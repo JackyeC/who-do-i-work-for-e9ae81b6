@@ -679,6 +679,10 @@ export const companies: Company[] = [
     ],
     workerRelevance: "Costco is widely considered one of the better large retailers for workers. PAC spending is modest and broadly distributed.",
     consumerRelevance: "Membership fees support a company with relatively modest and balanced political spending.",
+    influenceROI: { totalPoliticalSpending: 3000000, totalGovernmentBenefits: 0, roiRatio: 0, grade: "N/A" },
+    hypocrisyIndex: { chiScore: 0, grade: "A+", directConflicts: 0, indirectConflicts: 0, alignedStances: 1, totalStances: 1 },
+    politicalRisk: { riskScore: 8, grade: "A+", revolvingDoorCount: 0, darkMoneyPercentage: 0, stakeholderDisconnect: 5, flaggedOrgCount: 0 },
+    benchmark: { industry: "Retail", transparencyGrade: "A", cpaZicklinScore: 88, industryRank: 1, industryTotal: 8, peerAvgCivicFootprint: 45, peerAvgLobbying: 3500000, peerAvgPacSpending: 2800000, isIndustryLeader: true },
   },
 ];
 
