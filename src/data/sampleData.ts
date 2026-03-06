@@ -311,6 +311,10 @@ export const companies: Company[] = [
     ],
     workerRelevance: "LGBTQ+ employees and allies may want to consider executive leadership's personal funding of organizations that oppose LGBTQ+ protections.",
     consumerRelevance: "Purchases support a company whose leadership has well-documented ties to organizations opposing LGBTQ+ rights through personal and foundation giving.",
+    influenceROI: { totalPoliticalSpending: 8500000, totalGovernmentBenefits: 0, roiRatio: 0, grade: "N/A" },
+    hypocrisyIndex: { chiScore: 85, grade: "F", directConflicts: 1, indirectConflicts: 0, alignedStances: 0, totalStances: 1 },
+    politicalRisk: { riskScore: 72, grade: "F", revolvingDoorCount: 0, darkMoneyPercentage: 59, stakeholderDisconnect: 75, flaggedOrgCount: 2 },
+    benchmark: { industry: "Food & Beverage", transparencyGrade: "F", industryRank: 12, industryTotal: 12, peerAvgCivicFootprint: 35, peerAvgLobbying: 2000000, peerAvgPacSpending: 1500000, isIndustryLeader: false },
   },
   {
     id: "hobby-lobby",
