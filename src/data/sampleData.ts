@@ -21,10 +21,23 @@ export interface Company {
   executives: Executive[];
   lobbyingSpend?: number;
 
+  // Indirect / Dark Money
+  superPacs: SuperPacTie[];
+  darkMoneyOrgs: DarkMoneyOrg[];
+  
+  // Government ROI
+  governmentContracts?: number;
+  subsidiesReceived?: number;
+  effectiveTaxRate?: string;
+  revolvingDoor: RevolvingDoorEntry[];
+
   // Influence Network
   tradeAssociations: string[];
   flaggedOrgTies: FlaggedOrgTie[];
   boardAffiliations: string[];
+
+  // Historical Spending (by election cycle)
+  spendingHistory: SpendingCycle[];
 
   // Public Stance vs Spending
   publicStances: PublicStance[];
@@ -33,7 +46,6 @@ export interface Company {
   workerRelevance: string;
   consumerRelevance: string;
 
-  // Legacy — renamed from alignmentScore
   civicFootprintScore: number; // 0-100, higher = more concentrated influence
 }
 
@@ -43,7 +55,7 @@ export interface Candidate {
   state: string;
   district?: string;
   amount: number;
-  type: "corporate-pac" | "executive-personal";
+  type: "corporate-pac" | "executive-personal" | "super-pac";
   flagged: boolean;
   flagReason?: string;
 }
@@ -53,6 +65,40 @@ export interface Executive {
   title: string;
   totalDonations: number;
   topRecipients: { name: string; amount: number; party: "R" | "D" | "I" }[];
+}
+
+export interface SuperPacTie {
+  name: string;
+  type: "super-pac" | "527";
+  amount: number;
+  relationship: "direct" | "leadership-linked" | "corporate-affiliated";
+  description: string;
+  confidence: "direct" | "inferred" | "unverified";
+}
+
+export interface DarkMoneyOrg {
+  name: string;
+  type: "501c4" | "501c6" | "other";
+  estimatedAmount?: number;
+  relationship: string;
+  confidence: "direct" | "inferred" | "unverified";
+  description: string;
+  source?: string;
+}
+
+export interface RevolvingDoorEntry {
+  person: string;
+  formerRole: string;
+  currentRole: string;
+  relevance: string;
+  confidence: "direct" | "inferred" | "unverified";
+}
+
+export interface SpendingCycle {
+  cycle: string; // e.g. "2020", "2022", "2024", "2026"
+  pacSpending: number;
+  lobbyingSpend: number;
+  executiveGiving: number;
 }
 
 export interface FlaggedOrgTie {
