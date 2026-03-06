@@ -959,6 +959,59 @@ export type Database = {
           },
         ]
       }
+      social_media_scans: {
+        Row: {
+          ai_summary: string | null
+          company_id: string
+          contradictions: Json | null
+          created_at: string
+          id: string
+          personnel_changes: Json | null
+          query_used: string
+          results: Json
+          scan_type: string
+          sentiment: string | null
+          sources: Json | null
+          stance_shifts: Json | null
+        }
+        Insert: {
+          ai_summary?: string | null
+          company_id: string
+          contradictions?: Json | null
+          created_at?: string
+          id?: string
+          personnel_changes?: Json | null
+          query_used: string
+          results?: Json
+          scan_type?: string
+          sentiment?: string | null
+          sources?: Json | null
+          stance_shifts?: Json | null
+        }
+        Update: {
+          ai_summary?: string | null
+          company_id?: string
+          contradictions?: Json | null
+          created_at?: string
+          id?: string
+          personnel_changes?: Json | null
+          query_used?: string
+          results?: Json
+          scan_type?: string
+          sentiment?: string | null
+          sources?: Json | null
+          stance_shifts?: Json | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "social_media_scans_company_id_fkey"
+            columns: ["company_id"]
+            isOneToOne: false
+            referencedRelation: "companies"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
     }
     Views: {
       [_ in never]: never
