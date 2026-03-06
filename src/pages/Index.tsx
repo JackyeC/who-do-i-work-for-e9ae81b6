@@ -1,14 +1,145 @@
-// Update this page (the content is just a fallback if you fail to update the page)
+import { useState } from "react";
+import { useNavigate } from "react-router-dom";
+import { motion } from "framer-motion";
+import { Search, Eye, Shield, Users, TrendingUp, AlertTriangle } from "lucide-react";
+import { Input } from "@/components/ui/input";
+import { Button } from "@/components/ui/button";
+import { CompanyCard } from "@/components/CompanyCard";
+import { Header } from "@/components/Header";
+import { Footer } from "@/components/Footer";
+import { companies } from "@/data/sampleData";
 
 const Index = () => {
+  const [query, setQuery] = useState("");
+  const navigate = useNavigate();
+
+  const handleSearch = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (query.trim()) {
+      navigate(`/search?q=${encodeURIComponent(query.trim())}`);
+    }
+  };
+
+  const featured = companies.slice(0, 4);
+
   return (
-    <div className="flex min-h-screen items-center justify-center bg-background">
-      <div className="text-center">
-        <h1 className="mb-4 text-4xl font-bold">Welcome to Your Blank App</h1>
-        <p className="text-xl text-muted-foreground">Start building your amazing project here!</p>
-      </div>
+    <div className="min-h-screen flex flex-col bg-background">
+      <Header />
+
+      {/* Hero */}
+      <section className="relative overflow-hidden">
+        <div className="absolute inset-0 bg-gradient-to-b from-primary/5 to-transparent" />
+        <div className="container mx-auto px-4 pt-20 pb-16 relative">
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5 }}
+            className="max-w-3xl mx-auto text-center"
+          >
+            <div className="inline-flex items-center gap-2 bg-civic-red/10 text-civic-red text-sm font-medium px-4 py-1.5 rounded-full mb-6">
+              <AlertTriangle className="w-3.5 h-3.5" />
+              Know where your money goes
+            </div>
+            <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold text-foreground leading-tight mb-6">
+              See what companies fund{" "}
+              <span className="text-primary">before</span> you work or shop there
+            </h1>
+            <p className="text-lg text-muted-foreground mb-10 max-w-2xl mx-auto">
+              CivicLens reveals corporate political donations, PAC spending, and executive contributions 
+              so you can make informed decisions about where your money and labor go.
+            </p>
+
+            <form onSubmit={handleSearch} className="max-w-xl mx-auto flex gap-2">
+              <div className="relative flex-1">
+                <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
+                <Input
+                  value={query}
+                  onChange={(e) => setQuery(e.target.value)}
+                  placeholder="Search any company (e.g., Home Depot, Walmart)..."
+                  className="pl-10 h-12 text-base"
+                />
+              </div>
+              <Button type="submit" size="lg" className="h-12 px-6">
+                Search
+              </Button>
+            </form>
+
+            <p className="mt-4 text-sm text-muted-foreground">
+              Currently tracking {companies.length} companies · Data from FEC &amp; public records
+            </p>
+          </motion.div>
+        </div>
+      </section>
+
+      {/* How It Works */}
+      <section className="container mx-auto px-4 py-16">
+        <h2 className="text-2xl font-bold text-foreground text-center mb-10">How It Works</h2>
+        <div className="grid md:grid-cols-3 gap-8 max-w-4xl mx-auto">
+          {[
+            { icon: Search, title: "Search a Company", desc: "Type any company name to see their political activity and affiliations." },
+            { icon: Eye, title: "See the Data", desc: "View PAC spending, candidate donations, executive contributions, and flagged affiliations." },
+            { icon: Shield, title: "Make Informed Choices", desc: "Decide if a company's political activity aligns with your values before working or shopping there." },
+          ].map((step, i) => (
+            <motion.div
+              key={step.title}
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.4, delay: i * 0.15 }}
+              className="text-center"
+            >
+              <div className="w-12 h-12 rounded-xl bg-primary/10 flex items-center justify-center mx-auto mb-4">
+                <step.icon className="w-6 h-6 text-primary" />
+              </div>
+              <h3 className="font-semibold text-foreground mb-2 text-lg">{step.title}</h3>
+              <p className="text-sm text-muted-foreground">{step.desc}</p>
+            </motion.div>
+          ))}
+        </div>
+      </section>
+
+      {/* Featured Companies */}
+      <section className="container mx-auto px-4 py-16">
+        <div className="flex items-center justify-between mb-8">
+          <div>
+            <h2 className="text-2xl font-bold text-foreground">Featured Companies</h2>
+            <p className="text-sm text-muted-foreground mt-1">Recently updated profiles</p>
+          </div>
+          <Button variant="outline" onClick={() => navigate("/browse")}>
+            View All
+          </Button>
+        </div>
+        <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-4">
+          {featured.map((company) => (
+            <CompanyCard key={company.id} company={company} />
+          ))}
+        </div>
+      </section>
+
+      {/* Stats */}
+      <section className="bg-primary text-primary-foreground py-16">
+        <div className="container mx-auto px-4">
+          <div className="grid md:grid-cols-3 gap-8 text-center">
+            {[
+              { icon: Building2Icon, value: companies.length, label: "Companies Tracked" },
+              { icon: Users, value: "$100M+", label: "Political Spending Tracked" },
+              { icon: TrendingUp, value: "2026", label: "Election Cycle Data" },
+            ].map((stat) => (
+              <div key={stat.label}>
+                <div className="text-3xl font-bold mb-1">{stat.value}</div>
+                <div className="text-primary-foreground/70 text-sm">{stat.label}</div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      <Footer />
     </div>
   );
 };
+
+function Building2Icon(props: React.SVGProps<SVGSVGElement>) {
+  return null; // placeholder for stat icon
+}
 
 export default Index;
