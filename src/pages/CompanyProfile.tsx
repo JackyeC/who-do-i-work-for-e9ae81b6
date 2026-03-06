@@ -283,9 +283,15 @@ export default function CompanyProfile() {
               </Card>
             )}
 
-            {/* ROI Pipeline */}
-            {company.roiPipeline && (
-              <ROIPipelineCard data={company.roiPipeline} />
+            {/* ROI Pipeline — prefer live DB data */}
+            {(livePipeline || company.roiPipeline) && (
+              <div className="mt-6">
+                {pipelineLoading ? (
+                  <Card><CardContent className="p-6 text-center text-muted-foreground">Loading influence pipeline...</CardContent></Card>
+                ) : (
+                  <ROIPipelineCard data={livePipeline || company.roiPipeline!} />
+                )}
+              </div>
             )}
           </div>
 
