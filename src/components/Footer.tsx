@@ -1,3 +1,4 @@
+import { Link } from "react-router-dom";
 import { Eye } from "lucide-react";
 
 export function Footer() {
@@ -13,14 +14,26 @@ export function Footer() {
               <span className="font-bold text-foreground" style={{ fontFamily: "'Source Serif 4', serif" }}>CivicLens</span>
             </div>
             <p className="text-sm text-muted-foreground max-w-xs">
-              Transparency tool helping people make informed decisions about where they work and shop.
+              Helping people make informed work and spending decisions using publicly available data about political and civic influence.
             </p>
           </div>
-          <div className="text-sm text-muted-foreground space-y-2">
-            <p>Data sourced from FEC.gov and public records.</p>
-            <p>Donations do not always equal total endorsement.</p>
-            <p className="text-xs">© {new Date().getFullYear()} CivicLens. All rights reserved.</p>
+          <div className="flex flex-col sm:flex-row gap-8">
+            <div className="text-sm space-y-2">
+              <p className="font-medium text-foreground">Navigate</p>
+              <Link to="/browse" className="block text-muted-foreground hover:text-foreground transition-colors">Browse Companies</Link>
+              <Link to="/methodology" className="block text-muted-foreground hover:text-foreground transition-colors">Methodology</Link>
+              <Link to="/search" className="block text-muted-foreground hover:text-foreground transition-colors">Search</Link>
+            </div>
+            <div className="text-sm text-muted-foreground space-y-2">
+              <p className="font-medium text-foreground">About</p>
+              <p>Data from FEC.gov, OpenSecrets &amp; public filings.</p>
+              <p>Donations do not always equal endorsement.</p>
+              <a href="mailto:corrections@civiclens.org" className="block text-primary hover:underline">Request a Correction</a>
+            </div>
           </div>
+        </div>
+        <div className="mt-8 pt-6 border-t border-border">
+          <p className="text-xs text-muted-foreground">© {new Date().getFullYear()} CivicLens. All rights reserved. This tool provides publicly available data for informational purposes only.</p>
         </div>
       </div>
     </footer>

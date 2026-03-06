@@ -1,5 +1,5 @@
 import { Link } from "react-router-dom";
-import { Search, Eye } from "lucide-react";
+import { Search, Eye, BookOpen } from "lucide-react";
 
 export function Header() {
   return (
@@ -15,7 +15,11 @@ export function Header() {
         </Link>
         <nav className="flex items-center gap-6">
           <Link to="/browse" className="text-sm font-medium text-muted-foreground hover:text-foreground transition-colors">
-            Browse Companies
+            Browse
+          </Link>
+          <Link to="/methodology" className="text-sm font-medium text-muted-foreground hover:text-foreground transition-colors flex items-center gap-1">
+            <BookOpen className="w-3.5 h-3.5" />
+            Methodology
           </Link>
           <Link to="/search" className="text-sm font-medium text-muted-foreground hover:text-foreground transition-colors flex items-center gap-1">
             <Search className="w-3.5 h-3.5" />

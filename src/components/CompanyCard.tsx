@@ -1,6 +1,6 @@
 import { Link } from "react-router-dom";
 import { Card, CardContent } from "@/components/ui/card";
-import { AlignmentBadge } from "@/components/AlignmentBadge";
+import { CivicFootprintBadge } from "@/components/CivicFootprintBadge";
 import { formatCurrency, type Company } from "@/data/sampleData";
 import { Building2, ArrowRight } from "lucide-react";
 
@@ -30,7 +30,7 @@ export function CompanyCard({ company }: CompanyCardProps) {
             <ArrowRight className="w-4 h-4 text-muted-foreground group-hover:text-primary transition-colors shrink-0 mt-1" />
           </div>
           <div className="mt-4 flex items-center justify-between gap-2 flex-wrap">
-            <AlignmentBadge score={company.alignmentScore} size="sm" />
+            <CivicFootprintBadge score={company.civicFootprintScore} size="sm" />
             <span className="text-xs text-muted-foreground">
               {company.totalPacSpending > 0
                 ? `PAC: ${formatCurrency(company.totalPacSpending)}`

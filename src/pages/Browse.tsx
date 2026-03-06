@@ -16,7 +16,7 @@ export default function Browse() {
       : companies;
     return [...list].sort((a, b) =>
       sortBy === "score"
-        ? b.alignmentScore - a.alignmentScore
+        ? b.civicFootprintScore - a.civicFootprintScore
         : a.name.localeCompare(b.name)
     );
   }, [selectedIndustry, sortBy]);
@@ -28,7 +28,7 @@ export default function Browse() {
         <div className="mb-8">
           <h1 className="text-3xl font-bold text-foreground mb-2">Company Directory</h1>
           <p className="text-muted-foreground">
-            Browse {companies.length} companies and their political spending profiles.
+            Browse {companies.length} companies and their civic footprint profiles.
           </p>
         </div>
 
@@ -57,7 +57,7 @@ export default function Browse() {
               size="sm"
               onClick={() => setSortBy("score")}
             >
-              By Score
+              By Footprint
             </Button>
             <Button
               variant={sortBy === "name" ? "secondary" : "ghost"}

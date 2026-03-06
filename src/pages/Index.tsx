@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
-import { Search, Eye, Shield, Users, TrendingUp, AlertTriangle } from "lucide-react";
+import { Search, Eye, Shield, BookOpen, Building2, TrendingUp, Scale } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { CompanyCard } from "@/components/CompanyCard";
@@ -36,17 +36,17 @@ const Index = () => {
             transition={{ duration: 0.5 }}
             className="max-w-3xl mx-auto text-center"
           >
-            <div className="inline-flex items-center gap-2 bg-civic-red/10 text-civic-red text-sm font-medium px-4 py-1.5 rounded-full mb-6">
-              <AlertTriangle className="w-3.5 h-3.5" />
-              Know where your money goes
+            <div className="inline-flex items-center gap-2 bg-primary/10 text-primary text-sm font-medium px-4 py-1.5 rounded-full mb-6">
+              <Scale className="w-3.5 h-3.5" />
+              Public data. Informed decisions.
             </div>
             <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold text-foreground leading-tight mb-6">
-              See what companies fund{" "}
-              <span className="text-primary">before</span> you work or shop there
+              See where a company's money and influence go{" "}
+              <span className="text-primary">before</span> you decide to work there, buy there, or back them
             </h1>
             <p className="text-lg text-muted-foreground mb-10 max-w-2xl mx-auto">
-              CivicLens reveals corporate political donations, PAC spending, and executive contributions 
-              so you can make informed decisions about where your money and labor go.
+              Search public data on political spending, executive donations, lobbying, and influence networks 
+              so you can make clearer decisions with your eyes open.
             </p>
 
             <form onSubmit={handleSearch} className="max-w-xl mx-auto flex gap-2">
@@ -65,7 +65,7 @@ const Index = () => {
             </form>
 
             <p className="mt-4 text-sm text-muted-foreground">
-              Currently tracking {companies.length} companies · Data from FEC &amp; public records
+              Currently tracking {companies.length} companies · Data from FEC, OpenSecrets &amp; public filings
             </p>
           </motion.div>
         </div>
@@ -76,9 +76,9 @@ const Index = () => {
         <h2 className="text-2xl font-bold text-foreground text-center mb-10">How It Works</h2>
         <div className="grid md:grid-cols-3 gap-8 max-w-4xl mx-auto">
           {[
-            { icon: Search, title: "Search a Company", desc: "Type any company name to see their political activity and affiliations." },
-            { icon: Eye, title: "See the Data", desc: "View PAC spending, candidate donations, executive contributions, and flagged affiliations." },
-            { icon: Shield, title: "Make Informed Choices", desc: "Decide if a company's political activity aligns with your values before working or shopping there." },
+            { icon: Search, title: "Search a Company", desc: "Type any company name to see their political activity, lobbying, and influence network." },
+            { icon: Eye, title: "Follow the Money", desc: "View PAC spending, executive donations, trade group memberships, lobbying, and flagged affiliations — each clearly labeled by type." },
+            { icon: Shield, title: "Make Informed Choices", desc: "Compare public stances against actual spending. Decide if a company's civic footprint aligns with your values." },
           ].map((step, i) => (
             <motion.div
               key={step.title}
@@ -94,6 +94,31 @@ const Index = () => {
               <p className="text-sm text-muted-foreground">{step.desc}</p>
             </motion.div>
           ))}
+        </div>
+      </section>
+
+      {/* What We Track */}
+      <section className="bg-muted/50 py-16">
+        <div className="container mx-auto px-4">
+          <h2 className="text-2xl font-bold text-foreground text-center mb-3">What We Track</h2>
+          <p className="text-muted-foreground text-center mb-10 max-w-xl mx-auto">
+            Not all money is the same. We separate types of influence so the picture stays honest.
+          </p>
+          <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4 max-w-4xl mx-auto">
+            {[
+              { label: "Corporate PAC", desc: "Company-organized political action committee donations to candidates" },
+              { label: "Executive Personal Giving", desc: "C-suite and board members' individual political contributions" },
+              { label: "Lobbying", desc: "Corporate spending to influence legislation and regulation" },
+              { label: "Trade Associations", desc: "Membership in industry groups that lobby on their behalf" },
+              { label: "Flagged Org Ties", desc: "Connections to organizations flagged by civil rights watchdogs" },
+              { label: "Public Stance vs. Spending", desc: "Where marketing language and money trail diverge" },
+            ].map((item) => (
+              <div key={item.label} className="bg-card rounded-lg border border-border p-4">
+                <div className="font-medium text-foreground text-sm mb-1">{item.label}</div>
+                <p className="text-xs text-muted-foreground">{item.desc}</p>
+              </div>
+            ))}
+          </div>
         </div>
       </section>
 
@@ -120,9 +145,9 @@ const Index = () => {
         <div className="container mx-auto px-4">
           <div className="grid md:grid-cols-3 gap-8 text-center">
             {[
-              { icon: Building2Icon, value: companies.length, label: "Companies Tracked" },
-              { icon: Users, value: "$100M+", label: "Political Spending Tracked" },
-              { icon: TrendingUp, value: "2026", label: "Election Cycle Data" },
+              { value: companies.length, label: "Companies Tracked" },
+              { value: "$100M+", label: "Political Spending Tracked" },
+              { value: "2026", label: "Election Cycle Data" },
             ].map((stat) => (
               <div key={stat.label}>
                 <div className="text-3xl font-bold mb-1">{stat.value}</div>
@@ -133,13 +158,21 @@ const Index = () => {
         </div>
       </section>
 
+      {/* Methodology CTA */}
+      <section className="container mx-auto px-4 py-16 text-center">
+        <BookOpen className="w-8 h-8 text-muted-foreground mx-auto mb-4" />
+        <h2 className="text-2xl font-bold text-foreground mb-3">Transparent About Transparency</h2>
+        <p className="text-muted-foreground max-w-lg mx-auto mb-6">
+          We publish our methodology, data sources, and confidence ratings. Every claim is labeled as direct, inferred, or unverified.
+        </p>
+        <Button variant="outline" onClick={() => navigate("/methodology")}>
+          Read Our Methodology
+        </Button>
+      </section>
+
       <Footer />
     </div>
   );
 };
-
-function Building2Icon(props: React.SVGProps<SVGSVGElement>) {
-  return null; // placeholder for stat icon
-}
 
 export default Index;
