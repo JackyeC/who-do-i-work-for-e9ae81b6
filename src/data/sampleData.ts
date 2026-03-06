@@ -621,6 +621,10 @@ export const companies: Company[] = [
     ],
     workerRelevance: "Koch Industries' political network is one of the most influential in American politics. Working here means contributing to a company whose leadership actively shapes conservative policy.",
     consumerRelevance: "Koch subsidiaries include Georgia-Pacific (Brawny, Dixie, Quilted Northern), Guardian Industries, and Molex. Revenue supports extensive political infrastructure.",
+    influenceROI: { totalPoliticalSpending: 63700000, totalGovernmentBenefits: 350000000, roiRatio: 5.5, policyWinRate: 81, grade: "A" },
+    hypocrisyIndex: { chiScore: 50, grade: "D", directConflicts: 1, indirectConflicts: 0, alignedStances: 1, totalStances: 2 },
+    politicalRisk: { riskScore: 92, grade: "F", revolvingDoorCount: 2, darkMoneyPercentage: 78, stakeholderDisconnect: 70, flaggedOrgCount: 2 },
+    benchmark: { industry: "Conglomerate", transparencyGrade: "F", industryRank: 10, industryTotal: 10, peerAvgCivicFootprint: 40, peerAvgLobbying: 5000000, peerAvgPacSpending: 3000000, isIndustryLeader: false },
   },
   {
     id: "costco",
