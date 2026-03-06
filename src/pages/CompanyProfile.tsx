@@ -21,6 +21,7 @@ import { PoliticalRiskCard } from "@/components/PoliticalRiskCard";
 import { BenchmarkCard } from "@/components/BenchmarkCard";
 import { ROIPipelineCard } from "@/components/ROIPipelineCard";
 import { SocialMonitorCard } from "@/components/SocialMonitorCard";
+import { AgencyContractsCard } from "@/components/AgencyContractsCard";
 import { useROIPipeline } from "@/hooks/use-roi-pipeline";
 
 export default function CompanyProfile() {
