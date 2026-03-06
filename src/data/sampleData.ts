@@ -457,3 +457,5 @@ export const companies: Company[] = [
     consumerRelevance: "Membership fees support a company with relatively modest and balanced political spending.",
   },
 ];
+
+export const industries = [...new Set(companies.map((c) => c.industry))].sort();
