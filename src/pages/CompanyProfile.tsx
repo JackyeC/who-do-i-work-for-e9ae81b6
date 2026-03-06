@@ -272,6 +272,11 @@ export default function CompanyProfile() {
                 </CardContent>
               </Card>
             )}
+
+            {/* ROI Pipeline */}
+            {company.roiPipeline && (
+              <ROIPipelineCard data={company.roiPipeline} />
+            )}
           </div>
 
           {/* Executive Donors */}
