@@ -468,6 +468,28 @@ export const companies: Company[] = [
     hypocrisyIndex: { chiScore: 55, grade: "D", directConflicts: 1, indirectConflicts: 1, alignedStances: 0, totalStances: 2 },
     politicalRisk: { riskScore: 35, grade: "B", revolvingDoorCount: 1, darkMoneyPercentage: 0, stakeholderDisconnect: 30, flaggedOrgCount: 0 },
     benchmark: { industry: "Technology", transparencyGrade: "A", cpaZicklinScore: 82, industryRank: 2, industryTotal: 15, peerAvgCivicFootprint: 30, peerAvgLobbying: 8000000, peerAvgPacSpending: 3000000, isIndustryLeader: true },
+    roiPipeline: {
+      totalSpending: 18750000, totalBenefits: 2700000000,
+      moneyIn: [
+        { label: "Corporate PAC", amount: 5100000, type: "PAC" },
+        { label: "Lobbying", amount: 13400000, type: "Lobbying" },
+        { label: "Sundar Pichai (Personal)", amount: 250000, type: "Executive" },
+      ],
+      network: [
+        { label: "Sen. Mark Warner", role: "Intelligence Committee — tech oversight", type: "Recipient" },
+        { label: "Susan Molinari", role: "Former Rep (R-NY) → Google VP of Public Policy", type: "Revolving Door" },
+        { label: "Business Roundtable", role: "Lobbies on antitrust & AI regulation", type: "Trade Group" },
+      ],
+      benefitsOut: [
+        { label: "Federal Cloud Contracts", amount: 2700000000, type: "Contracts" },
+      ],
+      linkages: [
+        { source: "Google PAC", target: "Sen. Mark Warner", description: "$15K donation; Warner on Intelligence Committee overseeing tech surveillance", confidence: 1.0 },
+        { source: "Susan Molinari", target: "Google Policy Team", description: "Former congresswoman hired to lead Google's DC lobbying operation", confidence: 1.0 },
+        { source: "Google Lobbying ($13.4M)", target: "Antitrust Legislation", description: "Lobbied against antitrust bills targeting search dominance", confidence: 0.9 },
+        { source: "Federal Cloud Services", target: "Google Cloud", description: "$2.7B in federal cloud infrastructure contracts (DoD, civilian)", confidence: 1.0 },
+      ],
+    },
   },
   {
     id: "walmart",
