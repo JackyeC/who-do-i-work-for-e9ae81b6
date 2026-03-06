@@ -92,6 +92,59 @@ export type Database = {
         }
         Relationships: []
       }
+      company_benchmarks: {
+        Row: {
+          company_id: string
+          cpa_zicklin_score: number | null
+          id: string
+          industry: string
+          industry_rank: number | null
+          industry_total: number | null
+          is_industry_leader: boolean
+          last_calculated: string
+          peer_avg_civic_footprint: number | null
+          peer_avg_lobbying: number | null
+          peer_avg_pac_spending: number | null
+          transparency_grade: string
+        }
+        Insert: {
+          company_id: string
+          cpa_zicklin_score?: number | null
+          id?: string
+          industry: string
+          industry_rank?: number | null
+          industry_total?: number | null
+          is_industry_leader?: boolean
+          last_calculated?: string
+          peer_avg_civic_footprint?: number | null
+          peer_avg_lobbying?: number | null
+          peer_avg_pac_spending?: number | null
+          transparency_grade?: string
+        }
+        Update: {
+          company_id?: string
+          cpa_zicklin_score?: number | null
+          id?: string
+          industry?: string
+          industry_rank?: number | null
+          industry_total?: number | null
+          is_industry_leader?: boolean
+          last_calculated?: string
+          peer_avg_civic_footprint?: number | null
+          peer_avg_lobbying?: number | null
+          peer_avg_pac_spending?: number | null
+          transparency_grade?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "company_benchmarks_company_id_fkey"
+            columns: ["company_id"]
+            isOneToOne: true
+            referencedRelation: "companies"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       company_board_affiliations: {
         Row: {
           company_id: string
@@ -279,6 +332,91 @@ export type Database = {
           },
         ]
       }
+      company_hypocrisy_index: {
+        Row: {
+          aligned_stances: number
+          chi_grade: string
+          chi_score: number
+          company_id: string
+          direct_conflicts: number
+          id: string
+          indirect_conflicts: number
+          last_calculated: string
+          total_stances: number
+        }
+        Insert: {
+          aligned_stances?: number
+          chi_grade?: string
+          chi_score?: number
+          company_id: string
+          direct_conflicts?: number
+          id?: string
+          indirect_conflicts?: number
+          last_calculated?: string
+          total_stances?: number
+        }
+        Update: {
+          aligned_stances?: number
+          chi_grade?: string
+          chi_score?: number
+          company_id?: string
+          direct_conflicts?: number
+          id?: string
+          indirect_conflicts?: number
+          last_calculated?: string
+          total_stances?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "company_hypocrisy_index_company_id_fkey"
+            columns: ["company_id"]
+            isOneToOne: true
+            referencedRelation: "companies"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      company_influence_roi: {
+        Row: {
+          company_id: string
+          id: string
+          last_calculated: string
+          policy_win_rate: number | null
+          roi_grade: string
+          roi_ratio: number | null
+          total_government_benefits: number
+          total_political_spending: number
+        }
+        Insert: {
+          company_id: string
+          id?: string
+          last_calculated?: string
+          policy_win_rate?: number | null
+          roi_grade?: string
+          roi_ratio?: number | null
+          total_government_benefits?: number
+          total_political_spending?: number
+        }
+        Update: {
+          company_id?: string
+          id?: string
+          last_calculated?: string
+          policy_win_rate?: number | null
+          roi_grade?: string
+          roi_ratio?: number | null
+          total_government_benefits?: number
+          total_political_spending?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "company_influence_roi_company_id_fkey"
+            columns: ["company_id"]
+            isOneToOne: true
+            referencedRelation: "companies"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       company_party_breakdown: {
         Row: {
           amount: number
@@ -306,6 +444,50 @@ export type Database = {
             foreignKeyName: "company_party_breakdown_company_id_fkey"
             columns: ["company_id"]
             isOneToOne: false
+            referencedRelation: "companies"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      company_political_risk: {
+        Row: {
+          company_id: string
+          dark_money_percentage: number
+          flagged_org_count: number
+          id: string
+          last_calculated: string
+          revolving_door_count: number
+          risk_grade: string
+          risk_score: number
+          stakeholder_disconnect_score: number
+        }
+        Insert: {
+          company_id: string
+          dark_money_percentage?: number
+          flagged_org_count?: number
+          id?: string
+          last_calculated?: string
+          revolving_door_count?: number
+          risk_grade?: string
+          risk_score?: number
+          stakeholder_disconnect_score?: number
+        }
+        Update: {
+          company_id?: string
+          dark_money_percentage?: number
+          flagged_org_count?: number
+          id?: string
+          last_calculated?: string
+          revolving_door_count?: number
+          risk_grade?: string
+          risk_score?: number
+          stakeholder_disconnect_score?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "company_political_risk_company_id_fkey"
+            columns: ["company_id"]
+            isOneToOne: true
             referencedRelation: "companies"
             referencedColumns: ["id"]
           },

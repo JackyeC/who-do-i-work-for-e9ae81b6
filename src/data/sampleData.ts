@@ -47,6 +47,12 @@ export interface Company {
   consumerRelevance: string;
 
   civicFootprintScore: number; // 0-100, higher = more concentrated influence
+
+  // Scoring
+  influenceROI?: InfluenceROIData;
+  hypocrisyIndex?: HypocrisyIndexData;
+  politicalRisk?: PoliticalRiskData;
+  benchmark?: BenchmarkData;
 }
 
 export interface Candidate {
@@ -114,6 +120,46 @@ export interface PublicStance {
   publicPosition: string;
   spendingReality: string;
   gap: "aligned" | "mixed" | "contradictory";
+}
+
+// ─── Scoring Interfaces ──────────────────────────────────────────────────────
+
+export interface InfluenceROIData {
+  totalPoliticalSpending: number;
+  totalGovernmentBenefits: number;
+  roiRatio: number;
+  policyWinRate?: number;
+  grade: string;
+}
+
+export interface HypocrisyIndexData {
+  chiScore: number;
+  grade: string;
+  directConflicts: number;
+  indirectConflicts: number;
+  alignedStances: number;
+  totalStances: number;
+}
+
+export interface PoliticalRiskData {
+  riskScore: number;
+  grade: string;
+  revolvingDoorCount: number;
+  darkMoneyPercentage: number;
+  stakeholderDisconnect: number;
+  flaggedOrgCount: number;
+}
+
+export interface BenchmarkData {
+  industry: string;
+  transparencyGrade: string;
+  cpaZicklinScore?: number;
+  industryRank?: number;
+  industryTotal?: number;
+  peerAvgCivicFootprint: number;
+  peerAvgLobbying: number;
+  peerAvgPacSpending: number;
+  isIndustryLeader: boolean;
 }
 
 // ─── Helpers ─────────────────────────────────────────────────────────────────
@@ -211,6 +257,10 @@ export const companies: Company[] = [
     ],
     workerRelevance: "Leadership spending may signal likely positions on labor rights, union policy, and workplace protections. Co-founder's significant political spending is personal, not corporate.",
     consumerRelevance: "Purchases support a company whose PAC leans Republican and whose co-founder is a major conservative donor.",
+    influenceROI: { totalPoliticalSpending: 39300000, totalGovernmentBenefits: 630000000, roiRatio: 16.0, policyWinRate: 72, grade: "A+" },
+    hypocrisyIndex: { chiScore: 68, grade: "D", directConflicts: 1, indirectConflicts: 0, alignedStances: 0, totalStances: 1 },
+    politicalRisk: { riskScore: 62, grade: "D", revolvingDoorCount: 1, darkMoneyPercentage: 0, stakeholderDisconnect: 55, flaggedOrgCount: 1 },
+    benchmark: { industry: "Retail", transparencyGrade: "B", cpaZicklinScore: 65, industryRank: 3, industryTotal: 8, peerAvgCivicFootprint: 45, peerAvgLobbying: 3500000, peerAvgPacSpending: 2800000, isIndustryLeader: false },
   },
   {
     id: "chick-fil-a",
@@ -261,6 +311,10 @@ export const companies: Company[] = [
     ],
     workerRelevance: "LGBTQ+ employees and allies may want to consider executive leadership's personal funding of organizations that oppose LGBTQ+ protections.",
     consumerRelevance: "Purchases support a company whose leadership has well-documented ties to organizations opposing LGBTQ+ rights through personal and foundation giving.",
+    influenceROI: { totalPoliticalSpending: 8500000, totalGovernmentBenefits: 0, roiRatio: 0, grade: "N/A" },
+    hypocrisyIndex: { chiScore: 85, grade: "F", directConflicts: 1, indirectConflicts: 0, alignedStances: 0, totalStances: 1 },
+    politicalRisk: { riskScore: 72, grade: "F", revolvingDoorCount: 0, darkMoneyPercentage: 59, stakeholderDisconnect: 75, flaggedOrgCount: 2 },
+    benchmark: { industry: "Food & Beverage", transparencyGrade: "F", industryRank: 12, industryTotal: 12, peerAvgCivicFootprint: 35, peerAvgLobbying: 2000000, peerAvgPacSpending: 1500000, isIndustryLeader: false },
   },
   {
     id: "hobby-lobby",
@@ -312,6 +366,10 @@ export const companies: Company[] = [
     ],
     workerRelevance: "Company has successfully argued for religious exemptions that affect employee healthcare benefits (contraceptive coverage).",
     consumerRelevance: "Revenue directly supports a family-owned business whose leadership funds organizations opposing LGBTQ+ rights and reproductive healthcare access.",
+    influenceROI: { totalPoliticalSpending: 18000000, totalGovernmentBenefits: 0, roiRatio: 0, grade: "N/A" },
+    hypocrisyIndex: { chiScore: 0, grade: "A+", directConflicts: 0, indirectConflicts: 0, alignedStances: 2, totalStances: 2 },
+    politicalRisk: { riskScore: 78, grade: "F", revolvingDoorCount: 0, darkMoneyPercentage: 28, stakeholderDisconnect: 65, flaggedOrgCount: 2 },
+    benchmark: { industry: "Retail", transparencyGrade: "F", industryRank: 8, industryTotal: 8, peerAvgCivicFootprint: 45, peerAvgLobbying: 3500000, peerAvgPacSpending: 2800000, isIndustryLeader: false },
   },
   {
     id: "google",
@@ -372,6 +430,10 @@ export const companies: Company[] = [
     ],
     workerRelevance: "PAC spending is broadly distributed across both parties. Significant lobbying budget focused on tech regulation and antitrust. Generally considered a progressive employer.",
     consumerRelevance: "Using Google products supports a company with massive lobbying influence on tech regulation, privacy, and antitrust policy.",
+    influenceROI: { totalPoliticalSpending: 18750000, totalGovernmentBenefits: 2700000000, roiRatio: 144.0, policyWinRate: 68, grade: "A+" },
+    hypocrisyIndex: { chiScore: 55, grade: "D", directConflicts: 1, indirectConflicts: 1, alignedStances: 0, totalStances: 2 },
+    politicalRisk: { riskScore: 35, grade: "B", revolvingDoorCount: 1, darkMoneyPercentage: 0, stakeholderDisconnect: 30, flaggedOrgCount: 0 },
+    benchmark: { industry: "Technology", transparencyGrade: "A", cpaZicklinScore: 82, industryRank: 2, industryTotal: 15, peerAvgCivicFootprint: 30, peerAvgLobbying: 8000000, peerAvgPacSpending: 3000000, isIndustryLeader: true },
   },
   {
     id: "walmart",
@@ -437,6 +499,10 @@ export const companies: Company[] = [
     ],
     workerRelevance: "As the nation's largest private employer, Walmart's lobbying on labor policy, minimum wage, and union rights directly affects millions of workers.",
     consumerRelevance: "Purchases support a company with significant political influence through lobbying, PAC spending, and Walton family personal donations.",
+    influenceROI: { totalPoliticalSpending: 19500000, totalGovernmentBenefits: 2090000000, roiRatio: 107.2, policyWinRate: 74, grade: "A+" },
+    hypocrisyIndex: { chiScore: 72, grade: "F", directConflicts: 1, indirectConflicts: 1, alignedStances: 0, totalStances: 2 },
+    politicalRisk: { riskScore: 52, grade: "C", revolvingDoorCount: 1, darkMoneyPercentage: 0, stakeholderDisconnect: 50, flaggedOrgCount: 1 },
+    benchmark: { industry: "Retail", transparencyGrade: "B+", cpaZicklinScore: 70, industryRank: 2, industryTotal: 8, peerAvgCivicFootprint: 45, peerAvgLobbying: 3500000, peerAvgPacSpending: 2800000, isIndustryLeader: false },
   },
   {
     id: "patagonia",
@@ -483,6 +549,10 @@ export const companies: Company[] = [
     ],
     workerRelevance: "Company's political activity is minimal and focused on environmental causes. Ownership structure donates profits to environmental nonprofits.",
     consumerRelevance: "Purchases support a company whose profits now fund environmental nonprofits through its ownership structure.",
+    influenceROI: { totalPoliticalSpending: 50000, totalGovernmentBenefits: 0, roiRatio: 0, grade: "N/A" },
+    hypocrisyIndex: { chiScore: 0, grade: "A+", directConflicts: 0, indirectConflicts: 0, alignedStances: 1, totalStances: 1 },
+    politicalRisk: { riskScore: 5, grade: "A+", revolvingDoorCount: 0, darkMoneyPercentage: 0, stakeholderDisconnect: 0, flaggedOrgCount: 0 },
+    benchmark: { industry: "Retail / Apparel", transparencyGrade: "A+", cpaZicklinScore: 95, industryRank: 1, industryTotal: 5, peerAvgCivicFootprint: 30, peerAvgLobbying: 500000, peerAvgPacSpending: 200000, isIndustryLeader: true },
   },
   {
     id: "koch-industries",
@@ -551,6 +621,10 @@ export const companies: Company[] = [
     ],
     workerRelevance: "Koch Industries' political network is one of the most influential in American politics. Working here means contributing to a company whose leadership actively shapes conservative policy.",
     consumerRelevance: "Koch subsidiaries include Georgia-Pacific (Brawny, Dixie, Quilted Northern), Guardian Industries, and Molex. Revenue supports extensive political infrastructure.",
+    influenceROI: { totalPoliticalSpending: 63700000, totalGovernmentBenefits: 350000000, roiRatio: 5.5, policyWinRate: 81, grade: "A" },
+    hypocrisyIndex: { chiScore: 50, grade: "D", directConflicts: 1, indirectConflicts: 0, alignedStances: 1, totalStances: 2 },
+    politicalRisk: { riskScore: 92, grade: "F", revolvingDoorCount: 2, darkMoneyPercentage: 78, stakeholderDisconnect: 70, flaggedOrgCount: 2 },
+    benchmark: { industry: "Conglomerate", transparencyGrade: "F", industryRank: 10, industryTotal: 10, peerAvgCivicFootprint: 40, peerAvgLobbying: 5000000, peerAvgPacSpending: 3000000, isIndustryLeader: false },
   },
   {
     id: "costco",
@@ -605,6 +679,10 @@ export const companies: Company[] = [
     ],
     workerRelevance: "Costco is widely considered one of the better large retailers for workers. PAC spending is modest and broadly distributed.",
     consumerRelevance: "Membership fees support a company with relatively modest and balanced political spending.",
+    influenceROI: { totalPoliticalSpending: 3000000, totalGovernmentBenefits: 0, roiRatio: 0, grade: "N/A" },
+    hypocrisyIndex: { chiScore: 0, grade: "A+", directConflicts: 0, indirectConflicts: 0, alignedStances: 1, totalStances: 1 },
+    politicalRisk: { riskScore: 8, grade: "A+", revolvingDoorCount: 0, darkMoneyPercentage: 0, stakeholderDisconnect: 5, flaggedOrgCount: 0 },
+    benchmark: { industry: "Retail", transparencyGrade: "A", cpaZicklinScore: 88, industryRank: 1, industryTotal: 8, peerAvgCivicFootprint: 45, peerAvgLobbying: 3500000, peerAvgPacSpending: 2800000, isIndustryLeader: true },
   },
 ];
 

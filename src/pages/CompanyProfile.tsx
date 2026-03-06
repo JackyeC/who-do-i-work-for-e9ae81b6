@@ -3,7 +3,8 @@ import { motion } from "framer-motion";
 import {
   Building2, ArrowLeft, Calendar, DollarSign, Users, Flag,
   Network, Scale, MessageSquareWarning, ExternalLink, Shield, Megaphone,
-  AlertTriangle, EyeOff, RotateCcw, TrendingUp, Landmark, FileText
+  AlertTriangle, EyeOff, RotateCcw, TrendingUp, Landmark, FileText,
+  BarChart3
 } from "lucide-react";
 import { PieChart, Pie, Cell, ResponsiveContainer, Tooltip, BarChart, Bar, XAxis, YAxis, CartesianGrid, Legend } from "recharts";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -14,6 +15,10 @@ import { Footer } from "@/components/Footer";
 import { CivicFootprintBadge } from "@/components/CivicFootprintBadge";
 import { companies, formatCurrency, getFootprintLabel } from "@/data/sampleData";
 import { cn } from "@/lib/utils";
+import { InfluenceROICard } from "@/components/InfluenceROICard";
+import { HypocrisyIndexCard } from "@/components/HypocrisyIndexCard";
+import { PoliticalRiskCard } from "@/components/PoliticalRiskCard";
+import { BenchmarkCard } from "@/components/BenchmarkCard";
 
 export default function CompanyProfile() {
   const { id } = useParams();
@@ -128,6 +133,30 @@ export default function CompanyProfile() {
               </CardContent>
             </Card>
           </div>
+
+          {/* ── SCORING & INTELLIGENCE ─────────────────────────────── */}
+          {(company.influenceROI || company.hypocrisyIndex || company.politicalRisk || company.benchmark) && (
+            <div className="mb-10">
+              <h2 className="text-xl font-bold text-foreground mb-1 flex items-center gap-2">
+                <BarChart3 className="w-5 h-5 text-primary" />
+                Intelligence Scores
+              </h2>
+              <p className="text-sm text-muted-foreground mb-4">Predictive risk scores, ROI metrics, and peer benchmarking.</p>
+              <div className="grid lg:grid-cols-2 gap-6">
+                {company.influenceROI && <InfluenceROICard data={company.influenceROI} />}
+                {company.hypocrisyIndex && <HypocrisyIndexCard data={company.hypocrisyIndex} />}
+                {company.politicalRisk && <PoliticalRiskCard data={company.politicalRisk} />}
+                {company.benchmark && (
+                  <BenchmarkCard data={{
+                    ...company.benchmark,
+                    companyCivicFootprint: company.civicFootprintScore,
+                    companyLobbying: company.lobbyingSpend || 0,
+                    companyPacSpending: company.totalPacSpending,
+                  }} />
+                )}
+              </div>
+            </div>
+          )}
 
           {/* ── SECTION 1: Money Trail ─────────────────────────────────── */}
           <div className="mb-10">
