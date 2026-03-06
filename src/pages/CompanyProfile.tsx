@@ -23,6 +23,7 @@ import { ROIPipelineCard } from "@/components/ROIPipelineCard";
 import { SocialMonitorCard } from "@/components/SocialMonitorCard";
 import { AgencyContractsCard } from "@/components/AgencyContractsCard";
 import { IdeologyFlagsCard } from "@/components/IdeologyFlagsCard";
+import { WorkerSentimentCard } from "@/components/WorkerSentimentCard";
 import { useROIPipeline } from "@/hooks/use-roi-pipeline";
 
 export default function CompanyProfile() {
@@ -318,6 +319,14 @@ export default function CompanyProfile() {
             {/* Ideological Alignment Tracker */}
             <div className="mt-6">
               <IdeologyFlagsCard
+                companyName={company.name}
+                dbCompanyId={dbCompanyId}
+              />
+            </div>
+
+            {/* Worker Sentiment Scanner */}
+            <div className="mt-6">
+              <WorkerSentimentCard
                 companyName={company.name}
                 dbCompanyId={dbCompanyId}
               />

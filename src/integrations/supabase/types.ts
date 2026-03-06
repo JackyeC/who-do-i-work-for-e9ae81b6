@@ -1037,6 +1037,77 @@ export type Database = {
           },
         ]
       }
+      company_worker_sentiment: {
+        Row: {
+          ai_summary: string | null
+          career_opportunities: number | null
+          ceo_approval: number | null
+          company_id: string
+          compensation_rating: number | null
+          created_at: string
+          culture_rating: number | null
+          hypocrisy_flags: Json | null
+          id: string
+          overall_rating: number | null
+          raw_results: Json | null
+          recommend_to_friend: number | null
+          scan_type: string
+          sentiment: string | null
+          sources: Json | null
+          top_complaints: Json | null
+          top_praises: Json | null
+          work_life_balance: number | null
+        }
+        Insert: {
+          ai_summary?: string | null
+          career_opportunities?: number | null
+          ceo_approval?: number | null
+          company_id: string
+          compensation_rating?: number | null
+          created_at?: string
+          culture_rating?: number | null
+          hypocrisy_flags?: Json | null
+          id?: string
+          overall_rating?: number | null
+          raw_results?: Json | null
+          recommend_to_friend?: number | null
+          scan_type?: string
+          sentiment?: string | null
+          sources?: Json | null
+          top_complaints?: Json | null
+          top_praises?: Json | null
+          work_life_balance?: number | null
+        }
+        Update: {
+          ai_summary?: string | null
+          career_opportunities?: number | null
+          ceo_approval?: number | null
+          company_id?: string
+          compensation_rating?: number | null
+          created_at?: string
+          culture_rating?: number | null
+          hypocrisy_flags?: Json | null
+          id?: string
+          overall_rating?: number | null
+          raw_results?: Json | null
+          recommend_to_friend?: number | null
+          scan_type?: string
+          sentiment?: string | null
+          sources?: Json | null
+          top_complaints?: Json | null
+          top_praises?: Json | null
+          work_life_balance?: number | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "company_worker_sentiment_company_id_fkey"
+            columns: ["company_id"]
+            isOneToOne: false
+            referencedRelation: "companies"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       entity_linkages: {
         Row: {
           amount: number | null
