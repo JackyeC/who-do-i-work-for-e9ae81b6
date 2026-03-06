@@ -23,6 +23,7 @@ import { ROIPipelineCard } from "@/components/ROIPipelineCard";
 import { SocialMonitorCard } from "@/components/SocialMonitorCard";
 import { AgencyContractsCard } from "@/components/AgencyContractsCard";
 import { IdeologyFlagsCard } from "@/components/IdeologyFlagsCard";
+import { WorkerSentimentCard } from "@/components/WorkerSentimentCard";
 import { useROIPipeline } from "@/hooks/use-roi-pipeline";
 
 export default function CompanyProfile() {
