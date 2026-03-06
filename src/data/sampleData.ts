@@ -53,6 +53,18 @@ export interface Company {
   hypocrisyIndex?: HypocrisyIndexData;
   politicalRisk?: PoliticalRiskData;
   benchmark?: BenchmarkData;
+
+  // ROI Pipeline (connective tissue)
+  roiPipeline?: ROIPipelineData;
+}
+
+export interface ROIPipelineData {
+  moneyIn: { label: string; amount: number; type: string }[];
+  network: { label: string; role: string; type: string }[];
+  benefitsOut: { label: string; amount: number; type: string }[];
+  linkages: { source: string; target: string; description: string; confidence: number }[];
+  totalSpending: number;
+  totalBenefits: number;
 }
 
 export interface Candidate {
