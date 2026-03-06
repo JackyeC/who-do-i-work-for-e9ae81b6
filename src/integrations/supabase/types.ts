@@ -142,6 +142,65 @@ export type Database = {
           },
         ]
       }
+      company_agency_contracts: {
+        Row: {
+          agency_acronym: string | null
+          agency_name: string
+          company_id: string
+          confidence: string
+          contract_description: string | null
+          contract_id_external: string | null
+          contract_value: number | null
+          controversy_category: string | null
+          controversy_description: string | null
+          controversy_flag: boolean
+          created_at: string
+          fiscal_year: number | null
+          id: string
+          source: string | null
+        }
+        Insert: {
+          agency_acronym?: string | null
+          agency_name: string
+          company_id: string
+          confidence?: string
+          contract_description?: string | null
+          contract_id_external?: string | null
+          contract_value?: number | null
+          controversy_category?: string | null
+          controversy_description?: string | null
+          controversy_flag?: boolean
+          created_at?: string
+          fiscal_year?: number | null
+          id?: string
+          source?: string | null
+        }
+        Update: {
+          agency_acronym?: string | null
+          agency_name?: string
+          company_id?: string
+          confidence?: string
+          contract_description?: string | null
+          contract_id_external?: string | null
+          contract_value?: number | null
+          controversy_category?: string | null
+          controversy_description?: string | null
+          controversy_flag?: boolean
+          created_at?: string
+          fiscal_year?: number | null
+          id?: string
+          source?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "company_agency_contracts_company_id_fkey"
+            columns: ["company_id"]
+            isOneToOne: false
+            referencedRelation: "companies"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       company_benchmarks: {
         Row: {
           company_id: string
@@ -839,6 +898,53 @@ export type Database = {
           },
         ]
       }
+      company_supply_chain_flags: {
+        Row: {
+          company_id: string
+          confidence: string
+          country: string
+          created_at: string
+          description: string | null
+          entity_name: string | null
+          flag_type: string
+          id: string
+          severity: string
+          source: string | null
+        }
+        Insert: {
+          company_id: string
+          confidence?: string
+          country: string
+          created_at?: string
+          description?: string | null
+          entity_name?: string | null
+          flag_type: string
+          id?: string
+          severity?: string
+          source?: string | null
+        }
+        Update: {
+          company_id?: string
+          confidence?: string
+          country?: string
+          created_at?: string
+          description?: string | null
+          entity_name?: string | null
+          flag_type?: string
+          id?: string
+          severity?: string
+          source?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "company_supply_chain_flags_company_id_fkey"
+            columns: ["company_id"]
+            isOneToOne: false
+            referencedRelation: "companies"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       company_trade_associations: {
         Row: {
           company_id: string
@@ -955,6 +1061,100 @@ export type Database = {
             columns: ["executive_id"]
             isOneToOne: false
             referencedRelation: "company_executives"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      scan_alerts: {
+        Row: {
+          alert_type: string
+          company_id: string
+          created_at: string
+          data: Json | null
+          description: string | null
+          id: string
+          is_read: boolean
+          scan_type: string
+          severity: string
+          title: string
+        }
+        Insert: {
+          alert_type: string
+          company_id: string
+          created_at?: string
+          data?: Json | null
+          description?: string | null
+          id?: string
+          is_read?: boolean
+          scan_type: string
+          severity?: string
+          title: string
+        }
+        Update: {
+          alert_type?: string
+          company_id?: string
+          created_at?: string
+          data?: Json | null
+          description?: string | null
+          id?: string
+          is_read?: boolean
+          scan_type?: string
+          severity?: string
+          title?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "scan_alerts_company_id_fkey"
+            columns: ["company_id"]
+            isOneToOne: false
+            referencedRelation: "companies"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      scan_schedules: {
+        Row: {
+          alert_count: number
+          company_id: string
+          created_at: string
+          id: string
+          is_active: boolean
+          last_scan_at: string | null
+          last_scan_status: string | null
+          next_scan_at: string | null
+          scan_frequency_hours: number
+          scan_type: string
+        }
+        Insert: {
+          alert_count?: number
+          company_id: string
+          created_at?: string
+          id?: string
+          is_active?: boolean
+          last_scan_at?: string | null
+          last_scan_status?: string | null
+          next_scan_at?: string | null
+          scan_frequency_hours?: number
+          scan_type: string
+        }
+        Update: {
+          alert_count?: number
+          company_id?: string
+          created_at?: string
+          id?: string
+          is_active?: boolean
+          last_scan_at?: string | null
+          last_scan_status?: string | null
+          next_scan_at?: string | null
+          scan_frequency_hours?: number
+          scan_type?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "scan_schedules_company_id_fkey"
+            columns: ["company_id"]
+            isOneToOne: false
+            referencedRelation: "companies"
             referencedColumns: ["id"]
           },
         ]
