@@ -14,7 +14,510 @@ export type Database = {
   }
   public: {
     Tables: {
-      [_ in never]: never
+      companies: {
+        Row: {
+          careers_url: string | null
+          civic_footprint_score: number
+          confidence_rating: string
+          consumer_relevance: string | null
+          corporate_pac_exists: boolean
+          created_at: string
+          description: string | null
+          effective_tax_rate: string | null
+          employee_count: string | null
+          government_contracts: number | null
+          id: string
+          industry: string
+          last_reviewed: string
+          lobbying_spend: number | null
+          name: string
+          parent_company: string | null
+          revenue: string | null
+          slug: string
+          state: string
+          subsidies_received: number | null
+          total_pac_spending: number
+          updated_at: string
+          worker_relevance: string | null
+        }
+        Insert: {
+          careers_url?: string | null
+          civic_footprint_score?: number
+          confidence_rating?: string
+          consumer_relevance?: string | null
+          corporate_pac_exists?: boolean
+          created_at?: string
+          description?: string | null
+          effective_tax_rate?: string | null
+          employee_count?: string | null
+          government_contracts?: number | null
+          id?: string
+          industry: string
+          last_reviewed?: string
+          lobbying_spend?: number | null
+          name: string
+          parent_company?: string | null
+          revenue?: string | null
+          slug: string
+          state: string
+          subsidies_received?: number | null
+          total_pac_spending?: number
+          updated_at?: string
+          worker_relevance?: string | null
+        }
+        Update: {
+          careers_url?: string | null
+          civic_footprint_score?: number
+          confidence_rating?: string
+          consumer_relevance?: string | null
+          corporate_pac_exists?: boolean
+          created_at?: string
+          description?: string | null
+          effective_tax_rate?: string | null
+          employee_count?: string | null
+          government_contracts?: number | null
+          id?: string
+          industry?: string
+          last_reviewed?: string
+          lobbying_spend?: number | null
+          name?: string
+          parent_company?: string | null
+          revenue?: string | null
+          slug?: string
+          state?: string
+          subsidies_received?: number | null
+          total_pac_spending?: number
+          updated_at?: string
+          worker_relevance?: string | null
+        }
+        Relationships: []
+      }
+      company_board_affiliations: {
+        Row: {
+          company_id: string
+          id: string
+          name: string
+        }
+        Insert: {
+          company_id: string
+          id?: string
+          name: string
+        }
+        Update: {
+          company_id?: string
+          id?: string
+          name?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "company_board_affiliations_company_id_fkey"
+            columns: ["company_id"]
+            isOneToOne: false
+            referencedRelation: "companies"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      company_candidates: {
+        Row: {
+          amount: number
+          company_id: string
+          district: string | null
+          donation_type: string
+          flag_reason: string | null
+          flagged: boolean
+          id: string
+          name: string
+          party: string
+          state: string
+        }
+        Insert: {
+          amount?: number
+          company_id: string
+          district?: string | null
+          donation_type?: string
+          flag_reason?: string | null
+          flagged?: boolean
+          id?: string
+          name: string
+          party: string
+          state: string
+        }
+        Update: {
+          amount?: number
+          company_id?: string
+          district?: string | null
+          donation_type?: string
+          flag_reason?: string | null
+          flagged?: boolean
+          id?: string
+          name?: string
+          party?: string
+          state?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "company_candidates_company_id_fkey"
+            columns: ["company_id"]
+            isOneToOne: false
+            referencedRelation: "companies"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      company_dark_money: {
+        Row: {
+          company_id: string
+          confidence: string
+          description: string | null
+          estimated_amount: number | null
+          id: string
+          name: string
+          org_type: string
+          relationship: string
+          source: string | null
+        }
+        Insert: {
+          company_id: string
+          confidence?: string
+          description?: string | null
+          estimated_amount?: number | null
+          id?: string
+          name: string
+          org_type: string
+          relationship: string
+          source?: string | null
+        }
+        Update: {
+          company_id?: string
+          confidence?: string
+          description?: string | null
+          estimated_amount?: number | null
+          id?: string
+          name?: string
+          org_type?: string
+          relationship?: string
+          source?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "company_dark_money_company_id_fkey"
+            columns: ["company_id"]
+            isOneToOne: false
+            referencedRelation: "companies"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      company_executives: {
+        Row: {
+          company_id: string
+          id: string
+          name: string
+          title: string
+          total_donations: number
+        }
+        Insert: {
+          company_id: string
+          id?: string
+          name: string
+          title: string
+          total_donations?: number
+        }
+        Update: {
+          company_id?: string
+          id?: string
+          name?: string
+          title?: string
+          total_donations?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "company_executives_company_id_fkey"
+            columns: ["company_id"]
+            isOneToOne: false
+            referencedRelation: "companies"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      company_flagged_orgs: {
+        Row: {
+          company_id: string
+          confidence: string
+          description: string | null
+          id: string
+          org_name: string
+          relationship: string
+          source: string | null
+        }
+        Insert: {
+          company_id: string
+          confidence?: string
+          description?: string | null
+          id?: string
+          org_name: string
+          relationship: string
+          source?: string | null
+        }
+        Update: {
+          company_id?: string
+          confidence?: string
+          description?: string | null
+          id?: string
+          org_name?: string
+          relationship?: string
+          source?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "company_flagged_orgs_company_id_fkey"
+            columns: ["company_id"]
+            isOneToOne: false
+            referencedRelation: "companies"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      company_party_breakdown: {
+        Row: {
+          amount: number
+          color: string
+          company_id: string
+          id: string
+          party: string
+        }
+        Insert: {
+          amount?: number
+          color?: string
+          company_id: string
+          id?: string
+          party: string
+        }
+        Update: {
+          amount?: number
+          color?: string
+          company_id?: string
+          id?: string
+          party?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "company_party_breakdown_company_id_fkey"
+            columns: ["company_id"]
+            isOneToOne: false
+            referencedRelation: "companies"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      company_public_stances: {
+        Row: {
+          company_id: string
+          gap: string
+          id: string
+          public_position: string
+          spending_reality: string
+          topic: string
+        }
+        Insert: {
+          company_id: string
+          gap?: string
+          id?: string
+          public_position: string
+          spending_reality: string
+          topic: string
+        }
+        Update: {
+          company_id?: string
+          gap?: string
+          id?: string
+          public_position?: string
+          spending_reality?: string
+          topic?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "company_public_stances_company_id_fkey"
+            columns: ["company_id"]
+            isOneToOne: false
+            referencedRelation: "companies"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      company_revolving_door: {
+        Row: {
+          company_id: string
+          confidence: string
+          id: string
+          new_role: string
+          person: string
+          prior_role: string
+          relevance: string | null
+        }
+        Insert: {
+          company_id: string
+          confidence?: string
+          id?: string
+          new_role: string
+          person: string
+          prior_role: string
+          relevance?: string | null
+        }
+        Update: {
+          company_id?: string
+          confidence?: string
+          id?: string
+          new_role?: string
+          person?: string
+          prior_role?: string
+          relevance?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "company_revolving_door_company_id_fkey"
+            columns: ["company_id"]
+            isOneToOne: false
+            referencedRelation: "companies"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      company_spending_history: {
+        Row: {
+          company_id: string
+          cycle: string
+          executive_giving: number
+          id: string
+          lobbying_spend: number
+          pac_spending: number
+        }
+        Insert: {
+          company_id: string
+          cycle: string
+          executive_giving?: number
+          id?: string
+          lobbying_spend?: number
+          pac_spending?: number
+        }
+        Update: {
+          company_id?: string
+          cycle?: string
+          executive_giving?: number
+          id?: string
+          lobbying_spend?: number
+          pac_spending?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "company_spending_history_company_id_fkey"
+            columns: ["company_id"]
+            isOneToOne: false
+            referencedRelation: "companies"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      company_super_pacs: {
+        Row: {
+          amount: number
+          company_id: string
+          confidence: string
+          description: string | null
+          id: string
+          name: string
+          pac_type: string
+          relationship: string
+        }
+        Insert: {
+          amount?: number
+          company_id: string
+          confidence?: string
+          description?: string | null
+          id?: string
+          name: string
+          pac_type: string
+          relationship: string
+        }
+        Update: {
+          amount?: number
+          company_id?: string
+          confidence?: string
+          description?: string | null
+          id?: string
+          name?: string
+          pac_type?: string
+          relationship?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "company_super_pacs_company_id_fkey"
+            columns: ["company_id"]
+            isOneToOne: false
+            referencedRelation: "companies"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      company_trade_associations: {
+        Row: {
+          company_id: string
+          id: string
+          name: string
+        }
+        Insert: {
+          company_id: string
+          id?: string
+          name: string
+        }
+        Update: {
+          company_id?: string
+          id?: string
+          name?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "company_trade_associations_company_id_fkey"
+            columns: ["company_id"]
+            isOneToOne: false
+            referencedRelation: "companies"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      executive_recipients: {
+        Row: {
+          amount: number
+          executive_id: string
+          id: string
+          name: string
+          party: string
+        }
+        Insert: {
+          amount?: number
+          executive_id: string
+          id?: string
+          name: string
+          party: string
+        }
+        Update: {
+          amount?: number
+          executive_id?: string
+          id?: string
+          name?: string
+          party?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "executive_recipients_executive_id_fkey"
+            columns: ["executive_id"]
+            isOneToOne: false
+            referencedRelation: "company_executives"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
     }
     Views: {
       [_ in never]: never
