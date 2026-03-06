@@ -47,6 +47,12 @@ export interface Company {
   consumerRelevance: string;
 
   civicFootprintScore: number; // 0-100, higher = more concentrated influence
+
+  // Scoring
+  influenceROI?: InfluenceROIData;
+  hypocrisyIndex?: HypocrisyIndexData;
+  politicalRisk?: PoliticalRiskData;
+  benchmark?: BenchmarkData;
 }
 
 export interface Candidate {
