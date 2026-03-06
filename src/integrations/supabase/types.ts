@@ -964,7 +964,22 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
-      [_ in never]: never
+      get_company_roi_pipeline: { Args: { _company_id: string }; Returns: Json }
+      trace_influence_chain: {
+        Args: { _company_id: string; _max_depth?: number }
+        Returns: {
+          amount: number
+          chain_id: number
+          confidence: number
+          description: string
+          link_type: string
+          source_name: string
+          source_type: string
+          step: number
+          target_name: string
+          target_type: string
+        }[]
+      }
     }
     Enums: {
       link_type:
