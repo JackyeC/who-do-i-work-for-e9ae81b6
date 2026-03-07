@@ -138,6 +138,72 @@ export type Database = {
           },
         ]
       }
+      applications_tracker: {
+        Row: {
+          alignment_score: number | null
+          application_link: string | null
+          applied_at: string | null
+          company_id: string
+          company_name: string
+          created_at: string | null
+          id: string
+          job_id: string | null
+          job_title: string
+          matched_signals: Json | null
+          notes: string | null
+          status: string
+          updated_at: string | null
+          user_id: string
+        }
+        Insert: {
+          alignment_score?: number | null
+          application_link?: string | null
+          applied_at?: string | null
+          company_id: string
+          company_name: string
+          created_at?: string | null
+          id?: string
+          job_id?: string | null
+          job_title: string
+          matched_signals?: Json | null
+          notes?: string | null
+          status?: string
+          updated_at?: string | null
+          user_id: string
+        }
+        Update: {
+          alignment_score?: number | null
+          application_link?: string | null
+          applied_at?: string | null
+          company_id?: string
+          company_name?: string
+          created_at?: string | null
+          id?: string
+          job_id?: string | null
+          job_title?: string
+          matched_signals?: Json | null
+          notes?: string | null
+          status?: string
+          updated_at?: string | null
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "applications_tracker_company_id_fkey"
+            columns: ["company_id"]
+            isOneToOne: false
+            referencedRelation: "companies"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "applications_tracker_job_id_fkey"
+            columns: ["job_id"]
+            isOneToOne: false
+            referencedRelation: "company_jobs"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       companies: {
         Row: {
           careers_url: string | null
@@ -1493,6 +1559,36 @@ export type Database = {
         }
         Relationships: []
       }
+      job_match_preferences: {
+        Row: {
+          created_at: string | null
+          id: string
+          is_required: boolean | null
+          min_score: number | null
+          signal_key: string
+          signal_label: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string | null
+          id?: string
+          is_required?: boolean | null
+          min_score?: number | null
+          signal_key: string
+          signal_label: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string | null
+          id?: string
+          is_required?: boolean | null
+          min_score?: number | null
+          signal_key?: string
+          signal_label?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       offer_checks: {
         Row: {
           company_id: string
@@ -1613,24 +1709,39 @@ export type Database = {
       }
       profiles: {
         Row: {
+          bio: string | null
           created_at: string
           email: string | null
           employer_company_id: string | null
           id: string
+          linkedin_url: string | null
+          min_salary: number | null
+          resume_url: string | null
+          target_job_titles: string[] | null
           updated_at: string
         }
         Insert: {
+          bio?: string | null
           created_at?: string
           email?: string | null
           employer_company_id?: string | null
           id: string
+          linkedin_url?: string | null
+          min_salary?: number | null
+          resume_url?: string | null
+          target_job_titles?: string[] | null
           updated_at?: string
         }
         Update: {
+          bio?: string | null
           created_at?: string
           email?: string | null
           employer_company_id?: string | null
           id?: string
+          linkedin_url?: string | null
+          min_salary?: number | null
+          resume_url?: string | null
+          target_job_titles?: string[] | null
           updated_at?: string
         }
         Relationships: [

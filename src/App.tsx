@@ -19,6 +19,7 @@ import RequestCorrection from "./pages/RequestCorrection";
 import OfferCheck from "./pages/OfferCheck";
 import MyOfferChecks from "./pages/MyOfferChecks";
 import CompareOfferChecks from "./pages/CompareOfferChecks";
+import JobDashboard from "./pages/JobDashboard";
 
 const queryClient = new QueryClient();
 
@@ -46,6 +47,11 @@ const App = () => (
             <Route path="/request-correction" element={<RequestCorrection />} />
             <Route path="/offer-check/:companyId" element={<OfferCheck />} />
             <Route path="/compare-offer-checks" element={<CompareOfferChecks />} />
+            <Route path="/job-dashboard" element={
+              <ProtectedRoute>
+                <JobDashboard />
+              </ProtectedRoute>
+            } />
             <Route path="/my-offer-checks" element={
               <ProtectedRoute>
                 <MyOfferChecks />
