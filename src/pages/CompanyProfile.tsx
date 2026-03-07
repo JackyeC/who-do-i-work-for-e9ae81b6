@@ -48,7 +48,7 @@ import {
 } from "@/components/ui/table";
 
 /** Renders DB-only company modules in lens priority order */
-function DbLensModules({ activeLens, dbCompany, dbPartyBreakdown, dbCandidates, dbExecutives, dbPublicStances, dbDarkMoney, dbRevolvingDoor, livePipeline }: {
+function DbLensModules({ activeLens, dbCompany, dbPartyBreakdown, dbCandidates, dbExecutives, dbPublicStances, dbDarkMoney, dbRevolvingDoor, livePipeline, autoScanning, triggerScan }: {
   activeLens: LensId;
   dbCompany: any;
   dbPartyBreakdown: any[] | null | undefined;
@@ -58,6 +58,8 @@ function DbLensModules({ activeLens, dbCompany, dbPartyBreakdown, dbCandidates, 
   dbDarkMoney: any[] | null | undefined;
   dbRevolvingDoor: any[] | null | undefined;
   livePipeline: any;
+  autoScanning?: boolean;
+  triggerScan?: () => void;
 }) {
   const lens = getLens(activeLens);
 
@@ -205,7 +207,7 @@ function DbLensModules({ activeLens, dbCompany, dbPartyBreakdown, dbCandidates, 
         </CardContent>
       </Card>
     ) : null,
-    "roi-pipeline": <div key="roi-pipeline" className="mb-6"><ROIPipelineCard data={livePipeline || { moneyIn: [], network: [], benefitsOut: [], linkages: [], totalSpending: 0, totalBenefits: 0 }} isSearching={!livePipeline && !!dbCompany.id} /></div>,
+    "roi-pipeline": <div key="roi-pipeline" className="mb-6"><ROIPipelineCard data={livePipeline || { moneyIn: [], network: [], benefitsOut: [], linkages: [], totalSpending: 0, totalBenefits: 0 }} isSearching={!livePipeline && !!dbCompany.id} onTriggerScan={triggerScan} autoScanning={autoScanning} /></div>,
     "influence-chain": <div key="influence-chain" className="mb-6"><InfluenceChainCard companyId={dbCompany.id} companyName={dbCompany.name} /></div>,
     "social-monitor": <div key="social-monitor" className="mb-6"><SocialMonitorCard companyId={dbCompany.slug} companyName={dbCompany.name} executiveNames={dbExecutives?.map(e => e.name) || []} dbCompanyId={dbCompany.id} /></div>,
     "agency-contracts": <div key="agency-contracts" className="mb-6"><AgencyContractsCard companyName={dbCompany.name} dbCompanyId={dbCompany.id} /></div>,
@@ -380,7 +382,8 @@ export default function CompanyProfile() {
     "koch-industries": "c3d4e5f6-a7b8-9012-cdef-123456789012",
   };
   const pipelineCompanyId = company ? dbCompanyIdMap[company.id] : dbCompany?.id;
-  const { data: livePipeline, isLoading: pipelineLoading } = useROIPipeline(pipelineCompanyId);
+  const pipelineCompanyName = company?.name || dbCompany?.name;
+  const { data: livePipeline, isLoading: pipelineLoading, autoScanning, triggerScan } = useROIPipeline(pipelineCompanyId, pipelineCompanyName);
 
   // Loading state for DB-only companies
   if (!company && dbLoading) {
@@ -639,6 +642,8 @@ export default function CompanyProfile() {
               dbDarkMoney={dbDarkMoney}
               dbRevolvingDoor={dbRevolvingDoor}
               livePipeline={livePipeline}
+              autoScanning={autoScanning}
+              triggerScan={triggerScan}
             />
           </motion.div>
         </div>
@@ -929,6 +934,8 @@ export default function CompanyProfile() {
                 <ROIPipelineCard
                   data={livePipeline || company.roiPipeline || { moneyIn: [], network: [], benefitsOut: [], linkages: [], totalSpending: 0, totalBenefits: 0 }}
                   isSearching={pipelineLoading}
+                  onTriggerScan={triggerScan}
+                  autoScanning={autoScanning}
                 />
               )}
             </div>
