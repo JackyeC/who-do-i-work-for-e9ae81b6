@@ -284,6 +284,16 @@ export default function OfferCheck() {
           </Card>
         )}
 
+        {/* Signal Timeline Link + Watch */}
+        {companyId && (
+          <div className="flex items-center gap-3 mb-5">
+            <Button variant="outline" size="sm" className="gap-1.5" onClick={() => navigate(`/company/${company.slug}`)}>
+              <Eye className="w-3.5 h-3.5" /> View Signal Timeline
+            </Button>
+            <WatchCompanyButton companyId={companyId} companyName={company.name} />
+          </div>
+        )}
+
         {/* Report Sections */}
         <OfferCheckReport
           sections={sections}

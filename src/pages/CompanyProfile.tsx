@@ -630,6 +630,11 @@ export default function CompanyProfile() {
               <TransparencyIndex categories={transparencyCategories} />
             </div>
 
+            {/* Signal Timeline */}
+            <div className="mb-6">
+              <SignalTimeline companyId={dbCompany.id} />
+            </div>
+
             {/* Debug Panel */}
             <div className="mb-6">
               <ScanDebugPanel companyId={dbCompany.id} />
