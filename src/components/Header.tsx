@@ -1,5 +1,5 @@
 import { Link } from "react-router-dom";
-import { Search, Eye, BookOpen, Briefcase } from "lucide-react";
+import { Search, Eye, BookOpen, Briefcase, Plus } from "lucide-react";
 import { useAuth } from "@/contexts/AuthContext";
 import { Button } from "@/components/ui/button";
 
