@@ -138,7 +138,7 @@ Deno.serve(async (req) => {
     }
 
     const now = new Date().toISOString();
-    const results: Record<string, any> = { benefits: 0, aiHiring: 0, auditStatus: 'unknown' };
+    const results: Record<string, any> = { benefits: 0, aiHiring: 0, payEquity: 0, auditStatus: 'unknown' };
 
     if (!allContent || allContent.length < 100) {
       return new Response(JSON.stringify({
