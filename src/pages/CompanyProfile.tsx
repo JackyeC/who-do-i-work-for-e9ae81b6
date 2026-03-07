@@ -44,6 +44,183 @@ import {
   Table, TableBody, TableCell, TableHead, TableHeader, TableRow
 } from "@/components/ui/table";
 
+/** Renders DB-only company modules in lens priority order */
+function DbLensModules({ activeLens, dbCompany, dbPartyBreakdown, dbCandidates, dbExecutives, dbPublicStances, dbDarkMoney, dbRevolvingDoor, livePipeline }: {
+  activeLens: LensId;
+  dbCompany: any;
+  dbPartyBreakdown: any[] | null | undefined;
+  dbCandidates: any[] | null | undefined;
+  dbExecutives: any[] | null | undefined;
+  dbPublicStances: any[] | null | undefined;
+  dbDarkMoney: any[] | null | undefined;
+  dbRevolvingDoor: any[] | null | undefined;
+  livePipeline: any;
+}) {
+  const lens = getLens(activeLens);
+
+  const modules: Record<string, ReactNode> = {
+    "money-trail": ((dbPartyBreakdown?.length || 0) > 0 || (dbCandidates?.length || 0) > 0 || (dbExecutives?.length || 0) > 0) ? (
+      <div key="money-trail" className="mb-10">
+        <h2 className="text-xl font-bold text-foreground mb-1 flex items-center gap-2">
+          <DollarSign className="w-5 h-5 text-primary" /> Money Trail
+        </h2>
+        <p className="text-sm text-muted-foreground mb-4">PAC contributions, candidate support, and executive personal giving.</p>
+        <div className="grid lg:grid-cols-2 gap-6">
+          {dbPartyBreakdown && dbPartyBreakdown.length > 0 && (
+            <Card>
+              <CardHeader><CardTitle className="text-lg">PAC Spending by Party</CardTitle></CardHeader>
+              <CardContent>
+                <div className="h-56">
+                  <ResponsiveContainer width="100%" height="100%">
+                    <PieChart><Pie data={dbPartyBreakdown} cx="50%" cy="50%" innerRadius={55} outerRadius={85} paddingAngle={3} dataKey="amount" nameKey="party">
+                      {dbPartyBreakdown.map((entry, i) => <Cell key={i} fill={entry.color} />)}
+                    </Pie><Tooltip formatter={(val: number) => formatCurrency(val)} /></PieChart>
+                  </ResponsiveContainer>
+                </div>
+                <div className="flex justify-center gap-4 mt-2">
+                  {dbPartyBreakdown.map((p) => (
+                    <div key={p.party} className="flex items-center gap-1.5 text-xs">
+                      <div className="w-2.5 h-2.5 rounded-full" style={{ backgroundColor: p.color }} />
+                      <span className="text-muted-foreground">{p.party}: {formatCurrency(p.amount)}</span>
+                    </div>
+                  ))}
+                </div>
+              </CardContent>
+            </Card>
+          )}
+          {dbExecutives && dbExecutives.length > 0 && (
+            <Card>
+              <CardHeader><CardTitle className="text-lg flex items-center gap-2"><Users className="w-4 h-4" /> Executive Donors</CardTitle></CardHeader>
+              <CardContent>
+                <div className="space-y-3">
+                  {dbExecutives.map((exec) => (
+                    <div key={exec.id} className="flex items-center justify-between p-2 rounded-lg bg-muted/50">
+                      <div>
+                        <div className="font-medium text-sm text-foreground">{exec.name}</div>
+                        <div className="text-xs text-muted-foreground">{exec.title}</div>
+                      </div>
+                      <Badge variant="secondary">{formatCurrency(exec.total_donations)}</Badge>
+                    </div>
+                  ))}
+                </div>
+              </CardContent>
+            </Card>
+          )}
+        </div>
+        {dbCandidates && dbCandidates.length > 0 && (
+          <Card className="mt-6">
+            <CardHeader><CardTitle className="text-lg flex items-center gap-2"><Flag className="w-4 h-4" /> PAC Recipients ({dbCandidates.length} politicians)</CardTitle></CardHeader>
+            <CardContent>
+              <Table>
+                <TableHeader><TableRow><TableHead>Name</TableHead><TableHead>Party</TableHead><TableHead>State</TableHead><TableHead>Amount</TableHead><TableHead>Type</TableHead></TableRow></TableHeader>
+                <TableBody>
+                  {dbCandidates.map((c) => (
+                    <TableRow key={c.id}>
+                      <TableCell className="font-medium">{c.name}{c.flagged && <Badge variant="destructive" className="ml-2 text-xs">Flagged</Badge>}</TableCell>
+                      <TableCell><Badge variant="outline" className={cn("text-xs", c.party === "Republican" && "border-destructive/50 text-destructive", c.party === "Democrat" && "border-primary/50 text-primary")}>{c.party}</Badge></TableCell>
+                      <TableCell className="text-muted-foreground">{c.state}</TableCell>
+                      <TableCell>{formatCurrency(c.amount)}</TableCell>
+                      <TableCell className="text-xs text-muted-foreground">{c.donation_type}</TableCell>
+                    </TableRow>
+                  ))}
+                </TableBody>
+              </Table>
+            </CardContent>
+          </Card>
+        )}
+      </div>
+    ) : null,
+    "public-stances": dbPublicStances && dbPublicStances.length > 0 ? (
+      <div key="public-stances" className="mb-10">
+        <h2 className="text-xl font-bold text-foreground mb-1 flex items-center gap-2"><MessageSquareWarning className="w-5 h-5 text-primary" /> Say vs. Do</h2>
+        <p className="text-sm text-muted-foreground mb-4">Public positions compared to spending reality.</p>
+        <div className="space-y-4">
+          {dbPublicStances.map((stance) => (
+            <Card key={stance.id}><CardContent className="p-4">
+              <div className="flex items-start justify-between gap-4">
+                <div className="flex-1">
+                  <h4 className="font-semibold text-foreground mb-2">{stance.topic}</h4>
+                  <div className="grid sm:grid-cols-2 gap-3">
+                    <div><p className="text-xs font-medium text-muted-foreground mb-1">🗣️ Public Position</p><p className="text-sm text-foreground">{stance.public_position}</p></div>
+                    <div><p className="text-xs font-medium text-muted-foreground mb-1">💰 Spending Reality</p><p className="text-sm text-foreground">{stance.spending_reality}</p></div>
+                  </div>
+                </div>
+                <Badge variant={stance.gap === "direct-conflict" ? "destructive" : stance.gap === "aligned" ? "secondary" : "outline"} className="shrink-0">
+                  {stance.gap === "direct-conflict" ? "Conflict" : stance.gap === "aligned" ? "Aligned" : "Mixed"}
+                </Badge>
+              </div>
+            </CardContent></Card>
+          ))}
+        </div>
+      </div>
+    ) : null,
+    "influence-network": ((dbDarkMoney?.length || 0) > 0 || (dbRevolvingDoor?.length || 0) > 0) ? (
+      <div key="influence-network" className="mb-10">
+        <h2 className="text-xl font-bold text-foreground mb-1 flex items-center gap-2"><Network className="w-5 h-5 text-primary" /> Influence Network</h2>
+        <p className="text-sm text-muted-foreground mb-4">Dark money channels, revolving door, and indirect influence.</p>
+        <div className="grid lg:grid-cols-2 gap-6">
+          {dbDarkMoney && dbDarkMoney.length > 0 && (
+            <Card>
+              <CardHeader><CardTitle className="text-lg flex items-center gap-2"><EyeOff className="w-4 h-4" /> Dark Money</CardTitle></CardHeader>
+              <CardContent className="space-y-3">
+                {dbDarkMoney.map((d) => (
+                  <div key={d.id} className="p-3 rounded-lg bg-muted/50 border border-border">
+                    <div className="flex items-center justify-between mb-1"><span className="font-medium text-sm text-foreground">{d.name}</span><Badge variant="outline" className="text-xs">{d.org_type}</Badge></div>
+                    {d.description && <p className="text-xs text-muted-foreground">{d.description}</p>}
+                    {d.estimated_amount && <p className="text-xs text-muted-foreground mt-1">Est. {formatCurrency(d.estimated_amount)}</p>}
+                  </div>
+                ))}
+              </CardContent>
+            </Card>
+          )}
+          {dbRevolvingDoor && dbRevolvingDoor.length > 0 && (
+            <Card>
+              <CardHeader><CardTitle className="text-lg flex items-center gap-2"><RotateCcw className="w-4 h-4" /> Revolving Door</CardTitle></CardHeader>
+              <CardContent className="space-y-3">
+                {dbRevolvingDoor.map((r) => (
+                  <div key={r.id} className="p-3 rounded-lg bg-muted/50 border border-border">
+                    <div className="font-medium text-sm text-foreground">{r.person}</div>
+                    <div className="text-xs text-muted-foreground mt-1"><span className="text-foreground/70">{r.prior_role}</span> → <span className="text-foreground/70">{r.new_role}</span></div>
+                    {r.relevance && <p className="text-xs text-muted-foreground mt-1">{r.relevance}</p>}
+                  </div>
+                ))}
+              </CardContent>
+            </Card>
+          )}
+        </div>
+      </div>
+    ) : null,
+    "government-roi": (dbCompany.government_contracts || dbCompany.subsidies_received || dbCompany.effective_tax_rate) ? (
+      <Card key="government-roi" className="mb-6">
+        <CardHeader><CardTitle className="text-lg flex items-center gap-2"><Landmark className="w-5 h-5" /> Government ROI</CardTitle></CardHeader>
+        <CardContent>
+          <div className="grid sm:grid-cols-3 gap-4">
+            {dbCompany.government_contracts && <div className="text-center p-3 bg-muted/50 rounded-lg"><div className="text-xl font-bold text-foreground">{formatCurrency(dbCompany.government_contracts)}</div><div className="text-xs text-muted-foreground">Government Contracts</div></div>}
+            {dbCompany.subsidies_received && <div className="text-center p-3 bg-muted/50 rounded-lg"><div className="text-xl font-bold text-foreground">{formatCurrency(dbCompany.subsidies_received)}</div><div className="text-xs text-muted-foreground">Subsidies & Tax Breaks</div></div>}
+            {dbCompany.effective_tax_rate && <div className="text-center p-3 bg-muted/50 rounded-lg"><div className="text-xl font-bold text-foreground">{dbCompany.effective_tax_rate}</div><div className="text-xs text-muted-foreground">Effective Tax Rate</div></div>}
+          </div>
+        </CardContent>
+      </Card>
+    ) : null,
+    "roi-pipeline": livePipeline ? <div key="roi-pipeline" className="mb-6"><ROIPipelineCard data={livePipeline} /></div> : null,
+    "influence-chain": <div key="influence-chain" className="mb-6"><InfluenceChainCard companyId={dbCompany.id} companyName={dbCompany.name} /></div>,
+    "social-monitor": <div key="social-monitor" className="mb-6"><SocialMonitorCard companyId={dbCompany.slug} companyName={dbCompany.name} executiveNames={dbExecutives?.map(e => e.name) || []} dbCompanyId={dbCompany.id} /></div>,
+    "agency-contracts": <div key="agency-contracts" className="mb-6"><AgencyContractsCard companyName={dbCompany.name} dbCompanyId={dbCompany.id} /></div>,
+    "ideology-flags": <div key="ideology-flags" className="mb-6"><IdeologyFlagsCard companyName={dbCompany.name} dbCompanyId={dbCompany.id} /></div>,
+    "worker-sentiment": <div key="worker-sentiment" className="mb-6"><WorkerSentimentCard companyName={dbCompany.name} dbCompanyId={dbCompany.id} /></div>,
+    "ai-hiring": <div key="ai-hiring" className="mb-6"><AIHiringCard companyName={dbCompany.name} dbCompanyId={dbCompany.id} /></div>,
+    "worker-benefits": <div key="worker-benefits" className="mb-6"><WorkerBenefitsCard companyName={dbCompany.name} dbCompanyId={dbCompany.id} /></div>,
+    "ai-accountability": <div key="ai-accountability" className="mb-6"><AIAccountabilityCard companyName={dbCompany.name} dbCompanyId={dbCompany.id} /></div>,
+    "compensation": <div key="compensation" className="mb-6"><CompensationTransparencyCard companyName={dbCompany.name} dbCompanyId={dbCompany.id} /></div>,
+  };
+
+  return (
+    <div className="space-y-0">
+      {lens.modulePriority.map((key) => modules[key]).filter(Boolean)}
+    </div>
+  );
+}
+
 export default function CompanyProfile() {
   const { id } = useParams();
   const company = companies.find((c) => c.id === id);
