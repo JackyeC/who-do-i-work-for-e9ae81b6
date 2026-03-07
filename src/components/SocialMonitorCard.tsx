@@ -128,6 +128,15 @@ export function SocialMonitorCard({ companyId, companyName, executiveNames, dbCo
           </div>
         ) : (
           <>
+            {/* Signal Density */}
+            <SignalDensity
+              sourcesScanned={result.resultCount}
+              signalsDetected={result.contradictions.length + result.stanceShifts.length + result.personnelChanges.length}
+              categories={[
+                ...result.contradictions.map(c => c.topic),
+                ...result.stanceShifts.map(s => s.topic),
+              ].slice(0, 6)}
+            />
             {/* Sentiment & Summary */}
             <div className="space-y-2">
               <div className="flex items-center gap-2">
