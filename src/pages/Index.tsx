@@ -74,7 +74,7 @@ const Index = () => {
             </form>
 
             <p className="mt-4 text-sm text-muted-foreground">
-              Currently tracking {companies.length} companies · Data from FEC, OpenSecrets &amp; public filings
+              Currently tracking {companyCount} companies · Data from FEC, OpenSecrets &amp; public filings
             </p>
           </motion.div>
         </div>
