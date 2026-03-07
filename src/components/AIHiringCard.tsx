@@ -296,28 +296,15 @@ export function AIHiringCard({ companyName, dbCompanyId }: AIHiringCardProps) {
                           <p className="text-xs text-muted-foreground mt-1 italic">"{signal.evidence_text}"</p>
                         )}
 
-                        <div className="flex items-center gap-3 mt-2 flex-wrap">
-                          {signal.source_type && (
-                            <span className="text-xs text-muted-foreground">
-                              Source: {signal.source_type}
-                            </span>
-                          )}
-                          {signal.detection_method && (
-                            <span className="text-xs text-muted-foreground">
-                              Method: {signal.detection_method.replace(/_/g, " ")}
-                            </span>
-                          )}
-                          {signal.source_url && (
-                            <a
-                              href={signal.source_url}
-                              target="_blank"
-                              rel="noopener noreferrer"
-                              className="text-xs text-primary hover:underline inline-flex items-center gap-0.5"
-                            >
-                              View source <ExternalLink className="w-2.5 h-2.5" />
-                            </a>
-                          )}
-                        </div>
+                        <SignalMeta
+                          sourceType={signal.source_type}
+                          detectionMethod={signal.detection_method}
+                          confidence={signal.confidence}
+                          sourceUrl={signal.source_url}
+                          detectedAt={signal.date_detected}
+                          lastVerifiedAt={signal.last_verified}
+                          compact
+                        />
                       </div>
                     ))}
                   </div>
