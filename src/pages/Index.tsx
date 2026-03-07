@@ -143,8 +143,12 @@ const Index = () => {
           </Button>
         </div>
         <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-4">
-          {featured.map((company) => (
-            <CompanyCard key={company.id} company={company} />
+          {featuredCompanies.map((company) => (
+            <div key={company.id} className="bg-card rounded-lg border border-border p-4 cursor-pointer hover:border-primary/50 transition-colors" onClick={() => navigate(`/company/${company.slug}`)}>
+              <h3 className="font-semibold text-foreground">{company.name}</h3>
+              <p className="text-xs text-muted-foreground mt-1">{company.industry} · {company.state}</p>
+              <p className="text-xs text-muted-foreground mt-2">Civic Footprint: {company.civic_footprint_score}/100</p>
+            </div>
           ))}
         </div>
       </section>
