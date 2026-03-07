@@ -13,6 +13,7 @@ import Methodology from "./pages/Methodology";
 import Login from "./pages/Login";
 import WhoDoIWorkFor from "./pages/WhoDoIWorkFor";
 import AddCompany from "./pages/AddCompany";
+import Jobs from "./pages/Jobs";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
