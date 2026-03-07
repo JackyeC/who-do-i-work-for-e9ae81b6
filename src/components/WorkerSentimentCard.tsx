@@ -204,8 +204,8 @@ export function WorkerSentimentCard({ companyName, dbCompanyId }: WorkerSentimen
                         <span className="text-sm font-medium">{f.topic}</span>
                         <Badge className={severityColors[f.severity] || severityColors.low} variant="outline">{f.severity}</Badge>
                       </div>
-                      <p className="text-xs text-muted-foreground"><strong>Company says:</strong> {f.companyClaimsSummary}</p>
-                      <p className="text-xs text-muted-foreground"><strong>Workers report:</strong> {f.workerReality}</p>
+                       <p className="text-xs text-muted-foreground"><strong>Public statement:</strong> {f.companyClaimsSummary}</p>
+                       <p className="text-xs text-muted-foreground"><strong>Worker signal:</strong> {f.workerReality}</p>
                       {f.evidence && <p className="text-xs text-muted-foreground/60 italic">"{f.evidence}"</p>}
                     </div>
                   ))}
