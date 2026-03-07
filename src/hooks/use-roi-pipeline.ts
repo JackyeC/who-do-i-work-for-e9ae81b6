@@ -1,11 +1,18 @@
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
+import { useEffect, useRef, useState } from "react";
 import type { ROIPipelineData } from "@/components/ROIPipelineCard";
 
-export function useROIPipeline(companyId: string | undefined) {
-  return useQuery({
+export function useROIPipeline(companyId: string | undefined, companyName?: string) {
+  const queryClient = useQueryClient();
+  const [autoScanTriggered, setAutoScanTriggered] = useState(false);
+  const [autoScanning, setAutoScanning] = useState(false);
+  const scanAttempted = useRef(false);
+
+  const query = useQuery({
     queryKey: ["roi-pipeline", companyId],
     enabled: !!companyId,
+    refetchInterval: autoScanning ? 8000 : false,
     queryFn: async (): Promise<ROIPipelineData | null> => {
       if (!companyId) return null;
 
@@ -31,6 +38,81 @@ export function useROIPipeline(companyId: string | undefined) {
       };
     },
   });
+
+  // Auto-trigger scan when pipeline is empty and we have a company name
+  useEffect(() => {
+    if (
+      !companyId ||
+      !companyName ||
+      scanAttempted.current ||
+      query.isLoading ||
+      autoScanTriggered
+    ) return;
+
+    const isEmpty = !query.data ||
+      (query.data.moneyIn.length === 0 &&
+       query.data.network.length === 0 &&
+       query.data.benefitsOut.length === 0 &&
+       query.data.linkages.length === 0);
+
+    if (!isEmpty) return;
+
+    // Check if a scan has already been run for this company
+    supabase
+      .from("scan_runs" as any)
+      .select("id")
+      .eq("company_id", companyId)
+      .limit(1)
+      .then(({ data: scanRuns }) => {
+        // Only auto-scan if no scan has ever been run
+        if (scanRuns && scanRuns.length > 0) return;
+        if (scanAttempted.current) return;
+
+        scanAttempted.current = true;
+        setAutoScanTriggered(true);
+        setAutoScanning(true);
+
+        console.log(`[ROI Pipeline] Auto-triggering scan for ${companyName} (${companyId})`);
+
+        supabase.functions.invoke("company-intelligence-scan", {
+          body: { companyId, companyName },
+        }).then(({ error }) => {
+          if (error) {
+            console.error("[ROI Pipeline] Auto-scan failed:", error);
+          }
+          setAutoScanning(false);
+          // Invalidate all relevant queries
+          queryClient.invalidateQueries({ queryKey: ["roi-pipeline", companyId] });
+          queryClient.invalidateQueries({ queryKey: ["influence-chain", companyId] });
+          queryClient.invalidateQueries({ queryKey: ["latest-scan-run", companyId] });
+        });
+      });
+  }, [companyId, companyName, query.data, query.isLoading, autoScanTriggered, queryClient]);
+
+  // Manual trigger for the scan button
+  const triggerScan = async () => {
+    if (!companyId || !companyName) return;
+    setAutoScanning(true);
+    try {
+      const { error } = await supabase.functions.invoke("company-intelligence-scan", {
+        body: { companyId, companyName },
+      });
+      if (error) throw error;
+    } catch (e) {
+      console.error("[ROI Pipeline] Manual scan failed:", e);
+    } finally {
+      setAutoScanning(false);
+      queryClient.invalidateQueries({ queryKey: ["roi-pipeline", companyId] });
+      queryClient.invalidateQueries({ queryKey: ["influence-chain", companyId] });
+      queryClient.invalidateQueries({ queryKey: ["latest-scan-run", companyId] });
+    }
+  };
+
+  return {
+    ...query,
+    autoScanning,
+    triggerScan,
+  };
 }
 
 export function useInfluenceChain(companyId: string | undefined) {

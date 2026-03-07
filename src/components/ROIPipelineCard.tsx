@@ -1,15 +1,16 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
 import { formatCurrency } from "@/data/sampleData";
 import { cn } from "@/lib/utils";
-import { ArrowRight, DollarSign, Users, Landmark, FileText, Loader, Search } from "lucide-react";
+import { ArrowRight, DollarSign, Users, Landmark, FileText, Loader2, Search, Radar } from "lucide-react";
 
 export interface LinkageNode {
   id: string;
   label: string;
   type: "spending" | "person" | "committee" | "contract" | "bill" | "outcome";
   amount?: number;
-  confidence: number; // 0-1
+  confidence: number;
 }
 
 export interface LinkageEdge {
@@ -76,12 +77,20 @@ function FlowArrow() {
   );
 }
 
-export function ROIPipelineCard({ data, isSearching = false }: { data: ROIPipelineData; isSearching?: boolean }) {
+interface ROIPipelineCardProps {
+  data: ROIPipelineData;
+  isSearching?: boolean;
+  onTriggerScan?: () => void;
+  autoScanning?: boolean;
+}
+
+export function ROIPipelineCard({ data, isSearching = false, onTriggerScan, autoScanning = false }: ROIPipelineCardProps) {
   const roiRatio = data.totalSpending > 0
     ? (data.totalBenefits / data.totalSpending).toFixed(1)
     : "N/A";
 
   const isEmpty = data.moneyIn.length === 0 && data.network.length === 0 && data.benefitsOut.length === 0;
+  const scanning = isSearching || autoScanning;
 
   return (
     <Card>
@@ -98,30 +107,41 @@ export function ROIPipelineCard({ data, isSearching = false }: { data: ROIPipeli
       <CardContent>
         {isEmpty && (
           <div className="flex items-center gap-3 p-4 bg-muted/50 rounded-lg mb-6 border border-border">
-            {isSearching ? (
+            {scanning ? (
               <>
-                <Loader className="w-5 h-5 text-primary animate-spin" />
-                <div>
-                  <div className="text-sm font-medium text-foreground">Searching Federal Records…</div>
-                  <div className="text-xs text-muted-foreground">Tracing entity linkages through PAC filings, lobbying disclosures, and contract awards.</div>
+                <Loader2 className="w-5 h-5 text-primary animate-spin" />
+                <div className="flex-1">
+                  <div className="text-sm font-medium text-foreground">Scanning Federal Records…</div>
+                  <div className="text-xs text-muted-foreground">
+                    Tracing entity linkages through PAC filings, lobbying disclosures, and contract awards. This runs automatically when no data exists.
+                  </div>
                 </div>
               </>
             ) : (
               <>
-                <Search className="w-5 h-5 text-muted-foreground" />
-                <div>
-                  <div className="text-sm font-medium text-foreground">No influence pipeline data yet</div>
-                  <div className="text-xs text-muted-foreground">Run a Company Intelligence Scan to populate entity linkages and trace influence paths.</div>
+                <Radar className="w-5 h-5 text-muted-foreground" />
+                <div className="flex-1">
+                  <div className="text-sm font-medium text-foreground">No influence pipeline data found</div>
+                  <div className="text-xs text-muted-foreground">
+                    No entity linkages were detected. Run a scan to search PAC filings, lobbying disclosures, and contract awards.
+                  </div>
                 </div>
+                {onTriggerScan && (
+                  <Button size="sm" onClick={onTriggerScan} className="gap-1.5 shrink-0">
+                    <Search className="w-3.5 h-3.5" />
+                    Scan Now
+                  </Button>
+                )}
               </>
             )}
           </div>
         )}
+
         {/* Summary bar */}
         <div className="flex items-center justify-between p-4 bg-muted/50 rounded-lg mb-6">
           <div className="text-center">
             <div className="text-xs text-muted-foreground uppercase tracking-wider">Money In</div>
-            <div className="text-xl font-bold text-civic-red">{formatCurrency(data.totalSpending)}</div>
+            <div className="text-xl font-bold text-destructive">{formatCurrency(data.totalSpending)}</div>
           </div>
           <div className="flex items-center gap-2">
             <ArrowRight className="w-4 h-4 text-muted-foreground" />
@@ -133,33 +153,35 @@ export function ROIPipelineCard({ data, isSearching = false }: { data: ROIPipeli
           </div>
           <div className="text-center">
             <div className="text-xs text-muted-foreground uppercase tracking-wider">Benefits Out</div>
-            <div className="text-xl font-bold text-civic-green">{formatCurrency(data.totalBenefits)}</div>
+            <div className="text-xl font-bold text-primary">{formatCurrency(data.totalBenefits)}</div>
           </div>
         </div>
 
         {/* Pipeline flow */}
-        <div className="flex flex-col md:flex-row gap-4">
-          <PipelineColumn
-            title="Money In"
-            icon={DollarSign}
-            items={data.moneyIn}
-            color="text-civic-red"
-          />
-          <FlowArrow />
-          <PipelineColumn
-            title="Influence Network"
-            icon={Users}
-            items={data.network.map(n => ({ label: n.label, role: n.role, type: n.type }))}
-            color="text-civic-yellow"
-          />
-          <FlowArrow />
-          <PipelineColumn
-            title="Benefits Out"
-            icon={Landmark}
-            items={data.benefitsOut}
-            color="text-civic-green"
-          />
-        </div>
+        {!isEmpty && (
+          <div className="flex flex-col md:flex-row gap-4">
+            <PipelineColumn
+              title="Money In"
+              icon={DollarSign}
+              items={data.moneyIn}
+              color="text-destructive"
+            />
+            <FlowArrow />
+            <PipelineColumn
+              title="Influence Network"
+              icon={Users}
+              items={data.network.map(n => ({ label: n.label, role: n.role, type: n.type }))}
+              color="text-yellow-600"
+            />
+            <FlowArrow />
+            <PipelineColumn
+              title="Benefits Out"
+              icon={Landmark}
+              items={data.benefitsOut}
+              color="text-primary"
+            />
+          </div>
+        )}
 
         {/* Linkage chain */}
         {data.linkages.length > 0 && (
@@ -174,7 +196,7 @@ export function ROIPipelineCard({ data, isSearching = false }: { data: ROIPipeli
                   <div className="flex items-center gap-1 shrink-0 mt-0.5">
                     <div className={cn(
                       "w-2 h-2 rounded-full",
-                      link.confidence >= 0.8 ? "bg-civic-green" : link.confidence >= 0.5 ? "bg-civic-yellow" : "bg-civic-red"
+                      link.confidence >= 0.8 ? "bg-primary" : link.confidence >= 0.5 ? "bg-yellow-500" : "bg-destructive"
                     )} />
                     <span className="text-muted-foreground w-8">{(link.confidence * 100).toFixed(0)}%</span>
                   </div>
