@@ -50,6 +50,7 @@ export default function CompanyProfile() {
   const { toast } = useToast();
   const queryClient = useQueryClient();
   const [isEnriching, setIsEnriching] = useState(false);
+  const [activeLens, setActiveLens] = useState<LensId>("influence");
 
   // Always try to load from DB by slug to get real UUID for chain tracing etc.
   const { data: dbCompany, isLoading: dbLoading } = useQuery({
