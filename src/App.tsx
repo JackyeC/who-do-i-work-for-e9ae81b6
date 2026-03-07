@@ -15,6 +15,7 @@ import WhoDoIWorkFor from "./pages/WhoDoIWorkFor";
 import AddCompany from "./pages/AddCompany";
 import Jobs from "./pages/Jobs";
 import NotFound from "./pages/NotFound";
+import RequestCorrection from "./pages/RequestCorrection";
 
 const queryClient = new QueryClient();
 
@@ -39,6 +40,7 @@ const App = () => (
             } />
             <Route path="/add-company" element={<AddCompany />} />
             <Route path="/jobs" element={<Jobs />} />
+            <Route path="/request-correction" element={<RequestCorrection />} />
             <Route path="*" element={<NotFound />} />
           </Routes>
         </BrowserRouter>

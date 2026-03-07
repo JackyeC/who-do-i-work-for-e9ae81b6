@@ -1164,6 +1164,51 @@ export type Database = {
           },
         ]
       }
+      correction_requests: {
+        Row: {
+          company_name: string
+          company_profile_url: string | null
+          contact_email: string
+          contact_name: string
+          created_at: string
+          description: string
+          id: string
+          issue_type: string
+          review_status: string
+          reviewer_notes: string | null
+          source_links: string[] | null
+          updated_at: string
+        }
+        Insert: {
+          company_name: string
+          company_profile_url?: string | null
+          contact_email: string
+          contact_name: string
+          created_at?: string
+          description: string
+          id?: string
+          issue_type?: string
+          review_status?: string
+          reviewer_notes?: string | null
+          source_links?: string[] | null
+          updated_at?: string
+        }
+        Update: {
+          company_name?: string
+          company_profile_url?: string | null
+          contact_email?: string
+          contact_name?: string
+          created_at?: string
+          description?: string
+          id?: string
+          issue_type?: string
+          review_status?: string
+          reviewer_notes?: string | null
+          source_links?: string[] | null
+          updated_at?: string
+        }
+        Relationships: []
+      }
       entity_linkages: {
         Row: {
           amount: number | null

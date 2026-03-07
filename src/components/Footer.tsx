@@ -28,7 +28,7 @@ export function Footer() {
               <p className="font-medium text-foreground">About</p>
               <p>Data from FEC.gov, OpenSecrets &amp; public filings.</p>
               <p>Donations do not always equal endorsement.</p>
-              <a href="mailto:corrections@civiclens.org" className="block text-primary hover:underline">Request a Correction</a>
+              <Link to="/request-correction" className="block text-primary hover:underline">Request a Correction</Link>
             </div>
           </div>
         </div>
