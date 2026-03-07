@@ -142,8 +142,8 @@ export function SocialMonitorCard({ companyId, companyName, executiveNames, dbCo
             {result.contradictions.length > 0 && (
               <div className="space-y-2">
                 <h4 className="text-sm font-semibold flex items-center gap-1.5 text-destructive">
-                  <MessageSquareWarning className="w-4 h-4" />
-                  Say-Do Contradictions ({result.contradictions.length})
+                   <MessageSquareWarning className="w-4 h-4" />
+                   Public Statement vs. Observed Signals ({result.contradictions.length})
                 </h4>
                 <div className="space-y-2">
                   {result.contradictions.map((c, i) => (
