@@ -96,6 +96,27 @@ export function ROIPipelineCard({ data, isSearching = false }: { data: ROIPipeli
         </p>
       </CardHeader>
       <CardContent>
+        {isEmpty && (
+          <div className="flex items-center gap-3 p-4 bg-muted/50 rounded-lg mb-6 border border-border">
+            {isSearching ? (
+              <>
+                <Loader className="w-5 h-5 text-primary animate-spin" />
+                <div>
+                  <div className="text-sm font-medium text-foreground">Searching Federal Records…</div>
+                  <div className="text-xs text-muted-foreground">Tracing entity linkages through PAC filings, lobbying disclosures, and contract awards.</div>
+                </div>
+              </>
+            ) : (
+              <>
+                <Search className="w-5 h-5 text-muted-foreground" />
+                <div>
+                  <div className="text-sm font-medium text-foreground">No influence pipeline data yet</div>
+                  <div className="text-xs text-muted-foreground">Run a Company Intelligence Scan to populate entity linkages and trace influence paths.</div>
+                </div>
+              </>
+            )}
+          </div>
+        )}
         {/* Summary bar */}
         <div className="flex items-center justify-between p-4 bg-muted/50 rounded-lg mb-6">
           <div className="text-center">
