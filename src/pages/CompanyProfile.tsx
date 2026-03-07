@@ -380,7 +380,8 @@ export default function CompanyProfile() {
     "koch-industries": "c3d4e5f6-a7b8-9012-cdef-123456789012",
   };
   const pipelineCompanyId = company ? dbCompanyIdMap[company.id] : dbCompany?.id;
-  const { data: livePipeline, isLoading: pipelineLoading } = useROIPipeline(pipelineCompanyId);
+  const pipelineCompanyName = company?.name || dbCompany?.name;
+  const { data: livePipeline, isLoading: pipelineLoading, autoScanning, triggerScan } = useROIPipeline(pipelineCompanyId, pipelineCompanyName);
 
   // Loading state for DB-only companies
   if (!company && dbLoading) {
