@@ -60,7 +60,7 @@ Deno.serve(async (req) => {
       });
     }
 
-    const parts = scanParts || ['benefits', 'ai_hiring', 'audit_hunt'];
+    const parts = scanParts || ['benefits', 'ai_hiring', 'audit_hunt', 'pay_equity'];
     const firecrawlKey = Deno.env.get('FIRECRAWL_API_KEY');
     const lovableKey = Deno.env.get('LOVABLE_API_KEY');
     const supabaseUrl = Deno.env.get('SUPABASE_URL')!;
@@ -83,6 +83,8 @@ Deno.serve(async (req) => {
       `"${companyName}" careers benefits 401k PTO remote work`,
       `"${companyName}" HireVue Eightfold Phenom Paradox SeekOut talent AI`,
       `"${companyName}" union collective bargaining worker protections`,
+      `"${companyName}" pay equity gender pay gap equal pay report compensation`,
+      `"${companyName}" salary transparency pay band PayAnalytics Syndio CEO pay ratio`,
     ];
 
     let allContent = '';
@@ -136,7 +138,7 @@ Deno.serve(async (req) => {
     }
 
     const now = new Date().toISOString();
-    const results: Record<string, any> = { benefits: 0, aiHiring: 0, auditStatus: 'unknown' };
+    const results: Record<string, any> = { benefits: 0, aiHiring: 0, payEquity: 0, auditStatus: 'unknown' };
 
     if (!allContent || allContent.length < 100) {
       return new Response(JSON.stringify({
@@ -148,7 +150,9 @@ Deno.serve(async (req) => {
     const truncated = allContent.slice(0, 30000);
 
     // ─── Phase 2: AI Analysis ───────────────────────────────────────
-    const aiPrompt = `Analyze the following content about "${companyName}" and extract TWO types of signals:
+    const PAY_EQUITY_VENDORS = 'PayAnalytics, Syndio, Beqom, Trusaic, Payscale, Mercer, Aon, Korn Ferry';
+
+    const aiPrompt = `Analyze the following content about "${companyName}" and extract signals:
 
 **Part A - Worker Benefits:** Detect evidence of employee benefits in these categories: ${Object.keys(BENEFIT_CATEGORIES).join(', ')}
 
@@ -157,10 +161,24 @@ Also detect: ${PSYCH_SAFETY_PATTERNS.join(', ')}
 
 **Part C - Bias Audit Hunt:** Look for: ${AUDIT_PATTERNS.join(', ')}
 
+**Part D - Pay Equity:** Detect evidence of:
+- Gender/racial pay gap disclosures (specific percentages)
+- Salary transparency (ranges in job postings, pay bands)
+- Pay equity audits, certifications (EDGE, Fair Pay Workplace)
+- Pay analytics vendors (${PAY_EQUITY_VENDORS})
+- CEO-to-worker pay ratios
+- Pay discrimination litigation or settlements
+- EEO-1 data or workforce demographic reports
+
 Return JSON:
 {
   "benefits": [{ "benefit_category": "string", "benefit_type": "string", "source_url": "string|null", "source_type": "string", "evidence_text": "string", "detection_method": "string", "confidence": "direct|strong_inference|moderate_inference|weak_inference" }],
   "ai_hiring": [{ "signal_category": "string (Recruiting & Screening|Interview & Assessment|Talent Management|Employee Monitoring|Compliance & Governance)", "signal_type": "string", "vendor_name": "string|null", "tool_name": "string|null", "source_url": "string|null", "source_type": "string", "evidence_text": "string", "detection_method": "string", "confidence": "direct|strong_inference|moderate_inference|weak_inference", "is_psych_safety_risk": false }],
+  "pay_equity": [{ "signal_type": "string", "signal_category": "pay_reporting|salary_transparency|workforce_disclosure|litigation|certification|compensation_policy|public_commitment|vendor_detection|gap_metrics", "source_url": "string|null", "source_type": "string", "evidence_text": "string", "detection_method": "string", "confidence": "direct|strong_inference|moderate_inference|weak_inference", "jurisdiction": "string|null" }],
+  "gap_metrics": { "gender_pay_gap_pct": null, "racial_pay_gap_pct": null, "ceo_worker_ratio": null, "disclosed_year": null },
+  "pay_vendors_detected": [],
+  "has_pay_audit": false,
+  "salary_ranges_in_postings": false,
   "bias_audit_found": false,
   "bias_audit_details": "string|null"
 }
@@ -206,7 +224,7 @@ ${truncated}`;
       parsed = JSON.parse(jsonMatch[1].trim());
     } catch {
       console.error('Failed to parse AI output:', raw.slice(0, 500));
-      parsed = { benefits: [], ai_hiring: [], bias_audit_found: false };
+      parsed = { benefits: [], ai_hiring: [], pay_equity: [], bias_audit_found: false };
     }
 
     // ─── Phase 3: Store results ─────────────────────────────────────
@@ -256,16 +274,44 @@ ${truncated}`;
       results.aiHiring = parsed.ai_hiring.length;
     }
 
+    // Pay Equity
+    if (parts.includes('pay_equity') && parsed.pay_equity?.length > 0) {
+      await supabase.from('pay_equity_signals').delete()
+        .eq('company_id', companyId).eq('status', 'auto_detected');
+
+      await supabase.from('pay_equity_signals').insert(
+        parsed.pay_equity.slice(0, 30).map((s: any) => ({
+          company_id: companyId,
+          signal_type: s.signal_type || 'unknown',
+          signal_category: s.signal_category || 'pay_reporting',
+          source_url: s.source_url || null,
+          source_type: s.source_type || null,
+          source_title: null,
+          evidence_text: s.evidence_text || null,
+          detection_method: s.detection_method || 'keyword_detection',
+          confidence: s.confidence || 'moderate_inference',
+          jurisdiction: s.jurisdiction || null,
+          date_detected: now,
+          status: 'auto_detected',
+        }))
+      );
+      results.payEquity = parsed.pay_equity.length;
+    }
+
     // Audit status
     results.auditStatus = parsed.bias_audit_found ? 'audit_found' : 'no_audit';
     results.auditDetails = parsed.bias_audit_details || null;
+    results.gapMetrics = parsed.gap_metrics || null;
+    results.payVendorsDetected = parsed.pay_vendors_detected || [];
+    results.hasPayAudit = parsed.has_pay_audit || false;
+    results.salaryRangesInPostings = parsed.salary_ranges_in_postings || false;
 
     // If AI tools found but no audit → flag transparency warning
     if (parsed.ai_hiring?.length > 0 && !parsed.bias_audit_found) {
       results.transparencyWarning = true;
     }
 
-    console.log(`Intelligence scan complete: ${results.benefits} benefits, ${results.aiHiring} AI signals, audit: ${results.auditStatus}`);
+    console.log(`Intelligence scan complete: ${results.benefits} benefits, ${results.aiHiring} AI hiring, ${results.payEquity} pay equity, audit: ${results.auditStatus}`);
 
     return new Response(JSON.stringify({
       success: true,
