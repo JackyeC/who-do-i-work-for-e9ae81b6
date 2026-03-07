@@ -330,33 +330,43 @@ export default function WhoDoIWorkFor() {
                       <Flag className="w-5 h-5" />
                       Politicians Funded by Your Employer's PAC
                     </CardTitle>
+                    <p className="text-xs text-muted-foreground mt-1">
+                      Amounts shown are aggregate totals from public filings. Individual contributions are not itemized below unless broken out by type.
+                    </p>
                   </CardHeader>
                   <CardContent>
                     <div className="space-y-2">
                       {(candidates || []).map((c) => (
-                        <div key={c.id} className="flex items-center justify-between p-3 rounded-lg border border-border">
-                          <div className="flex items-center gap-3">
-                            <User className="w-4 h-4 text-muted-foreground" />
-                            <div>
-                              <span className="font-medium text-foreground">{c.name}</span>
-                              <div className="flex items-center gap-2 text-xs text-muted-foreground">
-                                <span>{c.state}{c.district ? `-${c.district}` : ""}</span>
-                                <span>·</span>
-                                <span className="capitalize">{c.donation_type.replace("-", " ")}</span>
+                        <div key={c.id} className="rounded-lg border border-border overflow-hidden">
+                          <div className="flex items-center justify-between p-3">
+                            <div className="flex items-center gap-3">
+                              <User className="w-4 h-4 text-muted-foreground" />
+                              <div>
+                                <span className="font-medium text-foreground">{c.name}</span>
+                                <div className="flex items-center gap-2 text-xs text-muted-foreground">
+                                  <span>{c.state}{c.district ? `-${c.district}` : ""}</span>
+                                  <span>·</span>
+                                  <Badge variant="outline" className="text-[10px] px-1.5 py-0 capitalize">
+                                    {c.donation_type.replace(/-/g, " ")}
+                                  </Badge>
+                                </div>
                               </div>
                             </div>
-                          </div>
-                          <div className="flex items-center gap-3">
-                            {c.flagged && (
-                              <Badge variant="outline" className="bg-destructive/10 text-destructive border-destructive/30 text-xs">
-                                <AlertTriangle className="w-3 h-3 mr-1" />
-                                {c.flag_reason || "Flagged"}
+                            <div className="flex items-center gap-3">
+                              {c.flagged && (
+                                <Badge variant="outline" className="bg-destructive/10 text-destructive border-destructive/30 text-xs">
+                                  <AlertTriangle className="w-3 h-3 mr-1" />
+                                  {c.flag_reason || "Flagged"}
+                                </Badge>
+                              )}
+                              <Badge variant="outline" className={partyColors[c.party] || partyColors.I}>
+                                {c.party}
                               </Badge>
-                            )}
-                            <Badge variant="outline" className={partyColors[c.party] || partyColors.I}>
-                              {c.party}
-                            </Badge>
-                            <span className="font-semibold text-foreground">{formatCurrency(c.amount)}</span>
+                              <div className="text-right">
+                                <span className="font-semibold text-foreground">{formatCurrency(c.amount)}</span>
+                                <p className="text-[10px] text-muted-foreground">aggregate est.</p>
+                              </div>
+                            </div>
                           </div>
                         </div>
                       ))}
