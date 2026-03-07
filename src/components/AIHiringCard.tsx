@@ -216,7 +216,7 @@ export function AIHiringCard({ companyName, dbCompanyId }: AIHiringCardProps) {
           <div className="text-center py-6">
             <BrainCircuit className="w-8 h-8 text-muted-foreground mx-auto mb-2" />
             <p className="text-sm text-muted-foreground mb-1">Scan not run yet</p>
-            <p className="text-xs text-muted-foreground">Click "Run Scan" to search public sources for evidence of AI or automated systems in hiring and HR.</p>
+            <p className="text-xs text-muted-foreground">Click "Run Scan" to search public sources for hiring technology signals.</p>
           </div>
         ) : !hasSignals ? null : (
           <div className="space-y-4">
