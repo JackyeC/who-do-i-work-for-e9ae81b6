@@ -38,6 +38,8 @@ import { HiringTransparencyCard } from "@/components/HiringTransparencyCard";
 import { CompensationTransparencyCard } from "@/components/CompensationTransparencyCard";
 import { CompanyIntelligenceScanCard } from "@/components/CompanyIntelligenceScanCard";
 import { ScanDebugPanel } from "@/components/ScanDebugPanel";
+import { SignalTimeline } from "@/components/SignalTimeline";
+import { WatchCompanyButton } from "@/components/WatchCompanyButton";
 import { useROIPipeline } from "@/hooks/use-roi-pipeline";
 import { TransparencyIndex } from "@/components/TransparencyIndex";
 import { supabase } from "@/integrations/supabase/client";
