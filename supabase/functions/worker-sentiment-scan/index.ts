@@ -38,10 +38,14 @@ Deno.serve(async (req) => {
 
     // 1. Search for Glassdoor reviews and worker sentiment data
     const searchQueries = [
-      `${companyName} Glassdoor reviews employee ratings 2024 2025`,
-      `${companyName} employee satisfaction complaints workplace culture`,
-      `${companyName} worker conditions labor practices wages`,
-      `${companyName} union employees labor disputes complaints`,
+      `site:glassdoor.com "${companyName}" reviews employee ratings`,
+      `site:glassdoor.com "${companyName}" salary compensation benefits`,
+      `site:indeed.com "${companyName}" employee reviews work-life balance`,
+      `site:indeed.com "${companyName}" company reviews pros cons`,
+      `site:linkedin.com "${companyName}" employee reviews culture`,
+      `${companyName} Glassdoor rating CEO approval 2024 2025`,
+      `${companyName} Indeed employee complaints workplace issues`,
+      `${companyName} worker conditions labor practices wages union`,
     ];
 
     const allResults: any[] = [];
