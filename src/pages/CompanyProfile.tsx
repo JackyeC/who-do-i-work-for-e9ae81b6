@@ -38,6 +38,7 @@ import { CompensationTransparencyCard } from "@/components/CompensationTranspare
 import { CompanyIntelligenceScanCard } from "@/components/CompanyIntelligenceScanCard";
 import { ScanDebugPanel } from "@/components/ScanDebugPanel";
 import { useROIPipeline } from "@/hooks/use-roi-pipeline";
+import { TransparencyIndex } from "@/components/TransparencyIndex";
 import { supabase } from "@/integrations/supabase/client";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useToast } from "@/hooks/use-toast";
@@ -313,6 +314,25 @@ export default function CompanyProfile() {
 
   const hasDetailedData = (dbCandidates?.length || 0) > 0 || (dbExecutives?.length || 0) > 0;
 
+  // Transparency Index: check signal presence across categories
+  const { data: tiAiHr } = useQuery({ queryKey: ["ti-ai-hr", dbCompanyId], queryFn: async () => { const { count } = await supabase.from("ai_hr_signals" as any).select("id", { count: "exact", head: true }).eq("company_id", dbCompanyId!); return (count || 0) > 0; }, enabled: !!dbCompanyId });
+  const { data: tiBenefits } = useQuery({ queryKey: ["ti-benefits", dbCompanyId], queryFn: async () => { const { count } = await supabase.from("worker_benefit_signals" as any).select("id", { count: "exact", head: true }).eq("company_id", dbCompanyId!); return (count || 0) > 0; }, enabled: !!dbCompanyId });
+  const { data: tiPayEquity } = useQuery({ queryKey: ["ti-pay", dbCompanyId], queryFn: async () => { const { count } = await supabase.from("pay_equity_signals" as any).select("id", { count: "exact", head: true }).eq("company_id", dbCompanyId!); return (count || 0) > 0; }, enabled: !!dbCompanyId });
+  const { data: tiSentiment } = useQuery({ queryKey: ["ti-sentiment", dbCompanyId], queryFn: async () => { const { count } = await supabase.from("company_worker_sentiment" as any).select("id", { count: "exact", head: true }).eq("company_id", dbCompanyId!); return (count || 0) > 0; }, enabled: !!dbCompanyId });
+  const { data: tiIdeology } = useQuery({ queryKey: ["ti-ideology", dbCompanyId], queryFn: async () => { const { count } = await supabase.from("company_ideology_flags" as any).select("id", { count: "exact", head: true }).eq("company_id", dbCompanyId!); return (count || 0) > 0; }, enabled: !!dbCompanyId });
+  const hasCivicInfluence = (dbCandidates?.length || 0) > 0 || (dbCompany as any)?.lobbying_spend > 0 || (dbCompany as any)?.total_pac_spending > 0;
+  const hasWorkforceDisclosure = (dbPublicStances?.length || 0) > 0;
+
+  const transparencyCategories = [
+    { key: "civic-influence", label: "Civic Influence", hasSignals: !!hasCivicInfluence },
+    { key: "workforce-disclosure", label: "Workforce Disclosure", hasSignals: !!hasWorkforceDisclosure },
+    { key: "hiring-technology", label: "Hiring Technology", hasSignals: !!tiAiHr },
+    { key: "compensation-transparency", label: "Compensation Transparency", hasSignals: !!tiPayEquity },
+    { key: "worker-benefits", label: "Worker Benefits", hasSignals: !!tiBenefits },
+    { key: "organizational-affiliation", label: "Organizational Affiliations", hasSignals: !!tiIdeology },
+    { key: "worker-sentiment", label: "Worker Sentiment", hasSignals: !!tiSentiment },
+  ];
+
   const handleEnrich = async () => {
     if (!dbCompany) return;
     setIsEnriching(true);
@@ -545,6 +565,11 @@ export default function CompanyProfile() {
             {/* Company Intelligence Scan */}
             <div className="mb-6">
               <CompanyIntelligenceScanCard companyId={dbCompany.id} companyName={dbCompany.name} />
+            </div>
+
+            {/* Transparency Index */}
+            <div className="mb-6">
+              <TransparencyIndex categories={transparencyCategories} />
             </div>
 
             {/* Debug Panel */}

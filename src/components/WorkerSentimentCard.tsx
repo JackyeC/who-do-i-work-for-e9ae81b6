@@ -10,6 +10,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { useQuery } from "@tanstack/react-query";
 import { useToast } from "@/hooks/use-toast";
 import { Progress } from "@/components/ui/progress";
+import { SignalDensity } from "@/components/SignalMeta";
 
 interface WorkerSentimentCardProps {
   companyName: string;
@@ -147,6 +148,15 @@ export function WorkerSentimentCard({ companyName, dbCompanyId }: WorkerSentimen
           </div>
         ) : (
           <>
+            {/* Signal Density */}
+            <SignalDensity
+              sourcesScanned={result.resultCount}
+              signalsDetected={result.topComplaints.length + result.topPraises.length}
+              categories={[
+                ...result.topComplaints.map(c => c.theme),
+                ...result.topPraises.map(p => p.theme),
+              ].slice(0, 6)}
+            />
             {/* Sentiment & Summary */}
             <div className="space-y-2">
               <div className="flex items-center gap-2">

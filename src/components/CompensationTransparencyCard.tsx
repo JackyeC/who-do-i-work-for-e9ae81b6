@@ -11,6 +11,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useToast } from "@/hooks/use-toast";
 import { cn } from "@/lib/utils";
+import { SignalMeta } from "@/components/SignalMeta";
 
 interface Props {
   companyName: string;
@@ -145,40 +146,30 @@ export function CompensationTransparencyCard({ companyName, dbCompanyId }: Props
                   <div className="space-y-2">
                     {grouped[cat].map((signal: any) => (
                       <div key={signal.id} className="bg-muted/50 rounded-md p-2.5">
-                        <div className="flex items-start justify-between gap-2 mb-1">
-                          <span className="text-sm font-medium text-foreground">{signal.signal_type}</span>
-                          <Badge
-                            variant="outline"
-                            className={cn("text-[10px] shrink-0", CONFIDENCE_STYLES[signal.confidence] || CONFIDENCE_STYLES.moderate_inference)}
-                          >
-                            {signal.confidence?.replace("_", " ")}
-                          </Badge>
-                        </div>
-                        {signal.evidence_text && (
-                          <p className="text-xs text-muted-foreground mb-1">"{signal.evidence_text}"</p>
-                        )}
-                        <div className="flex items-center gap-2 flex-wrap">
-                          {signal.source_type && (
-                            <span className="text-[10px] text-muted-foreground">
-                              Source: {signal.source_type}
-                            </span>
-                          )}
-                          {signal.jurisdiction && (
-                            <Badge variant="outline" className="text-[10px]">
-                              {signal.jurisdiction}
-                            </Badge>
-                          )}
-                          {signal.source_url && (
-                            <a
-                              href={signal.source_url}
-                              target="_blank"
-                              rel="noopener noreferrer"
-                              className="text-[10px] text-primary hover:underline inline-flex items-center gap-0.5"
-                            >
-                              View source <ExternalLink className="w-2.5 h-2.5" />
-                            </a>
-                          )}
-                        </div>
+                         <div className="flex items-start justify-between gap-2 mb-1">
+                           <span className="text-sm font-medium text-foreground">{signal.signal_type}</span>
+                           <Badge
+                             variant="outline"
+                             className={cn("text-[10px] shrink-0", CONFIDENCE_STYLES[signal.confidence] || CONFIDENCE_STYLES.moderate_inference)}
+                           >
+                             {signal.confidence?.replace("_", " ")}
+                           </Badge>
+                         </div>
+                         <SignalMeta
+                           sourceType={signal.source_type}
+                           detectionMethod={signal.detection_method}
+                           confidence={signal.confidence}
+                           sourceUrl={signal.source_url}
+                           evidenceText={signal.evidence_text}
+                           detectedAt={signal.date_detected}
+                           lastVerifiedAt={signal.last_verified}
+                           compact
+                         />
+                         {signal.jurisdiction && (
+                           <Badge variant="outline" className="text-[10px] mt-1">
+                             {signal.jurisdiction}
+                           </Badge>
+                         )}
                       </div>
                     ))}
                   </div>
