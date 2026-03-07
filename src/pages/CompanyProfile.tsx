@@ -8,6 +8,7 @@ import {
   BarChart3, Loader2, Sparkles
 } from "lucide-react";
 import { ShareableScorecard } from "@/components/ShareableScorecard";
+import { EmbedBadge } from "@/components/EmbedBadge";
 import { PieChart, Pie, Cell, ResponsiveContainer, Tooltip, BarChart, Bar, XAxis, YAxis, CartesianGrid, Legend } from "recharts";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -192,7 +193,7 @@ export default function CompanyProfile() {
                     )}
                     <p className="text-muted-foreground mb-3">{dbCompany.description}</p>
                   </div>
-                  <div className="flex gap-2">
+                  <div className="flex gap-2 flex-wrap">
                     <ShareableScorecard data={{
                       name: dbCompany.name,
                       industry: dbCompany.industry,
@@ -204,6 +205,7 @@ export default function CompanyProfile() {
                       governmentContracts: dbCompany.government_contracts ?? undefined,
                       partyBreakdown: dbPartyBreakdown?.map(p => ({ party: p.party, amount: p.amount, color: p.color })),
                     }} />
+                    <EmbedBadge slug={dbCompany.slug} companyName={dbCompany.name} />
                     <Button
                       onClick={handleEnrich}
                       disabled={isEnriching}
@@ -607,6 +609,7 @@ export default function CompanyProfile() {
                   governmentContracts: company.governmentContracts,
                   partyBreakdown: company.partyBreakdown,
                 }} />
+                <EmbedBadge slug={company.id} companyName={company.name} />
               </div>
             </div>
           </div>
