@@ -1158,6 +1158,13 @@ export default function CompanyProfile() {
             </div>
           )}
 
+          {/* Company Intelligence Scan (for sample companies with DB records) */}
+          {pipelineCompanyId && (
+            <div className="mb-6">
+              <CompanyIntelligenceScanCard companyId={pipelineCompanyId} companyName={company.name} />
+            </div>
+          )}
+
           {/* ── SECTION 2: Influence Network ───────────────────────────── */}
           <div className="mb-10">
             <h2 className="text-xl font-bold text-foreground mb-1 flex items-center gap-2">
