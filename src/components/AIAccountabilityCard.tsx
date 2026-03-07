@@ -166,8 +166,8 @@ export function AIAccountabilityCard({ companyName, dbCompanyId }: AIAccountabil
         ) : !hasSignals ? (
           <div className="text-center py-6">
             <Shield className="w-8 h-8 text-muted-foreground mx-auto mb-2" />
-            <p className="text-sm text-muted-foreground mb-1">No AI hiring accountability data yet</p>
-            <p className="text-xs text-muted-foreground">Click "Deep Scan" to analyze this company's hiring technology stack, bias audit compliance, and algorithmic transparency.</p>
+            <p className="text-sm text-muted-foreground mb-1">No public evidence detected in scanned sources</p>
+            <p className="text-xs text-muted-foreground">Click "Deep Scan" to search public sources for AI hiring technology signals.</p>
           </div>
         ) : (
           <div className="space-y-5">
