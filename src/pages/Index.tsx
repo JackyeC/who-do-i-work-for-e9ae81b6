@@ -1,13 +1,12 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
 import { Search, Eye, Shield, BookOpen, Building2, TrendingUp, Scale } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { CompanyCard } from "@/components/CompanyCard";
 import { Header } from "@/components/Header";
 import { Footer } from "@/components/Footer";
-import { companies } from "@/data/sampleData";
+import { supabase } from "@/integrations/supabase/client";
 
 const Index = () => {
   const [query, setQuery] = useState("");
