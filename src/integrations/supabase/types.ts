@@ -1707,6 +1707,180 @@ export type Database = {
           },
         ]
       }
+      pipeline_benefits_out: {
+        Row: {
+          agency: string | null
+          amount: number | null
+          benefit_type: string
+          confidence_score: number
+          created_at: string
+          date: string | null
+          description: string | null
+          entity_id: string
+          id: string
+          source_url: string | null
+        }
+        Insert: {
+          agency?: string | null
+          amount?: number | null
+          benefit_type: string
+          confidence_score?: number
+          created_at?: string
+          date?: string | null
+          description?: string | null
+          entity_id: string
+          id?: string
+          source_url?: string | null
+        }
+        Update: {
+          agency?: string | null
+          amount?: number | null
+          benefit_type?: string
+          confidence_score?: number
+          created_at?: string
+          date?: string | null
+          description?: string | null
+          entity_id?: string
+          id?: string
+          source_url?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "pipeline_benefits_out_entity_id_fkey"
+            columns: ["entity_id"]
+            isOneToOne: false
+            referencedRelation: "pipeline_entities"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      pipeline_entities: {
+        Row: {
+          aliases: string[] | null
+          canonical_name: string
+          created_at: string
+          id: string
+          parent_company: string | null
+          searched_name: string
+          ticker: string | null
+          updated_at: string
+          website: string | null
+        }
+        Insert: {
+          aliases?: string[] | null
+          canonical_name: string
+          created_at?: string
+          id?: string
+          parent_company?: string | null
+          searched_name: string
+          ticker?: string | null
+          updated_at?: string
+          website?: string | null
+        }
+        Update: {
+          aliases?: string[] | null
+          canonical_name?: string
+          created_at?: string
+          id?: string
+          parent_company?: string | null
+          searched_name?: string
+          ticker?: string | null
+          updated_at?: string
+          website?: string | null
+        }
+        Relationships: []
+      }
+      pipeline_influence_network: {
+        Row: {
+          confidence_score: number
+          created_at: string
+          entity_id: string
+          id: string
+          node_name: string
+          node_type: string
+          related_to: string | null
+          relationship_type: string
+          source_url: string | null
+        }
+        Insert: {
+          confidence_score?: number
+          created_at?: string
+          entity_id: string
+          id?: string
+          node_name: string
+          node_type: string
+          related_to?: string | null
+          relationship_type: string
+          source_url?: string | null
+        }
+        Update: {
+          confidence_score?: number
+          created_at?: string
+          entity_id?: string
+          id?: string
+          node_name?: string
+          node_type?: string
+          related_to?: string | null
+          relationship_type?: string
+          source_url?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "pipeline_influence_network_entity_id_fkey"
+            columns: ["entity_id"]
+            isOneToOne: false
+            referencedRelation: "pipeline_entities"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      pipeline_money_in: {
+        Row: {
+          amount: number | null
+          confidence_score: number
+          created_at: string
+          date: string | null
+          entity_id: string
+          filing_url: string | null
+          id: string
+          recipient_name: string
+          source_name: string
+          source_type: string
+        }
+        Insert: {
+          amount?: number | null
+          confidence_score?: number
+          created_at?: string
+          date?: string | null
+          entity_id: string
+          filing_url?: string | null
+          id?: string
+          recipient_name: string
+          source_name: string
+          source_type: string
+        }
+        Update: {
+          amount?: number | null
+          confidence_score?: number
+          created_at?: string
+          date?: string | null
+          entity_id?: string
+          filing_url?: string | null
+          id?: string
+          recipient_name?: string
+          source_name?: string
+          source_type?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "pipeline_money_in_entity_id_fkey"
+            columns: ["entity_id"]
+            isOneToOne: false
+            referencedRelation: "pipeline_entities"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       profiles: {
         Row: {
           bio: string | null
