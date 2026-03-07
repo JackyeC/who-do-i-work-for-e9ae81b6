@@ -4,7 +4,7 @@ import {
   Building2, ArrowLeft, Calendar, DollarSign, Users, Flag,
   Network, Scale, MessageSquareWarning, ExternalLink, Shield, Megaphone,
   AlertTriangle, EyeOff, RotateCcw, TrendingUp, Landmark, FileText,
-  BarChart3
+  BarChart3, Loader2
 } from "lucide-react";
 import { PieChart, Pie, Cell, ResponsiveContainer, Tooltip, BarChart, Bar, XAxis, YAxis, CartesianGrid, Legend } from "recharts";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -25,10 +25,27 @@ import { AgencyContractsCard } from "@/components/AgencyContractsCard";
 import { IdeologyFlagsCard } from "@/components/IdeologyFlagsCard";
 import { WorkerSentimentCard } from "@/components/WorkerSentimentCard";
 import { useROIPipeline } from "@/hooks/use-roi-pipeline";
+import { supabase } from "@/integrations/supabase/client";
+import { useQuery } from "@tanstack/react-query";
 
 export default function CompanyProfile() {
   const { id } = useParams();
   const company = companies.find((c) => c.id === id);
+
+  // Try to load from DB by slug if not in sample data
+  const { data: dbCompany, isLoading: dbLoading } = useQuery({
+    queryKey: ["company-profile", id],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from("companies")
+        .select("*")
+        .eq("slug", id!)
+        .maybeSingle();
+      if (error) throw error;
+      return data;
+    },
+    enabled: !company && !!id,
+  });
   
   // Map sample company slugs to seeded DB company IDs for live pipeline data
   const dbCompanyIdMap: Record<string, string> = {
@@ -36,8 +53,155 @@ export default function CompanyProfile() {
     "home-depot": "b2c3d4e5-f6a7-8901-bcde-f12345678901",
     "koch-industries": "c3d4e5f6-a7b8-9012-cdef-123456789012",
   };
-  const dbCompanyId = company ? dbCompanyIdMap[company.id] : undefined;
+  const dbCompanyId = company ? dbCompanyIdMap[company.id] : dbCompany?.id;
   const { data: livePipeline, isLoading: pipelineLoading } = useROIPipeline(dbCompanyId);
+
+  // Loading state for DB-only companies
+  if (!company && dbLoading) {
+    return (
+      <div className="min-h-screen flex flex-col bg-background">
+        <Header />
+        <div className="flex-1 flex items-center justify-center">
+          <Loader2 className="w-8 h-8 animate-spin text-primary" />
+        </div>
+      </div>
+    );
+  }
+
+  // DB-only company profile (no sample data)
+  if (!company && dbCompany) {
+    return (
+      <div className="min-h-screen flex flex-col bg-background">
+        <Header />
+        <div className="container mx-auto px-4 py-8">
+          <Link to="/browse" className="inline-flex items-center gap-1 text-sm text-muted-foreground hover:text-foreground transition-colors mb-6">
+            <ArrowLeft className="w-3.5 h-3.5" />
+            Back to directory
+          </Link>
+
+          <motion.div initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.3 }}>
+            {/* Company Overview */}
+            <div className="flex flex-col md:flex-row md:items-start gap-6 mb-8">
+              <div className="w-16 h-16 rounded-xl bg-muted flex items-center justify-center shrink-0">
+                <Building2 className="w-8 h-8 text-muted-foreground" />
+              </div>
+              <div className="flex-1 min-w-0">
+                <h1 className="text-3xl md:text-4xl font-bold text-foreground mb-2">{dbCompany.name}</h1>
+                {dbCompany.parent_company && (
+                  <p className="text-sm text-muted-foreground mb-1">Parent: {dbCompany.parent_company}</p>
+                )}
+                <p className="text-muted-foreground mb-3">{dbCompany.description}</p>
+                <div className="flex flex-wrap items-center gap-3">
+                  <Badge variant="secondary">{dbCompany.industry}</Badge>
+                  <Badge variant="secondary">{dbCompany.state}</Badge>
+                  {dbCompany.revenue && <Badge variant="secondary">Revenue: {dbCompany.revenue}</Badge>}
+                  {dbCompany.employee_count && <Badge variant="secondary">{dbCompany.employee_count} employees</Badge>}
+                  <CivicFootprintBadge score={dbCompany.civic_footprint_score} />
+                </div>
+              </div>
+            </div>
+
+            {/* Summary Cards */}
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
+              <Card>
+                <CardContent className="p-4">
+                  <div className="flex items-center gap-2 text-xs text-muted-foreground mb-1">
+                    <Scale className="w-3.5 h-3.5" />
+                    Civic Footprint
+                  </div>
+                  <div className="text-2xl font-bold text-foreground">{dbCompany.civic_footprint_score}<span className="text-sm text-muted-foreground">/100</span></div>
+                  <CivicFootprintBadge score={dbCompany.civic_footprint_score} size="sm" />
+                </CardContent>
+              </Card>
+              <Card>
+                <CardContent className="p-4">
+                  <div className="flex items-center gap-2 text-xs text-muted-foreground mb-1">
+                    <DollarSign className="w-3.5 h-3.5" />
+                    PAC Spending
+                  </div>
+                  <div className="text-2xl font-bold text-foreground">
+                    {dbCompany.total_pac_spending > 0 ? formatCurrency(dbCompany.total_pac_spending) : "None"}
+                  </div>
+                </CardContent>
+              </Card>
+              <Card>
+                <CardContent className="p-4">
+                  <div className="flex items-center gap-2 text-xs text-muted-foreground mb-1">
+                    <Megaphone className="w-3.5 h-3.5" />
+                    Lobbying
+                  </div>
+                  <div className="text-2xl font-bold text-foreground">
+                    {dbCompany.lobbying_spend ? formatCurrency(dbCompany.lobbying_spend) : "None"}
+                  </div>
+                </CardContent>
+              </Card>
+              {(dbCompany.government_contracts || dbCompany.subsidies_received) && (
+                <Card>
+                  <CardContent className="p-4">
+                    <div className="flex items-center gap-2 text-xs text-muted-foreground mb-1">
+                      <Landmark className="w-3.5 h-3.5" />
+                      Gov Contracts
+                    </div>
+                    <div className="text-2xl font-bold text-foreground">
+                      {dbCompany.government_contracts ? formatCurrency(dbCompany.government_contracts) : "—"}
+                    </div>
+                  </CardContent>
+                </Card>
+              )}
+            </div>
+
+            {/* Government ROI */}
+            {(dbCompany.government_contracts || dbCompany.subsidies_received || dbCompany.effective_tax_rate) && (
+              <Card className="mb-6">
+                <CardHeader>
+                  <CardTitle className="text-lg flex items-center gap-2">
+                    <Landmark className="w-5 h-5" />
+                    Government ROI
+                  </CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <div className="grid sm:grid-cols-3 gap-4">
+                    {dbCompany.government_contracts && (
+                      <div className="text-center p-3 bg-muted/50 rounded-lg">
+                        <div className="text-xl font-bold text-foreground">{formatCurrency(dbCompany.government_contracts)}</div>
+                        <div className="text-xs text-muted-foreground">Government Contracts</div>
+                      </div>
+                    )}
+                    {dbCompany.subsidies_received && (
+                      <div className="text-center p-3 bg-muted/50 rounded-lg">
+                        <div className="text-xl font-bold text-foreground">{formatCurrency(dbCompany.subsidies_received)}</div>
+                        <div className="text-xs text-muted-foreground">Subsidies & Tax Breaks</div>
+                      </div>
+                    )}
+                    {dbCompany.effective_tax_rate && (
+                      <div className="text-center p-3 bg-muted/50 rounded-lg">
+                        <div className="text-xl font-bold text-foreground">{dbCompany.effective_tax_rate}</div>
+                        <div className="text-xs text-muted-foreground">Effective Tax Rate</div>
+                      </div>
+                    )}
+                  </div>
+                </CardContent>
+              </Card>
+            )}
+
+            {/* Live Scan Cards */}
+            <div className="space-y-6">
+              <SocialMonitorCard
+                companyId={dbCompany.slug}
+                companyName={dbCompany.name}
+                executiveNames={[]}
+                dbCompanyId={dbCompany.id}
+              />
+              <AgencyContractsCard companyName={dbCompany.name} dbCompanyId={dbCompany.id} />
+              <IdeologyFlagsCard companyName={dbCompany.name} dbCompanyId={dbCompany.id} />
+              <WorkerSentimentCard companyName={dbCompany.name} dbCompanyId={dbCompany.id} />
+            </div>
+          </motion.div>
+        </div>
+        <Footer />
+      </div>
+    );
+  }
 
   if (!company) {
     return (
