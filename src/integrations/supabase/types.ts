@@ -1108,6 +1108,53 @@ export type Database = {
           },
         ]
       }
+      company_signal_scans: {
+        Row: {
+          company_id: string
+          confidence_level: string
+          created_at: string
+          id: string
+          raw_excerpt: string | null
+          scan_timestamp: string
+          signal_category: string
+          signal_type: string
+          signal_value: string | null
+          source_url: string | null
+        }
+        Insert: {
+          company_id: string
+          confidence_level?: string
+          created_at?: string
+          id?: string
+          raw_excerpt?: string | null
+          scan_timestamp?: string
+          signal_category: string
+          signal_type: string
+          signal_value?: string | null
+          source_url?: string | null
+        }
+        Update: {
+          company_id?: string
+          confidence_level?: string
+          created_at?: string
+          id?: string
+          raw_excerpt?: string | null
+          scan_timestamp?: string
+          signal_category?: string
+          signal_type?: string
+          signal_value?: string | null
+          source_url?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "company_signal_scans_company_id_fkey"
+            columns: ["company_id"]
+            isOneToOne: false
+            referencedRelation: "companies"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       company_spending_history: {
         Row: {
           company_id: string
@@ -2090,6 +2137,53 @@ export type Database = {
           },
         ]
       }
+      signal_change_log: {
+        Row: {
+          change_type: string
+          company_id: string
+          confidence_change: string | null
+          created_at: string
+          id: string
+          new_value: string | null
+          previous_value: string | null
+          scan_timestamp: string
+          signal_category: string
+          source_url: string | null
+        }
+        Insert: {
+          change_type: string
+          company_id: string
+          confidence_change?: string | null
+          created_at?: string
+          id?: string
+          new_value?: string | null
+          previous_value?: string | null
+          scan_timestamp?: string
+          signal_category: string
+          source_url?: string | null
+        }
+        Update: {
+          change_type?: string
+          company_id?: string
+          confidence_change?: string | null
+          created_at?: string
+          id?: string
+          new_value?: string | null
+          previous_value?: string | null
+          scan_timestamp?: string
+          signal_category?: string
+          source_url?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "signal_change_log_company_id_fkey"
+            columns: ["company_id"]
+            isOneToOne: false
+            referencedRelation: "companies"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       social_media_scans: {
         Row: {
           ai_summary: string | null
@@ -2136,6 +2230,82 @@ export type Database = {
         Relationships: [
           {
             foreignKeyName: "social_media_scans_company_id_fkey"
+            columns: ["company_id"]
+            isOneToOne: false
+            referencedRelation: "companies"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      user_alerts: {
+        Row: {
+          change_description: string
+          change_type: string
+          company_id: string
+          company_name: string
+          created_at: string
+          date_detected: string
+          id: string
+          is_read: boolean
+          signal_category: string
+          user_id: string
+        }
+        Insert: {
+          change_description: string
+          change_type: string
+          company_id: string
+          company_name: string
+          created_at?: string
+          date_detected?: string
+          id?: string
+          is_read?: boolean
+          signal_category: string
+          user_id: string
+        }
+        Update: {
+          change_description?: string
+          change_type?: string
+          company_id?: string
+          company_name?: string
+          created_at?: string
+          date_detected?: string
+          id?: string
+          is_read?: boolean
+          signal_category?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "user_alerts_company_id_fkey"
+            columns: ["company_id"]
+            isOneToOne: false
+            referencedRelation: "companies"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      user_company_watchlist: {
+        Row: {
+          company_id: string
+          id: string
+          user_id: string
+          watch_timestamp: string
+        }
+        Insert: {
+          company_id: string
+          id?: string
+          user_id: string
+          watch_timestamp?: string
+        }
+        Update: {
+          company_id?: string
+          id?: string
+          user_id?: string
+          watch_timestamp?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "user_company_watchlist_company_id_fkey"
             columns: ["company_id"]
             isOneToOne: false
             referencedRelation: "companies"
