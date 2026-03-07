@@ -158,7 +158,7 @@ const Index = () => {
         <div className="container mx-auto px-4">
           <div className="grid md:grid-cols-3 gap-8 text-center">
             {[
-              { value: companies.length, label: "Companies Tracked" },
+              { value: companyCount, label: "Companies Tracked" },
               { value: "$100M+", label: "Political Spending Tracked" },
               { value: "2026", label: "Election Cycle Data" },
             ].map((stat) => (
