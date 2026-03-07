@@ -123,7 +123,7 @@ export function SocialMonitorCard({ companyId, companyName, executiveNames, dbCo
         {!result ? (
           <div className="text-center py-8 text-muted-foreground">
             <Radio className="w-8 h-8 mx-auto mb-2 opacity-40" />
-            <p className="text-sm">No scan results yet. Click "Run Scan" to search social media and news for {companyName}.</p>
+            <p className="text-sm">No public signals detected yet. Click "Run Scan" to search public sources for media and messaging signals for {companyName}.</p>
           </div>
         ) : (
           <>
