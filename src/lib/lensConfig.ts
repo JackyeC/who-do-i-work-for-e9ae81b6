@@ -74,6 +74,7 @@ export const LENSES: LensDefinition[] = [
       "money-trail",
       "influence-network",
       "ai-hiring",
+      "hiring-transparency",
       "ai-accountability",
       "government-roi",
       "roi-pipeline",
