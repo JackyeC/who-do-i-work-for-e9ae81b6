@@ -18,6 +18,7 @@ import NotFound from "./pages/NotFound";
 import RequestCorrection from "./pages/RequestCorrection";
 import OfferCheck from "./pages/OfferCheck";
 import MyOfferChecks from "./pages/MyOfferChecks";
+import CompareOfferChecks from "./pages/CompareOfferChecks";
 
 const queryClient = new QueryClient();
 
