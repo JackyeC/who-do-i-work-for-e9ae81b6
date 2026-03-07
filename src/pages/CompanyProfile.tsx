@@ -1,10 +1,11 @@
+import { useState } from "react";
 import { useParams, Link } from "react-router-dom";
 import { motion } from "framer-motion";
 import {
   Building2, ArrowLeft, Calendar, DollarSign, Users, Flag,
   Network, Scale, MessageSquareWarning, ExternalLink, Shield, Megaphone,
   AlertTriangle, EyeOff, RotateCcw, TrendingUp, Landmark, FileText,
-  BarChart3, Loader2
+  BarChart3, Loader2, Sparkles
 } from "lucide-react";
 import { PieChart, Pie, Cell, ResponsiveContainer, Tooltip, BarChart, Bar, XAxis, YAxis, CartesianGrid, Legend } from "recharts";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -26,11 +27,18 @@ import { IdeologyFlagsCard } from "@/components/IdeologyFlagsCard";
 import { WorkerSentimentCard } from "@/components/WorkerSentimentCard";
 import { useROIPipeline } from "@/hooks/use-roi-pipeline";
 import { supabase } from "@/integrations/supabase/client";
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
+import { useToast } from "@/hooks/use-toast";
+import {
+  Table, TableBody, TableCell, TableHead, TableHeader, TableRow
+} from "@/components/ui/table";
 
 export default function CompanyProfile() {
   const { id } = useParams();
   const company = companies.find((c) => c.id === id);
+  const { toast } = useToast();
+  const queryClient = useQueryClient();
+  const [isEnriching, setIsEnriching] = useState(false);
 
   // Try to load from DB by slug if not in sample data
   const { data: dbCompany, isLoading: dbLoading } = useQuery({
@@ -46,6 +54,93 @@ export default function CompanyProfile() {
     },
     enabled: !company && !!id,
   });
+
+  // Load related data for DB companies
+  const dbCompanyId = company ? undefined : dbCompany?.id;
+
+  const { data: dbCandidates } = useQuery({
+    queryKey: ["company-candidates", dbCompanyId],
+    queryFn: async () => {
+      const { data } = await supabase.from("company_candidates").select("*").eq("company_id", dbCompanyId!).order("amount", { ascending: false });
+      return data || [];
+    },
+    enabled: !!dbCompanyId,
+  });
+
+  const { data: dbExecutives } = useQuery({
+    queryKey: ["company-executives", dbCompanyId],
+    queryFn: async () => {
+      const { data } = await supabase.from("company_executives").select("*").eq("company_id", dbCompanyId!).order("total_donations", { ascending: false });
+      return data || [];
+    },
+    enabled: !!dbCompanyId,
+  });
+
+  const { data: dbPartyBreakdown } = useQuery({
+    queryKey: ["company-party-breakdown", dbCompanyId],
+    queryFn: async () => {
+      const { data } = await supabase.from("company_party_breakdown").select("*").eq("company_id", dbCompanyId!);
+      return data || [];
+    },
+    enabled: !!dbCompanyId,
+  });
+
+  const { data: dbPublicStances } = useQuery({
+    queryKey: ["company-public-stances", dbCompanyId],
+    queryFn: async () => {
+      const { data } = await supabase.from("company_public_stances").select("*").eq("company_id", dbCompanyId!);
+      return data || [];
+    },
+    enabled: !!dbCompanyId,
+  });
+
+  const { data: dbDarkMoney } = useQuery({
+    queryKey: ["company-dark-money", dbCompanyId],
+    queryFn: async () => {
+      const { data } = await supabase.from("company_dark_money").select("*").eq("company_id", dbCompanyId!);
+      return data || [];
+    },
+    enabled: !!dbCompanyId,
+  });
+
+  const { data: dbRevolvingDoor } = useQuery({
+    queryKey: ["company-revolving-door", dbCompanyId],
+    queryFn: async () => {
+      const { data } = await supabase.from("company_revolving_door").select("*").eq("company_id", dbCompanyId!);
+      return data || [];
+    },
+    enabled: !!dbCompanyId,
+  });
+
+  const hasDetailedData = (dbCandidates?.length || 0) > 0 || (dbExecutives?.length || 0) > 0;
+
+  const handleEnrich = async () => {
+    if (!dbCompany) return;
+    setIsEnriching(true);
+    try {
+      const { data, error } = await supabase.functions.invoke("company-research", {
+        body: { companyName: dbCompany.name, enrichExisting: true },
+      });
+      if (error) throw error;
+      if (data?.success) {
+        toast({ title: "Data enriched!", description: `AI populated ${Object.values(data.tablesPopulated || {}).reduce((a: number, b: any) => a + (b as number), 0)} records for ${dbCompany.name}.` });
+        // Invalidate all related queries
+        queryClient.invalidateQueries({ queryKey: ["company-profile", id] });
+        queryClient.invalidateQueries({ queryKey: ["company-candidates", dbCompanyId] });
+        queryClient.invalidateQueries({ queryKey: ["company-executives", dbCompanyId] });
+        queryClient.invalidateQueries({ queryKey: ["company-party-breakdown", dbCompanyId] });
+        queryClient.invalidateQueries({ queryKey: ["company-public-stances", dbCompanyId] });
+        queryClient.invalidateQueries({ queryKey: ["company-dark-money", dbCompanyId] });
+        queryClient.invalidateQueries({ queryKey: ["company-revolving-door", dbCompanyId] });
+      } else {
+        throw new Error(data?.error || "Enrichment failed");
+      }
+    } catch (e: any) {
+      toast({ title: "Enrichment failed", description: e.message, variant: "destructive" });
+    } finally {
+      setIsEnriching(false);
+    }
+  };
   
   // Map sample company slugs to seeded DB company IDs for live pipeline data
   const dbCompanyIdMap: Record<string, string> = {
