@@ -642,6 +642,8 @@ export default function CompanyProfile() {
               dbDarkMoney={dbDarkMoney}
               dbRevolvingDoor={dbRevolvingDoor}
               livePipeline={livePipeline}
+              autoScanning={autoScanning}
+              triggerScan={triggerScan}
             />
           </motion.div>
         </div>
