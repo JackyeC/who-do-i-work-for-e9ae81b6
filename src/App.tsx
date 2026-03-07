@@ -16,6 +16,8 @@ import AddCompany from "./pages/AddCompany";
 import Jobs from "./pages/Jobs";
 import NotFound from "./pages/NotFound";
 import RequestCorrection from "./pages/RequestCorrection";
+import OfferCheck from "./pages/OfferCheck";
+import MyOfferChecks from "./pages/MyOfferChecks";
 
 const queryClient = new QueryClient();
 
