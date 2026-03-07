@@ -131,7 +131,7 @@ export function IdeologyFlagsCard({ companyName, dbCompanyId }: Props) {
       <CardHeader>
         <CardTitle className="text-lg flex items-center gap-2">
           <Eye className="w-5 h-5 text-primary" />
-          Ideological Alignment Tracker
+          Organizational Affiliation Signals
           {result && (
             <Badge className={cn("ml-auto text-xs", riskLevelStyle(result.riskLevel))}>
               Risk: {result.riskLevel}
