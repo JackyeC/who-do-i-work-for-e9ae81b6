@@ -48,7 +48,7 @@ import {
 } from "@/components/ui/table";
 
 /** Renders DB-only company modules in lens priority order */
-function DbLensModules({ activeLens, dbCompany, dbPartyBreakdown, dbCandidates, dbExecutives, dbPublicStances, dbDarkMoney, dbRevolvingDoor, livePipeline }: {
+function DbLensModules({ activeLens, dbCompany, dbPartyBreakdown, dbCandidates, dbExecutives, dbPublicStances, dbDarkMoney, dbRevolvingDoor, livePipeline, autoScanning, triggerScan }: {
   activeLens: LensId;
   dbCompany: any;
   dbPartyBreakdown: any[] | null | undefined;
@@ -58,6 +58,8 @@ function DbLensModules({ activeLens, dbCompany, dbPartyBreakdown, dbCandidates, 
   dbDarkMoney: any[] | null | undefined;
   dbRevolvingDoor: any[] | null | undefined;
   livePipeline: any;
+  autoScanning?: boolean;
+  triggerScan?: () => void;
 }) {
   const lens = getLens(activeLens);
 
