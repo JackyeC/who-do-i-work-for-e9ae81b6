@@ -14,6 +14,68 @@ export type Database = {
   }
   public: {
     Tables: {
+      ai_hiring_signals: {
+        Row: {
+          bias_audit_link: string | null
+          bias_audit_status: string | null
+          category: string
+          company_id: string
+          confidence_score: number
+          created_at: string
+          evidence_text: string | null
+          evidence_url: string | null
+          id: string
+          last_scanned: string
+          safepath_flags: Json | null
+          signal_type: string
+          status: string
+          transparency_score: number | null
+          vendor_name: string | null
+        }
+        Insert: {
+          bias_audit_link?: string | null
+          bias_audit_status?: string | null
+          category: string
+          company_id: string
+          confidence_score?: number
+          created_at?: string
+          evidence_text?: string | null
+          evidence_url?: string | null
+          id?: string
+          last_scanned?: string
+          safepath_flags?: Json | null
+          signal_type?: string
+          status?: string
+          transparency_score?: number | null
+          vendor_name?: string | null
+        }
+        Update: {
+          bias_audit_link?: string | null
+          bias_audit_status?: string | null
+          category?: string
+          company_id?: string
+          confidence_score?: number
+          created_at?: string
+          evidence_text?: string | null
+          evidence_url?: string | null
+          id?: string
+          last_scanned?: string
+          safepath_flags?: Json | null
+          signal_type?: string
+          status?: string
+          transparency_score?: number | null
+          vendor_name?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "ai_hiring_signals_company_id_fkey"
+            columns: ["company_id"]
+            isOneToOne: false
+            referencedRelation: "companies"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       ai_hr_signals: {
         Row: {
           company_id: string
