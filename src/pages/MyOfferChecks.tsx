@@ -1,11 +1,12 @@
 import { Link, useNavigate } from "react-router-dom";
-import { ClipboardCheck, Building2, ArrowRight, Loader2, Trash2 } from "lucide-react";
+import { ClipboardCheck, Building2, ArrowRight, Loader2, Trash2, GitCompareArrows, Crown, AlertTriangle } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Header } from "@/components/Header";
 import { Footer } from "@/components/Footer";
 import { useAuth } from "@/contexts/AuthContext";
+import { usePremium } from "@/hooks/use-premium";
 import { supabase } from "@/integrations/supabase/client";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useToast } from "@/hooks/use-toast";
@@ -15,6 +16,7 @@ export default function MyOfferChecks() {
   const navigate = useNavigate();
   const { toast } = useToast();
   const queryClient = useQueryClient();
+  const premium = usePremium();
 
   const { data: checks, isLoading } = useQuery({
     queryKey: ["my-offer-checks", user?.id],
@@ -33,6 +35,7 @@ export default function MyOfferChecks() {
   const handleDelete = async (id: string) => {
     await supabase.from("offer_checks" as any).delete().eq("id", id);
     queryClient.invalidateQueries({ queryKey: ["my-offer-checks"] });
+    queryClient.invalidateQueries({ queryKey: ["saved-offer-check-count"] });
     toast({ title: "Report removed" });
   };
 
@@ -50,20 +53,56 @@ export default function MyOfferChecks() {
     );
   }
 
+  const savedCount = checks?.length || 0;
+
   return (
     <div className="min-h-screen flex flex-col bg-background">
       <Header />
       <div className="container mx-auto px-4 py-8 max-w-2xl">
-        <div className="flex items-center gap-2 mb-6">
-          <ClipboardCheck className="w-6 h-6 text-primary" />
-          <h1 className="text-2xl font-bold text-foreground">My Offer Checks</h1>
+        <div className="flex items-center justify-between mb-6">
+          <div className="flex items-center gap-2">
+            <ClipboardCheck className="w-6 h-6 text-primary" />
+            <h1 className="text-2xl font-bold text-foreground">My Offer Checks</h1>
+          </div>
+          <Button
+            variant="outline"
+            size="sm"
+            className="gap-1.5"
+            onClick={() => navigate("/compare-offer-checks")}
+          >
+            <GitCompareArrows className="w-3.5 h-3.5" />
+            Compare
+            {!premium.isPremium && <Crown className="w-3 h-3 text-muted-foreground" />}
+          </Button>
         </div>
+
+        {/* Save limit indicator */}
+        {!premium.isPremium && (
+          <div className="flex items-center justify-between p-3 rounded-lg border border-border bg-muted/30 mb-4">
+            <span className="text-xs text-muted-foreground">
+              {savedCount} / {premium.maxSavedReports} saved reports used
+            </span>
+            <div className="flex items-center gap-2">
+              <div className="w-24 h-1.5 bg-muted rounded-full overflow-hidden">
+                <div
+                  className="h-full bg-primary rounded-full transition-all"
+                  style={{ width: `${Math.min(100, (savedCount / premium.maxSavedReports) * 100)}%` }}
+                />
+              </div>
+              {savedCount >= premium.maxSavedReports && (
+                <Badge variant="outline" className="text-[9px] gap-1">
+                  <Crown className="w-2.5 h-2.5" /> Upgrade
+                </Badge>
+              )}
+            </div>
+          </div>
+        )}
 
         {isLoading ? (
           <div className="flex justify-center py-12">
             <Loader2 className="w-6 h-6 animate-spin text-primary" />
           </div>
-        ) : (checks?.length || 0) === 0 ? (
+        ) : savedCount === 0 ? (
           <Card>
             <CardContent className="p-8 text-center">
               <ClipboardCheck className="w-8 h-8 text-muted-foreground mx-auto mb-3" />
@@ -79,6 +118,7 @@ export default function MyOfferChecks() {
           <div className="space-y-3">
             {checks!.map((check: any) => {
               const company = check.companies;
+              const hasStale = check.stale_sections_count > 0;
               return (
                 <Card key={check.id} className="hover:border-primary/40 transition-colors cursor-pointer" onClick={() => navigate(`/offer-check/${check.company_id}`)}>
                   <CardContent className="p-4 flex items-center gap-4">
@@ -88,9 +128,17 @@ export default function MyOfferChecks() {
                     <div className="flex-1 min-w-0">
                       <h3 className="font-semibold text-foreground truncate">{company?.name || "Unknown"}</h3>
                       <p className="text-xs text-muted-foreground">{company?.industry} · {company?.state}</p>
-                      <p className="text-[10px] text-muted-foreground mt-0.5">
-                        {check.signals_count} signals · Saved {new Date(check.updated_at).toLocaleDateString()}
-                      </p>
+                      <div className="flex items-center gap-2 mt-0.5">
+                        <span className="text-[10px] text-muted-foreground">
+                          {check.signals_count} signals · Saved {new Date(check.updated_at).toLocaleDateString()}
+                        </span>
+                        {hasStale && (
+                          <Badge variant="outline" className="text-[9px] text-muted-foreground gap-0.5">
+                            <AlertTriangle className="w-2 h-2" />
+                            {check.stale_sections_count} stale
+                          </Badge>
+                        )}
+                      </div>
                     </div>
                     <div className="flex items-center gap-2 shrink-0">
                       <Button

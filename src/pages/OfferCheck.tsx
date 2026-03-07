@@ -3,7 +3,8 @@ import { useParams, useNavigate, Link } from "react-router-dom";
 import { motion } from "framer-motion";
 import {
   ArrowLeft, ClipboardCheck, Building2, Share2, Bookmark,
-  BookmarkCheck, Loader2, Search, Sparkles
+  BookmarkCheck, Loader2, Sparkles, Crown, Download, GitCompareArrows,
+  AlertTriangle, Clock
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -13,11 +14,48 @@ import { Footer } from "@/components/Footer";
 import { PlatformPhilosophy } from "@/components/PlatformPhilosophy";
 import { OfferCheckReport } from "@/components/OfferCheckReport";
 import { OfferCheckShareCard } from "@/components/OfferCheckShareCard";
+import { PremiumGate } from "@/components/PremiumGate";
 import { useOfferCheck } from "@/hooks/use-offer-check";
+import { usePremium } from "@/hooks/use-premium";
 import { useAuth } from "@/contexts/AuthContext";
 import { supabase } from "@/integrations/supabase/client";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useToast } from "@/hooks/use-toast";
+
+function StaleWarningBanner({ staleSections, total }: { staleSections: number; total: number }) {
+  if (staleSections === 0) return null;
+  return (
+    <div className="flex items-center gap-2 p-3 rounded-lg border border-[hsl(var(--civic-yellow))]/30 bg-[hsl(var(--civic-yellow))]/5 mb-5">
+      <AlertTriangle className="w-4 h-4 text-[hsl(var(--civic-yellow))] shrink-0" />
+      <p className="text-sm text-foreground">
+        <span className="font-medium">{staleSections} of {total} sections</span>{" "}
+        contain signals that have not been verified in the last 90 days.
+      </p>
+    </div>
+  );
+}
+
+function ReportTimeline({ company }: { company: any }) {
+  const scanDate = company?.last_scan_attempted;
+  const createdDate = company?.created_at;
+
+  return (
+    <div className="flex items-center gap-4 flex-wrap text-[10px] text-muted-foreground mb-4">
+      {createdDate && (
+        <span className="flex items-center gap-1">
+          <Clock className="w-2.5 h-2.5" />
+          Profile created: {new Date(createdDate).toLocaleDateString()}
+        </span>
+      )}
+      {scanDate && (
+        <span className="flex items-center gap-1">
+          <Clock className="w-2.5 h-2.5" />
+          Last scanned: {new Date(scanDate).toLocaleDateString()}
+        </span>
+      )}
+    </div>
+  );
+}
 
 export default function OfferCheck() {
   const { companyId } = useParams<{ companyId: string }>();
@@ -26,10 +64,10 @@ export default function OfferCheck() {
   const { toast } = useToast();
   const queryClient = useQueryClient();
   const [showShareCard, setShowShareCard] = useState(false);
+  const premium = usePremium();
 
   const { company, sections, tiCategories, totalSignals, staleSections, isLoading } = useOfferCheck(companyId);
 
-  // Check if user has a saved offer check for this company
   const { data: savedCheck } = useQuery({
     queryKey: ["saved-offer-check", companyId, user?.id],
     queryFn: async () => {
@@ -45,24 +83,36 @@ export default function OfferCheck() {
     enabled: !!companyId && !!user,
   });
 
-  const isSaved = !!savedCheck?.is_saved;
+  const { data: savedCount } = useQuery({
+    queryKey: ["saved-offer-check-count", user?.id],
+    queryFn: async () => {
+      const { count } = await supabase
+        .from("offer_checks" as any)
+        .select("*", { count: "exact", head: true })
+        .eq("user_id", user!.id)
+        .eq("is_saved", true);
+      return count || 0;
+    },
+    enabled: !!user,
+  });
 
-  // Sections locked for non-logged-in users
+  const isSaved = !!savedCheck?.is_saved;
+  const atSaveLimit = !premium.isPremium && (savedCount || 0) >= premium.maxSavedReports && !isSaved;
+
   const lockedSections = useMemo(() => {
     if (user) return [];
-    // Show first 2 sections free, lock the rest
     return sections.slice(2).map(s => s.id);
   }, [user, sections]);
 
   const handleSave = async () => {
-    if (!user) {
-      navigate("/login");
+    if (!user) { navigate("/login"); return; }
+    if (!companyId) return;
+    if (atSaveLimit) {
+      toast({ title: "Save limit reached", description: `Free accounts can save up to ${premium.maxSavedReports} reports. Upgrade to save more.`, variant: "destructive" });
       return;
     }
-    if (!companyId) return;
 
     try {
-      const sectionsWithSignals = sections.filter(s => s.hasData);
       const reportData = {
         sections: sections.map(s => ({ id: s.id, title: s.title, signalCount: s.signals.length, hasData: s.hasData, stale: s.stale })),
         tiCategories,
@@ -89,6 +139,7 @@ export default function OfferCheck() {
 
       queryClient.invalidateQueries({ queryKey: ["saved-offer-check", companyId, user.id] });
       queryClient.invalidateQueries({ queryKey: ["my-offer-checks"] });
+      queryClient.invalidateQueries({ queryKey: ["saved-offer-check-count"] });
       toast({ title: isSaved ? "Report unsaved" : "Report saved", description: isSaved ? "Removed from your saved reports." : "Added to your saved Offer Checks." });
     } catch (e: any) {
       toast({ title: "Error", description: e.message, variant: "destructive" });
@@ -128,12 +179,10 @@ export default function OfferCheck() {
     <div className="min-h-screen flex flex-col bg-background">
       <Header />
       <div className="container mx-auto px-4 py-8 max-w-3xl">
-        {/* Back nav */}
         <Link to={`/company/${company.slug}`} className="inline-flex items-center gap-1 text-sm text-muted-foreground hover:text-foreground mb-6">
           <ArrowLeft className="w-4 h-4" /> Back to profile
         </Link>
 
-        {/* Report Header */}
         <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} className="mb-6">
           <div className="flex items-start justify-between gap-4 mb-4">
             <div>
@@ -153,6 +202,8 @@ export default function OfferCheck() {
                 variant={isSaved ? "secondary" : "outline"}
                 size="sm"
                 onClick={handleSave}
+                disabled={atSaveLimit}
+                title={atSaveLimit ? "Save limit reached" : undefined}
               >
                 {isSaved ? <BookmarkCheck className="w-3.5 h-3.5" /> : <Bookmark className="w-3.5 h-3.5" />}
                 {isSaved ? "Saved" : "Save"}
@@ -186,13 +237,12 @@ export default function OfferCheck() {
                   <div className="text-[10px] text-muted-foreground">Stale Sections</div>
                 </div>
               </div>
-              {company.last_scan_attempted && (
-                <p className="text-[10px] text-muted-foreground mt-2">
-                  Last scanned: {new Date(company.last_scan_attempted).toLocaleDateString()}
-                </p>
-              )}
+              <ReportTimeline company={company} />
             </CardContent>
           </Card>
+
+          {/* Stale Warning Banner */}
+          <StaleWarningBanner staleSections={staleSections} total={sections.length} />
 
           <PlatformPhilosophy />
         </motion.div>
@@ -237,6 +287,42 @@ export default function OfferCheck() {
           lockedSections={lockedSections}
           onUnlock={handleUnlock}
         />
+
+        {/* Premium Features CTAs */}
+        {user && (
+          <div className="mt-6 grid sm:grid-cols-2 gap-4">
+            <Card className="border-primary/20 hover:border-primary/40 transition-colors cursor-pointer" onClick={() => navigate("/compare-offer-checks")}>
+              <CardContent className="p-4 flex items-center gap-3">
+                <div className="w-9 h-9 rounded-lg bg-primary/10 flex items-center justify-center shrink-0">
+                  <GitCompareArrows className="w-4.5 h-4.5 text-primary" />
+                </div>
+                <div>
+                  <p className="text-sm font-medium text-foreground">Compare Companies</p>
+                  <p className="text-[10px] text-muted-foreground">Side-by-side Offer Check comparison</p>
+                  {!premium.isPremium && (
+                    <Badge variant="outline" className="text-[9px] mt-1 gap-1">
+                      <Crown className="w-2.5 h-2.5" /> Premium
+                    </Badge>
+                  )}
+                </div>
+              </CardContent>
+            </Card>
+
+            <PremiumGate feature="Export Report" description="Download your Offer Check as a PDF report.">
+              <Card className="border-primary/20">
+                <CardContent className="p-4 flex items-center gap-3">
+                  <div className="w-9 h-9 rounded-lg bg-primary/10 flex items-center justify-center shrink-0">
+                    <Download className="w-4.5 h-4.5 text-primary" />
+                  </div>
+                  <div>
+                    <p className="text-sm font-medium text-foreground">Export Report</p>
+                    <p className="text-[10px] text-muted-foreground">Download as PDF</p>
+                  </div>
+                </CardContent>
+              </Card>
+            </PremiumGate>
+          </div>
+        )}
 
         {/* Bottom CTA */}
         {!user && (
