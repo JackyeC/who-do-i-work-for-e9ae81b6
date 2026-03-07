@@ -1,7 +1,11 @@
 import { Link } from "react-router-dom";
-import { Search, Eye, BookOpen } from "lucide-react";
+import { Search, Eye, BookOpen, Vote } from "lucide-react";
+import { useAuth } from "@/contexts/AuthContext";
+import { Button } from "@/components/ui/button";
 
 export function Header() {
+  const { user } = useAuth();
+
   return (
     <header className="border-b border-border bg-card/80 backdrop-blur-sm sticky top-0 z-50">
       <div className="container mx-auto px-4 h-16 flex items-center justify-between">
@@ -13,7 +17,7 @@ export function Header() {
             CivicLens
           </span>
         </Link>
-        <nav className="flex items-center gap-6">
+        <nav className="flex items-center gap-4">
           <Link to="/browse" className="text-sm font-medium text-muted-foreground hover:text-foreground transition-colors">
             Browse
           </Link>
@@ -24,6 +28,12 @@ export function Header() {
           <Link to="/search" className="text-sm font-medium text-muted-foreground hover:text-foreground transition-colors flex items-center gap-1">
             <Search className="w-3.5 h-3.5" />
             Search
+          </Link>
+          <Link to={user ? "/voter-lookup" : "/login"}>
+            <Button size="sm" variant="default" className="gap-1.5">
+              <Vote className="w-3.5 h-3.5" />
+              Who Did I Vote For?
+            </Button>
           </Link>
         </nav>
       </div>
