@@ -33,6 +33,10 @@ export function Header() {
             <Plus className="w-3.5 h-3.5" />
             Add Company
           </Link>
+          <Link to="/jobs" className="text-sm font-medium text-muted-foreground hover:text-foreground transition-colors flex items-center gap-1">
+            <HardHat className="w-3.5 h-3.5" />
+            Jobs
+          </Link>
           <Link to={user ? "/who-do-i-work-for" : "/login"}>
             <Button size="sm" variant="default" className="gap-1.5">
               <Briefcase className="w-3.5 h-3.5" />

@@ -38,6 +38,7 @@ const App = () => (
               </ProtectedRoute>
             } />
             <Route path="/add-company" element={<AddCompany />} />
+            <Route path="/jobs" element={<Jobs />} />
             <Route path="*" element={<NotFound />} />
           </Routes>
         </BrowserRouter>
