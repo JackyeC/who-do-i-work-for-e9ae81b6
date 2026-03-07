@@ -1493,6 +1493,59 @@ export type Database = {
         }
         Relationships: []
       }
+      offer_checks: {
+        Row: {
+          company_id: string
+          created_at: string
+          generated_at: string
+          id: string
+          is_saved: boolean
+          report_data: Json
+          sections_included: string[]
+          share_metadata: Json | null
+          signals_count: number
+          stale_sections_count: number
+          updated_at: string
+          user_id: string | null
+        }
+        Insert: {
+          company_id: string
+          created_at?: string
+          generated_at?: string
+          id?: string
+          is_saved?: boolean
+          report_data?: Json
+          sections_included?: string[]
+          share_metadata?: Json | null
+          signals_count?: number
+          stale_sections_count?: number
+          updated_at?: string
+          user_id?: string | null
+        }
+        Update: {
+          company_id?: string
+          created_at?: string
+          generated_at?: string
+          id?: string
+          is_saved?: boolean
+          report_data?: Json
+          sections_included?: string[]
+          share_metadata?: Json | null
+          signals_count?: number
+          stale_sections_count?: number
+          updated_at?: string
+          user_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "offer_checks_company_id_fkey"
+            columns: ["company_id"]
+            isOneToOne: false
+            referencedRelation: "companies"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       pay_equity_signals: {
         Row: {
           company_id: string
