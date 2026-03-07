@@ -613,13 +613,24 @@ export default function CompanyProfile() {
   }
 
   if (!company) {
+    // No sample data and no DB match — this slug doesn't exist anywhere
+    // Don't show dead-end; the search flow should have auto-created it
     return (
       <div className="min-h-screen flex flex-col bg-background">
         <Header />
         <div className="flex-1 flex items-center justify-center">
-          <div className="text-center">
+          <div className="text-center max-w-md">
+            <Building2 className="w-12 h-12 text-muted-foreground mx-auto mb-4" />
             <h1 className="text-2xl font-bold text-foreground mb-2">Company Not Found</h1>
-            <Link to="/" className="text-primary hover:underline">Go back home</Link>
+            <p className="text-sm text-muted-foreground mb-4">
+              This company isn't in our database yet. Search for it to automatically start building its transparency profile.
+            </p>
+            <Link to="/search">
+              <Button className="gap-2">
+                <Search className="w-4 h-4" />
+                Search & Discover
+              </Button>
+            </Link>
           </div>
         </div>
       </div>
