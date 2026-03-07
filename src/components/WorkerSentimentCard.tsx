@@ -190,12 +190,12 @@ export function WorkerSentimentCard({ companyName, dbCompanyId }: WorkerSentimen
               </div>
             )}
 
-            {/* Hypocrisy Flags — Say vs Do */}
+            {/* Say-Do Gap Flags */}
             {result.hypocrisyFlags.length > 0 && (
               <div className="space-y-2">
                 <h4 className="text-sm font-semibold flex items-center gap-1.5 text-destructive">
                   <AlertTriangle className="w-4 h-4" />
-                  Labor Hypocrisy Flags ({result.hypocrisyFlags.length})
+                  Say-Do Gap Flags ({result.hypocrisyFlags.length})
                 </h4>
                 <div className="space-y-2">
                   {result.hypocrisyFlags.map((f, i) => (

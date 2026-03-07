@@ -3,7 +3,7 @@ import { Badge } from "@/components/ui/badge";
 import { MessageSquareWarning } from "lucide-react";
 import { cn } from "@/lib/utils";
 
-export interface HypocrisyIndex {
+export interface SayDoGapData {
   chiScore: number; // 0-100
   grade: string;
   directConflicts: number;
@@ -12,7 +12,10 @@ export interface HypocrisyIndex {
   totalStances: number;
 }
 
-function chiColor(score: number) {
+/** @deprecated Use SayDoGapData instead */
+export type HypocrisyIndex = SayDoGapData;
+
+function gapColor(score: number) {
   if (score >= 70) return "text-civic-red";
   if (score >= 40) return "text-civic-yellow";
   return "text-civic-green";
@@ -24,17 +27,17 @@ function gradeStyle(grade: string) {
   return "bg-civic-red/10 text-civic-red border-civic-red/30";
 }
 
-export function HypocrisyIndexCard({ data }: { data: HypocrisyIndex }) {
+export function HypocrisyIndexCard({ data }: { data: SayDoGapData }) {
   return (
     <Card>
       <CardHeader>
         <CardTitle className="text-lg flex items-center gap-2">
           <MessageSquareWarning className="w-5 h-5 text-primary" />
-          Corporate Hypocrisy Index (CHI)
+          Say-Do Gap™
           <Badge className={cn("ml-auto text-sm", gradeStyle(data.grade))}>{data.grade}</Badge>
         </CardTitle>
         <p className="text-xs text-muted-foreground">
-          Measures the gap between public marketing claims and actual political spending. Lower = more consistent.
+          Measures the gap between public statements and actual political spending. Lower = more consistent.
         </p>
       </CardHeader>
       <CardContent>
@@ -52,7 +55,7 @@ export function HypocrisyIndexCard({ data }: { data: HypocrisyIndex }) {
               />
             </svg>
             <div className="absolute inset-0 flex items-center justify-center">
-              <span className={cn("text-2xl font-bold", chiColor(data.chiScore))}>{data.chiScore}</span>
+              <span className={cn("text-2xl font-bold", gapColor(data.chiScore))}>{data.chiScore}</span>
             </div>
           </div>
           <div className="flex-1 space-y-2">
@@ -82,8 +85,8 @@ export function HypocrisyIndexCard({ data }: { data: HypocrisyIndex }) {
         </div>
 
         <p className="text-xs text-muted-foreground mt-3 border-t border-border pt-3">
-          CHI = (Direct Conflicts × 100% + Indirect Conflicts × 50%) / Total Stances × 100.
-          A score of 0 means perfect alignment; 100 means total hypocrisy.
+          Score = (Direct Conflicts × 100% + Indirect Conflicts × 50%) / Total Stances × 100.
+          A score of 0 means perfect alignment; 100 means maximum disconnect.
         </p>
       </CardContent>
     </Card>
