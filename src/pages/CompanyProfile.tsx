@@ -5,7 +5,7 @@ import {
   Building2, ArrowLeft, Calendar, DollarSign, Users, Flag,
   Network, Scale, MessageSquareWarning, ExternalLink, Shield, Megaphone,
   AlertTriangle, EyeOff, RotateCcw, TrendingUp, Landmark, FileText,
-  BarChart3, Loader2, Sparkles, Search, ClipboardCheck
+  BarChart3, Loader2, Sparkles, Search, ClipboardCheck, CheckCircle2
 } from "lucide-react";
 import { LensSelector } from "@/components/LensSelector";
 import { PlatformPhilosophy } from "@/components/PlatformPhilosophy";
@@ -260,6 +260,10 @@ export default function CompanyProfile() {
   // For sample data companies, still use the DB UUID for features that need it
   const dbCompanyId = dbCompany?.id;
 
+  // Auto-poll child queries while research is in progress
+  const isResearching = dbCompany && ['discovered', 'identity_matched', 'research_in_progress'].includes((dbCompany as any)?.record_status || '');
+  const pollInterval = isResearching ? 10000 : false;
+
   const { data: dbCandidates } = useQuery({
     queryKey: ["company-candidates", dbCompanyId],
     queryFn: async () => {
@@ -267,6 +271,7 @@ export default function CompanyProfile() {
       return data || [];
     },
     enabled: !!dbCompanyId,
+    refetchInterval: pollInterval,
   });
 
   const { data: dbExecutives } = useQuery({
@@ -276,6 +281,7 @@ export default function CompanyProfile() {
       return data || [];
     },
     enabled: !!dbCompanyId,
+    refetchInterval: pollInterval,
   });
 
   const { data: dbPartyBreakdown } = useQuery({
@@ -285,6 +291,7 @@ export default function CompanyProfile() {
       return data || [];
     },
     enabled: !!dbCompanyId,
+    refetchInterval: pollInterval,
   });
 
   const { data: dbPublicStances } = useQuery({
@@ -294,6 +301,7 @@ export default function CompanyProfile() {
       return data || [];
     },
     enabled: !!dbCompanyId,
+    refetchInterval: pollInterval,
   });
 
   const { data: dbDarkMoney } = useQuery({
@@ -303,6 +311,7 @@ export default function CompanyProfile() {
       return data || [];
     },
     enabled: !!dbCompanyId,
+    refetchInterval: pollInterval,
   });
 
   const { data: dbRevolvingDoor } = useQuery({
@@ -312,6 +321,7 @@ export default function CompanyProfile() {
       return data || [];
     },
     enabled: !!dbCompanyId,
+    refetchInterval: pollInterval,
   });
 
   const hasDetailedData = (dbCandidates?.length || 0) > 0 || (dbExecutives?.length || 0) > 0;
@@ -386,7 +396,7 @@ export default function CompanyProfile() {
 
   // DB-only company profile (no sample data)
   if (!company && dbCompany) {
-    const isDiscovering = ['discovered', 'identity_matched', 'research_in_progress'].includes((dbCompany as any).record_status || '');
+    const isDiscovering = isResearching;
     const statusLabels: Record<string, { label: string; color: string }> = {
       discovered: { label: 'Discovered', color: 'bg-civic-yellow/10 text-civic-yellow border-civic-yellow/30' },
       identity_matched: { label: 'Identity Verified', color: 'bg-blue-500/10 text-blue-500 border-blue-500/30' },
@@ -468,35 +478,58 @@ export default function CompanyProfile() {
             </div>
 
             {/* Discovery banner for new companies */}
-            {isDiscovering && (
-              <Card className="mb-8 border-dashed border-2 border-primary/30 bg-primary/5">
-                <CardContent className="p-6">
-                  <div className="flex items-start gap-4">
-                    <div className="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center shrink-0">
-                      <Sparkles className="w-5 h-5 text-primary animate-pulse" />
-                    </div>
-                    <div>
-                      <h3 className="text-lg font-semibold text-foreground mb-1">Building Transparency Profile</h3>
-                      <p className="text-sm text-muted-foreground mb-4">
-                        We found this company and started building its transparency profile from public sources. 
-                        Some signals may appear as research completes.
-                      </p>
-                      <div className="grid grid-cols-2 md:grid-cols-4 gap-2">
-                        {[
-                          'Political spending', 'Lobbying activity', 'Trade associations', 'Executive donations',
-                          'AI hiring tools', 'Worker sentiment', 'Benefits scan', 'Government contracts',
-                        ].map((scan) => (
-                          <div key={scan} className="flex items-center gap-1.5 text-xs text-muted-foreground">
-                            <Loader2 className="w-3 h-3 animate-spin text-primary" />
-                            {scan}
-                          </div>
-                        ))}
+            {isDiscovering && (() => {
+              const scanCompletion = (dbCompany as any).scan_completion as Record<string, boolean> | null;
+              const scanItems = [
+                { key: 'political_spending', label: 'Political spending' },
+                { key: 'lobbying', label: 'Lobbying activity' },
+                { key: 'trade_associations', label: 'Trade associations' },
+                { key: 'executives', label: 'Executive donations' },
+                { key: 'ai_hiring', label: 'AI hiring tools' },
+                { key: 'worker_sentiment', label: 'Worker sentiment' },
+                { key: 'benefits', label: 'Benefits scan' },
+                { key: 'government_contracts', label: 'Government contracts' },
+              ];
+              const completedCount = scanCompletion ? scanItems.filter(s => scanCompletion[s.key]).length : 0;
+
+              return (
+                <Card className="mb-8 border-dashed border-2 border-primary/30 bg-primary/5">
+                  <CardContent className="p-6">
+                    <div className="flex items-start gap-4">
+                      <div className="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center shrink-0">
+                        <Sparkles className="w-5 h-5 text-primary animate-pulse" />
+                      </div>
+                      <div className="flex-1">
+                        <h3 className="text-lg font-semibold text-foreground mb-1">Building Transparency Profile</h3>
+                        <p className="text-sm text-muted-foreground mb-2">
+                          Researching public sources… {completedCount}/{scanItems.length} scans complete.
+                        </p>
+                        <div className="w-full bg-muted rounded-full h-1.5 mb-4">
+                          <div
+                            className="bg-primary h-1.5 rounded-full transition-all duration-500"
+                            style={{ width: `${(completedCount / scanItems.length) * 100}%` }}
+                          />
+                        </div>
+                        <div className="grid grid-cols-2 md:grid-cols-4 gap-2">
+                          {scanItems.map((scan) => {
+                            const done = scanCompletion?.[scan.key];
+                            return (
+                              <div key={scan.key} className={cn("flex items-center gap-1.5 text-xs", done ? "text-foreground" : "text-muted-foreground")}>
+                                {done
+                                  ? <CheckCircle2 className="w-3 h-3 text-civic-green" />
+                                  : <Loader2 className="w-3 h-3 animate-spin text-primary" />
+                                }
+                                {scan.label}
+                              </div>
+                            );
+                          })}
+                        </div>
                       </div>
                     </div>
-                  </div>
-                </CardContent>
-              </Card>
-            )}
+                  </CardContent>
+                </Card>
+              );
+            })()}
 
             {/* Enrich prompt when no detailed data and not discovering */}
             {!hasDetailedData && !isEnriching && !isDiscovering && (
