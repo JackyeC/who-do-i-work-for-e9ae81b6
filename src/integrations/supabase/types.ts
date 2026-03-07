@@ -1589,6 +1589,62 @@ export type Database = {
           },
         ]
       }
+      worker_benefit_signals: {
+        Row: {
+          benefit_category: string
+          benefit_type: string
+          company_id: string
+          confidence: string
+          created_at: string
+          date_detected: string
+          detection_method: string
+          evidence_text: string | null
+          id: string
+          last_verified: string | null
+          source_type: string | null
+          source_url: string | null
+          status: string
+        }
+        Insert: {
+          benefit_category: string
+          benefit_type: string
+          company_id: string
+          confidence?: string
+          created_at?: string
+          date_detected?: string
+          detection_method?: string
+          evidence_text?: string | null
+          id?: string
+          last_verified?: string | null
+          source_type?: string | null
+          source_url?: string | null
+          status?: string
+        }
+        Update: {
+          benefit_category?: string
+          benefit_type?: string
+          company_id?: string
+          confidence?: string
+          created_at?: string
+          date_detected?: string
+          detection_method?: string
+          evidence_text?: string | null
+          id?: string
+          last_verified?: string | null
+          source_type?: string | null
+          source_url?: string | null
+          status?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "worker_benefit_signals_company_id_fkey"
+            columns: ["company_id"]
+            isOneToOne: false
+            referencedRelation: "companies"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
     }
     Views: {
       [_ in never]: never
