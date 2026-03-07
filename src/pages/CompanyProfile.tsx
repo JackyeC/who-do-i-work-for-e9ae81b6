@@ -33,6 +33,7 @@ import { WorkerBenefitsCard } from "@/components/WorkerBenefitsCard";
 import { AIAccountabilityCard } from "@/components/AIAccountabilityCard";
 import { CompensationTransparencyCard } from "@/components/CompensationTransparencyCard";
 import { CompanyIntelligenceScanCard } from "@/components/CompanyIntelligenceScanCard";
+import { ScanDebugPanel } from "@/components/ScanDebugPanel";
 import { useROIPipeline } from "@/hooks/use-roi-pipeline";
 import { supabase } from "@/integrations/supabase/client";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
@@ -61,6 +62,14 @@ export default function CompanyProfile() {
       return data;
     },
     enabled: !!id,
+    // Auto-poll every 10s while company is still being researched
+    refetchInterval: (query) => {
+      const status = (query.state.data as any)?.record_status;
+      if (status && ['discovered', 'identity_matched', 'research_in_progress'].includes(status)) {
+        return 10000;
+      }
+      return false;
+    },
   });
 
   // For DB-only companies (no sample data), use DB data for related queries
@@ -595,6 +604,11 @@ export default function CompanyProfile() {
             {/* Company Intelligence Scan */}
             <div className="mb-6">
               <CompanyIntelligenceScanCard companyId={dbCompany.id} companyName={dbCompany.name} />
+            </div>
+
+            {/* Debug Panel */}
+            <div className="mb-6">
+              <ScanDebugPanel companyId={dbCompany.id} />
             </div>
 
             {/* Live Scan Cards */}

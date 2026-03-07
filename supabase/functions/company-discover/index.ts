@@ -174,20 +174,18 @@ ${searchContent ? `Search results:\n${searchContent}` : 'Use your knowledge.'}`,
 
     await supabase.from('companies').update(updateFields).eq('id', newCompany.id);
 
-    // Step 5: Trigger research scans in background (fire-and-forget)
+    // Step 5: Trigger intelligence scan in background (fire-and-forget)
     const scansToTrigger = [
       { fn: 'company-research', body: { companyName: identityData.official_name || name, enrichExisting: true } },
+      { fn: 'company-intelligence-scan', body: { companyId: newCompany.id, companyName: identityData.official_name || name } },
     ];
 
-    // Fire all background scans without awaiting
-    const supabaseAnonKey = Deno.env.get('SUPABASE_ANON_KEY') || Deno.env.get('SUPABASE_PUBLISHABLE_KEY') || '';
-    
     for (const scan of scansToTrigger) {
       try {
         fetch(`${supabaseUrl}/functions/v1/${scan.fn}`, {
           method: 'POST',
           headers: {
-            'Authorization': `Bearer ${supabaseAnonKey}`,
+            'Authorization': `Bearer ${supabaseKey}`,
             'Content-Type': 'application/json',
           },
           body: JSON.stringify(scan.body),
