@@ -567,6 +567,11 @@ export default function CompanyProfile() {
               <CompanyIntelligenceScanCard companyId={dbCompany.id} companyName={dbCompany.name} />
             </div>
 
+            {/* Transparency Index */}
+            <div className="mb-6">
+              <TransparencyIndex categories={transparencyCategories} />
+            </div>
+
             {/* Debug Panel */}
             <div className="mb-6">
               <ScanDebugPanel companyId={dbCompany.id} />
