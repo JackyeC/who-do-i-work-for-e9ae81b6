@@ -1493,6 +1493,71 @@ export type Database = {
         }
         Relationships: []
       }
+      pay_equity_signals: {
+        Row: {
+          company_id: string
+          confidence: string
+          created_at: string
+          date_detected: string
+          detection_method: string
+          evidence_text: string | null
+          id: string
+          jurisdiction: string | null
+          last_verified: string | null
+          notes: string | null
+          signal_category: string
+          signal_type: string
+          source_title: string | null
+          source_type: string | null
+          source_url: string | null
+          status: string
+        }
+        Insert: {
+          company_id: string
+          confidence?: string
+          created_at?: string
+          date_detected?: string
+          detection_method?: string
+          evidence_text?: string | null
+          id?: string
+          jurisdiction?: string | null
+          last_verified?: string | null
+          notes?: string | null
+          signal_category: string
+          signal_type: string
+          source_title?: string | null
+          source_type?: string | null
+          source_url?: string | null
+          status?: string
+        }
+        Update: {
+          company_id?: string
+          confidence?: string
+          created_at?: string
+          date_detected?: string
+          detection_method?: string
+          evidence_text?: string | null
+          id?: string
+          jurisdiction?: string | null
+          last_verified?: string | null
+          notes?: string | null
+          signal_category?: string
+          signal_type?: string
+          source_title?: string | null
+          source_type?: string | null
+          source_url?: string | null
+          status?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "pay_equity_signals_company_id_fkey"
+            columns: ["company_id"]
+            isOneToOne: false
+            referencedRelation: "companies"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       profiles: {
         Row: {
           created_at: string
