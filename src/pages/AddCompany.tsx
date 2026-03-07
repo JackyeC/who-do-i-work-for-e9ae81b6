@@ -147,8 +147,8 @@ export default function AddCompany() {
             {result && (
               <div className="space-y-4">
                 {result.alreadyExists ? (
-                  <div className="flex items-start gap-3 p-4 rounded-lg bg-amber-500/10 border border-amber-500/20">
-                    <AlertTriangle className="w-5 h-5 text-amber-600 shrink-0 mt-0.5" />
+                  <div className="flex items-start gap-3 p-4 rounded-lg bg-accent/50 border border-border">
+                    <AlertTriangle className="w-5 h-5 text-accent-foreground shrink-0 mt-0.5" />
                     <div>
                       <p className="font-medium text-foreground">{result.company.name} already exists</p>
                       <Button variant="link" className="p-0 h-auto text-primary" onClick={() => navigate(`/company/${result.company.slug}`)}>
