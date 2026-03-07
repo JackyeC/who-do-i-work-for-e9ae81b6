@@ -876,6 +876,14 @@ export default function CompanyProfile() {
                 dbCompanyId={dbCompanyId}
               />
             </div>
+
+            {/* Worker Benefits & Protections */}
+            <div className="mt-6">
+              <WorkerBenefitsCard
+                companyName={company.name}
+                dbCompanyId={dbCompanyId}
+              />
+            </div>
           </div>
 
           {/* Executive Donors */}
