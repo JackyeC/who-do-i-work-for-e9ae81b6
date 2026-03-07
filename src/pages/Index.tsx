@@ -1,17 +1,28 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
 import { Search, Eye, Shield, BookOpen, Building2, TrendingUp, Scale } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { CompanyCard } from "@/components/CompanyCard";
 import { Header } from "@/components/Header";
 import { Footer } from "@/components/Footer";
-import { companies } from "@/data/sampleData";
+import { supabase } from "@/integrations/supabase/client";
 
 const Index = () => {
   const [query, setQuery] = useState("");
+  const [companyCount, setCompanyCount] = useState(0);
+  const [featuredCompanies, setFeaturedCompanies] = useState<any[]>([]);
   const navigate = useNavigate();
+
+  useEffect(() => {
+    const fetchData = async () => {
+      const { count } = await supabase.from("companies").select("*", { count: "exact", head: true });
+      setCompanyCount(count || 0);
+      const { data } = await supabase.from("companies").select("*").order("updated_at", { ascending: false }).limit(4);
+      setFeaturedCompanies(data || []);
+    };
+    fetchData();
+  }, []);
 
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault();
@@ -19,8 +30,6 @@ const Index = () => {
       navigate(`/search?q=${encodeURIComponent(query.trim())}`);
     }
   };
-
-  const featured = companies.slice(0, 4);
 
   return (
     <div className="min-h-screen flex flex-col bg-background">
@@ -65,7 +74,7 @@ const Index = () => {
             </form>
 
             <p className="mt-4 text-sm text-muted-foreground">
-              Currently tracking {companies.length} companies · Data from FEC, OpenSecrets &amp; public filings
+              Currently tracking {companyCount} companies · Data from FEC, OpenSecrets &amp; public filings
             </p>
           </motion.div>
         </div>
@@ -134,8 +143,12 @@ const Index = () => {
           </Button>
         </div>
         <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-4">
-          {featured.map((company) => (
-            <CompanyCard key={company.id} company={company} />
+          {featuredCompanies.map((company) => (
+            <div key={company.id} className="bg-card rounded-lg border border-border p-4 cursor-pointer hover:border-primary/50 transition-colors" onClick={() => navigate(`/company/${company.slug}`)}>
+              <h3 className="font-semibold text-foreground">{company.name}</h3>
+              <p className="text-xs text-muted-foreground mt-1">{company.industry} · {company.state}</p>
+              <p className="text-xs text-muted-foreground mt-2">Civic Footprint: {company.civic_footprint_score}/100</p>
+            </div>
           ))}
         </div>
       </section>
@@ -145,7 +158,7 @@ const Index = () => {
         <div className="container mx-auto px-4">
           <div className="grid md:grid-cols-3 gap-8 text-center">
             {[
-              { value: companies.length, label: "Companies Tracked" },
+              { value: companyCount, label: "Companies Tracked" },
               { value: "$100M+", label: "Political Spending Tracked" },
               { value: "2026", label: "Election Cycle Data" },
             ].map((stat) => (
