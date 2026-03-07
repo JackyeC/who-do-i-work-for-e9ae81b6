@@ -937,6 +937,7 @@ export default function CompanyProfile() {
                   isSearching={pipelineLoading}
                   onTriggerScan={triggerScan}
                   autoScanning={autoScanning}
+                  hasBeenScanned={hasBeenScanned}
                 />
               )}
             </div>
