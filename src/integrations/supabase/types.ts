@@ -1637,6 +1637,74 @@ export type Database = {
           },
         ]
       }
+      scan_runs: {
+        Row: {
+          company_id: string
+          created_at: string
+          error_log: Json | null
+          id: string
+          module_statuses: Json
+          modules_completed: number
+          modules_failed: number
+          modules_with_no_signals: number
+          modules_with_signals: number
+          scan_completed_at: string | null
+          scan_started_at: string
+          scan_status: string
+          total_modules_run: number
+          total_signals_found: number
+          total_sources_scanned: number
+          triggered_by: string
+          warnings: string[] | null
+        }
+        Insert: {
+          company_id: string
+          created_at?: string
+          error_log?: Json | null
+          id?: string
+          module_statuses?: Json
+          modules_completed?: number
+          modules_failed?: number
+          modules_with_no_signals?: number
+          modules_with_signals?: number
+          scan_completed_at?: string | null
+          scan_started_at?: string
+          scan_status?: string
+          total_modules_run?: number
+          total_signals_found?: number
+          total_sources_scanned?: number
+          triggered_by?: string
+          warnings?: string[] | null
+        }
+        Update: {
+          company_id?: string
+          created_at?: string
+          error_log?: Json | null
+          id?: string
+          module_statuses?: Json
+          modules_completed?: number
+          modules_failed?: number
+          modules_with_no_signals?: number
+          modules_with_signals?: number
+          scan_completed_at?: string | null
+          scan_started_at?: string
+          scan_status?: string
+          total_modules_run?: number
+          total_signals_found?: number
+          total_sources_scanned?: number
+          triggered_by?: string
+          warnings?: string[] | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "scan_runs_company_id_fkey"
+            columns: ["company_id"]
+            isOneToOne: false
+            referencedRelation: "companies"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       scan_schedules: {
         Row: {
           alert_count: number
