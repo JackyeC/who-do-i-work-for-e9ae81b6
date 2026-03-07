@@ -33,6 +33,7 @@ import { WorkerBenefitsCard } from "@/components/WorkerBenefitsCard";
 import { AIAccountabilityCard } from "@/components/AIAccountabilityCard";
 import { CompensationTransparencyCard } from "@/components/CompensationTransparencyCard";
 import { CompanyIntelligenceScanCard } from "@/components/CompanyIntelligenceScanCard";
+import { ScanDebugPanel } from "@/components/ScanDebugPanel";
 import { useROIPipeline } from "@/hooks/use-roi-pipeline";
 import { supabase } from "@/integrations/supabase/client";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
