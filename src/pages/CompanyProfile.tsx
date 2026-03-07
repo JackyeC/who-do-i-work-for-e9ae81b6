@@ -62,6 +62,14 @@ export default function CompanyProfile() {
       return data;
     },
     enabled: !!id,
+    // Auto-poll every 10s while company is still being researched
+    refetchInterval: (query) => {
+      const status = (query.state.data as any)?.record_status;
+      if (status && ['discovered', 'identity_matched', 'research_in_progress'].includes(status)) {
+        return 10000;
+      }
+      return false;
+    },
   });
 
   // For DB-only companies (no sample data), use DB data for related queries
