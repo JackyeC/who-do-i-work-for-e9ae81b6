@@ -143,7 +143,7 @@ export function WorkerSentimentCard({ companyName, dbCompanyId }: WorkerSentimen
         {!result ? (
           <div className="text-center py-8 text-muted-foreground">
             <HardHat className="w-8 h-8 mx-auto mb-2 opacity-40" />
-            <p className="text-sm">No worker sentiment data yet. Click "Run Scan" to analyze Glassdoor reviews, employee satisfaction data, and labor practices for {companyName}.</p>
+            <p className="text-sm">No public worker sentiment signals detected yet. Click "Run Scan" to search public sources for workplace sentiment signals for {companyName}.</p>
           </div>
         ) : (
           <>
