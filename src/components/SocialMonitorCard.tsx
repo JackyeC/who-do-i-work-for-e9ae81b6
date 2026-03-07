@@ -9,6 +9,7 @@ import {
 import { supabase } from "@/integrations/supabase/client";
 import { useQuery } from "@tanstack/react-query";
 import { useToast } from "@/hooks/use-toast";
+import { SignalDensity } from "@/components/SignalMeta";
 
 interface SocialMonitorCardProps {
   companyId: string;
