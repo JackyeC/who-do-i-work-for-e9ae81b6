@@ -6,50 +6,44 @@ const corsHeaders = {
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2';
 
 const HR_KEYWORDS = [
-  // Recruiting & Screening
   'AI recruiting', 'automated candidate screening', 'automated screening', 'resume ranking',
   'applicant scoring', 'candidate scoring', 'AI resume screening', 'sourcing automation',
   'predictive hiring', 'algorithmic hiring', 'AI hiring',
-  // Interview & Assessment
   'interview intelligence', 'video interview analysis', 'interview assessment',
   'recruiting chatbot', 'chatbot recruiting',
-  // Talent Management
   'talent intelligence', 'skills inference', 'skills graph', 'matching engine',
   'talent marketplace', 'internal talent marketplace',
-  // Workforce Analytics
   'workforce analytics', 'people analytics', 'performance analytics',
   'performance prediction', 'workforce planning AI',
-  // Employee Monitoring
   'employee monitoring', 'scheduling automation', 'worker surveillance',
-  // Compliance & Governance
   'automated employment decision tool', 'AEDT', 'bias audit',
   'algorithmic decision making', 'automated decision making', 'automated decision-making',
   'AI governance policy', 'algorithmic impact assessment', 'algorithmic transparency',
   'AI hiring transparency', 'Local Law 144', 'EU AI Act employment',
-  // General
   'HR automation', 'HR tech', 'recruiting technology', 'talent acquisition technology',
+  'candidate matching', 'recruiting automation', 'HR automation',
 ];
 
 const VENDOR_MAP: Record<string, string> = {
-  'HireVue': 'video interview analysis',
+  'HireVue': 'video interview assessment',
   'Modern Hire': 'interview intelligence',
-  'Eightfold AI': 'talent intelligence',
-  'Eightfold': 'talent intelligence',
-  'Paradox': 'chatbot recruiting assistant',
-  'Olivia': 'chatbot recruiting assistant',
-  'Phenom': 'talent marketplace',
-  'SeekOut': 'sourcing automation',
-  'Workday': 'workforce analytics',
+  'Eightfold AI': 'talent intelligence / matching',
+  'Eightfold': 'talent intelligence / matching',
+  'Paradox': 'recruiting chatbot',
+  'Olivia': 'recruiting chatbot',
+  'Phenom': 'talent experience platform',
+  'SeekOut': 'sourcing intelligence',
+  'Workday': 'HCM with AI recruiting features',
   'iCIMS': 'applicant tracking',
-  'Greenhouse': 'applicant tracking',
+  'Greenhouse': 'ATS with automation',
   'SAP SuccessFactors': 'workforce analytics',
   'SuccessFactors': 'workforce analytics',
   'Oracle HCM': 'workforce analytics',
   'Harver': 'automated candidate scoring',
   'pymetrics': 'automated candidate scoring',
   'Textio': 'AI job description optimization',
-  'Beamery': 'talent marketplace',
-  'HiredScore': 'AI resume screening',
+  'Beamery': 'talent CRM and automation',
+  'HiredScore': 'AI candidate ranking',
   'UKG': 'workforce analytics',
   'Visier': 'people analytics',
   'Gloat': 'internal talent marketplace',
@@ -84,13 +78,13 @@ const VENDOR_MAP: Record<string, string> = {
 
 function classifySignalCategory(signalType: string): string {
   const categories: Record<string, string[]> = {
-    'Recruiting & Screening': ['AI resume screening', 'automated candidate scoring', 'applicant tracking', 'sourcing automation', 'automated candidate screening', 'AI job description optimization'],
-    'Interview & Assessment': ['interview intelligence', 'video interview analysis', 'chatbot recruiting assistant', 'recruiting chatbot'],
-    'Talent Management': ['talent intelligence', 'talent marketplace', 'internal talent marketplace', 'skills inference'],
-    'Workforce Analytics': ['workforce analytics', 'people analytics', 'performance prediction', 'performance analytics'],
+    'Recruiting & Screening': ['AI resume screening', 'automated candidate scoring', 'applicant tracking', 'sourcing automation', 'automated candidate screening', 'AI job description optimization', 'AI candidate ranking', 'candidate matching', 'predictive hiring'],
+    'Interview & Assessment': ['interview intelligence', 'video interview', 'chatbot recruiting', 'recruiting chatbot'],
+    'Talent Management': ['talent intelligence', 'talent marketplace', 'internal talent marketplace', 'skills inference', 'talent CRM', 'talent experience'],
+    'Workforce Analytics': ['workforce analytics', 'people analytics', 'performance prediction', 'performance analytics', 'HCM'],
     'Employee Monitoring': ['employee monitoring', 'scheduling automation', 'worker surveillance'],
-    'Compliance & Governance': ['bias audit', 'AEDT compliance', 'AI governance', 'algorithmic impact assessment', 'algorithmic transparency'],
-    'HR Automation': ['HR automation'],
+    'Compliance & Governance': ['bias audit', 'AEDT', 'AI governance', 'algorithmic impact', 'algorithmic transparency', 'Local Law 144'],
+    'HR Automation': ['HR automation', 'ATS with automation'],
   };
   for (const [category, types] of Object.entries(categories)) {
     if (types.some(t => signalType.toLowerCase().includes(t.toLowerCase()))) return category;
@@ -103,10 +97,18 @@ Deno.serve(async (req) => {
     return new Response(null, { headers: corsHeaders });
   }
 
+  const scanLog: Record<string, any> = {
+    scan_timestamp: new Date().toISOString(),
+    steps: {},
+  };
+
   try {
     const { companyId, companyName } = await req.json();
+    scanLog.company_id = companyId;
+    scanLog.company_name = companyName;
+
     if (!companyId || !companyName) {
-      return new Response(JSON.stringify({ success: false, error: 'companyId and companyName required' }), {
+      return new Response(JSON.stringify({ success: false, error: 'companyId and companyName required', scanStatus: 'failed' }), {
         status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' }
       });
     }
@@ -118,14 +120,15 @@ Deno.serve(async (req) => {
     const supabase = createClient(supabaseUrl, supabaseKey);
 
     if (!firecrawlKey || !lovableKey) {
-      return new Response(JSON.stringify({ success: false, error: 'Required API keys not configured' }), {
+      console.error('SCAN_LOG:', JSON.stringify({ ...scanLog, steps: { config: 'MISSING_API_KEYS' } }));
+      return new Response(JSON.stringify({ success: false, error: 'Required API keys not configured', scanStatus: 'failed' }), {
         status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' }
       });
     }
 
-    console.log(`AI HR scan for: ${companyName}`);
+    console.log(`[ai-hr-scan] START: ${companyName} (${companyId})`);
 
-    // Step 1: Search for evidence across multiple source categories
+    // ── Step 1: Build search queries (general + vendor case studies) ──
     const searchQueries = [
       `"${companyName}" AI hiring recruiting automation technology`,
       `"${companyName}" automated screening candidate assessment applicant scoring`,
@@ -135,10 +138,19 @@ Deno.serve(async (req) => {
       `"${companyName}" AI governance policy hiring transparency`,
       `"${companyName}" recruiting chatbot interview intelligence video interview`,
       `"${companyName}" privacy policy automated decision making`,
+      // Vendor case study queries
+      `"${companyName}" HireVue`,
+      `"${companyName}" Eightfold AI`,
+      `"${companyName}" Phenom recruiting`,
+      `"${companyName}" Paradox chatbot`,
+      `"${companyName}" talent intelligence recruiting automation`,
     ];
 
     let allContent = '';
     const allSourceUrls: string[] = [];
+    let pagesReturnedCount = 0;
+    let searchSuccessCount = 0;
+    let searchFailCount = 0;
 
     for (const query of searchQueries) {
       try {
@@ -154,36 +166,48 @@ Deno.serve(async (req) => {
         if (searchResp.ok) {
           const searchData = await searchResp.json();
           const results = searchData.data || [];
+          searchSuccessCount++;
+          pagesReturnedCount += results.length;
           for (const r of results) {
             allSourceUrls.push(r.url);
             allContent += `\n\nSOURCE: ${r.url}\nTITLE: ${r.title}\n${r.description || ''}\n${r.markdown?.slice(0, 2000) || ''}`;
           }
+        } else {
+          searchFailCount++;
+          const errText = await searchResp.text();
+          console.warn(`[ai-hr-scan] Search returned ${searchResp.status} for query: ${query.slice(0, 60)}... - ${errText.slice(0, 200)}`);
         }
       } catch (e) {
-        console.error(`Search failed for: ${query}`, e);
+        searchFailCount++;
+        console.error(`[ai-hr-scan] Search exception for: ${query.slice(0, 60)}...`, e);
       }
     }
 
-    // Step 2: Crawl company careers page and privacy policy if available
-    const { data: company } = await supabase
+    scanLog.steps.search = { queries_sent: searchQueries.length, success: searchSuccessCount, failed: searchFailCount, pages_returned: pagesReturnedCount };
+    console.log(`[ai-hr-scan] Search complete: ${searchSuccessCount}/${searchQueries.length} succeeded, ${pagesReturnedCount} pages`);
+
+    // ── Step 2: Crawl company pages (careers, privacy, etc.) ──
+    const { data: companyRow } = await supabase
       .from('companies')
       .select('careers_url')
       .eq('id', companyId)
       .single();
 
     const pagesToScrape: { url: string; type: string }[] = [];
-    if (company?.careers_url) {
-      pagesToScrape.push({ url: company.careers_url, type: 'company careers page' });
+    if (companyRow?.careers_url) {
+      pagesToScrape.push({ url: companyRow.careers_url, type: 'company careers page' });
     }
 
-    // Try common privacy policy and AI governance URLs
     const companyDomain = extractDomain(companyName);
     if (companyDomain) {
-      pagesToScrape.push(
-        { url: `https://www.${companyDomain}/privacy`, type: 'privacy policy' },
-        { url: `https://www.${companyDomain}/ai-principles`, type: 'AI governance policy' },
-      );
+      const paths = ['/careers', '/jobs', '/talent', '/recruiting', '/work-with-us', '/privacy', '/about', '/blog', '/news'];
+      for (const path of paths) {
+        pagesToScrape.push({ url: `https://www.${companyDomain}${path}`, type: `company ${path.slice(1)} page` });
+      }
     }
+
+    let scrapeSuccessCount = 0;
+    let scrapeFailCount = 0;
 
     for (const page of pagesToScrape) {
       try {
@@ -197,7 +221,7 @@ Deno.serve(async (req) => {
             url: page.url,
             formats: ['markdown'],
             onlyMainContent: true,
-            waitFor: 3000,
+            waitFor: 4000,
           }),
         });
 
@@ -205,32 +229,51 @@ Deno.serve(async (req) => {
           const scrapeData = await scrapeResp.json();
           const md = scrapeData.data?.markdown || scrapeData.markdown || '';
           if (md.length > 50) {
+            scrapeSuccessCount++;
+            pagesReturnedCount++;
             allContent += `\n\nSOURCE: ${page.url}\nTYPE: ${page.type}\n${md.slice(0, 5000)}`;
+            allSourceUrls.push(page.url);
           }
+        } else {
+          scrapeFailCount++;
         }
       } catch (e) {
-        console.error(`Scrape failed for ${page.url}`, e);
+        scrapeFailCount++;
+        console.warn(`[ai-hr-scan] Scrape failed for ${page.url}`);
       }
     }
 
-    const now = new Date().toISOString();
+    scanLog.steps.scrape = { attempted: pagesToScrape.length, success: scrapeSuccessCount, failed: scrapeFailCount };
+    console.log(`[ai-hr-scan] Scrape complete: ${scrapeSuccessCount}/${pagesToScrape.length} succeeded`);
 
+    const now = new Date().toISOString();
+    const totalSourcesScanned = pagesReturnedCount;
+
+    // ── Step 3: Handle no content ──
     if (!allContent || allContent.length < 100) {
-      // Record explicit "no signals" scan result
+      console.log(`[ai-hr-scan] No content gathered for ${companyName}, marking completed_no_signals`);
+
       await supabase
         .from('ai_hr_signals')
         .delete()
         .eq('company_id', companyId)
         .eq('status', 'auto_detected');
 
+      scanLog.steps.result = 'completed_no_signals_no_content';
+      console.log('[ai-hr-scan] SCAN_LOG:', JSON.stringify(scanLog));
+
       return new Response(JSON.stringify({
-        success: true, signalsFound: 0,
+        success: true,
+        signalsFound: 0,
+        scanStatus: 'completed_no_signals',
+        sourcesScanned: totalSourcesScanned,
         message: 'No AI hiring technology signals detected in scanned public sources.',
         scannedAt: now,
       }), { headers: { ...corsHeaders, 'Content-Type': 'application/json' } });
     }
 
-    // Step 3: AI extraction with expanded prompt
+    // ── Step 4: AI analysis ──
+    console.log(`[ai-hr-scan] Starting Gemini analysis with ${allContent.length} chars of content`);
     const truncated = allContent.slice(0, 25000);
     const vendorList = Object.keys(VENDOR_MAP).join(', ');
     const keywordList = HR_KEYWORDS.join(', ');
@@ -246,7 +289,7 @@ Deno.serve(async (req) => {
         messages: [
           {
             role: 'system',
-            content: 'You are an expert at detecting AI and automation usage in corporate hiring and HR practices from public sources. Return only valid JSON.',
+            content: 'You are an expert at detecting AI and automation usage in corporate hiring and HR practices from public sources. Return only valid JSON arrays. Be conservative — only flag things with actual evidence from the provided content. Never fabricate signals.',
           },
           {
             role: 'user',
@@ -275,7 +318,7 @@ Return a JSON array of detected signals:
   "confidence": "direct, strong_inference, moderate_inference, or weak_inference"
 }]
 
-Return [] if no evidence found. Be conservative — only flag things with actual evidence.
+Return [] if no evidence found. Be conservative — only flag things with actual evidence. Never generate generic or placeholder links.
 
 Content:
 ${truncated}`,
@@ -285,14 +328,24 @@ ${truncated}`,
     });
 
     if (!aiResp.ok) {
-      console.error('AI extraction failed:', aiResp.status);
-      return new Response(JSON.stringify({ success: false, error: 'AI analysis failed' }), {
+      const errText = await aiResp.text();
+      console.error(`[ai-hr-scan] AI gateway error: ${aiResp.status} - ${errText.slice(0, 500)}`);
+      scanLog.steps.ai = { status: 'failed', http_status: aiResp.status };
+      console.log('[ai-hr-scan] SCAN_LOG:', JSON.stringify(scanLog));
+      return new Response(JSON.stringify({
+        success: false,
+        error: `AI analysis failed (${aiResp.status})`,
+        scanStatus: 'failed',
+        sourcesScanned: totalSourcesScanned,
+      }), {
         status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' }
       });
     }
 
     const aiData = await aiResp.json();
     const raw = aiData.choices?.[0]?.message?.content || '[]';
+    scanLog.steps.ai = { status: 'success', response_length: raw.length };
+    console.log(`[ai-hr-scan] AI response received: ${raw.length} chars`);
 
     let signals: any[];
     try {
@@ -300,64 +353,91 @@ ${truncated}`,
       signals = JSON.parse(jsonMatch[1].trim());
       if (!Array.isArray(signals)) signals = [];
     } catch {
-      console.error('Failed to parse AI output:', raw.slice(0, 500));
+      console.error('[ai-hr-scan] Failed to parse AI output:', raw.slice(0, 500));
       signals = [];
     }
 
-    console.log(`Detected ${signals.length} AI/HR signals for ${companyName}`);
+    console.log(`[ai-hr-scan] Extracted ${signals.length} signals for ${companyName}`);
+    scanLog.steps.extraction = { signals_count: signals.length };
 
-    // Step 4: Upsert signals (clear old auto-detected, keep verified/disputed)
-    await supabase
+    // ── Step 5: Persist signals ──
+    const { error: deleteErr } = await supabase
       .from('ai_hr_signals')
       .delete()
       .eq('company_id', companyId)
       .eq('status', 'auto_detected');
 
+    if (deleteErr) {
+      console.error('[ai-hr-scan] Delete old signals error:', deleteErr);
+    }
+
     if (signals.length === 0) {
+      scanLog.steps.result = 'completed_no_signals';
+      console.log('[ai-hr-scan] SCAN_LOG:', JSON.stringify(scanLog));
       return new Response(JSON.stringify({
-        success: true, signalsFound: 0,
+        success: true,
+        signalsFound: 0,
+        scanStatus: 'completed_no_signals',
+        sourcesScanned: totalSourcesScanned,
         message: 'No AI hiring technology signals detected in scanned public sources.',
         scannedAt: now,
       }), { headers: { ...corsHeaders, 'Content-Type': 'application/json' } });
     }
 
-    const { error: insertErr } = await supabase.from('ai_hr_signals').insert(
-      signals.slice(0, 30).map((s: any) => ({
-        company_id: companyId,
-        signal_type: s.signal_type || 'unknown',
-        signal_category: classifySignalCategory(s.signal_type || ''),
-        tool_name: s.tool_name || null,
-        vendor_name: s.vendor_name || null,
-        source_url: s.source_url || null,
-        source_type: s.source_type || null,
-        evidence_text: s.evidence_text || null,
-        detection_method: s.detection_method || 'keyword_detection',
-        confidence: s.confidence || 'moderate_inference',
-        date_detected: now,
-        last_verified: null,
-        status: 'auto_detected',
-      }))
-    );
+    const rows = signals.slice(0, 30).map((s: any) => ({
+      company_id: companyId,
+      signal_type: s.signal_type || 'unknown',
+      signal_category: classifySignalCategory(s.signal_type || ''),
+      tool_name: s.tool_name || null,
+      vendor_name: s.vendor_name || null,
+      source_url: s.source_url || null,
+      source_type: s.source_type || null,
+      evidence_text: s.evidence_text || null,
+      detection_method: s.detection_method || 'keyword_detection',
+      confidence: s.confidence || 'moderate_inference',
+      date_detected: now,
+      last_verified: null,
+      status: 'auto_detected',
+    }));
+
+    const { error: insertErr } = await supabase.from('ai_hr_signals').insert(rows);
 
     if (insertErr) {
-      console.error('Insert error:', insertErr);
-      return new Response(JSON.stringify({ success: false, error: insertErr.message }), {
+      console.error('[ai-hr-scan] Insert error:', insertErr);
+      scanLog.steps.db_insert = { status: 'failed', error: insertErr.message };
+      console.log('[ai-hr-scan] SCAN_LOG:', JSON.stringify(scanLog));
+      return new Response(JSON.stringify({
+        success: false,
+        error: `Database insert failed: ${insertErr.message}`,
+        scanStatus: 'failed',
+        sourcesScanned: totalSourcesScanned,
+      }), {
         status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' }
       });
     }
 
+    scanLog.steps.db_insert = { status: 'success', rows_inserted: rows.length };
+    scanLog.steps.result = 'completed_with_signals';
+    console.log(`[ai-hr-scan] SUCCESS: ${rows.length} signals saved for ${companyName}`);
+    console.log('[ai-hr-scan] SCAN_LOG:', JSON.stringify(scanLog));
+
     return new Response(JSON.stringify({
       success: true,
-      signalsFound: signals.length,
+      signalsFound: rows.length,
+      scanStatus: 'completed_with_signals',
+      sourcesScanned: totalSourcesScanned,
       companyId,
       scannedAt: now,
     }), { headers: { ...corsHeaders, 'Content-Type': 'application/json' } });
 
   } catch (error) {
-    console.error('AI HR scan error:', error);
+    console.error('[ai-hr-scan] Unhandled error:', error);
+    scanLog.steps.error = error instanceof Error ? error.message : 'Unknown error';
+    console.log('[ai-hr-scan] SCAN_LOG:', JSON.stringify(scanLog));
     return new Response(JSON.stringify({
       success: false,
       error: error instanceof Error ? error.message : 'Unknown error',
+      scanStatus: 'failed',
     }), { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } });
   }
 });
