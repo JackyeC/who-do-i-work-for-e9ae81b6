@@ -538,6 +538,9 @@ export default function CompanyProfile() {
             {/* Lens Selector */}
             <LensSelector activeLens={activeLens} onLensChange={setActiveLens} />
 
+            {/* Platform Philosophy */}
+            <PlatformPhilosophy />
+
             {/* Company Intelligence Scan */}
             <div className="mb-6">
               <CompanyIntelligenceScanCard companyId={dbCompany.id} companyName={dbCompany.name} />
