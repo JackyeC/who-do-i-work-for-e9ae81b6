@@ -103,7 +103,7 @@ function ScorecardCanvas({ data }: { data: ScorecardData }) {
             marginTop: 6, fontSize: 12, fontWeight: 600,
             color: footprintColor, textTransform: "uppercase", letterSpacing: 0.5,
           }}>
-            {footprintLabel}
+            {footprintLabel.label}
           </div>
         </div>
 
