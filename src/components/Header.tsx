@@ -37,6 +37,12 @@ export function Header() {
             <HardHat className="w-3.5 h-3.5" />
             Jobs
           </Link>
+          {user && (
+            <Link to="/my-offer-checks" className="text-sm font-medium text-muted-foreground hover:text-foreground transition-colors flex items-center gap-1">
+              <ClipboardCheck className="w-3.5 h-3.5" />
+              My Offer Checks
+            </Link>
+          )}
           <Link to={user ? "/who-do-i-work-for" : "/login"}>
             <Button size="sm" variant="default" className="gap-1.5">
               <Briefcase className="w-3.5 h-3.5" />
