@@ -703,12 +703,9 @@ export default function CompanyProfile() {
           {/* Lens Selector */}
           <LensSelector activeLens={activeLens} onLensChange={setActiveLens} />
 
-          {/* Lens-ordered sections use CSS order */}
-          <div className="flex flex-col">
-
           {/* ── SCORING & INTELLIGENCE ─────────────────────────────── */}
           {(company.influenceROI || company.hypocrisyIndex || company.politicalRisk || company.benchmark) && (
-            <div className="mb-10" style={{ order: getLens(activeLens).modulePriority.indexOf("intelligence-scores") }}>
+            <div className="mb-10">
               <h2 className="text-xl font-bold text-foreground mb-1 flex items-center gap-2">
                 <BarChart3 className="w-5 h-5 text-primary" />
                 Intelligence Scores
