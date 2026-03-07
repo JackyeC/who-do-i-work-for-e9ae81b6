@@ -2,7 +2,7 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
-import { Search, Eye, Shield, BookOpen, Building2, TrendingUp, Scale } from "lucide-react";
+import { Search, Eye, Shield, BookOpen, Building2, TrendingUp, Scale, ClipboardCheck } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Header } from "@/components/Header";
@@ -77,6 +77,23 @@ const Index = () => {
             <p className="mt-4 text-sm text-muted-foreground">
               Currently tracking {companyCount} companies · Data from FEC, OpenSecrets &amp; public filings
             </p>
+
+            {/* Offer Check CTA */}
+            <div className="mt-8 p-5 rounded-xl border border-primary/20 bg-primary/5 max-w-lg mx-auto">
+              <div className="flex items-center gap-2 mb-2">
+                <ClipboardCheck className="w-5 h-5 text-primary" />
+                <span className="font-semibold text-foreground">Offer Check</span>
+              </div>
+              <p className="text-sm text-muted-foreground mb-3">
+                Before you accept the offer, run the Offer Check. Review public signals about any employer.
+              </p>
+              <Button variant="outline" size="sm" onClick={() => {
+                const input = document.querySelector<HTMLInputElement>('input[placeholder*="Search"]');
+                input?.focus();
+              }}>
+                Search a company to start
+              </Button>
+            </div>
           </motion.div>
         </div>
       </section>

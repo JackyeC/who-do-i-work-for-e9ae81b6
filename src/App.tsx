@@ -16,6 +16,8 @@ import AddCompany from "./pages/AddCompany";
 import Jobs from "./pages/Jobs";
 import NotFound from "./pages/NotFound";
 import RequestCorrection from "./pages/RequestCorrection";
+import OfferCheck from "./pages/OfferCheck";
+import MyOfferChecks from "./pages/MyOfferChecks";
 
 const queryClient = new QueryClient();
 
@@ -41,6 +43,12 @@ const App = () => (
             <Route path="/add-company" element={<AddCompany />} />
             <Route path="/jobs" element={<Jobs />} />
             <Route path="/request-correction" element={<RequestCorrection />} />
+            <Route path="/offer-check/:companyId" element={<OfferCheck />} />
+            <Route path="/my-offer-checks" element={
+              <ProtectedRoute>
+                <MyOfferChecks />
+              </ProtectedRoute>
+            } />
             <Route path="*" element={<NotFound />} />
           </Routes>
         </BrowserRouter>

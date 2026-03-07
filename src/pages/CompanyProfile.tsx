@@ -1,11 +1,11 @@
 import { useState, useMemo, ReactNode } from "react";
-import { useParams, Link } from "react-router-dom";
+import { useParams, Link, useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
 import {
   Building2, ArrowLeft, Calendar, DollarSign, Users, Flag,
   Network, Scale, MessageSquareWarning, ExternalLink, Shield, Megaphone,
   AlertTriangle, EyeOff, RotateCcw, TrendingUp, Landmark, FileText,
-  BarChart3, Loader2, Sparkles, Search
+  BarChart3, Loader2, Sparkles, Search, ClipboardCheck
 } from "lucide-react";
 import { LensSelector } from "@/components/LensSelector";
 import { PlatformPhilosophy } from "@/components/PlatformPhilosophy";
@@ -555,6 +555,22 @@ export default function CompanyProfile() {
                 </Card>
               )}
             </div>
+
+            {/* Offer Check CTA */}
+            <Card className="mb-6 border-primary/20 bg-gradient-to-r from-primary/5 to-transparent">
+              <CardContent className="p-4 flex items-center gap-4">
+                <div className="w-10 h-10 rounded-lg bg-primary/10 flex items-center justify-center shrink-0">
+                  <ClipboardCheck className="w-5 h-5 text-primary" />
+                </div>
+                <div className="flex-1">
+                  <h3 className="font-semibold text-foreground text-sm">Run the Offer Check</h3>
+                  <p className="text-xs text-muted-foreground">Public signals to review before you say yes.</p>
+                </div>
+                <Button size="sm" onClick={() => window.location.href = `/offer-check/${dbCompany.id}`}>
+                  Run Offer Check
+                </Button>
+              </CardContent>
+            </Card>
 
             {/* Lens Selector */}
             <LensSelector activeLens={activeLens} onLensChange={setActiveLens} />
