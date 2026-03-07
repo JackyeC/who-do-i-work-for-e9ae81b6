@@ -545,6 +545,7 @@ export default function CompanyProfile() {
               <AgencyContractsCard companyName={dbCompany.name} dbCompanyId={dbCompany.id} />
               <IdeologyFlagsCard companyName={dbCompany.name} dbCompanyId={dbCompany.id} />
               <WorkerSentimentCard companyName={dbCompany.name} dbCompanyId={dbCompany.id} />
+              <AIHiringCard companyName={dbCompany.name} dbCompanyId={dbCompany.id} />
             </div>
           </motion.div>
         </div>
