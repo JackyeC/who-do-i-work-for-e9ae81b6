@@ -556,6 +556,22 @@ export default function CompanyProfile() {
               )}
             </div>
 
+            {/* Offer Check CTA */}
+            <Card className="mb-6 border-primary/20 bg-gradient-to-r from-primary/5 to-transparent">
+              <CardContent className="p-4 flex items-center gap-4">
+                <div className="w-10 h-10 rounded-lg bg-primary/10 flex items-center justify-center shrink-0">
+                  <ClipboardCheck className="w-5 h-5 text-primary" />
+                </div>
+                <div className="flex-1">
+                  <h3 className="font-semibold text-foreground text-sm">Run the Offer Check</h3>
+                  <p className="text-xs text-muted-foreground">Public signals to review before you say yes.</p>
+                </div>
+                <Button size="sm" onClick={() => window.location.href = `/offer-check/${dbCompany.id}`}>
+                  Run Offer Check
+                </Button>
+              </CardContent>
+            </Card>
+
             {/* Lens Selector */}
             <LensSelector activeLens={activeLens} onLensChange={setActiveLens} />
 
