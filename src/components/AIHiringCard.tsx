@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Bot, Loader2, ExternalLink, ShieldCheck, AlertTriangle, Eye, BrainCircuit, RefreshCw, Clock, FileCheck } from "lucide-react";
+import { Bot, Loader2, ExternalLink, ShieldCheck, AlertTriangle, Eye, BrainCircuit, RefreshCw, Clock, FileCheck, BarChart3, AlertCircle, CheckCircle2, XCircle } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -12,6 +12,8 @@ interface AIHiringCardProps {
   companyName: string;
   dbCompanyId: string;
 }
+
+type ScanStatus = 'not_run' | 'in_progress' | 'completed_no_signals' | 'completed_with_signals' | 'failed';
 
 const confidenceColors: Record<string, string> = {
   direct: "text-civic-green border-civic-green/30",
@@ -63,7 +65,11 @@ function getSummaryLabels(signals: any[]): string[] {
 }
 
 export function AIHiringCard({ companyName, dbCompanyId }: AIHiringCardProps) {
-  const [isScanning, setIsScanning] = useState(false);
+  const [scanState, setScanState] = useState<{
+    status: ScanStatus;
+    sourcesScanned?: number;
+    errorMessage?: string;
+  }>({ status: 'not_run' });
   const { toast } = useToast();
   const queryClient = useQueryClient();
 
@@ -81,28 +87,42 @@ export function AIHiringCard({ companyName, dbCompanyId }: AIHiringCardProps) {
     enabled: !!dbCompanyId,
   });
 
+  // Once signals load, update scan status if we haven't scanned yet
+  const effectiveScanStatus: ScanStatus =
+    scanState.status !== 'not_run' ? scanState.status :
+    isLoading ? 'not_run' :
+    (signals?.length || 0) > 0 ? 'completed_with_signals' :
+    'not_run';
+
   const handleScan = async () => {
-    setIsScanning(true);
+    setScanState({ status: 'in_progress' });
     try {
       const { data, error } = await supabase.functions.invoke("ai-hr-scan", {
         body: { companyId: dbCompanyId, companyName },
       });
       if (error) throw error;
+
+      const scanStatus = data?.scanStatus || (data?.success ? (data.signalsFound > 0 ? 'completed_with_signals' : 'completed_no_signals') : 'failed');
+
+      setScanState({
+        status: scanStatus,
+        sourcesScanned: data?.sourcesScanned,
+      });
+
       if (data?.success) {
         toast({
           title: "AI/HR scan complete",
           description: data.signalsFound > 0
-            ? `Found ${data.signalsFound} AI/hiring technology signals`
-            : "No AI/hiring technology signals detected",
+            ? `Found ${data.signalsFound} AI/hiring technology signals from ${data.sourcesScanned || '?'} sources`
+            : "No AI/hiring technology signals detected in scanned public sources",
         });
         queryClient.invalidateQueries({ queryKey: ["ai-hr-signals", dbCompanyId] });
       } else {
         throw new Error(data?.error || "Scan failed");
       }
     } catch (e: any) {
+      setScanState({ status: 'failed', errorMessage: e.message });
       toast({ title: "Scan failed", description: e.message, variant: "destructive" });
-    } finally {
-      setIsScanning(false);
     }
   };
 
@@ -121,6 +141,38 @@ export function AIHiringCard({ companyName, dbCompanyId }: AIHiringCardProps) {
     ? signals.reduce((latest: string, s: any) => s.date_detected > latest ? s.date_detected : latest, signals[0].date_detected)
     : null;
 
+  const renderScanStatusBanner = () => {
+    switch (effectiveScanStatus) {
+      case 'in_progress':
+        return (
+          <div className="flex items-center gap-2 p-3 rounded-lg bg-primary/5 border border-primary/20 mb-4">
+            <Loader2 className="w-4 h-4 animate-spin text-primary" />
+            <span className="text-sm text-primary font-medium">Scanning public sources for hiring technology signals…</span>
+          </div>
+        );
+      case 'failed':
+        return (
+          <div className="flex items-center gap-2 p-3 rounded-lg bg-destructive/5 border border-destructive/20 mb-4">
+            <XCircle className="w-4 h-4 text-destructive" />
+            <span className="text-sm text-destructive font-medium">
+              Scan failed. {scanState.errorMessage ? scanState.errorMessage : 'Try again.'}
+            </span>
+          </div>
+        );
+      case 'completed_no_signals':
+        return (
+          <div className="flex items-center gap-2 p-3 rounded-lg bg-muted/50 border border-border mb-4">
+            <CheckCircle2 className="w-4 h-4 text-muted-foreground" />
+            <span className="text-sm text-muted-foreground">
+              Public sources scanned{scanState.sourcesScanned ? ` (${scanState.sourcesScanned} pages)` : ''}. No hiring automation signals detected.
+            </span>
+          </div>
+        );
+      default:
+        return null;
+    }
+  };
+
   return (
     <Card>
       <CardHeader>
@@ -138,29 +190,35 @@ export function AIHiringCard({ companyName, dbCompanyId }: AIHiringCardProps) {
             )}
             <Button
               onClick={handleScan}
-              disabled={isScanning}
+              disabled={effectiveScanStatus === 'in_progress'}
               variant="outline"
               size="sm"
               className="gap-1.5"
             >
-              {isScanning ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <RefreshCw className="w-3.5 h-3.5" />}
-              {isScanning ? "Scanning…" : "Scan"}
+              {effectiveScanStatus === 'in_progress' ? (
+                <Loader2 className="w-3.5 h-3.5 animate-spin" />
+              ) : (
+                <RefreshCw className="w-3.5 h-3.5" />
+              )}
+              {effectiveScanStatus === 'in_progress' ? "Scanning…" : hasSignals ? "Re-Scan" : "Run Scan"}
             </Button>
           </div>
         </div>
       </CardHeader>
       <CardContent>
+        {renderScanStatusBanner()}
+
         {isLoading ? (
           <div className="flex items-center justify-center py-8">
             <Loader2 className="w-5 h-5 animate-spin text-muted-foreground" />
           </div>
-        ) : !hasSignals ? (
+        ) : !hasSignals && effectiveScanStatus === 'not_run' ? (
           <div className="text-center py-6">
             <BrainCircuit className="w-8 h-8 text-muted-foreground mx-auto mb-2" />
-            <p className="text-sm text-muted-foreground mb-1">No AI/hiring technology signals detected yet</p>
-            <p className="text-xs text-muted-foreground">Click "Scan" to search public sources for evidence of AI or automated systems in hiring and HR.</p>
+            <p className="text-sm text-muted-foreground mb-1">Scan not run yet</p>
+            <p className="text-xs text-muted-foreground">Click "Run Scan" to search public sources for evidence of AI or automated systems in hiring and HR.</p>
           </div>
-        ) : (
+        ) : !hasSignals ? null : (
           <div className="space-y-4">
             {/* Summary labels */}
             {summaryLabels.length > 0 && (
@@ -180,6 +238,12 @@ export function AIHiringCard({ companyName, dbCompanyId }: AIHiringCardProps) {
                 <Bot className="w-3 h-3" />
                 {signals!.length} signal{signals!.length !== 1 ? "s" : ""} detected
               </Badge>
+              {scanState.sourcesScanned && (
+                <Badge variant="outline" className="gap-1">
+                  <BarChart3 className="w-3 h-3" />
+                  {scanState.sourcesScanned} sources scanned
+                </Badge>
+              )}
               {verifiedCount > 0 && (
                 <Badge variant="outline" className="gap-1 text-civic-green border-civic-green/30">
                   <ShieldCheck className="w-3 h-3" />
