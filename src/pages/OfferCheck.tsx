@@ -4,7 +4,7 @@ import { motion } from "framer-motion";
 import {
   ArrowLeft, ClipboardCheck, Building2, Share2, Bookmark,
   BookmarkCheck, Loader2, Sparkles, Crown, Download, GitCompareArrows,
-  AlertTriangle, Clock
+  AlertTriangle, Clock, Eye
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
