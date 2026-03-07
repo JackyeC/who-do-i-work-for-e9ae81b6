@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Bot, Loader2, ExternalLink, ShieldCheck, AlertTriangle, Eye, BrainCircuit, RefreshCw } from "lucide-react";
+import { Bot, Loader2, ExternalLink, ShieldCheck, AlertTriangle, Eye, BrainCircuit, RefreshCw, Clock, FileCheck } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -21,6 +21,16 @@ const confidenceColors: Record<string, string> = {
   unverified: "text-muted-foreground border-border",
 };
 
+const categoryIcons: Record<string, typeof Bot> = {
+  "Recruiting & Screening": Bot,
+  "Interview & Assessment": Eye,
+  "Talent Management": BrainCircuit,
+  "Workforce Analytics": BrainCircuit,
+  "Employee Monitoring": Eye,
+  "Compliance & Governance": ShieldCheck,
+  "HR Automation": Bot,
+};
+
 const statusIcons: Record<string, string> = {
   auto_detected: "🔍",
   needs_review: "👁️",
@@ -29,14 +39,28 @@ const statusIcons: Record<string, string> = {
   archived: "📦",
 };
 
-const categoryIcons: Record<string, typeof Bot> = {
-  "Recruiting & Screening": Bot,
-  "Interview & Assessment": Eye,
-  "Talent Management": BrainCircuit,
-  "Workforce Analytics": BrainCircuit,
-  "Employee Monitoring": Eye,
-  "Compliance & Governance": ShieldCheck,
-};
+function getSummaryLabels(signals: any[]): string[] {
+  const labels: string[] = [];
+  const categories = new Set(signals.map((s: any) => s.signal_category));
+  const hasVerified = signals.some((s: any) => s.status === "verified");
+  const hasBiasAudit = signals.some((s: any) =>
+    s.signal_type?.toLowerCase().includes("bias audit")
+  );
+  const hasGovernance = signals.some((s: any) =>
+    s.signal_type?.toLowerCase().includes("governance")
+  );
+  const hasMonitoring = categories.has("Employee Monitoring");
+
+  if (signals.length > 0) labels.push("AI hiring tools detected");
+  if (categories.has("Recruiting & Screening")) labels.push("Automated screening signals found");
+  if (hasBiasAudit) labels.push("Bias audit publicly disclosed");
+  if (hasGovernance) labels.push("AI governance policy available");
+  if (hasMonitoring) labels.push("Employee monitoring signals detected");
+  if (categories.has("Talent Management")) labels.push("Talent marketplace platform detected");
+  if (hasVerified) labels.push("Signals independently verified");
+
+  return labels;
+}
 
 export function AIHiringCard({ companyName, dbCompanyId }: AIHiringCardProps) {
   const [isScanning, setIsScanning] = useState(false);
@@ -82,7 +106,6 @@ export function AIHiringCard({ companyName, dbCompanyId }: AIHiringCardProps) {
     }
   };
 
-  // Group signals by category
   const grouped = (signals || []).reduce((acc: Record<string, any[]>, s: any) => {
     const cat = s.signal_category || "Other";
     if (!acc[cat]) acc[cat] = [];
@@ -93,6 +116,10 @@ export function AIHiringCard({ companyName, dbCompanyId }: AIHiringCardProps) {
   const hasSignals = (signals?.length || 0) > 0;
   const verifiedCount = signals?.filter((s: any) => s.status === "verified").length || 0;
   const autoCount = signals?.filter((s: any) => s.status === "auto_detected").length || 0;
+  const summaryLabels = hasSignals ? getSummaryLabels(signals!) : [];
+  const lastScanned = signals?.length
+    ? signals.reduce((latest: string, s: any) => s.date_detected > latest ? s.date_detected : latest, signals[0].date_detected)
+    : null;
 
   return (
     <Card>
@@ -102,16 +129,24 @@ export function AIHiringCard({ companyName, dbCompanyId }: AIHiringCardProps) {
             <BrainCircuit className="w-5 h-5 text-primary" />
             Hiring Technology & AI Use
           </CardTitle>
-          <Button
-            onClick={handleScan}
-            disabled={isScanning}
-            variant="outline"
-            size="sm"
-            className="gap-1.5"
-          >
-            {isScanning ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <RefreshCw className="w-3.5 h-3.5" />}
-            {isScanning ? "Scanning…" : "Scan"}
-          </Button>
+          <div className="flex items-center gap-2">
+            {lastScanned && (
+              <span className="text-xs text-muted-foreground flex items-center gap-1">
+                <Clock className="w-3 h-3" />
+                {new Date(lastScanned).toLocaleDateString()}
+              </span>
+            )}
+            <Button
+              onClick={handleScan}
+              disabled={isScanning}
+              variant="outline"
+              size="sm"
+              className="gap-1.5"
+            >
+              {isScanning ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <RefreshCw className="w-3.5 h-3.5" />}
+              {isScanning ? "Scanning…" : "Scan"}
+            </Button>
+          </div>
         </div>
       </CardHeader>
       <CardContent>
@@ -127,7 +162,19 @@ export function AIHiringCard({ companyName, dbCompanyId }: AIHiringCardProps) {
           </div>
         ) : (
           <div className="space-y-4">
-            {/* Summary bar */}
+            {/* Summary labels */}
+            {summaryLabels.length > 0 && (
+              <div className="flex flex-wrap gap-1.5 pb-3 border-b border-border">
+                {summaryLabels.map((label) => (
+                  <Badge key={label} variant="secondary" className="text-xs gap-1">
+                    <FileCheck className="w-3 h-3" />
+                    {label}
+                  </Badge>
+                ))}
+              </div>
+            )}
+
+            {/* Stats bar */}
             <div className="flex flex-wrap gap-2 pb-3 border-b border-border">
               <Badge variant="secondary" className="gap-1">
                 <Bot className="w-3 h-3" />
