@@ -644,6 +644,7 @@ export default function CompanyProfile() {
               dbRevolvingDoor={dbRevolvingDoor}
               livePipeline={livePipeline}
               autoScanning={autoScanning}
+              hasBeenScanned={hasBeenScanned}
               triggerScan={triggerScan}
             />
           </motion.div>
