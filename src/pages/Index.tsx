@@ -2,7 +2,7 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
-import { Search, Eye, Shield, BookOpen, Building2, TrendingUp, Scale } from "lucide-react";
+import { Search, Eye, Shield, BookOpen, Building2, TrendingUp, Scale, ClipboardCheck } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Header } from "@/components/Header";
