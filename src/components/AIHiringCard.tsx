@@ -326,8 +326,8 @@ export function AIHiringCard({ companyName, dbCompanyId }: AIHiringCardProps) {
 
             {/* Disclaimer */}
             <p className="text-xs text-muted-foreground pt-2 border-t border-border">
-              Signals are auto-detected from public sources and do not constitute proof of specific practices. 
-              Information is provided for transparency purposes only.
+              Signals are detected from publicly available sources and presented with confidence levels.
+              No conclusions are drawn. Interpretation is left to the user.
             </p>
           </div>
         )}
