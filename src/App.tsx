@@ -19,6 +19,7 @@ import RequestCorrection from "./pages/RequestCorrection";
 import OfferCheck from "./pages/OfferCheck";
 import MyOfferChecks from "./pages/MyOfferChecks";
 import CompareOfferChecks from "./pages/CompareOfferChecks";
+import JobDashboard from "./pages/JobDashboard";
 
 const queryClient = new QueryClient();
 
