@@ -177,7 +177,7 @@ export default function AddCompany() {
                     )}
 
                     {result.warnings?.length > 0 && (
-                      <p className="text-xs text-amber-600">Some data couldn't be saved: {result.warnings.join(', ')}</p>
+                      <p className="text-xs text-destructive">Some data couldn't be saved: {result.warnings.join(', ')}</p>
                     )}
 
                     <Button onClick={() => navigate(`/company/${result.company.slug}`)} className="w-full gap-2">
