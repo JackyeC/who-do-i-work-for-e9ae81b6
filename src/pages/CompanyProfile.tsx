@@ -1,10 +1,11 @@
+import { useState } from "react";
 import { useParams, Link } from "react-router-dom";
 import { motion } from "framer-motion";
 import {
   Building2, ArrowLeft, Calendar, DollarSign, Users, Flag,
   Network, Scale, MessageSquareWarning, ExternalLink, Shield, Megaphone,
   AlertTriangle, EyeOff, RotateCcw, TrendingUp, Landmark, FileText,
-  BarChart3, Loader2
+  BarChart3, Loader2, Sparkles
 } from "lucide-react";
 import { PieChart, Pie, Cell, ResponsiveContainer, Tooltip, BarChart, Bar, XAxis, YAxis, CartesianGrid, Legend } from "recharts";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -26,11 +27,18 @@ import { IdeologyFlagsCard } from "@/components/IdeologyFlagsCard";
 import { WorkerSentimentCard } from "@/components/WorkerSentimentCard";
 import { useROIPipeline } from "@/hooks/use-roi-pipeline";
 import { supabase } from "@/integrations/supabase/client";
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
+import { useToast } from "@/hooks/use-toast";
+import {
+  Table, TableBody, TableCell, TableHead, TableHeader, TableRow
+} from "@/components/ui/table";
 
 export default function CompanyProfile() {
   const { id } = useParams();
   const company = companies.find((c) => c.id === id);
+  const { toast } = useToast();
+  const queryClient = useQueryClient();
+  const [isEnriching, setIsEnriching] = useState(false);
 
   // Try to load from DB by slug if not in sample data
   const { data: dbCompany, isLoading: dbLoading } = useQuery({
@@ -46,6 +54,93 @@ export default function CompanyProfile() {
     },
     enabled: !company && !!id,
   });
+
+  // Load related data for DB companies
+  const dbCompanyId = company ? undefined : dbCompany?.id;
+
+  const { data: dbCandidates } = useQuery({
+    queryKey: ["company-candidates", dbCompanyId],
+    queryFn: async () => {
+      const { data } = await supabase.from("company_candidates").select("*").eq("company_id", dbCompanyId!).order("amount", { ascending: false });
+      return data || [];
+    },
+    enabled: !!dbCompanyId,
+  });
+
+  const { data: dbExecutives } = useQuery({
+    queryKey: ["company-executives", dbCompanyId],
+    queryFn: async () => {
+      const { data } = await supabase.from("company_executives").select("*").eq("company_id", dbCompanyId!).order("total_donations", { ascending: false });
+      return data || [];
+    },
+    enabled: !!dbCompanyId,
+  });
+
+  const { data: dbPartyBreakdown } = useQuery({
+    queryKey: ["company-party-breakdown", dbCompanyId],
+    queryFn: async () => {
+      const { data } = await supabase.from("company_party_breakdown").select("*").eq("company_id", dbCompanyId!);
+      return data || [];
+    },
+    enabled: !!dbCompanyId,
+  });
+
+  const { data: dbPublicStances } = useQuery({
+    queryKey: ["company-public-stances", dbCompanyId],
+    queryFn: async () => {
+      const { data } = await supabase.from("company_public_stances").select("*").eq("company_id", dbCompanyId!);
+      return data || [];
+    },
+    enabled: !!dbCompanyId,
+  });
+
+  const { data: dbDarkMoney } = useQuery({
+    queryKey: ["company-dark-money", dbCompanyId],
+    queryFn: async () => {
+      const { data } = await supabase.from("company_dark_money").select("*").eq("company_id", dbCompanyId!);
+      return data || [];
+    },
+    enabled: !!dbCompanyId,
+  });
+
+  const { data: dbRevolvingDoor } = useQuery({
+    queryKey: ["company-revolving-door", dbCompanyId],
+    queryFn: async () => {
+      const { data } = await supabase.from("company_revolving_door").select("*").eq("company_id", dbCompanyId!);
+      return data || [];
+    },
+    enabled: !!dbCompanyId,
+  });
+
+  const hasDetailedData = (dbCandidates?.length || 0) > 0 || (dbExecutives?.length || 0) > 0;
+
+  const handleEnrich = async () => {
+    if (!dbCompany) return;
+    setIsEnriching(true);
+    try {
+      const { data, error } = await supabase.functions.invoke("company-research", {
+        body: { companyName: dbCompany.name, enrichExisting: true },
+      });
+      if (error) throw error;
+      if (data?.success) {
+        toast({ title: "Data enriched!", description: `AI populated ${Object.values(data.tablesPopulated || {}).reduce((a: number, b: any) => a + (b as number), 0)} records for ${dbCompany.name}.` });
+        // Invalidate all related queries
+        queryClient.invalidateQueries({ queryKey: ["company-profile", id] });
+        queryClient.invalidateQueries({ queryKey: ["company-candidates", dbCompanyId] });
+        queryClient.invalidateQueries({ queryKey: ["company-executives", dbCompanyId] });
+        queryClient.invalidateQueries({ queryKey: ["company-party-breakdown", dbCompanyId] });
+        queryClient.invalidateQueries({ queryKey: ["company-public-stances", dbCompanyId] });
+        queryClient.invalidateQueries({ queryKey: ["company-dark-money", dbCompanyId] });
+        queryClient.invalidateQueries({ queryKey: ["company-revolving-door", dbCompanyId] });
+      } else {
+        throw new Error(data?.error || "Enrichment failed");
+      }
+    } catch (e: any) {
+      toast({ title: "Enrichment failed", description: e.message, variant: "destructive" });
+    } finally {
+      setIsEnriching(false);
+    }
+  };
   
   // Map sample company slugs to seeded DB company IDs for live pipeline data
   const dbCompanyIdMap: Record<string, string> = {
@@ -53,8 +148,8 @@ export default function CompanyProfile() {
     "home-depot": "b2c3d4e5-f6a7-8901-bcde-f12345678901",
     "koch-industries": "c3d4e5f6-a7b8-9012-cdef-123456789012",
   };
-  const dbCompanyId = company ? dbCompanyIdMap[company.id] : dbCompany?.id;
-  const { data: livePipeline, isLoading: pipelineLoading } = useROIPipeline(dbCompanyId);
+  const pipelineCompanyId = company ? dbCompanyIdMap[company.id] : dbCompany?.id;
+  const { data: livePipeline, isLoading: pipelineLoading } = useROIPipeline(pipelineCompanyId);
 
   // Loading state for DB-only companies
   if (!company && dbLoading) {
@@ -86,11 +181,24 @@ export default function CompanyProfile() {
                 <Building2 className="w-8 h-8 text-muted-foreground" />
               </div>
               <div className="flex-1 min-w-0">
-                <h1 className="text-3xl md:text-4xl font-bold text-foreground mb-2">{dbCompany.name}</h1>
-                {dbCompany.parent_company && (
-                  <p className="text-sm text-muted-foreground mb-1">Parent: {dbCompany.parent_company}</p>
-                )}
-                <p className="text-muted-foreground mb-3">{dbCompany.description}</p>
+                <div className="flex items-start justify-between gap-4">
+                  <div>
+                    <h1 className="text-3xl md:text-4xl font-bold text-foreground mb-2">{dbCompany.name}</h1>
+                    {dbCompany.parent_company && (
+                      <p className="text-sm text-muted-foreground mb-1">Parent: {dbCompany.parent_company}</p>
+                    )}
+                    <p className="text-muted-foreground mb-3">{dbCompany.description}</p>
+                  </div>
+                  <Button
+                    onClick={handleEnrich}
+                    disabled={isEnriching}
+                    variant={hasDetailedData ? "outline" : "default"}
+                    className="shrink-0 gap-2"
+                  >
+                    {isEnriching ? <Loader2 className="w-4 h-4 animate-spin" /> : <Sparkles className="w-4 h-4" />}
+                    {isEnriching ? "Researching..." : hasDetailedData ? "Refresh Data" : "AI Research"}
+                  </Button>
+                </div>
                 <div className="flex flex-wrap items-center gap-3">
                   <Badge variant="secondary">{dbCompany.industry}</Badge>
                   <Badge variant="secondary">{dbCompany.state}</Badge>
@@ -100,6 +208,17 @@ export default function CompanyProfile() {
                 </div>
               </div>
             </div>
+
+            {/* Enrich prompt when no detailed data */}
+            {!hasDetailedData && !isEnriching && (
+              <Card className="mb-8 border-dashed border-2 border-primary/30 bg-primary/5">
+                <CardContent className="p-6 text-center">
+                  <Sparkles className="w-8 h-8 text-primary mx-auto mb-3" />
+                  <h3 className="text-lg font-semibold text-foreground mb-1">Detailed data not yet available</h3>
+                  <p className="text-sm text-muted-foreground mb-4">Click "AI Research" above to populate PAC recipients, executives, public stances, dark money connections, and more.</p>
+                </CardContent>
+              </Card>
+            )}
 
             {/* Summary Cards */}
             <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
@@ -150,6 +269,206 @@ export default function CompanyProfile() {
               )}
             </div>
 
+            {/* Money Trail Section */}
+            {((dbPartyBreakdown?.length || 0) > 0 || (dbCandidates?.length || 0) > 0 || (dbExecutives?.length || 0) > 0) && (
+              <div className="mb-10">
+                <h2 className="text-xl font-bold text-foreground mb-1 flex items-center gap-2">
+                  <DollarSign className="w-5 h-5 text-primary" />
+                  Money Trail
+                </h2>
+                <p className="text-sm text-muted-foreground mb-4">PAC contributions, candidate support, and executive personal giving.</p>
+
+                <div className="grid lg:grid-cols-2 gap-6">
+                  {/* Party Breakdown Pie */}
+                  {dbPartyBreakdown && dbPartyBreakdown.length > 0 && (
+                    <Card>
+                      <CardHeader><CardTitle className="text-lg">PAC Spending by Party</CardTitle></CardHeader>
+                      <CardContent>
+                        <div className="h-56">
+                          <ResponsiveContainer width="100%" height="100%">
+                            <PieChart>
+                              <Pie data={dbPartyBreakdown} cx="50%" cy="50%" innerRadius={55} outerRadius={85} paddingAngle={3} dataKey="amount" nameKey="party">
+                                {dbPartyBreakdown.map((entry, i) => (
+                                  <Cell key={i} fill={entry.color} />
+                                ))}
+                              </Pie>
+                              <Tooltip formatter={(val: number) => formatCurrency(val)} />
+                            </PieChart>
+                          </ResponsiveContainer>
+                        </div>
+                        <div className="flex justify-center gap-4 mt-2">
+                          {dbPartyBreakdown.map((p) => (
+                            <div key={p.party} className="flex items-center gap-1.5 text-xs">
+                              <div className="w-2.5 h-2.5 rounded-full" style={{ backgroundColor: p.color }} />
+                              <span className="text-muted-foreground">{p.party}: {formatCurrency(p.amount)}</span>
+                            </div>
+                          ))}
+                        </div>
+                      </CardContent>
+                    </Card>
+                  )}
+
+                  {/* Executives */}
+                  {dbExecutives && dbExecutives.length > 0 && (
+                    <Card>
+                      <CardHeader><CardTitle className="text-lg flex items-center gap-2"><Users className="w-4 h-4" /> Executive Donors</CardTitle></CardHeader>
+                      <CardContent>
+                        <div className="space-y-3">
+                          {dbExecutives.map((exec) => (
+                            <div key={exec.id} className="flex items-center justify-between p-2 rounded-lg bg-muted/50">
+                              <div>
+                                <div className="font-medium text-sm text-foreground">{exec.name}</div>
+                                <div className="text-xs text-muted-foreground">{exec.title}</div>
+                              </div>
+                              <Badge variant="secondary">{formatCurrency(exec.total_donations)}</Badge>
+                            </div>
+                          ))}
+                        </div>
+                      </CardContent>
+                    </Card>
+                  )}
+                </div>
+
+                {/* Candidate Recipients Table */}
+                {dbCandidates && dbCandidates.length > 0 && (
+                  <Card className="mt-6">
+                    <CardHeader>
+                      <CardTitle className="text-lg flex items-center gap-2">
+                        <Flag className="w-4 h-4" />
+                        PAC Recipients ({dbCandidates.length} politicians)
+                      </CardTitle>
+                    </CardHeader>
+                    <CardContent>
+                      <Table>
+                        <TableHeader>
+                          <TableRow>
+                            <TableHead>Name</TableHead>
+                            <TableHead>Party</TableHead>
+                            <TableHead>State</TableHead>
+                            <TableHead>Amount</TableHead>
+                            <TableHead>Type</TableHead>
+                          </TableRow>
+                        </TableHeader>
+                        <TableBody>
+                          {dbCandidates.map((c) => (
+                            <TableRow key={c.id}>
+                              <TableCell className="font-medium">
+                                {c.name}
+                                {c.flagged && (
+                                  <Badge variant="destructive" className="ml-2 text-xs">Flagged</Badge>
+                                )}
+                              </TableCell>
+                              <TableCell>
+                                <Badge variant="outline" className={cn(
+                                  "text-xs",
+                                  c.party === "Republican" && "border-red-500/50 text-red-600",
+                                  c.party === "Democrat" && "border-blue-500/50 text-blue-600",
+                                )}>
+                                  {c.party}
+                                </Badge>
+                              </TableCell>
+                              <TableCell className="text-muted-foreground">{c.state}</TableCell>
+                              <TableCell>{formatCurrency(c.amount)}</TableCell>
+                              <TableCell className="text-xs text-muted-foreground">{c.donation_type}</TableCell>
+                            </TableRow>
+                          ))}
+                        </TableBody>
+                      </Table>
+                    </CardContent>
+                  </Card>
+                )}
+              </div>
+            )}
+
+            {/* Public Stances - Say vs Do */}
+            {dbPublicStances && dbPublicStances.length > 0 && (
+              <div className="mb-10">
+                <h2 className="text-xl font-bold text-foreground mb-1 flex items-center gap-2">
+                  <MessageSquareWarning className="w-5 h-5 text-primary" />
+                  Say vs. Do
+                </h2>
+                <p className="text-sm text-muted-foreground mb-4">Public positions compared to spending reality.</p>
+                <div className="space-y-4">
+                  {dbPublicStances.map((stance) => (
+                    <Card key={stance.id}>
+                      <CardContent className="p-4">
+                        <div className="flex items-start justify-between gap-4">
+                          <div className="flex-1">
+                            <h4 className="font-semibold text-foreground mb-2">{stance.topic}</h4>
+                            <div className="grid sm:grid-cols-2 gap-3">
+                              <div>
+                                <p className="text-xs font-medium text-muted-foreground mb-1">🗣️ Public Position</p>
+                                <p className="text-sm text-foreground">{stance.public_position}</p>
+                              </div>
+                              <div>
+                                <p className="text-xs font-medium text-muted-foreground mb-1">💰 Spending Reality</p>
+                                <p className="text-sm text-foreground">{stance.spending_reality}</p>
+                              </div>
+                            </div>
+                          </div>
+                          <Badge variant={
+                            stance.gap === "direct-conflict" ? "destructive" :
+                            stance.gap === "aligned" ? "secondary" : "outline"
+                          } className="shrink-0">
+                            {stance.gap === "direct-conflict" ? "Conflict" :
+                             stance.gap === "aligned" ? "Aligned" : "Mixed"}
+                          </Badge>
+                        </div>
+                      </CardContent>
+                    </Card>
+                  ))}
+                </div>
+              </div>
+            )}
+
+            {/* Dark Money & Influence Network */}
+            {((dbDarkMoney?.length || 0) > 0 || (dbRevolvingDoor?.length || 0) > 0) && (
+              <div className="mb-10">
+                <h2 className="text-xl font-bold text-foreground mb-1 flex items-center gap-2">
+                  <Network className="w-5 h-5 text-primary" />
+                  Influence Network
+                </h2>
+                <p className="text-sm text-muted-foreground mb-4">Dark money channels, revolving door, and indirect influence.</p>
+                <div className="grid lg:grid-cols-2 gap-6">
+                  {dbDarkMoney && dbDarkMoney.length > 0 && (
+                    <Card>
+                      <CardHeader><CardTitle className="text-lg flex items-center gap-2"><EyeOff className="w-4 h-4" /> Dark Money</CardTitle></CardHeader>
+                      <CardContent className="space-y-3">
+                        {dbDarkMoney.map((d) => (
+                          <div key={d.id} className="p-3 rounded-lg bg-muted/50 border border-border">
+                            <div className="flex items-center justify-between mb-1">
+                              <span className="font-medium text-sm text-foreground">{d.name}</span>
+                              <Badge variant="outline" className="text-xs">{d.org_type}</Badge>
+                            </div>
+                            {d.description && <p className="text-xs text-muted-foreground">{d.description}</p>}
+                            {d.estimated_amount && (
+                              <p className="text-xs text-muted-foreground mt-1">Est. {formatCurrency(d.estimated_amount)}</p>
+                            )}
+                          </div>
+                        ))}
+                      </CardContent>
+                    </Card>
+                  )}
+                  {dbRevolvingDoor && dbRevolvingDoor.length > 0 && (
+                    <Card>
+                      <CardHeader><CardTitle className="text-lg flex items-center gap-2"><RotateCcw className="w-4 h-4" /> Revolving Door</CardTitle></CardHeader>
+                      <CardContent className="space-y-3">
+                        {dbRevolvingDoor.map((r) => (
+                          <div key={r.id} className="p-3 rounded-lg bg-muted/50 border border-border">
+                            <div className="font-medium text-sm text-foreground">{r.person}</div>
+                            <div className="text-xs text-muted-foreground mt-1">
+                              <span className="text-foreground/70">{r.prior_role}</span> → <span className="text-foreground/70">{r.new_role}</span>
+                            </div>
+                            {r.relevance && <p className="text-xs text-muted-foreground mt-1">{r.relevance}</p>}
+                          </div>
+                        ))}
+                      </CardContent>
+                    </Card>
+                  )}
+                </div>
+              </div>
+            )}
+
             {/* Government ROI */}
             {(dbCompany.government_contracts || dbCompany.subsidies_received || dbCompany.effective_tax_rate) && (
               <Card className="mb-6">
@@ -189,7 +508,7 @@ export default function CompanyProfile() {
               <SocialMonitorCard
                 companyId={dbCompany.slug}
                 companyName={dbCompany.name}
-                executiveNames={[]}
+                executiveNames={dbExecutives?.map(e => e.name) || []}
                 dbCompanyId={dbCompany.id}
               />
               <AgencyContractsCard companyName={dbCompany.name} dbCompanyId={dbCompany.id} />

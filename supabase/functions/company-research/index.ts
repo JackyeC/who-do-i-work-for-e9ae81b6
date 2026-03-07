@@ -11,7 +11,7 @@ Deno.serve(async (req) => {
   }
 
   try {
-    const { companyName } = await req.json();
+    const { companyName, enrichExisting } = await req.json();
 
     if (!companyName || typeof companyName !== 'string' || companyName.trim().length < 2) {
       return new Response(
@@ -43,7 +43,8 @@ Deno.serve(async (req) => {
       .limit(1)
       .maybeSingle();
 
-    if (existing) {
+    // If exists and NOT enriching, just return
+    if (existing && !enrichExisting) {
       return new Response(JSON.stringify({
         success: true,
         alreadyExists: true,
@@ -51,7 +52,7 @@ Deno.serve(async (req) => {
       }), { headers: { ...corsHeaders, 'Content-Type': 'application/json' } });
     }
 
-    console.log(`Researching company: ${sanitizedName}`);
+    console.log(`Researching company: ${sanitizedName} (enrich: ${!!enrichExisting})`);
 
     // Use AI to research the company
     const aiPrompt = `You are a corporate political intelligence researcher for CivicLens. Research "${sanitizedName}" and provide comprehensive data about this company.
@@ -94,8 +95,18 @@ Return a JSON object with this EXACT structure. Use real, publicly available inf
   "dark_money": [
     {"name": "Org Name", "org_type": "501c4", "relationship": "donor", "confidence": "inferred", "description": "Brief description", "estimated_amount": 100000}
   ],
-  "board_affiliations": ["US Chamber of Commerce", "Business Roundtable"]
+  "board_affiliations": ["US Chamber of Commerce", "Business Roundtable"],
+  "revolving_door": [
+    {"person": "Person Name", "prior_role": "Former government role", "new_role": "Company role", "confidence": "inferred", "relevance": "How this connection matters"}
+  ],
+  "spending_history": [
+    {"cycle": "2020", "pac_spending": 400000, "lobbying_spend": 800000, "executive_giving": 150000},
+    {"cycle": "2022", "pac_spending": 450000, "lobbying_spend": 900000, "executive_giving": 175000},
+    {"cycle": "2024", "pac_spending": 500000, "lobbying_spend": 1000000, "executive_giving": 200000}
+  ]
 }
+
+IMPORTANT: For the "candidates" array, include at least 8-15 real politicians who have received donations from this company's PAC or executives. Include their actual party, state, and estimated amounts. Include both Republican and Democrat recipients. Flag any candidates who are controversial or have notable policy positions relevant to the company.
 
 Return ONLY valid JSON. No markdown, no explanation.`;
 
@@ -108,7 +119,7 @@ Return ONLY valid JSON. No markdown, no explanation.`;
       body: JSON.stringify({
         model: 'google/gemini-2.5-flash',
         messages: [
-          { role: 'system', content: 'You are a corporate political intelligence researcher. Return only valid JSON with real, publicly available data about companies.' },
+          { role: 'system', content: 'You are a corporate political intelligence researcher. Return only valid JSON with real, publicly available data about companies. Be thorough with candidate/politician recipient lists.' },
           { role: 'user', content: aiPrompt },
         ],
       }),
@@ -152,35 +163,67 @@ Return ONLY valid JSON. No markdown, no explanation.`;
       });
     }
 
-    // Insert company
-    const finalSlug = co.name.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '');
-    const { data: newCompany, error: companyError } = await supabase.from('companies').insert({
-      name: co.name,
-      slug: finalSlug,
-      industry: co.industry || 'Unknown',
-      state: co.state || 'N/A',
-      revenue: co.revenue || null,
-      employee_count: co.employee_count || null,
-      description: co.description || null,
-      parent_company: co.parent_company || null,
-      effective_tax_rate: co.effective_tax_rate || null,
-      corporate_pac_exists: co.corporate_pac_exists ?? false,
-      total_pac_spending: co.total_pac_spending || 0,
-      lobbying_spend: co.lobbying_spend || null,
-      government_contracts: co.government_contracts || null,
-      subsidies_received: co.subsidies_received || null,
-      civic_footprint_score: co.civic_footprint_score || 50,
-      confidence_rating: co.confidence_rating || 'inferred',
-    }).select('id, name, slug').single();
+    let companyId: string;
+    let companyRecord: any;
 
-    if (companyError) {
-      console.error('Failed to insert company:', companyError);
-      return new Response(JSON.stringify({ success: false, error: `Failed to create company: ${companyError.message}` }), {
-        status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' }
-      });
+    if (existing) {
+      // Enrich existing company - update its core data too
+      companyId = existing.id;
+      companyRecord = existing;
+      
+      await supabase.from('companies').update({
+        description: co.description || undefined,
+        effective_tax_rate: co.effective_tax_rate || undefined,
+        corporate_pac_exists: co.corporate_pac_exists ?? undefined,
+        total_pac_spending: co.total_pac_spending || undefined,
+        lobbying_spend: co.lobbying_spend || undefined,
+        government_contracts: co.government_contracts || undefined,
+        subsidies_received: co.subsidies_received || undefined,
+      }).eq('id', companyId);
+
+      // Delete existing related data so we can repopulate
+      await Promise.all([
+        supabase.from('company_executives').delete().eq('company_id', companyId),
+        supabase.from('company_party_breakdown').delete().eq('company_id', companyId),
+        supabase.from('company_candidates').delete().eq('company_id', companyId),
+        supabase.from('company_public_stances').delete().eq('company_id', companyId),
+        supabase.from('company_dark_money').delete().eq('company_id', companyId),
+        supabase.from('company_board_affiliations').delete().eq('company_id', companyId),
+        supabase.from('company_revolving_door').delete().eq('company_id', companyId),
+        supabase.from('company_spending_history').delete().eq('company_id', companyId),
+      ]);
+    } else {
+      // Insert new company
+      const finalSlug = co.name.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '');
+      const { data: newCompany, error: companyError } = await supabase.from('companies').insert({
+        name: co.name,
+        slug: finalSlug,
+        industry: co.industry || 'Unknown',
+        state: co.state || 'N/A',
+        revenue: co.revenue || null,
+        employee_count: co.employee_count || null,
+        description: co.description || null,
+        parent_company: co.parent_company || null,
+        effective_tax_rate: co.effective_tax_rate || null,
+        corporate_pac_exists: co.corporate_pac_exists ?? false,
+        total_pac_spending: co.total_pac_spending || 0,
+        lobbying_spend: co.lobbying_spend || null,
+        government_contracts: co.government_contracts || null,
+        subsidies_received: co.subsidies_received || null,
+        civic_footprint_score: co.civic_footprint_score || 50,
+        confidence_rating: co.confidence_rating || 'inferred',
+      }).select('id, name, slug').single();
+
+      if (companyError) {
+        console.error('Failed to insert company:', companyError);
+        return new Response(JSON.stringify({ success: false, error: `Failed to create company: ${companyError.message}` }), {
+          status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' }
+        });
+      }
+      companyId = newCompany.id;
+      companyRecord = newCompany;
     }
 
-    const companyId = newCompany.id;
     const insertErrors: string[] = [];
 
     // Insert executives
@@ -212,7 +255,7 @@ Return ONLY valid JSON. No markdown, no explanation.`;
     // Insert candidates
     if (research.candidates?.length) {
       const { error } = await supabase.from('company_candidates').insert(
-        research.candidates.slice(0, 20).map((c: any) => ({
+        research.candidates.slice(0, 30).map((c: any) => ({
           company_id: companyId,
           name: c.name,
           party: c.party,
@@ -267,16 +310,46 @@ Return ONLY valid JSON. No markdown, no explanation.`;
       if (error) insertErrors.push(`board_affiliations: ${error.message}`);
     }
 
+    // Insert revolving door
+    if (research.revolving_door?.length) {
+      const { error } = await supabase.from('company_revolving_door').insert(
+        research.revolving_door.slice(0, 10).map((r: any) => ({
+          company_id: companyId,
+          person: r.person,
+          prior_role: r.prior_role,
+          new_role: r.new_role,
+          confidence: r.confidence || 'inferred',
+          relevance: r.relevance || null,
+        }))
+      );
+      if (error) insertErrors.push(`revolving_door: ${error.message}`);
+    }
+
+    // Insert spending history
+    if (research.spending_history?.length) {
+      const { error } = await supabase.from('company_spending_history').insert(
+        research.spending_history.slice(0, 10).map((h: any) => ({
+          company_id: companyId,
+          cycle: h.cycle,
+          pac_spending: h.pac_spending || 0,
+          lobbying_spend: h.lobbying_spend || 0,
+          executive_giving: h.executive_giving || 0,
+        }))
+      );
+      if (error) insertErrors.push(`spending_history: ${error.message}`);
+    }
+
     if (insertErrors.length) {
       console.error('Some inserts failed:', insertErrors);
     }
 
-    console.log(`Successfully created company: ${co.name} (${companyId})`);
+    console.log(`Successfully ${existing ? 'enriched' : 'created'} company: ${co.name} (${companyId})`);
 
     return new Response(JSON.stringify({
       success: true,
       alreadyExists: false,
-      company: newCompany,
+      enriched: !!existing,
+      company: companyRecord,
       tablesPopulated: {
         executives: research.executives?.length || 0,
         party_breakdown: research.party_breakdown?.length || 0,
@@ -284,6 +357,8 @@ Return ONLY valid JSON. No markdown, no explanation.`;
         public_stances: research.public_stances?.length || 0,
         dark_money: research.dark_money?.length || 0,
         board_affiliations: research.board_affiliations?.length || 0,
+        revolving_door: research.revolving_door?.length || 0,
+        spending_history: research.spending_history?.length || 0,
       },
       warnings: insertErrors.length ? insertErrors : undefined,
     }), {
