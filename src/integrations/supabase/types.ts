@@ -146,22 +146,29 @@ export type Database = {
           consumer_relevance: string | null
           corporate_pac_exists: boolean
           created_at: string
+          creation_source: string | null
           description: string | null
           effective_tax_rate: string | null
           employee_count: string | null
           government_contracts: number | null
           id: string
+          identity_matched: boolean | null
           industry: string
           last_reviewed: string
+          last_scan_attempted: string | null
           lobbying_spend: number | null
           name: string
           parent_company: string | null
+          record_status: string
           revenue: string | null
+          scan_completion: Json | null
+          search_query: string | null
           slug: string
           state: string
           subsidies_received: number | null
           total_pac_spending: number
           updated_at: string
+          verification_notes: string | null
           worker_relevance: string | null
         }
         Insert: {
@@ -171,22 +178,29 @@ export type Database = {
           consumer_relevance?: string | null
           corporate_pac_exists?: boolean
           created_at?: string
+          creation_source?: string | null
           description?: string | null
           effective_tax_rate?: string | null
           employee_count?: string | null
           government_contracts?: number | null
           id?: string
+          identity_matched?: boolean | null
           industry: string
           last_reviewed?: string
+          last_scan_attempted?: string | null
           lobbying_spend?: number | null
           name: string
           parent_company?: string | null
+          record_status?: string
           revenue?: string | null
+          scan_completion?: Json | null
+          search_query?: string | null
           slug: string
           state: string
           subsidies_received?: number | null
           total_pac_spending?: number
           updated_at?: string
+          verification_notes?: string | null
           worker_relevance?: string | null
         }
         Update: {
@@ -196,22 +210,29 @@ export type Database = {
           consumer_relevance?: string | null
           corporate_pac_exists?: boolean
           created_at?: string
+          creation_source?: string | null
           description?: string | null
           effective_tax_rate?: string | null
           employee_count?: string | null
           government_contracts?: number | null
           id?: string
+          identity_matched?: boolean | null
           industry?: string
           last_reviewed?: string
+          last_scan_attempted?: string | null
           lobbying_spend?: number | null
           name?: string
           parent_company?: string | null
+          record_status?: string
           revenue?: string | null
+          scan_completion?: Json | null
+          search_query?: string | null
           slug?: string
           state?: string
           subsidies_received?: number | null
           total_pac_spending?: number
           updated_at?: string
+          verification_notes?: string | null
           worker_relevance?: string | null
         }
         Relationships: []

@@ -5,7 +5,7 @@ import {
   Building2, ArrowLeft, Calendar, DollarSign, Users, Flag,
   Network, Scale, MessageSquareWarning, ExternalLink, Shield, Megaphone,
   AlertTriangle, EyeOff, RotateCcw, TrendingUp, Landmark, FileText,
-  BarChart3, Loader2, Sparkles
+  BarChart3, Loader2, Sparkles, Search
 } from "lucide-react";
 import { ShareableScorecard } from "@/components/ShareableScorecard";
 import { EmbedBadge } from "@/components/EmbedBadge";
@@ -172,6 +172,18 @@ export default function CompanyProfile() {
 
   // DB-only company profile (no sample data)
   if (!company && dbCompany) {
+    const isDiscovering = ['discovered', 'identity_matched', 'research_in_progress'].includes((dbCompany as any).record_status || '');
+    const statusLabels: Record<string, { label: string; color: string }> = {
+      discovered: { label: 'Discovered', color: 'bg-civic-yellow/10 text-civic-yellow border-civic-yellow/30' },
+      identity_matched: { label: 'Identity Verified', color: 'bg-blue-500/10 text-blue-500 border-blue-500/30' },
+      research_in_progress: { label: 'Research In Progress', color: 'bg-primary/10 text-primary border-primary/30' },
+      partially_verified: { label: 'Partially Verified', color: 'bg-civic-yellow/10 text-civic-yellow border-civic-yellow/30' },
+      verified: { label: 'Verified', color: 'bg-civic-green/10 text-civic-green border-civic-green/30' },
+      failed_to_verify: { label: 'Unverified', color: 'bg-destructive/10 text-destructive border-destructive/30' },
+    };
+    const recordStatus = (dbCompany as any).record_status || 'verified';
+    const statusInfo = statusLabels[recordStatus] || statusLabels.verified;
+
     return (
       <div className="min-h-screen flex flex-col bg-background">
         <Header />
@@ -190,11 +202,22 @@ export default function CompanyProfile() {
               <div className="flex-1 min-w-0">
                 <div className="flex items-start justify-between gap-4">
                   <div>
-                    <h1 className="text-3xl md:text-4xl font-bold text-foreground mb-2">{dbCompany.name}</h1>
+                    <div className="flex items-center gap-3 mb-2">
+                      <h1 className="text-3xl md:text-4xl font-bold text-foreground">{dbCompany.name}</h1>
+                      {recordStatus !== 'verified' && (
+                        <span className={`text-xs px-2.5 py-1 rounded-full border font-medium ${statusInfo.color}`}>
+                          {isDiscovering && <Loader2 className="w-3 h-3 animate-spin inline mr-1" />}
+                          {statusInfo.label}
+                        </span>
+                      )}
+                    </div>
                     {dbCompany.parent_company && (
                       <p className="text-sm text-muted-foreground mb-1">Parent: {dbCompany.parent_company}</p>
                     )}
                     <p className="text-muted-foreground mb-3">{dbCompany.description}</p>
+                    {(dbCompany as any).verification_notes && (
+                      <p className="text-xs text-civic-yellow mb-2">⚠ {(dbCompany as any).verification_notes}</p>
+                    )}
                   </div>
                   <div className="flex gap-2 flex-wrap">
                     <ShareableScorecard data={{
@@ -230,8 +253,39 @@ export default function CompanyProfile() {
               </div>
             </div>
 
-            {/* Enrich prompt when no detailed data */}
-            {!hasDetailedData && !isEnriching && (
+            {/* Discovery banner for new companies */}
+            {isDiscovering && (
+              <Card className="mb-8 border-dashed border-2 border-primary/30 bg-primary/5">
+                <CardContent className="p-6">
+                  <div className="flex items-start gap-4">
+                    <div className="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center shrink-0">
+                      <Sparkles className="w-5 h-5 text-primary animate-pulse" />
+                    </div>
+                    <div>
+                      <h3 className="text-lg font-semibold text-foreground mb-1">Building Transparency Profile</h3>
+                      <p className="text-sm text-muted-foreground mb-4">
+                        We found this company and started building its transparency profile from public sources. 
+                        Some signals may appear as research completes.
+                      </p>
+                      <div className="grid grid-cols-2 md:grid-cols-4 gap-2">
+                        {[
+                          'Political spending', 'Lobbying activity', 'Trade associations', 'Executive donations',
+                          'AI hiring tools', 'Worker sentiment', 'Benefits scan', 'Government contracts',
+                        ].map((scan) => (
+                          <div key={scan} className="flex items-center gap-1.5 text-xs text-muted-foreground">
+                            <Loader2 className="w-3 h-3 animate-spin text-primary" />
+                            {scan}
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+            )}
+
+            {/* Enrich prompt when no detailed data and not discovering */}
+            {!hasDetailedData && !isEnriching && !isDiscovering && (
               <Card className="mb-8 border-dashed border-2 border-primary/30 bg-primary/5">
                 <CardContent className="p-6 text-center">
                   <Sparkles className="w-8 h-8 text-primary mx-auto mb-3" />
@@ -559,13 +613,24 @@ export default function CompanyProfile() {
   }
 
   if (!company) {
+    // No sample data and no DB match — this slug doesn't exist anywhere
+    // Don't show dead-end; the search flow should have auto-created it
     return (
       <div className="min-h-screen flex flex-col bg-background">
         <Header />
         <div className="flex-1 flex items-center justify-center">
-          <div className="text-center">
+          <div className="text-center max-w-md">
+            <Building2 className="w-12 h-12 text-muted-foreground mx-auto mb-4" />
             <h1 className="text-2xl font-bold text-foreground mb-2">Company Not Found</h1>
-            <Link to="/" className="text-primary hover:underline">Go back home</Link>
+            <p className="text-sm text-muted-foreground mb-4">
+              This company isn't in our database yet. Search for it to automatically start building its transparency profile.
+            </p>
+            <Link to="/search">
+              <Button className="gap-2">
+                <Search className="w-4 h-4" />
+                Search & Discover
+              </Button>
+            </Link>
           </div>
         </div>
       </div>

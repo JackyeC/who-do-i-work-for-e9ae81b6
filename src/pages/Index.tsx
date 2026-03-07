@@ -65,7 +65,7 @@ const Index = () => {
                 <Input
                   value={query}
                   onChange={(e) => setQuery(e.target.value)}
-                  placeholder="Search any company (e.g., Home Depot, Walmart)..."
+                  placeholder="Search any company. If it's not here yet, we'll add and research it automatically."
                   className="pl-10 h-12 text-base"
                 />
               </div>
