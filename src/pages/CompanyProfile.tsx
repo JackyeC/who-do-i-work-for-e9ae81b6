@@ -148,8 +148,8 @@ export default function CompanyProfile() {
     "home-depot": "b2c3d4e5-f6a7-8901-bcde-f12345678901",
     "koch-industries": "c3d4e5f6-a7b8-9012-cdef-123456789012",
   };
-  const dbCompanyId = company ? dbCompanyIdMap[company.id] : dbCompany?.id;
-  const { data: livePipeline, isLoading: pipelineLoading } = useROIPipeline(dbCompanyId);
+  const pipelineCompanyId = company ? dbCompanyIdMap[company.id] : dbCompany?.id;
+  const { data: livePipeline, isLoading: pipelineLoading } = useROIPipeline(pipelineCompanyId);
 
   // Loading state for DB-only companies
   if (!company && dbLoading) {
