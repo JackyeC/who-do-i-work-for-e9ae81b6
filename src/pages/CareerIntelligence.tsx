@@ -97,6 +97,10 @@ export default function CareerIntelligence() {
           <TabsContent value="alerts" className="mt-6">
             <DreamJobAlerts />
           </TabsContent>
+          <TabsContent value="pathing" className="mt-6">
+            <CareerMappingView />
+          </TabsContent>
+          </TabsContent>
         </Tabs>
 
         {/* Data Wipe - always visible at bottom */}
