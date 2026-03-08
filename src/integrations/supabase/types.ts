@@ -1094,14 +1094,21 @@ export type Database = {
           department: string | null
           description: string | null
           employment_type: string | null
+          extracted_skills: Json | null
           id: string
           is_active: boolean
+          last_verified_at: string | null
           location: string | null
           posted_at: string | null
           salary_range: string | null
           scraped_at: string
+          seniority_level: string | null
+          source_platform: string
+          source_type: string
+          source_url: string | null
           title: string
           url: string | null
+          work_mode: string | null
         }
         Insert: {
           company_id: string
@@ -1109,14 +1116,21 @@ export type Database = {
           department?: string | null
           description?: string | null
           employment_type?: string | null
+          extracted_skills?: Json | null
           id?: string
           is_active?: boolean
+          last_verified_at?: string | null
           location?: string | null
           posted_at?: string | null
           salary_range?: string | null
           scraped_at?: string
+          seniority_level?: string | null
+          source_platform?: string
+          source_type?: string
+          source_url?: string | null
           title: string
           url?: string | null
+          work_mode?: string | null
         }
         Update: {
           company_id?: string
@@ -1124,14 +1138,21 @@ export type Database = {
           department?: string | null
           description?: string | null
           employment_type?: string | null
+          extracted_skills?: Json | null
           id?: string
           is_active?: boolean
+          last_verified_at?: string | null
           location?: string | null
           posted_at?: string | null
           salary_range?: string | null
           scraped_at?: string
+          seniority_level?: string | null
+          source_platform?: string
+          source_type?: string
+          source_url?: string | null
           title?: string
           url?: string | null
+          work_mode?: string | null
         }
         Relationships: [
           {
