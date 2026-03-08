@@ -65,7 +65,7 @@ const Index = () => {
             </motion.div>
 
             <motion.h1 variants={fadeUp} custom={1} className="text-foreground mb-8 text-balance leading-[1.02] font-display" style={{ fontSize: 'clamp(2.75rem, 6vw, 4.75rem)', fontWeight: 800, letterSpacing: '-0.04em' }}>
-              Trace How Corporate Money{" "}
+              Trace How Corporate Money<br />
               <span className="text-civic-gold" style={{ textDecorationLine: 'underline', textDecorationColor: 'hsl(38 72% 50% / 0.25)', textUnderlineOffset: '8px', textDecorationThickness: '3px' }}>Becomes Influence</span>
             </motion.h1>
 
