@@ -1591,6 +1591,59 @@ export type Database = {
           },
         ]
       }
+      company_values_signals: {
+        Row: {
+          company_id: string
+          confidence: string
+          created_at: string
+          detected_by: string
+          evidence_text: string | null
+          evidence_url: string | null
+          id: string
+          scan_date: string
+          severity: string
+          signal_summary: string | null
+          signal_type: string
+          value_category: string
+        }
+        Insert: {
+          company_id: string
+          confidence?: string
+          created_at?: string
+          detected_by?: string
+          evidence_text?: string | null
+          evidence_url?: string | null
+          id?: string
+          scan_date?: string
+          severity?: string
+          signal_summary?: string | null
+          signal_type: string
+          value_category: string
+        }
+        Update: {
+          company_id?: string
+          confidence?: string
+          created_at?: string
+          detected_by?: string
+          evidence_text?: string | null
+          evidence_url?: string | null
+          id?: string
+          scan_date?: string
+          severity?: string
+          signal_summary?: string | null
+          signal_type?: string
+          value_category?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "company_values_signals_company_id_fkey"
+            columns: ["company_id"]
+            isOneToOne: false
+            referencedRelation: "companies"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       company_warn_notices: {
         Row: {
           company_id: string
@@ -2948,6 +3001,30 @@ export type Database = {
           status?: Database["public"]["Enums"]["document_status"] | null
           updated_at?: string
           user_id?: string
+        }
+        Relationships: []
+      }
+      user_values_preferences: {
+        Row: {
+          created_at: string
+          id: string
+          is_positive: boolean
+          user_id: string
+          value_category: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          is_positive?: boolean
+          user_id: string
+          value_category: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          is_positive?: boolean
+          user_id?: string
+          value_category?: string
         }
         Relationships: []
       }
