@@ -32,16 +32,17 @@ export function Footer() {
             <div className="space-y-4">
               <p className="text-[10px] font-semibold text-primary-foreground/30 uppercase tracking-[0.2em]">Check</p>
               <div className="space-y-3">
-                <Link to="/check" className="block text-sm text-primary-foreground/55 hover:text-primary-foreground/90 transition-colors">Company Check</Link>
-                <Link to="/check?tab=offer" className="block text-sm text-primary-foreground/55 hover:text-primary-foreground/90 transition-colors">Offer Check</Link>
-                <Link to="/browse" className="block text-sm text-primary-foreground/55 hover:text-primary-foreground/90 transition-colors">Browse Companies</Link>
+                <Link to="/check?tab=company" className="block text-sm text-primary-foreground/55 hover:text-primary-foreground/90 transition-colors">Who Do I Work For?</Link>
+                <Link to="/check?tab=offer" className="block text-sm text-primary-foreground/55 hover:text-primary-foreground/90 transition-colors">Is This Offer Right For Me?</Link>
+                <Link to="/check?tab=candidate" className="block text-sm text-primary-foreground/55 hover:text-primary-foreground/90 transition-colors">What Am I Supporting?</Link>
               </div>
             </div>
             <div className="space-y-4">
               <p className="text-[10px] font-semibold text-primary-foreground/30 uppercase tracking-[0.2em]">Explore</p>
               <div className="space-y-3">
+                <Link to="/career-map" className="block text-sm text-primary-foreground/55 hover:text-primary-foreground/90 transition-colors">Where Could My Career Go?</Link>
                 <Link to="/jobs" className="block text-sm text-primary-foreground/55 hover:text-primary-foreground/90 transition-colors">Jobs</Link>
-                <Link to="/career-map" className="block text-sm text-primary-foreground/55 hover:text-primary-foreground/90 transition-colors">Career Map</Link>
+                <Link to="/dashboard" className="block text-sm text-primary-foreground/55 hover:text-primary-foreground/90 transition-colors">My Dashboard</Link>
                 <Link to="/methodology" className="block text-sm text-primary-foreground/55 hover:text-primary-foreground/90 transition-colors">Methodology</Link>
               </div>
             </div>
