@@ -1,0 +1,1 @@
+UPDATE scan_runs SET scan_status = 'failed', error_log = '{"reason": "Manual reset: stale scan"}'::jsonb WHERE company_id = '7bf87409-f772-4d87-80a5-d08d864658fc' AND scan_status IN ('queued', 'in_progress');

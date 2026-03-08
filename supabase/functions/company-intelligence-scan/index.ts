@@ -104,20 +104,32 @@ Deno.serve(async (req) => {
       console.warn('[intelligence-scan] Entity resolution error (non-critical):', resolveErr);
     }
 
-    // Check for existing in-progress scan
+    // Check for existing in-progress scan (auto-expire stale scans older than 10 minutes)
     const { data: existingScan } = await supabase
       .from('scan_runs')
-      .select('id, scan_status')
+      .select('id, scan_status, created_at')
       .eq('company_id', companyId)
       .in('scan_status', ['queued', 'in_progress'])
       .maybeSingle();
 
     if (existingScan) {
-      return new Response(JSON.stringify({
-        success: false,
-        error: 'A scan is already in progress for this company',
-        scanRunId: existingScan.id,
-      }), { status: 409, headers: { ...corsHeaders, 'Content-Type': 'application/json' } });
+      const scanAge = Date.now() - new Date(existingScan.created_at).getTime();
+      const TEN_MINUTES = 10 * 60 * 1000;
+
+      if (scanAge > TEN_MINUTES) {
+        // Auto-expire stale scan
+        console.warn(`[intelligence-scan] Auto-expiring stale scan ${existingScan.id} (age: ${Math.round(scanAge / 1000)}s)`);
+        await supabase
+          .from('scan_runs')
+          .update({ scan_status: 'failed', error_log: { reason: 'Auto-expired: scan exceeded 10-minute timeout', expired_at: new Date().toISOString() } })
+          .eq('id', existingScan.id);
+      } else {
+        return new Response(JSON.stringify({
+          success: false,
+          error: 'A scan is already in progress for this company',
+          scanRunId: existingScan.id,
+        }), { status: 409, headers: { ...corsHeaders, 'Content-Type': 'application/json' } });
+      }
     }
 
     // Create scan run record
