@@ -1,12 +1,14 @@
 import { useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 import { Search, ClipboardCheck, BookOpen, Briefcase, Plus, HardHat, Target, Bell, Menu, X } from "lucide-react";
 import { useAuth } from "@/contexts/AuthContext";
 import { Button } from "@/components/ui/button";
+import { cn } from "@/lib/utils";
 
 export function Header() {
   const { user } = useAuth();
   const [mobileOpen, setMobileOpen] = useState(false);
+  const location = useLocation();
 
   const navLinks = [
     { to: "/browse", label: "Browse" },
@@ -24,46 +26,69 @@ export function Header() {
       ]
     : [];
 
+  const isActive = (path: string) => location.pathname === path;
+
   return (
-    <header className="border-b border-border bg-card/80 backdrop-blur-sm sticky top-0 z-50">
+    <header className="border-b border-border/60 bg-card/90 backdrop-blur-md sticky top-0 z-50">
       <div className="container mx-auto px-4 h-16 flex items-center justify-between">
-        <Link to="/" className="flex items-center gap-2 group">
-          <div className="w-8 h-8 rounded-lg bg-primary flex items-center justify-center">
+        <Link to="/" className="flex items-center gap-2.5 group">
+          <div className="w-8 h-8 rounded-lg bg-primary flex items-center justify-center shadow-sm">
             <ClipboardCheck className="w-4 h-4 text-primary-foreground" />
           </div>
           <div className="flex flex-col leading-none">
             <span className="text-lg font-bold text-foreground tracking-tight" style={{ fontFamily: "'Source Serif 4', serif" }}>
               Offer Check
             </span>
-            <span className="text-[9px] text-muted-foreground tracking-wide">by Jackye Clayton</span>
+            <span className="text-[9px] text-muted-foreground tracking-widest uppercase">by Jackye Clayton</span>
           </div>
         </Link>
 
         {/* Desktop nav */}
-        <nav className="hidden lg:flex items-center gap-4">
+        <nav className="hidden lg:flex items-center gap-1">
           {navLinks.map((link) => (
-            <Link key={link.to} to={link.to} className="text-sm font-medium text-muted-foreground hover:text-foreground transition-colors flex items-center gap-1">
+            <Link
+              key={link.to}
+              to={link.to}
+              className={cn(
+                "text-sm font-medium px-3 py-2 rounded-lg transition-all duration-150 flex items-center gap-1.5",
+                isActive(link.to)
+                  ? "text-foreground bg-accent"
+                  : "text-muted-foreground hover:text-foreground hover:bg-accent/50"
+              )}
+            >
               {link.icon && <link.icon className="w-3.5 h-3.5" />}
               {link.label}
             </Link>
           ))}
+          {authLinks.length > 0 && <div className="w-px h-5 bg-border mx-1" />}
           {authLinks.map((link) => (
-            <Link key={link.to} to={link.to} className="text-sm font-medium text-muted-foreground hover:text-foreground transition-colors flex items-center gap-1">
+            <Link
+              key={link.to}
+              to={link.to}
+              className={cn(
+                "text-sm font-medium px-3 py-2 rounded-lg transition-all duration-150 flex items-center gap-1.5",
+                isActive(link.to)
+                  ? "text-foreground bg-accent"
+                  : "text-muted-foreground hover:text-foreground hover:bg-accent/50"
+              )}
+            >
               <link.icon className="w-3.5 h-3.5" />
               {link.label}
             </Link>
           ))}
-          <Link to={user ? "/who-do-i-work-for" : "/login"}>
-            <Button size="sm" variant="default" className="gap-1.5">
-              <Briefcase className="w-3.5 h-3.5" />
-              Who Do I Work For?
-            </Button>
-          </Link>
+          <div className="ml-2">
+            <Link to={user ? "/who-do-i-work-for" : "/login"}>
+              <Button size="sm" variant="default" className="gap-1.5 shadow-sm">
+                <Briefcase className="w-3.5 h-3.5" />
+                Who Do I Work For?
+              </Button>
+            </Link>
+          </div>
         </nav>
 
         {/* Mobile toggle */}
         <button
-          className="lg:hidden p-2.5 -mr-2 text-muted-foreground hover:text-foreground rounded-md active:bg-muted"
+          className="lg:hidden p-2.5 -mr-2 text-muted-foreground hover:text-foreground rounded-lg active:bg-accent transition-colors"
           onClick={() => setMobileOpen(!mobileOpen)}
           aria-label="Toggle menu"
         >
@@ -73,31 +98,41 @@ export function Header() {
 
       {/* Mobile nav */}
       {mobileOpen && (
-        <div className="lg:hidden border-t border-border bg-card px-4 py-3 space-y-1 max-h-[70vh] overflow-y-auto">
+        <div className="lg:hidden border-t border-border/60 bg-card px-4 py-3 space-y-0.5 max-h-[70vh] overflow-y-auto animate-fade-in">
           {navLinks.map((link) => (
             <Link
               key={link.to}
               to={link.to}
               onClick={() => setMobileOpen(false)}
-              className="flex items-center gap-3 text-sm font-medium text-muted-foreground hover:text-foreground transition-colors py-3 px-3 rounded-md active:bg-muted/50"
+              className={cn(
+                "flex items-center gap-3 text-sm font-medium transition-colors py-3 px-3 rounded-lg",
+                isActive(link.to)
+                  ? "text-foreground bg-accent"
+                  : "text-muted-foreground hover:text-foreground active:bg-accent/50"
+              )}
             >
               {link.icon && <link.icon className="w-4 h-4" />}
               {link.label}
             </Link>
           ))}
-          {authLinks.length > 0 && <div className="border-t border-border my-1" />}
+          {authLinks.length > 0 && <div className="border-t border-border/60 my-2" />}
           {authLinks.map((link) => (
             <Link
               key={link.to}
               to={link.to}
               onClick={() => setMobileOpen(false)}
-              className="flex items-center gap-3 text-sm font-medium text-muted-foreground hover:text-foreground transition-colors py-3 px-3 rounded-md active:bg-muted/50"
+              className={cn(
+                "flex items-center gap-3 text-sm font-medium transition-colors py-3 px-3 rounded-lg",
+                isActive(link.to)
+                  ? "text-foreground bg-accent"
+                  : "text-muted-foreground hover:text-foreground active:bg-accent/50"
+              )}
             >
               <link.icon className="w-4 h-4" />
               {link.label}
             </Link>
           ))}
-          <div className="pt-2 pb-1">
+          <div className="pt-3 pb-1">
             <Link to={user ? "/who-do-i-work-for" : "/login"} onClick={() => setMobileOpen(false)}>
               <Button size="default" variant="default" className="gap-1.5 w-full">
                 <Briefcase className="w-4 h-4" />

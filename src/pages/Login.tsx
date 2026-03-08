@@ -7,7 +7,7 @@ import { Header } from "@/components/Header";
 import { Footer } from "@/components/Footer";
 import { useToast } from "@/hooks/use-toast";
 import { useEffect } from "react";
-import { Shield } from "lucide-react";
+import { Shield, ArrowRight } from "lucide-react";
 
 export default function Login() {
   const { user, loading } = useAuth();
@@ -36,21 +36,21 @@ export default function Login() {
   return (
     <div className="min-h-screen flex flex-col bg-background">
       <Header />
-      <div className="flex-1 flex items-center justify-center px-4 py-16">
-        <Card className="w-full max-w-md">
-          <CardHeader className="text-center space-y-2">
-            <div className="w-14 h-14 mx-auto rounded-2xl bg-primary/10 flex items-center justify-center mb-2">
-              <Shield className="w-7 h-7 text-primary" />
+      <div className="flex-1 flex items-center justify-center px-4 py-20">
+        <Card className="w-full max-w-md shadow-elevated">
+          <CardHeader className="text-center space-y-3 pb-6">
+            <div className="w-16 h-16 mx-auto rounded-2xl bg-primary/8 flex items-center justify-center mb-2 border border-primary/10">
+              <Shield className="w-8 h-8 text-primary" />
             </div>
-            <CardTitle className="text-2xl font-bold">Sign in to Offer Check</CardTitle>
-            <p className="text-sm text-muted-foreground">
-              Sign in to access premium features like "Who Do I Work For?" — see exactly which corporations fund your elected representatives.
+            <CardTitle className="text-headline text-2xl">Sign in to Offer Check</CardTitle>
+            <p className="text-body text-muted-foreground leading-relaxed">
+              Access premium features like "Who Do I Work For?" — see exactly which corporations fund your elected representatives.
             </p>
           </CardHeader>
-          <CardContent className="space-y-4">
+          <CardContent className="space-y-5 pt-0">
             <Button
               onClick={handleGoogleSignIn}
-              className="w-full gap-2"
+              className="w-full gap-2.5 h-12 text-base"
               size="lg"
             >
               <svg className="w-5 h-5" viewBox="0 0 24 24">
@@ -60,8 +60,9 @@ export default function Login() {
                 <path fill="currentColor" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/>
               </svg>
               Continue with Google
+              <ArrowRight className="w-4 h-4 ml-auto" />
             </Button>
-            <p className="text-xs text-center text-muted-foreground">
+            <p className="text-micro text-center text-muted-foreground">
               By signing in, you agree to our terms of service. We only use your email to personalize your experience.
             </p>
           </CardContent>

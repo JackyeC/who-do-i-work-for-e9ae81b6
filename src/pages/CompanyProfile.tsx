@@ -442,39 +442,39 @@ export default function CompanyProfile() {
     return (
       <div className="min-h-screen flex flex-col bg-background">
         <Header />
-        <div className="container mx-auto px-4 py-8">
-          <Link to="/browse" className="inline-flex items-center gap-1 text-sm text-muted-foreground hover:text-foreground transition-colors mb-6">
+        <div className="container mx-auto px-4 py-12">
+          <Link to="/browse" className="inline-flex items-center gap-1.5 text-caption text-muted-foreground hover:text-foreground transition-colors mb-8">
             <ArrowLeft className="w-3.5 h-3.5" />
             Back to directory
           </Link>
 
           <motion.div initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.3 }}>
             {/* Company Overview */}
-            <div className="flex flex-col md:flex-row md:items-start gap-6 mb-8">
-              <div className="w-16 h-16 rounded-xl bg-muted flex items-center justify-center shrink-0">
-                <Building2 className="w-8 h-8 text-muted-foreground" />
+            <div className="flex flex-col md:flex-row md:items-start gap-6 mb-10">
+              <div className="w-16 h-16 rounded-2xl bg-muted/60 flex items-center justify-center shrink-0 border border-border/60">
+                <Building2 className="w-8 h-8 text-muted-foreground/70" />
               </div>
               <div className="flex-1 min-w-0">
                 <div className="flex items-start justify-between gap-4">
                   <div>
                     <div className="flex items-center gap-3 mb-2">
-                      <h1 className="text-3xl md:text-4xl font-bold text-foreground">{dbCompany.name}</h1>
+                      <h1 className="text-headline text-foreground">{dbCompany.name}</h1>
                       {recordStatus !== 'verified' && (
-                        <span className={`text-xs px-2.5 py-1 rounded-full border font-medium ${statusInfo.color}`}>
+                        <span className={`text-micro px-2.5 py-1 rounded-lg border font-medium ${statusInfo.color}`}>
                           {isDiscovering && <Loader2 className="w-3 h-3 animate-spin inline mr-1" />}
                           {statusInfo.label}
                         </span>
                       )}
                     </div>
                     {dbCompany.parent_company && (
-                      <p className="text-sm text-muted-foreground mb-1">Parent: {dbCompany.parent_company}</p>
+                      <p className="text-caption text-muted-foreground mb-1">Parent: {dbCompany.parent_company}</p>
                     )}
-                    <p className="text-muted-foreground mb-3">{dbCompany.description}</p>
+                    <p className="text-body text-muted-foreground mb-4 leading-relaxed max-w-2xl">{dbCompany.description}</p>
                     {(dbCompany as any).verification_notes && (
-                      <p className="text-xs text-civic-yellow mb-2">⚠ {(dbCompany as any).verification_notes}</p>
+                      <p className="text-caption text-civic-yellow mb-2">⚠ {(dbCompany as any).verification_notes}</p>
                     )}
                   </div>
-                  <div className="flex gap-2 flex-wrap">
+                  <div className="flex gap-2 flex-wrap shrink-0">
                     <ShareableScorecard data={{
                       name: dbCompany.name,
                       industry: dbCompany.industry,
@@ -499,7 +499,7 @@ export default function CompanyProfile() {
                     </Button>
                   </div>
                 </div>
-                <div className="flex flex-wrap items-center gap-3">
+                <div className="flex flex-wrap items-center gap-2">
                   <Badge variant="secondary">{dbCompany.industry}</Badge>
                   <Badge variant="secondary">{dbCompany.state}</Badge>
                   {dbCompany.revenue && <Badge variant="secondary">Revenue: {dbCompany.revenue}</Badge>}
@@ -578,47 +578,47 @@ export default function CompanyProfile() {
             <MonitoringStatusCard companyId={dbCompany.id} />
 
             {/* Summary Cards */}
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
-              <Card>
-                <CardContent className="p-4">
-                  <div className="flex items-center gap-2 text-xs text-muted-foreground mb-1">
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-10">
+              <Card className="overflow-hidden">
+                <CardContent className="p-5">
+                  <div className="flex items-center gap-2 text-caption text-muted-foreground mb-2">
                     <Scale className="w-3.5 h-3.5" />
                     Civic Footprint
                   </div>
-                  <div className="text-2xl font-bold text-foreground">{dbCompany.civic_footprint_score}<span className="text-sm text-muted-foreground">/100</span></div>
+                  <div className="text-3xl font-bold text-foreground mb-1" style={{ fontFamily: "'Source Serif 4', serif" }}>{dbCompany.civic_footprint_score}<span className="text-sm text-muted-foreground font-normal">/100</span></div>
                   <CivicFootprintBadge score={dbCompany.civic_footprint_score} size="sm" />
                 </CardContent>
               </Card>
-              <Card>
-                <CardContent className="p-4">
-                  <div className="flex items-center gap-2 text-xs text-muted-foreground mb-1">
+              <Card className="overflow-hidden">
+                <CardContent className="p-5">
+                  <div className="flex items-center gap-2 text-caption text-muted-foreground mb-2">
                     <DollarSign className="w-3.5 h-3.5" />
                     PAC Spending
                   </div>
-                  <div className="text-2xl font-bold text-foreground">
+                  <div className="text-3xl font-bold text-foreground" style={{ fontFamily: "'Source Serif 4', serif" }}>
                     {dbCompany.total_pac_spending > 0 ? formatCurrency(dbCompany.total_pac_spending) : "None"}
                   </div>
                 </CardContent>
               </Card>
-              <Card>
-                <CardContent className="p-4">
-                  <div className="flex items-center gap-2 text-xs text-muted-foreground mb-1">
+              <Card className="overflow-hidden">
+                <CardContent className="p-5">
+                  <div className="flex items-center gap-2 text-caption text-muted-foreground mb-2">
                     <Megaphone className="w-3.5 h-3.5" />
                     Lobbying
                   </div>
-                  <div className="text-2xl font-bold text-foreground">
+                  <div className="text-3xl font-bold text-foreground" style={{ fontFamily: "'Source Serif 4', serif" }}>
                     {dbCompany.lobbying_spend ? formatCurrency(dbCompany.lobbying_spend) : "None"}
                   </div>
                 </CardContent>
               </Card>
               {(dbCompany.government_contracts || dbCompany.subsidies_received) && (
-                <Card>
-                  <CardContent className="p-4">
-                    <div className="flex items-center gap-2 text-xs text-muted-foreground mb-1">
+                <Card className="overflow-hidden">
+                  <CardContent className="p-5">
+                    <div className="flex items-center gap-2 text-caption text-muted-foreground mb-2">
                       <Landmark className="w-3.5 h-3.5" />
                       Gov Contracts
                     </div>
-                    <div className="text-2xl font-bold text-foreground">
+                    <div className="text-3xl font-bold text-foreground" style={{ fontFamily: "'Source Serif 4', serif" }}>
                       {dbCompany.government_contracts ? formatCurrency(dbCompany.government_contracts) : "—"}
                     </div>
                   </CardContent>
@@ -627,16 +627,16 @@ export default function CompanyProfile() {
             </div>
 
             {/* Offer Check CTA */}
-            <Card className="mb-6 border-primary/20 bg-gradient-to-r from-primary/5 to-transparent">
-              <CardContent className="p-4 flex items-center gap-4">
-                <div className="w-10 h-10 rounded-lg bg-primary/10 flex items-center justify-center shrink-0">
-                  <ClipboardCheck className="w-5 h-5 text-primary" />
+            <Card className="mb-8 border-primary/15 bg-gradient-to-r from-primary/[0.03] to-transparent">
+              <CardContent className="p-5 flex items-center gap-5">
+                <div className="w-12 h-12 rounded-2xl bg-primary/8 flex items-center justify-center shrink-0 border border-primary/10">
+                  <ClipboardCheck className="w-6 h-6 text-primary" />
                 </div>
                 <div className="flex-1">
-                  <h3 className="font-semibold text-foreground text-sm">Run the Offer Check</h3>
-                  <p className="text-xs text-muted-foreground">Public signals to review before you say yes.</p>
+                  <h3 className="font-semibold text-foreground">Run the Offer Check</h3>
+                  <p className="text-caption text-muted-foreground">Public signals to review before you say yes.</p>
                 </div>
-                <Button size="sm" onClick={() => window.location.href = `/offer-check/${dbCompany.id}`}>
+                <Button onClick={() => window.location.href = `/offer-check/${dbCompany.id}`}>
                   Run Offer Check
                 </Button>
               </CardContent>

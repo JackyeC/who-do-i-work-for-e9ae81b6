@@ -19,26 +19,26 @@ export function EmptyState({ icon: Icon, title, description, action, className, 
   return (
     <div className={cn(
       "flex flex-col items-center justify-center text-center",
-      compact ? "py-8" : "py-16",
+      compact ? "py-10" : "py-20",
       className
     )}>
       <div className={cn(
-        "rounded-full bg-muted flex items-center justify-center mb-4",
-        compact ? "w-12 h-12" : "w-16 h-16"
+        "rounded-2xl bg-muted/60 flex items-center justify-center mb-5",
+        compact ? "w-14 h-14" : "w-18 h-18"
       )}>
         <Icon className={cn(
-          "text-muted-foreground",
-          compact ? "w-5 h-5" : "w-7 h-7"
+          "text-muted-foreground/60",
+          compact ? "w-6 h-6" : "w-8 h-8"
         )} />
       </div>
       <h3 className={cn(
-        "font-semibold text-foreground mb-1",
+        "font-semibold text-foreground mb-2",
         compact ? "text-base" : "text-lg"
       )}>
         {title}
       </h3>
       <p className={cn(
-        "text-muted-foreground max-w-sm",
+        "text-muted-foreground max-w-sm leading-relaxed",
         compact ? "text-xs" : "text-sm"
       )}>
         {description}
@@ -48,7 +48,7 @@ export function EmptyState({ icon: Icon, title, description, action, className, 
           variant={action.variant || "outline"}
           size="sm"
           onClick={action.onClick}
-          className="mt-4"
+          className="mt-6"
         >
           {action.label}
         </Button>
