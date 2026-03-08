@@ -141,9 +141,10 @@ function FlowArrow() {
 function SummaryBar({ data, state }: { data: ROIPipelineData; state: PipelineState }) {
   if (state === "not_scanned" || state === "scanning") return null;
 
-  const roiRatio = data.totalSpending > 0
+  const hasBothSides = data.totalSpending > 0 && data.totalBenefits > 0;
+  const roiRatio = hasBothSides
     ? `${(data.totalBenefits / data.totalSpending).toFixed(1)}x`
-    : "—";
+    : null;
 
   const showValues = state === "results" || state === "partial";
 
@@ -159,7 +160,13 @@ function SummaryBar({ data, state }: { data: ROIPipelineData; state: PipelineSta
         <ArrowRight className="w-4 h-4 text-muted-foreground" />
         <div className="text-center px-4 py-2 bg-card rounded-lg border border-border">
           <div className="text-xs text-muted-foreground">ROI</div>
-          <div className="text-xl font-bold text-foreground">{showValues ? roiRatio : "—"}</div>
+          {showValues && roiRatio ? (
+            <div className="text-xl font-bold text-foreground">{roiRatio}</div>
+          ) : showValues ? (
+            <div className="text-xs text-muted-foreground italic">Insufficient verified data</div>
+          ) : (
+            <div className="text-xl font-bold text-foreground">—</div>
+          )}
         </div>
         <ArrowRight className="w-4 h-4 text-muted-foreground" />
       </div>
