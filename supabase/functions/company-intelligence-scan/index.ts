@@ -5,27 +5,58 @@ const corsHeaders = {
 
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2';
 
-const MODULES = [
-  { key: 'ai_hr_scan', label: 'Hiring Technology & AI Use', fn: 'ai-hr-scan' },
-  { key: 'worker_benefits', label: 'Worker Benefits & Protections', fn: 'worker-benefits-scan' },
-  { key: 'pay_equity', label: 'Pay Equity & Compensation Transparency', fn: 'pay-equity-scan' },
-  { key: 'worker_sentiment', label: 'Worker Sentiment', fn: 'worker-sentiment-scan' },
-  { key: 'ideology', label: 'Ideology & Controversy Signals', fn: 'ideology-scan' },
-  { key: 'social', label: 'Social & Media Monitoring', fn: 'social-scan' },
-  { key: 'agency_contracts', label: 'Government Contracts', fn: 'agency-scan' },
-  { key: 'ai_accountability', label: 'AI Accountability', fn: 'ai-accountability-scan' },
+// Phase 1: Structured data connectors (federal APIs - high confidence)
+const PIPELINE_MODULES = [
+  { key: 'fec_campaign_finance', label: 'FEC Campaign Finance', fn: 'sync-openfec', phase: 'pipeline' },
+  { key: 'federal_contracts', label: 'Federal Contracts (USASpending)', fn: 'sync-federal-contracts', phase: 'pipeline' },
+  { key: 'lobbying_disclosure', label: 'Lobbying Disclosure (Senate LDA)', fn: 'sync-lobbying', phase: 'pipeline' },
 ];
 
-// Determine truthful module status based on actual results
+// Phase 2: Web-crawled research modules (AI-analyzed - moderate confidence)
+const RESEARCH_MODULES = [
+  { key: 'ai_hr_scan', label: 'Hiring Technology & AI Use', fn: 'ai-hr-scan', phase: 'research' },
+  { key: 'worker_benefits', label: 'Worker Benefits & Protections', fn: 'worker-benefits-scan', phase: 'research' },
+  { key: 'pay_equity', label: 'Pay Equity & Compensation Transparency', fn: 'pay-equity-scan', phase: 'research' },
+  { key: 'worker_sentiment', label: 'Worker Sentiment', fn: 'worker-sentiment-scan', phase: 'research' },
+  { key: 'ideology', label: 'Ideology & Controversy Signals', fn: 'ideology-scan', phase: 'research' },
+  { key: 'social', label: 'Social & Media Monitoring', fn: 'social-scan', phase: 'research' },
+  { key: 'agency_contracts', label: 'Government Contracts', fn: 'agency-scan', phase: 'research' },
+  { key: 'ai_accountability', label: 'AI Accountability', fn: 'ai-accountability-scan', phase: 'research' },
+];
+
+const ALL_MODULES = [...PIPELINE_MODULES, ...RESEARCH_MODULES];
+
 function resolveModuleStatus(sourcesScanned: number, signalsFound: number): string {
   if (sourcesScanned > 0 && signalsFound > 0) return 'completed_with_signals';
   if (sourcesScanned > 0 && signalsFound === 0) return 'completed_no_signals';
   return 'no_sources_found';
 }
 
-// Check if a status counts as "truly completed"
 function isTrulyCompleted(status: string): boolean {
   return status === 'completed_with_signals' || status === 'completed_no_signals';
+}
+
+// For pipeline modules, interpret their response format (they return success/stats not sourcesScanned)
+function interpretPipelineResult(result: any): { sourcesScanned: number; signalsFound: number } {
+  // sync-openfec returns stats.committeesFound, stats.candidatesFunded, stats.linkagesCreated
+  // sync-federal-contracts returns contractsFound, linkagesCreated
+  // sync-lobbying returns filingsFound, linkagesCreated
+
+  const sourcesScanned =
+    (result.stats?.committeesFound || 0) +
+    (result.contractsFound || 0) +
+    (result.filingsFound || 0) +
+    (result.sourcesScanned || 0) +
+    (result.stats ? 1 : 0); // At least 1 if stats exist
+
+  const signalsFound =
+    (result.stats?.candidatesFunded || 0) +
+    (result.stats?.linkagesCreated || 0) +
+    (result.linkagesCreated || 0) +
+    (result.contractsInserted || 0) +
+    (result.signalsFound || 0);
+
+  return { sourcesScanned: Math.max(sourcesScanned, result.success ? 1 : 0), signalsFound };
 }
 
 Deno.serve(async (req) => {
@@ -70,8 +101,8 @@ Deno.serve(async (req) => {
         company_id: companyId,
         scan_status: 'in_progress',
         triggered_by: 'user',
-        total_modules_run: MODULES.length,
-        module_statuses: Object.fromEntries(MODULES.map(m => [m.key, { status: 'queued', label: m.label }])),
+        total_modules_run: ALL_MODULES.length,
+        module_statuses: Object.fromEntries(ALL_MODULES.map(m => [m.key, { status: 'queued', label: m.label, phase: m.phase }])),
       })
       .select()
       .single();
@@ -90,30 +121,113 @@ Deno.serve(async (req) => {
       last_scan_attempted: new Date().toISOString(),
     }).eq('id', companyId);
 
-    // Run modules sequentially
+    // Run all modules sequentially
     const moduleStatuses: Record<string, any> = {};
     let trulyCompleted = 0, failed = 0, noSourcesFound = 0, withSignals = 0;
     let totalSources = 0, totalSignals = 0;
     const warnings: string[] = [];
     const errorLog: any[] = [];
 
-    for (const mod of MODULES) {
-      console.log(`[intelligence-scan] Running module: ${mod.key}`);
+    // ─── Phase 1: Pipeline connectors (structured federal data) ───
+    console.log(`[intelligence-scan] ═══ Phase 1: Structured Data Connectors ═══`);
+
+    for (const mod of PIPELINE_MODULES) {
+      console.log(`[intelligence-scan] Running pipeline module: ${mod.key}`);
       const moduleStartedAt = new Date().toISOString();
 
-      // Update module status to in_progress
-      moduleStatuses[mod.key] = { status: 'in_progress', label: mod.label, startedAt: moduleStartedAt };
-      await supabase.from('scan_runs').update({
-        module_statuses: { ...moduleStatuses },
-      }).eq('id', scanId);
+      moduleStatuses[mod.key] = { status: 'in_progress', label: mod.label, phase: mod.phase, startedAt: moduleStartedAt };
+      await supabase.from('scan_runs').update({ module_statuses: { ...moduleStatuses } }).eq('id', scanId);
 
       try {
         const moduleResp = await fetch(`${supabaseUrl}/functions/v1/${mod.fn}`, {
           method: 'POST',
-          headers: {
-            'Authorization': `Bearer ${supabaseKey}`,
-            'Content-Type': 'application/json',
-          },
+          headers: { 'Authorization': `Bearer ${supabaseKey}`, 'Content-Type': 'application/json' },
+          body: JSON.stringify({ companyId, companyName }),
+        });
+
+        const moduleCompletedAt = new Date().toISOString();
+
+        if (moduleResp.ok) {
+          const result = await moduleResp.json();
+          const { sourcesScanned, signalsFound } = interpretPipelineResult(result);
+
+          totalSources += sourcesScanned;
+          totalSignals += signalsFound;
+
+          const resolvedStatus = resolveModuleStatus(sourcesScanned, signalsFound);
+
+          moduleStatuses[mod.key] = {
+            status: resolvedStatus, label: mod.label, phase: mod.phase,
+            signalsFound, sourcesScanned,
+            startedAt: moduleStartedAt, completedAt: moduleCompletedAt,
+            pipelineResult: {
+              totalSpend: result.stats?.totalPacSpending || result.totalContractValue || result.totalLobbyingSpend || 0,
+              linkagesCreated: result.stats?.linkagesCreated || result.linkagesCreated || 0,
+            },
+          };
+
+          if (isTrulyCompleted(resolvedStatus)) {
+            trulyCompleted++;
+            if (resolvedStatus === 'completed_with_signals') withSignals++;
+          } else {
+            noSourcesFound++;
+            warnings.push(`${mod.label}: No records found in federal databases.`);
+          }
+
+          console.log(`[intelligence-scan] ${mod.key}: ${resolvedStatus}, ${signalsFound} signals from ${sourcesScanned} sources`);
+        } else {
+          const errText = await moduleResp.text().catch(() => 'Unknown error');
+          failed++;
+          const errorType = moduleResp.status === 402 ? 'quota_exceeded' : moduleResp.status === 429 ? 'rate_limited' : moduleResp.status >= 500 ? 'server_error' : 'http_error';
+
+          moduleStatuses[mod.key] = {
+            status: 'failed', label: mod.label, phase: mod.phase,
+            error: `HTTP ${moduleResp.status}`, errorType,
+            startedAt: moduleStartedAt, completedAt: moduleCompletedAt,
+            sourcesScanned: 0, signalsFound: 0,
+          };
+          warnings.push(`${mod.label} failed (HTTP ${moduleResp.status})`);
+          errorLog.push({ module: mod.key, status: moduleResp.status, errorType, error: errText.slice(0, 500), timestamp: moduleCompletedAt });
+          console.error(`[intelligence-scan] ${mod.key} failed: HTTP ${moduleResp.status}`);
+        }
+      } catch (e) {
+        const moduleCompletedAt = new Date().toISOString();
+        failed++;
+        const msg = e instanceof Error ? e.message : 'Unknown error';
+        moduleStatuses[mod.key] = {
+          status: 'failed', label: mod.label, phase: mod.phase,
+          error: msg, errorType: 'exception',
+          startedAt: moduleStartedAt, completedAt: moduleCompletedAt,
+          sourcesScanned: 0, signalsFound: 0,
+        };
+        warnings.push(`${mod.label} failed: ${msg}`);
+        errorLog.push({ module: mod.key, errorType: 'exception', error: msg, timestamp: moduleCompletedAt });
+        console.error(`[intelligence-scan] ${mod.key} exception:`, e);
+      }
+
+      // Update progress
+      await supabase.from('scan_runs').update({
+        modules_completed: trulyCompleted, modules_failed: failed,
+        modules_with_signals: withSignals, modules_with_no_signals: noSourcesFound,
+        total_sources_scanned: totalSources, total_signals_found: totalSignals,
+        module_statuses: { ...moduleStatuses }, warnings, error_log: errorLog,
+      }).eq('id', scanId);
+    }
+
+    // ─── Phase 2: Web research modules ───
+    console.log(`[intelligence-scan] ═══ Phase 2: Web Research Modules ═══`);
+
+    for (const mod of RESEARCH_MODULES) {
+      console.log(`[intelligence-scan] Running research module: ${mod.key}`);
+      const moduleStartedAt = new Date().toISOString();
+
+      moduleStatuses[mod.key] = { status: 'in_progress', label: mod.label, phase: mod.phase, startedAt: moduleStartedAt };
+      await supabase.from('scan_runs').update({ module_statuses: { ...moduleStatuses } }).eq('id', scanId);
+
+      try {
+        const moduleResp = await fetch(`${supabaseUrl}/functions/v1/${mod.fn}`, {
+          method: 'POST',
+          headers: { 'Authorization': `Bearer ${supabaseKey}`, 'Content-Type': 'application/json' },
           body: JSON.stringify({ companyId, companyName }),
         });
 
@@ -127,67 +241,36 @@ Deno.serve(async (req) => {
           totalSources += sourcesScanned;
           totalSignals += signalsFound;
 
-          // Apply truthful status rules
           const resolvedStatus = resolveModuleStatus(sourcesScanned, signalsFound);
 
           moduleStatuses[mod.key] = {
-            status: resolvedStatus,
-            label: mod.label,
-            signalsFound,
-            sourcesScanned,
-            startedAt: moduleStartedAt,
-            completedAt: moduleCompletedAt,
+            status: resolvedStatus, label: mod.label, phase: mod.phase,
+            signalsFound, sourcesScanned,
+            startedAt: moduleStartedAt, completedAt: moduleCompletedAt,
           };
 
           if (isTrulyCompleted(resolvedStatus)) {
             trulyCompleted++;
             if (resolvedStatus === 'completed_with_signals') withSignals++;
           } else {
-            // no_sources_found
             noSourcesFound++;
             warnings.push(`${mod.label}: No usable sources were discovered or scanned.`);
           }
 
-          console.log(`[intelligence-scan] ${mod.key}: status=${resolvedStatus}, ${signalsFound} signals from ${sourcesScanned} sources`);
+          console.log(`[intelligence-scan] ${mod.key}: ${resolvedStatus}, ${signalsFound} signals from ${sourcesScanned} sources`);
         } else {
           const errText = await moduleResp.text().catch(() => 'Unknown error');
           failed++;
-
-          // Detect specific error types
-          let errorType = 'http_error';
-          let errorExplanation = `Module returned HTTP ${moduleResp.status}`;
-          if (moduleResp.status === 402) {
-            errorType = 'quota_exceeded';
-            errorExplanation = 'External provider quota or billing issue detected. The crawling service has run out of credits.';
-          } else if (moduleResp.status === 429) {
-            errorType = 'rate_limited';
-            errorExplanation = 'Rate limited by external provider. Try again later.';
-          } else if (moduleResp.status >= 500) {
-            errorType = 'server_error';
-            errorExplanation = 'The scan module encountered an internal error.';
-          }
+          const errorType = moduleResp.status === 402 ? 'quota_exceeded' : moduleResp.status === 429 ? 'rate_limited' : moduleResp.status >= 500 ? 'server_error' : 'http_error';
 
           moduleStatuses[mod.key] = {
-            status: 'failed',
-            label: mod.label,
-            error: `HTTP ${moduleResp.status}`,
-            errorType,
-            errorExplanation,
-            startedAt: moduleStartedAt,
-            completedAt: moduleCompletedAt,
-            sourcesScanned: 0,
-            signalsFound: 0,
+            status: 'failed', label: mod.label, phase: mod.phase,
+            error: `HTTP ${moduleResp.status}`, errorType,
+            startedAt: moduleStartedAt, completedAt: moduleCompletedAt,
+            sourcesScanned: 0, signalsFound: 0,
           };
-          warnings.push(`${mod.label} failed (HTTP ${moduleResp.status}): ${errorExplanation}`);
-          errorLog.push({
-            module: mod.key,
-            label: mod.label,
-            status: moduleResp.status,
-            errorType,
-            errorExplanation,
-            error: errText.slice(0, 500),
-            timestamp: moduleCompletedAt,
-          });
+          warnings.push(`${mod.label} failed (HTTP ${moduleResp.status})`);
+          errorLog.push({ module: mod.key, status: moduleResp.status, errorType, error: errText.slice(0, 500), timestamp: moduleCompletedAt });
           console.error(`[intelligence-scan] ${mod.key} failed: HTTP ${moduleResp.status}`);
         }
       } catch (e) {
@@ -195,44 +278,73 @@ Deno.serve(async (req) => {
         failed++;
         const msg = e instanceof Error ? e.message : 'Unknown error';
         moduleStatuses[mod.key] = {
-          status: 'failed',
-          label: mod.label,
-          error: msg,
-          errorType: 'exception',
-          errorExplanation: `Unhandled exception: ${msg}`,
-          startedAt: moduleStartedAt,
-          completedAt: moduleCompletedAt,
-          sourcesScanned: 0,
-          signalsFound: 0,
+          status: 'failed', label: mod.label, phase: mod.phase,
+          error: msg, errorType: 'exception',
+          startedAt: moduleStartedAt, completedAt: moduleCompletedAt,
+          sourcesScanned: 0, signalsFound: 0,
         };
         warnings.push(`${mod.label} failed: ${msg}`);
-        errorLog.push({
-          module: mod.key,
-          label: mod.label,
-          errorType: 'exception',
-          errorExplanation: msg,
-          error: msg,
-          timestamp: moduleCompletedAt,
-        });
+        errorLog.push({ module: mod.key, errorType: 'exception', error: msg, timestamp: moduleCompletedAt });
         console.error(`[intelligence-scan] ${mod.key} exception:`, e);
       }
 
-      // Update progress after each module
       await supabase.from('scan_runs').update({
-        modules_completed: trulyCompleted,
-        modules_failed: failed,
-        modules_with_signals: withSignals,
-        modules_with_no_signals: noSourcesFound,
-        total_sources_scanned: totalSources,
-        total_signals_found: totalSignals,
-        module_statuses: { ...moduleStatuses },
-        warnings,
-        error_log: errorLog,
+        modules_completed: trulyCompleted, modules_failed: failed,
+        modules_with_signals: withSignals, modules_with_no_signals: noSourcesFound,
+        total_sources_scanned: totalSources, total_signals_found: totalSignals,
+        module_statuses: { ...moduleStatuses }, warnings, error_log: errorLog,
       }).eq('id', scanId);
     }
 
+    // ─── Phase 3: Calculate influence ROI from pipeline data ───
+    console.log(`[intelligence-scan] ═══ Phase 3: Calculating Influence ROI ═══`);
+
+    try {
+      // Sum Money In (donations + lobbying)
+      const { data: moneyInData } = await supabase
+        .from('entity_linkages')
+        .select('amount')
+        .eq('company_id', companyId)
+        .in('link_type', ['donation_to_member', 'trade_association_lobbying', 'dark_money_channel']);
+
+      const totalPoliticalSpending = (moneyInData || []).reduce((sum, r) => sum + (r.amount || 0), 0);
+
+      // Sum Benefits Out (contracts + grants)
+      const { data: benefitsData } = await supabase
+        .from('entity_linkages')
+        .select('amount')
+        .eq('company_id', companyId)
+        .in('link_type', ['committee_oversight_of_contract', 'foundation_grant_to_district', 'state_lobbying_contract']);
+
+      const totalGovernmentBenefits = (benefitsData || []).reduce((sum, r) => sum + (r.amount || 0), 0);
+
+      // Calculate ROI
+      const roiRatio = totalPoliticalSpending > 0 ? totalGovernmentBenefits / totalPoliticalSpending : null;
+      const roiGrade = roiRatio === null ? 'Insufficient Data'
+        : roiRatio >= 10 ? 'A+'
+        : roiRatio >= 5 ? 'A'
+        : roiRatio >= 2 ? 'B'
+        : roiRatio >= 1 ? 'C'
+        : 'D';
+
+      // Upsert influence ROI record
+      await supabase.from('company_influence_roi').upsert({
+        company_id: companyId,
+        total_political_spending: totalPoliticalSpending,
+        total_government_benefits: totalGovernmentBenefits,
+        roi_ratio: roiRatio || 0,
+        roi_grade: roiGrade,
+        last_calculated: new Date().toISOString(),
+      }, { onConflict: 'company_id' });
+
+      console.log(`[intelligence-scan] ROI: $${totalPoliticalSpending.toLocaleString()} in → $${totalGovernmentBenefits.toLocaleString()} out (${roiRatio?.toFixed(1) || 'N/A'}x)`);
+    } catch (roiErr) {
+      console.error('[intelligence-scan] ROI calculation error:', roiErr);
+      warnings.push('ROI calculation failed');
+    }
+
     // Finalize overall status
-    const overallStatus = failed === MODULES.length
+    const overallStatus = failed === ALL_MODULES.length
       ? 'failed'
       : (failed > 0 || noSourcesFound > 0)
         ? 'completed_with_warnings'
@@ -243,9 +355,9 @@ Deno.serve(async (req) => {
       scan_completed_at: new Date().toISOString(),
     }).eq('id', scanId);
 
-    // Update company scan_completion — only truly completed modules count
+    // Update company scan_completion
     const scanCompletion: Record<string, boolean> = {};
-    for (const mod of MODULES) {
+    for (const mod of ALL_MODULES) {
       scanCompletion[mod.key] = isTrulyCompleted(moduleStatuses[mod.key]?.status);
     }
     await supabase.from('companies').update({
@@ -253,7 +365,7 @@ Deno.serve(async (req) => {
       record_status: 'verified',
     }).eq('id', companyId);
 
-    console.log(`[intelligence-scan] COMPLETE: ${companyName} - ${overallStatus} (${trulyCompleted}/${MODULES.length} truly completed, ${noSourcesFound} no_sources_found, ${failed} failed, ${totalSignals} signals)`);
+    console.log(`[intelligence-scan] COMPLETE: ${companyName} - ${overallStatus} (${trulyCompleted}/${ALL_MODULES.length} completed, ${totalSignals} signals)`);
 
     return new Response(JSON.stringify({
       success: true,
