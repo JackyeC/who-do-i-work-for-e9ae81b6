@@ -12,9 +12,11 @@ export function Header() {
 
   const navLinks = [
     { to: "/", label: "Home" },
-    { to: "/check", label: "Check", icon: Shield },
+    { to: "/check?tab=company", label: "Who Do I Work For?", icon: Shield },
+    { to: "/check?tab=offer", label: "Is This Offer Right For Me?", icon: ClipboardCheck },
+    { to: "/career-map", label: "Where Could My Career Go?", icon: Map },
+    { to: "/check?tab=candidate", label: "What Am I Supporting?", icon: Users },
     { to: "/jobs", label: "Jobs", icon: Briefcase },
-    { to: "/career-map", label: "Career Map", icon: Map },
     { to: "/methodology", label: "Methodology", icon: BookOpen },
   ];
 
