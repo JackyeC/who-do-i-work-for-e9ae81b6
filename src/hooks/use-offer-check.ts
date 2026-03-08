@@ -109,6 +109,15 @@ export function useOfferCheck(companyId?: string) {
     enabled: !!companyId,
   });
 
+  const { data: warnNotices } = useQuery({
+    queryKey: ["oc-warn", companyId],
+    queryFn: async () => {
+      const { data } = await supabase.from("company_warn_notices" as any).select("*").eq("company_id", companyId!).order("notice_date", { ascending: false });
+      return (data || []) as any[];
+    },
+    enabled: !!companyId,
+  });
+
   const { data: darkMoney } = useQuery({
     queryKey: ["oc-dark-money", companyId],
     queryFn: async () => {

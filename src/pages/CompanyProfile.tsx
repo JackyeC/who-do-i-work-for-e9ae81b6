@@ -223,6 +223,7 @@ function DbLensModules({ activeLens, dbCompany, dbPartyBreakdown, dbCandidates, 
     "worker-benefits": <div key="worker-benefits" className="mb-6"><WorkerBenefitsCard companyName={dbCompany.name} dbCompanyId={dbCompany.id} /></div>,
     "ai-accountability": <div key="ai-accountability" className="mb-6"><AIAccountabilityCard companyName={dbCompany.name} dbCompanyId={dbCompany.id} /></div>,
     "compensation": <div key="compensation" className="mb-6"><CompensationTransparencyCard companyName={dbCompany.name} dbCompanyId={dbCompany.id} /></div>,
+    "warn-tracker": <div key="warn-tracker" className="mb-6"><WarnTrackerCard companyName={dbCompany.name} dbCompanyId={dbCompany.id} /></div>,
   };
 
   return (

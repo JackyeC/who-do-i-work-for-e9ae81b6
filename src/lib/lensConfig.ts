@@ -70,6 +70,7 @@ export const LENSES: LensDefinition[] = [
       "intelligence-scores",
       "compensation",
       "worker-benefits",
+      "warn-tracker",
       "ideology-flags",
       "social-monitor",
       "worker-sentiment",
