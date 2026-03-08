@@ -3,11 +3,18 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import {
   Bug, ChevronDown, ChevronUp, CheckCircle2, XCircle, Clock, Loader2,
-  Database, Globe, Brain, AlertTriangle, CircleSlash, SkipForward
+  Database, Globe, Brain, AlertTriangle, CircleSlash, SkipForward, Radio
 } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useQuery } from "@tanstack/react-query";
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
+import { cn } from "@/lib/utils";
+
+const PAGE_TYPE_LABELS: Record<string, string> = {
+  careers: "Careers", jobs: "Job Listings", benefits: "Benefits",
+  leadership: "Leadership", esg: "ESG / Impact", diversity: "Diversity & Workforce",
+  newsroom: "Newsroom / Press", policy: "Political Disclosure", privacy: "Privacy / AI Disclosure",
+};
 
 interface Props {
   companyId: string;
@@ -15,6 +22,7 @@ interface Props {
 
 export function ScanDebugPanel({ companyId }: Props) {
   const [isOpen, setIsOpen] = useState(false);
+  const [monitoringOpen, setMonitoringOpen] = useState(false);
 
   const { data: scanRuns, isLoading } = useQuery({
     queryKey: ["scan-debug", companyId],
@@ -31,6 +39,35 @@ export function ScanDebugPanel({ companyId }: Props) {
     enabled: isOpen,
   });
 
+  const { data: monitors } = useQuery({
+    queryKey: ["debug-monitors", companyId],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from("browse_ai_monitors" as any)
+        .select("*")
+        .eq("company_id", companyId)
+        .order("created_at", { ascending: true });
+      if (error) throw error;
+      return data as any[];
+    },
+    enabled: isOpen && monitoringOpen,
+  });
+
+  const { data: changeEvents } = useQuery({
+    queryKey: ["debug-change-events", companyId],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from("browse_ai_change_events" as any)
+        .select("*")
+        .eq("company_id", companyId)
+        .order("created_at", { ascending: false })
+        .limit(10);
+      if (error) throw error;
+      return data as any[];
+    },
+    enabled: isOpen && monitoringOpen,
+  });
+
   const statusIcon = (status: string) => {
     if (status === 'completed_with_signals') return <CheckCircle2 className="w-3.5 h-3.5 text-primary" />;
     if (status === 'completed_no_signals') return <CheckCircle2 className="w-3.5 h-3.5 text-muted-foreground" />;
@@ -38,6 +75,9 @@ export function ScanDebugPanel({ companyId }: Props) {
     if (status === 'failed') return <XCircle className="w-3.5 h-3.5 text-destructive" />;
     if (status === 'skipped') return <SkipForward className="w-3.5 h-3.5 text-muted-foreground" />;
     if (status === 'in_progress') return <Loader2 className="w-3.5 h-3.5 animate-spin text-primary" />;
+    if (status === 'active') return <CheckCircle2 className="w-3.5 h-3.5 text-green-600" />;
+    if (status === 'error') return <XCircle className="w-3.5 h-3.5 text-destructive" />;
+    if (status === 'paused') return <AlertTriangle className="w-3.5 h-3.5 text-yellow-600" />;
     return <Clock className="w-3.5 h-3.5 text-muted-foreground" />;
   };
 
@@ -97,7 +137,6 @@ export function ScanDebugPanel({ companyId }: Props) {
                     </span>
                   </div>
 
-                  {/* Truthful stats */}
                   <div className="grid grid-cols-3 md:grid-cols-6 gap-2 mb-3">
                     {[
                       { icon: Globe, label: 'Sources', val: run.total_sources_scanned },
@@ -114,7 +153,6 @@ export function ScanDebugPanel({ companyId }: Props) {
                     ))}
                   </div>
 
-                  {/* Per-module diagnostics */}
                   <div className="space-y-1 mb-3">
                     <div className="text-xs font-medium text-muted-foreground mb-1">Module Diagnostics:</div>
                     {moduleEntries.map(([key, mod]: [string, any]) => (
@@ -148,7 +186,6 @@ export function ScanDebugPanel({ companyId }: Props) {
                     ))}
                   </div>
 
-                  {/* Error log */}
                   {run.error_log?.length > 0 && (
                     <div className="p-2 rounded bg-destructive/5 border border-destructive/20 mb-2">
                       <div className="text-xs font-medium text-destructive mb-1">Error Log ({run.error_log.length}):</div>
@@ -163,7 +200,6 @@ export function ScanDebugPanel({ companyId }: Props) {
                     </div>
                   )}
 
-                  {/* Warnings */}
                   {run.warnings?.length > 0 && (
                     <div className="p-2 rounded bg-yellow-500/5 border border-yellow-500/20 mb-2">
                       <div className="flex items-center gap-1 text-xs font-medium text-yellow-600 mb-1">
@@ -175,7 +211,6 @@ export function ScanDebugPanel({ companyId }: Props) {
                     </div>
                   )}
 
-                  {/* Duration */}
                   {run.scan_completed_at && (
                     <p className="text-xs text-muted-foreground mt-2">
                       Duration: {Math.round((new Date(run.scan_completed_at).getTime() - new Date(run.scan_started_at).getTime()) / 1000)}s
@@ -184,6 +219,109 @@ export function ScanDebugPanel({ companyId }: Props) {
                 </div>
               );
             })}
+
+            {/* Browse AI Monitoring Debug Section */}
+            <Collapsible open={monitoringOpen} onOpenChange={setMonitoringOpen}>
+              <CollapsibleTrigger asChild>
+                <div className="mt-4 pt-4 border-t border-border cursor-pointer hover:bg-muted/20 rounded p-2 transition-colors">
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center gap-2 text-sm text-muted-foreground">
+                      <Radio className="w-4 h-4" />
+                      <span className="font-medium">Browse AI Monitoring Debug</span>
+                    </div>
+                    {monitoringOpen ? <ChevronUp className="w-4 h-4 text-muted-foreground" /> : <ChevronDown className="w-4 h-4 text-muted-foreground" />}
+                  </div>
+                </div>
+              </CollapsibleTrigger>
+              <CollapsibleContent>
+                <div className="mt-2 space-y-3">
+                  {/* Monitor list */}
+                  {monitors && monitors.length > 0 ? (
+                    <div>
+                      <div className="text-xs font-medium text-muted-foreground mb-2">
+                        Monitored Pages ({monitors.length})
+                      </div>
+                      <div className="space-y-1">
+                        {monitors.map((mon: any) => (
+                          <div key={mon.id} className="text-xs py-1.5 px-2 rounded bg-muted/20 border border-border/30">
+                            <div className="flex items-center justify-between">
+                              <div className="flex items-center gap-1.5">
+                                {statusIcon(mon.status)}
+                                <span className="font-medium text-foreground">
+                                  {PAGE_TYPE_LABELS[mon.page_type] || mon.page_type}
+                                </span>
+                              </div>
+                              <Badge variant="outline" className="text-[9px]">{mon.status}</Badge>
+                            </div>
+                            <div className="flex flex-wrap items-center gap-3 mt-0.5 ml-5 text-muted-foreground">
+                              {mon.browse_ai_robot_id && (
+                                <span>Robot: <code className="text-foreground/70">{mon.browse_ai_robot_id.slice(0, 12)}…</code></span>
+                              )}
+                              {mon.last_checked_at && (
+                                <span>Checked: {new Date(mon.last_checked_at).toLocaleString()}</span>
+                              )}
+                              {mon.last_change_detected_at && (
+                                <span className="text-primary">Changed: {new Date(mon.last_change_detected_at).toLocaleString()}</span>
+                              )}
+                            </div>
+                            {mon.error_message && (
+                              <div className="mt-1 ml-5 text-destructive">{mon.error_message}</div>
+                            )}
+                            <div className="mt-0.5 ml-5">
+                              <a href={mon.page_url} target="_blank" rel="noopener noreferrer" className="text-primary hover:underline text-[10px]">
+                                {mon.page_url}
+                              </a>
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  ) : (
+                    <p className="text-xs text-muted-foreground">No Browse AI monitors configured for this company.</p>
+                  )}
+
+                  {/* Recent change events */}
+                  {changeEvents && changeEvents.length > 0 && (
+                    <div>
+                      <div className="text-xs font-medium text-muted-foreground mb-2">
+                        Recent Webhook Events ({changeEvents.length})
+                      </div>
+                      <div className="space-y-1">
+                        {changeEvents.map((evt: any) => (
+                          <div key={evt.id} className="text-xs py-1.5 px-2 rounded bg-muted/20 border border-border/30">
+                            <div className="flex items-center justify-between mb-0.5">
+                              <div className="flex items-center gap-2">
+                                <Badge variant="outline" className="text-[9px]">
+                                  {PAGE_TYPE_LABELS[evt.page_type] || evt.page_type}
+                                </Badge>
+                                <Badge
+                                  variant="outline"
+                                  className={cn(
+                                    "text-[9px]",
+                                    evt.processing_status === 'completed' ? 'border-green-200 text-green-600' :
+                                    evt.processing_status === 'failed' ? 'border-destructive/30 text-destructive' :
+                                    'border-yellow-200 text-yellow-600'
+                                  )}
+                                >
+                                  {evt.processing_status}
+                                </Badge>
+                              </div>
+                              <span className="text-muted-foreground">{new Date(evt.created_at).toLocaleString()}</span>
+                            </div>
+                            <p className="text-muted-foreground">{evt.change_summary}</p>
+                            {evt.signal_modules_triggered?.length > 0 && (
+                              <div className="mt-0.5 text-muted-foreground">
+                                Modules: {evt.signal_modules_triggered.join(', ')}
+                              </div>
+                            )}
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  )}
+                </div>
+              </CollapsibleContent>
+            </Collapsible>
           </CardContent>
         </CollapsibleContent>
       </Card>

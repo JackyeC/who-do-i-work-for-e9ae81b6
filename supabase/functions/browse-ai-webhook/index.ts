@@ -5,14 +5,30 @@ const corsHeaders = {
 
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2';
 
-// Map page types to the signal analysis modules that should re-run
+// Expanded module mapping: page_type → scan modules to re-run
 const PAGE_TYPE_TO_MODULES: Record<string, string[]> = {
-  careers: ['ai-hr-scan', 'pay-equity-scan'],
-  benefits: ['worker-benefits-scan'],
+  careers: ['ai-hr-scan', 'worker-benefits-scan', 'pay-equity-scan'],
+  jobs: ['ai-hr-scan', 'pay-equity-scan'],
+  benefits: ['worker-benefits-scan', 'pay-equity-scan'],
   leadership: ['ideology-scan', 'social-scan'],
-  esg: ['ai-accountability-scan', 'worker-benefits-scan'],
-  political_disclosure: ['sync-openfec', 'sync-lobbying', 'ideology-scan'],
-  job_listings: ['ai-hr-scan', 'pay-equity-scan'],
+  esg: ['ai-accountability-scan', 'worker-benefits-scan', 'ideology-scan'],
+  diversity: ['worker-benefits-scan', 'pay-equity-scan', 'worker-sentiment-scan'],
+  newsroom: ['social-scan', 'ideology-scan'],
+  policy: ['sync-openfec', 'sync-lobbying', 'ideology-scan'],
+  privacy: ['ai-hr-scan', 'ai-accountability-scan'],
+};
+
+// Friendly labels for page types
+const PAGE_TYPE_LABELS: Record<string, string> = {
+  careers: 'Careers',
+  jobs: 'Job Listings',
+  benefits: 'Benefits',
+  leadership: 'Leadership',
+  esg: 'ESG / Impact',
+  diversity: 'Diversity & Workforce',
+  newsroom: 'Newsroom / Press',
+  policy: 'Political Disclosure',
+  privacy: 'Privacy / AI Disclosure',
 };
 
 Deno.serve(async (req) => {
@@ -26,12 +42,10 @@ Deno.serve(async (req) => {
 
   try {
     const payload = await req.json();
-    console.log('[browse-ai-webhook] Received webhook:', JSON.stringify(payload).slice(0, 500));
+    console.log('[browse-ai-webhook] Received:', JSON.stringify(payload).slice(0, 500));
 
-    // Browse AI sends robotId and task data
     const robotId = payload.robot?.id || payload.robotId;
     const taskData = payload.task || payload;
-    const capturedData = taskData.capturedData || taskData.data || {};
 
     if (!robotId) {
       return new Response(JSON.stringify({ error: 'No robotId in webhook payload' }), {
@@ -39,7 +53,7 @@ Deno.serve(async (req) => {
       });
     }
 
-    // Look up our monitor record by Browse AI robot ID
+    // Find our monitor record
     const { data: monitor, error: monitorErr } = await supabase
       .from('browse_ai_monitors')
       .select('id, company_id, page_type, page_url')
@@ -47,13 +61,13 @@ Deno.serve(async (req) => {
       .single();
 
     if (monitorErr || !monitor) {
-      console.error('[browse-ai-webhook] No monitor found for robot:', robotId);
-      return new Response(JSON.stringify({ error: 'Monitor not found for this robot' }), {
+      console.error('[browse-ai-webhook] No monitor for robot:', robotId);
+      return new Response(JSON.stringify({ error: 'Monitor not found' }), {
         status: 404, headers: { ...corsHeaders, 'Content-Type': 'application/json' },
       });
     }
 
-    // Get company name for logging and notifications
+    // Get company info
     const { data: company } = await supabase
       .from('companies')
       .select('name, slug')
@@ -61,20 +75,21 @@ Deno.serve(async (req) => {
       .single();
 
     const companyName = company?.name || 'Unknown Company';
+    const pageLabel = PAGE_TYPE_LABELS[monitor.page_type] || monitor.page_type;
 
-    console.log(`[browse-ai-webhook] Change detected: ${companyName} - ${monitor.page_type}`);
+    console.log(`[browse-ai-webhook] Change: ${companyName} - ${monitor.page_type}`);
 
-    // Determine which modules to re-run
+    // Determine modules to re-run
     const modulesToTrigger = PAGE_TYPE_TO_MODULES[monitor.page_type] || [];
 
-    // Record the change event
+    // Record change event
     const { data: changeEvent } = await supabase
       .from('browse_ai_change_events')
       .insert({
         monitor_id: monitor.id,
         company_id: monitor.company_id,
         page_type: monitor.page_type,
-        change_summary: `Change detected on ${monitor.page_type} page for ${companyName}`,
+        change_summary: `Change detected on ${pageLabel} page for ${companyName}`,
         raw_payload: payload,
         signal_modules_triggered: modulesToTrigger,
         processing_status: 'processing',
@@ -94,7 +109,7 @@ Deno.serve(async (req) => {
     const moduleResults: any[] = [];
     for (const moduleFn of modulesToTrigger) {
       try {
-        console.log(`[browse-ai-webhook] Triggering module: ${moduleFn}`);
+        console.log(`[browse-ai-webhook] Triggering: ${moduleFn}`);
         const moduleResp = await fetch(`${supabaseUrl}/functions/v1/${moduleFn}`, {
           method: 'POST',
           headers: {
@@ -108,13 +123,13 @@ Deno.serve(async (req) => {
           }),
         });
 
-        const moduleResult = moduleResp.ok ? await moduleResp.json() : { error: `HTTP ${moduleResp.status}` };
-        moduleResults.push({ module: moduleFn, status: moduleResp.ok ? 'completed' : 'failed', result: moduleResult });
-        console.log(`[browse-ai-webhook] Module ${moduleFn}: ${moduleResp.ok ? 'completed' : 'failed'}`);
+        const result = moduleResp.ok ? await moduleResp.json() : { error: `HTTP ${moduleResp.status}` };
+        moduleResults.push({ module: moduleFn, status: moduleResp.ok ? 'completed' : 'failed', result });
+        console.log(`[browse-ai-webhook] ${moduleFn}: ${moduleResp.ok ? 'OK' : 'FAIL'}`);
       } catch (modErr) {
         const msg = modErr instanceof Error ? modErr.message : 'Unknown error';
         moduleResults.push({ module: moduleFn, status: 'error', error: msg });
-        console.error(`[browse-ai-webhook] Module ${moduleFn} error:`, msg);
+        console.error(`[browse-ai-webhook] ${moduleFn} error:`, msg);
       }
     }
 
@@ -122,17 +137,20 @@ Deno.serve(async (req) => {
     await supabase.from('company_signal_scans').insert({
       company_id: monitor.company_id,
       signal_category: 'monitoring',
-      signal_type: `browse_ai_change_${monitor.page_type}`,
-      signal_value: `Change detected on ${monitor.page_type} page`,
+      signal_type: `page_change_${monitor.page_type}`,
+      signal_value: `${pageLabel} page updated. ${modulesToTrigger.length} module(s) re-analyzed.`,
       confidence_level: 'direct',
       source_url: monitor.page_url,
     });
 
     // Update change event status
+    const allSucceeded = moduleResults.every(r => r.status === 'completed');
+    const anyFailed = moduleResults.some(r => r.status !== 'completed');
+
     if (changeEvent) {
       await supabase.from('browse_ai_change_events').update({
-        processing_status: moduleResults.every(r => r.status === 'completed') ? 'completed' : 'completed_with_errors',
-        change_summary: `Change on ${monitor.page_type} page. Triggered ${modulesToTrigger.length} module(s): ${moduleResults.map(r => `${r.module}(${r.status})`).join(', ')}`,
+        processing_status: allSucceeded ? 'completed' : anyFailed ? 'completed_with_errors' : 'completed',
+        change_summary: `${pageLabel} page changed. Triggered ${modulesToTrigger.length} module(s): ${moduleResults.map(r => `${r.module}(${r.status})`).join(', ')}`,
       }).eq('id', changeEvent.id);
     }
 
@@ -143,22 +161,19 @@ Deno.serve(async (req) => {
       .eq('company_id', monitor.company_id);
 
     if (watchers && watchers.length > 0) {
-      const alertInserts = watchers.map(w => ({
+      const alertInserts = watchers.map((w: any) => ({
         user_id: w.user_id,
         company_id: monitor.company_id,
         company_name: companyName,
         signal_category: monitor.page_type,
         change_type: 'page_change_detected',
-        change_description: `Browse AI detected a change on ${companyName}'s ${monitor.page_type.replace(/_/g, ' ')} page. ${modulesToTrigger.length} signal module(s) have been re-analyzed.`,
+        change_description: `${pageLabel} page updated for ${companyName}. ${modulesToTrigger.length} signal module(s) have been re-analyzed.`,
         date_detected: new Date().toISOString(),
       }));
 
       const { error: alertErr } = await supabase.from('user_alerts').insert(alertInserts);
-      if (alertErr) {
-        console.error('[browse-ai-webhook] Failed to create user alerts:', alertErr);
-      } else {
-        console.log(`[browse-ai-webhook] Notified ${watchers.length} watcher(s)`);
-      }
+      if (alertErr) console.error('[browse-ai-webhook] Alert insert error:', alertErr);
+      else console.log(`[browse-ai-webhook] Notified ${watchers.length} watcher(s)`);
     }
 
     return new Response(JSON.stringify({

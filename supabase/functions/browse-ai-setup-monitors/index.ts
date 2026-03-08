@@ -7,14 +7,17 @@ import { createClient } from 'https://esm.sh/@supabase/supabase-js@2';
 
 const BROWSE_AI_API = 'https://api.browse.ai/v2';
 
-// Page types to monitor and how to discover URLs
+// Expanded page types aligned with Offer Check signal categories
 const PAGE_TYPES = [
   { type: 'careers', pathHints: ['/careers', '/jobs', '/join-us', '/work-with-us'] },
+  { type: 'jobs', pathHints: ['/jobs', '/careers/search', '/open-positions', '/job-openings'] },
   { type: 'benefits', pathHints: ['/benefits', '/perks', '/total-rewards', '/compensation'] },
   { type: 'leadership', pathHints: ['/leadership', '/team', '/about/leadership', '/executives', '/board'] },
-  { type: 'esg', pathHints: ['/esg', '/sustainability', '/responsibility', '/csr', '/impact', '/environment'] },
-  { type: 'political_disclosure', pathHints: ['/political-activity', '/political-disclosure', '/pac', '/political-engagement', '/government-affairs'] },
-  { type: 'job_listings', pathHints: ['/jobs', '/careers/search', '/open-positions', '/job-openings'] },
+  { type: 'esg', pathHints: ['/esg', '/sustainability', '/responsibility', '/csr', '/impact'] },
+  { type: 'diversity', pathHints: ['/diversity', '/inclusion', '/dei', '/belonging', '/workforce', '/people'] },
+  { type: 'newsroom', pathHints: ['/newsroom', '/press', '/news', '/media', '/blog'] },
+  { type: 'policy', pathHints: ['/political-activity', '/political-disclosure', '/pac', '/government-affairs', '/public-policy'] },
+  { type: 'privacy', pathHints: ['/privacy', '/ai-disclosure', '/data-practices', '/transparency'] },
 ];
 
 Deno.serve(async (req) => {
@@ -42,38 +45,38 @@ Deno.serve(async (req) => {
       });
     }
 
+    console.log(`[browse-ai-setup] Setting up monitors for: ${companyName}`);
+
     // Check which monitors already exist
     const { data: existingMonitors } = await supabase
       .from('browse_ai_monitors')
       .select('page_type')
       .eq('company_id', companyId);
 
-    const existingTypes = new Set((existingMonitors || []).map(m => m.page_type));
+    const existingTypes = new Set((existingMonitors || []).map((m: any) => m.page_type));
 
-    // Build candidate URLs to monitor
+    // Build base URL
     const baseUrl = (websiteUrl || `https://www.${companyName.toLowerCase().replace(/[^a-z0-9]/g, '')}.com`).replace(/\/$/, '');
     const candidatePages: { type: string; url: string }[] = [];
 
     for (const pageType of PAGE_TYPES) {
       if (existingTypes.has(pageType.type)) continue;
 
-      if (pageType.type === 'careers' && careersUrl) {
-        candidatePages.push({ type: 'careers', url: careersUrl });
-        continue;
-      }
-      if (pageType.type === 'job_listings' && careersUrl) {
-        candidatePages.push({ type: 'job_listings', url: careersUrl });
+      // Use provided careers URL for careers/jobs page types
+      if ((pageType.type === 'careers' || pageType.type === 'jobs') && careersUrl) {
+        candidatePages.push({ type: pageType.type, url: careersUrl });
         continue;
       }
 
-      // Use first path hint as the default URL
       candidatePages.push({ type: pageType.type, url: `${baseUrl}${pageType.pathHints[0]}` });
     }
 
     if (candidatePages.length === 0) {
-      return new Response(JSON.stringify({ success: true, message: 'All monitors already exist', monitorsCreated: 0 }), {
-        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-      });
+      return new Response(JSON.stringify({
+        success: true,
+        message: 'All monitors already exist',
+        monitorsCreated: 0,
+      }), { headers: { ...corsHeaders, 'Content-Type': 'application/json' } });
     }
 
     const webhookUrl = `${supabaseUrl}/functions/v1/browse-ai-webhook`;
@@ -81,7 +84,6 @@ Deno.serve(async (req) => {
 
     for (const page of candidatePages) {
       try {
-        // Create a Browse AI robot to monitor this page
         const robotResp = await fetch(`${BROWSE_AI_API}/robots`, {
           method: 'POST',
           headers: {
@@ -93,16 +95,15 @@ Deno.serve(async (req) => {
             url: page.url,
             monitorMode: true,
             monitorInterval: 'daily',
-            webhookUrl: webhookUrl,
+            webhookUrl,
             description: `Monitor ${page.type} page for ${companyName}. Company ID: ${companyId}`,
           }),
         });
 
         if (!robotResp.ok) {
           const errText = await robotResp.text();
-          console.error(`Browse AI robot creation failed for ${page.type}:`, errText);
-          
-          // Still insert monitor record with error status
+          console.error(`[browse-ai-setup] Robot creation failed for ${page.type}:`, errText);
+
           await supabase.from('browse_ai_monitors').upsert({
             company_id: companyId,
             page_type: page.type,
@@ -118,7 +119,6 @@ Deno.serve(async (req) => {
         const robotData = await robotResp.json();
         const robotId = robotData.result?.id || robotData.id;
 
-        // Save monitor record
         await supabase.from('browse_ai_monitors').upsert({
           company_id: companyId,
           page_type: page.type,
@@ -129,12 +129,11 @@ Deno.serve(async (req) => {
         }, { onConflict: 'company_id,page_type' });
 
         results.push({ type: page.type, status: 'active', robotId });
-        console.log(`[browse-ai] Created robot ${robotId} for ${companyName} - ${page.type}`);
-
+        console.log(`[browse-ai-setup] Created robot ${robotId} for ${companyName} - ${page.type}`);
       } catch (pageErr) {
         const msg = pageErr instanceof Error ? pageErr.message : 'Unknown error';
-        console.error(`[browse-ai] Error creating monitor for ${page.type}:`, msg);
-        
+        console.error(`[browse-ai-setup] Error for ${page.type}:`, msg);
+
         await supabase.from('browse_ai_monitors').upsert({
           company_id: companyId,
           page_type: page.type,
@@ -148,7 +147,7 @@ Deno.serve(async (req) => {
     }
 
     const activeCount = results.filter(r => r.status === 'active').length;
-    console.log(`[browse-ai] Setup complete for ${companyName}: ${activeCount}/${results.length} monitors active`);
+    console.log(`[browse-ai-setup] Complete: ${activeCount}/${results.length} monitors active for ${companyName}`);
 
     return new Response(JSON.stringify({
       success: true,
