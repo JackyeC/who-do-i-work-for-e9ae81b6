@@ -30,9 +30,17 @@ export function useROIPipeline(companyId: string | undefined, companyName?: stri
 
       const pipeline = data as any;
       return {
-        moneyIn: pipeline.moneyIn || [],
+        moneyIn: (pipeline.moneyIn || []).map((item: any) => ({
+          ...item,
+          matched_entity_name: item.matched_entity_name || undefined,
+          matched_entity_type: item.matched_entity_type || undefined,
+        })),
         network: pipeline.network || [],
-        benefitsOut: pipeline.benefitsOut || [],
+        benefitsOut: (pipeline.benefitsOut || []).map((item: any) => ({
+          ...item,
+          matched_entity_name: item.matched_entity_name || undefined,
+          matched_entity_type: item.matched_entity_type || undefined,
+        })),
         linkages: pipeline.linkages || [],
         totalSpending: pipeline.totalSpending || 0,
         totalBenefits: pipeline.totalBenefits || 0,
