@@ -93,7 +93,9 @@ Deno.serve(async (req) => {
 
     const categoryList = [
       'christian_nationalism', 'white_supremacy', 'anti_lgbtq', 'anti_labor',
-      'voter_suppression', 'climate_denial', 'anti_reproductive_rights', 'privatization'
+      'voter_suppression', 'climate_denial', 'anti_reproductive_rights', 'privatization',
+      'racial_discrimination', 'mass_layoffs', 'executive_controversy', 'dei_rollback',
+      'worker_retaliation', 'government_influence'
     ];
 
     const aiPrompt = `You are a corporate accountability analyst for CivicLens. Analyze these search results about "${companyName}" for ties to ideological organizations and movements.
