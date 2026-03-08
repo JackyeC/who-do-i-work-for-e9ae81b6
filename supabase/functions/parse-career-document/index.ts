@@ -179,23 +179,50 @@ serve(async (req) => {
       status: "parsed",
     }).eq("id", documentId);
 
-    // If resume, auto-update career profile
+    // Auto-update career profile from any document type
+    const { data: existing } = await adminClient.from("user_career_profile").select("*").eq("user_id", user.id).single();
+    const profileUpdates: Record<string, any> = { user_id: user.id, auto_generated: true };
+
     if (docType === "resume") {
-      const { data: existing } = await adminClient.from("user_career_profile").select("id").eq("user_id", user.id).single();
-      const profileData = {
-        user_id: user.id,
-        skills: parsed.skills || [],
-        industries: parsed.industries || [],
-        seniority_level: parsed.seniority_level || null,
-        job_titles: parsed.job_titles || [],
-        management_scope: parsed.management_scope || null,
-        auto_generated: true,
-      };
-      if (existing) {
-        await adminClient.from("user_career_profile").update(profileData).eq("user_id", user.id);
-      } else {
-        await adminClient.from("user_career_profile").insert(profileData);
+      profileUpdates.skills = parsed.skills || [];
+      profileUpdates.industries = parsed.industries || [];
+      profileUpdates.seniority_level = parsed.seniority_level || null;
+      profileUpdates.job_titles = parsed.job_titles || [];
+      profileUpdates.management_scope = parsed.management_scope || null;
+    } else if (docType === "offer_letter") {
+      // Extract salary info from offer to enrich profile
+      const salary = parsed.financials?.base_salary;
+      if (salary) {
+        const numericSalary = parseInt(String(salary).replace(/[^0-9]/g, ""), 10);
+        if (!isNaN(numericSalary) && numericSalary > 0) {
+          profileUpdates.salary_range_min = Math.round(numericSalary * 0.9);
+          profileUpdates.salary_range_max = Math.round(numericSalary * 1.15);
+        }
       }
+      const location = parsed.work_arrangement?.location;
+      if (location && location !== "Not specified") {
+        profileUpdates.preferred_locations = [location];
+      }
+    } else if (docType === "job_description") {
+      // Merge skills from JD into existing profile skills
+      const jdSkills = parsed.required_skills || [];
+      const existingSkills = existing?.skills || [];
+      const mergedSkills = [...new Set([...existingSkills, ...jdSkills])];
+      if (mergedSkills.length > 0) profileUpdates.skills = mergedSkills;
+
+      if (parsed.seniority_level) profileUpdates.seniority_level = parsed.seniority_level;
+
+      const loc = parsed.location?.requirement;
+      if (loc && loc !== "Not specified") {
+        const existingLocs = existing?.preferred_locations || [];
+        profileUpdates.preferred_locations = [...new Set([...existingLocs, loc])];
+      }
+    }
+
+    if (existing) {
+      await adminClient.from("user_career_profile").update(profileUpdates).eq("user_id", user.id);
+    } else {
+      await adminClient.from("user_career_profile").insert(profileUpdates);
     }
 
     return new Response(JSON.stringify({ success: true, documentId, parsed }), {
