@@ -23,6 +23,7 @@ import CompareOfferChecks from "./pages/CompareOfferChecks";
 import JobDashboard from "./pages/JobDashboard";
 import OfferReview from "./pages/OfferReview";
 import MyOfferReviews from "./pages/MyOfferReviews";
+import SignalAlerts from "./pages/SignalAlerts";
 
 const queryClient = new QueryClient();
 
