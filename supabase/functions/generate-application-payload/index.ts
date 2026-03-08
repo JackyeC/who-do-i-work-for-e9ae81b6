@@ -108,24 +108,49 @@ Deno.serve(async (req) => {
       }
     }
 
-    // Generate matching statement via AI
-    const prompt = `You are writing a brief "Values Alignment Statement" for a job applicant.
+    // Build detailed signal descriptions for the prompt
+    const aiToolNames = (aiSignals || []).map(s => s.signal_type).filter(Boolean);
+    const benefitNames = (benefitSignals || []).map(s => `${s.signal_type}: ${s.signal_value}`).filter(Boolean);
+    const payNames = (paySignals || []).map(s => s.signal_type).filter(Boolean);
+    const biasAuditStatus = aiToolNames.some(s => s.toLowerCase().includes('bias audit')) ? 'Verified Bias Audit' : 'No verified audit';
 
-The applicant's profile:
+    // Generate matching statement via AI
+    const prompt = `You are a Career Strategist writing a "Personal Value Proposition" for a senior professional.
+
+CANDIDATE PROFILE:
 - Name: ${profile.full_name || 'Not provided'}
 - Bio: ${profile.bio || 'Not provided'}
 - Skills: ${(profile.skills || []).join(', ') || 'Not provided'}
 - Target role: ${(profile.target_job_titles || []).join(', ') || 'Not provided'}
 
-The company they're applying to: ${company.name}
+COMPANY: ${company.name}
 - Industry: ${company.industry}
 - Civic Footprint Score: ${company.civic_footprint_score}/100
-- Detected signals: ${JSON.stringify(signalSummary)}
-- Alignment score: ${alignmentScore}%
+
+DETECTED COMPANY SIGNALS:
+- AI/HR Tools: ${aiToolNames.join(', ') || 'None detected'}
+- Worker Benefits: ${benefitNames.join(', ') || 'None detected'}
+- Pay Equity Signals: ${payNames.join(', ') || 'None detected'}
+- Bias Audit Status: ${biasAuditStatus}
+- Worker Sentiment: ${signalSummary.sentiment ? `${signalSummary.sentiment.rating}/5 (${signalSummary.sentiment.sentiment})` : 'No data'}
+- WARN Notices: ${signalSummary.warn_notices} on record
+
+ALIGNMENT:
+- Score: ${alignmentScore}%
 - Matched values: ${matchedSignals.join(', ') || 'None detected'}
 - Missing preferences: ${missingSignals.join(', ') || 'None'}
 
-Write a 2-3 sentence "Values Alignment Statement" that the applicant can paste into a job application's "Why us?" section. Focus on genuine alignment between their values and the company's verified practices. Be specific about which detected signals matter. Keep it professional and authentic — not sycophantic.`;
+Write a 150-250 word "Personal Value Proposition" with this structure:
+1. THE LEAD: Acknowledge a specific tool or practice the company uses (e.g., their AI stack, a specific benefit).
+2. THE WHY: Connect that practice to the candidate's values and experience.
+3. THE EVIDENCE: Mention one specific detected signal (benefit, audit, pay transparency) and how it aligns with the candidate's commitment.
+4. THE CTA: State concretely how the candidate will help optimize or strengthen this value stack.
+
+CONSTRAINTS:
+- Never use "synergy," "passionate," "leverage," or "dynamic."
+- Write in the tone of a peer-to-peer executive consultation.
+- Be specific about detected signals — do not generalize.
+- If few signals are detected, be honest about limited data and focus on what IS verified.`;
 
     const aiResponse = await fetch('https://ai.gateway.lovable.dev/v1/chat/completions', {
       method: 'POST',
