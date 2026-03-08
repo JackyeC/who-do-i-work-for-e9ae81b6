@@ -848,62 +848,72 @@ export default function CompanyProfile() {
 
           {/* ── Summary Cards ──────────────────────────────────────────── */}
           <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-5 gap-4 mb-8">
-            <Card>
-              <CardContent className="p-4">
-                <div className="flex items-center gap-2 text-xs text-muted-foreground mb-1">
-                  <Scale className="w-3.5 h-3.5" />
-                  Civic Footprint
-                </div>
-                <div className="text-2xl font-bold text-foreground">{company.civicFootprintScore}<span className="text-sm text-muted-foreground">/100</span></div>
-                <CivicFootprintBadge score={company.civicFootprintScore} size="sm" />
-              </CardContent>
-            </Card>
-            <Card>
-              <CardContent className="p-4">
-                <div className="flex items-center gap-2 text-xs text-muted-foreground mb-1">
-                  <DollarSign className="w-3.5 h-3.5" />
-                  PAC Spending
-                </div>
-                <div className="text-2xl font-bold text-foreground">
-                  {company.totalPacSpending > 0 ? formatCurrency(company.totalPacSpending) : "None"}
-                </div>
-                <p className="text-xs text-muted-foreground">Current cycle</p>
-              </CardContent>
-            </Card>
-            <Card>
-              <CardContent className="p-4">
-                <div className="flex items-center gap-2 text-xs text-muted-foreground mb-1">
-                  <Megaphone className="w-3.5 h-3.5" />
-                  Lobbying
-                </div>
-                <div className="text-2xl font-bold text-foreground">
-                  {company.lobbyingSpend ? formatCurrency(company.lobbyingSpend) : "None"}
-                </div>
-                <p className="text-xs text-muted-foreground">Annual</p>
-              </CardContent>
-            </Card>
-            <Card>
-              <CardContent className="p-4">
-                <div className="flex items-center gap-2 text-xs text-muted-foreground mb-1">
-                  <EyeOff className="w-3.5 h-3.5" />
-                  Indirect Influence
-                </div>
-                <div className="text-2xl font-bold text-foreground">
-                  {totalIndirectInfluence > 0 ? formatCurrency(totalIndirectInfluence) : "None"}
-                </div>
-                <p className="text-xs text-muted-foreground">Super PACs &amp; dark money</p>
-              </CardContent>
-            </Card>
-            <Card>
-              <CardContent className="p-4">
-                <div className="flex items-center gap-2 text-xs text-muted-foreground mb-1">
-                  <Flag className="w-3.5 h-3.5" />
-                  Risk Signals
-                </div>
-                <div className="text-2xl font-bold text-foreground">{company.flaggedOrgTies.length + flaggedCandidates.length + company.darkMoneyOrgs.length}</div>
-                <p className="text-xs text-muted-foreground">Flagged ties</p>
-              </CardContent>
-            </Card>
+            <ExplainableMetric metricKey="civic-footprint">
+              <Card>
+                <CardContent className="p-4">
+                  <div className="flex items-center gap-2 text-xs text-muted-foreground mb-1">
+                    <Scale className="w-3.5 h-3.5" />
+                    Civic Footprint
+                  </div>
+                  <div className="text-2xl font-bold text-foreground">{company.civicFootprintScore}<span className="text-sm text-muted-foreground">/100</span></div>
+                  <CivicFootprintBadge score={company.civicFootprintScore} size="sm" />
+                </CardContent>
+              </Card>
+            </ExplainableMetric>
+            <ExplainableMetric metricKey="pac-spending">
+              <Card>
+                <CardContent className="p-4">
+                  <div className="flex items-center gap-2 text-xs text-muted-foreground mb-1">
+                    <DollarSign className="w-3.5 h-3.5" />
+                    PAC Spending
+                  </div>
+                  <div className="text-2xl font-bold text-foreground">
+                    {company.totalPacSpending > 0 ? formatCurrency(company.totalPacSpending) : "None"}
+                  </div>
+                  <p className="text-xs text-muted-foreground">Current cycle</p>
+                </CardContent>
+              </Card>
+            </ExplainableMetric>
+            <ExplainableMetric metricKey="lobbying">
+              <Card>
+                <CardContent className="p-4">
+                  <div className="flex items-center gap-2 text-xs text-muted-foreground mb-1">
+                    <Megaphone className="w-3.5 h-3.5" />
+                    Lobbying
+                  </div>
+                  <div className="text-2xl font-bold text-foreground">
+                    {company.lobbyingSpend ? formatCurrency(company.lobbyingSpend) : "None"}
+                  </div>
+                  <p className="text-xs text-muted-foreground">Annual</p>
+                </CardContent>
+              </Card>
+            </ExplainableMetric>
+            <ExplainableMetric metricKey="indirect-influence">
+              <Card>
+                <CardContent className="p-4">
+                  <div className="flex items-center gap-2 text-xs text-muted-foreground mb-1">
+                    <EyeOff className="w-3.5 h-3.5" />
+                    Indirect Influence
+                  </div>
+                  <div className="text-2xl font-bold text-foreground">
+                    {totalIndirectInfluence > 0 ? formatCurrency(totalIndirectInfluence) : "None"}
+                  </div>
+                  <p className="text-xs text-muted-foreground">Super PACs &amp; dark money</p>
+                </CardContent>
+              </Card>
+            </ExplainableMetric>
+            <ExplainableMetric metricKey="risk-signals">
+              <Card>
+                <CardContent className="p-4">
+                  <div className="flex items-center gap-2 text-xs text-muted-foreground mb-1">
+                    <Flag className="w-3.5 h-3.5" />
+                    Risk Signals
+                  </div>
+                  <div className="text-2xl font-bold text-foreground">{company.flaggedOrgTies.length + flaggedCandidates.length + company.darkMoneyOrgs.length}</div>
+                  <p className="text-xs text-muted-foreground">Flagged ties</p>
+                </CardContent>
+              </Card>
+            </ExplainableMetric>
           </div>
 
           {/* Data Glossary */}
