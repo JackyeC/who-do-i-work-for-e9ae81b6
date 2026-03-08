@@ -103,7 +103,7 @@ Deno.serve(async (req) => {
   };
 
   try {
-    const { companyId, companyName } = await req.json();
+    const { companyId, companyName, searchNames, entityMap } = await req.json();
     scanLog.company_id = companyId;
     scanLog.company_name = companyName;
 
@@ -128,23 +128,38 @@ Deno.serve(async (req) => {
 
     console.log(`[ai-hr-scan] START: ${companyName} (${companyId})`);
 
+    // Use resolved entity names for broader search coverage
+    const entityNames = (searchNames && searchNames.length > 0)
+      ? searchNames.filter((n: string) => n.length >= 3).slice(0, 5)
+      : [companyName];
+    const primaryName = companyName;
+    const additionalNames = entityNames.filter((n: string) => n !== primaryName).slice(0, 3);
+
+    console.log(`[ai-hr-scan] Searching with ${entityNames.length} entity names`);
+
     // ── Step 1: Build search queries (general + vendor case studies) ──
     const searchQueries = [
-      `"${companyName}" AI hiring recruiting automation technology`,
-      `"${companyName}" automated screening candidate assessment applicant scoring`,
-      `"${companyName}" employee monitoring workforce analytics people analytics`,
-      `"${companyName}" bias audit algorithmic decision automated employment`,
-      `"${companyName}" HR technology vendor talent acquisition platform`,
-      `"${companyName}" AI governance policy hiring transparency`,
-      `"${companyName}" recruiting chatbot interview intelligence video interview`,
-      `"${companyName}" privacy policy automated decision making`,
+      `"${primaryName}" AI hiring recruiting automation technology`,
+      `"${primaryName}" automated screening candidate assessment applicant scoring`,
+      `"${primaryName}" employee monitoring workforce analytics people analytics`,
+      `"${primaryName}" bias audit algorithmic decision automated employment`,
+      `"${primaryName}" HR technology vendor talent acquisition platform`,
+      `"${primaryName}" AI governance policy hiring transparency`,
+      `"${primaryName}" recruiting chatbot interview intelligence video interview`,
+      `"${primaryName}" privacy policy automated decision making`,
       // Vendor case study queries
-      `"${companyName}" HireVue`,
-      `"${companyName}" Eightfold AI`,
-      `"${companyName}" Phenom recruiting`,
-      `"${companyName}" Paradox chatbot`,
-      `"${companyName}" talent intelligence recruiting automation`,
+      `"${primaryName}" HireVue`,
+      `"${primaryName}" Eightfold AI`,
+      `"${primaryName}" Phenom recruiting`,
+      `"${primaryName}" Paradox chatbot`,
+      `"${primaryName}" talent intelligence recruiting automation`,
     ];
+
+    // Add queries for related entities (subsidiaries, parent, etc.)
+    for (const altName of additionalNames) {
+      searchQueries.push(`"${altName}" AI hiring recruiting automation HR technology`);
+      searchQueries.push(`"${altName}" employee monitoring workforce analytics bias audit`);
+    }
 
     let allContent = '';
     const allSourceUrls: string[] = [];
