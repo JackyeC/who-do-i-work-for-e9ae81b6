@@ -87,26 +87,28 @@ function DbLensModules({ activeLens, dbCompany, dbPartyBreakdown, dbCandidates, 
         <p className="text-sm text-muted-foreground mb-4">PAC contributions, candidate support, and executive personal giving.</p>
         <div className="grid lg:grid-cols-2 gap-6">
           {dbPartyBreakdown && dbPartyBreakdown.length > 0 && (
-            <Card>
-              <CardHeader><CardTitle className="text-lg">PAC Spending by Party</CardTitle></CardHeader>
-              <CardContent>
-                <div className="h-56">
-                  <ResponsiveContainer width="100%" height="100%">
-                    <PieChart><Pie data={dbPartyBreakdown} cx="50%" cy="50%" innerRadius={55} outerRadius={85} paddingAngle={3} dataKey="amount" nameKey="party" className="cursor-pointer" onClick={(_, index) => onPartyClick?.(dbPartyBreakdown[index]?.party)}>
-                      {dbPartyBreakdown.map((entry, i) => <Cell key={i} fill={entry.color} className="hover:opacity-80 transition-opacity" />)}
-                    </Pie><Tooltip formatter={(val: number) => formatCurrency(val)} /></PieChart>
-                  </ResponsiveContainer>
-                </div>
-                <div className="flex justify-center gap-4 mt-2">
-                  {dbPartyBreakdown.map((p) => (
-                    <button key={p.party} onClick={() => onPartyClick?.(p.party)} className="flex items-center gap-1.5 text-xs hover:underline cursor-pointer">
-                      <div className="w-2.5 h-2.5 rounded-full" style={{ backgroundColor: p.color }} />
-                      <span className="text-muted-foreground">{p.party}: {formatCurrency(p.amount)}</span>
-                    </button>
-                  ))}
-                </div>
-              </CardContent>
-            </Card>
+            <ExplainableMetric metricKey="party-breakdown">
+              <Card>
+                <CardHeader><CardTitle className="text-lg">PAC Spending by Party</CardTitle></CardHeader>
+                <CardContent>
+                  <div className="h-56">
+                    <ResponsiveContainer width="100%" height="100%">
+                      <PieChart><Pie data={dbPartyBreakdown} cx="50%" cy="50%" innerRadius={55} outerRadius={85} paddingAngle={3} dataKey="amount" nameKey="party" className="cursor-pointer" onClick={(_, index) => onPartyClick?.(dbPartyBreakdown[index]?.party)}>
+                        {dbPartyBreakdown.map((entry, i) => <Cell key={i} fill={entry.color} className="hover:opacity-80 transition-opacity" />)}
+                      </Pie><Tooltip formatter={(val: number) => formatCurrency(val)} /></PieChart>
+                    </ResponsiveContainer>
+                  </div>
+                  <div className="flex justify-center gap-4 mt-2">
+                    {dbPartyBreakdown.map((p) => (
+                      <button key={p.party} onClick={() => onPartyClick?.(p.party)} className="flex items-center gap-1.5 text-xs hover:underline cursor-pointer">
+                        <div className="w-2.5 h-2.5 rounded-full" style={{ backgroundColor: p.color }} />
+                        <span className="text-muted-foreground">{p.party}: {formatCurrency(p.amount)}</span>
+                      </button>
+                    ))}
+                  </div>
+                </CardContent>
+              </Card>
+            </ExplainableMetric>
           )}
           {dbExecutives && dbExecutives.length > 0 && (
             <Card>
