@@ -90,7 +90,7 @@ export function OfferCheckReport({ sections, lockedSections = [], onUnlock }: Of
         const isLocked = lockedSections.includes(section.id);
 
         return (
-          <Card key={section.id}>
+          <Card key={section.id} className="card-official rounded-xl overflow-hidden">
             <CardHeader className="pb-2">
               <CardTitle className="text-base flex items-center gap-2">
                 <Icon className="w-4.5 h-4.5 text-primary" />
@@ -102,7 +102,7 @@ export function OfferCheckReport({ sections, lockedSections = [], onUnlock }: Of
                   </Badge>
                 )}
                 {!section.stale && section.hasData && (
-                  <Badge variant="secondary" className="text-[10px] ml-auto">
+                  <Badge variant="secondary" className="text-[10px] ml-auto font-semibold">
                     {section.signals.length} signal{section.signals.length !== 1 ? "s" : ""}
                   </Badge>
                 )}
@@ -122,7 +122,7 @@ export function OfferCheckReport({ sections, lockedSections = [], onUnlock }: Of
                   )}
                 </div>
               ) : !section.hasData ? (
-                <p className="text-sm text-muted-foreground py-3">
+                <p className="text-sm text-muted-foreground py-3 italic">
                   No public evidence detected in scanned sources for this category.
                 </p>
               ) : (

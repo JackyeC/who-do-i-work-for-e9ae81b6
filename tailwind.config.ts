@@ -55,6 +55,8 @@ export default {
           navy: "hsl(var(--civic-navy))",
           slate: "hsl(var(--civic-slate))",
           surface: "hsl(var(--civic-surface))",
+          gold: "hsl(var(--civic-gold))",
+          "gold-muted": "hsl(var(--civic-gold-muted))",
         },
         sidebar: {
           DEFAULT: "hsl(var(--sidebar-background))",

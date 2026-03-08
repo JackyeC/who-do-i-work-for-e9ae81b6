@@ -29,22 +29,24 @@ export function Header() {
   const isActive = (path: string) => location.pathname === path;
 
   return (
-    <header className="border-b border-border/60 bg-card/90 backdrop-blur-md sticky top-0 z-50">
-      <div className="container mx-auto px-4 h-16 flex items-center justify-between">
-        <Link to="/" className="flex items-center gap-2.5 group">
-          <div className="w-8 h-8 rounded-lg bg-primary flex items-center justify-center shadow-sm">
-            <ClipboardCheck className="w-4 h-4 text-primary-foreground" />
+    <header className="border-b border-border/40 bg-card/95 backdrop-blur-lg sticky top-0 z-50 shadow-elegant">
+      <div className="container mx-auto px-4 h-[4.25rem] flex items-center justify-between">
+        <Link to="/" className="flex items-center gap-3 group">
+          {/* Shield-inspired logo mark */}
+          <div className="relative w-9 h-9 rounded-lg bg-primary flex items-center justify-center shadow-sm overflow-hidden">
+            <div className="absolute inset-0 bg-gradient-to-b from-white/10 to-transparent pointer-events-none" />
+            <ClipboardCheck className="w-4.5 h-4.5 text-primary-foreground relative z-10" />
           </div>
           <div className="flex flex-col leading-none">
             <span className="text-lg font-bold text-foreground tracking-tight" style={{ fontFamily: "'Source Serif 4', serif" }}>
               Offer Check
             </span>
-            <span className="text-[9px] text-muted-foreground tracking-widest uppercase">by Jackye Clayton</span>
+            <span className="text-[8.5px] text-civic-gold tracking-[0.18em] uppercase font-semibold">by Jackye Clayton</span>
           </div>
         </Link>
 
         {/* Desktop nav */}
-        <nav className="hidden lg:flex items-center gap-1">
+        <nav className="hidden lg:flex items-center gap-0.5">
           {navLinks.map((link) => (
             <Link
               key={link.to}
@@ -60,7 +62,7 @@ export function Header() {
               {link.label}
             </Link>
           ))}
-          {authLinks.length > 0 && <div className="w-px h-5 bg-border mx-1" />}
+          {authLinks.length > 0 && <div className="w-px h-5 bg-border mx-1.5" />}
           {authLinks.map((link) => (
             <Link
               key={link.to}
@@ -78,7 +80,7 @@ export function Header() {
           ))}
           <div className="ml-2">
             <Link to={user ? "/who-do-i-work-for" : "/login"}>
-              <Button size="sm" variant="default" className="gap-1.5 shadow-sm">
+              <Button size="sm" variant="default" className="gap-1.5 shadow-sm font-semibold">
                 <Briefcase className="w-3.5 h-3.5" />
                 Who Do I Work For?
               </Button>
