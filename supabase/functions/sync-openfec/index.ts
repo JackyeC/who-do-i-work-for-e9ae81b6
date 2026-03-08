@@ -320,8 +320,55 @@ Deno.serve(async (req) => {
         }));
 
         await supabase.from('company_executives').delete().eq('company_id', companyId);
-        const { error: execErr } = await supabase.from('company_executives').insert(execRows);
+        const { data: insertedExecs, error: execErr } = await supabase
+          .from('company_executives')
+          .insert(execRows)
+          .select('id, name');
         if (execErr) console.error('[sync-openfec] Executive insert error:', execErr);
+
+        // Insert executive_recipients for each executive's donation recipients
+        if (insertedExecs && insertedExecs.length > 0) {
+          const execNameToId = new Map(insertedExecs.map(e => [e.name?.toUpperCase(), e.id]));
+          const recipientRows: { executive_id: string; name: string; party: string; amount: number }[] = [];
+
+          for (const exec of topExecs) {
+            const execId = execNameToId.get(exec.name?.toUpperCase());
+            if (!execId || !exec.recipients.length) continue;
+
+            // Aggregate by committee/recipient name
+            const recipMap = new Map<string, { name: string; amount: number }>();
+            for (const r of exec.recipients) {
+              const key = (r.committee || 'Unknown').toUpperCase();
+              const existing = recipMap.get(key) || { name: r.committee || 'Unknown', amount: 0 };
+              existing.amount += r.amount;
+              recipMap.set(key, existing);
+            }
+
+            for (const recip of recipMap.values()) {
+              // Try to match to a known candidate for party info
+              const matchedCandidate = allCandidates.find(c =>
+                recip.name.toUpperCase().includes(c.name.split(',')[0]?.toUpperCase() || '___')
+              );
+              recipientRows.push({
+                executive_id: execId,
+                name: recip.name,
+                party: matchedCandidate?.party?.includes('REP') ? 'Republican'
+                     : matchedCandidate?.party?.includes('DEM') ? 'Democrat'
+                     : 'Unknown',
+                amount: Math.round(recip.amount),
+              });
+            }
+          }
+
+          if (recipientRows.length > 0) {
+            // Clear old recipients for these executives
+            const execIds = insertedExecs.map(e => e.id);
+            await supabase.from('executive_recipients').delete().in('executive_id', execIds);
+            const { error: recipErr } = await supabase.from('executive_recipients').insert(recipientRows);
+            if (recipErr) console.error('[sync-openfec] Executive recipients insert error:', recipErr);
+            else console.log(`[sync-openfec] Inserted ${recipientRows.length} executive recipient records`);
+          }
+        }
       }
     } catch (e: any) {
       if (e.upstreamStatus === 422) {
