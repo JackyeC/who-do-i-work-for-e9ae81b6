@@ -12,7 +12,9 @@ import { Badge } from "@/components/ui/badge";
 import { companies as sampleCompanies, industries as sampleIndustries, formatCurrency } from "@/data/sampleData";
 import { supabase } from "@/integrations/supabase/client";
 import { useQuery } from "@tanstack/react-query";
-import { Building2, ArrowRight, Search, Loader2 } from "lucide-react";
+import { Building2, ArrowRight, Search } from "lucide-react";
+import { EmptyState } from "@/components/EmptyState";
+import { LoadingState } from "@/components/LoadingState";
 
 export default function Browse() {
   const [selectedIndustry, setSelectedIndustry] = useState<string | null>(null);
@@ -162,11 +164,9 @@ export default function Browse() {
         </div>
 
         {isLoading ? (
-          <div className="flex items-center justify-center py-16">
-            <Loader2 className="w-6 h-6 animate-spin text-primary" />
-          </div>
+          <LoadingState message="Loading companies..." />
         ) : (
-          <div className="grid sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-3 sm:gap-4">
             {filtered.map((company, i) => (
               <motion.div
                 key={company.slug}
@@ -176,7 +176,7 @@ export default function Browse() {
               >
                 <Link to={`/company/${company.slug}`}>
                   <Card className="group hover:shadow-md transition-all duration-200 hover:border-primary/20 cursor-pointer">
-                    <CardContent className="p-5">
+                    <CardContent className="p-4 sm:p-5">
                       <div className="flex items-start justify-between gap-3">
                         <div className="flex items-start gap-3 min-w-0">
                           <div className="w-10 h-10 rounded-lg bg-muted flex items-center justify-center shrink-0">
@@ -210,10 +210,11 @@ export default function Browse() {
         )}
 
         {!isLoading && filtered.length === 0 && (
-          <div className="text-center py-16 text-muted-foreground">
-            <Building2 className="w-10 h-10 mx-auto mb-3 opacity-40" />
-            <p>No companies match your search.</p>
-          </div>
+          <EmptyState
+            icon={Building2}
+            title="No companies match"
+            description="Try adjusting your search or industry filter."
+          />
         )}
       </div>
       <Footer />

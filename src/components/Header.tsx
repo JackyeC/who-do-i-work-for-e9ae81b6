@@ -63,7 +63,7 @@ export function Header() {
 
         {/* Mobile toggle */}
         <button
-          className="lg:hidden p-2 text-muted-foreground hover:text-foreground"
+          className="lg:hidden p-2.5 -mr-2 text-muted-foreground hover:text-foreground rounded-md active:bg-muted"
           onClick={() => setMobileOpen(!mobileOpen)}
           aria-label="Toggle menu"
         >
@@ -73,35 +73,38 @@ export function Header() {
 
       {/* Mobile nav */}
       {mobileOpen && (
-        <div className="lg:hidden border-t border-border bg-card px-4 py-4 space-y-2">
+        <div className="lg:hidden border-t border-border bg-card px-4 py-3 space-y-1 max-h-[70vh] overflow-y-auto">
           {navLinks.map((link) => (
             <Link
               key={link.to}
               to={link.to}
               onClick={() => setMobileOpen(false)}
-              className="block text-sm font-medium text-muted-foreground hover:text-foreground transition-colors py-2 px-2 rounded-md hover:bg-muted/50 flex items-center gap-2"
+              className="flex items-center gap-3 text-sm font-medium text-muted-foreground hover:text-foreground transition-colors py-3 px-3 rounded-md active:bg-muted/50"
             >
               {link.icon && <link.icon className="w-4 h-4" />}
               {link.label}
             </Link>
           ))}
+          {authLinks.length > 0 && <div className="border-t border-border my-1" />}
           {authLinks.map((link) => (
             <Link
               key={link.to}
               to={link.to}
               onClick={() => setMobileOpen(false)}
-              className="block text-sm font-medium text-muted-foreground hover:text-foreground transition-colors py-2 px-2 rounded-md hover:bg-muted/50 flex items-center gap-2"
+              className="flex items-center gap-3 text-sm font-medium text-muted-foreground hover:text-foreground transition-colors py-3 px-3 rounded-md active:bg-muted/50"
             >
               <link.icon className="w-4 h-4" />
               {link.label}
             </Link>
           ))}
-          <Link to={user ? "/who-do-i-work-for" : "/login"} onClick={() => setMobileOpen(false)}>
-            <Button size="sm" variant="default" className="gap-1.5 w-full mt-2">
-              <Briefcase className="w-3.5 h-3.5" />
-              Who Do I Work For?
-            </Button>
-          </Link>
+          <div className="pt-2 pb-1">
+            <Link to={user ? "/who-do-i-work-for" : "/login"} onClick={() => setMobileOpen(false)}>
+              <Button size="default" variant="default" className="gap-1.5 w-full">
+                <Briefcase className="w-4 h-4" />
+                Who Do I Work For?
+              </Button>
+            </Link>
+          </div>
         </div>
       )}
     </header>

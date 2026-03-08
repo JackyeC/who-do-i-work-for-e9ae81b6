@@ -4,11 +4,11 @@ import { useAuth } from "@/contexts/AuthContext";
 import { Header } from "@/components/Header";
 import { Footer } from "@/components/Footer";
 import { UserAlertsList } from "@/components/UserAlerts";
+import { EmptyState } from "@/components/EmptyState";
+import { LoadingState } from "@/components/LoadingState";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { Switch } from "@/components/ui/switch";
-import { Label } from "@/components/ui/label";
 import { Eye, EyeOff, Bell, Building2, Trash2 } from "lucide-react";
 import { Link, useNavigate } from "react-router-dom";
 import { useToast } from "@/hooks/use-toast";
@@ -30,7 +30,6 @@ export default function SignalAlerts() {
 
       if (!data || data.length === 0) return [];
 
-      // Fetch company names
       const companyIds = data.map((w: any) => w.company_id);
       const { data: companies } = await supabase
         .from("companies")
@@ -55,13 +54,15 @@ export default function SignalAlerts() {
 
   if (!user) {
     return (
-      <div className="min-h-screen bg-background">
+      <div className="min-h-screen bg-background flex flex-col">
         <Header />
-        <div className="container mx-auto px-4 py-16 text-center">
-          <Bell className="w-12 h-12 text-muted-foreground mx-auto mb-4" />
-          <h1 className="text-2xl font-bold text-foreground mb-2">Signal Alerts</h1>
-          <p className="text-muted-foreground mb-6">Sign in to watch companies and receive signal alerts.</p>
-          <Button onClick={() => navigate("/login")}>Sign In</Button>
+        <div className="flex-1 flex items-center justify-center px-4">
+          <EmptyState
+            icon={Bell}
+            title="Signal Alerts"
+            description="Sign in to watch companies and receive signal alerts when new data is detected."
+            action={{ label: "Sign In", onClick: () => navigate("/login"), variant: "default" }}
+          />
         </div>
         <Footer />
       </div>
@@ -69,27 +70,25 @@ export default function SignalAlerts() {
   }
 
   return (
-    <div className="min-h-screen bg-background">
+    <div className="min-h-screen bg-background flex flex-col">
       <Header />
-      <div className="container mx-auto px-4 py-8 max-w-4xl">
-        <div className="mb-8">
-          <h1 className="text-2xl font-bold text-foreground flex items-center gap-2">
-            <Bell className="w-6 h-6 text-primary" />
+      <div className="container mx-auto px-4 py-6 sm:py-8 max-w-4xl flex-1">
+        <div className="mb-6 sm:mb-8">
+          <h1 className="text-xl sm:text-2xl font-bold text-foreground flex items-center gap-2">
+            <Bell className="w-5 h-5 sm:w-6 sm:h-6 text-primary" />
             Signal Alerts
           </h1>
-          <p className="text-sm text-muted-foreground mt-1">
+          <p className="text-xs sm:text-sm text-muted-foreground mt-1">
             Monitor companies for new signals detected from publicly available sources.
           </p>
         </div>
 
-        {/* Alerts */}
-        <div className="mb-8">
+        <div className="mb-6 sm:mb-8">
           <UserAlertsList />
         </div>
 
-        {/* Watched Companies */}
         <Card>
-          <CardHeader className="pb-2">
+          <CardHeader className="pb-2 px-4 sm:px-6">
             <CardTitle className="text-base flex items-center gap-2">
               <Eye className="w-4 h-4 text-primary" />
               Watched Companies
@@ -98,32 +97,26 @@ export default function SignalAlerts() {
               )}
             </CardTitle>
           </CardHeader>
-          <CardContent>
+          <CardContent className="px-4 sm:px-6">
             {isLoading ? (
-              <p className="text-sm text-muted-foreground">Loading…</p>
+              <LoadingState message="Loading watchlist..." className="py-8" />
             ) : !watchlist || watchlist.length === 0 ? (
-              <div className="text-center py-8">
-                <EyeOff className="w-8 h-8 text-muted-foreground mx-auto mb-3" />
-                <p className="text-sm text-muted-foreground mb-2">You're not watching any companies yet.</p>
-                <p className="text-xs text-muted-foreground mb-4">
-                  Visit a company profile and click "Watch" to start receiving signal alerts.
-                </p>
-                <Button variant="outline" size="sm" asChild>
-                  <Link to="/browse">Browse Companies</Link>
-                </Button>
-              </div>
+              <EmptyState
+                icon={EyeOff}
+                title="No companies watched"
+                description="Visit a company profile and click 'Watch' to start receiving signal alerts."
+                action={{ label: "Browse Companies", onClick: () => navigate("/browse") }}
+                compact
+              />
             ) : (
-              <div className="space-y-3">
+              <div className="space-y-2 sm:space-y-3">
                 {watchlist.map((item: any) => (
-                  <div key={item.id} className="flex items-center justify-between gap-3 p-3 rounded-lg border border-border">
-                    <div className="flex items-center gap-3">
+                  <div key={item.id} className="flex items-center justify-between gap-2 sm:gap-3 p-2.5 sm:p-3 rounded-lg border border-border">
+                    <div className="flex items-center gap-2 sm:gap-3 min-w-0">
                       <Building2 className="w-4 h-4 text-muted-foreground shrink-0" />
-                      <div>
+                      <div className="min-w-0">
                         {item.company ? (
-                          <Link
-                            to={`/company/${item.company.slug}`}
-                            className="text-sm font-medium text-foreground hover:underline"
-                          >
+                          <Link to={`/company/${item.company.slug}`} className="text-sm font-medium text-foreground hover:underline truncate block">
                             {item.company.name}
                           </Link>
                         ) : (
@@ -133,7 +126,7 @@ export default function SignalAlerts() {
                           {item.company?.industry && (
                             <Badge variant="outline" className="text-[10px]">{item.company.industry}</Badge>
                           )}
-                          <span className="text-[10px] text-muted-foreground">
+                          <span className="text-[10px] text-muted-foreground hidden sm:inline">
                             Since {new Date(item.watch_timestamp).toLocaleDateString()}
                           </span>
                         </div>
@@ -142,7 +135,7 @@ export default function SignalAlerts() {
                     <Button
                       variant="ghost"
                       size="icon"
-                      className="shrink-0 text-muted-foreground hover:text-destructive"
+                      className="shrink-0 text-muted-foreground hover:text-destructive h-8 w-8"
                       onClick={() => handleUnwatch(item.id, item.company?.name || "company")}
                     >
                       <Trash2 className="w-4 h-4" />
