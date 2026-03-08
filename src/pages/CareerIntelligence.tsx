@@ -11,7 +11,8 @@ import { DataWipeButton } from "@/components/career/DataWipeButton";
 import { useAuth } from "@/contexts/AuthContext";
 import { Navigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
-import { FileText, User, Bell, Upload, Wand2 } from "lucide-react";
+import { FileText, User, Bell, Upload, Wand2, Compass } from "lucide-react";
+import { CareerMappingView } from "@/components/career/CareerMappingView";
 
 export default function CareerIntelligence() {
   const { user } = useAuth();
