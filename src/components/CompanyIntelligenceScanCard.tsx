@@ -297,6 +297,19 @@ export function CompanyIntelligenceScanCard({ companyId, companyName }: Props) {
           </div>
         )}
 
+        {/* Scan Coverage Panel — entity resolution + data source coverage */}
+        {latestScan && (
+          <div className="mt-4">
+            <ScanCoveragePanel
+              resolutionLog={latestScan.entity_resolution_log as any}
+              moduleStatuses={moduleStatuses as any}
+              totalSignals={latestScan.total_signals_found || 0}
+              totalSources={latestScan.total_sources_scanned || 0}
+              scanStatus={latestScan.scan_status}
+            />
+          </div>
+        )}
+
         {/* Empty state */}
         {!latestScan && !isLoading && (
           <div className="text-center py-6">
