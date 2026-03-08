@@ -115,7 +115,7 @@ export function CompanyIntelligenceScanCard({ companyId, companyName }: Props) {
       const orchResult = orchestrated.status === 'fulfilled' ? orchestrated.value : null;
       const uniResult = unified.status === 'fulfilled' ? unified.value : null;
 
-      if (orchResult?.error && uniResult?.error) {
+      if (orchResult?.error && !orchResult.error.message?.includes('409') && uniResult?.error) {
         throw new Error(orchResult.error.message || "Scan failed");
       }
 

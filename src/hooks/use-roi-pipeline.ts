@@ -88,8 +88,8 @@ export function useROIPipeline(companyId: string | undefined, companyName?: stri
         supabase.functions.invoke("company-intelligence-scan", {
           body: { companyId, companyName },
         }).then(({ error }) => {
-          // 409 = scan already in progress, not a real error
-          if (error && !error.message?.includes('already in progress')) {
+          // 409 = scan already in progress, not a real error — ignore it
+          if (error && !error.message?.includes('409') && !error.message?.includes('already in progress')) {
             console.error("[ROI Pipeline] Auto-scan failed:", error);
           }
           setAutoScanning(false);
@@ -109,7 +109,7 @@ export function useROIPipeline(companyId: string | undefined, companyName?: stri
       const { error } = await supabase.functions.invoke("company-intelligence-scan", {
         body: { companyId, companyName },
       });
-      if (error && !error.message?.includes('already in progress')) throw error;
+      if (error && !error.message?.includes('409') && !error.message?.includes('already in progress')) throw error;
     } catch (e) {
       console.error("[ROI Pipeline] Manual scan failed:", e);
     } finally {
