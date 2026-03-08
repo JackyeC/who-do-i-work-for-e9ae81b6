@@ -221,7 +221,23 @@ export function useOfferCheck(companyId?: string) {
   });
   sections.push({ id: "affiliations", title: "Organizational Affiliation Signals", signals: affiliationSignals, stale: false, hasData: affiliationSignals.length > 0 });
 
-  // 8. Public Statement vs Observed Signals
+  // 8. WARN Act Layoff Signals
+  const warnSignals: OfferCheckSignal[] = [];
+  warnNotices?.forEach((n: any) => {
+    const date = n.notice_date ? new Date(n.notice_date).toLocaleDateString() : "Unknown date";
+    const location = [n.location_city, n.location_state].filter(Boolean).join(", ");
+    warnSignals.push({
+      type: "WARN Notice",
+      description: `${n.employees_affected?.toLocaleString() || "Unknown"} employees affected${location ? ` in ${location}` : ""} (${date})${n.reason ? ` — ${n.reason}` : ""}`,
+      confidence: "Direct Source",
+      sourceUrl: n.source_url,
+      detectedAt: n.notice_date,
+      detectionMethod: "WARN Act filing",
+    });
+  });
+  sections.push({ id: "warn-layoffs", title: "WARN Act Layoff Notices", signals: warnSignals, stale: false, hasData: warnSignals.length > 0 });
+
+  // 9. Public Statement vs Observed Signals
   const sayDoSignals: OfferCheckSignal[] = [];
   publicStances?.forEach(s => {
     sayDoSignals.push({ type: "Say-Do Gap", description: `${s.topic}: States "${s.public_position}" — Observed: "${s.spending_reality}" (Gap: ${s.gap})`, confidence: "Multi-Source" });
