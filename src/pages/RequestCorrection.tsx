@@ -211,7 +211,7 @@ export default function RequestCorrection() {
               id="source_links"
               value={form.source_links}
               onChange={(e) => handleChange("source_links", e.target.value)}
-              placeholder={"https://fec.gov/data/...\nhttps://opensecrets.org/..."}
+              placeholder={"https://fec.gov/data/...\nhttps://usaspending.gov/..."}
               rows={3}
             />
           </div>

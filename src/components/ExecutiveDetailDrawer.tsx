@@ -38,7 +38,7 @@ export function ExecutiveDetailDrawer({ open, onOpenChange, executive, companyNa
 
   if (!executive) return null;
 
-  const openSecretsUrl = `https://www.opensecrets.org/search?q=${encodeURIComponent(executive.name)}&type=donors`;
+  const fecDonorUrl = `https://www.fec.gov/data/receipts/individual-contributions/?contributor_name=${encodeURIComponent(executive.name)}&contributor_employer=${encodeURIComponent(companyName)}`;
 
   return (
     <Sheet open={open} onOpenChange={onOpenChange}>
@@ -108,7 +108,7 @@ export function ExecutiveDetailDrawer({ open, onOpenChange, executive, companyNa
             </div>
           ) : (
             <p className="text-sm text-muted-foreground py-4 text-center">
-              No itemized recipient data available. Check OpenSecrets for full records.
+              No itemized recipient data available. Check FEC individual contribution records for full details.
             </p>
           )}
         </div>
@@ -117,9 +117,9 @@ export function ExecutiveDetailDrawer({ open, onOpenChange, executive, companyNa
         <div className="space-y-2">
           <p className="text-xs font-medium text-muted-foreground uppercase tracking-wide">Research Links</p>
           <Button variant="outline" size="sm" className="justify-start gap-2 w-full" asChild>
-            <a href={openSecretsUrl} target="_blank" rel="noopener noreferrer">
+            <a href={fecDonorUrl} target="_blank" rel="noopener noreferrer">
               <ExternalLink className="w-3.5 h-3.5" />
-              OpenSecrets – Donor Profile
+              FEC – Individual Contributions
             </a>
           </Button>
         </div>

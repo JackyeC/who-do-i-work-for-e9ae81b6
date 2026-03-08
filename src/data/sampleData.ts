@@ -262,7 +262,7 @@ export const companies: Company[] = [
     ],
     tradeAssociations: ["National Retail Federation", "U.S. Chamber of Commerce"],
     flaggedOrgTies: [
-      { orgName: "Club for Growth", relationship: "direct-funding", confidence: "direct", description: "Co-founder Bernard Marcus has donated $7M+ to Club for Growth.", source: "OpenSecrets.org" },
+      { orgName: "Club for Growth", relationship: "direct-funding", confidence: "direct", description: "Co-founder Bernard Marcus has donated $7M+ to Club for Growth.", source: "FEC filings" },
     ],
     boardAffiliations: ["Republican Jewish Coalition (Marcus)"],
     publicStances: [
@@ -547,7 +547,7 @@ export const companies: Company[] = [
     ],
     tradeAssociations: ["National Retail Federation", "U.S. Chamber of Commerce", "Business Roundtable"],
     flaggedOrgTies: [
-      { orgName: "Conduit for Action", relationship: "direct-funding", confidence: "direct", description: "Alice Walton has donated $3M to Conduit for Action, a conservative Arkansas PAC.", source: "OpenSecrets.org" },
+      { orgName: "Conduit for Action", relationship: "direct-funding", confidence: "direct", description: "Alice Walton has donated $3M to Conduit for Action, a conservative Arkansas PAC.", source: "FEC filings" },
     ],
     boardAffiliations: [],
     publicStances: [
@@ -674,7 +674,7 @@ export const companies: Company[] = [
       { name: "Freedom Partners Action Fund", type: "super-pac", amount: 60000000, relationship: "corporate-affiliated", description: "Koch network Super PAC that has spent tens of millions on conservative candidates.", confidence: "direct" },
     ],
     darkMoneyOrgs: [
-      { name: "Americans for Prosperity", type: "501c4", estimatedAmount: 400000000, relationship: "Koch-founded and funded", confidence: "direct", description: "501(c)(4) that does not disclose donors. Has spent hundreds of millions on political advocacy opposing climate legislation, healthcare reform, and labor protections.", source: "OpenSecrets.org, investigative reporting" },
+      { name: "Americans for Prosperity", type: "501c4", estimatedAmount: 400000000, relationship: "Koch-founded and funded", confidence: "direct", description: "501(c)(4) that does not disclose donors. Has spent hundreds of millions on political advocacy opposing climate legislation, healthcare reform, and labor protections.", source: "FEC filings, investigative reporting" },
       { name: "Donors Trust", type: "501c4", estimatedAmount: 100000000, relationship: "Koch network donor-advised fund", confidence: "inferred", description: "Donor-advised fund that channels money to conservative causes while obscuring the original donors.", source: "Tax filings, investigative journalism" },
     ],
     revolvingDoor: [
@@ -691,7 +691,7 @@ export const companies: Company[] = [
     ],
     tradeAssociations: ["American Petroleum Institute", "National Association of Manufacturers", "U.S. Chamber of Commerce"],
     flaggedOrgTies: [
-      { orgName: "Americans for Prosperity", relationship: "direct-funding", confidence: "direct", description: "Koch-founded organization that has spent billions on conservative political infrastructure.", source: "OpenSecrets.org, public reporting" },
+      { orgName: "Americans for Prosperity", relationship: "direct-funding", confidence: "direct", description: "Koch-founded organization that has spent billions on conservative political infrastructure.", source: "FEC filings, public reporting" },
       { orgName: "Stand Together", relationship: "direct-funding", confidence: "direct", description: "Koch network umbrella organization funding conservative causes.", source: "Public reporting" },
     ],
     boardAffiliations: ["Americans for Prosperity (Founder)", "Stand Together (Founder)"],

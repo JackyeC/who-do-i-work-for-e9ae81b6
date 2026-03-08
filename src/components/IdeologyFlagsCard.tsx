@@ -237,7 +237,7 @@ export function IdeologyFlagsCard({ companyName, dbCompanyId }: Props) {
         )}
 
         <p className="text-xs text-muted-foreground mt-4 border-t border-border pt-3">
-          Signals are detected from publicly available sources (SPLC, ADL, OpenSecrets, InfluenceWatch, FEC filings, news reports) and presented with confidence levels. No conclusions are drawn. Interpretation is left to the user.
+          Signals are detected from publicly available sources (SPLC, ADL, FEC filings, InfluenceWatch, Senate LDA, news reports) and presented with confidence levels. No conclusions are drawn. Interpretation is left to the user.
         </p>
       </CardContent>
     </Card>

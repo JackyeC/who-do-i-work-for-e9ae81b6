@@ -67,7 +67,7 @@ export function CandidateDetailDrawer({ open, onOpenChange, candidate, companyNa
 
   const congressSearchUrl = `https://www.congress.gov/search?q=${encodeURIComponent(candidate.name)}`;
   const voteSmartUrl = `https://justfacts.votesmart.org/candidate/key-votes/${encodeURIComponent(candidate.name.replace(/\s+/g, '-').toLowerCase())}`;
-  const openSecretsUrl = `https://www.opensecrets.org/search?q=${encodeURIComponent(candidate.name)}&type=candidates`;
+  const fecCandidateUrl = `https://www.fec.gov/data/candidates/?search=${encodeURIComponent(candidate.name)}`;
 
   return (
     <Sheet open={open} onOpenChange={handleOpenChange}>
@@ -172,9 +172,9 @@ export function CandidateDetailDrawer({ open, onOpenChange, candidate, companyNa
               </a>
             </Button>
             <Button variant="outline" size="sm" className="justify-start gap-2" asChild>
-              <a href={openSecretsUrl} target="_blank" rel="noopener noreferrer">
+              <a href={fecCandidateUrl} target="_blank" rel="noopener noreferrer">
                 <ExternalLink className="w-3.5 h-3.5" />
-                OpenSecrets – Full Funding Profile
+                FEC – Candidate Filings
               </a>
             </Button>
           </div>

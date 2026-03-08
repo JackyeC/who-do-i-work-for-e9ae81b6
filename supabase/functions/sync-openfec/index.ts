@@ -12,7 +12,6 @@ const VALID_COMMITTEE_TYPES = new Set([
   'C', 'D', 'E', 'H', 'I', 'N', 'O', 'P', 'Q', 'S', 'U', 'V', 'W', 'X', 'Y', 'Z'
 ]);
 
-// Human-readable label → FEC code mapping
 const COMMITTEE_TYPE_MAP: Record<string, string> = {
   'PAC': 'Q',
   'SUPER PAC': 'O',
@@ -27,30 +26,16 @@ const COMMITTEE_TYPE_MAP: Record<string, string> = {
 
 function normalizeCommitteeTypes(input: string | string[] | undefined | null): string[] {
   if (!input) return [];
-  
   const raw = Array.isArray(input) ? input : String(input).split(',');
   const normalized: string[] = [];
-  
   for (const val of raw) {
     const trimmed = val.trim().toUpperCase();
     if (!trimmed) continue;
-    
-    // Direct code match
-    if (VALID_COMMITTEE_TYPES.has(trimmed)) {
-      normalized.push(trimmed);
-      continue;
-    }
-    
-    // Label mapping
-    if (COMMITTEE_TYPE_MAP[trimmed]) {
-      normalized.push(COMMITTEE_TYPE_MAP[trimmed]);
-      continue;
-    }
-    
+    if (VALID_COMMITTEE_TYPES.has(trimmed)) { normalized.push(trimmed); continue; }
+    if (COMMITTEE_TYPE_MAP[trimmed]) { normalized.push(COMMITTEE_TYPE_MAP[trimmed]); continue; }
     console.warn(`[sync-openfec] Dropping invalid committee_type value: "${trimmed}"`);
   }
-  
-  return [...new Set(normalized)]; // dedupe
+  return [...new Set(normalized)];
 }
 
 interface FECCommittee {
@@ -100,11 +85,8 @@ async function fecFetch(endpoint: string, params: Record<string, string | string
   
   for (const [k, v] of Object.entries(params)) {
     if (v === undefined || v === null || v === '') continue;
-    // FEC API accepts repeated params for multi-value fields
     if (Array.isArray(v)) {
-      for (const val of v) {
-        url.searchParams.append(k, val);
-      }
+      for (const val of v) url.searchParams.append(k, val);
     } else {
       url.searchParams.set(k, v);
     }
@@ -117,8 +99,6 @@ async function fecFetch(endpoint: string, params: Record<string, string | string
     const errText = await resp.text();
     const errMsg = `FEC API ${resp.status}: ${errText.substring(0, 300)}`;
     console.error(`[sync-openfec] ${errMsg}`);
-    
-    // Preserve upstream status for caller
     const error = new Error(errMsg) as any;
     error.upstreamStatus = resp.status;
     error.upstreamBody = errText.substring(0, 500);
@@ -141,7 +121,7 @@ Deno.serve(async (req) => {
       );
     }
 
-    const { companyId, companyName, pacName, cycle } = await req.json();
+    const { companyId, companyName, pacName, cycle, searchNames, entityMap } = await req.json();
 
     if (!companyId || !companyName) {
       return new Response(
@@ -155,42 +135,60 @@ Deno.serve(async (req) => {
     const supabase = createClient(supabaseUrl, supabaseKey);
 
     const electionCycle = cycle || '2024';
-    const searchName = pacName || companyName;
 
-    console.log(`[sync-openfec] OpenFEC ingestion for "${searchName}" (cycle ${electionCycle})...`);
+    // Use entity resolution: search PACs using all resolved names
+    const namesToSearch = searchNames?.length
+      ? searchNames.filter((n: string) => {
+          const type = entityMap?.[n];
+          return !type || type !== 'legal_variant'; // Skip pure legal variants for PAC search
+        }).slice(0, 5)
+      : [pacName || companyName];
 
-    // ─── Step 1: Find PAC committees matching this company ───
-    // Normalize committee types - FEC API requires individual valid codes
+    console.log(`[sync-openfec] OpenFEC ingestion for ${namesToSearch.length} name variants (cycle ${electionCycle})...`);
+
+    // ─── Step 1: Find PAC committees matching company name variants ───
     const committeeTypes = normalizeCommitteeTypes('Q,N,O,U,V,W');
-    console.log(`[sync-openfec] Normalized committee_type: ${JSON.stringify(committeeTypes)}`);
+    const allCommittees: FECCommittee[] = [];
+    const seenCommitteeIds = new Set<string>();
 
-    const committeeParams: Record<string, string | string[]> = {
-      q: searchName,
-      cycle: electionCycle,
-      sort: '-receipts',
-    };
-    
-    // Only add committee_type if we have valid codes
-    if (committeeTypes.length > 0) {
-      committeeParams.committee_type = committeeTypes;
+    for (const searchName of namesToSearch) {
+      const committeeParams: Record<string, string | string[]> = {
+        q: searchName,
+        cycle: electionCycle,
+        sort: '-receipts',
+      };
+      if (committeeTypes.length > 0) committeeParams.committee_type = committeeTypes;
+
+      try {
+        const committeeData = await fecFetch('/committees/', committeeParams, apiKey);
+        const committees: FECCommittee[] = committeeData.results || [];
+        for (const c of committees) {
+          if (!seenCommitteeIds.has(c.committee_id)) {
+            seenCommitteeIds.add(c.committee_id);
+            allCommittees.push(c);
+          }
+        }
+        console.log(`[sync-openfec] "${searchName}": ${committees.length} committees`);
+        await new Promise(r => setTimeout(r, 300));
+      } catch (e: any) {
+        if (e.upstreamStatus === 422) {
+          console.warn(`[sync-openfec] FEC validation error for "${searchName}": ${e.upstreamBody}`);
+        } else {
+          console.error(`[sync-openfec] Committee search error for "${searchName}":`, e);
+        }
+      }
     }
 
-    const committeeData = await fecFetch('/committees/', committeeParams, apiKey);
-
-    const committees: FECCommittee[] = committeeData.results || [];
-    console.log(`[sync-openfec] Found ${committees.length} committees matching "${searchName}"`);
-
-    if (committees.length === 0) {
-      console.log('[sync-openfec] No PAC found. Searching individual contributions by employer name...');
-    }
+    console.log(`[sync-openfec] Total unique committees found: ${allCommittees.length}`);
 
     const stats = {
-      committeesFound: committees.length,
+      committeesFound: allCommittees.length,
       candidatesFunded: 0,
       executiveDonors: 0,
       totalPacSpending: 0,
       totalIndividualGiving: 0,
       linkagesCreated: 0,
+      searchNamesUsed: namesToSearch.length,
     };
 
     // ─── Step 2: For each PAC, get disbursements to candidates ───
@@ -200,7 +198,7 @@ Deno.serve(async (req) => {
     }> = [];
     const linkages: any[] = [];
 
-    for (const committee of committees.slice(0, 3)) {
+    for (const committee of allCommittees.slice(0, 5)) {
       console.log(`[sync-openfec] Fetching disbursements for ${committee.name} (${committee.committee_id})...`);
 
       try {
@@ -216,7 +214,6 @@ Deno.serve(async (req) => {
 
         for (const d of disbursements) {
           if (d.disbursement_amount <= 0) continue;
-
           stats.totalPacSpending += d.disbursement_amount;
 
           if (d.candidate_name) {
@@ -242,7 +239,7 @@ Deno.serve(async (req) => {
               confidence_score: 0.95,
               description: `PAC contribution: ${committee.name} → ${d.candidate_name} ($${d.disbursement_amount.toLocaleString()}, ${d.disbursement_date || electionCycle})`,
               source_citation: JSON.stringify([{
-                source: 'OpenFEC',
+                source: 'FEC',
                 url: `https://www.fec.gov/data/disbursements/?committee_id=${committee.committee_id}&recipient_name=${encodeURIComponent(d.candidate_name || '')}`,
                 committee_id: committee.committee_id,
                 cycle: electionCycle,
@@ -257,10 +254,8 @@ Deno.serve(async (req) => {
             });
           }
         }
-
         await new Promise(r => setTimeout(r, 500));
       } catch (e: any) {
-        // If upstream returned 422, surface it clearly
         if (e.upstreamStatus === 422) {
           console.error(`[sync-openfec] FEC validation error for ${committee.committee_id}: ${e.upstreamBody}`);
         } else {
@@ -269,112 +264,136 @@ Deno.serve(async (req) => {
       }
     }
 
-    // ─── Step 3: Individual contributions by employer ───
-    try {
-      console.log(`[sync-openfec] Fetching individual contributions where employer = "${companyName}"...`);
-      const receiptData = await fecFetch('/schedules/schedule_a/', {
-        contributor_employer: companyName,
-        two_year_transaction_period: electionCycle,
-        sort: '-contribution_receipt_amount',
-        is_individual: 'true',
-      }, apiKey);
+    // ─── Step 3: Individual contributions by employer (using all name variants) ───
+    for (const employerName of namesToSearch.slice(0, 3)) {
+      try {
+        console.log(`[sync-openfec] Fetching individual contributions where employer = "${employerName}"...`);
+        const receiptData = await fecFetch('/schedules/schedule_a/', {
+          contributor_employer: employerName,
+          two_year_transaction_period: electionCycle,
+          sort: '-contribution_receipt_amount',
+          is_individual: 'true',
+        }, apiKey);
 
-      const receipts: FECReceipt[] = receiptData.results || [];
-      console.log(`[sync-openfec] Found ${receipts.length} individual contributions from ${companyName} employees`);
+        const receipts: FECReceipt[] = receiptData.results || [];
+        console.log(`[sync-openfec] Found ${receipts.length} individual contributions from "${employerName}" employees`);
 
-      const executiveMap = new Map<string, { name: string; total: number; occupation: string; recipients: any[] }>();
+        const executiveMap = new Map<string, { name: string; total: number; occupation: string; recipients: any[] }>();
 
-      for (const r of receipts) {
-        if (r.contribution_receipt_amount <= 0) continue;
+        for (const r of receipts) {
+          if (r.contribution_receipt_amount <= 0) continue;
+          const key = r.contributor_name?.toUpperCase() || 'UNKNOWN';
+          const existing = executiveMap.get(key) || {
+            name: r.contributor_name,
+            total: 0,
+            occupation: r.contributor_occupation || 'Unknown',
+            recipients: [],
+          };
+          existing.total += r.contribution_receipt_amount;
+          existing.recipients.push({
+            committee: r.committee?.name,
+            amount: r.contribution_receipt_amount,
+            date: r.contribution_receipt_date,
+          });
+          executiveMap.set(key, existing);
+          stats.totalIndividualGiving += r.contribution_receipt_amount;
+        }
 
-        const key = r.contributor_name?.toUpperCase() || 'UNKNOWN';
-        const existing = executiveMap.get(key) || {
-          name: r.contributor_name,
-          total: 0,
-          occupation: r.contributor_occupation || 'Unknown',
-          recipients: [],
-        };
-        existing.total += r.contribution_receipt_amount;
-        existing.recipients.push({
-          committee: r.committee?.name,
-          amount: r.contribution_receipt_amount,
-          date: r.contribution_receipt_date,
-        });
-        executiveMap.set(key, existing);
+        const topExecs = [...executiveMap.values()]
+          .sort((a, b) => b.total - a.total)
+          .slice(0, 20);
 
-        stats.totalIndividualGiving += r.contribution_receipt_amount;
-      }
+        stats.executiveDonors += topExecs.length;
 
-      const topExecs = [...executiveMap.values()]
-        .sort((a, b) => b.total - a.total)
-        .slice(0, 20);
+        if (topExecs.length > 0) {
+          const execRows = topExecs.map(e => ({
+            company_id: companyId,
+            name: e.name,
+            title: e.occupation,
+            total_donations: Math.round(e.total),
+          }));
 
-      stats.executiveDonors = topExecs.length;
+          // Only clear on first employer variant
+          if (employerName === namesToSearch[0]) {
+            await supabase.from('company_executives').delete().eq('company_id', companyId);
+          }
+          const { data: insertedExecs, error: execErr } = await supabase
+            .from('company_executives')
+            .insert(execRows)
+            .select('id, name');
+          if (execErr) console.error('[sync-openfec] Executive insert error:', execErr);
 
-      if (topExecs.length > 0) {
-        const execRows = topExecs.map(e => ({
-          company_id: companyId,
-          name: e.name,
-          title: e.occupation,
-          total_donations: Math.round(e.total),
-        }));
+          if (insertedExecs && insertedExecs.length > 0) {
+            const execNameToId = new Map(insertedExecs.map(e => [e.name?.toUpperCase(), e.id]));
+            const recipientRows: { executive_id: string; name: string; party: string; amount: number }[] = [];
 
-        await supabase.from('company_executives').delete().eq('company_id', companyId);
-        const { data: insertedExecs, error: execErr } = await supabase
-          .from('company_executives')
-          .insert(execRows)
-          .select('id, name');
-        if (execErr) console.error('[sync-openfec] Executive insert error:', execErr);
+            for (const exec of topExecs) {
+              const execId = execNameToId.get(exec.name?.toUpperCase());
+              if (!execId || !exec.recipients.length) continue;
 
-        // Insert executive_recipients for each executive's donation recipients
-        if (insertedExecs && insertedExecs.length > 0) {
-          const execNameToId = new Map(insertedExecs.map(e => [e.name?.toUpperCase(), e.id]));
-          const recipientRows: { executive_id: string; name: string; party: string; amount: number }[] = [];
+              const recipMap = new Map<string, { name: string; amount: number }>();
+              for (const r of exec.recipients) {
+                const key = (r.committee || 'Unknown').toUpperCase();
+                const existing = recipMap.get(key) || { name: r.committee || 'Unknown', amount: 0 };
+                existing.amount += r.amount;
+                recipMap.set(key, existing);
+              }
 
-          for (const exec of topExecs) {
-            const execId = execNameToId.get(exec.name?.toUpperCase());
-            if (!execId || !exec.recipients.length) continue;
-
-            // Aggregate by committee/recipient name
-            const recipMap = new Map<string, { name: string; amount: number }>();
-            for (const r of exec.recipients) {
-              const key = (r.committee || 'Unknown').toUpperCase();
-              const existing = recipMap.get(key) || { name: r.committee || 'Unknown', amount: 0 };
-              existing.amount += r.amount;
-              recipMap.set(key, existing);
+              for (const recip of recipMap.values()) {
+                const matchedCandidate = allCandidates.find(c =>
+                  recip.name.toUpperCase().includes(c.name.split(',')[0]?.toUpperCase() || '___')
+                );
+                recipientRows.push({
+                  executive_id: execId,
+                  name: recip.name,
+                  party: matchedCandidate?.party?.includes('REP') ? 'Republican'
+                       : matchedCandidate?.party?.includes('DEM') ? 'Democrat'
+                       : 'Unknown',
+                  amount: Math.round(recip.amount),
+                });
+              }
             }
 
-            for (const recip of recipMap.values()) {
-              // Try to match to a known candidate for party info
-              const matchedCandidate = allCandidates.find(c =>
-                recip.name.toUpperCase().includes(c.name.split(',')[0]?.toUpperCase() || '___')
-              );
-              recipientRows.push({
-                executive_id: execId,
-                name: recip.name,
-                party: matchedCandidate?.party?.includes('REP') ? 'Republican'
-                     : matchedCandidate?.party?.includes('DEM') ? 'Democrat'
-                     : 'Unknown',
-                amount: Math.round(recip.amount),
+            if (recipientRows.length > 0) {
+              const execIds = insertedExecs.map(e => e.id);
+              await supabase.from('executive_recipients').delete().in('executive_id', execIds);
+              const { error: recipErr } = await supabase.from('executive_recipients').insert(recipientRows);
+              if (recipErr) console.error('[sync-openfec] Executive recipients insert error:', recipErr);
+              else console.log(`[sync-openfec] Inserted ${recipientRows.length} executive recipient records`);
+            }
+
+            // ─── Executive influence detection: check if execs appear in lobbying/govt ───
+            for (const exec of insertedExecs) {
+              // Create entity linkage for executive → company political activity
+              linkages.push({
+                company_id: companyId,
+                source_entity_name: exec.name,
+                source_entity_type: 'executive',
+                source_entity_id: exec.id,
+                target_entity_name: companyName,
+                target_entity_type: 'company',
+                target_entity_id: companyId,
+                link_type: 'donation_to_member',
+                amount: execRows.find(e => e.name === exec.name)?.total_donations || 0,
+                confidence_score: 0.95,
+                description: `Executive donor: ${exec.name} personal contributions (FEC individual receipts)`,
+                source_citation: JSON.stringify([{
+                  source: 'FEC',
+                  url: `https://www.fec.gov/data/receipts/individual-contributions/?contributor_employer=${encodeURIComponent(employerName)}&contributor_name=${encodeURIComponent(exec.name || '')}`,
+                  cycle: electionCycle,
+                  retrieved_at: new Date().toISOString(),
+                }]),
               });
             }
           }
-
-          if (recipientRows.length > 0) {
-            // Clear old recipients for these executives
-            const execIds = insertedExecs.map(e => e.id);
-            await supabase.from('executive_recipients').delete().in('executive_id', execIds);
-            const { error: recipErr } = await supabase.from('executive_recipients').insert(recipientRows);
-            if (recipErr) console.error('[sync-openfec] Executive recipients insert error:', recipErr);
-            else console.log(`[sync-openfec] Inserted ${recipientRows.length} executive recipient records`);
-          }
         }
-      }
-    } catch (e: any) {
-      if (e.upstreamStatus === 422) {
-        console.error(`[sync-openfec] FEC validation error on individual contributions: ${e.upstreamBody}`);
-      } else {
-        console.error('[sync-openfec] Error fetching individual contributions:', e);
+        await new Promise(r => setTimeout(r, 500));
+      } catch (e: any) {
+        if (e.upstreamStatus === 422) {
+          console.error(`[sync-openfec] FEC validation error on individual contributions: ${e.upstreamBody}`);
+        } else {
+          console.error('[sync-openfec] Error fetching individual contributions:', e);
+        }
       }
     }
 
@@ -383,11 +402,8 @@ Deno.serve(async (req) => {
     for (const c of allCandidates) {
       const key = c.name.toUpperCase();
       const existing = candidateMap.get(key);
-      if (existing) {
-        existing.amount += c.amount;
-      } else {
-        candidateMap.set(key, { ...c });
-      }
+      if (existing) { existing.amount += c.amount; }
+      else { candidateMap.set(key, { ...c }); }
     }
 
     const deduped = [...candidateMap.values()].sort((a, b) => b.amount - a.amount);
@@ -446,6 +462,14 @@ Deno.serve(async (req) => {
         .eq('link_type', 'donation_to_member')
         .like('description', 'PAC contribution:%');
 
+      // Also clear old executive donor linkages
+      await supabase
+        .from('entity_linkages')
+        .delete()
+        .eq('company_id', companyId)
+        .eq('link_type', 'donation_to_member')
+        .like('description', 'Executive donor:%');
+
       for (let i = 0; i < linkages.length; i += 50) {
         const batch = linkages.slice(i, i + 50);
         const { error: linkErr } = await supabase.from('entity_linkages').insert(batch);
@@ -465,34 +489,25 @@ Deno.serve(async (req) => {
 
     await supabase.from('companies').update(updateFields).eq('id', companyId);
 
-    console.log(`[sync-openfec] ✅ Complete for ${companyName}: ${stats.candidatesFunded} candidates, ${stats.executiveDonors} exec donors, $${stats.totalPacSpending.toLocaleString()} PAC spending`);
+    console.log(`[sync-openfec] ✅ Complete for ${companyName}: ${stats.candidatesFunded} candidates, ${stats.executiveDonors} exec donors, $${stats.totalPacSpending.toLocaleString()} PAC spending (searched ${stats.searchNamesUsed} name variants)`);
 
     return new Response(
-      JSON.stringify({
-        success: true,
-        message: `Synced ${stats.candidatesFunded} candidates + ${stats.executiveDonors} executive donors for ${companyName}`,
-        stats,
-      }),
+      JSON.stringify({ success: true, stats }),
       { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
     );
 
   } catch (error: any) {
     console.error('[sync-openfec] error:', error);
-    
-    // Preserve upstream error details
     const isUpstreamValidation = error.upstreamStatus === 422;
-    const statusCode = isUpstreamValidation ? 422 : 500;
-    const errorType = isUpstreamValidation ? 'failed_validation' : 'server_error';
-    
     return new Response(
       JSON.stringify({
         success: false,
         error: error.message || 'Unknown error',
-        errorType,
+        errorType: isUpstreamValidation ? 'failed_validation' : 'server_error',
         upstreamStatus: error.upstreamStatus || null,
         upstreamBody: error.upstreamBody || null,
       }),
-      { status: statusCode, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+      { status: isUpstreamValidation ? 422 : 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
     );
   }
 });

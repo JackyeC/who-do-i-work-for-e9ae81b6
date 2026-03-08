@@ -33,7 +33,7 @@ export function Footer() {
             <div className="space-y-3">
               <p className="text-xs font-semibold text-foreground uppercase tracking-widest">About</p>
               <div className="space-y-2.5 text-sm text-muted-foreground">
-                <p>Data from FEC.gov, OpenSecrets, USASpending &amp; public filings.</p>
+                <p>Data from FEC.gov, Senate LDA, USASpending &amp; public filings.</p>
                 <p>Signals reported. No conclusions drawn.</p>
                 <Link to="/request-correction" className="block text-primary hover:underline">Request a Correction</Link>
               </div>

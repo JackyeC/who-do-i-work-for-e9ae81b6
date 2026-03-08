@@ -12,7 +12,6 @@ function generateNameVariants(name: string): string[] {
   const base = name.trim();
   const variants = [base, base.toUpperCase(), base.toLowerCase()];
 
-  // Strip common suffixes for fuzzy matching
   const suffixes = [', Inc.', ', Inc', ' Inc.', ' Inc', ', LLC', ' LLC', ', Corp.', ' Corp.', ' Corp', ' Corporation', ' Company', ' Co.', ' Co', ' Group', ' Holdings', ' Enterprises'];
   for (const suffix of suffixes) {
     if (base.toLowerCase().endsWith(suffix.toLowerCase())) {
@@ -21,11 +20,8 @@ function generateNameVariants(name: string): string[] {
     }
   }
 
-  // Add variants with common suffixes
   const cleanName = variants[0].replace(/,?\s*(Inc\.?|LLC|Corp\.?|Corporation|Company|Co\.?|Group|Holdings|Enterprises)\s*$/i, '').trim();
-  if (cleanName !== base) {
-    variants.push(cleanName);
-  }
+  if (cleanName !== base) variants.push(cleanName);
 
   return [...new Set(variants)];
 }
@@ -36,7 +32,7 @@ Deno.serve(async (req) => {
   }
 
   try {
-    const { companyId, companyName } = await req.json();
+    const { companyId, companyName, searchNames, entityMap } = await req.json();
 
     if (!companyId || !companyName) {
       return new Response(
@@ -51,16 +47,29 @@ Deno.serve(async (req) => {
 
     console.log(`[sync-lobbying] Starting for ${companyName}...`);
 
-    const nameVariants = generateNameVariants(companyName);
-    let allFilings: any[] = [];
+    // Use entity resolution names if available, otherwise generate variants
+    const resolvedNames = searchNames?.length
+      ? searchNames.filter((n: string) => {
+          const type = entityMap?.[n];
+          return !type || type !== 'ticker'; // Skip ticker symbols for lobbying search
+        }).slice(0, 5)
+      : [];
 
-    // Try each variant against the Senate LDA API
-    for (const variant of nameVariants.slice(0, 3)) {
+    const localVariants = generateNameVariants(companyName);
+    const allVariants = [...new Set([...resolvedNames, ...localVariants])].slice(0, 6);
+
+    let allFilings: any[] = [];
+    let sourcesSearched = 0;
+
+    // Search Senate LDA API with all name variants
+    for (const variant of allVariants) {
       try {
+        // Search as registrant (company does own lobbying)
         const url = new URL(`${LOBBY_API_BASE}/filings/`);
         url.searchParams.set('registrant_name', variant);
         url.searchParams.set('filing_year', new Date().getFullYear().toString());
-        url.searchParams.set('filing_type', 'Q'); // Quarterly reports
+        url.searchParams.set('filing_type', 'Q');
+        sourcesSearched++;
 
         const resp = await fetch(url.toString(), {
           headers: { 'Accept': 'application/json' },
@@ -70,15 +79,15 @@ Deno.serve(async (req) => {
           const data = await resp.json();
           if (data.results && data.results.length > 0) {
             allFilings = allFilings.concat(data.results);
-            console.log(`[sync-lobbying] Found ${data.results.length} filings for variant "${variant}"`);
-            break; // Found results, stop searching variants
+            console.log(`[sync-lobbying] Found ${data.results.length} registrant filings for "${variant}"`);
           }
         }
 
-        // Also search as client (company hires a lobbying firm)
+        // Search as client (company hires a lobbying firm)
         const clientUrl = new URL(`${LOBBY_API_BASE}/filings/`);
         clientUrl.searchParams.set('client_name', variant);
         clientUrl.searchParams.set('filing_year', new Date().getFullYear().toString());
+        sourcesSearched++;
 
         const clientResp = await fetch(clientUrl.toString(), {
           headers: { 'Accept': 'application/json' },
@@ -89,11 +98,32 @@ Deno.serve(async (req) => {
           if (clientData.results && clientData.results.length > 0) {
             allFilings = allFilings.concat(clientData.results);
             console.log(`[sync-lobbying] Found ${clientData.results.length} client filings for "${variant}"`);
-            break;
           }
         }
 
-        await new Promise(r => setTimeout(r, 300)); // Rate limit
+        // Also search previous year for broader coverage
+        const prevYear = (new Date().getFullYear() - 1).toString();
+        const prevUrl = new URL(`${LOBBY_API_BASE}/filings/`);
+        prevUrl.searchParams.set('client_name', variant);
+        prevUrl.searchParams.set('filing_year', prevYear);
+        sourcesSearched++;
+
+        const prevResp = await fetch(prevUrl.toString(), {
+          headers: { 'Accept': 'application/json' },
+        });
+
+        if (prevResp.ok) {
+          const prevData = await prevResp.json();
+          if (prevData.results && prevData.results.length > 0) {
+            allFilings = allFilings.concat(prevData.results);
+            console.log(`[sync-lobbying] Found ${prevData.results.length} previous year filings for "${variant}"`);
+          }
+        }
+
+        await new Promise(r => setTimeout(r, 300));
+
+        // If we have enough results, stop searching more variants
+        if (allFilings.length >= 20) break;
       } catch (e) {
         console.error(`[sync-lobbying] Error searching variant "${variant}":`, e);
       }
@@ -108,18 +138,17 @@ Deno.serve(async (req) => {
       return true;
     });
 
-    console.log(`[sync-lobbying] ${uniqueFilings.length} unique filings found`);
+    console.log(`[sync-lobbying] ${uniqueFilings.length} unique filings found (searched ${sourcesSearched} endpoints)`);
 
     if (uniqueFilings.length === 0) {
-      // Try OpenSecrets/ProPublica lobbying search as fallback
-      // For now, return empty with descriptive message
       return new Response(
         JSON.stringify({
           success: true,
-          message: `No lobbying filings found for ${companyName}`,
+          message: `No lobbying filings found for ${companyName} in Senate LDA records`,
           filingsFound: 0,
           linkagesCreated: 0,
           totalLobbyingSpend: 0,
+          sourcesScanned: sourcesSearched,
         }),
         { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
       );
@@ -142,7 +171,6 @@ Deno.serve(async (req) => {
 
       lobbyingFirms.add(registrantName);
 
-      // Track lobbying issues
       if (filing.lobbying_activities) {
         for (const activity of filing.lobbying_activities) {
           if (activity.general_issue_code_display) {
@@ -151,7 +179,6 @@ Deno.serve(async (req) => {
         }
       }
 
-      // Create linkage: Company → Lobbying Firm
       if (amount > 0) {
         linkages.push({
           company_id: companyId,
@@ -184,7 +211,7 @@ Deno.serve(async (req) => {
       }
     }
 
-    // Clear old lobbying linkages for this company
+    // Clear old lobbying linkages
     await supabase
       .from('entity_linkages')
       .delete()
@@ -192,7 +219,6 @@ Deno.serve(async (req) => {
       .eq('link_type', 'trade_association_lobbying')
       .like('description', 'Lobbying expenditure:%');
 
-    // Insert new linkages
     let inserted = 0;
     for (let i = 0; i < linkages.length; i += 50) {
       const batch = linkages.slice(i, i + 50);
@@ -204,7 +230,6 @@ Deno.serve(async (req) => {
       }
     }
 
-    // Update company lobbying_spend
     if (totalLobbyingSpend > 0) {
       await supabase.from('companies').update({
         lobbying_spend: Math.round(totalLobbyingSpend),
@@ -222,6 +247,7 @@ Deno.serve(async (req) => {
         totalLobbyingSpend: Math.round(totalLobbyingSpend),
         lobbyingFirms: [...lobbyingFirms],
         issuesTracked: [...issuesTracked],
+        sourcesScanned: sourcesSearched,
       }),
       { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
     );

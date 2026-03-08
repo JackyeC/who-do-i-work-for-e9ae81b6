@@ -1453,7 +1453,7 @@ export default function CompanyProfile() {
                 </div>
               </div>
               <p className="text-xs text-muted-foreground mt-3">
-                Data sourced from FEC.gov, OpenSecrets.org, lobbying disclosures, USASpending.gov, Good Jobs First, and public filings. 
+                Data sourced from FEC.gov, Senate LDA, USASpending.gov, OpenCorporates, DOL enforcement data, and public filings. 
                 Executive donations reflect personal giving and do not necessarily represent corporate policy.
                 Dark money estimates are based on available tax filings and may not represent total giving.
                 CivicLens provides publicly available data for informational purposes only and does not make endorsements or moral judgments.

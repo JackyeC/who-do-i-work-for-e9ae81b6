@@ -20,10 +20,13 @@ export default function Methodology() {
               <h2 className="text-title text-foreground mb-5">Data Sources</h2>
               <div className="space-y-3">
                 {[
-                  { name: "Federal Election Commission (FEC)", desc: "Official source for federal campaign contributions, PAC filings, and individual donor records." },
-                  { name: "OpenSecrets.org", desc: "Aggregated data linking PACs, donors, and candidates. Used for cross-referencing and industry-level analysis." },
-                  { name: "Lobbying Disclosure Act filings", desc: "Federal lobbying registrations and quarterly spending reports filed with the Senate and House." },
-                  { name: "Corporate filings & tax records", desc: "SEC filings, 990 nonprofit tax returns, and state corporate registrations." },
+                  { name: "Federal Election Commission (FEC)", desc: "Official source for federal campaign contributions, PAC filings, and individual donor records via the OpenFEC API." },
+                  { name: "USASpending.gov", desc: "Federal contracts, grants, subsidies, and procurement awards from the official government spending database." },
+                  { name: "Senate Lobbying Disclosure Act (LDA)", desc: "Federal lobbying registrations and quarterly spending reports filed with the U.S. Senate." },
+                  { name: "SEC EDGAR", desc: "Public company filings, executive compensation disclosures, and financial reports from the SEC." },
+                  { name: "OpenCorporates", desc: "Global corporate registry data for company structure, officers, directors, and jurisdictions." },
+                  { name: "DOL Enforcement Data", desc: "OSHA inspections and Wage & Hour Division enforcement records from the Department of Labor." },
+                  { name: "Corporate filings & tax records", desc: "990 nonprofit tax returns and state corporate registrations." },
                   { name: "Civil rights watchdog reports", desc: "SPLC, ADL, and other organizations that track extremist affiliations and designations." },
                   { name: "Public reporting", desc: "Investigative journalism from ProPublica, Reuters, AP, and other outlets." },
                 ].map((source) => (
