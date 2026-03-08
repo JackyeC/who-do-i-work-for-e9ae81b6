@@ -691,7 +691,7 @@ export const companies: Company[] = [
     ],
     tradeAssociations: ["American Petroleum Institute", "National Association of Manufacturers", "U.S. Chamber of Commerce"],
     flaggedOrgTies: [
-      { orgName: "Americans for Prosperity", relationship: "direct-funding", confidence: "direct", description: "Koch-founded organization that has spent billions on conservative political infrastructure.", source: "OpenSecrets.org, public reporting" },
+      { orgName: "Americans for Prosperity", relationship: "direct-funding", confidence: "direct", description: "Koch-founded organization that has spent billions on conservative political infrastructure.", source: "FEC filings, public reporting" },
       { orgName: "Stand Together", relationship: "direct-funding", confidence: "direct", description: "Koch network umbrella organization funding conservative causes.", source: "Public reporting" },
     ],
     boardAffiliations: ["Americans for Prosperity (Founder)", "Stand Together (Founder)"],
