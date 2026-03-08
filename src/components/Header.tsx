@@ -1,10 +1,27 @@
+import { useState } from "react";
 import { Link } from "react-router-dom";
-import { Search, ClipboardCheck, BookOpen, Briefcase, Plus, HardHat, Target } from "lucide-react";
+import { Search, ClipboardCheck, BookOpen, Briefcase, Plus, HardHat, Target, Menu, X } from "lucide-react";
 import { useAuth } from "@/contexts/AuthContext";
 import { Button } from "@/components/ui/button";
 
 export function Header() {
   const { user } = useAuth();
+  const [mobileOpen, setMobileOpen] = useState(false);
+
+  const navLinks = [
+    { to: "/browse", label: "Browse" },
+    { to: "/methodology", label: "Methodology", icon: BookOpen },
+    { to: "/search", label: "Search", icon: Search },
+    { to: "/add-company", label: "Add Company", icon: Plus },
+    { to: "/jobs", label: "Jobs", icon: HardHat },
+  ];
+
+  const authLinks = user
+    ? [
+        { to: "/job-dashboard", label: "Job Match", icon: Target },
+        { to: "/my-offer-checks", label: "My Offer Checks", icon: ClipboardCheck },
+      ]
+    : [];
 
   return (
     <header className="border-b border-border bg-card/80 backdrop-blur-sm sticky top-0 z-50">
@@ -20,38 +37,21 @@ export function Header() {
             <span className="text-[9px] text-muted-foreground tracking-wide">by Jackye Clayton</span>
           </div>
         </Link>
-        <nav className="flex items-center gap-4">
-          <Link to="/browse" className="text-sm font-medium text-muted-foreground hover:text-foreground transition-colors">
-            Browse
-          </Link>
-          <Link to="/methodology" className="text-sm font-medium text-muted-foreground hover:text-foreground transition-colors flex items-center gap-1">
-            <BookOpen className="w-3.5 h-3.5" />
-            Methodology
-          </Link>
-          <Link to="/search" className="text-sm font-medium text-muted-foreground hover:text-foreground transition-colors flex items-center gap-1">
-            <Search className="w-3.5 h-3.5" />
-            Search
-          </Link>
-          <Link to="/add-company" className="text-sm font-medium text-muted-foreground hover:text-foreground transition-colors flex items-center gap-1">
-            <Plus className="w-3.5 h-3.5" />
-            Add Company
-          </Link>
-          <Link to="/jobs" className="text-sm font-medium text-muted-foreground hover:text-foreground transition-colors flex items-center gap-1">
-            <HardHat className="w-3.5 h-3.5" />
-            Jobs
-          </Link>
-          {user && (
-            <>
-              <Link to="/job-dashboard" className="text-sm font-medium text-muted-foreground hover:text-foreground transition-colors flex items-center gap-1">
-                <Target className="w-3.5 h-3.5" />
-                Job Match
-              </Link>
-              <Link to="/my-offer-checks" className="text-sm font-medium text-muted-foreground hover:text-foreground transition-colors flex items-center gap-1">
-                <ClipboardCheck className="w-3.5 h-3.5" />
-                My Offer Checks
-              </Link>
-            </>
-          )}
+
+        {/* Desktop nav */}
+        <nav className="hidden lg:flex items-center gap-4">
+          {navLinks.map((link) => (
+            <Link key={link.to} to={link.to} className="text-sm font-medium text-muted-foreground hover:text-foreground transition-colors flex items-center gap-1">
+              {link.icon && <link.icon className="w-3.5 h-3.5" />}
+              {link.label}
+            </Link>
+          ))}
+          {authLinks.map((link) => (
+            <Link key={link.to} to={link.to} className="text-sm font-medium text-muted-foreground hover:text-foreground transition-colors flex items-center gap-1">
+              <link.icon className="w-3.5 h-3.5" />
+              {link.label}
+            </Link>
+          ))}
           <Link to={user ? "/who-do-i-work-for" : "/login"}>
             <Button size="sm" variant="default" className="gap-1.5">
               <Briefcase className="w-3.5 h-3.5" />
@@ -59,7 +59,50 @@ export function Header() {
             </Button>
           </Link>
         </nav>
+
+        {/* Mobile toggle */}
+        <button
+          className="lg:hidden p-2 text-muted-foreground hover:text-foreground"
+          onClick={() => setMobileOpen(!mobileOpen)}
+          aria-label="Toggle menu"
+        >
+          {mobileOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
+        </button>
       </div>
+
+      {/* Mobile nav */}
+      {mobileOpen && (
+        <div className="lg:hidden border-t border-border bg-card px-4 py-4 space-y-2">
+          {navLinks.map((link) => (
+            <Link
+              key={link.to}
+              to={link.to}
+              onClick={() => setMobileOpen(false)}
+              className="block text-sm font-medium text-muted-foreground hover:text-foreground transition-colors py-2 px-2 rounded-md hover:bg-muted/50 flex items-center gap-2"
+            >
+              {link.icon && <link.icon className="w-4 h-4" />}
+              {link.label}
+            </Link>
+          ))}
+          {authLinks.map((link) => (
+            <Link
+              key={link.to}
+              to={link.to}
+              onClick={() => setMobileOpen(false)}
+              className="block text-sm font-medium text-muted-foreground hover:text-foreground transition-colors py-2 px-2 rounded-md hover:bg-muted/50 flex items-center gap-2"
+            >
+              <link.icon className="w-4 h-4" />
+              {link.label}
+            </Link>
+          ))}
+          <Link to={user ? "/who-do-i-work-for" : "/login"} onClick={() => setMobileOpen(false)}>
+            <Button size="sm" variant="default" className="gap-1.5 w-full mt-2">
+              <Briefcase className="w-3.5 h-3.5" />
+              Who Do I Work For?
+            </Button>
+          </Link>
+        </div>
+      )}
     </header>
   );
 }

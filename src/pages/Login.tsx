@@ -42,9 +42,9 @@ export default function Login() {
             <div className="w-14 h-14 mx-auto rounded-2xl bg-primary/10 flex items-center justify-center mb-2">
               <Shield className="w-7 h-7 text-primary" />
             </div>
-            <CardTitle className="text-2xl font-bold">Sign in to CivicLens</CardTitle>
+            <CardTitle className="text-2xl font-bold">Sign in to Offer Check</CardTitle>
             <p className="text-sm text-muted-foreground">
-              Sign in to access premium features like "Who Did I Vote For?" — see exactly which corporations fund your elected representatives.
+              Sign in to access premium features like "Who Do I Work For?" — see exactly which corporations fund your elected representatives.
             </p>
           </CardHeader>
           <CardContent className="space-y-4">
