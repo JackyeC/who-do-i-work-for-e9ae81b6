@@ -38,6 +38,20 @@ function normalizeCommitteeTypes(input: string | string[] | undefined | null): s
   return [...new Set(normalized)];
 }
 
+// Normalize FEC contributor names: strip honorifics, suffixes, extra whitespace
+function normalizeName(name: string): string {
+  if (!name) return 'UNKNOWN';
+  return name
+    .toUpperCase()
+    .replace(/\b(MR|MRS|MS|DR|JR|SR|II|III|IV|ESQ|PHD|MD|HON|REV|PROF)\b\.?/g, '')
+    .replace(/[.,]+/g, ',')
+    .replace(/\s{2,}/g, ' ')
+    .replace(/,\s*,/g, ',')
+    .replace(/,\s*$/, '')
+    .replace(/^\s*,/, '')
+    .trim();
+}
+
 interface FECCommittee {
   committee_id: string;
   name: string;
