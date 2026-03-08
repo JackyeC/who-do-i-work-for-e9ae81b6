@@ -42,9 +42,17 @@ Deno.serve(async (req) => {
       `${companyName} Glassdoor reviews employee ratings`,
       `${companyName} Glassdoor salary compensation CEO approval`,
       `${companyName} Indeed employee reviews work-life balance`,
-      `${companyName} Indeed company reviews pros cons`,
       `${companyName} LinkedIn employee reviews culture workplace`,
       `${companyName} employee complaints worker conditions labor practices`,
+      // Controversy & legal action queries
+      `"${companyName}" EEOC complaint discrimination lawsuit settlement`,
+      `"${companyName}" NLRB unfair labor practice union busting complaint`,
+      `"${companyName}" mass layoffs fired terminated workforce reduction`,
+      `"${companyName}" racial discrimination gender discrimination class action`,
+      `"${companyName}" hostile work environment toxic workplace culture`,
+      `"${companyName}" whistleblower retaliation wrongful termination`,
+      `"${companyName}" worker safety OSHA violation workplace injury`,
+      `"${companyName}" labor controversy DEI cuts diversity layoffs`,
     ];
 
     const allResults: any[] = [];

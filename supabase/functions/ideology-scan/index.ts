@@ -55,6 +55,12 @@ Deno.serve(async (req) => {
       `"${companyName}" anti-LGBTQ anti-union voter suppression climate denial funding`,
       `"${companyName}" conversion therapy school voucher private prison reproductive rights lobbying`,
       `"${companyName}" PAC donation extremist organization radical group`,
+      // Labor & civil rights controversies
+      `"${companyName}" racial discrimination lawsuit EEOC class action settlement`,
+      `"${companyName}" mass firing layoffs DOGE government workforce reduction`,
+      `"${companyName}" union busting NLRB unfair labor practice retaliation`,
+      `"${companyName}" DEI rollback diversity equity inclusion cuts controversy`,
+      `"${companyName}" CEO executive political donation controversy statement`,
     ];
 
     const allResults: any[] = [];
