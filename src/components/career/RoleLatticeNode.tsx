@@ -76,10 +76,21 @@ export function RoleLatticeNode({
         </div>
 
         {/* Values Alignment */}
-        <div className="flex items-center gap-2 mb-3">
+        <div className="flex items-center gap-2 mb-2">
           <span className="text-xs text-muted-foreground">Values:</span>
           <Badge variant={valuesVariant} className="text-[10px]">{valuesLabel}</Badge>
         </div>
+
+        {/* Estimated timeline */}
+        {gapAnalysis?.estimated_months && (
+          <div className="flex items-center gap-1.5 mb-3 text-xs text-muted-foreground">
+            <Clock className="w-3 h-3" />
+            ~{gapAnalysis.estimated_months} months
+            {gapAnalysis?.difficulty && (
+              <span className="ml-auto text-[10px] opacity-70">Difficulty: {gapAnalysis.difficulty}/10</span>
+            )}
+          </div>
+        )}
 
         {/* Expand for details */}
         <CollapsibleTrigger className="flex items-center gap-1 text-xs text-[hsl(var(--civic-blue))] hover:underline cursor-pointer w-full">
