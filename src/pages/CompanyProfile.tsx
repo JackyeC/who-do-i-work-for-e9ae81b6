@@ -247,6 +247,21 @@ export default function CompanyProfile() {
   const queryClient = useQueryClient();
   const [isEnriching, setIsEnriching] = useState(false);
   const [activeLens, setActiveLens] = useState<LensId>("influence");
+  const [selectedCandidate, setSelectedCandidate] = useState<any>(null);
+  const [candidateDrawerOpen, setCandidateDrawerOpen] = useState(false);
+  const [selectedExecutive, setSelectedExecutive] = useState<any>(null);
+  const [executiveDrawerOpen, setExecutiveDrawerOpen] = useState(false);
+  const [partyFilteredCandidates, setPartyFilteredCandidates] = useState<any[] | null>(null);
+
+  const handleCandidateClick = useCallback((candidate: any) => {
+    setSelectedCandidate(candidate);
+    setCandidateDrawerOpen(true);
+  }, []);
+
+  const handleExecutiveClick = useCallback((executive: any) => {
+    setSelectedExecutive(executive);
+    setExecutiveDrawerOpen(true);
+  }, []);
 
   // Always try to load from DB by slug to get real UUID for chain tracing etc.
   const { data: dbCompany, isLoading: dbLoading } = useQuery({
