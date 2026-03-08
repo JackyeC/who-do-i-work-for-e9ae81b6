@@ -16,7 +16,7 @@ export default function Login() {
 
   useEffect(() => {
     if (!loading && user) {
-      navigate("/voter-lookup");
+      navigate("/dashboard");
     }
   }, [user, loading, navigate]);
 
