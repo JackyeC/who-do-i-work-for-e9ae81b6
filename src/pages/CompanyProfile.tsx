@@ -627,6 +627,11 @@ export default function CompanyProfile() {
               )}
             </div>
 
+            {/* Data Glossary */}
+            <div className="mb-8">
+              <DataGlossary />
+            </div>
+
             {/* Offer Check CTA */}
             <Card className="mb-8 border-primary/15 bg-gradient-to-r from-primary/[0.03] to-transparent">
               <CardContent className="p-5 flex items-center gap-5">
