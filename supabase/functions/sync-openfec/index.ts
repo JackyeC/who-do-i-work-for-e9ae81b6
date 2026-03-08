@@ -427,7 +427,7 @@ Deno.serve(async (req) => {
     if (deduped.length > 0) {
       const candidateRows = deduped.map(c => ({
         company_id: companyId,
-        name: c.name,
+        name: c.name.replace(/\b(MR|MRS|MS|DR|JR|SR)\b\.?\s*/gi, '').replace(/\s{2,}/g, ' ').trim(),
         party: c.party,
         state: c.state,
         amount: Math.round(c.amount),
