@@ -1878,24 +1878,33 @@ export type Database = {
       executive_recipients: {
         Row: {
           amount: number
+          committee_name: string | null
+          district: string | null
           executive_id: string
           id: string
           name: string
           party: string
+          state: string | null
         }
         Insert: {
           amount?: number
+          committee_name?: string | null
+          district?: string | null
           executive_id: string
           id?: string
           name: string
           party: string
+          state?: string | null
         }
         Update: {
           amount?: number
+          committee_name?: string | null
+          district?: string | null
           executive_id?: string
           id?: string
           name?: string
           party?: string
+          state?: string | null
         }
         Relationships: [
           {
