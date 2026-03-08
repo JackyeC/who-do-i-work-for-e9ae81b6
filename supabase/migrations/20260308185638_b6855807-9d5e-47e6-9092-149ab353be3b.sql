@@ -1,0 +1,1 @@
+UPDATE scan_runs SET scan_status = 'failed', error_log = jsonb_build_object('reason', 'Auto-expired: module timed out', 'expired_at', now()::text) WHERE scan_status = 'in_progress' AND created_at < now() - interval '10 minutes';
