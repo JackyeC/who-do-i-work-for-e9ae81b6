@@ -2,3 +2,6 @@ project_id = "tdetybqdxadmowjivtjy"
 
 [functions.browse-ai-webhook]
 verify_jwt = false
+
+[functions.career-gap-analysis]
+verify_jwt = false
