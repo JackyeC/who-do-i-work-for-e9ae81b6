@@ -5,7 +5,7 @@ import {
   Building2, ArrowLeft, Calendar, DollarSign, Users, Flag,
   Network, Scale, MessageSquareWarning, ExternalLink, Shield, Megaphone,
   AlertTriangle, EyeOff, RotateCcw, TrendingUp, Landmark, FileText,
-  BarChart3, Loader2, Sparkles, Search, ClipboardCheck, CheckCircle2
+  BarChart3, Loader2, Sparkles, Search, ClipboardCheck, CheckCircle2, HelpCircle
 } from "lucide-react";
 import { LensSelector } from "@/components/LensSelector";
 import { DataGlossary } from "@/components/DataGlossary";
