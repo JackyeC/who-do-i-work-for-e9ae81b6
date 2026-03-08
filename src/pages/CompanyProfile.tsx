@@ -885,6 +885,11 @@ export default function CompanyProfile() {
             </Card>
           </div>
 
+          {/* Data Glossary */}
+          <div className="mb-8">
+            <DataGlossary />
+          </div>
+
           {/* Lens Selector */}
           <LensSelector activeLens={activeLens} onLensChange={setActiveLens} />
 
