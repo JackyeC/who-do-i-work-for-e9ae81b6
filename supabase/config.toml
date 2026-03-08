@@ -5,3 +5,9 @@ verify_jwt = false
 
 [functions.career-gap-analysis]
 verify_jwt = false
+
+[functions.process-apply-queue]
+verify_jwt = false
+
+[functions.career-gap-analysis]
+verify_jwt = false

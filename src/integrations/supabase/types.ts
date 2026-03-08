@@ -204,6 +204,101 @@ export type Database = {
           },
         ]
       }
+      apply_queue: {
+        Row: {
+          alignment_score: number
+          application_url: string | null
+          company_id: string
+          company_name: string
+          created_at: string
+          error_message: string | null
+          generated_payload: Json | null
+          id: string
+          job_id: string | null
+          job_title: string
+          matched_signals: Json
+          processed_at: string | null
+          status: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          alignment_score?: number
+          application_url?: string | null
+          company_id: string
+          company_name: string
+          created_at?: string
+          error_message?: string | null
+          generated_payload?: Json | null
+          id?: string
+          job_id?: string | null
+          job_title: string
+          matched_signals?: Json
+          processed_at?: string | null
+          status?: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          alignment_score?: number
+          application_url?: string | null
+          company_id?: string
+          company_name?: string
+          created_at?: string
+          error_message?: string | null
+          generated_payload?: Json | null
+          id?: string
+          job_id?: string | null
+          job_title?: string
+          matched_signals?: Json
+          processed_at?: string | null
+          status?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "apply_queue_job_id_fkey"
+            columns: ["job_id"]
+            isOneToOne: false
+            referencedRelation: "company_jobs"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      auto_apply_settings: {
+        Row: {
+          created_at: string
+          id: string
+          is_enabled: boolean
+          is_paused: boolean
+          max_daily_applications: number
+          min_alignment_threshold: number
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          is_enabled?: boolean
+          is_paused?: boolean
+          max_daily_applications?: number
+          min_alignment_threshold?: number
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          is_enabled?: boolean
+          is_paused?: boolean
+          max_daily_applications?: number
+          min_alignment_threshold?: number
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       browse_ai_change_events: {
         Row: {
           change_summary: string | null
