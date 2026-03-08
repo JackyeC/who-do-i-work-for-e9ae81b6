@@ -87,75 +87,81 @@ function DbLensModules({ activeLens, dbCompany, dbPartyBreakdown, dbCandidates, 
         <p className="text-sm text-muted-foreground mb-4">PAC contributions, candidate support, and executive personal giving.</p>
         <div className="grid lg:grid-cols-2 gap-6">
           {dbPartyBreakdown && dbPartyBreakdown.length > 0 && (
-            <Card>
-              <CardHeader><CardTitle className="text-lg">PAC Spending by Party</CardTitle></CardHeader>
-              <CardContent>
-                <div className="h-56">
-                  <ResponsiveContainer width="100%" height="100%">
-                    <PieChart><Pie data={dbPartyBreakdown} cx="50%" cy="50%" innerRadius={55} outerRadius={85} paddingAngle={3} dataKey="amount" nameKey="party" className="cursor-pointer" onClick={(_, index) => onPartyClick?.(dbPartyBreakdown[index]?.party)}>
-                      {dbPartyBreakdown.map((entry, i) => <Cell key={i} fill={entry.color} className="hover:opacity-80 transition-opacity" />)}
-                    </Pie><Tooltip formatter={(val: number) => formatCurrency(val)} /></PieChart>
-                  </ResponsiveContainer>
-                </div>
-                <div className="flex justify-center gap-4 mt-2">
-                  {dbPartyBreakdown.map((p) => (
-                    <button key={p.party} onClick={() => onPartyClick?.(p.party)} className="flex items-center gap-1.5 text-xs hover:underline cursor-pointer">
-                      <div className="w-2.5 h-2.5 rounded-full" style={{ backgroundColor: p.color }} />
-                      <span className="text-muted-foreground">{p.party}: {formatCurrency(p.amount)}</span>
-                    </button>
-                  ))}
-                </div>
-              </CardContent>
-            </Card>
+            <ExplainableMetric metricKey="party-breakdown">
+              <Card>
+                <CardHeader><CardTitle className="text-lg">PAC Spending by Party</CardTitle></CardHeader>
+                <CardContent>
+                  <div className="h-56">
+                    <ResponsiveContainer width="100%" height="100%">
+                      <PieChart><Pie data={dbPartyBreakdown} cx="50%" cy="50%" innerRadius={55} outerRadius={85} paddingAngle={3} dataKey="amount" nameKey="party" className="cursor-pointer" onClick={(_, index) => onPartyClick?.(dbPartyBreakdown[index]?.party)}>
+                        {dbPartyBreakdown.map((entry, i) => <Cell key={i} fill={entry.color} className="hover:opacity-80 transition-opacity" />)}
+                      </Pie><Tooltip formatter={(val: number) => formatCurrency(val)} /></PieChart>
+                    </ResponsiveContainer>
+                  </div>
+                  <div className="flex justify-center gap-4 mt-2">
+                    {dbPartyBreakdown.map((p) => (
+                      <button key={p.party} onClick={() => onPartyClick?.(p.party)} className="flex items-center gap-1.5 text-xs hover:underline cursor-pointer">
+                        <div className="w-2.5 h-2.5 rounded-full" style={{ backgroundColor: p.color }} />
+                        <span className="text-muted-foreground">{p.party}: {formatCurrency(p.amount)}</span>
+                      </button>
+                    ))}
+                  </div>
+                </CardContent>
+              </Card>
+            </ExplainableMetric>
           )}
           {dbExecutives && dbExecutives.length > 0 && (
-            <Card>
-              <CardHeader><CardTitle className="text-lg flex items-center gap-2"><Users className="w-4 h-4" /> Executive Donors</CardTitle></CardHeader>
-              <CardContent>
-                <div className="space-y-3">
-                  {dbExecutives.map((exec) => (
-                    <button key={exec.id} onClick={() => onExecutiveClick?.(exec)} className="w-full flex items-center justify-between p-2 rounded-lg bg-muted/50 hover:bg-primary/5 hover:border-primary/20 border border-transparent transition-colors cursor-pointer text-left">
-                      <div className="flex items-center gap-3">
-                        {exec.photo_url ? (
-                          <img src={exec.photo_url} alt={exec.name} className="w-9 h-9 rounded-full object-cover border border-border/60 shrink-0" crossOrigin="anonymous" referrerPolicy="no-referrer" />
-                        ) : (
-                          <div className="w-9 h-9 rounded-full bg-muted flex items-center justify-center shrink-0 border border-border/60">
-                            <Users className="w-4 h-4 text-muted-foreground/70" />
+            <ExplainableMetric metricKey="executive-donors">
+              <Card>
+                <CardHeader><CardTitle className="text-lg flex items-center gap-2"><Users className="w-4 h-4" /> Executive Donors</CardTitle></CardHeader>
+                <CardContent>
+                  <div className="space-y-3">
+                    {dbExecutives.map((exec) => (
+                      <button key={exec.id} onClick={() => onExecutiveClick?.(exec)} className="w-full flex items-center justify-between p-2 rounded-lg bg-muted/50 hover:bg-primary/5 hover:border-primary/20 border border-transparent transition-colors cursor-pointer text-left">
+                        <div className="flex items-center gap-3">
+                          {exec.photo_url ? (
+                            <img src={exec.photo_url} alt={exec.name} className="w-9 h-9 rounded-full object-cover border border-border/60 shrink-0" crossOrigin="anonymous" referrerPolicy="no-referrer" />
+                          ) : (
+                            <div className="w-9 h-9 rounded-full bg-muted flex items-center justify-center shrink-0 border border-border/60">
+                              <Users className="w-4 h-4 text-muted-foreground/70" />
+                            </div>
+                          )}
+                          <div>
+                            <div className="font-medium text-sm text-foreground">{exec.name}</div>
+                            <div className="text-xs text-muted-foreground">{exec.title}</div>
                           </div>
-                        )}
-                        <div>
-                          <div className="font-medium text-sm text-foreground">{exec.name}</div>
-                          <div className="text-xs text-muted-foreground">{exec.title}</div>
                         </div>
-                      </div>
-                      <Badge variant="secondary">{formatCurrency(exec.total_donations)}</Badge>
-                    </button>
-                  ))}
-                </div>
-              </CardContent>
-            </Card>
+                        <Badge variant="secondary">{formatCurrency(exec.total_donations)}</Badge>
+                      </button>
+                    ))}
+                  </div>
+                </CardContent>
+              </Card>
+            </ExplainableMetric>
           )}
         </div>
         {dbCandidates && dbCandidates.length > 0 && (
-          <Card className="mt-6">
-            <CardHeader><CardTitle className="text-lg flex items-center gap-2"><Flag className="w-4 h-4" /> PAC Recipients ({dbCandidates.length} politicians)</CardTitle></CardHeader>
-            <CardContent>
-              <Table>
-                <TableHeader><TableRow><TableHead>Name</TableHead><TableHead>Party</TableHead><TableHead>State</TableHead><TableHead>Amount</TableHead><TableHead>Type</TableHead></TableRow></TableHeader>
-                <TableBody>
-                  {dbCandidates.map((c) => (
-                    <TableRow key={c.id} className="cursor-pointer hover:bg-primary/5 transition-colors" onClick={() => onCandidateClick?.(c)}>
-                      <TableCell className="font-medium">{c.name}{c.flagged && <Badge variant="destructive" className="ml-2 text-xs">Flagged</Badge>}</TableCell>
-                      <TableCell><Badge variant="outline" className={cn("text-xs", c.party === "Republican" && "border-destructive/50 text-destructive", c.party === "Democrat" && "border-primary/50 text-primary")}>{c.party}</Badge></TableCell>
-                      <TableCell className="text-muted-foreground">{c.state}{c.district ? `, D-${c.district}` : ""}</TableCell>
-                      <TableCell>{formatCurrency(c.amount)}</TableCell>
-                      <TableCell className="text-xs text-muted-foreground">{c.donation_type}</TableCell>
-                    </TableRow>
-                  ))}
-                </TableBody>
-              </Table>
-            </CardContent>
-          </Card>
+          <ExplainableMetric metricKey="candidates-funded">
+            <Card className="mt-6">
+              <CardHeader><CardTitle className="text-lg flex items-center gap-2"><Flag className="w-4 h-4" /> PAC Recipients ({dbCandidates.length} politicians)</CardTitle></CardHeader>
+              <CardContent>
+                <Table>
+                  <TableHeader><TableRow><TableHead>Name</TableHead><TableHead>Party</TableHead><TableHead>State</TableHead><TableHead>Amount</TableHead><TableHead>Type</TableHead></TableRow></TableHeader>
+                  <TableBody>
+                    {dbCandidates.map((c) => (
+                      <TableRow key={c.id} className="cursor-pointer hover:bg-primary/5 transition-colors" onClick={() => onCandidateClick?.(c)}>
+                        <TableCell className="font-medium">{c.name}{c.flagged && <Badge variant="destructive" className="ml-2 text-xs">Flagged</Badge>}</TableCell>
+                        <TableCell><Badge variant="outline" className={cn("text-xs", c.party === "Republican" && "border-destructive/50 text-destructive", c.party === "Democrat" && "border-primary/50 text-primary")}>{c.party}</Badge></TableCell>
+                        <TableCell className="text-muted-foreground">{c.state}{c.district ? `, D-${c.district}` : ""}</TableCell>
+                        <TableCell>{formatCurrency(c.amount)}</TableCell>
+                        <TableCell className="text-xs text-muted-foreground">{c.donation_type}</TableCell>
+                      </TableRow>
+                    ))}
+                  </TableBody>
+                </Table>
+              </CardContent>
+            </Card>
+          </ExplainableMetric>
         )}
       </div>
     ) : null,
@@ -189,32 +195,36 @@ function DbLensModules({ activeLens, dbCompany, dbPartyBreakdown, dbCandidates, 
         <p className="text-sm text-muted-foreground mb-4">Dark money channels, revolving door, and indirect influence.</p>
         <div className="grid lg:grid-cols-2 gap-6">
           {dbDarkMoney && dbDarkMoney.length > 0 && (
-            <Card>
-              <CardHeader><CardTitle className="text-lg flex items-center gap-2"><EyeOff className="w-4 h-4" /> Dark Money</CardTitle></CardHeader>
-              <CardContent className="space-y-3">
-                {dbDarkMoney.map((d) => (
-                  <div key={d.id} className="p-3 rounded-lg bg-muted/50 border border-border">
-                    <div className="flex items-center justify-between mb-1"><span className="font-medium text-sm text-foreground">{d.name}</span><Badge variant="outline" className="text-xs">{d.org_type}</Badge></div>
-                    {d.description && <p className="text-xs text-muted-foreground">{d.description}</p>}
-                    {d.estimated_amount && <p className="text-xs text-muted-foreground mt-1">Est. {formatCurrency(d.estimated_amount)}</p>}
-                  </div>
-                ))}
-              </CardContent>
-            </Card>
+            <ExplainableMetric metricKey="dark-money">
+              <Card>
+                <CardHeader><CardTitle className="text-lg flex items-center gap-2"><EyeOff className="w-4 h-4" /> Dark Money</CardTitle></CardHeader>
+                <CardContent className="space-y-3">
+                  {dbDarkMoney.map((d) => (
+                    <div key={d.id} className="p-3 rounded-lg bg-muted/50 border border-border">
+                      <div className="flex items-center justify-between mb-1"><span className="font-medium text-sm text-foreground">{d.name}</span><Badge variant="outline" className="text-xs">{d.org_type}</Badge></div>
+                      {d.description && <p className="text-xs text-muted-foreground">{d.description}</p>}
+                      {d.estimated_amount && <p className="text-xs text-muted-foreground mt-1">Est. {formatCurrency(d.estimated_amount)}</p>}
+                    </div>
+                  ))}
+                </CardContent>
+              </Card>
+            </ExplainableMetric>
           )}
           {dbRevolvingDoor && dbRevolvingDoor.length > 0 && (
-            <Card>
-              <CardHeader><CardTitle className="text-lg flex items-center gap-2"><RotateCcw className="w-4 h-4" /> Revolving Door</CardTitle></CardHeader>
-              <CardContent className="space-y-3">
-                {dbRevolvingDoor.map((r) => (
-                  <div key={r.id} className="p-3 rounded-lg bg-muted/50 border border-border">
-                    <div className="font-medium text-sm text-foreground">{r.person}</div>
-                    <div className="text-xs text-muted-foreground mt-1"><span className="text-foreground/70">{r.prior_role}</span> → <span className="text-foreground/70">{r.new_role}</span></div>
-                    {r.relevance && <p className="text-xs text-muted-foreground mt-1">{r.relevance}</p>}
-                  </div>
-                ))}
-              </CardContent>
-            </Card>
+            <ExplainableMetric metricKey="revolving-door">
+              <Card>
+                <CardHeader><CardTitle className="text-lg flex items-center gap-2"><RotateCcw className="w-4 h-4" /> Revolving Door</CardTitle></CardHeader>
+                <CardContent className="space-y-3">
+                  {dbRevolvingDoor.map((r) => (
+                    <div key={r.id} className="p-3 rounded-lg bg-muted/50 border border-border">
+                      <div className="font-medium text-sm text-foreground">{r.person}</div>
+                      <div className="text-xs text-muted-foreground mt-1"><span className="text-foreground/70">{r.prior_role}</span> → <span className="text-foreground/70">{r.new_role}</span></div>
+                      {r.relevance && <p className="text-xs text-muted-foreground mt-1">{r.relevance}</p>}
+                    </div>
+                  ))}
+                </CardContent>
+              </Card>
+            </ExplainableMetric>
           )}
         </div>
       </div>
@@ -243,18 +253,18 @@ function DbLensModules({ activeLens, dbCompany, dbPartyBreakdown, dbCandidates, 
         </CardContent>
       </Card>
     ) : null,
-    "roi-pipeline": <div key="roi-pipeline" className="mb-6"><ROIPipelineCard data={livePipeline || { moneyIn: [], network: [], benefitsOut: [], linkages: [], totalSpending: 0, totalBenefits: 0 }} isSearching={!livePipeline && !!dbCompany.id} onTriggerScan={triggerScan} autoScanning={autoScanning} hasBeenScanned={hasBeenScanned} /></div>,
-    "influence-chain": <div key="influence-chain" className="mb-6"><InfluenceChainCard companyId={dbCompany.id} companyName={dbCompany.name} /></div>,
-    "social-monitor": <div key="social-monitor" className="mb-6"><SocialMonitorCard companyId={dbCompany.slug} companyName={dbCompany.name} executiveNames={dbExecutives?.map(e => e.name) || []} dbCompanyId={dbCompany.id} /></div>,
-    "agency-contracts": <div key="agency-contracts" className="mb-6"><AgencyContractsCard companyName={dbCompany.name} dbCompanyId={dbCompany.id} /></div>,
-    "ideology-flags": <div key="ideology-flags" className="mb-6"><IdeologyFlagsCard companyName={dbCompany.name} dbCompanyId={dbCompany.id} /></div>,
-    "worker-sentiment": <div key="worker-sentiment" className="mb-6"><WorkerSentimentCard companyName={dbCompany.name} dbCompanyId={dbCompany.id} /></div>,
-    "ai-hiring": <div key="ai-hiring" className="mb-6"><AIHiringCard companyName={dbCompany.name} dbCompanyId={dbCompany.id} /></div>,
-    "hiring-transparency": <div key="hiring-transparency" className="mb-6"><HiringTransparencyCard companyName={dbCompany.name} dbCompanyId={dbCompany.id} /></div>,
-    "worker-benefits": <div key="worker-benefits" className="mb-6"><WorkerBenefitsCard companyName={dbCompany.name} dbCompanyId={dbCompany.id} /></div>,
-    "ai-accountability": <div key="ai-accountability" className="mb-6"><AIAccountabilityCard companyName={dbCompany.name} dbCompanyId={dbCompany.id} /></div>,
-    "compensation": <div key="compensation" className="mb-6"><CompensationTransparencyCard companyName={dbCompany.name} dbCompanyId={dbCompany.id} /></div>,
-    "warn-tracker": <div key="warn-tracker" className="mb-6"><WarnTrackerCard companyName={dbCompany.name} dbCompanyId={dbCompany.id} /></div>,
+    "roi-pipeline": <ExplainableMetric metricKey="roi-pipeline"><div key="roi-pipeline" className="mb-6"><ROIPipelineCard data={livePipeline || { moneyIn: [], network: [], benefitsOut: [], linkages: [], totalSpending: 0, totalBenefits: 0 }} isSearching={!livePipeline && !!dbCompany.id} onTriggerScan={triggerScan} autoScanning={autoScanning} hasBeenScanned={hasBeenScanned} /></div></ExplainableMetric>,
+    "influence-chain": <ExplainableMetric metricKey="influence-chain"><div key="influence-chain" className="mb-6"><InfluenceChainCard companyId={dbCompany.id} companyName={dbCompany.name} /></div></ExplainableMetric>,
+    "social-monitor": <ExplainableMetric metricKey="social-monitor"><div key="social-monitor" className="mb-6"><SocialMonitorCard companyId={dbCompany.slug} companyName={dbCompany.name} executiveNames={dbExecutives?.map(e => e.name) || []} dbCompanyId={dbCompany.id} /></div></ExplainableMetric>,
+    "agency-contracts": <ExplainableMetric metricKey="agency-contracts"><div key="agency-contracts" className="mb-6"><AgencyContractsCard companyName={dbCompany.name} dbCompanyId={dbCompany.id} /></div></ExplainableMetric>,
+    "ideology-flags": <ExplainableMetric metricKey="ideology-flags"><div key="ideology-flags" className="mb-6"><IdeologyFlagsCard companyName={dbCompany.name} dbCompanyId={dbCompany.id} /></div></ExplainableMetric>,
+    "worker-sentiment": <ExplainableMetric metricKey="worker-sentiment"><div key="worker-sentiment" className="mb-6"><WorkerSentimentCard companyName={dbCompany.name} dbCompanyId={dbCompany.id} /></div></ExplainableMetric>,
+    "ai-hiring": <ExplainableMetric metricKey="ai-hiring"><div key="ai-hiring" className="mb-6"><AIHiringCard companyName={dbCompany.name} dbCompanyId={dbCompany.id} /></div></ExplainableMetric>,
+    "hiring-transparency": <ExplainableMetric metricKey="ai-hiring"><div key="hiring-transparency" className="mb-6"><HiringTransparencyCard companyName={dbCompany.name} dbCompanyId={dbCompany.id} /></div></ExplainableMetric>,
+    "worker-benefits": <ExplainableMetric metricKey="worker-benefits"><div key="worker-benefits" className="mb-6"><WorkerBenefitsCard companyName={dbCompany.name} dbCompanyId={dbCompany.id} /></div></ExplainableMetric>,
+    "ai-accountability": <ExplainableMetric metricKey="ai-accountability"><div key="ai-accountability" className="mb-6"><AIAccountabilityCard companyName={dbCompany.name} dbCompanyId={dbCompany.id} /></div></ExplainableMetric>,
+    "compensation": <ExplainableMetric metricKey="compensation-transparency"><div key="compensation" className="mb-6"><CompensationTransparencyCard companyName={dbCompany.name} dbCompanyId={dbCompany.id} /></div></ExplainableMetric>,
+    "warn-tracker": <ExplainableMetric metricKey="warn-tracker"><div key="warn-tracker" className="mb-6"><WarnTrackerCard companyName={dbCompany.name} dbCompanyId={dbCompany.id} /></div></ExplainableMetric>,
   };
 
   return (
