@@ -169,7 +169,7 @@ Deno.serve(async (req) => {
         const moduleResp = await fetch(`${supabaseUrl}/functions/v1/${mod.fn}`, {
           method: 'POST',
           headers: { 'Authorization': `Bearer ${supabaseKey}`, 'Content-Type': 'application/json' },
-          body: JSON.stringify({ companyId, companyName }),
+          body: JSON.stringify({ companyId, companyName, searchNames, entityMap }),
         });
 
         const moduleCompletedAt = new Date().toISOString();
