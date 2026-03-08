@@ -626,7 +626,7 @@ export default function CompanyProfile() {
             <div className="flex items-center gap-2 mb-4 px-1">
               <HelpCircle className="w-4 h-4 text-primary shrink-0" />
               <p className="text-xs text-muted-foreground">
-                <span className="font-medium text-foreground">What do these numbers mean?</span> Each card below summarizes a type of political activity. Tap any card for a full explanation with sources.
+                <span className="font-medium text-foreground">What do these numbers mean?</span> Click any card below to see the full breakdown — where the money goes, who gets it, and how to verify it.
               </p>
             </div>
 
