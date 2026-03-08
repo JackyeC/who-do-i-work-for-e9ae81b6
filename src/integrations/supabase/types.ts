@@ -403,6 +403,39 @@ export type Database = {
           },
         ]
       }
+      career_paths: {
+        Row: {
+          average_salary: string | null
+          career_progression_confidence: number | null
+          created_at: string
+          id: string
+          industry: string | null
+          next_role: string
+          role_title: string
+          skills_required: Json | null
+        }
+        Insert: {
+          average_salary?: string | null
+          career_progression_confidence?: number | null
+          created_at?: string
+          id?: string
+          industry?: string | null
+          next_role: string
+          role_title: string
+          skills_required?: Json | null
+        }
+        Update: {
+          average_salary?: string | null
+          career_progression_confidence?: number | null
+          created_at?: string
+          id?: string
+          industry?: string | null
+          next_role?: string
+          role_title?: string
+          skills_required?: Json | null
+        }
+        Relationships: []
+      }
       companies: {
         Row: {
           careers_url: string | null
