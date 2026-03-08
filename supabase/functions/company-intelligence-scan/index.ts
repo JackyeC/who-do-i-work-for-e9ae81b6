@@ -51,6 +51,9 @@ function interpretPipelineResult(result: any): { sourcesScanned: number; signals
     (result.contractsFound || 0) +
     (result.filingsFound || 0) +
     (result.sourcesScanned || 0) +
+    (result.entitiesFound || 0) +
+    (result.oshaRecords || 0) +
+    (result.whdRecords || 0) +
     (result.stats ? 1 : 0); // At least 1 if stats exist
 
   const signalsFound =
@@ -58,7 +61,8 @@ function interpretPipelineResult(result: any): { sourcesScanned: number; signals
     (result.stats?.linkagesCreated || 0) +
     (result.linkagesCreated || 0) +
     (result.contractsInserted || 0) +
-    (result.signalsFound || 0);
+    (result.signalsFound || 0) +
+    (result.officersFound || 0);
 
   return { sourcesScanned: Math.max(sourcesScanned, result.success ? 1 : 0), signalsFound };
 }

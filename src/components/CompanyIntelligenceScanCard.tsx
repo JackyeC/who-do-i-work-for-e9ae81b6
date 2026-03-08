@@ -18,6 +18,13 @@ interface Props {
 }
 
 const MODULE_LABELS: Record<string, string> = {
+  fec_campaign_finance: "FEC Campaign Finance",
+  federal_contracts: "Federal Contracts (USASpending)",
+  lobbying_disclosure: "Lobbying Disclosure (Senate LDA)",
+  sec_edgar: "SEC EDGAR (Filings & Compensation)",
+  congress_cross_ref: "Congress Cross-Reference",
+  opencorporates: "Corporate Structure (OpenCorporates)",
+  workplace_enforcement: "Workplace Enforcement (DOL)",
   ai_hr_scan: "Hiring Technology & AI Use",
   worker_benefits: "Worker Benefits & Protections",
   pay_equity: "Pay Equity & Compensation",
