@@ -26,6 +26,7 @@ export const LENSES: LensDefinition[] = [
       "agency-contracts",
       "ideology-flags",
       "social-monitor",
+      "warn-tracker",
       "worker-sentiment",
       "ai-hiring",
       "hiring-transparency",
