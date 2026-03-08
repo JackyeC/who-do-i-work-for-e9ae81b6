@@ -1961,6 +1961,57 @@ export type Database = {
         }
         Relationships: []
       }
+      job_alerts: {
+        Row: {
+          alert_type: string
+          company_id: string | null
+          created_at: string
+          id: string
+          is_read: boolean | null
+          job_id: string | null
+          match_details: Json | null
+          match_score: number | null
+          user_id: string
+        }
+        Insert: {
+          alert_type?: string
+          company_id?: string | null
+          created_at?: string
+          id?: string
+          is_read?: boolean | null
+          job_id?: string | null
+          match_details?: Json | null
+          match_score?: number | null
+          user_id: string
+        }
+        Update: {
+          alert_type?: string
+          company_id?: string | null
+          created_at?: string
+          id?: string
+          is_read?: boolean | null
+          job_id?: string | null
+          match_details?: Json | null
+          match_score?: number | null
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "job_alerts_company_id_fkey"
+            columns: ["company_id"]
+            isOneToOne: false
+            referencedRelation: "companies"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "job_alerts_job_id_fkey"
+            columns: ["job_id"]
+            isOneToOne: false
+            referencedRelation: "company_jobs"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       job_match_preferences: {
         Row: {
           created_at: string | null
@@ -2772,6 +2823,57 @@ export type Database = {
           },
         ]
       }
+      user_career_profile: {
+        Row: {
+          auto_generated: boolean | null
+          created_at: string
+          id: string
+          industries: string[] | null
+          job_titles: string[] | null
+          management_scope: string | null
+          preferred_locations: string[] | null
+          salary_range_max: number | null
+          salary_range_min: number | null
+          seniority_level: string | null
+          skills: string[] | null
+          updated_at: string
+          user_id: string
+          values_preferences: Json | null
+        }
+        Insert: {
+          auto_generated?: boolean | null
+          created_at?: string
+          id?: string
+          industries?: string[] | null
+          job_titles?: string[] | null
+          management_scope?: string | null
+          preferred_locations?: string[] | null
+          salary_range_max?: number | null
+          salary_range_min?: number | null
+          seniority_level?: string | null
+          skills?: string[] | null
+          updated_at?: string
+          user_id: string
+          values_preferences?: Json | null
+        }
+        Update: {
+          auto_generated?: boolean | null
+          created_at?: string
+          id?: string
+          industries?: string[] | null
+          job_titles?: string[] | null
+          management_scope?: string | null
+          preferred_locations?: string[] | null
+          salary_range_max?: number | null
+          salary_range_min?: number | null
+          seniority_level?: string | null
+          skills?: string[] | null
+          updated_at?: string
+          user_id?: string
+          values_preferences?: Json | null
+        }
+        Relationships: []
+      }
       user_company_watchlist: {
         Row: {
           company_id: string
@@ -2803,6 +2905,51 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
+      }
+      user_documents: {
+        Row: {
+          confidence_level: string | null
+          created_at: string
+          document_type: Database["public"]["Enums"]["document_type"]
+          file_deleted: boolean | null
+          file_path: string
+          id: string
+          original_filename: string | null
+          parsed_signals: Json | null
+          parsed_summary: Json | null
+          status: Database["public"]["Enums"]["document_status"] | null
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          confidence_level?: string | null
+          created_at?: string
+          document_type: Database["public"]["Enums"]["document_type"]
+          file_deleted?: boolean | null
+          file_path: string
+          id?: string
+          original_filename?: string | null
+          parsed_signals?: Json | null
+          parsed_summary?: Json | null
+          status?: Database["public"]["Enums"]["document_status"] | null
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          confidence_level?: string | null
+          created_at?: string
+          document_type?: Database["public"]["Enums"]["document_type"]
+          file_deleted?: boolean | null
+          file_path?: string
+          id?: string
+          original_filename?: string | null
+          parsed_signals?: Json | null
+          parsed_summary?: Json | null
+          status?: Database["public"]["Enums"]["document_status"] | null
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
       }
       worker_benefit_signals: {
         Row: {
@@ -2957,6 +3104,8 @@ export type Database = {
       }
     }
     Enums: {
+      document_status: "pending" | "parsing" | "parsed" | "error" | "deleted"
+      document_type: "offer_letter" | "resume" | "job_description"
       link_type:
         | "donation_to_member"
         | "member_on_committee"
@@ -3097,6 +3246,8 @@ export type CompositeTypes<
 export const Constants = {
   public: {
     Enums: {
+      document_status: ["pending", "parsing", "parsed", "error", "deleted"],
+      document_type: ["offer_letter", "resume", "job_description"],
       link_type: [
         "donation_to_member",
         "member_on_committee",
