@@ -49,24 +49,26 @@ const Index = () => {
       <Header />
 
       {/* ─── HERO ─── */}
-      <section className="relative overflow-hidden">
-        {/* Subtle grid pattern */}
-        <div className="absolute inset-0 opacity-[0.015]" style={{
-          backgroundImage: `linear-gradient(hsl(var(--foreground)) 1px, transparent 1px), linear-gradient(90deg, hsl(var(--foreground)) 1px, transparent 1px)`,
-          backgroundSize: '64px 64px',
+      <section className="relative overflow-hidden bg-primary/[0.02]">
+        {/* Refined herringbone pattern */}
+        <div className="absolute inset-0 opacity-[0.012]" style={{
+          backgroundImage: `repeating-linear-gradient(45deg, hsl(var(--foreground)) 0, hsl(var(--foreground)) 1px, transparent 0, transparent 50%)`,
+          backgroundSize: '24px 24px',
         }} />
-        <div className="absolute inset-0 bg-gradient-to-b from-primary/[0.03] via-transparent to-background pointer-events-none" />
+        <div className="absolute inset-0 bg-gradient-to-b from-primary/[0.04] via-transparent to-background pointer-events-none" />
+        {/* Gold accent line at top */}
+        <div className="absolute top-0 left-0 right-0 h-[2px] bg-gradient-to-r from-transparent via-civic-gold-muted to-transparent" />
 
         <div className="container mx-auto px-4 pt-24 sm:pt-32 lg:pt-40 pb-20 sm:pb-28 relative">
           <motion.div initial="hidden" animate="show" className="max-w-4xl mx-auto text-center">
-            <motion.div variants={fadeUp} custom={0} className="inline-flex items-center gap-2 bg-primary/[0.06] text-primary text-caption px-4 py-1.5 rounded-full mb-8 border border-primary/10">
+            <motion.div variants={fadeUp} custom={0} className="inline-flex items-center gap-2 bg-card text-primary text-caption px-5 py-2 rounded-full mb-8 border border-border/60 shadow-elegant">
               <Database className="w-3.5 h-3.5" />
-              {companyCount.toLocaleString()} companies analyzed
+              <span className="font-semibold">{companyCount.toLocaleString()} companies analyzed</span>
             </motion.div>
 
-            <motion.h1 variants={fadeUp} custom={1} className="text-foreground mb-6 text-balance leading-[1.08] tracking-tight" style={{ fontSize: 'clamp(2.25rem, 5vw, 4rem)', fontFamily: "'Source Serif 4', serif", fontWeight: 800, letterSpacing: '-0.025em' }}>
+            <motion.h1 variants={fadeUp} custom={1} className="text-foreground mb-6 text-balance leading-[1.06]" style={{ fontSize: 'clamp(2.5rem, 5.5vw, 4.25rem)', fontFamily: "'Source Serif 4', serif", fontWeight: 800, letterSpacing: '-0.03em' }}>
               Trace How Corporate Money{" "}
-              <span className="text-primary">Becomes Influence</span>
+              <span className="bg-gradient-to-r from-primary to-civic-blue bg-clip-text text-transparent">Becomes Influence</span>
             </motion.h1>
 
             <motion.p variants={fadeUp} custom={2} className="text-body-lg text-muted-foreground mb-12 max-w-2xl mx-auto leading-relaxed">
@@ -74,7 +76,7 @@ const Index = () => {
             </motion.p>
 
             <motion.form variants={fadeUp} custom={3} onSubmit={handleSearch} className="max-w-2xl mx-auto">
-              <div className="relative flex flex-col sm:flex-row gap-3 bg-card rounded-2xl p-2 shadow-elevated border border-border/60">
+              <div className="relative flex flex-col sm:flex-row gap-3 bg-card rounded-2xl p-2.5 shadow-prominent border border-border/50">
                 <div className="relative flex-1">
                   <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground/60" />
                   <Input
@@ -91,14 +93,14 @@ const Index = () => {
               </div>
             </motion.form>
 
-            <motion.div variants={fadeUp} custom={4} className="mt-8 flex flex-wrap items-center justify-center gap-x-8 gap-y-3 text-caption text-muted-foreground/70">
+            <motion.div variants={fadeUp} custom={4} className="mt-10 flex flex-wrap items-center justify-center gap-x-6 gap-y-3">
               {[
                 { icon: CheckCircle2, label: "FEC & lobbying filings" },
                 { icon: Landmark, label: "USASpending contracts" },
                 { icon: FileText, label: "SEC & public records" },
               ].map(s => (
-                <span key={s.label} className="flex items-center gap-1.5">
-                  <s.icon className="w-3.5 h-3.5" />
+                <span key={s.label} className="flex items-center gap-1.5 text-caption text-muted-foreground/60 bg-muted/50 px-3 py-1 rounded-full border border-border/40">
+                  <s.icon className="w-3 h-3" />
                   {s.label}
                 </span>
               ))}
