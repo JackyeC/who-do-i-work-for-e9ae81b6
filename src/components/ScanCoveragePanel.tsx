@@ -58,6 +58,8 @@ const CATEGORY_CHECKS = [
   { key: "political", label: "Political Spending", modules: ["fec_campaign_finance"] },
   { key: "lobbying", label: "Lobbying Disclosure", modules: ["lobbying_disclosure"] },
   { key: "contracts", label: "Government Benefits", modules: ["federal_contracts", "agency_contracts"] },
+  { key: "corporate_structure", label: "Corporate Structure", modules: ["opencorporates"] },
+  { key: "workplace", label: "Workplace Enforcement", modules: ["workplace_enforcement"] },
   { key: "worker", label: "Worker Intelligence", modules: ["ai_hr_scan", "worker_benefits", "pay_equity", "worker_sentiment"] },
   { key: "ideology", label: "Ideology & Social", modules: ["ideology", "social"] },
   { key: "ai", label: "AI Accountability", modules: ["ai_accountability"] },

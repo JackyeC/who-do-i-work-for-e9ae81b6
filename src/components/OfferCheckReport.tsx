@@ -11,12 +11,16 @@ import { type OfferCheckSection, type OfferCheckSignal } from "@/hooks/use-offer
 
 const SECTION_ICONS: Record<string, typeof Building2> = {
   overview: Building2,
+  "corporate-structure": Building2,
   civic: Briefcase,
+  "government-contracts": Briefcase,
   "hiring-tech": Bot,
   "worker-benefits": Heart,
   "compensation": BarChart3,
   "worker-sentiment": Users,
+  "workplace-enforcement": Shield,
   "affiliations": Flag,
+  "warn-layoffs": AlertTriangle,
   "say-do": MessageSquareWarning,
   safety: Shield,
   transparency: BarChart3,

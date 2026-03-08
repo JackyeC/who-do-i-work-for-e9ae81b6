@@ -642,6 +642,77 @@ export type Database = {
           },
         ]
       }
+      company_corporate_structure: {
+        Row: {
+          company_id: string
+          confidence: string
+          created_at: string
+          detected_at: string
+          entity_name: string
+          entity_type: string
+          evidence_text: string | null
+          id: string
+          jurisdiction: string | null
+          last_verified_at: string | null
+          officer_name: string | null
+          officer_role: string | null
+          parent_entity_name: string | null
+          registration_date: string | null
+          registration_number: string | null
+          source_name: string
+          source_url: string | null
+          status: string | null
+        }
+        Insert: {
+          company_id: string
+          confidence?: string
+          created_at?: string
+          detected_at?: string
+          entity_name: string
+          entity_type?: string
+          evidence_text?: string | null
+          id?: string
+          jurisdiction?: string | null
+          last_verified_at?: string | null
+          officer_name?: string | null
+          officer_role?: string | null
+          parent_entity_name?: string | null
+          registration_date?: string | null
+          registration_number?: string | null
+          source_name?: string
+          source_url?: string | null
+          status?: string | null
+        }
+        Update: {
+          company_id?: string
+          confidence?: string
+          created_at?: string
+          detected_at?: string
+          entity_name?: string
+          entity_type?: string
+          evidence_text?: string | null
+          id?: string
+          jurisdiction?: string | null
+          last_verified_at?: string | null
+          officer_name?: string | null
+          officer_role?: string | null
+          parent_entity_name?: string | null
+          registration_date?: string | null
+          registration_number?: string | null
+          source_name?: string
+          source_url?: string | null
+          status?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "company_corporate_structure_company_id_fkey"
+            columns: ["company_id"]
+            isOneToOne: false
+            referencedRelation: "companies"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       company_dark_money: {
         Row: {
           company_id: string
@@ -1287,6 +1358,62 @@ export type Database = {
         Relationships: [
           {
             foreignKeyName: "company_spending_history_company_id_fkey"
+            columns: ["company_id"]
+            isOneToOne: false
+            referencedRelation: "companies"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      company_state_contributions: {
+        Row: {
+          amount: number
+          company_id: string
+          confidence: string
+          created_at: string
+          detected_at: string
+          election_year: number | null
+          id: string
+          party: string | null
+          recipient_name: string
+          recipient_type: string | null
+          source_name: string
+          source_url: string | null
+          state: string
+        }
+        Insert: {
+          amount?: number
+          company_id: string
+          confidence?: string
+          created_at?: string
+          detected_at?: string
+          election_year?: number | null
+          id?: string
+          party?: string | null
+          recipient_name: string
+          recipient_type?: string | null
+          source_name?: string
+          source_url?: string | null
+          state: string
+        }
+        Update: {
+          amount?: number
+          company_id?: string
+          confidence?: string
+          created_at?: string
+          detected_at?: string
+          election_year?: number | null
+          id?: string
+          party?: string | null
+          recipient_name?: string
+          recipient_type?: string | null
+          source_name?: string
+          source_url?: string | null
+          state?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "company_state_contributions_company_id_fkey"
             columns: ["company_id"]
             isOneToOne: false
             referencedRelation: "companies"
@@ -2702,6 +2829,80 @@ export type Database = {
         Relationships: [
           {
             foreignKeyName: "worker_benefit_signals_company_id_fkey"
+            columns: ["company_id"]
+            isOneToOne: false
+            referencedRelation: "companies"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      workplace_enforcement_signals: {
+        Row: {
+          agency_name: string
+          case_number: string | null
+          company_id: string
+          confidence: string
+          created_at: string
+          description: string | null
+          detected_at: string
+          detection_method: string
+          employees_affected: number | null
+          enforcement_date: string | null
+          evidence_text: string | null
+          id: string
+          last_verified_at: string | null
+          penalty_amount: number | null
+          resolution_type: string | null
+          signal_category: string
+          signal_type: string
+          source_name: string
+          source_url: string | null
+        }
+        Insert: {
+          agency_name: string
+          case_number?: string | null
+          company_id: string
+          confidence?: string
+          created_at?: string
+          description?: string | null
+          detected_at?: string
+          detection_method?: string
+          employees_affected?: number | null
+          enforcement_date?: string | null
+          evidence_text?: string | null
+          id?: string
+          last_verified_at?: string | null
+          penalty_amount?: number | null
+          resolution_type?: string | null
+          signal_category: string
+          signal_type: string
+          source_name: string
+          source_url?: string | null
+        }
+        Update: {
+          agency_name?: string
+          case_number?: string | null
+          company_id?: string
+          confidence?: string
+          created_at?: string
+          description?: string | null
+          detected_at?: string
+          detection_method?: string
+          employees_affected?: number | null
+          enforcement_date?: string | null
+          evidence_text?: string | null
+          id?: string
+          last_verified_at?: string | null
+          penalty_amount?: number | null
+          resolution_type?: string | null
+          signal_category?: string
+          signal_type?: string
+          source_name?: string
+          source_url?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "workplace_enforcement_signals_company_id_fkey"
             columns: ["company_id"]
             isOneToOne: false
             referencedRelation: "companies"

@@ -12,6 +12,8 @@ const PIPELINE_MODULES = [
   { key: 'lobbying_disclosure', label: 'Lobbying Disclosure (Senate LDA)', fn: 'sync-lobbying', phase: 'pipeline' },
   { key: 'sec_edgar', label: 'SEC EDGAR (Filings & Compensation)', fn: 'sync-sec-edgar', phase: 'pipeline' },
   { key: 'congress_cross_ref', label: 'Congress Cross-Reference', fn: 'sync-congress-votes', phase: 'pipeline' },
+  { key: 'opencorporates', label: 'Corporate Structure (OpenCorporates)', fn: 'sync-opencorporates', phase: 'pipeline' },
+  { key: 'workplace_enforcement', label: 'Workplace Enforcement (DOL)', fn: 'sync-workplace-enforcement', phase: 'pipeline' },
 ];
 
 // Phase 2: Web-crawled research modules (AI-analyzed - moderate confidence)
@@ -49,6 +51,9 @@ function interpretPipelineResult(result: any): { sourcesScanned: number; signals
     (result.contractsFound || 0) +
     (result.filingsFound || 0) +
     (result.sourcesScanned || 0) +
+    (result.entitiesFound || 0) +
+    (result.oshaRecords || 0) +
+    (result.whdRecords || 0) +
     (result.stats ? 1 : 0); // At least 1 if stats exist
 
   const signalsFound =
@@ -56,7 +61,8 @@ function interpretPipelineResult(result: any): { sourcesScanned: number; signals
     (result.stats?.linkagesCreated || 0) +
     (result.linkagesCreated || 0) +
     (result.contractsInserted || 0) +
-    (result.signalsFound || 0);
+    (result.signalsFound || 0) +
+    (result.officersFound || 0);
 
   return { sourcesScanned: Math.max(sourcesScanned, result.success ? 1 : 0), signalsFound };
 }
