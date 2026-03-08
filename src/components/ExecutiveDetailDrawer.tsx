@@ -17,6 +17,7 @@ interface ExecutiveDetailDrawerProps {
     name: string;
     title: string;
     total_donations: number;
+    photo_url?: string | null;
   } | null;
   companyName: string;
   onCandidateClick?: (candidate: any) => void;
