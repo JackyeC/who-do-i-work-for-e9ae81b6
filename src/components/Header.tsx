@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { Link, useLocation } from "react-router-dom";
-import { Search, BookOpen, Menu, X, Plus, LayoutDashboard, Shield, Briefcase, Map, ClipboardCheck } from "lucide-react";
+import { Search, BookOpen, Menu, X, Plus, LayoutDashboard, Shield, Briefcase, Map, ClipboardCheck, Users } from "lucide-react";
 import { useAuth } from "@/contexts/AuthContext";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
