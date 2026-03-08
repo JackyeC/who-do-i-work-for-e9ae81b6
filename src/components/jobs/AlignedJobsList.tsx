@@ -2,17 +2,19 @@ import { useState } from "react";
 import { useJobMatcher, useApplicationsTracker, MatchedJob } from "@/hooks/use-job-matcher";
 import { useAuth } from "@/contexts/AuthContext";
 import { supabase } from "@/integrations/supabase/client";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useToast } from "@/hooks/use-toast";
 import {
   ExternalLink, Briefcase, MapPin, Building2, Shield, Sparkles,
-  Loader2, Copy, Check, Wand2,
+  Loader2, Copy, Check, Wand2, ShieldAlert, X,
 } from "lucide-react";
 import { Link } from "react-router-dom";
 import { cn } from "@/lib/utils";
+
+const AI_TRANSPARENCY_THRESHOLD = 70;
 
 function ScoreBadge({ score }: { score: number }) {
   const color = score >= 70 ? "text-green-600 bg-green-50 border-green-200"
@@ -26,13 +28,23 @@ function ScoreBadge({ score }: { score: number }) {
   );
 }
 
-function JobCard({ job, onApply, onGenerate, applying, generating }: {
+function AlignmentGuardBadge() {
+  return (
+    <span className="inline-flex items-center gap-1 px-2 py-1 rounded-full text-xs font-medium border border-destructive/30 text-destructive bg-destructive/5">
+      <ShieldAlert className="w-3 h-3" />
+      Below transparency threshold
+    </span>
+  );
+}
+
+function JobCard({ job, onApply, applying, generating }: {
   job: MatchedJob;
   onApply: (job: MatchedJob) => void;
-  onGenerate: (job: MatchedJob) => void;
   applying: boolean;
   generating: boolean;
 }) {
+  const belowThreshold = job.alignment_score < AI_TRANSPARENCY_THRESHOLD;
+
   return (
     <Card className="hover:shadow-md transition-shadow">
       <CardContent className="p-5">
@@ -41,6 +53,7 @@ function JobCard({ job, onApply, onGenerate, applying, generating }: {
             <div className="flex items-center gap-2 mb-1 flex-wrap">
               <h3 className="font-semibold text-foreground truncate">{job.title}</h3>
               <ScoreBadge score={job.alignment_score} />
+              {belowThreshold && <AlignmentGuardBadge />}
             </div>
             <Link to={`/company/${job.company_slug}`} className="text-sm text-primary hover:underline flex items-center gap-1">
               <Building2 className="w-3.5 h-3.5" />
@@ -78,22 +91,13 @@ function JobCard({ job, onApply, onGenerate, applying, generating }: {
           <div className="flex flex-col gap-2 shrink-0">
             <Button
               size="sm"
-              onClick={() => onGenerate(job)}
-              disabled={generating}
-              variant="outline"
+              onClick={() => onApply(job)}
+              disabled={applying || generating || belowThreshold}
               className="gap-1.5"
+              title={belowThreshold ? `Alignment score must be ${AI_TRANSPARENCY_THRESHOLD}%+ to apply` : undefined}
             >
               {generating ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <Wand2 className="w-3.5 h-3.5" />}
-              Auto-Fill
-            </Button>
-            <Button
-              size="sm"
-              onClick={() => onApply(job)}
-              disabled={applying}
-              className="gap-1.5"
-            >
-              {applying ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <Briefcase className="w-3.5 h-3.5" />}
-              Apply & Track
+              Apply to Aligned Job
             </Button>
             {job.url && (
               <Button size="sm" variant="ghost" asChild className="gap-1.5 text-xs">
@@ -110,8 +114,7 @@ function JobCard({ job, onApply, onGenerate, applying, generating }: {
   );
 }
 
-// Clipboard banner for the matching statement
-function PayloadBanner({ payload, onDismiss }: {
+function ClipboardBanner({ payload, onDismiss }: {
   payload: {
     matchingStatement: string;
     alignmentScore: number;
@@ -129,20 +132,23 @@ function PayloadBanner({ payload, onDismiss }: {
   };
 
   return (
-    <Card className="border-primary/30 bg-primary/5 mb-4">
+    <Card className="border-primary/30 bg-primary/5 mb-4 animate-in slide-in-from-top-2">
       <CardContent className="p-4">
         <div className="flex items-start justify-between gap-3">
           <div className="flex-1">
             <div className="flex items-center gap-2 mb-2">
               <Wand2 className="w-4 h-4 text-primary" />
               <span className="text-sm font-semibold text-foreground">
-                Values Alignment Statement for {payload.companyName}
+                We've opened the tab. Your alignment statement is ready.
               </span>
               <Badge variant="secondary" className="text-xs">{payload.alignmentScore}% aligned</Badge>
             </div>
-            <p className="text-sm text-foreground/80 leading-relaxed">
-              {payload.matchingStatement}
+            <p className="text-sm text-muted-foreground mb-2">
+              Paste this into the "Cover Letter" or "Why us?" field on {payload.companyName}'s application:
             </p>
+            <div className="bg-background border border-border rounded-md p-3 text-sm text-foreground/90 leading-relaxed max-h-48 overflow-y-auto">
+              {payload.matchingStatement}
+            </div>
             {payload.matchedSignals.length > 0 && (
               <div className="flex gap-1 mt-2 flex-wrap">
                 {payload.matchedSignals.map(s => (
@@ -156,8 +162,8 @@ function PayloadBanner({ payload, onDismiss }: {
               {copied ? <Check className="w-3.5 h-3.5" /> : <Copy className="w-3.5 h-3.5" />}
               {copied ? "Copied!" : "Copy Statement"}
             </Button>
-            <Button size="sm" variant="ghost" onClick={onDismiss} className="text-xs">
-              Dismiss
+            <Button size="icon" variant="ghost" onClick={onDismiss} className="h-8 w-8">
+              <X className="w-4 h-4" />
             </Button>
           </div>
         </div>
@@ -174,45 +180,57 @@ export function AlignedJobsList() {
   const [generatingFor, setGeneratingFor] = useState<string | null>(null);
   const [activePayload, setActivePayload] = useState<any>(null);
 
-  const handleApply = (job: MatchedJob) => {
-    if (job.url) {
-      window.open(job.url, "_blank", "noopener,noreferrer");
-    }
-    trackApplication.mutate({
-      company_id: job.company_id,
-      job_id: job.job_id,
-      job_title: job.title,
-      company_name: job.company_name,
-      application_link: job.url || undefined,
-      alignment_score: job.alignment_score,
-      matched_signals: job.matched_signals,
-      status: "Submitted",
-    });
-  };
-
-  const handleGenerate = async (job: MatchedJob) => {
+  const handleApply = async (job: MatchedJob) => {
     if (!user) {
       toast({ title: "Please sign in", variant: "destructive" });
       return;
     }
 
+    if (job.alignment_score < AI_TRANSPARENCY_THRESHOLD) {
+      toast({
+        title: "Alignment too low",
+        description: `This company scores ${job.alignment_score}% — below the ${AI_TRANSPARENCY_THRESHOLD}% transparency threshold.`,
+        variant: "destructive",
+      });
+      return;
+    }
+
     setGeneratingFor(job.job_id);
     try {
+      // 1. Call edge function to generate the payload
       const { data: result, error: fnError } = await supabase.functions.invoke("generate-application-payload", {
         body: { company_id: job.company_id, user_id: user.id },
       });
-
       if (fnError) throw fnError;
 
       if (result?.payload) {
-        setActivePayload(result.payload);
+        // 2. Auto-copy statement to clipboard
+        try {
+          await navigator.clipboard.writeText(result.payload.matchingStatement);
+        } catch { /* clipboard may fail silently */ }
 
-        // Open the job URL
+        // 3. Save to application tracker with status "Redirected"
+        trackApplication.mutate({
+          company_id: job.company_id,
+          job_id: job.job_id,
+          job_title: job.title,
+          company_name: job.company_name,
+          application_link: job.url || undefined,
+          alignment_score: job.alignment_score,
+          matched_signals: job.matched_signals,
+          status: "Submitted",
+        });
+
+        // 4. Open the job URL
         if (job.url) {
           window.open(job.url, "_blank", "noopener,noreferrer");
         }
 
-        toast({ title: "Application payload generated! Copy your Values Statement below." });
+        // 5. Show clipboard proxy banner
+        setActivePayload(result.payload);
+
+        // 6. Success toast
+        toast({ title: "Alignment statement copied! Paste it into the application to stand out." });
       }
     } catch (e: any) {
       console.error("Payload generation error:", e);
@@ -264,7 +282,7 @@ export function AlignedJobsList() {
   return (
     <div className="space-y-3">
       {activePayload && (
-        <PayloadBanner payload={activePayload} onDismiss={() => setActivePayload(null)} />
+        <ClipboardBanner payload={activePayload} onDismiss={() => setActivePayload(null)} />
       )}
       <div className="flex items-center justify-between mb-2">
         <p className="text-sm text-muted-foreground">
@@ -277,7 +295,6 @@ export function AlignedJobsList() {
           key={job.job_id}
           job={job}
           onApply={handleApply}
-          onGenerate={handleGenerate}
           applying={trackApplication.isPending}
           generating={generatingFor === job.job_id}
         />
