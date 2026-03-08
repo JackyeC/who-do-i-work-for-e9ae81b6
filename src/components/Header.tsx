@@ -63,7 +63,7 @@ export function Header() {
 
         {/* Mobile toggle */}
         <button
-          className="lg:hidden p-2 text-muted-foreground hover:text-foreground"
+          className="lg:hidden p-2.5 -mr-2 text-muted-foreground hover:text-foreground rounded-md active:bg-muted"
           onClick={() => setMobileOpen(!mobileOpen)}
           aria-label="Toggle menu"
         >
