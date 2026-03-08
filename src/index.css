@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600;700&family=Source+Serif+4:wght@600;700;800&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600;700&family=Source+Serif+4:ital,wght@0,600;0,700;0,800;1,600&family=Cormorant+Garamond:wght@500;600;700&display=swap');
 
 @tailwind base;
 @tailwind components;
@@ -6,49 +6,53 @@
 
 @layer base {
   :root {
-    --background: 220 16% 96%;
-    --foreground: 222 28% 12%;
+    --background: 225 18% 97%;
+    --foreground: 228 30% 10%;
 
     --card: 0 0% 100%;
-    --card-foreground: 222 28% 12%;
+    --card-foreground: 228 30% 10%;
 
     --popover: 0 0% 100%;
-    --popover-foreground: 222 28% 12%;
+    --popover-foreground: 228 30% 10%;
 
-    --primary: 222 47% 20%;
-    --primary-foreground: 210 40% 98%;
+    --primary: 228 45% 18%;
+    --primary-foreground: 45 30% 95%;
 
-    --secondary: 218 18% 92%;
-    --secondary-foreground: 222 28% 12%;
+    --secondary: 225 16% 92%;
+    --secondary-foreground: 228 30% 10%;
 
-    --muted: 220 14% 94%;
-    --muted-foreground: 218 12% 50%;
+    --muted: 225 14% 94%;
+    --muted-foreground: 225 10% 46%;
 
-    --accent: 220 16% 90%;
-    --accent-foreground: 222 28% 12%;
+    --accent: 225 16% 90%;
+    --accent-foreground: 228 30% 10%;
 
     --destructive: 0 72% 51%;
     --destructive-foreground: 210 40% 98%;
 
-    --border: 220 14% 89%;
-    --input: 220 14% 89%;
-    --ring: 222 47% 20%;
+    --border: 225 14% 88%;
+    --input: 225 14% 88%;
+    --ring: 228 45% 18%;
 
     --radius: 0.625rem;
 
     /* CivicLens / Offer Check tokens */
     --civic-red: 0 72% 51%;
     --civic-yellow: 45 93% 47%;
-    --civic-green: 152 56% 38%;
-    --civic-blue: 220 60% 50%;
-    --civic-navy: 222 47% 20%;
-    --civic-slate: 218 12% 50%;
-    --civic-surface: 220 16% 96%;
+    --civic-green: 158 50% 34%;
+    --civic-blue: 220 58% 48%;
+    --civic-navy: 228 45% 18%;
+    --civic-slate: 225 10% 46%;
+    --civic-surface: 225 18% 97%;
+
+    /* Authority accent — muted gold */
+    --civic-gold: 42 60% 50%;
+    --civic-gold-muted: 42 30% 72%;
 
     /* Premium tokens */
     --surface-elevated: 0 0% 100%;
-    --surface-sunken: 220 16% 93%;
-    --glow-primary: 222 47% 20%;
+    --surface-sunken: 225 18% 93%;
+    --glow-primary: 228 45% 18%;
 
     --sidebar-background: 0 0% 98%;
     --sidebar-foreground: 240 5.3% 26.1%;
@@ -61,45 +65,48 @@
   }
 
   .dark {
-    --background: 222 24% 6%;
-    --foreground: 215 20% 92%;
+    --background: 228 28% 5%;
+    --foreground: 220 18% 92%;
 
-    --card: 222 20% 9%;
-    --card-foreground: 215 20% 92%;
+    --card: 228 24% 8%;
+    --card-foreground: 220 18% 92%;
 
-    --popover: 222 20% 9%;
-    --popover-foreground: 215 20% 92%;
+    --popover: 228 24% 8%;
+    --popover-foreground: 220 18% 92%;
 
-    --primary: 215 60% 65%;
-    --primary-foreground: 222 24% 6%;
+    --primary: 220 50% 65%;
+    --primary-foreground: 228 28% 5%;
 
-    --secondary: 222 16% 15%;
-    --secondary-foreground: 215 20% 92%;
+    --secondary: 228 18% 14%;
+    --secondary-foreground: 220 18% 92%;
 
-    --muted: 222 16% 14%;
-    --muted-foreground: 218 12% 55%;
+    --muted: 228 18% 13%;
+    --muted-foreground: 225 10% 55%;
 
-    --accent: 222 16% 15%;
-    --accent-foreground: 215 20% 92%;
+    --accent: 228 18% 14%;
+    --accent-foreground: 220 18% 92%;
 
     --destructive: 0 62.8% 30.6%;
     --destructive-foreground: 210 40% 98%;
 
-    --border: 222 16% 16%;
-    --input: 222 16% 16%;
-    --ring: 215 60% 65%;
+    --border: 228 18% 15%;
+    --input: 228 18% 15%;
+    --ring: 220 50% 65%;
 
     --civic-red: 0 72% 55%;
     --civic-yellow: 45 93% 55%;
-    --civic-green: 152 56% 50%;
-    --civic-blue: 220 60% 60%;
-    --civic-navy: 215 60% 65%;
-    --civic-slate: 218 12% 60%;
-    --civic-surface: 222 20% 9%;
+    --civic-green: 158 50% 48%;
+    --civic-blue: 220 58% 58%;
+    --civic-navy: 220 50% 65%;
+    --civic-slate: 225 10% 60%;
+    --civic-surface: 228 24% 8%;
 
-    --surface-elevated: 222 20% 11%;
-    --surface-sunken: 222 24% 5%;
-    --glow-primary: 215 60% 65%;
+    --civic-gold: 42 55% 58%;
+    --civic-gold-muted: 42 25% 42%;
+
+    --surface-elevated: 228 24% 10%;
+    --surface-sunken: 228 28% 4%;
+    --glow-primary: 220 50% 65%;
 
     --sidebar-background: 240 5.9% 10%;
     --sidebar-foreground: 240 4.8% 95.9%;
@@ -125,7 +132,7 @@
 
   h1, h2, h3 {
     font-family: 'Source Serif 4', Georgia, serif;
-    letter-spacing: -0.01em;
+    letter-spacing: -0.015em;
   }
 }
 
@@ -138,6 +145,13 @@
 
   .card-elevated:hover {
     box-shadow: 0 4px 12px -2px hsl(var(--foreground) / 0.08), 0 2px 4px -2px hsl(var(--foreground) / 0.04);
+  }
+
+  /* Regal card with gold top-border accent */
+  .card-official {
+    @apply bg-card border border-border/60;
+    border-top: 2px solid hsl(var(--civic-gold-muted));
+    box-shadow: 0 2px 8px -2px hsl(var(--foreground) / 0.06), 0 1px 3px -1px hsl(var(--foreground) / 0.04);
   }
 
   /* Section spacing */
@@ -157,5 +171,22 @@
   /* Custom height utility */
   .h-13 {
     height: 3.25rem;
+  }
+
+  /* Regal divider */
+  .divider-ornament {
+    position: relative;
+    text-align: center;
+  }
+  .divider-ornament::before {
+    content: '';
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    transform: translateX(-50%);
+    width: 40px;
+    height: 2px;
+    background: hsl(var(--civic-gold-muted));
+    border-radius: 1px;
   }
 }
