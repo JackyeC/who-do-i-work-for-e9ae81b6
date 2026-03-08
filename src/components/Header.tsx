@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { Link } from "react-router-dom";
-import { Search, ClipboardCheck, BookOpen, Briefcase, Plus, HardHat, Target, Menu, X } from "lucide-react";
+import { Search, ClipboardCheck, BookOpen, Briefcase, Plus, HardHat, Target, Bell, Menu, X } from "lucide-react";
 import { useAuth } from "@/contexts/AuthContext";
 import { Button } from "@/components/ui/button";
 
