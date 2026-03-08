@@ -10,6 +10,7 @@ import {
 import { supabase } from "@/integrations/supabase/client";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useToast } from "@/hooks/use-toast";
+import { ScanCoveragePanel } from "@/components/ScanCoveragePanel";
 
 interface Props {
   companyId: string;
@@ -293,6 +294,19 @@ export function CompanyIntelligenceScanCard({ companyId, companyName }: Props) {
             {(latestScan.warnings as string[]).map((w: string, i: number) => (
               <p key={i} className="text-xs text-muted-foreground">{w}</p>
             ))}
+          </div>
+        )}
+
+        {/* Scan Coverage Panel — entity resolution + data source coverage */}
+        {latestScan && (
+          <div className="mt-4">
+            <ScanCoveragePanel
+              resolutionLog={latestScan.entity_resolution_log as any}
+              moduleStatuses={moduleStatuses as any}
+              totalSignals={latestScan.total_signals_found || 0}
+              totalSources={latestScan.total_sources_scanned || 0}
+              scanStatus={latestScan.scan_status}
+            />
           </div>
         )}
 

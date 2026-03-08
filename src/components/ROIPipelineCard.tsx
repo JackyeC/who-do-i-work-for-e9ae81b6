@@ -6,7 +6,7 @@ import { formatCurrency } from "@/data/sampleData";
 import { cn } from "@/lib/utils";
 import {
   ArrowRight, DollarSign, Users, Landmark, FileText,
-  Loader2, Search, Radar, ShieldCheck, ShieldX, CheckCircle2,
+  Loader2, Search, Radar, ShieldCheck, ShieldX, CheckCircle2, Building2,
 } from "lucide-react";
 
 export interface LinkageNode {
@@ -26,9 +26,9 @@ export interface LinkageEdge {
 }
 
 export interface ROIPipelineData {
-  moneyIn: { label: string; amount: number; type: string }[];
+  moneyIn: { label: string; amount: number; type: string; matched_entity_name?: string; matched_entity_type?: string }[];
   network: { label: string; role: string; type: string }[];
-  benefitsOut: { label: string; amount: number; type: string }[];
+  benefitsOut: { label: string; amount: number; type: string; matched_entity_name?: string; matched_entity_type?: string }[];
   linkages: { source: string; target: string; description: string; confidence: number }[];
   totalSpending: number;
   totalBenefits: number;
@@ -74,7 +74,7 @@ function ConfidenceDot({ confidence }: { confidence?: number }) {
 function PipelineColumn({ title, icon: Icon, items, color }: {
   title: string;
   icon: React.ElementType;
-  items: { label: string; amount?: number; type?: string; role?: string; confidence?: number }[];
+  items: { label: string; amount?: number; type?: string; role?: string; confidence?: number; matched_entity_name?: string; matched_entity_type?: string }[];
   color: string;
 }) {
   if (items.length === 0) {
@@ -90,6 +90,17 @@ function PipelineColumn({ title, icon: Icon, items, color }: {
       </div>
     );
   }
+
+  const MATCH_LABELS: Record<string, string> = {
+    direct_company: "",
+    parent_company: "Matched through parent company",
+    subsidiary: "Matched through subsidiary",
+    pac_name: "Matched through PAC",
+    executive_linked: "Matched through executive-linked donation",
+    brand_name: "Matched through brand name",
+    trade_association: "Matched through trade association",
+    affiliate: "Matched through affiliate",
+  };
 
   return (
     <div className="flex-1 min-w-0">
@@ -115,6 +126,12 @@ function PipelineColumn({ title, icon: Icon, items, color }: {
               <Badge variant="outline" className="text-xs mt-1">
                 {item.type.replace(/_/g, ' ')}
               </Badge>
+            )}
+            {item.matched_entity_type && item.matched_entity_type !== "direct_company" && (
+              <div className="mt-1.5 flex items-center gap-1 text-[10px] text-primary">
+                <Building2 className="w-3 h-3" />
+                {MATCH_LABELS[item.matched_entity_type] || `Via ${item.matched_entity_name || "related entity"}`}
+              </div>
             )}
           </div>
         ))}

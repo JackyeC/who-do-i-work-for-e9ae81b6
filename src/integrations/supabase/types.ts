@@ -1636,7 +1636,10 @@ export type Database = {
           description: string | null
           id: string
           link_type: Database["public"]["Enums"]["link_type"]
+          matched_entity_name: string | null
+          matched_entity_type: string | null
           metadata: Json | null
+          original_source_query: string | null
           source_citation: Json | null
           source_entity_id: string | null
           source_entity_name: string
@@ -1653,7 +1656,10 @@ export type Database = {
           description?: string | null
           id?: string
           link_type: Database["public"]["Enums"]["link_type"]
+          matched_entity_name?: string | null
+          matched_entity_type?: string | null
           metadata?: Json | null
+          original_source_query?: string | null
           source_citation?: Json | null
           source_entity_id?: string | null
           source_entity_name: string
@@ -1670,7 +1676,10 @@ export type Database = {
           description?: string | null
           id?: string
           link_type?: Database["public"]["Enums"]["link_type"]
+          matched_entity_name?: string | null
+          matched_entity_type?: string | null
           metadata?: Json | null
+          original_source_query?: string | null
           source_citation?: Json | null
           source_entity_id?: string | null
           source_entity_name?: string
@@ -1683,6 +1692,47 @@ export type Database = {
           {
             foreignKeyName: "entity_linkages_company_id_fkey"
             columns: ["company_id"]
+            isOneToOne: false
+            referencedRelation: "companies"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      entity_relationships: {
+        Row: {
+          confidence_score: number
+          created_at: string
+          id: string
+          notes: string | null
+          primary_entity_id: string
+          related_entity_name: string
+          relationship_type: string
+          source_url: string | null
+        }
+        Insert: {
+          confidence_score?: number
+          created_at?: string
+          id?: string
+          notes?: string | null
+          primary_entity_id: string
+          related_entity_name: string
+          relationship_type?: string
+          source_url?: string | null
+        }
+        Update: {
+          confidence_score?: number
+          created_at?: string
+          id?: string
+          notes?: string | null
+          primary_entity_id?: string
+          related_entity_name?: string
+          relationship_type?: string
+          source_url?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "entity_relationships_primary_entity_id_fkey"
+            columns: ["primary_entity_id"]
             isOneToOne: false
             referencedRelation: "companies"
             referencedColumns: ["id"]
@@ -2269,6 +2319,7 @@ export type Database = {
         Row: {
           company_id: string
           created_at: string
+          entity_resolution_log: Json | null
           error_log: Json | null
           id: string
           module_statuses: Json
@@ -2288,6 +2339,7 @@ export type Database = {
         Insert: {
           company_id: string
           created_at?: string
+          entity_resolution_log?: Json | null
           error_log?: Json | null
           id?: string
           module_statuses?: Json
@@ -2307,6 +2359,7 @@ export type Database = {
         Update: {
           company_id?: string
           created_at?: string
+          entity_resolution_log?: Json | null
           error_log?: Json | null
           id?: string
           module_statuses?: Json
