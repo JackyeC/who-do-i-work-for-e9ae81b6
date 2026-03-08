@@ -1,19 +1,21 @@
-import { Info, ShieldCheck } from "lucide-react";
+import { ShieldCheck } from "lucide-react";
 
 export function PlatformPhilosophy() {
   return (
-    <div className="flex items-start gap-2.5 p-4 rounded-lg bg-muted/50 border border-border mb-4">
-      <ShieldCheck className="w-4 h-4 text-primary shrink-0 mt-0.5" />
-      <div className="space-y-2">
-        <p className="text-xs text-muted-foreground leading-relaxed">
-          This platform reports signals detected from publicly available data sources. 
-          No conclusions are drawn. Interpretation is left to the user.
-        </p>
-        <div className="flex flex-wrap gap-3">
-          <ConfidencePill level="Direct Source" color="text-[hsl(var(--civic-green))]" description="Official filing or disclosure" />
-          <ConfidencePill level="Multi-Source Signal" color="text-primary" description="Corroborated across sources" />
-          <ConfidencePill level="Inferred Signal" color="text-[hsl(var(--civic-yellow))]" description="Indirect public evidence" />
-          <ConfidencePill level="No Public Evidence" color="text-muted-foreground" description="Not detected in scanned sources" />
+    <div className="card-official rounded-xl p-4 mb-4">
+      <div className="flex items-start gap-2.5">
+        <ShieldCheck className="w-4 h-4 text-primary shrink-0 mt-0.5" />
+        <div className="space-y-2.5">
+          <p className="text-xs text-muted-foreground leading-relaxed">
+            This platform reports signals detected from publicly available data sources. 
+            No conclusions are drawn. Interpretation is left to the user.
+          </p>
+          <div className="flex flex-wrap gap-3">
+            <ConfidencePill level="Direct Source" color="text-[hsl(var(--civic-green))]" description="Official filing or disclosure" />
+            <ConfidencePill level="Multi-Source Signal" color="text-primary" description="Corroborated across sources" />
+            <ConfidencePill level="Inferred Signal" color="text-[hsl(var(--civic-yellow))]" description="Indirect public evidence" />
+            <ConfidencePill level="No Public Evidence" color="text-muted-foreground" description="Not detected in scanned sources" />
+          </div>
         </div>
       </div>
     </div>
