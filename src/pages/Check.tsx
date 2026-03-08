@@ -98,7 +98,7 @@ export default function Check() {
                 Explore financial and influence relationships between companies, executives, PACs, and political recipients using publicly available data.
               </p>
               <Button onClick={() => navigate("/voter-lookup")} className="gap-2">
-                Look Up a Candidate <ArrowRight className="w-4 h-4" />
+                Explore Relationships <ArrowRight className="w-4 h-4" />
               </Button>
             </div>
           </TabsContent>
