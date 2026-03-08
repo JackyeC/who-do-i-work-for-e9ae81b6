@@ -117,9 +117,9 @@ export function ExecutiveDetailDrawer({ open, onOpenChange, executive, companyNa
         <div className="space-y-2">
           <p className="text-xs font-medium text-muted-foreground uppercase tracking-wide">Research Links</p>
           <Button variant="outline" size="sm" className="justify-start gap-2 w-full" asChild>
-            <a href={openSecretsUrl} target="_blank" rel="noopener noreferrer">
+            <a href={fecDonorUrl} target="_blank" rel="noopener noreferrer">
               <ExternalLink className="w-3.5 h-3.5" />
-              OpenSecrets – Donor Profile
+              FEC – Individual Contributions
             </a>
           </Button>
         </div>

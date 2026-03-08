@@ -254,7 +254,7 @@ Deno.serve(async (req) => {
             signal_type: 'partisan_donation_lean',
             signal_value: `${leanPct}% of PAC money to current ${leanParty} legislators`,
             confidence_level: 'direct',
-            source_url: `https://www.opensecrets.org/orgs/summary?id=${encodeURIComponent(companyName)}`,
+            source_url: `https://www.fec.gov/data/committee/${encodeURIComponent(companyName)}/?tab=spending`,
             raw_excerpt: JSON.stringify({ republican_pct: repPct, democratic_pct: demPct, total: totalDonated }),
           });
         }
