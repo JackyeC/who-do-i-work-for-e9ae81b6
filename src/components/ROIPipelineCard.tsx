@@ -6,7 +6,7 @@ import { formatCurrency } from "@/data/sampleData";
 import { cn } from "@/lib/utils";
 import {
   ArrowRight, DollarSign, Users, Landmark, FileText,
-  Loader2, Search, Radar, ShieldCheck, ShieldX, CheckCircle2,
+  Loader2, Search, Radar, ShieldCheck, ShieldX, CheckCircle2, Building2,
 } from "lucide-react";
 
 export interface LinkageNode {
