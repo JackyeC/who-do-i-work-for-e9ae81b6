@@ -2,12 +2,13 @@ import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetDescription } from "
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { ExternalLink, DollarSign, Users, Flag, AlertTriangle, FileSearch } from "lucide-react";
+import { ExternalLink, DollarSign, Users, Flag, AlertTriangle, FileSearch, Info } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { formatCurrency } from "@/data/sampleData";
 import { supabase } from "@/integrations/supabase/client";
 import { useQuery } from "@tanstack/react-query";
 import { LoadingState } from "@/components/LoadingState";
+import { PartyBadge, computeRecipientMix } from "@/components/PartyBadge";
 import { PieChart, Pie, Cell, ResponsiveContainer, Tooltip } from "recharts";
 
 interface PACDetailDrawerProps {
@@ -75,6 +76,11 @@ export function PACDetailDrawer({ open, onOpenChange, companyId, companyName, to
   const isLoading = partyLoading || candidatesLoading || execLoading;
   const flaggedCandidates = (candidates || []).filter((c: any) => c.flagged);
 
+  // Compute recipient mix from candidates
+  const recipientMix = computeRecipientMix(
+    (candidates || []).map((c: any) => ({ party: c.party, entityType: "politician", amount: c.amount }))
+  );
+
   return (
     <Sheet open={open} onOpenChange={onOpenChange}>
       <SheetContent className="w-full sm:max-w-lg overflow-y-auto">
@@ -126,6 +132,43 @@ export function PACDetailDrawer({ open, onOpenChange, companyId, companyName, to
             <LoadingState message="Loading PAC details..." className="py-8" />
           ) : (
             <>
+              {/* Recipient Mix Bar */}
+              {recipientMix.length > 0 && (
+                <div className="p-3 bg-card border border-border rounded-lg">
+                  <div className="flex items-center gap-1.5 mb-2">
+                    <Info className="w-3.5 h-3.5 text-muted-foreground" />
+                    <span className="text-xs font-semibold text-foreground">Recipient Mix</span>
+                  </div>
+                  <div className="flex h-3 rounded-full overflow-hidden mb-2">
+                    {recipientMix.map((mix, i) => (
+                      <div
+                        key={i}
+                        className={cn(
+                          "h-full",
+                          mix.label === "R" ? "bg-[hsl(0,65%,50%)]" :
+                          mix.label === "D" ? "bg-[hsl(218,55%,48%)]" :
+                          "bg-muted-foreground/30"
+                        )}
+                        style={{ width: `${mix.percentage}%` }}
+                      />
+                    ))}
+                  </div>
+                  <div className="flex items-center gap-3">
+                    {recipientMix.map((mix, i) => (
+                      <span key={i} className="flex items-center gap-1 text-[10px] text-muted-foreground">
+                        <span className={cn(
+                          "w-2 h-2 rounded-full inline-block",
+                          mix.label === "R" ? "bg-[hsl(0,65%,50%)]" :
+                          mix.label === "D" ? "bg-[hsl(218,55%,48%)]" :
+                          "bg-muted-foreground/30"
+                        )} />
+                        {mix.percentage}% {mix.label}
+                      </span>
+                    ))}
+                  </div>
+                </div>
+              )}
+
               {/* Party breakdown chart */}
               {partyBreakdown && partyBreakdown.length > 0 && (
                 <div>
@@ -158,26 +201,23 @@ export function PACDetailDrawer({ open, onOpenChange, companyId, companyName, to
                 <div>
                   <h3 className="text-sm font-semibold text-foreground mb-3 flex items-center gap-2">
                     <Flag className="w-4 h-4 text-muted-foreground" />
-                    Top PAC Recipients ({candidates.length} politicians)
+                    Top PAC Recipients ({candidates.length})
                   </h3>
-                  <div className="space-y-1.5 max-h-64 overflow-y-auto">
+                  <div className="space-y-1.5 max-h-72 overflow-y-auto">
                     {candidates.map((c: any) => (
                       <div key={c.id} className="flex items-center justify-between p-2.5 rounded-lg bg-muted/40 border border-border/60">
-                        <div>
-                          <div className="flex items-center gap-2">
+                        <div className="min-w-0">
+                          <div className="flex items-center gap-1.5 flex-wrap">
                             <span className="text-sm font-medium text-foreground">{c.name}</span>
+                            <PartyBadge party={c.party} entityType="politician" size="sm" />
                             {c.flagged && <Badge variant="destructive" className="text-[10px]">Flagged</Badge>}
                           </div>
-                          <div className="flex items-center gap-2 mt-0.5">
-                            <Badge variant="outline" className={cn("text-[10px]",
-                              c.party === "Republican" && "border-destructive/50 text-destructive",
-                              c.party === "Democrat" && "border-primary/50 text-primary"
-                            )}>{c.party}</Badge>
-                            <span className="text-[10px] text-muted-foreground">{c.state}{c.district ? `, D-${c.district}` : ""}</span>
+                          <div className="flex items-center gap-2 mt-0.5 text-[10px] text-muted-foreground">
+                            <span>{c.state}{c.district ? `-${c.district}` : ""}</span>
                             <Badge variant="outline" className="text-[10px]">{c.donation_type}</Badge>
                           </div>
                         </div>
-                        <span className="text-sm font-semibold text-foreground shrink-0">{formatCurrency(c.amount)}</span>
+                        <span className="text-sm font-semibold text-foreground shrink-0 ml-2">{formatCurrency(c.amount)}</span>
                       </div>
                     ))}
                   </div>
@@ -188,7 +228,6 @@ export function PACDetailDrawer({ open, onOpenChange, companyId, companyName, to
                         <span className="text-xs font-semibold text-destructive">{flaggedCandidates.length} Flagged Recipients</span>
                       </div>
                       <p className="text-[10px] text-muted-foreground">
-                        These candidates have been flagged for controversial positions or voting records.
                         {flaggedCandidates.map((c: any) => c.flag_reason).filter(Boolean).join("; ")}
                       </p>
                     </div>
@@ -204,7 +243,10 @@ export function PACDetailDrawer({ open, onOpenChange, companyId, companyName, to
                     {superPacs.map((sp: any) => (
                       <div key={sp.id} className="p-3 rounded-lg bg-muted/40 border border-border/60">
                         <div className="flex items-center justify-between mb-1">
-                          <span className="text-sm font-medium text-foreground">{sp.name}</span>
+                          <div className="flex items-center gap-1.5">
+                            <span className="text-sm font-medium text-foreground">{sp.name}</span>
+                            <PartyBadge entityType="pac" size="sm" />
+                          </div>
                           {sp.amount > 0 && <Badge variant="secondary" className="text-xs">{formatCurrency(sp.amount)}</Badge>}
                         </div>
                         <div className="flex items-center gap-2">
@@ -252,7 +294,7 @@ export function PACDetailDrawer({ open, onOpenChange, companyId, companyName, to
                 </div>
               )}
 
-              {/* How to report / verify */}
+              {/* How to verify */}
               <Card className="border-muted">
                 <CardContent className="p-4">
                   <h3 className="text-sm font-semibold text-foreground mb-2">How to Verify & Report</h3>
@@ -266,18 +308,14 @@ export function PACDetailDrawer({ open, onOpenChange, companyId, companyName, to
                     <a href="https://www.fec.gov/legal-resources/enforcement/" target="_blank" rel="noopener noreferrer" className="flex items-center gap-2 text-xs text-destructive hover:underline">
                       <AlertTriangle className="w-3 h-3" /> File a complaint with the FEC
                     </a>
-                    <a href="https://www.fec.gov/legal-resources/policy-other-guidance/advisory-opinions/" target="_blank" rel="noopener noreferrer" className="flex items-center gap-2 text-xs text-primary hover:underline">
-                      <ExternalLink className="w-3 h-3" /> FEC Advisory Opinions
-                    </a>
                   </div>
                 </CardContent>
               </Card>
 
-              {/* Source */}
               <div className="border-t border-border pt-4">
                 <p className="text-[10px] text-muted-foreground">
-                  Sources: Federal Election Commission (OpenFEC). All PAC data from official <a href="https://www.fec.gov" target="_blank" rel="noopener noreferrer" className="text-primary hover:underline">FEC filings</a>.
-                  Individual contribution limits: $3,300 per candidate per election (2024 cycle).
+                  Sources: Federal Election Commission (OpenFEC). Party badges reflect official FEC filing data.
+                  Dashed-border badges indicate inferred alignment. All data from official <a href="https://www.fec.gov" target="_blank" rel="noopener noreferrer" className="text-primary hover:underline">FEC filings</a>.
                 </p>
               </div>
             </>

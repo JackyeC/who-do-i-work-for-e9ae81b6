@@ -7,6 +7,7 @@ import { Loader2, ExternalLink, MapPin, Vote, Sparkles, AlertTriangle } from "lu
 import { cn } from "@/lib/utils";
 import { formatCurrency } from "@/data/sampleData";
 import { supabase } from "@/integrations/supabase/client";
+import { PartyBadge } from "@/components/PartyBadge";
 
 interface CandidateDetailDrawerProps {
   open: boolean;
@@ -75,16 +76,7 @@ export function CandidateDetailDrawer({ open, onOpenChange, candidate, companyNa
         <SheetHeader className="pb-4">
           <SheetTitle className="flex items-center gap-2 text-xl">
             {candidate.name}
-            <Badge
-              variant="outline"
-              className={cn(
-                "text-xs",
-                candidate.party === "Republican" && "border-destructive/50 text-destructive",
-                candidate.party === "Democrat" && "border-primary/50 text-primary"
-              )}
-            >
-              {candidate.party}
-            </Badge>
+            <PartyBadge party={candidate.party} entityType="politician" size="sm" />
           </SheetTitle>
           <SheetDescription className="flex items-center gap-2">
             <MapPin className="w-3.5 h-3.5" />
@@ -118,7 +110,7 @@ export function CandidateDetailDrawer({ open, onOpenChange, candidate, companyNa
                 <span className="font-semibold text-sm text-foreground">Your District Connection</span>
               </div>
               <p className="text-sm text-muted-foreground">
-                This politician represents <span className="font-medium text-foreground">{candidate.state} District {candidate.district}</span>. 
+                This politician represents <span className="font-medium text-foreground">{candidate.state} District {candidate.district}</span>.
                 If this is your district, {companyName}'s PAC directly funds your representative.
               </p>
             </CardContent>
@@ -141,14 +133,10 @@ export function CandidateDetailDrawer({ open, onOpenChange, candidate, companyNa
             ) : votingError ? (
               <div className="text-sm text-muted-foreground">
                 <p>{votingError}</p>
-                <Button variant="outline" size="sm" className="mt-2" onClick={fetchVotingSummary}>
-                  Retry
-                </Button>
+                <Button variant="outline" size="sm" className="mt-2" onClick={fetchVotingSummary}>Retry</Button>
               </div>
             ) : votingSummary ? (
-              <div className="text-sm text-foreground leading-relaxed whitespace-pre-line">
-                {votingSummary}
-              </div>
+              <div className="text-sm text-foreground leading-relaxed whitespace-pre-line">{votingSummary}</div>
             ) : (
               <p className="text-sm text-muted-foreground">Loading...</p>
             )}
@@ -161,23 +149,26 @@ export function CandidateDetailDrawer({ open, onOpenChange, candidate, companyNa
           <div className="grid gap-2">
             <Button variant="outline" size="sm" className="justify-start gap-2" asChild>
               <a href={congressSearchUrl} target="_blank" rel="noopener noreferrer">
-                <ExternalLink className="w-3.5 h-3.5" />
-                Congress.gov – Bills & Votes
+                <ExternalLink className="w-3.5 h-3.5" /> Congress.gov – Bills & Votes
               </a>
             </Button>
             <Button variant="outline" size="sm" className="justify-start gap-2" asChild>
               <a href={voteSmartUrl} target="_blank" rel="noopener noreferrer">
-                <ExternalLink className="w-3.5 h-3.5" />
-                VoteSmart – Key Votes
+                <ExternalLink className="w-3.5 h-3.5" /> VoteSmart – Key Votes
               </a>
             </Button>
             <Button variant="outline" size="sm" className="justify-start gap-2" asChild>
               <a href={fecCandidateUrl} target="_blank" rel="noopener noreferrer">
-                <ExternalLink className="w-3.5 h-3.5" />
-                FEC – Candidate Filings
+                <ExternalLink className="w-3.5 h-3.5" /> FEC – Candidate Filings
               </a>
             </Button>
           </div>
+        </div>
+
+        <div className="mt-4 border-t border-border pt-3">
+          <p className="text-[10px] text-muted-foreground">
+            Party badge reflects official FEC filing data. Sources: Federal Election Commission, Congress.gov.
+          </p>
         </div>
       </SheetContent>
     </Sheet>
