@@ -38,6 +38,20 @@ function normalizeCommitteeTypes(input: string | string[] | undefined | null): s
   return [...new Set(normalized)];
 }
 
+// Normalize FEC contributor names: strip honorifics, suffixes, extra whitespace
+function normalizeName(name: string): string {
+  if (!name) return 'UNKNOWN';
+  return name
+    .toUpperCase()
+    .replace(/\b(MR|MRS|MS|DR|JR|SR|II|III|IV|ESQ|PHD|MD|HON|REV|PROF)\b\.?/g, '')
+    .replace(/[.,]+/g, ',')
+    .replace(/\s{2,}/g, ' ')
+    .replace(/,\s*,/g, ',')
+    .replace(/,\s*$/, '')
+    .replace(/^\s*,/, '')
+    .trim();
+}
+
 interface FECCommittee {
   committee_id: string;
   name: string;
@@ -282,9 +296,10 @@ Deno.serve(async (req) => {
 
         for (const r of receipts) {
           if (r.contribution_receipt_amount <= 0) continue;
-          const key = r.contributor_name?.toUpperCase() || 'UNKNOWN';
+          const key = normalizeName(r.contributor_name);
+          const displayName = r.contributor_name?.replace(/\b(MR|MRS|MS|DR|JR|SR)\b\.?\s*/gi, '').replace(/\s{2,}/g, ' ').trim() || 'Unknown';
           const existing = executiveMap.get(key) || {
-            name: r.contributor_name,
+            name: displayName,
             total: 0,
             occupation: r.contributor_occupation || 'Unknown',
             recipients: [],
@@ -400,7 +415,7 @@ Deno.serve(async (req) => {
     // ─── Step 4: Aggregate & deduplicate candidates ───
     const candidateMap = new Map<string, typeof allCandidates[0]>();
     for (const c of allCandidates) {
-      const key = c.name.toUpperCase();
+      const key = normalizeName(c.name);
       const existing = candidateMap.get(key);
       if (existing) { existing.amount += c.amount; }
       else { candidateMap.set(key, { ...c }); }
@@ -412,7 +427,7 @@ Deno.serve(async (req) => {
     if (deduped.length > 0) {
       const candidateRows = deduped.map(c => ({
         company_id: companyId,
-        name: c.name,
+        name: c.name.replace(/\b(MR|MRS|MS|DR|JR|SR)\b\.?\s*/gi, '').replace(/\s{2,}/g, ' ').trim(),
         party: c.party,
         state: c.state,
         amount: Math.round(c.amount),
