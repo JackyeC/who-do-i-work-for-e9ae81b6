@@ -502,6 +502,22 @@ Deno.serve(async (req) => {
       record_status: 'verified',
     }).eq('id', companyId);
 
+    // Auto-fetch company logo if not already set
+    try {
+      const { data: companyCheck } = await supabase.from('companies').select('logo_url, careers_url').eq('id', companyId).maybeSingle();
+      if (!companyCheck?.logo_url) {
+        const guessedUrl = companyCheck?.careers_url
+          ? companyCheck.careers_url.replace(/\/careers.*$/i, '')
+          : `https://www.${companyName.toLowerCase().replace(/[^a-z0-9]/g, '')}.com`;
+        console.log(`[intelligence-scan] Fetching logo for ${companyName} from ${guessedUrl}`);
+        await supabase.functions.invoke('fetch-company-branding', {
+          body: { companyId, websiteUrl: guessedUrl },
+        });
+      }
+    } catch (logoErr) {
+      console.warn('[intelligence-scan] Logo fetch failed (non-critical):', logoErr);
+    }
+
     console.log(`[intelligence-scan] COMPLETE: ${companyName} - ${overallStatus} (${trulyCompleted}/${ALL_MODULES.length} completed, ${totalSignals} signals)`);
 
     return new Response(JSON.stringify({

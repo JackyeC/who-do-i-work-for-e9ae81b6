@@ -10,6 +10,7 @@ import {
 import { LensSelector } from "@/components/LensSelector";
 import { DataGlossary } from "@/components/DataGlossary";
 import { ExplainableMetric } from "@/components/ExplainableMetric";
+import { CompanyLogo } from "@/components/CompanyLogo";
 import { PlatformPhilosophy } from "@/components/PlatformPhilosophy";
 import { type LensId, getLens } from "@/lib/lensConfig";
 import { ShareableScorecard } from "@/components/ShareableScorecard";
@@ -465,9 +466,14 @@ export default function CompanyProfile() {
           <motion.div initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.3 }}>
             {/* Company Overview */}
             <div className="flex flex-col md:flex-row md:items-start gap-6 mb-10">
-              <div className="w-16 h-16 rounded-2xl bg-muted/60 flex items-center justify-center shrink-0 border border-border/60">
-                <Building2 className="w-8 h-8 text-muted-foreground/70" />
-              </div>
+              <CompanyLogo
+                companyId={dbCompany.id}
+                logoUrl={(dbCompany as any).logo_url}
+                websiteUrl={(dbCompany as any).website_url}
+                companyName={dbCompany.name}
+                slug={id}
+                size="md"
+              />
               <div className="flex-1 min-w-0">
                 <div className="flex items-start justify-between gap-4">
                   <div>
@@ -815,9 +821,11 @@ export default function CompanyProfile() {
         <motion.div initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.3 }}>
           {/* ── Company Overview ────────────────────────────────────────── */}
           <div className="flex flex-col md:flex-row md:items-start gap-6 mb-8">
-            <div className="w-16 h-16 rounded-xl bg-muted flex items-center justify-center shrink-0">
-              <Building2 className="w-8 h-8 text-muted-foreground" />
-            </div>
+            <CompanyLogo
+              companyName={company.name}
+              logoUrl={null}
+              size="md"
+            />
             <div className="flex-1 min-w-0">
               <h1 className="text-3xl md:text-4xl font-bold text-foreground mb-2">{company.name}</h1>
               {company.parentCompany && (

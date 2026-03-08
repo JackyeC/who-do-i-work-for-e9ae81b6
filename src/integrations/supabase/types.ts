@@ -327,6 +327,7 @@ export type Database = {
           last_reviewed: string
           last_scan_attempted: string | null
           lobbying_spend: number | null
+          logo_url: string | null
           name: string
           parent_company: string | null
           record_status: string
@@ -339,6 +340,7 @@ export type Database = {
           total_pac_spending: number
           updated_at: string
           verification_notes: string | null
+          website_url: string | null
           worker_relevance: string | null
         }
         Insert: {
@@ -359,6 +361,7 @@ export type Database = {
           last_reviewed?: string
           last_scan_attempted?: string | null
           lobbying_spend?: number | null
+          logo_url?: string | null
           name: string
           parent_company?: string | null
           record_status?: string
@@ -371,6 +374,7 @@ export type Database = {
           total_pac_spending?: number
           updated_at?: string
           verification_notes?: string | null
+          website_url?: string | null
           worker_relevance?: string | null
         }
         Update: {
@@ -391,6 +395,7 @@ export type Database = {
           last_reviewed?: string
           last_scan_attempted?: string | null
           lobbying_spend?: number | null
+          logo_url?: string | null
           name?: string
           parent_company?: string | null
           record_status?: string
@@ -403,6 +408,7 @@ export type Database = {
           total_pac_spending?: number
           updated_at?: string
           verification_notes?: string | null
+          website_url?: string | null
           worker_relevance?: string | null
         }
         Relationships: []
