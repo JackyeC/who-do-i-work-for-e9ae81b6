@@ -186,11 +186,18 @@ Deno.serve(async (req) => {
       await supabase.from('scan_runs').update({ module_statuses: { ...moduleStatuses } }).eq('id', scanId);
 
       try {
+        // Add per-module timeout (90 seconds) to prevent stuck scans
+        const controller = new AbortController();
+        const timeoutId = setTimeout(() => controller.abort(), 90_000);
+
         const moduleResp = await fetch(`${supabaseUrl}/functions/v1/${mod.fn}`, {
           method: 'POST',
           headers: { 'Authorization': `Bearer ${supabaseKey}`, 'Content-Type': 'application/json' },
           body: JSON.stringify({ companyId, companyName, searchNames, entityMap }),
+          signal: controller.signal,
         });
+
+        clearTimeout(timeoutId);
 
         const moduleCompletedAt = new Date().toISOString();
 
