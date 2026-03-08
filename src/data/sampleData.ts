@@ -262,7 +262,7 @@ export const companies: Company[] = [
     ],
     tradeAssociations: ["National Retail Federation", "U.S. Chamber of Commerce"],
     flaggedOrgTies: [
-      { orgName: "Club for Growth", relationship: "direct-funding", confidence: "direct", description: "Co-founder Bernard Marcus has donated $7M+ to Club for Growth.", source: "OpenSecrets.org" },
+      { orgName: "Club for Growth", relationship: "direct-funding", confidence: "direct", description: "Co-founder Bernard Marcus has donated $7M+ to Club for Growth.", source: "FEC filings" },
     ],
     boardAffiliations: ["Republican Jewish Coalition (Marcus)"],
     publicStances: [
