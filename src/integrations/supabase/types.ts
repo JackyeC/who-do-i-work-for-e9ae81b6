@@ -1986,38 +1986,56 @@ export type Database = {
       }
       profiles: {
         Row: {
+          ai_transparency_required: boolean | null
           bio: string | null
           created_at: string
           email: string | null
           employer_company_id: string | null
+          full_name: string | null
           id: string
           linkedin_url: string | null
+          min_safety_score: number | null
           min_salary: number | null
+          pay_transparency_required: boolean | null
+          required_benefits: string[] | null
           resume_url: string | null
+          skills: string[] | null
           target_job_titles: string[] | null
           updated_at: string
         }
         Insert: {
+          ai_transparency_required?: boolean | null
           bio?: string | null
           created_at?: string
           email?: string | null
           employer_company_id?: string | null
+          full_name?: string | null
           id: string
           linkedin_url?: string | null
+          min_safety_score?: number | null
           min_salary?: number | null
+          pay_transparency_required?: boolean | null
+          required_benefits?: string[] | null
           resume_url?: string | null
+          skills?: string[] | null
           target_job_titles?: string[] | null
           updated_at?: string
         }
         Update: {
+          ai_transparency_required?: boolean | null
           bio?: string | null
           created_at?: string
           email?: string | null
           employer_company_id?: string | null
+          full_name?: string | null
           id?: string
           linkedin_url?: string | null
+          min_safety_score?: number | null
           min_salary?: number | null
+          pay_transparency_required?: boolean | null
+          required_benefits?: string[] | null
           resume_url?: string | null
+          skills?: string[] | null
           target_job_titles?: string[] | null
           updated_at?: string
         }
