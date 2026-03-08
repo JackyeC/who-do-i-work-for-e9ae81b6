@@ -61,12 +61,12 @@ export function OfferReviewResults({ review, onDelete, onRerun, deleting }: Offe
     );
   }
 
-  const termsByCategory = terms.reduce((acc: Record<string, any[]>, t: any) => {
+  const termsByCategory: Record<string, any[]> = terms.reduce((acc: Record<string, any[]>, t: any) => {
     const cat = t.category || "other";
     if (!acc[cat]) acc[cat] = [];
     acc[cat].push(t);
     return acc;
-  }, {});
+  }, {} as Record<string, any[]>);
 
   const categoryLabels: Record<string, string> = {
     compensation: "Compensation Terms",
