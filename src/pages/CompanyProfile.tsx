@@ -40,6 +40,7 @@ import { CompanyIntelligenceScanCard } from "@/components/CompanyIntelligenceSca
 import { ScanDebugPanel } from "@/components/ScanDebugPanel";
 import { SignalTimeline } from "@/components/SignalTimeline";
 import { WatchCompanyButton } from "@/components/WatchCompanyButton";
+import { ManualSignalEntry } from "@/components/ManualSignalEntry";
 import { useROIPipeline } from "@/hooks/use-roi-pipeline";
 import { TransparencyIndex } from "@/components/TransparencyIndex";
 import { supabase } from "@/integrations/supabase/client";
@@ -630,8 +631,9 @@ export default function CompanyProfile() {
               <TransparencyIndex categories={transparencyCategories} />
             </div>
 
-            {/* Signal Timeline */}
-            <div className="mb-6">
+            {/* Manual Signal Entry + Signal Timeline */}
+            <div className="mb-6 space-y-4">
+              <ManualSignalEntry companyId={dbCompany.id} companyName={dbCompany.name} />
               <SignalTimeline companyId={dbCompany.id} />
             </div>
 

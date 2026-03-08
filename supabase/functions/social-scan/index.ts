@@ -38,8 +38,12 @@ Deno.serve(async (req) => {
 
     // 1. Search for company social media & news
     const searchQueries = [
-      `${companyName} political stance statement social media 2024 2025`,
-      `${companyName} CEO executive public statement policy`,
+      `${companyName} political stance statement social media 2024 2025 2026`,
+      `${companyName} CEO executive public statement policy controversy`,
+      `"${companyName}" boycott protest backlash scandal controversy`,
+      `"${companyName}" employee fired laid off mass layoffs workforce cuts`,
+      `"${companyName}" discrimination lawsuit settlement EEOC civil rights`,
+      `"${companyName}" DOGE government efficiency federal workers`,
     ];
 
     // Add exec-specific queries
