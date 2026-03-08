@@ -102,13 +102,19 @@ export function CareerMappingView() {
   // Build lattice nodes from tracks
   const latticeNodes = (tracks || []).filter(t => (t as any).status !== "achieved").slice(0, 3);
 
-  const getMoveIcon = (idx: number) => {
-    const icons = [ArrowUp, ArrowUpRight, ArrowRightLeft];
-    return icons[idx % icons.length];
+  const getMoveIcon = (track: any) => {
+    const moveType = track.gap_analysis?.move_type;
+    if (moveType === "upward") return ArrowUp;
+    if (moveType === "diagonal") return ArrowUpRight;
+    if (moveType === "lateral") return ArrowRightLeft;
+    return ArrowUpRight;
   };
-  const getMoveLabel = (idx: number) => {
-    const labels = ["Upward", "Diagonal", "Lateral"];
-    return labels[idx % labels.length];
+  const getMoveLabel = (track: any) => {
+    const moveType = track.gap_analysis?.move_type;
+    if (moveType === "upward") return "Upward";
+    if (moveType === "diagonal") return "Diagonal";
+    if (moveType === "lateral") return "Lateral";
+    return "Exploring";
   };
 
   if (tracksLoading) {
