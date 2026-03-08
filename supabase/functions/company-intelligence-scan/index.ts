@@ -457,6 +457,8 @@ Deno.serve(async (req) => {
       totalSourcesScanned: totalSources,
       totalSignalsFound: totalSignals,
       warnings,
+      entityResolution: resolutionLog,
+      searchNamesUsed: searchNames.length,
     }), { headers: { ...corsHeaders, 'Content-Type': 'application/json' } });
 
   } catch (error) {
