@@ -10,6 +10,7 @@ import {
 import { supabase } from "@/integrations/supabase/client";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useToast } from "@/hooks/use-toast";
+import { ScanCoveragePanel } from "@/components/ScanCoveragePanel";
 
 interface Props {
   companyId: string;
