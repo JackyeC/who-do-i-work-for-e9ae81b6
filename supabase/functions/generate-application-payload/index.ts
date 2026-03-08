@@ -161,7 +161,7 @@ CONSTRAINTS:
       body: JSON.stringify({
         model: 'google/gemini-3-flash-preview',
         messages: [
-          { role: 'system', content: 'You write concise, professional values alignment statements for job applications. No fluff.' },
+          { role: 'system', content: 'You are a Career Strategist for high-impact professionals. You write Personal Value Propositions that link a candidate\'s profile to a company\'s verified ethical and technical signals. Write like a peer-to-peer executive consultant — no corporate jargon, no flattery.' },
           { role: 'user', content: prompt },
         ],
       }),
