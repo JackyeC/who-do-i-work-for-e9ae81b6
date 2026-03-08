@@ -8,7 +8,9 @@ import { AlignedJobsList } from "@/components/jobs/AlignedJobsList";
 import { PreferenceCenter } from "@/components/jobs/PreferenceCenter";
 import { UserProfileForm } from "@/components/jobs/UserProfileForm";
 import { TrackingDashboard } from "@/components/jobs/TrackingDashboard";
-import { Briefcase, Settings, User, LayoutDashboard } from "lucide-react";
+import { AutoApplySettings } from "@/components/jobs/AutoApplySettings";
+import { ApplyQueueDashboard } from "@/components/jobs/ApplyQueueDashboard";
+import { Briefcase, Settings, User, LayoutDashboard, Zap } from "lucide-react";
 
 export default function JobDashboard() {
   const { user, loading } = useAuth();
@@ -36,6 +38,10 @@ export default function JobDashboard() {
               <Briefcase className="w-4 h-4" />
               Aligned Jobs
             </TabsTrigger>
+            <TabsTrigger value="auto-apply" className="gap-1.5">
+              <Zap className="w-4 h-4" />
+              Auto-Apply
+            </TabsTrigger>
             <TabsTrigger value="tracker" className="gap-1.5">
               <LayoutDashboard className="w-4 h-4" />
               My Applications
@@ -52,6 +58,12 @@ export default function JobDashboard() {
 
           <TabsContent value="matches">
             <AlignedJobsList />
+          </TabsContent>
+          <TabsContent value="auto-apply">
+            <div className="space-y-6">
+              <AutoApplySettings />
+              <ApplyQueueDashboard />
+            </div>
           </TabsContent>
           <TabsContent value="tracker">
             <TrackingDashboard />
