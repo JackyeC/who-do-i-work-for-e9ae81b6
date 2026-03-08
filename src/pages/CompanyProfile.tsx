@@ -38,6 +38,7 @@ import { HiringTransparencyCard } from "@/components/HiringTransparencyCard";
 import { CompensationTransparencyCard } from "@/components/CompensationTransparencyCard";
 import { CompanyIntelligenceScanCard } from "@/components/CompanyIntelligenceScanCard";
 import { ScanDebugPanel } from "@/components/ScanDebugPanel";
+import { MonitoredPagesPanel } from "@/components/MonitoredPagesPanel";
 import { SignalTimeline } from "@/components/SignalTimeline";
 import { WatchCompanyButton } from "@/components/WatchCompanyButton";
 import { ManualSignalEntry } from "@/components/ManualSignalEntry";
