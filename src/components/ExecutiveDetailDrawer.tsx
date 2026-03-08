@@ -2,7 +2,7 @@ import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetDescription } from "
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { ExternalLink, User, ArrowRight, Linkedin, Globe, Search, Sparkles, Loader2, ChevronDown, ChevronUp } from "lucide-react";
+import { ExternalLink, User, ArrowRight, Linkedin, Globe, Search, Sparkles, Loader2, ChevronDown, ChevronUp, MapPin } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { formatCurrency } from "@/data/sampleData";
 import { supabase } from "@/integrations/supabase/client";
@@ -129,18 +129,65 @@ export function ExecutiveDetailDrawer({ open, onOpenChange, executive, companyNa
           </CardContent>
         </Card>
 
+        {/* Party breakdown summary */}
+        {recipients && recipients.length > 0 && (
+          <Card className="mb-4">
+            <CardContent className="p-4">
+              <p className="text-xs font-semibold text-foreground uppercase tracking-wide mb-2">Party Breakdown</p>
+              {(() => {
+                const partyTotals = recipients.reduce((acc, r) => {
+                  const p = r.party || "Unknown";
+                  acc[p] = (acc[p] || 0) + (r.amount || 0);
+                  return acc;
+                }, {} as Record<string, number>);
+                const sorted = Object.entries(partyTotals).sort((a, b) => b[1] - a[1]);
+                const total = sorted.reduce((s, [, v]) => s + v, 0);
+                return (
+                  <div className="space-y-2">
+                    {sorted.map(([party, amount]) => (
+                      <div key={party}>
+                        <div className="flex justify-between text-xs mb-0.5">
+                          <span className={cn(
+                            "font-medium",
+                            party === "Republican" && "text-destructive",
+                            party === "Democrat" && "text-primary",
+                            party !== "Republican" && party !== "Democrat" && "text-muted-foreground"
+                          )}>{party}</span>
+                          <span className="text-foreground font-medium">{formatCurrency(amount)}</span>
+                        </div>
+                        <div className="h-1.5 bg-muted rounded-full overflow-hidden">
+                          <div
+                            className={cn(
+                              "h-full rounded-full",
+                              party === "Republican" && "bg-destructive",
+                              party === "Democrat" && "bg-primary",
+                              party !== "Republican" && party !== "Democrat" && "bg-muted-foreground"
+                            )}
+                            style={{ width: `${total > 0 ? (amount / total) * 100 : 0}%` }}
+                          />
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                );
+              })()}
+            </CardContent>
+          </Card>
+        )}
+
         {/* Recipients with impact drill-down */}
         <div className="mb-4">
           <p className="text-sm font-semibold text-foreground mb-1">Where the Money Goes</p>
-          <p className="text-xs text-muted-foreground mb-3">Click any recipient to see what they vote for and support.</p>
+          <p className="text-xs text-muted-foreground mb-3">Sorted by amount. Click any recipient to see what they vote for.</p>
           {isLoading ? (
             <LoadingState message="Loading recipients..." />
           ) : recipients && recipients.length > 0 ? (
             <div className="space-y-2">
-              {recipients.map((r) => {
+              {recipients.map((r, idx) => {
                 const isExpanded = expandedRecipient === r.name;
                 const summary = recipientSummaries[r.name];
                 const isLoadingThis = loadingRecipient === r.name;
+                const stateDisplay = r.state || (r as any).district ? `${r.state || ""}${(r as any).district ? `, Dist. ${(r as any).district}` : ""}` : null;
 
                 return (
                   <div key={r.id} className="rounded-lg border border-border overflow-hidden">
@@ -148,23 +195,34 @@ export function ExecutiveDetailDrawer({ open, onOpenChange, executive, companyNa
                       onClick={() => fetchRecipientImpact(r.name, r.party)}
                       className="w-full flex items-center justify-between p-3 bg-muted/50 hover:bg-primary/5 transition-colors text-left"
                     >
-                      <div className="flex items-center gap-3 min-w-0">
-                        <div className="min-w-0">
-                          <span className="font-medium text-sm text-foreground">{r.name}</span>
-                          <Badge
-                            variant="outline"
-                            className={cn(
-                              "ml-2 text-xs",
-                              r.party === "Republican" && "border-destructive/50 text-destructive",
-                              r.party === "Democrat" && "border-primary/50 text-primary"
+                      <div className="flex items-center gap-2 min-w-0 flex-1">
+                        <span className="text-xs text-muted-foreground font-mono w-5 shrink-0">#{idx + 1}</span>
+                        <div className="min-w-0 flex-1">
+                          <div className="flex items-center gap-1.5 flex-wrap">
+                            <span className="font-medium text-sm text-foreground">{r.name}</span>
+                            <Badge
+                              variant="outline"
+                              className={cn(
+                                "text-[10px] px-1.5 py-0",
+                                r.party === "Republican" && "border-destructive/50 text-destructive",
+                                r.party === "Democrat" && "border-primary/50 text-primary"
+                              )}
+                            >
+                              {r.party === "Republican" ? "R" : r.party === "Democrat" ? "D" : r.party}
+                            </Badge>
+                            {stateDisplay && (
+                              <span className="text-[10px] text-muted-foreground flex items-center gap-0.5">
+                                <MapPin className="w-2.5 h-2.5" />{stateDisplay}
+                              </span>
                             )}
-                          >
-                            {r.party}
-                          </Badge>
+                          </div>
+                          {(r as any).committee_name && (
+                            <p className="text-[10px] text-muted-foreground mt-0.5 truncate">{(r as any).committee_name}</p>
+                          )}
                         </div>
                       </div>
                       <div className="flex items-center gap-2 shrink-0">
-                        <span className="text-sm font-medium text-foreground">{formatCurrency(r.amount)}</span>
+                        <span className="text-sm font-bold text-foreground">{formatCurrency(r.amount)}</span>
                         {isExpanded ? <ChevronUp className="w-4 h-4 text-muted-foreground" /> : <ChevronDown className="w-4 h-4 text-muted-foreground" />}
                       </div>
                     </button>
