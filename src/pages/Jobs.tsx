@@ -43,6 +43,31 @@ export default function Jobs() {
     },
   });
 
+  // Fetch signal flags for companies (benefits, hiring tech, sentiment, influence)
+  const { data: signalFlags } = useQuery({
+    queryKey: ["company-signal-flags"],
+    queryFn: async () => {
+      const flags: Record<string, string[]> = {};
+      const [benefits, hiringTech, sentiment, influence] = await Promise.all([
+        supabase.from("company_signal_scans").select("company_id").eq("signal_category", "worker_benefits").limit(500),
+        supabase.from("ai_hiring_signals").select("company_id").limit(500),
+        supabase.from("company_signal_scans").select("company_id").eq("signal_category", "worker_sentiment").limit(500),
+        supabase.from("company_candidates").select("company_id").limit(500),
+      ]);
+      const addFlag = (rows: any[] | null, flag: string) => {
+        (rows || []).forEach((r: any) => {
+          if (!flags[r.company_id]) flags[r.company_id] = [];
+          if (!flags[r.company_id].includes(flag)) flags[r.company_id].push(flag);
+        });
+      };
+      addFlag(benefits.data, "benefits");
+      addFlag(hiringTech.data, "hiring_tech");
+      addFlag(sentiment.data, "sentiment");
+      addFlag(influence.data, "influence");
+      return flags;
+    },
+  });
+
   const { data: valuesSignals } = useQuery({
     queryKey: ["company-values-signals", valuesFilters],
     queryFn: async () => {
@@ -248,11 +273,13 @@ export default function Jobs() {
                 {filtered?.map((job: any) => {
                   const company = job.companies;
                   const companyValueSignals = valuesSignals?.[company?.id] || [];
+                  const companySignals = signalFlags?.[company?.id] || [];
                   return (
                     <JobListRow
                       key={job.id}
                       job={job}
                       companyValueSignals={companyValueSignals}
+                      companySignalFlags={companySignals}
                       isSelected={selectedJob?.id === job.id}
                       onClick={() => setSelectedJob(job)}
                     />

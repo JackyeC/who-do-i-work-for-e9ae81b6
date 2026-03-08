@@ -4,6 +4,7 @@ import { JobMatchBadge } from "./JobMatchBadge";
 import { VALUE_CATEGORIES } from "@/components/ValuesPreferenceSidebar";
 import {
   Building2, MapPin, Wifi, Monitor, Home, DollarSign,
+  Bot, Heart, MessageSquare, Landmark,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 
@@ -20,15 +21,24 @@ const SOURCE_LABELS: Record<string, string> = {
   custom: "Careers Page",
 };
 
+/** Signal indicator pills — neutral detection language */
+const SIGNAL_INDICATORS = [
+  { key: "benefits", label: "Benefits", icon: Heart, className: "text-[hsl(var(--civic-green))]" },
+  { key: "hiring_tech", label: "Hiring Tech", icon: Bot, className: "text-[hsl(var(--civic-blue))]" },
+  { key: "sentiment", label: "Sentiment", icon: MessageSquare, className: "text-[hsl(var(--civic-yellow))]" },
+  { key: "influence", label: "Influence", icon: Landmark, className: "text-muted-foreground" },
+];
+
 interface JobListRowProps {
   job: any;
   companyValueSignals?: any[];
+  companySignalFlags?: string[];
   matchScore?: number;
   isSelected?: boolean;
   onClick: () => void;
 }
 
-export function JobListRow({ job, companyValueSignals = [], matchScore, isSelected, onClick }: JobListRowProps) {
+export function JobListRow({ job, companyValueSignals = [], companySignalFlags = [], matchScore, isSelected, onClick }: JobListRowProps) {
   const company = job.companies;
   const WorkModeIcon = job.work_mode ? WORK_MODE_ICONS[job.work_mode] : null;
 
@@ -70,10 +80,10 @@ export function JobListRow({ job, companyValueSignals = [], matchScore, isSelect
             )}
           </div>
 
-          {/* Salary + badges row */}
+          {/* Salary + signal indicators + values badges */}
           <div className="flex flex-wrap items-center gap-1.5 mt-1.5">
             {job.salary_range && (
-              <span className="text-xs font-medium text-civic-green flex items-center gap-0.5">
+              <span className="text-xs font-medium text-[hsl(var(--civic-green))] flex items-center gap-0.5">
                 <DollarSign className="w-3 h-3" />{job.salary_range}
               </span>
             )}
@@ -82,6 +92,18 @@ export function JobListRow({ job, companyValueSignals = [], matchScore, isSelect
                 via {SOURCE_LABELS[job.source_platform] || job.source_platform}
               </Badge>
             )}
+            {/* Signal indicator badges */}
+            {SIGNAL_INDICATORS.map((sig) => {
+              if (!companySignalFlags.includes(sig.key)) return null;
+              const Icon = sig.icon;
+              return (
+                <Badge key={sig.key} variant="outline" className="text-[10px] gap-0.5">
+                  <Icon className={`w-3 h-3 ${sig.className}`} />
+                  {sig.label}
+                </Badge>
+              );
+            })}
+            {/* Value category badges */}
             {companyValueSignals.slice(0, 3).map((vs: any, idx: number) => {
               const cat = VALUE_CATEGORIES.find((c) => c.key === vs.value_category);
               if (!cat) return null;
@@ -102,10 +124,10 @@ export function JobListRow({ job, companyValueSignals = [], matchScore, isSelect
             className={cn(
               "w-9 h-9 rounded-full flex items-center justify-center text-xs font-bold border",
               (company?.civic_footprint_score || 0) >= 70
-                ? "bg-civic-green/15 border-civic-green/30 text-civic-green"
+                ? "bg-[hsl(var(--civic-green)/0.15)] border-[hsl(var(--civic-green)/0.3)] text-[hsl(var(--civic-green))]"
                 : (company?.civic_footprint_score || 0) >= 40
-                ? "bg-civic-yellow/15 border-civic-yellow/30 text-civic-yellow"
-                : "bg-civic-red/15 border-civic-red/30 text-civic-red"
+                ? "bg-[hsl(var(--civic-yellow)/0.15)] border-[hsl(var(--civic-yellow)/0.3)] text-[hsl(var(--civic-yellow))]"
+                : "bg-[hsl(var(--civic-red)/0.15)] border-[hsl(var(--civic-red)/0.3)] text-[hsl(var(--civic-red))]"
             )}
           >
             {company?.civic_footprint_score || 0}
