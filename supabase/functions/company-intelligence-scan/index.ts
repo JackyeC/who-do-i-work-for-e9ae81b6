@@ -205,16 +205,36 @@ Deno.serve(async (req) => {
         } else {
           const errText = await moduleResp.text().catch(() => 'Unknown error');
           failed++;
-          const errorType = moduleResp.status === 402 ? 'quota_exceeded' : moduleResp.status === 429 ? 'rate_limited' : moduleResp.status >= 500 ? 'server_error' : 'http_error';
+          
+          // Parse upstream error details if available
+          let parsedErr: any = {};
+          try { parsedErr = JSON.parse(errText); } catch { /* raw text */ }
+          
+          const upstreamErrorType = parsedErr.errorType || null;
+          const upstreamStatus = parsedErr.upstreamStatus || null;
+          const upstreamBody = parsedErr.upstreamBody || null;
+          
+          // Determine error type with granularity
+          const errorType = upstreamErrorType === 'failed_validation' ? 'failed_validation'
+            : upstreamErrorType === 'upstream_api_error' ? 'upstream_api_error'
+            : moduleResp.status === 402 ? 'quota_exceeded'
+            : moduleResp.status === 429 ? 'rate_limited'
+            : moduleResp.status === 422 ? 'failed_validation'
+            : moduleResp.status >= 500 ? 'server_error'
+            : 'http_error';
+
+          const errorMessage = parsedErr.error || `HTTP ${moduleResp.status}`;
 
           moduleStatuses[mod.key] = {
             status: 'failed', label: mod.label, phase: mod.phase,
-            error: `HTTP ${moduleResp.status}`, errorType,
+            error: errorMessage, errorType,
+            upstreamStatus: upstreamStatus || moduleResp.status,
+            upstreamBody: upstreamBody || errText.slice(0, 300),
             startedAt: moduleStartedAt, completedAt: moduleCompletedAt,
             sourcesScanned: 0, signalsFound: 0,
           };
-          warnings.push(`${mod.label} failed (HTTP ${moduleResp.status})`);
-          errorLog.push({ module: mod.key, status: moduleResp.status, errorType, error: errText.slice(0, 500), timestamp: moduleCompletedAt });
+          warnings.push(`${mod.label}: ${errorMessage}`);
+          errorLog.push({ module: mod.key, status: moduleResp.status, errorType, error: errorMessage, upstreamStatus, upstreamBody: (upstreamBody || errText).slice(0, 500), timestamp: moduleCompletedAt });
           console.error(`[intelligence-scan] ${mod.key} failed: HTTP ${moduleResp.status}`);
         }
       } catch (e) {
