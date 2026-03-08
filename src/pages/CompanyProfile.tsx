@@ -96,10 +96,10 @@ function DbLensModules({ activeLens, dbCompany, dbPartyBreakdown, dbCandidates, 
                 </div>
                 <div className="flex justify-center gap-4 mt-2">
                   {dbPartyBreakdown.map((p) => (
-                    <div key={p.party} className="flex items-center gap-1.5 text-xs">
+                    <button key={p.party} onClick={() => onPartyClick?.(p.party)} className="flex items-center gap-1.5 text-xs hover:underline cursor-pointer">
                       <div className="w-2.5 h-2.5 rounded-full" style={{ backgroundColor: p.color }} />
                       <span className="text-muted-foreground">{p.party}: {formatCurrency(p.amount)}</span>
-                    </div>
+                    </button>
                   ))}
                 </div>
               </CardContent>
