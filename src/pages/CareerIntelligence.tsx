@@ -99,7 +99,6 @@ export default function CareerIntelligence() {
           <TabsContent value="pathing" className="mt-6">
             <CareerMappingView />
           </TabsContent>
-          </TabsContent>
         </Tabs>
 
         {/* Data Wipe - always visible at bottom */}
