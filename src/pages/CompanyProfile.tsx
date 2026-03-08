@@ -9,6 +9,7 @@ import {
 } from "lucide-react";
 import { LensSelector } from "@/components/LensSelector";
 import { DataGlossary } from "@/components/DataGlossary";
+import { ExplainableMetric } from "@/components/ExplainableMetric";
 import { PlatformPhilosophy } from "@/components/PlatformPhilosophy";
 import { type LensId, getLens } from "@/lib/lensConfig";
 import { ShareableScorecard } from "@/components/ShareableScorecard";
@@ -213,9 +214,21 @@ function DbLensModules({ activeLens, dbCompany, dbPartyBreakdown, dbCandidates, 
         <CardHeader><CardTitle className="text-lg flex items-center gap-2"><Landmark className="w-5 h-5" /> Government ROI</CardTitle></CardHeader>
         <CardContent>
           <div className="grid sm:grid-cols-3 gap-4">
-            {dbCompany.government_contracts && <div className="text-center p-3 bg-muted/50 rounded-lg"><div className="text-xl font-bold text-foreground">{formatCurrency(dbCompany.government_contracts)}</div><div className="text-xs text-muted-foreground">Government Contracts</div></div>}
-            {dbCompany.subsidies_received && <div className="text-center p-3 bg-muted/50 rounded-lg"><div className="text-xl font-bold text-foreground">{formatCurrency(dbCompany.subsidies_received)}</div><div className="text-xs text-muted-foreground">Subsidies & Tax Breaks</div></div>}
-            {dbCompany.effective_tax_rate && <div className="text-center p-3 bg-muted/50 rounded-lg"><div className="text-xl font-bold text-foreground">{dbCompany.effective_tax_rate}</div><div className="text-xs text-muted-foreground">Effective Tax Rate</div></div>}
+            {dbCompany.government_contracts && (
+              <ExplainableMetric metricKey="gov-contracts">
+                <div className="text-center p-3 bg-muted/50 rounded-lg"><div className="text-xl font-bold text-foreground">{formatCurrency(dbCompany.government_contracts)}</div><div className="text-xs text-muted-foreground">Government Contracts</div></div>
+              </ExplainableMetric>
+            )}
+            {dbCompany.subsidies_received && (
+              <ExplainableMetric metricKey="subsidies">
+                <div className="text-center p-3 bg-muted/50 rounded-lg"><div className="text-xl font-bold text-foreground">{formatCurrency(dbCompany.subsidies_received)}</div><div className="text-xs text-muted-foreground">Subsidies & Tax Breaks</div></div>
+              </ExplainableMetric>
+            )}
+            {dbCompany.effective_tax_rate && (
+              <ExplainableMetric metricKey="effective-tax-rate">
+                <div className="text-center p-3 bg-muted/50 rounded-lg"><div className="text-xl font-bold text-foreground">{dbCompany.effective_tax_rate}</div><div className="text-xs text-muted-foreground">Effective Tax Rate</div></div>
+              </ExplainableMetric>
+            )}
           </div>
         </CardContent>
       </Card>
@@ -580,50 +593,58 @@ export default function CompanyProfile() {
 
             {/* Summary Cards */}
             <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-10">
-              <Card className="overflow-hidden">
-                <CardContent className="p-5">
-                  <div className="flex items-center gap-2 text-caption text-muted-foreground mb-2">
-                    <Scale className="w-3.5 h-3.5" />
-                    Civic Footprint
-                  </div>
-                  <div className="text-3xl font-bold text-foreground mb-1" style={{ fontFamily: "'Source Serif 4', serif" }}>{dbCompany.civic_footprint_score}<span className="text-sm text-muted-foreground font-normal">/100</span></div>
-                  <CivicFootprintBadge score={dbCompany.civic_footprint_score} size="sm" />
-                </CardContent>
-              </Card>
-              <Card className="overflow-hidden">
-                <CardContent className="p-5">
-                  <div className="flex items-center gap-2 text-caption text-muted-foreground mb-2">
-                    <DollarSign className="w-3.5 h-3.5" />
-                    PAC Spending
-                  </div>
-                  <div className="text-3xl font-bold text-foreground" style={{ fontFamily: "'Source Serif 4', serif" }}>
-                    {dbCompany.total_pac_spending > 0 ? formatCurrency(dbCompany.total_pac_spending) : "None"}
-                  </div>
-                </CardContent>
-              </Card>
-              <Card className="overflow-hidden">
-                <CardContent className="p-5">
-                  <div className="flex items-center gap-2 text-caption text-muted-foreground mb-2">
-                    <Megaphone className="w-3.5 h-3.5" />
-                    Lobbying
-                  </div>
-                  <div className="text-3xl font-bold text-foreground" style={{ fontFamily: "'Source Serif 4', serif" }}>
-                    {dbCompany.lobbying_spend ? formatCurrency(dbCompany.lobbying_spend) : "None"}
-                  </div>
-                </CardContent>
-              </Card>
-              {(dbCompany.government_contracts || dbCompany.subsidies_received) && (
+              <ExplainableMetric metricKey="civic-footprint">
                 <Card className="overflow-hidden">
                   <CardContent className="p-5">
                     <div className="flex items-center gap-2 text-caption text-muted-foreground mb-2">
-                      <Landmark className="w-3.5 h-3.5" />
-                      Gov Contracts
+                      <Scale className="w-3.5 h-3.5" />
+                      Civic Footprint
+                    </div>
+                    <div className="text-3xl font-bold text-foreground mb-1" style={{ fontFamily: "'Source Serif 4', serif" }}>{dbCompany.civic_footprint_score}<span className="text-sm text-muted-foreground font-normal">/100</span></div>
+                    <CivicFootprintBadge score={dbCompany.civic_footprint_score} size="sm" />
+                  </CardContent>
+                </Card>
+              </ExplainableMetric>
+              <ExplainableMetric metricKey="pac-spending">
+                <Card className="overflow-hidden">
+                  <CardContent className="p-5">
+                    <div className="flex items-center gap-2 text-caption text-muted-foreground mb-2">
+                      <DollarSign className="w-3.5 h-3.5" />
+                      PAC Spending
                     </div>
                     <div className="text-3xl font-bold text-foreground" style={{ fontFamily: "'Source Serif 4', serif" }}>
-                      {dbCompany.government_contracts ? formatCurrency(dbCompany.government_contracts) : "—"}
+                      {dbCompany.total_pac_spending > 0 ? formatCurrency(dbCompany.total_pac_spending) : "None"}
                     </div>
                   </CardContent>
                 </Card>
+              </ExplainableMetric>
+              <ExplainableMetric metricKey="lobbying">
+                <Card className="overflow-hidden">
+                  <CardContent className="p-5">
+                    <div className="flex items-center gap-2 text-caption text-muted-foreground mb-2">
+                      <Megaphone className="w-3.5 h-3.5" />
+                      Lobbying
+                    </div>
+                    <div className="text-3xl font-bold text-foreground" style={{ fontFamily: "'Source Serif 4', serif" }}>
+                      {dbCompany.lobbying_spend ? formatCurrency(dbCompany.lobbying_spend) : "None"}
+                    </div>
+                  </CardContent>
+                </Card>
+              </ExplainableMetric>
+              {(dbCompany.government_contracts || dbCompany.subsidies_received) && (
+                <ExplainableMetric metricKey="gov-contracts">
+                  <Card className="overflow-hidden">
+                    <CardContent className="p-5">
+                      <div className="flex items-center gap-2 text-caption text-muted-foreground mb-2">
+                        <Landmark className="w-3.5 h-3.5" />
+                        Gov Contracts
+                      </div>
+                      <div className="text-3xl font-bold text-foreground" style={{ fontFamily: "'Source Serif 4', serif" }}>
+                        {dbCompany.government_contracts ? formatCurrency(dbCompany.government_contracts) : "—"}
+                      </div>
+                    </CardContent>
+                  </Card>
+                </ExplainableMetric>
               )}
             </div>
 
@@ -827,62 +848,72 @@ export default function CompanyProfile() {
 
           {/* ── Summary Cards ──────────────────────────────────────────── */}
           <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-5 gap-4 mb-8">
-            <Card>
-              <CardContent className="p-4">
-                <div className="flex items-center gap-2 text-xs text-muted-foreground mb-1">
-                  <Scale className="w-3.5 h-3.5" />
-                  Civic Footprint
-                </div>
-                <div className="text-2xl font-bold text-foreground">{company.civicFootprintScore}<span className="text-sm text-muted-foreground">/100</span></div>
-                <CivicFootprintBadge score={company.civicFootprintScore} size="sm" />
-              </CardContent>
-            </Card>
-            <Card>
-              <CardContent className="p-4">
-                <div className="flex items-center gap-2 text-xs text-muted-foreground mb-1">
-                  <DollarSign className="w-3.5 h-3.5" />
-                  PAC Spending
-                </div>
-                <div className="text-2xl font-bold text-foreground">
-                  {company.totalPacSpending > 0 ? formatCurrency(company.totalPacSpending) : "None"}
-                </div>
-                <p className="text-xs text-muted-foreground">Current cycle</p>
-              </CardContent>
-            </Card>
-            <Card>
-              <CardContent className="p-4">
-                <div className="flex items-center gap-2 text-xs text-muted-foreground mb-1">
-                  <Megaphone className="w-3.5 h-3.5" />
-                  Lobbying
-                </div>
-                <div className="text-2xl font-bold text-foreground">
-                  {company.lobbyingSpend ? formatCurrency(company.lobbyingSpend) : "None"}
-                </div>
-                <p className="text-xs text-muted-foreground">Annual</p>
-              </CardContent>
-            </Card>
-            <Card>
-              <CardContent className="p-4">
-                <div className="flex items-center gap-2 text-xs text-muted-foreground mb-1">
-                  <EyeOff className="w-3.5 h-3.5" />
-                  Indirect Influence
-                </div>
-                <div className="text-2xl font-bold text-foreground">
-                  {totalIndirectInfluence > 0 ? formatCurrency(totalIndirectInfluence) : "None"}
-                </div>
-                <p className="text-xs text-muted-foreground">Super PACs &amp; dark money</p>
-              </CardContent>
-            </Card>
-            <Card>
-              <CardContent className="p-4">
-                <div className="flex items-center gap-2 text-xs text-muted-foreground mb-1">
-                  <Flag className="w-3.5 h-3.5" />
-                  Risk Signals
-                </div>
-                <div className="text-2xl font-bold text-foreground">{company.flaggedOrgTies.length + flaggedCandidates.length + company.darkMoneyOrgs.length}</div>
-                <p className="text-xs text-muted-foreground">Flagged ties</p>
-              </CardContent>
-            </Card>
+            <ExplainableMetric metricKey="civic-footprint">
+              <Card>
+                <CardContent className="p-4">
+                  <div className="flex items-center gap-2 text-xs text-muted-foreground mb-1">
+                    <Scale className="w-3.5 h-3.5" />
+                    Civic Footprint
+                  </div>
+                  <div className="text-2xl font-bold text-foreground">{company.civicFootprintScore}<span className="text-sm text-muted-foreground">/100</span></div>
+                  <CivicFootprintBadge score={company.civicFootprintScore} size="sm" />
+                </CardContent>
+              </Card>
+            </ExplainableMetric>
+            <ExplainableMetric metricKey="pac-spending">
+              <Card>
+                <CardContent className="p-4">
+                  <div className="flex items-center gap-2 text-xs text-muted-foreground mb-1">
+                    <DollarSign className="w-3.5 h-3.5" />
+                    PAC Spending
+                  </div>
+                  <div className="text-2xl font-bold text-foreground">
+                    {company.totalPacSpending > 0 ? formatCurrency(company.totalPacSpending) : "None"}
+                  </div>
+                  <p className="text-xs text-muted-foreground">Current cycle</p>
+                </CardContent>
+              </Card>
+            </ExplainableMetric>
+            <ExplainableMetric metricKey="lobbying">
+              <Card>
+                <CardContent className="p-4">
+                  <div className="flex items-center gap-2 text-xs text-muted-foreground mb-1">
+                    <Megaphone className="w-3.5 h-3.5" />
+                    Lobbying
+                  </div>
+                  <div className="text-2xl font-bold text-foreground">
+                    {company.lobbyingSpend ? formatCurrency(company.lobbyingSpend) : "None"}
+                  </div>
+                  <p className="text-xs text-muted-foreground">Annual</p>
+                </CardContent>
+              </Card>
+            </ExplainableMetric>
+            <ExplainableMetric metricKey="indirect-influence">
+              <Card>
+                <CardContent className="p-4">
+                  <div className="flex items-center gap-2 text-xs text-muted-foreground mb-1">
+                    <EyeOff className="w-3.5 h-3.5" />
+                    Indirect Influence
+                  </div>
+                  <div className="text-2xl font-bold text-foreground">
+                    {totalIndirectInfluence > 0 ? formatCurrency(totalIndirectInfluence) : "None"}
+                  </div>
+                  <p className="text-xs text-muted-foreground">Super PACs &amp; dark money</p>
+                </CardContent>
+              </Card>
+            </ExplainableMetric>
+            <ExplainableMetric metricKey="risk-signals">
+              <Card>
+                <CardContent className="p-4">
+                  <div className="flex items-center gap-2 text-xs text-muted-foreground mb-1">
+                    <Flag className="w-3.5 h-3.5" />
+                    Risk Signals
+                  </div>
+                  <div className="text-2xl font-bold text-foreground">{company.flaggedOrgTies.length + flaggedCandidates.length + company.darkMoneyOrgs.length}</div>
+                  <p className="text-xs text-muted-foreground">Flagged ties</p>
+                </CardContent>
+              </Card>
+            </ExplainableMetric>
           </div>
 
           {/* Data Glossary */}
