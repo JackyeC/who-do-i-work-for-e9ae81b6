@@ -220,7 +220,7 @@ Deno.serve(async (req) => {
         signal_type: 'pac_recipients_in_congress',
         signal_value: `${matches.length} current members of Congress received ${companyName} PAC funds`,
         confidence_level: 'direct',
-        source_url: `https://www.opensecrets.org/orgs/summary?id=${encodeURIComponent(companyName)}`,
+        source_url: `https://www.fec.gov/data/committee/${encodeURIComponent(companyName)}/?tab=spending`,
         raw_excerpt: JSON.stringify({
           total_matched: matches.length,
           party_breakdown: partyBreakdown,
