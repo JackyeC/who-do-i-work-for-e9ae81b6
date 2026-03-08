@@ -32,7 +32,6 @@ Deno.serve(async (req) => {
         { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
       );
     }
-
     if (!lovableKey) {
       return new Response(
         JSON.stringify({ success: false, error: 'AI gateway not configured' }),
@@ -42,8 +41,11 @@ Deno.serve(async (req) => {
 
     console.log(`Scraping jobs from: ${careersUrl} for company ${companyName || companyId}`);
 
-    // Step 1: Use Firecrawl to scrape the careers page
-    const scrapeResp = await fetch('https://api.firecrawl.dev/v1/scrape', {
+    // Step 1: Map the careers site to find individual job listing pages
+    let allMarkdown = '';
+
+    // First try to map the site for job-specific URLs
+    const mapResp = await fetch('https://api.firecrawl.dev/v1/map', {
       method: 'POST',
       headers: {
         'Authorization': `Bearer ${firecrawlKey}`,
@@ -51,49 +53,79 @@ Deno.serve(async (req) => {
       },
       body: JSON.stringify({
         url: careersUrl,
-        formats: ['markdown'],
-        onlyMainContent: true,
-        waitFor: 3000,
+        search: 'jobs careers positions openings apply',
+        limit: 30,
       }),
     });
 
-    if (!scrapeResp.ok) {
-      const errData = await scrapeResp.json();
-      console.error('Firecrawl error:', errData);
-      return new Response(
-        JSON.stringify({ success: false, error: `Firecrawl scrape failed: ${errData.error || scrapeResp.status}` }),
-        { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
-      );
+    let jobPageUrls: string[] = [];
+    if (mapResp.ok) {
+      const mapData = await mapResp.json();
+      const allLinks = mapData.links || [];
+      // Filter for links that look like individual job listings
+      jobPageUrls = allLinks.filter((url: string) => {
+        const lower = url.toLowerCase();
+        return (
+          lower.includes('/job') ||
+          lower.includes('/position') ||
+          lower.includes('/career') ||
+          lower.includes('/opening') ||
+          lower.includes('/apply') ||
+          lower.includes('/role') ||
+          lower.includes('/opportunity') ||
+          lower.includes('lever.co') ||
+          lower.includes('greenhouse.io') ||
+          lower.includes('workday.com') ||
+          lower.includes('ashbyhq.com') ||
+          lower.includes('boards.') ||
+          lower.includes('jobs.')
+        );
+      }).slice(0, 10);
+      console.log(`Map found ${allLinks.length} total links, ${jobPageUrls.length} look like job pages`);
     }
 
-    const scrapeData = await scrapeResp.json();
-    const markdown = scrapeData.data?.markdown || scrapeData.markdown || '';
+    // Step 2: Scrape the main careers page + up to 3 job sub-pages
+    const urlsToScrape = [careersUrl, ...jobPageUrls.slice(0, 3)];
+    
+    for (const url of urlsToScrape) {
+      try {
+        const scrapeResp = await fetch('https://api.firecrawl.dev/v1/scrape', {
+          method: 'POST',
+          headers: {
+            'Authorization': `Bearer ${firecrawlKey}`,
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            url,
+            formats: ['markdown'],
+            onlyMainContent: true,
+            waitFor: 5000,
+          }),
+        });
 
-    if (!markdown || markdown.length < 50) {
-      console.log('No meaningful content scraped, trying map + crawl approach');
-      // Try mapping the careers URL to find job listing pages
-      const mapResp = await fetch('https://api.firecrawl.dev/v1/map', {
-        method: 'POST',
-        headers: {
-          'Authorization': `Bearer ${firecrawlKey}`,
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          url: careersUrl,
-          search: 'jobs careers positions openings',
-          limit: 20,
-        }),
-      });
-
-      if (mapResp.ok) {
-        const mapData = await mapResp.json();
-        const jobUrls = (mapData.links || []).slice(0, 5);
-        console.log(`Found ${jobUrls.length} potential job pages`);
+        if (scrapeResp.ok) {
+          const scrapeData = await scrapeResp.json();
+          const md = scrapeData.data?.markdown || scrapeData.markdown || '';
+          if (md.length > 50) {
+            allMarkdown += `\n\n--- PAGE: ${url} ---\n${md}`;
+          }
+        }
+      } catch (e) {
+        console.warn(`Failed to scrape ${url}:`, e);
       }
     }
 
-    // Step 2: Use AI to extract structured job data from the scraped content
-    const truncatedContent = markdown.slice(0, 15000);
+    if (!allMarkdown || allMarkdown.length < 100) {
+      console.log('No meaningful content scraped from any pages');
+      return new Response(JSON.stringify({
+        success: true,
+        message: 'No content found on career pages',
+        jobsAdded: 0,
+      }), { headers: { ...corsHeaders, 'Content-Type': 'application/json' } });
+    }
+
+    // Step 3: Use AI to extract structured job data
+    const truncatedContent = allMarkdown.slice(0, 20000);
 
     const aiResp = await fetch('https://ai.gateway.lovable.dev/v1/chat/completions', {
       method: 'POST',
@@ -106,16 +138,23 @@ Deno.serve(async (req) => {
         messages: [
           {
             role: 'system',
-            content: 'You extract structured job listings from career page content. Return only valid JSON.'
+            content: `You extract REAL job listings from career page content. Return only valid JSON.
+
+CRITICAL RULES:
+- Only extract ACTUAL job openings with specific titles (e.g. "Senior Software Engineer", "Marketing Manager")
+- DO NOT include generic page elements like "Join our mission", "See open roles", "Apply now", "Learn more"
+- DO NOT include department headers or team names as job titles
+- Each job must have a specific, real job title that someone would apply for
+- If no real job listings are found, return an empty array []`
           },
           {
             role: 'user',
-            content: `Extract job listings from this careers page content for "${companyName || 'this company'}". 
+            content: `Extract REAL job listings from these career pages for "${companyName || 'this company'}". 
 
-Return a JSON array of jobs with this structure:
+Return a JSON array:
 [
   {
-    "title": "Job Title",
+    "title": "Specific Job Title",
     "department": "Engineering",
     "location": "City, State or Remote",
     "employment_type": "full-time|part-time|contract|internship",
@@ -125,7 +164,7 @@ Return a JSON array of jobs with this structure:
   }
 ]
 
-Extract up to 25 jobs. If no jobs are found, return an empty array [].
+Remember: Only REAL job titles. No generic text. Up to 50 jobs max. Empty array [] if none found.
 
 Content:
 ${truncatedContent}`
@@ -155,21 +194,33 @@ ${truncatedContent}`
       jobs = [];
     }
 
-    console.log(`Extracted ${jobs.length} jobs for ${companyName}`);
+    // Filter out obvious non-jobs
+    const genericPhrases = [
+      'join our', 'see open', 'apply now', 'learn more', 'view all',
+      'our mission', 'our team', 'our culture', 'why work', 'benefits',
+      'about us', 'get started', 'sign up', 'contact us',
+    ];
+    jobs = jobs.filter((j: any) => {
+      if (!j.title || j.title.length < 4 || j.title.length > 120) return false;
+      const lower = j.title.toLowerCase();
+      return !genericPhrases.some(phrase => lower.includes(phrase));
+    });
+
+    console.log(`Extracted ${jobs.length} real jobs for ${companyName}`);
 
     if (jobs.length === 0) {
       return new Response(JSON.stringify({
         success: true,
-        message: 'No jobs found on the careers page',
+        message: 'No real job listings found on the careers page',
         jobsAdded: 0,
       }), { headers: { ...corsHeaders, 'Content-Type': 'application/json' } });
     }
 
-    // Step 3: Clear old jobs and insert new ones
+    // Step 4: Clear old jobs and insert new ones
     await supabase.from('company_jobs').delete().eq('company_id', companyId);
 
     const { error: insertErr } = await supabase.from('company_jobs').insert(
-      jobs.slice(0, 25).map((j: any) => ({
+      jobs.slice(0, 50).map((j: any) => ({
         company_id: companyId,
         title: j.title,
         department: j.department || null,
