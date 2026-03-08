@@ -10,7 +10,7 @@ import { UserProfileForm } from "@/components/jobs/UserProfileForm";
 import { TrackingDashboard } from "@/components/jobs/TrackingDashboard";
 import { AutoApplySettings } from "@/components/jobs/AutoApplySettings";
 import { ApplyQueueDashboard } from "@/components/jobs/ApplyQueueDashboard";
-import { UserAlerts } from "@/components/UserAlerts";
+import { UserAlertsList } from "@/components/UserAlerts";
 import {
   ClipboardCheck, Bookmark, Bell, Briefcase, LayoutDashboard,
   Settings, User, Zap, Map
