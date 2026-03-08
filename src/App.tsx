@@ -25,6 +25,9 @@ import OfferReview from "./pages/OfferReview";
 import MyOfferReviews from "./pages/MyOfferReviews";
 import SignalAlerts from "./pages/SignalAlerts";
 import CareerIntelligence from "./pages/CareerIntelligence";
+import Check from "./pages/Check";
+import CareerMap from "./pages/CareerMap";
+import Dashboard from "./pages/Dashboard";
 
 const queryClient = new QueryClient();
 
@@ -37,6 +40,7 @@ const App = () => (
         <BrowserRouter>
           <Routes>
             <Route path="/" element={<Index />} />
+            <Route path="/check" element={<Check />} />
             <Route path="/company/:id" element={<CompanyProfile />} />
             <Route path="/search" element={<SearchResults />} />
             <Route path="/browse" element={<Browse />} />
@@ -62,6 +66,16 @@ const App = () => (
               </ProtectedRoute>
             } />
             <Route path="/compare-offer-checks" element={<CompareOfferChecks />} />
+            <Route path="/dashboard" element={
+              <ProtectedRoute>
+                <Dashboard />
+              </ProtectedRoute>
+            } />
+            <Route path="/career-map" element={
+              <ProtectedRoute>
+                <CareerMap />
+              </ProtectedRoute>
+            } />
             <Route path="/job-dashboard" element={
               <ProtectedRoute>
                 <JobDashboard />

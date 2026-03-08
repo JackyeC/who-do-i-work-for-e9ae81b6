@@ -2,22 +2,21 @@ import { Link, useLocation } from "react-router-dom";
 import { cn } from "@/lib/utils";
 import { useAuth } from "@/contexts/AuthContext";
 import {
-  Search, Briefcase, Bookmark, LayoutDashboard, FileText,
+  Search, Briefcase, Bookmark, LayoutDashboard, Map,
   Settings, User, Sparkles, LogIn,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
 const NAV_ITEMS = [
-  { label: "Search Jobs", icon: Search, path: "/jobs", exact: true },
-  { label: "Matched Jobs", icon: Sparkles, path: "/job-dashboard", auth: true },
-  { label: "My Applications", icon: LayoutDashboard, path: "/job-dashboard?tab=tracker", auth: true },
-  { label: "Saved Jobs", icon: Bookmark, path: "/job-dashboard?tab=saved", auth: true },
-  { label: "Career Intel", icon: FileText, path: "/career-intelligence", auth: true },
+  { label: "Explore Jobs", icon: Search, path: "/jobs", exact: true },
+  { label: "Matched Jobs", icon: Sparkles, path: "/dashboard", auth: true },
+  { label: "My Applications", icon: LayoutDashboard, path: "/dashboard?tab=tracker", auth: true },
+  { label: "Career Map", icon: Map, path: "/career-map", auth: true },
 ];
 
 const SETTINGS_ITEMS = [
-  { label: "Signal Preferences", icon: Settings, path: "/job-dashboard?tab=preferences", auth: true },
-  { label: "My Profile", icon: User, path: "/job-dashboard?tab=profile", auth: true },
+  { label: "Preferences", icon: Settings, path: "/dashboard?tab=preferences", auth: true },
+  { label: "My Profile", icon: User, path: "/dashboard?tab=profile", auth: true },
 ];
 
 export function JobSidebar() {
