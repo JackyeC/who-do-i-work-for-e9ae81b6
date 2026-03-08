@@ -42,6 +42,8 @@ import { MonitoredPagesPanel } from "@/components/MonitoredPagesPanel";
 import { SignalTimeline } from "@/components/SignalTimeline";
 import { WatchCompanyButton } from "@/components/WatchCompanyButton";
 import { ManualSignalEntry } from "@/components/ManualSignalEntry";
+import { CandidateDetailDrawer } from "@/components/CandidateDetailDrawer";
+import { ExecutiveDetailDrawer } from "@/components/ExecutiveDetailDrawer";
 import { WarnTrackerCard } from "@/components/WarnTrackerCard";
 import { MonitoringStatusCard } from "@/components/MonitoringStatusCard";
 import { useROIPipeline } from "@/hooks/use-roi-pipeline";
