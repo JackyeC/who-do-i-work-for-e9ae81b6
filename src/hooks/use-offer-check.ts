@@ -176,9 +176,28 @@ export function useOfferCheck(companyId?: string) {
     if (company.parent_company) overviewSignals.push({ type: "Parent Company", description: `Parent company: ${company.parent_company}`, confidence: "Direct Source" });
     overviewSignals.push({ type: "Data Confidence", description: `Overall confidence rating: ${company.confidence_rating}`, confidence: mapConfidence(company.confidence_rating) });
   }
+  // Enrich overview with corporate structure data
+  const registeredEntities = (corporateStructure || []).filter((s: any) => s.entity_type === 'registered_entity');
+  if (registeredEntities.length > 0) {
+    const primaryEntity = registeredEntities[0];
+    if (primaryEntity.jurisdiction) overviewSignals.push({ type: "Jurisdiction", description: `Registered in: ${primaryEntity.jurisdiction}`, confidence: "Direct Source", sourceUrl: primaryEntity.source_url, detectionMethod: "opencorporates" });
+    if (primaryEntity.registration_number) overviewSignals.push({ type: "Registration", description: `Company number: ${primaryEntity.registration_number}`, confidence: "Direct Source", sourceUrl: primaryEntity.source_url, detectionMethod: "opencorporates" });
+    if (primaryEntity.status) overviewSignals.push({ type: "Entity Status", description: `Registration status: ${primaryEntity.status}`, confidence: "Direct Source", sourceUrl: primaryEntity.source_url });
+  }
   sections.push({ id: "overview", title: "Company Overview", signals: overviewSignals, stale: false, hasData: overviewSignals.length > 0 });
 
-  // 2. Influence Signals
+  // 2. Corporate Structure Signals
+  const structureSignals: OfferCheckSignal[] = [];
+  (corporateStructure || []).forEach((s: any) => {
+    if (s.entity_type === 'officer') {
+      structureSignals.push({ type: "Director/Officer", description: `${s.officer_name} — ${s.officer_role}`, confidence: mapConfidence(s.confidence), sourceUrl: s.source_url, evidenceText: s.evidence_text, detectedAt: s.detected_at, lastVerified: s.last_verified_at, detectionMethod: "opencorporates" });
+    } else if (s.entity_type !== 'registered_entity' || registeredEntities.indexOf(s) > 0) {
+      structureSignals.push({ type: s.entity_type === 'registered_entity' ? "Related Entity" : s.entity_type, description: `${s.entity_name}${s.jurisdiction ? ` (${s.jurisdiction})` : ''}${s.status ? ` — ${s.status}` : ''}`, confidence: mapConfidence(s.confidence), sourceUrl: s.source_url, evidenceText: s.evidence_text, detectedAt: s.detected_at, lastVerified: s.last_verified_at, detectionMethod: "opencorporates" });
+    }
+  });
+  sections.push({ id: "corporate-structure", title: "Corporate Structure Signals", signals: structureSignals, stale: false, hasData: structureSignals.length > 0 });
+
+  // 3. Influence Signals
   const influenceSignals: OfferCheckSignal[] = [];
   if (company?.total_pac_spending && company.total_pac_spending > 0) {
     influenceSignals.push({ type: "Corporate PAC", description: `Total PAC spending detected: $${company.total_pac_spending.toLocaleString()}`, confidence: "Direct Source", detectionMethod: "government filing" });
@@ -197,7 +216,21 @@ export function useOfferCheck(companyId?: string) {
   });
   sections.push({ id: "civic", title: "Influence Signals", signals: influenceSignals, stale: false, hasData: influenceSignals.length > 0 });
 
-  // 3. Hiring Technology & AI Use
+  // 4. Government Contracts & Public Money
+  const contractSignals: OfferCheckSignal[] = [];
+  agencyContracts?.forEach(c => {
+    contractSignals.push({
+      type: c.controversy_flag ? "Flagged Contract" : "Government Contract",
+      description: `${c.agency_name}${c.agency_acronym ? ` (${c.agency_acronym})` : ''}: ${c.contract_description || 'Contract awarded'}${c.contract_value ? ` — $${c.contract_value.toLocaleString()}` : ''}${c.fiscal_year ? ` (FY${c.fiscal_year})` : ''}`,
+      confidence: mapConfidence(c.confidence),
+      sourceUrl: c.source,
+      evidenceText: c.controversy_flag ? c.controversy_description || undefined : undefined,
+      detectionMethod: "government procurement",
+    });
+  });
+  sections.push({ id: "government-contracts", title: "Government Contracts & Public Money", signals: contractSignals, stale: false, hasData: contractSignals.length > 0 });
+
+  // 5. Hiring Technology & AI Use
   const hiringSignals: OfferCheckSignal[] = [];
   aiHr?.forEach((s: any) => {
     hiringSignals.push({ type: s.signal_category || "Hiring Tech", description: s.signal_type + (s.vendor_name ? ` (Vendor: ${s.vendor_name})` : ""), confidence: mapConfidence(s.confidence), sourceUrl: s.source_url, evidenceText: s.evidence_text, detectedAt: s.date_detected, lastVerified: s.last_verified, detectionMethod: s.detection_method });
@@ -205,21 +238,21 @@ export function useOfferCheck(companyId?: string) {
   const hiringStaleDates = (aiHr || []).map((s: any) => s.last_verified || s.date_detected);
   sections.push({ id: "hiring-tech", title: "Hiring Technology & AI Use Signals", signals: hiringSignals, stale: hiringStaleDates.length > 0 && hiringStaleDates.every(d => isStale(d)), hasData: hiringSignals.length > 0 });
 
-  // 4. Worker Benefits Signals
+  // 6. Worker Benefits Signals
   const benefitSignals: OfferCheckSignal[] = [];
   benefits?.forEach((s: any) => {
     benefitSignals.push({ type: "Worker Benefit", description: `${s.benefit_category}: ${s.benefit_type}`, confidence: mapConfidence(s.confidence), sourceUrl: s.source_url, evidenceText: s.evidence_text, detectedAt: s.date_detected, lastVerified: s.last_verified, detectionMethod: s.detection_method });
   });
   sections.push({ id: "worker-benefits", title: "Worker Benefits Signals", signals: benefitSignals, stale: benefitSignals.length > 0 && benefits?.every((s: any) => isStale(s.last_verified || s.date_detected)), hasData: benefitSignals.length > 0 });
 
-  // 5. Compensation Transparency Signals
+  // 7. Compensation Transparency Signals
   const compSignals: OfferCheckSignal[] = [];
   payEquity?.forEach((s: any) => {
     compSignals.push({ type: "Pay Equity", description: s.signal_type, confidence: mapConfidence(s.confidence), sourceUrl: s.source_url, evidenceText: s.evidence_text, detectedAt: s.date_detected, lastVerified: s.last_verified, detectionMethod: s.detection_method });
   });
   sections.push({ id: "compensation", title: "Compensation Transparency Signals", signals: compSignals, stale: compSignals.length > 0 && payEquity?.every((s: any) => isStale(s.last_verified || s.date_detected)), hasData: compSignals.length > 0 });
 
-  // 6. Worker Sentiment Signals
+  // 8. Worker Sentiment Signals
   const sentimentSignals: OfferCheckSignal[] = [];
   if (sentiment) {
     if (sentiment.overall_rating) sentimentSignals.push({ type: "Overall Rating", description: `Overall worker satisfaction: ${sentiment.overall_rating}/5`, confidence: "Multi-Source", detectedAt: sentiment.created_at, detectionMethod: "review aggregation" });
@@ -238,7 +271,24 @@ export function useOfferCheck(companyId?: string) {
   }
   sections.push({ id: "worker-sentiment", title: "Worker Sentiment Signals", signals: sentimentSignals, stale: sentiment ? isStale(sentiment.created_at) : false, hasData: sentimentSignals.length > 0 });
 
-  // 7. Organizational Affiliation Signals
+  // 9. Workplace Enforcement & Compliance
+  const enforcementSignals: OfferCheckSignal[] = [];
+  (workplaceEnforcement || []).forEach((s: any) => {
+    const dateStr = s.enforcement_date ? new Date(s.enforcement_date).toLocaleDateString() : '';
+    enforcementSignals.push({
+      type: s.signal_type?.replace(/_/g, ' ') || s.signal_category,
+      description: `${s.agency_name}: ${s.description || s.signal_type}${s.penalty_amount ? ` — Penalty: $${s.penalty_amount.toLocaleString()}` : ''}${s.employees_affected ? ` (${s.employees_affected} employees affected)` : ''}${dateStr ? ` (${dateStr})` : ''}`,
+      confidence: mapConfidence(s.confidence),
+      sourceUrl: s.source_url,
+      evidenceText: s.evidence_text,
+      detectedAt: s.detected_at,
+      lastVerified: s.last_verified_at,
+      detectionMethod: s.detection_method,
+    });
+  });
+  sections.push({ id: "workplace-enforcement", title: "Workplace Enforcement & Compliance", signals: enforcementSignals, stale: false, hasData: enforcementSignals.length > 0 });
+
+  // 10. Organizational Affiliation Signals
   const affiliationSignals: OfferCheckSignal[] = [];
   ideology?.forEach(f => {
     affiliationSignals.push({ type: f.category, description: `${f.relationship_type} with ${f.org_name}: ${f.description || 'Detected'}`, confidence: mapConfidence(f.confidence), sourceUrl: f.evidence_url, detectedAt: f.scan_date, detectionMethod: f.detected_by });
@@ -248,7 +298,7 @@ export function useOfferCheck(companyId?: string) {
   });
   sections.push({ id: "affiliations", title: "Organizational Affiliation Signals", signals: affiliationSignals, stale: false, hasData: affiliationSignals.length > 0 });
 
-  // 8. WARN Act Layoff Signals
+  // 11. WARN Act Layoff Signals
   const warnSignals: OfferCheckSignal[] = [];
   warnNotices?.forEach((n: any) => {
     const date = n.notice_date ? new Date(n.notice_date).toLocaleDateString() : "Unknown date";
@@ -264,7 +314,7 @@ export function useOfferCheck(companyId?: string) {
   });
   sections.push({ id: "warn-layoffs", title: "WARN Act Layoff Notices", signals: warnSignals, stale: false, hasData: warnSignals.length > 0 });
 
-  // 9. Public Statement vs Observed Signals
+  // 12. Public Statement vs Observed Signals
   const sayDoSignals: OfferCheckSignal[] = [];
   publicStances?.forEach(s => {
     sayDoSignals.push({ type: "Say-Do Gap", description: `${s.topic}: States "${s.public_position}" — Observed: "${s.spending_reality}" (Gap: ${s.gap})`, confidence: "Multi-Source" });
@@ -275,7 +325,7 @@ export function useOfferCheck(companyId?: string) {
   });
   sections.push({ id: "say-do", title: "Public Statement vs Observed Signals", signals: sayDoSignals, stale: false, hasData: sayDoSignals.length > 0 });
 
-  // 9. Confidence Rating summary
+  // 13. Confidence Rating summary
   const confidenceSignals: OfferCheckSignal[] = [];
   const directCount = sections.reduce((n, s) => n + s.signals.filter(sig => sig.confidence === "Direct Source").length, 0);
   const multiCount = sections.reduce((n, s) => n + s.signals.filter(sig => sig.confidence === "Multi-Source").length, 0);
@@ -287,10 +337,13 @@ export function useOfferCheck(companyId?: string) {
 
   const tiCategories = [
     { key: "civic-influence", label: "Civic Influence", hasSignals: influenceSignals.length > 0 },
+    { key: "corporate-structure", label: "Corporate Structure", hasSignals: structureSignals.length > 0 },
+    { key: "government-contracts", label: "Government Contracts", hasSignals: contractSignals.length > 0 },
     { key: "hiring-technology", label: "Hiring Technology", hasSignals: hiringSignals.length > 0 },
     { key: "worker-benefits", label: "Worker Benefits", hasSignals: benefitSignals.length > 0 },
     { key: "compensation-transparency", label: "Compensation Transparency", hasSignals: compSignals.length > 0 },
     { key: "worker-sentiment", label: "Worker Sentiment", hasSignals: sentimentSignals.length > 0 },
+    { key: "workplace-enforcement", label: "Workplace Enforcement", hasSignals: enforcementSignals.length > 0 },
     { key: "organizational-affiliation", label: "Organizational Affiliations", hasSignals: affiliationSignals.length > 0 },
     { key: "say-do-gap", label: "Public Statement vs Observed", hasSignals: sayDoSignals.length > 0 },
   ];
