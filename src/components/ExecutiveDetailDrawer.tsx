@@ -45,8 +45,14 @@ export function ExecutiveDetailDrawer({ open, onOpenChange, executive, companyNa
     <Sheet open={open} onOpenChange={onOpenChange}>
       <SheetContent className="sm:max-w-lg overflow-y-auto">
         <SheetHeader className="pb-4">
-          <SheetTitle className="flex items-center gap-2 text-xl">
-            <User className="w-5 h-5 text-primary" />
+          <SheetTitle className="flex items-center gap-3 text-xl">
+            {executive.photo_url ? (
+              <img src={executive.photo_url} alt={executive.name} className="w-12 h-12 rounded-full object-cover border-2 border-border/60 shrink-0" crossOrigin="anonymous" referrerPolicy="no-referrer" />
+            ) : (
+              <div className="w-12 h-12 rounded-full bg-muted flex items-center justify-center shrink-0 border-2 border-border/60">
+                <User className="w-6 h-6 text-muted-foreground/70" />
+              </div>
+            )}
             {executive.name}
           </SheetTitle>
           <SheetDescription>
