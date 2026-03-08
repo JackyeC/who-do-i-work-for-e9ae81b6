@@ -21,6 +21,8 @@ import OfferCheck from "./pages/OfferCheck";
 import MyOfferChecks from "./pages/MyOfferChecks";
 import CompareOfferChecks from "./pages/CompareOfferChecks";
 import JobDashboard from "./pages/JobDashboard";
+import OfferReview from "./pages/OfferReview";
+import MyOfferReviews from "./pages/MyOfferReviews";
 
 const queryClient = new QueryClient();
 
