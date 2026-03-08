@@ -346,27 +346,48 @@ export function ROIPipelineCard({
         {/* Linkage chain — show for results and partial */}
         {(state === "results" || state === "partial") && data.linkages.length > 0 && (
           <div className="mt-6 border-t border-border pt-4">
-            <div className="flex items-center gap-2 text-sm font-medium text-foreground mb-3">
+            <div className="flex items-center gap-2 text-sm font-medium text-foreground mb-4">
               <FileText className="w-4 h-4" />
               Connection Chain
               <Badge variant="secondary" className="text-xs ml-auto">{data.linkages.length} links</Badge>
             </div>
-            <div className="space-y-2">
-              {data.linkages.map((link, i) => (
-                <div key={i} className="flex items-start gap-3 text-xs">
-                  <div className="flex items-center gap-1 shrink-0 mt-0.5">
-                    <div className={cn(
-                      "w-2 h-2 rounded-full",
-                      link.confidence >= 0.8 ? "bg-primary" : link.confidence >= 0.5 ? "bg-accent-foreground" : "bg-destructive"
-                    )} />
-                    <span className="text-muted-foreground w-8">{(link.confidence * 100).toFixed(0)}%</span>
+            <div className="relative space-y-0">
+              {data.linkages.map((link, i) => {
+                const isHigh = link.confidence >= 0.8;
+                const isMed = link.confidence >= 0.5;
+                const confidenceColor = isHigh ? "text-primary" : isMed ? "text-yellow-500" : "text-destructive";
+                const confidenceBg = isHigh ? "bg-primary/10 border-primary/30" : isMed ? "bg-yellow-500/10 border-yellow-500/30" : "bg-destructive/10 border-destructive/30";
+                const confidenceLabel = isHigh ? "Verified" : isMed ? "Inferred" : "Unverified";
+                const dotColor = isHigh ? "bg-primary" : isMed ? "bg-yellow-500" : "bg-destructive";
+                const lineColor = isHigh ? "bg-primary/30" : isMed ? "bg-yellow-500/30" : "bg-destructive/30";
+                const isLast = i === data.linkages.length - 1;
+
+                return (
+                  <div key={i} className="flex gap-3">
+                    {/* Vertical timeline spine */}
+                    <div className="flex flex-col items-center shrink-0 w-5">
+                      <div className={cn("w-3 h-3 rounded-full mt-3.5 shrink-0 ring-2 ring-background", dotColor)} />
+                      {!isLast && <div className={cn("w-0.5 flex-1 min-h-[16px]", lineColor)} />}
+                    </div>
+
+                    {/* Card */}
+                    <div className={cn("flex-1 mb-2 p-3 rounded-lg border", confidenceBg)}>
+                      <div className="flex items-center gap-2 mb-1.5">
+                        <span className="text-sm font-semibold text-foreground">{link.source}</span>
+                        <ArrowRight className="w-3.5 h-3.5 text-muted-foreground shrink-0" />
+                        <span className="text-sm font-semibold text-foreground">{link.target}</span>
+                      </div>
+                      <p className="text-xs text-muted-foreground leading-relaxed">{link.description}</p>
+                      <div className="flex items-center gap-1.5 mt-2">
+                        <div className={cn("w-1.5 h-1.5 rounded-full", dotColor)} />
+                        <span className={cn("text-[10px] font-medium uppercase tracking-wider", confidenceColor)}>
+                          {confidenceLabel} · {(link.confidence * 100).toFixed(0)}%
+                        </span>
+                      </div>
+                    </div>
                   </div>
-                  <span className="text-foreground font-medium">{link.source}</span>
-                  <ArrowRight className="w-3 h-3 text-muted-foreground shrink-0 mt-0.5" />
-                  <span className="text-foreground font-medium">{link.target}</span>
-                  <span className="text-muted-foreground">— {link.description}</span>
-                </div>
-              ))}
+                );
+              })}
             </div>
           </div>
         )}
