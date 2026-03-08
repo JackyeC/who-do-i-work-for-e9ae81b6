@@ -16,7 +16,7 @@ import { Search, MapPin, Briefcase, Building2, ExternalLink, ArrowRight, Filter 
 
 export default function Jobs() {
   const [search, setSearch] = useState("");
-  const [minScore, setMinScore] = useState("0");
+  const [minScore, setMinScore] = useState("70");
   const [industryFilter, setIndustryFilter] = useState("all");
 
   const { data: jobs, isLoading } = useQuery({
