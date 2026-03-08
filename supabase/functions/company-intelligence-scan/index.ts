@@ -514,8 +514,13 @@ Deno.serve(async (req) => {
           body: { companyId, websiteUrl: guessedUrl },
         });
       }
+      // Also fetch executive headshots
+      console.log(`[intelligence-scan] Fetching executive photos for ${companyName}`);
+      await supabase.functions.invoke('fetch-executive-photos', {
+        body: { companyId, websiteUrl: companyCheck?.careers_url ? companyCheck.careers_url.replace(/\/careers.*$/i, '') : undefined, companyName },
+      });
     } catch (logoErr) {
-      console.warn('[intelligence-scan] Logo fetch failed (non-critical):', logoErr);
+      console.warn('[intelligence-scan] Logo/photo fetch failed (non-critical):', logoErr);
     }
 
     console.log(`[intelligence-scan] COMPLETE: ${companyName} - ${overallStatus} (${trulyCompleted}/${ALL_MODULES.length} completed, ${totalSignals} signals)`);
