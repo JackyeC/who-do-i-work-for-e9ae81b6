@@ -8,6 +8,7 @@ import {
   BarChart3, Loader2, Sparkles, Search, ClipboardCheck, CheckCircle2
 } from "lucide-react";
 import { LensSelector } from "@/components/LensSelector";
+import { DataGlossary } from "@/components/DataGlossary";
 import { PlatformPhilosophy } from "@/components/PlatformPhilosophy";
 import { type LensId, getLens } from "@/lib/lensConfig";
 import { ShareableScorecard } from "@/components/ShareableScorecard";
@@ -626,6 +627,11 @@ export default function CompanyProfile() {
               )}
             </div>
 
+            {/* Data Glossary */}
+            <div className="mb-8">
+              <DataGlossary />
+            </div>
+
             {/* Offer Check CTA */}
             <Card className="mb-8 border-primary/15 bg-gradient-to-r from-primary/[0.03] to-transparent">
               <CardContent className="p-5 flex items-center gap-5">
@@ -877,6 +883,11 @@ export default function CompanyProfile() {
                 <p className="text-xs text-muted-foreground">Flagged ties</p>
               </CardContent>
             </Card>
+          </div>
+
+          {/* Data Glossary */}
+          <div className="mb-8">
+            <DataGlossary />
           </div>
 
           {/* Lens Selector */}
