@@ -5,7 +5,7 @@ import { Badge } from "@/components/ui/badge";
 import { Progress } from "@/components/ui/progress";
 import {
   Radar, Loader2, CheckCircle2, XCircle, AlertTriangle, Clock,
-  Search, RefreshCw
+  Search, RefreshCw, CircleSlash, SkipForward
 } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
@@ -31,8 +31,10 @@ const statusIcon = (status: string) => {
   switch (status) {
     case 'completed_with_signals': return <CheckCircle2 className="w-3.5 h-3.5 text-primary" />;
     case 'completed_no_signals': return <CheckCircle2 className="w-3.5 h-3.5 text-muted-foreground" />;
+    case 'no_sources_found': return <CircleSlash className="w-3.5 h-3.5 text-[hsl(var(--civic-yellow))]" />;
     case 'failed': return <XCircle className="w-3.5 h-3.5 text-destructive" />;
     case 'in_progress': return <Loader2 className="w-3.5 h-3.5 animate-spin text-primary" />;
+    case 'skipped': return <SkipForward className="w-3.5 h-3.5 text-muted-foreground" />;
     case 'queued': return <Clock className="w-3.5 h-3.5 text-muted-foreground" />;
     default: return <Clock className="w-3.5 h-3.5 text-muted-foreground" />;
   }
@@ -41,11 +43,23 @@ const statusIcon = (status: string) => {
 const statusLabel = (status: string) => {
   switch (status) {
     case 'completed_with_signals': return 'Signals found';
-    case 'completed_no_signals': return 'No signals';
+    case 'completed_no_signals': return 'No signals detected';
+    case 'no_sources_found': return 'No sources found';
     case 'failed': return 'Failed';
     case 'in_progress': return 'Scanning...';
+    case 'skipped': return 'Skipped';
     case 'queued': return 'Queued';
     default: return 'Not run';
+  }
+};
+
+const statusBadgeClass = (status: string) => {
+  switch (status) {
+    case 'completed_with_signals': return 'bg-primary/10 text-primary border-primary/30';
+    case 'completed_no_signals': return 'bg-muted text-muted-foreground border-border';
+    case 'no_sources_found': return 'bg-yellow-500/10 text-yellow-600 border-yellow-500/30';
+    case 'failed': return 'bg-destructive/10 text-destructive border-destructive/30';
+    default: return 'bg-muted text-muted-foreground border-border';
   }
 };
 
@@ -70,25 +84,17 @@ export function CompanyIntelligenceScanCard({ companyId, companyName }: Props) {
     refetchInterval: isScanning ? 3000 : false,
   });
 
-  // If scan completed while polling, stop
   useEffect(() => {
     if (isScanning && latestScan?.scan_status && !['queued', 'in_progress'].includes(latestScan.scan_status)) {
       setIsScanning(false);
-      queryClient.invalidateQueries({ queryKey: ["ai-hr-signals"] });
-      queryClient.invalidateQueries({ queryKey: ["worker-benefit-signals"] });
-      queryClient.invalidateQueries({ queryKey: ["pay-equity-signals"] });
-      queryClient.invalidateQueries({ queryKey: ["worker-sentiment"] });
-      queryClient.invalidateQueries({ queryKey: ["ideology-flags"] });
-      queryClient.invalidateQueries({ queryKey: ["social-media-scans"] });
-      queryClient.invalidateQueries({ queryKey: ["agency-contracts"] });
-      queryClient.invalidateQueries({ queryKey: ["ai-accountability"] });
+      const keys = ["ai-hr-signals", "worker-benefit-signals", "pay-equity-signals", "worker-sentiment", "ideology-flags", "social-media-scans", "agency-contracts", "ai-accountability"];
+      keys.forEach(k => queryClient.invalidateQueries({ queryKey: [k] }));
     }
   }, [isScanning, latestScan?.scan_status, queryClient]);
 
   const runScan = async () => {
     setIsScanning(true);
     try {
-      // Run both the orchestrated scan AND the unified intelligence scan in parallel
       const [orchestrated, unified] = await Promise.allSettled([
         supabase.functions.invoke("company-intelligence-scan", {
           body: { companyId, companyName },
@@ -105,12 +111,12 @@ export function CompanyIntelligenceScanCard({ companyId, companyName }: Props) {
         throw new Error(orchResult.error.message || "Scan failed");
       }
 
-      const totalSignals = (orchResult?.data?.totalSignalsFound || 0) + 
+      const totalSignals = (orchResult?.data?.totalSignalsFound || 0) +
         (uniResult?.data?.results?.benefits || 0) + (uniResult?.data?.results?.aiHiring || 0);
-      
-      toast({ 
-        title: "Intelligence scan complete", 
-        description: `Found ${totalSignals} signals across all modules.${uniResult?.data?.results?.transparencyWarning ? ' ⚠️ Transparency warning flagged.' : ''}` 
+
+      toast({
+        title: "Intelligence scan complete",
+        description: `Found ${totalSignals} signals across all modules.`
       });
       queryClient.invalidateQueries({ queryKey: ["latest-scan-run", companyId] });
     } catch (e: any) {
@@ -121,27 +127,24 @@ export function CompanyIntelligenceScanCard({ companyId, companyName }: Props) {
       }
     } finally {
       setIsScanning(false);
-      queryClient.invalidateQueries({ queryKey: ["latest-scan-run", companyId] });
-      queryClient.invalidateQueries({ queryKey: ["ai-hr-signals"] });
-      queryClient.invalidateQueries({ queryKey: ["ai-hiring-signals"] });
-      queryClient.invalidateQueries({ queryKey: ["worker-benefit-signals"] });
-      queryClient.invalidateQueries({ queryKey: ["pay-equity-signals"] });
-      queryClient.invalidateQueries({ queryKey: ["worker-sentiment"] });
-      queryClient.invalidateQueries({ queryKey: ["ideology-flags"] });
-      queryClient.invalidateQueries({ queryKey: ["social-media-scans"] });
-      queryClient.invalidateQueries({ queryKey: ["agency-contracts"] });
-      queryClient.invalidateQueries({ queryKey: ["ai-accountability"] });
-      queryClient.invalidateQueries({ queryKey: ["roi-pipeline"] });
-      queryClient.invalidateQueries({ queryKey: ["influence-chain"] });
+      const allKeys = ["latest-scan-run", "ai-hr-signals", "ai-hiring-signals", "worker-benefit-signals", "pay-equity-signals", "worker-sentiment", "ideology-flags", "social-media-scans", "agency-contracts", "ai-accountability", "roi-pipeline", "influence-chain"];
+      allKeys.forEach(k => queryClient.invalidateQueries({ queryKey: k === "latest-scan-run" ? [k, companyId] : [k] }));
     }
   };
 
   const moduleStatuses = (latestScan?.module_statuses || {}) as Record<string, any>;
   const totalModules = Object.keys(MODULE_LABELS).length;
-  const completedCount = latestScan?.modules_completed || 0;
+
+  // Truthful counts: only count truly completed modules
+  const trulyCompletedCount = Object.values(moduleStatuses).filter(
+    (m: any) => m.status === 'completed_with_signals' || m.status === 'completed_no_signals'
+  ).length;
+  const failedCount = Object.values(moduleStatuses).filter((m: any) => m.status === 'failed').length;
+  const noSourcesCount = Object.values(moduleStatuses).filter((m: any) => m.status === 'no_sources_found').length;
+
   const progress = latestScan?.scan_status === 'in_progress'
-    ? Math.round((completedCount / totalModules) * 100)
-    : latestScan?.scan_status?.startsWith('completed') ? 100 : 0;
+    ? Math.round(((trulyCompletedCount + failedCount + noSourcesCount) / totalModules) * 100)
+    : latestScan?.scan_status?.startsWith('completed') || latestScan?.scan_status === 'failed' ? 100 : 0;
 
   const overallStatusBadge = () => {
     if (!latestScan) return null;
@@ -154,6 +157,8 @@ export function CompanyIntelligenceScanCard({ companyId, companyName }: Props) {
     }
   };
 
+  const errorLogEntries = (latestScan?.error_log || []) as any[];
+
   return (
     <Card className="border-2 border-primary/20 bg-primary/[0.02]">
       <CardHeader className="pb-3">
@@ -164,12 +169,7 @@ export function CompanyIntelligenceScanCard({ companyId, companyName }: Props) {
           </CardTitle>
           <div className="flex items-center gap-2">
             {overallStatusBadge()}
-            <Button
-              onClick={runScan}
-              disabled={isScanning}
-              size="sm"
-              className="gap-2"
-            >
+            <Button onClick={runScan} disabled={isScanning} size="sm" className="gap-2">
               {isScanning ? (
                 <><Loader2 className="w-4 h-4 animate-spin" />Scanning...</>
               ) : latestScan ? (
@@ -182,7 +182,7 @@ export function CompanyIntelligenceScanCard({ companyId, companyName }: Props) {
         </div>
       </CardHeader>
       <CardContent>
-        {/* Stats row */}
+        {/* Stats row — truthful counts */}
         {latestScan && (
           <div className="grid grid-cols-2 md:grid-cols-5 gap-3 mb-4">
             <div className="text-center p-2 bg-muted/50 rounded-lg">
@@ -194,12 +194,12 @@ export function CompanyIntelligenceScanCard({ companyId, companyName }: Props) {
               <div className="text-xs text-muted-foreground">Signals Found</div>
             </div>
             <div className="text-center p-2 bg-muted/50 rounded-lg">
-              <div className="text-lg font-bold text-foreground">{latestScan.modules_completed || 0}/{totalModules}</div>
+              <div className="text-lg font-bold text-foreground">{trulyCompletedCount}/{totalModules}</div>
               <div className="text-xs text-muted-foreground">Modules Complete</div>
             </div>
             <div className="text-center p-2 bg-muted/50 rounded-lg">
-              <div className="text-lg font-bold text-foreground">{latestScan.modules_with_signals || 0}</div>
-              <div className="text-xs text-muted-foreground">With Signals</div>
+              <div className="text-lg font-bold text-destructive">{failedCount + noSourcesCount}</div>
+              <div className="text-xs text-muted-foreground">Failed / No Sources</div>
             </div>
             <div className="text-center p-2 bg-muted/50 rounded-lg">
               <div className="text-lg font-bold text-primary text-xs">
@@ -216,37 +216,75 @@ export function CompanyIntelligenceScanCard({ companyId, companyName }: Props) {
         {isScanning && (
           <div className="mb-4">
             <Progress value={progress} className="h-2" />
-            <p className="text-xs text-muted-foreground mt-1">{completedCount}/{totalModules} modules scanned</p>
+            <p className="text-xs text-muted-foreground mt-1">Processing modules...</p>
           </div>
         )}
 
-        {/* Module status grid */}
+        {/* Module status grid — per-module diagnostics */}
         {latestScan && (
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+          <div className="space-y-2 mb-4">
             {Object.entries(MODULE_LABELS).map(([key, label]) => {
               const modStatus = moduleStatuses[key];
               const status = modStatus?.status || 'not_run';
-              const signals = modStatus?.signalsFound;
+              const signals = modStatus?.signalsFound ?? 0;
+              const sources = modStatus?.sourcesScanned ?? 0;
+              const completedAt = modStatus?.completedAt;
+
               return (
-                <div key={key} className="flex items-center justify-between p-2 rounded-lg bg-muted/30 border border-border/50">
-                  <div className="flex items-center gap-2">
-                    {statusIcon(status)}
-                    <span className="text-sm text-foreground">{label}</span>
+                <div key={key} className="p-2.5 rounded-lg bg-muted/30 border border-border/50">
+                  <div className="flex items-center justify-between mb-1">
+                    <div className="flex items-center gap-2">
+                      {statusIcon(status)}
+                      <span className="text-sm font-medium text-foreground">{label}</span>
+                    </div>
+                    <Badge variant="outline" className={`text-[10px] ${statusBadgeClass(status)}`}>
+                      {statusLabel(status)}
+                    </Badge>
                   </div>
-                  <div className="flex items-center gap-1.5">
-                    {signals != null && signals > 0 && (
-                      <Badge variant="secondary" className="text-xs">{signals} signals</Badge>
+                  <div className="flex items-center gap-4 text-[11px] text-muted-foreground ml-5.5">
+                    <span>Sources: {sources}</span>
+                    <span>Signals: {signals}</span>
+                    {completedAt && (
+                      <span>Run: {new Date(completedAt).toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' })}</span>
                     )}
-                    <span className="text-xs text-muted-foreground">{statusLabel(status)}</span>
                   </div>
+                  {/* Inline error detail for failed modules */}
+                  {status === 'failed' && modStatus?.errorExplanation && (
+                    <div className="mt-1.5 ml-5.5 text-[11px] text-destructive">
+                      {modStatus.error && <span className="font-medium">{modStatus.error}: </span>}
+                      {modStatus.errorExplanation}
+                    </div>
+                  )}
+                  {status === 'no_sources_found' && (
+                    <div className="mt-1.5 ml-5.5 text-[11px] text-[hsl(var(--civic-yellow))]">
+                      No usable source material was discovered. This is not the same as "no signals."
+                    </div>
+                  )}
                 </div>
               );
             })}
           </div>
         )}
 
-        {/* Warnings */}
-        {latestScan?.warnings?.length > 0 && (
+        {/* Scan warnings panel with actionable detail */}
+        {errorLogEntries.length > 0 && (
+          <div className="mt-3 p-3 rounded-lg bg-destructive/5 border border-destructive/20">
+            <div className="flex items-center gap-1.5 text-xs font-medium text-destructive mb-2">
+              <AlertTriangle className="w-3.5 h-3.5" />
+              Scan Errors ({errorLogEntries.length})
+            </div>
+            {errorLogEntries.map((entry: any, i: number) => (
+              <div key={i} className="mb-2 last:mb-0 p-2 rounded bg-destructive/5">
+                <div className="text-xs font-medium text-foreground">{entry.label || entry.module}</div>
+                {entry.status && <div className="text-[11px] text-destructive">HTTP {entry.status}</div>}
+                <div className="text-[11px] text-muted-foreground">{entry.errorExplanation || entry.error}</div>
+              </div>
+            ))}
+          </div>
+        )}
+
+        {/* General warnings */}
+        {latestScan?.warnings?.length > 0 && errorLogEntries.length === 0 && (
           <div className="mt-3 p-3 rounded-lg bg-yellow-500/5 border border-yellow-500/20">
             <div className="flex items-center gap-1.5 text-xs font-medium text-yellow-600 mb-1">
               <AlertTriangle className="w-3.5 h-3.5" />

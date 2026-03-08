@@ -16,6 +16,18 @@ const MODULES = [
   { key: 'ai_accountability', label: 'AI Accountability', fn: 'ai-accountability-scan' },
 ];
 
+// Determine truthful module status based on actual results
+function resolveModuleStatus(sourcesScanned: number, signalsFound: number): string {
+  if (sourcesScanned > 0 && signalsFound > 0) return 'completed_with_signals';
+  if (sourcesScanned > 0 && signalsFound === 0) return 'completed_no_signals';
+  return 'no_sources_found';
+}
+
+// Check if a status counts as "truly completed"
+function isTrulyCompleted(status: string): boolean {
+  return status === 'completed_with_signals' || status === 'completed_no_signals';
+}
+
 Deno.serve(async (req) => {
   if (req.method === 'OPTIONS') {
     return new Response(null, { headers: corsHeaders });
@@ -74,23 +86,23 @@ Deno.serve(async (req) => {
     const scanId = scanRun.id;
     console.log(`[intelligence-scan] Scan run created: ${scanId}`);
 
-    // Update company scan timestamp
     await supabase.from('companies').update({
       last_scan_attempted: new Date().toISOString(),
     }).eq('id', companyId);
 
-    // Run modules sequentially to avoid overwhelming APIs
+    // Run modules sequentially
     const moduleStatuses: Record<string, any> = {};
-    let completed = 0, failed = 0, withSignals = 0, noSignals = 0;
+    let trulyCompleted = 0, failed = 0, noSourcesFound = 0, withSignals = 0;
     let totalSources = 0, totalSignals = 0;
     const warnings: string[] = [];
     const errorLog: any[] = [];
 
     for (const mod of MODULES) {
       console.log(`[intelligence-scan] Running module: ${mod.key}`);
+      const moduleStartedAt = new Date().toISOString();
 
       // Update module status to in_progress
-      moduleStatuses[mod.key] = { status: 'in_progress', label: mod.label };
+      moduleStatuses[mod.key] = { status: 'in_progress', label: mod.label, startedAt: moduleStartedAt };
       await supabase.from('scan_runs').update({
         module_statuses: { ...moduleStatuses },
       }).eq('id', scanId);
@@ -105,6 +117,8 @@ Deno.serve(async (req) => {
           body: JSON.stringify({ companyId, companyName }),
         });
 
+        const moduleCompletedAt = new Date().toISOString();
+
         if (moduleResp.ok) {
           const result = await moduleResp.json();
           const signalsFound = result.signalsFound || 0;
@@ -113,51 +127,102 @@ Deno.serve(async (req) => {
           totalSources += sourcesScanned;
           totalSignals += signalsFound;
 
-          if (signalsFound > 0) {
-            withSignals++;
-            moduleStatuses[mod.key] = {
-              status: 'completed_with_signals',
-              label: mod.label,
-              signalsFound,
-              sourcesScanned,
-            };
+          // Apply truthful status rules
+          const resolvedStatus = resolveModuleStatus(sourcesScanned, signalsFound);
+
+          moduleStatuses[mod.key] = {
+            status: resolvedStatus,
+            label: mod.label,
+            signalsFound,
+            sourcesScanned,
+            startedAt: moduleStartedAt,
+            completedAt: moduleCompletedAt,
+          };
+
+          if (isTrulyCompleted(resolvedStatus)) {
+            trulyCompleted++;
+            if (resolvedStatus === 'completed_with_signals') withSignals++;
           } else {
-            noSignals++;
-            moduleStatuses[mod.key] = {
-              status: 'completed_no_signals',
-              label: mod.label,
-              sourcesScanned,
-            };
+            // no_sources_found
+            noSourcesFound++;
+            warnings.push(`${mod.label}: No usable sources were discovered or scanned.`);
           }
-          completed++;
-          console.log(`[intelligence-scan] ${mod.key}: ${signalsFound} signals from ${sourcesScanned} sources`);
+
+          console.log(`[intelligence-scan] ${mod.key}: status=${resolvedStatus}, ${signalsFound} signals from ${sourcesScanned} sources`);
         } else {
           const errText = await moduleResp.text().catch(() => 'Unknown error');
           failed++;
+
+          // Detect specific error types
+          let errorType = 'http_error';
+          let errorExplanation = `Module returned HTTP ${moduleResp.status}`;
+          if (moduleResp.status === 402) {
+            errorType = 'quota_exceeded';
+            errorExplanation = 'External provider quota or billing issue detected. The crawling service has run out of credits.';
+          } else if (moduleResp.status === 429) {
+            errorType = 'rate_limited';
+            errorExplanation = 'Rate limited by external provider. Try again later.';
+          } else if (moduleResp.status >= 500) {
+            errorType = 'server_error';
+            errorExplanation = 'The scan module encountered an internal error.';
+          }
+
           moduleStatuses[mod.key] = {
             status: 'failed',
             label: mod.label,
             error: `HTTP ${moduleResp.status}`,
+            errorType,
+            errorExplanation,
+            startedAt: moduleStartedAt,
+            completedAt: moduleCompletedAt,
+            sourcesScanned: 0,
+            signalsFound: 0,
           };
-          warnings.push(`${mod.label} failed (HTTP ${moduleResp.status})`);
-          errorLog.push({ module: mod.key, status: moduleResp.status, error: errText.slice(0, 500) });
+          warnings.push(`${mod.label} failed (HTTP ${moduleResp.status}): ${errorExplanation}`);
+          errorLog.push({
+            module: mod.key,
+            label: mod.label,
+            status: moduleResp.status,
+            errorType,
+            errorExplanation,
+            error: errText.slice(0, 500),
+            timestamp: moduleCompletedAt,
+          });
           console.error(`[intelligence-scan] ${mod.key} failed: HTTP ${moduleResp.status}`);
         }
       } catch (e) {
+        const moduleCompletedAt = new Date().toISOString();
         failed++;
         const msg = e instanceof Error ? e.message : 'Unknown error';
-        moduleStatuses[mod.key] = { status: 'failed', label: mod.label, error: msg };
+        moduleStatuses[mod.key] = {
+          status: 'failed',
+          label: mod.label,
+          error: msg,
+          errorType: 'exception',
+          errorExplanation: `Unhandled exception: ${msg}`,
+          startedAt: moduleStartedAt,
+          completedAt: moduleCompletedAt,
+          sourcesScanned: 0,
+          signalsFound: 0,
+        };
         warnings.push(`${mod.label} failed: ${msg}`);
-        errorLog.push({ module: mod.key, error: msg });
+        errorLog.push({
+          module: mod.key,
+          label: mod.label,
+          errorType: 'exception',
+          errorExplanation: msg,
+          error: msg,
+          timestamp: moduleCompletedAt,
+        });
         console.error(`[intelligence-scan] ${mod.key} exception:`, e);
       }
 
       // Update progress after each module
       await supabase.from('scan_runs').update({
-        modules_completed: completed,
+        modules_completed: trulyCompleted,
         modules_failed: failed,
         modules_with_signals: withSignals,
-        modules_with_no_signals: noSignals,
+        modules_with_no_signals: noSourcesFound,
         total_sources_scanned: totalSources,
         total_signals_found: totalSignals,
         module_statuses: { ...moduleStatuses },
@@ -166,10 +231,10 @@ Deno.serve(async (req) => {
       }).eq('id', scanId);
     }
 
-    // Finalize
+    // Finalize overall status
     const overallStatus = failed === MODULES.length
       ? 'failed'
-      : failed > 0
+      : (failed > 0 || noSourcesFound > 0)
         ? 'completed_with_warnings'
         : 'completed';
 
@@ -178,26 +243,26 @@ Deno.serve(async (req) => {
       scan_completed_at: new Date().toISOString(),
     }).eq('id', scanId);
 
-    // Update company scan_completion
+    // Update company scan_completion — only truly completed modules count
     const scanCompletion: Record<string, boolean> = {};
     for (const mod of MODULES) {
-      scanCompletion[mod.key] = moduleStatuses[mod.key]?.status?.startsWith('completed') || false;
+      scanCompletion[mod.key] = isTrulyCompleted(moduleStatuses[mod.key]?.status);
     }
     await supabase.from('companies').update({
       scan_completion: scanCompletion,
       record_status: 'verified',
     }).eq('id', companyId);
 
-    console.log(`[intelligence-scan] COMPLETE: ${companyName} - ${overallStatus} (${completed}/${MODULES.length} modules, ${totalSignals} signals)`);
+    console.log(`[intelligence-scan] COMPLETE: ${companyName} - ${overallStatus} (${trulyCompleted}/${MODULES.length} truly completed, ${noSourcesFound} no_sources_found, ${failed} failed, ${totalSignals} signals)`);
 
     return new Response(JSON.stringify({
       success: true,
       scanRunId: scanId,
       scanStatus: overallStatus,
-      modulesCompleted: completed,
+      modulesCompleted: trulyCompleted,
       modulesFailed: failed,
+      modulesNoSourcesFound: noSourcesFound,
       modulesWithSignals: withSignals,
-      modulesWithNoSignals: noSignals,
       totalSourcesScanned: totalSources,
       totalSignalsFound: totalSignals,
       warnings,
