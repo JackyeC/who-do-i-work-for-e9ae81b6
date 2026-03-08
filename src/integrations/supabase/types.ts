@@ -1849,6 +1849,71 @@ export type Database = {
           },
         ]
       }
+      offer_letter_reviews: {
+        Row: {
+          company_id: string
+          comparison_results: Json
+          created_at: string
+          detected_clauses: Json
+          error_message: string | null
+          extracted_terms: Json
+          extracted_text: string | null
+          file_deleted: boolean
+          file_path: string | null
+          id: string
+          input_type: string
+          offer_snapshot: Json
+          original_filename: string | null
+          processing_status: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          company_id: string
+          comparison_results?: Json
+          created_at?: string
+          detected_clauses?: Json
+          error_message?: string | null
+          extracted_terms?: Json
+          extracted_text?: string | null
+          file_deleted?: boolean
+          file_path?: string | null
+          id?: string
+          input_type?: string
+          offer_snapshot?: Json
+          original_filename?: string | null
+          processing_status?: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          company_id?: string
+          comparison_results?: Json
+          created_at?: string
+          detected_clauses?: Json
+          error_message?: string | null
+          extracted_terms?: Json
+          extracted_text?: string | null
+          file_deleted?: boolean
+          file_path?: string | null
+          id?: string
+          input_type?: string
+          offer_snapshot?: Json
+          original_filename?: string | null
+          processing_status?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "offer_letter_reviews_company_id_fkey"
+            columns: ["company_id"]
+            isOneToOne: false
+            referencedRelation: "companies"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       pay_equity_signals: {
         Row: {
           company_id: string
