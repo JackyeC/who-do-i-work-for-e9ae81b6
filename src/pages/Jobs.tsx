@@ -10,14 +10,17 @@ import { Button } from "@/components/ui/button";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { EmptyState } from "@/components/EmptyState";
 import { LoadingState } from "@/components/LoadingState";
+import { ValuesPreferenceSidebar, VALUE_CATEGORIES } from "@/components/ValuesPreferenceSidebar";
 import { supabase } from "@/integrations/supabase/client";
 import { useQuery } from "@tanstack/react-query";
-import { Search, MapPin, Briefcase, Building2, ExternalLink, ArrowRight, Filter, FileCheck } from "lucide-react";
+import { Search, MapPin, Briefcase, Building2, ExternalLink, Filter, FileCheck, SlidersHorizontal, X } from "lucide-react";
 
 export default function Jobs() {
   const [search, setSearch] = useState("");
   const [minScore, setMinScore] = useState("70");
   const [industryFilter, setIndustryFilter] = useState("all");
+  const [valuesFilters, setValuesFilters] = useState<string[]>([]);
+  const [showValues, setShowValues] = useState(false);
 
   const { data: jobs, isLoading } = useQuery({
     queryKey: ["jobs-with-companies"],
@@ -33,6 +36,27 @@ export default function Jobs() {
     },
   });
 
+  // Fetch values signals for companies when filters are active
+  const { data: valuesSignals } = useQuery({
+    queryKey: ["company-values-signals", valuesFilters],
+    queryFn: async () => {
+      if (valuesFilters.length === 0) return {};
+      const { data, error } = await supabase
+        .from("company_values_signals")
+        .select("company_id, value_category, signal_summary, confidence")
+        .in("value_category", valuesFilters);
+      if (error) throw error;
+      // Group by company_id
+      const map: Record<string, any[]> = {};
+      (data || []).forEach((s: any) => {
+        if (!map[s.company_id]) map[s.company_id] = [];
+        map[s.company_id].push(s);
+      });
+      return map;
+    },
+    enabled: valuesFilters.length > 0,
+  });
+
   const industries = useMemo(() => {
     if (!jobs) return [];
     const set = new Set(jobs.map((j: any) => j.companies?.industry).filter(Boolean));
@@ -45,18 +69,9 @@ export default function Jobs() {
       const company = job.companies;
       if (!company) return false;
       
-      // Filter to US jobs only
       const loc = (job.location || "").toLowerCase();
-      const isUS = !loc || 
-        loc.includes('united states') || loc.includes(', us') ||
-        loc.includes('remote') ||
-        /,\s*[a-z]{2}\s*$/i.test(job.location || '') || // "City, ST" format
-        /\b(alabama|alaska|arizona|arkansas|california|colorado|connecticut|delaware|florida|georgia|hawaii|idaho|illinois|indiana|iowa|kansas|kentucky|louisiana|maine|maryland|massachusetts|michigan|minnesota|mississippi|missouri|montana|nebraska|nevada|new hampshire|new jersey|new mexico|new york|north carolina|north dakota|ohio|oklahoma|oregon|pennsylvania|rhode island|south carolina|south dakota|tennessee|texas|utah|vermont|virginia|washington|west virginia|wisconsin|wyoming)\b/i.test(loc);
-      
-      // Exclude obviously non-US locations
       const isNonUS = /\b(india|germany|china|japan|south korea|mexico|brazil|canada|uk|france|spain|italy|australia|singapore|ireland|netherlands|israel|sweden|switzerland)\b/i.test(loc) ||
         /,\s*(in|de|cn|jp|kr|mx|br|ca|gb|fr|es|it|au|sg|ie|nl|il|se|ch)\s*$/i.test(loc);
-      
       if (isNonUS) return false;
       
       const matchesSearch = !search ||
@@ -65,9 +80,18 @@ export default function Jobs() {
         loc.includes(search.toLowerCase());
       const matchesScore = company.civic_footprint_score >= parseInt(minScore);
       const matchesIndustry = industryFilter === "all" || company.industry === industryFilter;
-      return matchesSearch && matchesScore && matchesIndustry;
+      
+      // Values filter: company must have at least one signal in each active category
+      let matchesValues = true;
+      if (valuesFilters.length > 0 && valuesSignals) {
+        const companySignals = valuesSignals[company.id] || [];
+        const companyCategories = new Set(companySignals.map((s: any) => s.value_category));
+        matchesValues = valuesFilters.every((f) => companyCategories.has(f));
+      }
+
+      return matchesSearch && matchesScore && matchesIndustry && matchesValues;
     });
-  }, [jobs, search, minScore, industryFilter]);
+  }, [jobs, search, minScore, industryFilter, valuesFilters, valuesSignals]);
 
   const companiesWithJobs = useMemo(() => {
     if (!filtered) return 0;
@@ -84,7 +108,7 @@ export default function Jobs() {
           </h1>
           <p className="text-muted-foreground max-w-2xl mx-auto text-sm sm:text-base">
             Browse job openings from companies in the directory. Every listing includes the employer's
-            civic transparency score.
+            civic transparency score and value signals.
           </p>
         </div>
 
@@ -119,8 +143,35 @@ export default function Jobs() {
                 ))}
               </SelectContent>
             </Select>
+            <Button
+              variant={showValues ? "default" : "outline"}
+              size="icon"
+              onClick={() => setShowValues(!showValues)}
+              title="Values Filter"
+            >
+              <SlidersHorizontal className="w-4 h-4" />
+            </Button>
           </div>
         </div>
+
+        {/* Active values filter badges */}
+        {valuesFilters.length > 0 && (
+          <div className="flex flex-wrap items-center gap-1.5 mb-4">
+            <span className="text-xs text-muted-foreground">Values:</span>
+            {valuesFilters.map((f) => {
+              const cat = VALUE_CATEGORIES.find((c) => c.key === f);
+              return cat ? (
+                <Badge key={f} variant="secondary" className="text-xs flex items-center gap-1">
+                  {cat.label}
+                  <X className="w-3 h-3 cursor-pointer" onClick={() => setValuesFilters((prev) => prev.filter((p) => p !== f))} />
+                </Badge>
+              ) : null;
+            })}
+            <Button variant="ghost" size="sm" className="text-xs h-6 px-2" onClick={() => setValuesFilters([])}>
+              Clear all
+            </Button>
+          </div>
+        )}
 
         {/* Stats bar */}
         <div className="flex items-center gap-4 mb-4 sm:mb-6 text-sm text-muted-foreground">
@@ -128,71 +179,116 @@ export default function Jobs() {
           <span>from <strong className="text-foreground">{companiesWithJobs}</strong> companies</span>
         </div>
 
-        {isLoading && <LoadingState message="Loading job listings..." />}
+        <div className="flex gap-6">
+          {/* Values Sidebar */}
+          {showValues && (
+            <div className="hidden sm:block w-64 shrink-0">
+              <div className="sticky top-20">
+                <ValuesPreferenceSidebar activeFilters={valuesFilters} onFiltersChange={setValuesFilters} />
+              </div>
+            </div>
+          )}
 
-        {!isLoading && filtered?.length === 0 && (
-          <EmptyState
-            icon={Briefcase}
-            title="No jobs found"
-            description={
-              jobs?.length === 0
-                ? "Job listings are being scraped from company career pages. Check back soon!"
-                : "Try adjusting your filters or search terms."
-            }
-          />
-        )}
+          {/* Job listings */}
+          <div className="flex-1 min-w-0">
+            {isLoading && <LoadingState message="Loading job listings..." />}
 
-        <div className="space-y-3">
-          {filtered?.map((job: any) => {
-            const company = job.companies;
-            return (
-              <Card key={job.id} className="border-border hover:border-primary/20 transition-colors">
-                <CardContent className="p-3 sm:p-4">
-                  <div className="flex items-start justify-between gap-3 sm:gap-4">
-                    <div className="flex-1 min-w-0">
-                      <div className="flex items-center gap-2 mb-1">
-                        <h3 className="font-semibold text-foreground truncate text-sm sm:text-base">{job.title}</h3>
-                        {job.employment_type && job.employment_type !== "full-time" && (
-                          <Badge variant="outline" className="text-[10px] shrink-0 hidden sm:inline-flex">{job.employment_type}</Badge>
-                        )}
+            {!isLoading && filtered?.length === 0 && (
+              <EmptyState
+                icon={Briefcase}
+                title="No jobs found"
+                description={
+                  valuesFilters.length > 0
+                    ? "No jobs match your values filters. Try removing some filters or running a values scan on more companies."
+                    : jobs?.length === 0
+                    ? "Job listings are being scraped from company career pages. Check back soon!"
+                    : "Try adjusting your filters or search terms."
+                }
+              />
+            )}
+
+            <div className="space-y-3">
+              {filtered?.map((job: any) => {
+                const company = job.companies;
+                const companyValueSignals = valuesSignals?.[company?.id] || [];
+                return (
+                  <Card key={job.id} className="border-border hover:border-primary/20 transition-colors">
+                    <CardContent className="p-3 sm:p-4">
+                      <div className="flex items-start justify-between gap-3 sm:gap-4">
+                        <div className="flex-1 min-w-0">
+                          <div className="flex items-center gap-2 mb-1">
+                            <h3 className="font-semibold text-foreground truncate text-sm sm:text-base">{job.title}</h3>
+                            {job.employment_type && job.employment_type !== "full-time" && (
+                              <Badge variant="outline" className="text-[10px] shrink-0 hidden sm:inline-flex">{job.employment_type}</Badge>
+                            )}
+                          </div>
+                          <div className="flex flex-wrap items-center gap-x-3 gap-y-1 text-xs sm:text-sm text-muted-foreground mb-2">
+                            <Link to={`/company/${company?.slug}`} className="font-medium text-foreground hover:text-primary transition-colors flex items-center gap-1">
+                              <Building2 className="w-3.5 h-3.5" />
+                              {company?.name}
+                            </Link>
+                            {job.location && (
+                              <span className="flex items-center gap-1">
+                                <MapPin className="w-3.5 h-3.5" />
+                                {job.location}
+                              </span>
+                            )}
+                          </div>
+                          {job.description && (
+                            <p className="text-xs sm:text-sm text-muted-foreground line-clamp-2">{job.description}</p>
+                          )}
+                          <div className="flex flex-wrap items-center gap-1.5 mt-1.5">
+                            {job.salary_range && (
+                              <span className="text-xs font-medium text-civic-green">{job.salary_range}</span>
+                            )}
+                            {companyValueSignals.length > 0 && companyValueSignals.map((vs: any, idx: number) => {
+                              const cat = VALUE_CATEGORIES.find((c) => c.key === vs.value_category);
+                              if (!cat) return null;
+                              const Icon = cat.icon;
+                              return (
+                                <Badge key={idx} variant="outline" className="text-[10px] gap-1" title={vs.signal_summary}>
+                                  <Icon className={`w-3 h-3 ${cat.color}`} />
+                                  {cat.label}
+                                </Badge>
+                              );
+                            })}
+                          </div>
+                        </div>
+                        <div className="flex flex-col items-end gap-2 shrink-0">
+                          <CivicScoreCard score={company?.civic_footprint_score || 0} size="sm" showLabel={false} />
+                          <CivicScoreBadge score={company?.civic_footprint_score || 0} />
+                          <Link to={`/offer-check/${company?.id}`} className="text-xs text-primary hover:underline flex items-center gap-1">
+                            <FileCheck className="w-3 h-3" /> Offer Check
+                          </Link>
+                          {job.url && (
+                            <a href={job.url} target="_blank" rel="noopener noreferrer" className="text-xs text-primary hover:underline flex items-center gap-1">
+                              Apply <ExternalLink className="w-3 h-3" />
+                            </a>
+                          )}
+                        </div>
                       </div>
-                      <div className="flex flex-wrap items-center gap-x-3 gap-y-1 text-xs sm:text-sm text-muted-foreground mb-2">
-                        <Link to={`/company/${company?.slug}`} className="font-medium text-foreground hover:text-primary transition-colors flex items-center gap-1">
-                          <Building2 className="w-3.5 h-3.5" />
-                          {company?.name}
-                        </Link>
-                        {job.location && (
-                          <span className="flex items-center gap-1">
-                            <MapPin className="w-3.5 h-3.5" />
-                            {job.location}
-                          </span>
-                        )}
-                      </div>
-                      {job.description && (
-                        <p className="text-xs sm:text-sm text-muted-foreground line-clamp-2">{job.description}</p>
-                      )}
-                      {job.salary_range && (
-                        <span className="text-xs font-medium text-civic-green mt-1 inline-block">{job.salary_range}</span>
-                      )}
-                    </div>
-                    <div className="flex flex-col items-end gap-2 shrink-0">
-                      <CivicScoreCard score={company?.civic_footprint_score || 0} size="sm" showLabel={false} />
-                      <CivicScoreBadge score={company?.civic_footprint_score || 0} />
-                      <Link to={`/offer-check/${company?.id}`} className="text-xs text-primary hover:underline flex items-center gap-1">
-                        <FileCheck className="w-3 h-3" /> Offer Check
-                      </Link>
-                      {job.url && (
-                        <a href={job.url} target="_blank" rel="noopener noreferrer" className="text-xs text-primary hover:underline flex items-center gap-1">
-                          Apply <ExternalLink className="w-3 h-3" />
-                        </a>
-                      )}
-                    </div>
-                  </div>
-                </CardContent>
-              </Card>
-            );
-          })}
+                    </CardContent>
+                  </Card>
+                );
+              })}
+            </div>
+          </div>
         </div>
+
+        {/* Mobile values panel */}
+        {showValues && (
+          <div className="sm:hidden fixed inset-0 z-50 bg-background/80 backdrop-blur-sm" onClick={() => setShowValues(false)}>
+            <div className="absolute right-0 top-0 h-full w-80 bg-background border-l border-border p-4 overflow-y-auto" onClick={(e) => e.stopPropagation()}>
+              <div className="flex justify-between items-center mb-4">
+                <h3 className="font-semibold text-foreground">Values Filter</h3>
+                <Button variant="ghost" size="icon" onClick={() => setShowValues(false)}>
+                  <X className="w-4 h-4" />
+                </Button>
+              </div>
+              <ValuesPreferenceSidebar activeFilters={valuesFilters} onFiltersChange={setValuesFilters} />
+            </div>
+          </div>
+        )}
       </main>
       <Footer />
     </div>
