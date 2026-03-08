@@ -26,7 +26,13 @@ export function Header() {
       ]
     : [];
 
-  const isActive = (path: string) => location.pathname === path;
+  const isActive = (path: string) => {
+    const [basePath, queryString] = path.split('?');
+    if (queryString) {
+      return location.pathname === basePath && location.search.includes(queryString);
+    }
+    return location.pathname === basePath;
+  };
 
   return (
     <header className="border-b border-border/30 bg-card/90 backdrop-blur-xl sticky top-0 z-50" style={{ boxShadow: '0 1px 0 hsl(38 72% 50% / 0.06), 0 4px 20px -4px hsl(var(--foreground) / 0.04)' }}>
