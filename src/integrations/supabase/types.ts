@@ -2906,6 +2906,8 @@ export type Database = {
           job_titles: string[] | null
           management_scope: string | null
           preferred_locations: string[] | null
+          preferred_titles: string[] | null
+          preferred_work_mode: string | null
           salary_range_max: number | null
           salary_range_min: number | null
           seniority_level: string | null
@@ -2922,6 +2924,8 @@ export type Database = {
           job_titles?: string[] | null
           management_scope?: string | null
           preferred_locations?: string[] | null
+          preferred_titles?: string[] | null
+          preferred_work_mode?: string | null
           salary_range_max?: number | null
           salary_range_min?: number | null
           seniority_level?: string | null
@@ -2938,6 +2942,8 @@ export type Database = {
           job_titles?: string[] | null
           management_scope?: string | null
           preferred_locations?: string[] | null
+          preferred_titles?: string[] | null
+          preferred_work_mode?: string | null
           salary_range_max?: number | null
           salary_range_min?: number | null
           seniority_level?: string | null
