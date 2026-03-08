@@ -111,7 +111,11 @@ export function SignalTimeline({ companyId }: SignalTimelineProps) {
           )}
         </CardTitle>
       </CardHeader>
-      <CardContent>
+        {(hasActiveMonitoring || hasMonitoringScans) && (
+          <p className="text-xs text-muted-foreground mb-3 italic">
+            Timeline includes updates detected through monitored public pages.
+          </p>
+        )}
         <div className="relative">
           {/* Timeline line */}
           <div className="absolute left-3 top-0 bottom-0 w-px bg-border" />
