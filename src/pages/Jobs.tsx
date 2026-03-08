@@ -12,7 +12,7 @@ import { EmptyState } from "@/components/EmptyState";
 import { LoadingState } from "@/components/LoadingState";
 import { supabase } from "@/integrations/supabase/client";
 import { useQuery } from "@tanstack/react-query";
-import { Search, MapPin, Briefcase, Building2, ExternalLink, ArrowRight, Filter } from "lucide-react";
+import { Search, MapPin, Briefcase, Building2, ExternalLink, ArrowRight, Filter, FileCheck } from "lucide-react";
 
 export default function Jobs() {
   const [search, setSearch] = useState("");
@@ -178,6 +178,9 @@ export default function Jobs() {
                     <div className="flex flex-col items-end gap-2 shrink-0">
                       <CivicScoreCard score={company?.civic_footprint_score || 0} size="sm" showLabel={false} />
                       <CivicScoreBadge score={company?.civic_footprint_score || 0} />
+                      <Link to={`/offer-check/${company?.id}`} className="text-xs text-primary hover:underline flex items-center gap-1">
+                        <FileCheck className="w-3 h-3" /> Offer Check
+                      </Link>
                       {job.url && (
                         <a href={job.url} target="_blank" rel="noopener noreferrer" className="text-xs text-primary hover:underline flex items-center gap-1">
                           Apply <ExternalLink className="w-3 h-3" />
