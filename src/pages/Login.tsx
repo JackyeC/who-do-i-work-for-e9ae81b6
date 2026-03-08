@@ -16,7 +16,7 @@ export default function Login() {
 
   useEffect(() => {
     if (!loading && user) {
-      navigate("/voter-lookup");
+      navigate("/dashboard");
     }
   }, [user, loading, navigate]);
 
@@ -42,9 +42,9 @@ export default function Login() {
             <div className="w-16 h-16 mx-auto rounded-2xl bg-primary/8 flex items-center justify-center mb-2 border border-primary/10">
               <Shield className="w-8 h-8 text-primary" />
             </div>
-            <CardTitle className="text-headline text-2xl">Sign in to Offer Check</CardTitle>
+            <CardTitle className="text-headline text-2xl">Sign in</CardTitle>
             <p className="text-body text-muted-foreground leading-relaxed">
-              Access premium features like "Who Do I Work For?" — see exactly which corporations fund your elected representatives.
+              Access career intelligence tools including job matching, offer analysis, career mapping, and company transparency insights.
             </p>
           </CardHeader>
           <CardContent className="space-y-5 pt-0">
