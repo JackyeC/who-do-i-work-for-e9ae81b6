@@ -5,7 +5,7 @@ import {
   Building2, ArrowLeft, Calendar, DollarSign, Users, Flag,
   Network, Scale, MessageSquareWarning, ExternalLink, Shield, Megaphone,
   AlertTriangle, EyeOff, RotateCcw, TrendingUp, Landmark, FileText,
-  BarChart3, Loader2, Sparkles, Search, ClipboardCheck, CheckCircle2
+  BarChart3, Loader2, Sparkles, Search, ClipboardCheck, CheckCircle2, HelpCircle
 } from "lucide-react";
 import { LensSelector } from "@/components/LensSelector";
 import { DataGlossary } from "@/components/DataGlossary";
@@ -616,6 +616,14 @@ export default function CompanyProfile() {
             {/* Monitoring Status */}
             <MonitoringStatusCard companyId={dbCompany.id} />
 
+            {/* Numbers Guide */}
+            <div className="flex items-center gap-2 mb-4 px-1">
+              <HelpCircle className="w-4 h-4 text-primary shrink-0" />
+              <p className="text-xs text-muted-foreground">
+                <span className="font-medium text-foreground">What do these numbers mean?</span> Each card below summarizes a type of political activity. Tap any card for a full explanation with sources.
+              </p>
+            </div>
+
             {/* Summary Cards */}
             <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-10">
               <ExplainableMetric metricKey="civic-footprint">
@@ -627,6 +635,7 @@ export default function CompanyProfile() {
                     </div>
                     <div className="text-3xl font-bold text-foreground mb-1" style={{ fontFamily: "'Source Serif 4', serif" }}>{dbCompany.civic_footprint_score}<span className="text-sm text-muted-foreground font-normal">/100</span></div>
                     <CivicFootprintBadge score={dbCompany.civic_footprint_score} size="sm" />
+                    <p className="text-[11px] text-muted-foreground mt-2 leading-snug">How much political activity we detected. Higher = more active, not worse.</p>
                   </CardContent>
                 </Card>
               </ExplainableMetric>
@@ -640,6 +649,7 @@ export default function CompanyProfile() {
                     <div className="text-3xl font-bold text-foreground" style={{ fontFamily: "'Source Serif 4', serif" }}>
                       {dbCompany.total_pac_spending > 0 ? formatCurrency(dbCompany.total_pac_spending) : "None"}
                     </div>
+                    <p className="text-[11px] text-muted-foreground mt-2 leading-snug">Money donated by the company's PAC directly to political candidates this cycle.</p>
                   </CardContent>
                 </Card>
               </ExplainableMetric>
@@ -653,6 +663,7 @@ export default function CompanyProfile() {
                     <div className="text-3xl font-bold text-foreground" style={{ fontFamily: "'Source Serif 4', serif" }}>
                       {dbCompany.lobbying_spend ? formatCurrency(dbCompany.lobbying_spend) : "None"}
                     </div>
+                    <p className="text-[11px] text-muted-foreground mt-2 leading-snug">Annual spending on lobbyists who advocate for the company in Congress.</p>
                   </CardContent>
                 </Card>
               </ExplainableMetric>
@@ -667,6 +678,7 @@ export default function CompanyProfile() {
                       <div className="text-3xl font-bold text-foreground" style={{ fontFamily: "'Source Serif 4', serif" }}>
                         {dbCompany.government_contracts ? formatCurrency(dbCompany.government_contracts) : "—"}
                       </div>
+                      <p className="text-[11px] text-muted-foreground mt-2 leading-snug">Federal contracts awarded to this company — taxpayer money received.</p>
                     </CardContent>
                   </Card>
                 </ExplainableMetric>
