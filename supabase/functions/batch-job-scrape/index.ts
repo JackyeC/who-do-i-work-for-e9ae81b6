@@ -140,6 +140,20 @@ Deno.serve(async (req) => {
 
     const totalJobs = results.reduce((sum, r) => sum + (r.jobsAdded || 0), 0);
 
+    // ─── Step 5: Trigger dream job detection if new jobs were added ───
+    if (totalJobs > 0) {
+      try {
+        console.log('Triggering dream job detection...');
+        await fetch(`${supabaseUrl}/functions/v1/dream-job-detect`, {
+          method: 'POST',
+          headers: { 'Authorization': `Bearer ${supabaseKey}`, 'Content-Type': 'application/json' },
+          body: JSON.stringify({}),
+        });
+      } catch (e) {
+        console.warn('Dream job detection trigger failed (non-blocking):', e);
+      }
+    }
+
     return new Response(JSON.stringify({
       success: true,
       processed: batch.length,
