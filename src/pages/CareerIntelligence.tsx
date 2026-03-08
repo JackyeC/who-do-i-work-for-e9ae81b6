@@ -11,7 +11,8 @@ import { DataWipeButton } from "@/components/career/DataWipeButton";
 import { useAuth } from "@/contexts/AuthContext";
 import { Navigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
-import { FileText, User, Bell, Upload, Wand2 } from "lucide-react";
+import { FileText, User, Bell, Upload, Wand2, Compass } from "lucide-react";
+import { CareerMappingView } from "@/components/career/CareerMappingView";
 
 export default function CareerIntelligence() {
   const { user } = useAuth();
@@ -59,7 +60,7 @@ export default function CareerIntelligence() {
         </div>
 
         <Tabs value={activeTab} onValueChange={setActiveTab} className="max-w-4xl mx-auto">
-          <TabsList className="grid w-full grid-cols-5">
+          <TabsList className="grid w-full grid-cols-6">
             <TabsTrigger value="upload" className="flex items-center gap-1.5 text-xs sm:text-sm">
               <Upload className="w-3.5 h-3.5" /> <span className="hidden sm:inline">Upload</span>
             </TabsTrigger>
@@ -74,6 +75,9 @@ export default function CareerIntelligence() {
             </TabsTrigger>
             <TabsTrigger value="alerts" className="flex items-center gap-1.5 text-xs sm:text-sm">
               <Bell className="w-3.5 h-3.5" /> <span className="hidden sm:inline">Alerts</span>
+            </TabsTrigger>
+            <TabsTrigger value="pathing" className="flex items-center gap-1.5 text-xs sm:text-sm">
+              <Compass className="w-3.5 h-3.5" /> <span className="hidden sm:inline">Next Move</span>
             </TabsTrigger>
           </TabsList>
 
@@ -91,6 +95,9 @@ export default function CareerIntelligence() {
           </TabsContent>
           <TabsContent value="alerts" className="mt-6">
             <DreamJobAlerts />
+          </TabsContent>
+          <TabsContent value="pathing" className="mt-6">
+            <CareerMappingView />
           </TabsContent>
         </Tabs>
 

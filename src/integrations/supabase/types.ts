@@ -1837,6 +1837,62 @@ export type Database = {
         }
         Relationships: []
       }
+      employee_growth_tracker: {
+        Row: {
+          completed_skills: string[] | null
+          created_at: string
+          gap_analysis: Json | null
+          id: string
+          missing_skills: string[] | null
+          notes: string | null
+          skills_match_pct: number | null
+          status: string
+          target_company_id: string | null
+          target_role: string
+          updated_at: string
+          user_id: string
+          values_alignment_score: number | null
+        }
+        Insert: {
+          completed_skills?: string[] | null
+          created_at?: string
+          gap_analysis?: Json | null
+          id?: string
+          missing_skills?: string[] | null
+          notes?: string | null
+          skills_match_pct?: number | null
+          status?: string
+          target_company_id?: string | null
+          target_role: string
+          updated_at?: string
+          user_id: string
+          values_alignment_score?: number | null
+        }
+        Update: {
+          completed_skills?: string[] | null
+          created_at?: string
+          gap_analysis?: Json | null
+          id?: string
+          missing_skills?: string[] | null
+          notes?: string | null
+          skills_match_pct?: number | null
+          status?: string
+          target_company_id?: string | null
+          target_role?: string
+          updated_at?: string
+          user_id?: string
+          values_alignment_score?: number | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "employee_growth_tracker_target_company_id_fkey"
+            columns: ["target_company_id"]
+            isOneToOne: false
+            referencedRelation: "companies"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       entity_linkages: {
         Row: {
           amount: number | null
@@ -2532,6 +2588,100 @@ export type Database = {
           {
             foreignKeyName: "profiles_employer_company_id_fkey"
             columns: ["employer_company_id"]
+            isOneToOne: false
+            referencedRelation: "companies"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      project_gigs: {
+        Row: {
+          company_id: string | null
+          created_at: string
+          department: string | null
+          description: string | null
+          duration_weeks: number | null
+          id: string
+          is_active: boolean
+          skills_offered: string[] | null
+          title: string
+        }
+        Insert: {
+          company_id?: string | null
+          created_at?: string
+          department?: string | null
+          description?: string | null
+          duration_weeks?: number | null
+          id?: string
+          is_active?: boolean
+          skills_offered?: string[] | null
+          title: string
+        }
+        Update: {
+          company_id?: string | null
+          created_at?: string
+          department?: string | null
+          description?: string | null
+          duration_weeks?: number | null
+          id?: string
+          is_active?: boolean
+          skills_offered?: string[] | null
+          title?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "project_gigs_company_id_fkey"
+            columns: ["company_id"]
+            isOneToOne: false
+            referencedRelation: "companies"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      role_pathway: {
+        Row: {
+          avg_months_to_pivot: number | null
+          company_id: string | null
+          created_at: string
+          difficulty_score: number | null
+          id: string
+          move_type: string
+          optional_skills: string[] | null
+          recommended_certifications: string[] | null
+          required_skills: string[] | null
+          source_role: string
+          target_role: string
+        }
+        Insert: {
+          avg_months_to_pivot?: number | null
+          company_id?: string | null
+          created_at?: string
+          difficulty_score?: number | null
+          id?: string
+          move_type?: string
+          optional_skills?: string[] | null
+          recommended_certifications?: string[] | null
+          required_skills?: string[] | null
+          source_role: string
+          target_role: string
+        }
+        Update: {
+          avg_months_to_pivot?: number | null
+          company_id?: string | null
+          created_at?: string
+          difficulty_score?: number | null
+          id?: string
+          move_type?: string
+          optional_skills?: string[] | null
+          recommended_certifications?: string[] | null
+          required_skills?: string[] | null
+          source_role?: string
+          target_role?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "role_pathway_company_id_fkey"
+            columns: ["company_id"]
             isOneToOne: false
             referencedRelation: "companies"
             referencedColumns: ["id"]
