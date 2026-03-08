@@ -442,39 +442,39 @@ export default function CompanyProfile() {
     return (
       <div className="min-h-screen flex flex-col bg-background">
         <Header />
-        <div className="container mx-auto px-4 py-8">
-          <Link to="/browse" className="inline-flex items-center gap-1 text-sm text-muted-foreground hover:text-foreground transition-colors mb-6">
+        <div className="container mx-auto px-4 py-12">
+          <Link to="/browse" className="inline-flex items-center gap-1.5 text-caption text-muted-foreground hover:text-foreground transition-colors mb-8">
             <ArrowLeft className="w-3.5 h-3.5" />
             Back to directory
           </Link>
 
           <motion.div initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.3 }}>
             {/* Company Overview */}
-            <div className="flex flex-col md:flex-row md:items-start gap-6 mb-8">
-              <div className="w-16 h-16 rounded-xl bg-muted flex items-center justify-center shrink-0">
-                <Building2 className="w-8 h-8 text-muted-foreground" />
+            <div className="flex flex-col md:flex-row md:items-start gap-6 mb-10">
+              <div className="w-16 h-16 rounded-2xl bg-muted/60 flex items-center justify-center shrink-0 border border-border/60">
+                <Building2 className="w-8 h-8 text-muted-foreground/70" />
               </div>
               <div className="flex-1 min-w-0">
                 <div className="flex items-start justify-between gap-4">
                   <div>
                     <div className="flex items-center gap-3 mb-2">
-                      <h1 className="text-3xl md:text-4xl font-bold text-foreground">{dbCompany.name}</h1>
+                      <h1 className="text-headline text-foreground">{dbCompany.name}</h1>
                       {recordStatus !== 'verified' && (
-                        <span className={`text-xs px-2.5 py-1 rounded-full border font-medium ${statusInfo.color}`}>
+                        <span className={`text-micro px-2.5 py-1 rounded-lg border font-medium ${statusInfo.color}`}>
                           {isDiscovering && <Loader2 className="w-3 h-3 animate-spin inline mr-1" />}
                           {statusInfo.label}
                         </span>
                       )}
                     </div>
                     {dbCompany.parent_company && (
-                      <p className="text-sm text-muted-foreground mb-1">Parent: {dbCompany.parent_company}</p>
+                      <p className="text-caption text-muted-foreground mb-1">Parent: {dbCompany.parent_company}</p>
                     )}
-                    <p className="text-muted-foreground mb-3">{dbCompany.description}</p>
+                    <p className="text-body text-muted-foreground mb-4 leading-relaxed max-w-2xl">{dbCompany.description}</p>
                     {(dbCompany as any).verification_notes && (
-                      <p className="text-xs text-civic-yellow mb-2">⚠ {(dbCompany as any).verification_notes}</p>
+                      <p className="text-caption text-civic-yellow mb-2">⚠ {(dbCompany as any).verification_notes}</p>
                     )}
                   </div>
-                  <div className="flex gap-2 flex-wrap">
+                  <div className="flex gap-2 flex-wrap shrink-0">
                     <ShareableScorecard data={{
                       name: dbCompany.name,
                       industry: dbCompany.industry,
@@ -499,7 +499,7 @@ export default function CompanyProfile() {
                     </Button>
                   </div>
                 </div>
-                <div className="flex flex-wrap items-center gap-3">
+                <div className="flex flex-wrap items-center gap-2">
                   <Badge variant="secondary">{dbCompany.industry}</Badge>
                   <Badge variant="secondary">{dbCompany.state}</Badge>
                   {dbCompany.revenue && <Badge variant="secondary">Revenue: {dbCompany.revenue}</Badge>}
