@@ -184,7 +184,6 @@ export function CareerMappingView() {
                     MoveIcon={getMoveIcon(track)}
                     gapAnalysis={track.gap_analysis}
                   />
-                  />
                 ))}
               </div>
             ) : (
