@@ -82,6 +82,11 @@ const App = () => (
                 <SignalAlerts />
               </ProtectedRoute>
             } />
+            <Route path="/career-intelligence" element={
+              <ProtectedRoute>
+                <CareerIntelligence />
+              </ProtectedRoute>
+            } />
             <Route path="*" element={<NotFound />} />
           </Routes>
         </BrowserRouter>
