@@ -127,21 +127,30 @@ serve(async (req) => {
         additionalProperties: false,
       };
     } else if (docType === "resume") {
-      systemPrompt = `You are a career profile analyzer. Extract structured career signals from this resume: full name, job titles held, industries worked in, skills (technical and soft), seniority level (entry/mid/senior/executive), management scope, years of experience, and generate a concise professional bio (2-3 sentences) summarizing their career.`;
+      systemPrompt = `You are a career profile analyzer. Extract structured career signals from this resume.
+
+CRITICAL RULES:
+- Extract the ACTUAL job titles from work experience sections (e.g., "Software Engineer", "Product Manager", "Marketing Director")
+- Do NOT return generic placeholders like "Unknown", "N/A", "Not Specified" - only return real extracted values
+- If a field cannot be determined, return an empty array or null instead of placeholder text
+- Look for job titles in "Experience", "Work History", "Employment" sections
+- Skills should be specific technologies, tools, or competencies actually mentioned
+
+Extract: full name, job titles held, industries worked in, skills (technical and soft), seniority level, management scope, years of experience, and a professional bio (2-3 sentences).`;
       toolName = "parse_resume";
       toolParams = {
         type: "object",
         properties: {
-          full_name: { type: "string", description: "The person's full name" },
+          full_name: { type: "string", description: "The person's full name, or null if not found" },
           professional_bio: { type: "string", description: "A 2-3 sentence professional summary based on their experience" },
-          job_titles: { type: "array", items: { type: "string" } },
-          industries: { type: "array", items: { type: "string" } },
-          skills: { type: "array", items: { type: "string" } },
+          job_titles: { type: "array", items: { type: "string" }, description: "Actual job titles from work experience (e.g., Software Engineer, Sales Manager). Never include Unknown or N/A." },
+          industries: { type: "array", items: { type: "string" }, description: "Industries worked in (e.g., Technology, Healthcare, Finance)" },
+          skills: { type: "array", items: { type: "string" }, description: "Technical and soft skills explicitly mentioned" },
           seniority_level: { type: "string", enum: ["entry", "mid", "senior", "executive"] },
-          management_scope: { type: "string" },
-          years_experience: { type: "number" },
-          education: { type: "array", items: { type: "string" } },
-          linkedin_url: { type: "string", description: "LinkedIn URL if present" },
+          management_scope: { type: "string", description: "Team size or management responsibility if mentioned, or null" },
+          years_experience: { type: "number", description: "Estimated years of experience based on work history" },
+          education: { type: "array", items: { type: "string" }, description: "Degrees and institutions" },
+          linkedin_url: { type: "string", description: "LinkedIn URL if present in the document" },
           overall_confidence: { type: "string", enum: ["high", "medium", "low"] },
         },
         required: ["job_titles", "industries", "skills", "seniority_level", "overall_confidence"],
