@@ -87,6 +87,11 @@ export default function IntelligenceReports() {
           </div>
         </section>
 
+        {isSignalsView ? (
+          <section className="container mx-auto px-4 py-8">
+            <SignalsThisWeek />
+          </section>
+        ) : (
         <section className="container mx-auto px-4 py-8">
           <div className="flex flex-col sm:flex-row gap-3 mb-8 max-w-3xl">
             <div className="relative flex-1">
