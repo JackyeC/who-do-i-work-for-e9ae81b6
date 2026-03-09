@@ -188,27 +188,30 @@ export function ScanCoveragePanel({
                 {CATEGORY_CHECKS.map(cat => {
                   const { signalsFound, sourcesChecked, hasCompleted, hasFailed } = getCategoryStatus(cat.modules, moduleStatuses);
                   return (
-                    <div key={cat.key} className="flex items-center justify-between p-2 rounded-md bg-muted/30 border border-border/50">
-                      <span className="text-xs text-foreground">{cat.label}</span>
-                      <div className="flex items-center gap-2">
-                        {hasCompleted && signalsFound > 0 && (
-                          <span className="text-xs text-primary font-medium">
-                            {signalsFound} match{signalsFound !== 1 ? "es" : ""} found
-                          </span>
-                        )}
-                        {hasCompleted && signalsFound === 0 && (
-                          <span className="text-xs text-muted-foreground">No records found yet</span>
-                        )}
-                        {hasFailed && !hasCompleted && (
-                          <span className="text-xs text-destructive">Check failed</span>
-                        )}
-                        {hasCompleted ? (
-                          <CheckCircle2 className="w-3.5 h-3.5 text-primary" />
-                        ) : hasFailed ? (
-                          <AlertTriangle className="w-3.5 h-3.5 text-destructive" />
-                        ) : null}
-                      </div>
-                    </div>
+                     <div key={cat.key} className="flex items-center justify-between p-2 rounded-md bg-muted/30 border border-border/50">
+                       <span className="text-xs text-foreground">{cat.label}</span>
+                       <div className="flex items-center gap-2">
+                         {hasCompleted && signalsFound > 0 && (
+                           <span className="text-xs text-primary font-medium">
+                             {signalsFound} match{signalsFound !== 1 ? "es" : ""} found
+                           </span>
+                         )}
+                         {hasCompleted && signalsFound === 0 && (
+                           <span className="text-xs text-muted-foreground">No records found yet</span>
+                         )}
+                         {hasFailed && !hasCompleted && (
+                           <span className="text-xs text-destructive">Check failed</span>
+                         )}
+                         {!hasCompleted && !hasFailed && (
+                           <span className="text-xs text-muted-foreground/60">Not checked</span>
+                         )}
+                         {hasCompleted ? (
+                           <CheckCircle2 className="w-3.5 h-3.5 text-primary" />
+                         ) : hasFailed ? (
+                           <AlertTriangle className="w-3.5 h-3.5 text-destructive" />
+                         ) : null}
+                       </div>
+                     </div>
                   );
                 })}
               </div>

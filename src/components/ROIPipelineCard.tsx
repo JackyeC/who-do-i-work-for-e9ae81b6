@@ -317,9 +317,17 @@ export function ROIPipelineCard({
             <h3 className="text-sm font-semibold text-foreground mb-1">
               No verified influence pipeline evidence found yet
             </h3>
-            <p className="text-xs text-muted-foreground max-w-sm mb-5">
+            <p className="text-xs text-muted-foreground max-w-sm mb-2">
               The intelligence scan completed but found no entity linkages connecting political spending to government benefits for this company. This may change as new data becomes available.
             </p>
+            {enrichmentData && (
+              <div className="p-3 rounded-lg bg-accent/10 border border-accent/20 mb-4 max-w-sm">
+                <p className="text-xs text-accent-foreground font-medium mb-1">Third-party summary data found</p>
+                <p className="text-[11px] text-muted-foreground">
+                  Primary-source verification is still in progress or incomplete. OpenSecrets profile data is available for reference.
+                </p>
+              </div>
+            )}
             {onTriggerScan && (
               <Button variant="outline" size="sm" onClick={onTriggerScan} className="gap-1.5">
                 <Search className="w-3.5 h-3.5" />
