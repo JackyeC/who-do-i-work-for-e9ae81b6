@@ -19,7 +19,7 @@ export function RecruitingInsightsDashboard() {
     const fetch = async () => {
       const [companiesRes, warnRes, aiRes, industriesRes, layoffsRes] = await Promise.all([
         supabase.from("companies").select("id", { count: "exact", head: true }),
-        supabase.from("warn_notices").select("company_id", { count: "exact", head: true }),
+        supabase.from("company_warn_notices").select("company_id", { count: "exact", head: true }),
         supabase.from("ai_hiring_signals").select("company_id", { count: "exact", head: true }),
         supabase.from("companies").select("industry").limit(1000),
         supabase.from("warn_notices").select("company_name, number_affected, notice_date").order("notice_date", { ascending: false }).limit(10),
