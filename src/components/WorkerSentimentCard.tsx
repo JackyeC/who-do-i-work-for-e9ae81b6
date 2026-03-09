@@ -170,7 +170,7 @@ export function WorkerSentimentCard({ companyName, dbCompanyId }: WorkerSentimen
           </div>
         )}
 
-        {!result && !isScanning ? (
+        {!result ? (
           <div className="text-center py-8 text-muted-foreground">
             <HardHat className="w-8 h-8 mx-auto mb-2 opacity-40" />
             <p className="text-sm mb-1">No public worker sentiment signals detected yet.</p>
