@@ -1,0 +1,1 @@
+UPDATE scan_runs SET scan_status = 'failed', error_log = '{"reason": "Manual expiry: scan was stuck in_progress"}' WHERE id = '9cb5a1f0-9668-47de-a538-29286ec8ad7b' AND scan_status = 'in_progress'
