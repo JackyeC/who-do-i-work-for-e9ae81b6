@@ -14,6 +14,7 @@ import { useToast } from "@/hooks/use-toast";
 export default function SearchResults() {
   const [searchParams, setSearchParams] = useSearchParams();
   const initialQuery = searchParams.get("q") || "";
+  const intent = searchParams.get("intent") || "";
   const [query, setQuery] = useState(initialQuery);
   const [isDiscovering, setIsDiscovering] = useState(false);
   const navigate = useNavigate();
@@ -51,14 +52,15 @@ export default function SearchResults() {
         if (error) throw error;
 
         if (data?.success) {
+          const dest = intent === 'offer' ? `/offer-check/${data.companyId || data.slug}` : `/company/${data.slug}`;
           if (data.action === 'existing') {
-            navigate(`/company/${data.slug}`);
+            navigate(dest);
           } else if (data.action === 'created') {
             toast({
               title: "Company discovered",
               description: `Building transparency profile for ${data.identity?.name || initialQuery}...`,
             });
-            navigate(`/company/${data.slug}`);
+            navigate(dest);
           }
         }
       } catch (e: any) {
@@ -76,7 +78,7 @@ export default function SearchResults() {
     // Small delay to avoid firing on every keystroke
     const timer = setTimeout(autoDiscover, 500);
     return () => clearTimeout(timer);
-  }, [initialQuery, dbLoading, hasAnyResults, isDiscovering, navigate, toast]);
+  }, [initialQuery, dbLoading, hasAnyResults, isDiscovering, navigate, toast, intent]);
 
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault();
@@ -94,13 +96,14 @@ export default function SearchResults() {
       });
       if (error) throw error;
       if (data?.success) {
+        const dest = intent === 'offer' ? `/offer-check/${data.companyId || data.slug}` : `/company/${data.slug}`;
         toast({
           title: data.action === 'existing' ? "Company found" : "Company discovered",
           description: data.action === 'created'
             ? `Building transparency profile for ${data.identity?.name || initialQuery}...`
             : "Opening existing profile...",
         });
-        navigate(`/company/${data.slug}`);
+        navigate(dest);
       }
     } catch (e: any) {
       toast({ title: "Discovery failed", description: e.message, variant: "destructive" });
@@ -140,7 +143,7 @@ export default function SearchResults() {
               {dbResults!.map((c: any) => (
                 <a
                   key={c.id}
-                  href={`/company/${c.slug}`}
+                  href={intent === 'offer' ? `/offer-check/${c.id}` : `/company/${c.slug}`}
                   className="block p-4 rounded-lg border border-border bg-card hover:border-primary/50 transition-colors"
                 >
                   <div className="flex items-start justify-between gap-2">
