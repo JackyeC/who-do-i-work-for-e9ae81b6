@@ -161,7 +161,8 @@ export default function Jobs() {
               Job Board
             </h1>
             <p className="text-muted-foreground text-sm mt-0.5">
-              {filtered?.length || 0} jobs from {companiesWithJobs} companies · Score 70+
+              {filtered?.length || 0} jobs from {companiesWithJobs} companies
+              {minScore !== "0" && ` · Score ${minScore}+`}
             </p>
           </div>
 
