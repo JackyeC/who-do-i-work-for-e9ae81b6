@@ -272,8 +272,38 @@ serve(async (req) => {
       }
     }
 
-    // 7. Public stances → issue alignment
+    // 7. Public stances → issue alignment (enriched with related donations)
     if (stances && stances.length > 0) {
+      // Build related donations breakdown for stance context
+      const relatedDonations: { name: string; party: string; amount: number; donation_type: string; entity_type: string }[] = [];
+      if (candidates) {
+        for (const c of candidates) {
+          relatedDonations.push({
+            name: c.name,
+            party: c.party || "Unknown",
+            amount: c.amount || 0,
+            donation_type: c.donation_type || "PAC",
+            entity_type: "pac_recipient",
+          });
+        }
+      }
+      if (executives) {
+        for (const e of executives) {
+          const topR = execRecipientsMap.get(e.id) || [];
+          for (const r of topR) {
+            relatedDonations.push({
+              name: r.name,
+              party: r.party,
+              amount: r.amount,
+              donation_type: "Individual",
+              entity_type: "executive_recipient",
+            });
+          }
+        }
+      }
+      // Sort by amount descending
+      relatedDonations.sort((a, b) => b.amount - a.amount);
+
       for (const s of stances) {
         const issues = detectIssueAreas(`${s.topic} ${s.public_position} ${s.spending_reality}`);
         for (const issue of issues) {
@@ -289,6 +319,7 @@ serve(async (req) => {
             confidence_score: 0.7,
             confidence_label: "medium",
             verification_status: "partially_verified",
+            evidence_json: relatedDonations.length > 0 ? { recipients: relatedDonations.slice(0, 20) } : null,
           });
         }
       }
