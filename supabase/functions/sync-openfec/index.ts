@@ -354,12 +354,22 @@ Deno.serve(async (req) => {
             const committeePartyCache = new Map<string, string>();
 
             // Returns 'R', 'D', or 'I' to match DB constraint
+            // Uses comprehensive heuristics to avoid slow FEC lookups
             function inferPartyFromName(name: string): string {
               const upper = name.toUpperCase();
-              // Republican patterns
-              if (/\b(REPUBLICAN|GOP|RNC|NRCC|NRSC|TRUMP|DESANTIS|WINRED)\b/.test(upper)) return 'R';
-              // Democrat patterns
-              if (/\b(DEMOCRAT(IC)?|DNC|DCCC|DSCC|BIDEN|HARRIS|ACTBLUE)\b/.test(upper)) return 'D';
+              // Republican keywords & known committees
+              if (/\b(REPUBLICAN|GOP|RNC|NRCC|NRSC|WINRED|SAVE AMERICA|MAGA)\b/.test(upper)) return 'R';
+              // Known Republican candidates/committees
+              if (/\b(TRUMP|DESANTIS|BURGUM|TED CRUZ|CORNYN|MCCONNELL|RUBIO|SCOTT|THUNE|TUBERVILLE|BO HINES|PAUL HUDSON|HUIZENGA|MOOLENAAR|ROGERS|MARK GREEN)\b/.test(upper)) return 'R';
+              // Republican structural patterns
+              if (/\b(VICTORY (COMMITTEE|FUND)|FREEDOM FUND|LEADERSHIP FUND)\b/.test(upper) && !/\bDEMOCRAT/.test(upper)) {
+                // Check if it's paired with a known R candidate
+                if (/\b(TRUMP|DESANTIS|BURGUM|NRSC|NRCC|REPUBLICAN)\b/.test(upper)) return 'R';
+              }
+              // Democrat keywords & known committees  
+              if (/\b(DEMOCRAT(IC)?|DNC|DCCC|DSCC|ACTBLUE|EMILY'?S LIST|BLUE WAVE)\b/.test(upper)) return 'D';
+              // Known Democrat candidates/committees
+              if (/\b(BIDEN|HARRIS|KLOBUCHAR|BALDWIN|ALLRED|CASTEN|JACKSON|WARNOCK|OSSOFF|SCHUMER|PELOSI|STABENOW)\b/.test(upper)) return 'D';
               // Try matching against allCandidates from PAC data
               const matchedCandidate = allCandidates.find(c =>
                 upper.includes(c.name.split(',')[0]?.toUpperCase() || '___')
@@ -369,28 +379,6 @@ Deno.serve(async (req) => {
                 if (matchedCandidate.party?.includes('DEM')) return 'D';
               }
               return 'I'; // Default to Independent for unknown — satisfies DB constraint
-            }
-
-            // Try FEC committee lookup for ALL unknowns to get accurate party
-            const unknownCommittees = [...allCommitteeNames].filter(n => inferPartyFromName(n) === 'I');
-            console.log(`[sync-openfec] Looking up party for ${unknownCommittees.length} committees via FEC...`);
-            for (const committeeName of unknownCommittees.slice(0, 15)) {
-              try {
-                const searchData = await fecFetch('/committees/', { q: committeeName, per_page: '3' }, apiKey);
-                // Find best match by comparing names
-                const results = searchData.results || [];
-                for (const result of results) {
-                  if (result?.party_full) {
-                    const pf = result.party_full.toUpperCase();
-                    const party = pf.includes('REPUBLICAN') ? 'R' : pf.includes('DEMOCRAT') ? 'D' : null;
-                    if (party) {
-                      committeePartyCache.set(committeeName.toUpperCase(), party);
-                      break;
-                    }
-                  }
-                }
-                await new Promise(r => setTimeout(r, 150));
-              } catch { /* skip failed lookups */ }
             }
 
             for (const exec of topExecs) {
