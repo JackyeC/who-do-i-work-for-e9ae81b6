@@ -6,6 +6,29 @@ const corsHeaders = {
   "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type, x-supabase-client-platform, x-supabase-client-platform-version, x-supabase-client-runtime, x-supabase-client-runtime-version",
 };
 
+/** Convert a file extension to the Gemini-compatible MIME type */
+function getMimeType(filename: string): string {
+  const ext = filename.split(".").pop()?.toLowerCase() || "";
+  const map: Record<string, string> = {
+    pdf: "application/pdf",
+    docx: "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+    doc: "application/msword",
+    txt: "text/plain",
+    rtf: "application/rtf",
+  };
+  return map[ext] || "application/octet-stream";
+}
+
+/** Convert ArrayBuffer to base64 string */
+function arrayBufferToBase64(buffer: ArrayBuffer): string {
+  const bytes = new Uint8Array(buffer);
+  let binary = "";
+  for (let i = 0; i < bytes.length; i++) {
+    binary += String.fromCharCode(bytes[i]);
+  }
+  return btoa(binary);
+}
+
 serve(async (req) => {
   if (req.method === "OPTIONS") return new Response(null, { headers: corsHeaders });
 
@@ -44,8 +67,10 @@ serve(async (req) => {
     await adminClient.from("offer_letter_reviews").update({ processing_status: "processing" }).eq("id", reviewId);
 
     let documentText = review.extracted_text || "";
+    let fileBase64: string | null = null;
+    let fileMimeType: string | null = null;
 
-    // If file was uploaded, download and extract text
+    // If file was uploaded, download for Gemini native parsing
     if (review.file_path && !documentText) {
       const { data: fileData, error: fileError } = await adminClient.storage
         .from("offer-letters")
@@ -53,38 +78,38 @@ serve(async (req) => {
       if (fileError) throw new Error(`File download failed: ${fileError.message}`);
 
       const filename = (review.original_filename || "").toLowerCase();
-      if (filename.endsWith(".txt")) {
-        documentText = await fileData.text();
-      } else if (filename.endsWith(".pdf") || filename.endsWith(".docx")) {
-        // For PDF/DOCX, convert to text via the blob content
-        // Basic text extraction from raw bytes
-        const rawText = await fileData.text();
-        // Strip non-printable chars for basic extraction
-        documentText = rawText.replace(/[^\x20-\x7E\n\r\t]/g, " ").replace(/\s+/g, " ").trim();
-        if (documentText.length < 50) {
-          documentText = "Document content could not be fully extracted. Raw text preview: " + documentText.slice(0, 500);
-        }
-      } else {
-        documentText = await fileData.text();
-      }
 
-      // Store extracted text
-      await adminClient.from("offer_letter_reviews").update({ extracted_text: documentText.slice(0, 50000) }).eq("id", reviewId);
+      if (filename.endsWith(".txt")) {
+        // Plain text can be read directly
+        documentText = await fileData.text();
+      } else {
+        // For PDF/DOCX: send raw file to Gemini as base64 inline_data
+        // Gemini can natively understand these document formats
+        const buffer = await fileData.arrayBuffer();
+        fileBase64 = arrayBufferToBase64(buffer);
+        fileMimeType = getMimeType(filename);
+        console.log(`Sending ${filename} (${(buffer.byteLength / 1024).toFixed(1)}KB) as ${fileMimeType} to Gemini for native parsing`);
+      }
     }
 
-    if (!documentText || documentText.length < 20) {
+    // If we have neither text nor a file to parse, fail
+    if (!documentText && !fileBase64) {
       await adminClient.from("offer_letter_reviews").update({
         processing_status: "failed",
-        error_message: "Could not extract sufficient text from the document.",
+        error_message: "Could not extract content from the document.",
       }).eq("id", reviewId);
-      return new Response(JSON.stringify({ error: "Insufficient text" }), {
+      return new Response(JSON.stringify({ error: "No content to analyze" }), {
         status: 400,
         headers: { ...corsHeaders, "Content-Type": "application/json" },
       });
     }
 
-    // Get company info for comparison context
-    const { data: company } = await adminClient.from("companies").select("name, industry, state").eq("id", review.company_id).single();
+    // Get company info if linked
+    let companyContext = "Company not specified by user.";
+    if (review.company_id) {
+      const { data: company } = await adminClient.from("companies").select("name, industry, state").eq("id", review.company_id).single();
+      if (company) companyContext = `Company: ${company.name}, Industry: ${company.industry}, State: ${company.state}`;
+    }
 
     const systemPrompt = `You are a document analysis tool that extracts structured information from employment offer letters. You identify terms, clauses, and structural elements. You do NOT provide legal advice or interpret contract validity. You report what is detected in neutral language.
 
@@ -96,16 +121,34 @@ Extract the following categories of information where present:
 5. Contingencies: background_check, references, drug_screening, etc.
 6. Other Notable Terms: severance, reporting_structure, relocation language
 
-For the company context: The company is "${company?.name || 'Unknown'}" in the "${company?.industry || 'Unknown'}" industry, based in ${company?.state || 'Unknown'}.`;
+Context: ${companyContext}
 
-    const userPrompt = `Analyze this employment offer letter and extract all structured information. For each detected item, provide the category, term name, extracted text snippet, and a confidence level (high, medium, low).
+IMPORTANT: Always extract the employer_name from the document itself, regardless of any company context provided.`;
 
-Document text:
----
-${documentText.slice(0, 15000)}
----`;
+    // Build the messages array with either text or inline_data
+    const userContent: any[] = [];
+    
+    if (fileBase64 && fileMimeType) {
+      // Send the raw file as inline_data for Gemini native document understanding
+      userContent.push({
+        type: "file",
+        file: {
+          filename: review.original_filename || "document",
+          content: fileBase64,
+          content_type: fileMimeType,
+        },
+      });
+      userContent.push({
+        type: "text",
+        text: "Analyze this employment offer letter document and extract all structured information. For each detected item, provide the category, term name, extracted text snippet, and a confidence level (high, medium, low).",
+      });
+    } else {
+      userContent.push({
+        type: "text",
+        text: `Analyze this employment offer letter and extract all structured information. For each detected item, provide the category, term name, extracted text snippet, and a confidence level (high, medium, low).\n\nDocument text:\n---\n${documentText!.slice(0, 15000)}\n---`,
+      });
+    }
 
-    // Call Lovable AI with tool calling for structured output
     const aiResponse = await fetch("https://ai.gateway.lovable.dev/v1/chat/completions", {
       method: "POST",
       headers: {
@@ -116,7 +159,7 @@ ${documentText.slice(0, 15000)}
         model: "google/gemini-2.5-flash",
         messages: [
           { role: "system", content: systemPrompt },
-          { role: "user", content: userPrompt },
+          { role: "user", content: userContent },
         ],
         tools: [
           {
@@ -130,7 +173,7 @@ ${documentText.slice(0, 15000)}
                   offer_snapshot: {
                     type: "object",
                     properties: {
-                      employer_name: { type: "string" },
+                      employer_name: { type: "string", description: "The company making the offer, extracted from the document" },
                       role_title: { type: "string" },
                       department: { type: "string" },
                       base_salary: { type: "string" },
@@ -139,6 +182,7 @@ ${documentText.slice(0, 15000)}
                       work_arrangement: { type: "string" },
                       compensation_summary: { type: "string" },
                     },
+                    required: ["employer_name"],
                     additionalProperties: false,
                   },
                   extracted_terms: {
@@ -183,7 +227,7 @@ ${documentText.slice(0, 15000)}
     if (!aiResponse.ok) {
       const errText = await aiResponse.text();
       console.error("AI error:", aiResponse.status, errText);
-      
+
       if (aiResponse.status === 429) {
         await adminClient.from("offer_letter_reviews").update({ processing_status: "failed", error_message: "Rate limit exceeded. Please try again later." }).eq("id", reviewId);
         return new Response(JSON.stringify({ error: "Rate limit exceeded" }), { status: 429, headers: { ...corsHeaders, "Content-Type": "application/json" } });
@@ -198,27 +242,56 @@ ${documentText.slice(0, 15000)}
 
     const aiResult = await aiResponse.json();
     const toolCall = aiResult.choices?.[0]?.message?.tool_calls?.[0];
-    
+
     if (!toolCall?.function?.arguments) {
       throw new Error("AI did not return structured output");
     }
 
     const extracted = JSON.parse(toolCall.function.arguments);
 
-    // Update the review with extracted data
-    await adminClient.from("offer_letter_reviews").update({
+    // Auto-detect company from extracted employer_name if no company was linked
+    let detectedCompanyId = review.company_id;
+    const extractedEmployer = extracted.offer_snapshot?.employer_name;
+    if (!detectedCompanyId && extractedEmployer) {
+      console.log(`No company linked — auto-detecting from employer_name: "${extractedEmployer}"`);
+      const { data: matchedCompany } = await adminClient
+        .from("companies")
+        .select("id, name")
+        .ilike("name", `%${extractedEmployer.trim()}%`)
+        .limit(1)
+        .maybeSingle();
+
+      if (matchedCompany) {
+        detectedCompanyId = matchedCompany.id;
+        console.log(`Auto-matched to company: ${matchedCompany.name} (${matchedCompany.id})`);
+      }
+    }
+
+    // Build the update payload
+    const updatePayload: any = {
       offer_snapshot: extracted.offer_snapshot || {},
       extracted_terms: extracted.extracted_terms || [],
       detected_clauses: extracted.detected_clauses || [],
       processing_status: "completed",
-    }).eq("id", reviewId);
+    };
 
-    // If user opted to delete file after analysis
-    if (review.file_path && review.file_deleted) {
-      await adminClient.storage.from("offer-letters").remove([review.file_path]);
+    // Link to detected company if found
+    if (detectedCompanyId && !review.company_id) {
+      updatePayload.company_id = detectedCompanyId;
     }
 
-    return new Response(JSON.stringify({ success: true, reviewId }), {
+    // Update the review
+    await adminClient.from("offer_letter_reviews").update(updatePayload).eq("id", reviewId);
+
+    // Privacy: if user opted to delete file after analysis, remove it now
+    if (review.file_path && review.file_deleted) {
+      await adminClient.storage.from("offer-letters").remove([review.file_path]);
+      console.log(`File deleted per user request: ${review.file_path}`);
+      // Also clear extracted_text to minimize data retention
+      await adminClient.from("offer_letter_reviews").update({ extracted_text: null }).eq("id", reviewId);
+    }
+
+    return new Response(JSON.stringify({ success: true, reviewId, detectedCompany: detectedCompanyId }), {
       headers: { ...corsHeaders, "Content-Type": "application/json" },
     });
   } catch (e: any) {
