@@ -123,6 +123,10 @@ const App = () => (
                   <CareerIntelligence />
                 </ProtectedRoute>
               } />
+              <Route path="/intelligence" element={<IntelligenceReports />} />
+              <Route path="/intelligence/:slug" element={<IntelligenceReport />} />
+              <Route path="/admin/reports" element={<ProtectedRoute><ReportsList /></ProtectedRoute>} />
+              <Route path="/admin/reports/:id" element={<ProtectedRoute><ReportEditor /></ProtectedRoute>} />
               <Route path="*" element={<NotFound />} />
             </Routes>
           </BrowserRouter>

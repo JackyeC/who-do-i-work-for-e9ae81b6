@@ -1304,6 +1304,11 @@ export default function CompanyProfile() {
                 dbCompanyId={dbCompanyId}
               />
             </div>
+
+            {/* Related Intelligence Reports */}
+            <div className="mt-6">
+              <RelatedReportsCard companyName={company.name} companyId={dbCompanyId} />
+            </div>
           </div>
 
           {/* Executive Donors */}
