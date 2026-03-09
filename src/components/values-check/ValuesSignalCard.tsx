@@ -2,6 +2,7 @@ import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { ChevronDown, ChevronUp, ExternalLink } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
+import { PartyBadge } from "@/components/PartyBadge";
 import { cn } from "@/lib/utils";
 import { type ValuesCheckSignal, ISSUE_AREAS } from "./ValuesCheckSection";
 
@@ -23,7 +24,7 @@ export function ValuesSignalCard({ signal, getConfidenceBadge, getVerificationBa
   const issueInfo = ISSUE_AREAS.find((ia) => ia.key === signal.issue_area);
 
   // Parse recipients from evidence_json
-  const recipients: { name: string; party: string; amount: number }[] = (() => {
+  const recipients: { name: string; party: string; amount: number; donation_type?: string; entity_type?: string }[] = (() => {
     try {
       const ej = signal.evidence_json;
       if (ej && typeof ej === "object" && "recipients" in ej && Array.isArray((ej as any).recipients)) {
@@ -32,6 +33,10 @@ export function ValuesSignalCard({ signal, getConfidenceBadge, getVerificationBa
     } catch {}
     return [];
   })();
+
+  // Group recipients by donation type for display
+  const pacRecipients = recipients.filter(r => r.donation_type !== "Individual");
+  const individualRecipients = recipients.filter(r => r.donation_type === "Individual");
 
   return (
     <div className="rounded-xl border border-border/40 bg-card overflow-hidden hover:border-primary/15 transition-colors group">
@@ -88,8 +93,65 @@ export function ValuesSignalCard({ signal, getConfidenceBadge, getVerificationBa
             className="overflow-hidden"
           >
             <div className="px-4 pb-4 space-y-2.5 border-t border-border/30 pt-3">
-              {/* Donation recipients breakdown */}
-              {signal.signal_category === "executive_activity" && recipients.length > 0 && (
+              {/* Full description (not truncated) */}
+              {signal.signal_description && (
+                <p className="text-xs text-foreground/80 leading-relaxed">
+                  {signal.signal_description}
+                </p>
+              )}
+
+              {/* PAC donation recipients */}
+              {pacRecipients.length > 0 && (
+                <div className="space-y-1.5">
+                  <p className="text-[11px] font-semibold text-foreground flex items-center gap-1.5">
+                    Corporate PAC donations
+                    <Badge variant="outline" className="text-[9px] px-1 py-0 font-normal">PAC</Badge>
+                  </p>
+                  <div className="space-y-1">
+                    {pacRecipients.map((r, i) => (
+                      <div key={`pac-${i}`} className="flex items-center justify-between text-[11px] py-1 px-2 rounded-lg bg-muted/40">
+                        <div className="flex items-center gap-1.5 min-w-0">
+                          <span className="font-medium text-foreground truncate">{r.name}</span>
+                          <PartyBadge party={r.party} entityType={r.entity_type} size="xs" />
+                        </div>
+                        {r.amount > 0 && (
+                          <span className="text-[10px] font-bold text-primary shrink-0 ml-2">
+                            {formatAmount(r.amount)}
+                          </span>
+                        )}
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
+
+              {/* Individual executive donations */}
+              {individualRecipients.length > 0 && (
+                <div className="space-y-1.5">
+                  <p className="text-[11px] font-semibold text-foreground flex items-center gap-1.5">
+                    Individual executive donations
+                    <Badge variant="outline" className="text-[9px] px-1 py-0 font-normal">Individual</Badge>
+                  </p>
+                  <div className="space-y-1">
+                    {individualRecipients.map((r, i) => (
+                      <div key={`ind-${i}`} className="flex items-center justify-between text-[11px] py-1 px-2 rounded-lg bg-muted/40">
+                        <div className="flex items-center gap-1.5 min-w-0">
+                          <span className="font-medium text-foreground truncate">{r.name}</span>
+                          <PartyBadge party={r.party} entityType={r.entity_type} size="xs" />
+                        </div>
+                        {r.amount > 0 && (
+                          <span className="text-[10px] font-bold text-primary shrink-0 ml-2">
+                            {formatAmount(r.amount)}
+                          </span>
+                        )}
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
+
+              {/* Legacy: executive_activity recipients without donation_type */}
+              {signal.signal_category === "executive_activity" && recipients.length > 0 && !recipients[0]?.donation_type && (
                 <div className="space-y-1.5">
                   <p className="text-[11px] font-semibold text-foreground">Donated to:</p>
                   <div className="space-y-1">
@@ -97,19 +159,7 @@ export function ValuesSignalCard({ signal, getConfidenceBadge, getVerificationBa
                       <div key={i} className="flex items-center justify-between text-[11px] py-1 px-2 rounded-lg bg-muted/40">
                         <div className="flex items-center gap-1.5 min-w-0">
                           <span className="font-medium text-foreground truncate">{r.name}</span>
-                          {r.party && (
-                            <Badge
-                              variant="outline"
-                              className={cn(
-                                "text-[9px] px-1 py-0 shrink-0",
-                                r.party === "R" || r.party === "Republican" ? "border-destructive/40 text-destructive" :
-                                r.party === "D" || r.party === "Democrat" ? "border-primary/40 text-primary" :
-                                "border-border text-muted-foreground"
-                              )}
-                            >
-                              {r.party === "R" ? "R" : r.party === "D" ? "D" : r.party}
-                            </Badge>
-                          )}
+                          <PartyBadge party={r.party} size="xs" />
                         </div>
                         {r.amount > 0 && (
                           <span className="text-[10px] font-bold text-primary shrink-0 ml-2">
@@ -167,6 +217,7 @@ export function ValuesSignalCard({ signal, getConfidenceBadge, getVerificationBa
                   signal.source_type === "executive_donation" ? "executive donation matching" :
                   signal.source_type === "trade_association" ? "related-entity or PAC matching" :
                   signal.source_type === "third_party_summary" ? "third-party organization summary data" :
+                  signal.source_type === "public_stance" ? "public statements compared against political spending records" :
                   "public records"}.
               </p>
 
