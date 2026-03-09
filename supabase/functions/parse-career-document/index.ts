@@ -1,10 +1,33 @@
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
+import mammoth from "npm:mammoth@1.6.0";
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
   "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type, x-supabase-client-platform, x-supabase-client-platform-version, x-supabase-client-runtime, x-supabase-client-runtime-version",
 };
+
+async function extractTextFromFile(fileData: Blob, filename: string): Promise<string> {
+  const ext = filename.split(".").pop()?.toLowerCase() || "";
+  
+  if (ext === "docx") {
+    const arrayBuffer = await fileData.arrayBuffer();
+    const result = await mammoth.extractRawText({ arrayBuffer });
+    return result.value;
+  } else if (ext === "txt" || ext === "md") {
+    return await fileData.text();
+  } else if (ext === "pdf") {
+    // For PDF, extract what text we can (basic approach)
+    const text = await fileData.text();
+    // Try to extract readable content from PDF
+    const matches = text.match(/[\x20-\x7E\n\r\t]+/g) || [];
+    return matches.filter(m => m.length > 10).join(" ");
+  } else {
+    // Fallback: try as text
+    const text = await fileData.text();
+    return text.replace(/[^\x20-\x7E\n\r\t]/g, " ").replace(/\s+/g, " ").trim();
+  }
+}
 
 serve(async (req) => {
   if (req.method === "OPTIONS") return new Response(null, { headers: corsHeaders });
@@ -46,15 +69,18 @@ serve(async (req) => {
       .download(doc.file_path);
     if (fileError) throw new Error(`File download failed: ${fileError.message}`);
 
-    let documentText = await fileData.text();
-    documentText = documentText.replace(/[^\x20-\x7E\n\r\t]/g, " ").replace(/\s+/g, " ").trim();
+    // Extract text based on file type
+    const documentText = await extractTextFromFile(fileData, doc.original_filename || doc.file_path);
 
     if (documentText.length < 20) {
       await adminClient.from("user_documents").update({ status: "error", confidence_level: "low" }).eq("id", documentId);
-      return new Response(JSON.stringify({ error: "Insufficient text extracted" }), {
+      return new Response(JSON.stringify({ error: "Insufficient text extracted from document" }), {
         status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" },
       });
     }
+
+    console.log("Extracted text length:", documentText.length, "chars");
+    console.log("First 500 chars:", documentText.slice(0, 500));
 
     // Build prompt based on document type
     const docType = doc.document_type;
