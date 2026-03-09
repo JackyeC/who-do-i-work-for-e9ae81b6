@@ -80,6 +80,25 @@ function getCommitteeIssues(committeeName: string): string[] {
   return [];
 }
 
+/* ── Clean up ugly entity names so humans can read them ── */
+function cleanEntityName(name: string): string {
+  if (!name) return "Unknown";
+  // Remove SEC CIK identifiers like "SEC CIK 0001234567" or "(CIK: 0001234567)"
+  let cleaned = name.replace(/\b(SEC\s*)?CIK[\s:#]*\d+/gi, "").trim();
+  // Remove FEC IDs like "C00123456" or "(FEC ID: C00123456)"
+  cleaned = cleaned.replace(/\(?\s*FEC\s*(ID)?[\s:#]*C\d+\s*\)?/gi, "").trim();
+  // Remove standalone alphanumeric codes like "C00123456" at end
+  cleaned = cleaned.replace(/\s*C\d{8,}\s*/g, " ").trim();
+  // Remove EIN numbers
+  cleaned = cleaned.replace(/\b(EIN|TIN)[\s:#]*\d[\d-]+/gi, "").trim();
+  // Remove DUNS numbers
+  cleaned = cleaned.replace(/\bDUNS[\s:#]*\d+/gi, "").trim();
+  // Remove trailing dashes, commas, or parens left behind
+  cleaned = cleaned.replace(/[\s,\-()]+$/, "").replace(/^[\s,\-()]+/, "").trim();
+  // If we stripped everything, return original
+  return cleaned || name;
+}
+
 /* ── Plain-language entity type labels ── */
 const ENTITY_TYPE_LABELS: Record<string, string> = {
   company: "Company",
