@@ -197,13 +197,15 @@ function EntityNode({
   const isPolitician = type === "politician" || type === "member";
   const partyName = party ? PARTY_FULL_NAMES[party] || party : null;
 
+  const displayName = cleanEntityName(name);
+
   return (
     <Tooltip>
       <TooltipTrigger asChild>
         <div className={cn("px-3 py-2 rounded-lg border text-sm font-medium max-w-[280px] cursor-default", style)}>
           <div className="flex items-center gap-1.5">
             {isPolitician && <User className="w-3.5 h-3.5 shrink-0" />}
-            <span className="truncate">{name}</span>
+            <span className="truncate">{displayName}</span>
             {showParty && <PartyBadge party={party} entityType={type} />}
             {location && <span className="text-[9px] text-muted-foreground shrink-0">{location}</span>}
           </div>
