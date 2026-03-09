@@ -74,6 +74,7 @@ function getCategoryStatus(modules: string[], moduleStatuses: Record<string, Mod
   let sourcesChecked = 0;
   let hasCompleted = false;
   let hasFailed = false;
+  let latestTimestamp: string | null = null;
 
   for (const modKey of modules) {
     const mod = moduleStatuses[modKey];
@@ -86,9 +87,12 @@ function getCategoryStatus(modules: string[], moduleStatuses: Record<string, Mod
     if (mod.status === "failed" || mod.status === "no_sources_found") {
       hasFailed = true;
     }
+    if (mod.completedAt && (!latestTimestamp || mod.completedAt > latestTimestamp)) {
+      latestTimestamp = mod.completedAt;
+    }
   }
 
-  return { signalsFound, sourcesChecked, hasCompleted, hasFailed };
+  return { signalsFound, sourcesChecked, hasCompleted, hasFailed, latestTimestamp };
 }
 
 export function ScanCoveragePanel({
