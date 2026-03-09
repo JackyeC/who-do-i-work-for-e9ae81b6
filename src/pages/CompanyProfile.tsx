@@ -734,22 +734,22 @@ export default function CompanyProfile() {
 
             {/* Summary Cards */}
             <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-10">
-              <ExplainableMetric metricKey="civic-footprint">
-                <Card className="overflow-hidden">
-                  <CardContent className="p-5">
+              <ExplainableMetric metricKey="civic-footprint" className="h-full">
+                <Card className="overflow-hidden h-full flex flex-col">
+                  <CardContent className="p-5 flex flex-col flex-1">
                     <div className="flex items-center gap-2 text-caption text-muted-foreground mb-2">
                       <Scale className="w-3.5 h-3.5" />
                       Civic Footprint
                     </div>
                     <div className="text-3xl font-bold text-foreground mb-1 font-display-number">{dbCompany.civic_footprint_score}<span className="text-sm text-muted-foreground font-normal">/100</span></div>
                     <CivicFootprintBadge score={dbCompany.civic_footprint_score} size="sm" />
-                    <p className="text-[11px] text-muted-foreground mt-2 leading-snug">How much political activity we detected. Higher = more active, not worse.</p>
+                    <p className="text-[11px] text-muted-foreground mt-auto pt-2 leading-snug">How much political activity we detected. Higher = more active, not worse.</p>
                   </CardContent>
                 </Card>
               </ExplainableMetric>
-              <ExplainableMetric metricKey="pac-spending">
-                <Card className="overflow-hidden">
-                  <CardContent className="p-5">
+              <ExplainableMetric metricKey="pac-spending" className="h-full">
+                <Card className="overflow-hidden h-full flex flex-col">
+                  <CardContent className="p-5 flex flex-col flex-1">
                     <div className="flex items-center gap-2 text-caption text-muted-foreground mb-2">
                       <DollarSign className="w-3.5 h-3.5" />
                       PAC Spending
@@ -757,13 +757,13 @@ export default function CompanyProfile() {
                     <div className="text-3xl font-bold text-foreground font-display-number">
                       {dbCompany.total_pac_spending > 0 ? formatCurrency(dbCompany.total_pac_spending) : "None"}
                     </div>
-                    <p className="text-[11px] text-muted-foreground mt-2 leading-snug">Money donated by the company's PAC directly to political candidates this cycle.</p>
+                    <p className="text-[11px] text-muted-foreground mt-auto pt-2 leading-snug">Money donated by the company's PAC directly to political candidates this cycle.</p>
                   </CardContent>
                 </Card>
               </ExplainableMetric>
-              <ExplainableMetric metricKey="lobbying">
-                <Card className="overflow-hidden">
-                  <CardContent className="p-5">
+              <ExplainableMetric metricKey="lobbying" className="h-full">
+                <Card className="overflow-hidden h-full flex flex-col">
+                  <CardContent className="p-5 flex flex-col flex-1">
                     <div className="flex items-center gap-2 text-caption text-muted-foreground mb-2">
                       <Megaphone className="w-3.5 h-3.5" />
                       Lobbying
@@ -771,14 +771,14 @@ export default function CompanyProfile() {
                     <div className="text-3xl font-bold text-foreground font-display-number">
                       {dbCompany.lobbying_spend ? formatCurrency(dbCompany.lobbying_spend) : "None"}
                     </div>
-                    <p className="text-[11px] text-muted-foreground mt-2 leading-snug">Annual spending on lobbyists who advocate for the company in Congress.</p>
+                    <p className="text-[11px] text-muted-foreground mt-auto pt-2 leading-snug">Annual spending on lobbyists who advocate for the company in Congress.</p>
                   </CardContent>
                 </Card>
               </ExplainableMetric>
               {(dbCompany.government_contracts || dbCompany.subsidies_received) && (
-                <ExplainableMetric metricKey="gov-contracts">
-                  <Card className="overflow-hidden">
-                    <CardContent className="p-5">
+                <ExplainableMetric metricKey="gov-contracts" className="h-full">
+                  <Card className="overflow-hidden h-full flex flex-col">
+                    <CardContent className="p-5 flex flex-col flex-1">
                       <div className="flex items-center gap-2 text-caption text-muted-foreground mb-2">
                         <Landmark className="w-3.5 h-3.5" />
                         Gov Contracts
@@ -786,7 +786,7 @@ export default function CompanyProfile() {
                       <div className="text-3xl font-bold text-foreground font-display-number">
                         {dbCompany.government_contracts ? formatCurrency(dbCompany.government_contracts) : "—"}
                       </div>
-                      <p className="text-[11px] text-muted-foreground mt-2 leading-snug">Federal contracts awarded to this company — taxpayer money received.</p>
+                      <p className="text-[11px] text-muted-foreground mt-auto pt-2 leading-snug">Federal contracts awarded to this company — taxpayer money received.</p>
                     </CardContent>
                   </Card>
                 </ExplainableMetric>
