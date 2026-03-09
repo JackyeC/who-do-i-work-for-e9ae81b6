@@ -220,10 +220,21 @@ export default function ValuesSearch() {
               </div>
 
               {issueInfo && (
-                <p className="text-sm text-muted-foreground mb-6 max-w-2xl">
+                <p className="text-sm text-muted-foreground mb-4 max-w-2xl">
                   {issueInfo.description}. Companies listed below have public records — campaign donations,
                   lobbying filings, or advocacy signals — connected to this issue area.
                 </p>
+              )}
+
+              {/* Gun Policy transparency note */}
+              {selectedIssue === "gun_policy" && (
+                <div className="flex items-start gap-2.5 p-4 rounded-xl bg-muted/40 border border-border/40 mb-6 max-w-2xl">
+                  <Info className="w-4 h-4 text-muted-foreground shrink-0 mt-0.5" />
+                  <p className="text-xs text-muted-foreground leading-relaxed">
+                    This page reports documented political spending, lobbying activity, and advocacy connections
+                    related to firearm policy. The platform does not evaluate or endorse these positions.
+                  </p>
+                </div>
               )}
 
               {/* Filter within results */}
