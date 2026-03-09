@@ -8,6 +8,7 @@ import {
   BarChart3, Loader2, Sparkles, Search, ClipboardCheck, CheckCircle2, HelpCircle
 } from "lucide-react";
 import { LensSelector } from "@/components/LensSelector";
+import { BeforeYouApply } from "@/components/BeforeYouApply";
 import { DataGlossary } from "@/components/DataGlossary";
 import { ExplainableMetric } from "@/components/ExplainableMetric";
 import { CompanyLogo } from "@/components/CompanyLogo";
@@ -394,6 +395,16 @@ export default function CompanyProfile() {
     refetchInterval: pollInterval,
   });
 
+  const { data: dbTradeAssociations } = useQuery({
+    queryKey: ["company-trade-assoc", dbCompanyId],
+    queryFn: async () => {
+      const { data } = await supabase.from("company_trade_associations").select("id").eq("company_id", dbCompanyId!);
+      return data || [];
+    },
+    enabled: !!dbCompanyId,
+    refetchInterval: pollInterval,
+  });
+
   const hasDetailedData = (dbCandidates?.length || 0) > 0 || (dbExecutives?.length || 0) > 0;
 
   // Transparency Index: check signal presence across categories
@@ -712,6 +723,26 @@ export default function CompanyProfile() {
               </CardContent>
             </Card>
 
+            {/* Before You Apply */}
+            <div className="mb-8">
+              <BeforeYouApply
+                companyName={dbCompany.name}
+                companyId={dbCompany.id}
+                signals={{
+                  pacSpending: dbCompany.total_pac_spending || 0,
+                  executiveDonations: dbExecutives?.reduce((sum: number, e: any) => sum + (e.total_donations || 0), 0) || 0,
+                  lobbyingSpend: dbCompany.lobbying_spend || 0,
+                  tradeAssociationCount: dbTradeAssociations?.length || 0,
+                  publicStanceCount: dbPublicStances?.length || 0,
+                  hasDetailedData: hasDetailedData,
+                }}
+                onReviewSignals={() => {
+                  const el = document.getElementById('lens-modules');
+                  el?.scrollIntoView({ behavior: 'smooth' });
+                }}
+              />
+            </div>
+
             {/* Lens Selector */}
             <LensSelector activeLens={activeLens} onLensChange={setActiveLens} />
 
@@ -741,29 +772,30 @@ export default function CompanyProfile() {
             </div>
 
             {/* Lens-ordered modules */}
-            <DbLensModules
-              activeLens={activeLens}
-              dbCompany={dbCompany}
-              dbPartyBreakdown={dbPartyBreakdown}
-              dbCandidates={dbCandidates}
-              dbExecutives={dbExecutives}
-              dbPublicStances={dbPublicStances}
-              dbDarkMoney={dbDarkMoney}
-              dbRevolvingDoor={dbRevolvingDoor}
-              livePipeline={livePipeline}
-              autoScanning={autoScanning}
-              hasBeenScanned={hasBeenScanned}
-              triggerScan={triggerScan}
-              onCandidateClick={handleCandidateClick}
-              onExecutiveClick={handleExecutiveClick}
-              onPartyClick={(party) => {
-                // Scroll to candidates table filtered by party
-                const filtered = dbCandidates?.filter(c => c.party === party);
-                if (filtered && filtered.length > 0) {
-                  setPartyFilteredCandidates(filtered);
-                }
-              }}
-            />
+            <div id="lens-modules">
+              <DbLensModules
+                activeLens={activeLens}
+                dbCompany={dbCompany}
+                dbPartyBreakdown={dbPartyBreakdown}
+                dbCandidates={dbCandidates}
+                dbExecutives={dbExecutives}
+                dbPublicStances={dbPublicStances}
+                dbDarkMoney={dbDarkMoney}
+                dbRevolvingDoor={dbRevolvingDoor}
+                livePipeline={livePipeline}
+                autoScanning={autoScanning}
+                hasBeenScanned={hasBeenScanned}
+                triggerScan={triggerScan}
+                onCandidateClick={handleCandidateClick}
+                onExecutiveClick={handleExecutiveClick}
+                onPartyClick={(party) => {
+                  const filtered = dbCandidates?.filter(c => c.party === party);
+                  if (filtered && filtered.length > 0) {
+                    setPartyFilteredCandidates(filtered);
+                  }
+                }}
+              />
+            </div>
 
             {/* Party-filtered candidates modal */}
             {partyFilteredCandidates && partyFilteredCandidates.length > 0 && (
