@@ -1,3 +1,4 @@
+import { useState } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -7,7 +8,9 @@ import { cn } from "@/lib/utils";
 import {
   ArrowRight, DollarSign, Users, Landmark, FileText,
   Loader2, Search, Radar, ShieldCheck, ShieldX, CheckCircle2, Building2,
+  ChevronDown, ChevronRight, ExternalLink, ShieldAlert, Info,
 } from "lucide-react";
+import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
 
 export interface LinkageNode {
   id: string;
