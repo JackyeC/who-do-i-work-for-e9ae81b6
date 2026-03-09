@@ -252,6 +252,9 @@ const Index = () => {
         </div>
       </section>
 
+      {/* ─── INFLUENCE PIPELINE VISUAL ─── */}
+      <InfluencePipelineVisual />
+
       {/* ─── PHILOSOPHY ─── */}
       <section className="section-padding">
         <div className="container mx-auto px-4 max-w-3xl">
