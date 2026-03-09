@@ -39,6 +39,7 @@ import IntelligenceReports from "./pages/IntelligenceReports";
 import IntelligenceReport from "./pages/IntelligenceReport";
 import ReportsList from "./pages/ReportsList";
 import ReportEditor from "./pages/ReportEditor";
+import OfferClarity from "./pages/OfferClarity";
 
 const queryClient = new QueryClient();
 
