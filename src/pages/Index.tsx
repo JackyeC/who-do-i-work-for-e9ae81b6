@@ -6,6 +6,7 @@ import {
   CheckCircle2, Landmark, Scale, Globe, Users, Lock, BarChart3, BookOpen,
   Heart, Bot, Network, DollarSign, TrendingUp, ChevronRight, Layers
 } from "lucide-react";
+import { RecentSignalsFeed } from "@/components/RecentSignalsFeed";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Header } from "@/components/Header";
