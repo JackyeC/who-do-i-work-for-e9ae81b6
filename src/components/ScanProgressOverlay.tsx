@@ -46,6 +46,7 @@ interface ScanProgressOverlayProps {
   totalSignals: number;
   totalSources: number;
   onClose: () => void;
+  onForceRescan?: () => void;
 }
 
 export function ScanProgressOverlay({
