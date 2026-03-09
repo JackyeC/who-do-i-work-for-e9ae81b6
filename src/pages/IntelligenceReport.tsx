@@ -496,13 +496,18 @@ export default function IntelligenceReport() {
                             <VerificationBadge status={a.verification_status} />
                           </div>
                         </div>
-                        {a.entity_id && (
-                          <Link to={`/company/${a.entity_name_snapshot?.toLowerCase().replace(/\s+/g, "-")}`}>
-                            <Button variant="ghost" size="sm" className="text-xs gap-1">
-                              Profile <ChevronRight className="w-3 h-3" />
-                            </Button>
-                          </Link>
-                        )}
+                        <div className="flex flex-col gap-1.5 shrink-0 items-end">
+                          {a.entity_id && (
+                            <WatchCompanyButton companyId={a.entity_id} companyName={a.entity_name_snapshot || "Company"} size="sm" />
+                          )}
+                          {a.entity_id && (
+                            <Link to={`/company/${a.entity_name_snapshot?.toLowerCase().replace(/\s+/g, "-")}`}>
+                              <Button variant="ghost" size="sm" className="text-xs gap-1">
+                                Profile <ChevronRight className="w-3 h-3" />
+                              </Button>
+                            </Link>
+                          )}
+                        </div>
                       </div>
                     </CardContent>
                   </Card>
