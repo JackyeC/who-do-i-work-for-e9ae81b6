@@ -542,14 +542,6 @@ export default function CompanyProfile() {
     const recordStatus = (dbCompany as any).record_status || 'verified';
     const statusInfo = statusLabels[recordStatus] || statusLabels.verified;
 
-    // Dynamic SEO metadata
-    useCompanySEO({
-      name: dbCompany.name,
-      industry: dbCompany.industry,
-      state: dbCompany.state,
-      description: (dbCompany as any).description,
-      slug: id || dbCompany.slug,
-    });
 
     return (
       <div className="min-h-screen flex flex-col bg-background">
