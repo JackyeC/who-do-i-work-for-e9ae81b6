@@ -154,7 +154,7 @@ export function RecruitingInsightsDashboard() {
             <CardTitle className="text-base flex items-center gap-2">
               <TrendingUp className="w-4 h-4 text-primary" /> Top Employer Brands (by Transparency)
             </CardTitle>
-            <p className="text-xs text-muted-foreground">Companies with highest civic transparency scores</p>
+            <p className="text-xs text-muted-foreground">Companies that disclose the most about their political spending, lobbying, and governance — not a judgment of good or bad, just who shows their cards</p>
           </CardHeader>
           <CardContent className="space-y-2">
             {stats.competitorInsights.map((c, i) => (
