@@ -1,6 +1,7 @@
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 import mammoth from "npm:mammoth@1.6.0";
+import pdfParse from "npm:pdf-parse@1.1.1";
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
@@ -14,14 +15,13 @@ async function extractTextFromFile(fileData: Blob, filename: string): Promise<st
     const arrayBuffer = await fileData.arrayBuffer();
     const result = await mammoth.extractRawText({ arrayBuffer });
     return result.value;
+  } else if (ext === "pdf") {
+    const arrayBuffer = await fileData.arrayBuffer();
+    const buffer = new Uint8Array(arrayBuffer);
+    const result = await pdfParse(buffer);
+    return result.text;
   } else if (ext === "txt" || ext === "md") {
     return await fileData.text();
-  } else if (ext === "pdf") {
-    // For PDF, extract what text we can (basic approach)
-    const text = await fileData.text();
-    // Try to extract readable content from PDF
-    const matches = text.match(/[\x20-\x7E\n\r\t]+/g) || [];
-    return matches.filter(m => m.length > 10).join(" ");
   } else {
     // Fallback: try as text
     const text = await fileData.text();
