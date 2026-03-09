@@ -18,15 +18,37 @@ interface CompanyAlignment {
   matchedSignals: string[];
 }
 
+// Map lens keys to company_values_signals value_category values
+const LENS_TO_SIGNAL_CATEGORIES: Record<string, string[]> = {
+  dei_equity_importance: ["anti_discrimination", "lgbtq_inclusive", "dei_equity"],
+  environment_climate_importance: ["environmental", "environment_climate"],
+  labor_rights_importance: ["worker_benefits", "labor_rights"],
+  faith_christian_importance: ["faith_christian"],
+  israel_middle_east_importance: ["israel_middle_east"],
+  animal_welfare_importance: ["animal_welfare"],
+  anti_discrimination_importance: ["anti_discrimination"],
+  lgbtq_rights_importance: ["lgbtq_rights", "lgbtq_inclusive"],
+  reproductive_rights_importance: ["reproductive_rights"],
+  voting_rights_importance: ["voting_rights"],
+  consumer_protection_importance: ["consumer_protection"],
+  healthcare_importance: ["healthcare"],
+  immigration_importance: ["immigration"],
+  pay_transparency_importance: ["pay_transparency", "salary_transparency"],
+  worker_protections_importance: ["worker_benefits", "worker_protections"],
+  ai_transparency_importance: ["ai_transparency"],
+  benefits_importance: ["worker_benefits"],
+};
+
 export function useCareerAlignmentScore(companyId?: string) {
   const { user } = useAuth();
 
+  // Use unified user_values_profile
   const { data: valuesProfile } = useQuery({
-    queryKey: ["user-alignment-values", user?.id],
+    queryKey: ["user-values-profile", user?.id],
     queryFn: async () => {
       if (!user) return null;
-      const { data, error } = await supabase
-        .from("user_alignment_values")
+      const { data, error } = await (supabase as any)
+        .from("user_values_profile")
         .select("*")
         .eq("user_id", user.id)
         .single();
@@ -54,7 +76,6 @@ export function useCareerAlignmentScore(companyId?: string) {
   const calculateAlignment = async (targetCompanyId: string): Promise<CompanyAlignment | null> => {
     if (!valuesProfile && !careerProfile) return null;
 
-    // Fetch company data
     const { data: company } = await supabase
       .from("companies")
       .select("id, name, slug, civic_footprint_score, industry")
@@ -64,12 +85,11 @@ export function useCareerAlignmentScore(companyId?: string) {
     if (!company) return null;
 
     const matchedSignals: string[] = [];
-    let skillsScore = 50; // default if no career profile
+    let skillsScore = 50;
     let valuesScore = 50;
     let signalsScore = 0;
     let jobScore = 50;
 
-    // Fetch company signals in parallel
     const [benefitsRes, aiHiringRes, payEquityRes, sentimentRes, valuesSignalsRes] = await Promise.all([
       supabase.from("ai_hr_signals").select("signal_category").eq("company_id", targetCompanyId),
       supabase.from("ai_hiring_signals").select("transparency_score, bias_audit_status").eq("company_id", targetCompanyId),
@@ -78,10 +98,9 @@ export function useCareerAlignmentScore(companyId?: string) {
       supabase.from("company_values_signals").select("value_category, confidence").eq("company_id", targetCompanyId),
     ]);
 
-    // Calculate signals score based on what's available
+    // Signals score
     let signalCount = 0;
     const totalSignalWeight = 5;
-
     if ((benefitsRes.data?.length || 0) > 0) { signalCount++; matchedSignals.push("Worker Benefits"); }
     if ((aiHiringRes.data?.length || 0) > 0) { signalCount++; matchedSignals.push("AI Transparency"); }
     if ((payEquityRes.data?.length || 0) > 0) { signalCount++; matchedSignals.push("Pay Transparency"); }
@@ -89,28 +108,15 @@ export function useCareerAlignmentScore(companyId?: string) {
     if ((valuesSignalsRes.data?.length || 0) > 0) { signalCount++; matchedSignals.push("Values Signals"); }
 
     signalsScore = Math.round((signalCount / totalSignalWeight) * 100);
-
-    // Civic footprint as base quality
     signalsScore = Math.round(signalsScore * 0.5 + (company.civic_footprint_score || 0) * 0.5);
 
-    // Values alignment calculation
+    // Values alignment from unified profile
     if (valuesProfile) {
       let valueMatches = 0;
       let valueTotal = 0;
-
-      const valuesMap: Record<string, string[]> = {
-        pay_equity_weight: ["pay_transparency", "salary_transparency"],
-        worker_protections_weight: ["worker_benefits"],
-        ai_transparency_weight: ["ai_transparency"],
-        benefits_quality_weight: ["worker_benefits"],
-        dei_commitment_weight: ["anti_discrimination", "lgbtq_inclusive"],
-        environmental_commitment_weight: ["environmental"],
-        veteran_support_weight: ["veteran_support"],
-      };
-
       const companyValueCats = (valuesSignalsRes.data || []).map((v: any) => v.value_category);
 
-      Object.entries(valuesMap).forEach(([weightKey, categories]) => {
+      Object.entries(LENS_TO_SIGNAL_CATEGORIES).forEach(([weightKey, categories]) => {
         const weight = (valuesProfile as any)[weightKey] || 50;
         if (weight > 20) {
           valueTotal += weight;
@@ -125,11 +131,10 @@ export function useCareerAlignmentScore(companyId?: string) {
       valuesScore = valueTotal > 0 ? Math.round((valueMatches / valueTotal) * 100) : 50;
     }
 
-    // Skills match from career profile
+    // Skills match
     if (careerProfile) {
       const userSkills = ((careerProfile as any).skills || []).map((s: string) => s.toLowerCase());
       if (userSkills.length > 0) {
-        // Simplified: check against company jobs
         const { data: jobs } = await supabase
           .from("company_jobs")
           .select("extracted_skills, title")
@@ -142,18 +147,17 @@ export function useCareerAlignmentScore(companyId?: string) {
           jobs.forEach((j: any) => {
             ((j.extracted_skills || []) as string[]).forEach((s: string) => jobSkills.add(s.toLowerCase()));
           });
-          
+
           let matched = 0;
           userSkills.forEach((skill: string) => {
             if ([...jobSkills].some(js => js.includes(skill) || skill.includes(js))) matched++;
           });
-          
+
           skillsScore = Math.round(Math.min((matched / userSkills.length) * 100, 100));
           if (matched >= 2) matchedSignals.push(`${matched} Skills Match`);
 
-          // Job title match
           const userTitles = ((careerProfile as any).preferred_titles || []).map((t: string) => t.toLowerCase());
-          const titleMatch = jobs.some((j: any) => 
+          const titleMatch = jobs.some((j: any) =>
             userTitles.some((ut: string) => (j.title || "").toLowerCase().includes(ut))
           );
           if (titleMatch) {
@@ -164,7 +168,6 @@ export function useCareerAlignmentScore(companyId?: string) {
       }
     }
 
-    // Weighted overall score: Skills 30%, Values 30%, Signals 25%, Job 15%
     const overallScore = Math.round(
       skillsScore * 0.30 +
       valuesScore * 0.30 +
