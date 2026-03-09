@@ -1,9 +1,11 @@
 import { useState } from "react";
 import { Header } from "@/components/Header";
 import { Footer } from "@/components/Footer";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useAuth } from "@/contexts/AuthContext";
-import { Navigate } from "react-router-dom";
+import { Navigate, useSearchParams } from "react-router-dom";
+import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
+import { DashboardSidebar } from "@/components/dashboard/DashboardSidebar";
+import { DashboardOverview } from "@/components/dashboard/DashboardOverview";
 import { AlignedJobsList } from "@/components/jobs/AlignedJobsList";
 import { PreferenceCenter } from "@/components/jobs/PreferenceCenter";
 import { UserProfileForm } from "@/components/jobs/UserProfileForm";
@@ -11,109 +13,97 @@ import { TrackingDashboard } from "@/components/jobs/TrackingDashboard";
 import { AutoApplySettings } from "@/components/jobs/AutoApplySettings";
 import { ApplyQueueDashboard } from "@/components/jobs/ApplyQueueDashboard";
 import { UserAlertsList } from "@/components/UserAlerts";
-import { UserValuesProfile } from "@/components/UserValuesProfile";
 import { MyValuesProfile } from "@/components/career/MyValuesProfile";
 import { HowDoIGetThere } from "@/components/career/HowDoIGetThere";
 import { OutreachIntelligence } from "@/components/career/OutreachIntelligence";
-import {
-  ClipboardCheck, Bell, Briefcase, LayoutDashboard,
-  Settings, User, Zap, Target, Heart, Route, Users
-} from "lucide-react";
+import { ClipboardCheck } from "lucide-react";
+
+const TAB_TITLES: Record<string, string> = {
+  overview: "Dashboard Overview",
+  matches: "Matched Jobs",
+  values: "My Values Profile",
+  how: "How Do I Get There?",
+  outreach: "Outreach Intelligence",
+  tracker: "Application Tracker",
+  "auto-apply": "Auto-Apply",
+  offers: "My Offer Checks",
+  alerts: "Signal Alerts",
+  preferences: "Preferences",
+  profile: "My Profile",
+};
 
 export default function Dashboard() {
   const { user, loading } = useAuth();
-  const [tab, setTab] = useState("matches");
+  const [searchParams, setSearchParams] = useSearchParams();
+  const tab = searchParams.get("tab") || "overview";
+
+  const setTab = (newTab: string) => {
+    setSearchParams({ tab: newTab });
+  };
 
   if (loading) return null;
   if (!user) return <Navigate to="/login" replace />;
 
+  const renderContent = () => {
+    switch (tab) {
+      case "overview":
+        return <DashboardOverview onNavigate={setTab} />;
+      case "matches":
+        return <AlignedJobsList />;
+      case "values":
+        return <MyValuesProfile />;
+      case "how":
+        return <HowDoIGetThere />;
+      case "outreach":
+        return <OutreachIntelligence />;
+      case "tracker":
+        return <TrackingDashboard />;
+      case "auto-apply":
+        return (
+          <div className="space-y-6">
+            <AutoApplySettings />
+            <ApplyQueueDashboard />
+          </div>
+        );
+      case "offers":
+        return (
+          <div className="text-center py-12">
+            <ClipboardCheck className="w-10 h-10 text-muted-foreground mx-auto mb-3" />
+            <h3 className="text-lg font-semibold text-foreground mb-1">My Offer Checks</h3>
+            <p className="text-sm text-muted-foreground mb-4">View and compare your saved offer check reports.</p>
+            <a href="/my-offer-checks" className="text-sm text-primary underline">Go to My Offer Checks →</a>
+          </div>
+        );
+      case "alerts":
+        return <UserAlertsList />;
+      case "preferences":
+        return <PreferenceCenter />;
+      case "profile":
+        return <UserProfileForm />;
+      default:
+        return <DashboardOverview onNavigate={setTab} />;
+    }
+  };
+
   return (
     <div className="min-h-screen bg-background flex flex-col">
       <Header />
-      <main className="flex-1 container mx-auto px-4 py-8 max-w-6xl">
-        <div className="mb-6">
-          <h1 className="text-3xl font-bold text-foreground font-display">
-            My Dashboard
-          </h1>
-          <p className="text-muted-foreground mt-1">
-            Your career intelligence hub — values, jobs, paths, outreach, and alerts in one place.
-          </p>
+      <SidebarProvider>
+        <div className="flex-1 flex w-full">
+          <DashboardSidebar activeTab={tab} onTabChange={setTab} />
+          <main className="flex-1 flex flex-col min-w-0">
+            <div className="flex items-center gap-3 border-b border-border/30 px-6 h-12">
+              <SidebarTrigger className="-ml-1" />
+              <h1 className="text-sm font-semibold text-foreground truncate">
+                {TAB_TITLES[tab] || "Dashboard"}
+              </h1>
+            </div>
+            <div className="flex-1 overflow-y-auto px-6 py-6 max-w-5xl">
+              {renderContent()}
+            </div>
+          </main>
         </div>
-
-        <Tabs value={tab} onValueChange={setTab}>
-          <TabsList className="mb-6 flex-wrap">
-            <TabsTrigger value="matches" className="gap-1.5">
-              <Briefcase className="w-4 h-4" /> Matched Jobs
-            </TabsTrigger>
-            <TabsTrigger value="values" className="gap-1.5">
-              <Heart className="w-4 h-4" /> My Values
-            </TabsTrigger>
-            <TabsTrigger value="how" className="gap-1.5">
-              <Route className="w-4 h-4" /> How Do I Get There?
-            </TabsTrigger>
-            <TabsTrigger value="outreach" className="gap-1.5">
-              <Users className="w-4 h-4" /> Outreach
-            </TabsTrigger>
-            <TabsTrigger value="tracker" className="gap-1.5">
-              <LayoutDashboard className="w-4 h-4" /> Applications
-            </TabsTrigger>
-            <TabsTrigger value="offers" className="gap-1.5">
-              <ClipboardCheck className="w-4 h-4" /> My Offer Checks
-            </TabsTrigger>
-            <TabsTrigger value="alerts" className="gap-1.5">
-              <Bell className="w-4 h-4" /> Signal Alerts
-            </TabsTrigger>
-            <TabsTrigger value="auto-apply" className="gap-1.5">
-              <Zap className="w-4 h-4" /> Auto-Apply
-            </TabsTrigger>
-            <TabsTrigger value="preferences" className="gap-1.5">
-              <Settings className="w-4 h-4" /> Preferences
-            </TabsTrigger>
-            <TabsTrigger value="profile" className="gap-1.5">
-              <User className="w-4 h-4" /> Profile
-            </TabsTrigger>
-          </TabsList>
-
-          <TabsContent value="matches">
-            <AlignedJobsList />
-          </TabsContent>
-          <TabsContent value="values">
-            <MyValuesProfile />
-          </TabsContent>
-          <TabsContent value="how">
-            <HowDoIGetThere />
-          </TabsContent>
-          <TabsContent value="outreach">
-            <OutreachIntelligence />
-          </TabsContent>
-          <TabsContent value="tracker">
-            <TrackingDashboard />
-          </TabsContent>
-          <TabsContent value="offers">
-            <div className="text-center py-12">
-              <ClipboardCheck className="w-10 h-10 text-muted-foreground mx-auto mb-3" />
-              <h3 className="text-lg font-semibold text-foreground mb-1">My Offer Checks</h3>
-              <p className="text-sm text-muted-foreground mb-4">View and compare your saved offer check reports.</p>
-              <a href="/my-offer-checks" className="text-sm text-primary underline">Go to My Offer Checks →</a>
-            </div>
-          </TabsContent>
-          <TabsContent value="alerts">
-            <UserAlertsList />
-          </TabsContent>
-          <TabsContent value="auto-apply">
-            <div className="space-y-6">
-              <AutoApplySettings />
-              <ApplyQueueDashboard />
-            </div>
-          </TabsContent>
-          <TabsContent value="preferences">
-            <PreferenceCenter />
-          </TabsContent>
-          <TabsContent value="profile">
-            <UserProfileForm />
-          </TabsContent>
-        </Tabs>
-      </main>
+      </SidebarProvider>
       <Footer />
     </div>
   );
