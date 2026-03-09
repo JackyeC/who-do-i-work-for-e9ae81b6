@@ -224,7 +224,9 @@ export function CompanyIntelligenceScanCard({ companyId, companyName }: Props) {
         {isScanning && (
           <div className="mb-4">
             <Progress value={progress} className="h-2" />
-            <p className="text-xs text-muted-foreground mt-1">Processing modules...</p>
+            <p className="text-xs text-muted-foreground mt-1.5">
+              Scanning federal databases, web sources, and AI analysis modules. This typically takes <strong>2–4 minutes</strong> depending on data availability.
+            </p>
           </div>
         )}
 
