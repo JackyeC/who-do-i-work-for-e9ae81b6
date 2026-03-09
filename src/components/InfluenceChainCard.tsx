@@ -351,22 +351,22 @@ function chainStory(chain: ChainStep[], companyName: string): string {
   if (chain.some(s => s.link_type === "donation_to_member")) {
     story = `${companyName} gave money`;
     if (totalAmount > 0) story += ` (${formatCurrency(totalAmount)})`;
-    story += ` to ${last.target_name}`;
+    story += ` to ${cleanEntityName(last.target_name)}`;
     if (partyName) story += `, a ${partyName}`;
 
     if (committees.length > 0) {
-      story += `, who sits on the ${committees[0]}`;
+      story += `, who sits on the ${cleanEntityName(committees[0])}`;
       if (uniqueIssues.length > 0) {
         story += `. That committee handles: ${uniqueIssues.slice(0, 3).join(", ")}`;
       }
     }
     story += ".";
   } else if (chain.some(s => s.link_type === "lobbying_on_bill")) {
-    story = `${companyName} paid lobbyists to influence legislation connected to ${last.target_name}.`;
+    story = `${companyName} paid lobbyists to influence legislation connected to ${cleanEntityName(last.target_name)}.`;
   } else if (chain.some(s => s.link_type === "revolving_door")) {
-    story = `${companyName} hired ${last.target_name}, who used to work in government. This is called a "revolving door" — people moving between government jobs and private companies.`;
+    story = `${companyName} hired ${cleanEntityName(last.target_name)}, who used to work in government. This is called a "revolving door" — people moving between government jobs and private companies.`;
   } else {
-    story = `${companyName} is connected to ${last.target_name} through ${chain.length} step${chain.length !== 1 ? "s" : ""}.`;
+    story = `${companyName} is connected to ${cleanEntityName(last.target_name)} through ${chain.length} step${chain.length !== 1 ? "s" : ""}.`;
   }
 
   return story;
