@@ -14,6 +14,7 @@ import { useToast } from "@/hooks/use-toast";
 export default function SearchResults() {
   const [searchParams, setSearchParams] = useSearchParams();
   const initialQuery = searchParams.get("q") || "";
+  const intent = searchParams.get("intent") || "";
   const [query, setQuery] = useState(initialQuery);
   const [isDiscovering, setIsDiscovering] = useState(false);
   const navigate = useNavigate();
