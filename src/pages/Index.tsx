@@ -86,7 +86,7 @@ const Index = () => {
                 </div>
                 <Button type="submit" size="lg" className="h-14 px-10 rounded-xl text-base font-semibold shadow-elevated">
                   <Search className="w-4 h-4 mr-2" />
-                  Analyze
+                  Start Exploring
                 </Button>
               </div>
             </motion.form>
