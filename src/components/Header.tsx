@@ -49,6 +49,9 @@ const VALUES_ISSUES = [
   { to: "/values-search?issue=education", label: "Education", icon: GraduationCap },
   { to: "/values-search?issue=immigration", label: "Immigration", icon: Globe2 },
   { to: "/values-search?issue=consumer_protection", label: "Consumer Protection", icon: ShoppingCart },
+  { to: "/values-search?issue=reproductive_rights", label: "Reproductive Rights", icon: Heart },
+  { to: "/values-search?issue=voting_rights", label: "Voting Rights", icon: Landmark },
+  { to: "/values-search?issue=lgbtq_rights", label: "LGBTQ+ Rights", icon: Heart },
 ];
 
 const INTELLIGENCE_ITEMS = [
