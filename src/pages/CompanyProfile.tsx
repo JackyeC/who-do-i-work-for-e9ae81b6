@@ -713,6 +713,26 @@ export default function CompanyProfile() {
               </CardContent>
             </Card>
 
+            {/* Before You Apply */}
+            <div className="mb-8">
+              <BeforeYouApply
+                companyName={dbCompany.name}
+                companyId={dbCompany.id}
+                signals={{
+                  pacSpending: dbCompany.total_pac_spending || 0,
+                  executiveDonations: dbExecutives?.reduce((sum: number, e: any) => sum + (e.total_donations || 0), 0) || 0,
+                  lobbyingSpend: dbCompany.lobbying_spend || 0,
+                  tradeAssociationCount: 0,
+                  publicStanceCount: dbPublicStances?.length || 0,
+                  hasDetailedData: hasDetailedData,
+                }}
+                onReviewSignals={() => {
+                  const el = document.getElementById('lens-modules');
+                  el?.scrollIntoView({ behavior: 'smooth' });
+                }}
+              />
+            </div>
+
             {/* Lens Selector */}
             <LensSelector activeLens={activeLens} onLensChange={setActiveLens} />
 
