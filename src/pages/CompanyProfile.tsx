@@ -408,6 +408,17 @@ export default function CompanyProfile() {
 
   const hasDetailedData = (dbCandidates?.length || 0) > 0 || (dbExecutives?.length || 0) > 0;
 
+  // Enrichment data (OpenSecrets third-party summaries)
+  const { data: enrichmentData } = useQuery({
+    queryKey: ["org-enrichment", dbCompanyId],
+    queryFn: async () => {
+      const { data } = await supabase.from("organization_profile_enrichment" as any).select("*").eq("company_id", dbCompanyId!).eq("source_name", "OpenSecrets").maybeSingle();
+      return data;
+    },
+    enabled: !!dbCompanyId,
+    refetchInterval: pollInterval,
+  });
+
   // Transparency Index: check signal presence across categories
   const { data: tiAiHr } = useQuery({ queryKey: ["ti-ai-hr", dbCompanyId], queryFn: async () => { const { count } = await supabase.from("ai_hr_signals" as any).select("id", { count: "exact", head: true }).eq("company_id", dbCompanyId!); return (count || 0) > 0; }, enabled: !!dbCompanyId });
   const { data: tiBenefits } = useQuery({ queryKey: ["ti-benefits", dbCompanyId], queryFn: async () => { const { count } = await supabase.from("worker_benefit_signals" as any).select("id", { count: "exact", head: true }).eq("company_id", dbCompanyId!); return (count || 0) > 0; }, enabled: !!dbCompanyId });
