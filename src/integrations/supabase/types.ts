@@ -3631,6 +3631,83 @@ export type Database = {
         }
         Relationships: []
       }
+      values_check_signals: {
+        Row: {
+          amount: number | null
+          company_id: string
+          confidence_label: string
+          confidence_score: number
+          created_at: string
+          evidence_json: Json | null
+          id: string
+          issue_area: string
+          matched_entity_type: string | null
+          related_entity_name: string | null
+          related_person_name: string | null
+          signal_category: string
+          signal_description: string | null
+          signal_title: string
+          source_name: string
+          source_type: string | null
+          source_url: string | null
+          updated_at: string
+          verification_status: string
+          year: number | null
+        }
+        Insert: {
+          amount?: number | null
+          company_id: string
+          confidence_label?: string
+          confidence_score?: number
+          created_at?: string
+          evidence_json?: Json | null
+          id?: string
+          issue_area: string
+          matched_entity_type?: string | null
+          related_entity_name?: string | null
+          related_person_name?: string | null
+          signal_category: string
+          signal_description?: string | null
+          signal_title: string
+          source_name?: string
+          source_type?: string | null
+          source_url?: string | null
+          updated_at?: string
+          verification_status?: string
+          year?: number | null
+        }
+        Update: {
+          amount?: number | null
+          company_id?: string
+          confidence_label?: string
+          confidence_score?: number
+          created_at?: string
+          evidence_json?: Json | null
+          id?: string
+          issue_area?: string
+          matched_entity_type?: string | null
+          related_entity_name?: string | null
+          related_person_name?: string | null
+          signal_category?: string
+          signal_description?: string | null
+          signal_title?: string
+          source_name?: string
+          source_type?: string | null
+          source_url?: string | null
+          updated_at?: string
+          verification_status?: string
+          year?: number | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "values_check_signals_company_id_fkey"
+            columns: ["company_id"]
+            isOneToOne: false
+            referencedRelation: "companies"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       worker_benefit_signals: {
         Row: {
           benefit_category: string
