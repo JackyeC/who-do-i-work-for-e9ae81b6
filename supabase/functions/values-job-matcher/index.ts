@@ -66,7 +66,7 @@ Deno.serve(async (req) => {
     const userWorkMode = careerProfile?.preferred_work_mode || null;
     const userMinSalary = careerProfile?.salary_range_min || (profile as any)?.min_salary || 0;
 
-    // 4. Fetch active jobs with company data
+    // 5. Fetch active jobs with company data
     const { data: jobs } = await supabase
       .from('company_jobs')
       .select(`
@@ -83,14 +83,15 @@ Deno.serve(async (req) => {
       });
     }
 
-    // 5. Get signal data for companies
+    // 6. Get signal data for companies AND values signals
     const companyIds = [...new Set(jobs.map((j: any) => j.company_id))];
 
-    const [benefitsRes, aiHiringRes, payEquityRes, sentimentRes] = await Promise.all([
+    const [benefitsRes, aiHiringRes, payEquityRes, sentimentRes, valuesSignalsRes] = await Promise.all([
       supabase.from('ai_hr_signals').select('company_id, signal_category, signal_type, confidence').in('company_id', companyIds),
       supabase.from('ai_hiring_signals').select('company_id, category, transparency_score, bias_audit_status').in('company_id', companyIds),
       supabase.from('pay_equity_signals').select('company_id, signal_category, signal_type, confidence').in('company_id', companyIds),
       supabase.from('company_worker_sentiment').select('company_id, overall_rating, sentiment').in('company_id', companyIds),
+      supabase.from('company_values_signals').select('company_id, value_category, signal_type, confidence').in('company_id', companyIds),
     ]);
 
     // Build signal map
