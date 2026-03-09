@@ -7,7 +7,7 @@ const corsHeaders = {
 };
 
 const ISSUE_AREA_KEYWORDS: Record<string, string[]> = {
-  gun_policy: ["gun", "firearm", "NRA", "second amendment", "2nd amendment", "assault weapon", "background check", "concealed carry", "gun control", "gun rights"],
+  gun_policy: ["gun", "firearm", "NRA", "second amendment", "2nd amendment", "assault weapon", "background check", "concealed carry", "gun control", "gun rights", "gun safety", "gun violence", "open carry", "giffords", "everytown", "brady campaign", "ammunition", "nssf", "national shooting sports", "firearms policy"],
   reproductive_rights: ["abortion", "reproductive", "planned parenthood", "pro-life", "pro-choice", "Roe", "contraception", "family planning"],
   labor_rights: ["union", "labor", "minimum wage", "worker", "collective bargaining", "right to work", "NLRB", "overtime", "wage theft"],
   climate: ["climate", "carbon", "fossil fuel", "renewable", "EPA", "emissions", "green energy", "sustainability", "net zero", "oil", "gas", "coal"],
