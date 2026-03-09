@@ -5,21 +5,27 @@ const corsHeaders = {
 
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2';
 
-// Phase 0.5: Third-party enrichment (discovery & cross-reference)
-const ENRICHMENT_MODULES = [
-  { key: 'opensecrets', label: 'OpenSecrets Organization Profiles', fn: 'sync-opensecrets', phase: 'enrichment' },
-];
-
-// Phase 1: Structured data connectors (federal APIs - high confidence)
-const PIPELINE_MODULES = [
+// Phase 1: Primary data connectors (federal APIs - highest confidence)
+// These are the authoritative sources: FEC, Senate LDA, USASpending, Congress.gov
+const PRIMARY_PIPELINE_MODULES = [
   { key: 'fec_campaign_finance', label: 'FEC Campaign Finance', fn: 'sync-openfec', phase: 'pipeline' },
   { key: 'federal_contracts', label: 'Federal Contracts (USASpending)', fn: 'sync-federal-contracts', phase: 'pipeline' },
   { key: 'lobbying_disclosure', label: 'Lobbying Disclosure (Senate LDA)', fn: 'sync-lobbying', phase: 'pipeline' },
   { key: 'sec_edgar', label: 'SEC EDGAR (Filings & Compensation)', fn: 'sync-sec-edgar', phase: 'pipeline' },
-  { key: 'congress_cross_ref', label: 'Congress Cross-Reference', fn: 'sync-congress-votes', phase: 'pipeline' },
   { key: 'opencorporates', label: 'Corporate Structure (OpenCorporates)', fn: 'sync-opencorporates', phase: 'pipeline' },
   { key: 'workplace_enforcement', label: 'Workplace Enforcement (DOL)', fn: 'sync-workplace-enforcement', phase: 'pipeline' },
 ];
+
+// Phase 1b: Congress cross-reference (depends on FEC data being present first)
+const CONGRESS_MODULE = { key: 'congress_cross_ref', label: 'Congress Cross-Reference', fn: 'sync-congress-votes', phase: 'pipeline' };
+
+// Phase 1 parallel enrichment: OpenSecrets runs alongside primary sources as discovery/validation
+// NOT a prerequisite — just supplementary cross-reference data
+const ENRICHMENT_MODULES = [
+  { key: 'opensecrets', label: 'OpenSecrets (Discovery Only)', fn: 'sync-opensecrets', phase: 'enrichment' },
+];
+
+const PIPELINE_MODULES = [...PRIMARY_PIPELINE_MODULES, CONGRESS_MODULE];
 
 // Phase 2: Web-crawled research modules (AI-analyzed - moderate confidence)
 const RESEARCH_MODULES = [
