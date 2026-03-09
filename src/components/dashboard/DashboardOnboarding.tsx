@@ -17,8 +17,8 @@ export function DashboardOnboarding({ onNavigate }: DashboardOnboardingProps) {
     queryKey: ["onboarding-progress", user?.id],
     queryFn: async () => {
       const [values, docs, apps] = await Promise.all([
-        supabase.from("user_values_profile").select("id").eq("user_id", user!.id).maybeSingle(),
-        supabase.from("user_career_documents").select("id", { count: "exact", head: true }).eq("user_id", user!.id),
+        (supabase as any).from("user_values_profile").select("id").eq("user_id", user!.id).maybeSingle(),
+        (supabase as any).from("user_career_documents").select("id", { count: "exact", head: true }).eq("user_id", user!.id),
         supabase.from("applications_tracker").select("id", { count: "exact", head: true }).eq("user_id", user!.id),
       ]);
       return {
