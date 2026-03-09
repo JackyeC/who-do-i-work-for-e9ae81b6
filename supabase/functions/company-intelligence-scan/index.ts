@@ -176,311 +176,165 @@ Deno.serve(async (req) => {
       last_scan_attempted: new Date().toISOString(),
     }).eq('id', companyId);
 
-    // Run all modules sequentially
+    // Run modules in parallel batches for speed
     const moduleStatuses: Record<string, any> = {};
     let trulyCompleted = 0, failed = 0, noSourcesFound = 0, withSignals = 0;
     let totalSources = 0, totalSignals = 0;
     const warnings: string[] = [];
     const errorLog: any[] = [];
 
-    // ─── Phase 0.5: Third-party Enrichment (OpenSecrets) ───
-    console.log(`[intelligence-scan] ═══ Phase 0.5: Third-party Enrichment ═══`);
+    // Helper: run a single module and return its result
+    async function runModule(mod: typeof ALL_MODULES[0], isPipeline: boolean) {
+      const moduleStartedAt = new Date().toISOString();
+      moduleStatuses[mod.key] = { status: 'in_progress', label: mod.label, phase: mod.phase, startedAt: moduleStartedAt };
 
+      try {
+        const controller = new AbortController();
+        const timeoutId = setTimeout(() => controller.abort(), 90_000);
+
+        const moduleResp = await fetch(`${supabaseUrl}/functions/v1/${mod.fn}`, {
+          method: 'POST',
+          headers: { 'Authorization': `Bearer ${supabaseKey}`, 'Content-Type': 'application/json' },
+          body: JSON.stringify({ companyId, companyName, searchNames, entityMap }),
+          signal: controller.signal,
+        });
+
+        clearTimeout(timeoutId);
+        const moduleCompletedAt = new Date().toISOString();
+
+        if (moduleResp.ok) {
+          const result = await moduleResp.json();
+          let sourcesScanned: number, signalsFound: number;
+
+          if (isPipeline) {
+            const interpreted = interpretPipelineResult(result);
+            sourcesScanned = interpreted.sourcesScanned;
+            signalsFound = interpreted.signalsFound;
+          } else {
+            signalsFound = result.signalsFound || result.data?.flagCount || 0;
+            sourcesScanned = result.sourcesScanned || result.data?.resultCount || 0;
+          }
+
+          totalSources += sourcesScanned;
+          totalSignals += signalsFound;
+          const resolvedStatus = resolveModuleStatus(sourcesScanned, signalsFound);
+
+          moduleStatuses[mod.key] = {
+            status: resolvedStatus, label: mod.label, phase: mod.phase,
+            signalsFound, sourcesScanned,
+            startedAt: moduleStartedAt, completedAt: moduleCompletedAt,
+            ...(isPipeline ? {
+              pipelineResult: {
+                totalSpend: result.stats?.totalPacSpending || result.totalContractValue || result.totalLobbyingSpend || 0,
+                linkagesCreated: result.stats?.linkagesCreated || result.linkagesCreated || 0,
+              },
+            } : {}),
+            ...(mod.phase === 'enrichment' ? {
+              profileFound: result.profileFound || false,
+              profileUrl: result.profileUrl || null,
+            } : {}),
+          };
+
+          if (isTrulyCompleted(resolvedStatus)) {
+            trulyCompleted++;
+            if (resolvedStatus === 'completed_with_signals') withSignals++;
+          } else {
+            noSourcesFound++;
+            if (isPipeline) warnings.push(`${mod.label}: No records found in federal databases.`);
+            else if (mod.phase === 'research') warnings.push(`${mod.label}: No usable sources were discovered or scanned.`);
+          }
+
+          console.log(`[intelligence-scan] ${mod.key}: ${resolvedStatus}, ${signalsFound} signals from ${sourcesScanned} sources`);
+        } else {
+          const errText = await moduleResp.text().catch(() => 'Unknown error');
+          failed++;
+
+          let parsedErr: any = {};
+          try { parsedErr = JSON.parse(errText); } catch { /* raw text */ }
+
+          const upstreamErrorType = parsedErr.errorType || null;
+          const errorType = upstreamErrorType === 'failed_validation' ? 'failed_validation'
+            : upstreamErrorType === 'upstream_api_error' ? 'upstream_api_error'
+            : moduleResp.status === 402 ? 'quota_exceeded'
+            : moduleResp.status === 429 ? 'rate_limited'
+            : moduleResp.status === 422 ? 'failed_validation'
+            : moduleResp.status >= 500 ? 'server_error'
+            : 'http_error';
+
+          const errorMessage = parsedErr.error || `HTTP ${moduleResp.status}`;
+
+          moduleStatuses[mod.key] = {
+            status: 'failed', label: mod.label, phase: mod.phase,
+            error: errorMessage, errorType,
+            upstreamStatus: parsedErr.upstreamStatus || moduleResp.status,
+            upstreamBody: (parsedErr.upstreamBody || errText).slice(0, 300),
+            startedAt: moduleStartedAt, completedAt: moduleCompletedAt,
+            sourcesScanned: 0, signalsFound: 0,
+          };
+          warnings.push(`${mod.label}: ${errorMessage}`);
+          errorLog.push({ module: mod.key, status: moduleResp.status, errorType, error: errorMessage, timestamp: moduleCompletedAt });
+          console.error(`[intelligence-scan] ${mod.key} failed: HTTP ${moduleResp.status}`);
+        }
+      } catch (e) {
+        const moduleCompletedAt = new Date().toISOString();
+        failed++;
+        const msg = e instanceof Error ? e.message : 'Unknown error';
+        moduleStatuses[mod.key] = {
+          status: 'failed', label: mod.label, phase: mod.phase,
+          error: msg, errorType: 'exception',
+          startedAt: moduleStartedAt, completedAt: moduleCompletedAt,
+          sourcesScanned: 0, signalsFound: 0,
+        };
+        warnings.push(`${mod.label} failed: ${msg}`);
+        errorLog.push({ module: mod.key, errorType: 'exception', error: msg, timestamp: moduleCompletedAt });
+        console.error(`[intelligence-scan] ${mod.key} exception:`, e);
+      }
+    }
+
+    // Helper: update scan progress in DB
+    async function updateProgress() {
+      await supabase.from('scan_runs').update({
+        modules_completed: trulyCompleted, modules_failed: failed,
+        modules_with_signals: withSignals, modules_with_no_signals: noSourcesFound,
+        total_sources_scanned: totalSources, total_signals_found: totalSignals,
+        module_statuses: { ...moduleStatuses }, warnings, error_log: errorLog,
+      }).eq('id', scanId);
+    }
+
+    // ─── Phase 0.5: Third-party Enrichment (sequential — needed before pipeline) ───
+    console.log(`[intelligence-scan] ═══ Phase 0.5: Third-party Enrichment ═══`);
     for (const mod of ENRICHMENT_MODULES) {
       console.log(`[intelligence-scan] Running enrichment module: ${mod.key}`);
-      const moduleStartedAt = new Date().toISOString();
-
-      moduleStatuses[mod.key] = { status: 'in_progress', label: mod.label, phase: mod.phase, startedAt: moduleStartedAt };
-      await supabase.from('scan_runs').update({ module_statuses: { ...moduleStatuses } }).eq('id', scanId);
-
-      try {
-        const controller = new AbortController();
-        const timeoutId = setTimeout(() => controller.abort(), 90_000);
-
-        const moduleResp = await fetch(`${supabaseUrl}/functions/v1/${mod.fn}`, {
-          method: 'POST',
-          headers: { 'Authorization': `Bearer ${supabaseKey}`, 'Content-Type': 'application/json' },
-          body: JSON.stringify({ companyId, companyName, searchNames, entityMap }),
-          signal: controller.signal,
-        });
-
-        clearTimeout(timeoutId);
-        const moduleCompletedAt = new Date().toISOString();
-
-        if (moduleResp.ok) {
-          const result = await moduleResp.json();
-          const sScanned = result.sourcesScanned || 0;
-          const sFound = result.signalsFound || 0;
-          totalSources += sScanned;
-          totalSignals += sFound;
-          const resolvedStatus = resolveModuleStatus(sScanned, sFound);
-
-          moduleStatuses[mod.key] = {
-            status: resolvedStatus, label: mod.label, phase: mod.phase,
-            signalsFound: sFound, sourcesScanned: sScanned,
-            startedAt: moduleStartedAt, completedAt: moduleCompletedAt,
-            profileFound: result.profileFound || false,
-            profileUrl: result.profileUrl || null,
-          };
-
-          if (isTrulyCompleted(resolvedStatus)) {
-            trulyCompleted++;
-            if (resolvedStatus === 'completed_with_signals') withSignals++;
-          } else {
-            noSourcesFound++;
-          }
-
-          console.log(`[intelligence-scan] ${mod.key}: ${resolvedStatus}, ${sFound} signals from ${sScanned} sources`);
-        } else {
-          const errText = await moduleResp.text().catch(() => 'Unknown error');
-          failed++;
-          moduleStatuses[mod.key] = {
-            status: 'failed', label: mod.label, phase: mod.phase,
-            error: errText.slice(0, 200), startedAt: moduleStartedAt, completedAt: moduleCompletedAt,
-            sourcesScanned: 0, signalsFound: 0,
-          };
-          warnings.push(`${mod.label}: HTTP ${moduleResp.status}`);
-          errorLog.push({ module: mod.key, status: moduleResp.status, error: errText.slice(0, 500), timestamp: moduleCompletedAt });
-        }
-      } catch (e) {
-        const moduleCompletedAt = new Date().toISOString();
-        failed++;
-        const msg = e instanceof Error ? e.message : 'Unknown error';
-        moduleStatuses[mod.key] = {
-          status: 'failed', label: mod.label, phase: mod.phase,
-          error: msg, startedAt: moduleStartedAt, completedAt: moduleCompletedAt,
-          sourcesScanned: 0, signalsFound: 0,
-        };
-        warnings.push(`${mod.label} failed: ${msg}`);
-        errorLog.push({ module: mod.key, error: msg, timestamp: moduleCompletedAt });
-      }
-
-      await supabase.from('scan_runs').update({
-        modules_completed: trulyCompleted, modules_failed: failed,
-        modules_with_signals: withSignals, modules_with_no_signals: noSourcesFound,
-        total_sources_scanned: totalSources, total_signals_found: totalSignals,
-        module_statuses: { ...moduleStatuses }, warnings, error_log: errorLog,
-      }).eq('id', scanId);
+      await runModule(mod, false);
+      await updateProgress();
     }
 
-    // ─── Phase 1: Pipeline connectors (structured federal data) ───
-    console.log(`[intelligence-scan] ═══ Phase 1: Structured Data Connectors ═══`);
-
+    // ─── Phase 1: Pipeline connectors — ALL IN PARALLEL ───
+    console.log(`[intelligence-scan] ═══ Phase 1: Structured Data Connectors (parallel) ═══`);
+    // Mark all as in_progress
     for (const mod of PIPELINE_MODULES) {
+      moduleStatuses[mod.key] = { status: 'in_progress', label: mod.label, phase: mod.phase, startedAt: new Date().toISOString() };
+    }
+    await updateProgress();
+
+    await Promise.all(PIPELINE_MODULES.map(mod => {
       console.log(`[intelligence-scan] Running pipeline module: ${mod.key}`);
-      const moduleStartedAt = new Date().toISOString();
+      return runModule(mod, true);
+    }));
+    await updateProgress();
 
-      moduleStatuses[mod.key] = { status: 'in_progress', label: mod.label, phase: mod.phase, startedAt: moduleStartedAt };
-      await supabase.from('scan_runs').update({ module_statuses: { ...moduleStatuses } }).eq('id', scanId);
-
-      try {
-        // Add per-module timeout (90 seconds) to prevent stuck scans
-        const controller = new AbortController();
-        const timeoutId = setTimeout(() => controller.abort(), 90_000);
-
-        const moduleResp = await fetch(`${supabaseUrl}/functions/v1/${mod.fn}`, {
-          method: 'POST',
-          headers: { 'Authorization': `Bearer ${supabaseKey}`, 'Content-Type': 'application/json' },
-          body: JSON.stringify({ companyId, companyName, searchNames, entityMap }),
-          signal: controller.signal,
-        });
-
-        clearTimeout(timeoutId);
-
-        const moduleCompletedAt = new Date().toISOString();
-
-        if (moduleResp.ok) {
-          const result = await moduleResp.json();
-          const { sourcesScanned, signalsFound } = interpretPipelineResult(result);
-
-          totalSources += sourcesScanned;
-          totalSignals += signalsFound;
-
-          const resolvedStatus = resolveModuleStatus(sourcesScanned, signalsFound);
-
-          moduleStatuses[mod.key] = {
-            status: resolvedStatus, label: mod.label, phase: mod.phase,
-            signalsFound, sourcesScanned,
-            startedAt: moduleStartedAt, completedAt: moduleCompletedAt,
-            pipelineResult: {
-              totalSpend: result.stats?.totalPacSpending || result.totalContractValue || result.totalLobbyingSpend || 0,
-              linkagesCreated: result.stats?.linkagesCreated || result.linkagesCreated || 0,
-            },
-          };
-
-          if (isTrulyCompleted(resolvedStatus)) {
-            trulyCompleted++;
-            if (resolvedStatus === 'completed_with_signals') withSignals++;
-          } else {
-            noSourcesFound++;
-            warnings.push(`${mod.label}: No records found in federal databases.`);
-          }
-
-          console.log(`[intelligence-scan] ${mod.key}: ${resolvedStatus}, ${signalsFound} signals from ${sourcesScanned} sources`);
-        } else {
-          const errText = await moduleResp.text().catch(() => 'Unknown error');
-          failed++;
-          
-          // Parse upstream error details if available
-          let parsedErr: any = {};
-          try { parsedErr = JSON.parse(errText); } catch { /* raw text */ }
-          
-          const upstreamErrorType = parsedErr.errorType || null;
-          const upstreamStatus = parsedErr.upstreamStatus || null;
-          const upstreamBody = parsedErr.upstreamBody || null;
-          
-          // Determine error type with granularity
-          const errorType = upstreamErrorType === 'failed_validation' ? 'failed_validation'
-            : upstreamErrorType === 'upstream_api_error' ? 'upstream_api_error'
-            : moduleResp.status === 402 ? 'quota_exceeded'
-            : moduleResp.status === 429 ? 'rate_limited'
-            : moduleResp.status === 422 ? 'failed_validation'
-            : moduleResp.status >= 500 ? 'server_error'
-            : 'http_error';
-
-          const errorMessage = parsedErr.error || `HTTP ${moduleResp.status}`;
-
-          moduleStatuses[mod.key] = {
-            status: 'failed', label: mod.label, phase: mod.phase,
-            error: errorMessage, errorType,
-            upstreamStatus: upstreamStatus || moduleResp.status,
-            upstreamBody: upstreamBody || errText.slice(0, 300),
-            startedAt: moduleStartedAt, completedAt: moduleCompletedAt,
-            sourcesScanned: 0, signalsFound: 0,
-          };
-          warnings.push(`${mod.label}: ${errorMessage}`);
-          errorLog.push({ module: mod.key, status: moduleResp.status, errorType, error: errorMessage, upstreamStatus, upstreamBody: (upstreamBody || errText).slice(0, 500), timestamp: moduleCompletedAt });
-          console.error(`[intelligence-scan] ${mod.key} failed: HTTP ${moduleResp.status}`);
-        }
-      } catch (e) {
-        const moduleCompletedAt = new Date().toISOString();
-        failed++;
-        const msg = e instanceof Error ? e.message : 'Unknown error';
-        moduleStatuses[mod.key] = {
-          status: 'failed', label: mod.label, phase: mod.phase,
-          error: msg, errorType: 'exception',
-          startedAt: moduleStartedAt, completedAt: moduleCompletedAt,
-          sourcesScanned: 0, signalsFound: 0,
-        };
-        warnings.push(`${mod.label} failed: ${msg}`);
-        errorLog.push({ module: mod.key, errorType: 'exception', error: msg, timestamp: moduleCompletedAt });
-        console.error(`[intelligence-scan] ${mod.key} exception:`, e);
-      }
-
-      // Update progress
-      await supabase.from('scan_runs').update({
-        modules_completed: trulyCompleted, modules_failed: failed,
-        modules_with_signals: withSignals, modules_with_no_signals: noSourcesFound,
-        total_sources_scanned: totalSources, total_signals_found: totalSignals,
-        module_statuses: { ...moduleStatuses }, warnings, error_log: errorLog,
-      }).eq('id', scanId);
-    }
-
-    // ─── Phase 2: Web research modules ───
-    console.log(`[intelligence-scan] ═══ Phase 2: Web Research Modules ═══`);
-
+    // ─── Phase 2: Web research modules — ALL IN PARALLEL ───
+    console.log(`[intelligence-scan] ═══ Phase 2: Web Research Modules (parallel) ═══`);
     for (const mod of RESEARCH_MODULES) {
-      console.log(`[intelligence-scan] Running research module: ${mod.key}`);
-      const moduleStartedAt = new Date().toISOString();
-
-      moduleStatuses[mod.key] = { status: 'in_progress', label: mod.label, phase: mod.phase, startedAt: moduleStartedAt };
-      await supabase.from('scan_runs').update({ module_statuses: { ...moduleStatuses } }).eq('id', scanId);
-
-      try {
-        // Add per-module timeout (90 seconds) to prevent stuck scans
-        const controller = new AbortController();
-        const timeoutId = setTimeout(() => controller.abort(), 90_000);
-
-        const moduleResp = await fetch(`${supabaseUrl}/functions/v1/${mod.fn}`, {
-          method: 'POST',
-          headers: { 'Authorization': `Bearer ${supabaseKey}`, 'Content-Type': 'application/json' },
-          body: JSON.stringify({ companyId, companyName, searchNames, entityMap }),
-          signal: controller.signal,
-        });
-
-        clearTimeout(timeoutId);
-        const moduleCompletedAt = new Date().toISOString();
-
-        if (moduleResp.ok) {
-          const result = await moduleResp.json();
-          const signalsFound = result.signalsFound || result.data?.flagCount || 0;
-          const sourcesScanned = result.sourcesScanned || result.data?.resultCount || 0;
-
-          totalSources += sourcesScanned;
-          totalSignals += signalsFound;
-
-          const resolvedStatus = resolveModuleStatus(sourcesScanned, signalsFound);
-
-          moduleStatuses[mod.key] = {
-            status: resolvedStatus, label: mod.label, phase: mod.phase,
-            signalsFound, sourcesScanned,
-            startedAt: moduleStartedAt, completedAt: moduleCompletedAt,
-          };
-
-          if (isTrulyCompleted(resolvedStatus)) {
-            trulyCompleted++;
-            if (resolvedStatus === 'completed_with_signals') withSignals++;
-          } else {
-            noSourcesFound++;
-            warnings.push(`${mod.label}: No usable sources were discovered or scanned.`);
-          }
-
-          console.log(`[intelligence-scan] ${mod.key}: ${resolvedStatus}, ${signalsFound} signals from ${sourcesScanned} sources`);
-        } else {
-          const errText = await moduleResp.text().catch(() => 'Unknown error');
-          failed++;
-          
-          let parsedErr: any = {};
-          try { parsedErr = JSON.parse(errText); } catch { /* raw text */ }
-          
-          const upstreamErrorType = parsedErr.errorType || null;
-          const upstreamStatus = parsedErr.upstreamStatus || null;
-          const upstreamBody = parsedErr.upstreamBody || null;
-          
-          const errorType = upstreamErrorType === 'failed_validation' ? 'failed_validation'
-            : upstreamErrorType === 'upstream_api_error' ? 'upstream_api_error'
-            : moduleResp.status === 402 ? 'quota_exceeded'
-            : moduleResp.status === 429 ? 'rate_limited'
-            : moduleResp.status === 422 ? 'failed_validation'
-            : moduleResp.status >= 500 ? 'server_error'
-            : 'http_error';
-
-          const errorMessage = parsedErr.error || `HTTP ${moduleResp.status}`;
-
-          moduleStatuses[mod.key] = {
-            status: 'failed', label: mod.label, phase: mod.phase,
-            error: errorMessage, errorType,
-            upstreamStatus: upstreamStatus || moduleResp.status,
-            upstreamBody: upstreamBody || errText.slice(0, 300),
-            startedAt: moduleStartedAt, completedAt: moduleCompletedAt,
-            sourcesScanned: 0, signalsFound: 0,
-          };
-          warnings.push(`${mod.label}: ${errorMessage}`);
-          errorLog.push({ module: mod.key, status: moduleResp.status, errorType, error: errorMessage, upstreamStatus, upstreamBody: (upstreamBody || errText).slice(0, 500), timestamp: moduleCompletedAt });
-          console.error(`[intelligence-scan] ${mod.key} failed: HTTP ${moduleResp.status}`);
-        }
-      } catch (e) {
-        const moduleCompletedAt = new Date().toISOString();
-        failed++;
-        const msg = e instanceof Error ? e.message : 'Unknown error';
-        moduleStatuses[mod.key] = {
-          status: 'failed', label: mod.label, phase: mod.phase,
-          error: msg, errorType: 'exception',
-          startedAt: moduleStartedAt, completedAt: moduleCompletedAt,
-          sourcesScanned: 0, signalsFound: 0,
-        };
-        warnings.push(`${mod.label} failed: ${msg}`);
-        errorLog.push({ module: mod.key, errorType: 'exception', error: msg, timestamp: moduleCompletedAt });
-        console.error(`[intelligence-scan] ${mod.key} exception:`, e);
-      }
-
-      await supabase.from('scan_runs').update({
-        modules_completed: trulyCompleted, modules_failed: failed,
-        modules_with_signals: withSignals, modules_with_no_signals: noSourcesFound,
-        total_sources_scanned: totalSources, total_signals_found: totalSignals,
-        module_statuses: { ...moduleStatuses }, warnings, error_log: errorLog,
-      }).eq('id', scanId);
+      moduleStatuses[mod.key] = { status: 'in_progress', label: mod.label, phase: mod.phase, startedAt: new Date().toISOString() };
     }
+    await updateProgress();
+
+    await Promise.all(RESEARCH_MODULES.map(mod => {
+      console.log(`[intelligence-scan] Running research module: ${mod.key}`);
+      return runModule(mod, false);
+    }));
+    await updateProgress();
 
     // ─── Phase 3: Calculate influence ROI from pipeline data ───
     console.log(`[intelligence-scan] ═══ Phase 3: Calculating Influence ROI ═══`);
