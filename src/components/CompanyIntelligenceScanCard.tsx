@@ -103,13 +103,13 @@ export function CompanyIntelligenceScanCard({ companyId, companyName }: Props) {
     }
   }, [isScanning, latestScan?.scan_status, queryClient]);
 
-  const runScan = async () => {
+  const runScan = async (forceRescan = false) => {
     setIsScanning(true);
     setShowOverlay(true);
     try {
       const [orchestrated, unified] = await Promise.allSettled([
         supabase.functions.invoke("company-intelligence-scan", {
-          body: { companyId, companyName },
+          body: { companyId, companyName, forceRescan },
         }),
         supabase.functions.invoke("civiclens-intelligence-scan", {
           body: { companyId, companyName, scanParts: ['benefits', 'ai_hiring', 'audit_hunt'] },
