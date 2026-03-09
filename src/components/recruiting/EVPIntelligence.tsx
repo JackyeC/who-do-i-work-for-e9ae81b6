@@ -43,9 +43,9 @@ export function EVPIntelligence() {
       const company = companies[0];
 
       // Fetch related signals
-      const [stancesRes, benefitsRes, jobsRes, contractsRes] = await Promise.all([
+      const [stancesRes, signalScansRes, jobsRes, contractsRes] = await Promise.all([
         supabase.from("company_public_stances").select("topic, public_position, spending_reality, gap").eq("company_id", company.id),
-        supabase.from("worker_benefits_signals").select("benefit_category, signal_type, evidence_text, sentiment").eq("company_id", company.id).limit(20),
+        supabase.from("company_signal_scans").select("signal_category, signal_type, signal_value, confidence_level").eq("company_id", company.id).limit(20),
         supabase.from("company_jobs").select("title, department, work_mode, location").eq("company_id", company.id).eq("is_active", true).limit(10),
         supabase.from("company_agency_contracts").select("agency_name, contract_description, contract_value").eq("company_id", company.id).limit(5),
       ]);
