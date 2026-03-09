@@ -5,6 +5,20 @@ const corsHeaders = {
   "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type, x-supabase-client-platform, x-supabase-client-platform-version, x-supabase-client-runtime, x-supabase-client-runtime-version",
 };
 
+// Known state WARN notice URLs - structured sources that publish WARN data
+const STATE_WARN_SOURCES: { state: string; url: string; type: string }[] = [
+  { state: "CA", url: "https://edd.ca.gov/en/jobs_and_training/Layoff_Services_WARN/", type: "state_agency" },
+  { state: "NY", url: "https://dol.ny.gov/warn-notices", type: "state_agency" },
+  { state: "TX", url: "https://www.twc.texas.gov/businesses/worker-adjustment-and-retraining-notification-warn-notices", type: "state_agency" },
+  { state: "FL", url: "https://floridajobs.org/office-directory/division-of-workforce-services/workforce-programs/reemployment-and-emergency-assistance-coordination-team-react/warn-notices", type: "state_agency" },
+  { state: "NJ", url: "https://www.nj.gov/labor/employer-services/warn/", type: "state_agency" },
+  { state: "PA", url: "https://www.dli.pa.gov/Individuals/Workforce-Development/warn/Pages/default.aspx", type: "state_agency" },
+  { state: "NC", url: "https://www.commerce.nc.gov/data-tools-reports/labor-market-data-tools/warn-notices", type: "state_agency" },
+  { state: "GA", url: "https://www.dol.state.ga.us/public/es/warn/searchwarns/list", type: "state_agency" },
+  { state: "VA", url: "https://www.vec.virginia.gov/warn-notices", type: "state_agency" },
+  { state: "MD", url: "https://www.dllr.state.md.us/employment/warn.shtml", type: "state_agency" },
+];
+
 Deno.serve(async (req) => {
   if (req.method === "OPTIONS") {
     return new Response(null, { headers: corsHeaders });
@@ -33,51 +47,76 @@ Deno.serve(async (req) => {
 
     console.log(`Scanning WARN notices for: ${company_name}`);
 
-    // Search for WARN notices using Firecrawl
-    const searchQueries = [
-      `"${company_name}" WARN Act layoff notice`,
-      `"${company_name}" mass layoff plant closure WARN`,
-      `"${company_name}" worker adjustment retraining notification`,
-    ];
-
+    // Phase 1: Search structured state WARN databases via Firecrawl
     const allResults: any[] = [];
 
-    for (const query of searchQueries) {
-      try {
-        const searchRes = await fetch("https://api.firecrawl.dev/v1/search", {
-          method: "POST",
-          headers: {
-            Authorization: `Bearer ${firecrawlKey}`,
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({
-            query,
-            limit: 10,
-            scrapeOptions: { formats: ["markdown"] },
-          }),
-        });
-
-        if (searchRes.ok) {
-          const searchData = await searchRes.json();
-          if (searchData.data) {
-            allResults.push(...searchData.data);
-          }
+    // Targeted state WARN database searches
+    const stateSearches = STATE_WARN_SOURCES.map((src) =>
+      fetchFirecrawl(firecrawlKey, {
+        query: `site:${new URL(src.url).hostname} "${company_name}" WARN`,
+        limit: 5,
+        scrapeOptions: { formats: ["markdown"] },
+      }).then((data) => {
+        if (data?.data) {
+          data.data.forEach((r: any) => (r._source_state = src.state));
+          allResults.push(...data.data);
         }
-      } catch (e) {
-        console.error(`Search failed for query: ${query}`, e);
-      }
-    }
+      }).catch((e) => console.error(`State search failed (${src.state}):`, e))
+    );
+
+    // Phase 2: General web searches (broader net)
+    const generalSearches = [
+      `"${company_name}" WARN Act layoff notice site:gov`,
+      `"${company_name}" WARN Act layoff notice`,
+      `"${company_name}" mass layoff plant closure WARN filing`,
+    ].map((query) =>
+      fetchFirecrawl(firecrawlKey, {
+        query,
+        limit: 10,
+        scrapeOptions: { formats: ["markdown"] },
+      }).then((data) => {
+        if (data?.data) allResults.push(...data.data);
+      }).catch((e) => console.error(`Search failed: ${query}`, e))
+    );
+
+    // Phase 3: Check known aggregator databases
+    const aggregatorSearches = [
+      `"${company_name}" site:layoffstracker.com`,
+      `"${company_name}" site:warn-notice.ca.gov`,
+      `"${company_name}" WARN notice layoff tracker database`,
+    ].map((query) =>
+      fetchFirecrawl(firecrawlKey, {
+        query,
+        limit: 5,
+        scrapeOptions: { formats: ["markdown"] },
+      }).then((data) => {
+        if (data?.data) allResults.push(...data.data);
+      }).catch((e) => console.error(`Aggregator search failed:`, e))
+    );
+
+    // Run all searches in parallel
+    await Promise.allSettled([...stateSearches, ...generalSearches, ...aggregatorSearches]);
 
     if (allResults.length === 0) {
-      console.log("No WARN results found");
+      console.log("No WARN results found from any source");
       return new Response(JSON.stringify({ success: true, notices: 0 }), {
         headers: { ...corsHeaders, "Content-Type": "application/json" },
       });
     }
 
+    console.log(`Found ${allResults.length} raw results, analyzing with AI...`);
+
+    // Deduplicate by URL
+    const seenUrls = new Set<string>();
+    const uniqueResults = allResults.filter((r) => {
+      if (!r.url || seenUrls.has(r.url)) return false;
+      seenUrls.add(r.url);
+      return true;
+    });
+
     // Use Gemini to extract structured WARN notice data
-    const combinedText = allResults
-      .map((r) => `URL: ${r.url}\nTitle: ${r.title || ""}\n${(r.markdown || r.description || "").slice(0, 2000)}`)
+    const combinedText = uniqueResults
+      .map((r) => `URL: ${r.url}\nTitle: ${r.title || ""}\nState: ${r._source_state || "unknown"}\n${(r.markdown || r.description || "").slice(0, 2000)}`)
       .join("\n---\n")
       .slice(0, 15000);
 
@@ -91,7 +130,9 @@ Deno.serve(async (req) => {
             {
               parts: [
                 {
-                  text: `Extract WARN Act layoff notices for "${company_name}" from the following search results. Return ONLY a JSON array of notices. Each notice should have:
+                  text: `Extract WARN Act layoff notices for "${company_name}" from the following search results. Include subsidiary and acquired company notices (e.g. for Bank of America, include Merrill Lynch, Countrywide, First Franklin, NationsBank notices).
+
+Return ONLY a JSON array of notices. Each notice should have:
 - notice_date (YYYY-MM-DD format)
 - effective_date (YYYY-MM-DD or null)
 - employees_affected (integer)
@@ -102,7 +143,7 @@ Deno.serve(async (req) => {
 - source_url (the URL where this was found)
 - source_state (state that filed the WARN notice)
 
-Only include notices that are specifically about "${company_name}" (not other companies). Be strict about matching the company name. If no valid WARN notices are found, return an empty array [].
+Be strict about matching "${company_name}" or its known subsidiaries. If no valid WARN notices are found, return an empty array [].
 
 Search results:
 ${combinedText}`,
@@ -138,14 +179,13 @@ ${combinedText}`,
       notices = [];
     }
 
-    console.log(`Found ${notices.length} WARN notices`);
+    console.log(`AI extracted ${notices.length} WARN notices`);
 
-    // Insert notices, avoiding duplicates by checking existing dates + employee counts
+    // Insert notices, avoiding duplicates
     let inserted = 0;
     for (const notice of notices) {
       if (!notice.notice_date || !notice.employees_affected) continue;
 
-      // Check for duplicate
       const { data: existing } = await supabase
         .from("company_warn_notices")
         .select("id")
@@ -177,7 +217,7 @@ ${combinedText}`,
       }
     }
 
-    // Also log to signal scans for timeline
+    // Log to signal scans
     if (inserted > 0) {
       await supabase.from("company_signal_scans").insert({
         company_id,
@@ -201,3 +241,17 @@ ${combinedText}`,
     );
   }
 });
+
+// Helper: call Firecrawl search API
+async function fetchFirecrawl(apiKey: string, body: Record<string, unknown>): Promise<any> {
+  const res = await fetch("https://api.firecrawl.dev/v1/search", {
+    method: "POST",
+    headers: {
+      Authorization: `Bearer ${apiKey}`,
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify(body),
+  });
+  if (!res.ok) return null;
+  return res.json();
+}
