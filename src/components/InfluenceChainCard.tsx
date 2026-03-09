@@ -260,9 +260,9 @@ function ChainRow({ step, chain }: { step: ChainStep; chain: ChainStep[] }) {
     <div className="space-y-2">
       {/* Plain-language sentence */}
       <p className="text-xs text-muted-foreground">
-        <strong className="text-foreground">{step.source_name}</strong>
+        <strong className="text-foreground">{cleanEntityName(step.source_name)}</strong>
         {" "}{config.plainLabel.toLowerCase()}{" "}
-        <strong className="text-foreground">{step.target_name}</strong>
+        <strong className="text-foreground">{cleanEntityName(step.target_name)}</strong>
         {targetParty && ` (${PARTY_FULL_NAMES[targetParty] || targetParty}${targetLocation ? `, ${targetLocation}` : ""})`}
         {step.amount > 0 && <> — <strong className="text-foreground">{formatCurrency(step.amount)}</strong></>}
       </p>
