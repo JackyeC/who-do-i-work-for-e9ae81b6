@@ -200,8 +200,8 @@ Deno.serve(async (req) => {
       signalsScore += Math.min(signalPts, 20);
       signalsScore = Math.min(signalsScore, 100);
 
-      // ─── Career profile matching (up to 50 pts) ───
-      if (hasProfile) {
+      // ─── SKILLS MATCH (30%) ───
+      if (hasProfile && userSkills.length > 0) {
         // Title match (0-15 pts)
         const jobTitleLower = (job.title || '').toLowerCase();
         let titleScore = 0;
@@ -218,9 +218,8 @@ Deno.serve(async (req) => {
             titleScore = Math.max(titleScore, Math.round(15 * matchedWords.length / words.length));
           }
         }
-        score += titleScore;
 
-        // Skill overlap (0-15 pts)
+        // Skill overlap (0-85 pts to total 100 for skills)
         const jobSkills = ((job.extracted_skills || []) as string[]).map((s: string) => s.toLowerCase());
         const jobDesc = (job.description || '').toLowerCase();
         let skillMatches = 0;
@@ -229,37 +228,45 @@ Deno.serve(async (req) => {
             skillMatches++;
           }
         }
-        if (userSkills.length > 0 && skillMatches > 0) {
+        if (skillMatches > 0) {
           const skillRatio = Math.min(skillMatches / Math.max(userSkills.length, 1), 1);
-          const skillPts = Math.round(15 * skillRatio);
-          score += skillPts;
+          const skillPts = Math.round(85 * skillRatio);
+          skillsScore = titleScore + skillPts;
           if (skillMatches >= 2) matchedSignals.push(`${skillMatches} Skills Match`);
+        } else {
+          skillsScore = titleScore;
         }
+        skillsScore = Math.min(skillsScore, 100);
+      }
 
-        // Location match (0-10 pts)
-        const jobLoc = (job.location || '').toLowerCase();
-        if (userLocations.length > 0 && jobLoc) {
-          for (const loc of userLocations) {
-            if (jobLoc.includes(loc) || loc.includes(jobLoc.split(',')[0])) {
-              score += 10;
-              matchedSignals.push('Location Match');
-              break;
-            }
+      // ─── JOB MATCH (15%) ───
+      let jobMatchPts = 0;
+
+      // Location match (0-40 pts)
+      const jobLoc = (job.location || '').toLowerCase();
+      if (userLocations.length > 0 && jobLoc) {
+        for (const loc of userLocations) {
+          if (jobLoc.includes(loc) || loc.includes(jobLoc.split(',')[0])) {
+            jobMatchPts += 40;
+            matchedSignals.push('Location Match');
+            break;
           }
         }
-
-        // Work mode match (0-5 pts)
-        if (userWorkMode && job.work_mode && userWorkMode === job.work_mode) {
-          score += 5;
-          matchedSignals.push('Work Mode Match');
-        }
-
-        // Seniority match (0-5 pts)
-        if (userSeniority && job.seniority_level && userSeniority === job.seniority_level) {
-          score += 5;
-          matchedSignals.push('Seniority Match');
-        }
       }
+
+      // Work mode match (0-30 pts)
+      if (userWorkMode && job.work_mode && userWorkMode === job.work_mode) {
+        jobMatchPts += 30;
+        matchedSignals.push('Work Mode Match');
+      }
+
+      // Seniority match (0-30 pts)
+      if (userSeniority && job.seniority_level && userSeniority === job.seniority_level) {
+        jobMatchPts += 30;
+        matchedSignals.push('Seniority Match');
+      }
+
+      jobScore = Math.min(jobMatchPts, 100);
 
       // Check required signal preferences
       let meetsRequirements = true;
