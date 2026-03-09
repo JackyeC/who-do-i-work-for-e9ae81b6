@@ -52,8 +52,9 @@ export default function SearchResults() {
         if (error) throw error;
 
         if (data?.success) {
+          const dest = intent === 'offer' ? `/offer-check/${data.companyId || data.slug}` : `/company/${data.slug}`;
           if (data.action === 'existing') {
-            navigate(`/company/${data.slug}`);
+            navigate(dest);
           } else if (data.action === 'created') {
             toast({
               title: "Company discovered",
