@@ -68,7 +68,19 @@ function RatingBar({ label, value, max = 5 }: { label: string; value: number | n
 export function WorkerSentimentCard({ companyName, dbCompanyId }: WorkerSentimentCardProps) {
   const { toast } = useToast();
   const [isScanning, setIsScanning] = useState(false);
+  const [scanStartTime, setScanStartTime] = useState<number | null>(null);
+  const [elapsed, setElapsed] = useState(0);
   const [liveResult, setLiveResult] = useState<SentimentResult | null>(null);
+
+  // Timer for elapsed display
+  useState(() => {
+    const interval = setInterval(() => {
+      if (scanStartTime) {
+        setElapsed(Math.floor((Date.now() - scanStartTime) / 1000));
+      }
+    }, 1000);
+    return () => clearInterval(interval);
+  });
 
   const { data: cachedScan, refetch } = useQuery({
     queryKey: ["worker-sentiment", dbCompanyId],
