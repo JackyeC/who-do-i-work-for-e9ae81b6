@@ -7,9 +7,14 @@ export default {
   theme: {
     container: {
       center: true,
-      padding: "2rem",
+      padding: {
+        DEFAULT: "1.5rem",
+        sm: "2rem",
+        lg: "2.5rem",
+        xl: "3.5rem",
+      },
       screens: {
-        "2xl": "1280px",
+        "2xl": "1320px",
       },
     },
     extend: {
@@ -71,22 +76,26 @@ export default {
         },
       },
       fontFamily: {
-        display: ["'Playfair Display'", "'Source Serif 4'", "Georgia", "serif"],
-        serif: ["'Source Serif 4'", "Georgia", "serif"],
-        sans: ["'IBM Plex Sans'", "system-ui", "-apple-system", "sans-serif"],
+        display: ["'Sora'", "'Inter'", "system-ui", "sans-serif"],
+        sans: ["'Inter'", "system-ui", "-apple-system", "sans-serif"],
+        mono: ["'JetBrains Mono'", "'Fira Code'", "monospace"],
       },
       fontSize: {
-        "display": ["4rem", { lineHeight: "1.05", letterSpacing: "-0.035em", fontWeight: "800" }],
-        "headline": ["2.5rem", { lineHeight: "1.1", letterSpacing: "-0.025em", fontWeight: "700" }],
-        "title": ["1.5rem", { lineHeight: "1.25", letterSpacing: "-0.015em", fontWeight: "700" }],
-        "body-lg": ["1.125rem", { lineHeight: "1.65", fontWeight: "400" }],
-        "body": ["0.9375rem", { lineHeight: "1.65", fontWeight: "400" }],
-        "caption": ["0.8125rem", { lineHeight: "1.5", fontWeight: "500" }],
+        "hero": ["3.75rem", { lineHeight: "1.1", letterSpacing: "-0.035em", fontWeight: "800" }],
+        "display": ["3rem", { lineHeight: "1.15", letterSpacing: "-0.03em", fontWeight: "700" }],
+        "headline": ["2rem", { lineHeight: "1.2", letterSpacing: "-0.02em", fontWeight: "700" }],
+        "title": ["1.5rem", { lineHeight: "1.3", letterSpacing: "-0.015em", fontWeight: "600" }],
+        "body-lg": ["1.125rem", { lineHeight: "1.6", fontWeight: "400" }],
+        "body": ["1rem", { lineHeight: "1.6", fontWeight: "400" }],
+        "caption": ["0.875rem", { lineHeight: "1.5", fontWeight: "500" }],
+        "label": ["0.8125rem", { lineHeight: "1.4", fontWeight: "500" }],
         "micro": ["0.6875rem", { lineHeight: "1.4", fontWeight: "500" }],
       },
       spacing: {
         "18": "4.5rem",
         "22": "5.5rem",
+        "26": "6.5rem",
+        "30": "7.5rem",
       },
       borderRadius: {
         lg: "var(--radius)",
@@ -98,10 +107,13 @@ export default {
       },
       boxShadow: {
         "elegant": "0 1px 3px 0 hsl(var(--foreground) / 0.03), 0 0 0 1px hsl(var(--foreground) / 0.02)",
-        "elevated": "0 4px 16px -4px hsl(var(--foreground) / 0.08), 0 2px 4px -2px hsl(var(--foreground) / 0.03), 0 0 0 1px hsl(var(--foreground) / 0.02)",
+        "elevated": "0 4px 20px -4px hsl(var(--foreground) / 0.08), 0 2px 6px -2px hsl(var(--foreground) / 0.04)",
         "prominent": "0 8px 32px -8px hsl(var(--foreground) / 0.12), 0 4px 8px -4px hsl(var(--foreground) / 0.06)",
         "luxury": "0 12px 48px -12px hsl(var(--foreground) / 0.14), 0 4px 16px -4px hsl(var(--foreground) / 0.06), 0 0 0 1px hsl(var(--foreground) / 0.02)",
-        "inner-glow": "inset 0 1px 0 0 hsl(38 72% 50% / 0.06), inset 0 0 20px hsl(38 72% 50% / 0.02)",
+        "inner-glow": "inset 0 1px 0 0 hsl(var(--primary) / 0.06), inset 0 0 20px hsl(var(--primary) / 0.02)",
+      },
+      gap: {
+        "card": "1.25rem",
       },
       keyframes: {
         "accordion-down": {
