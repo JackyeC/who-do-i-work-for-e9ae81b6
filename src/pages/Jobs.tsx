@@ -4,6 +4,7 @@ import { Footer } from "@/components/Footer";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { EmptyState } from "@/components/EmptyState";
 import { LoadingState } from "@/components/LoadingState";
@@ -12,12 +13,21 @@ import { VALUES_LENSES } from "@/lib/valuesLenses";
 import { JobSidebar } from "@/components/jobs/JobSidebar";
 import { JobListRow } from "@/components/jobs/JobListRow";
 import { JobDetailDrawer } from "@/components/jobs/JobDetailDrawer";
+import { TrackingDashboard } from "@/components/jobs/TrackingDashboard";
+import { AutoApplySettings } from "@/components/jobs/AutoApplySettings";
+import { ApplyQueueDashboard } from "@/components/jobs/ApplyQueueDashboard";
+import { UserProfileForm } from "@/components/jobs/UserProfileForm";
+import { PreferenceCenter } from "@/components/jobs/PreferenceCenter";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/contexts/AuthContext";
 import { useQuery } from "@tanstack/react-query";
 import { toast } from "sonner";
+import { Card, CardContent } from "@/components/ui/card";
+import { Progress } from "@/components/ui/progress";
 import {
   Search, Briefcase, Building2, Filter, SlidersHorizontal, X, Monitor,
+  Zap, LayoutDashboard, User, Wand2, Copy, Check, Loader2, ExternalLink,
+  FileText, Sparkles, Shield,
 } from "lucide-react";
 
 export default function Jobs() {
@@ -29,6 +39,10 @@ export default function Jobs() {
   const [valuesFilters, setValuesFilters] = useState<string[]>([]);
   const [showValues, setShowValues] = useState(false);
   const [selectedJob, setSelectedJob] = useState<any>(null);
+  const [tab, setTab] = useState("browse");
+  const [generatingFor, setGeneratingFor] = useState<string | null>(null);
+  const [generatedPayload, setGeneratedPayload] = useState<any>(null);
+  const [copied, setCopied] = useState(false);
 
   const { data: jobs, isLoading } = useQuery({
     queryKey: ["jobs-with-companies"],
@@ -44,7 +58,6 @@ export default function Jobs() {
     },
   });
 
-  // Fetch signal flags for companies (benefits, hiring tech, sentiment, influence)
   const { data: signalFlags } = useQuery({
     queryKey: ["company-signal-flags"],
     queryFn: async () => {
@@ -73,7 +86,6 @@ export default function Jobs() {
     queryKey: ["company-values-signals", valuesFilters],
     queryFn: async () => {
       if (valuesFilters.length === 0) return {};
-      // Query by both value_category and values_lens columns to cover all signal formats
       const orFilter = valuesFilters.map(f => `value_category.eq.${f},values_lens.eq.${f}`).join(",");
       const { data, error } = await supabase
         .from("company_values_signals")
@@ -95,6 +107,28 @@ export default function Jobs() {
     const set = new Set(jobs.map((j: any) => j.companies?.industry).filter(Boolean));
     return Array.from(set).sort();
   }, [jobs]);
+
+  // Calculate a simple match score for each job based on signals
+  const jobScores = useMemo(() => {
+    if (!jobs) return {};
+    const scores: Record<string, number> = {};
+    jobs.forEach((job: any) => {
+      const company = job.companies;
+      if (!company) return;
+      let score = Math.min(Math.round((company.civic_footprint_score || 0) * 0.4), 40);
+      const flags = signalFlags?.[company.id] || [];
+      score += flags.length * 8;
+      // Bonus for values match
+      if (valuesFilters.length > 0 && valuesSignals) {
+        const companyVals = valuesSignals[company.id] || [];
+        const matchedCategories = new Set(companyVals.map((s: any) => s.value_category || s.values_lens));
+        const matchRate = valuesFilters.filter(f => matchedCategories.has(f)).length / valuesFilters.length;
+        score += Math.round(matchRate * 30);
+      }
+      scores[job.id] = Math.min(score, 99);
+    });
+    return scores;
+  }, [jobs, signalFlags, valuesFilters, valuesSignals]);
 
   const filtered = useMemo(() => {
     if (!jobs) return [];
@@ -119,8 +153,8 @@ export default function Jobs() {
         matchesValues = valuesFilters.every((f) => companyCategories.has(f));
       }
       return matchesSearch && matchesScore && matchesIndustry && matchesValues && matchesWorkMode;
-    });
-  }, [jobs, search, minScore, industryFilter, workModeFilter, valuesFilters, valuesSignals]);
+    }).sort((a: any, b: any) => (jobScores[b.id] || 0) - (jobScores[a.id] || 0));
+  }, [jobs, search, minScore, industryFilter, workModeFilter, valuesFilters, valuesSignals, jobScores]);
 
   const companiesWithJobs = useMemo(() => {
     if (!filtered) return 0;
@@ -149,149 +183,357 @@ export default function Jobs() {
     if (job.url) window.open(job.url, "_blank", "noopener,noreferrer");
   };
 
+  const handleGenerateCoverLetter = async (job: any) => {
+    if (!user) {
+      toast.error("Please sign in to generate a cover letter");
+      return;
+    }
+    setGeneratingFor(job.id);
+    setGeneratedPayload(null);
+    try {
+      const { data: result, error } = await supabase.functions.invoke("generate-application-payload", {
+        body: { company_id: job.company_id, user_id: user.id },
+      });
+      if (error) throw error;
+      if (result?.payload) {
+        setGeneratedPayload({ ...result.payload, jobTitle: job.title, jobId: job.id });
+        try { await navigator.clipboard.writeText(result.payload.matchingStatement); } catch {}
+        toast.success("Cover letter generated & copied!");
+        // Track application
+        await supabase.from("applications_tracker").upsert({
+          user_id: user.id,
+          company_id: job.company_id,
+          job_id: job.id,
+          job_title: job.title,
+          company_name: job.companies?.name || "Unknown",
+          application_link: job.url,
+          alignment_score: result.payload.alignmentScore || 0,
+          status: "Draft",
+        }, { onConflict: "user_id,job_id" }).then(() => {});
+      }
+    } catch (e: any) {
+      console.error(e);
+      if (e?.message?.includes("429")) {
+        toast.error("Rate limited — try again in a moment");
+      } else if (e?.message?.includes("402")) {
+        toast.error("AI credits exhausted — please add funds");
+      } else {
+        toast.error(e?.message || "Generation failed");
+      }
+    } finally {
+      setGeneratingFor(null);
+    }
+  };
+
+  const handleCopyPayload = async () => {
+    if (!generatedPayload?.matchingStatement) return;
+    await navigator.clipboard.writeText(generatedPayload.matchingStatement);
+    setCopied(true);
+    setTimeout(() => setCopied(false), 2000);
+  };
+
   return (
     <div className="min-h-screen bg-background flex flex-col">
       <Header />
       <div className="flex flex-1">
-        {/* Sidebar nav */}
         <JobSidebar />
 
-        {/* Main content */}
         <main className="flex-1 min-w-0 px-4 sm:px-6 py-5">
-          {/* Header area */}
+          {/* Header */}
           <div className="mb-5">
             <h1 className="text-xl sm:text-2xl font-bold text-foreground font-display">
-              Job Board
+              Career Intelligence
             </h1>
             <p className="text-muted-foreground text-sm mt-0.5">
-              {filtered?.length || 0} jobs from {companiesWithJobs} companies
-              {minScore !== "0" && ` · Score ${minScore}+`}
+              Find jobs at companies that align with your values. Like AIApply — but with transparency built in.
             </p>
           </div>
 
-          {/* Filters bar */}
-          <div className="flex flex-col sm:flex-row gap-2 mb-4">
-            <div className="relative flex-1">
-              <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
-              <Input
-                placeholder="Search jobs, companies, or locations..."
-                value={search}
-                onChange={(e) => setSearch(e.target.value)}
-                className="pl-10"
-              />
-            </div>
-            <div className="flex gap-2 flex-wrap">
-              <Select value={minScore} onValueChange={setMinScore}>
-                <SelectTrigger className="w-full sm:w-[140px]">
-                  <Filter className="w-4 h-4 mr-1.5 text-muted-foreground" />
-                  <SelectValue placeholder="Min score" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="0">All Scores</SelectItem>
-                  <SelectItem value="30">Score 30+</SelectItem>
-                  <SelectItem value="50">Score 50+</SelectItem>
-                  <SelectItem value="70">Score 70+</SelectItem>
-                </SelectContent>
-              </Select>
-              <Select value={industryFilter} onValueChange={setIndustryFilter}>
-                <SelectTrigger className="w-full sm:w-[160px]">
-                  <Building2 className="w-4 h-4 mr-1.5 text-muted-foreground" />
-                  <SelectValue placeholder="Industry" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="all">All Industries</SelectItem>
-                  {industries.map((ind) => (
-                    <SelectItem key={ind} value={ind}>{ind}</SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-              <Select value={workModeFilter} onValueChange={setWorkModeFilter}>
-                <SelectTrigger className="w-full sm:w-[130px]">
-                  <Monitor className="w-4 h-4 mr-1.5 text-muted-foreground" />
-                  <SelectValue placeholder="Work mode" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="all">All Modes</SelectItem>
-                  <SelectItem value="remote">Remote</SelectItem>
-                  <SelectItem value="hybrid">Hybrid</SelectItem>
-                  <SelectItem value="on-site">On-site</SelectItem>
-                </SelectContent>
-              </Select>
-              <Button
-                variant={showValues ? "default" : "outline"}
-                onClick={() => setShowValues(!showValues)}
-                className="gap-1.5"
-              >
-                <SlidersHorizontal className="w-4 h-4" />
-                <span className="hidden sm:inline">Values</span>
-              </Button>
-            </div>
-          </div>
+          {/* Tabs */}
+          <Tabs value={tab} onValueChange={setTab}>
+            <TabsList className="mb-4">
+              <TabsTrigger value="browse" className="gap-1.5">
+                <Search className="w-4 h-4" />
+                Browse Jobs
+              </TabsTrigger>
+              {user && (
+                <>
+                  <TabsTrigger value="auto-apply" className="gap-1.5">
+                    <Zap className="w-4 h-4" />
+                    Auto-Apply
+                  </TabsTrigger>
+                  <TabsTrigger value="tracker" className="gap-1.5">
+                    <LayoutDashboard className="w-4 h-4" />
+                    My Applications
+                  </TabsTrigger>
+                  <TabsTrigger value="profile" className="gap-1.5">
+                    <User className="w-4 h-4" />
+                    Profile
+                  </TabsTrigger>
+                </>
+              )}
+            </TabsList>
 
-          {/* Active values chips */}
-          {valuesFilters.length > 0 && (
-            <div className="flex flex-wrap items-center gap-1.5 mb-4">
-              <span className="text-xs text-muted-foreground">Values:</span>
-              {valuesFilters.map((f) => {
-                const cat = VALUES_LENSES.find((c) => c.key === f);
-                return cat ? (
-                  <Badge key={f} variant="secondary" className="text-xs flex items-center gap-1">
-                    {cat.label}
-                    <X className="w-3 h-3 cursor-pointer" onClick={() => setValuesFilters((prev) => prev.filter((p) => p !== f))} />
-                  </Badge>
-                ) : null;
-              })}
-              <Button variant="ghost" size="sm" className="text-xs h-6 px-2" onClick={() => setValuesFilters([])}>
-                Clear all
-              </Button>
-            </div>
-          )}
-
-          {/* Content area: optional values sidebar + job list */}
-          <div className="flex gap-5">
-            {showValues && (
-              <div className="hidden sm:block w-56 shrink-0">
-                <div className="sticky top-20">
-                  <ValuesPreferenceSidebar activeFilters={valuesFilters} onFiltersChange={setValuesFilters} />
-                </div>
-              </div>
-            )}
-
-            <div className="flex-1 min-w-0">
-              {isLoading && <LoadingState message="Loading job listings..." />}
-              {!isLoading && filtered?.length === 0 && (
-                <EmptyState
-                  icon={Briefcase}
-                  title="No jobs found"
-                  description={
-                    valuesFilters.length > 0
-                      ? "No jobs match your values filters. Try removing some filters."
-                      : jobs?.length === 0
-                      ? "Job listings are being scraped. Check back soon!"
-                      : "Try adjusting your filters or search terms."
-                  }
-                />
+            {/* ──── BROWSE JOBS TAB ──── */}
+            <TabsContent value="browse">
+              {/* Generated cover letter banner */}
+              {generatedPayload && (
+                <Card className="border-primary/30 bg-primary/5 mb-4 animate-in slide-in-from-top-2">
+                  <CardContent className="p-4">
+                    <div className="flex items-start justify-between gap-3">
+                      <div className="flex-1 min-w-0">
+                        <div className="flex items-center gap-2 mb-2">
+                          <Wand2 className="w-4 h-4 text-primary" />
+                          <span className="text-sm font-semibold text-foreground">
+                            Cover letter ready for {generatedPayload.jobTitle}
+                          </span>
+                          <Badge variant="secondary" className="text-xs">
+                            <Shield className="w-3 h-3 mr-0.5" />
+                            {generatedPayload.alignmentScore}% match
+                          </Badge>
+                        </div>
+                        {generatedPayload.targetedIntro && (
+                          <p className="text-sm text-foreground/90 mb-2">{generatedPayload.targetedIntro}</p>
+                        )}
+                        <div className="bg-background border border-border rounded-md p-3 text-sm text-foreground/90 leading-relaxed max-h-40 overflow-y-auto">
+                          {generatedPayload.matchingStatement}
+                        </div>
+                        <p className="text-xs text-muted-foreground mt-2">
+                          Paste this into the "Cover Letter" or "Why us?" field on {generatedPayload.companyName}'s application.
+                        </p>
+                      </div>
+                      <div className="flex flex-col gap-2 shrink-0">
+                        <Button size="sm" onClick={handleCopyPayload} className="gap-1.5">
+                          {copied ? <Check className="w-3.5 h-3.5" /> : <Copy className="w-3.5 h-3.5" />}
+                          {copied ? "Copied!" : "Copy"}
+                        </Button>
+                        {generatedPayload.careerSiteUrl && (
+                          <Button size="sm" variant="outline" asChild className="gap-1.5 text-xs">
+                            <a href={generatedPayload.careerSiteUrl} target="_blank" rel="noopener noreferrer">
+                              <ExternalLink className="w-3 h-3" /> Apply
+                            </a>
+                          </Button>
+                        )}
+                        <Button size="sm" variant="ghost" onClick={() => setGeneratedPayload(null)} className="text-xs">
+                          <X className="w-3 h-3" />
+                        </Button>
+                      </div>
+                    </div>
+                  </CardContent>
+                </Card>
               )}
 
-              <div className="space-y-2">
-                {filtered?.map((job: any) => {
-                  const company = job.companies;
-                  const companyValueSignals = valuesSignals?.[company?.id] || [];
-                  const companySignals = signalFlags?.[company?.id] || [];
-                  return (
-                    <JobListRow
-                      key={job.id}
-                      job={job}
-                      companyValueSignals={companyValueSignals}
-                      companySignalFlags={companySignals}
-                      isSelected={selectedJob?.id === job.id}
-                      onClick={() => setSelectedJob(job)}
-                    />
-                  );
-                })}
+              {/* Stats bar */}
+              <div className="flex items-center justify-between mb-3">
+                <p className="text-muted-foreground text-sm">
+                  {filtered?.length || 0} jobs from {companiesWithJobs} companies
+                  {minScore !== "0" && ` · Score ${minScore}+`}
+                </p>
+                {user && (
+                  <p className="text-xs text-muted-foreground">
+                    <Sparkles className="w-3 h-3 inline mr-0.5" />
+                    Match scores based on your profile & values
+                  </p>
+                )}
               </div>
-            </div>
-          </div>
+
+              {/* Filters */}
+              <div className="flex flex-col sm:flex-row gap-2 mb-4">
+                <div className="relative flex-1">
+                  <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
+                  <Input
+                    placeholder="Search jobs, companies, or locations..."
+                    value={search}
+                    onChange={(e) => setSearch(e.target.value)}
+                    className="pl-10"
+                  />
+                </div>
+                <div className="flex gap-2 flex-wrap">
+                  <Select value={minScore} onValueChange={setMinScore}>
+                    <SelectTrigger className="w-full sm:w-[140px]">
+                      <Filter className="w-4 h-4 mr-1.5 text-muted-foreground" />
+                      <SelectValue placeholder="Min score" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="0">All Scores</SelectItem>
+                      <SelectItem value="30">Score 30+</SelectItem>
+                      <SelectItem value="50">Score 50+</SelectItem>
+                      <SelectItem value="70">Score 70+</SelectItem>
+                    </SelectContent>
+                  </Select>
+                  <Select value={industryFilter} onValueChange={setIndustryFilter}>
+                    <SelectTrigger className="w-full sm:w-[160px]">
+                      <Building2 className="w-4 h-4 mr-1.5 text-muted-foreground" />
+                      <SelectValue placeholder="Industry" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="all">All Industries</SelectItem>
+                      {industries.map((ind) => (
+                        <SelectItem key={ind} value={ind}>{ind}</SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                  <Select value={workModeFilter} onValueChange={setWorkModeFilter}>
+                    <SelectTrigger className="w-full sm:w-[130px]">
+                      <Monitor className="w-4 h-4 mr-1.5 text-muted-foreground" />
+                      <SelectValue placeholder="Work mode" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="all">All Modes</SelectItem>
+                      <SelectItem value="remote">Remote</SelectItem>
+                      <SelectItem value="hybrid">Hybrid</SelectItem>
+                      <SelectItem value="on-site">On-site</SelectItem>
+                    </SelectContent>
+                  </Select>
+                  <Button
+                    variant={showValues ? "default" : "outline"}
+                    onClick={() => setShowValues(!showValues)}
+                    className="gap-1.5"
+                  >
+                    <SlidersHorizontal className="w-4 h-4" />
+                    <span className="hidden sm:inline">Values</span>
+                  </Button>
+                </div>
+              </div>
+
+              {/* Active values chips */}
+              {valuesFilters.length > 0 && (
+                <div className="flex flex-wrap items-center gap-1.5 mb-4">
+                  <span className="text-xs text-muted-foreground">Values:</span>
+                  {valuesFilters.map((f) => {
+                    const cat = VALUES_LENSES.find((c) => c.key === f);
+                    return cat ? (
+                      <Badge key={f} variant="secondary" className="text-xs flex items-center gap-1">
+                        {cat.label}
+                        <X className="w-3 h-3 cursor-pointer" onClick={() => setValuesFilters((prev) => prev.filter((p) => p !== f))} />
+                      </Badge>
+                    ) : null;
+                  })}
+                  <Button variant="ghost" size="sm" className="text-xs h-6 px-2" onClick={() => setValuesFilters([])}>
+                    Clear all
+                  </Button>
+                </div>
+              )}
+
+              {/* Content area */}
+              <div className="flex gap-5">
+                {showValues && (
+                  <div className="hidden sm:block w-56 shrink-0">
+                    <div className="sticky top-20">
+                      <ValuesPreferenceSidebar activeFilters={valuesFilters} onFiltersChange={setValuesFilters} />
+                    </div>
+                  </div>
+                )}
+
+                <div className="flex-1 min-w-0">
+                  {isLoading && <LoadingState message="Loading job listings..." />}
+                  {!isLoading && filtered?.length === 0 && (
+                    <EmptyState
+                      icon={Briefcase}
+                      title="No jobs found"
+                      description={
+                        valuesFilters.length > 0
+                          ? "No jobs match your values filters. Try removing some filters."
+                          : jobs?.length === 0
+                          ? "Job listings are being scraped. Check back soon!"
+                          : "Try adjusting your filters or search terms."
+                      }
+                    />
+                  )}
+
+                  <div className="space-y-2">
+                    {filtered?.map((job: any) => {
+                      const company = job.companies;
+                      const companyValueSignals = valuesSignals?.[company?.id] || [];
+                      const companySignals = signalFlags?.[company?.id] || [];
+                      const score = jobScores[job.id] || 0;
+                      const isGenerating = generatingFor === job.id;
+
+                      return (
+                        <div key={job.id} className="relative group">
+                          <JobListRow
+                            job={job}
+                            companyValueSignals={companyValueSignals}
+                            companySignalFlags={companySignals}
+                            matchScore={score}
+                            isSelected={selectedJob?.id === job.id}
+                            onClick={() => setSelectedJob(job)}
+                          />
+                          {/* Quick-action overlay: Generate Cover Letter */}
+                          {user && (
+                            <div className="absolute right-14 top-3 opacity-0 group-hover:opacity-100 transition-opacity flex gap-1.5">
+                              <Button
+                                size="sm"
+                                variant="default"
+                                className="gap-1 text-xs h-7 shadow-md"
+                                disabled={isGenerating}
+                                onClick={(e) => {
+                                  e.stopPropagation();
+                                  handleGenerateCoverLetter(job);
+                                }}
+                              >
+                                {isGenerating ? (
+                                  <Loader2 className="w-3 h-3 animate-spin" />
+                                ) : (
+                                  <FileText className="w-3 h-3" />
+                                )}
+                                {isGenerating ? "Generating..." : "Cover Letter"}
+                              </Button>
+                            </div>
+                          )}
+                        </div>
+                      );
+                    })}
+                  </div>
+                </div>
+              </div>
+            </TabsContent>
+
+            {/* ──── AUTO-APPLY TAB ──── */}
+            <TabsContent value="auto-apply">
+              {user ? (
+                <div className="space-y-6">
+                  <AutoApplySettings />
+                  <ApplyQueueDashboard />
+                </div>
+              ) : (
+                <EmptyState
+                  icon={Zap}
+                  title="Sign in to use Auto-Apply"
+                  description="Auto-apply generates tailored cover letters and tracks applications for jobs that match your values."
+                />
+              )}
+            </TabsContent>
+
+            {/* ──── MY APPLICATIONS TAB ──── */}
+            <TabsContent value="tracker">
+              {user ? (
+                <TrackingDashboard />
+              ) : (
+                <EmptyState
+                  icon={LayoutDashboard}
+                  title="Sign in to track applications"
+                  description="Keep track of where you've applied and your progress."
+                />
+              )}
+            </TabsContent>
+
+            {/* ──── PROFILE TAB ──── */}
+            <TabsContent value="profile">
+              {user ? (
+                <div className="space-y-6">
+                  <UserProfileForm />
+                  <PreferenceCenter />
+                </div>
+              ) : (
+                <EmptyState
+                  icon={User}
+                  title="Sign in to set up your profile"
+                  description="Your profile powers AI-generated cover letters and job matching."
+                />
+              )}
+            </TabsContent>
+          </Tabs>
         </main>
       </div>
 
@@ -299,6 +541,7 @@ export default function Jobs() {
       <JobDetailDrawer
         job={selectedJob}
         companyValueSignals={selectedJob ? (valuesSignals?.[selectedJob.companies?.id] || []) : []}
+        matchScore={selectedJob ? jobScores[selectedJob.id] : undefined}
         open={!!selectedJob}
         onOpenChange={(open) => { if (!open) setSelectedJob(null); }}
         onApply={handleClickToApply}
