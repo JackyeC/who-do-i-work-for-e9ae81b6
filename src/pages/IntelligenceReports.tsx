@@ -33,6 +33,10 @@ const ISSUE_OPTIONS = [
 ];
 
 export default function IntelligenceReports() {
+  const [searchParams] = useSearchParams();
+  const urlType = searchParams.get("type");
+  const isSignalsView = urlType === "weekly_brief";
+
   const [searchText, setSearchText] = useState("");
   const [issueFilter, setIssueFilter] = useState("all");
   const [typeFilter, setTypeFilter] = useState("all");
