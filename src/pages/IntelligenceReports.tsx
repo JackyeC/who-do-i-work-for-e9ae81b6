@@ -168,6 +168,7 @@ export default function IntelligenceReports() {
             </div>
           )}
         </section>
+        )}
       </main>
       <Footer />
     </div>
