@@ -10,7 +10,7 @@ export function RecruitingInsightsDashboard() {
     companiesWithWarn: 0,
     companiesWithAIHiring: 0,
     topIndustries: [] as { industry: string; count: number }[],
-    recentLayoffs: [] as { company_name: string; number_affected: number; notice_date: string }[],
+    recentLayoffs: [] as { company_name: string; employees_affected: number; notice_date: string }[],
     competitorInsights: [] as { name: string; industry: string; score: number }[],
   });
   const [loading, setLoading] = useState(true);
