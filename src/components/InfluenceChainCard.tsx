@@ -504,7 +504,7 @@ export function InfluenceChainCard({ companyId, companyName }: { companyId: stri
                       {chainIdx + 1}
                     </Badge>
                     <span className="text-sm font-medium text-foreground truncate">
-                      {firstStep.source_name}
+                      {cleanEntityName(firstStep.source_name)}
                     </span>
                     <ArrowRight className="w-3 h-3 text-muted-foreground shrink-0" />
                     <span className="text-[10px] text-muted-foreground shrink-0">
@@ -512,7 +512,7 @@ export function InfluenceChainCard({ companyId, companyName }: { companyId: stri
                     </span>
                     <ArrowRight className="w-3 h-3 text-muted-foreground shrink-0" />
                     <span className="text-sm font-medium text-foreground truncate">
-                      {lastStep.target_name}
+                      {cleanEntityName(lastStep.target_name)}
                     </span>
                     <PartyBadge party={lastParty} entityType={lastStep.target_type} />
                   </div>
