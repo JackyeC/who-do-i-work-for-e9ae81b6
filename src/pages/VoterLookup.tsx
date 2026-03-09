@@ -223,7 +223,7 @@ export default function VoterLookup() {
                         </>
                       ) : (
                         <div className="text-center py-4 text-sm text-muted-foreground bg-muted/50 rounded-lg">
-                          <p>No corporate funding tracked for this representative yet in CivicLens.</p>
+                          <p>No corporate donations tracked for this representative yet.</p>
                           <p className="text-xs mt-1">We're continuously adding more companies and data.</p>
                         </div>
                       )}
