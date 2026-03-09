@@ -77,25 +77,50 @@ export default function Check() {
             <div className="bg-card rounded-2xl border border-border/40 p-8 shadow-luxury">
               <h2 className="text-xl font-semibold text-foreground mb-2 font-display">Offer Check</h2>
               <p className="text-sm text-muted-foreground mb-6">
-                Search a company to run an Offer Check report — analyze salary structure, equity terms, contract language, and company intelligence context.
+                Two ways to check your offer:
               </p>
-              <form onSubmit={handleOfferSearch} className="flex gap-3">
-                <div className="relative flex-1">
-                  <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
-                  <Input
-                    value={companyQuery}
-                    onChange={(e) => setCompanyQuery(e.target.value)}
-                    placeholder="Enter company name to check your offer..."
-                    className="pl-10"
-                  />
+
+              <div className="space-y-4">
+                {/* Option 1: Direct upload */}
+                <div className="p-4 rounded-xl border border-primary/20 bg-primary/[0.02]">
+                  <div className="flex items-center gap-2 mb-2">
+                    <ShieldCheck className="w-5 h-5 text-primary" />
+                    <h3 className="font-semibold text-foreground text-sm">Upload Your Offer Letter</h3>
+                    <Badge variant="outline" className="text-[10px]">Private</Badge>
+                  </div>
+                  <p className="text-xs text-muted-foreground mb-3">
+                    Upload a PDF, DOCX, or paste text from your offer letter. AI will extract salary, equity, contract terms, and flag risks — no company selection needed.
+                  </p>
+                  <Button onClick={() => navigate("/offer-review-direct")} className="gap-2">
+                    <Upload className="w-4 h-4" /> Upload Offer Letter
+                  </Button>
                 </div>
-                <Button type="submit" className="gap-2">
-                  Run Offer Check <ArrowRight className="w-4 h-4" />
-                </Button>
-              </form>
-              <p className="text-xs text-muted-foreground mt-4">
-                You can also upload an offer letter for detailed analysis after selecting a company.
-              </p>
+
+                {/* Option 2: Company search */}
+                <div className="p-4 rounded-xl border border-border/40">
+                  <div className="flex items-center gap-2 mb-2">
+                    <ClipboardCheck className="w-5 h-5 text-muted-foreground" />
+                    <h3 className="font-semibold text-foreground text-sm">Search by Company</h3>
+                  </div>
+                  <p className="text-xs text-muted-foreground mb-3">
+                    Look up a company to see public signals about pay, hiring, worker conditions, and influence — before you accept.
+                  </p>
+                  <form onSubmit={handleOfferSearch} className="flex gap-3">
+                    <div className="relative flex-1">
+                      <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
+                      <Input
+                        value={companyQuery}
+                        onChange={(e) => setCompanyQuery(e.target.value)}
+                        placeholder="Enter company name..."
+                        className="pl-10"
+                      />
+                    </div>
+                    <Button type="submit" variant="outline" className="gap-2">
+                      Run Offer Check <ArrowRight className="w-4 h-4" />
+                    </Button>
+                  </form>
+                </div>
+              </div>
             </div>
           </TabsContent>
 
