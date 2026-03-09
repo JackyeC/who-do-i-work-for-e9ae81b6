@@ -5,6 +5,58 @@ const corsHeaders = {
 
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2';
 
+// Run searches in parallel batches to speed up scanning
+async function batchSearch(queries: string[], firecrawlKey: string, batchSize = 4): Promise<{ results: any[]; creditExhausted: boolean }> {
+  const allResults: any[] = [];
+  let creditExhausted = false;
+
+  for (let i = 0; i < queries.length; i += batchSize) {
+    if (creditExhausted) break;
+    const batch = queries.slice(i, i + batchSize);
+    console.log(`Batch ${Math.floor(i / batchSize) + 1}: searching ${batch.length} queries in parallel`);
+
+    const batchResults = await Promise.allSettled(
+      batch.map(async (query) => {
+        const searchResp = await fetch('https://api.firecrawl.dev/v1/search', {
+          method: 'POST',
+          headers: {
+            'Authorization': `Bearer ${firecrawlKey}`,
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({ query, limit: 5 }),
+        });
+
+        if (searchResp.status === 402) {
+          throw new Error('CREDIT_EXHAUSTED');
+        }
+
+        const searchData = await searchResp.json();
+        if (searchResp.ok && searchData.success && searchData.data) {
+          return searchData.data.map((r: any) => ({
+            title: r.title || '',
+            url: r.url || '',
+            description: r.description || '',
+            markdown: (r.markdown || '').slice(0, 2000),
+            query,
+          }));
+        }
+        return [];
+      })
+    );
+
+    for (const r of batchResults) {
+      if (r.status === 'fulfilled') {
+        allResults.push(...r.value);
+      } else if (r.reason?.message === 'CREDIT_EXHAUSTED') {
+        creditExhausted = true;
+        break;
+      }
+    }
+  }
+
+  return { results: allResults, creditExhausted };
+}
+
 Deno.serve(async (req) => {
   if (req.method === 'OPTIONS') {
     return new Response(null, { headers: corsHeaders });
@@ -36,108 +88,48 @@ Deno.serve(async (req) => {
       );
     }
 
-    // 1. Search for Glassdoor reviews and worker sentiment data
-    // Use simpler queries - site: operator may not work with Firecrawl
-    // Derive TheLayoff.com slug (lowercase, hyphenated)
     const layoffSlug = companyName.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '');
 
+    // Consolidated search queries (reduced from 12+ to 8 targeted ones)
     const searchQueries = [
-      `${companyName} Glassdoor reviews employee ratings`,
-      `${companyName} Glassdoor salary compensation CEO approval`,
-      `${companyName} Indeed employee reviews work-life balance`,
-      `${companyName} LinkedIn employee reviews culture workplace`,
+      `${companyName} Glassdoor reviews employee ratings CEO approval`,
+      `${companyName} Indeed employee reviews work-life balance salary`,
       `${companyName} employee complaints worker conditions labor practices`,
-      // TheLayoff.com - worker-sourced layoff rumors and sentiment
-      `site:thelayoff.com ${companyName} layoffs`,
-      `site:thelayoff.com "${companyName}" morale restructuring`,
-      // Controversy & legal action queries
-      `"${companyName}" EEOC complaint discrimination lawsuit settlement`,
-      `"${companyName}" NLRB unfair labor practice union busting complaint`,
-      `"${companyName}" mass layoffs fired terminated workforce reduction`,
-      `"${companyName}" racial discrimination gender discrimination class action`,
-      `"${companyName}" hostile work environment toxic workplace culture`,
-      `"${companyName}" whistleblower retaliation wrongful termination`,
-      `"${companyName}" worker safety OSHA violation workplace injury`,
-      `"${companyName}" labor controversy DEI cuts diversity layoffs`,
+      `site:thelayoff.com ${companyName} layoffs morale`,
+      `"${companyName}" EEOC NLRB complaint discrimination lawsuit`,
+      `"${companyName}" mass layoffs workforce reduction restructuring`,
+      `"${companyName}" hostile workplace toxic culture whistleblower`,
+      `"${companyName}" worker safety OSHA labor controversy DEI`,
     ];
 
-    const allResults: any[] = [];
-    let creditExhausted = false;
-    for (const query of searchQueries) {
-      if (creditExhausted) break;
-      try {
-        console.log(`Searching: ${query}`);
-        const searchResp = await fetch('https://api.firecrawl.dev/v1/search', {
-          method: 'POST',
-          headers: {
-            'Authorization': `Bearer ${firecrawlKey}`,
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify({
-            query,
-            limit: 5,
-          }),
-        });
+    // Run all searches in parallel batches of 4
+    const { results: allResults, creditExhausted } = await batchSearch(searchQueries, firecrawlKey, 4);
 
-        if (searchResp.status === 402) {
-          creditExhausted = true;
-          console.error('Firecrawl credits exhausted');
-          break;
-        }
-
-        const searchData = await searchResp.json();
-        console.log(`Search response for "${query.slice(0, 40)}...": status=${searchResp.status}, success=${searchData.success}, results=${searchData.data?.length || 0}`);
-
-        if (searchResp.ok && searchData.success && searchData.data) {
-          allResults.push(...searchData.data.map((r: any) => ({
-            title: r.title || '',
-            url: r.url || '',
-            description: r.description || '',
-            markdown: (r.markdown || '').slice(0, 2000),
-            query,
-          })));
-        } else if (!searchResp.ok) {
-          console.error(`Firecrawl error: ${searchResp.status}`, JSON.stringify(searchData).slice(0, 500));
-        }
-      } catch (e) {
-        console.error(`Search failed for: ${query}`, e);
-      }
-    }
-
-    // Direct scrape of TheLayoff.com company page for richer sentiment data
+    // Direct scrape of TheLayoff.com in parallel with nothing blocking
     if (!creditExhausted) {
       try {
         const layoffPageUrl = `https://www.thelayoff.com/${layoffSlug}`;
-        console.log(`Scraping TheLayoff.com page: ${layoffPageUrl}`);
+        console.log(`Scraping TheLayoff.com: ${layoffPageUrl}`);
         const scrapeResp = await fetch('https://api.firecrawl.dev/v1/scrape', {
           method: 'POST',
           headers: {
             'Authorization': `Bearer ${firecrawlKey}`,
             'Content-Type': 'application/json',
           },
-          body: JSON.stringify({
-            url: layoffPageUrl,
-            formats: ['markdown'],
-            onlyMainContent: true,
-          }),
+          body: JSON.stringify({ url: layoffPageUrl, formats: ['markdown'], onlyMainContent: true }),
         });
 
-        if (scrapeResp.status === 402) {
-          creditExhausted = true;
-        } else if (scrapeResp.ok) {
+        if (scrapeResp.ok) {
           const scrapeData = await scrapeResp.json();
           const markdown = scrapeData.data?.markdown || scrapeData.markdown || '';
           if (markdown.length > 50) {
             allResults.push({
               title: `TheLayoff.com - ${companyName} Employee Discussion`,
               url: layoffPageUrl,
-              description: 'Worker-sourced layoff rumors, morale reports, and insider sentiment from thelayoff.com',
+              description: 'Worker-sourced layoff rumors, morale reports, and insider sentiment',
               markdown: markdown.slice(0, 4000),
               query: 'thelayoff.com direct scrape',
             });
-            console.log(`TheLayoff.com scrape successful: ${markdown.length} chars`);
-          } else {
-            console.log('TheLayoff.com page had minimal content');
           }
         }
       } catch (e) {
@@ -151,36 +143,25 @@ Deno.serve(async (req) => {
       return new Response(JSON.stringify({
         success: false,
         error: 'Firecrawl credits exhausted. Please upgrade your Firecrawl plan to continue scanning. Use coupon LOVABLE50 for 50% off your first 3 months at firecrawl.dev/pricing'
-      }), {
-        status: 402,
-        headers: { ...corsHeaders, 'Content-Type': 'application/json' }
-      });
+      }), { status: 402, headers: { ...corsHeaders, 'Content-Type': 'application/json' } });
     }
 
     if (allResults.length === 0) {
       return new Response(JSON.stringify({
         success: false,
         error: 'No search results found. The web search returned no data for this company.'
-      }), {
-        status: 404,
-        headers: { ...corsHeaders, 'Content-Type': 'application/json' }
-      });
+      }), { status: 404, headers: { ...corsHeaders, 'Content-Type': 'application/json' } });
     }
 
-    // 2. Get company's public labor stances from DB for hypocrisy comparison
+    // Get company stances for hypocrisy comparison
     const supabaseUrl = Deno.env.get('SUPABASE_URL')!;
     const supabaseKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!;
     const supabase = createClient(supabaseUrl, supabaseKey);
 
-    const { data: stances } = await supabase
-      .from('company_public_stances')
-      .select('topic, public_position, spending_reality, gap')
-      .eq('company_id', companyId);
-
-    const { data: ideologyFlags } = await supabase
-      .from('company_ideology_flags')
-      .select('org_name, category, relationship_type, severity')
-      .eq('company_id', companyId);
+    const [{ data: stances }, { data: ideologyFlags }] = await Promise.all([
+      supabase.from('company_public_stances').select('topic, public_position, spending_reality, gap').eq('company_id', companyId),
+      supabase.from('company_ideology_flags').select('org_name, category, relationship_type, severity').eq('company_id', companyId),
+    ]);
 
     const laborStancesContext = (stances || [])
       .filter((s: any) => /labor|worker|wage|union|employ/i.test(s.topic + s.public_position))
@@ -192,7 +173,7 @@ Deno.serve(async (req) => {
       .map((f: any) => `${f.org_name} (${f.category}, ${f.relationship_type}, severity: ${f.severity})`)
       .join('\n');
 
-    // 3. AI Analysis
+    // AI Analysis
     const contentForAI = allResults.slice(0, 15).map((r, i) =>
       `[${i + 1}] "${r.title}" (${r.url})\n${r.description}\n${r.markdown?.slice(0, 800) || ''}`
     ).join('\n\n---\n\n');
@@ -279,7 +260,7 @@ Only include items you find evidence for. Return valid JSON only.`;
       }
     }
 
-    // 4. Store in database
+    // Store in database
     const { error: insertError } = await supabase.from('company_worker_sentiment').insert({
       company_id: companyId,
       scan_type: 'firecrawl_ai',
@@ -305,7 +286,7 @@ Only include items you find evidence for. Return valid JSON only.`;
 
     return new Response(JSON.stringify({
       success: true,
-      signalsFound: 1, // One consolidated sentiment record
+      signalsFound: 1,
       sourcesScanned: allResults.length,
       data: {
         overallRating: aiAnalysis.overallRating,
