@@ -32,6 +32,7 @@ import {
 } from "lucide-react";
 
 export default function Jobs() {
+  const [searchParams, setSearchParams] = useSearchParams();
   const { user } = useAuth();
   const [search, setSearch] = useState("");
   const [minScore, setMinScore] = useState("0");
