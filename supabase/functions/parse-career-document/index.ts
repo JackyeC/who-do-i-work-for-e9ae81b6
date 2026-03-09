@@ -1,7 +1,6 @@
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 import mammoth from "npm:mammoth@1.6.0";
-import pdfParse from "npm:pdf-parse@1.1.1";
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
@@ -16,6 +15,8 @@ async function extractTextFromFile(fileData: Blob, filename: string): Promise<st
     const result = await mammoth.extractRawText({ arrayBuffer });
     return result.value;
   } else if (ext === "pdf") {
+    // Use dynamic import from lib path to avoid pdf-parse test file filesystem issue in Deno
+    const { default: pdfParse } = await import("npm:pdf-parse/lib/pdf-parse.js");
     const arrayBuffer = await fileData.arrayBuffer();
     const buffer = new Uint8Array(arrayBuffer);
     const result = await pdfParse(buffer);
