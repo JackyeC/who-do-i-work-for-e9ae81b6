@@ -78,6 +78,11 @@ const App = () => (
                   <OfferReview />
                 </ProtectedRoute>
               } />
+              <Route path="/offer-review-direct" element={
+                <ProtectedRoute>
+                  <OfferReviewDirect />
+                </ProtectedRoute>
+              } />
               <Route path="/compare-offer-checks" element={<CompareOfferChecks />} />
               <Route path="/dashboard" element={
                 <ProtectedRoute>
