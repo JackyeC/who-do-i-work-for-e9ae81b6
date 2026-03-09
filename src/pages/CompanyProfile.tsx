@@ -409,6 +409,33 @@ export default function CompanyProfile() {
 
   const hasDetailedData = (dbCandidates?.length || 0) > 0 || (dbExecutives?.length || 0) > 0;
 
+  // Values Check signals
+  const { data: valuesCheckSignals, refetch: refetchValuesCheck } = useQuery({
+    queryKey: ["values-check-signals", dbCompanyId],
+    queryFn: async () => {
+      const { data } = await supabase.from("values_check_signals" as any).select("*").eq("company_id", dbCompanyId!).order("confidence_score", { ascending: false });
+      return (data || []) as ValuesCheckSignal[];
+    },
+    enabled: !!dbCompanyId,
+    refetchInterval: pollInterval,
+  });
+
+  const [isGeneratingValues, setIsGeneratingValues] = useState(false);
+  const handleGenerateValuesCheck = async () => {
+    if (!dbCompanyId) return;
+    setIsGeneratingValues(true);
+    try {
+      const { error } = await supabase.functions.invoke("generate-values-check", { body: { companyId: dbCompanyId } });
+      if (error) throw error;
+      refetchValuesCheck();
+      toast({ title: "Values Check generated", description: "Values signals have been mapped from available evidence." });
+    } catch (e: any) {
+      toast({ title: "Generation failed", description: e.message, variant: "destructive" });
+    } finally {
+      setIsGeneratingValues(false);
+    }
+  };
+
   // Enrichment data (OpenSecrets third-party summaries)
   const { data: enrichmentData } = useQuery({
     queryKey: ["org-enrichment", dbCompanyId],
