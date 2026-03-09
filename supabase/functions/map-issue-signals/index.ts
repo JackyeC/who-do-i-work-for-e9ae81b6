@@ -83,7 +83,7 @@ const GUN_CONTROL_ORGS = [
   'everytown for gun safety', 'everytown', 'brady campaign', 'brady',
   'giffords', 'moms demand action', 'march for our lives',
   'coalition to stop gun violence', 'sandy hook promise',
-  'violence policy center',
+  'violence policy center', 'giffords impact network', 'giffords law center',
 ];
 
 const FIREARM_INDUSTRY_KEYWORDS = [
@@ -91,6 +91,46 @@ const FIREARM_INDUSTRY_KEYWORDS = [
   'olin corporation', 'american outdoor brands', 'remington',
   'sig sauer', 'colt', 'beretta', 'firearms manufacturer',
   'ammunition manufacturer', 'weapons manufacturer', 'gunmaker',
+];
+
+// ─── Known corporate gun policy actions (public record) ───
+// These are well-documented, publicly reported corporate actions.
+// Source: Giffords Impact Network, corporate press releases, SEC filings, news reports
+const KNOWN_GUN_POLICY_ACTIONS: { companies: string[]; action: string; subtype: string; source: string }[] = [
+  // Retailers - product restrictions
+  { companies: ["dick's sporting goods", "dicks sporting goods"], action: "Stopped selling assault-style weapons and raised purchase age to 21 (2018)", subtype: "gun_control_signal", source: "Corporate press release / SEC filing" },
+  { companies: ["walmart"], action: "Raised minimum age for gun purchases to 21 and discontinued sales of assault-style rifle ammunition (2019)", subtype: "gun_control_signal", source: "Corporate press release" },
+  { companies: ["levi strauss", "levi's"], action: "Created $1M fund for gun violence prevention groups and joined Everytown Business Leaders for Gun Safety", subtype: "gun_control_signal", source: "Giffords Impact Network" },
+  { companies: ["toms", "toms shoes"], action: "Donated $5M to gun violence prevention organizations", subtype: "gun_control_signal", source: "Corporate press release" },
+  { companies: ["rei"], action: "Suspended orders from Vista Outdoor (ammunition/firearms parent company) over gun policy", subtype: "gun_control_signal", source: "Corporate press release" },
+  // Financial institutions
+  { companies: ["citigroup", "citi"], action: "Requires retail clients to restrict gun sales to those under 21 and mandate background checks", subtype: "gun_control_signal", source: "Corporate policy announcement" },
+  { companies: ["bank of america"], action: "Stopped lending to manufacturers of military-style rifles for civilian use", subtype: "gun_control_signal", source: "Corporate press release" },
+  { companies: ["amalgamated bank"], action: "Active supporter of gun safety legislation and Giffords Impact Network member", subtype: "gun_control_signal", source: "Giffords Impact Network" },
+  // Technology
+  { companies: ["salesforce"], action: "Banned customers from using Salesforce Commerce Cloud to sell certain weapons and accessories", subtype: "gun_control_signal", source: "Salesforce Acceptable Use Policy" },
+  { companies: ["uber"], action: "Prohibits riders and drivers from carrying firearms during trips", subtype: "gun_control_signal", source: "Corporate policy" },
+  // Open carry prohibitions (retailers)
+  { companies: ["albertsons"], action: "Requested customers not openly carry firearms in stores", subtype: "gun_control_signal", source: "Corporate statement" },
+  { companies: ["aldi"], action: "Prohibits open carry of firearms in stores", subtype: "gun_control_signal", source: "Corporate policy" },
+  { companies: ["cvs", "cvs health"], action: "Requested customers not openly carry firearms in stores", subtype: "gun_control_signal", source: "Corporate statement" },
+  { companies: ["kroger"], action: "Requested customers not openly carry firearms in stores and ceased gun/ammo sales in Alaska", subtype: "gun_control_signal", source: "Corporate statement" },
+  { companies: ["meijer"], action: "Requested customers not openly carry firearms in stores", subtype: "gun_control_signal", source: "Corporate policy" },
+  { companies: ["publix"], action: "Requested customers not openly carry firearms in stores", subtype: "gun_control_signal", source: "Corporate policy" },
+  { companies: ["walgreens"], action: "Requested customers not openly carry firearms in stores", subtype: "gun_control_signal", source: "Corporate statement" },
+  { companies: ["wegmans"], action: "Requested customers not openly carry firearms in stores", subtype: "gun_control_signal", source: "Corporate policy" },
+  { companies: ["subway"], action: "Prohibits open carry of firearms in restaurants", subtype: "gun_control_signal", source: "Corporate policy" },
+  // Healthcare / Other
+  { companies: ["northwell health"], action: "Major healthcare system actively treating gun violence as a public health crisis", subtype: "gun_control_signal", source: "Corporate program announcement" },
+  { companies: ["royal caribbean", "royal caribbean cruises"], action: "Signed letters supporting background check legislation", subtype: "gun_control_signal", source: "Giffords Impact Network" },
+  { companies: ["lyft"], action: "Prohibits firearms during rides and donated to March for Our Lives", subtype: "gun_control_signal", source: "Corporate policy / press release" },
+  // Gun rights / pro-2A companies
+  { companies: ["vista outdoor"], action: "Major firearms and ammunition manufacturer (Federal, CCI, Speer brands)", subtype: "firearm_industry_signal", source: "SEC filings" },
+  { companies: ["smith & wesson", "smith and wesson"], action: "Major firearms manufacturer, member of NSSF", subtype: "firearm_industry_signal", source: "SEC filings" },
+  { companies: ["sturm ruger", "ruger"], action: "Major firearms manufacturer", subtype: "firearm_industry_signal", source: "SEC filings" },
+  { companies: ["olin corporation", "olin"], action: "Ammunition manufacturer (Winchester brand)", subtype: "firearm_industry_signal", source: "SEC filings" },
+  { companies: ["bass pro shops"], action: "Major firearms retailer, opposes additional gun restrictions", subtype: "gun_rights_signal", source: "Public business model" },
+  { companies: ["cabela's"], action: "Major firearms retailer (owned by Bass Pro Shops)", subtype: "gun_rights_signal", source: "Public business model" },
 ];
 
 function classifyGunPolicySubtype(text: string, signalType: string): string {
