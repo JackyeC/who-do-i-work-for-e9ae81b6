@@ -11,6 +11,7 @@ import { Button } from "@/components/ui/button";
 import { Header } from "@/components/Header";
 import { Footer } from "@/components/Footer";
 import { PlatformPhilosophy } from "@/components/PlatformPhilosophy";
+import { InfluencePipelineVisual } from "@/components/InfluencePipelineVisual";
 import { supabase } from "@/integrations/supabase/client";
 
 const fadeUp = {
@@ -251,6 +252,9 @@ const Index = () => {
           </motion.div>
         </div>
       </section>
+
+      {/* ─── INFLUENCE PIPELINE VISUAL ─── */}
+      <InfluencePipelineVisual />
 
       {/* ─── PHILOSOPHY ─── */}
       <section className="section-padding">

@@ -58,6 +58,7 @@ import { useROIPipeline } from "@/hooks/use-roi-pipeline";
 import { TransparencyIndex } from "@/components/TransparencyIndex";
 import { supabase } from "@/integrations/supabase/client";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
+import { useCompanySEO } from "@/hooks/use-company-seo";
 import { useToast } from "@/hooks/use-toast";
 import {
   Table, TableBody, TableCell, TableHead, TableHeader, TableRow
@@ -529,6 +530,15 @@ export default function CompanyProfile() {
     };
     const recordStatus = (dbCompany as any).record_status || 'verified';
     const statusInfo = statusLabels[recordStatus] || statusLabels.verified;
+
+    // Dynamic SEO metadata
+    useCompanySEO({
+      name: dbCompany.name,
+      industry: dbCompany.industry,
+      state: dbCompany.state,
+      description: (dbCompany as any).description,
+      slug: id || dbCompany.slug,
+    });
 
     return (
       <div className="min-h-screen flex flex-col bg-background">

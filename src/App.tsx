@@ -31,6 +31,7 @@ import CareerMap from "./pages/CareerMap";
 import Dashboard from "./pages/Dashboard";
 import TermsOfService from "./pages/TermsOfService";
 import PrivacyPolicy from "./pages/PrivacyPolicy";
+import Examples from "./pages/Examples";
 
 const queryClient = new QueryClient();
 
@@ -52,6 +53,7 @@ const App = () => (
               <Route path="/login" element={<Login />} />
               <Route path="/terms" element={<TermsOfService />} />
               <Route path="/privacy" element={<PrivacyPolicy />} />
+              <Route path="/examples" element={<Examples />} />
               <Route path="/who-do-i-work-for" element={
                 <ProtectedRoute>
                   <WhoDoIWorkFor />
