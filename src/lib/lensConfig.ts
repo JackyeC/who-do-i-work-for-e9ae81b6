@@ -43,6 +43,7 @@ export const LENSES: LensDefinition[] = [
     description: "Workplace equity, hiring technology, benefits, and accountability signals.",
     modulePriority: [
       "warn-tracker",
+      "promotion-equity",
       "compensation",
       "ai-hiring",
       "hiring-transparency",
