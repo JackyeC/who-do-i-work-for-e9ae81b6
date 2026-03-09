@@ -478,6 +478,18 @@ Deno.serve(async (req) => {
       record_status: 'verified',
     }).eq('id', companyId);
 
+    // ─── Post-scan: Issue Signal Mapping ───
+    try {
+      console.log(`[intelligence-scan] Running issue signal mapping for ${companyName}`);
+      await fetch(`${supabaseUrl}/functions/v1/map-issue-signals`, {
+        method: 'POST',
+        headers: { 'Authorization': `Bearer ${supabaseKey}`, 'Content-Type': 'application/json' },
+        body: JSON.stringify({ companyId }),
+      });
+    } catch (issueErr) {
+      console.warn('[intelligence-scan] Issue signal mapping failed (non-critical):', issueErr);
+    }
+
     // Auto-fetch company logo if not already set
     try {
       const { data: companyCheck } = await supabase.from('companies').select('logo_url, careers_url').eq('id', companyId).maybeSingle();

@@ -247,16 +247,55 @@ export function ValuesLensResults({ lensKey, onBack }: Props) {
           <p className="text-sm text-muted-foreground">Searching signals...</p>
         </div>
       ) : results.length === 0 ? (
-        <div className="text-center py-16">
-          <AlertTriangle className="w-8 h-8 text-muted-foreground mx-auto mb-4" />
-          <h3 className="text-lg font-semibold text-foreground mb-2">
-            No signals found for {lensInfo?.label}
-          </h3>
-          <p className="text-sm text-muted-foreground max-w-md mx-auto mb-4">
-            We haven't detected public signals related to this values lens yet.
-            As more companies are scanned, results will appear here.
-          </p>
-          <Button variant="outline" onClick={onBack}>Browse other lenses</Button>
+        <div className="max-w-2xl mx-auto py-12">
+          <div className="text-center mb-8">
+            <Shield className="w-10 h-10 text-muted-foreground mx-auto mb-4" />
+            <h3 className="text-lg font-semibold text-foreground mb-2">
+              No documented signals yet for {lensInfo?.label}
+            </h3>
+            <p className="text-sm text-muted-foreground max-w-md mx-auto">
+              Our system scans public records for evidence-backed signals. As companies are scanned and more data is ingested, results will appear here automatically.
+            </p>
+          </div>
+
+          {/* Evidence methodology */}
+          <div className="space-y-4 text-left">
+            <h4 className="text-sm font-semibold text-foreground">How signals are detected</h4>
+            <p className="text-xs text-muted-foreground leading-relaxed">
+              Employer Reality Signals for this lens are generated when documented public records contain relevant keywords. The system searches across multiple evidence layers:
+            </p>
+
+            <div className="grid gap-3">
+              {[
+                { layer: "Money Trail", desc: "Campaign donations and PAC spending to politicians with documented positions on this issue", sources: "FEC filings, OpenSecrets" },
+                { layer: "Influence Trail", desc: "Registered lobbying activity referencing this policy area in quarterly disclosure filings", sources: "Senate LDA filings, state lobbying registries" },
+                { layer: "Policy Alignment", desc: "Support or opposition to specific legislation, bill sponsorship connections", sources: "Congress.gov, advocacy trackers" },
+                { layer: "Corporate Actions", desc: "Public statements, corporate policy changes, advocacy group memberships", sources: "SEC filings, press releases, corporate policies" },
+              ].map((item) => (
+                <div key={item.layer} className="p-3 rounded-lg border border-border bg-muted/20">
+                  <div className="flex items-center justify-between mb-1">
+                    <span className="text-xs font-semibold text-foreground">{item.layer}</span>
+                    <span className="text-[10px] text-muted-foreground">{item.sources}</span>
+                  </div>
+                  <p className="text-[11px] text-muted-foreground">{item.desc}</p>
+                </div>
+              ))}
+            </div>
+
+            <div className="p-3 rounded-lg border border-primary/20 bg-primary/5">
+              <p className="text-xs text-muted-foreground leading-relaxed">
+                <strong className="text-foreground">Strongest signal pattern:</strong> When money (PAC donations to bill sponsors), influence (registered lobbying on the issue), and policy alignment (legislative connections) all point in the same direction, that constitutes strong documented evidence.
+              </p>
+            </div>
+
+            <p className="text-[10px] text-muted-foreground pt-2 border-t border-border">
+              This platform reports signals detected from publicly available data sources. No conclusions are drawn. Interpretation is left to the user.
+            </p>
+          </div>
+
+          <div className="text-center mt-6">
+            <Button variant="outline" onClick={onBack}>Browse other lenses</Button>
+          </div>
         </div>
       ) : (
         <>

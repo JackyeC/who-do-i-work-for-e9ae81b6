@@ -20,7 +20,15 @@ const ISSUE_KEYWORDS: Record<string, string[]> = {
   reproductive_rights: [
     'abortion', 'reproductive health', 'planned parenthood', 'family planning',
     'maternal health', 'reproductive rights', 'contraception', 'birth control',
-    'roe v wade', 'pro-life', 'pro-choice',
+    'roe v wade', 'pro-life', 'pro-choice', 'title x funding', 'title x program',
+    'contraceptive access', 'reproductive healthcare', 'dobbs', 'roe v. wade',
+    'pregnancy discrimination', 'ivf', 'in vitro fertilization',
+    'naral', 'emily\'s list', 'emilys list', 'susan b anthony list',
+    'march for life', 'americans united for life', 'national right to life',
+    'center for reproductive rights', 'reproductive freedom',
+    'heartbeat bill', 'fetal personhood', 'medication abortion',
+    'mifepristone', 'misoprostol', 'abortion ban', 'abortion access',
+    'women\'s reproductive', 'reproductive justice',
   ],
   labor_rights: [
     'union', 'collective bargaining', 'minimum wage', 'worker protection',
