@@ -22,6 +22,17 @@ export function ValuesSignalCard({ signal, getConfidenceBadge, getVerificationBa
   const verif = getVerificationBadge(signal.verification_status);
   const issueInfo = ISSUE_AREAS.find((ia) => ia.key === signal.issue_area);
 
+  // Parse recipients from evidence_json
+  const recipients: { name: string; party: string; amount: number }[] = (() => {
+    try {
+      const ej = signal.evidence_json;
+      if (ej && typeof ej === "object" && "recipients" in ej && Array.isArray((ej as any).recipients)) {
+        return (ej as any).recipients;
+      }
+    } catch {}
+    return [];
+  })();
+
   return (
     <div className="rounded-xl border border-border/40 bg-card overflow-hidden hover:border-primary/15 transition-colors group">
       <button
@@ -77,6 +88,40 @@ export function ValuesSignalCard({ signal, getConfidenceBadge, getVerificationBa
             className="overflow-hidden"
           >
             <div className="px-4 pb-4 space-y-2.5 border-t border-border/30 pt-3">
+              {/* Donation recipients breakdown */}
+              {signal.signal_category === "executive_activity" && recipients.length > 0 && (
+                <div className="space-y-1.5">
+                  <p className="text-[11px] font-semibold text-foreground">Donated to:</p>
+                  <div className="space-y-1">
+                    {recipients.map((r, i) => (
+                      <div key={i} className="flex items-center justify-between text-[11px] py-1 px-2 rounded-lg bg-muted/40">
+                        <div className="flex items-center gap-1.5 min-w-0">
+                          <span className="font-medium text-foreground truncate">{r.name}</span>
+                          {r.party && (
+                            <Badge
+                              variant="outline"
+                              className={cn(
+                                "text-[9px] px-1 py-0 shrink-0",
+                                r.party === "R" || r.party === "Republican" ? "border-destructive/40 text-destructive" :
+                                r.party === "D" || r.party === "Democrat" ? "border-primary/40 text-primary" :
+                                "border-border text-muted-foreground"
+                              )}
+                            >
+                              {r.party === "R" ? "R" : r.party === "D" ? "D" : r.party}
+                            </Badge>
+                          )}
+                        </div>
+                        {r.amount > 0 && (
+                          <span className="text-[10px] font-bold text-primary shrink-0 ml-2">
+                            {formatAmount(r.amount)}
+                          </span>
+                        )}
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
+
               {/* Source info */}
               <div className="grid grid-cols-2 gap-3 text-[11px]">
                 <div>
