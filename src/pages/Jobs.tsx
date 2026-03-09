@@ -22,7 +22,7 @@ import {
 export default function Jobs() {
   const { user } = useAuth();
   const [search, setSearch] = useState("");
-  const [minScore, setMinScore] = useState("70");
+  const [minScore, setMinScore] = useState("0");
   const [industryFilter, setIndustryFilter] = useState("all");
   const [workModeFilter, setWorkModeFilter] = useState("all");
   const [valuesFilters, setValuesFilters] = useState<string[]>([]);
@@ -161,7 +161,8 @@ export default function Jobs() {
               Job Board
             </h1>
             <p className="text-muted-foreground text-sm mt-0.5">
-              {filtered?.length || 0} jobs from {companiesWithJobs} companies · Score 70+
+              {filtered?.length || 0} jobs from {companiesWithJobs} companies
+              {minScore !== "0" && ` · Score ${minScore}+`}
             </p>
           </div>
 

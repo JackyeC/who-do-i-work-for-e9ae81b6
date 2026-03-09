@@ -1,7 +1,8 @@
 import { useState, useEffect } from "react";
 import { Header } from "@/components/Header";
 import { Footer } from "@/components/Footer";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent } from "@/components/ui/card";
 import { DocumentUploader } from "@/components/career/DocumentUploader";
 import { CareerProfile } from "@/components/career/CareerProfile";
 import { DreamJobAlerts } from "@/components/career/DreamJobAlerts";
@@ -15,18 +16,34 @@ import { OutreachIntelligence } from "@/components/career/OutreachIntelligence";
 import { useAuth } from "@/contexts/AuthContext";
 import { Navigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
-import { FileText, User, Bell, Upload, Wand2, Compass, Heart, Route, Users } from "lucide-react";
+import {
+  Upload, Heart, Compass, Route, Users, Wand2, ChevronRight,
+  CheckCircle2, Circle, ArrowLeft
+} from "lucide-react";
+import { cn } from "@/lib/utils";
+
+const STEPS = [
+  { id: "upload", label: "Upload Resume", icon: Upload, description: "Upload your resume or career documents to build your profile." },
+  { id: "values", label: "Define Values", icon: Heart, description: "Tell us what matters to you in an employer." },
+  { id: "explore", label: "Explore Paths", icon: Compass, description: "See where your career could go next." },
+  { id: "plan", label: "Plan Your Move", icon: Route, description: "Get a gap analysis and learning plan for your target role." },
+  { id: "connect", label: "Connect", icon: Users, description: "Find people who can help you get there." },
+  { id: "apply", label: "Tailor & Apply", icon: Wand2, description: "Tailor your resume and set up job alerts." },
+] as const;
+
+type StepId = typeof STEPS[number]["id"];
 
 export default function CareerMap() {
   const { user } = useAuth();
-  const [activeTab, setActiveTab] = useState("upload");
+  const [activeStep, setActiveStep] = useState<StepId>("upload");
+  const [completedSteps, setCompletedSteps] = useState<Set<StepId>>(new Set());
 
   useEffect(() => {
     if (!user) return;
     const ensureProfile = async () => {
       const { data } = await supabase
         .from("user_career_profile")
-        .select("id")
+        .select("id, skills, industries")
         .eq("user_id", user.id)
         .single();
       if (!data) {
@@ -37,12 +54,69 @@ export default function CareerMap() {
           industries: [],
           job_titles: [],
         });
+      } else {
+        // Auto-detect completed steps
+        const done = new Set<StepId>();
+        if ((data.skills as any[])?.length > 0) done.add("upload");
+        if ((data.industries as any[])?.length > 0) done.add("values");
+        setCompletedSteps(done);
+        // Start at the first incomplete step
+        const firstIncomplete = STEPS.find(s => !done.has(s.id));
+        if (firstIncomplete) setActiveStep(firstIncomplete.id);
       }
     };
     ensureProfile();
   }, [user]);
 
   if (!user) return <Navigate to="/login" replace />;
+
+  const currentIndex = STEPS.findIndex(s => s.id === activeStep);
+  const canGoNext = currentIndex < STEPS.length - 1;
+  const canGoBack = currentIndex > 0;
+
+  const markComplete = (step: StepId) => {
+    setCompletedSteps(prev => new Set([...prev, step]));
+  };
+
+  const goNext = () => {
+    markComplete(activeStep);
+    if (canGoNext) setActiveStep(STEPS[currentIndex + 1].id);
+  };
+
+  const renderContent = () => {
+    switch (activeStep) {
+      case "upload":
+        return (
+          <div className="space-y-6">
+            <DocumentUploader onUploadComplete={() => {
+              markComplete("upload");
+              setActiveStep("values");
+            }} />
+            <MyDocuments />
+          </div>
+        );
+      case "values":
+        return <MyValuesProfile />;
+      case "explore":
+        return (
+          <div className="space-y-6">
+            <CareerMappingView />
+            <CareerProfile />
+          </div>
+        );
+      case "plan":
+        return <HowDoIGetThere />;
+      case "connect":
+        return <OutreachIntelligence />;
+      case "apply":
+        return (
+          <div className="space-y-6">
+            <ResumeTailor />
+            <DreamJobAlerts />
+          </div>
+        );
+    }
+  };
 
   return (
     <div className="min-h-screen bg-background flex flex-col">
@@ -53,75 +127,86 @@ export default function CareerMap() {
             Map My Career
           </h1>
           <p className="text-muted-foreground max-w-2xl mx-auto text-sm sm:text-base">
-            Upload career documents, define your values, map your next move, and discover who can help you get there.
-          </p>
-          <p className="text-xs text-muted-foreground mt-2 max-w-xl mx-auto italic">
-            This tool detects signals in uploaded documents and public sources. It does not provide legal, financial, or employment advice.
+            Follow these steps to build your career profile, explore paths, and plan your next move.
           </p>
         </div>
 
-        <Tabs value={activeTab} onValueChange={setActiveTab} className="max-w-4xl mx-auto">
-          <TabsList className="grid w-full grid-cols-3 sm:grid-cols-9 h-auto">
-            <TabsTrigger value="upload" className="flex items-center gap-1.5 text-xs sm:text-sm">
-              <Upload className="w-3.5 h-3.5" /> <span className="hidden sm:inline">Upload</span>
-            </TabsTrigger>
-            <TabsTrigger value="documents" className="flex items-center gap-1.5 text-xs sm:text-sm">
-              <FileText className="w-3.5 h-3.5" /> <span className="hidden sm:inline">Docs</span>
-            </TabsTrigger>
-            <TabsTrigger value="values" className="flex items-center gap-1.5 text-xs sm:text-sm">
-              <Heart className="w-3.5 h-3.5" /> <span className="hidden sm:inline">Values</span>
-            </TabsTrigger>
-            <TabsTrigger value="pathing" className="flex items-center gap-1.5 text-xs sm:text-sm">
-              <Compass className="w-3.5 h-3.5" /> <span className="hidden sm:inline">Next Move</span>
-            </TabsTrigger>
-            <TabsTrigger value="how" className="flex items-center gap-1.5 text-xs sm:text-sm">
-              <Route className="w-3.5 h-3.5" /> <span className="hidden sm:inline">Get There</span>
-            </TabsTrigger>
-            <TabsTrigger value="outreach" className="flex items-center gap-1.5 text-xs sm:text-sm">
-              <Users className="w-3.5 h-3.5" /> <span className="hidden sm:inline">Outreach</span>
-            </TabsTrigger>
-            <TabsTrigger value="tailor" className="flex items-center gap-1.5 text-xs sm:text-sm">
-              <Wand2 className="w-3.5 h-3.5" /> <span className="hidden sm:inline">Tailor</span>
-            </TabsTrigger>
-            <TabsTrigger value="profile" className="flex items-center gap-1.5 text-xs sm:text-sm">
-              <User className="w-3.5 h-3.5" /> <span className="hidden sm:inline">Profile</span>
-            </TabsTrigger>
-            <TabsTrigger value="alerts" className="flex items-center gap-1.5 text-xs sm:text-sm">
-              <Bell className="w-3.5 h-3.5" /> <span className="hidden sm:inline">Alerts</span>
-            </TabsTrigger>
-          </TabsList>
+        <div className="max-w-4xl mx-auto">
+          {/* Step progress bar */}
+          <div className="flex items-center gap-1 mb-8 overflow-x-auto pb-2">
+            {STEPS.map((step, i) => {
+              const isActive = step.id === activeStep;
+              const isCompleted = completedSteps.has(step.id);
+              return (
+                <button
+                  key={step.id}
+                  onClick={() => setActiveStep(step.id)}
+                  className={cn(
+                    "flex items-center gap-2 px-3 py-2 rounded-lg text-xs font-medium whitespace-nowrap transition-all",
+                    isActive && "bg-primary text-primary-foreground shadow-sm",
+                    !isActive && isCompleted && "bg-primary/10 text-primary hover:bg-primary/15",
+                    !isActive && !isCompleted && "bg-muted text-muted-foreground hover:bg-muted/80"
+                  )}
+                >
+                  {isCompleted && !isActive ? (
+                    <CheckCircle2 className="w-3.5 h-3.5" />
+                  ) : (
+                    <step.icon className="w-3.5 h-3.5" />
+                  )}
+                  <span className="hidden sm:inline">{step.label}</span>
+                  <span className="sm:hidden">{i + 1}</span>
+                </button>
+              );
+            })}
+          </div>
 
-          <TabsContent value="upload" className="mt-6">
-            <DocumentUploader onUploadComplete={() => setActiveTab("documents")} />
-          </TabsContent>
-          <TabsContent value="documents" className="mt-6">
-            <MyDocuments />
-          </TabsContent>
-          <TabsContent value="values" className="mt-6">
-            <MyValuesProfile />
-          </TabsContent>
-          <TabsContent value="pathing" className="mt-6">
-            <CareerMappingView />
-          </TabsContent>
-          <TabsContent value="how" className="mt-6">
-            <HowDoIGetThere />
-          </TabsContent>
-          <TabsContent value="outreach" className="mt-6">
-            <OutreachIntelligence />
-          </TabsContent>
-          <TabsContent value="tailor" className="mt-6">
-            <ResumeTailor />
-          </TabsContent>
-          <TabsContent value="profile" className="mt-6">
-            <CareerProfile />
-          </TabsContent>
-          <TabsContent value="alerts" className="mt-6">
-            <DreamJobAlerts />
-          </TabsContent>
-        </Tabs>
+          {/* Step header */}
+          <Card className="mb-6 border-primary/20">
+            <CardContent className="p-4 flex items-center gap-3">
+              {(() => {
+                const step = STEPS[currentIndex];
+                return (
+                  <>
+                    <div className="w-10 h-10 rounded-xl bg-primary/10 flex items-center justify-center shrink-0">
+                      <step.icon className="w-5 h-5 text-primary" />
+                    </div>
+                    <div className="flex-1">
+                      <div className="flex items-center gap-2">
+                        <span className="text-[10px] text-muted-foreground font-medium uppercase tracking-wider">Step {currentIndex + 1} of {STEPS.length}</span>
+                        {completedSteps.has(activeStep) && (
+                          <CheckCircle2 className="w-3.5 h-3.5 text-primary" />
+                        )}
+                      </div>
+                      <h2 className="text-lg font-bold text-foreground font-display">{step.label}</h2>
+                      <p className="text-xs text-muted-foreground">{step.description}</p>
+                    </div>
+                    <div className="flex gap-2">
+                      {canGoBack && (
+                        <Button variant="outline" size="sm" onClick={() => setActiveStep(STEPS[currentIndex - 1].id)}>
+                          <ArrowLeft className="w-3.5 h-3.5" />
+                        </Button>
+                      )}
+                      {canGoNext && (
+                        <Button size="sm" onClick={goNext} className="gap-1.5">
+                          Next <ChevronRight className="w-3.5 h-3.5" />
+                        </Button>
+                      )}
+                    </div>
+                  </>
+                );
+              })()}
+            </CardContent>
+          </Card>
 
-        <div className="max-w-4xl mx-auto mt-8">
-          <DataWipeButton />
+          {/* Step content */}
+          {renderContent()}
+
+          <div className="mt-8 text-center">
+            <p className="text-xs text-muted-foreground mb-4 italic">
+              This tool detects signals in uploaded documents and public sources. It does not provide legal, financial, or employment advice.
+            </p>
+            <DataWipeButton />
+          </div>
         </div>
       </main>
       <Footer />

@@ -25,6 +25,7 @@ import JobDashboard from "./pages/JobDashboard";
 import OfferReview from "./pages/OfferReview";
 import MyOfferReviews from "./pages/MyOfferReviews";
 import SignalAlerts from "./pages/SignalAlerts";
+import OfferReviewDirect from "./pages/OfferReviewDirect";
 import CareerIntelligence from "./pages/CareerIntelligence";
 import Check from "./pages/Check";
 import CareerMap from "./pages/CareerMap";
@@ -75,6 +76,11 @@ const App = () => (
               <Route path="/offer-review/:companyId" element={
                 <ProtectedRoute>
                   <OfferReview />
+                </ProtectedRoute>
+              } />
+              <Route path="/offer-review-direct" element={
+                <ProtectedRoute>
+                  <OfferReviewDirect />
                 </ProtectedRoute>
               } />
               <Route path="/compare-offer-checks" element={<CompareOfferChecks />} />
