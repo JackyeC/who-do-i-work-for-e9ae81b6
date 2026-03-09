@@ -35,6 +35,8 @@ const GLOSSARY: GlossaryEntry[] = [
   { term: "CHI Score", definition: "Corporate Hypocrisy Index — measures the gap between a company's public statements and its actual political spending. Higher = more contradictions found.", category: "metric" },
   { term: "Political Risk Score", definition: "A composite score factoring in dark money connections, revolving door hires, and spending on controversial organizations.", category: "metric" },
   { term: "Transparency Grade", definition: "How openly a company discloses its political activity. Grades from A (fully transparent) to F (minimal disclosure).", category: "metric" },
+  { term: "CPA-Zicklin Score", definition: "A percentage score from the Center for Political Accountability measuring how transparent a company is about political spending — PAC donations, lobbying, trade association dues, and board oversight. S&P 500 average is ~55%. Scores above 80% = transparency leader; below 30% = opaque.", category: "metric" },
+  { term: "Effective Tax Rate", definition: "The actual percentage of income a company pays in taxes after all deductions, credits, and loopholes. The U.S. corporate statutory rate is 21%, but many large companies pay significantly less through legal tax strategies.", category: "metric" },
 
   // Concepts
   { term: "PAC", definition: "Political Action Committee — a legal entity that pools campaign contributions from members and donates to candidates or parties. A 'Corporate PAC' is funded by a company's employees and shareholders.", category: "concept" },
