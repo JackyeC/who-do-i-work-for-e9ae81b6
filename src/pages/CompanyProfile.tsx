@@ -754,7 +754,7 @@ export default function CompanyProfile() {
                       <DollarSign className="w-3.5 h-3.5" />
                       PAC Spending
                     </div>
-                    <div className="text-3xl font-bold text-foreground" style={{ fontFamily: "'Source Serif 4', serif" }}>
+                    <div className="text-3xl font-bold text-foreground font-display-number">
                       {dbCompany.total_pac_spending > 0 ? formatCurrency(dbCompany.total_pac_spending) : "None"}
                     </div>
                     <p className="text-[11px] text-muted-foreground mt-2 leading-snug">Money donated by the company's PAC directly to political candidates this cycle.</p>
