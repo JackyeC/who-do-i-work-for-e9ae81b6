@@ -224,13 +224,27 @@ function DbLensModules({ activeLens, dbCompany, dbPartyBreakdown, dbCandidates, 
           {dbRevolvingDoor && dbRevolvingDoor.length > 0 && (
             <ExplainableMetric metricKey="revolving-door">
               <Card>
-                <CardHeader><CardTitle className="text-lg flex items-center gap-2"><RotateCcw className="w-4 h-4" /> Revolving Door</CardTitle></CardHeader>
+                <CardHeader>
+                  <CardTitle className="text-lg flex items-center gap-2"><RotateCcw className="w-4 h-4" /> Revolving Door</CardTitle>
+                  <p className="text-xs text-muted-foreground leading-relaxed">
+                    These individuals moved between government positions and this company. This is legal and common, but it means the company may have insider access to the agencies that regulate it. Think of it like a referee joining the team they used to officiate.
+                  </p>
+                </CardHeader>
                 <CardContent className="space-y-3">
                   {dbRevolvingDoor.map((r) => (
                     <div key={r.id} className="p-3 rounded-lg bg-muted/50 border border-border">
                       <div className="font-medium text-sm text-foreground">{r.person}</div>
-                      <div className="text-xs text-muted-foreground mt-1"><span className="text-foreground/70">{r.prior_role}</span> → <span className="text-foreground/70">{r.new_role}</span></div>
+                      <div className="text-xs text-muted-foreground mt-1">
+                        <span className="text-foreground/70">{r.prior_role}</span>
+                        <span className="mx-1.5">→</span>
+                        <span className="text-foreground/70">{r.new_role}</span>
+                      </div>
                       {r.relevance && <p className="text-xs text-muted-foreground mt-1">{r.relevance}</p>}
+                      <div className="flex flex-wrap gap-1.5 mt-2">
+                        <a href={`https://www.linkedin.com/search/results/people/?keywords=${encodeURIComponent(r.person)}`} target="_blank" rel="noopener noreferrer" className="text-[10px] text-primary hover:underline">LinkedIn →</a>
+                        <span className="text-muted-foreground text-[10px]">·</span>
+                        <a href={`https://www.google.com/search?q=${encodeURIComponent(`"${r.person}" revolving door ${r.prior_role}`)}`} target="_blank" rel="noopener noreferrer" className="text-[10px] text-primary hover:underline">Research →</a>
+                      </div>
                     </div>
                   ))}
                 </CardContent>
@@ -1466,7 +1480,10 @@ export default function CompanyProfile() {
                 <RotateCcw className="w-5 h-5 text-primary" />
                 Revolving Door
               </h2>
-              <p className="text-sm text-muted-foreground mb-4">Connections between company leadership and government positions.</p>
+              <p className="text-sm text-muted-foreground mb-1">Connections between company leadership and government positions.</p>
+              <p className="text-xs text-muted-foreground mb-4 leading-relaxed bg-muted/50 p-3 rounded-lg border border-border">
+                <strong className="text-foreground">What does "revolving door" mean?</strong> It's when people move back and forth between government roles (like regulators, congressional staff, or agency officials) and private-sector jobs at the companies they used to oversee. It's legal, but it means the company may have insider knowledge of — and personal relationships within — the agencies that regulate it. This can create advantages in lobbying, contracts, and regulatory outcomes.
+              </p>
               <div className="space-y-3">
                 {company.revolvingDoor.map((entry, i) => (
                   <Card key={i}>
@@ -1485,6 +1502,11 @@ export default function CompanyProfile() {
                             </div>
                           </div>
                           <p className="text-xs text-muted-foreground mt-2">{entry.relevance}</p>
+                          <div className="flex flex-wrap gap-2 mt-2">
+                            <a href={`https://www.linkedin.com/search/results/people/?keywords=${encodeURIComponent(entry.person)}`} target="_blank" rel="noopener noreferrer" className="text-[10px] text-primary hover:underline">LinkedIn →</a>
+                            <span className="text-muted-foreground text-[10px]">·</span>
+                            <a href={`https://www.google.com/search?q=${encodeURIComponent(`"${entry.person}" revolving door`)}`} target="_blank" rel="noopener noreferrer" className="text-[10px] text-primary hover:underline">Research →</a>
+                          </div>
                         </div>
                         <Badge variant="outline" className={cn("text-xs shrink-0", entry.confidence === "direct" ? "text-civic-green border-civic-green/30" : entry.confidence === "inferred" ? "text-civic-yellow border-civic-yellow/30" : "text-civic-red border-civic-red/30")}>
                           {entry.confidence}

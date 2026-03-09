@@ -244,7 +244,7 @@ export function ExecutiveDetailDrawer({ open, onOpenChange, executive, companyNa
                           </>
                         ) : null}
 
-                        <div className="flex flex-wrap gap-2">
+                        <div className="flex flex-wrap gap-2 mb-3">
                           <Button variant="outline" size="sm" className="h-7 text-xs gap-1.5" asChild>
                             <a href={`https://www.congress.gov/search?q=${encodeURIComponent(r.name)}`} target="_blank" rel="noopener noreferrer">
                               <ExternalLink className="w-3 h-3" /> Congress.gov
@@ -253,6 +253,16 @@ export function ExecutiveDetailDrawer({ open, onOpenChange, executive, companyNa
                           <Button variant="outline" size="sm" className="h-7 text-xs gap-1.5" asChild>
                             <a href={`https://www.fec.gov/data/candidates/?search=${encodeURIComponent(r.name)}`} target="_blank" rel="noopener noreferrer">
                               <ExternalLink className="w-3 h-3" /> FEC Filings
+                            </a>
+                          </Button>
+                          <Button variant="outline" size="sm" className="h-7 text-xs gap-1.5" asChild>
+                            <a href={`https://justfacts.votesmart.org/candidate/key-votes/${encodeURIComponent(r.name.replace(/\s+/g, '-').toLowerCase())}`} target="_blank" rel="noopener noreferrer">
+                              <ExternalLink className="w-3 h-3" /> VoteSmart
+                            </a>
+                          </Button>
+                          <Button variant="outline" size="sm" className="h-7 text-xs gap-1.5" asChild>
+                            <a href={`https://www.opensecrets.org/search?q=${encodeURIComponent(r.name)}&type=members`} target="_blank" rel="noopener noreferrer">
+                              <ExternalLink className="w-3 h-3" /> OpenSecrets
                             </a>
                           </Button>
                           <Button variant="outline" size="sm" className="h-7 text-xs gap-1.5" onClick={() => onCandidateClick?.({
@@ -267,6 +277,9 @@ export function ExecutiveDetailDrawer({ open, onOpenChange, executive, companyNa
                             <ArrowRight className="w-3 h-3" /> Full Profile
                           </Button>
                         </div>
+                        <p className="text-[10px] text-muted-foreground italic">
+                          Research this person to understand what policies and legislation your executive is financially supporting.
+                        </p>
                       </div>
                     )}
                   </div>
