@@ -27,6 +27,7 @@ interface SentimentResult {
   careerOpportunities: number | null;
   topComplaints: Array<{ theme: string; frequency: string; severity: string; example: string }>;
   topPraises: Array<{ theme: string; frequency: string; example: string }>;
+  layoffRumors: Array<{ rumor: string; source: string; recency: string; credibility: string }>;
   hypocrisyFlags: Array<{ topic: string; companyClaimsSummary: string; workerReality: string; severity: string; evidence: string }>;
   summary: string;
   sentiment: string;
