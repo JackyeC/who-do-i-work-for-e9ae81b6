@@ -8,7 +8,7 @@ import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import { Badge } from "@/components/ui/badge";
 import { useToast } from "@/hooks/use-toast";
-import { User, Save, Loader2, Plus, X } from "lucide-react";
+import { User, Save, Loader2, Plus, X, Upload, FileText } from "lucide-react";
 
 export function UserProfileForm() {
   const { user } = useAuth();
