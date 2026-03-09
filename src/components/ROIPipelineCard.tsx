@@ -29,10 +29,10 @@ export interface LinkageEdge {
 }
 
 export interface ROIPipelineData {
-  moneyIn: { label: string; amount: number; type: string; matched_entity_name?: string; matched_entity_type?: string }[];
-  network: { label: string; role: string; type: string }[];
-  benefitsOut: { label: string; amount: number; type: string; matched_entity_name?: string; matched_entity_type?: string }[];
-  linkages: { source: string; target: string; description: string; confidence: number }[];
+  moneyIn: { label: string; amount: number; type: string; matched_entity_name?: string; matched_entity_type?: string; source_url?: string; evidence_type?: string }[];
+  network: { label: string; role: string; type: string; source_url?: string; evidence_type?: string }[];
+  benefitsOut: { label: string; amount: number; type: string; matched_entity_name?: string; matched_entity_type?: string; source_url?: string; evidence_type?: string }[];
+  linkages: { source: string; target: string; description: string; confidence: number; source_url?: string; evidence_type?: string; source_name?: string }[];
   totalSpending: number;
   totalBenefits: number;
 }
