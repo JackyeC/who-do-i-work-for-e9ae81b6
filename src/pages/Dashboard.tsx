@@ -68,6 +68,9 @@ export default function Dashboard() {
           <TabsContent value="matches">
             <AlignedJobsList />
           </TabsContent>
+          <TabsContent value="alignment">
+            <UserValuesProfile />
+          </TabsContent>
           <TabsContent value="tracker">
             <TrackingDashboard />
           </TabsContent>
