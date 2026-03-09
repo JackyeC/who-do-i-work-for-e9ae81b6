@@ -230,7 +230,7 @@ export function Header() {
         </Link>
 
         {/* ── Desktop nav ── */}
-        <nav className="hidden xl:flex items-center gap-0.5 flex-1 justify-center">
+        <nav className="hidden lg:flex items-center gap-0.5 flex-1 justify-center">
           {/* Home */}
           <Link
             to="/"
@@ -325,14 +325,14 @@ export function Header() {
         </nav>
 
         {/* ── Right side: search + auth ── */}
-        <div className="hidden xl:flex items-center gap-2 shrink-0">
+        <div className="hidden lg:flex items-center gap-2 shrink-0">
           <form onSubmit={handleSearch} className="relative">
             <Search className="absolute left-2.5 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-muted-foreground pointer-events-none" />
             <Input
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
               placeholder="Search companies, leaders, policies…"
-              className="h-9 w-[260px] pl-8 text-sm rounded-xl bg-muted/50 border-border/40 focus:w-[320px] transition-all duration-200"
+              className="h-9 w-[200px] xl:w-[260px] pl-8 text-sm rounded-xl bg-muted/50 border-border/40 focus:w-[280px] xl:focus:w-[320px] transition-all duration-200"
             />
           </form>
           {!user && (
@@ -350,7 +350,7 @@ export function Header() {
 
         {/* ── Mobile toggle ── */}
         <button
-          className="xl:hidden p-2.5 -mr-2 text-muted-foreground hover:text-foreground rounded-lg active:bg-accent transition-colors"
+          className="lg:hidden p-2.5 -mr-2 text-muted-foreground hover:text-foreground rounded-lg active:bg-accent transition-colors"
           onClick={() => setMobileOpen(!mobileOpen)}
           aria-label="Toggle menu"
         >
@@ -360,7 +360,7 @@ export function Header() {
 
       {/* ── Mobile nav ── */}
       {mobileOpen && (
-        <div className="xl:hidden border-t border-border/40 bg-card px-4 py-4 max-h-[80vh] overflow-y-auto animate-fade-in space-y-4">
+        <div className="lg:hidden border-t border-border/40 bg-card px-4 py-4 max-h-[80vh] overflow-y-auto animate-fade-in space-y-4">
           {/* Mobile search */}
           <form onSubmit={(e) => { handleSearch(e); setMobileOpen(false); }}>
             <div className="relative">
