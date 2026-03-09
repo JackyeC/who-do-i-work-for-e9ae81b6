@@ -2272,6 +2272,53 @@ export type Database = {
         }
         Relationships: []
       }
+      issue_signals: {
+        Row: {
+          amount: number | null
+          confidence_score: string
+          created_at: string
+          description: string | null
+          entity_id: string
+          id: string
+          issue_category: string
+          signal_type: string
+          source_dataset: string
+          source_url: string | null
+        }
+        Insert: {
+          amount?: number | null
+          confidence_score?: string
+          created_at?: string
+          description?: string | null
+          entity_id: string
+          id?: string
+          issue_category: string
+          signal_type?: string
+          source_dataset: string
+          source_url?: string | null
+        }
+        Update: {
+          amount?: number | null
+          confidence_score?: string
+          created_at?: string
+          description?: string | null
+          entity_id?: string
+          id?: string
+          issue_category?: string
+          signal_type?: string
+          source_dataset?: string
+          source_url?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "issue_signals_entity_id_fkey"
+            columns: ["entity_id"]
+            isOneToOne: false
+            referencedRelation: "companies"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       job_alerts: {
         Row: {
           alert_type: string
