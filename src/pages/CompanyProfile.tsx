@@ -763,29 +763,29 @@ export default function CompanyProfile() {
 
             {/* Lens-ordered modules */}
             <div id="lens-modules">
-            <DbLensModules
-              activeLens={activeLens}
-              dbCompany={dbCompany}
-              dbPartyBreakdown={dbPartyBreakdown}
-              dbCandidates={dbCandidates}
-              dbExecutives={dbExecutives}
-              dbPublicStances={dbPublicStances}
-              dbDarkMoney={dbDarkMoney}
-              dbRevolvingDoor={dbRevolvingDoor}
-              livePipeline={livePipeline}
-              autoScanning={autoScanning}
-              hasBeenScanned={hasBeenScanned}
-              triggerScan={triggerScan}
-              onCandidateClick={handleCandidateClick}
-              onExecutiveClick={handleExecutiveClick}
-              onPartyClick={(party) => {
-                // Scroll to candidates table filtered by party
-                const filtered = dbCandidates?.filter(c => c.party === party);
-                if (filtered && filtered.length > 0) {
-                  setPartyFilteredCandidates(filtered);
-                }
-              }}
-            />
+              <DbLensModules
+                activeLens={activeLens}
+                dbCompany={dbCompany}
+                dbPartyBreakdown={dbPartyBreakdown}
+                dbCandidates={dbCandidates}
+                dbExecutives={dbExecutives}
+                dbPublicStances={dbPublicStances}
+                dbDarkMoney={dbDarkMoney}
+                dbRevolvingDoor={dbRevolvingDoor}
+                livePipeline={livePipeline}
+                autoScanning={autoScanning}
+                hasBeenScanned={hasBeenScanned}
+                triggerScan={triggerScan}
+                onCandidateClick={handleCandidateClick}
+                onExecutiveClick={handleExecutiveClick}
+                onPartyClick={(party) => {
+                  const filtered = dbCandidates?.filter(c => c.party === party);
+                  if (filtered && filtered.length > 0) {
+                    setPartyFilteredCandidates(filtered);
+                  }
+                }}
+              />
+            </div>
 
             {/* Party-filtered candidates modal */}
             {partyFilteredCandidates && partyFilteredCandidates.length > 0 && (
