@@ -183,7 +183,7 @@ export default function VoterLookup() {
                           </div>
 
                           <div className="space-y-2">
-                            <h4 className="text-xs font-medium text-muted-foreground uppercase tracking-wider">Corporate Funders in CivicLens</h4>
+                            <h4 className="text-xs font-medium text-muted-foreground uppercase tracking-wider">Companies That Funded This Representative</h4>
                             {rep.corporateFunders.map((funder, j) => (
                               <Link
                                 key={j}
