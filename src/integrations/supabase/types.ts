@@ -4327,56 +4327,95 @@ export type Database = {
       user_values_profile: {
         Row: {
           ai_transparency_importance: number
+          animal_welfare_importance: number
+          anti_discrimination_importance: number
           benefits_importance: number
           company_size_preference: string | null
+          consumer_protection_importance: number
           created_at: string
+          dei_equity_importance: number
+          environment_climate_importance: number
+          faith_christian_importance: number
           government_contract_preference: number
+          healthcare_importance: number
           id: string
+          immigration_importance: number
+          israel_middle_east_importance: number
+          labor_rights_importance: number
+          lgbtq_rights_importance: number
           mission_alignment_importance: number
           notes: string | null
           pay_transparency_importance: number
           political_influence_sensitivity: number
           remote_flexibility_importance: number
           representation_disclosure_importance: number
+          reproductive_rights_importance: number
           startup_vs_enterprise_preference: string | null
           updated_at: string
           user_id: string
+          voting_rights_importance: number
           worker_protections_importance: number
         }
         Insert: {
           ai_transparency_importance?: number
+          animal_welfare_importance?: number
+          anti_discrimination_importance?: number
           benefits_importance?: number
           company_size_preference?: string | null
+          consumer_protection_importance?: number
           created_at?: string
+          dei_equity_importance?: number
+          environment_climate_importance?: number
+          faith_christian_importance?: number
           government_contract_preference?: number
+          healthcare_importance?: number
           id?: string
+          immigration_importance?: number
+          israel_middle_east_importance?: number
+          labor_rights_importance?: number
+          lgbtq_rights_importance?: number
           mission_alignment_importance?: number
           notes?: string | null
           pay_transparency_importance?: number
           political_influence_sensitivity?: number
           remote_flexibility_importance?: number
           representation_disclosure_importance?: number
+          reproductive_rights_importance?: number
           startup_vs_enterprise_preference?: string | null
           updated_at?: string
           user_id: string
+          voting_rights_importance?: number
           worker_protections_importance?: number
         }
         Update: {
           ai_transparency_importance?: number
+          animal_welfare_importance?: number
+          anti_discrimination_importance?: number
           benefits_importance?: number
           company_size_preference?: string | null
+          consumer_protection_importance?: number
           created_at?: string
+          dei_equity_importance?: number
+          environment_climate_importance?: number
+          faith_christian_importance?: number
           government_contract_preference?: number
+          healthcare_importance?: number
           id?: string
+          immigration_importance?: number
+          israel_middle_east_importance?: number
+          labor_rights_importance?: number
+          lgbtq_rights_importance?: number
           mission_alignment_importance?: number
           notes?: string | null
           pay_transparency_importance?: number
           political_influence_sensitivity?: number
           remote_flexibility_importance?: number
           representation_disclosure_importance?: number
+          reproductive_rights_importance?: number
           startup_vs_enterprise_preference?: string | null
           updated_at?: string
           user_id?: string
+          voting_rights_importance?: number
           worker_protections_importance?: number
         }
         Relationships: []

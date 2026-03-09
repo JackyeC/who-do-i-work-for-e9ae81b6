@@ -11,10 +11,12 @@ import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
 import {
   Heart, Shield, DollarSign, Bot, Building2, Landmark,
-  Scale, Monitor, Sparkles, Users, FileText, Save
+  Scale, Monitor, Sparkles, Users, FileText, Save, Info,
 } from "lucide-react";
+import { VALUES_LENSES } from "@/lib/valuesLenses";
 
-const VALUE_SLIDERS = [
+// --- Workplace preference sliders ---
+const WORKPLACE_SLIDERS = [
   { key: "pay_transparency_importance", label: "Pay Transparency", icon: DollarSign, description: "Importance of salary transparency and pay equity" },
   { key: "worker_protections_importance", label: "Worker Protections", icon: Shield, description: "Labor rights, safety standards, and employee advocacy" },
   { key: "ai_transparency_importance", label: "AI Transparency", icon: Bot, description: "Ethical AI usage in hiring and workplace decisions" },
@@ -25,6 +27,14 @@ const VALUE_SLIDERS = [
   { key: "government_contract_preference", label: "Government Contract Comfort", icon: Landmark, description: "Comfort level with government contractor employers" },
   { key: "representation_disclosure_importance", label: "Representation & DEI", icon: Users, description: "Diversity, equity, and inclusion practices" },
 ] as const;
+
+// --- Values lens sliders (from the 13 lens definitions) ---
+const LENS_SLIDERS = VALUES_LENSES.map((lens) => ({
+  key: `${lens.key}_importance`,
+  label: lens.label,
+  icon: lens.icon,
+  description: lens.description,
+}));
 
 export function MyValuesProfile() {
   const { user } = useAuth();
@@ -50,16 +60,17 @@ export function MyValuesProfile() {
   });
 
   useEffect(() => {
+    const allSliders = [...WORKPLACE_SLIDERS, ...LENS_SLIDERS];
     if (profile) {
       const w: Record<string, number> = {};
-      VALUE_SLIDERS.forEach((s) => { w[s.key] = profile[s.key] ?? 50; });
+      allSliders.forEach((s) => { w[s.key] = profile[s.key] ?? 50; });
       setWeights(w);
       setSizePreference(profile.company_size_preference || "no_preference");
       setStagePreference(profile.startup_vs_enterprise_preference || "no_preference");
       setNotes(profile.notes || "");
     } else {
       const w: Record<string, number> = {};
-      VALUE_SLIDERS.forEach((s) => { w[s.key] = 50; });
+      allSliders.forEach((s) => { w[s.key] = 50; });
       setWeights(w);
     }
   }, [profile]);
@@ -81,6 +92,7 @@ export function MyValuesProfile() {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["user-values-profile"] });
+      queryClient.invalidateQueries({ queryKey: ["user-alignment-values"] });
       toast.success("Values profile saved!");
     },
     onError: () => toast.error("Failed to save values profile"),
@@ -98,46 +110,76 @@ export function MyValuesProfile() {
     );
   }
 
+  const renderSliders = (sliders: readonly { key: string; label: string; icon: React.ElementType; description: string }[]) =>
+    sliders.map((item) => {
+      const Icon = item.icon;
+      const val = weights[item.key] ?? 50;
+      return (
+        <div key={item.key} className="space-y-2">
+          <div className="flex items-start justify-between gap-4">
+            <div className="flex items-start gap-3 min-w-0">
+              <div className="w-8 h-8 rounded-lg bg-primary/5 flex items-center justify-center shrink-0 mt-0.5">
+                <Icon className="w-4 h-4 text-primary" />
+              </div>
+              <div className="min-w-0">
+                <div className="font-medium text-sm text-foreground">{item.label}</div>
+                <div className="text-xs text-muted-foreground">{item.description}</div>
+              </div>
+            </div>
+            <Badge variant="outline" className="text-xs shrink-0">{val}</Badge>
+          </div>
+          <Slider
+            value={[val]}
+            onValueChange={(v) => setWeights((p) => ({ ...p, [item.key]: v[0] }))}
+            max={100}
+            step={5}
+            className="w-full"
+          />
+        </div>
+      );
+    });
+
   return (
     <div className="space-y-6">
+      {/* Transparency disclaimer */}
+      <div className="flex items-start gap-2.5 p-4 rounded-xl bg-muted/40 border border-border/40">
+        <Info className="w-4 h-4 text-muted-foreground shrink-0 mt-0.5" />
+        <p className="text-xs text-muted-foreground leading-relaxed">
+          Your values profile influences your Career Alignment Score, job matching, and company recommendations.
+          Slide each value to reflect how important it is to you — 0 means irrelevant, 100 means deal-breaker.
+        </p>
+      </div>
+
+      {/* Values Lenses section */}
       <Card className="border-border">
         <CardHeader>
           <div className="flex items-center gap-2">
             <Sparkles className="w-5 h-5 text-[hsl(var(--civic-gold))]" />
-            <CardTitle className="font-display">My Workplace Values</CardTitle>
+            <CardTitle className="font-display">Values & Issue Lenses</CardTitle>
           </div>
           <CardDescription>
-            Define what matters most to you. These values influence your Career Alignment Score, job matching, and outreach recommendations.
+            How important are these social, political, and ethical issues when evaluating employers?
+            These match the values lenses used across the platform.
           </CardDescription>
         </CardHeader>
         <CardContent className="space-y-6">
-          {VALUE_SLIDERS.map((item) => {
-            const Icon = item.icon;
-            const val = weights[item.key] ?? 50;
-            return (
-              <div key={item.key} className="space-y-2">
-                <div className="flex items-start justify-between gap-4">
-                  <div className="flex items-start gap-3 min-w-0">
-                    <div className="w-8 h-8 rounded-lg bg-primary/5 flex items-center justify-center shrink-0 mt-0.5">
-                      <Icon className="w-4 h-4 text-primary" />
-                    </div>
-                    <div className="min-w-0">
-                      <div className="font-medium text-sm text-foreground">{item.label}</div>
-                      <div className="text-xs text-muted-foreground">{item.description}</div>
-                    </div>
-                  </div>
-                  <Badge variant="outline" className="text-xs shrink-0">{val}</Badge>
-                </div>
-                <Slider
-                  value={[val]}
-                  onValueChange={(v) => setWeights((p) => ({ ...p, [item.key]: v[0] }))}
-                  max={100}
-                  step={5}
-                  className="w-full"
-                />
-              </div>
-            );
-          })}
+          {renderSliders(LENS_SLIDERS)}
+        </CardContent>
+      </Card>
+
+      {/* Workplace Preferences section */}
+      <Card className="border-border">
+        <CardHeader>
+          <div className="flex items-center gap-2">
+            <Building2 className="w-5 h-5 text-primary" />
+            <CardTitle className="font-display">Workplace Preferences</CardTitle>
+          </div>
+          <CardDescription>
+            How important are these day-to-day workplace factors to you?
+          </CardDescription>
+        </CardHeader>
+        <CardContent className="space-y-6">
+          {renderSliders(WORKPLACE_SLIDERS)}
 
           {/* Preference selects */}
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-4 border-t border-border">

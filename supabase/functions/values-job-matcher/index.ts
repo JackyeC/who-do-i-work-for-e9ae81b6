@@ -31,9 +31,9 @@ Deno.serve(async (req) => {
 
     const { limit = 50 } = await req.json().catch(() => ({}));
 
-    // 1. Get user values profile for alignment scoring
+    // 1. Get user values profile for alignment scoring (unified table)
     const { data: valuesProfile } = await supabase
-      .from('user_alignment_values')
+      .from('user_values_profile')
       .select('*')
       .eq('user_id', user.id)
       .single();
