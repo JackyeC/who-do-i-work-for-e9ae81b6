@@ -193,8 +193,8 @@ Deno.serve(async (req) => {
       .join('\n');
 
     // 3. AI Analysis
-    const contentForAI = allResults.slice(0, 12).map((r, i) =>
-      `[${i + 1}] "${r.title}" (${r.url})\n${r.description}\n${r.markdown?.slice(0, 600) || ''}`
+    const contentForAI = allResults.slice(0, 15).map((r, i) =>
+      `[${i + 1}] "${r.title}" (${r.url})\n${r.description}\n${r.markdown?.slice(0, 800) || ''}`
     ).join('\n\n---\n\n');
 
     const aiPrompt = `You are a corporate labor intelligence analyst for CivicLens. Analyze the following search results about "${companyName}" employee satisfaction and worker conditions.
