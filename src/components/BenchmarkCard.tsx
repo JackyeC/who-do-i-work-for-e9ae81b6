@@ -3,6 +3,7 @@ import { Badge } from "@/components/ui/badge";
 import { BarChart3, Award } from "lucide-react";
 import { formatCurrency } from "@/data/sampleData";
 import { cn } from "@/lib/utils";
+import { ExplainableMetric } from "@/components/ExplainableMetric";
 
 export interface Benchmark {
   industry: string;
