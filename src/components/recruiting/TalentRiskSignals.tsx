@@ -118,14 +118,37 @@ export function TalentRiskSignals({ companyId, companyName }: Props) {
 
       // High-severity values signals (DEI rollbacks, etc.)
       if (valuesRes.data && valuesRes.data.length > 0) {
-        const categories = [...new Set(valuesRes.data.map(v => v.value_category))];
+        const categories = [...new Set(valuesRes.data.map(v => v.value_category || v.values_lens))];
+        const conflictSignals = valuesRes.data.filter((v: any) => v.signal_direction === "conflict_signal");
+        const label = conflictSignals.length > 0
+          ? "Values conflict signals detected"
+          : "High-severity values signals detected";
         detected.push({
-          label: "High-severity values signals detected",
-          description: `${valuesRes.data.length} signal${valuesRes.data.length > 1 ? "s" : ""} in ${categories.slice(0, 3).join(", ")}`,
+          label,
+          description: `${valuesRes.data.length} signal${valuesRes.data.length > 1 ? "s" : ""} in ${categories.filter(Boolean).slice(0, 3).join(", ")}`,
           severity: "high",
           sourceUrl: valuesRes.data[0]?.evidence_url || undefined,
           sourceLabel: "Evidence",
         });
+      }
+
+      // Values evidence-based risk signals
+      if (valuesEvidenceRes.data && valuesEvidenceRes.data.length > 0) {
+        const lenses = [...new Set((valuesEvidenceRes.data as any[]).map((e: any) => e.values_lens))];
+        const riskTypes = (valuesEvidenceRes.data as any[]).filter((e: any) =>
+          e.signal_type === "DEI_rollback_signal" ||
+          e.signal_type === "EPA_enforcement" ||
+          e.signal_type === "advocacy_conflict"
+        );
+        if (riskTypes.length > 0) {
+          detected.push({
+            label: "Values-related recruiting risk detected",
+            description: `${riskTypes.length} evidence record${riskTypes.length > 1 ? "s" : ""} across ${lenses.slice(0, 3).join(", ")} — may affect candidate perception`,
+            severity: riskTypes.length > 2 ? "high" : "medium",
+            sourceUrl: riskTypes[0]?.source_url || undefined,
+            sourceLabel: "Evidence",
+          });
+        }
       }
 
       // Sort by severity
