@@ -403,6 +403,59 @@ export type Database = {
           },
         ]
       }
+      career_contacts: {
+        Row: {
+          company: string | null
+          company_id: string | null
+          contact_type: string
+          created_at: string
+          created_by: string | null
+          id: string
+          industry: string | null
+          name: string
+          profile_url: string | null
+          role_tags: string[] | null
+          source_type: string | null
+          title: string | null
+        }
+        Insert: {
+          company?: string | null
+          company_id?: string | null
+          contact_type?: string
+          created_at?: string
+          created_by?: string | null
+          id?: string
+          industry?: string | null
+          name: string
+          profile_url?: string | null
+          role_tags?: string[] | null
+          source_type?: string | null
+          title?: string | null
+        }
+        Update: {
+          company?: string | null
+          company_id?: string | null
+          contact_type?: string
+          created_at?: string
+          created_by?: string | null
+          id?: string
+          industry?: string | null
+          name?: string
+          profile_url?: string | null
+          role_tags?: string[] | null
+          source_type?: string | null
+          title?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "career_contacts_company_id_fkey"
+            columns: ["company_id"]
+            isOneToOne: false
+            referencedRelation: "companies"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       career_paths: {
         Row: {
           average_salary: string | null
@@ -2300,6 +2353,45 @@ export type Database = {
         }
         Relationships: []
       }
+      learning_resources: {
+        Row: {
+          created_at: string
+          description: string | null
+          estimated_time: string | null
+          id: string
+          level: string | null
+          provider_name: string
+          resource_title: string
+          resource_type: string
+          resource_url: string | null
+          skill_tag: string
+        }
+        Insert: {
+          created_at?: string
+          description?: string | null
+          estimated_time?: string | null
+          id?: string
+          level?: string | null
+          provider_name: string
+          resource_title: string
+          resource_type?: string
+          resource_url?: string | null
+          skill_tag: string
+        }
+        Update: {
+          created_at?: string
+          description?: string | null
+          estimated_time?: string | null
+          id?: string
+          level?: string | null
+          provider_name?: string
+          resource_title?: string
+          resource_type?: string
+          resource_url?: string | null
+          skill_tag?: string
+        }
+        Relationships: []
+      }
       offer_checks: {
         Row: {
           company_id: string
@@ -3390,6 +3482,63 @@ export type Database = {
           is_positive?: boolean
           user_id?: string
           value_category?: string
+        }
+        Relationships: []
+      }
+      user_values_profile: {
+        Row: {
+          ai_transparency_importance: number
+          benefits_importance: number
+          company_size_preference: string | null
+          created_at: string
+          government_contract_preference: number
+          id: string
+          mission_alignment_importance: number
+          notes: string | null
+          pay_transparency_importance: number
+          political_influence_sensitivity: number
+          remote_flexibility_importance: number
+          representation_disclosure_importance: number
+          startup_vs_enterprise_preference: string | null
+          updated_at: string
+          user_id: string
+          worker_protections_importance: number
+        }
+        Insert: {
+          ai_transparency_importance?: number
+          benefits_importance?: number
+          company_size_preference?: string | null
+          created_at?: string
+          government_contract_preference?: number
+          id?: string
+          mission_alignment_importance?: number
+          notes?: string | null
+          pay_transparency_importance?: number
+          political_influence_sensitivity?: number
+          remote_flexibility_importance?: number
+          representation_disclosure_importance?: number
+          startup_vs_enterprise_preference?: string | null
+          updated_at?: string
+          user_id: string
+          worker_protections_importance?: number
+        }
+        Update: {
+          ai_transparency_importance?: number
+          benefits_importance?: number
+          company_size_preference?: string | null
+          created_at?: string
+          government_contract_preference?: number
+          id?: string
+          mission_alignment_importance?: number
+          notes?: string | null
+          pay_transparency_importance?: number
+          political_influence_sensitivity?: number
+          remote_flexibility_importance?: number
+          representation_disclosure_importance?: number
+          startup_vs_enterprise_preference?: string | null
+          updated_at?: string
+          user_id?: string
+          worker_protections_importance?: number
         }
         Relationships: []
       }
