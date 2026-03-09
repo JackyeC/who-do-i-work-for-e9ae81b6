@@ -61,7 +61,7 @@ export default function ValuesSearch() {
       if (!selectedIssue) return [];
       const { data, error } = await supabase
         .from("issue_signals" as any)
-        .select("id, entity_id, issue_category, signal_type, source_dataset, description, source_url, confidence_score, amount, created_at")
+        .select("id, entity_id, entity_name_snapshot, issue_category, signal_type, signal_subtype, source_dataset, description, source_url, confidence_score, amount, transaction_date, created_at")
         .eq("issue_category", selectedIssue)
         .order("confidence_score", { ascending: true }) // high first alphabetically
         .limit(500);
