@@ -33,6 +33,7 @@ import TermsOfService from "./pages/TermsOfService";
 import PrivacyPolicy from "./pages/PrivacyPolicy";
 import Examples from "./pages/Examples";
 import SearchYourEmployer from "./pages/SearchYourEmployer";
+import ValuesSearch from "./pages/ValuesSearch";
 
 const queryClient = new QueryClient();
 
@@ -56,6 +57,7 @@ const App = () => (
               <Route path="/privacy" element={<PrivacyPolicy />} />
               <Route path="/examples" element={<Examples />} />
               <Route path="/search-your-employer" element={<SearchYourEmployer />} />
+              <Route path="/values-search" element={<ValuesSearch />} />
               <Route path="/who-do-i-work-for" element={
                 <ProtectedRoute>
                   <WhoDoIWorkFor />

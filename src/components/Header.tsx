@@ -16,6 +16,7 @@ export function Header() {
     { to: "/check?tab=offer", label: "Is This Offer Right For Me?", icon: ClipboardCheck },
     { to: "/career-map", label: "Where Could My Career Go?", icon: Map },
     { to: "/check?tab=candidate", label: "What Am I Supporting?", icon: Users },
+    { to: "/values-search", label: "Values Search", icon: Search },
     { to: "/jobs", label: "Jobs", icon: Briefcase },
   ];
 
