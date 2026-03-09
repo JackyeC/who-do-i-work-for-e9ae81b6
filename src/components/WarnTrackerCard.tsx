@@ -115,6 +115,7 @@ export function WarnTrackerCard({ companyName, dbCompanyId }: { companyName: str
               {isScanning ? "Scanning..." : "Scan Web"}
             </Button>
           </div>
+        </div>
         <p className="text-xs text-muted-foreground">
           Public WARN Act filings — employers must give 60-day notice before mass layoffs or plant closings.
         </p>
