@@ -12,6 +12,7 @@ import { Header } from "@/components/Header";
 import { Footer } from "@/components/Footer";
 import { PlatformPhilosophy } from "@/components/PlatformPhilosophy";
 import { InfluencePipelineVisual } from "@/components/InfluencePipelineVisual";
+import { LiveInfluencePreview } from "@/components/LiveInfluencePreview";
 import { supabase } from "@/integrations/supabase/client";
 
 const fadeUp = {
