@@ -17,7 +17,6 @@ export function Header() {
     { to: "/career-map", label: "Where Could My Career Go?", icon: Map },
     { to: "/check?tab=candidate", label: "What Am I Supporting?", icon: Users },
     { to: "/jobs", label: "Jobs", icon: Briefcase },
-    { to: "/methodology", label: "Methodology", icon: BookOpen },
   ];
 
   const authLinks = user

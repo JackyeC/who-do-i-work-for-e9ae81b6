@@ -3175,6 +3175,66 @@ export type Database = {
           },
         ]
       }
+      user_alignment_values: {
+        Row: {
+          ai_transparency_weight: number
+          avoid_industries: string[] | null
+          benefits_quality_weight: number
+          created_at: string
+          dei_commitment_weight: number
+          environmental_commitment_weight: number
+          government_contracts_weight: number
+          id: string
+          min_civic_footprint_score: number | null
+          organizational_affiliations_weight: number
+          pay_equity_weight: number
+          political_neutrality_weight: number
+          preferred_industries: string[] | null
+          updated_at: string
+          user_id: string
+          veteran_support_weight: number
+          worker_protections_weight: number
+        }
+        Insert: {
+          ai_transparency_weight?: number
+          avoid_industries?: string[] | null
+          benefits_quality_weight?: number
+          created_at?: string
+          dei_commitment_weight?: number
+          environmental_commitment_weight?: number
+          government_contracts_weight?: number
+          id?: string
+          min_civic_footprint_score?: number | null
+          organizational_affiliations_weight?: number
+          pay_equity_weight?: number
+          political_neutrality_weight?: number
+          preferred_industries?: string[] | null
+          updated_at?: string
+          user_id: string
+          veteran_support_weight?: number
+          worker_protections_weight?: number
+        }
+        Update: {
+          ai_transparency_weight?: number
+          avoid_industries?: string[] | null
+          benefits_quality_weight?: number
+          created_at?: string
+          dei_commitment_weight?: number
+          environmental_commitment_weight?: number
+          government_contracts_weight?: number
+          id?: string
+          min_civic_footprint_score?: number | null
+          organizational_affiliations_weight?: number
+          pay_equity_weight?: number
+          political_neutrality_weight?: number
+          preferred_industries?: string[] | null
+          updated_at?: string
+          user_id?: string
+          veteran_support_weight?: number
+          worker_protections_weight?: number
+        }
+        Relationships: []
+      }
       user_career_profile: {
         Row: {
           auto_generated: boolean | null

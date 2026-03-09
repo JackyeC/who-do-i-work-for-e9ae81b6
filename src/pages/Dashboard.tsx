@@ -11,9 +11,10 @@ import { TrackingDashboard } from "@/components/jobs/TrackingDashboard";
 import { AutoApplySettings } from "@/components/jobs/AutoApplySettings";
 import { ApplyQueueDashboard } from "@/components/jobs/ApplyQueueDashboard";
 import { UserAlertsList } from "@/components/UserAlerts";
+import { UserValuesProfile } from "@/components/UserValuesProfile";
 import {
   ClipboardCheck, Bookmark, Bell, Briefcase, LayoutDashboard,
-  Settings, User, Zap, Map
+  Settings, User, Zap, Map, Target
 } from "lucide-react";
 
 export default function Dashboard() {
@@ -41,6 +42,9 @@ export default function Dashboard() {
             <TabsTrigger value="matches" className="gap-1.5">
               <Briefcase className="w-4 h-4" /> Matched Jobs
             </TabsTrigger>
+            <TabsTrigger value="alignment" className="gap-1.5">
+              <Target className="w-4 h-4" /> My Alignment
+            </TabsTrigger>
             <TabsTrigger value="tracker" className="gap-1.5">
               <LayoutDashboard className="w-4 h-4" /> Applications
             </TabsTrigger>
@@ -63,6 +67,9 @@ export default function Dashboard() {
 
           <TabsContent value="matches">
             <AlignedJobsList />
+          </TabsContent>
+          <TabsContent value="alignment">
+            <UserValuesProfile />
           </TabsContent>
           <TabsContent value="tracker">
             <TrackingDashboard />

@@ -31,20 +31,27 @@ Deno.serve(async (req) => {
 
     const { limit = 50 } = await req.json().catch(() => ({}));
 
-    // 1. Get user preferences (signal filters)
+    // 1. Get user values profile for alignment scoring
+    const { data: valuesProfile } = await supabase
+      .from('user_alignment_values')
+      .select('*')
+      .eq('user_id', user.id)
+      .single();
+
+    // 2. Get user preferences (signal filters)
     const { data: preferences } = await supabase
       .from('job_match_preferences')
       .select('*')
       .eq('user_id', user.id);
 
-    // 2. Get career profile for matching
+    // 3. Get career profile for matching
     const { data: careerProfile } = await supabase
       .from('user_career_profile')
       .select('*')
       .eq('user_id', user.id)
       .single();
 
-    // 3. Get user profile for salary filter
+    // 4. Get user profile for salary filter
     const { data: profile } = await supabase
       .from('profiles')
       .select('min_salary, target_job_titles, skills')
@@ -59,7 +66,7 @@ Deno.serve(async (req) => {
     const userWorkMode = careerProfile?.preferred_work_mode || null;
     const userMinSalary = careerProfile?.salary_range_min || (profile as any)?.min_salary || 0;
 
-    // 4. Fetch active jobs with company data
+    // 5. Fetch active jobs with company data
     const { data: jobs } = await supabase
       .from('company_jobs')
       .select(`
@@ -76,14 +83,15 @@ Deno.serve(async (req) => {
       });
     }
 
-    // 5. Get signal data for companies
+    // 6. Get signal data for companies AND values signals
     const companyIds = [...new Set(jobs.map((j: any) => j.company_id))];
 
-    const [benefitsRes, aiHiringRes, payEquityRes, sentimentRes] = await Promise.all([
+    const [benefitsRes, aiHiringRes, payEquityRes, sentimentRes, valuesSignalsRes] = await Promise.all([
       supabase.from('ai_hr_signals').select('company_id, signal_category, signal_type, confidence').in('company_id', companyIds),
       supabase.from('ai_hiring_signals').select('company_id, category, transparency_score, bias_audit_status').in('company_id', companyIds),
       supabase.from('pay_equity_signals').select('company_id, signal_category, signal_type, confidence').in('company_id', companyIds),
       supabase.from('company_worker_sentiment').select('company_id, overall_rating, sentiment').in('company_id', companyIds),
+      supabase.from('company_values_signals').select('company_id, value_category, signal_type, confidence').in('company_id', companyIds),
     ]);
 
     // Build signal map
@@ -125,20 +133,63 @@ Deno.serve(async (req) => {
       companySignals[cid] = signals;
     }
 
-    // 6. Score jobs with career profile matching
+    // Build values alignment map per company
+    const companyValuesAlignment: Record<string, number> = {};
+    if (valuesProfile) {
+      for (const cid of companyIds) {
+        const companyValuesCats = (valuesSignalsRes.data || [])
+          .filter((s: any) => s.company_id === cid)
+          .map((s: any) => s.value_category);
+
+        const valuesMap: Record<string, string[]> = {
+          pay_equity_weight: ['pay_transparency', 'salary_transparency'],
+          worker_protections_weight: ['worker_benefits'],
+          ai_transparency_weight: ['ai_transparency'],
+          benefits_quality_weight: ['worker_benefits'],
+          dei_commitment_weight: ['anti_discrimination', 'lgbtq_inclusive'],
+          environmental_commitment_weight: ['environmental'],
+          veteran_support_weight: ['veteran_support'],
+        };
+
+        let valueMatches = 0;
+        let valueTotal = 0;
+
+        Object.entries(valuesMap).forEach(([weightKey, categories]) => {
+          const weight = (valuesProfile as any)[weightKey] || 50;
+          if (weight > 20) {
+            valueTotal += weight;
+            const hasMatch = categories.some(c => companyValuesCats.includes(c));
+            if (hasMatch) valueMatches += weight;
+          }
+        });
+
+        companyValuesAlignment[cid] = valueTotal > 0 ? Math.round((valueMatches / valueTotal) * 100) : 50;
+      }
+    }
+
+    // 7. Score jobs with NEW Career Alignment Score weighting
     const prefKeys = (preferences || []).filter((p: any) => p.is_required).map((p: any) => p.signal_key);
     const hasProfile = userSkills.length > 0 || userTitles.length > 0;
 
     const scoredJobs = jobs.map((job: any) => {
       const signals = companySignals[job.company_id] || {};
       const matchedSignals: string[] = [];
-      let score = 0;
       const company = job.companies;
 
-      // Base: civic footprint (0-30 pts)
-      score += Math.min(Math.round((company.civic_footprint_score || 0) * 0.3), 30);
+      // ────────────────────────────────────────────────────
+      // NEW: Career Alignment Score Calculation
+      // Skills 30%, Values 30%, Signals 25%, Job 15%
+      // ────────────────────────────────────────────────────
 
-      // Signal matches (up to 20 pts)
+      let skillsScore = 50; // default
+      let valuesScore = companyValuesAlignment[job.company_id] || 50;
+      let signalsScore = 0;
+      let jobScore = 50;
+
+      // ─── SIGNALS SCORE (25%) ───
+      // Base: civic footprint (0-30 pts) + signal detection (0-20 pts)
+      signalsScore += Math.min(Math.round((company.civic_footprint_score || 0) * 0.3), 30);
+
       let signalPts = 0;
       for (const key of Object.keys(signals)) {
         if (signals[key].detected) {
@@ -146,10 +197,11 @@ Deno.serve(async (req) => {
           matchedSignals.push(signals[key].label || key);
         }
       }
-      score += Math.min(signalPts, 20);
+      signalsScore += Math.min(signalPts, 20);
+      signalsScore = Math.min(signalsScore, 100);
 
-      // ─── Career profile matching (up to 50 pts) ───
-      if (hasProfile) {
+      // ─── SKILLS MATCH (30%) ───
+      if (hasProfile && userSkills.length > 0) {
         // Title match (0-15 pts)
         const jobTitleLower = (job.title || '').toLowerCase();
         let titleScore = 0;
@@ -166,9 +218,8 @@ Deno.serve(async (req) => {
             titleScore = Math.max(titleScore, Math.round(15 * matchedWords.length / words.length));
           }
         }
-        score += titleScore;
 
-        // Skill overlap (0-15 pts)
+        // Skill overlap (0-85 pts to total 100 for skills)
         const jobSkills = ((job.extracted_skills || []) as string[]).map((s: string) => s.toLowerCase());
         const jobDesc = (job.description || '').toLowerCase();
         let skillMatches = 0;
@@ -177,37 +228,54 @@ Deno.serve(async (req) => {
             skillMatches++;
           }
         }
-        if (userSkills.length > 0 && skillMatches > 0) {
+        if (skillMatches > 0) {
           const skillRatio = Math.min(skillMatches / Math.max(userSkills.length, 1), 1);
-          const skillPts = Math.round(15 * skillRatio);
-          score += skillPts;
+          const skillPts = Math.round(85 * skillRatio);
+          skillsScore = titleScore + skillPts;
           if (skillMatches >= 2) matchedSignals.push(`${skillMatches} Skills Match`);
+        } else {
+          skillsScore = titleScore;
         }
+        skillsScore = Math.min(skillsScore, 100);
+      }
 
-        // Location match (0-10 pts)
-        const jobLoc = (job.location || '').toLowerCase();
-        if (userLocations.length > 0 && jobLoc) {
-          for (const loc of userLocations) {
-            if (jobLoc.includes(loc) || loc.includes(jobLoc.split(',')[0])) {
-              score += 10;
-              matchedSignals.push('Location Match');
-              break;
-            }
+      // ─── JOB MATCH (15%) ───
+      let jobMatchPts = 0;
+
+      // Location match (0-40 pts)
+      const jobLoc = (job.location || '').toLowerCase();
+      if (userLocations.length > 0 && jobLoc) {
+        for (const loc of userLocations) {
+          if (jobLoc.includes(loc) || loc.includes(jobLoc.split(',')[0])) {
+            jobMatchPts += 40;
+            matchedSignals.push('Location Match');
+            break;
           }
         }
-
-        // Work mode match (0-5 pts)
-        if (userWorkMode && job.work_mode && userWorkMode === job.work_mode) {
-          score += 5;
-          matchedSignals.push('Work Mode Match');
-        }
-
-        // Seniority match (0-5 pts)
-        if (userSeniority && job.seniority_level && userSeniority === job.seniority_level) {
-          score += 5;
-          matchedSignals.push('Seniority Match');
-        }
       }
+
+      // Work mode match (0-30 pts)
+      if (userWorkMode && job.work_mode && userWorkMode === job.work_mode) {
+        jobMatchPts += 30;
+        matchedSignals.push('Work Mode Match');
+      }
+
+      // Seniority match (0-30 pts)
+      if (userSeniority && job.seniority_level && userSeniority === job.seniority_level) {
+        jobMatchPts += 30;
+        matchedSignals.push('Seniority Match');
+      }
+
+      jobScore = Math.min(jobMatchPts, 100);
+
+      // ─── FINAL CAREER ALIGNMENT SCORE ───
+      // Skills 30%, Values 30%, Signals 25%, Job 15%
+      const alignmentScore = Math.round(
+        skillsScore * 0.30 +
+        valuesScore * 0.30 +
+        signalsScore * 0.25 +
+        jobScore * 0.15
+      );
 
       // Check required signal preferences
       let meetsRequirements = true;
@@ -235,7 +303,7 @@ Deno.serve(async (req) => {
         civic_footprint_score: company.civic_footprint_score,
         industry: company.industry,
         state: company.state,
-        alignment_score: Math.min(score, 100),
+        alignment_score: Math.min(alignmentScore, 100),
         matched_signals: [...new Set(matchedSignals)],
         meets_requirements: meetsRequirements,
       };

@@ -47,11 +47,12 @@ export function Footer() {
               </div>
             </div>
             <div className="space-y-4">
-              <p className="text-[10px] font-semibold text-primary-foreground/30 uppercase tracking-[0.2em]">About</p>
-              <div className="space-y-3 text-sm text-primary-foreground/45">
-                <p>Data from FEC.gov, Senate LDA, USASpending &amp; public filings.</p>
-                <p>Signals reported. No conclusions drawn.</p>
-                <Link to="/request-correction" className="block text-primary-foreground/55 hover:text-primary-foreground/90 transition-colors">Request a Correction</Link>
+              <p className="text-[10px] font-semibold text-primary-foreground/30 uppercase tracking-[0.2em]">Resources</p>
+              <div className="space-y-3">
+                <Link to="/methodology" className="block text-sm text-primary-foreground/55 hover:text-primary-foreground/90 transition-colors">Methodology</Link>
+                <a href="#data-sources" className="block text-sm text-primary-foreground/55 hover:text-primary-foreground/90 transition-colors">Data Sources</a>
+                <Link to="/request-correction" className="block text-sm text-primary-foreground/55 hover:text-primary-foreground/90 transition-colors">Request a Correction</Link>
+                <a href="#privacy" className="block text-sm text-primary-foreground/55 hover:text-primary-foreground/90 transition-colors">Privacy</a>
               </div>
             </div>
           </div>
