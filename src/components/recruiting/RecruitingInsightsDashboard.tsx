@@ -22,7 +22,7 @@ export function RecruitingInsightsDashboard() {
         supabase.from("company_warn_notices").select("company_id", { count: "exact", head: true }),
         supabase.from("ai_hiring_signals").select("company_id", { count: "exact", head: true }),
         supabase.from("companies").select("industry").limit(1000),
-        supabase.from("company_warn_notices").select("company_name, number_affected, notice_date").order("notice_date", { ascending: false }).limit(10),
+        supabase.from("company_warn_notices").select("company_id, employees_affected, notice_date").order("notice_date", { ascending: false }).limit(10),
       ]);
 
       // Count industries
