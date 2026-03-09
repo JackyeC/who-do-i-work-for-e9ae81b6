@@ -324,7 +324,7 @@ export function CompanyIntelligenceScanCard({ companyId, companyName }: Props) {
           <div className="text-center py-6">
             <Radar className="w-10 h-10 text-muted-foreground/50 mx-auto mb-3" />
             <p className="text-sm text-muted-foreground mb-1">No intelligence scan has been run yet.</p>
-            <p className="text-xs text-muted-foreground">Click "Run Intelligence Scan" to analyze this company across all research modules.</p>
+            <p className="text-xs text-muted-foreground">Click "Run Intelligence Scan" to analyze this company across all research modules. Scans typically take 2–4 minutes.</p>
           </div>
         )}
       </CardContent>
