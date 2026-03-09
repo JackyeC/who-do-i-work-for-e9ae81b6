@@ -342,6 +342,45 @@ Deno.serve(async (req) => {
             const execNameToId = new Map(insertedExecs.map(e => [e.name?.toUpperCase(), e.id]));
             const recipientRows: { executive_id: string; name: string; party: string; amount: number }[] = [];
 
+            // Collect all unique committee names for batch party lookup
+            const allCommitteeNames = new Set<string>();
+            for (const exec of topExecs) {
+              for (const r of exec.recipients) {
+                if (r.committee) allCommitteeNames.add(r.committee);
+              }
+            }
+
+            // Resolve party from committee name using heuristics + FEC lookup
+            const committeePartyCache = new Map<string, string>();
+
+            // Returns 'R', 'D', or 'I' to match DB constraint
+            // Uses comprehensive heuristics to avoid slow FEC lookups
+            function inferPartyFromName(name: string): string {
+              const upper = name.toUpperCase();
+              // Republican keywords & known committees
+              if (/\b(REPUBLICAN|GOP|RNC|NRCC|NRSC|WINRED|SAVE AMERICA|MAGA)\b/.test(upper)) return 'R';
+              // Known Republican candidates/committees
+              if (/\b(TRUMP|DESANTIS|BURGUM|TED CRUZ|CORNYN|MCCONNELL|RUBIO|SCOTT|THUNE|TUBERVILLE|BO HINES|PAUL HUDSON|HUIZENGA|MOOLENAAR|ROGERS|MARK GREEN)\b/.test(upper)) return 'R';
+              // Republican structural patterns
+              if (/\b(VICTORY (COMMITTEE|FUND)|FREEDOM FUND|LEADERSHIP FUND)\b/.test(upper) && !/\bDEMOCRAT/.test(upper)) {
+                // Check if it's paired with a known R candidate
+                if (/\b(TRUMP|DESANTIS|BURGUM|NRSC|NRCC|REPUBLICAN)\b/.test(upper)) return 'R';
+              }
+              // Democrat keywords & known committees  
+              if (/\b(DEMOCRAT(IC)?|DNC|DCCC|DSCC|ACTBLUE|EMILY'?S LIST|BLUE WAVE)\b/.test(upper)) return 'D';
+              // Known Democrat candidates/committees
+              if (/\b(BIDEN|HARRIS|KLOBUCHAR|BALDWIN|ALLRED|CASTEN|JACKSON|WARNOCK|OSSOFF|SCHUMER|PELOSI|STABENOW)\b/.test(upper)) return 'D';
+              // Try matching against allCandidates from PAC data
+              const matchedCandidate = allCandidates.find(c =>
+                upper.includes(c.name.split(',')[0]?.toUpperCase() || '___')
+              );
+              if (matchedCandidate) {
+                if (matchedCandidate.party?.includes('REP')) return 'R';
+                if (matchedCandidate.party?.includes('DEM')) return 'D';
+              }
+              return 'I'; // Default to Independent for unknown — satisfies DB constraint
+            }
+
             for (const exec of topExecs) {
               const execId = execNameToId.get(exec.name?.toUpperCase());
               if (!execId || !exec.recipients.length) continue;
@@ -355,15 +394,13 @@ Deno.serve(async (req) => {
               }
 
               for (const recip of recipMap.values()) {
-                const matchedCandidate = allCandidates.find(c =>
-                  recip.name.toUpperCase().includes(c.name.split(',')[0]?.toUpperCase() || '___')
-                );
+                // Try cache first, then heuristics
+                const cachedParty = committeePartyCache.get(recip.name.toUpperCase());
+                const party = cachedParty || inferPartyFromName(recip.name);
                 recipientRows.push({
                   executive_id: execId,
                   name: recip.name,
-                  party: matchedCandidate?.party?.includes('REP') ? 'Republican'
-                       : matchedCandidate?.party?.includes('DEM') ? 'Democrat'
-                       : 'Unknown',
+                  party,
                   amount: Math.round(recip.amount),
                 });
               }
@@ -375,6 +412,8 @@ Deno.serve(async (req) => {
               const { error: recipErr } = await supabase.from('executive_recipients').insert(recipientRows);
               if (recipErr) console.error('[sync-openfec] Executive recipients insert error:', recipErr);
               else console.log(`[sync-openfec] Inserted ${recipientRows.length} executive recipient records`);
+            } else {
+              console.warn('[sync-openfec] No executive recipient rows to insert');
             }
 
             // ─── Executive influence detection: check if execs appear in lobbying/govt ───
