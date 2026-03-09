@@ -426,6 +426,7 @@ export default function CompanyProfile() {
   });
 
   const [isGeneratingValues, setIsGeneratingValues] = useState(false);
+  const valuesAutoGenTriggered = useRef(false);
   const handleGenerateValuesCheck = async () => {
     if (!dbCompanyId) return;
     setIsGeneratingValues(true);
@@ -440,6 +441,20 @@ export default function CompanyProfile() {
       setIsGeneratingValues(false);
     }
   };
+
+  // Auto-generate values check if the table is empty for this company
+  useEffect(() => {
+    if (
+      dbCompanyId &&
+      valuesCheckSignals !== undefined &&
+      valuesCheckSignals.length === 0 &&
+      !isGeneratingValues &&
+      !valuesAutoGenTriggered.current
+    ) {
+      valuesAutoGenTriggered.current = true;
+      handleGenerateValuesCheck();
+    }
+  }, [dbCompanyId, valuesCheckSignals]);
 
   // Enrichment data (OpenSecrets third-party summaries)
   const { data: enrichmentData } = useQuery({
