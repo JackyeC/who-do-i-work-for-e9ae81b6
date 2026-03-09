@@ -2850,6 +2850,7 @@ export type Database = {
           linkedin_url: string | null
           min_safety_score: number | null
           min_salary: number | null
+          onboarding_completed: boolean
           pay_transparency_required: boolean | null
           required_benefits: string[] | null
           resume_url: string | null
@@ -2868,6 +2869,7 @@ export type Database = {
           linkedin_url?: string | null
           min_safety_score?: number | null
           min_salary?: number | null
+          onboarding_completed?: boolean
           pay_transparency_required?: boolean | null
           required_benefits?: string[] | null
           resume_url?: string | null
@@ -2886,6 +2888,7 @@ export type Database = {
           linkedin_url?: string | null
           min_safety_score?: number | null
           min_salary?: number | null
+          onboarding_completed?: boolean
           pay_transparency_required?: boolean | null
           required_benefits?: string[] | null
           resume_url?: string | null

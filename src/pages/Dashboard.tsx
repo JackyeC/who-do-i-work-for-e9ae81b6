@@ -3,6 +3,7 @@ import { Header } from "@/components/Header";
 import { Footer } from "@/components/Footer";
 import { useAuth } from "@/contexts/AuthContext";
 import { Navigate, useSearchParams } from "react-router-dom";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
 import { DashboardSidebar } from "@/components/dashboard/DashboardSidebar";
 import { DashboardOverview } from "@/components/dashboard/DashboardOverview";
@@ -16,6 +17,8 @@ import { UserAlertsList } from "@/components/UserAlerts";
 import { MyValuesProfile } from "@/components/career/MyValuesProfile";
 import { HowDoIGetThere } from "@/components/career/HowDoIGetThere";
 import { OutreachIntelligence } from "@/components/career/OutreachIntelligence";
+import { FirstLoginOnboarding } from "@/components/FirstLoginOnboarding";
+import { supabase } from "@/integrations/supabase/client";
 import { ClipboardCheck } from "lucide-react";
 
 const TAB_TITLES: Record<string, string> = {
@@ -36,13 +39,29 @@ export default function Dashboard() {
   const { user, loading } = useAuth();
   const [searchParams, setSearchParams] = useSearchParams();
   const tab = searchParams.get("tab") || "overview";
+  const queryClient = useQueryClient();
 
   const setTab = (newTab: string) => {
     setSearchParams({ tab: newTab });
   };
 
-  if (loading) return null;
+  const { data: onboardingCompleted, isLoading: onboardingLoading } = useQuery({
+    queryKey: ["onboarding-status", user?.id],
+    queryFn: async () => {
+      const { data } = await (supabase as any)
+        .from("profiles")
+        .select("onboarding_completed")
+        .eq("id", user!.id)
+        .maybeSingle();
+      return data?.onboarding_completed ?? false;
+    },
+    enabled: !!user,
+  });
+
+  if (loading || onboardingLoading) return null;
   if (!user) return <Navigate to="/login" replace />;
+
+  const showOnboarding = onboardingCompleted === false;
 
   const renderContent = () => {
     switch (tab) {
@@ -88,6 +107,15 @@ export default function Dashboard() {
   return (
     <div className="min-h-screen bg-background flex flex-col">
       <Header />
+
+      {showOnboarding && (
+        <FirstLoginOnboarding
+          onComplete={() => {
+            queryClient.setQueryData(["onboarding-status", user.id], true);
+          }}
+        />
+      )}
+
       <SidebarProvider>
         <div className="flex-1 flex w-full">
           <DashboardSidebar activeTab={tab} onTabChange={setTab} />
