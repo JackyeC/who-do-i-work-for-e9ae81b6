@@ -64,8 +64,9 @@ Deno.serve(async (req) => {
       }).catch((e) => console.error(`State search failed (${src.state}):`, e))
     );
 
-    // Phase 2: General web searches (broader net)
+    // Phase 2: General web searches including warntracker.com
     const generalSearches = [
+      `"${company_name}" site:warntracker.com`,
       `"${company_name}" WARN Act layoff notice site:gov`,
       `"${company_name}" WARN Act layoff notice`,
       `"${company_name}" mass layoff plant closure WARN filing`,
@@ -93,6 +94,20 @@ Deno.serve(async (req) => {
         if (data?.data) allResults.push(...data.data);
       }).catch((e) => console.error(`Aggregator search failed:`, e))
     );
+
+    // Phase 4: Try direct warntracker.com scrape for this company
+    const warnTrackerScrape = fetchFirecrawlScrape(firecrawlKey, 
+      `https://www.warntracker.com/?company=${encodeURIComponent(company_name)}`
+    ).then((data) => {
+      if (data?.data?.markdown) {
+        allResults.push({ 
+          url: `https://www.warntracker.com/?company=${encodeURIComponent(company_name)}`,
+          title: `WARNTracker - ${company_name}`,
+          markdown: data.data.markdown,
+          _source_state: "aggregator"
+        });
+      }
+    }).catch((e) => console.error(`WARNTracker scrape failed:`, e));
 
     // Run all searches in parallel
     await Promise.allSettled([...stateSearches, ...generalSearches, ...aggregatorSearches]);
