@@ -177,7 +177,7 @@ export default function VoterLookup() {
                           <div className="flex items-center justify-between text-sm">
                             <span className="text-muted-foreground font-medium">
                               <DollarSign className="w-4 h-4 inline mr-1" />
-                              Total corporate funding tracked
+                              Total corporate donations <em>to</em> this representative
                             </span>
                             <span className="font-bold text-foreground text-lg">{formatCurrency(rep.totalCorporateFunding)}</span>
                           </div>
