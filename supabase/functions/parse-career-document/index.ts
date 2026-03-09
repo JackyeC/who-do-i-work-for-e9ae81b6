@@ -100,11 +100,13 @@ serve(async (req) => {
         additionalProperties: false,
       };
     } else if (docType === "resume") {
-      systemPrompt = `You are a career profile analyzer. Extract structured career signals from this resume: job titles held, industries worked in, skills (technical and soft), seniority level (entry/mid/senior/executive), management scope, and years of experience.`;
+      systemPrompt = `You are a career profile analyzer. Extract structured career signals from this resume: full name, job titles held, industries worked in, skills (technical and soft), seniority level (entry/mid/senior/executive), management scope, years of experience, and generate a concise professional bio (2-3 sentences) summarizing their career.`;
       toolName = "parse_resume";
       toolParams = {
         type: "object",
         properties: {
+          full_name: { type: "string", description: "The person's full name" },
+          professional_bio: { type: "string", description: "A 2-3 sentence professional summary based on their experience" },
           job_titles: { type: "array", items: { type: "string" } },
           industries: { type: "array", items: { type: "string" } },
           skills: { type: "array", items: { type: "string" } },
@@ -112,6 +114,7 @@ serve(async (req) => {
           management_scope: { type: "string" },
           years_experience: { type: "number" },
           education: { type: "array", items: { type: "string" } },
+          linkedin_url: { type: "string", description: "LinkedIn URL if present" },
           overall_confidence: { type: "string", enum: ["high", "medium", "low"] },
         },
         required: ["job_titles", "industries", "skills", "seniority_level", "overall_confidence"],

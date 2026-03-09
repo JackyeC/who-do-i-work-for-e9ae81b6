@@ -96,17 +96,15 @@ export function UserProfileForm() {
 
       if (parseError) throw parseError;
 
-      const { data: profile } = await supabase
-        .from("user_career_profile")
-        .select("*")
-        .eq("user_id", user.id)
-        .single();
-
-      if (profile) {
+      const parsed = parseData?.parsed;
+      if (parsed) {
         setForm((f) => ({
           ...f,
-          skills: profile.skills || f.skills,
-          target_job_titles: (profile.job_titles || []).join(", ") || f.target_job_titles,
+          full_name: parsed.full_name || f.full_name,
+          bio: parsed.professional_bio || f.bio,
+          linkedin_url: parsed.linkedin_url || f.linkedin_url,
+          skills: parsed.skills || f.skills,
+          target_job_titles: (parsed.job_titles || []).join(", ") || f.target_job_titles,
         }));
       }
 
