@@ -73,15 +73,29 @@ Deno.serve(async (req) => {
       .join("\n---\n")
       .slice(0, 15000);
 
-    const geminiRes = await fetch(
-      `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${Deno.env.get("LOVABLE_API_KEY")}`,
-      {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          contents: [{
-            parts: [{
-              text: `Extract WARN Act layoff notices for "${company_name}" from the following search results. Include subsidiary and acquired company notices.
+    const lovableKey = Deno.env.get("LOVABLE_API_KEY");
+    if (!lovableKey) {
+      return new Response(JSON.stringify({ error: "LOVABLE_API_KEY not configured" }), {
+        status: 500, headers: { ...corsHeaders, "Content-Type": "application/json" },
+      });
+    }
+
+    const geminiRes = await fetch("https://ai.gateway.lovable.dev/v1/chat/completions", {
+      method: "POST",
+      headers: {
+        Authorization: `Bearer ${lovableKey}`,
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        model: "google/gemini-2.5-flash",
+        messages: [
+          {
+            role: "system",
+            content: "You extract WARN Act layoff notices from search results. Return ONLY valid JSON arrays.",
+          },
+          {
+            role: "user",
+            content: `Extract WARN Act layoff notices for "${company_name}" from the following search results. Include subsidiary and acquired company notices.
 
 Return ONLY a JSON array. Each notice:
 - notice_date (YYYY-MM-DD)
@@ -97,15 +111,14 @@ Be strict about matching "${company_name}" or known subsidiaries. Return [] if n
 
 Search results:
 ${combinedText}`,
-            }],
-          }],
-          generationConfig: { temperature: 0.1, responseMimeType: "application/json" },
-        }),
-      }
-    );
+          },
+        ],
+        temperature: 0.1,
+      }),
+    });
 
     if (!geminiRes.ok) {
-      console.error("[warn-scan] Gemini error:", await geminiRes.text());
+      console.error("[warn-scan] AI error:", await geminiRes.text());
       return new Response(JSON.stringify({ error: "AI analysis failed" }), {
         status: 500,
         headers: { ...corsHeaders, "Content-Type": "application/json" },
@@ -113,7 +126,7 @@ ${combinedText}`,
     }
 
     const geminiData = await geminiRes.json();
-    const responseText = geminiData.candidates?.[0]?.content?.parts?.[0]?.text || "[]";
+    const responseText = geminiData.choices?.[0]?.message?.content || "[]";
 
     let notices: any[];
     try {
