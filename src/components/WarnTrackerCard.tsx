@@ -93,17 +93,28 @@ export function WarnTrackerCard({ companyName, dbCompanyId }: { companyName: str
             <AlertTriangle className="w-5 h-5 text-destructive" />
             WARN Act Layoff Tracker
           </CardTitle>
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={handleScan}
-            disabled={isScanning}
-            className="gap-1.5"
-          >
-            {isScanning ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : null}
-            {isScanning ? "Scanning..." : "Scan for WARN Notices"}
-          </Button>
-        </div>
+          <div className="flex items-center gap-2">
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={handleBulkImport}
+              disabled={isImporting || totalNotices > 0}
+              className="gap-1.5"
+            >
+              {isImporting ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : null}
+              {isImporting ? "Importing..." : "Import Dataset"}
+            </Button>
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={handleScan}
+              disabled={isScanning}
+              className="gap-1.5"
+            >
+              {isScanning ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : null}
+              {isScanning ? "Scanning..." : "Scan Web"}
+            </Button>
+          </div>
         <p className="text-xs text-muted-foreground">
           Public WARN Act filings — employers must give 60-day notice before mass layoffs or plant closings.
         </p>
