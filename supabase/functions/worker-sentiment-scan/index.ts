@@ -103,6 +103,48 @@ Deno.serve(async (req) => {
         console.error(`Search failed for: ${query}`, e);
       }
     }
+
+    // Direct scrape of TheLayoff.com company page for richer sentiment data
+    if (!creditExhausted) {
+      try {
+        const layoffPageUrl = `https://www.thelayoff.com/${layoffSlug}`;
+        console.log(`Scraping TheLayoff.com page: ${layoffPageUrl}`);
+        const scrapeResp = await fetch('https://api.firecrawl.dev/v1/scrape', {
+          method: 'POST',
+          headers: {
+            'Authorization': `Bearer ${firecrawlKey}`,
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            url: layoffPageUrl,
+            formats: ['markdown'],
+            onlyMainContent: true,
+          }),
+        });
+
+        if (scrapeResp.status === 402) {
+          creditExhausted = true;
+        } else if (scrapeResp.ok) {
+          const scrapeData = await scrapeResp.json();
+          const markdown = scrapeData.data?.markdown || scrapeData.markdown || '';
+          if (markdown.length > 50) {
+            allResults.push({
+              title: `TheLayoff.com - ${companyName} Employee Discussion`,
+              url: layoffPageUrl,
+              description: 'Worker-sourced layoff rumors, morale reports, and insider sentiment from thelayoff.com',
+              markdown: markdown.slice(0, 4000),
+              query: 'thelayoff.com direct scrape',
+            });
+            console.log(`TheLayoff.com scrape successful: ${markdown.length} chars`);
+          } else {
+            console.log('TheLayoff.com page had minimal content');
+          }
+        }
+      } catch (e) {
+        console.error('TheLayoff.com scrape failed:', e);
+      }
+    }
+
     console.log(`Total results collected: ${allResults.length}`);
 
     if (creditExhausted) {
