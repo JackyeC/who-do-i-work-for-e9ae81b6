@@ -41,14 +41,14 @@ const CAREER_SECTIONS = [
 ];
 
 const VALUES_ISSUES = [
-  { to: "/values-search?issue=Climate", label: "Climate", icon: Leaf },
-  { to: "/values-search?issue=Labor Rights", label: "Labor Rights", icon: Users },
-  { to: "/values-search?issue=Civil Rights", label: "Civil Rights", icon: Scale },
-  { to: "/values-search?issue=Healthcare", label: "Healthcare", icon: Stethoscope },
-  { to: "/values-search?issue=Gun Policy", label: "Gun Policy", icon: ShieldAlert },
-  { to: "/values-search?issue=Education", label: "Education", icon: GraduationCap },
-  { to: "/values-search?issue=Immigration", label: "Immigration", icon: Globe2 },
-  { to: "/values-search?issue=Consumer Protection", label: "Consumer Protection", icon: ShoppingCart },
+  { to: "/values-search?issue=climate", label: "Climate", icon: Leaf },
+  { to: "/values-search?issue=labor_rights", label: "Labor Rights", icon: Users },
+  { to: "/values-search?issue=civil_rights", label: "Civil Rights", icon: Scale },
+  { to: "/values-search?issue=healthcare", label: "Healthcare", icon: Stethoscope },
+  { to: "/values-search?issue=gun_policy", label: "Gun Policy", icon: ShieldAlert },
+  { to: "/values-search?issue=education", label: "Education", icon: GraduationCap },
+  { to: "/values-search?issue=immigration", label: "Immigration", icon: Globe2 },
+  { to: "/values-search?issue=consumer_protection", label: "Consumer Protection", icon: ShoppingCart },
 ];
 
 const INTELLIGENCE_ITEMS = [
