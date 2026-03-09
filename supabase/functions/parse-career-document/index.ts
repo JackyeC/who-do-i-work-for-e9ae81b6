@@ -6,64 +6,81 @@ const corsHeaders = {
   "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type, x-supabase-client-platform, x-supabase-client-platform-version, x-supabase-client-runtime, x-supabase-client-runtime-version",
 };
 
-async function extractTextFromDocx(arrayBuffer: ArrayBuffer): Promise<string> {
-  // Try mammoth first
-  try {
-    const mammoth = await import("npm:mammoth@1.6.0");
-    const result = await mammoth.default.extractRawText({ arrayBuffer });
-    if (result.value && result.value.trim().length > 50) {
-      return result.value;
-    }
-    console.log("Mammoth returned short text, trying ZIP fallback");
-  } catch (e) {
-    console.log("Mammoth failed, trying ZIP fallback:", e.message);
+function arrayBufferToBase64(buffer: ArrayBuffer): string {
+  const bytes = new Uint8Array(buffer);
+  let binary = "";
+  for (let i = 0; i < bytes.length; i++) {
+    binary += String.fromCharCode(bytes[i]);
+  }
+  return btoa(binary);
+}
+
+async function tryExtractText(fileData: Blob, filename: string): Promise<string> {
+  const ext = filename.split(".").pop()?.toLowerCase() || "";
+
+  if (ext === "txt" || ext === "md") {
+    return await fileData.text();
   }
 
-  // Fallback: manually extract text from DOCX XML using JSZip
-  try {
-    const JSZip = (await import("npm:jszip@3.10.1")).default;
-    const zip = await JSZip.loadAsync(arrayBuffer);
-    const docXml = await zip.file("word/document.xml")?.async("string");
-    if (docXml) {
-      // Strip XML tags to get raw text
-      const text = docXml
-        .replace(/<w:br[^>]*\/>/g, "\n")
-        .replace(/<\/w:p>/g, "\n")
-        .replace(/<[^>]+>/g, "")
-        .replace(/&amp;/g, "&")
-        .replace(/&lt;/g, "<")
-        .replace(/&gt;/g, ">")
-        .replace(/&quot;/g, '"')
-        .replace(/&apos;/g, "'")
-        .replace(/\n{3,}/g, "\n\n")
-        .trim();
-      if (text.length > 50) return text;
+  if (ext === "docx") {
+    try {
+      const mammoth = await import("npm:mammoth@1.6.0");
+      const ab = await fileData.arrayBuffer();
+      const result = await mammoth.default.extractRawText({ arrayBuffer: ab });
+      if (result.value && result.value.trim().length > 100) {
+        return result.value;
+      }
+      console.log("Mammoth returned short text:", result.value?.length || 0, "chars");
+    } catch (e) {
+      console.log("Mammoth failed:", e.message);
     }
-  } catch (e) {
-    console.log("JSZip fallback also failed:", e.message);
+
+    // JSZip fallback
+    try {
+      const JSZip = (await import("npm:jszip@3.10.1")).default;
+      const ab = await fileData.arrayBuffer();
+      const zip = await JSZip.loadAsync(ab);
+      const docXml = await zip.file("word/document.xml")?.async("string");
+      if (docXml) {
+        const text = docXml
+          .replace(/<w:br[^>]*\/>/g, "\n")
+          .replace(/<\/w:p>/g, "\n")
+          .replace(/<[^>]+>/g, "")
+          .replace(/&amp;/g, "&").replace(/&lt;/g, "<").replace(/&gt;/g, ">")
+          .replace(/&quot;/g, '"').replace(/&apos;/g, "'")
+          .replace(/\n{3,}/g, "\n\n").trim();
+        if (text.length > 100) return text;
+        console.log("JSZip returned short text:", text.length, "chars");
+      }
+    } catch (e) {
+      console.log("JSZip failed:", e.message);
+    }
+  }
+
+  if (ext === "pdf") {
+    try {
+      const { default: pdfParse } = await import("npm:pdf-parse/lib/pdf-parse.js");
+      const ab = await fileData.arrayBuffer();
+      const result = await pdfParse(new Uint8Array(ab));
+      if (result.text?.trim().length > 100) return result.text;
+      console.log("pdf-parse returned short text:", result.text?.length || 0, "chars");
+    } catch (e) {
+      console.log("pdf-parse failed:", e.message);
+    }
   }
 
   return "";
 }
 
-async function extractTextFromFile(fileData: Blob, filename: string): Promise<string> {
+function getMimeType(filename: string): string {
   const ext = filename.split(".").pop()?.toLowerCase() || "";
-
-  if (ext === "docx") {
-    const arrayBuffer = await fileData.arrayBuffer();
-    return await extractTextFromDocx(arrayBuffer);
-  } else if (ext === "pdf") {
-    const { default: pdfParse } = await import("npm:pdf-parse/lib/pdf-parse.js");
-    const arrayBuffer = await fileData.arrayBuffer();
-    const buffer = new Uint8Array(arrayBuffer);
-    const result = await pdfParse(buffer);
-    return result.text;
-  } else if (ext === "txt" || ext === "md") {
-    return await fileData.text();
-  } else {
-    const text = await fileData.text();
-    return text.replace(/[^\x20-\x7E\n\r\t]/g, " ").replace(/\s+/g, " ").trim();
-  }
+  const mimes: Record<string, string> = {
+    pdf: "application/pdf",
+    docx: "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+    doc: "application/msword",
+    txt: "text/plain",
+  };
+  return mimes[ext] || "application/octet-stream";
 }
 
 serve(async (req) => {
@@ -105,16 +122,19 @@ serve(async (req) => {
       .download(doc.file_path);
     if (fileError) throw new Error(`File download failed: ${fileError.message}`);
 
-    const documentText = await extractTextFromFile(fileData, doc.original_filename || doc.file_path);
+    const filename = doc.original_filename || doc.file_path;
 
-    console.log("Extracted text length:", documentText.length, "chars");
-    console.log("First 1000 chars:", documentText.slice(0, 1000));
+    // Try text extraction first
+    const documentText = await tryExtractText(fileData, filename);
+    console.log("Text extraction result:", documentText.length, "chars");
 
-    if (documentText.length < 20) {
-      await adminClient.from("user_documents").update({ status: "error", confidence_level: "low" }).eq("id", documentId);
-      return new Response(JSON.stringify({ error: "Insufficient text extracted from document. The file may be image-based or corrupted." }), {
-        status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" },
-      });
+    // Decide how to send to AI: text or raw file as base64
+    const useDirectFile = documentText.length < 100;
+    let fileBase64 = "";
+    if (useDirectFile) {
+      console.log("Text extraction insufficient, sending raw file to Gemini for direct parsing");
+      const ab = await fileData.arrayBuffer();
+      fileBase64 = arrayBufferToBase64(ab);
     }
 
     const docType = doc.document_type;
@@ -160,42 +180,36 @@ serve(async (req) => {
         additionalProperties: false,
       };
     } else if (docType === "resume") {
-      systemPrompt = `You are an expert resume parser. Your job is to extract REAL data from this resume text.
+      systemPrompt = `You are an expert resume parser. Your job is to extract REAL data from this resume.
 
-IMPORTANT: The text may have formatting artifacts from document conversion. Look carefully for:
-- Person's name (usually at the top)
-- Job titles like "Senior Software Engineer", "VP of Marketing", "Data Analyst" etc.
-- Company names and dates of employment
-- Skills, tools, technologies mentioned
-- Industries (Technology, Healthcare, Finance, etc.)
-
-RULES:
-- ONLY return values you can actually find in the text
-- If you find job titles in experience sections, list ALL of them
-- NEVER return "Unknown", "N/A", or placeholder values
+IMPORTANT RULES:
+- Extract the ACTUAL job titles from work experience sections (e.g. "Senior Software Engineer", "VP of Marketing")
+- Extract ALL skills, tools, and technologies mentioned
+- Identify industries based on companies worked at
+- NEVER return "Unknown", "N/A", "Not Specified", or any placeholder
 - If you truly cannot find a field, return null or empty array []
-- Look for patterns like "Title at Company" or "Company - Title" or "Title | Company"`;
+- The document may be a DOCX file sent as binary - parse whatever you can see`;
       toolName = "parse_resume";
       toolParams = {
         type: "object",
         properties: {
-          full_name: { type: ["string", "null"], description: "The person's full name from the resume header" },
-          professional_bio: { type: ["string", "null"], description: "2-3 sentence summary based on their actual experience" },
-          job_titles: { type: "array", items: { type: "string" }, description: "All job titles found in work experience sections" },
-          industries: { type: "array", items: { type: "string" }, description: "Industries they have worked in" },
-          skills: { type: "array", items: { type: "string" }, description: "Technical and soft skills mentioned" },
+          full_name: { type: ["string", "null"], description: "The person's full name" },
+          professional_bio: { type: ["string", "null"], description: "2-3 sentence professional summary" },
+          job_titles: { type: "array", items: { type: "string" }, description: "All job titles from work experience" },
+          industries: { type: "array", items: { type: "string" }, description: "Industries worked in" },
+          skills: { type: "array", items: { type: "string" }, description: "Technical and soft skills" },
           seniority_level: { type: "string", enum: ["entry", "mid", "senior", "executive"] },
-          management_scope: { type: ["string", "null"], description: "Management responsibility if mentioned" },
-          years_experience: { type: ["number", "null"], description: "Estimated total years of experience" },
-          education: { type: "array", items: { type: "string" }, description: "Degrees and institutions" },
-          linkedin_url: { type: ["string", "null"], description: "LinkedIn URL if present" },
+          management_scope: { type: ["string", "null"] },
+          years_experience: { type: ["number", "null"] },
+          education: { type: "array", items: { type: "string" } },
+          linkedin_url: { type: ["string", "null"] },
           overall_confidence: { type: "string", enum: ["high", "medium", "low"] },
         },
         required: ["job_titles", "skills", "overall_confidence"],
         additionalProperties: false,
       };
     } else if (docType === "job_description") {
-      systemPrompt = `You are a job posting analyzer. Extract structured signals from this job description: role title, required skills, salary transparency (whether salary is disclosed), benefits signals, location requirements, hiring technology signals (ATS platforms like Greenhouse, Lever, Workday detected in URLs or text), and any AI hiring tool references.`;
+      systemPrompt = `You are a job posting analyzer. Extract structured signals from this job description.`;
       toolName = "parse_job_description";
       toolParams = {
         type: "object",
@@ -217,6 +231,30 @@ RULES:
       throw new Error("Unsupported document type");
     }
 
+    // Build messages for AI
+    const userContent: any[] = [];
+
+    if (useDirectFile) {
+      // Send the raw file as base64 inline_data for Gemini to read directly
+      userContent.push({
+        type: "file",
+        file: {
+          filename: filename,
+          content_type: getMimeType(filename),
+          data: fileBase64,
+        },
+      });
+      userContent.push({
+        type: "text",
+        text: `This is a ${docType.replace("_", " ")} document. Please parse it and extract all structured data. Do NOT return Unknown or N/A for any field - only return data you actually find, or empty arrays/null.`,
+      });
+    } else {
+      userContent.push({
+        type: "text",
+        text: `Here is the extracted text from the ${docType.replace("_", " ")}. Parse it carefully:\n\n---\n${documentText.slice(0, 15000)}\n---`,
+      });
+    }
+
     const aiResponse = await fetch("https://ai.gateway.lovable.dev/v1/chat/completions", {
       method: "POST",
       headers: { Authorization: `Bearer ${lovableKey}`, "Content-Type": "application/json" },
@@ -224,7 +262,7 @@ RULES:
         model: "google/gemini-2.5-flash",
         messages: [
           { role: "system", content: systemPrompt },
-          { role: "user", content: `Here is the extracted text from the ${docType.replace("_", " ")}. Parse it carefully:\n\n---\n${documentText.slice(0, 15000)}\n---` },
+          { role: "user", content: useDirectFile ? userContent : userContent[0].text },
         ],
         tools: [{ type: "function", function: { name: toolName, description: `Extract structured data from a ${docType.replace("_", " ")}.`, parameters: toolParams } }],
         tool_choice: { type: "function", function: { name: toolName } },
@@ -242,21 +280,26 @@ RULES:
     }
 
     const aiResult = await aiResponse.json();
-    console.log("AI raw response:", JSON.stringify(aiResult, null, 2));
+    console.log("AI response received, choices:", aiResult.choices?.length);
 
     const toolCall = aiResult.choices?.[0]?.message?.tool_calls?.[0];
-    if (!toolCall?.function?.arguments) throw new Error("AI did not return structured output");
+    if (!toolCall?.function?.arguments) {
+      console.error("No tool call in response:", JSON.stringify(aiResult, null, 2));
+      throw new Error("AI did not return structured output");
+    }
 
     const parsed = JSON.parse(toolCall.function.arguments);
     console.log("Parsed result:", JSON.stringify(parsed, null, 2));
 
     // Clean arrays - remove junk values
+    const junkValues = new Set(["unknown", "n/a", "not specified", "none", "null", "not available", "not found", ""]);
     const cleanArray = (arr: any[]) =>
-      (arr || []).filter((v: string) => v && typeof v === "string" && !["unknown", "n/a", "not specified", "none", "null"].includes(v.toLowerCase().trim()));
+      (arr || []).filter((v: string) => v && typeof v === "string" && !junkValues.has(v.toLowerCase().trim()));
 
     if (parsed.job_titles) parsed.job_titles = cleanArray(parsed.job_titles);
     if (parsed.skills) parsed.skills = cleanArray(parsed.skills);
     if (parsed.industries) parsed.industries = cleanArray(parsed.industries);
+    if (parsed.education) parsed.education = cleanArray(parsed.education);
 
     // Update document
     await adminClient.from("user_documents").update({
@@ -304,13 +347,16 @@ RULES:
 
     // Only update profile if we have meaningful data
     const hasMeaningfulData = profileUpdates.job_titles?.length > 0 || profileUpdates.skills?.length > 0 || profileUpdates.industries?.length > 0;
-    
+
     if (hasMeaningfulData || docType !== "resume") {
       if (existing) {
         await adminClient.from("user_career_profile").update(profileUpdates).eq("user_id", user.id);
       } else {
         await adminClient.from("user_career_profile").insert(profileUpdates);
       }
+      console.log("Profile updated with:", Object.keys(profileUpdates).join(", "));
+    } else {
+      console.log("No meaningful data extracted, profile NOT updated");
     }
 
     return new Response(JSON.stringify({ success: true, documentId, parsed }), {
