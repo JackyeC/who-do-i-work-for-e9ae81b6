@@ -2885,6 +2885,72 @@ export type Database = {
           },
         ]
       }
+      policy_reports: {
+        Row: {
+          author_name: string
+          author_slug: string | null
+          confidence_level: string | null
+          created_at: string
+          executive_summary: string | null
+          featured_image_url: string | null
+          full_report_text: string | null
+          hero_quote: string | null
+          id: string
+          issue_categories_json: Json | null
+          primary_issue_category: string | null
+          publication_date: string | null
+          report_type: string
+          slug: string
+          status: string
+          subtitle: string | null
+          title: string
+          updated_at: string
+          verification_status: string | null
+        }
+        Insert: {
+          author_name?: string
+          author_slug?: string | null
+          confidence_level?: string | null
+          created_at?: string
+          executive_summary?: string | null
+          featured_image_url?: string | null
+          full_report_text?: string | null
+          hero_quote?: string | null
+          id?: string
+          issue_categories_json?: Json | null
+          primary_issue_category?: string | null
+          publication_date?: string | null
+          report_type?: string
+          slug: string
+          status?: string
+          subtitle?: string | null
+          title: string
+          updated_at?: string
+          verification_status?: string | null
+        }
+        Update: {
+          author_name?: string
+          author_slug?: string | null
+          confidence_level?: string | null
+          created_at?: string
+          executive_summary?: string | null
+          featured_image_url?: string | null
+          full_report_text?: string | null
+          hero_quote?: string | null
+          id?: string
+          issue_categories_json?: Json | null
+          primary_issue_category?: string | null
+          publication_date?: string | null
+          report_type?: string
+          slug?: string
+          status?: string
+          subtitle?: string | null
+          title?: string
+          updated_at?: string
+          verification_status?: string | null
+        }
+        Relationships: []
+      }
       profiles: {
         Row: {
           ai_transparency_required: boolean | null
@@ -2993,6 +3059,539 @@ export type Database = {
             columns: ["company_id"]
             isOneToOne: false
             referencedRelation: "companies"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      report_actions: {
+        Row: {
+          action_description: string | null
+          action_order: number
+          action_title: string
+          action_type: string
+          created_at: string
+          id: string
+          priority_level: string | null
+          related_entity_id: string | null
+          related_issue_category: string | null
+          report_id: string
+        }
+        Insert: {
+          action_description?: string | null
+          action_order?: number
+          action_title: string
+          action_type?: string
+          created_at?: string
+          id?: string
+          priority_level?: string | null
+          related_entity_id?: string | null
+          related_issue_category?: string | null
+          report_id: string
+        }
+        Update: {
+          action_description?: string | null
+          action_order?: number
+          action_title?: string
+          action_type?: string
+          created_at?: string
+          id?: string
+          priority_level?: string | null
+          related_entity_id?: string | null
+          related_issue_category?: string | null
+          report_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "report_actions_report_id_fkey"
+            columns: ["report_id"]
+            isOneToOne: false
+            referencedRelation: "policy_reports"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      report_claims: {
+        Row: {
+          claim_order: number
+          claim_text: string
+          claim_title: string
+          claim_type: string
+          confidence_level: string | null
+          created_at: string
+          evidence_required: boolean | null
+          id: string
+          issue_category: string | null
+          report_id: string
+          section_id: string | null
+          updated_at: string
+          verification_status: string | null
+        }
+        Insert: {
+          claim_order?: number
+          claim_text: string
+          claim_title: string
+          claim_type?: string
+          confidence_level?: string | null
+          created_at?: string
+          evidence_required?: boolean | null
+          id?: string
+          issue_category?: string | null
+          report_id: string
+          section_id?: string | null
+          updated_at?: string
+          verification_status?: string | null
+        }
+        Update: {
+          claim_order?: number
+          claim_text?: string
+          claim_title?: string
+          claim_type?: string
+          confidence_level?: string | null
+          created_at?: string
+          evidence_required?: boolean | null
+          id?: string
+          issue_category?: string | null
+          report_id?: string
+          section_id?: string | null
+          updated_at?: string
+          verification_status?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "report_claims_report_id_fkey"
+            columns: ["report_id"]
+            isOneToOne: false
+            referencedRelation: "policy_reports"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "report_claims_section_id_fkey"
+            columns: ["section_id"]
+            isOneToOne: false
+            referencedRelation: "report_sections"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      report_company_alignment: {
+        Row: {
+          alignment_summary: string | null
+          alignment_theme: string | null
+          confidence_level: string | null
+          created_at: string
+          dirty_receipt_label: string | null
+          entity_id: string | null
+          entity_name_snapshot: string
+          evidence_note: string | null
+          id: string
+          issue_category: string | null
+          report_id: string
+          updated_at: string
+          verification_status: string | null
+        }
+        Insert: {
+          alignment_summary?: string | null
+          alignment_theme?: string | null
+          confidence_level?: string | null
+          created_at?: string
+          dirty_receipt_label?: string | null
+          entity_id?: string | null
+          entity_name_snapshot: string
+          evidence_note?: string | null
+          id?: string
+          issue_category?: string | null
+          report_id: string
+          updated_at?: string
+          verification_status?: string | null
+        }
+        Update: {
+          alignment_summary?: string | null
+          alignment_theme?: string | null
+          confidence_level?: string | null
+          created_at?: string
+          dirty_receipt_label?: string | null
+          entity_id?: string | null
+          entity_name_snapshot?: string
+          evidence_note?: string | null
+          id?: string
+          issue_category?: string | null
+          report_id?: string
+          updated_at?: string
+          verification_status?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "report_company_alignment_report_id_fkey"
+            columns: ["report_id"]
+            isOneToOne: false
+            referencedRelation: "policy_reports"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      report_entities: {
+        Row: {
+          claim_id: string | null
+          confidence_level: string | null
+          created_at: string
+          entity_id: string | null
+          entity_name_snapshot: string
+          entity_type: string
+          id: string
+          relationship_description: string | null
+          report_id: string
+          section_id: string | null
+        }
+        Insert: {
+          claim_id?: string | null
+          confidence_level?: string | null
+          created_at?: string
+          entity_id?: string | null
+          entity_name_snapshot: string
+          entity_type?: string
+          id?: string
+          relationship_description?: string | null
+          report_id: string
+          section_id?: string | null
+        }
+        Update: {
+          claim_id?: string | null
+          confidence_level?: string | null
+          created_at?: string
+          entity_id?: string | null
+          entity_name_snapshot?: string
+          entity_type?: string
+          id?: string
+          relationship_description?: string | null
+          report_id?: string
+          section_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "report_entities_claim_id_fkey"
+            columns: ["claim_id"]
+            isOneToOne: false
+            referencedRelation: "report_claims"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "report_entities_report_id_fkey"
+            columns: ["report_id"]
+            isOneToOne: false
+            referencedRelation: "policy_reports"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "report_entities_section_id_fkey"
+            columns: ["section_id"]
+            isOneToOne: false
+            referencedRelation: "report_sections"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      report_events: {
+        Row: {
+          confidence_level: string | null
+          created_at: string
+          end_date: string | null
+          event_date: string | null
+          event_description: string | null
+          event_title: string
+          event_type: string
+          id: string
+          issue_category: string | null
+          report_id: string
+          section_id: string | null
+          source_url: string | null
+        }
+        Insert: {
+          confidence_level?: string | null
+          created_at?: string
+          end_date?: string | null
+          event_date?: string | null
+          event_description?: string | null
+          event_title: string
+          event_type?: string
+          id?: string
+          issue_category?: string | null
+          report_id: string
+          section_id?: string | null
+          source_url?: string | null
+        }
+        Update: {
+          confidence_level?: string | null
+          created_at?: string
+          end_date?: string | null
+          event_date?: string | null
+          event_description?: string | null
+          event_title?: string
+          event_type?: string
+          id?: string
+          issue_category?: string | null
+          report_id?: string
+          section_id?: string | null
+          source_url?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "report_events_report_id_fkey"
+            columns: ["report_id"]
+            isOneToOne: false
+            referencedRelation: "policy_reports"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "report_events_section_id_fkey"
+            columns: ["section_id"]
+            isOneToOne: false
+            referencedRelation: "report_sections"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      report_evidence_links: {
+        Row: {
+          claim_id: string | null
+          confidence_score: string | null
+          created_at: string
+          evidence_excerpt: string | null
+          id: string
+          report_id: string
+          section_id: string | null
+          source_date: string | null
+          source_description: string | null
+          source_name: string
+          source_title: string | null
+          source_type: string
+          source_url: string | null
+          verification_status: string | null
+        }
+        Insert: {
+          claim_id?: string | null
+          confidence_score?: string | null
+          created_at?: string
+          evidence_excerpt?: string | null
+          id?: string
+          report_id: string
+          section_id?: string | null
+          source_date?: string | null
+          source_description?: string | null
+          source_name: string
+          source_title?: string | null
+          source_type?: string
+          source_url?: string | null
+          verification_status?: string | null
+        }
+        Update: {
+          claim_id?: string | null
+          confidence_score?: string | null
+          created_at?: string
+          evidence_excerpt?: string | null
+          id?: string
+          report_id?: string
+          section_id?: string | null
+          source_date?: string | null
+          source_description?: string | null
+          source_name?: string
+          source_title?: string | null
+          source_type?: string
+          source_url?: string | null
+          verification_status?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "report_evidence_links_claim_id_fkey"
+            columns: ["claim_id"]
+            isOneToOne: false
+            referencedRelation: "report_claims"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "report_evidence_links_report_id_fkey"
+            columns: ["report_id"]
+            isOneToOne: false
+            referencedRelation: "policy_reports"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "report_evidence_links_section_id_fkey"
+            columns: ["section_id"]
+            isOneToOne: false
+            referencedRelation: "report_sections"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      report_followups: {
+        Row: {
+          created_at: string
+          id: string
+          priority_level: string | null
+          prompt_text: string
+          related_entity_id: string | null
+          related_issue_category: string | null
+          report_id: string
+          section_id: string | null
+          status: string
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          priority_level?: string | null
+          prompt_text: string
+          related_entity_id?: string | null
+          related_issue_category?: string | null
+          report_id: string
+          section_id?: string | null
+          status?: string
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          priority_level?: string | null
+          prompt_text?: string
+          related_entity_id?: string | null
+          related_issue_category?: string | null
+          report_id?: string
+          section_id?: string | null
+          status?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "report_followups_report_id_fkey"
+            columns: ["report_id"]
+            isOneToOne: false
+            referencedRelation: "policy_reports"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "report_followups_section_id_fkey"
+            columns: ["section_id"]
+            isOneToOne: false
+            referencedRelation: "report_sections"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      report_legislation: {
+        Row: {
+          bill_name: string
+          bill_number: string | null
+          created_at: string
+          current_status: string | null
+          description: string | null
+          id: string
+          issue_category: string | null
+          jurisdiction: string | null
+          legislative_body: string | null
+          legislative_session: string | null
+          report_id: string
+          section_id: string | null
+          source_url: string | null
+          updated_at: string
+        }
+        Insert: {
+          bill_name: string
+          bill_number?: string | null
+          created_at?: string
+          current_status?: string | null
+          description?: string | null
+          id?: string
+          issue_category?: string | null
+          jurisdiction?: string | null
+          legislative_body?: string | null
+          legislative_session?: string | null
+          report_id: string
+          section_id?: string | null
+          source_url?: string | null
+          updated_at?: string
+        }
+        Update: {
+          bill_name?: string
+          bill_number?: string | null
+          created_at?: string
+          current_status?: string | null
+          description?: string | null
+          id?: string
+          issue_category?: string | null
+          jurisdiction?: string | null
+          legislative_body?: string | null
+          legislative_session?: string | null
+          report_id?: string
+          section_id?: string | null
+          source_url?: string | null
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "report_legislation_report_id_fkey"
+            columns: ["report_id"]
+            isOneToOne: false
+            referencedRelation: "policy_reports"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "report_legislation_section_id_fkey"
+            columns: ["section_id"]
+            isOneToOne: false
+            referencedRelation: "report_sections"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      report_sections: {
+        Row: {
+          confidence_level: string | null
+          created_at: string
+          full_section_text: string | null
+          id: string
+          issue_category: string | null
+          report_id: string
+          section_order: number
+          section_subtitle: string | null
+          section_summary: string | null
+          section_title: string
+          updated_at: string
+          verification_status: string | null
+        }
+        Insert: {
+          confidence_level?: string | null
+          created_at?: string
+          full_section_text?: string | null
+          id?: string
+          issue_category?: string | null
+          report_id: string
+          section_order?: number
+          section_subtitle?: string | null
+          section_summary?: string | null
+          section_title: string
+          updated_at?: string
+          verification_status?: string | null
+        }
+        Update: {
+          confidence_level?: string | null
+          created_at?: string
+          full_section_text?: string | null
+          id?: string
+          issue_category?: string | null
+          report_id?: string
+          section_order?: number
+          section_subtitle?: string | null
+          section_summary?: string | null
+          section_title?: string
+          updated_at?: string
+          verification_status?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "report_sections_report_id_fkey"
+            columns: ["report_id"]
+            isOneToOne: false
+            referencedRelation: "policy_reports"
             referencedColumns: ["id"]
           },
         ]
