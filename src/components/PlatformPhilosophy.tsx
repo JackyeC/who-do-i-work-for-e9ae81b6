@@ -7,8 +7,9 @@ export function PlatformPhilosophy() {
         <ShieldCheck className="w-4 h-4 text-primary shrink-0 mt-0.5" />
         <div className="space-y-2.5">
           <p className="text-xs text-muted-foreground leading-relaxed">
-            This platform reports signals detected from publicly available data sources. 
-            No conclusions are drawn. Interpretation is left to the user.
+            Recruiting works best when messaging and reality match. This platform surfaces
+            Employer Reality Signals from publicly available records so recruiters and candidates
+            can make informed career decisions. No moral judgments are assigned.
           </p>
           <div className="flex flex-wrap gap-3">
             <ConfidencePill level="Direct Source" color="text-[hsl(var(--civic-green))]" description="Official filing or disclosure" />

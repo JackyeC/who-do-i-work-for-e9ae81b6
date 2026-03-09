@@ -17,12 +17,12 @@ import {
 } from "lucide-react";
 
 const REPORT_TYPE_LABELS: Record<string, string> = {
-  intelligence_report: "Intelligence Report",
+  intelligence_report: "Evidence Receipt",
   weekly_brief: "Weekly Brief",
-  issue_audit: "Issue Audit",
-  company_alignment_report: "Company Alignment",
+  issue_audit: "Signal Audit",
+  company_alignment_report: "Employer Alignment",
   legislative_watch: "Legislative Watch",
-  policy_alert: "Policy Alert",
+  policy_alert: "Policy Signal Report",
 };
 
 const ISSUE_OPTIONS = [
@@ -73,15 +73,15 @@ export default function IntelligenceReports() {
           <div className="container mx-auto px-4 py-16 relative">
             <div className="max-w-3xl mx-auto text-center">
               <Badge variant="secondary" className="mb-4 gap-1.5">
-                <Sparkles className="w-3 h-3" /> {isSignalsView ? "Live Intelligence" : "Investigative Intelligence"}
+                <Sparkles className="w-3 h-3" /> {isSignalsView ? "Employer Reality Signals" : "Evidence Receipts"}
               </Badge>
               <h1 className="text-4xl md:text-5xl font-display font-bold text-foreground tracking-tight mb-4">
-                {isSignalsView ? "Signals This Week" : "Intelligence Reports"}
+                {isSignalsView ? "Employer Signals This Week" : "Evidence Receipts"}
               </h1>
               <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
                 {isSignalsView
-                  ? "Live signals auto-detected from public filings, federal databases, and verified web sources."
-                  : "Structured investigative analysis linking corporate influence, policy campaigns, and legislative action — backed by evidence from public records."}
+                  ? "Employer reality signals auto-detected from public filings, federal databases, and verified web sources."
+                  : "Structured evidence receipts linking employer signals, policy influence, and workforce data — backed by documented public records."}
               </p>
             </div>
           </div>
@@ -96,12 +96,12 @@ export default function IntelligenceReports() {
           <div className="flex flex-col sm:flex-row gap-3 mb-8 max-w-3xl">
             <div className="relative flex-1">
               <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
-              <Input value={searchText} onChange={(e) => setSearchText(e.target.value)} placeholder="Search reports..." className="pl-10" />
+              <Input value={searchText} onChange={(e) => setSearchText(e.target.value)} placeholder="Search evidence receipts..." className="pl-10" />
             </div>
             <Select value={issueFilter} onValueChange={setIssueFilter}>
-              <SelectTrigger className="w-[180px]"><Filter className="w-3.5 h-3.5 mr-1" /><SelectValue placeholder="Issue Area" /></SelectTrigger>
+              <SelectTrigger className="w-[180px]"><Filter className="w-3.5 h-3.5 mr-1" /><SelectValue placeholder="Signal Category" /></SelectTrigger>
               <SelectContent>
-                <SelectItem value="all">All Issues</SelectItem>
+                <SelectItem value="all">All Categories</SelectItem>
                 {ISSUE_OPTIONS.map(i => <SelectItem key={i} value={i}>{i.replace(/_/g, " ")}</SelectItem>)}
               </SelectContent>
             </Select>
@@ -121,9 +121,9 @@ export default function IntelligenceReports() {
           ) : filtered.length === 0 ? (
             <div className="text-center py-16">
               <FileText className="w-10 h-10 text-muted-foreground mx-auto mb-4" />
-              <h3 className="text-lg font-semibold text-foreground mb-2">No reports found</h3>
+              <h3 className="text-lg font-semibold text-foreground mb-2">No evidence receipts found</h3>
               <p className="text-sm text-muted-foreground">
-                {reports?.length === 0 ? "Reports will appear here as they are published." : "Try adjusting your filters."}
+                {reports?.length === 0 ? "Evidence receipts will appear here as they are published." : "Try adjusting your filters."}
               </p>
             </div>
           ) : (

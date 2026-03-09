@@ -21,29 +21,29 @@ export function Footer() {
               </div>
               <div className="flex flex-col leading-none">
                 <span className="font-bold text-primary-foreground font-display text-lg">Who Do I Work For?</span>
-                <span className="text-[8px] text-primary-foreground/40 tracking-[0.2em] uppercase font-semibold mt-0.5">Career Intelligence by Jackye Clayton</span>
+                <span className="text-[8px] text-primary-foreground/40 tracking-[0.2em] uppercase font-semibold mt-0.5">Talent Intelligence by Jackye Clayton</span>
               </div>
             </div>
             <p className="text-sm text-primary-foreground/45 leading-relaxed">
-              Know who you're working for. Know where your career can go. Review public signals about any employer before you accept the offer.
+              Know the company behind the job description. Employer intelligence powered by public signals — helping recruiters and candidates make informed career decisions.
             </p>
           </div>
           <div className="flex flex-col sm:flex-row gap-14">
             <div className="space-y-4">
-              <p className="text-[10px] font-semibold text-primary-foreground/30 uppercase tracking-[0.2em]">Check</p>
+              <p className="text-[10px] font-semibold text-primary-foreground/30 uppercase tracking-[0.2em]">Evaluate</p>
               <div className="space-y-3">
-                <Link to="/check?tab=company" className="block text-sm text-primary-foreground/55 hover:text-primary-foreground/90 transition-colors">Who Do I Work For?</Link>
-                <Link to="/check?tab=offer" className="block text-sm text-primary-foreground/55 hover:text-primary-foreground/90 transition-colors">Is This Offer Right For Me?</Link>
-                <Link to="/check?tab=candidate" className="block text-sm text-primary-foreground/55 hover:text-primary-foreground/90 transition-colors">What Am I Supporting?</Link>
+                <Link to="/check?tab=company" className="block text-sm text-primary-foreground/55 hover:text-primary-foreground/90 transition-colors">Employer Scan</Link>
+                <Link to="/check?tab=offer" className="block text-sm text-primary-foreground/55 hover:text-primary-foreground/90 transition-colors">Offer Analysis</Link>
+                <Link to="/check?tab=candidate" className="block text-sm text-primary-foreground/55 hover:text-primary-foreground/90 transition-colors">Policy Influence Map</Link>
               </div>
             </div>
             <div className="space-y-4">
               <p className="text-[10px] font-semibold text-primary-foreground/30 uppercase tracking-[0.2em]">Explore</p>
               <div className="space-y-3">
-                <Link to="/career-map" className="block text-sm text-primary-foreground/55 hover:text-primary-foreground/90 transition-colors">Where Could My Career Go?</Link>
+                <Link to="/career-map" className="block text-sm text-primary-foreground/55 hover:text-primary-foreground/90 transition-colors">Career Path Explorer</Link>
                 <Link to="/jobs" className="block text-sm text-primary-foreground/55 hover:text-primary-foreground/90 transition-colors">Jobs</Link>
+                <Link to="/recruiting" className="block text-sm text-primary-foreground/55 hover:text-primary-foreground/90 transition-colors">Talent Intelligence</Link>
                 <Link to="/dashboard" className="block text-sm text-primary-foreground/55 hover:text-primary-foreground/90 transition-colors">My Dashboard</Link>
-                <Link to="/methodology" className="block text-sm text-primary-foreground/55 hover:text-primary-foreground/90 transition-colors">Methodology</Link>
               </div>
             </div>
             <div className="space-y-4">
@@ -60,7 +60,7 @@ export function Footer() {
         </div>
         <div className="mt-14 pt-8 border-t border-primary-foreground/[0.06]">
           <p className="text-xs text-primary-foreground/30">
-            © {new Date().getFullYear()} Who Do I Work For? — Career Intelligence by Jackye Clayton. All rights reserved. This tool reports publicly available data for informational purposes only.
+            © {new Date().getFullYear()} Who Do I Work For? — Talent Intelligence by Jackye Clayton. All rights reserved. This platform surfaces publicly available data as employer reality signals for informational purposes only.
           </p>
         </div>
       </div>

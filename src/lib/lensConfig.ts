@@ -12,9 +12,9 @@ export interface LensDefinition {
 export const LENSES: LensDefinition[] = [
   {
     id: "influence",
-    label: "Who Do I Work For?",
-    shortLabel: "Influence",
-    description: "Corporate political influence, PAC activity, lobbying, and government ties.",
+    label: "Who Do We Work For?",
+    shortLabel: "Employer Signals",
+    description: "Policy influence signals, lobbying activity, government contracts, and economic relationships.",
     modulePriority: [
       "money-trail",
       "public-stances",
@@ -39,9 +39,9 @@ export const LENSES: LensDefinition[] = [
   },
   {
     id: "safety",
-    label: "Psychological Safety at Work",
-    shortLabel: "Safety",
-    description: "Workplace equity, hiring technology, benefits, and accountability signals.",
+    label: "Workforce Stability",
+    shortLabel: "Workforce",
+    description: "Workforce signals including hiring technology, benefits, equity, and stability indicators.",
     modulePriority: [
       "talent-signals",
       "warn-tracker",
@@ -67,8 +67,8 @@ export const LENSES: LensDefinition[] = [
   {
     id: "values",
     label: "Values Alignment",
-    shortLabel: "Values",
-    description: "Whether public messaging matches financial and workplace behavior.",
+    shortLabel: "Alignment",
+    description: "Whether employer messaging matches documented financial and workforce behavior.",
     modulePriority: [
       "public-stances",
       "intelligence-scores",

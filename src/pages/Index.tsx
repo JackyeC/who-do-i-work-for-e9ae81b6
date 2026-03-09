@@ -4,7 +4,7 @@ import { motion } from "framer-motion";
 import {
   Search, Shield, Building2, ClipboardCheck, FileText, Map, ArrowRight,
   CheckCircle2, Landmark, Scale, Globe, Users, Lock, BarChart3, BookOpen,
-  Heart, Bot, Network, DollarSign, TrendingUp, ChevronRight, Layers
+  Heart, Bot, Network, DollarSign, TrendingUp, ChevronRight, Layers, Target
 } from "lucide-react";
 import { RecentSignalsFeed } from "@/components/RecentSignalsFeed";
 import { Input } from "@/components/ui/input";
@@ -58,22 +58,24 @@ const Index = () => {
           <motion.div initial="hidden" animate="show" className="max-w-4xl mx-auto text-center">
             <motion.div variants={fadeUp} custom={0} className="inline-flex items-center gap-2.5 bg-card/80 backdrop-blur-sm text-foreground text-caption px-6 py-2.5 rounded-full mb-8 border border-civic-gold-muted/30 shadow-elegant">
               <div className="w-1.5 h-1.5 rounded-full bg-civic-gold animate-pulse-subtle" />
-              <span className="font-semibold tracking-wide">{companyCount.toLocaleString()} companies analyzed</span>
+              <span className="font-semibold tracking-wide">{companyCount.toLocaleString()} employers analyzed</span>
             </motion.div>
 
             <motion.p variants={fadeUp} custom={0.5} className="text-sm uppercase tracking-[0.25em] text-civic-gold font-semibold mb-4">
-              Career Intelligence by Jackye Clayton
+              Talent Intelligence by Jackye Clayton
             </motion.p>
 
             <motion.h1 variants={fadeUp} custom={1} className="text-foreground mb-6 text-balance leading-[1.02] font-display" style={{ fontSize: 'clamp(2.5rem, 5.5vw, 4.5rem)', fontWeight: 800, letterSpacing: '-0.04em' }}>
-              Understand the company<br />
+              Know the company<br />
               <span className="text-civic-gold" style={{ textDecorationLine: 'underline', textDecorationColor: 'hsl(38 72% 50% / 0.25)', textUnderlineOffset: '8px', textDecorationThickness: '3px' }}>
-                behind the job.
+                behind the job description.
               </span>
             </motion.h1>
 
             <motion.p variants={fadeUp} custom={2} className="text-body-lg text-muted-foreground mb-12 max-w-2xl mx-auto leading-relaxed">
-              Career intelligence that helps you evaluate employers, offers, and influence before you decide where to work.
+              Employer intelligence that helps recruiters, candidates, and talent leaders understand 
+              the real signals around any organization — so recruiting messaging can be honest, 
+              transparent, and aligned with candidate expectations.
             </motion.p>
 
             <motion.form variants={fadeUp} custom={3} onSubmit={handleSearch} className="max-w-2xl mx-auto mb-8">
@@ -96,9 +98,9 @@ const Index = () => {
 
             <motion.div variants={fadeUp} custom={4} className="flex flex-wrap items-center justify-center gap-x-8 gap-y-3">
               {[
-                { icon: CheckCircle2, label: "FEC & lobbying filings" },
-                { icon: Landmark, label: "USASpending contracts" },
-                { icon: FileText, label: "SEC & public records" },
+                { icon: CheckCircle2, label: "Policy influence filings" },
+                { icon: Landmark, label: "Government contracts" },
+                { icon: FileText, label: "Workforce & regulatory records" },
               ].map(s => (
                 <span key={s.label} className="flex items-center gap-2 text-caption text-muted-foreground/50">
                   <s.icon className="w-3.5 h-3.5" />
@@ -113,6 +115,66 @@ const Index = () => {
       {/* ─── LIVE INFLUENCE PREVIEW ─── */}
       <LiveInfluencePreview />
 
+      {/* ─── PRODUCT PROMISE ─── */}
+      <section className="section-padding border-t border-border/30 bg-secondary/30">
+        <div className="container mx-auto px-4">
+          <div className="max-w-3xl mx-auto text-center">
+            <div className="gold-line w-16 mx-auto mb-8" />
+            <h2 className="text-headline text-foreground mb-4 font-display">Recruit with evidence, not assumptions.</h2>
+            <p className="text-body-lg text-muted-foreground max-w-2xl mx-auto leading-relaxed mb-6">
+              This platform analyzes publicly available records and documented signals to help 
+              recruiters and candidates understand the broader environment surrounding an employer. 
+              It does not assign moral judgment. It surfaces evidence so people can make informed career decisions.
+            </p>
+            <div className="flex flex-wrap justify-center gap-4 text-xs text-muted-foreground">
+              {["Employer intelligence for modern recruiting", "Talent decisions deserve real signals"].map(t => (
+                <span key={t} className="flex items-center gap-1.5 px-4 py-2 rounded-full bg-card border border-border/40">
+                  <Target className="w-3 h-3 text-civic-gold" />
+                  {t}
+                </span>
+              ))}
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* ─── EMPLOYER REALITY SIGNALS ─── */}
+      <section className="section-padding border-t border-border/30">
+        <div className="container mx-auto px-4">
+          <motion.div initial="hidden" whileInView="show" viewport={{ once: true, margin: "-60px" }} className="max-w-6xl mx-auto">
+            <motion.div variants={fadeUp} custom={0} className="text-center mb-16">
+              <div className="gold-line w-16 mx-auto mb-8" />
+              <h2 className="text-headline text-foreground mb-4 font-display">Employer Reality Signals</h2>
+              <p className="text-body-lg text-muted-foreground max-w-xl mx-auto">Evidence-backed indicators generated from public data that reveal how companies actually operate.</p>
+            </motion.div>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+              {[
+                { icon: Users, title: "Workforce Signals", items: ["Layoffs & WARN notices", "Hiring surges", "Restructuring events", "Workforce reporting"] },
+                { icon: Scale, title: "Policy Signals", items: ["Lobbying disclosures", "PAC activity", "Legislation sponsorship", "Policy positions"] },
+                { icon: DollarSign, title: "Economic Signals", items: ["Government contracts", "Regulatory disputes", "Industry alliances", "Public company disclosures"] },
+                { icon: Building2, title: "Governance Signals", items: ["Leadership structure", "Corporate governance changes", "Human capital disclosures", "Regulatory filings"] },
+              ].map((cat, i) => (
+                <motion.div key={cat.title} variants={fadeUp} custom={i + 1} className="bg-card rounded-2xl border border-border/40 p-6 shadow-luxury">
+                  <div className="w-12 h-12 rounded-xl bg-primary/[0.06] flex items-center justify-center mb-4 border border-primary/[0.06]">
+                    <cat.icon className="w-5 h-5 text-primary" />
+                  </div>
+                  <h3 className="text-base font-semibold text-foreground mb-3 font-display">{cat.title}</h3>
+                  <ul className="space-y-1.5">
+                    {cat.items.map(item => (
+                      <li key={item} className="text-caption text-muted-foreground flex items-center gap-2">
+                        <div className="w-1 h-1 rounded-full bg-civic-gold shrink-0" />
+                        {item}
+                      </li>
+                    ))}
+                  </ul>
+                </motion.div>
+              ))}
+            </div>
+          </motion.div>
+        </div>
+      </section>
+
       {/* ─── FOUR CORE QUESTIONS ─── */}
       <section className="section-padding border-t border-border/30">
         <div className="container mx-auto px-4">
@@ -120,67 +182,63 @@ const Index = () => {
             <motion.div variants={fadeUp} custom={0} className="text-center mb-16">
               <div className="gold-line w-16 mx-auto mb-8" />
               <h2 className="text-headline text-foreground mb-4 font-display">Four Questions. One Platform.</h2>
-              <p className="text-body-lg text-muted-foreground max-w-xl mx-auto">Every tool helps you answer a core career question.</p>
+              <p className="text-body-lg text-muted-foreground max-w-xl mx-auto">Every tool helps answer a core talent intelligence question.</p>
             </motion.div>
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-              {/* Question 1: Who Do I Work For? */}
               <motion.div variants={fadeUp} custom={1} className="bg-card rounded-3xl border border-border/40 p-8 shadow-luxury hover:shadow-elegant hover:border-civic-gold-muted/30 transition-all duration-300 group flex flex-col">
                 <div className="w-14 h-14 rounded-2xl bg-primary/[0.06] flex items-center justify-center mb-6 group-hover:bg-civic-gold/[0.08] transition-colors border border-primary/[0.06]">
                   <Building2 className="w-6 h-6 text-primary group-hover:text-civic-gold transition-colors" />
                 </div>
-                <h3 className="text-xl font-bold text-foreground mb-2 font-display">Who Do I Work For?</h3>
-                <p className="text-sm text-muted-foreground mb-2 font-medium">Investigate the company behind the job.</p>
+                <h3 className="text-xl font-bold text-foreground mb-2 font-display">Who Do We Actually Work For?</h3>
+                <p className="text-sm text-muted-foreground mb-2 font-medium">Understand the employer behind the brand.</p>
                 <p className="text-caption text-muted-foreground leading-relaxed mb-6 flex-1">
-                  Display signals such as hiring technology, worker benefits, worker sentiment, government contracts, political influence, and organizational affiliations.
+                  Public signals suggest how companies operate — including workforce stability, government contracts, policy influence, and organizational affiliations.
                 </p>
                 <Button onClick={() => navigate("/check?tab=company")} className="w-full gap-2 rounded-xl font-semibold">
-                  Check a Company <ArrowRight className="w-4 h-4" />
+                  Scan an Employer <ArrowRight className="w-4 h-4" />
                 </Button>
               </motion.div>
 
-              {/* Question 2: Is This Offer Right For Me? */}
               <motion.div variants={fadeUp} custom={2} className="bg-card rounded-3xl border border-border/40 p-8 shadow-luxury hover:shadow-elegant hover:border-civic-gold-muted/30 transition-all duration-300 group flex flex-col">
                 <div className="w-14 h-14 rounded-2xl bg-primary/[0.06] flex items-center justify-center mb-6 group-hover:bg-civic-gold/[0.08] transition-colors border border-primary/[0.06]">
                   <ClipboardCheck className="w-6 h-6 text-primary group-hover:text-civic-gold transition-colors" />
                 </div>
                 <h3 className="text-xl font-bold text-foreground mb-2 font-display">Is This Offer Right For Me?</h3>
-                <p className="text-sm text-muted-foreground mb-2 font-medium">Upload an offer letter or job description and detect signals in compensation, equity, and contract language.</p>
+                <p className="text-sm text-muted-foreground mb-2 font-medium">Analyze offer terms against employer signals.</p>
                 <p className="text-caption text-muted-foreground leading-relaxed mb-6 flex-1">
-                  Detect key signals including salary structure, equity terms, contract language, and company intelligence context.
+                  Available filings indicate compensation patterns, equity terms, and contract language — matched with employer reality signals.
                 </p>
                 <Button onClick={() => navigate("/check?tab=offer")} variant="outline" className="w-full gap-2 rounded-xl font-semibold">
                   Analyze My Offer <ArrowRight className="w-4 h-4" />
                 </Button>
               </motion.div>
 
-              {/* Question 3: Where Could My Career Go? */}
               <motion.div variants={fadeUp} custom={3} className="bg-card rounded-3xl border border-border/40 p-8 shadow-luxury hover:shadow-elegant hover:border-civic-gold-muted/30 transition-all duration-300 group flex flex-col">
                 <div className="w-14 h-14 rounded-2xl bg-primary/[0.06] flex items-center justify-center mb-6 group-hover:bg-civic-gold/[0.08] transition-colors border border-primary/[0.06]">
                   <Map className="w-6 h-6 text-primary group-hover:text-civic-gold transition-colors" />
                 </div>
                 <h3 className="text-xl font-bold text-foreground mb-2 font-display">Where Could My Career Go?</h3>
-                <p className="text-sm text-muted-foreground mb-2 font-medium">Upload your resume to generate a career profile and explore possible career paths.</p>
+                <p className="text-sm text-muted-foreground mb-2 font-medium">Map career paths aligned with your profile.</p>
                 <p className="text-caption text-muted-foreground leading-relaxed mb-6 flex-1">
-                  Discover career paths, skill gaps, and aligned companies based on your skills and values.
+                  Discover career paths, skill gaps, and aligned employers based on documented workforce and industry signals.
                 </p>
                 <Button onClick={() => navigate("/career-map")} variant="outline" className="w-full gap-2 rounded-xl font-semibold">
                   Explore My Career Map <ArrowRight className="w-4 h-4" />
                 </Button>
               </motion.div>
 
-              {/* Question 4: What Am I Supporting? */}
               <motion.div variants={fadeUp} custom={4} className="bg-card rounded-3xl border border-border/40 p-8 shadow-luxury hover:shadow-elegant hover:border-civic-gold-muted/30 transition-all duration-300 group flex flex-col">
                 <div className="w-14 h-14 rounded-2xl bg-primary/[0.06] flex items-center justify-center mb-6 group-hover:bg-civic-gold/[0.08] transition-colors border border-primary/[0.06]">
                   <Network className="w-6 h-6 text-primary group-hover:text-civic-gold transition-colors" />
                 </div>
-                <h3 className="text-xl font-bold text-foreground mb-2 font-display">What Am I Supporting?</h3>
-                <p className="text-sm text-muted-foreground mb-2 font-medium">Explore financial and influence relationships between companies, executives, PACs, and political recipients.</p>
+                <h3 className="text-xl font-bold text-foreground mb-2 font-display">What Does This Company Prioritize?</h3>
+                <p className="text-sm text-muted-foreground mb-2 font-medium">Explore documented financial and influence relationships.</p>
                 <p className="text-caption text-muted-foreground leading-relaxed mb-6 flex-1">
-                  Investigate connections using publicly available data including government contracts, lobbying activity, and contribution timelines.
+                  Documented records show connections between companies, executives, trade groups, and policy recipients — revealing what companies invest in beyond their products.
                 </p>
                 <Button onClick={() => navigate("/check?tab=candidate")} variant="outline" className="w-full gap-2 rounded-xl font-semibold">
-                  Explore Influence <ArrowRight className="w-4 h-4" />
+                  Explore Employer Signals <ArrowRight className="w-4 h-4" />
                 </Button>
               </motion.div>
             </div>
@@ -200,9 +258,9 @@ const Index = () => {
 
             <div className="grid grid-cols-1 md:grid-cols-3 gap-12 md:gap-10">
               {[
-                { icon: Search, step: "01", title: "Search or Upload", desc: "Enter a company name, upload an offer letter, or import your resume to get started." },
-                { icon: Layers, step: "02", title: "System Analyzes Signals", desc: "We cross-reference FEC filings, lobbying disclosures, government contracts, worker data, and more." },
-                { icon: Network, step: "03", title: "Get Career Intelligence", desc: "See employer signals, offer analysis, and career path recommendations all in one place." },
+                { icon: Search, step: "01", title: "Search or Upload", desc: "Enter an employer name, upload an offer letter, or import your resume to get started." },
+                { icon: Layers, step: "02", title: "System Analyzes Signals", desc: "We cross-reference policy filings, lobbying disclosures, government contracts, workforce data, and regulatory records." },
+                { icon: Network, step: "03", title: "Get Employer Intelligence", desc: "See employer reality signals, offer analysis, and talent alignment insights all in one place." },
               ].map((item, i) => (
                 <motion.div key={item.step} variants={fadeUp} custom={i + 1} className="relative text-center">
                   <div className="inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-card border border-border/40 mb-6 shadow-elevated">
@@ -241,7 +299,7 @@ const Index = () => {
                 { icon: Landmark, label: "USASpending.gov", desc: "Federal contracts, grants, loans, and procurement data" },
                 { icon: Building2, label: "SEC EDGAR Filings", desc: "Public company disclosures, executive compensation, ownership" },
                 { icon: Users, label: "Congressional Records", desc: "Voting records, committee assignments, bill sponsorships" },
-                { icon: Globe, label: "State-Level Sources", desc: "WARN notices, state lobbying registries, pay transparency laws" },
+                { icon: Globe, label: "State-Level Sources", desc: "WARN notices, state lobbying registries, workforce reporting" },
               ].map((item) => (
                 <motion.div key={item.label} variants={stagger.item} className="flex items-start gap-4 p-5 rounded-2xl bg-primary-foreground/[0.04] border border-primary-foreground/[0.06]">
                   <div className="w-11 h-11 rounded-xl bg-primary-foreground/[0.06] flex items-center justify-center shrink-0 border border-primary-foreground/[0.06]">
@@ -278,7 +336,7 @@ const Index = () => {
               Search your employer.
             </h2>
             <p className="text-body-lg text-muted-foreground mb-8">
-              Curious what your company's political influence looks like? You might be surprised.
+              Curious what signals are available about your employer? You might be surprised what public records reveal.
             </p>
             <form
               onSubmit={(e) => {

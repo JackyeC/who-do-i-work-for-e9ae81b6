@@ -19,8 +19,8 @@ import { cn } from "@/lib/utils";
 const EXPLORE_ITEMS = [
   { to: "/search", label: "Search Everything", icon: Search },
   { to: "/add-company", label: "Add Company", icon: PlusCircle },
-  { to: "/browse", label: "Company Directory", icon: Building2 },
-  { to: "/examples", label: "Top Searched Companies", icon: TrendingUp },
+  { to: "/browse", label: "Employer Directory", icon: Building2 },
+  { to: "/examples", label: "Top Searched Employers", icon: TrendingUp },
   { to: "/search-your-employer", label: "Recent Scans", icon: ScanSearch },
 ];
 
@@ -28,7 +28,7 @@ const CAREER_SECTIONS = [
   {
     heading: "Evaluate Employers",
     items: [
-      { to: "/check?tab=company", label: "Employer Scan", icon: Briefcase, desc: "Research who you really work for" },
+      { to: "/check?tab=company", label: "Employer Scan", icon: Briefcase, desc: "Research the company behind the job" },
       { to: "/check?tab=offer", label: "Offer Check", icon: FileCheck, desc: "Evaluate an offer before you accept" },
     ],
   },
@@ -40,7 +40,7 @@ const CAREER_SECTIONS = [
   },
 ];
 
-const VALUES_ISSUES = [
+const EMPLOYER_SIGNAL_ISSUES = [
   { to: "/values-search?issue=climate", label: "Climate", icon: Leaf },
   { to: "/values-search?issue=labor_rights", label: "Labor Rights", icon: Users },
   { to: "/values-search?issue=civil_rights", label: "Civil Rights", icon: Scale },
@@ -55,12 +55,12 @@ const VALUES_ISSUES = [
 ];
 
 const INTELLIGENCE_ITEMS = [
-  { to: "/intelligence", label: "Investigations", icon: FileText },
-  { to: "/intelligence?type=policy_alert", label: "Policy Reports", icon: BarChart3 },
-  { to: "/intelligence?type=weekly_brief", label: "Signals This Week", icon: Eye },
+  { to: "/intelligence", label: "Evidence Receipts", icon: FileText },
+  { to: "/intelligence?type=policy_alert", label: "Policy Signal Reports", icon: BarChart3 },
+  { to: "/intelligence?type=weekly_brief", label: "Employer Signals This Week", icon: Eye },
   { to: "/intelligence?type=legislative_watch", label: "Legislation Watch", icon: Landmark },
-  { to: "/check?tab=candidate", label: "Corporate Influence Map", icon: Network },
-  { to: "/recruiting", label: "Recruiting Intelligence", icon: Target },
+  { to: "/check?tab=candidate", label: "Policy Influence Map", icon: Network },
+  { to: "/recruiting", label: "Talent Intelligence", icon: Target },
 ];
 
 /* ------------------------------------------------------------------ */
@@ -228,7 +228,7 @@ export function Header() {
               Who Do I Work For?
             </span>
             <span className="text-[7px] text-civic-gold tracking-[0.18em] uppercase font-semibold mt-0.5">
-              Career Intelligence by Jackye Clayton
+              Talent Intelligence by Jackye Clayton
             </span>
           </div>
         </Link>
@@ -276,25 +276,25 @@ export function Header() {
               </div>
             ))}
             <DropDivider />
-            <DropItem to="/jobs" label="Job Board" icon={Briefcase} desc="Browse values-aligned jobs" />
+            <DropItem to="/jobs" label="Job Board" icon={Briefcase} desc="Browse aligned jobs" />
           </NavDropdown>
 
-          {/* Values */}
+          {/* Employer Signals */}
           <NavDropdown
-            label="Values"
+            label="Employer Signals"
             icon={Heart}
             active={isActive(["/values-search"])}
           >
             <DropItem
               to="/values-search"
-              label="Values Search"
+              label="Employer Signal Search"
               icon={Heart}
-              desc="Explore companies by issue signals"
+              desc="Explore employers by signal categories"
             />
             <DropDivider />
-            <DropHeading>Issue Areas</DropHeading>
+            <DropHeading>Signal Categories</DropHeading>
             <div className="grid grid-cols-2 gap-0.5">
-              {VALUES_ISSUES.map((item) => (
+              {EMPLOYER_SIGNAL_ISSUES.map((item) => (
                 <DropItem key={item.to} {...item} />
               ))}
             </div>
@@ -335,7 +335,7 @@ export function Header() {
             <Input
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              placeholder="Search companies, leaders, policies…"
+              placeholder="Search employers, leaders, signals…"
               className="h-9 w-[200px] xl:w-[260px] pl-8 text-sm rounded-xl bg-muted/50 border-border/40 focus:w-[280px] xl:focus:w-[320px] transition-all duration-200"
             />
           </form>
@@ -372,7 +372,7 @@ export function Header() {
               <Input
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                placeholder="Search companies, leaders, policies…"
+                placeholder="Search employers, leaders, signals…"
                 className="pl-9 rounded-xl"
               />
             </div>
@@ -398,10 +398,10 @@ export function Header() {
             <MobileLink to="/jobs" label="Job Board" icon={Briefcase} onClick={() => setMobileOpen(false)} />
           </MobileSection>
 
-          {/* Values */}
-          <MobileSection title="Values">
-            <MobileLink to="/values-search" label="Values Search" icon={Heart} onClick={() => setMobileOpen(false)} />
-            {VALUES_ISSUES.map((item) => (
+          {/* Employer Signals */}
+          <MobileSection title="Employer Signals">
+            <MobileLink to="/values-search" label="Employer Signal Search" icon={Heart} onClick={() => setMobileOpen(false)} />
+            {EMPLOYER_SIGNAL_ISSUES.map((item) => (
               <MobileLink key={item.to} {...item} onClick={() => setMobileOpen(false)} />
             ))}
           </MobileSection>

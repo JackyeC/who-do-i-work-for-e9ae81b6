@@ -11,14 +11,14 @@ import {
 import { cn } from "@/lib/utils";
 
 const CATEGORY_CONFIG: Record<string, { label: string; icon: any; color: string }> = {
-  warn_layoffs: { label: "WARN Act Layoff", icon: TrendingDown, color: "text-destructive border-destructive/30 bg-destructive/5" },
-  sec_executive_compensation: { label: "Executive Compensation", icon: DollarSign, color: "text-amber-600 border-amber-500/30 bg-amber-500/5" },
-  sec_insider_trading: { label: "Insider Trading Activity", icon: BarChart3, color: "text-orange-600 border-orange-500/30 bg-orange-500/5" },
-  lobbying: { label: "Lobbying Activity", icon: Scale, color: "text-blue-600 border-blue-500/30 bg-blue-500/5" },
-  pac_spending: { label: "PAC Spending", icon: DollarSign, color: "text-purple-600 border-purple-500/30 bg-purple-500/5" },
-  federal_contracts: { label: "Federal Contract", icon: Briefcase, color: "text-emerald-600 border-emerald-500/30 bg-emerald-500/5" },
-  workplace_enforcement: { label: "Workplace Enforcement", icon: Shield, color: "text-red-600 border-red-500/30 bg-red-500/5" },
-  ai_hiring: { label: "AI Hiring Signal", icon: Eye, color: "text-indigo-600 border-indigo-500/30 bg-indigo-500/5" },
+  warn_layoffs: { label: "Workforce Signal", icon: TrendingDown, color: "text-destructive border-destructive/30 bg-destructive/5" },
+  sec_executive_compensation: { label: "Governance Signal", icon: DollarSign, color: "text-amber-600 border-amber-500/30 bg-amber-500/5" },
+  sec_insider_trading: { label: "Economic Signal", icon: BarChart3, color: "text-orange-600 border-orange-500/30 bg-orange-500/5" },
+  lobbying: { label: "Policy Influence Signal", icon: Scale, color: "text-blue-600 border-blue-500/30 bg-blue-500/5" },
+  pac_spending: { label: "Policy Influence Signal", icon: DollarSign, color: "text-purple-600 border-purple-500/30 bg-purple-500/5" },
+  federal_contracts: { label: "Economic Signal", icon: Briefcase, color: "text-emerald-600 border-emerald-500/30 bg-emerald-500/5" },
+  workplace_enforcement: { label: "Workforce Signal", icon: Shield, color: "text-red-600 border-red-500/30 bg-red-500/5" },
+  ai_hiring: { label: "Workforce Signal", icon: Eye, color: "text-indigo-600 border-indigo-500/30 bg-indigo-500/5" },
 };
 
 function getRelativeTime(dateStr: string) {
@@ -35,7 +35,6 @@ function getRelativeTime(dateStr: string) {
 }
 
 export function SignalsThisWeek() {
-  // Get signals from the last 30 days
   const thirtyDaysAgo = new Date();
   thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
 
@@ -53,7 +52,6 @@ export function SignalsThisWeek() {
     },
   });
 
-  // Get company names for all signal company_ids
   const companyIds = [...new Set((signals || []).map(s => s.company_id))];
   const { data: companies } = useQuery({
     queryKey: ["signal-companies", companyIds.join(",")],
@@ -70,7 +68,6 @@ export function SignalsThisWeek() {
 
   const companyMap = new Map((companies || []).map(c => [c.id, c]));
 
-  // Get WARN notice stats
   const { data: warnStats } = useQuery({
     queryKey: ["warn-stats-week"],
     queryFn: async () => {
@@ -87,7 +84,6 @@ export function SignalsThisWeek() {
   const totalWarnAffected = (warnStats || []).reduce((s: number, n: any) => s + (n.employees_affected || 0), 0);
   const totalWarnNotices = (warnStats || []).length;
 
-  // Group signals by category for summary
   const categoryCounts: Record<string, number> = {};
   (signals || []).forEach(s => {
     categoryCounts[s.signal_category] = (categoryCounts[s.signal_category] || 0) + 1;
@@ -97,7 +93,7 @@ export function SignalsThisWeek() {
     return (
       <div className="text-center py-16">
         <Loader2 className="w-8 h-8 animate-spin text-primary mx-auto" />
-        <p className="text-sm text-muted-foreground mt-3">Loading live signals...</p>
+        <p className="text-sm text-muted-foreground mt-3">Loading employer reality signals...</p>
       </div>
     );
   }
@@ -106,8 +102,8 @@ export function SignalsThisWeek() {
     return (
       <div className="text-center py-16">
         <AlertTriangle className="w-10 h-10 text-muted-foreground mx-auto mb-4" />
-        <h3 className="text-lg font-semibold text-foreground mb-2">No signals detected recently</h3>
-        <p className="text-sm text-muted-foreground">Scan some companies to populate this feed.</p>
+        <h3 className="text-lg font-semibold text-foreground mb-2">No employer signals detected recently</h3>
+        <p className="text-sm text-muted-foreground">Scan some employers to populate this feed.</p>
       </div>
     );
   }
@@ -117,7 +113,7 @@ export function SignalsThisWeek() {
       {/* Live header */}
       <div className="flex items-center gap-3 mb-2">
         <div className="w-2 h-2 rounded-full bg-primary animate-pulse" />
-        <span className="text-xs font-semibold text-primary uppercase tracking-wider">Live Signal Feed</span>
+        <span className="text-xs font-semibold text-primary uppercase tracking-wider">Employer Reality Signal Feed</span>
         <span className="text-xs text-muted-foreground">· {signals.length} signals detected in the last 30 days</span>
       </div>
 
@@ -132,7 +128,7 @@ export function SignalsThisWeek() {
         <Card>
           <CardContent className="p-4 text-center">
             <div className="text-2xl font-bold text-foreground">{companyIds.length}</div>
-            <div className="text-[10px] text-muted-foreground uppercase tracking-wider">Companies Flagged</div>
+            <div className="text-[10px] text-muted-foreground uppercase tracking-wider">Employers Flagged</div>
           </CardContent>
         </Card>
         <Card>
@@ -184,7 +180,7 @@ export function SignalsThisWeek() {
                           {company.name}
                         </Link>
                       ) : (
-                        <span className="text-sm font-semibold text-foreground">Unknown Company</span>
+                        <span className="text-sm font-semibold text-foreground">Unknown Employer</span>
                       )}
                       <Badge variant="outline" className={cn("text-[9px] capitalize", config.color)}>
                         {config.label}
@@ -192,7 +188,7 @@ export function SignalsThisWeek() {
                     </div>
                     <p className="text-sm text-foreground/80 mb-1">{signal.signal_type}</p>
                     {signal.signal_value && (
-                      <p className="text-xs text-muted-foreground">{signal.signal_value}</p>
+                      <p className="text-xs text-muted-foreground">Public signals suggest: {signal.signal_value}</p>
                     )}
                     <div className="flex items-center gap-3 mt-2 text-[10px] text-muted-foreground">
                       <span className="flex items-center gap-1">
@@ -221,8 +217,8 @@ export function SignalsThisWeek() {
       {/* Attribution */}
       <div className="text-center pt-4 border-t border-border">
         <p className="text-[10px] text-muted-foreground">
-          Signals auto-detected from public records: FEC, SEC EDGAR, USASpending, OSHA, state WARN filings, and verified web sources.
-          This platform reports signals — interpretation is left to you.
+          Employer reality signals auto-detected from public records: FEC, SEC EDGAR, USASpending, OSHA, state WARN filings, and verified web sources.
+          This platform surfaces evidence — interpretation is left to you.
         </p>
       </div>
     </div>

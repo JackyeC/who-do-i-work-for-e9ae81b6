@@ -22,17 +22,18 @@ export default function RecruitingIntelligence() {
             </div>
             <div>
               <h1 className="text-3xl font-bold text-foreground font-display">
-                Recruiting Intelligence
+                Talent Intelligence
               </h1>
               <p className="text-muted-foreground text-sm">
-                Talent strategy tools powered by corporate transparency signals
+                Employer reality signals connected to recruiting and talent alignment insights
               </p>
             </div>
           </div>
           <div className="flex flex-wrap gap-2 mt-4">
             <Badge variant="outline" className="text-xs">For Recruiters</Badge>
-            <Badge variant="outline" className="text-xs">EVP Strategy</Badge>
-            <Badge variant="outline" className="text-xs">Talent Market Signals</Badge>
+            <Badge variant="outline" className="text-xs">For Candidates</Badge>
+            <Badge variant="outline" className="text-xs">Employer Signals</Badge>
+            <Badge variant="outline" className="text-xs">Talent Alignment</Badge>
           </div>
         </div>
 
@@ -40,11 +41,11 @@ export default function RecruitingIntelligence() {
           <TabsList className="mb-6">
             <TabsTrigger value="insights" className="gap-1.5">
               <BarChart3 className="w-4 h-4" />
-              Market Insights
+              Market Signals
             </TabsTrigger>
             <TabsTrigger value="evp" className="gap-1.5">
               <Megaphone className="w-4 h-4" />
-              EVP Intelligence
+              Employer Positioning
             </TabsTrigger>
             <TabsTrigger value="personas" className="gap-1.5">
               <Users className="w-4 h-4" />
@@ -70,9 +71,9 @@ export default function RecruitingIntelligence() {
           </p>
           <div className="grid md:grid-cols-3 gap-4">
             {[
-              { title: "Candidates", desc: "Evaluating job offers and employer values alignment", icon: Users },
-              { title: "Recruiters", desc: "Building aligned teams with evidence-based EVP strategy", icon: Target },
-              { title: "Researchers", desc: "Exploring corporate signals and influence networks", icon: BarChart3 },
+              { title: "Candidates", desc: "Evaluating employers with evidence-based signals before accepting offers", icon: Users },
+              { title: "Recruiters", desc: "Building honest messaging aligned with documented employer reality signals", icon: Target },
+              { title: "Talent Leaders", desc: "Understanding workforce stability and candidate alignment signals", icon: BarChart3 },
             ].map((a) => (
               <div key={a.title} className="flex items-start gap-3 p-4 rounded-xl bg-muted/30 border border-border/30">
                 <a.icon className="w-5 h-5 text-primary shrink-0 mt-0.5" />
@@ -84,7 +85,7 @@ export default function RecruitingIntelligence() {
             ))}
           </div>
           <p className="text-[10px] text-muted-foreground mt-4 text-center italic">
-            All data is sourced from public records. No conclusions are drawn. Interpretation is left to the user.
+            All data is sourced from public records. No moral judgments are assigned. Available filings indicate employer signals — interpretation is left to the user.
           </p>
         </div>
       </main>
