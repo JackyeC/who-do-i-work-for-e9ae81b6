@@ -34,6 +34,7 @@ export const LENSES: LensDefinition[] = [
       "promotion-equity",
       "ai-accountability",
       "compensation",
+      "talent-signals",
     ],
   },
   {
