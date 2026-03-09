@@ -432,6 +432,42 @@ export default function CompanyProfile() {
     refetchInterval: pollInterval,
   });
 
+  // Lobbying details from entity_linkages (what bills/agencies they lobbied)
+  const { data: dbLobbyingDetails } = useQuery({
+    queryKey: ["company-lobbying-details", dbCompanyId],
+    queryFn: async () => {
+      const { data } = await (supabase as any)
+        .from("entity_linkages")
+        .select("target_entity_name, description, amount")
+        .eq("company_id", dbCompanyId!)
+        .eq("link_type", "lobbying_on_bill")
+        .order("amount", { ascending: false })
+        .limit(10);
+      return (data || []).map((d: any) => ({
+        target: d.target_entity_name,
+        description: d.description || "",
+        amount: d.amount || 0,
+      }));
+    },
+    enabled: !!dbCompanyId,
+    refetchInterval: pollInterval,
+  });
+
+  // State lobbying issues
+  const { data: dbStateLobbying } = useQuery({
+    queryKey: ["company-state-lobbying", dbCompanyId],
+    queryFn: async () => {
+      const { data } = await supabase
+        .from("company_state_lobbying")
+        .select("issues, state, lobbying_spend")
+        .eq("company_id", dbCompanyId!)
+        .order("lobbying_spend", { ascending: false });
+      return data || [];
+    },
+    enabled: !!dbCompanyId,
+    refetchInterval: pollInterval,
+  });
+
   const hasDetailedData = (dbCandidates?.length || 0) > 0 || (dbExecutives?.length || 0) > 0;
 
   // Values Check signals
@@ -863,8 +899,12 @@ export default function CompanyProfile() {
                   topCandidates={(dbCandidates || [])
                     .sort((a: any, b: any) => (b.amount || 0) - (a.amount || 0))
                     .slice(0, 5)
-                    .map((c: any) => ({ name: c.name, party: c.party, amount: c.amount }))}
-                  topIssuesLobbied={[]}
+                    .map((c: any) => ({ name: c.name, party: c.party, amount: c.amount, state: c.state }))}
+                  lobbyingDetails={dbLobbyingDetails || []}
+                  topIssuesLobbied={
+                    // Flatten state lobbying issues as fallback
+                    (dbStateLobbying || []).flatMap((s: any) => s.issues || []).filter((v: string, i: number, a: string[]) => a.indexOf(v) === i).slice(0, 8)
+                  }
                   darkMoneyConnections={(dbDarkMoney || []).length}
                   flaggedOrgCount={0}
                 />
