@@ -180,6 +180,86 @@ Deno.serve(async (req) => {
     const warnings: string[] = [];
     const errorLog: any[] = [];
 
+    // ─── Phase 0.5: Third-party Enrichment (OpenSecrets) ───
+    console.log(`[intelligence-scan] ═══ Phase 0.5: Third-party Enrichment ═══`);
+
+    for (const mod of ENRICHMENT_MODULES) {
+      console.log(`[intelligence-scan] Running enrichment module: ${mod.key}`);
+      const moduleStartedAt = new Date().toISOString();
+
+      moduleStatuses[mod.key] = { status: 'in_progress', label: mod.label, phase: mod.phase, startedAt: moduleStartedAt };
+      await supabase.from('scan_runs').update({ module_statuses: { ...moduleStatuses } }).eq('id', scanId);
+
+      try {
+        const controller = new AbortController();
+        const timeoutId = setTimeout(() => controller.abort(), 90_000);
+
+        const moduleResp = await fetch(`${supabaseUrl}/functions/v1/${mod.fn}`, {
+          method: 'POST',
+          headers: { 'Authorization': `Bearer ${supabaseKey}`, 'Content-Type': 'application/json' },
+          body: JSON.stringify({ companyId, companyName, searchNames, entityMap }),
+          signal: controller.signal,
+        });
+
+        clearTimeout(timeoutId);
+        const moduleCompletedAt = new Date().toISOString();
+
+        if (moduleResp.ok) {
+          const result = await moduleResp.json();
+          const sScanned = result.sourcesScanned || 0;
+          const sFound = result.signalsFound || 0;
+          totalSources += sScanned;
+          totalSignals += sFound;
+          const resolvedStatus = resolveModuleStatus(sScanned, sFound);
+
+          moduleStatuses[mod.key] = {
+            status: resolvedStatus, label: mod.label, phase: mod.phase,
+            signalsFound: sFound, sourcesScanned: sScanned,
+            startedAt: moduleStartedAt, completedAt: moduleCompletedAt,
+            profileFound: result.profileFound || false,
+            profileUrl: result.profileUrl || null,
+          };
+
+          if (isTrulyCompleted(resolvedStatus)) {
+            trulyCompleted++;
+            if (resolvedStatus === 'completed_with_signals') withSignals++;
+          } else {
+            noSourcesFound++;
+          }
+
+          console.log(`[intelligence-scan] ${mod.key}: ${resolvedStatus}, ${sFound} signals from ${sScanned} sources`);
+        } else {
+          const errText = await moduleResp.text().catch(() => 'Unknown error');
+          failed++;
+          moduleStatuses[mod.key] = {
+            status: 'failed', label: mod.label, phase: mod.phase,
+            error: errText.slice(0, 200), startedAt: moduleStartedAt, completedAt: moduleCompletedAt,
+            sourcesScanned: 0, signalsFound: 0,
+          };
+          warnings.push(`${mod.label}: HTTP ${moduleResp.status}`);
+          errorLog.push({ module: mod.key, status: moduleResp.status, error: errText.slice(0, 500), timestamp: moduleCompletedAt });
+        }
+      } catch (e) {
+        const moduleCompletedAt = new Date().toISOString();
+        failed++;
+        const msg = e instanceof Error ? e.message : 'Unknown error';
+        moduleStatuses[mod.key] = {
+          status: 'failed', label: mod.label, phase: mod.phase,
+          error: msg, startedAt: moduleStartedAt, completedAt: moduleCompletedAt,
+          sourcesScanned: 0, signalsFound: 0,
+        };
+        warnings.push(`${mod.label} failed: ${msg}`);
+        errorLog.push({ module: mod.key, error: msg, timestamp: moduleCompletedAt });
+      }
+
+      await supabase.from('scan_runs').update({
+        modules_completed: trulyCompleted, modules_failed: failed,
+        modules_with_signals: withSignals, modules_with_no_signals: noSourcesFound,
+        total_sources_scanned: totalSources, total_signals_found: totalSignals,
+        module_statuses: { ...moduleStatuses }, warnings, error_log: errorLog,
+      }).eq('id', scanId);
+    }
+
     // ─── Phase 1: Pipeline connectors (structured federal data) ───
     console.log(`[intelligence-scan] ═══ Phase 1: Structured Data Connectors ═══`);
 
