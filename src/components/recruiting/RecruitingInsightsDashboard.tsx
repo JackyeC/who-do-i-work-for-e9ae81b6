@@ -35,6 +35,20 @@ export function RecruitingInsightsDashboard() {
         .sort((a, b) => b.count - a.count)
         .slice(0, 8);
 
+      // Enrich layoffs with company names
+      const layoffData = layoffsRes.data || [];
+      let enrichedLayoffs: any[] = [];
+      if (layoffData.length > 0) {
+        const companyIds = [...new Set(layoffData.map((l: any) => l.company_id))];
+        const { data: companyNames } = await supabase.from("companies").select("id, name").in("id", companyIds);
+        const nameMap = Object.fromEntries((companyNames || []).map((c: any) => [c.id, c.name]));
+        enrichedLayoffs = layoffData.map((l: any) => ({
+          company_name: nameMap[l.company_id] || "Unknown",
+          employees_affected: l.employees_affected,
+          notice_date: l.notice_date,
+        }));
+      }
+
       // Top scored companies as "talent competitors"
       const { data: topCompanies } = await supabase
         .from("companies")
