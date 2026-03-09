@@ -223,13 +223,13 @@ export function ScanCoveragePanel({
                 <Info className="w-3.5 h-3.5 text-muted-foreground mt-0.5 shrink-0" />
                 <p className="text-xs text-muted-foreground">
                   {!hasResults && (
-                    <>No verified influence pipeline evidence was found in the checked sources for this company or its currently known related entities. This does not confirm the absence of influence activity.</>
+                    <>No verified influence pipeline evidence was found in the checked sources for this company or its currently known related entities. We checked available public sources and OpenSecrets organization profiles — partial results will appear whenever evidence is found.</>
                   )}
                   {hasResults && isPartial && (
-                    <>This company has partial verified evidence. Some pipeline categories returned results, while others did not produce confirmed matches yet.</>
+                    <>This company has partial verified evidence. Some pipeline categories returned results, while others did not produce confirmed matches yet. Third-party summaries may be available for cross-reference.</>
                   )}
                   {hasResults && !isPartial && (
-                    <>Evidence was found across checked data sources. Results are linked to the primary company entity through verified corporate relationships.</>
+                    <>Evidence was found across checked data sources. Results are linked to the primary company entity through verified corporate relationships and cross-checked against primary records where possible.</>
                   )}
                 </p>
               </div>
