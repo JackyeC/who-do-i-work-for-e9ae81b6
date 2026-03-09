@@ -213,11 +213,14 @@ serve(async (req) => {
     const { data: existing } = await adminClient.from("user_career_profile").select("*").eq("user_id", user.id).single();
     const profileUpdates: Record<string, any> = { user_id: user.id, auto_generated: true };
 
+    const cleanArray = (arr: string[]) =>
+      (arr || []).filter((v) => v && !["unknown", "n/a", "not specified"].includes(v.toLowerCase().trim()));
+
     if (docType === "resume") {
-      profileUpdates.skills = parsed.skills || [];
-      profileUpdates.industries = parsed.industries || [];
+      profileUpdates.skills = cleanArray(parsed.skills);
+      profileUpdates.industries = cleanArray(parsed.industries);
       profileUpdates.seniority_level = parsed.seniority_level || null;
-      profileUpdates.job_titles = parsed.job_titles || [];
+      profileUpdates.job_titles = cleanArray(parsed.job_titles);
       profileUpdates.management_scope = parsed.management_scope || null;
     } else if (docType === "offer_letter") {
       // Extract salary info from offer to enrich profile
