@@ -371,19 +371,25 @@ Deno.serve(async (req) => {
               return 'I'; // Default to Independent for unknown — satisfies DB constraint
             }
 
-            // Try FEC committee lookup for unknowns (batch up to 10 unique committees)
-            const unknownCommittees = [...allCommitteeNames].filter(n => inferPartyFromName(n) === 'I').slice(0, 10);
-            for (const committeeName of unknownCommittees) {
+            // Try FEC committee lookup for ALL unknowns to get accurate party
+            const unknownCommittees = [...allCommitteeNames].filter(n => inferPartyFromName(n) === 'I');
+            console.log(`[sync-openfec] Looking up party for ${unknownCommittees.length} committees via FEC...`);
+            for (const committeeName of unknownCommittees.slice(0, 25)) {
               try {
-                const searchData = await fecFetch('/committees/', { q: committeeName, per_page: '1' }, apiKey);
-                const result = searchData.results?.[0];
-                if (result?.party_full) {
-                  const pf = result.party_full.toUpperCase();
-                  committeePartyCache.set(committeeName.toUpperCase(), 
-                    pf.includes('REPUBLICAN') ? 'R' : pf.includes('DEMOCRAT') ? 'D' : 'I'
-                  );
+                const searchData = await fecFetch('/committees/', { q: committeeName, per_page: '3' }, apiKey);
+                // Find best match by comparing names
+                const results = searchData.results || [];
+                for (const result of results) {
+                  if (result?.party_full) {
+                    const pf = result.party_full.toUpperCase();
+                    const party = pf.includes('REPUBLICAN') ? 'R' : pf.includes('DEMOCRAT') ? 'D' : null;
+                    if (party) {
+                      committeePartyCache.set(committeeName.toUpperCase(), party);
+                      break;
+                    }
+                  }
                 }
-                await new Promise(r => setTimeout(r, 200));
+                await new Promise(r => setTimeout(r, 150));
               } catch { /* skip failed lookups */ }
             }
 
