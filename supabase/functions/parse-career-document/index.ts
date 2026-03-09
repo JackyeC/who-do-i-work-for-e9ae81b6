@@ -196,10 +196,13 @@ serve(async (req) => {
     }
 
     const aiResult = await aiResponse.json();
+    console.log("AI Response:", JSON.stringify(aiResult, null, 2));
+    
     const toolCall = aiResult.choices?.[0]?.message?.tool_calls?.[0];
     if (!toolCall?.function?.arguments) throw new Error("AI did not return structured output");
 
     const parsed = JSON.parse(toolCall.function.arguments);
+    console.log("Parsed result:", JSON.stringify(parsed, null, 2));
 
     // Update document with parsed signals
     await adminClient.from("user_documents").update({
