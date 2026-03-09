@@ -1480,7 +1480,10 @@ export default function CompanyProfile() {
                 <RotateCcw className="w-5 h-5 text-primary" />
                 Revolving Door
               </h2>
-              <p className="text-sm text-muted-foreground mb-4">Connections between company leadership and government positions.</p>
+              <p className="text-sm text-muted-foreground mb-1">Connections between company leadership and government positions.</p>
+              <p className="text-xs text-muted-foreground mb-4 leading-relaxed bg-muted/50 p-3 rounded-lg border border-border">
+                <strong className="text-foreground">What does "revolving door" mean?</strong> It's when people move back and forth between government roles (like regulators, congressional staff, or agency officials) and private-sector jobs at the companies they used to oversee. It's legal, but it means the company may have insider knowledge of — and personal relationships within — the agencies that regulate it. This can create advantages in lobbying, contracts, and regulatory outcomes.
+              </p>
               <div className="space-y-3">
                 {company.revolvingDoor.map((entry, i) => (
                   <Card key={i}>
@@ -1499,6 +1502,11 @@ export default function CompanyProfile() {
                             </div>
                           </div>
                           <p className="text-xs text-muted-foreground mt-2">{entry.relevance}</p>
+                          <div className="flex flex-wrap gap-2 mt-2">
+                            <a href={`https://www.linkedin.com/search/results/people/?keywords=${encodeURIComponent(entry.person)}`} target="_blank" rel="noopener noreferrer" className="text-[10px] text-primary hover:underline">LinkedIn →</a>
+                            <span className="text-muted-foreground text-[10px]">·</span>
+                            <a href={`https://www.google.com/search?q=${encodeURIComponent(`"${entry.person}" revolving door`)}`} target="_blank" rel="noopener noreferrer" className="text-[10px] text-primary hover:underline">Research →</a>
+                          </div>
                         </div>
                         <Badge variant="outline" className={cn("text-xs shrink-0", entry.confidence === "direct" ? "text-civic-green border-civic-green/30" : entry.confidence === "inferred" ? "text-civic-yellow border-civic-yellow/30" : "text-civic-red border-civic-red/30")}>
                           {entry.confidence}
