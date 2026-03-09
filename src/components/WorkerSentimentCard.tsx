@@ -225,7 +225,30 @@ export function WorkerSentimentCard({ companyName, dbCompanyId }: WorkerSentimen
               </div>
             )}
 
-            {/* Top Complaints */}
+            {/* Layoff Rumors & Restructuring Signals */}
+            {result.layoffRumors && result.layoffRumors.length > 0 && (
+              <div className="space-y-2">
+                <h4 className="text-sm font-semibold flex items-center gap-1.5 text-destructive">
+                   <AlertTriangle className="w-4 h-4" />
+                   Layoff & Restructuring Signals ({result.layoffRumors.length})
+                </h4>
+                <div className="space-y-1.5">
+                  {result.layoffRumors.map((r, i) => (
+                    <div key={i} className="rounded-md border border-border bg-card p-2.5 space-y-1">
+                      <p className="text-sm">{r.rumor}</p>
+                      <div className="flex items-center gap-2">
+                        <Badge variant="outline" className="text-xs">{r.source}</Badge>
+                        <Badge variant="outline" className="text-xs">{r.recency}</Badge>
+                        <Badge className={severityColors[r.credibility === 'high' ? 'high' : r.credibility === 'medium' ? 'medium' : 'low'] || severityColors.low} variant="outline">
+                          {r.credibility} credibility
+                        </Badge>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
+
             {result.topComplaints.length > 0 && (
               <div className="space-y-2">
                 <h4 className="text-sm font-semibold flex items-center gap-1.5 text-amber-600 dark:text-amber-400">
