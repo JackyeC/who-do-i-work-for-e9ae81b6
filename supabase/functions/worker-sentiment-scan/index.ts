@@ -317,6 +317,7 @@ Only include items you find evidence for. Return valid JSON only.`;
         careerOpportunities: aiAnalysis.careerOpportunities,
         topComplaints: aiAnalysis.topComplaints || [],
         topPraises: aiAnalysis.topPraises || [],
+        layoffRumors: aiAnalysis.layoffRumors || [],
         hypocrisyFlags: aiAnalysis.hypocrisyFlags || [],
         summary: aiAnalysis.summary,
         sentiment: aiAnalysis.sentiment,
