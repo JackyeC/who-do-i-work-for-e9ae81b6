@@ -2279,11 +2279,14 @@ export type Database = {
           created_at: string
           description: string | null
           entity_id: string
+          entity_name_snapshot: string | null
           id: string
           issue_category: string
+          signal_subtype: string | null
           signal_type: string
           source_dataset: string
           source_url: string | null
+          transaction_date: string | null
         }
         Insert: {
           amount?: number | null
@@ -2291,11 +2294,14 @@ export type Database = {
           created_at?: string
           description?: string | null
           entity_id: string
+          entity_name_snapshot?: string | null
           id?: string
           issue_category: string
+          signal_subtype?: string | null
           signal_type?: string
           source_dataset: string
           source_url?: string | null
+          transaction_date?: string | null
         }
         Update: {
           amount?: number | null
@@ -2303,11 +2309,14 @@ export type Database = {
           created_at?: string
           description?: string | null
           entity_id?: string
+          entity_name_snapshot?: string | null
           id?: string
           issue_category?: string
+          signal_subtype?: string | null
           signal_type?: string
           source_dataset?: string
           source_url?: string | null
+          transaction_date?: string | null
         }
         Relationships: [
           {
