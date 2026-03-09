@@ -1,0 +1,2 @@
+UPDATE user_documents SET status = 'error' WHERE status = 'parsing';
+UPDATE user_career_profile SET job_titles = '{}', skills = '{}', industries = '{}', preferred_titles = '{}', auto_generated = false WHERE user_id = '33b168fc-c90d-4e31-a8bd-beb8984d338e';
