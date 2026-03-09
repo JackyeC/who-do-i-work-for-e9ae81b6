@@ -156,7 +156,7 @@ export function Header() {
             <Link to="/search" onClick={() => setMobileOpen(false)}>
               <Button size="default" variant="outline" className="gap-1.5 w-full rounded-xl">
                 <Search className="w-4 h-4" />
-                Search
+                Search Everything
               </Button>
             </Link>
             {!user && (
