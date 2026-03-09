@@ -10,7 +10,7 @@ interface CompanySEOProps {
 
 export function useCompanySEO({ name, industry, state, description, slug }: CompanySEOProps) {
   useEffect(() => {
-    const title = `${name} Influence Profile | Who Do I Work For?`;
+    const title = `Company Influence Profile: ${name} | Who Do I Work For?`;
     const desc = description
       ? `${description.slice(0, 120)}… Review political spending, lobbying, and influence signals.`
       : `Review ${name}'s political spending, lobbying activity, executive donations, and influence network. ${industry} company based in ${state}.`;
