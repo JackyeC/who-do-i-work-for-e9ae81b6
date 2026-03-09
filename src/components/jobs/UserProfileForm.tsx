@@ -62,6 +62,63 @@ export function UserProfileForm() {
     setForm((f) => ({ ...f, skills: f.skills.filter((s) => s !== skill) }));
   };
 
+  const handleFileUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file || !user) return;
+
+    if (file.size > 20 * 1024 * 1024) {
+      toast({ title: "File too large", description: "Maximum file size is 20MB", variant: "destructive" });
+      return;
+    }
+
+    setUploading(true);
+    try {
+      const filePath = `${user.id}/${Date.now()}_${file.name}`;
+      const { error: uploadError } = await supabase.storage.from("career_docs").upload(filePath, file);
+      if (uploadError) throw uploadError;
+
+      const { data: doc, error: docError } = await supabase
+        .from("user_documents")
+        .insert({
+          user_id: user.id,
+          document_type: "resume",
+          file_path: filePath,
+          original_filename: file.name,
+        })
+        .select()
+        .single();
+
+      if (docError) throw docError;
+
+      const { data: parseData, error: parseError } = await supabase.functions.invoke("parse-career-document", {
+        body: { documentId: doc.id },
+      });
+
+      if (parseError) throw parseError;
+
+      const { data: profile } = await supabase
+        .from("user_career_profile")
+        .select("*")
+        .eq("user_id", user.id)
+        .single();
+
+      if (profile) {
+        setForm((f) => ({
+          ...f,
+          skills: profile.skills || f.skills,
+          target_job_titles: (profile.job_titles || []).join(", ") || f.target_job_titles,
+        }));
+      }
+
+      toast({ title: "Resume parsed successfully", description: "Profile fields have been auto-filled" });
+    } catch (error: any) {
+      console.error("Upload error:", error);
+      toast({ title: "Upload failed", description: error.message, variant: "destructive" });
+    } finally {
+      setUploading(false);
+    }
+  };
+
   const handleSave = async () => {
     if (!user) return;
     setSaving(true);
