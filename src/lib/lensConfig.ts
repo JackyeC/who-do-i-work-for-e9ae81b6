@@ -88,6 +88,7 @@ export const LENSES: LensDefinition[] = [
       "roi-pipeline",
       "influence-chain",
       "agency-contracts",
+      "talent-signals",
     ],
   },
 ];
