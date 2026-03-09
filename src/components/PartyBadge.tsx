@@ -88,27 +88,43 @@ interface PartyBadgeProps {
 const PARTY_EXPLANATIONS: Record<string, { title: string; description: string }> = {
   D: {
     title: "Democrat",
-    description: "This recipient is affiliated with the Democratic Party. Your company's PAC or executives donated money to this Democratic candidate or committee. Democrats generally support expanded healthcare, environmental regulation, labor protections, and social programs.",
+    description: "This person is a Democrat. The company (or its executives) gave money to this Democrat. Democrats generally push for things like affordable healthcare, environmental rules, worker protections, and social programs.",
   },
   R: {
     title: "Republican",
-    description: "This recipient is affiliated with the Republican Party. Your company's PAC or executives donated money to this Republican candidate or committee. Republicans generally support lower taxes, deregulation, free-market policies, and limited government.",
+    description: "This person is a Republican. The company (or its executives) gave money to this Republican. Republicans generally push for things like lower taxes, fewer government rules on businesses, free markets, and smaller government.",
   },
   I: {
     title: "Independent",
-    description: "This recipient is not affiliated with either major party. Independent candidates run outside the two-party system.",
+    description: "This person doesn't belong to either major party. They run on their own.",
+  },
+  L: {
+    title: "Libertarian",
+    description: "This person is a Libertarian. Libertarians generally push for minimal government involvement in both personal and economic matters.",
+  },
+  G: {
+    title: "Green Party",
+    description: "This person is in the Green Party. The Green Party generally pushes for environmental protection, social justice, and grassroots democracy.",
   },
   "D-aligned": {
-    title: "Democrat-Aligned",
-    description: "This PAC or committee primarily supports Democratic candidates or causes, based on its spending patterns.",
+    title: "Leans Democrat",
+    description: "This group mostly gives money to Democrats or supports Democratic causes. We figured this out by looking at where their money goes.",
   },
   "R-aligned": {
-    title: "Republican-Aligned",
-    description: "This PAC or committee primarily supports Republican candidates or causes, based on its spending patterns.",
+    title: "Leans Republican",
+    description: "This group mostly gives money to Republicans or supports Republican causes. We figured this out by looking at where their money goes.",
+  },
+  Mixed: {
+    title: "Gives to Both Sides",
+    description: "This group gives money to both Democrats and Republicans. Many companies do this to have influence no matter who wins.",
   },
   PAC: {
-    title: "Political Action Committee",
-    description: "A PAC pools contributions from members to donate to candidates or parties. This entity is a committee, not an individual candidate.",
+    title: "Political Fund (PAC)",
+    description: "A PAC is like a money pool. A company's employees put money in, and the PAC decides which politicians to give it to. It's one of the main ways companies influence politics.",
+  },
+  ORG: {
+    title: "Organization",
+    description: "This is a group or nonprofit — not a person. It might be an advocacy group, industry association, or think tank.",
   },
 };
 
