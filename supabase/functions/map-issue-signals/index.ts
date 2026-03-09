@@ -396,6 +396,71 @@ Deno.serve(async (req) => {
       }
     }
 
+    // ─── Source 7: Company description keyword scan ───
+    if (companyDescription || companyIndustry) {
+      const searchText = `${companyDescription} ${companyIndustry}`;
+      const matches = matchIssues(searchText);
+      for (const match of matches) {
+        signals.push(buildSignal(
+          match.category,
+          match.matchedKeywords,
+          'company_description',
+          'company_profile',
+          `Company profile mentions: ${match.matchedKeywords.join(', ')}`,
+          null,
+          null,
+          null,
+        ));
+      }
+    }
+
+    // ─── Source 8: Signal scan records ───
+    const { data: signalScans } = await supabase
+      .from('company_signal_scans')
+      .select('signal_category, signal_type, signal_value, raw_excerpt, source_url')
+      .eq('company_id', companyId);
+
+    for (const scan of signalScans || []) {
+      const searchText = [scan.signal_category, scan.signal_type, scan.signal_value, scan.raw_excerpt].filter(Boolean).join(' ');
+      const matches = matchIssues(searchText);
+      for (const match of matches) {
+        signals.push(buildSignal(
+          match.category,
+          match.matchedKeywords,
+          'signal_scan',
+          'company_signal_scan',
+          `Signal scan: ${match.matchedKeywords.join(', ')} in ${scan.signal_category}`,
+          scan.source_url || null,
+          null,
+          null,
+        ));
+      }
+    }
+
+    // ─── Source 9: Known corporate gun policy actions ───
+    // Match company name against reference database of documented corporate gun policy positions
+    if (companyName) {
+      const lowerName = companyName.toLowerCase();
+      for (const entry of KNOWN_GUN_POLICY_ACTIONS) {
+        const matched = entry.companies.some(alias => lowerName.includes(alias) || alias.includes(lowerName));
+        if (matched) {
+          signals.push({
+            entity_id: companyId,
+            entity_name_snapshot: companyName,
+            issue_category: 'gun_policy',
+            signal_type: 'corporate_policy_action',
+            signal_subtype: entry.subtype,
+            source_dataset: 'known_corporate_actions',
+            description: entry.action,
+            source_url: null,
+            confidence_score: 'high',
+            amount: null,
+            transaction_date: null,
+          });
+        }
+      }
+    }
+
     console.log(`[map-issue-signals] Found ${signals.length} issue signals for company ${companyId}`);
 
     if (signals.length > 0) {
