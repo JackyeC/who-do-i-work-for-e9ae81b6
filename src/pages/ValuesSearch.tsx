@@ -322,7 +322,12 @@ export default function ValuesSearch() {
                                             {new Intl.NumberFormat("en-US", { style: "currency", currency: "USD", maximumFractionDigits: 0 }).format(signal.amount)}
                                           </span>
                                         )}
-                                        <div className="flex items-center gap-2 mt-0.5">
+                                        <div className="flex items-center gap-2 mt-0.5 flex-wrap">
+                                          {signal.signal_subtype && GUN_POLICY_SUBTYPES[signal.signal_subtype] && (
+                                            <Badge variant="outline" className="text-[10px] px-1.5 py-0 border-primary/30 text-primary">
+                                              {GUN_POLICY_SUBTYPES[signal.signal_subtype].label}
+                                            </Badge>
+                                          )}
                                           <span className="text-xs text-muted-foreground capitalize">
                                             {signal.source_dataset?.replace(/_/g, " ")}
                                           </span>
