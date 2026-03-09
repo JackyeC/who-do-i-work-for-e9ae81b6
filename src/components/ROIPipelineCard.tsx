@@ -65,7 +65,7 @@ function derivePipelineState(
 
 function ConfidenceDot({ confidence }: { confidence?: number }) {
   const level = confidence ?? 0;
-  const color = level >= 0.8 ? "bg-primary" : level >= 0.5 ? "bg-yellow-500" : "bg-destructive";
+  const color = level >= 0.8 ? "bg-primary" : level >= 0.5 ? "bg-accent-foreground" : "bg-destructive";
   const label = level >= 0.8 ? "High" : level >= 0.5 ? "Medium" : "Low";
   return (
     <div className="flex items-center gap-1" title={`${label} confidence (${(level * 100).toFixed(0)}%)`}>
