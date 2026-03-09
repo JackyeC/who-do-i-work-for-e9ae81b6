@@ -110,7 +110,7 @@ Deno.serve(async (req) => {
     }).catch((e) => console.error(`WARNTracker scrape failed:`, e));
 
     // Run all searches in parallel
-    await Promise.allSettled([...stateSearches, ...generalSearches, ...aggregatorSearches]);
+    await Promise.allSettled([...stateSearches, ...generalSearches, ...aggregatorSearches, warnTrackerScrape]);
 
     if (allResults.length === 0) {
       console.log("No WARN results found from any source");
