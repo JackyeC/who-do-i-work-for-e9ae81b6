@@ -1,0 +1,1 @@
+ALTER TABLE public.offer_letter_reviews ALTER COLUMN company_id DROP NOT NULL;
