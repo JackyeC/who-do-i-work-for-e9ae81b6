@@ -254,7 +254,7 @@ export function ROIPipelineCard({
               No verified pipeline data yet
             </h3>
             <p className="text-xs text-muted-foreground max-w-sm mb-5">
-              No verified pipeline data has been generated for this company yet. Run a scan to check political spending, influence connections, and government benefits.
+              No verified pipeline data has been generated for this company yet. We checked available public sources and will show partial results whenever evidence is found.
             </p>
             {onTriggerScan && (
               <Button onClick={onTriggerScan} className="gap-2">
