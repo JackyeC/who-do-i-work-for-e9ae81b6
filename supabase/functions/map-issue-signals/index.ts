@@ -1,6 +1,6 @@
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
-  'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
+  'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type, x-supabase-client-platform, x-supabase-client-platform-version, x-supabase-client-runtime, x-supabase-client-runtime-version',
 };
 
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2';
@@ -79,6 +79,46 @@ const ISSUE_KEYWORDS: Record<string, string[]> = {
   ],
 };
 
+// ─── Congress.gov policy_area → issue category mapping ───
+// These are the official Congress.gov policy area names from bill metadata.
+// This lets us generate high-confidence signals from LEGISLATION data
+// instead of relying solely on keyword matching.
+const POLICY_AREA_TO_ISSUE: Record<string, string[]> = {
+  // Direct 1:1 mappings
+  'Labor and Employment': ['labor_rights'],
+  'Environmental Protection': ['climate'],
+  'Energy': ['climate'],
+  'Civil Rights and Liberties, Minority Issues': ['civil_rights', 'lgbtq_rights', 'voting_rights'],
+  'Immigration': ['immigration'],
+  'Education': ['education'],
+  'Health': ['healthcare', 'reproductive_rights'],
+  'Consumer Protection': ['consumer_protection', 'consumer_protection'],
+  'Crime and Law Enforcement': ['gun_policy'],
+  'Commerce': ['consumer_protection'],
+  'Finance and Financial Sector': ['consumer_protection'],
+  'Taxation': ['labor_rights'],
+  'Social Welfare': ['labor_rights', 'healthcare'],
+  'Public Lands and Natural Resources': ['climate'],
+  'Water Resources Development': ['climate'],
+  'Science, Technology, Communications': ['consumer_protection'],
+  'Women': ['reproductive_rights', 'civil_rights'],
+  'Families': ['reproductive_rights', 'healthcare'],
+  'Armed Forces and National Security': [],
+  'International Affairs': ['immigration'],
+  'Government Operations and Politics': ['voting_rights'],
+  'Housing and Community Development': ['civil_rights'],
+  'Agriculture and Food': ['consumer_protection'],
+  'Transportation and Public Works': [],
+  'Native Americans': ['civil_rights'],
+  'Sports and Recreation': [],
+  'Animals': [],
+  'Arts, Culture, Religion': [],
+  'Economics and Public Finance': [],
+  'Emergency Management': [],
+  'Foreign Trade and International Finance': [],
+  'Law': [],
+};
+
 // ─── Gun policy org-to-subtype classification ───
 const GUN_RIGHTS_ORGS = [
   'national rifle association', 'nra', 'second amendment foundation',
@@ -102,23 +142,17 @@ const FIREARM_INDUSTRY_KEYWORDS = [
 ];
 
 // ─── Known corporate gun policy actions (public record) ───
-// These are well-documented, publicly reported corporate actions.
-// Source: Giffords Impact Network, corporate press releases, SEC filings, news reports
 const KNOWN_GUN_POLICY_ACTIONS: { companies: string[]; action: string; subtype: string; source: string }[] = [
-  // Retailers - product restrictions
   { companies: ["dick's sporting goods", "dicks sporting goods"], action: "Stopped selling assault-style weapons and raised purchase age to 21 (2018)", subtype: "gun_control_signal", source: "Corporate press release / SEC filing" },
   { companies: ["walmart"], action: "Raised minimum age for gun purchases to 21 and discontinued sales of assault-style rifle ammunition (2019)", subtype: "gun_control_signal", source: "Corporate press release" },
   { companies: ["levi strauss", "levi's"], action: "Created $1M fund for gun violence prevention groups and joined Everytown Business Leaders for Gun Safety", subtype: "gun_control_signal", source: "Giffords Impact Network" },
   { companies: ["toms", "toms shoes"], action: "Donated $5M to gun violence prevention organizations", subtype: "gun_control_signal", source: "Corporate press release" },
   { companies: ["rei"], action: "Suspended orders from Vista Outdoor (ammunition/firearms parent company) over gun policy", subtype: "gun_control_signal", source: "Corporate press release" },
-  // Financial institutions
   { companies: ["citigroup", "citi"], action: "Requires retail clients to restrict gun sales to those under 21 and mandate background checks", subtype: "gun_control_signal", source: "Corporate policy announcement" },
   { companies: ["bank of america"], action: "Stopped lending to manufacturers of military-style rifles for civilian use", subtype: "gun_control_signal", source: "Corporate press release" },
   { companies: ["amalgamated bank"], action: "Active supporter of gun safety legislation and Giffords Impact Network member", subtype: "gun_control_signal", source: "Giffords Impact Network" },
-  // Technology
   { companies: ["salesforce"], action: "Banned customers from using Salesforce Commerce Cloud to sell certain weapons and accessories", subtype: "gun_control_signal", source: "Salesforce Acceptable Use Policy" },
   { companies: ["uber"], action: "Prohibits riders and drivers from carrying firearms during trips", subtype: "gun_control_signal", source: "Corporate policy" },
-  // Open carry prohibitions (retailers)
   { companies: ["albertsons"], action: "Requested customers not openly carry firearms in stores", subtype: "gun_control_signal", source: "Corporate statement" },
   { companies: ["aldi"], action: "Prohibits open carry of firearms in stores", subtype: "gun_control_signal", source: "Corporate policy" },
   { companies: ["cvs", "cvs health"], action: "Requested customers not openly carry firearms in stores", subtype: "gun_control_signal", source: "Corporate statement" },
@@ -128,11 +162,9 @@ const KNOWN_GUN_POLICY_ACTIONS: { companies: string[]; action: string; subtype: 
   { companies: ["walgreens"], action: "Requested customers not openly carry firearms in stores", subtype: "gun_control_signal", source: "Corporate statement" },
   { companies: ["wegmans"], action: "Requested customers not openly carry firearms in stores", subtype: "gun_control_signal", source: "Corporate policy" },
   { companies: ["subway"], action: "Prohibits open carry of firearms in restaurants", subtype: "gun_control_signal", source: "Corporate policy" },
-  // Healthcare / Other
   { companies: ["northwell health"], action: "Major healthcare system actively treating gun violence as a public health crisis", subtype: "gun_control_signal", source: "Corporate program announcement" },
   { companies: ["royal caribbean", "royal caribbean cruises"], action: "Signed letters supporting background check legislation", subtype: "gun_control_signal", source: "Giffords Impact Network" },
   { companies: ["lyft"], action: "Prohibits firearms during rides and donated to March for Our Lives", subtype: "gun_control_signal", source: "Corporate policy / press release" },
-  // Gun rights / pro-2A companies
   { companies: ["vista outdoor"], action: "Major firearms and ammunition manufacturer (Federal, CCI, Speer brands)", subtype: "firearm_industry_signal", source: "SEC filings" },
   { companies: ["smith & wesson", "smith and wesson"], action: "Major firearms manufacturer, member of NSSF", subtype: "firearm_industry_signal", source: "SEC filings" },
   { companies: ["sturm ruger", "ruger"], action: "Major firearms manufacturer", subtype: "firearm_industry_signal", source: "SEC filings" },
@@ -143,23 +175,13 @@ const KNOWN_GUN_POLICY_ACTIONS: { companies: string[]; action: string; subtype: 
 
 function classifyGunPolicySubtype(text: string, signalType: string): string {
   const lower = text.toLowerCase();
-
   if (signalType === 'lobbying_issue' || lower.includes('lobbying') || lower.includes('lobbied'))
     return 'lobbying_signal';
-
-  for (const org of GUN_RIGHTS_ORGS) {
-    if (lower.includes(org)) return 'gun_rights_signal';
-  }
-  for (const org of GUN_CONTROL_ORGS) {
-    if (lower.includes(org)) return 'gun_control_signal';
-  }
-  for (const kw of FIREARM_INDUSTRY_KEYWORDS) {
-    if (lower.includes(kw)) return 'firearm_industry_signal';
-  }
-
+  for (const org of GUN_RIGHTS_ORGS) { if (lower.includes(org)) return 'gun_rights_signal'; }
+  for (const org of GUN_CONTROL_ORGS) { if (lower.includes(org)) return 'gun_control_signal'; }
+  for (const kw of FIREARM_INDUSTRY_KEYWORDS) { if (lower.includes(kw)) return 'firearm_industry_signal'; }
   if (signalType === 'pac_donation' || lower.includes('donation') || lower.includes('pac'))
     return 'legislator_support_signal';
-
   return 'advocacy_signal';
 }
 
@@ -180,7 +202,6 @@ interface IssueSignal {
 function matchIssues(text: string): { category: string; matchedKeywords: string[] }[] {
   const lower = text.toLowerCase();
   const matches: { category: string; matchedKeywords: string[] }[] = [];
-
   for (const [category, keywords] of Object.entries(ISSUE_KEYWORDS)) {
     const matched = keywords.filter(kw => lower.includes(kw));
     if (matched.length > 0) {
@@ -196,6 +217,9 @@ function determineConfidence(matchCount: number, sourceType: string): string {
   }
   if (sourceType === 'government_contract') {
     return matchCount >= 2 ? 'high' : 'medium';
+  }
+  if (sourceType === 'congress_legislation') {
+    return 'high'; // Direct from Congress.gov — highest confidence
   }
   return matchCount >= 3 ? 'medium' : 'low';
 }
@@ -219,7 +243,6 @@ Deno.serve(async (req) => {
 
     console.log(`[map-issue-signals] Starting issue mapping for company ${companyId}`);
 
-    // Fetch company name + description for snapshot
     const { data: companyRow } = await supabase
       .from('companies')
       .select('name, description, industry')
@@ -231,7 +254,6 @@ Deno.serve(async (req) => {
 
     const signals: IssueSignal[] = [];
 
-    // Helper to build signal with gun subtype
     function buildSignal(
       category: string,
       matchedKeywords: string[],
@@ -261,10 +283,138 @@ Deno.serve(async (req) => {
       };
     }
 
-    // ─── Source 1: Entity linkages ───
+    // ═══════════════════════════════════════════════════════════
+    // PRIMARY SOURCE 1: Congress.gov Legislation (HIGHEST priority)
+    // PAC recipients → their sponsored bills → policy areas → issue categories
+    // This is the "follow the money to the legislation" pipeline.
+    // ═══════════════════════════════════════════════════════════
+    const { data: congressSignals } = await supabase
+      .from('company_signal_scans')
+      .select('signal_type, signal_value, raw_excerpt, source_url')
+      .eq('company_id', companyId)
+      .eq('signal_category', 'congress_cross_reference');
+
+    let legislationSignalsGenerated = 0;
+
+    for (const scan of congressSignals || []) {
+      if (!scan.raw_excerpt) continue;
+
+      let parsed: any;
+      try { parsed = typeof scan.raw_excerpt === 'string' ? JSON.parse(scan.raw_excerpt) : scan.raw_excerpt; }
+      catch { continue; }
+
+      // Extract policy areas from PAC recipients' sponsored legislation
+      if (parsed.policy_area_focus) {
+        for (const policyItem of parsed.policy_area_focus) {
+          const policyArea = policyItem.area;
+          const issueCategories = POLICY_AREA_TO_ISSUE[policyArea] || [];
+
+          for (const issueCategory of issueCategories) {
+            signals.push({
+              entity_id: companyId,
+              entity_name_snapshot: companyName,
+              issue_category: issueCategory,
+              signal_type: 'legislation_sponsorship',
+              signal_subtype: 'pac_recipient_legislation',
+              source_dataset: 'congress_legislation',
+              description: `${policyItem.count} bills in "${policyArea}" sponsored by politicians who received ${companyName} PAC funds`,
+              source_url: 'https://www.congress.gov',
+              confidence_score: 'high',
+              amount: null,
+              transaction_date: null,
+            });
+            legislationSignalsGenerated++;
+          }
+        }
+      }
+
+      // Extract individual bills with policy areas from top recipients
+      if (parsed.top_recipients) {
+        for (const recipient of parsed.top_recipients) {
+          const recipientName = recipient.name;
+          const recipientParty = recipient.party;
+          const recipientAmount = recipient.amount;
+          const recentBill = recipient.recent_bill;
+
+          // Check bill title against keyword mappings
+          if (recentBill) {
+            const billMatches = matchIssues(recentBill);
+            for (const match of billMatches) {
+              signals.push({
+                entity_id: companyId,
+                entity_name_snapshot: companyName,
+                issue_category: match.category,
+                signal_type: 'legislation_sponsorship',
+                signal_subtype: 'pac_recipient_bill',
+                source_dataset: 'congress_legislation',
+                description: `${recipientName} (${recipientParty}) received $${recipientAmount?.toLocaleString()} from ${companyName} PAC and sponsors: "${recentBill}"`,
+                source_url: `https://www.congress.gov/search?q=${encodeURIComponent(recentBill)}&searchResultViewType=expanded`,
+                confidence_score: 'high',
+                amount: recipientAmount || null,
+                transaction_date: null,
+              });
+              legislationSignalsGenerated++;
+            }
+          }
+
+          // Map committees to issue areas via keyword matching
+          if (recipient.committees) {
+            for (const committee of recipient.committees) {
+              const committeeMatches = matchIssues(committee);
+              for (const match of committeeMatches) {
+                signals.push({
+                  entity_id: companyId,
+                  entity_name_snapshot: companyName,
+                  issue_category: match.category,
+                  signal_type: 'committee_assignment',
+                  signal_subtype: 'pac_recipient_committee',
+                  source_dataset: 'congress_legislation',
+                  description: `${recipientName} (${recipientParty}) sits on "${committee}" — received $${recipientAmount?.toLocaleString()} from ${companyName} PAC`,
+                  source_url: `https://www.congress.gov/member/${recipientName.toLowerCase().replace(/[^a-z]/g, '-')}`,
+                  confidence_score: 'high',
+                  amount: recipientAmount || null,
+                  transaction_date: null,
+                });
+                legislationSignalsGenerated++;
+              }
+            }
+          }
+        }
+      }
+
+      // Worker-relevant legislation signal (already computed by sync-congress-votes)
+      if (scan.signal_type === 'worker_relevant_legislation' && parsed.bills) {
+        for (const bill of parsed.bills) {
+          const policyIssues = POLICY_AREA_TO_ISSUE[bill.policy_area] || [];
+          for (const issueCategory of policyIssues) {
+            signals.push({
+              entity_id: companyId,
+              entity_name_snapshot: companyName,
+              issue_category: issueCategory,
+              signal_type: 'legislation_sponsorship',
+              signal_subtype: 'worker_relevant_bill',
+              source_dataset: 'congress_legislation',
+              description: `${bill.sponsor} (${bill.party}) sponsors "${bill.bill_title}" — received ${companyName} PAC funds`,
+              source_url: `https://www.congress.gov/search?q=${encodeURIComponent(bill.bill_title)}`,
+              confidence_score: 'high',
+              amount: null,
+              transaction_date: null,
+            });
+            legislationSignalsGenerated++;
+          }
+        }
+      }
+    }
+
+    console.log(`[map-issue-signals] Congress.gov legislation: ${legislationSignalsGenerated} high-confidence signals`);
+
+    // ═══════════════════════════════════════════════════════════
+    // PRIMARY SOURCE 2: FEC Campaign Finance (entity_linkages)
+    // Direct PAC disbursements and individual donations
+    // ═══════════════════════════════════════════════════════════
     const { data: linkages } = await supabase
       .from('entity_linkages')
-      .select('source_entity_name, target_entity_name, link_type, description, amount, source_url, confidence_score')
+      .select('source_entity_name, target_entity_name, link_type, description, amount, source_citation, confidence_score')
       .eq('company_id', companyId);
 
     for (const link of linkages || []) {
@@ -275,6 +425,15 @@ Deno.serve(async (req) => {
         : link.link_type?.includes('contract') ? 'government_contract'
         : 'entity_linkage';
 
+      // Extract source URL from citation JSON
+      let sourceUrl: string | null = null;
+      if (link.source_citation) {
+        try {
+          const citations = typeof link.source_citation === 'string' ? JSON.parse(link.source_citation) : link.source_citation;
+          if (Array.isArray(citations) && citations[0]?.url) sourceUrl = citations[0].url;
+        } catch { /* ignore */ }
+      }
+
       for (const match of matches) {
         signals.push(buildSignal(
           match.category,
@@ -282,14 +441,16 @@ Deno.serve(async (req) => {
           'keyword_match',
           sourceDataset,
           `${match.matchedKeywords.join(', ')} found in: ${link.description || link.target_entity_name || 'linkage record'}`,
-          link.source_url || null,
+          sourceUrl,
           link.amount || null,
           null,
         ));
       }
     }
 
-    // ─── Source 2: Lobbying records ───
+    // ═══════════════════════════════════════════════════════════
+    // PRIMARY SOURCE 3: Senate LDA Lobbying Records
+    // ═══════════════════════════════════════════════════════════
     const { data: lobbying } = await supabase
       .from('company_state_lobbying')
       .select('issues, lobbying_spend, state, year, source')
@@ -312,7 +473,41 @@ Deno.serve(async (req) => {
       }
     }
 
-    // ─── Source 3: Ideology flags ───
+    // ═══════════════════════════════════════════════════════════
+    // PRIMARY SOURCE 4: USASpending Government Contracts
+    // ═══════════════════════════════════════════════════════════
+    const { data: contracts } = await supabase
+      .from('company_agency_contracts')
+      .select('agency_name, contract_description, contract_value, controversy_description, source, contract_id_external')
+      .eq('company_id', companyId);
+
+    for (const contract of contracts || []) {
+      const searchText = [contract.agency_name, contract.contract_description, contract.controversy_description].filter(Boolean).join(' ');
+      const matches = matchIssues(searchText);
+      // Build evidence URL to USASpending
+      const contractUrl = contract.contract_id_external
+        ? `https://www.usaspending.gov/search/?hash=&keyword=${encodeURIComponent(contract.contract_id_external)}`
+        : contract.source || null;
+
+      for (const match of matches) {
+        signals.push(buildSignal(
+          match.category,
+          match.matchedKeywords,
+          'government_contract',
+          'government_contract',
+          `Contract with ${contract.agency_name}: ${match.matchedKeywords.join(', ')}`,
+          contractUrl,
+          contract.contract_value || null,
+          null,
+        ));
+      }
+    }
+
+    // ═══════════════════════════════════════════════════════════
+    // SECONDARY SOURCES (enrichment, not primary evidence)
+    // ═══════════════════════════════════════════════════════════
+
+    // ─── Ideology flags ───
     const { data: ideologyFlags } = await supabase
       .from('company_ideology_flags')
       .select('org_name, category, description, amount, evidence_url, severity')
@@ -335,7 +530,7 @@ Deno.serve(async (req) => {
       }
     }
 
-    // ─── Source 4: PAC candidates ───
+    // ─── PAC candidates ───
     const { data: candidates } = await supabase
       .from('company_candidates')
       .select('name, party, amount, flag_reason, donation_type')
@@ -351,37 +546,14 @@ Deno.serve(async (req) => {
           'pac_donation',
           'campaign_finance',
           `PAC donation to ${cand.name} (${cand.party}): ${match.matchedKeywords.join(', ')}`,
-          null,
+          `https://www.fec.gov/data/receipts/?contributor_name=${encodeURIComponent(companyName || '')}`,
           cand.amount || null,
           null,
         ));
       }
     }
 
-    // ─── Source 5: Government contracts ───
-    const { data: contracts } = await supabase
-      .from('company_agency_contracts')
-      .select('agency_name, contract_description, contract_value, controversy_description, source')
-      .eq('company_id', companyId);
-
-    for (const contract of contracts || []) {
-      const searchText = [contract.agency_name, contract.contract_description, contract.controversy_description].filter(Boolean).join(' ');
-      const matches = matchIssues(searchText);
-      for (const match of matches) {
-        signals.push(buildSignal(
-          match.category,
-          match.matchedKeywords,
-          'government_contract',
-          'government_contract',
-          `Contract with ${contract.agency_name}: ${match.matchedKeywords.join(', ')}`,
-          contract.source || null,
-          contract.contract_value || null,
-          null,
-        ));
-      }
-    }
-
-    // ─── Source 6: Public stances ───
+    // ─── Public stances ───
     const { data: stances } = await supabase
       .from('company_public_stances')
       .select('topic, public_position, spending_reality, gap')
@@ -404,7 +576,7 @@ Deno.serve(async (req) => {
       }
     }
 
-    // ─── Source 7: Company description keyword scan ───
+    // ─── Company description keyword scan ───
     if (companyDescription || companyIndustry) {
       const searchText = `${companyDescription} ${companyIndustry}`;
       const matches = matchIssues(searchText);
@@ -422,11 +594,12 @@ Deno.serve(async (req) => {
       }
     }
 
-    // ─── Source 8: Signal scan records ───
+    // ─── Signal scan records (non-congress — those are handled above) ───
     const { data: signalScans } = await supabase
       .from('company_signal_scans')
       .select('signal_category, signal_type, signal_value, raw_excerpt, source_url')
-      .eq('company_id', companyId);
+      .eq('company_id', companyId)
+      .neq('signal_category', 'congress_cross_reference'); // Already processed above
 
     for (const scan of signalScans || []) {
       const searchText = [scan.signal_category, scan.signal_type, scan.signal_value, scan.raw_excerpt].filter(Boolean).join(' ');
@@ -445,8 +618,7 @@ Deno.serve(async (req) => {
       }
     }
 
-    // ─── Source 9: Known corporate gun policy actions ───
-    // Match company name against reference database of documented corporate gun policy positions
+    // ─── Known corporate gun policy actions ───
     if (companyName) {
       const lowerName = companyName.toLowerCase();
       for (const entry of KNOWN_GUN_POLICY_ACTIONS) {
@@ -469,7 +641,7 @@ Deno.serve(async (req) => {
       }
     }
 
-    console.log(`[map-issue-signals] Found ${signals.length} issue signals for company ${companyId}`);
+    console.log(`[map-issue-signals] Total signals: ${signals.length} (${legislationSignalsGenerated} from legislation)`);
 
     if (signals.length > 0) {
       await supabase.from('issue_signals').delete().eq('entity_id', companyId);
@@ -502,10 +674,18 @@ Deno.serve(async (req) => {
       categoryCounts[s.issue_category] = (categoryCounts[s.issue_category] || 0) + 1;
     }
 
+    // Count by source for transparency
+    const sourceCounts: Record<string, number> = {};
+    for (const s of signals) {
+      sourceCounts[s.source_dataset] = (sourceCounts[s.source_dataset] || 0) + 1;
+    }
+
     return new Response(JSON.stringify({
       success: true,
       signalsFound: signals.length,
       categoryCounts,
+      sourceCounts,
+      legislationSignals: legislationSignalsGenerated,
     }), { headers: { ...corsHeaders, 'Content-Type': 'application/json' } });
 
   } catch (error) {
