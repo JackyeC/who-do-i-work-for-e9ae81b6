@@ -35,14 +35,15 @@ export function TalentRiskSignals({ companyId, companyName }: Props) {
       setLoading(true);
       const detected: RiskSignal[] = [];
 
-      const [warnRes, ideologyRes, aiHrRes, sentimentRes, revDoorRes, darkMoneyRes, valuesRes] = await Promise.all([
+      const [warnRes, ideologyRes, aiHrRes, sentimentRes, revDoorRes, darkMoneyRes, valuesRes, valuesEvidenceRes] = await Promise.all([
         supabase.from("company_warn_notices").select("id, employees_affected, notice_date, source_url, layoff_type").eq("company_id", companyId).order("notice_date", { ascending: false }).limit(5),
         supabase.from("company_ideology_flags").select("id, category, description, severity, evidence_url").eq("company_id", companyId).limit(5),
         supabase.from("ai_hr_signals").select("id, signal_type, signal_category, source_url").eq("company_id", companyId).limit(3),
         supabase.from("company_worker_sentiment").select("id, sentiment, ai_summary, top_complaints").eq("company_id", companyId).limit(1),
         supabase.from("company_revolving_door").select("id, person, new_role").eq("company_id", companyId).limit(3),
         supabase.from("company_dark_money").select("id, name, source").eq("company_id", companyId).limit(2),
-        supabase.from("company_values_signals").select("id, value_category, signal_type, severity, evidence_url").eq("company_id", companyId).eq("severity", "high").limit(5),
+        supabase.from("company_values_signals").select("id, value_category, signal_type, severity, evidence_url, signal_direction, signal_label, values_lens").eq("company_id", companyId).eq("severity", "high").limit(5),
+        (supabase as any).from("company_values_evidence").select("id, values_lens, signal_type, evidence_summary, source_url, confidence_level").eq("entity_id", companyId).limit(10),
       ]);
 
       // Workforce restructuring
