@@ -133,6 +133,40 @@ Deno.serve(async (req) => {
       companySignals[cid] = signals;
     }
 
+    // Build values alignment map per company
+    const companyValuesAlignment: Record<string, number> = {};
+    if (valuesProfile) {
+      for (const cid of companyIds) {
+        const companyValuesCats = (valuesSignalsRes.data || [])
+          .filter((s: any) => s.company_id === cid)
+          .map((s: any) => s.value_category);
+
+        const valuesMap: Record<string, string[]> = {
+          pay_equity_weight: ['pay_transparency', 'salary_transparency'],
+          worker_protections_weight: ['worker_benefits'],
+          ai_transparency_weight: ['ai_transparency'],
+          benefits_quality_weight: ['worker_benefits'],
+          dei_commitment_weight: ['anti_discrimination', 'lgbtq_inclusive'],
+          environmental_commitment_weight: ['environmental'],
+          veteran_support_weight: ['veteran_support'],
+        };
+
+        let valueMatches = 0;
+        let valueTotal = 0;
+
+        Object.entries(valuesMap).forEach(([weightKey, categories]) => {
+          const weight = (valuesProfile as any)[weightKey] || 50;
+          if (weight > 20) {
+            valueTotal += weight;
+            const hasMatch = categories.some(c => companyValuesCats.includes(c));
+            if (hasMatch) valueMatches += weight;
+          }
+        });
+
+        companyValuesAlignment[cid] = valueTotal > 0 ? Math.round((valueMatches / valueTotal) * 100) : 50;
+      }
+    }
+
     // 6. Score jobs with career profile matching
     const prefKeys = (preferences || []).filter((p: any) => p.is_required).map((p: any) => p.signal_key);
     const hasProfile = userSkills.length > 0 || userTitles.length > 0;
