@@ -341,6 +341,10 @@ export function CompanyIntelligenceScanCard({ companyId, companyName }: Props) {
         totalSignals={latestScan?.total_signals_found || 0}
         totalSources={latestScan?.total_sources_scanned || 0}
         onClose={() => setShowOverlay(false)}
+        onForceRescan={() => {
+          setShowOverlay(false);
+          runScan(true);
+        }}
       />
     </Card>
   );
