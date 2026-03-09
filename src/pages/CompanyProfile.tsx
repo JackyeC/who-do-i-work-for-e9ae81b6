@@ -732,7 +732,7 @@ export default function CompanyProfile() {
                   pacSpending: dbCompany.total_pac_spending || 0,
                   executiveDonations: dbExecutives?.reduce((sum: number, e: any) => sum + (e.total_donations || 0), 0) || 0,
                   lobbyingSpend: dbCompany.lobbying_spend || 0,
-                  tradeAssociationCount: 0,
+                  tradeAssociationCount: dbTradeAssociations?.length || 0,
                   publicStanceCount: dbPublicStances?.length || 0,
                   hasDetailedData: hasDetailedData,
                 }}
