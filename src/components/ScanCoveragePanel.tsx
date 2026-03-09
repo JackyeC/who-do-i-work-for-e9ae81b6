@@ -167,7 +167,7 @@ export function ScanCoveragePanel({
                       <div key={i} className="flex items-center gap-2 p-2 rounded-md bg-muted/50 border border-border">
                         <div className={cn(
                           "w-2 h-2 rounded-full",
-                          rel.confidence >= 0.8 ? "bg-primary" : rel.confidence >= 0.5 ? "bg-yellow-500" : "bg-muted-foreground"
+                          rel.confidence >= 0.8 ? "bg-primary" : rel.confidence >= 0.5 ? "bg-accent-foreground" : "bg-muted-foreground"
                         )} />
                         <span className="text-xs text-foreground truncate">{rel.name}</span>
                         <Badge variant="outline" className="text-[10px] ml-auto shrink-0">
