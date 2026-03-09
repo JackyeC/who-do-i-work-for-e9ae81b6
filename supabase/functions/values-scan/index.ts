@@ -55,8 +55,49 @@ const VALUE_CATEGORIES = [
     searchTerms: ["HRC 100 score", "domestic partner benefits", "gender-affirming care", "Pride sponsor", "LGBTQ+ ERG", "transgender-inclusive benefits"],
     sourceHints: ["HRC Corporate Equality Index", "benefits page", "press release"],
   },
+  {
+    key: "internal_promotion",
+    label: "Internal Promotion / Promotes From Within",
+    searchTerms: ["internal promotion rate", "promote from within", "internal mobility program", "career ladder", "succession planning", "internal hire percentage", "employee development program", "tuition reimbursement"],
+    sourceHints: ["careers page", "annual report", "Glassdoor reviews", "press release"],
+  },
+  {
+    key: "women_leadership",
+    label: "Women in Leadership & Promotions",
+    searchTerms: ["women in leadership", "female executives", "women promoted", "women on board", "gender parity", "women ERG", "women's leadership program", "SHE Summit", "Catalyst award"],
+    sourceHints: ["diversity report", "proxy statement", "ESG filing", "press release"],
+  },
+  {
+    key: "minority_advancement",
+    label: "Minority Advancement & Representation",
+    searchTerms: ["minority leadership", "Black executives", "Hispanic leadership", "people of color promoted", "racial equity audit", "minority representation", "diverse leadership pipeline", "BIPOC advancement"],
+    sourceHints: ["EEO-1 data", "diversity report", "press release", "ESG filing"],
+  },
+  {
+    key: "deaf_accessibility",
+    label: "Deaf & Hard-of-Hearing Inclusion",
+    searchTerms: ["deaf employees", "ASL interpreter", "hearing accessibility", "deaf-friendly workplace", "captioning provided", "deaf hiring program", "National Association of the Deaf", "Communication Access Realtime Translation"],
+    sourceHints: ["careers page", "accessibility page", "press release", "disability inclusion report"],
+  },
+  {
+    key: "learning_disability",
+    label: "Learning Disability & Neurodivergent Support",
+    searchTerms: ["neurodiversity program", "dyslexia accommodations", "learning disability support", "autism hiring", "neurodivergent inclusion", "ADHD accommodations", "disability ERG", "accommodations policy"],
+    sourceHints: ["careers page", "disability inclusion report", "press release", "ERG page"],
+  },
+  {
+    key: "hbcu_pipeline",
+    label: "HBCU Pipeline & Partnerships",
+    searchTerms: ["HBCU partnership", "HBCU recruitment", "HBCU scholarship", "historically Black college", "HBCU career fair", "HBCU internship", "Thurgood Marshall College Fund", "UNCF partnership"],
+    sourceHints: ["careers page", "press release", "university partnerships page", "diversity report"],
+  },
+  {
+    key: "no_degree",
+    label: "No-Degree & Skills-First Pathways",
+    searchTerms: ["no degree required", "skills-based hiring", "remove degree requirement", "alternative credentials", "apprenticeship program", "Tear the Paper Ceiling", "STARs hiring", "skills-first employer", "certificate pathway"],
+    sourceHints: ["job listings", "careers page", "press release", "Opportunity@Work", "Markle Foundation"],
+  },
 ];
-
 serve(async (req) => {
   if (req.method === "OPTIONS") return new Response(null, { headers: corsHeaders });
 
