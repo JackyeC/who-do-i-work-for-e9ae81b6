@@ -224,13 +224,27 @@ function DbLensModules({ activeLens, dbCompany, dbPartyBreakdown, dbCandidates, 
           {dbRevolvingDoor && dbRevolvingDoor.length > 0 && (
             <ExplainableMetric metricKey="revolving-door">
               <Card>
-                <CardHeader><CardTitle className="text-lg flex items-center gap-2"><RotateCcw className="w-4 h-4" /> Revolving Door</CardTitle></CardHeader>
+                <CardHeader>
+                  <CardTitle className="text-lg flex items-center gap-2"><RotateCcw className="w-4 h-4" /> Revolving Door</CardTitle>
+                  <p className="text-xs text-muted-foreground leading-relaxed">
+                    These individuals moved between government positions and this company. This is legal and common, but it means the company may have insider access to the agencies that regulate it. Think of it like a referee joining the team they used to officiate.
+                  </p>
+                </CardHeader>
                 <CardContent className="space-y-3">
                   {dbRevolvingDoor.map((r) => (
                     <div key={r.id} className="p-3 rounded-lg bg-muted/50 border border-border">
                       <div className="font-medium text-sm text-foreground">{r.person}</div>
-                      <div className="text-xs text-muted-foreground mt-1"><span className="text-foreground/70">{r.prior_role}</span> → <span className="text-foreground/70">{r.new_role}</span></div>
+                      <div className="text-xs text-muted-foreground mt-1">
+                        <span className="text-foreground/70">{r.prior_role}</span>
+                        <span className="mx-1.5">→</span>
+                        <span className="text-foreground/70">{r.new_role}</span>
+                      </div>
                       {r.relevance && <p className="text-xs text-muted-foreground mt-1">{r.relevance}</p>}
+                      <div className="flex flex-wrap gap-1.5 mt-2">
+                        <a href={`https://www.linkedin.com/search/results/people/?keywords=${encodeURIComponent(r.person)}`} target="_blank" rel="noopener noreferrer" className="text-[10px] text-primary hover:underline">LinkedIn →</a>
+                        <span className="text-muted-foreground text-[10px]">·</span>
+                        <a href={`https://www.google.com/search?q=${encodeURIComponent(`"${r.person}" revolving door ${r.prior_role}`)}`} target="_blank" rel="noopener noreferrer" className="text-[10px] text-primary hover:underline">Research →</a>
+                      </div>
                     </div>
                   ))}
                 </CardContent>
