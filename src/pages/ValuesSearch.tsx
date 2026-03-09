@@ -1,6 +1,6 @@
 import { useState, useMemo } from "react";
 import { useSearchParams, Link } from "react-router-dom";
-import { Search, Sparkles, Info } from "lucide-react";
+import { Search, Sparkles, Info, HelpCircle } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Header } from "@/components/Header";
@@ -28,17 +28,13 @@ const LENS_TO_ISSUE: Record<string, string> = {
 export default function ValuesSearch() {
   const [searchParams, setSearchParams] = useSearchParams();
   const selectedLens = searchParams.get("lens") as ValuesLensKey | null;
-  // Backward compat: support ?issue= param
   const legacyIssue = searchParams.get("issue");
   const activeLens = selectedLens || (legacyIssue ? Object.entries(LENS_TO_ISSUE).find(([, v]) => v === legacyIssue)?.[0] as ValuesLensKey : null);
 
-  // Count signals per lens
   const { data: lensCounts } = useQuery({
     queryKey: ["values-lens-counts"],
     queryFn: async () => {
       const counts: Record<string, number> = {};
-
-      // Count from company_values_signals
       for (const lens of VALUES_LENSES) {
         const { count } = await (supabase as any)
           .from("company_values_signals")
@@ -46,8 +42,6 @@ export default function ValuesSearch() {
           .or(`values_lens.eq.${lens.key},value_category.eq.${lens.key}`);
         counts[lens.key] = count || 0;
       }
-
-      // Add counts from issue_signals for mapped lenses
       for (const [lensKey, issueKey] of Object.entries(LENS_TO_ISSUE)) {
         const { count } = await (supabase as any)
           .from("issue_signals")
@@ -55,7 +49,6 @@ export default function ValuesSearch() {
           .eq("issue_category", issueKey);
         counts[lensKey] = (counts[lensKey] || 0) + (count || 0);
       }
-
       return counts;
     },
     staleTime: 5 * 60 * 1000,
@@ -83,14 +76,14 @@ export default function ValuesSearch() {
             <div className="max-w-3xl mx-auto text-center">
               <Badge variant="secondary" className="mb-4 gap-1.5">
                 <Sparkles className="w-3 h-3" />
-                Values Lens Engine
+                Employer Signal Explorer
               </Badge>
               <h1 className="text-4xl md:text-5xl font-display font-bold text-foreground tracking-tight mb-4">
-                Explore Companies Through Your Values
+                What Does This Company <em>Actually</em> Support?
               </h1>
               <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
-                Filter and explore companies based on public signals connected to the values
-                or issues you care about — before you apply, recruit, invest, or support.
+                Companies spend money on politics, lobbying, and advocacy. That spending is public record.
+                Pick a topic below to see where companies put their money — not just what they say.
               </p>
             </div>
           </div>
@@ -100,19 +93,28 @@ export default function ValuesSearch() {
         <section className="container mx-auto px-4 py-12">
           {!activeLens ? (
             <>
-              <h2 className="text-xl font-semibold text-foreground mb-2 font-display">Choose a values lens</h2>
-              <p className="text-sm text-muted-foreground mb-4 max-w-2xl">
-                Select a values or issue area to see which companies have related public signals in our database.
-                These are lenses for filtering — not conclusions.
+              <h2 className="text-xl font-semibold text-foreground mb-2 font-display">Pick a topic you care about</h2>
+              <p className="text-sm text-muted-foreground mb-6 max-w-2xl">
+                We'll show you which companies have public spending records connected to that topic.
+                This isn't opinion — it's what's in the public filings.
               </p>
 
-              {/* Transparency disclaimer */}
-              <div className="flex items-start gap-2.5 p-4 rounded-xl bg-muted/40 border border-border/40 mb-8 max-w-2xl">
-                <Info className="w-4 h-4 text-muted-foreground shrink-0 mt-0.5" />
-                <p className="text-xs text-muted-foreground leading-relaxed">
-                  This platform surfaces publicly documented signals connected to the values or issues you choose.
-                  It does not assign moral or legal judgments. Interpretation is left to the user.
-                </p>
+              {/* How it works — plain language */}
+              <div className="p-5 rounded-xl bg-muted/40 border border-border/40 mb-8 max-w-2xl">
+                <div className="flex items-center gap-2 mb-3">
+                  <HelpCircle className="w-4 h-4 text-primary shrink-0" />
+                  <h3 className="text-sm font-semibold text-foreground">How does this work?</h3>
+                </div>
+                <div className="space-y-3 text-sm text-muted-foreground leading-relaxed">
+                  <p>
+                    Every company that wants to influence laws or politicians has to file paperwork with the government.
+                    That paperwork is public — anyone can look it up.
+                  </p>
+                  <p>We read those filings and sort them by topic so you don't have to.</p>
+                  <p className="text-xs border-t border-border/40 pt-3">
+                    <strong className="text-foreground">We don't take sides.</strong> We just show you what the records say. You decide what it means to you.
+                  </p>
+                </div>
               </div>
 
               <ValuesLensGrid counts={lensCounts} onSelect={handleSelectLens} />
@@ -120,8 +122,6 @@ export default function ValuesSearch() {
           ) : (
             <>
               <ValuesLensResults lensKey={activeLens} onBack={handleBack} />
-
-              {/* Related reports */}
               {lensInfo && LENS_TO_ISSUE[activeLens] && (
                 <IssueRelatedReports
                   issueCategory={LENS_TO_ISSUE[activeLens]}
@@ -136,15 +136,15 @@ export default function ValuesSearch() {
         <section className="border-t border-border/30 bg-muted/20">
           <div className="container mx-auto px-4 py-12 text-center">
             <h3 className="text-lg font-semibold text-foreground mb-2 font-display">
-              Don't see the company you're looking for?
+              Looking for a specific company?
             </h3>
             <p className="text-sm text-muted-foreground mb-4 max-w-md mx-auto">
-              Search any company by name and we'll automatically scan public records for signals.
+              Type any company name and we'll pull their public records for you.
             </p>
             <Link to="/search-your-employer">
               <Button className="gap-2">
                 <Search className="w-4 h-4" />
-                Search by Company Name
+                Search a Company
               </Button>
             </Link>
           </div>

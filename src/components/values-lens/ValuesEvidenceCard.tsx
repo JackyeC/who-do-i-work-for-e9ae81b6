@@ -1,6 +1,6 @@
-import { ExternalLink, Shield, AlertTriangle, Info } from "lucide-react";
+import { ExternalLink, Shield, Info } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
-import { SIGNAL_DIRECTION_CONFIG, CONFIDENCE_CONFIG } from "@/lib/valuesLenses";
+import { CONFIDENCE_CONFIG } from "@/lib/valuesLenses";
 
 interface EvidenceRecord {
   id: string;
@@ -24,10 +24,23 @@ interface Props {
   evidence: EvidenceRecord;
 }
 
+const PLAIN_SOURCE_TYPES: Record<string, string> = {
+  lobbying_filing: "Lobbying report",
+  pac_donation: "Campaign donation",
+  executive_donation: "Executive donation",
+  sec_filing: "Company filing",
+  government_contract: "Gov't contract",
+  enforcement_action: "Gov't enforcement",
+  corporate_statement: "Company statement",
+  advocacy_alignment: "Advocacy group link",
+};
+
 export function ValuesEvidenceCard({ evidence }: Props) {
-  const conf = CONFIDENCE_CONFIG[evidence.confidence_level] || CONFIDENCE_CONFIG.low;
+  const conf = CONFIDENCE_CONFIG[evidence.confidence_level] || CONFIDENCE_CONFIG.medium;
   const formatCurrency = (n: number) =>
     new Intl.NumberFormat("en-US", { style: "currency", currency: "USD", maximumFractionDigits: 0 }).format(n);
+
+  const plainSourceType = PLAIN_SOURCE_TYPES[evidence.source_type || ""] || evidence.source_type?.replace(/_/g, " ");
 
   return (
     <div className="p-3 rounded-lg bg-muted/30 border border-border/50 space-y-2">
@@ -51,13 +64,13 @@ export function ValuesEvidenceCard({ evidence }: Props) {
 
       {/* Metadata row */}
       <div className="flex items-center gap-2 flex-wrap">
-        {evidence.source_type && (
+        {plainSourceType && (
           <Badge variant="outline" className="text-[10px] px-1.5 py-0">
-            {evidence.source_type.replace(/_/g, " ")}
+            {plainSourceType}
           </Badge>
         )}
         <Badge variant="outline" className={`text-[10px] px-1.5 py-0 ${conf.color}`}>
-          {conf.label}
+          {conf.plainLabel}
         </Badge>
         {evidence.event_date && (
           <span className="text-[10px] text-muted-foreground">
@@ -66,20 +79,16 @@ export function ValuesEvidenceCard({ evidence }: Props) {
         )}
       </div>
 
-      {/* Related entities */}
+      {/* Related entities — plain language */}
       {(evidence.related_legislation || evidence.related_org || evidence.related_politician) && (
-        <div className="flex items-center gap-2 flex-wrap">
+        <div className="flex items-center gap-2 flex-wrap text-[10px] text-muted-foreground">
           {evidence.related_legislation && (
-            <span className="text-[10px] text-muted-foreground flex items-center gap-1">
-              <Info className="w-2.5 h-2.5" /> {evidence.related_legislation}
+            <span className="flex items-center gap-1">
+              <Info className="w-2.5 h-2.5" /> Bill: {evidence.related_legislation}
             </span>
           )}
-          {evidence.related_org && (
-            <span className="text-[10px] text-muted-foreground">{evidence.related_org}</span>
-          )}
-          {evidence.related_politician && (
-            <span className="text-[10px] text-muted-foreground">{evidence.related_politician}</span>
-          )}
+          {evidence.related_org && <span>Group: {evidence.related_org}</span>}
+          {evidence.related_politician && <span>Politician: {evidence.related_politician}</span>}
         </div>
       )}
 
@@ -92,7 +101,7 @@ export function ValuesEvidenceCard({ evidence }: Props) {
           className="inline-flex items-center gap-1 text-[11px] text-primary hover:underline"
         >
           <Shield className="w-3 h-3" />
-          {evidence.source_name || "View source"}
+          {evidence.source_name || "View the original record"}
           <ExternalLink className="w-2.5 h-2.5" />
         </a>
       )}

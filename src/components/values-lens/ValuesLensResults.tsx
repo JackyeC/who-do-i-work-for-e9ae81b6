@@ -1,6 +1,6 @@
 import { useState, useMemo } from "react";
 import { AnimatePresence } from "framer-motion";
-import { Search, AlertTriangle, ArrowLeft, Info, Shield } from "lucide-react";
+import { Search, ArrowLeft, HelpCircle, Shield, DollarSign, Megaphone, FileText } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -20,11 +20,9 @@ export function ValuesLensResults({ lensKey, onBack }: Props) {
   const [textFilter, setTextFilter] = useState("");
   const lensInfo = VALUES_LENSES.find((l) => l.key === lensKey);
 
-  // Fetch signals for this lens from both tables
   const { data: signals, isLoading: loadingSignals } = useQuery({
     queryKey: ["values-lens-signals", lensKey],
     queryFn: async () => {
-      // Query company_values_signals using values_lens OR value_category
       const { data, error } = await (supabase as any)
         .from("company_values_signals")
         .select("*")
@@ -36,7 +34,6 @@ export function ValuesLensResults({ lensKey, onBack }: Props) {
     },
   });
 
-  // Fetch evidence for this lens
   const { data: evidence, isLoading: loadingEvidence } = useQuery({
     queryKey: ["values-lens-evidence", lensKey],
     queryFn: async () => {
@@ -51,7 +48,6 @@ export function ValuesLensResults({ lensKey, onBack }: Props) {
     },
   });
 
-  // Also pull from issue_signals for backward compat
   const issueMapping: Record<string, string> = {
     labor_rights: "labor_rights",
     environment_climate: "climate",
@@ -79,7 +75,6 @@ export function ValuesLensResults({ lensKey, onBack }: Props) {
     },
   });
 
-  // Get all unique company IDs
   const companyIds = useMemo(() => {
     const ids = new Set<string>();
     for (const s of (signals || []) as any[]) ids.add(s.company_id);
@@ -100,7 +95,6 @@ export function ValuesLensResults({ lensKey, onBack }: Props) {
     },
   });
 
-  // Also check for value conflicts (public stances vs spending)
   const { data: publicStances } = useQuery({
     queryKey: ["values-stances", companyIds],
     enabled: companyIds.length > 0,
@@ -113,7 +107,6 @@ export function ValuesLensResults({ lensKey, onBack }: Props) {
     },
   });
 
-  // Build results
   const results = useMemo(() => {
     if (!companies) return [];
     const map = new Map<string, { company: any; signals: any[]; evidence: any[]; hasConflict: boolean }>();
@@ -122,13 +115,11 @@ export function ValuesLensResults({ lensKey, onBack }: Props) {
       map.set(c.id, { company: c, signals: [], evidence: [], hasConflict: false });
     }
 
-    // Add values signals
     for (const s of (signals || []) as any[]) {
       const entry = map.get(s.company_id);
       if (entry) entry.signals.push(s);
     }
 
-    // Add issue signals as synthetic signals
     for (const s of (issueSignals || []) as any[]) {
       const entry = map.get(s.entity_id);
       if (entry) {
@@ -143,13 +134,11 @@ export function ValuesLensResults({ lensKey, onBack }: Props) {
       }
     }
 
-    // Add evidence
     for (const e of (evidence || []) as any[]) {
       const entry = map.get(e.entity_id);
       if (entry) entry.evidence.push(e);
     }
 
-    // Detect conflicts
     for (const stance of (publicStances || []) as any[]) {
       const entry = map.get(stance.company_id);
       if (entry && stance.gap === "large") {
@@ -172,7 +161,6 @@ export function ValuesLensResults({ lensKey, onBack }: Props) {
     return list;
   }, [companies, signals, issueSignals, evidence, publicStances, textFilter]);
 
-  // Build conflict alerts
   const conflictAlerts = useMemo(() => {
     if (!publicStances || !companies) return [];
     return (publicStances as any[])
@@ -194,9 +182,9 @@ export function ValuesLensResults({ lensKey, onBack }: Props) {
   return (
     <div>
       {/* Header */}
-      <div className="flex items-center gap-3 mb-6">
+      <div className="flex items-center gap-3 mb-4">
         <Button variant="ghost" size="sm" onClick={onBack}>
-          <ArrowLeft className="w-4 h-4 mr-1" /> All Lenses
+          <ArrowLeft className="w-4 h-4 mr-1" /> Back
         </Button>
         <Separator orientation="vertical" className="h-5" />
         {lensInfo && (
@@ -207,20 +195,15 @@ export function ValuesLensResults({ lensKey, onBack }: Props) {
         )}
       </div>
 
+      {/* Plain language explainer */}
       {lensInfo && (
-        <p className="text-sm text-muted-foreground mb-4 max-w-2xl">
-          {lensInfo.description}. Companies listed below have documented public records connected to this values lens.
-        </p>
+        <div className="p-4 rounded-xl bg-muted/40 border border-border/40 mb-6 max-w-2xl">
+          <p className="text-sm text-foreground font-medium mb-1">{lensInfo.description}</p>
+          <p className="text-sm text-muted-foreground leading-relaxed">
+            {"plainExplainer" in lensInfo ? (lensInfo as any).plainExplainer : ""}
+          </p>
+        </div>
       )}
-
-      {/* Transparency note */}
-      <div className="flex items-start gap-2.5 p-4 rounded-xl bg-muted/40 border border-border/40 mb-6 max-w-2xl">
-        <Info className="w-4 h-4 text-muted-foreground shrink-0 mt-0.5" />
-        <p className="text-xs text-muted-foreground leading-relaxed">
-          This platform surfaces publicly documented signals connected to the values or issues you choose.
-          It does not assign moral or legal judgments. Interpretation is left to the user.
-        </p>
-      </div>
 
       {/* Search filter */}
       <div className="relative max-w-md mb-6">
@@ -228,7 +211,7 @@ export function ValuesLensResults({ lensKey, onBack }: Props) {
         <Input
           value={textFilter}
           onChange={(e) => setTextFilter(e.target.value)}
-          placeholder="Filter companies by name or industry..."
+          placeholder="Filter by company name or industry..."
           className="pl-10"
         />
       </div>
@@ -244,63 +227,73 @@ export function ValuesLensResults({ lensKey, onBack }: Props) {
       {isLoading ? (
         <div className="text-center py-16">
           <div className="w-8 h-8 border-2 border-primary border-t-transparent rounded-full animate-spin mx-auto mb-4" />
-          <p className="text-sm text-muted-foreground">Searching signals...</p>
+          <p className="text-sm text-muted-foreground">Looking through public records...</p>
         </div>
       ) : results.length === 0 ? (
         <div className="max-w-2xl mx-auto py-12">
           <div className="text-center mb-8">
             <Shield className="w-10 h-10 text-muted-foreground mx-auto mb-4" />
             <h3 className="text-lg font-semibold text-foreground mb-2">
-              No documented signals yet for {lensInfo?.label}
+              No records found yet for {lensInfo?.label}
             </h3>
             <p className="text-sm text-muted-foreground max-w-md mx-auto">
-              Our system scans public records for evidence-backed signals. As companies are scanned and more data is ingested, results will appear here automatically.
+              We haven't found public filings connected to this topic yet. As more companies are scanned, results will show up here automatically.
             </p>
           </div>
 
-          {/* Evidence methodology */}
+          {/* Plain language methodology */}
           <div className="space-y-4 text-left">
-            <h4 className="text-sm font-semibold text-foreground">How signals are detected</h4>
-            <p className="text-xs text-muted-foreground leading-relaxed">
-              Employer Reality Signals for this lens are generated when documented public records contain relevant keywords. The system searches across multiple evidence layers:
+            <div className="flex items-center gap-2">
+              <HelpCircle className="w-4 h-4 text-primary shrink-0" />
+              <h4 className="text-sm font-semibold text-foreground">Where does this data come from?</h4>
+            </div>
+            <p className="text-sm text-muted-foreground leading-relaxed">
+              When companies want to influence laws, they have to file paperwork with the government. We read those filings and organize them by topic. Here's what we look for:
             </p>
 
             <div className="grid gap-3">
               {[
-                { layer: "Money Trail", desc: "Campaign donations and PAC spending to politicians with documented positions on this issue", sources: "FEC filings, OpenSecrets" },
-                { layer: "Influence Trail", desc: "Registered lobbying activity referencing this policy area in quarterly disclosure filings", sources: "Senate LDA filings, state lobbying registries" },
-                { layer: "Policy Alignment", desc: "Support or opposition to specific legislation, bill sponsorship connections", sources: "Congress.gov, advocacy trackers" },
-                { layer: "Corporate Actions", desc: "Public statements, corporate policy changes, advocacy group memberships", sources: "SEC filings, press releases, corporate policies" },
+                {
+                  icon: DollarSign,
+                  title: "Follow the money",
+                  desc: "Companies and their executives donate to politicians. Those donations are public record. We check who got the money and how those politicians voted on this topic.",
+                },
+                {
+                  icon: Megaphone,
+                  title: "Follow the lobbying",
+                  desc: "When a company hires someone to talk to lawmakers about changing rules, they have to report it. We check those reports to see if they mention this topic.",
+                },
+                {
+                  icon: FileText,
+                  title: "Follow the paperwork",
+                  desc: "Companies file reports with government agencies about their workforce, contracts, and business practices. We scan those for relevant information.",
+                },
               ].map((item) => (
-                <div key={item.layer} className="p-3 rounded-lg border border-border bg-muted/20">
-                  <div className="flex items-center justify-between mb-1">
-                    <span className="text-xs font-semibold text-foreground">{item.layer}</span>
-                    <span className="text-[10px] text-muted-foreground">{item.sources}</span>
+                <div key={item.title} className="flex items-start gap-3 p-3 rounded-lg border border-border bg-muted/20">
+                  <div className="w-8 h-8 rounded-lg bg-primary/10 flex items-center justify-center shrink-0">
+                    <item.icon className="w-4 h-4 text-primary" />
                   </div>
-                  <p className="text-[11px] text-muted-foreground">{item.desc}</p>
+                  <div>
+                    <span className="text-sm font-semibold text-foreground">{item.title}</span>
+                    <p className="text-xs text-muted-foreground mt-0.5 leading-relaxed">{item.desc}</p>
+                  </div>
                 </div>
               ))}
             </div>
 
-            <div className="p-3 rounded-lg border border-primary/20 bg-primary/5">
-              <p className="text-xs text-muted-foreground leading-relaxed">
-                <strong className="text-foreground">Strongest signal pattern:</strong> When money (PAC donations to bill sponsors), influence (registered lobbying on the issue), and policy alignment (legislative connections) all point in the same direction, that constitutes strong documented evidence.
-              </p>
-            </div>
-
-            <p className="text-[10px] text-muted-foreground pt-2 border-t border-border">
-              This platform reports signals detected from publicly available data sources. No conclusions are drawn. Interpretation is left to the user.
+            <p className="text-xs text-muted-foreground pt-3 border-t border-border">
+              <strong className="text-foreground">Important:</strong> We show what the records say. We don't tell you what to think about it. That part is up to you.
             </p>
           </div>
 
           <div className="text-center mt-6">
-            <Button variant="outline" onClick={onBack}>Browse other lenses</Button>
+            <Button variant="outline" onClick={onBack}>Browse other topics</Button>
           </div>
         </div>
       ) : (
         <>
           <p className="text-sm text-muted-foreground mb-4">
-            {results.length} compan{results.length !== 1 ? "ies" : "y"} with {lensInfo?.label} signals
+            {results.length} compan{results.length !== 1 ? "ies" : "y"} with public records on {lensInfo?.label}
           </p>
           <div className="space-y-4">
             <AnimatePresence mode="popLayout">

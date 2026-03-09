@@ -22,14 +22,14 @@ export function ValueConflictAlert({ conflicts }: Props) {
     <div className="space-y-3">
       <div className="flex items-center gap-2">
         <AlertTriangle className="w-4 h-4 text-[hsl(var(--civic-yellow))]" />
-        <h3 className="text-sm font-semibold text-foreground">Value Conflict Signals</h3>
+        <h3 className="text-sm font-semibold text-foreground">Saying one thing, spending another</h3>
         <Badge variant="outline" className="text-[10px] border-[hsl(var(--civic-yellow))]/30 text-[hsl(var(--civic-yellow))]">
-          {conflicts.length} detected
+          {conflicts.length} found
         </Badge>
       </div>
       <p className="text-xs text-muted-foreground">
-        These companies have public messaging that may differ from their documented political spending, lobbying, or advocacy activity.
-        This does not imply wrongdoing — interpretation is left to the user.
+        These companies say something publicly but their spending records tell a different story.
+        This doesn't mean they're doing anything wrong — but the gap is worth knowing about.
       </p>
       <div className="space-y-2">
         {conflicts.map((c, i) => (
@@ -40,10 +40,10 @@ export function ValueConflictAlert({ conflicts }: Props) {
                 <div className="flex-1 min-w-0 space-y-1">
                   <p className="text-sm font-medium text-foreground">{c.company_name}</p>
                   <p className="text-xs text-muted-foreground">
-                    <strong className="text-foreground">Public claim:</strong> {c.public_claim}
+                    <strong className="text-foreground">What they say:</strong> {c.public_claim}
                   </p>
                   <p className="text-xs text-muted-foreground">
-                    <strong className="text-foreground">Evidence:</strong> {c.conflicting_evidence}
+                    <strong className="text-foreground">What the records show:</strong> {c.conflicting_evidence}
                   </p>
                   {c.evidence_url && (
                     <a
@@ -52,7 +52,7 @@ export function ValueConflictAlert({ conflicts }: Props) {
                       rel="noopener noreferrer"
                       className="inline-flex items-center gap-1 text-[11px] text-primary hover:underline"
                     >
-                      <Shield className="w-3 h-3" /> View source <ExternalLink className="w-2.5 h-2.5" />
+                      <Shield className="w-3 h-3" /> See the record <ExternalLink className="w-2.5 h-2.5" />
                     </a>
                   )}
                 </div>
