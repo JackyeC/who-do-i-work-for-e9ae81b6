@@ -353,28 +353,26 @@ Deno.serve(async (req) => {
             // Resolve party from committee name using heuristics + FEC lookup
             const committeePartyCache = new Map<string, string>();
 
+            // Returns 'R', 'D', or 'I' to match DB constraint
             function inferPartyFromName(name: string): string {
               const upper = name.toUpperCase();
               // Republican patterns
-              if (/\b(REPUBLICAN|GOP|RNC|NRCC|NRSC|TRUMP|DESANTIS)\b/.test(upper)) return 'Republican';
-              if (/\bREPUBLICAN\b/.test(upper)) return 'Republican';
+              if (/\b(REPUBLICAN|GOP|RNC|NRCC|NRSC|TRUMP|DESANTIS|WINRED)\b/.test(upper)) return 'R';
               // Democrat patterns
-              if (/\b(DEMOCRAT|DNC|DCCC|DSCC|BIDEN|HARRIS|ACTBLUE)\b/.test(upper)) return 'Democrat';
-              if (/\bDEMOCRAT(IC)?\b/.test(upper)) return 'Democrat';
-              // Check for "FOR CONGRESS/SENATE/PRESIDENT" patterns - these are candidate committees
+              if (/\b(DEMOCRAT(IC)?|DNC|DCCC|DSCC|BIDEN|HARRIS|ACTBLUE)\b/.test(upper)) return 'D';
               // Try matching against allCandidates from PAC data
               const matchedCandidate = allCandidates.find(c =>
                 upper.includes(c.name.split(',')[0]?.toUpperCase() || '___')
               );
               if (matchedCandidate) {
-                if (matchedCandidate.party?.includes('REP')) return 'Republican';
-                if (matchedCandidate.party?.includes('DEM')) return 'Democrat';
+                if (matchedCandidate.party?.includes('REP')) return 'R';
+                if (matchedCandidate.party?.includes('DEM')) return 'D';
               }
-              return 'Unknown';
+              return 'I'; // Default to Independent for unknown — satisfies DB constraint
             }
 
             // Try FEC committee lookup for unknowns (batch up to 10 unique committees)
-            const unknownCommittees = [...allCommitteeNames].filter(n => inferPartyFromName(n) === 'Unknown').slice(0, 10);
+            const unknownCommittees = [...allCommitteeNames].filter(n => inferPartyFromName(n) === 'I').slice(0, 10);
             for (const committeeName of unknownCommittees) {
               try {
                 const searchData = await fecFetch('/committees/', { q: committeeName, per_page: '1' }, apiKey);
@@ -382,7 +380,7 @@ Deno.serve(async (req) => {
                 if (result?.party_full) {
                   const pf = result.party_full.toUpperCase();
                   committeePartyCache.set(committeeName.toUpperCase(), 
-                    pf.includes('REPUBLICAN') ? 'Republican' : pf.includes('DEMOCRAT') ? 'Democrat' : 'Unknown'
+                    pf.includes('REPUBLICAN') ? 'R' : pf.includes('DEMOCRAT') ? 'D' : 'I'
                   );
                 }
                 await new Promise(r => setTimeout(r, 200));
