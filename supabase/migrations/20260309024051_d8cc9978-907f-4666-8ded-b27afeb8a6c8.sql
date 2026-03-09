@@ -1,0 +1,2 @@
+UPDATE user_documents SET status = 'error', confidence_level = 'low' WHERE status = 'parsing';
+UPDATE user_career_profile SET job_titles = '{}', skills = '{}', industries = '{}', preferred_titles = '{}', preferred_locations = '{}', seniority_level = NULL, management_scope = NULL, auto_generated = false WHERE job_titles = '{}' AND skills = '{}';
