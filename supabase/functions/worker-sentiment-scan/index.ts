@@ -38,12 +38,18 @@ Deno.serve(async (req) => {
 
     // 1. Search for Glassdoor reviews and worker sentiment data
     // Use simpler queries - site: operator may not work with Firecrawl
+    // Derive TheLayoff.com slug (lowercase, hyphenated)
+    const layoffSlug = companyName.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '');
+
     const searchQueries = [
       `${companyName} Glassdoor reviews employee ratings`,
       `${companyName} Glassdoor salary compensation CEO approval`,
       `${companyName} Indeed employee reviews work-life balance`,
       `${companyName} LinkedIn employee reviews culture workplace`,
       `${companyName} employee complaints worker conditions labor practices`,
+      // TheLayoff.com - worker-sourced layoff rumors and sentiment
+      `site:thelayoff.com ${companyName} layoffs`,
+      `site:thelayoff.com "${companyName}" morale restructuring`,
       // Controversy & legal action queries
       `"${companyName}" EEOC complaint discrimination lawsuit settlement`,
       `"${companyName}" NLRB unfair labor practice union busting complaint`,
