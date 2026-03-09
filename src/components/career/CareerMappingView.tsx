@@ -96,7 +96,9 @@ export function CareerMappingView() {
   });
 
   // Derive current role from profile
-  const currentRole = (profile as any)?.preferred_titles?.[0] || profile?.job_titles?.[0] || "Your Current Role";
+  const cleanTitles = ((profile as any)?.preferred_titles || []).filter((t: string) => t && t.toLowerCase() !== "unknown");
+  const cleanJobTitles = (profile?.job_titles || []).filter((t: string) => t && t.toLowerCase() !== "unknown");
+  const currentRole = cleanTitles[0] || cleanJobTitles[0] || "Your Current Role";
   const currentSkills = profile?.skills || [];
 
   // Build lattice nodes from tracks
