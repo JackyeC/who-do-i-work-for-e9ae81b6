@@ -97,6 +97,7 @@ export function CompanyIntelligenceScanCard({ companyId, companyName }: Props) {
   useEffect(() => {
     if (isScanning && latestScan?.scan_status && !['queued', 'in_progress'].includes(latestScan.scan_status)) {
       setIsScanning(false);
+      // Keep overlay open so user can see "Scan Complete" and click "View Results"
       const keys = ["ai-hr-signals", "worker-benefit-signals", "pay-equity-signals", "worker-sentiment", "ideology-flags", "social-media-scans", "agency-contracts", "ai-accountability"];
       keys.forEach(k => queryClient.invalidateQueries({ queryKey: [k] }));
     }
