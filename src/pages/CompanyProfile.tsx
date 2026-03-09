@@ -55,6 +55,7 @@ import { PACDetailDrawer } from "@/components/PACDetailDrawer";
 import { ContractsDetailDrawer } from "@/components/ContractsDetailDrawer";
 import { WarnTrackerCard } from "@/components/WarnTrackerCard";
 import { PromotionEquityCard } from "@/components/PromotionEquityCard";
+import { RelatedReportsCard } from "@/components/RelatedReportsCard";
 import { MonitoringStatusCard } from "@/components/MonitoringStatusCard";
 import { useROIPipeline } from "@/hooks/use-roi-pipeline";
 import { TransparencyIndex } from "@/components/TransparencyIndex";
