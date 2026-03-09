@@ -4,7 +4,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import {
   Search, Crosshair, Heart, Hammer, Leaf, Scale, Rainbow, Vote,
   Globe, BookOpen, Stethoscope, ShoppingCart, ArrowRight,
-  Sparkles, TrendingUp, AlertTriangle, ExternalLink, Shield,
+  Sparkles, TrendingUp, AlertTriangle, ExternalLink, Shield, Info,
 } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
