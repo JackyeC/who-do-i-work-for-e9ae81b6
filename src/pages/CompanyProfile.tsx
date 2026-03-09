@@ -798,6 +798,7 @@ export default function CompanyProfile() {
                 autoScanning={autoScanning}
                 hasBeenScanned={hasBeenScanned}
                 triggerScan={triggerScan}
+                enrichmentData={enrichmentData}
                 onCandidateClick={handleCandidateClick}
                 onExecutiveClick={handleExecutiveClick}
                 onPartyClick={(party) => {
