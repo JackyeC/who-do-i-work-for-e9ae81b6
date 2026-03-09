@@ -35,6 +35,10 @@ import PrivacyPolicy from "./pages/PrivacyPolicy";
 import Examples from "./pages/Examples";
 import SearchYourEmployer from "./pages/SearchYourEmployer";
 import ValuesSearch from "./pages/ValuesSearch";
+import IntelligenceReports from "./pages/IntelligenceReports";
+import IntelligenceReport from "./pages/IntelligenceReport";
+import ReportsList from "./pages/ReportsList";
+import ReportEditor from "./pages/ReportEditor";
 
 const queryClient = new QueryClient();
 
