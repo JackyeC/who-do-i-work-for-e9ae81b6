@@ -567,6 +567,7 @@ export type Database = {
           id: string
           identity_matched: boolean | null
           industry: string
+          is_publicly_traded: boolean | null
           last_reviewed: string
           last_scan_attempted: string | null
           lobbying_spend: number | null
@@ -577,9 +578,11 @@ export type Database = {
           revenue: string | null
           scan_completion: Json | null
           search_query: string | null
+          sec_cik: string | null
           slug: string
           state: string
           subsidies_received: number | null
+          ticker: string | null
           total_pac_spending: number
           updated_at: string
           verification_notes: string | null
@@ -601,6 +604,7 @@ export type Database = {
           id?: string
           identity_matched?: boolean | null
           industry: string
+          is_publicly_traded?: boolean | null
           last_reviewed?: string
           last_scan_attempted?: string | null
           lobbying_spend?: number | null
@@ -611,9 +615,11 @@ export type Database = {
           revenue?: string | null
           scan_completion?: Json | null
           search_query?: string | null
+          sec_cik?: string | null
           slug: string
           state: string
           subsidies_received?: number | null
+          ticker?: string | null
           total_pac_spending?: number
           updated_at?: string
           verification_notes?: string | null
@@ -635,6 +641,7 @@ export type Database = {
           id?: string
           identity_matched?: boolean | null
           industry?: string
+          is_publicly_traded?: boolean | null
           last_reviewed?: string
           last_scan_attempted?: string | null
           lobbying_spend?: number | null
@@ -645,9 +652,11 @@ export type Database = {
           revenue?: string | null
           scan_completion?: Json | null
           search_query?: string | null
+          sec_cik?: string | null
           slug?: string
           state?: string
           subsidies_received?: number | null
+          ticker?: string | null
           total_pac_spending?: number
           updated_at?: string
           verification_notes?: string | null
