@@ -118,20 +118,17 @@ Deno.serve(async (req) => {
     const aiVendorSignal = (aiSignals || []).find(s => s.signal_type === 'ai_vendor_detected');
     const detectedVendor = aiVendorSignal?.evidence_text?.replace('Known AI vendor: ', '') || 'Unknown';
 
-    // Generate structured payload via AI with tool calling
-    const prompt = `You are a Career Strategist generating an application payload for a senior professional.
+    // Generate cover letter via AI with tool calling
+    const prompt = `Write a short cover letter (120–170 words max) for this candidate applying to ${company.name}.
 
-CANDIDATE PROFILE:
+CANDIDATE:
 - Name: ${profile.full_name || 'Not provided'}
 - Bio: ${profile.bio || 'Not provided'}
 - Skills: ${(profile.skills || []).join(', ') || 'Not provided'}
-- Target role: ${(profile.target_job_titles || []).join(', ') || 'Not provided'}
+- Target roles: ${(profile.target_job_titles || []).join(', ') || 'Not provided'}
 
-COMPANY: ${company.name}
-- Industry: ${company.industry}
+COMPANY: ${company.name} (${company.industry})
 - Civic Footprint Score: ${company.civic_footprint_score}/100
-
-DETECTED SIGNALS:
 - AI/HR Vendor: ${detectedVendor}
 - AI/HR Tools: ${aiToolNames.join(', ') || 'None detected'}
 - Worker Benefits: ${benefitNames.join(', ') || 'None detected'}
@@ -139,10 +136,22 @@ DETECTED SIGNALS:
 - Bias Audit Status: ${biasAuditStatus}
 - Worker Sentiment: ${signalSummary.sentiment ? `${signalSummary.sentiment.rating}/5 (${signalSummary.sentiment.sentiment})` : 'No data'}
 - WARN Notices: ${signalSummary.warn_notices} on record
+- Alignment: ${alignmentScore}% | Matched signals: ${matchedSignals.join(', ') || 'None'} | Missing: ${missingSignals.join(', ') || 'None'}
 
-ALIGNMENT: ${alignmentScore}% | Matched: ${matchedSignals.join(', ') || 'None'} | Missing: ${missingSignals.join(', ') || 'None'}
+VOICE RULES (follow exactly):
+- Write like an experienced professional talking to another professional. Direct, confident, warm.
+- Short sentences. Plain English. No buzzwords, no filler, no consulting-speak.
+- NEVER use headers like "THE WHY" / "THE LEAD" / "THE EVIDENCE" / "THE CTA".
+- No phrases like "I am writing to express my interest" or "I believe my skills align."
+- Sound like a real person who is genuinely interested, not a template.
 
-Generate three fields plus a full value proposition statement.`;
+STRUCTURE (no labels, just flow naturally):
+1. Opening (1-2 sentences): Why this role or company caught their eye. Be specific to something the company actually does.
+2. Alignment (2-3 sentences): How their background connects to the company's work. Reference a real signal if available.
+3. Proof (2-3 sentences): One concrete example — a result, a project, a leadership moment.
+4. Close (1 sentence): Confident, friendly, expresses interest in a conversation.
+
+The letter must read like something a smart, busy professional would actually send. If it sounds corporate or robotic, it's wrong.`;
 
     const aiResponse = await fetch('https://ai.gateway.lovable.dev/v1/chat/completions', {
       method: 'POST',
@@ -153,35 +162,31 @@ Generate three fields plus a full value proposition statement.`;
       body: JSON.stringify({
         model: 'google/gemini-3-flash-preview',
         messages: [
-          { role: 'system', content: 'You are a Career Strategist for high-impact professionals. Generate structured application data. No corporate jargon, no flattery. Be specific about detected signals.' },
+          { role: 'system', content: 'You write cover letters that sound human, sharp, and credible. You never sound like a template or a consulting report. You write the way a confident professional speaks — clean, direct, and warm. Every word earns its place.' },
           { role: 'user', content: prompt },
         ],
         tools: [{
           type: 'function',
           function: {
             name: 'generate_payload',
-            description: 'Generate a structured application payload with targeted intro, HR tech alignment, values check, and full value proposition.',
+            description: 'Generate a cover letter and supporting application fields.',
             parameters: {
               type: 'object',
               properties: {
-                targeted_intro: {
+                cover_letter: {
                   type: 'string',
-                  description: 'A 2-sentence value proposition mentioning the company specific Bias Audit status or civic footprint score.',
+                  description: 'The full cover letter, 120-170 words. No headers, no labels. Just clean paragraphs that flow naturally. Must sound like a real human wrote it.',
                 },
-                hr_tech_alignment: {
+                one_line_pitch: {
                   type: 'string',
-                  description: 'A statement addressing the AI vendor detected (e.g. "I am familiar with the Eightfold ecosystem and value its commitment to skills-based ranking"). Be specific to the vendor name.',
+                  description: 'A single compelling sentence (under 25 words) that captures why this candidate fits this company. Used as a subject line or intro hook.',
                 },
-                values_check: {
+                values_alignment_note: {
                   type: 'string',
-                  description: 'A confirmation of their CROWN Act support, Pay Transparency stance, or worker protection values based on detected signals.',
-                },
-                matching_statement: {
-                  type: 'string',
-                  description: 'A 150-250 word Personal Value Proposition with structure: THE LEAD (acknowledge a specific company practice), THE WHY (connect to candidate values), THE EVIDENCE (mention a specific detected signal), THE CTA (how candidate will help).',
+                  description: 'One sentence noting a specific company practice or signal the candidate values. Written naturally, not like a checkbox.',
                 },
               },
-              required: ['targeted_intro', 'hr_tech_alignment', 'values_check', 'matching_statement'],
+              required: ['cover_letter', 'one_line_pitch', 'values_alignment_note'],
               additionalProperties: false,
             },
           },
