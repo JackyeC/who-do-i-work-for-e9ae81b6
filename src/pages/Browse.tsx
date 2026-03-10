@@ -16,7 +16,7 @@ import { Badge } from "@/components/ui/badge";
 
 const stagger = {
   container: { hidden: {}, show: { transition: { staggerChildren: 0.03 } } },
-  item: { hidden: { opacity: 0, y: 12 }, show: { opacity: 1, y: 0, transition: { duration: 0.35, ease: "easeOut" } } },
+  item: { hidden: { opacity: 0, y: 12 }, show: { opacity: 1, y: 0, transition: { duration: 0.35, ease: "easeOut" as const } } },
 };
 
 export default function Browse() {
