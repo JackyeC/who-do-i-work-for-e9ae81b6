@@ -129,7 +129,7 @@ function PipelineColumn({ title, icon: Icon, items, color }: {
         {items.map((item, i) => {
           const isExpanded = expandedIdx === i;
           const confidenceLevel = item.confidence ?? 0;
-          const confidenceLabel = confidenceLevel >= 0.8 ? "Verified" : confidenceLevel >= 0.5 ? "Inferred" : "Low confidence";
+          const confidenceLabel = confidenceLevel >= 0.8 ? "Strong evidence" : confidenceLevel >= 0.5 ? "Some evidence" : "Weak evidence";
 
           return (
             <Collapsible key={i} open={isExpanded} onOpenChange={() => setExpandedIdx(isExpanded ? null : i)}>
