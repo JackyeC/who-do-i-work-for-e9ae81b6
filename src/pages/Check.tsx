@@ -78,30 +78,45 @@ export default function Check() {
             <div className="bg-card rounded-2xl border border-border/40 p-8 shadow-luxury">
               <h2 className="text-xl font-semibold text-foreground mb-2 font-display">Offer Check</h2>
               <p className="text-sm text-muted-foreground mb-6">
-                Two ways to check your offer:
+                Three ways to check your offer — no PII required:
               </p>
 
               <div className="space-y-4">
-                {/* Option 1: Direct upload */}
+                {/* Option 1: Quick manual input */}
                 <div className="p-4 rounded-xl border border-primary/20 bg-primary/[0.02]">
                   <div className="flex items-center gap-2 mb-2">
-                    <ShieldCheck className="w-5 h-5 text-primary" />
-                    <h3 className="font-semibold text-foreground text-sm">Upload Your Offer Letter</h3>
+                    <ClipboardCheck className="w-5 h-5 text-primary" />
+                    <h3 className="font-semibold text-foreground text-sm">Enter Offer Details</h3>
+                    <Badge className="text-[10px] bg-primary/10 text-primary border-0">Recommended</Badge>
+                  </div>
+                  <p className="text-xs text-muted-foreground mb-3">
+                    Just enter the job title, salary, and company name — no documents or personal info needed. Get an instant Offer Clarity Score.
+                  </p>
+                  <Button onClick={() => navigate("/offer-clarity")} className="gap-2">
+                    <ClipboardCheck className="w-4 h-4" /> Enter Offer Details
+                  </Button>
+                </div>
+
+                {/* Option 2: Upload offer letter */}
+                <div className="p-4 rounded-xl border border-border/40">
+                  <div className="flex items-center gap-2 mb-2">
+                    <ShieldCheck className="w-5 h-5 text-muted-foreground" />
+                    <h3 className="font-semibold text-foreground text-sm">Upload Offer Letter</h3>
                     <Badge variant="outline" className="text-[10px]">Private</Badge>
                   </div>
                   <p className="text-xs text-muted-foreground mb-3">
-                    Upload a PDF, DOCX, or paste text from your offer letter. AI will extract salary, equity, contract terms, and flag risks — no company selection needed.
+                    Upload a PDF or DOCX for AI-powered term extraction. Your document is encrypted and visible only to you. Original files can be auto-deleted after analysis.
                   </p>
-                  <Button onClick={() => navigate("/offer-review-direct")} className="gap-2">
+                  <Button variant="outline" onClick={() => navigate("/offer-review-direct")} className="gap-2">
                     <Upload className="w-4 h-4" /> Upload Offer Letter
                   </Button>
                 </div>
 
-                {/* Option 2: Company search */}
+                {/* Option 3: Company search */}
                 <div className="p-4 rounded-xl border border-border/40">
                   <div className="flex items-center gap-2 mb-2">
-                    <ClipboardCheck className="w-5 h-5 text-muted-foreground" />
-                    <h3 className="font-semibold text-foreground text-sm">Search by Company</h3>
+                    <Building2 className="w-5 h-5 text-muted-foreground" />
+                    <h3 className="font-semibold text-foreground text-sm">Research by Company</h3>
                   </div>
                   <p className="text-xs text-muted-foreground mb-3">
                     Look up a company to see public signals about pay, hiring, worker conditions, and influence — before you accept.
@@ -117,7 +132,7 @@ export default function Check() {
                       />
                     </div>
                     <Button type="submit" variant="outline" className="gap-2">
-                      Run Offer Check <ArrowRight className="w-4 h-4" />
+                      Research <ArrowRight className="w-4 h-4" />
                     </Button>
                   </form>
                 </div>
