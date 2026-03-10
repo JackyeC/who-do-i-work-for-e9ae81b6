@@ -489,6 +489,68 @@ export type Database = {
         }
         Relationships: []
       }
+      career_smart_goals: {
+        Row: {
+          achievable: string | null
+          created_at: string
+          description: string | null
+          id: string
+          is_ai_generated: boolean | null
+          measurable: string | null
+          relevant: string | null
+          sort_order: number | null
+          specific: string | null
+          status: string
+          time_bound: string | null
+          title: string
+          track_id: string | null
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          achievable?: string | null
+          created_at?: string
+          description?: string | null
+          id?: string
+          is_ai_generated?: boolean | null
+          measurable?: string | null
+          relevant?: string | null
+          sort_order?: number | null
+          specific?: string | null
+          status?: string
+          time_bound?: string | null
+          title: string
+          track_id?: string | null
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          achievable?: string | null
+          created_at?: string
+          description?: string | null
+          id?: string
+          is_ai_generated?: boolean | null
+          measurable?: string | null
+          relevant?: string | null
+          sort_order?: number | null
+          specific?: string | null
+          status?: string
+          time_bound?: string | null
+          title?: string
+          track_id?: string | null
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "career_smart_goals_track_id_fkey"
+            columns: ["track_id"]
+            isOneToOne: false
+            referencedRelation: "employee_growth_tracker"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       companies: {
         Row: {
           careers_url: string | null
@@ -4297,6 +4359,48 @@ export type Database = {
           status?: Database["public"]["Enums"]["document_status"] | null
           updated_at?: string
           user_id?: string
+        }
+        Relationships: []
+      }
+      user_personality_profile: {
+        Row: {
+          ai_summary: string | null
+          communication_style: string | null
+          created_at: string
+          id: string
+          leadership_preference: string | null
+          personality_traits: string[] | null
+          strengths: string[] | null
+          updated_at: string
+          user_id: string
+          work_environment: string | null
+          work_style: string[] | null
+        }
+        Insert: {
+          ai_summary?: string | null
+          communication_style?: string | null
+          created_at?: string
+          id?: string
+          leadership_preference?: string | null
+          personality_traits?: string[] | null
+          strengths?: string[] | null
+          updated_at?: string
+          user_id: string
+          work_environment?: string | null
+          work_style?: string[] | null
+        }
+        Update: {
+          ai_summary?: string | null
+          communication_style?: string | null
+          created_at?: string
+          id?: string
+          leadership_preference?: string | null
+          personality_traits?: string[] | null
+          strengths?: string[] | null
+          updated_at?: string
+          user_id?: string
+          work_environment?: string | null
+          work_style?: string[] | null
         }
         Relationships: []
       }
