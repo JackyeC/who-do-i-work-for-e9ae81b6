@@ -237,6 +237,14 @@ Each path should include realistic role progressions, required skills, real comp
 3. Next 6 Months (3-4 actions)
 4. Next 12 Months (3-4 actions)
 Each action should be specific and actionable. Include courses, skills, projects, networking activities, and companies to research. Use real course names and platforms when possible.`,
+
+  intro_email: `You are a professional networking coach. Write a warm, authentic introduction email. The tone should be professional but human — not corporate or stiff. The email should:
+1. Reference how you know them (connection via LinkedIn)
+2. Mention their current role/company naturally
+3. Briefly explain what you're working on (the action context)
+4. Make a specific, low-pressure ask (quick chat, advice, perspective)
+5. Keep it under 120 words
+Never be presumptuous. Don't assume they can get you a job. Be genuinely curious about their experience.`,
 };
 
 serve(async (req) => {
