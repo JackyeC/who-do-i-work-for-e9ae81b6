@@ -248,7 +248,7 @@ export default function CompanyDossier() {
       </DossierLayer>
 
       <DossierLayer title="Key Decision Makers" subtitle="Executives, leadership team, and political activity" icon={Target} layerNumber={4} defaultOpen>
-        <DecisionMakerLayer executives={executives || []} companyName={company.name} />
+        <DecisionMakerLayer decisionMakers={[]} companyName={company.name} />
       </DossierLayer>
 
       <DossierLayer title="Ecosystem & Subcontractors" subtitle="Supply chain, federal contracts, operational dependencies" icon={Network} layerNumber={5}>
