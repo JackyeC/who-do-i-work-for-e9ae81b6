@@ -1,9 +1,18 @@
 import { useState } from "react";
-import { FileDown, Loader2 } from "lucide-react";
+import { FileDown, Loader2, Lock } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { supabase } from "@/integrations/supabase/client";
 import { generateDossierPdf } from "@/lib/generateDossierPdf";
 import { toast } from "sonner";
+import { useTrackedCompanies } from "@/hooks/use-tracked-companies";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogDescription,
+} from "@/components/ui/dialog";
+import { useNavigate } from "react-router-dom";
 
 interface ExportDossierButtonProps {
   companyId: string;
@@ -13,11 +22,21 @@ interface ExportDossierButtonProps {
 
 export function ExportDossierButton({ companyId, companyName, company }: ExportDossierButtonProps) {
   const [exporting, setExporting] = useState(false);
+  const [showUpgrade, setShowUpgrade] = useState(false);
+  const { isCompanyTracked, isPremium } = useTrackedCompanies();
+  const navigate = useNavigate();
+
+  const isTracked = isCompanyTracked(companyId);
+  const canExport = isTracked && isPremium;
 
   const handleExport = async () => {
+    if (!canExport) {
+      setShowUpgrade(true);
+      return;
+    }
+
     setExporting(true);
     try {
-      // Fetch ALL intelligence layers in parallel for the richest possible export
       const [
         execRes, contractRes, valuesRes, warnRes, sentimentRes, payEquityRes,
         lobbyRes, partyRes, darkMoneyRes, revolvingRes, stancesRes, benchRes, candidatesRes,
@@ -55,8 +74,8 @@ export function ExportDossierButton({ companyId, companyName, company }: ExportD
       });
 
       const slug = companyName.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/-+$/, "");
-      doc.save(`${slug}-intelligence-dossier.pdf`);
-      toast.success("Intelligence Dossier exported");
+      doc.save(`${slug}-integrity-brief.pdf`);
+      toast.success("Integrity Brief downloaded");
     } catch (err) {
       console.error("PDF export error:", err);
       toast.error("Failed to generate PDF");
@@ -66,15 +85,45 @@ export function ExportDossierButton({ companyId, companyName, company }: ExportD
   };
 
   return (
-    <Button
-      onClick={handleExport}
-      disabled={exporting}
-      variant="outline"
-      size="sm"
-      className="gap-2"
-    >
-      {exporting ? <Loader2 className="w-4 h-4 animate-spin" /> : <FileDown className="w-4 h-4" />}
-      {exporting ? "Generating…" : "Export Intelligence Brief"}
-    </Button>
+    <>
+      <Button
+        onClick={handleExport}
+        disabled={exporting}
+        variant={canExport ? "outline" : "secondary"}
+        size="sm"
+        className="gap-2"
+      >
+        {exporting ? (
+          <Loader2 className="w-4 h-4 animate-spin" />
+        ) : canExport ? (
+          <FileDown className="w-4 h-4" />
+        ) : (
+          <Lock className="w-4 h-4" />
+        )}
+        {exporting ? "Generating…" : "Download Integrity Brief"}
+      </Button>
+
+      <Dialog open={showUpgrade} onOpenChange={setShowUpgrade}>
+        <DialogContent className="sm:max-w-md">
+          <DialogHeader>
+            <DialogTitle className="flex items-center gap-2">
+              <Lock className="w-5 h-5 text-primary" />
+              Upgrade to Export
+            </DialogTitle>
+            <DialogDescription>
+              The Integrity Brief is a premium export available to Pro subscribers who are actively tracking this company. Track {companyName} to unlock the full intelligence dossier and downloadable PDF.
+            </DialogDescription>
+          </DialogHeader>
+          <div className="flex gap-3 pt-4">
+            <Button variant="outline" onClick={() => setShowUpgrade(false)}>
+              Cancel
+            </Button>
+            <Button onClick={() => { setShowUpgrade(false); navigate("/pricing"); }}>
+              View Plans
+            </Button>
+          </div>
+        </DialogContent>
+      </Dialog>
+    </>
   );
 }
