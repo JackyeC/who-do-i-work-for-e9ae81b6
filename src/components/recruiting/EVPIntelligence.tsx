@@ -241,23 +241,39 @@ export function EVPIntelligence() {
         });
       }
 
-      // Narrative suggestions
+      // Narrative suggestions — Jackye Clayton's voice: direct, evidence-first, no corporate fluff
       const narrativeSuggestions: string[] = [];
-      if (contractsRes.data && contractsRes.data.length > 0) {
-        narrativeSuggestions.push(`"Join a team trusted by ${contractsRes.data.map(c => c.agency_name).slice(0, 2).join(" and ")} to deliver critical public services."`);
+
+      // Reality-check narrative based on gaps
+      if (sayDoAnalysis.some(s => s.gap === "major")) {
+        const gapCount = sayDoAnalysis.filter(s => s.gap === "major").length;
+        narrativeSuggestions.push(`🚨 Real talk: You have ${gapCount} say-do gap${gapCount > 1 ? "s" : ""}. Before you write another job post, fix these. Candidates are Googling you right now, and these receipts are public.`);
       }
+
+      if (contractsRes.data && contractsRes.data.length > 0) {
+        const agencies = contractsRes.data.map(c => c.agency_name).slice(0, 2).join(" and ");
+        narrativeSuggestions.push(`💡 You work with ${agencies} — that's real impact. Lead with that in your job descriptions. Stop burying the actual mission behind corporate buzzwords.`);
+      }
+
       if (signalScansRes.data && signalScansRes.data.length > 0) {
         const topCategories = [...new Set((signalScansRes.data as any[]).map(s => s.signal_category))].slice(0, 2);
-        narrativeSuggestions.push(`"We invest in our people — with demonstrated commitment to ${topCategories.join(" and ")}."`);
+        narrativeSuggestions.push(`📋 I see programs in ${topCategories.join(" and ")}. If these are real and active, showcase them with specifics — numbers, outcomes, real employee stories. Vague claims don't close candidates.`);
       }
+
       if (company.employee_count) {
-        narrativeSuggestions.push(`"Be part of a ${company.employee_count}-strong team making an impact in ${company.industry}."`);
+        narrativeSuggestions.push(`🏢 ${company.employee_count} employees in ${company.industry}. Use that scale to tell a growth story, but be honest about what stage you're in. Early-career talent wants to know what they're walking into.`);
       }
-      if (sayDoAnalysis.some(s => s.gap === "major")) {
-        narrativeSuggestions.push(`⚠️ Before using any of the above messaging, address the ${sayDoAnalysis.filter(s => s.gap === "major").length} say-do gap(s) identified below. Candidates will find these.`);
+
+      if (careerSiteMessages.length === 0) {
+        narrativeSuggestions.push(`🔍 I couldn't find meaningful messaging on your career site. That's a problem. Your career page is doing the recruiting before your recruiter ever gets on the phone. Make it count.`);
       }
+
+      if (sayDoAnalysis.every(s => s.gap === "aligned") && sayDoAnalysis.length > 0) {
+        narrativeSuggestions.push(`✅ Your messaging actually matches the receipts — that's rare and valuable. Use that alignment as a competitive advantage. Transparency is the new employer brand.`);
+      }
+
       if (narrativeSuggestions.length === 0) {
-        narrativeSuggestions.push(`"Build your career at ${company.name} — a company in ${company.industry} based in ${company.state}."`);
+        narrativeSuggestions.push(`📌 ${company.name} in ${company.industry}, based in ${company.state}. There's not a lot of public signal data to work with yet. Build your evidence trail — that transparency is what today's talent is looking for.`);
       }
 
       // EVP positioning
@@ -266,21 +282,24 @@ export function EVPIntelligence() {
       if (signalScansRes.data && signalScansRes.data.length > 5) evpPositioning.push("Strong employee programs");
       if (jobsRes.data?.some(j => j.work_mode === "remote")) evpPositioning.push("Remote work culture");
       if (company.civic_footprint_score && company.civic_footprint_score >= 60) evpPositioning.push("Transparent governance");
-      if (sayDoAnalysis.every(s => s.gap === "aligned") && sayDoAnalysis.length > 0) evpPositioning.push("Values-aligned messaging");
+      if (sayDoAnalysis.every(s => s.gap === "aligned") && sayDoAnalysis.length > 0) evpPositioning.push("Receipts match the rhetoric");
       evpPositioning.push(`${company.industry} sector`);
 
-      // Attraction insights
+      // Attraction insights — Jackye's real-talk style
       const attractionInsights: string[] = [];
       if (sayDoAnalysis.some(s => s.gap === "major")) {
-        attractionInsights.push("⚠️ Say-Do gaps detected — candidates researching this company will find messaging inconsistencies. Address proactively.");
+        attractionInsights.push("🚩 You have say-do gaps that any candidate with 5 minutes and a search engine will find. Address these in your recruiter scripts before someone brings them up in an interview. Don't let a candidate fact-check you live.");
       }
       if (company.total_pac_spending > 50000) {
-        attractionInsights.push("💡 Significant political spending detected — values-driven candidates will evaluate this. Consider transparency as a differentiator.");
+        attractionInsights.push("💰 You're spending real money on political activity. That's not inherently bad, but candidates — especially Gen Z and values-driven talent — will ask about it. Have an answer ready, or better yet, get out ahead of it.");
       }
       if (careerSiteMessages.length === 0) {
-        attractionInsights.push("🔍 No career site content could be analyzed. Ensure your careers page clearly communicates your EVP.");
+        attractionInsights.push("🖥️ Your career site is either empty or not saying anything a candidate can use. The career page is your first recruiter. If it's not working, you're losing people before the apply click.");
       }
-      attractionInsights.push("✅ Lead with mission and impact in job descriptions to attract purpose-driven talent.");
+      if (candidatesRes.data?.some(c => c.flagged)) {
+        attractionInsights.push("⚠️ Some of your PAC donation recipients have been flagged. You might not think candidates track this, but they do. Have your talking points ready — honesty beats spin every time.");
+      }
+      attractionInsights.push("🎯 Bottom line: Lead with what you can prove. Specifics over slogans. Receipts over rhetoric. That's what builds trust with talent who has options.");
 
       setResult({
         companyName: company.name,
