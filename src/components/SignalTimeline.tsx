@@ -154,7 +154,7 @@ export function SignalTimeline({ companyId }: SignalTimelineProps) {
                           </p>
                           {change.confidence_change && (
                             <p className="text-[10px] text-muted-foreground mt-0.5">
-                              Confidence: {change.confidence_change}
+                              Evidence strength: {change.confidence_change === "high" ? "Strong" : change.confidence_change === "medium" ? "Some" : change.confidence_change}
                             </p>
                           )}
                           <div className="flex items-center gap-3 mt-1">

@@ -30,7 +30,7 @@ const GLOSSARY: GlossaryEntry[] = [
 
   // Metrics
   { term: "Civic Footprint Score", definition: "Our 0–100 composite score measuring a company's political influence footprint. Higher = more political activity detected. Not a judgment — just a measure of activity level.", category: "metric" },
-  { term: "Confidence Level", definition: "How certain we are about a data connection. ≥80% = directly from official filings. 50–79% = inferred from patterns (e.g., name matching). <50% = unverified or weak evidence.", category: "metric" },
+  { term: "Evidence Strength", definition: "How sure we are about a data connection. 'Strong evidence' means it comes directly from official filings. 'Some evidence' means we found patterns that suggest a link (like name matching). 'Weak evidence' means we found a hint but can't fully confirm it yet.", category: "metric" },
   { term: "ROI Ratio", definition: "The ratio of government benefits received (contracts, grants, subsidies) to political spending (PAC donations, lobbying). A 10x ratio means the company received $10 in government benefits for every $1 spent on politics.", category: "metric" },
   { term: "CHI Score", definition: "Corporate Hypocrisy Index — measures the gap between a company's public statements and its actual political spending. Higher = more contradictions found.", category: "metric" },
   { term: "Political Risk Score", definition: "A composite score factoring in dark money connections, revolving door hires, and spending on controversial organizations.", category: "metric" },

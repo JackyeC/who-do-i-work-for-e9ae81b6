@@ -267,7 +267,7 @@ function LinkageChain({ linkages }: { linkages: ROIPipelineData["linkages"] }) {
         const isMed = link.confidence >= 0.5;
         const confidenceColor = isHigh ? "text-primary" : isMed ? "text-accent-foreground" : "text-destructive";
         const confidenceBg = isHigh ? "bg-primary/10 border-primary/30" : isMed ? "bg-accent/20 border-accent/30" : "bg-destructive/10 border-destructive/30";
-        const confidenceLabel = isHigh ? "Verified" : isMed ? "Inferred" : "Unverified";
+        const confidenceLabel = isHigh ? "Strong evidence" : isMed ? "Some evidence" : "Weak evidence";
         const dotColor = isHigh ? "bg-primary" : isMed ? "bg-accent-foreground" : "bg-destructive";
         const lineColor = isHigh ? "bg-primary/30" : isMed ? "bg-accent/30" : "bg-destructive/30";
         const isLast = i === linkages.length - 1;
