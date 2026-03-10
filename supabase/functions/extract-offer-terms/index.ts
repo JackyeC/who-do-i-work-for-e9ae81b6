@@ -158,15 +158,15 @@ serve(async (req) => {
       const filename = (review.original_filename || "").toLowerCase();
 
       if (filename.endsWith(".txt")) {
-        // Plain text can be read directly
         documentText = await fileData.text();
-      } else {
-        // For PDF/DOCX: send raw file to Gemini as base64 inline_data
-        // Gemini can natively understand these document formats
+      } else if (filename.endsWith(".docx") || filename.endsWith(".doc")) {
         const buffer = await fileData.arrayBuffer();
-        fileBase64 = arrayBufferToBase64(buffer);
-        fileMimeType = getMimeType(filename);
-        console.log(`Sending ${filename} (${(buffer.byteLength / 1024).toFixed(1)}KB) as ${fileMimeType} to Gemini for native parsing`);
+        documentText = await extractDocxText(buffer);
+        console.log(`Extracted ${documentText.length} chars from DOCX`);
+      } else if (filename.endsWith(".pdf")) {
+        const buffer = await fileData.arrayBuffer();
+        documentText = extractPdfText(buffer);
+        console.log(`Extracted ${documentText.length} chars from PDF`);
       }
     }
 
