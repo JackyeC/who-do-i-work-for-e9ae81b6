@@ -21,6 +21,26 @@ serve(async (req) => {
       });
     }
 
+    // Server-side input validation
+    const sanitize = (s: string | undefined, max = 500): string =>
+      (s || "").replace(/[<>"'`]/g, "").substring(0, max).trim();
+
+    if (typeof companyName !== "string" || companyName.length > 500) {
+      return new Response(JSON.stringify({ error: "Invalid company name" }), {
+        status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" },
+      });
+    }
+
+    const sanitizedOffer = {
+      roleTitle: sanitize(offerData.roleTitle, 200),
+      location: sanitize(offerData.location, 200),
+      yearsExperience: sanitize(offerData.yearsExperience, 10),
+      baseSalary: sanitize(offerData.baseSalary, 20),
+      bonus: sanitize(offerData.bonus, 200),
+      equity: sanitize(offerData.equity, 200),
+      additionalDetails: sanitize(offerData.additionalDetails, 3000),
+    };
+
     // Fetch company signals if companyId provided
     let companySignals: any = {};
     if (companyId) {
