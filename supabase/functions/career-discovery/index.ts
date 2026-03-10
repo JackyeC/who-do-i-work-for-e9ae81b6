@@ -6,6 +6,29 @@ const corsHeaders = {
 };
 
 const TOOLS: Record<string, { name: string; description: string; parameters: any }> = {
+  suggest_roles: {
+    name: "suggest_roles",
+    description: "Suggest 5 future career roles tailored to the user's profile.",
+    parameters: {
+      type: "object",
+      properties: {
+        suggestions: {
+          type: "array",
+          items: {
+            type: "object",
+            properties: {
+              role: { type: "string", description: "Specific job title" },
+              reason: { type: "string", description: "Why this role fits their background (1-2 sentences)" },
+              growth: { type: "string", description: "Growth outlook, e.g. 'High demand', 'Emerging field', 'Steady growth'" },
+            },
+            required: ["role", "reason", "growth"],
+          },
+        },
+      },
+      required: ["suggestions"],
+      additionalProperties: false,
+    },
+  },
   career_discovery: {
     name: "career_discovery",
     description: "Return career path suggestions in three categories: likely, adjacent, and unexpected.",
