@@ -343,7 +343,7 @@ Deno.serve(async (req) => {
       target_entity_id: cikResult.cik,
       link_type: 'interlocking_directorate',
       confidence_score: 1.0,
-      description: `SEC-registered entity${cikResult.ticker ? ` (${cikResult.ticker})` : ''} — ${(dbCompany as any)?.is_publicly_traded !== false ? 'publicly traded' : 'privately held'}`,
+      description: `SEC-registered entity${cikResult.ticker ? ` (${cikResult.ticker})` : ''} — ${isPubliclyTraded ? 'publicly traded' : 'SEC filer'}`,
       source_citation: JSON.stringify([{
         source: 'SEC EDGAR',
         url: `https://www.sec.gov/cgi-bin/browse-edgar?action=getcompany&CIK=${cikResult.cik}`,
