@@ -145,10 +145,8 @@ serve(async (req) => {
     await adminClient.from("offer_letter_reviews").update({ processing_status: "processing" }).eq("id", reviewId);
 
     let documentText = review.extracted_text || "";
-    let fileBase64: string | null = null;
-    let fileMimeType: string | null = null;
 
-    // If file was uploaded, download for Gemini native parsing
+    // If file was uploaded, download and extract text
     if (review.file_path && !documentText) {
       const { data: fileData, error: fileError } = await adminClient.storage
         .from("offer-letters")
@@ -170,11 +168,11 @@ serve(async (req) => {
       }
     }
 
-    // If we have neither text nor a file to parse, fail
-    if (!documentText && !fileBase64) {
+    // If we have no text, fail
+    if (!documentText || documentText.length < 20) {
       await adminClient.from("offer_letter_reviews").update({
         processing_status: "failed",
-        error_message: "Could not extract content from the document.",
+        error_message: "Could not extract readable content from the document. Try pasting the text instead.",
       }).eq("id", reviewId);
       return new Response(JSON.stringify({ error: "No content to analyze" }), {
         status: 400,
@@ -203,29 +201,7 @@ Context: ${companyContext}
 
 IMPORTANT: Always extract the employer_name from the document itself, regardless of any company context provided.`;
 
-    // Build the messages array with either text or inline_data
-    const userContent: any[] = [];
-    
-    if (fileBase64 && fileMimeType) {
-      // Send the raw file as inline_data for Gemini native document understanding
-      userContent.push({
-        type: "file",
-        file: {
-          filename: review.original_filename || "document",
-          content: fileBase64,
-          content_type: fileMimeType,
-        },
-      });
-      userContent.push({
-        type: "text",
-        text: "Analyze this employment offer letter document and extract all structured information. For each detected item, provide the category, term name, extracted text snippet, and a confidence level (high, medium, low).",
-      });
-    } else {
-      userContent.push({
-        type: "text",
-        text: `Analyze this employment offer letter and extract all structured information. For each detected item, provide the category, term name, extracted text snippet, and a confidence level (high, medium, low).\n\nDocument text:\n---\n${documentText!.slice(0, 15000)}\n---`,
-      });
-    }
+    const userContent = `Analyze this employment offer letter and extract all structured information. For each detected item, provide the category, term name, extracted text snippet, and a confidence level (high, medium, low).\n\nDocument text:\n---\n${documentText.slice(0, 15000)}\n---`;
 
     const aiResponse = await fetch("https://ai.gateway.lovable.dev/v1/chat/completions", {
       method: "POST",
