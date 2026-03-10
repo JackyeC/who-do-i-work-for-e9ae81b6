@@ -33,6 +33,7 @@ const RESEARCH_MODULES = [
   { key: 'worker_benefits', label: 'Worker Benefits & Protections', fn: 'worker-benefits-scan', phase: 'research' },
   { key: 'pay_equity', label: 'Pay Equity & Compensation Transparency', fn: 'pay-equity-scan', phase: 'research' },
   { key: 'worker_sentiment', label: 'Worker Sentiment', fn: 'worker-sentiment-scan', phase: 'research' },
+  { key: 'warn_notices', label: 'WARN Act & Layoff Tracker', fn: 'warn-scan', phase: 'research', paramStyle: 'snake' },
   { key: 'ideology', label: 'Ideology & Controversy Signals', fn: 'ideology-scan', phase: 'research' },
   { key: 'social', label: 'Social & Media Monitoring', fn: 'social-scan', phase: 'research' },
   { key: 'agency_contracts', label: 'Government Contracts', fn: 'agency-scan', phase: 'research' },
@@ -200,10 +201,15 @@ Deno.serve(async (req) => {
         const timeoutMs = isRetry ? 45_000 : 55_000;
         const timeoutId = setTimeout(() => controller.abort(), timeoutMs);
 
+        // Some modules use snake_case params (e.g. warn-scan)
+        const bodyPayload = (mod as any).paramStyle === 'snake'
+          ? { company_id: companyId, company_name: companyName, searchNames, entityMap }
+          : { companyId, companyName, searchNames, entityMap };
+
         const moduleResp = await fetch(`${supabaseUrl}/functions/v1/${mod.fn}`, {
           method: 'POST',
           headers: { 'Authorization': `Bearer ${supabaseKey}`, 'Content-Type': 'application/json' },
-          body: JSON.stringify({ companyId, companyName, searchNames, entityMap }),
+          body: JSON.stringify(bodyPayload),
           signal: controller.signal,
         });
 
