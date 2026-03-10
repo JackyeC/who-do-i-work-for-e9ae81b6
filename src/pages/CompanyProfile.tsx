@@ -385,7 +385,11 @@ export default function CompanyProfile() {
     queryKey: ["company-executives", dbCompanyId],
     queryFn: async () => {
       const { data } = await supabase.from("company_executives").select("*").eq("company_id", dbCompanyId!).order("total_donations", { ascending: false });
-      return data || [];
+      if (!data) return [];
+      // Filter to C-suite / senior leadership only
+      const CSUITE_RE = /\b(CEO|CFO|COO|CTO|CIO|CISO|CMO|CPO|CLO|CDO|CSO|CHRO|CAO|CRO|CCO|CHAIRMAN|CHAIRWOMAN|CHAIR|PRESIDENT|VICE\s*PRESIDENT|VP|SVP|EVP|MANAGING\s*DIRECTOR|GENERAL\s*COUNSEL|PARTNER|FOUNDER|CO-?FOUNDER|OWNER|DIRECTOR|CHIEF|HEAD|EXECUTIVE|BOARD\s*MEMBER|TREASURER|SECRETARY|GENERAL\s*MANAGER|PRINCIPAL)\b/i;
+      const filtered = data.filter(e => CSUITE_RE.test(e.title || ""));
+      return filtered.length > 0 ? filtered : data.slice(0, 5);
     },
     enabled: !!dbCompanyId,
     refetchInterval: pollInterval,
