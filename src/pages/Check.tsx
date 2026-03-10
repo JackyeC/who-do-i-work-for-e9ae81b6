@@ -86,14 +86,14 @@ export default function Check() {
                 <div className="p-4 rounded-xl border border-primary/20 bg-primary/[0.02]">
                   <div className="flex items-center gap-2 mb-2">
                     <ClipboardCheck className="w-5 h-5 text-primary" />
-                    <h3 className="font-semibold text-foreground text-sm">Enter Offer Details</h3>
+                    <h3 className="font-semibold text-foreground text-sm">Strategic Offer Review</h3>
                     <Badge className="text-[10px] bg-primary/10 text-primary border-0">Recommended</Badge>
                   </div>
                   <p className="text-xs text-muted-foreground mb-3">
-                    Just enter the job title, salary, and company name — no documents or personal info needed. Get an instant Offer Clarity Score.
+                    Five-layer analysis: walk-away calculator, civic & legal audit, equity visualizer, negotiation scripts, and scam detection. No PII required.
                   </p>
-                  <Button onClick={() => navigate("/offer-clarity")} className="gap-2">
-                    <ClipboardCheck className="w-4 h-4" /> Enter Offer Details
+                  <Button onClick={() => navigate("/strategic-offer-review")} className="gap-2">
+                    <ClipboardCheck className="w-4 h-4" /> Start Strategic Review
                   </Button>
                 </div>
 
