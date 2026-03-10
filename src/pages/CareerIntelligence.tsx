@@ -63,7 +63,7 @@ export default function CareerIntelligence() {
         </div>
 
         <Tabs value={activeTab} onValueChange={setActiveTab} className="max-w-4xl mx-auto">
-          <TabsList className="grid w-full grid-cols-6">
+          <TabsList className="grid w-full grid-cols-7">
             <TabsTrigger value="upload" className="flex items-center gap-1.5 text-xs sm:text-sm">
               <Upload className="w-3.5 h-3.5" /> <span className="hidden sm:inline">Upload</span>
             </TabsTrigger>
@@ -81,6 +81,9 @@ export default function CareerIntelligence() {
             </TabsTrigger>
             <TabsTrigger value="pathing" className="flex items-center gap-1.5 text-xs sm:text-sm">
               <Compass className="w-3.5 h-3.5" /> <span className="hidden sm:inline">Next Move</span>
+            </TabsTrigger>
+            <TabsTrigger value="checklist" className="flex items-center gap-1.5 text-xs sm:text-sm">
+              <CheckCircle2 className="w-3.5 h-3.5" /> <span className="hidden sm:inline">Checklist</span>
             </TabsTrigger>
           </TabsList>
 
