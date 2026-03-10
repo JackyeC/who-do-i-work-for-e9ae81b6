@@ -98,33 +98,7 @@ Deno.serve(async (req) => {
 
     console.log(`[intelligence-scan] START: ${companyName} (${companyId})`);
 
-    // ─── Phase 0: Entity Resolution ───
-    console.log(`[intelligence-scan] ═══ Phase 0: Entity Resolution ═══`);
-    let searchNames = [companyName];
-    let entityMap: Record<string, string> = { [companyName]: 'direct_company' };
-    let resolutionLog: any = { canonical_name: companyName, total_search_names: 1 };
-
-    try {
-      const resolveResp = await fetch(`${supabaseUrl}/functions/v1/resolve-entity`, {
-        method: 'POST',
-        headers: { 'Authorization': `Bearer ${supabaseKey}`, 'Content-Type': 'application/json' },
-        body: JSON.stringify({ companyId, companyName }),
-      });
-
-      if (resolveResp.ok) {
-        const resolveResult = await resolveResp.json();
-        searchNames = resolveResult.searchNames || [companyName];
-        entityMap = resolveResult.entityMap || entityMap;
-        resolutionLog = resolveResult.resolutionLog || resolutionLog;
-        console.log(`[intelligence-scan] Resolved ${searchNames.length} search names`);
-      } else {
-        console.warn(`[intelligence-scan] Entity resolution failed (HTTP ${resolveResp.status}), using company name only`);
-      }
-    } catch (resolveErr) {
-      console.warn('[intelligence-scan] Entity resolution error (non-critical):', resolveErr);
-    }
-
-    // Check for existing in-progress scan (auto-expire stale scans older than 5 minutes)
+    // Check for existing in-progress scan FIRST (before entity resolution to prevent race conditions)
     const forceRescan = body?.forceRescan === true;
     const { data: existingScan } = await supabase
       .from('scan_runs')
@@ -151,6 +125,32 @@ Deno.serve(async (req) => {
           scanRunId: existingScan.id,
         }), { status: 409, headers: { ...corsHeaders, 'Content-Type': 'application/json' } });
       }
+    }
+
+    // ─── Phase 0: Entity Resolution (after concurrency check) ───
+    console.log(`[intelligence-scan] ═══ Phase 0: Entity Resolution ═══`);
+    let searchNames = [companyName];
+    let entityMap: Record<string, string> = { [companyName]: 'direct_company' };
+    let resolutionLog: any = { canonical_name: companyName, total_search_names: 1 };
+
+    try {
+      const resolveResp = await fetch(`${supabaseUrl}/functions/v1/resolve-entity`, {
+        method: 'POST',
+        headers: { 'Authorization': `Bearer ${supabaseKey}`, 'Content-Type': 'application/json' },
+        body: JSON.stringify({ companyId, companyName }),
+      });
+
+      if (resolveResp.ok) {
+        const resolveResult = await resolveResp.json();
+        searchNames = resolveResult.searchNames || [companyName];
+        entityMap = resolveResult.entityMap || entityMap;
+        resolutionLog = resolveResult.resolutionLog || resolutionLog;
+        console.log(`[intelligence-scan] Resolved ${searchNames.length} search names`);
+      } else {
+        console.warn(`[intelligence-scan] Entity resolution failed (HTTP ${resolveResp.status}), using company name only`);
+      }
+    } catch (resolveErr) {
+      console.warn('[intelligence-scan] Entity resolution error (non-critical):', resolveErr);
     }
 
     // Create scan run record
