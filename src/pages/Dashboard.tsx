@@ -24,6 +24,7 @@ import { ClipboardCheck } from "lucide-react";
 
 const TAB_TITLES: Record<string, string> = {
   overview: "Dashboard Overview",
+  tracked: "Tracked Companies",
   matches: "Matched Jobs",
   values: "My Values Profile",
   how: "How Do I Get There?",
