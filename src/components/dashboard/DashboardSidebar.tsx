@@ -17,7 +17,7 @@ import { Button } from "@/components/ui/button";
 import {
   Briefcase, Heart, Route, Users, LayoutDashboard,
   Settings, User, Zap, Bell, ClipboardCheck, LogOut,
-  Home, Compass, Building2
+  Home, Compass, Building2, Network
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 
