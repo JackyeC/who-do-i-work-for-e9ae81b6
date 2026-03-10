@@ -86,8 +86,26 @@ export function ExecutiveDetailDrawer({ open, onOpenChange, executive, companyNa
 
   if (!executive) return null;
 
-  const linkedInUrl = `https://www.linkedin.com/search/results/people/?keywords=${encodeURIComponent(executive.name + " " + companyName)}`;
-  const googleSearchUrl = `https://www.google.com/search?q=${encodeURIComponent(`"${executive.name}" "${companyName}" site:linkedin.com OR site:twitter.com OR site:x.com`)}`;
+  // Normalize "LAST, FIRST" → "First Last" for social search URLs
+  const normalizeDisplayName = (raw: string) => {
+    const trimmed = raw.trim();
+    if (trimmed.includes(",")) {
+      const [last, ...firstParts] = trimmed.split(",").map(s => s.trim());
+      const first = firstParts.join(" ").trim();
+      if (first && last) {
+        const titleCase = (s: string) => s.charAt(0).toUpperCase() + s.slice(1).toLowerCase();
+        return first.split(/\s+/).map(titleCase).join(" ") + " " + last.split(/\s+/).map(titleCase).join(" ");
+      }
+    }
+    return trimmed;
+  };
+
+  const displayName = normalizeDisplayName(executive.name);
+  // Strip company suffixes for cleaner employer search
+  const cleanCompany = companyName.replace(/,?\s*(LP|LLC|Inc\.?|Corp\.?|Co\.?)$/i, "").trim();
+
+  const linkedInUrl = `https://www.linkedin.com/search/results/people/?keywords=${encodeURIComponent(displayName + " " + cleanCompany)}`;
+  const googleSearchUrl = `https://www.google.com/search?q=${encodeURIComponent(`"${displayName}" "${cleanCompany}" site:linkedin.com OR site:twitter.com OR site:x.com`)}`;
   const fecDonorUrl = `https://www.fec.gov/data/receipts/individual-contributions/?contributor_name=${encodeURIComponent(executive.name)}&contributor_employer=${encodeURIComponent(companyName)}`;
 
   return (
