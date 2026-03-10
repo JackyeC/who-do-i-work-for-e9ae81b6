@@ -350,14 +350,14 @@ export default function Jobs() {
                           </Badge>
                         </div>
                         {generatedPayload.targetedIntro && (
-                          <p className="text-sm text-foreground/90 mb-2">{generatedPayload.targetedIntro}</p>
+                          <p className="text-sm font-medium text-foreground/90 mb-2 italic">"{generatedPayload.targetedIntro}"</p>
                         )}
-                        <div className="bg-background border border-border rounded-md p-3 text-sm text-foreground/90 leading-relaxed max-h-40 overflow-y-auto">
+                        <div className="bg-background border border-border rounded-md p-3 text-sm text-foreground/90 leading-relaxed max-h-40 overflow-y-auto whitespace-pre-line">
                           {generatedPayload.matchingStatement}
                         </div>
-                        <p className="text-xs text-muted-foreground mt-2">
-                          Paste this into the "Cover Letter" or "Why us?" field on {generatedPayload.companyName}'s application.
-                        </p>
+                        {generatedPayload.valuesCheck && (
+                          <p className="text-xs text-muted-foreground mt-2">{generatedPayload.valuesCheck}</p>
+                        )}
                       </div>
                       <div className="flex flex-col gap-2 shrink-0">
                         <Button size="sm" onClick={handleCopyPayload} className="gap-1.5">
