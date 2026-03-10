@@ -50,10 +50,27 @@ export function WhatYoureSupportingCard({
   return (
     <Card className="border-primary/20 bg-primary/[0.02]">
       <CardHeader className="pb-3">
-        <CardTitle className="text-lg flex items-center gap-2">
-          <HandCoins className="w-5 h-5 text-primary" />
-          What You're Supporting
-        </CardTitle>
+        <div className="flex items-center justify-between">
+          <CardTitle className="text-lg flex items-center gap-2">
+            <HandCoins className="w-5 h-5 text-primary" />
+            What You're Supporting
+          </CardTitle>
+          <Button
+            variant="ghost"
+            size="sm"
+            className="gap-1.5 text-xs"
+            onClick={async () => {
+              const url = window.location.href;
+              if (navigator.share) {
+                try { await navigator.share({ title: `${companyName} — What You're Supporting`, url }); } catch {}
+              } else {
+                await navigator.clipboard.writeText(url);
+              }
+            }}
+          >
+            <Share2 className="w-3 h-3" /> Share
+          </Button>
+        </div>
         <p className="text-sm text-muted-foreground leading-relaxed">
           When you work at <strong className="text-foreground">{companyName}</strong>, your labor generates revenue that funds the following political activities. This isn't a judgment — it's a map of where the money goes.
         </p>
