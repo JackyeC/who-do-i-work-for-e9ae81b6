@@ -189,8 +189,13 @@ export default function CompanyDossier() {
   // Layers 2–11: Full dossier — gated
   const fullContent = (
     <>
-      <DossierLayer title="Innovation & Patents" subtitle="Spending timeline, patent clusters, R&D themes, and technology bets" icon={Lightbulb} layerNumber={2}>
-        <StockPatentsLayer companyId={companyId!} companyName={company.name} />
+      <DossierLayer title="Innovation & Patents" subtitle="Stock timeline, patent clusters, R&D themes, and technology bets" icon={Lightbulb} layerNumber={2}>
+        <div className="space-y-8">
+          <StockPatentsLayer companyId={companyId!} companyName={company.name} />
+          <div className="border-t border-border/30 pt-6">
+            <InnovationPatentsLayer totalPatents={0} clusters={[]} companyName={company.name} companyId={companyId} />
+          </div>
+        </div>
       </DossierLayer>
 
       <DossierLayer title="Ecosystem & Subcontractors" subtitle="Supply chain, federal contracts, and operational dependencies" icon={Network} layerNumber={3}>
