@@ -950,8 +950,12 @@ export default function CompanyProfile() {
                     .slice(0, 5)
                     .map((c: any) => ({ name: c.name, party: c.party, amount: c.amount, state: c.state }))}
                   lobbyingDetails={dbLobbyingDetails || []}
+                  publicStances={(dbPublicStances || []).map((s: any) => ({
+                    topic: s.topic,
+                    public_position: s.public_position,
+                    spending_reality: s.spending_reality,
+                  }))}
                   topIssuesLobbied={
-                    // Flatten state lobbying issues as fallback
                     (dbStateLobbying || []).flatMap((s: any) => s.issues || []).filter((v: string, i: number, a: string[]) => a.indexOf(v) === i).slice(0, 8)
                   }
                   darkMoneyConnections={(dbDarkMoney || []).length}

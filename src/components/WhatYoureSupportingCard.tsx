@@ -13,6 +13,12 @@ interface LobbyingDetail {
   amount?: number;
 }
 
+interface PublicStance {
+  topic: string;
+  public_position: string;
+  spending_reality: string;
+}
+
 interface Props {
   companyName: string;
   totalPacSpending: number;
@@ -20,6 +26,7 @@ interface Props {
   topCandidates?: { name: string; party: string; amount: number; state?: string; committees?: string[] }[];
   topIssuesLobbied?: string[];
   lobbyingDetails?: LobbyingDetail[];
+  publicStances?: PublicStance[];
   darkMoneyConnections?: number;
   flaggedOrgCount?: number;
 }
