@@ -986,6 +986,9 @@ export default function CompanyProfile() {
                   const filtered = dbCandidates?.filter(c => c.party === party);
                   if (filtered && filtered.length > 0) {
                     setPartyFilteredCandidates(filtered);
+                  } else {
+                    // No individual candidates — open the full PAC drawer instead
+                    setPacDrawerOpen(true);
                   }
                 }}
               />
