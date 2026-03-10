@@ -4,29 +4,29 @@ export type PremiumTier = "free" | "starter" | "pro" | "team";
 
 export const STRIPE_TIERS = {
   starter: {
-    price_id: "price_1T93XPGh4NKuXb2AjiV2bobX",
-    product_id: "prod_U7I705lqyNGEWI",
+    price_id: "price_1T9Tve7Qj0W6UtN9eZPIbMff",
+    product_id: "prod_U7jOh7zqBI9YBu",
     label: "Starter",
     price: "$29/mo",
     companies: 3,
   },
   pro: {
-    price_id: "price_pro_250",
-    product_id: "prod_pro_250",
+    price_id: "price_1T9Tvf7Qj0W6UtN9gpum2Bw3",
+    product_id: "prod_U7jOK344koIbiZ",
     label: "Pro",
     price: "$250/mo",
     companies: 25,
   },
   team: {
-    price_id: "price_team_800",
-    product_id: "prod_team_800",
+    price_id: "price_1T9Tvg7Qj0W6UtN9c9OwDzDM",
+    product_id: "prod_U7jOw43ulg302A",
     label: "Team",
     price: "$800/mo",
     companies: 100,
   },
   auto_apply: {
-    price_id: "price_1T9FEIGh4NKuXb2AW5uXIZ5y",
-    product_id: "prod_U7UChM7ivY1Bmf",
+    price_id: "price_1T9Tvd7Qj0W6UtN9EbbU1EOn",
+    product_id: "prod_U7jOXGhFa2WjxK",
     label: "Auto-Apply Add-on",
     price: "$9/mo",
   },
