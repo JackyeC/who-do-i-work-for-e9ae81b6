@@ -50,6 +50,7 @@ import { SignalTimeline } from "@/components/SignalTimeline";
 import { WatchCompanyButton } from "@/components/WatchCompanyButton";
 import { ManualSignalEntry } from "@/components/ManualSignalEntry";
 import { CandidateDetailDrawer } from "@/components/CandidateDetailDrawer";
+import { PartyBadge } from "@/components/PartyBadge";
 import { ExecutiveDetailDrawer } from "@/components/ExecutiveDetailDrawer";
 import { LobbyingDetailDrawer } from "@/components/LobbyingDetailDrawer";
 import { PACDetailDrawer } from "@/components/PACDetailDrawer";
