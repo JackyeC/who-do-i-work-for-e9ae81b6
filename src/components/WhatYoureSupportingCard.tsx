@@ -47,6 +47,7 @@ export function WhatYoureSupportingCard({
   topCandidates = [],
   topIssuesLobbied = [],
   lobbyingDetails = [],
+  publicStances = [],
   darkMoneyConnections = 0,
   flaggedOrgCount = 0,
 }: Props) {
