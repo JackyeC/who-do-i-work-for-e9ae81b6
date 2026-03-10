@@ -266,9 +266,9 @@ export function NetworkIntelligenceStep() {
                         <p className="text-xs text-muted-foreground">
                           {conn.title}{conn.title && company ? " at " : ""}{company}
                         </p>
-                        {conn.matched_company && (
+                        {enriched.matched_company && (
                           <button
-                            onClick={() => navigate(`/dossier/${conn.matched_company!.slug}`)}
+                            onClick={() => navigate(`/dossier/${enriched.matched_company!.slug}`)}
                             className="text-[10px] text-primary hover:underline inline-flex items-center gap-1 mt-0.5"
                           >
                             View company dossier <ExternalLink className="w-2.5 h-2.5" />
