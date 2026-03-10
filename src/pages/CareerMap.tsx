@@ -32,6 +32,7 @@ const STEPS = [
   { id: "futures", label: "Possible Paths", icon: GitBranch, section: "Possible Paths" },
   { id: "action", label: "Action Plan", icon: ClipboardList, section: "Your Action Plan" },
   { id: "network", label: "Path Guides", icon: Users, section: "Who Can Help" },
+  { id: "wrapped", label: "Your Results", icon: Trophy, section: "Career Mapped!" },
 ] as const;
 
 type StepId = typeof STEPS[number]["id"];
