@@ -150,30 +150,18 @@ function ClipboardBanner({ payload, onDismiss }: {
               <Badge variant="secondary" className="text-xs">{payload.alignmentScore}% aligned</Badge>
             </div>
 
-            {/* Structured fields */}
+            {/* Pitch line */}
             {payload.targetedIntro && (
-              <div className="mb-2">
-                <span className="text-xs font-semibold text-muted-foreground uppercase tracking-wide">Targeted Intro</span>
-                <p className="text-sm text-foreground/90 mt-0.5">{payload.targetedIntro}</p>
-              </div>
-            )}
-            {payload.hrTechAlignment && (
-              <div className="mb-2">
-                <span className="text-xs font-semibold text-muted-foreground uppercase tracking-wide">HR Tech Alignment</span>
-                <p className="text-sm text-foreground/90 mt-0.5">{payload.hrTechAlignment}</p>
-              </div>
-            )}
-            {payload.valuesCheck && (
-              <div className="mb-2">
-                <span className="text-xs font-semibold text-muted-foreground uppercase tracking-wide">Values Check</span>
-                <p className="text-sm text-foreground/90 mt-0.5">{payload.valuesCheck}</p>
-              </div>
+              <p className="text-sm font-medium text-foreground mb-2 italic">"{payload.targetedIntro}"</p>
             )}
 
-            <p className="text-sm text-muted-foreground mb-2">
-              Paste this into the "Cover Letter" or "Why us?" field on {payload.companyName}'s application:
-            </p>
-            <div className="bg-background border border-border rounded-md p-3 text-sm text-foreground/90 leading-relaxed max-h-48 overflow-y-auto">
+            {/* Values note */}
+            {payload.valuesCheck && (
+              <p className="text-xs text-muted-foreground mb-2">{payload.valuesCheck}</p>
+            )}
+
+            {/* Cover letter */}
+            <div className="bg-background border border-border rounded-md p-3 text-sm text-foreground/90 leading-relaxed max-h-48 overflow-y-auto whitespace-pre-line">
               {payload.matchingStatement}
             </div>
 
