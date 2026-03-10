@@ -24,7 +24,7 @@ export function ValuesLensResults({ lensKey, onBack }: Props) {
 
   const handleSearchSubmit = (e: React.KeyboardEvent<HTMLInputElement>) => {
     if (e.key === "Enter" && textFilter.trim()) {
-      navigate(`/search-your-employer?q=${encodeURIComponent(textFilter.trim())}`);
+      navigate(`/search?q=${encodeURIComponent(textFilter.trim())}`);
     }
   };
 
