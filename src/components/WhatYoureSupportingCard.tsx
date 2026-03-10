@@ -164,19 +164,28 @@ export function WhatYoureSupportingCard({
             </p>
             <div className="space-y-1.5">
               {topCandidates.slice(0, 5).map((c, i) => (
-                <div key={i} className="flex items-center justify-between py-2 px-3 rounded bg-muted/30">
+                <a
+                  key={i}
+                  href={`https://www.fec.gov/data/receipts/?contributor_name=${encodeURIComponent(c.name)}`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="flex items-center justify-between py-2 px-3 rounded bg-muted/30 hover:bg-primary/5 hover:border-primary/20 border border-transparent transition-colors cursor-pointer group"
+                >
                   <div className="flex items-center gap-2 min-w-0">
                     <PartyBadge party={c.party} size="sm" />
                     <div className="min-w-0">
-                      <span className="text-sm text-foreground block truncate">{c.name}</span>
+                      <span className="text-sm text-foreground block truncate group-hover:text-primary transition-colors">{c.name}</span>
                       <span className="text-[10px] text-muted-foreground">
                         {PARTY_FULL[c.party] || c.party}
                         {c.state ? ` — ${c.state}` : ""}
                       </span>
                     </div>
                   </div>
-                  <span className="text-sm font-data font-medium text-foreground shrink-0">{formatCurrency(c.amount)}</span>
-                </div>
+                  <div className="flex items-center gap-2 shrink-0">
+                    <span className="text-sm font-data font-medium text-foreground">{formatCurrency(c.amount)}</span>
+                    <ExternalLink className="w-3 h-3 text-muted-foreground opacity-0 group-hover:opacity-100 transition-opacity" />
+                  </div>
+                </a>
               ))}
             </div>
           </div>
