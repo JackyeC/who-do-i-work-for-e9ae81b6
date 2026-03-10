@@ -4200,6 +4200,53 @@ export type Database = {
           },
         ]
       }
+      signals: {
+        Row: {
+          company_id: string
+          confidence_level: number | null
+          created_at: string | null
+          date_published: string | null
+          description: string | null
+          id: string
+          is_verified: boolean | null
+          issue_area: string | null
+          signal_type: string | null
+          source_url: string | null
+        }
+        Insert: {
+          company_id: string
+          confidence_level?: number | null
+          created_at?: string | null
+          date_published?: string | null
+          description?: string | null
+          id?: string
+          is_verified?: boolean | null
+          issue_area?: string | null
+          signal_type?: string | null
+          source_url?: string | null
+        }
+        Update: {
+          company_id?: string
+          confidence_level?: number | null
+          created_at?: string | null
+          date_published?: string | null
+          description?: string | null
+          id?: string
+          is_verified?: boolean | null
+          issue_area?: string | null
+          signal_type?: string | null
+          source_url?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "signals_company_id_fkey"
+            columns: ["company_id"]
+            isOneToOne: false
+            referencedRelation: "companies"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       social_media_scans: {
         Row: {
           ai_summary: string | null
