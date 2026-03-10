@@ -3,18 +3,57 @@ import { Link, useLocation, useNavigate } from "react-router-dom";
 import {
   Search, Menu, X, LayoutDashboard, ClipboardCheck,
   ChevronDown, Building2, PlusCircle, TrendingUp, ScanSearch,
-  Briefcase, FileCheck, Map, Heart, Leaf, Users, Scale,
+  Briefcase, FileCheck, Map, Heart, Scale,
   Stethoscope, ShieldAlert, GraduationCap, Globe2, ShoppingCart,
   FileText, BarChart3, Eye, Landmark, Network, Home, Target,
-  Megaphone,
+  Megaphone, Users, Leaf, Sun, Moon,
 } from "lucide-react";
 import { useAuth } from "@/contexts/AuthContext";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { cn } from "@/lib/utils";
+import {
+  Accordion,
+  AccordionContent,
+  AccordionItem,
+  AccordionTrigger,
+} from "@/components/ui/accordion";
 
 /* ------------------------------------------------------------------ */
-/*  Dropdown data — unified nav                                        */
+/*  Theme toggle                                                       */
+/* ------------------------------------------------------------------ */
+
+function ThemeToggle() {
+  const [dark, setDark] = useState(() => document.documentElement.classList.contains("dark"));
+
+  const toggle = () => {
+    const next = !dark;
+    setDark(next);
+    document.documentElement.classList.toggle("dark", next);
+    localStorage.setItem("theme", next ? "dark" : "light");
+  };
+
+  useEffect(() => {
+    const saved = localStorage.getItem("theme");
+    if (saved === "dark") {
+      document.documentElement.classList.add("dark");
+      setDark(true);
+    }
+  }, []);
+
+  return (
+    <button
+      onClick={toggle}
+      className="p-2 rounded-lg text-muted-foreground hover:text-foreground hover:bg-accent/50 transition-colors"
+      aria-label="Toggle theme"
+    >
+      {dark ? <Sun className="w-4 h-4" /> : <Moon className="w-4 h-4" />}
+    </button>
+  );
+}
+
+/* ------------------------------------------------------------------ */
+/*  Dropdown data                                                      */
 /* ------------------------------------------------------------------ */
 
 const EXPLORE_ITEMS = [
@@ -23,23 +62,7 @@ const EXPLORE_ITEMS = [
   { to: "/browse", label: "Employer Directory", icon: Building2 },
   { to: "/examples", label: "Top Searched Employers", icon: TrendingUp },
   { to: "/search-your-employer", label: "Recent Scans", icon: ScanSearch },
-];
-
-const CAREER_SECTIONS = [
-  {
-    heading: "Evaluate Employers",
-    items: [
-      { to: "/check?tab=company", label: "Employer Scan", icon: Briefcase, desc: "Research the company behind the job" },
-      { to: "/check?tab=offer", label: "Offer Check", icon: FileCheck, desc: "Evaluate an offer before you accept" },
-    ],
-  },
-  {
-    heading: "Career Direction",
-    items: [
-      { to: "/career-map", label: "Career Path Explorer", icon: Map, desc: "Map where your career could go" },
-      { to: "/jobs", label: "Job Board", icon: Briefcase, desc: "Browse aligned jobs" },
-    ],
-  },
+  { to: "/values-search", label: "Employer Signal Search", icon: Heart, desc: "Explore employers by signal categories" },
 ];
 
 const EMPLOYER_SIGNAL_ISSUES = [
@@ -50,41 +73,39 @@ const EMPLOYER_SIGNAL_ISSUES = [
   { to: "/values-search?issue=gun_policy", label: "Gun Policy", icon: ShieldAlert },
   { to: "/values-search?issue=education", label: "Education", icon: GraduationCap },
   { to: "/values-search?issue=immigration", label: "Immigration", icon: Globe2 },
-  { to: "/values-search?issue=consumer_protection", label: "Consumer Protection", icon: ShoppingCart },
-  { to: "/values-search?issue=reproductive_rights", label: "Reproductive Rights", icon: Heart },
+  { to: "/values-search?issue=consumer_protection", label: "Consumer", icon: ShoppingCart },
+  { to: "/values-search?issue=reproductive_rights", label: "Reproductive", icon: Heart },
   { to: "/values-search?issue=voting_rights", label: "Voting Rights", icon: Landmark },
-  { to: "/values-search?issue=lgbtq_rights", label: "LGBTQ+ Rights", icon: Heart },
+  { to: "/values-search?issue=lgbtq_rights", label: "LGBTQ+", icon: Heart },
+];
+
+const CAREER_ITEMS = [
+  { to: "/check?tab=company", label: "Employer Scan", icon: Briefcase, desc: "Research the company behind the job" },
+  { to: "/check?tab=offer", label: "Offer Check", icon: FileCheck, desc: "Evaluate an offer before you accept" },
+  { to: "/career-map", label: "Career Path Explorer", icon: Map, desc: "Map where your career could go" },
+  { to: "/jobs", label: "Job Board", icon: Briefcase, desc: "Browse aligned jobs" },
 ];
 
 const INTELLIGENCE_ITEMS = [
   { to: "/intelligence", label: "Evidence Receipts", icon: FileText, desc: "Structured investigative reports" },
   { to: "/intelligence?type=policy_alert", label: "Policy Signal Reports", icon: BarChart3, desc: "Policy shifts and corporate actions" },
-  { to: "/intelligence?type=weekly_brief", label: "Employer Signals This Week", icon: Eye, desc: "Latest detected employer signals" },
+  { to: "/intelligence?type=weekly_brief", label: "Signals This Week", icon: Eye, desc: "Latest detected employer signals" },
   { to: "/intelligence?type=legislative_watch", label: "Legislation Watch", icon: Landmark, desc: "Bills connected to corporate lobbying" },
   { to: "/check?tab=candidate", label: "Policy Influence Map", icon: Network, desc: "Trace influence from money to policy" },
-];
-
-const TALENT_INTEL_ITEMS = [
-  { to: "/recruiting?tab=evp", label: "EVP Audit", icon: Megaphone, desc: "Audit employer value proposition against public signals" },
-  { to: "/recruiting?tab=response-studio", label: "Response Studio", icon: FileText, desc: "Generate evidence-based talking points" },
-  { to: "/recruiting?tab=personas", label: "Candidate Personas", icon: Users, desc: "Define talent motivations and profiles" },
-  { to: "/recruiting?tab=insights", label: "Talent Dashboard", icon: Target, desc: "Workforce stability and employer signals" },
+  { to: "/recruiting?tab=evp", label: "EVP Audit", icon: Megaphone, desc: "Audit employer value proposition" },
+  { to: "/recruiting?tab=response-studio", label: "Response Studio", icon: FileText, desc: "Evidence-based talking points" },
+  { to: "/recruiting?tab=personas", label: "Candidate Personas", icon: Users, desc: "Define talent motivations" },
+  { to: "/recruiting?tab=insights", label: "Talent Dashboard", icon: Target, desc: "Workforce stability signals" },
 ];
 
 /* ------------------------------------------------------------------ */
-/*  Generic dropdown wrapper                                           */
+/*  Generic dropdown                                                   */
 /* ------------------------------------------------------------------ */
 
 function NavDropdown({
-  label,
-  icon: Icon,
-  children,
-  active,
+  label, icon: Icon, children, active, wide,
 }: {
-  label: string;
-  icon: React.ElementType;
-  children: React.ReactNode;
-  active?: boolean;
+  label: string; icon: React.ElementType; children: React.ReactNode; active?: boolean; wide?: boolean;
 }) {
   const [open, setOpen] = useState(false);
   const ref = useRef<HTMLDivElement>(null);
@@ -92,7 +113,6 @@ function NavDropdown({
 
   const enter = () => { clearTimeout(timeout.current); setOpen(true); };
   const leave = () => { timeout.current = setTimeout(() => setOpen(false), 150); };
-
   useEffect(() => () => clearTimeout(timeout.current), []);
 
   return (
@@ -115,7 +135,7 @@ function NavDropdown({
           onMouseEnter={enter}
           onMouseLeave={leave}
         >
-          <div className="min-w-[240px] rounded-xl border border-border/60 bg-popover shadow-lg p-1.5" onClick={() => setOpen(false)}>
+          <div className={cn("rounded-xl border border-border/60 bg-popover shadow-lg p-1.5", wide ? "min-w-[420px]" : "min-w-[260px]")} onClick={() => setOpen(false)}>
             {children}
           </div>
         </div>
@@ -196,9 +216,8 @@ export function Header() {
           </div>
         </Link>
 
-        {/* ── Desktop nav ── */}
+        {/* ── Desktop nav — 3 dropdowns + Home + Dashboard ── */}
         <nav className="hidden lg:flex items-center gap-0.5 flex-1 justify-center">
-          {/* Home */}
           <Link
             to="/"
             className={cn(
@@ -210,31 +229,14 @@ export function Header() {
             Home
           </Link>
 
-          {/* Explore */}
-          <NavDropdown label="Explore" icon={Search} active={isActive(["/search", "/add-company", "/browse", "/examples", "/search-your-employer"])}>
+          {/* Explore — merged with Employer Signals */}
+          <NavDropdown label="Explore" icon={Search} wide active={isActive(["/search", "/add-company", "/browse", "/examples", "/search-your-employer", "/values-search"])}>
+            <DropHeading>Search & Browse</DropHeading>
             {EXPLORE_ITEMS.map((item) => (
               <DropItem key={item.to} {...item} />
             ))}
-          </NavDropdown>
-
-          {/* Career */}
-          <NavDropdown label="Career" icon={Briefcase} active={isActive(["/check", "/career-map", "/jobs"])}>
-            {CAREER_SECTIONS.map((section, i) => (
-              <div key={section.heading}>
-                {i > 0 && <DropDivider />}
-                <DropHeading>{section.heading}</DropHeading>
-                {section.items.map((item) => (
-                  <DropItem key={item.to} {...item} />
-                ))}
-              </div>
-            ))}
-          </NavDropdown>
-
-          {/* Employer Signals */}
-          <NavDropdown label="Employer Signals" icon={Heart} active={isActive(["/values-search"])}>
-            <DropItem to="/values-search" label="Employer Signal Search" icon={Heart} desc="Explore employers by signal categories" />
             <DropDivider />
-            <DropHeading>Signal Categories</DropHeading>
+            <DropHeading>Browse by Signal</DropHeading>
             <div className="grid grid-cols-2 gap-0.5">
               {EMPLOYER_SIGNAL_ISSUES.map((item) => (
                 <DropItem key={item.to} {...item} />
@@ -242,20 +244,26 @@ export function Header() {
             </div>
           </NavDropdown>
 
-          {/* Intelligence */}
-          <NavDropdown label="Intelligence" icon={FileText} active={isActive(["/intelligence"])}>
-            <DropHeading>Reports & Signals</DropHeading>
-            {INTELLIGENCE_ITEMS.map((item) => (
-              <DropItem key={item.to} {...item} />
-            ))}
-            <DropDivider />
-            <DropHeading>Talent Intelligence</DropHeading>
-            {TALENT_INTEL_ITEMS.map((item) => (
+          {/* Career */}
+          <NavDropdown label="Career" icon={Briefcase} active={isActive(["/check", "/career-map", "/jobs"])}>
+            {CAREER_ITEMS.map((item) => (
               <DropItem key={item.to} {...item} />
             ))}
           </NavDropdown>
 
-          {/* Dashboard */}
+          {/* Intelligence — merged with Talent Intel */}
+          <NavDropdown label="Intelligence" icon={FileText} active={isActive(["/intelligence", "/recruiting"])}>
+            <DropHeading>Reports & Signals</DropHeading>
+            {INTELLIGENCE_ITEMS.slice(0, 5).map((item) => (
+              <DropItem key={item.to} {...item} />
+            ))}
+            <DropDivider />
+            <DropHeading>Talent Intelligence</DropHeading>
+            {INTELLIGENCE_ITEMS.slice(5).map((item) => (
+              <DropItem key={item.to} {...item} />
+            ))}
+          </NavDropdown>
+
           {user && (
             <Link
               to="/dashboard"
@@ -270,17 +278,18 @@ export function Header() {
           )}
         </nav>
 
-        {/* ── Right side: search + auth ── */}
-        <div className="hidden lg:flex items-center gap-2 shrink-0">
+        {/* ── Right side ── */}
+        <div className="hidden lg:flex items-center gap-1.5 shrink-0">
           <form onSubmit={handleSearch} className="relative">
             <Search className="absolute left-2.5 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-muted-foreground pointer-events-none" />
             <Input
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              placeholder="Search employers, leaders, signals…"
-              className="h-9 w-[200px] xl:w-[260px] pl-8 text-sm rounded-xl bg-muted/50 border-border/40 focus:w-[280px] xl:focus:w-[320px] transition-all duration-200"
+              placeholder="Search employers…"
+              className="h-9 w-[180px] xl:w-[220px] pl-8 text-sm rounded-xl bg-muted/50 border-border/40 focus:w-[260px] transition-all duration-200"
             />
           </form>
+          <ThemeToggle />
           {!user && (
             <Link to="/login">
               <Button size="sm" variant="default" className="shadow-elevated font-semibold rounded-xl px-5">
@@ -290,63 +299,68 @@ export function Header() {
           )}
         </div>
 
-        {/* ── Mobile toggle ── */}
-        <button
-          className="lg:hidden p-2.5 -mr-2 text-muted-foreground hover:text-foreground rounded-lg active:bg-accent transition-colors"
-          onClick={() => setMobileOpen(!mobileOpen)}
-          aria-label="Toggle menu"
-        >
-          {mobileOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
-        </button>
+        {/* ── Mobile: theme + toggle ── */}
+        <div className="flex lg:hidden items-center gap-1">
+          <ThemeToggle />
+          <button
+            className="p-2.5 -mr-2 text-muted-foreground hover:text-foreground rounded-lg active:bg-accent transition-colors"
+            onClick={() => setMobileOpen(!mobileOpen)}
+            aria-label="Toggle menu"
+          >
+            {mobileOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
+          </button>
+        </div>
       </div>
 
-      {/* ── Mobile nav ── */}
+      {/* ── Mobile nav — accordion groups ── */}
       {mobileOpen && (
-        <div className="lg:hidden border-t border-border/40 bg-card px-4 py-4 max-h-[80vh] overflow-y-auto animate-in fade-in-0 duration-200 space-y-4">
+        <div className="lg:hidden border-t border-border/40 bg-card px-4 py-4 max-h-[80vh] overflow-y-auto animate-in fade-in-0 duration-200">
           {/* Mobile search */}
-          <form onSubmit={(e) => { handleSearch(e); setMobileOpen(false); }}>
+          <form onSubmit={(e) => { handleSearch(e); setMobileOpen(false); }} className="mb-4">
             <div className="relative">
               <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground pointer-events-none" />
-              <Input value={searchQuery} onChange={(e) => setSearchQuery(e.target.value)} placeholder="Search employers, leaders, signals…" className="pl-9 rounded-xl" />
+              <Input value={searchQuery} onChange={(e) => setSearchQuery(e.target.value)} placeholder="Search employers…" className="pl-9 rounded-xl" />
             </div>
           </form>
 
           <MobileLink to="/" label="Home" icon={Home} onClick={() => setMobileOpen(false)} active={location.pathname === "/"} />
 
-          <MobileSection title="Explore">
-            {EXPLORE_ITEMS.map((item) => (
-              <MobileLink key={item.to} {...item} onClick={() => setMobileOpen(false)} />
-            ))}
-          </MobileSection>
+          <Accordion type="multiple" className="w-full">
+            <AccordionItem value="explore" className="border-b-0">
+              <AccordionTrigger className="py-2.5 px-3 text-sm font-medium text-muted-foreground hover:text-foreground hover:no-underline rounded-lg">
+                <span className="flex items-center gap-3"><Search className="w-4 h-4" />Explore</span>
+              </AccordionTrigger>
+              <AccordionContent className="pb-1 pl-4">
+                {EXPLORE_ITEMS.map((item) => (
+                  <MobileLink key={item.to} {...item} onClick={() => setMobileOpen(false)} />
+                ))}
+              </AccordionContent>
+            </AccordionItem>
 
-          <MobileSection title="Career">
-            {CAREER_SECTIONS.map((section) =>
-              section.items.map((item) => (
-                <MobileLink key={item.to} to={item.to} label={item.label} icon={item.icon} onClick={() => setMobileOpen(false)} />
-              ))
-            )}
-          </MobileSection>
+            <AccordionItem value="career" className="border-b-0">
+              <AccordionTrigger className="py-2.5 px-3 text-sm font-medium text-muted-foreground hover:text-foreground hover:no-underline rounded-lg">
+                <span className="flex items-center gap-3"><Briefcase className="w-4 h-4" />Career</span>
+              </AccordionTrigger>
+              <AccordionContent className="pb-1 pl-4">
+                {CAREER_ITEMS.map((item) => (
+                  <MobileLink key={item.to} to={item.to} label={item.label} icon={item.icon} onClick={() => setMobileOpen(false)} />
+                ))}
+              </AccordionContent>
+            </AccordionItem>
 
-          <MobileSection title="Employer Signals">
-            <MobileLink to="/values-search" label="Employer Signal Search" icon={Heart} onClick={() => setMobileOpen(false)} />
-            {EMPLOYER_SIGNAL_ISSUES.map((item) => (
-              <MobileLink key={item.to} {...item} onClick={() => setMobileOpen(false)} />
-            ))}
-          </MobileSection>
+            <AccordionItem value="intelligence" className="border-b-0">
+              <AccordionTrigger className="py-2.5 px-3 text-sm font-medium text-muted-foreground hover:text-foreground hover:no-underline rounded-lg">
+                <span className="flex items-center gap-3"><FileText className="w-4 h-4" />Intelligence</span>
+              </AccordionTrigger>
+              <AccordionContent className="pb-1 pl-4">
+                {INTELLIGENCE_ITEMS.map((item) => (
+                  <MobileLink key={item.to} to={item.to} label={item.label} icon={item.icon} onClick={() => setMobileOpen(false)} />
+                ))}
+              </AccordionContent>
+            </AccordionItem>
+          </Accordion>
 
-          <MobileSection title="Intelligence">
-            {INTELLIGENCE_ITEMS.map((item) => (
-              <MobileLink key={item.to} to={item.to} label={item.label} icon={item.icon} onClick={() => setMobileOpen(false)} />
-            ))}
-          </MobileSection>
-
-          <MobileSection title="Talent Intelligence">
-            {TALENT_INTEL_ITEMS.map((item) => (
-              <MobileLink key={item.to} to={item.to} label={item.label} icon={item.icon} onClick={() => setMobileOpen(false)} />
-            ))}
-          </MobileSection>
-
-          <div className="pt-2 border-t border-border/40 space-y-2">
+          <div className="pt-3 mt-2 border-t border-border/40 space-y-2">
             {user ? (
               <MobileLink to="/dashboard" label="Dashboard" icon={LayoutDashboard} onClick={() => setMobileOpen(false)} />
             ) : (
@@ -361,16 +375,7 @@ export function Header() {
   );
 }
 
-/* ── Mobile helpers ── */
-
-function MobileSection({ title, children }: { title: string; children: React.ReactNode }) {
-  return (
-    <div>
-      <p className="text-[10px] font-semibold uppercase tracking-widest text-muted-foreground mb-1 px-1">{title}</p>
-      <div className="space-y-0.5">{children}</div>
-    </div>
-  );
-}
+/* ── Mobile helper ── */
 
 function MobileLink({ to, label, icon: Icon, onClick, active }: { to: string; label: string; icon: React.ElementType; onClick?: () => void; active?: boolean }) {
   return (
