@@ -8,6 +8,7 @@ import { CareerAnchorsStep } from "@/components/career-discovery/CareerAnchorsSt
 import { TargetDestinationStep } from "@/components/career-discovery/TargetDestinationStep";
 import { AICareerDiscoveryStep } from "@/components/career-discovery/AICareerDiscoveryStep";
 import { AICompanyDiscoveryStep } from "@/components/career-discovery/AICompanyDiscoveryStep";
+import { EconomicIntelligenceStep } from "@/components/career-discovery/EconomicIntelligenceStep";
 import { SkillGapStep } from "@/components/career-discovery/SkillGapStep";
 import { MultipleFuturesStep } from "@/components/career-discovery/MultipleFuturesStep";
 import { ActionPlanStep } from "@/components/career-discovery/ActionPlanStep";
@@ -19,6 +20,7 @@ import { CareerWrappedStep } from "@/components/career-discovery/CareerWrappedSt
 import {
   Upload, Anchor, Compass, Sparkles, Building2, BarChart3,
   GitBranch, ClipboardList, Users, ChevronRight, ArrowLeft, CheckCircle2, Trophy,
+  Activity,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 
@@ -28,6 +30,7 @@ const STEPS = [
   { id: "target", label: "Destination", icon: Compass, section: "Where You Could Go" },
   { id: "discover", label: "Career Discovery", icon: Sparkles, section: "Where You Could Go" },
   { id: "companies", label: "Company Discovery", icon: Building2, section: "Companies You May Not Have Considered" },
+  { id: "economic", label: "2026 Economy", icon: Activity, section: "Economic Intelligence" },
   { id: "skills", label: "Skill Gap", icon: BarChart3, section: "Skills to Build" },
   { id: "futures", label: "Possible Paths", icon: GitBranch, section: "Possible Paths" },
   { id: "action", label: "Action Plan", icon: ClipboardList, section: "Your Action Plan" },
@@ -119,6 +122,8 @@ export default function CareerMap() {
         return <AICareerDiscoveryStep data={careerPaths.data} loading={careerPaths.loading} error={careerPaths.error} onRetry={() => discover("career_discovery")} />;
       case "companies":
         return <AICompanyDiscoveryStep data={companies.data} loading={companies.loading} error={companies.error} onRetry={() => discover("company_discovery")} />;
+      case "economic":
+        return profile ? <EconomicIntelligenceStep profile={profile} /> : null;
       case "skills":
         return <SkillGapStep data={skillGap.data} loading={skillGap.loading} error={skillGap.error} onRetry={() => discover("skill_gap")} />;
       case "futures":
