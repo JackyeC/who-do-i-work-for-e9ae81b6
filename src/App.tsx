@@ -4,6 +4,7 @@ import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { AuthProvider } from "@/contexts/AuthContext";
+import { ViewModeProvider } from "@/contexts/ViewModeContext";
 import { ProtectedRoute } from "@/components/ProtectedRoute";
 import { ErrorBoundary } from "@/components/ErrorBoundary";
 import Index from "./pages/Index";
@@ -41,13 +42,14 @@ import ReportsList from "./pages/ReportsList";
 import ReportEditor from "./pages/ReportEditor";
 import OfferClarity from "./pages/OfferClarity";
 import RecruitingIntelligence from "./pages/RecruitingIntelligence";
-
+import CompanyDossier from "./pages/CompanyDossier";
 const queryClient = new QueryClient();
 
 const App = () => (
   <ErrorBoundary>
     <QueryClientProvider client={queryClient}>
       <AuthProvider>
+        <ViewModeProvider>
         <TooltipProvider>
           <Toaster />
           <Sonner />
@@ -56,6 +58,7 @@ const App = () => (
               <Route path="/" element={<Index />} />
               <Route path="/check" element={<Check />} />
               <Route path="/company/:id" element={<CompanyProfile />} />
+              <Route path="/dossier/:id" element={<CompanyDossier />} />
               <Route path="/search" element={<SearchResults />} />
               <Route path="/browse" element={<Browse />} />
               <Route path="/methodology" element={<Methodology />} />
@@ -135,6 +138,7 @@ const App = () => (
             </Routes>
           </BrowserRouter>
         </TooltipProvider>
+        </ViewModeProvider>
       </AuthProvider>
     </QueryClientProvider>
   </ErrorBoundary>

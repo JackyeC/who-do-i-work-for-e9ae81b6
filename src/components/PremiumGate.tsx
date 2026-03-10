@@ -22,7 +22,7 @@ export function PremiumGate({ feature, description, children }: PremiumGateProps
     setLoading(true);
     try {
       const { data, error } = await supabase.functions.invoke("create-checkout", {
-        body: { priceId: STRIPE_TIERS.pro.price_id },
+        body: { priceId: STRIPE_TIERS.starter.price_id },
       });
       if (error) throw error;
       if (data?.url) {
@@ -56,12 +56,12 @@ export function PremiumGate({ feature, description, children }: PremiumGateProps
           ) : (
             <Button size="default" onClick={handleUpgrade} disabled={loading} className="gap-1.5">
               {loading ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <Lock className="w-3.5 h-3.5" />}
-              Upgrade to Pro — $29/mo
+              Unlock — Starting at $29/mo
             </Button>
           )}
         </div>
         <p className="text-micro text-muted-foreground mt-4">
-          Cancel anytime. Unlimited Offer Checks, alerts, and full report access.
+          Starter $29/mo (3 companies) · Pro $250/mo (25 companies) · Team $800/mo (100 companies)
         </p>
       </CardContent>
     </Card>

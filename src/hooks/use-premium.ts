@@ -1,13 +1,28 @@
 import { useAuth } from "@/contexts/AuthContext";
 
-export type PremiumTier = "free" | "pro";
+export type PremiumTier = "free" | "starter" | "pro" | "team";
 
 export const STRIPE_TIERS = {
-  pro: {
+  starter: {
     price_id: "price_1T93XPGh4NKuXb2AjiV2bobX",
     product_id: "prod_U7I705lqyNGEWI",
-    label: "Pro",
+    label: "Starter",
     price: "$29/mo",
+    companies: 3,
+  },
+  pro: {
+    price_id: "price_pro_250",
+    product_id: "prod_pro_250",
+    label: "Pro",
+    price: "$250/mo",
+    companies: 25,
+  },
+  team: {
+    price_id: "price_team_800",
+    product_id: "prod_team_800",
+    label: "Team",
+    price: "$800/mo",
+    companies: 100,
   },
   auto_apply: {
     price_id: "price_1T9FEIGh4NKuXb2AW5uXIZ5y",

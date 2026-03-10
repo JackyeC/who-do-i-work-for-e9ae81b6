@@ -12,6 +12,7 @@ import { useAuth } from "@/contexts/AuthContext";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { cn } from "@/lib/utils";
+import { ViewModeToggle } from "@/components/ViewModeToggle";
 import {
   Accordion,
   AccordionContent,
@@ -279,7 +280,8 @@ export function Header() {
         </nav>
 
         {/* ── Right side ── */}
-        <div className="hidden lg:flex items-center gap-1.5 shrink-0">
+        <div className="hidden lg:flex items-center gap-2 shrink-0">
+          <ViewModeToggle />
           <form onSubmit={handleSearch} className="relative">
             <Search className="absolute left-2.5 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-muted-foreground pointer-events-none" />
             <Input
