@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useCallback } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
@@ -6,8 +6,10 @@ import { Badge } from "@/components/ui/badge";
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { DocumentUploader } from "@/components/career/DocumentUploader";
-import { Upload, Briefcase, Wrench, Heart, Sparkles } from "lucide-react";
+import { supabase } from "@/integrations/supabase/client";
+import { useAuth } from "@/contexts/AuthContext";
+import { toast } from "sonner";
+import { Upload, Briefcase, Wrench, Heart, Sparkles, FileText, Loader2, CheckCircle } from "lucide-react";
 import { VALUES_LENSES } from "@/lib/valuesLenses";
 
 const WORK_STYLES = ["Remote", "Hybrid", "In-Office", "Flexible Hours", "Async-First", "Travel-Heavy"];
