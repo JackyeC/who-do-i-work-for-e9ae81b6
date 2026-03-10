@@ -660,7 +660,7 @@ export function InfluenceChainCard({ companyId, companyName, onExecutiveClick, o
             {showFullEvidence && (
               <div className="mt-3 space-y-2 max-h-[600px] overflow-y-auto">
                 {sortByImportance(allSteps).map((step, i) => (
-                  <EvidenceCard key={`full-${step.chain_id}-${step.step}-${i}`} step={step} />
+                  <EvidenceCard key={`full-${step.chain_id}-${step.step}-${i}`} step={step} onEntityClick={handleEntityClick} />
                 ))}
               </div>
             )}
