@@ -6,6 +6,29 @@ const corsHeaders = {
 };
 
 const TOOLS: Record<string, { name: string; description: string; parameters: any }> = {
+  suggest_roles: {
+    name: "suggest_roles",
+    description: "Suggest 5 future career roles tailored to the user's profile.",
+    parameters: {
+      type: "object",
+      properties: {
+        suggestions: {
+          type: "array",
+          items: {
+            type: "object",
+            properties: {
+              role: { type: "string", description: "Specific job title" },
+              reason: { type: "string", description: "Why this role fits their background (1-2 sentences)" },
+              growth: { type: "string", description: "Growth outlook, e.g. 'High demand', 'Emerging field', 'Steady growth'" },
+            },
+            required: ["role", "reason", "growth"],
+          },
+        },
+      },
+      required: ["suggestions"],
+      additionalProperties: false,
+    },
+  },
   career_discovery: {
     name: "career_discovery",
     description: "Return career path suggestions in three categories: likely, adjacent, and unexpected.",
@@ -168,6 +191,7 @@ const TOOLS: Record<string, { name: string; description: string; parameters: any
 };
 
 const SYSTEM_PROMPTS: Record<string, string> = {
+  suggest_roles: `You are a career strategist. Given a user's current role, skills, industries, and values, suggest exactly 5 specific future roles they could pursue. Mix realistic next-steps with stretch goals. Each role should have a clear reason why it fits and a growth outlook. Be specific with titles (e.g. "Director of Product Analytics" not just "Director"). Avoid generic titles.`,
   career_discovery: `You are a career intelligence analyst. Given a user's profile, generate realistic career path suggestions in three categories:
 1. Likely: Natural progressions (3 items). Include confidence % (60-95).
 2. Adjacent: Same skills, different industries (3 items). Include match % (65-90).

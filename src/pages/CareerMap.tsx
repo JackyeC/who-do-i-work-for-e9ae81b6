@@ -112,7 +112,7 @@ export default function CareerMap() {
       case "anchors":
         return <CareerAnchorsStep onComplete={handleAnchorsComplete} />;
       case "target":
-        return <TargetDestinationStep onComplete={handleTargetComplete} />;
+        return <TargetDestinationStep profileData={profile || undefined} onComplete={handleTargetComplete} />;
       case "discover":
         return <AICareerDiscoveryStep data={careerPaths.data} loading={careerPaths.loading} error={careerPaths.error} onRetry={() => discover("career_discovery")} />;
       case "companies":
