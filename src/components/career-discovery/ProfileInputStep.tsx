@@ -86,9 +86,42 @@ export function ProfileInputStep({ onComplete }: Props) {
         .select().single();
       if (insertError) throw insertError;
 
-      toast.success("Resume uploaded! Parsing...");
-      await supabase.functions.invoke("parse-career-document", { body: { documentId: doc.id } });
-      toast.success("Resume analyzed successfully!");
+      toast.success("Resume uploaded! Analyzing...");
+      const { data: parseResult } = await supabase.functions.invoke("parse-career-document", { body: { documentId: doc.id } });
+
+      // Auto-fill form fields from parsed resume data
+      const parsed = parseResult?.parsed;
+      if (parsed) {
+        if (parsed.job_titles?.length > 0 && !jobTitle) {
+          setJobTitle(parsed.job_titles[0]);
+        }
+        if (parsed.years_experience && !yearsExperience) {
+          const yrs = parsed.years_experience;
+          if (yrs <= 2) setYearsExperience("0-2");
+          else if (yrs <= 5) setYearsExperience("3-5");
+          else if (yrs <= 10) setYearsExperience("6-10");
+          else if (yrs <= 15) setYearsExperience("11-15");
+          else if (yrs <= 20) setYearsExperience("16-20");
+          else setYearsExperience("20+");
+        }
+        if (parsed.industries?.length > 0 && industries.length === 0) {
+          setIndustries(parsed.industries);
+        }
+        if (parsed.skills?.length > 0) {
+          const techKeywords = /python|java|sql|react|node|aws|docker|kubernetes|typescript|javascript|html|css|git|api|cloud|data|machine learning|ai|excel|tableau|salesforce|sap|figma|sketch/i;
+          const parsedTech: string[] = [];
+          const parsedSoft: string[] = [];
+          parsed.skills.forEach((s: string) => {
+            if (techKeywords.test(s)) parsedTech.push(s);
+            else parsedSoft.push(s);
+          });
+          if (parsedTech.length > 0 && technicalSkills.length === 0) setTechnicalSkills(parsedTech);
+          if (parsedSoft.length > 0 && softSkills.length === 0) setSoftSkills(parsedSoft);
+        }
+        toast.success("Resume parsed — fields auto-filled!");
+      } else {
+        toast.success("Resume uploaded successfully!");
+      }
       setResumeUploaded(true);
     } catch (err: any) {
       toast.error(err.message || "Upload failed");
