@@ -44,6 +44,7 @@ import OfferClarity from "./pages/OfferClarity";
 import RecruitingIntelligence from "./pages/RecruitingIntelligence";
 import CompanyDossier from "./pages/CompanyDossier";
 import Pricing from "./pages/Pricing";
+import RelationshipIntelligence from "./pages/RelationshipIntelligence";
 const queryClient = new QueryClient();
 
 const App = () => (
@@ -136,6 +137,11 @@ const App = () => (
               <Route path="/admin/reports" element={<ProtectedRoute><ReportsList /></ProtectedRoute>} />
               <Route path="/admin/reports/:id" element={<ProtectedRoute><ReportEditor /></ProtectedRoute>} />
               <Route path="/recruiting" element={<RecruitingIntelligence />} />
+              <Route path="/relationship-intelligence" element={
+                <ProtectedRoute>
+                  <RelationshipIntelligence />
+                </ProtectedRoute>
+              } />
               <Route path="*" element={<NotFound />} />
             </Routes>
           </BrowserRouter>

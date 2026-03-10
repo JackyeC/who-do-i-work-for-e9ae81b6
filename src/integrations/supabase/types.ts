@@ -2127,6 +2127,45 @@ export type Database = {
           },
         ]
       }
+      connection_company_map: {
+        Row: {
+          company_id: string
+          connection_id: string
+          created_at: string
+          id: string
+          match_confidence: number
+        }
+        Insert: {
+          company_id: string
+          connection_id: string
+          created_at?: string
+          id?: string
+          match_confidence?: number
+        }
+        Update: {
+          company_id?: string
+          connection_id?: string
+          created_at?: string
+          id?: string
+          match_confidence?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "connection_company_map_company_id_fkey"
+            columns: ["company_id"]
+            isOneToOne: false
+            referencedRelation: "companies"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "connection_company_map_connection_id_fkey"
+            columns: ["connection_id"]
+            isOneToOne: false
+            referencedRelation: "user_connections"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       correction_requests: {
         Row: {
           company_name: string
@@ -4441,6 +4480,42 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
+      }
+      user_connections: {
+        Row: {
+          company: string | null
+          connection_date: string | null
+          created_at: string
+          email: string | null
+          first_name: string
+          id: string
+          last_name: string
+          title: string | null
+          user_id: string
+        }
+        Insert: {
+          company?: string | null
+          connection_date?: string | null
+          created_at?: string
+          email?: string | null
+          first_name: string
+          id?: string
+          last_name: string
+          title?: string | null
+          user_id: string
+        }
+        Update: {
+          company?: string | null
+          connection_date?: string | null
+          created_at?: string
+          email?: string | null
+          first_name?: string
+          id?: string
+          last_name?: string
+          title?: string | null
+          user_id?: string
+        }
+        Relationships: []
       }
       user_documents: {
         Row: {

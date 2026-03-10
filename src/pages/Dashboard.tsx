@@ -18,6 +18,7 @@ import { UserAlertsList } from "@/components/UserAlerts";
 import { MyValuesProfile } from "@/components/career/MyValuesProfile";
 import { HowDoIGetThere } from "@/components/career/HowDoIGetThere";
 import { OutreachIntelligence } from "@/components/career/OutreachIntelligence";
+import { RelationshipDashboard } from "@/components/career/RelationshipDashboard";
 import { FirstLoginOnboarding } from "@/components/FirstLoginOnboarding";
 import { supabase } from "@/integrations/supabase/client";
 import { ClipboardCheck } from "lucide-react";
@@ -31,6 +32,7 @@ const TAB_TITLES: Record<string, string> = {
   outreach: "Outreach Intelligence",
   tracker: "Application Tracker",
   "auto-apply": "Auto-Apply",
+  relationships: "Relationship Intelligence",
   offers: "My Offer Checks",
   alerts: "Signal Alerts",
   preferences: "Preferences",
@@ -79,6 +81,8 @@ export default function Dashboard() {
         return <HowDoIGetThere />;
       case "outreach":
         return <OutreachIntelligence />;
+      case "relationships":
+        return <RelationshipDashboard />;
       case "tracker":
         return <TrackingDashboard />;
       case "auto-apply":
