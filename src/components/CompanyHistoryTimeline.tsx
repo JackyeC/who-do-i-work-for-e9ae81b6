@@ -260,13 +260,13 @@ export function CompanyHistoryTimeline({ companyId, companyName }: CompanyHistor
         date: d.created_at,
         category: "influence",
         type: d.link_type,
-        title: `${d.source_entity_name} → ${d.target_entity_name}`,
+        title: `${cleanEntityName(d.source_entity_name)} → ${cleanEntityName(d.target_entity_name)}`,
         description: d.description || `${d.link_type.replace(/_/g, " ")} connection`,
         amount: d.amount || undefined,
         confidence: d.confidence_score > 0.7 ? "high" : d.confidence_score > 0.4 ? "medium" : "low",
         details: {
-          "Source": d.source_entity_name,
-          "Target": d.target_entity_name,
+          "Source": cleanEntityName(d.source_entity_name),
+          "Target": cleanEntityName(d.target_entity_name),
           "Type": d.link_type.replace(/_/g, " "),
         },
       });
