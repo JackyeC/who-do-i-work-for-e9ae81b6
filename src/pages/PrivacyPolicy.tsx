@@ -13,7 +13,8 @@ const PrivacyPolicy = () => (
           <h2 className="text-lg font-semibold text-foreground mt-8 mb-3">1. Information We Collect</h2>
           <p><strong>Account Information:</strong> When you sign up, we collect your email address and name through Google OAuth. We do not store passwords.</p>
           <p><strong>Usage Data:</strong> We collect information about how you use the Service, including pages visited, searches performed, and features used.</p>
-          <p><strong>Uploaded Documents:</strong> If you use the Offer Review feature, uploaded documents are processed securely and can be deleted at any time.</p>
+         <p><strong>Uploaded Documents:</strong> If you use the Offer Review feature, uploaded documents are processed securely and can be deleted at any time.</p>
+           <p><strong>LinkedIn Connection Data:</strong> If you upload your LinkedIn connections CSV, that data is stored securely and is accessible only to you. We do not share, sell, license, or provide access to your uploaded connection data to any third party, other user, or internal team member. It is used solely to power your personal Relationship Intelligence dashboard.</p>
         </section>
 
         <section>
