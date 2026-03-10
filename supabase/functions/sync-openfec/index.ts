@@ -314,9 +314,18 @@ Deno.serve(async (req) => {
           stats.totalIndividualGiving += r.contribution_receipt_amount;
         }
 
-        const topExecs = [...executiveMap.values()]
+        // Filter to C-suite / senior leadership titles only
+        const CSUITE_PATTERNS = /\b(CEO|CFO|COO|CTO|CIO|CISO|CMO|CPO|CLO|CDO|CSO|CHRO|CAO|CRO|CCO|CHAIRMAN|CHAIRWOMAN|CHAIR|PRESIDENT|VICE\s*PRESIDENT|VP|SVP|EVP|MANAGING\s*DIRECTOR|GENERAL\s*COUNSEL|PARTNER|FOUNDER|CO-?FOUNDER|OWNER|DIRECTOR|CHIEF|HEAD|EXECUTIVE|BOARD\s*MEMBER|TREASURER|SECRETARY|GENERAL\s*MANAGER|PRINCIPAL)\b/i;
+
+        const csuiteExecs = [...executiveMap.values()]
+          .filter(e => CSUITE_PATTERNS.test(e.occupation))
           .sort((a, b) => b.total - a.total)
           .slice(0, 20);
+
+        // Fallback: if no C-suite found, take top 5 by donation amount
+        const topExecs = csuiteExecs.length > 0 ? csuiteExecs : [...executiveMap.values()]
+          .sort((a, b) => b.total - a.total)
+          .slice(0, 5);
 
         stats.executiveDonors += topExecs.length;
 
