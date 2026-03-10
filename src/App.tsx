@@ -137,6 +137,11 @@ const App = () => (
               <Route path="/admin/reports" element={<ProtectedRoute><ReportsList /></ProtectedRoute>} />
               <Route path="/admin/reports/:id" element={<ProtectedRoute><ReportEditor /></ProtectedRoute>} />
               <Route path="/recruiting" element={<RecruitingIntelligence />} />
+              <Route path="/relationship-intelligence" element={
+                <ProtectedRoute>
+                  <RelationshipIntelligence />
+                </ProtectedRoute>
+              } />
               <Route path="*" element={<NotFound />} />
             </Routes>
           </BrowserRouter>

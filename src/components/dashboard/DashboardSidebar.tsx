@@ -36,6 +36,7 @@ const navGroups = [
       { id: "values", label: "My Values", icon: Heart },
       { id: "how", label: "How Do I Get There?", icon: Route },
       { id: "outreach", label: "Outreach", icon: Users },
+      { id: "relationships", label: "Relationship Intel", icon: Network },
     ],
   },
   {
