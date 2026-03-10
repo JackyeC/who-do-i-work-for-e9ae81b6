@@ -210,10 +210,21 @@ const SYSTEM_PROMPTS: Record<string, string> = {
 3. Unexpected: Surprising but viable paths they haven't considered (3 items). Include match % (55-80).
 Be specific with role titles. Make unexpected paths genuinely creative but realistic.`,
   
-  company_discovery: `You are a talent market intelligence analyst. Given a user's profile, suggest 5 REAL companies that would be a strong fit. Consider their skills, values, industry background, and career anchors. Include:
+  company_discovery: `You are a talent market intelligence analyst. Given a user's profile, suggest 5 REAL companies that would be a strong fit. Consider their skills, values, industry background, and career anchors.
+
+CRITICAL 2026 ECONOMIC CONTEXT — use this to prioritize recommendations:
+- BEA GDP leaders: Health Care & Social Assistance (+4.4%), Information & Technology (+3.8%), Professional Services (+3.2%)
+- FRED PMI signals: Manufacturing (48.2, contracting), Healthcare (57.8, expanding), Tech (54.1, expanding), Retail (46.5, contracting)
+- BLS high-velocity roles: Solar Electric (+180%), Wind Energy (+81%), AI/ML (+34%), Cybersecurity (+33%), Mental Health (+26%)
+- IP Investment up 7.4% — R&D and Legal roles growing
+- If user is early-career (≤3 years), note that AI has slowed entry-level hiring; prioritize companies investing in AI upskilling
+
+Prioritize companies in expanding GDP sectors when they match the user's values and skills. Flag any company in a contracting sector (PMI < 50) with a note about sector volatility.
+
+Include:
 - Real company names that actually exist
 - Accurate industry classifications
-- Realistic hiring signals
+- Realistic hiring signals informed by 2026 economic data
 - Values signals based on public knowledge
 - Match percentage (70-95)
 Make suggestions diverse across company sizes and industries.`,
