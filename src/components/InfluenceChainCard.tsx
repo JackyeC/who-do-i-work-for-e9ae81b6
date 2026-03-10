@@ -82,18 +82,18 @@ const CATEGORIES: Category[] = [
 
 /* ── Plain-language labels ── */
 const LINK_TYPE_CONFIG: Record<string, { label: string; plainLabel: string; color: string; icon: React.ElementType }> = {
-  donation_to_member:              { label: "Donation",            plainLabel: "Gave money to",                                         color: "text-[hsl(var(--civic-red))]",    icon: DollarSign },
-  member_on_committee:             { label: "Committee Seat",      plainLabel: "Sits on a committee that oversees",                      color: "text-[hsl(var(--civic-blue))]",   icon: Users },
-  committee_oversight_of_contract: { label: "Contract Oversight",  plainLabel: "That committee controls contracts for",                  color: "text-[hsl(var(--civic-green))]",  icon: Landmark },
-  lobbying_on_bill:                { label: "Lobbying",             plainLabel: "Paid lobbyists to influence",                            color: "text-[hsl(var(--civic-yellow))]", icon: FileCheck },
-  revolving_door:                  { label: "Revolving Door",      plainLabel: "Former government official now works here",               color: "text-destructive",                icon: RotateCcw },
-  foundation_grant_to_district:    { label: "Foundation Grant",    plainLabel: "Gave a charitable grant in the district of",              color: "text-[hsl(var(--civic-green))]",  icon: DollarSign },
-  trade_association_lobbying:      { label: "Trade Group",         plainLabel: "Belongs to a group that lobbies for",                     color: "text-[hsl(var(--civic-yellow))]", icon: Users },
-  dark_money_channel:              { label: "Dark Money",          plainLabel: "Money sent through a group that doesn't disclose donors", color: "text-destructive",                icon: DollarSign },
-  advisory_committee_appointment:  { label: "Advisory Role",       plainLabel: "Has a person on a government advisory panel",             color: "text-[hsl(var(--civic-blue))]",   icon: Users },
-  interlocking_directorate:        { label: "Shared Board Member", plainLabel: "Shares a board member with",                              color: "text-muted-foreground",           icon: Users },
-  state_lobbying_contract:         { label: "State Lobbying",      plainLabel: "Paid lobbyists in state government for",                  color: "text-[hsl(var(--civic-yellow))]", icon: Landmark },
-  international_influence:         { label: "International",       plainLabel: "Has influence activities in other countries",              color: "text-[hsl(var(--civic-blue))]",   icon: Globe },
+  donation_to_member:              { label: "Political Donation",        plainLabel: "donated to",                                                            color: "text-[hsl(var(--civic-red))]",    icon: DollarSign },
+  member_on_committee:             { label: "Congressional Committee",   plainLabel: "sits on a congressional committee that oversees",                       color: "text-[hsl(var(--civic-blue))]",   icon: Users },
+  committee_oversight_of_contract: { label: "Federal Contract",          plainLabel: "that committee controls federal contracts awarded to",                   color: "text-[hsl(var(--civic-green))]",  icon: Landmark },
+  lobbying_on_bill:                { label: "Paid Lobbying",             plainLabel: "paid lobbyists to influence legislation affecting",                      color: "text-[hsl(var(--civic-yellow))]", icon: FileCheck },
+  revolving_door:                  { label: "Former Gov't Official",     plainLabel: "hired a former government official who previously worked at",            color: "text-destructive",                icon: RotateCcw },
+  foundation_grant_to_district:    { label: "Charitable Grant",          plainLabel: "gave a charitable grant in the congressional district of",               color: "text-[hsl(var(--civic-green))]",  icon: DollarSign },
+  trade_association_lobbying:      { label: "Hired Lobbying Firm",       plainLabel: "hired a lobbying firm to advocate on their behalf to",                   color: "text-[hsl(var(--civic-yellow))]", icon: Users },
+  dark_money_channel:              { label: "Undisclosed Donor Group",   plainLabel: "routed money through a nonprofit that doesn't disclose its donors to",   color: "text-destructive",                icon: DollarSign },
+  advisory_committee_appointment:  { label: "Gov't Advisory Panel",      plainLabel: "has a person serving on a federal advisory panel at",                    color: "text-[hsl(var(--civic-blue))]",   icon: Users },
+  interlocking_directorate:        { label: "Shared Board Member",       plainLabel: "shares a board member with",                                             color: "text-muted-foreground",           icon: Users },
+  state_lobbying_contract:         { label: "State-Level Lobbying",      plainLabel: "paid lobbyists to influence state lawmakers on behalf of",                color: "text-[hsl(var(--civic-yellow))]", icon: Landmark },
+  international_influence:         { label: "Foreign Influence Activity", plainLabel: "has political or lobbying activities in other countries involving",       color: "text-[hsl(var(--civic-blue))]",   icon: Globe },
 };
 
 const COMMITTEE_ISSUES: Record<string, string[]> = {
