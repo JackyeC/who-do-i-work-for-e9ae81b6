@@ -483,6 +483,17 @@ export function InfluenceChainCard({ companyId, companyName, onExecutiveClick, o
   const totalSpending = allSteps.reduce((s, step) => s + (step.amount || 0), 0);
   const filledCategories = CATEGORIES.filter(c => categorized[c.key].length > 0);
 
+  const handleEntityClick = useMemo(() => {
+    if (!onExecutiveClick && !onCandidateClick) return undefined;
+    return (entity: { name: string; type: string; linkType: string; amount: number }) => {
+      if (entity.type === "executive" && onExecutiveClick) {
+        onExecutiveClick({ name: entity.name, total_donations: entity.amount });
+      } else if (entity.type === "candidate" && onCandidateClick) {
+        onCandidateClick({ name: entity.name, amount: entity.amount });
+      }
+    };
+  }, [onExecutiveClick, onCandidateClick]);
+
   if (isLoading) {
     return (
       <Card>
