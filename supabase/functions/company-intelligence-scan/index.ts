@@ -306,45 +306,32 @@ Deno.serve(async (req) => {
       }).eq('id', scanId);
     }
 
-    // ─── Phase 1: Primary Pipeline + Enrichment (ALL IN PARALLEL) ───
-    // Primary sources (FEC, LDA, USASpending) run alongside OpenSecrets enrichment.
-    // OpenSecrets is discovery/validation only — NOT a prerequisite.
-    console.log(`[intelligence-scan] ═══ Phase 1: Primary Sources + Enrichment (parallel) ═══`);
-    
-    const phase1Modules = [...PRIMARY_PIPELINE_MODULES, ...ENRICHMENT_MODULES];
-    for (const mod of phase1Modules) {
+    // Helper: run module and immediately persist progress
+    async function runAndSave(mod: typeof ALL_MODULES[0], isPipeline: boolean) {
       moduleStatuses[mod.key] = { status: 'in_progress', label: mod.label, phase: mod.phase, startedAt: new Date().toISOString() };
+      await runModule(mod, isPipeline);
+      await updateProgress();
     }
-    await updateProgress();
 
+    // ─── Phase 1: Primary Pipeline + Enrichment (ALL IN PARALLEL) ───
+    console.log(`[intelligence-scan] ═══ Phase 1: Primary Sources + Enrichment (parallel) ═══`);
+    const phase1Modules = [...PRIMARY_PIPELINE_MODULES, ...ENRICHMENT_MODULES];
     await Promise.all(phase1Modules.map(mod => {
       const isPipeline = mod.phase === 'pipeline';
       console.log(`[intelligence-scan] Running ${mod.phase} module: ${mod.key}`);
-      return runModule(mod, isPipeline);
+      return runAndSave(mod, isPipeline);
     }));
-    await updateProgress();
 
     // ─── Phase 1b: Congress Cross-Reference (depends on FEC data) ───
-    // This must run AFTER sync-openfec so PAC recipients are in the DB.
-    // It then fetches their sponsored legislation from Congress.gov.
     console.log(`[intelligence-scan] ═══ Phase 1b: Congress Cross-Reference (post-FEC) ═══`);
-    moduleStatuses[CONGRESS_MODULE.key] = { status: 'in_progress', label: CONGRESS_MODULE.label, phase: CONGRESS_MODULE.phase, startedAt: new Date().toISOString() };
-    await updateProgress();
-    await runModule(CONGRESS_MODULE, true);
-    await updateProgress();
+    await runAndSave(CONGRESS_MODULE, true);
 
     // ─── Phase 2: Web research modules — ALL IN PARALLEL ───
     console.log(`[intelligence-scan] ═══ Phase 2: Web Research Modules (parallel) ═══`);
-    for (const mod of RESEARCH_MODULES) {
-      moduleStatuses[mod.key] = { status: 'in_progress', label: mod.label, phase: mod.phase, startedAt: new Date().toISOString() };
-    }
-    await updateProgress();
-
     await Promise.all(RESEARCH_MODULES.map(mod => {
       console.log(`[intelligence-scan] Running research module: ${mod.key}`);
-      return runModule(mod, false);
+      return runAndSave(mod, false);
     }));
-    await updateProgress();
 
     // ─── Phase 3: Calculate influence ROI from pipeline data ───
     console.log(`[intelligence-scan] ═══ Phase 3: Calculating Influence ROI ═══`);
