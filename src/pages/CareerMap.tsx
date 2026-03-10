@@ -15,9 +15,10 @@ import { NetworkIntelligenceStep } from "@/components/career-discovery/NetworkIn
 import { useAuth } from "@/contexts/AuthContext";
 import { useCareerDiscovery, type CareerProfile } from "@/hooks/use-career-discovery";
 import { Navigate } from "react-router-dom";
+import { CareerWrappedStep } from "@/components/career-discovery/CareerWrappedStep";
 import {
   Upload, Anchor, Compass, Sparkles, Building2, BarChart3,
-  GitBranch, ClipboardList, Users, ChevronRight, ArrowLeft, CheckCircle2,
+  GitBranch, ClipboardList, Users, ChevronRight, ArrowLeft, CheckCircle2, Trophy,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 
@@ -31,6 +32,7 @@ const STEPS = [
   { id: "futures", label: "Possible Paths", icon: GitBranch, section: "Possible Paths" },
   { id: "action", label: "Action Plan", icon: ClipboardList, section: "Your Action Plan" },
   { id: "network", label: "Path Guides", icon: Users, section: "Who Can Help" },
+  { id: "wrapped", label: "Your Results", icon: Trophy, section: "Career Mapped!" },
 ] as const;
 
 type StepId = typeof STEPS[number]["id"];
@@ -125,6 +127,17 @@ export default function CareerMap() {
         return <ActionPlanStep data={actionPlan.data} loading={actionPlan.loading} error={actionPlan.error} onRetry={() => discover("action_plan")} />;
       case "network":
         return <NetworkIntelligenceStep />;
+      case "wrapped":
+        return (
+          <CareerWrappedStep
+            profile={profile!}
+            careerPaths={careerPaths.data}
+            companies={companies.data}
+            skillGap={skillGap.data}
+            futures={futures.data}
+            actionPlan={actionPlan.data}
+          />
+        );
     }
   };
 
