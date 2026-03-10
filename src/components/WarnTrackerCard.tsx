@@ -181,7 +181,7 @@ export function WarnTrackerCard({ companyName, dbCompanyId }: { companyName: str
                 LayoffStats
               </Button>
             </a>
-            <a href="https://www.livenowfox.com/news/2026-layoffs-list-companies-cutting-jobs-year" target="_blank" rel="noopener noreferrer">
+            <a href={`https://layoffs.fyi/`} target="_blank" rel="noopener noreferrer">
               <Button variant="ghost" size="sm" className="gap-1.5 text-xs text-muted-foreground">
                 <Newspaper className="w-3 h-3" />
                 {currentYear} Master List
