@@ -3117,6 +3117,27 @@ export type Database = {
           },
         ]
       }
+      plans: {
+        Row: {
+          id: string
+          max_slots: number
+          monthly_price_cents: number
+          name: string
+        }
+        Insert: {
+          id?: string
+          max_slots: number
+          monthly_price_cents: number
+          name: string
+        }
+        Update: {
+          id?: string
+          max_slots?: number
+          monthly_price_cents?: number
+          name?: string
+        }
+        Relationships: []
+      }
       policy_reports: {
         Row: {
           author_name: string
@@ -4507,6 +4528,35 @@ export type Database = {
           work_style?: string[] | null
         }
         Relationships: []
+      }
+      user_subscriptions: {
+        Row: {
+          additional_slots: number | null
+          current_period_end: string | null
+          plan_id: string | null
+          user_id: string
+        }
+        Insert: {
+          additional_slots?: number | null
+          current_period_end?: string | null
+          plan_id?: string | null
+          user_id: string
+        }
+        Update: {
+          additional_slots?: number | null
+          current_period_end?: string | null
+          plan_id?: string | null
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "user_subscriptions_plan_id_fkey"
+            columns: ["plan_id"]
+            isOneToOne: false
+            referencedRelation: "plans"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       user_values_preferences: {
         Row: {
