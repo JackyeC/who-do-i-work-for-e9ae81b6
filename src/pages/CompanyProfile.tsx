@@ -50,6 +50,7 @@ import { SignalTimeline } from "@/components/SignalTimeline";
 import { WatchCompanyButton } from "@/components/WatchCompanyButton";
 import { ManualSignalEntry } from "@/components/ManualSignalEntry";
 import { CandidateDetailDrawer } from "@/components/CandidateDetailDrawer";
+import { PartyBadge } from "@/components/PartyBadge";
 import { ExecutiveDetailDrawer } from "@/components/ExecutiveDetailDrawer";
 import { LobbyingDetailDrawer } from "@/components/LobbyingDetailDrawer";
 import { PACDetailDrawer } from "@/components/PACDetailDrawer";
@@ -986,24 +987,53 @@ export default function CompanyProfile() {
               />
             </div>
 
-            {/* Party-filtered candidates modal */}
+            {/* Party-filtered candidates — detailed view */}
             {partyFilteredCandidates && partyFilteredCandidates.length > 0 && (
-              <Card className="mb-6 border-primary/20">
-                <CardContent className="p-4">
-                  <div className="flex items-center justify-between mb-3">
-                    <h3 className="font-semibold text-foreground text-sm">
-                      {partyFilteredCandidates[0]?.party} Recipients ({partyFilteredCandidates.length})
+              <Card className="mb-6 border-primary/20 overflow-hidden">
+                <div className="bg-primary/5 border-b border-primary/10 px-4 py-3 flex items-center justify-between">
+                  <div>
+                    <h3 className="font-semibold text-foreground text-sm flex items-center gap-2">
+                      <PartyBadge party={partyFilteredCandidates[0]?.party} entityType="politician" size="sm" />
+                      {partyFilteredCandidates[0]?.party === "R" ? "Republican" : partyFilteredCandidates[0]?.party === "D" ? "Democrat" : partyFilteredCandidates[0]?.party} Recipients
+                      <Badge variant="secondary" className="text-[10px] ml-1">{partyFilteredCandidates.length}</Badge>
                     </h3>
-                    <Button variant="ghost" size="sm" onClick={() => setPartyFilteredCandidates(null)}>Clear filter</Button>
+                    <p className="text-[11px] text-muted-foreground mt-0.5">
+                      Total: {formatCurrency(partyFilteredCandidates.reduce((s: number, c: any) => s + (c.amount || 0), 0))} · Click any recipient to see their voting record and politics
+                    </p>
                   </div>
-                  <div className="space-y-2">
-                    {partyFilteredCandidates.map((c: any) => (
-                      <button key={c.id} onClick={() => handleCandidateClick(c)} className="w-full flex items-center justify-between p-2 rounded-lg bg-muted/50 hover:bg-primary/5 border border-transparent hover:border-primary/20 transition-colors text-left">
-                        <div>
-                          <span className="font-medium text-sm text-foreground">{c.name}</span>
-                          <span className="text-xs text-muted-foreground ml-2">{c.state}{c.district ? `, D-${c.district}` : ""}</span>
+                  <Button variant="ghost" size="sm" onClick={() => setPartyFilteredCandidates(null)} className="text-xs">✕ Close</Button>
+                </div>
+                <CardContent className="p-3">
+                  <div className="space-y-1.5 max-h-96 overflow-y-auto">
+                    {partyFilteredCandidates
+                      .sort((a: any, b: any) => (b.amount || 0) - (a.amount || 0))
+                      .map((c: any) => (
+                      <button
+                        key={c.id}
+                        onClick={() => handleCandidateClick(c)}
+                        className="w-full flex items-center gap-3 p-3 rounded-lg bg-card hover:bg-accent/50 border border-border/60 hover:border-primary/30 transition-all text-left group"
+                      >
+                        <div className="w-9 h-9 rounded-full bg-muted flex items-center justify-center shrink-0 border border-border/60 group-hover:border-primary/30 transition-colors">
+                          <span className="text-xs font-bold text-muted-foreground">{c.name?.split(" ").map((n: string) => n[0]).join("").slice(0, 2)}</span>
                         </div>
-                        <span className="text-sm font-medium text-foreground">{formatCurrency(c.amount)}</span>
+                        <div className="flex-1 min-w-0">
+                          <div className="flex items-center gap-1.5 flex-wrap">
+                            <span className="text-sm font-semibold text-foreground">{c.name}</span>
+                            <PartyBadge party={c.party} entityType="politician" size="sm" />
+                            {c.flagged && <Badge variant="destructive" className="text-[10px] px-1.5">Flagged</Badge>}
+                          </div>
+                          <div className="flex items-center gap-2 mt-0.5 flex-wrap">
+                            <span className="text-[11px] text-muted-foreground">{c.state}{c.district ? `, District ${c.district}` : ""}</span>
+                            <Badge variant="outline" className="text-[10px] py-0">{c.donation_type || "PAC"}</Badge>
+                          </div>
+                          {c.flag_reason && (
+                            <p className="text-[10px] text-destructive mt-1 truncate">{c.flag_reason}</p>
+                          )}
+                        </div>
+                        <div className="text-right shrink-0">
+                          <span className="text-sm font-bold text-foreground">{formatCurrency(c.amount)}</span>
+                          <p className="text-[10px] text-primary opacity-0 group-hover:opacity-100 transition-opacity">View politics →</p>
+                        </div>
                       </button>
                     ))}
                   </div>
