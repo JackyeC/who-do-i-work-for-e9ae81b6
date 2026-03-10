@@ -78,20 +78,24 @@ async function findCIK(companyName: string): Promise<{ cik: string; ticker: stri
       }
     }
     
-    // Partial match
+    // Partial match — require the search term to be a substantial substring
     for (const entry of Object.values(tickers)) {
       const normalizedTitle = entry.title.toLowerCase().replace(/[^a-z0-9\s]/g, '').trim();
-      if (normalizedTitle.includes(normalizedSearch) || normalizedSearch.includes(normalizedTitle)) {
+      // Only match if the shorter string is at least 60% the length of the longer
+      const shorter = normalizedSearch.length < normalizedTitle.length ? normalizedSearch : normalizedTitle;
+      const longer = normalizedSearch.length < normalizedTitle.length ? normalizedTitle : normalizedSearch;
+      if (shorter.length >= longer.length * 0.6 && longer.includes(shorter)) {
         return { cik: String(entry.cik_str).padStart(10, '0'), ticker: entry.ticker, name: entry.title };
       }
     }
 
-    // Word-based fuzzy match (match first 2 words)
-    const searchWords = normalizedSearch.split(/\s+/).slice(0, 2);
-    if (searchWords.length >= 1 && searchWords[0].length > 3) {
+    // Word-based match — require ALL significant words (3+ chars) to match
+    const searchWords = normalizedSearch.split(/\s+/).filter(w => w.length > 2);
+    if (searchWords.length >= 2) {
       for (const entry of Object.values(tickers)) {
         const titleWords = entry.title.toLowerCase().replace(/[^a-z0-9\s]/g, '').split(/\s+/);
-        if (searchWords.every(w => titleWords.some(tw => tw.startsWith(w) || w.startsWith(tw)))) {
+        // All search words must appear in the title
+        if (searchWords.every(sw => titleWords.some(tw => tw === sw || (tw.length > 4 && sw.length > 4 && (tw.startsWith(sw) || sw.startsWith(tw)))))) {
           return { cik: String(entry.cik_str).padStart(10, '0'), ticker: entry.ticker, name: entry.title };
         }
       }
