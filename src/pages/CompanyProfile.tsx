@@ -57,6 +57,7 @@ import { LobbyingDetailDrawer } from "@/components/LobbyingDetailDrawer";
 import { PACDetailDrawer } from "@/components/PACDetailDrawer";
 import { ContractsDetailDrawer } from "@/components/ContractsDetailDrawer";
 import { WarnTrackerCard } from "@/components/WarnTrackerCard";
+import { SurvivorAlertCard } from "@/components/SurvivorAlertCard";
 import { PromotionEquityCard } from "@/components/PromotionEquityCard";
 import { RelatedReportsCard } from "@/components/RelatedReportsCard";
 import { MonitoringStatusCard } from "@/components/MonitoringStatusCard";
@@ -300,7 +301,7 @@ function DbLensModules({ activeLens, dbCompany, dbPartyBreakdown, dbCandidates, 
     "worker-benefits": <ExplainableMetric metricKey="worker-benefits"><div key="worker-benefits" className="mb-6"><WorkerBenefitsCard companyName={dbCompany.name} dbCompanyId={dbCompany.id} /></div></ExplainableMetric>,
     "ai-accountability": <ExplainableMetric metricKey="ai-accountability"><div key="ai-accountability" className="mb-6"><AIAccountabilityCard companyName={dbCompany.name} dbCompanyId={dbCompany.id} /></div></ExplainableMetric>,
     "compensation": <ExplainableMetric metricKey="compensation-transparency"><div key="compensation" className="mb-6"><CompensationTransparencyCard companyName={dbCompany.name} dbCompanyId={dbCompany.id} /></div></ExplainableMetric>,
-    "warn-tracker": <ExplainableMetric metricKey="warn-tracker"><div key="warn-tracker" className="mb-6"><WarnTrackerCard companyName={dbCompany.name} dbCompanyId={dbCompany.id} /></div></ExplainableMetric>,
+    "warn-tracker": <ExplainableMetric metricKey="warn-tracker"><div key="warn-tracker" className="mb-6 space-y-4"><WarnTrackerCard companyName={dbCompany.name} dbCompanyId={dbCompany.id} /><SurvivorAlertCard companyName={dbCompany.name} dbCompanyId={dbCompany.id} /></div></ExplainableMetric>,
     "promotion-equity": <ExplainableMetric metricKey="worker-benefits"><div key="promotion-equity" className="mb-6"><PromotionEquityCard companyName={dbCompany.name} dbCompanyId={dbCompany.id} /></div></ExplainableMetric>,
     "talent-signals": <div key="talent-signals" className="mb-6 space-y-6"><SignalsDetectedSummary companyId={dbCompany.id} companyName={dbCompany.name} /><TalentSignalsCard companyName={dbCompany.name} /><CandidateAttractionScore companyId={dbCompany.id} companyName={dbCompany.name} /><TalentRiskSignals companyId={dbCompany.id} companyName={dbCompany.name} /></div>,
   };

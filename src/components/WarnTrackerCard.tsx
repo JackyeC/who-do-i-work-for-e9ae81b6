@@ -46,11 +46,11 @@ export function WarnTrackerCard({ companyName, dbCompanyId }: { companyName: str
   const displayedRecent = showAll ? recentNotices : recentNotices.slice(0, 5);
   const displayedOlder = showAll ? olderNotices : olderNotices.slice(0, 3);
 
-  const handleScan = async () => {
+  const handleScan = async (national = false) => {
     setIsScanning(true);
     try {
       await supabase.functions.invoke("warn-scan", {
-        body: { company_id: dbCompanyId, company_name: companyName },
+        body: { company_id: dbCompanyId, company_name: companyName, national },
       });
       setTimeout(() => refetch(), 3000);
     } catch (e) {
@@ -138,16 +138,28 @@ export function WarnTrackerCard({ companyName, dbCompanyId }: { companyName: str
             <TrendingDown className="w-5 h-5 text-destructive" />
             Workforce Stability
           </CardTitle>
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={handleScan}
-            disabled={isScanning}
-            className="gap-1.5"
-          >
-            {isScanning ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <RefreshCw className="w-3.5 h-3.5" />}
-            {isScanning ? "Scanning..." : "Scan Latest"}
-          </Button>
+          <div className="flex gap-2">
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => handleScan(false)}
+              disabled={isScanning}
+              className="gap-1.5"
+            >
+              {isScanning ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <RefreshCw className="w-3.5 h-3.5" />}
+              {isScanning ? "Scanning..." : "Scan Latest"}
+            </Button>
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => handleScan(true)}
+              disabled={isScanning}
+              className="gap-1.5 text-xs border-destructive/30 text-destructive hover:bg-destructive/10"
+            >
+              <MapPin className="w-3.5 h-3.5" />
+              National Scan
+            </Button>
+          </div>
         </div>
         <p className="text-xs text-muted-foreground">
           {currentYear} layoff filings, WARN notices, and workforce reduction intelligence for {companyName}.
