@@ -22,24 +22,36 @@ export interface TrackedCompany {
   };
 }
 
-const TIER_SLOT_LIMITS: Record<string, number> = {
-  free: 0,
-  starter: 3,
-  pro: 25,
-  team: 100,
-};
-
-const ADD_ON_PRICE_PER_COMPANY = 12; // $12/company/month
-
-export function getSlotLimit(tier: string): number {
-  return TIER_SLOT_LIMITS[tier] ?? 0;
+interface UserSubscription {
+  user_id: string;
+  plan_id: string | null;
+  additional_slots: number;
+  current_period_end: string | null;
+  plan?: { name: string; max_slots: number; monthly_price_cents: number } | null;
 }
 
 export function useTrackedCompanies() {
   const { user } = useAuth();
-  const { tier, isPremium } = usePremium();
+  const { isPremium } = usePremium();
+  const queryClient = useQueryClient();
 
-  const slotLimit = getSlotLimit(tier);
+  // Fetch user subscription with plan details
+  const { data: subscription } = useQuery({
+    queryKey: ["user-subscription", user?.id],
+    queryFn: async () => {
+      const { data, error } = await (supabase as any)
+        .from("user_subscriptions")
+        .select("*, plan:plans(*)")
+        .eq("user_id", user!.id)
+        .maybeSingle();
+      if (error) throw error;
+      return data as UserSubscription | null;
+    },
+    enabled: !!user,
+  });
+
+  const slotLimit = (subscription?.plan?.max_slots ?? 0) + (subscription?.additional_slots ?? 0);
+  const tier = subscription?.plan?.name?.toLowerCase() ?? "free";
 
   const { data: trackedCompanies = [], isLoading, refetch } = useQuery({
     queryKey: ["tracked-companies", user?.id],
@@ -61,15 +73,11 @@ export function useTrackedCompanies() {
 
   const slotsUsed = trackedCompanies.length;
   const slotsRemaining = Math.max(0, slotLimit - slotsUsed);
-  const isAtCapacity = slotsUsed >= slotLimit;
-
-  const queryClient = useQueryClient();
+  const isAtCapacity = slotLimit > 0 && slotsUsed >= slotLimit;
 
   const trackCompany = useMutation({
     mutationFn: async (companyId: string) => {
       if (!user) throw new Error("Must be logged in");
-      if (!isPremium) throw new Error("Subscription required");
-      if (isAtCapacity) throw new Error("No slots available. Untrack a company or upgrade your plan.");
 
       // Upsert: if previously untracked, reactivate
       const { data: existing } = await (supabase as any)
@@ -91,12 +99,18 @@ export function useTrackedCompanies() {
         return data;
       }
 
+      // Insert — server-side trigger enforces slot limit
       const { data, error } = await (supabase as any)
         .from("tracked_companies")
         .insert({ user_id: user.id, company_id: companyId })
         .select()
         .single();
-      if (error) throw error;
+      if (error) {
+        if (error.message?.includes("limit")) {
+          throw new Error("You've reached your slot limit. Untrack a company to free up a slot.");
+        }
+        throw error;
+      }
       return data;
     },
     onSuccess: () => {
@@ -143,6 +157,7 @@ export function useTrackedCompanies() {
     isCompanyTracked,
     tier,
     isPremium,
+    subscription,
     refetch,
   };
 }
