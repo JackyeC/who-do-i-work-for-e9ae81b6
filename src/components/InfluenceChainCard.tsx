@@ -216,7 +216,7 @@ function ConfidenceTag({ confidence }: { confidence: number }) {
 }
 
 /* ── Evidence card (replaces flat rows) ── */
-function EvidenceCard({ step, onEntityClick }: { step: ChainStep; onEntityClick?: (entity: { name: string; type: string; linkType: string; amount: number }) => void }) {
+function EvidenceCard({ step, onEntityClick, companyName }: { step: ChainStep; onEntityClick?: (entity: { name: string; type: string; linkType: string; amount: number }) => void; companyName?: string }) {
   const config = LINK_TYPE_CONFIG[step.link_type] || { label: step.link_type, plainLabel: "Connected to", color: "text-muted-foreground", icon: ArrowRight };
   const Icon = config.icon;
   const targetParty = extractPartyFromDescription(step.description, step.target_name);
@@ -226,8 +226,9 @@ function EvidenceCard({ step, onEntityClick }: { step: ChainStep; onEntityClick?
   const issues = (isPolitician || step.link_type === "member_on_committee") ? getCommitteeIssues(step.target_name) : [];
   const sourceName = cleanEntityName(step.source_name);
   const targetName = cleanEntityName(step.target_name);
+  const isExecAgg = isExecAggregate(step, companyName);
   const isExecutiveDonation = step.source_type === "executive" || step.link_type === "donation_to_member" && step.source_type === "executive";
-  const isDonationToMember = step.link_type === "donation_to_member";
+  const isDonationToMember = step.link_type === "donation_to_member" && !isExecAgg;
   const isClickable = !!onEntityClick && (isExecutiveDonation || isDonationToMember);
 
   const handleClick = () => {
@@ -238,6 +239,12 @@ function EvidenceCard({ step, onEntityClick }: { step: ChainStep; onEntityClick?
       onEntityClick({ name: step.target_name, type: "candidate", linkType: step.link_type, amount: step.amount });
     }
   };
+
+  // For exec aggregates, rewrite labels
+  const displayLabel = isExecAgg ? "Executive Personal Donations" : config.label;
+  const displaySummary = isExecAgg
+    ? `${sourceName} made ${formatCurrency(step.amount)} in personal political donations (click to see recipients)`
+    : `${sourceName} ${config.plainLabel.toLowerCase()} ${targetName}${targetParty ? ` (${PARTY_FULL_NAMES[targetParty] || targetParty})` : ""}${step.amount > 0 ? ` for ${formatCurrency(step.amount)}` : ""}`;
 
   return (
     <div
@@ -252,7 +259,7 @@ function EvidenceCard({ step, onEntityClick }: { step: ChainStep; onEntityClick?
         <div className="flex items-center gap-2">
           <span className={cn("inline-flex items-center gap-1 text-[10px] font-semibold px-2 py-0.5 rounded-full bg-muted", config.color)}>
             <Icon className="w-3 h-3" />
-            {config.label}
+            {displayLabel}
           </span>
           {step.amount > 0 && (
             <span className="text-xs font-bold text-foreground">{formatCurrency(step.amount)}</span>
@@ -261,24 +268,27 @@ function EvidenceCard({ step, onEntityClick }: { step: ChainStep; onEntityClick?
         <ConfidenceTag confidence={step.confidence} />
       </div>
 
-      {/* Connection: source → target */}
-      <div className="flex items-center gap-2 mb-1.5">
-        <span className="text-xs font-medium text-muted-foreground truncate max-w-[120px]">{sourceName}</span>
-        <ChevronRight className="w-3 h-3 text-muted-foreground/50 shrink-0" />
-        <span className="text-sm font-semibold text-foreground truncate">{targetName}</span>
-        {targetParty && <PartyBadge party={targetParty} entityType={step.target_type} />}
-        {targetLocation && <span className="text-[10px] text-muted-foreground">{targetLocation}</span>}
-      </div>
+      {/* Connection: source → target (skip arrow for exec aggregates) */}
+      {!isExecAgg ? (
+        <div className="flex items-center gap-2 mb-1.5">
+          <span className="text-xs font-medium text-muted-foreground truncate max-w-[120px]">{sourceName}</span>
+          <ChevronRight className="w-3 h-3 text-muted-foreground/50 shrink-0" />
+          <span className="text-sm font-semibold text-foreground truncate">{targetName}</span>
+          {targetParty && <PartyBadge party={targetParty} entityType={step.target_type} />}
+          {targetLocation && <span className="text-[10px] text-muted-foreground">{targetLocation}</span>}
+        </div>
+      ) : (
+        <div className="flex items-center gap-2 mb-1.5">
+          <span className="text-sm font-semibold text-foreground truncate">{sourceName}</span>
+          <span className="text-[10px] text-muted-foreground">(company executive)</span>
+        </div>
+      )}
 
-      {/* Summary line — always explain who, to whom, for what */}
-      <p className="text-xs text-muted-foreground leading-relaxed">
-        {sourceName} {config.plainLabel.toLowerCase()} {targetName}
-        {targetParty && <> ({PARTY_FULL_NAMES[targetParty] || targetParty})</>}
-        {step.amount > 0 && <> for {formatCurrency(step.amount)}</>}
-      </p>
+      {/* Summary line */}
+      <p className="text-xs text-muted-foreground leading-relaxed">{displaySummary}</p>
 
       {/* Description detail — show for all types that have descriptions */}
-      {step.description && (
+      {step.description && !isExecAgg && (
         <p className="text-[10px] text-muted-foreground/80 mt-1 leading-relaxed italic">
           {expandAcronymsInText(summarizeDescription(step.description, step.link_type, sourceName, targetName))}
         </p>
