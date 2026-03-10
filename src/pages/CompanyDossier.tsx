@@ -142,6 +142,7 @@ export default function CompanyDossier() {
   }
 
   const influenceScore = company.civic_footprint_score || 0;
+  const hasFullAccess = isTracked; // used to pass unlocked prop
 
   // Layer 1: Overview — always visible
   const overviewContent = (
@@ -161,7 +162,6 @@ export default function CompanyDossier() {
             {company.employee_count && ` · ${company.employee_count} employees`}
           </p>
         </div>
-        {/* Export button */}
         <ExportDossierButton companyId={companyId!} companyName={company.name} company={company} />
       </div>
 
@@ -183,20 +183,22 @@ export default function CompanyDossier() {
           <MarketsSegmentsLayer segments={[]} companyName={company.name} />
         </div>
       </DossierLayer>
-    </>
-  );
 
-  // Layers 2–11: Full dossier — gated
-  const fullContent = (
-    <>
+      {/* Innovation & Stock — always visible but blurred for non-subscribers */}
       <DossierLayer title="Innovation & Patents" subtitle="Stock timeline, patent clusters, R&D themes, and technology bets" icon={Lightbulb} layerNumber={2}>
         <div className="space-y-8">
-          <StockPatentsLayer companyId={companyId!} companyName={company.name} />
+          <StockPatentsLayer companyId={companyId!} companyName={company.name} unlocked={hasFullAccess} />
           <div className="border-t border-border/30 pt-6">
-            <InnovationPatentsLayer totalPatents={0} clusters={[]} companyName={company.name} companyId={companyId} />
+            <InnovationPatentsLayer totalPatents={0} clusters={[]} companyName={company.name} companyId={companyId} unlocked={hasFullAccess} />
           </div>
         </div>
       </DossierLayer>
+    </>
+  );
+
+  // Layers 3–11: Full dossier — gated
+  const fullContent = (
+    <>
 
       <DossierLayer title="Ecosystem & Subcontractors" subtitle="Supply chain, federal contracts, and operational dependencies" icon={Network} layerNumber={3}>
         <EcosystemSubcontractorsLayer entities={[]} companyName={company.name} />
