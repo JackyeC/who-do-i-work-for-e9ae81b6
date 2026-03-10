@@ -109,7 +109,7 @@ Deno.serve(async (req) => {
 
     if (existingScan) {
       const scanAge = Date.now() - new Date(existingScan.created_at).getTime();
-      const THREE_MINUTES = 3 * 60 * 1000;
+      const FIVE_MINUTES = 5 * 60 * 1000;
 
       if (forceRescan || scanAge > THREE_MINUTES) {
         const reason = forceRescan ? 'Force re-scan requested by user' : `Auto-expired: scan exceeded 3-minute timeout`;
