@@ -13,6 +13,7 @@ import { UserProfileForm } from "@/components/jobs/UserProfileForm";
 import { TrackingDashboard } from "@/components/jobs/TrackingDashboard";
 import { AutoApplySettings } from "@/components/jobs/AutoApplySettings";
 import { ApplyQueueDashboard } from "@/components/jobs/ApplyQueueDashboard";
+import { SlotManagementDashboard } from "@/components/slots/SlotManagementDashboard";
 import { UserAlertsList } from "@/components/UserAlerts";
 import { MyValuesProfile } from "@/components/career/MyValuesProfile";
 import { HowDoIGetThere } from "@/components/career/HowDoIGetThere";
@@ -23,6 +24,7 @@ import { ClipboardCheck } from "lucide-react";
 
 const TAB_TITLES: Record<string, string> = {
   overview: "Dashboard Overview",
+  tracked: "Tracked Companies",
   matches: "Matched Jobs",
   values: "My Values Profile",
   how: "How Do I Get There?",
@@ -67,6 +69,8 @@ export default function Dashboard() {
     switch (tab) {
       case "overview":
         return <DashboardOverview onNavigate={setTab} />;
+      case "tracked":
+        return <SlotManagementDashboard />;
       case "matches":
         return <AlignedJobsList />;
       case "values":

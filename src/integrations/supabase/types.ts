@@ -4184,6 +4184,41 @@ export type Database = {
           },
         ]
       }
+      tracked_companies: {
+        Row: {
+          company_id: string
+          id: string
+          is_active: boolean
+          tracked_at: string
+          untracked_at: string | null
+          user_id: string
+        }
+        Insert: {
+          company_id: string
+          id?: string
+          is_active?: boolean
+          tracked_at?: string
+          untracked_at?: string | null
+          user_id: string
+        }
+        Update: {
+          company_id?: string
+          id?: string
+          is_active?: boolean
+          tracked_at?: string
+          untracked_at?: string | null
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "tracked_companies_company_id_fkey"
+            columns: ["company_id"]
+            isOneToOne: false
+            referencedRelation: "companies"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       user_alerts: {
         Row: {
           change_description: string

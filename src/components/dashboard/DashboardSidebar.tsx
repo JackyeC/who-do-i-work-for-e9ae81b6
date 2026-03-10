@@ -17,7 +17,7 @@ import { Button } from "@/components/ui/button";
 import {
   Briefcase, Heart, Route, Users, LayoutDashboard,
   Settings, User, Zap, Bell, ClipboardCheck, LogOut,
-  Home, Compass
+  Home, Compass, Building2
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 
@@ -26,6 +26,7 @@ const navGroups = [
     label: "Overview",
     items: [
       { id: "overview", label: "Dashboard", icon: Home },
+      { id: "tracked", label: "Tracked Companies", icon: Building2 },
     ],
   },
   {
