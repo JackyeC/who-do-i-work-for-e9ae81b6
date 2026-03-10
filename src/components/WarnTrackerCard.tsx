@@ -49,9 +49,16 @@ export function WarnTrackerCard({ companyName, dbCompanyId }: { companyName: str
   const handleScan = async (national = false) => {
     setIsScanning(true);
     try {
-      await supabase.functions.invoke("warn-scan", {
-        body: { company_id: dbCompanyId, company_name: companyName, national },
-      });
+      if (national) {
+        // Use the Big Local News national WARN dataset
+        await supabase.functions.invoke("warn-national-sync", {
+          body: { company_id: dbCompanyId, company_name: companyName, days_back: 365 },
+        });
+      } else {
+        await supabase.functions.invoke("warn-scan", {
+          body: { company_id: dbCompanyId, company_name: companyName, national },
+        });
+      }
       setTimeout(() => refetch(), 3000);
     } catch (e) {
       console.error("WARN scan error:", e);
@@ -281,7 +288,10 @@ export function WarnTrackerCard({ companyName, dbCompanyId }: { companyName: str
         {/* Attribution */}
         <div className="pt-2 border-t border-border">
           <p className="text-[10px] text-muted-foreground text-center">
-            Data from WARN filings, news reports & public records · Live tracking via{" "}
+            National WARN data via{" "}
+            <a href="https://github.com/biglocalnews/warn-transformer" target="_blank" rel="noopener noreferrer" className="text-primary hover:underline">
+              Big Local News
+            </a>{" "}·{" "}
             <a href="https://www.warntracker.com" target="_blank" rel="noopener noreferrer" className="text-primary hover:underline">
               WARN Tracker
             </a>{" "}·{" "}
