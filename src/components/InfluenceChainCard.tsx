@@ -329,7 +329,7 @@ function EvidenceCard({ step, onEntityClick, companyName }: { step: ChainStep; o
 }
 
 /* ── Category section with top-5 + expand ── */
-function CategorySection({ category, steps, defaultOpen, onEntityClick }: { category: Category; steps: ChainStep[]; defaultOpen: boolean; onEntityClick?: (entity: { name: string; type: string; linkType: string; amount: number }) => void }) {
+function CategorySection({ category, steps, defaultOpen, onEntityClick, companyName }: { category: Category; steps: ChainStep[]; defaultOpen: boolean; onEntityClick?: (entity: { name: string; type: string; linkType: string; amount: number }) => void; companyName?: string }) {
   const [isOpen, setIsOpen] = useState(defaultOpen);
   const [showAll, setShowAll] = useState(false);
   const Icon = category.icon;
