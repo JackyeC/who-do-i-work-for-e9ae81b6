@@ -692,6 +692,7 @@ export function InfluenceChainCard({ companyId, companyName, onExecutiveClick, o
               steps={categorized[cat.key]}
               defaultOpen={idx === 0}
               onEntityClick={handleEntityClick}
+              companyName={companyName}
             />
           ))}
         </div>
