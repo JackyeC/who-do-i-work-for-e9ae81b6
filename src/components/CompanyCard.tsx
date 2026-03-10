@@ -31,11 +31,14 @@ export function CompanyCard({ company }: CompanyCardProps) {
           </div>
           <div className="mt-4 flex items-center justify-between gap-2 flex-wrap">
             <CivicFootprintBadge score={company.civicFootprintScore} size="sm" />
-            <span className="text-micro text-muted-foreground">
-              {company.totalPacSpending > 0
-                ? `PAC: ${formatCurrency(company.totalPacSpending)}`
-                : "No PAC spending"}
-            </span>
+            <div className="flex items-center gap-2">
+              <span className="text-micro text-muted-foreground">
+                {company.totalPacSpending > 0
+                  ? `PAC: ${formatCurrency(company.totalPacSpending)}`
+                  : "No PAC spending"}
+              </span>
+              <span className="text-[10px] text-primary font-medium opacity-0 group-hover:opacity-100 transition-opacity">View profile →</span>
+            </div>
           </div>
         </CardContent>
       </Card>

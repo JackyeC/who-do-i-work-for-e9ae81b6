@@ -671,6 +671,25 @@ export default function CompanyProfile() {
                       governmentContracts: dbCompany.government_contracts ?? undefined,
                       partyBreakdown: dbPartyBreakdown?.map(p => ({ party: p.party, amount: p.amount, color: p.color })),
                     }} />
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      className="gap-1.5"
+                      onClick={async () => {
+                        const url = window.location.href;
+                        if (navigator.share) {
+                          try {
+                            await navigator.share({ title: `${dbCompany.name} — Who Do I Work For?`, url });
+                          } catch {}
+                        } else {
+                          await navigator.clipboard.writeText(url);
+                          toast({ title: "Link copied!", description: "Share this company profile with anyone." });
+                        }
+                      }}
+                    >
+                      <ExternalLink className="w-3.5 h-3.5" />
+                      Share
+                    </Button>
                     <EmbedBadge slug={dbCompany.slug} companyName={dbCompany.name} />
                     <WatchCompanyButton companyId={dbCompany.id} companyName={dbCompany.name} />
                     <Button
@@ -685,7 +704,9 @@ export default function CompanyProfile() {
                   </div>
                 </div>
                 <div className="flex flex-wrap items-center gap-2">
-                  <Badge variant="secondary">{dbCompany.industry}</Badge>
+                  <Link to={`/browse?industry=${encodeURIComponent(dbCompany.industry)}`}>
+                    <Badge variant="secondary" className="cursor-pointer hover:bg-primary/10 transition-colors">{dbCompany.industry}</Badge>
+                  </Link>
                   <Badge variant="secondary">{dbCompany.state}</Badge>
                   {dbCompany.revenue && <Badge variant="secondary">Revenue: {dbCompany.revenue}</Badge>}
                   {dbCompany.employee_count && <Badge variant="secondary">{dbCompany.employee_count} employees</Badge>}
@@ -792,7 +813,7 @@ export default function CompanyProfile() {
               </p>
             </div>
 
-            {/* Summary Cards */}
+            {/* Summary Cards — clickable to open detail drawers */}
             <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-10">
               <ExplainableMetric metricKey="civic-footprint" className="h-full">
                 <Card className="overflow-hidden h-full flex flex-col">
@@ -808,7 +829,7 @@ export default function CompanyProfile() {
                 </Card>
               </ExplainableMetric>
               <ExplainableMetric metricKey="pac-spending" className="h-full">
-                <Card className="overflow-hidden h-full flex flex-col">
+                <Card className="overflow-hidden h-full flex flex-col cursor-pointer hover:border-primary/30 hover:shadow-md transition-all" onClick={() => setPacDrawerOpen(true)}>
                   <CardContent className="p-5 flex flex-col flex-1">
                     <div className="flex items-center gap-2 text-caption text-muted-foreground mb-2">
                       <DollarSign className="w-3.5 h-3.5" />
@@ -818,11 +839,12 @@ export default function CompanyProfile() {
                       {dbCompany.total_pac_spending > 0 ? formatCurrency(dbCompany.total_pac_spending) : "None"}
                     </div>
                     <p className="text-[11px] text-muted-foreground mt-auto pt-2 leading-snug">Money donated by the company's PAC directly to political candidates this cycle.</p>
+                    <span className="text-[10px] text-primary font-medium mt-1">View details →</span>
                   </CardContent>
                 </Card>
               </ExplainableMetric>
               <ExplainableMetric metricKey="lobbying" className="h-full">
-                <Card className="overflow-hidden h-full flex flex-col">
+                <Card className="overflow-hidden h-full flex flex-col cursor-pointer hover:border-primary/30 hover:shadow-md transition-all" onClick={() => setLobbyingDrawerOpen(true)}>
                   <CardContent className="p-5 flex flex-col flex-1">
                     <div className="flex items-center gap-2 text-caption text-muted-foreground mb-2">
                       <Megaphone className="w-3.5 h-3.5" />
@@ -832,12 +854,13 @@ export default function CompanyProfile() {
                       {dbCompany.lobbying_spend ? formatCurrency(dbCompany.lobbying_spend) : "None"}
                     </div>
                     <p className="text-[11px] text-muted-foreground mt-auto pt-2 leading-snug">Annual spending on lobbyists who advocate for the company in Congress.</p>
+                    <span className="text-[10px] text-primary font-medium mt-1">View details →</span>
                   </CardContent>
                 </Card>
               </ExplainableMetric>
               {(dbCompany.government_contracts || dbCompany.subsidies_received) && (
                 <ExplainableMetric metricKey="gov-contracts" className="h-full">
-                  <Card className="overflow-hidden h-full flex flex-col">
+                  <Card className="overflow-hidden h-full flex flex-col cursor-pointer hover:border-primary/30 hover:shadow-md transition-all" onClick={() => setContractsDrawerOpen(true)}>
                     <CardContent className="p-5 flex flex-col flex-1">
                       <div className="flex items-center gap-2 text-caption text-muted-foreground mb-2">
                         <Landmark className="w-3.5 h-3.5" />
@@ -847,6 +870,7 @@ export default function CompanyProfile() {
                         {dbCompany.government_contracts ? formatCurrency(dbCompany.government_contracts) : "—"}
                       </div>
                       <p className="text-[11px] text-muted-foreground mt-auto pt-2 leading-snug">Federal contracts awarded to this company — taxpayer money received.</p>
+                      <span className="text-[10px] text-primary font-medium mt-1">View details →</span>
                     </CardContent>
                   </Card>
                 </ExplainableMetric>
@@ -1236,9 +1260,9 @@ export default function CompanyProfile() {
                     <div className="h-56">
                       <ResponsiveContainer width="100%" height="100%">
                         <PieChart>
-                          <Pie data={company.partyBreakdown} cx="50%" cy="50%" innerRadius={55} outerRadius={85} paddingAngle={3} dataKey="amount" nameKey="party">
+                          <Pie data={company.partyBreakdown} cx="50%" cy="50%" innerRadius={55} outerRadius={85} paddingAngle={3} dataKey="amount" nameKey="party" className="cursor-pointer">
                             {company.partyBreakdown.map((entry, i) => (
-                              <Cell key={i} fill={entry.color} />
+                              <Cell key={i} fill={entry.color} className="hover:opacity-80 transition-opacity" />
                             ))}
                           </Pie>
                           <Tooltip formatter={(value: number) => formatCurrency(value)} />
@@ -1247,10 +1271,10 @@ export default function CompanyProfile() {
                     </div>
                     <div className="flex justify-center gap-6 mt-2">
                       {company.partyBreakdown.map((entry) => (
-                        <div key={entry.party} className="flex items-center gap-2 text-sm">
+                        <Link key={entry.party} to={`/values-search?issue=${entry.party === "Republican" || entry.party === "R" ? "conservative_alignment" : "progressive_alignment"}`} className="flex items-center gap-2 text-sm hover:underline cursor-pointer group">
                           <div className="w-3 h-3 rounded-full" style={{ backgroundColor: entry.color }} />
-                          <span className="text-muted-foreground">{entry.party}: {formatCurrency(entry.amount)}</span>
-                        </div>
+                          <span className="text-muted-foreground group-hover:text-foreground transition-colors">{entry.party}: {formatCurrency(entry.amount)}</span>
+                        </Link>
                       ))}
                     </div>
                   </CardContent>
@@ -1264,10 +1288,20 @@ export default function CompanyProfile() {
                   <CardContent>
                     <div className="space-y-3 max-h-80 overflow-y-auto">
                       {company.candidates.map((candidate) => (
-                        <div
+                        <button
                           key={candidate.name}
+                          onClick={() => handleCandidateClick({
+                            name: candidate.name,
+                            party: candidate.party === "R" ? "Republican" : candidate.party === "D" ? "Democrat" : candidate.party,
+                            state: candidate.state,
+                            amount: candidate.amount,
+                            donation_type: candidate.type,
+                            flagged: candidate.flagged,
+                            flag_reason: candidate.flagReason,
+                            district: candidate.district,
+                          })}
                           className={cn(
-                            "flex items-start justify-between p-3 rounded-lg border",
+                            "w-full flex items-start justify-between p-3 rounded-lg border text-left transition-colors hover:bg-primary/5 hover:border-primary/20 cursor-pointer",
                             candidate.flagged ? "border-civic-red/20 bg-civic-red/5" : "border-border"
                           )}
                         >
@@ -1286,7 +1320,7 @@ export default function CompanyProfile() {
                             {candidate.flagReason && <p className="text-xs text-civic-red mt-1">{candidate.flagReason}</p>}
                           </div>
                           <span className="text-sm font-medium text-foreground shrink-0">{formatCurrency(candidate.amount)}</span>
-                        </div>
+                        </button>
                       ))}
                     </div>
                   </CardContent>

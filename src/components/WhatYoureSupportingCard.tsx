@@ -1,9 +1,11 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { AlertTriangle, HandCoins, Users, Scale, HelpCircle, ExternalLink } from "lucide-react";
+import { AlertTriangle, HandCoins, Users, Scale, HelpCircle, ExternalLink, Share2 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { formatCurrency } from "@/data/sampleData";
 import { PartyBadge } from "@/components/PartyBadge";
+import { Link } from "react-router-dom";
+import { Button } from "@/components/ui/button";
 
 interface LobbyingDetail {
   target: string;
@@ -48,10 +50,27 @@ export function WhatYoureSupportingCard({
   return (
     <Card className="border-primary/20 bg-primary/[0.02]">
       <CardHeader className="pb-3">
-        <CardTitle className="text-lg flex items-center gap-2">
-          <HandCoins className="w-5 h-5 text-primary" />
-          What You're Supporting
-        </CardTitle>
+        <div className="flex items-center justify-between">
+          <CardTitle className="text-lg flex items-center gap-2">
+            <HandCoins className="w-5 h-5 text-primary" />
+            What You're Supporting
+          </CardTitle>
+          <Button
+            variant="ghost"
+            size="sm"
+            className="gap-1.5 text-xs"
+            onClick={async () => {
+              const url = window.location.href;
+              if (navigator.share) {
+                try { await navigator.share({ title: `${companyName} — What You're Supporting`, url }); } catch {}
+              } else {
+                await navigator.clipboard.writeText(url);
+              }
+            }}
+          >
+            <Share2 className="w-3 h-3" /> Share
+          </Button>
+        </div>
         <p className="text-sm text-muted-foreground leading-relaxed">
           When you work at <strong className="text-foreground">{companyName}</strong>, your labor generates revenue that funds the following political activities. This isn't a judgment — it's a map of where the money goes.
         </p>
@@ -124,7 +143,9 @@ export function WhatYoureSupportingCard({
             </p>
             <div className="flex flex-wrap gap-1.5">
               {topIssuesLobbied.slice(0, 8).map((issue, i) => (
-                <Badge key={i} variant="outline" className="text-xs">{issue}</Badge>
+                <Link key={i} to={`/values-search?issue=${encodeURIComponent(issue.toLowerCase().replace(/\s+/g, '_'))}`}>
+                  <Badge variant="outline" className="text-xs cursor-pointer hover:bg-primary/10 hover:border-primary/30 transition-colors">{issue}</Badge>
+                </Link>
               ))}
             </div>
           </div>
@@ -143,19 +164,28 @@ export function WhatYoureSupportingCard({
             </p>
             <div className="space-y-1.5">
               {topCandidates.slice(0, 5).map((c, i) => (
-                <div key={i} className="flex items-center justify-between py-2 px-3 rounded bg-muted/30">
+                <a
+                  key={i}
+                  href={`https://www.fec.gov/data/receipts/?contributor_name=${encodeURIComponent(c.name)}`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="flex items-center justify-between py-2 px-3 rounded bg-muted/30 hover:bg-primary/5 hover:border-primary/20 border border-transparent transition-colors cursor-pointer group"
+                >
                   <div className="flex items-center gap-2 min-w-0">
                     <PartyBadge party={c.party} size="sm" />
                     <div className="min-w-0">
-                      <span className="text-sm text-foreground block truncate">{c.name}</span>
+                      <span className="text-sm text-foreground block truncate group-hover:text-primary transition-colors">{c.name}</span>
                       <span className="text-[10px] text-muted-foreground">
                         {PARTY_FULL[c.party] || c.party}
                         {c.state ? ` — ${c.state}` : ""}
                       </span>
                     </div>
                   </div>
-                  <span className="text-sm font-data font-medium text-foreground shrink-0">{formatCurrency(c.amount)}</span>
-                </div>
+                  <div className="flex items-center gap-2 shrink-0">
+                    <span className="text-sm font-data font-medium text-foreground">{formatCurrency(c.amount)}</span>
+                    <ExternalLink className="w-3 h-3 text-muted-foreground opacity-0 group-hover:opacity-100 transition-opacity" />
+                  </div>
+                </a>
               ))}
             </div>
           </div>
