@@ -119,7 +119,22 @@ export function CompanyIntelligenceScanCard({ companyId, companyName }: Props) {
       const orchResult = orchestrated.status === 'fulfilled' ? orchestrated.value : null;
       const uniResult = unified.status === 'fulfilled' ? unified.value : null;
 
-      if (orchResult?.error && !orchResult.error.message?.includes('409') && uniResult?.error) {
+      // Check if the 409 "already in progress" was returned — treat as non-error (just poll)
+      const is409 = orchResult?.error && (
+        orchResult.error.message?.includes('409') ||
+        orchResult.error.message?.includes('already in progress') ||
+        (orchResult.error as any)?.context?.status === 409 ||
+        (orchResult.error as any)?.status === 409
+      );
+
+      if (is409) {
+        // Scan is already running — just poll for results
+        toast({ title: "Scan already in progress", description: "Monitoring the existing scan for results." });
+        queryClient.invalidateQueries({ queryKey: ["latest-scan-run", companyId] });
+        return;
+      }
+
+      if (orchResult?.error && uniResult?.error) {
         throw new Error(orchResult.error.message || "Scan failed");
       }
 
