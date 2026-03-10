@@ -109,10 +109,10 @@ Deno.serve(async (req) => {
 
     if (existingScan) {
       const scanAge = Date.now() - new Date(existingScan.created_at).getTime();
-      const THREE_MINUTES = 3 * 60 * 1000;
+      const FIVE_MINUTES = 5 * 60 * 1000;
 
-      if (forceRescan || scanAge > THREE_MINUTES) {
-        const reason = forceRescan ? 'Force re-scan requested by user' : `Auto-expired: scan exceeded 3-minute timeout`;
+      if (forceRescan || scanAge > FIVE_MINUTES) {
+        const reason = forceRescan ? 'Force re-scan requested by user' : `Auto-expired: scan exceeded 5-minute timeout`;
         console.warn(`[intelligence-scan] Expiring scan ${existingScan.id}: ${reason} (age: ${Math.round(scanAge / 1000)}s)`);
         await supabase
           .from('scan_runs')
@@ -187,15 +187,18 @@ Deno.serve(async (req) => {
     let totalSources = 0, totalSignals = 0;
     const warnings: string[] = [];
     const errorLog: any[] = [];
+    const retryQueue: { mod: typeof ALL_MODULES[0]; isPipeline: boolean }[] = [];
 
     // Helper: run a single module and return its result
-    async function runModule(mod: typeof ALL_MODULES[0], isPipeline: boolean) {
+    async function runModule(mod: typeof ALL_MODULES[0], isPipeline: boolean, isRetry = false) {
       const moduleStartedAt = new Date().toISOString();
-      moduleStatuses[mod.key] = { status: 'in_progress', label: mod.label, phase: mod.phase, startedAt: moduleStartedAt };
+      moduleStatuses[mod.key] = { status: isRetry ? 'retrying' : 'in_progress', label: mod.label, phase: mod.phase, startedAt: moduleStartedAt };
 
       try {
         const controller = new AbortController();
-        const timeoutId = setTimeout(() => controller.abort(), 30_000);
+        // 55s timeout for first attempt, 45s for retries
+        const timeoutMs = isRetry ? 45_000 : 55_000;
+        const timeoutId = setTimeout(() => controller.abort(), timeoutMs);
 
         const moduleResp = await fetch(`${supabaseUrl}/functions/v1/${mod.fn}`, {
           method: 'POST',
@@ -282,17 +285,33 @@ Deno.serve(async (req) => {
         }
       } catch (e) {
         const moduleCompletedAt = new Date().toISOString();
-        failed++;
         const msg = e instanceof Error ? e.message : 'Unknown error';
+        const isTimeout = msg.includes('abort') || msg.includes('timeout') || msg.includes('signal');
+
+        // Queue for retry if it was a timeout on first attempt
+        if (isTimeout && !isRetry) {
+          retryQueue.push({ mod, isPipeline });
+          moduleStatuses[mod.key] = {
+            status: 'queued_retry', label: mod.label, phase: mod.phase,
+            error: 'Timed out, will retry', errorType: 'timeout',
+            startedAt: moduleStartedAt, completedAt: moduleCompletedAt,
+            sourcesScanned: 0, signalsFound: 0,
+          };
+          console.warn(`[intelligence-scan] ${mod.key} timed out, queued for retry`);
+          return; // Don't count as failed yet
+        }
+
+        failed++;
         moduleStatuses[mod.key] = {
           status: 'failed', label: mod.label, phase: mod.phase,
-          error: msg, errorType: 'exception',
+          error: msg, errorType: isTimeout ? 'timeout' : 'exception',
           startedAt: moduleStartedAt, completedAt: moduleCompletedAt,
           sourcesScanned: 0, signalsFound: 0,
+          retried: isRetry,
         };
         warnings.push(`${mod.label} failed: ${msg}`);
-        errorLog.push({ module: mod.key, errorType: 'exception', error: msg, timestamp: moduleCompletedAt });
-        console.error(`[intelligence-scan] ${mod.key} exception:`, e);
+        errorLog.push({ module: mod.key, errorType: isTimeout ? 'timeout' : 'exception', error: msg, timestamp: moduleCompletedAt, retried: isRetry });
+        console.error(`[intelligence-scan] ${mod.key} ${isRetry ? '(retry) ' : ''}exception:`, e);
       }
     }
 
@@ -326,12 +345,27 @@ Deno.serve(async (req) => {
     console.log(`[intelligence-scan] ═══ Phase 1b: Congress Cross-Reference (post-FEC) ═══`);
     await runAndSave(CONGRESS_MODULE, true);
 
-    // ─── Phase 2: Web research modules — ALL IN PARALLEL ───
-    console.log(`[intelligence-scan] ═══ Phase 2: Web Research Modules (parallel) ═══`);
-    await Promise.all(RESEARCH_MODULES.map(mod => {
-      console.log(`[intelligence-scan] Running research module: ${mod.key}`);
-      return runAndSave(mod, false);
-    }));
+    // ─── Phase 2: Web research modules — STAGGERED BATCHES ───
+    console.log(`[intelligence-scan] ═══ Phase 2: Web Research Modules (staggered) ═══`);
+    const BATCH_SIZE = 4;
+    for (let i = 0; i < RESEARCH_MODULES.length; i += BATCH_SIZE) {
+      const batch = RESEARCH_MODULES.slice(i, i + BATCH_SIZE);
+      console.log(`[intelligence-scan] Research batch ${Math.floor(i / BATCH_SIZE) + 1}: ${batch.map(m => m.key).join(', ')}`);
+      await Promise.all(batch.map(mod => {
+        return runAndSave(mod, false);
+      }));
+    }
+
+    // ─── Phase 2b: Retry timed-out modules sequentially ───
+    if (retryQueue.length > 0) {
+      console.log(`[intelligence-scan] ═══ Phase 2b: Retrying ${retryQueue.length} timed-out modules ═══`);
+      for (const { mod, isPipeline } of retryQueue) {
+        console.log(`[intelligence-scan] Retrying: ${mod.key}`);
+        moduleStatuses[mod.key] = { status: 'retrying', label: mod.label, phase: mod.phase, startedAt: new Date().toISOString() };
+        await runModule(mod, isPipeline, true);
+        await updateProgress();
+      }
+    }
 
     // ─── Phase 3: Calculate influence ROI from pipeline data ───
     console.log(`[intelligence-scan] ═══ Phase 3: Calculating Influence ROI ═══`);
