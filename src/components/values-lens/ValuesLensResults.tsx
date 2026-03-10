@@ -18,8 +18,15 @@ interface Props {
 }
 
 export function ValuesLensResults({ lensKey, onBack }: Props) {
+  const navigate = useNavigate();
   const [textFilter, setTextFilter] = useState("");
   const lensInfo = VALUES_LENSES.find((l) => l.key === lensKey);
+
+  const handleSearchSubmit = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === "Enter" && textFilter.trim()) {
+      navigate(`/search-your-employer?q=${encodeURIComponent(textFilter.trim())}`);
+    }
+  };
 
   const { data: signals, isLoading: loadingSignals } = useQuery({
     queryKey: ["values-lens-signals", lensKey],
