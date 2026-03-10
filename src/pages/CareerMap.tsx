@@ -26,7 +26,8 @@ import { cn } from "@/lib/utils";
 const STEPS = [
   { id: "upload", label: "Upload Resume", icon: Upload, description: "Upload your resume or career documents to build your profile." },
   { id: "values", label: "Define Values", icon: Heart, description: "Tell us what matters to you in an employer." },
-  { id: "explore", label: "Explore Paths", icon: Compass, description: "See where your career could go next." },
+  { id: "personality", label: "Work Style", icon: Upload, description: "Describe how you work best and your personality strengths." },
+  { id: "explore", label: "Map My Path", icon: Compass, description: "Visualize your career journey with SMART goals." },
   { id: "plan", label: "Plan Your Move", icon: Route, description: "Get a gap analysis and learning plan for your target role." },
   { id: "connect", label: "Connect", icon: Users, description: "Find people who can help you get there." },
   { id: "apply", label: "Tailor & Apply", icon: Wand2, description: "Tailor your resume and set up job alerts." },
