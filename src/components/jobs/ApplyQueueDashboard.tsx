@@ -166,9 +166,9 @@ export function ApplyQueueDashboard() {
         <Card>
           <CardContent className="p-8 text-center">
             <ListTodo className="w-10 h-10 text-muted-foreground mx-auto mb-3" />
-            <h3 className="text-sm font-semibold text-foreground mb-1">Queue is empty</h3>
-            <p className="text-xs text-muted-foreground max-w-sm mx-auto">
-              Jobs that exceed your alignment threshold will automatically appear here for payload generation.
+            <h3 className="text-sm font-semibold text-foreground mb-1">No jobs in your queue yet</h3>
+            <p className="text-xs text-muted-foreground max-w-sm mx-auto leading-relaxed">
+              When we find jobs at companies that match your values above your threshold, they'll show up here with AI-generated cover letters ready to go. Browse jobs and make sure your <strong>Profile</strong> and values are set up.
             </p>
           </CardContent>
         </Card>
