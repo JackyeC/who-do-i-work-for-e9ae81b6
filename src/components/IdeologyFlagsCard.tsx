@@ -142,7 +142,7 @@ export function IdeologyFlagsCard({ companyName, dbCompanyId }: Props) {
         <ExplainableMetric metricKey="flagged-organization">
           <p className="text-xs text-muted-foreground">
             Public signals of corporate affiliations with organizations tracked by SPLC, ADL, and curated watchlists.
-            Signals are presented with source links and confidence levels. <span className="underline decoration-dotted">What is a "flagged organization"?</span>
+            Signals are presented with source links and evidence strength ratings. <span className="underline decoration-dotted">What is a "flagged organization"?</span>
           </p>
         </ExplainableMetric>
       </CardHeader>
