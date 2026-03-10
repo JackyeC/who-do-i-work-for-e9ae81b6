@@ -14,3 +14,6 @@ verify_jwt = false
 
 [functions.translate-signals]
 verify_jwt = false
+
+[functions.career-discovery]
+verify_jwt = false
