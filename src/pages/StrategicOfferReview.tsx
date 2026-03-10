@@ -21,6 +21,7 @@ import { CivicLegalAudit, type LegalFlag } from "@/components/strategic-offer/Ci
 import { EquityVisualizer } from "@/components/strategic-offer/EquityVisualizer";
 import { NegotiationBot } from "@/components/strategic-offer/NegotiationBot";
 import { ScamDetector } from "@/components/strategic-offer/ScamDetector";
+import { EmployerIntelligenceCard } from "@/components/strategic-offer/EmployerIntelligenceCard";
 import { OfferClarityDashboard, type OfferClarityReport } from "@/components/offer-clarity/OfferClarityDashboard";
 
 type InputMode = null | "manual" | "upload";
@@ -52,6 +53,10 @@ const STEPS = [
   { label: "Full Review", icon: Scale },
 ];
 
+// Input sanitization helper — strips potential XSS/injection content
+const sanitize = (v: string, maxLen = 500): string =>
+  v.replace(/[<>"'`]/g, "").substring(0, maxLen).trim();
+
 export default function StrategicOfferReview() {
   const { toast } = useToast();
   const [inputMode, setInputMode] = useState<InputMode>(null);
@@ -71,16 +76,22 @@ export default function StrategicOfferReview() {
     nonCompete: "", arbitrationClause: false, ipClause: false,
   });
 
-  const update = (field: keyof OfferInput, value: any) =>
+  const update = (field: keyof OfferInput, value: any) => {
+    if (typeof value === "string") {
+      const maxLen = field === "additionalDetails" || field === "nonCompete" ? 2000 : 500;
+      value = sanitize(value, maxLen);
+    }
     setOffer(d => ({ ...d, [field]: value }));
+  };
 
   const searchCompany = async (name: string) => {
-    update("companyName", name);
-    if (name.length < 2) { setCompanyResults([]); return; }
+    const clean = sanitize(name, 200);
+    update("companyName", clean);
+    if (clean.length < 2) { setCompanyResults([]); return; }
     const { data } = await supabase
       .from("companies")
       .select("id, name, industry, state")
-      .ilike("name", `%${name}%`)
+      .ilike("name", `%${clean}%`)
       .limit(5);
     setCompanyResults(data || []);
   };
@@ -582,14 +593,22 @@ export default function StrategicOfferReview() {
 
             {/* Step 3: Full Results */}
             {step === 3 && (
-              <Tabs defaultValue="overview" className="space-y-6">
-                <TabsList className="grid w-full grid-cols-5">
+              <Tabs defaultValue="employer" className="space-y-6">
+                <TabsList className="grid w-full grid-cols-6">
+                  <TabsTrigger value="employer" className="text-xs">Employer</TabsTrigger>
                   <TabsTrigger value="overview" className="text-xs">Overview</TabsTrigger>
                   <TabsTrigger value="legal" className="text-xs">Legal Audit</TabsTrigger>
                   <TabsTrigger value="equity" className="text-xs">Equity</TabsTrigger>
                   <TabsTrigger value="negotiate" className="text-xs">Negotiate</TabsTrigger>
                   <TabsTrigger value="scam" className="text-xs">Safety</TabsTrigger>
                 </TabsList>
+
+                <TabsContent value="employer">
+                  <EmployerIntelligenceCard
+                    companyId={offer.companyId}
+                    companyName={offer.companyName}
+                  />
+                </TabsContent>
 
                 <TabsContent value="overview">
                   {report ? (

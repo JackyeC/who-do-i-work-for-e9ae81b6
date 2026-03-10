@@ -21,6 +21,26 @@ serve(async (req) => {
       });
     }
 
+    // Server-side input validation
+    const sanitize = (s: string | undefined, max = 500): string =>
+      (s || "").replace(/[<>"'`]/g, "").substring(0, max).trim();
+
+    if (typeof companyName !== "string" || companyName.length > 500) {
+      return new Response(JSON.stringify({ error: "Invalid company name" }), {
+        status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" },
+      });
+    }
+
+    const sanitizedOffer = {
+      roleTitle: sanitize(offerData.roleTitle, 200),
+      location: sanitize(offerData.location, 200),
+      yearsExperience: sanitize(offerData.yearsExperience, 10),
+      baseSalary: sanitize(offerData.baseSalary, 20),
+      bonus: sanitize(offerData.bonus, 200),
+      equity: sanitize(offerData.equity, 200),
+      additionalDetails: sanitize(offerData.additionalDetails, 3000),
+    };
+
     // Fetch company signals if companyId provided
     let companySignals: any = {};
     if (companyId) {
@@ -48,14 +68,14 @@ serve(async (req) => {
     const prompt = `You are an expert compensation analyst and employment advisor. Analyze this job offer and produce a structured Offer Clarity Score.
 
 ## Offer Details
-- Company: ${companyName}
-- Role: ${offerData.roleTitle || "Not specified"}
-- Location: ${offerData.location || "Not specified"}
-- Years of Experience: ${offerData.yearsExperience || "Not specified"}
-- Base Salary: ${offerData.baseSalary ? `$${offerData.baseSalary}` : "Not specified"}
-- Bonus/Commission: ${offerData.bonus || "None"}
-- Equity: ${offerData.equity || "None"}
-- Additional Details: ${offerData.additionalDetails || "None"}
+- Company: ${sanitize(companyName, 200)}
+- Role: ${sanitizedOffer.roleTitle || "Not specified"}
+- Location: ${sanitizedOffer.location || "Not specified"}
+- Years of Experience: ${sanitizedOffer.yearsExperience || "Not specified"}
+- Base Salary: ${sanitizedOffer.baseSalary ? `$${sanitizedOffer.baseSalary}` : "Not specified"}
+- Bonus/Commission: ${sanitizedOffer.bonus || "None"}
+- Equity: ${sanitizedOffer.equity || "None"}
+- Additional Details: ${sanitizedOffer.additionalDetails || "None"}
 
 ## Company Signals from Database
 ${JSON.stringify(companySignals, null, 2)}
