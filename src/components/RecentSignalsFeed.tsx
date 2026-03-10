@@ -133,7 +133,7 @@ export function RecentSignalsFeed() {
                           variant="outline"
                           className="text-[10px] shrink-0 capitalize"
                         >
-                          {signal.confidence_level}
+                          {signal.confidence_level === "high" ? "Strong evidence" : signal.confidence_level === "medium" ? "Some evidence" : "Weak evidence"}
                         </Badge>
                       </div>
                       <p className="text-xs text-muted-foreground truncate">

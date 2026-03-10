@@ -138,7 +138,7 @@ export function ContractsDetailDrawer({ open, onOpenChange, companyId, companyNa
                         <div className="flex items-center gap-2 flex-wrap">
                           {c.fiscal_year && <Badge variant="outline" className="text-[10px]">FY{c.fiscal_year}</Badge>}
                           {c.controversy_flag && <Badge variant="destructive" className="text-[10px]">Controversy</Badge>}
-                          <Badge variant="outline" className="text-[10px]">{c.confidence}</Badge>
+                          <Badge variant="outline" className="text-[10px]">{c.confidence === "high" ? "Strong evidence" : c.confidence === "medium" ? "Some evidence" : "Weak evidence"}</Badge>
                         </div>
                       </div>
                     ))}

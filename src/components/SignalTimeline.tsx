@@ -8,14 +8,14 @@ import { cn } from "@/lib/utils";
 const CHANGE_ICONS: Record<string, typeof Plus> = {
   "New Signal": Plus,
   "Signal Removed": Minus,
-  "Confidence Change": RefreshCw,
+  "Evidence Update": RefreshCw,
   "Source Change": RefreshCw,
 };
 
 const CHANGE_COLORS: Record<string, string> = {
   "New Signal": "text-[hsl(var(--civic-green))] bg-[hsl(var(--civic-green))]/10 border-[hsl(var(--civic-green))]/30",
   "Signal Removed": "text-destructive bg-destructive/10 border-destructive/30",
-  "Confidence Change": "text-[hsl(var(--civic-yellow))] bg-[hsl(var(--civic-yellow))]/10 border-[hsl(var(--civic-yellow))]/30",
+  "Evidence Update": "text-[hsl(var(--civic-yellow))] bg-[hsl(var(--civic-yellow))]/10 border-[hsl(var(--civic-yellow))]/30",
   "Source Change": "text-primary bg-primary/10 border-primary/30",
 };
 
@@ -154,7 +154,7 @@ export function SignalTimeline({ companyId }: SignalTimelineProps) {
                           </p>
                           {change.confidence_change && (
                             <p className="text-[10px] text-muted-foreground mt-0.5">
-                              Confidence: {change.confidence_change}
+                              Evidence strength: {change.confidence_change === "high" ? "Strong" : change.confidence_change === "medium" ? "Some" : change.confidence_change}
                             </p>
                           )}
                           <div className="flex items-center gap-3 mt-1">

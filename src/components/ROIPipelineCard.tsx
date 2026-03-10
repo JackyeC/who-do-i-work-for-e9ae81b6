@@ -129,7 +129,7 @@ function PipelineColumn({ title, icon: Icon, items, color }: {
         {items.map((item, i) => {
           const isExpanded = expandedIdx === i;
           const confidenceLevel = item.confidence ?? 0;
-          const confidenceLabel = confidenceLevel >= 0.8 ? "Verified" : confidenceLevel >= 0.5 ? "Inferred" : "Low confidence";
+          const confidenceLabel = confidenceLevel >= 0.8 ? "Strong evidence" : confidenceLevel >= 0.5 ? "Some evidence" : "Weak evidence";
 
           return (
             <Collapsible key={i} open={isExpanded} onOpenChange={() => setExpandedIdx(isExpanded ? null : i)}>
@@ -160,7 +160,7 @@ function PipelineColumn({ title, icon: Icon, items, color }: {
                   <div className="flex items-center gap-2">
                     <ShieldAlert className="w-3.5 h-3.5 text-muted-foreground shrink-0" />
                     <span className="text-[11px] text-muted-foreground">
-                      Confidence: <span className={cn("font-semibold", confidenceLevel >= 0.8 ? "text-primary" : confidenceLevel >= 0.5 ? "text-accent-foreground" : "text-destructive")}>{confidenceLabel} ({(confidenceLevel * 100).toFixed(0)}%)</span>
+                      Evidence strength: <span className={cn("font-semibold", confidenceLevel >= 0.8 ? "text-primary" : confidenceLevel >= 0.5 ? "text-accent-foreground" : "text-destructive")}>{confidenceLabel}</span>
                     </span>
                   </div>
                   {item.evidence_type && (
@@ -267,7 +267,7 @@ function LinkageChain({ linkages }: { linkages: ROIPipelineData["linkages"] }) {
         const isMed = link.confidence >= 0.5;
         const confidenceColor = isHigh ? "text-primary" : isMed ? "text-accent-foreground" : "text-destructive";
         const confidenceBg = isHigh ? "bg-primary/10 border-primary/30" : isMed ? "bg-accent/20 border-accent/30" : "bg-destructive/10 border-destructive/30";
-        const confidenceLabel = isHigh ? "Verified" : isMed ? "Inferred" : "Unverified";
+        const confidenceLabel = isHigh ? "Strong evidence" : isMed ? "Some evidence" : "Weak evidence";
         const dotColor = isHigh ? "bg-primary" : isMed ? "bg-accent-foreground" : "bg-destructive";
         const lineColor = isHigh ? "bg-primary/30" : isMed ? "bg-accent/30" : "bg-destructive/30";
         const isLast = i === linkages.length - 1;

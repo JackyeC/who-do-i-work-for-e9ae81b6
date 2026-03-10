@@ -133,10 +133,36 @@ export const SIGNAL_DIRECTION_CONFIG: Record<string, { label: string; plainLabel
 };
 
 export const CONFIDENCE_CONFIG: Record<string, { label: string; plainLabel: string; color: string }> = {
-  high: { label: "High Confidence", plainLabel: "Strong evidence", color: "border-[hsl(var(--civic-green))]/30 text-[hsl(var(--civic-green))]" },
-  medium: { label: "Medium Confidence", plainLabel: "Some evidence", color: "border-[hsl(var(--civic-yellow))]/30 text-[hsl(var(--civic-yellow))]" },
-  low: { label: "Low Confidence", plainLabel: "Weak evidence", color: "border-[hsl(var(--civic-red))]/30 text-[hsl(var(--civic-red))]" },
+  high: { label: "Strong evidence", plainLabel: "Strong evidence", color: "border-[hsl(var(--civic-green))]/30 text-[hsl(var(--civic-green))]" },
+  medium: { label: "Some evidence", plainLabel: "Some evidence", color: "border-[hsl(var(--civic-yellow))]/30 text-[hsl(var(--civic-yellow))]" },
+  low: { label: "Weak evidence", plainLabel: "Weak evidence", color: "border-[hsl(var(--civic-red))]/30 text-[hsl(var(--civic-red))]" },
 };
+
+/** Convert a numeric confidence score (0-1) or string level to plain English */
+export function plainConfidence(value: number | string): string {
+  if (typeof value === "string") {
+    const lower = value.toLowerCase();
+    if (lower === "high" || lower === "strong") return "Strong evidence";
+    if (lower === "medium" || lower === "moderate" || lower === "some") return "Some evidence";
+    return "Weak evidence";
+  }
+  if (value >= 0.8) return "Strong evidence";
+  if (value >= 0.5) return "Some evidence";
+  return "Weak evidence";
+}
+
+/** Get a color class for a confidence level */
+export function confidenceColor(value: number | string): string {
+  if (typeof value === "string") {
+    const lower = value.toLowerCase();
+    if (lower === "high" || lower === "strong") return "text-primary";
+    if (lower === "medium" || lower === "moderate") return "text-accent-foreground";
+    return "text-destructive";
+  }
+  if (value >= 0.8) return "text-primary";
+  if (value >= 0.5) return "text-accent-foreground";
+  return "text-destructive";
+}
 
 export const VERIFICATION_CONFIG: Record<string, { label: string; color: string }> = {
   verified: { label: "Verified", color: "text-[hsl(var(--civic-green))]" },

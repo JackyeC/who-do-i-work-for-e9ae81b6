@@ -32,9 +32,9 @@ const categoryIcons: Record<string, typeof Bot> = {
 };
 
 const confidenceLabel = (score: number) => {
-  if (score >= 0.8) return { text: "High", className: "text-civic-green border-civic-green/30" };
-  if (score >= 0.5) return { text: "Medium", className: "text-civic-yellow border-civic-yellow/30" };
-  return { text: "Low", className: "text-muted-foreground border-border" };
+  if (score >= 0.8) return { text: "Strong evidence", className: "text-civic-green border-civic-green/30" };
+  if (score >= 0.5) return { text: "Some evidence", className: "text-civic-yellow border-civic-yellow/30" };
+  return { text: "Weak evidence", className: "text-muted-foreground border-border" };
 };
 
 function TransparencyGauge({ score }: { score: number }) {

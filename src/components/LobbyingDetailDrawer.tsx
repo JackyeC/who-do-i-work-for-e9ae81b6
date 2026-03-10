@@ -184,7 +184,7 @@ export function LobbyingDetailDrawer({ open, onOpenChange, companyId, companyNam
                         {l.description && <p className="text-xs text-muted-foreground">{l.description}</p>}
                         <div className="flex items-center gap-2 mt-1">
                           <Badge variant="outline" className="text-[10px]">{l.link_type.replace(/_/g, " ")}</Badge>
-                          <span className="text-[10px] text-muted-foreground">{Math.round(l.confidence_score * 100)}% confidence</span>
+                          <span className="text-[10px] text-muted-foreground">{Math.round(l.confidence_score * 100) >= 80 ? "Strong evidence" : Math.round(l.confidence_score * 100) >= 50 ? "Some evidence" : "Weak evidence"}</span>
                         </div>
                       </div>
                     ))}
