@@ -32,6 +32,7 @@ interface Props {
 }
 
 export function ProfileInputStep({ onComplete }: Props) {
+  const { user } = useAuth();
   const [jobTitle, setJobTitle] = useState("");
   const [yearsExperience, setYearsExperience] = useState("");
   const [industryInput, setIndustryInput] = useState("");
@@ -45,6 +46,8 @@ export function ProfileInputStep({ onComplete }: Props) {
   const [lifestylePrefs, setLifestylePrefs] = useState<string[]>([]);
   const [values, setValues] = useState<string[]>([]);
   const [resumeUploaded, setResumeUploaded] = useState(false);
+  const [resumeFile, setResumeFile] = useState<File | null>(null);
+  const [uploading, setUploading] = useState(false);
 
   const addTag = (value: string, list: string[], setter: (v: string[]) => void, inputSetter: (v: string) => void) => {
     const trimmed = value.trim();
@@ -56,6 +59,42 @@ export function ProfileInputStep({ onComplete }: Props) {
 
   const toggleItem = (item: string, list: string[], setter: (v: string[]) => void) => {
     setter(list.includes(item) ? list.filter(i => i !== item) : [...list, item]);
+  };
+
+  const handleResumeSelect = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
+    const selected = e.target.files?.[0];
+    if (!selected) return;
+    if (selected.size > 10 * 1024 * 1024) {
+      toast.error("File must be under 10MB");
+      return;
+    }
+    setResumeFile(selected);
+  }, []);
+
+  const handleResumeUpload = async () => {
+    if (!resumeFile || !user) return;
+    setUploading(true);
+    try {
+      const ext = resumeFile.name.split(".").pop()?.toLowerCase() || "pdf";
+      const filePath = `${user.id}/${Date.now()}.${ext}`;
+      const { error: uploadError } = await supabase.storage.from("career_docs").upload(filePath, resumeFile);
+      if (uploadError) throw uploadError;
+
+      const { data: doc, error: insertError } = await supabase
+        .from("user_documents")
+        .insert({ user_id: user.id, document_type: "resume" as any, file_path: filePath, original_filename: resumeFile.name })
+        .select().single();
+      if (insertError) throw insertError;
+
+      toast.success("Resume uploaded! Parsing...");
+      await supabase.functions.invoke("parse-career-document", { body: { documentId: doc.id } });
+      toast.success("Resume analyzed successfully!");
+      setResumeUploaded(true);
+    } catch (err: any) {
+      toast.error(err.message || "Upload failed");
+    } finally {
+      setUploading(false);
+    }
   };
 
   const handleSubmit = () => {
@@ -74,17 +113,38 @@ export function ProfileInputStep({ onComplete }: Props) {
         <CardHeader className="pb-3">
           <CardTitle className="text-base flex items-center gap-2">
             <Upload className="w-4 h-4 text-primary" />
-            Resume Upload
+            Upload Your Resume
           </CardTitle>
-          <p className="text-xs text-muted-foreground">Upload your resume so the AI can extract your skills and experience automatically.</p>
+          <p className="text-xs text-muted-foreground">Optional — lets the AI auto-extract your skills and experience.</p>
         </CardHeader>
         <CardContent>
           {resumeUploaded ? (
             <div className="flex items-center gap-2 text-sm text-primary">
-              <Sparkles className="w-4 h-4" /> Resume uploaded and analyzed
+              <CheckCircle className="w-4 h-4" /> Resume uploaded and analyzed
             </div>
           ) : (
-            <DocumentUploader onUploadComplete={() => setResumeUploaded(true)} />
+            <div className="space-y-3">
+              <div className="border-2 border-dashed border-border rounded-lg p-6 text-center">
+                <input type="file" accept=".pdf,.docx,.doc,.txt" onChange={handleResumeSelect} className="hidden" id="resume-upload" />
+                <label htmlFor="resume-upload" className="cursor-pointer">
+                  <FileText className="w-8 h-8 text-muted-foreground mx-auto mb-2" />
+                  {resumeFile ? (
+                    <p className="text-sm font-medium text-foreground">{resumeFile.name}</p>
+                  ) : (
+                    <>
+                      <p className="text-sm font-medium text-foreground">Click to select your resume</p>
+                      <p className="text-xs text-muted-foreground mt-1">PDF, DOCX, or TXT — Max 10MB</p>
+                    </>
+                  )}
+                </label>
+              </div>
+              {resumeFile && (
+                <Button onClick={handleResumeUpload} disabled={uploading} size="sm" className="w-full">
+                  {uploading ? <Loader2 className="w-4 h-4 mr-2 animate-spin" /> : <Upload className="w-4 h-4 mr-2" />}
+                  {uploading ? "Analyzing..." : "Upload & Analyze"}
+                </Button>
+              )}
+            </div>
           )}
         </CardContent>
       </Card>
