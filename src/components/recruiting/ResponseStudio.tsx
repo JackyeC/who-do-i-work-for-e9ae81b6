@@ -172,7 +172,7 @@ export function ResponseStudio() {
                       <p className="text-sm font-medium text-foreground">{point.signal}</p>
                       <div className="flex items-center gap-2 mt-1">
                         <Badge variant="secondary" className="text-[10px]">{point.source}</Badge>
-                        {point.sourceUrl && (
+                        {point.sourceUrl && /^https?:\/\//.test(point.sourceUrl) && (
                           <a href={point.sourceUrl} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-1 text-[10px] text-primary hover:underline">
                             <ExternalLink className="w-2.5 h-2.5" /> View Receipt
                           </a>

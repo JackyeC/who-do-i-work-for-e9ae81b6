@@ -259,7 +259,7 @@ export default function IntelligenceReports() {
                                     ${Number(s.amount).toLocaleString()}
                                   </span>
                                 )}
-                                {s.source_url && (
+                                {s.source_url && /^https?:\/\//.test(s.source_url) && (
                                   <a href={s.source_url} target="_blank" rel="noopener noreferrer" className="flex items-center gap-1 text-primary hover:underline">
                                     <ExternalLink className="w-3 h-3" />
                                     View Receipt
