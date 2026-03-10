@@ -1,0 +1,2 @@
+DELETE FROM entity_linkages WHERE id = '7bec1deb-60fc-4cf5-aebc-076dfb7dfd4a';
+DELETE FROM company_signal_scans WHERE company_id = 'd6d6f2c5-94d4-4413-9e84-9a4bee5fe729' AND signal_category IN ('sec_insider_trading', 'sec_executive_compensation');
