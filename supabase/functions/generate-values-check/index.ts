@@ -30,7 +30,7 @@ function detectIssueAreas(text: string): string[] {
   return matches.length > 0 ? matches : ["general"];
 }
 
-serve(async (req) => {
+Deno.serve(async (req) => {
   if (req.method === "OPTIONS") return new Response(null, { headers: corsHeaders });
 
   try {
