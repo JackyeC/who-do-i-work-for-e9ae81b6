@@ -1347,7 +1347,7 @@ export default function CompanyProfile() {
                               <Cell key={i} fill={entry.color} className="hover:opacity-80 transition-opacity" />
                             ))}
                           </Pie>
-                          <Tooltip formatter={(value: number) => formatCurrency(value)} />
+                          <RechartsTooltip formatter={(value: number) => formatCurrency(value)} />
                         </PieChart>
                       </ResponsiveContainer>
                     </div>
