@@ -58,20 +58,37 @@ export function ValuesLensResults({ lensKey, onBack }: Props) {
     healthcare: "healthcare",
     immigration: "immigration",
     dei_equity: "civil_rights",
+    gun_policy: "gun_policy",
+    education: "education",
+    faith_christian: "faith_christian",
+    israel_mideast: "israel_mideast",
   };
 
-  const mappedIssue = issueMapping[lensKey];
+  const mappedIssue = issueMapping[lensKey] || lensKey;
 
   const { data: issueSignals } = useQuery({
     queryKey: ["issue-signals-for-lens", mappedIssue],
-    enabled: !!mappedIssue,
     queryFn: async () => {
       const { data } = await (supabase as any)
         .from("issue_signals")
         .select("id, entity_id, entity_name_snapshot, issue_category, signal_type, signal_subtype, source_dataset, description, source_url, confidence_score, amount, transaction_date, created_at")
         .eq("issue_category", mappedIssue)
-        .limit(500);
+        .order("created_at", { ascending: false })
+        .limit(1000);
       return data || [];
+    },
+  });
+
+  // Fetch scan status for this issue category
+  const { data: scanStatus } = useQuery({
+    queryKey: ["issue-scan-status", mappedIssue],
+    queryFn: async () => {
+      const { data } = await (supabase as any)
+        .from("issue_scan_status")
+        .select("*")
+        .eq("issue_category", mappedIssue)
+        .maybeSingle();
+      return data;
     },
   });
 
