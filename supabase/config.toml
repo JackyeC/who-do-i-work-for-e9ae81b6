@@ -11,3 +11,6 @@ verify_jwt = false
 
 [functions.offer-clarity-scan]
 verify_jwt = false
+
+[functions.translate-signals]
+verify_jwt = false

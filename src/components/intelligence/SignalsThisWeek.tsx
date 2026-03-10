@@ -1,14 +1,17 @@
+import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { Link } from "react-router-dom";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
 import {
   AlertTriangle, TrendingDown, DollarSign, Shield, Building2,
   Users, Loader2, ExternalLink, Clock, BarChart3, Briefcase,
-  Scale, Eye
+  Scale, Eye, Sparkles, CheckCircle2, AlertCircle
 } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { useToast } from "@/hooks/use-toast";
 
 const CATEGORY_CONFIG: Record<string, { label: string; icon: any; color: string }> = {
   warn_layoffs: { label: "Workforce Signal", icon: TrendingDown, color: "text-destructive border-destructive/30 bg-destructive/5" },
@@ -34,7 +37,19 @@ function getRelativeTime(dateStr: string) {
   return date.toLocaleDateString("en-US", { month: "short", day: "numeric" });
 }
 
+interface Translation {
+  index: number;
+  plain_summary: string;
+  is_fresh: boolean;
+  freshness_note: string;
+}
+
 export function SignalsThisWeek() {
+  const { toast } = useToast();
+  const [translations, setTranslations] = useState<Record<number, Translation>>({});
+  const [translating, setTranslating] = useState(false);
+  const [translated, setTranslated] = useState(false);
+
   const thirtyDaysAgo = new Date();
   thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
 
@@ -89,6 +104,43 @@ export function SignalsThisWeek() {
     categoryCounts[s.signal_category] = (categoryCounts[s.signal_category] || 0) + 1;
   });
 
+  const handleTranslate = async () => {
+    if (!signals || signals.length === 0) return;
+    setTranslating(true);
+    try {
+      const batch = signals.slice(0, 20).map((s, i) => ({
+        ...s,
+        companyName: companyMap.get(s.company_id)?.name || "Unknown",
+      }));
+
+      const { data, error } = await supabase.functions.invoke("translate-signals", {
+        body: { signals: batch },
+      });
+
+      if (error) throw error;
+
+      if (data?.translations) {
+        const map: Record<number, Translation> = {};
+        (data.translations as Translation[]).forEach(t => { map[t.index] = t; });
+        setTranslations(map);
+        setTranslated(true);
+        toast({ title: "Signals verified ✓", description: "AI checked dates and translated all signals into plain English." });
+      }
+    } catch (e: any) {
+      console.error(e);
+      const msg = e?.message || "Unknown error";
+      if (msg.includes("Rate limit") || msg.includes("429")) {
+        toast({ title: "Too many requests", description: "Please wait a moment and try again.", variant: "destructive" });
+      } else if (msg.includes("402") || msg.includes("credits")) {
+        toast({ title: "Credits needed", description: "AI credits have run out. Add more in workspace settings.", variant: "destructive" });
+      } else {
+        toast({ title: "Translation failed", description: msg, variant: "destructive" });
+      }
+    } finally {
+      setTranslating(false);
+    }
+  };
+
   if (isLoading) {
     return (
       <div className="text-center py-16">
@@ -111,10 +163,27 @@ export function SignalsThisWeek() {
   return (
     <div className="max-w-4xl space-y-6">
       {/* Live header */}
-      <div className="flex items-center gap-3 mb-2">
-        <div className="w-2 h-2 rounded-full bg-primary animate-pulse" />
-        <span className="text-xs font-semibold text-primary uppercase tracking-wider">Employer Reality Signal Feed</span>
-        <span className="text-xs text-muted-foreground">· {signals.length} signals detected in the last 30 days</span>
+      <div className="flex items-center justify-between gap-3 mb-2">
+        <div className="flex items-center gap-3">
+          <div className="w-2 h-2 rounded-full bg-primary animate-pulse" />
+          <span className="text-xs font-semibold text-primary uppercase tracking-wider">Employer Reality Signal Feed</span>
+          <span className="text-xs text-muted-foreground">· {signals.length} signals detected in the last 30 days</span>
+        </div>
+        <Button
+          variant={translated ? "outline" : "default"}
+          size="sm"
+          onClick={handleTranslate}
+          disabled={translating}
+          className="gap-1.5 shrink-0"
+        >
+          {translating ? (
+            <><Loader2 className="w-3.5 h-3.5 animate-spin" /> Verifying...</>
+          ) : translated ? (
+            <><CheckCircle2 className="w-3.5 h-3.5" /> Verified ✓</>
+          ) : (
+            <><Sparkles className="w-3.5 h-3.5" /> Explain in Plain English</>
+          )}
+        </Button>
       </div>
 
       {/* Summary cards */}
@@ -161,13 +230,18 @@ export function SignalsThisWeek() {
 
       {/* Signal timeline */}
       <div className="space-y-3">
-        {signals.map((signal: any) => {
+        {signals.map((signal: any, idx: number) => {
           const company = companyMap.get(signal.company_id);
           const config = CATEGORY_CONFIG[signal.signal_category] || { label: signal.signal_category, icon: AlertTriangle, color: "text-muted-foreground" };
           const Icon = config.icon;
+          const translation = translations[idx];
+          const confidenceLabel = signal.confidence_level === "high" ? "Strong evidence" : signal.confidence_level === "medium" ? "Some evidence" : "Weak evidence";
 
           return (
-            <Card key={signal.id} className="hover:border-primary/30 transition-colors">
+            <Card key={signal.id} className={cn(
+              "hover:border-primary/30 transition-colors",
+              translation && !translation.is_fresh && "border-amber-500/30"
+            )}>
               <CardContent className="p-4">
                 <div className="flex items-start gap-3">
                   <div className={cn("w-8 h-8 rounded-lg flex items-center justify-center shrink-0", config.color)}>
@@ -185,11 +259,37 @@ export function SignalsThisWeek() {
                       <Badge variant="outline" className={cn("text-[9px] capitalize", config.color)}>
                         {config.label}
                       </Badge>
+                      {translation && !translation.is_fresh && (
+                        <Badge variant="outline" className="text-[9px] border-amber-500/30 text-amber-600 bg-amber-500/5 gap-1">
+                          <AlertCircle className="w-2.5 h-2.5" /> Not this week
+                        </Badge>
+                      )}
+                      {translation && translation.is_fresh && (
+                        <Badge variant="outline" className="text-[9px] border-primary/30 text-primary bg-primary/5 gap-1">
+                          <CheckCircle2 className="w-2.5 h-2.5" /> Fresh
+                        </Badge>
+                      )}
                     </div>
-                    <p className="text-sm text-foreground/80 mb-1">{signal.signal_type}</p>
-                    {signal.signal_value && (
-                      <p className="text-xs text-muted-foreground">Public signals suggest: {signal.signal_value}</p>
+
+                    {/* AI plain-English summary */}
+                    {translation ? (
+                      <div className="mb-1.5">
+                        <p className="text-sm text-foreground/90 leading-relaxed">
+                          {translation.plain_summary}
+                        </p>
+                        <p className="text-[10px] text-muted-foreground mt-1 italic">
+                          {translation.freshness_note}
+                        </p>
+                      </div>
+                    ) : (
+                      <>
+                        <p className="text-sm text-foreground/80 mb-1">{signal.signal_type}</p>
+                        {signal.signal_value && (
+                          <p className="text-xs text-muted-foreground">Public signals suggest: {signal.signal_value}</p>
+                        )}
+                      </>
                     )}
+
                     <div className="flex items-center gap-3 mt-2 text-[10px] text-muted-foreground">
                       <span className="flex items-center gap-1">
                         <Clock className="w-2.5 h-2.5" />
@@ -197,7 +297,7 @@ export function SignalsThisWeek() {
                       </span>
                       <span className="flex items-center gap-1">
                         <Shield className="w-2.5 h-2.5" />
-                        {signal.confidence_level}
+                        {confidenceLabel}
                       </span>
                       {signal.source_url && (
                         <a href={signal.source_url} target="_blank" rel="noopener noreferrer"
