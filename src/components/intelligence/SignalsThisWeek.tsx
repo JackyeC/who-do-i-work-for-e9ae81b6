@@ -44,24 +44,44 @@ interface Translation {
   freshness_note: string;
 }
 
+type TimeRange = "30d" | "6mo" | "1yr" | "2yr";
+
+const TIME_RANGE_OPTIONS: { value: TimeRange; label: string }[] = [
+  { value: "30d", label: "30 days" },
+  { value: "6mo", label: "6 months" },
+  { value: "1yr", label: "1 year" },
+  { value: "2yr", label: "2 years" },
+];
+
+function getCutoffDate(range: TimeRange): Date {
+  const d = new Date();
+  switch (range) {
+    case "30d": d.setDate(d.getDate() - 30); break;
+    case "6mo": d.setMonth(d.getMonth() - 6); break;
+    case "1yr": d.setFullYear(d.getFullYear() - 1); break;
+    case "2yr": d.setFullYear(d.getFullYear() - 2); break;
+  }
+  return d;
+}
+
 export function SignalsThisWeek() {
   const { toast } = useToast();
   const [translations, setTranslations] = useState<Record<number, Translation>>({});
   const [translating, setTranslating] = useState(false);
   const [translated, setTranslated] = useState(false);
+  const [timeRange, setTimeRange] = useState<TimeRange>("30d");
 
-  const thirtyDaysAgo = new Date();
-  thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
+  const cutoffDate = getCutoffDate(timeRange);
 
   const { data: signals, isLoading } = useQuery({
-    queryKey: ["signals-this-week"],
+    queryKey: ["signals-this-week", timeRange],
     queryFn: async () => {
       const { data, error } = await supabase
         .from("company_signal_scans")
         .select("id, company_id, signal_category, signal_type, signal_value, confidence_level, scan_timestamp, source_url")
-        .gte("scan_timestamp", thirtyDaysAgo.toISOString())
+        .gte("scan_timestamp", cutoffDate.toISOString())
         .order("scan_timestamp", { ascending: false })
-        .limit(100);
+        .limit(200);
       if (error) throw error;
       return data || [];
     },
@@ -163,27 +183,42 @@ export function SignalsThisWeek() {
   return (
     <div className="max-w-4xl space-y-6">
       {/* Live header */}
-      <div className="flex items-center justify-between gap-3 mb-2">
+      <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 mb-2">
         <div className="flex items-center gap-3">
           <div className="w-2 h-2 rounded-full bg-primary animate-pulse" />
           <span className="text-xs font-semibold text-primary uppercase tracking-wider">Employer Reality Signal Feed</span>
-          <span className="text-xs text-muted-foreground">· {signals.length} signals detected in the last 30 days</span>
+          <span className="text-xs text-muted-foreground">· {signals.length} signals detected</span>
         </div>
-        <Button
-          variant={translated ? "outline" : "default"}
-          size="sm"
-          onClick={handleTranslate}
-          disabled={translating}
-          className="gap-1.5 shrink-0"
-        >
-          {translating ? (
-            <><Loader2 className="w-3.5 h-3.5 animate-spin" /> Verifying...</>
-          ) : translated ? (
-            <><CheckCircle2 className="w-3.5 h-3.5" /> Verified ✓</>
-          ) : (
-            <><Sparkles className="w-3.5 h-3.5" /> Explain in Plain English</>
-          )}
-        </Button>
+        <div className="flex items-center gap-2">
+          <div className="flex gap-1 bg-muted/50 rounded-lg p-0.5">
+            {TIME_RANGE_OPTIONS.map(tr => (
+              <Button
+                key={tr.value}
+                variant={timeRange === tr.value ? "default" : "ghost"}
+                size="sm"
+                onClick={() => { setTimeRange(tr.value); setTranslated(false); setTranslations({}); }}
+                className="text-[10px] h-7 px-2.5"
+              >
+                {tr.label}
+              </Button>
+            ))}
+          </div>
+          <Button
+            variant={translated ? "outline" : "default"}
+            size="sm"
+            onClick={handleTranslate}
+            disabled={translating}
+            className="gap-1.5 shrink-0"
+          >
+            {translating ? (
+              <><Loader2 className="w-3.5 h-3.5 animate-spin" /> Verifying...</>
+            ) : translated ? (
+              <><CheckCircle2 className="w-3.5 h-3.5" /> Verified ✓</>
+            ) : (
+              <><Sparkles className="w-3.5 h-3.5" /> Explain in Plain English</>
+            )}
+          </Button>
+        </div>
       </div>
 
       {/* Summary cards */}

@@ -1,4 +1,5 @@
 import { useState, useMemo, ReactNode, useCallback, useEffect, useRef } from "react";
+import { CompanyHistoryTimeline } from "@/components/CompanyHistoryTimeline";
 import { useParams, Link, useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
 import {
@@ -934,6 +935,11 @@ export default function CompanyProfile() {
               <MonitoredPagesPanel companyId={dbCompany.id} />
               <ManualSignalEntry companyId={dbCompany.id} companyName={dbCompany.name} />
               <SignalTimeline companyId={dbCompany.id} />
+            </div>
+
+            {/* History & Timeline — 2-year clickable timeline */}
+            <div className="mb-6">
+              <CompanyHistoryTimeline companyId={dbCompany.id} companyName={dbCompany.name} />
             </div>
 
             {/* Debug Panel */}
