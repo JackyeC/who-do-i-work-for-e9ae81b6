@@ -194,7 +194,7 @@ export function ValuesSignalCard({ signal, getConfidenceBadge, getVerificationBa
                 {signal.related_entity_name && (
                   <div>
                     <span className="text-muted-foreground font-medium">Related Entity:</span>
-                    <p className="text-foreground mt-0.5">{signal.related_entity_name}</p>
+                    <p className="text-foreground mt-0.5">{cleanEntityName(signal.related_entity_name)}</p>
                   </div>
                 )}
                 {signal.year && (

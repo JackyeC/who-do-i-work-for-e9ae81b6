@@ -151,7 +151,7 @@ function PipelineColumn({ title, icon: Icon, items, color }: {
                   {item.matched_entity_type && item.matched_entity_type !== "direct_company" && (
                     <div className="mt-1.5 flex items-center gap-1 text-[10px] text-primary">
                       <Building2 className="w-3 h-3" />
-                      {MATCH_LABELS[item.matched_entity_type] || `Via ${item.matched_entity_name || "related entity"}`}
+                      {MATCH_LABELS[item.matched_entity_type] || `Via ${cleanEntityName(item.matched_entity_name || "related entity")}`}
                     </div>
                   )}
                 </button>
