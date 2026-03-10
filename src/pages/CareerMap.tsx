@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Header } from "@/components/Header";
 import { Footer } from "@/components/Footer";
 import { Button } from "@/components/ui/button";
@@ -13,6 +13,7 @@ import { MultipleFuturesStep } from "@/components/career-discovery/MultipleFutur
 import { ActionPlanStep } from "@/components/career-discovery/ActionPlanStep";
 import { NetworkIntelligenceStep } from "@/components/career-discovery/NetworkIntelligenceStep";
 import { useAuth } from "@/contexts/AuthContext";
+import { useCareerDiscovery, type CareerProfile } from "@/hooks/use-career-discovery";
 import { Navigate } from "react-router-dom";
 import {
   Upload, Anchor, Compass, Sparkles, Building2, BarChart3,
@@ -34,10 +35,22 @@ const STEPS = [
 
 type StepId = typeof STEPS[number]["id"];
 
+// Map which AI call each step needs
+const AI_STEP_MAP: Partial<Record<StepId, "career_discovery" | "company_discovery" | "skill_gap" | "multiple_futures" | "action_plan">> = {
+  discover: "career_discovery",
+  companies: "company_discovery",
+  skills: "skill_gap",
+  futures: "multiple_futures",
+  action: "action_plan",
+};
+
 export default function CareerMap() {
   const { user } = useAuth();
   const [activeStep, setActiveStep] = useState<StepId>("profile");
   const [completedSteps, setCompletedSteps] = useState<Set<StepId>>(new Set());
+  const [profile, setProfile] = useState<CareerProfile | null>(null);
+
+  const { careerPaths, companies, skillGap, futures, actionPlan, discover } = useCareerDiscovery(profile);
 
   if (!user) return <Navigate to="/login" replace />;
 
@@ -59,45 +72,63 @@ export default function CareerMap() {
     if (canGoBack) setActiveStep(STEPS[currentIndex - 1].id);
   };
 
+  // Trigger AI discovery when entering an AI step
+  useEffect(() => {
+    const aiType = AI_STEP_MAP[activeStep];
+    if (!aiType || !profile) return;
+    // Only fetch if we don't already have data
+    const stateMap = { career_discovery: careerPaths, company_discovery: companies, skill_gap: skillGap, multiple_futures: futures, action_plan: actionPlan };
+    const state = stateMap[aiType];
+    if (!state.data && !state.loading) {
+      discover(aiType);
+    }
+  }, [activeStep, profile]);
+
+  const handleProfileComplete = (data: Omit<CareerProfile, "anchors" | "targetRole">) => {
+    setProfile(prev => ({ ...data, anchors: prev?.anchors || [], targetRole: prev?.targetRole || null }));
+    markComplete("profile");
+    setActiveStep("anchors");
+  };
+
+  const handleAnchorsComplete = (anchors: string[]) => {
+    setProfile(prev => prev ? { ...prev, anchors } : null);
+    markComplete("anchors");
+    setActiveStep("target");
+  };
+
+  const handleTargetComplete = (targetRole: string | null) => {
+    setProfile(prev => prev ? { ...prev, targetRole } : null);
+    markComplete("target");
+    setActiveStep("discover");
+  };
+
   const renderContent = () => {
     switch (activeStep) {
       case "profile":
-        return <ProfileInputStep onComplete={() => { markComplete("profile"); setActiveStep("anchors"); }} />;
+        return <ProfileInputStep onComplete={handleProfileComplete} />;
       case "anchors":
-        return <CareerAnchorsStep onComplete={() => { markComplete("anchors"); setActiveStep("target"); }} />;
+        return <CareerAnchorsStep onComplete={handleAnchorsComplete} />;
       case "target":
-        return <TargetDestinationStep onComplete={() => { markComplete("target"); setActiveStep("discover"); }} />;
+        return <TargetDestinationStep onComplete={handleTargetComplete} />;
       case "discover":
-        return <AICareerDiscoveryStep />;
+        return <AICareerDiscoveryStep data={careerPaths.data} loading={careerPaths.loading} error={careerPaths.error} onRetry={() => discover("career_discovery")} />;
       case "companies":
-        return <AICompanyDiscoveryStep />;
+        return <AICompanyDiscoveryStep data={companies.data} loading={companies.loading} error={companies.error} onRetry={() => discover("company_discovery")} />;
       case "skills":
-        return <SkillGapStep />;
+        return <SkillGapStep data={skillGap.data} loading={skillGap.loading} error={skillGap.error} onRetry={() => discover("skill_gap")} />;
       case "futures":
-        return <MultipleFuturesStep />;
+        return <MultipleFuturesStep data={futures.data} loading={futures.loading} error={futures.error} onRetry={() => discover("multiple_futures")} />;
       case "action":
-        return <ActionPlanStep />;
+        return <ActionPlanStep data={actionPlan.data} loading={actionPlan.loading} error={actionPlan.error} onRetry={() => discover("action_plan")} />;
       case "network":
         return <NetworkIntelligenceStep />;
     }
   };
 
-  // Group steps by section for the progress nav
-  const sections = STEPS.reduce<{ section: string; steps: typeof STEPS[number][] }[]>((acc, step) => {
-    const last = acc[acc.length - 1];
-    if (last && last.section === step.section) {
-      last.steps.push(step);
-    } else {
-      acc.push({ section: step.section, steps: [step] });
-    }
-    return acc;
-  }, []);
-
   return (
     <div className="min-h-screen bg-background flex flex-col">
       <Header />
       <main className="container mx-auto px-4 py-6 sm:py-10 flex-1">
-        {/* Hero Header */}
         <div className="text-center mb-8">
           <h1 className="text-2xl sm:text-3xl font-bold text-foreground mb-2 font-display">
             Career Discovery & Path Mapping
@@ -108,7 +139,6 @@ export default function CareerMap() {
         </div>
 
         <div className="max-w-4xl mx-auto">
-          {/* Step navigation - horizontal scrollable */}
           <div className="flex items-center gap-1 mb-8 overflow-x-auto pb-2 scrollbar-thin">
             {STEPS.map((step, i) => {
               const isActive = step.id === activeStep;
@@ -133,7 +163,6 @@ export default function CareerMap() {
             })}
           </div>
 
-          {/* Section & step header */}
           <Card className="mb-6 border-primary/20">
             <CardContent className="p-4 flex items-center gap-3">
               <div className="w-10 h-10 rounded-xl bg-primary/10 flex items-center justify-center shrink-0">
@@ -159,12 +188,11 @@ export default function CareerMap() {
             </CardContent>
           </Card>
 
-          {/* Step content */}
           {renderContent()}
 
           <div className="mt-10 text-center">
             <p className="text-xs text-muted-foreground italic">
-              Career paths and company suggestions are generated using market intelligence and public data. This tool does not provide employment or financial advice.
+              Career paths and company suggestions are generated using AI and market intelligence. This tool does not provide employment or financial advice.
             </p>
           </div>
         </div>
