@@ -3,7 +3,8 @@ import { useParams } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import {
   Building2, Lightbulb, Network, Landmark,
-  Sparkles, Users, Heart, Loader2,
+  Sparkles, Users, Heart, Loader2, ShoppingCart,
+  BarChart3, TrendingUp,
 } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { Header } from "@/components/Header";
@@ -14,6 +15,7 @@ import { InfluenceGauge } from "@/components/dossier/InfluenceGauge";
 import { useTrackedCompanies } from "@/hooks/use-tracked-companies";
 import { CompanyLogo } from "@/components/CompanyLogo";
 import { Badge } from "@/components/ui/badge";
+import { ExportDossierButton } from "@/components/dossier/ExportDossierButton";
 
 // Layer components
 import { ProductsPlatformsLayer } from "@/components/dossier/ProductsPlatformsLayer";
@@ -25,6 +27,12 @@ import { PatternsSynthesisLayer } from "@/components/dossier/PatternsSynthesisLa
 import { TalentContextLayer } from "@/components/dossier/TalentContextLayer";
 import { ValuesSignalsLayer } from "@/components/dossier/ValuesSignalsLayer";
 import { FullEvidenceLayer } from "@/components/dossier/FullEvidenceLayer";
+import { DecisionMakerLayer } from "@/components/dossier/DecisionMakerLayer";
+
+// New layers
+import { WorkforceDemographicsLayer } from "@/components/dossier/WorkforceDemographicsLayer";
+import { BuyingLogicLayer } from "@/components/dossier/BuyingLogicLayer";
+import { StockPatentsLayer } from "@/components/dossier/StockPatentsLayer";
 
 export default function CompanyDossier() {
   const { id } = useParams();
@@ -153,6 +161,8 @@ export default function CompanyDossier() {
             {company.employee_count && ` · ${company.employee_count} employees`}
           </p>
         </div>
+        {/* Export button */}
+        <ExportDossierButton companyId={companyId!} companyName={company.name} company={company} />
       </div>
 
       {/* Score gauges */}
@@ -176,18 +186,26 @@ export default function CompanyDossier() {
     </>
   );
 
-  // Layers 2–7: Full dossier — gated
+  // Layers 2–11: Full dossier — gated
   const fullContent = (
     <>
-      <DossierLayer title="Innovation & Patents" subtitle="Patent clusters, R&D themes, and technology bets" icon={Lightbulb} layerNumber={2}>
-        <InnovationPatentsLayer totalPatents={0} clusters={[]} companyName={company.name} />
+      <DossierLayer title="Innovation & Patents" subtitle="Spending timeline, patent clusters, R&D themes, and technology bets" icon={Lightbulb} layerNumber={2}>
+        <StockPatentsLayer companyId={companyId!} companyName={company.name} />
       </DossierLayer>
 
       <DossierLayer title="Ecosystem & Subcontractors" subtitle="Supply chain, federal contracts, and operational dependencies" icon={Network} layerNumber={3}>
         <EcosystemSubcontractorsLayer entities={[]} companyName={company.name} />
       </DossierLayer>
 
-      <DossierLayer title="Influence & Policy Signals" subtitle="PAC giving, lobbying, government contracts, and policy links" icon={Landmark} layerNumber={4} defaultOpen>
+      <DossierLayer title="Workforce Demographics" subtitle="Role distribution, pay equity, diversity, and promotion signals" icon={BarChart3} layerNumber={4}>
+        <WorkforceDemographicsLayer companyId={companyId!} companyName={company.name} />
+      </DossierLayer>
+
+      <DossierLayer title="Decision & Buying Logic" subtitle="Typical buying committees, approval layers, and decision-maker mapping" icon={ShoppingCart} layerNumber={5}>
+        <BuyingLogicLayer companyId={companyId!} companyName={company.name} industry={company.industry} />
+      </DossierLayer>
+
+      <DossierLayer title="Influence & Policy Signals" subtitle="PAC giving, lobbying, government contracts, and policy links" icon={Landmark} layerNumber={6} defaultOpen>
         <InfluencePolicyLayer
           politicalGiving={politicalGiving}
           lobbyingActivity={[]}
@@ -196,15 +214,15 @@ export default function CompanyDossier() {
         />
       </DossierLayer>
 
-      <DossierLayer title="Patterns & Synthesis" subtitle="Key observations and notable patterns" icon={Sparkles} layerNumber={5}>
+      <DossierLayer title="Patterns & Synthesis" subtitle="Key observations and notable patterns" icon={Sparkles} layerNumber={7}>
         <PatternsSynthesisLayer patterns={[]} companyName={company.name} />
       </DossierLayer>
 
-      <DossierLayer title="Talent Context" subtitle="WARN notices, hiring stability, workforce signals" icon={Users} layerNumber={6}>
+      <DossierLayer title="Talent Context" subtitle="WARN notices, hiring stability, workforce signals" icon={Users} layerNumber={8}>
         <TalentContextLayer signals={[]} companyName={company.name} />
       </DossierLayer>
 
-      <DossierLayer title="Values Filter" subtitle="Evidence-based filtering across 14 issue lenses" icon={Heart} layerNumber={7}>
+      <DossierLayer title="Values Filter" subtitle="Evidence-based filtering across 14 issue lenses" icon={Heart} layerNumber={9}>
         <ValuesSignalsLayer signals={mappedValues} companyName={company.name} />
       </DossierLayer>
 
