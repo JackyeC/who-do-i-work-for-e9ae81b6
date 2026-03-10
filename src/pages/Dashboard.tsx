@@ -1,11 +1,7 @@
 import { useState } from "react";
-import { Header } from "@/components/Header";
-import { Footer } from "@/components/Footer";
 import { useAuth } from "@/contexts/AuthContext";
 import { Navigate, useSearchParams } from "react-router-dom";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
-import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
-import { DashboardSidebar } from "@/components/dashboard/DashboardSidebar";
 import { DashboardOverview } from "@/components/dashboard/DashboardOverview";
 import { AlignedJobsList } from "@/components/jobs/AlignedJobsList";
 import { PreferenceCenter } from "@/components/jobs/PreferenceCenter";
@@ -113,9 +109,7 @@ export default function Dashboard() {
   };
 
   return (
-    <div className="min-h-screen bg-background flex flex-col">
-      <Header />
-
+    <div className="flex flex-col flex-1">
       {showOnboarding && (
         <FirstLoginOnboarding
           onComplete={() => {
@@ -124,23 +118,14 @@ export default function Dashboard() {
         />
       )}
 
-      <SidebarProvider>
-        <div className="flex-1 flex w-full">
-          <DashboardSidebar activeTab={tab} onTabChange={setTab} />
-          <main className="flex-1 flex flex-col min-w-0">
-            <div className="flex items-center gap-3 border-b border-border/30 px-6 h-12">
-              <SidebarTrigger className="-ml-1" />
-              <h1 className="text-sm font-semibold text-foreground truncate">
-                {TAB_TITLES[tab] || "Dashboard"}
-              </h1>
-            </div>
-            <div className="flex-1 overflow-y-auto px-6 py-6 max-w-5xl">
-              {renderContent()}
-            </div>
-          </main>
-        </div>
-      </SidebarProvider>
-      <Footer />
+      <div className="flex items-center gap-3 border-b border-border/30 px-6 h-12">
+        <h1 className="text-sm font-semibold text-foreground truncate">
+          {TAB_TITLES[tab] || "Dashboard"}
+        </h1>
+      </div>
+      <div className="flex-1 overflow-y-auto px-6 py-6 max-w-5xl">
+        {renderContent()}
+      </div>
     </div>
   );
 }
