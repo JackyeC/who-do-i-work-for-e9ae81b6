@@ -180,6 +180,20 @@ Deno.serve(async (req) => {
       }
 
       if (amount > 0) {
+        // Build a clear plain-English description
+        const clientClean = clientName.replace(/,?\s*(Inc\.?|LLC|Corp\.?|Corporation|Company|Co\.?|Group|Holdings)\s*$/i, '').trim();
+        const registrantClean = registrantName.replace(/,?\s*(Inc\.?|LLC|Corp\.?|Corporation|Company|Co\.?|Group|Holdings)\s*$/i, '').trim();
+        const isSelfLobby = clientClean.toLowerCase() === registrantClean.toLowerCase()
+          || registrantClean.toLowerCase().includes(clientClean.toLowerCase())
+          || clientClean.toLowerCase().includes(registrantClean.toLowerCase());
+
+        const issueList = [...issuesTracked].slice(0, 3);
+        const issueStr = issueList.length > 0 ? ` on issues including ${issueList.join(', ')}` : '';
+
+        const plainDescription = isSelfLobby
+          ? `${clientClean} spent $${amount.toLocaleString()} on in-house lobbying in ${filingYear}${issueStr}`
+          : `${clientClean} hired ${registrantClean} to lobby on their behalf ($${amount.toLocaleString()}) in ${filingYear}${issueStr}`;
+
         linkages.push({
           company_id: companyId,
           source_entity_name: clientName,
@@ -191,7 +205,7 @@ Deno.serve(async (req) => {
           link_type: 'trade_association_lobbying',
           amount: Math.round(amount),
           confidence_score: 0.90,
-          description: `Lobbying expenditure: ${clientName} → ${registrantName} ($${amount.toLocaleString()}, ${filingYear})`,
+          description: plainDescription,
           source_citation: JSON.stringify([{
             source: 'Senate LDA',
             url: filing.filing_uuid

@@ -25,14 +25,14 @@ interface Props {
 }
 
 const PLAIN_SOURCE_TYPES: Record<string, string> = {
-  lobbying_filing: "Lobbying report",
-  pac_donation: "Campaign donation",
-  executive_donation: "Executive donation",
-  sec_filing: "Company filing",
-  government_contract: "Gov't contract",
-  enforcement_action: "Gov't enforcement",
-  corporate_statement: "Company statement",
-  advocacy_alignment: "Advocacy group link",
+  lobbying_filing: "Lobbying disclosure filing",
+  pac_donation: "Political Action Committee donation",
+  executive_donation: "Personal donation by a company executive",
+  sec_filing: "Securities and Exchange Commission filing",
+  government_contract: "Federal government contract",
+  enforcement_action: "Government enforcement action",
+  corporate_statement: "Official company statement",
+  advocacy_alignment: "Link to an advocacy or trade group",
 };
 
 export function ValuesEvidenceCard({ evidence }: Props) {

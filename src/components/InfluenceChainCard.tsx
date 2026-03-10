@@ -252,16 +252,17 @@ function EvidenceCard({ step, onEntityClick }: { step: ChainStep; onEntityClick?
         {targetLocation && <span className="text-[10px] text-muted-foreground">{targetLocation}</span>}
       </div>
 
-      {/* Summary line */}
+      {/* Summary line — always explain who, to whom, for what */}
       <p className="text-xs text-muted-foreground leading-relaxed">
         {sourceName} {config.plainLabel.toLowerCase()} {targetName}
         {targetParty && <> ({PARTY_FULL_NAMES[targetParty] || targetParty})</>}
+        {step.amount > 0 && <> for {formatCurrency(step.amount)}</>}
       </p>
 
-      {/* Description detail (truncated) */}
-      {step.description && step.link_type === "committee_oversight_of_contract" && (
+      {/* Description detail — show for all types that have descriptions */}
+      {step.description && (
         <p className="text-[10px] text-muted-foreground/80 mt-1 leading-relaxed italic">
-          {summarizeDescription(step.description, step.link_type, sourceName, targetName)}
+          {expandAcronymsInText(summarizeDescription(step.description, step.link_type, sourceName, targetName))}
         </p>
       )}
 
