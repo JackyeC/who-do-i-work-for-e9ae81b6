@@ -105,6 +105,15 @@ ${watchlistOrgs.slice(0, 30).map(w => `- ${w.org_name} (${w.category})${w.splc_d
 
 CATEGORIES TO FLAG: ${categoryList.join(', ')}
 
+CRITICAL FALSE-POSITIVE RULES — DO NOT FLAG these:
+- Company or person names that coincidentally contain religious words (e.g. "Church's Chicken", "Churchhill", "Church & Dwight", "Temple Industries", "Bishop Staffing")
+- Generic charitable giving to local churches, food banks, or community organizations
+- Standard holiday messaging (Christmas, Easter references in marketing)
+- Employee resource groups for faith-based communities (these are internal diversity efforts)
+- A company headquartered near a church or religious landmark
+- Names like "Christian" as a first name (e.g. "Christian Dior", "Christian Bale")
+- Only flag if there is a SPECIFIC, DOCUMENTED financial or organizational connection to a POLITICAL advocacy organization
+
 Search Results:
 ${content}
 
@@ -112,10 +121,10 @@ Return JSON:
 {
   "flags": [
     {
-      "orgName": "organization name",
+      "orgName": "organization name (must be a REAL political advocacy organization, not a commercial brand)",
       "category": "one of: ${categoryList.join('|')}",
       "relationshipType": "direct_funding|pac_contribution|executive_donation|board_membership|trade_association|lobbying_alignment|event_sponsorship|foundation_grant",
-      "description": "specific evidence of the connection",
+      "description": "specific evidence of the connection — cite the actual financial or organizational link",
       "amount": number|null,
       "evidenceUrl": "source URL",
       "severity": "critical|high|medium|low",
@@ -126,7 +135,7 @@ Return JSON:
   "riskLevel": "critical|high|medium|low|none"
 }
 
-Only include flags with actual evidence. Be specific about the nature of each connection. Return valid JSON only.`;
+Only include flags with actual evidence of a POLITICAL connection. Do NOT flag commercial brands, restaurants, or businesses that happen to have religious-sounding names. Return valid JSON only.`;
 
     const aiResp = await fetch('https://ai.gateway.lovable.dev/v1/chat/completions', {
       method: 'POST',
