@@ -1,78 +1,48 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { Header } from "@/components/Header";
 import { Footer } from "@/components/Footer";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
-import { DocumentUploader } from "@/components/career/DocumentUploader";
-import { CareerProfile } from "@/components/career/CareerProfile";
-import { DreamJobAlerts } from "@/components/career/DreamJobAlerts";
-import { MyDocuments } from "@/components/career/MyDocuments";
-import { ResumeTailor } from "@/components/career/ResumeTailor";
-import { DataWipeButton } from "@/components/career/DataWipeButton";
-import { CareerJourneyTimeline } from "@/components/career/CareerJourneyTimeline";
-import { MyValuesProfile } from "@/components/career/MyValuesProfile";
-import { PersonalityProfile } from "@/components/career/PersonalityProfile";
-import { HowDoIGetThere } from "@/components/career/HowDoIGetThere";
-import { OutreachIntelligence } from "@/components/career/OutreachIntelligence";
+import { ProfileInputStep } from "@/components/career-discovery/ProfileInputStep";
+import { CareerAnchorsStep } from "@/components/career-discovery/CareerAnchorsStep";
+import { TargetDestinationStep } from "@/components/career-discovery/TargetDestinationStep";
+import { AICareerDiscoveryStep } from "@/components/career-discovery/AICareerDiscoveryStep";
+import { AICompanyDiscoveryStep } from "@/components/career-discovery/AICompanyDiscoveryStep";
+import { SkillGapStep } from "@/components/career-discovery/SkillGapStep";
+import { MultipleFuturesStep } from "@/components/career-discovery/MultipleFuturesStep";
+import { ActionPlanStep } from "@/components/career-discovery/ActionPlanStep";
+import { NetworkIntelligenceStep } from "@/components/career-discovery/NetworkIntelligenceStep";
 import { useAuth } from "@/contexts/AuthContext";
 import { Navigate } from "react-router-dom";
-import { supabase } from "@/integrations/supabase/client";
 import {
-  Upload, Heart, Compass, Route, Users, Wand2, ChevronRight,
-  CheckCircle2, Circle, ArrowLeft, User
+  Upload, Anchor, Compass, Sparkles, Building2, BarChart3,
+  GitBranch, ClipboardList, Users, ChevronRight, ArrowLeft, CheckCircle2,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 const STEPS = [
-  { id: "upload", label: "Upload Resume", icon: Upload, description: "Upload your resume or career documents to build your profile." },
-  { id: "values", label: "Define Values", icon: Heart, description: "Tell us what matters to you in an employer." },
-  { id: "personality", label: "Work Style", icon: User, description: "Describe how you work best and your personality strengths." },
-  { id: "explore", label: "Map My Path", icon: Compass, description: "Visualize your career journey with SMART goals." },
-  { id: "plan", label: "Plan Your Move", icon: Route, description: "Get a gap analysis and learning plan for your target role." },
-  { id: "connect", label: "Connect", icon: Users, description: "Find people who can help you get there." },
-  { id: "apply", label: "Tailor & Apply", icon: Wand2, description: "Tailor your resume and set up job alerts." },
+  { id: "profile", label: "Build Profile", icon: Upload, section: "Where You Are Now" },
+  { id: "anchors", label: "Career Anchors", icon: Anchor, section: "Where You Are Now" },
+  { id: "target", label: "Destination", icon: Compass, section: "Where You Could Go" },
+  { id: "discover", label: "Career Discovery", icon: Sparkles, section: "Where You Could Go" },
+  { id: "companies", label: "Company Discovery", icon: Building2, section: "Companies You May Not Have Considered" },
+  { id: "skills", label: "Skill Gap", icon: BarChart3, section: "Skills to Build" },
+  { id: "futures", label: "Possible Paths", icon: GitBranch, section: "Possible Paths" },
+  { id: "action", label: "Action Plan", icon: ClipboardList, section: "Your Action Plan" },
+  { id: "network", label: "Path Guides", icon: Users, section: "Who Can Help" },
 ] as const;
 
 type StepId = typeof STEPS[number]["id"];
 
 export default function CareerMap() {
   const { user } = useAuth();
-  const [activeStep, setActiveStep] = useState<StepId>("upload");
+  const [activeStep, setActiveStep] = useState<StepId>("profile");
   const [completedSteps, setCompletedSteps] = useState<Set<StepId>>(new Set());
-
-  useEffect(() => {
-    if (!user) return;
-    const ensureProfile = async () => {
-      const { data } = await supabase
-        .from("user_career_profile")
-        .select("id, skills, industries")
-        .eq("user_id", user.id)
-        .single();
-      if (!data) {
-        await supabase.from("user_career_profile").insert({
-          user_id: user.id,
-          auto_generated: true,
-          skills: [],
-          industries: [],
-          job_titles: [],
-        });
-      } else {
-        // Auto-detect completed steps
-        const done = new Set<StepId>();
-        if ((data.skills as any[])?.length > 0) done.add("upload");
-        if ((data.industries as any[])?.length > 0) done.add("values");
-        setCompletedSteps(done);
-        // Start at the first incomplete step
-        const firstIncomplete = STEPS.find(s => !done.has(s.id));
-        if (firstIncomplete) setActiveStep(firstIncomplete.id);
-      }
-    };
-    ensureProfile();
-  }, [user]);
 
   if (!user) return <Navigate to="/login" replace />;
 
   const currentIndex = STEPS.findIndex(s => s.id === activeStep);
+  const currentStep = STEPS[currentIndex];
   const canGoNext = currentIndex < STEPS.length - 1;
   const canGoBack = currentIndex > 0;
 
@@ -85,73 +55,72 @@ export default function CareerMap() {
     if (canGoNext) setActiveStep(STEPS[currentIndex + 1].id);
   };
 
+  const goBack = () => {
+    if (canGoBack) setActiveStep(STEPS[currentIndex - 1].id);
+  };
+
   const renderContent = () => {
     switch (activeStep) {
-      case "upload":
-        return (
-          <div className="space-y-6">
-            <DocumentUploader onUploadComplete={() => {
-              markComplete("upload");
-              setActiveStep("values");
-            }} />
-            <MyDocuments />
-          </div>
-        );
-      case "values":
-        return <MyValuesProfile />;
-      case "personality":
-        return <PersonalityProfile />;
-      case "explore":
-        return (
-          <div className="space-y-6">
-            <CareerJourneyTimeline />
-            <CareerProfile />
-          </div>
-        );
-      case "plan":
-        return <HowDoIGetThere />;
-      case "connect":
-        return <OutreachIntelligence />;
-      case "apply":
-        return (
-          <div className="space-y-6">
-            <ResumeTailor />
-            <DreamJobAlerts />
-          </div>
-        );
+      case "profile":
+        return <ProfileInputStep onComplete={() => { markComplete("profile"); setActiveStep("anchors"); }} />;
+      case "anchors":
+        return <CareerAnchorsStep onComplete={() => { markComplete("anchors"); setActiveStep("target"); }} />;
+      case "target":
+        return <TargetDestinationStep onComplete={() => { markComplete("target"); setActiveStep("discover"); }} />;
+      case "discover":
+        return <AICareerDiscoveryStep />;
+      case "companies":
+        return <AICompanyDiscoveryStep />;
+      case "skills":
+        return <SkillGapStep />;
+      case "futures":
+        return <MultipleFuturesStep />;
+      case "action":
+        return <ActionPlanStep />;
+      case "network":
+        return <NetworkIntelligenceStep />;
     }
   };
+
+  // Group steps by section for the progress nav
+  const sections = STEPS.reduce<{ section: string; steps: typeof STEPS[number][] }[]>((acc, step) => {
+    const last = acc[acc.length - 1];
+    if (last && last.section === step.section) {
+      last.steps.push(step);
+    } else {
+      acc.push({ section: step.section, steps: [step] });
+    }
+    return acc;
+  }, []);
 
   return (
     <div className="min-h-screen bg-background flex flex-col">
       <Header />
-      <main className="container mx-auto px-4 py-6 sm:py-8 flex-1">
-        <div className="text-center mb-6 sm:mb-8">
+      <main className="container mx-auto px-4 py-6 sm:py-10 flex-1">
+        {/* Hero Header */}
+        <div className="text-center mb-8">
           <h1 className="text-2xl sm:text-3xl font-bold text-foreground mb-2 font-display">
-            Map My Career
+            Career Discovery & Path Mapping
           </h1>
           <p className="text-muted-foreground max-w-2xl mx-auto text-sm sm:text-base">
-            Follow these steps to build your career profile, explore paths, and plan your next move.
+            Use AI and market intelligence to discover career paths and companies you may not have considered.
           </p>
         </div>
 
         <div className="max-w-4xl mx-auto">
-          {/* Step progress bar */}
-          <div className="flex items-center gap-1 mb-8 overflow-x-auto pb-2">
+          {/* Step navigation - horizontal scrollable */}
+          <div className="flex items-center gap-1 mb-8 overflow-x-auto pb-2 scrollbar-thin">
             {STEPS.map((step, i) => {
               const isActive = step.id === activeStep;
               const isCompleted = completedSteps.has(step.id);
               return (
-                <button
-                  key={step.id}
-                  onClick={() => setActiveStep(step.id)}
+                <button key={step.id} onClick={() => setActiveStep(step.id)}
                   className={cn(
-                    "flex items-center gap-2 px-3 py-2 rounded-lg text-xs font-medium whitespace-nowrap transition-all",
+                    "flex items-center gap-1.5 px-3 py-2 rounded-lg text-xs font-medium whitespace-nowrap transition-all shrink-0",
                     isActive && "bg-primary text-primary-foreground shadow-sm",
                     !isActive && isCompleted && "bg-primary/10 text-primary hover:bg-primary/15",
-                    !isActive && !isCompleted && "bg-muted text-muted-foreground hover:bg-muted/80"
-                  )}
-                >
+                    !isActive && !isCompleted && "bg-muted text-muted-foreground hover:bg-muted/80",
+                  )}>
                   {isCompleted && !isActive ? (
                     <CheckCircle2 className="w-3.5 h-3.5" />
                   ) : (
@@ -164,52 +133,39 @@ export default function CareerMap() {
             })}
           </div>
 
-          {/* Step header */}
+          {/* Section & step header */}
           <Card className="mb-6 border-primary/20">
             <CardContent className="p-4 flex items-center gap-3">
-              {(() => {
-                const step = STEPS[currentIndex];
-                return (
-                  <>
-                    <div className="w-10 h-10 rounded-xl bg-primary/10 flex items-center justify-center shrink-0">
-                      <step.icon className="w-5 h-5 text-primary" />
-                    </div>
-                    <div className="flex-1">
-                      <div className="flex items-center gap-2">
-                        <span className="text-[10px] text-muted-foreground font-medium uppercase tracking-wider">Step {currentIndex + 1} of {STEPS.length}</span>
-                        {completedSteps.has(activeStep) && (
-                          <CheckCircle2 className="w-3.5 h-3.5 text-primary" />
-                        )}
-                      </div>
-                      <h2 className="text-lg font-bold text-foreground font-display">{step.label}</h2>
-                      <p className="text-xs text-muted-foreground">{step.description}</p>
-                    </div>
-                    <div className="flex gap-2">
-                      {canGoBack && (
-                        <Button variant="outline" size="sm" onClick={() => setActiveStep(STEPS[currentIndex - 1].id)}>
-                          <ArrowLeft className="w-3.5 h-3.5" />
-                        </Button>
-                      )}
-                      {canGoNext && (
-                        <Button size="sm" onClick={goNext} className="gap-1.5">
-                          Next <ChevronRight className="w-3.5 h-3.5" />
-                        </Button>
-                      )}
-                    </div>
-                  </>
-                );
-              })()}
+              <div className="w-10 h-10 rounded-xl bg-primary/10 flex items-center justify-center shrink-0">
+                <currentStep.icon className="w-5 h-5 text-primary" />
+              </div>
+              <div className="flex-1 min-w-0">
+                <p className="text-[10px] text-primary font-semibold uppercase tracking-wider">{currentStep.section}</p>
+                <h2 className="text-lg font-bold text-foreground font-display">{currentStep.label}</h2>
+                <p className="text-xs text-muted-foreground">Step {currentIndex + 1} of {STEPS.length}</p>
+              </div>
+              <div className="flex gap-2 shrink-0">
+                {canGoBack && (
+                  <Button variant="outline" size="sm" onClick={goBack}>
+                    <ArrowLeft className="w-3.5 h-3.5" />
+                  </Button>
+                )}
+                {canGoNext && (
+                  <Button size="sm" onClick={goNext} className="gap-1.5">
+                    Next <ChevronRight className="w-3.5 h-3.5" />
+                  </Button>
+                )}
+              </div>
             </CardContent>
           </Card>
 
           {/* Step content */}
           {renderContent()}
 
-          <div className="mt-8 text-center">
-            <p className="text-xs text-muted-foreground mb-4 italic">
-              This tool detects signals in uploaded documents and public sources. It does not provide legal, financial, or employment advice.
+          <div className="mt-10 text-center">
+            <p className="text-xs text-muted-foreground italic">
+              Career paths and company suggestions are generated using market intelligence and public data. This tool does not provide employment or financial advice.
             </p>
-            <DataWipeButton />
           </div>
         </div>
       </main>
