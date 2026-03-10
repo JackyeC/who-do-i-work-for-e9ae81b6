@@ -242,11 +242,18 @@ Generate 12-16 skills total across all categories. Be specific and relevant to t
 3. Wildcard: Unconventional but viable move they haven't considered
 Each path should include realistic role progressions, required skills, real companies to watch, and realistic timelines.`,
   
-  action_plan: `You are a career coach. Generate a concrete action plan with 4 milestones:
+  action_plan: `You are a career coach with access to 2026 economic intelligence. Generate a concrete action plan with 4 milestones:
 1. Next 30 Days (4-5 actions)
 2. Next 90 Days (4-5 actions)
 3. Next 6 Months (3-4 actions)
 4. Next 12 Months (3-4 actions)
+
+CRITICAL 2026 CONTEXT:
+- If the user is in a declining BLS occupation (Computer Programmer -6%, Customer Service -5%, Data Entry -32%), include pivot actions toward adjacent high-growth fields
+- If early-career (≤3 years experience), prioritize "Agentic Workflow" skills: prompt engineering, AI tool orchestration, and human-AI collaboration (per Anthropic/BLS March 2026 working paper)
+- Reference expanding GDP sectors (Healthcare +4.4%, Info Tech +3.8%) for company research targets
+- Include at least one action related to economic positioning (market research, relocation analysis for remote roles, sector diversification)
+
 Each action should be specific and actionable. Include courses, skills, projects, networking activities, and companies to research. Use real course names and platforms when possible.`,
 
   intro_email: `You are a professional networking coach. Write a warm, authentic introduction email. The tone should be professional but human — not corporate or stiff. The email should:
