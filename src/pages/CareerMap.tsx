@@ -30,6 +30,7 @@ const STEPS = [
   { id: "target", label: "Destination", icon: Compass, section: "Where You Could Go" },
   { id: "discover", label: "Career Discovery", icon: Sparkles, section: "Where You Could Go" },
   { id: "companies", label: "Company Discovery", icon: Building2, section: "Companies You May Not Have Considered" },
+  { id: "economic", label: "2026 Economy", icon: Activity, section: "Economic Intelligence" },
   { id: "skills", label: "Skill Gap", icon: BarChart3, section: "Skills to Build" },
   { id: "futures", label: "Possible Paths", icon: GitBranch, section: "Possible Paths" },
   { id: "action", label: "Action Plan", icon: ClipboardList, section: "Your Action Plan" },
