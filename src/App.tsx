@@ -46,6 +46,7 @@ import RecruitingIntelligence from "./pages/RecruitingIntelligence";
 import CompanyDossier from "./pages/CompanyDossier";
 import Pricing from "./pages/Pricing";
 import RelationshipIntelligence from "./pages/RelationshipIntelligence";
+import StrategicOfferReview from "./pages/StrategicOfferReview";
 const queryClient = new QueryClient();
 
 const App = () => (
