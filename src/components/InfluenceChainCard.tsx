@@ -303,6 +303,13 @@ function EvidenceCard({ step, onEntityClick }: { step: ChainStep; onEntityClick?
         {targetParty && <> ({PARTY_FULL_NAMES[targetParty] || targetParty})</>}
       </p>
 
+      {/* Description detail (truncated) */}
+      {step.description && step.link_type === "committee_oversight_of_contract" && (
+        <p className="text-[10px] text-muted-foreground/80 mt-1 leading-relaxed italic">
+          {summarizeDescription(step.description, step.link_type, sourceName, targetName)}
+        </p>
+      )}
+
       {/* Click CTA */}
       {isClickable && (
         <p className="text-[10px] text-primary font-medium mt-1.5 flex items-center gap-1">
