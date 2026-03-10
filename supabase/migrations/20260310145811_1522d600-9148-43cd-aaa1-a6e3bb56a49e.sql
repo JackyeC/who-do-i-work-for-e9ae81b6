@@ -1,0 +1,1 @@
+UPDATE scan_runs SET scan_status = 'failed', error_log = '{"reason": "Manual cleanup of stuck scan"}'::jsonb WHERE scan_status IN ('queued', 'in_progress') AND created_at < now() - interval '2 minutes';
