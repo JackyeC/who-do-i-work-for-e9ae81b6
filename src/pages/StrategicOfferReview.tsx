@@ -588,14 +588,22 @@ export default function StrategicOfferReview() {
 
             {/* Step 3: Full Results */}
             {step === 3 && (
-              <Tabs defaultValue="overview" className="space-y-6">
-                <TabsList className="grid w-full grid-cols-5">
+              <Tabs defaultValue="employer" className="space-y-6">
+                <TabsList className="grid w-full grid-cols-6">
+                  <TabsTrigger value="employer" className="text-xs">Employer</TabsTrigger>
                   <TabsTrigger value="overview" className="text-xs">Overview</TabsTrigger>
                   <TabsTrigger value="legal" className="text-xs">Legal Audit</TabsTrigger>
                   <TabsTrigger value="equity" className="text-xs">Equity</TabsTrigger>
                   <TabsTrigger value="negotiate" className="text-xs">Negotiate</TabsTrigger>
                   <TabsTrigger value="scam" className="text-xs">Safety</TabsTrigger>
                 </TabsList>
+
+                <TabsContent value="employer">
+                  <EmployerIntelligenceCard
+                    companyId={offer.companyId}
+                    companyName={offer.companyName}
+                  />
+                </TabsContent>
 
                 <TabsContent value="overview">
                   {report ? (
