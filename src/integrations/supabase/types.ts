@@ -2426,6 +2426,75 @@ export type Database = {
         }
         Relationships: []
       }
+      issue_legislation_map: {
+        Row: {
+          bill_keyword: string
+          bill_number: string | null
+          congress_session: string | null
+          created_at: string
+          description: string | null
+          id: string
+          issue_category: string
+          policy_area: string | null
+        }
+        Insert: {
+          bill_keyword: string
+          bill_number?: string | null
+          congress_session?: string | null
+          created_at?: string
+          description?: string | null
+          id?: string
+          issue_category: string
+          policy_area?: string | null
+        }
+        Update: {
+          bill_keyword?: string
+          bill_number?: string | null
+          congress_session?: string | null
+          created_at?: string
+          description?: string | null
+          id?: string
+          issue_category?: string
+          policy_area?: string | null
+        }
+        Relationships: []
+      }
+      issue_scan_status: {
+        Row: {
+          companies_scanned: number
+          created_at: string
+          id: string
+          issue_category: string
+          last_scan_at: string | null
+          records_analyzed: number
+          scan_status: string
+          signals_generated: number
+          updated_at: string
+        }
+        Insert: {
+          companies_scanned?: number
+          created_at?: string
+          id?: string
+          issue_category: string
+          last_scan_at?: string | null
+          records_analyzed?: number
+          scan_status?: string
+          signals_generated?: number
+          updated_at?: string
+        }
+        Update: {
+          companies_scanned?: number
+          created_at?: string
+          id?: string
+          issue_category?: string
+          last_scan_at?: string | null
+          records_analyzed?: number
+          scan_status?: string
+          signals_generated?: number
+          updated_at?: string
+        }
+        Relationships: []
+      }
       issue_signals: {
         Row: {
           amount: number | null
