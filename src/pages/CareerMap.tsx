@@ -52,6 +52,18 @@ export default function CareerMap() {
 
   const { careerPaths, companies, skillGap, futures, actionPlan, discover } = useCareerDiscovery(profile);
 
+  // Trigger AI discovery when entering an AI step
+  useEffect(() => {
+    if (!user) return;
+    const aiType = AI_STEP_MAP[activeStep];
+    if (!aiType || !profile) return;
+    const stateMap = { career_discovery: careerPaths, company_discovery: companies, skill_gap: skillGap, multiple_futures: futures, action_plan: actionPlan };
+    const state = stateMap[aiType];
+    if (!state.data && !state.loading) {
+      discover(aiType);
+    }
+  }, [activeStep, profile, user]);
+
   if (!user) return <Navigate to="/login" replace />;
 
   const currentIndex = STEPS.findIndex(s => s.id === activeStep);
