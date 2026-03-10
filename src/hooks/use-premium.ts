@@ -9,6 +9,12 @@ export const STRIPE_TIERS = {
     label: "Pro",
     price: "$29/mo",
   },
+  auto_apply: {
+    price_id: "price_1T9FEIGh4NKuXb2AW5uXIZ5y",
+    product_id: "prod_U7UChM7ivY1Bmf",
+    label: "Auto-Apply Add-on",
+    price: "$9/mo",
+  },
 } as const;
 
 export interface PremiumFeatures {
@@ -52,5 +58,20 @@ export function usePremium(): PremiumFeatures & { isPremium: boolean; isLoggedIn
     isPremium,
     isLoggedIn: !!user,
     subscriptionEnd: subscriptionStatus?.subscription_end ?? null,
+  };
+}
+
+export function useAutoApplySubscription() {
+  const { user, subscriptionStatus } = useAuth();
+
+  // Auto-Apply is available if user has the auto_apply product OR the pro product (pro includes it)
+  const hasAutoApply =
+    subscriptionStatus?.subscribed === true &&
+    (subscriptionStatus?.product_id === STRIPE_TIERS.auto_apply.product_id ||
+     subscriptionStatus?.product_id === STRIPE_TIERS.pro.product_id);
+
+  return {
+    hasAutoApply: hasAutoApply ?? false,
+    isLoggedIn: !!user,
   };
 }

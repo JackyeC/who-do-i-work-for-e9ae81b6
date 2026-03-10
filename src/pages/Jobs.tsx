@@ -21,6 +21,7 @@ import { UserProfileForm } from "@/components/jobs/UserProfileForm";
 import { PreferenceCenter } from "@/components/jobs/PreferenceCenter";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/contexts/AuthContext";
+import { useAutoApplySubscription, STRIPE_TIERS } from "@/hooks/use-premium";
 import { useQuery } from "@tanstack/react-query";
 import { toast } from "sonner";
 import { Card, CardContent } from "@/components/ui/card";
@@ -28,8 +29,62 @@ import { Progress } from "@/components/ui/progress";
 import {
   Search, Briefcase, Building2, Filter, SlidersHorizontal, X, Monitor,
   Zap, LayoutDashboard, User, Wand2, Copy, Check, Loader2, ExternalLink,
-  FileText, Sparkles, Shield,
+  FileText, Sparkles, Shield, Lock, Crown,
 } from "lucide-react";
+
+function AutoApplyGated() {
+  const { hasAutoApply, isLoggedIn } = useAutoApplySubscription();
+  const [loading, setLoading] = useState(false);
+
+  const handleSubscribe = async () => {
+    setLoading(true);
+    try {
+      const { data, error } = await supabase.functions.invoke("create-checkout", {
+        body: { priceId: STRIPE_TIERS.auto_apply.price_id },
+      });
+      if (error) throw error;
+      if (data?.url) window.open(data.url, "_blank");
+    } catch {
+      toast.error("Failed to start checkout. Please try again.");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  if (hasAutoApply) {
+    return (
+      <div className="space-y-6">
+        <AutoApplySettings />
+        <ApplyQueueDashboard />
+      </div>
+    );
+  }
+
+  return (
+    <Card className="border-dashed border-2 border-primary/15 bg-muted/30">
+      <CardContent className="p-10 text-center">
+        <div className="w-14 h-14 rounded-2xl bg-primary/8 flex items-center justify-center mx-auto mb-5">
+          <Zap className="w-7 h-7 text-primary" />
+        </div>
+        <h3 className="font-semibold text-foreground mb-2 text-xl">Unlock Auto-Apply</h3>
+        <p className="text-sm text-muted-foreground mb-2 max-w-md mx-auto leading-relaxed">
+          Let AI scan for jobs at values-aligned companies, generate tailored cover letters, and queue them for your review — all automatically.
+        </p>
+        <ul className="text-sm text-muted-foreground mb-6 max-w-sm mx-auto text-left space-y-1.5">
+          <li className="flex items-center gap-2"><Check className="w-4 h-4 text-primary shrink-0" /> Daily job scanning at tracked companies</li>
+          <li className="flex items-center gap-2"><Check className="w-4 h-4 text-primary shrink-0" /> AI-tailored cover letters per match</li>
+          <li className="flex items-center gap-2"><Check className="w-4 h-4 text-primary shrink-0" /> Values-based match scoring</li>
+          <li className="flex items-center gap-2"><Check className="w-4 h-4 text-primary shrink-0" /> Nothing sent without your approval</li>
+        </ul>
+        <Button size="lg" onClick={handleSubscribe} disabled={loading} className="gap-2">
+          {loading ? <Loader2 className="w-4 h-4 animate-spin" /> : <Crown className="w-4 h-4" />}
+          Subscribe — $9/mo
+        </Button>
+        <p className="text-xs text-muted-foreground mt-4">Cancel anytime. Works alongside your existing plan.</p>
+      </CardContent>
+    </Card>
+  );
+}
 
 export default function Jobs() {
   const [searchParams, setSearchParams] = useSearchParams();
@@ -494,10 +549,7 @@ export default function Jobs() {
             {/* ──── AUTO-APPLY TAB ──── */}
             <TabsContent value="auto-apply">
               {user ? (
-                <div className="space-y-6">
-                  <AutoApplySettings />
-                  <ApplyQueueDashboard />
-                </div>
+                <AutoApplyGated />
               ) : (
                 <EmptyState
                   icon={Zap}
