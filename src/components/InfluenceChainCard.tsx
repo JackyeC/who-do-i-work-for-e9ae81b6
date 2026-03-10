@@ -383,7 +383,7 @@ function CategorySection({ category, steps, defaultOpen, onEntityClick, companyN
           {/* Evidence cards */}
           <div className="p-3 space-y-2">
             {displaySteps.map((step, i) => (
-              <EvidenceCard key={`${step.chain_id}-${step.step}-${i}`} step={step} onEntityClick={onEntityClick} />
+              <EvidenceCard key={`${step.chain_id}-${step.step}-${i}`} step={step} onEntityClick={onEntityClick} companyName={companyName} />
             ))}
           </div>
 
