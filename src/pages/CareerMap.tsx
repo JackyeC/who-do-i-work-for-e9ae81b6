@@ -20,6 +20,7 @@ import { CareerWrappedStep } from "@/components/career-discovery/CareerWrappedSt
 import {
   Upload, Anchor, Compass, Sparkles, Building2, BarChart3,
   GitBranch, ClipboardList, Users, ChevronRight, ArrowLeft, CheckCircle2, Trophy,
+  Activity,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 
