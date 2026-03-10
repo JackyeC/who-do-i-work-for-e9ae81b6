@@ -33,12 +33,15 @@ Deno.serve(async (req) => {
 
     console.log(`[warn-scan] Scanning: ${company_name}`);
 
-    // Focused search strategy: 3 high-value searches only to stay within timeout
+    // Focused search strategy: current + historical high-value searches
     const allResults: any[] = [];
+    const currentYear = new Date().getFullYear();
     
     const searches = [
+      `"${company_name}" layoffs ${currentYear}`,
+      `"${company_name}" WARN Act layoff notice ${currentYear}`,
       `"${company_name}" site:warntracker.com`,
-      `"${company_name}" WARN Act layoff notice`,
+      `"${company_name}" layoffs cuts jobs ${currentYear} site:reuters.com OR site:cnbc.com OR site:foxbusiness.com`,
       `"${company_name}" WARN notice mass layoff site:gov`,
     ];
 
