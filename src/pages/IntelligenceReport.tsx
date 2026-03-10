@@ -485,7 +485,13 @@ export default function IntelligenceReport() {
                       <div className="flex items-start justify-between gap-3">
                         <div>
                           <div className="flex items-center gap-2 mb-1">
-                            <span className="font-semibold text-foreground text-sm">{a.entity_name_snapshot}</span>
+                            {a.entity_id ? (
+                              <Link to={`/dossier/${a.entity_name_snapshot?.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/-+$/, "")}`} className="font-semibold text-primary hover:underline text-sm">
+                                {a.entity_name_snapshot}
+                              </Link>
+                            ) : (
+                              <span className="font-semibold text-foreground text-sm">{a.entity_name_snapshot}</span>
+                            )}
                             {a.alignment_theme && <Badge variant="secondary" className="text-[10px]">{a.alignment_theme}</Badge>}
                             {a.dirty_receipt_label && <Badge variant="destructive" className="text-[10px]">{a.dirty_receipt_label}</Badge>}
                           </div>

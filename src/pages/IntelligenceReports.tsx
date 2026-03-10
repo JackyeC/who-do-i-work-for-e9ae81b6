@@ -249,7 +249,14 @@ export default function IntelligenceReports() {
                                 </Badge>
                               </div>
                               <p className="text-sm font-medium text-foreground">
-                                {s.entity_name_snapshot && <span className="text-primary">{s.entity_name_snapshot}: </span>}
+                                {s.entity_name_snapshot && s.entity_id ? (
+                                  <Link to={`/dossier/${s.entity_name_snapshot.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/-+$/, "")}`} className="text-primary hover:underline font-semibold" onClick={(e) => e.stopPropagation()}>
+                                    {s.entity_name_snapshot}
+                                  </Link>
+                                ) : s.entity_name_snapshot ? (
+                                  <span className="text-primary">{s.entity_name_snapshot}</span>
+                                ) : null}
+                                {s.entity_name_snapshot && ": "}
                                 {s.description}
                               </p>
                               <div className="flex items-center gap-3 mt-2 text-xs text-muted-foreground">
