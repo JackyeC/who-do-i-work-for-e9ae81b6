@@ -196,6 +196,38 @@ export function PACDetailDrawer({ open, onOpenChange, companyId, companyName, to
                 </div>
               )}
 
+              {/* No individual recipients yet — show explanation */}
+              {(!candidates || candidates.length === 0) && partyBreakdown && partyBreakdown.length > 0 && (
+                <div className="p-4 rounded-lg bg-muted/30 border border-border/60">
+                  <h3 className="text-sm font-semibold text-foreground mb-2 flex items-center gap-2">
+                    <Flag className="w-4 h-4 text-muted-foreground" />
+                    Party-Level Breakdown
+                  </h3>
+                  <p className="text-xs text-muted-foreground mb-3">
+                    We know how {companyName}'s PAC money splits by party, but individual recipient names aren't yet available in our database. You can look them up directly on FEC.gov.
+                  </p>
+                  <div className="space-y-2 mb-3">
+                    {partyBreakdown.filter((p: any) => p.amount > 0).map((p: any) => (
+                      <div key={p.party} className="flex items-center justify-between p-2.5 rounded-lg bg-card border border-border/50">
+                        <div className="flex items-center gap-2">
+                          <div className="w-3 h-3 rounded-full" style={{ backgroundColor: p.color }} />
+                          <span className="text-sm font-medium text-foreground">{p.party}</span>
+                        </div>
+                        <span className="text-sm font-bold text-foreground">{formatCurrency(p.amount)}</span>
+                      </div>
+                    ))}
+                  </div>
+                  <a
+                    href={`https://www.fec.gov/data/disbursements/?data_type=processed&committee_id=&recipient_name=&two_year_transaction_period=2024&min_date=&max_date=&min_amount=&max_amount=&committee_name=${encodeURIComponent(companyName)}`}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="inline-flex items-center gap-1.5 text-xs text-primary hover:underline"
+                  >
+                    <ExternalLink className="w-3 h-3" /> Look up individual recipients on FEC.gov →
+                  </a>
+                </div>
+              )}
+
               {/* Top recipients */}
               {candidates && candidates.length > 0 && (
                 <div>
