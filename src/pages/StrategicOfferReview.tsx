@@ -21,6 +21,7 @@ import { CivicLegalAudit, type LegalFlag } from "@/components/strategic-offer/Ci
 import { EquityVisualizer } from "@/components/strategic-offer/EquityVisualizer";
 import { NegotiationBot } from "@/components/strategic-offer/NegotiationBot";
 import { ScamDetector } from "@/components/strategic-offer/ScamDetector";
+import { EmployerIntelligenceCard } from "@/components/strategic-offer/EmployerIntelligenceCard";
 import { OfferClarityDashboard, type OfferClarityReport } from "@/components/offer-clarity/OfferClarityDashboard";
 
 type InputMode = null | "manual" | "upload";
