@@ -288,7 +288,10 @@ export function WarnTrackerCard({ companyName, dbCompanyId }: { companyName: str
         {/* Attribution */}
         <div className="pt-2 border-t border-border">
           <p className="text-[10px] text-muted-foreground text-center">
-            Data from WARN filings, news reports & public records · Live tracking via{" "}
+            National WARN data via{" "}
+            <a href="https://github.com/biglocalnews/warn-transformer" target="_blank" rel="noopener noreferrer" className="text-primary hover:underline">
+              Big Local News
+            </a>{" "}·{" "}
             <a href="https://www.warntracker.com" target="_blank" rel="noopener noreferrer" className="text-primary hover:underline">
               WARN Tracker
             </a>{" "}·{" "}
