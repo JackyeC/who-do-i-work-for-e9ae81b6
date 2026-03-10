@@ -11,7 +11,7 @@ Deno.serve(async (req) => {
   }
 
   try {
-    const { company_id, company_name } = await req.json();
+    const { company_id, company_name, national = false } = await req.json();
     if (!company_id || !company_name) {
       return new Response(JSON.stringify({ error: "company_id and company_name required" }), {
         status: 400,
@@ -31,21 +31,34 @@ Deno.serve(async (req) => {
       });
     }
 
-    console.log(`[warn-scan] Scanning: ${company_name}`);
+    console.log(`[warn-scan] Scanning: ${company_name} (national: ${national})`);
 
-    // Focused search strategy: current + historical high-value searches
     const allResults: any[] = [];
     const currentYear = new Date().getFullYear();
-    
-    const searches = [
-      `"${company_name}" layoffs ${currentYear}`,
-      `"${company_name}" WARN Act layoff notice ${currentYear}`,
-      `"${company_name}" site:warntracker.com`,
-      `"${company_name}" layoffs cuts jobs ${currentYear} site:reuters.com OR site:cnbc.com OR site:foxbusiness.com`,
-      `"${company_name}" WARN notice mass layoff site:gov`,
-    ];
 
-    const results = await Promise.allSettled(
+    // National multi-state search strategy
+    const searches = national
+      ? [
+          `"${company_name}" WARN Act layoff notice ${currentYear}`,
+          `"${company_name}" layoffs ${currentYear}`,
+          `"${company_name}" site:warntracker.com`,
+          `"${company_name}" layoffs cuts jobs ${currentYear} site:reuters.com OR site:cnbc.com OR site:foxbusiness.com`,
+          `"${company_name}" WARN notice mass layoff site:gov`,
+          `"${company_name}" layoffs site:layoffs.fyi`,
+          `"${company_name}" reduction in force RIF ${currentYear}`,
+          `"${company_name}" 8-K "Item 2.05" workforce reduction`,
+          `"${company_name}" WARN California layoff ${currentYear}`,
+          `"${company_name}" WARN Texas New York layoff ${currentYear}`,
+        ]
+      : [
+          `"${company_name}" layoffs ${currentYear}`,
+          `"${company_name}" WARN Act layoff notice ${currentYear}`,
+          `"${company_name}" site:warntracker.com`,
+          `"${company_name}" layoffs cuts jobs ${currentYear} site:reuters.com OR site:cnbc.com OR site:foxbusiness.com`,
+          `"${company_name}" WARN notice mass layoff site:gov`,
+        ];
+
+    await Promise.allSettled(
       searches.map((query) =>
         fetchFirecrawl(firecrawlKey, { query, limit: 10, scrapeOptions: { formats: ["markdown"] } })
           .then((data) => { if (data?.data) allResults.push(...data.data); })
@@ -70,7 +83,6 @@ Deno.serve(async (req) => {
       return true;
     });
 
-    // Use Gemini to extract structured WARN notice data
     const combinedText = uniqueResults
       .map((r) => `URL: ${r.url}\nTitle: ${r.title || ""}\n${(r.markdown || r.description || "").slice(0, 2000)}`)
       .join("\n---\n")
@@ -82,6 +94,10 @@ Deno.serve(async (req) => {
         status: 500, headers: { ...corsHeaders, "Content-Type": "application/json" },
       });
     }
+
+    const nationalPrompt = national
+      ? `This is a NATIONAL scan. Extract WARN notices from ALL US states and locations. Include every distinct location/state filing separately. Also look for SEC 8-K Item 2.05 filings indicating workforce reductions.`
+      : ``;
 
     const geminiRes = await fetch("https://ai.gateway.lovable.dev/v1/chat/completions", {
       method: "POST",
@@ -98,20 +114,24 @@ Deno.serve(async (req) => {
           },
           {
             role: "user",
-            content: `Extract layoff and WARN Act notices for "${company_name}" from the following search results. Include:
-- Official WARN Act filings
+            content: `Extract layoff and WARN Act notices for "${company_name}" from the following search results. ${nationalPrompt}
+
+Include:
+- Official WARN Act filings from ALL states
 - Announced layoffs from news sources (Reuters, CNBC, Fox Business, etc.)
+- SEC 8-K Item 2.05 workforce reduction disclosures
 - Subsidiary and acquired company notices
 
 Return ONLY a JSON array. Each notice:
 - notice_date (YYYY-MM-DD, use announcement date if filing date unknown)
 - effective_date (YYYY-MM-DD or null)
 - employees_affected (integer, use best estimate from reporting)
-- layoff_type ("layoff", "closure", "relocation", "mass_layoff", "temporary")
+- layoff_type ("layoff", "closure", "relocation", "mass_layoff", "temporary", "rif")
 - location_city (string or null)
 - location_state (US state abbreviation or null)
 - reason (brief description, e.g. "AI restructuring", "cost cuts", "demand decline")
 - source_url (URL where found)
+- is_8k_filing (boolean, true if sourced from SEC 8-K Item 2.05)
 
 Prioritize ${currentYear} data. Be strict about matching "${company_name}" or known subsidiaries. Return [] if none found.
 
@@ -133,7 +153,6 @@ ${combinedText}`,
 
     const geminiData = await geminiRes.json();
     let responseText = geminiData.choices?.[0]?.message?.content || "[]";
-    // Strip markdown code fences if present
     responseText = responseText.replace(/^```(?:json)?\s*/i, "").replace(/\s*```$/i, "").trim();
 
     let notices: any[];
@@ -149,6 +168,8 @@ ${combinedText}`,
 
     // Insert notices, avoiding duplicates
     let inserted = 0;
+    const stateBreakdown: Record<string, number> = {};
+
     for (const notice of notices) {
       if (!notice.notice_date || !notice.employees_affected) continue;
 
@@ -162,6 +183,11 @@ ${combinedText}`,
 
       if (existing && existing.length > 0) continue;
 
+      const state = notice.location_state || "Unknown";
+      const reason = notice.is_8k_filing
+        ? `[SEC 8-K] ${notice.reason || "Workforce reduction"}`
+        : notice.reason || null;
+
       const { error } = await supabase.from("company_warn_notices").insert({
         company_id,
         notice_date: notice.notice_date,
@@ -170,26 +196,30 @@ ${combinedText}`,
         layoff_type: notice.layoff_type || "layoff",
         location_city: notice.location_city || null,
         location_state: notice.location_state || null,
-        reason: notice.reason || null,
+        reason,
         source_url: notice.source_url || null,
         source_state: notice.location_state || null,
-        confidence: "direct",
+        confidence: notice.is_8k_filing ? "direct" : "direct",
       });
 
       if (error) {
         console.error("[warn-scan] Insert error:", error);
       } else {
         inserted++;
+        stateBreakdown[state] = (stateBreakdown[state] || 0) + (parseInt(notice.employees_affected) || 0);
       }
     }
 
     // Log to signal scans
     if (inserted > 0) {
+      const stateCount = Object.keys(stateBreakdown).length;
+      const totalAffected = notices.reduce((s: number, n: any) => s + (parseInt(n.employees_affected) || 0), 0);
+      
       await supabase.from("company_signal_scans").insert({
         company_id,
         signal_category: "warn_layoffs",
-        signal_type: `${inserted} WARN Act notice(s) detected`,
-        signal_value: `${notices.reduce((s: number, n: any) => s + (parseInt(n.employees_affected) || 0), 0)} employees affected`,
+        signal_type: `${inserted} WARN/RIF notice(s) detected across ${stateCount} state(s)`,
+        signal_value: `${totalAffected.toLocaleString()} employees affected | States: ${Object.keys(stateBreakdown).join(", ")}`,
         confidence_level: "direct",
         source_url: notices[0]?.source_url || "https://www.warntracker.com",
       });
@@ -198,7 +228,7 @@ ${combinedText}`,
     console.log(`[warn-scan] Done: ${inserted} inserted for ${company_name}`);
 
     return new Response(
-      JSON.stringify({ success: true, notices: inserted }),
+      JSON.stringify({ success: true, notices: inserted, stateBreakdown }),
       { headers: { ...corsHeaders, "Content-Type": "application/json" } }
     );
   } catch (error) {
