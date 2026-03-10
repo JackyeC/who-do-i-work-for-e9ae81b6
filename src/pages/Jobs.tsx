@@ -290,10 +290,8 @@ export default function Jobs() {
   };
 
   return (
-    <div className="min-h-screen bg-background flex flex-col">
-      <Header />
+    <div className="flex flex-col flex-1">
       <div className="flex flex-1">
-        <JobSidebar />
 
         <main className="flex-1 min-w-0 px-4 sm:px-6 py-5">
           {/* Header */}
