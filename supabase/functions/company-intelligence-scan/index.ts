@@ -195,7 +195,7 @@ Deno.serve(async (req) => {
 
       try {
         const controller = new AbortController();
-        const timeoutId = setTimeout(() => controller.abort(), 90_000);
+        const timeoutId = setTimeout(() => controller.abort(), 30_000);
 
         const moduleResp = await fetch(`${supabaseUrl}/functions/v1/${mod.fn}`, {
           method: 'POST',
