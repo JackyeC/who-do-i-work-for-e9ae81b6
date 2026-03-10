@@ -495,10 +495,11 @@ export function InfluenceChainCard({ companyId, companyName }: { companyId: stri
             <span className="text-xs font-semibold text-foreground">Who gets the money? (by political party)</span>
             <div className="flex h-3 rounded-full overflow-hidden my-2">
               {recipientMix.map((mix, i) => (
-                <div
+                <Link
                   key={i}
+                  to={`/values-search?issue=${mix.label === "R" ? "conservative_alignment" : mix.label === "D" ? "progressive_alignment" : "bipartisan"}`}
                   className={cn(
-                    "h-full transition-all",
+                    "h-full transition-all hover:opacity-80",
                     mix.label === "R" ? "bg-[hsl(0,65%,50%)]" :
                     mix.label === "D" ? "bg-[hsl(218,55%,48%)]" :
                     "bg-muted-foreground/30"
@@ -509,7 +510,11 @@ export function InfluenceChainCard({ companyId, companyName }: { companyId: stri
             </div>
             <div className="flex items-center gap-3">
               {recipientMix.map((mix, i) => (
-                <span key={i} className="flex items-center gap-1 text-[10px] text-muted-foreground">
+                <Link
+                  key={i}
+                  to={`/values-search?issue=${mix.label === "R" ? "conservative_alignment" : mix.label === "D" ? "progressive_alignment" : "bipartisan"}`}
+                  className="flex items-center gap-1 text-[10px] text-muted-foreground hover:text-foreground transition-colors"
+                >
                   <span className={cn(
                     "w-2 h-2 rounded-full inline-block",
                     mix.label === "R" ? "bg-[hsl(0,65%,50%)]" :
@@ -517,7 +522,7 @@ export function InfluenceChainCard({ companyId, companyName }: { companyId: stri
                     "bg-muted-foreground/30"
                   )} />
                   {mix.percentage}% {mix.label === "R" ? "Republican" : mix.label === "D" ? "Democrat" : mix.label}
-                </span>
+                </Link>
               ))}
             </div>
           </div>
