@@ -57,6 +57,7 @@ import { LobbyingDetailDrawer } from "@/components/LobbyingDetailDrawer";
 import { PACDetailDrawer } from "@/components/PACDetailDrawer";
 import { ContractsDetailDrawer } from "@/components/ContractsDetailDrawer";
 import { WarnTrackerCard } from "@/components/WarnTrackerCard";
+import { SurvivorAlertCard } from "@/components/SurvivorAlertCard";
 import { PromotionEquityCard } from "@/components/PromotionEquityCard";
 import { RelatedReportsCard } from "@/components/RelatedReportsCard";
 import { MonitoringStatusCard } from "@/components/MonitoringStatusCard";
