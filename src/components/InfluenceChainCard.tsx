@@ -185,6 +185,29 @@ function getPoliticianDetail(name: string, party: string | null, location: strin
   return { committees, issues: [...new Set(allIssues)] };
 }
 
+/* ── Build external links for entities ── */
+function getEntityLink(name: string, type: string): string | null {
+  const cleanName = cleanEntityName(name);
+  switch (type) {
+    case "pac":
+    case "super_pac":
+      return `https://www.fec.gov/data/committee/?q=${encodeURIComponent(cleanName)}`;
+    case "politician":
+    case "member":
+      return `https://www.fec.gov/data/candidates/?search=${encodeURIComponent(cleanName)}`;
+    case "committee":
+      return `https://www.congress.gov/search?q=${encodeURIComponent(cleanName)}&searchResultViewType=expanded`;
+    case "agency":
+      return `https://www.usaspending.gov/search/?hash=keyword-${encodeURIComponent(cleanName)}`;
+    case "contract":
+      return `https://www.usaspending.gov/search/?hash=keyword-${encodeURIComponent(cleanName)}`;
+    case "lobbyist":
+      return `https://lda.senate.gov/filings/public/filing/search/?search=${encodeURIComponent(cleanName)}`;
+    default:
+      return null;
+  }
+}
+
 function EntityNode({
   name, type, party, location, committees, issues,
 }: {
@@ -200,51 +223,64 @@ function EntityNode({
   const showParty = type !== "company" && type !== "agency" && type !== "contract";
   const isPolitician = type === "politician" || type === "member";
   const partyName = party ? PARTY_FULL_NAMES[party] || party : null;
-
   const displayName = cleanEntityName(name);
+  const externalLink = getEntityLink(name, type);
 
-  return (
-    <Tooltip>
-      <TooltipTrigger asChild>
-        <div className={cn("px-3 py-2 rounded-lg border text-sm font-medium max-w-[280px] cursor-default", style)}>
-          <div className="flex items-center gap-1.5">
-            {isPolitician && <User className="w-3.5 h-3.5 shrink-0" />}
-            <span className="truncate">{displayName}</span>
-            {showParty && <PartyBadge party={party} entityType={type} />}
-            {location && <span className="text-[9px] text-muted-foreground shrink-0">{location}</span>}
-          </div>
-          {/* Inline politician detail */}
-          {isPolitician && (partyName || (committees && committees.length > 0)) && (
-            <div className="mt-1.5 pt-1.5 border-t border-current/10 space-y-1">
-              {partyName && (
-                <p className="text-[10px] opacity-80">{partyName}{location ? ` — ${location}` : ""}</p>
-              )}
-              {committees && committees.length > 0 && (
-                <p className="text-[10px] opacity-70">
-                  Sits on: {committees.join(", ")}
-                </p>
-              )}
-              {issues && issues.length > 0 && (
-                <div className="flex flex-wrap gap-1 mt-0.5">
-                  {issues.slice(0, 4).map((issue) => (
-                    <span key={issue} className="text-[9px] px-1.5 py-0 rounded-full bg-background/50 border border-current/10">
-                      {issue}
-                    </span>
-                  ))}
-                  {issues.length > 4 && (
-                    <span className="text-[9px] text-muted-foreground">+{issues.length - 4} more</span>
-                  )}
-                </div>
+  const content = (
+    <div className={cn(
+      "px-3 py-2 rounded-lg border text-sm font-medium max-w-[280px] transition-all",
+      style,
+      externalLink ? "cursor-pointer hover:shadow-md hover:scale-[1.02] group" : "cursor-default"
+    )}>
+      <div className="flex items-center gap-1.5">
+        {isPolitician && <User className="w-3.5 h-3.5 shrink-0" />}
+        <span className="truncate">{displayName}</span>
+        {showParty && <PartyBadge party={party} entityType={type} />}
+        {location && <span className="text-[9px] text-muted-foreground shrink-0">{location}</span>}
+        {externalLink && <ExternalLink className="w-3 h-3 shrink-0 opacity-0 group-hover:opacity-100 transition-opacity" />}
+      </div>
+      {/* Inline politician detail */}
+      {isPolitician && (partyName || (committees && committees.length > 0)) && (
+        <div className="mt-1.5 pt-1.5 border-t border-current/10 space-y-1">
+          {partyName && (
+            <p className="text-[10px] opacity-80">{partyName}{location ? ` — ${location}` : ""}</p>
+          )}
+          {committees && committees.length > 0 && (
+            <p className="text-[10px] opacity-70">
+              Sits on: {committees.join(", ")}
+            </p>
+          )}
+          {issues && issues.length > 0 && (
+            <div className="flex flex-wrap gap-1 mt-0.5">
+              {issues.slice(0, 4).map((issue) => (
+                <Link
+                  key={issue}
+                  to={`/values-search?issue=${encodeURIComponent(issue.toLowerCase().replace(/\s+/g, '_'))}`}
+                  className="text-[9px] px-1.5 py-0 rounded-full bg-background/50 border border-current/10 hover:bg-primary/10 hover:border-primary/30 transition-colors"
+                  onClick={(e) => e.stopPropagation()}
+                >
+                  {issue}
+                </Link>
+              ))}
+              {issues.length > 4 && (
+                <span className="text-[9px] text-muted-foreground">+{issues.length - 4} more</span>
               )}
             </div>
           )}
         </div>
-      </TooltipTrigger>
-      <TooltipContent side="top" className="text-xs max-w-xs">
-        <p className="font-medium">{plainType}</p>
-      </TooltipContent>
-    </Tooltip>
+      )}
+    </div>
   );
+
+  if (externalLink) {
+    return (
+      <a href={externalLink} target="_blank" rel="noopener noreferrer" title={`View ${displayName} on ${type === "committee" ? "Congress.gov" : type === "agency" || type === "contract" ? "USASpending.gov" : "FEC.gov"}`}>
+        {content}
+      </a>
+    );
+  }
+
+  return content;
 }
 
 function ChainRow({ step, chain }: { step: ChainStep; chain: ChainStep[] }) {
