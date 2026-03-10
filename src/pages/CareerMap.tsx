@@ -8,6 +8,7 @@ import { CareerAnchorsStep } from "@/components/career-discovery/CareerAnchorsSt
 import { TargetDestinationStep } from "@/components/career-discovery/TargetDestinationStep";
 import { AICareerDiscoveryStep } from "@/components/career-discovery/AICareerDiscoveryStep";
 import { AICompanyDiscoveryStep } from "@/components/career-discovery/AICompanyDiscoveryStep";
+import { EconomicIntelligenceStep } from "@/components/career-discovery/EconomicIntelligenceStep";
 import { SkillGapStep } from "@/components/career-discovery/SkillGapStep";
 import { MultipleFuturesStep } from "@/components/career-discovery/MultipleFuturesStep";
 import { ActionPlanStep } from "@/components/career-discovery/ActionPlanStep";
