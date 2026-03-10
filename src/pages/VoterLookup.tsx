@@ -179,42 +179,46 @@ export default function VoterLookup() {
                           </div>
 
                           <div className="space-y-2">
-                            <h4 className="text-xs font-medium text-muted-foreground uppercase tracking-wider">Companies That Funded This Representative</h4>
-                            {rep.corporateFunders.map((funder, j) => (
-                              <Link
-                                key={j}
-                                to={`/company/${funder.companySlug}`}
-                                className="flex items-center justify-between p-3 rounded-lg border border-border hover:border-primary/30 hover:bg-primary/5 transition-colors group"
-                              >
-                                <div className="flex items-center gap-3">
-                                  <div className="w-8 h-8 rounded-lg bg-muted flex items-center justify-center">
-                                    <Building2 className="w-4 h-4 text-muted-foreground" />
+                            <h4 className="text-xs font-medium text-muted-foreground uppercase tracking-wider">Top Funders</h4>
+                            {rep.corporateFunders.map((funder, j) => {
+                              const hasProfile = funder.companySlug;
+                              const Wrapper = hasProfile ? Link : 'div';
+                              const wrapperProps = hasProfile
+                                ? { to: `/company/${funder.companySlug}`, className: "flex items-center justify-between p-3 rounded-lg border border-border hover:border-primary/30 hover:bg-primary/5 transition-colors group" }
+                                : { className: "flex items-center justify-between p-3 rounded-lg border border-border" };
+                              return (
+                                <Wrapper key={j} {...(wrapperProps as any)}>
+                                  <div className="flex items-center gap-3">
+                                    <div className="w-8 h-8 rounded-lg bg-muted flex items-center justify-center">
+                                      <Building2 className="w-4 h-4 text-muted-foreground" />
+                                    </div>
+                                    <div>
+                                      <div className="flex items-center gap-2">
+                                        <span className={`font-medium ${hasProfile ? 'text-foreground group-hover:text-primary transition-colors' : 'text-foreground'}`}>{funder.companyName}</span>
+                                        {hasProfile && <ExternalLink className="w-3 h-3 text-muted-foreground opacity-0 group-hover:opacity-100 transition-opacity" />}
+                                      </div>
+                                      <div className="flex items-center gap-2 text-xs text-muted-foreground">
+                                        {funder.industry && <><span>{funder.industry}</span><span>•</span></>}
+                                        {funder.companyScore != null && <><span>Score: {funder.companyScore}/100</span><span>•</span></>}
+                                        <span className="capitalize">{(funder.donationType || 'pac').replace(/[-_]/g, ' ')}</span>
+                                        {(funder as any).source === 'fec' && (
+                                          <Badge variant="outline" className="text-[10px] px-1.5 py-0 ml-1 border-primary/20 text-primary/70">FEC</Badge>
+                                        )}
+                                      </div>
+                                    </div>
                                   </div>
-                                  <div>
-                                    <div className="flex items-center gap-2">
-                                      <span className="font-medium text-foreground group-hover:text-primary transition-colors">{funder.companyName}</span>
-                                      <ExternalLink className="w-3 h-3 text-muted-foreground opacity-0 group-hover:opacity-100 transition-opacity" />
-                                    </div>
-                                    <div className="flex items-center gap-2 text-xs text-muted-foreground">
-                                      <span>{funder.industry}</span>
-                                      <span>•</span>
-                                      <span>Score: {funder.companyScore}/100</span>
-                                      <span>•</span>
-                                      <span className="capitalize">{funder.donationType.replace('-', ' ')}</span>
-                                    </div>
+                                  <div className="text-right shrink-0">
+                                    <span className="font-semibold text-foreground">{formatCurrency(funder.amount)}</span>
+                                    {funder.flagged && (
+                                      <div className="flex items-center gap-1 text-xs text-destructive mt-0.5">
+                                        <Flag className="w-3 h-3" />
+                                        {funder.flagReason || "Flagged"}
+                                      </div>
+                                    )}
                                   </div>
-                                </div>
-                                <div className="text-right shrink-0">
-                                  <span className="font-semibold text-foreground">{formatCurrency(funder.amount)}</span>
-                                  {funder.flagged && (
-                                    <div className="flex items-center gap-1 text-xs text-destructive mt-0.5">
-                                      <Flag className="w-3 h-3" />
-                                      {funder.flagReason || "Flagged"}
-                                    </div>
-                                  )}
-                                </div>
-                              </Link>
-                            ))}
+                                </Wrapper>
+                              );
+                            })}
                           </div>
                         </>
                       ) : (
