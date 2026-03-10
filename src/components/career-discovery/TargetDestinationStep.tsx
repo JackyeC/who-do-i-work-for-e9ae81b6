@@ -39,15 +39,13 @@ export function TargetDestinationStep({ profileData, onComplete }: Props) {
     try {
       const { data, error } = await supabase.functions.invoke("career-discovery", {
         body: {
-          step: "suggest-roles",
+          type: "suggest_roles",
           profile: {
-            currentRole: profileData?.jobTitle || "Professional",
-            experience: profileData?.yearsExperience || "5",
+            jobTitle: profileData?.jobTitle || "Professional",
+            yearsExperience: profileData?.yearsExperience || "5",
             industries: profileData?.industries || [],
-            skills: [
-              ...(profileData?.technicalSkills || []),
-              ...(profileData?.softSkills || []),
-            ],
+            technicalSkills: profileData?.technicalSkills || [],
+            softSkills: profileData?.softSkills || [],
             values: profileData?.values || [],
           },
         },
