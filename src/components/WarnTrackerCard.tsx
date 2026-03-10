@@ -49,9 +49,16 @@ export function WarnTrackerCard({ companyName, dbCompanyId }: { companyName: str
   const handleScan = async (national = false) => {
     setIsScanning(true);
     try {
-      await supabase.functions.invoke("warn-scan", {
-        body: { company_id: dbCompanyId, company_name: companyName, national },
-      });
+      if (national) {
+        // Use the Big Local News national WARN dataset
+        await supabase.functions.invoke("warn-national-sync", {
+          body: { company_id: dbCompanyId, company_name: companyName, days_back: 365 },
+        });
+      } else {
+        await supabase.functions.invoke("warn-scan", {
+          body: { company_id: dbCompanyId, company_name: companyName, national },
+        });
+      }
       setTimeout(() => refetch(), 3000);
     } catch (e) {
       console.error("WARN scan error:", e);
