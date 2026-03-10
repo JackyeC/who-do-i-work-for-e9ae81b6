@@ -6,7 +6,7 @@ import {
   Briefcase, FileCheck, Map, Heart, Leaf, Users, Scale,
   Stethoscope, ShieldAlert, GraduationCap, Globe2, ShoppingCart,
   FileText, BarChart3, Eye, Landmark, Network, Home, Target,
-  Megaphone, UserCheck, ToggleLeft, ToggleRight,
+  Megaphone, UserCheck,
 } from "lucide-react";
 import { useAuth } from "@/contexts/AuthContext";
 import { Button } from "@/components/ui/button";
@@ -14,27 +14,7 @@ import { Input } from "@/components/ui/input";
 import { cn } from "@/lib/utils";
 
 /* ------------------------------------------------------------------ */
-/*  Recruiter mode state (persisted in localStorage)                   */
-/* ------------------------------------------------------------------ */
-
-function useRecruiterMode() {
-  const [isRecruiter, setIsRecruiter] = useState(() => {
-    try { return localStorage.getItem("recruiter_mode") === "true"; }
-    catch { return false; }
-  });
-
-  const toggle = () => {
-    const next = !isRecruiter;
-    setIsRecruiter(next);
-    try { localStorage.setItem("recruiter_mode", String(next)); }
-    catch { /* ignore */ }
-  };
-
-  return { isRecruiter, toggle };
-}
-
-/* ------------------------------------------------------------------ */
-/*  Dropdown data — Candidate mode                                     */
+/*  Dropdown data — unified nav                                        */
 /* ------------------------------------------------------------------ */
 
 const EXPLORE_ITEMS = [
@@ -57,6 +37,7 @@ const CAREER_SECTIONS = [
     heading: "Career Direction",
     items: [
       { to: "/career-map", label: "Career Path Explorer", icon: Map, desc: "Map where your career could go" },
+      { to: "/jobs", label: "Job Board", icon: Briefcase, desc: "Browse aligned jobs" },
     ],
   },
 ];
@@ -76,32 +57,18 @@ const EMPLOYER_SIGNAL_ISSUES = [
 ];
 
 const INTELLIGENCE_ITEMS = [
-  { to: "/intelligence", label: "Evidence Receipts", icon: FileText },
-  { to: "/intelligence?type=policy_alert", label: "Policy Signal Reports", icon: BarChart3 },
-  { to: "/intelligence?type=weekly_brief", label: "Employer Signals This Week", icon: Eye },
-  { to: "/intelligence?type=legislative_watch", label: "Legislation Watch", icon: Landmark },
-  { to: "/check?tab=candidate", label: "Policy Influence Map", icon: Network },
+  { to: "/intelligence", label: "Evidence Receipts", icon: FileText, desc: "Structured investigative reports" },
+  { to: "/intelligence?type=policy_alert", label: "Policy Signal Reports", icon: BarChart3, desc: "Policy shifts and corporate actions" },
+  { to: "/intelligence?type=weekly_brief", label: "Employer Signals This Week", icon: Eye, desc: "Latest detected employer signals" },
+  { to: "/intelligence?type=legislative_watch", label: "Legislation Watch", icon: Landmark, desc: "Bills connected to corporate lobbying" },
+  { to: "/check?tab=candidate", label: "Policy Influence Map", icon: Network, desc: "Trace influence from money to policy" },
 ];
 
-/* ------------------------------------------------------------------ */
-/*  Dropdown data — Recruiter mode                                     */
-/* ------------------------------------------------------------------ */
-
-const RECRUITER_AUDIT_ITEMS = [
+const TALENT_INTEL_ITEMS = [
   { to: "/recruiting?tab=evp", label: "EVP Audit", icon: Megaphone, desc: "Audit employer value proposition against public signals" },
-  { to: "/recruiting?tab=insights", label: "Market Signals", icon: BarChart3, desc: "WARN notices, layoffs, and industry trends" },
-  { to: "/search", label: "Company Lookup", icon: Search, desc: "Search any employer for integrity signals" },
-];
-
-const RECRUITER_STUDIO_ITEMS = [
-  { to: "/recruiting?tab=response-studio", label: "Response Studio", icon: FileText, desc: "Generate evidence-based talking points for candidates" },
-  { to: "/recruiting?tab=evp", label: "Generate EVP Report", icon: Megaphone, desc: "Create trust reports backed by public records" },
-];
-
-const RECRUITER_ANALYTICS_ITEMS = [
-  { to: "/recruiting?tab=personas", label: "Candidate Personas", icon: Users, desc: "Define talent motivations and alignment profiles" },
-  { to: "/recruiting?tab=insights", label: "Talent Dashboard", icon: Target, desc: "Workforce stability and employer reputation signals" },
-  { to: "/intelligence", label: "Intelligence Feed", icon: Eye, desc: "Latest employer reality signals" },
+  { to: "/recruiting?tab=response-studio", label: "Response Studio", icon: FileText, desc: "Generate evidence-based talking points" },
+  { to: "/recruiting?tab=personas", label: "Candidate Personas", icon: Users, desc: "Define talent motivations and profiles" },
+  { to: "/recruiting?tab=insights", label: "Talent Dashboard", icon: Target, desc: "Workforce stability and employer signals" },
 ];
 
 /* ------------------------------------------------------------------ */
@@ -187,7 +154,6 @@ function DropDivider() {
 
 export function Header() {
   const { user } = useAuth();
-  const { isRecruiter, toggle: toggleMode } = useRecruiterMode();
   const [mobileOpen, setMobileOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
   const location = useLocation();
@@ -225,7 +191,7 @@ export function Header() {
               Who Do I Work For?
             </span>
             <span className="text-[7px] text-civic-gold tracking-[0.18em] uppercase font-semibold mt-0.5">
-              {isRecruiter ? "Recruiter Intelligence Edition" : "Talent Intelligence by Jackye Clayton"}
+              Talent Intelligence by Jackye Clayton
             </span>
           </div>
         </Link>
@@ -244,89 +210,52 @@ export function Header() {
             Home
           </Link>
 
-          {isRecruiter ? (
-            <>
-              {/* Recruiter: EVP Audit */}
-              <NavDropdown label="EVP Audit" icon={Megaphone} active={isActive(["/recruiting"])}>
-                {RECRUITER_AUDIT_ITEMS.map((item) => (
+          {/* Explore */}
+          <NavDropdown label="Explore" icon={Search} active={isActive(["/search", "/add-company", "/browse", "/examples", "/search-your-employer"])}>
+            {EXPLORE_ITEMS.map((item) => (
+              <DropItem key={item.to} {...item} />
+            ))}
+          </NavDropdown>
+
+          {/* Career */}
+          <NavDropdown label="Career" icon={Briefcase} active={isActive(["/check", "/career-map", "/jobs"])}>
+            {CAREER_SECTIONS.map((section, i) => (
+              <div key={section.heading}>
+                {i > 0 && <DropDivider />}
+                <DropHeading>{section.heading}</DropHeading>
+                {section.items.map((item) => (
                   <DropItem key={item.to} {...item} />
                 ))}
-              </NavDropdown>
+              </div>
+            ))}
+          </NavDropdown>
 
-              {/* Recruiter: Response Studio */}
-              <NavDropdown label="Response Studio" icon={FileText} active={isActive(["/recruiting?tab=response-studio"])}>
-                {RECRUITER_STUDIO_ITEMS.map((item) => (
-                  <DropItem key={item.to} {...item} />
-                ))}
-              </NavDropdown>
+          {/* Employer Signals */}
+          <NavDropdown label="Employer Signals" icon={Heart} active={isActive(["/values-search"])}>
+            <DropItem to="/values-search" label="Employer Signal Search" icon={Heart} desc="Explore employers by signal categories" />
+            <DropDivider />
+            <DropHeading>Signal Categories</DropHeading>
+            <div className="grid grid-cols-2 gap-0.5">
+              {EMPLOYER_SIGNAL_ISSUES.map((item) => (
+                <DropItem key={item.to} {...item} />
+              ))}
+            </div>
+          </NavDropdown>
 
-              {/* Recruiter: Talent Dashboard */}
-              <NavDropdown label="Talent Dashboard" icon={Target} active={isActive(["/recruiting?tab=insights"])}>
-                {RECRUITER_ANALYTICS_ITEMS.map((item) => (
-                  <DropItem key={item.to} {...item} />
-                ))}
-              </NavDropdown>
+          {/* Intelligence */}
+          <NavDropdown label="Intelligence" icon={FileText} active={isActive(["/intelligence"])}>
+            <DropHeading>Reports & Signals</DropHeading>
+            {INTELLIGENCE_ITEMS.map((item) => (
+              <DropItem key={item.to} {...item} />
+            ))}
+            <DropDivider />
+            <DropHeading>Talent Intelligence</DropHeading>
+            {TALENT_INTEL_ITEMS.map((item) => (
+              <DropItem key={item.to} {...item} />
+            ))}
+          </NavDropdown>
 
-              {/* Employer Signals (available in both modes) */}
-              <NavDropdown label="Employer Signals" icon={Heart} active={isActive(["/values-search"])}>
-                <DropItem to="/values-search" label="Employer Signal Search" icon={Heart} desc="Explore employers by signal categories" />
-                <DropDivider />
-                <DropHeading>Signal Categories</DropHeading>
-                <div className="grid grid-cols-2 gap-0.5">
-                  {EMPLOYER_SIGNAL_ISSUES.map((item) => (
-                    <DropItem key={item.to} {...item} />
-                  ))}
-                </div>
-              </NavDropdown>
-            </>
-          ) : (
-            <>
-              {/* Candidate: Explore */}
-              <NavDropdown label="Explore" icon={Search} active={isActive(["/search", "/add-company", "/browse", "/examples", "/search-your-employer"])}>
-                {EXPLORE_ITEMS.map((item) => (
-                  <DropItem key={item.to} {...item} />
-                ))}
-              </NavDropdown>
-
-              {/* Candidate: Career */}
-              <NavDropdown label="Career" icon={Briefcase} active={isActive(["/check", "/career-map", "/jobs"])}>
-                {CAREER_SECTIONS.map((section, i) => (
-                  <div key={section.heading}>
-                    {i > 0 && <DropDivider />}
-                    <DropHeading>{section.heading}</DropHeading>
-                    {section.items.map((item) => (
-                      <DropItem key={item.to} {...item} />
-                    ))}
-                  </div>
-                ))}
-                <DropDivider />
-                <DropItem to="/jobs" label="Job Board" icon={Briefcase} desc="Browse aligned jobs" />
-              </NavDropdown>
-
-              {/* Candidate: Employer Signals */}
-              <NavDropdown label="Employer Signals" icon={Heart} active={isActive(["/values-search"])}>
-                <DropItem to="/values-search" label="Employer Signal Search" icon={Heart} desc="Explore employers by signal categories" />
-                <DropDivider />
-                <DropHeading>Signal Categories</DropHeading>
-                <div className="grid grid-cols-2 gap-0.5">
-                  {EMPLOYER_SIGNAL_ISSUES.map((item) => (
-                    <DropItem key={item.to} {...item} />
-                  ))}
-                </div>
-              </NavDropdown>
-
-              {/* Candidate: Intelligence */}
-              <NavDropdown label="Intelligence" icon={FileText} active={isActive(["/intelligence"])}>
-                {INTELLIGENCE_ITEMS.map((item) => (
-                  <DropItem key={item.to} {...item} />
-                ))}
-                <DropDivider />
-                <DropItem to="/recruiting" label="Talent Intelligence" icon={Target} desc="Recruiting & talent alignment insights" />
-              </NavDropdown>
-            </>
-          )}
-
-          {/* Dashboard (both modes) */}
+          {/* Dashboard */}
           {user && (
             <Link
               to="/dashboard"
@@ -341,26 +270,8 @@ export function Header() {
           )}
         </nav>
 
-        {/* ── Right side: mode toggle + search + auth ── */}
+        {/* ── Right side: search + auth ── */}
         <div className="hidden lg:flex items-center gap-2 shrink-0">
-          {/* Mode toggle */}
-          <button
-            onClick={toggleMode}
-            className={cn(
-              "flex items-center gap-1.5 text-xs font-semibold px-3 py-1.5 rounded-lg border transition-all duration-200",
-              isRecruiter
-                ? "bg-primary/10 border-primary/30 text-primary hover:bg-primary/20"
-                : "bg-muted/50 border-border/40 text-muted-foreground hover:text-foreground hover:bg-accent/50"
-            )}
-            title={isRecruiter ? "Switch to Candidate view" : "Switch to Recruiter view"}
-          >
-            {isRecruiter ? (
-              <><ToggleRight className="w-3.5 h-3.5" /> Recruiter</>
-            ) : (
-              <><ToggleLeft className="w-3.5 h-3.5" /> Candidate</>
-            )}
-          </button>
-
           <form onSubmit={handleSearch} className="relative">
             <Search className="absolute left-2.5 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-muted-foreground pointer-events-none" />
             <Input
@@ -392,23 +303,6 @@ export function Header() {
       {/* ── Mobile nav ── */}
       {mobileOpen && (
         <div className="lg:hidden border-t border-border/40 bg-card px-4 py-4 max-h-[80vh] overflow-y-auto animate-fade-in space-y-4">
-          {/* Mobile mode toggle */}
-          <button
-            onClick={toggleMode}
-            className={cn(
-              "w-full flex items-center justify-center gap-2 text-sm font-semibold py-2.5 rounded-xl border transition-all",
-              isRecruiter
-                ? "bg-primary/10 border-primary/30 text-primary"
-                : "bg-muted/50 border-border/40 text-muted-foreground"
-            )}
-          >
-            {isRecruiter ? (
-              <><ToggleRight className="w-4 h-4" /> Recruiter Mode</>
-            ) : (
-              <><ToggleLeft className="w-4 h-4" /> Candidate Mode</>
-            )}
-          </button>
-
           {/* Mobile search */}
           <form onSubmit={(e) => { handleSearch(e); setMobileOpen(false); }}>
             <div className="relative">
@@ -419,51 +313,36 @@ export function Header() {
 
           <MobileLink to="/" label="Home" icon={Home} onClick={() => setMobileOpen(false)} active={location.pathname === "/"} />
 
-          {isRecruiter ? (
-            <>
-              <MobileSection title="EVP Audit">
-                {RECRUITER_AUDIT_ITEMS.map((item) => (
-                  <MobileLink key={item.to} {...item} onClick={() => setMobileOpen(false)} />
-                ))}
-              </MobileSection>
-              <MobileSection title="Response Studio">
-                {RECRUITER_STUDIO_ITEMS.map((item) => (
-                  <MobileLink key={item.to} {...item} onClick={() => setMobileOpen(false)} />
-                ))}
-              </MobileSection>
-              <MobileSection title="Talent Dashboard">
-                {RECRUITER_ANALYTICS_ITEMS.map((item) => (
-                  <MobileLink key={item.to} {...item} onClick={() => setMobileOpen(false)} />
-                ))}
-              </MobileSection>
-            </>
-          ) : (
-            <>
-              <MobileSection title="Explore">
-                {EXPLORE_ITEMS.map((item) => (
-                  <MobileLink key={item.to} {...item} onClick={() => setMobileOpen(false)} />
-                ))}
-              </MobileSection>
-              <MobileSection title="Career">
-                {CAREER_SECTIONS.map((section) =>
-                  section.items.map((item) => (
-                    <MobileLink key={item.to} to={item.to} label={item.label} icon={item.icon} onClick={() => setMobileOpen(false)} />
-                  ))
-                )}
-                <MobileLink to="/jobs" label="Job Board" icon={Briefcase} onClick={() => setMobileOpen(false)} />
-              </MobileSection>
-              <MobileSection title="Intelligence">
-                {INTELLIGENCE_ITEMS.map((item) => (
-                  <MobileLink key={item.to} {...item} onClick={() => setMobileOpen(false)} />
-                ))}
-              </MobileSection>
-            </>
-          )}
+          <MobileSection title="Explore">
+            {EXPLORE_ITEMS.map((item) => (
+              <MobileLink key={item.to} {...item} onClick={() => setMobileOpen(false)} />
+            ))}
+          </MobileSection>
+
+          <MobileSection title="Career">
+            {CAREER_SECTIONS.map((section) =>
+              section.items.map((item) => (
+                <MobileLink key={item.to} to={item.to} label={item.label} icon={item.icon} onClick={() => setMobileOpen(false)} />
+              ))
+            )}
+          </MobileSection>
 
           <MobileSection title="Employer Signals">
             <MobileLink to="/values-search" label="Employer Signal Search" icon={Heart} onClick={() => setMobileOpen(false)} />
             {EMPLOYER_SIGNAL_ISSUES.map((item) => (
               <MobileLink key={item.to} {...item} onClick={() => setMobileOpen(false)} />
+            ))}
+          </MobileSection>
+
+          <MobileSection title="Intelligence">
+            {INTELLIGENCE_ITEMS.map((item) => (
+              <MobileLink key={item.to} to={item.to} label={item.label} icon={item.icon} onClick={() => setMobileOpen(false)} />
+            ))}
+          </MobileSection>
+
+          <MobileSection title="Talent Intelligence">
+            {TALENT_INTEL_ITEMS.map((item) => (
+              <MobileLink key={item.to} to={item.to} label={item.label} icon={item.icon} onClick={() => setMobileOpen(false)} />
             ))}
           </MobileSection>
 
