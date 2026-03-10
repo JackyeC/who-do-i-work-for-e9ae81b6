@@ -598,6 +598,9 @@ export function InfluenceChainCard({ companyId, companyName, onExecutiveClick, o
           <p className="text-sm opacity-90 max-w-lg leading-relaxed">
             This view traces how a company connects to politics, policy, and government through donations, lobbying, contracts, and institutional relationships — all from public records.
           </p>
+          <p className="text-[11px] opacity-70 mt-2 font-medium tracking-wide">
+            Built from public filings, lobbying disclosures, campaign finance records, and federal contract data.
+          </p>
         </div>
       </div>
 
