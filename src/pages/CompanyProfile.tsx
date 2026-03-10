@@ -124,6 +124,9 @@ function DbLensModules({ activeLens, dbCompany, dbPartyBreakdown, dbCandidates, 
                       </button>
                     ))}
                   </div>
+                  <p className="text-center text-[11px] text-primary mt-2 cursor-pointer hover:underline" onClick={() => onPartyClick?.("")}>
+                    Click a party to see recipients · or tap here for full PAC detail →
+                  </p>
                 </CardContent>
               </Card>
             </ExplainableMetric>
@@ -986,6 +989,9 @@ export default function CompanyProfile() {
                   const filtered = dbCandidates?.filter(c => c.party === party);
                   if (filtered && filtered.length > 0) {
                     setPartyFilteredCandidates(filtered);
+                  } else {
+                    // No individual candidates — open the full PAC drawer instead
+                    setPacDrawerOpen(true);
                   }
                 }}
               />
