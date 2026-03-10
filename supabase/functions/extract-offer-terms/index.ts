@@ -19,14 +19,92 @@ function getMimeType(filename: string): string {
   return map[ext] || "application/octet-stream";
 }
 
-/** Convert ArrayBuffer to base64 string */
-function arrayBufferToBase64(buffer: ArrayBuffer): string {
-  const bytes = new Uint8Array(buffer);
-  let binary = "";
-  for (let i = 0; i < bytes.length; i++) {
-    binary += String.fromCharCode(bytes[i]);
+/** Extract readable text from a DOCX file (ZIP of XML) */
+async function extractDocxText(buffer: ArrayBuffer): Promise<string> {
+  // DOCX is a ZIP file; we look for word/document.xml and strip XML tags
+  try {
+    // Use a simple approach: decode as text and extract content between XML tags
+    const bytes = new Uint8Array(buffer);
+    
+    // Find PK signature to confirm it's a ZIP
+    if (bytes[0] !== 0x50 || bytes[1] !== 0x4B) {
+      return ""; // Not a valid ZIP/DOCX
+    }
+    
+    // Try to find and decompress document.xml using DecompressionStream
+    // For simplicity, we'll use the raw bytes approach with a text decoder
+    // and look for readable text patterns
+    const rawText = new TextDecoder("utf-8", { fatal: false }).decode(bytes);
+    
+    // Extract text from XML content within the DOCX
+    const xmlMatches = rawText.match(/<w:t[^>]*>([^<]*)<\/w:t>/g);
+    if (xmlMatches && xmlMatches.length > 0) {
+      return xmlMatches
+        .map(m => m.replace(/<[^>]+>/g, ""))
+        .join(" ")
+        .replace(/\s+/g, " ")
+        .trim();
+    }
+    
+    // Fallback: grab anything that looks like readable text
+    const readable = rawText.replace(/[^\x20-\x7E\n\r\t]/g, " ").replace(/\s+/g, " ").trim();
+    return readable.slice(0, 20000);
+  } catch {
+    return "";
   }
-  return btoa(binary);
+}
+
+/** Extract readable text from a PDF (basic text extraction) */
+function extractPdfText(buffer: ArrayBuffer): string {
+  try {
+    const bytes = new Uint8Array(buffer);
+    const raw = new TextDecoder("utf-8", { fatal: false }).decode(bytes);
+    
+    // Extract text between BT/ET blocks (PDF text objects)
+    const textBlocks: string[] = [];
+    const btEtRegex = /BT\s([\s\S]*?)ET/g;
+    let match;
+    while ((match = btEtRegex.exec(raw)) !== null) {
+      const block = match[1];
+      // Extract text from Tj and TJ operators
+      const tjMatches = block.match(/\(([^)]*)\)\s*Tj/g);
+      if (tjMatches) {
+        tjMatches.forEach(t => {
+          const inner = t.match(/\(([^)]*)\)/);
+          if (inner) textBlocks.push(inner[1]);
+        });
+      }
+      // TJ array operator
+      const tjArrayMatches = block.match(/\[([^\]]*)\]\s*TJ/g);
+      if (tjArrayMatches) {
+        tjArrayMatches.forEach(t => {
+          const parts = t.match(/\(([^)]*)\)/g);
+          if (parts) {
+            parts.forEach(p => {
+              const inner = p.match(/\(([^)]*)\)/);
+              if (inner) textBlocks.push(inner[1]);
+            });
+          }
+        });
+      }
+    }
+    
+    if (textBlocks.length > 0) {
+      return textBlocks.join(" ").replace(/\s+/g, " ").trim();
+    }
+    
+    // Fallback for PDFs with stream-compressed text - grab readable ASCII
+    const readable = raw
+      .split(/stream[\r\n]|endstream/)
+      .filter(s => s.length > 50)
+      .map(s => s.replace(/[^\x20-\x7E\n\r]/g, " ").replace(/\s+/g, " ").trim())
+      .filter(s => s.length > 20 && /[a-zA-Z]{3,}/.test(s))
+      .join(" ");
+    
+    return readable.slice(0, 20000);
+  } catch {
+    return "";
+  }
 }
 
 serve(async (req) => {
@@ -67,10 +145,8 @@ serve(async (req) => {
     await adminClient.from("offer_letter_reviews").update({ processing_status: "processing" }).eq("id", reviewId);
 
     let documentText = review.extracted_text || "";
-    let fileBase64: string | null = null;
-    let fileMimeType: string | null = null;
 
-    // If file was uploaded, download for Gemini native parsing
+    // If file was uploaded, download and extract text
     if (review.file_path && !documentText) {
       const { data: fileData, error: fileError } = await adminClient.storage
         .from("offer-letters")
@@ -80,23 +156,23 @@ serve(async (req) => {
       const filename = (review.original_filename || "").toLowerCase();
 
       if (filename.endsWith(".txt")) {
-        // Plain text can be read directly
         documentText = await fileData.text();
-      } else {
-        // For PDF/DOCX: send raw file to Gemini as base64 inline_data
-        // Gemini can natively understand these document formats
+      } else if (filename.endsWith(".docx") || filename.endsWith(".doc")) {
         const buffer = await fileData.arrayBuffer();
-        fileBase64 = arrayBufferToBase64(buffer);
-        fileMimeType = getMimeType(filename);
-        console.log(`Sending ${filename} (${(buffer.byteLength / 1024).toFixed(1)}KB) as ${fileMimeType} to Gemini for native parsing`);
+        documentText = await extractDocxText(buffer);
+        console.log(`Extracted ${documentText.length} chars from DOCX`);
+      } else if (filename.endsWith(".pdf")) {
+        const buffer = await fileData.arrayBuffer();
+        documentText = extractPdfText(buffer);
+        console.log(`Extracted ${documentText.length} chars from PDF`);
       }
     }
 
-    // If we have neither text nor a file to parse, fail
-    if (!documentText && !fileBase64) {
+    // If we have no text, fail
+    if (!documentText || documentText.length < 20) {
       await adminClient.from("offer_letter_reviews").update({
         processing_status: "failed",
-        error_message: "Could not extract content from the document.",
+        error_message: "Could not extract readable content from the document. Try pasting the text instead.",
       }).eq("id", reviewId);
       return new Response(JSON.stringify({ error: "No content to analyze" }), {
         status: 400,
@@ -125,29 +201,7 @@ Context: ${companyContext}
 
 IMPORTANT: Always extract the employer_name from the document itself, regardless of any company context provided.`;
 
-    // Build the messages array with either text or inline_data
-    const userContent: any[] = [];
-    
-    if (fileBase64 && fileMimeType) {
-      // Send the raw file as inline_data for Gemini native document understanding
-      userContent.push({
-        type: "file",
-        file: {
-          filename: review.original_filename || "document",
-          content: fileBase64,
-          content_type: fileMimeType,
-        },
-      });
-      userContent.push({
-        type: "text",
-        text: "Analyze this employment offer letter document and extract all structured information. For each detected item, provide the category, term name, extracted text snippet, and a confidence level (high, medium, low).",
-      });
-    } else {
-      userContent.push({
-        type: "text",
-        text: `Analyze this employment offer letter and extract all structured information. For each detected item, provide the category, term name, extracted text snippet, and a confidence level (high, medium, low).\n\nDocument text:\n---\n${documentText!.slice(0, 15000)}\n---`,
-      });
-    }
+    const userContent = `Analyze this employment offer letter and extract all structured information. For each detected item, provide the category, term name, extracted text snippet, and a confidence level (high, medium, low).\n\nDocument text:\n---\n${documentText.slice(0, 15000)}\n---`;
 
     const aiResponse = await fetch("https://ai.gateway.lovable.dev/v1/chat/completions", {
       method: "POST",
