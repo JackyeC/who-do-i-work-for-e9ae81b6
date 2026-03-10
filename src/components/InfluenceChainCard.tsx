@@ -1,19 +1,18 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import { formatCurrency } from "@/data/sampleData";
 import { useInfluenceChain } from "@/hooks/use-roi-pipeline";
 import { PartyBadge, computeRecipientMix } from "@/components/PartyBadge";
+import { Link } from "react-router-dom";
 import {
   ArrowRight, ArrowDown, GitBranch, Loader2, DollarSign, Users, Landmark,
   FileCheck, RotateCcw, Globe, ChevronDown, ChevronRight, HelpCircle, User,
+  ExternalLink, Share2, Copy,
 } from "lucide-react";
 import { useState } from "react";
-import {
-  Tooltip,
-  TooltipContent,
-  TooltipTrigger,
-} from "@/components/ui/tooltip";
+import { toast } from "sonner";
 
 interface ChainStep {
   chain_id: number;
@@ -181,6 +180,29 @@ function getPoliticianDetail(name: string, party: string | null, location: strin
   return { committees, issues: [...new Set(allIssues)] };
 }
 
+/* ── Build external links for entities ── */
+function getEntityLink(name: string, type: string): string | null {
+  const cleanName = cleanEntityName(name);
+  switch (type) {
+    case "pac":
+    case "super_pac":
+      return `https://www.fec.gov/data/committee/?q=${encodeURIComponent(cleanName)}`;
+    case "politician":
+    case "member":
+      return `https://www.fec.gov/data/candidates/?search=${encodeURIComponent(cleanName)}`;
+    case "committee":
+      return `https://www.congress.gov/search?q=${encodeURIComponent(cleanName)}&searchResultViewType=expanded`;
+    case "agency":
+      return `https://www.usaspending.gov/search/?hash=keyword-${encodeURIComponent(cleanName)}`;
+    case "contract":
+      return `https://www.usaspending.gov/search/?hash=keyword-${encodeURIComponent(cleanName)}`;
+    case "lobbyist":
+      return `https://lda.senate.gov/filings/public/filing/search/?search=${encodeURIComponent(cleanName)}`;
+    default:
+      return null;
+  }
+}
+
 function EntityNode({
   name, type, party, location, committees, issues,
 }: {
@@ -196,51 +218,64 @@ function EntityNode({
   const showParty = type !== "company" && type !== "agency" && type !== "contract";
   const isPolitician = type === "politician" || type === "member";
   const partyName = party ? PARTY_FULL_NAMES[party] || party : null;
-
   const displayName = cleanEntityName(name);
+  const externalLink = getEntityLink(name, type);
 
-  return (
-    <Tooltip>
-      <TooltipTrigger asChild>
-        <div className={cn("px-3 py-2 rounded-lg border text-sm font-medium max-w-[280px] cursor-default", style)}>
-          <div className="flex items-center gap-1.5">
-            {isPolitician && <User className="w-3.5 h-3.5 shrink-0" />}
-            <span className="truncate">{displayName}</span>
-            {showParty && <PartyBadge party={party} entityType={type} />}
-            {location && <span className="text-[9px] text-muted-foreground shrink-0">{location}</span>}
-          </div>
-          {/* Inline politician detail */}
-          {isPolitician && (partyName || (committees && committees.length > 0)) && (
-            <div className="mt-1.5 pt-1.5 border-t border-current/10 space-y-1">
-              {partyName && (
-                <p className="text-[10px] opacity-80">{partyName}{location ? ` — ${location}` : ""}</p>
-              )}
-              {committees && committees.length > 0 && (
-                <p className="text-[10px] opacity-70">
-                  Sits on: {committees.join(", ")}
-                </p>
-              )}
-              {issues && issues.length > 0 && (
-                <div className="flex flex-wrap gap-1 mt-0.5">
-                  {issues.slice(0, 4).map((issue) => (
-                    <span key={issue} className="text-[9px] px-1.5 py-0 rounded-full bg-background/50 border border-current/10">
-                      {issue}
-                    </span>
-                  ))}
-                  {issues.length > 4 && (
-                    <span className="text-[9px] text-muted-foreground">+{issues.length - 4} more</span>
-                  )}
-                </div>
+  const content = (
+    <div className={cn(
+      "px-3 py-2 rounded-lg border text-sm font-medium max-w-[280px] transition-all",
+      style,
+      externalLink ? "cursor-pointer hover:shadow-md hover:scale-[1.02] group" : "cursor-default"
+    )}>
+      <div className="flex items-center gap-1.5">
+        {isPolitician && <User className="w-3.5 h-3.5 shrink-0" />}
+        <span className="truncate">{displayName}</span>
+        {showParty && <PartyBadge party={party} entityType={type} />}
+        {location && <span className="text-[9px] text-muted-foreground shrink-0">{location}</span>}
+        {externalLink && <ExternalLink className="w-3 h-3 shrink-0 opacity-0 group-hover:opacity-100 transition-opacity" />}
+      </div>
+      {/* Inline politician detail */}
+      {isPolitician && (partyName || (committees && committees.length > 0)) && (
+        <div className="mt-1.5 pt-1.5 border-t border-current/10 space-y-1">
+          {partyName && (
+            <p className="text-[10px] opacity-80">{partyName}{location ? ` — ${location}` : ""}</p>
+          )}
+          {committees && committees.length > 0 && (
+            <p className="text-[10px] opacity-70">
+              Sits on: {committees.join(", ")}
+            </p>
+          )}
+          {issues && issues.length > 0 && (
+            <div className="flex flex-wrap gap-1 mt-0.5">
+              {issues.slice(0, 4).map((issue) => (
+                <Link
+                  key={issue}
+                  to={`/values-search?issue=${encodeURIComponent(issue.toLowerCase().replace(/\s+/g, '_'))}`}
+                  className="text-[9px] px-1.5 py-0 rounded-full bg-background/50 border border-current/10 hover:bg-primary/10 hover:border-primary/30 transition-colors"
+                  onClick={(e) => e.stopPropagation()}
+                >
+                  {issue}
+                </Link>
+              ))}
+              {issues.length > 4 && (
+                <span className="text-[9px] text-muted-foreground">+{issues.length - 4} more</span>
               )}
             </div>
           )}
         </div>
-      </TooltipTrigger>
-      <TooltipContent side="top" className="text-xs max-w-xs">
-        <p className="font-medium">{plainType}</p>
-      </TooltipContent>
-    </Tooltip>
+      )}
+    </div>
   );
+
+  if (externalLink) {
+    return (
+      <a href={externalLink} target="_blank" rel="noopener noreferrer" title={`View ${displayName} on ${type === "committee" ? "Congress.gov" : type === "agency" || type === "contract" ? "USASpending.gov" : "FEC.gov"}`}>
+        {content}
+      </a>
+    );
+  }
+
+  return content;
 }
 
 function ChainRow({ step, chain }: { step: ChainStep; chain: ChainStep[] }) {
@@ -412,11 +447,30 @@ export function InfluenceChainCard({ companyId, companyName }: { companyId: stri
           <GitBranch className="w-5 h-5 text-primary" />
           Where Does the Money Go?
         </CardTitle>
-        <p className="text-sm text-muted-foreground">
-          This shows how {companyName} spends money on politics — and what happens after.
-          Think of it like a trail: the company sends money somewhere, that money reaches a politician or group,
-          and that politician or group has power over government decisions that affect the company.
-        </p>
+        <div className="flex items-center justify-between">
+          <p className="text-sm text-muted-foreground flex-1">
+            This shows how {companyName} spends money on politics — and what happens after.
+            Think of it like a trail: the company sends money somewhere, that money reaches a politician or group,
+            and that politician or group has power over government decisions that affect the company.
+          </p>
+          <Button
+            variant="ghost"
+            size="sm"
+            className="gap-1.5 text-xs shrink-0 ml-2"
+            onClick={async () => {
+              const url = window.location.href;
+              const text = `See where ${companyName} sends political money — ${chains.length} money trail${chains.length !== 1 ? "s" : ""} found`;
+              if (navigator.share) {
+                try { await navigator.share({ title: text, url }); } catch {}
+              } else {
+                await navigator.clipboard.writeText(`${text}\n${url}`);
+                toast("Link copied!", { description: "Share this influence chain with anyone." });
+              }
+            }}
+          >
+            <Share2 className="w-3.5 h-3.5" /> Share
+          </Button>
+        </div>
       </CardHeader>
       <CardContent>
         {/* How to read this */}
@@ -455,10 +509,11 @@ export function InfluenceChainCard({ companyId, companyName }: { companyId: stri
             <span className="text-xs font-semibold text-foreground">Who gets the money? (by political party)</span>
             <div className="flex h-3 rounded-full overflow-hidden my-2">
               {recipientMix.map((mix, i) => (
-                <div
+                <Link
                   key={i}
+                  to={`/values-search?issue=${mix.label === "R" ? "conservative_alignment" : mix.label === "D" ? "progressive_alignment" : "bipartisan"}`}
                   className={cn(
-                    "h-full transition-all",
+                    "h-full transition-all hover:opacity-80",
                     mix.label === "R" ? "bg-[hsl(0,65%,50%)]" :
                     mix.label === "D" ? "bg-[hsl(218,55%,48%)]" :
                     "bg-muted-foreground/30"
@@ -469,7 +524,11 @@ export function InfluenceChainCard({ companyId, companyName }: { companyId: stri
             </div>
             <div className="flex items-center gap-3">
               {recipientMix.map((mix, i) => (
-                <span key={i} className="flex items-center gap-1 text-[10px] text-muted-foreground">
+                <Link
+                  key={i}
+                  to={`/values-search?issue=${mix.label === "R" ? "conservative_alignment" : mix.label === "D" ? "progressive_alignment" : "bipartisan"}`}
+                  className="flex items-center gap-1 text-[10px] text-muted-foreground hover:text-foreground transition-colors"
+                >
                   <span className={cn(
                     "w-2 h-2 rounded-full inline-block",
                     mix.label === "R" ? "bg-[hsl(0,65%,50%)]" :
@@ -477,7 +536,7 @@ export function InfluenceChainCard({ companyId, companyName }: { companyId: stri
                     "bg-muted-foreground/30"
                   )} />
                   {mix.percentage}% {mix.label === "R" ? "Republican" : mix.label === "D" ? "Democrat" : mix.label}
-                </span>
+                </Link>
               ))}
             </div>
           </div>
@@ -526,14 +585,23 @@ export function InfluenceChainCard({ companyId, companyName }: { companyId: stri
 
                 {isExpanded && (
                   <div className="border-t border-border bg-muted/30">
-                    {/* Plain-language story summary */}
+                    {/* Plain-language story summary — clickable to copy */}
                     {story && (
                       <div className="px-4 pt-3 pb-2">
-                        <div className="p-3 rounded-lg bg-primary/5 border border-primary/10">
-                          <p className="text-sm text-foreground leading-relaxed">
-                            <strong>In plain English:</strong> {story}
-                          </p>
-                        </div>
+                        <button
+                          onClick={async () => {
+                            await navigator.clipboard.writeText(story);
+                            toast("Copied!", { description: "Plain-English summary copied to clipboard." });
+                          }}
+                          className="w-full text-left p-3 rounded-lg bg-primary/5 border border-primary/10 hover:bg-primary/10 hover:border-primary/20 transition-colors group cursor-pointer"
+                        >
+                          <div className="flex items-start justify-between gap-2">
+                            <p className="text-sm text-foreground leading-relaxed">
+                              <strong>In plain English:</strong> {story}
+                            </p>
+                            <Copy className="w-3.5 h-3.5 text-muted-foreground opacity-0 group-hover:opacity-100 transition-opacity shrink-0 mt-0.5" />
+                          </div>
+                        </button>
                       </div>
                     )}
 
