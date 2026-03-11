@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { ChevronDown, ChevronUp, ExternalLink, MousePointerClick } from "lucide-react";
+import { ChevronDown, ChevronUp, ExternalLink, MousePointerClick, ArrowRight } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { PartyBadge } from "@/components/PartyBadge";
 import { cleanEntityName } from "@/lib/entityUtils";
