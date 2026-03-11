@@ -48,7 +48,7 @@ export function DashboardOverview({ onNavigate }: DashboardOverviewProps) {
 
   const profile = data?.profile;
   const parsedResume = data?.docs?.find((d: any) => d.document_type === "resume" && d.status === "parsed");
-  const resumeSignals = parsedResume?.parsed_signals;
+  const resumeSignals = parsedResume?.parsed_signals as Record<string, any> | undefined;
   const hasProfile = !!(profile?.job_titles?.length || profile?.skills?.length);
 
   const greeting = () => {
