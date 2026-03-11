@@ -230,32 +230,48 @@ export function ValuesCheckSection({
                   {/* Key stat cards */}
                   <div className="grid grid-cols-2 sm:grid-cols-4 gap-2.5">
                     {summaryStats.totalDonations > 0 && (
-                      <div className="bg-card rounded-lg p-3 border border-border/30">
+                      <button
+                        onClick={() => document.getElementById("cat-political_giving")?.scrollIntoView({ behavior: "smooth", block: "center" })}
+                        className="bg-card rounded-lg p-3 border border-border/30 text-left hover:border-primary/20 hover:bg-primary/[0.02] transition-all cursor-pointer group"
+                      >
                         <DollarSign className="w-4 h-4 text-primary mb-1" />
-                        <p className="text-lg font-bold text-foreground font-data">{formatAmount(summaryStats.totalDonations)}</p>
+                        <p className="text-lg font-bold text-foreground font-data group-hover:text-primary transition-colors">{formatAmount(summaryStats.totalDonations)}</p>
                         <p className="text-[10px] text-muted-foreground">Political donations</p>
-                      </div>
+                        <p className="text-[8px] text-primary opacity-0 group-hover:opacity-100 transition-opacity mt-1">Click to view ↓</p>
+                      </button>
                     )}
                     {summaryStats.totalLobbying > 0 && (
-                      <div className="bg-card rounded-lg p-3 border border-border/30">
+                      <button
+                        onClick={() => document.getElementById("cat-lobbying")?.scrollIntoView({ behavior: "smooth", block: "center" })}
+                        className="bg-card rounded-lg p-3 border border-border/30 text-left hover:border-primary/20 hover:bg-primary/[0.02] transition-all cursor-pointer group"
+                      >
                         <Megaphone className="w-4 h-4 text-primary mb-1" />
-                        <p className="text-lg font-bold text-foreground font-data">{formatAmount(summaryStats.totalLobbying)}</p>
+                        <p className="text-lg font-bold text-foreground font-data group-hover:text-primary transition-colors">{formatAmount(summaryStats.totalLobbying)}</p>
                         <p className="text-[10px] text-muted-foreground">Lobbying spend</p>
-                      </div>
+                        <p className="text-[8px] text-primary opacity-0 group-hover:opacity-100 transition-opacity mt-1">Click to view ↓</p>
+                      </button>
                     )}
                     {summaryStats.uniqueRecipients > 0 && (
-                      <div className="bg-card rounded-lg p-3 border border-border/30">
+                      <button
+                        onClick={() => document.getElementById("cat-political_giving")?.scrollIntoView({ behavior: "smooth", block: "center" })}
+                        className="bg-card rounded-lg p-3 border border-border/30 text-left hover:border-primary/20 hover:bg-primary/[0.02] transition-all cursor-pointer group"
+                      >
                         <Users className="w-4 h-4 text-primary mb-1" />
-                        <p className="text-lg font-bold text-foreground font-data">{summaryStats.uniqueRecipients}</p>
+                        <p className="text-lg font-bold text-foreground font-data group-hover:text-primary transition-colors">{summaryStats.uniqueRecipients}</p>
                         <p className="text-[10px] text-muted-foreground">Recipients funded</p>
-                      </div>
+                        <p className="text-[8px] text-primary opacity-0 group-hover:opacity-100 transition-opacity mt-1">Click to view ↓</p>
+                      </button>
                     )}
                     {summaryStats.execCount > 0 && (
-                      <div className="bg-card rounded-lg p-3 border border-border/30">
+                      <button
+                        onClick={() => document.getElementById("cat-executive_activity")?.scrollIntoView({ behavior: "smooth", block: "center" })}
+                        className="bg-card rounded-lg p-3 border border-border/30 text-left hover:border-primary/20 hover:bg-primary/[0.02] transition-all cursor-pointer group"
+                      >
                         <UserCheck className="w-4 h-4 text-primary mb-1" />
-                        <p className="text-lg font-bold text-foreground font-data">{summaryStats.execCount}</p>
+                        <p className="text-lg font-bold text-foreground font-data group-hover:text-primary transition-colors">{summaryStats.execCount}</p>
                         <p className="text-[10px] text-muted-foreground">Exec donors tracked</p>
-                      </div>
+                        <p className="text-[8px] text-primary opacity-0 group-hover:opacity-100 transition-opacity mt-1">Click to view ↓</p>
+                      </button>
                     )}
                   </div>
 
