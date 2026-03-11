@@ -214,13 +214,22 @@ export function OfferClarityDashboard({ report, offerData, onStartOver }: Props)
         </CardContent>
       </Card>
 
-      {/* BLS Data Intelligence */}
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-        <BLSWageBenchmarkCard occupationTitle={offerData.roleTitle} offeredSalary={baseSalary} />
-        <BLSECITrendCard />
+      {/* National Labor Market Intelligence */}
+      <div className="space-y-1">
+        <h3 className="text-base font-display font-semibold text-foreground flex items-center gap-2">
+          <Scale className="w-4 h-4 text-primary" />
+          National Labor Market Intelligence
+        </h3>
+        <p className="text-xs text-muted-foreground">
+          How your offer compares to federal compensation data from the Bureau of Labor Statistics
+        </p>
       </div>
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <BLSWageBenchmarkCard occupationTitle={offerData.roleTitle} offeredSalary={baseSalary} />
         <BLSDemographicsCard offeredSalary={baseSalary} />
+      </div>
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <BLSECITrendCard />
         <BLSBenefitsCard />
       </div>
 
