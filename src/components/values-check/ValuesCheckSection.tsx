@@ -102,6 +102,7 @@ export function ValuesCheckSection({
   isLoading,
   onGenerateSignals,
   isGenerating,
+  onExecutiveClick,
 }: ValuesCheckSectionProps) {
   const [selectedIssue, setSelectedIssue] = useState<string | null>(null);
   const [issueFilterExpanded, setIssueFilterExpanded] = useState(false);
