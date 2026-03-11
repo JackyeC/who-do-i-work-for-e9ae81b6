@@ -150,15 +150,59 @@ Deno.serve(async (req) => {
 
     const electionCycle = cycle || '2024';
 
-    // Use entity resolution: search PACs using all resolved names
-    const namesToSearch = searchNames?.length
-      ? searchNames.filter((n: string) => {
-          const type = entityMap?.[n];
-          return !type || type !== 'legal_variant'; // Skip pure legal variants for PAC search
-        }).slice(0, 5)
-      : [pacName || companyName];
+    // ─── Entity Resolution: build search names from DB ───
+    let namesToSearch: string[] = [];
 
-    console.log(`[sync-openfec] OpenFEC ingestion for ${namesToSearch.length} name variants (cycle ${electionCycle})...`);
+    if (searchNames?.length) {
+      namesToSearch = searchNames.filter((n: string) => {
+        const type = entityMap?.[n];
+        return !type || type !== 'legal_variant';
+      }).slice(0, 8);
+    } else {
+      // Auto-resolve: pull parent company and known PAC names from DB
+      namesToSearch = [pacName || companyName];
+
+      const { data: companyRecord } = await supabase
+        .from('companies')
+        .select('name, parent_company')
+        .eq('id', companyId)
+        .single();
+
+      if (companyRecord) {
+        // Add parent company name variant
+        if (companyRecord.parent_company && !namesToSearch.includes(companyRecord.parent_company)) {
+          namesToSearch.push(companyRecord.parent_company);
+        }
+        // Add cleaned company name (strip Inc., Corp., etc.)
+        const cleanName = companyRecord.name
+          .replace(/,?\s*(Inc\.?|Corp\.?|Corporation|LLC|Ltd\.?|Co\.?|Company|Group|Holdings?)\s*$/i, '')
+          .trim();
+        if (cleanName !== companyRecord.name && !namesToSearch.includes(cleanName)) {
+          namesToSearch.push(cleanName);
+        }
+      }
+
+      // Check entity_relationships for subsidiaries/PAC names
+      const { data: relationships } = await supabase
+        .from('entity_relationships' as any)
+        .select('related_name, relationship_type')
+        .eq('company_id', companyId)
+        .in('relationship_type', ['pac', 'subsidiary', 'parent', 'dba'])
+        .limit(5);
+
+      if (relationships) {
+        for (const rel of relationships) {
+          if (rel.related_name && !namesToSearch.includes(rel.related_name)) {
+            namesToSearch.push(rel.related_name);
+          }
+        }
+      }
+    }
+
+    // Deduplicate and limit
+    namesToSearch = [...new Set(namesToSearch)].slice(0, 8);
+
+    console.log(`[sync-openfec] OpenFEC ingestion for ${namesToSearch.length} name variants: ${namesToSearch.join(', ')} (cycle ${electionCycle})...`);
 
     // ─── Step 1: Find PAC committees matching company name variants ───
     const committeeTypes = normalizeCommitteeTypes('Q,N,O,U,V,W');
@@ -212,28 +256,50 @@ Deno.serve(async (req) => {
     }> = [];
     const linkages: any[] = [];
 
-    for (const committee of allCommittees.slice(0, 5)) {
+    for (const committee of allCommittees.slice(0, 8)) {
       console.log(`[sync-openfec] Fetching disbursements for ${committee.name} (${committee.committee_id})...`);
 
-      try {
-        const disbData = await fecFetch(`/schedules/schedule_b/`, {
-          committee_id: committee.committee_id,
-          two_year_transaction_period: electionCycle,
-          sort: '-disbursement_amount',
-          disbursement_purpose_category: 'CONTRIBUTIONS',
-        }, apiKey);
+      // Paginate through disbursement results (up to 3 pages)
+      let lastIndex: string | null = null;
+      for (let page = 0; page < 3; page++) {
+        try {
+          const disbParams: Record<string, string | string[]> = {
+            committee_id: committee.committee_id,
+            two_year_transaction_period: electionCycle,
+            sort: '-disbursement_amount',
+          };
+          // Remove overly restrictive filter — get ALL disbursements, then filter client-side
+          if (lastIndex) disbParams.last_index = lastIndex;
 
-        const disbursements: FECDisbursement[] = disbData.results || [];
-        console.log(`  ${committee.name}: ${disbursements.length} disbursements`);
+          const disbData = await fecFetch(`/schedules/schedule_b/`, disbParams, apiKey);
+          const disbursements: FECDisbursement[] = disbData.results || [];
+          
+          if (disbursements.length === 0) break;
+          console.log(`  ${committee.name} page ${page + 1}: ${disbursements.length} disbursements`);
 
-        for (const d of disbursements) {
-          if (d.disbursement_amount <= 0) continue;
-          stats.totalPacSpending += d.disbursement_amount;
+          // Track last_index for pagination
+          lastIndex = disbData.pagination?.last_indexes?.last_index || null;
 
-          if (d.candidate_name) {
+          for (const d of disbursements) {
+            if (d.disbursement_amount <= 0) continue;
+
+            // Filter to candidate contributions and transfers to other committees
+            const isContribution = d.candidate_name || 
+              d.line_number_label?.includes('CONTRIBUTION') ||
+              d.disbursement_description?.toUpperCase().includes('CONTRIBUTION') ||
+              d.disbursement_description?.toUpperCase().includes('TRANSFER');
+
+            if (!isContribution) continue;
+
+            stats.totalPacSpending += d.disbursement_amount;
+
+            // Determine recipient name (candidate or committee)
+            const recipientName = d.candidate_name || d.recipient_name;
+            if (!recipientName) continue;
+
             allCandidates.push({
-              name: d.candidate_name,
-              party: d.committee?.party || 'Unknown',
+              name: recipientName,
+              party: d.committee?.party || committee.party || 'Unknown',
               state: d.recipient_state || 'Unknown',
               amount: d.disbursement_amount,
               type: 'corporate-pac',
@@ -245,16 +311,16 @@ Deno.serve(async (req) => {
               source_entity_name: committee.name,
               source_entity_type: 'pac',
               source_entity_id: committee.committee_id,
-              target_entity_name: d.candidate_name,
-              target_entity_type: 'politician',
+              target_entity_name: recipientName,
+              target_entity_type: d.candidate_name ? 'politician' : 'committee',
               target_entity_id: d.candidate_id || null,
               link_type: 'donation_to_member',
               amount: Math.round(d.disbursement_amount),
               confidence_score: 0.95,
-              description: `PAC contribution: ${committee.name} → ${d.candidate_name} ($${d.disbursement_amount.toLocaleString()}, ${d.disbursement_date || electionCycle})`,
+              description: `PAC contribution: ${committee.name} → ${recipientName} ($${d.disbursement_amount.toLocaleString()}, ${d.disbursement_date || electionCycle})`,
               source_citation: JSON.stringify([{
                 source: 'FEC',
-                url: `https://www.fec.gov/data/disbursements/?committee_id=${committee.committee_id}&recipient_name=${encodeURIComponent(d.candidate_name || '')}`,
+                url: `https://www.fec.gov/data/disbursements/?committee_id=${committee.committee_id}&recipient_name=${encodeURIComponent(recipientName || '')}`,
                 committee_id: committee.committee_id,
                 cycle: electionCycle,
                 retrieved_at: new Date().toISOString(),
@@ -267,15 +333,19 @@ Deno.serve(async (req) => {
               }),
             });
           }
-        }
-        await new Promise(r => setTimeout(r, 500));
-      } catch (e: any) {
-        if (e.upstreamStatus === 422) {
-          console.error(`[sync-openfec] FEC validation error for ${committee.committee_id}: ${e.upstreamBody}`);
-        } else {
-          console.error(`[sync-openfec] Error fetching disbursements for ${committee.committee_id}:`, e);
+
+          if (!lastIndex || disbursements.length < 100) break;
+          await new Promise(r => setTimeout(r, 500));
+        } catch (e: any) {
+          if (e.upstreamStatus === 422) {
+            console.error(`[sync-openfec] FEC validation error for ${committee.committee_id}: ${e.upstreamBody}`);
+          } else {
+            console.error(`[sync-openfec] Error fetching disbursements for ${committee.committee_id}:`, e);
+          }
+          break;
         }
       }
+      await new Promise(r => setTimeout(r, 300));
     }
 
     // ─── Step 3: Individual contributions by employer (using all name variants) ───

@@ -19,6 +19,15 @@ interface PublicStance {
   spending_reality: string;
 }
 
+interface IssueSignal {
+  issue_category: string;
+  signal_type: string;
+  description: string;
+  amount: number | null;
+  confidence_score: string;
+  source_url: string | null;
+}
+
 interface Props {
   companyName: string;
   totalPacSpending: number;
@@ -29,6 +38,7 @@ interface Props {
   publicStances?: PublicStance[];
   darkMoneyConnections?: number;
   flaggedOrgCount?: number;
+  issueSignals?: IssueSignal[];
 }
 
 const PARTY_FULL: Record<string, string> = {
@@ -50,8 +60,21 @@ export function WhatYoureSupportingCard({
   publicStances = [],
   darkMoneyConnections = 0,
   flaggedOrgCount = 0,
+  issueSignals = [],
 }: Props) {
-  const hasActivity = totalPacSpending > 0 || lobbyingSpend > 0 || topCandidates.length > 0;
+  const hasActivity = totalPacSpending > 0 || lobbyingSpend > 0 || topCandidates.length > 0 || issueSignals.length > 0;
+
+  // Aggregate issue signals by category
+  const issueBreakdown = issueSignals.reduce<Record<string, { count: number; totalAmount: number }>>((acc, s) => {
+    const cat = s.issue_category || 'general';
+    if (!acc[cat]) acc[cat] = { count: 0, totalAmount: 0 };
+    acc[cat].count++;
+    acc[cat].totalAmount += s.amount || 0;
+    return acc;
+  }, {});
+
+  const sortedIssues = Object.entries(issueBreakdown)
+    .sort((a, b) => b[1].count - a[1].count);
 
   if (!hasActivity) return null;
 
@@ -165,8 +188,46 @@ export function WhatYoureSupportingCard({
           </div>
         )}
 
-        {/* Issue tags if no detail records and no stances */}
-        {lobbyingDetails.length === 0 && publicStances.length === 0 && topIssuesLobbied.length > 0 && (
+        {/* Issue Signal Breakdown — evidence-based categorization */}
+        {sortedIssues.length > 0 && (
+          <div>
+            <div className="flex items-center gap-2 mb-2">
+              <Scale className="w-4 h-4 text-primary" />
+              <span className="text-sm font-semibold text-foreground">Policy Areas Influenced</span>
+            </div>
+            <p className="text-xs text-muted-foreground mb-2">
+              Based on {issueSignals.length} signals mapped from PAC donations, lobbying filings, and legislative connections.
+            </p>
+            <div className="space-y-1.5">
+              {sortedIssues.slice(0, 8).map(([category, data]) => {
+                const label = category.replace(/_/g, ' ').replace(/\b\w/g, c => c.toUpperCase());
+                const maxCount = sortedIssues[0][1].count;
+                const pct = (data.count / maxCount) * 100;
+                return (
+                  <Link key={category} to={`/values-search?issue=${encodeURIComponent(category)}`} className="block">
+                    <div className="py-2 px-3 rounded-lg bg-muted/30 border border-border/50 hover:bg-primary/5 hover:border-primary/20 transition-colors cursor-pointer group">
+                      <div className="flex items-center justify-between mb-1">
+                        <span className="text-sm text-foreground group-hover:text-primary transition-colors">{label}</span>
+                        <div className="flex items-center gap-2 text-xs text-muted-foreground">
+                          <span>{data.count} signal{data.count > 1 ? 's' : ''}</span>
+                          {data.totalAmount > 0 && (
+                            <span className="font-medium text-foreground">{formatCurrency(data.totalAmount)}</span>
+                          )}
+                        </div>
+                      </div>
+                      <div className="h-1.5 bg-muted rounded-full overflow-hidden">
+                        <div className="h-full bg-primary/50 rounded-full transition-all" style={{ width: `${pct}%` }} />
+                      </div>
+                    </div>
+                  </Link>
+                );
+              })}
+            </div>
+          </div>
+        )}
+
+        {/* Issue tags if no detail records and no stances and no issue signals */}
+        {sortedIssues.length === 0 && lobbyingDetails.length === 0 && publicStances.length === 0 && topIssuesLobbied.length > 0 && (
           <div>
             <div className="flex items-center gap-2 mb-2">
               <Scale className="w-4 h-4 text-muted-foreground" />

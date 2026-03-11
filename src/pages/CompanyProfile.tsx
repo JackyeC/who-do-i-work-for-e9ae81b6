@@ -481,6 +481,21 @@ export default function CompanyProfile() {
     refetchInterval: pollInterval,
   });
 
+  // Issue signals (mapped from entity_id = company_id)
+  const { data: dbIssueSignals } = useQuery({
+    queryKey: ["company-issue-signals", dbCompanyId],
+    queryFn: async () => {
+      const { data } = await (supabase as any)
+        .from("issue_signals")
+        .select("issue_category, signal_type, description, amount, confidence_score, source_url")
+        .eq("entity_id", dbCompanyId!)
+        .order("amount", { ascending: false });
+      return data || [];
+    },
+    enabled: !!dbCompanyId,
+    refetchInterval: pollInterval,
+  });
+
   const hasDetailedData = (dbCandidates?.length || 0) > 0 || (dbExecutives?.length || 0) > 0;
 
   // Values Check signals
@@ -1005,10 +1020,15 @@ export default function CompanyProfile() {
                     spending_reality: s.spending_reality,
                   }))}
                   topIssuesLobbied={
-                    (dbStateLobbying || []).flatMap((s: any) => s.issues || []).filter((v: string, i: number, a: string[]) => a.indexOf(v) === i).slice(0, 8)
+                    // Merge state lobbying issues + issue_signals categories
+                    [
+                      ...(dbStateLobbying || []).flatMap((s: any) => s.issues || []),
+                      ...(dbIssueSignals || []).map((s: any) => s.issue_category?.replace(/_/g, ' ')),
+                    ].filter((v: string, i: number, a: string[]) => v && a.indexOf(v) === i).slice(0, 12)
                   }
                   darkMoneyConnections={(dbDarkMoney || []).length}
                   flaggedOrgCount={0}
+                  issueSignals={dbIssueSignals || []}
                 />
               </div>
             )}
