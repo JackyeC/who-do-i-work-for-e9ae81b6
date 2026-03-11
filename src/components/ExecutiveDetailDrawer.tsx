@@ -31,17 +31,38 @@ export function ExecutiveDetailDrawer({ open, onOpenChange, executive, companyNa
   const [recipientSummaries, setRecipientSummaries] = useState<Record<string, string>>({});
   const [loadingRecipient, setLoadingRecipient] = useState<string | null>(null);
 
+  // If we have an id, use it directly. Otherwise resolve by name.
+  const { data: resolvedExec } = useQuery({
+    queryKey: ["resolve-executive", executive?.name, companyName],
+    queryFn: async () => {
+      const { data } = await supabase
+        .from("company_executives")
+        .select("id, name, title, total_donations, photo_url")
+        .ilike("name", `%${executive!.name.split(" ").pop()}%`)
+        .limit(5);
+      // Best match: find one whose name contains the key parts
+      const match = data?.find(e =>
+        e.name.toLowerCase().includes(executive!.name.toLowerCase()) ||
+        executive!.name.toLowerCase().includes(e.name.toLowerCase())
+      );
+      return match || null;
+    },
+    enabled: !!executive?.name && !executive?.id && open,
+  });
+
+  const effectiveExecId = executive?.id || resolvedExec?.id;
+
   const { data: recipients, isLoading } = useQuery({
-    queryKey: ["executive-recipients", executive?.id],
+    queryKey: ["executive-recipients", effectiveExecId],
     queryFn: async () => {
       const { data } = await supabase
         .from("executive_recipients")
         .select("*")
-        .eq("executive_id", executive!.id)
+        .eq("executive_id", effectiveExecId!)
         .order("amount", { ascending: false });
       return data || [];
     },
-    enabled: !!executive?.id && open,
+    enabled: !!effectiveExecId && open,
   });
 
   const fetchRecipientImpact = async (recipientName: string, party: string) => {
