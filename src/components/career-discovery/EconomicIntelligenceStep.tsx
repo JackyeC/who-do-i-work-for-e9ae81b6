@@ -10,6 +10,8 @@ import {
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { StabilityGauge } from "./StabilityGauge";
+import { BLSWageBenchmarkCard } from "@/components/bls/BLSWageBenchmarkCard";
+import { BLSECITrendCard } from "@/components/bls/BLSECITrendCard";
 import {
   HIGH_VELOCITY_PATHS, DECLINING_PATHS, INDUSTRY_PULSE_2026, SECTOR_GDP_2026,
   AFFORDABILITY_MARKETS, EARLY_CAREER_AI_SIGNAL,
