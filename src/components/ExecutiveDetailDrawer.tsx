@@ -143,11 +143,13 @@ export function ExecutiveDetailDrawer({ open, onOpenChange, executive, companyNa
             )}
             <div>
               {executive.name}
-              <div className="flex items-center gap-2 mt-1">
-                <a href={linkedInUrl} target="_blank" rel="noopener noreferrer" title="Search LinkedIn" className="text-muted-foreground hover:text-primary transition-colors">
+              <div className="flex items-center gap-2 mt-1" onClick={(e) => e.stopPropagation()}>
+                <a href={linkedInUrl} target="_blank" rel="noopener noreferrer" title="Search LinkedIn" className="text-muted-foreground hover:text-primary transition-colors z-10"
+                   onClick={(e) => { e.stopPropagation(); window.open(linkedInUrl, '_blank', 'noopener,noreferrer'); }}>
                   <Linkedin className="w-4 h-4" />
                 </a>
-                <a href={googleSearchUrl} target="_blank" rel="noopener noreferrer" title="Find social profiles" className="text-muted-foreground hover:text-primary transition-colors">
+                <a href={googleSearchUrl} target="_blank" rel="noopener noreferrer" title="Find social profiles" className="text-muted-foreground hover:text-primary transition-colors z-10"
+                   onClick={(e) => { e.stopPropagation(); window.open(googleSearchUrl, '_blank', 'noopener,noreferrer'); }}>
                   <Globe className="w-4 h-4" />
                 </a>
               </div>
