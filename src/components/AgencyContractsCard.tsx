@@ -197,19 +197,19 @@ export function AgencyContractsCard({ companyName, dbCompanyId }: Props) {
                 </div>
                 <div className="space-y-2">
                   {result.agencyContracts.slice(0, expanded ? undefined : 4).map((c, i) => (
-                    <div key={i} className={cn("p-3 rounded-lg border", c.controversyFlag ? "border-civic-red/20 bg-civic-red/5" : "border-border")}>
+                    <div key={i} className={cn("p-3 rounded-lg border", c.controversyFlag ? "border-primary/20 bg-primary/5" : "border-border")}>
                       <div className="flex items-start justify-between gap-2">
                         <div className="flex items-center gap-2">
                           <span className="font-medium text-sm text-foreground">{c.agencyAcronym || c.agencyName}</span>
-                          {c.controversyFlag && <AlertTriangle className="w-3.5 h-3.5 text-civic-red" />}
-                          {c.controversyCategory && (
-                            <Badge className={cn("text-xs", severityColor("high"))}>{categoryLabel(c.controversyCategory)}</Badge>
+                          {c.controversyFlag && <Info className="w-3.5 h-3.5 text-muted-foreground" />}
+                          {c.notableCategory && (
+                            <Badge variant="outline" className="text-xs">{categoryLabel(c.notableCategory)}</Badge>
                           )}
                         </div>
                         {c.estimatedValue && <span className="text-sm font-bold text-foreground">{formatCurrency(c.estimatedValue)}</span>}
                       </div>
                       <p className="text-xs text-muted-foreground mt-1">{c.description}</p>
-                      {c.controversyDescription && <p className="text-xs text-civic-red mt-1">{c.controversyDescription}</p>}
+                      {c.notableDescription && <p className="text-xs text-muted-foreground mt-1 italic">{c.notableDescription}</p>}
                     </div>
                   ))}
                   {result.agencyContracts.length > 4 && (
