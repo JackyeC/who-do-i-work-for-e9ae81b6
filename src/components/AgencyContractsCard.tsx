@@ -142,8 +142,8 @@ export function AgencyContractsCard({ companyName, dbCompanyId }: Props) {
           <ShieldAlert className="w-5 h-5 text-primary" />
           Federal Agency Contracts & Global Footprint
           {totalFlags > 0 && (
-            <Badge className="ml-auto text-xs bg-civic-red/10 text-civic-red border-civic-red/30">
-              {totalFlags} flags
+            <Badge className="ml-auto text-xs bg-muted text-muted-foreground border-border">
+              {totalFlags} notes
             </Badge>
           )}
         </CardTitle>
