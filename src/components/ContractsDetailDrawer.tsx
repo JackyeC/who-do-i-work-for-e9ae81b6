@@ -114,15 +114,15 @@ export function ContractsDetailDrawer({ open, onOpenChange, companyId, companyNa
             <LoadingState message="Loading contract details..." className="py-8" />
           ) : (
             <>
-              {/* Controversy alerts */}
-              {controversialContracts.length > 0 && (
-                <div className="p-3 rounded-lg bg-destructive/5 border border-destructive/20">
+              {/* Notable context */}
+              {notableContracts.length > 0 && (
+                <div className="p-3 rounded-lg bg-muted/50 border border-border">
                   <div className="flex items-center gap-2 mb-2">
-                    <AlertTriangle className="w-4 h-4 text-destructive" />
-                    <span className="text-sm font-semibold text-destructive">{controversialContracts.length} Controversial Contract{controversialContracts.length > 1 ? "s" : ""}</span>
+                    <AlertTriangle className="w-4 h-4 text-muted-foreground" />
+                    <span className="text-sm font-semibold text-foreground">{notableContracts.length} Contract{notableContracts.length > 1 ? "s" : ""} with Additional Context</span>
                   </div>
                   <div className="space-y-2">
-                    {controversialContracts.map((c: any) => (
+                    {notableContracts.map((c: any) => (
                       <div key={c.id} className="text-xs text-muted-foreground">
                         <span className="font-medium text-foreground">{c.agency_name}</span> — {c.controversy_description || c.controversy_category}
                         {c.contract_value && <span className="ml-1">({formatCurrency(c.contract_value)})</span>}
