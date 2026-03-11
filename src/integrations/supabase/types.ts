@@ -299,6 +299,210 @@ export type Database = {
         }
         Relationships: []
       }
+      bls_benefits_benchmarks: {
+        Row: {
+          benefit_category: string
+          benefit_type: string
+          data_quarter: number | null
+          data_year: number
+          employer_cost_per_hour: number | null
+          fetched_at: string
+          id: string
+          industry_group: string | null
+          participation_rate: number | null
+          source_program: string
+          worker_type: string
+        }
+        Insert: {
+          benefit_category: string
+          benefit_type: string
+          data_quarter?: number | null
+          data_year: number
+          employer_cost_per_hour?: number | null
+          fetched_at?: string
+          id?: string
+          industry_group?: string | null
+          participation_rate?: number | null
+          source_program?: string
+          worker_type?: string
+        }
+        Update: {
+          benefit_category?: string
+          benefit_type?: string
+          data_quarter?: number | null
+          data_year?: number
+          employer_cost_per_hour?: number | null
+          fetched_at?: string
+          id?: string
+          industry_group?: string | null
+          participation_rate?: number | null
+          source_program?: string
+          worker_type?: string
+        }
+        Relationships: []
+      }
+      bls_demographic_earnings: {
+        Row: {
+          comparison_group: string | null
+          data_quarter: number | null
+          data_year: number
+          demographic_group: string
+          demographic_value: string
+          earnings_ratio: number | null
+          fetched_at: string
+          id: string
+          median_annual_earnings: number | null
+          median_weekly_earnings: number | null
+          source_program: string
+        }
+        Insert: {
+          comparison_group?: string | null
+          data_quarter?: number | null
+          data_year: number
+          demographic_group: string
+          demographic_value: string
+          earnings_ratio?: number | null
+          fetched_at?: string
+          id?: string
+          median_annual_earnings?: number | null
+          median_weekly_earnings?: number | null
+          source_program?: string
+        }
+        Update: {
+          comparison_group?: string | null
+          data_quarter?: number | null
+          data_year?: number
+          demographic_group?: string
+          demographic_value?: string
+          earnings_ratio?: number | null
+          fetched_at?: string
+          id?: string
+          median_annual_earnings?: number | null
+          median_weekly_earnings?: number | null
+          source_program?: string
+        }
+        Relationships: []
+      }
+      bls_eci_trends: {
+        Row: {
+          compensation_type: string
+          fetched_at: string
+          id: string
+          industry_group: string | null
+          occupation_group: string | null
+          percent_change_12mo: number | null
+          period: string
+          series_id: string
+          series_title: string
+          source_program: string
+          value: number
+          year: number
+        }
+        Insert: {
+          compensation_type?: string
+          fetched_at?: string
+          id?: string
+          industry_group?: string | null
+          occupation_group?: string | null
+          percent_change_12mo?: number | null
+          period: string
+          series_id: string
+          series_title: string
+          source_program?: string
+          value: number
+          year: number
+        }
+        Update: {
+          compensation_type?: string
+          fetched_at?: string
+          id?: string
+          industry_group?: string | null
+          occupation_group?: string | null
+          percent_change_12mo?: number | null
+          period?: string
+          series_id?: string
+          series_title?: string
+          source_program?: string
+          value?: number
+          year?: number
+        }
+        Relationships: []
+      }
+      bls_wage_benchmarks: {
+        Row: {
+          annual_10th: number | null
+          annual_25th: number | null
+          annual_75th: number | null
+          annual_90th: number | null
+          annual_mean: number | null
+          annual_median: number | null
+          area_code: string
+          area_title: string
+          data_year: number
+          fetched_at: string
+          hourly_10th: number | null
+          hourly_25th: number | null
+          hourly_75th: number | null
+          hourly_90th: number | null
+          hourly_mean: number | null
+          hourly_median: number | null
+          id: string
+          industry_code: string
+          occupation_code: string
+          occupation_title: string
+          source_program: string
+          total_employment: number | null
+        }
+        Insert: {
+          annual_10th?: number | null
+          annual_25th?: number | null
+          annual_75th?: number | null
+          annual_90th?: number | null
+          annual_mean?: number | null
+          annual_median?: number | null
+          area_code?: string
+          area_title?: string
+          data_year: number
+          fetched_at?: string
+          hourly_10th?: number | null
+          hourly_25th?: number | null
+          hourly_75th?: number | null
+          hourly_90th?: number | null
+          hourly_mean?: number | null
+          hourly_median?: number | null
+          id?: string
+          industry_code?: string
+          occupation_code: string
+          occupation_title: string
+          source_program?: string
+          total_employment?: number | null
+        }
+        Update: {
+          annual_10th?: number | null
+          annual_25th?: number | null
+          annual_75th?: number | null
+          annual_90th?: number | null
+          annual_mean?: number | null
+          annual_median?: number | null
+          area_code?: string
+          area_title?: string
+          data_year?: number
+          fetched_at?: string
+          hourly_10th?: number | null
+          hourly_25th?: number | null
+          hourly_75th?: number | null
+          hourly_90th?: number | null
+          hourly_mean?: number | null
+          hourly_median?: number | null
+          id?: string
+          industry_code?: string
+          occupation_code?: string
+          occupation_title?: string
+          source_program?: string
+          total_employment?: number | null
+        }
+        Relationships: []
+      }
       browse_ai_change_events: {
         Row: {
           change_summary: string | null
