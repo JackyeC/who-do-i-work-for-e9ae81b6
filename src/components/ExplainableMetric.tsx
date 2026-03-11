@@ -127,8 +127,8 @@ const METRIC_EXPLANATIONS: Record<string, MetricExplanation> = {
     source: "SEC filings, state disclosures, job posting analysis",
   },
   "ideology-flags": {
-    title: "Ideology & Controversy Flags",
-    what: "Connections between this company and organizations on ideological watchlists — including extremist groups, politically controversial nonprofits, and organizations flagged by civil rights monitors.",
+    title: "Ideology & Affiliation Flags",
+    what: "Connections between this company and organizations on ideological watchlists — including politically active nonprofits and organizations flagged by civil rights monitors.",
     why: "These flags don't mean a company endorses extremism. They identify financial or organizational relationships that could affect workplace culture, brand perception, or stakeholder trust.",
     source: "SPLC, ADL, lobbying disclosures, IRS 990 filings",
     context: "Severity levels: Critical (direct funding of flagged orgs), High (board/leadership overlap), Medium (trade association membership), Low (indirect connection).",
@@ -141,8 +141,8 @@ const METRIC_EXPLANATIONS: Record<string, MetricExplanation> = {
   },
   "agency-contracts": {
     title: "Government Agency Contracts",
-    what: "Detailed breakdown of federal contracts by agency, including contract value, description, fiscal year, and any controversy flags (e.g., contracts awarded by agencies the company lobbies).",
-    why: "The specific agencies a company contracts with — and whether those overlap with lobbying targets — can reveal potential conflicts of interest.",
+    what: "Detailed breakdown of federal contracts by agency, including contract value, description, fiscal year, and any additional context notes (e.g., contracts awarded by agencies the company lobbies).",
+    why: "The specific agencies a company contracts with — and whether those overlap with lobbying targets — can provide additional context about the relationship.",
     source: "USASpending.gov, FPDS",
     sourceUrl: "https://www.usaspending.gov",
   },

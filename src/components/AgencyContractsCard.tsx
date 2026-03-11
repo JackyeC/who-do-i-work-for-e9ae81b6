@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Shield, AlertTriangle, Loader2, Globe, ShieldAlert, Factory, ChevronDown, ChevronUp } from "lucide-react";
+import { Shield, AlertTriangle, Loader2, Globe, ShieldAlert, Factory, ChevronDown, ChevronUp, Info } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { cn } from "@/lib/utils";
 import { formatCurrency } from "@/data/sampleData";
@@ -13,8 +13,8 @@ interface AgencyContract {
   description: string;
   estimatedValue?: number;
   controversyFlag: boolean;
-  controversyCategory?: string;
-  controversyDescription?: string;
+  notableCategory?: string;
+  notableDescription?: string;
   source?: string;
   confidence: string;
 }
@@ -133,6 +133,7 @@ export function AgencyContractsCard({ companyName, dbCompanyId }: Props) {
 
   const totalFlags = (result?.agencyContracts?.filter(c => c.controversyFlag).length || 0) +
     (result?.supplyChainFlags?.length || 0);
+  // Note: "flags" here means "notable context items" — not judgments
 
   return (
     <Card className={cn(totalFlags > 0 && "border-civic-red/20")}>
@@ -141,8 +142,8 @@ export function AgencyContractsCard({ companyName, dbCompanyId }: Props) {
           <ShieldAlert className="w-5 h-5 text-primary" />
           Federal Agency Contracts & Global Footprint
           {totalFlags > 0 && (
-            <Badge className="ml-auto text-xs bg-civic-red/10 text-civic-red border-civic-red/30">
-              {totalFlags} flags
+            <Badge className="ml-auto text-xs bg-muted text-muted-foreground border-border">
+              {totalFlags} notes
             </Badge>
           )}
         </CardTitle>
@@ -196,19 +197,19 @@ export function AgencyContractsCard({ companyName, dbCompanyId }: Props) {
                 </div>
                 <div className="space-y-2">
                   {result.agencyContracts.slice(0, expanded ? undefined : 4).map((c, i) => (
-                    <div key={i} className={cn("p-3 rounded-lg border", c.controversyFlag ? "border-civic-red/20 bg-civic-red/5" : "border-border")}>
+                    <div key={i} className={cn("p-3 rounded-lg border", c.controversyFlag ? "border-primary/20 bg-primary/5" : "border-border")}>
                       <div className="flex items-start justify-between gap-2">
                         <div className="flex items-center gap-2">
                           <span className="font-medium text-sm text-foreground">{c.agencyAcronym || c.agencyName}</span>
-                          {c.controversyFlag && <AlertTriangle className="w-3.5 h-3.5 text-civic-red" />}
-                          {c.controversyCategory && (
-                            <Badge className={cn("text-xs", severityColor("high"))}>{categoryLabel(c.controversyCategory)}</Badge>
+                          {c.controversyFlag && <Info className="w-3.5 h-3.5 text-muted-foreground" />}
+                          {c.notableCategory && (
+                            <Badge variant="outline" className="text-xs">{categoryLabel(c.notableCategory)}</Badge>
                           )}
                         </div>
                         {c.estimatedValue && <span className="text-sm font-bold text-foreground">{formatCurrency(c.estimatedValue)}</span>}
                       </div>
                       <p className="text-xs text-muted-foreground mt-1">{c.description}</p>
-                      {c.controversyDescription && <p className="text-xs text-civic-red mt-1">{c.controversyDescription}</p>}
+                      {c.notableDescription && <p className="text-xs text-muted-foreground mt-1 italic">{c.notableDescription}</p>}
                     </div>
                   ))}
                   {result.agencyContracts.length > 4 && (

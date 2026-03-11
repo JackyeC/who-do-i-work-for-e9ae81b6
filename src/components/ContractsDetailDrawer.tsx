@@ -22,7 +22,7 @@ interface AgencyGroup {
   total: number;
   count: number;
   contracts: any[];
-  hasControversy: boolean;
+  hasNotableContext: boolean;
 }
 
 export function ContractsDetailDrawer({ open, onOpenChange, companyId, companyName, totalContracts, totalSubsidies }: ContractsDetailDrawerProps) {
@@ -41,7 +41,7 @@ export function ContractsDetailDrawer({ open, onOpenChange, companyId, companyNa
     enabled: !!companyId && open,
   });
 
-  const controversialContracts = (contracts || []).filter((c: any) => c.controversy_flag);
+  const notableContracts = (contracts || []).filter((c: any) => c.controversy_flag);
   const totalValue = (contracts || []).reduce((sum: number, c: any) => sum + (c.contract_value || 0), 0);
 
   // Group by agency into sorted list
@@ -49,11 +49,11 @@ export function ContractsDetailDrawer({ open, onOpenChange, companyId, companyNa
     const map: Record<string, AgencyGroup> = {};
     for (const c of contracts || []) {
       const key = c.agency_name || "Unknown Agency";
-      if (!map[key]) map[key] = { agency: key, total: 0, count: 0, contracts: [], hasControversy: false };
+      if (!map[key]) map[key] = { agency: key, total: 0, count: 0, contracts: [], hasNotableContext: false };
       map[key].total += c.contract_value || 0;
       map[key].count += 1;
       map[key].contracts.push(c);
-      if (c.controversy_flag) map[key].hasControversy = true;
+      if (c.controversy_flag) map[key].hasNotableContext = true;
     }
     return Object.values(map).sort((a, b) => b.total - a.total);
   })();
@@ -114,15 +114,15 @@ export function ContractsDetailDrawer({ open, onOpenChange, companyId, companyNa
             <LoadingState message="Loading contract details..." className="py-8" />
           ) : (
             <>
-              {/* Controversy alerts */}
-              {controversialContracts.length > 0 && (
-                <div className="p-3 rounded-lg bg-destructive/5 border border-destructive/20">
+              {/* Notable context */}
+              {notableContracts.length > 0 && (
+                <div className="p-3 rounded-lg bg-muted/50 border border-border">
                   <div className="flex items-center gap-2 mb-2">
-                    <AlertTriangle className="w-4 h-4 text-destructive" />
-                    <span className="text-sm font-semibold text-destructive">{controversialContracts.length} Controversial Contract{controversialContracts.length > 1 ? "s" : ""}</span>
+                    <AlertTriangle className="w-4 h-4 text-muted-foreground" />
+                    <span className="text-sm font-semibold text-foreground">{notableContracts.length} Contract{notableContracts.length > 1 ? "s" : ""} with Additional Context</span>
                   </div>
                   <div className="space-y-2">
-                    {controversialContracts.map((c: any) => (
+                    {notableContracts.map((c: any) => (
                       <div key={c.id} className="text-xs text-muted-foreground">
                         <span className="font-medium text-foreground">{c.agency_name}</span> — {c.controversy_description || c.controversy_category}
                         {c.contract_value && <span className="ml-1">({formatCurrency(c.contract_value)})</span>}
@@ -154,7 +154,7 @@ export function ContractsDetailDrawer({ open, onOpenChange, companyId, companyNa
                               <div className="text-sm font-medium text-foreground truncate">{group.agency}</div>
                               <div className="text-[10px] text-muted-foreground">
                                 {group.count} contract{group.count > 1 ? "s" : ""}
-                                {group.hasControversy && <span className="text-destructive ml-1.5">• Controversy flagged</span>}
+                                {group.hasNotableContext && <span className="text-muted-foreground ml-1.5">• Additional context</span>}
                               </div>
                             </div>
                           </div>
@@ -165,7 +165,7 @@ export function ContractsDetailDrawer({ open, onOpenChange, companyId, companyNa
                         {isExpanded && (
                           <div className="border-t border-border/40 bg-muted/20 p-2 space-y-1.5 max-h-64 overflow-y-auto">
                             {group.contracts.map((c: any) => (
-                              <div key={c.id} className={`p-2.5 rounded-md border ${c.controversy_flag ? "border-destructive/20 bg-destructive/5" : "border-border/40 bg-background"}`}>
+                              <div key={c.id} className={`p-2.5 rounded-md border ${c.controversy_flag ? "border-primary/20 bg-primary/5" : "border-border/40 bg-background"}`}>
                                 <div className="flex items-center justify-between mb-1">
                                   {c.contract_description
                                     ? <span className="text-xs text-foreground line-clamp-2">{c.contract_description}</span>
@@ -177,7 +177,7 @@ export function ContractsDetailDrawer({ open, onOpenChange, companyId, companyNa
                                 </div>
                                 <div className="flex items-center gap-2 flex-wrap mt-1">
                                   {c.fiscal_year && <Badge variant="outline" className="text-[10px]">FY{c.fiscal_year}</Badge>}
-                                  {c.controversy_flag && <Badge variant="destructive" className="text-[10px]">Controversy</Badge>}
+                                  {c.controversy_flag && <Badge variant="outline" className="text-[10px]">Additional Info</Badge>}
                                   <Badge variant="outline" className="text-[10px]">
                                     {c.confidence === "high" ? "Strong evidence" : c.confidence === "medium" ? "Some evidence" : "Weak evidence"}
                                   </Badge>
