@@ -53,7 +53,7 @@ export function ContractsDetailDrawer({ open, onOpenChange, companyId, companyNa
       map[key].total += c.contract_value || 0;
       map[key].count += 1;
       map[key].contracts.push(c);
-      if (c.controversy_flag) map[key].hasControversy = true;
+      if (c.controversy_flag) map[key].hasNotableContext = true;
     }
     return Object.values(map).sort((a, b) => b.total - a.total);
   })();
