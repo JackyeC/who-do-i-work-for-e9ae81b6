@@ -29,6 +29,16 @@ interface IssueSignal {
   source_url: string | null;
 }
 
+interface DarkMoneyRecord {
+  name: string;
+  org_type: string;
+  relationship: string;
+  estimated_amount?: number | null;
+  description?: string | null;
+  source?: string | null;
+  confidence?: string;
+}
+
 interface Props {
   companyName: string;
   totalPacSpending: number;
@@ -38,6 +48,7 @@ interface Props {
   lobbyingDetails?: LobbyingDetail[];
   publicStances?: PublicStance[];
   darkMoneyConnections?: number;
+  darkMoneyRecords?: DarkMoneyRecord[];
   flaggedOrgCount?: number;
   issueSignals?: IssueSignal[];
 }
