@@ -60,8 +60,21 @@ export function WhatYoureSupportingCard({
   publicStances = [],
   darkMoneyConnections = 0,
   flaggedOrgCount = 0,
+  issueSignals = [],
 }: Props) {
-  const hasActivity = totalPacSpending > 0 || lobbyingSpend > 0 || topCandidates.length > 0;
+  const hasActivity = totalPacSpending > 0 || lobbyingSpend > 0 || topCandidates.length > 0 || issueSignals.length > 0;
+
+  // Aggregate issue signals by category
+  const issueBreakdown = issueSignals.reduce<Record<string, { count: number; totalAmount: number }>>((acc, s) => {
+    const cat = s.issue_category || 'general';
+    if (!acc[cat]) acc[cat] = { count: 0, totalAmount: 0 };
+    acc[cat].count++;
+    acc[cat].totalAmount += s.amount || 0;
+    return acc;
+  }, {});
+
+  const sortedIssues = Object.entries(issueBreakdown)
+    .sort((a, b) => b[1].count - a[1].count);
 
   if (!hasActivity) return null;
 
