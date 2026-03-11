@@ -41,7 +41,7 @@ export function ContractsDetailDrawer({ open, onOpenChange, companyId, companyNa
     enabled: !!companyId && open,
   });
 
-  const controversialContracts = (contracts || []).filter((c: any) => c.controversy_flag);
+  const notableContracts = (contracts || []).filter((c: any) => c.controversy_flag);
   const totalValue = (contracts || []).reduce((sum: number, c: any) => sum + (c.contract_value || 0), 0);
 
   // Group by agency into sorted list
