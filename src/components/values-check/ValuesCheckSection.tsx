@@ -66,6 +66,7 @@ interface ValuesCheckSectionProps {
   isLoading?: boolean;
   onGenerateSignals?: () => void;
   isGenerating?: boolean;
+  onExecutiveClick?: (executive: { id: string; name: string; title: string; total_donations: number }) => void;
 }
 
 function getConfidenceBadge(label: string) {
