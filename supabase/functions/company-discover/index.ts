@@ -174,25 +174,20 @@ ${searchContent ? `Search results:\n${searchContent}` : 'Use your knowledge.'}`,
 
     await supabase.from('companies').update(updateFields).eq('id', newCompany.id);
 
-    // Step 5: Trigger intelligence scan in background (fire-and-forget)
-    const scansToTrigger = [
-      { fn: 'company-research', body: { companyName: identityData.official_name || name, enrichExisting: true } },
-      { fn: 'company-intelligence-scan', body: { companyId: newCompany.id, companyName: identityData.official_name || name } },
-    ];
-
-    for (const scan of scansToTrigger) {
-      try {
-        fetch(`${supabaseUrl}/functions/v1/${scan.fn}`, {
-          method: 'POST',
-          headers: {
-            'Authorization': `Bearer ${supabaseKey}`,
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify(scan.body),
-        }).catch(e => console.error(`Background scan ${scan.fn} failed:`, e));
-      } catch (e) {
-        console.error(`Failed to trigger ${scan.fn}:`, e);
-      }
+    // Step 5: Trigger company-research in background (fire-and-forget)
+    // NOTE: Do NOT trigger company-intelligence-scan here — the profile page's
+    // useROIPipeline hook auto-triggers it when it detects empty data, avoiding double invocation.
+    try {
+      fetch(`${supabaseUrl}/functions/v1/company-research`, {
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${supabaseKey}`,
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ companyName: identityData.official_name || name, enrichExisting: true }),
+      }).catch(e => console.error('Background company-research failed:', e));
+    } catch (e) {
+      console.error('Failed to trigger company-research:', e);
     }
 
     // Update status to research in progress
