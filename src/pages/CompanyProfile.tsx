@@ -481,6 +481,21 @@ export default function CompanyProfile() {
     refetchInterval: pollInterval,
   });
 
+  // Issue signals (mapped from entity_id = company_id)
+  const { data: dbIssueSignals } = useQuery({
+    queryKey: ["company-issue-signals", dbCompanyId],
+    queryFn: async () => {
+      const { data } = await (supabase as any)
+        .from("issue_signals")
+        .select("issue_category, signal_type, description, amount, confidence_score, source_url")
+        .eq("entity_id", dbCompanyId!)
+        .order("amount", { ascending: false });
+      return data || [];
+    },
+    enabled: !!dbCompanyId,
+    refetchInterval: pollInterval,
+  });
+
   const hasDetailedData = (dbCandidates?.length || 0) > 0 || (dbExecutives?.length || 0) > 0;
 
   // Values Check signals
