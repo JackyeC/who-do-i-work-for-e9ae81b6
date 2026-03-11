@@ -141,8 +141,8 @@ const METRIC_EXPLANATIONS: Record<string, MetricExplanation> = {
   },
   "agency-contracts": {
     title: "Government Agency Contracts",
-    what: "Detailed breakdown of federal contracts by agency, including contract value, description, fiscal year, and any controversy flags (e.g., contracts awarded by agencies the company lobbies).",
-    why: "The specific agencies a company contracts with — and whether those overlap with lobbying targets — can reveal potential conflicts of interest.",
+    what: "Detailed breakdown of federal contracts by agency, including contract value, description, fiscal year, and any additional context notes (e.g., contracts awarded by agencies the company lobbies).",
+    why: "The specific agencies a company contracts with — and whether those overlap with lobbying targets — can provide additional context about the relationship.",
     source: "USASpending.gov, FPDS",
     sourceUrl: "https://www.usaspending.gov",
   },

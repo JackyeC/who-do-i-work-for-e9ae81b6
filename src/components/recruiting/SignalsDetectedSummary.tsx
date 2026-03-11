@@ -110,8 +110,8 @@ export function SignalsDetectedSummary({ companyId, companyName }: Props) {
 
       if (ideologyRes.data && ideologyRes.data.length > 0) {
         detected.push({
-          label: "Ideology or controversy flags",
-          category: "Controversy",
+          label: "Ideology or affiliation flags",
+          category: "Additional Context",
           icon: <AlertTriangle className="w-3.5 h-3.5" />,
           sourceUrl: ideologyRes.data[0]?.evidence_url || undefined,
           sourceLabel: "Source",
