@@ -17,3 +17,6 @@ verify_jwt = false
 
 [functions.career-discovery]
 verify_jwt = false
+
+[functions.sync-bls-data]
+verify_jwt = false
