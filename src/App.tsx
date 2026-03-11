@@ -49,6 +49,9 @@ import CompanyDossier from "./pages/CompanyDossier";
 import Pricing from "./pages/Pricing";
 import RelationshipIntelligence from "./pages/RelationshipIntelligence";
 import StrategicOfferReview from "./pages/StrategicOfferReview";
+import PolicyHub from "./pages/PolicyHub";
+import PolicyDetail from "./pages/PolicyDetail";
+import EconomyDashboard from "./pages/EconomyDashboard";
 const queryClient = new QueryClient();
 
 function ScrollToTop() {
