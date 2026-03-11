@@ -1,6 +1,7 @@
+import { useState } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { AlertTriangle, HandCoins, Users, Scale, HelpCircle, ExternalLink, Share2 } from "lucide-react";
+import { AlertTriangle, HandCoins, Users, Scale, HelpCircle, ExternalLink, Share2, ChevronDown, ChevronUp, Info } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { formatCurrency } from "@/data/sampleData";
 import { PartyBadge } from "@/components/PartyBadge";
@@ -28,6 +29,16 @@ interface IssueSignal {
   source_url: string | null;
 }
 
+interface DarkMoneyRecord {
+  name: string;
+  org_type: string;
+  relationship: string;
+  estimated_amount?: number | null;
+  description?: string | null;
+  source?: string | null;
+  confidence?: string;
+}
+
 interface Props {
   companyName: string;
   totalPacSpending: number;
@@ -37,6 +48,7 @@ interface Props {
   lobbyingDetails?: LobbyingDetail[];
   publicStances?: PublicStance[];
   darkMoneyConnections?: number;
+  darkMoneyRecords?: DarkMoneyRecord[];
   flaggedOrgCount?: number;
   issueSignals?: IssueSignal[];
 }
@@ -59,9 +71,11 @@ export function WhatYoureSupportingCard({
   lobbyingDetails = [],
   publicStances = [],
   darkMoneyConnections = 0,
+  darkMoneyRecords = [],
   flaggedOrgCount = 0,
   issueSignals = [],
 }: Props) {
+  const [worthKnowingExpanded, setWorthKnowingExpanded] = useState(false);
   const hasActivity = totalPacSpending > 0 || lobbyingSpend > 0 || topCandidates.length > 0 || issueSignals.length > 0;
 
   // Aggregate issue signals by category
@@ -286,25 +300,66 @@ export function WhatYoureSupportingCard({
           </div>
         )}
 
-        {/* Risk flags */}
+        {/* Additional context — clickable & expandable */}
         {(darkMoneyConnections > 0 || flaggedOrgCount > 0) && (
-          <div className="p-3 rounded-lg bg-[hsl(var(--civic-yellow))]/5 border border-[hsl(var(--civic-yellow))]/20">
-            <div className="flex items-center gap-2 mb-1">
-              <AlertTriangle className="w-4 h-4 text-[hsl(var(--civic-yellow))]" />
-              <span className="text-sm font-semibold text-foreground">Worth Knowing</span>
-            </div>
-            <ul className="text-xs text-muted-foreground space-y-1 ml-6 list-disc">
-              {darkMoneyConnections > 0 && (
-                <li>
-                  <strong className="text-foreground">{darkMoneyConnections} hidden money connection{darkMoneyConnections > 1 ? "s" : ""}</strong> — money sent through groups that don't have to say who gave it. This makes it harder to see the full picture.
-                </li>
-              )}
-              {flaggedOrgCount > 0 && (
-                <li>
-                  <strong className="text-foreground">{flaggedOrgCount} connection{flaggedOrgCount > 1 ? "s" : ""} to watchlist groups</strong> — organizations flagged by civil rights groups (SPLC/ADL) for extremist ties.
-                </li>
-              )}
-            </ul>
+          <div className="rounded-lg border border-border bg-muted/30 overflow-hidden">
+            <button
+              onClick={() => setWorthKnowingExpanded(!worthKnowingExpanded)}
+              className="w-full flex items-center justify-between p-3 hover:bg-muted/50 transition-colors cursor-pointer group"
+            >
+              <div className="flex items-center gap-2">
+                <Info className="w-4 h-4 text-muted-foreground" />
+                <span className="text-sm font-semibold text-foreground">Additional Information</span>
+                <Badge variant="outline" className="text-[10px]">
+                  {darkMoneyConnections + flaggedOrgCount} item{(darkMoneyConnections + flaggedOrgCount) > 1 ? "s" : ""}
+                </Badge>
+              </div>
+              {worthKnowingExpanded
+                ? <ChevronUp className="w-4 h-4 text-muted-foreground" />
+                : <ChevronDown className="w-4 h-4 text-muted-foreground group-hover:text-foreground transition-colors" />
+              }
+            </button>
+
+            {worthKnowingExpanded && (
+              <div className="border-t border-border/40 p-3 space-y-3">
+                {darkMoneyConnections > 0 && (
+                  <div>
+                    <p className="text-xs text-muted-foreground mb-2">
+                      <strong className="text-foreground">{darkMoneyConnections} indirect spending connection{darkMoneyConnections > 1 ? "s" : ""}</strong> — money routed through organizations that are not required to disclose donors under current law.
+                    </p>
+                    {darkMoneyRecords.length > 0 && (
+                      <div className="space-y-1.5">
+                        {darkMoneyRecords.map((dm, i) => (
+                          <div key={i} className="p-2.5 rounded-lg bg-card border border-border/50 text-xs">
+                            <div className="flex items-center justify-between mb-1">
+                              <span className="font-medium text-foreground">{dm.name}</span>
+                              <div className="flex items-center gap-1.5">
+                                <Badge variant="outline" className="text-[9px] px-1.5">{dm.org_type}</Badge>
+                                {dm.estimated_amount && dm.estimated_amount > 0 && (
+                                  <span className="font-data font-semibold text-foreground">{formatCurrency(dm.estimated_amount)}</span>
+                                )}
+                              </div>
+                            </div>
+                            <p className="text-muted-foreground">{dm.relationship}</p>
+                            {dm.description && <p className="text-muted-foreground mt-0.5 italic">{dm.description}</p>}
+                            {dm.source && (
+                              <a href={dm.source} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-1 text-primary hover:underline mt-1">
+                                View source <ExternalLink className="w-2.5 h-2.5" />
+                              </a>
+                            )}
+                          </div>
+                        ))}
+                      </div>
+                    )}
+                  </div>
+                )}
+                {flaggedOrgCount > 0 && (
+                  <p className="text-xs text-muted-foreground">
+                    <strong className="text-foreground">{flaggedOrgCount} connection{flaggedOrgCount > 1 ? "s" : ""} to watchlist organizations</strong> — groups identified by civil rights monitoring organizations.
+                  </p>
+                )}
+              </div>
+            )}
           </div>
         )}
 

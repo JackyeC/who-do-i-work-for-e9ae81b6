@@ -1029,6 +1029,15 @@ export default function CompanyProfile() {
                     ].filter((v: string, i: number, a: string[]) => v && a.indexOf(v) === i).slice(0, 12)
                   }
                   darkMoneyConnections={(dbDarkMoney || []).length}
+                  darkMoneyRecords={(dbDarkMoney || []).map((dm: any) => ({
+                    name: dm.name,
+                    org_type: dm.org_type,
+                    relationship: dm.relationship,
+                    estimated_amount: dm.estimated_amount,
+                    description: dm.description,
+                    source: dm.source,
+                    confidence: dm.confidence,
+                  }))}
                   flaggedOrgCount={0}
                   issueSignals={dbIssueSignals || []}
                 />
