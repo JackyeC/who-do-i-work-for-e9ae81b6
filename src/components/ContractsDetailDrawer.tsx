@@ -22,7 +22,7 @@ interface AgencyGroup {
   total: number;
   count: number;
   contracts: any[];
-  hasControversy: boolean;
+  hasNotableContext: boolean;
 }
 
 export function ContractsDetailDrawer({ open, onOpenChange, companyId, companyName, totalContracts, totalSubsidies }: ContractsDetailDrawerProps) {
