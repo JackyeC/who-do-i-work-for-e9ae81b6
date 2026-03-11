@@ -967,6 +967,7 @@ export default function CompanyProfile() {
                 onGenerateSignals={handleGenerateValuesCheck}
                 isGenerating={isGeneratingValues}
                 onExecutiveClick={handleExecutiveClick}
+                onDonationsClick={() => setPacDrawerOpen(true)}
               />
             </div>
 
