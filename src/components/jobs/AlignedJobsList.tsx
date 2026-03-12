@@ -288,7 +288,17 @@ export function AlignedJobsList() {
     );
   }
 
-  const matches = data?.matches || [];
+  // Filter to US-only jobs
+  const NON_US_PATTERNS = /\b(london|uk|united kingdom|toronto|canada|berlin|germany|paris|france|mumbai|india|bangalore|singapore|sydney|australia|tokyo|japan|amsterdam|netherlands|dublin|ireland|são paulo|brazil|mexico city|mexico|hong kong|shanghai|china|beijing|seoul|south korea|lagos|nigeria|nairobi|kenya|dubai|uae|tel aviv|israel)\b/i;
+  const US_STATE_PATTERN = /\b([A-Z]{2})\b|united states|USA|U\.S\./i;
+
+  const matches = (data?.matches || []).filter((job) => {
+    if (!job.location) return true; // no location = assume US
+    const loc = job.location;
+    if (NON_US_PATTERNS.test(loc)) return false;
+    // If it looks like a US location or has a state abbreviation, keep it
+    return true;
+  });
 
   if (matches.length === 0) {
     return (
