@@ -96,8 +96,8 @@ function StatCard({ icon: Icon, label, value, subtext, onClick }: {
   icon: any; label: string; value: string; subtext?: string; onClick?: () => void;
 }) {
   return (
-    <Card className={cn("overflow-hidden", onClick && "cursor-pointer hover:border-primary/30 hover:shadow-md transition-all")} onClick={onClick}>
-      <CardContent className="p-4">
+    <Card className={cn("overflow-hidden h-full", onClick && "cursor-pointer hover:border-primary/30 hover:shadow-md transition-all")} onClick={onClick}>
+      <CardContent className="p-4 h-full flex flex-col justify-center">
         <div className="flex items-center gap-2 text-xs text-muted-foreground mb-1.5">
           <Icon className="w-3.5 h-3.5" />
           {label}
