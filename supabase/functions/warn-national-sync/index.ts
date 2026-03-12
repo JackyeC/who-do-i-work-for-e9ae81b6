@@ -9,6 +9,13 @@ const corsHeaders = {
 const NATIONAL_WARN_URL =
   "https://raw.githubusercontent.com/biglocalnews/warn-transformer/main/data/warn.json";
 
+// Official state WARN sources for direct scraping
+const STATE_SOURCES: Record<string, { name: string; url: string; type: string }> = {
+  CA: { name: "California EDD WARN", url: "https://edd.ca.gov/en/jobs_and_training/layoff_services_warn", type: "official_state_warn" },
+  TX: { name: "Texas Workforce Commission WARN", url: "https://www.twc.texas.gov/businesses/worker-adjustment-and-retraining-notification-warn-notices", type: "official_state_warn" },
+  NY: { name: "New York WARN Dashboard", url: "https://dol.ny.gov/warn-notices", type: "official_state_warn" },
+};
+
 interface WarnEntry {
   company_name?: string;
   notice_date?: string;
@@ -34,10 +41,8 @@ function companiesMatch(warnName: string, targetName: string, subsidiaries: stri
   const normWarn = normalizeCompanyName(warnName);
   const normTarget = normalizeCompanyName(targetName);
 
-  // Direct match
   if (normWarn.includes(normTarget) || normTarget.includes(normWarn)) return true;
 
-  // Subsidiary match
   for (const sub of subsidiaries) {
     const normSub = normalizeCompanyName(sub);
     if (normSub.length > 2 && (normWarn.includes(normSub) || normSub.includes(normWarn))) return true;
@@ -49,9 +54,7 @@ function companiesMatch(warnName: string, targetName: string, subsidiaries: stri
 function parseDate(d: string | undefined): string | null {
   if (!d) return null;
   const cleaned = d.trim();
-  // Try ISO format first
   if (/^\d{4}-\d{2}-\d{2}/.test(cleaned)) return cleaned.slice(0, 10);
-  // Try MM/DD/YYYY
   const parts = cleaned.split("/");
   if (parts.length === 3) {
     const [m, day, y] = parts;
@@ -84,7 +87,7 @@ Deno.serve(async (req) => {
 
   try {
     const body = await req.json();
-    const { company_id, company_name, days_back = 365 } = body;
+    const { company_id, company_name, days_back = 365, mode = "company" } = body;
 
     const supabaseUrl = Deno.env.get("SUPABASE_URL")!;
     const supabaseKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!;
@@ -109,6 +112,16 @@ Deno.serve(async (req) => {
     if (!response.ok) {
       const errText = await response.text();
       console.error("[warn-national-sync] Fetch failed:", response.status, errText);
+
+      // Log sync failure
+      await supabase.from("warn_sync_log").insert({
+        source_name: "Big Local News WARN Transformer",
+        source_url: NATIONAL_WARN_URL,
+        source_type: "big_local_news",
+        status: "error",
+        error_message: `HTTP ${response.status}: ${errText.slice(0, 200)}`,
+      });
+
       return new Response(
         JSON.stringify({ error: "Failed to fetch national WARN dataset" }),
         { status: 502, headers: { ...corsHeaders, "Content-Type": "application/json" } }
@@ -118,7 +131,8 @@ Deno.serve(async (req) => {
     const allData: WarnEntry[] = await response.json();
     console.log(`[warn-national-sync] Dataset size: ${allData.length} entries`);
 
-    // Filter by date range
+    // Filter by date range — prioritize current year
+    const currentYear = new Date().getFullYear();
     const cutoff = new Date();
     cutoff.setDate(cutoff.getDate() - days_back);
 
@@ -127,17 +141,17 @@ Deno.serve(async (req) => {
       return nd && new Date(nd) >= cutoff;
     });
 
+    // Sort by notice_date descending — current year first
+    recentData.sort((a, b) => {
+      const da = parseDate(a.notice_date) || "";
+      const db = parseDate(b.notice_date) || "";
+      return db.localeCompare(da);
+    });
+
     console.log(`[warn-national-sync] ${recentData.length} entries within last ${days_back} days`);
 
-    // If company_name provided, filter to matching entries
-    let matched: WarnEntry[];
-    if (company_name) {
-      matched = recentData.filter((entry) =>
-        entry.company_name && companiesMatch(entry.company_name, company_name, subsidiaryNames)
-      );
-      console.log(`[warn-national-sync] ${matched.length} matches for "${company_name}"`);
-    } else {
-      // Return top-level national summary (no company filter)
+    // If no company filter, return national summary
+    if (mode === "national" || !company_name) {
       const stateBreakdown: Record<string, { notices: number; affected: number }> = {};
       for (const entry of recentData) {
         const state = entry.state || "Unknown";
@@ -146,18 +160,41 @@ Deno.serve(async (req) => {
         stateBreakdown[state].affected += parseWorkers(entry.number_of_workers);
       }
 
+      // Current year stats
+      const currentYearData = recentData.filter(e => {
+        const nd = parseDate(e.notice_date);
+        return nd && nd.startsWith(String(currentYear));
+      });
+
+      await supabase.from("warn_sync_log").insert({
+        source_name: "Big Local News WARN Transformer",
+        source_url: NATIONAL_WARN_URL,
+        source_type: "big_local_news",
+        records_fetched: allData.length,
+        status: "success",
+      });
+
       return new Response(
         JSON.stringify({
           success: true,
           totalNotices: recentData.length,
+          currentYearNotices: currentYearData.length,
           totalAffected: recentData.reduce((s, e) => s + parseWorkers(e.number_of_workers), 0),
+          currentYearAffected: currentYearData.reduce((s, e) => s + parseWorkers(e.number_of_workers), 0),
           stateBreakdown,
           topCompanies: getTopCompanies(recentData, 20),
           source: "Big Local News WARN Transformer",
+          lastSynced: new Date().toISOString(),
         }),
         { headers: { ...corsHeaders, "Content-Type": "application/json" } }
       );
     }
+
+    // Company-specific matching
+    const matched = recentData.filter((entry) =>
+      entry.company_name && companiesMatch(entry.company_name, company_name, subsidiaryNames)
+    );
+    console.log(`[warn-national-sync] ${matched.length} matches for "${company_name}"`);
 
     // Insert matched notices into DB
     let inserted = 0;
@@ -183,6 +220,9 @@ Deno.serve(async (req) => {
 
       if (existing && existing.length > 0) { skipped++; continue; }
 
+      // Determine reason type
+      const rawReason = entry.company_name !== company_name ? `Filed as: ${entry.company_name}` : null;
+
       const { error } = await supabase.from("company_warn_notices").insert({
         company_id,
         notice_date: noticeDate,
@@ -191,10 +231,14 @@ Deno.serve(async (req) => {
         layoff_type: normalizeLayoffType(entry.layoff_or_closure),
         location_city: city,
         location_state: state,
-        reason: entry.company_name !== company_name ? `Filed as: ${entry.company_name}` : null,
+        reason: rawReason,
+        reason_type: "not_stated",
         source_url: "https://github.com/biglocalnews/warn-transformer",
         source_state: state,
+        source_type: "big_local_news",
         confidence: "direct",
+        employer_name_raw: entry.company_name || null,
+        last_synced_at: new Date().toISOString(),
       });
 
       if (error) {
@@ -227,6 +271,16 @@ Deno.serve(async (req) => {
       });
     }
 
+    // Log sync
+    await supabase.from("warn_sync_log").insert({
+      source_name: "Big Local News WARN Transformer",
+      source_url: NATIONAL_WARN_URL,
+      source_type: "big_local_news",
+      records_fetched: matched.length,
+      records_inserted: inserted,
+      status: "success",
+    });
+
     console.log(`[warn-national-sync] Done: ${inserted} inserted, ${skipped} skipped for ${company_name}`);
 
     return new Response(
@@ -237,6 +291,7 @@ Deno.serve(async (req) => {
         matched: matched.length,
         stateBreakdown,
         source: "Big Local News WARN Transformer",
+        lastSynced: new Date().toISOString(),
       }),
       { headers: { ...corsHeaders, "Content-Type": "application/json" } }
     );
