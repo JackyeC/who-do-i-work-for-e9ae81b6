@@ -3,7 +3,7 @@ import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { BrowserRouter, Routes, Route, useLocation } from "react-router-dom";
+import { BrowserRouter, Routes, Route, Navigate, useLocation } from "react-router-dom";
 import { AuthProvider } from "@/contexts/AuthContext";
 import { ViewModeProvider } from "@/contexts/ViewModeContext";
 import { DossierLensProvider } from "@/contexts/DossierLensContext";
@@ -187,6 +187,7 @@ const App = () => (
                     <RelationshipIntelligence />
                   </ProtectedRoute>
                 } />
+                <Route path="/auto-apply" element={<Navigate to="/dashboard?tab=auto-apply" replace />} />
                 <Route path="*" element={<NotFound />} />
               </Routes>
               <AskJackyeWidget />
