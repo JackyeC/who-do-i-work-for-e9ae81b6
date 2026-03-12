@@ -110,6 +110,15 @@ function StatCard({ icon: Icon, label, value, subtext, onClick }: {
   );
 }
 
+/* ─── Helper: check if a company has enough data to show full profile ─── */
+function hasSubstantiveData(opts: {
+  totalPac: number; lobbyingSpend: number; govContracts: number;
+  candidates: number; executives: number; stances: number;
+}) {
+  return opts.totalPac > 0 || opts.lobbyingSpend > 0 || opts.govContracts > 0 ||
+    opts.candidates > 0 || opts.executives > 0 || opts.stances > 0;
+}
+
 export default function CompanyProfile() {
   const { id } = useParams();
   const company = companies.find((c) => c.id === id);
@@ -476,14 +485,47 @@ export default function CompanyProfile() {
           })()}
 
           {/* ═══════════════════════════════════════════════════════════
-              KEY STATS ROW
+              KEY STATS ROW — only show cards with actual data
              ═══════════════════════════════════════════════════════════ */}
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-3 mb-6">
-            <StatCard icon={Scale} label="Civic Footprint" value={`${civicScore}/100`} subtext="Political activity level" />
-            <StatCard icon={DollarSign} label="PAC Spending" value={totalPac > 0 ? formatCurrency(totalPac) : "None"} subtext="Current cycle" onClick={() => setPacDrawerOpen(true)} />
-            <StatCard icon={Megaphone} label="Federal Lobbying" value={lobbyingSpend ? formatCurrency(lobbyingSpend) : "None"} subtext="Senate LDA filings" onClick={() => setLobbyingDrawerOpen(true)} />
-            <StatCard icon={Landmark} label="Gov Contracts" value={govContracts ? formatCurrency(govContracts) : "—"} subtext="Federal awards" onClick={govContracts ? () => setContractsDrawerOpen(true) : undefined} />
-          </div>
+          {(() => {
+            const stats = [
+              totalPac > 0 && <StatCard key="pac" icon={DollarSign} label="PAC Spending" value={formatCurrency(totalPac)} subtext="Current cycle" onClick={() => setPacDrawerOpen(true)} />,
+              lobbyingSpend > 0 && <StatCard key="lobby" icon={Megaphone} label="Federal Lobbying" value={formatCurrency(lobbyingSpend)} subtext="Senate LDA filings" onClick={() => setLobbyingDrawerOpen(true)} />,
+              govContracts > 0 && <StatCard key="contracts" icon={Landmark} label="Gov Contracts" value={formatCurrency(govContracts)} subtext="Federal awards" onClick={() => setContractsDrawerOpen(true)} />,
+              civicScore > 0 && <StatCard key="civic" icon={Scale} label="Civic Footprint" value={`${civicScore}/100`} subtext="Political activity level" />,
+            ].filter(Boolean);
+
+            if (stats.length === 0) return null;
+            return (
+              <div className={`grid grid-cols-2 ${stats.length >= 3 ? 'md:grid-cols-' + Math.min(stats.length, 4) : 'md:grid-cols-2'} gap-3 mb-6`}>
+                {stats}
+              </div>
+            );
+          })()}
+
+          {/* ═══════════════════════════════════════════════════════════
+              NO DATA YET — Show clear CTA when company lacks data
+             ═══════════════════════════════════════════════════════════ */}
+          {dbCompany && !isDiscovering && !hasSubstantiveData({
+            totalPac, lobbyingSpend, govContracts,
+            candidates: dbCandidates?.length || 0,
+            executives: dbExecutives?.length || 0,
+            stances: dbPublicStances?.length || 0,
+          }) && (
+            <Card className="mb-6 border-dashed border-primary/20">
+              <CardContent className="p-6 text-center">
+                <Sparkles className="w-8 h-8 text-primary/40 mx-auto mb-3" />
+                <h3 className="text-base font-semibold text-foreground mb-1">No intelligence data yet</h3>
+                <p className="text-sm text-muted-foreground mb-4 max-w-md mx-auto">
+                  This company hasn't been scanned. Run an AI research scan to pull public records from FEC, Senate LDA, USAspending, and more.
+                </p>
+                <Button onClick={handleEnrich} disabled={isEnriching} className="gap-1.5">
+                  {isEnriching ? <Loader2 className="w-4 h-4 animate-spin" /> : <Sparkles className="w-4 h-4" />}
+                  {isEnriching ? "Scanning…" : "Run Intelligence Scan"}
+                </Button>
+              </CardContent>
+            </Card>
+          )}
 
           {/* ═══════════════════════════════════════════════════════════
               TABBED CONTENT AREA
@@ -491,12 +533,12 @@ export default function CompanyProfile() {
           <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
             <TabsList className="w-full justify-start overflow-x-auto border-b border-border bg-transparent rounded-none h-auto p-0 gap-0">
               {[
-                { value: "overview", label: "Overview" },
-                { value: "money", label: "Money Trail" },
-                { value: "workforce", label: "Workforce" },
-                { value: "values", label: "Values Check" },
-                { value: "signals", label: "Signals & Timeline" },
-              ].map(tab => (
+                { value: "overview", label: "Overview", show: true },
+                { value: "money", label: "Money Trail", show: totalPac > 0 || lobbyingSpend > 0 || (dbCandidates?.length || 0) > 0 || (dbDarkMoney?.length || 0) > 0 },
+                { value: "workforce", label: "Workforce", show: true },
+                { value: "values", label: "Values Check", show: true },
+                { value: "signals", label: "Signals & Timeline", show: !!dbCompany },
+              ].filter(tab => tab.show).map(tab => (
                 <TabsTrigger
                   key={tab.value}
                   value={tab.value}
@@ -509,7 +551,7 @@ export default function CompanyProfile() {
 
             {/* ─── OVERVIEW TAB ─── */}
             <TabsContent value="overview" className="mt-6 space-y-6">
-              {/* Insights summary */}
+              {/* Insights summary — only when there's at least some data */}
               {dbCompany && (() => {
                 const hasPoliticalSpending = totalPac > 0 || lobbyingSpend > 0 || (dbCandidates?.length || 0) > 0;
                 const insights = [
@@ -520,14 +562,18 @@ export default function CompanyProfile() {
                   { key: "hiring", label: "Hiring Technology", found: !!tiAiHr, detail: "AI tools detected", icon: <Brain className="w-4 h-4 text-primary" /> },
                   { key: "benefits", label: "Benefits Data", found: !!tiBenefits, detail: "Signals found", icon: <Briefcase className="w-4 h-4 text-primary" /> },
                 ];
+                const hasAnyInsight = insights.some(i => i.found) || hasPoliticalSpending;
+                if (!hasAnyInsight) return null;
                 return <ProfileInsightsSummary companyName={name} hasPoliticalSpending={hasPoliticalSpending} insights={insights} />;
               })()}
 
-              {/* Transparency Index */}
-              <TransparencyIndex categories={transparencyCategories} />
+              {/* Transparency Index — only show when there's at least one signal */}
+              {transparencyCategories.some(c => c.hasSignals) && (
+                <TransparencyIndex categories={transparencyCategories} />
+              )}
 
-              {/* What You're Supporting */}
-              {dbCompany && (
+              {/* What You're Supporting — only when there's political/influence data */}
+              {dbCompany && (totalPac > 0 || lobbyingSpend > 0 || (dbCandidates?.length || 0) > 0 || (dbIssueSignals?.length || 0) > 0) && (
                 <WhatYoureSupportingCard
                   companyName={name}
                   totalPacSpending={totalPac}
