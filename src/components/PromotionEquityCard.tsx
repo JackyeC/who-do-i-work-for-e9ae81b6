@@ -9,7 +9,7 @@ import { cn } from "@/lib/utils";
 import {
   TrendingUp, RefreshCw, Loader2, Users, GraduationCap, Ear,
   Brain, School, Award, CheckCircle2, AlertTriangle, HelpCircle,
-  ArrowUpRight, ShieldCheck
+  ArrowUpRight, ShieldCheck, EyeOff, Info
 } from "lucide-react";
 
 interface PromotionEquityCardProps {
@@ -27,11 +27,53 @@ const EQUITY_CATEGORIES = [
   { key: "no_degree", label: "No-Degree Pathways", icon: GraduationCap, color: "text-orange-500" },
 ];
 
-function getSignalStatus(signals: any[], category: string) {
+type SignalStrength = "strong" | "moderate" | "limited" | "no_public_signals";
+
+function getSignalStrength(signals: any[], category: string): SignalStrength {
   const matching = signals.filter(s => s.value_category === category);
-  if (matching.length === 0) return "none";
-  const hasDirectEvidence = matching.some(s => s.confidence === "direct");
-  return hasDirectEvidence ? "strong" : "signal";
+  if (matching.length === 0) return "no_public_signals";
+  const directCount = matching.filter(s => s.confidence === "direct").length;
+  const inferredCount = matching.filter(s => s.confidence === "inferred").length;
+  if (directCount >= 1) return "strong";
+  if (inferredCount >= 1 || matching.length >= 2) return "moderate";
+  return "limited";
+}
+
+const strengthConfig = {
+  strong: {
+    icon: CheckCircle2,
+    label: "Strong Evidence",
+    badgeClass: "bg-primary/10 text-primary border-primary/20",
+    rowClass: "border-primary/20 bg-primary/[0.02]",
+  },
+  moderate: {
+    icon: ArrowUpRight,
+    label: "Moderate Evidence",
+    badgeClass: "bg-amber-500/10 text-amber-600 border-amber-500/20",
+    rowClass: "border-amber-500/20 bg-amber-500/[0.02]",
+  },
+  limited: {
+    icon: AlertTriangle,
+    label: "Limited Evidence",
+    badgeClass: "bg-orange-500/10 text-orange-600 border-orange-500/20",
+    rowClass: "border-orange-500/20 bg-orange-500/[0.02]",
+  },
+  no_public_signals: {
+    icon: EyeOff,
+    label: "No Public Signals",
+    badgeClass: "bg-muted text-muted-foreground border-border",
+    rowClass: "border-border bg-muted/30",
+  },
+};
+
+function getTransparencyScore(signals: any[]): { score: number; label: string; color: string } {
+  const categoriesWithSignals = new Set(signals.map(s => s.value_category));
+  const covered = EQUITY_CATEGORIES.filter(c => categoriesWithSignals.has(c.key)).length;
+  const pct = Math.round((covered / EQUITY_CATEGORIES.length) * 100);
+  if (pct >= 70) return { score: pct, label: "High", color: "text-primary" };
+  if (pct >= 40) return { score: pct, label: "Moderate", color: "text-amber-500" };
+  if (pct > 0) return { score: pct, label: "Low", color: "text-orange-500" };
+  return { score: 0, label: "Opaque", color: "text-destructive" };
 }
 
 export function PromotionEquityCard({ companyName, dbCompanyId }: PromotionEquityCardProps) {
@@ -55,6 +97,8 @@ export function PromotionEquityCard({ companyName, dbCompanyId }: PromotionEquit
   });
 
   const hasSignals = (signals?.length || 0) > 0;
+  const hasScanned = hasSignals || signals !== undefined;
+  const transparency = getTransparencyScore(signals || []);
 
   const handleScan = async () => {
     setScanning(true);
@@ -74,12 +118,6 @@ export function PromotionEquityCard({ companyName, dbCompanyId }: PromotionEquit
     } finally {
       setScanning(false);
     }
-  };
-
-  const statusConfig = {
-    strong: { icon: CheckCircle2, label: "Evidence Found", badgeClass: "bg-primary/10 text-primary border-primary/20" },
-    signal: { icon: ArrowUpRight, label: "Signal Detected", badgeClass: "bg-amber-500/10 text-amber-600 border-amber-500/20" },
-    none: { icon: HelpCircle, label: "No Evidence", badgeClass: "bg-muted text-muted-foreground border-border" },
   };
 
   return (
@@ -112,23 +150,35 @@ export function PromotionEquityCard({ companyName, dbCompanyId }: PromotionEquit
           </div>
         ) : (
           <div className="space-y-4">
+            {/* Transparency Score */}
+            {hasScanned && (
+              <div className="flex items-center gap-3 p-3 rounded-lg border border-border bg-muted/30">
+                <ShieldCheck className="w-5 h-5 text-primary shrink-0" />
+                <div className="flex-1">
+                  <div className="flex items-center gap-2">
+                    <span className="text-sm font-semibold text-foreground">Transparency Level:</span>
+                    <span className={cn("text-sm font-bold", transparency.color)}>{transparency.label}</span>
+                    <span className="text-xs text-muted-foreground">({transparency.score}% of categories covered)</span>
+                  </div>
+                  <p className="text-[11px] text-muted-foreground mt-0.5">
+                    Companies that publish promotion data score higher. Absence of data is itself a meaningful signal.
+                  </p>
+                </div>
+              </div>
+            )}
+
             {/* Category grid */}
             <div className="grid gap-2">
               {EQUITY_CATEGORIES.map((cat) => {
-                const status = getSignalStatus(signals || [], cat.key);
-                const config = statusConfig[status];
+                const strength = getSignalStrength(signals || [], cat.key);
+                const config = strengthConfig[strength];
                 const matching = (signals || []).filter((s: any) => s.value_category === cat.key);
                 const StatusIcon = config.icon;
 
                 return (
                   <div
                     key={cat.key}
-                    className={cn(
-                      "flex items-start gap-3 p-3 rounded-lg border transition-colors",
-                      status === "strong" && "border-primary/20 bg-primary/[0.02]",
-                      status === "signal" && "border-amber-500/20 bg-amber-500/[0.02]",
-                      status === "none" && "border-border bg-muted/30"
-                    )}
+                    className={cn("flex items-start gap-3 p-3 rounded-lg border transition-colors", config.rowClass)}
                   >
                     <cat.icon className={cn("w-4 h-4 mt-0.5 shrink-0", cat.color)} />
                     <div className="flex-1 min-w-0">
@@ -153,9 +203,17 @@ export function PromotionEquityCard({ companyName, dbCompanyId }: PromotionEquit
                             </div>
                           ))}
                         </div>
+                      ) : hasScanned ? (
+                        <p className="text-[11px] text-muted-foreground flex items-start gap-1">
+                          <Info className="w-3 h-3 mt-0.5 shrink-0" />
+                          <span>
+                            Public signals not detected in scanned sources. This does not necessarily mean {companyName} lacks
+                            programs — it may mean the information is not publicly disclosed.
+                          </span>
+                        </p>
                       ) : (
                         <p className="text-[11px] text-muted-foreground">
-                          No public evidence detected. Click Scan to search.
+                          Click Scan to search public sources.
                         </p>
                       )}
                     </div>
@@ -171,25 +229,26 @@ export function PromotionEquityCard({ companyName, dbCompanyId }: PromotionEquit
                   <ShieldCheck className="w-4 h-4 text-primary" />
                   <span className="text-sm font-semibold text-foreground">
                     {(signals || []).filter((s: any) => s.confidence === "direct").length} direct signals,{" "}
-                    {(signals || []).filter((s: any) => s.confidence === "inferred").length} inferred
+                    {(signals || []).filter((s: any) => s.confidence === "inferred").length} inferred,{" "}
+                    {(signals || []).filter((s: any) => s.confidence === "weak").length} limited
                   </span>
                 </div>
                 <p className="text-[11px] text-muted-foreground">
-                  Signals detected from career pages, press releases, diversity reports, ESG filings, and public partnerships.
+                  Signals detected from ESG reports, impact reports, diversity reports, career pages, press releases, SEC filings, and public partnerships.
                 </p>
               </div>
             )}
 
-            {!hasSignals && (
+            {!hasSignals && !hasScanned && (
               <div className="text-center py-4">
                 <TrendingUp className="w-8 h-8 text-muted-foreground mx-auto mb-2" />
                 <p className="text-sm text-muted-foreground">Click "Scan" to detect promotion equity signals from public sources.</p>
-                <p className="text-[10px] text-muted-foreground mt-1">Typically takes 30–60 seconds.</p>
+                <p className="text-[10px] text-muted-foreground mt-1">Scans ESG reports, diversity reports, career pages, press releases, SEC filings, and partnerships.</p>
               </div>
             )}
 
             <p className="text-[10px] text-muted-foreground pt-2 border-t border-border">
-              Sources: Diversity reports, career pages, press releases, HBCU partnerships, Skill-First hiring pledges, ESG filings.
+              Sources: ESG / impact reports, diversity reports, career pages, press releases, SEC filings, HBCU partnerships, skills-first hiring pledges.
               This tool reports public signals — it does not provide legal or employment advice. Educational insights only.
             </p>
           </div>

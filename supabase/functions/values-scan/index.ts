@@ -58,46 +58,120 @@ const VALUE_CATEGORIES = [
   {
     key: "internal_promotion",
     label: "Internal Promotion / Promotes From Within",
-    searchTerms: ["internal promotion rate", "promote from within", "internal mobility program", "career ladder", "succession planning", "internal hire percentage", "employee development program", "tuition reimbursement"],
-    sourceHints: ["careers page", "annual report", "Glassdoor reviews", "press release"],
+    searchTerms: [
+      "internal promotion rate", "promote from within", "internal mobility program",
+      "career ladder", "succession planning", "internal hire percentage",
+      "employee development program", "tuition reimbursement",
+      "leadership development program", "talent marketplace", "career growth pathways",
+      "upskilling initiative", "internal job marketplace", "mentorship program",
+      "career pathing", "learning and development",
+    ],
+    sourceHints: ["careers page", "annual report", "ESG report", "impact report", "diversity report", "press release", "talent development page"],
   },
   {
     key: "women_leadership",
     label: "Women in Leadership & Promotions",
-    searchTerms: ["women in leadership", "female executives", "women promoted", "women on board", "gender parity", "women ERG", "women's leadership program", "SHE Summit", "Catalyst award"],
-    sourceHints: ["diversity report", "proxy statement", "ESG filing", "press release"],
+    searchTerms: [
+      "women in leadership", "female executives", "women promoted", "women on board",
+      "gender parity", "women ERG", "women's leadership program", "SHE Summit",
+      "Catalyst award", "board gender statistics", "executive gender breakdown",
+      "pay equity report", "gender pay gap", "leadership diversity commitment",
+    ],
+    sourceHints: ["diversity report", "proxy statement", "ESG filing", "press release", "SEC proxy", "impact report"],
   },
   {
     key: "minority_advancement",
     label: "Minority Advancement & Representation",
-    searchTerms: ["minority leadership", "Black executives", "Hispanic leadership", "people of color promoted", "racial equity audit", "minority representation", "diverse leadership pipeline", "BIPOC advancement"],
-    sourceHints: ["EEO-1 data", "diversity report", "press release", "ESG filing"],
+    searchTerms: [
+      "minority leadership", "Black executives", "Hispanic leadership",
+      "people of color promoted", "racial equity audit", "minority representation",
+      "diverse leadership pipeline", "BIPOC advancement",
+      "employee resource group", "supplier diversity", "workforce representation",
+      "leadership diversity initiative", "ERG program",
+    ],
+    sourceHints: ["EEO-1 data", "diversity report", "press release", "ESG filing", "impact report", "workforce demographics report"],
   },
   {
     key: "deaf_accessibility",
     label: "Deaf & Hard-of-Hearing Inclusion",
-    searchTerms: ["deaf employees", "ASL interpreter", "hearing accessibility", "deaf-friendly workplace", "captioning provided", "deaf hiring program", "National Association of the Deaf", "Communication Access Realtime Translation"],
-    sourceHints: ["careers page", "accessibility page", "press release", "disability inclusion report"],
+    searchTerms: [
+      "deaf employees", "ASL interpreter", "hearing accessibility",
+      "deaf-friendly workplace", "captioning provided", "deaf hiring program",
+      "National Association of the Deaf", "Communication Access Realtime Translation",
+      "accessibility initiative", "disability ERG", "ADA accommodations",
+      "inclusive design program", "accessibility statement",
+    ],
+    sourceHints: ["careers page", "accessibility page", "press release", "disability inclusion report", "diversity report"],
   },
   {
     key: "learning_disability",
     label: "Learning Disability & Neurodivergent Support",
-    searchTerms: ["neurodiversity program", "dyslexia accommodations", "learning disability support", "autism hiring", "neurodivergent inclusion", "ADHD accommodations", "disability ERG", "accommodations policy"],
-    sourceHints: ["careers page", "disability inclusion report", "press release", "ERG page"],
+    searchTerms: [
+      "neurodiversity program", "dyslexia accommodations", "learning disability support",
+      "autism hiring", "neurodivergent inclusion", "ADHD accommodations",
+      "disability ERG", "accommodations policy",
+      "autism at work", "neurodiversity hiring", "inclusive workplace disability",
+    ],
+    sourceHints: ["careers page", "disability inclusion report", "press release", "ERG page", "accessibility statement"],
   },
   {
     key: "hbcu_pipeline",
     label: "HBCU Pipeline & Partnerships",
-    searchTerms: ["HBCU partnership", "HBCU recruitment", "HBCU scholarship", "historically Black college", "HBCU career fair", "HBCU internship", "Thurgood Marshall College Fund", "UNCF partnership"],
-    sourceHints: ["careers page", "press release", "university partnerships page", "diversity report"],
+    searchTerms: [
+      "HBCU partnership", "HBCU recruitment", "HBCU scholarship",
+      "historically Black college", "HBCU career fair", "HBCU internship",
+      "Thurgood Marshall College Fund", "UNCF partnership",
+      "HBCU fellowship", "campus partnership Howard University",
+      "campus partnership Morehouse", "campus partnership Spelman",
+    ],
+    sourceHints: ["careers page", "press release", "university partnerships page", "diversity report", "scholarship page"],
   },
   {
     key: "no_degree",
     label: "No-Degree & Skills-First Pathways",
-    searchTerms: ["no degree required", "skills-based hiring", "remove degree requirement", "alternative credentials", "apprenticeship program", "Tear the Paper Ceiling", "STARs hiring", "skills-first employer", "certificate pathway"],
+    searchTerms: [
+      "no degree required", "skills-based hiring", "remove degree requirement",
+      "alternative credentials", "apprenticeship program", "Tear the Paper Ceiling",
+      "STARs hiring", "skills-first employer", "certificate pathway",
+      "degree optional", "non-degree pathways", "competency-based hiring",
+    ],
     sourceHints: ["job listings", "careers page", "press release", "Opportunity@Work", "Markle Foundation"],
   },
 ];
+
+// ─── Expanded scrape targets for promotion equity evidence ───
+function getScrapePaths(websiteUrl: string, careersUrl: string | null): string[] {
+  const base = websiteUrl.replace(/\/$/, "");
+  const paths = [
+    base,
+    `${base}/about`,
+    `${base}/diversity`,
+    `${base}/inclusion`,
+    `${base}/responsibility`,
+    `${base}/esg`,
+    `${base}/impact`,
+    `${base}/sustainability`,
+    `${base}/careers`,
+    `${base}/culture`,
+  ];
+  if (careersUrl && !paths.includes(careersUrl)) {
+    paths.push(careersUrl);
+  }
+  // Return max 5 to conserve Firecrawl credits
+  return paths.slice(0, 5);
+}
+
+// ─── Search queries to find reports not linked from main site ───
+function getSearchQueries(companyName: string): string[] {
+  return [
+    `"${companyName}" ESG report OR impact report OR inclusion report OR diversity report`,
+    `"${companyName}" internal promotion rate OR leadership development OR talent marketplace`,
+    `"${companyName}" HBCU partnership OR skills-first hiring OR neurodiversity program OR disability inclusion`,
+  ];
+}
+
+const CACHE_TTL_DAYS = 7;
+
 serve(async (req) => {
   if (req.method === "OPTIONS") return new Response(null, { headers: corsHeaders });
 
@@ -121,27 +195,50 @@ serve(async (req) => {
       .single();
     if (compError || !company) throw new Error("Company not found");
 
-    // Gather existing signals for context
+    // ─── Cache check: skip if scanned within TTL ───
+    const { data: recentSignals } = await adminClient
+      .from("company_values_signals")
+      .select("created_at")
+      .eq("company_id", companyId)
+      .order("created_at", { ascending: false })
+      .limit(1);
+
+    if (recentSignals && recentSignals.length > 0) {
+      const lastScan = new Date(recentSignals[0].created_at);
+      const daysSince = (Date.now() - lastScan.getTime()) / (1000 * 60 * 60 * 24);
+      if (daysSince < CACHE_TTL_DAYS) {
+        console.log(`[values-scan] Cache hit for ${company.name} (${daysSince.toFixed(1)}d ago)`);
+        const { data: cached } = await adminClient
+          .from("company_values_signals")
+          .select("*")
+          .eq("company_id", companyId);
+        return new Response(JSON.stringify({
+          success: true,
+          cached: true,
+          signalsFound: cached?.length || 0,
+          signals: cached || [],
+        }), { headers: { ...corsHeaders, "Content-Type": "application/json" } });
+      }
+    }
+
+    // ─── Gather existing signals for context ───
     const [{ data: existingFlags }, { data: existingIdeology }, { data: existingPAC }] = await Promise.all([
       adminClient.from("company_ideology_flags").select("org_name, category, relationship_type").eq("company_id", companyId).limit(20),
       adminClient.from("company_flagged_orgs").select("org_name, relationship, description").eq("company_id", companyId).limit(20),
       adminClient.from("company_candidates").select("name, party, amount").eq("company_id", companyId).limit(30),
     ]);
 
-    // Try to scrape company about/values pages
+    // ─── Phase 1: Scrape company pages (up to 5) ───
     let scrapedContent = "";
     if (firecrawlKey && company.website_url) {
-      try {
-        const urls = [
-          company.website_url,
-          `${company.website_url}/about`,
-          `${company.website_url}/values`,
-          `${company.website_url}/responsibility`,
-          `${company.website_url}/diversity`,
-        ].filter(Boolean);
+      const urls = getScrapePaths(company.website_url, company.careers_url);
+      console.log(`[values-scan] Scraping ${urls.length} pages for ${company.name}`);
 
-        for (const url of urls.slice(0, 3)) {
-          try {
+      // Scrape in parallel batches of 3
+      for (let i = 0; i < urls.length; i += 3) {
+        const batch = urls.slice(i, i + 3);
+        const results = await Promise.allSettled(
+          batch.map(async (url) => {
             const scrapeRes = await fetch("https://api.firecrawl.dev/v1/scrape", {
               method: "POST",
               headers: { Authorization: `Bearer ${firecrawlKey}`, "Content-Type": "application/json" },
@@ -150,32 +247,86 @@ serve(async (req) => {
             if (scrapeRes.ok) {
               const scrapeData = await scrapeRes.json();
               if (scrapeData?.data?.markdown) {
-                scrapedContent += `\n\n--- Page: ${url} ---\n${scrapeData.data.markdown.slice(0, 3000)}`;
+                return `\n\n--- Page: ${url} ---\n${scrapeData.data.markdown.slice(0, 3000)}`;
               }
             }
-          } catch { /* skip failed scrapes */ }
+            return "";
+          })
+        );
+        for (const r of results) {
+          if (r.status === "fulfilled" && r.value) scrapedContent += r.value;
         }
-      } catch { /* skip all scraping errors */ }
+      }
     }
 
-    // AI analysis
-    const systemPrompt = `You are a corporate values intelligence analyst. Given company data, existing political signals, and scraped web content, detect "Value-Identity" signals across these categories:
+    // ─── Phase 2: Search for reports/announcements not on the main site ───
+    let searchContent = "";
+    if (firecrawlKey) {
+      const queries = getSearchQueries(company.name);
+      console.log(`[values-scan] Running ${queries.length} search queries for ${company.name}`);
+
+      const searchResults = await Promise.allSettled(
+        queries.map(async (query) => {
+          const res = await fetch("https://api.firecrawl.dev/v1/search", {
+            method: "POST",
+            headers: { Authorization: `Bearer ${firecrawlKey}`, "Content-Type": "application/json" },
+            body: JSON.stringify({
+              query,
+              limit: 3,
+              lang: "en",
+              country: "us",
+              tbs: "qdr:y", // last year
+            }),
+          });
+          if (res.ok) {
+            const data = await res.json();
+            if (data?.data) {
+              return data.data
+                .map((r: any) => `--- Search result: ${r.title} (${r.url}) ---\n${r.description || ""}`)
+                .join("\n\n");
+            }
+          }
+          return "";
+        })
+      );
+      for (const r of searchResults) {
+        if (r.status === "fulfilled" && r.value) searchContent += "\n\n" + r.value;
+      }
+    }
+
+    // ─── AI analysis with expanded prompt ───
+    const systemPrompt = `You are a corporate values intelligence analyst specializing in detecting promotion equity, internal mobility, and workforce inclusion signals. 
+
+Given company data, existing political signals, scraped web content, and search results, detect "Value-Identity" signals across these categories:
 
 ${VALUE_CATEGORIES.map(c => `- ${c.key}: ${c.label} — Look for: ${c.searchTerms.join(", ")}`).join("\n")}
 
-For each signal found, provide the category, specific signal type, a factual summary, and evidence. Only report signals with actual evidence. Be factual and neutral—document what is found without moral judgment. If a company is rolling back DEI, report that factually alongside companies maintaining programs.`;
+IMPORTANT GUIDELINES:
+1. Look for EVIDENCE PATTERNS, not just exact phrases. Companies rarely use textbook terminology.
+2. Evidence hidden in ESG reports, impact reports, recruiting blogs, leadership announcements, and talent development pages counts.
+3. Detect implicit signals: employee title progression patterns suggest internal promotion even without explicit statements.
+4. For each signal, assign confidence:
+   - "direct": Explicit data or program mentioned (e.g., "our internal promotion rate is 40%")
+   - "inferred": Strong evidence pattern but not directly stated (e.g., ESG report mentions leadership development programs without specific rates)
+   - "weak": Indirect or limited evidence (e.g., job posting mentions "growth opportunities" without specifics)
+5. When NO signals are found for a category, that is itself a meaningful finding — note the transparency gap.
+6. Be factual and neutral — document what is found without moral judgment.`;
 
     const userPrompt = `Company: ${company.name}
 Industry: ${company.industry}
 Description: ${company.description || "N/A"}
+Website: ${company.website_url || "N/A"}
 
 Existing Political Signals:
 ${JSON.stringify({ flags: existingFlags?.slice(0, 10), ideology: existingIdeology?.slice(0, 10), pac_recipients: existingPAC?.slice(0, 15) }, null, 2)}
 
-Scraped Web Content:
-${scrapedContent.slice(0, 8000) || "No content scraped"}
+Scraped Web Content (from company pages):
+${scrapedContent.slice(0, 10000) || "No content scraped from company pages"}
 
-Analyze and extract all value-identity signals.`;
+Search Results (ESG reports, diversity reports, press releases):
+${searchContent.slice(0, 6000) || "No additional reports found via search"}
+
+Analyze all available evidence and extract value-identity signals. For promotion equity categories (internal_promotion, women_leadership, minority_advancement, deaf_accessibility, learning_disability, hbcu_pipeline, no_degree), be especially thorough — look for implicit evidence patterns, not just explicit statements.`;
 
     const aiResponse = await fetch("https://ai.gateway.lovable.dev/v1/chat/completions", {
       method: "POST",
@@ -236,7 +387,6 @@ Analyze and extract all value-identity signals.`;
 
     // Upsert signals
     if (signals && signals.length > 0) {
-      // Clear old signals for this company
       await adminClient.from("company_values_signals").delete().eq("company_id", companyId);
 
       const rows = signals.map((s: any) => ({
