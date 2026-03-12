@@ -514,7 +514,7 @@ export function ValuesCheckSection({
 
           {/* CTA + Methodology */}
           <div className="p-7 space-y-5">
-            {onGenerateSignals && signals.length === 0 && (
+            {onGenerateSignals && signals.length > 0 && filteredSignals.length === 0 && selectedIssue && (
               <Button
                 onClick={onGenerateSignals}
                 disabled={isGenerating}
