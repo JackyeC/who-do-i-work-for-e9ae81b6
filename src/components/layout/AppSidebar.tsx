@@ -19,7 +19,7 @@ import { cn } from "@/lib/utils";
 import {
   Home, Search, Building2, PlusCircle, TrendingUp, ScanSearch, Heart,
   Briefcase, FileCheck, Map, FileText, BarChart3, Eye, Landmark, Network,
-  Megaphone, Users, Target,
+  Megaphone, Users, Target, CreditCard,
   LayoutDashboard, Zap, Bell, Settings, User, ClipboardCheck,
   LogIn, LogOut, Compass, Flame, Shield,
 } from "lucide-react";
