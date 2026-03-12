@@ -6,6 +6,12 @@ import {
   BookmarkCheck, Loader2, Sparkles, Crown, Download, GitCompareArrows,
   AlertTriangle, Clock, Eye, ShieldCheck
 } from "lucide-react";
+import {
+  OfferCheckSnapshot,
+  buildDefaultSections,
+  deriveSnapshotVerdict,
+  generateSnapshotJackyeTake,
+} from "@/components/OfferCheckSnapshot";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent } from "@/components/ui/card";
