@@ -172,6 +172,7 @@ const App = () => (
                 } />
                 <Route path="*" element={<NotFound />} />
               </Routes>
+              <AskJackyeWidget />
             </AppShell>
           </BrowserRouter>
         </TooltipProvider>
