@@ -411,6 +411,32 @@ export default function CompanyProfile() {
           </Card>
 
           {/* ═══════════════════════════════════════════════════════════
+              EMPLOYER CLARITY SCORE
+             ═══════════════════════════════════════════════════════════ */}
+          <div className="mb-6">
+            <EmployerClarityScore
+              hasWarnNotices={false}
+              hasLayoffSignals={false}
+              hasSentimentData={!!tiSentiment}
+              employeeCount={(dbCompany as any)?.employee_count}
+              hasAiHrSignals={!!tiAiHr}
+              hasBenefitsData={!!tiBenefits}
+              hasJobPostings={false}
+              totalPacSpending={totalPac}
+              lobbyingSpend={lobbyingSpend}
+              hasTradeAssociations={(dbTradeAssociations?.length || 0) > 0}
+              hasGovernmentContracts={govContracts > 0}
+              hasDarkMoney={(dbDarkMoney?.length || 0) > 0}
+              hasPayEquitySignals={!!tiPayEquity}
+              hasCompensationData={!!tiBenefits}
+              scanCompletion={(dbCompany as any)?.scan_completion}
+              recordStatus={recordStatus}
+              hasPublicStances={(dbPublicStances?.length || 0) > 0}
+              hasIssueSignals={(dbIssueSignals?.length || 0) > 0}
+            />
+          </div>
+
+          {/* ═══════════════════════════════════════════════════════════
               SCAN PROGRESS (when actively scanning)
              ═══════════════════════════════════════════════════════════ */}
           {isDiscovering && (() => {
