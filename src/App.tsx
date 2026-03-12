@@ -43,7 +43,7 @@ import IntelligenceReports from "./pages/IntelligenceReports";
 import IntelligenceReport from "./pages/IntelligenceReport";
 import ReportsList from "./pages/ReportsList";
 import ReportEditor from "./pages/ReportEditor";
-import OfferClarity from "./pages/OfferClarity";
+// OfferClarity merged into Check page
 import RecruitingIntelligence from "./pages/RecruitingIntelligence";
 import CompanyDossier from "./pages/CompanyDossier";
 import Pricing from "./pages/Pricing";
