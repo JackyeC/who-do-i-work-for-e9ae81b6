@@ -475,6 +475,14 @@ export default function WhoDoIWorkFor() {
                 </Card>
               )}
 
+              {/* Workforce Equity & Advancement Module */}
+              <div className="mt-10 pt-8 border-t border-border">
+                <WorkforceEquityModule
+                  companyName={employerCompany.name}
+                  companyId={employerCompany.id}
+                />
+              </div>
+
               {/* CTA to full profile */}
               <div className="text-center mt-8">
                 <Link to={`/company/${employerCompany.slug}`}>
