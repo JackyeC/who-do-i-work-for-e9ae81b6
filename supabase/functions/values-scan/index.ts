@@ -228,6 +228,63 @@ const VALUE_CATEGORIES = [
     sourceHints: ["diversity report", "ESG report", "press release", "proxy statement"],
     layer: 1,
   },
+  // ─── Career Trajectory & Flight Risk Categories ───
+  {
+    key: "career_trajectory",
+    label: "Career Trajectory Patterns",
+    searchTerms: [
+      "career path", "career progression", "title progression", "typical career path",
+      "career ladder", "career lattice", "role progression", "advancement track",
+      "junior to senior", "analyst to manager", "career journey",
+      "typical tenure", "average tenure", "median tenure",
+    ],
+    sourceHints: ["careers page", "Glassdoor reviews", "ESG report", "LinkedIn company page"],
+    layer: 7,
+  },
+  {
+    key: "exit_destinations",
+    label: "Exit Destination Patterns",
+    searchTerms: [
+      "employees move to", "former employees at", "alumni at",
+      "left for", "talent pipeline to", "feeder company",
+      "alumni network", "common next employer", "where employees go",
+    ],
+    sourceHints: ["workforce analytics", "alumni networks", "professional profiles"],
+    layer: 7,
+  },
+  {
+    key: "talent_sources",
+    label: "Talent Source Patterns",
+    searchTerms: [
+      "hire from", "recruit from", "talent pipeline from", "feeder school",
+      "campus recruiting", "talent source", "where we hire",
+      "incoming employees from", "common prior employer",
+    ],
+    sourceHints: ["recruiting pages", "press releases", "university partnerships"],
+    layer: 4,
+  },
+  {
+    key: "internal_mobility_score",
+    label: "Internal Mobility Signals",
+    searchTerms: [
+      "internal applicants only", "promotion from within", "internal hire rate",
+      "internal mobility score", "lateral move", "cross-functional opportunity",
+      "internal transfer rate", "internal job posting", "career mobility program",
+    ],
+    sourceHints: ["job listings", "careers page", "ATS system"],
+    layer: 3,
+  },
+  {
+    key: "seniority_distribution",
+    label: "Seniority & Role Distribution",
+    searchTerms: [
+      "seniority level", "entry level positions", "senior positions ratio",
+      "management ratio", "org structure", "flat organization",
+      "leadership to IC ratio", "management layers", "span of control",
+    ],
+    sourceHints: ["job listings", "careers page", "organizational charts"],
+    layer: 3,
+  },
 ];
 
 // ─── 7-Layer Source Map for scraping ───
