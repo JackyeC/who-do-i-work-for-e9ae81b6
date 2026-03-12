@@ -44,7 +44,6 @@ import IntelligenceReports from "./pages/IntelligenceReports";
 import IntelligenceReport from "./pages/IntelligenceReport";
 import ReportsList from "./pages/ReportsList";
 import ReportEditor from "./pages/ReportEditor";
-// OfferClarity merged into Check page
 import RecruitingIntelligence from "./pages/RecruitingIntelligence";
 import CompanyDossier from "./pages/CompanyDossier";
 import Pricing from "./pages/Pricing";
@@ -56,6 +55,9 @@ import EconomyDashboard from "./pages/EconomyDashboard";
 import FollowTheMoney from "./pages/FollowTheMoney";
 import AskJackye from "./pages/AskJackye";
 import OnePager from "./pages/OnePager";
+import WouldYouWorkHere from "./pages/WouldYouWorkHere";
+import WorkWithJackye from "./pages/WorkWithJackye";
+
 const queryClient = new QueryClient();
 
 function ScrollToTop() {
@@ -63,7 +65,6 @@ function ScrollToTop() {
   useEffect(() => { window.scrollTo(0, 0); }, [pathname]);
   return null;
 }
-
 
 const App = () => (
   <ErrorBoundary>
@@ -80,6 +81,8 @@ const App = () => (
               <Routes>
                 <Route path="/" element={<Index />} />
                 <Route path="/ask-jackye" element={<AskJackye />} />
+                <Route path="/would-you-work-here" element={<WouldYouWorkHere />} />
+                <Route path="/work-with-jackye" element={<WorkWithJackye />} />
                 <Route path="/one-pager" element={<OnePager />} />
                 <Route path="/check" element={<Check />} />
                 <Route path="/policy" element={<PolicyHub />} />
@@ -112,7 +115,6 @@ const App = () => (
                 <Route path="/jobs" element={<Jobs />} />
                 <Route path="/request-correction" element={<RequestCorrection />} />
                 <Route path="/offer-check/:companyId" element={<OfferCheck />} />
-                {/* /offer-clarity merged into /check?tab=offer */}
                 <Route path="/strategic-offer-review" element={<StrategicOfferReview />} />
                 <Route path="/offer-review/:companyId" element={
                   <ProtectedRoute>

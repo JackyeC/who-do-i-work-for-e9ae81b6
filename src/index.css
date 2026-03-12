@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@300;400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Libre+Baskerville:ital,wght@0,400;0,700;1,400&family=IBM+Plex+Sans:wght@300;400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap');
 
 @tailwind base;
 @tailwind components;
@@ -15,8 +15,8 @@
     --popover: 0 0% 100%;
     --popover-foreground: 220 20% 12%;
 
-    --primary: 262 60% 50%;
-    --primary-foreground: 0 0% 100%;
+    --primary: 43 53% 54%;
+    --primary-foreground: 220 25% 5%;
 
     --secondary: 220 14% 92%;
     --secondary-foreground: 220 20% 12%;
@@ -24,31 +24,31 @@
     --muted: 220 14% 94%;
     --muted-foreground: 220 10% 42%;
 
-    --accent: 262 40% 94%;
-    --accent-foreground: 262 60% 40%;
+    --accent: 43 30% 92%;
+    --accent-foreground: 43 53% 35%;
 
-    --destructive: 7 65% 45%;
+    --destructive: 6 65% 55%;
     --destructive-foreground: 0 0% 100%;
 
     --border: 220 14% 86%;
     --input: 220 14% 86%;
-    --ring: 262 60% 50%;
+    --ring: 43 53% 54%;
 
     --radius: 0px;
 
     /* Signal tokens */
-    --civic-red: 7 65% 45%;
-    --civic-yellow: 33 90% 44%;
-    --civic-green: 152 46% 36%;
+    --civic-red: 6 65% 55%;
+    --civic-yellow: 35 90% 44%;
+    --civic-green: 152 46% 42%;
     --civic-blue: 218 55% 48%;
     --civic-navy: 225 42% 20%;
     --civic-slate: 225 12% 45%;
     --civic-surface: 0 0% 100%;
 
-    /* Gold accent — used for data highlights */
-    --civic-gold: 43 53% 42%;
-    --civic-gold-muted: 43 30% 50%;
-    --civic-gold-light: 43 53% 60%;
+    /* Gold accent */
+    --civic-gold: 43 53% 54%;
+    --civic-gold-muted: 40 50% 36%;
+    --civic-gold-light: 43 53% 64%;
 
     /* Surface tokens */
     --surface-elevated: 0 0% 100%;
@@ -56,74 +56,74 @@
     --surface-2: 220 14% 95%;
     --border-2: 220 12% 80%;
 
-    --sidebar-background: 262 30% 96%;
+    --sidebar-background: 220 14% 96%;
     --sidebar-foreground: 220 20% 12%;
-    --sidebar-primary: 262 60% 50%;
-    --sidebar-primary-foreground: 0 0% 100%;
-    --sidebar-accent: 262 40% 92%;
-    --sidebar-accent-foreground: 262 60% 40%;
+    --sidebar-primary: 43 53% 54%;
+    --sidebar-primary-foreground: 220 25% 5%;
+    --sidebar-accent: 43 30% 92%;
+    --sidebar-accent-foreground: 43 53% 35%;
     --sidebar-border: 220 14% 86%;
-    --sidebar-ring: 262 60% 50%;
+    --sidebar-ring: 43 53% 54%;
   }
 
   .dark {
-    --background: 260 20% 5%;
+    --background: 220 25% 5%;
     --foreground: 34 24% 87%;
 
-    --card: 260 18% 8%;
+    --card: 225 18% 8%;
     --card-foreground: 34 24% 87%;
 
-    --popover: 260 18% 8%;
+    --popover: 225 18% 8%;
     --popover-foreground: 34 24% 87%;
 
-    /* Purple primary for UI */
-    --primary: 262 60% 58%;
-    --primary-foreground: 0 0% 100%;
+    /* Gold primary */
+    --primary: 43 53% 54%;
+    --primary-foreground: 220 25% 5%;
 
-    --secondary: 260 16% 12%;
+    --secondary: 220 17% 11%;
     --secondary-foreground: 34 24% 87%;
 
-    --muted: 260 16% 12%;
-    --muted-foreground: 30 5% 52%;
+    --muted: 220 17% 11%;
+    --muted-foreground: 34 3% 52%;
 
-    --accent: 262 30% 16%;
-    --accent-foreground: 262 60% 75%;
+    --accent: 43 30% 14%;
+    --accent-foreground: 43 53% 64%;
 
-    --destructive: 7 65% 55%;
+    --destructive: 6 65% 55%;
     --destructive-foreground: 0 0% 100%;
 
-    --border: 260 14% 17%;
-    --input: 260 14% 17%;
-    --ring: 262 60% 58%;
+    --border: 216 14% 16%;
+    --input: 216 14% 16%;
+    --ring: 43 53% 54%;
 
     /* Signal tokens */
-    --civic-red: 7 65% 55%;
-    --civic-yellow: 33 90% 44%;
+    --civic-red: 6 65% 55%;
+    --civic-yellow: 35 90% 44%;
     --civic-green: 152 46% 42%;
     --civic-blue: 218 55% 48%;
-    --civic-navy: 260 42% 15%;
-    --civic-slate: 260 12% 55%;
-    --civic-surface: 260 18% 8%;
+    --civic-navy: 225 42% 15%;
+    --civic-slate: 225 12% 55%;
+    --civic-surface: 225 18% 8%;
 
-    /* Gold accent — kept for data highlights */
+    /* Gold accent */
     --civic-gold: 43 53% 54%;
-    --civic-gold-muted: 43 50% 36%;
-    --civic-gold-light: 43 53% 54%;
+    --civic-gold-muted: 40 50% 36%;
+    --civic-gold-light: 43 53% 64%;
 
     /* Surface tokens */
-    --surface-elevated: 260 18% 10%;
-    --surface-sunken: 260 20% 3%;
-    --surface-2: 260 16% 12%;
-    --border-2: 260 14% 21%;
+    --surface-elevated: 225 18% 10%;
+    --surface-sunken: 220 25% 3%;
+    --surface-2: 220 17% 11%;
+    --border-2: 216 14% 21%;
 
-    --sidebar-background: 260 18% 8%;
+    --sidebar-background: 225 18% 8%;
     --sidebar-foreground: 34 24% 87%;
-    --sidebar-primary: 262 60% 58%;
-    --sidebar-primary-foreground: 0 0% 100%;
-    --sidebar-accent: 262 30% 16%;
-    --sidebar-accent-foreground: 262 60% 75%;
-    --sidebar-border: 260 14% 17%;
-    --sidebar-ring: 262 60% 58%;
+    --sidebar-primary: 43 53% 54%;
+    --sidebar-primary-foreground: 220 25% 5%;
+    --sidebar-accent: 43 30% 14%;
+    --sidebar-accent-foreground: 43 53% 64%;
+    --sidebar-border: 216 14% 16%;
+    --sidebar-ring: 43 53% 54%;
   }
 }
 
@@ -142,7 +142,7 @@
   }
 
   h1, h2, h3 {
-    font-family: 'IBM Plex Sans', system-ui, sans-serif;
+    font-family: 'Libre Baskerville', Georgia, serif;
     font-weight: 700;
     line-height: 1.15;
     letter-spacing: -0.01em;
@@ -155,7 +155,7 @@
 
 @layer utilities {
   .font-serif {
-    font-family: 'IBM Plex Sans', system-ui, sans-serif;
+    font-family: 'Libre Baskerville', Georgia, serif;
     font-weight: 700;
     letter-spacing: -0.01em;
   }
