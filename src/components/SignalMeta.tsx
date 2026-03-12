@@ -91,6 +91,9 @@ export function SignalMeta({
       )}
 
       <div className="flex items-center gap-3 flex-wrap">
+        {/* Algorithm signal label */}
+        <span className="text-[10px] font-semibold text-muted-foreground">Algorithm Signal</span>
+
         {/* Detection source */}
         <span className="text-[10px] text-muted-foreground flex items-center gap-1">
           <Search className="w-2.5 h-2.5" />
