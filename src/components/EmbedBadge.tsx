@@ -62,7 +62,7 @@ ${scriptTag}`;
                 </div>
                 <div>
                   <div className="text-[10px] text-muted-foreground font-medium tracking-wide">CIVIC FOOTPRINT</div>
-                  <div className="text-xs text-muted-foreground mt-0.5">Transparency Profile Available · CivicLens</div>
+                  <div className="text-xs text-muted-foreground mt-0.5">Transparency Profile Available · WDIWF?</div>
                 </div>
               </div>
             </div>
