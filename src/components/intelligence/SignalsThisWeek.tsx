@@ -55,22 +55,22 @@ interface Translation {
   freshness_note: string;
 }
 
-type TimeRange = "30d" | "6mo" | "1yr" | "2yr";
+type TimeRange = "7d" | "30d" | "6mo" | "1yr";
 
 const TIME_RANGE_OPTIONS: { value: TimeRange; label: string }[] = [
+  { value: "7d", label: "This week" },
   { value: "30d", label: "30 days" },
   { value: "6mo", label: "6 months" },
   { value: "1yr", label: "1 year" },
-  { value: "2yr", label: "2 years" },
 ];
 
 function getCutoffDate(range: TimeRange): Date {
   const d = new Date();
   switch (range) {
+    case "7d": d.setDate(d.getDate() - 7); break;
     case "30d": d.setDate(d.getDate() - 30); break;
     case "6mo": d.setMonth(d.getMonth() - 6); break;
     case "1yr": d.setFullYear(d.getFullYear() - 1); break;
-    case "2yr": d.setFullYear(d.getFullYear() - 2); break;
   }
   return d;
 }
