@@ -3,12 +3,13 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/contexts/AuthContext";
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { EmptyState } from "@/components/EmptyState";
+import { useToast } from "@/hooks/use-toast";
 import {
   GraduationCap, Target, Users, Building2, ExternalLink,
   BookOpen, Video, Award, Newspaper, ChevronRight, Compass,
-  Loader2
+  Loader2, Trash2
 } from "lucide-react";
 
 const RESOURCE_ICONS: Record<string, any> = {
@@ -21,8 +22,23 @@ const RESOURCE_ICONS: Record<string, any> = {
 };
 
 export function HowDoIGetThere() {
+  const { toast } = useToast();
+  const queryClient = useQueryClient();
   const { user } = useAuth();
 
+  const handleDeleteTrack = async (trackId: string) => {
+    const { error } = await supabase
+      .from("employee_growth_tracker")
+      .delete()
+      .eq("id", trackId)
+      .eq("user_id", user!.id);
+    if (error) {
+      toast({ title: "Error", description: "Failed to delete track.", variant: "destructive" });
+    } else {
+      toast({ title: "Deleted", description: "Target role removed." });
+      queryClient.invalidateQueries({ queryKey: ["growth-tracks", user?.id] });
+    }
+  };
   // Fetch growth tracks (target roles with gap analysis)
   const { data: tracks, isLoading: tracksLoading } = useQuery({
     queryKey: ["growth-tracks", user?.id],
@@ -121,9 +137,19 @@ export function HowDoIGetThere() {
                 <Target className="w-4 h-4 text-[hsl(var(--civic-blue))]" />
                 Path to: {track.target_role}
               </CardTitle>
-              <Badge variant={track.skills_match_pct >= 75 ? "success" : "secondary"} className="text-xs">
-                {track.skills_match_pct}% ready
-              </Badge>
+              <div className="flex items-center gap-2">
+                <Badge variant={track.skills_match_pct >= 75 ? "success" : "secondary"} className="text-xs">
+                  {track.skills_match_pct}% ready
+                </Badge>
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  className="w-7 h-7 text-muted-foreground hover:text-destructive"
+                  onClick={() => handleDeleteTrack(track.id)}
+                >
+                  <Trash2 className="w-3.5 h-3.5" />
+                </Button>
+              </div>
             </div>
           </CardHeader>
           <CardContent className="space-y-4">
