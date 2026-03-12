@@ -178,7 +178,7 @@ export function AskJackyeWidget() {
                 </div>
                 <div className={msg.role === "assistant" ? "text-foreground" : "text-muted-foreground"}>
                   {msg.role === "assistant" ? (
-                    <ReactMarkdown className="prose prose-sm prose-invert max-w-none [&_p]:mb-2 [&_p]:leading-relaxed [&_strong]:text-primary [&_li]:text-foreground">{msg.content}</ReactMarkdown>
+                    <MarkdownWrapper content={msg.content} />
                   ) : (
                     msg.content
                   )}

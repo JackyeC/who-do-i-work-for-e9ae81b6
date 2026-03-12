@@ -161,7 +161,7 @@ export default function AskJackyePage() {
             </div>
             <div className={`max-w-3xl ${msg.role === "assistant" ? "text-foreground" : "text-muted-foreground"}`}>
               {msg.role === "assistant" ? (
-                <ReactMarkdown className="prose prose-sm prose-invert max-w-none [&_p]:mb-2 [&_p]:leading-relaxed [&_strong]:text-primary [&_li]:text-foreground [&_h3]:font-serif [&_h3]:text-primary [&_h3]:text-base">{msg.content}</ReactMarkdown>
+                <div className="prose prose-sm prose-invert max-w-none [&_p]:mb-2 [&_p]:leading-relaxed [&_strong]:text-primary [&_li]:text-foreground [&_h3]:font-serif [&_h3]:text-primary [&_h3]:text-base"><ReactMarkdown>{msg.content}</ReactMarkdown></div>
               ) : (
                 msg.content
               )}
