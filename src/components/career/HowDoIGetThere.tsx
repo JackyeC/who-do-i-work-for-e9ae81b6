@@ -258,6 +258,45 @@ export function HowDoIGetThere() {
         </Card>
       ))}
 
+      {/* Clear All button */}
+      {tracks.length > 0 && (
+        <Card className="border-destructive/20">
+          <CardContent className="p-4">
+            {!confirmDeleteAll ? (
+              <div className="flex items-center justify-between">
+                <div className="flex items-start gap-3">
+                  <Trash2 className="w-5 h-5 text-destructive shrink-0 mt-0.5" />
+                  <div>
+                    <p className="text-sm font-medium text-foreground">Clear All Target Roles</p>
+                    <p className="text-xs text-muted-foreground">Remove all growth tracks and start fresh.</p>
+                  </div>
+                </div>
+                <Button variant="outline" size="sm" className="text-destructive border-destructive/30 shrink-0" onClick={() => setConfirmDeleteAll(true)}>
+                  Delete All
+                </Button>
+              </div>
+            ) : (
+              <div className="space-y-3">
+                <div className="flex items-start gap-3">
+                  <AlertTriangle className="w-5 h-5 text-destructive shrink-0 mt-0.5" />
+                  <div>
+                    <p className="text-sm font-medium text-destructive">Are you sure?</p>
+                    <p className="text-xs text-muted-foreground">This will permanently delete all {tracks.length} target role(s) and their gap analyses.</p>
+                  </div>
+                </div>
+                <div className="flex gap-2 justify-end">
+                  <Button variant="outline" size="sm" onClick={() => setConfirmDeleteAll(false)} disabled={deletingAll}>Cancel</Button>
+                  <Button variant="destructive" size="sm" onClick={handleDeleteAll} disabled={deletingAll}>
+                    {deletingAll ? <Loader2 className="w-4 h-4 mr-1 animate-spin" /> : null}
+                    {deletingAll ? "Deleting..." : "Yes, Delete All"}
+                  </Button>
+                </div>
+              </div>
+            )}
+          </CardContent>
+        </Card>
+      )}
+
       {/* Suggested companies */}
       {suggestedCompanies && suggestedCompanies.length > 0 && (
         <Card className="border-border">
