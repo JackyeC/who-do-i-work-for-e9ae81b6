@@ -5,8 +5,10 @@ const corsHeaders = {
 
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2';
 
+const CACHE_TTL_DAYS = 7;
+
 // Run searches in parallel batches to speed up scanning
-async function batchSearch(queries: string[], firecrawlKey: string, batchSize = 4): Promise<{ results: any[]; creditExhausted: boolean }> {
+async function batchSearch(queries: string[], firecrawlKey: string, batchSize = 3): Promise<{ results: any[]; creditExhausted: boolean }> {
   const allResults: any[] = [];
   let creditExhausted = false;
 
@@ -23,7 +25,7 @@ async function batchSearch(queries: string[], firecrawlKey: string, batchSize = 
             'Authorization': `Bearer ${firecrawlKey}`,
             'Content-Type': 'application/json',
           },
-          body: JSON.stringify({ query, limit: 5 }),
+          body: JSON.stringify({ query, limit: 5, lang: 'en', country: 'us' }),
         });
 
         if (searchResp.status === 402) {
@@ -72,6 +74,51 @@ Deno.serve(async (req) => {
       );
     }
 
+    const supabaseUrl = Deno.env.get('SUPABASE_URL')!;
+    const supabaseKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!;
+    const supabase = createClient(supabaseUrl, supabaseKey);
+
+    // ─── Cache check: return existing data if fresh ───
+    const cacheThreshold = new Date(Date.now() - CACHE_TTL_DAYS * 24 * 60 * 60 * 1000).toISOString();
+    const { data: cached } = await supabase
+      .from('company_worker_sentiment')
+      .select('*')
+      .eq('company_id', companyId)
+      .gte('created_at', cacheThreshold)
+      .order('created_at', { ascending: false })
+      .limit(1)
+      .maybeSingle();
+
+    if (cached) {
+      console.log(`[worker-sentiment] Cache hit for ${companyName} (${cached.created_at})`);
+      return new Response(JSON.stringify({
+        success: true,
+        cached: true,
+        signalsFound: 1,
+        sourcesScanned: (cached.sources || []).length,
+        data: {
+          overallRating: cached.overall_rating,
+          ceoApproval: cached.ceo_approval,
+          recommendToFriend: cached.recommend_to_friend,
+          workLifeBalance: cached.work_life_balance,
+          compensationRating: cached.compensation_rating,
+          cultureRating: cached.culture_rating,
+          careerOpportunities: cached.career_opportunities,
+          topComplaints: cached.top_complaints || [],
+          topPraises: cached.top_praises || [],
+          layoffRumors: cached.layoff_rumors || [],
+          hypocrisyFlags: cached.hypocrisy_flags || [],
+          summary: cached.ai_summary,
+          sentiment: cached.sentiment,
+          sources: cached.sources || [],
+          resultCount: (cached.sources || []).length,
+          cachedAt: cached.created_at,
+        }
+      }), {
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' }
+      });
+    }
+
     const firecrawlKey = Deno.env.get('FIRECRAWL_API_KEY');
     if (!firecrawlKey) {
       return new Response(
@@ -88,61 +135,24 @@ Deno.serve(async (req) => {
       );
     }
 
-    const layoffSlug = companyName.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '');
-
-    // Consolidated search queries (reduced from 12+ to 8 targeted ones)
+    // Consolidated search queries — reduced from 8 to 5 targeted ones
     const searchQueries = [
-      `${companyName} Glassdoor reviews employee ratings CEO approval`,
-      `${companyName} Indeed employee reviews work-life balance salary`,
-      `${companyName} employee complaints worker conditions labor practices`,
-      `site:thelayoff.com ${companyName} layoffs morale`,
-      `"${companyName}" EEOC NLRB complaint discrimination lawsuit`,
-      `"${companyName}" mass layoffs workforce reduction restructuring`,
-      `"${companyName}" hostile workplace toxic culture whistleblower`,
-      `"${companyName}" worker safety OSHA labor controversy DEI`,
+      `${companyName} Glassdoor reviews employee ratings work-life balance`,
+      `${companyName} Indeed employee reviews salary culture`,
+      `"${companyName}" EEOC NLRB discrimination lawsuit labor`,
+      `"${companyName}" mass layoffs restructuring workforce cuts`,
+      `"${companyName}" toxic culture whistleblower worker safety`,
     ];
 
-    // Run all searches in parallel batches of 4
-    const { results: allResults, creditExhausted } = await batchSearch(searchQueries, firecrawlKey, 4);
-
-    // Direct scrape of TheLayoff.com in parallel with nothing blocking
-    if (!creditExhausted) {
-      try {
-        const layoffPageUrl = `https://www.thelayoff.com/${layoffSlug}`;
-        console.log(`Scraping TheLayoff.com: ${layoffPageUrl}`);
-        const scrapeResp = await fetch('https://api.firecrawl.dev/v1/scrape', {
-          method: 'POST',
-          headers: {
-            'Authorization': `Bearer ${firecrawlKey}`,
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify({ url: layoffPageUrl, formats: ['markdown'], onlyMainContent: true }),
-        });
-
-        if (scrapeResp.ok) {
-          const scrapeData = await scrapeResp.json();
-          const markdown = scrapeData.data?.markdown || scrapeData.markdown || '';
-          if (markdown.length > 50) {
-            allResults.push({
-              title: `TheLayoff.com - ${companyName} Employee Discussion`,
-              url: layoffPageUrl,
-              description: 'Worker-sourced layoff rumors, morale reports, and insider sentiment',
-              markdown: markdown.slice(0, 4000),
-              query: 'thelayoff.com direct scrape',
-            });
-          }
-        }
-      } catch (e) {
-        console.error('TheLayoff.com scrape failed:', e);
-      }
-    }
+    // Run all searches in parallel batches of 3 (reduced from 4)
+    const { results: allResults, creditExhausted } = await batchSearch(searchQueries, firecrawlKey, 3);
 
     console.log(`Total results collected: ${allResults.length}`);
 
     if (creditExhausted) {
       return new Response(JSON.stringify({
         success: false,
-        error: 'Firecrawl credits exhausted. Please upgrade your Firecrawl plan to continue scanning. Use coupon LOVABLE50 for 50% off your first 3 months at firecrawl.dev/pricing'
+        error: 'Firecrawl credits exhausted. Please upgrade your Firecrawl plan to continue scanning.'
       }), { status: 402, headers: { ...corsHeaders, 'Content-Type': 'application/json' } });
     }
 
@@ -154,10 +164,6 @@ Deno.serve(async (req) => {
     }
 
     // Get company stances for hypocrisy comparison
-    const supabaseUrl = Deno.env.get('SUPABASE_URL')!;
-    const supabaseKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!;
-    const supabase = createClient(supabaseUrl, supabaseKey);
-
     const [{ data: stances }, { data: ideologyFlags }] = await Promise.all([
       supabase.from('company_public_stances').select('topic, public_position, spending_reality, gap').eq('company_id', companyId),
       supabase.from('company_ideology_flags').select('org_name, category, relationship_type, severity').eq('company_id', companyId),
@@ -174,8 +180,8 @@ Deno.serve(async (req) => {
       .join('\n');
 
     // AI Analysis
-    const contentForAI = allResults.slice(0, 15).map((r, i) =>
-      `[${i + 1}] "${r.title}" (${r.url})\n${r.description}\n${r.markdown?.slice(0, 800) || ''}`
+    const contentForAI = allResults.slice(0, 12).map((r, i) =>
+      `[${i + 1}] "${r.title}" (${r.url})\n${r.description}\n${r.markdown?.slice(0, 600) || ''}`
     ).join('\n\n---\n\n');
 
     const aiPrompt = `You are a corporate labor intelligence analyst for CivicLens. Analyze the following search results about "${companyName}" employee satisfaction and worker conditions.
@@ -186,7 +192,7 @@ ${contentForAI}
 ${laborStancesContext ? `\nCompany's Public Labor Stances:\n${laborStancesContext}` : ''}
 ${antiLaborFlags ? `\nAnti-Labor Ideology Flags:\n${antiLaborFlags}` : ''}
 
-Extract worker sentiment data and identify hypocrisy between what the company says about workers vs how workers actually feel. Pay special attention to TheLayoff.com content which contains worker-sourced insider intelligence, layoff rumors, and morale reports. Return JSON:
+Extract worker sentiment data and identify hypocrisy between what the company says about workers vs how workers actually feel. Return JSON:
 {
   "overallRating": number or null (1-5 scale, Glassdoor-style),
   "ceoApproval": number or null (0-100 percentage),
@@ -202,12 +208,12 @@ Extract worker sentiment data and identify hypocrisy between what the company sa
     {"theme": "string", "frequency": "common|frequent|occasional", "example": "representative quote or summary"}
   ],
   "layoffRumors": [
-    {"rumor": "description of layoff rumor or restructuring signal", "source": "thelayoff.com or other", "recency": "recent|months_ago|older", "credibility": "high|medium|low"}
+    {"rumor": "description", "source": "source", "recency": "recent|months_ago|older", "credibility": "high|medium|low"}
   ],
   "hypocrisyFlags": [
-    {"topic": "string", "companyClaimsSummary": "what the company says about workers/labor", "workerReality": "what workers actually report", "severity": "high|medium|low", "evidence": "specific data point or quote"}
+    {"topic": "string", "companyClaimsSummary": "what the company says", "workerReality": "what workers report", "severity": "high|medium|low", "evidence": "specific data point"}
   ],
-  "summary": "2-3 paragraph analysis of worker sentiment, key themes, layoff signals, and any say-do gaps between company messaging and employee experience",
+  "summary": "2-3 paragraph analysis of worker sentiment, key themes, and any say-do gaps",
   "sentiment": "positive|negative|neutral|mixed"
 }
 
@@ -276,8 +282,8 @@ Only include items you find evidence for. Return valid JSON only.`;
       hypocrisy_flags: aiAnalysis.hypocrisyFlags || [],
       ai_summary: aiAnalysis.summary,
       sentiment: aiAnalysis.sentiment,
-      sources: allResults.slice(0, 15).map((r: any) => ({ title: r.title, url: r.url })),
-      raw_results: allResults.slice(0, 15),
+      sources: allResults.slice(0, 12).map((r: any) => ({ title: r.title, url: r.url })),
+      raw_results: allResults.slice(0, 12),
     });
 
     if (insertError) {
@@ -302,7 +308,7 @@ Only include items you find evidence for. Return valid JSON only.`;
         hypocrisyFlags: aiAnalysis.hypocrisyFlags || [],
         summary: aiAnalysis.summary,
         sentiment: aiAnalysis.sentiment,
-        sources: allResults.slice(0, 15).map((r: any) => ({ title: r.title, url: r.url })),
+        sources: allResults.slice(0, 12).map((r: any) => ({ title: r.title, url: r.url })),
         resultCount: allResults.length,
       }
     }), {

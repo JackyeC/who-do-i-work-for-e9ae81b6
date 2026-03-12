@@ -5,6 +5,8 @@ const corsHeaders = {
 
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2';
 
+const CACHE_TTL_DAYS = 7;
+
 Deno.serve(async (req) => {
   if (req.method === 'OPTIONS') {
     return new Response(null, { headers: corsHeaders });
@@ -18,6 +20,45 @@ Deno.serve(async (req) => {
         JSON.stringify({ success: false, error: 'companyId and companyName are required' }),
         { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
       );
+    }
+
+    const supabaseUrl = Deno.env.get('SUPABASE_URL')!;
+    const supabaseKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!;
+    const supabase = createClient(supabaseUrl, supabaseKey);
+
+    // ─── Cache check: return existing data if fresh ───
+    const cacheThreshold = new Date(Date.now() - CACHE_TTL_DAYS * 24 * 60 * 60 * 1000).toISOString();
+    const { data: cached } = await supabase
+      .from('social_media_scans')
+      .select('*')
+      .eq('company_id', companyId)
+      .gte('created_at', cacheThreshold)
+      .order('created_at', { ascending: false })
+      .limit(1)
+      .maybeSingle();
+
+    if (cached) {
+      console.log(`[social-scan] Cache hit for ${companyName} (${cached.created_at})`);
+      const contradictionCount = (cached.contradictions || []).length + (cached.stance_shifts || []).length;
+      return new Response(JSON.stringify({
+        success: true,
+        cached: true,
+        signalsFound: contradictionCount || (cached.ai_summary ? 1 : 0),
+        sourcesScanned: (cached.sources || []).length,
+        data: {
+          summary: cached.ai_summary,
+          sentiment: cached.sentiment,
+          contradictions: cached.contradictions || [],
+          personnelChanges: cached.personnel_changes || [],
+          stanceShifts: cached.stance_shifts || [],
+          keyMessages: [],
+          sources: cached.sources || [],
+          resultCount: (cached.sources || []).length,
+          cachedAt: cached.created_at,
+        }
+      }), {
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' }
+      });
     }
 
     const firecrawlKey = Deno.env.get('FIRECRAWL_API_KEY');
@@ -36,23 +77,21 @@ Deno.serve(async (req) => {
       );
     }
 
-    // 1. Search for company social media & news
+    // Consolidated queries — reduced from 6+ to 4 targeted ones with lang filter
     const searchQueries = [
-      `${companyName} political stance statement social media 2024 2025 2026`,
+      `${companyName} political stance controversy boycott scandal 2024 2025 2026`,
       `${companyName} CEO executive public statement policy controversy`,
-      `"${companyName}" boycott protest backlash scandal controversy`,
+      `"${companyName}" discrimination lawsuit EEOC DOGE federal workers`,
       `"${companyName}" employee fired laid off mass layoffs workforce cuts`,
-      `"${companyName}" discrimination lawsuit settlement EEOC civil rights`,
-      `"${companyName}" DOGE government efficiency federal workers`,
     ];
 
-    // Add exec-specific queries
+    // Add 1 exec-specific query (reduced from 3)
     const execNames: string[] = executiveNames || [];
-    for (const exec of execNames.slice(0, 3)) {
-      searchQueries.push(`"${exec}" ${companyName} statement policy opinion`);
+    if (execNames.length > 0) {
+      searchQueries.push(`"${execNames[0]}" ${companyName} statement policy opinion`);
     }
 
-    // Run Firecrawl searches
+    // Run Firecrawl searches with English filter
     const allResults: any[] = [];
     for (const query of searchQueries) {
       try {
@@ -65,9 +104,18 @@ Deno.serve(async (req) => {
           body: JSON.stringify({
             query,
             limit: 5,
+            lang: 'en',
+            country: 'us',
             scrapeOptions: { formats: ['markdown'] },
           }),
         });
+
+        if (searchResp.status === 402) {
+          return new Response(JSON.stringify({
+            success: false,
+            error: 'Firecrawl credits exhausted. Please upgrade your Firecrawl plan to continue scanning.'
+          }), { status: 402, headers: { ...corsHeaders, 'Content-Type': 'application/json' } });
+        }
 
         if (searchResp.ok) {
           const searchData = await searchResp.json();
@@ -144,7 +192,6 @@ Only include items you find evidence for. Return valid JSON only.`;
       const aiData = await aiResp.json();
       const content = aiData.choices?.[0]?.message?.content || '';
       try {
-        // Extract JSON from potential markdown code blocks
         const jsonMatch = content.match(/```(?:json)?\s*([\s\S]*?)```/) || [null, content];
         aiAnalysis = JSON.parse(jsonMatch[1].trim());
       } catch (e) {
@@ -166,21 +213,17 @@ Only include items you find evidence for. Return valid JSON only.`;
     }
 
     // 3. Store in database
-    const supabaseUrl = Deno.env.get('SUPABASE_URL')!;
-    const supabaseKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!;
-    const supabase = createClient(supabaseUrl, supabaseKey);
-
     const { error: insertError } = await supabase.from('social_media_scans').insert({
       company_id: companyId,
       scan_type: 'firecrawl_ai',
       query_used: searchQueries.join(' | '),
-      results: allResults.slice(0, 15),
+      results: allResults.slice(0, 12),
       ai_summary: aiAnalysis.summary,
       sentiment: aiAnalysis.sentiment,
       contradictions: aiAnalysis.contradictions || [],
       personnel_changes: aiAnalysis.personnelChanges || [],
       stance_shifts: aiAnalysis.stanceShifts || [],
-      sources: allResults.slice(0, 15).map((r: any) => ({ title: r.title, url: r.url })),
+      sources: allResults.slice(0, 12).map((r: any) => ({ title: r.title, url: r.url })),
     });
 
     if (insertError) {
@@ -199,7 +242,7 @@ Only include items you find evidence for. Return valid JSON only.`;
         personnelChanges: aiAnalysis.personnelChanges || [],
         stanceShifts: aiAnalysis.stanceShifts || [],
         keyMessages: aiAnalysis.keyMessages || [],
-        sources: allResults.slice(0, 15).map((r: any) => ({ title: r.title, url: r.url })),
+        sources: allResults.slice(0, 12).map((r: any) => ({ title: r.title, url: r.url })),
         resultCount: allResults.length,
       }
     }), {
