@@ -80,6 +80,10 @@ function interpretPipelineResult(result: any): { sourcesScanned: number; signals
   return { sourcesScanned: Math.max(sourcesScanned, result.success ? 1 : 0), signalsFound };
 }
 
+// Daily scan cap per user to prevent credit abuse
+const MAX_SCANS_PER_DAY_FREE = 2;
+const MAX_SCANS_PER_DAY_PAID = 20;
+
 Deno.serve(async (req) => {
   if (req.method === 'OPTIONS') {
     return new Response(null, { headers: corsHeaders });
@@ -96,6 +100,54 @@ Deno.serve(async (req) => {
       return new Response(JSON.stringify({ success: false, error: 'companyId and companyName required' }), {
         status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' },
       });
+    }
+
+    // ─── Per-user daily scan cap ───
+    const authHeader = req.headers.get('Authorization');
+    let userId: string | null = null;
+    let isPaidUser = false;
+
+    if (authHeader) {
+      const anonKey = Deno.env.get('SUPABASE_ANON_KEY') || '';
+      const anonClient = createClient(supabaseUrl, anonKey);
+      const token = authHeader.replace('Bearer ', '');
+      const { data: userData } = await anonClient.auth.getUser(token);
+      userId = userData?.user?.id || null;
+
+      if (userId) {
+        // Check Stripe subscription status
+        try {
+          const stripeKey = Deno.env.get('STRIPE_SECRET_KEY');
+          if (stripeKey && userData?.user?.email) {
+            const { default: Stripe } = await import('https://esm.sh/stripe@18.5.0');
+            const stripe = new Stripe(stripeKey, { apiVersion: '2025-08-27.basil' });
+            const customers = await stripe.customers.list({ email: userData.user.email, limit: 1 });
+            if (customers.data.length > 0) {
+              const subs = await stripe.subscriptions.list({ customer: customers.data[0].id, status: 'active', limit: 1 });
+              isPaidUser = subs.data.length > 0;
+            }
+          }
+        } catch (e) {
+          console.warn('[intelligence-scan] Subscription check failed (non-critical):', e);
+        }
+
+        // Check daily scan count
+        const todayStart = new Date();
+        todayStart.setHours(0, 0, 0, 0);
+        const { count } = await supabase
+          .from('scan_runs')
+          .select('*', { count: 'exact', head: true })
+          .gte('created_at', todayStart.toISOString())
+          .eq('triggered_by', 'user');
+
+        const maxScans = isPaidUser ? MAX_SCANS_PER_DAY_PAID : MAX_SCANS_PER_DAY_FREE;
+        if ((count || 0) >= maxScans) {
+          return new Response(JSON.stringify({
+            success: false,
+            error: `Daily scan limit reached (${maxScans} per day). ${isPaidUser ? 'Try again tomorrow.' : 'Upgrade to a paid plan for more scans.'}`,
+          }), { status: 429, headers: { ...corsHeaders, 'Content-Type': 'application/json' } });
+        }
+      }
     }
 
     console.log(`[intelligence-scan] START: ${companyName} (${companyId})`);
@@ -353,10 +405,25 @@ Deno.serve(async (req) => {
     await runAndSave(CONGRESS_MODULE, true);
 
     // ─── Phase 2: Web research modules — STAGGERED BATCHES ───
-    console.log(`[intelligence-scan] ═══ Phase 2: Web Research Modules (staggered) ═══`);
-    const BATCH_SIZE = 4;
-    for (let i = 0; i < RESEARCH_MODULES.length; i += BATCH_SIZE) {
-      const batch = RESEARCH_MODULES.slice(i, i + BATCH_SIZE);
+    // Free users: skip Firecrawl-heavy modules to save credits
+    const FIRECRAWL_HEAVY_MODULES = ['worker_sentiment', 'social', 'ideology', 'ai_accountability', 'ai_hr_scan'];
+    const researchModulesToRun = isPaidUser
+      ? RESEARCH_MODULES
+      : RESEARCH_MODULES.filter(m => !FIRECRAWL_HEAVY_MODULES.includes(m.key));
+
+    if (researchModulesToRun.length < RESEARCH_MODULES.length) {
+      const skipped = RESEARCH_MODULES.filter(m => FIRECRAWL_HEAVY_MODULES.includes(m.key));
+      for (const mod of skipped) {
+        moduleStatuses[mod.key] = { status: 'skipped', label: mod.label, phase: mod.phase, reason: 'Requires paid plan' };
+      }
+      console.log(`[intelligence-scan] Skipping ${skipped.length} Firecrawl modules (free user)`);
+      await updateProgress();
+    }
+
+    console.log(`[intelligence-scan] ═══ Phase 2: Web Research Modules (staggered, ${researchModulesToRun.length} modules) ═══`);
+    const BATCH_SIZE = 3; // Reduced from 4 to save credits
+    for (let i = 0; i < researchModulesToRun.length; i += BATCH_SIZE) {
+      const batch = researchModulesToRun.slice(i, i + BATCH_SIZE);
       console.log(`[intelligence-scan] Research batch ${Math.floor(i / BATCH_SIZE) + 1}: ${batch.map(m => m.key).join(', ')}`);
       await Promise.all(batch.map(mod => {
         return runAndSave(mod, false);
