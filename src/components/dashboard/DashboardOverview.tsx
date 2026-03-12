@@ -102,7 +102,7 @@ export function DashboardOverview({ onNavigate }: DashboardOverviewProps) {
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: i * 0.05, duration: 0.4 }}
             onClick={stat.action}
-            className="bg-card rounded-xl border border-border/40 p-4 cursor-pointer hover:border-primary/20 hover:shadow-sm transition-all group"
+            className="bg-card rounded-xl border border-border/40 p-4 cursor-pointer hover:border-primary/20 hover:shadow-sm transition-all group h-full"
           >
             <div className="flex items-center justify-between mb-2">
               <stat.icon className={`w-4 h-4 text-[hsl(var(--${stat.color}))]`} />

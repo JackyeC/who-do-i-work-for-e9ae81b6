@@ -96,8 +96,8 @@ function StatCard({ icon: Icon, label, value, subtext, onClick }: {
   icon: any; label: string; value: string; subtext?: string; onClick?: () => void;
 }) {
   return (
-    <Card className={cn("overflow-hidden", onClick && "cursor-pointer hover:border-primary/30 hover:shadow-md transition-all")} onClick={onClick}>
-      <CardContent className="p-4">
+    <Card className={cn("overflow-hidden h-full", onClick && "cursor-pointer hover:border-primary/30 hover:shadow-md transition-all")} onClick={onClick}>
+      <CardContent className="p-4 h-full flex flex-col justify-center">
         <div className="flex items-center gap-2 text-xs text-muted-foreground mb-1.5">
           <Icon className="w-3.5 h-3.5" />
           {label}
@@ -497,7 +497,7 @@ export default function CompanyProfile() {
 
             if (stats.length === 0) return null;
             return (
-              <div className={`grid grid-cols-2 ${stats.length >= 3 ? 'md:grid-cols-' + Math.min(stats.length, 4) : 'md:grid-cols-2'} gap-3 mb-6`}>
+              <div className={`grid grid-cols-2 gap-3 mb-6 ${stats.length === 1 ? 'md:grid-cols-1 max-w-xs' : stats.length === 2 ? 'md:grid-cols-2' : stats.length === 3 ? 'md:grid-cols-3' : 'md:grid-cols-4'}`}>
                 {stats}
               </div>
             );
