@@ -232,7 +232,7 @@ export default function OfferReviewDirect() {
 
             {/* Disclaimer */}
             <div className="bg-muted/50 rounded-lg p-3 text-[11px] text-muted-foreground">
-              This tool identifies terms and clauses from uploaded documents. It does not provide legal, financial, or employment advice. Analysis typically takes 30–60 seconds.
+              This tool identifies terms and clauses from uploaded documents. It provides educational insights only — not legal, financial, or employment advice. Analysis typically takes 30–60 seconds.
             </div>
 
             {/* Consent */}

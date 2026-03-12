@@ -3167,6 +3167,7 @@ export type Database = {
           company_id: string | null
           comparison_results: Json
           created_at: string
+          delete_after_days: number | null
           detected_clauses: Json
           error_message: string | null
           extracted_terms: Json
@@ -3185,6 +3186,7 @@ export type Database = {
           company_id?: string | null
           comparison_results?: Json
           created_at?: string
+          delete_after_days?: number | null
           detected_clauses?: Json
           error_message?: string | null
           extracted_terms?: Json
@@ -3203,6 +3205,7 @@ export type Database = {
           company_id?: string | null
           comparison_results?: Json
           created_at?: string
+          delete_after_days?: number | null
           detected_clauses?: Json
           error_message?: string | null
           extracted_terms?: Json
@@ -3232,6 +3235,7 @@ export type Database = {
           company_id: string | null
           company_name: string
           created_at: string
+          delete_after_days: number | null
           extracted_clauses: Json | null
           green_flags: Json | null
           id: string
@@ -3247,6 +3251,7 @@ export type Database = {
           company_id?: string | null
           company_name: string
           created_at?: string
+          delete_after_days?: number | null
           extracted_clauses?: Json | null
           green_flags?: Json | null
           id?: string
@@ -3262,6 +3267,7 @@ export type Database = {
           company_id?: string | null
           company_name?: string
           created_at?: string
+          delete_after_days?: number | null
           extracted_clauses?: Json | null
           green_flags?: Json | null
           id?: string
@@ -5132,6 +5138,7 @@ export type Database = {
         Row: {
           confidence_level: string | null
           created_at: string
+          delete_after_days: number | null
           document_type: Database["public"]["Enums"]["document_type"]
           file_deleted: boolean | null
           file_path: string
@@ -5146,6 +5153,7 @@ export type Database = {
         Insert: {
           confidence_level?: string | null
           created_at?: string
+          delete_after_days?: number | null
           document_type: Database["public"]["Enums"]["document_type"]
           file_deleted?: boolean | null
           file_path: string
@@ -5160,6 +5168,7 @@ export type Database = {
         Update: {
           confidence_level?: string | null
           created_at?: string
+          delete_after_days?: number | null
           document_type?: Database["public"]["Enums"]["document_type"]
           file_deleted?: boolean | null
           file_path?: string

@@ -16,7 +16,7 @@ const TermsOfService = () => (
 
         <section>
           <h2 className="text-lg font-semibold text-foreground mt-8 mb-3">2. Description of Service</h2>
-          <p>The Service provides transparency and intelligence tools that surface publicly available information about companies, including political spending, lobbying activity, executive donations, and related public-record signals. The Service is designed for informational purposes and does not provide legal, financial, or moral advice.</p>
+          <p>The Service provides transparency and intelligence tools that surface publicly available information about companies, including political spending, lobbying activity, executive donations, and related public-record signals. The Service is designed for informational purposes and provides educational insights only. It does not constitute legal, financial, or moral advice. We do not use your private documents to train AI models.</p>
         </section>
 
         <section>

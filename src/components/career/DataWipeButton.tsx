@@ -28,18 +28,33 @@ export function DataWipeButton() {
         await supabase.storage.from("career_docs").remove(paths);
       }
 
-      // Delete all documents (cascade will clean related data)
+      // Delete all career documents
       await supabase.from("user_documents").delete().eq("user_id", user.id);
-      
+
+      // Delete offer analysis data
+      await supabase.from("offer_scores").delete().eq("user_id", user.id);
+      await supabase.from("offer_records").delete().eq("user_id", user.id);
+
+      // Delete offer letter reviews + files
+      const { data: offerFiles } = await supabase.storage.from("offer-letters").list(user.id);
+      if (offerFiles && offerFiles.length > 0) {
+        await supabase.storage.from("offer-letters").remove(offerFiles.map(f => `${user.id}/${f.name}`));
+      }
+      await supabase.from("offer_letter_reviews" as any).delete().eq("user_id", user.id);
+
       // Delete career profile
       await supabase.from("user_career_profile").delete().eq("user_id", user.id);
 
       // Delete job alerts
       await supabase.from("job_alerts").delete().eq("user_id", user.id);
 
+      // Delete offer preferences
+      await supabase.from("user_offer_preferences").delete().eq("user_id", user.id);
+
       queryClient.invalidateQueries({ queryKey: ["user-documents"] });
       queryClient.invalidateQueries({ queryKey: ["career-profile"] });
       queryClient.invalidateQueries({ queryKey: ["job-alerts"] });
+      queryClient.invalidateQueries({ queryKey: ["my-offer-reviews"] });
 
       toast.success("All career data has been permanently deleted.");
       setConfirming(false);

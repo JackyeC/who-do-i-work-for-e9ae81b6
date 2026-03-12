@@ -58,7 +58,7 @@ export default function CareerIntelligence() {
             skill gap identification, and dream job alerts based on your skills and values.
           </p>
           <p className="text-xs text-muted-foreground mt-2 max-w-xl mx-auto italic">
-            This tool detects signals in uploaded documents and public sources. It does not provide legal, financial, or employment advice.
+            This tool detects signals in uploaded documents and public sources. It provides educational insights only — not legal, financial, or employment advice.
           </p>
         </div>
 

@@ -216,7 +216,7 @@ export function ResumeTailor() {
           )}
 
           <p className="text-xs text-muted-foreground text-center italic">
-            This analysis detects signal patterns in your documents. It does not provide legal, financial, or employment advice.
+            This analysis detects signal patterns in your documents. It provides educational insights only — not legal, financial, or employment advice.
           </p>
         </div>
       )}

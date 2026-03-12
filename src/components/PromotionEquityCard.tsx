@@ -190,7 +190,7 @@ export function PromotionEquityCard({ companyName, dbCompanyId }: PromotionEquit
 
             <p className="text-[10px] text-muted-foreground pt-2 border-t border-border">
               Sources: Diversity reports, career pages, press releases, HBCU partnerships, Skill-First hiring pledges, ESG filings.
-              This tool reports public signals — it does not provide legal or employment advice.
+              This tool reports public signals — it does not provide legal or employment advice. Educational insights only.
             </p>
           </div>
         )}

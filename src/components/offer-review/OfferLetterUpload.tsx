@@ -200,7 +200,7 @@ export function OfferLetterUpload({ companyId, companyName, onReviewCreated }: O
 
         {/* Disclaimer */}
         <div className="bg-muted/50 rounded-lg p-3 text-[11px] text-muted-foreground">
-          This tool identifies terms and clauses from uploaded documents and compares them with publicly available company signals. It does not provide legal, financial, or employment advice.
+          This tool identifies terms and clauses from uploaded documents and compares them with publicly available company signals. It provides educational insights only — not legal, financial, or employment advice.
         </div>
 
         {/* Consent */}
@@ -211,7 +211,7 @@ export function OfferLetterUpload({ companyId, companyName, onReviewCreated }: O
             className="mt-0.5"
           />
           <span className="text-xs text-foreground">
-            I confirm that I have the right to upload this document for personal review.
+            I understand this is not legal advice, I have the right to upload this document, and I agree to the <a href="/terms" target="_blank" className="text-primary hover:underline">Terms of Service</a>.
           </span>
         </label>
 

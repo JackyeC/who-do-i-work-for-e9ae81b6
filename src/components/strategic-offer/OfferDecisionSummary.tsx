@@ -175,7 +175,7 @@ export function OfferDecisionSummary(props: Props) {
           {/* Disclaimer */}
           <div className="p-3 bg-muted/30 rounded-xl">
             <p className="text-[11px] text-muted-foreground">
-              This summary is educational guidance based on publicly available data and the terms you provided. It does not constitute legal, financial, or employment advice. For complex or high-risk clauses, consult an employment attorney.
+              This summary provides educational insights based on publicly available data and the terms you provided. It does not constitute legal, financial, or employment advice. For complex or high-risk clauses, consult an employment attorney.
             </p>
           </div>
         </CardContent>

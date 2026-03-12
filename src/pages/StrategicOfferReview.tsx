@@ -32,6 +32,8 @@ import { OfferDecisionSummary } from "@/components/strategic-offer/OfferDecision
 import { OfferClarityDashboard, type OfferClarityReport } from "@/components/offer-clarity/OfferClarityDashboard";
 import { OfferLetterUpload } from "@/components/offer-review/OfferLetterUpload";
 import { OfferReviewResults } from "@/components/offer-review/OfferReviewResults";
+import { LegalDisclaimer } from "@/components/strategic-offer/LegalDisclaimer";
+import { ConsentModal } from "@/components/strategic-offer/ConsentModal";
 
 type InputMode = null | "manual" | "upload";
 
@@ -90,6 +92,7 @@ export default function StrategicOfferReview() {
   const [report, setReport] = useState<OfferClarityReport | null>(null);
   const [legalFlags, setLegalFlags] = useState<LegalFlag[]>([]);
   const [uploadReviewId, setUploadReviewId] = useState<string | null>(null);
+  const [showConsentModal, setShowConsentModal] = useState(false);
 
   const [companyResults, setCompanyResults] = useState<any[]>([]);
 
@@ -310,7 +313,7 @@ export default function StrategicOfferReview() {
                   toast({ title: "Sign in required", description: "Create a free account to upload offer letters for private review." });
                   return;
                 }
-                setInputMode("upload");
+                setShowConsentModal(true);
               }}
             >
               <CardContent className="p-6 text-center space-y-3">
@@ -781,7 +784,7 @@ export default function StrategicOfferReview() {
                 {/* Disclaimer */}
                 <div className="p-4 bg-muted/30 rounded-xl border border-border/40">
                   <p className="text-[11px] text-muted-foreground text-center">
-                    Created by Jackye Clayton. This tool provides educational guidance and risk signals based on publicly available data and user-provided terms. It does not constitute legal, financial, or employment advice.
+                    Created by Jackye Clayton. This tool provides educational insights and risk signals based on publicly available data and user-provided terms. It does not constitute legal, financial, or employment advice.
                   </p>
                 </div>
               </div>
@@ -789,6 +792,12 @@ export default function StrategicOfferReview() {
           </>
         )}
       </main>
+      <LegalDisclaimer />
+      <ConsentModal
+        open={showConsentModal}
+        onAccept={() => { setShowConsentModal(false); setInputMode("upload"); }}
+        onCancel={() => setShowConsentModal(false)}
+      />
       <Footer />
     </div>
   );
