@@ -102,7 +102,12 @@ export default function Dashboard() {
       case "preferences":
         return <PreferenceCenter />;
       case "profile":
-        return <UserProfileForm />;
+        return (
+          <div className="space-y-6">
+            <UserProfileForm />
+            <DataWipeButton />
+          </div>
+        );
       default:
         return <DashboardOverview onNavigate={setTab} />;
     }
