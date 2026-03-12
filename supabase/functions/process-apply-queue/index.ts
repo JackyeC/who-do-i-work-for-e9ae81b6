@@ -23,18 +23,16 @@ Deno.serve(async (req) => {
 
     const supabase = createClient(supabaseUrl, serviceKey);
 
-    // Get auth user from JWT
+    // Derive userId exclusively from authenticated session
     const authHeader = req.headers.get('Authorization');
-    let userId: string | null = null;
-
-    if (authHeader) {
-      const { data: { user } } = await supabase.auth.getUser(authHeader.replace('Bearer ', ''));
-      userId = user?.id || null;
+    if (!authHeader?.startsWith('Bearer ')) {
+      return new Response(JSON.stringify({ error: 'Unauthorized' }), {
+        status: 401, headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+      });
     }
 
-    // Also accept user_id from body (for edge function calls)
-    const body = await req.json().catch(() => ({}));
-    userId = userId || body.user_id;
+    const { data: { user } } = await supabase.auth.getUser(authHeader.replace('Bearer ', ''));
+    const userId = user?.id || null;
 
     if (!userId) {
       return new Response(JSON.stringify({ error: 'Unauthorized' }), {
