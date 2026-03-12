@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, forwardRef } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -258,11 +258,11 @@ const EVIDENCE_SOURCE_LABELS: Record<string, string> = {
   congress_vote: "Congressional voting record",
 };
 
-function LinkageChain({ linkages }: { linkages: ROIPipelineData["linkages"] }) {
+const LinkageChain = forwardRef<HTMLDivElement, { linkages: ROIPipelineData["linkages"] }>(({ linkages }, ref) => {
   const [expandedLink, setExpandedLink] = useState<number | null>(null);
 
   return (
-    <div className="relative space-y-0">
+    <div ref={ref} className="relative space-y-0">
       {linkages.map((link, i) => {
         const isHigh = link.confidence >= 0.8;
         const isMed = link.confidence >= 0.5;
@@ -339,7 +339,7 @@ function LinkageChain({ linkages }: { linkages: ROIPipelineData["linkages"] }) {
       })}
     </div>
   );
-}
+});
 
 /* ─── Main component ─── */
 

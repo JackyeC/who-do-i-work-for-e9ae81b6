@@ -1,10 +1,10 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, forwardRef } from "react";
 import { useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { Search, ArrowRight, Shield, FileText, MessageSquare, Compass } from "lucide-react";
 import { usePageSEO } from "@/hooks/use-page-seo";
 
-const Index = () => {
+const Index = forwardRef<HTMLDivElement>((_, ref) => {
   const [companyCount, setCompanyCount] = useState(0);
   const navigate = useNavigate();
 
@@ -69,7 +69,7 @@ const Index = () => {
   const trustSources = ["FEC Filings", "USASpending.gov", "SEC EDGAR", "Senate Lobbying Disclosures", "BLS Wage Data", "OpenSecrets"];
 
   return (
-    <div className="flex flex-col min-h-screen bg-background">
+    <div ref={ref} className="flex flex-col min-h-screen bg-background">
       {/* Hero */}
       <section className="px-6 lg:px-16 py-20 lg:py-32 max-w-[1100px] mx-auto w-full grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-16 items-center">
         <div>
@@ -264,6 +264,6 @@ const Index = () => {
       </footer>
     </div>
   );
-};
+});
 
 export default Index;
