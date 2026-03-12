@@ -308,7 +308,7 @@ export default function FollowTheMoney() {
   const [loading, setLoading] = useState(false);
   const [activeIssueFilter, setActiveIssueFilter] = useState("All");
   const [activeRelFilter, setActiveRelFilter] = useState("all");
-  const [showLabels, setShowLabels] = useState(true);
+  const [showLabels, setShowLabels] = useState(false);
   const [strongOnly, setStrongOnly] = useState(false);
   const [dimensions, setDimensions] = useState({ width: 800, height: 500 });
   const [pathMode, setPathMode] = useState(false);
@@ -316,6 +316,20 @@ export default function FollowTheMoney() {
   const [pathEnd, setPathEnd] = useState<string | null>(null);
   const [activePath, setActivePath] = useState<{ nodeIds: string[]; linkIndices: number[] } | null>(null);
   const [graphExpanded, setGraphExpanded] = useState(false);
+  const [hoverTooltip, setHoverTooltip] = useState<{ x: number; y: number; text: string } | null>(null);
+
+  // Cluster foci positions by group type
+  const CLUSTER_FOCI: Record<string, { x: number; y: number }> = {
+    Company:     { x: 0,    y: 0 },
+    PAC:         { x: -150, y: -100 },
+    Politician:  { x: 150,  y: -100 },
+    Legislation: { x: 200,  y: 100 },
+    Industry:    { x: -200, y: 100 },
+    Agency:      { x: 0,    y: 200 },
+    Committee:   { x: 0,    y: -200 },
+  };
+
+  // D3 forces configured after graphData (defined below)
 
   // Resize observer
   useEffect(() => {
@@ -375,7 +389,36 @@ export default function FollowTheMoney() {
     return { nodes: clustered, links: filteredLinks };
   }, [allNodes, allLinks, activeIssueFilter, activeRelFilter, strongOnly, selectedCompanyId]);
 
-  // Search companies
+  // Configure D3 forces after graphData is ready
+  useEffect(() => {
+    const fg = graphRef.current;
+    if (!fg) return;
+    // @ts-ignore
+    fg.d3Force("charge")?.strength(-120).distanceMax(400);
+    // @ts-ignore
+    fg.d3Force("link")?.distance(60);
+    // @ts-ignore
+    fg.d3Force("center")?.strength(0.05);
+
+    // Add cluster foci forces
+    if (fg.d3Force) {
+      // @ts-ignore
+      fg.d3Force("clusterX", (alpha: number) => {
+        graphData.nodes.forEach((node: any) => {
+          const foci = CLUSTER_FOCI[node.group] || { x: 0, y: 0 };
+          node.vx = (node.vx || 0) + (foci.x - (node.x || 0)) * alpha * 0.03;
+        });
+      });
+      // @ts-ignore
+      fg.d3Force("clusterY", (alpha: number) => {
+        graphData.nodes.forEach((node: any) => {
+          const foci = CLUSTER_FOCI[node.group] || { x: 0, y: 0 };
+          node.vy = (node.vy || 0) + (foci.y - (node.y || 0)) * alpha * 0.03;
+        });
+      });
+    }
+  }, [graphData]);
+
   useEffect(() => {
     if (!query.trim() || query.length < 2) { setSearchResults([]); return; }
     const timeout = setTimeout(async () => {
@@ -481,7 +524,7 @@ export default function FollowTheMoney() {
     setPathEnd(null);
   };
 
-  // Hover highlight — trace full connected subgraph
+  // Hover highlight — 1-hop neighbors only (not full BFS)
   const highlightedIds = useMemo(() => {
     // Path mode takes priority
     if (activePath) {
@@ -491,17 +534,13 @@ export default function FollowTheMoney() {
     const ids = new Set<string>();
     const linkIds = new Set<number>();
     ids.add(hoveredNode);
-    const queue = [hoveredNode];
-    const visited = new Set<string>([hoveredNode]);
-    while (queue.length > 0) {
-      const curr = queue.shift()!;
-      graphData.links.forEach((l, i) => {
-        const src = typeof l.source === "string" ? l.source : l.source.id;
-        const tgt = typeof l.target === "string" ? l.target : l.target.id;
-        if (src === curr && !visited.has(tgt)) { visited.add(tgt); ids.add(tgt); linkIds.add(i); queue.push(tgt); }
-        if (tgt === curr && !visited.has(src)) { visited.add(src); ids.add(src); linkIds.add(i); queue.push(src); }
-      });
-    }
+    // Only direct neighbors (1-hop)
+    graphData.links.forEach((l, i) => {
+      const src = typeof l.source === "string" ? l.source : l.source.id;
+      const tgt = typeof l.target === "string" ? l.target : l.target.id;
+      if (src === hoveredNode) { ids.add(tgt); linkIds.add(i); }
+      if (tgt === hoveredNode) { ids.add(src); linkIds.add(i); }
+    });
     return { nodes: ids, links: linkIds };
   }, [hoveredNode, graphData, activePath]);
 
@@ -590,16 +629,18 @@ export default function FollowTheMoney() {
       ctx.stroke();
     }
 
-    // Shape indicator
-    const fontSize = Math.max(8, 11 / globalScale);
-    ctx.font = `${fontSize}px system-ui, sans-serif`;
+    // Initials inside circle
+    const initials = node.label.split(/[\s&]+/).filter(Boolean).slice(0, 2).map((w: string) => w[0]?.toUpperCase()).join("");
+    const fontSize = Math.max(7, Math.min(r * 0.85, 14 / globalScale));
+    ctx.font = `700 ${fontSize}px system-ui, sans-serif`;
     ctx.textAlign = "center";
     ctx.textBaseline = "middle";
     ctx.fillStyle = "#fff";
-    ctx.fillText(GROUP_SHAPES[node.group] || "●", node.x, node.y);
+    ctx.fillText(initials || "?", node.x, node.y);
 
-    // Label
-    if (showLabels && globalScale > 0.5) {
+    // Label — show on hover/selected/path, or when showLabels is toggled on
+    const shouldShowLabel = showLabels || isSelected || (highlightedIds && highlightedIds.nodes.has(node.id));
+    if (shouldShowLabel && globalScale > 0.4) {
       const labelSize = Math.max(7, 10 / globalScale);
       ctx.font = `600 ${labelSize}px system-ui, sans-serif`;
       ctx.textAlign = "center";
@@ -608,7 +649,7 @@ export default function FollowTheMoney() {
       const label = node.label.length > 22 ? node.label.slice(0, 20) + "…" : node.label;
       ctx.fillText(label, node.x, node.y + r + 3);
 
-      if (node.amount && globalScale > 0.8) {
+      if (node.amount && globalScale > 0.7) {
         const amtSize = Math.max(6, 8 / globalScale);
         ctx.font = `${amtSize}px system-ui, sans-serif`;
         ctx.fillStyle = isHighlighted ? "rgba(255,255,255,0.6)" : "rgba(255,255,255,0.15)";
@@ -934,12 +975,39 @@ export default function FollowTheMoney() {
             linkDirectionalParticleColor={(link: any) =>
               LINK_STYLES[link.linkType]?.color || "rgba(150,150,150,0.5)"
             }
-            onNodeHover={(node: any) => setHoveredNode(node?.id || null)}
+            onNodeHover={(node: any) => {
+              setHoveredNode(node?.id || null);
+              if (node) {
+                const receipts = graphData.links
+                  .filter(l => {
+                    const src = typeof l.source === "string" ? l.source : l.source.id;
+                    const tgt = typeof l.target === "string" ? l.target : l.target.id;
+                    return src === node.id || tgt === node.id;
+                  })
+                  .filter(l => l.amount)
+                  .slice(0, 3)
+                  .map(l => {
+                    const src = typeof l.source === "string" ? l.source : l.source.id;
+                    const tgt = typeof l.target === "string" ? l.target : l.target.id;
+                    const srcNode = graphData.nodes.find(n => n.id === src);
+                    const tgtNode = graphData.nodes.find(n => n.id === tgt);
+                    return `${srcNode?.label || src} → ${tgtNode?.label || tgt}: ${formatAmount(l.amount)}`;
+                  });
+                if (receipts.length > 0) {
+                  setHoverTooltip({ x: node.x || 0, y: node.y || 0, text: receipts.join("\n") });
+                } else {
+                  setHoverTooltip(null);
+                }
+              } else {
+                setHoverTooltip(null);
+              }
+            }}
             onNodeClick={handleNodeClick}
             onNodeDragEnd={(node: any) => { node.fx = node.x; node.fy = node.y; }}
-            d3AlphaDecay={0.02}
-            d3VelocityDecay={0.3}
-            cooldownTicks={200}
+            d3AlphaDecay={0.015}
+            d3VelocityDecay={0.25}
+            cooldownTicks={300}
+            warmupTicks={100}
             enableNodeDrag={true}
             enableZoomInteraction={true}
             enablePanInteraction={true}
