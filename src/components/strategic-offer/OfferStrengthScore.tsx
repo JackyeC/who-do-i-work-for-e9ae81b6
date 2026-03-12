@@ -2,6 +2,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Progress } from "@/components/ui/progress";
 import { cn } from "@/lib/utils";
+import { AIAnalysisNotice } from "@/components/strategic-offer/AIAnalysisNotice";
 import {
   DollarSign, FileText, Shield, Heart, Scale, TrendingUp, AlertTriangle,
   CheckCircle2, XCircle, Info, Sparkles, ChevronDown, ChevronUp
