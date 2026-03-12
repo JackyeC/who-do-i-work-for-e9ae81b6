@@ -2,6 +2,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { AlertTriangle, Scale, ShieldAlert, Clock, Lightbulb, Gavel, XCircle, CheckCircle2 } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { ConsultProfessionalBanner } from "@/components/strategic-offer/ConsultProfessionalBanner";
 
 export interface LegalFlag {
   id: string;
@@ -52,6 +53,13 @@ export function CivicLegalAudit({ flags }: Props) {
           </div>
         ))}
       </div>
+
+      {/* Professional review banner for high-risk flags */}
+      {redFlags.length > 0 && (
+        <ConsultProfessionalBanner
+          clause={redFlags.length === 1 ? redFlags[0].title.toLowerCase() : undefined}
+        />
+      )}
 
       {/* Flags list */}
       <div className="space-y-3">

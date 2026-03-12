@@ -7,14 +7,14 @@ const PrivacyPolicy = () => (
     <main className="flex-1 max-w-3xl mx-auto px-4 py-16">
       <h1 className="text-3xl font-bold text-foreground mb-8">Privacy Policy</h1>
       <div className="prose prose-sm text-muted-foreground space-y-6">
-        <p className="text-sm text-muted-foreground">Last updated: March 9, 2026</p>
+        <p className="text-sm text-muted-foreground">Last updated: March 12, 2026</p>
 
         <section>
           <h2 className="text-lg font-semibold text-foreground mt-8 mb-3">1. Information We Collect</h2>
           <p><strong>Account Information:</strong> When you sign up, we collect your email address and name through Google OAuth. We do not store passwords.</p>
           <p><strong>Usage Data:</strong> We collect information about how you use the Service, including pages visited, searches performed, and features used.</p>
-         <p><strong>Uploaded Documents:</strong> If you use the Offer Review feature, uploaded documents are processed securely and can be deleted at any time.</p>
-           <p><strong>LinkedIn Connection Data:</strong> If you upload your LinkedIn connections CSV, that data is stored securely and is accessible only to you. We do not share, sell, license, or provide access to your uploaded connection data to any third party, other user, or internal team member. It is used solely to power your personal Relationship Intelligence dashboard.</p>
+          <p><strong>Uploaded Documents:</strong> If you use the Offer Review feature, uploaded documents are processed securely and can be deleted at any time. We do not use your private documents to train AI models.</p>
+          <p><strong>LinkedIn Connection Data:</strong> If you upload your LinkedIn connections CSV, that data is stored securely and is accessible only to you. We do not share, sell, license, or provide access to your uploaded connection data to any third party, other user, or internal team member. It is used solely to power your personal Relationship Intelligence dashboard.</p>
         </section>
 
         <section>
@@ -38,27 +38,33 @@ const PrivacyPolicy = () => (
         </section>
 
         <section>
-          <h2 className="text-lg font-semibold text-foreground mt-8 mb-3">5. Data Retention</h2>
-          <p>Account data is retained as long as your account is active. Uploaded documents can be deleted at any time. Career contacts and saved reports are retained until you delete them or your account.</p>
+          <h2 className="text-lg font-semibold text-foreground mt-8 mb-3">5. Document Processing</h2>
+          <p>Uploaded documents are processed automatically to generate educational insights. Documents may be temporarily stored for analysis purposes. We do not use your private documents to train AI models.</p>
+          <p>Users should avoid uploading documents that contain information they are not authorized to share.</p>
         </section>
 
         <section>
-          <h2 className="text-lg font-semibold text-foreground mt-8 mb-3">6. Your Rights</h2>
+          <h2 className="text-lg font-semibold text-foreground mt-8 mb-3">6. Data Retention</h2>
+          <p>Account data is retained as long as your account is active. Uploaded documents can be deleted at any time. Career contacts and saved reports are retained until you delete them or your account. Document data may be automatically purged after 30 days based on your retention settings.</p>
+        </section>
+
+        <section>
+          <h2 className="text-lg font-semibold text-foreground mt-8 mb-3">7. Your Rights</h2>
           <p>You have the right to access, correct, or delete your personal data. You can delete uploaded documents, career contacts, and saved reports through the platform. To delete your account entirely, contact us through the platform.</p>
         </section>
 
         <section>
-          <h2 className="text-lg font-semibold text-foreground mt-8 mb-3">7. Cookies</h2>
+          <h2 className="text-lg font-semibold text-foreground mt-8 mb-3">8. Cookies</h2>
           <p>We use essential cookies for authentication and session management. We do not use third-party tracking cookies.</p>
         </section>
 
         <section>
-          <h2 className="text-lg font-semibold text-foreground mt-8 mb-3">8. Changes to This Policy</h2>
+          <h2 className="text-lg font-semibold text-foreground mt-8 mb-3">9. Changes to This Policy</h2>
           <p>We may update this Privacy Policy periodically. We will notify you of significant changes through the platform or by email.</p>
         </section>
 
         <section>
-          <h2 className="text-lg font-semibold text-foreground mt-8 mb-3">9. Contact</h2>
+          <h2 className="text-lg font-semibold text-foreground mt-8 mb-3">10. Contact</h2>
           <p>For privacy-related questions or requests, please use the Request Correction form or contact us through the platform.</p>
         </section>
       </div>

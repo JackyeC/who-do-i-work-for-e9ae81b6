@@ -55,6 +55,7 @@ export function Footer() {
                 <Link to="/request-correction" className="block text-sm text-primary-foreground/55 hover:text-primary-foreground/90 transition-colors">Request a Correction</Link>
                 <Link to="/privacy" className="block text-sm text-primary-foreground/55 hover:text-primary-foreground/90 transition-colors">Privacy Policy</Link>
                 <Link to="/terms" className="block text-sm text-primary-foreground/55 hover:text-primary-foreground/90 transition-colors">Terms of Service</Link>
+                <Link to="/disclaimers" className="block text-sm text-primary-foreground/55 hover:text-primary-foreground/90 transition-colors">Disclaimers</Link>
               </div>
             </div>
           </div>

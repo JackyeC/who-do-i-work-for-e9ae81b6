@@ -2,6 +2,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Progress } from "@/components/ui/progress";
 import { cn } from "@/lib/utils";
+import { AIAnalysisNotice } from "@/components/strategic-offer/AIAnalysisNotice";
 import {
   DollarSign, FileText, Shield, Heart, Scale, TrendingUp, AlertTriangle,
   CheckCircle2, XCircle, Info, Sparkles, ChevronDown, ChevronUp
@@ -57,6 +58,9 @@ export function OfferStrengthScore({ result, isAIPowered, loading }: Props) {
 
   return (
     <div className="space-y-5" id="offer-strength-score">
+      {/* AI Analysis Notice */}
+      <AIAnalysisNotice />
+
       {/* Main Score Card */}
       <Card className="border-2 border-primary/20 rounded-2xl overflow-hidden">
         <CardContent className="p-7">

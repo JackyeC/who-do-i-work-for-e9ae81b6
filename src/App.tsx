@@ -63,6 +63,8 @@ import WhatAmISupporting from "./pages/WhatAmISupporting";
 import IntelligenceChain from "./pages/IntelligenceChain";
 import BoardIntelligence from "./pages/BoardIntelligence";
 import LeaderProfile from "./pages/LeaderProfile";
+import Disclaimers from "./pages/Disclaimers";
+import { CookieNotice } from "@/components/CookieNotice";
 
 const queryClient = new QueryClient();
 
@@ -110,6 +112,7 @@ const App = () => (
                 <Route path="/login" element={<Login />} />
                 <Route path="/terms" element={<TermsOfService />} />
                 <Route path="/privacy" element={<PrivacyPolicy />} />
+                <Route path="/disclaimers" element={<Disclaimers />} />
                 <Route path="/examples" element={<Examples />} />
                 <Route path="/search-your-employer" element={<SearchYourEmployer />} />
                 <Route path="/values-search" element={<ValuesSearch />} />
@@ -187,6 +190,7 @@ const App = () => (
                 <Route path="*" element={<NotFound />} />
               </Routes>
               <AskJackyeWidget />
+              <CookieNotice />
             </AppShell>
           </BrowserRouter>
         </TooltipProvider>
