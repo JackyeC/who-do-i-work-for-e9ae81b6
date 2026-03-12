@@ -251,6 +251,9 @@ export function WorkforceEquityModule({
             companyName={companyName}
           />
 
+          {/* Promotion vs Exit Pattern */}
+          <PromotionExitPattern signals={signals} companyName={companyName} />
+
           {/* Transparency Score */}
           <TransparencyScoreCard signals={signals} companyName={companyName} />
 
