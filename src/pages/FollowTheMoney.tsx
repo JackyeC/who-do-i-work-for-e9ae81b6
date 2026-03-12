@@ -524,7 +524,7 @@ export default function FollowTheMoney() {
     setPathEnd(null);
   };
 
-  // Hover highlight — trace full connected subgraph
+  // Hover highlight — 1-hop neighbors only (not full BFS)
   const highlightedIds = useMemo(() => {
     // Path mode takes priority
     if (activePath) {
@@ -534,17 +534,13 @@ export default function FollowTheMoney() {
     const ids = new Set<string>();
     const linkIds = new Set<number>();
     ids.add(hoveredNode);
-    const queue = [hoveredNode];
-    const visited = new Set<string>([hoveredNode]);
-    while (queue.length > 0) {
-      const curr = queue.shift()!;
-      graphData.links.forEach((l, i) => {
-        const src = typeof l.source === "string" ? l.source : l.source.id;
-        const tgt = typeof l.target === "string" ? l.target : l.target.id;
-        if (src === curr && !visited.has(tgt)) { visited.add(tgt); ids.add(tgt); linkIds.add(i); queue.push(tgt); }
-        if (tgt === curr && !visited.has(src)) { visited.add(src); ids.add(src); linkIds.add(i); queue.push(src); }
-      });
-    }
+    // Only direct neighbors (1-hop)
+    graphData.links.forEach((l, i) => {
+      const src = typeof l.source === "string" ? l.source : l.source.id;
+      const tgt = typeof l.target === "string" ? l.target : l.target.id;
+      if (src === hoveredNode) { ids.add(tgt); linkIds.add(i); }
+      if (tgt === hoveredNode) { ids.add(src); linkIds.add(i); }
+    });
     return { nodes: ids, links: linkIds };
   }, [hoveredNode, graphData, activePath]);
 
