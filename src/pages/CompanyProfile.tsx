@@ -497,7 +497,7 @@ export default function CompanyProfile() {
 
             if (stats.length === 0) return null;
             return (
-              <div className={`grid grid-cols-2 ${stats.length >= 3 ? 'md:grid-cols-' + Math.min(stats.length, 4) : 'md:grid-cols-2'} gap-3 mb-6`}>
+              <div className={`grid grid-cols-2 gap-3 mb-6 ${stats.length === 1 ? 'md:grid-cols-1 max-w-xs' : stats.length === 2 ? 'md:grid-cols-2' : stats.length === 3 ? 'md:grid-cols-3' : 'md:grid-cols-4'}`}>
                 {stats}
               </div>
             );

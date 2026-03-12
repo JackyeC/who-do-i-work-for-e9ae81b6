@@ -79,8 +79,8 @@ export default function EconomyDashboard() {
         <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
           {MACRO_SIGNALS.map((sig, i) => (
             <motion.div key={sig.label} initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: i * 0.05 }}>
-              <Card>
-                <CardContent className="p-4">
+              <Card className="h-full">
+                <CardContent className="p-4 h-full flex flex-col justify-between">
                   <div className="flex items-center justify-between mb-2">
                     <span className="text-xs text-muted-foreground">{sig.label}</span>
                     <Badge variant="outline" className="text-[10px]">{sig.source}</Badge>
