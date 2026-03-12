@@ -34,6 +34,8 @@ import { OfferLetterUpload } from "@/components/offer-review/OfferLetterUpload";
 import { OfferReviewResults } from "@/components/offer-review/OfferReviewResults";
 import { LegalDisclaimer } from "@/components/strategic-offer/LegalDisclaimer";
 import { ConsentModal } from "@/components/strategic-offer/ConsentModal";
+import { CareerPathForecast } from "@/components/strategic-offer/CareerPathForecast";
+import { useQuery } from "@tanstack/react-query";
 
 type InputMode = null | "manual" | "upload";
 

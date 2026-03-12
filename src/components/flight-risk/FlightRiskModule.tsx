@@ -404,6 +404,12 @@ export function FlightRiskModule({
             </Card>
           </div>
 
+          {/* Career GPS Sankey Diagram */}
+          <CareerGPSSankey
+            companyName={companyName}
+            signals={signals}
+          />
+
           {/* Network Graph */}
           {graphData.nodes.length > 1 && (
             <Card>
