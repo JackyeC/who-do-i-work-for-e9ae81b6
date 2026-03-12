@@ -39,8 +39,8 @@ function getRelativeTime(dateStr: string) {
 
 function buildHeadline(signal: any, companyName: string, config: typeof CATEGORY_CONFIG[string]): string {
   const val = signal.signal_value || "";
-  // Don't show raw JSON
-  if (val.startsWith("{") || val.startsWith("[") || val === "N/A" || !val.trim()) {
+  // Don't show raw JSON, N/A, or empty values
+  if (!val.trim() || val.startsWith("{") || val.startsWith("[") || val.toLowerCase() === "n/a" || val === "-" || val === "null" || val === "undefined") {
     return `${companyName}: ${config.headline}`;
   }
   // Truncate long values into headline
@@ -55,22 +55,22 @@ interface Translation {
   freshness_note: string;
 }
 
-type TimeRange = "30d" | "6mo" | "1yr" | "2yr";
+type TimeRange = "7d" | "30d" | "6mo" | "1yr";
 
 const TIME_RANGE_OPTIONS: { value: TimeRange; label: string }[] = [
+  { value: "7d", label: "This week" },
   { value: "30d", label: "30 days" },
   { value: "6mo", label: "6 months" },
   { value: "1yr", label: "1 year" },
-  { value: "2yr", label: "2 years" },
 ];
 
 function getCutoffDate(range: TimeRange): Date {
   const d = new Date();
   switch (range) {
+    case "7d": d.setDate(d.getDate() - 7); break;
     case "30d": d.setDate(d.getDate() - 30); break;
     case "6mo": d.setMonth(d.getMonth() - 6); break;
     case "1yr": d.setFullYear(d.getFullYear() - 1); break;
-    case "2yr": d.setFullYear(d.getFullYear() - 2); break;
   }
   return d;
 }
@@ -80,7 +80,7 @@ export function SignalsThisWeek() {
   const [translations, setTranslations] = useState<Record<number, Translation>>({});
   const [translating, setTranslating] = useState(false);
   const [translated, setTranslated] = useState(false);
-  const [timeRange, setTimeRange] = useState<TimeRange>("30d");
+  const [timeRange, setTimeRange] = useState<TimeRange>("7d");
 
   const cutoffDate = getCutoffDate(timeRange);
 
@@ -270,15 +270,8 @@ export function SignalsThisWeek() {
             ? translation.plain_summary
             : buildHeadline(signal, company?.name || "Unknown Employer", config);
 
-          return (
-            <div
-              key={signal.id}
-              className={cn(
-                "relative p-5 flex flex-col justify-between min-h-[180px] group cursor-pointer transition-colors hover:bg-accent/30",
-                idx < 2 && "md:border-r border-border/30",
-                idx < topStories.length - 1 && "border-b md:border-b-0 border-border/30"
-              )}
-            >
+          const cardContent = (
+            <>
               {/* Category tag */}
               <div className="flex items-center gap-2 mb-3">
                 <span className={cn("w-2 h-2 rounded-full", config.accent)} />
@@ -302,30 +295,51 @@ export function SignalsThisWeek() {
 
               {/* Footer */}
               <div className="flex items-center justify-between mt-3 pt-2 border-t border-border/20">
-                {company ? (
-                  <Link to={`/company/${company.slug}`} className="text-[11px] font-semibold text-foreground hover:text-primary flex items-center gap-1.5">
-                    {company.logo_url ? (
-                      <img src={company.logo_url} alt="" className="w-4 h-4 rounded object-contain" />
-                    ) : (
-                      <Building2 className="w-3.5 h-3.5 text-muted-foreground" />
-                    )}
-                    {company.name}
-                  </Link>
-                ) : (
-                  <span className="text-[11px] text-muted-foreground">Unknown employer</span>
-                )}
+                <span className="text-[11px] font-semibold text-foreground flex items-center gap-1.5">
+                  {company?.logo_url ? (
+                    <img src={company.logo_url} alt="" className="w-4 h-4 rounded object-contain" />
+                  ) : (
+                    <Building2 className="w-3.5 h-3.5 text-muted-foreground" />
+                  )}
+                  {company?.name || "Unknown employer"}
+                </span>
                 <div className="flex items-center gap-2">
                   <span className="text-[9px] text-muted-foreground flex items-center gap-0.5">
                     <Shield className="w-2.5 h-2.5" />
                     {signal.confidence_level === "high" ? "Strong" : signal.confidence_level === "medium" ? "Moderate" : "Emerging"}
                   </span>
                   {signal.source_url && (
-                    <a href={signal.source_url} target="_blank" rel="noopener noreferrer" className="text-primary hover:text-primary/80">
+                    <a href={signal.source_url} target="_blank" rel="noopener noreferrer" onClick={e => e.stopPropagation()} className="text-primary hover:text-primary/80">
                       <ExternalLink className="w-3 h-3" />
                     </a>
                   )}
                 </div>
               </div>
+            </>
+          );
+
+          return company ? (
+            <Link
+              key={signal.id}
+              to={`/company/${company.slug}`}
+              className={cn(
+                "relative p-5 flex flex-col justify-between min-h-[180px] group cursor-pointer transition-colors hover:bg-accent/30 no-underline",
+                idx < 2 && "md:border-r border-border/30",
+                idx < topStories.length - 1 && "border-b md:border-b-0 border-border/30"
+              )}
+            >
+              {cardContent}
+            </Link>
+          ) : (
+            <div
+              key={signal.id}
+              className={cn(
+                "relative p-5 flex flex-col justify-between min-h-[180px] group transition-colors",
+                idx < 2 && "md:border-r border-border/30",
+                idx < topStories.length - 1 && "border-b md:border-b-0 border-border/30"
+              )}
+            >
+              {cardContent}
             </div>
           );
         })}
@@ -350,8 +364,8 @@ export function SignalsThisWeek() {
             ? translation.plain_summary
             : buildHeadline(signal, company?.name || "Unknown Employer", config);
 
-          return (
-            <div key={signal.id} className="px-4 py-3 flex items-start gap-3 hover:bg-accent/20 transition-colors group">
+          const rowContent = (
+            <>
               {/* Time column */}
               <div className="w-14 shrink-0 pt-0.5">
                 <span className="text-[11px] font-mono text-muted-foreground">
@@ -384,17 +398,25 @@ export function SignalsThisWeek() {
 
               {/* Company + source */}
               <div className="flex items-center gap-2 shrink-0 pt-0.5">
-                {company && (
-                  <Link to={`/company/${company.slug}`} className="text-[10px] font-medium text-muted-foreground hover:text-primary whitespace-nowrap">
-                    {company.name}
-                  </Link>
-                )}
+                <span className="text-[10px] font-medium text-muted-foreground whitespace-nowrap">
+                  {company?.name || "Unknown"}
+                </span>
                 {signal.source_url && (
-                  <a href={signal.source_url} target="_blank" rel="noopener noreferrer" className="text-primary/60 hover:text-primary">
+                  <a href={signal.source_url} target="_blank" rel="noopener noreferrer" onClick={e => e.stopPropagation()} className="text-primary/60 hover:text-primary">
                     <ExternalLink className="w-3 h-3" />
                   </a>
                 )}
               </div>
+            </>
+          );
+
+          return company ? (
+            <Link key={signal.id} to={`/company/${company.slug}`} className="px-4 py-3 flex items-start gap-3 hover:bg-accent/20 transition-colors group no-underline">
+              {rowContent}
+            </Link>
+          ) : (
+            <div key={signal.id} className="px-4 py-3 flex items-start gap-3 group">
+              {rowContent}
             </div>
           );
         })}
