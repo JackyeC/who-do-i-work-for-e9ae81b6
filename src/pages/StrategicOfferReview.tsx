@@ -1,4 +1,4 @@
-import { useState, useCallback, useMemo } from "react";
+import { useState, useCallback } from "react";
 import { Header } from "@/components/Header";
 import { Footer } from "@/components/Footer";
 import { Badge } from "@/components/ui/badge";
@@ -24,6 +24,7 @@ import { NegotiationBot } from "@/components/strategic-offer/NegotiationBot";
 import { ScamDetector } from "@/components/strategic-offer/ScamDetector";
 import { EmployerIntelligenceCard } from "@/components/strategic-offer/EmployerIntelligenceCard";
 import { OfferStrengthScore } from "@/components/strategic-offer/OfferStrengthScore";
+import { useOfferStrengthScore } from "@/hooks/use-offer-strength-score";
 import { GreenFlagsPanel } from "@/components/strategic-offer/GreenFlagsPanel";
 import { QuestionsToAsk } from "@/components/strategic-offer/QuestionsToAsk";
 import { CultureSnapshot } from "@/components/strategic-offer/CultureSnapshot";
@@ -236,6 +237,8 @@ export default function StrategicOfferReview() {
       if (data?.error) throw new Error(data.error);
       setReport(data.report);
       setStep(3);
+      // Fire AI strength score in background (uses clarity report)
+      strengthScore.runAIScore();
     } catch (e: any) {
       console.error(e);
       toast({ title: "Scan failed", description: e.message, variant: "destructive" });
@@ -245,22 +248,12 @@ export default function StrategicOfferReview() {
     }
   };
 
-  const offerStrengthScore = useMemo(() => {
-    const redFlags = legalFlags.filter(f => f.severity === "red").length;
-    const yellowFlags = legalFlags.filter(f => f.severity === "yellow").length;
-    const salary = Number(offer.baseSalary) || 0;
-    const compScore = report?.compensation.score ?? (salary > annualBaseline * 1.2 ? 80 : salary > annualBaseline ? 60 : 35);
-    const clarityScore = report?.transparency.score ?? 50;
-    const restrictiveScore = Math.max(0, 100 - redFlags * 30 - yellowFlags * 15);
-    const benefitsScore = report?.employeeExperience.score ?? 50;
-    const mechanicsScore = salary >= annualBaseline ? 70 : 30;
-    const growthScore = report?.leadershipRepresentation.score ?? 50;
-    const legalScore = report?.legalRisk.score ?? Math.max(0, 100 - redFlags * 25 - yellowFlags * 10);
-    return Math.round(
-      compScore * 0.25 + clarityScore * 0.15 + restrictiveScore * 0.20 +
-      benefitsScore * 0.10 + mechanicsScore * 0.10 + growthScore * 0.10 + legalScore * 0.10
-    );
-  }, [report, legalFlags, offer.baseSalary, annualBaseline]);
+  const strengthScore = useOfferStrengthScore({
+    offer,
+    annualBaseline,
+    legalFlags,
+    clarityReport: report,
+  });
 
   const canAdvanceOffer = offer.companyName.length >= 2 && offer.roleTitle.length >= 2 && offer.baseSalary.length >= 1;
 
@@ -656,12 +649,9 @@ export default function StrategicOfferReview() {
 
                 {/* 1. Offer Strength Score */}
                 <OfferStrengthScore
-                  report={report}
-                  legalFlags={legalFlags}
-                  offerSalary={Number(offer.baseSalary) || 0}
-                  annualBaseline={annualBaseline}
-                  hasEquity={!!offer.equity}
-                  hasBonus={!!offer.bonus}
+                  result={strengthScore.result}
+                  isAIPowered={strengthScore.isAIPowered}
+                  loading={strengthScore.loading}
                 />
 
                 {/* 2. Scam Detector (only if triggered) */}
@@ -763,7 +753,7 @@ export default function StrategicOfferReview() {
                 <OfferDecisionSummary
                   companyName={offer.companyName}
                   roleTitle={offer.roleTitle}
-                  offerStrengthScore={offerStrengthScore}
+                  offerStrengthScore={strengthScore.result.totalScore}
                   report={report}
                   legalFlags={legalFlags}
                   offerSalary={Number(offer.baseSalary) || 0}

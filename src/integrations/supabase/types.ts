@@ -3227,6 +3227,124 @@ export type Database = {
           },
         ]
       }
+      offer_records: {
+        Row: {
+          company_id: string | null
+          company_name: string
+          created_at: string
+          extracted_clauses: Json | null
+          green_flags: Json | null
+          id: string
+          location: string | null
+          missing_fields: string[] | null
+          parsed_fields: Json | null
+          red_flags: Json | null
+          role_title: string | null
+          user_id: string
+          years_experience: string | null
+        }
+        Insert: {
+          company_id?: string | null
+          company_name: string
+          created_at?: string
+          extracted_clauses?: Json | null
+          green_flags?: Json | null
+          id?: string
+          location?: string | null
+          missing_fields?: string[] | null
+          parsed_fields?: Json | null
+          red_flags?: Json | null
+          role_title?: string | null
+          user_id: string
+          years_experience?: string | null
+        }
+        Update: {
+          company_id?: string | null
+          company_name?: string
+          created_at?: string
+          extracted_clauses?: Json | null
+          green_flags?: Json | null
+          id?: string
+          location?: string | null
+          missing_fields?: string[] | null
+          parsed_fields?: Json | null
+          red_flags?: Json | null
+          role_title?: string | null
+          user_id?: string
+          years_experience?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "offer_records_company_id_fkey"
+            columns: ["company_id"]
+            isOneToOne: false
+            referencedRelation: "companies"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      offer_scores: {
+        Row: {
+          category_explanations: Json
+          category_scores: Json
+          confidence: string
+          created_at: string
+          final_label: string
+          final_recommendation: string
+          id: string
+          negotiation_targets: Json | null
+          offer_id: string
+          personalization_applied: boolean | null
+          top_green_flags: Json | null
+          top_red_flags: Json | null
+          total_score: number
+          user_id: string
+          why_this_score: string | null
+        }
+        Insert: {
+          category_explanations?: Json
+          category_scores?: Json
+          confidence?: string
+          created_at?: string
+          final_label: string
+          final_recommendation: string
+          id?: string
+          negotiation_targets?: Json | null
+          offer_id: string
+          personalization_applied?: boolean | null
+          top_green_flags?: Json | null
+          top_red_flags?: Json | null
+          total_score: number
+          user_id: string
+          why_this_score?: string | null
+        }
+        Update: {
+          category_explanations?: Json
+          category_scores?: Json
+          confidence?: string
+          created_at?: string
+          final_label?: string
+          final_recommendation?: string
+          id?: string
+          negotiation_targets?: Json | null
+          offer_id?: string
+          personalization_applied?: boolean | null
+          top_green_flags?: Json | null
+          top_red_flags?: Json | null
+          total_score?: number
+          user_id?: string
+          why_this_score?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "offer_scores_offer_id_fkey"
+            columns: ["offer_id"]
+            isOneToOne: false
+            referencedRelation: "offer_records"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       organization_profile_enrichment: {
         Row: {
           company_id: string
@@ -5050,6 +5168,48 @@ export type Database = {
           parsed_signals?: Json | null
           parsed_summary?: Json | null
           status?: Database["public"]["Enums"]["document_status"] | null
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      user_offer_preferences: {
+        Row: {
+          compensation_priority: number | null
+          flexibility_priority: number | null
+          growth_priority: number | null
+          healthcare_priority: number | null
+          id: string
+          legal_risk_sensitivity: number | null
+          mission_alignment_priority: number | null
+          remote_work_priority: number | null
+          stability_priority: number | null
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          compensation_priority?: number | null
+          flexibility_priority?: number | null
+          growth_priority?: number | null
+          healthcare_priority?: number | null
+          id?: string
+          legal_risk_sensitivity?: number | null
+          mission_alignment_priority?: number | null
+          remote_work_priority?: number | null
+          stability_priority?: number | null
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          compensation_priority?: number | null
+          flexibility_priority?: number | null
+          growth_priority?: number | null
+          healthcare_priority?: number | null
+          id?: string
+          legal_risk_sensitivity?: number | null
+          mission_alignment_priority?: number | null
+          remote_work_priority?: number | null
+          stability_priority?: number | null
           updated_at?: string
           user_id?: string
         }

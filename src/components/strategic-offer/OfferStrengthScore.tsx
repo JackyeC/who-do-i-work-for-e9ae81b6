@@ -4,115 +4,52 @@ import { Progress } from "@/components/ui/progress";
 import { cn } from "@/lib/utils";
 import {
   DollarSign, FileText, Shield, Heart, Scale, TrendingUp, AlertTriangle,
-  CheckCircle2, XCircle
+  CheckCircle2, XCircle, Info, Sparkles, ChevronDown, ChevronUp
 } from "lucide-react";
-import type { LegalFlag } from "./CivicLegalAudit";
-import type { OfferClarityReport } from "@/components/offer-clarity/OfferClarityDashboard";
+import { useState } from "react";
+import type { OfferStrengthResult, ScoreCategory } from "@/lib/offerStrengthScoring";
+import { getScoreLabel } from "@/lib/offerStrengthScoring";
+
+const CATEGORY_ICONS: Record<string, typeof DollarSign> = {
+  compensation: DollarSign,
+  clarity: FileText,
+  restrictive: Shield,
+  benefits: Heart,
+  mechanics: Scale,
+  growth: TrendingUp,
+  legal: AlertTriangle,
+};
+
+const CONFIDENCE_STYLES: Record<string, { label: string; className: string }> = {
+  high: { label: "High Confidence", className: "text-[hsl(var(--civic-green))] bg-[hsl(var(--civic-green))]/10" },
+  medium: { label: "Medium Confidence", className: "text-[hsl(var(--civic-yellow))] bg-[hsl(var(--civic-yellow))]/10" },
+  low: { label: "Low Confidence", className: "text-muted-foreground bg-muted" },
+};
+
+const RECOMMENDATION_STYLES: Record<string, { className: string; icon: typeof CheckCircle2 }> = {
+  "Ready to Sign": { className: "text-[hsl(var(--civic-green))] border-[hsl(var(--civic-green))]/30 bg-[hsl(var(--civic-green))]/5", icon: CheckCircle2 },
+  "Worth Negotiating": { className: "text-primary border-primary/30 bg-primary/5", icon: Info },
+  "Proceed Carefully": { className: "text-[hsl(var(--civic-yellow))] border-[hsl(var(--civic-yellow))]/30 bg-[hsl(var(--civic-yellow))]/5", icon: AlertTriangle },
+  "Get More Information": { className: "text-[hsl(var(--civic-yellow))] border-[hsl(var(--civic-yellow))]/30 bg-[hsl(var(--civic-yellow))]/5", icon: Info },
+  "High-Risk Offer": { className: "text-destructive border-destructive/30 bg-destructive/5", icon: XCircle },
+};
 
 interface Props {
-  report: OfferClarityReport | null;
-  legalFlags: LegalFlag[];
-  offerSalary: number;
-  annualBaseline: number;
-  hasEquity: boolean;
-  hasBonus: boolean;
+  result: OfferStrengthResult;
+  isAIPowered: boolean;
+  loading?: boolean;
 }
 
-interface ScoreCategory {
-  key: string;
-  label: string;
-  icon: typeof DollarSign;
-  weight: number;
-  score: number;
-  findings: string[];
-}
+export function OfferStrengthScore({ result, isAIPowered, loading }: Props) {
+  const [expandedCat, setExpandedCat] = useState<string | null>(null);
 
-const SCORE_LABELS: { min: number; label: string; color: string; icon: typeof CheckCircle2 }[] = [
-  { min: 85, label: "Strong Offer", color: "text-[hsl(var(--civic-green))]", icon: CheckCircle2 },
-  { min: 70, label: "Good Offer", color: "text-primary", icon: CheckCircle2 },
-  { min: 55, label: "Mixed Offer", color: "text-[hsl(var(--civic-yellow))]", icon: AlertTriangle },
-  { min: 40, label: "Risky Offer", color: "text-destructive", icon: AlertTriangle },
-  { min: 0, label: "High-Risk Offer", color: "text-destructive", icon: XCircle },
-];
-
-function getScoreLabel(score: number) {
-  return SCORE_LABELS.find(l => score >= l.min) || SCORE_LABELS[SCORE_LABELS.length - 1];
-}
-
-function computeCategories(
-  report: OfferClarityReport | null,
-  flags: LegalFlag[],
-  salary: number,
-  baseline: number,
-  hasEquity: boolean,
-  hasBonus: boolean,
-): ScoreCategory[] {
-  const redFlags = flags.filter(f => f.severity === "red").length;
-  const yellowFlags = flags.filter(f => f.severity === "yellow").length;
-
-  // 1. Compensation Competitiveness (25%)
-  const compScore = report?.compensation.score ?? (salary > baseline * 1.2 ? 80 : salary > baseline ? 60 : 35);
-  const compFindings: string[] = [];
-  if (report) {
-    compFindings.push(`Market percentile: ${report.compensation.percentile}th`);
-    compFindings.push(report.compensation.interpretation.replace(/_/g, " "));
-  } else {
-    compFindings.push(salary > baseline ? `Salary ${((salary / baseline - 1) * 100).toFixed(0)}% above your safety line` : "Salary at or below your safety line");
-  }
-  if (hasBonus) compFindings.push("Variable compensation component included");
-  else compFindings.push("No bonus or commission structure disclosed");
-
-  // 2. Contract Clarity (15%)
-  const clarityScore = report?.transparency.score ?? 50;
-  const clarityFindings = report?.transparency.findings.slice(0, 2) || [
-    "Contract clarity could not be fully assessed from provided details",
-  ];
-
-  // 3. Restrictive Terms Risk (20%)
-  const restrictiveScore = Math.max(0, 100 - redFlags * 30 - yellowFlags * 15);
-  const restrictiveFindings: string[] = [];
-  if (redFlags > 0) restrictiveFindings.push(`${redFlags} high-risk restrictive clause${redFlags > 1 ? "s" : ""} detected`);
-  if (yellowFlags > 0) restrictiveFindings.push(`${yellowFlags} cautionary clause${yellowFlags > 1 ? "s" : ""} detected`);
-  if (redFlags === 0 && yellowFlags === 0) restrictiveFindings.push("No significant restrictive clauses detected");
-
-  // 4. Benefits Quality (10%)
-  const benefitsScore = report?.employeeExperience.score ?? 50;
-  const benefitsFindings = report?.employeeExperience.findings.slice(0, 2) || ["Benefits data not fully evaluated"];
-
-  // 5. Offer Mechanics & Fairness (10%)
-  const mechanicsScore = salary >= baseline ? 70 : 30;
-  const mechanicsFindings: string[] = [];
-  mechanicsFindings.push(salary >= baseline ? "Base salary covers your living expenses" : "Base salary falls below your calculated safety line");
-
-  // 6. Career Growth Signals (10%)
-  const growthScore = report?.leadershipRepresentation.score ?? 50;
-  const growthFindings = report?.leadershipRepresentation.findings.slice(0, 2) || ["Career growth indicators not fully assessed"];
-
-  // 7. Legal / Financial Risk (10%)
-  const legalScore = report?.legalRisk.score ?? Math.max(0, 100 - redFlags * 25 - yellowFlags * 10);
-  const legalFindings = report?.legalRisk.findings.slice(0, 2) || [];
-  if (legalFindings.length === 0) {
-    legalFindings.push(redFlags > 0 ? "Legal risk elevated due to restrictive clauses" : "No major legal risk indicators from available data");
-  }
-
-  return [
-    { key: "compensation", label: "Compensation Competitiveness", icon: DollarSign, weight: 25, score: compScore, findings: compFindings },
-    { key: "clarity", label: "Contract Clarity", icon: FileText, weight: 15, score: clarityScore, findings: clarityFindings },
-    { key: "restrictive", label: "Restrictive Terms Risk", icon: Shield, weight: 20, score: restrictiveScore, findings: restrictiveFindings },
-    { key: "benefits", label: "Benefits Quality", icon: Heart, weight: 10, score: benefitsScore, findings: benefitsFindings },
-    { key: "mechanics", label: "Offer Mechanics & Fairness", icon: Scale, weight: 10, score: mechanicsScore, findings: mechanicsFindings },
-    { key: "growth", label: "Career Growth Signals", icon: TrendingUp, weight: 10, score: growthScore, findings: growthFindings },
-    { key: "legal", label: "Legal / Financial Risk", icon: AlertTriangle, weight: 10, score: legalScore, findings: legalFindings },
-  ];
-}
-
-export function OfferStrengthScore({ report, legalFlags, offerSalary, annualBaseline, hasEquity, hasBonus }: Props) {
-  const categories = computeCategories(report, legalFlags, offerSalary, annualBaseline, hasEquity, hasBonus);
-  const totalScore = Math.round(categories.reduce((sum, c) => sum + c.score * (c.weight / 100), 0));
+  const { totalScore, finalLabel, finalRecommendation, confidence, whyThisScore, categories, missingDataWarnings, personalizationApplied } = result;
   const label = getScoreLabel(totalScore);
-  const LabelIcon = label.icon;
+  const confStyle = CONFIDENCE_STYLES[confidence] || CONFIDENCE_STYLES.medium;
+  const recStyle = RECOMMENDATION_STYLES[finalRecommendation] || RECOMMENDATION_STYLES["Proceed Carefully"];
+  const RecIcon = recStyle.icon;
 
-  const ringSize = 140;
+  const ringSize = 150;
   const radius = (ringSize - 14) / 2;
   const circumference = 2 * Math.PI * radius;
   const offset = circumference - (totalScore / 100) * circumference;
@@ -120,6 +57,7 @@ export function OfferStrengthScore({ report, legalFlags, offerSalary, annualBase
 
   return (
     <div className="space-y-5" id="offer-strength-score">
+      {/* Main Score Card */}
       <Card className="border-2 border-primary/20 rounded-2xl overflow-hidden">
         <CardContent className="p-7">
           <div className="flex flex-col sm:flex-row items-center gap-6">
@@ -130,76 +68,141 @@ export function OfferStrengthScore({ report, legalFlags, offerSalary, annualBase
                 <circle
                   cx={ringSize / 2} cy={ringSize / 2} r={radius} fill="none"
                   stroke={ringColor} strokeWidth="7" strokeLinecap="round"
-                  strokeDasharray={circumference} strokeDashoffset={offset}
+                  strokeDasharray={circumference} strokeDashoffset={loading ? circumference : offset}
                   className="transition-all duration-1000"
                 />
               </svg>
               <div className="absolute inset-0 flex flex-col items-center justify-center">
-                <span className="text-4xl font-display font-bold text-foreground">{totalScore}</span>
+                <span className="text-4xl font-display font-bold text-foreground">{loading ? "—" : totalScore}</span>
                 <span className="text-[10px] text-muted-foreground font-medium">/ 100</span>
               </div>
             </div>
 
             {/* Label + summary */}
-            <div className="flex-1 text-center sm:text-left">
-              <h2 className="text-2xl font-display font-bold text-foreground mb-1 tracking-tight">
-                Offer Strength Score™
-              </h2>
-              <div className="flex items-center gap-2 justify-center sm:justify-start mb-3">
-                <LabelIcon className={cn("w-4 h-4", label.color)} />
-                <span className={cn("text-sm font-semibold", label.color)}>{label.label}</span>
+            <div className="flex-1 text-center sm:text-left space-y-3">
+              <div>
+                <h2 className="text-2xl font-display font-bold text-foreground mb-1 tracking-tight">
+                  Offer Strength Score™
+                </h2>
+                <div className="flex items-center gap-2 justify-center sm:justify-start flex-wrap">
+                  <span className={cn("text-sm font-semibold", label.color)}>{finalLabel}</span>
+                  <Badge variant="outline" className={cn("text-[10px]", confStyle.className)}>{confStyle.label}</Badge>
+                  {isAIPowered && <Badge variant="outline" className="text-[10px] gap-1"><Sparkles className="w-2.5 h-2.5" /> AI-Powered</Badge>}
+                  {personalizationApplied && <Badge variant="outline" className="text-[10px]">Personalized</Badge>}
+                </div>
               </div>
-              <p className="text-sm text-muted-foreground leading-relaxed">
-                {totalScore >= 85
-                  ? "This offer is competitive, clearly structured, and low-risk. You're in a strong negotiating position."
-                  : totalScore >= 70
-                  ? "This is a solid offer with room for strategic negotiation on specific terms."
-                  : totalScore >= 55
-                  ? "This offer has strengths but also notable gaps. Review the breakdown before signing."
-                  : totalScore >= 40
-                  ? "Multiple risk signals detected. Negotiate aggressively or consider walking."
-                  : "This offer raises serious concerns. Do not sign without addressing the issues below."}
-              </p>
+
+              {/* Recommendation badge */}
+              <div className={cn("inline-flex items-center gap-2 px-3 py-1.5 rounded-lg border text-sm font-medium", recStyle.className)}>
+                <RecIcon className="w-4 h-4" />
+                {finalRecommendation}
+              </div>
+
+              {/* Why this score */}
+              {whyThisScore && (
+                <p className="text-sm text-muted-foreground leading-relaxed">{whyThisScore}</p>
+              )}
             </div>
           </div>
+
+          {/* Missing data warnings */}
+          {missingDataWarnings.length > 0 && (
+            <div className="mt-5 p-3 bg-muted/40 rounded-xl space-y-1">
+              <p className="text-[11px] font-medium text-muted-foreground flex items-center gap-1.5">
+                <Info className="w-3 h-3" /> Missing Information
+              </p>
+              {missingDataWarnings.map((w, i) => (
+                <p key={i} className="text-[11px] text-muted-foreground pl-4">• {w}</p>
+              ))}
+            </div>
+          )}
         </CardContent>
       </Card>
 
       {/* Category breakdown */}
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-        {categories.map(cat => {
-          const Icon = cat.icon;
-          const catColor = cat.score >= 70 ? "text-[hsl(var(--civic-green))]" : cat.score >= 50 ? "text-[hsl(var(--civic-yellow))]" : "text-destructive";
-          return (
-            <Card key={cat.key} className="rounded-xl border-border/50">
-              <CardContent className="p-4 space-y-2.5">
-                <div className="flex items-center justify-between">
-                  <div className="flex items-center gap-2">
-                    <Icon className="w-4 h-4 text-muted-foreground" />
-                    <span className="text-sm font-semibold text-foreground">{cat.label}</span>
-                  </div>
-                  <Badge variant="outline" className={cn("text-xs font-bold", catColor)}>
-                    {cat.score}
-                  </Badge>
-                </div>
-                <Progress
-                  value={cat.score}
-                  className="h-1.5"
-                />
-                <ul className="space-y-1">
-                  {cat.findings.map((f, i) => (
-                    <li key={i} className="flex items-start gap-2 text-xs text-muted-foreground">
-                      <span className="mt-1.5 w-1 h-1 rounded-full bg-muted-foreground/40 shrink-0" />
-                      {f}
-                    </li>
-                  ))}
-                </ul>
-                <span className="text-[10px] text-muted-foreground">{cat.weight}% weight</span>
-              </CardContent>
-            </Card>
-          );
-        })}
+        {categories.map(cat => (
+          <CategoryCard
+            key={cat.key}
+            category={cat}
+            isExpanded={expandedCat === cat.key}
+            onToggle={() => setExpandedCat(expandedCat === cat.key ? null : cat.key)}
+          />
+        ))}
       </div>
     </div>
+  );
+}
+
+function CategoryCard({ category, isExpanded, onToggle }: { category: ScoreCategory; isExpanded: boolean; onToggle: () => void }) {
+  const Icon = CATEGORY_ICONS[category.key] || Info;
+  const catColor = category.score >= 70 ? "text-[hsl(var(--civic-green))]" : category.score >= 50 ? "text-[hsl(var(--civic-yellow))]" : "text-destructive";
+  const confStyle = CONFIDENCE_STYLES[category.confidence] || CONFIDENCE_STYLES.medium;
+
+  return (
+    <Card className="rounded-xl border-border/50 hover:border-border transition-colors">
+      <CardContent className="p-4 space-y-2.5">
+        <button onClick={onToggle} className="w-full text-left">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-2">
+              <Icon className="w-4 h-4 text-muted-foreground" />
+              <span className="text-sm font-semibold text-foreground">{category.label}</span>
+            </div>
+            <div className="flex items-center gap-1.5">
+              <Badge variant="outline" className={cn("text-xs font-bold", catColor)}>
+                {category.score}
+              </Badge>
+              {isExpanded ? <ChevronUp className="w-3.5 h-3.5 text-muted-foreground" /> : <ChevronDown className="w-3.5 h-3.5 text-muted-foreground" />}
+            </div>
+          </div>
+        </button>
+
+        <Progress value={category.score} className="h-1.5" />
+
+        {/* Findings always visible */}
+        <ul className="space-y-1">
+          {category.findings.map((f, i) => (
+            <li key={i} className="flex items-start gap-2 text-xs text-muted-foreground">
+              <span className="mt-1.5 w-1 h-1 rounded-full bg-muted-foreground/40 shrink-0" />
+              {f}
+            </li>
+          ))}
+        </ul>
+
+        {/* Expanded detail */}
+        {isExpanded && (
+          <div className="pt-2 space-y-2 border-t border-border/30">
+            {category.positiveSignals && category.positiveSignals.length > 0 && (
+              <div>
+                <p className="text-[10px] font-semibold text-[hsl(var(--civic-green))] mb-1">Positive Signals</p>
+                {category.positiveSignals.map((s, i) => (
+                  <p key={i} className="text-[11px] text-muted-foreground flex items-center gap-1.5">
+                    <CheckCircle2 className="w-3 h-3 text-[hsl(var(--civic-green))]" /> {s}
+                  </p>
+                ))}
+              </div>
+            )}
+            {category.negativeSignals && category.negativeSignals.length > 0 && (
+              <div>
+                <p className="text-[10px] font-semibold text-destructive mb-1">Risk Signals</p>
+                {category.negativeSignals.map((s, i) => (
+                  <p key={i} className="text-[11px] text-muted-foreground flex items-center gap-1.5">
+                    <XCircle className="w-3 h-3 text-destructive" /> {s}
+                  </p>
+                ))}
+              </div>
+            )}
+            <div className="flex items-center justify-between">
+              <Badge variant="outline" className={cn("text-[9px]", confStyle.className)}>{confStyle.label}</Badge>
+              <span className="text-[10px] text-muted-foreground">{category.weight}% weight</span>
+            </div>
+          </div>
+        )}
+
+        {!isExpanded && (
+          <span className="text-[10px] text-muted-foreground">{category.weight}% weight</span>
+        )}
+      </CardContent>
+    </Card>
   );
 }
