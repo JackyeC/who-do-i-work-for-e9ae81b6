@@ -4,7 +4,7 @@ import { Separator } from "@/components/ui/separator";
 import {
   Users, TrendingDown, Eye, DollarSign, Landmark,
   Heart, MessageSquare, Building2, MapPin, Briefcase,
-  ShieldCheck, AlertTriangle, Search
+  ShieldCheck, AlertTriangle, Search, ArrowRight
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 
@@ -12,12 +12,17 @@ import { cn } from "@/lib/utils";
 
 type SnapshotVerdict = "Strong Fit" | "Proceed with Caution" | "Needs Deeper Review";
 
+type SignalLevel = "strong" | "high" | "moderate" | "low" | "weak" | "missing";
+
 interface SnapshotSection {
   key: string;
   label: string;
   icon: typeof Users;
-  summary: string;
+  signalLevel: SignalLevel;
+  evidence: string[];
   status: "positive" | "neutral" | "warning" | "missing";
+  exploreLabel?: string;
+  exploreAnchor?: string;
 }
 
 interface OfferCheckSnapshotProps {
@@ -28,6 +33,17 @@ interface OfferCheckSnapshotProps {
   sections: SnapshotSection[];
   jackyeTake?: string;
 }
+
+/* ── Signal level styling ── */
+
+const SIGNAL_LEVEL_CONFIG: Record<SignalLevel, { label: string; color: string; bg: string; border: string }> = {
+  strong: { label: "Strong", color: "text-[hsl(var(--civic-green))]", bg: "bg-[hsl(var(--civic-green))]/10", border: "border-[hsl(var(--civic-green))]/30" },
+  high: { label: "High", color: "text-destructive", bg: "bg-destructive/10", border: "border-destructive/30" },
+  moderate: { label: "Moderate", color: "text-[hsl(var(--civic-yellow))]", bg: "bg-[hsl(var(--civic-yellow))]/10", border: "border-[hsl(var(--civic-yellow))]/30" },
+  low: { label: "Low", color: "text-[hsl(var(--civic-green))]", bg: "bg-[hsl(var(--civic-green))]/10", border: "border-[hsl(var(--civic-green))]/30" },
+  weak: { label: "Weak", color: "text-[hsl(var(--civic-yellow))]", bg: "bg-[hsl(var(--civic-yellow))]/10", border: "border-[hsl(var(--civic-yellow))]/30" },
+  missing: { label: "No Data", color: "text-muted-foreground", bg: "bg-muted/50", border: "border-border/50" },
+};
 
 /* ── Verdict styling ── */
 
@@ -66,92 +82,137 @@ export function buildDefaultSections(opts: {
   execCount?: number;
   hasLayoffs?: boolean;
   layoffRecent?: boolean;
+  layoffCount?: number;
+  warnFilings?: number;
+  hiringSlowed?: boolean;
   hiringTransparency?: "high" | "medium" | "low" | "unknown";
+  salaryRangesPublished?: boolean;
+  biasAuditStatus?: string;
   offerStrength?: "strong" | "average" | "weak" | "unknown";
+  salaryPercentile?: string;
+  benefitsRating?: string;
+  equityOffered?: boolean;
   influenceExposure?: "high" | "moderate" | "low" | "unknown";
+  lobbyingSpend?: string;
+  pacDonations?: string;
+  federalContracts?: number;
   cultureAlignment?: "aligned" | "mixed" | "misaligned" | "unknown";
+  sentimentRating?: string;
+  hypocrisyScore?: string;
+  deiSignals?: string;
 }): SnapshotSection[] {
   const {
     hasExecs = false, execCount = 0,
-    hasLayoffs = false, layoffRecent = false,
-    hiringTransparency = "unknown",
-    offerStrength = "unknown",
-    influenceExposure = "unknown",
-    cultureAlignment = "unknown",
+    hasLayoffs = false, layoffRecent = false, layoffCount = 0, warnFilings = 0, hiringSlowed = false,
+    hiringTransparency = "unknown", salaryRangesPublished = false, biasAuditStatus,
+    offerStrength = "unknown", salaryPercentile, benefitsRating, equityOffered,
+    influenceExposure = "unknown", lobbyingSpend, pacDonations, federalContracts,
+    cultureAlignment = "unknown", sentimentRating, hypocrisyScore, deiSignals,
   } = opts;
 
   return [
     {
       key: "decision_makers",
-      label: "Decision Makers",
+      label: "Leadership Visibility",
       icon: Users,
-      summary: hasExecs
-        ? `${execCount} executive${execCount !== 1 ? "s" : ""} and board members identified shaping strategy and risk.`
-        : "No executive data available yet. Run a scan to discover leadership.",
+      signalLevel: hasExecs ? (execCount >= 5 ? "strong" : "moderate") : "missing",
+      evidence: hasExecs
+        ? [
+            `${execCount} executive${execCount !== 1 ? "s" : ""} and board members identified`,
+            execCount >= 5 ? "Strong leadership transparency from public filings" : "Limited executive data — some gaps in leadership visibility",
+            "Decision-maker profiles available for review",
+          ]
+        : [
+            "No executive data available yet",
+            "Run a scan to discover leadership",
+            "Leadership visibility is a key trust signal",
+          ],
       status: hasExecs ? "positive" : "missing",
+      exploreLabel: "Explore leadership",
+      exploreAnchor: "#decision-makers",
     },
     {
       key: "workforce_stability",
-      label: "Workforce Stability",
+      label: "Layoff Risk",
       icon: TrendingDown,
-      summary: layoffRecent
-        ? "Recent layoffs or WARN activity detected. This may directly affect the role."
-        : hasLayoffs
-          ? "Historical layoff signals found, but no recent activity within 90 days."
-          : "No public layoff or restructuring signals detected.",
+      signalLevel: layoffRecent ? "high" : hasLayoffs ? "moderate" : "low",
+      evidence: (() => {
+        const bullets: string[] = [];
+        if (layoffRecent) bullets.push(`Active workforce reduction detected${layoffCount ? ` (${layoffCount} event${layoffCount !== 1 ? "s" : ""})` : ""}`);
+        else if (hasLayoffs) bullets.push(`${layoffCount || "Historical"} workforce reduction${layoffCount !== 1 ? "s" : ""} in the past 18 months`);
+        else bullets.push("No public layoff or restructuring signals detected");
+        if (hiringSlowed) bullets.push("Hiring slowed in the past two quarters");
+        else bullets.push("Hiring activity appears stable");
+        bullets.push(warnFilings > 0 ? `${warnFilings} WARN filing${warnFilings !== 1 ? "s" : ""} in the past 6 months` : "No WARN filings in the past 6 months");
+        return bullets;
+      })(),
       status: layoffRecent ? "warning" : hasLayoffs ? "neutral" : "positive",
+      exploreLabel: "Explore workforce signals",
+      exploreAnchor: "#workforce-stability",
     },
     {
       key: "hiring_transparency",
       label: "Hiring Transparency",
       icon: Eye,
-      summary: hiringTransparency === "high"
-        ? "Salary ranges published, hiring process explained, and AI screening signals transparent."
-        : hiringTransparency === "medium"
-          ? "Some salary visibility, but hiring technology and process transparency are incomplete."
-          : hiringTransparency === "low"
-            ? "Limited salary range visibility, opaque hiring technology, and unclear screening process."
-            : "Insufficient data to evaluate hiring transparency.",
+      signalLevel: hiringTransparency === "high" ? "strong" : hiringTransparency === "medium" ? "moderate" : hiringTransparency === "low" ? "weak" : "missing",
+      evidence: (() => {
+        const bullets: string[] = [];
+        bullets.push(salaryRangesPublished ? "Salary ranges published on job postings" : "No salary ranges found on job postings");
+        bullets.push(biasAuditStatus === "completed" ? "AI hiring bias audit completed" : biasAuditStatus === "partial" ? "Partial AI bias audit disclosure" : "No AI hiring bias audit found");
+        bullets.push(hiringTransparency === "high" ? "Hiring process clearly explained" : hiringTransparency === "medium" ? "Some hiring process visibility" : "Hiring process opaque or undisclosed");
+        return bullets;
+      })(),
       status: hiringTransparency === "high" ? "positive" : hiringTransparency === "medium" ? "neutral" : hiringTransparency === "low" ? "warning" : "missing",
+      exploreLabel: "Explore hiring signals",
+      exploreAnchor: "#hiring-transparency",
     },
     {
       key: "offer_competitiveness",
-      label: "Offer Competitiveness",
+      label: "Offer Strength",
       icon: DollarSign,
-      summary: offerStrength === "strong"
-        ? "Salary, benefits, and equity appear strong against market benchmarks."
-        : offerStrength === "average"
-          ? "Compensation appears in line with market benchmarks. Review equity and benefits details."
-          : offerStrength === "weak"
-            ? "Offer may fall below market benchmarks. Consider negotiation before committing."
-            : "Market comparison data not yet available for this offer.",
+      signalLevel: offerStrength === "strong" ? "strong" : offerStrength === "average" ? "moderate" : offerStrength === "weak" ? "weak" : "missing",
+      evidence: (() => {
+        const bullets: string[] = [];
+        bullets.push(salaryPercentile ? `Salary at ${salaryPercentile} percentile vs. market` : offerStrength === "strong" ? "Salary above market benchmarks" : offerStrength === "weak" ? "Salary may fall below market benchmarks" : "Market salary comparison not yet available");
+        bullets.push(benefitsRating ? `Benefits rated ${benefitsRating}` : "Benefits data not yet analyzed");
+        bullets.push(equityOffered ? "Equity component included in offer" : equityOffered === false ? "No equity component in offer" : "Equity details not yet evaluated");
+        return bullets;
+      })(),
       status: offerStrength === "strong" ? "positive" : offerStrength === "average" ? "neutral" : offerStrength === "weak" ? "warning" : "missing",
+      exploreLabel: "Explore compensation",
+      exploreAnchor: "#offer-competitiveness",
     },
     {
       key: "influence_spending",
-      label: "Influence & Spending",
+      label: "Political Influence",
       icon: Landmark,
-      summary: influenceExposure === "high"
-        ? "Significant political donations, lobbying, or federal contract signals detected."
-        : influenceExposure === "moderate"
-          ? "Some political and lobbying activity detected. Review the connection chain for context."
-          : influenceExposure === "low"
-            ? "Low political influence signals. Limited lobbying or PAC activity on record."
-            : "Influence data not yet collected for this company.",
+      signalLevel: influenceExposure === "high" ? "high" : influenceExposure === "moderate" ? "moderate" : influenceExposure === "low" ? "low" : "missing",
+      evidence: (() => {
+        const bullets: string[] = [];
+        bullets.push(lobbyingSpend ? `${lobbyingSpend} in lobbying expenditures` : influenceExposure === "low" ? "Minimal lobbying activity on record" : "Lobbying data not yet collected");
+        bullets.push(pacDonations ? `${pacDonations} in PAC donations` : "No PAC donation data available");
+        bullets.push(federalContracts ? `${federalContracts} federal contract${federalContracts !== 1 ? "s" : ""} on record` : "No federal contracts detected");
+        return bullets;
+      })(),
       status: influenceExposure === "high" ? "warning" : influenceExposure === "moderate" ? "neutral" : influenceExposure === "low" ? "positive" : "missing",
+      exploreLabel: "Follow the money",
+      exploreAnchor: "#influence-spending",
     },
     {
       key: "culture_trust",
-      label: "Culture & Trust Signals",
+      label: "Culture & Trust",
       icon: Heart,
-      summary: cultureAlignment === "aligned"
-        ? "Public employer brand appears consistent with workforce and leadership signals."
-        : cultureAlignment === "mixed"
-          ? "Some alignment gaps between public messaging and observable workforce signals."
-          : cultureAlignment === "misaligned"
-            ? "Notable gaps between employer brand and actual workforce, leadership, or influence signals."
-            : "Insufficient culture signals to evaluate alignment.",
+      signalLevel: cultureAlignment === "aligned" ? "strong" : cultureAlignment === "mixed" ? "moderate" : cultureAlignment === "misaligned" ? "weak" : "missing",
+      evidence: (() => {
+        const bullets: string[] = [];
+        bullets.push(sentimentRating ? `Employee sentiment: ${sentimentRating}` : cultureAlignment === "aligned" ? "Public brand consistent with workforce signals" : "Employee sentiment data not available");
+        bullets.push(hypocrisyScore ? `Hypocrisy Index: ${hypocrisyScore}` : "Say-Do gap analysis not yet available");
+        bullets.push(deiSignals ? `DEI signals: ${deiSignals}` : "DEI signal data not yet collected");
+        return bullets;
+      })(),
       status: cultureAlignment === "aligned" ? "positive" : cultureAlignment === "mixed" ? "neutral" : cultureAlignment === "misaligned" ? "warning" : "missing",
+      exploreLabel: "Explore culture signals",
+      exploreAnchor: "#culture-trust",
     },
   ];
 }
@@ -170,7 +231,6 @@ export function deriveSnapshotVerdict(sections: SnapshotSection[]): SnapshotVerd
 }
 
 /* ── Generate Jackye's Take for the snapshot ── */
-/* Voice: The Redline Auditor. "Facts over Feelings." Accountability Intelligence. */
 
 export function generateSnapshotJackyeTake(
   verdict: SnapshotVerdict,
@@ -187,7 +247,6 @@ export function generateSnapshotJackyeTake(
 
   if (verdict === "Needs Deeper Review") {
     const warningLabels = warnings.map(w => w.label.toLowerCase()).join(", ");
-    // Dirty Receipt callout if influence + another gap
     if (influenceWarning && warnings.length >= 2) {
       const otherWarnings = warnings.filter(w => w.key !== "influence_spending").map(w => w.label.toLowerCase()).join(" and ");
       return `Ugly Baby alert. They know how to write checks in DC, but when it comes to ${otherWarnings}? Silence. That's a massive character gap — they're obsessed with automation but ghosting on humanization. AI can simulate competence, but these signals reveal who they actually are. Don't let a nice salary blind you to the Dirty Receipts. Run the chain first. Always.`;
@@ -195,7 +254,6 @@ export function generateSnapshotJackyeTake(
     return `Ugly Baby alert. The marketing is pretty, but the receipts are messy — showing red in ${warningLabels}. Before you sign anything, look at the flow of funds vs. the marketing fluff. Human frailty is real, but so is corporate negligence. Don't commit your talent until they can show the work. Run the chain first. Always.`;
   }
 
-  // Proceed with Caution
   if (influenceWarning && hiringWarning) {
     return "Dirty Receipt: they're spending money to shape policy but haven't published a Bias Audit for their own AI hiring tools. They'll lobby Congress about workforce issues but won't tell you how their algorithm screens you out. That's not oversight — that's a character issue. Before you commit your talent, ask them about the audit. If they can't show the work, they don't get your time.";
   }
@@ -240,7 +298,7 @@ export function OfferCheckSnapshot({
         </div>
       </CardHeader>
 
-      <CardContent className="space-y-5">
+      <CardContent className="space-y-4">
         {/* Company / Role / Location header */}
         <div className="flex flex-wrap items-center gap-3 text-sm">
           <span className="flex items-center gap-1.5 font-semibold text-foreground">
@@ -261,57 +319,57 @@ export function OfferCheckSnapshot({
           )}
         </div>
 
-        {/* Intro copy */}
-        <p className="text-xs text-muted-foreground leading-relaxed">
-          This snapshot gives you the quickest read on the company behind the offer — how stable it looks,
-          how transparent it is, and where its money and influence may point.
-        </p>
-
         <Separator />
 
-        {/* Snapshot sections */}
-        <div className="grid gap-3">
+        {/* Snapshot signal cards */}
+        <div className="grid gap-3 sm:grid-cols-2">
           {sections.map((section) => {
             const Icon = section.icon;
+            const levelStyle = SIGNAL_LEVEL_CONFIG[section.signalLevel];
             return (
               <div
                 key={section.key}
-                className="flex items-start gap-3 p-3 rounded-lg bg-muted/30 border border-border/50"
+                className="p-3.5 rounded-lg bg-muted/30 border border-border/50 space-y-2.5"
               >
-                <div className="mt-0.5 shrink-0 flex items-center gap-2">
-                  <div className={cn("w-2 h-2 rounded-full shrink-0", STATUS_DOT[section.status])} />
-                  <Icon className="w-4 h-4 text-muted-foreground" />
+                {/* Header: label + signal level badge */}
+                <div className="flex items-center justify-between gap-2">
+                  <div className="flex items-center gap-2 min-w-0">
+                    <div className={cn("w-2 h-2 rounded-full shrink-0", STATUS_DOT[section.status])} />
+                    <Icon className="w-4 h-4 text-muted-foreground shrink-0" />
+                    <span className="text-sm font-semibold text-foreground truncate">{section.label}</span>
+                  </div>
+                  <Badge
+                    variant="outline"
+                    className={cn("text-[10px] font-bold shrink-0 px-2 py-0.5", levelStyle.color, levelStyle.border, levelStyle.bg)}
+                  >
+                    {levelStyle.label}
+                  </Badge>
                 </div>
-                <div className="min-w-0">
-                  <p className="text-sm font-semibold text-foreground">{section.label}</p>
-                  <p className="text-xs text-muted-foreground mt-0.5 leading-relaxed">
-                    {section.summary}
-                  </p>
-                </div>
+
+                {/* Evidence bullets */}
+                <ul className="space-y-1 pl-1">
+                  {section.evidence.slice(0, 3).map((point, i) => (
+                    <li key={i} className="flex items-start gap-2 text-xs text-muted-foreground leading-relaxed">
+                      <span className="mt-1.5 w-1 h-1 rounded-full bg-muted-foreground/50 shrink-0" />
+                      {point}
+                    </li>
+                  ))}
+                </ul>
+
+                {/* Explore link */}
+                {section.exploreLabel && (
+                  <a
+                    href={section.exploreAnchor || "#"}
+                    className="inline-flex items-center gap-1 text-[11px] font-medium text-primary hover:underline mt-1"
+                  >
+                    {section.exploreLabel}
+                    <ArrowRight className="w-3 h-3" />
+                  </a>
+                )}
               </div>
             );
           })}
         </div>
-
-        {/* What This May Mean for You — only if we have enough data */}
-        {sections.filter(s => s.status !== "missing").length >= 3 && (
-          <>
-            <Separator />
-            <div className="p-3 rounded-lg bg-muted/30 border border-border/50">
-              <div className="flex items-center gap-2 mb-2">
-                <MessageSquare className="w-4 h-4 text-primary" />
-                <p className="text-sm font-semibold text-foreground">What This May Mean for You</p>
-              </div>
-              <p className="text-xs text-muted-foreground leading-relaxed">
-                {verdict === "Strong Fit"
-                  ? "The signals behind this company are unusually clear. You're in a good position to negotiate from strength — but still ask the hard questions. Good character holds up under scrutiny."
-                  : verdict === "Proceed with Caution"
-                    ? "There are gaps worth understanding before you commit. Look at where the money flows, who makes the decisions, and whether the employer brand matches the workforce signals. Ask about what you don't see — not just what they show you."
-                    : "Multiple signal categories are raising flags. This doesn't mean the offer is bad — but it means you need answers before you sign. Ask about stability, transparency, and where the company's actual priorities lie. Silence on these topics tells you something too."}
-              </p>
-            </div>
-          </>
-        )}
 
         {/* Jackye's Take */}
         {jackyeTake && (
