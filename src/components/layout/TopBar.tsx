@@ -46,10 +46,10 @@ export const MAIN_SECTIONS = [
     label: "Policy",
     icon: Landmark,
     path: "/policy",
-    matchPaths: ["/policy", "/intelligence"],
+    matchPaths: ["/policy", "/intelligence", "/follow-the-money"],
     subItems: [
       { label: "Policy Impact Hub", path: "/policy" },
-      { label: "Legislation Tracker", path: "/policy?view=tracker" },
+      { label: "Follow the Money", path: "/follow-the-money" },
       { label: "Evidence Receipts", path: "/intelligence" },
       { label: "Signals This Week", path: "/intelligence?type=weekly_brief" },
     ],
