@@ -79,6 +79,8 @@ const App = () => (
             <AppShell>
               <Routes>
                 <Route path="/" element={<Index />} />
+                <Route path="/ask-jackye" element={<AskJackye />} />
+                <Route path="/one-pager" element={<OnePager />} />
                 <Route path="/check" element={<Check />} />
                 <Route path="/policy" element={<PolicyHub />} />
                 <Route path="/policy/:id" element={<PolicyDetail />} />
