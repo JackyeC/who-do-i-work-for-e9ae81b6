@@ -1,3 +1,4 @@
+import { useState } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -9,7 +10,7 @@ import { useToast } from "@/hooks/use-toast";
 import {
   GraduationCap, Target, Users, Building2, ExternalLink,
   BookOpen, Video, Award, Newspaper, ChevronRight, Compass,
-  Loader2, Trash2
+  Loader2, Trash2, AlertTriangle
 } from "lucide-react";
 
 const RESOURCE_ICONS: Record<string, any> = {
