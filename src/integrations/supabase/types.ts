@@ -723,34 +723,69 @@ export type Database = {
         Row: {
           average_salary: string | null
           career_progression_confidence: number | null
+          company_id: string | null
           created_at: string
+          data_source: string | null
           id: string
           industry: string | null
+          last_updated: string | null
+          median_years_to_pivot: number | null
           next_role: string
+          path_type: string | null
+          required_skills_delta: string[] | null
           role_title: string
           skills_required: Json | null
+          source_role_title: string | null
+          success_rate_pct: number | null
+          target_role_title: string | null
         }
         Insert: {
           average_salary?: string | null
           career_progression_confidence?: number | null
+          company_id?: string | null
           created_at?: string
+          data_source?: string | null
           id?: string
           industry?: string | null
+          last_updated?: string | null
+          median_years_to_pivot?: number | null
           next_role: string
+          path_type?: string | null
+          required_skills_delta?: string[] | null
           role_title: string
           skills_required?: Json | null
+          source_role_title?: string | null
+          success_rate_pct?: number | null
+          target_role_title?: string | null
         }
         Update: {
           average_salary?: string | null
           career_progression_confidence?: number | null
+          company_id?: string | null
           created_at?: string
+          data_source?: string | null
           id?: string
           industry?: string | null
+          last_updated?: string | null
+          median_years_to_pivot?: number | null
           next_role?: string
+          path_type?: string | null
+          required_skills_delta?: string[] | null
           role_title?: string
           skills_required?: Json | null
+          source_role_title?: string | null
+          success_rate_pct?: number | null
+          target_role_title?: string | null
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "career_paths_company_id_fkey"
+            columns: ["company_id"]
+            isOneToOne: false
+            referencedRelation: "companies"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       career_smart_goals: {
         Row: {
