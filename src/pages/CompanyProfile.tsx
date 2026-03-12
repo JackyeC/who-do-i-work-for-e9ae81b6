@@ -555,8 +555,8 @@ export default function CompanyProfile() {
               {dbCompany && (() => {
                 const hasPoliticalSpending = totalPac > 0 || lobbyingSpend > 0 || (dbCandidates?.length || 0) > 0;
                 const insights = [
-                  { key: "executives", label: "Leadership Identified", found: (dbExecutives?.length || 0) > 0, detail: `${dbExecutives?.length || 0} executive(s)`, icon: <Users className="w-4 h-4 text-primary" /> },
-                  { key: "stances", label: "Public Stances Mapped", found: (dbPublicStances?.length || 0) > 0, detail: `${dbPublicStances?.length || 0} topic(s)`, icon: <Shield className="w-4 h-4 text-primary" /> },
+                  { key: "executives", label: "Leadership Identified", found: (dbExecutives?.length || 0) > 0, detail: (dbExecutives || []).map((e: any) => `${e.name} (${e.title})`).join(", ") || "None found", icon: <Users className="w-4 h-4 text-primary" /> },
+                  { key: "stances", label: "Public Stances Mapped", found: (dbPublicStances?.length || 0) > 0, detail: (dbPublicStances || []).map((s: any) => s.topic).join(", ") || "None found", icon: <Shield className="w-4 h-4 text-primary" /> },
                   { key: "values", label: "Values Signals", found: (valuesCheckSignals?.length || 0) > 0, detail: `${valuesCheckSignals?.length || 0} signal(s)`, icon: <Heart className="w-4 h-4 text-primary" /> },
                   { key: "sentiment", label: "Worker Sentiment", found: !!tiSentiment, detail: "Signals detected", icon: <TrendingUp className="w-4 h-4 text-primary" /> },
                   { key: "hiring", label: "Hiring Technology", found: !!tiAiHr, detail: "AI tools detected", icon: <Brain className="w-4 h-4 text-primary" /> },
