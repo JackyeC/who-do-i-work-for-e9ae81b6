@@ -237,6 +237,8 @@ export default function StrategicOfferReview() {
       if (data?.error) throw new Error(data.error);
       setReport(data.report);
       setStep(3);
+      // Fire AI strength score in background (uses clarity report)
+      strengthScore.runAIScore();
     } catch (e: any) {
       console.error(e);
       toast({ title: "Scan failed", description: e.message, variant: "destructive" });
