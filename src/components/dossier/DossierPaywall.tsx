@@ -2,28 +2,24 @@ import { Lock, Sparkles, Loader2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "@/contexts/AuthContext";
-import { useTrackedCompanies } from "@/hooks/use-tracked-companies";
+import { usePremium, STRIPE_TIERS } from "@/hooks/use-premium";
 import { supabase } from "@/integrations/supabase/client";
-import { STRIPE_TIERS } from "@/hooks/use-premium";
 import { toast } from "sonner";
 import { useState } from "react";
 
 interface DossierPaywallProps {
   companyId: string;
   companyName: string;
+  layerIndex?: number;
 }
 
-export function DossierPaywall({ companyId, companyName }: DossierPaywallProps) {
+export function DossierPaywall({ companyId, companyName, layerIndex }: DossierPaywallProps) {
   const navigate = useNavigate();
   const { user } = useAuth();
-  const { isPremium, isAtCapacity, trackCompany, slotsRemaining } = useTrackedCompanies();
+  const { tier, dossierLayers } = usePremium();
   const [checkoutLoading, setCheckoutLoading] = useState(false);
 
-  const handleTrack = () => {
-    trackCompany.mutate(companyId);
-  };
-
-  const handleSubscribe = async () => {
+  const handleSubscribe = async (priceId: string) => {
     if (!user) {
       navigate("/login");
       return;
@@ -31,7 +27,7 @@ export function DossierPaywall({ companyId, companyName }: DossierPaywallProps) 
     setCheckoutLoading(true);
     try {
       const { data, error } = await supabase.functions.invoke("create-checkout", {
-        body: { priceId: STRIPE_TIERS.starter.price_id },
+        body: { priceId },
       });
       if (error) throw error;
       if (data?.url) window.open(data.url, "_blank");
@@ -50,50 +46,43 @@ export function DossierPaywall({ companyId, companyName }: DossierPaywallProps) 
           <Sparkles className="w-7 h-7 text-primary" />
         </div>
         <h3 className="text-xl font-semibold text-foreground mb-2">
-          Unlock the Full Intelligence Dossier
+          Unlock Deeper Intelligence
         </h3>
         <p className="text-muted-foreground max-w-lg mx-auto mb-6 leading-relaxed">
-          Track <strong>{companyName}</strong> to access all 7 layers — Innovation, Ecosystem,
-          Influence Receipts, Patterns, Talent Context, and Values Filters.
+          {tier === "free"
+            ? `Upgrade to see all 7 dossier layers for ${companyName}. Free accounts see the first ${dossierLayers} layers.`
+            : `This layer requires a Professional plan to access.`}
         </p>
 
         {!user ? (
           <Button size="lg" onClick={() => navigate("/login")} className="gap-2">
             Sign Up to Get Started
           </Button>
-        ) : !isPremium ? (
-          <Button size="lg" onClick={handleSubscribe} disabled={checkoutLoading} className="gap-2">
-            {checkoutLoading ? (
-              <Loader2 className="w-4 h-4 animate-spin" />
-            ) : (
-              <Lock className="w-4 h-4" />
-            )}
-            Subscribe — Starting at $29/mo
+        ) : tier === "free" ? (
+          <Button
+            size="lg"
+            onClick={() => handleSubscribe(STRIPE_TIERS.candidate.price_id)}
+            disabled={checkoutLoading}
+            className="gap-2"
+          >
+            {checkoutLoading ? <Loader2 className="w-4 h-4 animate-spin" /> : <Lock className="w-4 h-4" />}
+            Upgrade to Candidate — $29/mo
           </Button>
-        ) : isAtCapacity ? (
-          <div className="space-y-3">
-            <p className="text-sm text-destructive font-medium">
-              All slots are in use. Untrack a company to free a slot.
-            </p>
-            <Button size="lg" variant="outline" onClick={() => navigate("/dashboard?tab=tracked")}>
-              Manage Tracked Companies
-            </Button>
-          </div>
         ) : (
-          <Button size="lg" onClick={handleTrack} disabled={trackCompany.isPending} className="gap-2">
-            {trackCompany.isPending ? (
-              <Loader2 className="w-4 h-4 animate-spin" />
-            ) : (
-              <Sparkles className="w-4 h-4" />
-            )}
-            Track This Company ({slotsRemaining} slots remaining)
+          <Button
+            size="lg"
+            onClick={() => handleSubscribe(STRIPE_TIERS.professional.price_id)}
+            disabled={checkoutLoading}
+            className="gap-2"
+          >
+            {checkoutLoading ? <Loader2 className="w-4 h-4 animate-spin" /> : <Lock className="w-4 h-4" />}
+            Upgrade to Professional — $99/mo
           </Button>
         )}
 
         <div className="mt-6 flex items-center justify-center gap-6 text-micro text-muted-foreground">
-          <span>Starter $29/mo · 3 companies</span>
-          <span>Pro $250/mo · 25 companies</span>
-          <span>Team $800/mo · 100 companies</span>
+          <span>Candidate $29/mo · 10 scans</span>
+          <span>Professional $99/mo · 50 scans</span>
         </div>
       </div>
     </div>

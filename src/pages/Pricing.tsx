@@ -2,7 +2,7 @@ import { Header } from "@/components/Header";
 import { Footer } from "@/components/Footer";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { Check, Building2, Users, Zap, Shield, Loader2, Plus } from "lucide-react";
+import { Check, Shield, Loader2, X } from "lucide-react";
 import { useAuth } from "@/contexts/AuthContext";
 import { useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
@@ -12,63 +12,58 @@ import { useState } from "react";
 
 const tiers = [
   {
-    name: "Starter",
+    name: "Free",
+    price: "$0",
+    period: "",
+    priceId: null,
+    features: [
+      { label: "3 company scans/mo", included: true },
+      { label: "Government data only (FEC, contracts)", included: true },
+      { label: "Top 3 dossier layers", included: true },
+      { label: "1 offer check", included: true },
+      { label: "5 Ask Jackye questions/mo", included: true },
+      { label: "Full Firecrawl scans", included: false },
+      { label: "Dossier export", included: false },
+      { label: "Influence chain & EVP audit", included: false },
+    ],
+    popular: false,
+    cta: "Get Started Free",
+  },
+  {
+    name: "Candidate",
     price: "$29",
     period: "/mo",
-    slots: 3,
-    perCompany: "$9.67",
-    priceId: STRIPE_TIERS.starter.price_id,
+    priceId: STRIPE_TIERS.candidate.price_id,
     features: [
-      "3 tracked companies",
-      "Full 7-layer dossier",
-      "Influence scores & signals",
-      "Values filter lenses",
-      "Evidence receipts",
-      "Unlimited users",
-    ],
-    popular: false,
-  },
-  {
-    name: "Pro",
-    price: "$250",
-    period: "/mo",
-    slots: 25,
-    perCompany: "$10",
-    priceId: STRIPE_TIERS.pro.price_id,
-    features: [
-      "25 tracked companies",
-      "Full 7-layer dossier",
-      "Influence scores & signals",
-      "Values filter lenses",
-      "Evidence receipts",
-      "Talent risk signals",
-      "Decision-maker mapping",
-      "Priority support",
-      "Unlimited users",
+      { label: "10 company scans/mo", included: true },
+      { label: "Full scans (govt + web intelligence)", included: true },
+      { label: "All 7 dossier layers", included: true },
+      { label: "5 offer checks/mo", included: true },
+      { label: "30 Ask Jackye questions/mo", included: true },
+      { label: "Track & alert on companies", included: true },
+      { label: "Dossier export", included: false },
+      { label: "Influence chain & EVP audit", included: false },
     ],
     popular: true,
+    cta: "Get Candidate",
   },
   {
-    name: "Team",
-    price: "$800",
+    name: "Professional",
+    price: "$99",
     period: "/mo",
-    slots: 100,
-    perCompany: "$8",
-    priceId: STRIPE_TIERS.team.price_id,
+    priceId: STRIPE_TIERS.professional.price_id,
     features: [
-      "100 tracked companies",
-      "Full 7-layer dossier",
-      "Influence scores & signals",
-      "Values filter lenses",
-      "Evidence receipts",
-      "Talent risk signals",
-      "Decision-maker mapping",
-      "EVP integrity reports",
-      "Market intelligence",
-      "Dedicated support",
-      "Unlimited users",
+      { label: "50 company scans/mo", included: true },
+      { label: "Full scans (govt + web intelligence)", included: true },
+      { label: "All 7 dossier layers", included: true },
+      { label: "20 offer checks/mo", included: true },
+      { label: "100 Ask Jackye questions/mo", included: true },
+      { label: "Track & alert on companies", included: true },
+      { label: "Dossier export (PDF)", included: true },
+      { label: "Influence chain & EVP audit", included: true },
     ],
     popular: false,
+    cta: "Get Professional",
   },
 ];
 
@@ -77,9 +72,13 @@ export default function Pricing() {
   const navigate = useNavigate();
   const [loadingTier, setLoadingTier] = useState<string | null>(null);
 
-  const handleCheckout = async (priceId: string, tierName: string) => {
+  const handleCheckout = async (priceId: string | null, tierName: string) => {
     if (!user) {
       navigate("/login");
+      return;
+    }
+    if (!priceId) {
+      navigate("/dashboard");
       return;
     }
     setLoadingTier(tierName);
@@ -100,21 +99,18 @@ export default function Pricing() {
     <div className="min-h-screen flex flex-col bg-background">
       <Header />
       <main className="flex-1 container mx-auto px-4 py-16 max-w-6xl">
-        {/* Hero */}
         <div className="text-center mb-16">
           <Badge variant="secondary" className="mb-4 text-xs font-mono uppercase tracking-wider">
-            Slot-Based Pricing
+            Simple Pricing
           </Badge>
           <h1 className="text-heading-1 font-bold text-foreground mb-4">
-            Track Companies. See the Receipts.
+            Know Who You Work For. See the Receipts.
           </h1>
           <p className="text-body-lg text-muted-foreground max-w-2xl mx-auto leading-relaxed">
-            Each slot unlocks the full 7-layer intelligence dossier for one company.
-            Swap companies anytime — your slots are a living workspace.
+            Sign up free to start scanning companies. Upgrade when you need deeper intelligence.
           </p>
         </div>
 
-        {/* Tier Cards */}
         <div className="grid md:grid-cols-3 gap-6 mb-16">
           {tiers.map((tier) => (
             <div
@@ -135,18 +131,21 @@ export default function Pricing() {
                 <h3 className="text-xl font-bold text-foreground mb-1">{tier.name}</h3>
                 <div className="flex items-baseline gap-1">
                   <span className="text-4xl font-bold font-mono text-foreground">{tier.price}</span>
-                  <span className="text-muted-foreground">{tier.period}</span>
+                  {tier.period && <span className="text-muted-foreground">{tier.period}</span>}
                 </div>
-                <p className="text-caption text-muted-foreground mt-2">
-                  {tier.slots} tracked companies · {tier.perCompany}/company
-                </p>
               </div>
 
               <ul className="space-y-3 flex-1 mb-8">
                 {tier.features.map((feature) => (
-                  <li key={feature} className="flex items-start gap-2.5 text-sm text-foreground">
-                    <Check className="w-4 h-4 text-primary shrink-0 mt-0.5" />
-                    {feature}
+                  <li key={feature.label} className="flex items-start gap-2.5 text-sm">
+                    {feature.included ? (
+                      <Check className="w-4 h-4 text-primary shrink-0 mt-0.5" />
+                    ) : (
+                      <X className="w-4 h-4 text-muted-foreground/40 shrink-0 mt-0.5" />
+                    )}
+                    <span className={feature.included ? "text-foreground" : "text-muted-foreground/60"}>
+                      {feature.label}
+                    </span>
                   </li>
                 ))}
               </ul>
@@ -161,28 +160,12 @@ export default function Pricing() {
                 {loadingTier === tier.name ? (
                   <Loader2 className="w-4 h-4 animate-spin mr-2" />
                 ) : null}
-                Get {tier.name}
+                {tier.cta}
               </Button>
             </div>
           ))}
         </div>
 
-        {/* Add-on slots */}
-        <div className="rounded-2xl border border-border/40 bg-card p-8 text-center mb-16">
-          <div className="flex items-center justify-center gap-3 mb-3">
-            <Plus className="w-5 h-5 text-primary" />
-            <h3 className="text-lg font-semibold text-foreground">Need More Slots?</h3>
-          </div>
-          <p className="text-muted-foreground max-w-lg mx-auto mb-4">
-            Add individual company slots to any plan for <strong>$12/company/month</strong>.
-            Expand your workspace without upgrading your full tier.
-          </p>
-          <Button variant="outline" size="sm" onClick={() => user ? navigate("/dashboard?tab=tracked") : navigate("/login")}>
-            Manage Slots
-          </Button>
-        </div>
-
-        {/* Integrity Note */}
         <div className="rounded-2xl bg-muted/40 border border-border/30 px-8 py-6 text-center max-w-3xl mx-auto">
           <div className="flex items-center justify-center gap-2 mb-3">
             <Shield className="w-5 h-5 text-primary" />
