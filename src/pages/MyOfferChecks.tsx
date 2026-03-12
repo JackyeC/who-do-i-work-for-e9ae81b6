@@ -80,7 +80,7 @@ export default function MyOfferChecks() {
         {!premium.isPremium && (
           <div className="flex items-center justify-between p-3 rounded-lg border border-border bg-muted/30 mb-4">
             <span className="text-xs text-muted-foreground">
-              {savedCount} / {premium.maxSavedReports} saved reports used
+              {savedCount} / {premium.maxOfferChecks} saved reports used
             </span>
             <div className="flex items-center gap-2">
               <div className="w-24 h-1.5 bg-muted rounded-full overflow-hidden">
