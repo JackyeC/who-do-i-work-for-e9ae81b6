@@ -39,8 +39,8 @@ function getRelativeTime(dateStr: string) {
 
 function buildHeadline(signal: any, companyName: string, config: typeof CATEGORY_CONFIG[string]): string {
   const val = signal.signal_value || "";
-  // Don't show raw JSON
-  if (val.startsWith("{") || val.startsWith("[") || val === "N/A" || !val.trim()) {
+  // Don't show raw JSON, N/A, or empty values
+  if (!val.trim() || val.startsWith("{") || val.startsWith("[") || val.toLowerCase() === "n/a" || val === "-" || val === "null" || val === "undefined") {
     return `${companyName}: ${config.headline}`;
   }
   // Truncate long values into headline
