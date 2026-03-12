@@ -14,7 +14,7 @@ interface PremiumGateProps {
 export function PremiumGate({ feature, description, requiredTier = "candidate", children }: PremiumGateProps) {
   const { tier, isLoggedIn } = usePremium();
   const navigate = useNavigate();
-  const [loading, setLoading] = useState(false);
+  
 
   const tierRank = { free: 0, candidate: 1, professional: 2 };
   const hasAccess = tierRank[tier] >= tierRank[requiredTier];
