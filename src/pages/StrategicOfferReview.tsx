@@ -1,4 +1,4 @@
-import { useState, useCallback } from "react";
+import { useState, useCallback, useMemo } from "react";
 import { Header } from "@/components/Header";
 import { Footer } from "@/components/Footer";
 import { Badge } from "@/components/ui/badge";
@@ -6,14 +6,15 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Progress } from "@/components/ui/progress";
+import { Separator } from "@/components/ui/separator";
 import { useToast } from "@/hooks/use-toast";
+import { useAuth } from "@/contexts/AuthContext";
 import { supabase } from "@/integrations/supabase/client";
 import {
   ShieldCheck, Shield, Lock, Upload, ClipboardPaste, ArrowRight, ArrowLeft,
-  Loader2, CheckCircle2, Building2, Briefcase, MapPin, DollarSign,
-  Scale, TrendingUp, MessageSquare, AlertOctagon, Eye
+  Loader2, CheckCircle2, Building2, Briefcase, DollarSign,
+  Scale, AlertOctagon, FileText
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { WalkAwayCalculator } from "@/components/strategic-offer/WalkAwayCalculator";
@@ -22,7 +23,14 @@ import { EquityVisualizer } from "@/components/strategic-offer/EquityVisualizer"
 import { NegotiationBot } from "@/components/strategic-offer/NegotiationBot";
 import { ScamDetector } from "@/components/strategic-offer/ScamDetector";
 import { EmployerIntelligenceCard } from "@/components/strategic-offer/EmployerIntelligenceCard";
+import { OfferStrengthScore } from "@/components/strategic-offer/OfferStrengthScore";
+import { GreenFlagsPanel } from "@/components/strategic-offer/GreenFlagsPanel";
+import { QuestionsToAsk } from "@/components/strategic-offer/QuestionsToAsk";
+import { CultureSnapshot } from "@/components/strategic-offer/CultureSnapshot";
+import { OfferDecisionSummary } from "@/components/strategic-offer/OfferDecisionSummary";
 import { OfferClarityDashboard, type OfferClarityReport } from "@/components/offer-clarity/OfferClarityDashboard";
+import { OfferLetterUpload } from "@/components/offer-review/OfferLetterUpload";
+import { OfferReviewResults } from "@/components/offer-review/OfferReviewResults";
 
 type InputMode = null | "manual" | "upload";
 
@@ -53,18 +61,34 @@ const STEPS = [
   { label: "Full Review", icon: Scale },
 ];
 
-// Input sanitization helper — strips potential XSS/injection content
 const sanitize = (v: string, maxLen = 500): string =>
   v.replace(/[<>"'`]/g, "").substring(0, maxLen).trim();
 
+/* ── Navigation anchors for the scrolling dashboard ── */
+const DASHBOARD_SECTIONS = [
+  { id: "offer-strength-score", label: "Score" },
+  { id: "red-flags", label: "Red Flags" },
+  { id: "green-flags", label: "Green Flags" },
+  { id: "employer-intel", label: "Employer" },
+  { id: "compensation", label: "Compensation" },
+  { id: "equity", label: "Equity" },
+  { id: "career-freedom", label: "Career Freedom" },
+  { id: "negotiate", label: "Negotiate" },
+  { id: "questions-to-ask", label: "Questions" },
+  { id: "culture-snapshot", label: "Culture" },
+  { id: "decision-summary", label: "Decision" },
+];
+
 export default function StrategicOfferReview() {
   const { toast } = useToast();
+  const { user } = useAuth();
   const [inputMode, setInputMode] = useState<InputMode>(null);
   const [step, setStep] = useState(0);
   const [annualBaseline, setAnnualBaseline] = useState(0);
   const [scanning, setScanning] = useState(false);
   const [report, setReport] = useState<OfferClarityReport | null>(null);
   const [legalFlags, setLegalFlags] = useState<LegalFlag[]>([]);
+  const [uploadReviewId, setUploadReviewId] = useState<string | null>(null);
 
   const [companyResults, setCompanyResults] = useState<any[]>([]);
 
@@ -101,7 +125,6 @@ export default function StrategicOfferReview() {
     setCompanyResults([]);
   };
 
-  // Generate legal flags from manual input
   const generateLegalFlags = useCallback((): LegalFlag[] => {
     const flags: LegalFlag[] = [];
 
@@ -120,17 +143,17 @@ export default function StrategicOfferReview() {
       flags.push({
         id: "stay-pay", severity: "red", category: "Stay-or-Pay",
         title: "Stay-or-Pay Trap (Exceeds CA AB 692 Limits)",
-        description: `Repayment clause requires ${repaymentMonths} months of commitment. Under 2026 California AB 692, repayment clauses for sign-on and relocation bonuses must be prorated and capped at 2 years (24 months).`,
-        legalBasis: "CA AB 692 (effective 2026). Mandates proration of repayment obligations and a maximum 2-year commitment period for training/sign-on/relocation repayment agreements.",
-        negotiationTip: "Request a prorated repayment schedule (e.g., if you leave at 18 months of a 24-month agreement, you owe only 25% back). Refuse any non-prorated full-repayment clause.",
+        description: `Repayment clause requires ${repaymentMonths} months of commitment. Under 2026 California AB 692, repayment clauses must be prorated and capped at 2 years.`,
+        legalBasis: "CA AB 692 (effective 2026). Mandates proration of repayment obligations and a maximum 2-year commitment period.",
+        negotiationTip: "Request a prorated repayment schedule. Refuse any non-prorated full-repayment clause.",
       });
     } else if (repaymentMonths && repaymentMonths > 0) {
       flags.push({
         id: "stay-pay", severity: "yellow", category: "Stay-or-Pay",
         title: "Sign-On Repayment Clause Detected",
-        description: `${repaymentMonths}-month repayment period detected. Within the 2-year legal limit, but verify the clause uses a prorated model.`,
+        description: `${repaymentMonths}-month repayment period. Within the 2-year legal limit, but verify it uses a prorated model.`,
         legalBasis: "CA AB 692 (effective 2026). Ensure repayment is calculated on a pro-rata basis.",
-        negotiationTip: "Confirm in writing that repayment is prorated monthly, not a full lump-sum payback. Get the exact formula in your offer letter.",
+        negotiationTip: "Confirm in writing that repayment is prorated monthly, not a full lump-sum payback.",
       });
     }
 
@@ -139,9 +162,9 @@ export default function StrategicOfferReview() {
       flags.push({
         id: "benefit-gap", severity: "yellow", category: "Benefits Gap",
         title: `${waitDays}-Day Health Benefit Waiting Period`,
-        description: `A ${waitDays}-day waiting period before health benefits activate creates a coverage gap. This is a common pitfall — many people don't realize they'll be uninsured during the first weeks at a new job.`,
-        legalBasis: "ACA allows up to 90-day waiting periods, but best practice is 30 days or less. COBRA continuation from prior employer may bridge the gap.",
-        negotiationTip: "Ask the employer to either (1) waive or reduce the waiting period, or (2) cover your COBRA premiums from your previous employer during the gap. This is a low-cost ask for them.",
+        description: `A ${waitDays}-day waiting period creates a coverage gap.`,
+        legalBasis: "ACA allows up to 90-day waiting periods, but best practice is 30 days or less.",
+        negotiationTip: "Ask the employer to waive or reduce the waiting period, or cover your COBRA premiums during the gap.",
       });
     }
 
@@ -149,9 +172,9 @@ export default function StrategicOfferReview() {
       flags.push({
         id: "ip", severity: "yellow", category: "IP Ownership",
         title: "Broad IP Assignment Clause — Side-Hustle Risk",
-        description: "The offer claims ownership of inventions or creative work made on your personal time. This can affect freelance work, open-source contributions, and personal projects.",
-        legalBasis: "Many states (CA, DE, MN, IL, WA, NC) have statutes limiting employer IP claims to work created using company resources or related to company business. CA Labor Code §2870.",
-        negotiationTip: "Request an explicit carve-out for work created (1) on your own time, (2) using your own equipment, and (3) not related to the company's current or planned products. List specific projects you want excluded.",
+        description: "The offer claims ownership of inventions or creative work made on your personal time.",
+        legalBasis: "Many states limit employer IP claims to work created using company resources. CA Labor Code §2870.",
+        negotiationTip: "Request an explicit carve-out for work created on your own time, using your own equipment, and unrelated to the company's products.",
       });
     }
 
@@ -162,18 +185,17 @@ export default function StrategicOfferReview() {
       flags.push({
         id: "noncompete", severity: isAggressive ? "red" : "yellow", category: "Non-Compete",
         title: isAggressive ? "Aggressive Non-Compete Clause" : "Non-Compete Clause Detected",
-        description: `Non-compete provision: "${offer.nonCompete.substring(0, 100)}${offer.nonCompete.length > 100 ? "..." : ""}". ${isAggressive ? "The scope appears unusually broad." : "Review the geographic and temporal scope."}`,
-        legalBasis: "FTC proposed a nationwide ban on non-competes (struck down 2024). State enforcement varies widely. CA, MN, ND, OK ban most non-competes entirely. Many other states require reasonable scope.",
-        negotiationTip: "Narrow the clause to (1) direct competitors only, (2) within 50 miles of your primary work location, and (3) a maximum of 6 months. Request a garden leave provision (paid non-compete period).",
+        description: `Non-compete provision: "${offer.nonCompete.substring(0, 100)}${offer.nonCompete.length > 100 ? "..." : ""}". ${isAggressive ? "The scope appears unusually broad." : "Review the scope."}`,
+        legalBasis: "FTC proposed a nationwide ban on non-competes (struck down 2024). State enforcement varies. CA, MN, ND, OK ban most non-competes.",
+        negotiationTip: "Narrow to direct competitors only, within 50 miles, and 6 months max. Request a garden leave provision.",
       });
     }
 
-    // Green flags
     if (!offer.arbitrationClause && !offer.ipClause && flags.length === 0) {
       flags.push({
         id: "clean", severity: "green", category: "Standard Terms",
         title: "No Major Legal Red Flags Detected",
-        description: "Based on the information provided, this offer doesn't contain the most common legal pitfalls. Always have an employment attorney review before signing.",
+        description: "Based on the information provided, no common legal pitfalls were found. Always have an employment attorney review before signing.",
         legalBasis: "General employment law best practice.",
         negotiationTip: "Even clean offers can be improved. Focus on compensation, start date flexibility, and professional development budget.",
       });
@@ -185,12 +207,9 @@ export default function StrategicOfferReview() {
   const runFullAnalysis = async () => {
     setStep(2);
     setScanning(true);
-
-    // Generate legal flags immediately (client-side)
     const flags = generateLegalFlags();
     setLegalFlags(flags);
 
-    // Run AI scan
     try {
       const { data, error } = await supabase.functions.invoke("offer-clarity-scan", {
         body: {
@@ -220,12 +239,28 @@ export default function StrategicOfferReview() {
     } catch (e: any) {
       console.error(e);
       toast({ title: "Scan failed", description: e.message, variant: "destructive" });
-      // Still show results with legal flags even if AI fails
       setStep(3);
     } finally {
       setScanning(false);
     }
   };
+
+  const offerStrengthScore = useMemo(() => {
+    const redFlags = legalFlags.filter(f => f.severity === "red").length;
+    const yellowFlags = legalFlags.filter(f => f.severity === "yellow").length;
+    const salary = Number(offer.baseSalary) || 0;
+    const compScore = report?.compensation.score ?? (salary > annualBaseline * 1.2 ? 80 : salary > annualBaseline ? 60 : 35);
+    const clarityScore = report?.transparency.score ?? 50;
+    const restrictiveScore = Math.max(0, 100 - redFlags * 30 - yellowFlags * 15);
+    const benefitsScore = report?.employeeExperience.score ?? 50;
+    const mechanicsScore = salary >= annualBaseline ? 70 : 30;
+    const growthScore = report?.leadershipRepresentation.score ?? 50;
+    const legalScore = report?.legalRisk.score ?? Math.max(0, 100 - redFlags * 25 - yellowFlags * 10);
+    return Math.round(
+      compScore * 0.25 + clarityScore * 0.15 + restrictiveScore * 0.20 +
+      benefitsScore * 0.10 + mechanicsScore * 0.10 + growthScore * 0.10 + legalScore * 0.10
+    );
+  }, [report, legalFlags, offer.baseSalary, annualBaseline]);
 
   const canAdvanceOffer = offer.companyName.length >= 2 && offer.roleTitle.length >= 2 && offer.baseSalary.length >= 1;
 
@@ -238,7 +273,7 @@ export default function StrategicOfferReview() {
           <Lock className="w-4 h-4 text-primary shrink-0" />
           <p className="text-xs text-muted-foreground">
             <span className="font-semibold text-foreground">Data Stays Local.</span>{" "}
-            No PII is stored. Salary and title data are processed for analysis only and never shared. Your privacy is non-negotiable.
+            No PII is stored. Salary and title data are processed for analysis only and never shared.
           </p>
           <Badge variant="outline" className="text-[9px] shrink-0">Encrypted</Badge>
         </div>
@@ -246,13 +281,13 @@ export default function StrategicOfferReview() {
         {/* Header */}
         <div className="text-center mb-8">
           <Badge variant="outline" className="mb-3 text-xs gap-1.5">
-            <ShieldCheck className="w-3 h-3" /> Strategic Offer Review
+            <ShieldCheck className="w-3 h-3" /> Offer Check
           </Badge>
           <h1 className="text-3xl sm:text-4xl font-display font-bold text-foreground mb-3">
             Is this offer actually good?
           </h1>
           <p className="text-muted-foreground max-w-xl mx-auto leading-relaxed text-sm">
-            Five analytical layers. Zero guesswork. Know your baseline, spot the legal traps, calculate the real equity value, and get ready-to-send negotiation scripts.
+            Strategic offer analysis. Compensation benchmarking. Contract red flag detection. Negotiation coaching. Company alignment context. All in one place.
           </p>
         </div>
 
@@ -267,15 +302,22 @@ export default function StrategicOfferReview() {
                 <ClipboardPaste className="w-10 h-10 text-primary mx-auto" />
                 <h3 className="font-semibold text-foreground">Enter Offer Details</h3>
                 <p className="text-xs text-muted-foreground">
-                  Privacy-first. Just enter the key terms — no documents, no PII needed.
+                  Privacy-first. Just enter the key terms — no documents needed.
                 </p>
                 <Badge className="text-[10px] bg-primary/10 text-primary border-0">Recommended</Badge>
               </CardContent>
             </Card>
             <Card
-              className="rounded-2xl border-border/40 cursor-pointer hover:border-border transition-colors"
+              className={cn(
+                "rounded-2xl border-border/40 cursor-pointer hover:border-border transition-colors",
+                !user && "opacity-60"
+              )}
               onClick={() => {
-                toast({ title: "Coming soon", description: "PDF upload with AI scanning is under development. Use manual entry for now." });
+                if (!user) {
+                  toast({ title: "Sign in required", description: "Create a free account to upload offer letters for private review." });
+                  return;
+                }
+                setInputMode("upload");
               }}
             >
               <CardContent className="p-6 text-center space-y-3">
@@ -290,6 +332,71 @@ export default function StrategicOfferReview() {
           </div>
         )}
 
+        {/* Upload flow */}
+        {inputMode === "upload" && !uploadReviewId && (
+          <div className="space-y-4">
+            <Button variant="ghost" size="sm" onClick={() => setInputMode(null)} className="gap-1.5 mb-2">
+              <ArrowLeft className="w-3.5 h-3.5" /> Back
+            </Button>
+
+            {/* Company selector for upload */}
+            <Card className="border-border/40 rounded-2xl">
+              <CardHeader className="pb-3">
+                <CardTitle className="text-sm flex items-center gap-2">
+                  <Building2 className="w-4 h-4 text-primary" />
+                  Select Company
+                </CardTitle>
+              </CardHeader>
+              <CardContent className="space-y-3">
+                <div className="relative">
+                  <Input
+                    placeholder="Search for the company..."
+                    value={offer.companyName}
+                    onChange={e => searchCompany(e.target.value)}
+                  />
+                  {companyResults.length > 0 && (
+                    <div className="absolute z-10 w-full mt-1 bg-card border border-border rounded-lg shadow-lg overflow-hidden">
+                      {companyResults.map(c => (
+                        <button
+                          key={c.id}
+                          onClick={() => selectCompany(c)}
+                          className="w-full text-left px-4 py-2.5 hover:bg-accent transition-colors flex items-center justify-between"
+                        >
+                          <span className="text-sm font-medium">{c.name}</span>
+                          <span className="text-xs text-muted-foreground">{c.industry}</span>
+                        </button>
+                      ))}
+                    </div>
+                  )}
+                  {offer.companyId && (
+                    <Badge variant="secondary" className="mt-2 text-[10px]">
+                      <CheckCircle2 className="w-3 h-3 mr-1" /> Matched — company signals included
+                    </Badge>
+                  )}
+                </div>
+              </CardContent>
+            </Card>
+
+            {offer.companyId && (
+              <OfferLetterUpload
+                companyId={offer.companyId}
+                companyName={offer.companyName}
+                onReviewCreated={(id) => setUploadReviewId(id)}
+              />
+            )}
+            {!offer.companyId && offer.companyName.length >= 2 && (
+              <p className="text-xs text-muted-foreground text-center">
+                Select a company from the suggestions above, or <button className="text-primary hover:underline" onClick={() => setInputMode("manual")}>enter details manually</button>.
+              </p>
+            )}
+          </div>
+        )}
+
+        {/* Upload results */}
+        {inputMode === "upload" && uploadReviewId && (
+          <UploadedOfferResults reviewId={uploadReviewId} onBack={() => { setUploadReviewId(null); setInputMode(null); }} />
+        )}
+
         {/* Manual flow */}
         {inputMode === "manual" && (
           <>
@@ -301,7 +408,7 @@ export default function StrategicOfferReview() {
                 const isDone = i < step;
                 return (
                   <div key={i} className="flex items-center gap-2 flex-1">
-                    <div className={cn("w-9 h-9 rounded-full flex items-center justify-center border-2 transition-all", 
+                    <div className={cn("w-9 h-9 rounded-full flex items-center justify-center border-2 transition-all",
                       isActive ? "border-primary bg-primary text-primary-foreground" :
                       isDone ? "border-primary bg-primary/10 text-primary" :
                       "border-border bg-muted text-muted-foreground"
@@ -369,29 +476,16 @@ export default function StrategicOfferReview() {
                     <div className="grid grid-cols-2 gap-4">
                       <div>
                         <label className="text-sm font-medium text-foreground mb-1.5 block">Role Title</label>
-                        <Input
-                          placeholder="e.g. Senior Engineer"
-                          value={offer.roleTitle}
-                          onChange={e => update("roleTitle", e.target.value)}
-                        />
+                        <Input placeholder="e.g. Senior Engineer" value={offer.roleTitle} onChange={e => update("roleTitle", e.target.value)} />
                       </div>
                       <div>
                         <label className="text-sm font-medium text-foreground mb-1.5 block">Location</label>
-                        <Input
-                          placeholder="e.g. Austin, TX"
-                          value={offer.location}
-                          onChange={e => update("location", e.target.value)}
-                        />
+                        <Input placeholder="e.g. Austin, TX" value={offer.location} onChange={e => update("location", e.target.value)} />
                       </div>
                     </div>
                     <div>
                       <label className="text-sm font-medium text-foreground mb-1.5 block">Years of Experience</label>
-                      <Input
-                        type="number"
-                        placeholder="e.g. 5"
-                        value={offer.yearsExperience}
-                        onChange={e => update("yearsExperience", e.target.value)}
-                      />
+                      <Input type="number" placeholder="e.g. 5" value={offer.yearsExperience} onChange={e => update("yearsExperience", e.target.value)} />
                     </div>
                   </CardContent>
                 </Card>
@@ -408,13 +502,7 @@ export default function StrategicOfferReview() {
                       <label className="text-sm font-medium text-foreground mb-1.5 block">Base Salary (Annual)</label>
                       <div className="relative">
                         <DollarSign className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
-                        <Input
-                          type="number"
-                          placeholder="e.g. 160000"
-                          value={offer.baseSalary}
-                          onChange={e => update("baseSalary", e.target.value)}
-                          className="pl-9"
-                        />
+                        <Input type="number" placeholder="e.g. 160000" value={offer.baseSalary} onChange={e => update("baseSalary", e.target.value)} className="pl-9" />
                       </div>
                       {annualBaseline > 0 && Number(offer.baseSalary) > 0 && Number(offer.baseSalary) < annualBaseline && (
                         <p className="text-xs text-destructive mt-1 flex items-center gap-1">
@@ -426,61 +514,38 @@ export default function StrategicOfferReview() {
                     <div className="grid grid-cols-2 gap-4">
                       <div>
                         <label className="text-sm font-medium text-foreground mb-1.5 block">Bonus / Commission</label>
-                        <Input
-                          placeholder="e.g. 15% target bonus"
-                          value={offer.bonus}
-                          onChange={e => update("bonus", e.target.value)}
-                        />
+                        <Input placeholder="e.g. 15% target bonus" value={offer.bonus} onChange={e => update("bonus", e.target.value)} />
                       </div>
                       <div>
                         <label className="text-sm font-medium text-foreground mb-1.5 block">Sign-On Bonus</label>
-                        <Input
-                          placeholder="e.g. $25,000"
-                          value={offer.signOnBonus}
-                          onChange={e => update("signOnBonus", e.target.value)}
-                        />
+                        <Input placeholder="e.g. $25,000" value={offer.signOnBonus} onChange={e => update("signOnBonus", e.target.value)} />
                       </div>
                     </div>
                     <div>
                       <label className="text-sm font-medium text-foreground mb-1.5 block">Equity</label>
-                      <Input
-                        placeholder="e.g. 10,000 RSUs over 4 years"
-                        value={offer.equity}
-                        onChange={e => update("equity", e.target.value)}
-                      />
+                      <Input placeholder="e.g. 10,000 RSUs over 4 years" value={offer.equity} onChange={e => update("equity", e.target.value)} />
                     </div>
                   </CardContent>
                 </Card>
 
-                {/* Legal clauses */}
                 <Card className="border-border/40 rounded-2xl">
                   <CardHeader className="pb-3">
                     <CardTitle className="text-base flex items-center gap-2">
                       <Scale className="w-4 h-4 text-primary" />
                       Legal & Contract Terms
                     </CardTitle>
-                    <p className="text-xs text-muted-foreground">These questions help us detect 2026 legal "truth facts" most candidates miss.</p>
+                    <p className="text-xs text-muted-foreground">These questions help detect legal pitfalls most candidates miss.</p>
                   </CardHeader>
                   <CardContent className="space-y-4">
                     <div className="grid grid-cols-2 gap-4">
                       <div>
                         <label className="text-sm font-medium text-foreground mb-1.5 block">Repayment clause (months)</label>
-                        <Input
-                          type="number"
-                          placeholder="e.g. 24 (or leave blank)"
-                          value={offer.repaymentClause}
-                          onChange={e => update("repaymentClause", e.target.value)}
-                        />
-                        <p className="text-[10px] text-muted-foreground mt-1">For sign-on/relocation bonus repayment requirements</p>
+                        <Input type="number" placeholder="e.g. 24" value={offer.repaymentClause} onChange={e => update("repaymentClause", e.target.value)} />
+                        <p className="text-[10px] text-muted-foreground mt-1">For sign-on/relocation bonus repayment</p>
                       </div>
                       <div>
                         <label className="text-sm font-medium text-foreground mb-1.5 block">Benefit waiting period (days)</label>
-                        <Input
-                          type="number"
-                          placeholder="e.g. 90 (or leave blank)"
-                          value={offer.benefitWaitingPeriod}
-                          onChange={e => update("benefitWaitingPeriod", e.target.value)}
-                        />
+                        <Input type="number" placeholder="e.g. 90" value={offer.benefitWaitingPeriod} onChange={e => update("benefitWaitingPeriod", e.target.value)} />
                         <p className="text-[10px] text-muted-foreground mt-1">Days before health benefits activate</p>
                       </div>
                     </div>
@@ -488,7 +553,7 @@ export default function StrategicOfferReview() {
                     <div>
                       <label className="text-sm font-medium text-foreground mb-1.5 block">Non-compete clause</label>
                       <Textarea
-                        placeholder="Paste the non-compete language here, or describe the restriction (e.g., 'Cannot work for any competitor nationwide for 12 months')"
+                        placeholder="Paste the non-compete language or describe the restriction"
                         value={offer.nonCompete}
                         onChange={e => update("nonCompete", e.target.value)}
                         rows={2}
@@ -497,24 +562,14 @@ export default function StrategicOfferReview() {
 
                     <div className="grid grid-cols-2 gap-4">
                       <label className="flex items-center gap-3 p-3 bg-muted/30 rounded-xl cursor-pointer">
-                        <input
-                          type="checkbox"
-                          checked={offer.arbitrationClause}
-                          onChange={e => update("arbitrationClause", e.target.checked)}
-                          className="rounded border-border"
-                        />
+                        <input type="checkbox" checked={offer.arbitrationClause} onChange={e => update("arbitrationClause", e.target.checked)} className="rounded border-border" />
                         <div>
                           <p className="text-sm font-medium text-foreground">Mandatory arbitration</p>
                           <p className="text-[10px] text-muted-foreground">Waives right to jury trial</p>
                         </div>
                       </label>
                       <label className="flex items-center gap-3 p-3 bg-muted/30 rounded-xl cursor-pointer">
-                        <input
-                          type="checkbox"
-                          checked={offer.ipClause}
-                          onChange={e => update("ipClause", e.target.checked)}
-                          className="rounded border-border"
-                        />
+                        <input type="checkbox" checked={offer.ipClause} onChange={e => update("ipClause", e.target.checked)} className="rounded border-border" />
                         <div>
                           <p className="text-sm font-medium text-foreground">Broad IP assignment</p>
                           <p className="text-[10px] text-muted-foreground">Claims personal-time inventions</p>
@@ -524,24 +579,14 @@ export default function StrategicOfferReview() {
 
                     <div className="grid grid-cols-2 gap-4">
                       <label className="flex items-center gap-3 p-3 bg-muted/30 rounded-xl cursor-pointer">
-                        <input
-                          type="checkbox"
-                          checked={offer.hasInterview}
-                          onChange={e => update("hasInterview", e.target.checked)}
-                          className="rounded border-border"
-                        />
+                        <input type="checkbox" checked={offer.hasInterview} onChange={e => update("hasInterview", e.target.checked)} className="rounded border-border" />
                         <div>
                           <p className="text-sm font-medium text-foreground">Had an interview</p>
-                          <p className="text-[10px] text-muted-foreground">Uncheck if no interview process</p>
+                          <p className="text-[10px] text-muted-foreground">Uncheck if no interview</p>
                         </div>
                       </label>
                       <label className="flex items-center gap-3 p-3 bg-muted/30 rounded-xl cursor-pointer">
-                        <input
-                          type="checkbox"
-                          checked={offer.asksToBuyEquipment}
-                          onChange={e => update("asksToBuyEquipment", e.target.checked)}
-                          className="rounded border-border"
-                        />
+                        <input type="checkbox" checked={offer.asksToBuyEquipment} onChange={e => update("asksToBuyEquipment", e.target.checked)} className="rounded border-border" />
                         <div>
                           <p className="text-sm font-medium text-foreground">Buy-equipment request</p>
                           <p className="text-[10px] text-muted-foreground">Asked to purchase via check</p>
@@ -591,26 +636,67 @@ export default function StrategicOfferReview() {
               </Card>
             )}
 
-            {/* Step 3: Full Results */}
+            {/* Step 3: Full Scrolling Dashboard */}
             {step === 3 && (
-              <Tabs defaultValue="employer" className="space-y-6">
-                <TabsList className="grid w-full grid-cols-6">
-                  <TabsTrigger value="employer" className="text-xs">Employer</TabsTrigger>
-                  <TabsTrigger value="overview" className="text-xs">Overview</TabsTrigger>
-                  <TabsTrigger value="legal" className="text-xs">Legal Audit</TabsTrigger>
-                  <TabsTrigger value="equity" className="text-xs">Equity</TabsTrigger>
-                  <TabsTrigger value="negotiate" className="text-xs">Negotiate</TabsTrigger>
-                  <TabsTrigger value="scam" className="text-xs">Safety</TabsTrigger>
-                </TabsList>
+              <div className="space-y-8">
+                {/* Sticky nav */}
+                <div className="sticky top-0 z-20 bg-background/95 backdrop-blur-sm border-b border-border/40 -mx-4 px-4 py-2 mb-4">
+                  <div className="flex gap-1.5 overflow-x-auto scrollbar-hide">
+                    {DASHBOARD_SECTIONS.map(sec => (
+                      <a
+                        key={sec.id}
+                        href={`#${sec.id}`}
+                        className="text-[11px] font-medium text-muted-foreground hover:text-foreground px-2.5 py-1.5 rounded-lg hover:bg-muted/50 whitespace-nowrap transition-colors"
+                      >
+                        {sec.label}
+                      </a>
+                    ))}
+                  </div>
+                </div>
 
-                <TabsContent value="employer">
+                {/* 1. Offer Strength Score */}
+                <OfferStrengthScore
+                  report={report}
+                  legalFlags={legalFlags}
+                  offerSalary={Number(offer.baseSalary) || 0}
+                  annualBaseline={annualBaseline}
+                  hasEquity={!!offer.equity}
+                  hasBonus={!!offer.bonus}
+                />
+
+                {/* 2. Scam Detector (only if triggered) */}
+                <ScamDetector
+                  additionalDetails={offer.additionalDetails}
+                  hasInterview={offer.hasInterview}
+                  asksToBuyEquipment={offer.asksToBuyEquipment}
+                />
+
+                {/* 3. Red Flags — Legal Audit */}
+                <div id="red-flags">
+                  <CivicLegalAudit flags={legalFlags} />
+                </div>
+
+                {/* 4. Green Flags */}
+                <GreenFlagsPanel
+                  legalFlags={legalFlags}
+                  report={report}
+                  offerSalary={Number(offer.baseSalary) || 0}
+                  annualBaseline={annualBaseline}
+                  hasEquity={!!offer.equity}
+                  hasBonus={!!offer.bonus}
+                  hasInterview={offer.hasInterview}
+                />
+
+                {/* 5. Employer Intelligence */}
+                <div id="employer-intel">
                   <EmployerIntelligenceCard
                     companyId={offer.companyId}
                     companyName={offer.companyName}
                   />
-                </TabsContent>
+                </div>
 
-                <TabsContent value="overview">
+                {/* 6. Compensation Analysis */}
+                <div id="compensation">
                   {report ? (
                     <OfferClarityDashboard
                       report={report}
@@ -619,6 +705,7 @@ export default function StrategicOfferReview() {
                         roleTitle: offer.roleTitle,
                         baseSalary: offer.baseSalary,
                         location: offer.location,
+                        ...(offer.companyId ? { companyId: offer.companyId } : {}),
                       }}
                       onStartOver={() => {
                         setStep(0);
@@ -629,23 +716,24 @@ export default function StrategicOfferReview() {
                     />
                   ) : (
                     <Card className="rounded-2xl border-border/40">
-                      <CardContent className="p-8 text-center space-y-3">
-                        <AlertOctagon className="w-10 h-10 text-civic-yellow mx-auto" />
-                        <p className="text-sm text-muted-foreground">AI analysis unavailable. Check the Legal Audit and Equity tabs for local analysis results.</p>
+                      <CardContent className="p-6 text-center space-y-2">
+                        <AlertOctagon className="w-8 h-8 text-[hsl(var(--civic-yellow))] mx-auto" />
+                        <p className="text-sm text-muted-foreground">AI compensation analysis unavailable. Local analysis results shown below.</p>
                       </CardContent>
                     </Card>
                   )}
-                </TabsContent>
+                </div>
 
-                <TabsContent value="legal">
-                  <CivicLegalAudit flags={legalFlags} />
-                </TabsContent>
-
-                <TabsContent value="equity">
+                {/* 7. Equity */}
+                <div id="equity">
                   <EquityVisualizer />
-                </TabsContent>
+                </div>
 
-                <TabsContent value="negotiate">
+                {/* 8. Career Freedom Risk (already shown in Legal Audit, but anchored) */}
+                <div id="career-freedom" />
+
+                {/* 9. Negotiation Planner */}
+                <div id="negotiate">
                   <NegotiationBot
                     flags={legalFlags}
                     offerSalary={Number(offer.baseSalary) || 0}
@@ -653,26 +741,60 @@ export default function StrategicOfferReview() {
                     companyName={offer.companyName}
                     roleTitle={offer.roleTitle}
                   />
-                </TabsContent>
+                </div>
 
-                <TabsContent value="scam">
-                  <ScamDetector
-                    additionalDetails={offer.additionalDetails}
-                    hasInterview={offer.hasInterview}
-                    asksToBuyEquipment={offer.asksToBuyEquipment}
-                  />
-                  {!offer.asksToBuyEquipment && offer.hasInterview && !offer.additionalDetails.toLowerCase().includes("fee") && (
-                    <Card className="rounded-xl border-civic-green/20 bg-civic-green/5 mt-4">
-                      <CardContent className="p-4 flex items-center gap-3">
-                        <CheckCircle2 className="w-5 h-5 text-civic-green shrink-0" />
-                        <p className="text-sm text-muted-foreground">
-                          No scam indicators detected. This appears to be a legitimate offer process.
-                        </p>
-                      </CardContent>
-                    </Card>
-                  )}
-                </TabsContent>
-              </Tabs>
+                {/* 10. Questions to Ask */}
+                <QuestionsToAsk
+                  legalFlags={legalFlags}
+                  hasEquity={!!offer.equity}
+                  hasBonus={!!offer.bonus}
+                  offerSalary={Number(offer.baseSalary) || 0}
+                  annualBaseline={annualBaseline}
+                  companyName={offer.companyName}
+                />
+
+                {/* 11. Culture Snapshot */}
+                <CultureSnapshot
+                  companyId={offer.companyId}
+                  companyName={offer.companyName}
+                />
+
+                {/* 12. Final Decision Summary */}
+                <OfferDecisionSummary
+                  companyName={offer.companyName}
+                  roleTitle={offer.roleTitle}
+                  offerStrengthScore={offerStrengthScore}
+                  report={report}
+                  legalFlags={legalFlags}
+                  offerSalary={Number(offer.baseSalary) || 0}
+                  annualBaseline={annualBaseline}
+                  hasEquity={!!offer.equity}
+                  hasBonus={!!offer.bonus}
+                />
+
+                {/* Start Over */}
+                <div className="flex justify-center pt-4">
+                  <Button
+                    variant="outline"
+                    onClick={() => {
+                      setStep(0);
+                      setReport(null);
+                      setLegalFlags([]);
+                      setInputMode(null);
+                    }}
+                    className="gap-2"
+                  >
+                    <ArrowLeft className="w-4 h-4" /> Start New Analysis
+                  </Button>
+                </div>
+
+                {/* Disclaimer */}
+                <div className="p-4 bg-muted/30 rounded-xl border border-border/40">
+                  <p className="text-[11px] text-muted-foreground text-center">
+                    Created by Jackye Clayton. This tool provides educational guidance and risk signals based on publicly available data and user-provided terms. It does not constitute legal, financial, or employment advice.
+                  </p>
+                </div>
+              </div>
             )}
           </>
         )}
@@ -680,4 +802,64 @@ export default function StrategicOfferReview() {
       <Footer />
     </div>
   );
+}
+
+/* ── Uploaded offer results sub-component ── */
+function UploadedOfferResults({ reviewId, onBack }: { reviewId: string; onBack: () => void }) {
+  const { data: review, isLoading, refetch } = useUploadedReview(reviewId);
+
+  if (isLoading) {
+    return (
+      <Card className="rounded-2xl">
+        <CardContent className="p-10 text-center">
+          <Loader2 className="w-8 h-8 animate-spin text-primary mx-auto mb-3" />
+          <p className="text-sm text-muted-foreground">Loading analysis...</p>
+        </CardContent>
+      </Card>
+    );
+  }
+
+  if (!review) {
+    return (
+      <Card className="rounded-2xl border-destructive/30">
+        <CardContent className="p-6 text-center">
+          <p className="text-sm text-muted-foreground">Review not found.</p>
+          <Button variant="outline" size="sm" onClick={onBack} className="mt-3 gap-1.5">
+            <ArrowLeft className="w-3.5 h-3.5" /> Back
+          </Button>
+        </CardContent>
+      </Card>
+    );
+  }
+
+  return (
+    <div className="space-y-4">
+      <Button variant="ghost" size="sm" onClick={onBack} className="gap-1.5">
+        <ArrowLeft className="w-3.5 h-3.5" /> Back
+      </Button>
+      <OfferReviewResults
+        review={review}
+        onRerun={() => refetch()}
+      />
+    </div>
+  );
+}
+
+function useUploadedReview(reviewId: string) {
+  const { data, isLoading, refetch } = require("@tanstack/react-query").useQuery({
+    queryKey: ["uploaded-review", reviewId],
+    queryFn: async () => {
+      const { data } = await supabase
+        .from("offer_letter_reviews" as any)
+        .select("*")
+        .eq("id", reviewId)
+        .single();
+      return data;
+    },
+    refetchInterval: (data: any) => {
+      if (data?.processing_status === "pending" || data?.processing_status === "processing") return 3000;
+      return false;
+    },
+  });
+  return { data, isLoading, refetch };
 }
