@@ -86,7 +86,7 @@ export default function MyOfferChecks() {
               <div className="w-24 h-1.5 bg-muted rounded-full overflow-hidden">
                 <div
                   className="h-full bg-primary rounded-full transition-all"
-                  style={{ width: `${Math.min(100, (savedCount / premium.maxSavedReports) * 100)}%` }}
+                  style={{ width: `${Math.min(100, (savedCount / premium.maxOfferChecks) * 100)}%` }}
                 />
               </div>
               {savedCount >= premium.maxSavedReports && (
