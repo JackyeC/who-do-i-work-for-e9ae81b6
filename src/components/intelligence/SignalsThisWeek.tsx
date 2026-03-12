@@ -2,26 +2,26 @@ import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { Link } from "react-router-dom";
-import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import {
   AlertTriangle, TrendingDown, DollarSign, Shield, Building2,
   Users, Loader2, ExternalLink, Clock, BarChart3, Briefcase,
-  Scale, Eye, Sparkles, CheckCircle2, AlertCircle
+  Scale, Eye, Sparkles, CheckCircle2, AlertCircle, Flame, Zap,
+  FileText, Globe, Radio
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useToast } from "@/hooks/use-toast";
 
-const CATEGORY_CONFIG: Record<string, { label: string; icon: any; color: string }> = {
-  warn_layoffs: { label: "Workforce Signal", icon: TrendingDown, color: "text-destructive border-destructive/30 bg-destructive/5" },
-  sec_executive_compensation: { label: "Governance Signal", icon: DollarSign, color: "text-amber-600 border-amber-500/30 bg-amber-500/5" },
-  sec_insider_trading: { label: "Economic Signal", icon: BarChart3, color: "text-orange-600 border-orange-500/30 bg-orange-500/5" },
-  lobbying: { label: "Policy Influence Signal", icon: Scale, color: "text-blue-600 border-blue-500/30 bg-blue-500/5" },
-  pac_spending: { label: "Policy Influence Signal", icon: DollarSign, color: "text-purple-600 border-purple-500/30 bg-purple-500/5" },
-  federal_contracts: { label: "Economic Signal", icon: Briefcase, color: "text-emerald-600 border-emerald-500/30 bg-emerald-500/5" },
-  workplace_enforcement: { label: "Workforce Signal", icon: Shield, color: "text-red-600 border-red-500/30 bg-red-500/5" },
-  ai_hiring: { label: "Workforce Signal", icon: Eye, color: "text-indigo-600 border-indigo-500/30 bg-indigo-500/5" },
+const CATEGORY_CONFIG: Record<string, { label: string; icon: any; color: string; accent: string; headline: string }> = {
+  warn_layoffs: { label: "WORKFORCE", icon: TrendingDown, color: "text-destructive", accent: "bg-destructive", headline: "Layoff signal detected" },
+  sec_executive_compensation: { label: "GOVERNANCE", icon: DollarSign, color: "text-amber-600", accent: "bg-amber-500", headline: "Executive pay filing" },
+  sec_insider_trading: { label: "MARKETS", icon: BarChart3, color: "text-orange-600", accent: "bg-orange-500", headline: "Insider trading activity" },
+  lobbying: { label: "INFLUENCE", icon: Scale, color: "text-blue-600", accent: "bg-blue-500", headline: "Lobbying disclosure" },
+  pac_spending: { label: "POLITICAL SPENDING", icon: DollarSign, color: "text-purple-600", accent: "bg-purple-500", headline: "PAC spending detected" },
+  federal_contracts: { label: "CONTRACTS", icon: Briefcase, color: "text-emerald-600", accent: "bg-emerald-500", headline: "Federal contract awarded" },
+  workplace_enforcement: { label: "ENFORCEMENT", icon: Shield, color: "text-red-600", accent: "bg-red-500", headline: "Workplace enforcement action" },
+  ai_hiring: { label: "AI & HIRING", icon: Eye, color: "text-indigo-600", accent: "bg-indigo-500", headline: "AI hiring practice detected" },
 };
 
 function getRelativeTime(dateStr: string) {
@@ -35,6 +35,17 @@ function getRelativeTime(dateStr: string) {
   if (diffDays === 1) return "Yesterday";
   if (diffDays < 7) return `${diffDays}d ago`;
   return date.toLocaleDateString("en-US", { month: "short", day: "numeric" });
+}
+
+function buildHeadline(signal: any, companyName: string, config: typeof CATEGORY_CONFIG[string]): string {
+  const val = signal.signal_value || "";
+  // Don't show raw JSON
+  if (val.startsWith("{") || val.startsWith("[") || val === "N/A" || !val.trim()) {
+    return `${companyName}: ${config.headline}`;
+  }
+  // Truncate long values into headline
+  const clean = val.length > 120 ? val.slice(0, 117) + "…" : val;
+  return `${companyName} — ${clean}`;
 }
 
 interface Translation {
@@ -94,7 +105,7 @@ export function SignalsThisWeek() {
       if (companyIds.length === 0) return [];
       const { data } = await supabase
         .from("companies")
-        .select("id, name, slug")
+        .select("id, name, slug, industry, logo_url")
         .in("id", companyIds);
       return data || [];
     },
@@ -118,11 +129,6 @@ export function SignalsThisWeek() {
 
   const totalWarnAffected = (warnStats || []).reduce((s: number, n: any) => s + (n.employees_affected || 0), 0);
   const totalWarnNotices = (warnStats || []).length;
-
-  const categoryCounts: Record<string, number> = {};
-  (signals || []).forEach(s => {
-    categoryCounts[s.signal_category] = (categoryCounts[s.signal_category] || 0) + 1;
-  });
 
   const handleTranslate = async () => {
     if (!signals || signals.length === 0) return;
@@ -165,7 +171,7 @@ export function SignalsThisWeek() {
     return (
       <div className="text-center py-16">
         <Loader2 className="w-8 h-8 animate-spin text-primary mx-auto" />
-        <p className="text-sm text-muted-foreground mt-3">Loading employer reality signals...</p>
+        <p className="text-sm text-muted-foreground mt-3">Loading signal feed...</p>
       </div>
     );
   }
@@ -173,189 +179,231 @@ export function SignalsThisWeek() {
   if (!signals || signals.length === 0) {
     return (
       <div className="text-center py-16">
-        <AlertTriangle className="w-10 h-10 text-muted-foreground mx-auto mb-4" />
-        <h3 className="text-lg font-semibold text-foreground mb-2">No employer signals detected recently</h3>
-        <p className="text-sm text-muted-foreground">Scan some employers to populate this feed.</p>
+        <Radio className="w-10 h-10 text-muted-foreground mx-auto mb-4" />
+        <h3 className="text-lg font-semibold text-foreground mb-2">No signals detected yet</h3>
+        <p className="text-sm text-muted-foreground">Scan some employers to populate the live feed.</p>
       </div>
     );
   }
 
+  // Split: first 3 are "top stories", rest are timeline
+  const topStories = signals.slice(0, 3);
+  const restSignals = signals.slice(3);
+
+  // Category counts for the ticker
+  const categoryCounts: Record<string, number> = {};
+  (signals || []).forEach(s => {
+    categoryCounts[s.signal_category] = (categoryCounts[s.signal_category] || 0) + 1;
+  });
+
   return (
-    <div className="max-w-4xl space-y-6">
-      {/* Live header */}
-      <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 mb-2">
-        <div className="flex items-center gap-3">
-          <div className="w-2 h-2 rounded-full bg-primary animate-pulse" />
-          <span className="text-xs font-semibold text-primary uppercase tracking-wider">Employer Reality Signal Feed</span>
-          <span className="text-xs text-muted-foreground">· {signals.length} signals detected</span>
-        </div>
-        <div className="flex items-center gap-2">
-          <div className="flex gap-1 bg-muted/50 rounded-lg p-0.5">
-            {TIME_RANGE_OPTIONS.map(tr => (
-              <Button
-                key={tr.value}
-                variant={timeRange === tr.value ? "default" : "ghost"}
-                size="sm"
-                onClick={() => { setTimeRange(tr.value); setTranslated(false); setTranslations({}); }}
-                className="text-[10px] h-7 px-2.5"
-              >
-                {tr.label}
-              </Button>
-            ))}
-          </div>
-          <Button
-            variant={translated ? "outline" : "default"}
-            size="sm"
-            onClick={handleTranslate}
-            disabled={translating}
-            className="gap-1.5 shrink-0"
-          >
-            {translating ? (
-              <><Loader2 className="w-3.5 h-3.5 animate-spin" /> Verifying...</>
-            ) : translated ? (
-              <><CheckCircle2 className="w-3.5 h-3.5" /> Verified ✓</>
-            ) : (
-              <><Sparkles className="w-3.5 h-3.5" /> Explain in Plain English</>
-            )}
-          </Button>
+    <div className="max-w-5xl space-y-0">
+      {/* ═══ BREAKING NEWS BANNER ═══ */}
+      <div className="bg-destructive text-destructive-foreground px-4 py-2 flex items-center gap-3 rounded-t-xl">
+        <Flame className="w-4 h-4 animate-pulse shrink-0" />
+        <span className="text-xs font-bold uppercase tracking-widest">Live Signal Feed</span>
+        <span className="text-xs opacity-80 ml-auto">{signals.length} signals · {companyIds.length} employers</span>
+      </div>
+
+      {/* ═══ TICKER BAR ═══ */}
+      <div className="bg-card border-x border-border/50 px-4 py-2 flex items-center gap-4 overflow-x-auto">
+        <div className="flex items-center gap-4 text-[11px] font-medium whitespace-nowrap">
+          {totalWarnNotices > 0 && (
+            <span className="flex items-center gap-1.5 text-destructive">
+              <TrendingDown className="w-3 h-3" />
+              {totalWarnNotices} WARN Notices · {totalWarnAffected.toLocaleString()} workers
+            </span>
+          )}
+          {Object.entries(categoryCounts).slice(0, 5).map(([cat, count]) => {
+            const config = CATEGORY_CONFIG[cat];
+            if (!config) return null;
+            return (
+              <span key={cat} className={cn("flex items-center gap-1", config.color)}>
+                <config.icon className="w-3 h-3" />
+                {config.label}: {count}
+              </span>
+            );
+          })}
         </div>
       </div>
 
-      {/* Summary cards */}
-      <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
-        <Card>
-          <CardContent className="p-4 text-center">
-            <div className="text-2xl font-bold text-foreground">{signals.length}</div>
-            <div className="text-[10px] text-muted-foreground uppercase tracking-wider">Total Signals</div>
-          </CardContent>
-        </Card>
-        <Card>
-          <CardContent className="p-4 text-center">
-            <div className="text-2xl font-bold text-foreground">{companyIds.length}</div>
-            <div className="text-[10px] text-muted-foreground uppercase tracking-wider">Employers Flagged</div>
-          </CardContent>
-        </Card>
-        <Card>
-          <CardContent className="p-4 text-center">
-            <div className="text-2xl font-bold text-destructive">{totalWarnNotices}</div>
-            <div className="text-[10px] text-muted-foreground uppercase tracking-wider">WARN Notices</div>
-          </CardContent>
-        </Card>
-        <Card>
-          <CardContent className="p-4 text-center">
-            <div className="text-2xl font-bold text-destructive">{totalWarnAffected.toLocaleString()}</div>
-            <div className="text-[10px] text-muted-foreground uppercase tracking-wider">Workers Affected</div>
-          </CardContent>
-        </Card>
+      {/* ═══ CONTROLS BAR ═══ */}
+      <div className="bg-card border-x border-border/50 px-4 py-3 flex items-center justify-between gap-3 border-b border-border/30">
+        <div className="flex gap-1 bg-muted/50 rounded-lg p-0.5">
+          {TIME_RANGE_OPTIONS.map(tr => (
+            <Button
+              key={tr.value}
+              variant={timeRange === tr.value ? "default" : "ghost"}
+              size="sm"
+              onClick={() => { setTimeRange(tr.value); setTranslated(false); setTranslations({}); }}
+              className="text-[10px] h-7 px-2.5"
+            >
+              {tr.label}
+            </Button>
+          ))}
+        </div>
+        <Button
+          variant={translated ? "outline" : "default"}
+          size="sm"
+          onClick={handleTranslate}
+          disabled={translating}
+          className="gap-1.5 shrink-0"
+        >
+          {translating ? (
+            <><Loader2 className="w-3.5 h-3.5 animate-spin" /> Verifying...</>
+          ) : translated ? (
+            <><CheckCircle2 className="w-3.5 h-3.5" /> Verified ✓</>
+          ) : (
+            <><Sparkles className="w-3.5 h-3.5" /> Plain English</>
+          )}
+        </Button>
       </div>
 
-      {/* Category breakdown */}
-      <div className="flex flex-wrap gap-2">
-        {Object.entries(categoryCounts).map(([cat, count]) => {
-          const config = CATEGORY_CONFIG[cat] || { label: cat.replace(/_/g, " "), icon: AlertTriangle, color: "text-muted-foreground" };
-          const Icon = config.icon;
-          return (
-            <Badge key={cat} variant="outline" className={cn("gap-1.5 capitalize text-xs", config.color)}>
-              <Icon className="w-3 h-3" />
-              {config.label}: {count}
-            </Badge>
-          );
-        })}
-      </div>
-
-      {/* Signal timeline */}
-      <div className="space-y-3">
-        {signals.map((signal: any, idx: number) => {
+      {/* ═══ TOP STORIES — hero cards ═══ */}
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-0 border-x border-border/50 bg-card">
+        {topStories.map((signal, idx) => {
           const company = companyMap.get(signal.company_id);
-          const config = CATEGORY_CONFIG[signal.signal_category] || { label: signal.signal_category, icon: AlertTriangle, color: "text-muted-foreground" };
+          const config = CATEGORY_CONFIG[signal.signal_category] || { label: "SIGNAL", icon: AlertTriangle, color: "text-muted-foreground", accent: "bg-muted", headline: "Signal detected" };
           const Icon = config.icon;
           const translation = translations[idx];
-          const confidenceLabel = signal.confidence_level === "high" ? "Strong evidence" : signal.confidence_level === "medium" ? "Some evidence" : "Weak evidence";
+          const headline = translation
+            ? translation.plain_summary
+            : buildHeadline(signal, company?.name || "Unknown Employer", config);
 
           return (
-            <Card key={signal.id} className={cn(
-              "hover:border-primary/30 transition-colors",
-              translation && !translation.is_fresh && "border-amber-500/30"
-            )}>
-              <CardContent className="p-4">
-                <div className="flex items-start gap-3">
-                  <div className={cn("w-8 h-8 rounded-lg flex items-center justify-center shrink-0", config.color)}>
-                    <Icon className="w-4 h-4" />
-                  </div>
-                  <div className="flex-1 min-w-0">
-                    <div className="flex items-center gap-2 mb-1">
-                      {company ? (
-                        <Link to={`/company/${company.slug}`} className="text-sm font-semibold text-foreground hover:text-primary transition-colors">
-                          {company.name}
-                        </Link>
-                      ) : (
-                        <span className="text-sm font-semibold text-foreground">Unknown Employer</span>
-                      )}
-                      <Badge variant="outline" className={cn("text-[9px] capitalize", config.color)}>
-                        {config.label}
-                      </Badge>
-                      {translation && !translation.is_fresh && (
-                        <Badge variant="outline" className="text-[9px] border-amber-500/30 text-amber-600 bg-amber-500/5 gap-1">
-                          <AlertCircle className="w-2.5 h-2.5" /> Not this week
-                        </Badge>
-                      )}
-                      {translation && translation.is_fresh && (
-                        <Badge variant="outline" className="text-[9px] border-primary/30 text-primary bg-primary/5 gap-1">
-                          <CheckCircle2 className="w-2.5 h-2.5" /> Fresh
-                        </Badge>
-                      )}
-                    </div>
+            <div
+              key={signal.id}
+              className={cn(
+                "relative p-5 flex flex-col justify-between min-h-[180px] group cursor-pointer transition-colors hover:bg-accent/30",
+                idx < 2 && "md:border-r border-border/30",
+                idx < topStories.length - 1 && "border-b md:border-b-0 border-border/30"
+              )}
+            >
+              {/* Category tag */}
+              <div className="flex items-center gap-2 mb-3">
+                <span className={cn("w-2 h-2 rounded-full", config.accent)} />
+                <span className={cn("text-[10px] font-extrabold uppercase tracking-[0.15em]", config.color)}>
+                  {config.label}
+                </span>
+                <span className="text-[10px] text-muted-foreground ml-auto">
+                  {getRelativeTime(signal.scan_timestamp)}
+                </span>
+              </div>
 
-                    {/* AI plain-English summary */}
-                    {translation ? (
-                      <div className="mb-1.5">
-                        <p className="text-sm text-foreground/90 leading-relaxed">
-                          {translation.plain_summary}
-                        </p>
-                        <p className="text-[10px] text-muted-foreground mt-1 italic">
-                          {translation.freshness_note}
-                        </p>
-                      </div>
+              {/* Headline */}
+              <div className="flex-1">
+                <h3 className="text-[15px] font-bold text-foreground leading-snug mb-2 group-hover:text-primary transition-colors line-clamp-3">
+                  {headline}
+                </h3>
+                {translation && !translation.is_fresh && (
+                  <span className="text-[10px] text-amber-600 italic">{translation.freshness_note}</span>
+                )}
+              </div>
+
+              {/* Footer */}
+              <div className="flex items-center justify-between mt-3 pt-2 border-t border-border/20">
+                {company ? (
+                  <Link to={`/company/${company.slug}`} className="text-[11px] font-semibold text-foreground hover:text-primary flex items-center gap-1.5">
+                    {company.logo_url ? (
+                      <img src={company.logo_url} alt="" className="w-4 h-4 rounded object-contain" />
                     ) : (
-                      <>
-                        <p className="text-sm text-foreground/80 mb-1">{signal.signal_type}</p>
-                        {signal.signal_value && !signal.signal_value.startsWith('{') && !signal.signal_value.startsWith('[') && (
-                          <p className="text-xs text-muted-foreground">Public signals suggest: {signal.signal_value}</p>
-                        )}
-                        {signal.signal_value && (signal.signal_value.startsWith('{') || signal.signal_value.startsWith('[')) && (
-                          <p className="text-xs text-muted-foreground">Structured data detected — view company profile for details.</p>
-                        )}
-                      </>
+                      <Building2 className="w-3.5 h-3.5 text-muted-foreground" />
                     )}
-
-                    <div className="flex items-center gap-3 mt-2 text-[10px] text-muted-foreground">
-                      <span className="flex items-center gap-1">
-                        <Clock className="w-2.5 h-2.5" />
-                        {getRelativeTime(signal.scan_timestamp)}
-                      </span>
-                      <span className="flex items-center gap-1">
-                        <Shield className="w-2.5 h-2.5" />
-                        {confidenceLabel}
-                      </span>
-                      {signal.source_url && (
-                        <a href={signal.source_url} target="_blank" rel="noopener noreferrer"
-                          className="flex items-center gap-1 text-primary hover:underline">
-                          <ExternalLink className="w-2.5 h-2.5" /> Source
-                        </a>
-                      )}
-                    </div>
-                  </div>
+                    {company.name}
+                  </Link>
+                ) : (
+                  <span className="text-[11px] text-muted-foreground">Unknown employer</span>
+                )}
+                <div className="flex items-center gap-2">
+                  <span className="text-[9px] text-muted-foreground flex items-center gap-0.5">
+                    <Shield className="w-2.5 h-2.5" />
+                    {signal.confidence_level === "high" ? "Strong" : signal.confidence_level === "medium" ? "Moderate" : "Emerging"}
+                  </span>
+                  {signal.source_url && (
+                    <a href={signal.source_url} target="_blank" rel="noopener noreferrer" className="text-primary hover:text-primary/80">
+                      <ExternalLink className="w-3 h-3" />
+                    </a>
+                  )}
                 </div>
-              </CardContent>
-            </Card>
+              </div>
+            </div>
           );
         })}
       </div>
 
-      {/* Attribution */}
-      <div className="text-center pt-4 border-t border-border">
+      {/* ═══ DIVIDER ═══ */}
+      <div className="border-x border-border/50 bg-muted/30 px-4 py-2 flex items-center gap-2">
+        <Globe className="w-3.5 h-3.5 text-muted-foreground" />
+        <span className="text-[10px] font-semibold text-muted-foreground uppercase tracking-wider">All Signals</span>
+        <div className="flex-1 border-t border-border/30" />
+      </div>
+
+      {/* ═══ SIGNAL TIMELINE — news wire style ═══ */}
+      <div className="border-x border-b border-border/50 bg-card rounded-b-xl divide-y divide-border/20">
+        {restSignals.map((signal, rawIdx) => {
+          const idx = rawIdx + 3; // offset for translations
+          const company = companyMap.get(signal.company_id);
+          const config = CATEGORY_CONFIG[signal.signal_category] || { label: "SIGNAL", icon: AlertTriangle, color: "text-muted-foreground", accent: "bg-muted", headline: "Signal detected" };
+          const Icon = config.icon;
+          const translation = translations[idx];
+          const headline = translation
+            ? translation.plain_summary
+            : buildHeadline(signal, company?.name || "Unknown Employer", config);
+
+          return (
+            <div key={signal.id} className="px-4 py-3 flex items-start gap-3 hover:bg-accent/20 transition-colors group">
+              {/* Time column */}
+              <div className="w-14 shrink-0 pt-0.5">
+                <span className="text-[11px] font-mono text-muted-foreground">
+                  {getRelativeTime(signal.scan_timestamp)}
+                </span>
+              </div>
+
+              {/* Category pip */}
+              <div className={cn("w-1.5 h-1.5 rounded-full mt-2 shrink-0", config.accent)} />
+
+              {/* Content */}
+              <div className="flex-1 min-w-0">
+                <div className="flex items-center gap-2 mb-0.5">
+                  <span className={cn("text-[9px] font-extrabold uppercase tracking-[0.12em]", config.color)}>
+                    {config.label}
+                  </span>
+                  {translation && !translation.is_fresh && (
+                    <Badge variant="outline" className="text-[8px] px-1 py-0 border-amber-500/30 text-amber-600">
+                      Historical
+                    </Badge>
+                  )}
+                </div>
+                <p className="text-sm text-foreground font-semibold leading-snug group-hover:text-primary transition-colors line-clamp-2">
+                  {headline}
+                </p>
+                {translation && (
+                  <p className="text-[10px] text-muted-foreground mt-0.5 italic">{translation.freshness_note}</p>
+                )}
+              </div>
+
+              {/* Company + source */}
+              <div className="flex items-center gap-2 shrink-0 pt-0.5">
+                {company && (
+                  <Link to={`/company/${company.slug}`} className="text-[10px] font-medium text-muted-foreground hover:text-primary whitespace-nowrap">
+                    {company.name}
+                  </Link>
+                )}
+                {signal.source_url && (
+                  <a href={signal.source_url} target="_blank" rel="noopener noreferrer" className="text-primary/60 hover:text-primary">
+                    <ExternalLink className="w-3 h-3" />
+                  </a>
+                )}
+              </div>
+            </div>
+          );
+        })}
+      </div>
+
+      {/* ═══ ATTRIBUTION ═══ */}
+      <div className="text-center pt-4 pb-2">
         <p className="text-[10px] text-muted-foreground">
-          Employer reality signals auto-detected from public records: FEC, SEC EDGAR, USASpending, OSHA, state WARN filings, and verified web sources.
+          Signals auto-detected from public records: FEC, SEC EDGAR, USASpending, OSHA, state WARN filings, and verified web sources.
           This platform surfaces evidence — interpretation is left to you.
         </p>
       </div>
