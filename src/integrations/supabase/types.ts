@@ -4920,6 +4920,27 @@ export type Database = {
           },
         ]
       }
+      user_usage: {
+        Row: {
+          function_name: string
+          id: string
+          used_at: string
+          user_id: string
+        }
+        Insert: {
+          function_name: string
+          id?: string
+          used_at?: string
+          user_id: string
+        }
+        Update: {
+          function_name?: string
+          id?: string
+          used_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       user_values_preferences: {
         Row: {
           created_at: string
