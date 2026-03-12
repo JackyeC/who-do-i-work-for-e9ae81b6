@@ -96,7 +96,17 @@ export default function StrategicOfferReview() {
   const [uploadReviewId, setUploadReviewId] = useState<string | null>(null);
   const [showConsentModal, setShowConsentModal] = useState(false);
 
-  // Career path signals for the forecast module
+  const [companyResults, setCompanyResults] = useState<any[]>([]);
+
+  const [offer, setOffer] = useState<OfferInput>({
+    companyName: "", roleTitle: "", location: "", yearsExperience: "",
+    baseSalary: "", bonus: "", equity: "", additionalDetails: "",
+    hasInterview: true, asksToBuyEquipment: false,
+    signOnBonus: "", repaymentClause: "", benefitWaitingPeriod: "",
+    nonCompete: "", arbitrationClause: false, ipClause: false,
+  });
+
+  // Career path signals for the forecast module (must be after offer declaration)
   const { data: careerSignals = [] } = useQuery({
     queryKey: ["career-forecast-signals", offer.companyId],
     queryFn: async () => {
@@ -109,16 +119,6 @@ export default function StrategicOfferReview() {
       return (data || []) as any[];
     },
     enabled: !!offer.companyId && step === 3,
-  });
-
-  const [companyResults, setCompanyResults] = useState<any[]>([]);
-
-  const [offer, setOffer] = useState<OfferInput>({
-    companyName: "", roleTitle: "", location: "", yearsExperience: "",
-    baseSalary: "", bonus: "", equity: "", additionalDetails: "",
-    hasInterview: true, asksToBuyEquipment: false,
-    signOnBonus: "", repaymentClause: "", benefitWaitingPeriod: "",
-    nonCompete: "", arbitrationClause: false, ipClause: false,
   });
 
   const update = (field: keyof OfferInput, value: any) => {
