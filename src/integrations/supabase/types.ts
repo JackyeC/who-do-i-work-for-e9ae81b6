@@ -5175,14 +5175,22 @@ export type Database = {
         Row: {
           ai_transparency_importance: number
           animal_welfare_importance: number
+          anti_corruption_importance: number
           anti_discrimination_importance: number
           benefits_importance: number
+          community_investment_importance: number
           company_size_preference: string | null
           consumer_protection_importance: number
           created_at: string
+          data_privacy_importance: number
           dei_equity_importance: number
+          disability_inclusion_importance: number
+          education_access_importance: number
+          energy_fossil_fuel_importance: number
           environment_climate_importance: number
           faith_christian_importance: number
+          gender_equality_importance: number
+          gig_worker_treatment_importance: number
           government_contract_preference: number
           healthcare_importance: number
           id: string
@@ -5192,28 +5200,42 @@ export type Database = {
           lgbtq_rights_importance: number
           mission_alignment_importance: number
           notes: string | null
+          pay_equity_importance: number
           pay_transparency_importance: number
           political_influence_sensitivity: number
+          political_transparency_importance: number
+          pollution_waste_importance: number
           remote_flexibility_importance: number
           representation_disclosure_importance: number
           reproductive_rights_importance: number
           startup_vs_enterprise_preference: string | null
+          sustainable_supply_chains_importance: number
+          union_rights_importance: number
           updated_at: string
           user_id: string
           voting_rights_importance: number
           worker_protections_importance: number
+          workplace_safety_importance: number
         }
         Insert: {
           ai_transparency_importance?: number
           animal_welfare_importance?: number
+          anti_corruption_importance?: number
           anti_discrimination_importance?: number
           benefits_importance?: number
+          community_investment_importance?: number
           company_size_preference?: string | null
           consumer_protection_importance?: number
           created_at?: string
+          data_privacy_importance?: number
           dei_equity_importance?: number
+          disability_inclusion_importance?: number
+          education_access_importance?: number
+          energy_fossil_fuel_importance?: number
           environment_climate_importance?: number
           faith_christian_importance?: number
+          gender_equality_importance?: number
+          gig_worker_treatment_importance?: number
           government_contract_preference?: number
           healthcare_importance?: number
           id?: string
@@ -5223,28 +5245,42 @@ export type Database = {
           lgbtq_rights_importance?: number
           mission_alignment_importance?: number
           notes?: string | null
+          pay_equity_importance?: number
           pay_transparency_importance?: number
           political_influence_sensitivity?: number
+          political_transparency_importance?: number
+          pollution_waste_importance?: number
           remote_flexibility_importance?: number
           representation_disclosure_importance?: number
           reproductive_rights_importance?: number
           startup_vs_enterprise_preference?: string | null
+          sustainable_supply_chains_importance?: number
+          union_rights_importance?: number
           updated_at?: string
           user_id: string
           voting_rights_importance?: number
           worker_protections_importance?: number
+          workplace_safety_importance?: number
         }
         Update: {
           ai_transparency_importance?: number
           animal_welfare_importance?: number
+          anti_corruption_importance?: number
           anti_discrimination_importance?: number
           benefits_importance?: number
+          community_investment_importance?: number
           company_size_preference?: string | null
           consumer_protection_importance?: number
           created_at?: string
+          data_privacy_importance?: number
           dei_equity_importance?: number
+          disability_inclusion_importance?: number
+          education_access_importance?: number
+          energy_fossil_fuel_importance?: number
           environment_climate_importance?: number
           faith_christian_importance?: number
+          gender_equality_importance?: number
+          gig_worker_treatment_importance?: number
           government_contract_preference?: number
           healthcare_importance?: number
           id?: string
@@ -5254,16 +5290,22 @@ export type Database = {
           lgbtq_rights_importance?: number
           mission_alignment_importance?: number
           notes?: string | null
+          pay_equity_importance?: number
           pay_transparency_importance?: number
           political_influence_sensitivity?: number
+          political_transparency_importance?: number
+          pollution_waste_importance?: number
           remote_flexibility_importance?: number
           representation_disclosure_importance?: number
           reproductive_rights_importance?: number
           startup_vs_enterprise_preference?: string | null
+          sustainable_supply_chains_importance?: number
+          union_rights_importance?: number
           updated_at?: string
           user_id?: string
           voting_rights_importance?: number
           worker_protections_importance?: number
+          workplace_safety_importance?: number
         }
         Relationships: []
       }

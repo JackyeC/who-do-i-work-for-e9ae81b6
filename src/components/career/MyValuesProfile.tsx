@@ -5,6 +5,7 @@ import { Slider } from "@/components/ui/slider";
 import { Badge } from "@/components/ui/badge";
 import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/contexts/AuthContext";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
@@ -12,8 +13,9 @@ import { toast } from "sonner";
 import {
   Heart, Shield, DollarSign, Bot, Building2, Landmark,
   Scale, Monitor, Sparkles, Users, FileText, Save, Info,
+  ChevronDown, ChevronRight, Database,
 } from "lucide-react";
-import { VALUES_LENSES } from "@/lib/valuesLenses";
+import { VALUES_LENSES, VALUES_GROUPS } from "@/lib/valuesLenses";
 
 // --- Workplace preference sliders ---
 const WORKPLACE_SLIDERS = [
@@ -28,13 +30,20 @@ const WORKPLACE_SLIDERS = [
   { key: "representation_disclosure_importance", label: "Representation & DEI", icon: Users, description: "Diversity, equity, and inclusion practices" },
 ] as const;
 
-// --- Values lens sliders (from the 13 lens definitions) ---
+// --- Build grouped lens sliders ---
 const LENS_SLIDERS = VALUES_LENSES.map((lens) => ({
   key: `${lens.key}_importance`,
   label: lens.label,
   icon: lens.icon,
   description: lens.description,
+  group: lens.group,
+  dataSources: lens.dataSources,
 }));
+
+const ALL_SLIDER_KEYS = [
+  ...WORKPLACE_SLIDERS.map(s => s.key),
+  ...LENS_SLIDERS.map(s => s.key),
+];
 
 export function MyValuesProfile() {
   const { user } = useAuth();
@@ -43,6 +52,11 @@ export function MyValuesProfile() {
   const [sizePreference, setSizePreference] = useState("no_preference");
   const [stagePreference, setStagePreference] = useState("no_preference");
   const [notes, setNotes] = useState("");
+  const [openGroups, setOpenGroups] = useState<Record<string, boolean>>(() => {
+    const initial: Record<string, boolean> = {};
+    VALUES_GROUPS.forEach(g => { initial[g.key] = true; });
+    return initial;
+  });
 
   const { data: profile, isLoading } = useQuery({
     queryKey: ["user-values-profile", user?.id],
@@ -60,17 +74,16 @@ export function MyValuesProfile() {
   });
 
   useEffect(() => {
-    const allSliders = [...WORKPLACE_SLIDERS, ...LENS_SLIDERS];
     if (profile) {
       const w: Record<string, number> = {};
-      allSliders.forEach((s) => { w[s.key] = profile[s.key] ?? 50; });
+      ALL_SLIDER_KEYS.forEach((k) => { w[k] = profile[k] ?? 50; });
       setWeights(w);
       setSizePreference(profile.company_size_preference || "no_preference");
       setStagePreference(profile.startup_vs_enterprise_preference || "no_preference");
       setNotes(profile.notes || "");
     } else {
       const w: Record<string, number> = {};
-      allSliders.forEach((s) => { w[s.key] = 50; });
+      ALL_SLIDER_KEYS.forEach((k) => { w[k] = 50; });
       setWeights(w);
     }
   }, [profile]);
@@ -110,62 +123,127 @@ export function MyValuesProfile() {
     );
   }
 
-  const renderSliders = (sliders: readonly { key: string; label: string; icon: React.ElementType; description: string }[]) =>
-    sliders.map((item) => {
-      const Icon = item.icon;
-      const val = weights[item.key] ?? 50;
-      return (
-        <div key={item.key} className="space-y-2">
-          <div className="flex items-start justify-between gap-4">
-            <div className="flex items-start gap-3 min-w-0">
-              <div className="w-8 h-8 rounded-lg bg-primary/5 flex items-center justify-center shrink-0 mt-0.5">
-                <Icon className="w-4 h-4 text-primary" />
-              </div>
-              <div className="min-w-0">
-                <div className="font-medium text-sm text-foreground">{item.label}</div>
-                <div className="text-xs text-muted-foreground">{item.description}</div>
-              </div>
+  const getPriorityLabel = (val: number) => {
+    if (val >= 90) return "Deal Breaker";
+    if (val >= 70) return "Very Important";
+    if (val >= 40) return "Important";
+    if (val >= 15) return "Nice to Have";
+    return "Not Important";
+  };
+
+  const getPriorityColor = (val: number) => {
+    if (val >= 90) return "text-destructive";
+    if (val >= 70) return "text-primary";
+    if (val >= 40) return "text-foreground";
+    return "text-muted-foreground";
+  };
+
+  const renderSlider = (item: { key: string; label: string; icon: React.ElementType; description: string; dataSources?: readonly string[] }) => {
+    const Icon = item.icon;
+    const val = weights[item.key] ?? 50;
+    return (
+      <div key={item.key} className="space-y-2">
+        <div className="flex items-start justify-between gap-4">
+          <div className="flex items-start gap-3 min-w-0">
+            <div className="w-8 h-8 rounded-lg bg-primary/5 flex items-center justify-center shrink-0 mt-0.5">
+              <Icon className="w-4 h-4 text-primary" />
             </div>
-            <Badge variant="outline" className="text-xs shrink-0">{val}</Badge>
+            <div className="min-w-0">
+              <div className="font-medium text-sm text-foreground">{item.label}</div>
+              <div className="text-xs text-muted-foreground">{item.description}</div>
+              {item.dataSources && item.dataSources.length > 0 && (
+                <div className="flex items-center gap-1 mt-1">
+                  <Database className="w-3 h-3 text-muted-foreground/60" />
+                  <span className="text-[10px] text-muted-foreground/60">
+                    {item.dataSources.slice(0, 2).join(" · ")}
+                    {item.dataSources.length > 2 && ` +${item.dataSources.length - 2}`}
+                  </span>
+                </div>
+              )}
+            </div>
           </div>
-          <Slider
-            value={[val]}
-            onValueChange={(v) => setWeights((p) => ({ ...p, [item.key]: v[0] }))}
-            max={100}
-            step={5}
-            className="w-full"
-          />
+          <div className="flex flex-col items-end gap-0.5 shrink-0">
+            <Badge variant="outline" className="text-xs">{val}</Badge>
+            <span className={`text-[10px] font-medium ${getPriorityColor(val)}`}>
+              {getPriorityLabel(val)}
+            </span>
+          </div>
         </div>
-      );
-    });
+        <Slider
+          value={[val]}
+          onValueChange={(v) => setWeights((p) => ({ ...p, [item.key]: v[0] }))}
+          max={100}
+          step={5}
+          className="w-full"
+        />
+      </div>
+    );
+  };
+
+  const toggleGroup = (groupKey: string) => {
+    setOpenGroups(prev => ({ ...prev, [groupKey]: !prev[groupKey] }));
+  };
+
+  // Count active (non-default) values per group
+  const getGroupActiveCount = (groupKey: string) => {
+    const groupSliders = LENS_SLIDERS.filter(s => s.group === groupKey);
+    return groupSliders.filter(s => {
+      const val = weights[s.key] ?? 50;
+      return val !== 50;
+    }).length;
+  };
 
   return (
     <div className="space-y-6">
       {/* Transparency disclaimer */}
       <div className="flex items-start gap-2.5 p-4 rounded-xl bg-muted/40 border border-border/40">
         <Info className="w-4 h-4 text-muted-foreground shrink-0 mt-0.5" />
-        <p className="text-xs text-muted-foreground leading-relaxed">
-          Your values profile influences your Career Alignment Score, job matching, and company recommendations.
-          Slide each value to reflect how important it is to you — 0 means irrelevant, 100 means deal-breaker.
-        </p>
+        <div className="space-y-1">
+          <p className="text-xs text-muted-foreground leading-relaxed">
+            Your values profile influences your Career Alignment Score, job matching, and company recommendations.
+            Slide each value to reflect how important it is to you — <strong>0 = Not Important</strong>, <strong>70+ = Very Important</strong>, <strong>90+ = Deal Breaker</strong>.
+          </p>
+          <p className="text-[10px] text-muted-foreground/70">
+            Every value is tied to verifiable public data sources — no opinions, just receipts.
+          </p>
+        </div>
       </div>
 
-      {/* Values Lenses section */}
-      <Card className="border-border">
-        <CardHeader>
-          <div className="flex items-center gap-2">
-            <Sparkles className="w-5 h-5 text-[hsl(var(--civic-gold))]" />
-            <CardTitle className="font-display">Values & Issue Lenses</CardTitle>
-          </div>
-          <CardDescription>
-            How important are these social, political, and ethical issues when evaluating employers?
-            These match the values lenses used across the platform.
-          </CardDescription>
-        </CardHeader>
-        <CardContent className="space-y-6">
-          {renderSliders(LENS_SLIDERS)}
-        </CardContent>
-      </Card>
+      {/* Grouped Values Lenses */}
+      {VALUES_GROUPS.map((group) => {
+        const groupSliders = LENS_SLIDERS.filter(s => s.group === group.key);
+        const activeCount = getGroupActiveCount(group.key);
+        const isOpen = openGroups[group.key] ?? true;
+
+        return (
+          <Card key={group.key} className="border-border">
+            <Collapsible open={isOpen} onOpenChange={() => toggleGroup(group.key)}>
+              <CollapsibleTrigger asChild>
+                <CardHeader className="cursor-pointer hover:bg-muted/30 transition-colors">
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center gap-2">
+                      {isOpen ? <ChevronDown className="w-4 h-4 text-muted-foreground" /> : <ChevronRight className="w-4 h-4 text-muted-foreground" />}
+                      <CardTitle className="font-display text-base">{group.label}</CardTitle>
+                      {activeCount > 0 && (
+                        <Badge variant="secondary" className="text-[10px]">
+                          {activeCount} customized
+                        </Badge>
+                      )}
+                    </div>
+                    <span className="text-xs text-muted-foreground">{groupSliders.length} values</span>
+                  </div>
+                  <CardDescription className="ml-6">{group.description}</CardDescription>
+                </CardHeader>
+              </CollapsibleTrigger>
+              <CollapsibleContent>
+                <CardContent className="space-y-6 pt-0">
+                  {groupSliders.map(renderSlider)}
+                </CardContent>
+              </CollapsibleContent>
+            </Collapsible>
+          </Card>
+        );
+      })}
 
       {/* Workplace Preferences section */}
       <Card className="border-border">
@@ -179,7 +257,7 @@ export function MyValuesProfile() {
           </CardDescription>
         </CardHeader>
         <CardContent className="space-y-6">
-          {renderSliders(WORKPLACE_SLIDERS)}
+          {WORKPLACE_SLIDERS.map(item => renderSlider(item))}
 
           {/* Preference selects */}
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-4 border-t border-border">
@@ -223,7 +301,7 @@ export function MyValuesProfile() {
             <Textarea
               value={notes}
               onChange={(e) => setNotes(e.target.value)}
-              placeholder="Anything else that matters to you in a workplace? (e.g., specific causes, deal-breakers, must-haves)"
+              placeholder="Anything else that matters to you? Deal-breakers, must-haves, causes you'd never want your employer funding..."
               rows={3}
             />
           </div>

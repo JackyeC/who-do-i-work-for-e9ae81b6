@@ -3,13 +3,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { useState } from "react";
 import { cn } from "@/lib/utils";
-
-const LENSES = [
-  "Animal Welfare", "DEI / Workplace Equity", "Climate", "Labor Rights",
-  "Civil Rights", "LGBTQ+ Rights", "Reproductive Rights", "Voting Rights",
-  "Immigration", "Education", "Healthcare", "Consumer Protection",
-  "Faith / Christian Values", "Israel / Middle East"
-];
+import { VALUES_LENSES, VALUES_GROUPS } from "@/lib/valuesLenses";
 
 type SignalDirection = "alignment_signal" | "conflict_signal" | "informational_signal" | "mixed_signal";
 
@@ -33,6 +27,9 @@ const directionConfig: Record<SignalDirection, { label: string; color: string }>
   informational_signal: { label: "Informational", color: "bg-civic-blue/10 text-civic-blue border-civic-blue/20" },
   mixed_signal: { label: "Mixed", color: "bg-civic-yellow/10 text-civic-yellow border-civic-yellow/20" },
 };
+
+// Build full lens list from the expanded VALUES_LENSES
+const ALL_LENS_LABELS = VALUES_LENSES.map(l => l.label);
 
 export function ValuesSignalsLayer({ signals, companyName }: ValuesSignalsProps) {
   const [activeLens, setActiveLens] = useState<string | null>(null);

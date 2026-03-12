@@ -20,19 +20,50 @@ interface CompanyAlignment {
 
 // Map lens keys to company_values_signals value_category values
 const LENS_TO_SIGNAL_CATEGORIES: Record<string, string[]> = {
+  // Social & Civil Rights
   dei_equity_importance: ["anti_discrimination", "lgbtq_inclusive", "dei_equity"],
-  environment_climate_importance: ["environmental", "environment_climate"],
-  labor_rights_importance: ["worker_benefits", "labor_rights"],
-  faith_christian_importance: ["faith_christian"],
-  israel_middle_east_importance: ["israel_middle_east"],
-  animal_welfare_importance: ["animal_welfare"],
-  anti_discrimination_importance: ["anti_discrimination"],
+  anti_discrimination_importance: ["anti_discrimination", "eeoc_case"],
   lgbtq_rights_importance: ["lgbtq_rights", "lgbtq_inclusive"],
   reproductive_rights_importance: ["reproductive_rights"],
   voting_rights_importance: ["voting_rights"],
-  consumer_protection_importance: ["consumer_protection"],
-  healthcare_importance: ["healthcare"],
   immigration_importance: ["immigration"],
+  disability_inclusion_importance: ["disability_inclusion", "ada_compliance"],
+  gender_equality_importance: ["gender_equality", "pay_gap", "gender_pay"],
+
+  // Worker Treatment
+  labor_rights_importance: ["worker_benefits", "labor_rights"],
+  pay_equity_importance: ["pay_equity", "pay_transparency", "salary_transparency", "pay_gap"],
+  workplace_safety_importance: ["workplace_safety", "osha_violation"],
+  union_rights_importance: ["union_rights", "nlrb_case", "collective_bargaining"],
+  gig_worker_treatment_importance: ["gig_worker", "contractor_treatment", "misclassification"],
+
+  // Environmental Impact
+  environment_climate_importance: ["environmental", "environment_climate", "climate"],
+  pollution_waste_importance: ["pollution", "toxic_release", "waste_violation", "epa_violation"],
+  sustainable_supply_chains_importance: ["supply_chain", "ethical_sourcing", "fair_trade"],
+  energy_fossil_fuel_importance: ["energy_policy", "fossil_fuel", "renewable_energy"],
+
+  // Ethical Business
+  consumer_protection_importance: ["consumer_protection", "ftc_action", "cfpb_complaint"],
+  data_privacy_importance: ["data_privacy", "data_breach", "privacy_violation"],
+  ai_ethics_importance: ["ai_transparency", "ai_ethics", "bias_audit"],
+  anti_corruption_importance: ["anti_corruption", "fcpa", "bribery"],
+  political_transparency_importance: ["political_transparency", "dark_money", "spending_disclosure"],
+
+  // Political Activity
+  political_donations_importance: ["pac_donation", "executive_donation", "political_donation"],
+  lobbying_activity_importance: ["lobbying", "lobbying_filing"],
+  israel_middle_east_importance: ["israel_middle_east"],
+  international_trade_importance: ["international_trade", "sanctions", "trade_policy"],
+
+  // Lifestyle & Personal
+  faith_christian_importance: ["faith_christian"],
+  animal_welfare_importance: ["animal_welfare"],
+  healthcare_importance: ["healthcare"],
+  education_access_importance: ["education", "tuition_assistance"],
+  community_investment_importance: ["community_investment", "philanthropy", "foundation_grant"],
+
+  // Workplace preferences (mapped to signal categories)
   pay_transparency_importance: ["pay_transparency", "salary_transparency"],
   worker_protections_importance: ["worker_benefits", "worker_protections"],
   ai_transparency_importance: ["ai_transparency"],
@@ -42,7 +73,6 @@ const LENS_TO_SIGNAL_CATEGORIES: Record<string, string[]> = {
 export function useCareerAlignmentScore(companyId?: string) {
   const { user } = useAuth();
 
-  // Use unified user_values_profile
   const { data: valuesProfile } = useQuery({
     queryKey: ["user-values-profile", user?.id],
     queryFn: async () => {
