@@ -14,6 +14,12 @@ import { BLSDemographicsCard } from "@/components/bls/BLSDemographicsCard";
 import { BLSBenefitsCard } from "@/components/bls/BLSBenefitsCard";
 import { useOfferCheck } from "@/hooks/use-offer-check";
 import { OfferCheckReport } from "@/components/OfferCheckReport";
+import {
+  OfferCheckSnapshot,
+  buildDefaultSections,
+  deriveSnapshotVerdict,
+  generateSnapshotJackyeTake,
+} from "@/components/OfferCheckSnapshot";
 
 export interface OfferClarityReport {
   compensation: {
