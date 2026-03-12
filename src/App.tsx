@@ -190,6 +190,7 @@ const App = () => (
                 <Route path="*" element={<NotFound />} />
               </Routes>
               <AskJackyeWidget />
+              <CookieNotice />
             </AppShell>
           </BrowserRouter>
         </TooltipProvider>

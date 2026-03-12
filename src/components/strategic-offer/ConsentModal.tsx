@@ -25,10 +25,13 @@ export function ConsentModal({ open, onAccept, onCancel }: ConsentModalProps) {
           </DialogTitle>
           <DialogDescription className="text-sm leading-relaxed pt-2 space-y-3">
             <p>
-              This tool analyzes offer terms and detects signal patterns using publicly available data. It provides <span className="font-semibold text-foreground">educational insights only</span>.
+              This tool analyzes offer terms and detects signal patterns using publicly available data. It provides <span className="font-semibold text-foreground">educational insights only</span> and is not a law firm.
             </p>
             <p>
-              Your documents are encrypted, visible only to you, and are not used to train AI models. You can delete your data at any time.
+              Nothing on this platform should be interpreted as legal advice or as a substitute for consulting a qualified attorney. Use of this platform does not create an attorney-client relationship.
+            </p>
+            <p>
+              Your documents are processed automatically, visible only to you, and are <span className="font-semibold text-foreground">not used to train AI models</span>. You can delete your data at any time. Avoid uploading documents you are not authorized to share.
             </p>
           </DialogDescription>
         </DialogHeader>
