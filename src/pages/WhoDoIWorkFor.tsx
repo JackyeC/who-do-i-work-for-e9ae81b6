@@ -18,6 +18,7 @@ import {
   ExternalLink, LogOut, Flag, Users, Briefcase, ArrowRight,
   UserCheck, Scale, Megaphone, X
 } from "lucide-react";
+import { WorkforceEquityModule } from "@/components/workforce-equity/WorkforceEquityModule";
 
 interface CompanyOption {
   id: string;
