@@ -171,7 +171,7 @@
   }
 
   .font-display-number {
-    font-family: 'Libre Baskerville', Georgia, serif;
+    font-family: 'IBM Plex Mono', monospace;
     font-variant-numeric: tabular-nums;
   }
 
