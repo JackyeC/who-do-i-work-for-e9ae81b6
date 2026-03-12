@@ -57,6 +57,7 @@ import AskJackye from "./pages/AskJackye";
 import OnePager from "./pages/OnePager";
 import WouldYouWorkHere from "./pages/WouldYouWorkHere";
 import WorkWithJackye from "./pages/WorkWithJackye";
+import EmployerReceipt from "./pages/EmployerReceipt";
 
 const queryClient = new QueryClient();
 
@@ -83,6 +84,7 @@ const App = () => (
                 <Route path="/ask-jackye" element={<AskJackye />} />
                 <Route path="/would-you-work-here" element={<WouldYouWorkHere />} />
                 <Route path="/work-with-jackye" element={<WorkWithJackye />} />
+                <Route path="/employer-receipt" element={<EmployerReceipt />} />
                 <Route path="/one-pager" element={<OnePager />} />
                 <Route path="/check" element={<Check />} />
                 <Route path="/policy" element={<PolicyHub />} />
