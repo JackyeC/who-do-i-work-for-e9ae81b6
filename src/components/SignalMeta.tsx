@@ -1,6 +1,7 @@
 import { ExternalLink, Clock, Search, CheckCircle2 } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { cn } from "@/lib/utils";
+import { VerifySignalButton } from "@/components/VerifySignalButton";
 
 /** Maps raw source_type or detection_method values to display labels */
 const SOURCE_TYPE_LABELS: Record<string, string> = {
