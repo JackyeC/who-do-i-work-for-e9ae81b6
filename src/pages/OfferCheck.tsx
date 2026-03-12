@@ -64,6 +64,43 @@ function ReportTimeline({ company }: { company: any }) {
   );
 }
 
+function OfferCheckSnapshotBlock({ company, sections: reportSections }: { company: any; sections: any[] }) {
+  const snapshotSections = useMemo(() => {
+    const hasExecs = reportSections.some(s => s.id === "decision_makers" && s.hasData);
+    const execSection = reportSections.find(s => s.id === "decision_makers");
+    const workforceSection = reportSections.find(s => s.id === "workforce_stability");
+    const hiringSection = reportSections.find(s => s.id === "hiring_transparency");
+    const influenceSection = reportSections.find(s => s.id === "influence_exposure" || s.id === "political_influence");
+
+    return buildDefaultSections({
+      hasExecs,
+      execCount: execSection?.signals?.length || 0,
+      hasLayoffs: workforceSection?.hasData || false,
+      layoffRecent: workforceSection?.stale === false && workforceSection?.hasData,
+      hiringTransparency: hiringSection?.hasData ? (hiringSection.signals.length >= 3 ? "high" : "medium") : "unknown",
+      offerStrength: "unknown",
+      influenceExposure: influenceSection?.hasData
+        ? (influenceSection.signals.length >= 5 ? "high" : influenceSection.signals.length >= 2 ? "moderate" : "low")
+        : "unknown",
+      cultureAlignment: "unknown",
+    });
+  }, [reportSections]);
+
+  const verdict = deriveSnapshotVerdict(snapshotSections);
+  const jackyeTake = generateSnapshotJackyeTake(verdict, snapshotSections);
+
+  return (
+    <div className="mb-5">
+      <OfferCheckSnapshot
+        companyName={company.name}
+        verdict={verdict}
+        sections={snapshotSections}
+        jackyeTake={jackyeTake}
+      />
+    </div>
+  );
+}
+
 export default function OfferCheck() {
   const { companyId } = useParams<{ companyId: string }>();
   const navigate = useNavigate();
