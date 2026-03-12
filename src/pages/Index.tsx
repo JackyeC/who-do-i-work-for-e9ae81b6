@@ -1,10 +1,10 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, forwardRef } from "react";
 import { useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { Search, ArrowRight, Shield, FileText, MessageSquare, Compass } from "lucide-react";
 import { usePageSEO } from "@/hooks/use-page-seo";
 
-const Index = () => {
+const Index = forwardRef<HTMLDivElement>((_, ref) => {
   const [companyCount, setCompanyCount] = useState(0);
   const navigate = useNavigate();
 
