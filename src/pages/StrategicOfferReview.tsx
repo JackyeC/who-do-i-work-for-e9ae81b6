@@ -246,22 +246,12 @@ export default function StrategicOfferReview() {
     }
   };
 
-  const offerStrengthScore = useMemo(() => {
-    const redFlags = legalFlags.filter(f => f.severity === "red").length;
-    const yellowFlags = legalFlags.filter(f => f.severity === "yellow").length;
-    const salary = Number(offer.baseSalary) || 0;
-    const compScore = report?.compensation.score ?? (salary > annualBaseline * 1.2 ? 80 : salary > annualBaseline ? 60 : 35);
-    const clarityScore = report?.transparency.score ?? 50;
-    const restrictiveScore = Math.max(0, 100 - redFlags * 30 - yellowFlags * 15);
-    const benefitsScore = report?.employeeExperience.score ?? 50;
-    const mechanicsScore = salary >= annualBaseline ? 70 : 30;
-    const growthScore = report?.leadershipRepresentation.score ?? 50;
-    const legalScore = report?.legalRisk.score ?? Math.max(0, 100 - redFlags * 25 - yellowFlags * 10);
-    return Math.round(
-      compScore * 0.25 + clarityScore * 0.15 + restrictiveScore * 0.20 +
-      benefitsScore * 0.10 + mechanicsScore * 0.10 + growthScore * 0.10 + legalScore * 0.10
-    );
-  }, [report, legalFlags, offer.baseSalary, annualBaseline]);
+  const strengthScore = useOfferStrengthScore({
+    offer,
+    annualBaseline,
+    legalFlags,
+    clarityReport: report,
+  });
 
   const canAdvanceOffer = offer.companyName.length >= 2 && offer.roleTitle.length >= 2 && offer.baseSalary.length >= 1;
 
