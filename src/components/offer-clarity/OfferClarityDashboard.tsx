@@ -147,7 +147,7 @@ export function OfferClarityDashboard({ report, offerData, onStartOver }: Props)
           <div className="flex flex-col sm:flex-row items-center gap-6">
             <ScoreRing score={report.overallScore} />
             <div className="flex-1 text-center sm:text-left">
-              <h2 className="text-2xl font-display font-bold text-foreground mb-1">Offer Clarity Score</h2>
+              <h2 className="text-2xl font-display font-bold text-foreground mb-1">Offer Check Score</h2>
               <div className="flex items-center gap-2 justify-center sm:justify-start mb-3">
                 <InterpIcon className={cn("w-4 h-4", interp.color)} />
                 <span className={cn("text-sm font-semibold", interp.color)}>{interp.label}</span>
@@ -256,6 +256,11 @@ export function OfferClarityDashboard({ report, offerData, onStartOver }: Props)
         })}
       </div>
 
+      {/* Company Signals from Database (if company was matched) */}
+      {(offerData as any).companyId && (
+        <CompanySignalsSection companyId={(offerData as any).companyId} />
+      )}
+
       {/* Interpretation guide */}
       <Card className="card-official rounded-2xl">
         <CardContent className="p-5">
@@ -282,6 +287,33 @@ export function OfferClarityDashboard({ report, offerData, onStartOver }: Props)
           <ArrowLeft className="w-4 h-4" /> Start Over
         </Button>
       </div>
+    </div>
+  );
+}
+
+/** Inline company signals section pulled from useOfferCheck */
+function CompanySignalsSection({ companyId }: { companyId: string }) {
+  const { useOfferCheck } = require("@/hooks/use-offer-check");
+  const { OfferCheckReport } = require("@/components/OfferCheckReport");
+  const { sections, isLoading } = useOfferCheck(companyId);
+
+  if (isLoading) return null;
+
+  const signalSections = sections.filter((s: any) => s.hasData);
+  if (signalSections.length === 0) return null;
+
+  return (
+    <div className="space-y-3">
+      <div className="space-y-1">
+        <h3 className="text-base font-display font-semibold text-foreground flex items-center gap-2">
+          <Shield className="w-4 h-4 text-primary" />
+          Employer Signals from Public Records
+        </h3>
+        <p className="text-xs text-muted-foreground">
+          Evidence-based signals detected from government filings, corporate disclosures, and verified sources
+        </p>
+      </div>
+      <OfferCheckReport sections={sections} />
     </div>
   );
 }

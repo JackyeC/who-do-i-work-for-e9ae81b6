@@ -7,6 +7,7 @@ import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Building2, ClipboardCheck, Users, Search, ArrowRight, ShieldCheck, Upload } from "lucide-react";
+import { OfferClarityWizard } from "@/components/offer-clarity/OfferClarityWizard";
 
 export default function Check() {
   const navigate = useNavigate();
@@ -17,11 +18,6 @@ export default function Check() {
   const handleCompanySearch = (e: React.FormEvent) => {
     e.preventDefault();
     if (companyQuery.trim()) navigate(`/search?q=${encodeURIComponent(companyQuery.trim())}`);
-  };
-
-  const handleOfferSearch = (e: React.FormEvent) => {
-    e.preventDefault();
-    if (companyQuery.trim()) navigate(`/search?q=${encodeURIComponent(companyQuery.trim())}&intent=offer`);
   };
 
   return (
@@ -75,66 +71,50 @@ export default function Check() {
           </TabsContent>
 
           <TabsContent value="offer">
-            <div className="bg-card rounded-2xl border border-border/40 p-8 shadow-luxury">
-              <h2 className="text-xl font-semibold text-foreground mb-2 font-display">Offer Check</h2>
-              <p className="text-sm text-muted-foreground mb-6">
-                Three ways to check your offer — no PII required:
-              </p>
+            <div className="space-y-6">
+              {/* Primary: Unified Offer Check wizard (company signals + AI scoring) */}
+              <div>
+                <div className="text-center mb-6">
+                  <Badge variant="outline" className="mb-3 text-xs gap-1.5">
+                    <ShieldCheck className="w-3 h-3" /> Offer Check™
+                  </Badge>
+                  <h2 className="text-xl font-display font-semibold text-foreground mb-2">
+                    Is this offer actually good?
+                  </h2>
+                  <p className="text-sm text-muted-foreground max-w-xl mx-auto leading-relaxed">
+                    Enter your offer details. We'll score it across compensation, transparency, legal risk, leadership, and employee experience — plus surface employer signals from public records.
+                  </p>
+                </div>
+                <OfferClarityWizard />
+              </div>
 
-              <div className="space-y-4">
-                {/* Option 1: Quick manual input */}
+              {/* Secondary options */}
+              <div className="grid sm:grid-cols-2 gap-4 pt-2">
                 <div className="p-4 rounded-xl border border-primary/20 bg-primary/[0.02]">
                   <div className="flex items-center gap-2 mb-2">
                     <ClipboardCheck className="w-5 h-5 text-primary" />
                     <h3 className="font-semibold text-foreground text-sm">Strategic Offer Review</h3>
-                    <Badge className="text-[10px] bg-primary/10 text-primary border-0">Recommended</Badge>
                   </div>
                   <p className="text-xs text-muted-foreground mb-3">
-                    Five-layer analysis: walk-away calculator, civic & legal audit, equity visualizer, negotiation scripts, and scam detection. No PII required.
+                    Five-layer analysis: walk-away calculator, civic & legal audit, equity visualizer, negotiation scripts, and scam detection.
                   </p>
-                  <Button onClick={() => navigate("/strategic-offer-review")} className="gap-2">
+                  <Button variant="outline" size="sm" onClick={() => navigate("/strategic-offer-review")} className="gap-2">
                     <ClipboardCheck className="w-4 h-4" /> Start Strategic Review
                   </Button>
                 </div>
 
-                {/* Option 2: Upload offer letter */}
                 <div className="p-4 rounded-xl border border-border/40">
                   <div className="flex items-center gap-2 mb-2">
-                    <ShieldCheck className="w-5 h-5 text-muted-foreground" />
+                    <Upload className="w-5 h-5 text-muted-foreground" />
                     <h3 className="font-semibold text-foreground text-sm">Upload Offer Letter</h3>
                     <Badge variant="outline" className="text-[10px]">Private</Badge>
                   </div>
                   <p className="text-xs text-muted-foreground mb-3">
-                    Upload a PDF or DOCX for AI-powered term extraction. Your document is encrypted and visible only to you. Original files can be auto-deleted after analysis.
+                    Upload a PDF or DOCX for AI-powered term extraction. Your document is encrypted and visible only to you.
                   </p>
-                  <Button variant="outline" onClick={() => navigate("/offer-review-direct")} className="gap-2">
+                  <Button variant="outline" size="sm" onClick={() => navigate("/offer-review-direct")} className="gap-2">
                     <Upload className="w-4 h-4" /> Upload Offer Letter
                   </Button>
-                </div>
-
-                {/* Option 3: Company search */}
-                <div className="p-4 rounded-xl border border-border/40">
-                  <div className="flex items-center gap-2 mb-2">
-                    <Building2 className="w-5 h-5 text-muted-foreground" />
-                    <h3 className="font-semibold text-foreground text-sm">Research by Company</h3>
-                  </div>
-                  <p className="text-xs text-muted-foreground mb-3">
-                    Look up a company to see public signals about pay, hiring, worker conditions, and influence — before you accept.
-                  </p>
-                  <form onSubmit={handleOfferSearch} className="flex gap-3">
-                    <div className="relative flex-1">
-                      <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
-                      <Input
-                        value={companyQuery}
-                        onChange={(e) => setCompanyQuery(e.target.value)}
-                        placeholder="Enter company name..."
-                        className="pl-10"
-                      />
-                    </div>
-                    <Button type="submit" variant="outline" className="gap-2">
-                      Research <ArrowRight className="w-4 h-4" />
-                    </Button>
-                  </form>
                 </div>
               </div>
             </div>
