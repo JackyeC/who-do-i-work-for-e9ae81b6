@@ -308,7 +308,7 @@ export default function FollowTheMoney() {
   const [loading, setLoading] = useState(false);
   const [activeIssueFilter, setActiveIssueFilter] = useState("All");
   const [activeRelFilter, setActiveRelFilter] = useState("all");
-  const [showLabels, setShowLabels] = useState(true);
+  const [showLabels, setShowLabels] = useState(false);
   const [strongOnly, setStrongOnly] = useState(false);
   const [dimensions, setDimensions] = useState({ width: 800, height: 500 });
   const [pathMode, setPathMode] = useState(false);
