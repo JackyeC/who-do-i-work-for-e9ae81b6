@@ -262,7 +262,7 @@ const LinkageChain = forwardRef<HTMLDivElement, { linkages: ROIPipelineData["lin
   const [expandedLink, setExpandedLink] = useState<number | null>(null);
 
   return (
-    <div className="relative space-y-0">
+    <div ref={ref} className="relative space-y-0">
       {linkages.map((link, i) => {
         const isHigh = link.confidence >= 0.8;
         const isMed = link.confidence >= 0.5;
