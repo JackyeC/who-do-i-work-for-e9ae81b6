@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Sora:wght@400;500;600;700;800&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Libre+Baskerville:ital,wght@0,400;0,700;1,400&family=IBM+Plex+Sans:wght@300;400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap');
 
 @tailwind base;
 @tailwind components;
@@ -6,122 +6,64 @@
 
 @layer base {
   :root {
-    --background: 220 14% 97%;
-    --foreground: 210 24% 16%;
+    --background: 220 20% 4%;
+    --foreground: 34 24% 90%;
 
-    --card: 0 0% 100%;
-    --card-foreground: 210 24% 16%;
+    --card: 225 18% 7%;
+    --card-foreground: 34 24% 90%;
 
-    --popover: 0 0% 100%;
-    --popover-foreground: 210 24% 16%;
+    --popover: 225 18% 7%;
+    --popover-foreground: 34 24% 90%;
 
-    --primary: 245 58% 67%;
-    --primary-foreground: 0 0% 100%;
+    --primary: 43 53% 54%;
+    --primary-foreground: 0 0% 0%;
 
-    --secondary: 220 14% 94%;
-    --secondary-foreground: 210 24% 16%;
+    --secondary: 220 16% 10%;
+    --secondary-foreground: 34 24% 90%;
 
-    --muted: 220 14% 94%;
-    --muted-foreground: 215 14% 46%;
+    --muted: 220 14% 9%;
+    --muted-foreground: 30 5% 53%;
 
-    --accent: 220 14% 92%;
-    --accent-foreground: 210 24% 16%;
+    --accent: 220 16% 12%;
+    --accent-foreground: 34 24% 90%;
 
-    --destructive: 358 65% 59%;
+    --destructive: 7 65% 45%;
     --destructive-foreground: 0 0% 100%;
 
-    --border: 220 13% 90%;
-    --input: 220 13% 90%;
-    --ring: 245 58% 67%;
+    --border: 220 14% 16%;
+    --input: 220 14% 16%;
+    --ring: 43 53% 54%;
 
-    --radius: 0.75rem;
+    --radius: 0px;
 
     /* Signal tokens */
-    --civic-red: 358 65% 59%;
-    --civic-yellow: 42 90% 48%;
-    --civic-green: 152 56% 39%;
+    --civic-red: 7 65% 45%;
+    --civic-yellow: 33 90% 44%;
+    --civic-green: 152 46% 42%;
     --civic-blue: 218 55% 48%;
     --civic-navy: 225 42% 15%;
-    --civic-slate: 215 14% 46%;
-    --civic-surface: 220 14% 97%;
+    --civic-slate: 225 12% 55%;
+    --civic-surface: 225 18% 7%;
 
-    /* Accent gold */
-    --civic-gold: 38 72% 50%;
-    --civic-gold-muted: 38 35% 68%;
-    --civic-gold-light: 38 50% 92%;
+    /* Gold accent */
+    --civic-gold: 43 53% 54%;
+    --civic-gold-muted: 43 30% 36%;
+    --civic-gold-light: 43 53% 54%;
 
-    /* Premium surface tokens */
-    --surface-elevated: 0 0% 100%;
-    --surface-sunken: 220 14% 94%;
-    --surface-premium: 245 58% 67%;
-    --glow-primary: 245 58% 67%;
-    --glow-gold: 38 72% 50%;
+    /* Surface tokens */
+    --surface-elevated: 225 18% 9%;
+    --surface-sunken: 220 20% 3%;
+    --surface-2: 220 18% 11%;
+    --border-2: 220 12% 21%;
 
-    --sidebar-background: 0 0% 98%;
-    --sidebar-foreground: 240 5.3% 26.1%;
-    --sidebar-primary: 240 5.9% 10%;
-    --sidebar-primary-foreground: 0 0% 98%;
-    --sidebar-accent: 240 4.8% 95.9%;
-    --sidebar-accent-foreground: 240 5.9% 10%;
-    --sidebar-border: 220 13% 91%;
-    --sidebar-ring: 245 58% 67%;
-  }
-
-  .dark {
-    --background: 225 30% 4%;
-    --foreground: 220 14% 92%;
-
-    --card: 225 26% 7%;
-    --card-foreground: 220 14% 92%;
-
-    --popover: 225 26% 7%;
-    --popover-foreground: 220 14% 92%;
-
-    --primary: 245 58% 67%;
-    --primary-foreground: 0 0% 100%;
-
-    --secondary: 225 20% 12%;
-    --secondary-foreground: 220 14% 92%;
-
-    --muted: 225 20% 11%;
-    --muted-foreground: 225 12% 55%;
-
-    --accent: 225 20% 12%;
-    --accent-foreground: 220 14% 92%;
-
-    --destructive: 358 60% 45%;
-    --destructive-foreground: 0 0% 100%;
-
-    --border: 225 20% 14%;
-    --input: 225 20% 14%;
-    --ring: 245 58% 67%;
-
-    --civic-red: 358 65% 55%;
-    --civic-yellow: 42 90% 55%;
-    --civic-green: 152 56% 48%;
-    --civic-blue: 218 55% 58%;
-    --civic-navy: 245 58% 67%;
-    --civic-slate: 225 12% 60%;
-    --civic-surface: 225 26% 7%;
-
-    --civic-gold: 38 55% 58%;
-    --civic-gold-muted: 38 30% 42%;
-    --civic-gold-light: 38 25% 16%;
-
-    --surface-elevated: 225 26% 9%;
-    --surface-sunken: 225 30% 3%;
-    --surface-premium: 245 58% 67%;
-    --glow-primary: 245 58% 67%;
-    --glow-gold: 38 55% 58%;
-
-    --sidebar-background: 240 5.9% 10%;
-    --sidebar-foreground: 240 4.8% 95.9%;
-    --sidebar-primary: 245 58% 67%;
-    --sidebar-primary-foreground: 0 0% 100%;
-    --sidebar-accent: 240 3.7% 15.9%;
-    --sidebar-accent-foreground: 240 4.8% 95.9%;
-    --sidebar-border: 240 3.7% 15.9%;
-    --sidebar-ring: 245 58% 67%;
+    --sidebar-background: 225 18% 7%;
+    --sidebar-foreground: 34 24% 90%;
+    --sidebar-primary: 43 53% 54%;
+    --sidebar-primary-foreground: 0 0% 0%;
+    --sidebar-accent: 220 16% 12%;
+    --sidebar-accent-foreground: 34 24% 90%;
+    --sidebar-border: 220 14% 16%;
+    --sidebar-ring: 43 53% 54%;
   }
 }
 
@@ -132,64 +74,55 @@
 
   body {
     @apply bg-background text-foreground antialiased;
-    font-family: 'Inter', system-ui, -apple-system, sans-serif;
-    font-size: 18px;
-    line-height: 1.6;
+    font-family: 'IBM Plex Sans', system-ui, -apple-system, sans-serif;
+    font-size: 13px;
+    line-height: 1.5;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
   }
 
   h1, h2, h3 {
-    font-family: 'Sora', 'Inter', system-ui, sans-serif;
-    letter-spacing: -0.025em;
-    line-height: 1.25;
+    font-family: 'Libre Baskerville', Georgia, serif;
+    line-height: 1.2;
   }
-
-  h1 { line-height: 1.15; }
-  h2 { line-height: 1.2; }
 
   p, li, td {
     line-height: 1.6;
   }
-
-  @media (max-width: 640px) {
-    body {
-      font-size: 16px;
-    }
-  }
 }
 
 @layer utilities {
-  /* Premium card elevation */
-  .card-elevated {
-    @apply bg-card border border-border/50;
-    box-shadow:
-      0 1px 3px 0 hsl(var(--foreground) / 0.04),
-      0 6px 24px -6px hsl(var(--foreground) / 0.06);
+  .font-serif {
+    font-family: 'Libre Baskerville', Georgia, serif;
   }
 
-  .card-elevated:hover {
-    box-shadow:
-      0 2px 6px 0 hsl(var(--foreground) / 0.06),
-      0 12px 40px -8px hsl(var(--foreground) / 0.1);
+  .font-mono {
+    font-family: 'IBM Plex Mono', monospace;
   }
 
-  /* Official card with accent top-border */
+  .font-sans {
+    font-family: 'IBM Plex Sans', system-ui, sans-serif;
+  }
+
+  .font-data {
+    font-family: 'IBM Plex Mono', monospace;
+    font-variant-numeric: tabular-nums;
+  }
+
+  .font-display-number {
+    font-family: 'Libre Baskerville', Georgia, serif;
+    font-variant-numeric: tabular-nums;
+  }
+
+  /* Terminal card */
+  .card-terminal {
+    @apply bg-card border border-border;
+  }
+
+  /* Gold accent top border */
   .card-official {
-    @apply bg-card border border-border/50;
-    border-top: 3px solid hsl(var(--primary) / 0.5);
-    box-shadow:
-      0 1px 3px 0 hsl(var(--foreground) / 0.03),
-      0 6px 24px -6px hsl(var(--foreground) / 0.06);
-  }
-
-  /* Premium glass surface */
-  .surface-glass {
-    @apply backdrop-blur-xl;
-    background: hsl(var(--card) / 0.85);
-    box-shadow:
-      0 1px 3px hsl(var(--foreground) / 0.04),
-      0 0 0 1px hsl(var(--foreground) / 0.03);
+    @apply bg-card border border-border;
+    border-top: 2px solid hsl(var(--primary));
   }
 
   /* Gold shimmer line */
@@ -205,18 +138,9 @@
     );
   }
 
-  /* Premium glow */
-  .glow-gold {
-    box-shadow: 0 0 40px -12px hsl(var(--civic-gold) / 0.2), 0 0 80px -20px hsl(var(--civic-gold) / 0.1);
-  }
-
-  /* Section spacing — generous */
+  /* Section spacing */
   .section-padding {
-    @apply py-20 sm:py-28 lg:py-32;
-  }
-
-  .section-padding-sm {
-    @apply py-14 sm:py-20 lg:py-24;
+    @apply py-16 sm:py-24;
   }
 
   /* Text balance */
@@ -224,39 +148,32 @@
     text-wrap: balance;
   }
 
-  /* Custom height utility */
   .h-13 {
     height: 3.25rem;
   }
 
-  /* Regal divider */
-  .divider-ornament {
-    position: relative;
-    text-align: center;
-  }
-  .divider-ornament::before {
-    content: '';
-    position: absolute;
-    left: 50%;
-    top: 50%;
-    transform: translateX(-50%);
-    width: 40px;
-    height: 2px;
-    background: linear-gradient(90deg, transparent, hsl(var(--primary)), transparent);
-    border-radius: 1px;
+  /* Risk dots */
+  .dot-high { background: hsl(var(--civic-red)); }
+  .dot-med { background: hsl(var(--civic-yellow)); }
+  .dot-low { background: hsl(var(--civic-green)); }
+
+  /* Ticker animation */
+  @keyframes ticker-scroll {
+    from { transform: translateX(0); }
+    to { transform: translateX(-50%); }
   }
 
-  /* Monospace data values */
-  .font-data {
-    font-family: 'JetBrains Mono', 'Fira Code', monospace;
-    font-variant-numeric: tabular-nums;
-    letter-spacing: -0.02em;
+  .animate-ticker {
+    animation: ticker-scroll 40s linear infinite;
   }
 
-  /* Premium number styling */
-  .font-display-number {
-    font-family: 'Sora', 'Inter', sans-serif;
-    font-variant-numeric: tabular-nums;
-    letter-spacing: -0.04em;
+  /* Scrollbar styling */
+  .scrollbar-thin {
+    scrollbar-width: thin;
+    scrollbar-color: hsl(var(--border-2)) transparent;
   }
+
+  .scrollbar-thin::-webkit-scrollbar { width: 4px; height: 4px; }
+  .scrollbar-thin::-webkit-scrollbar-track { background: transparent; }
+  .scrollbar-thin::-webkit-scrollbar-thumb { background: hsl(var(--border-2)); }
 }
