@@ -270,15 +270,8 @@ export function SignalsThisWeek() {
             ? translation.plain_summary
             : buildHeadline(signal, company?.name || "Unknown Employer", config);
 
-          return (
-            <div
-              key={signal.id}
-              className={cn(
-                "relative p-5 flex flex-col justify-between min-h-[180px] group cursor-pointer transition-colors hover:bg-accent/30",
-                idx < 2 && "md:border-r border-border/30",
-                idx < topStories.length - 1 && "border-b md:border-b-0 border-border/30"
-              )}
-            >
+          const cardContent = (
+            <>
               {/* Category tag */}
               <div className="flex items-center gap-2 mb-3">
                 <span className={cn("w-2 h-2 rounded-full", config.accent)} />
@@ -302,30 +295,51 @@ export function SignalsThisWeek() {
 
               {/* Footer */}
               <div className="flex items-center justify-between mt-3 pt-2 border-t border-border/20">
-                {company ? (
-                  <Link to={`/company/${company.slug}`} className="text-[11px] font-semibold text-foreground hover:text-primary flex items-center gap-1.5">
-                    {company.logo_url ? (
-                      <img src={company.logo_url} alt="" className="w-4 h-4 rounded object-contain" />
-                    ) : (
-                      <Building2 className="w-3.5 h-3.5 text-muted-foreground" />
-                    )}
-                    {company.name}
-                  </Link>
-                ) : (
-                  <span className="text-[11px] text-muted-foreground">Unknown employer</span>
-                )}
+                <span className="text-[11px] font-semibold text-foreground flex items-center gap-1.5">
+                  {company?.logo_url ? (
+                    <img src={company.logo_url} alt="" className="w-4 h-4 rounded object-contain" />
+                  ) : (
+                    <Building2 className="w-3.5 h-3.5 text-muted-foreground" />
+                  )}
+                  {company?.name || "Unknown employer"}
+                </span>
                 <div className="flex items-center gap-2">
                   <span className="text-[9px] text-muted-foreground flex items-center gap-0.5">
                     <Shield className="w-2.5 h-2.5" />
                     {signal.confidence_level === "high" ? "Strong" : signal.confidence_level === "medium" ? "Moderate" : "Emerging"}
                   </span>
                   {signal.source_url && (
-                    <a href={signal.source_url} target="_blank" rel="noopener noreferrer" className="text-primary hover:text-primary/80">
+                    <a href={signal.source_url} target="_blank" rel="noopener noreferrer" onClick={e => e.stopPropagation()} className="text-primary hover:text-primary/80">
                       <ExternalLink className="w-3 h-3" />
                     </a>
                   )}
                 </div>
               </div>
+            </>
+          );
+
+          return company ? (
+            <Link
+              key={signal.id}
+              to={`/company/${company.slug}`}
+              className={cn(
+                "relative p-5 flex flex-col justify-between min-h-[180px] group cursor-pointer transition-colors hover:bg-accent/30 no-underline",
+                idx < 2 && "md:border-r border-border/30",
+                idx < topStories.length - 1 && "border-b md:border-b-0 border-border/30"
+              )}
+            >
+              {cardContent}
+            </Link>
+          ) : (
+            <div
+              key={signal.id}
+              className={cn(
+                "relative p-5 flex flex-col justify-between min-h-[180px] group transition-colors",
+                idx < 2 && "md:border-r border-border/30",
+                idx < topStories.length - 1 && "border-b md:border-b-0 border-border/30"
+              )}
+            >
+              {cardContent}
             </div>
           );
         })}
