@@ -16,6 +16,7 @@ import { HowDoIGetThere } from "@/components/career/HowDoIGetThere";
 import { OutreachIntelligence } from "@/components/career/OutreachIntelligence";
 import { RelationshipDashboard } from "@/components/career/RelationshipDashboard";
 import { FirstLoginOnboarding } from "@/components/FirstLoginOnboarding";
+import { DataWipeButton } from "@/components/career/DataWipeButton";
 import { supabase } from "@/integrations/supabase/client";
 import { ClipboardCheck } from "lucide-react";
 
