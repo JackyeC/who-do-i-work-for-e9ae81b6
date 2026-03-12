@@ -551,7 +551,7 @@ export default function CompanyProfile() {
 
             {/* ─── OVERVIEW TAB ─── */}
             <TabsContent value="overview" className="mt-6 space-y-6">
-              {/* Insights summary */}
+              {/* Insights summary — only when there's at least some data */}
               {dbCompany && (() => {
                 const hasPoliticalSpending = totalPac > 0 || lobbyingSpend > 0 || (dbCandidates?.length || 0) > 0;
                 const insights = [
@@ -562,14 +562,18 @@ export default function CompanyProfile() {
                   { key: "hiring", label: "Hiring Technology", found: !!tiAiHr, detail: "AI tools detected", icon: <Brain className="w-4 h-4 text-primary" /> },
                   { key: "benefits", label: "Benefits Data", found: !!tiBenefits, detail: "Signals found", icon: <Briefcase className="w-4 h-4 text-primary" /> },
                 ];
+                const hasAnyInsight = insights.some(i => i.found) || hasPoliticalSpending;
+                if (!hasAnyInsight) return null;
                 return <ProfileInsightsSummary companyName={name} hasPoliticalSpending={hasPoliticalSpending} insights={insights} />;
               })()}
 
-              {/* Transparency Index */}
-              <TransparencyIndex categories={transparencyCategories} />
+              {/* Transparency Index — only show when there's at least one signal */}
+              {transparencyCategories.some(c => c.hasSignals) && (
+                <TransparencyIndex categories={transparencyCategories} />
+              )}
 
-              {/* What You're Supporting */}
-              {dbCompany && (
+              {/* What You're Supporting — only when there's political/influence data */}
+              {dbCompany && (totalPac > 0 || lobbyingSpend > 0 || (dbCandidates?.length || 0) > 0 || (dbIssueSignals?.length || 0) > 0) && (
                 <WhatYoureSupportingCard
                   companyName={name}
                   totalPacSpending={totalPac}
