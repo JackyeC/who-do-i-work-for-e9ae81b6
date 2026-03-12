@@ -96,6 +96,21 @@ export default function StrategicOfferReview() {
   const [uploadReviewId, setUploadReviewId] = useState<string | null>(null);
   const [showConsentModal, setShowConsentModal] = useState(false);
 
+  // Career path signals for the forecast module
+  const { data: careerSignals = [] } = useQuery({
+    queryKey: ["career-forecast-signals", offer.companyId],
+    queryFn: async () => {
+      if (!offer.companyId) return [];
+      const { data } = await supabase
+        .from("company_values_signals" as any)
+        .select("*")
+        .eq("company_id", offer.companyId)
+        .order("created_at", { ascending: false });
+      return (data || []) as any[];
+    },
+    enabled: !!offer.companyId && step === 3,
+  });
+
   const [companyResults, setCompanyResults] = useState<any[]>([]);
 
   const [offer, setOffer] = useState<OfferInput>({
