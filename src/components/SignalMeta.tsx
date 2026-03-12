@@ -134,6 +134,16 @@ export function SignalMeta({
             View source <ExternalLink className="w-2.5 h-2.5" />
           </a>
         )}
+
+        {/* Verify This Signal */}
+        {signalType && (
+          <VerifySignalButton
+            signalType={signalType}
+            signalId={signalId}
+            companyId={companyId}
+            compact={compact}
+          />
+        )}
       </div>
     </div>
   );
