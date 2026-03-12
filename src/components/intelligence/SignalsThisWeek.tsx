@@ -80,7 +80,7 @@ export function SignalsThisWeek() {
   const [translations, setTranslations] = useState<Record<number, Translation>>({});
   const [translating, setTranslating] = useState(false);
   const [translated, setTranslated] = useState(false);
-  const [timeRange, setTimeRange] = useState<TimeRange>("30d");
+  const [timeRange, setTimeRange] = useState<TimeRange>("7d");
 
   const cutoffDate = getCutoffDate(timeRange);
 
