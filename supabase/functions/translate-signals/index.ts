@@ -30,6 +30,26 @@ serve(async (req) => {
       });
     }
 
+    // Usage quota check
+    const { createClient: createServiceClient } = await import("https://esm.sh/@supabase/supabase-js@2");
+    const serviceClient = createServiceClient(
+      Deno.env.get("SUPABASE_URL")!,
+      Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!
+    );
+    const since = new Date(Date.now() - 24 * 60 * 60 * 1000).toISOString();
+    const { count } = await serviceClient
+      .from("user_usage")
+      .select("id", { count: "exact", head: true })
+      .eq("user_id", user.id)
+      .eq("function_name", "translate-signals")
+      .gte("used_at", since);
+    const DAILY_LIMIT = 30;
+    if ((count ?? 0) >= DAILY_LIMIT) {
+      return new Response(JSON.stringify({ error: "Daily usage limit reached. You can run up to " + DAILY_LIMIT + " signal translations per day." }), {
+        status: 429, headers: { ...corsHeaders, "Content-Type": "application/json" },
+      });
+    }
+
     const LOVABLE_API_KEY = Deno.env.get("LOVABLE_API_KEY");
     if (!LOVABLE_API_KEY) throw new Error("LOVABLE_API_KEY not configured");
 
@@ -129,6 +149,9 @@ Return your analysis using the provided tool.`;
     if (!toolCall) throw new Error("No tool call returned");
 
     const result = JSON.parse(toolCall.function.arguments);
+
+    // Log usage
+    await serviceClient.from("user_usage").insert({ user_id: user.id, function_name: "translate-signals" });
 
     return new Response(JSON.stringify({ success: true, ...result }), {
       headers: { ...corsHeaders, "Content-Type": "application/json" },

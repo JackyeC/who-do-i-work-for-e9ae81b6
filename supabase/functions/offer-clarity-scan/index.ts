@@ -31,6 +31,23 @@ serve(async (req) => {
       });
     }
 
+    // Usage quota check
+    const serviceKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!;
+    const serviceQuotaClient = createClient(supabaseUrl, serviceKey);
+    const since = new Date(Date.now() - 24 * 60 * 60 * 1000).toISOString();
+    const { count } = await serviceQuotaClient
+      .from("user_usage")
+      .select("id", { count: "exact", head: true })
+      .eq("user_id", user.id)
+      .eq("function_name", "offer-clarity-scan")
+      .gte("used_at", since);
+    const DAILY_LIMIT = 10;
+    if ((count ?? 0) >= DAILY_LIMIT) {
+      return new Response(JSON.stringify({ error: "Daily usage limit reached. You can run up to " + DAILY_LIMIT + " offer scans per day." }), {
+        status: 429, headers: { ...corsHeaders, "Content-Type": "application/json" },
+      });
+    }
+
     const LOVABLE_API_KEY = Deno.env.get("LOVABLE_API_KEY");
     if (!LOVABLE_API_KEY) throw new Error("LOVABLE_API_KEY not configured");
 
@@ -209,6 +226,9 @@ Use the tool to return your analysis.`;
     if (!toolCall) throw new Error("No tool call returned from AI");
 
     const report = JSON.parse(toolCall.function.arguments);
+
+    // Log usage
+    await serviceQuotaClient.from("user_usage").insert({ user_id: user.id, function_name: "offer-clarity-scan" });
 
     return new Response(JSON.stringify({ success: true, report }), {
       headers: { ...corsHeaders, "Content-Type": "application/json" },

@@ -290,6 +290,25 @@ serve(async (req) => {
       });
     }
 
+    // Usage quota check
+    const serviceClient = (await import("https://esm.sh/@supabase/supabase-js@2")).createClient(
+      Deno.env.get("SUPABASE_URL")!,
+      Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!
+    );
+    const since = new Date(Date.now() - 24 * 60 * 60 * 1000).toISOString();
+    const { count } = await serviceClient
+      .from("user_usage")
+      .select("id", { count: "exact", head: true })
+      .eq("user_id", user.id)
+      .eq("function_name", "career-discovery")
+      .gte("used_at", since);
+    const DAILY_LIMIT = 20;
+    if ((count ?? 0) >= DAILY_LIMIT) {
+      return new Response(JSON.stringify({ error: "Daily usage limit reached. You can run up to " + DAILY_LIMIT + " career discovery analyses per day." }), {
+        status: 429, headers: { ...corsHeaders, "Content-Type": "application/json" },
+      });
+    }
+
     const { type, profile } = await req.json();
     
     if (!type || !TOOLS[type]) {
@@ -376,6 +395,9 @@ Target Role: ${profile.targetRole || "AI should suggest roles"}
     }
 
     const result = JSON.parse(toolCall.function.arguments);
+
+    // Log usage
+    await serviceClient.from("user_usage").insert({ user_id: user.id, function_name: "career-discovery" });
 
     return new Response(JSON.stringify({ success: true, data: result }), {
       headers: { ...corsHeaders, "Content-Type": "application/json" },
