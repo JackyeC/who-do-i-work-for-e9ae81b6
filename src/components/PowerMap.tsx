@@ -2,8 +2,7 @@ import { useCallback, useMemo, useState, useRef, useEffect } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { Network, Maximize2, Minimize2, ZoomIn } from "lucide-react";
-import { cn } from "@/lib/utils";
+import { Network, ZoomIn, Minimize2, Filter } from "lucide-react";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 
@@ -52,7 +51,22 @@ interface PowerMapProps {
 export function PowerMap({ companyId, companyName, executives }: PowerMapProps) {
   const [revealed, setRevealed] = useState(false);
   const [selectedNode, setSelectedNode] = useState<string | null>(null);
+  const [activeFilters, setActiveFilters] = useState<Set<string>>(new Set());
+  const [hoveredNode, setHoveredNode] = useState<string | null>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
+  const containerRef = useRef<HTMLDivElement>(null);
+  const [canvasSize, setCanvasSize] = useState({ w: 800, h: 500 });
+
+  // Responsive canvas sizing
+  useEffect(() => {
+    if (!containerRef.current || !revealed) return;
+    const obs = new ResizeObserver(([entry]) => {
+      const w = Math.floor(entry.contentRect.width);
+      setCanvasSize({ w: Math.max(w, 400), h: Math.min(Math.max(w * 0.55, 350), 600) });
+    });
+    obs.observe(containerRef.current);
+    return () => obs.disconnect();
+  }, [revealed]);
 
   // Fetch entity linkages for the power map
   const { data: linkages } = useQuery({
@@ -93,35 +107,30 @@ export function PowerMap({ companyId, companyName, executives }: PowerMapProps) 
   });
 
   // Build graph data
-  const { nodes, edges } = useMemo(() => {
+  const { allNodes, allEdges } = useMemo(() => {
     const nodeMap = new Map<string, PowerMapNode>();
     const edgeList: PowerMapEdge[] = [];
 
-    // Company node
     nodeMap.set("company", { id: "company", label: companyName, type: "company" });
 
-    // Executives
     (executives || []).forEach((e) => {
       const nid = `exec-${e.id}`;
       nodeMap.set(nid, { id: nid, label: e.name, type: "executive", value: e.total_donations });
       edgeList.push({ source: "company", target: nid, label: "Executive" });
     });
 
-    // Board members
     (boardMembers || []).forEach((b: any) => {
       const nid = `board-${b.id}`;
       nodeMap.set(nid, { id: nid, label: b.name, type: "board_member" });
       edgeList.push({ source: "company", target: nid, label: "Board Member" });
     });
 
-    // Trade associations
     (tradeAssociations || []).forEach((t: any) => {
       const nid = `trade-${t.id}`;
       nodeMap.set(nid, { id: nid, label: t.association_name, type: "trade_association" });
       edgeList.push({ source: "company", target: nid, label: t.relationship_type || "Member" });
     });
 
-    // Entity linkages
     (linkages || []).forEach((l: any) => {
       const sourceId = `entity-${l.source_entity_name}`;
       const targetId = `entity-${l.target_entity_name}`;
@@ -136,105 +145,142 @@ export function PowerMap({ companyId, companyName, executives }: PowerMapProps) 
 
       if (!nodeMap.has(sourceId)) {
         nodeMap.set(sourceId, {
-          id: sourceId,
-          label: l.source_entity_name,
-          type: typeMap[l.source_entity_type] || "company",
-          value: l.amount,
+          id: sourceId, label: l.source_entity_name,
+          type: typeMap[l.source_entity_type] || "company", value: l.amount,
         });
       }
       if (!nodeMap.has(targetId)) {
         nodeMap.set(targetId, {
-          id: targetId,
-          label: l.target_entity_name,
-          type: typeMap[l.target_entity_type] || "political_committee",
-          value: l.amount,
+          id: targetId, label: l.target_entity_name,
+          type: typeMap[l.target_entity_type] || "political_committee", value: l.amount,
         });
       }
 
       edgeList.push({
-        source: sourceId,
-        target: targetId,
-        label: l.link_type?.replace(/_/g, " ") || "connected",
-        amount: l.amount,
+        source: sourceId, target: targetId,
+        label: l.link_type?.replace(/_/g, " ") || "connected", amount: l.amount,
       });
     });
 
-    return { nodes: Array.from(nodeMap.values()), edges: edgeList };
+    return { allNodes: Array.from(nodeMap.values()), allEdges: edgeList };
   }, [companyName, executives, boardMembers, tradeAssociations, linkages]);
 
-  // Simple force-directed layout rendered on canvas
+  // Determine which types are present for filter buttons
+  const presentTypes = useMemo(() => {
+    const types = new Set<string>();
+    allNodes.forEach(n => types.add(n.type));
+    return types;
+  }, [allNodes]);
+
+  // Filter nodes & edges
+  const { nodes, edges } = useMemo(() => {
+    if (activeFilters.size === 0) return { nodes: allNodes, edges: allEdges };
+    const visibleNodes = allNodes.filter(n => n.type === "company" || activeFilters.has(n.type));
+    const visibleIds = new Set(visibleNodes.map(n => n.id));
+    const visibleEdges = allEdges.filter(e => visibleIds.has(e.source) && visibleIds.has(e.target));
+    return { nodes: visibleNodes, edges: visibleEdges };
+  }, [allNodes, allEdges, activeFilters]);
+
+  // Neighbor set for highlighting
+  const neighborIds = useMemo(() => {
+    const focus = hoveredNode || selectedNode;
+    if (!focus) return null;
+    const set = new Set<string>([focus]);
+    edges.forEach(e => {
+      if (e.source === focus) set.add(e.target);
+      if (e.target === focus) set.add(e.source);
+    });
+    return set;
+  }, [hoveredNode, selectedNode, edges]);
+
+  // Force-directed layout
   const [positions, setPositions] = useState<Record<string, { x: number; y: number }>>({});
 
   useEffect(() => {
     if (nodes.length === 0) return;
-    const w = 600, h = 400;
+    const { w, h } = canvasSize;
     const pos: Record<string, { x: number; y: number }> = {};
-    // Initialize positions in a circle
-    nodes.forEach((n, i) => {
-      const angle = (2 * Math.PI * i) / nodes.length;
-      const r = Math.min(w, h) * 0.35;
+
+    // Place company at center, others in a circle
+    pos["company"] = { x: w / 2, y: h / 2 };
+    const others = nodes.filter(n => n.id !== "company");
+    others.forEach((n, i) => {
+      const angle = (2 * Math.PI * i) / others.length;
+      const r = Math.min(w, h) * 0.38;
       pos[n.id] = { x: w / 2 + r * Math.cos(angle), y: h / 2 + r * Math.sin(angle) };
     });
 
-    // Simple force simulation (few iterations)
-    for (let iter = 0; iter < 50; iter++) {
-      // Repulsion between all nodes
+    const nodeCount = nodes.length;
+    const repulsion = Math.max(2000, nodeCount * 60);
+    const idealDist = Math.max(140, Math.min(w, h) / Math.sqrt(nodeCount) * 1.2);
+    const iterations = 80;
+
+    for (let iter = 0; iter < iterations; iter++) {
+      const cooling = 1 - iter / iterations;
+
+      // Repulsion
       for (let i = 0; i < nodes.length; i++) {
         for (let j = i + 1; j < nodes.length; j++) {
           const a = pos[nodes[i].id], b = pos[nodes[j].id];
           const dx = b.x - a.x, dy = b.y - a.y;
           const dist = Math.max(Math.sqrt(dx * dx + dy * dy), 1);
-          const force = 800 / (dist * dist);
+          const force = (repulsion / (dist * dist)) * cooling;
           const fx = (dx / dist) * force, fy = (dy / dist) * force;
-          a.x -= fx; a.y -= fy;
-          b.x += fx; b.y += fy;
+          if (nodes[i].id !== "company") { a.x -= fx; a.y -= fy; }
+          if (nodes[j].id !== "company") { b.x += fx; b.y += fy; }
         }
       }
+
       // Attraction along edges
       edges.forEach((e) => {
         const a = pos[e.source], b = pos[e.target];
         if (!a || !b) return;
         const dx = b.x - a.x, dy = b.y - a.y;
         const dist = Math.sqrt(dx * dx + dy * dy);
-        const force = (dist - 100) * 0.01;
+        const force = (dist - idealDist) * 0.008 * cooling;
         const fx = (dx / Math.max(dist, 1)) * force;
         const fy = (dy / Math.max(dist, 1)) * force;
-        a.x += fx; a.y += fy;
-        b.x -= fx; b.y -= fy;
+        if (e.source !== "company") { a.x += fx; a.y += fy; }
+        if (e.target !== "company") { b.x -= fx; b.y -= fy; }
       });
-      // Center gravity
+
+      // Center gravity (gentle)
       nodes.forEach((n) => {
+        if (n.id === "company") return;
         const p = pos[n.id];
-        p.x += (w / 2 - p.x) * 0.01;
-        p.y += (h / 2 - p.y) * 0.01;
-        // Bounds
-        p.x = Math.max(40, Math.min(w - 40, p.x));
-        p.y = Math.max(40, Math.min(h - 40, p.y));
+        p.x += (w / 2 - p.x) * 0.005 * cooling;
+        p.y += (h / 2 - p.y) * 0.005 * cooling;
+        // Keep in bounds with padding
+        p.x = Math.max(60, Math.min(w - 60, p.x));
+        p.y = Math.max(50, Math.min(h - 50, p.y));
       });
     }
     setPositions(pos);
-  }, [nodes, edges]);
+  }, [nodes, edges, canvasSize]);
 
-  // Draw on canvas
+  // Draw
   useEffect(() => {
     const canvas = canvasRef.current;
     if (!canvas || Object.keys(positions).length === 0) return;
     const ctx = canvas.getContext("2d");
     if (!ctx) return;
+    const { w, h } = canvasSize;
 
     const dpr = window.devicePixelRatio || 1;
-    canvas.width = 600 * dpr;
-    canvas.height = 400 * dpr;
+    canvas.width = w * dpr;
+    canvas.height = h * dpr;
     ctx.scale(dpr, dpr);
+    ctx.clearRect(0, 0, w, h);
 
-    ctx.clearRect(0, 0, 600, 400);
+    const hasFocus = !!neighborIds;
 
     // Edges
-    ctx.strokeStyle = "rgba(128,128,128,0.2)";
-    ctx.lineWidth = 1;
     edges.forEach((e) => {
       const a = positions[e.source], b = positions[e.target];
       if (!a || !b) return;
+      const highlighted = !hasFocus || (neighborIds!.has(e.source) && neighborIds!.has(e.target));
+      ctx.strokeStyle = highlighted ? "rgba(128,128,128,0.3)" : "rgba(128,128,128,0.06)";
+      ctx.lineWidth = highlighted ? 1.5 : 0.5;
       ctx.beginPath();
       ctx.moveTo(a.x, a.y);
       ctx.lineTo(b.x, b.y);
@@ -245,49 +291,82 @@ export function PowerMap({ companyId, companyName, executives }: PowerMapProps) 
     nodes.forEach((n) => {
       const p = positions[n.id];
       if (!p) return;
-      const r = n.id === "company" ? 18 : 10;
+      const r = n.id === "company" ? 20 : 9;
       const color = NODE_COLORS[n.type] || "#888";
       const isSelected = selectedNode === n.id;
+      const isNeighbor = !hasFocus || neighborIds!.has(n.id);
 
       ctx.beginPath();
       ctx.arc(p.x, p.y, r + (isSelected ? 3 : 0), 0, 2 * Math.PI);
       ctx.fillStyle = color;
-      ctx.globalAlpha = isSelected ? 1 : 0.85;
+      ctx.globalAlpha = isNeighbor ? (isSelected ? 1 : 0.9) : 0.12;
       ctx.fill();
-      ctx.globalAlpha = 1;
 
       if (isSelected) {
         ctx.strokeStyle = color;
         ctx.lineWidth = 2;
+        ctx.globalAlpha = 1;
         ctx.stroke();
       }
 
-      // Label
-      ctx.fillStyle = getComputedStyle(document.documentElement).getPropertyValue('--foreground') ? '#e0e0e0' : '#333';
-      ctx.font = n.id === "company" ? "bold 10px sans-serif" : "9px sans-serif";
-      ctx.textAlign = "center";
-      ctx.fillText(n.label.length > 18 ? n.label.slice(0, 16) + "…" : n.label, p.x, p.y + r + 12);
+      // Label — only show for focused/neighbor nodes or if graph is small
+      if (isNeighbor || nodes.length <= 15) {
+        ctx.fillStyle = "#c0c0c0";
+        ctx.globalAlpha = isNeighbor ? 0.95 : 0.2;
+        ctx.font = n.id === "company" ? "bold 11px sans-serif" : "9px sans-serif";
+        ctx.textAlign = "center";
+        const maxLen = n.id === "company" ? 24 : 16;
+        const label = n.label.length > maxLen ? n.label.slice(0, maxLen - 1) + "…" : n.label;
+        ctx.fillText(label, p.x, p.y + r + 13);
+      }
+
+      ctx.globalAlpha = 1;
     });
-  }, [positions, nodes, edges, selectedNode]);
+  }, [positions, nodes, edges, selectedNode, neighborIds, canvasSize]);
 
-  // Handle canvas click
-  const handleCanvasClick = useCallback((e: React.MouseEvent<HTMLCanvasElement>) => {
-    const rect = canvasRef.current?.getBoundingClientRect();
-    if (!rect) return;
-    const x = e.clientX - rect.left;
-    const y = e.clientY - rect.top;
-
+  // Canvas mouse interaction
+  const getNodeAtPos = useCallback((cx: number, cy: number) => {
     for (const n of nodes) {
       const p = positions[n.id];
       if (!p) continue;
-      const dist = Math.sqrt((x - p.x) ** 2 + (y - p.y) ** 2);
-      if (dist < 15) {
-        setSelectedNode(selectedNode === n.id ? null : n.id);
-        return;
-      }
+      const dist = Math.sqrt((cx - p.x) ** 2 + (cy - p.y) ** 2);
+      if (dist < 16) return n.id;
     }
+    return null;
+  }, [nodes, positions]);
+
+  const handleCanvasClick = useCallback((e: React.MouseEvent<HTMLCanvasElement>) => {
+    const rect = canvasRef.current?.getBoundingClientRect();
+    if (!rect) return;
+    const scaleX = canvasSize.w / rect.width;
+    const scaleY = canvasSize.h / rect.height;
+    const x = (e.clientX - rect.left) * scaleX;
+    const y = (e.clientY - rect.top) * scaleY;
+    const hit = getNodeAtPos(x, y);
+    setSelectedNode(hit && hit !== selectedNode ? hit : null);
+  }, [getNodeAtPos, selectedNode, canvasSize]);
+
+  const handleCanvasMove = useCallback((e: React.MouseEvent<HTMLCanvasElement>) => {
+    const rect = canvasRef.current?.getBoundingClientRect();
+    if (!rect) return;
+    const scaleX = canvasSize.w / rect.width;
+    const scaleY = canvasSize.h / rect.height;
+    const x = (e.clientX - rect.left) * scaleX;
+    const y = (e.clientY - rect.top) * scaleY;
+    const hit = getNodeAtPos(x, y);
+    setHoveredNode(hit);
+    if (canvasRef.current) canvasRef.current.style.cursor = hit ? "pointer" : "default";
+  }, [getNodeAtPos, canvasSize]);
+
+  const toggleFilter = (type: string) => {
+    setActiveFilters(prev => {
+      const next = new Set(prev);
+      if (next.has(type)) next.delete(type);
+      else next.add(type);
+      return next;
+    });
     setSelectedNode(null);
-  }, [nodes, positions, selectedNode]);
+  };
 
   const selectedNodeData = selectedNode ? nodes.find((n) => n.id === selectedNode) : null;
   const selectedEdges = selectedNode
@@ -304,13 +383,9 @@ export function PowerMap({ companyId, companyName, executives }: PowerMapProps) 
             See how executives, board members, trade associations, lobbying organizations, and political committees connect.
           </p>
           <p className="text-xs text-muted-foreground/70 mb-6">
-            Interactive influence network • Click any node to explore connections
+            Interactive influence network · Hover to highlight · Click to inspect
           </p>
-          <Button
-            size="lg"
-            onClick={() => setRevealed(true)}
-            className="gap-2"
-          >
+          <Button size="lg" onClick={() => setRevealed(true)} className="gap-2">
             <ZoomIn className="w-4 h-4" />
             Reveal the Power Map
           </Button>
@@ -332,41 +407,64 @@ export function PowerMap({ companyId, companyName, executives }: PowerMapProps) 
           </Badge>
         </CardTitle>
         <p className="text-xs text-muted-foreground">
-          Click any node to explore its connections. This map shows verified relationships from public records.
+          Hover a node to highlight its neighborhood. Click to inspect connections. Use filters to reduce noise.
         </p>
       </CardHeader>
       <CardContent>
-        {/* Legend */}
-        <div className="flex flex-wrap gap-3 mb-3">
-          {Object.entries(NODE_LABELS).map(([type, label]) => (
-            <div key={type} className="flex items-center gap-1.5">
-              <div
-                className="w-2.5 h-2.5 rounded-full"
-                style={{ backgroundColor: NODE_COLORS[type] }}
-              />
-              <span className="text-[10px] text-muted-foreground">{label}</span>
-            </div>
-          ))}
+        {/* Filters + Legend */}
+        <div className="flex flex-wrap gap-2 mb-3">
+          <span className="flex items-center gap-1 text-[10px] text-muted-foreground mr-1">
+            <Filter className="w-3 h-3" /> Filter:
+          </span>
+          {Object.entries(NODE_LABELS).map(([type, label]) => {
+            if (!presentTypes.has(type) || type === "company") return null;
+            const isActive = activeFilters.size === 0 || activeFilters.has(type);
+            return (
+              <button
+                key={type}
+                onClick={() => toggleFilter(type)}
+                className={`flex items-center gap-1.5 px-2 py-0.5 border text-[10px] transition-all ${
+                  isActive
+                    ? "border-border text-foreground bg-muted/50"
+                    : "border-transparent text-muted-foreground/40 opacity-50"
+                }`}
+              >
+                <div
+                  className="w-2 h-2 rounded-full shrink-0"
+                  style={{ backgroundColor: NODE_COLORS[type] }}
+                />
+                {label}
+              </button>
+            );
+          })}
+          {activeFilters.size > 0 && (
+            <button
+              onClick={() => setActiveFilters(new Set())}
+              className="text-[10px] text-primary hover:underline ml-1"
+            >
+              Show all
+            </button>
+          )}
         </div>
 
         {/* Canvas */}
-        <div className="relative rounded-lg border border-border/50 bg-muted/20 overflow-hidden">
+        <div ref={containerRef} className="relative border border-border/50 bg-muted/10 overflow-hidden">
           <canvas
             ref={canvasRef}
-            width={600}
-            height={400}
-            className="w-full cursor-pointer"
-            style={{ height: 400 }}
+            className="w-full cursor-default"
+            style={{ height: canvasSize.h, display: "block" }}
             onClick={handleCanvasClick}
+            onMouseMove={handleCanvasMove}
+            onMouseLeave={() => setHoveredNode(null)}
           />
 
           {/* Selected node info panel */}
           {selectedNodeData && (
-            <div className="absolute bottom-3 left-3 right-3 bg-card/95 backdrop-blur-sm border border-border rounded-lg p-3 shadow-lg">
+            <div className="absolute bottom-3 left-3 right-3 max-w-sm bg-card/95 backdrop-blur-sm border border-border p-3 shadow-lg">
               <div className="flex items-center justify-between mb-2">
                 <div className="flex items-center gap-2">
                   <div
-                    className="w-3 h-3 rounded-full"
+                    className="w-3 h-3 rounded-full shrink-0"
                     style={{ backgroundColor: NODE_COLORS[selectedNodeData.type] }}
                   />
                   <span className="text-sm font-semibold text-foreground">{selectedNodeData.label}</span>
@@ -397,7 +495,7 @@ export function PowerMap({ companyId, companyName, executives }: PowerMapProps) 
                     );
                   })}
                   {selectedEdges.length > 5 && (
-                    <p className="text-[10px] text-muted-foreground">+ {selectedEdges.length - 5} more connections</p>
+                    <p className="text-[10px] text-muted-foreground">+ {selectedEdges.length - 5} more</p>
                   )}
                 </div>
               )}
