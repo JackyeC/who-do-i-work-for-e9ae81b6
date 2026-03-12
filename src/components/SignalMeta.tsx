@@ -1,6 +1,7 @@
 import { ExternalLink, Clock, Search, CheckCircle2 } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { cn } from "@/lib/utils";
+import { VerifySignalButton } from "@/components/VerifySignalButton";
 
 /** Maps raw source_type or detection_method values to display labels */
 const SOURCE_TYPE_LABELS: Record<string, string> = {
@@ -51,6 +52,9 @@ interface SignalMetaProps {
   detectedAt?: string | null;
   lastVerifiedAt?: string | null;
   compact?: boolean;
+  signalType?: string;
+  signalId?: string;
+  companyId?: string;
 }
 
 /**
@@ -66,6 +70,9 @@ export function SignalMeta({
   detectedAt,
   lastVerifiedAt,
   compact = false,
+  signalType,
+  signalId,
+  companyId,
 }: SignalMetaProps) {
   const conf = confidence ? getConfidenceDisplay(confidence) : null;
   const sourceLabel = getSourceTypeLabel(sourceType, detectionMethod);
@@ -126,6 +133,16 @@ export function SignalMeta({
           >
             View source <ExternalLink className="w-2.5 h-2.5" />
           </a>
+        )}
+
+        {/* Verify This Signal */}
+        {signalType && (
+          <VerifySignalButton
+            signalType={signalType}
+            signalId={signalId}
+            companyId={companyId}
+            compact={compact}
+          />
         )}
       </div>
     </div>

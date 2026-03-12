@@ -4431,6 +4431,53 @@ export type Database = {
           },
         ]
       }
+      signal_disputes: {
+        Row: {
+          company_id: string | null
+          created_at: string
+          id: string
+          reason: string
+          resolution_note: string | null
+          resolved_at: string | null
+          signal_id: string | null
+          signal_type: string
+          status: string
+          user_id: string
+        }
+        Insert: {
+          company_id?: string | null
+          created_at?: string
+          id?: string
+          reason: string
+          resolution_note?: string | null
+          resolved_at?: string | null
+          signal_id?: string | null
+          signal_type: string
+          status?: string
+          user_id: string
+        }
+        Update: {
+          company_id?: string | null
+          created_at?: string
+          id?: string
+          reason?: string
+          resolution_note?: string | null
+          resolved_at?: string | null
+          signal_id?: string | null
+          signal_type?: string
+          status?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "signal_disputes_company_id_fkey"
+            columns: ["company_id"]
+            isOneToOne: false
+            referencedRelation: "companies"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       signals: {
         Row: {
           company_id: string
