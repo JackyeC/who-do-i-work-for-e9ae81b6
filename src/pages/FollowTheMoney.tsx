@@ -329,36 +329,7 @@ export default function FollowTheMoney() {
     Committee:   { x: 0,    y: -200 },
   };
 
-  // Configure D3 forces after mount
-  useEffect(() => {
-    const fg = graphRef.current;
-    if (!fg) return;
-    // @ts-ignore
-    fg.d3Force("charge")?.strength(-120).distanceMax(400);
-    // @ts-ignore
-    fg.d3Force("link")?.distance(60);
-    // @ts-ignore
-    fg.d3Force("center")?.strength(0.05);
-
-    // Add cluster foci forces
-    const d3 = (window as any).d3;
-    if (fg.d3Force) {
-      // @ts-ignore
-      fg.d3Force("clusterX", (alpha: number) => {
-        graphData.nodes.forEach((node: any) => {
-          const foci = CLUSTER_FOCI[node.group] || { x: 0, y: 0 };
-          node.vx = (node.vx || 0) + (foci.x - (node.x || 0)) * alpha * 0.03;
-        });
-      });
-      // @ts-ignore
-      fg.d3Force("clusterY", (alpha: number) => {
-        graphData.nodes.forEach((node: any) => {
-          const foci = CLUSTER_FOCI[node.group] || { x: 0, y: 0 };
-          node.vy = (node.vy || 0) + (foci.y - (node.y || 0)) * alpha * 0.03;
-        });
-      });
-    }
-  }, [graphData]);
+  // D3 forces configured after graphData (defined below)
 
   // Resize observer
   useEffect(() => {
