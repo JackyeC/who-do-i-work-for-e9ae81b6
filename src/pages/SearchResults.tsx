@@ -41,14 +41,17 @@ export default function SearchResults() {
 
   // Auto-discover when no results found
   useEffect(() => {
-    if (!initialQuery.trim() || dbLoading || hasAnyResults || isDiscovering) return;
+    if (!initialQuery.trim() || dbLoading) return;
+    if (hasAnyResults || isDiscovering) return;
 
     const autoDiscover = async () => {
       setIsDiscovering(true);
+      console.log(`[Auto-discover] Starting for "${initialQuery}"`);
       try {
         const { data, error } = await supabase.functions.invoke("company-discover", {
           body: { searchQuery: initialQuery, companyName: initialQuery.trim() },
         });
+        console.log("[Auto-discover] Response:", data, error);
         if (error) throw error;
 
         if (data?.success) {
@@ -58,16 +61,18 @@ export default function SearchResults() {
           } else if (data.action === 'created') {
             toast({
               title: "Company discovered",
-              description: `Building transparency profile for ${data.identity?.name || initialQuery}...`,
+              description: `Building intelligence profile for ${data.identity?.name || initialQuery}...`,
             });
             navigate(dest);
           }
+        } else {
+          console.error("[Auto-discover] No success:", data);
         }
       } catch (e: any) {
-        console.error("Auto-discover failed:", e);
+        console.error("[Auto-discover] Failed:", e);
         toast({
           title: "Discovery failed",
-          description: e.message || "Could not create company profile",
+          description: e.message || "Could not create company profile. Try again.",
           variant: "destructive",
         });
       } finally {
@@ -75,8 +80,7 @@ export default function SearchResults() {
       }
     };
 
-    // Small delay to avoid firing on every keystroke
-    const timer = setTimeout(autoDiscover, 500);
+    const timer = setTimeout(autoDiscover, 300);
     return () => clearTimeout(timer);
   }, [initialQuery, dbLoading, hasAnyResults, isDiscovering, navigate, toast, intent]);
 

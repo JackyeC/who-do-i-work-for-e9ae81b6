@@ -29,13 +29,20 @@ Deno.serve(async (req) => {
 
     console.log(`Company discover: "${name}" (slug: ${slug})`);
 
-    // Step 1: Check if company already exists
-    const { data: existing } = await supabase
+    // Step 1: Check if company already exists (search by slug and name separately)
+    const { data: bySlug } = await supabase
       .from('companies')
       .select('id, slug, record_status')
-      .or(`slug.eq.${slug},name.ilike.${name}`)
+      .eq('slug', slug)
       .limit(1)
       .maybeSingle();
+
+    const existing = bySlug || (await supabase
+      .from('companies')
+      .select('id, slug, record_status')
+      .ilike('name', `%${name}%`)
+      .limit(1)
+      .maybeSingle()).data;
 
     if (existing) {
       console.log(`Company already exists: ${existing.slug}`);
