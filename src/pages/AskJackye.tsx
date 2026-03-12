@@ -27,6 +27,8 @@ const OPENING_MESSAGE: Msg = {
 const CHAT_URL = `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/ask-jackye`;
 
 export default function AskJackyePage() {
+  const { user, loading } = useAuth();
+  const navigate = useNavigate();
   const [messages, setMessages] = useState<Msg[]>([OPENING_MESSAGE]);
   const [input, setInput] = useState("");
   const [isLoading, setIsLoading] = useState(false);
