@@ -150,6 +150,8 @@ export function HowDoIGetThere() {
                   <Trash2 className="w-3.5 h-3.5" />
                 </Button>
               </div>
+            </div>
+          </CardHeader>
           <CardContent className="space-y-4">
             {/* Why it matches */}
             {track.gap_analysis?.rationale && (
