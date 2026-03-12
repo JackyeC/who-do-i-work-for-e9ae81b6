@@ -264,6 +264,6 @@ const Index = forwardRef<HTMLDivElement>((_, ref) => {
       </footer>
     </div>
   );
-};
+});
 
 export default Index;
