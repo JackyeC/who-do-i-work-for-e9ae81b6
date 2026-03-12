@@ -5,6 +5,12 @@ import {
   Briefcase, DollarSign, Shield, FileWarning, Heart,
   Building2, MapPin, Calendar, Users, Trash2, Loader2, RefreshCw
 } from "lucide-react";
+import {
+  OfferCheckSnapshot,
+  buildDefaultSections,
+  deriveSnapshotVerdict,
+  generateSnapshotJackyeTake,
+} from "@/components/OfferCheckSnapshot";
 
 interface OfferReviewResultsProps {
   review: any;
