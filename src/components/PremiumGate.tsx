@@ -1,11 +1,8 @@
-import { Lock, Crown, Loader2 } from "lucide-react";
+import { Lock, Crown } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { usePremium, STRIPE_TIERS } from "@/hooks/use-premium";
 import { useNavigate } from "react-router-dom";
-import { supabase } from "@/integrations/supabase/client";
-import { useState } from "react";
-import { toast } from "sonner";
 
 interface PremiumGateProps {
   feature: string;
