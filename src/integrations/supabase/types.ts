@@ -2220,14 +2220,23 @@ export type Database = {
           created_at: string
           effective_date: string | null
           employees_affected: number
+          employer_name_raw: string | null
           id: string
+          industry: string | null
+          last_synced_at: string | null
           layoff_type: string
           location_city: string | null
           location_state: string | null
           notice_date: string
+          public_announcement_date: string | null
           reason: string | null
+          reason_type: string
           source_state: string | null
+          source_type: string
           source_url: string | null
+          support_services_coordinator: string | null
+          support_services_mentioned: boolean | null
+          workforce_board_referenced: boolean | null
         }
         Insert: {
           company_id: string
@@ -2235,14 +2244,23 @@ export type Database = {
           created_at?: string
           effective_date?: string | null
           employees_affected?: number
+          employer_name_raw?: string | null
           id?: string
+          industry?: string | null
+          last_synced_at?: string | null
           layoff_type?: string
           location_city?: string | null
           location_state?: string | null
           notice_date: string
+          public_announcement_date?: string | null
           reason?: string | null
+          reason_type?: string
           source_state?: string | null
+          source_type?: string
           source_url?: string | null
+          support_services_coordinator?: string | null
+          support_services_mentioned?: boolean | null
+          workforce_board_referenced?: boolean | null
         }
         Update: {
           company_id?: string
@@ -2250,14 +2268,23 @@ export type Database = {
           created_at?: string
           effective_date?: string | null
           employees_affected?: number
+          employer_name_raw?: string | null
           id?: string
+          industry?: string | null
+          last_synced_at?: string | null
           layoff_type?: string
           location_city?: string | null
           location_state?: string | null
           notice_date?: string
+          public_announcement_date?: string | null
           reason?: string | null
+          reason_type?: string
           source_state?: string | null
+          source_type?: string
           source_url?: string | null
+          support_services_coordinator?: string | null
+          support_services_mentioned?: boolean | null
+          workforce_board_referenced?: boolean | null
         }
         Relationships: [
           {
@@ -5089,6 +5116,51 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
+      }
+      warn_sync_log: {
+        Row: {
+          created_at: string
+          error_message: string | null
+          id: string
+          last_synced_at: string
+          records_fetched: number | null
+          records_inserted: number | null
+          records_updated: number | null
+          source_name: string
+          source_type: string
+          source_url: string | null
+          state: string | null
+          status: string
+        }
+        Insert: {
+          created_at?: string
+          error_message?: string | null
+          id?: string
+          last_synced_at?: string
+          records_fetched?: number | null
+          records_inserted?: number | null
+          records_updated?: number | null
+          source_name: string
+          source_type: string
+          source_url?: string | null
+          state?: string | null
+          status?: string
+        }
+        Update: {
+          created_at?: string
+          error_message?: string | null
+          id?: string
+          last_synced_at?: string
+          records_fetched?: number | null
+          records_inserted?: number | null
+          records_updated?: number | null
+          source_name?: string
+          source_type?: string
+          source_url?: string | null
+          state?: string | null
+          status?: string
+        }
+        Relationships: []
       }
       worker_benefit_signals: {
         Row: {
