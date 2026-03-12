@@ -10,6 +10,7 @@ import { DossierLensProvider } from "@/contexts/DossierLensContext";
 import { ProtectedRoute } from "@/components/ProtectedRoute";
 import { ErrorBoundary } from "@/components/ErrorBoundary";
 import { AppShell } from "@/components/layout/AppShell";
+import { AskJackyeWidget } from "@/components/AskJackyeWidget";
 import Index from "./pages/Index";
 import CompanyProfile from "./pages/CompanyProfile";
 import SearchResults from "./pages/SearchResults";
