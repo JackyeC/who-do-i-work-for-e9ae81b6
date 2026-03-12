@@ -1,11 +1,8 @@
-import { Lock, Crown, Loader2 } from "lucide-react";
+import { Lock, Crown } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { usePremium, STRIPE_TIERS } from "@/hooks/use-premium";
 import { useNavigate } from "react-router-dom";
-import { supabase } from "@/integrations/supabase/client";
-import { useState } from "react";
-import { toast } from "sonner";
 
 interface PremiumGateProps {
   feature: string;
@@ -17,7 +14,7 @@ interface PremiumGateProps {
 export function PremiumGate({ feature, description, requiredTier = "candidate", children }: PremiumGateProps) {
   const { tier, isLoggedIn } = usePremium();
   const navigate = useNavigate();
-  const [loading, setLoading] = useState(false);
+  
 
   const tierRank = { free: 0, candidate: 1, professional: 2 };
   const hasAccess = tierRank[tier] >= tierRank[requiredTier];
@@ -26,23 +23,12 @@ export function PremiumGate({ feature, description, requiredTier = "candidate", 
 
   const targetTier = requiredTier === "professional" ? STRIPE_TIERS.professional : STRIPE_TIERS.candidate;
 
-  const handleUpgrade = async () => {
+  const handleUpgrade = () => {
     if (!isLoggedIn) {
       navigate("/login");
       return;
     }
-    setLoading(true);
-    try {
-      const { data, error } = await supabase.functions.invoke("create-checkout", {
-        body: { priceId: targetTier.price_id },
-      });
-      if (error) throw error;
-      if (data?.url) window.open(data.url, "_blank");
-    } catch {
-      toast.error("Failed to start checkout. Please try again.");
-    } finally {
-      setLoading(false);
-    }
+    navigate("/pricing");
   };
 
   return (
@@ -61,8 +47,8 @@ export function PremiumGate({ feature, description, requiredTier = "candidate", 
               Sign Up Free
             </Button>
           ) : (
-            <Button size="default" onClick={handleUpgrade} disabled={loading} className="gap-1.5">
-              {loading ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <Lock className="w-3.5 h-3.5" />}
+            <Button size="default" onClick={handleUpgrade} className="gap-1.5">
+              <Lock className="w-3.5 h-3.5" />
               Upgrade to {targetTier.label} — {targetTier.price}
             </Button>
           )}
