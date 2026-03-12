@@ -20,3 +20,6 @@ verify_jwt = false
 
 [functions.sync-bls-data]
 verify_jwt = false
+
+[functions.scheduled-leadership-refresh]
+verify_jwt = false
