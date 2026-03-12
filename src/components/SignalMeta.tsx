@@ -52,6 +52,9 @@ interface SignalMetaProps {
   detectedAt?: string | null;
   lastVerifiedAt?: string | null;
   compact?: boolean;
+  signalType?: string;
+  signalId?: string;
+  companyId?: string;
 }
 
 /**
