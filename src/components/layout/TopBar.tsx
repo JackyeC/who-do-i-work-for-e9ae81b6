@@ -168,6 +168,8 @@ export function TopBar() {
             />
           </form>
 
+          <ThemeToggle />
+
           {user ? (
             <button
               onClick={signOut}
