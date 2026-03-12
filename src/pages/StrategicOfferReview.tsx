@@ -769,6 +769,15 @@ export default function StrategicOfferReview() {
                   companyName={offer.companyName}
                 />
 
+                {/* 11.5. Career Path Forecast — Future-Value Check */}
+                {offer.companyId && careerSignals.length > 0 && (
+                  <CareerPathForecast
+                    companyName={offer.companyName}
+                    roleTitle={offer.roleTitle}
+                    signals={careerSignals}
+                  />
+                )}
+
                 {/* 12. Final Decision Summary */}
                 <OfferDecisionSummary
                   companyName={offer.companyName}
