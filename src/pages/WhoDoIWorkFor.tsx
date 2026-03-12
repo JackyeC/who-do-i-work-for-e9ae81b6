@@ -18,6 +18,7 @@ import {
   ExternalLink, LogOut, Flag, Users, Briefcase, ArrowRight,
   UserCheck, Scale, Megaphone, X
 } from "lucide-react";
+import { WorkforceEquityModule } from "@/components/workforce-equity/WorkforceEquityModule";
 
 interface CompanyOption {
   id: string;
@@ -473,6 +474,14 @@ export default function WhoDoIWorkFor() {
                   </CardContent>
                 </Card>
               )}
+
+              {/* Workforce Equity & Advancement Module */}
+              <div className="mt-10 pt-8 border-t border-border">
+                <WorkforceEquityModule
+                  companyName={employerCompany.name}
+                  companyId={employerCompany.id}
+                />
+              </div>
 
               {/* CTA to full profile */}
               <div className="text-center mt-8">
