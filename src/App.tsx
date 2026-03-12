@@ -61,6 +61,7 @@ import EmployerReceipt from "./pages/EmployerReceipt";
 import EVPRealityCheck from "./pages/EVPRealityCheck";
 import WhatAmISupporting from "./pages/WhatAmISupporting";
 import IntelligenceChain from "./pages/IntelligenceChain";
+import BoardIntelligence from "./pages/BoardIntelligence";
 
 const queryClient = new QueryClient();
 
