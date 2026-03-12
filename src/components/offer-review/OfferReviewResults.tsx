@@ -5,6 +5,12 @@ import {
   Briefcase, DollarSign, Shield, FileWarning, Heart,
   Building2, MapPin, Calendar, Users, Trash2, Loader2, RefreshCw
 } from "lucide-react";
+import {
+  OfferCheckSnapshot,
+  buildDefaultSections,
+  deriveSnapshotVerdict,
+  generateSnapshotJackyeTake,
+} from "@/components/OfferCheckSnapshot";
 
 interface OfferReviewResultsProps {
   review: any;
@@ -77,8 +83,25 @@ export function OfferReviewResults({ review, onDelete, onRerun, deleting }: Offe
     other: "Other Terms",
   };
 
+  // Build snapshot from offer data
+  const snapshotSections = buildDefaultSections({
+    offerStrength: snapshot.base_salary ? "average" : "unknown",
+  });
+  const snapshotVerdict = deriveSnapshotVerdict(snapshotSections);
+  const snapshotJackyeTake = generateSnapshotJackyeTake(snapshotVerdict, snapshotSections);
+
   return (
     <div className="space-y-5">
+      {/* Offer Check Snapshot — decision-ready summary before the full report */}
+      <OfferCheckSnapshot
+        companyName={snapshot.company_name || review.company_name || "Company"}
+        roleTitle={snapshot.role_title}
+        location={snapshot.work_location}
+        verdict={snapshotVerdict}
+        sections={snapshotSections}
+        jackyeTake={snapshotJackyeTake}
+      />
+
       {/* Offer Snapshot */}
       {Object.keys(snapshot).length > 0 && (
         <Card>
