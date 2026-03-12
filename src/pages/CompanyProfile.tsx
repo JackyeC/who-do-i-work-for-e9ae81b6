@@ -110,6 +110,15 @@ function StatCard({ icon: Icon, label, value, subtext, onClick }: {
   );
 }
 
+/* ─── Helper: check if a company has enough data to show full profile ─── */
+function hasSubstantiveData(opts: {
+  totalPac: number; lobbyingSpend: number; govContracts: number;
+  candidates: number; executives: number; stances: number;
+}) {
+  return opts.totalPac > 0 || opts.lobbyingSpend > 0 || opts.govContracts > 0 ||
+    opts.candidates > 0 || opts.executives > 0 || opts.stances > 0;
+}
+
 export default function CompanyProfile() {
   const { id } = useParams();
   const company = companies.find((c) => c.id === id);
