@@ -147,8 +147,24 @@ export function OfferClarityDashboard({ report, offerData, onStartOver }: Props)
   const InterpIcon = interp.icon;
   const baseSalary = Number(offerData.baseSalary);
 
+  const snapshotSections = buildDefaultSections({
+    offerStrength: report.compensation.percentile >= 70 ? "strong" : report.compensation.percentile >= 30 ? "average" : "weak",
+  });
+  const snapshotVerdict = deriveSnapshotVerdict(snapshotSections);
+  const snapshotJackyeTake = generateSnapshotJackyeTake(snapshotVerdict, snapshotSections);
+
   return (
     <div className="space-y-6">
+      {/* Offer Check Snapshot — fast read before the full report */}
+      <OfferCheckSnapshot
+        companyName={offerData.companyName}
+        roleTitle={offerData.roleTitle}
+        location={offerData.location}
+        verdict={snapshotVerdict}
+        sections={snapshotSections}
+        jackyeTake={snapshotJackyeTake}
+      />
+
       {/* Hero Score */}
       <Card className="card-official rounded-2xl overflow-hidden">
         <CardContent className="p-7">
