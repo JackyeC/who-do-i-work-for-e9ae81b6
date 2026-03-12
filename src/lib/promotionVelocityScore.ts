@@ -11,7 +11,6 @@
  */
 
 export interface PVSInput {
-  /** 0-100 sub-scores fed from evidence analysis */
   careerPathProgression: number;
   internalPromotionSignals: number;
   leadershipPipelineDiversity: number;
@@ -105,6 +104,21 @@ export function calculatePVS(input: PVSInput, confidence: PVSResult["confidence"
   };
 }
 
+/** Evidence strength scoring using the 7-Layer model */
+function layerSignalScore(signals: any[], max: number): number {
+  if (!signals.length) return 12; // baseline for no data — slight penalty vs old 15
+
+  // Weight by evidence strength
+  let raw = 0;
+  for (const s of signals) {
+    const conf = s.confidence || "weak";
+    if (conf === "direct" || conf === "high") raw += 28;
+    else if (conf === "inferred" || conf === "medium") raw += 16;
+    else raw += 7;
+  }
+  return Math.min(raw, max);
+}
+
 /** Derive sub-scores from raw signal arrays */
 export function deriveSubScores(params: {
   promotionSignals: any[];
@@ -112,25 +126,17 @@ export function deriveSubScores(params: {
   diversitySignals: any[];
   retentionSignals: any[];
   learningSignals: any[];
-  transparencyCategories: number; // out of total possible
+  transparencyCategories: number;
   totalCategories: number;
 }): PVSInput {
-  const signalScore = (signals: any[], max: number) => {
-    if (!signals.length) return 15; // baseline for no data
-    const direct = signals.filter((s) => s.confidence === "direct" || s.confidence === "high").length;
-    const inferred = signals.filter((s) => s.confidence === "inferred" || s.confidence === "medium").length;
-    const raw = direct * 25 + inferred * 15 + (signals.length - direct - inferred) * 8;
-    return Math.min(raw, max);
-  };
-
   return {
-    careerPathProgression: signalScore(params.promotionSignals, 100),
-    internalPromotionSignals: signalScore(params.mobilitySignals, 100),
-    leadershipPipelineDiversity: signalScore(params.diversitySignals, 100),
-    retentionPattern: signalScore(params.retentionSignals, 100),
-    learningMobilityInfra: signalScore(params.learningSignals, 100),
+    careerPathProgression: layerSignalScore(params.promotionSignals, 100),
+    internalPromotionSignals: layerSignalScore(params.mobilitySignals, 100),
+    leadershipPipelineDiversity: layerSignalScore(params.diversitySignals, 100),
+    retentionPattern: layerSignalScore(params.retentionSignals, 100),
+    learningMobilityInfra: layerSignalScore(params.learningSignals, 100),
     transparencyModifier: params.totalCategories > 0
       ? Math.round((params.transparencyCategories / params.totalCategories) * 100)
-      : 15,
+      : 12,
   };
 }

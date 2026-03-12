@@ -12,49 +12,58 @@ const VALUE_CATEGORIES = [
     label: "Christian / Faith Values",
     searchTerms: ["chaplaincy program", "faith-based workplace", "Sunday closure", "Christian values", "religious accommodations", "faith-friendly employer"],
     sourceHints: ["about page", "careers page", "press release", "Christian Blue Pages"],
+    layer: 3,
   },
   {
     key: "supports_israel",
     label: "Supports Israel",
     searchTerms: ["AIPAC donation", "Israel bond purchase", "United Democracy Project", "pro-Israel advocacy", "Israel solidarity"],
     sourceHints: ["FEC filing", "PAC donation records", "corporate press release"],
+    layer: 4,
   },
   {
     key: "animal_welfare",
     label: "Animal / Pet Welfare",
     searchTerms: ["animal shelter donation", "pet adoption program", "cruelty-free certified", "percentage to shelters", "ASPCA partner", "Humane Society partner"],
     sourceHints: ["ESG report", "corporate responsibility page", "press release"],
+    layer: 1,
   },
   {
     key: "anti_discrimination",
     label: "Anti-Discrimination / DEI",
     searchTerms: ["CROWN Act support", "HRC Corporate Equality Index", "Title VII compliance", "DEI program", "pay equity audit", "anti-discrimination policy", "inclusive hiring"],
     sourceHints: ["EEOC filings", "HRC database", "corporate DEI page", "amicus brief"],
+    layer: 1,
   },
   {
     key: "dei_rollback",
     label: "DEI Rollback Tracker",
     searchTerms: ["DEI program ended", "diversity office closed", "DEI budget cut", "rolled back diversity", "ended affirmative action", "dismantled DEI"],
     sourceHints: ["news article", "SEC filing", "press release", "earnings call transcript"],
+    layer: 2,
   },
   {
     key: "environmental",
     label: "Environmental Commitment",
     searchTerms: ["carbon neutral", "net zero commitment", "renewable energy", "climate pledge", "sustainability report", "EPA compliance"],
     sourceHints: ["sustainability report", "CDP filing", "press release"],
+    layer: 1,
   },
   {
     key: "veteran_support",
     label: "Veteran / Military Support",
     searchTerms: ["veteran hiring program", "military spouse employment", "Hiring Our Heroes", "veteran transition", "military-friendly employer"],
     sourceHints: ["careers page", "press release", "Military Times ranking"],
+    layer: 4,
   },
   {
     key: "lgbtq_inclusive",
     label: "LGBTQ+ Inclusive",
     searchTerms: ["HRC 100 score", "domestic partner benefits", "gender-affirming care", "Pride sponsor", "LGBTQ+ ERG", "transgender-inclusive benefits"],
     sourceHints: ["HRC Corporate Equality Index", "benefits page", "press release"],
+    layer: 1,
   },
+  // ─── Promotion Equity & Workforce Categories ───
   {
     key: "internal_promotion",
     label: "Internal Promotion / Promotes From Within",
@@ -64,9 +73,12 @@ const VALUE_CATEGORIES = [
       "employee development program", "tuition reimbursement",
       "leadership development program", "talent marketplace", "career growth pathways",
       "upskilling initiative", "internal job marketplace", "mentorship program",
-      "career pathing", "learning and development",
+      "career pathing", "learning and development", "rotational program",
+      "career mobility", "leadership training", "leadership pipeline",
+      "talent development", "career progression", "promote and retain",
     ],
-    sourceHints: ["careers page", "annual report", "ESG report", "impact report", "diversity report", "press release", "talent development page"],
+    sourceHints: ["careers page", "annual report", "ESG report", "impact report", "diversity report", "press release", "talent development page", "SEC 10-K"],
+    layer: 1,
   },
   {
     key: "women_leadership",
@@ -78,6 +90,7 @@ const VALUE_CATEGORIES = [
       "pay equity report", "gender pay gap", "leadership diversity commitment",
     ],
     sourceHints: ["diversity report", "proxy statement", "ESG filing", "press release", "SEC proxy", "impact report"],
+    layer: 1,
   },
   {
     key: "minority_advancement",
@@ -90,6 +103,7 @@ const VALUE_CATEGORIES = [
       "leadership diversity initiative", "ERG program",
     ],
     sourceHints: ["EEO-1 data", "diversity report", "press release", "ESG filing", "impact report", "workforce demographics report"],
+    layer: 1,
   },
   {
     key: "deaf_accessibility",
@@ -102,6 +116,7 @@ const VALUE_CATEGORIES = [
       "inclusive design program", "accessibility statement",
     ],
     sourceHints: ["careers page", "accessibility page", "press release", "disability inclusion report", "diversity report"],
+    layer: 5,
   },
   {
     key: "learning_disability",
@@ -113,6 +128,7 @@ const VALUE_CATEGORIES = [
       "autism at work", "neurodiversity hiring", "inclusive workplace disability",
     ],
     sourceHints: ["careers page", "disability inclusion report", "press release", "ERG page", "accessibility statement"],
+    layer: 5,
   },
   {
     key: "hbcu_pipeline",
@@ -123,8 +139,11 @@ const VALUE_CATEGORIES = [
       "Thurgood Marshall College Fund", "UNCF partnership",
       "HBCU fellowship", "campus partnership Howard University",
       "campus partnership Morehouse", "campus partnership Spelman",
+      "minority-serving institution", "Hispanic-serving institution",
+      "community college pathway", "apprenticeship", "workforce development partnership",
     ],
     sourceHints: ["careers page", "press release", "university partnerships page", "diversity report", "scholarship page"],
+    layer: 4,
   },
   {
     key: "no_degree",
@@ -136,37 +155,127 @@ const VALUE_CATEGORIES = [
       "degree optional", "non-degree pathways", "competency-based hiring",
     ],
     sourceHints: ["job listings", "careers page", "press release", "Opportunity@Work", "Markle Foundation"],
+    layer: 4,
+  },
+  // ─── New categories for enhanced workforce equity ───
+  {
+    key: "career_path_progression",
+    label: "Career Path Progression Data",
+    searchTerms: [
+      "promotion rate", "time to promotion", "title progression", "career advancement rate",
+      "internal leaders", "promoted internally percentage", "executive long tenure",
+      "median promotion time", "advancement metrics", "advancement outcomes",
+      "career progression data", "advancement statistics",
+    ],
+    sourceHints: ["ESG report", "diversity report", "impact report", "annual report", "workforce data"],
+    layer: 7,
+  },
+  {
+    key: "retention_stability",
+    label: "Retention & Workforce Stability",
+    searchTerms: [
+      "employee retention", "turnover rate", "attrition rate", "low turnover",
+      "employee satisfaction", "great place to work", "retention program",
+      "employee tenure", "workforce stability", "hiring freeze", "restructuring",
+    ],
+    sourceHints: ["press release", "annual report", "Glassdoor", "ESG report", "WARN database"],
+    layer: 6,
+  },
+  {
+    key: "promotion_vs_exit",
+    label: "Promotion vs Exit Pattern",
+    searchTerms: [
+      "internal promotion vs external hire", "employees leave to advance",
+      "career plateau", "internal mobility rate", "external replacement",
+      "hire and burn", "high turnover", "promote and retain",
+      "boomerang employees", "talent pipeline leakage",
+    ],
+    sourceHints: ["workforce analytics", "career page signals", "SEC filing", "news reports"],
+    layer: 7,
+  },
+  {
+    key: "learning_infrastructure",
+    label: "Learning & Development Infrastructure",
+    searchTerms: [
+      "learning and development", "training investment", "tuition reimbursement",
+      "leadership academy", "upskilling program", "reskilling initiative",
+      "professional development budget", "certification support",
+      "internal university", "corporate university", "learning platform",
+    ],
+    sourceHints: ["careers page", "ESG report", "annual report", "press release"],
+    layer: 3,
+  },
+  {
+    key: "representation",
+    label: "Workforce Representation Data",
+    searchTerms: [
+      "workforce composition", "workforce demographics", "EEO-1",
+      "representation data", "gender breakdown", "racial breakdown",
+      "board diversity percentage", "leadership composition",
+      "technical team diversity", "workforce statistics",
+    ],
+    sourceHints: ["diversity report", "ESG report", "SEC proxy statement", "EEO-1 filing"],
+    layer: 1,
+  },
+  {
+    key: "pay_equity",
+    label: "Pay Equity & Transparency",
+    searchTerms: [
+      "pay equity", "pay gap analysis", "compensation equity", "equal pay",
+      "pay transparency", "salary transparency", "compensation audit",
+      "gender pay gap report", "racial pay gap", "pay equity methodology",
+    ],
+    sourceHints: ["diversity report", "ESG report", "press release", "proxy statement"],
+    layer: 1,
   },
 ];
 
-// ─── Expanded scrape targets for promotion equity evidence ───
+// ─── 7-Layer Source Map for scraping ───
 function getScrapePaths(websiteUrl: string, careersUrl: string | null): string[] {
   const base = websiteUrl.replace(/\/$/, "");
   const paths = [
-    base,
-    `${base}/about`,
+    // Layer 1 — Company Reports
     `${base}/diversity`,
     `${base}/inclusion`,
-    `${base}/responsibility`,
     `${base}/esg`,
     `${base}/impact`,
     `${base}/sustainability`,
+    `${base}/responsibility`,
+    `${base}/corporate-responsibility`,
+    // Layer 3 — Career & Talent Pages
     `${base}/careers`,
     `${base}/culture`,
+    `${base}/about`,
+    `${base}/life`,
+    `${base}/growth`,
+    `${base}/learning-development`,
+    // Layer 5 — Accessibility
+    `${base}/accessibility`,
   ];
   if (careersUrl && !paths.includes(careersUrl)) {
     paths.push(careersUrl);
   }
-  // Return max 5 to conserve Firecrawl credits
-  return paths.slice(0, 5);
+  // Scrape up to 7 to balance coverage with credit cost
+  return paths.slice(0, 7);
 }
 
-// ─── Search queries to find reports not linked from main site ───
+// ─── 7-Layer search queries ───
 function getSearchQueries(companyName: string): string[] {
   return [
-    `"${companyName}" ESG report OR impact report OR inclusion report OR diversity report`,
-    `"${companyName}" internal promotion rate OR leadership development OR talent marketplace`,
-    `"${companyName}" HBCU partnership OR skills-first hiring OR neurodiversity program OR disability inclusion`,
+    // Layer 1 — Company Reports
+    `"${companyName}" diversity report OR inclusion report OR ESG report OR impact report OR corporate responsibility report`,
+    // Layer 2 — SEC Filings
+    `"${companyName}" SEC 10-K OR proxy statement human capital management OR workforce development OR leadership succession`,
+    // Layer 3 — Career Pages & Learning
+    `"${companyName}" internal job marketplace OR leadership academy OR mentorship program OR rotational program`,
+    // Layer 4 — University & Pipeline Partnerships
+    `"${companyName}" HBCU partnership OR minority-serving institution OR apprenticeship OR skills-first hiring OR workforce development partnership`,
+    // Layer 5 — Accessibility & Disability
+    `"${companyName}" neurodiversity hiring OR disability inclusion OR deaf employment OR accessibility initiative`,
+    // Layer 6 — Workforce Stability
+    `"${companyName}" layoffs OR restructuring OR workforce reduction OR WARN notice`,
+    // Layer 7 — Career Path Progression
+    `"${companyName}" promotion rate OR internal mobility rate OR advancement statistics OR career progression data`,
   ];
 }
 
@@ -195,7 +304,7 @@ serve(async (req) => {
       .single();
     if (compError || !company) throw new Error("Company not found");
 
-    // ─── Cache check: skip if scanned within TTL ───
+    // Cache check
     const { data: recentSignals } = await adminClient
       .from("company_values_signals")
       .select("created_at")
@@ -221,20 +330,19 @@ serve(async (req) => {
       }
     }
 
-    // ─── Gather existing signals for context ───
+    // Gather existing signals for context
     const [{ data: existingFlags }, { data: existingIdeology }, { data: existingPAC }] = await Promise.all([
       adminClient.from("company_ideology_flags").select("org_name, category, relationship_type").eq("company_id", companyId).limit(20),
       adminClient.from("company_flagged_orgs").select("org_name, relationship, description").eq("company_id", companyId).limit(20),
       adminClient.from("company_candidates").select("name, party, amount").eq("company_id", companyId).limit(30),
     ]);
 
-    // ─── Phase 1: Scrape company pages (up to 5) ───
+    // ─── Phase 1: Scrape company pages (Layer 1, 3, 5) ───
     let scrapedContent = "";
     if (firecrawlKey && company.website_url) {
       const urls = getScrapePaths(company.website_url, company.careers_url);
       console.log(`[values-scan] Scraping ${urls.length} pages for ${company.name}`);
 
-      // Scrape in parallel batches of 3
       for (let i = 0; i < urls.length; i += 3) {
         const batch = urls.slice(i, i + 3);
         const results = await Promise.allSettled(
@@ -259,7 +367,7 @@ serve(async (req) => {
       }
     }
 
-    // ─── Phase 2: Search for reports/announcements not on the main site ───
+    // ─── Phase 2: Search for reports across all 7 layers ───
     let searchContent = "";
     if (firecrawlKey) {
       const queries = getSearchQueries(company.name);
@@ -275,7 +383,7 @@ serve(async (req) => {
               limit: 3,
               lang: "en",
               country: "us",
-              tbs: "qdr:y", // last year
+              tbs: "qdr:y",
             }),
           });
           if (res.ok) {
@@ -294,23 +402,41 @@ serve(async (req) => {
       }
     }
 
-    // ─── AI analysis with expanded prompt ───
-    const systemPrompt = `You are a corporate values intelligence analyst specializing in detecting promotion equity, internal mobility, and workforce inclusion signals. 
+    // ─── AI analysis with 7-layer evidence model ───
+    const systemPrompt = `You are a corporate workforce intelligence analyst specializing in detecting promotion equity, internal mobility, career progression, and workforce inclusion signals using a structured 7-Layer Evidence Model.
 
-Given company data, existing political signals, scraped web content, and search results, detect "Value-Identity" signals across these categories:
+EVIDENCE LAYERS (search in this order):
+Layer 1 — Company Reports (Most Reliable): Diversity, Inclusion, ESG, Impact, Sustainability, Corporate Responsibility, Talent reports
+Layer 2 — SEC Filings: 10-K, proxy statements (DEF 14A) — human capital strategy, leadership succession
+Layer 3 — Career & Talent Pages: Internal job marketplaces, leadership academies, mentorship, rotational programs, L&D
+Layer 4 — University & Pipeline Partnerships: HBCU, HSI, community college, apprenticeship, workforce development partnerships
+Layer 5 — Accessibility & Disability Signals: Disability inclusion, neurodiversity hiring, deaf employment, ADA accommodations
+Layer 6 — Workforce Stability: WARN data, layoffs, restructuring, hiring freezes, retention patterns
+Layer 7 — Career Path Progression: Title progression patterns, promotion rates, internal vs external hiring ratios
 
-${VALUE_CATEGORIES.map(c => `- ${c.key}: ${c.label} — Look for: ${c.searchTerms.join(", ")}`).join("\n")}
+EVIDENCE STRENGTH CLASSIFICATION (apply to every signal):
+- "direct": Explicit data, statistics, or named programs. Examples: "45% of leadership roles filled internally", "We operate an internal talent marketplace"
+- "inferred": Clear references or programs without specific data. Examples: "Employees are encouraged to pursue internal roles", "Participates in HBCU career fairs"  
+- "weak": Generic language, vague commitments. Examples: "We support employee growth", "Opportunities to grow", "We invest in people"
 
-IMPORTANT GUIDELINES:
-1. Look for EVIDENCE PATTERNS, not just exact phrases. Companies rarely use textbook terminology.
-2. Evidence hidden in ESG reports, impact reports, recruiting blogs, leadership announcements, and talent development pages counts.
-3. Detect implicit signals: employee title progression patterns suggest internal promotion even without explicit statements.
-4. For each signal, assign confidence:
-   - "direct": Explicit data or program mentioned (e.g., "our internal promotion rate is 40%")
-   - "inferred": Strong evidence pattern but not directly stated (e.g., ESG report mentions leadership development programs without specific rates)
-   - "weak": Indirect or limited evidence (e.g., job posting mentions "growth opportunities" without specifics)
-5. When NO signals are found for a category, that is itself a meaningful finding — note the transparency gap.
-6. Be factual and neutral — document what is found without moral judgment.`;
+PROMOTION VS EXIT PATTERN ANALYSIS:
+When detecting career_path_progression and promotion_vs_exit signals, assess whether the company appears to:
+- "promote_and_retain": Employees grow internally (frequent title progression, high internal promotion rate)
+- "hire_and_burn": High turnover pattern, frequent layoffs followed by rehiring
+- "external_replacement": Leadership filled primarily from outside rather than developed internally
+
+Given company data, existing political signals, scraped web content, and search results, detect signals across these categories:
+
+${VALUE_CATEGORIES.map(c => `- ${c.key}: ${c.label} (Layer ${c.layer}) — Look for: ${c.searchTerms.slice(0, 8).join(", ")}`).join("\n")}
+
+IMPORTANT:
+1. Look for EVIDENCE PATTERNS, not just exact phrases.
+2. For promotion equity categories, be especially thorough — check ESG reports, career pages, SEC filings, and press releases.
+3. For the promotion_vs_exit category: explicitly assess whether employees grow internally or leave to advance.
+4. When NO signals are found for a category, that is a transparency gap — note it as a finding.
+5. Include the source_layer (1-7) for each signal based on where the evidence was found.
+6. Be factual and neutral — document what is found without moral judgment.
+7. Do NOT infer protected traits from photos or names — only use self-disclosed or company-disclosed information.`;
 
     const userPrompt = `Company: ${company.name}
 Industry: ${company.industry}
@@ -320,13 +446,13 @@ Website: ${company.website_url || "N/A"}
 Existing Political Signals:
 ${JSON.stringify({ flags: existingFlags?.slice(0, 10), ideology: existingIdeology?.slice(0, 10), pac_recipients: existingPAC?.slice(0, 15) }, null, 2)}
 
-Scraped Web Content (from company pages):
-${scrapedContent.slice(0, 10000) || "No content scraped from company pages"}
+Scraped Web Content (from company pages — Layers 1, 3, 5):
+${scrapedContent.slice(0, 12000) || "No content scraped from company pages"}
 
-Search Results (ESG reports, diversity reports, press releases):
-${searchContent.slice(0, 6000) || "No additional reports found via search"}
+Search Results (Layers 1-7: ESG reports, SEC filings, career pages, partnerships, accessibility, stability, career progression):
+${searchContent.slice(0, 8000) || "No additional reports found via search"}
 
-Analyze all available evidence and extract value-identity signals. For promotion equity categories (internal_promotion, women_leadership, minority_advancement, deaf_accessibility, learning_disability, hbcu_pipeline, no_degree), be especially thorough — look for implicit evidence patterns, not just explicit statements.`;
+Analyze all available evidence using the 7-Layer Evidence Model. Extract signals with proper evidence strength classification. For workforce equity categories, assess both what IS disclosed and what is NOT disclosed (transparency gaps).`;
 
     const aiResponse = await fetch("https://ai.gateway.lovable.dev/v1/chat/completions", {
       method: "POST",
@@ -341,7 +467,7 @@ Analyze all available evidence and extract value-identity signals. For promotion
           type: "function",
           function: {
             name: "report_values_signals",
-            description: "Report detected value-identity signals for a company.",
+            description: "Report detected value-identity signals for a company using the 7-Layer Evidence Model.",
             parameters: {
               type: "object",
               properties: {
@@ -356,6 +482,9 @@ Analyze all available evidence and extract value-identity signals. For promotion
                       evidence_text: { type: "string" },
                       evidence_url: { type: "string" },
                       confidence: { type: "string", enum: ["direct", "inferred", "weak"] },
+                      source_layer: { type: "number", enum: [1, 2, 3, 4, 5, 6, 7] },
+                      evidence_strength: { type: "string", enum: ["strong", "moderate", "weak", "no_public_signals"] },
+                      pattern_type: { type: "string", enum: ["promote_and_retain", "hire_and_burn", "external_replacement", "unknown"] },
                     },
                     required: ["value_category", "signal_type", "signal_summary", "confidence"],
                     additionalProperties: false,
@@ -397,7 +526,7 @@ Analyze all available evidence and extract value-identity signals. For promotion
         evidence_text: s.evidence_text || null,
         evidence_url: s.evidence_url || null,
         confidence: s.confidence,
-        detected_by: "values_scan",
+        detected_by: "values_scan_v2",
       }));
 
       await adminClient.from("company_values_signals").insert(rows);
