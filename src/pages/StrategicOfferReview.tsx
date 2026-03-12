@@ -24,6 +24,7 @@ import { NegotiationBot } from "@/components/strategic-offer/NegotiationBot";
 import { ScamDetector } from "@/components/strategic-offer/ScamDetector";
 import { EmployerIntelligenceCard } from "@/components/strategic-offer/EmployerIntelligenceCard";
 import { OfferStrengthScore } from "@/components/strategic-offer/OfferStrengthScore";
+import { useOfferStrengthScore } from "@/hooks/use-offer-strength-score";
 import { GreenFlagsPanel } from "@/components/strategic-offer/GreenFlagsPanel";
 import { QuestionsToAsk } from "@/components/strategic-offer/QuestionsToAsk";
 import { CultureSnapshot } from "@/components/strategic-offer/CultureSnapshot";
