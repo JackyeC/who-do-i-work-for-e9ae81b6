@@ -169,8 +169,13 @@ export function HowDoIGetThere() {
                   size="icon"
                   className="w-7 h-7 text-muted-foreground hover:text-destructive"
                   onClick={() => handleDeleteTrack(track.id)}
+                  disabled={deletingId === track.id}
                 >
-                  <Trash2 className="w-3.5 h-3.5" />
+                  {deletingId === track.id ? (
+                    <Loader2 className="w-3.5 h-3.5 animate-spin" />
+                  ) : (
+                    <Trash2 className="w-3.5 h-3.5" />
+                  )}
                 </Button>
               </div>
             </div>
