@@ -55,10 +55,10 @@ Deno.serve(async (req) => {
       }), { headers: { ...corsHeaders, 'Content-Type': 'application/json' } });
     }
 
-    // Step 2: Create the company record immediately
+    // Step 2: Create the company record (use upsert on slug to handle race conditions)
     const { data: newCompany, error: insertErr } = await supabase
       .from('companies')
-      .insert({
+      .upsert({
         name,
         slug,
         industry: 'Pending Verification',
@@ -71,9 +71,28 @@ Deno.serve(async (req) => {
         civic_footprint_score: 0,
         total_pac_spending: 0,
         confidence_rating: 'low',
-      })
+      }, { onConflict: 'slug', ignoreDuplicates: true })
       .select('id, slug')
       .single();
+
+    // If upsert returned nothing (duplicate ignored), fetch the existing record
+    if (!newCompany) {
+      const { data: existingBySlug } = await supabase
+        .from('companies')
+        .select('id, slug, record_status')
+        .eq('slug', slug)
+        .single();
+
+      if (existingBySlug) {
+        return new Response(JSON.stringify({
+          success: true,
+          action: 'existing',
+          companyId: existingBySlug.id,
+          slug: existingBySlug.slug,
+          status: existingBySlug.record_status,
+        }), { headers: { ...corsHeaders, 'Content-Type': 'application/json' } });
+      }
+    }
 
     if (insertErr) {
       console.error('Insert error:', insertErr);
