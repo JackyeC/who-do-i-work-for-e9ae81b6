@@ -28,7 +28,7 @@ export default function JobDashboard() {
             Values-Based Job Matching
           </h1>
           <p className="text-muted-foreground mt-1">
-            Find jobs at companies that align with your values. Career Intelligence by Jackye Clayton.
+            Find jobs at companies that align with your values. Know Before You Go by Jackye Clayton.
           </p>
         </div>
 

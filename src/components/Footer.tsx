@@ -61,7 +61,7 @@ export function Footer() {
         </div>
         <div className="mt-14 pt-8 border-t border-primary-foreground/[0.06]">
           <p className="text-xs text-primary-foreground/30">
-            © {new Date().getFullYear()} Who Do I Work For? — Talent Intelligence by Jackye Clayton. All rights reserved. This platform surfaces publicly available data as employer reality signals for informational purposes only.
+            © {new Date().getFullYear()} Who Do I Work For? — Know Before You Go by Jackye Clayton. All rights reserved. This platform surfaces publicly available data as employer reality signals for informational purposes only.
           </p>
         </div>
       </div>

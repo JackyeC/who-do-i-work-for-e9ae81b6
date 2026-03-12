@@ -66,7 +66,7 @@ export function useCompanySEO({ name, industry, state, description, slug }: Comp
     document.head.appendChild(ldScript);
 
     return () => {
-      document.title = "Who Do I Work For? — Career Intelligence by Jackye Clayton";
+      document.title = "Who Do I Work For? — Know Before You Go by Jackye Clayton";
       const companyLd = document.querySelector('script[data-company-ld]');
       if (companyLd) companyLd.remove();
     };
