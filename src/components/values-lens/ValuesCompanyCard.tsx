@@ -96,9 +96,20 @@ export function ValuesCompanyCard({ company, signals, evidence, lensLabel, hasCo
                 <div key={signal.id} className="flex items-start gap-2 text-sm">
                   <div className={`w-1.5 h-1.5 rounded-full mt-1.5 shrink-0 ${dirConfig?.color || "text-muted-foreground"} bg-current`} />
                   <div className="flex-1 min-w-0">
-                    <span className="text-foreground font-medium">
-                      {signal.signal_label || signal.signal_summary || signal.signal_type?.replace(/_/g, " ")}
-                    </span>
+                    {signal.evidence_url ? (
+                      <a
+                        href={signal.evidence_url}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="text-foreground font-medium hover:text-primary hover:underline transition-colors cursor-pointer"
+                      >
+                        {signal.signal_label || signal.signal_summary || signal.signal_type?.replace(/_/g, " ")}
+                      </a>
+                    ) : (
+                      <span className="text-foreground font-medium">
+                        {signal.signal_label || signal.signal_summary || signal.signal_type?.replace(/_/g, " ")}
+                      </span>
+                    )}
                     {signal.signal_summary && signal.signal_label && (
                       <p className="text-xs text-muted-foreground mt-0.5 leading-relaxed">{signal.signal_summary}</p>
                     )}
@@ -116,9 +127,9 @@ export function ValuesCompanyCard({ company, signals, evidence, lensLabel, hasCo
                           href={signal.evidence_url}
                           target="_blank"
                           rel="noopener noreferrer"
-                          className="inline-flex items-center gap-0.5 text-[10px] text-primary hover:underline"
+                          className="inline-flex items-center gap-0.5 text-[10px] text-primary hover:underline font-semibold"
                         >
-                          <Shield className="w-2.5 h-2.5" /> View source
+                          <ExternalLink className="w-2.5 h-2.5" /> View source
                         </a>
                       )}
                     </div>
