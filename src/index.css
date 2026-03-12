@@ -6,6 +6,67 @@
 
 @layer base {
   :root {
+    --background: 40 20% 97%;
+    --foreground: 220 20% 12%;
+
+    --card: 0 0% 100%;
+    --card-foreground: 220 20% 12%;
+
+    --popover: 0 0% 100%;
+    --popover-foreground: 220 20% 12%;
+
+    --primary: 43 53% 42%;
+    --primary-foreground: 0 0% 100%;
+
+    --secondary: 220 14% 92%;
+    --secondary-foreground: 220 20% 12%;
+
+    --muted: 220 14% 94%;
+    --muted-foreground: 220 10% 42%;
+
+    --accent: 220 14% 92%;
+    --accent-foreground: 220 20% 12%;
+
+    --destructive: 7 65% 45%;
+    --destructive-foreground: 0 0% 100%;
+
+    --border: 220 14% 86%;
+    --input: 220 14% 86%;
+    --ring: 43 53% 42%;
+
+    --radius: 0px;
+
+    /* Signal tokens */
+    --civic-red: 7 65% 45%;
+    --civic-yellow: 33 90% 44%;
+    --civic-green: 152 46% 36%;
+    --civic-blue: 218 55% 48%;
+    --civic-navy: 225 42% 20%;
+    --civic-slate: 225 12% 45%;
+    --civic-surface: 0 0% 100%;
+
+    /* Gold accent */
+    --civic-gold: 43 53% 42%;
+    --civic-gold-muted: 43 30% 50%;
+    --civic-gold-light: 43 53% 60%;
+
+    /* Surface tokens */
+    --surface-elevated: 0 0% 100%;
+    --surface-sunken: 220 14% 94%;
+    --surface-2: 220 14% 95%;
+    --border-2: 220 12% 80%;
+
+    --sidebar-background: 220 16% 96%;
+    --sidebar-foreground: 220 20% 12%;
+    --sidebar-primary: 43 53% 42%;
+    --sidebar-primary-foreground: 0 0% 100%;
+    --sidebar-accent: 220 14% 92%;
+    --sidebar-accent-foreground: 220 20% 12%;
+    --sidebar-border: 220 14% 86%;
+    --sidebar-ring: 43 53% 42%;
+  }
+
+  .dark {
     --background: 220 20% 4%;
     --foreground: 34 24% 90%;
 
@@ -33,8 +94,6 @@
     --border: 220 14% 16%;
     --input: 220 14% 16%;
     --ring: 43 53% 54%;
-
-    --radius: 0px;
 
     /* Signal tokens */
     --civic-red: 7 65% 45%;

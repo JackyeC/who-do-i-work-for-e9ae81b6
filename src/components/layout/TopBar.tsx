@@ -3,6 +3,7 @@ import { Link, useNavigate, useLocation } from "react-router-dom";
 import { useAuth } from "@/contexts/AuthContext";
 import { cn } from "@/lib/utils";
 import { Search, LogIn, LogOut, Menu, X } from "lucide-react";
+import { ThemeToggle } from "@/components/ThemeToggle";
 
 export const MAIN_SECTIONS = [
   {
@@ -166,6 +167,8 @@ export function TopBar() {
               className="bg-transparent border-none outline-none text-foreground font-mono text-[10px] w-full placeholder:text-muted-foreground"
             />
           </form>
+
+          <ThemeToggle />
 
           {user ? (
             <button
