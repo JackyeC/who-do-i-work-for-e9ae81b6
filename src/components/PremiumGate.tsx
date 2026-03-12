@@ -10,33 +10,40 @@ import { toast } from "sonner";
 interface PremiumGateProps {
   feature: string;
   description?: string;
+  requiredTier?: "candidate" | "professional";
   children: React.ReactNode;
 }
 
-export function PremiumGate({ feature, description, children }: PremiumGateProps) {
-  const { isPremium, isLoggedIn } = usePremium();
+export function PremiumGate({ feature, description, requiredTier = "candidate", children }: PremiumGateProps) {
+  const { tier, isLoggedIn } = usePremium();
   const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
 
+  const tierRank = { free: 0, candidate: 1, professional: 2 };
+  const hasAccess = tierRank[tier] >= tierRank[requiredTier];
+
+  if (hasAccess) return <>{children}</>;
+
+  const targetTier = requiredTier === "professional" ? STRIPE_TIERS.professional : STRIPE_TIERS.candidate;
+
   const handleUpgrade = async () => {
+    if (!isLoggedIn) {
+      navigate("/login");
+      return;
+    }
     setLoading(true);
     try {
       const { data, error } = await supabase.functions.invoke("create-checkout", {
-        body: { priceId: STRIPE_TIERS.starter.price_id },
+        body: { priceId: targetTier.price_id },
       });
       if (error) throw error;
-      if (data?.url) {
-        window.open(data.url, "_blank");
-      }
-    } catch (err) {
+      if (data?.url) window.open(data.url, "_blank");
+    } catch {
       toast.error("Failed to start checkout. Please try again.");
-      console.error(err);
     } finally {
       setLoading(false);
     }
   };
-
-  if (isPremium) return <>{children}</>;
 
   return (
     <Card className="border-dashed border-2 border-primary/15 bg-muted/30">
@@ -46,7 +53,7 @@ export function PremiumGate({ feature, description, children }: PremiumGateProps
         </div>
         <h3 className="font-semibold text-foreground mb-2 text-lg">{feature}</h3>
         <p className="text-sm text-muted-foreground mb-6 max-w-sm mx-auto leading-relaxed">
-          {description || "This feature is available with a Pro account."}
+          {description || `This feature requires a ${targetTier.label} plan.`}
         </p>
         <div className="flex items-center justify-center gap-2">
           {!isLoggedIn ? (
@@ -56,12 +63,12 @@ export function PremiumGate({ feature, description, children }: PremiumGateProps
           ) : (
             <Button size="default" onClick={handleUpgrade} disabled={loading} className="gap-1.5">
               {loading ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <Lock className="w-3.5 h-3.5" />}
-              Unlock — Starting at $29/mo
+              Upgrade to {targetTier.label} — {targetTier.price}
             </Button>
           )}
         </div>
         <p className="text-micro text-muted-foreground mt-4">
-          Starter $29/mo (3 companies) · Pro $250/mo (25 companies) · Team $800/mo (100 companies)
+          Candidate $29/mo · Professional $99/mo
         </p>
       </CardContent>
     </Card>

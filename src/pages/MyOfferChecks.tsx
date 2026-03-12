@@ -80,16 +80,16 @@ export default function MyOfferChecks() {
         {!premium.isPremium && (
           <div className="flex items-center justify-between p-3 rounded-lg border border-border bg-muted/30 mb-4">
             <span className="text-xs text-muted-foreground">
-              {savedCount} / {premium.maxSavedReports} saved reports used
+              {savedCount} / {premium.maxOfferChecks} saved reports used
             </span>
             <div className="flex items-center gap-2">
               <div className="w-24 h-1.5 bg-muted rounded-full overflow-hidden">
                 <div
                   className="h-full bg-primary rounded-full transition-all"
-                  style={{ width: `${Math.min(100, (savedCount / premium.maxSavedReports) * 100)}%` }}
+                  style={{ width: `${Math.min(100, (savedCount / premium.maxOfferChecks) * 100)}%` }}
                 />
               </div>
-              {savedCount >= premium.maxSavedReports && (
+              {savedCount >= premium.maxOfferChecks && (
                 <Badge variant="outline" className="text-[9px] gap-1">
                   <Crown className="w-2.5 h-2.5" /> Upgrade
                 </Badge>

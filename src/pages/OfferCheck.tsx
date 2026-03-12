@@ -141,7 +141,7 @@ export default function OfferCheck() {
   });
 
   const isSaved = !!savedCheck?.is_saved;
-  const atSaveLimit = !premium.isPremium && (savedCount || 0) >= premium.maxSavedReports && !isSaved;
+  const atSaveLimit = !premium.isPremium && (savedCount || 0) >= premium.maxOfferChecks && !isSaved;
 
   const lockedSections = useMemo(() => {
     if (user) return [];
@@ -152,7 +152,7 @@ export default function OfferCheck() {
     if (!user) { navigate("/login"); return; }
     if (!companyId) return;
     if (atSaveLimit) {
-      toast({ title: "Save limit reached", description: `Free accounts can save up to ${premium.maxSavedReports} reports. Upgrade to save more.`, variant: "destructive" });
+      toast({ title: "Save limit reached", description: `Free accounts can save up to ${premium.maxOfferChecks} reports. Upgrade to save more.`, variant: "destructive" });
       return;
     }
 
