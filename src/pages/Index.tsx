@@ -8,6 +8,20 @@ const Index = () => {
   const [companyCount, setCompanyCount] = useState(0);
   const navigate = useNavigate();
 
+  usePageSEO({
+    title: "Know Who You're Really Working For",
+    description: "Employer Intelligence platform. Company intelligence, offer analysis, connection chains, and career strategy by Jackye Clayton. Know before you sign.",
+    path: "/",
+    jsonLd: {
+      "@type": "WebApplication",
+      name: "Who Do I Work For?",
+      description: "Employer Intelligence platform connecting policy, company behavior, and career strategy.",
+      applicationCategory: "BusinessApplication",
+      creator: { "@type": "Person", name: "Jackye Clayton" },
+      url: "https://civic-align.lovable.app",
+    },
+  });
+
   useEffect(() => {
     supabase.from("companies").select("*", { count: "exact", head: true })
       .then(({ count }) => setCompanyCount(count || 0));
