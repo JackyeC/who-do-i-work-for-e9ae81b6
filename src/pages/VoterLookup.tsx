@@ -245,7 +245,7 @@ export default function VoterLookup() {
         </motion.div>
       </div>
 
-      <Footer />
+      
     </div>
   );
 }
