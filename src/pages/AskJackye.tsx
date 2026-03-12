@@ -29,6 +29,12 @@ export default function AskJackyePage() {
   const [isLoading, setIsLoading] = useState(false);
   const chatEndRef = useRef<HTMLDivElement>(null);
 
+  usePageSEO({
+    title: "Ask Jackye — AI Career Strategy Coach",
+    description: "Get career strategy, offer negotiation advice, and employer intelligence from Jackye Clayton's AI coach. Direct, practical, truth-first career guidance.",
+    path: "/ask-jackye",
+  });
+
   useEffect(() => {
     chatEndRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [messages]);
