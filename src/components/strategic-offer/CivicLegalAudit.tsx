@@ -54,6 +54,13 @@ export function CivicLegalAudit({ flags }: Props) {
         ))}
       </div>
 
+      {/* Professional review banner for high-risk flags */}
+      {redFlags.length > 0 && (
+        <ConsultProfessionalBanner
+          clause={redFlags.length === 1 ? redFlags[0].title.toLowerCase() : undefined}
+        />
+      )}
+
       {/* Flags list */}
       <div className="space-y-3">
         {flags.map(flag => {
