@@ -143,8 +143,9 @@
 
   h1, h2, h3 {
     font-family: 'IBM Plex Sans', system-ui, sans-serif;
-    font-weight: 600;
-    line-height: 1.2;
+    font-weight: 700;
+    line-height: 1.15;
+    letter-spacing: -0.01em;
   }
 
   p, li, td {
