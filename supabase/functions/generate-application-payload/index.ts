@@ -12,7 +12,7 @@ Deno.serve(async (req) => {
 
   try {
     const supabaseUrl = Deno.env.get('SUPABASE_URL')!;
-    const supabaseKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!;
+    const serviceKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!;
     const LOVABLE_API_KEY = Deno.env.get('LOVABLE_API_KEY');
 
     if (!LOVABLE_API_KEY) {
@@ -21,11 +21,33 @@ Deno.serve(async (req) => {
       });
     }
 
-    const supabase = createClient(supabaseUrl, supabaseKey);
-    const { company_id, user_id } = await req.json();
+    const supabase = createClient(supabaseUrl, serviceKey);
+    const body = await req.json();
+    const { company_id } = body;
+
+    // Determine user_id: trust body only for internal service-role calls,
+    // otherwise derive exclusively from JWT
+    const authHeader = req.headers.get('Authorization');
+    const token = authHeader?.replace('Bearer ', '') || '';
+    const isServiceCall = token === serviceKey;
+
+    let user_id: string;
+    if (isServiceCall) {
+      // Internal call from process-apply-queue using service role key
+      user_id = body.user_id;
+    } else {
+      // Normal user call — derive from JWT
+      const { data: { user }, error: authErr } = await supabase.auth.getUser(token);
+      if (authErr || !user) {
+        return new Response(JSON.stringify({ error: 'Unauthorized' }), {
+          status: 401, headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+        });
+      }
+      user_id = user.id;
+    }
 
     if (!company_id || !user_id) {
-      return new Response(JSON.stringify({ error: 'company_id and user_id are required' }), {
+      return new Response(JSON.stringify({ error: 'company_id is required' }), {
         status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' },
       });
     }
