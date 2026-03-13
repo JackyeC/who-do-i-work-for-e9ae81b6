@@ -68,6 +68,7 @@ import BoardIntelligence from "./pages/BoardIntelligence";
 import LeaderProfile from "./pages/LeaderProfile";
 import Disclaimers from "./pages/Disclaimers";
 import CompareCompanies from "./pages/CompareCompanies";
+import InvestigativeExplorer from "./pages/InvestigativeExplorer";
 import { CookieNotice } from "@/components/CookieNotice";
 
 const queryClient = new QueryClient();
