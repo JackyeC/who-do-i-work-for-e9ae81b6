@@ -588,9 +588,26 @@ Analyze all available evidence using the 7-Layer Evidence Model plus Career Traj
 
     const aiResult = await aiResponse.json();
     const toolCall = aiResult.choices?.[0]?.message?.tool_calls?.[0];
-    if (!toolCall?.function?.arguments) throw new Error("AI did not return structured output");
+    let signals: any[];
 
-    const { signals } = JSON.parse(toolCall.function.arguments);
+    if (toolCall?.function?.arguments) {
+      const parsed = JSON.parse(toolCall.function.arguments);
+      signals = parsed.signals;
+    } else {
+      // Fallback: try to parse signals from the response content text
+      const content = aiResult.choices?.[0]?.message?.content || "";
+      console.warn("[values-scan] No tool_calls returned, attempting content fallback parse");
+      try {
+        // Extract JSON from markdown code blocks or raw content
+        const jsonMatch = content.match(/```(?:json)?\s*([\s\S]*?)```/) || [null, content];
+        const rawJson = jsonMatch[1].trim();
+        const parsed = JSON.parse(rawJson);
+        signals = Array.isArray(parsed) ? parsed : (parsed.signals || []);
+      } catch {
+        console.error("[values-scan] Could not parse AI content as JSON either. Content:", content.slice(0, 500));
+        signals = [];
+      }
+    }
 
     // Upsert signals
     if (signals && signals.length > 0) {
