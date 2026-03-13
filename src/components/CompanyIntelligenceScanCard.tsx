@@ -1,11 +1,12 @@
 import { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Progress } from "@/components/ui/progress";
 import {
   Radar, Loader2, CheckCircle2, XCircle, AlertTriangle, Clock,
-  Search, RefreshCw, CircleSlash, SkipForward
+  Search, RefreshCw, CircleSlash, SkipForward, Lock, ArrowRight
 } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
