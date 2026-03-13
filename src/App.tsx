@@ -9,6 +9,7 @@ import { ViewModeProvider } from "@/contexts/ViewModeContext";
 import { DossierLensProvider } from "@/contexts/DossierLensContext";
 import { DemoSafeModeProvider } from "@/contexts/DemoSafeModeContext";
 import { ProtectedRoute } from "@/components/ProtectedRoute";
+import { AdminRoute } from "@/components/AdminRoute";
 import { ErrorBoundary } from "@/components/ErrorBoundary";
 import { AppShell } from "@/components/layout/AppShell";
 import { AskJackyeWidget } from "@/components/AskJackyeWidget";
