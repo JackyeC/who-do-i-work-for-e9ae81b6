@@ -17,7 +17,7 @@ import { PeopleTab } from "@/components/investigative/PeopleTab";
 import { OrganizationsTab } from "@/components/investigative/OrganizationsTab";
 import { NetworkGraphTab } from "@/components/investigative/NetworkGraphTab";
 import { EvidenceTab } from "@/components/investigative/EvidenceTab";
-import { usePageSeo } from "@/hooks/use-page-seo";
+import { usePageSEO } from "@/hooks/use-page-seo";
 
 export default function InvestigativeExplorer() {
   usePageSeo({
