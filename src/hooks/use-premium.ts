@@ -1,4 +1,5 @@
 import { useAuth } from "@/contexts/AuthContext";
+import { useDemoSafeMode } from "@/contexts/DemoSafeModeContext";
 
 export type PremiumTier = "free" | "candidate" | "professional";
 
@@ -101,6 +102,17 @@ function getFeaturesForTier(tier: PremiumTier): PremiumFeatures {
 
 export function usePremium(): PremiumFeatures & { isPremium: boolean; isLoggedIn: boolean; subscriptionEnd: string | null } {
   const { user, subscriptionStatus } = useAuth();
+  const { isDemoSafe } = useDemoSafeMode();
+
+  // Demo Safe Mode: treat as professional tier (bypass all paywalls)
+  if (isDemoSafe && user) {
+    return {
+      ...PROFESSIONAL_FEATURES,
+      isPremium: true,
+      isLoggedIn: true,
+      subscriptionEnd: null,
+    };
+  }
 
   const tier = getTierFromProductId(subscriptionStatus?.product_id ?? null);
   const isPremium = tier !== "free";

@@ -1,8 +1,9 @@
 import { useState, useEffect, useRef } from "react";
 import { Link, useNavigate, useLocation } from "react-router-dom";
 import { useAuth } from "@/contexts/AuthContext";
+import { useDemoSafeMode } from "@/contexts/DemoSafeModeContext";
 import { cn } from "@/lib/utils";
-import { Search, LogIn, LogOut, Menu, X } from "lucide-react";
+import { Search, LogIn, LogOut, Menu, X, Shield } from "lucide-react";
 import { ThemeToggle } from "@/components/ThemeToggle";
 
 export const MAIN_SECTIONS = [
@@ -58,6 +59,7 @@ export function TopBar() {
   const navigate = useNavigate();
   const location = useLocation();
   const { user, signOut } = useAuth();
+  const { isDemoSafe, toggleDemoSafe, canToggle } = useDemoSafeMode();
 
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault();
@@ -138,7 +140,17 @@ export function TopBar() {
 
         {/* Right */}
         <div className="flex items-center gap-3 ml-auto">
-          {user && (
+          {isDemoSafe && (
+            <button
+              onClick={canToggle ? toggleDemoSafe : undefined}
+              className="hidden lg:flex items-center gap-1.5 font-mono text-[9px] tracking-wider uppercase px-2 py-1 border border-civic-green/60 text-civic-green bg-civic-green/10 cursor-pointer hover:bg-civic-green/20 transition-colors"
+              title="Demo Safe Mode — all paywalls bypassed"
+            >
+              <Shield className="w-3 h-3" />
+              Demo Mode
+            </button>
+          )}
+          {user && !isDemoSafe && (
             <div className="hidden lg:flex font-mono text-[9px] tracking-wider uppercase px-2 py-1 border border-primary/40 text-primary">
               Pro
             </div>
