@@ -76,8 +76,10 @@ const statusBadgeClass = (status: string) => {
 export function CompanyIntelligenceScanCard({ companyId, companyName }: Props) {
   const [isScanning, setIsScanning] = useState(false);
   const [showOverlay, setShowOverlay] = useState(false);
+  const [scanLimitReached, setScanLimitReached] = useState(false);
   const { toast } = useToast();
   const queryClient = useQueryClient();
+  const navigate = useNavigate();
 
   const { data: latestScan, isLoading } = useQuery({
     queryKey: ["latest-scan-run", companyId],
