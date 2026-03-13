@@ -81,6 +81,7 @@ const App = () => (
   <ErrorBoundary>
     <QueryClientProvider client={queryClient}>
       <AuthProvider>
+        <DemoSafeModeProvider>
         <ViewModeProvider>
         <DossierLensProvider>
         <TooltipProvider>
