@@ -115,37 +115,54 @@ Deno.serve(async (req) => {
       userId = userData?.user?.id || null;
 
       if (userId) {
-        // Check Stripe subscription status
+        // Check if user has owner/admin role (bypass scan limits)
+        let isPrivilegedUser = false;
         try {
-          const stripeKey = Deno.env.get('STRIPE_SECRET_KEY');
-          if (stripeKey && userData?.user?.email) {
-            const { default: Stripe } = await import('https://esm.sh/stripe@18.5.0');
-            const stripe = new Stripe(stripeKey, { apiVersion: '2025-08-27.basil' });
-            const customers = await stripe.customers.list({ email: userData.user.email, limit: 1 });
-            if (customers.data.length > 0) {
-              const subs = await stripe.subscriptions.list({ customer: customers.data[0].id, status: 'active', limit: 1 });
-              isPaidUser = subs.data.length > 0;
-            }
-          }
+          const { data: roleData } = await supabase
+            .from('user_roles')
+            .select('role')
+            .eq('user_id', userId)
+            .in('role', ['owner', 'admin', 'internal_test']);
+          isPrivilegedUser = (roleData && roleData.length > 0);
         } catch (e) {
-          console.warn('[intelligence-scan] Subscription check failed (non-critical):', e);
+          console.warn('[intelligence-scan] Role check failed (non-critical):', e);
         }
 
-        // Check daily scan count
-        const todayStart = new Date();
-        todayStart.setHours(0, 0, 0, 0);
-        const { count } = await supabase
-          .from('scan_runs')
-          .select('*', { count: 'exact', head: true })
-          .gte('created_at', todayStart.toISOString())
-          .eq('triggered_by', 'user');
+        if (!isPrivilegedUser) {
+          // Check Stripe subscription status
+          try {
+            const stripeKey = Deno.env.get('STRIPE_SECRET_KEY');
+            if (stripeKey && userData?.user?.email) {
+              const { default: Stripe } = await import('https://esm.sh/stripe@18.5.0');
+              const stripe = new Stripe(stripeKey, { apiVersion: '2025-08-27.basil' });
+              const customers = await stripe.customers.list({ email: userData.user.email, limit: 1 });
+              if (customers.data.length > 0) {
+                const subs = await stripe.subscriptions.list({ customer: customers.data[0].id, status: 'active', limit: 1 });
+                isPaidUser = subs.data.length > 0;
+              }
+            }
+          } catch (e) {
+            console.warn('[intelligence-scan] Subscription check failed (non-critical):', e);
+          }
 
-        const maxScans = isPaidUser ? MAX_SCANS_PER_DAY_PAID : MAX_SCANS_PER_DAY_FREE;
-        if ((count || 0) >= maxScans) {
-          return new Response(JSON.stringify({
-            success: false,
-            error: `Daily scan limit reached (${maxScans} per day). ${isPaidUser ? 'Try again tomorrow.' : 'Upgrade to a paid plan for more scans.'}`,
-          }), { status: 429, headers: { ...corsHeaders, 'Content-Type': 'application/json' } });
+          // Check daily scan count
+          const todayStart = new Date();
+          todayStart.setHours(0, 0, 0, 0);
+          const { count } = await supabase
+            .from('scan_runs')
+            .select('*', { count: 'exact', head: true })
+            .gte('created_at', todayStart.toISOString())
+            .eq('triggered_by', 'user');
+
+          const maxScans = isPaidUser ? MAX_SCANS_PER_DAY_PAID : MAX_SCANS_PER_DAY_FREE;
+          if ((count || 0) >= maxScans) {
+            return new Response(JSON.stringify({
+              success: false,
+              error: `Daily scan limit reached (${maxScans} per day). ${isPaidUser ? 'Try again tomorrow.' : 'Upgrade to a paid plan for more scans.'}`,
+            }), { status: 429, headers: { ...corsHeaders, 'Content-Type': 'application/json' } });
+          }
+        } else {
+          console.log(`[intelligence-scan] Privileged user ${userId} — scan limits bypassed`);
         }
       }
     }
