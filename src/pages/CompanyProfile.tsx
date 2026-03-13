@@ -37,7 +37,7 @@ import { CompanyIntelligenceScanCard } from "@/components/CompanyIntelligenceSca
 import { RelatedReportsCard } from "@/components/RelatedReportsCard";
 import { ValuesCheckSection, type ValuesCheckSignal } from "@/components/values-check/ValuesCheckSection";
 import { InfluenceChainCard } from "@/components/InfluenceChainCard";
-import { CorporateCharacterScore } from "@/components/CorporateCharacterScore";
+import { CorporateCharacterScore, calculateCharacterScore } from "@/components/CorporateCharacterScore";
 import { DataFreshnessCard } from "@/components/DataFreshnessCard";
 import { useScanTracker } from "@/hooks/use-scan-tracker";
 import { DecisionMakers } from "@/components/DecisionMakers";
