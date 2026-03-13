@@ -125,20 +125,51 @@ function getScoreBarColor(score: number): string {
   return "bg-destructive";
 }
 
-function getJackyesTake(score: number, components: ComponentScore[]): string {
+interface JackyeTake {
+  opener: string;
+  receipt: string;
+  humanFact: string;
+  closing: string;
+}
+
+function getJackyesTake(score: number, components: ComponentScore[]): JackyeTake {
   const weakest = [...components].sort((a, b) => a.score - b.score)[0];
   const strongest = [...components].sort((a, b) => b.score - a.score)[0];
+  const gaps = components.filter(c => c.score < 40);
+  const gapNames = gaps.map(g => g.label.toLowerCase()).join(" and ");
 
   if (score >= 75) {
-    return `This employer has strong signal clarity across most categories. ${strongest.label} is the strongest area at ${strongest.score}/100. You have enough data to make an informed decision. If ${weakest.label} matters to you, note it scored ${weakest.score}/100 — you may want to ask about that directly.`;
+    return {
+      opener: `This employer shows their receipts. That's rare — and it matters.`,
+      receipt: `${strongest.label} is their strongest signal at ${strongest.score}/100. When a company lets you see this much, it usually means they're not hiding the rest.`,
+      humanFact: weakest.score < 60
+        ? `That said, ${weakest.label.toLowerCase()} scored ${weakest.score}/100. High clarity everywhere else but a gap here? That's worth one direct question in your interview.`
+        : `Across the board, the data is consistent. No major gaps between what they say and what the filings show.`,
+      closing: `You have enough signal to make a real decision here. Use it.`,
+    };
   }
   if (score >= 50) {
-    return `There's a moderate level of transparency here. ${strongest.label} (${strongest.score}/100) gives you the clearest picture, but ${weakest.label} (${weakest.score}/100) has limited data. Before making a decision, I'd recommend asking the employer directly about ${weakest.label.toLowerCase()} to fill the gaps.`;
+    return {
+      opener: `There's enough signal here to work with — but not enough to stop asking questions.`,
+      receipt: `${strongest.label} gives you the clearest picture at ${strongest.score}/100. But ${weakest.label.toLowerCase()}? ${weakest.score}/100. That gap isn't an accident — it's either a blind spot or a choice.`,
+      humanFact: `Companies with moderate clarity often look fine on the careers page. The question is whether the reality matches the marketing. Right now, the data says "maybe."`,
+      closing: `Before you sign anything: ask them directly about ${weakest.label.toLowerCase()}. If they dodge it, that's your answer.`,
+    };
   }
   if (score >= 25) {
-    return `Signal clarity is low for this employer. The strongest area is ${strongest.label} at ${strongest.score}/100, but overall there isn't enough verified data to form a complete picture. This doesn't mean the employer is bad — it means you'll need to do more of your own research. Ask direct questions about ${weakest.label.toLowerCase()} and compensation before committing.`;
+    return {
+      opener: `I can't give you a clear read on this employer — and that itself is a signal.`,
+      receipt: `The strongest area is ${strongest.label} at ${strongest.score}/100, but ${gapNames || weakest.label.toLowerCase()} ${gaps.length > 1 ? "are" : "is"} sitting well below where I'd want to see ${gaps.length > 1 ? "them" : "it"}. When most of the picture is missing, you're not making a decision — you're making a guess.`,
+      humanFact: `This doesn't mean they're a bad employer. It means they haven't made their story easy to verify. Some companies just don't have a big public footprint. Others are intentionally opaque. Your job is to figure out which one this is.`,
+      closing: `Do your own diligence. Ask about ${weakest.label.toLowerCase()} and compensation directly. If they can't answer clearly, walk.`,
+    };
   }
-  return `Very limited employer signal data is available. This is common for smaller or private companies that don't have extensive public disclosures. It's not a judgment on the employer — it just means you'll need to gather more information through conversations, interviews, and your own research.`;
+  return {
+    opener: `Almost nothing to work with here. I'm not going to pretend otherwise.`,
+    receipt: `Across all five signal categories, data coverage is thin. That's common for smaller or private companies — but it doesn't let you off the hook for doing your homework.`,
+    humanFact: `No public data doesn't mean no red flags. It means the red flags — and the green ones — are hiding behind closed doors. You'll only find them by asking the right questions in person.`,
+    closing: `Treat this like a first date with no mutual friends. Be curious, be direct, and don't commit until you've seen the receipts yourself.`,
+  };
 }
 
 interface EmployerClarityScoreProps {
