@@ -80,7 +80,7 @@ const Index = forwardRef<HTMLDivElement>((_, ref) => {
             transition={{ duration: 0.5, delay: 0.2 }}
             className="text-body-lg text-muted-foreground mb-8 max-w-[480px]"
           >
-            Employer Intelligence for the modern workforce. We connect policy, company behavior, workforce signals, and compensation patterns so you make decisions with full information.
+            Understand the company behind the job offer. We connect policy, company behavior, workforce signals, and compensation patterns so you make decisions with full information.
           </motion.p>
           <HeroSearch />
           <motion.div
