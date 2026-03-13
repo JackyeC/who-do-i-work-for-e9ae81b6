@@ -668,7 +668,7 @@ export default function CompanyProfile() {
           {/* ═══════════════════════════════════════════════════════════
               8. POLICY & INFLUENCE SIGNALS
              ═══════════════════════════════════════════════════════════ */}
-          <section className="mb-8">
+          <section id="section-influence" className="mb-8 scroll-mt-28">
             <SectionHeader icon={Landmark} title="Policy & Influence Signals" subtitle="Political donations, lobbying, trade associations, federal contracts" />
             <div className="space-y-4 pl-12">
               {/* Inline summary stats */}
