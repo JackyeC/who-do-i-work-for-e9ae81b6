@@ -109,7 +109,7 @@ export function TopBar() {
         {/* Logo */}
         <Link to="/" className="flex flex-col shrink-0">
           <span className="font-serif text-[13px] text-primary leading-none">Who Do I Work For</span>
-          <span className="font-mono text-micro uppercase text-muted-foreground tracking-[0.2em]">Employer Intelligence by Jackye Clayton</span>
+          <span className="font-mono text-micro uppercase text-muted-foreground tracking-[0.2em]">Career Intelligence by Jackye Clayton</span>
         </Link>
 
         <div className="w-px h-6 bg-border hidden lg:block" />

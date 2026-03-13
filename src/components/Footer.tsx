@@ -22,11 +22,11 @@ export const Footer = forwardRef<HTMLElement>((_, ref) => {
               </div>
               <div className="flex flex-col leading-none">
                 <span className="font-bold text-primary-foreground font-display text-lg">Who Do I Work For?</span>
-                <span className="text-[8px] text-primary-foreground/40 tracking-[0.2em] uppercase font-semibold mt-0.5">Know Before You Go by Jackye Clayton</span>
+                <span className="text-[8px] text-primary-foreground/40 tracking-[0.2em] uppercase font-semibold mt-0.5">Career Intelligence by Jackye Clayton</span>
               </div>
             </div>
             <p className="text-sm text-primary-foreground/45 leading-relaxed">
-              Know the company behind the job description. Employer intelligence powered by public signals — helping recruiters and candidates make informed career decisions.
+              Understand the company behind the job offer. Career intelligence powered by public signals — helping candidates, recruiters, and leaders make informed decisions.
             </p>
           </div>
           <div className="flex flex-col sm:flex-row gap-14">
@@ -52,7 +52,7 @@ export const Footer = forwardRef<HTMLElement>((_, ref) => {
               <div className="space-y-3">
                 <Link to="/pricing" className="block text-sm text-primary-foreground/55 hover:text-primary-foreground/90 transition-colors">Pricing</Link>
                 <Link to="/methodology" className="block text-sm text-primary-foreground/55 hover:text-primary-foreground/90 transition-colors">Methodology</Link>
-                <a href="#data-sources" className="block text-sm text-primary-foreground/55 hover:text-primary-foreground/90 transition-colors">Data Sources</a>
+                <a href="#evidence-sources" className="block text-sm text-primary-foreground/55 hover:text-primary-foreground/90 transition-colors">Evidence Sources</a>
                 <Link to="/request-correction" className="block text-sm text-primary-foreground/55 hover:text-primary-foreground/90 transition-colors">Request a Correction</Link>
                 <Link to="/privacy" className="block text-sm text-primary-foreground/55 hover:text-primary-foreground/90 transition-colors">Privacy Policy</Link>
                 <Link to="/terms" className="block text-sm text-primary-foreground/55 hover:text-primary-foreground/90 transition-colors">Terms of Service</Link>
@@ -63,7 +63,7 @@ export const Footer = forwardRef<HTMLElement>((_, ref) => {
         </div>
         <div className="mt-14 pt-8 border-t border-primary-foreground/[0.06]">
           <p className="text-xs text-primary-foreground/30">
-            © {new Date().getFullYear()} Who Do I Work For? — Know Before You Go by Jackye Clayton. All rights reserved. This platform surfaces publicly available data as employer reality signals for informational purposes only.
+            © {new Date().getFullYear()} Who Do I Work For? — Career Intelligence by Jackye Clayton. All rights reserved. This platform surfaces publicly available data as employer reality signals for informational purposes only.
           </p>
         </div>
       </div>

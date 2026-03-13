@@ -429,10 +429,13 @@ export function WorkforceIntelligenceBrief({
       </div>
 
       {/* System footer */}
-      <div className="px-5 py-2.5 border-t border-border bg-muted/20">
+      <div className="px-5 py-2.5 border-t border-border bg-muted/20 flex items-center justify-between flex-wrap gap-2">
         <p className="text-[9px] text-muted-foreground/60 font-mono">
-          Workforce Intelligence System · Career Transparency Assessment · Signals-based analysis — not legal or employment advice
+          Career Transparency System · Workforce Intelligence Brief · Signals-based analysis — not legal or employment advice
         </p>
+        <span className="text-[9px] text-muted-foreground/40 font-mono">
+          Generated {new Date().toLocaleDateString("en-US", { month: "long", year: "numeric" })}
+        </span>
       </div>
     </div>
   );

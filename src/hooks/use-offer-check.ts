@@ -184,7 +184,7 @@ export function useOfferCheck(companyId?: string) {
     if (primaryEntity.registration_number) overviewSignals.push({ type: "Registration", description: `Company number: ${primaryEntity.registration_number}`, confidence: "Direct Source", sourceUrl: primaryEntity.source_url, detectionMethod: "opencorporates" });
     if (primaryEntity.status) overviewSignals.push({ type: "Entity Status", description: `Registration status: ${primaryEntity.status}`, confidence: "Direct Source", sourceUrl: primaryEntity.source_url });
   }
-  sections.push({ id: "overview", title: "Company Overview", signals: overviewSignals, stale: false, hasData: overviewSignals.length > 0 });
+  sections.push({ id: "overview", title: "Company Snapshot", signals: overviewSignals, stale: false, hasData: overviewSignals.length > 0 });
 
   // 2. Corporate Structure Signals
   const structureSignals: OfferCheckSignal[] = [];

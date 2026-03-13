@@ -15,9 +15,9 @@ export default function Methodology() {
           </p>
 
           <div className="space-y-14">
-            {/* Data Sources */}
+            {/* Evidence Sources */}
             <section>
-              <h2 className="text-title text-foreground mb-5">Data Sources</h2>
+              <h2 className="text-title text-foreground mb-5">Evidence Sources</h2>
               <div className="space-y-3">
                 {[
                   { name: "Federal Election Commission (FEC)", desc: "Official source for federal campaign contributions, PAC filings, and individual donor records via the OpenFEC API." },

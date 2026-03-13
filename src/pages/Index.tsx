@@ -18,12 +18,12 @@ const Index = forwardRef<HTMLDivElement>((_, ref) => {
 
   usePageSEO({
     title: "Know Who You're Really Working For",
-    description: "Employer Intelligence platform. Company intelligence, offer analysis, connection chains, and career strategy by Jackye Clayton. Know before you sign.",
+    description: "Career Intelligence platform. Company intelligence, offer analysis, connection chains, and career strategy by Jackye Clayton. Know before you sign.",
     path: "/",
     jsonLd: {
       "@type": "WebApplication",
       name: "Who Do I Work For?",
-      description: "Employer Intelligence platform connecting policy, company behavior, and career strategy.",
+      description: "Career Intelligence platform. Understand the company behind the job offer.",
       applicationCategory: "BusinessApplication",
       creator: { "@type": "Person", name: "Jackye Clayton" },
       url: "https://civic-align.lovable.app",
@@ -64,7 +64,7 @@ const Index = forwardRef<HTMLDivElement>((_, ref) => {
             className="font-mono text-label uppercase text-primary mb-4 flex items-center gap-2"
           >
             <span className="w-8 h-px bg-primary inline-block" />
-            Employer Intelligence Platform
+            Career Intelligence Platform
           </motion.div>
           <motion.h1
             initial={{ opacity: 0, y: 12 }}
@@ -80,7 +80,7 @@ const Index = forwardRef<HTMLDivElement>((_, ref) => {
             transition={{ duration: 0.5, delay: 0.2 }}
             className="text-body-lg text-muted-foreground mb-8 max-w-[480px]"
           >
-            Employer Intelligence for the modern workforce. We connect policy, company behavior, workforce signals, and compensation patterns so you make decisions with full information.
+            Understand the company behind the job offer. We connect policy, company behavior, workforce signals, and compensation patterns so you make decisions with full information.
           </motion.p>
           <HeroSearch />
           <motion.div
@@ -320,7 +320,7 @@ const Index = forwardRef<HTMLDivElement>((_, ref) => {
       {/* Footer */}
       <footer className="border-t border-border px-6 lg:px-16 py-6 flex justify-between items-center flex-wrap gap-4">
         <div className="font-mono text-[9px] tracking-wider text-muted-foreground">
-          © 2026 Who Do I Work For · Employer Intelligence by Jackye Clayton
+          © 2026 Who Do I Work For · Career Intelligence by Jackye Clayton
         </div>
         <div className="flex gap-6">
           <a href="/privacy" className="font-mono text-[9px] tracking-wider text-muted-foreground hover:text-foreground transition-colors">Privacy</a>

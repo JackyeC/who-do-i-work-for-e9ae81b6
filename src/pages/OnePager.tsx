@@ -112,7 +112,7 @@ const OnePager = () => {
         {/* Bottom row */}
         <div className="grid grid-cols-[1fr_auto] items-end gap-8 border-t border-border pt-6">
           <div>
-            <div className="font-mono text-micro tracking-[0.18em] uppercase text-muted-foreground mb-2">Verified Data Sources</div>
+            <div className="font-mono text-micro tracking-[0.18em] uppercase text-muted-foreground mb-2">Verified Evidence Sources</div>
             <div className="flex flex-wrap gap-3">
               {trustSources.map(s => (
                 <span key={s} className="font-mono text-[9px] text-muted-foreground">{s}</span>
