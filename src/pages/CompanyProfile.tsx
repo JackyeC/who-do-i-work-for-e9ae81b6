@@ -809,6 +809,9 @@ export default function CompanyProfile() {
             <SectionHeader icon={Network} title="Organizational Affiliations" subtitle="Watchlist signals and ideological connections" />
             <div className="space-y-4 pl-12">
               <IdeologyFlagsCard companyName={name} dbCompanyId={dbCompanyId} />
+              {dbCompanyId && (
+                <EpsteinCrossCheckCard companyId={dbCompanyId} companyName={name} />
+              )}
             </div>
           </section>
 
