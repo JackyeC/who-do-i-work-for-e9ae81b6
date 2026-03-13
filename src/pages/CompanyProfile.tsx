@@ -750,29 +750,9 @@ export default function CompanyProfile() {
                 </Card>
               )}
 
-              {/* Say vs. Do */}
+              {/* Say vs. Do — Alignment Dashboard */}
               {dbPublicStances && dbPublicStances.length > 0 && (
-                <div>
-                  <h3 className="text-base font-semibold text-foreground mb-3 flex items-center gap-2"><MessageSquareWarning className="w-4 h-4 text-primary" /> Say vs. Do</h3>
-                  <div className="space-y-3">
-                    {dbPublicStances.map((stance) => (
-                      <Card key={stance.id}><CardContent className="p-4">
-                        <div className="flex items-start justify-between gap-3">
-                          <div className="flex-1">
-                            <h4 className="font-semibold text-foreground text-sm mb-2">{stance.topic}</h4>
-                            <div className="grid sm:grid-cols-2 gap-3">
-                              <div><p className="text-[11px] font-medium text-muted-foreground mb-0.5">🗣️ Public Position</p><p className="text-sm text-foreground">{stance.public_position}</p></div>
-                              <div><p className="text-[11px] font-medium text-muted-foreground mb-0.5">💰 Spending Reality</p><p className="text-sm text-foreground">{stance.spending_reality}</p></div>
-                            </div>
-                          </div>
-                          <Badge variant={stance.gap === "direct-conflict" ? "destructive" : stance.gap === "aligned" ? "secondary" : "outline"} className="shrink-0 text-xs">
-                            {stance.gap === "direct-conflict" ? "Conflict" : stance.gap === "aligned" ? "Aligned" : "Mixed"}
-                          </Badge>
-                        </div>
-                      </CardContent></Card>
-                    ))}
-                  </div>
-                </div>
+                <AlignmentDashboard stances={dbPublicStances} />
               )}
 
               {/* Dark Money + Revolving Door */}
