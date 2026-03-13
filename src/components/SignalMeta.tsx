@@ -134,7 +134,7 @@ export function SignalMeta({
             rel="noopener noreferrer"
             className="text-[10px] text-primary hover:underline inline-flex items-center gap-0.5"
           >
-            View source <ExternalLink className="w-2.5 h-2.5" />
+            View evidence <ExternalLink className="w-2.5 h-2.5" />
           </a>
         )}
 

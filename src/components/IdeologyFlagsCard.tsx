@@ -213,7 +213,7 @@ export function IdeologyFlagsCard({ companyName, dbCompanyId }: Props) {
                             {flag.evidenceUrl && (
                               <a href={flag.evidenceUrl} target="_blank" rel="noopener noreferrer"
                                 className="text-xs text-primary hover:underline mt-1 inline-block">
-                                View source →
+                                View evidence →
                               </a>
                             )}
                           </div>

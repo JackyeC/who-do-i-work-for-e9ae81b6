@@ -57,7 +57,7 @@ function SignalGroup({ title, icon: Icon, signals, defaultOpen = false }: { titl
                 <Badge variant="outline" className="text-micro">{signal.sourceType}</Badge>
                 {signal.sourceUrl && (
                   <a href={signal.sourceUrl} target="_blank" rel="noopener noreferrer" className="text-micro text-primary hover:underline flex items-center gap-1">
-                    View Source <ExternalLink className="w-3 h-3" />
+                    View Evidence <ExternalLink className="w-3 h-3" />
                   </a>
                 )}
                 {signal.amount && signal.amount > 0 && (

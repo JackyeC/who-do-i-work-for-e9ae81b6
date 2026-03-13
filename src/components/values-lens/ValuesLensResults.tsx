@@ -159,7 +159,7 @@ export function ValuesLensResults({ lensKey, onBack }: Props) {
           ideology_scan: "Ideology Scan",
           company_signal_scan: "Signal Scan",
           known_corporate_actions: "Public Record",
-          company_profile: "Company Profile",
+          company_profile: "Company Snapshot",
           public_stance_analysis: "Public Stance",
         };
         const sourceLabel = sourceLabels[s.source_dataset] || s.source_dataset;

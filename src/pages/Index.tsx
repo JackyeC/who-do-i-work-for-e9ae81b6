@@ -78,9 +78,17 @@ const Index = forwardRef<HTMLDivElement>((_, ref) => {
             initial={{ opacity: 0, y: 12 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5, delay: 0.2 }}
-            className="text-body-lg text-muted-foreground mb-8 max-w-[480px]"
+            className="text-body-lg text-foreground/80 mb-3 max-w-[480px]"
           >
-            Understand the company behind the job offer. We connect policy, company behavior, workforce signals, and compensation patterns so you make decisions with full information.
+            Career intelligence before you accept the offer.
+          </motion.p>
+          <motion.p
+            initial={{ opacity: 0, y: 12 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5, delay: 0.25 }}
+            className="text-body text-muted-foreground mb-8 max-w-[480px]"
+          >
+            Research the company behind the job offer. Understand leadership, lobbying, labor signals, and accountability data before you decide where to work.
           </motion.p>
           <HeroSearch />
           <motion.div

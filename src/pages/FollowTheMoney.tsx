@@ -1158,7 +1158,7 @@ export default function FollowTheMoney() {
                       onClick={() => navigate(`/search?q=${encodeURIComponent(selectedNode.label)}`)}
                     >
                       <ExternalLink className="w-3 h-3" />
-                      View Company Profile
+                      View Company Snapshot
                     </Button>
                   )}
                 </div>

@@ -49,7 +49,7 @@ const SOURCE_LABELS: Record<string, { label: string; icon: typeof FileText }> = 
   known_corporate_actions: { label: "Public Record", icon: FileText },
   public_stance_analysis: { label: "Public Stance", icon: FileText },
   company_signal_scan: { label: "Signal Scan", icon: Shield },
-  company_profile: { label: "Company Profile", icon: Building2 },
+  company_profile: { label: "Company Snapshot", icon: Building2 },
   entity_linkage: { label: "Entity Linkage", icon: FileText },
   issue_legislation_map: { label: "Legislation Link", icon: Landmark },
 };

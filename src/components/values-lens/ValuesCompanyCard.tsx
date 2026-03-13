@@ -164,7 +164,7 @@ export function ValuesCompanyCard({ company, signals, evidence, lensLabel, hasCo
             )}
             <Link to={`/company/${company.slug}`}>
               <Button variant="ghost" size="sm" className="gap-1 text-xs">
-                Full Company Profile <ExternalLink className="w-3 h-3" />
+                Full Company Snapshot <ExternalLink className="w-3 h-3" />
               </Button>
             </Link>
           </div>
