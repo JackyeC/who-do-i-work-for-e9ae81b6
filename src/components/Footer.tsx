@@ -22,7 +22,7 @@ export const Footer = forwardRef<HTMLElement>((_, ref) => {
               </div>
               <div className="flex flex-col leading-none">
                 <span className="font-bold text-primary-foreground font-display text-lg">Who Do I Work For?</span>
-                <span className="text-[8px] text-primary-foreground/40 tracking-[0.2em] uppercase font-semibold mt-0.5">Know Before You Go by Jackye Clayton</span>
+                <span className="text-[8px] text-primary-foreground/40 tracking-[0.2em] uppercase font-semibold mt-0.5">Career Intelligence by Jackye Clayton</span>
               </div>
             </div>
             <p className="text-sm text-primary-foreground/45 leading-relaxed">
