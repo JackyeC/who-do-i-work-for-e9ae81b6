@@ -1,18 +1,26 @@
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "@/contexts/AuthContext";
 import { lovable } from "@/integrations/lovable/index";
+import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Header } from "@/components/Header";
 import { Footer } from "@/components/Footer";
 import { useToast } from "@/hooks/use-toast";
-import { useEffect } from "react";
-import { Shield, ArrowRight } from "lucide-react";
+import { useEffect, useState } from "react";
+import { Shield, ArrowRight, Mail, Loader2 } from "lucide-react";
 
 export default function Login() {
   const { user, loading } = useAuth();
   const navigate = useNavigate();
   const { toast } = useToast();
+
+  const [mode, setMode] = useState<"signin" | "signup">("signin");
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [submitting, setSubmitting] = useState(false);
 
   useEffect(() => {
     if (!loading && user) {
@@ -46,6 +54,42 @@ export default function Login() {
     }
   };
 
+  const handleEmailSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    const trimmedEmail = email.trim();
+    if (!trimmedEmail || !password) return;
+
+    setSubmitting(true);
+    try {
+      if (mode === "signup") {
+        const { error } = await supabase.auth.signUp({
+          email: trimmedEmail,
+          password,
+          options: { emailRedirectTo: window.location.origin },
+        });
+        if (error) throw error;
+        toast({
+          title: "Check your email",
+          description: "We sent you a confirmation link. Please verify your email to sign in.",
+        });
+      } else {
+        const { error } = await supabase.auth.signInWithPassword({
+          email: trimmedEmail,
+          password,
+        });
+        if (error) throw error;
+      }
+    } catch (err: any) {
+      toast({
+        title: mode === "signup" ? "Sign-up failed" : "Sign-in failed",
+        description: err.message || "Something went wrong.",
+        variant: "destructive",
+      });
+    } finally {
+      setSubmitting(false);
+    }
+  };
+
   return (
     <div className="min-h-screen flex flex-col bg-background">
       <Header />
@@ -55,14 +99,92 @@ export default function Login() {
             <div className="w-16 h-16 mx-auto rounded-2xl bg-primary/8 flex items-center justify-center mb-2 border border-primary/10">
               <Shield className="w-8 h-8 text-primary" />
             </div>
-            <CardTitle className="text-headline text-2xl">Sign in</CardTitle>
+            <CardTitle className="text-headline text-2xl">
+              {mode === "signin" ? "Sign in" : "Create account"}
+            </CardTitle>
             <p className="text-body text-muted-foreground leading-relaxed">
               Access career intelligence tools including job matching, offer analysis, career mapping, and company transparency insights.
             </p>
           </CardHeader>
-          <CardContent className="space-y-3 pt-0">
+          <CardContent className="space-y-4 pt-0">
+            {/* Email + Password Form */}
+            <form onSubmit={handleEmailSubmit} className="space-y-3">
+              <div className="space-y-1.5">
+                <Label htmlFor="email" className="text-sm">Email</Label>
+                <Input
+                  id="email"
+                  type="email"
+                  placeholder="you@example.com"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  required
+                  autoComplete="email"
+                />
+              </div>
+              <div className="space-y-1.5">
+                <Label htmlFor="password" className="text-sm">Password</Label>
+                <Input
+                  id="password"
+                  type="password"
+                  placeholder="••••••••"
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  required
+                  minLength={6}
+                  autoComplete={mode === "signup" ? "new-password" : "current-password"}
+                />
+              </div>
+              <Button type="submit" className="w-full h-12 gap-2 text-base" disabled={submitting}>
+                {submitting ? (
+                  <Loader2 className="w-4 h-4 animate-spin" />
+                ) : (
+                  <Mail className="w-4 h-4" />
+                )}
+                {mode === "signin" ? "Sign in with Email" : "Create Account"}
+                {!submitting && <ArrowRight className="w-4 h-4 ml-auto" />}
+              </Button>
+            </form>
+
+            <p className="text-center text-sm text-muted-foreground">
+              {mode === "signin" ? (
+                <>
+                  Don't have an account?{" "}
+                  <button
+                    type="button"
+                    onClick={() => setMode("signup")}
+                    className="text-primary font-medium hover:underline"
+                  >
+                    Sign up
+                  </button>
+                </>
+              ) : (
+                <>
+                  Already have an account?{" "}
+                  <button
+                    type="button"
+                    onClick={() => setMode("signin")}
+                    className="text-primary font-medium hover:underline"
+                  >
+                    Sign in
+                  </button>
+                </>
+              )}
+            </p>
+
+            {/* Divider */}
+            <div className="relative py-2">
+              <div className="absolute inset-0 flex items-center">
+                <span className="w-full border-t border-border" />
+              </div>
+              <div className="relative flex justify-center text-xs uppercase">
+                <span className="bg-card px-3 text-muted-foreground">or continue with</span>
+              </div>
+            </div>
+
+            {/* OAuth Buttons */}
             <Button
               onClick={handleGoogleSignIn}
+              variant="outline"
               className="w-full gap-2.5 h-12 text-base"
               size="lg"
             >
