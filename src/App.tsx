@@ -191,6 +191,8 @@ const App = () => (
                 <Route path="/compare" element={<CompareCompanies />} />
                 <Route path="/auto-apply" element={<Navigate to="/dashboard?tab=auto-apply" replace />} />
                 <Route path="/my-values" element={<Navigate to="/dashboard?tab=values" replace />} />
+                <Route path="/offer-checks" element={<Navigate to="/my-offer-checks" replace />} />
+                <Route path="/offer-clarity" element={<OfferClarity />} />
                 <Route path="*" element={<NotFound />} />
               </Routes>
               <AskJackyeWidget />
