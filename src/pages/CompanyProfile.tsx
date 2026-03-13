@@ -631,7 +631,7 @@ export default function CompanyProfile() {
           {/* ═══════════════════════════════════════════════════════════
               5. COMPENSATION TRANSPARENCY
              ═══════════════════════════════════════════════════════════ */}
-          <section className="mb-8">
+          <section id="section-compensation" className="mb-8 scroll-mt-28">
             <SectionHeader icon={DollarSign} title="Compensation Transparency" subtitle="Pay equity signals and national benchmarks" />
             <div className="space-y-4 pl-12">
               <CompensationTransparencyCard companyName={name} dbCompanyId={dbCompanyId} />
