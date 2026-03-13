@@ -72,7 +72,7 @@ const Index = forwardRef<HTMLDivElement>((_, ref) => {
             transition={{ duration: 0.5, delay: 0.1 }}
             className="text-3xl lg:text-[clamp(2.4rem,5vw,3.6rem)] leading-tight mb-6 text-foreground"
           >
-            Know who you're <em className="text-primary not-italic">really</em> working for before you sign.
+            Who Do I Work For?
           </motion.h1>
           <motion.p
             initial={{ opacity: 0, y: 12 }}
