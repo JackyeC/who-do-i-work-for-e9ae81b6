@@ -3,8 +3,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Progress } from "@/components/ui/progress";
 import {
-  Shield, Users, Briefcase, DollarSign, BarChart3,
-  CheckCircle2, MessageSquare
+  Shield, Users, Briefcase, DollarSign, BarChart3, CheckCircle2,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 
