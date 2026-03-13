@@ -245,7 +245,7 @@ const Index = forwardRef<HTMLDivElement>((_, ref) => {
         </div>
       </section>
 
-      {/* Data Sources */}
+      {/* Evidence Sources */}
       <SectionReveal>
         <section className="bg-card border-y border-border px-6 lg:px-16 py-16">
           <div className="max-w-[1100px] mx-auto text-center">

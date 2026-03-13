@@ -14,7 +14,7 @@ export function HeroSearch() {
     }
   };
 
-  const suggestions = ["Amazon", "Google", "Goldman Sachs", "Lockheed Martin"];
+  const suggestions = ["ExxonMobil", "Amazon", "Google", "Goldman Sachs"];
 
   return (
     <motion.div
