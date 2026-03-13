@@ -60,6 +60,7 @@ import WorkWithJackye from "./pages/WorkWithJackye";
 import EmployerReceipt from "./pages/EmployerReceipt";
 import EVPRealityCheck from "./pages/EVPRealityCheck";
 import WhatAmISupporting from "./pages/WhatAmISupporting";
+import OfferClarity from "./pages/OfferClarity";
 import IntelligenceChain from "./pages/IntelligenceChain";
 import BoardIntelligence from "./pages/BoardIntelligence";
 import LeaderProfile from "./pages/LeaderProfile";
@@ -191,6 +192,8 @@ const App = () => (
                 <Route path="/compare" element={<CompareCompanies />} />
                 <Route path="/auto-apply" element={<Navigate to="/dashboard?tab=auto-apply" replace />} />
                 <Route path="/my-values" element={<Navigate to="/dashboard?tab=values" replace />} />
+                <Route path="/offer-checks" element={<Navigate to="/my-offer-checks" replace />} />
+                <Route path="/offer-clarity" element={<OfferClarity />} />
                 <Route path="*" element={<NotFound />} />
               </Routes>
               <AskJackyeWidget />
