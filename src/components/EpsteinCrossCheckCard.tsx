@@ -130,7 +130,7 @@ export function EpsteinCrossCheckCard({ companyId, companyName }: Props) {
                       {ref.match_confidence} confidence
                     </Badge>
                     {ep.black_book && (
-                      <Badge className="text-[10px] bg-amber-600/90">Black Book</Badge>
+                      <Badge variant="secondary" className="text-[10px]">Black Book</Badge>
                     )}
                   </div>
                   {ep.category && (
