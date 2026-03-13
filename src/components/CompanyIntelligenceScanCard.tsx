@@ -228,6 +228,36 @@ export function CompanyIntelligenceScanCard({ companyId, companyName }: Props) {
         </div>
       </CardHeader>
       <CardContent>
+        {/* ─── Scan Limit Reached — polished upgrade state ─── */}
+        {scanLimitReached && (
+          <div className="border border-primary/30 bg-primary/5 rounded-lg p-6 text-center space-y-4 mb-4">
+            <div className="flex justify-center">
+              <div className="w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center">
+                <Lock className="w-6 h-6 text-primary" />
+              </div>
+            </div>
+            <div>
+              <h3 className="text-lg font-semibold text-foreground mb-1">You've reached today's free scan limit</h3>
+              <p className="text-sm text-muted-foreground max-w-md mx-auto">
+                Free accounts include 2 scans per day. Upgrade for more scans or come back tomorrow.
+              </p>
+            </div>
+            <div className="flex items-center justify-center gap-3">
+              <Button onClick={() => navigate("/pricing")} className="gap-2">
+                Upgrade <ArrowRight className="w-4 h-4" />
+              </Button>
+              <Button variant="outline" onClick={() => navigate("/dashboard")}>
+                Back to dashboard
+              </Button>
+            </div>
+            <button
+              onClick={() => setScanLimitReached(false)}
+              className="text-xs text-muted-foreground hover:text-foreground transition-colors"
+            >
+              Dismiss
+            </button>
+          </div>
+        )}
         {/* Stats row — truthful counts */}
         {latestScan && (
           <div className="grid grid-cols-2 md:grid-cols-5 gap-3 mb-4">
