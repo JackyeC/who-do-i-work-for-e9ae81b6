@@ -184,8 +184,8 @@ const App = () => (
                 } />
                 <Route path="/intelligence" element={<IntelligenceReports />} />
                 <Route path="/intelligence/:slug" element={<IntelligenceReport />} />
-                <Route path="/admin/reports" element={<ProtectedRoute><ReportsList /></ProtectedRoute>} />
-                <Route path="/admin/reports/:id" element={<ProtectedRoute><ReportEditor /></ProtectedRoute>} />
+                <Route path="/admin/reports" element={<AdminRoute><ReportsList /></AdminRoute>} />
+                <Route path="/admin/reports/:id" element={<AdminRoute><ReportEditor /></AdminRoute>} />
                 <Route path="/recruiting" element={<RecruitingIntelligence />} />
                 <Route path="/relationship-intelligence" element={
                   <ProtectedRoute>
