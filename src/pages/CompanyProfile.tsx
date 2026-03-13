@@ -36,6 +36,7 @@ import { ValuesCheckSection, type ValuesCheckSignal } from "@/components/values-
 import { InfluenceChainCard } from "@/components/InfluenceChainCard";
 import { EmployerClarityScore } from "@/components/EmployerClarityScore";
 import { DataFreshnessCard } from "@/components/DataFreshnessCard";
+import { useScanTracker } from "@/hooks/use-scan-tracker";
 import { DecisionMakers } from "@/components/DecisionMakers";
 import { PowerMap } from "@/components/PowerMap";
 import { BoardGovernanceTab } from "@/components/BoardGovernanceTab";
