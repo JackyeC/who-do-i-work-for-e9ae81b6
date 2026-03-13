@@ -1,4 +1,5 @@
 import { useAuth } from "@/contexts/AuthContext";
+import { useDemoSafeMode } from "@/contexts/DemoSafeModeContext";
 
 export type PremiumTier = "free" | "candidate" | "professional";
 
