@@ -35,7 +35,7 @@ import { CompanyIntelligenceScanCard } from "@/components/CompanyIntelligenceSca
 import { RelatedReportsCard } from "@/components/RelatedReportsCard";
 import { ValuesCheckSection, type ValuesCheckSignal } from "@/components/values-check/ValuesCheckSection";
 import { InfluenceChainCard } from "@/components/InfluenceChainCard";
-import { EmployerClarityScore } from "@/components/EmployerClarityScore";
+import { CorporateCharacterScore } from "@/components/CorporateCharacterScore";
 import { DataFreshnessCard } from "@/components/DataFreshnessCard";
 import { useScanTracker } from "@/hooks/use-scan-tracker";
 import { DecisionMakers } from "@/components/DecisionMakers";
@@ -429,29 +429,37 @@ export default function CompanyProfile() {
           </Card>
 
           {/* ═══════════════════════════════════════════════════════════
-              EMPLOYER CLARITY SCORE
+              CORPORATE CHARACTER SCORE™
              ═══════════════════════════════════════════════════════════ */}
           <div className="mb-6 grid lg:grid-cols-3 gap-4">
             <div className="lg:col-span-2">
-              <EmployerClarityScore
-                hasWarnNotices={false}
-                hasLayoffSignals={false}
+              <CorporateCharacterScore
+                // Transparency
+                hasPayTransparency={!!tiPayEquity}
+                hasPublicStances={(dbPublicStances?.length || 0) > 0}
+                hasPublicReporting={!!dbCompany?.is_publicly_traded}
+                // Worker Treatment
                 hasSentimentData={!!tiSentiment}
-                employeeCount={(dbCompany as any)?.employee_count}
-                hasAiHrSignals={!!tiAiHr}
+                hasLayoffSignals={false}
+                hasWarnNotices={false}
                 hasBenefitsData={!!tiBenefits}
-                hasJobPostings={false}
+                employeeCount={(dbCompany as any)?.employee_count}
+                // Political Influence
                 totalPacSpending={totalPac}
                 lobbyingSpend={lobbyingSpend}
                 hasTradeAssociations={(dbTradeAssociations?.length || 0) > 0}
                 hasGovernmentContracts={govContracts > 0}
                 hasDarkMoney={(dbDarkMoney?.length || 0) > 0}
+                hasIssueSignals={(dbIssueSignals?.length || 0) > 0}
+                // Ethical Conduct
                 hasPayEquitySignals={!!tiPayEquity}
+                // Leadership
                 hasCompensationData={!!tiBenefits}
+                hasAiHrSignals={!!tiAiHr}
+                hasJobPostings={false}
+                // Meta
                 scanCompletion={(dbCompany as any)?.scan_completion}
                 recordStatus={recordStatus}
-                hasPublicStances={(dbPublicStances?.length || 0) > 0}
-                hasIssueSignals={(dbIssueSignals?.length || 0) > 0}
               />
             </div>
             <DataFreshnessCard
