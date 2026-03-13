@@ -72,7 +72,7 @@ const Index = forwardRef<HTMLDivElement>((_, ref) => {
             transition={{ duration: 0.5, delay: 0.1 }}
             className="text-3xl lg:text-[clamp(2.4rem,5vw,3.6rem)] leading-tight mb-6 text-foreground"
           >
-            Who Do I Work For?
+            Who Do I Work For? <span className="font-mono text-[10px] tracking-wider uppercase px-2 py-1 bg-primary/10 text-primary border border-primary/20 rounded-sm align-middle">Beta</span>
           </motion.h1>
           <motion.p
             initial={{ opacity: 0, y: 12 }}
