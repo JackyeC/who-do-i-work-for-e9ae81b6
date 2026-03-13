@@ -655,7 +655,7 @@ export default function CompanyProfile() {
           {/* ═══════════════════════════════════════════════════════════
               7. WORKFORCE STABILITY
              ═══════════════════════════════════════════════════════════ */}
-          <section className="mb-8">
+          <section id="section-stability" className="mb-8 scroll-mt-28">
             <SectionHeader icon={AlertTriangle} title="Workforce Stability" subtitle="Layoffs, WARN notices, and workforce reduction signals" />
             <div className="space-y-4 pl-12">
               <WarnTrackerCard companyName={name} dbCompanyId={dbCompanyId} />
