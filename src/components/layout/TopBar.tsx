@@ -110,7 +110,7 @@ export function TopBar() {
       <header className="sticky top-0 z-50 bg-card border-b border-border h-[52px] flex items-center px-4 lg:px-6 gap-4 lg:gap-8">
         {/* Logo */}
         <Link to="/" className="flex flex-col shrink-0">
-          <span className="font-serif text-[13px] text-primary leading-none">Who Do I Work For</span>
+          <span className="font-serif text-[13px] text-primary leading-none flex items-center gap-1.5">Who Do I Work For <span className="font-mono text-[8px] tracking-wider uppercase px-1.5 py-0.5 bg-primary/10 text-primary border border-primary/20 rounded-sm leading-none">Beta</span></span>
           <span className="font-mono text-micro uppercase text-muted-foreground tracking-[0.2em]">Career Intelligence by Jackye Clayton</span>
         </Link>
 
