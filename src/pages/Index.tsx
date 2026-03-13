@@ -1,8 +1,9 @@
 import { useState, useEffect, forwardRef } from "react";
 import { useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
-import { Search, ArrowRight, Shield, FileText, MessageSquare, Compass } from "lucide-react";
+import { Search, ArrowRight, Shield, FileText, MessageSquare, Compass, ArrowLeftRight } from "lucide-react";
 import { usePageSEO } from "@/hooks/use-page-seo";
+import { LiveActivityTicker } from "@/components/viral/LiveActivityTicker";
 
 const Index = forwardRef<HTMLDivElement>((_, ref) => {
   const [companyCount, setCompanyCount] = useState(0);
@@ -129,6 +130,9 @@ const Index = forwardRef<HTMLDivElement>((_, ref) => {
         </div>
       </section>
 
+      {/* Live Activity Social Proof */}
+      <LiveActivityTicker />
+
       {/* Trust Bar */}
       <div className="flex items-center justify-center gap-6 lg:gap-12 flex-wrap px-6 py-5 border-y border-border">
         {trustSources.map((src, i) => (
@@ -224,6 +228,25 @@ const Index = forwardRef<HTMLDivElement>((_, ref) => {
           >
             Read our methodology →
           </button>
+        </div>
+      </section>
+
+      {/* Compare CTA */}
+      <section className="px-6 lg:px-16 py-12 max-w-[1100px] mx-auto w-full">
+        <div
+          className="bg-card border border-border p-8 flex flex-col md:flex-row items-center justify-between gap-6 cursor-pointer hover:border-primary/30 transition-colors group"
+          onClick={() => navigate("/compare")}
+        >
+          <div className="flex items-center gap-4">
+            <ArrowLeftRight className="w-8 h-8 text-primary" strokeWidth={1.5} />
+            <div>
+              <div className="font-serif text-lg text-foreground group-hover:text-primary transition-colors">Compare Two Employers</div>
+              <div className="text-[13px] text-muted-foreground">Side-by-side transparency scores, PAC spending, lobbying, and government contracts.</div>
+            </div>
+          </div>
+          <div className="flex items-center gap-1.5 font-mono text-[10px] tracking-wider uppercase text-primary group-hover:gap-2.5 transition-all whitespace-nowrap">
+            Start comparison <ArrowRight className="w-3 h-3" />
+          </div>
         </div>
       </section>
 

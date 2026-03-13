@@ -36,6 +36,7 @@ import { ValuesCheckSection, type ValuesCheckSignal } from "@/components/values-
 import { InfluenceChainCard } from "@/components/InfluenceChainCard";
 import { EmployerClarityScore } from "@/components/EmployerClarityScore";
 import { DataFreshnessCard } from "@/components/DataFreshnessCard";
+import { useScanTracker } from "@/hooks/use-scan-tracker";
 import { DecisionMakers } from "@/components/DecisionMakers";
 import { PowerMap } from "@/components/PowerMap";
 import { BoardGovernanceTab } from "@/components/BoardGovernanceTab";
@@ -273,6 +274,9 @@ export default function CompanyProfile() {
 
   const seoTarget = dbCompany || (company ? { name: company.name, industry: company.industry || "", state: company.state || "", description: "", slug: company.id } : null);
   useCompanySEO({ name: seoTarget?.name || "", industry: seoTarget?.industry || "", state: seoTarget?.state || "", description: (seoTarget as any)?.description || "", slug: id || seoTarget?.slug || "" });
+
+  // Track scan for social proof
+  useScanTracker(dbCompany?.id || undefined, dbCompany?.name || company?.name);
 
   // ─── Full Scan Handler ───
   const handleFullScan = async () => {
