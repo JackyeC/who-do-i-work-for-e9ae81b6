@@ -5,6 +5,28 @@ const corsHeaders = {
 
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2';
 
+// HMAC-SHA256 signature verification helpers
+const encoder = new TextEncoder();
+
+function toHex(buffer: ArrayBuffer): string {
+  return Array.from(new Uint8Array(buffer))
+    .map(b => b.toString(16).padStart(2, '0'))
+    .join('');
+}
+
+async function verifySignature(body: string, signature: string | null, secret: string): Promise<boolean> {
+  if (!signature) return false;
+  const key = await crypto.subtle.importKey(
+    'raw',
+    encoder.encode(secret),
+    { name: 'HMAC', hash: 'SHA-256' },
+    false,
+    ['sign']
+  );
+  const expected = toHex(await crypto.subtle.sign('HMAC', key, encoder.encode(body)));
+  return signature === expected;
+}
+
 // Expanded module mapping: page_type → scan modules to re-run
 const PAGE_TYPE_TO_MODULES: Record<string, string[]> = {
   careers: ['ai-hr-scan', 'worker-benefits-scan', 'pay-equity-scan'],
@@ -38,10 +60,29 @@ Deno.serve(async (req) => {
 
   const supabaseUrl = Deno.env.get('SUPABASE_URL')!;
   const supabaseKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!;
+  const webhookSecret = Deno.env.get('BROWSE_AI_WEBHOOK_SECRET');
   const supabase = createClient(supabaseUrl, supabaseKey);
 
   try {
-    const payload = await req.json();
+    // Read body as text for signature verification
+    const rawBody = await req.text();
+
+    // Verify webhook signature if secret is configured
+    if (webhookSecret) {
+      const signature = req.headers.get('x-browse-ai-signature');
+      const valid = await verifySignature(rawBody, signature, webhookSecret);
+      if (!valid) {
+        console.error('[browse-ai-webhook] Invalid signature');
+        return new Response(JSON.stringify({ error: 'Forbidden: invalid signature' }), {
+          status: 403,
+          headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+        });
+      }
+    } else {
+      console.warn('[browse-ai-webhook] BROWSE_AI_WEBHOOK_SECRET not configured — signature verification skipped');
+    }
+
+    const payload = JSON.parse(rawBody);
     console.log('[browse-ai-webhook] Received:', JSON.stringify(payload).slice(0, 500));
 
     const robotId = payload.robot?.id || payload.robotId;
@@ -188,7 +229,7 @@ Deno.serve(async (req) => {
   } catch (error) {
     console.error('[browse-ai-webhook] Error:', error);
     return new Response(JSON.stringify({
-      error: error instanceof Error ? error.message : 'Unknown error',
+      error: 'Internal server error',
     }), { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } });
   }
 });

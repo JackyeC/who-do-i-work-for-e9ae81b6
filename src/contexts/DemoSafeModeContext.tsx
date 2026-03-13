@@ -22,18 +22,26 @@ export function DemoSafeModeProvider({ children }: { children: ReactNode }) {
   const { isInternalTest, isOwner, isLoading } = useUserRole();
   const canToggle = isInternalTest || isOwner;
 
-  const [isDemoSafe, setDemoSafe] = useState(() => {
-    return localStorage.getItem("civiclens-demo-safe") === "true";
-  });
+  const [isDemoSafe, setDemoSafe] = useState(false);
 
-  // Auto-activate for internal_test users once roles load
+  // Only allow demo mode for authorized roles; reset for unauthorized users
   useEffect(() => {
     if (isLoading) return;
+    if (!canToggle) {
+      setDemoSafe(false);
+      localStorage.removeItem("civiclens-demo-safe");
+      return;
+    }
+    // Restore persisted preference for authorized users
+    if (localStorage.getItem("civiclens-demo-safe") === "true") {
+      setDemoSafe(true);
+    }
+    // Auto-activate for internal_test users
     if (isInternalTest && !isDemoSafe) {
       setDemoSafe(true);
       localStorage.setItem("civiclens-demo-safe", "true");
     }
-  }, [isInternalTest, isLoading]); // eslint-disable-line react-hooks/exhaustive-deps
+  }, [isLoading, canToggle, isInternalTest]); // eslint-disable-line react-hooks/exhaustive-deps
 
   const toggleDemoSafe = useCallback(() => {
     if (!canToggle) return;
