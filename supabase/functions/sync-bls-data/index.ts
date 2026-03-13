@@ -1,4 +1,3 @@
-import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 
 const corsHeaders = {
@@ -9,13 +8,7 @@ const corsHeaders = {
 // BLS API endpoints
 const BLS_API_V1 = "https://api.bls.gov/publicAPI/v1/timeseries/data/";
 const BLS_API_V2 = "https://api.bls.gov/publicAPI/v2/timeseries/data/";
-const BLS_QCEW_BASE = "https://data.bls.gov/cew/data/api";
 
-// Key OES series IDs for common occupations (national level)
-// Format: OEUM{area}{industry}{occupation}{datatype}
-// area=0000000 (national), industry=000000 (cross-industry)
-// datatype: 01=employment, 04=mean hourly, 05=annual mean, 07=median hourly, 08=annual median
-// 10th=10, 25th=11, 75th=12, 90th=13 (annual percentiles)
 const OES_OCCUPATIONS: Record<string, { code: string; title: string }> = {
   "software_dev": { code: "151252", title: "Software Developers" },
   "data_scientist": { code: "152051", title: "Data Scientists" },
@@ -39,16 +32,14 @@ const OES_OCCUPATIONS: Record<string, { code: string; title: string }> = {
   "customer_service": { code: "434051", title: "Customer Service Representatives" },
 };
 
-// ECI series IDs
 const ECI_SERIES = [
-  "CIU1010000000000A",  // Total compensation, all workers
-  "CIU2010000000000A",  // Wages and salaries, all workers
-  "CIU3010000000000A",  // Benefits, all workers
-  "CIU2020000000000A",  // Wages, private industry
-  "CIU2030000000000A",  // Wages, state and local govt
+  "CIU1010000000000A",
+  "CIU2010000000000A",
+  "CIU3010000000000A",
+  "CIU2020000000000A",
+  "CIU2030000000000A",
 ];
 
-// CPS demographic earnings series (median weekly earnings)
 const CPS_SERIES = [
   { id: "LEU0252881500", group: "sex", value: "Men", label: "Men, 16+" },
   { id: "LEU0252881600", group: "sex", value: "Women", label: "Women, 16+" },
@@ -58,7 +49,6 @@ const CPS_SERIES = [
   { id: "LEU0254531100", group: "race", value: "Hispanic", label: "Hispanic or Latino" },
 ];
 
-// NCS Benefits series
 const NCS_SERIES = [
   { id: "NBU10000000000000028007", category: "healthcare", type: "Medical care", worker: "all" },
   { id: "NBU10000000000000028014", category: "healthcare", type: "Dental care", worker: "all" },
@@ -72,11 +62,9 @@ const NCS_SERIES = [
 async function callBLS(seriesIds: string[], startYear: number, endYear: number, apiKey?: string): Promise<any> {
   const useV2 = !!apiKey;
   const url = useV2 ? BLS_API_V2 : BLS_API_V1;
-  
-  // V1 limit: 25 series. V2: 50.
   const maxSeries = useV2 ? 50 : 25;
   const batch = seriesIds.slice(0, maxSeries);
-  
+
   const payload: any = {
     seriesid: batch,
     startyear: String(startYear),
@@ -96,22 +84,53 @@ async function callBLS(seriesIds: string[], startYear: number, endYear: number, 
 
   if (!resp.ok) throw new Error(`BLS API error: ${resp.status}`);
   const json = await resp.json();
-  
+
   if (json.status !== "REQUEST_SUCCEEDED") {
     console.error("BLS API message:", json.message);
     throw new Error(`BLS API: ${json.message?.join("; ") || "Request failed"}`);
   }
-  
+
   return json.Results?.series || [];
 }
 
-serve(async (req) => {
+Deno.serve(async (req) => {
   if (req.method === "OPTIONS") return new Response(null, { headers: corsHeaders });
 
   try {
     const supabaseUrl = Deno.env.get("SUPABASE_URL")!;
     const serviceKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!;
-    const blsApiKey = Deno.env.get("BLS_API_KEY"); // Optional - v1 if missing
+
+    // ── Auth gate: only service-role or admin users allowed ──
+    const authHeader = req.headers.get("Authorization");
+    const token = authHeader?.replace("Bearer ", "") || "";
+    const isServiceCall = token === serviceKey;
+
+    if (!isServiceCall) {
+      const sb = createClient(supabaseUrl, Deno.env.get("SUPABASE_ANON_KEY")!, {
+        global: { headers: { Authorization: authHeader! } },
+      });
+      const { data, error } = await sb.auth.getUser(token);
+      if (error || !data?.user) {
+        return new Response(JSON.stringify({ error: "Unauthorized" }), {
+          status: 401,
+          headers: { ...corsHeaders, "Content-Type": "application/json" },
+        });
+      }
+      // Check admin/owner role
+      const { data: roles } = await createClient(supabaseUrl, serviceKey)
+        .from("user_roles")
+        .select("role")
+        .eq("user_id", data.user.id)
+        .in("role", ["admin", "owner"]);
+      if (!roles || roles.length === 0) {
+        return new Response(JSON.stringify({ error: "Forbidden: admin role required" }), {
+          status: 403,
+          headers: { ...corsHeaders, "Content-Type": "application/json" },
+        });
+      }
+    }
+
+    const blsApiKey = Deno.env.get("BLS_API_KEY");
     const sb = createClient(supabaseUrl, serviceKey);
 
     const body = await req.json().catch(() => ({}));
@@ -123,9 +142,8 @@ serve(async (req) => {
     if (modules.includes("oes")) {
       const oesSeriesIds: string[] = [];
       const oesMap: Record<string, { occ: string; title: string; datatype: string }> = {};
-      
+
       for (const [, occ] of Object.entries(OES_OCCUPATIONS)) {
-        // Annual mean (05), annual median (08), employment (01)
         for (const dt of ["01", "04", "05", "07", "08", "10", "11", "12", "13"]) {
           const sid = `OEUM000000000000${occ.code}${dt}`;
           oesSeriesIds.push(sid);
@@ -133,21 +151,20 @@ serve(async (req) => {
         }
       }
 
-      // Batch in groups of 25 (v1 limit)
       const batchSize = blsApiKey ? 50 : 25;
       const wageRows: any[] = [];
-      
+
       for (let i = 0; i < oesSeriesIds.length; i += batchSize) {
         const batch = oesSeriesIds.slice(i, i + batchSize);
         try {
           const series = await callBLS(batch, currentYear - 2, currentYear, blsApiKey);
-          
+
           for (const s of series) {
             const meta = oesMap[s.seriesID];
             if (!meta || !s.data?.length) continue;
-            
+
             for (const dp of s.data) {
-              if (dp.period !== "A01") continue; // annual only
+              if (dp.period !== "A01") continue;
               const year = parseInt(dp.year);
               const val = parseFloat(dp.value);
               if (isNaN(val)) continue;
@@ -173,14 +190,13 @@ serve(async (req) => {
               };
               const col = dtMap[meta.datatype];
               if (col === "total_employment") {
-                existing[col] = Math.round(val * 1000); // BLS reports in thousands
+                existing[col] = Math.round(val * 1000);
               } else {
                 existing[col] = val;
               }
             }
           }
-          
-          // Rate limit: small delay between batches
+
           if (i + batchSize < oesSeriesIds.length) await new Promise(r => setTimeout(r, 500));
         } catch (e) {
           console.error(`OES batch error:`, e);
@@ -206,7 +222,7 @@ serve(async (req) => {
           for (const dp of s.data || []) {
             const val = parseFloat(dp.value);
             if (isNaN(val)) continue;
-            
+
             const pctChange = dp.calculations?.pct_changes?.["12"]
               ? parseFloat(dp.calculations.pct_changes["12"])
               : null;

@@ -17,6 +17,36 @@ Deno.serve(async (req) => {
     const supabaseUrl = Deno.env.get("SUPABASE_URL")!;
     const serviceKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!;
     const lovableKey = Deno.env.get("LOVABLE_API_KEY");
+
+    // ── Auth gate: only service-role or admin users allowed ──
+    const authHeader = req.headers.get("Authorization");
+    const token = authHeader?.replace("Bearer ", "") || "";
+    const isServiceCall = token === serviceKey;
+
+    if (!isServiceCall) {
+      const anonSb = createClient(supabaseUrl, Deno.env.get("SUPABASE_ANON_KEY")!, {
+        global: { headers: { Authorization: authHeader! } },
+      });
+      const { data: userData, error: authErr } = await anonSb.auth.getUser(token);
+      if (authErr || !userData?.user) {
+        return new Response(JSON.stringify({ error: "Unauthorized" }), {
+          status: 401,
+          headers: { ...corsHeaders, "Content-Type": "application/json" },
+        });
+      }
+      const { data: roles } = await createClient(supabaseUrl, serviceKey)
+        .from("user_roles")
+        .select("role")
+        .eq("user_id", userData.user.id)
+        .in("role", ["admin", "owner"]);
+      if (!roles || roles.length === 0) {
+        return new Response(JSON.stringify({ error: "Forbidden: admin role required" }), {
+          status: 403,
+          headers: { ...corsHeaders, "Content-Type": "application/json" },
+        });
+      }
+    }
+
     const sb = createClient(supabaseUrl, serviceKey);
 
     const body = await req.json().catch(() => ({}));
