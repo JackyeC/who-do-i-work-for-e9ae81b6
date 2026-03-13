@@ -64,6 +64,7 @@ import IntelligenceChain from "./pages/IntelligenceChain";
 import BoardIntelligence from "./pages/BoardIntelligence";
 import LeaderProfile from "./pages/LeaderProfile";
 import Disclaimers from "./pages/Disclaimers";
+import CompareCompanies from "./pages/CompareCompanies";
 import { CookieNotice } from "@/components/CookieNotice";
 
 const queryClient = new QueryClient();
