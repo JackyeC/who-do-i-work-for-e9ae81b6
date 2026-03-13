@@ -59,6 +59,7 @@ export function TopBar() {
   const navigate = useNavigate();
   const location = useLocation();
   const { user, signOut } = useAuth();
+  const { isDemoSafe, toggleDemoSafe, canToggle } = useDemoSafeMode();
 
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault();
