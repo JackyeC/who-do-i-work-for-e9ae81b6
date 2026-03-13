@@ -39,6 +39,25 @@ serve(async (req) => {
     if (!user?.email) throw new Error("User not authenticated or email not available");
     logStep("User authenticated", { email: user.email });
 
+    // Privileged role bypass for build/demo accounts (owner/admin/internal_test)
+    const { data: privilegedRoles, error: roleError } = await supabaseClient
+      .from("user_roles")
+      .select("role")
+      .eq("user_id", user.id)
+      .in("role", ["owner", "admin", "internal_test"]);
+
+    if (!roleError && privilegedRoles && privilegedRoles.length > 0) {
+      logStep("Privileged role bypass active", { roles: privilegedRoles.map((r) => r.role) });
+      return new Response(JSON.stringify({
+        subscribed: true,
+        product_id: "prod_U8Ynpf4FKYEV3Q", // Professional tier for full feature access
+        subscription_end: null,
+      }), {
+        headers: { ...corsHeaders, "Content-Type": "application/json" },
+        status: 200,
+      });
+    }
+
     const stripe = new Stripe(stripeKey, { apiVersion: "2025-08-27.basil" });
     const customers = await stripe.customers.list({ email: user.email, limit: 1 });
 
