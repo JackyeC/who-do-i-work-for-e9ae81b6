@@ -2775,89 +2775,6 @@ export type Database = {
           },
         ]
       }
-      epstein_cross_references: {
-        Row: {
-          board_member_id: string | null
-          company_id: string | null
-          connection_count: number | null
-          created_at: string | null
-          document_count: number | null
-          epstein_person_id: string | null
-          executive_id: string | null
-          flight_count: number | null
-          id: string
-          match_confidence: string
-          match_details: Json | null
-          match_type: string
-          updated_at: string | null
-          verified_at: string | null
-          verified_by: string | null
-        }
-        Insert: {
-          board_member_id?: string | null
-          company_id?: string | null
-          connection_count?: number | null
-          created_at?: string | null
-          document_count?: number | null
-          epstein_person_id?: string | null
-          executive_id?: string | null
-          flight_count?: number | null
-          id?: string
-          match_confidence?: string
-          match_details?: Json | null
-          match_type?: string
-          updated_at?: string | null
-          verified_at?: string | null
-          verified_by?: string | null
-        }
-        Update: {
-          board_member_id?: string | null
-          company_id?: string | null
-          connection_count?: number | null
-          created_at?: string | null
-          document_count?: number | null
-          epstein_person_id?: string | null
-          executive_id?: string | null
-          flight_count?: number | null
-          id?: string
-          match_confidence?: string
-          match_details?: Json | null
-          match_type?: string
-          updated_at?: string | null
-          verified_at?: string | null
-          verified_by?: string | null
-        }
-        Relationships: [
-          {
-            foreignKeyName: "epstein_cross_references_board_member_id_fkey"
-            columns: ["board_member_id"]
-            isOneToOne: false
-            referencedRelation: "board_members"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "epstein_cross_references_company_id_fkey"
-            columns: ["company_id"]
-            isOneToOne: false
-            referencedRelation: "companies"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "epstein_cross_references_epstein_person_id_fkey"
-            columns: ["epstein_person_id"]
-            isOneToOne: false
-            referencedRelation: "epstein_persons"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "epstein_cross_references_executive_id_fkey"
-            columns: ["executive_id"]
-            isOneToOne: false
-            referencedRelation: "company_executives"
-            referencedColumns: ["id"]
-          },
-        ]
-      }
       epstein_documents: {
         Row: {
           category: string | null
@@ -2924,51 +2841,6 @@ export type Database = {
           origin?: string | null
           passengers?: Json | null
           raw_data?: Json | null
-        }
-        Relationships: []
-      }
-      epstein_persons: {
-        Row: {
-          aliases: string[] | null
-          bio: string | null
-          black_book: boolean | null
-          category: string | null
-          external_slug: string
-          id: string
-          imported_at: string | null
-          name: string
-          raw_data: Json | null
-          stats: Json | null
-          tags: string[] | null
-          updated_at: string | null
-        }
-        Insert: {
-          aliases?: string[] | null
-          bio?: string | null
-          black_book?: boolean | null
-          category?: string | null
-          external_slug: string
-          id?: string
-          imported_at?: string | null
-          name: string
-          raw_data?: Json | null
-          stats?: Json | null
-          tags?: string[] | null
-          updated_at?: string | null
-        }
-        Update: {
-          aliases?: string[] | null
-          bio?: string | null
-          black_book?: boolean | null
-          category?: string | null
-          external_slug?: string
-          id?: string
-          imported_at?: string | null
-          name?: string
-          raw_data?: Json | null
-          stats?: Json | null
-          tags?: string[] | null
-          updated_at?: string | null
         }
         Relationships: []
       }
@@ -4047,6 +3919,316 @@ export type Database = {
           verification_status?: string | null
         }
         Relationships: []
+      }
+      power_network_datasets: {
+        Row: {
+          created_at: string | null
+          description: string | null
+          document_count: number | null
+          entity_count: number | null
+          id: string
+          is_active: boolean | null
+          last_synced_at: string | null
+          name: string
+          reliability_level: string
+          slug: string
+          source_type: string
+          source_url: string | null
+          updated_at: string | null
+        }
+        Insert: {
+          created_at?: string | null
+          description?: string | null
+          document_count?: number | null
+          entity_count?: number | null
+          id?: string
+          is_active?: boolean | null
+          last_synced_at?: string | null
+          name: string
+          reliability_level?: string
+          slug: string
+          source_type?: string
+          source_url?: string | null
+          updated_at?: string | null
+        }
+        Update: {
+          created_at?: string | null
+          description?: string | null
+          document_count?: number | null
+          entity_count?: number | null
+          id?: string
+          is_active?: boolean | null
+          last_synced_at?: string | null
+          name?: string
+          reliability_level?: string
+          slug?: string
+          source_type?: string
+          source_url?: string | null
+          updated_at?: string | null
+        }
+        Relationships: []
+      }
+      power_network_documents: {
+        Row: {
+          content_summary: string | null
+          content_text: string | null
+          created_at: string | null
+          dataset_id: string
+          date_ingested: string | null
+          date_published: string | null
+          document_type: string | null
+          external_doc_id: string | null
+          has_redactions: boolean | null
+          id: string
+          metadata: Json | null
+          page_count: number | null
+          search_vector: unknown
+          source_url: string | null
+          title: string
+        }
+        Insert: {
+          content_summary?: string | null
+          content_text?: string | null
+          created_at?: string | null
+          dataset_id: string
+          date_ingested?: string | null
+          date_published?: string | null
+          document_type?: string | null
+          external_doc_id?: string | null
+          has_redactions?: boolean | null
+          id?: string
+          metadata?: Json | null
+          page_count?: number | null
+          search_vector?: unknown
+          source_url?: string | null
+          title: string
+        }
+        Update: {
+          content_summary?: string | null
+          content_text?: string | null
+          created_at?: string | null
+          dataset_id?: string
+          date_ingested?: string | null
+          date_published?: string | null
+          document_type?: string | null
+          external_doc_id?: string | null
+          has_redactions?: boolean | null
+          id?: string
+          metadata?: Json | null
+          page_count?: number | null
+          search_vector?: unknown
+          source_url?: string | null
+          title?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "power_network_documents_dataset_id_fkey"
+            columns: ["dataset_id"]
+            isOneToOne: false
+            referencedRelation: "power_network_datasets"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      power_network_entities: {
+        Row: {
+          aliases: string[] | null
+          company_id: string | null
+          created_at: string | null
+          description: string | null
+          document_count: number | null
+          entity_type: string
+          id: string
+          is_redacted: boolean | null
+          is_victim: boolean | null
+          metadata: Json | null
+          name: string
+          relationship_count: number | null
+          updated_at: string | null
+        }
+        Insert: {
+          aliases?: string[] | null
+          company_id?: string | null
+          created_at?: string | null
+          description?: string | null
+          document_count?: number | null
+          entity_type: string
+          id?: string
+          is_redacted?: boolean | null
+          is_victim?: boolean | null
+          metadata?: Json | null
+          name: string
+          relationship_count?: number | null
+          updated_at?: string | null
+        }
+        Update: {
+          aliases?: string[] | null
+          company_id?: string | null
+          created_at?: string | null
+          description?: string | null
+          document_count?: number | null
+          entity_type?: string
+          id?: string
+          is_redacted?: boolean | null
+          is_victim?: boolean | null
+          metadata?: Json | null
+          name?: string
+          relationship_count?: number | null
+          updated_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "power_network_entities_company_id_fkey"
+            columns: ["company_id"]
+            isOneToOne: false
+            referencedRelation: "companies"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      power_network_evidence: {
+        Row: {
+          created_at: string | null
+          document_id: string
+          excerpt: string | null
+          id: string
+          page_reference: string | null
+          relationship_id: string
+          source_url: string | null
+        }
+        Insert: {
+          created_at?: string | null
+          document_id: string
+          excerpt?: string | null
+          id?: string
+          page_reference?: string | null
+          relationship_id: string
+          source_url?: string | null
+        }
+        Update: {
+          created_at?: string | null
+          document_id?: string
+          excerpt?: string | null
+          id?: string
+          page_reference?: string | null
+          relationship_id?: string
+          source_url?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "power_network_evidence_document_id_fkey"
+            columns: ["document_id"]
+            isOneToOne: false
+            referencedRelation: "power_network_documents"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "power_network_evidence_relationship_id_fkey"
+            columns: ["relationship_id"]
+            isOneToOne: false
+            referencedRelation: "power_network_relationships"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      power_network_mentions: {
+        Row: {
+          confidence: number | null
+          context_snippet: string | null
+          created_at: string | null
+          document_id: string
+          entity_id: string
+          id: string
+          page_number: number | null
+        }
+        Insert: {
+          confidence?: number | null
+          context_snippet?: string | null
+          created_at?: string | null
+          document_id: string
+          entity_id: string
+          id?: string
+          page_number?: number | null
+        }
+        Update: {
+          confidence?: number | null
+          context_snippet?: string | null
+          created_at?: string | null
+          document_id?: string
+          entity_id?: string
+          id?: string
+          page_number?: number | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "power_network_mentions_document_id_fkey"
+            columns: ["document_id"]
+            isOneToOne: false
+            referencedRelation: "power_network_documents"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "power_network_mentions_entity_id_fkey"
+            columns: ["entity_id"]
+            isOneToOne: false
+            referencedRelation: "power_network_entities"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      power_network_relationships: {
+        Row: {
+          confidence: number | null
+          created_at: string | null
+          date_observed: string | null
+          description: string | null
+          id: string
+          is_verified: boolean | null
+          metadata: Json | null
+          relationship_type: string
+          source_entity_id: string
+          target_entity_id: string
+        }
+        Insert: {
+          confidence?: number | null
+          created_at?: string | null
+          date_observed?: string | null
+          description?: string | null
+          id?: string
+          is_verified?: boolean | null
+          metadata?: Json | null
+          relationship_type: string
+          source_entity_id: string
+          target_entity_id: string
+        }
+        Update: {
+          confidence?: number | null
+          created_at?: string | null
+          date_observed?: string | null
+          description?: string | null
+          id?: string
+          is_verified?: boolean | null
+          metadata?: Json | null
+          relationship_type?: string
+          source_entity_id?: string
+          target_entity_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "power_network_relationships_source_entity_id_fkey"
+            columns: ["source_entity_id"]
+            isOneToOne: false
+            referencedRelation: "power_network_entities"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "power_network_relationships_target_entity_id_fkey"
+            columns: ["target_entity_id"]
+            isOneToOne: false
+            referencedRelation: "power_network_entities"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       profiles: {
         Row: {
