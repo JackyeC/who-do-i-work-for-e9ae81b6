@@ -130,6 +130,9 @@ const Index = forwardRef<HTMLDivElement>((_, ref) => {
         </div>
       </section>
 
+      {/* Live Activity Social Proof */}
+      <LiveActivityTicker />
+
       {/* Trust Bar */}
       <div className="flex items-center justify-center gap-6 lg:gap-12 flex-wrap px-6 py-5 border-y border-border">
         {trustSources.map((src, i) => (
