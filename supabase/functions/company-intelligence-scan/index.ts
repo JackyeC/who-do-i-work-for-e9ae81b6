@@ -166,7 +166,9 @@ Deno.serve(async (req) => {
             }), { status: 429, headers: { ...corsHeaders, 'Content-Type': 'application/json' } });
           }
         } else {
-          console.log(`[intelligence-scan] Privileged user ${userId} — scan limits bypassed`);
+          // Privileged users bypass free-tier limits and paid-module gating during build/demo
+          isPaidUser = true;
+          console.log(`[intelligence-scan] Privileged user ${userId} — scan limits and tier gates bypassed`);
         }
       }
     }
