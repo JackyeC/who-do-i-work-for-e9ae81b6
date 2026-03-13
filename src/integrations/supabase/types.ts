@@ -1875,6 +1875,35 @@ export type Database = {
           },
         ]
       }
+      company_scan_events: {
+        Row: {
+          company_id: string
+          company_name: string
+          id: string
+          scanned_at: string
+        }
+        Insert: {
+          company_id: string
+          company_name: string
+          id?: string
+          scanned_at?: string
+        }
+        Update: {
+          company_id?: string
+          company_name?: string
+          id?: string
+          scanned_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "company_scan_events_company_id_fkey"
+            columns: ["company_id"]
+            isOneToOne: false
+            referencedRelation: "companies"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       company_signal_scans: {
         Row: {
           company_id: string
