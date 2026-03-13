@@ -100,6 +100,9 @@ export default function Browse() {
           </Button>
         </div>
       </div>
+
+      <div className="max-w-6xl mx-auto px-4 sm:px-6 py-5">
+        {/* Controls row — search, industry dropdown, sort */}
         <div className="flex flex-col sm:flex-row gap-2.5 mb-6">
           <div className="relative flex-1">
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground pointer-events-none" />
