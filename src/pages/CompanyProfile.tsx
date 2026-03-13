@@ -344,7 +344,7 @@ export default function CompanyProfile() {
   const transparencyScore = Math.round((transparencySignals.filter(Boolean).length / transparencySignals.length) * 100);
 
   // Corporate Character Score for sticky header
-  const characterScore = useMemo(() => calculateCharacterScore({
+  const characterScore = calculateCharacterScore({
     hasDeiReports: false, hasPayTransparency: !!tiPayEquity, hasPromotionData: false,
     hasWorkforceDemographics: false, hasPublicReporting: !!dbCompany?.is_publicly_traded,
     hasPublicStances: (dbPublicStances?.length || 0) > 0, hasSentimentData: !!tiSentiment,
@@ -358,7 +358,7 @@ export default function CompanyProfile() {
     hasGovernanceDisclosures: false, hasBoardDiversity: false, hasAiHrSignals: !!tiAiHr,
     hasJobPostings: false, scanCompletion: (dbCompany as any)?.scan_completion ?? null,
     recordStatus: recordStatus,
-  }), [tiPayEquity, tiSentiment, tiBenefits, tiAiHr, totalPac, lobbyingSpend, govContracts, dbPublicStances, dbTradeAssociations, dbDarkMoney, dbIssueSignals, dbCompany, recordStatus]);
+  });
 
   return (
     <div className="flex flex-col min-h-0">
