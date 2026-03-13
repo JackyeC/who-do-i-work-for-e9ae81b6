@@ -2775,6 +2775,203 @@ export type Database = {
           },
         ]
       }
+      epstein_cross_references: {
+        Row: {
+          board_member_id: string | null
+          company_id: string | null
+          connection_count: number | null
+          created_at: string | null
+          document_count: number | null
+          epstein_person_id: string | null
+          executive_id: string | null
+          flight_count: number | null
+          id: string
+          match_confidence: string
+          match_details: Json | null
+          match_type: string
+          updated_at: string | null
+          verified_at: string | null
+          verified_by: string | null
+        }
+        Insert: {
+          board_member_id?: string | null
+          company_id?: string | null
+          connection_count?: number | null
+          created_at?: string | null
+          document_count?: number | null
+          epstein_person_id?: string | null
+          executive_id?: string | null
+          flight_count?: number | null
+          id?: string
+          match_confidence?: string
+          match_details?: Json | null
+          match_type?: string
+          updated_at?: string | null
+          verified_at?: string | null
+          verified_by?: string | null
+        }
+        Update: {
+          board_member_id?: string | null
+          company_id?: string | null
+          connection_count?: number | null
+          created_at?: string | null
+          document_count?: number | null
+          epstein_person_id?: string | null
+          executive_id?: string | null
+          flight_count?: number | null
+          id?: string
+          match_confidence?: string
+          match_details?: Json | null
+          match_type?: string
+          updated_at?: string | null
+          verified_at?: string | null
+          verified_by?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "epstein_cross_references_board_member_id_fkey"
+            columns: ["board_member_id"]
+            isOneToOne: false
+            referencedRelation: "board_members"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "epstein_cross_references_company_id_fkey"
+            columns: ["company_id"]
+            isOneToOne: false
+            referencedRelation: "companies"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "epstein_cross_references_epstein_person_id_fkey"
+            columns: ["epstein_person_id"]
+            isOneToOne: false
+            referencedRelation: "epstein_persons"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "epstein_cross_references_executive_id_fkey"
+            columns: ["executive_id"]
+            isOneToOne: false
+            referencedRelation: "company_executives"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      epstein_documents: {
+        Row: {
+          category: string | null
+          external_id: string
+          id: string
+          imported_at: string | null
+          linked_person_slugs: string[] | null
+          raw_data: Json | null
+          source: string | null
+          summary: string | null
+          title: string | null
+        }
+        Insert: {
+          category?: string | null
+          external_id: string
+          id?: string
+          imported_at?: string | null
+          linked_person_slugs?: string[] | null
+          raw_data?: Json | null
+          source?: string | null
+          summary?: string | null
+          title?: string | null
+        }
+        Update: {
+          category?: string | null
+          external_id?: string
+          id?: string
+          imported_at?: string | null
+          linked_person_slugs?: string[] | null
+          raw_data?: Json | null
+          source?: string | null
+          summary?: string | null
+          title?: string | null
+        }
+        Relationships: []
+      }
+      epstein_flights: {
+        Row: {
+          destination: string | null
+          external_id: string
+          flight_date: string | null
+          id: string
+          imported_at: string | null
+          origin: string | null
+          passengers: Json | null
+          raw_data: Json | null
+        }
+        Insert: {
+          destination?: string | null
+          external_id: string
+          flight_date?: string | null
+          id?: string
+          imported_at?: string | null
+          origin?: string | null
+          passengers?: Json | null
+          raw_data?: Json | null
+        }
+        Update: {
+          destination?: string | null
+          external_id?: string
+          flight_date?: string | null
+          id?: string
+          imported_at?: string | null
+          origin?: string | null
+          passengers?: Json | null
+          raw_data?: Json | null
+        }
+        Relationships: []
+      }
+      epstein_persons: {
+        Row: {
+          aliases: string[] | null
+          bio: string | null
+          black_book: boolean | null
+          category: string | null
+          external_slug: string
+          id: string
+          imported_at: string | null
+          name: string
+          raw_data: Json | null
+          stats: Json | null
+          tags: string[] | null
+          updated_at: string | null
+        }
+        Insert: {
+          aliases?: string[] | null
+          bio?: string | null
+          black_book?: boolean | null
+          category?: string | null
+          external_slug: string
+          id?: string
+          imported_at?: string | null
+          name: string
+          raw_data?: Json | null
+          stats?: Json | null
+          tags?: string[] | null
+          updated_at?: string | null
+        }
+        Update: {
+          aliases?: string[] | null
+          bio?: string | null
+          black_book?: boolean | null
+          category?: string | null
+          external_slug?: string
+          id?: string
+          imported_at?: string | null
+          name?: string
+          raw_data?: Json | null
+          stats?: Json | null
+          tags?: string[] | null
+          updated_at?: string | null
+        }
+        Relationships: []
+      }
       executive_recipients: {
         Row: {
           amount: number
