@@ -61,9 +61,12 @@ export const Footer = forwardRef<HTMLElement>((_, ref) => {
             </div>
           </div>
         </div>
-        <div className="mt-14 pt-8 border-t border-primary-foreground/[0.06]">
+        <div className="mt-14 pt-8 border-t border-primary-foreground/[0.06] space-y-4">
           <p className="text-xs text-primary-foreground/30">
             © {new Date().getFullYear()} Who Do I Work For? — Career Intelligence by Jackye Clayton. All rights reserved. This platform surfaces publicly available data as employer reality signals for informational purposes only.
+          </p>
+          <p className="text-[10px] text-primary-foreground/20 leading-relaxed">
+            AI Training Restriction: Content on this website may not be used to train artificial intelligence systems, machine learning models, or large language models without explicit written permission. Automated scraping, dataset creation, or model training using this content is prohibited.
           </p>
         </div>
       </div>
