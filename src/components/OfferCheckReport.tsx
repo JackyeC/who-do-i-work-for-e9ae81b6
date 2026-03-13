@@ -51,10 +51,13 @@ function SignalRow({ signal }: { signal: OfferCheckSignal }) {
         </Badge>
       </div>
       <div className="flex items-center gap-4 flex-wrap">
+        <span className="font-mono text-[8px] tracking-wider uppercase text-muted-foreground/60 font-semibold">
+          Evidence
+        </span>
         {signal.detectionMethod && (
           <span className="text-[10px] text-muted-foreground flex items-center gap-1">
             <Search className="w-2.5 h-2.5" />
-            Detected via: {signal.detectionMethod.replace(/_/g, " ")}
+            {signal.detectionMethod.replace(/_/g, " ")}
           </span>
         )}
         {signal.detectedAt && (
@@ -70,8 +73,8 @@ function SignalRow({ signal }: { signal: OfferCheckSignal }) {
           </span>
         )}
         {signal.sourceUrl && (
-          <a href={signal.sourceUrl} target="_blank" rel="noopener noreferrer" className="text-[10px] text-civic-gold hover:text-civic-gold/80 inline-flex items-center gap-0.5 font-medium">
-            View source <ExternalLink className="w-2.5 h-2.5" />
+          <a href={signal.sourceUrl} target="_blank" rel="noopener noreferrer" className="text-[10px] text-primary hover:underline inline-flex items-center gap-0.5 font-medium">
+            View evidence <ExternalLink className="w-2.5 h-2.5" />
           </a>
         )}
       </div>
@@ -124,9 +127,12 @@ export function OfferCheckReport({ sections, lockedSections = [], onUnlock }: Of
                   )}
                 </div>
               ) : !section.hasData ? (
-                <p className="text-sm text-muted-foreground py-4 italic">
-                  No public evidence detected in scanned sources for this category.
-                </p>
+                <div className="py-4 flex items-center gap-2">
+                  <Clock className="w-4 h-4 text-muted-foreground/40" />
+                  <p className="text-sm text-muted-foreground italic">
+                    Audit Pending — no public evidence detected in scanned sources for this category.
+                  </p>
+                </div>
               ) : (
                 <div>
                   {section.signals.map((signal, i) => (

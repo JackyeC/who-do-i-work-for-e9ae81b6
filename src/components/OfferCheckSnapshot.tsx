@@ -3,10 +3,11 @@ import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
 import {
   Users, TrendingDown, Eye, DollarSign, Landmark,
-  Heart, MessageSquare, Building2, MapPin, Briefcase,
-  ShieldCheck, AlertTriangle, Search, ArrowRight
+  Heart, Building2, MapPin, Briefcase,
+  ShieldCheck, AlertTriangle, Search, ArrowRight,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { AccountabilityBadge, type AccountabilityStatus } from "@/components/AccountabilityBadge";
 
 /* ── Types ── */
 
@@ -23,6 +24,10 @@ interface SnapshotSection {
   status: "positive" | "neutral" | "warning" | "missing";
   exploreLabel?: string;
   exploreAnchor?: string;
+  evidenceSource?: string;
+  evidenceUrl?: string;
+  accountabilityStatus?: AccountabilityStatus;
+  accountabilityLabel?: string;
 }
 
 interface OfferCheckSnapshotProps {
@@ -42,7 +47,7 @@ const SIGNAL_LEVEL_CONFIG: Record<SignalLevel, { label: string; color: string; b
   moderate: { label: "Moderate", color: "text-[hsl(var(--civic-yellow))]", bg: "bg-[hsl(var(--civic-yellow))]/10", border: "border-[hsl(var(--civic-yellow))]/30" },
   low: { label: "Low", color: "text-[hsl(var(--civic-green))]", bg: "bg-[hsl(var(--civic-green))]/10", border: "border-[hsl(var(--civic-green))]/30" },
   weak: { label: "Weak", color: "text-[hsl(var(--civic-yellow))]", bg: "bg-[hsl(var(--civic-yellow))]/10", border: "border-[hsl(var(--civic-yellow))]/30" },
-  missing: { label: "No Data", color: "text-muted-foreground", bg: "bg-muted/50", border: "border-border/50" },
+  missing: { label: "Audit Pending", color: "text-muted-foreground", bg: "bg-muted/50", border: "border-border/50" },
 };
 
 /* ── Verdict styling ── */
@@ -74,6 +79,20 @@ const STATUS_DOT: Record<string, string> = {
   warning: "bg-[hsl(var(--civic-yellow))]",
   missing: "bg-muted-foreground/40",
 };
+
+/* ── Risk label helper ── */
+
+function getRiskLabel(signalLevel: SignalLevel, sectionLabel: string): string {
+  const labelMap: Record<SignalLevel, string> = {
+    strong: "Leader",
+    high: "High Risk",
+    moderate: "Moderate Risk",
+    low: "Low Risk",
+    weak: "Audit Pending",
+    missing: "Audit Pending",
+  };
+  return `${sectionLabel}: ${labelMap[signalLevel]}`;
+}
 
 /* ── Default section builder ── */
 
@@ -113,42 +132,46 @@ export function buildDefaultSections(opts: {
   return [
     {
       key: "decision_makers",
-      label: "Leadership Visibility",
+      label: "Decision Makers",
       icon: Users,
       signalLevel: hasExecs ? (execCount >= 5 ? "strong" : "moderate") : "missing",
       evidence: hasExecs
         ? [
             `${execCount} executive${execCount !== 1 ? "s" : ""} and board members identified`,
-            execCount >= 5 ? "Strong leadership transparency from public filings" : "Limited executive data — some gaps in leadership visibility",
+            execCount >= 5 ? "Strong leadership transparency from public filings" : "Limited executive data — gaps in leadership visibility",
             "Decision-maker profiles available for review",
           ]
         : [
             "No executive data available yet",
-            "Run a scan to discover leadership",
             "Leadership visibility is a key trust signal",
+            "Scan to discover decision makers",
           ],
       status: hasExecs ? "positive" : "missing",
-      exploreLabel: "Explore leadership",
+      exploreLabel: "Explore leadership →",
       exploreAnchor: "#decision-makers",
+      evidenceSource: hasExecs ? "SEC Proxy Filing" : undefined,
+      accountabilityStatus: hasExecs ? (execCount >= 5 ? "verified" : "partial") : "audit_pending",
+      accountabilityLabel: hasExecs ? "Leadership Verified" : "Audit Pending",
     },
     {
       key: "workforce_stability",
-      label: "Layoff Risk",
+      label: "Workforce Stability",
       icon: TrendingDown,
       signalLevel: layoffRecent ? "high" : hasLayoffs ? "moderate" : "low",
       evidence: (() => {
         const bullets: string[] = [];
         if (layoffRecent) bullets.push(`Active workforce reduction detected${layoffCount ? ` (${layoffCount} event${layoffCount !== 1 ? "s" : ""})` : ""}`);
-        else if (hasLayoffs) bullets.push(`${layoffCount || "Historical"} workforce reduction${layoffCount !== 1 ? "s" : ""} in the past 18 months`);
+        else if (hasLayoffs) bullets.push(`${layoffCount || "Historical"} workforce reduction${layoffCount !== 1 ? "s" : ""} in past 18 months`);
         else bullets.push("No public layoff or restructuring signals detected");
-        if (hiringSlowed) bullets.push("Hiring slowed in the past two quarters");
+        if (hiringSlowed) bullets.push("Hiring slowed in recent quarters");
         else bullets.push("Hiring activity appears stable");
-        bullets.push(warnFilings > 0 ? `${warnFilings} WARN filing${warnFilings !== 1 ? "s" : ""} in the past 6 months` : "No WARN filings in the past 6 months");
+        bullets.push(warnFilings > 0 ? `${warnFilings} WARN filing${warnFilings !== 1 ? "s" : ""} in past 6 months` : "No WARN filings in past 6 months");
         return bullets;
       })(),
       status: layoffRecent ? "warning" : hasLayoffs ? "neutral" : "positive",
-      exploreLabel: "Explore workforce signals",
+      exploreLabel: "Explore workforce signals →",
       exploreAnchor: "#workforce-stability",
+      evidenceSource: "WARN Database",
     },
     {
       key: "hiring_transparency",
@@ -158,17 +181,19 @@ export function buildDefaultSections(opts: {
       evidence: (() => {
         const bullets: string[] = [];
         bullets.push(salaryRangesPublished ? "Salary ranges published on job postings" : "No salary ranges found on job postings");
-        bullets.push(biasAuditStatus === "completed" ? "AI hiring bias audit completed" : biasAuditStatus === "partial" ? "Partial AI bias audit disclosure" : "No AI hiring bias audit found");
+        bullets.push(biasAuditStatus === "completed" ? "AI hiring bias audit completed" : biasAuditStatus === "partial" ? "Partial AI bias audit disclosure" : "No AI hiring bias audit disclosed");
         bullets.push(hiringTransparency === "high" ? "Hiring process clearly explained" : hiringTransparency === "medium" ? "Some hiring process visibility" : "Hiring process opaque or undisclosed");
         return bullets;
       })(),
       status: hiringTransparency === "high" ? "positive" : hiringTransparency === "medium" ? "neutral" : hiringTransparency === "low" ? "warning" : "missing",
-      exploreLabel: "Explore hiring signals",
+      exploreLabel: "Explore hiring signals →",
       exploreAnchor: "#hiring-transparency",
+      accountabilityStatus: biasAuditStatus === "completed" ? "published" : "audit_pending",
+      accountabilityLabel: biasAuditStatus === "completed" ? "AI Bias Audit Published" : "Audit Pending",
     },
     {
       key: "offer_competitiveness",
-      label: "Offer Strength",
+      label: "Offer Competitiveness",
       icon: DollarSign,
       signalLevel: offerStrength === "strong" ? "strong" : offerStrength === "average" ? "moderate" : offerStrength === "weak" ? "weak" : "missing",
       evidence: (() => {
@@ -179,12 +204,13 @@ export function buildDefaultSections(opts: {
         return bullets;
       })(),
       status: offerStrength === "strong" ? "positive" : offerStrength === "average" ? "neutral" : offerStrength === "weak" ? "warning" : "missing",
-      exploreLabel: "Explore compensation",
+      exploreLabel: "Explore compensation →",
       exploreAnchor: "#offer-competitiveness",
+      evidenceSource: "BLS",
     },
     {
       key: "influence_spending",
-      label: "Political Influence",
+      label: "Influence & Spending",
       icon: Landmark,
       signalLevel: influenceExposure === "high" ? "high" : influenceExposure === "moderate" ? "moderate" : influenceExposure === "low" ? "low" : "missing",
       evidence: (() => {
@@ -195,23 +221,24 @@ export function buildDefaultSections(opts: {
         return bullets;
       })(),
       status: influenceExposure === "high" ? "warning" : influenceExposure === "moderate" ? "neutral" : influenceExposure === "low" ? "positive" : "missing",
-      exploreLabel: "Follow the money",
+      exploreLabel: "Follow the money →",
       exploreAnchor: "#influence-spending",
+      evidenceSource: lobbyingSpend ? "LDA" : pacDonations ? "FEC" : undefined,
     },
     {
       key: "culture_trust",
-      label: "Culture & Trust",
+      label: "Culture & Trust Signals",
       icon: Heart,
       signalLevel: cultureAlignment === "aligned" ? "strong" : cultureAlignment === "mixed" ? "moderate" : cultureAlignment === "misaligned" ? "weak" : "missing",
       evidence: (() => {
         const bullets: string[] = [];
         bullets.push(sentimentRating ? `Employee sentiment: ${sentimentRating}` : cultureAlignment === "aligned" ? "Public brand consistent with workforce signals" : "Employee sentiment data not available");
-        bullets.push(hypocrisyScore ? `Hypocrisy Index: ${hypocrisyScore}` : "Say-Do gap analysis not yet available");
+        bullets.push(hypocrisyScore ? `Say-Do Gap Index: ${hypocrisyScore}` : "Say-Do gap analysis not yet available");
         bullets.push(deiSignals ? `DEI signals: ${deiSignals}` : "DEI signal data not yet collected");
         return bullets;
       })(),
       status: cultureAlignment === "aligned" ? "positive" : cultureAlignment === "mixed" ? "neutral" : cultureAlignment === "misaligned" ? "warning" : "missing",
-      exploreLabel: "Explore culture signals",
+      exploreLabel: "Explore culture signals →",
       exploreAnchor: "#culture-trust",
     },
   ];
@@ -242,25 +269,24 @@ export function generateSnapshotJackyeTake(
   const hiringWarning = warnings.find(w => w.key === "hiring_transparency");
 
   if (verdict === "Strong Fit") {
-    return "I don't hand out gold stars easily, but this one earned it. The receipts match the rhetoric — and in this market, that's not just rare, it's remarkable. Still, ask the questions below. Good character holds up under scrutiny. That's how trust gets built. Facts over Feelings.";
+    return "The receipts match the rhetoric — and in this market, that's remarkable. The transparency signals are strong across categories. Still, ask the questions below. Good character holds up under scrutiny. Facts over Feelings.";
   }
 
   if (verdict === "Needs Deeper Review") {
     const warningLabels = warnings.map(w => w.label.toLowerCase()).join(", ");
     if (influenceWarning && warnings.length >= 2) {
-      const otherWarnings = warnings.filter(w => w.key !== "influence_spending").map(w => w.label.toLowerCase()).join(" and ");
-      return `Ugly Baby alert. They know how to write checks in DC, but when it comes to ${otherWarnings}? Silence. That's a massive character gap — they're obsessed with automation but ghosting on humanization. AI can simulate competence, but these signals reveal who they actually are. Don't let a nice salary blind you to the Dirty Receipts. Run the chain first. Always.`;
+      return `This employer knows how to write checks in DC, but when it comes to workforce transparency? Silence. That gap between spending and disclosure is a character issue. Don't let a strong offer distract from the Dirty Receipts. Run the chain first.`;
     }
-    return `Ugly Baby alert. The marketing is pretty, but the receipts are messy — showing red in ${warningLabels}. Before you sign anything, look at the flow of funds vs. the marketing fluff. Human frailty is real, but so is corporate negligence. Don't commit your talent until they can show the work. Run the chain first. Always.`;
+    return `The marketing is polished, but the receipts are messy — red flags in ${warningLabels}. Before you sign anything, look at the evidence trail. Human frailty is real, but so is corporate negligence. Don't commit your talent until they show the work.`;
   }
 
   if (influenceWarning && hiringWarning) {
-    return "Dirty Receipt: they're spending money to shape policy but haven't published a Bias Audit for their own AI hiring tools. They'll lobby Congress about workforce issues but won't tell you how their algorithm screens you out. That's not oversight — that's a character issue. Before you commit your talent, ask them about the audit. If they can't show the work, they don't get your time.";
+    return "This employer spends money to shape policy but hasn't published a Bias Audit for their AI hiring tools. They'll lobby Congress about workforce issues but won't tell you how their algorithm screens you out. That's a character issue. Ask about the audit before committing.";
   }
   if (missing.length >= 2) {
-    return "The receipts are incomplete, and silence is a strategy, not an accident. AI can simulate competence all day long, but these signals reveal character — and right now, the character sheet has blank spots that should worry you. Ask the hard questions before you say yes. Facts over Feelings.";
+    return "The receipts are incomplete, and silence is a strategy, not an accident. Missing signals don't mean bad signals — but they mean you need to ask the hard questions before signing. Facts over Feelings.";
   }
-  return "This offer may look good on paper, but the bigger question is whether the company behind it makes sense for your goals, values, and risk tolerance. Look at the flow of funds vs. the marketing fluff. Don't just sign the offer — ask them why their spending doesn't match their messaging. Trust is the currency here; don't spend yours blindly.";
+  return "This offer may look strong on paper, but the bigger question is whether the company behind it aligns with your goals, values, and risk tolerance. Look at the evidence trail before you commit.";
 }
 
 /* ── Component ── */
@@ -281,11 +307,14 @@ export function OfferCheckSnapshot({
       <CardHeader className="pb-3">
         <div className="flex items-start justify-between gap-3">
           <div>
+            <div className="font-mono text-[9px] tracking-[0.25em] uppercase text-primary font-semibold mb-1">
+              Career Transparency System
+            </div>
             <CardTitle className="text-lg font-display font-bold tracking-tight">
               Offer Check Snapshot
             </CardTitle>
             <p className="text-xs text-muted-foreground mt-1">
-              Before you sign, know what you're stepping into.
+              Signal-based assessment of this employer — read in under 10 seconds.
             </p>
           </div>
           <Badge
@@ -321,22 +350,24 @@ export function OfferCheckSnapshot({
 
         <Separator />
 
-        {/* Snapshot signal cards */}
+        {/* Snapshot signal cards — each self-contained with result + evidence + explore */}
         <div className="grid gap-3 sm:grid-cols-2">
           {sections.map((section) => {
             const Icon = section.icon;
             const levelStyle = SIGNAL_LEVEL_CONFIG[section.signalLevel];
+            const riskLabel = getRiskLabel(section.signalLevel, section.label);
+
             return (
               <div
                 key={section.key}
-                className="p-3.5 rounded-lg bg-muted/30 border border-border/50 space-y-2.5"
+                className="p-3.5 border border-border/50 space-y-2.5 bg-muted/20"
               >
-                {/* Header: label + signal level badge */}
+                {/* Signal Result — immediately visible */}
                 <div className="flex items-center justify-between gap-2">
                   <div className="flex items-center gap-2 min-w-0">
                     <div className={cn("w-2 h-2 rounded-full shrink-0", STATUS_DOT[section.status])} />
                     <Icon className="w-4 h-4 text-muted-foreground shrink-0" />
-                    <span className="text-sm font-semibold text-foreground truncate">{section.label}</span>
+                    <span className="text-sm font-semibold text-foreground truncate">{riskLabel}</span>
                   </div>
                   <Badge
                     variant="outline"
@@ -346,26 +377,47 @@ export function OfferCheckSnapshot({
                   </Badge>
                 </div>
 
-                {/* Evidence bullets */}
-                <ul className="space-y-1 pl-1">
-                  {section.evidence.slice(0, 3).map((point, i) => (
-                    <li key={i} className="flex items-start gap-2 text-xs text-muted-foreground leading-relaxed">
-                      <span className="mt-1.5 w-1 h-1 rounded-full bg-muted-foreground/50 shrink-0" />
-                      {point}
-                    </li>
-                  ))}
-                </ul>
-
-                {/* Explore link */}
-                {section.exploreLabel && (
-                  <a
-                    href={section.exploreAnchor || "#"}
-                    className="inline-flex items-center gap-1 text-[11px] font-medium text-primary hover:underline mt-1"
-                  >
-                    {section.exploreLabel}
-                    <ArrowRight className="w-3 h-3" />
-                  </a>
+                {/* Accountability badge */}
+                {section.accountabilityStatus && section.accountabilityLabel && (
+                  <AccountabilityBadge
+                    status={section.accountabilityStatus}
+                    label={section.accountabilityLabel}
+                    size="sm"
+                  />
                 )}
+
+                {/* Evidence bullets */}
+                <div>
+                  <div className="font-mono text-[8px] tracking-wider uppercase text-muted-foreground/60 mb-1">
+                    Evidence
+                  </div>
+                  <ul className="space-y-1 pl-1">
+                    {section.evidence.slice(0, 3).map((point, i) => (
+                      <li key={i} className="flex items-start gap-2 text-xs text-muted-foreground leading-relaxed">
+                        <span className="mt-1.5 w-1 h-1 rounded-full bg-muted-foreground/50 shrink-0" />
+                        {point}
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+
+                {/* Evidence source + Explore link */}
+                <div className="flex items-center justify-between pt-1">
+                  {section.evidenceSource && (
+                    <span className="text-[9px] text-muted-foreground/60 font-mono">
+                      Source: {section.evidenceSource}
+                    </span>
+                  )}
+                  {section.exploreLabel && (
+                    <a
+                      href={section.exploreAnchor || "#"}
+                      className="inline-flex items-center gap-1 text-[11px] font-medium text-primary hover:underline ml-auto"
+                    >
+                      {section.exploreLabel}
+                      <ArrowRight className="w-3 h-3" />
+                    </a>
+                  )}
+                </div>
               </div>
             );
           })}
@@ -375,7 +427,7 @@ export function OfferCheckSnapshot({
         {jackyeTake && (
           <>
             <Separator />
-            <div className="p-4 rounded-lg border-2 border-primary/20 bg-primary/5">
+            <div className="p-4 border-2 border-primary/20 bg-primary/5">
               <div className="flex items-center gap-2 mb-2">
                 <div className="w-7 h-7 rounded-full bg-primary/20 flex items-center justify-center">
                   <span className="text-xs font-bold text-primary">JC</span>
