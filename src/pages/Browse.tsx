@@ -1,13 +1,15 @@
 import { useState, useMemo } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
 import { CivicFootprintBadge } from "@/components/CivicFootprintBadge";
 import { Input } from "@/components/ui/input";
+import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { companies as sampleCompanies, formatCurrency } from "@/data/sampleData";
 import { supabase } from "@/integrations/supabase/client";
 import { useQuery } from "@tanstack/react-query";
-import { Building2, ArrowRight, Search, TrendingUp, SortAsc, ChevronDown } from "lucide-react";
+import { useToast } from "@/hooks/use-toast";
+import { Building2, ArrowRight, Search, TrendingUp, SortAsc, Sparkles, Loader2 } from "lucide-react";
 import { EmptyState } from "@/components/EmptyState";
 import { LoadingState } from "@/components/LoadingState";
 import {
