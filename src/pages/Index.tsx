@@ -231,6 +231,25 @@ const Index = forwardRef<HTMLDivElement>((_, ref) => {
         </div>
       </section>
 
+      {/* Compare CTA */}
+      <section className="px-6 lg:px-16 py-12 max-w-[1100px] mx-auto w-full">
+        <div
+          className="bg-card border border-border p-8 flex flex-col md:flex-row items-center justify-between gap-6 cursor-pointer hover:border-primary/30 transition-colors group"
+          onClick={() => navigate("/compare")}
+        >
+          <div className="flex items-center gap-4">
+            <ArrowLeftRight className="w-8 h-8 text-primary" strokeWidth={1.5} />
+            <div>
+              <div className="font-serif text-lg text-foreground group-hover:text-primary transition-colors">Compare Two Employers</div>
+              <div className="text-[13px] text-muted-foreground">Side-by-side transparency scores, PAC spending, lobbying, and government contracts.</div>
+            </div>
+          </div>
+          <div className="flex items-center gap-1.5 font-mono text-[10px] tracking-wider uppercase text-primary group-hover:gap-2.5 transition-all whitespace-nowrap">
+            Start comparison <ArrowRight className="w-3 h-3" />
+          </div>
+        </div>
+      </section>
+
       {/* Final CTA */}
       <section className="px-6 lg:px-16 py-24 lg:py-28 text-center">
         <h2 className="text-2xl lg:text-[clamp(2rem,4vw,3rem)] mb-4 text-foreground">
