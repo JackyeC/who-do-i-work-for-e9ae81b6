@@ -285,6 +285,12 @@ const Index = forwardRef<HTMLDivElement>((_, ref) => {
         </section>
       </SectionReveal>
 
+      {/* FAQ */}
+      <FAQSection />
+
+      {/* Email Capture */}
+      <EmailCapture />
+
       {/* Final CTA */}
       <SectionReveal>
         <section className="px-6 lg:px-16 py-24 lg:py-28 text-center">
