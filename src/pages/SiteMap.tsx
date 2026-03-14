@@ -1,6 +1,6 @@
 import { Link } from "react-router-dom";
 import { useAuth } from "@/contexts/AuthContext";
-import { usePageSeo } from "@/hooks/use-page-seo";
+import { usePageSEO } from "@/hooks/use-page-seo";
 import {
   Search, Building2, FileCheck, MessageSquare, Briefcase, LayoutDashboard,
   Route, Users, Bell, Scale, DollarSign, Landmark, Shield, Globe, Map,
