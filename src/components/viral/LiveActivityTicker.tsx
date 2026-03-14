@@ -78,7 +78,7 @@ export function LiveActivityTicker() {
                   initial={{ opacity: 0, x: 10 }}
                   animate={{ opacity: 1, x: 0 }}
                   exit={{ opacity: 0, x: -10 }}
-                  className="font-mono text-[9px] tracking-wider uppercase text-primary px-2 py-0.5 bg-primary/10 border border-primary/20"
+                  className="font-mono text-xs tracking-wider uppercase text-primary px-2 py-0.5 bg-primary/10 border border-primary/20"
                 >
                   {e.company_name}
                 </motion.span>

@@ -39,10 +39,10 @@ export function AnimatedCounter({ end, suffix = "", prefix = "", label, duration
       transition={{ duration: 0.5 }}
       className="text-center"
     >
-      <div className="font-data text-2xl lg:text-3xl font-bold text-primary">
+      <div className="font-data text-3xl lg:text-4xl font-bold text-primary">
         {prefix}{count.toLocaleString()}{suffix}
       </div>
-      <div className="font-mono text-[9px] tracking-[0.2em] uppercase text-muted-foreground mt-1">
+      <div className="font-mono text-xs tracking-[0.15em] uppercase text-muted-foreground mt-1.5">
         {label}
       </div>
     </motion.div>

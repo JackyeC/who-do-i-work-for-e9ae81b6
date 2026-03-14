@@ -167,7 +167,7 @@ const Index = forwardRef<HTMLDivElement>((_, ref) => {
       <div className="flex items-center justify-center gap-6 lg:gap-12 flex-wrap px-6 py-5 border-b border-border">
         {trustSources.map((src, i) => (
           <span key={src} className="flex items-center gap-6 lg:gap-12">
-            <span className="font-mono text-[9px] tracking-wider uppercase text-muted-foreground">{src}</span>
+            <span className="font-mono text-xs tracking-wider uppercase text-muted-foreground">{src}</span>
             {i < trustSources.length - 1 && <span className="w-px h-4 bg-border hidden lg:block" />}
           </span>
         ))}
