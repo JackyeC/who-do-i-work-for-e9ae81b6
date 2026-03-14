@@ -476,6 +476,11 @@ export default function CompanyProfile() {
           </Card>
 
           {/* ═══════════════════════════════════════════════════════════
+              PERSONA SELECTOR
+             ═══════════════════════════════════════════════════════════ */}
+          <PersonaSelector activePersona={activePersona} onPersonaChange={handlePersonaChange} />
+
+          {/* ═══════════════════════════════════════════════════════════
               CORPORATE CHARACTER SCORE™
              ═══════════════════════════════════════════════════════════ */}
           <div className="mb-6 grid lg:grid-cols-3 gap-4">
