@@ -136,7 +136,7 @@ const Index = forwardRef<HTMLDivElement>((_, ref) => {
                 { label: "Workforce Stability", val: "Stable", color: "text-civic-green" },
               ].map(m => (
                 <div key={m.label} className="bg-card p-3">
-                  <div className="font-mono text-micro uppercase text-muted-foreground mb-1">{m.label}</div>
+                  <div className="font-mono text-[11px] uppercase text-muted-foreground mb-1">{m.label}</div>
                   <div className={`font-data text-lg font-bold ${m.color}`}>{m.val}</div>
                 </div>
               ))}
