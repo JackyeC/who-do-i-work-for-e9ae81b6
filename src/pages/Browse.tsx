@@ -252,6 +252,14 @@ export default function Browse() {
           </motion.div>
         )}
       </div>
+      </TabsContent>
+
+      <TabsContent value="nonprofits" className="mt-0">
+        <div className="max-w-6xl mx-auto px-4 sm:px-6 py-5">
+          <NonProfitDirectory />
+        </div>
+      </TabsContent>
+      </Tabs>
     </div>
   );
 }
