@@ -1878,6 +1878,62 @@ export type Database = {
           },
         ]
       }
+      company_news_signals: {
+        Row: {
+          company_id: string
+          controversy_type: string | null
+          created_at: string
+          gdelt_doc_id: string | null
+          headline: string
+          id: string
+          is_controversy: boolean | null
+          published_at: string | null
+          sentiment_score: number | null
+          source_name: string | null
+          source_url: string | null
+          themes: string[] | null
+          tone_label: string | null
+        }
+        Insert: {
+          company_id: string
+          controversy_type?: string | null
+          created_at?: string
+          gdelt_doc_id?: string | null
+          headline: string
+          id?: string
+          is_controversy?: boolean | null
+          published_at?: string | null
+          sentiment_score?: number | null
+          source_name?: string | null
+          source_url?: string | null
+          themes?: string[] | null
+          tone_label?: string | null
+        }
+        Update: {
+          company_id?: string
+          controversy_type?: string | null
+          created_at?: string
+          gdelt_doc_id?: string | null
+          headline?: string
+          id?: string
+          is_controversy?: boolean | null
+          published_at?: string | null
+          sentiment_score?: number | null
+          source_name?: string | null
+          source_url?: string | null
+          themes?: string[] | null
+          tone_label?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "company_news_signals_company_id_fkey"
+            columns: ["company_id"]
+            isOneToOne: false
+            referencedRelation: "companies"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       company_ownership_structures: {
         Row: {
           company_id: string
@@ -3176,6 +3232,65 @@ export type Database = {
           website?: string | null
         }
         Relationships: []
+      }
+      insider_trades: {
+        Row: {
+          company_id: string
+          created_at: string
+          filer_name: string
+          filer_title: string | null
+          form_type: string | null
+          id: string
+          is_10b5_plan: boolean | null
+          price_per_share: number | null
+          sec_filing_url: string | null
+          shares_owned_after: number | null
+          shares_traded: number | null
+          total_value: number | null
+          transaction_date: string | null
+          transaction_type: string
+        }
+        Insert: {
+          company_id: string
+          created_at?: string
+          filer_name: string
+          filer_title?: string | null
+          form_type?: string | null
+          id?: string
+          is_10b5_plan?: boolean | null
+          price_per_share?: number | null
+          sec_filing_url?: string | null
+          shares_owned_after?: number | null
+          shares_traded?: number | null
+          total_value?: number | null
+          transaction_date?: string | null
+          transaction_type?: string
+        }
+        Update: {
+          company_id?: string
+          created_at?: string
+          filer_name?: string
+          filer_title?: string | null
+          form_type?: string | null
+          id?: string
+          is_10b5_plan?: boolean | null
+          price_per_share?: number | null
+          sec_filing_url?: string | null
+          shares_owned_after?: number | null
+          shares_traded?: number | null
+          total_value?: number | null
+          transaction_date?: string | null
+          transaction_type?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "insider_trades_company_id_fkey"
+            columns: ["company_id"]
+            isOneToOne: false
+            referencedRelation: "companies"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       issue_legislation_map: {
         Row: {
