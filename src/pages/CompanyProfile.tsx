@@ -828,6 +828,7 @@ export default function CompanyProfile() {
             <SectionHeader icon={AlertTriangle} title="Workforce Stability" subtitle="Layoffs, WARN notices, and workforce reduction signals" />
             <div className="space-y-4">
               <WarnTrackerCard companyName={name} dbCompanyId={dbCompanyId} />
+              {dbCompanyId && <CourtRecordsCard companyId={dbCompanyId} companyName={name} />}
             </div>
           </section>
 
