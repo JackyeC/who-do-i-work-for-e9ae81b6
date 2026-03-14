@@ -1,5 +1,5 @@
 import { ReactNode, useState } from "react";
-import { ChevronDown, Lock } from "lucide-react";
+import { ChevronDown, Lock, Receipt } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { motion, AnimatePresence } from "framer-motion";
 import { usePremium } from "@/hooks/use-premium";
@@ -28,39 +28,44 @@ export function DossierLayer({
   const { isRecruiterMode } = useViewMode();
   const navigate = useNavigate();
 
-  // Hide recruiter-only layers in candidate mode
   if (recruiterOnly && !isRecruiterMode) return null;
 
   const locked = requiresPro && !isPremium;
 
   return (
-    <div className={cn("border border-border/40 rounded-2xl bg-card overflow-hidden", className)}>
+    <div className={cn("border border-border/40 rounded-none bg-card overflow-hidden", className)}>
+      {/* Terminal-style layer header */}
       <button
         onClick={() => !locked && setOpen(!open)}
         className={cn(
-          "w-full flex items-center gap-4 px-6 py-5 text-left transition-colors",
+          "w-full flex items-center gap-4 px-6 py-4 text-left transition-colors",
           locked ? "cursor-not-allowed opacity-70" : "hover:bg-accent/30 cursor-pointer"
         )}
       >
-        <div className="flex items-center justify-center w-10 h-10 rounded-xl bg-primary/8 shrink-0">
+        <div className="flex items-center justify-center w-10 h-10 rounded-none border border-border/50 bg-muted/30 shrink-0">
           {locked ? <Lock className="w-5 h-5 text-muted-foreground" /> : <Icon className="w-5 h-5 text-primary" />}
         </div>
         <div className="flex-1 min-w-0">
           <div className="flex items-center gap-2">
-            <span className="text-micro text-muted-foreground font-mono">LAYER {layerNumber}</span>
+            <span className="font-mono text-[9px] tracking-[0.25em] uppercase text-primary font-semibold">
+              LAYER {String(layerNumber).padStart(2, "0")}
+            </span>
             {recruiterOnly && (
-              <span className="text-[10px] font-semibold uppercase tracking-wider text-primary bg-primary/10 px-2 py-0.5 rounded-full">Pro</span>
+              <span className="font-mono text-[8px] font-semibold uppercase tracking-wider text-primary bg-primary/10 px-2 py-0.5">Pro</span>
             )}
           </div>
-          <h3 className="text-body-lg font-semibold text-foreground leading-tight mt-0.5">{title}</h3>
-          {subtitle && <p className="text-caption text-muted-foreground mt-0.5">{subtitle}</p>}
+          <h3 className="text-sm font-bold text-foreground leading-tight mt-0.5 tracking-tight">{title}</h3>
+          {subtitle && <p className="text-[11px] text-muted-foreground mt-0.5">{subtitle}</p>}
         </div>
         {locked ? (
-          <Button size="sm" variant="outline" className="shrink-0 text-xs" onClick={(e) => { e.stopPropagation(); navigate("/login"); }}>
-            Unlock
+          <Button size="sm" variant="outline" className="shrink-0 text-xs font-mono" onClick={(e) => { e.stopPropagation(); navigate("/login"); }}>
+            UNLOCK
           </Button>
         ) : (
-          <ChevronDown className={cn("w-5 h-5 text-muted-foreground transition-transform duration-200 shrink-0", open && "rotate-180")} />
+          <div className="flex items-center gap-2 shrink-0">
+            <Receipt className="w-3.5 h-3.5 text-muted-foreground/40" />
+            <ChevronDown className={cn("w-5 h-5 text-muted-foreground transition-transform duration-200", open && "rotate-180")} />
+          </div>
         )}
       </button>
       <AnimatePresence initial={false}>
@@ -84,8 +89,9 @@ export function DossierLayer({
 
 export function TransparencyDisclaimer() {
   return (
-    <div className="rounded-xl bg-muted/40 border border-border/30 px-5 py-4 text-caption text-muted-foreground leading-relaxed">
+    <div className="rounded-none bg-muted/40 border border-border/30 px-5 py-4 text-[11px] text-muted-foreground leading-relaxed font-mono">
       <p>
+        <span className="text-primary font-semibold tracking-wider uppercase text-[9px]">DISCLAIMER</span>{" "}
         This platform surfaces signals from public records, documented disclosures, and clearly labeled enrichment sources. 
         It does not assign moral or legal judgments. Interpretation is left to the user.
       </p>

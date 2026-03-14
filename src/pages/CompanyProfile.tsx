@@ -38,6 +38,7 @@ import { RelatedReportsCard } from "@/components/RelatedReportsCard";
 import { ValuesCheckSection, type ValuesCheckSignal } from "@/components/values-check/ValuesCheckSection";
 import { InfluenceChainCard } from "@/components/InfluenceChainCard";
 import { CorporateCharacterScore, calculateCharacterScore } from "@/components/CorporateCharacterScore";
+import { TransparencyGhosting } from "@/components/TransparencyGhosting";
 import { DataFreshnessCard } from "@/components/DataFreshnessCard";
 import { useScanTracker } from "@/hooks/use-scan-tracker";
 import { DecisionMakers } from "@/components/DecisionMakers";
@@ -497,6 +498,22 @@ export default function CompanyProfile() {
               scanCompletion={(dbCompany as any)?.scan_completion}
             />
           </div>
+
+          {/* TRANSPARENCY GHOSTING — Missing Data as Risk Signal */}
+          <Card className="mb-6">
+            <CardContent className="p-5">
+              <TransparencyGhosting
+                hasPayEquity={!!tiPayEquity}
+                hasPromotionData={false}
+                hasSentimentData={!!tiSentiment}
+                hasBenefitsData={!!tiBenefits}
+                hasAiHrSignals={!!tiAiHr}
+                hasDeiReports={false}
+                hasCompensationData={!!tiBenefits}
+                hasWorkforceDemographics={false}
+              />
+            </CardContent>
+          </Card>
 
           {/* ═══════════════════════════════════════════════════════════
               SCAN PROGRESS (when actively scanning)

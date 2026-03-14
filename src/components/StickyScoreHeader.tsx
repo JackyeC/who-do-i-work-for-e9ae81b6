@@ -1,6 +1,6 @@
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect } from "react";
 import { cn } from "@/lib/utils";
-import { Shield, AlertTriangle, ChevronDown } from "lucide-react";
+import { Shield, AlertTriangle, ChevronDown, Activity } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { motion, AnimatePresence } from "framer-motion";
 
@@ -9,7 +9,6 @@ interface StickyScoreHeaderProps {
   score: number;
   ticker?: string | null;
   industry: string;
-  /** ID of the scroll container, or use window */
   scrollRef?: React.RefObject<HTMLElement>;
 }
 
@@ -20,9 +19,9 @@ function getScoreColor(score: number) {
 }
 
 function getOfferRisk(score: number) {
-  if (score >= 65) return { level: "Low", color: "text-[hsl(var(--civic-green))]", bg: "bg-[hsl(var(--civic-green))]/10" };
-  if (score >= 40) return { level: "Moderate", color: "text-[hsl(var(--civic-yellow))]", bg: "bg-[hsl(var(--civic-yellow))]/10" };
-  return { level: "Elevated", color: "text-destructive", bg: "bg-destructive/10" };
+  if (score >= 65) return { level: "Low", color: "text-[hsl(var(--civic-green))]", bg: "bg-[hsl(var(--civic-green))]/10", border: "border-[hsl(var(--civic-green))]/30" };
+  if (score >= 40) return { level: "Moderate", color: "text-[hsl(var(--civic-yellow))]", bg: "bg-[hsl(var(--civic-yellow))]/10", border: "border-[hsl(var(--civic-yellow))]/30" };
+  return { level: "Elevated", color: "text-destructive", bg: "bg-destructive/10", border: "border-destructive/30" };
 }
 
 const SECTIONS = [
@@ -43,8 +42,6 @@ export function StickyScoreHeader({ companyName, score, ticker, industry }: Stic
   useEffect(() => {
     const handleScroll = () => {
       setVisible(window.scrollY > 320);
-
-      // Determine active section
       for (let i = SECTIONS.length - 1; i >= 0; i--) {
         const el = document.getElementById(`section-${SECTIONS[i].id}`);
         if (el) {
@@ -56,18 +53,16 @@ export function StickyScoreHeader({ companyName, score, ticker, industry }: Stic
         }
       }
     };
-
     window.addEventListener("scroll", handleScroll, { passive: true });
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
   const risk = getOfferRisk(score);
+  const isElevated = risk.level === "Elevated";
 
   const scrollTo = (sectionId: string) => {
     const el = document.getElementById(`section-${sectionId}`);
-    if (el) {
-      el.scrollIntoView({ behavior: "smooth", block: "start" });
-    }
+    if (el) el.scrollIntoView({ behavior: "smooth", block: "start" });
   };
 
   return (
@@ -81,34 +76,51 @@ export function StickyScoreHeader({ companyName, score, ticker, industry }: Stic
           className="fixed top-0 left-0 right-0 z-50 bg-card/95 backdrop-blur-md border-b border-border/50 shadow-sm"
         >
           <div className="container mx-auto px-4 max-w-4xl">
-            {/* Score bar */}
-            <div className="flex items-center justify-between h-11 gap-4">
+            {/* Bloomberg-style status bar */}
+            <div className="flex items-center justify-between h-12 gap-3">
+              {/* Left: Company identity */}
               <div className="flex items-center gap-3 min-w-0">
                 <span className="font-bold text-foreground text-sm truncate">{companyName}</span>
-                {ticker && <Badge variant="outline" className="font-mono text-[10px] shrink-0">{ticker}</Badge>}
+                {ticker && (
+                  <Badge variant="outline" className="font-mono text-[10px] shrink-0 tabular-nums">{ticker}</Badge>
+                )}
+                <span className="text-[10px] text-muted-foreground hidden sm:inline">{industry}</span>
               </div>
-              <div className="flex items-center gap-4 shrink-0">
-                <div className="flex items-center gap-1.5">
-                  <Shield className="w-3.5 h-3.5 text-primary" />
-                  <span className="text-[10px] text-muted-foreground">Score</span>
-                  <span className={cn("text-sm font-black tabular-nums", getScoreColor(score))}>{score}</span>
-                  <span className="text-[10px] text-muted-foreground">/100</span>
+
+              {/* Right: Terminal-style scores */}
+              <div className="flex items-center gap-3 shrink-0">
+                {/* Score in monospaced terminal style */}
+                <div className="flex items-center gap-1.5 px-2.5 py-1 rounded border border-border/50 bg-muted/30">
+                  <Shield className="w-3 h-3 text-primary" />
+                  <span className="font-mono text-[9px] tracking-wider uppercase text-muted-foreground">CCS™</span>
+                  <span className={cn("font-mono text-base font-black tabular-nums leading-none", getScoreColor(score))}>
+                    {score}
+                  </span>
                 </div>
-                <div className={cn("flex items-center gap-1 px-2 py-0.5 rounded text-[10px] font-medium", risk.bg, risk.color)}>
-                  <AlertTriangle className="w-3 h-3" />
-                  Offer Risk: {risk.level}
+
+                {/* Risk badge with pulsing CAUTION for elevated */}
+                <div className={cn(
+                  "flex items-center gap-1.5 px-2.5 py-1 rounded border text-[10px] font-semibold font-mono uppercase tracking-wider",
+                  risk.bg, risk.color, risk.border,
+                )}>
+                  {isElevated ? (
+                    <Activity className="w-3 h-3 animate-pulse" />
+                  ) : (
+                    <AlertTriangle className="w-3 h-3" />
+                  )}
+                  {isElevated ? "CAUTION" : risk.level}
                 </div>
               </div>
             </div>
 
-            {/* Section nav */}
+            {/* Section nav tabs */}
             <div className="flex items-center gap-0.5 -mb-px overflow-x-auto scrollbar-none">
               {SECTIONS.map((s) => (
                 <button
                   key={s.id}
                   onClick={() => scrollTo(s.id)}
                   className={cn(
-                    "px-3 py-1.5 text-[11px] font-medium whitespace-nowrap transition-colors border-b-2",
+                    "px-3 py-1.5 text-[11px] font-medium whitespace-nowrap transition-colors border-b-2 font-mono",
                     activeSection === s.id
                       ? "border-primary text-primary"
                       : "border-transparent text-muted-foreground hover:text-foreground"
