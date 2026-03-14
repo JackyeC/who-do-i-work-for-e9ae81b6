@@ -194,13 +194,19 @@ export function DecisionMakers({ executives, companyId, companyName, onExecutive
     enabled: !!companyId,
   });
 
+  // Filter out former leaders by default, show current ones
+  const activeExecs = executives.filter(e => e.verification_status !== "former");
+  const formerExecs = executives.filter(e => e.verification_status === "former");
+  const activeBoard = boardMembers?.filter(b => b.verification_status !== "former") || [];
+  const formerBoard = boardMembers?.filter(b => b.verification_status === "former") || [];
+  
   // Split executives into C-suite and others
-  const cSuite = executives.filter((e) => CSUITE_TITLES.test(e.title || ""));
-  const others = executives.filter((e) => !CSUITE_TITLES.test(e.title || ""));
+  const cSuite = activeExecs.filter((e) => CSUITE_TITLES.test(e.title || ""));
+  const others = activeExecs.filter((e) => !CSUITE_TITLES.test(e.title || ""));
   const displayedCSuite = cSuite;
-  const displayedOthers = showAll ? others : [];
+  const displayedOthers = showAll ? [...others, ...formerExecs] : [];
 
-  const totalLeaders = cSuite.length + others.length + (boardMembers?.length || 0);
+  const totalLeaders = activeExecs.length + activeBoard.length;
 
   return (
     <Card>
