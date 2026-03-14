@@ -193,9 +193,9 @@ const Index = forwardRef<HTMLDivElement>((_, ref) => {
               >
                 <t.icon className="w-5 h-5 text-primary mb-4" strokeWidth={1.5} />
                 <div className="font-serif text-lg mb-3 text-foreground">{t.title}</div>
-                <div className="text-[13px] text-muted-foreground leading-relaxed mb-4">{t.desc}</div>
-                <div className="flex items-center gap-1.5 font-mono text-[10px] tracking-wider uppercase text-primary group-hover:gap-2.5 transition-all">
-                  {t.cta} <ArrowRight className="w-3 h-3" />
+                <div className="text-sm text-muted-foreground leading-relaxed mb-4">{t.desc}</div>
+                <div className="flex items-center gap-1.5 font-mono text-xs tracking-wider uppercase text-primary group-hover:gap-2.5 transition-all">
+                  {t.cta} <ArrowRight className="w-3.5 h-3.5" />
                 </div>
               </div>
             </SectionReveal>
