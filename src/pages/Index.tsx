@@ -341,13 +341,13 @@ const Index = forwardRef<HTMLDivElement>((_, ref) => {
           <div className="flex gap-3 justify-center flex-wrap">
             <button
               onClick={() => navigate("/login")}
-              className="bg-primary text-primary-foreground px-7 py-3 font-mono text-[11px] font-semibold tracking-wider uppercase hover:brightness-110 transition-all"
+              className="bg-primary text-primary-foreground px-7 py-3 font-mono text-xs font-semibold tracking-wider uppercase hover:brightness-110 transition-all"
             >
               Get Full Access
             </button>
             <button
               onClick={() => navigate("/work-with-jackye")}
-              className="border border-border text-muted-foreground px-7 py-3 font-mono text-[11px] tracking-wider uppercase hover:border-primary hover:text-primary transition-all"
+              className="border border-border text-muted-foreground px-7 py-3 font-mono text-xs tracking-wider uppercase hover:border-primary hover:text-primary transition-all"
             >
               Work With Jackye
             </button>
