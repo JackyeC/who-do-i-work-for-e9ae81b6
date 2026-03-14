@@ -1,5 +1,6 @@
 import { useNavigate } from "react-router-dom";
 import { ArrowRight } from "lucide-react";
+import jackyeHeadshot from "@/assets/jackye-headshot.png";
 import { usePageSEO } from "@/hooks/use-page-seo";
 
 const SERVICES = [
