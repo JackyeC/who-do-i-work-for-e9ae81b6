@@ -167,6 +167,15 @@ export default function Pricing() {
           ))}
         </div>
 
+        {/* Credit Packs — pay per report */}
+        <div className="max-w-md mx-auto mb-16">
+          <div className="text-center mb-6">
+            <h2 className="text-xl font-bold text-foreground mb-2">Just need one report?</h2>
+            <p className="text-sm text-muted-foreground">Buy scan credits — no subscription required.</p>
+          </div>
+          <CreditPurchaseCard />
+        </div>
+
         <div className="rounded-2xl bg-muted/40 border border-border/30 px-8 py-6 text-center max-w-3xl mx-auto">
           <div className="flex items-center justify-center gap-2 mb-3">
             <Shield className="w-5 h-5 text-primary" />
