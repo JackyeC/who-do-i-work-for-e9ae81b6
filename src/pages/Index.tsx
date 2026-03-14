@@ -274,6 +274,35 @@ const Index = forwardRef<HTMLDivElement>((_, ref) => {
         </section>
       </SectionReveal>
 
+      {/* 2026 Rivalries Teaser */}
+      <SectionReveal>
+        <section className="px-6 lg:px-16 py-12 max-w-[1100px] mx-auto w-full">
+          <div className="flex items-center justify-between mb-6">
+            <div>
+              <div className="flex items-center gap-2 mb-1">
+                <Zap className="w-4 h-4 text-primary" />
+                <span className="font-mono text-[9px] tracking-[0.25em] uppercase text-primary font-semibold">
+                  2026 Intelligence
+                </span>
+              </div>
+              <h2 className="text-xl font-bold text-foreground">Rivalry Super Tracker</h2>
+              <p className="text-[13px] text-muted-foreground mt-1">The biggest corporate matchups, analyzed through career intelligence.</p>
+            </div>
+            <button
+              onClick={() => navigate("/rivalries")}
+              className="font-mono text-[10px] tracking-wider uppercase text-primary hover:underline flex items-center gap-1 whitespace-nowrap"
+            >
+              View all <ArrowRight className="w-3 h-3" />
+            </button>
+          </div>
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+            {rivalries2026.slice(0, 2).map(r => (
+              <RivalryBattleCard key={r.id} rivalry={r} compact />
+            ))}
+          </div>
+        </section>
+      </SectionReveal>
+
       {/* Compare CTA */}
       <SectionReveal>
         <section className="px-6 lg:px-16 py-12 max-w-[1100px] mx-auto w-full">
