@@ -108,7 +108,7 @@ const Index = forwardRef<HTMLDivElement>((_, ref) => {
             </button>
             <button
               onClick={() => navigate("/would-you-work-here")}
-              className="border border-border text-muted-foreground px-7 py-3 font-mono text-[11px] tracking-wider uppercase hover:border-primary hover:text-primary transition-all"
+              className="border border-border text-muted-foreground px-7 py-3 font-mono text-xs tracking-wider uppercase hover:border-primary hover:text-primary transition-all"
             >
               Would You Work Here?
             </button>
