@@ -1335,6 +1335,86 @@ export type Database = {
           },
         ]
       }
+      company_court_cases: {
+        Row: {
+          case_name: string
+          case_number: string | null
+          case_type: string | null
+          cause: string | null
+          company_id: string
+          confidence: string | null
+          court_name: string | null
+          courtlistener_id: string | null
+          courtlistener_url: string | null
+          created_at: string | null
+          damages_amount: number | null
+          date_filed: string | null
+          date_terminated: string | null
+          id: string
+          nature_of_suit: string | null
+          pacer_case_id: string | null
+          plaintiff_or_defendant: string | null
+          source: string | null
+          status: string | null
+          summary: string | null
+          updated_at: string | null
+        }
+        Insert: {
+          case_name: string
+          case_number?: string | null
+          case_type?: string | null
+          cause?: string | null
+          company_id: string
+          confidence?: string | null
+          court_name?: string | null
+          courtlistener_id?: string | null
+          courtlistener_url?: string | null
+          created_at?: string | null
+          damages_amount?: number | null
+          date_filed?: string | null
+          date_terminated?: string | null
+          id?: string
+          nature_of_suit?: string | null
+          pacer_case_id?: string | null
+          plaintiff_or_defendant?: string | null
+          source?: string | null
+          status?: string | null
+          summary?: string | null
+          updated_at?: string | null
+        }
+        Update: {
+          case_name?: string
+          case_number?: string | null
+          case_type?: string | null
+          cause?: string | null
+          company_id?: string
+          confidence?: string | null
+          court_name?: string | null
+          courtlistener_id?: string | null
+          courtlistener_url?: string | null
+          created_at?: string | null
+          damages_amount?: number | null
+          date_filed?: string | null
+          date_terminated?: string | null
+          id?: string
+          nature_of_suit?: string | null
+          pacer_case_id?: string | null
+          plaintiff_or_defendant?: string | null
+          source?: string | null
+          status?: string | null
+          summary?: string | null
+          updated_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "company_court_cases_company_id_fkey"
+            columns: ["company_id"]
+            isOneToOne: false
+            referencedRelation: "companies"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       company_dark_money: {
         Row: {
           company_id: string
