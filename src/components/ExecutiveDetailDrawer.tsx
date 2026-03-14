@@ -2,7 +2,7 @@ import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetDescription } from "
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { ExternalLink, User, ArrowRight, Linkedin, Globe, Search, Sparkles, Loader2, ChevronDown, ChevronUp, MapPin } from "lucide-react";
+import { ExternalLink, User, ArrowRight, Linkedin, Globe, Search, Sparkles, Loader2, ChevronDown, ChevronUp, MapPin, AlertTriangle, FileText } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { formatCurrency } from "@/data/sampleData";
 import { supabase } from "@/integrations/supabase/client";
