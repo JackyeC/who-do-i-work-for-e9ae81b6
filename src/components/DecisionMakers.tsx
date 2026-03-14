@@ -26,6 +26,7 @@ interface Executive {
   photo_url?: string | null;
   source?: string | null;
   last_verified_at?: string | null;
+  verification_status?: string | null;
 }
 
 interface BoardMember {
