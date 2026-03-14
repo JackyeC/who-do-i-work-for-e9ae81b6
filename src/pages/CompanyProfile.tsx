@@ -408,7 +408,7 @@ export default function CompanyProfile() {
                       <div className="flex items-center gap-2.5 flex-wrap">
                         <h1 className="text-2xl md:text-3xl font-bold text-foreground leading-tight">{name}</h1>
                         {recordStatus !== "verified" && (
-                          <span className={`text-[11px] px-2 py-0.5 rounded-md border font-medium whitespace-nowrap ${statusInfo.color}`}>
+                          <span className={`text-xs px-2 py-0.5 rounded-md border font-medium whitespace-nowrap ${statusInfo.color}`}>
                             {isDiscovering && <Loader2 className="w-3 h-3 animate-spin inline mr-1" />}
                             {statusInfo.label}
                           </span>
