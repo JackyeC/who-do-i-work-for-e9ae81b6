@@ -80,6 +80,7 @@ export default function Browse() {
 
   return (
     <div className="flex-1">
+      <Tabs defaultValue="companies" className="w-full">
       {/* Compact header */}
       <div className="border-b border-border/40 bg-card/30">
         <div className="max-w-6xl mx-auto px-4 sm:px-6 py-6 flex items-center justify-between">
