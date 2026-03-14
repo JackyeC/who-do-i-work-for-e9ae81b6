@@ -28,6 +28,19 @@ const TYPE_META: Record<string, { icon: any; color: string; label: string }> = {
   project: { icon: Sparkles, color: "text-accent", label: "Project" },
 };
 
+const DEFAULT_CHECKLIST: Omit<ChecklistItem, "id">[] = [
+  { text: "Update your resume with recent accomplishments", type: "project", completed: false },
+  { text: "Research 3 companies that match your values", type: "company", completed: false },
+  { text: "Complete a skills assessment for your target role", type: "skill", completed: false },
+  { text: "Enroll in one course to close your biggest skill gap", type: "course", completed: false },
+  { text: "Reach out to 2 people in your target industry", type: "connect", completed: false },
+  { text: "Run Career Discovery to map your career paths", type: "project", completed: false },
+  { text: "Review 5 company civic footprint scores", type: "company", completed: false },
+  { text: "Set up job alerts for your target roles", type: "skill", completed: false },
+  { text: "Practice answering 'Why this company?' for your top pick", type: "project", completed: false },
+  { text: "Upload your LinkedIn connections to find warm intros", type: "connect", completed: false },
+];
+
 export function CareerChecklist() {
   const { user } = useAuth();
   const [items, setItems] = useState<ChecklistItem[]>([]);
