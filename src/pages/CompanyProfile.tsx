@@ -1,5 +1,5 @@
 import { useState, useMemo, useCallback, useEffect, useRef } from "react";
-import { useParams, Link, useNavigate } from "react-router-dom";
+import { useParams, Link, useNavigate, useSearchParams } from "react-router-dom";
 import { motion } from "framer-motion";
 import {
   Building2, ArrowLeft, DollarSign, Users, Flag,
@@ -64,6 +64,12 @@ import { CareerRiskReport } from "@/components/CareerRiskReport";
 import { BoardGovernanceTab } from "@/components/BoardGovernanceTab";
 import { CorporateBehaviorIndexCard } from "@/components/CorporateBehaviorIndexCard";
 import { calculateCBI, type CBIInput } from "@/lib/corporateBehaviorIndex";
+import { RecruiterRealityScoreCard } from "@/components/RecruiterRealityScoreCard";
+import { calculateRRS, type RRSInput } from "@/lib/recruiterRealityScore";
+import { GTMScoreCard } from "@/components/GTMScoreCard";
+import { calculateGTM, type GTMInput } from "@/lib/gtmScore";
+import { PersonaSelector } from "@/components/PersonaSelector";
+import { type PersonaId, isSectionVisible } from "@/lib/personaConfig";
 
 /* ─── Status labels ─── */
 const STATUS_LABELS: Record<string, { label: string; color: string }> = {
@@ -125,6 +131,9 @@ export default function CompanyProfile() {
   const [lobbyingDrawerOpen, setLobbyingDrawerOpen] = useState(false);
   const [pacDrawerOpen, setPacDrawerOpen] = useState(false);
   const [contractsDrawerOpen, setContractsDrawerOpen] = useState(false);
+  const [searchParams, setSearchParams] = useSearchParams();
+  const [activePersona, setActivePersona] = useState<PersonaId>((searchParams.get("persona") as PersonaId) || "job_seeker");
+  const handlePersonaChange = (p: PersonaId) => { setActivePersona(p); setSearchParams({ persona: p }); };
 
   const handleCandidateClick = useCallback((candidate: any) => {
     setSelectedCandidate(candidate);
@@ -467,6 +476,11 @@ export default function CompanyProfile() {
           </Card>
 
           {/* ═══════════════════════════════════════════════════════════
+              PERSONA SELECTOR
+             ═══════════════════════════════════════════════════════════ */}
+          <PersonaSelector activePersona={activePersona} onPersonaChange={handlePersonaChange} />
+
+          {/* ═══════════════════════════════════════════════════════════
               CORPORATE CHARACTER SCORE™
              ═══════════════════════════════════════════════════════════ */}
           <div className="mb-6 grid lg:grid-cols-3 gap-4">
@@ -541,9 +555,62 @@ export default function CompanyProfile() {
               aiHiringToolCount: tiAiHr ? 1 : 0,
             };
             const cbiResult = calculateCBI(cbiInput);
+
+            // Recruiter Reality Score
+            const rrsInput: RRSInput = {
+              hasApplicationAcknowledgment: false,
+              hasTimelineDisclosure: false,
+              hasRejectionNotification: false,
+              candidateGhostingSignals: 0,
+              interviewRoundCount: 0,
+              hasStructuredInterviewProcess: false,
+              hasInterviewFeedback: false,
+              hasSalaryInPostings: !!tiPayEquity,
+              hasCompensationBands: false,
+              hasBenefitsInPostings: !!tiBenefits,
+              salaryDisclosureRate: tiPayEquity ? 0.3 : 0,
+              hasGlassdoorInterviewReviews: !!tiSentiment,
+              glassdoorInterviewRating: tiSentiment ? 3.2 : 0,
+              hasCandidateExperienceSurvey: false,
+              hasEEODisclosure: false,
+              hasAIDisclosure: !!tiAiHr,
+              hasAccommodationsPolicy: false,
+            };
+            const rrsResult = calculateRRS(rrsInput);
+
+            // GTM Score
+            const gtmInput: GTMInput = {
+              recentSalesHires: 0,
+              totalRecentHires: 0,
+              hasSalesLeadershipHires: false,
+              recentMarketingHires: 0,
+              hasMarketingLeadership: false,
+              hasBrandInvestmentSignals: false,
+              isPubliclyTraded: !!dbCompany?.is_publicly_traded,
+              hasRevenueGrowth: false,
+              hasFundingAnnouncement: false,
+              revenue: (dbCompany as any)?.revenue || null,
+              executiveTurnoverCount: 0,
+              executiveCount: dbExecutives?.length || 0,
+              hasCEOChange: false,
+              hasRecentLayoffs: false,
+              hasRecentHiringFreeze: false,
+              warnNoticeCount: 0,
+              isHiring: false,
+            };
+            const gtmResult = calculateGTM(gtmInput);
+
             return (
-              <div className="mb-6">
-                <CorporateBehaviorIndexCard result={cbiResult} companyName={name} />
+              <div className="space-y-4 mb-6">
+                {isSectionVisible(activePersona, "cbi") && (
+                  <CorporateBehaviorIndexCard result={cbiResult} companyName={name} />
+                )}
+                {isSectionVisible(activePersona, "recruiter_reality") && (
+                  <RecruiterRealityScoreCard result={rrsResult} companyName={name} />
+                )}
+                {isSectionVisible(activePersona, "gtm") && (
+                  <GTMScoreCard result={gtmResult} companyName={name} />
+                )}
               </div>
             );
           })()}
@@ -699,29 +766,33 @@ export default function CompanyProfile() {
           {/* ═══════════════════════════════════════════════════════════
               3b. GOVERNANCE & BOARD STRUCTURE
              ═══════════════════════════════════════════════════════════ */}
-          <section id="section-governance" className="mb-10 scroll-mt-28">
-            <SectionHeader icon={Shield} title="Governance & Board Structure" subtitle="Board composition, committee oversight, and ownership signals" />
-            <BoardGovernanceTab
-              companyId={dbCompanyId || ""}
-              companyName={name}
-              ticker={dbCompany?.ticker}
-              secCik={dbCompany?.sec_cik}
-            />
-          </section>
+          {isSectionVisible(activePersona, "governance") && (
+           <section id="section-governance" className="mb-10 scroll-mt-28">
+             <SectionHeader icon={Shield} title="Governance & Board Structure" subtitle="Board composition, committee oversight, and ownership signals" />
+             <BoardGovernanceTab
+               companyId={dbCompanyId || ""}
+               companyName={name}
+               ticker={dbCompany?.ticker}
+               secCik={dbCompany?.sec_cik}
+             />
+           </section>
+          )}
 
           <Separator className="mb-10" />
 
           {/* ═══════════════════════════════════════════════════════════
               4. WORKFORCE INTELLIGENCE
              ═══════════════════════════════════════════════════════════ */}
-          <section id="section-workforce" className="mb-10 scroll-mt-28">
-            <SectionHeader icon={TrendingUp} title="Workforce Intelligence" subtitle="Worker sentiment, hiring technology, and benefits signals" />
-            <div className="space-y-4">
-              <WorkerSentimentCard companyName={name} dbCompanyId={dbCompanyId} />
-              <AIHiringCard companyName={name} dbCompanyId={dbCompanyId} />
-              <WorkerBenefitsCard companyName={name} dbCompanyId={dbCompanyId} />
-            </div>
-          </section>
+          {isSectionVisible(activePersona, "workforce_intel") && (
+           <section id="section-workforce" className="mb-10 scroll-mt-28">
+             <SectionHeader icon={TrendingUp} title="Workforce Intelligence" subtitle="Worker sentiment, hiring technology, and benefits signals" />
+             <div className="space-y-4">
+               <WorkerSentimentCard companyName={name} dbCompanyId={dbCompanyId} />
+               <AIHiringCard companyName={name} dbCompanyId={dbCompanyId} />
+               <WorkerBenefitsCard companyName={name} dbCompanyId={dbCompanyId} />
+             </div>
+           </section>
+          )}
 
           <Separator className="mb-10" />
 

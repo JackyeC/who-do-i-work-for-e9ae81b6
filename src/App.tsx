@@ -74,6 +74,7 @@ import SiteMap from "./pages/SiteMap";
 import Rivalries from "./pages/Rivalries";
 import BrandMadness from "./pages/BrandMadness";
 import SignalFeed from "./pages/SignalFeed";
+import WorkIndex from "./pages/WorkIndex";
 import { CookieNotice } from "@/components/CookieNotice";
 
 const queryClient = new QueryClient();
@@ -209,6 +210,7 @@ const App = () => (
                 <Route path="/site-map" element={<SiteMap />} />
                 <Route path="/rivalries" element={<Rivalries />} />
                 <Route path="/brand-madness" element={<BrandMadness />} />
+                <Route path="/work-index" element={<WorkIndex />} />
                 <Route path="*" element={<NotFound />} />
               </Routes>
               <AskJackyeWidget />
