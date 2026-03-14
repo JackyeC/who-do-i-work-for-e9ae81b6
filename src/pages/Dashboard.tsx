@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useAuth } from "@/contexts/AuthContext";
-import { Navigate, useSearchParams } from "react-router-dom";
+import { Navigate, useSearchParams, useNavigate } from "react-router-dom";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { DashboardOverview } from "@/components/dashboard/DashboardOverview";
 import { AlignedJobsList } from "@/components/jobs/AlignedJobsList";
@@ -17,6 +17,7 @@ import { OutreachIntelligence } from "@/components/career/OutreachIntelligence";
 import { RelationshipDashboard } from "@/components/career/RelationshipDashboard";
 import { FirstLoginOnboarding } from "@/components/FirstLoginOnboarding";
 import { DataWipeButton } from "@/components/career/DataWipeButton";
+import { PostPurchaseUpsell } from "@/components/PostPurchaseUpsell";
 import { supabase } from "@/integrations/supabase/client";
 import { ClipboardCheck } from "lucide-react";
 
@@ -59,10 +60,19 @@ export default function Dashboard() {
     enabled: !!user,
   });
 
+  const creditPurchase = searchParams.get("credit_purchase");
+  const [showUpsell, setShowUpsell] = useState(creditPurchase === "success");
+
   if (loading || onboardingLoading) return null;
   if (!user) return <Navigate to="/login" replace />;
 
   const showOnboarding = onboardingCompleted === false;
+
+  const dismissUpsell = () => {
+    setShowUpsell(false);
+    searchParams.delete("credit_purchase");
+    setSearchParams(searchParams, { replace: true });
+  };
 
   const renderContent = () => {
     switch (tab) {
@@ -130,6 +140,7 @@ export default function Dashboard() {
         </h1>
       </div>
       <div className="flex-1 overflow-y-auto px-6 py-6 max-w-5xl">
+        {showUpsell && <PostPurchaseUpsell onDismiss={dismissUpsell} />}
         {renderContent()}
       </div>
     </div>
