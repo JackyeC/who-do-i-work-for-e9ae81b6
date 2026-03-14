@@ -1,3 +1,5 @@
+import jackyeHeadshot from "@/assets/jackye-headshot.png";
+
 const OnePager = () => {
   const trustSources = ["FEC Individual Receipts", "USASpending.gov", "OpenSecrets Lobbying", "SEC EDGAR", "Glassdoor Intelligence", "Real-time sync"];
 
