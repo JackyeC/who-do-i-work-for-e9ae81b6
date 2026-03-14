@@ -51,6 +51,7 @@ export const Footer = forwardRef<HTMLElement>((_, ref) => {
               <p className="text-[10px] font-semibold text-primary-foreground/30 uppercase tracking-[0.2em]">Resources</p>
               <div className="space-y-3">
                 <Link to="/pricing" className="block text-sm text-primary-foreground/55 hover:text-primary-foreground/90 transition-colors">Pricing</Link>
+                <Link to="/site-map" className="block text-sm text-primary-foreground/55 hover:text-primary-foreground/90 transition-colors">Site Map</Link>
                 <Link to="/methodology" className="block text-sm text-primary-foreground/55 hover:text-primary-foreground/90 transition-colors">Methodology</Link>
                 <a href="#evidence-sources" className="block text-sm text-primary-foreground/55 hover:text-primary-foreground/90 transition-colors">Evidence Sources</a>
                 <Link to="/request-correction" className="block text-sm text-primary-foreground/55 hover:text-primary-foreground/90 transition-colors">Request a Correction</Link>
