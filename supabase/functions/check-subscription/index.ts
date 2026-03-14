@@ -44,7 +44,7 @@ serve(async (req) => {
       .from("user_roles")
       .select("role")
       .eq("user_id", user.id)
-      .in("role", ["owner", "admin", "internal_test"]);
+      .in("role", ["owner", "admin", "internal_test", "beta_tester"]);
 
     if (!roleError && privilegedRoles && privilegedRoles.length > 0) {
       logStep("Privileged role bypass active", { roles: privilegedRoles.map((r) => r.role) });
