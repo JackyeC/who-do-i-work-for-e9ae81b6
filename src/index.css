@@ -247,4 +247,18 @@
   .scrollbar-thin::-webkit-scrollbar { width: 4px; height: 4px; }
   .scrollbar-thin::-webkit-scrollbar-track { background: transparent; }
   .scrollbar-thin::-webkit-scrollbar-thumb { background: hsl(var(--border-2)); }
+
+  /* Copy protection for premium content */
+  .protected-content {
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+    -webkit-touch-callout: none;
+  }
+
+  .protected-content img {
+    pointer-events: none;
+    -webkit-user-drag: none;
+  }
 }
