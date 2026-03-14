@@ -12,7 +12,7 @@ export function DashboardStats() {
     queryFn: async () => {
       const [apps, alerts, values, growth] = await Promise.all([
         supabase.from("applications_tracker").select("id", { count: "exact", head: true }).eq("user_id", user!.id),
-        (supabase as any).from("user_signal_alerts").select("id", { count: "exact", head: true }).eq("user_id", user!.id).eq("is_read", false),
+        (supabase as any).from("user_alerts").select("id", { count: "exact", head: true }).eq("user_id", user!.id).eq("is_read", false),
         (supabase as any).from("user_values_profile").select("id").eq("user_id", user!.id).maybeSingle(),
         (supabase as any).from("employee_growth_tracker").select("id", { count: "exact", head: true }).eq("user_id", user!.id),
       ]);

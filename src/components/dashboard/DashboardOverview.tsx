@@ -26,7 +26,7 @@ export function DashboardOverview({ onNavigate }: DashboardOverviewProps) {
         (supabase as any).from("user_career_profile").select("*").eq("user_id", user!.id).maybeSingle(),
         supabase.from("user_documents").select("id, document_type, status, parsed_signals, original_filename, created_at").order("created_at", { ascending: false }).limit(5),
         supabase.from("applications_tracker").select("id, status, company_name, job_title", { count: "exact" }).eq("user_id", user!.id).order("created_at", { ascending: false }).limit(3),
-        (supabase as any).from("user_signal_alerts").select("id", { count: "exact", head: true }).eq("user_id", user!.id).eq("is_read", false),
+        (supabase as any).from("user_alerts").select("id", { count: "exact", head: true }).eq("user_id", user!.id).eq("is_read", false),
         (supabase as any).from("user_values_profile").select("id").eq("user_id", user!.id).maybeSingle(),
         (supabase as any).from("tracked_companies").select("id, company:companies(name, industry)", { count: "exact" }).eq("user_id", user!.id).eq("is_active", true).limit(3),
         supabase.from("user_company_watchlist").select("id", { count: "exact", head: true }).eq("user_id", user!.id),
