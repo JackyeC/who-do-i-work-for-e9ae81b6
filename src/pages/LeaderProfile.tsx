@@ -99,6 +99,8 @@ export default function LeaderProfile() {
     enabled: !!otherBoardSeats && otherBoardSeats.length > 0,
   });
 
+  const { enrichment, isEnriching, enrich } = useLeaderEnrichment(leader?.id, leaderType);
+
   usePageSEO({
     title: leader ? `${leader.name} — Leader Profile` : "Leader Profile",
     description: leader ? `Intelligence profile for ${leader.name}${company ? ` at ${company.name}` : ""}` : "Leader profile",
