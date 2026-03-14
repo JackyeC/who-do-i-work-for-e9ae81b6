@@ -1,5 +1,6 @@
 import { Header } from "@/components/Header";
 import { Footer } from "@/components/Footer";
+import { CreditPurchaseCard } from "@/components/CreditPurchaseCard";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Check, Shield, Loader2, X } from "lucide-react";
@@ -164,6 +165,15 @@ export default function Pricing() {
               </Button>
             </div>
           ))}
+        </div>
+
+        {/* Credit Packs — pay per report */}
+        <div className="max-w-md mx-auto mb-16">
+          <div className="text-center mb-6">
+            <h2 className="text-xl font-bold text-foreground mb-2">Just need one report?</h2>
+            <p className="text-sm text-muted-foreground">Buy scan credits — no subscription required.</p>
+          </div>
+          <CreditPurchaseCard />
         </div>
 
         <div className="rounded-2xl bg-muted/40 border border-border/30 px-8 py-6 text-center max-w-3xl mx-auto">

@@ -61,6 +61,7 @@ import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useCompanySEO } from "@/hooks/use-company-seo";
 import { useToast } from "@/hooks/use-toast";
 import { ContentProtector } from "@/components/ContentProtector";
+import { ReportTeaserGate } from "@/components/ReportTeaserGate";
 
 /* ─── Status labels ─── */
 const STATUS_LABELS: Record<string, { label: string; color: string }> = {
@@ -516,6 +517,10 @@ export default function CompanyProfile() {
             </CardContent>
           </Card>
 
+          <ReportTeaserGate
+            companyName={name}
+            teaser={null}
+          >
           {/* ═══════════════════════════════════════════════════════════
               SCAN PROGRESS (when actively scanning)
              ═══════════════════════════════════════════════════════════ */}
@@ -922,6 +927,7 @@ export default function CompanyProfile() {
               Executive donations reflect personal giving. This platform provides publicly available data for informational purposes only.
             </p>
           </div>
+          </ReportTeaserGate>
         </motion.div>
       </div>
 
