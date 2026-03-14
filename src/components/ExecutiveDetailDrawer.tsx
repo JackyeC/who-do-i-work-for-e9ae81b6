@@ -65,6 +65,67 @@ export function ExecutiveDetailDrawer({ open, onOpenChange, executive, companyNa
     enabled: !!effectiveExecId && open,
   });
 
+  // Cross-reference executive name against investigative document archives
+  const { data: investigativeMentions } = useQuery({
+    queryKey: ["executive-investigative-mentions", executive?.name],
+    queryFn: async () => {
+      if (!executive?.name) return [];
+      const nameParts = executive.name.replace(/,/g, " ").split(/\s+/).filter(Boolean);
+      const lastName = nameParts.length > 1 ? nameParts[nameParts.length - 1] : nameParts[0];
+      
+      // Search for matching entities in the power network
+      const { data: entities } = await (supabase as any)
+        .from("power_network_entities")
+        .select("id, name, description, aliases, is_victim, is_redacted")
+        .eq("entity_type", "person")
+        .eq("is_victim", false)
+        .ilike("name", `%${lastName}%`)
+        .limit(20);
+      
+      if (!entities || entities.length === 0) return [];
+      
+      // Filter for close name matches
+      const normalName = executive.name.toLowerCase().replace(/[,.\s]+/g, " ").trim();
+      const matched = entities.filter((e: any) => {
+        const eName = e.name.toLowerCase().replace(/[,.\s]+/g, " ").trim();
+        return eName.includes(normalName) || normalName.includes(eName) || 
+               (e.aliases && e.aliases.some((a: string) => {
+                 const aLower = a.toLowerCase().replace(/[,.\s]+/g, " ").trim();
+                 return aLower.includes(normalName) || normalName.includes(aLower);
+               }));
+      });
+      
+      if (matched.length === 0) return [];
+      
+      // Get document mentions for matched entities
+      const entityIds = matched.map((e: any) => e.id);
+      const { data: mentions } = await (supabase as any)
+        .from("power_network_mentions")
+        .select("id, context_snippet, page_number, confidence, document_id")
+        .in("entity_id", entityIds)
+        .order("confidence", { ascending: false })
+        .limit(20);
+      
+      if (!mentions || mentions.length === 0) return [];
+      
+      // Get document details
+      const docIds = [...new Set(mentions.map((m: any) => m.document_id))];
+      const { data: docs } = await (supabase as any)
+        .from("power_network_documents")
+        .select("id, title, document_type, source_url, date_published")
+        .in("id", docIds);
+      
+      const docMap = (docs || []).reduce((acc: any, d: any) => { acc[d.id] = d; return acc; }, {});
+      
+      return mentions.map((m: any) => ({
+        ...m,
+        document: docMap[m.document_id] || null,
+        entityName: matched.find((e: any) => entityIds.includes(e.id))?.name,
+      }));
+    },
+    enabled: !!executive?.name && open,
+  });
+
   const fetchRecipientImpact = async (recipientName: string, party: string) => {
     if (recipientSummaries[recipientName]) {
       setExpandedRecipient(expandedRecipient === recipientName ? null : recipientName);
