@@ -10,17 +10,33 @@ import { useQuery } from "@tanstack/react-query";
 
 export const MAIN_SECTIONS = [
   {
-    id: "intelligence",
-    label: "Company Intelligence",
+    id: "dashboard",
+    label: "Dashboard",
+    path: "/dashboard",
+    matchPaths: ["/dashboard"],
+    auth: true,
+    subItems: [],
+  },
+  {
+    id: "company",
+    label: "Company",
     path: "/browse",
     matchPaths: ["/browse", "/search", "/company/", "/dossier/", "/add-company", "/values-search", "/intelligence"],
     subItems: [],
   },
   {
-    id: "offer",
-    label: "Offer Intelligence",
+    id: "offers",
+    label: "Offers",
     path: "/check",
     matchPaths: ["/check", "/offer-check", "/offer-review", "/strategic-offer-review", "/offer-clarity"],
+    subItems: [],
+  },
+  {
+    id: "careers",
+    label: "Careers",
+    path: "/career-intelligence",
+    matchPaths: ["/career-intelligence", "/career-map"],
+    auth: true,
     subItems: [],
   },
   {
@@ -42,22 +58,6 @@ export const MAIN_SECTIONS = [
     label: "Ask Jackye",
     path: "/ask-jackye",
     matchPaths: ["/ask-jackye"],
-    subItems: [],
-  },
-  {
-    id: "career",
-    label: "Career Intelligence",
-    path: "/career-intelligence",
-    matchPaths: ["/career-intelligence", "/career-map"],
-    auth: true,
-    subItems: [],
-  },
-  {
-    id: "dashboard",
-    label: "Dashboard",
-    path: "/dashboard",
-    matchPaths: ["/dashboard"],
-    auth: true,
     subItems: [],
   },
 ];
