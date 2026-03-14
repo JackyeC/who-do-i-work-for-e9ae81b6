@@ -71,6 +71,11 @@ import { calculateGTM, type GTMInput } from "@/lib/gtmScore";
 import { PersonaSelector } from "@/components/PersonaSelector";
 import { type PersonaId, isSectionVisible } from "@/lib/personaConfig";
 import { CourtRecordsCard } from "@/components/CourtRecordsCard";
+import { NewsIntelligenceCard } from "@/components/NewsIntelligenceCard";
+import { InsiderTradingCard } from "@/components/InsiderTradingCard";
+import { PromotionVelocityCard } from "@/components/PromotionVelocityCard";
+import { IntelligenceSnapshotCard } from "@/components/viral/IntelligenceSnapshotCard";
+import { calculatePVS, deriveSubScores, computeConfidence } from "@/lib/promotionVelocityScore";
 
 /* ─── Status labels ─── */
 const STATUS_LABELS: Record<string, { label: string; color: string }> = {
