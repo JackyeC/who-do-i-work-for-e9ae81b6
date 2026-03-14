@@ -62,6 +62,7 @@ function LeaderCard({
   leaderId,
   leaderType,
   companyId,
+  verificationStatus,
   onViewProfile,
   onTraceInfluence,
 }: {
