@@ -75,6 +75,7 @@ import Rivalries from "./pages/Rivalries";
 import BrandMadness from "./pages/BrandMadness";
 import SignalFeed from "./pages/SignalFeed";
 import WorkIndex from "./pages/WorkIndex";
+import Rankings from "./pages/Rankings";
 import { CookieNotice } from "@/components/CookieNotice";
 
 const queryClient = new QueryClient();
