@@ -1,4 +1,5 @@
 import { useState, useEffect, forwardRef } from "react";
+import jackyeHeadshot from "@/assets/jackye-headshot.png";
 import { useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { Shield, FileText, MessageSquare, Compass, ArrowRight, ArrowLeftRight, Zap } from "lucide-react";
