@@ -794,294 +794,234 @@ export default function CompanyProfile() {
 
 
           {/* ═══════════════════════════════════════════════════════════
-              3b. GOVERNANCE & BOARD STRUCTURE
+              PERSONA-ORDERED SECTIONS
              ═══════════════════════════════════════════════════════════ */}
-          {isSectionVisible(activePersona, "governance") && (
-           <section id="section-governance" className="mb-10 scroll-mt-28">
-             <SectionHeader icon={Shield} title="Governance & Board Structure" subtitle="Board composition, committee oversight, and ownership signals" />
-              <BoardGovernanceTab
-                companyId={dbCompanyId || ""}
-                companyName={name}
-                ticker={dbCompany?.ticker}
-                secCik={dbCompany?.sec_cik}
-              />
-              {dbCompanyId && dbCompany?.is_publicly_traded && (
-                <div className="mt-4">
-                  <InsiderTradingCard companyId={dbCompanyId} companyName={name} ticker={dbCompany?.ticker} cik={dbCompany?.sec_cik} />
-                </div>
-              )}
-           </section>
-          )}
+          {(() => {
+            const sectionOrder = getSectionOrder(activePersona);
 
-          <Separator className="mb-10" />
-
-          {/* ═══════════════════════════════════════════════════════════
-              4. WORKFORCE INTELLIGENCE
-             ═══════════════════════════════════════════════════════════ */}
-          {isSectionVisible(activePersona, "workforce_intel") && (
-           <section id="section-workforce" className="mb-10 scroll-mt-28">
-             <SectionHeader icon={TrendingUp} title="Workforce Intelligence" subtitle="Worker sentiment, hiring technology, and benefits signals" />
-             <div className="space-y-4">
-               <WorkerSentimentCard companyName={name} dbCompanyId={dbCompanyId} />
-               <AIHiringCard companyName={name} dbCompanyId={dbCompanyId} />
-               <WorkerBenefitsCard companyName={name} dbCompanyId={dbCompanyId} />
-             </div>
-           </section>
-          )}
-
-          <Separator className="mb-10" />
-
-          {/* ═══════════════════════════════════════════════════════════
-              5. COMPENSATION TRANSPARENCY
-             ═══════════════════════════════════════════════════════════ */}
-          <section id="section-compensation" className="mb-10 scroll-mt-28">
-            <SectionHeader icon={DollarSign} title="Compensation Transparency" subtitle="Pay equity signals and national benchmarks" />
-            <div className="space-y-4">
-              <CompensationTransparencyCard companyName={name} dbCompanyId={dbCompanyId} />
-            </div>
-          </section>
-
-          <Separator className="mb-10" />
-
-          {/* ═══════════════════════════════════════════════════════════
-              6. WORKFORCE MOBILITY & PROMOTION EQUITY
-             ═══════════════════════════════════════════════════════════ */}
-          <section className="mb-10">
-            <SectionHeader icon={Award} title="Workforce Mobility & Promotion Equity" subtitle="Internal promotion, leadership diversity, HBCU partnerships, skills-first hiring" />
-            <div className="space-y-4">
-              <PromotionEquityCard companyName={name} dbCompanyId={dbCompanyId} />
-              {(() => {
-                const subScores = deriveSubScores({ promotionSignals: [], mobilitySignals: [], diversitySignals: [], retentionSignals: [], learningSignals: [], transparencyCategories: 2, totalCategories: 6 });
-                const confidence = computeConfidence(3, false, 180);
-                const pvsResult = calculatePVS(subScores, confidence);
-                return <PromotionVelocityCard result={pvsResult} companyName={name} />;
-              })()}
-            </div>
-          </section>
-
-          <Separator className="mb-10" />
-
-          {/* ═══════════════════════════════════════════════════════════
-              7. WORKFORCE STABILITY
-             ═══════════════════════════════════════════════════════════ */}
-           <section id="section-stability" className="mb-10 scroll-mt-28">
-            <SectionHeader icon={AlertTriangle} title="Workforce Stability" subtitle="Layoffs, WARN notices, and workforce reduction signals" />
-            <div className="space-y-4">
-              <WarnTrackerCard companyName={name} dbCompanyId={dbCompanyId} />
-              {dbCompanyId && <CourtRecordsCard companyId={dbCompanyId} companyName={name} />}
-              {dbCompanyId && <NewsIntelligenceCard companyId={dbCompanyId} companyName={name} />}
-            </div>
-          </section>
-
-          <Separator className="mb-10" />
-
-          {/* ═══════════════════════════════════════════════════════════
-              8. POLICY & INFLUENCE SIGNALS
-             ═══════════════════════════════════════════════════════════ */}
-          <section id="section-influence" className="mb-10 scroll-mt-28">
-            <SectionHeader icon={Landmark} title="Policy & Influence Signals" subtitle="Political donations, lobbying, trade associations, federal contracts" />
-            <div className="space-y-4">
-              {/* Sankey Influence Diagram */}
-              <SankeyInfluenceDiagram
-                pacSpending={totalPac}
-                lobbyingSpend={lobbyingSpend}
-                federalContracts={govContracts}
-                subsidies={subsidies}
-                companyName={name}
-              />
-              {/* Inline summary stats */}
-              <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-2">
-               {totalPac > 0 && (
-                  <button onClick={() => setPacDrawerOpen(true)} className="p-4 rounded-lg bg-card border border-border/50 hover:border-primary/30 transition-colors text-left group">
-                    <p className="text-xs uppercase tracking-wider text-muted-foreground mb-1.5">PAC Spending</p>
-                    <p className="text-xl font-bold text-foreground">{formatCurrency(totalPac)}</p>
-                    <span className="text-xs text-primary opacity-0 group-hover:opacity-100 transition-opacity">View details →</span>
-                  </button>
-                )}
-                {lobbyingSpend > 0 && (
-                  <button onClick={() => setLobbyingDrawerOpen(true)} className="p-4 rounded-lg bg-card border border-border/50 hover:border-primary/30 transition-colors text-left group">
-                    <p className="text-xs uppercase tracking-wider text-muted-foreground mb-1.5">Federal Lobbying</p>
-                    <p className="text-xl font-bold text-foreground">{formatCurrency(lobbyingSpend)}</p>
-                    <span className="text-xs text-primary opacity-0 group-hover:opacity-100 transition-opacity">View details →</span>
-                  </button>
-                )}
-                {govContracts > 0 && (
-                  <button onClick={() => setContractsDrawerOpen(true)} className="p-4 rounded-lg bg-card border border-border/50 hover:border-primary/30 transition-colors text-left group">
-                    <p className="text-xs uppercase tracking-wider text-muted-foreground mb-1.5">Gov Contracts</p>
-                    <p className="text-xl font-bold text-foreground">{formatCurrency(govContracts)}</p>
-                    <span className="text-xs text-primary opacity-0 group-hover:opacity-100 transition-opacity">View details →</span>
-                  </button>
-                )}
-                {(dbTradeAssociations?.length || 0) > 0 && (
-                  <div className="p-4 rounded-lg bg-card border border-border/50 text-left">
-                    <p className="text-xs uppercase tracking-wider text-muted-foreground mb-1.5">Trade Associations</p>
-                    <p className="text-xl font-bold text-foreground">{dbTradeAssociations?.length}</p>
+            const SECTION_RENDERERS: Record<string, () => React.ReactNode> = {
+              governance: () => (
+                <section id="section-governance" className="mb-10 scroll-mt-28">
+                  <SectionHeader icon={Shield} title="Governance & Board Structure" subtitle="Board composition, committee oversight, and ownership signals" />
+                  <BoardGovernanceTab companyId={dbCompanyId || ""} companyName={name} ticker={dbCompany?.ticker} secCik={dbCompany?.sec_cik} />
+                  {dbCompanyId && dbCompany?.is_publicly_traded && (
+                    <div className="mt-4">
+                      <InsiderTradingCard companyId={dbCompanyId} companyName={name} ticker={dbCompany?.ticker} cik={dbCompany?.sec_cik} />
+                    </div>
+                  )}
+                </section>
+              ),
+              workforce_intel: () => (
+                <section id="section-workforce" className="mb-10 scroll-mt-28">
+                  <SectionHeader icon={TrendingUp} title="Workforce Intelligence" subtitle="Worker sentiment, hiring technology, and benefits signals" />
+                  <div className="space-y-4">
+                    <WorkerSentimentCard companyName={name} dbCompanyId={dbCompanyId} />
+                    <AIHiringCard companyName={name} dbCompanyId={dbCompanyId} />
+                    <WorkerBenefitsCard companyName={name} dbCompanyId={dbCompanyId} />
                   </div>
-                )}
-              </div>
-
-              {/* Party breakdown chart */}
-              {dbPartyBreakdown && dbPartyBreakdown.length > 0 && dbPartyBreakdown.some(p => p.amount > 0) && (
-                <Card>
-                  <CardHeader className="pb-2"><CardTitle className="text-base">Political Giving by Party</CardTitle></CardHeader>
-                  <CardContent>
-                    <div className="h-48">
-                      <ResponsiveContainer width="100%" height="100%">
-                        <PieChart><Pie data={dbPartyBreakdown.filter(p => p.amount > 0)} cx="50%" cy="50%" innerRadius={45} outerRadius={70} paddingAngle={3} dataKey="amount" nameKey="party">
-                          {dbPartyBreakdown.filter(p => p.amount > 0).map((entry, i) => <Cell key={i} fill={entry.color} className="hover:opacity-80 transition-opacity cursor-pointer" />)}
-                        </Pie><RechartsTooltip formatter={(val: number) => formatCurrency(val)} /></PieChart>
-                      </ResponsiveContainer>
+                </section>
+              ),
+              compensation: () => (
+                <section id="section-compensation" className="mb-10 scroll-mt-28">
+                  <SectionHeader icon={DollarSign} title="Compensation Transparency" subtitle="Pay equity signals and national benchmarks" />
+                  <div className="space-y-4">
+                    <CompensationTransparencyCard companyName={name} dbCompanyId={dbCompanyId} />
+                  </div>
+                </section>
+              ),
+              promotion_velocity: () => (
+                <section className="mb-10">
+                  <SectionHeader icon={Award} title="Workforce Mobility & Promotion Equity" subtitle="Internal promotion, leadership diversity, HBCU partnerships, skills-first hiring" />
+                  <div className="space-y-4">
+                    <PromotionEquityCard companyName={name} dbCompanyId={dbCompanyId} />
+                    {(() => {
+                      const subScores = deriveSubScores({ promotionSignals: [], mobilitySignals: [], diversitySignals: [], retentionSignals: [], learningSignals: [], transparencyCategories: 2, totalCategories: 6 });
+                      const confidence = computeConfidence(3, false, 180);
+                      const pvsResult = calculatePVS(subScores, confidence);
+                      return <PromotionVelocityCard result={pvsResult} companyName={name} />;
+                    })()}
+                  </div>
+                </section>
+              ),
+              workforce_stability: () => (
+                <section id="section-stability" className="mb-10 scroll-mt-28">
+                  <SectionHeader icon={AlertTriangle} title="Workforce Stability" subtitle="Layoffs, WARN notices, and workforce reduction signals" />
+                  <div className="space-y-4">
+                    <WarnTrackerCard companyName={name} dbCompanyId={dbCompanyId} />
+                    {dbCompanyId && <CourtRecordsCard companyId={dbCompanyId} companyName={name} />}
+                    {dbCompanyId && <NewsIntelligenceCard companyId={dbCompanyId} companyName={name} />}
+                  </div>
+                </section>
+              ),
+              influence: () => (
+                <section id="section-influence" className="mb-10 scroll-mt-28">
+                  <SectionHeader icon={Landmark} title="Policy & Influence Signals" subtitle="Political donations, lobbying, trade associations, federal contracts" />
+                  <div className="space-y-4">
+                    <SankeyInfluenceDiagram pacSpending={totalPac} lobbyingSpend={lobbyingSpend} federalContracts={govContracts} subsidies={subsidies} companyName={name} />
+                    <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-2">
+                      {totalPac > 0 && (
+                        <button onClick={() => setPacDrawerOpen(true)} className="p-4 rounded-lg bg-card border border-border/50 hover:border-primary/30 transition-colors text-left group">
+                          <p className="text-xs uppercase tracking-wider text-muted-foreground mb-1.5">PAC Spending</p>
+                          <p className="text-xl font-bold text-foreground">{formatCurrency(totalPac)}</p>
+                          <span className="text-xs text-primary opacity-0 group-hover:opacity-100 transition-opacity">View details →</span>
+                        </button>
+                      )}
+                      {lobbyingSpend > 0 && (
+                        <button onClick={() => setLobbyingDrawerOpen(true)} className="p-4 rounded-lg bg-card border border-border/50 hover:border-primary/30 transition-colors text-left group">
+                          <p className="text-xs uppercase tracking-wider text-muted-foreground mb-1.5">Federal Lobbying</p>
+                          <p className="text-xl font-bold text-foreground">{formatCurrency(lobbyingSpend)}</p>
+                          <span className="text-xs text-primary opacity-0 group-hover:opacity-100 transition-opacity">View details →</span>
+                        </button>
+                      )}
+                      {govContracts > 0 && (
+                        <button onClick={() => setContractsDrawerOpen(true)} className="p-4 rounded-lg bg-card border border-border/50 hover:border-primary/30 transition-colors text-left group">
+                          <p className="text-xs uppercase tracking-wider text-muted-foreground mb-1.5">Gov Contracts</p>
+                          <p className="text-xl font-bold text-foreground">{formatCurrency(govContracts)}</p>
+                          <span className="text-xs text-primary opacity-0 group-hover:opacity-100 transition-opacity">View details →</span>
+                        </button>
+                      )}
+                      {(dbTradeAssociations?.length || 0) > 0 && (
+                        <div className="p-4 rounded-lg bg-card border border-border/50 text-left">
+                          <p className="text-xs uppercase tracking-wider text-muted-foreground mb-1.5">Trade Associations</p>
+                          <p className="text-xl font-bold text-foreground">{dbTradeAssociations?.length}</p>
+                        </div>
+                      )}
                     </div>
-                    <div className="flex justify-center gap-4 mt-1">
-                      {dbPartyBreakdown.filter(p => p.amount > 0).map((p) => (
-                        <span key={p.party} className="flex items-center gap-1.5 text-xs text-muted-foreground">
-                          <div className="w-2 h-2 rounded-full" style={{ backgroundColor: p.color }} />
-                          {p.party}: {formatCurrency(p.amount)}
-                        </span>
-                      ))}
-                    </div>
-                  </CardContent>
-                </Card>
-              )}
-
-              {/* PAC Recipients */}
-              {dbCandidates && dbCandidates.length > 0 && (
-                <Card>
-                  <CardHeader className="pb-2"><CardTitle className="text-base flex items-center gap-2"><Flag className="w-4 h-4" /> PAC Recipients ({dbCandidates.length})</CardTitle></CardHeader>
-                  <CardContent>
-                    <div className="overflow-x-auto">
-                      <Table>
-                        <TableHeader><TableRow><TableHead>Name</TableHead><TableHead>Party</TableHead><TableHead>State</TableHead><TableHead>Amount</TableHead></TableRow></TableHeader>
-                        <TableBody>
-                          {dbCandidates.map((c) => (
-                            <TableRow key={c.id} className="cursor-pointer hover:bg-primary/5" onClick={() => handleCandidateClick(c)}>
-                              <TableCell className="font-medium text-sm">{c.name}{c.flagged && <Badge variant="destructive" className="ml-2 text-[10px]">Flagged</Badge>}</TableCell>
-                              <TableCell><PartyBadge party={c.party} entityType="politician" size="sm" /></TableCell>
-                              <TableCell className="text-muted-foreground text-sm">{c.state}</TableCell>
-                              <TableCell className="text-sm">{formatCurrency(c.amount)}</TableCell>
-                            </TableRow>
-                          ))}
-                        </TableBody>
-                      </Table>
-                    </div>
-                  </CardContent>
-                </Card>
-              )}
-
-              {/* Say vs. Do — Alignment Dashboard */}
-              {dbPublicStances && dbPublicStances.length > 0 && (
-                <AlignmentDashboard stances={dbPublicStances} />
-              )}
-
-              {/* Dark Money + Revolving Door */}
-              {((dbDarkMoney?.length || 0) > 0 || (dbRevolvingDoor?.length || 0) > 0) && (
-                <div className="grid lg:grid-cols-2 gap-4">
-                  {dbDarkMoney && dbDarkMoney.length > 0 && (
-                    <Card>
-                      <CardHeader className="pb-2"><CardTitle className="text-base flex items-center gap-2"><EyeOff className="w-4 h-4" /> Dark Money</CardTitle></CardHeader>
-                      <CardContent className="space-y-2">
-                        {dbDarkMoney.map((d) => (
-                          <div key={d.id} className="p-2.5 rounded-lg bg-muted/50 border border-border">
-                            <div className="flex items-center justify-between mb-0.5"><span className="font-medium text-sm text-foreground">{d.name}</span><Badge variant="outline" className="text-[10px]">{d.org_type}</Badge></div>
-                            {d.description && <p className="text-xs text-muted-foreground">{d.description}</p>}
-                            {d.estimated_amount && <p className="text-xs text-muted-foreground mt-0.5">Est. {formatCurrency(d.estimated_amount)}</p>}
+                    {dbPartyBreakdown && dbPartyBreakdown.length > 0 && dbPartyBreakdown.some(p => p.amount > 0) && (
+                      <Card>
+                        <CardHeader className="pb-2"><CardTitle className="text-base">Political Giving by Party</CardTitle></CardHeader>
+                        <CardContent>
+                          <div className="h-48">
+                            <ResponsiveContainer width="100%" height="100%">
+                              <PieChart><Pie data={dbPartyBreakdown.filter(p => p.amount > 0)} cx="50%" cy="50%" innerRadius={45} outerRadius={70} paddingAngle={3} dataKey="amount" nameKey="party">
+                                {dbPartyBreakdown.filter(p => p.amount > 0).map((entry, i) => <Cell key={i} fill={entry.color} className="hover:opacity-80 transition-opacity cursor-pointer" />)}
+                              </Pie><RechartsTooltip formatter={(val: number) => formatCurrency(val)} /></PieChart>
+                            </ResponsiveContainer>
                           </div>
-                        ))}
-                      </CardContent>
-                    </Card>
-                  )}
-                  {dbRevolvingDoor && dbRevolvingDoor.length > 0 && (
-                    <Card>
-                      <CardHeader className="pb-2"><CardTitle className="text-base flex items-center gap-2"><RotateCcw className="w-4 h-4" /> Revolving Door</CardTitle></CardHeader>
-                      <CardContent className="space-y-2">
-                        {dbRevolvingDoor.map((r) => (
-                          <div key={r.id} className="p-2.5 rounded-lg bg-muted/50 border border-border">
-                            <div className="font-medium text-sm text-foreground">{r.person}</div>
-                            <div className="text-xs text-muted-foreground mt-0.5">
-                              {r.prior_role} <span className="mx-1">→</span> {r.new_role}
-                            </div>
+                          <div className="flex justify-center gap-4 mt-1">
+                            {dbPartyBreakdown.filter(p => p.amount > 0).map((p) => (
+                              <span key={p.party} className="flex items-center gap-1.5 text-xs text-muted-foreground">
+                                <div className="w-2 h-2 rounded-full" style={{ backgroundColor: p.color }} />
+                                {p.party}: {formatCurrency(p.amount)}
+                              </span>
+                            ))}
                           </div>
-                        ))}
-                      </CardContent>
-                    </Card>
-                  )}
+                        </CardContent>
+                      </Card>
+                    )}
+                    {dbCandidates && dbCandidates.length > 0 && (
+                      <Card>
+                        <CardHeader className="pb-2"><CardTitle className="text-base flex items-center gap-2"><Flag className="w-4 h-4" /> PAC Recipients ({dbCandidates.length})</CardTitle></CardHeader>
+                        <CardContent>
+                          <div className="overflow-x-auto">
+                            <Table>
+                              <TableHeader><TableRow><TableHead>Name</TableHead><TableHead>Party</TableHead><TableHead>State</TableHead><TableHead>Amount</TableHead></TableRow></TableHeader>
+                              <TableBody>
+                                {dbCandidates.map((c) => (
+                                  <TableRow key={c.id} className="cursor-pointer hover:bg-primary/5" onClick={() => handleCandidateClick(c)}>
+                                    <TableCell className="font-medium text-sm">{c.name}{c.flagged && <Badge variant="destructive" className="ml-2 text-[10px]">Flagged</Badge>}</TableCell>
+                                    <TableCell><PartyBadge party={c.party} entityType="politician" size="sm" /></TableCell>
+                                    <TableCell className="text-muted-foreground text-sm">{c.state}</TableCell>
+                                    <TableCell className="text-sm">{formatCurrency(c.amount)}</TableCell>
+                                  </TableRow>
+                                ))}
+                              </TableBody>
+                            </Table>
+                          </div>
+                        </CardContent>
+                      </Card>
+                    )}
+                    {dbPublicStances && dbPublicStances.length > 0 && (
+                      <AlignmentDashboard stances={dbPublicStances} />
+                    )}
+                    {((dbDarkMoney?.length || 0) > 0 || (dbRevolvingDoor?.length || 0) > 0) && (
+                      <div className="grid lg:grid-cols-2 gap-4">
+                        {dbDarkMoney && dbDarkMoney.length > 0 && (
+                          <Card>
+                            <CardHeader className="pb-2"><CardTitle className="text-base flex items-center gap-2"><EyeOff className="w-4 h-4" /> Dark Money</CardTitle></CardHeader>
+                            <CardContent className="space-y-2">
+                              {dbDarkMoney.map((d) => (
+                                <div key={d.id} className="p-2.5 rounded-lg bg-muted/50 border border-border">
+                                  <div className="flex items-center justify-between mb-0.5"><span className="font-medium text-sm text-foreground">{d.name}</span><Badge variant="outline" className="text-[10px]">{d.org_type}</Badge></div>
+                                  {d.description && <p className="text-xs text-muted-foreground">{d.description}</p>}
+                                  {d.estimated_amount && <p className="text-xs text-muted-foreground mt-0.5">Est. {formatCurrency(d.estimated_amount)}</p>}
+                                </div>
+                              ))}
+                            </CardContent>
+                          </Card>
+                        )}
+                        {dbRevolvingDoor && dbRevolvingDoor.length > 0 && (
+                          <Card>
+                            <CardHeader className="pb-2"><CardTitle className="text-base flex items-center gap-2"><RotateCcw className="w-4 h-4" /> Revolving Door</CardTitle></CardHeader>
+                            <CardContent className="space-y-2">
+                              {dbRevolvingDoor.map((r) => (
+                                <div key={r.id} className="p-2.5 rounded-lg bg-muted/50 border border-border">
+                                  <div className="font-medium text-sm text-foreground">{r.person}</div>
+                                  <div className="text-xs text-muted-foreground mt-0.5">
+                                    {r.prior_role} <span className="mx-1">→</span> {r.new_role}
+                                  </div>
+                                </div>
+                              ))}
+                            </CardContent>
+                          </Card>
+                        )}
+                      </div>
+                    )}
+                    <ROIPipelineCard data={livePipeline || { moneyIn: [], network: [], benefitsOut: [], linkages: [], totalSpending: 0, totalBenefits: 0 }} isSearching={!livePipeline && !!dbCompanyId} onTriggerScan={triggerScan} autoScanning={autoScanning} hasBeenScanned={hasBeenScanned} enrichmentData={enrichmentData} />
+                    {enrichmentData && <OpenSecretsEnrichmentCard data={enrichmentData} />}
+                    <AgencyContractsCard companyName={name} dbCompanyId={dbCompanyId} />
+                  </div>
+                </section>
+              ),
+              values: () => (
+                <section id="section-values" className="mb-10 scroll-mt-28">
+                  <SectionHeader icon={Heart} title="Values Check" subtitle="How this company's actions align with your values" />
+                  <div className="space-y-4">
+                    <ValuesCheckSection
+                      companyName={name}
+                      companyId={dbCompany?.id || ""}
+                      signals={valuesCheckSignals || []}
+                      onGenerateSignals={handleGenerateValuesCheck}
+                      isGenerating={isGeneratingValues}
+                      onExecutiveClick={handleExecutiveClick}
+                      onDonationsClick={() => setPacDrawerOpen(true)}
+                    />
+                    <InfluenceChainCard
+                      companyId={dbCompany?.id || ""}
+                      companyName={name}
+                      onExecutiveClick={(exec) => {
+                        const match = dbExecutives?.find(e => e.name.toLowerCase().includes(exec.name.toLowerCase().split(",")[0]) || exec.name.toLowerCase().includes(e.name.toLowerCase().split(",")[0]));
+                        handleExecutiveClick(match || { id: "", name: exec.name, title: "Executive", total_donations: exec.total_donations || 0 });
+                      }}
+                      onCandidateClick={handleCandidateClick}
+                    />
+                  </div>
+                </section>
+              ),
+              public_records: () => (
+                <section id="section-public-records" className="mb-10 scroll-mt-28">
+                  <SectionHeader icon={FileText} title="Public Records & Network Exposure" subtitle="Public records, legal filings, government disclosures, and documented network ties" />
+                  <PublicRecordsExposure companyName={name} companyId={dbCompany?.id} />
+                </section>
+              ),
+              narrative_power: () => (
+                <section id="section-narrative-power" className="mb-10 scroll-mt-28">
+                  <SectionHeader icon={Radio} title="Who Shapes the Narrative" subtitle="PR firms, influencers, advocacy groups, think tanks, and coordinated messaging networks" />
+                  <NarrativePowerSection companyName={name} companyId={dbCompany?.id} />
+                </section>
+              ),
+            };
+
+            // Render sections in persona-defined order, skip hidden
+            return sectionOrder
+              .filter(key => isSectionVisible(activePersona, key) && SECTION_RENDERERS[key])
+              .map((key) => (
+                <div key={key}>
+                  {SECTION_RENDERERS[key]()}
+                  <Separator className="mb-8" />
                 </div>
-              )}
-
-              {/* ROI Pipeline + Contracts */}
-              <ROIPipelineCard data={livePipeline || { moneyIn: [], network: [], benefitsOut: [], linkages: [], totalSpending: 0, totalBenefits: 0 }} isSearching={!livePipeline && !!dbCompanyId} onTriggerScan={triggerScan} autoScanning={autoScanning} hasBeenScanned={hasBeenScanned} enrichmentData={enrichmentData} />
-              {enrichmentData && <OpenSecretsEnrichmentCard data={enrichmentData} />}
-              <AgencyContractsCard companyName={name} dbCompanyId={dbCompanyId} />
-            </div>
-          </section>
-
-          <Separator className="mb-8" />
-
-
-
-
-          {/* ═══════════════════════════════════════════════════════════
-              10. VALUES CHECK
-             ═══════════════════════════════════════════════════════════ */}
-          <section id="section-values" className="mb-10 scroll-mt-28">
-            <SectionHeader icon={Heart} title="Values Check" subtitle="How this company's actions align with your values" />
-            <div className="space-y-4">
-              <ValuesCheckSection
-                companyName={name}
-                companyId={dbCompany?.id || ""}
-                signals={valuesCheckSignals || []}
-                onGenerateSignals={handleGenerateValuesCheck}
-                isGenerating={isGeneratingValues}
-                onExecutiveClick={handleExecutiveClick}
-                onDonationsClick={() => setPacDrawerOpen(true)}
-              />
-              <InfluenceChainCard
-                companyId={dbCompany?.id || ""}
-                companyName={name}
-                onExecutiveClick={(exec) => {
-                  const match = dbExecutives?.find(e => e.name.toLowerCase().includes(exec.name.toLowerCase().split(",")[0]) || exec.name.toLowerCase().includes(e.name.toLowerCase().split(",")[0]));
-                  handleExecutiveClick(match || { id: "", name: exec.name, title: "Executive", total_donations: exec.total_donations || 0 });
-                }}
-                onCandidateClick={handleCandidateClick}
-              />
-            </div>
-          </section>
-
-          <Separator className="mb-8" />
-
-          {/* ═══════════════════════════════════════════════════════════
-              11. PUBLIC RECORDS & NETWORK EXPOSURE
-             ═══════════════════════════════════════════════════════════ */}
-          <section id="section-public-records" className="mb-10 scroll-mt-28">
-            <SectionHeader
-              icon={FileText}
-              title="Public Records & Network Exposure"
-              subtitle="Public records, legal filings, government disclosures, and documented network ties that may matter for reputation, trust, and decision-making"
-            />
-            <PublicRecordsExposure
-              companyName={name}
-              companyId={dbCompany?.id}
-            />
-          </section>
-
-          <Separator className="mb-8" />
-
-          {/* ═══════════════════════════════════════════════════════════
-              12. NARRATIVE POWER INTELLIGENCE
-             ═══════════════════════════════════════════════════════════ */}
-          <section id="section-narrative-power" className="mb-10 scroll-mt-28">
-            <SectionHeader
-              icon={Radio}
-              title="Who Shapes the Narrative"
-              subtitle="PR firms, influencers, advocacy groups, think tanks, and coordinated messaging networks influencing perception of this company"
-            />
-            <NarrativePowerSection
-              companyName={name}
-              companyId={dbCompany?.id}
-            />
-          </section>
-
-          <Separator className="mb-8" />
+              ));
+          })()}
 
           {/* ═══════════════════════════════════════════════════════════
               RUN FULL SCAN BUTTON
