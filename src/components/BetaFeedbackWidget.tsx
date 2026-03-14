@@ -24,7 +24,7 @@ export function BetaFeedbackWidget() {
   const [feedbackType, setFeedbackType] = useState("general");
   const [rating, setRating] = useState<number | null>(null);
   const [submitting, setSubmitting] = useState(false);
-
+  const [wantReal, setWantReal] = useState(false);
   if (!user) return null;
 
   const handleSubmit = async () => {
@@ -36,14 +36,24 @@ export function BetaFeedbackWidget() {
         user_email: user.email,
         page_url: location.pathname,
         feedback_type: feedbackType,
-        message: message.trim(),
+        message: message.trim() + (wantReal ? " [WANTS TO SUBSCRIBE]" : ""),
         rating,
       });
       if (error) throw error;
+
+      // If they want to subscribe, also capture in email_signups
+      if (wantReal && user.email) {
+        await (supabase as any).from("email_signups").upsert(
+          { email: user.email, source: "beta_interest" },
+          { onConflict: "email" }
+        );
+      }
+
       toast({ title: "Thanks for your feedback! 🙏", description: "Jackye will review it personally." });
       setMessage("");
       setRating(null);
       setFeedbackType("general");
+      setWantReal(false);
       setOpen(false);
     } catch {
       toast({ title: "Couldn't send feedback", description: "Please try again.", variant: "destructive" });
@@ -104,6 +114,21 @@ export function BetaFeedbackWidget() {
                   />
                 </button>
               ))}
+            </div>
+
+            <div className="bg-muted/50 border border-border/50 rounded-lg p-2.5 space-y-1.5">
+              <div className="flex items-center gap-1.5">
+                <input
+                  type="checkbox"
+                  id="wantReal"
+                  checked={wantReal}
+                  onChange={(e) => setWantReal(e.target.checked)}
+                  className="rounded border-border"
+                />
+                <label htmlFor="wantReal" className="text-xs text-foreground cursor-pointer">
+                  I'd subscribe when this launches for real 🚀
+                </label>
+              </div>
             </div>
 
             <Button
