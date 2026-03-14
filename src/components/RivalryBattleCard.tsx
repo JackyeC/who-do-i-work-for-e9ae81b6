@@ -144,12 +144,15 @@ export function RivalryBattleCard({ rivalry, compact }: RivalryBattleCardProps) 
             {rivalry.companyB.name} Intel →
           </Link>
         </div>
-        <Link
-          to={`/compare?a=${rivalry.companyA.slug}&b=${rivalry.companyB.slug}`}
-          className="font-mono text-[9px] tracking-wider uppercase text-muted-foreground hover:text-primary transition-colors flex items-center gap-1"
-        >
-          Compare <ArrowRight className="w-2.5 h-2.5" />
-        </Link>
+        <div className="flex items-center gap-3">
+          <FollowRivalryButton rivalryId={rivalry.id} rivalryTitle={rivalry.title} compact />
+          <Link
+            to={`/compare?a=${rivalry.companyA.slug}&b=${rivalry.companyB.slug}`}
+            className="font-mono text-[9px] tracking-wider uppercase text-muted-foreground hover:text-primary transition-colors flex items-center gap-1"
+          >
+            Compare <ArrowRight className="w-2.5 h-2.5" />
+          </Link>
+        </div>
       </div>
     </div>
   );

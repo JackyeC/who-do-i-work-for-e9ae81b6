@@ -205,6 +205,7 @@ const App = () => (
                 <Route path="/offer-clarity" element={<OfferClarity />} />
                 <Route path="/site-map" element={<SiteMap />} />
                 <Route path="/rivalries" element={<Rivalries />} />
+                <Route path="/brand-madness" element={<BrandMadness />} />
                 <Route path="*" element={<NotFound />} />
               </Routes>
               <AskJackyeWidget />
