@@ -11,6 +11,7 @@ import {
 import { Link } from "react-router-dom";
 import { useState } from "react";
 import { cn } from "@/lib/utils";
+import { GovernanceSignalsCard } from "@/components/GovernanceSignalsCard";
 
 interface BoardGovernanceTabProps {
   companyId: string;
