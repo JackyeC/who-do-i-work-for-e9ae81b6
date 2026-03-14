@@ -429,9 +429,7 @@ export function OfferCheckSnapshot({
             <Separator />
             <div className="p-4 border-2 border-primary/20 bg-primary/5">
               <div className="flex items-center gap-2 mb-2">
-                <div className="w-7 h-7 rounded-full bg-primary/20 flex items-center justify-center">
-                  <span className="text-xs font-bold text-primary">JC</span>
-                </div>
+                <img src={jackyeHeadshot} alt="Jackye Clayton" className="w-7 h-7 rounded-full object-cover" />
                 <div>
                   <p className="text-sm font-semibold text-foreground">Jackye's Take</p>
                   <p className="text-[10px] text-muted-foreground">Accountability Intelligence</p>

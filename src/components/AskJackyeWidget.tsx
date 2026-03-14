@@ -142,9 +142,7 @@ export function AskJackyeWidget() {
         <div className="fixed bottom-6 right-6 z-50 w-[380px] max-w-[calc(100vw-2rem)] h-[520px] max-h-[calc(100vh-4rem)] bg-card border border-border flex flex-col shadow-2xl">
           {/* Header */}
           <div className="flex items-center gap-3 px-4 py-3 bg-surface-2 border-b border-border shrink-0">
-            <div className="w-10 h-10 rounded-full bg-gradient-to-br from-civic-gold-muted to-primary flex items-center justify-center font-serif text-base font-bold text-primary-foreground shrink-0">
-              JC
-            </div>
+            <img src={jackyeHeadshot} alt="Jackye Clayton" className="w-10 h-10 rounded-full object-cover shrink-0" />
             <div className="flex-1 min-w-0">
               <div className="font-serif text-sm font-bold text-primary">Jackye Clayton</div>
               <div className="text-[11px] text-muted-foreground">Career Strategist · Your Advocate</div>
