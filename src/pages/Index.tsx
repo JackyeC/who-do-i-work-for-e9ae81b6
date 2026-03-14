@@ -121,7 +121,7 @@ const Index = forwardRef<HTMLDivElement>((_, ref) => {
           className="hidden lg:block"
         >
           <div className="bg-card border border-border p-6 relative">
-            <div className="absolute -top-2.5 left-4 bg-background px-2 font-mono text-micro uppercase text-primary tracking-widest">
+            <div className="absolute -top-2.5 left-4 bg-background px-2 font-mono text-xs uppercase text-primary tracking-widest">
               Live Intelligence Preview
             </div>
             <div className="font-serif text-lg mb-1">Koch Industries</div>
