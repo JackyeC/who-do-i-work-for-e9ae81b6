@@ -75,6 +75,7 @@ import Rivalries from "./pages/Rivalries";
 import BrandMadness from "./pages/BrandMadness";
 import SignalFeed from "./pages/SignalFeed";
 import WorkIndex from "./pages/WorkIndex";
+import Rankings from "./pages/Rankings";
 import { CookieNotice } from "@/components/CookieNotice";
 
 const queryClient = new QueryClient();
@@ -211,6 +212,7 @@ const App = () => (
                 <Route path="/rivalries" element={<Rivalries />} />
                 <Route path="/brand-madness" element={<BrandMadness />} />
                 <Route path="/work-index" element={<WorkIndex />} />
+                <Route path="/rankings" element={<Rankings />} />
                 <Route path="*" element={<NotFound />} />
               </Routes>
               <AskJackyeWidget />

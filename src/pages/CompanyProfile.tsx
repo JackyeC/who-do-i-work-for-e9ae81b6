@@ -71,6 +71,11 @@ import { calculateGTM, type GTMInput } from "@/lib/gtmScore";
 import { PersonaSelector } from "@/components/PersonaSelector";
 import { type PersonaId, isSectionVisible } from "@/lib/personaConfig";
 import { CourtRecordsCard } from "@/components/CourtRecordsCard";
+import { NewsIntelligenceCard } from "@/components/NewsIntelligenceCard";
+import { InsiderTradingCard } from "@/components/InsiderTradingCard";
+import { PromotionVelocityCard } from "@/components/PromotionVelocityCard";
+import { IntelligenceSnapshotCard } from "@/components/viral/IntelligenceSnapshotCard";
+import { calculatePVS, deriveSubScores, computeConfidence } from "@/lib/promotionVelocityScore";
 
 /* ─── Status labels ─── */
 const STATUS_LABELS: Record<string, { label: string; color: string }> = {
@@ -639,6 +644,28 @@ export default function CompanyProfile() {
             />
           </div>
 
+          {/* SHAREABLE INTELLIGENCE SNAPSHOT */}
+          <div className="mb-6">
+            <IntelligenceSnapshotCard
+              companyName={name}
+              overallScore={characterScore.totalScore}
+              scoreLabel={characterScore.totalScore >= 65 ? "Responsible" : characterScore.totalScore >= 45 ? "Mixed" : "Concerning"}
+              slug={id || ""}
+              signals={[
+                { label: "Workforce Stability", score: Math.min(100, Math.max(0, 100 - (totalPac > 100000 ? 30 : 0))), status: "neutral" as const },
+                { label: "Pay Transparency", score: tiPayEquity ? 72 : 25, status: tiPayEquity ? "positive" as const : "negative" as const },
+                { label: "Governance", score: (dbExecutives?.length || 0) > 3 ? 68 : 40, status: "neutral" as const },
+                { label: "HR Tech Ethics", score: tiAiHr ? 55 : 50, status: "neutral" as const },
+                { label: "Career Mobility", score: 45, status: "neutral" as const },
+              ]}
+              metrics={[
+                { label: "Transparency", value: `${transparencyScore}%` },
+                { label: "Character", value: `${characterScore.totalScore}/100` },
+                { label: "Confidence", value: dbCompany?.confidence_rating || "Low" },
+              ]}
+            />
+          </div>
+
           {/* TRANSPARENCY GHOSTING — Missing Data as Risk Signal */}
           <Card className="mb-6">
             <CardContent className="p-5">
@@ -770,12 +797,17 @@ export default function CompanyProfile() {
           {isSectionVisible(activePersona, "governance") && (
            <section id="section-governance" className="mb-10 scroll-mt-28">
              <SectionHeader icon={Shield} title="Governance & Board Structure" subtitle="Board composition, committee oversight, and ownership signals" />
-             <BoardGovernanceTab
-               companyId={dbCompanyId || ""}
-               companyName={name}
-               ticker={dbCompany?.ticker}
-               secCik={dbCompany?.sec_cik}
-             />
+              <BoardGovernanceTab
+                companyId={dbCompanyId || ""}
+                companyName={name}
+                ticker={dbCompany?.ticker}
+                secCik={dbCompany?.sec_cik}
+              />
+              {dbCompanyId && dbCompany?.is_publicly_traded && (
+                <div className="mt-4">
+                  <InsiderTradingCard companyId={dbCompanyId} companyName={name} ticker={dbCompany?.ticker} cik={dbCompany?.sec_cik} />
+                </div>
+              )}
            </section>
           )}
 
@@ -816,6 +848,12 @@ export default function CompanyProfile() {
             <SectionHeader icon={Award} title="Workforce Mobility & Promotion Equity" subtitle="Internal promotion, leadership diversity, HBCU partnerships, skills-first hiring" />
             <div className="space-y-4">
               <PromotionEquityCard companyName={name} dbCompanyId={dbCompanyId} />
+              {(() => {
+                const subScores = deriveSubScores({ promotionSignals: [], mobilitySignals: [], diversitySignals: [], retentionSignals: [], learningSignals: [], transparencyCategories: 2, totalCategories: 6 });
+                const confidence = computeConfidence(3, false, 180);
+                const pvsResult = calculatePVS(subScores, confidence);
+                return <PromotionVelocityCard result={pvsResult} companyName={name} />;
+              })()}
             </div>
           </section>
 
@@ -829,6 +867,7 @@ export default function CompanyProfile() {
             <div className="space-y-4">
               <WarnTrackerCard companyName={name} dbCompanyId={dbCompanyId} />
               {dbCompanyId && <CourtRecordsCard companyId={dbCompanyId} companyName={name} />}
+              {dbCompanyId && <NewsIntelligenceCard companyId={dbCompanyId} companyName={name} />}
             </div>
           </section>
 
