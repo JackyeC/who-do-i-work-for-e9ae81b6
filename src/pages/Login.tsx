@@ -1,4 +1,4 @@
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useSearchParams } from "react-router-dom";
 import { useAuth } from "@/contexts/AuthContext";
 import { lovable } from "@/integrations/lovable/index";
 import { supabase } from "@/integrations/supabase/client";
@@ -10,23 +10,59 @@ import { Header } from "@/components/Header";
 import { Footer } from "@/components/Footer";
 import { useToast } from "@/hooks/use-toast";
 import { useEffect, useState } from "react";
-import { Shield, ArrowRight, Mail, Loader2 } from "lucide-react";
+import { Shield, ArrowRight, Mail, Loader2, Sparkles } from "lucide-react";
 
 export default function Login() {
   const { user, loading } = useAuth();
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
   const { toast } = useToast();
+  const isBeta = searchParams.get("beta") === "true";
 
-  const [mode, setMode] = useState<"signin" | "signup">("signin");
+  const [mode, setMode] = useState<"signin" | "signup">(isBeta ? "signup" : "signin");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [betaCode, setBetaCode] = useState("");
   const [submitting, setSubmitting] = useState(false);
+  const [activatingBeta, setActivatingBeta] = useState(false);
 
   useEffect(() => {
-    if (!loading && user) {
+    if (!loading && user && !isBeta) {
       navigate("/dashboard");
     }
-  }, [user, loading, navigate]);
+  }, [user, loading, navigate, isBeta]);
+
+  // Auto-activate beta after signup + login
+  useEffect(() => {
+    if (user && isBeta && betaCode) {
+      activateBeta();
+    }
+  }, [user]);
+
+  const activateBeta = async () => {
+    if (!betaCode) return;
+    setActivatingBeta(true);
+    try {
+      const { data, error } = await supabase.functions.invoke("assign-beta-role", {
+        body: { betaCode },
+      });
+      if (error) throw error;
+      if (data?.error) throw new Error(data.error);
+      toast({
+        title: "🎉 Beta access activated!",
+        description: "You now have full access to all features. Welcome, tester!",
+      });
+      window.location.href = "/dashboard";
+    } catch (err: any) {
+      toast({
+        title: "Beta activation failed",
+        description: err.message || "Invalid beta code.",
+        variant: "destructive",
+      });
+    } finally {
+      setActivatingBeta(false);
+    }
+  };
 
   const handleGoogleSignIn = async () => {
     const { error } = await lovable.auth.signInWithOAuth("google", {
@@ -90,6 +126,45 @@ export default function Login() {
     }
   };
 
+  // Show beta activation screen if user is logged in with beta param
+  if (user && isBeta) {
+    return (
+      <div className="min-h-screen flex flex-col bg-background">
+        <Header />
+        <div className="flex-1 flex items-center justify-center px-4 py-20">
+          <Card className="w-full max-w-md shadow-elevated">
+            <CardHeader className="text-center space-y-3 pb-6">
+              <div className="w-16 h-16 mx-auto rounded-2xl bg-primary/8 flex items-center justify-center mb-2 border border-primary/10">
+                <Sparkles className="w-8 h-8 text-primary" />
+              </div>
+              <CardTitle className="text-headline text-2xl">Activate Beta Access</CardTitle>
+              <p className="text-body text-muted-foreground leading-relaxed">
+                Enter your beta invite code to unlock full access — free.
+              </p>
+            </CardHeader>
+            <CardContent className="space-y-4 pt-0">
+              <div className="space-y-1.5">
+                <Label htmlFor="betaCode" className="text-sm">Beta Invite Code</Label>
+                <Input
+                  id="betaCode"
+                  placeholder="e.g. JACKYE2026"
+                  value={betaCode}
+                  onChange={(e) => setBetaCode(e.target.value.toUpperCase())}
+                  className="font-mono tracking-wider text-center text-lg"
+                />
+              </div>
+              <Button onClick={activateBeta} disabled={!betaCode || activatingBeta} className="w-full h-12 gap-2">
+                {activatingBeta ? <Loader2 className="w-4 h-4 animate-spin" /> : <Sparkles className="w-4 h-4" />}
+                {activatingBeta ? "Activating..." : "Activate Beta"}
+              </Button>
+            </CardContent>
+          </Card>
+        </div>
+        <Footer />
+      </div>
+    );
+  }
+
   return (
     <div className="min-h-screen flex flex-col bg-background">
       <Header />
@@ -100,14 +175,35 @@ export default function Login() {
               <Shield className="w-8 h-8 text-primary" />
             </div>
             <CardTitle className="text-headline text-2xl">
-              {mode === "signin" ? "Sign in" : "Create account"}
+              {isBeta ? "Join the Beta" : mode === "signin" ? "Sign in" : "Create account"}
             </CardTitle>
             <p className="text-body text-muted-foreground leading-relaxed">
-              Access career intelligence tools including job matching, offer analysis, career mapping, and company transparency insights.
+              {isBeta
+                ? "Sign up to get full beta access — completely free. Your feedback shapes the platform."
+                : "Access career intelligence tools including job matching, offer analysis, career mapping, and company transparency insights."}
             </p>
           </CardHeader>
           <CardContent className="space-y-4 pt-0">
-            {/* Email + Password Form */}
+            {isBeta && (
+              <div className="bg-primary/5 border border-primary/15 rounded-xl p-3 text-center">
+                <p className="text-xs font-mono text-primary font-semibold tracking-wider">🧪 BETA TESTER INVITE</p>
+                <p className="text-xs text-muted-foreground mt-1">Sign up, then enter your beta code for full access</p>
+              </div>
+            )}
+
+            {isBeta && mode === "signup" && (
+              <div className="space-y-1.5">
+                <Label htmlFor="betaCodeSignup" className="text-sm">Beta Code</Label>
+                <Input
+                  id="betaCodeSignup"
+                  placeholder="e.g. JACKYE2026"
+                  value={betaCode}
+                  onChange={(e) => setBetaCode(e.target.value.toUpperCase())}
+                  className="font-mono tracking-wider text-center"
+                />
+              </div>
+            )}
+
             <form onSubmit={handleEmailSubmit} className="space-y-3">
               <div className="space-y-1.5">
                 <Label htmlFor="email" className="text-sm">Email</Label>
@@ -149,29 +245,20 @@ export default function Login() {
               {mode === "signin" ? (
                 <>
                   Don't have an account?{" "}
-                  <button
-                    type="button"
-                    onClick={() => setMode("signup")}
-                    className="text-primary font-medium hover:underline"
-                  >
+                  <button type="button" onClick={() => setMode("signup")} className="text-primary font-medium hover:underline">
                     Sign up
                   </button>
                 </>
               ) : (
                 <>
                   Already have an account?{" "}
-                  <button
-                    type="button"
-                    onClick={() => setMode("signin")}
-                    className="text-primary font-medium hover:underline"
-                  >
+                  <button type="button" onClick={() => setMode("signin")} className="text-primary font-medium hover:underline">
                     Sign in
                   </button>
                 </>
               )}
             </p>
 
-            {/* Divider */}
             <div className="relative py-2">
               <div className="absolute inset-0 flex items-center">
                 <span className="w-full border-t border-border" />
@@ -181,13 +268,7 @@ export default function Login() {
               </div>
             </div>
 
-            {/* OAuth Buttons */}
-            <Button
-              onClick={handleGoogleSignIn}
-              variant="outline"
-              className="w-full gap-2.5 h-12 text-base"
-              size="lg"
-            >
+            <Button onClick={handleGoogleSignIn} variant="outline" className="w-full gap-2.5 h-12 text-base" size="lg">
               <svg className="w-5 h-5" viewBox="0 0 24 24">
                 <path fill="currentColor" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92a5.06 5.06 0 0 1-2.2 3.32v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.1z"/>
                 <path fill="currentColor" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/>
@@ -198,12 +279,7 @@ export default function Login() {
               <ArrowRight className="w-4 h-4 ml-auto" />
             </Button>
 
-            <Button
-              onClick={handleAppleSignIn}
-              variant="outline"
-              className="w-full gap-2.5 h-12 text-base"
-              size="lg"
-            >
+            <Button onClick={handleAppleSignIn} variant="outline" className="w-full gap-2.5 h-12 text-base" size="lg">
               <svg className="w-5 h-5" viewBox="0 0 24 24">
                 <path fill="currentColor" d="M17.05 20.28c-.98.95-2.05.88-3.08.4-1.09-.5-2.08-.48-3.24 0-1.44.62-2.2.44-3.06-.4C2.79 15.25 3.51 7.59 9.05 7.31c1.35.07 2.29.74 3.08.8 1.18-.24 2.31-.93 3.57-.84 1.51.12 2.65.72 3.4 1.8-3.12 1.87-2.38 5.98.48 7.13-.57 1.5-1.31 2.99-2.54 4.09zM12.03 7.25c-.15-2.23 1.66-4.07 3.74-4.25.29 2.58-2.34 4.5-3.74 4.25z"/>
               </svg>

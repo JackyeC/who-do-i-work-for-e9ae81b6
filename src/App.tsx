@@ -13,6 +13,7 @@ import { AdminRoute } from "@/components/AdminRoute";
 import { ErrorBoundary } from "@/components/ErrorBoundary";
 import { AppShell } from "@/components/layout/AppShell";
 import { AskJackyeWidget } from "@/components/AskJackyeWidget";
+import { BetaFeedbackWidget } from "@/components/BetaFeedbackWidget";
 import Index from "./pages/Index";
 import CompanyProfile from "./pages/CompanyProfile";
 import SearchResults from "./pages/SearchResults";
@@ -209,6 +210,7 @@ const App = () => (
                 <Route path="*" element={<NotFound />} />
               </Routes>
               <AskJackyeWidget />
+              <BetaFeedbackWidget />
               <CookieNotice />
             </AppShell>
           </BrowserRouter>

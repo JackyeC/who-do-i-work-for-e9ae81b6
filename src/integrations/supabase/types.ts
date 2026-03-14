@@ -299,6 +299,39 @@ export type Database = {
         }
         Relationships: []
       }
+      beta_feedback: {
+        Row: {
+          created_at: string
+          feedback_type: string
+          id: string
+          message: string
+          page_url: string | null
+          rating: number | null
+          user_email: string | null
+          user_id: string | null
+        }
+        Insert: {
+          created_at?: string
+          feedback_type?: string
+          id?: string
+          message: string
+          page_url?: string | null
+          rating?: number | null
+          user_email?: string | null
+          user_id?: string | null
+        }
+        Update: {
+          created_at?: string
+          feedback_type?: string
+          id?: string
+          message?: string
+          page_url?: string | null
+          rating?: number | null
+          user_email?: string | null
+          user_id?: string | null
+        }
+        Relationships: []
+      }
       bls_benefits_benchmarks: {
         Row: {
           benefit_category: string
@@ -6297,6 +6330,7 @@ export type Database = {
         | "owner"
         | "internal_test"
         | "analyst"
+        | "beta_tester"
       document_status: "pending" | "parsing" | "parsed" | "error" | "deleted"
       document_type: "offer_letter" | "resume" | "job_description"
       link_type:
@@ -6446,6 +6480,7 @@ export const Constants = {
         "owner",
         "internal_test",
         "analyst",
+        "beta_tester",
       ],
       document_status: ["pending", "parsing", "parsed", "error", "deleted"],
       document_type: ["offer_letter", "resume", "job_description"],
