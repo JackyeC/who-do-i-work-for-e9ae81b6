@@ -3572,6 +3572,65 @@ export type Database = {
         }
         Relationships: []
       }
+      leader_enrichments: {
+        Row: {
+          ai_narrative: string | null
+          bio: string | null
+          career_highlights: string[] | null
+          company_id: string | null
+          created_at: string
+          education: string | null
+          enriched_at: string
+          enrichment_source: string | null
+          id: string
+          leader_id: string
+          leader_type: string
+          normalized_company_name: string | null
+          photo_url: string | null
+          updated_at: string
+        }
+        Insert: {
+          ai_narrative?: string | null
+          bio?: string | null
+          career_highlights?: string[] | null
+          company_id?: string | null
+          created_at?: string
+          education?: string | null
+          enriched_at?: string
+          enrichment_source?: string | null
+          id?: string
+          leader_id: string
+          leader_type?: string
+          normalized_company_name?: string | null
+          photo_url?: string | null
+          updated_at?: string
+        }
+        Update: {
+          ai_narrative?: string | null
+          bio?: string | null
+          career_highlights?: string[] | null
+          company_id?: string | null
+          created_at?: string
+          education?: string | null
+          enriched_at?: string
+          enrichment_source?: string | null
+          id?: string
+          leader_id?: string
+          leader_type?: string
+          normalized_company_name?: string | null
+          photo_url?: string | null
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "leader_enrichments_company_id_fkey"
+            columns: ["company_id"]
+            isOneToOne: false
+            referencedRelation: "companies"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       leader_follows: {
         Row: {
           company_id: string | null

@@ -15,6 +15,7 @@ import { formatCurrency } from "@/data/sampleData";
 import { FollowLeaderButton } from "@/components/FollowLeaderButton";
 import { LoadingState } from "@/components/LoadingState";
 import { usePageSEO } from "@/hooks/use-page-seo";
+import { useLeaderEnrichment } from "@/hooks/use-leader-enrichment";
 import { useState } from "react";
 
 export default function LeaderProfile() {
@@ -98,6 +99,8 @@ export default function LeaderProfile() {
     enabled: !!otherBoardSeats && otherBoardSeats.length > 0,
   });
 
+  const { enrichment, isEnriching, enrich } = useLeaderEnrichment(leader?.id, leaderType);
+
   usePageSEO({
     title: leader ? `${leader.name} — Leader Profile` : "Leader Profile",
     description: leader ? `Intelligence profile for ${leader.name}${company ? ` at ${company.name}` : ""}` : "Leader profile",
@@ -136,7 +139,8 @@ export default function LeaderProfile() {
   }
 
   const displayName = leader.name;
-  const cleanCompany = (company?.name || "").replace(/,?\s*(LP|LLC|Inc\.?|Corp\.?|Co\.?)$/i, "").trim();
+  const displayCompanyName = enrichment?.normalized_company_name || company?.name || "";
+  const cleanCompany = displayCompanyName.replace(/,?\s*(LP|LLC|Inc\.?|Corp\.?|Co\.?)$/i, "").trim();
   const linkedInUrl = `https://www.linkedin.com/search/results/people/?keywords=${encodeURIComponent(displayName + " " + cleanCompany)}`;
   const fecUrl = `https://www.fec.gov/data/receipts/individual-contributions/?contributor_name=${encodeURIComponent(displayName)}&contributor_employer=${encodeURIComponent(company?.name || "")}`;
   const openSecretsUrl = `https://www.opensecrets.org/search?q=${encodeURIComponent(displayName)}&type=donors`;
@@ -169,7 +173,7 @@ export default function LeaderProfile() {
               <div className="flex items-start justify-between gap-3">
                 <div>
                   <h1 className="text-2xl font-bold text-foreground">{displayName}</h1>
-                  <p className="text-base text-muted-foreground">{leader.title}{company ? ` at ${company.name}` : ""}</p>
+                  <p className="text-base text-muted-foreground">{leader.title}{displayCompanyName ? ` at ${displayCompanyName}` : ""}</p>
                 </div>
                 <FollowLeaderButton leaderType={leaderType} leaderId={leader.id} leaderName={displayName} companyId={companyId} />
               </div>
@@ -190,13 +194,77 @@ export default function LeaderProfile() {
                 {executive?.total_donations > 0 && <Badge variant="outline" className="gap-1 text-[hsl(var(--civic-yellow))] border-[hsl(var(--civic-yellow))]/30"><DollarSign className="w-3 h-3" /> {formatCurrency(executive.total_donations)} donated</Badge>}
               </div>
 
-              {(boardMember as any)?.bio && (
-                <p className="text-sm text-muted-foreground mt-3 leading-relaxed">{(boardMember as any).bio}</p>
+              {(enrichment?.bio || (boardMember as any)?.bio) && (
+                <p className="text-sm text-muted-foreground mt-3 leading-relaxed">{enrichment?.bio || (boardMember as any).bio}</p>
               )}
             </div>
           </div>
         </CardContent>
       </Card>
+
+      {/* AI Intelligence Brief */}
+      {enrichment?.ai_narrative ? (
+        <Card className="border-primary/20 bg-primary/[0.02]">
+          <CardHeader className="pb-3">
+            <CardTitle className="text-base flex items-center gap-2">
+              <Sparkles className="w-4 h-4 text-primary" /> Intelligence Brief
+              <Badge variant="outline" className="text-[10px] ml-auto font-mono">
+                {enrichment.enrichment_source === "firecrawl+ai" ? "WEB + AI" : "AI GENERATED"}
+              </Badge>
+            </CardTitle>
+          </CardHeader>
+          <CardContent className="space-y-4">
+            {enrichment.education && enrichment.education !== "Not publicly available" && (
+              <div className="flex items-start gap-2">
+                <Badge variant="secondary" className="text-[10px] shrink-0 mt-0.5">EDUCATION</Badge>
+                <span className="text-sm text-muted-foreground">{enrichment.education}</span>
+              </div>
+            )}
+            {enrichment.career_highlights && enrichment.career_highlights.length > 0 && (
+              <div className="space-y-1.5">
+                <span className="text-[10px] font-bold uppercase tracking-wide text-muted-foreground">Key Milestones</span>
+                <ul className="space-y-1">
+                  {enrichment.career_highlights.map((h, i) => (
+                    <li key={i} className="text-sm text-muted-foreground flex items-start gap-2">
+                      <span className="text-primary mt-1">•</span> {h}
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            )}
+            <Separator />
+            <div className="text-sm text-foreground leading-relaxed whitespace-pre-line">{enrichment.ai_narrative}</div>
+            <p className="text-[10px] text-muted-foreground/60 italic">
+              Generated {new Date(enrichment.enriched_at).toLocaleDateString()} · Source: {enrichment.enrichment_source}
+            </p>
+          </CardContent>
+        </Card>
+      ) : (
+        <Card className="border-dashed border-primary/30">
+          <CardContent className="p-6 text-center">
+            <Sparkles className="w-8 h-8 text-primary/40 mx-auto mb-3" />
+            <h3 className="text-sm font-semibold text-foreground mb-1">AI Intelligence Brief Available</h3>
+            <p className="text-xs text-muted-foreground mb-4">
+              Generate a complete dossier with normalized company data, bio, career highlights, and narrative analysis.
+            </p>
+            <Button
+              onClick={() => enrich({
+                leader_name: leader.name,
+                leader_title: leader.title,
+                company_id: companyId,
+                company_name: company?.name,
+                company_industry: company?.industry,
+              })}
+              disabled={isEnriching}
+              size="sm"
+              className="gap-2"
+            >
+              {isEnriching ? <Loader2 className="w-4 h-4 animate-spin" /> : <Sparkles className="w-4 h-4" />}
+              {isEnriching ? "Generating Dossier..." : "Generate Intelligence Brief"}
+            </Button>
+          </CardContent>
+        </Card>
+      )}
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         {/* Main content */}
@@ -330,8 +398,8 @@ export default function LeaderProfile() {
               </div>
               <p className="text-xs text-muted-foreground leading-relaxed">
                 {executive
-                  ? `${displayName} holds a ${leader.title} position${company ? ` at ${company.name}` : ""}. ${executive.total_donations > 0 ? `They have ${formatCurrency(executive.total_donations)} in tracked political donations. Understand where this money goes to see what policies this leader financially supports.` : "No tracked political donations were found, but that doesn't mean no influence exists — check trade association and lobbying connections."}`
-                  : `${displayName} serves on the board${company ? ` of ${company.name}` : ""}. Board members shape company strategy through governance oversight, committee assignments, and executive compensation decisions. ${(boardMember as any)?.is_independent ? "This director is classified as independent." : "Check whether this director has ties that could compromise independence."}`
+                  ? `${displayName} holds a ${leader.title} position${displayCompanyName ? ` at ${displayCompanyName}` : ""}. ${executive.total_donations > 0 ? `They have ${formatCurrency(executive.total_donations)} in tracked political donations. Understand where this money goes to see what policies this leader financially supports.` : "No tracked political donations were found, but that doesn't mean no influence exists — check trade association and lobbying connections."}`
+                  : `${displayName} serves on the board${displayCompanyName ? ` of ${displayCompanyName}` : ""}. Board members shape company strategy through governance oversight, committee assignments, and executive compensation decisions. ${(boardMember as any)?.is_independent ? "This director is classified as independent." : "Check whether this director has ties that could compromise independence."}`
                 }
               </p>
             </CardContent>

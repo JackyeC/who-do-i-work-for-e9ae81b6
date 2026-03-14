@@ -23,3 +23,6 @@ verify_jwt = false
 
 [functions.scheduled-leadership-refresh]
 verify_jwt = false
+
+[functions.leader-enrich]
+verify_jwt = false
