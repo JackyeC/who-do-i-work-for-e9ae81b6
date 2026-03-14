@@ -766,15 +766,17 @@ export default function CompanyProfile() {
           {/* ═══════════════════════════════════════════════════════════
               3b. GOVERNANCE & BOARD STRUCTURE
              ═══════════════════════════════════════════════════════════ */}
-          <section id="section-governance" className="mb-10 scroll-mt-28">
-            <SectionHeader icon={Shield} title="Governance & Board Structure" subtitle="Board composition, committee oversight, and ownership signals" />
-            <BoardGovernanceTab
-              companyId={dbCompanyId || ""}
-              companyName={name}
-              ticker={dbCompany?.ticker}
-              secCik={dbCompany?.sec_cik}
-            />
-          </section>
+          {isSectionVisible(activePersona, "governance") && (
+           <section id="section-governance" className="mb-10 scroll-mt-28">
+             <SectionHeader icon={Shield} title="Governance & Board Structure" subtitle="Board composition, committee oversight, and ownership signals" />
+             <BoardGovernanceTab
+               companyId={dbCompanyId || ""}
+               companyName={name}
+               ticker={dbCompany?.ticker}
+               secCik={dbCompany?.sec_cik}
+             />
+           </section>
+          )}
 
           <Separator className="mb-10" />
 
