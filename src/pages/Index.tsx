@@ -313,11 +313,11 @@ const Index = forwardRef<HTMLDivElement>((_, ref) => {
               <ArrowLeftRight className="w-8 h-8 text-primary" strokeWidth={1.5} />
               <div>
                 <div className="font-serif text-lg text-foreground group-hover:text-primary transition-colors">Compare Two Employers</div>
-                <div className="text-[13px] text-muted-foreground">Side-by-side transparency scores, PAC spending, lobbying, and government contracts.</div>
+                <div className="text-sm text-muted-foreground">Side-by-side transparency scores, PAC spending, lobbying, and government contracts.</div>
               </div>
             </div>
-            <div className="flex items-center gap-1.5 font-mono text-[10px] tracking-wider uppercase text-primary group-hover:gap-2.5 transition-all whitespace-nowrap">
-              Start comparison <ArrowRight className="w-3 h-3" />
+            <div className="flex items-center gap-1.5 font-mono text-xs tracking-wider uppercase text-primary group-hover:gap-2.5 transition-all whitespace-nowrap">
+              Start comparison <ArrowRight className="w-3.5 h-3.5" />
             </div>
           </div>
         </section>
