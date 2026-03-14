@@ -306,28 +306,39 @@ export function ActionPlanStep({ data, loading, error, onRetry }: Props) {
                   const isNetworkAction = action.type === "connect";
                   const isInternalLink = link?.url.startsWith("/");
 
+                  const handleRowClick = () => {
+                    if (link) {
+                      if (isInternalLink) {
+                        navigate(link.url);
+                      } else {
+                        window.open(link.url, "_blank", "noopener,noreferrer");
+                      }
+                    }
+                  };
+
                   return (
                     <div key={ai}>
-                      <div className="flex items-start gap-3 p-2.5 rounded-lg hover:bg-muted/30 transition-colors group">
+                      <div
+                        className={cn(
+                          "flex items-start gap-3 p-2.5 rounded-lg hover:bg-muted/30 transition-colors group",
+                          link && "cursor-pointer"
+                        )}
+                        onClick={handleRowClick}
+                        role={link ? "button" : undefined}
+                      >
                         <div className="mt-0.5">
                           <Circle className="w-4 h-4 text-muted-foreground/40 group-hover:text-primary transition-colors" />
                         </div>
                         <div className="flex-1 min-w-0">
                           <p className="text-sm text-foreground">{action.text}</p>
                           {link && (
-                            isInternalLink ? (
-                              <Link to={link.url} className="inline-flex items-center gap-1 text-xs text-primary hover:underline mt-1">
-                                {link.label} <ExternalLink className="w-2.5 h-2.5" />
-                              </Link>
-                            ) : (
-                              <a href={link.url} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-1 text-xs text-primary hover:underline mt-1">
-                                {link.label} <ExternalLink className="w-2.5 h-2.5" />
-                              </a>
-                            )
+                            <span className="inline-flex items-center gap-1 text-xs text-primary mt-1">
+                              {link.label} <ExternalLink className="w-2.5 h-2.5" />
+                            </span>
                           )}
                           {isNetworkAction && !hasConnections && (
                             <button
-                              onClick={() => navigate("/relationship-intelligence")}
+                              onClick={(e) => { e.stopPropagation(); navigate("/relationship-intelligence"); }}
                               className="inline-flex items-center gap-1 text-xs text-primary hover:underline mt-1"
                             >
                               <UserPlus className="w-2.5 h-2.5" /> Upload LinkedIn to find connections
