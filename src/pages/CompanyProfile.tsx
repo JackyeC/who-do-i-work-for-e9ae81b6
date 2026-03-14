@@ -1067,6 +1067,23 @@ export default function CompanyProfile() {
           <Separator className="mb-8" />
 
           {/* ═══════════════════════════════════════════════════════════
+              12. NARRATIVE POWER INTELLIGENCE
+             ═══════════════════════════════════════════════════════════ */}
+          <section id="section-narrative-power" className="mb-10 scroll-mt-28">
+            <SectionHeader
+              icon={Radio}
+              title="Who Shapes the Narrative"
+              subtitle="PR firms, influencers, advocacy groups, think tanks, and coordinated messaging networks influencing perception of this company"
+            />
+            <NarrativePowerSection
+              companyName={name}
+              companyId={dbCompany?.id}
+            />
+          </section>
+
+          <Separator className="mb-8" />
+
+          {/* ═══════════════════════════════════════════════════════════
               RUN FULL SCAN BUTTON
              ═══════════════════════════════════════════════════════════ */}
           <section className="mb-8">
