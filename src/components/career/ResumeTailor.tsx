@@ -3,12 +3,14 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/com
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Textarea } from "@/components/ui/textarea";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/contexts/AuthContext";
 import { useQuery } from "@tanstack/react-query";
 import { toast } from "sonner";
 import { EmptyState } from "@/components/EmptyState";
-import { Wand2, Target, CheckCircle, XCircle, MessageSquare, ArrowRight, Loader2, Sparkles, AlertCircle } from "lucide-react";
+import { Wand2, Target, CheckCircle, XCircle, MessageSquare, ArrowRight, Loader2, Sparkles, AlertCircle, ClipboardPaste, FileText } from "lucide-react";
 import { Progress } from "@/components/ui/progress";
 import { useNavigate } from "react-router-dom";
 
@@ -17,6 +19,8 @@ export function ResumeTailor() {
   const navigate = useNavigate();
   const [selectedResume, setSelectedResume] = useState<string>("");
   const [selectedJD, setSelectedJD] = useState<string>("");
+  const [pastedJD, setPastedJD] = useState("");
+  const [jdMode, setJdMode] = useState<"paste" | "select">("paste");
   const [analysis, setAnalysis] = useState<any>(null);
   const [loading, setLoading] = useState(false);
 
@@ -43,22 +47,40 @@ export function ResumeTailor() {
     }
   }, [resumes.length]);
 
-  // Auto-select JD if only one exists
+  // Auto-select JD if only one exists and in select mode
   useEffect(() => {
     if (jobDescs.length === 1 && !selectedJD) {
       setSelectedJD(jobDescs[0].id);
     }
   }, [jobDescs.length]);
 
+  // Default to select mode if they have uploaded JDs but no paste content
+  useEffect(() => {
+    if (jobDescs.length > 0 && !pastedJD) {
+      setJdMode("select");
+    }
+  }, [jobDescs.length]);
+
+  const hasValidJD = jdMode === "paste" ? pastedJD.trim().length >= 50 : !!selectedJD;
+
   const handleTailor = async () => {
-    if (!selectedResume || !selectedJD) return;
+    if (!selectedResume || !hasValidJD) return;
+    if (jdMode === "paste" && pastedJD.length > 15000) {
+      toast.error("Job description is too long (max 15,000 characters)");
+      return;
+    }
     setLoading(true);
     setAnalysis(null);
 
     try {
-      const { data, error } = await supabase.functions.invoke("tailor-resume", {
-        body: { resumeDocId: selectedResume, jobDescDocId: selectedJD },
-      });
+      const body: any = { resumeDocId: selectedResume };
+      if (jdMode === "select") {
+        body.jobDescDocId = selectedJD;
+      } else {
+        body.pastedJobDescription = pastedJD.trim();
+      }
+
+      const { data, error } = await supabase.functions.invoke("tailor-resume", { body });
       if (error) throw error;
       if (data?.error) throw new Error(data.error);
       setAnalysis(data.analysis);
@@ -71,15 +93,12 @@ export function ResumeTailor() {
     }
   };
 
-  const missingResume = !resumes.length;
-  const missingJD = !jobDescs.length;
-
-  if (missingResume && missingJD) {
+  if (!resumes.length) {
     return (
       <EmptyState
         icon={Wand2}
-        title="Upload a resume and a job description"
-        description="To tailor your resume, upload both documents in the Upload tab — or start with Career Discovery which uploads your resume automatically."
+        title="Upload a resume first"
+        description="To tailor your resume, upload one in the Upload tab or start with Career Discovery which uploads your resume automatically."
       />
     );
   }
@@ -92,56 +111,75 @@ export function ResumeTailor() {
             <Wand2 className="w-5 h-5" /> Resume Tailor
           </CardTitle>
           <CardDescription>
-            Select a resume and a job description to get AI-powered gap analysis and tailoring suggestions.
+            Select your resume and provide a job description to get AI-powered gap analysis and tailoring suggestions.
           </CardDescription>
         </CardHeader>
         <CardContent className="space-y-4">
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-            <div>
-              <label className="text-xs text-muted-foreground mb-1 block">Your Resume</label>
-              {resumes.length > 0 ? (
-                <Select value={selectedResume} onValueChange={setSelectedResume}>
-                  <SelectTrigger><SelectValue placeholder="Select resume" /></SelectTrigger>
-                  <SelectContent>
-                    {resumes.map((r: any) => (
-                      <SelectItem key={r.id} value={r.id}>{r.original_filename || "Resume"}</SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-              ) : (
-                <div className="rounded-md border border-dashed border-border p-3 text-center">
-                  <p className="text-xs text-muted-foreground mb-2">No resume found</p>
-                  <Button variant="outline" size="sm" onClick={() => navigate("/career-intelligence?tab=upload")} className="text-xs gap-1">
-                    <AlertCircle className="w-3 h-3" /> Upload Resume
-                  </Button>
-                </div>
-              )}
-            </div>
-            <div>
-              <label className="text-xs text-muted-foreground mb-1 block">Target Job Description</label>
-              {jobDescs.length > 0 ? (
-                <Select value={selectedJD} onValueChange={setSelectedJD}>
-                  <SelectTrigger><SelectValue placeholder="Select job description" /></SelectTrigger>
-                  <SelectContent>
-                    {jobDescs.map((j: any) => (
-                      <SelectItem key={j.id} value={j.id}>
-                        {j.parsed_signals?.role_title || j.original_filename || "Job Description"}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-              ) : (
-                <div className="rounded-md border border-dashed border-border p-3 text-center">
-                  <p className="text-xs text-muted-foreground mb-2">No job description found</p>
-                  <Button variant="outline" size="sm" onClick={() => navigate("/career-intelligence?tab=upload")} className="text-xs gap-1">
-                    <AlertCircle className="w-3 h-3" /> Upload Job Description
-                  </Button>
-                </div>
-              )}
-            </div>
+          {/* Resume Selection */}
+          <div>
+            <label className="text-xs text-muted-foreground mb-1 block">Your Resume</label>
+            <Select value={selectedResume} onValueChange={setSelectedResume}>
+              <SelectTrigger><SelectValue placeholder="Select resume" /></SelectTrigger>
+              <SelectContent>
+                {resumes.map((r: any) => (
+                  <SelectItem key={r.id} value={r.id}>{r.original_filename || "Resume"}</SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
           </div>
 
-          <Button onClick={handleTailor} disabled={!selectedResume || !selectedJD || loading} className="w-full">
+          {/* Job Description - Tabs for paste vs select */}
+          <div>
+            <label className="text-xs text-muted-foreground mb-1 block">Target Job Description</label>
+            <Tabs value={jdMode} onValueChange={(v) => setJdMode(v as "paste" | "select")} className="w-full">
+              <TabsList className="grid w-full grid-cols-2 h-8">
+                <TabsTrigger value="paste" className="text-xs gap-1.5">
+                  <ClipboardPaste className="w-3 h-3" /> Paste Text
+                </TabsTrigger>
+                <TabsTrigger value="select" className="text-xs gap-1.5">
+                  <FileText className="w-3 h-3" /> Uploaded ({jobDescs.length})
+                </TabsTrigger>
+              </TabsList>
+              <TabsContent value="paste" className="mt-2">
+                <Textarea
+                  value={pastedJD}
+                  onChange={(e) => setPastedJD(e.target.value)}
+                  placeholder="Paste the full job description here..."
+                  className="min-h-[140px] text-sm resize-y"
+                  maxLength={15000}
+                />
+                <div className="flex justify-between mt-1">
+                  <p className="text-[10px] text-muted-foreground">
+                    {pastedJD.length > 0 && pastedJD.length < 50 ? "Paste at least 50 characters for a meaningful analysis" : ""}
+                  </p>
+                  <p className="text-[10px] text-muted-foreground">{pastedJD.length.toLocaleString()} / 15,000</p>
+                </div>
+              </TabsContent>
+              <TabsContent value="select" className="mt-2">
+                {jobDescs.length > 0 ? (
+                  <Select value={selectedJD} onValueChange={setSelectedJD}>
+                    <SelectTrigger><SelectValue placeholder="Select job description" /></SelectTrigger>
+                    <SelectContent>
+                      {jobDescs.map((j: any) => (
+                        <SelectItem key={j.id} value={j.id}>
+                          {j.parsed_signals?.role_title || j.original_filename || "Job Description"}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                ) : (
+                  <div className="rounded-md border border-dashed border-border p-4 text-center">
+                    <p className="text-xs text-muted-foreground mb-2">No uploaded job descriptions yet</p>
+                    <Button variant="outline" size="sm" onClick={() => navigate("/career-intelligence?tab=upload")} className="text-xs gap-1">
+                      <AlertCircle className="w-3 h-3" /> Upload Job Description
+                    </Button>
+                  </div>
+                )}
+              </TabsContent>
+            </Tabs>
+          </div>
+
+          <Button onClick={handleTailor} disabled={!selectedResume || !hasValidJD || loading} className="w-full">
             {loading ? <Loader2 className="w-4 h-4 mr-2 animate-spin" /> : <Sparkles className="w-4 h-4 mr-2" />}
             {loading ? "Analyzing..." : "Analyze & Tailor"}
           </Button>

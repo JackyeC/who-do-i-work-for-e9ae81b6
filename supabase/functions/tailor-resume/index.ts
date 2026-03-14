@@ -25,24 +25,36 @@ serve(async (req) => {
     const { data: { user }, error: authError } = await userClient.auth.getUser();
     if (authError || !user) throw new Error("Unauthorized");
 
-    const { resumeDocId, jobDescDocId } = await req.json();
-    if (!resumeDocId || !jobDescDocId) throw new Error("Both resumeDocId and jobDescDocId are required");
+    const { resumeDocId, jobDescDocId, pastedJobDescription } = await req.json();
+    if (!resumeDocId) throw new Error("resumeDocId is required");
+    if (!jobDescDocId && !pastedJobDescription) throw new Error("Either jobDescDocId or pastedJobDescription is required");
+
+    // Validate pasted JD length
+    if (pastedJobDescription && pastedJobDescription.length > 15000) {
+      throw new Error("Job description text is too long (max 15,000 characters)");
+    }
 
     const adminClient = createClient(supabaseUrl, serviceKey);
 
-    // Fetch both parsed documents
-    const [resumeRes, jdRes] = await Promise.all([
-      adminClient.from("user_documents").select("*").eq("id", resumeDocId).eq("user_id", user.id).eq("status", "parsed").single(),
-      adminClient.from("user_documents").select("*").eq("id", jobDescDocId).eq("user_id", user.id).eq("status", "parsed").single(),
-    ]);
-
-    if (resumeRes.error || !resumeRes.data) throw new Error("Resume not found or not parsed");
-    if (jdRes.error || !jdRes.data) throw new Error("Job description not found or not parsed");
+    // Fetch resume
+    const resumeRes = await adminClient.from("user_documents").select("*").eq("id", resumeDocId).eq("user_id", user.id).single();
+    if (resumeRes.error || !resumeRes.data) throw new Error("Resume not found");
 
     const resumeSignals = resumeRes.data.parsed_signals || {};
-    const jdSignals = jdRes.data.parsed_signals || {};
 
-    const systemPrompt = `You are a career intelligence advisor. Given a parsed resume profile and a parsed job description, produce:
+    // Get JD signals: either from a parsed document or from pasted text
+    let jdSignals: any;
+
+    if (jobDescDocId) {
+      const jdRes = await adminClient.from("user_documents").select("*").eq("id", jobDescDocId).eq("user_id", user.id).single();
+      if (jdRes.error || !jdRes.data) throw new Error("Job description not found");
+      jdSignals = jdRes.data.parsed_signals || {};
+    } else {
+      // Use pasted text directly as the JD content
+      jdSignals = { raw_text: pastedJobDescription.substring(0, 15000) };
+    }
+
+    const systemPrompt = `You are a career intelligence advisor. Given a parsed resume profile and a job description, produce:
 1. A GAP ANALYSIS showing which required skills the candidate has vs. is missing
 2. TAILORING SUGGESTIONS: specific, actionable ways to adjust resume language to better match the JD
 3. A MATCH SCORE (0-100) based on skills overlap, seniority fit, and role alignment
@@ -54,8 +66,8 @@ This is career signal analysis, NOT legal or employment advice.`;
     const userPrompt = `Resume Profile:
 ${JSON.stringify(resumeSignals, null, 2)}
 
-Job Description Signals:
-${JSON.stringify(jdSignals, null, 2)}
+Job Description:
+${jobDescDocId ? JSON.stringify(jdSignals, null, 2) : jdSignals.raw_text}
 
 Analyze the fit and provide tailoring recommendations.`;
 
