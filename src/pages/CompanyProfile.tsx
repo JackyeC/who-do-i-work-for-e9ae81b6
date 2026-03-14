@@ -7,7 +7,7 @@ import {
   AlertTriangle, EyeOff, RotateCcw, TrendingUp, Landmark,
   Loader2, Sparkles, Search, ClipboardCheck,
   Heart, Brain, Briefcase, ChevronDown, MessageSquareWarning,
-  Scan, BarChart3, Award, GraduationCap, Hammer, Network, FileText
+  Scan, BarChart3, Award, GraduationCap, Hammer, Network, FileText, Radio
 } from "lucide-react";
 import { CompanyLogo } from "@/components/CompanyLogo";
 import { StickyScoreHeader } from "@/components/StickyScoreHeader";
@@ -77,6 +77,7 @@ import { PromotionVelocityCard } from "@/components/PromotionVelocityCard";
 import { IntelligenceSnapshotCard } from "@/components/viral/IntelligenceSnapshotCard";
 import { calculatePVS, deriveSubScores, computeConfidence } from "@/lib/promotionVelocityScore";
 import { PublicRecordsExposure } from "@/components/public-records/PublicRecordsExposure";
+import { NarrativePowerSection } from "@/components/narrative-power";
 
 /* ─── Status labels ─── */
 const STATUS_LABELS: Record<string, { label: string; color: string }> = {
@@ -1058,6 +1059,23 @@ export default function CompanyProfile() {
               subtitle="Public records, legal filings, government disclosures, and documented network ties that may matter for reputation, trust, and decision-making"
             />
             <PublicRecordsExposure
+              companyName={name}
+              companyId={dbCompany?.id}
+            />
+          </section>
+
+          <Separator className="mb-8" />
+
+          {/* ═══════════════════════════════════════════════════════════
+              12. NARRATIVE POWER INTELLIGENCE
+             ═══════════════════════════════════════════════════════════ */}
+          <section id="section-narrative-power" className="mb-10 scroll-mt-28">
+            <SectionHeader
+              icon={Radio}
+              title="Who Shapes the Narrative"
+              subtitle="PR firms, influencers, advocacy groups, think tanks, and coordinated messaging networks influencing perception of this company"
+            />
+            <NarrativePowerSection
               companyName={name}
               companyId={dbCompany?.id}
             />

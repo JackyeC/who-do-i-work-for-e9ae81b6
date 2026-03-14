@@ -3699,6 +3699,89 @@ export type Database = {
         }
         Relationships: []
       }
+      narrative_power_signals: {
+        Row: {
+          actor_description: string | null
+          actor_name: string
+          actor_type: Database["public"]["Enums"]["narrative_actor_type"]
+          company_id: string
+          confidence_level: Database["public"]["Enums"]["narrative_confidence"]
+          created_at: string
+          date_range_end: string | null
+          date_range_start: string | null
+          evidence_description: string | null
+          evidence_source: string
+          evidence_urls: string[] | null
+          id: string
+          intermediaries: string[] | null
+          is_active: boolean
+          last_verified_at: string | null
+          narrative_chain: string | null
+          narrative_method: string
+          narrative_target: string
+          signal_title: string
+          signal_type: Database["public"]["Enums"]["narrative_signal_type"]
+          target_category: string
+          updated_at: string
+        }
+        Insert: {
+          actor_description?: string | null
+          actor_name: string
+          actor_type: Database["public"]["Enums"]["narrative_actor_type"]
+          company_id: string
+          confidence_level?: Database["public"]["Enums"]["narrative_confidence"]
+          created_at?: string
+          date_range_end?: string | null
+          date_range_start?: string | null
+          evidence_description?: string | null
+          evidence_source: string
+          evidence_urls?: string[] | null
+          id?: string
+          intermediaries?: string[] | null
+          is_active?: boolean
+          last_verified_at?: string | null
+          narrative_chain?: string | null
+          narrative_method: string
+          narrative_target: string
+          signal_title: string
+          signal_type: Database["public"]["Enums"]["narrative_signal_type"]
+          target_category?: string
+          updated_at?: string
+        }
+        Update: {
+          actor_description?: string | null
+          actor_name?: string
+          actor_type?: Database["public"]["Enums"]["narrative_actor_type"]
+          company_id?: string
+          confidence_level?: Database["public"]["Enums"]["narrative_confidence"]
+          created_at?: string
+          date_range_end?: string | null
+          date_range_start?: string | null
+          evidence_description?: string | null
+          evidence_source?: string
+          evidence_urls?: string[] | null
+          id?: string
+          intermediaries?: string[] | null
+          is_active?: boolean
+          last_verified_at?: string | null
+          narrative_chain?: string | null
+          narrative_method?: string
+          narrative_target?: string
+          signal_title?: string
+          signal_type?: Database["public"]["Enums"]["narrative_signal_type"]
+          target_category?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "narrative_power_signals_company_id_fkey"
+            columns: ["company_id"]
+            isOneToOne: false
+            referencedRelation: "companies"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       offer_checks: {
         Row: {
           company_id: string
@@ -6762,6 +6845,24 @@ export type Database = {
         | "interlocking_directorate"
         | "state_lobbying_contract"
         | "international_influence"
+      narrative_actor_type:
+        | "company"
+        | "pr_firm"
+        | "pac"
+        | "advocacy_group"
+        | "media_organization"
+        | "influencer"
+        | "think_tank"
+      narrative_confidence:
+        | "verified"
+        | "investigative_reporting"
+        | "allegation"
+      narrative_signal_type:
+        | "influencer_campaign"
+        | "media_amplification"
+        | "pr_narrative_campaign"
+        | "advocacy_messaging"
+        | "propaganda_network"
       network_relationship_type:
         | "banking_relationship"
         | "executive_or_founder_mention"
@@ -6925,6 +7026,27 @@ export const Constants = {
         "interlocking_directorate",
         "state_lobbying_contract",
         "international_influence",
+      ],
+      narrative_actor_type: [
+        "company",
+        "pr_firm",
+        "pac",
+        "advocacy_group",
+        "media_organization",
+        "influencer",
+        "think_tank",
+      ],
+      narrative_confidence: [
+        "verified",
+        "investigative_reporting",
+        "allegation",
+      ],
+      narrative_signal_type: [
+        "influencer_campaign",
+        "media_amplification",
+        "pr_narrative_campaign",
+        "advocacy_messaging",
+        "propaganda_network",
       ],
       network_relationship_type: [
         "banking_relationship",
