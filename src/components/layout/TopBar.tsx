@@ -81,14 +81,12 @@ export function TopBar() {
   const { data: tickerStats } = useQuery({
     queryKey: ["ticker-stats"],
     queryFn: async () => {
-      const [companiesRes, signalsRes, scansRes] = await Promise.all([
+      const [companiesRes, scansRes] = await Promise.all([
         supabase.from("companies").select("id", { count: "exact", head: true }),
-        supabase.from("company_signals").select("id", { count: "exact", head: true }),
         supabase.from("company_scan_events").select("id, company_name", { count: "exact" }).order("scanned_at", { ascending: false }).limit(3),
       ]);
       return {
         totalCompanies: companiesRes.count ?? 0,
-        totalSignals: signalsRes.count ?? 0,
         recentScans: scansRes.data ?? [],
         totalScans: scansRes.count ?? 0,
       };
