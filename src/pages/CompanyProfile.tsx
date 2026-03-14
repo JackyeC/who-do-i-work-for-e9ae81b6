@@ -657,19 +657,17 @@ export default function CompanyProfile() {
           {/* ═══════════════════════════════════════════════════════════
               3b. GOVERNANCE & BOARD STRUCTURE
              ═══════════════════════════════════════════════════════════ */}
-          <section id="section-governance" className="mb-8 scroll-mt-28">
+          <section id="section-governance" className="mb-10 scroll-mt-28">
             <SectionHeader icon={Shield} title="Governance & Board Structure" subtitle="Board composition, committee oversight, and ownership signals" />
-            <div className="pl-12">
-              <BoardGovernanceTab
-                companyId={dbCompanyId || ""}
-                companyName={name}
-                ticker={dbCompany?.ticker}
-                secCik={dbCompany?.sec_cik}
-              />
-            </div>
+            <BoardGovernanceTab
+              companyId={dbCompanyId || ""}
+              companyName={name}
+              ticker={dbCompany?.ticker}
+              secCik={dbCompany?.sec_cik}
+            />
           </section>
 
-          <Separator className="mb-8" />
+          <Separator className="mb-10" />
 
           {/* ═══════════════════════════════════════════════════════════
               4. WORKFORCE INTELLIGENCE
