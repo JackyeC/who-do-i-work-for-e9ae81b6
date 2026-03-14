@@ -27,7 +27,7 @@ import { WorkerBenefitsCard } from "@/components/WorkerBenefitsCard";
 import { CompensationTransparencyCard } from "@/components/CompensationTransparencyCard";
 import { PromotionEquityCard } from "@/components/PromotionEquityCard";
 import { WarnTrackerCard } from "@/components/WarnTrackerCard";
-import { IdeologyFlagsCard } from "@/components/IdeologyFlagsCard";
+
 
 import { AgencyContractsCard } from "@/components/AgencyContractsCard";
 import { ROIPipelineCard } from "@/components/ROIPipelineCard";
