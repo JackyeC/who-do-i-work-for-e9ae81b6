@@ -73,6 +73,7 @@ import InvestigativeExplorer from "./pages/InvestigativeExplorer";
 import SiteMap from "./pages/SiteMap";
 import Rivalries from "./pages/Rivalries";
 import BrandMadness from "./pages/BrandMadness";
+import SignalFeed from "./pages/SignalFeed";
 import { CookieNotice } from "@/components/CookieNotice";
 
 const queryClient = new QueryClient();
