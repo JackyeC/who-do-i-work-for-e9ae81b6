@@ -106,6 +106,21 @@ export function BetaFeedbackWidget() {
               ))}
             </div>
 
+            <div className="bg-muted/50 border border-border/50 rounded-lg p-2.5 space-y-1.5">
+              <div className="flex items-center gap-1.5">
+                <input
+                  type="checkbox"
+                  id="wantReal"
+                  checked={wantReal}
+                  onChange={(e) => setWantReal(e.target.checked)}
+                  className="rounded border-border"
+                />
+                <label htmlFor="wantReal" className="text-xs text-foreground cursor-pointer">
+                  I'd subscribe when this launches for real 🚀
+                </label>
+              </div>
+            </div>
+
             <Button
               onClick={handleSubmit}
               disabled={!message.trim() || submitting}
