@@ -517,6 +517,10 @@ export default function CompanyProfile() {
             </CardContent>
           </Card>
 
+          <ReportTeaserGate
+            companyName={name}
+            teaser={null}
+          >
           {/* ═══════════════════════════════════════════════════════════
               SCAN PROGRESS (when actively scanning)
              ═══════════════════════════════════════════════════════════ */}
