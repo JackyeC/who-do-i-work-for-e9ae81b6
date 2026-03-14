@@ -364,7 +364,7 @@ export default function CompanyProfile() {
     hasIssueSignals: (dbIssueSignals?.length || 0) > 0, hasSecInvestigations: false,
     hasDojEnforcement: false, hasFtcActions: false, hasClassActionLawsuits: false,
     hasPayEquitySignals: !!tiPayEquity, hasCompensationData: !!tiBenefits,
-    hasGovernanceDisclosures: false, hasBoardDiversity: false, hasAiHrSignals: !!tiAiHr,
+    hasGovernanceDisclosures: (dbBoardMembers?.length || 0) > 0, hasBoardDiversity: (dbBoardMembers?.length || 0) > 0, hasAiHrSignals: !!tiAiHr,
     hasJobPostings: false, scanCompletion: (dbCompany as any)?.scan_completion ?? null,
     recordStatus: recordStatus,
   });
