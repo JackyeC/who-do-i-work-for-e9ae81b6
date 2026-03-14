@@ -1,5 +1,6 @@
 import { useState, useRef, useEffect } from "react";
 import { Send } from "lucide-react";
+import jackyeHeadshot from "@/assets/jackye-headshot.png";
 import ReactMarkdown from "react-markdown";
 import { usePageSEO } from "@/hooks/use-page-seo";
 import { useAuth } from "@/contexts/AuthContext";
