@@ -61,6 +61,7 @@ import { ContentProtector } from "@/components/ContentProtector";
 import { ReportTeaserGate } from "@/components/ReportTeaserGate";
 import { SankeyInfluenceDiagram } from "@/components/SankeyInfluenceDiagram";
 import { CareerRiskReport } from "@/components/CareerRiskReport";
+import { BoardGovernanceTab } from "@/components/BoardGovernanceTab";
 
 /* ─── Status labels ─── */
 const STATUS_LABELS: Record<string, { label: string; color: string }> = {
