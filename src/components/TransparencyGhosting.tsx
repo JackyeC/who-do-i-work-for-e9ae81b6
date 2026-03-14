@@ -68,26 +68,28 @@ export function TransparencyGhosting(props: TransparencyGhostingProps) {
             return (
               <Tooltip key={gap.label}>
                 <TooltipTrigger asChild>
-                  <div className="flex items-center gap-3 p-3 rounded-lg border border-dashed border-border/60 bg-muted/20 cursor-help group hover:border-destructive/30 transition-colors">
-                    {/* Ghosted icon */}
-                    <div className="w-8 h-8 rounded-lg bg-muted/50 flex items-center justify-center shrink-0">
-                      <Icon className="w-4 h-4 text-muted-foreground/40" />
-                    </div>
-                    <div className="flex-1 min-w-0">
-                      <div className="flex items-center gap-2">
-                        <span className="text-xs font-medium text-muted-foreground/60">{gap.label}</span>
-                      </div>
-                      {/* Skeleton bars to represent missing data */}
-                      <div className="flex items-center gap-1.5 mt-1.5">
-                        <Skeleton className="h-1.5 w-16 bg-muted-foreground/10" />
-                        <Skeleton className="h-1.5 w-10 bg-muted-foreground/10" />
-                        <Skeleton className="h-1.5 w-8 bg-muted-foreground/10" />
-                      </div>
-                    </div>
-                    <span className="font-mono text-[8px] uppercase tracking-wider text-muted-foreground/40 shrink-0">
-                      {gap.category}
-                    </span>
-                  </div>
+                   <div className="flex items-center gap-3 p-3 rounded-lg border border-dashed border-border/60 bg-muted/20 cursor-help group hover:border-destructive/30 transition-colors relative overflow-hidden">
+                     {/* Shimmer overlay */}
+                     <div className="absolute inset-0 shimmer-skeleton opacity-[0.04] pointer-events-none" />
+                     {/* Ghosted icon */}
+                     <div className="w-8 h-8 rounded-lg bg-muted/50 flex items-center justify-center shrink-0 relative">
+                       <Icon className="w-4 h-4 text-muted-foreground/30" />
+                     </div>
+                     <div className="flex-1 min-w-0 relative">
+                       <div className="flex items-center gap-2">
+                         <span className="text-xs font-medium text-muted-foreground/50 font-mono">{gap.label}</span>
+                       </div>
+                       {/* Animated skeleton bars */}
+                       <div className="flex items-center gap-1.5 mt-1.5">
+                         <div className="h-1.5 w-16 rounded-full shimmer-skeleton" />
+                         <div className="h-1.5 w-10 rounded-full shimmer-skeleton" style={{ animationDelay: "0.3s" }} />
+                         <div className="h-1.5 w-8 rounded-full shimmer-skeleton" style={{ animationDelay: "0.6s" }} />
+                       </div>
+                     </div>
+                     <span className="font-mono text-[8px] uppercase tracking-wider text-muted-foreground/30 shrink-0 relative">
+                       {gap.category}
+                     </span>
+                   </div>
                 </TooltipTrigger>
                 <TooltipContent side="top" className="max-w-[260px]">
                   <p className="text-xs leading-relaxed">{gap.riskNote}</p>
