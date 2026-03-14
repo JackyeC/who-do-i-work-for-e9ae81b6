@@ -11,6 +11,8 @@ import { HeroSearch } from "@/components/landing/HeroSearch";
 import { AnimatedCounter } from "@/components/landing/AnimatedCounter";
 import { SectionReveal } from "@/components/landing/SectionReveal";
 import { motion } from "framer-motion";
+import { rivalries2026 } from "@/data/rivalries2026";
+import { RivalryBattleCard } from "@/components/RivalryBattleCard";
 
 const Index = forwardRef<HTMLDivElement>((_, ref) => {
   const [companyCount, setCompanyCount] = useState(0);
