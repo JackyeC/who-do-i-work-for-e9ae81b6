@@ -100,7 +100,7 @@ export function TopBar() {
     const s = tickerStats;
     if (s) {
       items.push(`PLATFORM: ${s.totalCompanies.toLocaleString()} companies tracked`);
-      items.push(`SIGNALS: ${s.totalSignals.toLocaleString()} employer signals indexed`);
+      items.push(`SCANS: ${s.totalScans.toLocaleString()} total intelligence scans`);
       if (s.recentScans.length > 0) {
         items.push(`LATEST SCAN: ${s.recentScans[0]?.company_name ?? "—"}`);
       }
