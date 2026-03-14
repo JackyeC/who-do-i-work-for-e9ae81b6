@@ -56,9 +56,7 @@ export default function WorkWithJackye() {
           The AI coach is always available. But sometimes you need the real thing — direct access to Jackye Clayton for career strategy, recruiting advisory, HR tech positioning, and offer review.
         </p>
         <div className="flex items-center gap-4 mb-12">
-          <div className="w-16 h-16 bg-gradient-to-br from-civic-gold-muted to-primary flex items-center justify-center font-serif text-2xl text-primary-foreground shrink-0">
-            JC
-          </div>
+          <img src={jackyeHeadshot} alt="Jackye Clayton" className="w-16 h-16 object-cover shrink-0" />
           <div>
             <div className="font-serif text-base text-primary">Jackye Clayton</div>
             <div className="text-[11px] text-muted-foreground">20+ years in HR · Recruiting · Talent Strategy · HR Tech</div>

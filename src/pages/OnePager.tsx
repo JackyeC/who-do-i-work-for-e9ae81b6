@@ -72,9 +72,7 @@ const OnePager = () => {
 
         {/* Jackye strip */}
         <div className="grid grid-cols-[auto_1fr] gap-5 bg-card border border-border border-t-2 border-t-primary p-5 mb-8 items-center">
-          <div className="w-14 h-14 rounded-full bg-gradient-to-br from-civic-gold-muted to-primary flex items-center justify-center font-serif text-xl font-bold text-primary-foreground shrink-0">
-            JC
-          </div>
+          <img src={jackyeHeadshot} alt="Jackye Clayton" className="w-14 h-14 rounded-full object-cover shrink-0" />
           <div>
             <div className="font-serif text-base font-bold text-primary">Jackye Clayton</div>
             <div className="font-mono text-micro tracking-wider uppercase text-muted-foreground mb-1.5">Founder · Career Intelligence by Jackye Clayton</div>

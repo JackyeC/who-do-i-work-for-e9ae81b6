@@ -136,9 +136,7 @@ export default function AskJackyePage() {
     <div className="flex flex-col h-[calc(100vh-78px)]">
       {/* Coach header */}
       <div className="flex items-center gap-4 px-6 py-4 bg-surface-2 border-b border-border shrink-0">
-        <div className="w-12 h-12 bg-gradient-to-br from-civic-gold-muted to-primary flex items-center justify-center font-serif text-xl text-primary-foreground shrink-0">
-          JC
-        </div>
+        <img src={jackyeHeadshot} alt="Jackye Clayton" className="w-12 h-12 object-cover shrink-0" />
         <div className="flex-1">
           <div className="font-serif text-base text-primary">Jackye Clayton</div>
           <div className="text-[11px] text-muted-foreground">Career Strategist · HR Intelligence Expert · Your Advocate</div>

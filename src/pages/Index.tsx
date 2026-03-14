@@ -211,9 +211,7 @@ const Index = forwardRef<HTMLDivElement>((_, ref) => {
         <section className="bg-card border-y border-border px-6 lg:px-16 py-20 lg:py-24">
           <div className="max-w-[1100px] mx-auto grid grid-cols-1 lg:grid-cols-[1fr_2fr] gap-12 lg:gap-20 items-center">
             <div>
-              <div className="w-24 h-24 bg-gradient-to-br from-civic-gold-muted to-primary flex items-center justify-center font-serif text-4xl text-primary-foreground mb-4">
-                JC
-              </div>
+              <img src={jackyeHeadshot} alt="Jackye Clayton" className="w-24 h-24 object-cover mb-4" />
               <div className="font-serif text-xl text-primary mb-1">Jackye Clayton</div>
               <div className="font-mono text-[9px] tracking-wider uppercase text-muted-foreground">
                 Founder · Career Strategist · HR Intelligence Expert
