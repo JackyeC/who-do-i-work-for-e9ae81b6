@@ -344,15 +344,20 @@ export function CorporateCharacterScore(props: CorporateCharacterScoreProps) {
   const strokeDashoffset = circumference - (totalScore / 100) * circumference;
 
   return (
-    <Card className="border-primary/20">
+    <Card className={cn("border-primary/20", totalScore < 40 && "animate-caution")}>
       <CardHeader className="pb-3">
         <CardTitle className="flex items-center justify-between">
-          <div className="flex items-center gap-2 text-lg">
+          <div className="flex items-center gap-2 text-lg font-display">
             <Shield className="w-5 h-5 text-primary" />
             Corporate Character Score™
           </div>
+          {totalScore < 40 && (
+            <Badge variant="destructive" className="animate-pulse font-mono text-[10px] tracking-wider">
+              CAUTION
+            </Badge>
+          )}
         </CardTitle>
-        <p className="text-xs text-muted-foreground">
+        <p className="text-xs text-muted-foreground font-mono">
           Evidence-based assessment of organizational character across transparency, conduct, and influence.
         </p>
       </CardHeader>
