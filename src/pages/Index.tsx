@@ -64,7 +64,7 @@ const Index = forwardRef<HTMLDivElement>((_, ref) => {
             initial={{ opacity: 0, y: 8 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.4 }}
-            className="font-mono text-label uppercase text-primary mb-4 flex items-center gap-2"
+            className="font-mono text-xs uppercase text-primary mb-4 flex items-center gap-2"
           >
             <span className="w-8 h-px bg-primary inline-block" />
             Career Intelligence Platform
