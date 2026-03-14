@@ -349,7 +349,7 @@ export default function CompanyProfile() {
   const hasDetailedData = (dbCandidates?.length || 0) > 0 || (dbExecutives?.length || 0) > 0;
 
   // Transparency score (simple count-based)
-  const transparencySignals = [!!tiAiHr, !!tiBenefits, !!tiPayEquity, !!tiSentiment, (dbPublicStances?.length || 0) > 0, (dbExecutives?.length || 0) > 0, !!tiIdeology];
+  const transparencySignals = [!!tiAiHr, !!tiBenefits, !!tiPayEquity, !!tiSentiment, (dbPublicStances?.length || 0) > 0, (dbExecutives?.length || 0) > 0, !!tiIdeology, (dbBoardMembers?.length || 0) > 0];
   const transparencyScore = Math.round((transparencySignals.filter(Boolean).length / transparencySignals.length) * 100);
 
   // Corporate Character Score for sticky header
