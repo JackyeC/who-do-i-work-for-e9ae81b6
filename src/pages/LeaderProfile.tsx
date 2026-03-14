@@ -15,6 +15,7 @@ import { formatCurrency } from "@/data/sampleData";
 import { FollowLeaderButton } from "@/components/FollowLeaderButton";
 import { LoadingState } from "@/components/LoadingState";
 import { usePageSEO } from "@/hooks/use-page-seo";
+import { useLeaderEnrichment } from "@/hooks/use-leader-enrichment";
 import { useState } from "react";
 
 export default function LeaderProfile() {
