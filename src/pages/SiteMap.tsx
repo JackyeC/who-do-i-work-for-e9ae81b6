@@ -89,7 +89,7 @@ const sections: SiteSection[] = [
 export default function SiteMap() {
   const { user } = useAuth();
 
-  usePageSeo({
+  usePageSEO({
     title: "Site Map — Who Do I Work For?",
     description: "Explore all tools, analyzers, and intelligence features available on the Who Do I Work For? career intelligence platform.",
     path: "/site-map",
