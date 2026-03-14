@@ -705,14 +705,14 @@ export default function CompanyProfile() {
             </div>
           </section>
 
-          <Separator className="mb-8" />
+          <Separator className="mb-10" />
 
           {/* ═══════════════════════════════════════════════════════════
               7. WORKFORCE STABILITY
              ═══════════════════════════════════════════════════════════ */}
-           <section id="section-stability" className="mb-8 scroll-mt-28">
+           <section id="section-stability" className="mb-10 scroll-mt-28">
             <SectionHeader icon={AlertTriangle} title="Workforce Stability" subtitle="Layoffs, WARN notices, and workforce reduction signals" />
-            <div className="space-y-4 pl-12">
+            <div className="space-y-4">
               <WarnTrackerCard companyName={name} dbCompanyId={dbCompanyId} />
             </div>
           </section>
