@@ -363,7 +363,7 @@ export default function CompanyProfile() {
   });
 
   return (
-    <div className="flex flex-col min-h-0">
+    <ContentProtector className="flex flex-col min-h-0">
       {/* Sticky Score Header */}
       <StickyScoreHeader
         companyName={name}
