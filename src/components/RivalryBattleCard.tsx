@@ -1,7 +1,7 @@
 import { Link } from "react-router-dom";
 import { cn } from "@/lib/utils";
 import { ArrowRight, MapPin, Zap, Shield } from "lucide-react";
-import { Badge } from "@/components/ui/badge";
+import { FollowRivalryButton } from "@/components/FollowRivalryButton";
 import type { Rivalry } from "@/data/rivalries2026";
 
 interface RivalryBattleCardProps {
