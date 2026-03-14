@@ -71,6 +71,7 @@ import CompareCompanies from "./pages/CompareCompanies";
 import InvestigativeExplorer from "./pages/InvestigativeExplorer";
 import SiteMap from "./pages/SiteMap";
 import Rivalries from "./pages/Rivalries";
+import BrandMadness from "./pages/BrandMadness";
 import { CookieNotice } from "@/components/CookieNotice";
 
 const queryClient = new QueryClient();
@@ -204,6 +205,7 @@ const App = () => (
                 <Route path="/offer-clarity" element={<OfferClarity />} />
                 <Route path="/site-map" element={<SiteMap />} />
                 <Route path="/rivalries" element={<Rivalries />} />
+                <Route path="/brand-madness" element={<BrandMadness />} />
                 <Route path="*" element={<NotFound />} />
               </Routes>
               <AskJackyeWidget />

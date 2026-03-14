@@ -562,6 +562,33 @@ export type Database = {
           },
         ]
       }
+      bracket_votes: {
+        Row: {
+          created_at: string
+          id: string
+          matchup_id: string
+          round: number
+          user_id: string | null
+          voted_for: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          matchup_id: string
+          round?: number
+          user_id?: string | null
+          voted_for: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          matchup_id?: string
+          round?: number
+          user_id?: string | null
+          voted_for?: string
+        }
+        Relationships: []
+      }
       browse_ai_change_events: {
         Row: {
           change_summary: string | null
@@ -4874,6 +4901,27 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
+      }
+      rivalry_follows: {
+        Row: {
+          created_at: string
+          id: string
+          rivalry_id: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          rivalry_id: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          rivalry_id?: string
+          user_id?: string
+        }
+        Relationships: []
       }
       role_pathway: {
         Row: {

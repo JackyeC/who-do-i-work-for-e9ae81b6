@@ -1,7 +1,7 @@
 import { Link } from "react-router-dom";
 import { cn } from "@/lib/utils";
 import { ArrowRight, MapPin, Zap, Shield } from "lucide-react";
-import { Badge } from "@/components/ui/badge";
+import { FollowRivalryButton } from "@/components/FollowRivalryButton";
 import type { Rivalry } from "@/data/rivalries2026";
 
 interface RivalryBattleCardProps {
@@ -144,12 +144,15 @@ export function RivalryBattleCard({ rivalry, compact }: RivalryBattleCardProps) 
             {rivalry.companyB.name} Intel →
           </Link>
         </div>
-        <Link
-          to={`/compare?a=${rivalry.companyA.slug}&b=${rivalry.companyB.slug}`}
-          className="font-mono text-[9px] tracking-wider uppercase text-muted-foreground hover:text-primary transition-colors flex items-center gap-1"
-        >
-          Compare <ArrowRight className="w-2.5 h-2.5" />
-        </Link>
+        <div className="flex items-center gap-3">
+          <FollowRivalryButton rivalryId={rivalry.id} rivalryTitle={rivalry.title} compact />
+          <Link
+            to={`/compare?a=${rivalry.companyA.slug}&b=${rivalry.companyB.slug}`}
+            className="font-mono text-[9px] tracking-wider uppercase text-muted-foreground hover:text-primary transition-colors flex items-center gap-1"
+          >
+            Compare <ArrowRight className="w-2.5 h-2.5" />
+          </Link>
+        </div>
       </div>
     </div>
   );
