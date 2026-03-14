@@ -24,7 +24,6 @@ export function ResumeTailor() {
       const { data, error } = await supabase
         .from("user_documents")
         .select("*")
-        .eq("status", "parsed")
         .order("created_at", { ascending: false });
       if (error) throw error;
       return data || [];
