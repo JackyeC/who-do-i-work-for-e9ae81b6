@@ -14,6 +14,7 @@ const PRIMARY_PIPELINE_MODULES = [
   { key: 'sec_edgar', label: 'SEC EDGAR (Filings & Compensation)', fn: 'sync-sec-edgar', phase: 'pipeline' },
   { key: 'opencorporates', label: 'Corporate Structure (OpenCorporates)', fn: 'sync-opencorporates', phase: 'pipeline' },
   { key: 'workplace_enforcement', label: 'Workplace Enforcement (DOL)', fn: 'sync-workplace-enforcement', phase: 'pipeline' },
+  { key: 'finnhub_leadership', label: 'Leadership Verification (Finnhub)', fn: 'sync-finnhub-leadership', phase: 'pipeline' },
 ];
 
 // Phase 1b: Congress cross-reference (depends on FEC data being present first)
