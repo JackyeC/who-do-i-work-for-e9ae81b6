@@ -69,6 +69,7 @@ import LeaderProfile from "./pages/LeaderProfile";
 import Disclaimers from "./pages/Disclaimers";
 import CompareCompanies from "./pages/CompareCompanies";
 import InvestigativeExplorer from "./pages/InvestigativeExplorer";
+import SiteMap from "./pages/SiteMap";
 import { CookieNotice } from "@/components/CookieNotice";
 
 const queryClient = new QueryClient();
