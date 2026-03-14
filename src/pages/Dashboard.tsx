@@ -60,10 +60,19 @@ export default function Dashboard() {
     enabled: !!user,
   });
 
+  const creditPurchase = searchParams.get("credit_purchase");
+  const [showUpsell, setShowUpsell] = useState(creditPurchase === "success");
+
   if (loading || onboardingLoading) return null;
   if (!user) return <Navigate to="/login" replace />;
 
   const showOnboarding = onboardingCompleted === false;
+
+  const dismissUpsell = () => {
+    setShowUpsell(false);
+    searchParams.delete("credit_purchase");
+    setSearchParams(searchParams, { replace: true });
+  };
 
   const renderContent = () => {
     switch (tab) {
