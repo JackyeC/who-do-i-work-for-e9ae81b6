@@ -62,4 +62,4 @@ Disallow: /
 User-agent: *
 Allow: /
 
-Sitemap: https://who-do-i-work-for.lovable.app/sitemap.xml
+Sitemap: https://wdiwf.jackyeclayton.com/sitemap.xml

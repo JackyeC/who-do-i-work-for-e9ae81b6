@@ -14,7 +14,7 @@ export function useCompanySEO({ name, industry, state, description, slug }: Comp
     const desc = description
       ? `${description.slice(0, 120)}… Review political spending, lobbying, and influence signals.`
       : `Review ${name}'s political spending, lobbying activity, executive donations, and influence network. ${industry} company based in ${state}.`;
-    const url = `https://civic-align.lovable.app/company/${slug}`;
+    const url = `https://wdiwf.jackyeclayton.com/company/${slug}`;
 
     // Title
     document.title = title;
