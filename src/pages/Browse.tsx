@@ -9,7 +9,11 @@ import { companies as sampleCompanies, formatCurrency } from "@/data/sampleData"
 import { supabase } from "@/integrations/supabase/client";
 import { useQuery } from "@tanstack/react-query";
 import { useToast } from "@/hooks/use-toast";
-import { Building2, ArrowRight, Search, TrendingUp, SortAsc, Sparkles, Loader2 } from "lucide-react";
+import { Building2, ArrowRight, Search, TrendingUp, SortAsc, Sparkles, Loader2, Landmark } from "lucide-react";
+import { EmptyState } from "@/components/EmptyState";
+import { LoadingState } from "@/components/LoadingState";
+import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
+import { NonProfitDirectory } from "@/components/browse/NonProfitDirectory";
 import { EmptyState } from "@/components/EmptyState";
 import { LoadingState } from "@/components/LoadingState";
 import {
