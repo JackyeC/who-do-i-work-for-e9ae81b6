@@ -8,7 +8,7 @@ import { Separator } from "@/components/ui/separator";
 import {
   User, ArrowLeft, Briefcase, Building2, Shield, DollarSign,
   ExternalLink, Linkedin, Globe, Search, Network, Calendar,
-  Sparkles, Loader2, ChevronDown, ChevronUp, MapPin, Scale
+  Sparkles, Loader2, ChevronDown, ChevronUp, MapPin, Scale, UserX, ShieldCheck, AlertTriangle
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { formatCurrency } from "@/data/sampleData";
