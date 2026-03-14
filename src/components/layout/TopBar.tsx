@@ -3,7 +3,7 @@ import { Link, useNavigate, useLocation } from "react-router-dom";
 import { useAuth } from "@/contexts/AuthContext";
 import { useDemoSafeMode } from "@/contexts/DemoSafeModeContext";
 import { cn } from "@/lib/utils";
-import { Search, LogIn, LogOut, Menu, X, Shield } from "lucide-react";
+import { Search, LogIn, LogOut, Menu, X, Shield, Map, ChevronDown } from "lucide-react";
 import { ThemeToggle } from "@/components/ThemeToggle";
 
 export const MAIN_SECTIONS = [
@@ -18,8 +18,22 @@ export const MAIN_SECTIONS = [
     id: "offer",
     label: "Offer Intelligence",
     path: "/check",
-    matchPaths: ["/check", "/offer-check", "/offer-review", "/strategic-offer-review"],
+    matchPaths: ["/check", "/offer-check", "/offer-review", "/strategic-offer-review", "/offer-clarity"],
     subItems: [],
+  },
+  {
+    id: "tools",
+    label: "Tools",
+    path: "/site-map",
+    matchPaths: ["/would-you-work-here", "/employer-receipt", "/evp-reality-check", "/what-am-i-supporting", "/follow-the-money", "/compare", "/site-map"],
+    subItems: [
+      { label: "Would You Work Here?", path: "/would-you-work-here" },
+      { label: "Employer Receipt", path: "/employer-receipt" },
+      { label: "EVP Reality Check", path: "/evp-reality-check" },
+      { label: "Follow the Money", path: "/follow-the-money" },
+      { label: "Compare Companies", path: "/compare" },
+      { label: "All Tools →", path: "/site-map" },
+    ],
   },
   {
     id: "coach",
@@ -121,19 +135,35 @@ export function TopBar() {
           {MAIN_SECTIONS.map(section => {
             if ((section as any).auth && !user) return null;
             const active = isSectionActive(section, location.pathname);
+            const hasDropdown = section.subItems && section.subItems.length > 0;
             return (
-              <Link
-                key={section.id}
-                to={section.path}
-                className={cn(
-                  "font-mono text-[10px] tracking-wider uppercase px-4 h-full flex items-center border-b-2 transition-colors",
-                  active
-                    ? "text-primary border-primary"
-                    : "text-muted-foreground border-transparent hover:text-foreground"
+              <div key={section.id} className="relative h-full group">
+                <Link
+                  to={section.path}
+                  className={cn(
+                    "font-mono text-[10px] tracking-wider uppercase px-4 h-full flex items-center border-b-2 transition-colors gap-1",
+                    active
+                      ? "text-primary border-primary"
+                      : "text-muted-foreground border-transparent hover:text-foreground"
+                  )}
+                >
+                  {section.label}
+                  {hasDropdown && <ChevronDown className="w-2.5 h-2.5" />}
+                </Link>
+                {hasDropdown && (
+                  <div className="absolute top-full left-0 hidden group-hover:block bg-card border border-border shadow-lg min-w-[200px] z-50">
+                    {section.subItems.map(sub => (
+                      <Link
+                        key={sub.path}
+                        to={sub.path}
+                        className="block px-4 py-2.5 font-mono text-[10px] tracking-wider text-muted-foreground hover:text-primary hover:bg-primary/[0.04] transition-colors"
+                      >
+                        {sub.label}
+                      </Link>
+                    ))}
+                  </div>
                 )}
-              >
-                {section.label}
-              </Link>
+              </div>
             );
           })}
         </nav>

@@ -69,6 +69,7 @@ import LeaderProfile from "./pages/LeaderProfile";
 import Disclaimers from "./pages/Disclaimers";
 import CompareCompanies from "./pages/CompareCompanies";
 import InvestigativeExplorer from "./pages/InvestigativeExplorer";
+import SiteMap from "./pages/SiteMap";
 import { CookieNotice } from "@/components/CookieNotice";
 
 const queryClient = new QueryClient();
@@ -200,6 +201,7 @@ const App = () => (
                 <Route path="/offer-checks" element={<Navigate to="/my-offer-checks" replace />} />
                 <Route path="/outreach" element={<Navigate to="/dashboard?tab=outreach" replace />} />
                 <Route path="/offer-clarity" element={<OfferClarity />} />
+                <Route path="/site-map" element={<SiteMap />} />
                 <Route path="*" element={<NotFound />} />
               </Routes>
               <AskJackyeWidget />
