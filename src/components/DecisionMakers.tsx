@@ -276,6 +276,7 @@ export function DecisionMakers({ executives, companyId, companyName, onExecutive
                     leaderId={exec.id}
                     leaderType="executive"
                     companyId={companyId}
+                    verificationStatus={exec.verification_status}
                     onViewProfile={() => onExecutiveClick(exec)}
                     onTraceInfluence={() => onExecutiveClick(exec)}
                   />
