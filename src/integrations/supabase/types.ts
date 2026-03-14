@@ -2646,6 +2646,36 @@ export type Database = {
         }
         Relationships: []
       }
+      credit_purchases: {
+        Row: {
+          amount_cents: number
+          created_at: string
+          credits_added: number
+          id: string
+          product_id: string
+          stripe_session_id: string | null
+          user_id: string
+        }
+        Insert: {
+          amount_cents: number
+          created_at?: string
+          credits_added: number
+          id?: string
+          product_id: string
+          stripe_session_id?: string | null
+          user_id: string
+        }
+        Update: {
+          amount_cents?: number
+          created_at?: string
+          credits_added?: number
+          id?: string
+          product_id?: string
+          stripe_session_id?: string | null
+          user_id?: string
+        }
+        Relationships: []
+      }
       email_signups: {
         Row: {
           created_at: string
@@ -5675,6 +5705,33 @@ export type Database = {
           id?: string
           last_name?: string
           title?: string | null
+          user_id?: string
+        }
+        Relationships: []
+      }
+      user_credits: {
+        Row: {
+          credits_purchased: number
+          credits_remaining: number
+          id: string
+          last_purchase_at: string | null
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          credits_purchased?: number
+          credits_remaining?: number
+          id?: string
+          last_purchase_at?: string | null
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          credits_purchased?: number
+          credits_remaining?: number
+          id?: string
+          last_purchase_at?: string | null
+          updated_at?: string
           user_id?: string
         }
         Relationships: []
