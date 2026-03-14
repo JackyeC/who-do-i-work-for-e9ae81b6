@@ -2,7 +2,7 @@ import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetDescription } from "
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { ExternalLink, User, ArrowRight, Linkedin, Globe, Search, Sparkles, Loader2, ChevronDown, ChevronUp, MapPin } from "lucide-react";
+import { ExternalLink, User, ArrowRight, Linkedin, Globe, Search, Sparkles, Loader2, ChevronDown, ChevronUp, MapPin, AlertTriangle, FileText } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { formatCurrency } from "@/data/sampleData";
 import { supabase } from "@/integrations/supabase/client";
@@ -63,6 +63,67 @@ export function ExecutiveDetailDrawer({ open, onOpenChange, executive, companyNa
       return data || [];
     },
     enabled: !!effectiveExecId && open,
+  });
+
+  // Cross-reference executive name against investigative document archives
+  const { data: investigativeMentions } = useQuery({
+    queryKey: ["executive-investigative-mentions", executive?.name],
+    queryFn: async () => {
+      if (!executive?.name) return [];
+      const nameParts = executive.name.replace(/,/g, " ").split(/\s+/).filter(Boolean);
+      const lastName = nameParts.length > 1 ? nameParts[nameParts.length - 1] : nameParts[0];
+      
+      // Search for matching entities in the power network
+      const { data: entities } = await (supabase as any)
+        .from("power_network_entities")
+        .select("id, name, description, aliases, is_victim, is_redacted")
+        .eq("entity_type", "person")
+        .eq("is_victim", false)
+        .ilike("name", `%${lastName}%`)
+        .limit(20);
+      
+      if (!entities || entities.length === 0) return [];
+      
+      // Filter for close name matches
+      const normalName = executive.name.toLowerCase().replace(/[,.\s]+/g, " ").trim();
+      const matched = entities.filter((e: any) => {
+        const eName = e.name.toLowerCase().replace(/[,.\s]+/g, " ").trim();
+        return eName.includes(normalName) || normalName.includes(eName) || 
+               (e.aliases && e.aliases.some((a: string) => {
+                 const aLower = a.toLowerCase().replace(/[,.\s]+/g, " ").trim();
+                 return aLower.includes(normalName) || normalName.includes(aLower);
+               }));
+      });
+      
+      if (matched.length === 0) return [];
+      
+      // Get document mentions for matched entities
+      const entityIds = matched.map((e: any) => e.id);
+      const { data: mentions } = await (supabase as any)
+        .from("power_network_mentions")
+        .select("id, context_snippet, page_number, confidence, document_id")
+        .in("entity_id", entityIds)
+        .order("confidence", { ascending: false })
+        .limit(20);
+      
+      if (!mentions || mentions.length === 0) return [];
+      
+      // Get document details
+      const docIds = [...new Set(mentions.map((m: any) => m.document_id))];
+      const { data: docs } = await (supabase as any)
+        .from("power_network_documents")
+        .select("id, title, document_type, source_url, date_published")
+        .in("id", docIds);
+      
+      const docMap = (docs || []).reduce((acc: any, d: any) => { acc[d.id] = d; return acc; }, {});
+      
+      return mentions.map((m: any) => ({
+        ...m,
+        document: docMap[m.document_id] || null,
+        entityName: matched.find((e: any) => entityIds.includes(e.id))?.name,
+      }));
+    },
+    enabled: !!executive?.name && open,
   });
 
   const fetchRecipientImpact = async (recipientName: string, party: string) => {
@@ -333,6 +394,63 @@ export function ExecutiveDetailDrawer({ open, onOpenChange, executive, companyNa
             </p>
           )}
         </div>
+
+        {/* Investigative Document Mentions */}
+        {investigativeMentions && investigativeMentions.length > 0 && (
+          <Card className="mb-4 border-destructive/40 bg-destructive/5">
+            <CardContent className="p-4">
+              <div className="flex items-center gap-2 mb-3">
+                <AlertTriangle className="w-4 h-4 text-destructive" />
+                <p className="text-sm font-semibold text-destructive">Investigative Document Mentions</p>
+              </div>
+              <p className="text-xs text-muted-foreground mb-3">
+                This person's name appears in {investigativeMentions.length} mention{investigativeMentions.length !== 1 ? "s" : ""} across archived investigative documents. 
+                Inclusion does not imply wrongdoing — verify context carefully.
+              </p>
+              <div className="space-y-2">
+                {investigativeMentions.slice(0, 5).map((mention: any, idx: number) => (
+                  <div key={mention.id || idx} className="rounded-lg border border-destructive/20 bg-card p-3">
+                    <div className="flex items-start gap-2">
+                      <FileText className="w-3.5 h-3.5 text-destructive/70 mt-0.5 shrink-0" />
+                      <div className="flex-1 min-w-0">
+                        {mention.document && (
+                          <p className="text-xs font-medium text-foreground truncate">
+                            {mention.document.title}
+                          </p>
+                        )}
+                        {mention.context_snippet && (
+                          <p className="text-xs text-muted-foreground mt-1 line-clamp-3 italic">
+                            "{mention.context_snippet}"
+                          </p>
+                        )}
+                        <div className="flex items-center gap-2 mt-1.5 flex-wrap">
+                          {mention.page_number && (
+                            <span className="text-[10px] text-muted-foreground">p. {mention.page_number}</span>
+                          )}
+                          {mention.confidence && (
+                            <Badge variant="outline" className="text-[10px] px-1.5 py-0">
+                              {mention.confidence >= 0.8 ? "High match" : mention.confidence >= 0.5 ? "Likely match" : "Possible match"}
+                            </Badge>
+                          )}
+                          {mention.document?.source_url && (
+                            <a href={mention.document.source_url} target="_blank" rel="noopener noreferrer" className="text-[10px] text-primary hover:underline flex items-center gap-0.5">
+                              <ExternalLink className="w-2.5 h-2.5" /> Source
+                            </a>
+                          )}
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                ))}
+                {investigativeMentions.length > 5 && (
+                  <p className="text-[10px] text-muted-foreground text-center pt-1">
+                    + {investigativeMentions.length - 5} more mentions in the archive
+                  </p>
+                )}
+              </div>
+            </CardContent>
+          </Card>
+        )}
 
         {/* Social & Research links */}
         <div className="space-y-2">
