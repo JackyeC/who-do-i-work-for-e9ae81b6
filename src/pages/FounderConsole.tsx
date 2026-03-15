@@ -335,7 +335,14 @@ export default function FounderConsole() {
           <FounderNotesPanel />
         </div>
 
-        {/* Pending Reviews Section */}
+        {/* Admin Review Queues */}
+        <div className="mt-8 grid grid-cols-1 lg:grid-cols-3 gap-6">
+          <ResearchPublishQueue />
+          <JobApprovalQueue />
+          <CertificationQueue />
+        </div>
+
+        {/* Legacy Pending Reviews */}
         <div className="mt-8">
           <PendingReviewsDashboard />
         </div>
