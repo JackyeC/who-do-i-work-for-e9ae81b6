@@ -41,9 +41,9 @@ interface JobListRowProps {
 export function JobListRow({ job, companyValueSignals = [], companySignalFlags = [], matchScore, isSelected, onClick }: JobListRowProps) {
   const company = job.companies;
   const WorkModeIcon = job.work_mode ? WORK_MODE_ICONS[job.work_mode] : null;
+  const isSponsored = job.is_sponsored && (!job.sponsor_expires_at || new Date(job.sponsor_expires_at) > new Date());
 
   return (
-    const isSponsored = job.is_sponsored && (!job.sponsor_expires_at || new Date(job.sponsor_expires_at) > new Date());
 
     <button
       onClick={onClick}
