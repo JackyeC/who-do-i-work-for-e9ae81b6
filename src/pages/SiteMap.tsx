@@ -139,6 +139,11 @@ export default function SiteMap() {
                           <span className="font-mono text-[11px] text-foreground group-hover:text-primary transition-colors tracking-wide">
                             {link.label}
                           </span>
+                          {link.premium && (
+                            <span className="font-mono text-[8px] uppercase tracking-wider px-1.5 py-0.5 bg-accent text-accent-foreground border border-accent/40">
+                              {link.premium === "professional" ? "Pro" : "Paid"}
+                            </span>
+                          )}
                           {link.auth && (
                             <span className="font-mono text-[8px] uppercase tracking-wider px-1.5 py-0.5 bg-primary/10 text-primary border border-primary/20">
                               Login
