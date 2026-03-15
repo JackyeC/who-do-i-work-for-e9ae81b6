@@ -102,16 +102,21 @@ export function SocialMonitorCard({ companyId, companyName, executiveNames, dbCo
           <Radio className="w-5 h-5 text-primary" />
           Social & Media Monitor
         </CardTitle>
-        <Button
-          onClick={runScan}
-          disabled={isScanning || !dbCompanyId}
-          size="sm"
-          variant="outline"
-          className="gap-1.5"
-        >
-          {isScanning ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <RefreshCw className="w-3.5 h-3.5" />}
-          {isScanning ? "Scanning..." : "Run Scan"}
-        </Button>
+        <div className="flex items-center gap-2">
+          {(isFirecrawlDown || firecrawlDown) && cachedScan && (
+            <SavedIntelligenceBadge lastUpdated={cachedScan?.scanned_at} />
+          )}
+          <Button
+            onClick={runScan}
+            disabled={isScanning || !dbCompanyId || isFirecrawlDown}
+            size="sm"
+            variant="outline"
+            className="gap-1.5"
+          >
+            {isScanning ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : isFirecrawlDown ? <CloudOff className="w-3.5 h-3.5" /> : <RefreshCw className="w-3.5 h-3.5" />}
+            {isScanning ? "Scanning..." : isFirecrawlDown ? `Paused (~${cooldownMinutes}m)` : "Run Scan"}
+          </Button>
+        </div>
       </CardHeader>
       <CardContent className="space-y-4">
         {!result ? (
