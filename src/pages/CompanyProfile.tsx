@@ -27,6 +27,7 @@ import { WorkerSentimentCard } from "@/components/WorkerSentimentCard";
 import { AIHiringCard } from "@/components/AIHiringCard";
 import { WorkerBenefitsCard } from "@/components/WorkerBenefitsCard";
 import { CompensationTransparencyCard } from "@/components/CompensationTransparencyCard";
+import { CompensationMarketCard } from "@/components/CompensationMarketCard";
 import { PromotionEquityCard } from "@/components/PromotionEquityCard";
 import { WarnTrackerCard } from "@/components/WarnTrackerCard";
 import { BLSDemographicsCard } from "@/components/bls/BLSDemographicsCard";
@@ -914,6 +915,7 @@ export default function CompanyProfile() {
                 <section id="section-compensation" className="mb-10 scroll-mt-28">
                   <SectionHeader icon={DollarSign} title="Compensation Transparency" subtitle="Pay equity signals and national benchmarks" />
                   <div className="space-y-4">
+                    <CompensationMarketCard companyName={name} dbCompanyId={dbCompanyId} />
                     <CompensationTransparencyCard companyName={name} dbCompanyId={dbCompanyId} />
                   </div>
                 </section>

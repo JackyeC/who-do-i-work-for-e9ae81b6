@@ -53,3 +53,6 @@ verify_jwt = false
 
 [functions.company-research-perplexity]
 verify_jwt = false
+
+[functions.fetch-company-compensation]
+verify_jwt = false
