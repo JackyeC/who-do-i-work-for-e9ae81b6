@@ -70,16 +70,24 @@ export function OfferStrengthScore({ result, isAIPowered, loading }: Props) {
             <div className="relative shrink-0" style={{ width: ringSize, height: ringSize }}>
               <svg width={ringSize} height={ringSize} className="-rotate-90">
                 <circle cx={ringSize / 2} cy={ringSize / 2} r={radius} fill="none" stroke="hsl(var(--border))" strokeWidth="7" />
-                <circle
-                  cx={ringSize / 2} cy={ringSize / 2} r={radius} fill="none"
-                  stroke={ringColor} strokeWidth="7" strokeLinecap="round"
-                  strokeDasharray={circumference} strokeDashoffset={loading ? circumference : offset}
-                  className="transition-all duration-1000"
-                />
+                {!loading && (
+                  <circle
+                    cx={ringSize / 2} cy={ringSize / 2} r={radius} fill="none"
+                    stroke={ringColor} strokeWidth="7" strokeLinecap="round"
+                    strokeDasharray={circumference} strokeDashoffset={offset}
+                    className="transition-all duration-1000"
+                  />
+                )}
               </svg>
               <div className="absolute inset-0 flex flex-col items-center justify-center">
-                <span className="text-4xl font-display font-bold text-foreground">{loading ? "—" : totalScore}</span>
-                <span className="text-[10px] text-muted-foreground font-medium">/ 100</span>
+                {loading ? (
+                  <Loader2 className="w-8 h-8 text-primary animate-spin" />
+                ) : (
+                  <>
+                    <span className="text-4xl font-display font-bold text-foreground">{totalScore}</span>
+                    <span className="text-[10px] text-muted-foreground font-medium">/ 100</span>
+                  </>
+                )}
               </div>
             </div>
 
@@ -90,28 +98,39 @@ export function OfferStrengthScore({ result, isAIPowered, loading }: Props) {
                   Offer Strength Score™
                 </h2>
                 <div className="flex items-center gap-2 justify-center sm:justify-start flex-wrap">
-                  <span className={cn("text-sm font-semibold", label.color)}>{finalLabel}</span>
-                  <Badge variant="outline" className={cn("text-[10px]", confStyle.className)}>{confStyle.label}</Badge>
-                  {isAIPowered && <Badge variant="outline" className="text-[10px] gap-1"><Sparkles className="w-2.5 h-2.5" /> AI-Powered</Badge>}
-                  {personalizationApplied && <Badge variant="outline" className="text-[10px]">Personalized</Badge>}
+                  {loading ? (
+                    <span className="text-sm font-semibold text-primary animate-pulse">Analyzing Your Offer...</span>
+                  ) : (
+                    <span className={cn("text-sm font-semibold", label.color)}>{finalLabel}</span>
+                  )}
+                  {!loading && <Badge variant="outline" className={cn("text-[10px]", confStyle.className)}>{confStyle.label}</Badge>}
+                  {isAIPowered && !loading && <Badge variant="outline" className="text-[10px] gap-1"><Sparkles className="w-2.5 h-2.5" /> AI-Powered</Badge>}
+                  {personalizationApplied && !loading && <Badge variant="outline" className="text-[10px]">Personalized</Badge>}
                 </div>
               </div>
 
               {/* Recommendation badge */}
-              <div className={cn("inline-flex items-center gap-2 px-3 py-1.5 rounded-lg border text-sm font-medium", recStyle.className)}>
-                <RecIcon className="w-4 h-4" />
-                {finalRecommendation}
-              </div>
+              {loading ? (
+                <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-lg border border-primary/30 bg-primary/5 text-sm font-medium text-primary">
+                  <Loader2 className="w-4 h-4 animate-spin" />
+                  Gathering Intelligence — Please Wait
+                </div>
+              ) : (
+                <div className={cn("inline-flex items-center gap-2 px-3 py-1.5 rounded-lg border text-sm font-medium", recStyle.className)}>
+                  <RecIcon className="w-4 h-4" />
+                  {finalRecommendation}
+                </div>
+              )}
 
               {/* Why this score */}
-              {whyThisScore && (
+              {!loading && whyThisScore && (
                 <p className="text-sm text-muted-foreground leading-relaxed">{whyThisScore}</p>
               )}
             </div>
           </div>
 
           {/* Missing data warnings */}
-          {missingDataWarnings.length > 0 && (
+          {!loading && missingDataWarnings.length > 0 && (
             <div className="mt-5 p-3 bg-muted/40 rounded-xl space-y-1">
               <p className="text-[11px] font-medium text-muted-foreground flex items-center gap-1.5">
                 <Info className="w-3 h-3" /> Missing Information
@@ -124,17 +143,32 @@ export function OfferStrengthScore({ result, isAIPowered, loading }: Props) {
         </CardContent>
       </Card>
 
-      {/* Category breakdown */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-        {categories.map(cat => (
-          <CategoryCard
-            key={cat.key}
-            category={cat}
-            isExpanded={expandedCat === cat.key}
-            onToggle={() => setExpandedCat(expandedCat === cat.key ? null : cat.key)}
-          />
-        ))}
-      </div>
+      {/* Category breakdown — skeleton while loading */}
+      {loading ? (
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+          {[1, 2, 3, 4].map(i => (
+            <Card key={i} className="rounded-xl border-border/50">
+              <CardContent className="p-4 space-y-3">
+                <Skeleton className="h-4 w-3/4" />
+                <Skeleton className="h-1.5 w-full" />
+                <Skeleton className="h-3 w-full" />
+                <Skeleton className="h-3 w-2/3" />
+              </CardContent>
+            </Card>
+          ))}
+        </div>
+      ) : (
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+          {categories.map(cat => (
+            <CategoryCard
+              key={cat.key}
+              category={cat}
+              isExpanded={expandedCat === cat.key}
+              onToggle={() => setExpandedCat(expandedCat === cat.key ? null : cat.key)}
+            />
+          ))}
+        </div>
+      )}
     </div>
   );
 }
