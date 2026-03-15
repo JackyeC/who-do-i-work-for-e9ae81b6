@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { BarChart3, AlertTriangle } from "lucide-react";
+import { BarChart3, AlertTriangle, Info } from "lucide-react";
 
 interface LevelsFyiEmbedProps {
   companyName: string;
@@ -48,11 +48,31 @@ export function LevelsFyiEmbed({ companyName }: LevelsFyiEmbedProps) {
         <iframe
           src={embedUrl}
           title={`${companyName} compensation chart`}
-          className="w-full border-0 rounded-b-lg"
+          className="w-full border-0"
           style={{ height: 420 }}
           onError={() => setLoadError(true)}
           sandbox="allow-scripts allow-same-origin"
         />
+        {/* Compensation Intelligence Note */}
+        <div className="mx-4 mb-4 mt-3 p-3 bg-muted/40 border border-border/30 rounded-lg">
+          <div className="flex items-start gap-2">
+            <Info className="w-3.5 h-3.5 text-primary shrink-0 mt-0.5" />
+            <div>
+              <p className="text-xs font-semibold text-foreground mb-1">
+                📊 Intelligence Note
+              </p>
+              <p className="text-xs text-muted-foreground leading-relaxed">
+                Compensation data is provided via Levels.fyi and is based on self-reported and verified industry benchmarks.
+                While these numbers are the gold standard for tech and corporate roles, they are estimates.
+              </p>
+              <p className="text-xs text-muted-foreground leading-relaxed mt-1.5 italic">
+                <span className="font-medium text-foreground not-italic">Jackye's Context:</span>{" "}
+                A high salary is only one part of the equation. Use this data alongside the Connection Chain
+                to see if the company's ethics and stability match the paycheck.
+              </p>
+            </div>
+          </div>
+        </div>
       </CardContent>
     </Card>
   );
