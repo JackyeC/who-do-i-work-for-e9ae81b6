@@ -1,6 +1,7 @@
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { usePageSEO } from "@/hooks/use-page-seo";
+import { PendingReviewsDashboard } from "@/components/admin/PendingReviewsDashboard";
 import { useUserRole } from "@/hooks/use-user-role";
 import { Header } from "@/components/Header";
 import { Footer } from "@/components/Footer";
@@ -307,6 +308,11 @@ export default function FounderConsole() {
               </div>
             </div>
           </div>
+        </div>
+
+        {/* Pending Reviews Section */}
+        <div className="mt-8">
+          <PendingReviewsDashboard />
         </div>
       </main>
       <Footer />

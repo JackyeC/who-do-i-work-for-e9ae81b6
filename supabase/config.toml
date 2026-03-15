@@ -50,3 +50,6 @@ verify_jwt = false
 
 [functions.sync-work-news]
 verify_jwt = false
+
+[functions.company-research-perplexity]
+verify_jwt = false
