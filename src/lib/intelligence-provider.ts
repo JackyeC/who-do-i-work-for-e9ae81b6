@@ -30,16 +30,25 @@ export type IntelligenceSection =
 
 /** Freshness TTL in hours per section */
 export const SECTION_FRESHNESS: Record<IntelligenceSection, number> = {
-  careers: 48,              // 2 days — jobs change fast
-  news: 24,                 // 1 day — news is time-sensitive
-  worker_sentiment: 72,     // 3 days
+  careers: 24,              // 1 day — jobs change fast
+  news: 12,                 // 12 hours — news is time-sensitive
+  worker_sentiment: 48,     // 2 days
   compensation: 168,        // 7 days
-  leadership: 336,          // 14 days — changes rarely
-  reputation: 168,          // 7 days
-  recruiter_intelligence: 72, // 3 days
+  leadership: 168,          // 7 days — was 14, now faster
+  reputation: 72,           // 3 days
+  recruiter_intelligence: 48, // 2 days
   ai_hiring: 168,           // 7 days
-  ideology: 336,            // 14 days
+  ideology: 168,            // 7 days — was 14
   benefits: 168,            // 7 days
+  sanctions_screening: 168, // 7 days — sanctions lists update weekly
+  wikidata_enrichment: 336, // 14 days — changes rarely
+  corporate_structure: 168, // 7 days
+  political_influence: 72,  // 3 days — FEC data updates frequently
+  legal_risk: 72,           // 3 days — court records
+  lobbying: 168,            // 7 days
+  government_contracts: 168,// 7 days
+  insider_trading: 48,      // 2 days — SEC Form 4
+  sec_filings: 72,          // 3 days
 };
 
 /** Provider fallback chain per section */
