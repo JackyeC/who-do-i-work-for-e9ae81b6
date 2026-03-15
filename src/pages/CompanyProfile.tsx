@@ -70,7 +70,7 @@ import { calculateRRS, type RRSInput } from "@/lib/recruiterRealityScore";
 import { GTMScoreCard } from "@/components/GTMScoreCard";
 import { calculateGTM, type GTMInput } from "@/lib/gtmScore";
 import { PersonaSelector } from "@/components/PersonaSelector";
-import { type PersonaId, isSectionVisible, getSectionOrder } from "@/lib/personaConfig";
+import { type PersonaId, type PersonaBucket, isSectionVisible, getSectionOrder, getPersonaConfig } from "@/lib/personaConfig";
 import { CourtRecordsCard } from "@/components/CourtRecordsCard";
 import { NewsIntelligenceCard } from "@/components/NewsIntelligenceCard";
 import { InsiderTradingCard } from "@/components/InsiderTradingCard";
