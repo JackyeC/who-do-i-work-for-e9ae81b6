@@ -300,7 +300,7 @@ export default function FounderConsole() {
                   <span className="flex items-center gap-2"><TrendingUp className="w-3.5 h-3.5 text-muted-foreground" /> Brand Madness</span>
                   <Eye className="w-3.5 h-3.5 text-muted-foreground" />
                 </Link>
-                <Link to="/investigative-explorer" className="flex items-center justify-between p-2.5 rounded-lg hover:bg-muted/50 transition-colors text-sm text-foreground">
+                <Link to="/investigative" className="flex items-center justify-between p-2.5 rounded-lg hover:bg-muted/50 transition-colors text-sm text-foreground">
                   <span className="flex items-center gap-2"><Database className="w-3.5 h-3.5 text-muted-foreground" /> Data Explorer</span>
                   <Eye className="w-3.5 h-3.5 text-muted-foreground" />
                 </Link>
