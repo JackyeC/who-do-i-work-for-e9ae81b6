@@ -3,7 +3,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
-import { DollarSign, RefreshCw, Loader2, TrendingUp, AlertTriangle } from "lucide-react";
+import { DollarSign, RefreshCw, Loader2, TrendingUp, AlertTriangle, Info, Bot } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useToast } from "@/hooks/use-toast";
@@ -44,6 +44,15 @@ interface CompensationRecord {
   freshness_status: string | null;
 }
 
+// --- Source hierarchy labels (ordered by confidence) ---
+const SOURCE_HIERARCHY = [
+  { key: "levels_fyi", label: "Levels.fyi", tier: "High" },
+  { key: "glassdoor", label: "Glassdoor", tier: "Medium" },
+  { key: "apify", label: "Apify/Glassdoor", tier: "Medium" },
+  { key: "h1b", label: "H1B Filings", tier: "Medium" },
+  { key: "ai_estimation", label: "AI Estimation", tier: "Low" },
+];
+
 const FRESHNESS_BADGE: Record<string, { label: string; className: string }> = {
   fresh: { label: "Fresh", className: "bg-[hsl(var(--civic-green))]/10 text-[hsl(var(--civic-green))] border-[hsl(var(--civic-green))]/30" },
   stale: { label: "Stale", className: "bg-[hsl(var(--civic-yellow))]/10 text-[hsl(var(--civic-yellow))] border-[hsl(var(--civic-yellow))]/30" },
@@ -51,8 +60,41 @@ const FRESHNESS_BADGE: Record<string, { label: string; className: string }> = {
   failed: { label: "Failed", className: "bg-destructive/10 text-destructive border-destructive/30" },
 };
 
-function formatUSD(val: number): string {
-  return "$" + val.toLocaleString("en-US");
+const CONFIDENCE_COLORS: Record<string, string> = {
+  High: "bg-[hsl(var(--civic-green))]/10 text-[hsl(var(--civic-green))] border-[hsl(var(--civic-green))]/30",
+  Medium: "bg-[hsl(var(--civic-yellow))]/10 text-[hsl(var(--civic-yellow))] border-[hsl(var(--civic-yellow))]/30",
+  Low: "bg-destructive/10 text-destructive border-destructive/30",
+};
+
+/** Round to nearest $1,000 and format as $XK */
+function formatUSDRounded(val: number): string {
+  const rounded = Math.round(val / 1000) * 1000;
+  if (rounded >= 1000) return `$${Math.round(rounded / 1000)}K`;
+  return `$${rounded.toLocaleString("en-US")}`;
+}
+
+/** Check if data is older than 90 days */
+function isStaleData(lastUpdated: string | null): boolean {
+  if (!lastUpdated) return true;
+  const diff = Date.now() - new Date(lastUpdated).getTime();
+  return diff > 90 * 24 * 60 * 60 * 1000;
+}
+
+/** Determine if all sources are AI-only */
+function isAIOnly(sources: SourceData[]): boolean {
+  if (sources.length === 0) return true;
+  return sources.every(
+    (s) => s.source_type === "ai_estimation" || s.source_name.toLowerCase().includes("ai")
+  );
+}
+
+/** Determine overall confidence tier */
+function getOverallConfidence(sources: SourceData[]): string {
+  if (sources.length === 0) return "Low";
+  const maxConf = Math.max(...sources.map((s) => s.confidence));
+  if (maxConf >= 0.8) return "High";
+  if (maxConf >= 0.5) return "Medium";
+  return "Low";
 }
 
 function GradeBar({ grade, maxComp }: { grade: GradeData; maxComp: number }) {
@@ -69,11 +111,15 @@ function GradeBar({ grade, maxComp }: { grade: GradeData; maxComp: number }) {
         />
       </div>
       <span className="text-xs font-semibold text-foreground w-24 text-right">
-        {formatUSD(grade.median_total_comp_usd)}
+        {formatUSDRounded(grade.median_total_comp_usd)}
       </span>
     </div>
   );
 }
+
+/** Shared compensation disclaimer for use in exports too */
+export const COMPENSATION_DISCLAIMER =
+  "Compensation data comes from third-party sources and may include AI estimates. Actual offers vary by role, level, location, and negotiation. H1B data reflects base salary only and excludes bonus or equity.";
 
 export function CompensationMarketCard({ companyName, dbCompanyId }: Props) {
   const { toast } = useToast();
@@ -118,6 +164,9 @@ export function CompensationMarketCard({ companyName, dbCompanyId }: Props) {
   const sources = (compData?.source_summary || []) as SourceData[];
   const maxComp = grades.length > 0 ? Math.max(...grades.map((g) => g.median_total_comp_usd)) : 0;
   const isFailed = freshness === "failed";
+  const staleWarning = compData ? isStaleData(compData.last_updated) : false;
+  const aiOnly = isAIOnly(sources);
+  const overallConfidence = getOverallConfidence(sources);
 
   return (
     <Card className={cn(isFailed && "opacity-75")}>
@@ -125,6 +174,10 @@ export function CompensationMarketCard({ companyName, dbCompanyId }: Props) {
         <CardTitle className="text-lg flex items-center gap-2">
           <TrendingUp className="w-5 h-5 text-primary" />
           Compensation Market Position
+          {/* Confidence badge */}
+          <Badge variant="outline" className={cn("text-[9px] ml-1", CONFIDENCE_COLORS[overallConfidence])}>
+            {overallConfidence} Confidence
+          </Badge>
           <Button
             variant="outline"
             size="sm"
@@ -137,7 +190,7 @@ export function CompensationMarketCard({ companyName, dbCompanyId }: Props) {
           </Button>
         </CardTitle>
         <p className="text-xs text-muted-foreground">
-          AI-estimated compensation ranges from H1B disclosures, industry benchmarks, and public filings.
+          Market-corrected compensation intelligence from verified and estimated sources.
         </p>
       </CardHeader>
       <CardContent>
@@ -165,6 +218,26 @@ export function CompensationMarketCard({ companyName, dbCompanyId }: Props) {
               </div>
             )}
 
+            {/* Freshness warning (>90 days) */}
+            {staleWarning && !isFailed && (
+              <div className="flex items-center gap-2 p-2 rounded-lg bg-[hsl(var(--civic-yellow))]/5 border border-[hsl(var(--civic-yellow))]/20">
+                <AlertTriangle className="w-4 h-4 text-[hsl(var(--civic-yellow))] shrink-0" />
+                <p className="text-xs text-[hsl(var(--civic-yellow))]">
+                  Compensation data may be outdated. Refresh to view updated market estimates.
+                </p>
+              </div>
+            )}
+
+            {/* AI-only estimate badge */}
+            {aiOnly && (
+              <div className="flex items-center gap-2 p-2 rounded-lg bg-muted/50 border border-border">
+                <Bot className="w-4 h-4 text-muted-foreground shrink-0" />
+                <p className="text-xs text-muted-foreground font-medium">
+                  AI Estimated — Not Verified by External Source
+                </p>
+              </div>
+            )}
+
             {/* Median Total Comp */}
             {compData.median_total_compensation_usd && (
               <div className="border border-border rounded-lg p-4 text-center bg-muted/30">
@@ -172,7 +245,7 @@ export function CompensationMarketCard({ companyName, dbCompanyId }: Props) {
                   Median Total Compensation
                 </div>
                 <div className="text-3xl font-bold text-foreground">
-                  {formatUSD(compData.median_total_compensation_usd)}
+                  {formatUSDRounded(compData.median_total_compensation_usd)}
                 </div>
                 <div className="text-xs text-muted-foreground mt-1">{compData.currency || "USD"} / year</div>
               </div>
@@ -189,7 +262,7 @@ export function CompensationMarketCard({ companyName, dbCompanyId }: Props) {
                     <div key={i} className="flex items-center justify-between">
                       <span className="text-sm text-foreground">{r.role}</span>
                       <span className="text-sm font-semibold text-foreground">
-                        {formatUSD(r.median_total_comp_usd)}
+                        {formatUSDRounded(r.median_total_comp_usd)}
                       </span>
                     </div>
                   ))}
@@ -225,21 +298,42 @@ export function CompensationMarketCard({ companyName, dbCompanyId }: Props) {
               )}
             </div>
 
-            {/* Source + Disclaimer */}
-            <div className="border-t border-border pt-3 space-y-1">
-              <p className="text-[10px] text-muted-foreground">
-                Data sourced from H1B disclosure records (base salary), industry benchmarks, and AI estimation.
-                {sources.length > 0 && (
-                  <span>
-                    {" "}Confidence:{" "}
-                    {sources.map((s) => `${s.source_name} (${Math.round(s.confidence * 100)}%)`).join(", ")}
-                  </span>
-                )}
-              </p>
-              <p className="text-[10px] text-muted-foreground italic">
-                H1B data reflects base salary only and may understate total compensation. AI estimates are
-                directional and should not be used for negotiation without additional verification.
-              </p>
+            {/* Source transparency */}
+            {sources.length > 0 && (
+              <div className="border border-border rounded-lg p-3">
+                <div className="text-xs font-semibold text-foreground uppercase tracking-wider mb-2">
+                  Sources
+                </div>
+                <div className="flex flex-wrap gap-1.5">
+                  {sources.map((s, i) => {
+                    const tier = SOURCE_HIERARCHY.find(
+                      (h) => s.source_name.toLowerCase().includes(h.key) || s.source_type === h.key
+                    );
+                    return (
+                      <Badge
+                        key={i}
+                        variant="outline"
+                        className={cn(
+                          "text-[9px]",
+                          tier ? CONFIDENCE_COLORS[tier.tier] : "text-muted-foreground"
+                        )}
+                      >
+                        {s.source_name} ({Math.round(s.confidence * 100)}%)
+                      </Badge>
+                    );
+                  })}
+                </div>
+              </div>
+            )}
+
+            {/* Required disclaimer */}
+            <div className="border-t border-border pt-3">
+              <div className="flex items-start gap-1.5">
+                <Info className="w-3 h-3 text-muted-foreground shrink-0 mt-0.5" />
+                <p className="text-[10px] text-muted-foreground leading-relaxed">
+                  {COMPENSATION_DISCLAIMER}
+                </p>
+              </div>
             </div>
           </div>
         )}
