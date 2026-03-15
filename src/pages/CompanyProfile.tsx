@@ -31,6 +31,10 @@ import { PromotionEquityCard } from "@/components/PromotionEquityCard";
 import { WarnTrackerCard } from "@/components/WarnTrackerCard";
 import { BLSDemographicsCard } from "@/components/bls/BLSDemographicsCard";
 import { WorkforceDemographicsLayer } from "@/components/dossier/WorkforceDemographicsLayer";
+import { ExecutiveInclusionSnapshot } from "@/components/intelligence/ExecutiveInclusionSnapshot";
+import { EarlyWarningSignals } from "@/components/intelligence/EarlyWarningSignals";
+import { EEO1WorkforceCard } from "@/components/intelligence/EEO1WorkforceCard";
+import { DiversityDisclosureTracker } from "@/components/intelligence/DiversityDisclosureTracker";
 
 import { ValuesNudgeBanner } from "@/components/onboarding/ValuesNudgeBanner";
 import { AgencyContractsCard } from "@/components/AgencyContractsCard";
@@ -850,8 +854,6 @@ export default function CompanyProfile() {
           )}
 
 
-
-
           {/* ═══════════════════════════════════════════════════════════
               PERSONA-ORDERED SECTIONS
              ═══════════════════════════════════════════════════════════ */}
@@ -879,8 +881,12 @@ export default function CompanyProfile() {
               ),
               workforce_intel: () => (
                 <section id="section-workforce" className="mb-10 scroll-mt-28">
-                  <SectionHeader icon={TrendingUp} title="Workforce Intelligence" subtitle="Worker sentiment, hiring technology, and benefits signals" />
+                  <SectionHeader icon={TrendingUp} title="Workforce Intelligence" subtitle="Worker demographics, sentiment, hiring technology, and benefits signals" />
                   <div className="space-y-4">
+                    <EarlyWarningSignals companyId={dbCompanyId} companyName={name} />
+                    <EEO1WorkforceCard companyId={dbCompanyId} companyName={name} />
+                    <ExecutiveInclusionSnapshot companyId={dbCompanyId} companyName={name} />
+                    <DiversityDisclosureTracker companyId={dbCompanyId} companyName={name} />
                     <WorkerSentimentCard companyName={name} dbCompanyId={dbCompanyId} />
                     <AIHiringCard companyName={name} dbCompanyId={dbCompanyId} />
                     <WorkerBenefitsCard companyName={name} dbCompanyId={dbCompanyId} />

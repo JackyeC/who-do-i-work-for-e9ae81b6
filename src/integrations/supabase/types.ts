@@ -1459,6 +1459,124 @@ export type Database = {
           },
         ]
       }
+      company_diversity_disclosures: {
+        Row: {
+          company_id: string
+          created_at: string | null
+          detected_at: string | null
+          disclosure_type: string
+          id: string
+          is_published: boolean | null
+          notes: string | null
+          report_url: string | null
+          source: string | null
+          year: number
+        }
+        Insert: {
+          company_id: string
+          created_at?: string | null
+          detected_at?: string | null
+          disclosure_type: string
+          id?: string
+          is_published?: boolean | null
+          notes?: string | null
+          report_url?: string | null
+          source?: string | null
+          year: number
+        }
+        Update: {
+          company_id?: string
+          created_at?: string | null
+          detected_at?: string | null
+          disclosure_type?: string
+          id?: string
+          is_published?: boolean | null
+          notes?: string | null
+          report_url?: string | null
+          source?: string | null
+          year?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "company_diversity_disclosures_company_id_fkey"
+            columns: ["company_id"]
+            isOneToOne: false
+            referencedRelation: "companies"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      company_eeo1_data: {
+        Row: {
+          asian_count: number | null
+          black_count: number | null
+          company_id: string
+          confidence: string | null
+          created_at: string | null
+          female_count: number | null
+          hispanic_count: number | null
+          id: string
+          job_category: string
+          male_count: number | null
+          native_american_count: number | null
+          pacific_islander_count: number | null
+          report_year: number
+          source: string | null
+          source_url: string | null
+          total_employees: number | null
+          two_or_more_races_count: number | null
+          white_count: number | null
+        }
+        Insert: {
+          asian_count?: number | null
+          black_count?: number | null
+          company_id: string
+          confidence?: string | null
+          created_at?: string | null
+          female_count?: number | null
+          hispanic_count?: number | null
+          id?: string
+          job_category: string
+          male_count?: number | null
+          native_american_count?: number | null
+          pacific_islander_count?: number | null
+          report_year: number
+          source?: string | null
+          source_url?: string | null
+          total_employees?: number | null
+          two_or_more_races_count?: number | null
+          white_count?: number | null
+        }
+        Update: {
+          asian_count?: number | null
+          black_count?: number | null
+          company_id?: string
+          confidence?: string | null
+          created_at?: string | null
+          female_count?: number | null
+          hispanic_count?: number | null
+          id?: string
+          job_category?: string
+          male_count?: number | null
+          native_american_count?: number | null
+          pacific_islander_count?: number | null
+          report_year?: number
+          source?: string | null
+          source_url?: string | null
+          total_employees?: number | null
+          two_or_more_races_count?: number | null
+          white_count?: number | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "company_eeo1_data_company_id_fkey"
+            columns: ["company_id"]
+            isOneToOne: false
+            referencedRelation: "companies"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       company_executives: {
         Row: {
           company_id: string
@@ -1880,6 +1998,77 @@ export type Database = {
         Relationships: [
           {
             foreignKeyName: "company_jobs_company_id_fkey"
+            columns: ["company_id"]
+            isOneToOne: false
+            referencedRelation: "companies"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      company_leadership_demographics: {
+        Row: {
+          asian_count: number | null
+          black_count: number | null
+          company_id: string
+          confidence: string | null
+          created_at: string | null
+          female_count: number | null
+          hispanic_count: number | null
+          id: string
+          leadership_level: string
+          male_count: number | null
+          nonbinary_count: number | null
+          other_race_count: number | null
+          report_year: number | null
+          source: string | null
+          source_url: string | null
+          total_count: number | null
+          updated_at: string | null
+          white_count: number | null
+        }
+        Insert: {
+          asian_count?: number | null
+          black_count?: number | null
+          company_id: string
+          confidence?: string | null
+          created_at?: string | null
+          female_count?: number | null
+          hispanic_count?: number | null
+          id?: string
+          leadership_level: string
+          male_count?: number | null
+          nonbinary_count?: number | null
+          other_race_count?: number | null
+          report_year?: number | null
+          source?: string | null
+          source_url?: string | null
+          total_count?: number | null
+          updated_at?: string | null
+          white_count?: number | null
+        }
+        Update: {
+          asian_count?: number | null
+          black_count?: number | null
+          company_id?: string
+          confidence?: string | null
+          created_at?: string | null
+          female_count?: number | null
+          hispanic_count?: number | null
+          id?: string
+          leadership_level?: string
+          male_count?: number | null
+          nonbinary_count?: number | null
+          other_race_count?: number | null
+          report_year?: number | null
+          source?: string | null
+          source_url?: string | null
+          total_count?: number | null
+          updated_at?: string | null
+          white_count?: number | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "company_leadership_demographics_company_id_fkey"
             columns: ["company_id"]
             isOneToOne: false
             referencedRelation: "companies"
