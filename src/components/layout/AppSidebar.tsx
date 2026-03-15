@@ -49,7 +49,7 @@ const NAV_GROUPS = [
     ],
   },
   {
-    label: "Career",
+    label: "Map My Career",
     items: [
       { id: "employer-scan", label: "Employer Scan", icon: Briefcase, path: "/check?tab=company" },
       { id: "offer-check", label: "Offer Check", icon: FileCheck, path: "/check?tab=offer" },
