@@ -159,6 +159,7 @@ const App = () => (
                 } />
                 <Route path="/add-company" element={<AddCompany />} />
                 <Route path="/jobs" element={<Jobs />} />
+                <Route path="/job-board" element={<JobIntegrityBoard />} />
                 <Route path="/request-correction" element={<RequestCorrection />} />
                 <Route path="/offer-check/:companyId" element={<OfferCheck />} />
                 <Route path="/strategic-offer-review" element={<StrategicOfferReview />} />
