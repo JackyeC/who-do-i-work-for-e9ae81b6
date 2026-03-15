@@ -182,6 +182,12 @@ export function BattleImage({ companyA, companyB, industryA, industryB, scoreA, 
               <Linkedin className="w-3.5 h-3.5" /> LinkedIn
             </button>
             <button
+              onClick={shareFacebook}
+              className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-[hsl(220,46%,48%)] hover:bg-[hsl(220,46%,38%)] text-white font-mono text-[9px] tracking-wider uppercase transition-colors"
+            >
+              <Facebook className="w-3.5 h-3.5" /> Facebook
+            </button>
+            <button
               onClick={shareTwitter}
               className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-foreground hover:bg-foreground/80 text-background font-mono text-[9px] tracking-wider uppercase transition-colors"
             >
