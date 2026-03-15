@@ -1,7 +1,8 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
 import { supabase } from "@/integrations/supabase/client";
-import { Zap, Sparkles, RefreshCw, Share2, Linkedin, Link2, Check, Twitter } from "lucide-react";
+import { Zap, Sparkles, RefreshCw, Share2, Linkedin, Link2, Check, Twitter, Facebook } from "lucide-react";
 import { toast } from "@/hooks/use-toast";
+import { openShareWindow, getShareText, type ShareContext } from "@/lib/social-share";
 
 interface BattleImageProps {
   companyA: string;
