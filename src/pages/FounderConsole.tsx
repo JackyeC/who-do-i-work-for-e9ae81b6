@@ -2,6 +2,9 @@ import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { usePageSEO } from "@/hooks/use-page-seo";
 import { PendingReviewsDashboard } from "@/components/admin/PendingReviewsDashboard";
+import { CompensationHealthPanel } from "@/components/admin/CompensationHealthPanel";
+import { FounderNotesPanel } from "@/components/admin/FounderNotesPanel";
+import { SearchIntelligencePanel } from "@/components/admin/SearchIntelligencePanel";
 import { useUserRole } from "@/hooks/use-user-role";
 import { Header } from "@/components/Header";
 import { Footer } from "@/components/Footer";
@@ -308,6 +311,17 @@ export default function FounderConsole() {
               </div>
             </div>
           </div>
+        </div>
+
+        {/* Search Intelligence */}
+        <div className="mt-8">
+          <SearchIntelligencePanel />
+        </div>
+
+        {/* Compensation Health + Founder Notes */}
+        <div className="mt-6 grid grid-cols-1 lg:grid-cols-2 gap-6">
+          <CompensationHealthPanel />
+          <FounderNotesPanel />
         </div>
 
         {/* Pending Reviews Section */}
