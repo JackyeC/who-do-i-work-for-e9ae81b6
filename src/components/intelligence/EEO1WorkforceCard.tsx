@@ -62,7 +62,7 @@ export function EEO1WorkforceCard({ companyId, companyName }: Props) {
         .select("*")
         .eq("company_id", companyId!)
         .order("report_year", { ascending: false });
-      return (data || []) as EEO1Row[];
+      return (data || []) as unknown as EEO1Row[];
     },
   });
 

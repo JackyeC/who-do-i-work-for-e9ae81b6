@@ -78,7 +78,7 @@ export function ExecutiveInclusionSnapshot({ companyId, companyName }: Props) {
         .select("*")
         .eq("company_id", companyId!)
         .order("report_year", { ascending: false });
-      return (data || []) as DemoRow[];
+      return (data || []) as unknown as DemoRow[];
     },
   });
 
