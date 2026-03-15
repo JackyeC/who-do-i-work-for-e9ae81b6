@@ -26,3 +26,6 @@ verify_jwt = false
 
 [functions.leader-enrich]
 verify_jwt = false
+
+[functions.eeoc-case-scanner]
+verify_jwt = false
