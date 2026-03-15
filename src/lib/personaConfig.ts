@@ -5,6 +5,14 @@
 
 export type PersonaId = "job_seeker" | "employee" | "recruiter" | "hr_tech_buyer" | "journalist";
 
+export interface PersonaBucket {
+  id: string;
+  title: string;
+  subtitle: string;
+  iconName: string; // lucide icon name
+  sections: string[];
+}
+
 export interface PersonaConfig {
   id: PersonaId;
   label: string;
@@ -16,6 +24,7 @@ export interface PersonaConfig {
   secondarySections: string[];
   hiddenSections: string[];
   primaryScores: string[];
+  buckets?: PersonaBucket[]; // Grouped section view (optional)
 }
 
 export const PERSONAS: PersonaConfig[] = [
@@ -24,12 +33,56 @@ export const PERSONAS: PersonaConfig[] = [
     label: "Job Seeker",
     shortLabel: "Seeker",
     icon: "Briefcase",
-    description: "Should I work here? Career risk, recruiting experience, and offer intelligence.",
+    description: "Should I work here? What a company really is — not what their careers page says.",
     question: "Should I work here?",
-    primarySections: ["cbi", "career_risk", "recruiter_reality", "promotion_velocity", "workforce_stability", "compensation", "values"],
+    primarySections: ["revenue_model", "leadership", "workforce_reality", "career_mobility", "ethical_footprint", "stability"],
     secondarySections: ["governance", "influence", "narrative_power", "public_records"],
     hiddenSections: ["gtm"],
     primaryScores: ["cbi", "career_risk", "recruiter_reality", "promotion_velocity", "layoff_probability"],
+    buckets: [
+      {
+        id: "money_model",
+        title: "How the Company Makes Its Money",
+        subtitle: "Revenue sources, government contracts, and business model incentives — because a company's money model tells you more than its mission statement.",
+        iconName: "DollarSign",
+        sections: ["influence"],
+      },
+      {
+        id: "leadership_behavior",
+        title: "Leadership Behavior & Track Record",
+        subtitle: "Executive history, board composition, lawsuits, and crisis responses — leadership behavior predicts culture better than any HR document.",
+        iconName: "Users",
+        sections: ["governance"],
+      },
+      {
+        id: "workforce_reality",
+        title: "Workforce Reality vs Employer Branding",
+        subtitle: "Sentiment patterns, transparency gaps, tenure signals, and diversity of leadership — when branding and workforce reality diverge, it shows up quickly.",
+        iconName: "Eye",
+        sections: ["workforce_intel", "compensation", "recruiter_reality"],
+      },
+      {
+        id: "career_growth",
+        title: "Career Mobility & Internal Growth",
+        subtitle: "Promotion rates, leadership pipelines, internal mobility, and learning investment — a company that grows people tends to grow responsibly.",
+        iconName: "TrendingUp",
+        sections: ["promotion_velocity"],
+      },
+      {
+        id: "ethical_footprint",
+        title: "Ethical Footprint",
+        subtitle: "Lawsuits, regulatory actions, political donations, labor practices, and social commitments vs actual spending — you don't need perfection, but patterns matter.",
+        iconName: "Shield",
+        sections: ["values", "public_records", "narrative_power"],
+      },
+      {
+        id: "stability_health",
+        title: "Stability & Business Health",
+        subtitle: "Layoff history, WARN notices, leadership turnover, and market signals — even if a company aligns with your values, it still needs to survive.",
+        iconName: "Activity",
+        sections: ["workforce_stability"],
+      },
+    ],
   },
   {
     id: "employee",
@@ -97,5 +150,11 @@ export function isSectionPrimary(personaId: PersonaId, sectionKey: string): bool
 
 export function getSectionOrder(personaId: PersonaId): string[] {
   const config = getPersonaConfig(personaId);
+  // If persona has buckets, flatten bucket sections + append secondary
+  if (config.buckets) {
+    const bucketSections = config.buckets.flatMap(b => b.sections);
+    const remaining = config.secondarySections.filter(s => !bucketSections.includes(s));
+    return [...bucketSections, ...remaining];
+  }
   return [...config.primarySections, ...config.secondarySections];
 }
