@@ -23,6 +23,7 @@ export function MiniReportTeaser() {
   const [loading, setLoading] = useState(false);
   const [report, setReport] = useState<MiniReport | null>(null);
   const [notFound, setNotFound] = useState(false);
+  const [showSignup, setShowSignup] = useState(false);
   const navigate = useNavigate();
 
   const handleSearch = async () => {
