@@ -51,36 +51,24 @@ export function BattleImage({ companyA, companyB, industryA, industryB, scoreA, 
     if (companyA && companyB) generate();
   }, [companyA, companyB]);
 
-  const shareUrl = slugA && slugB
-    ? `${window.location.origin}/compare?a=${slugA}&b=${slugB}`
-    : window.location.href;
+  const shareCtx = useMemo<ShareContext>(() => ({
+    type: "battle",
+    companyA,
+    companyB,
+    scoreA,
+    scoreB,
+    slugA,
+    slugB,
+  }), [companyA, companyB, scoreA, scoreB, slugA, slugB]);
 
-  const winner = scoreA != null && scoreB != null
-    ? scoreA > scoreB ? companyA : scoreB > scoreA ? companyB : null
-    : null;
+  const shareText = getShareText("copy", shareCtx);
 
-  const shareText = winner
-    ? `⚔️ ${companyA} (${scoreA}/100) vs ${companyB} (${scoreB}/100) — ${winner} wins the transparency battle! Who does YOUR employer work for?`
-    : `⚔️ ${companyA} vs ${companyB} — Who's more transparent? Compare employer intelligence scores.`;
-
-  const shareLinkedIn = () => {
-    window.open(
-      `https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(shareUrl)}`,
-      "_blank",
-      "width=600,height=500"
-    );
-  };
-
-  const shareTwitter = () => {
-    window.open(
-      `https://twitter.com/intent/tweet?text=${encodeURIComponent(shareText)}&url=${encodeURIComponent(shareUrl)}`,
-      "_blank",
-      "width=600,height=500"
-    );
-  };
+  const shareLinkedIn = () => openShareWindow("linkedin", shareCtx);
+  const shareTwitter = () => openShareWindow("twitter", shareCtx);
+  const shareFacebook = () => openShareWindow("facebook", shareCtx);
 
   const copyLink = () => {
-    navigator.clipboard.writeText(`${shareText} ${shareUrl}`);
+    navigator.clipboard.writeText(getShareText("copy", shareCtx));
     setCopied(true);
     setTimeout(() => setCopied(false), 2000);
     toast({ title: "Battle link copied! 🔥" });
