@@ -915,6 +915,7 @@ export default function CompanyProfile() {
                 <section id="section-compensation" className="mb-10 scroll-mt-28">
                   <SectionHeader icon={DollarSign} title="Compensation Transparency" subtitle="Pay equity signals and national benchmarks" />
                   <div className="space-y-4">
+                    <CompensationMarketCard companyName={name} dbCompanyId={dbCompanyId} />
                     <CompensationTransparencyCard companyName={name} dbCompanyId={dbCompanyId} />
                   </div>
                 </section>
