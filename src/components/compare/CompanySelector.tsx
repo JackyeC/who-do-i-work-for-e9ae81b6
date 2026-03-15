@@ -1,5 +1,7 @@
+import { useState } from "react";
 import { Input } from "@/components/ui/input";
-import { Search } from "lucide-react";
+import { Search, Plus } from "lucide-react";
+import { AddCompanyModal } from "./AddCompanyModal";
 
 interface CompanyData {
   id: string;
@@ -25,6 +27,8 @@ interface CompanySelectorProps {
 }
 
 export function CompanySelector({ label, company, search, suggestions, onSearchChange, onSelect, onClear }: CompanySelectorProps) {
+  const [showAdd, setShowAdd] = useState(false);
+
   if (company) {
     return (
       <div className="bg-card border border-border p-5 relative group hover:border-primary/30 transition-all">
@@ -44,6 +48,8 @@ export function CompanySelector({ label, company, search, suggestions, onSearchC
     );
   }
 
+  const showNoResults = search.length >= 2 && suggestions.length === 0;
+
   return (
     <div>
       <div className="font-mono text-[8px] tracking-[0.2em] uppercase text-muted-foreground mb-2">{label}</div>
@@ -57,7 +63,7 @@ export function CompanySelector({ label, company, search, suggestions, onSearchC
             className="font-mono text-xs pl-9"
           />
         </div>
-        {suggestions.length > 0 && (
+        {(suggestions.length > 0 || showNoResults) && (
           <div className="absolute z-10 w-full mt-1 bg-card border border-border shadow-xl">
             {suggestions.map((c) => (
               <button
@@ -72,9 +78,27 @@ export function CompanySelector({ label, company, search, suggestions, onSearchC
                 <span className="font-mono text-xs font-bold text-primary">{c.civic_footprint_score}</span>
               </button>
             ))}
+            {showNoResults && (
+              <div className="px-4 py-3 text-center">
+                <div className="text-[12px] text-muted-foreground mb-2">No employers found for "{search}"</div>
+                <button
+                  onClick={() => setShowAdd(true)}
+                  className="inline-flex items-center gap-1.5 font-mono text-[10px] tracking-wider uppercase text-primary hover:underline"
+                >
+                  <Plus className="w-3.5 h-3.5" /> Add this company
+                </button>
+              </div>
+            )}
           </div>
         )}
       </div>
+
+      <AddCompanyModal
+        open={showAdd}
+        onOpenChange={setShowAdd}
+        onCompanyAdded={(c) => onSelect(c)}
+        initialName={search}
+      />
     </div>
   );
 }
