@@ -149,10 +149,10 @@ export default function RealityCheckPage() {
             <div>
               <h1 className="font-mono text-sm font-bold tracking-wider uppercase text-civic-green flex items-center gap-2">
                 <Terminal className="w-4 h-4" />
-                The Reality Check
+                Spot Employer Red Flags Before You Accept
               </h1>
               <p className="text-xs text-muted-foreground mt-0.5">
-                Compare your interview experience against the Intelligence Advisor's data signals.
+                Before you accept that offer, run the data. This questionnaire cross-references your interview experience against public SEC, FEC, and BLS intelligence to detect "Diversity Wash" signals and Say-Do disconnects.
               </p>
             </div>
           </div>
