@@ -374,6 +374,7 @@ export default function EVPRealityCheck() {
             </div>
           </div>
         )}
+        </PremiumGate>
       </div>
     </div>
   );
