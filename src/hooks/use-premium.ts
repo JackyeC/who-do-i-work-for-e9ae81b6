@@ -6,9 +6,12 @@ export type PremiumTier = "free" | "candidate" | "professional";
 export const STRIPE_TIERS = {
   candidate: {
     price_id: "price_1TAHg57Qj0W6UtN9K0R65x7g",
+    price_id_annual: "price_1TB4Na7Qj0W6UtN9CtKdAM9G",
     product_id: "prod_U8YnG3ulVF5QEW",
     label: "Candidate",
     price: "$29/mo",
+    priceAnnual: "$290/yr",
+    priceAnnualMonthly: "$24",
     scans: 10,
     offerChecks: 5,
     askJackye: 30,
@@ -17,9 +20,12 @@ export const STRIPE_TIERS = {
   },
   professional: {
     price_id: "price_1TAHg67Qj0W6UtN9HLpWnQy4",
+    price_id_annual: "price_1TB4Nb7Qj0W6UtN9mzOJj9E3",
     product_id: "prod_U8Ynpf4FKYEV3Q",
     label: "Professional",
     price: "$99/mo",
+    priceAnnual: "$990/yr",
+    priceAnnualMonthly: "$83",
     scans: 50,
     offerChecks: 20,
     askJackye: 100,
