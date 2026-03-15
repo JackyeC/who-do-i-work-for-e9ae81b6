@@ -338,7 +338,7 @@ export default function EVPRealityCheck() {
               <div>
                 <div className="flex items-center gap-2 mb-3">
                   <AlertTriangle className="w-4 h-4 text-civic-red" strokeWidth={1.5} />
-                  <span className="font-mono text-[0.65rem] uppercase tracking-widest text-muted-foreground">Where the EVP Breaks</span>
+                  <span className="font-mono text-[0.65rem] uppercase tracking-widest text-muted-foreground">Where the Promise Breaks</span>
                 </div>
                 <div className="space-y-3">
                   {result.breaks.map((item, i) => <ComparisonRow key={i} item={item} type="breaks" />)}
