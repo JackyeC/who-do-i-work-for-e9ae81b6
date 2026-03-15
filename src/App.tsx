@@ -74,6 +74,7 @@ import SiteMap from "./pages/SiteMap";
 import Rivalries from "./pages/Rivalries";
 import BrandMadness from "./pages/BrandMadness";
 import SignalFeed from "./pages/SignalFeed";
+import EEOCTracker from "./pages/EEOCTracker";
 import WorkIndex from "./pages/WorkIndex";
 import Rankings from "./pages/Rankings";
 import { CookieNotice } from "@/components/CookieNotice";
@@ -128,6 +129,7 @@ const App = () => (
                 <Route path="/disclaimers" element={<Disclaimers />} />
                 <Route path="/examples" element={<Examples />} />
                 <Route path="/signals" element={<SignalFeed />} />
+                <Route path="/eeoc-tracker" element={<EEOCTracker />} />
                 <Route path="/search-your-employer" element={<SearchYourEmployer />} />
                 <Route path="/values-search" element={<ValuesSearch />} />
                 <Route path="/who-do-i-work-for" element={

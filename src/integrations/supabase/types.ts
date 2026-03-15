@@ -2889,6 +2889,89 @@ export type Database = {
         }
         Relationships: []
       }
+      eeoc_dropped_cases: {
+        Row: {
+          action_type: string
+          case_name: string
+          case_number: string | null
+          company_id: string | null
+          company_name: string
+          confidence: string
+          court_filing_url: string | null
+          court_name: string | null
+          courtlistener_id: string | null
+          created_at: string
+          detection_method: string
+          discrimination_category: string
+          discrimination_type: string
+          eeoc_drop_date: string | null
+          eeoc_filing_date: string | null
+          eeoc_litigation_url: string | null
+          id: string
+          source_url: string | null
+          state: string | null
+          status: string
+          summary: string | null
+          updated_at: string
+        }
+        Insert: {
+          action_type?: string
+          case_name: string
+          case_number?: string | null
+          company_id?: string | null
+          company_name: string
+          confidence?: string
+          court_filing_url?: string | null
+          court_name?: string | null
+          courtlistener_id?: string | null
+          created_at?: string
+          detection_method?: string
+          discrimination_category?: string
+          discrimination_type: string
+          eeoc_drop_date?: string | null
+          eeoc_filing_date?: string | null
+          eeoc_litigation_url?: string | null
+          id?: string
+          source_url?: string | null
+          state?: string | null
+          status?: string
+          summary?: string | null
+          updated_at?: string
+        }
+        Update: {
+          action_type?: string
+          case_name?: string
+          case_number?: string | null
+          company_id?: string | null
+          company_name?: string
+          confidence?: string
+          court_filing_url?: string | null
+          court_name?: string | null
+          courtlistener_id?: string | null
+          created_at?: string
+          detection_method?: string
+          discrimination_category?: string
+          discrimination_type?: string
+          eeoc_drop_date?: string | null
+          eeoc_filing_date?: string | null
+          eeoc_litigation_url?: string | null
+          id?: string
+          source_url?: string | null
+          state?: string | null
+          status?: string
+          summary?: string | null
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "eeoc_dropped_cases_company_id_fkey"
+            columns: ["company_id"]
+            isOneToOne: false
+            referencedRelation: "companies"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       email_signups: {
         Row: {
           created_at: string

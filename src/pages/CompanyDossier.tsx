@@ -33,6 +33,8 @@ import { DecisionMakerLayer } from "@/components/dossier/DecisionMakerLayer";
 import { WorkforceDemographicsLayer } from "@/components/dossier/WorkforceDemographicsLayer";
 import { BuyingLogicLayer } from "@/components/dossier/BuyingLogicLayer";
 import { StockPatentsLayer } from "@/components/dossier/StockPatentsLayer";
+import { EEOCCaseAlert } from "@/components/EEOCCaseAlert";
+import { useEEOCByCompanyName } from "@/hooks/use-eeoc-cases";
 
 /* ─── Lens config ─── */
 const LENS_META = {
@@ -62,6 +64,7 @@ export default function CompanyDossier() {
 
   const companyId = company?.id;
   const isTracked = companyId ? isCompanyTracked(companyId) : false;
+  const { data: eeocCases } = useEEOCByCompanyName(company?.name);
 
   const { data: executives } = useQuery({
     queryKey: ["dossier-executives", companyId],
@@ -208,6 +211,11 @@ export default function CompanyDossier() {
           </div>
         </div>
       </DossierLayer>
+
+      {/* EEOC Enforcement Alert */}
+      {eeocCases && eeocCases.length > 0 && (
+        <EEOCCaseAlert cases={eeocCases} />
+      )}
     </>
   );
 
