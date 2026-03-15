@@ -1,7 +1,8 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
 import { useSearchParams, useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { usePageSEO } from "@/hooks/use-page-seo";
+import { getOGImageUrl } from "@/lib/social-share";
 import { ArrowRight, ArrowLeftRight } from "lucide-react";
 import { CompareHeader } from "@/components/compare/CompareHeader";
 import { CompanySelector } from "@/components/compare/CompanySelector";
