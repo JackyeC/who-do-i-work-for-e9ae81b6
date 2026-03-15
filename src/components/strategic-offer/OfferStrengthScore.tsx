@@ -1,11 +1,12 @@
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Progress } from "@/components/ui/progress";
+import { Skeleton } from "@/components/ui/skeleton";
 import { cn } from "@/lib/utils";
 import { AIAnalysisNotice } from "@/components/strategic-offer/AIAnalysisNotice";
 import {
   DollarSign, FileText, Shield, Heart, Scale, TrendingUp, AlertTriangle,
-  CheckCircle2, XCircle, Info, Sparkles, ChevronDown, ChevronUp
+  CheckCircle2, XCircle, Info, Sparkles, ChevronDown, ChevronUp, Loader2
 } from "lucide-react";
 import { useState } from "react";
 import type { OfferStrengthResult, ScoreCategory } from "@/lib/offerStrengthScoring";
