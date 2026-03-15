@@ -39,13 +39,13 @@ serve(async (req) => {
     }
 
     // Generate a fun battle image with Gemini
-    const prompt = `Create a sophisticated, high-contrast corporate intelligence illustration in a premium editorial style — dark background (#080b0f), violet and cyan accent lighting, clean geometric composition. This is a "Corporate Transparency Showdown" between "${companyA}" (${industryA || "corporation"}) on the left and "${companyB}" (${industryB || "corporation"}) on the right.
+    const prompt = `Create a FUN, vibrant, cartoon-style corporate battle illustration — bold colors, playful energy, like a Pixar movie poster meets a comic book cover. "${companyA}" (${industryA || "corporation"}) on the left vs "${companyB}" (${industryB || "corporation"}) on the right.
 
-Feature TWO real-looking, photorealistic people facing each other — everyday professionals who reflect what the actual workforce looks like. Randomly choose from: a Black woman in business attire, a Latino man with a prosthetic arm in a sharp blazer, a South Asian woman in a hijab reviewing documents, a short-statured white man at a standing desk, an elderly Asian woman with silver hair and reading glasses, a plus-size Indigenous woman with a laptop, a young blind professional with a white cane and earbuds, a wheelchair-using Black man in a crisp suit. Pick TWO DIFFERENT people each time — different ethnicities, body types, ages, and abilities. They should look like real professionals, NOT cartoon warriors.
+Feature TWO cartoon characters facing off — pick two DIFFERENT people each time from: a Black woman with natural hair in a power suit, a short-statured Latino guy with a giant briefcase, a hijabi woman holding a glowing tablet, a wheelchair-using dude with rocket boosters on the wheels, an elderly Asian grandma cracking her knuckles, a plus-size Indigenous woman with a cape, a blind guy with a high-tech white cane that shoots lightning, a tall lanky redhead woman with vitiligo flexing. They should be EXAGGERATED, expressive, and funny — big heads, dynamic poses, confident grins. NOT realistic — think Overwatch character select screen energy.
 
-Each person stands confidently on their side with subtle corporate iconography behind them (office towers, data screens, stock tickers). Between them: a bold "VS" in electric violet with subtle data-stream effects. At the bottom, a sleek status bar reads "${companyA} vs ${companyB} — WHO'S MORE TRANSPARENT?"
+Between them: a huge electric "VS" with cartoon lightning bolts and sparkle effects. Behind each character: simplified cartoon buildings or industry icons for their company. Bottom text: "${companyA} vs ${companyB}" in a fun bold font.
 
-Style: Bloomberg Terminal meets editorial magazine cover. Moody lighting, sharp typography, premium and authoritative. NOT cartoonish, NOT cute — this is serious career intelligence. Dark, cinematic, high-end.`;
+Style: Saturday morning cartoon meets corporate satire. Bright saturated colors, thick outlines, cel-shaded look, exaggerated proportions, tons of personality. FUN and shareable. Clean background.`;
 
     const aiResponse = await fetch("https://ai.gateway.lovable.dev/v1/chat/completions", {
       method: "POST",
