@@ -61,7 +61,7 @@ export default function EEOCTracker() {
   });
 
   const { isAdmin, isOwner } = useUserRole();
-  const canDelete = isAdmin || isOwner;
+  const canDelete = isOwner;
   const deleteCase = useDeleteEEOCCase();
 
   const { data: cases, isLoading } = useQuery({
