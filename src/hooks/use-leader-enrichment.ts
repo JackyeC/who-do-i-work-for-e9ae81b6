@@ -12,6 +12,7 @@ interface EnrichmentData {
   education: string | null;
   career_highlights: string[] | null;
   ai_narrative: string | null;
+  photo_url: string | null;
   enrichment_source: string | null;
   enriched_at: string;
 }
