@@ -157,9 +157,12 @@ const Index = forwardRef<HTMLDivElement>((_, ref) => {
       <SectionReveal>
         <div className="flex items-center justify-center gap-10 lg:gap-20 flex-wrap px-6 py-10 border-b border-border">
           <AnimatedCounter end={companyCount || 850} suffix="+" label="Companies Tracked" />
-          <AnimatedCounter end={12400} suffix="+" label="Intelligence Scans" />
-          <AnimatedCounter end={3200} suffix="+" label="Offers Analyzed" />
-          <AnimatedCounter end={94} suffix="%" label="User Action Rate" />
+          <AnimatedCounter end={6} suffix="" label="Federal Data Sources" />
+          <AnimatedCounter end={20} suffix="+" label="Years HR Expertise" />
+          <div className="flex flex-col items-center gap-1">
+            <span className="font-mono text-xs tracking-wider uppercase text-primary border border-primary/20 bg-primary/5 px-3 py-1">Early Access</span>
+            <span className="font-mono text-[11px] tracking-wider uppercase text-muted-foreground">Be first. Shape the product.</span>
+          </div>
         </div>
       </SectionReveal>
 
