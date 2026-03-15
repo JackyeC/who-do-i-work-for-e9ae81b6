@@ -309,6 +309,11 @@ export default function FounderConsole() {
             </div>
           </div>
         </div>
+
+        {/* Pending Reviews Section */}
+        <div className="mt-8">
+          <PendingReviewsDashboard />
+        </div>
       </main>
       <Footer />
     </div>
