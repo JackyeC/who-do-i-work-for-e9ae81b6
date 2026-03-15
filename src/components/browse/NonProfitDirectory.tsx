@@ -1,13 +1,16 @@
 import { useState, useMemo } from "react";
 import { useQuery } from "@tanstack/react-query";
+import { useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { motion } from "framer-motion";
 import { Input } from "@/components/ui/input";
+import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { EmptyState } from "@/components/EmptyState";
 import { LoadingState } from "@/components/LoadingState";
-import { Landmark, Search, Network, FileText, ArrowRight } from "lucide-react";
+import { Landmark, Search, Network, FileText, ArrowRight, Sparkles, Loader2 } from "lucide-react";
+import { useToast } from "@/hooks/use-toast";
 
 const stagger = {
   container: { hidden: {}, show: { transition: { staggerChildren: 0.025 } } },
@@ -16,6 +19,9 @@ const stagger = {
 
 export function NonProfitDirectory() {
   const [searchQuery, setSearchQuery] = useState("");
+  const [isDiscovering, setIsDiscovering] = useState(false);
+  const navigate = useNavigate();
+  const { toast } = useToast();
 
   const { data: orgs, isLoading } = useQuery({
     queryKey: ["nonprofit-directory"],
@@ -44,6 +50,31 @@ export function NonProfitDirectory() {
 
   const typeLabel = (t: string) => t?.replace(/_/g, " ") || "organization";
 
+  const handleDiscover = async () => {
+    setIsDiscovering(true);
+    try {
+      const { data, error } = await supabase.functions.invoke("company-discover", {
+        body: { searchQuery: searchQuery.trim(), companyName: searchQuery.trim() },
+      });
+      if (error) throw error;
+      if (data?.success) {
+        toast({
+          title: data.action === "existing" ? "Organization found" : "Organization discovered",
+          description: data.action === "created"
+            ? `Building intelligence profile for ${data.identity?.name || searchQuery}...`
+            : "Opening existing profile...",
+        });
+        navigate(`/company/${data.slug}`);
+      } else {
+        throw new Error(data?.error || "Discovery failed");
+      }
+    } catch (e: any) {
+      toast({ title: "Discovery failed", description: e.message, variant: "destructive" });
+    } finally {
+      setIsDiscovering(false);
+    }
+  };
+
   return (
     <div>
       {/* Search */}
@@ -57,6 +88,18 @@ export function NonProfitDirectory() {
             className="pl-9 h-9 rounded-lg bg-muted/40 border-border/40 text-sm"
           />
         </div>
+        {searchQuery.trim().length >= 2 && (
+          <Button
+            variant="outline"
+            size="sm"
+            className="gap-2 shrink-0"
+            onClick={handleDiscover}
+            disabled={isDiscovering}
+          >
+            {isDiscovering ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <Sparkles className="w-3.5 h-3.5" />}
+            {isDiscovering ? "Discovering..." : "Discover & Add"}
+          </Button>
+        )}
       </div>
 
       <p className="text-xs text-muted-foreground mb-3">
@@ -66,11 +109,28 @@ export function NonProfitDirectory() {
       {isLoading ? (
         <LoadingState message="Loading organizations…" />
       ) : filtered.length === 0 ? (
-        <EmptyState
-          icon={Landmark}
-          title="No organizations found"
-          description="Non-profits and foundations are extracted automatically from investigative documents and influence data."
-        />
+        <div className="text-center py-12">
+          <EmptyState
+            icon={Landmark}
+            title="No organizations found"
+            description="Non-profits and foundations are extracted automatically from investigative documents and influence data."
+          />
+          {searchQuery.trim().length >= 2 && (
+            <div className="mt-4">
+              <p className="text-sm text-muted-foreground mb-3">
+                Can't find <strong>"{searchQuery}"</strong>? We can discover and research it automatically.
+              </p>
+              <Button
+                onClick={handleDiscover}
+                disabled={isDiscovering}
+                className="gap-2"
+              >
+                {isDiscovering ? <Loader2 className="w-4 h-4 animate-spin" /> : <Sparkles className="w-4 h-4" />}
+                {isDiscovering ? "Discovering..." : "Discover & Research"}
+              </Button>
+            </div>
+          )}
+        </div>
       ) : (
         <motion.div
           variants={stagger.container}
