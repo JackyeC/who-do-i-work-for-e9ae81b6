@@ -8,6 +8,8 @@ import {
   logScanError,
   getCooldownMinutes,
 } from "@/lib/firecrawl-circuit-breaker";
+import type { IntelligenceSection } from "@/lib/intelligence-provider";
+import { isSectionStale } from "@/lib/intelligence-provider";
 
 interface UseScanOptions {
   functionName: string;
@@ -21,6 +23,10 @@ interface UseScanOptions {
   onError?: (reason: 'circuit_open' | 'firecrawl_error' | 'other_error', message: string) => void;
   /** Set loading state */
   setLoading?: (v: boolean) => void;
+  /** Intelligence section for freshness checking */
+  section?: IntelligenceSection;
+  /** Last update timestamp from cached data — skip scan if fresh */
+  lastUpdated?: string | null;
 }
 
 /**
@@ -35,12 +41,24 @@ export function useScanWithFallback({
   onSuccess,
   onError,
   setLoading,
+  section,
+  lastUpdated,
 }: UseScanOptions) {
   const { toast } = useToast();
 
   const firecrawlState = isFirecrawlUnavailable();
 
-  const runScan = useCallback(async () => {
+  const runScan = useCallback(async (_eventOrForce?: React.MouseEvent | boolean) => {
+    const forceRefresh = typeof _eventOrForce === 'boolean' ? _eventOrForce : false;
+    // Freshness check — skip scan if data is still fresh (unless forced)
+    if (!forceRefresh && section && lastUpdated && !isSectionStale(lastUpdated, section)) {
+      toast({
+        title: "Intelligence is current",
+        description: "This data was recently updated. No refresh needed.",
+      });
+      return;
+    }
+
     // Circuit breaker check
     const state = isFirecrawlUnavailable();
     if (state) {
@@ -135,7 +153,7 @@ export function useScanWithFallback({
     } finally {
       setLoading?.(false);
     }
-  }, [companyId, companyName, functionName, extraBody, onSuccess, onError, setLoading, toast]);
+  }, [companyId, companyName, functionName, extraBody, onSuccess, onError, setLoading, toast, section, lastUpdated]);
 
   return {
     runScan,

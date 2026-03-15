@@ -315,30 +315,46 @@ Up to 50 jobs. Content:\n${allMarkdown.slice(0, 20000)}`
     // Upsert: delete old + insert new
     await supabase.from('company_jobs').delete().eq('company_id', companyId);
 
-    const { error: insertErr } = await supabase.from('company_jobs').insert(
-      jobs.slice(0, 50).map((j: any) => ({
-        company_id: companyId,
-        title: j.title,
-        department: j.department || null,
-        location: j.location || null,
-        employment_type: j.employment_type || 'full-time',
-        description: (j.description || '').slice(0, 5000),
-        url: j.url || careersUrl,
-        salary_range: j.salary_range || null,
-        scraped_at: new Date().toISOString(),
-        source_type: sourceType,
-        source_platform: sourcePlatform,
-        work_mode: j.work_mode || null,
-        source_url: careersUrl,
-        last_verified_at: new Date().toISOString(),
-      }))
-    );
+    const jobRecords = jobs.slice(0, 50).map((j: any) => ({
+      company_id: companyId,
+      title: j.title,
+      department: j.department || null,
+      location: j.location || null,
+      employment_type: j.employment_type || 'full-time',
+      description: (j.description || '').slice(0, 5000),
+      url: j.url || careersUrl,
+      salary_range: j.salary_range || null,
+      scraped_at: new Date().toISOString(),
+      source_type: sourceType,
+      source_platform: sourcePlatform,
+      work_mode: j.work_mode || null,
+      source_url: careersUrl,
+      last_verified_at: new Date().toISOString(),
+    }));
+
+    const { error: insertErr } = await supabase.from('company_jobs').insert(jobRecords);
 
     if (insertErr) {
       console.error('Insert failed:', insertErr);
       return new Response(JSON.stringify({ success: false, error: insertErr.message }),
         { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } });
     }
+
+    // Also cache in company_report_sections for cache-first loading
+    await supabase.from('company_report_sections').upsert({
+      company_id: companyId,
+      section_type: 'careers',
+      content: { jobs: jobRecords, sourceType, sourcePlatform, totalJobs: jobs.length },
+      summary: `${jobs.length} open positions found via ${sourcePlatform}`,
+      source_urls: [careersUrl],
+      provider_used: sourcePlatform === 'custom' ? 'firecrawl' : 'ats_api',
+      last_successful_update: new Date().toISOString(),
+      last_attempted_update: new Date().toISOString(),
+      last_error: null,
+      freshness_ttl_hours: 48,
+      confidence_score: sourceType === 'ats' ? 0.95 : 0.75,
+      updated_at: new Date().toISOString(),
+    }, { onConflict: 'company_id,section_type' });
 
     return new Response(JSON.stringify({
       success: true, jobsAdded: jobs.length, companyId, sourceType, sourcePlatform,
