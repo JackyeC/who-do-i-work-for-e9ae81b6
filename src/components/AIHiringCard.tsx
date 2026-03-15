@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Bot, Loader2, ExternalLink, ShieldCheck, AlertTriangle, Eye, BrainCircuit, RefreshCw, Clock, FileCheck, BarChart3, AlertCircle, CheckCircle2, XCircle } from "lucide-react";
+import { Bot, Loader2, ExternalLink, ShieldCheck, AlertTriangle, Eye, BrainCircuit, RefreshCw, Clock, FileCheck, BarChart3, AlertCircle, CheckCircle2, XCircle, CloudOff } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -8,6 +8,8 @@ import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useToast } from "@/hooks/use-toast";
 import { cn } from "@/lib/utils";
 import { SignalMeta } from "@/components/SignalMeta";
+import { useScanWithFallback } from "@/hooks/use-scan-with-fallback";
+import { SavedIntelligenceBadge } from "@/components/scan/ScanUnavailableBanner";
 
 interface AIHiringCardProps {
   companyName: string;
