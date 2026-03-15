@@ -1037,7 +1037,59 @@ export default function CompanyProfile() {
               ),
             };
 
-            // Render sections in persona-defined order, skip hidden
+            const BUCKET_ICONS: Record<string, any> = {
+              DollarSign, Users, Eye, TrendingUp, Shield, Activity,
+            };
+
+            const personaConfig = getPersonaConfig(activePersona);
+
+            // If persona has buckets, render grouped sections with bucket headers
+            if (personaConfig.buckets) {
+              return (
+                <>
+                  {personaConfig.buckets.map((bucket) => {
+                    const visibleSections = bucket.sections.filter(
+                      key => SECTION_RENDERERS[key]
+                    );
+                    if (visibleSections.length === 0) return null;
+                    const BucketIcon = BUCKET_ICONS[bucket.iconName] || Shield;
+
+                    return (
+                      <div key={bucket.id} className="mb-10">
+                        {/* Bucket Header */}
+                        <div className="flex items-start gap-3 mb-6 pb-4 border-b-2 border-primary/15">
+                          <div className="w-11 h-11 rounded-xl bg-primary/10 flex items-center justify-center shrink-0 border border-primary/15 mt-0.5">
+                            <BucketIcon className="w-5.5 h-5.5 text-primary" />
+                          </div>
+                          <div>
+                            <h2 className="text-lg font-bold text-foreground tracking-tight">{bucket.title}</h2>
+                            <p className="text-sm text-muted-foreground mt-1 leading-relaxed max-w-2xl">{bucket.subtitle}</p>
+                          </div>
+                        </div>
+                        {/* Sections inside bucket */}
+                        {visibleSections.map(key => (
+                          <div key={key}>{SECTION_RENDERERS[key]()}</div>
+                        ))}
+                      </div>
+                    );
+                  })}
+                  {/* Remaining secondary sections not in any bucket */}
+                  {sectionOrder
+                    .filter(key => {
+                      const inBucket = personaConfig.buckets!.some(b => b.sections.includes(key));
+                      return !inBucket && SECTION_RENDERERS[key];
+                    })
+                    .map(key => (
+                      <div key={key}>
+                        {SECTION_RENDERERS[key]()}
+                        <Separator className="mb-8" />
+                      </div>
+                    ))}
+                </>
+              );
+            }
+
+            // Default: render sections in flat order
             return sectionOrder
               .filter(key => isSectionVisible(activePersona, key) && SECTION_RENDERERS[key])
               .map((key) => (
