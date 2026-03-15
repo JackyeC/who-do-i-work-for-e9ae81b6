@@ -263,7 +263,32 @@ const Index = forwardRef<HTMLDivElement>((_, ref) => {
         </div>
       </section>
 
-      {/* Evidence Sources */}
+      {/* Find Aligned Jobs */}
+      <SectionReveal>
+        <section className="bg-card border-y border-border px-6 lg:px-16 py-16">
+          <div className="max-w-[1100px] mx-auto grid grid-cols-1 lg:grid-cols-[1fr_auto] gap-8 items-center">
+            <div>
+              <div className="flex items-center gap-2 mb-2">
+                <Briefcase className="w-4 h-4 text-primary" />
+                <span className="font-mono text-xs tracking-[0.2em] uppercase text-primary">Values-Aligned Jobs</span>
+              </div>
+              <h2 className="text-xl lg:text-2xl text-foreground mb-2">
+                Find roles that match what matters to you.
+              </h2>
+              <p className="text-sm text-muted-foreground max-w-[520px] leading-relaxed">
+                Every listing is enriched with employer intelligence — civic scores, political signals, and culture data.
+                Stop guessing. Start filtering by the things that actually affect your career.
+              </p>
+            </div>
+            <button
+              onClick={() => navigate("/jobs")}
+              className="bg-primary text-primary-foreground px-7 py-3 font-mono text-xs font-semibold tracking-wider uppercase hover:brightness-110 transition-all whitespace-nowrap flex items-center gap-2"
+            >
+              Browse Jobs <ArrowRight className="w-3.5 h-3.5" />
+            </button>
+          </div>
+        </section>
+      </SectionReveal>
       <SectionReveal>
         <section className="bg-card border-y border-border px-6 lg:px-16 py-16">
           <div className="max-w-[1100px] mx-auto text-center">
