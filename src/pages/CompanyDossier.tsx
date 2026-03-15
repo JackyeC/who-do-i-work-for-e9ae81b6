@@ -64,6 +64,7 @@ export default function CompanyDossier() {
 
   const companyId = company?.id;
   const isTracked = companyId ? isCompanyTracked(companyId) : false;
+  const { data: eeocCases } = useEEOCByCompanyName(company?.name);
 
   const { data: executives } = useQuery({
     queryKey: ["dossier-executives", companyId],
