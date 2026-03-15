@@ -1,7 +1,6 @@
 import { useState, useEffect } from "react";
 import { supabase } from "@/integrations/supabase/client";
-import { Zap, Sparkles, RefreshCw } from "lucide-react";
-import { cn } from "@/lib/utils";
+import { Zap, Sparkles, RefreshCw, Share2, Linkedin, Link2, Check, Twitter } from "lucide-react";
 import { toast } from "@/hooks/use-toast";
 
 interface BattleImageProps {
@@ -9,12 +8,17 @@ interface BattleImageProps {
   companyB: string;
   industryA?: string;
   industryB?: string;
+  scoreA?: number;
+  scoreB?: number;
+  slugA?: string;
+  slugB?: string;
 }
 
-export function BattleImage({ companyA, companyB, industryA, industryB }: BattleImageProps) {
+export function BattleImage({ companyA, companyB, industryA, industryB, scoreA, scoreB, slugA, slugB }: BattleImageProps) {
   const [imageUrl, setImageUrl] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(false);
+  const [copied, setCopied] = useState(false);
 
   const generate = async () => {
     setLoading(true);
@@ -45,6 +49,60 @@ export function BattleImage({ companyA, companyB, industryA, industryB }: Battle
   useEffect(() => {
     if (companyA && companyB) generate();
   }, [companyA, companyB]);
+
+  const shareUrl = slugA && slugB
+    ? `${window.location.origin}/compare?a=${slugA}&b=${slugB}`
+    : window.location.href;
+
+  const winner = scoreA != null && scoreB != null
+    ? scoreA > scoreB ? companyA : scoreB > scoreA ? companyB : null
+    : null;
+
+  const shareText = winner
+    ? `⚔️ ${companyA} (${scoreA}/100) vs ${companyB} (${scoreB}/100) — ${winner} wins the transparency battle! Who does YOUR employer work for?`
+    : `⚔️ ${companyA} vs ${companyB} — Who's more transparent? Compare employer intelligence scores.`;
+
+  const shareLinkedIn = () => {
+    window.open(
+      `https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(shareUrl)}`,
+      "_blank",
+      "width=600,height=500"
+    );
+  };
+
+  const shareTwitter = () => {
+    window.open(
+      `https://twitter.com/intent/tweet?text=${encodeURIComponent(shareText)}&url=${encodeURIComponent(shareUrl)}`,
+      "_blank",
+      "width=600,height=500"
+    );
+  };
+
+  const copyLink = () => {
+    navigator.clipboard.writeText(`${shareText} ${shareUrl}`);
+    setCopied(true);
+    setTimeout(() => setCopied(false), 2000);
+    toast({ title: "Battle link copied! 🔥" });
+  };
+
+  const downloadImage = async () => {
+    if (!imageUrl) return;
+    try {
+      const res = await fetch(imageUrl);
+      const blob = await res.blob();
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = `${companyA}-vs-${companyB}-battle.png`;
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      URL.revokeObjectURL(url);
+      toast({ title: "Image downloaded! 📸", description: "Share it on social media!" });
+    } catch {
+      toast({ title: "Download failed", variant: "destructive" });
+    }
+  };
 
   return (
     <div className="border border-border bg-card overflow-hidden mb-8">
@@ -109,9 +167,51 @@ export function BattleImage({ companyA, companyB, industryA, industryB }: Battle
         )}
       </div>
 
+      {/* Share bar — only when image is ready */}
+      {imageUrl && !loading && (
+        <div className="px-5 py-4 border-t border-border bg-muted/10">
+          <div className="flex items-center gap-2 mb-3">
+            <Share2 className="w-3.5 h-3.5 text-primary" />
+            <span className="font-mono text-[9px] tracking-[0.2em] uppercase text-primary font-semibold">
+              Share This Battle
+            </span>
+          </div>
+          <p className="text-[12px] text-muted-foreground mb-3">
+            {shareText}
+          </p>
+          <div className="flex flex-wrap gap-2">
+            <button
+              onClick={shareLinkedIn}
+              className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-[hsl(210,80%,40%)] hover:bg-[hsl(210,80%,30%)] text-white font-mono text-[9px] tracking-wider uppercase transition-colors"
+            >
+              <Linkedin className="w-3.5 h-3.5" /> LinkedIn
+            </button>
+            <button
+              onClick={shareTwitter}
+              className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-foreground hover:bg-foreground/80 text-background font-mono text-[9px] tracking-wider uppercase transition-colors"
+            >
+              <Twitter className="w-3.5 h-3.5" /> Twitter / X
+            </button>
+            <button
+              onClick={copyLink}
+              className="inline-flex items-center gap-1.5 px-3 py-1.5 border border-border bg-card hover:bg-muted/30 text-foreground font-mono text-[9px] tracking-wider uppercase transition-colors"
+            >
+              {copied ? <Check className="w-3.5 h-3.5 text-primary" /> : <Link2 className="w-3.5 h-3.5" />}
+              {copied ? "Copied!" : "Copy Link"}
+            </button>
+            <button
+              onClick={downloadImage}
+              className="inline-flex items-center gap-1.5 px-3 py-1.5 border border-primary/30 bg-primary/5 hover:bg-primary/10 text-primary font-mono text-[9px] tracking-wider uppercase transition-colors"
+            >
+              📸 Download Image
+            </button>
+          </div>
+        </div>
+      )}
+
       <div className="px-5 py-2 border-t border-border bg-muted/10 text-center">
         <span className="font-mono text-[8px] tracking-wider uppercase text-muted-foreground">
-          Powered by AI · For entertainment purposes · Not a reflection of actual corporate performance
+          Powered by AI · For entertainment purposes · Celebrating underrepresented voices in corporate America
         </span>
       </div>
     </div>
