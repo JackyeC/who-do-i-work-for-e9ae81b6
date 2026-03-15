@@ -1933,6 +1933,7 @@ export type Database = {
           department: string | null
           description: string | null
           employment_type: string | null
+          expires_at: string | null
           extracted_skills: Json | null
           id: string
           is_active: boolean
@@ -1960,6 +1961,7 @@ export type Database = {
           department?: string | null
           description?: string | null
           employment_type?: string | null
+          expires_at?: string | null
           extracted_skills?: Json | null
           id?: string
           is_active?: boolean
@@ -1987,6 +1989,7 @@ export type Database = {
           department?: string | null
           description?: string | null
           employment_type?: string | null
+          expires_at?: string | null
           extracted_skills?: Json | null
           id?: string
           is_active?: boolean
@@ -3546,6 +3549,53 @@ export type Database = {
           {
             foreignKeyName: "employee_growth_tracker_target_company_id_fkey"
             columns: ["target_company_id"]
+            isOneToOne: false
+            referencedRelation: "companies"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      employer_profiles: {
+        Row: {
+          company_id: string | null
+          company_name: string
+          created_at: string
+          id: string
+          job_credits: number
+          stripe_customer_id: string | null
+          tier: string
+          updated_at: string
+          user_id: string
+          work_email: string | null
+        }
+        Insert: {
+          company_id?: string | null
+          company_name: string
+          created_at?: string
+          id?: string
+          job_credits?: number
+          stripe_customer_id?: string | null
+          tier?: string
+          updated_at?: string
+          user_id: string
+          work_email?: string | null
+        }
+        Update: {
+          company_id?: string | null
+          company_name?: string
+          created_at?: string
+          id?: string
+          job_credits?: number
+          stripe_customer_id?: string | null
+          tier?: string
+          updated_at?: string
+          user_id?: string
+          work_email?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "employer_profiles_company_id_fkey"
+            columns: ["company_id"]
             isOneToOne: false
             referencedRelation: "companies"
             referencedColumns: ["id"]
@@ -7752,6 +7802,7 @@ export type Database = {
       }
     }
     Functions: {
+      deactivate_expired_jobs: { Args: never; Returns: number }
       get_company_roi_pipeline: { Args: { _company_id: string }; Returns: Json }
       has_role: {
         Args: {
