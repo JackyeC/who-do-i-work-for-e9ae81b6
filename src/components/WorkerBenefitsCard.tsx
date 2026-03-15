@@ -114,13 +114,13 @@ export function WorkerBenefitsCard({ companyName, dbCompanyId }: WorkerBenefitsC
             )}
             <Button
               onClick={handleScan}
-              disabled={isScanning}
+              disabled={isScanning || isFirecrawlDown}
               variant="outline"
               size="sm"
               className="gap-1.5"
             >
-              {isScanning ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <RefreshCw className="w-3.5 h-3.5" />}
-              {isScanning ? "Scanning…" : "Scan"}
+              {isScanning ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : isFirecrawlDown ? <CloudOff className="w-3.5 h-3.5" /> : <RefreshCw className="w-3.5 h-3.5" />}
+              {isScanning ? "Scanning…" : isFirecrawlDown ? `Paused (~${cooldownMinutes}m)` : "Scan"}
             </Button>
           </div>
         </div>

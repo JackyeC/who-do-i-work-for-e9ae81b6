@@ -141,10 +141,10 @@ export function CompensationTransparencyCard({ companyName, dbCompanyId }: Props
             size="sm"
             className="ml-auto gap-1.5"
             onClick={handleScan}
-            disabled={isScanning || !dbCompanyId}
+            disabled={isScanning || !dbCompanyId || isFirecrawlDown}
           >
-            {isScanning ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <Search className="w-3.5 h-3.5" />}
-            {isScanning ? "Scanning..." : "Scan"}
+            {isScanning ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : isFirecrawlDown ? <CloudOff className="w-3.5 h-3.5" /> : <Search className="w-3.5 h-3.5" />}
+            {isScanning ? "Scanning..." : isFirecrawlDown ? `Paused (~${cooldownMinutes}m)` : "Scan"}
           </Button>
         </CardTitle>
         <p className="text-xs text-muted-foreground">

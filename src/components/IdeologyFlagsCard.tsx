@@ -159,9 +159,11 @@ export function IdeologyFlagsCard({ companyName, dbCompanyId }: Props) {
 
         {!result ? (
           <div className="text-center py-6">
-            <Button onClick={runScan} disabled={scanning || !dbCompanyId} variant="outline">
+            <Button onClick={runScan} disabled={scanning || !dbCompanyId || isFirecrawlDown} variant="outline">
               {scanning ? (
                 <><Loader2 className="w-4 h-4 mr-2 animate-spin" /> Scanning ideological ties...</>
+              ) : isFirecrawlDown ? (
+                <><CloudOff className="w-4 h-4 mr-2" /> Paused (~{cooldownMinutes}m)</>
               ) : (
                 "Run Ideology Scan"
               )}

@@ -97,37 +97,34 @@ export function AIHiringCard({ companyName, dbCompanyId }: AIHiringCardProps) {
     (signals?.length || 0) > 0 ? 'completed_with_signals' :
     'not_run';
 
-  const handleScan = async () => {
-    setScanState({ status: 'in_progress' });
-    try {
-      const { data, error } = await supabase.functions.invoke("ai-hr-scan", {
-        body: { companyId: dbCompanyId, companyName },
-      });
-      if (error) throw error;
+  const [firecrawlDown, setFirecrawlDown] = useState(false);
 
+  const { runScan: triggerScan, isFirecrawlDown, cooldownMinutes } = useScanWithFallback({
+    functionName: "ai-hr-scan",
+    companyId: dbCompanyId,
+    companyName,
+    setLoading: (v) => {
+      if (v) setScanState({ status: 'in_progress' });
+    },
+    onSuccess: (data) => {
       const scanStatus = data?.scanStatus || (data?.success ? (data.signalsFound > 0 ? 'completed_with_signals' : 'completed_no_signals') : 'failed');
-
       setScanState({
         status: scanStatus,
         sourcesScanned: data?.sourcesScanned,
       });
-
-      if (data?.success) {
-        toast({
-          title: "AI/HR scan complete",
-          description: data.signalsFound > 0
-            ? `Found ${data.signalsFound} AI/hiring technology signals from ${data.sourcesScanned || '?'} sources`
-            : "No AI/hiring technology signals detected in scanned public sources",
-        });
-        queryClient.invalidateQueries({ queryKey: ["ai-hr-signals", dbCompanyId] });
+      queryClient.invalidateQueries({ queryKey: ["ai-hr-signals", dbCompanyId] });
+    },
+    onError: (reason, message) => {
+      if (reason === 'firecrawl_error' || reason === 'circuit_open') {
+        setFirecrawlDown(true);
+        setScanState({ status: effectiveScanStatus === 'not_run' ? 'not_run' : effectiveScanStatus });
       } else {
-        throw new Error(data?.error || "Scan failed");
+        setScanState({ status: 'failed', errorMessage: message });
       }
-    } catch (e: any) {
-      setScanState({ status: 'failed', errorMessage: e.message });
-      toast({ title: "Scan failed", description: e.message, variant: "destructive" });
-    }
-  };
+    },
+  });
+
+  const handleScan = triggerScan;
 
   const grouped = (signals || []).reduce((acc: Record<string, any[]>, s: any) => {
     const cat = s.signal_category || "Other";
