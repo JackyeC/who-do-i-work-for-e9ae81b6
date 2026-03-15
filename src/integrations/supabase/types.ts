@@ -3165,6 +3165,48 @@ export type Database = {
           },
         ]
       }
+      compensation_data: {
+        Row: {
+          company: string
+          created_at: string | null
+          currency: string | null
+          freshness_status: string | null
+          id: string
+          last_updated: string | null
+          median_total_compensation_usd: number | null
+          salary_by_grade: Json | null
+          source_summary: Json | null
+          top_roles: Json | null
+          updated_at: string | null
+        }
+        Insert: {
+          company: string
+          created_at?: string | null
+          currency?: string | null
+          freshness_status?: string | null
+          id?: string
+          last_updated?: string | null
+          median_total_compensation_usd?: number | null
+          salary_by_grade?: Json | null
+          source_summary?: Json | null
+          top_roles?: Json | null
+          updated_at?: string | null
+        }
+        Update: {
+          company?: string
+          created_at?: string | null
+          currency?: string | null
+          freshness_status?: string | null
+          id?: string
+          last_updated?: string | null
+          median_total_compensation_usd?: number | null
+          salary_by_grade?: Json | null
+          source_summary?: Json | null
+          top_roles?: Json | null
+          updated_at?: string | null
+        }
+        Relationships: []
+      }
       connection_company_map: {
         Row: {
           company_id: string
