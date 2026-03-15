@@ -309,6 +309,10 @@ export default function Jobs() {
             <p className="text-muted-foreground text-sm mt-0.5">
               Find jobs at companies that align with your values. Like AIApply — but with transparency built in.
             </p>
+            <p className="text-muted-foreground text-[11px] mt-1.5 flex items-center gap-1.5">
+              <span className="inline-block w-2 h-2 rounded-full bg-[hsl(var(--civic-green))]" />
+              <span><strong className="text-foreground/80">Civic Score</strong> measures employer transparency across governance, lobbying, workforce data, and public accountability. Hover or tap any score to learn more.</span>
+            </p>
           </div>
 
           {/* Tabs */}
