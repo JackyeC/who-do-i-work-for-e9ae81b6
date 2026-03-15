@@ -26,7 +26,7 @@ export default function WorkforceBrief() {
       if (!session?.user?.id) return null;
       const { data } = await supabase
         .from("user_subscriptions")
-        .select("tier")
+        .select("plan_id, plans(name)")
         .eq("user_id", session.user.id)
         .maybeSingle();
       return data;
@@ -34,7 +34,8 @@ export default function WorkforceBrief() {
     enabled: !!session?.user?.id,
   });
 
-  const isPro = subscription?.tier === "candidate" || subscription?.tier === "professional";
+  const planName = (subscription?.plans as any)?.name?.toLowerCase() || "";
+  const isPro = !!subscription?.plan_id && planName !== "free";
 
   return (
     <div className="min-h-screen bg-background">
