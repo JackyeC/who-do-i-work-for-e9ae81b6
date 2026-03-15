@@ -17,7 +17,16 @@ export type IntelligenceSection =
   | 'compensation'
   | 'ai_hiring'
   | 'ideology'
-  | 'benefits';
+  | 'benefits'
+  | 'sanctions_screening'
+  | 'wikidata_enrichment'
+  | 'corporate_structure'
+  | 'political_influence'
+  | 'legal_risk'
+  | 'lobbying'
+  | 'government_contracts'
+  | 'insider_trading'
+  | 'sec_filings';
 
 /** Freshness TTL in hours per section */
 export const SECTION_FRESHNESS: Record<IntelligenceSection, number> = {
