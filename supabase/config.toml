@@ -41,3 +41,6 @@ verify_jwt = false
 
 [functions.osint-parallel-scan]
 verify_jwt = false
+
+[functions.receipts-timeline]
+verify_jwt = false

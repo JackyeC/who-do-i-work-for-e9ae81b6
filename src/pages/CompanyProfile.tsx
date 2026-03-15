@@ -1074,6 +1074,12 @@ export default function CompanyProfile() {
                   <NarrativePowerSection companyName={name} companyId={dbCompany?.id} />
                 </section>
               ),
+              receipts_timeline: () => (
+                <section id="section-receipts-timeline" className="mb-10 scroll-mt-28">
+                  <SectionHeader icon={Clock} title="Receipts Timeline" subtitle="Chronological evidence trail — what happened, when, and according to whom" />
+                  {dbCompanyId && <ReceiptsTimeline companyId={dbCompanyId} companyName={name} />}
+                </section>
+              ),
             };
 
             const BUCKET_ICONS: Record<string, any> = {
