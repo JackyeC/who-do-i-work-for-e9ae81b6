@@ -212,6 +212,9 @@ const Index = forwardRef<HTMLDivElement>((_, ref) => {
       {/* Animated Demo */}
       <AnimatedDemo />
 
+      {/* Mini Report Teaser */}
+      <MiniReportTeaser />
+
       {/* Values Quiz */}
       <ValuesQuiz />
 
