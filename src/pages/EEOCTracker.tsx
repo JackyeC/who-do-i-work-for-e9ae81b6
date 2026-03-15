@@ -1,14 +1,17 @@
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { usePageSEO } from "@/hooks/use-page-seo";
+import { useUserRole } from "@/hooks/use-user-role";
+import { useDeleteEEOCCase } from "@/hooks/use-eeoc-cases";
 import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Link } from "react-router-dom";
 import { motion } from "framer-motion";
 import {
   Scale, AlertTriangle, ExternalLink, MapPin, Calendar,
-  Shield, Gavel, Building2, Users, ChevronRight
+  Shield, Gavel, Building2, Users, ChevronRight, Trash2
 } from "lucide-react";
 
 interface EEOCCase {
