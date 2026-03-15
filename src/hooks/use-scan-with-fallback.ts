@@ -41,6 +41,8 @@ export function useScanWithFallback({
   onSuccess,
   onError,
   setLoading,
+  section,
+  lastUpdated,
 }: UseScanOptions) {
   const { toast } = useToast();
 
