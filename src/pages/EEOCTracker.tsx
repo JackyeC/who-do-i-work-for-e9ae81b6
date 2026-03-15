@@ -60,6 +60,10 @@ export default function EEOCTracker() {
     description: "Track EEOC lawsuits that were dropped, dismissed, or withdrawn. Transparency on federal enforcement shifts affecting workers.",
   });
 
+  const { isAdmin, isOwner } = useUserRole();
+  const canDelete = isAdmin || isOwner;
+  const deleteCase = useDeleteEEOCCase();
+
   const { data: cases, isLoading } = useQuery({
     queryKey: ["eeoc-dropped-cases"],
     queryFn: async () => {
