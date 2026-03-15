@@ -74,8 +74,8 @@ const sections: SiteSection[] = [
     links: [
       { label: "Policy Hub", path: "/policy", icon: Landmark, description: "Track legislation affecting workers" },
       { label: "Economy Dashboard", path: "/economy", icon: DollarSign, description: "Labor market and economic indicators" },
-      { label: "Follow the Money", path: "/follow-the-money", icon: DollarSign, description: "Trace corporate political spending" },
-      { label: "Board Intelligence", path: "/board-intelligence", icon: Users, description: "Corporate board member analysis" },
+      { label: "Follow the Money", path: "/follow-the-money", icon: DollarSign, premium: "candidate", description: "Trace corporate political spending" },
+      { label: "Board Intelligence", path: "/board-intelligence", icon: Users, premium: "candidate", description: "Corporate board member analysis" },
       { label: "Intelligence Chain", path: "/intelligence-chain", icon: Network, description: "Evidence chain methodology" },
     ],
   },
