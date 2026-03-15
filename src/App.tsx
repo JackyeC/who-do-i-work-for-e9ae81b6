@@ -87,6 +87,7 @@ const Rankings = lazy(() => import("./pages/Rankings"));
 const RealityCheck = lazy(() => import("./pages/RealityCheck"));
 const FounderConsole = lazy(() => import("./pages/FounderConsole"));
 const EmployerVerificationPending = lazy(() => import("./pages/EmployerVerificationPending"));
+const ForEmployers = lazy(() => import("./pages/ForEmployers"));
 
 // Lazy-load floating widgets — not needed on first paint
 const AskJackyeWidget = lazy(() => import("./components/AskJackyeWidget").then(m => ({ default: m.AskJackyeWidget })));
