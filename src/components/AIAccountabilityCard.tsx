@@ -84,30 +84,20 @@ export function AIAccountabilityCard({ companyName, dbCompanyId }: AIAccountabil
     enabled: !!dbCompanyId,
   });
 
-  const handleScan = async () => {
-    setIsScanning(true);
-    try {
-      const { data, error } = await supabase.functions.invoke("ai-accountability-scan", {
-        body: { companyId: dbCompanyId, companyName },
-      });
-      if (error) throw error;
-      if (data?.success) {
-        toast({
-          title: "AI Accountability scan complete",
-          description: data.vendorsDetected > 0
-            ? `Found ${data.vendorsDetected} AI vendors, ${data.auditsFound} audits`
-            : "No AI hiring vendors detected",
-        });
-        queryClient.invalidateQueries({ queryKey: ["ai-hiring-signals", dbCompanyId] });
-      } else {
-        throw new Error(data?.error || "Scan failed");
-      }
-    } catch (e: any) {
-      toast({ title: "Scan failed", description: e.message, variant: "destructive" });
-    } finally {
-      setIsScanning(false);
-    }
-  };
+  const [firecrawlDown, setFirecrawlDown] = useState(false);
+
+  const { runScan: handleScan, isFirecrawlDown, cooldownMinutes } = useScanWithFallback({
+    functionName: "ai-accountability-scan",
+    companyId: dbCompanyId,
+    companyName,
+    setLoading: setIsScanning,
+    onSuccess: (data) => {
+      queryClient.invalidateQueries({ queryKey: ["ai-hiring-signals", dbCompanyId] });
+    },
+    onError: (reason) => {
+      if (reason === 'firecrawl_error' || reason === 'circuit_open') setFirecrawlDown(true);
+    },
+  });
 
   const hasSignals = (signals?.length || 0) > 0;
   const vendors = signals?.filter((s: any) => s.signal_type !== 'Regulatory Disclosure') || [];
