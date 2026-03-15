@@ -871,7 +871,7 @@ function UploadedOfferResults({ reviewId, onBack }: { reviewId: string; onBack: 
 }
 
 function useUploadedReview(reviewId: string) {
-  const { data, isLoading, refetch } = require("@tanstack/react-query").useQuery({
+  const { data, isLoading, refetch } = useQuery({
     queryKey: ["uploaded-review", reviewId],
     queryFn: async () => {
       const { data } = await supabase
