@@ -932,6 +932,7 @@ export type Database = {
           identity_matched: boolean | null
           industry: string
           is_publicly_traded: boolean | null
+          jackye_insight: string | null
           last_reviewed: string
           last_scan_attempted: string | null
           lobbying_spend: number | null
@@ -950,6 +951,7 @@ export type Database = {
           total_pac_spending: number
           updated_at: string
           verification_notes: string | null
+          vetted_status: string | null
           website_url: string | null
           worker_relevance: string | null
         }
@@ -969,6 +971,7 @@ export type Database = {
           identity_matched?: boolean | null
           industry: string
           is_publicly_traded?: boolean | null
+          jackye_insight?: string | null
           last_reviewed?: string
           last_scan_attempted?: string | null
           lobbying_spend?: number | null
@@ -987,6 +990,7 @@ export type Database = {
           total_pac_spending?: number
           updated_at?: string
           verification_notes?: string | null
+          vetted_status?: string | null
           website_url?: string | null
           worker_relevance?: string | null
         }
@@ -1006,6 +1010,7 @@ export type Database = {
           identity_matched?: boolean | null
           industry?: string
           is_publicly_traded?: boolean | null
+          jackye_insight?: string | null
           last_reviewed?: string
           last_scan_attempted?: string | null
           lobbying_spend?: number | null
@@ -1024,6 +1029,7 @@ export type Database = {
           total_pac_spending?: number
           updated_at?: string
           verification_notes?: string | null
+          vetted_status?: string | null
           website_url?: string | null
           worker_relevance?: string | null
         }
@@ -1921,6 +1927,7 @@ export type Database = {
       }
       company_jobs: {
         Row: {
+          admin_approved: boolean | null
           company_id: string
           created_at: string
           department: string | null
@@ -1929,6 +1936,7 @@ export type Database = {
           extracted_skills: Json | null
           id: string
           is_active: boolean
+          is_featured: boolean | null
           is_sponsored: boolean
           last_verified_at: string | null
           location: string | null
@@ -1946,6 +1954,7 @@ export type Database = {
           work_mode: string | null
         }
         Insert: {
+          admin_approved?: boolean | null
           company_id: string
           created_at?: string
           department?: string | null
@@ -1954,6 +1963,7 @@ export type Database = {
           extracted_skills?: Json | null
           id?: string
           is_active?: boolean
+          is_featured?: boolean | null
           is_sponsored?: boolean
           last_verified_at?: string | null
           location?: string | null
@@ -1971,6 +1981,7 @@ export type Database = {
           work_mode?: string | null
         }
         Update: {
+          admin_approved?: boolean | null
           company_id?: string
           created_at?: string
           department?: string | null
@@ -1979,6 +1990,7 @@ export type Database = {
           extracted_skills?: Json | null
           id?: string
           is_active?: boolean
+          is_featured?: boolean | null
           is_sponsored?: boolean
           last_verified_at?: string | null
           location?: string | null
@@ -2360,6 +2372,65 @@ export type Database = {
         Relationships: [
           {
             foreignKeyName: "company_report_sections_company_id_fkey"
+            columns: ["company_id"]
+            isOneToOne: false
+            referencedRelation: "companies"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      company_research: {
+        Row: {
+          approved_at: string | null
+          approved_by: string | null
+          board_connections: string | null
+          citations: Json | null
+          company_id: string
+          connection_chain: string | null
+          created_at: string
+          id: string
+          leadership_notes: string | null
+          political_spending_notes: string | null
+          research_summary: string | null
+          source_model: string | null
+          status: string
+          updated_at: string
+        }
+        Insert: {
+          approved_at?: string | null
+          approved_by?: string | null
+          board_connections?: string | null
+          citations?: Json | null
+          company_id: string
+          connection_chain?: string | null
+          created_at?: string
+          id?: string
+          leadership_notes?: string | null
+          political_spending_notes?: string | null
+          research_summary?: string | null
+          source_model?: string | null
+          status?: string
+          updated_at?: string
+        }
+        Update: {
+          approved_at?: string | null
+          approved_by?: string | null
+          board_connections?: string | null
+          citations?: Json | null
+          company_id?: string
+          connection_chain?: string | null
+          created_at?: string
+          id?: string
+          leadership_notes?: string | null
+          political_spending_notes?: string | null
+          research_summary?: string | null
+          source_model?: string | null
+          status?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "company_research_company_id_fkey"
             columns: ["company_id"]
             isOneToOne: false
             referencedRelation: "companies"
