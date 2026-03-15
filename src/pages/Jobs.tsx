@@ -210,7 +210,14 @@ export default function Jobs() {
         matchesValues = valuesFilters.every((f) => companyCategories.has(f));
       }
       return matchesSearch && matchesScore && matchesIndustry && matchesValues && matchesWorkMode;
-    }).sort((a: any, b: any) => (jobScores[b.id] || 0) - (jobScores[a.id] || 0));
+    }).sort((a: any, b: any) => {
+      // Sponsored jobs always sort to top
+      const aSponsored = a.is_sponsored && (!a.sponsor_expires_at || new Date(a.sponsor_expires_at) > new Date());
+      const bSponsored = b.is_sponsored && (!b.sponsor_expires_at || new Date(b.sponsor_expires_at) > new Date());
+      if (aSponsored && !bSponsored) return -1;
+      if (!aSponsored && bSponsored) return 1;
+      return (jobScores[b.id] || 0) - (jobScores[a.id] || 0);
+    });
   }, [jobs, search, minScore, industryFilter, workModeFilter, valuesFilters, valuesSignals, jobScores]);
 
   const companiesWithJobs = useMemo(() => {

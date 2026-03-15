@@ -41,15 +41,18 @@ interface JobListRowProps {
 export function JobListRow({ job, companyValueSignals = [], companySignalFlags = [], matchScore, isSelected, onClick }: JobListRowProps) {
   const company = job.companies;
   const WorkModeIcon = job.work_mode ? WORK_MODE_ICONS[job.work_mode] : null;
+  const isSponsored = job.is_sponsored && (!job.sponsor_expires_at || new Date(job.sponsor_expires_at) > new Date());
 
   return (
+
     <button
       onClick={onClick}
       className={cn(
         "w-full text-left p-3 sm:p-4 rounded-xl border transition-all duration-150 hover:shadow-elegant group",
+        isSponsored && "border-primary/20 bg-primary/[0.02]",
         isSelected
           ? "border-primary/40 bg-primary/5 shadow-elegant"
-          : "border-border bg-card hover:border-primary/20"
+          : !isSponsored && "border-border bg-card hover:border-primary/20"
       )}
     >
       <div className="flex items-start justify-between gap-3">

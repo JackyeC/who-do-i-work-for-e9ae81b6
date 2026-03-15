@@ -4,6 +4,8 @@ import { useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { Shield, FileText, MessageSquare, Compass, ArrowRight, ArrowLeftRight, Zap } from "lucide-react";
 import { AnimatedDemo } from "@/components/landing/AnimatedDemo";
+import { MiniReportTeaser } from "@/components/landing/MiniReportTeaser";
+import { ExitIntentCapture } from "@/components/ExitIntentCapture";
 import { FAQSection } from "@/components/landing/FAQSection";
 import { EmailCapture } from "@/components/landing/EmailCapture";
 import { usePageSEO } from "@/hooks/use-page-seo";
@@ -58,7 +60,7 @@ const Index = forwardRef<HTMLDivElement>((_, ref) => {
 
   return (
     <div ref={ref} className="flex flex-col min-h-screen bg-background">
-      {/* Hero */}
+      <ExitIntentCapture />
       <section className="px-6 lg:px-16 py-20 lg:py-32 max-w-[1100px] mx-auto w-full grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-16 items-center">
         <div>
           <motion.div
@@ -209,6 +211,9 @@ const Index = forwardRef<HTMLDivElement>((_, ref) => {
 
       {/* Animated Demo */}
       <AnimatedDemo />
+
+      {/* Mini Report Teaser */}
+      <MiniReportTeaser />
 
       {/* Values Quiz */}
       <ValuesQuiz />
