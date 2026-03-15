@@ -2,10 +2,11 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import jackyeHeadshot from "@/assets/jackye-headshot.png";
 import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
+import { Skeleton } from "@/components/ui/skeleton";
 import {
   Users, TrendingDown, Eye, DollarSign, Landmark,
   Heart, Building2, MapPin, Briefcase,
-  ShieldCheck, AlertTriangle, Search, ArrowRight,
+  ShieldCheck, AlertTriangle, Search, ArrowRight, Loader2,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { AccountabilityBadge, type AccountabilityStatus } from "@/components/AccountabilityBadge";
@@ -38,6 +39,7 @@ interface OfferCheckSnapshotProps {
   verdict: SnapshotVerdict;
   sections: SnapshotSection[];
   jackyeTake?: string;
+  loading?: boolean;
 }
 
 /* ── Signal level styling ── */
@@ -299,6 +301,7 @@ export function OfferCheckSnapshot({
   verdict,
   sections,
   jackyeTake,
+  loading,
 }: OfferCheckSnapshotProps) {
   const verdictStyle = VERDICT_CONFIG[verdict];
   const VerdictIcon = verdictStyle.icon;
@@ -315,16 +318,26 @@ export function OfferCheckSnapshot({
               Offer Check Snapshot
             </CardTitle>
             <p className="text-xs text-muted-foreground mt-1">
-              Signal-based assessment of this employer — read in under 10 seconds.
+              {loading ? "Building your report — gathering intelligence from multiple sources." : "Signal-based assessment of this employer — read in under 10 seconds."}
             </p>
           </div>
-          <Badge
-            variant="outline"
-            className={cn("text-xs font-semibold gap-1.5 px-3 py-1", verdictStyle.color, verdictStyle.border, verdictStyle.bg)}
-          >
-            <VerdictIcon className="w-3.5 h-3.5" />
-            {verdict}
-          </Badge>
+          {loading ? (
+            <Badge
+              variant="outline"
+              className="text-xs font-semibold gap-1.5 px-3 py-1 text-primary border-primary/30 bg-primary/5"
+            >
+              <Loader2 className="w-3.5 h-3.5 animate-spin" />
+              Building Report
+            </Badge>
+          ) : (
+            <Badge
+              variant="outline"
+              className={cn("text-xs font-semibold gap-1.5 px-3 py-1", verdictStyle.color, verdictStyle.border, verdictStyle.bg)}
+            >
+              <VerdictIcon className="w-3.5 h-3.5" />
+              {verdict}
+            </Badge>
+          )}
         </div>
       </CardHeader>
 
