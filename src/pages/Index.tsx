@@ -60,7 +60,7 @@ const Index = forwardRef<HTMLDivElement>((_, ref) => {
 
   return (
     <div ref={ref} className="flex flex-col min-h-screen bg-background">
-      {/* Hero */}
+      <ExitIntentCapture />
       <section className="px-6 lg:px-16 py-20 lg:py-32 max-w-[1100px] mx-auto w-full grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-16 items-center">
         <div>
           <motion.div
