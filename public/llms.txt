@@ -51,17 +51,21 @@ Jackye Clayton is a career strategist, HR intelligence expert, and candidate adv
 
 ## Contact
 
-- Website: https://civic-align.lovable.app
-- Advisory services: https://civic-align.lovable.app/work-with-jackye
+- Website: https://wdiwf.jackyeclayton.com
+- Advisory services: https://wdiwf.jackyeclayton.com/work-with-jackye
 
 ## Key Pages
 
-- Homepage: https://civic-align.lovable.app/
-- Company Intelligence: https://civic-align.lovable.app/browse
-- Offer Intelligence: https://civic-align.lovable.app/check
-- Ask Jackye: https://civic-align.lovable.app/ask-jackye
-- Career Intelligence: https://civic-align.lovable.app/career-intelligence
-- Would You Work Here?: https://civic-align.lovable.app/would-you-work-here
-- Work With Jackye: https://civic-align.lovable.app/work-with-jackye
-- Methodology: https://civic-align.lovable.app/methodology
-- Pricing: https://civic-align.lovable.app/pricing
+- Homepage: https://wdiwf.jackyeclayton.com/
+- Company Intelligence: https://wdiwf.jackyeclayton.com/browse
+- Offer Intelligence: https://wdiwf.jackyeclayton.com/check
+- Ask Jackye: https://wdiwf.jackyeclayton.com/ask-jackye
+- Career Intelligence: https://wdiwf.jackyeclayton.com/career-intelligence
+- Would You Work Here?: https://wdiwf.jackyeclayton.com/would-you-work-here
+- Work With Jackye: https://wdiwf.jackyeclayton.com/work-with-jackye
+- Methodology: https://wdiwf.jackyeclayton.com/methodology
+- Pricing: https://wdiwf.jackyeclayton.com/pricing
+
+## Full Documentation
+
+For comprehensive platform details, see: https://wdiwf.jackyeclayton.com/llms-full.txt
