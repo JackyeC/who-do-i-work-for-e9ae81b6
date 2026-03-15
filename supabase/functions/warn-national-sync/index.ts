@@ -112,7 +112,17 @@ Deno.serve(async (req) => {
     }
 
     console.log(`[warn-national-sync] Fetching national WARN dataset...`);
-    const response = await fetch(NATIONAL_WARN_URL);
+    let response = await fetch(NATIONAL_WARN_URL);
+    let usedUrl = NATIONAL_WARN_URL;
+    
+    // Try fallback URL if primary fails
+    if (!response.ok) {
+      await response.text(); // consume body
+      console.log(`[warn-national-sync] Primary URL failed, trying fallback...`);
+      response = await fetch(NATIONAL_WARN_FALLBACK_URL);
+      usedUrl = NATIONAL_WARN_FALLBACK_URL;
+    }
+    
     if (!response.ok) {
       const errText = await response.text();
       console.error("[warn-national-sync] Fetch failed:", response.status, errText);
@@ -120,7 +130,7 @@ Deno.serve(async (req) => {
       // Log sync failure
       await supabase.from("warn_sync_log").insert({
         source_name: "Big Local News WARN Transformer",
-        source_url: NATIONAL_WARN_URL,
+        source_url: usedUrl,
         source_type: "big_local_news",
         status: "error",
         error_message: `HTTP ${response.status}: ${errText.slice(0, 200)}`,
@@ -133,7 +143,7 @@ Deno.serve(async (req) => {
     }
 
     const allData: WarnEntry[] = await response.json();
-    console.log(`[warn-national-sync] Dataset size: ${allData.length} entries`);
+    console.log(`[warn-national-sync] Dataset size: ${allData.length} entries (from ${usedUrl})`);
 
     // Filter by date range — prioritize current year
     const currentYear = new Date().getFullYear();
