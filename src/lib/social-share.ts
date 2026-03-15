@@ -12,7 +12,7 @@ const BASE_URL = "https://wdiwf.jackyeclayton.com";
 export type SharePlatform = "linkedin" | "twitter" | "facebook" | "copy";
 
 export interface ShareContext {
-  type: "company" | "battle" | "rivalry" | "scorecard";
+  type: "company" | "battle" | "rivalry" | "scorecard" | "receipt" | "career-risk";
   companyA: string;
   companyB?: string;
   scoreA?: number;
@@ -20,6 +20,8 @@ export interface ShareContext {
   slugA?: string;
   slugB?: string;
   industry?: string;
+  signals?: { label: string; score: number }[];
+  dimensions?: { label: string; score: number }[];
 }
 
 function getShareUrl(ctx: ShareContext): string {
