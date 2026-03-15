@@ -884,6 +884,10 @@ export default function CompanyProfile() {
                     <WorkerSentimentCard companyName={name} dbCompanyId={dbCompanyId} />
                     <AIHiringCard companyName={name} dbCompanyId={dbCompanyId} />
                     <WorkerBenefitsCard companyName={name} dbCompanyId={dbCompanyId} />
+                    {dbCompanyId && (
+                      <WorkforceDemographicsLayer companyId={dbCompanyId} companyName={name} />
+                    )}
+                    <BLSDemographicsCard />
                   </div>
                 </section>
               ),
