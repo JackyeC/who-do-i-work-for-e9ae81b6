@@ -1,4 +1,4 @@
-import { useEffect } from "react";
+import { Suspense, lazy, useEffect } from "react";
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
@@ -12,78 +12,85 @@ import { ProtectedRoute } from "@/components/ProtectedRoute";
 import { AdminRoute } from "@/components/AdminRoute";
 import { ErrorBoundary } from "@/components/ErrorBoundary";
 import { AppShell } from "@/components/layout/AppShell";
-import { AskJackyeWidget } from "@/components/AskJackyeWidget";
-import { BetaFeedbackWidget } from "@/components/BetaFeedbackWidget";
+import { Loader2 } from "lucide-react";
+
+// Only the landing page is eagerly loaded
 import Index from "./pages/Index";
-import CompanyProfile from "./pages/CompanyProfile";
-import SearchResults from "./pages/SearchResults";
-import Browse from "./pages/Browse";
-import Methodology from "./pages/Methodology";
-import Login from "./pages/Login";
-import WhoDoIWorkFor from "./pages/WhoDoIWorkFor";
-import VoterLookup from "./pages/VoterLookup";
-import RepresentativeProfile from "./pages/RepresentativeProfile";
-import AddCompany from "./pages/AddCompany";
-import Jobs from "./pages/Jobs";
-import JobIntegrityBoard from "./pages/JobIntegrityBoard";
 import NotFound from "./pages/NotFound";
-import RequestCorrection from "./pages/RequestCorrection";
-import OfferCheck from "./pages/OfferCheck";
-import MyOfferChecks from "./pages/MyOfferChecks";
-import CompareOfferChecks from "./pages/CompareOfferChecks";
-import JobDashboard from "./pages/JobDashboard";
-import OfferReview from "./pages/OfferReview";
-import MyOfferReviews from "./pages/MyOfferReviews";
-import SignalAlerts from "./pages/SignalAlerts";
-import OfferReviewDirect from "./pages/OfferReviewDirect";
-import CareerIntelligence from "./pages/CareerIntelligence";
-import Check from "./pages/Check";
-import CareerMap from "./pages/CareerMap";
-import Dashboard from "./pages/Dashboard";
-import TermsOfService from "./pages/TermsOfService";
-import PrivacyPolicy from "./pages/PrivacyPolicy";
-import Examples from "./pages/Examples";
-import SearchYourEmployer from "./pages/SearchYourEmployer";
-import ValuesSearch from "./pages/ValuesSearch";
-import IntelligenceReports from "./pages/IntelligenceReports";
-import IntelligenceReport from "./pages/IntelligenceReport";
-import ReportsList from "./pages/ReportsList";
-import ReportEditor from "./pages/ReportEditor";
-import RecruitingIntelligence from "./pages/RecruitingIntelligence";
-import CompanyDossier from "./pages/CompanyDossier";
-import Pricing from "./pages/Pricing";
-import RelationshipIntelligence from "./pages/RelationshipIntelligence";
-import StrategicOfferReview from "./pages/StrategicOfferReview";
-import PolicyHub from "./pages/PolicyHub";
-import PolicyDetail from "./pages/PolicyDetail";
-import EconomyDashboard from "./pages/EconomyDashboard";
-import FollowTheMoney from "./pages/FollowTheMoney";
-import AskJackye from "./pages/AskJackye";
-import OnePager from "./pages/OnePager";
-import Demo from "./pages/Demo";
-import WouldYouWorkHere from "./pages/WouldYouWorkHere";
-import WorkWithJackye from "./pages/WorkWithJackye";
-import EmployerReceipt from "./pages/EmployerReceipt";
-import EVPRealityCheck from "./pages/EVPRealityCheck";
-import WhatAmISupporting from "./pages/WhatAmISupporting";
-import OfferClarity from "./pages/OfferClarity";
-import IntelligenceChain from "./pages/IntelligenceChain";
-import BoardIntelligence from "./pages/BoardIntelligence";
-import LeaderProfile from "./pages/LeaderProfile";
-import Disclaimers from "./pages/Disclaimers";
-import CompareCompanies from "./pages/CompareCompanies";
-import InvestigativeExplorer from "./pages/InvestigativeExplorer";
-import SiteMap from "./pages/SiteMap";
-import Rivalries from "./pages/Rivalries";
-import BrandMadness from "./pages/BrandMadness";
-import SignalFeed from "./pages/SignalFeed";
-import EEOCTracker from "./pages/EEOCTracker";
-import WorkIndex from "./pages/WorkIndex";
-import WorkforceBrief from "./pages/WorkforceBrief";
-import Rankings from "./pages/Rankings";
-import RealityCheck from "./pages/RealityCheck";
-import FounderConsole from "./pages/FounderConsole";
-import { CookieNotice } from "@/components/CookieNotice";
+
+// Everything else is lazy-loaded per route
+const CompanyProfile = lazy(() => import("./pages/CompanyProfile"));
+const SearchResults = lazy(() => import("./pages/SearchResults"));
+const Browse = lazy(() => import("./pages/Browse"));
+const Methodology = lazy(() => import("./pages/Methodology"));
+const Login = lazy(() => import("./pages/Login"));
+const WhoDoIWorkFor = lazy(() => import("./pages/WhoDoIWorkFor"));
+const VoterLookup = lazy(() => import("./pages/VoterLookup"));
+const RepresentativeProfile = lazy(() => import("./pages/RepresentativeProfile"));
+const AddCompany = lazy(() => import("./pages/AddCompany"));
+const Jobs = lazy(() => import("./pages/Jobs"));
+const JobIntegrityBoard = lazy(() => import("./pages/JobIntegrityBoard"));
+const RequestCorrection = lazy(() => import("./pages/RequestCorrection"));
+const OfferCheck = lazy(() => import("./pages/OfferCheck"));
+const MyOfferChecks = lazy(() => import("./pages/MyOfferChecks"));
+const CompareOfferChecks = lazy(() => import("./pages/CompareOfferChecks"));
+const JobDashboard = lazy(() => import("./pages/JobDashboard"));
+const OfferReview = lazy(() => import("./pages/OfferReview"));
+const MyOfferReviews = lazy(() => import("./pages/MyOfferReviews"));
+const SignalAlerts = lazy(() => import("./pages/SignalAlerts"));
+const OfferReviewDirect = lazy(() => import("./pages/OfferReviewDirect"));
+const CareerIntelligence = lazy(() => import("./pages/CareerIntelligence"));
+const Check = lazy(() => import("./pages/Check"));
+const CareerMap = lazy(() => import("./pages/CareerMap"));
+const Dashboard = lazy(() => import("./pages/Dashboard"));
+const TermsOfService = lazy(() => import("./pages/TermsOfService"));
+const PrivacyPolicy = lazy(() => import("./pages/PrivacyPolicy"));
+const Examples = lazy(() => import("./pages/Examples"));
+const SearchYourEmployer = lazy(() => import("./pages/SearchYourEmployer"));
+const ValuesSearch = lazy(() => import("./pages/ValuesSearch"));
+const IntelligenceReports = lazy(() => import("./pages/IntelligenceReports"));
+const IntelligenceReport = lazy(() => import("./pages/IntelligenceReport"));
+const ReportsList = lazy(() => import("./pages/ReportsList"));
+const ReportEditor = lazy(() => import("./pages/ReportEditor"));
+const RecruitingIntelligence = lazy(() => import("./pages/RecruitingIntelligence"));
+const CompanyDossier = lazy(() => import("./pages/CompanyDossier"));
+const Pricing = lazy(() => import("./pages/Pricing"));
+const RelationshipIntelligence = lazy(() => import("./pages/RelationshipIntelligence"));
+const StrategicOfferReview = lazy(() => import("./pages/StrategicOfferReview"));
+const PolicyHub = lazy(() => import("./pages/PolicyHub"));
+const PolicyDetail = lazy(() => import("./pages/PolicyDetail"));
+const EconomyDashboard = lazy(() => import("./pages/EconomyDashboard"));
+const FollowTheMoney = lazy(() => import("./pages/FollowTheMoney"));
+const AskJackye = lazy(() => import("./pages/AskJackye"));
+const OnePager = lazy(() => import("./pages/OnePager"));
+const Demo = lazy(() => import("./pages/Demo"));
+const WouldYouWorkHere = lazy(() => import("./pages/WouldYouWorkHere"));
+const WorkWithJackye = lazy(() => import("./pages/WorkWithJackye"));
+const EmployerReceipt = lazy(() => import("./pages/EmployerReceipt"));
+const EVPRealityCheck = lazy(() => import("./pages/EVPRealityCheck"));
+const WhatAmISupporting = lazy(() => import("./pages/WhatAmISupporting"));
+const OfferClarity = lazy(() => import("./pages/OfferClarity"));
+const IntelligenceChain = lazy(() => import("./pages/IntelligenceChain"));
+const BoardIntelligence = lazy(() => import("./pages/BoardIntelligence"));
+const LeaderProfile = lazy(() => import("./pages/LeaderProfile"));
+const Disclaimers = lazy(() => import("./pages/Disclaimers"));
+const CompareCompanies = lazy(() => import("./pages/CompareCompanies"));
+const InvestigativeExplorer = lazy(() => import("./pages/InvestigativeExplorer"));
+const SiteMap = lazy(() => import("./pages/SiteMap"));
+const Rivalries = lazy(() => import("./pages/Rivalries"));
+const BrandMadness = lazy(() => import("./pages/BrandMadness"));
+const SignalFeed = lazy(() => import("./pages/SignalFeed"));
+const EEOCTracker = lazy(() => import("./pages/EEOCTracker"));
+const WorkIndex = lazy(() => import("./pages/WorkIndex"));
+const WorkforceBrief = lazy(() => import("./pages/WorkforceBrief"));
+const Rankings = lazy(() => import("./pages/Rankings"));
+const RealityCheck = lazy(() => import("./pages/RealityCheck"));
+const FounderConsole = lazy(() => import("./pages/FounderConsole"));
+
+// Lazy-load floating widgets — not needed on first paint
+const AskJackyeWidget = lazy(() => import("./components/AskJackyeWidget").then(m => ({ default: m.AskJackyeWidget })));
+const BetaFeedbackWidget = lazy(() => import("./components/BetaFeedbackWidget").then(m => ({ default: m.BetaFeedbackWidget })));
+const CookieNotice = lazy(() => import("./components/CookieNotice").then(m => ({ default: m.CookieNotice })));
 
 const queryClient = new QueryClient();
 
@@ -91,6 +98,14 @@ function ScrollToTop() {
   const { pathname } = useLocation();
   useEffect(() => { window.scrollTo(0, 0); }, [pathname]);
   return null;
+}
+
+function RouteLoader() {
+  return (
+    <div className="min-h-screen flex items-center justify-center bg-background">
+      <Loader2 className="w-6 h-6 animate-spin text-primary" />
+    </div>
+  );
 }
 
 const App = () => (
@@ -106,138 +121,90 @@ const App = () => (
           <BrowserRouter>
             <ScrollToTop />
             <AppShell>
-              <Routes>
-                <Route path="/" element={<Index />} />
-                <Route path="/ask-jackye" element={<AskJackye />} />
-                <Route path="/reality-check" element={<ProtectedRoute><RealityCheck /></ProtectedRoute>} />
-                <Route path="/would-you-work-here" element={<WouldYouWorkHere />} />
-                <Route path="/work-with-jackye" element={<WorkWithJackye />} />
-                <Route path="/employer-receipt" element={<EmployerReceipt />} />
-                <Route path="/employer-promise-check" element={<EVPRealityCheck />} />
-                <Route path="/evp-reality-check" element={<EVPRealityCheck />} /> {/* Legacy redirect */}
-                <Route path="/what-am-i-supporting" element={<WhatAmISupporting />} />
-                <Route path="/intelligence-chain" element={<IntelligenceChain />} />
-                <Route path="/board-intelligence" element={<BoardIntelligence />} />
-                <Route path="/leader/:id" element={<LeaderProfile />} />
-                <Route path="/one-pager" element={<OnePager />} />
-                <Route path="/demo" element={<Demo />} />
-                <Route path="/check" element={<Check />} />
-                <Route path="/policy" element={<PolicyHub />} />
-                <Route path="/policy/:id" element={<PolicyDetail />} />
-                <Route path="/economy" element={<EconomyDashboard />} />
-                <Route path="/follow-the-money" element={<FollowTheMoney />} />
-                <Route path="/company/:id" element={<CompanyProfile />} />
-                <Route path="/dossier/:id" element={<CompanyDossier />} />
-                <Route path="/pricing" element={<Pricing />} />
-                <Route path="/search" element={<SearchResults />} />
-                <Route path="/browse" element={<Browse />} />
-                <Route path="/methodology" element={<Methodology />} />
-                <Route path="/login" element={<Login />} />
-                <Route path="/terms" element={<TermsOfService />} />
-                <Route path="/privacy" element={<PrivacyPolicy />} />
-                <Route path="/disclaimers" element={<Disclaimers />} />
-                <Route path="/examples" element={<Examples />} />
-                <Route path="/signals" element={<SignalFeed />} />
-                <Route path="/workforce-brief" element={<WorkforceBrief />} />
-                <Route path="/eeoc-tracker" element={<EEOCTracker />} />
-                <Route path="/search-your-employer" element={<SearchYourEmployer />} />
-                <Route path="/values-search" element={<ValuesSearch />} />
-                <Route path="/who-do-i-work-for" element={
-                  <ProtectedRoute>
-                    <WhoDoIWorkFor />
-                  </ProtectedRoute>
-                } />
-                <Route path="/voter-lookup" element={
-                  <ProtectedRoute>
-                    <VoterLookup />
-                  </ProtectedRoute>
-                } />
-                <Route path="/representative/:name" element={
-                  <ProtectedRoute>
-                    <RepresentativeProfile />
-                  </ProtectedRoute>
-                } />
-                <Route path="/add-company" element={<AddCompany />} />
-                <Route path="/jobs" element={<Jobs />} />
-                <Route path="/job-board" element={<JobIntegrityBoard />} />
-                <Route path="/request-correction" element={<RequestCorrection />} />
-                <Route path="/offer-check/:companyId" element={<OfferCheck />} />
-                <Route path="/strategic-offer-review" element={<StrategicOfferReview />} />
-                <Route path="/offer-review/:companyId" element={
-                  <ProtectedRoute>
-                    <OfferReview />
-                  </ProtectedRoute>
-                } />
-                <Route path="/offer-review-direct" element={
-                  <ProtectedRoute>
-                    <OfferReviewDirect />
-                  </ProtectedRoute>
-                } />
-                <Route path="/compare-offer-checks" element={<CompareOfferChecks />} />
-                <Route path="/dashboard" element={
-                  <ProtectedRoute>
-                    <Dashboard />
-                  </ProtectedRoute>
-                } />
-                <Route path="/career-map" element={
-                  <ProtectedRoute>
-                    <CareerMap />
-                  </ProtectedRoute>
-                } />
-                <Route path="/job-dashboard" element={
-                  <ProtectedRoute>
-                    <JobDashboard />
-                  </ProtectedRoute>
-                } />
-                <Route path="/my-offer-checks" element={
-                  <ProtectedRoute>
-                    <MyOfferChecks />
-                  </ProtectedRoute>
-                } />
-                <Route path="/my-offer-reviews" element={
-                  <ProtectedRoute>
-                    <MyOfferReviews />
-                  </ProtectedRoute>
-                } />
-                <Route path="/signal-alerts" element={
-                  <ProtectedRoute>
-                    <SignalAlerts />
-                  </ProtectedRoute>
-                } />
-                <Route path="/career-intelligence" element={
-                  <ProtectedRoute>
-                    <CareerIntelligence />
-                  </ProtectedRoute>
-                } />
-                <Route path="/intelligence" element={<IntelligenceReports />} />
-                <Route path="/intelligence/:slug" element={<IntelligenceReport />} />
-                <Route path="/admin/reports" element={<AdminRoute><ReportsList /></AdminRoute>} />
-                <Route path="/admin/reports/:id" element={<AdminRoute><ReportEditor /></AdminRoute>} />
-                <Route path="/founder-console" element={<AdminRoute><FounderConsole /></AdminRoute>} />
-                <Route path="/recruiting" element={<RecruitingIntelligence />} />
-                <Route path="/relationship-intelligence" element={
-                  <ProtectedRoute>
-                    <RelationshipIntelligence />
-                  </ProtectedRoute>
-                } />
-                <Route path="/compare" element={<CompareCompanies />} />
-                <Route path="/investigative" element={<InvestigativeExplorer />} />
-                <Route path="/auto-apply" element={<Navigate to="/dashboard?tab=auto-apply" replace />} />
-                <Route path="/my-values" element={<Navigate to="/dashboard?tab=values" replace />} />
-                <Route path="/how-do-i-get-there" element={<Navigate to="/dashboard?tab=how" replace />} />
-                <Route path="/offer-checks" element={<Navigate to="/my-offer-checks" replace />} />
-                <Route path="/outreach" element={<Navigate to="/dashboard?tab=outreach" replace />} />
-                <Route path="/offer-clarity" element={<OfferClarity />} />
-                <Route path="/site-map" element={<SiteMap />} />
-                <Route path="/rivalries" element={<Rivalries />} />
-                <Route path="/brand-madness" element={<BrandMadness />} />
-                <Route path="/work-index" element={<WorkIndex />} />
-                <Route path="/rankings" element={<Rankings />} />
-                <Route path="*" element={<NotFound />} />
-              </Routes>
-              <AskJackyeWidget />
-              <BetaFeedbackWidget />
-              <CookieNotice />
+              <Suspense fallback={<RouteLoader />}>
+                <Routes>
+                  <Route path="/" element={<Index />} />
+                  <Route path="/ask-jackye" element={<AskJackye />} />
+                  <Route path="/reality-check" element={<ProtectedRoute><RealityCheck /></ProtectedRoute>} />
+                  <Route path="/would-you-work-here" element={<WouldYouWorkHere />} />
+                  <Route path="/work-with-jackye" element={<WorkWithJackye />} />
+                  <Route path="/employer-receipt" element={<EmployerReceipt />} />
+                  <Route path="/employer-promise-check" element={<EVPRealityCheck />} />
+                  <Route path="/evp-reality-check" element={<EVPRealityCheck />} />
+                  <Route path="/what-am-i-supporting" element={<WhatAmISupporting />} />
+                  <Route path="/intelligence-chain" element={<IntelligenceChain />} />
+                  <Route path="/board-intelligence" element={<BoardIntelligence />} />
+                  <Route path="/leader/:id" element={<LeaderProfile />} />
+                  <Route path="/one-pager" element={<OnePager />} />
+                  <Route path="/demo" element={<Demo />} />
+                  <Route path="/check" element={<Check />} />
+                  <Route path="/policy" element={<PolicyHub />} />
+                  <Route path="/policy/:id" element={<PolicyDetail />} />
+                  <Route path="/economy" element={<EconomyDashboard />} />
+                  <Route path="/follow-the-money" element={<FollowTheMoney />} />
+                  <Route path="/company/:id" element={<CompanyProfile />} />
+                  <Route path="/dossier/:id" element={<CompanyDossier />} />
+                  <Route path="/pricing" element={<Pricing />} />
+                  <Route path="/search" element={<SearchResults />} />
+                  <Route path="/browse" element={<Browse />} />
+                  <Route path="/methodology" element={<Methodology />} />
+                  <Route path="/login" element={<Login />} />
+                  <Route path="/terms" element={<TermsOfService />} />
+                  <Route path="/privacy" element={<PrivacyPolicy />} />
+                  <Route path="/disclaimers" element={<Disclaimers />} />
+                  <Route path="/examples" element={<Examples />} />
+                  <Route path="/signals" element={<SignalFeed />} />
+                  <Route path="/workforce-brief" element={<WorkforceBrief />} />
+                  <Route path="/eeoc-tracker" element={<EEOCTracker />} />
+                  <Route path="/search-your-employer" element={<SearchYourEmployer />} />
+                  <Route path="/values-search" element={<ValuesSearch />} />
+                  <Route path="/who-do-i-work-for" element={<ProtectedRoute><WhoDoIWorkFor /></ProtectedRoute>} />
+                  <Route path="/voter-lookup" element={<ProtectedRoute><VoterLookup /></ProtectedRoute>} />
+                  <Route path="/representative/:name" element={<ProtectedRoute><RepresentativeProfile /></ProtectedRoute>} />
+                  <Route path="/add-company" element={<AddCompany />} />
+                  <Route path="/jobs" element={<Jobs />} />
+                  <Route path="/job-board" element={<JobIntegrityBoard />} />
+                  <Route path="/request-correction" element={<RequestCorrection />} />
+                  <Route path="/offer-check/:companyId" element={<OfferCheck />} />
+                  <Route path="/strategic-offer-review" element={<StrategicOfferReview />} />
+                  <Route path="/offer-review/:companyId" element={<ProtectedRoute><OfferReview /></ProtectedRoute>} />
+                  <Route path="/offer-review-direct" element={<ProtectedRoute><OfferReviewDirect /></ProtectedRoute>} />
+                  <Route path="/compare-offer-checks" element={<CompareOfferChecks />} />
+                  <Route path="/dashboard" element={<ProtectedRoute><Dashboard /></ProtectedRoute>} />
+                  <Route path="/career-map" element={<ProtectedRoute><CareerMap /></ProtectedRoute>} />
+                  <Route path="/job-dashboard" element={<ProtectedRoute><JobDashboard /></ProtectedRoute>} />
+                  <Route path="/my-offer-checks" element={<ProtectedRoute><MyOfferChecks /></ProtectedRoute>} />
+                  <Route path="/my-offer-reviews" element={<ProtectedRoute><MyOfferReviews /></ProtectedRoute>} />
+                  <Route path="/signal-alerts" element={<ProtectedRoute><SignalAlerts /></ProtectedRoute>} />
+                  <Route path="/career-intelligence" element={<ProtectedRoute><CareerIntelligence /></ProtectedRoute>} />
+                  <Route path="/intelligence" element={<IntelligenceReports />} />
+                  <Route path="/intelligence/:slug" element={<IntelligenceReport />} />
+                  <Route path="/admin/reports" element={<AdminRoute><ReportsList /></AdminRoute>} />
+                  <Route path="/admin/reports/:id" element={<AdminRoute><ReportEditor /></AdminRoute>} />
+                  <Route path="/founder-console" element={<AdminRoute><FounderConsole /></AdminRoute>} />
+                  <Route path="/recruiting" element={<RecruitingIntelligence />} />
+                  <Route path="/relationship-intelligence" element={<ProtectedRoute><RelationshipIntelligence /></ProtectedRoute>} />
+                  <Route path="/compare" element={<CompareCompanies />} />
+                  <Route path="/investigative" element={<InvestigativeExplorer />} />
+                  <Route path="/auto-apply" element={<Navigate to="/dashboard?tab=auto-apply" replace />} />
+                  <Route path="/my-values" element={<Navigate to="/dashboard?tab=values" replace />} />
+                  <Route path="/how-do-i-get-there" element={<Navigate to="/dashboard?tab=how" replace />} />
+                  <Route path="/offer-checks" element={<Navigate to="/my-offer-checks" replace />} />
+                  <Route path="/outreach" element={<Navigate to="/dashboard?tab=outreach" replace />} />
+                  <Route path="/offer-clarity" element={<OfferClarity />} />
+                  <Route path="/site-map" element={<SiteMap />} />
+                  <Route path="/rivalries" element={<Rivalries />} />
+                  <Route path="/brand-madness" element={<BrandMadness />} />
+                  <Route path="/work-index" element={<WorkIndex />} />
+                  <Route path="/rankings" element={<Rankings />} />
+                  <Route path="*" element={<NotFound />} />
+                </Routes>
+              </Suspense>
+              <Suspense fallback={null}>
+                <AskJackyeWidget />
+                <BetaFeedbackWidget />
+                <CookieNotice />
+              </Suspense>
             </AppShell>
           </BrowserRouter>
         </TooltipProvider>
