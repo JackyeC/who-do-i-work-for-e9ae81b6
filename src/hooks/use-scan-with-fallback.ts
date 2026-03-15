@@ -152,7 +152,7 @@ export function useScanWithFallback({
     } finally {
       setLoading?.(false);
     }
-  }, [companyId, companyName, functionName, extraBody, onSuccess, onError, setLoading, toast]);
+  }, [companyId, companyName, functionName, extraBody, onSuccess, onError, setLoading, toast, section, lastUpdated]);
 
   return {
     runScan,
