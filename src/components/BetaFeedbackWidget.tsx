@@ -104,7 +104,7 @@ export function BetaFeedbackWidget() {
             initial={{ opacity: 0, y: 20, scale: 0.95 }}
             animate={{ opacity: 1, y: 0, scale: 1 }}
             exit={{ opacity: 0, y: 20, scale: 0.95 }}
-            className="fixed bottom-20 right-4 z-50 w-[340px] bg-card border border-border rounded-2xl shadow-elevated p-5 space-y-4"
+            className="fixed bottom-20 left-4 z-50 w-[340px] bg-card border border-border rounded-2xl shadow-elevated p-5 space-y-4"
           >
             <div className="flex items-center justify-between">
               <h3 className="font-semibold text-foreground text-sm font-display">Beta Feedback</h3>
@@ -275,7 +275,7 @@ export function BetaFeedbackWidget() {
         onClick={() => setOpen(!open)}
         whileHover={{ scale: 1.05 }}
         whileTap={{ scale: 0.95 }}
-        className="fixed bottom-4 right-4 z-50 w-12 h-12 rounded-full bg-primary text-primary-foreground shadow-lg flex items-center justify-center hover:brightness-110 transition-all"
+        className="fixed bottom-4 left-4 z-50 w-12 h-12 rounded-full bg-primary text-primary-foreground shadow-lg flex items-center justify-center hover:brightness-110 transition-all"
         aria-label="Send feedback"
       >
         {open ? <X className="w-5 h-5" /> : <MessageSquarePlus className="w-5 h-5" />}
