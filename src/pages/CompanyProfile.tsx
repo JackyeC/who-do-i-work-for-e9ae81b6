@@ -29,7 +29,7 @@ import { CompensationTransparencyCard } from "@/components/CompensationTranspare
 import { PromotionEquityCard } from "@/components/PromotionEquityCard";
 import { WarnTrackerCard } from "@/components/WarnTrackerCard";
 
-
+import { ValuesNudgeBanner } from "@/components/onboarding/ValuesNudgeBanner";
 import { AgencyContractsCard } from "@/components/AgencyContractsCard";
 import { ROIPipelineCard } from "@/components/ROIPipelineCard";
 import { OpenSecretsEnrichmentCard } from "@/components/OpenSecretsEnrichmentCard";
@@ -405,6 +405,8 @@ export default function CompanyProfile() {
           <ArrowLeft className="w-3.5 h-3.5" />
           Back to directory
         </Link>
+
+        <ValuesNudgeBanner />
 
         <motion.div initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.25 }}>
 
