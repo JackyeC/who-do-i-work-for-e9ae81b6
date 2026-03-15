@@ -22,6 +22,12 @@ Allow: /
 Disallow: /dashboard
 Disallow: /settings
 Disallow: /login
+Disallow: /job-dashboard
+Disallow: /career-intelligence
+Disallow: /career-map
+Disallow: /relationship-intelligence
+Disallow: /my-offer-checks
+Disallow: /signal-alerts
 
 User-agent: ChatGPT-User
 Allow: /
@@ -31,6 +37,12 @@ Allow: /
 Disallow: /dashboard
 Disallow: /settings
 Disallow: /login
+Disallow: /job-dashboard
+Disallow: /career-intelligence
+Disallow: /career-map
+Disallow: /relationship-intelligence
+Disallow: /my-offer-checks
+Disallow: /signal-alerts
 
 User-agent: Applebot
 Allow: /
