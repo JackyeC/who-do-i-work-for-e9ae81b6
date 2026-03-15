@@ -89,7 +89,7 @@ const PROFESSIONAL_FEATURES: PremiumFeatures = {
   canExport: true,
   canTrackAlerts: true,
   hasInfluenceChain: true,
-  hasEVPAudit: true,
+  hasEmployerPromiseAudit: true,
 };
 
 function getTierFromProductId(productId: string | null): PremiumTier {
