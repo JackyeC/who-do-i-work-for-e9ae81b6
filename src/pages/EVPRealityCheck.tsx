@@ -6,6 +6,7 @@ import {
   Clipboard, X
 } from "lucide-react";
 import { usePageSEO } from "@/hooks/use-page-seo";
+import { PremiumGate } from "@/components/PremiumGate";
 
 /* ── Types ── */
 interface SignalComparison {
