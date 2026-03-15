@@ -80,6 +80,7 @@ import EEOCTracker from "./pages/EEOCTracker";
 import WorkIndex from "./pages/WorkIndex";
 import Rankings from "./pages/Rankings";
 import RealityCheck from "./pages/RealityCheck";
+import FounderConsole from "./pages/FounderConsole";
 import { CookieNotice } from "@/components/CookieNotice";
 
 const queryClient = new QueryClient();
