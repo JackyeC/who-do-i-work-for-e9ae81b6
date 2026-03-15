@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button";
 import { Search, Shield, Lock, ArrowRight, Building2, Loader2 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { SectionReveal } from "./SectionReveal";
+import { SignupModal } from "@/components/SignupModal";
 
 interface MiniReport {
   name: string;
