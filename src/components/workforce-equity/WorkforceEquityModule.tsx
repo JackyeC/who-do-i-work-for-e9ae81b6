@@ -9,7 +9,12 @@ import {
   calculatePVS, deriveSubScores, computeConfidence,
   type PVSInput,
 } from "@/lib/promotionVelocityScore";
+import {
+  calculateVibeScore, deriveLeadershipEquity, deriveEmployeeExperience,
+  deriveSocialCommitment, computeVibeConfidence,
+} from "@/lib/vibeScore";
 import { PromotionVelocityGauge } from "./PromotionVelocityGauge";
+import { VibeScoreGauge } from "./VibeScoreGauge";
 import { ScoreBreakdownTable } from "./ScoreBreakdownTable";
 import { RepresentationSnapshot } from "./RepresentationSnapshot";
 import { SignalSection } from "./SignalSection";
@@ -81,6 +86,33 @@ export function WorkforceEquityModule({
     enabled: !!companyId,
   });
 
+  // Fetch leadership demographics for Vibe Score
+  const { data: demographics = [] } = useQuery({
+    queryKey: ["leadership-demographics", companyId],
+    enabled: !!companyId,
+    queryFn: async () => {
+      const { data } = await supabase
+        .from("company_leadership_demographics" as any)
+        .select("*")
+        .eq("company_id", companyId)
+        .order("report_year", { ascending: false });
+      return (data || []) as any[];
+    },
+  });
+
+  // Fetch diversity disclosures for Social Commitment pillar
+  const { data: disclosures = [] } = useQuery({
+    queryKey: ["diversity-disclosures", companyId],
+    enabled: !!companyId,
+    queryFn: async () => {
+      const { data } = await supabase
+        .from("company_diversity_disclosures")
+        .select("*")
+        .eq("company_id", companyId);
+      return (data || []) as any[];
+    },
+  });
+
   const hasScanned = signals.length > 0;
 
   // Categorize signals for scoring
@@ -136,6 +168,56 @@ export function WorkforceEquityModule({
 
   const confidence = computeConfidence(signals.length, hasDirectEvidence, recencyDays);
   const pvsResult = calculatePVS(subScores, confidence);
+
+  // ── Vibe Score computation ──
+  const execRow = demographics.find((d: any) => d.leadership_level === "executive_team");
+  const boardRow = demographics.find((d: any) => d.leadership_level === "board");
+
+  const leadershipEquity = deriveLeadershipEquity({
+    execFemalePct: execRow ? Math.round((execRow.female_count / (execRow.total_count || 1)) * 100) : undefined,
+    execPocPct: execRow ? Math.round(((execRow.black_count + execRow.hispanic_count + execRow.asian_count + execRow.other_race_count) / (execRow.total_count || 1)) * 100) : undefined,
+    boardFemalePct: boardRow ? Math.round((boardRow.female_count / (boardRow.total_count || 1)) * 100) : undefined,
+    boardPocPct: boardRow ? Math.round(((boardRow.black_count + boardRow.hispanic_count + boardRow.asian_count + boardRow.other_race_count) / (boardRow.total_count || 1)) * 100) : undefined,
+  });
+
+  const employeeExperience = deriveEmployeeExperience({
+    promotionVelocityScore: pvsResult.score,
+  });
+
+  const hasPayAudit = signals.some((s) =>
+    ["pay equity", "pay audit", "compensation audit", "equal pay"].some(
+      (kw) => s.signal_summary?.toLowerCase().includes(kw) || s.value_category === "pay_equity"
+    )
+  );
+  const hasEEO1 = disclosures.some((d: any) => d.disclosure_type === "eeo1" && d.is_published);
+  const hasCEOPledge = signals.some((s) =>
+    ["ceo pledge", "ceo action", "ceo commitment"].some(
+      (kw) => s.signal_summary?.toLowerCase().includes(kw)
+    )
+  );
+  const hasDiversityReport = disclosures.some((d: any) =>
+    ["diversity_report", "dei_report", "impact_report"].includes(d.disclosure_type)
+  );
+
+  const socialCommitment = deriveSocialCommitment({
+    hasPayEquityAudit: hasPayAudit,
+    hasEEO1Published: hasEEO1,
+    hasCEOPledge,
+    hasDiversityReport,
+    diversityDisclosureCount: disclosures.length,
+  });
+
+  const vibeConfidence = computeVibeConfidence(
+    !!execRow || !!boardRow,
+    retentionSignals.length > 0,
+    false, // sentiment data — future integration
+    signals.length,
+  );
+
+  const vibeResult = calculateVibeScore(
+    { leadershipEquity, employeeExperience, socialCommitment },
+    vibeConfidence,
+  );
 
   const handleScan = async () => {
     setScanning(true);
@@ -203,6 +285,9 @@ export function WorkforceEquityModule({
         </Card>
       ) : (
         <>
+          {/* Inclusive Vibe Score */}
+          <VibeScoreGauge result={vibeResult} />
+
           {/* Promotion Velocity Score */}
           <PromotionVelocityGauge result={pvsResult} />
 
