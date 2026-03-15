@@ -83,13 +83,13 @@ export function CompensationMarketCard({ companyName, dbCompanyId }: Props) {
   const { data: compData, isLoading } = useQuery<CompensationRecord | null>({
     queryKey: ["compensation-market", companyName],
     queryFn: async () => {
-      const { data, error } = await supabase
+      const { data, error } = await (supabase
         .from("compensation_data" as any)
         .select("*")
         .ilike("company", companyName)
-        .maybeSingle();
+        .maybeSingle() as any);
       if (error) throw error;
-      return data as CompensationRecord | null;
+      return (data as CompensationRecord | null);
     },
     enabled: !!companyName,
   });
