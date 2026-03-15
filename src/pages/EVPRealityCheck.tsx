@@ -140,7 +140,7 @@ function analyzeEvp(text: string): EvpResult {
   if (score >= 80) {
     jackyeRec = "Your employer messaging largely holds up against the public signals. That's rare. Keep it honest — and back your claims with data where you can. The candidates checking are the ones you actually want.";
   } else if (score >= 60) {
-    jackyeRec = `Your messaging is mostly on track, but there are ${gaps} area${gaps !== 1 ? "s" : ""} where the public data doesn't fully support what you're saying. That's not a crisis — it's an opportunity. Close the gaps before a candidate or journalist does it for you. Start with the contradictions first.`;
+    jackyeRec = `Your messaging is mostly on track, but there are ${gaps} area${gaps !== 1 ? "s" : ""} where the public data doesn't fully support what you're saying. That's not a crisis — it's an opportunity. Close the gaps before a candidate or journalist does it for you.`;
   } else if (score >= 40) {
     jackyeRec = `There are significant disconnects between what your EVP promises and what the data shows. ${contradictions} signal${contradictions !== 1 ? "s" : ""} directly contradict your messaging. This is the kind of gap that erodes candidate trust during the interview process. You need to either change the messaging or change the reality. I'd start with a full EVP audit.`;
   } else {
