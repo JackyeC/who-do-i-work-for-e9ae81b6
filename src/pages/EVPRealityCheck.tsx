@@ -254,7 +254,7 @@ export default function EVPRealityCheck() {
             Employer Promise vs. Reality
           </h1>
           <p className="text-base text-muted-foreground leading-relaxed max-w-[600px]">
-            Paste your employer brand messaging — career page copy, EVP statements, recruiting promises — and see how it holds up against real employer intelligence signals.
+            Paste your employer brand messaging — career page copy, Employee Value Proposition statements, recruiting promises — and see how it holds up against real employer intelligence signals.
           </p>
         </div>
 
