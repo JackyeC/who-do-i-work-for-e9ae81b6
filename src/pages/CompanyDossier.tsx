@@ -33,6 +33,8 @@ import { DecisionMakerLayer } from "@/components/dossier/DecisionMakerLayer";
 import { WorkforceDemographicsLayer } from "@/components/dossier/WorkforceDemographicsLayer";
 import { BuyingLogicLayer } from "@/components/dossier/BuyingLogicLayer";
 import { StockPatentsLayer } from "@/components/dossier/StockPatentsLayer";
+import { EEOCCaseAlert } from "@/components/EEOCCaseAlert";
+import { useEEOCByCompanyName } from "@/hooks/use-eeoc-cases";
 
 /* ─── Lens config ─── */
 const LENS_META = {
