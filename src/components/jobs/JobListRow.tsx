@@ -7,6 +7,9 @@ import {
   Bot, Heart, MessageSquare, Landmark,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
+import {
+  Tooltip, TooltipContent, TooltipProvider, TooltipTrigger,
+} from "@/components/ui/tooltip";
 
 const WORK_MODE_ICONS: Record<string, any> = {
   remote: Wifi, hybrid: Monitor, "on-site": Home,
@@ -29,6 +32,12 @@ const SIGNAL_INDICATORS = [
   { key: "influence", label: "Influence", icon: Landmark, className: "text-muted-foreground" },
 ];
 
+function getCivicScoreExplainer(score: number): string {
+  if (score >= 70) return "Strong transparency signals across governance, lobbying, and workforce data.";
+  if (score >= 40) return "Mixed transparency signals — some areas lack public disclosure.";
+  return "Limited transparency signals detected. Proceed with independent research.";
+}
+
 interface JobListRowProps {
   job: any;
   companyValueSignals?: any[];
@@ -42,9 +51,9 @@ export function JobListRow({ job, companyValueSignals = [], companySignalFlags =
   const company = job.companies;
   const WorkModeIcon = job.work_mode ? WORK_MODE_ICONS[job.work_mode] : null;
   const isSponsored = job.is_sponsored && (!job.sponsor_expires_at || new Date(job.sponsor_expires_at) > new Date());
+  const civicScore = company?.civic_footprint_score || 0;
 
   return (
-
     <button
       onClick={onClick}
       className={cn(
@@ -65,10 +74,21 @@ export function JobListRow({ job, companyValueSignals = [], companySignalFlags =
 
           {/* Meta row */}
           <div className="flex flex-wrap items-center gap-x-3 gap-y-0.5 text-xs text-muted-foreground">
-            <span className="font-medium text-foreground/80 flex items-center gap-1">
-              <Building2 className="w-3 h-3" />
-              {company?.name}
-            </span>
+            {company?.slug ? (
+              <Link
+                to={`/company/${company.slug}`}
+                className="font-medium text-foreground/80 flex items-center gap-1 hover:text-primary hover:underline transition-colors"
+                onClick={(e) => e.stopPropagation()}
+              >
+                <Building2 className="w-3 h-3" />
+                {company?.name}
+              </Link>
+            ) : (
+              <span className="font-medium text-foreground/80 flex items-center gap-1">
+                <Building2 className="w-3 h-3" />
+                {company?.name}
+              </span>
+            )}
             {job.location && (
               <span className="flex items-center gap-1">
                 <MapPin className="w-3 h-3" />
@@ -121,22 +141,37 @@ export function JobListRow({ job, companyValueSignals = [], companySignalFlags =
           </div>
         </div>
 
-        {/* Civic score mini */}
-        <div className="shrink-0 flex flex-col items-center gap-0.5">
-          <div
-            className={cn(
-              "w-9 h-9 rounded-full flex items-center justify-center text-xs font-bold border",
-              (company?.civic_footprint_score || 0) >= 70
-                ? "bg-[hsl(var(--civic-green)/0.15)] border-[hsl(var(--civic-green)/0.3)] text-[hsl(var(--civic-green))]"
-                : (company?.civic_footprint_score || 0) >= 40
-                ? "bg-[hsl(var(--civic-yellow)/0.15)] border-[hsl(var(--civic-yellow)/0.3)] text-[hsl(var(--civic-yellow))]"
-                : "bg-[hsl(var(--civic-red)/0.15)] border-[hsl(var(--civic-red)/0.3)] text-[hsl(var(--civic-red))]"
-            )}
-          >
-            {company?.civic_footprint_score || 0}
-          </div>
-          <span className="text-[9px] text-muted-foreground">Civic</span>
-        </div>
+        {/* Civic score mini — with tooltip explainer + clickable to company profile */}
+        <TooltipProvider delayDuration={200}>
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <Link
+                to={company?.slug ? `/company/${company.slug}` : "#"}
+                className="shrink-0 flex flex-col items-center gap-0.5 hover:scale-105 transition-transform"
+                onClick={(e) => e.stopPropagation()}
+              >
+                <div
+                  className={cn(
+                    "w-9 h-9 rounded-full flex items-center justify-center text-xs font-bold border",
+                    civicScore >= 70
+                      ? "bg-[hsl(var(--civic-green)/0.15)] border-[hsl(var(--civic-green)/0.3)] text-[hsl(var(--civic-green))]"
+                      : civicScore >= 40
+                      ? "bg-[hsl(var(--civic-yellow)/0.15)] border-[hsl(var(--civic-yellow)/0.3)] text-[hsl(var(--civic-yellow))]"
+                      : "bg-[hsl(var(--civic-red)/0.15)] border-[hsl(var(--civic-red)/0.3)] text-[hsl(var(--civic-red))]"
+                  )}
+                >
+                  {civicScore}
+                </div>
+                <span className="text-[9px] text-muted-foreground">Civic Score</span>
+              </Link>
+            </TooltipTrigger>
+            <TooltipContent side="left" className="max-w-[220px] text-xs leading-relaxed">
+              <p className="font-semibold mb-1">Civic Footprint Score™ ({civicScore}/100)</p>
+              <p className="text-muted-foreground">{getCivicScoreExplainer(civicScore)}</p>
+              <p className="text-primary mt-1 text-[10px]">Click to view full company profile →</p>
+            </TooltipContent>
+          </Tooltip>
+        </TooltipProvider>
       </div>
     </button>
   );
