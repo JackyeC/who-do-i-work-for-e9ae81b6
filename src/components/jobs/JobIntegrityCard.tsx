@@ -61,7 +61,7 @@ export function JobIntegrityCard({ job }: JobIntegrityCardProps) {
       <CardContent className="p-5 space-y-3">
         {/* Header */}
         <div className="flex items-start gap-3">
-          <CompanyLogo name={co?.name || "Unknown"} logoUrl={co?.logo_url} size="sm" />
+          <CompanyLogo companyName={co?.name || "Unknown"} logoUrl={co?.logo_url} size="sm" />
           <div className="flex-1 min-w-0">
             <h3 className="font-semibold text-foreground text-sm leading-tight">{job.title}</h3>
             <div className="flex items-center gap-2 mt-1">
