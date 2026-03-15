@@ -209,6 +209,7 @@ const App = () => (
                 <Route path="/intelligence/:slug" element={<IntelligenceReport />} />
                 <Route path="/admin/reports" element={<AdminRoute><ReportsList /></AdminRoute>} />
                 <Route path="/admin/reports/:id" element={<AdminRoute><ReportEditor /></AdminRoute>} />
+                <Route path="/founder-console" element={<AdminRoute><FounderConsole /></AdminRoute>} />
                 <Route path="/recruiting" element={<RecruitingIntelligence />} />
                 <Route path="/relationship-intelligence" element={
                   <ProtectedRoute>
