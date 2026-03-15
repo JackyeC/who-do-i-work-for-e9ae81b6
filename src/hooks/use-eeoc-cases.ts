@@ -55,3 +55,23 @@ export function useEEOCByCompanyName(companyName?: string) {
     enabled: !!companyName,
   });
 }
+
+export function useDeleteEEOCCase() {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: async (id: string) => {
+      const { error } = await (supabase as any)
+        .from("eeoc_dropped_cases")
+        .delete()
+        .eq("id", id);
+      if (error) throw error;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["eeoc-dropped-cases"] });
+      toast.success("Case deleted");
+    },
+    onError: () => {
+      toast.error("Failed to delete case");
+    },
+  });
+}
