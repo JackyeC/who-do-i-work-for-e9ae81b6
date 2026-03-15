@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Heart, Loader2, ExternalLink, RefreshCw, Clock, Baby, Brain, GraduationCap, Home, Shield, Briefcase, Users, Wallet, HeartPulse, FileCheck } from "lucide-react";
+import { Heart, Loader2, ExternalLink, RefreshCw, Clock, Baby, Brain, GraduationCap, Home, Shield, Briefcase, Users, Wallet, HeartPulse, FileCheck, CloudOff } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -8,6 +8,8 @@ import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useToast } from "@/hooks/use-toast";
 import { cn } from "@/lib/utils";
 import { SignalMeta } from "@/components/SignalMeta";
+import { useScanWithFallback } from "@/hooks/use-scan-with-fallback";
+import { SavedIntelligenceBadge } from "@/components/scan/ScanUnavailableBanner";
 
 interface WorkerBenefitsCardProps {
   companyName: string;
