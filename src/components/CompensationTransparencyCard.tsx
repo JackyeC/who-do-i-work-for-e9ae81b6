@@ -7,12 +7,14 @@ import { Progress } from "@/components/ui/progress";
 import {
   DollarSign, Search, ExternalLink, Loader2, ShieldCheck,
   AlertTriangle, FileText, Scale, BarChart3, Briefcase, TrendingDown,
-  Users, Bot, Calendar, Info
+  Users, Bot, Calendar, Info, CloudOff
 } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useToast } from "@/hooks/use-toast";
 import { cn } from "@/lib/utils";
+import { useScanWithFallback } from "@/hooks/use-scan-with-fallback";
+import { SavedIntelligenceBadge } from "@/components/scan/ScanUnavailableBanner";
 import { SignalMeta } from "@/components/SignalMeta";
 
 interface Props {
