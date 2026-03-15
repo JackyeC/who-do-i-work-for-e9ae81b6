@@ -285,6 +285,9 @@ export function WorkforceEquityModule({
         </Card>
       ) : (
         <>
+          {/* Inclusive Vibe Score */}
+          <VibeScoreGauge result={vibeResult} />
+
           {/* Promotion Velocity Score */}
           <PromotionVelocityGauge result={pvsResult} />
 
