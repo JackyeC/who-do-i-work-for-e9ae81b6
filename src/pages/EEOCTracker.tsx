@@ -1,14 +1,17 @@
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { usePageSEO } from "@/hooks/use-page-seo";
+import { useUserRole } from "@/hooks/use-user-role";
+import { useDeleteEEOCCase } from "@/hooks/use-eeoc-cases";
 import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Link } from "react-router-dom";
 import { motion } from "framer-motion";
 import {
   Scale, AlertTriangle, ExternalLink, MapPin, Calendar,
-  Shield, Gavel, Building2, Users, ChevronRight
+  Shield, Gavel, Building2, Users, ChevronRight, Trash2
 } from "lucide-react";
 
 interface EEOCCase {
@@ -56,6 +59,10 @@ export default function EEOCTracker() {
     title: "EEOC Case Tracker — Dropped & Withdrawn Lawsuits | Who Do I Work For?",
     description: "Track EEOC lawsuits that were dropped, dismissed, or withdrawn. Transparency on federal enforcement shifts affecting workers.",
   });
+
+  const { isAdmin, isOwner } = useUserRole();
+  const canDelete = isAdmin || isOwner;
+  const deleteCase = useDeleteEEOCCase();
 
   const { data: cases, isLoading } = useQuery({
     queryKey: ["eeoc-dropped-cases"],
@@ -221,6 +228,17 @@ export default function EEOCTracker() {
                                 className="text-xs text-primary hover:underline flex items-center gap-1">
                                 <Building2 className="w-3 h-3" /> Company Profile <ChevronRight className="w-3 h-3" />
                               </Link>
+                            )}
+                            {canDelete && (
+                              <Button
+                                size="sm"
+                                variant="ghost"
+                                className="text-xs text-destructive hover:text-destructive h-auto py-1 px-2"
+                                onClick={() => deleteCase.mutate(c.id)}
+                                disabled={deleteCase.isPending}
+                              >
+                                <Trash2 className="w-3 h-3 mr-1" /> Delete
+                              </Button>
                             )}
                           </div>
                         </div>

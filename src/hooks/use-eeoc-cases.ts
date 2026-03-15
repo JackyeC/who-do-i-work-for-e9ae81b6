@@ -1,5 +1,6 @@
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
+import { toast } from "sonner";
 
 export interface EEOCDroppedCase {
   id: string;
@@ -52,5 +53,25 @@ export function useEEOCByCompanyName(companyName?: string) {
       return (data || []) as EEOCDroppedCase[];
     },
     enabled: !!companyName,
+  });
+}
+
+export function useDeleteEEOCCase() {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: async (id: string) => {
+      const { error } = await (supabase as any)
+        .from("eeoc_dropped_cases")
+        .delete()
+        .eq("id", id);
+      if (error) throw error;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["eeoc-dropped-cases"] });
+      toast.success("Case deleted");
+    },
+    onError: () => {
+      toast.error("Failed to delete case");
+    },
   });
 }
