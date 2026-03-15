@@ -54,6 +54,13 @@ export const MAIN_SECTIONS = [
     ],
   },
   {
+    id: "jobs",
+    label: "Job Board",
+    path: "/job-board",
+    matchPaths: ["/job-board", "/jobs"],
+    subItems: [],
+  },
+  {
     id: "coach",
     label: "Ask Jackye",
     path: "/ask-jackye",
