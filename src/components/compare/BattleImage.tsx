@@ -48,7 +48,13 @@ export function BattleImage({ companyA, companyB, industryA, industryB, scoreA, 
   };
 
   useEffect(() => {
-    if (companyA && companyB) generate();
+    if (companyA && companyB) {
+      generate();
+      // Pre-generate OG card for social sharing
+      supabase.functions.invoke("generate-og-card", {
+        body: { type: "battle", companyA, companyB, scoreA, scoreB, industryA, industryB },
+      }).catch(() => {}); // silent — OG card is best-effort
+    }
   }, [companyA, companyB]);
 
   const shareCtx = useMemo<ShareContext>(() => ({
