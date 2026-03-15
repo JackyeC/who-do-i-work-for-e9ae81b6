@@ -229,6 +229,17 @@ export default function EEOCTracker() {
                                 <Building2 className="w-3 h-3" /> Company Profile <ChevronRight className="w-3 h-3" />
                               </Link>
                             )}
+                            {canDelete && (
+                              <Button
+                                size="sm"
+                                variant="ghost"
+                                className="text-xs text-destructive hover:text-destructive h-auto py-1 px-2"
+                                onClick={() => deleteCase.mutate(c.id)}
+                                disabled={deleteCase.isPending}
+                              >
+                                <Trash2 className="w-3 h-3 mr-1" /> Delete
+                              </Button>
+                            )}
                           </div>
                         </div>
                       </div>
