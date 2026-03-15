@@ -35,7 +35,7 @@ const sections: SiteSection[] = [
       { label: "Offer Clarity", path: "/offer-clarity", icon: Zap, description: "Upload an offer letter for AI-powered review" },
       { label: "Would You Work Here?", path: "/would-you-work-here", icon: Eye, description: "Shareable employer reality check" },
       { label: "Employer Receipt", path: "/employer-receipt", icon: Receipt, description: "See what your labor really funds" },
-      { label: "EVP Reality Check", path: "/evp-reality-check", icon: Shield, description: "Does the employer brand match reality?" },
+      { label: "Employer Promise vs. Reality", path: "/employer-promise-check", icon: Shield, description: "Does the employer brand match reality?" },
       { label: "What Am I Supporting?", path: "/what-am-i-supporting", icon: Globe, description: "Trace your paycheck to political influence" },
     ],
   },

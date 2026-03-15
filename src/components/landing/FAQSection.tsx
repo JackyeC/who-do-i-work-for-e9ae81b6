@@ -17,7 +17,7 @@ const faqs = [
   },
   {
     q: "Is this free?",
-    a: "You get 3 free company scans and 1 offer analysis per month. For deeper intelligence, unlimited scans, and advanced features like the influence chain and EVP audit, upgrade to a paid plan.",
+    a: "You get 3 free company scans and 1 offer analysis per month. For deeper intelligence, unlimited scans, and advanced features like the influence chain and Employer Promise audit, upgrade to a paid plan.",
   },
   {
     q: "How is this different from Glassdoor?",

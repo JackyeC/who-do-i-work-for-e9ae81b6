@@ -27,7 +27,7 @@ const OnePager = () => {
           <div className="font-mono text-micro tracking-[0.2em] uppercase text-civic-red mb-2">The Problem</div>
           <div className="font-serif text-body-lg leading-relaxed text-foreground">
             Candidates spend months interviewing for a job, then accept an offer without knowing{" "}
-            <em className="text-primary italic">who they're really working for</em> — or what the company's data actually says about culture, compensation, and values. HR teams build EVP decks disconnected from reality. Recruiters lose candidates at the offer stage because they don't have the intelligence to get ahead of objections.{" "}
+            <em className="text-primary italic">who they're really working for</em> — or what the company's data actually says about culture, compensation, and values. HR teams build employer promises disconnected from reality. Recruiters lose candidates at the offer stage because they don't have the intelligence to get ahead of objections.{" "}
             <em className="text-primary italic">We fix all three.</em>
           </div>
         </div>

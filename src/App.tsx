@@ -106,7 +106,8 @@ const App = () => (
                 <Route path="/would-you-work-here" element={<WouldYouWorkHere />} />
                 <Route path="/work-with-jackye" element={<WorkWithJackye />} />
                 <Route path="/employer-receipt" element={<EmployerReceipt />} />
-                <Route path="/evp-reality-check" element={<EVPRealityCheck />} />
+                <Route path="/employer-promise-check" element={<EVPRealityCheck />} />
+                <Route path="/evp-reality-check" element={<EVPRealityCheck />} /> {/* Legacy redirect */}
                 <Route path="/what-am-i-supporting" element={<WhatAmISupporting />} />
                 <Route path="/intelligence-chain" element={<IntelligenceChain />} />
                 <Route path="/board-intelligence" element={<BoardIntelligence />} />

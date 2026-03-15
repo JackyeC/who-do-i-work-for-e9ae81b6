@@ -142,7 +142,7 @@ function analyzeEvp(text: string): EvpResult {
   } else if (score >= 60) {
     jackyeRec = `Your messaging is mostly on track, but there are ${gaps} area${gaps !== 1 ? "s" : ""} where the public data doesn't fully support what you're saying. That's not a crisis — it's an opportunity. Close the gaps before a candidate or journalist does it for you.`;
   } else if (score >= 40) {
-    jackyeRec = `There are significant disconnects between what your EVP promises and what the data shows. ${contradictions} signal${contradictions !== 1 ? "s" : ""} directly contradict your messaging. This is the kind of gap that erodes candidate trust during the interview process. You need to either change the messaging or change the reality. I'd start with a full EVP audit.`;
+    jackyeRec = `There are significant disconnects between what you promise and what the data shows. ${contradictions} signal${contradictions !== 1 ? "s" : ""} directly contradict your messaging. This erodes candidate trust during the interview process. You need to either change the messaging or change the reality.`;
   } else {
     jackyeRec = "I'm going to be direct: your employer brand messaging is telling a story that the data doesn't support. Candidates who do their homework — and the best ones always do — will see through this. This isn't about better copywriting. It's about fixing the underlying signals first, then rebuilding your narrative on solid ground.";
   }
