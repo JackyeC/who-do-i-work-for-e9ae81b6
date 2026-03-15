@@ -593,6 +593,13 @@ export default function CompanyProfile() {
               updatedAt={dbCompany?.updated_at}
               recordStatus={recordStatus}
               scanCompletion={(dbCompany as any)?.scan_completion}
+              intelligenceReports={intelligenceReports}
+              refreshStatuses={refreshStatus}
+              isAnyRefreshing={isAnyRefreshing}
+              onRefreshAll={() => {
+                const staleSections = Object.values(intelligenceReports).filter(r => r.isStale);
+                staleSections.forEach(r => refreshSection(r.section_type));
+              }}
             />
           </div>
 
