@@ -50,7 +50,7 @@ export interface PremiumFeatures {
   canExport: boolean;
   canTrackAlerts: boolean;
   hasInfluenceChain: boolean;
-  hasEVPAudit: boolean;
+  hasEmployerPromiseAudit: boolean;
 }
 
 const FREE_FEATURES: PremiumFeatures = {
