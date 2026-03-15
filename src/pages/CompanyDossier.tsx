@@ -211,6 +211,11 @@ export default function CompanyDossier() {
           </div>
         </div>
       </DossierLayer>
+
+      {/* EEOC Enforcement Alert */}
+      {eeocCases && eeocCases.length > 0 && (
+        <EEOCCaseAlert cases={eeocCases} />
+      )}
     </>
   );
 
