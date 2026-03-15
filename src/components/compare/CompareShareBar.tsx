@@ -1,7 +1,8 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Linkedin, Link2, Check, Share2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { toast } from "@/hooks/use-toast";
+import { preGenerateOGCard } from "@/lib/social-share";
 
 interface CompareShareBarProps {
   nameA: string;
@@ -14,11 +15,15 @@ interface CompareShareBarProps {
 
 export function CompareShareBar({ nameA, nameB, slugA, slugB, scoreA, scoreB }: CompareShareBarProps) {
   const [copied, setCopied] = useState(false);
-  const shareUrl = `${window.location.origin}/compare?a=${slugA}&b=${slugB}`;
+  const shareUrl = `https://wdiwf.jackyeclayton.com/compare?a=${slugA}&b=${slugB}`;
   const shareText = `${nameA} (${scoreA}/100) vs ${nameB} (${scoreB}/100): Who's more transparent? Compare employer intelligence scores.`;
 
+  useEffect(() => {
+    preGenerateOGCard({ type: "battle", companyA: nameA, companyB: nameB, scoreA, scoreB });
+  }, [nameA, nameB, scoreA, scoreB]);
+
   const shareLinkedIn = () => {
-    window.open(`https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(shareUrl)}&summary=${encodeURIComponent(shareText)}`, "_blank", "width=600,height=500");
+    window.open(`https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(shareUrl)}`, "_blank", "width=600,height=600");
   };
 
   const copyLink = () => {

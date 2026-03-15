@@ -1,4 +1,4 @@
-import { useState, useRef } from "react";
+import { useState, useRef, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import {
   Users, DollarSign, Eye, Landmark, AlertTriangle, MessageCircle,
@@ -6,6 +6,7 @@ import {
   TrendingDown, FileText
 } from "lucide-react";
 import { usePageSEO } from "@/hooks/use-page-seo";
+import { getOGImageUrl, preGenerateOGCard } from "@/lib/social-share";
 import {
   computeVerdict,
   getVerdictColors,
@@ -68,30 +69,35 @@ function clarityBand(score: number) {
 /* ── Share Bar ── */
 function ShareBar() {
   const [copied, setCopied] = useState(false);
-  const url = typeof window !== "undefined" ? window.location.href : "";
-  const text = `Employer Receipt: ${DEMO_COMPANY} — See the intelligence before you sign.`;
+  const shareUrl = "https://wdiwf.jackyeclayton.com/employer-receipt";
+  const shareText = `Employer Receipt: ${DEMO_COMPANY} — See the intelligence before you sign. ${shareUrl}`;
 
   const copyLink = () => {
-    navigator.clipboard.writeText(url);
+    navigator.clipboard.writeText(shareText);
     setCopied(true);
     setTimeout(() => setCopied(false), 2000);
   };
 
   const handleDownloadPdf = () => {
-    // Placeholder — real PDF generation can use html2canvas + jspdf
     window.print();
+  };
+
+  const shareLinkedIn = () => {
+    window.open(
+      `https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(shareUrl)}`,
+      "_blank",
+      "width=600,height=600"
+    );
   };
 
   return (
     <div className="flex items-center gap-2 flex-wrap">
-      <a
-        href={`https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(url)}`}
-        target="_blank"
-        rel="noopener noreferrer"
+      <button
+        onClick={shareLinkedIn}
         className="flex items-center gap-1.5 px-3 py-2 border border-border text-muted-foreground hover:text-primary hover:border-primary transition-colors font-mono text-[0.65rem] uppercase tracking-wider"
       >
         <Linkedin className="w-3.5 h-3.5" /> Share on LinkedIn
-      </a>
+      </button>
       <button
         onClick={handleDownloadPdf}
         className="flex items-center gap-1.5 px-3 py-2 border border-border text-muted-foreground hover:text-primary hover:border-primary transition-colors font-mono text-[0.65rem] uppercase tracking-wider"
@@ -186,10 +192,18 @@ export default function EmployerReceipt() {
   const covColor = verdictResult.dataCoverage === "High" ? "text-civic-green" : verdictResult.dataCoverage === "Medium" ? "text-civic-yellow" : "text-civic-red";
   const confColor = verdictResult.verdictConfidence === "High" ? "text-civic-green" : verdictResult.verdictConfidence === "Medium" ? "text-civic-yellow" : "text-civic-red";
 
+  const receiptSignals = DEMO_SIGNALS.map(s => ({ label: s.label, score: s.subscore }));
+  const ogImage = getOGImageUrl({ type: "receipt", companyA: DEMO_COMPANY, scoreA: verdictResult.clarityScore, signals: receiptSignals });
+
+  useEffect(() => {
+    preGenerateOGCard({ type: "receipt", companyA: DEMO_COMPANY, scoreA: verdictResult.clarityScore, signals: receiptSignals });
+  }, []);
+
   usePageSEO({
     title: `Employer Receipt: ${DEMO_COMPANY} — Employer Intelligence Summary`,
     description: `Employer intelligence receipt for ${DEMO_COMPANY}. Clarity score, workforce stability, compensation transparency, influence exposure, and Jackye's verdict.`,
     path: "/employer-receipt",
+    image: ogImage,
     jsonLd: {
       "@type": "WebPage",
       name: `Employer Receipt: ${DEMO_COMPANY}`,

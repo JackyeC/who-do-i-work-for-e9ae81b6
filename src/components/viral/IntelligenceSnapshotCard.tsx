@@ -1,9 +1,10 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Linkedin, Link2, Check, Download, Camera } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { toast } from "@/hooks/use-toast";
 import { cn } from "@/lib/utils";
+import { preGenerateOGCard } from "@/lib/social-share";
 
 interface SignalRow {
   label: string;
@@ -32,12 +33,15 @@ export function IntelligenceSnapshotCard({ companyName, overallScore, scoreLabel
   const [copied, setCopied] = useState(false);
   const band = scoreBand(overallScore);
 
-  const shareUrl = `${window.location.origin}/company/${slug}`;
+  const shareUrl = `https://wdiwf.jackyeclayton.com/company/${slug}`;
   const shareText = `${companyName} scored ${overallScore}/100 on the Corporate Behavior Index™. Here's what the data says about working there:`;
 
+  useEffect(() => {
+    preGenerateOGCard({ type: "company", companyA: companyName, scoreA: overallScore, slugA: slug });
+  }, [companyName, overallScore]);
+
   const shareLinkedIn = () => {
-    const url = `https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(shareUrl)}&summary=${encodeURIComponent(shareText)}`;
-    window.open(url, "_blank", "width=600,height=500");
+    window.open(`https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(shareUrl)}`, "_blank", "width=600,height=600");
   };
 
   const copyLink = () => {

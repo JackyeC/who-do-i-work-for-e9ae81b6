@@ -1,7 +1,8 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Linkedin, Link2, Check, Download } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { toast } from "@/hooks/use-toast";
+import { preGenerateOGCard } from "@/lib/social-share";
 
 interface ShareableScoreCardProps {
   companyName: string;
@@ -21,12 +22,15 @@ export function ShareableScoreCard({ companyName, clarityScore, signals, slug }:
   const [copied, setCopied] = useState(false);
   const band = clarityBand(clarityScore);
 
-  const shareUrl = `${window.location.origin}/would-you-work-here?company=${slug}`;
+  const shareUrl = `https://wdiwf.jackyeclayton.com/company/${slug}`;
   const shareText = `${companyName} scored ${clarityScore}/100 on employer transparency. Would you work here? Check the intelligence:`;
 
+  useEffect(() => {
+    preGenerateOGCard({ type: "company", companyA: companyName, scoreA: clarityScore, slugA: slug });
+  }, [companyName, clarityScore]);
+
   const shareLinkedIn = () => {
-    const url = `https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(shareUrl)}&summary=${encodeURIComponent(shareText)}`;
-    window.open(url, "_blank", "width=600,height=500");
+    window.open(`https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(shareUrl)}`, "_blank", "width=600,height=600");
   };
 
   const copyLink = () => {

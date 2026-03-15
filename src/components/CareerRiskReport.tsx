@@ -1,4 +1,4 @@
-import { useState, useRef } from "react";
+import { useState, useRef, useEffect } from "react";
 import html2canvas from "html2canvas";
 import {
   Share2, Download, Copy, Check, Linkedin, Link2,
@@ -12,6 +12,7 @@ import {
 } from "@/components/ui/dialog";
 import { toast } from "@/hooks/use-toast";
 import { cn } from "@/lib/utils";
+import { preGenerateOGCard } from "@/lib/social-share";
 
 /* ─── Risk Dimension ─── */
 
@@ -265,8 +266,18 @@ export function CareerRiskReport(props: CareerRiskReportProps) {
   const overallScore = computeOverallScore(dimensions);
   const overall = overallLabel(overallScore);
 
-  const shareUrl = `${window.location.origin}/company/${props.slug}`;
+  const shareUrl = `https://wdiwf.jackyeclayton.com/company/${props.slug}`;
   const shareText = `${props.companyName} has a Career Risk Score of ${overallScore}/100. Check your employer before you say yes:`;
+
+  // Pre-generate OG card for social sharing
+  useEffect(() => {
+    preGenerateOGCard({
+      type: "career-risk",
+      companyA: props.companyName,
+      scoreA: overallScore,
+      dimensions: dimensions.map(d => ({ label: d.label, score: d.value })),
+    });
+  }, [props.companyName, overallScore]);
 
   const generateImage = async (): Promise<HTMLCanvasElement | null> => {
     const el = document.getElementById("career-risk-render");

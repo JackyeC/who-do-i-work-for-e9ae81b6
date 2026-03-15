@@ -12,7 +12,7 @@ const BASE_URL = "https://wdiwf.jackyeclayton.com";
 export type SharePlatform = "linkedin" | "twitter" | "facebook" | "copy";
 
 export interface ShareContext {
-  type: "company" | "battle" | "rivalry" | "scorecard";
+  type: "company" | "battle" | "rivalry" | "scorecard" | "receipt" | "career-risk";
   companyA: string;
   companyB?: string;
   scoreA?: number;
@@ -20,6 +20,8 @@ export interface ShareContext {
   slugA?: string;
   slugB?: string;
   industry?: string;
+  signals?: { label: string; score: number }[];
+  dimensions?: { label: string; score: number }[];
 }
 
 function getShareUrl(ctx: ShareContext): string {
@@ -33,6 +35,10 @@ function getShareUrl(ctx: ShareContext): string {
     case "rivalry":
       return `${BASE_URL}/rivalries`;
     case "scorecard":
+      return ctx.slugA ? `${BASE_URL}/company/${ctx.slugA}` : BASE_URL;
+    case "receipt":
+      return `${BASE_URL}/employer-receipt`;
+    case "career-risk":
       return ctx.slugA ? `${BASE_URL}/company/${ctx.slugA}` : BASE_URL;
     default:
       return BASE_URL;
@@ -146,27 +152,57 @@ export function openShareWindow(platform: SharePlatform, ctx: ShareContext): voi
   }
 }
 
-/** Generate OG image URL for dynamic pages */
+/** Generate OG image URL for dynamic pages (PNG format for LinkedIn/social) */
 export function getOGImageUrl(ctx: ShareContext): string {
-  // For now, construct a URL that points to our cached OG images
-  // The generate-og-card function caches these in the battle-images bucket
   const projectId = import.meta.env.VITE_SUPABASE_PROJECT_ID || 'tdetybqdxadmowjivtjy';
   const bucketBase = `https://${projectId}.supabase.co/storage/v1/object/public/battle-images`;
   
   switch (ctx.type) {
     case "battle": {
       const pair = [ctx.companyA, ctx.companyB || ''].sort().join('-vs-').toLowerCase().replace(/[^a-z0-9-]/g, '');
-      return `${bucketBase}/og-battle-${pair}.svg`;
+      return `${bucketBase}/og-battle-${pair}.png`;
     }
     case "company": {
       const key = ctx.companyA.toLowerCase().replace(/[^a-z0-9]/g, '');
-      return `${bucketBase}/og-company-${key}.svg`;
+      return `${bucketBase}/og-company-${key}.png`;
     }
     case "scorecard": {
       const key = ctx.companyA.toLowerCase().replace(/[^a-z0-9]/g, '');
-      return `${bucketBase}/og-scorecard-${key}.svg`;
+      return `${bucketBase}/og-scorecard-${key}.png`;
     }
+    case "receipt": {
+      const key = ctx.companyA.toLowerCase().replace(/[^a-z0-9]/g, '');
+      return `${bucketBase}/og-receipt-${key}-${ctx.scoreA || 0}.png`;
+    }
+    case "career-risk": {
+      const key = ctx.companyA.toLowerCase().replace(/[^a-z0-9]/g, '');
+      return `${bucketBase}/og-career-risk-${key}-${ctx.scoreA || 0}.png`;
+    }
+    case "rivalry":
+      return `${BASE_URL}/og-image.png`;
     default:
       return `${BASE_URL}/og-image.png`;
   }
+}
+
+/** Pre-generate OG card via edge function (best-effort, fire-and-forget) */
+export async function preGenerateOGCard(ctx: ShareContext): Promise<void> {
+  const { supabase } = await import("@/integrations/supabase/client");
+  
+  const body: Record<string, unknown> = { type: ctx.type, companyA: ctx.companyA, scoreA: ctx.scoreA };
+  
+  if (ctx.type === "battle") {
+    body.companyB = ctx.companyB;
+    body.scoreB = ctx.scoreB;
+    body.industryA = ctx.industry;
+    body.industryB = ctx.industry;
+  } else if (ctx.type === "company" || ctx.type === "scorecard") {
+    body.industryA = ctx.industry;
+  } else if (ctx.type === "receipt") {
+    body.signals = ctx.signals;
+  } else if (ctx.type === "career-risk") {
+    body.dimensions = ctx.dimensions;
+  }
+
+  supabase.functions.invoke("generate-og-card", { body }).catch(() => {});
 }
