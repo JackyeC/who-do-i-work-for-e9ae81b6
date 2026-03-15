@@ -3777,6 +3777,33 @@ export type Database = {
           },
         ]
       }
+      founder_notes: {
+        Row: {
+          created_at: string
+          id: string
+          note: string
+          updated_at: string
+          user_id: string
+          week_label: string | null
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          note: string
+          updated_at?: string
+          user_id: string
+          week_label?: string | null
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          note?: string
+          updated_at?: string
+          user_id?: string
+          week_label?: string | null
+        }
+        Relationships: []
+      }
       ideology_watchlist: {
         Row: {
           adl_designated: boolean
@@ -7622,7 +7649,36 @@ export type Database = {
       }
     }
     Views: {
-      [_ in never]: never
+      compensation_freshness_audit: {
+        Row: {
+          company: string | null
+          days_since_update: number | null
+          freshness_status: string | null
+          health_status: string | null
+          id: string | null
+          last_updated: string | null
+          updated_at: string | null
+        }
+        Insert: {
+          company?: string | null
+          days_since_update?: never
+          freshness_status?: string | null
+          health_status?: never
+          id?: string | null
+          last_updated?: string | null
+          updated_at?: string | null
+        }
+        Update: {
+          company?: string | null
+          days_since_update?: never
+          freshness_status?: string | null
+          health_status?: never
+          id?: string | null
+          last_updated?: string | null
+          updated_at?: string | null
+        }
+        Relationships: []
+      }
     }
     Functions: {
       get_company_roi_pipeline: { Args: { _company_id: string }; Returns: Json }
