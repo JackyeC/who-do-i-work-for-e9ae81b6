@@ -312,6 +312,21 @@ export default function CompanyProfile() {
   // Track scan for social proof
   useScanTracker(dbCompany?.id || undefined, dbCompany?.name || company?.name);
 
+  // ─── Cache-first intelligence loading ───
+  const {
+    reports: intelligenceReports,
+    loading: intelligenceLoading,
+    refreshStatus,
+    isAnyRefreshing,
+    refreshSection,
+    hasCachedData: hasIntelligenceData,
+    getSection: getIntelligenceSection,
+  } = useCompanyIntelligence({
+    companyId: dbCompanyId,
+    companyName: dbCompany?.name || company?.name,
+    autoRefreshStale: true,
+  });
+
   // ─── Full Scan Handler ───
   const handleFullScan = async () => {
     if (!dbCompany) return;
@@ -322,12 +337,18 @@ export default function CompanyProfile() {
       if (data?.success) {
         const count = Object.values(data.tablesPopulated || {}).reduce((a: number, b: any) => a + (b as number), 0);
         toast({ title: "Scan complete", description: `Found ${count} records for ${dbCompany.name}.` });
-        // Invalidate all queries
         const keys = ["company-profile", "company-candidates", "company-executives", "company-party-breakdown", "company-public-stances", "company-dark-money", "company-revolving-door", "company-trade-assoc", "company-lobbying-details", "company-state-lobbying", "company-issue-signals", "values-check-signals", "org-enrichment", "ti-ai-hr", "ti-benefits", "ti-pay", "ti-sentiment", "ti-ideology"];
         keys.forEach(k => queryClient.invalidateQueries({ queryKey: [k] }));
       } else { throw new Error(data?.error || "Scan failed"); }
     } catch (e: any) {
-      toast({ title: "Scan failed", description: e.message, variant: "destructive" });
+      // Never show raw technical errors to users
+      const msg = e.message || '';
+      const isProviderError = /insufficient|credits|timeout|non-2xx|502|503|firecrawl|scraping/i.test(msg);
+      toast({
+        title: isProviderError ? "Live refresh temporarily unavailable" : "Scan issue",
+        description: isProviderError ? "Showing the most recent saved intelligence." : "Something went wrong. Please try again.",
+        variant: isProviderError ? undefined : "destructive",
+      });
     } finally { setIsScanning(false); }
   };
 
