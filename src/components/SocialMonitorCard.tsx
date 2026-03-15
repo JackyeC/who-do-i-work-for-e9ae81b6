@@ -67,31 +67,22 @@ export function SocialMonitorCard({ companyId, companyName, executiveNames, dbCo
     enabled: !!dbCompanyId,
   });
 
-  const runScan = async () => {
-    if (!dbCompanyId) {
-      toast({ title: "No database ID", description: "This company isn't linked to live data yet.", variant: "destructive" });
-      return;
-    }
-    setIsScanning(true);
-    try {
-      const { data, error } = await supabase.functions.invoke("social-scan", {
-        body: { companyId: dbCompanyId, companyName, executiveNames },
-      });
-      if (error) throw error;
-      if (data?.success) {
-        setLiveResult(data.data);
-        refetch();
-        toast({ title: "Scan complete", description: `Found ${data.data.resultCount} results across web and social media.` });
-      } else {
-        throw new Error(data?.error || "Scan failed");
-      }
-    } catch (e: any) {
-      console.error("Scan error:", e);
-      toast({ title: "Scan failed", description: e.message || "Could not complete social media scan.", variant: "destructive" });
-    } finally {
-      setIsScanning(false);
-    }
-  };
+  const [firecrawlDown, setFirecrawlDown] = useState(false);
+
+  const { runScan, isFirecrawlDown, cooldownMinutes } = useScanWithFallback({
+    functionName: "social-scan",
+    companyId: dbCompanyId,
+    companyName,
+    extraBody: { executiveNames },
+    setLoading: setIsScanning,
+    onSuccess: (data) => {
+      setLiveResult(data.data);
+      refetch();
+    },
+    onError: (reason) => {
+      if (reason === 'firecrawl_error' || reason === 'circuit_open') setFirecrawlDown(true);
+    },
+  });
 
   const result = liveResult || (cachedScan ? {
     summary: cachedScan.ai_summary || "",
