@@ -4710,6 +4710,77 @@ export type Database = {
           },
         ]
       }
+      pending_company_reviews: {
+        Row: {
+          ai_citations: string[] | null
+          ai_controversies: string | null
+          ai_leadership: string | null
+          ai_model_used: string | null
+          ai_political_activity: string | null
+          ai_summary: string | null
+          company_name: string
+          created_at: string | null
+          id: string
+          jackye_take: string | null
+          published_company_id: string | null
+          requested_by: string | null
+          requester_email: string | null
+          requester_note: string | null
+          reviewed_at: string | null
+          reviewed_by: string | null
+          status: string
+          updated_at: string | null
+        }
+        Insert: {
+          ai_citations?: string[] | null
+          ai_controversies?: string | null
+          ai_leadership?: string | null
+          ai_model_used?: string | null
+          ai_political_activity?: string | null
+          ai_summary?: string | null
+          company_name: string
+          created_at?: string | null
+          id?: string
+          jackye_take?: string | null
+          published_company_id?: string | null
+          requested_by?: string | null
+          requester_email?: string | null
+          requester_note?: string | null
+          reviewed_at?: string | null
+          reviewed_by?: string | null
+          status?: string
+          updated_at?: string | null
+        }
+        Update: {
+          ai_citations?: string[] | null
+          ai_controversies?: string | null
+          ai_leadership?: string | null
+          ai_model_used?: string | null
+          ai_political_activity?: string | null
+          ai_summary?: string | null
+          company_name?: string
+          created_at?: string | null
+          id?: string
+          jackye_take?: string | null
+          published_company_id?: string | null
+          requested_by?: string | null
+          requester_email?: string | null
+          requester_note?: string | null
+          reviewed_at?: string | null
+          reviewed_by?: string | null
+          status?: string
+          updated_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "pending_company_reviews_published_company_id_fkey"
+            columns: ["published_company_id"]
+            isOneToOne: false
+            referencedRelation: "companies"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       pipeline_benefits_out: {
         Row: {
           agency: string | null
