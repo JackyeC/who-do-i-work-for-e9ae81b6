@@ -2119,6 +2119,65 @@ export type Database = {
           },
         ]
       }
+      company_report_sections: {
+        Row: {
+          company_id: string
+          confidence_score: number | null
+          content: Json
+          created_at: string
+          freshness_ttl_hours: number
+          id: string
+          last_attempted_update: string | null
+          last_error: string | null
+          last_successful_update: string | null
+          provider_used: string | null
+          section_type: string
+          source_urls: string[] | null
+          summary: string | null
+          updated_at: string
+        }
+        Insert: {
+          company_id: string
+          confidence_score?: number | null
+          content?: Json
+          created_at?: string
+          freshness_ttl_hours?: number
+          id?: string
+          last_attempted_update?: string | null
+          last_error?: string | null
+          last_successful_update?: string | null
+          provider_used?: string | null
+          section_type: string
+          source_urls?: string[] | null
+          summary?: string | null
+          updated_at?: string
+        }
+        Update: {
+          company_id?: string
+          confidence_score?: number | null
+          content?: Json
+          created_at?: string
+          freshness_ttl_hours?: number
+          id?: string
+          last_attempted_update?: string | null
+          last_error?: string | null
+          last_successful_update?: string | null
+          provider_used?: string | null
+          section_type?: string
+          source_urls?: string[] | null
+          summary?: string | null
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "company_report_sections_company_id_fkey"
+            columns: ["company_id"]
+            isOneToOne: false
+            referencedRelation: "companies"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       company_revolving_door: {
         Row: {
           company_id: string
@@ -5656,6 +5715,62 @@ export type Database = {
         Relationships: [
           {
             foreignKeyName: "scan_alerts_company_id_fkey"
+            columns: ["company_id"]
+            isOneToOne: false
+            referencedRelation: "companies"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      scan_jobs: {
+        Row: {
+          company_id: string
+          completed_at: string | null
+          created_at: string
+          duration_ms: number | null
+          error_message: string | null
+          error_type: string | null
+          id: string
+          provider_fallback_chain: string[] | null
+          provider_used: string | null
+          section_type: string | null
+          started_at: string | null
+          status: string
+          triggered_by: string
+        }
+        Insert: {
+          company_id: string
+          completed_at?: string | null
+          created_at?: string
+          duration_ms?: number | null
+          error_message?: string | null
+          error_type?: string | null
+          id?: string
+          provider_fallback_chain?: string[] | null
+          provider_used?: string | null
+          section_type?: string | null
+          started_at?: string | null
+          status?: string
+          triggered_by?: string
+        }
+        Update: {
+          company_id?: string
+          completed_at?: string | null
+          created_at?: string
+          duration_ms?: number | null
+          error_message?: string | null
+          error_type?: string | null
+          id?: string
+          provider_fallback_chain?: string[] | null
+          provider_used?: string | null
+          section_type?: string | null
+          started_at?: string | null
+          status?: string
+          triggered_by?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "scan_jobs_company_id_fkey"
             columns: ["company_id"]
             isOneToOne: false
             referencedRelation: "companies"
