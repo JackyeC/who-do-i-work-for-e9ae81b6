@@ -191,6 +191,9 @@ const Index = forwardRef<HTMLDivElement>((_, ref) => {
         </div>
       </section>
 
+      {/* ── Social Proof ── */}
+      <SocialProofStrip />
+
       {/* ── Mini Report Teaser ── */}
       <MiniReportTeaser />
 
