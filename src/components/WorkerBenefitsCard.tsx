@@ -67,30 +67,20 @@ export function WorkerBenefitsCard({ companyName, dbCompanyId }: WorkerBenefitsC
     enabled: !!dbCompanyId,
   });
 
-  const handleScan = async () => {
-    setIsScanning(true);
-    try {
-      const { data, error } = await supabase.functions.invoke("worker-benefits-scan", {
-        body: { companyId: dbCompanyId, companyName },
-      });
-      if (error) throw error;
-      if (data?.success) {
-        toast({
-          title: "Benefits scan complete",
-          description: data.signalsFound > 0
-            ? `Found ${data.signalsFound} worker benefit signals`
-            : "No worker benefit signals detected",
-        });
-        queryClient.invalidateQueries({ queryKey: ["worker-benefit-signals", dbCompanyId] });
-      } else {
-        throw new Error(data?.error || "Scan failed");
-      }
-    } catch (e: any) {
-      toast({ title: "Scan failed", description: e.message, variant: "destructive" });
-    } finally {
-      setIsScanning(false);
-    }
-  };
+  const [firecrawlDown, setFirecrawlDown] = useState(false);
+
+  const { runScan: handleScan, isFirecrawlDown, cooldownMinutes } = useScanWithFallback({
+    functionName: "worker-benefits-scan",
+    companyId: dbCompanyId,
+    companyName,
+    setLoading: setIsScanning,
+    onSuccess: (data) => {
+      queryClient.invalidateQueries({ queryKey: ["worker-benefit-signals", dbCompanyId] });
+    },
+    onError: (reason) => {
+      if (reason === 'firecrawl_error' || reason === 'circuit_open') setFirecrawlDown(true);
+    },
+  });
 
   const grouped = (signals || []).reduce((acc: Record<string, any[]>, s: any) => {
     const cat = s.benefit_category || "Other";
