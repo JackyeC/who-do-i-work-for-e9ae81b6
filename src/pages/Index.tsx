@@ -60,6 +60,7 @@ const Index = forwardRef<HTMLDivElement>((_, ref) => {
 
   return (
     <div ref={ref} className="flex flex-col min-h-screen bg-background">
+      <WorkNewsTicker />
       <ExitIntentCapture />
 
       {/* ── Hero ── */}
