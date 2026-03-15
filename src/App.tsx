@@ -208,6 +208,7 @@ const App = () => (
                 <Route path="/investigative" element={<InvestigativeExplorer />} />
                 <Route path="/auto-apply" element={<Navigate to="/dashboard?tab=auto-apply" replace />} />
                 <Route path="/my-values" element={<Navigate to="/dashboard?tab=values" replace />} />
+                <Route path="/how-do-i-get-there" element={<Navigate to="/dashboard?tab=how" replace />} />
                 <Route path="/offer-checks" element={<Navigate to="/my-offer-checks" replace />} />
                 <Route path="/outreach" element={<Navigate to="/dashboard?tab=outreach" replace />} />
                 <Route path="/offer-clarity" element={<OfferClarity />} />
