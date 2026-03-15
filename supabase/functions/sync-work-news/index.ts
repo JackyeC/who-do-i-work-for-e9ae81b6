@@ -1,15 +1,14 @@
 /**
- * Sync Work News — GDELT-powered global workforce intelligence feed.
+ * Sync Work News — Dual-source workforce intelligence feed.
  * 
- * Queries GDELT DOC API with workforce-related keywords every 4 hours.
- * No API key needed — completely free.
+ * Sources:
+ *   1. NewsAPI.org (keyword search, structured, fast)
+ *   2. GDELT DOC API (global, free, sentiment-scored)
  * 
- * Keywords: labor laws, future of work, workplace regulation, employment bills,
- * return to office, AI workplace, layoffs, NLRB, Department of Labor.
+ * Runs every 4 hours via pg_cron.
  */
 
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
-import { createHash } from "https://deno.land/std@0.208.0/crypto/mod.ts";
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
@@ -17,22 +16,24 @@ const corsHeaders = {
 };
 
 const GDELT_DOC_API = "https://api.gdeltproject.org/api/v2/doc/doc";
+const NEWSAPI_BASE = "https://newsapi.org/v2/everything";
 
-// Workforce-related search queries
-const SEARCH_QUERIES = [
-  '"labor laws" OR "NLRB" OR "Department of Labor" OR "workplace regulation"',
-  '"future of work" OR "return to office" OR "AI workplace" OR "AI hiring"',
-  '"mass layoffs" OR "WARN Act" OR "pay equity" OR "salary transparency"',
-  '"union" OR "collective bargaining" OR "employment bill" OR "minimum wage"',
+// ─── Shared config ───
+
+const NEWSAPI_QUERIES = [
+  { q: "labor laws OR NLRB OR workplace regulation", category: "regulation" },
+  { q: "future of work OR return to office OR remote work", category: "future_of_work" },
+  { q: "AI hiring OR AI workplace OR automated hiring", category: "ai_workplace" },
+  { q: "mass layoffs OR pay equity OR salary transparency", category: "layoffs" },
+  { q: "union OR collective bargaining OR minimum wage", category: "labor_organizing" },
 ];
 
-// Category mapping based on query content
-const QUERY_CATEGORIES: Record<number, string> = {
-  0: "regulation",
-  1: "future_of_work",
-  2: "layoffs",
-  3: "labor_organizing",
-};
+const GDELT_QUERIES = [
+  { q: '"labor laws" OR "NLRB" OR "Department of Labor" OR "workplace regulation"', category: "regulation" },
+  { q: '"future of work" OR "return to office" OR "AI workplace" OR "AI hiring"', category: "future_of_work" },
+  { q: '"mass layoffs" OR "WARN Act" OR "pay equity" OR "salary transparency"', category: "layoffs" },
+  { q: '"union" OR "collective bargaining" OR "employment bill" OR "minimum wage"', category: "labor_organizing" },
+];
 
 function toneLabel(tone: number): string {
   if (tone >= 5) return "Very Positive";
@@ -55,80 +56,144 @@ function detectControversyType(title: string): string | null {
   return null;
 }
 
-// Simple hash for dedup
 function hashUrl(url: string): string {
-  // Use last 100 chars of URL as a simple hash key
   return url.slice(-100).replace(/[^a-zA-Z0-9]/g, "");
 }
+
+// ─── NewsAPI fetcher ───
+
+async function fetchNewsAPI(apiKey: string): Promise<any[]> {
+  const rows: any[] = [];
+
+  for (const { q, category } of NEWSAPI_QUERIES) {
+    try {
+      const params = new URLSearchParams({
+        q,
+        language: "en",
+        sortBy: "publishedAt",
+        pageSize: "20",
+        apiKey,
+      });
+
+      const res = await fetch(`${NEWSAPI_BASE}?${params}`);
+      if (!res.ok) {
+        console.warn(`[NewsAPI] Query "${q.slice(0, 30)}..." failed: ${res.status}`);
+        continue;
+      }
+
+      const data = await res.json();
+      for (const article of data.articles || []) {
+        if (!article.url || !article.title || article.title === "[Removed]") continue;
+
+        const title = article.title;
+        const isControversy = controversyPatterns.test(title);
+
+        rows.push({
+          headline: title.slice(0, 500),
+          source_name: article.source?.name || null,
+          source_url: article.url,
+          published_at: article.publishedAt || new Date().toISOString(),
+          sentiment_score: null, // NewsAPI doesn't provide tone
+          tone_label: null,
+          themes: [],
+          category,
+          is_controversy: isControversy,
+          controversy_type: isControversy ? detectControversyType(title) : null,
+          gdelt_url_hash: hashUrl(article.url),
+        });
+      }
+
+      // Small delay between queries
+      await new Promise(r => setTimeout(r, 500));
+    } catch (e) {
+      console.warn(`[NewsAPI] Error for "${q.slice(0, 30)}...":`, e);
+    }
+  }
+
+  console.log(`[NewsAPI] Fetched ${rows.length} articles`);
+  return rows;
+}
+
+// ─── GDELT fetcher ───
+
+async function fetchGDELT(): Promise<any[]> {
+  const rows: any[] = [];
+
+  for (const { q, category } of GDELT_QUERIES) {
+    try {
+      const encoded = encodeURIComponent(q);
+      const url = `${GDELT_DOC_API}?query=${encoded}&mode=ArtList&maxrecords=15&format=json&timespan=48h&sort=DateDesc`;
+
+      const res = await fetch(url);
+      if (!res.ok) {
+        console.warn(`[GDELT] Query failed: ${res.status}`);
+        await new Promise(r => setTimeout(r, 6000));
+        continue;
+      }
+
+      const text = await res.text();
+      if (!text.startsWith("{") && !text.startsWith("[")) {
+        console.warn(`[GDELT] Non-JSON response: ${text.slice(0, 80)}`);
+        await new Promise(r => setTimeout(r, 6000));
+        continue;
+      }
+
+      const data = JSON.parse(text);
+      for (const a of data?.articles || []) {
+        if (!a.url || !a.title) continue;
+
+        const tone = a.tone ? parseFloat(String(a.tone).split(",")[0]) : 0;
+        const title = a.title;
+        const isControversy = controversyPatterns.test(title);
+
+        rows.push({
+          headline: title.slice(0, 500),
+          source_name: a.domain || null,
+          source_url: a.url,
+          published_at: a.seendate
+            ? new Date(a.seendate.slice(0, 4) + "-" + a.seendate.slice(4, 6) + "-" + a.seendate.slice(6, 8)).toISOString()
+            : new Date().toISOString(),
+          sentiment_score: tone,
+          tone_label: toneLabel(tone),
+          themes: a.themes ? String(a.themes).split(";").slice(0, 10) : [],
+          category,
+          is_controversy: isControversy,
+          controversy_type: isControversy ? detectControversyType(title) : null,
+          gdelt_url_hash: hashUrl(a.url),
+        });
+      }
+
+      await new Promise(r => setTimeout(r, 6000));
+    } catch (e) {
+      console.warn(`[GDELT] Error:`, e);
+    }
+  }
+
+  console.log(`[GDELT] Fetched ${rows.length} articles`);
+  return rows;
+}
+
+// ─── Main handler ───
 
 Deno.serve(async (req) => {
   if (req.method === "OPTIONS") return new Response(null, { headers: corsHeaders });
 
   const supabaseUrl = Deno.env.get("SUPABASE_URL")!;
   const serviceKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!;
+  const newsApiKey = Deno.env.get("NEWS_API_KEY");
   const supabase = createClient(supabaseUrl, serviceKey);
 
   try {
-    const allRows: any[] = [];
+    // Fetch from both sources in parallel
+    const [newsApiRows, gdeltRows] = await Promise.allSettled([
+      newsApiKey ? fetchNewsAPI(newsApiKey) : Promise.resolve([]),
+      fetchGDELT(),
+    ]);
 
-    for (let i = 0; i < SEARCH_QUERIES.length; i++) {
-      const query = SEARCH_QUERIES[i];
-      const category = QUERY_CATEGORIES[i] || "general";
-
-      try {
-        const encoded = encodeURIComponent(query);
-        const url = `${GDELT_DOC_API}?query=${encoded}&mode=ArtList&maxrecords=15&format=json&timespan=48h&sort=DateDesc`;
-        
-        const res = await fetch(url);
-        if (!res.ok) {
-          console.warn(`GDELT query ${i} failed: ${res.status}`);
-          await new Promise(r => setTimeout(r, 6000));
-          continue;
-        }
-
-        const text = await res.text();
-        if (!text.startsWith("{") && !text.startsWith("[")) {
-          console.warn(`GDELT query ${i} returned non-JSON: ${text.slice(0, 80)}`);
-          await new Promise(r => setTimeout(r, 6000));
-          continue;
-        }
-
-        const data = JSON.parse(text);
-        const articles = data?.articles || [];
-
-        for (const a of articles) {
-          if (!a.url || !a.title) continue;
-
-          const tone = a.tone ? parseFloat(String(a.tone).split(",")[0]) : 0;
-          const title = a.title || "Untitled";
-          const isControversy = controversyPatterns.test(title);
-          const urlHash = hashUrl(a.url);
-
-          allRows.push({
-            headline: title.slice(0, 500),
-            source_name: a.domain || null,
-            source_url: a.url,
-            published_at: a.seendate
-              ? new Date(
-                  a.seendate.slice(0, 4) + "-" + a.seendate.slice(4, 6) + "-" + a.seendate.slice(6, 8)
-                ).toISOString()
-              : new Date().toISOString(),
-            sentiment_score: tone,
-            tone_label: toneLabel(tone),
-            themes: a.themes ? String(a.themes).split(";").slice(0, 10) : [],
-            category,
-            is_controversy: isControversy,
-            controversy_type: isControversy ? detectControversyType(title) : null,
-            gdelt_url_hash: urlHash,
-          });
-        }
-
-        // Throttle — GDELT rate limits aggressively
-        await new Promise(r => setTimeout(r, 6000));
-      } catch (e) {
-        console.warn(`GDELT query ${i} error:`, e);
-      }
-    }
+    const allRows = [
+      ...(newsApiRows.status === "fulfilled" ? newsApiRows.value : []),
+      ...(gdeltRows.status === "fulfilled" ? gdeltRows.value : []),
+    ];
 
     // Deduplicate by URL hash
     const seen = new Set<string>();
@@ -139,7 +204,6 @@ Deno.serve(async (req) => {
     });
 
     if (unique.length > 0) {
-      // Upsert to avoid duplicates
       const { error } = await supabase.from("work_news").upsert(unique, {
         onConflict: "gdelt_url_hash",
         ignoreDuplicates: true,
@@ -147,15 +211,19 @@ Deno.serve(async (req) => {
       if (error) console.error("work_news upsert error:", error);
     }
 
-    // Get total count for stats
     const { count } = await supabase
       .from("work_news")
       .select("*", { count: "exact", head: true });
 
-    console.log(`[sync-work-news] Synced ${unique.length} new articles. Total: ${count}`);
+    const sources = {
+      newsapi: newsApiRows.status === "fulfilled" ? newsApiRows.value.length : 0,
+      gdelt: gdeltRows.status === "fulfilled" ? gdeltRows.value.length : 0,
+    };
+
+    console.log(`[sync-work-news] Synced ${unique.length} unique articles (NewsAPI: ${sources.newsapi}, GDELT: ${sources.gdelt}). Total: ${count}`);
 
     return new Response(
-      JSON.stringify({ success: true, newArticles: unique.length, totalArticles: count }),
+      JSON.stringify({ success: true, newArticles: unique.length, totalArticles: count, sources }),
       { headers: { ...corsHeaders, "Content-Type": "application/json" } }
     );
   } catch (error) {
