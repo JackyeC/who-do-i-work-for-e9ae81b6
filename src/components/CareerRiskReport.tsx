@@ -1,4 +1,4 @@
-import { useState, useRef } from "react";
+import { useState, useRef, useEffect } from "react";
 import html2canvas from "html2canvas";
 import {
   Share2, Download, Copy, Check, Linkedin, Link2,
@@ -12,6 +12,7 @@ import {
 } from "@/components/ui/dialog";
 import { toast } from "@/hooks/use-toast";
 import { cn } from "@/lib/utils";
+import { preGenerateOGCard } from "@/lib/social-share";
 
 /* ─── Risk Dimension ─── */
 
