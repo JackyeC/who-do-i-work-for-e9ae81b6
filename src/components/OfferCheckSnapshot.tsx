@@ -338,7 +338,6 @@ export function OfferCheckSnapshot({
               {verdict}
             </Badge>
           )}
-          </Badge>
         </div>
       </CardHeader>
 
