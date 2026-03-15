@@ -35,6 +35,11 @@ const MODULE_LABELS: Record<string, string> = {
   social: "Social & Media Monitoring",
   agency_contracts: "Government Contracts",
   ai_accountability: "AI Accountability",
+  opensanctions: "Sanctions & Watchlists (OpenSanctions)",
+  wikidata: "Entity Intelligence (Wikidata)",
+  court_records: "Court Records (CourtListener)",
+  gdelt_news: "News Signals (GDELT)",
+  insider_trades: "Insider Trading (SEC Form 4)",
 };
 
 const statusIcon = (status: string) => {
