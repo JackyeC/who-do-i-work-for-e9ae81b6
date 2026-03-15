@@ -8,6 +8,7 @@ import { CompanySelector } from "@/components/compare/CompanySelector";
 import { ScoreShowdown } from "@/components/compare/ScoreShowdown";
 import { MetricBattle } from "@/components/compare/MetricBattle";
 import { CompareShareBar } from "@/components/compare/CompareShareBar";
+import { BattleImage } from "@/components/compare/BattleImage";
 
 interface CompanyData {
   id: string;
