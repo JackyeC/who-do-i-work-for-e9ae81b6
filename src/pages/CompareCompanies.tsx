@@ -121,6 +121,10 @@ export default function CompareCompanies() {
               companyB={companyB.name}
               industryA={companyA.industry}
               industryB={companyB.industry}
+              scoreA={companyA.civic_footprint_score}
+              scoreB={companyB.civic_footprint_score}
+              slugA={companyA.slug}
+              slugB={companyB.slug}
             />
             <ScoreShowdown companyA={companyA} companyB={companyB} />
             <MetricBattle companyA={companyA} companyB={companyB} />
