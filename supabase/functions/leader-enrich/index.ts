@@ -7,6 +7,45 @@ const corsHeaders = {
     "authorization, x-client-info, apikey, content-type, x-supabase-client-platform, x-supabase-client-platform-version, x-supabase-client-runtime, x-supabase-client-runtime-version",
 };
 
+async function findHeadshot(name: string, company: string, firecrawlKey: string): Promise<string | null> {
+  try {
+    const query = `${name} ${company} headshot portrait photo`;
+    const resp = await fetch("https://api.firecrawl.dev/v1/search", {
+      method: "POST",
+      headers: {
+        Authorization: `Bearer ${firecrawlKey}`,
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        query,
+        limit: 5,
+        lang: "en",
+        country: "us",
+        scrapeOptions: { formats: ["links"] },
+      }),
+    });
+    if (!resp.ok) return null;
+    const data = await resp.json();
+    const results = data.data || [];
+    // Look for image URLs in results
+    for (const r of results) {
+      const links: string[] = r.links || [];
+      for (const link of links) {
+        if (/\.(jpg|jpeg|png|webp)/i.test(link) && !/logo|icon|banner|favicon/i.test(link)) {
+          return link;
+        }
+      }
+      // Check if the URL itself is an image
+      if (r.url && /\.(jpg|jpeg|png|webp)/i.test(r.url)) {
+        return r.url;
+      }
+    }
+  } catch (e) {
+    console.error("Headshot search error:", e);
+  }
+  return null;
+}
+
 serve(async (req) => {
   if (req.method === "OPTIONS") {
     return new Response(null, { headers: corsHeaders });
@@ -43,7 +82,6 @@ serve(async (req) => {
       }
     }
 
-    // Step 1: Normalize company name using AI
     const LOVABLE_API_KEY = Deno.env.get("LOVABLE_API_KEY");
     if (!LOVABLE_API_KEY) {
       return new Response(JSON.stringify({ error: "LOVABLE_API_KEY not configured" }), {
@@ -52,46 +90,55 @@ serve(async (req) => {
       });
     }
 
-    // Step 2: Try Firecrawl to find bio from company website
-    let scrapedBio = "";
+    // Parallel: scrape bio data + search for headshot
     const FIRECRAWL_API_KEY = Deno.env.get("FIRECRAWL_API_KEY");
+    let scrapedBio = "";
+    let photoUrl: string | null = null;
 
     if (FIRECRAWL_API_KEY) {
-      try {
-        // Search for the leader on the company website
-        const searchQuery = `${leader_name} ${company_name || ""} executive leadership biography site:linkedin.com OR site:bloomberg.com`;
-        const searchResp = await fetch("https://api.firecrawl.dev/v1/search", {
-          method: "POST",
-          headers: {
-            Authorization: `Bearer ${FIRECRAWL_API_KEY}`,
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({
-            query: searchQuery,
-            limit: 3,
-            lang: "en",
-            country: "us",
-            scrapeOptions: { formats: ["markdown"] },
-          }),
-        });
-
-        if (searchResp.ok) {
-          const searchData = await searchResp.json();
-          const results = searchData.data || [];
-          // Extract relevant text
-          for (const r of results) {
-            if (r.markdown && r.markdown.length > 100) {
-              scrapedBio += r.markdown.slice(0, 2000) + "\n\n";
+      const [bioResult, headshot] = await Promise.all([
+        // Bio search
+        (async () => {
+          try {
+            const searchQuery = `${leader_name} ${company_name || ""} executive leadership biography site:linkedin.com OR site:bloomberg.com`;
+            const searchResp = await fetch("https://api.firecrawl.dev/v1/search", {
+              method: "POST",
+              headers: {
+                Authorization: `Bearer ${FIRECRAWL_API_KEY}`,
+                "Content-Type": "application/json",
+              },
+              body: JSON.stringify({
+                query: searchQuery,
+                limit: 3,
+                lang: "en",
+                country: "us",
+                scrapeOptions: { formats: ["markdown"] },
+              }),
+            });
+            if (searchResp.ok) {
+              const searchData = await searchResp.json();
+              const results = searchData.data || [];
+              let bio = "";
+              for (const r of results) {
+                if (r.markdown && r.markdown.length > 100) {
+                  bio += r.markdown.slice(0, 2000) + "\n\n";
+                }
+              }
+              return bio.slice(0, 4000);
             }
+          } catch (e) {
+            console.error("Bio search error:", e);
           }
-          scrapedBio = scrapedBio.slice(0, 4000);
-        }
-      } catch (e) {
-        console.error("Firecrawl search error:", e);
-      }
+          return "";
+        })(),
+        // Headshot search
+        findHeadshot(leader_name, company_name || "", FIRECRAWL_API_KEY),
+      ]);
+      scrapedBio = bioResult;
+      photoUrl = headshot;
     }
 
-    // Step 3: Use AI to generate a complete leader dossier
+    // AI dossier generation
     const aiPrompt = `You are an intelligence analyst creating a leader dossier for a career intelligence platform.
 
 LEADER: ${leader_name}
@@ -153,46 +200,40 @@ Be factual. If information is uncertain, say so. Never fabricate specific dates,
       const status = aiResp.status;
       if (status === 429) {
         return new Response(JSON.stringify({ error: "Rate limited. Please try again later." }), {
-          status: 429,
-          headers: { ...corsHeaders, "Content-Type": "application/json" },
+          status: 429, headers: { ...corsHeaders, "Content-Type": "application/json" },
         });
       }
       if (status === 402) {
         return new Response(JSON.stringify({ error: "AI credits exhausted." }), {
-          status: 402,
-          headers: { ...corsHeaders, "Content-Type": "application/json" },
+          status: 402, headers: { ...corsHeaders, "Content-Type": "application/json" },
         });
       }
       const errText = await aiResp.text();
       console.error("AI error:", status, errText);
       return new Response(JSON.stringify({ error: "AI generation failed" }), {
-        status: 500,
-        headers: { ...corsHeaders, "Content-Type": "application/json" },
+        status: 500, headers: { ...corsHeaders, "Content-Type": "application/json" },
       });
     }
 
     const aiData = await aiResp.json();
     let dossier: any;
 
-    // Extract from tool call response
     const toolCall = aiData.choices?.[0]?.message?.tool_calls?.[0];
     if (toolCall?.function?.arguments) {
       dossier = JSON.parse(toolCall.function.arguments);
     } else {
-      // Fallback: try parsing content directly
       const content = aiData.choices?.[0]?.message?.content || "";
       try {
         dossier = JSON.parse(content.replace(/```json?\n?/g, "").replace(/```/g, "").trim());
       } catch {
         console.error("Failed to parse AI response:", content);
         return new Response(JSON.stringify({ error: "Failed to parse AI response" }), {
-          status: 500,
-          headers: { ...corsHeaders, "Content-Type": "application/json" },
+          status: 500, headers: { ...corsHeaders, "Content-Type": "application/json" },
         });
       }
     }
 
-    // Step 4: Upsert enrichment
+    // Upsert enrichment
     const enrichment = {
       leader_id,
       leader_type: leader_type || "executive",
@@ -202,6 +243,7 @@ Be factual. If information is uncertain, say so. Never fabricate specific dates,
       education: dossier.education,
       career_highlights: dossier.career_highlights || [],
       ai_narrative: dossier.ai_narrative,
+      photo_url: photoUrl,
       enrichment_source: scrapedBio ? "firecrawl+ai" : "ai",
       enriched_at: new Date().toISOString(),
       updated_at: new Date().toISOString(),
@@ -216,9 +258,14 @@ Be factual. If information is uncertain, say so. Never fabricate specific dates,
     if (upsertErr) {
       console.error("Upsert error:", upsertErr);
       return new Response(JSON.stringify({ error: "Failed to save enrichment" }), {
-        status: 500,
-        headers: { ...corsHeaders, "Content-Type": "application/json" },
+        status: 500, headers: { ...corsHeaders, "Content-Type": "application/json" },
       });
+    }
+
+    // Also update the leader's photo_url if we found one and they don't have one
+    if (photoUrl) {
+      const table = leader_type === "board_member" ? "board_members" : "company_executives";
+      await supabase.from(table).update({ photo_url: photoUrl }).eq("id", leader_id).is("photo_url", null);
     }
 
     return new Response(JSON.stringify({ enrichment: upserted, cached: false }), {
@@ -227,8 +274,7 @@ Be factual. If information is uncertain, say so. Never fabricate specific dates,
   } catch (e) {
     console.error("leader-enrich error:", e);
     return new Response(JSON.stringify({ error: e instanceof Error ? e.message : "Unknown error" }), {
-      status: 500,
-      headers: { ...corsHeaders, "Content-Type": "application/json" },
+      status: 500, headers: { ...corsHeaders, "Content-Type": "application/json" },
     });
   }
 });
