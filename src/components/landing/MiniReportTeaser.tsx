@@ -161,7 +161,6 @@ export function MiniReportTeaser() {
                 headline={`Unlock the full ${report.name} report`}
                 subtext="No credit card required. Your first report is free."
               />
-              </div>
             </motion.div>
           )}
 
