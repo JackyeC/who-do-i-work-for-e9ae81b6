@@ -22,6 +22,7 @@ import Methodology from "./pages/Methodology";
 import Login from "./pages/Login";
 import WhoDoIWorkFor from "./pages/WhoDoIWorkFor";
 import VoterLookup from "./pages/VoterLookup";
+import RepresentativeProfile from "./pages/RepresentativeProfile";
 import AddCompany from "./pages/AddCompany";
 import Jobs from "./pages/Jobs";
 import NotFound from "./pages/NotFound";
@@ -141,6 +142,11 @@ const App = () => (
                 <Route path="/voter-lookup" element={
                   <ProtectedRoute>
                     <VoterLookup />
+                  </ProtectedRoute>
+                } />
+                <Route path="/representative/:name" element={
+                  <ProtectedRoute>
+                    <RepresentativeProfile />
                   </ProtectedRoute>
                 } />
                 <Route path="/add-company" element={<AddCompany />} />

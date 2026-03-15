@@ -134,7 +134,13 @@ export default function VoterLookup() {
                         <div>
                           <CardTitle className="text-xl flex items-center gap-2">
                             <User className="w-5 h-5 text-primary" />
-                            {rep.name}
+                            <Link
+                              to={`/representative/${encodeURIComponent(rep.name)}`}
+                              className="hover:text-primary transition-colors underline-offset-2 hover:underline"
+                            >
+                              {rep.name}
+                            </Link>
+                            <ExternalLink className="w-3.5 h-3.5 text-muted-foreground" />
                           </CardTitle>
                           <p className="text-sm text-muted-foreground mt-1">{rep.title}</p>
                           {rep.notableInfo && <p className="text-xs text-muted-foreground/70 mt-1">{rep.notableInfo}</p>}
