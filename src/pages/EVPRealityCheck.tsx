@@ -168,7 +168,7 @@ function ScoreRing({ score }: { score: number }) {
         </div>
       </div>
       <div>
-        <div className="font-mono text-[0.65rem] uppercase tracking-widest text-muted-foreground mb-1">EVP Alignment Score</div>
+        <div className="font-mono text-[0.65rem] uppercase tracking-widest text-muted-foreground mb-1">Promise Alignment Score</div>
         <span className={`inline-block px-3 py-1 text-xs font-semibold uppercase tracking-wider ${band.color} ${band.bg} border ${band.border}`}>
           {band.label}
         </span>
