@@ -1811,6 +1811,7 @@ export type Database = {
           extracted_skills: Json | null
           id: string
           is_active: boolean
+          is_sponsored: boolean
           last_verified_at: string | null
           location: string | null
           posted_at: string | null
@@ -1820,6 +1821,8 @@ export type Database = {
           source_platform: string
           source_type: string
           source_url: string | null
+          sponsor_email: string | null
+          sponsor_expires_at: string | null
           title: string
           url: string | null
           work_mode: string | null
@@ -1833,6 +1836,7 @@ export type Database = {
           extracted_skills?: Json | null
           id?: string
           is_active?: boolean
+          is_sponsored?: boolean
           last_verified_at?: string | null
           location?: string | null
           posted_at?: string | null
@@ -1842,6 +1846,8 @@ export type Database = {
           source_platform?: string
           source_type?: string
           source_url?: string | null
+          sponsor_email?: string | null
+          sponsor_expires_at?: string | null
           title: string
           url?: string | null
           work_mode?: string | null
@@ -1855,6 +1861,7 @@ export type Database = {
           extracted_skills?: Json | null
           id?: string
           is_active?: boolean
+          is_sponsored?: boolean
           last_verified_at?: string | null
           location?: string | null
           posted_at?: string | null
@@ -1864,6 +1871,8 @@ export type Database = {
           source_platform?: string
           source_type?: string
           source_url?: string | null
+          sponsor_email?: string | null
+          sponsor_expires_at?: string | null
           title?: string
           url?: string | null
           work_mode?: string | null
