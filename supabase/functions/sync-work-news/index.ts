@@ -20,14 +20,10 @@ const GDELT_DOC_API = "https://api.gdeltproject.org/api/v2/doc/doc";
 
 // Workforce-related search queries
 const SEARCH_QUERIES = [
-  '"labor laws" OR "employment law" OR "NLRB" OR "Department of Labor"',
-  '"future of work" OR "return to office" OR "remote work policy"',
-  '"workplace regulation" OR "worker protection" OR "wage theft"',
-  '"AI workplace" OR "AI hiring" OR "automated hiring"',
-  '"employment bill" OR "labor bill" OR "minimum wage"',
-  '"mass layoffs" OR "WARN Act" OR "workforce reduction"',
-  '"pay equity" OR "pay transparency" OR "salary transparency"',
-  '"union" OR "collective bargaining" OR "worker organizing"',
+  '"labor laws" OR "NLRB" OR "Department of Labor" OR "workplace regulation"',
+  '"future of work" OR "return to office" OR "AI workplace" OR "AI hiring"',
+  '"mass layoffs" OR "WARN Act" OR "pay equity" OR "salary transparency"',
+  '"union" OR "collective bargaining" OR "employment bill" OR "minimum wage"',
 ];
 
 // Category mapping based on query content
