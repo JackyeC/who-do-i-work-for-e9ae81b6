@@ -7320,6 +7320,63 @@ export type Database = {
         }
         Relationships: []
       }
+      work_news: {
+        Row: {
+          category: string | null
+          controversy_type: string | null
+          created_at: string | null
+          gdelt_url_hash: string | null
+          headline: string
+          id: string
+          is_controversy: boolean | null
+          jackye_take: string | null
+          jackye_take_approved: boolean | null
+          published_at: string | null
+          sentiment_score: number | null
+          source_name: string | null
+          source_url: string | null
+          themes: string[] | null
+          tone_label: string | null
+          updated_at: string | null
+        }
+        Insert: {
+          category?: string | null
+          controversy_type?: string | null
+          created_at?: string | null
+          gdelt_url_hash?: string | null
+          headline: string
+          id?: string
+          is_controversy?: boolean | null
+          jackye_take?: string | null
+          jackye_take_approved?: boolean | null
+          published_at?: string | null
+          sentiment_score?: number | null
+          source_name?: string | null
+          source_url?: string | null
+          themes?: string[] | null
+          tone_label?: string | null
+          updated_at?: string | null
+        }
+        Update: {
+          category?: string | null
+          controversy_type?: string | null
+          created_at?: string | null
+          gdelt_url_hash?: string | null
+          headline?: string
+          id?: string
+          is_controversy?: boolean | null
+          jackye_take?: string | null
+          jackye_take_approved?: boolean | null
+          published_at?: string | null
+          sentiment_score?: number | null
+          source_name?: string | null
+          source_url?: string | null
+          themes?: string[] | null
+          tone_label?: string | null
+          updated_at?: string | null
+        }
+        Relationships: []
+      }
       worker_benefit_signals: {
         Row: {
           benefit_category: string
