@@ -5,6 +5,7 @@ import { PendingReviewsDashboard } from "@/components/admin/PendingReviewsDashbo
 import { CompensationHealthPanel } from "@/components/admin/CompensationHealthPanel";
 import { FounderNotesPanel } from "@/components/admin/FounderNotesPanel";
 import { SearchIntelligencePanel } from "@/components/admin/SearchIntelligencePanel";
+import { WarnHeatmapPanel } from "@/components/admin/WarnHeatmapPanel";
 import { useUserRole } from "@/hooks/use-user-role";
 import { Header } from "@/components/Header";
 import { Footer } from "@/components/Footer";
@@ -313,8 +314,13 @@ export default function FounderConsole() {
           </div>
         </div>
 
-        {/* Search Intelligence */}
+        {/* WARN / Layoff Heatmap */}
         <div className="mt-8">
+          <WarnHeatmapPanel />
+        </div>
+
+        {/* Search Intelligence */}
+        <div className="mt-6">
           <SearchIntelligencePanel />
         </div>
 
