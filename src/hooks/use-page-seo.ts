@@ -3,20 +3,24 @@ import { useEffect } from "react";
 const BASE_URL = "https://wdiwf.jackyeclayton.com";
 const SITE_NAME = "Who Do I Work For?";
 const DEFAULT_DESC = "Employer Intelligence platform. Know who you're really working for before you sign. Company intelligence, offer analysis, career strategy by Jackye Clayton.";
+const DEFAULT_IMAGE = "https://wdiwf.jackyeclayton.com/og-image.png";
 
 interface PageSEOProps {
   title: string;
   description?: string;
   path?: string;
   type?: string;
+  image?: string;
+  twitterCard?: "summary" | "summary_large_image";
   jsonLd?: Record<string, any>;
 }
 
-export function usePageSEO({ title, description, path, type = "website", jsonLd }: PageSEOProps) {
+export function usePageSEO({ title, description, path, type = "website", image, twitterCard = "summary_large_image", jsonLd }: PageSEOProps) {
   useEffect(() => {
     const fullTitle = `${title} | ${SITE_NAME}`;
     const desc = description || DEFAULT_DESC;
     const url = path ? `${BASE_URL}${path}` : BASE_URL;
+    const ogImage = image || DEFAULT_IMAGE;
 
     document.title = fullTitle;
 
@@ -36,11 +40,13 @@ export function usePageSEO({ title, description, path, type = "website", jsonLd 
     setMeta("property", "og:url", url);
     setMeta("property", "og:type", type);
     setMeta("property", "og:site_name", SITE_NAME);
+    setMeta("property", "og:image", ogImage);
+    setMeta("property", "og:image:width", "1200");
+    setMeta("property", "og:image:height", "630");
     setMeta("name", "twitter:title", fullTitle);
     setMeta("name", "twitter:description", desc);
-    setMeta("name", "twitter:card", "summary_large_image");
-    setMeta("property", "og:image", "https://wdiwf.jackyeclayton.com/og-image.png");
-    setMeta("name", "twitter:image", "https://wdiwf.jackyeclayton.com/og-image.png");
+    setMeta("name", "twitter:card", twitterCard);
+    setMeta("name", "twitter:image", ogImage);
 
     // Canonical
     let canonical = document.querySelector('link[rel="canonical"]') as HTMLLinkElement;
@@ -68,5 +74,5 @@ export function usePageSEO({ title, description, path, type = "website", jsonLd 
       const pageLd = document.querySelector('script[data-page-ld]');
       if (pageLd) pageLd.remove();
     };
-  }, [title, description, path, type, jsonLd]);
+  }, [title, description, path, type, image, twitterCard, jsonLd]);
 }
