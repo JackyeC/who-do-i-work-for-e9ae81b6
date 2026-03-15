@@ -1183,6 +1183,8 @@ export default function CompanyProfile() {
             </p>
           </div>
           </ReportTeaserGate>
+
+          <PostReportNudge />
         </motion.div>
       </div>
 
