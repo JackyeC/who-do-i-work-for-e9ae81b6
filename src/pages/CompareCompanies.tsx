@@ -152,6 +152,27 @@ export default function CompareCompanies() {
                 </button>
               ))}
             </div>
+
+            {/* Compare more CTA */}
+            <div className="mt-10 border border-dashed border-primary/30 bg-primary/5 p-8 text-center">
+              <div className="w-12 h-12 rounded-full bg-primary/10 border border-primary/20 flex items-center justify-center mx-auto mb-4">
+                <ArrowLeftRight className="w-5 h-5 text-primary" />
+              </div>
+              <div className="font-bold text-foreground mb-1">Want to compare more employers?</div>
+              <p className="text-[13px] text-muted-foreground mb-4 max-w-[400px] mx-auto">
+                Run another matchup — see who really wins on transparency.
+              </p>
+              <button
+                onClick={() => {
+                  setCompanyA(null);
+                  setCompanyB(null);
+                  setSearchParams({});
+                }}
+                className="inline-flex items-center gap-2 px-5 py-2.5 bg-primary text-primary-foreground font-mono text-[10px] tracking-wider uppercase hover:bg-primary/90 transition-colors"
+              >
+                <ArrowLeftRight className="w-3.5 h-3.5" /> Start New Comparison
+              </button>
+            </div>
           </>
         )}
 
