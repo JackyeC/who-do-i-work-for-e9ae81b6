@@ -59,6 +59,7 @@ import EconomyDashboard from "./pages/EconomyDashboard";
 import FollowTheMoney from "./pages/FollowTheMoney";
 import AskJackye from "./pages/AskJackye";
 import OnePager from "./pages/OnePager";
+import Demo from "./pages/Demo";
 import WouldYouWorkHere from "./pages/WouldYouWorkHere";
 import WorkWithJackye from "./pages/WorkWithJackye";
 import EmployerReceipt from "./pages/EmployerReceipt";
