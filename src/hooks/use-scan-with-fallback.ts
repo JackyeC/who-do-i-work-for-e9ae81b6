@@ -8,6 +8,8 @@ import {
   logScanError,
   getCooldownMinutes,
 } from "@/lib/firecrawl-circuit-breaker";
+import type { IntelligenceSection } from "@/lib/intelligence-provider";
+import { isSectionStale } from "@/lib/intelligence-provider";
 
 interface UseScanOptions {
   functionName: string;
@@ -21,6 +23,10 @@ interface UseScanOptions {
   onError?: (reason: 'circuit_open' | 'firecrawl_error' | 'other_error', message: string) => void;
   /** Set loading state */
   setLoading?: (v: boolean) => void;
+  /** Intelligence section for freshness checking */
+  section?: IntelligenceSection;
+  /** Last update timestamp from cached data — skip scan if fresh */
+  lastUpdated?: string | null;
 }
 
 /**
