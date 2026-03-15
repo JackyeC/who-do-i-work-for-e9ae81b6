@@ -144,6 +144,11 @@ const App = () => (
                     <VoterLookup />
                   </ProtectedRoute>
                 } />
+                <Route path="/representative/:name" element={
+                  <ProtectedRoute>
+                    <RepresentativeProfile />
+                  </ProtectedRoute>
+                } />
                 <Route path="/add-company" element={<AddCompany />} />
                 <Route path="/jobs" element={<Jobs />} />
                 <Route path="/request-correction" element={<RequestCorrection />} />
