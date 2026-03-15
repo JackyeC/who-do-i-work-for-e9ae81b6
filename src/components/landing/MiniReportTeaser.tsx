@@ -137,7 +137,7 @@ export function MiniReportTeaser() {
                     <div className="flex gap-2">
                       <Button
                         size="sm"
-                        onClick={() => navigate("/login")}
+                        onClick={() => setShowSignup(true)}
                         className="gap-1.5 font-mono text-xs tracking-wider uppercase"
                       >
                         Get Full Report <ArrowRight className="w-3 h-3" />
@@ -153,6 +153,14 @@ export function MiniReportTeaser() {
                     </div>
                   </div>
                 </div>
+              </div>
+
+              <SignupModal
+                open={showSignup}
+                onOpenChange={setShowSignup}
+                headline={`Unlock the full ${report.name} report`}
+                subtext="No credit card required. Your first report is free."
+              />
               </div>
             </motion.div>
           )}
