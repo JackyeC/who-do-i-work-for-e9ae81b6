@@ -6,8 +6,12 @@ const corsHeaders = {
 };
 
 // Big Local News WARN Transformer — aggregated national WARN data from all 50 states
+// Data moved from data/ directory to GitHub Releases assets
 const NATIONAL_WARN_URL =
-  "https://raw.githubusercontent.com/biglocalnews/warn-transformer/main/data/warn.json";
+  "https://github.com/biglocalnews/warn-transformer/releases/latest/download/warn_output.json";
+// Fallback URL if the primary one fails
+const NATIONAL_WARN_FALLBACK_URL =
+  "https://github.com/biglocalnews/warn-transformer/releases/latest/download/warn.json";
 
 // Official state WARN sources for direct scraping
 const STATE_SOURCES: Record<string, { name: string; url: string; type: string }> = {
