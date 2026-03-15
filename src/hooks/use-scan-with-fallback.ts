@@ -48,7 +48,16 @@ export function useScanWithFallback({
 
   const firecrawlState = isFirecrawlUnavailable();
 
-  const runScan = useCallback(async () => {
+  const runScan = useCallback(async (forceRefresh = false) => {
+    // Freshness check — skip scan if data is still fresh (unless forced)
+    if (!forceRefresh && section && lastUpdated && !isSectionStale(lastUpdated, section)) {
+      toast({
+        title: "Intelligence is current",
+        description: "This data was recently updated. No refresh needed.",
+      });
+      return;
+    }
+
     // Circuit breaker check
     const state = isFirecrawlUnavailable();
     if (state) {
