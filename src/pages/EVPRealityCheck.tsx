@@ -286,7 +286,7 @@ export default function EVPRealityCheck() {
           <textarea
             value={evpText}
             onChange={(e) => setEvpText(e.target.value)}
-            placeholder={"Paste your EVP statements, career page messaging, recruiting promises, or employer brand copy here...\n\nExample:\n\"We offer competitive compensation, inclusive hiring practices, and long-term career growth in a stable, values-driven environment.\""}
+            placeholder={"Paste your employer promises, career page messaging, recruiting claims, or brand copy here...\n\nExample:\n\"We offer competitive compensation, inclusive hiring practices, and long-term career growth in a stable, values-driven environment.\""}
             className="w-full h-40 bg-background border border-border p-4 text-sm text-foreground placeholder:text-muted-foreground/50 resize-none outline-none focus:border-primary transition-colors"
           />
 
