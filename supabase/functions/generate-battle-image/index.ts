@@ -47,10 +47,14 @@ Between them: a huge electric "VS" with cartoon lightning bolts and sparkle effe
 
 Style: Saturday morning cartoon meets corporate satire. Bright saturated colors, thick outlines, cel-shaded look, exaggerated proportions, tons of personality. FUN and shareable. Clean background.`;
 
-    // Generate with retry on 429
+    // Generate with retry on 429 (longer backoff for image generation)
     let aiResponse: Response | null = null;
-    for (let attempt = 0; attempt < 3; attempt++) {
-      if (attempt > 0) await new Promise(r => setTimeout(r, 3000 * attempt));
+    const delays = [0, 5000, 15000];
+    for (let attempt = 0; attempt < delays.length; attempt++) {
+      if (delays[attempt] > 0) {
+        console.log(`Rate limited, waiting ${delays[attempt] / 1000}s before retry ${attempt + 1}/${delays.length}...`);
+        await new Promise(r => setTimeout(r, delays[attempt]));
+      }
 
       aiResponse = await fetch("https://ai.gateway.lovable.dev/v1/chat/completions", {
         method: "POST",
@@ -66,7 +70,6 @@ Style: Saturday morning cartoon meets corporate satire. Bright saturated colors,
       });
 
       if (aiResponse.status !== 429) break;
-      console.log(`Rate limited, retry ${attempt + 1}/3...`);
     }
 
     if (!aiResponse || !aiResponse.ok) {
