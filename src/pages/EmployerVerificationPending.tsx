@@ -168,9 +168,21 @@ export default function EmployerVerificationPending() {
           <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-primary/10 mb-5">
             <ShieldCheck className="w-8 h-8 text-primary" />
           </div>
+          {goldShieldActive ? (
+            <Badge className="mb-4 text-xs font-mono uppercase tracking-wider bg-[hsl(var(--civic-green))] text-white">
+              🛡️ Gold Shield Active
+            </Badge>
+          ) : (
+            <Badge
+              variant="secondary"
+              className="mb-4 text-xs font-mono uppercase tracking-wider"
+            >
+              Gold Shield — Pending Admin Approval
+            </Badge>
+          )}
           <Badge
             variant="secondary"
-            className="mb-4 text-xs font-mono uppercase tracking-wider"
+            className="mb-4 ml-2 text-xs font-mono uppercase tracking-wider"
           >
             Founding Partner Certification
           </Badge>
