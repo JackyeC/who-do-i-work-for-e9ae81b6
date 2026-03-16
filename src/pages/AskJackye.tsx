@@ -78,7 +78,7 @@ const OPENING_MESSAGE: Msg = {
   content: `## 🛡️ Intelligence Advisor — Online
 
 **System:** People Puzzles Proprietary Talent Framework v2.6
-**Engine:** Jackye Clayton AI Twin
+**Engine:** WDIWF Intelligence Engine
 **Status:** All intelligence feeds active
 
 ---
