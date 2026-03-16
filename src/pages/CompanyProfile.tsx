@@ -98,6 +98,9 @@ import { LevelsFyiEmbed } from "@/components/company/LevelsFyiEmbed";
 import { TransparencyResearchTab } from "@/components/company/TransparencyResearchTab";
 import { CivilRightsIntelligencePanel } from "@/components/CivilRightsIntelligencePanel";
 import { AlignmentSignalsPanel } from "@/components/AlignmentSignalsPanel";
+import { EntityResolutionReport } from "@/components/EntityResolutionReport";
+import { EvidenceQualityBadge } from "@/components/EvidenceQualityBadge";
+import { computeEvidenceQuality, sourceTypeToTier, type SourceSignal } from "@/lib/evidenceQualityScore";
 
 /* ─── Status labels ─── */
 const STATUS_LABELS: Record<string, { label: string; color: string }> = {
