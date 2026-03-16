@@ -1236,6 +1236,10 @@ export default function CompanyProfile() {
                       }}
                       onCandidateClick={handleCandidateClick}
                     />
+                    {/* Institutional DNA — Policy & Institutional Networks */}
+                    {dbCompanyId && (
+                      <InstitutionalDNACard companyId={dbCompanyId} companyName={name} />
+                    )}
                     {/* Alignment Signals — Contradiction Heatmap */}
                     {dbCompanyId && (
                       <AlignmentSignalsPanel companyId={dbCompanyId} companyName={name} />
