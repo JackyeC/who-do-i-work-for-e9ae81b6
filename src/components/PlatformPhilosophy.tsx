@@ -9,7 +9,7 @@ export function PlatformPhilosophy() {
           <p className="text-xs text-muted-foreground leading-relaxed">
             Recruiting works best when messaging and reality match. This platform surfaces
             Employer Reality Signals from publicly available records so recruiters and candidates
-            can make informed career decisions. No moral judgments are assigned.
+            can make informed career decisions. No judgment, just receipts.
           </p>
           <div className="flex flex-wrap gap-3">
             <ConfidencePill level="Direct Source" color="text-[hsl(var(--civic-green))]" description="Official filing or disclosure" />

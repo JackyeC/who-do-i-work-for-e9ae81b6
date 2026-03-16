@@ -131,7 +131,7 @@ export function LevelsFyiEmbed({ companyName }: LevelsFyiEmbedProps) {
                 While these numbers are the gold standard for tech and corporate roles, they are estimates.
               </p>
               <p className="text-xs text-muted-foreground leading-relaxed mt-1.5 italic">
-                <span className="font-medium text-foreground not-italic">Jackye's Context:</span>{" "}
+                <span className="font-medium text-foreground not-italic">Strategic Context:</span>{" "}
                 A high salary is only one part of the equation. Use this data alongside the Connection Chain
                 to see if the company's ethics and stability match the paycheck.
               </p>

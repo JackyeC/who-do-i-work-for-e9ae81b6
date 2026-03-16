@@ -367,7 +367,7 @@ export default function EmployerVerificationPending() {
                 <span className="font-semibold text-foreground">
                   24 hours
                 </span>{" "}
-                of document submission and Jackye's manual review.
+                of document submission and manual review.
               </p>
             </div>
           </CardContent>

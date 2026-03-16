@@ -259,7 +259,7 @@ export default function WhatAmISupporting() {
         {/* Footer */}
         <div className="mt-10 text-center">
           <div className="font-mono text-[0.6rem] uppercase tracking-[0.15em] text-primary font-semibold mb-1">Run the chain first. Always.</div>
-          <div className="text-[0.55rem] font-mono uppercase tracking-widest text-muted-foreground">Who Do I Work For — Employer Intelligence by Jackye Clayton</div>
+          <div className="text-[0.55rem] font-mono uppercase tracking-widest text-muted-foreground">Who Do I Work For — Workforce Transparency Standard</div>
         </div>
       </div>
     </div>

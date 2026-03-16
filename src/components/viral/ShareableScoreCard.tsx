@@ -88,7 +88,7 @@ export function ShareableScoreCard({ companyName, clarityScore, signals, slug }:
               whodoimworkfor.com
             </span>
             <span className="font-mono text-[8px] tracking-widest uppercase text-muted-foreground">
-              Employer Intelligence by Jackye Clayton
+              Workforce Transparency Standard
             </span>
           </div>
         </div>

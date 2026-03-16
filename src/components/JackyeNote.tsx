@@ -1,6 +1,7 @@
 import { useMemo } from "react";
 import { MessageSquareWarning, TrendingDown, DollarSign, Shield, Users, AlertTriangle, Eye } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
+import { AddYourStoryCTA } from "@/components/AddYourStoryCTA";
 import { cn } from "@/lib/utils";
 
 interface JackyeNoteProps {
@@ -67,14 +68,12 @@ export function JackyeNote(props: JackyeNoteProps) {
   const blurb = useMemo(() => {
     const parts: string[] = [];
 
-    // Opening — what we're looking at
     if (props.isPubliclyTraded) {
       parts.push(`${companyName} is a publicly traded company in the ${props.industry} sector.`);
     } else {
       parts.push(`${companyName} operates in the ${props.industry} sector.`);
     }
 
-    // Political money trail
     if (props.totalPacSpending > 0 || props.lobbyingSpend > 0) {
       const moneyParts: string[] = [];
       if (props.totalPacSpending > 0) moneyParts.push(`${formatMoney(props.totalPacSpending)} in PAC contributions`);
@@ -82,7 +81,6 @@ export function JackyeNote(props: JackyeNoteProps) {
       parts.push(`Public records show ${moneyParts.join(" and ")}.`);
     }
 
-    // Connections
     if (props.darkMoneyCount > 0 || props.revolvingDoorCount > 0) {
       const connParts: string[] = [];
       if (props.darkMoneyCount > 0) connParts.push(`${props.darkMoneyCount} dark money connection(s)`);
@@ -90,7 +88,6 @@ export function JackyeNote(props: JackyeNoteProps) {
       parts.push(`We've identified ${connParts.join(" and ")} in the public record.`);
     }
 
-    // Transparency gaps
     const gaps: string[] = [];
     if (!props.hasPayEquity) gaps.push("pay equity reporting");
     if (!props.hasBenefitsData) gaps.push("public benefits data");
@@ -99,14 +96,13 @@ export function JackyeNote(props: JackyeNoteProps) {
       parts.push(`Gaps exist in ${gaps.join(", ")}.`);
     }
 
-    // Closing — always the same tone
-    parts.push("The signals below are sourced from public filings, federal databases, and open records. Read the receipts — draw your own conclusions.");
+    parts.push("The signals below are sourced from public filings, federal databases, and open records. No judgment, just receipts.");
 
     return parts.join(" ");
   }, [companyName, props]);
 
   if (receipts.length === 0 && props.transparencyScore > 70) {
-    return null; // Nothing notable to surface
+    return null;
   }
 
   return (
@@ -114,7 +110,7 @@ export function JackyeNote(props: JackyeNoteProps) {
       {/* Header bar */}
       <div className="flex items-center gap-2.5 px-5 py-3 border-b border-primary/10 bg-primary/[0.04]">
         <MessageSquareWarning className="w-4.5 h-4.5 text-primary shrink-0" />
-        <span className="text-sm font-bold text-foreground tracking-tight">Jackye's Note</span>
+        <span className="text-sm font-bold text-foreground tracking-tight">Insider's Brief</span>
         <Badge variant="outline" className="text-[9px] font-mono tracking-wider border-primary/20 text-primary ml-auto">
           SIGNAL SUMMARY
         </Badge>
@@ -142,6 +138,9 @@ export function JackyeNote(props: JackyeNoteProps) {
             })}
           </div>
         )}
+
+        {/* Add Your Story CTA for employers */}
+        <AddYourStoryCTA />
 
         <p className="text-[10px] text-muted-foreground/60 italic pt-1">
           This summary is auto-generated from public data signals — not editorial opinion. A signal is not a verdict.

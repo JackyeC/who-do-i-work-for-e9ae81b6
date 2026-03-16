@@ -47,7 +47,7 @@ const Index = forwardRef<HTMLDivElement>((_, ref) => {
 
   usePageSEO({
     title: "Employer Background Check for Recruiters — Career Intelligence",
-    description: "Vet employers before your candidates do. SEC filings, PAC spending, layoff history, and pay equity data — in one scan. Employer intelligence by Jackye Clayton.",
+    description: "Vet employers before your candidates do. SEC filings, PAC spending, layoff history, and pay equity data — in one scan. Workforce Transparency Standard.",
     path: "/",
     jsonLd: {
       "@type": "WebApplication",

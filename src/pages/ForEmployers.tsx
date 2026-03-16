@@ -305,7 +305,7 @@ export default function ForEmployers() {
                 <h3 className="text-xl font-bold text-foreground mb-2">Single Job Credit — $199</h3>
                 <p className="text-sm text-muted-foreground leading-relaxed mb-4">
                   One 'Value-Aligned' job post on the Job Integrity Board for 30 days.
-                  Includes standard transparency data overlay, Jackye Insight, and Connection Chain (read-only).
+                  Includes standard transparency data overlay, Strategic Context, and Connection Chain (read-only).
                 </p>
                 <ul className="space-y-1.5 text-sm">
                   {["1 job post for 30 days", "Standard transparency overlay", "No Gold Shield required"].map((f) => (

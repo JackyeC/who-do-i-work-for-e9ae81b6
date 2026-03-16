@@ -86,7 +86,7 @@ export function HighRiskConnectionCard({ companyId, companyName }: HighRiskConne
         <div className="flex items-start gap-2">
           <Info className="w-3.5 h-3.5 text-primary shrink-0 mt-0.5" />
           <p className="text-xs text-muted-foreground leading-relaxed">
-            <span className="font-medium text-foreground">Jackye's Insight:</span>{" "}
+            <span className="font-medium text-foreground">Strategic Context:</span>{" "}
             A documented association does not necessarily imply endorsement. However, institutional ties to flagged organizations
             are a material factor in evaluating employer alignment. Sources include SPLC, ADL, and public records.
           </p>

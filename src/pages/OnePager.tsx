@@ -75,7 +75,7 @@ const OnePager = () => {
           <img src={jackyeHeadshot} alt="Jackye Clayton" className="w-14 h-14 rounded-full object-cover shrink-0" />
           <div>
             <div className="font-serif text-base font-bold text-primary">Jackye Clayton</div>
-            <div className="font-mono text-micro tracking-wider uppercase text-muted-foreground mb-1.5">Founder · Career Intelligence by Jackye Clayton</div>
+            <div className="font-mono text-micro tracking-wider uppercase text-muted-foreground mb-1.5">Founder · Who Do I Work For?</div>
             <div className="text-[11px] text-muted-foreground italic leading-relaxed">
               "The question isn't just whether you want the job. It's whether you know exactly who you're going to work for. Every candidate deserves to walk into that negotiation armed with the same information the company already has about them."
             </div>

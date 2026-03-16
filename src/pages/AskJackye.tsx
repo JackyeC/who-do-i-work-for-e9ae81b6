@@ -516,8 +516,8 @@ export default function AskJackyePage() {
       {messages.length <= 1 && (
         <div className="border-t border-border bg-card/30 shrink-0 max-h-[180px] overflow-y-auto">
           <div className="px-6 py-3">
-            <p className="font-mono text-[9px] text-muted-foreground tracking-widest uppercase mb-2">
-              ▸ About the AI Twin
+             <p className="font-mono text-[9px] text-muted-foreground tracking-widest uppercase mb-2">
+              ▸ About the Intelligence Engine
             </p>
             <div className="space-y-0.5">
               {FAQ_ITEMS.map((faq, i) => (

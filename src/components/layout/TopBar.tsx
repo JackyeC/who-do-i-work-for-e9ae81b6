@@ -115,7 +115,7 @@ export function TopBar() {
       items.push(`SCANS: ${s.totalScans.toLocaleString()} total intelligence scans`);
     }
     items.push(`UPDATED: ${new Date().toLocaleDateString()} — connection chains refreshed`);
-    items.push('JACKYE INSIGHT: "Don\'t accept an offer without running the chain first"');
+    items.push('INSIDER CONTEXT: "Run the chain before you sign."');
     return items;
   }, [tickerStats]);
 

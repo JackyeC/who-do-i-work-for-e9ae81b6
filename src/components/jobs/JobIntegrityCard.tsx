@@ -85,11 +85,11 @@ export function JobIntegrityCard({ job }: JobIntegrityCardProps) {
           </div>
         </div>
 
-        {/* Jackye Insight — read-only, cannot be edited by employers */}
+        {/* Strategic Context — read-only, cannot be edited by employers */}
         {co?.jackye_insight && (
           <div className="p-3 bg-primary/[0.04] border border-primary/10 rounded-lg">
             <p className="text-[10px] font-medium text-primary mb-1 flex items-center gap-1">
-              <Sparkles className="w-3 h-3" /> Jackye's Insight
+              <Sparkles className="w-3 h-3" /> Strategic Context
             </p>
             <p className="text-xs text-muted-foreground leading-relaxed line-clamp-2">
               {co.jackye_insight}

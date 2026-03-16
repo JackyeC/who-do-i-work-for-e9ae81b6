@@ -64,7 +64,7 @@ export default function JobIntegrityBoard() {
             Job Integrity Board
           </h1>
           <p className="text-muted-foreground max-w-xl mx-auto">
-            Every listing includes employer transparency signals, Jackye's Insight, and
+            Every listing includes employer transparency signals, strategic context, and
             Connection Chain data — so you know who you're really working for.
           </p>
         </div>

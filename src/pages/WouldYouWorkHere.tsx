@@ -209,7 +209,7 @@ export default function WouldYouWorkHere() {
 
   usePageSEO({
     title: "Would You Work Here? — Free Employer Intelligence Check",
-    description: "Check any employer's clarity score, hiring transparency, workforce stability, compensation data, and influence exposure. Free employer intelligence by Jackye Clayton.",
+    description: "Check any employer's clarity score, hiring transparency, workforce stability, compensation data, and influence exposure. Workforce Transparency Standard.",
     path: "/would-you-work-here",
     jsonLd: {
       "@type": "WebPage",
