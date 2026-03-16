@@ -6317,6 +6317,7 @@ export type Database = {
       profiles: {
         Row: {
           ai_transparency_required: boolean | null
+          beta_agreement_accepted_at: string | null
           bio: string | null
           created_at: string
           email: string | null
@@ -6336,6 +6337,7 @@ export type Database = {
         }
         Insert: {
           ai_transparency_required?: boolean | null
+          beta_agreement_accepted_at?: string | null
           bio?: string | null
           created_at?: string
           email?: string | null
@@ -6355,6 +6357,7 @@ export type Database = {
         }
         Update: {
           ai_transparency_required?: boolean | null
+          beta_agreement_accepted_at?: string | null
           bio?: string | null
           created_at?: string
           email?: string | null
