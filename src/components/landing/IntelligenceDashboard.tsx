@@ -245,8 +245,8 @@ export function IntelligenceDashboard() {
           ))}
         </div>
 
-        {/* Bottom row: 3 panels */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-px bg-border border border-border">
+        {/* Bottom row: 4 panels */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-px bg-border border border-border">
           {PANELS.slice(4).map((p) => (
             <IntelligencePanel key={p.queryKey} panel={p} />
           ))}
