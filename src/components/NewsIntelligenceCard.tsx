@@ -95,8 +95,8 @@ export function NewsIntelligenceCard({ companyId, companyName }: Props) {
                         {s.controversy_type || "controversy"}
                       </Badge>
                     )}
+                    <MediaBiasIndicator sourceUrl={s.source_url} sourceName={s.source_name} />
                   </div>
-                </div>
                 {s.source_url && (
                   <a href={s.source_url} target="_blank" rel="noopener noreferrer" className="text-muted-foreground hover:text-primary shrink-0">
                     <ExternalLink className="w-3.5 h-3.5" />
