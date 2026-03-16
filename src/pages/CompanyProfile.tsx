@@ -558,7 +558,15 @@ export default function CompanyProfile() {
                   </div>
 
                   {/* Score badges */}
-                  <div className="flex items-center gap-3">
+                  <div className="flex items-center gap-3 flex-wrap">
+                    {evidenceQuality && (
+                      <EvidenceQualityBadge
+                        score={evidenceQuality.score}
+                        primarySourceCoverage={evidenceQuality.primarySourceCoverage}
+                        crossVerifiedCount={evidenceQuality.crossVerifiedCount}
+                        conflictsDetected={evidenceQuality.conflictsDetected}
+                      />
+                    )}
                     <CivicFootprintBadge score={civicScore} size="sm" />
                     {transparencyScore > 0 && (
                       <Badge variant="outline" className="text-xs gap-1">
