@@ -1,4 +1,9 @@
 import { TopBar } from "./TopBar";
+import { Suspense, lazy } from "react";
+
+const BetaAgreementModal = lazy(() =>
+  import("@/components/BetaAgreementModal").then((m) => ({ default: m.BetaAgreementModal }))
+);
 
 interface AppShellProps {
   children: React.ReactNode;
@@ -11,6 +16,9 @@ export function AppShell({ children }: AppShellProps) {
       <main className="flex-1 min-w-0">
         {children}
       </main>
+      <Suspense fallback={null}>
+        <BetaAgreementModal />
+      </Suspense>
     </div>
   );
 }
