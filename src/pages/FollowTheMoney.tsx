@@ -620,10 +620,40 @@ const SAMPLE_LINKS: GraphLink[] = [
   { source: "smith-wesson", target: "nssf-pac", label: "Funds via NSSF", linkType: "trade_association_lobbying", amount: 780_000, confidence: "likely" },
   { source: "nssf-pac", target: "sen-thune", label: "Donated $35K", linkType: "donation_to_member", amount: 35_000, year: 2024, confidence: "direct" },
   { source: "nssf-pac", target: "rep-hudson", label: "Donated $28K", linkType: "donation_to_member", amount: 28_000, year: 2023, confidence: "direct" },
+  { source: "nra-pac", target: "sen-thune", label: "Donated $22K + A rating", linkType: "donation_to_member", amount: 22_000, year: 2024, confidence: "direct" },
+  { source: "nra-pac", target: "rep-hudson", label: "Donated $15K + A rating", linkType: "donation_to_member", amount: 15_000, year: 2023, confidence: "direct" },
+  { source: "rep-hudson", target: "house-judiciary", label: "Serves on", linkType: "member_on_committee", confidence: "direct" },
   { source: "rep-hudson", target: "gun-safety-bill", label: "Opposes", linkType: "lobbying_on_bill", confidence: "direct" },
+  { source: "sen-murphy", target: "judiciary-committee", label: "Serves on", linkType: "member_on_committee", confidence: "direct" },
+  { source: "sen-murphy", target: "safer-communities-act", label: "Lead author", linkType: "lobbying_on_bill", confidence: "direct" },
+  { source: "everytown-pac", target: "sen-murphy", label: "Supported $1.2M", linkType: "donation_to_member", amount: 1_200_000, year: 2024, confidence: "direct" },
+  { source: "house-judiciary", target: "gun-safety-bill", label: "Oversees", linkType: "lobbying_on_bill", confidence: "direct" },
+  { source: "judiciary-committee", target: "safer-communities-act", label: "Oversees", linkType: "lobbying_on_bill", confidence: "direct" },
   { source: "gun-safety-bill", target: "firearms-industry", label: "Impacts", linkType: "committee_oversight_of_contract", confidence: "likely" },
+  { source: "plcaa", target: "firearms-industry", label: "Protects", linkType: "committee_oversight_of_contract", confidence: "direct" },
   { source: "smith-wesson", target: "atf", label: "Regulatory Oversight", linkType: "committee_oversight_of_contract", confidence: "direct" },
   { source: "smith-wesson", target: "firearms-industry", label: "Operates in", linkType: "trade_association_lobbying", confidence: "direct" },
+  { source: "smith-wesson", target: "plcaa", label: "Protected by", linkType: "committee_oversight_of_contract", confidence: "direct" },
+
+  // ── Walmart gun links ──
+  { source: "walmart-guns", target: "atf", label: "FFL Dealer (restricted 2019)", linkType: "committee_oversight_of_contract", confidence: "direct" },
+  { source: "walmart-guns", target: "firearms-industry", label: "Restricted sales", linkType: "trade_association_lobbying", confidence: "direct" },
+  { source: "walmart-guns", target: "safer-communities-act", label: "Supported passage", linkType: "lobbying_on_bill", confidence: "likely" },
+
+  // ── Dick's Sporting Goods gun links ──
+  { source: "dicks-sporting", target: "atf", label: "Removed assault rifles", linkType: "committee_oversight_of_contract", confidence: "direct" },
+  { source: "dicks-sporting", target: "firearms-industry", label: "Exited category", linkType: "trade_association_lobbying", confidence: "direct" },
+  { source: "dicks-sporting", target: "giffords-org", label: "Corporate advocacy partner", linkType: "trade_association_lobbying", confidence: "likely" },
+
+  // ── Levi Strauss gun links ──
+  { source: "levi-strauss", target: "everytown-pac", label: "Co-founded business leaders coalition", linkType: "trade_association_lobbying", amount: 1_000_000, confidence: "direct" },
+  { source: "levi-strauss", target: "giffords-org", label: "Donated to gun safety org", linkType: "trade_association_lobbying", confidence: "likely" },
+  { source: "levi-strauss", target: "safer-communities-act", label: "Advocated for passage", linkType: "lobbying_on_bill", confidence: "likely" },
+
+  // ── NRA / Everytown ecosystem ──
+  { source: "nra-pac", target: "plcaa", label: "Lobbied for passage", linkType: "lobbying_on_bill", amount: 3_500_000, confidence: "direct" },
+  { source: "everytown-pac", target: "gun-safety-bill", label: "Advocates for", linkType: "lobbying_on_bill", confidence: "direct" },
+  { source: "giffords-org", target: "safer-communities-act", label: "Advocates for", linkType: "lobbying_on_bill", confidence: "direct" },
 
   // ── Pearson links (Education) ──
   { source: "pearson", target: "pearson-pac", label: "Funds", linkType: "donation_to_member", amount: 320_000, confidence: "direct" },
