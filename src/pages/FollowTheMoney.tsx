@@ -461,6 +461,23 @@ const SAMPLE_NODES: GraphNode[] = [
   { id: "fda", label: "Food & Drug Administration", group: "Agency", val: 15, issueCategories: ["Healthcare"] },
   { id: "opioid-regulation-bill", label: "SUPPORT for Patients and Communities Act", group: "Legislation", val: 11, issueCategories: ["Healthcare"], metadata: { status: "Enacted", description: "Bipartisan opioid response legislation signed into law after years of pharma lobbying delays." } },
   { id: "pharma-industry", label: "Pharmaceutical Sector", group: "Industry", val: 15, issueCategories: ["Healthcare"] },
+
+  // ── Disney (Civil Rights — LGBTQ advocacy) ──
+  { id: "disney-cr", label: "Walt Disney Company", group: "Company", val: 17, metadata: { industry: "Entertainment", summary: "HRC CEI 100/100. Publicly opposed Florida 'Don't Say Gay' bill. Major corporate LGBTQ rights advocate." } },
+  { id: "eeoc-agency", label: "EEOC (Equal Employment Opportunity Commission)", group: "Agency", val: 15, issueCategories: ["Civil Rights", "Labor Rights"] },
+  { id: "hrc-index", label: "HRC Corporate Equality Index", group: "Industry", val: 13, issueCategories: ["Civil Rights"], metadata: { summary: "Human Rights Campaign annual benchmark of LGBTQ workplace policies. Rates 1,300+ companies." } },
+  { id: "equality-act", label: "Equality Act (H.R.5)", group: "Legislation", val: 13, issueCategories: ["Civil Rights"], metadata: { status: "Passed House", description: "Would add sexual orientation and gender identity to federal civil rights protections in employment, housing, and public accommodations." } },
+  { id: "civil-rights-industry", label: "Civil Rights Sector", group: "Industry", val: 14, issueCategories: ["Civil Rights"] },
+  { id: "doj-civil-rights", label: "DOJ Civil Rights Division", group: "Agency", val: 14, issueCategories: ["Civil Rights"] },
+
+  // ── Nike (Civil Rights — Racial equity, gender discrimination) ──
+  { id: "nike-cr", label: "Nike", group: "Company", val: 16, metadata: { industry: "Apparel", summary: "Colin Kaepernick campaign. Gender discrimination lawsuits from female employees. HRC CEI 100/100. $140M racial equity commitment." } },
+
+  // ── Target (Civil Rights — DEI, EEOC) ──
+  { id: "target-cr", label: "Target Corporation", group: "Company", val: 15, metadata: { industry: "Retail", summary: "HRC CEI 100/100. EEOC settlement for discriminatory pre-employment tests. DEI rollback controversy in 2024." } },
+
+  // ── Chick-fil-A (Civil Rights — Controversial donations) ──
+  { id: "chick-fil-a", label: "Chick-fil-A", group: "Company", val: 14, metadata: { industry: "Food & Beverage", summary: "Documented donations to organizations opposing LGBTQ rights. Changed foundation policy in 2019 after sustained advocacy pressure." } },
 ];
 
 const SAMPLE_LINKS: GraphLink[] = [
@@ -732,6 +749,30 @@ const SAMPLE_LINKS: GraphLink[] = [
   { source: "purdue", target: "fda", label: "Regulatory capture attempts", linkType: "revolving_door", confidence: "likely" },
   { source: "purdue", target: "pharma-industry", label: "Operates in", linkType: "trade_association_lobbying", confidence: "direct" },
   { source: "opioid-regulation-bill", target: "pharma-industry", label: "Impacts", linkType: "committee_oversight_of_contract", confidence: "likely" },
+
+  // ── Disney civil rights links ──
+  { source: "disney-cr", target: "hrc-index", label: "CEI Score: 100/100", linkType: "trade_association_lobbying", confidence: "direct" },
+  { source: "disney-cr", target: "equality-act", label: "Publicly supported", linkType: "lobbying_on_bill", confidence: "direct" },
+  { source: "disney-cr", target: "civil-rights-industry", label: "LGBTQ advocacy", linkType: "trade_association_lobbying", confidence: "direct" },
+  { source: "judiciary-committee", target: "equality-act", label: "Oversees", linkType: "lobbying_on_bill", confidence: "direct" },
+  { source: "equality-act", target: "civil-rights-industry", label: "Impacts", linkType: "committee_oversight_of_contract", confidence: "likely" },
+
+  // ── Nike civil rights links ──
+  { source: "nike-cr", target: "hrc-index", label: "CEI Score: 100/100", linkType: "trade_association_lobbying", confidence: "direct" },
+  { source: "nike-cr", target: "eeoc-agency", label: "Gender discrimination lawsuits", linkType: "committee_oversight_of_contract", confidence: "direct" },
+  { source: "nike-cr", target: "civil-rights-industry", label: "$140M racial equity commitment", linkType: "trade_association_lobbying", confidence: "direct" },
+
+  // ── Target civil rights links ──
+  { source: "target-cr", target: "eeoc-agency", label: "EEOC settlement (pre-employment tests)", linkType: "committee_oversight_of_contract", confidence: "direct" },
+  { source: "target-cr", target: "hrc-index", label: "CEI Score: 100/100", linkType: "trade_association_lobbying", confidence: "direct" },
+  { source: "target-cr", target: "civil-rights-industry", label: "DEI commitments (rollback 2024)", linkType: "trade_association_lobbying", confidence: "direct" },
+
+  // ── Chick-fil-A civil rights links ──
+  { source: "chick-fil-a", target: "civil-rights-industry", label: "Controversial donations to anti-LGBTQ orgs", linkType: "dark_money_channel", confidence: "likely" },
+  { source: "chick-fil-a", target: "hrc-index", label: "Not rated", linkType: "trade_association_lobbying", confidence: "direct" },
+
+  // ── EEOC / DOJ connections ──
+  { source: "eeoc-agency", target: "doj-civil-rights", label: "Enforcement partnership", linkType: "committee_oversight_of_contract", confidence: "direct" },
 ];
 
 // ─── Main Component ───

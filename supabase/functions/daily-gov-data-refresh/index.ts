@@ -27,6 +27,7 @@ const GOV_SOURCES = [
   { name: 'sync-immigration-signals', label: 'Immigration (H-1B/H-2A/H-2B/DOL)' },
   { name: 'sync-climate-signals', label: 'Climate (EPA GHGRP/ECHO)' },
   { name: 'sync-gun-policy-signals', label: 'Gun Policy (ATF/FEC)' },
+  { name: 'sync-civil-rights-signals', label: 'Civil Rights (EEOC/CourtListener/HRC)' },
 ] as const;
 
 Deno.serve(async (req) => {

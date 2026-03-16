@@ -34,6 +34,11 @@ const SOURCE_URLS: Record<string, string> = {
   "NSSF": "https://www.nssf.org/",
   "Giffords": "https://giffords.org/",
   "Everytown": "https://www.everytown.org/",
+  "HRC": "https://www.hrc.org/resources/corporate-equality-index",
+  "DOJ Civil Rights": "https://www.justice.gov/crt",
+  "CourtListener": "https://www.courtlistener.com/",
+  "NAACP": "https://naacp.org/",
+  "ACLU": "https://www.aclu.org/",
 };
 
 export function getSourceUrl(source: string): string | undefined {

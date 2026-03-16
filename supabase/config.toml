@@ -80,3 +80,9 @@ verify_jwt = false
 
 [functions.seed-gun-policy-companies]
 verify_jwt = false
+
+[functions.sync-civil-rights-signals]
+verify_jwt = false
+
+[functions.seed-civil-rights-companies]
+verify_jwt = false
