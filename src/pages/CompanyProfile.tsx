@@ -317,7 +317,28 @@ export default function CompanyProfile() {
     enabled: !!dbCompanyId,
   });
 
-  const dbCompanyIdMap: Record<string, string> = {
+  // Signal sources for evidence quality
+  const { data: signalSources } = useQuery({
+    queryKey: ["signal-sources", dbCompanyId],
+    queryFn: async () => {
+      const { data } = await (supabase as any).from("signal_sources").select("source_type, date_retrieved, match_confidence, verification_status").eq("company_id", dbCompanyId!);
+      return data || [];
+    },
+    enabled: !!dbCompanyId,
+  });
+
+  const evidenceQuality = useMemo(() => {
+    if (!signalSources?.length) return null;
+    const signals: SourceSignal[] = signalSources.map((s: any) => ({
+      tier: sourceTypeToTier(s.source_type),
+      dateRetrieved: s.date_retrieved,
+      matchConfidence: s.match_confidence,
+      verificationStatus: s.verification_status,
+    }));
+    return computeEvidenceQuality(signals);
+  }, [signalSources]);
+
+
     "google": "a1b2c3d4-e5f6-7890-abcd-ef1234567890",
     "home-depot": "b2c3d4e5-f6a7-8901-bcde-f12345678901",
     "koch-industries": "c3d4e5f6-a7b8-9012-cdef-123456789012",
