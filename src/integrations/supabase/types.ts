@@ -4909,6 +4909,51 @@ export type Database = {
           },
         ]
       }
+      job_click_events: {
+        Row: {
+          click_type: string
+          company_id: string
+          created_at: string
+          destination_url: string | null
+          id: string
+          job_id: string | null
+          user_id: string | null
+        }
+        Insert: {
+          click_type?: string
+          company_id: string
+          created_at?: string
+          destination_url?: string | null
+          id?: string
+          job_id?: string | null
+          user_id?: string | null
+        }
+        Update: {
+          click_type?: string
+          company_id?: string
+          created_at?: string
+          destination_url?: string | null
+          id?: string
+          job_id?: string | null
+          user_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "job_click_events_company_id_fkey"
+            columns: ["company_id"]
+            isOneToOne: false
+            referencedRelation: "companies"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "job_click_events_job_id_fkey"
+            columns: ["job_id"]
+            isOneToOne: false
+            referencedRelation: "company_jobs"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       job_match_preferences: {
         Row: {
           created_at: string | null
