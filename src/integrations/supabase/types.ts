@@ -3617,6 +3617,53 @@ export type Database = {
           },
         ]
       }
+      contradiction_signals: {
+        Row: {
+          company_id: string
+          created_at: string
+          evidence_sources: Json | null
+          id: string
+          public_statement: string | null
+          severity: string
+          spending_reality: string | null
+          spending_source_url: string | null
+          statement_source_url: string | null
+          topic: string
+        }
+        Insert: {
+          company_id: string
+          created_at?: string
+          evidence_sources?: Json | null
+          id?: string
+          public_statement?: string | null
+          severity?: string
+          spending_reality?: string | null
+          spending_source_url?: string | null
+          statement_source_url?: string | null
+          topic: string
+        }
+        Update: {
+          company_id?: string
+          created_at?: string
+          evidence_sources?: Json | null
+          id?: string
+          public_statement?: string | null
+          severity?: string
+          spending_reality?: string | null
+          spending_source_url?: string | null
+          statement_source_url?: string | null
+          topic?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "contradiction_signals_company_id_fkey"
+            columns: ["company_id"]
+            isOneToOne: false
+            referencedRelation: "companies"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       correction_requests: {
         Row: {
           company_name: string
