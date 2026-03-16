@@ -41,7 +41,7 @@ serve(async (req) => {
     // Generate a fun battle image with Gemini
     const prompt = `Create a FUN, vibrant, cartoon-style corporate battle illustration — bold colors, playful energy, like a Pixar movie poster meets a comic book cover. "${companyA}" (${industryA || "corporation"}) on the left vs "${companyB}" (${industryB || "corporation"}) on the right.
 
-Feature TWO cartoon characters facing off — pick two DIFFERENT people each time from: a Black woman with natural hair in a power suit, a short-statured Latino guy with a giant briefcase, a hijabi woman holding a glowing tablet, a wheelchair-using dude with rocket boosters on the wheels, an elderly Asian grandma cracking her knuckles, a plus-size Indigenous woman with a cape, a blind guy with a high-tech white cane that shoots lightning, a tall lanky redhead woman with vitiligo flexing. They should be EXAGGERATED, expressive, and funny — big heads, dynamic poses, confident grins. NOT realistic — think Overwatch character select screen energy.
+Feature TWO cartoon characters facing off — pick two DIFFERENT fun characters each time. Vary their race, gender, age, and body type to reflect the real diversity of America and the world — include people of all backgrounds naturally. They should be EXAGGERATED, expressive, and funny — big heads, dynamic poses, confident grins. Both characters must look equally hyped, powerful, and confident. NOT realistic — think Overwatch character select screen energy.
 
 Between them: a huge electric "VS" with cartoon lightning bolts and sparkle effects. Behind each character: simplified cartoon buildings or industry icons for their company. Bottom text: "${companyA} vs ${companyB}" in a fun bold font.
 
