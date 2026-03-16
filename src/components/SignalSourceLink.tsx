@@ -29,6 +29,11 @@ const SOURCE_URLS: Record<string, string> = {
   "SBTi": "https://sciencebasedtargets.org/companies-taking-action",
   "InfluenceMap": "https://influencemap.org/",
   "Climate Case Chart": "https://climatecasechart.com/",
+  "ATF": "https://www.atf.gov/firearms/listing-federal-firearms-licensees",
+  "Gun Violence Archive": "https://www.gunviolencearchive.org/",
+  "NSSF": "https://www.nssf.org/",
+  "Giffords": "https://giffords.org/",
+  "Everytown": "https://www.everytown.org/",
 };
 
 export function getSourceUrl(source: string): string | undefined {

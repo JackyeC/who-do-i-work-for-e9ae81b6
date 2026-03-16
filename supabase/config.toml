@@ -74,3 +74,9 @@ verify_jwt = false
 
 [functions.seed-climate-companies]
 verify_jwt = false
+
+[functions.sync-gun-policy-signals]
+verify_jwt = false
+
+[functions.seed-gun-policy-companies]
+verify_jwt = false

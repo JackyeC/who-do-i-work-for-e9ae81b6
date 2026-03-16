@@ -3993,6 +3993,71 @@ export type Database = {
         }
         Relationships: []
       }
+      gun_policy_signals: {
+        Row: {
+          amount: number | null
+          case_number: string | null
+          company_id: string
+          confidence: string | null
+          created_at: string | null
+          description: string | null
+          evidence_text: string | null
+          filing_date: string | null
+          id: string
+          license_type: string | null
+          location_state: string | null
+          organization_name: string | null
+          signal_category: string
+          signal_type: string
+          source_name: string
+          source_url: string | null
+        }
+        Insert: {
+          amount?: number | null
+          case_number?: string | null
+          company_id: string
+          confidence?: string | null
+          created_at?: string | null
+          description?: string | null
+          evidence_text?: string | null
+          filing_date?: string | null
+          id?: string
+          license_type?: string | null
+          location_state?: string | null
+          organization_name?: string | null
+          signal_category?: string
+          signal_type: string
+          source_name?: string
+          source_url?: string | null
+        }
+        Update: {
+          amount?: number | null
+          case_number?: string | null
+          company_id?: string
+          confidence?: string | null
+          created_at?: string | null
+          description?: string | null
+          evidence_text?: string | null
+          filing_date?: string | null
+          id?: string
+          license_type?: string | null
+          location_state?: string | null
+          organization_name?: string | null
+          signal_category?: string
+          signal_type?: string
+          source_name?: string
+          source_url?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "gun_policy_signals_company_id_fkey"
+            columns: ["company_id"]
+            isOneToOne: false
+            referencedRelation: "companies"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       ideology_watchlist: {
         Row: {
           adl_designated: boolean

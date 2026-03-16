@@ -376,11 +376,27 @@ const SAMPLE_NODES: GraphNode[] = [
   // ── Smith & Wesson / NSSF (Gun Policy) ──
   { id: "smith-wesson", label: "Smith & Wesson Brands", group: "Company", val: 14, metadata: { industry: "Firearms Manufacturing", summary: "Major US firearms manufacturer. Lobbies through NSSF trade association against gun safety legislation." } },
   { id: "nssf-pac", label: "NSSF PAC (Gun Industry)", group: "PAC", val: 13, amount: 780_000, metadata: { summary: "National Shooting Sports Foundation PAC — the gun industry's primary political spending vehicle." } },
+  { id: "nra-pac", label: "NRA Political Victory Fund", group: "PAC", val: 18, amount: 14_000_000, metadata: { summary: "NRA's PAC — one of the most influential political spending vehicles in US politics. Grades politicians on gun policy stances." } },
+  { id: "everytown-pac", label: "Everytown for Gun Safety PAC", group: "PAC", val: 14, amount: 6_500_000, metadata: { summary: "Gun safety advocacy PAC. Funded by Bloomberg Philanthropies. Supports universal background check legislation." } },
+  { id: "giffords-org", label: "Giffords Law Center", group: "Industry", val: 13, issueCategories: ["Gun Policy"], metadata: { summary: "Gun violence prevention organization founded by former Rep. Gabby Giffords. Rates states on gun law strength." } },
   { id: "sen-thune", label: "Sen. John Thune (R-SD)", group: "Politician", val: 11, party: "Republican", state: "SD", issueCategories: ["Gun Policy"] },
   { id: "rep-hudson", label: "Rep. Richard Hudson (R-NC)", group: "Politician", val: 10, party: "Republican", state: "NC", issueCategories: ["Gun Policy"] },
+  { id: "sen-murphy", label: "Sen. Chris Murphy (D-CT)", group: "Politician", val: 12, party: "Democrat", state: "CT", issueCategories: ["Gun Policy"] },
   { id: "gun-safety-bill", label: "Bipartisan Background Checks Act (H.R.8)", group: "Legislation", val: 11, issueCategories: ["Gun Policy"], metadata: { status: "Passed House", description: "Requires background checks for all firearm sales, including private and gun show transactions." } },
+  { id: "safer-communities-act", label: "Bipartisan Safer Communities Act", group: "Legislation", val: 13, issueCategories: ["Gun Policy"], metadata: { status: "Enacted (2022)", description: "First major federal gun safety law in 30 years. Enhanced background checks for under-21 buyers, funding for state red flag laws." } },
+  { id: "plcaa", label: "Protection of Lawful Commerce in Arms Act", group: "Legislation", val: 12, issueCategories: ["Gun Policy"], metadata: { status: "Enacted (2005)", description: "Shields gun manufacturers from civil liability in most cases. Key legal protection for firearms industry." } },
   { id: "firearms-industry", label: "Firearms Sector", group: "Industry", val: 12, issueCategories: ["Gun Policy"] },
   { id: "atf", label: "Bureau of Alcohol, Tobacco & Firearms", group: "Agency", val: 13, issueCategories: ["Gun Policy"] },
+  { id: "house-judiciary", label: "House Judiciary Committee", group: "Committee", val: 14, issueCategories: ["Gun Policy", "Civil Rights", "Immigration"] },
+
+  // ── Walmart (Gun Policy — Retailer that changed policy) ──
+  { id: "walmart-guns", label: "Walmart (Gun Sales)", group: "Company", val: 16, metadata: { industry: "Retail", summary: "Largest US retailer. Sold firearms until 2019 when it stopped selling handgun ammunition and raised purchase age to 21 after El Paso shooting." } },
+
+  // ── Dick's Sporting Goods (Gun Policy — Removed assault rifles) ──
+  { id: "dicks-sporting", label: "Dick's Sporting Goods", group: "Company", val: 14, metadata: { industry: "Retail", summary: "Removed assault-style rifles from all 730+ stores after Parkland. CEO Ed Stack became corporate gun safety advocate. Destroyed $5M in firearms inventory." } },
+
+  // ── Levi Strauss (Gun Policy — Corporate gun safety advocacy) ──
+  { id: "levi-strauss", label: "Levi Strauss & Co", group: "Company", val: 13, metadata: { industry: "Apparel", summary: "CEO Chip Bergh launched 'Everytown Business Leaders for Gun Safety' corporate coalition. Donated $1M to gun safety organizations." } },
 
   // ── Pearson / McGraw Hill (Education) ──
   { id: "pearson", label: "Pearson Education", group: "Company", val: 14, metadata: { industry: "Education / Publishing", summary: "Largest education publisher globally. Lobbies on standardized testing mandates, EdTech procurement, and student data privacy." } },
@@ -604,10 +620,40 @@ const SAMPLE_LINKS: GraphLink[] = [
   { source: "smith-wesson", target: "nssf-pac", label: "Funds via NSSF", linkType: "trade_association_lobbying", amount: 780_000, confidence: "likely" },
   { source: "nssf-pac", target: "sen-thune", label: "Donated $35K", linkType: "donation_to_member", amount: 35_000, year: 2024, confidence: "direct" },
   { source: "nssf-pac", target: "rep-hudson", label: "Donated $28K", linkType: "donation_to_member", amount: 28_000, year: 2023, confidence: "direct" },
+  { source: "nra-pac", target: "sen-thune", label: "Donated $22K + A rating", linkType: "donation_to_member", amount: 22_000, year: 2024, confidence: "direct" },
+  { source: "nra-pac", target: "rep-hudson", label: "Donated $15K + A rating", linkType: "donation_to_member", amount: 15_000, year: 2023, confidence: "direct" },
+  { source: "rep-hudson", target: "house-judiciary", label: "Serves on", linkType: "member_on_committee", confidence: "direct" },
   { source: "rep-hudson", target: "gun-safety-bill", label: "Opposes", linkType: "lobbying_on_bill", confidence: "direct" },
+  { source: "sen-murphy", target: "judiciary-committee", label: "Serves on", linkType: "member_on_committee", confidence: "direct" },
+  { source: "sen-murphy", target: "safer-communities-act", label: "Lead author", linkType: "lobbying_on_bill", confidence: "direct" },
+  { source: "everytown-pac", target: "sen-murphy", label: "Supported $1.2M", linkType: "donation_to_member", amount: 1_200_000, year: 2024, confidence: "direct" },
+  { source: "house-judiciary", target: "gun-safety-bill", label: "Oversees", linkType: "lobbying_on_bill", confidence: "direct" },
+  { source: "judiciary-committee", target: "safer-communities-act", label: "Oversees", linkType: "lobbying_on_bill", confidence: "direct" },
   { source: "gun-safety-bill", target: "firearms-industry", label: "Impacts", linkType: "committee_oversight_of_contract", confidence: "likely" },
+  { source: "plcaa", target: "firearms-industry", label: "Protects", linkType: "committee_oversight_of_contract", confidence: "direct" },
   { source: "smith-wesson", target: "atf", label: "Regulatory Oversight", linkType: "committee_oversight_of_contract", confidence: "direct" },
   { source: "smith-wesson", target: "firearms-industry", label: "Operates in", linkType: "trade_association_lobbying", confidence: "direct" },
+  { source: "smith-wesson", target: "plcaa", label: "Protected by", linkType: "committee_oversight_of_contract", confidence: "direct" },
+
+  // ── Walmart gun links ──
+  { source: "walmart-guns", target: "atf", label: "FFL Dealer (restricted 2019)", linkType: "committee_oversight_of_contract", confidence: "direct" },
+  { source: "walmart-guns", target: "firearms-industry", label: "Restricted sales", linkType: "trade_association_lobbying", confidence: "direct" },
+  { source: "walmart-guns", target: "safer-communities-act", label: "Supported passage", linkType: "lobbying_on_bill", confidence: "likely" },
+
+  // ── Dick's Sporting Goods gun links ──
+  { source: "dicks-sporting", target: "atf", label: "Removed assault rifles", linkType: "committee_oversight_of_contract", confidence: "direct" },
+  { source: "dicks-sporting", target: "firearms-industry", label: "Exited category", linkType: "trade_association_lobbying", confidence: "direct" },
+  { source: "dicks-sporting", target: "giffords-org", label: "Corporate advocacy partner", linkType: "trade_association_lobbying", confidence: "likely" },
+
+  // ── Levi Strauss gun links ──
+  { source: "levi-strauss", target: "everytown-pac", label: "Co-founded business leaders coalition", linkType: "trade_association_lobbying", amount: 1_000_000, confidence: "direct" },
+  { source: "levi-strauss", target: "giffords-org", label: "Donated to gun safety org", linkType: "trade_association_lobbying", confidence: "likely" },
+  { source: "levi-strauss", target: "safer-communities-act", label: "Advocated for passage", linkType: "lobbying_on_bill", confidence: "likely" },
+
+  // ── NRA / Everytown ecosystem ──
+  { source: "nra-pac", target: "plcaa", label: "Lobbied for passage", linkType: "lobbying_on_bill", amount: 3_500_000, confidence: "direct" },
+  { source: "everytown-pac", target: "gun-safety-bill", label: "Advocates for", linkType: "lobbying_on_bill", confidence: "direct" },
+  { source: "giffords-org", target: "safer-communities-act", label: "Advocates for", linkType: "lobbying_on_bill", confidence: "direct" },
 
   // ── Pearson links (Education) ──
   { source: "pearson", target: "pearson-pac", label: "Funds", linkType: "donation_to_member", amount: 320_000, confidence: "direct" },
