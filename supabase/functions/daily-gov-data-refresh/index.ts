@@ -25,6 +25,7 @@ const GOV_SOURCES = [
   { name: 'sync-congress-votes', label: 'Congress.gov (Legislation)' },
   { name: 'sync-labor-rights', label: 'Labor Rights (DOL/NLRB/BLS)' },
   { name: 'sync-immigration-signals', label: 'Immigration (H-1B/H-2A/H-2B/DOL)' },
+  { name: 'sync-climate-signals', label: 'Climate (EPA GHGRP/ECHO)' },
 ] as const;
 
 Deno.serve(async (req) => {

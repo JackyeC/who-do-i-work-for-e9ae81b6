@@ -24,6 +24,11 @@ const SOURCE_URLS: Record<string, string> = {
   "DOL Foreign Labor": "https://www.dol.gov/agencies/eta/foreign-labor/performance",
   "USCIS": "https://www.uscis.gov/",
   "ICE": "https://www.ice.gov/",
+  "EPA GHGRP": "https://ghgdata.epa.gov/ghgp/main.do",
+  "EPA ECHO": "https://echo.epa.gov/",
+  "SBTi": "https://sciencebasedtargets.org/companies-taking-action",
+  "InfluenceMap": "https://influencemap.org/",
+  "Climate Case Chart": "https://climatecasechart.com/",
 };
 
 export function getSourceUrl(source: string): string | undefined {

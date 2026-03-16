@@ -351,6 +351,28 @@ const SAMPLE_NODES: GraphNode[] = [
   { id: "energy-industry", label: "Oil & Gas Sector", group: "Industry", val: 15, issueCategories: ["Energy", "Climate"] },
   { id: "doe", label: "Dept. of Energy", group: "Agency", val: 15, issueCategories: ["Energy", "Climate"] },
 
+  // ── Chevron (Climate — Major emitter, litigation target) ──
+  { id: "chevron", label: "Chevron", group: "Company", val: 19, metadata: { industry: "Oil & Gas", summary: "Major integrated energy company. Target of multiple municipal climate lawsuits. Significant EPA GHGRP-reported emissions." } },
+  { id: "chevron-pac", label: "Chevron PAC", group: "PAC", val: 14, amount: 1_300_000 },
+  { id: "sen-barrasso", label: "Sen. John Barrasso (R-WY)", group: "Politician", val: 11, party: "Republican", state: "WY", issueCategories: ["Climate", "Energy"] },
+  { id: "ira-clean-energy", label: "Inflation Reduction Act (Clean Energy)", group: "Legislation", val: 13, issueCategories: ["Climate", "Energy"], metadata: { status: "Enacted", description: "$369B in clean energy investments, tax credits for EVs, renewable energy, and carbon capture." } },
+  { id: "climate-action-100", label: "Climate Action 100+ (Investor Coalition)", group: "Industry", val: 14, issueCategories: ["Climate"], metadata: { summary: "Investor-led initiative ensuring the world's largest corporate GHG emitters take necessary action on climate change." } },
+
+  // ── Duke Energy (Climate — Largest US utility emitter) ──
+  { id: "duke-energy", label: "Duke Energy", group: "Company", val: 17, metadata: { industry: "Utilities", summary: "Largest electric utility in the US by generation. Major EPA GHGRP reporter transitioning from coal to renewables." } },
+  { id: "duke-pac", label: "Duke Energy PAC", group: "PAC", val: 13, amount: 920_000 },
+  { id: "house-energy-committee", label: "House Energy & Commerce Committee", group: "Committee", val: 14, issueCategories: ["Climate", "Energy", "Healthcare"] },
+  { id: "clean-air-amendments", label: "Clean Air Act Amendments", group: "Legislation", val: 12, issueCategories: ["Climate"], metadata: { status: "Ongoing", description: "Amendments to strengthen EPA authority to regulate power plant emissions under the Clean Air Act." } },
+
+  // ── NextEra Energy (Climate — Largest US renewables) ──
+  { id: "nextera", label: "NextEra Energy", group: "Company", val: 16, metadata: { industry: "Utilities / Renewables", summary: "Largest generator of wind and solar energy in the world. Leading the utility industry's renewable energy transition." } },
+  { id: "nextera-pac", label: "NextEra Energy PAC", group: "PAC", val: 12, amount: 780_000 },
+
+  // ── Marathon Petroleum (Climate — Largest US refiner) ──
+  { id: "marathon", label: "Marathon Petroleum", group: "Company", val: 17, metadata: { industry: "Oil & Gas / Refining", summary: "Largest petroleum refiner in the US. Major EPA GHGRP emissions reporter. Lobbied against clean fuel standards." } },
+  { id: "marathon-pac", label: "Marathon Petroleum PAC", group: "PAC", val: 13, amount: 1_050_000 },
+  { id: "ogci", label: "Oil & Gas Climate Initiative", group: "Industry", val: 13, issueCategories: ["Climate", "Energy"], metadata: { summary: "CEO-led consortium of major oil and gas companies investing in low-carbon technologies." } },
+
   // ── Smith & Wesson / NSSF (Gun Policy) ──
   { id: "smith-wesson", label: "Smith & Wesson Brands", group: "Company", val: 14, metadata: { industry: "Firearms Manufacturing", summary: "Major US firearms manufacturer. Lobbies through NSSF trade association against gun safety legislation." } },
   { id: "nssf-pac", label: "NSSF PAC (Gun Industry)", group: "PAC", val: 13, amount: 780_000, metadata: { summary: "National Shooting Sports Foundation PAC — the gun industry's primary political spending vehicle." } },

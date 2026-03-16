@@ -68,3 +68,9 @@ verify_jwt = false
 
 [functions.seed-immigration-companies]
 verify_jwt = false
+
+[functions.sync-climate-signals]
+verify_jwt = false
+
+[functions.seed-climate-companies]
+verify_jwt = false
