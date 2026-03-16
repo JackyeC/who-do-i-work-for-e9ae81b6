@@ -291,6 +291,37 @@ const SAMPLE_NODES: GraphNode[] = [
   { id: "farm-workforce-bill", label: "Farm Workforce Modernization Act (H.R.1603)", group: "Legislation", val: 11, issueCategories: ["Immigration", "Labor Rights"], metadata: { status: "Passed House", description: "Reforms H-2A visa program and provides path to legal status for farm workers." } },
   { id: "agriculture-industry", label: "Agriculture Sector", group: "Industry", val: 13, issueCategories: ["Labor Rights", "Immigration"] },
 
+  // ── Starbucks (Labor Rights — Union organizing) ──
+  { id: "starbucks", label: "Starbucks", group: "Company", val: 18, metadata: { industry: "Food & Beverage", summary: "Over 400 NLRB unfair labor practice complaints. Center of largest US union wave since the 1930s with Workers United/SBWU organizing 400+ stores." } },
+  { id: "starbucks-pac", label: "Starbucks PAC", group: "PAC", val: 12, amount: 560_000 },
+  { id: "sen-sanders", label: "Sen. Bernie Sanders (I-VT)", group: "Politician", val: 13, party: "Independent", state: "VT", issueCategories: ["Labor Rights", "Healthcare"] },
+  { id: "labor-committee", label: "Senate HELP Committee (Labor)", group: "Committee", val: 14, issueCategories: ["Labor Rights", "Education"] },
+  { id: "pro-act", label: "PRO Act (H.R.842)", group: "Legislation", val: 13, issueCategories: ["Labor Rights"], metadata: { status: "Passed House", description: "Protecting the Right to Organize Act — strengthens union organizing rights, bans captive audience meetings, adds penalties for labor law violations." } },
+  { id: "nlrb-agency", label: "National Labor Relations Board", group: "Agency", val: 16, issueCategories: ["Labor Rights"] },
+  { id: "labor-industry", label: "Organized Labor Sector", group: "Industry", val: 14, issueCategories: ["Labor Rights"] },
+
+  // ── Dollar General (Labor Rights — OSHA severe violator) ──
+  { id: "dollar-general", label: "Dollar General", group: "Company", val: 15, metadata: { industry: "Retail", summary: "Designated OSHA 'Severe Violator' for repeated willful safety violations including blocked exits, falling hazards, and understaffing across hundreds of stores." } },
+  { id: "dol-agency", label: "Dept. of Labor", group: "Agency", val: 16, issueCategories: ["Labor Rights"] },
+  { id: "workplace-safety-bill", label: "Workplace Violence Prevention Act (H.R.1195)", group: "Legislation", val: 11, issueCategories: ["Labor Rights"], metadata: { status: "In Committee", description: "Requires employers to develop and implement workplace violence prevention plans." } },
+
+  // ── Tesla (Labor Rights — NLRB + safety) ──
+  { id: "tesla", label: "Tesla", group: "Company", val: 18, metadata: { industry: "Automotive / EV", summary: "Multiple NLRB complaints including illegal anti-union tweets by CEO. OSHA violations at Fremont plant. UAW launched organizing campaign in 2023." } },
+  { id: "tesla-pac", label: "Tesla PAC", group: "PAC", val: 11, amount: 280_000 },
+  { id: "osha-agency", label: "OSHA", group: "Agency", val: 15, issueCategories: ["Labor Rights"] },
+
+  // ── UPS (Labor Rights — Pro-union, Teamsters) ──
+  { id: "ups", label: "UPS", group: "Company", val: 17, metadata: { industry: "Logistics", summary: "Largest unionized private employer in the US. 2023 Teamsters contract covering 340,000 workers was the largest private-sector union contract in US history." } },
+  { id: "ups-pac", label: "UPS PAC", group: "PAC", val: 13, amount: 1_100_000 },
+  { id: "rep-scott-bobby", label: "Rep. Bobby Scott (D-VA)", group: "Politician", val: 10, party: "Democrat", state: "VA", issueCategories: ["Labor Rights", "Education"] },
+
+  // ── Costco (Labor Rights — Pro-worker) ──
+  { id: "costco", label: "Costco", group: "Company", val: 16, metadata: { industry: "Retail", summary: "Known for above-average wages ($29.50/hr avg), comprehensive benefits, and relatively positive labor relations. CEO publicly opposed federal minimum wage cuts." } },
+
+  // ── Apple (Labor Rights — Retail union drives) ──
+  { id: "apple-retail", label: "Apple (Retail)", group: "Company", val: 17, metadata: { industry: "Technology / Retail", summary: "Facing retail union organizing at Apple Stores nationwide. IAM won first Apple Store union in Towson, MD. CWA organizing in multiple states." } },
+  { id: "apple-pac", label: "Apple PAC", group: "PAC", val: 12, amount: 420_000 },
+
   // ── ExxonMobil (Climate, Energy) ──
   { id: "exxon", label: "ExxonMobil", group: "Company", val: 20, metadata: { industry: "Oil & Gas / Energy", summary: "One of the largest fossil fuel companies. Decades-long lobbying against climate regulation while publicly pledging carbon reduction." } },
   { id: "exxon-pac", label: "ExxonMobil PAC", group: "PAC", val: 15, amount: 1_650_000, metadata: { summary: "Funds candidates across parties, with concentration on energy and environment committee members." } },

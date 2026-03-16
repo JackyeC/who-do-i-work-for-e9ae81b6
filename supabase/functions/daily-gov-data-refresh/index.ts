@@ -23,6 +23,7 @@ const GOV_SOURCES = [
   { name: 'sync-lobbying', label: 'Senate LDA (Lobbying)' },
   { name: 'sync-federal-contracts', label: 'USASpending (Contracts)' },
   { name: 'sync-congress-votes', label: 'Congress.gov (Legislation)' },
+  { name: 'sync-labor-rights', label: 'Labor Rights (DOL/NLRB/BLS)' },
 ] as const;
 
 Deno.serve(async (req) => {

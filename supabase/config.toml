@@ -56,3 +56,9 @@ verify_jwt = false
 
 [functions.fetch-company-compensation]
 verify_jwt = false
+
+[functions.sync-labor-rights]
+verify_jwt = false
+
+[functions.seed-labor-companies]
+verify_jwt = false
