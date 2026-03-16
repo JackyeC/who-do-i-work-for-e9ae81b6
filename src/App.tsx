@@ -147,6 +147,7 @@ const App = () => (
                   <Route path="/economy" element={<EconomyDashboard />} />
                   <Route path="/follow-the-money" element={<FollowTheMoney />} />
                   <Route path="/company/:id" element={<CompanyProfile />} />
+                  <Route path="/company/:id/influence" element={<InfluenceGraph />} />
                   <Route path="/dossier/:id" element={<CompanyDossier />} />
                   <Route path="/pricing" element={<Pricing />} />
                   <Route path="/search" element={<SearchResults />} />
