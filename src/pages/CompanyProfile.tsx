@@ -595,7 +595,7 @@ export default function CompanyProfile() {
                     <InsiderPrideBanner
                       companyId={dbCompanyId}
                       companyName={name}
-                      companySlug={slug}
+                      companySlug={id || ""}
                       isVerified={dbCompany?.vetted_status === "verified" || dbCompany?.vetted_status === "certified"}
                     />
                   )}
