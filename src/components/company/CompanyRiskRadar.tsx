@@ -137,10 +137,10 @@ export function CompanyRiskRadar({ companyId, companyName, slug, lobbyingSpend, 
   const signals: RiskSignal[] = [
     {
       key: "layoffs",
-      label: "Recent Layoffs",
+      label: "WARN Notices",
       icon: TrendingDown,
       severity: warns >= 3 ? "alert" : warns >= 1 ? "watch" : "clear",
-      summary: warns > 0 ? `${warns} WARN notice${warns > 1 ? "s" : ""} in past 12 months` : "No recent layoff signals detected",
+      summary: warns > 0 ? `${warns} WARN notice${warns > 1 ? "s" : ""} filed in past 12 months` : "No WARN notices filed recently",
     },
     {
       key: "compensation",
