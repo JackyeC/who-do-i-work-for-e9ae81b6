@@ -448,6 +448,44 @@ const SAMPLE_LINKS: GraphLink[] = [
   { source: "farm-workforce-bill", target: "agriculture-industry", label: "Impacts", linkType: "committee_oversight_of_contract", confidence: "likely" },
   { source: "tyson", target: "agriculture-industry", label: "Operates in", linkType: "trade_association_lobbying", confidence: "direct" },
 
+  // ── Starbucks links (Labor Rights) ──
+  { source: "starbucks", target: "starbucks-pac", label: "Funds", linkType: "donation_to_member", amount: 560_000, confidence: "direct" },
+  { source: "starbucks-pac", target: "sen-murray", label: "Donated $22K", linkType: "donation_to_member", amount: 22_000, year: 2024, confidence: "direct" },
+  { source: "starbucks", target: "nlrb-agency", label: "400+ ULP complaints filed", linkType: "committee_oversight_of_contract", confidence: "direct" },
+  { source: "sen-sanders", target: "labor-committee", label: "Chairs", linkType: "member_on_committee", confidence: "direct" },
+  { source: "labor-committee", target: "pro-act", label: "Oversees", linkType: "lobbying_on_bill", confidence: "direct" },
+  { source: "starbucks", target: "labor-industry", label: "Opposing unionization", linkType: "lobbying_on_bill", amount: 3_200_000, confidence: "direct" },
+  { source: "pro-act", target: "labor-industry", label: "Impacts", linkType: "committee_oversight_of_contract", confidence: "likely" },
+  { source: "starbucks", target: "sen-sanders", label: "Subpoenaed by HELP Committee", linkType: "committee_oversight_of_contract", confidence: "direct" },
+
+  // ── Dollar General links (Labor Rights — OSHA) ──
+  { source: "dollar-general", target: "osha-agency", label: "Severe Violator designation", linkType: "committee_oversight_of_contract", confidence: "direct" },
+  { source: "dollar-general", target: "dol-agency", label: "$15M+ in OSHA penalties", linkType: "committee_oversight_of_contract", amount: 15_000_000, confidence: "direct" },
+  { source: "dol-agency", target: "workplace-safety-bill", label: "Enforces", linkType: "lobbying_on_bill", confidence: "direct" },
+  { source: "dollar-general", target: "labor-industry", label: "Labor violations", linkType: "trade_association_lobbying", confidence: "direct" },
+
+  // ── Tesla links (Labor Rights — NLRB) ──
+  { source: "tesla", target: "tesla-pac", label: "Funds", linkType: "donation_to_member", amount: 280_000, confidence: "direct" },
+  { source: "tesla", target: "nlrb-agency", label: "Multiple NLRB complaints", linkType: "committee_oversight_of_contract", confidence: "direct" },
+  { source: "tesla", target: "osha-agency", label: "Fremont plant violations", linkType: "committee_oversight_of_contract", confidence: "direct" },
+  { source: "tesla", target: "labor-industry", label: "Anti-union activity", linkType: "lobbying_on_bill", confidence: "direct" },
+
+  // ── UPS links (Labor Rights — Pro-union) ──
+  { source: "ups", target: "ups-pac", label: "Funds", linkType: "donation_to_member", amount: 1_100_000, confidence: "direct" },
+  { source: "ups-pac", target: "rep-scott-bobby", label: "Donated $15K", linkType: "donation_to_member", amount: 15_000, year: 2024, confidence: "direct" },
+  { source: "rep-scott-bobby", target: "labor-committee", label: "Serves on", linkType: "member_on_committee", confidence: "direct" },
+  { source: "ups", target: "dol-agency", label: "Teamsters contract (340K workers)", linkType: "committee_oversight_of_contract", confidence: "direct" },
+  { source: "ups", target: "labor-industry", label: "Largest private union employer", linkType: "trade_association_lobbying", confidence: "direct" },
+
+  // ── Costco links (Labor Rights — Pro-worker) ──
+  { source: "costco", target: "labor-industry", label: "Above-avg wages ($29.50/hr)", linkType: "trade_association_lobbying", confidence: "direct" },
+  { source: "costco", target: "dol-agency", label: "Clean compliance record", linkType: "committee_oversight_of_contract", confidence: "direct" },
+
+  // ── Apple Retail links (Labor Rights) ──
+  { source: "apple-retail", target: "apple-pac", label: "Funds", linkType: "donation_to_member", amount: 420_000, confidence: "direct" },
+  { source: "apple-retail", target: "nlrb-agency", label: "Retail union elections", linkType: "committee_oversight_of_contract", confidence: "direct" },
+  { source: "apple-retail", target: "labor-industry", label: "IAM/CWA union drives", linkType: "trade_association_lobbying", confidence: "direct" },
+
   // ── ExxonMobil links (Climate, Energy) ──
   { source: "exxon", target: "exxon-pac", label: "Funds", linkType: "donation_to_member", amount: 1_650_000, confidence: "direct" },
   { source: "exxon-pac", target: "sen-manchin", label: "Donated $65K", linkType: "donation_to_member", amount: 65_000, year: 2024, confidence: "direct" },
