@@ -81,7 +81,7 @@ const transparencyAudit = [
   { icon: Home, label: "Remote / hybrid work policy published" },
   { icon: BarChart3, label: "Workforce representation data provided" },
   { icon: Star, label: "Employee NPS or engagement signal disclosed" },
-  { icon: ShieldCheck, label: "Final approval by Jackye" },
+  { icon: ShieldCheck, label: "Final approval by WDIWF" },
 ];
 
 export default function ForEmployers() {
