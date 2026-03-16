@@ -1,7 +1,7 @@
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { Link } from "react-router-dom";
-import { TrendingUp, Rocket, Cpu, AlertTriangle, Landmark, Eye, ShieldCheck, ArrowRight } from "lucide-react";
+import { TrendingUp, Rocket, Cpu, AlertTriangle, Landmark, Eye, ShieldCheck, RadioTower, ArrowRight } from "lucide-react";
 
 interface PanelCompany {
   id: string;
@@ -143,6 +143,22 @@ const PANELS: PanelConfig[] = [
     },
     metric: (c) => fmt(c.government_contracts),
   },
+  {
+    title: "Highest Risk",
+    icon: RadioTower,
+    queryKey: "panel-risk",
+    queryFn: async () => {
+      const { data } = await supabase
+        .from("companies")
+        .select("id, name, slug, civic_footprint_score, career_intelligence_score, lobbying_spend, government_contracts, is_startup, category_tags, industry")
+        .eq("record_status", "published")
+        .or("lobbying_spend.gt.1000000,total_pac_spending.gt.500000")
+        .order("lobbying_spend", { ascending: false })
+        .limit(10);
+      return (data as any[] || []) as PanelCompany[];
+    },
+    metric: (c) => fmt(c.lobbying_spend),
+  },
 ];
 
 function IntelligencePanel({ panel }: { panel: PanelConfig }) {
@@ -229,8 +245,8 @@ export function IntelligenceDashboard() {
           ))}
         </div>
 
-        {/* Bottom row: 3 panels */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-px bg-border border border-border">
+        {/* Bottom row: 4 panels */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-px bg-border border border-border">
           {PANELS.slice(4).map((p) => (
             <IntelligencePanel key={p.queryKey} panel={p} />
           ))}

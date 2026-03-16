@@ -105,7 +105,7 @@ import { computeEvidenceQuality, sourceTypeToTier, type SourceSignal } from "@/l
 import { LayoffProbabilityCard } from "@/components/LayoffProbabilityCard";
 import { EthicsRiskCard } from "@/components/EthicsRiskCard";
 import { ExecutivePowerNetworkCard } from "@/components/ExecutivePowerNetworkCard";
-
+import { CompanyRiskRadar } from "@/components/company/CompanyRiskRadar";
 /* ─── Status labels ─── */
 const STATUS_LABELS: Record<string, { label: string; color: string }> = {
   discovered: { label: "Discovered", color: "bg-[hsl(var(--civic-yellow))]/10 text-[hsl(var(--civic-yellow))] border-[hsl(var(--civic-yellow))]/30" },
@@ -800,6 +800,18 @@ export default function CompanyProfile() {
               </div>
             );
           })()}
+
+          {/* COMPANY RISK RADAR — At-a-glance risk summary */}
+          <div className="mb-6">
+            <CompanyRiskRadar
+              companyId={dbCompany?.id || ""}
+              companyName={name}
+              slug={id || ""}
+              lobbyingSpend={lobbyingSpend}
+              totalPacSpending={totalPac}
+              hasCompensationData={!!tiPayEquity}
+            />
+          </div>
 
           {/* CAREER RISK REPORT — Shareable viral scorecard */}
           <div className="mb-6">
