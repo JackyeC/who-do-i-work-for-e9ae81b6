@@ -38,6 +38,10 @@ export function BattleImage({ companyA, companyB, industryA, industryB, scoreA, 
       }
       if (data?.imageUrl) {
         setImageUrl(data.imageUrl);
+        // Generate OG card after battle image succeeds (not in parallel)
+        supabase.functions.invoke("generate-og-card", {
+          body: { type: "battle", companyA, companyB, scoreA, scoreB, industryA, industryB },
+        }).catch(() => {});
       }
     } catch (e) {
       console.error("Battle image error:", e);
