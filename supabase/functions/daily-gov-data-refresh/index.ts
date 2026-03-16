@@ -29,6 +29,7 @@ const GOV_SOURCES = [
   { name: 'sync-gun-policy-signals', label: 'Gun Policy (ATF/FEC)' },
   { name: 'sync-civil-rights-signals', label: 'Civil Rights (EEOC/CourtListener/HRC)' },
   { name: 'sync-healthcare-signals', label: 'Healthcare (DOL EBSA/CMS/Benefits)' },
+  { name: 'sync-consumer-protection-signals', label: 'Consumer Protection (CFPB/FTC/CPSC/FDA)' },
 ] as const;
 
 Deno.serve(async (req) => {

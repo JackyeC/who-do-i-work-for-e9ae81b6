@@ -489,6 +489,20 @@ const SAMPLE_NODES: GraphNode[] = [
   { id: "ira-drug-pricing", label: "Inflation Reduction Act — Drug Pricing", group: "Legislation", val: 14, issueCategories: ["Healthcare"], metadata: { status: "Enacted 2022", description: "Allows Medicare to negotiate prices for select high-cost drugs. Caps insulin at $35/mo for Medicare." } },
   { id: "mhpaea", label: "Mental Health Parity Act (MHPAEA)", group: "Legislation", val: 13, issueCategories: ["Healthcare"], metadata: { status: "Enacted", description: "Requires insurers to cover mental health/substance abuse at parity with medical/surgical benefits." } },
   { id: "healthcare-industry", label: "Healthcare Sector", group: "Industry", val: 15, issueCategories: ["Healthcare"] },
+
+  // ── Consumer Protection nodes ──
+  { id: "wells-fargo-cp", label: "Wells Fargo", group: "Company", val: 18, metadata: { industry: "Banking", summary: "CFPB $3.7B penalty for fake accounts and wrongful foreclosures. Massive consumer complaint volume." } },
+  { id: "equifax-cp", label: "Equifax", group: "Company", val: 16, metadata: { industry: "Credit Reporting", summary: "FTC $700M settlement for 2017 data breach exposing 147M consumers' personal data." } },
+  { id: "epic-games-cp", label: "Epic Games", group: "Company", val: 14, metadata: { industry: "Gaming", summary: "FTC $520M for COPPA violations and dark patterns tricking Fortnite players." } },
+  { id: "t-mobile-cp", label: "T-Mobile", group: "Company", val: 15, metadata: { industry: "Telecommunications", summary: "FCC $31.5M data breach settlement. 76.6M customer records exposed." } },
+  { id: "capital-one-cp", label: "Capital One", group: "Company", val: 15, metadata: { industry: "Banking", summary: "106M credit applicant records exposed in 2019 data breach." } },
+  { id: "cfpb-agency", label: "CFPB (Consumer Financial Protection Bureau)", group: "Agency", val: 16, issueCategories: ["Consumer Protection"] },
+  { id: "ftc-agency", label: "FTC (Federal Trade Commission)", group: "Agency", val: 16, issueCategories: ["Consumer Protection"] },
+  { id: "cpsc-agency", label: "CPSC (Consumer Product Safety Commission)", group: "Agency", val: 14, issueCategories: ["Consumer Protection"] },
+  { id: "fda-agency", label: "FDA (Food & Drug Administration)", group: "Agency", val: 15, issueCategories: ["Consumer Protection", "Healthcare"] },
+  { id: "consumer-privacy-act", label: "American Data Privacy & Protection Act", group: "Legislation", val: 13, issueCategories: ["Consumer Protection"], metadata: { status: "Proposed", description: "Federal consumer data privacy bill. Would establish national data privacy standards and FTC enforcement." } },
+  { id: "coppa", label: "COPPA (Children's Online Privacy)", group: "Legislation", val: 13, issueCategories: ["Consumer Protection"], metadata: { status: "Enacted 1998", description: "Requires parental consent for collecting data from children under 13. FTC enforces." } },
+  { id: "consumer-protection-industry", label: "Consumer Protection Sector", group: "Industry", val: 14, issueCategories: ["Consumer Protection"] },
 ];
 
 const SAMPLE_LINKS: GraphLink[] = [
@@ -799,6 +813,23 @@ const SAMPLE_LINKS: GraphLink[] = [
   { source: "dol-ebsa", target: "mhpaea", label: "Enforces parity compliance", linkType: "committee_oversight_of_contract", confidence: "direct" },
   { source: "cms-agency", target: "ira-drug-pricing", label: "Implements drug negotiations", linkType: "committee_oversight_of_contract", confidence: "direct" },
   { source: "ira-drug-pricing", target: "healthcare-industry", label: "Impacts pricing", linkType: "committee_oversight_of_contract", confidence: "direct" },
+
+  // ── Consumer Protection links ──
+  { source: "wells-fargo-cp", target: "cfpb-agency", label: "$3.7B penalty — fake accounts", linkType: "committee_oversight_of_contract", confidence: "direct" },
+  { source: "wells-fargo-cp", target: "consumer-protection-industry", label: "Massive consumer complaints", linkType: "trade_association_lobbying", confidence: "direct" },
+  { source: "equifax-cp", target: "ftc-agency", label: "$700M data breach settlement", linkType: "committee_oversight_of_contract", confidence: "direct" },
+  { source: "equifax-cp", target: "consumer-privacy-act", label: "Breach prompted legislation", linkType: "lobbying_on_bill", confidence: "likely" },
+  { source: "equifax-cp", target: "consumer-protection-industry", label: "147M records exposed", linkType: "trade_association_lobbying", confidence: "direct" },
+  { source: "epic-games-cp", target: "coppa", label: "FTC $520M COPPA violation", linkType: "committee_oversight_of_contract", confidence: "direct" },
+  { source: "epic-games-cp", target: "consumer-protection-industry", label: "Dark patterns enforcement", linkType: "trade_association_lobbying", confidence: "direct" },
+  { source: "t-mobile-cp", target: "consumer-protection-industry", label: "76.6M records exposed", linkType: "trade_association_lobbying", confidence: "direct" },
+  { source: "t-mobile-cp", target: "consumer-privacy-act", label: "Breach prompted advocacy", linkType: "lobbying_on_bill", confidence: "likely" },
+  { source: "capital-one-cp", target: "cfpb-agency", label: "CFPB enforcement", linkType: "committee_oversight_of_contract", confidence: "direct" },
+  { source: "capital-one-cp", target: "consumer-protection-industry", label: "106M records exposed", linkType: "trade_association_lobbying", confidence: "direct" },
+  { source: "cfpb-agency", target: "consumer-protection-industry", label: "Enforces consumer finance laws", linkType: "committee_oversight_of_contract", confidence: "direct" },
+  { source: "cpsc-agency", target: "consumer-protection-industry", label: "Enforces product safety", linkType: "committee_oversight_of_contract", confidence: "direct" },
+  { source: "fda-agency", target: "consumer-protection-industry", label: "Drug/device safety enforcement", linkType: "committee_oversight_of_contract", confidence: "direct" },
+  { source: "coppa", target: "consumer-protection-industry", label: "Protects children's data", linkType: "committee_oversight_of_contract", confidence: "direct" },
 ];
 
 // ─── Main Component ───

@@ -7,7 +7,7 @@ import { Input } from "@/components/ui/input";
 import {
   Search, Building2, Shield, Factory, Scale, Leaf, Crosshair,
   Users, AlertTriangle, TrendingUp, ExternalLink, ChevronRight,
-  BarChart3, Globe, FileText, ArrowRight, Loader2, Heart,
+  BarChart3, Globe, FileText, ArrowRight, Loader2, Heart, ShieldAlert,
 } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { cn } from "@/lib/utils";
@@ -45,6 +45,7 @@ const IMPACT_CATEGORIES = [
   { key: "gun_policy", label: "Gun Policy", icon: Crosshair, color: "text-red-400", bgColor: "bg-red-500/10", borderColor: "border-red-500/20", table: "gun_policy_signals", filter: null },
   { key: "civil_rights", label: "Civil Rights", icon: Scale, color: "text-purple-400", bgColor: "bg-purple-500/10", borderColor: "border-purple-500/20", table: "civil_rights_signals", filter: null },
   { key: "healthcare", label: "Healthcare", icon: Heart, color: "text-pink-400", bgColor: "bg-pink-500/10", borderColor: "border-pink-500/20", table: "healthcare_signals", filter: null },
+  { key: "consumer_protection", label: "Consumer Protection", icon: ShieldAlert, color: "text-amber-400", bgColor: "bg-amber-500/10", borderColor: "border-amber-500/20", table: "consumer_protection_signals", filter: null },
 ];
 
 const FEATURED_COMPANIES = [
@@ -52,6 +53,7 @@ const FEATURED_COMPANIES = [
   "Google", "Microsoft", "Goldman Sachs", "Tyson Foods",
   "Smith & Wesson Brands", "Dick's Sporting Goods", "Nike",
   "UnitedHealth Group", "CVS Health", "Pfizer", "Apple",
+  "Wells Fargo", "Meta Platforms", "Equifax", "JPMorgan Chase",
 ];
 
 // ─── Main Component ───
@@ -127,6 +129,13 @@ export default function CorporateImpactMap() {
           .eq("company_id", company.id)
           .limit(20) as { data: any[] | null };
 
+        // Fetch consumer_protection_signals
+        const { data: consumerSignals } = await supabase
+          .from("consumer_protection_signals")
+          .select("signal_type, description, source_name, confidence")
+          .eq("company_id", company.id)
+          .limit(20) as { data: any[] | null };
+
         // Build summaries per category
         for (const cat of IMPACT_CATEGORIES) {
           let count = 0;
@@ -159,6 +168,10 @@ export default function CorporateImpactMap() {
             count = (healthcareSignals || []).length;
             topSignals = (healthcareSignals || []).slice(0, 3).map(s => ({ type: s.signal_type, description: s.description, source: s.source_name, confidence: s.confidence }));
             (healthcareSignals || []).forEach(s => sources.add(s.source_name || ""));
+          } else if (cat.key === "consumer_protection") {
+            count = (consumerSignals || []).length;
+            topSignals = (consumerSignals || []).slice(0, 3).map(s => ({ type: s.signal_type, description: s.description, source: s.source_name, confidence: s.confidence }));
+            (consumerSignals || []).forEach(s => sources.add(s.source_name || ""));
           }
 
           if (count > 0) {

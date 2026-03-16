@@ -92,3 +92,9 @@ verify_jwt = false
 
 [functions.seed-healthcare-companies]
 verify_jwt = false
+
+[functions.sync-consumer-protection-signals]
+verify_jwt = false
+
+[functions.seed-consumer-protection-companies]
+verify_jwt = false

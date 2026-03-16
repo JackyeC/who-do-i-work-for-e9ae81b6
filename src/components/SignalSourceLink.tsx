@@ -42,6 +42,9 @@ const SOURCE_URLS: Record<string, string> = {
   "DOL EBSA": "https://www.dol.gov/agencies/ebsa",
   "CMS": "https://data.cms.gov/",
   "FAIR Health": "https://www.fairhealth.org/",
+  "CPSC": "https://www.cpsc.gov/Recalls",
+  "FDA": "https://open.fda.gov/",
+  "Privacy Rights Clearinghouse": "https://privacyrights.org/",
 };
 
 export function getSourceUrl(source: string): string | undefined {

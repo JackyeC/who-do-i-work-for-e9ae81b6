@@ -3456,6 +3456,83 @@ export type Database = {
           },
         ]
       }
+      consumer_protection_signals: {
+        Row: {
+          case_number: string | null
+          company_id: string
+          complaint_count: number | null
+          confidence: string | null
+          created_at: string | null
+          description: string | null
+          evidence_text: string | null
+          filing_date: string | null
+          hazard_type: string | null
+          id: string
+          location_state: string | null
+          product_name: string | null
+          records_exposed: number | null
+          settlement_amount: number | null
+          signal_category: string
+          signal_type: string
+          source_name: string
+          source_url: string | null
+          units_affected: number | null
+          violation_type: string | null
+        }
+        Insert: {
+          case_number?: string | null
+          company_id: string
+          complaint_count?: number | null
+          confidence?: string | null
+          created_at?: string | null
+          description?: string | null
+          evidence_text?: string | null
+          filing_date?: string | null
+          hazard_type?: string | null
+          id?: string
+          location_state?: string | null
+          product_name?: string | null
+          records_exposed?: number | null
+          settlement_amount?: number | null
+          signal_category?: string
+          signal_type: string
+          source_name?: string
+          source_url?: string | null
+          units_affected?: number | null
+          violation_type?: string | null
+        }
+        Update: {
+          case_number?: string | null
+          company_id?: string
+          complaint_count?: number | null
+          confidence?: string | null
+          created_at?: string | null
+          description?: string | null
+          evidence_text?: string | null
+          filing_date?: string | null
+          hazard_type?: string | null
+          id?: string
+          location_state?: string | null
+          product_name?: string | null
+          records_exposed?: number | null
+          settlement_amount?: number | null
+          signal_category?: string
+          signal_type?: string
+          source_name?: string
+          source_url?: string | null
+          units_affected?: number | null
+          violation_type?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "consumer_protection_signals_company_id_fkey"
+            columns: ["company_id"]
+            isOneToOne: false
+            referencedRelation: "companies"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       correction_requests: {
         Row: {
           company_name: string
