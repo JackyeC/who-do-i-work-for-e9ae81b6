@@ -338,6 +338,55 @@ Deno.serve(async (req) => {
       }
     }
 
+    // ═══════════════════════════════════════════
+    // TIER 4: Values-Aligned — companies with public stances
+    // ═══════════════════════════════════════════
+    if (tier === 'all' || tier === 'values') {
+      console.log(`\n═══ TIER 4: Values-Aligned Companies (${VALUES_ALIGNED_TARGETS.length} targets) ═══`);
+
+      for (const target of VALUES_ALIGNED_TARGETS.slice(0, maxPerTier)) {
+        try {
+          const companyId = await ensureCompany(target);
+          if (!companyId) {
+            results.push({ tier: 'values', company: target.name, status: 'error', error: 'Failed to create company record' });
+            continue;
+          }
+
+          // Seed values signals for this company
+          for (const value of target.values) {
+            await supabase.from('values_check_signals' as any).upsert({
+              company_id: companyId,
+              issue_category: value,
+              signal_summary: `${target.name} has a documented public stance on ${value}.`,
+              signal_direction: 'supportive_action',
+              confidence_score: 0.7,
+              verification_status: 'pending_review',
+              source_type: 'public_record',
+            }, { onConflict: 'company_id,issue_category' as any, ignoreDuplicates: true });
+          }
+
+          if (dryRun) {
+            results.push({ tier: 'values', company: target.name, status: 'dry_run', jobsAdded: 0 });
+            continue;
+          }
+
+          const scrapeResult = await scrapeJobs(companyId, target.careersUrl, target.name);
+          results.push({
+            tier: 'values',
+            company: target.name,
+            status: 'success',
+            jobsAdded: scrapeResult.jobsAdded || 0,
+          });
+          console.log(`✅ ${target.name}: ${scrapeResult.jobsAdded || 0} jobs (Values: ${target.values.join(', ')})`);
+        } catch (e) {
+          const msg = e instanceof Error ? e.message : 'Unknown error';
+          console.error(`❌ ${target.name}: ${msg}`);
+          results.push({ tier: 'values', company: target.name, status: 'error', error: msg });
+        }
+        await sleep(THROTTLE_MS);
+      }
+    }
+
     // ─── Summary ───
     const totalJobs = results.reduce((sum, r) => sum + (r.jobsAdded || 0), 0);
     const successCount = results.filter(r => r.status === 'success').length;
@@ -355,6 +404,7 @@ Deno.serve(async (req) => {
       byTier: {
         bcorp: results.filter(r => r.tier === 'bcorp'),
         political: results.filter(r => r.tier === 'political'),
+        values: results.filter(r => r.tier === 'values'),
         unfilled: results.filter(r => r.tier === 'unfilled'),
       },
     };
