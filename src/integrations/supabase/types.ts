@@ -7372,6 +7372,62 @@ export type Database = {
           },
         ]
       }
+      signal_sources: {
+        Row: {
+          company_id: string
+          created_at: string | null
+          date_published: string | null
+          date_retrieved: string | null
+          entity_matched: string | null
+          id: string
+          match_confidence: number | null
+          signal_id: string | null
+          signal_table: string
+          source_name: string
+          source_type: string
+          source_url: string | null
+          verification_status: string | null
+        }
+        Insert: {
+          company_id: string
+          created_at?: string | null
+          date_published?: string | null
+          date_retrieved?: string | null
+          entity_matched?: string | null
+          id?: string
+          match_confidence?: number | null
+          signal_id?: string | null
+          signal_table: string
+          source_name: string
+          source_type?: string
+          source_url?: string | null
+          verification_status?: string | null
+        }
+        Update: {
+          company_id?: string
+          created_at?: string | null
+          date_published?: string | null
+          date_retrieved?: string | null
+          entity_matched?: string | null
+          id?: string
+          match_confidence?: number | null
+          signal_id?: string | null
+          signal_table?: string
+          source_name?: string
+          source_type?: string
+          source_url?: string | null
+          verification_status?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "signal_sources_company_id_fkey"
+            columns: ["company_id"]
+            isOneToOne: false
+            referencedRelation: "companies"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       signal_verifications: {
         Row: {
           claim_evidence_urls: string[] | null
