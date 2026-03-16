@@ -137,21 +137,21 @@ export function CompanyRiskRadar({ companyId, companyName, slug, lobbyingSpend, 
   const signals: RiskSignal[] = [
     {
       key: "layoffs",
-      label: "Recent Layoffs",
+      label: "WARN Notices",
       icon: TrendingDown,
       severity: warns >= 3 ? "alert" : warns >= 1 ? "watch" : "clear",
-      summary: warns > 0 ? `${warns} WARN notice${warns > 1 ? "s" : ""} in past 12 months` : "No recent layoff signals detected",
+      summary: warns > 0 ? `${warns} WARN notice${warns > 1 ? "s" : ""} filed in past 12 months` : "No WARN notices filed recently",
     },
     {
       key: "compensation",
-      label: "Below-Market Comp",
+      label: "Comp Transparency",
       icon: AlertTriangle,
       severity: comp === 0 ? "watch" : "clear",
-      summary: comp === 0 ? "No compensation data disclosed — low transparency" : `${comp} salary data point${comp > 1 ? "s" : ""} on record`,
+      summary: comp === 0 ? "No compensation data publicly disclosed" : `${comp} salary data point${comp > 1 ? "s" : ""} on record`,
     },
     {
       key: "lobbying",
-      label: "Lobbying Exposure",
+      label: "Political Spending",
       icon: Landmark,
       severity: lobby >= 5_000_000 ? "alert" : lobby >= 500_000 ? "watch" : "clear",
       summary: lobby > 0
@@ -160,10 +160,10 @@ export function CompanyRiskRadar({ companyId, companyName, slug, lobbyingSpend, 
     },
     {
       key: "turnover",
-      label: "Executive Turnover",
+      label: "Leadership Changes",
       icon: UserMinus,
       severity: execs >= 4 ? "alert" : execs >= 2 ? "watch" : "clear",
-      summary: execs > 0 ? `${execs} executive departure${execs > 1 ? "s" : ""} on record` : "Stable leadership team",
+      summary: execs > 0 ? `${execs} executive departure${execs > 1 ? "s" : ""} on record` : "No recent leadership changes detected",
     },
   ];
 
@@ -174,10 +174,10 @@ export function CompanyRiskRadar({ companyId, companyName, slug, lobbyingSpend, 
     const activeSignals = signals.filter((s) => s.severity !== "clear");
     const details = activeSignals.map((s) => s.label).join(", ");
     const text = activeCount > 0
-      ? `⚠️ ${companyName} Risk Radar: ${activeCount} of 4 signals active — ${details}. Check the receipts → https://wdiwf.jackyeclayton.com/company/${slug}`
-      : `✅ ${companyName} Risk Radar: All clear — 0 of 4 risk signals active. → https://wdiwf.jackyeclayton.com/company/${slug}`;
+      ? `📊 ${companyName} Signal Radar: ${activeCount} of 4 signals noted — ${details}. See the data → https://wdiwf.jackyeclayton.com/company/${slug}`
+      : `✅ ${companyName} Signal Radar: All clear — 0 of 4 signals noted. → https://wdiwf.jackyeclayton.com/company/${slug}`;
     navigator.clipboard.writeText(text);
-    toast({ title: "Copied to clipboard", description: "Risk radar summary ready to share." });
+    toast({ title: "Copied to clipboard", description: "Signal radar summary ready to share." });
   };
 
   return (
@@ -185,9 +185,9 @@ export function CompanyRiskRadar({ companyId, companyName, slug, lobbyingSpend, 
       {/* Header */}
       <div className="flex items-center justify-between px-4 py-3 border-b border-border">
         <div className="flex items-center gap-2">
-          <AlertTriangle className="w-4 h-4 text-destructive" strokeWidth={1.5} />
+          <Shield className="w-4 h-4 text-primary" strokeWidth={1.5} />
           <span className="font-mono text-xs tracking-[0.15em] uppercase text-foreground font-semibold">
-            Career Risk Radar
+            Company Signal Radar
           </span>
         </div>
         <Button variant="ghost" size="sm" className="h-7 px-2 font-mono text-[10px] tracking-wider uppercase text-muted-foreground hover:text-foreground" onClick={handleShare}>
