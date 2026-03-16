@@ -27,6 +27,7 @@ import { MarketsSegmentsLayer } from "@/components/dossier/MarketsSegmentsLayer"
 import { InnovationPatentsLayer } from "@/components/dossier/InnovationPatentsLayer";
 import { EcosystemSubcontractorsLayer } from "@/components/dossier/EcosystemSubcontractorsLayer";
 import { InfluencePolicyLayer } from "@/components/dossier/InfluencePolicyLayer";
+import { InstitutionalDNACard } from "@/components/dossier/InstitutionalDNACard";
 import { PatternsSynthesisLayer } from "@/components/dossier/PatternsSynthesisLayer";
 import { TalentContextLayer } from "@/components/dossier/TalentContextLayer";
 import { ValuesSignalsLayer } from "@/components/dossier/ValuesSignalsLayer";
@@ -257,6 +258,11 @@ export default function CompanyDossier() {
         {companyId && (
           <div className="mt-6">
             <HighRiskConnectionCard companyId={companyId} companyName={company.name} />
+          </div>
+        )}
+        {companyId && (
+          <div className="mt-6">
+            <InstitutionalDNACard companyId={companyId} companyName={company.name} />
           </div>
         )}
       </DossierLayer>

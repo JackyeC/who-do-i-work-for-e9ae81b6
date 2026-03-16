@@ -4839,6 +4839,62 @@ export type Database = {
           },
         ]
       }
+      institutional_alignment_signals: {
+        Row: {
+          company_id: string
+          confidence: string
+          created_at: string
+          detected_at: string
+          evidence_source: string | null
+          evidence_url: string | null
+          id: string
+          institution_category: string
+          institution_name: string
+          link_description: string | null
+          link_type: string
+          person_name: string
+          person_title: string | null
+        }
+        Insert: {
+          company_id: string
+          confidence?: string
+          created_at?: string
+          detected_at?: string
+          evidence_source?: string | null
+          evidence_url?: string | null
+          id?: string
+          institution_category: string
+          institution_name: string
+          link_description?: string | null
+          link_type?: string
+          person_name: string
+          person_title?: string | null
+        }
+        Update: {
+          company_id?: string
+          confidence?: string
+          created_at?: string
+          detected_at?: string
+          evidence_source?: string | null
+          evidence_url?: string | null
+          id?: string
+          institution_category?: string
+          institution_name?: string
+          link_description?: string | null
+          link_type?: string
+          person_name?: string
+          person_title?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "institutional_alignment_signals_company_id_fkey"
+            columns: ["company_id"]
+            isOneToOne: false
+            referencedRelation: "companies"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       issue_legislation_map: {
         Row: {
           bill_keyword: string
