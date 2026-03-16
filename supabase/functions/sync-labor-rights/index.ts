@@ -35,9 +35,43 @@ async function fetchOSHA(companyName: string): Promise<any[]> {
   for (const name of names) {
     try {
       const encoded = encodeURIComponent(name);
+      // Use the DOL data API v2 with JSON response
       const url = `https://enforcedata.dol.gov/api/osha_inspection?trade_nm=${encoded}&page=0&size=25`;
       const resp = await fetch(url, { headers: { 'Accept': 'application/json' } });
-      if (!resp.ok) { console.warn(`[OSHA] ${resp.status} for "${name}"`); continue; }
+      if (!resp.ok) { console.warn(`[OSHA] ${resp.status} for "${name}"`); await resp.text(); continue; }
+      const contentType = resp.headers.get('content-type') || '';
+      if (!contentType.includes('json')) {
+        console.warn(`[OSHA] Got non-JSON response (${contentType}) for "${name}" — API may have changed`);
+        await resp.text(); // consume body
+        // Fallback: try DOL v2 enforcement search
+        try {
+          const fallbackUrl = `https://enforcedata.dol.gov/api/search?query=${encoded}&agency=osha&size=20`;
+          const fallbackResp = await fetch(fallbackUrl, { headers: { 'Accept': 'application/json' } });
+          const fallbackCt = fallbackResp.headers.get('content-type') || '';
+          if (fallbackResp.ok && fallbackCt.includes('json')) {
+            const fallbackData = await fallbackResp.json();
+            const hits = fallbackData?.hits?.hits || [];
+            for (const hit of hits) {
+              const src = hit._source || {};
+              allResults.push({
+                activity_nr: src.activity_nr,
+                estab_name: src.establishment_name || name,
+                site_state: src.site_state,
+                open_date: src.open_date,
+                close_case_date: src.close_date,
+                total_current_penalty: src.total_penalty ? parseFloat(src.total_penalty) : 0,
+                viol_type_desc: src.violation_type || 'Serious',
+                total_violations: src.total_violations || 1,
+              });
+            }
+          } else {
+            await fallbackResp.text();
+          }
+        } catch (fallbackErr) {
+          console.warn('[OSHA fallback] Error:', fallbackErr);
+        }
+        continue;
+      }
       const data = await resp.json();
       if (Array.isArray(data)) allResults.push(...data);
       await new Promise(r => setTimeout(r, 500));
@@ -58,7 +92,40 @@ async function fetchWHD(companyName: string): Promise<any[]> {
       const encoded = encodeURIComponent(name);
       const url = `https://enforcedata.dol.gov/api/whd_compliance?trade_nm=${encoded}&page=0&size=25`;
       const resp = await fetch(url, { headers: { 'Accept': 'application/json' } });
-      if (!resp.ok) { console.warn(`[WHD] ${resp.status} for "${name}"`); continue; }
+      if (!resp.ok) { console.warn(`[WHD] ${resp.status} for "${name}"`); await resp.text(); continue; }
+      const contentType = resp.headers.get('content-type') || '';
+      if (!contentType.includes('json')) {
+        console.warn(`[WHD] Got non-JSON response (${contentType}) for "${name}" — API may have changed`);
+        await resp.text();
+        // Fallback: DOL enforcement search for WHD
+        try {
+          const fallbackUrl = `https://enforcedata.dol.gov/api/search?query=${encoded}&agency=whd&size=20`;
+          const fallbackResp = await fetch(fallbackUrl, { headers: { 'Accept': 'application/json' } });
+          const fallbackCt = fallbackResp.headers.get('content-type') || '';
+          if (fallbackResp.ok && fallbackCt.includes('json')) {
+            const fallbackData = await fallbackResp.json();
+            const hits = fallbackData?.hits?.hits || [];
+            for (const hit of hits) {
+              const src = hit._source || {};
+              allResults.push({
+                trade_nm: src.establishment_name || name,
+                st_cd: src.site_state,
+                findings_start_date: src.open_date,
+                findings_end_date: src.close_date,
+                bw_amt: src.back_wages ? parseFloat(src.back_wages) : 0,
+                flsa_mw_bw_amt: 0,
+                flsa_ot_bw_amt: 0,
+                ee_violtd_cnt: src.employees_affected || 0,
+              });
+            }
+          } else {
+            await fallbackResp.text();
+          }
+        } catch (fallbackErr) {
+          console.warn('[WHD fallback] Error:', fallbackErr);
+        }
+        continue;
+      }
       const data = await resp.json();
       if (Array.isArray(data)) allResults.push(...data);
       await new Promise(r => setTimeout(r, 500));
@@ -74,20 +141,30 @@ async function fetchNLRB(companyName: string): Promise<any[]> {
   const allResults: any[] = [];
   const searchName = normalizeCompanyName(companyName);
 
-  // NLRB CATS Data via data.nlrb.gov OData API
+  // Try multiple NLRB endpoints — the data.nlrb.gov domain may be unreachable from edge runtime
   const endpoints = [
-    // R-cases: Representation (union election petitions)
+    // Primary: NLRB CATS Data
     `https://data.nlrb.gov/api/3.0/action/datastore_search?resource_id=election-results&q=${encodeURIComponent(searchName)}&limit=25`,
-    // C-cases: Unfair labor practice charges
     `https://data.nlrb.gov/api/3.0/action/datastore_search?resource_id=complaints-issued&q=${encodeURIComponent(searchName)}&limit=25`,
   ];
 
   for (const url of endpoints) {
     try {
-      const resp = await fetch(url, { headers: { 'Accept': 'application/json' } });
+      const controller = new AbortController();
+      const timeout = setTimeout(() => controller.abort(), 8000);
+      const resp = await fetch(url, { 
+        headers: { 'Accept': 'application/json' },
+        signal: controller.signal,
+      });
+      clearTimeout(timeout);
       if (!resp.ok) {
-        // Fallback: try alternative NLRB endpoint
         console.warn(`[NLRB] ${resp.status} for ${url}`);
+        await resp.text();
+        continue;
+      }
+      const contentType = resp.headers.get('content-type') || '';
+      if (!contentType.includes('json')) {
+        await resp.text();
         continue;
       }
       const json = await resp.json();
@@ -291,15 +368,21 @@ Deno.serve(async (req) => {
       const series = blsData[0];
       const latestData = series.data?.[0];
       if (latestData) {
+        const value = parseFloat(latestData.value);
+        // LNU02073395 returns union members in thousands; LNU02034093 would be the rate
+        const isRate = series.seriesID?.includes('034093');
+        const desc = isRate 
+          ? `National union membership rate: ${value}% (${latestData.year} ${latestData.periodName || ''})`
+          : `National union members: ${(value / 1000).toFixed(1)}M workers (${latestData.year} ${latestData.periodName || ''})`;
         laborSignals.push({
           company_id: companyId,
           signal_category: 'labor_rights',
           signal_type: 'union_membership_rate',
-          description: `National union membership rate: ${latestData.value}% (${latestData.year} ${latestData.periodName || ''})`,
+          description: desc,
           source_name: 'BLS Current Population Survey',
           source_url: 'https://www.bls.gov/news.release/union2.nr0.htm',
           confidence: 'direct',
-          evidence_text: `Series ${series.seriesID}: ${latestData.value}%`,
+          evidence_text: `Series ${series.seriesID}: ${latestData.value}`,
         });
         stats.bls = 1;
       }
@@ -359,10 +442,11 @@ Deno.serve(async (req) => {
     // Record scan
     await supabase.from('company_signal_scans').insert({
       company_id: companyId,
-      scan_type: 'labor_rights',
-      status: 'completed',
-      signals_found: laborSignals.length,
-      metadata: stats,
+      signal_category: 'labor_rights',
+      signal_type: 'full_scan',
+      confidence_level: 'high',
+      signal_value: `OSHA:${stats.osha} WHD:${stats.whd} NLRB:${stats.nlrb} BLS:${stats.bls}`,
+      source_url: 'https://enforcedata.dol.gov',
     }).then(({ error }) => {
       if (error) console.warn('[sync-labor-rights] scan record error:', error);
     });
