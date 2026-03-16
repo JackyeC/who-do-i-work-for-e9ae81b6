@@ -78,6 +78,19 @@ Style: Saturday morning cartoon meets corporate satire. Bright saturated colors,
     }
 
     const aiData = await aiResponse.json();
+
+    // Handle error payloads wrapped in 200 responses
+    if (aiData.error) {
+      const code = aiData.error.code || 500;
+      console.error("AI gateway error payload:", JSON.stringify(aiData.error));
+      if (code === 429) {
+        return new Response(JSON.stringify({ error: "Rate limited — try again in a moment." }), {
+          status: 429, headers: { ...corsHeaders, "Content-Type": "application/json" },
+        });
+      }
+      throw new Error(aiData.error.message || "AI generation failed");
+    }
+
     const imageDataUrl = aiData.choices?.[0]?.message?.images?.[0]?.image_url?.url;
 
     if (!imageDataUrl) {
