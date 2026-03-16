@@ -15,7 +15,7 @@ const corsHeaders = {
 
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2';
 
-const MAX_COMPANIES_PER_RUN = 25;
+const MAX_COMPANIES_PER_RUN = 40;
 
 // Government data sources to refresh
 const GOV_SOURCES = [
