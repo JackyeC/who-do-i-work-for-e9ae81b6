@@ -121,10 +121,18 @@ export function JobIntegrityCard({ job }: JobIntegrityCardProps) {
         {/* Actions */}
         <div className="flex items-center gap-2 pt-1">
           {job.url ? (
-            <Button size="sm" asChild className="gap-1.5 flex-1">
+            <Button size="sm" asChild className="gap-1.5 flex-1"
+              onClick={() => trackApplyClick(job.id, job.company_id, job.url!)}>
               <a href={job.url} target="_blank" rel="noopener noreferrer">
                 Apply <ExternalLink className="w-3 h-3" />
               </a>
+            </Button>
+          ) : co?.slug ? (
+            <Button size="sm" variant="secondary" asChild className="gap-1.5 flex-1"
+              onClick={() => trackApplyClick(job.id, job.company_id, `/company/${co.slug}`)}>
+              <Link to={`/company/${co.slug}`}>
+                View All Roles at {co.name} <ExternalLink className="w-3 h-3" />
+              </Link>
             </Button>
           ) : (
             <Button size="sm" disabled className="gap-1.5 flex-1">
