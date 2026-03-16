@@ -1137,7 +1137,9 @@ export type Database = {
       }
       companies: {
         Row: {
+          career_intelligence_score: number | null
           careers_url: string | null
+          category_tags: string[] | null
           civic_footprint_score: number
           confidence_rating: string
           consumer_relevance: string | null
@@ -1147,16 +1149,22 @@ export type Database = {
           description: string | null
           effective_tax_rate: string | null
           employee_count: string | null
+          founded_year: number | null
+          founder_names: string[] | null
+          founder_previous_companies: string[] | null
+          funding_stage: string | null
           government_contracts: number | null
           id: string
           identity_matched: boolean | null
           industry: string
           is_publicly_traded: boolean | null
+          is_startup: boolean | null
           jackye_insight: string | null
           last_reviewed: string
           last_scan_attempted: string | null
           lobbying_spend: number | null
           logo_url: string | null
+          market_cap: number | null
           name: string
           parent_company: string | null
           record_status: string
@@ -1166,6 +1174,7 @@ export type Database = {
           sec_cik: string | null
           slug: string
           state: string
+          sub_industry: string | null
           subsidies_received: number | null
           ticker: string | null
           total_pac_spending: number
@@ -1176,7 +1185,9 @@ export type Database = {
           worker_relevance: string | null
         }
         Insert: {
+          career_intelligence_score?: number | null
           careers_url?: string | null
+          category_tags?: string[] | null
           civic_footprint_score?: number
           confidence_rating?: string
           consumer_relevance?: string | null
@@ -1186,16 +1197,22 @@ export type Database = {
           description?: string | null
           effective_tax_rate?: string | null
           employee_count?: string | null
+          founded_year?: number | null
+          founder_names?: string[] | null
+          founder_previous_companies?: string[] | null
+          funding_stage?: string | null
           government_contracts?: number | null
           id?: string
           identity_matched?: boolean | null
           industry: string
           is_publicly_traded?: boolean | null
+          is_startup?: boolean | null
           jackye_insight?: string | null
           last_reviewed?: string
           last_scan_attempted?: string | null
           lobbying_spend?: number | null
           logo_url?: string | null
+          market_cap?: number | null
           name: string
           parent_company?: string | null
           record_status?: string
@@ -1205,6 +1222,7 @@ export type Database = {
           sec_cik?: string | null
           slug: string
           state: string
+          sub_industry?: string | null
           subsidies_received?: number | null
           ticker?: string | null
           total_pac_spending?: number
@@ -1215,7 +1233,9 @@ export type Database = {
           worker_relevance?: string | null
         }
         Update: {
+          career_intelligence_score?: number | null
           careers_url?: string | null
+          category_tags?: string[] | null
           civic_footprint_score?: number
           confidence_rating?: string
           consumer_relevance?: string | null
@@ -1225,16 +1245,22 @@ export type Database = {
           description?: string | null
           effective_tax_rate?: string | null
           employee_count?: string | null
+          founded_year?: number | null
+          founder_names?: string[] | null
+          founder_previous_companies?: string[] | null
+          funding_stage?: string | null
           government_contracts?: number | null
           id?: string
           identity_matched?: boolean | null
           industry?: string
           is_publicly_traded?: boolean | null
+          is_startup?: boolean | null
           jackye_insight?: string | null
           last_reviewed?: string
           last_scan_attempted?: string | null
           lobbying_spend?: number | null
           logo_url?: string | null
+          market_cap?: number | null
           name?: string
           parent_company?: string | null
           record_status?: string
@@ -1244,6 +1270,7 @@ export type Database = {
           sec_cik?: string | null
           slug?: string
           state?: string
+          sub_industry?: string | null
           subsidies_received?: number | null
           ticker?: string | null
           total_pac_spending?: number
@@ -8908,6 +8935,11 @@ export type Database = {
       }
     }
     Functions: {
+      compute_all_career_intelligence_scores: { Args: never; Returns: number }
+      compute_career_intelligence_score: {
+        Args: { _company_id: string }
+        Returns: number
+      }
       deactivate_expired_jobs: { Args: never; Returns: number }
       get_company_roi_pipeline: { Args: { _company_id: string }; Returns: Json }
       has_role: {
