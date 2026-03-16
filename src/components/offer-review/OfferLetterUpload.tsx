@@ -57,6 +57,7 @@ export function OfferLetterUpload({ companyId, companyName, onReviewCreated }: O
 
     setUploading(true);
     console.log("[OfferLetterUpload] Starting upload", { mode, fileSize: selectedFile?.size, textLength: pastedText.length });
+    try {
       let filePath: string | null = null;
       let originalFilename: string | null = null;
 
