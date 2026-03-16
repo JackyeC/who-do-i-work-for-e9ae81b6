@@ -83,9 +83,23 @@ export function OfferReviewResults({ review, onDelete, onRerun, deleting }: Offe
     other: "Other Terms",
   };
 
-  // Build snapshot from offer data
+  // Derive offer strength from extracted data
+  const hasEquity = terms.some((t: any) => /equity|stock|rsu|iso|option/i.test(t.term_name || ""));
+  const hasBenefits = terms.some((t: any) => t.category === "benefits");
+  const hasSalary = !!snapshot.base_salary;
+  const offerStrength = hasSalary && hasEquity ? "strong" : hasSalary ? "average" : "unknown";
+
+  // Detect clause-based signals
+  const hasArbitration = clauses.some((c: any) => c.clause_type === "arbitration");
+  const hasNonCompete = clauses.some((c: any) => c.clause_type === "non_compete");
+  const hasClawback = clauses.some((c: any) => c.clause_type === "repayment_clawback");
+  const hasAtWill = clauses.some((c: any) => c.clause_type === "at_will");
+
   const snapshotSections = buildDefaultSections({
-    offerStrength: snapshot.base_salary ? "average" : "unknown",
+    offerStrength,
+    equityOffered: hasEquity,
+    benefitsRating: hasBenefits ? "Detected in offer" : undefined,
+    salaryPercentile: hasSalary ? "See extracted terms below" : undefined,
   });
   const snapshotVerdict = deriveSnapshotVerdict(snapshotSections);
   const snapshotJackyeTake = generateSnapshotJackyeTake(snapshotVerdict, snapshotSections);
