@@ -489,6 +489,19 @@ const SAMPLE_NODES: GraphNode[] = [
   { id: "ira-drug-pricing", label: "Inflation Reduction Act — Drug Pricing", group: "Legislation", val: 14, issueCategories: ["Healthcare"], metadata: { status: "Enacted 2022", description: "Allows Medicare to negotiate prices for select high-cost drugs. Caps insulin at $35/mo for Medicare." } },
   { id: "mhpaea", label: "Mental Health Parity Act (MHPAEA)", group: "Legislation", val: 13, issueCategories: ["Healthcare"], metadata: { status: "Enacted", description: "Requires insurers to cover mental health/substance abuse at parity with medical/surgical benefits." } },
   { id: "healthcare-industry", label: "Healthcare Sector", group: "Industry", val: 15, issueCategories: ["Healthcare"] },
+
+  // ── Consumer Protection nodes ──
+  { id: "wells-fargo-cp", label: "Wells Fargo", group: "Company", val: 18, metadata: { industry: "Banking", summary: "CFPB $3.7B penalty for fake accounts and wrongful foreclosures. Massive consumer complaint volume." } },
+  { id: "equifax-cp", label: "Equifax", group: "Company", val: 16, metadata: { industry: "Credit Reporting", summary: "FTC $700M settlement for 2017 data breach exposing 147M consumers' personal data." } },
+  { id: "epic-games-cp", label: "Epic Games", group: "Company", val: 14, metadata: { industry: "Gaming", summary: "FTC $520M for COPPA violations and dark patterns tricking Fortnite players." } },
+  { id: "t-mobile-cp", label: "T-Mobile", group: "Company", val: 15, metadata: { industry: "Telecommunications", summary: "FCC $31.5M data breach settlement. 76.6M customer records exposed." } },
+  { id: "capital-one-cp", label: "Capital One", group: "Company", val: 15, metadata: { industry: "Banking", summary: "106M credit applicant records exposed in 2019 data breach." } },
+  { id: "cfpb-agency", label: "CFPB (Consumer Financial Protection Bureau)", group: "Agency", val: 16, issueCategories: ["Consumer Protection"] },
+  { id: "cpsc-agency", label: "CPSC (Consumer Product Safety Commission)", group: "Agency", val: 14, issueCategories: ["Consumer Protection"] },
+  { id: "fda-agency", label: "FDA (Food & Drug Administration)", group: "Agency", val: 15, issueCategories: ["Consumer Protection", "Healthcare"] },
+  { id: "consumer-privacy-act", label: "American Data Privacy & Protection Act", group: "Legislation", val: 13, issueCategories: ["Consumer Protection"], metadata: { status: "Proposed", description: "Federal consumer data privacy bill. Would establish national data privacy standards and FTC enforcement." } },
+  { id: "coppa", label: "COPPA (Children's Online Privacy)", group: "Legislation", val: 13, issueCategories: ["Consumer Protection"], metadata: { status: "Enacted 1998", description: "Requires parental consent for collecting data from children under 13. FTC enforces." } },
+  { id: "consumer-protection-industry", label: "Consumer Protection Sector", group: "Industry", val: 14, issueCategories: ["Consumer Protection"] },
 ];
 
 const SAMPLE_LINKS: GraphLink[] = [
