@@ -201,7 +201,7 @@ export function OfferLetterUpload({ companyId, companyName, onReviewCreated }: O
 
         {/* Disclaimer */}
         <div className="bg-muted/50 rounded-lg p-3 text-[11px] text-muted-foreground">
-          This tool identifies terms and clauses from uploaded documents and compares them with publicly available company signals. It provides educational insights only — not legal, financial, or employment advice.
+          Your offer letter stays private — only you can see it. We extract terms, flag clauses, and compare against public company signals so you can negotiate from a position of knowledge. This is not legal advice — it's your receipts, organized.
         </div>
 
         {/* Consent */}
