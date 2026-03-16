@@ -81,7 +81,7 @@ const Index = forwardRef<HTMLDivElement>((_, ref) => {
             <span className="text-primary">before you say yes.</span>
           </h1>
           <p className="text-base lg:text-lg text-muted-foreground mb-10 max-w-[480px] leading-relaxed">
-            The background check just flipped. I've been blessed to be in the rooms where it happens — now I'm taking everything I've learned and putting it into your hands.
+            Founded by a long-time Talent Acquisition executive who has been in the room where it happens, WDIWF was built to help both sides tell a clearer story through transparency.
           </p>
           <HeroSearch />
           <div className="mt-6">
