@@ -146,8 +146,8 @@ serve(async (req) => {
 
     let documentText = review.extracted_text || "";
 
-    // If file was uploaded, download and extract text
-    if (review.file_path && !documentText) {
+    // If file was uploaded and not yet deleted, download and extract text
+    if (review.file_path && !documentText && !review.file_deleted) {
       const { data: fileData, error: fileError } = await adminClient.storage
         .from("offer-letters")
         .download(review.file_path);
