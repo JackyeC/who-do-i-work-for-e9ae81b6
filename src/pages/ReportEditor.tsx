@@ -63,6 +63,18 @@ export default function ReportEditor() {
   const [saving, setSaving] = useState(false);
   const [activeTab, setActiveTab] = useState("report");
 
+  const applyTemplate = (template: ReportTemplate) => {
+    setReport((prev: any) => ({
+      ...prev,
+      ...template.report,
+      author_name: prev.author_name || "Jackye Clayton",
+      author_slug: prev.author_slug || "jackye-clayton",
+      status: "draft",
+    }));
+    setSections(template.sections);
+    setClaims(template.claims);
+  };
+
   // Load existing report
   const { isLoading: loading } = useQuery({
     queryKey: ["edit-report", id],
