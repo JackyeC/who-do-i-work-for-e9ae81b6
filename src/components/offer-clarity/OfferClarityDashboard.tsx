@@ -250,7 +250,10 @@ export function OfferClarityDashboard({ report, offerData, onStartOver }: Props)
       </div>
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         <BLSWageBenchmarkCard occupationTitle={offerData.roleTitle} offeredSalary={baseSalary} />
-        <BLSDemographicsCard offeredSalary={baseSalary} />
+        <BLSBenefitsCard />
+      </div>
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <BLSECITrendCard />
       </div>
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         <BLSECITrendCard />
