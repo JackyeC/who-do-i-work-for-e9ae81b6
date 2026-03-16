@@ -326,7 +326,7 @@ export default function AskJackyePage() {
                 </span>
               </div>
               <div className="text-[10px] text-muted-foreground font-mono">
-                Jackye Clayton · AI Twin · Framework v2.6
+                WDIWF Intelligence Engine · Framework v2.6
               </div>
             </div>
           </div>
