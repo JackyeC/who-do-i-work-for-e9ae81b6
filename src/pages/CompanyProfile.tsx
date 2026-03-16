@@ -48,6 +48,7 @@ import { CompanyIntelligenceScanCard } from "@/components/CompanyIntelligenceSca
 import { RelatedReportsCard } from "@/components/RelatedReportsCard";
 import { ValuesCheckSection, type ValuesCheckSignal } from "@/components/values-check/ValuesCheckSection";
 import { InfluenceChainCard } from "@/components/InfluenceChainCard";
+import { InsiderPrideBanner } from "@/components/community/InsiderPrideBanner";
 import { CorporateCharacterScore, calculateCharacterScore } from "@/components/CorporateCharacterScore";
 import { TransparencyGhosting } from "@/components/TransparencyGhosting";
 import { DataFreshnessCard } from "@/components/DataFreshnessCard";
