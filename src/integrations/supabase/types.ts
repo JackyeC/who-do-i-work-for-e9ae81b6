@@ -7325,6 +7325,80 @@ export type Database = {
           },
         ]
       }
+      signal_verifications: {
+        Row: {
+          claim_evidence_urls: string[] | null
+          claim_sources: Json | null
+          claim_verified: boolean | null
+          claim_verified_at: string | null
+          company_id: string
+          confidence_level: string | null
+          created_at: string | null
+          data_last_updated: string | null
+          freshness_status: string | null
+          id: string
+          identity_sources: Json | null
+          identity_verified: boolean | null
+          identity_verified_at: string | null
+          notes: string | null
+          signal_id: string
+          signal_table: string
+          updated_at: string | null
+          verification_status: string | null
+          verified_by: string | null
+        }
+        Insert: {
+          claim_evidence_urls?: string[] | null
+          claim_sources?: Json | null
+          claim_verified?: boolean | null
+          claim_verified_at?: string | null
+          company_id: string
+          confidence_level?: string | null
+          created_at?: string | null
+          data_last_updated?: string | null
+          freshness_status?: string | null
+          id?: string
+          identity_sources?: Json | null
+          identity_verified?: boolean | null
+          identity_verified_at?: string | null
+          notes?: string | null
+          signal_id: string
+          signal_table: string
+          updated_at?: string | null
+          verification_status?: string | null
+          verified_by?: string | null
+        }
+        Update: {
+          claim_evidence_urls?: string[] | null
+          claim_sources?: Json | null
+          claim_verified?: boolean | null
+          claim_verified_at?: string | null
+          company_id?: string
+          confidence_level?: string | null
+          created_at?: string | null
+          data_last_updated?: string | null
+          freshness_status?: string | null
+          id?: string
+          identity_sources?: Json | null
+          identity_verified?: boolean | null
+          identity_verified_at?: string | null
+          notes?: string | null
+          signal_id?: string
+          signal_table?: string
+          updated_at?: string | null
+          verification_status?: string | null
+          verified_by?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "signal_verifications_company_id_fkey"
+            columns: ["company_id"]
+            isOneToOne: false
+            referencedRelation: "companies"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       signals: {
         Row: {
           company_id: string
