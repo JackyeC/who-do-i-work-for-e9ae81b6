@@ -12,6 +12,7 @@ const FAQSection = lazy(() => import("@/components/landing/FAQSection").then(m =
 const EmailCapture = lazy(() => import("@/components/landing/EmailCapture").then(m => ({ default: m.EmailCapture })));
 const ExitIntentCapture = lazy(() => import("@/components/ExitIntentCapture").then(m => ({ default: m.ExitIntentCapture })));
 const RivalryBattleCard = lazy(() => import("@/components/RivalryBattleCard").then(m => ({ default: m.RivalryBattleCard })));
+const DreamJobWidget = lazy(() => import("@/components/community/DreamJobWidget").then(m => ({ default: m.DreamJobWidget })));
 
 // Lazy-load framer-motion SectionReveal — not needed for hero
 const SectionReveal = lazy(() => import("@/components/landing/SectionReveal").then(m => ({ default: m.SectionReveal })));
@@ -457,6 +458,15 @@ const Index = forwardRef<HTMLDivElement>((_, ref) => {
       {/* ── FAQ + Email (lazy) ── */}
       <Suspense fallback={null}><FAQSection /></Suspense>
       <Suspense fallback={null}><EmailCapture /></Suspense>
+
+      {/* ── Dream Job Widget ── */}
+      <section className="px-6 lg:px-16 py-20 lg:py-28">
+        <div className="max-w-[480px] mx-auto">
+          <Suspense fallback={<div className="h-64 animate-pulse bg-muted/30 rounded-xl" />}>
+            <DreamJobWidget />
+          </Suspense>
+        </div>
+      </section>
 
       {/* ── Final CTA ── */}
       <section className="px-6 lg:px-16 py-28 lg:py-36 text-center">

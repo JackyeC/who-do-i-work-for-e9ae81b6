@@ -3830,6 +3830,47 @@ export type Database = {
         }
         Relationships: []
       }
+      dream_job_requests: {
+        Row: {
+          created_at: string
+          dream_company_name: string
+          dream_role: string
+          id: string
+          intelligence_status: string
+          matched_company_id: string | null
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          dream_company_name: string
+          dream_role: string
+          id?: string
+          intelligence_status?: string
+          matched_company_id?: string | null
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          dream_company_name?: string
+          dream_role?: string
+          id?: string
+          intelligence_status?: string
+          matched_company_id?: string | null
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "dream_job_requests_matched_company_id_fkey"
+            columns: ["matched_company_id"]
+            isOneToOne: false
+            referencedRelation: "companies"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       eeoc_dropped_cases: {
         Row: {
           action_type: string
@@ -4667,6 +4708,44 @@ export type Database = {
         Relationships: [
           {
             foreignKeyName: "immigration_signals_company_id_fkey"
+            columns: ["company_id"]
+            isOneToOne: false
+            referencedRelation: "companies"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      insider_testimonials: {
+        Row: {
+          approved_at: string | null
+          company_id: string
+          created_at: string
+          id: string
+          status: string
+          testimonial_text: string
+          user_id: string
+        }
+        Insert: {
+          approved_at?: string | null
+          company_id: string
+          created_at?: string
+          id?: string
+          status?: string
+          testimonial_text: string
+          user_id: string
+        }
+        Update: {
+          approved_at?: string | null
+          company_id?: string
+          created_at?: string
+          id?: string
+          status?: string
+          testimonial_text?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "insider_testimonials_company_id_fkey"
             columns: ["company_id"]
             isOneToOne: false
             referencedRelation: "companies"
