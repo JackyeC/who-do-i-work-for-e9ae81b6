@@ -121,7 +121,7 @@ export function CivilRightsIntelligencePanel({ companyId, companyName }: CivilRi
       category: "Corporate Statement",
       finding: `${stance.topic}: ${stance.public_position || "Position stated"}`,
       severity: stance.gap === "direct-conflict" ? "high" : stance.gap === "mixed" ? "medium" : "low",
-      lastUpdated: stance.created_at || null,
+      lastUpdated: null,
       sourceUrl: null,
       refreshCadence: REFRESH_CADENCES.sentiment,
     });
