@@ -2,6 +2,8 @@ import { ExternalLink, Clock, Search, CheckCircle2 } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { cn } from "@/lib/utils";
 import { VerifySignalButton } from "@/components/VerifySignalButton";
+import { SourceTransparencyPanel, VerificationBadge } from "@/components/SourceTransparencyPanel";
+import { useSignalVerification } from "@/hooks/useSignalVerification";
 
 /** Maps raw source_type or detection_method values to display labels */
 const SOURCE_TYPE_LABELS: Record<string, string> = {
@@ -55,11 +57,13 @@ interface SignalMetaProps {
   signalType?: string;
   signalId?: string;
   companyId?: string;
+  /** Signal table name for verification lookup */
+  signalTable?: string;
 }
 
 /**
  * Reusable signal metadata footer for any signal card.
- * Shows: detection source, confidence, dates, evidence, source link.
+ * Shows: detection source, confidence, dates, evidence, source link, verification status.
  */
 export function SignalMeta({
   sourceType,
@@ -73,6 +77,7 @@ export function SignalMeta({
   signalType,
   signalId,
   companyId,
+  signalTable,
 }: SignalMetaProps) {
   const conf = confidence ? getConfidenceDisplay(confidence) : null;
   const sourceLabel = getSourceTypeLabel(sourceType, detectionMethod);
@@ -83,6 +88,9 @@ export function SignalMeta({
     ? (Date.now() - new Date(detectedAt).getTime()) > 90 * 24 * 60 * 60 * 1000
     : false;
 
+  // Fetch verification data if we have table + id
+  const { data: verification } = useSignalVerification(signalTable, signalId);
+
   return (
     <div className={cn("space-y-1", compact ? "mt-1" : "mt-2")}>
       {/* Evidence snippet */}
@@ -91,8 +99,15 @@ export function SignalMeta({
       )}
 
       <div className="flex items-center gap-3 flex-wrap">
-        {/* Algorithm signal label */}
-        <span className="text-[10px] font-semibold text-muted-foreground">Algorithm Signal</span>
+        {/* Verification badge (replaces generic "Algorithm Signal" when available) */}
+        {verification ? (
+          <VerificationBadge
+            status={verification.verification_status}
+            confidence={verification.confidence_level}
+          />
+        ) : (
+          <span className="text-[10px] font-semibold text-muted-foreground">Algorithm Signal</span>
+        )}
 
         {/* Detection source */}
         <span className="text-[10px] text-muted-foreground flex items-center gap-1">
@@ -148,6 +163,11 @@ export function SignalMeta({
           />
         )}
       </div>
+
+      {/* Source Transparency Panel — expandable verification details */}
+      {verification && !compact && (
+        <SourceTransparencyPanel verification={verification} className="mt-1.5" />
+      )}
     </div>
   );
 }
