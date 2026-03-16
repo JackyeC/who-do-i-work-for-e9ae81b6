@@ -546,6 +546,17 @@ export default function CompanyProfile() {
                       </Badge>
                     )}
                   </div>
+                  {/* Entity Resolution Report */}
+                  {dbCompanyId && (
+                    <EntityResolutionReport
+                      companyId={dbCompanyId}
+                      companyName={name}
+                      parentCompany={(dbCompany as any)?.parent_company}
+                      secCik={(dbCompany as any)?.sec_cik}
+                      ticker={(dbCompany as any)?.ticker}
+                      className="mt-2"
+                    />
+                  )}
                 </div>
               </div>
             </CardContent>
