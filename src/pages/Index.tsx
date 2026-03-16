@@ -282,17 +282,29 @@ const Index = forwardRef<HTMLDivElement>((_, ref) => {
 
       {/* ── Methodology ── */}
       <section className="px-6 lg:px-16 py-16 lg:py-20">
-        <div className="max-w-[960px] mx-auto text-center">
-          <h2 className="text-xl mb-4 text-foreground">Built on public records. Every signal sourced.</h2>
-          <p className="text-sm text-muted-foreground max-w-[520px] mx-auto mb-6">
-            FEC filings · Senate lobbying · USAspending · BLS wage data · SEC reports · FRED indicators.
-          </p>
-          <button
-            onClick={() => navigate("/methodology")}
-            className="font-mono text-sm tracking-wider uppercase text-primary hover:underline"
-          >
-            Read our methodology →
-          </button>
+        <div className="max-w-[960px] mx-auto">
+          <div className="text-center mb-8">
+            <h2 className="text-xl mb-4 text-foreground">Built on public records. Every signal sourced.</h2>
+            <p className="text-sm text-muted-foreground max-w-[520px] mx-auto mb-6">
+              FEC filings · Senate lobbying · USAspending · BLS wage data · SEC reports · FRED indicators.
+            </p>
+            <button
+              onClick={() => navigate("/methodology")}
+              className="font-mono text-sm tracking-wider uppercase text-primary hover:underline"
+            >
+              Read our methodology →
+            </button>
+          </div>
+          {/* Trust Card */}
+          <div className="bg-card border border-primary/20 p-6 lg:p-8 max-w-[640px] mx-auto">
+            <div className="flex items-center gap-2 mb-3">
+              <Shield className="w-5 h-5 text-primary" />
+              <span className="font-mono text-sm tracking-[0.15em] uppercase text-primary font-semibold">Our Standard</span>
+            </div>
+            <p className="text-sm text-foreground leading-relaxed">
+              Public records only. Verified watchdog data. No partisan endorsements. We connect the dots; you make the call.
+            </p>
+          </div>
         </div>
       </section>
 
