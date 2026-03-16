@@ -10,6 +10,7 @@ import {
   MapPin, Building2, ExternalLink, FileCheck, Wifi, Monitor, Home,
   Briefcase, DollarSign, Calendar, Clock,
 } from "lucide-react";
+import { cn } from "@/lib/utils";
 
 const WORK_MODE_ICONS: Record<string, any> = {
   remote: Wifi, hybrid: Monitor, "on-site": Home,

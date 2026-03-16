@@ -126,16 +126,34 @@ export function JobListRow({ job, companyValueSignals = [], companySignalFlags =
                 </Badge>
               );
             })}
-            {/* Value category badges */}
+            {/* Value category badges — certified vs uncertified */}
             {companyValueSignals.slice(0, 3).map((vs: any, idx: number) => {
               const cat = VALUES_LENSES.find((c) => c.key === vs.value_category || c.key === vs.values_lens);
               if (!cat) return null;
               const Icon = cat.icon;
+              const isCertified = company?.vetted_status === "certified";
               return (
-                <Badge key={idx} variant="outline" className="text-[10px] gap-0.5">
-                  <Icon className="w-3 h-3 text-primary" />
-                  {cat.label}
-                </Badge>
+                <TooltipProvider key={idx} delayDuration={200}>
+                  <Tooltip>
+                    <TooltipTrigger asChild>
+                      <Badge
+                        variant="outline"
+                        className={cn(
+                          "text-[10px] gap-0.5",
+                          !isCertified && "opacity-60 border-dashed"
+                        )}
+                      >
+                        <Icon className={cn("w-3 h-3", isCertified ? "text-[hsl(var(--civic-green))]" : "text-muted-foreground")} />
+                        {isCertified ? cat.label : `${cat.label} — Pending`}
+                      </Badge>
+                    </TooltipTrigger>
+                    <TooltipContent side="top" className="max-w-[200px] text-xs">
+                      {isCertified
+                        ? "Verified by Jackye Certification Audit"
+                        : "This employer has not completed the $599 Founding Partner audit. Stance is unverified."}
+                    </TooltipContent>
+                  </Tooltip>
+                </TooltipProvider>
               );
             })}
           </div>

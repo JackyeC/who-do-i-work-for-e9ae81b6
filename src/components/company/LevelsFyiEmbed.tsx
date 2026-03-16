@@ -1,6 +1,9 @@
-import { useState } from "react";
+import { useState, useEffect, useRef } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { BarChart3, AlertTriangle, Info } from "lucide-react";
+import { Badge } from "@/components/ui/badge";
+import { BarChart3, AlertTriangle, Info, Lock, Loader2 } from "lucide-react";
+import { usePremium } from "@/hooks/use-premium";
+import { Link } from "react-router-dom";
 
 interface LevelsFyiEmbedProps {
   companyName: string;
@@ -8,10 +11,24 @@ interface LevelsFyiEmbedProps {
 
 export function LevelsFyiEmbed({ companyName }: LevelsFyiEmbedProps) {
   const [loadError, setLoadError] = useState(false);
+  const [loading, setLoading] = useState(true);
+  const iframeRef = useRef<HTMLIFrameElement>(null);
+  const { isPremium } = usePremium();
 
-  // Normalize company name for Levels.fyi URL (capitalize, remove special chars)
   const encodedName = encodeURIComponent(companyName.trim());
-  const embedUrl = `https://www.levels.fyi/charts_embed.html?company=${encodedName}&track=Software%20Engineer`;
+  const salaryUrl = `https://www.levels.fyi/charts_embed.html?company=${encodedName}&track=Software%20Engineer`;
+  const levelingUrl = `https://www.levels.fyi/charts_embed.html?company=${encodedName}&track=Software%20Engineer&chart=leveling`;
+
+  // Timeout fallback — if iframe hasn't signaled load after 8s, show error
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      if (loading) {
+        setLoading(false);
+        // Don't set error — the iframe may just be slow; show it anyway
+      }
+    }, 8000);
+    return () => clearTimeout(timer);
+  }, [loading]);
 
   if (loadError) {
     return (
@@ -45,14 +62,62 @@ export function LevelsFyiEmbed({ companyName }: LevelsFyiEmbedProps) {
         </p>
       </CardHeader>
       <CardContent className="p-0">
-        <iframe
-          src={embedUrl}
-          title={`${companyName} compensation chart`}
-          className="w-full border-0"
-          style={{ height: 420 }}
-          onError={() => setLoadError(true)}
-          sandbox="allow-scripts allow-same-origin"
-        />
+        {/* Salary Chart — Free tier */}
+        <div className="relative">
+          {loading && (
+            <div className="absolute inset-0 flex items-center justify-center bg-background/80 z-10">
+              <Loader2 className="w-6 h-6 animate-spin text-primary" />
+            </div>
+          )}
+          <iframe
+            ref={iframeRef}
+            src={salaryUrl}
+            title={`${companyName} compensation chart`}
+            className="w-full border-0"
+            style={{ height: 420 }}
+            onLoad={() => setLoading(false)}
+            onError={() => { setLoading(false); setLoadError(true); }}
+            sandbox="allow-scripts allow-same-origin"
+          />
+        </div>
+
+        {/* Title Comparison / Leveling — Pro gate */}
+        <div className="mx-4 mt-4 mb-2">
+          <div className="flex items-center gap-2 mb-2">
+            <p className="text-xs font-semibold text-foreground uppercase tracking-wider">Title Comparison & Leveling</p>
+            {!isPremium && (
+              <Badge variant="outline" className="text-[9px] gap-0.5">
+                <Lock className="w-2.5 h-2.5" /> Pro
+              </Badge>
+            )}
+          </div>
+          {isPremium ? (
+            <iframe
+              src={levelingUrl}
+              title={`${companyName} leveling chart`}
+              className="w-full border-0 rounded-lg border border-border/20"
+              style={{ height: 380 }}
+              sandbox="allow-scripts allow-same-origin"
+            />
+          ) : (
+            <div className="relative rounded-lg border border-border/30 bg-muted/20 overflow-hidden" style={{ height: 200 }}>
+              <div className="absolute inset-0 flex flex-col items-center justify-center text-center p-6">
+                <Lock className="w-8 h-8 text-muted-foreground mb-3" />
+                <p className="text-sm font-semibold text-foreground mb-1">Unlock Title Comparison</p>
+                <p className="text-xs text-muted-foreground mb-3">
+                  See how compensation maps across engineering levels at {companyName}.
+                </p>
+                <Link
+                  to="/pricing"
+                  className="text-xs font-semibold text-primary hover:underline"
+                >
+                  Upgrade to Pro →
+                </Link>
+              </div>
+            </div>
+          )}
+        </div>
+
         {/* Compensation Intelligence Note */}
         <div className="mx-4 mb-4 mt-3 p-3 bg-muted/40 border border-border/30 rounded-lg">
           <div className="flex items-start gap-2">

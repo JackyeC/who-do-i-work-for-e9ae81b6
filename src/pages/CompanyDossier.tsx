@@ -39,6 +39,7 @@ import { EEOCCaseAlert } from "@/components/EEOCCaseAlert";
 import { useEEOCByCompanyName } from "@/hooks/use-eeoc-cases";
 import { PremiumGate } from "@/components/PremiumGate";
 import { useViewMode } from "@/contexts/ViewModeContext";
+import { HighRiskConnectionCard } from "@/components/company/HighRiskConnectionCard";
 
 /* ─── Lens config ─── */
 const LENS_META = {
