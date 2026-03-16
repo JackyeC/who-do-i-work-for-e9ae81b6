@@ -41,8 +41,21 @@ const BCORP_TARGETS = [
   { name: 'Cabot Creamery', slug: 'cabot-creamery', industry: 'Food & Beverage', state: 'VT', careersUrl: 'https://www.cabotcheese.coop/careers' },
 ];
 
-// ─── Tier 2: Top political donors — "Watchdog Warning" companies ───
-// These will be pulled from DB by highest total_pac_spending + lobbying_spend
+// ─── Tier 2: Power & Influence Top 10 — "Watchdog Warning" companies ───
+const POWER_INFLUENCE_TARGETS = [
+  { name: 'Amazon', slug: 'amazon', industry: 'Technology / E-Commerce', state: 'WA', careersUrl: 'https://www.amazon.jobs/en/search', lobbying: 21_400_000, pacSpending: 1_600_000 },
+  { name: 'Alphabet', slug: 'alphabet', industry: 'Technology / Search & AI', state: 'CA', careersUrl: 'https://www.google.com/about/careers/applications/', lobbying: 13_400_000, pacSpending: 1_900_000 },
+  { name: 'Meta', slug: 'meta', industry: 'Technology / Social Media', state: 'CA', careersUrl: 'https://www.metacareers.com/jobs/', lobbying: 19_700_000, pacSpending: 1_300_000 },
+  { name: 'Microsoft', slug: 'microsoft', industry: 'Technology / Software', state: 'WA', careersUrl: 'https://careers.microsoft.com/v2/global/en/search', lobbying: 10_200_000, pacSpending: 2_400_000 },
+  { name: 'Comcast', slug: 'comcast', industry: 'Telecommunications / Media', state: 'PA', careersUrl: 'https://jobs.comcast.com/search-jobs', lobbying: 14_300_000, pacSpending: 3_100_000 },
+  { name: 'Pfizer', slug: 'pfizer', industry: 'Pharmaceuticals', state: 'NY', careersUrl: 'https://www.pfizer.com/about/careers', lobbying: 11_600_000, pacSpending: 1_700_000 },
+  { name: 'Lockheed Martin', slug: 'lockheed-martin', industry: 'Defense / Aerospace', state: 'MD', careersUrl: 'https://www.lockheedmartinjobs.com/search-jobs', lobbying: 12_500_000, pacSpending: 3_800_000 },
+  { name: 'Walmart', slug: 'walmart', industry: 'Retail / General Merchandise', state: 'AR', careersUrl: 'https://careers.walmart.com/', lobbying: 8_600_000, pacSpending: 1_500_000 },
+  { name: 'JPMorgan Chase', slug: 'jpmorgan-chase', industry: 'Financial Services / Banking', state: 'NY', careersUrl: 'https://careers.jpmorgan.com/us/en/search-jobs', lobbying: 10_800_000, pacSpending: 2_200_000 },
+  { name: 'FedEx', slug: 'fedex', industry: 'Logistics / Transportation', state: 'TN', careersUrl: 'https://careers.fedex.com/fedex/', lobbying: 9_200_000, pacSpending: 2_800_000 },
+];
+
+// Tier 2 also pulls from DB by highest total_pac_spending + lobbying_spend
 
 const THROTTLE_MS = 2000;
 
@@ -60,7 +73,7 @@ Deno.serve(async (req) => {
   const supabase = createClient(supabaseUrl, supabaseKey);
 
   const body = await req.json().catch(() => ({}));
-  const tier = body.tier || 'all'; // 'bcorp', 'political', 'unfilled', 'all'
+  const tier = body.tier || 'all'; // 'bcorp', 'political'/'power', 'unfilled', 'all'
   const dryRun = body.dryRun || false;
   const maxPerTier = body.maxPerTier || 20;
 
@@ -160,25 +173,60 @@ Deno.serve(async (req) => {
     }
 
     // ═══════════════════════════════════════════
-    // TIER 2: Top Political Donors — "Spicy" Connection Chains
+    // TIER 2: Power & Influence Top 10 + DB political donors
     // ═══════════════════════════════════════════
-    if (tier === 'all' || tier === 'political') {
-      console.log(`\n═══ TIER 2: Top Political Donors ═══`);
+    if (tier === 'all' || tier === 'political' || tier === 'power') {
+      console.log(`\n═══ TIER 2: Power & Influence Companies ═══`);
 
-      // Get companies with highest political spending that have careers URLs
-      const { data: politicalCompanies } = await supabase
+      // First: process hardcoded Power & Influence targets
+      for (const target of POWER_INFLUENCE_TARGETS.slice(0, maxPerTier)) {
+        try {
+          const companyId = await ensureCompany(target);
+          if (!companyId) {
+            results.push({ tier: 'political', company: target.name, status: 'error', error: 'Failed to create company record' });
+            continue;
+          }
+
+          // Seed influence data
+          await supabase.from('companies').update({
+            lobbying_spend: target.lobbying,
+            total_pac_spending: target.pacSpending,
+            corporate_pac_exists: true,
+            careers_url: target.careersUrl,
+          }).eq('id', companyId);
+
+          if (dryRun) {
+            results.push({ tier: 'political', company: target.name, status: 'dry_run', jobsAdded: 0 });
+            continue;
+          }
+
+          const scrapeResult = await scrapeJobs(companyId, target.careersUrl, target.name);
+          results.push({
+            tier: 'political',
+            company: target.name,
+            status: 'success',
+            jobsAdded: scrapeResult.jobsAdded || 0,
+          });
+          console.log(`✅ ${target.name}: ${scrapeResult.jobsAdded || 0} jobs (Lobbying: $${target.lobbying.toLocaleString()}, PAC: $${target.pacSpending.toLocaleString()})`);
+        } catch (e) {
+          const msg = e instanceof Error ? e.message : 'Unknown error';
+          console.error(`❌ ${target.name}: ${msg}`);
+          results.push({ tier: 'political', company: target.name, status: 'error', error: msg });
+        }
+        await sleep(THROTTLE_MS);
+      }
+
+      // Then: additional DB companies with high political spending but no jobs yet
+      const processedSlugs = new Set(POWER_INFLUENCE_TARGETS.map(t => t.slug));
+      const { data: dbPoliticals } = await supabase
         .from('companies')
         .select('id, name, slug, careers_url, total_pac_spending, lobbying_spend')
         .not('careers_url', 'is', null)
         .order('total_pac_spending', { ascending: false })
         .limit(maxPerTier);
 
-      const politicals = (politicalCompanies || []).filter(c => c.careers_url);
-      console.log(`Found ${politicals.length} political donor companies with careers URLs`);
-
-      for (const company of politicals) {
+      for (const company of (dbPoliticals || []).filter(c => c.careers_url && !processedSlugs.has(c.slug))) {
         try {
-          // Check if they already have recent jobs
           const { count } = await supabase
             .from('company_jobs')
             .select('id', { count: 'exact', head: true })
@@ -202,13 +250,11 @@ Deno.serve(async (req) => {
             status: 'success',
             jobsAdded: scrapeResult.jobsAdded || 0,
           });
-          console.log(`✅ ${company.name}: ${scrapeResult.jobsAdded || 0} jobs (PAC: $${company.total_pac_spending?.toLocaleString()})`);
+          console.log(`✅ ${company.name}: ${scrapeResult.jobsAdded || 0} jobs`);
         } catch (e) {
           const msg = e instanceof Error ? e.message : 'Unknown error';
-          console.error(`❌ ${company.name}: ${msg}`);
           results.push({ tier: 'political', company: company.name, status: 'error', error: msg });
         }
-
         await sleep(THROTTLE_MS);
       }
     }
