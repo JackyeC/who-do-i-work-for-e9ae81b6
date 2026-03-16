@@ -89,6 +89,7 @@ const FounderConsole = lazy(() => import("./pages/FounderConsole"));
 const EmployerVerificationPending = lazy(() => import("./pages/EmployerVerificationPending"));
 const ForEmployers = lazy(() => import("./pages/ForEmployers"));
 const CorporateImpactMap = lazy(() => import("./pages/CorporateImpactMap"));
+const InfluenceGraph = lazy(() => import("./pages/InfluenceGraph"));
 
 // Lazy-load floating widgets — not needed on first paint
 const AskJackyeWidget = lazy(() => import("./components/AskJackyeWidget").then(m => ({ default: m.AskJackyeWidget })));
@@ -146,6 +147,7 @@ const App = () => (
                   <Route path="/economy" element={<EconomyDashboard />} />
                   <Route path="/follow-the-money" element={<FollowTheMoney />} />
                   <Route path="/company/:id" element={<CompanyProfile />} />
+                  <Route path="/company/:id/influence" element={<InfluenceGraph />} />
                   <Route path="/dossier/:id" element={<CompanyDossier />} />
                   <Route path="/pricing" element={<Pricing />} />
                   <Route path="/search" element={<SearchResults />} />

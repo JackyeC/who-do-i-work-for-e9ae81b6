@@ -492,6 +492,15 @@ export default function CompanyProfile() {
                         variant="outline"
                         size="sm"
                         className="text-xs gap-1.5"
+                        onClick={() => navigate(`/company/${id}/influence`)}
+                      >
+                        <Network className="w-3.5 h-3.5" />
+                        Influence Graph
+                      </Button>
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        className="text-xs gap-1.5"
                         onClick={() => navigate(`/dossier/${id}`)}
                       >
                         <Briefcase className="w-3.5 h-3.5" />
