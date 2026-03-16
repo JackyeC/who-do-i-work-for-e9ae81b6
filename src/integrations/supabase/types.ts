@@ -3970,6 +3970,77 @@ export type Database = {
         }
         Relationships: []
       }
+      immigration_signals: {
+        Row: {
+          case_number: string | null
+          company_id: string
+          confidence: string | null
+          created_at: string | null
+          description: string | null
+          evidence_text: string | null
+          filing_date: string | null
+          id: string
+          job_title: string | null
+          location_state: string | null
+          resolution_date: string | null
+          signal_category: string
+          signal_type: string
+          source_name: string
+          source_url: string | null
+          visa_type: string | null
+          wage_offered: number | null
+          workers_affected: number | null
+        }
+        Insert: {
+          case_number?: string | null
+          company_id: string
+          confidence?: string | null
+          created_at?: string | null
+          description?: string | null
+          evidence_text?: string | null
+          filing_date?: string | null
+          id?: string
+          job_title?: string | null
+          location_state?: string | null
+          resolution_date?: string | null
+          signal_category?: string
+          signal_type: string
+          source_name: string
+          source_url?: string | null
+          visa_type?: string | null
+          wage_offered?: number | null
+          workers_affected?: number | null
+        }
+        Update: {
+          case_number?: string | null
+          company_id?: string
+          confidence?: string | null
+          created_at?: string | null
+          description?: string | null
+          evidence_text?: string | null
+          filing_date?: string | null
+          id?: string
+          job_title?: string | null
+          location_state?: string | null
+          resolution_date?: string | null
+          signal_category?: string
+          signal_type?: string
+          source_name?: string
+          source_url?: string | null
+          visa_type?: string | null
+          wage_offered?: number | null
+          workers_affected?: number | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "immigration_signals_company_id_fkey"
+            columns: ["company_id"]
+            isOneToOne: false
+            referencedRelation: "companies"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       insider_trades: {
         Row: {
           company_id: string
