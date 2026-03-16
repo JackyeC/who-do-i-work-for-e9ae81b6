@@ -10,6 +10,7 @@ import {
   MapPin, Building2, ExternalLink, FileCheck, Wifi, Monitor, Home,
   Briefcase, DollarSign, Calendar, Clock,
 } from "lucide-react";
+import { cn } from "@/lib/utils";
 
 const WORK_MODE_ICONS: Record<string, any> = {
   remote: Wifi, hybrid: Monitor, "on-site": Home,
@@ -90,10 +91,19 @@ export function JobDetailDrawer({ job, companyValueSignals = [], matchScore, ope
                   const cat = VALUES_LENSES.find((c) => c.key === vs.value_category || c.key === vs.values_lens);
                   if (!cat) return null;
                   const Icon = cat.icon;
+                  const isCertified = company?.vetted_status === "certified";
                   return (
-                    <Badge key={idx} variant="outline" className="text-xs gap-1" title={vs.signal_summary}>
-                      <Icon className="w-3 h-3 text-primary" />
-                      {cat.label}
+                    <Badge
+                      key={idx}
+                      variant="outline"
+                      className={cn(
+                        "text-xs gap-1",
+                        !isCertified && "opacity-60 border-dashed"
+                      )}
+                      title={isCertified ? vs.signal_summary : "Unverified — Pending Certification Audit"}
+                    >
+                      <Icon className={cn("w-3 h-3", isCertified ? "text-[hsl(var(--civic-green))]" : "text-muted-foreground")} />
+                      {isCertified ? cat.label : `${cat.label} — Pending Audit`}
                     </Badge>
                   );
                 })}

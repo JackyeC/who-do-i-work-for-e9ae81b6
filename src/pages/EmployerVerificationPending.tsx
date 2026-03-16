@@ -112,6 +112,22 @@ export default function EmployerVerificationPending() {
 
   const jobCredits = employerProfile?.job_credits ?? 5;
 
+  // Fetch company vetted_status for Gold Shield display
+  const { data: companyData } = useQuery({
+    queryKey: ["employer-company-status", employerProfile?.company_name],
+    queryFn: async () => {
+      const { data } = await supabase
+        .from("companies")
+        .select("vetted_status")
+        .eq("name", employerProfile!.company_name)
+        .maybeSingle();
+      return data as { vetted_status: string | null } | null;
+    },
+    enabled: !!employerProfile?.company_name,
+  });
+
+  const goldShieldActive = companyData?.vetted_status === "certified";
+
   const handleUpload = async () => {
     if (!file || !user) return;
     setUploading(true);
@@ -152,9 +168,21 @@ export default function EmployerVerificationPending() {
           <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-primary/10 mb-5">
             <ShieldCheck className="w-8 h-8 text-primary" />
           </div>
+          {goldShieldActive ? (
+            <Badge className="mb-4 text-xs font-mono uppercase tracking-wider bg-[hsl(var(--civic-green))] text-white">
+              🛡️ Gold Shield Active
+            </Badge>
+          ) : (
+            <Badge
+              variant="secondary"
+              className="mb-4 text-xs font-mono uppercase tracking-wider"
+            >
+              Gold Shield — Pending Admin Approval
+            </Badge>
+          )}
           <Badge
             variant="secondary"
-            className="mb-4 text-xs font-mono uppercase tracking-wider"
+            className="mb-4 ml-2 text-xs font-mono uppercase tracking-wider"
           >
             Founding Partner Certification
           </Badge>

@@ -39,6 +39,7 @@ import { EEOCCaseAlert } from "@/components/EEOCCaseAlert";
 import { useEEOCByCompanyName } from "@/hooks/use-eeoc-cases";
 import { PremiumGate } from "@/components/PremiumGate";
 import { useViewMode } from "@/contexts/ViewModeContext";
+import { HighRiskConnectionCard } from "@/components/company/HighRiskConnectionCard";
 
 /* ─── Lens config ─── */
 const LENS_META = {
@@ -253,6 +254,11 @@ export default function CompanyDossier() {
           governmentContracts={governmentContractSignals}
           policyLinks={[]}
         />
+        {companyId && (
+          <div className="mt-6">
+            <HighRiskConnectionCard companyId={companyId} companyName={company.name} />
+          </div>
+        )}
       </DossierLayer>
 
       <DossierLayer title="Patterns & Synthesis" subtitle="Key observations and notable patterns" icon={Sparkles} layerNumber={7}>
