@@ -22,6 +22,7 @@ interface CompanyRiskRadarProps {
   slug: string;
   lobbyingSpend?: number | null;
   totalPacSpending?: number | null;
+  hasCompensationData?: boolean;
 }
 
 const SEVERITY_STYLES: Record<Severity, { badge: string; dot: string; ring: string }> = {
