@@ -253,6 +253,7 @@ function generateInsights(nodes: GraphNode[], links: GraphLink[]): string[] {
 // ─── Sample data ───
 
 const SAMPLE_NODES: GraphNode[] = [
+  // ── Amazon (Technology, Consumer Protection, Defense, Labor Rights) ──
   { id: "amazon", label: "Amazon", group: "Company", val: 22, metadata: { industry: "Technology / E-Commerce", summary: "One of the largest corporate political spenders in tech, with extensive lobbying on AI regulation, antitrust, and labor policy." } },
   { id: "amazon-pac", label: "Amazon.com PAC", group: "PAC", val: 16, amount: 1_200_000, metadata: { summary: "Amazon's corporate PAC disbursing funds to candidates across both parties." } },
   { id: "sen-cantwell", label: "Sen. Maria Cantwell (D-WA)", group: "Politician", val: 12, party: "Democrat", state: "WA", issueCategories: ["Technology", "Consumer Protection"] },
@@ -266,11 +267,72 @@ const SAMPLE_NODES: GraphNode[] = [
   { id: "tech-industry", label: "Technology Sector", group: "Industry", val: 16, issueCategories: ["Technology"] },
   { id: "ecommerce-industry", label: "E-Commerce & Retail", group: "Industry", val: 14, issueCategories: ["Consumer Protection"] },
   { id: "dod", label: "Dept. of Defense", group: "Agency", val: 18, amount: 10_000_000, issueCategories: ["Defense"] },
+
+  // ── Microsoft (Technology, Defense) ──
   { id: "microsoft", label: "Microsoft", group: "Company", val: 18, metadata: { industry: "Technology", summary: "Major government contractor and political spender with interests in AI regulation." } },
   { id: "ms-pac", label: "Microsoft PAC", group: "PAC", val: 14, amount: 890_000 },
+
+  // ── UnitedHealth Group (Healthcare) ──
+  { id: "unitedhealth", label: "UnitedHealth Group", group: "Company", val: 20, metadata: { industry: "Healthcare / Insurance", summary: "Largest health insurer in the US. Massive lobbying on ACA, Medicare, and drug pricing legislation." } },
+  { id: "uhg-pac", label: "UnitedHealth Group PAC", group: "PAC", val: 15, amount: 2_800_000, metadata: { summary: "One of the top healthcare PACs, donating heavily to both parties." } },
+  { id: "sen-cassidy", label: "Sen. Bill Cassidy (R-LA)", group: "Politician", val: 11, party: "Republican", state: "LA", issueCategories: ["Healthcare"] },
+  { id: "sen-murray", label: "Sen. Patty Murray (D-WA)", group: "Politician", val: 11, party: "Democrat", state: "WA", issueCategories: ["Healthcare", "Education"] },
+  { id: "help-committee", label: "Senate HELP Committee", group: "Committee", val: 13, issueCategories: ["Healthcare", "Education"] },
+  { id: "drug-pricing-bill", label: "Prescription Drug Pricing Reform Act", group: "Legislation", val: 11, issueCategories: ["Healthcare"], metadata: { status: "In Committee", description: "Would allow Medicare to negotiate drug prices and cap out-of-pocket costs." } },
+  { id: "healthcare-industry", label: "Healthcare Sector", group: "Industry", val: 15, issueCategories: ["Healthcare"] },
+  { id: "hhs", label: "Dept. of Health & Human Services", group: "Agency", val: 16, issueCategories: ["Healthcare"] },
+
+  // ── Tyson Foods (Immigration, Labor Rights) ──
+  { id: "tyson", label: "Tyson Foods", group: "Company", val: 16, metadata: { industry: "Food / Agriculture", summary: "One of the largest meatpacking companies. Heavily lobbied on immigration reform, guest worker programs, and OSHA standards." } },
+  { id: "tyson-pac", label: "Tyson Foods PAC", group: "PAC", val: 12, amount: 420_000, metadata: { summary: "Funds candidates supporting agricultural labor and immigration reform." } },
+  { id: "sen-cotton", label: "Sen. Tom Cotton (R-AR)", group: "Politician", val: 10, party: "Republican", state: "AR", issueCategories: ["Immigration", "Defense"] },
+  { id: "rep-crawford", label: "Rep. Rick Crawford (R-AR)", group: "Politician", val: 9, party: "Republican", state: "AR", issueCategories: ["Immigration", "Labor Rights"] },
+  { id: "judiciary-committee", label: "Senate Judiciary Committee", group: "Committee", val: 13, issueCategories: ["Immigration", "Civil Rights"] },
+  { id: "farm-workforce-bill", label: "Farm Workforce Modernization Act (H.R.1603)", group: "Legislation", val: 11, issueCategories: ["Immigration", "Labor Rights"], metadata: { status: "Passed House", description: "Reforms H-2A visa program and provides path to legal status for farm workers." } },
+  { id: "agriculture-industry", label: "Agriculture Sector", group: "Industry", val: 13, issueCategories: ["Labor Rights", "Immigration"] },
+
+  // ── ExxonMobil (Climate, Energy) ──
+  { id: "exxon", label: "ExxonMobil", group: "Company", val: 20, metadata: { industry: "Oil & Gas / Energy", summary: "One of the largest fossil fuel companies. Decades-long lobbying against climate regulation while publicly pledging carbon reduction." } },
+  { id: "exxon-pac", label: "ExxonMobil PAC", group: "PAC", val: 15, amount: 1_650_000, metadata: { summary: "Funds candidates across parties, with concentration on energy and environment committee members." } },
+  { id: "sen-manchin", label: "Sen. Joe Manchin (I-WV)", group: "Politician", val: 12, party: "Independent", state: "WV", issueCategories: ["Climate", "Energy"] },
+  { id: "sen-capito", label: "Sen. Shelley Moore Capito (R-WV)", group: "Politician", val: 10, party: "Republican", state: "WV", issueCategories: ["Climate", "Energy"] },
+  { id: "epw-committee", label: "Senate Environment & Public Works", group: "Committee", val: 13, issueCategories: ["Climate", "Energy"] },
+  { id: "clean-energy-bill", label: "Clean Energy Innovation Act (S.2657)", group: "Legislation", val: 11, issueCategories: ["Climate", "Energy"], metadata: { status: "In Committee", description: "Authorizes DOE research programs for carbon capture and clean energy." } },
+  { id: "energy-industry", label: "Oil & Gas Sector", group: "Industry", val: 15, issueCategories: ["Energy", "Climate"] },
+  { id: "doe", label: "Dept. of Energy", group: "Agency", val: 15, issueCategories: ["Energy", "Climate"] },
+
+  // ── Smith & Wesson / NSSF (Gun Policy) ──
+  { id: "smith-wesson", label: "Smith & Wesson Brands", group: "Company", val: 14, metadata: { industry: "Firearms Manufacturing", summary: "Major US firearms manufacturer. Lobbies through NSSF trade association against gun safety legislation." } },
+  { id: "nssf-pac", label: "NSSF PAC (Gun Industry)", group: "PAC", val: 13, amount: 780_000, metadata: { summary: "National Shooting Sports Foundation PAC — the gun industry's primary political spending vehicle." } },
+  { id: "sen-thune", label: "Sen. John Thune (R-SD)", group: "Politician", val: 11, party: "Republican", state: "SD", issueCategories: ["Gun Policy"] },
+  { id: "rep-hudson", label: "Rep. Richard Hudson (R-NC)", group: "Politician", val: 10, party: "Republican", state: "NC", issueCategories: ["Gun Policy"] },
+  { id: "gun-safety-bill", label: "Bipartisan Background Checks Act (H.R.8)", group: "Legislation", val: 11, issueCategories: ["Gun Policy"], metadata: { status: "Passed House", description: "Requires background checks for all firearm sales, including private and gun show transactions." } },
+  { id: "firearms-industry", label: "Firearms Sector", group: "Industry", val: 12, issueCategories: ["Gun Policy"] },
+  { id: "atf", label: "Bureau of Alcohol, Tobacco & Firearms", group: "Agency", val: 13, issueCategories: ["Gun Policy"] },
+
+  // ── Pearson / McGraw Hill (Education) ──
+  { id: "pearson", label: "Pearson Education", group: "Company", val: 14, metadata: { industry: "Education / Publishing", summary: "Largest education publisher globally. Lobbies on standardized testing mandates, EdTech procurement, and student data privacy." } },
+  { id: "pearson-pac", label: "Pearson/Education Industry PAC", group: "PAC", val: 11, amount: 320_000, metadata: { summary: "EdTech industry PAC funding candidates who support standardized testing mandates." } },
+  { id: "rep-scott", label: "Rep. Bobby Scott (D-VA)", group: "Politician", val: 10, party: "Democrat", state: "VA", issueCategories: ["Education", "Labor Rights"] },
+  { id: "education-bill", label: "Student Data Privacy Act (S.1158)", group: "Legislation", val: 10, issueCategories: ["Education", "Consumer Protection"], metadata: { status: "In Committee", description: "Restricts how education technology companies can use student data." } },
+  { id: "education-industry", label: "Education Sector", group: "Industry", val: 13, issueCategories: ["Education"] },
+  { id: "dept-education", label: "Dept. of Education", group: "Agency", val: 14, issueCategories: ["Education"] },
+
+  // ── Blackstone (Housing, Financial Services) ──
+  { id: "blackstone", label: "Blackstone Group", group: "Company", val: 18, metadata: { industry: "Private Equity / Real Estate", summary: "Largest private equity firm and single-family home landlord in the US. Lobbies on housing deregulation, carried interest tax treatment, and financial services oversight." } },
+  { id: "blackstone-pac", label: "Blackstone Group PAC", group: "PAC", val: 14, amount: 1_100_000, metadata: { summary: "Major financial services PAC. Top recipients sit on Banking and Finance committees." } },
+  { id: "sen-scott-tim", label: "Sen. Tim Scott (R-SC)", group: "Politician", val: 11, party: "Republican", state: "SC", issueCategories: ["Housing", "Financial Services"] },
+  { id: "sen-warren", label: "Sen. Elizabeth Warren (D-MA)", group: "Politician", val: 12, party: "Democrat", state: "MA", issueCategories: ["Housing", "Financial Services", "Consumer Protection"] },
+  { id: "banking-committee", label: "Senate Banking Committee", group: "Committee", val: 14, issueCategories: ["Housing", "Financial Services"] },
+  { id: "housing-bill", label: "Affordable Housing Credit Improvement Act (S.1557)", group: "Legislation", val: 11, issueCategories: ["Housing"], metadata: { status: "In Committee", description: "Expands Low-Income Housing Tax Credit and addresses housing supply crisis." } },
+  { id: "carried-interest-bill", label: "Carried Interest Fairness Act (S.1598)", group: "Legislation", val: 10, issueCategories: ["Financial Services"], metadata: { status: "In Committee", description: "Would tax carried interest as ordinary income instead of capital gains." } },
+  { id: "housing-industry", label: "Real Estate Sector", group: "Industry", val: 14, issueCategories: ["Housing"] },
+  { id: "hud", label: "Dept. of Housing & Urban Development", group: "Agency", val: 14, issueCategories: ["Housing"] },
+  { id: "financial-industry", label: "Financial Services Sector", group: "Industry", val: 15, issueCategories: ["Financial Services"] },
 ];
 
 const SAMPLE_LINKS: GraphLink[] = [
+  // ── Amazon links ──
   { source: "amazon", target: "amazon-pac", label: "Funds", linkType: "donation_to_member", amount: 1_200_000, confidence: "direct" },
   { source: "amazon-pac", target: "sen-cantwell", label: "Donated $45K", linkType: "donation_to_member", amount: 45_000, year: 2024, confidence: "direct" },
   { source: "amazon-pac", target: "sen-wyden", label: "Donated $38K", linkType: "donation_to_member", amount: 38_000, year: 2024, confidence: "direct" },
@@ -283,11 +345,77 @@ const SAMPLE_LINKS: GraphLink[] = [
   { source: "ai-regulation-bill", target: "tech-industry", label: "Impacts", linkType: "committee_oversight_of_contract", confidence: "likely" },
   { source: "data-privacy-bill", target: "ecommerce-industry", label: "Impacts", linkType: "committee_oversight_of_contract", confidence: "likely" },
   { source: "amazon", target: "dod", label: "AWS GovCloud Contract", linkType: "committee_oversight_of_contract", amount: 10_000_000, confidence: "direct" },
+  { source: "amazon", target: "tech-industry", label: "Operates in", linkType: "trade_association_lobbying", confidence: "direct" },
+
+  // ── Microsoft links ──
   { source: "microsoft", target: "ms-pac", label: "Funds", linkType: "donation_to_member", amount: 890_000, confidence: "direct" },
   { source: "ms-pac", target: "sen-cantwell", label: "Donated $30K", linkType: "donation_to_member", amount: 30_000, year: 2024, confidence: "direct" },
   { source: "microsoft", target: "dod", label: "JEDI Contract", linkType: "committee_oversight_of_contract", amount: 7_500_000, confidence: "direct" },
   { source: "microsoft", target: "tech-industry", label: "Operates in", linkType: "trade_association_lobbying", confidence: "direct" },
-  { source: "amazon", target: "tech-industry", label: "Operates in", linkType: "trade_association_lobbying", confidence: "direct" },
+
+  // ── UnitedHealth links (Healthcare) ──
+  { source: "unitedhealth", target: "uhg-pac", label: "Funds", linkType: "donation_to_member", amount: 2_800_000, confidence: "direct" },
+  { source: "uhg-pac", target: "sen-cassidy", label: "Donated $52K", linkType: "donation_to_member", amount: 52_000, year: 2024, confidence: "direct" },
+  { source: "uhg-pac", target: "sen-murray", label: "Donated $41K", linkType: "donation_to_member", amount: 41_000, year: 2024, confidence: "direct" },
+  { source: "sen-cassidy", target: "help-committee", label: "Serves on", linkType: "member_on_committee", confidence: "direct" },
+  { source: "sen-murray", target: "help-committee", label: "Chairs", linkType: "member_on_committee", confidence: "direct" },
+  { source: "help-committee", target: "drug-pricing-bill", label: "Oversees", linkType: "lobbying_on_bill", confidence: "direct" },
+  { source: "drug-pricing-bill", target: "healthcare-industry", label: "Impacts", linkType: "committee_oversight_of_contract", confidence: "likely" },
+  { source: "unitedhealth", target: "hhs", label: "Medicare Advantage Contracts", linkType: "committee_oversight_of_contract", amount: 280_000_000, confidence: "direct" },
+  { source: "unitedhealth", target: "healthcare-industry", label: "Operates in", linkType: "trade_association_lobbying", confidence: "direct" },
+
+  // ── Tyson links (Immigration, Labor Rights) ──
+  { source: "tyson", target: "tyson-pac", label: "Funds", linkType: "donation_to_member", amount: 420_000, confidence: "direct" },
+  { source: "tyson-pac", target: "sen-cotton", label: "Donated $18K", linkType: "donation_to_member", amount: 18_000, year: 2024, confidence: "direct" },
+  { source: "tyson-pac", target: "rep-crawford", label: "Donated $15K", linkType: "donation_to_member", amount: 15_000, year: 2023, confidence: "direct" },
+  { source: "sen-cotton", target: "judiciary-committee", label: "Serves on", linkType: "member_on_committee", confidence: "direct" },
+  { source: "judiciary-committee", target: "farm-workforce-bill", label: "Oversees", linkType: "lobbying_on_bill", confidence: "direct" },
+  { source: "farm-workforce-bill", target: "agriculture-industry", label: "Impacts", linkType: "committee_oversight_of_contract", confidence: "likely" },
+  { source: "tyson", target: "agriculture-industry", label: "Operates in", linkType: "trade_association_lobbying", confidence: "direct" },
+
+  // ── ExxonMobil links (Climate, Energy) ──
+  { source: "exxon", target: "exxon-pac", label: "Funds", linkType: "donation_to_member", amount: 1_650_000, confidence: "direct" },
+  { source: "exxon-pac", target: "sen-manchin", label: "Donated $65K", linkType: "donation_to_member", amount: 65_000, year: 2024, confidence: "direct" },
+  { source: "exxon-pac", target: "sen-capito", label: "Donated $40K", linkType: "donation_to_member", amount: 40_000, year: 2023, confidence: "direct" },
+  { source: "sen-manchin", target: "epw-committee", label: "Serves on", linkType: "member_on_committee", confidence: "direct" },
+  { source: "sen-capito", target: "epw-committee", label: "Ranking Member", linkType: "member_on_committee", confidence: "direct" },
+  { source: "epw-committee", target: "clean-energy-bill", label: "Oversees", linkType: "lobbying_on_bill", confidence: "direct" },
+  { source: "clean-energy-bill", target: "energy-industry", label: "Impacts", linkType: "committee_oversight_of_contract", confidence: "likely" },
+  { source: "exxon", target: "doe", label: "Carbon Capture R&D Grant", linkType: "committee_oversight_of_contract", amount: 3_200_000, confidence: "direct" },
+  { source: "exxon", target: "energy-industry", label: "Operates in", linkType: "trade_association_lobbying", confidence: "direct" },
+
+  // ── Smith & Wesson links (Gun Policy) ──
+  { source: "smith-wesson", target: "nssf-pac", label: "Funds via NSSF", linkType: "trade_association_lobbying", amount: 780_000, confidence: "likely" },
+  { source: "nssf-pac", target: "sen-thune", label: "Donated $35K", linkType: "donation_to_member", amount: 35_000, year: 2024, confidence: "direct" },
+  { source: "nssf-pac", target: "rep-hudson", label: "Donated $28K", linkType: "donation_to_member", amount: 28_000, year: 2023, confidence: "direct" },
+  { source: "rep-hudson", target: "gun-safety-bill", label: "Opposes", linkType: "lobbying_on_bill", confidence: "direct" },
+  { source: "gun-safety-bill", target: "firearms-industry", label: "Impacts", linkType: "committee_oversight_of_contract", confidence: "likely" },
+  { source: "smith-wesson", target: "atf", label: "Regulatory Oversight", linkType: "committee_oversight_of_contract", confidence: "direct" },
+  { source: "smith-wesson", target: "firearms-industry", label: "Operates in", linkType: "trade_association_lobbying", confidence: "direct" },
+
+  // ── Pearson links (Education) ──
+  { source: "pearson", target: "pearson-pac", label: "Funds", linkType: "donation_to_member", amount: 320_000, confidence: "direct" },
+  { source: "pearson-pac", target: "rep-scott", label: "Donated $12K", linkType: "donation_to_member", amount: 12_000, year: 2024, confidence: "direct" },
+  { source: "pearson-pac", target: "sen-murray", label: "Donated $15K", linkType: "donation_to_member", amount: 15_000, year: 2023, confidence: "direct" },
+  { source: "rep-scott", target: "help-committee", label: "Serves on", linkType: "member_on_committee", confidence: "direct" },
+  { source: "help-committee", target: "education-bill", label: "Oversees", linkType: "lobbying_on_bill", confidence: "direct" },
+  { source: "education-bill", target: "education-industry", label: "Impacts", linkType: "committee_oversight_of_contract", confidence: "likely" },
+  { source: "pearson", target: "dept-education", label: "Testing Contracts", linkType: "committee_oversight_of_contract", amount: 15_000_000, confidence: "direct" },
+  { source: "pearson", target: "education-industry", label: "Operates in", linkType: "trade_association_lobbying", confidence: "direct" },
+
+  // ── Blackstone links (Housing, Financial Services) ──
+  { source: "blackstone", target: "blackstone-pac", label: "Funds", linkType: "donation_to_member", amount: 1_100_000, confidence: "direct" },
+  { source: "blackstone-pac", target: "sen-scott-tim", label: "Donated $48K", linkType: "donation_to_member", amount: 48_000, year: 2024, confidence: "direct" },
+  { source: "blackstone-pac", target: "sen-warren", label: "Donated $0 (Opposes)", linkType: "donation_to_member", amount: 0, year: 2024, confidence: "direct" },
+  { source: "sen-scott-tim", target: "banking-committee", label: "Serves on", linkType: "member_on_committee", confidence: "direct" },
+  { source: "sen-warren", target: "banking-committee", label: "Serves on", linkType: "member_on_committee", confidence: "direct" },
+  { source: "banking-committee", target: "housing-bill", label: "Oversees", linkType: "lobbying_on_bill", confidence: "direct" },
+  { source: "banking-committee", target: "carried-interest-bill", label: "Oversees", linkType: "lobbying_on_bill", confidence: "direct" },
+  { source: "housing-bill", target: "housing-industry", label: "Impacts", linkType: "committee_oversight_of_contract", confidence: "likely" },
+  { source: "carried-interest-bill", target: "financial-industry", label: "Impacts", linkType: "committee_oversight_of_contract", confidence: "likely" },
+  { source: "blackstone", target: "hud", label: "FHA-Backed Rentals", linkType: "committee_oversight_of_contract", amount: 45_000_000, confidence: "likely" },
+  { source: "blackstone", target: "housing-industry", label: "Operates in", linkType: "trade_association_lobbying", confidence: "direct" },
+  { source: "blackstone", target: "financial-industry", label: "Operates in", linkType: "trade_association_lobbying", confidence: "direct" },
 ];
 
 // ─── Main Component ───
