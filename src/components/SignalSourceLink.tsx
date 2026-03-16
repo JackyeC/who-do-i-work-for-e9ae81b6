@@ -39,6 +39,9 @@ const SOURCE_URLS: Record<string, string> = {
   "CourtListener": "https://www.courtlistener.com/",
   "NAACP": "https://naacp.org/",
   "ACLU": "https://www.aclu.org/",
+  "DOL EBSA": "https://www.dol.gov/agencies/ebsa",
+  "CMS": "https://data.cms.gov/",
+  "FAIR Health": "https://www.fairhealth.org/",
 };
 
 export function getSourceUrl(source: string): string | undefined {

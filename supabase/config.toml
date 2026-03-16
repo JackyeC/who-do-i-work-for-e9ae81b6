@@ -86,3 +86,9 @@ verify_jwt = false
 
 [functions.seed-civil-rights-companies]
 verify_jwt = false
+
+[functions.sync-healthcare-signals]
+verify_jwt = false
+
+[functions.seed-healthcare-companies]
+verify_jwt = false

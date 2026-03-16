@@ -478,6 +478,17 @@ const SAMPLE_NODES: GraphNode[] = [
 
   // ── Chick-fil-A (Civil Rights — Controversial donations) ──
   { id: "chick-fil-a", label: "Chick-fil-A", group: "Company", val: 14, metadata: { industry: "Food & Beverage", summary: "Documented donations to organizations opposing LGBTQ rights. Changed foundation policy in 2019 after sustained advocacy pressure." } },
+
+  // ── Healthcare nodes ──
+  { id: "unitedhealth", label: "UnitedHealth Group", group: "Company", val: 18, metadata: { industry: "Health Insurance", summary: "Largest US health insurer. $8.2M lobbying on ACA/Medicare Advantage. $3.1M on mental health parity." } },
+  { id: "cvs-health", label: "CVS Health", group: "Company", val: 16, metadata: { industry: "Healthcare / Pharmacy", summary: "PBM/pharmacy giant. $6.7M healthcare lobbying on PBM transparency and drug pricing." } },
+  { id: "pfizer-hc", label: "Pfizer", group: "Company", val: 17, metadata: { industry: "Pharmaceuticals", summary: "$7.8M lobbying on IRA drug pricing, patent protections, and vaccine policy." } },
+  { id: "jnj-hc", label: "Johnson & Johnson", group: "Company", val: 16, metadata: { industry: "Pharmaceuticals", summary: "$5.4M lobbying on FDA approval processes, drug pricing negotiation under IRA." } },
+  { id: "dol-ebsa", label: "DOL EBSA (Employee Benefits)", group: "Agency", val: 14, issueCategories: ["Healthcare"] },
+  { id: "cms-agency", label: "CMS (Centers for Medicare & Medicaid)", group: "Agency", val: 15, issueCategories: ["Healthcare"] },
+  { id: "ira-drug-pricing", label: "Inflation Reduction Act — Drug Pricing", group: "Legislation", val: 14, issueCategories: ["Healthcare"], metadata: { status: "Enacted 2022", description: "Allows Medicare to negotiate prices for select high-cost drugs. Caps insulin at $35/mo for Medicare." } },
+  { id: "mhpaea", label: "Mental Health Parity Act (MHPAEA)", group: "Legislation", val: 13, issueCategories: ["Healthcare"], metadata: { status: "Enacted", description: "Requires insurers to cover mental health/substance abuse at parity with medical/surgical benefits." } },
+  { id: "healthcare-industry", label: "Healthcare Sector", group: "Industry", val: 15, issueCategories: ["Healthcare"] },
 ];
 
 const SAMPLE_LINKS: GraphLink[] = [
@@ -773,6 +784,21 @@ const SAMPLE_LINKS: GraphLink[] = [
 
   // ── EEOC / DOJ connections ──
   { source: "eeoc-agency", target: "doj-civil-rights", label: "Enforcement partnership", linkType: "committee_oversight_of_contract", confidence: "direct" },
+
+  // ── Healthcare links ──
+  { source: "unitedhealth", target: "ira-drug-pricing", label: "$8.2M lobbying", linkType: "lobbying_on_bill", confidence: "direct" },
+  { source: "unitedhealth", target: "mhpaea", label: "$3.1M lobbying on parity", linkType: "lobbying_on_bill", confidence: "direct" },
+  { source: "unitedhealth", target: "cms-agency", label: "Medicare Advantage contracts", linkType: "committee_oversight_of_contract", confidence: "direct" },
+  { source: "unitedhealth", target: "healthcare-industry", label: "Largest US insurer", linkType: "trade_association_lobbying", confidence: "direct" },
+  { source: "cvs-health", target: "ira-drug-pricing", label: "$6.7M PBM/drug pricing lobbying", linkType: "lobbying_on_bill", confidence: "direct" },
+  { source: "cvs-health", target: "healthcare-industry", label: "PBM/pharmacy operations", linkType: "trade_association_lobbying", confidence: "direct" },
+  { source: "pfizer-hc", target: "ira-drug-pricing", label: "$7.8M lobbying on drug pricing", linkType: "lobbying_on_bill", confidence: "direct" },
+  { source: "pfizer-hc", target: "healthcare-industry", label: "Major pharmaceutical", linkType: "trade_association_lobbying", confidence: "direct" },
+  { source: "jnj-hc", target: "ira-drug-pricing", label: "$5.4M lobbying", linkType: "lobbying_on_bill", confidence: "direct" },
+  { source: "jnj-hc", target: "healthcare-industry", label: "Pharma/med devices", linkType: "trade_association_lobbying", confidence: "direct" },
+  { source: "dol-ebsa", target: "mhpaea", label: "Enforces parity compliance", linkType: "committee_oversight_of_contract", confidence: "direct" },
+  { source: "cms-agency", target: "ira-drug-pricing", label: "Implements drug negotiations", linkType: "committee_oversight_of_contract", confidence: "direct" },
+  { source: "ira-drug-pricing", target: "healthcare-industry", label: "Impacts pricing", linkType: "committee_oversight_of_contract", confidence: "direct" },
 ];
 
 // ─── Main Component ───

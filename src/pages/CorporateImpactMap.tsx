@@ -7,7 +7,7 @@ import { Input } from "@/components/ui/input";
 import {
   Search, Building2, Shield, Factory, Scale, Leaf, Crosshair,
   Users, AlertTriangle, TrendingUp, ExternalLink, ChevronRight,
-  BarChart3, Globe, FileText, ArrowRight, Loader2,
+  BarChart3, Globe, FileText, ArrowRight, Loader2, Heart,
 } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { cn } from "@/lib/utils";
@@ -44,12 +44,14 @@ const IMPACT_CATEGORIES = [
   { key: "climate", label: "Climate", icon: Leaf, color: "text-green-400", bgColor: "bg-green-500/10", borderColor: "border-green-500/20", table: "climate_signals", filter: null },
   { key: "gun_policy", label: "Gun Policy", icon: Crosshair, color: "text-red-400", bgColor: "bg-red-500/10", borderColor: "border-red-500/20", table: "gun_policy_signals", filter: null },
   { key: "civil_rights", label: "Civil Rights", icon: Scale, color: "text-purple-400", bgColor: "bg-purple-500/10", borderColor: "border-purple-500/20", table: "civil_rights_signals", filter: null },
+  { key: "healthcare", label: "Healthcare", icon: Heart, color: "text-pink-400", bgColor: "bg-pink-500/10", borderColor: "border-pink-500/20", table: "healthcare_signals", filter: null },
 ];
 
 const FEATURED_COMPANIES = [
   "Amazon", "Tesla", "Starbucks", "ExxonMobil", "Walmart",
   "Google", "Microsoft", "Goldman Sachs", "Tyson Foods",
   "Smith & Wesson Brands", "Dick's Sporting Goods", "Nike",
+  "UnitedHealth Group", "CVS Health", "Pfizer", "Apple",
 ];
 
 // ─── Main Component ───
@@ -118,6 +120,13 @@ export default function CorporateImpactMap() {
           .eq("company_id", company.id)
           .limit(20) as { data: any[] | null };
 
+        // Fetch healthcare_signals
+        const { data: healthcareSignals } = await supabase
+          .from("healthcare_signals")
+          .select("signal_type, description, source_name, confidence")
+          .eq("company_id", company.id)
+          .limit(20) as { data: any[] | null };
+
         // Build summaries per category
         for (const cat of IMPACT_CATEGORIES) {
           let count = 0;
@@ -146,6 +155,10 @@ export default function CorporateImpactMap() {
             count = (civilRightsSignals || []).length;
             topSignals = (civilRightsSignals || []).slice(0, 3).map(s => ({ type: s.signal_type, description: s.description, source: s.source_name, confidence: s.confidence }));
             (civilRightsSignals || []).forEach(s => sources.add(s.source_name || ""));
+          } else if (cat.key === "healthcare") {
+            count = (healthcareSignals || []).length;
+            topSignals = (healthcareSignals || []).slice(0, 3).map(s => ({ type: s.signal_type, description: s.description, source: s.source_name, confidence: s.confidence }));
+            (healthcareSignals || []).forEach(s => sources.add(s.source_name || ""));
           }
 
           if (count > 0) {
