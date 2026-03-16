@@ -101,6 +101,9 @@ import { AlignmentSignalsPanel } from "@/components/AlignmentSignalsPanel";
 import { EntityResolutionReport } from "@/components/EntityResolutionReport";
 import { EvidenceQualityBadge } from "@/components/EvidenceQualityBadge";
 import { computeEvidenceQuality, sourceTypeToTier, type SourceSignal } from "@/lib/evidenceQualityScore";
+import { LayoffProbabilityCard } from "@/components/LayoffProbabilityCard";
+import { EthicsRiskCard } from "@/components/EthicsRiskCard";
+import { ExecutivePowerNetworkCard } from "@/components/ExecutivePowerNetworkCard";
 
 /* ─── Status labels ─── */
 const STATUS_LABELS: Record<string, { label: string; color: string }> = {
@@ -947,7 +950,7 @@ export default function CompanyProfile() {
               />
               <IntelStat
                 label="Layoff Risk"
-                value="Review below"
+                value="See Workforce Stability"
                 status="unknown"
               />
               <IntelStat
@@ -979,6 +982,9 @@ export default function CompanyProfile() {
                   onExecutiveClick={handleExecutiveClick}
                 />
               </div>
+              <div className="mt-4">
+                <ExecutivePowerNetworkCard companyId={dbCompanyId} companyName={name} />
+              </div>
             </section>
           )}
 
@@ -1005,6 +1011,7 @@ export default function CompanyProfile() {
                         <InsiderTradingCard companyId={dbCompanyId} companyName={name} ticker={dbCompany?.ticker} cik={dbCompany?.sec_cik} />
                       </div>
                     )}
+                    <EthicsRiskCard companyId={dbCompanyId} companyName={name} hasRevolvingDoor={(dbRevolvingDoor?.length || 0) > 0} hasDarkMoney={(dbDarkMoney?.length || 0) > 0} />
                   </div>
                 </section>
               ),
@@ -1057,6 +1064,7 @@ export default function CompanyProfile() {
                 <section id="section-stability" className="mb-10 scroll-mt-28">
                   <SectionHeader icon={AlertTriangle} title="Workforce Stability" subtitle="Layoffs, WARN notices, and workforce reduction signals" />
                   <div className="space-y-4">
+                    <LayoffProbabilityCard companyId={dbCompanyId} companyName={name} isPubliclyTraded={!!dbCompany?.is_publicly_traded} revenue={(dbCompany as any)?.revenue} />
                     <WarnTrackerCard companyName={name} dbCompanyId={dbCompanyId} />
                     {dbCompanyId && <CourtRecordsCard companyId={dbCompanyId} companyName={name} />}
                     {dbCompanyId && <NewsIntelligenceCard companyId={dbCompanyId} companyName={name} />}
