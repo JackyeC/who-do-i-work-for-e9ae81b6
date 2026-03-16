@@ -293,6 +293,9 @@ const Index = forwardRef<HTMLDivElement>((_, ref) => {
                 <p className="text-base text-muted-foreground leading-relaxed">
                   I don't tell you where to work; I give you the truth so you can decide. 20+ years in the rooms where it happens — now that intelligence is yours.
                 </p>
+                <p className="font-mono text-sm italic text-primary mt-6 tracking-wide">
+                  Unapologetically Transparent. — Jackye Clayton
+                </p>
               </div>
             </div>
           </section>
