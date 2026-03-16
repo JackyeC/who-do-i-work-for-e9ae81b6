@@ -41,8 +41,21 @@ const BCORP_TARGETS = [
   { name: 'Cabot Creamery', slug: 'cabot-creamery', industry: 'Food & Beverage', state: 'VT', careersUrl: 'https://www.cabotcheese.coop/careers' },
 ];
 
-// ─── Tier 2: Top political donors — "Watchdog Warning" companies ───
-// These will be pulled from DB by highest total_pac_spending + lobbying_spend
+// ─── Tier 2: Power & Influence Top 10 — "Watchdog Warning" companies ───
+const POWER_INFLUENCE_TARGETS = [
+  { name: 'Amazon', slug: 'amazon', industry: 'Technology / E-Commerce', state: 'WA', careersUrl: 'https://www.amazon.jobs/en/search', lobbying: 21_400_000, pacSpending: 1_600_000 },
+  { name: 'Alphabet', slug: 'alphabet', industry: 'Technology / Search & AI', state: 'CA', careersUrl: 'https://www.google.com/about/careers/applications/', lobbying: 13_400_000, pacSpending: 1_900_000 },
+  { name: 'Meta', slug: 'meta', industry: 'Technology / Social Media', state: 'CA', careersUrl: 'https://www.metacareers.com/jobs/', lobbying: 19_700_000, pacSpending: 1_300_000 },
+  { name: 'Microsoft', slug: 'microsoft', industry: 'Technology / Software', state: 'WA', careersUrl: 'https://careers.microsoft.com/v2/global/en/search', lobbying: 10_200_000, pacSpending: 2_400_000 },
+  { name: 'Comcast', slug: 'comcast', industry: 'Telecommunications / Media', state: 'PA', careersUrl: 'https://jobs.comcast.com/search-jobs', lobbying: 14_300_000, pacSpending: 3_100_000 },
+  { name: 'Pfizer', slug: 'pfizer', industry: 'Pharmaceuticals', state: 'NY', careersUrl: 'https://www.pfizer.com/about/careers', lobbying: 11_600_000, pacSpending: 1_700_000 },
+  { name: 'Lockheed Martin', slug: 'lockheed-martin', industry: 'Defense / Aerospace', state: 'MD', careersUrl: 'https://www.lockheedmartinjobs.com/search-jobs', lobbying: 12_500_000, pacSpending: 3_800_000 },
+  { name: 'Walmart', slug: 'walmart', industry: 'Retail / General Merchandise', state: 'AR', careersUrl: 'https://careers.walmart.com/', lobbying: 8_600_000, pacSpending: 1_500_000 },
+  { name: 'JPMorgan Chase', slug: 'jpmorgan-chase', industry: 'Financial Services / Banking', state: 'NY', careersUrl: 'https://careers.jpmorgan.com/us/en/search-jobs', lobbying: 10_800_000, pacSpending: 2_200_000 },
+  { name: 'FedEx', slug: 'fedex', industry: 'Logistics / Transportation', state: 'TN', careersUrl: 'https://careers.fedex.com/fedex/', lobbying: 9_200_000, pacSpending: 2_800_000 },
+];
+
+// Tier 2 also pulls from DB by highest total_pac_spending + lobbying_spend
 
 const THROTTLE_MS = 2000;
 
