@@ -147,7 +147,7 @@ const Index = forwardRef<HTMLDivElement>((_, ref) => {
       {/* ── Intelligence Dashboard — NEWS TERMINAL FEEL ── */}
       <Suspense fallback={<div className="h-96 animate-pulse bg-muted/10" />}>
         <IntelligenceDashboard />
-
+      </Suspense>
       {/* ── How It Works — 1-2-3 Flow ── */}
       <section className="px-6 lg:px-16 py-24 lg:py-32 max-w-[960px] mx-auto w-full">
         <div className="font-mono text-sm tracking-[0.2em] uppercase text-primary mb-3">How It Works</div>
