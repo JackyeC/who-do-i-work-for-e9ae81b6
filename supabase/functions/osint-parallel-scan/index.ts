@@ -96,6 +96,10 @@ Deno.serve(async (req) => {
       'sync-federal-contracts': 'government_contracts',
       'sync-insider-trades': 'insider_trading',
       'sync-sec-edgar': 'sec_filings',
+      'sync-civil-rights-signals': 'civil_rights',
+      'sync-labor-rights': 'labor_rights',
+      'sync-workplace-enforcement': 'workplace_enforcement',
+      'enrich-private-company': 'private_enrichment',
     };
 
     const freshSources: string[] = [];
