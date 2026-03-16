@@ -107,8 +107,11 @@ export function NewsIntelligenceCard({ companyId, companyName }: Props) {
           ))}
         </div>
 
+        {/* Coverage Balance */}
+        <CoverageBalanceChart sourceUrls={signals.map((s: any) => s.source_url).filter(Boolean)} />
+
         <p className="text-[10px] text-muted-foreground text-center">
-          Source: GDELT Global News Database • Sentiment analysis via GDELT tone scoring
+          Source: GDELT Global News Database • Sentiment analysis via GDELT tone scoring • Bias ratings via AllSides / Ad Fontes Media
         </p>
       </CardContent>
     </Card>
