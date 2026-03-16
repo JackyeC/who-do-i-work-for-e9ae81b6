@@ -322,6 +322,25 @@ const SAMPLE_NODES: GraphNode[] = [
   { id: "apple-retail", label: "Apple (Retail)", group: "Company", val: 17, metadata: { industry: "Technology / Retail", summary: "Facing retail union organizing at Apple Stores nationwide. IAM won first Apple Store union in Towson, MD. CWA organizing in multiple states." } },
   { id: "apple-pac", label: "Apple PAC", group: "PAC", val: 12, amount: 420_000 },
 
+  // ── Google (Immigration — H-1B) ──
+  { id: "google", label: "Google (Alphabet)", group: "Company", val: 20, metadata: { industry: "Technology", summary: "Top H-1B sponsor with 8,000+ Labor Condition Applications annually. Co-founded FWD.us immigration advocacy coalition. Active lobbying on high-skilled visa reform." } },
+  { id: "google-pac", label: "Google NetPAC", group: "PAC", val: 14, amount: 1_400_000 },
+  { id: "sen-padilla", label: "Sen. Alex Padilla (D-CA)", group: "Politician", val: 10, party: "Democrat", state: "CA", issueCategories: ["Immigration", "Technology"] },
+  { id: "immigration-subcommittee", label: "Senate Judiciary Immigration Subcommittee", group: "Committee", val: 14, issueCategories: ["Immigration"] },
+  { id: "eagle-act", label: "EAGLE Act (H.R.3648)", group: "Legislation", val: 12, issueCategories: ["Immigration"], metadata: { status: "Passed House", description: "Equal Access to Green cards for Legal Employment Act — eliminates per-country green card caps." } },
+  { id: "fwd-us", label: "FWD.us (Tech Immigration Coalition)", group: "Industry", val: 14, issueCategories: ["Immigration", "Technology"], metadata: { summary: "Tech industry advocacy group co-founded by Mark Zuckerberg pushing for immigration reform." } },
+  { id: "dol-flc", label: "DOL Foreign Labor Certification", group: "Agency", val: 15, issueCategories: ["Immigration"] },
+
+  // ── Infosys (Immigration — Largest H-1B sponsor) ──
+  { id: "infosys", label: "Infosys", group: "Company", val: 16, metadata: { industry: "IT Outsourcing", summary: "Largest H-1B sponsor by volume with 30,000+ annual LCAs. Paid $34M to settle visa fraud allegations in 2013." } },
+
+  // ── Marriott (Immigration — H-2B hospitality) ──
+  { id: "marriott", label: "Marriott International", group: "Company", val: 15, metadata: { industry: "Hospitality", summary: "Major H-2B hospitality visa sponsor for seasonal hotel workers across the US." } },
+  { id: "marriott-pac", label: "Marriott PAC", group: "PAC", val: 12, amount: 680_000 },
+  { id: "h2b-returning-bill", label: "H-2B Returning Worker Exception Act", group: "Legislation", val: 10, issueCategories: ["Immigration"], metadata: { status: "In Committee", description: "Exempts returning H-2B workers from the annual cap, expanding seasonal worker visas." } },
+  { id: "hospitality-industry", label: "Hospitality Sector", group: "Industry", val: 13, issueCategories: ["Immigration"] },
+  { id: "uscis", label: "USCIS", group: "Agency", val: 15, issueCategories: ["Immigration"] },
+
   // ── ExxonMobil (Climate, Energy) ──
   { id: "exxon", label: "ExxonMobil", group: "Company", val: 20, metadata: { industry: "Oil & Gas / Energy", summary: "One of the largest fossil fuel companies. Decades-long lobbying against climate regulation while publicly pledging carbon reduction." } },
   { id: "exxon-pac", label: "ExxonMobil PAC", group: "PAC", val: 15, amount: 1_650_000, metadata: { summary: "Funds candidates across parties, with concentration on energy and environment committee members." } },

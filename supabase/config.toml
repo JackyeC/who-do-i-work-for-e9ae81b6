@@ -62,3 +62,9 @@ verify_jwt = false
 
 [functions.seed-labor-companies]
 verify_jwt = false
+
+[functions.sync-immigration-signals]
+verify_jwt = false
+
+[functions.seed-immigration-companies]
+verify_jwt = false
