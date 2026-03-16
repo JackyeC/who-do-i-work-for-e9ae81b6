@@ -168,11 +168,13 @@ export default function OfferReview() {
                 )}
 
                 {activeReview && (
-                  <OfferReviewResults
-                    review={activeReview}
-                    onDelete={() => handleDelete(activeReview.id)}
-                    onRerun={() => handleRerun(activeReview.id)}
-                  />
+                  <ErrorBoundary>
+                    <OfferReviewResults
+                      review={activeReview}
+                      onDelete={() => handleDelete(activeReview.id)}
+                      onRerun={() => handleRerun(activeReview.id)}
+                    />
+                  </ErrorBoundary>
                 )}
               </div>
             )}
