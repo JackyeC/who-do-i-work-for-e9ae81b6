@@ -144,10 +144,10 @@ export function CompanyRiskRadar({ companyId, companyName, slug, lobbyingSpend, 
     },
     {
       key: "compensation",
-      label: "Below-Market Comp",
+      label: "Comp Transparency",
       icon: AlertTriangle,
       severity: comp === 0 ? "watch" : "clear",
-      summary: comp === 0 ? "No compensation data disclosed — low transparency" : `${comp} salary data point${comp > 1 ? "s" : ""} on record`,
+      summary: comp === 0 ? "No compensation data publicly disclosed" : `${comp} salary data point${comp > 1 ? "s" : ""} on record`,
     },
     {
       key: "lobbying",
