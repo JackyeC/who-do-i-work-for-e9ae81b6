@@ -497,6 +497,7 @@ const SAMPLE_NODES: GraphNode[] = [
   { id: "t-mobile-cp", label: "T-Mobile", group: "Company", val: 15, metadata: { industry: "Telecommunications", summary: "FCC $31.5M data breach settlement. 76.6M customer records exposed." } },
   { id: "capital-one-cp", label: "Capital One", group: "Company", val: 15, metadata: { industry: "Banking", summary: "106M credit applicant records exposed in 2019 data breach." } },
   { id: "cfpb-agency", label: "CFPB (Consumer Financial Protection Bureau)", group: "Agency", val: 16, issueCategories: ["Consumer Protection"] },
+  { id: "ftc-agency", label: "FTC (Federal Trade Commission)", group: "Agency", val: 16, issueCategories: ["Consumer Protection"] },
   { id: "cpsc-agency", label: "CPSC (Consumer Product Safety Commission)", group: "Agency", val: 14, issueCategories: ["Consumer Protection"] },
   { id: "fda-agency", label: "FDA (Food & Drug Administration)", group: "Agency", val: 15, issueCategories: ["Consumer Protection", "Healthcare"] },
   { id: "consumer-privacy-act", label: "American Data Privacy & Protection Act", group: "Legislation", val: 13, issueCategories: ["Consumer Protection"], metadata: { status: "Proposed", description: "Federal consumer data privacy bill. Would establish national data privacy standards and FTC enforcement." } },
