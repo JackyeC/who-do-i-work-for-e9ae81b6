@@ -22,36 +22,7 @@ interface PanelConfig {
   queryKey: string;
   queryFn: () => Promise<PanelCompany[]>;
   metric: (c: PanelCompany) => string;
-  metricLabel: string;
 }
-
-const fetchPanel = async (
-  filter: Record<string, any>,
-  orderBy: string,
-  ascending: boolean = false,
-  limit: number = 10,
-  containsTag?: string
-) => {
-  let query = supabase
-    .from("companies")
-    .select("id, name, slug, civic_footprint_score, career_intelligence_score, lobbying_spend, government_contracts, is_startup, category_tags, industry")
-    .eq("record_status", "published")
-    .limit(limit);
-
-  if (containsTag) {
-    query = query.contains("category_tags", [containsTag]);
-  }
-
-  Object.entries(filter).forEach(([k, v]) => {
-    query = query.eq(k, v);
-  });
-
-  query = query.order(orderBy, { ascending });
-
-  const { data, error } = await query;
-  if (error) throw error;
-  return (data || []) as PanelCompany[];
-};
 
 const fmt = (n: number | null) => {
   if (!n) return "—";
@@ -66,57 +37,111 @@ const PANELS: PanelConfig[] = [
     title: "Trending Companies",
     icon: TrendingUp,
     queryKey: "panel-trending",
-    queryFn: () => fetchPanel({}, "civic_footprint_score", false, 10),
+    queryFn: async () => {
+      const { data } = await supabase
+        .from("companies")
+        .select("id, name, slug, civic_footprint_score, career_intelligence_score, lobbying_spend, government_contracts, is_startup, category_tags, industry")
+        .eq("record_status", "published")
+        .order("civic_footprint_score", { ascending: false })
+        .limit(10);
+      return (data as any[] || []) as PanelCompany[];
+    },
     metric: (c) => `${c.civic_footprint_score}/10`,
-    metricLabel: "CFS",
   },
   {
     title: "Fastest Growing Startups",
     icon: Rocket,
     queryKey: "panel-startups",
-    queryFn: () => fetchPanel({ is_startup: true }, "civic_footprint_score", false, 10),
+    queryFn: async () => {
+      const { data } = await supabase
+        .from("companies")
+        .select("id, name, slug, civic_footprint_score, career_intelligence_score, lobbying_spend, government_contracts, is_startup, category_tags, industry")
+        .eq("record_status", "published")
+        .eq("is_startup", true)
+        .order("civic_footprint_score", { ascending: false })
+        .limit(10);
+      return (data as any[] || []) as PanelCompany[];
+    },
     metric: (c) => c.industry,
-    metricLabel: "Industry",
   },
   {
     title: "HR Tech Index",
     icon: Cpu,
     queryKey: "panel-hrtech",
-    queryFn: () => fetchPanel({}, "civic_footprint_score", false, 10, "HR Tech"),
+    queryFn: async () => {
+      const { data } = await supabase
+        .from("companies")
+        .select("id, name, slug, civic_footprint_score, career_intelligence_score, lobbying_spend, government_contracts, is_startup, category_tags, industry")
+        .eq("record_status", "published")
+        .contains("category_tags", ["HR Tech"])
+        .order("civic_footprint_score", { ascending: false })
+        .limit(10);
+      return (data as any[] || []) as PanelCompany[];
+    },
     metric: (c) => `${c.career_intelligence_score ?? "—"}/10`,
-    metricLabel: "CIS",
   },
   {
     title: "Layoff Watch",
     icon: AlertTriangle,
     queryKey: "panel-layoff",
-    queryFn: () => fetchPanel({}, "civic_footprint_score", true, 10),
+    queryFn: async () => {
+      const { data } = await supabase
+        .from("companies")
+        .select("id, name, slug, civic_footprint_score, career_intelligence_score, lobbying_spend, government_contracts, is_startup, category_tags, industry")
+        .eq("record_status", "published")
+        .order("civic_footprint_score", { ascending: true })
+        .limit(10);
+      return (data as any[] || []) as PanelCompany[];
+    },
     metric: (c) => `${c.civic_footprint_score}/10`,
-    metricLabel: "Risk",
   },
   {
     title: "High Lobbying Influence",
     icon: Landmark,
     queryKey: "panel-lobbying",
-    queryFn: () => fetchPanel({}, "lobbying_spend", false, 10),
+    queryFn: async () => {
+      const { data } = await supabase
+        .from("companies")
+        .select("id, name, slug, civic_footprint_score, career_intelligence_score, lobbying_spend, government_contracts, is_startup, category_tags, industry")
+        .eq("record_status", "published")
+        .not("lobbying_spend", "is", null)
+        .order("lobbying_spend", { ascending: false })
+        .limit(10);
+      return (data as any[] || []) as PanelCompany[];
+    },
     metric: (c) => fmt(c.lobbying_spend),
-    metricLabel: "Lobbying",
   },
   {
     title: "Most Transparent Employers",
     icon: Eye,
     queryKey: "panel-transparent",
-    queryFn: () => fetchPanel({}, "career_intelligence_score", false, 10),
+    queryFn: async () => {
+      const { data } = await supabase
+        .from("companies")
+        .select("id, name, slug, civic_footprint_score, career_intelligence_score, lobbying_spend, government_contracts, is_startup, category_tags, industry")
+        .eq("record_status", "published")
+        .not("career_intelligence_score", "is", null)
+        .order("career_intelligence_score", { ascending: false })
+        .limit(10);
+      return (data as any[] || []) as PanelCompany[];
+    },
     metric: (c) => `${c.career_intelligence_score ?? "—"}/10`,
-    metricLabel: "CIS",
   },
   {
     title: "Government Contractors",
     icon: ShieldCheck,
     queryKey: "panel-govcon",
-    queryFn: () => fetchPanel({}, "government_contracts", false, 10, "Government Contractors"),
+    queryFn: async () => {
+      const { data } = await supabase
+        .from("companies")
+        .select("id, name, slug, civic_footprint_score, career_intelligence_score, lobbying_spend, government_contracts, is_startup, category_tags, industry")
+        .eq("record_status", "published")
+        .contains("category_tags", ["Government Contractors"])
+        .order("government_contracts", { ascending: false })
+        .limit(10);
+      return (data as any[] || []) as PanelCompany[];
+    },
     metric: (c) => fmt(c.government_contracts),
-    metricLabel: "Contracts",
   },
 ];
 

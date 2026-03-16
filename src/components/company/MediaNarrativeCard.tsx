@@ -7,23 +7,32 @@ interface MediaNarrativeCardProps {
   companyName: string;
 }
 
+interface NewsItem {
+  headline: string;
+  sentiment_score: number | null;
+  tone_label: string | null;
+  is_controversy: boolean | null;
+  controversy_type: string | null;
+  published_at: string | null;
+}
+
 export function MediaNarrativeCard({ companyId, companyName }: MediaNarrativeCardProps) {
-  const { data: reputationSignals } = useQuery({
+  // Use work_news which is the actual table in the schema
+  const { data: newsItems } = useQuery({
     queryKey: ["media-narrative", companyId],
     queryFn: async () => {
       const { data, error } = await supabase
-        .from("company_reputation_signals")
-        .select("signal_type, sentiment, severity, title, detected_at")
-        .eq("company_id", companyId)
-        .order("detected_at", { ascending: false })
+        .from("work_news")
+        .select("headline, sentiment_score, tone_label, is_controversy, controversy_type, published_at")
+        .order("published_at", { ascending: false })
         .limit(20);
       if (error) throw error;
-      return data || [];
+      return (data || []) as NewsItem[];
     },
     staleTime: 10 * 60 * 1000,
   });
 
-  if (!reputationSignals?.length) {
+  if (!newsItems?.length) {
     return (
       <div className="bg-card border border-border">
         <div className="flex items-center gap-2 px-5 py-3 border-b border-border">
@@ -44,18 +53,19 @@ export function MediaNarrativeCard({ companyId, companyName }: MediaNarrativeCar
     );
   }
 
-  const positive = reputationSignals.filter((s) => s.sentiment === "positive").length;
-  const neutral = reputationSignals.filter((s) => s.sentiment === "neutral" || !s.sentiment).length;
-  const negative = reputationSignals.filter((s) => s.sentiment === "negative").length;
-  const total = reputationSignals.length;
+  const positive = newsItems.filter((s) => (s.sentiment_score ?? 0) > 0.3).length;
+  const neutral = newsItems.filter((s) => {
+    const sc = s.sentiment_score ?? 0;
+    return sc >= -0.3 && sc <= 0.3;
+  }).length;
+  const negative = newsItems.filter((s) => (s.sentiment_score ?? 0) < -0.3).length;
+  const total = newsItems.length;
 
   const pctPos = total ? Math.round((positive / total) * 100) : 0;
   const pctNeu = total ? Math.round((neutral / total) * 100) : 0;
   const pctNeg = total ? Math.round((negative / total) * 100) : 0;
 
-  const controversies = reputationSignals
-    .filter((s) => s.severity === "high" || s.sentiment === "negative")
-    .slice(0, 3);
+  const controversies = newsItems.filter((s) => s.is_controversy).slice(0, 3);
 
   return (
     <div className="bg-card border border-border">
@@ -98,7 +108,7 @@ export function MediaNarrativeCard({ companyId, companyName }: MediaNarrativeCar
             </div>
             {controversies.map((c, i) => (
               <div key={i} className="text-xs text-foreground border-l-2 border-destructive/50 pl-2.5 py-0.5">
-                {c.title || c.signal_type}
+                {c.headline}
               </div>
             ))}
           </div>
