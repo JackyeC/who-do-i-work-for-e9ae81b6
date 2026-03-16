@@ -460,6 +460,60 @@ const SAMPLE_LINKS: GraphLink[] = [
   { source: "blackstone", target: "hud", label: "FHA-Backed Rentals", linkType: "committee_oversight_of_contract", amount: 45_000_000, confidence: "likely" },
   { source: "blackstone", target: "housing-industry", label: "Operates in", linkType: "trade_association_lobbying", confidence: "direct" },
   { source: "blackstone", target: "financial-industry", label: "Operates in", linkType: "trade_association_lobbying", confidence: "direct" },
+
+  // ── Koch Industries links (Dark Money) ──
+  { source: "koch", target: "koch-pac", label: "Funds (visible)", linkType: "donation_to_member", amount: 2_100_000, confidence: "direct" },
+  { source: "koch", target: "americans-prosperity", label: "Funds via dark money", linkType: "dark_money_channel", amount: 65_000_000, confidence: "likely" },
+  { source: "koch", target: "freedom-partners", label: "Koch donor network", linkType: "dark_money_channel", amount: 42_000_000, confidence: "likely" },
+  { source: "americans-prosperity", target: "sen-cruz", label: "Election spending (undisclosed)", linkType: "dark_money_channel", amount: 8_500_000, confidence: "likely" },
+  { source: "freedom-partners", target: "americans-prosperity", label: "Grants to AFP", linkType: "dark_money_channel", amount: 32_000_000, confidence: "likely" },
+  { source: "sen-cruz", target: "epw-committee", label: "Serves on", linkType: "member_on_committee", confidence: "direct" },
+  { source: "epw-committee", target: "climate-deregulation-bill", label: "Oversees", linkType: "lobbying_on_bill", confidence: "direct" },
+  { source: "koch", target: "epa", label: "Lobbied against EPA rules", linkType: "lobbying_on_bill", amount: 12_000_000, confidence: "direct" },
+  { source: "koch", target: "energy-industry", label: "Operates in", linkType: "trade_association_lobbying", confidence: "direct" },
+
+  // ── Raytheon/RTX links (Revolving Door) ──
+  { source: "raytheon", target: "raytheon-pac", label: "Funds", linkType: "donation_to_member", amount: 2_400_000, confidence: "direct" },
+  { source: "raytheon", target: "lloyd-austin-node", label: "Board member → Secretary of Defense", linkType: "revolving_door", confidence: "direct" },
+  { source: "raytheon", target: "mark-esper-node", label: "VP Gov Relations → Secretary of Defense", linkType: "revolving_door", confidence: "direct" },
+  { source: "raytheon-pac", target: "sen-reed", label: "Donated $55K", linkType: "donation_to_member", amount: 55_000, year: 2024, confidence: "direct" },
+  { source: "raytheon-pac", target: "sen-wicker", label: "Donated $48K", linkType: "donation_to_member", amount: 48_000, year: 2024, confidence: "direct" },
+  { source: "sen-reed", target: "armed-services", label: "Chairs", linkType: "member_on_committee", confidence: "direct" },
+  { source: "sen-wicker", target: "armed-services", label: "Ranking Member", linkType: "member_on_committee", confidence: "direct" },
+  { source: "armed-services", target: "ndaa-bill", label: "Authors annually", linkType: "lobbying_on_bill", confidence: "direct" },
+  { source: "lloyd-austin-node", target: "dod", label: "Leads as SecDef", linkType: "revolving_door", confidence: "direct" },
+  { source: "mark-esper-node", target: "dod", label: "Led as SecDef", linkType: "revolving_door", confidence: "direct" },
+  { source: "raytheon", target: "dod", label: "Weapons contracts", linkType: "committee_oversight_of_contract", amount: 28_000_000_000, confidence: "direct" },
+  { source: "raytheon", target: "defense-industry", label: "Operates in", linkType: "trade_association_lobbying", confidence: "direct" },
+
+  // ── Comcast links (Lobbying) ──
+  { source: "comcast", target: "comcast-pac", label: "Funds", linkType: "donation_to_member", amount: 1_800_000, confidence: "direct" },
+  { source: "comcast", target: "fcc", label: "Lobbied $14.4M/yr on broadband", linkType: "lobbying_on_bill", amount: 14_400_000, confidence: "direct" },
+  { source: "comcast", target: "commerce-committee", label: "Lobbied on media consolidation", linkType: "lobbying_on_bill", amount: 5_200_000, confidence: "direct" },
+  { source: "commerce-committee", target: "net-neutrality-bill", label: "Oversees", linkType: "lobbying_on_bill", confidence: "direct" },
+  { source: "comcast", target: "telecom-industry", label: "Operates in", linkType: "trade_association_lobbying", confidence: "direct" },
+  { source: "comcast-pac", target: "sen-cantwell", label: "Donated $22K", linkType: "donation_to_member", amount: 22_000, year: 2024, confidence: "direct" },
+
+  // ── Goldman Sachs links (Revolving Door) ──
+  { source: "goldman", target: "goldman-pac", label: "Funds", linkType: "donation_to_member", amount: 1_900_000, confidence: "direct" },
+  { source: "goldman", target: "hank-paulson-node", label: "CEO → Treasury Secretary", linkType: "revolving_door", confidence: "direct" },
+  { source: "goldman", target: "gary-cohn-node", label: "President → NEC Director", linkType: "revolving_door", confidence: "direct" },
+  { source: "hank-paulson-node", target: "treasury", label: "Led Treasury during 2008 bailout", linkType: "revolving_door", confidence: "direct" },
+  { source: "gary-cohn-node", target: "treasury", label: "Shaped tax reform policy", linkType: "revolving_door", confidence: "direct" },
+  { source: "goldman", target: "sec", label: "Lobbied on derivatives rules", linkType: "lobbying_on_bill", amount: 4_800_000, confidence: "direct" },
+  { source: "goldman-pac", target: "sen-scott-tim", label: "Donated $35K", linkType: "donation_to_member", amount: 35_000, year: 2024, confidence: "direct" },
+  { source: "goldman", target: "financial-industry", label: "Operates in", linkType: "trade_association_lobbying", confidence: "direct" },
+  { source: "banking-committee", target: "dodd-frank-bill", label: "Oversees", linkType: "lobbying_on_bill", confidence: "direct" },
+
+  // ── Purdue Pharma links (Dark Money) ──
+  { source: "purdue", target: "sackler-foundation", label: "Sackler family funding", linkType: "dark_money_channel", amount: 18_000_000, confidence: "likely" },
+  { source: "purdue", target: "pain-care-forum", label: "Industry coalition funding", linkType: "dark_money_channel", amount: 740_000_000, confidence: "likely" },
+  { source: "pain-care-forum", target: "fda", label: "Lobbied against opioid restrictions", linkType: "lobbying_on_bill", amount: 62_000_000, confidence: "likely" },
+  { source: "sackler-foundation", target: "sen-cassidy", label: "Indirect support via healthcare orgs", linkType: "dark_money_channel", amount: 500_000, confidence: "likely" },
+  { source: "help-committee", target: "opioid-regulation-bill", label: "Oversees", linkType: "lobbying_on_bill", confidence: "direct" },
+  { source: "purdue", target: "fda", label: "Regulatory capture attempts", linkType: "revolving_door", confidence: "likely" },
+  { source: "purdue", target: "pharma-industry", label: "Operates in", linkType: "trade_association_lobbying", confidence: "direct" },
+  { source: "opioid-regulation-bill", target: "pharma-industry", label: "Impacts", linkType: "committee_oversight_of_contract", confidence: "likely" },
 ];
 
 // ─── Main Component ───
