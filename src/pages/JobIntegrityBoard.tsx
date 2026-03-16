@@ -30,7 +30,7 @@ export default function JobIntegrityBoard() {
         .eq("admin_approved", true)
         .order("is_featured", { ascending: false })
         .order("created_at", { ascending: false })
-        .limit(50);
+        .limit(200);
 
       if (filter === "certified") {
         query = query.eq("companies.vetted_status", "certified");
