@@ -1060,6 +1060,7 @@ export default function CompanyProfile() {
                 <section id="section-stability" className="mb-10 scroll-mt-28">
                   <SectionHeader icon={AlertTriangle} title="Workforce Stability" subtitle="Layoffs, WARN notices, and workforce reduction signals" />
                   <div className="space-y-4">
+                    <LayoffProbabilityCard companyId={dbCompanyId} companyName={name} isPubliclyTraded={!!dbCompany?.is_publicly_traded} revenue={(dbCompany as any)?.revenue} />
                     <WarnTrackerCard companyName={name} dbCompanyId={dbCompanyId} />
                     {dbCompanyId && <CourtRecordsCard companyId={dbCompanyId} companyName={name} />}
                     {dbCompanyId && <NewsIntelligenceCard companyId={dbCompanyId} companyName={name} />}
