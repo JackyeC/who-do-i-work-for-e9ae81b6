@@ -11,7 +11,7 @@ Deno.serve(async (req) => {
   }
 
   try {
-    const { companyName, enrichExisting } = await req.json();
+    const { companyName, companyId, enrichExisting } = await req.json();
 
     if (!companyName || typeof companyName !== 'string' || companyName.trim().length < 2) {
       return new Response(
@@ -34,14 +34,26 @@ Deno.serve(async (req) => {
     const supabaseKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!;
     const supabase = createClient(supabaseUrl, supabaseKey);
 
-    // Check if company already exists
-    const slug = sanitizedName.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '');
-    const { data: existing } = await supabase
-      .from('companies')
-      .select('id, name, slug')
-      .or(`slug.eq.${slug},name.ilike.${sanitizedName}`)
-      .limit(1)
-      .maybeSingle();
+    // Check if company already exists — prefer companyId if provided
+    let existing: any = null;
+    if (companyId) {
+      const { data } = await supabase
+        .from('companies')
+        .select('id, name, slug')
+        .eq('id', companyId)
+        .maybeSingle();
+      existing = data;
+    }
+    if (!existing) {
+      const slug = sanitizedName.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '');
+      const { data } = await supabase
+        .from('companies')
+        .select('id, name, slug')
+        .or(`slug.eq.${slug},name.ilike.%${sanitizedName}%`)
+        .limit(1)
+        .maybeSingle();
+      existing = data;
+    }
 
     // If exists and NOT enriching, just return
     if (existing && !enrichExisting) {

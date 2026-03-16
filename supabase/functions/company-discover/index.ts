@@ -210,7 +210,7 @@ ${searchContent ? `Search results:\n${searchContent}` : 'Use your knowledge.'}`,
           'Authorization': `Bearer ${supabaseKey}`,
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ companyName: identityData.official_name || name, enrichExisting: true }),
+        body: JSON.stringify({ companyName: identityData.official_name || name, companyId: newCompany.id, enrichExisting: true }),
       }).catch(e => console.error('Background company-research failed:', e));
     } catch (e) {
       console.error('Failed to trigger company-research:', e);
