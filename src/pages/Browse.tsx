@@ -29,7 +29,8 @@ const stagger = {
 
 export default function Browse() {
   const [selectedIndustry, setSelectedIndustry] = useState<string>("all");
-  const [sortBy, setSortBy] = useState<"name" | "score">("score");
+  const [selectedCategory, setSelectedCategory] = useState<string>("all");
+  const [sortBy, setSortBy] = useState<"name" | "score" | "cis">("score");
   const [searchQuery, setSearchQuery] = useState("");
   const [isDiscovering, setIsDiscovering] = useState(false);
   const navigate = useNavigate();
