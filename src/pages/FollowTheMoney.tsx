@@ -472,8 +472,8 @@ const SAMPLE_LINKS: GraphLink[] = [
 
   // ── UPS links (Labor Rights — Pro-union) ──
   { source: "ups", target: "ups-pac", label: "Funds", linkType: "donation_to_member", amount: 1_100_000, confidence: "direct" },
-  { source: "ups-pac", target: "rep-scott-bobby", label: "Donated $15K", linkType: "donation_to_member", amount: 15_000, year: 2024, confidence: "direct" },
-  { source: "rep-scott-bobby", target: "labor-committee", label: "Serves on", linkType: "member_on_committee", confidence: "direct" },
+  { source: "ups-pac", target: "rep-scott", label: "Donated $15K", linkType: "donation_to_member", amount: 15_000, year: 2024, confidence: "direct" },
+  { source: "rep-scott", target: "labor-committee", label: "Serves on", linkType: "member_on_committee", confidence: "direct" },
   { source: "ups", target: "dol-agency", label: "Teamsters contract (340K workers)", linkType: "committee_oversight_of_contract", confidence: "direct" },
   { source: "ups", target: "labor-industry", label: "Largest private union employer", linkType: "trade_association_lobbying", confidence: "direct" },
 
