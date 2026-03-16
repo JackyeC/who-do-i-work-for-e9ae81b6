@@ -95,7 +95,7 @@ function RadarRing({ overall }: { overall: OverallRisk }) {
   );
 }
 
-export function CompanyRiskRadar({ companyId, companyName, slug, lobbyingSpend, totalPacSpending }: CompanyRiskRadarProps) {
+export function CompanyRiskRadar({ companyId, companyName, slug, lobbyingSpend, totalPacSpending, hasCompensationData = false }: CompanyRiskRadarProps) {
   const { toast } = useToast();
 
   // Fetch WARN notices
