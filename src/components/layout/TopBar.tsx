@@ -62,7 +62,7 @@ export const MAIN_SECTIONS = [
   },
   {
     id: "coach",
-    label: "Ask Jackye",
+    label: "Advisor",
     path: "/ask-jackye",
     matchPaths: ["/ask-jackye"],
     subItems: [],
