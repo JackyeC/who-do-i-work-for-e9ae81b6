@@ -287,7 +287,7 @@ export default function ForEmployers() {
                 Certified companies acknowledge that independent research may still be published.
                 Payment grants the right to respond — but provides{" "}
                 <span className="font-semibold text-foreground">zero authority</span> to
-                edit, remove, or suppress any data found by AI or Jackye's independent research.
+                edit, remove, or suppress any data found by AI or independent research.
               </p>
             </CardContent>
           </Card>

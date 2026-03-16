@@ -11,7 +11,7 @@ const OnePager = () => {
           <div>
             <div className="font-serif text-3xl font-bold text-primary mb-1">Who Do I Work For</div>
             <div className="font-mono text-[9px] tracking-[0.2em] uppercase text-muted-foreground">
-              Career Intelligence by Jackye Clayton
+              Workforce Transparency Standard
             </div>
           </div>
           <div className="text-right">

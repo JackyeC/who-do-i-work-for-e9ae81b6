@@ -173,9 +173,9 @@ function ReviewCard({ review, onUpdate }: { review: PendingReview; onUpdate: () 
               </div>
             )}
 
-            {/* Jackye's Take editor */}
+            {/* Strategic Analysis editor */}
             <div className="space-y-2">
-              <p className="text-xs font-medium text-foreground">Jackye's Take (Pro-gated analysis)</p>
+              <p className="text-xs font-medium text-foreground">Strategic Analysis (Pro-gated)</p>
               <Textarea
                 value={jackyeTake}
                 onChange={e => setJackyeTake(e.target.value)}
