@@ -69,8 +69,8 @@ Style: Saturday morning cartoon meets corporate satire. Bright saturated colors,
       console.log(`Rate limited, retry ${attempt + 1}/3...`);
     }
 
-    if (!aiResponse.ok) {
-      const status = aiResponse.status;
+    if (!aiResponse || !aiResponse.ok) {
+      const status = aiResponse?.status || 500;
       if (status === 429) {
         return new Response(JSON.stringify({ error: "Rate limited — try again in a moment." }), {
           status: 429, headers: { ...corsHeaders, "Content-Type": "application/json" },
