@@ -146,25 +146,35 @@ serve(async (req) => {
 
     let documentText = review.extracted_text || "";
 
-    // If file was uploaded and not yet deleted, download and extract text
-    if (review.file_path && !documentText && !review.file_deleted) {
+    // If file was uploaded, try to download and extract text
+    // file_deleted flag means "delete AFTER analysis", not "already deleted"
+    if (review.file_path && !documentText) {
       const { data: fileData, error: fileError } = await adminClient.storage
         .from("offer-letters")
         .download(review.file_path);
-      if (fileError) throw new Error(`File download failed: ${fileError.message}`);
+      
+      if (fileError) {
+        console.warn(`File download failed (may have been deleted already): ${fileError.message}`);
+        // Don't throw — fall through to check if we have extracted_text already
+      } else {
+        const filename = (review.original_filename || "").toLowerCase();
 
-      const filename = (review.original_filename || "").toLowerCase();
+        if (filename.endsWith(".txt")) {
+          documentText = await fileData.text();
+        } else if (filename.endsWith(".docx") || filename.endsWith(".doc")) {
+          const buffer = await fileData.arrayBuffer();
+          documentText = await extractDocxText(buffer);
+          console.log(`Extracted ${documentText.length} chars from DOCX`);
+        } else if (filename.endsWith(".pdf")) {
+          const buffer = await fileData.arrayBuffer();
+          documentText = extractPdfText(buffer);
+          console.log(`Extracted ${documentText.length} chars from PDF`);
+        }
 
-      if (filename.endsWith(".txt")) {
-        documentText = await fileData.text();
-      } else if (filename.endsWith(".docx") || filename.endsWith(".doc")) {
-        const buffer = await fileData.arrayBuffer();
-        documentText = await extractDocxText(buffer);
-        console.log(`Extracted ${documentText.length} chars from DOCX`);
-      } else if (filename.endsWith(".pdf")) {
-        const buffer = await fileData.arrayBuffer();
-        documentText = extractPdfText(buffer);
-        console.log(`Extracted ${documentText.length} chars from PDF`);
+        // Store extracted text so reruns don't need the file
+        if (documentText && documentText.length > 20) {
+          await adminClient.from("offer_letter_reviews").update({ extracted_text: documentText.slice(0, 50000) }).eq("id", reviewId);
+        }
       }
     }
 
