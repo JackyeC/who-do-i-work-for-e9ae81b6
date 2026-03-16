@@ -331,7 +331,19 @@ export default function CompanyDossier() {
     </>
   );
 
-  const fullContent = lens === "candidate" ? candidateContent : lens === "sales" ? salesContent : hrContent;
+  const gatedSalesContent = canAccessRecruiter ? salesContent : (
+    <PremiumGate feature="Sales Intelligence View" description="Unlock decision-maker mapping, buying logic, ecosystem analysis, and government contract exposure for sales teams." requiredTier="candidate">
+      {salesContent}
+    </PremiumGate>
+  );
+
+  const gatedHrContent = canAccessRecruiter ? hrContent : (
+    <PremiumGate feature="HR Strategy View" description="Unlock workforce demographics, talent supply signals, EVP analysis, and employer brand intelligence." requiredTier="candidate">
+      {hrContent}
+    </PremiumGate>
+  );
+
+  const fullContent = lens === "candidate" ? candidateContent : lens === "sales" ? gatedSalesContent : gatedHrContent;
 
   return (
     <ContentProtector className="min-h-screen flex flex-col bg-background">
