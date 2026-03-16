@@ -7,7 +7,7 @@ import { Input } from "@/components/ui/input";
 import {
   Search, Building2, Shield, Factory, Scale, Leaf, Crosshair,
   Users, AlertTriangle, TrendingUp, ExternalLink, ChevronRight,
-  BarChart3, Globe, FileText, ArrowRight, Loader2, Heart,
+  BarChart3, Globe, FileText, ArrowRight, Loader2, Heart, ShieldAlert,
 } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { cn } from "@/lib/utils";
