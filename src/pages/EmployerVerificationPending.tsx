@@ -384,12 +384,12 @@ export default function EmployerVerificationPending() {
                 </p>
                 <p className="text-xs text-muted-foreground leading-relaxed">
                   Your $599/yr Founding Partner Certification grants the right
-                  to respond to Jackye Insights, but provides{" "}
+                  to respond to Insider Context findings, but provides{" "}
                   <span className="font-semibold text-foreground">
                     zero authority
                   </span>{" "}
                   to edit, remove, or suppress any data found by AI or
-                  Jackye's independent research. Transparency isn't optional—it's
+                  independent research. Transparency isn't optional—it's
                   the product.
                 </p>
               </div>
