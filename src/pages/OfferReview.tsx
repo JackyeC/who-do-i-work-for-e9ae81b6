@@ -135,7 +135,7 @@ export default function OfferReview() {
           <Badge variant="outline" className="text-[10px]">Private</Badge>
         </div>
         <p className="text-sm text-muted-foreground mb-6">
-          Upload your offer letter from {company.name} for a private, structured review.
+          You got an offer from {company.name}? Congratulations — now let's make sure it's as good as it looks. Keep the receipts.
         </p>
 
         <PremiumGate feature="Private Offer Review" description="Upload and analyze employment offer letters privately. Compare detected terms against public company signals.">

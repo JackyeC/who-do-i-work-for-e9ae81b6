@@ -122,7 +122,7 @@ export function OfferLetterUpload({ companyId, companyName, onReviewCreated }: O
         </div>
 
         <p className="text-xs text-muted-foreground">
-          Upload your offer letter from <span className="font-medium text-foreground">{companyName}</span> for a private, structured review. Your document is visible only to you.
+          Got an offer from <span className="font-medium text-foreground">{companyName}</span>? That's your moment — do what you need to do, but keep the receipts. Upload it here and we'll pull the terms apart so you know exactly what you're signing.
         </p>
 
         {/* Mode toggle */}
@@ -201,7 +201,7 @@ export function OfferLetterUpload({ companyId, companyName, onReviewCreated }: O
 
         {/* Disclaimer */}
         <div className="bg-muted/50 rounded-lg p-3 text-[11px] text-muted-foreground">
-          This tool identifies terms and clauses from uploaded documents and compares them with publicly available company signals. It provides educational insights only — not legal, financial, or employment advice.
+          Your offer letter stays private — only you can see it. We extract terms, flag clauses, and compare against public company signals so you can negotiate from a position of knowledge. This is not legal advice — it's your receipts, organized.
         </div>
 
         {/* Consent */}
