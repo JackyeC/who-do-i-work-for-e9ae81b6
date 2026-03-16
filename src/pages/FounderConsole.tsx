@@ -279,7 +279,7 @@ export default function FounderConsole() {
                     <FileText className="w-3 h-3" /> Reports
                   </Button>
                 </Link>
-                <Link to="/signal-feed">
+                <Link to="/signals">
                   <Button variant="outline" size="sm" className="w-full text-xs gap-1 border-primary/20 hover:bg-primary/10">
                     <Activity className="w-3 h-3" /> Signals
                   </Button>
