@@ -55,7 +55,31 @@ const POWER_INFLUENCE_TARGETS = [
   { name: 'FedEx', slug: 'fedex', industry: 'Logistics / Transportation', state: 'TN', careersUrl: 'https://careers.fedex.com/fedex/', lobbying: 9_200_000, pacSpending: 2_800_000 },
 ];
 
-// Tier 2 also pulls from DB by highest total_pac_spending + lobbying_spend
+// ─── Tier 4: Values-Aligned — companies with public stances on user values ───
+const VALUES_ALIGNED_TARGETS: { name: string; slug: string; industry: string; state: string; careersUrl: string; values: string[] }[] = [
+  // Reproductive & LGBTQ+ Rights
+  { name: 'Salesforce', slug: 'salesforce', industry: 'Technology / CRM', state: 'CA', careersUrl: 'https://careers.salesforce.com/en/jobs/', values: ['Reproductive Rights', 'LGBTQ+ Rights'] },
+  { name: 'Yelp', slug: 'yelp', industry: 'Technology / Reviews', state: 'CA', careersUrl: 'https://boards.greenhouse.io/yelp', values: ['Reproductive Rights', 'LGBTQ+ Rights'] },
+  { name: 'Citigroup', slug: 'citigroup', industry: 'Financial Services / Banking', state: 'NY', careersUrl: 'https://jobs.citi.com/', values: ['Reproductive Rights', 'LGBTQ+ Rights', 'Pay Equity'] },
+  { name: 'Apple', slug: 'apple', industry: 'Technology / Consumer Electronics', state: 'CA', careersUrl: 'https://jobs.apple.com/en-us/search', values: ['Reproductive Rights', 'LGBTQ+ Rights', 'Data Privacy'] },
+  // Climate & Environment
+  { name: 'Tesla', slug: 'tesla', industry: 'Automotive / Clean Energy', state: 'TX', careersUrl: 'https://www.tesla.com/careers/search', values: ['Climate Action', 'Fossil Fuel Policy'] },
+  { name: 'Impossible Foods', slug: 'impossible-foods', industry: 'Food Technology', state: 'CA', careersUrl: 'https://boards.greenhouse.io/impossiblefoods', values: ['Climate Action', 'Animal Welfare', 'Sustainable Supply Chains'] },
+  { name: 'Rivian', slug: 'rivian', industry: 'Automotive / Electric Vehicles', state: 'CA', careersUrl: 'https://boards.greenhouse.io/rivian', values: ['Climate Action', 'Fossil Fuel Policy'] },
+  // Worker & Union Rights
+  { name: 'Starbucks', slug: 'starbucks', industry: 'Food & Beverage / Coffee', state: 'WA', careersUrl: 'https://www.starbucks.com/careers/', values: ['Union Rights', 'Pay Equity', 'Worker Treatment'] },
+  { name: 'UPS', slug: 'ups', industry: 'Logistics / Package Delivery', state: 'GA', careersUrl: 'https://www.jobs-ups.com/', values: ['Union Rights', 'Worker Treatment'] },
+  { name: 'REI', slug: 'rei', industry: 'Retail / Outdoor', state: 'WA', careersUrl: 'https://rei.jobs/', values: ['Union Rights', 'Climate Action', 'Worker Treatment'] },
+  { name: 'Delta Air Lines', slug: 'delta-air-lines', industry: 'Airlines / Aviation', state: 'GA', careersUrl: 'https://delta.avature.net/careers', values: ['Union Rights', 'Worker Treatment'] },
+  // Data Privacy & AI Ethics
+  { name: 'DuckDuckGo', slug: 'duckduckgo', industry: 'Technology / Search', state: 'PA', careersUrl: 'https://duckduckgo.com/hiring', values: ['Data Privacy', 'AI Ethics'] },
+  { name: 'IBM', slug: 'ibm', industry: 'Technology / Enterprise', state: 'NY', careersUrl: 'https://www.ibm.com/careers/search', values: ['AI Ethics', 'Data Privacy', 'Pay Equity'] },
+  { name: 'Anthropic', slug: 'anthropic', industry: 'Technology / AI Safety', state: 'CA', careersUrl: 'https://boards.greenhouse.io/anthropic', values: ['AI Ethics', 'Data Privacy'] },
+  // Animal Welfare
+  { name: 'Petco', slug: 'petco', industry: 'Retail / Pet', state: 'CA', careersUrl: 'https://careers.petco.com/', values: ['Animal Welfare'] },
+  { name: 'Chewy', slug: 'chewy', industry: 'E-Commerce / Pet', state: 'FL', careersUrl: 'https://careers.chewy.com/', values: ['Animal Welfare'] },
+  { name: 'Lush Cosmetics', slug: 'lush-cosmetics', industry: 'Retail / Cosmetics', state: 'NC', careersUrl: 'https://www.lushusa.com/stories/article_we-are-hiring.html', values: ['Animal Welfare', 'Climate Action', 'Sustainable Supply Chains'] },
+];
 
 const THROTTLE_MS = 2000;
 
