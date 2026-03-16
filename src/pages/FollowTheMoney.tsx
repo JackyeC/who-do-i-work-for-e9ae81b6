@@ -291,6 +291,37 @@ const SAMPLE_NODES: GraphNode[] = [
   { id: "farm-workforce-bill", label: "Farm Workforce Modernization Act (H.R.1603)", group: "Legislation", val: 11, issueCategories: ["Immigration", "Labor Rights"], metadata: { status: "Passed House", description: "Reforms H-2A visa program and provides path to legal status for farm workers." } },
   { id: "agriculture-industry", label: "Agriculture Sector", group: "Industry", val: 13, issueCategories: ["Labor Rights", "Immigration"] },
 
+  // ── Starbucks (Labor Rights — Union organizing) ──
+  { id: "starbucks", label: "Starbucks", group: "Company", val: 18, metadata: { industry: "Food & Beverage", summary: "Over 400 NLRB unfair labor practice complaints. Center of largest US union wave since the 1930s with Workers United/SBWU organizing 400+ stores." } },
+  { id: "starbucks-pac", label: "Starbucks PAC", group: "PAC", val: 12, amount: 560_000 },
+  { id: "sen-sanders", label: "Sen. Bernie Sanders (I-VT)", group: "Politician", val: 13, party: "Independent", state: "VT", issueCategories: ["Labor Rights", "Healthcare"] },
+  { id: "labor-committee", label: "Senate HELP Committee (Labor)", group: "Committee", val: 14, issueCategories: ["Labor Rights", "Education"] },
+  { id: "pro-act", label: "PRO Act (H.R.842)", group: "Legislation", val: 13, issueCategories: ["Labor Rights"], metadata: { status: "Passed House", description: "Protecting the Right to Organize Act — strengthens union organizing rights, bans captive audience meetings, adds penalties for labor law violations." } },
+  { id: "nlrb-agency", label: "National Labor Relations Board", group: "Agency", val: 16, issueCategories: ["Labor Rights"] },
+  { id: "labor-industry", label: "Organized Labor Sector", group: "Industry", val: 14, issueCategories: ["Labor Rights"] },
+
+  // ── Dollar General (Labor Rights — OSHA severe violator) ──
+  { id: "dollar-general", label: "Dollar General", group: "Company", val: 15, metadata: { industry: "Retail", summary: "Designated OSHA 'Severe Violator' for repeated willful safety violations including blocked exits, falling hazards, and understaffing across hundreds of stores." } },
+  { id: "dol-agency", label: "Dept. of Labor", group: "Agency", val: 16, issueCategories: ["Labor Rights"] },
+  { id: "workplace-safety-bill", label: "Workplace Violence Prevention Act (H.R.1195)", group: "Legislation", val: 11, issueCategories: ["Labor Rights"], metadata: { status: "In Committee", description: "Requires employers to develop and implement workplace violence prevention plans." } },
+
+  // ── Tesla (Labor Rights — NLRB + safety) ──
+  { id: "tesla", label: "Tesla", group: "Company", val: 18, metadata: { industry: "Automotive / EV", summary: "Multiple NLRB complaints including illegal anti-union tweets by CEO. OSHA violations at Fremont plant. UAW launched organizing campaign in 2023." } },
+  { id: "tesla-pac", label: "Tesla PAC", group: "PAC", val: 11, amount: 280_000 },
+  { id: "osha-agency", label: "OSHA", group: "Agency", val: 15, issueCategories: ["Labor Rights"] },
+
+  // ── UPS (Labor Rights — Pro-union, Teamsters) ──
+  { id: "ups", label: "UPS", group: "Company", val: 17, metadata: { industry: "Logistics", summary: "Largest unionized private employer in the US. 2023 Teamsters contract covering 340,000 workers was the largest private-sector union contract in US history." } },
+  { id: "ups-pac", label: "UPS PAC", group: "PAC", val: 13, amount: 1_100_000 },
+  
+
+  // ── Costco (Labor Rights — Pro-worker) ──
+  { id: "costco", label: "Costco", group: "Company", val: 16, metadata: { industry: "Retail", summary: "Known for above-average wages ($29.50/hr avg), comprehensive benefits, and relatively positive labor relations. CEO publicly opposed federal minimum wage cuts." } },
+
+  // ── Apple (Labor Rights — Retail union drives) ──
+  { id: "apple-retail", label: "Apple (Retail)", group: "Company", val: 17, metadata: { industry: "Technology / Retail", summary: "Facing retail union organizing at Apple Stores nationwide. IAM won first Apple Store union in Towson, MD. CWA organizing in multiple states." } },
+  { id: "apple-pac", label: "Apple PAC", group: "PAC", val: 12, amount: 420_000 },
+
   // ── ExxonMobil (Climate, Energy) ──
   { id: "exxon", label: "ExxonMobil", group: "Company", val: 20, metadata: { industry: "Oil & Gas / Energy", summary: "One of the largest fossil fuel companies. Decades-long lobbying against climate regulation while publicly pledging carbon reduction." } },
   { id: "exxon-pac", label: "ExxonMobil PAC", group: "PAC", val: 15, amount: 1_650_000, metadata: { summary: "Funds candidates across parties, with concentration on energy and environment committee members." } },
@@ -416,6 +447,44 @@ const SAMPLE_LINKS: GraphLink[] = [
   { source: "judiciary-committee", target: "farm-workforce-bill", label: "Oversees", linkType: "lobbying_on_bill", confidence: "direct" },
   { source: "farm-workforce-bill", target: "agriculture-industry", label: "Impacts", linkType: "committee_oversight_of_contract", confidence: "likely" },
   { source: "tyson", target: "agriculture-industry", label: "Operates in", linkType: "trade_association_lobbying", confidence: "direct" },
+
+  // ── Starbucks links (Labor Rights) ──
+  { source: "starbucks", target: "starbucks-pac", label: "Funds", linkType: "donation_to_member", amount: 560_000, confidence: "direct" },
+  { source: "starbucks-pac", target: "sen-murray", label: "Donated $22K", linkType: "donation_to_member", amount: 22_000, year: 2024, confidence: "direct" },
+  { source: "starbucks", target: "nlrb-agency", label: "400+ ULP complaints filed", linkType: "committee_oversight_of_contract", confidence: "direct" },
+  { source: "sen-sanders", target: "labor-committee", label: "Chairs", linkType: "member_on_committee", confidence: "direct" },
+  { source: "labor-committee", target: "pro-act", label: "Oversees", linkType: "lobbying_on_bill", confidence: "direct" },
+  { source: "starbucks", target: "labor-industry", label: "Opposing unionization", linkType: "lobbying_on_bill", amount: 3_200_000, confidence: "direct" },
+  { source: "pro-act", target: "labor-industry", label: "Impacts", linkType: "committee_oversight_of_contract", confidence: "likely" },
+  { source: "starbucks", target: "sen-sanders", label: "Subpoenaed by HELP Committee", linkType: "committee_oversight_of_contract", confidence: "direct" },
+
+  // ── Dollar General links (Labor Rights — OSHA) ──
+  { source: "dollar-general", target: "osha-agency", label: "Severe Violator designation", linkType: "committee_oversight_of_contract", confidence: "direct" },
+  { source: "dollar-general", target: "dol-agency", label: "$15M+ in OSHA penalties", linkType: "committee_oversight_of_contract", amount: 15_000_000, confidence: "direct" },
+  { source: "dol-agency", target: "workplace-safety-bill", label: "Enforces", linkType: "lobbying_on_bill", confidence: "direct" },
+  { source: "dollar-general", target: "labor-industry", label: "Labor violations", linkType: "trade_association_lobbying", confidence: "direct" },
+
+  // ── Tesla links (Labor Rights — NLRB) ──
+  { source: "tesla", target: "tesla-pac", label: "Funds", linkType: "donation_to_member", amount: 280_000, confidence: "direct" },
+  { source: "tesla", target: "nlrb-agency", label: "Multiple NLRB complaints", linkType: "committee_oversight_of_contract", confidence: "direct" },
+  { source: "tesla", target: "osha-agency", label: "Fremont plant violations", linkType: "committee_oversight_of_contract", confidence: "direct" },
+  { source: "tesla", target: "labor-industry", label: "Anti-union activity", linkType: "lobbying_on_bill", confidence: "direct" },
+
+  // ── UPS links (Labor Rights — Pro-union) ──
+  { source: "ups", target: "ups-pac", label: "Funds", linkType: "donation_to_member", amount: 1_100_000, confidence: "direct" },
+  { source: "ups-pac", target: "rep-scott", label: "Donated $15K", linkType: "donation_to_member", amount: 15_000, year: 2024, confidence: "direct" },
+  { source: "rep-scott", target: "labor-committee", label: "Serves on", linkType: "member_on_committee", confidence: "direct" },
+  { source: "ups", target: "dol-agency", label: "Teamsters contract (340K workers)", linkType: "committee_oversight_of_contract", confidence: "direct" },
+  { source: "ups", target: "labor-industry", label: "Largest private union employer", linkType: "trade_association_lobbying", confidence: "direct" },
+
+  // ── Costco links (Labor Rights — Pro-worker) ──
+  { source: "costco", target: "labor-industry", label: "Above-avg wages ($29.50/hr)", linkType: "trade_association_lobbying", confidence: "direct" },
+  { source: "costco", target: "dol-agency", label: "Clean compliance record", linkType: "committee_oversight_of_contract", confidence: "direct" },
+
+  // ── Apple Retail links (Labor Rights) ──
+  { source: "apple-retail", target: "apple-pac", label: "Funds", linkType: "donation_to_member", amount: 420_000, confidence: "direct" },
+  { source: "apple-retail", target: "nlrb-agency", label: "Retail union elections", linkType: "committee_oversight_of_contract", confidence: "direct" },
+  { source: "apple-retail", target: "labor-industry", label: "IAM/CWA union drives", linkType: "trade_association_lobbying", confidence: "direct" },
 
   // ── ExxonMobil links (Climate, Energy) ──
   { source: "exxon", target: "exxon-pac", label: "Funds", linkType: "donation_to_member", amount: 1_650_000, confidence: "direct" },
