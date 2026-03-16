@@ -244,7 +244,46 @@ export default function Pricing() {
           })}
         </div>
 
-        {/* Employer Certification */}
+        {/* Founding Partner — Primary Employer CTA */}
+        <div className="rounded-2xl border-2 border-primary bg-card p-8 flex flex-col md:flex-row items-center justify-between gap-6 mb-6 ring-1 ring-primary/20 relative overflow-hidden">
+          <div className="absolute top-0 right-0 bg-primary text-primary-foreground font-mono text-[10px] tracking-wider uppercase px-4 py-1">
+            Limited to 50 Partners
+          </div>
+          <div className="flex items-center gap-4">
+            <div className="w-12 h-12 rounded-2xl bg-primary/10 flex items-center justify-center">
+              <ShieldCheck className="w-6 h-6 text-primary" />
+            </div>
+            <div>
+              <h3 className="font-bold text-foreground text-lg flex items-center gap-2">
+                Founding Partner
+                <Badge variant="outline" className="text-[10px] bg-primary/10 text-primary border-primary/20">Gold Shield</Badge>
+              </h3>
+              <p className="text-sm text-muted-foreground">
+                Claim your profile, get the 3-point transparency audit by Jackye, and receive 5 job credits. Move to the top of the feed.
+              </p>
+              <div className="flex items-baseline gap-2 mt-1">
+                <span className="text-2xl font-bold font-mono text-foreground">$599</span>
+                <span className="text-muted-foreground">/yr</span>
+                <span className="text-sm text-muted-foreground line-through ml-2">$1,200/yr</span>
+                <Badge variant="secondary" className="text-[10px] text-green-600 bg-green-500/10 border-green-500/20">
+                  50% OFF
+                </Badge>
+              </div>
+              <p className="text-xs text-muted-foreground mt-1">Includes 5 job credits ($199 value each) · 30-day auto-expiry on listings</p>
+            </div>
+          </div>
+          <Button
+            size="lg"
+            className="shrink-0 gap-2"
+            onClick={() => handleCheckout(STRIPE_TIERS.founding_partner.price_id, null, "Founding Partner")}
+            disabled={loadingTier === "Founding Partner"}
+          >
+            {loadingTier === "Founding Partner" ? <Loader2 className="w-4 h-4 animate-spin" /> : <ShieldCheck className="w-4 h-4" />}
+            Become a Founding Partner
+          </Button>
+        </div>
+
+        {/* Standard Employer Certification */}
         <div className="rounded-2xl border border-amber-500/30 bg-card p-8 flex flex-col md:flex-row items-center justify-between gap-6 mb-6 ring-1 ring-amber-500/10">
           <div className="flex items-center gap-4">
             <div className="w-12 h-12 rounded-2xl bg-amber-500/10 flex items-center justify-center">
@@ -253,10 +292,10 @@ export default function Pricing() {
             <div>
               <h3 className="font-bold text-foreground text-lg flex items-center gap-2">
                 Employer Certification
-                <Badge variant="outline" className="text-[10px] bg-amber-500/10 text-amber-600 border-amber-500/20">Gold Shield</Badge>
+                <Badge variant="outline" className="text-[10px] bg-amber-500/10 text-amber-600 border-amber-500/20">Standard</Badge>
               </h3>
               <p className="text-sm text-muted-foreground">
-                Claim your profile, respond to insights, and earn Certified status with a 3-point transparency audit by Jackye.
+                Claim your profile, respond to insights, and earn Certified status. 1 job credit included.
               </p>
               <div className="flex items-baseline gap-1.5 mt-1">
                 <span className="text-2xl font-bold font-mono text-foreground">$499</span>

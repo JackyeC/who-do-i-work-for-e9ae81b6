@@ -157,13 +157,27 @@ export default function Methodology() {
               </Card>
             </section>
 
+            {/* Trust Standard */}
+            <section>
+              <Card className="border-primary/20">
+                <CardContent className="p-6">
+                  <div className="flex items-center gap-2 mb-3">
+                    <Badge variant="secondary" className="text-xs font-mono uppercase tracking-wider">Our Standard</Badge>
+                  </div>
+                  <p className="text-body text-foreground leading-relaxed font-medium">
+                    Public records only. Verified watchdog data. No partisan endorsements. We connect the dots; you make the call.
+                  </p>
+                </CardContent>
+              </Card>
+            </section>
+
             {/* Disclaimer */}
             <section className="border-t border-border/60 pt-10">
               <p className="text-caption text-muted-foreground leading-relaxed">
-                Who Do I Work For? helps people make informed career decisions using publicly available data 
-                about political and civic influence. We do not make endorsements, moral judgments, or recommendations.
-                All data is sourced from public records and clearly attributed. Individual executive donations 
-                reflect personal giving and do not necessarily represent corporate policy.
+                WDIWF reports publicly available data and does not provide character assessments, legal advice, or employment recommendations.
+                All signals are sourced from public records and verified watchdog databases (SPLC, ADL, FEC, SEC, BLS). 
+                Individual executive donations reflect personal giving and do not necessarily represent corporate policy.
+                Users should independently verify information before making employment decisions.
               </p>
             </section>
           </div>

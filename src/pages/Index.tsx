@@ -77,11 +77,11 @@ const Index = forwardRef<HTMLDivElement>((_, ref) => {
             Career Intelligence Platform
           </div>
           <h1 className="text-3xl lg:text-[clamp(2.4rem,5vw,3.6rem)] leading-tight mb-6 text-foreground">
-            You vetted the candidate.{" "}
-            <span className="text-primary">Who vetted the employer?</span>
+            See who you really work for{" "}
+            <span className="text-primary">before you say yes.</span>
           </h1>
           <p className="text-base lg:text-lg text-muted-foreground mb-10 max-w-[480px] leading-relaxed">
-            Surface compensation traps, non-compete risks, and political spending behind any offer. FEC · SEC · BLS sourced.
+            The background check just flipped. I've been blessed to be in the rooms where it happens — now I'm taking everything I've learned and putting it into your hands.
           </p>
           <HeroSearch />
           <div className="mt-6">
@@ -200,11 +200,11 @@ const Index = forwardRef<HTMLDivElement>((_, ref) => {
               </div>
               <div>
                 <blockquote className="border-l-2 border-primary pl-4 text-lg italic text-foreground leading-relaxed mb-2 font-serif" style={{ fontWeight: 400 }}>
-                  "The question isn't whether you want the job. It's whether you know exactly who you're going to work for. Run the chain first. Always."
+                  "I've seen firsthand how corporate decisions are made, how talent is vetted, and how power is wielded. Who Do I Work For? is the background check the industry never wanted you to have."
                 </blockquote>
                 <div className="font-mono text-sm tracking-wider uppercase text-muted-foreground pl-4 mb-6">— Jackye Clayton</div>
                 <p className="text-base text-muted-foreground leading-relaxed">
-                  15+ years in HR watching candidates accept offers they shouldn't have — because they didn't have the data. Who Do I Work For exists because information is power.
+                  I don't tell you where to work; I give you the truth so you can decide. 20+ years in the rooms where it happens — now that intelligence is yours.
                 </p>
               </div>
             </div>
@@ -282,17 +282,29 @@ const Index = forwardRef<HTMLDivElement>((_, ref) => {
 
       {/* ── Methodology ── */}
       <section className="px-6 lg:px-16 py-16 lg:py-20">
-        <div className="max-w-[960px] mx-auto text-center">
-          <h2 className="text-xl mb-4 text-foreground">Built on public records. Every signal sourced.</h2>
-          <p className="text-sm text-muted-foreground max-w-[520px] mx-auto mb-6">
-            FEC filings · Senate lobbying · USAspending · BLS wage data · SEC reports · FRED indicators.
-          </p>
-          <button
-            onClick={() => navigate("/methodology")}
-            className="font-mono text-sm tracking-wider uppercase text-primary hover:underline"
-          >
-            Read our methodology →
-          </button>
+        <div className="max-w-[960px] mx-auto">
+          <div className="text-center mb-8">
+            <h2 className="text-xl mb-4 text-foreground">Built on public records. Every signal sourced.</h2>
+            <p className="text-sm text-muted-foreground max-w-[520px] mx-auto mb-6">
+              FEC filings · Senate lobbying · USAspending · BLS wage data · SEC reports · FRED indicators.
+            </p>
+            <button
+              onClick={() => navigate("/methodology")}
+              className="font-mono text-sm tracking-wider uppercase text-primary hover:underline"
+            >
+              Read our methodology →
+            </button>
+          </div>
+          {/* Trust Card */}
+          <div className="bg-card border border-primary/20 p-6 lg:p-8 max-w-[640px] mx-auto">
+            <div className="flex items-center gap-2 mb-3">
+              <Shield className="w-5 h-5 text-primary" />
+              <span className="font-mono text-sm tracking-[0.15em] uppercase text-primary font-semibold">Our Standard</span>
+            </div>
+            <p className="text-sm text-foreground leading-relaxed">
+              Public records only. Verified watchdog data. No partisan endorsements. We connect the dots; you make the call.
+            </p>
+          </div>
         </div>
       </section>
 
@@ -370,14 +382,23 @@ const Index = forwardRef<HTMLDivElement>((_, ref) => {
       </section>
 
       {/* ── Footer ── */}
-      <footer className="border-t border-border px-6 lg:px-16 py-6 flex justify-between items-center flex-wrap gap-4">
-        <div className="font-mono text-sm tracking-wider text-muted-foreground">
-          Who Do I Work For? · by Jackye Clayton
-        </div>
-        <div className="flex gap-6">
-          <a href="/privacy" className="font-mono text-sm tracking-wider text-muted-foreground hover:text-foreground transition-colors">Privacy</a>
-          <a href="/terms" className="font-mono text-sm tracking-wider text-muted-foreground hover:text-foreground transition-colors">Terms</a>
-          <a href="/methodology" className="font-mono text-sm tracking-wider text-muted-foreground hover:text-foreground transition-colors">Methodology</a>
+      <footer className="border-t border-border px-6 lg:px-16 py-6">
+        <div className="max-w-[1100px] mx-auto">
+          <div className="flex justify-between items-center flex-wrap gap-4 mb-4">
+            <div className="font-mono text-sm tracking-wider text-muted-foreground">
+              Who Do I Work For? · by Jackye Clayton
+            </div>
+            <div className="flex gap-6">
+              <a href="/privacy" className="font-mono text-sm tracking-wider text-muted-foreground hover:text-foreground transition-colors">Privacy</a>
+              <a href="/terms" className="font-mono text-sm tracking-wider text-muted-foreground hover:text-foreground transition-colors">Terms</a>
+              <a href="/methodology" className="font-mono text-sm tracking-wider text-muted-foreground hover:text-foreground transition-colors">Methodology</a>
+            </div>
+          </div>
+          <div className="border-t border-border/50 pt-4">
+            <p className="font-mono text-[11px] tracking-wider text-muted-foreground/60 leading-relaxed max-w-[800px]">
+              WDIWF reports publicly available data and does not provide character assessments, legal advice, or employment recommendations. All signals are sourced from public records and verified watchdog databases. Users should independently verify information before making employment decisions.
+            </p>
+          </div>
         </div>
       </footer>
     </div>
