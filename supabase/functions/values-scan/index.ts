@@ -608,20 +608,44 @@ Analyze all available evidence using the 7-Layer Evidence Model plus Career Traj
 
     // Upsert signals
     if (signals && signals.length > 0) {
-      await adminClient.from("company_values_signals").delete().eq("company_id", companyId);
+      const rows = signals
+        .filter((s: any) => s.value_category && s.signal_type)
+        .map((s: any) => ({
+          company_id: companyId,
+          value_category: String(s.value_category),
+          signal_type: String(s.signal_type),
+          signal_summary: s.signal_summary || null,
+          evidence_text: s.evidence_text || null,
+          evidence_url: s.evidence_url || null,
+          confidence: s.confidence || "inferred",
+          severity: s.severity || "neutral",
+          detected_by: "values_scan_v2",
+        }));
 
-      const rows = signals.map((s: any) => ({
-        company_id: companyId,
-        value_category: s.value_category,
-        signal_type: s.signal_type,
-        signal_summary: s.signal_summary,
-        evidence_text: s.evidence_text || null,
-        evidence_url: s.evidence_url || null,
-        confidence: s.confidence,
-        detected_by: "values_scan_v2",
-      }));
+      if (rows.length > 0) {
+        const { error: delError } = await adminClient
+          .from("company_values_signals")
+          .delete()
+          .eq("company_id", companyId);
+        if (delError) console.error(`[values-scan] Delete failed for ${companyId}:`, delError.message);
 
-      await adminClient.from("company_values_signals").insert(rows);
+        const { error: insError } = await adminClient
+          .from("company_values_signals")
+          .insert(rows);
+        if (insError) {
+          console.error(`[values-scan] Insert failed for ${companyId}:`, insError.message, JSON.stringify(rows[0]));
+          // Try inserting one-by-one to identify bad rows
+          let inserted = 0;
+          for (const row of rows) {
+            const { error: singleErr } = await adminClient
+              .from("company_values_signals")
+              .insert(row);
+            if (!singleErr) inserted++;
+            else console.error(`[values-scan] Row insert failed:`, singleErr.message, row.value_category);
+          }
+          console.log(`[values-scan] Fallback: inserted ${inserted}/${rows.length} rows for ${companyId}`);
+        }
+      }
     }
 
     return new Response(JSON.stringify({ success: true, signalsFound: signals?.length || 0, signals }), {
