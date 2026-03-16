@@ -89,11 +89,17 @@ export default function WorkWithJackye() {
           Whether it's a career decision, a recruiting challenge, or an HR tech launch — Jackye brings the intelligence and the experience.
         </p>
         <div className="flex gap-3 justify-center flex-wrap">
-          <a
-            href="mailto:jackye@whodoimworkfor.com?subject=Advisory Request"
+          <button
+            onClick={() => window.open('https://calendly.com/jackyeclayton', '_blank')}
             className="bg-primary text-primary-foreground px-7 py-3 font-mono text-[11px] font-semibold tracking-wider uppercase hover:brightness-110 transition-all inline-flex items-center gap-2"
           >
             Book Jackye <ArrowRight className="w-3 h-3" />
+          </button>
+          <a
+            href="mailto:jackye@jackyeclayton.com?subject=Advisory Request"
+            className="border border-border text-muted-foreground px-7 py-3 font-mono text-[11px] tracking-wider uppercase hover:border-primary hover:text-primary transition-all inline-flex items-center gap-2"
+          >
+            Email Jackye
           </a>
           <button
             onClick={() => navigate("/ask-jackye")}
