@@ -1,6 +1,6 @@
-import { useState, useEffect, useMemo } from "react";
+import { useState, useEffect, useMemo, useRef } from "react";
 import { supabase } from "@/integrations/supabase/client";
-import { Zap, Sparkles, RefreshCw, Share2, Linkedin, Link2, Check, Twitter, Facebook } from "lucide-react";
+import { Zap, Sparkles, RefreshCw, Share2, Linkedin, Link2, Check, Twitter, Facebook, Shield, Eye } from "lucide-react";
 import { toast } from "@/hooks/use-toast";
 import { openShareWindow, getShareText, type ShareContext } from "@/lib/social-share";
 
@@ -15,11 +15,82 @@ interface BattleImageProps {
   slugB?: string;
 }
 
+/** Branded fallback when image can't be generated */
+function BattleFallback({ companyA, companyB, onRetry }: { companyA: string; companyB: string; onRetry: () => void }) {
+  return (
+    <div className="flex flex-col items-center justify-center py-10 px-6 bg-gradient-to-b from-primary/5 to-transparent">
+      <div className="flex items-center gap-6 mb-4">
+        <div className="w-16 h-16 rounded-full bg-primary/10 border border-primary/20 flex items-center justify-center">
+          <Shield className="w-7 h-7 text-primary" />
+        </div>
+        <div className="font-mono text-2xl font-bold text-primary tracking-tight">VS</div>
+        <div className="w-16 h-16 rounded-full bg-primary/10 border border-primary/20 flex items-center justify-center">
+          <Shield className="w-7 h-7 text-primary" />
+        </div>
+      </div>
+      <div className="font-bold text-sm text-foreground mb-1">
+        {companyA} vs {companyB}
+      </div>
+      <div className="font-mono text-[9px] tracking-[0.2em] uppercase text-muted-foreground mb-4">
+        No Judgment · Just Receipts
+      </div>
+      <button
+        onClick={onRetry}
+        className="inline-flex items-center gap-1.5 px-4 py-2 border border-primary/30 bg-primary/5 hover:bg-primary/10 text-primary font-mono text-[9px] tracking-wider uppercase transition-colors"
+      >
+        <RefreshCw className="w-3 h-3" /> Generate Battle Art
+      </button>
+    </div>
+  );
+}
+
+/** Intel-themed loading state */
+function BattleLoading({ companyA, companyB }: { companyA: string; companyB: string }) {
+  const [phase, setPhase] = useState(0);
+  const phases = [
+    "Initializing battle protocols...",
+    "Cross-referencing corporate intel...",
+    `Analyzing ${companyA} vs ${companyB}...`,
+    "Rendering classified illustration...",
+    "Verifying visual intelligence...",
+  ];
+
+  useEffect(() => {
+    const interval = setInterval(() => setPhase(p => (p + 1) % phases.length), 3000);
+    return () => clearInterval(interval);
+  }, []);
+
+  return (
+    <div className="flex flex-col items-center gap-4 py-12">
+      <div className="relative">
+        <div className="w-16 h-16 rounded-full bg-primary/10 border border-primary/20 flex items-center justify-center">
+          <Eye className="w-6 h-6 text-primary animate-pulse" />
+        </div>
+        <div className="absolute inset-0 rounded-full border-2 border-primary/30 animate-ping" style={{ animationDuration: '2s' }} />
+      </div>
+      <div className="text-center">
+        <div className="font-mono text-[10px] tracking-wider uppercase text-primary mb-1">
+          Generating Battle Intelligence
+        </div>
+        <div className="text-[12px] text-muted-foreground transition-opacity duration-500">
+          {phases[phase]}
+        </div>
+      </div>
+    </div>
+  );
+}
+
 export function BattleImage({ companyA, companyB, industryA, industryB, scoreA, scoreB, slugA, slugB }: BattleImageProps) {
   const [imageUrl, setImageUrl] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(false);
   const [copied, setCopied] = useState(false);
+  const mountedRef = useRef(true);
+
+  useEffect(() => {
+    mountedRef.current = true;
+    return () => { mountedRef.current = false; };
+  }, []);
 
   const generate = async () => {
     setLoading(true);
@@ -29,11 +100,12 @@ export function BattleImage({ companyA, companyB, industryA, industryB, scoreA, 
         body: { companyA, companyB, industryA, industryB },
       });
 
+      if (!mountedRef.current) return;
+
       if (fnError) throw fnError;
       if (data?.error) {
-        if (data.error.includes("Rate limited")) {
-          toast({ title: "Slow down!", description: "Too many requests — try again in a moment.", variant: "destructive" });
-        }
+        // Don't show noisy toasts for rate limits — the fallback UI handles it
+        console.warn("Battle image rate limited or failed:", data.error);
         throw new Error(data.error);
       }
       if (data?.imageUrl) {
@@ -45,9 +117,9 @@ export function BattleImage({ companyA, companyB, industryA, industryB, scoreA, 
       }
     } catch (e) {
       console.error("Battle image error:", e);
-      setError(true);
+      if (mountedRef.current) setError(true);
     } finally {
-      setLoading(false);
+      if (mountedRef.current) setLoading(false);
     }
   };
 
@@ -68,7 +140,6 @@ export function BattleImage({ companyA, companyB, industryA, industryB, scoreA, 
   }), [companyA, companyB, scoreA, scoreB, slugA, slugB]);
 
   const shareText = getShareText("copy", shareCtx);
-
   const shareLinkedIn = () => openShareWindow("linkedin", shareCtx);
   const shareTwitter = () => openShareWindow("twitter", shareCtx);
   const shareFacebook = () => openShareWindow("facebook", shareCtx);
@@ -119,51 +190,24 @@ export function BattleImage({ companyA, companyB, industryA, industryB, scoreA, 
       </div>
 
       <div className="relative min-h-[280px] flex items-center justify-center">
-        {loading && (
-          <div className="flex flex-col items-center gap-4 py-12">
-            <div className="relative">
-              <div className="w-16 h-16 rounded-full bg-primary/10 border border-primary/20 flex items-center justify-center">
-                <Zap className="w-6 h-6 text-primary animate-pulse" />
-              </div>
-              <div className="absolute inset-0 rounded-full border-2 border-primary/30 animate-ping" style={{ animationDuration: '2s' }} />
-            </div>
-            <div className="text-center">
-              <div className="font-mono text-[10px] tracking-wider uppercase text-primary mb-1">
-                Generating Battle Art
-              </div>
-              <div className="text-[12px] text-muted-foreground">
-                AI is illustrating {companyA} vs {companyB}...
-              </div>
-            </div>
-          </div>
-        )}
+        {loading && <BattleLoading companyA={companyA} companyB={companyB} />}
 
         {imageUrl && !loading && (
           <img
             src={imageUrl}
             alt={`${companyA} vs ${companyB} battle illustration`}
             className="w-full max-h-[400px] object-contain"
+            loading="lazy"
           />
         )}
 
         {error && !loading && (
-          <div className="flex flex-col items-center gap-3 py-12">
-            <Zap className="w-8 h-8 text-muted-foreground" />
-            <div className="text-[12px] text-muted-foreground">
-              Couldn't generate battle art this time.
-            </div>
-            <button
-              onClick={generate}
-              className="font-mono text-[10px] tracking-wider uppercase text-primary hover:underline"
-            >
-              Try again →
-            </button>
-          </div>
+          <BattleFallback companyA={companyA} companyB={companyB} onRetry={generate} />
         )}
       </div>
 
-      {/* Share bar — only when image is ready */}
-      {imageUrl && !loading && (
+      {/* Share bar — shows with image OR fallback */}
+      {(imageUrl || error) && !loading && (
         <div className="px-5 py-4 border-t border-border bg-muted/10">
           <div className="flex items-center gap-2 mb-3">
             <Share2 className="w-3.5 h-3.5 text-primary" />
@@ -200,19 +244,21 @@ export function BattleImage({ companyA, companyB, industryA, industryB, scoreA, 
               {copied ? <Check className="w-3.5 h-3.5 text-primary" /> : <Link2 className="w-3.5 h-3.5" />}
               {copied ? "Copied!" : "Copy Link"}
             </button>
-            <button
-              onClick={downloadImage}
-              className="inline-flex items-center gap-1.5 px-3 py-1.5 border border-primary/30 bg-primary/5 hover:bg-primary/10 text-primary font-mono text-[9px] tracking-wider uppercase transition-colors"
-            >
-              📸 Download Image
-            </button>
+            {imageUrl && (
+              <button
+                onClick={downloadImage}
+                className="inline-flex items-center gap-1.5 px-3 py-1.5 border border-primary/30 bg-primary/5 hover:bg-primary/10 text-primary font-mono text-[9px] tracking-wider uppercase transition-colors"
+              >
+                📸 Download Image
+              </button>
+            )}
           </div>
         </div>
       )}
 
       <div className="px-5 py-2 border-t border-border bg-muted/10 text-center">
         <span className="font-mono text-[8px] tracking-wider uppercase text-muted-foreground">
-          Powered by AI · For entertainment purposes · Celebrating underrepresented voices in corporate America
+          Powered by AI · For entertainment purposes · No judgment, just receipts
         </span>
       </div>
     </div>
