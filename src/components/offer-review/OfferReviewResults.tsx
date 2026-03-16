@@ -108,7 +108,7 @@ export function OfferReviewResults({ review, onDelete, onRerun, deleting }: Offe
     <div className="space-y-5">
       {/* Offer Check Snapshot — decision-ready summary before the full report */}
       <OfferCheckSnapshot
-        companyName={snapshot.company_name || review.company_name || "Company"}
+        companyName={snapshot.employer_name || review.company_name || "Company"}
         roleTitle={snapshot.role_title}
         location={snapshot.work_location}
         verdict={snapshotVerdict}
