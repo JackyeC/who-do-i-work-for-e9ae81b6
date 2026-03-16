@@ -34,7 +34,6 @@ const SOURCE_URLS: Record<string, string> = {
   "NSSF": "https://www.nssf.org/",
   "Giffords": "https://giffords.org/",
   "Everytown": "https://www.everytown.org/",
-  "EEOC": "https://www.eeoc.gov/data",
   "HRC": "https://www.hrc.org/resources/corporate-equality-index",
   "DOJ Civil Rights": "https://www.justice.gov/crt",
   "CourtListener": "https://www.courtlistener.com/",
