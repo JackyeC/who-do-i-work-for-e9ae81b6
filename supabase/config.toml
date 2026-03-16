@@ -98,3 +98,6 @@ verify_jwt = false
 
 [functions.seed-consumer-protection-companies]
 verify_jwt = false
+
+[functions.bulk-scrape-strategic-jobs]
+verify_jwt = false
