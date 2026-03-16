@@ -90,6 +90,7 @@ const EmployerVerificationPending = lazy(() => import("./pages/EmployerVerificat
 const ForEmployers = lazy(() => import("./pages/ForEmployers"));
 const CorporateImpactMap = lazy(() => import("./pages/CorporateImpactMap"));
 const InfluenceGraph = lazy(() => import("./pages/InfluenceGraph"));
+const CorporateAlignment = lazy(() => import("./pages/CorporateAlignment"));
 
 // Lazy-load floating widgets — not needed on first paint
 const AskJackyeWidget = lazy(() => import("./components/AskJackyeWidget").then(m => ({ default: m.AskJackyeWidget })));
