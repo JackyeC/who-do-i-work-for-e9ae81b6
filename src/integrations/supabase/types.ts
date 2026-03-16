@@ -915,6 +915,74 @@ export type Database = {
           },
         ]
       }
+      climate_signals: {
+        Row: {
+          company_id: string
+          confidence: string | null
+          created_at: string | null
+          description: string | null
+          emissions_amount: number | null
+          emissions_unit: string | null
+          evidence_text: string | null
+          facility_name: string | null
+          id: string
+          location_state: string | null
+          score: string | null
+          signal_category: string
+          signal_type: string
+          source_name: string
+          source_url: string | null
+          target_description: string | null
+          target_year: number | null
+        }
+        Insert: {
+          company_id: string
+          confidence?: string | null
+          created_at?: string | null
+          description?: string | null
+          emissions_amount?: number | null
+          emissions_unit?: string | null
+          evidence_text?: string | null
+          facility_name?: string | null
+          id?: string
+          location_state?: string | null
+          score?: string | null
+          signal_category?: string
+          signal_type: string
+          source_name?: string
+          source_url?: string | null
+          target_description?: string | null
+          target_year?: number | null
+        }
+        Update: {
+          company_id?: string
+          confidence?: string | null
+          created_at?: string | null
+          description?: string | null
+          emissions_amount?: number | null
+          emissions_unit?: string | null
+          evidence_text?: string | null
+          facility_name?: string | null
+          id?: string
+          location_state?: string | null
+          score?: string | null
+          signal_category?: string
+          signal_type?: string
+          source_name?: string
+          source_url?: string | null
+          target_description?: string | null
+          target_year?: number | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "climate_signals_company_id_fkey"
+            columns: ["company_id"]
+            isOneToOne: false
+            referencedRelation: "companies"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       companies: {
         Row: {
           careers_url: string | null
