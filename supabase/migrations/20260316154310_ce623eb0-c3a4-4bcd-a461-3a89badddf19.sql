@@ -1,0 +1,1 @@
+CREATE UNIQUE INDEX uq_exec_company_name ON public.company_executives (company_id, LOWER(TRIM(name))) WHERE departed_at IS NULL;
