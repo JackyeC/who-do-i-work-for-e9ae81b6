@@ -234,7 +234,7 @@ export default function ForEmployers() {
                 The 10-Point Transparency Audit
               </h2>
               <p className="text-sm text-muted-foreground max-w-md mx-auto">
-                The Gold Shield is earned, not bought. Payment gets you in the door — Jackye's audit gets you certified.
+                The Gold Shield is earned, not bought. Payment gets you in the door — the transparency audit gets you certified.
               </p>
             </div>
             <div className="grid sm:grid-cols-2 gap-4">
