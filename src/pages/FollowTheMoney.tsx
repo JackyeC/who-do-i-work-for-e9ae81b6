@@ -565,6 +565,40 @@ const SAMPLE_LINKS: GraphLink[] = [
   { source: "clean-energy-bill", target: "energy-industry", label: "Impacts", linkType: "committee_oversight_of_contract", confidence: "likely" },
   { source: "exxon", target: "doe", label: "Carbon Capture R&D Grant", linkType: "committee_oversight_of_contract", amount: 3_200_000, confidence: "direct" },
   { source: "exxon", target: "energy-industry", label: "Operates in", linkType: "trade_association_lobbying", confidence: "direct" },
+  { source: "exxon", target: "epa", label: "EPA GHGRP top reporter", linkType: "committee_oversight_of_contract", confidence: "direct" },
+  { source: "exxon", target: "climate-action-100", label: "Investor target", linkType: "trade_association_lobbying", confidence: "direct" },
+
+  // ── Chevron links (Climate) ──
+  { source: "chevron", target: "chevron-pac", label: "Funds", linkType: "donation_to_member", amount: 1_300_000, confidence: "direct" },
+  { source: "chevron-pac", target: "sen-barrasso", label: "Donated $42K", linkType: "donation_to_member", amount: 42_000, year: 2024, confidence: "direct" },
+  { source: "sen-barrasso", target: "epw-committee", label: "Serves on", linkType: "member_on_committee", confidence: "direct" },
+  { source: "chevron", target: "epa", label: "EPA GHGRP major emitter", linkType: "committee_oversight_of_contract", confidence: "direct" },
+  { source: "chevron", target: "energy-industry", label: "Operates in", linkType: "trade_association_lobbying", confidence: "direct" },
+  { source: "chevron", target: "climate-action-100", label: "Investor target", linkType: "trade_association_lobbying", confidence: "direct" },
+  { source: "chevron", target: "ogci", label: "Member company", linkType: "trade_association_lobbying", confidence: "direct" },
+  { source: "epw-committee", target: "ira-clean-energy", label: "Oversees implementation", linkType: "lobbying_on_bill", confidence: "direct" },
+
+  // ── Duke Energy links (Climate) ──
+  { source: "duke-energy", target: "duke-pac", label: "Funds", linkType: "donation_to_member", amount: 920_000, confidence: "direct" },
+  { source: "duke-pac", target: "sen-capito", label: "Donated $25K", linkType: "donation_to_member", amount: 25_000, year: 2024, confidence: "direct" },
+  { source: "duke-energy", target: "epa", label: "Top utility emitter (EPA GHGRP)", linkType: "committee_oversight_of_contract", confidence: "direct" },
+  { source: "duke-energy", target: "house-energy-committee", label: "Lobbied on emissions rules", linkType: "lobbying_on_bill", amount: 4_800_000, confidence: "direct" },
+  { source: "house-energy-committee", target: "clean-air-amendments", label: "Oversees", linkType: "lobbying_on_bill", confidence: "direct" },
+  { source: "duke-energy", target: "energy-industry", label: "Operates in", linkType: "trade_association_lobbying", confidence: "direct" },
+
+  // ── NextEra Energy links (Climate — Renewables leader) ──
+  { source: "nextera", target: "nextera-pac", label: "Funds", linkType: "donation_to_member", amount: 780_000, confidence: "direct" },
+  { source: "nextera-pac", target: "sen-manchin", label: "Donated $20K", linkType: "donation_to_member", amount: 20_000, year: 2024, confidence: "direct" },
+  { source: "nextera", target: "doe", label: "Clean energy tax credits recipient", linkType: "committee_oversight_of_contract", confidence: "direct" },
+  { source: "nextera", target: "energy-industry", label: "Largest wind/solar generator", linkType: "trade_association_lobbying", confidence: "direct" },
+  { source: "nextera", target: "ira-clean-energy", label: "Beneficiary of IRA credits", linkType: "committee_oversight_of_contract", confidence: "direct" },
+
+  // ── Marathon Petroleum links (Climate) ──
+  { source: "marathon", target: "marathon-pac", label: "Funds", linkType: "donation_to_member", amount: 1_050_000, confidence: "direct" },
+  { source: "marathon-pac", target: "sen-barrasso", label: "Donated $30K", linkType: "donation_to_member", amount: 30_000, year: 2024, confidence: "direct" },
+  { source: "marathon", target: "epa", label: "Largest US refiner (EPA GHGRP)", linkType: "committee_oversight_of_contract", confidence: "direct" },
+  { source: "marathon", target: "energy-industry", label: "Operates in", linkType: "trade_association_lobbying", confidence: "direct" },
+  { source: "marathon", target: "ogci", label: "Industry climate initiative", linkType: "trade_association_lobbying", confidence: "likely" },
 
   // ── Smith & Wesson links (Gun Policy) ──
   { source: "smith-wesson", target: "nssf-pac", label: "Funds via NSSF", linkType: "trade_association_lobbying", amount: 780_000, confidence: "likely" },
