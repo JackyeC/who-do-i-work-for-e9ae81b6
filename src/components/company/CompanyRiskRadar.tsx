@@ -185,9 +185,9 @@ export function CompanyRiskRadar({ companyId, companyName, slug, lobbyingSpend, 
       {/* Header */}
       <div className="flex items-center justify-between px-4 py-3 border-b border-border">
         <div className="flex items-center gap-2">
-          <AlertTriangle className="w-4 h-4 text-destructive" strokeWidth={1.5} />
+          <Shield className="w-4 h-4 text-primary" strokeWidth={1.5} />
           <span className="font-mono text-xs tracking-[0.15em] uppercase text-foreground font-semibold">
-            Career Risk Radar
+            Company Signal Radar
           </span>
         </div>
         <Button variant="ghost" size="sm" className="h-7 px-2 font-mono text-[10px] tracking-wider uppercase text-muted-foreground hover:text-foreground" onClick={handleShare}>
