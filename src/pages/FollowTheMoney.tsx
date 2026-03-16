@@ -329,6 +329,50 @@ const SAMPLE_NODES: GraphNode[] = [
   { id: "housing-industry", label: "Real Estate Sector", group: "Industry", val: 14, issueCategories: ["Housing"] },
   { id: "hud", label: "Dept. of Housing & Urban Development", group: "Agency", val: 14, issueCategories: ["Housing"] },
   { id: "financial-industry", label: "Financial Services Sector", group: "Industry", val: 15, issueCategories: ["Financial Services"] },
+
+  // ── Koch Industries (Dark Money — Climate, Energy) ──
+  { id: "koch", label: "Koch Industries", group: "Company", val: 20, metadata: { industry: "Conglomerate / Energy", summary: "Private conglomerate with one of the largest dark money networks in US politics. Funds 501(c)(4) groups that spend on elections without disclosing donors." } },
+  { id: "koch-pac", label: "Koch Industries PAC", group: "PAC", val: 14, amount: 2_100_000, metadata: { summary: "Direct PAC spending — only the visible portion of Koch's political influence." } },
+  { id: "americans-prosperity", label: "Americans for Prosperity (501c4)", group: "PAC", val: 18, amount: 65_000_000, metadata: { summary: "Koch-funded 501(c)(4) dark money group. Spent $65M+ on elections without disclosing donors. Opposes climate regulation and ACA." } },
+  { id: "freedom-partners", label: "Freedom Partners Chamber", group: "PAC", val: 15, amount: 42_000_000, metadata: { summary: "Koch donor network hub. Distributed $42M to conservative groups opposing environmental and labor regulations." } },
+  { id: "sen-cruz", label: "Sen. Ted Cruz (R-TX)", group: "Politician", val: 12, party: "Republican", state: "TX", issueCategories: ["Energy", "Climate"] },
+  { id: "epa", label: "Environmental Protection Agency", group: "Agency", val: 15, issueCategories: ["Climate", "Energy"] },
+  { id: "climate-deregulation-bill", label: "EPA Regulatory Reform Act", group: "Legislation", val: 11, issueCategories: ["Climate", "Energy"], metadata: { status: "In Committee", description: "Would restrict EPA authority to regulate greenhouse gas emissions from power plants." } },
+
+  // ── Raytheon/RTX (Revolving Door — Defense) ──
+  { id: "raytheon", label: "RTX (Raytheon)", group: "Company", val: 20, metadata: { industry: "Defense / Aerospace", summary: "Major defense contractor. Former executives rotate between Pentagon leadership roles and corporate board seats — textbook revolving door." } },
+  { id: "raytheon-pac", label: "RTX PAC", group: "PAC", val: 15, amount: 2_400_000, metadata: { summary: "One of the top defense industry PACs. Donates to Armed Services committee members from both parties." } },
+  { id: "lloyd-austin-node", label: "Lloyd Austin (Fmr. Raytheon Board → SecDef)", group: "Politician", val: 14, issueCategories: ["Defense"], metadata: { summary: "Served on Raytheon board before becoming Secretary of Defense. Classic revolving door." } },
+  { id: "mark-esper-node", label: "Mark Esper (Fmr. Raytheon Lobbyist → SecDef)", group: "Politician", val: 13, issueCategories: ["Defense"], metadata: { summary: "Was Raytheon's VP of Government Relations before serving as Secretary of Defense under Trump." } },
+  { id: "armed-services", label: "Senate Armed Services Committee", group: "Committee", val: 15, issueCategories: ["Defense"] },
+  { id: "sen-reed", label: "Sen. Jack Reed (D-RI)", group: "Politician", val: 11, party: "Democrat", state: "RI", issueCategories: ["Defense"] },
+  { id: "sen-wicker", label: "Sen. Roger Wicker (R-MS)", group: "Politician", val: 11, party: "Republican", state: "MS", issueCategories: ["Defense"] },
+  { id: "ndaa-bill", label: "National Defense Authorization Act (NDAA)", group: "Legislation", val: 14, issueCategories: ["Defense"], metadata: { status: "Enacted Annually", description: "Annual defense spending bill. Raytheon lobbies heavily on weapons procurement provisions." } },
+  { id: "defense-industry", label: "Defense Sector", group: "Industry", val: 16, issueCategories: ["Defense"] },
+
+  // ── Comcast/NBCUniversal (Lobbying — Consumer Protection, Technology) ──
+  { id: "comcast", label: "Comcast / NBCUniversal", group: "Company", val: 18, metadata: { industry: "Telecom / Media", summary: "Top corporate lobbyist in the US. Spends $14M+/year lobbying on net neutrality, media consolidation, and broadband regulation." } },
+  { id: "comcast-pac", label: "Comcast PAC", group: "PAC", val: 14, amount: 1_800_000 },
+  { id: "fcc", label: "Federal Communications Commission", group: "Agency", val: 15, issueCategories: ["Technology", "Consumer Protection"] },
+  { id: "net-neutrality-bill", label: "Net Neutrality & Broadband Justice Act", group: "Legislation", val: 11, issueCategories: ["Technology", "Consumer Protection"], metadata: { status: "In Committee", description: "Would restore FCC authority to enforce net neutrality and regulate broadband as a utility." } },
+  { id: "telecom-industry", label: "Telecom Sector", group: "Industry", val: 14, issueCategories: ["Technology", "Consumer Protection"] },
+
+  // ── Goldman Sachs (Revolving Door — Financial Services) ──
+  { id: "goldman", label: "Goldman Sachs", group: "Company", val: 20, metadata: { industry: "Investment Banking", summary: "The poster child for revolving door influence. Multiple former executives served as Treasury Secretary, Fed chairs, and White House advisors." } },
+  { id: "goldman-pac", label: "Goldman Sachs PAC", group: "PAC", val: 15, amount: 1_900_000 },
+  { id: "hank-paulson-node", label: "Hank Paulson (Goldman CEO → Treasury Sec.)", group: "Politician", val: 13, issueCategories: ["Financial Services"], metadata: { summary: "Goldman Sachs CEO who became Treasury Secretary during 2008 crisis. Oversaw bank bailouts." } },
+  { id: "gary-cohn-node", label: "Gary Cohn (Goldman Pres. → NEC Director)", group: "Politician", val: 12, issueCategories: ["Financial Services"], metadata: { summary: "Goldman Sachs president who became Trump's National Economic Council director." } },
+  { id: "treasury", label: "U.S. Treasury Department", group: "Agency", val: 16, issueCategories: ["Financial Services"] },
+  { id: "sec", label: "Securities & Exchange Commission", group: "Agency", val: 15, issueCategories: ["Financial Services"] },
+  { id: "dodd-frank-bill", label: "Dodd-Frank Wall Street Reform Act", group: "Legislation", val: 12, issueCategories: ["Financial Services", "Consumer Protection"], metadata: { status: "Enacted (under rollback)", description: "Post-2008 financial regulation. Goldman lobbied heavily on derivatives trading rules." } },
+
+  // ── Purdue Pharma / Sacklers (Dark Money — Healthcare) ──
+  { id: "purdue", label: "Purdue Pharma (Sackler Family)", group: "Company", val: 16, metadata: { industry: "Pharmaceuticals", summary: "Sackler family used philanthropic foundations and dark money channels to influence opioid policy while fueling the opioid crisis." } },
+  { id: "sackler-foundation", label: "Sackler Family Foundations (501c3/c4)", group: "PAC", val: 14, amount: 18_000_000, metadata: { summary: "Sackler philanthropic entities that donated to institutions while lobbying against opioid restrictions." } },
+  { id: "pain-care-forum", label: "Pain Care Forum (Industry Coalition)", group: "PAC", val: 13, amount: 740_000_000, metadata: { summary: "Pharma industry dark money coalition that spent $740M lobbying against opioid regulations over a decade." } },
+  { id: "fda", label: "Food & Drug Administration", group: "Agency", val: 15, issueCategories: ["Healthcare"] },
+  { id: "opioid-regulation-bill", label: "SUPPORT for Patients and Communities Act", group: "Legislation", val: 11, issueCategories: ["Healthcare"], metadata: { status: "Enacted", description: "Bipartisan opioid response legislation signed into law after years of pharma lobbying delays." } },
+  { id: "pharma-industry", label: "Pharmaceutical Sector", group: "Industry", val: 15, issueCategories: ["Healthcare"] },
 ];
 
 const SAMPLE_LINKS: GraphLink[] = [
