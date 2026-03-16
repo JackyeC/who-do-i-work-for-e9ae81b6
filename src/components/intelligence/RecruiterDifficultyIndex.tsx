@@ -65,7 +65,7 @@ export function RecruiterDifficultyIndex({ companyId, companyName }: Props) {
     queryKey: ["rdi-comp", companyId],
     enabled: !!companyId,
     queryFn: async () => {
-      const { data } = await supabase
+      const { data } = await (supabase as any)
         .from("company_compensation")
         .select("salary_competitiveness, data_source")
         .eq("company_id", companyId)
