@@ -81,7 +81,7 @@ const Index = forwardRef<HTMLDivElement>((_, ref) => {
             <span className="text-primary">before you say yes.</span>
           </h1>
           <p className="text-base lg:text-lg text-muted-foreground mb-10 max-w-[480px] leading-relaxed">
-            Independent, public-data-based insights on employers' power, politics, people practices, and worker experience. Not another background check on you — this time, it's about <em>them</em>.
+            The background check just flipped. I've been blessed to be in the rooms where it happens — now I'm taking everything I've learned and putting it into your hands.
           </p>
           <HeroSearch />
           <div className="mt-6">
@@ -292,6 +292,9 @@ const Index = forwardRef<HTMLDivElement>((_, ref) => {
                 <div className="font-mono text-sm tracking-wider uppercase text-muted-foreground pl-4 mb-6">— Jackye Clayton</div>
                 <p className="text-base text-muted-foreground leading-relaxed">
                   I don't tell you where to work; I give you the truth so you can decide. 20+ years in the rooms where it happens — now that intelligence is yours.
+                </p>
+                <p className="font-mono text-sm italic text-primary mt-6 tracking-wide">
+                  Unapologetically Transparent. — Jackye Clayton
                 </p>
               </div>
             </div>

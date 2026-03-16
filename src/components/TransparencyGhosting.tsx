@@ -57,7 +57,7 @@ export function TransparencyGhosting(props: TransparencyGhostingProps) {
       </div>
 
       <p className="text-[11px] text-muted-foreground leading-relaxed">
-        Omission is a signal. These data points are not publicly disclosed — which makes them open questions, not negative findings.
+        Data Not Disclosed: This employer has not made this information public. Omission is a signal — these are open questions, not negative findings.
       </p>
 
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
