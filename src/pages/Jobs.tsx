@@ -239,10 +239,16 @@ export default function Jobs() {
         /,\s*(in|de|cn|jp|kr|mx|br|ca|gb|fr|es|it|au|sg|ie|nl|il|se|ch)\s*$/i.test(loc);
       if (isNonUS) return false;
       if (salaryOnly && !job.salary_range) return false;
+      const searchLower = search.toLowerCase();
       const matchesSearch = !search ||
-        job.title.toLowerCase().includes(search.toLowerCase()) ||
-        company.name.toLowerCase().includes(search.toLowerCase()) ||
-        loc.includes(search.toLowerCase());
+        job.title.toLowerCase().includes(searchLower) ||
+        company.name.toLowerCase().includes(searchLower) ||
+        loc.includes(searchLower) ||
+        // Semantic expanded terms matching
+        semanticTerms.some(term => {
+          const t = term.toLowerCase();
+          return job.title.toLowerCase().includes(t) || company.name.toLowerCase().includes(t) || loc.includes(t);
+        });
       const matchesScore = company.civic_footprint_score >= parseInt(minScore);
       const matchesIndustry = industryFilter === "all" || company.industry === industryFilter;
       const matchesWorkMode = workModeFilter === "all" || job.work_mode === workModeFilter;
