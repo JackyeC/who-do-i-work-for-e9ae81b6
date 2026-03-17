@@ -590,6 +590,7 @@ export default function CompanyProfile() {
                         Transparency: {transparencyScore}%
                       </Badge>
                     )}
+                    <CIOAuditBadge lastAuditedAt={(dbCompany as any)?.last_audited_at} />
                     <LastAuditedStamp
                       lastAuditedAt={(dbCompany as any)?.last_audited_at}
                       lastReviewed={dbCompany?.last_reviewed}
