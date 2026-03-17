@@ -1148,15 +1148,27 @@ export default function CompanyProfile() {
                     <HiringScanContextCard companyId={dbCompanyId} companyName={name} />
                     <RecruitingHealthCard companyId={dbCompanyId} companyName={name} />
                     <EEO1WorkforceCard companyId={dbCompanyId} companyName={name} />
+                    {!dbCompanyId && <EmptyStateExplainer type="eeo1" />}
                     <ExecutiveInclusionSnapshot companyId={dbCompanyId} companyName={name} />
                     <DiversityDisclosureTracker companyId={dbCompanyId} companyName={name} />
                     <WorkerSentimentCard companyName={name} dbCompanyId={dbCompanyId} />
+                    {!tiSentiment && <EmptyStateExplainer type="sentiment" />}
                     <AIHiringCard companyName={name} dbCompanyId={dbCompanyId} />
                     <WorkerBenefitsCard companyName={name} dbCompanyId={dbCompanyId} />
+                    {!tiBenefits && <EmptyStateExplainer type="benefits" />}
                     {dbCompanyId && (
                       <WorkforceDemographicsLayer companyId={dbCompanyId} companyName={name} />
                     )}
-                    
+                    {/* Tactical Questions — generated from risk signals */}
+                    <TacticalQuestionsCard
+                      companyName={name}
+                      signals={[
+                        ...(tiSentiment ? [{ type: "low_sentiment", severity: "yellow" as const }] : []),
+                        ...((dbRevolvingDoor?.length || 0) > 0 ? [{ type: "executive_turnover", severity: "yellow" as const }] : []),
+                        ...((dbDarkMoney?.length || 0) > 0 ? [{ type: "dark_money", severity: "red" as const }] : []),
+                        ...(tiAiHr ? [{ type: "ai_hiring", severity: "yellow" as const }] : []),
+                      ]}
+                    />
                   </div>
                 </section>
               ),
