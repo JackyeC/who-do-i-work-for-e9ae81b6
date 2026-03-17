@@ -116,6 +116,8 @@ import { EmployerRebuttalSection } from "@/components/company/EmployerRebuttalSe
 import { NarrativeGapCard } from "@/components/company/NarrativeGapCard";
 import { RecruitmentAdvantageScore } from "@/components/company/RecruitmentAdvantageScore";
 import { VerificationBountyCard } from "@/components/company/VerificationBountyCard";
+import { PrivateCompanyIdentityCard } from "@/components/company/PrivateCompanyIdentityCard";
+import { StartupDNACard } from "@/components/company/StartupDNACard";
 import { CIOAuditBadge } from "@/components/company/CIOAuditBadge";
 /* ─── Status labels ─── */
 const STATUS_LABELS: Record<string, { label: string; color: string }> = {
@@ -656,6 +658,35 @@ export default function CompanyProfile() {
                 </div>
               </CardContent>
             </Card>
+          )}
+
+          {/* ═══════════════════════════════════════════════════════════
+              PRIVATE COMPANY IDENTITY — Who Runs This Company
+             ═══════════════════════════════════════════════════════════ */}
+          {dbCompany?.is_publicly_traded === false && (
+            <PrivateCompanyIdentityCard
+              companyName={name}
+              founderNames={(dbCompany as any)?.founder_names}
+              founderPreviousCompanies={(dbCompany as any)?.founder_previous_companies}
+              foundedYear={(dbCompany as any)?.founded_year}
+              fundingStage={(dbCompany as any)?.funding_stage}
+              parentCompany={(dbCompany as any)?.parent_company}
+              employeeCount={(dbCompany as any)?.employee_count}
+              description={(dbCompany as any)?.description}
+            />
+          )}
+
+          {/* ═══════════════════════════════════════════════════════════
+              STARTUP DNA — For startup-flagged companies
+             ═══════════════════════════════════════════════════════════ */}
+          {(dbCompany as any)?.is_startup === true && (
+            <StartupDNACard
+              companyName={name}
+              founderNames={(dbCompany as any)?.founder_names}
+              founderPreviousCompanies={(dbCompany as any)?.founder_previous_companies}
+              fundingStage={(dbCompany as any)?.funding_stage}
+              foundedYear={(dbCompany as any)?.founded_year}
+            />
           )}
 
           {/* ═══════════════════════════════════════════════════════════
