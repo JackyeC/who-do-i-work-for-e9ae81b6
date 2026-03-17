@@ -22,11 +22,20 @@ Deno.serve(async (req) => {
     // Step 1: Search CourtListener for EEOC dismissal motions
     const courtListenerResults = await searchCourtListener();
 
-    // Step 2: Search news via Firecrawl for recent EEOC dropped cases
+    // Step 2: Search news via resilient search for recent EEOC dropped cases
     let newsResults: any[] = [];
-    if (firecrawlKey) {
-      newsResults = await searchFirecrawlNews(firecrawlKey);
-    }
+    const newsQueries = [
+      '"EEOC moved to dismiss" 2025',
+      '"EEOC withdrew" discrimination lawsuit 2025',
+      '"EEOC dropped" employment case 2025',
+    ];
+    const { results: searchResults } = await resilientSearch(newsQueries, firecrawlKey, lovableKey);
+    newsResults = searchResults.map(r => ({
+      source: "resilient_search",
+      title: r.title || "",
+      url: r.url || "",
+      markdown: (r.markdown || "").slice(0, 2000),
+    }));
 
     // Step 3: Use AI to extract structured case data from search results
     const allResults = [...courtListenerResults, ...newsResults];
