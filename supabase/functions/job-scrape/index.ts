@@ -177,6 +177,51 @@ const ATS_CONFIGS: Record<string, { detect: (url: string) => boolean; fetchJobs:
     detect: (url) => /jobvite\.com|jobs\.jobvite/i.test(url),
     fetchJobs: async (_url) => [],
   },
+  bamboohr: {
+    platform: 'bamboohr',
+    detect: (url) => /bamboohr\.com/i.test(url),
+    fetchJobs: async (_url) => [],
+  },
+  rippling: {
+    platform: 'rippling',
+    detect: (url) => /rippling\.com.*careers|rippling-ats/i.test(url),
+    fetchJobs: async (_url) => [],
+  },
+  breezy: {
+    platform: 'breezy',
+    detect: (url) => /breezy\.hr/i.test(url),
+    fetchJobs: async (_url) => [],
+  },
+  teamtailor: {
+    platform: 'teamtailor',
+    detect: (url) => /teamtailor\.com/i.test(url),
+    fetchJobs: async (_url) => [],
+  },
+  recruitee: {
+    platform: 'recruitee',
+    detect: (url) => /recruitee\.com/i.test(url),
+    fetchJobs: async (_url) => [],
+  },
+  zohorecruit: {
+    platform: 'zohorecruit',
+    detect: (url) => /zoho\.com.*recruit|zohorecruit/i.test(url),
+    fetchJobs: async (_url) => [],
+  },
+  pinpoint: {
+    platform: 'pinpoint',
+    detect: (url) => /pinpointhq\.com/i.test(url),
+    fetchJobs: async (_url) => [],
+  },
+  manatal: {
+    platform: 'manatal',
+    detect: (url) => /manatal\.com/i.test(url),
+    fetchJobs: async (_url) => [],
+  },
+  gem: {
+    platform: 'gem',
+    detect: (url) => /gem\.com.*jobs/i.test(url),
+    fetchJobs: async (_url) => [],
+  },
 };
 
 // ─── ATS patterns to find in page content (for pages that link to ATS) ───
@@ -191,6 +236,15 @@ const ATS_LINK_PATTERNS: { platform: string; pattern: RegExp; extractUrl?: (matc
   { platform: 'taleo', pattern: /(?:href=["']|)(https?:\/\/[a-z0-9_-]+\.taleo\.net[^\s"']*)/gi },
   { platform: 'jobvite', pattern: /(?:href=["']|)(https?:\/\/jobs\.jobvite\.com\/[a-z0-9_-]+)/gi },
   { platform: 'phenom', pattern: /(?:href=["']|)(https?:\/\/[a-z0-9_-]+\.phenom\.com[^\s"']*)/gi },
+  { platform: 'bamboohr', pattern: /(?:href=["']|)(https?:\/\/[a-z0-9_-]+\.bamboohr\.com[^\s"']*)/gi },
+  { platform: 'rippling', pattern: /(?:href=["']|)(https?:\/\/[a-z0-9_-]+\.rippling\.com[^\s"']*)/gi },
+  { platform: 'breezy', pattern: /(?:href=["']|)(https?:\/\/[a-z0-9_-]+\.breezy\.hr[^\s"']*)/gi },
+  { platform: 'teamtailor', pattern: /(?:href=["']|)(https?:\/\/[a-z0-9_-]+\.teamtailor\.com[^\s"']*)/gi },
+  { platform: 'recruitee', pattern: /(?:href=["']|)(https?:\/\/[a-z0-9_-]+\.recruitee\.com[^\s"']*)/gi },
+  { platform: 'zohorecruit', pattern: /(?:href=["']|)(https?:\/\/[a-z0-9_-]+\.zohorecruit\.com[^\s"']*)/gi },
+  { platform: 'pinpoint', pattern: /(?:href=["']|)(https?:\/\/[a-z0-9_-]+\.pinpointhq\.com[^\s"']*)/gi },
+  { platform: 'manatal', pattern: /(?:href=["']|)(https?:\/\/[a-z0-9_-]+\.manatal\.com[^\s"']*)/gi },
+  { platform: 'gem', pattern: /(?:href=["']|)(https?:\/\/[a-z0-9_-]+\.gem\.com[^\s"']*\/jobs[^\s"']*)/gi },
 ];
 
 function detectWorkMode(location: string, description: string): string | null {
