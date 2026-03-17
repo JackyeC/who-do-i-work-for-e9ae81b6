@@ -160,37 +160,69 @@ export function UserProfileForm() {
         </CardDescription>
       </CardHeader>
       <CardContent className="space-y-5">
-        <div className="space-y-2">
-          <Label>Upload Resume (Auto-Fill)</Label>
-          <div className="flex items-center gap-2">
-            <Button
-              type="button"
-              variant="outline"
-              className="gap-2"
-              disabled={uploading}
-              onClick={() => document.getElementById("resume-upload")?.click()}
-            >
-              {uploading ? (
-                <>
-                  <Loader2 className="w-4 h-4 animate-spin" />
-                  Parsing...
-                </>
-              ) : (
-                <>
-                  <Upload className="w-4 h-4" />
-                  Upload Resume
-                </>
-              )}
-            </Button>
-            <input
-              id="resume-upload"
-              type="file"
-              accept=".pdf,.doc,.docx,.txt"
-              onChange={handleFileUpload}
-              className="hidden"
-            />
-            <p className="text-xs text-muted-foreground">PDF, DOC, DOCX • Max 20MB</p>
-          </div>
+        {/* Resume Upload + Status */}
+        <div className="space-y-3">
+          <Label>Resume</Label>
+          {latestResume ? (
+            <div className="rounded-lg border border-border bg-muted/30 p-3 space-y-2">
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-2">
+                  <FileText className="w-4 h-4 text-primary" />
+                  <div>
+                    <p className="text-sm font-medium text-foreground">{latestResume.original_filename}</p>
+                    <p className="text-xs text-muted-foreground">
+                      Uploaded {new Date(latestResume.created_at).toLocaleDateString()}
+                      {latestResume.parsed_skills_count != null && ` • ${latestResume.parsed_skills_count} skills extracted`}
+                    </p>
+                  </div>
+                </div>
+                <Badge variant="outline" className="text-[hsl(var(--civic-green))] border-[hsl(var(--civic-green))]/30 text-xs">
+                  Ready for Quick Apply
+                </Badge>
+              </div>
+              <Button
+                type="button"
+                variant="ghost"
+                size="sm"
+                className="gap-1.5 text-xs"
+                disabled={uploading}
+                onClick={() => document.getElementById("resume-upload")?.click()}
+              >
+                <Upload className="w-3 h-3" />
+                Replace Resume
+              </Button>
+            </div>
+          ) : (
+            <div className="flex items-center gap-2">
+              <Button
+                type="button"
+                variant="outline"
+                className="gap-2"
+                disabled={uploading}
+                onClick={() => document.getElementById("resume-upload")?.click()}
+              >
+                {uploading ? (
+                  <>
+                    <Loader2 className="w-4 h-4 animate-spin" />
+                    Parsing...
+                  </>
+                ) : (
+                  <>
+                    <Upload className="w-4 h-4" />
+                    Upload Resume
+                  </>
+                )}
+              </Button>
+              <p className="text-xs text-muted-foreground">PDF, DOC, DOCX • Max 20MB</p>
+            </div>
+          )}
+          <input
+            id="resume-upload"
+            type="file"
+            accept=".pdf,.doc,.docx,.txt"
+            onChange={handleFileUpload}
+            className="hidden"
+          />
           <p className="text-xs text-muted-foreground flex items-center gap-1">
             <FileText className="w-3 h-3" />
             AI will extract your skills, experience, and job titles automatically
