@@ -7,6 +7,8 @@ const corsHeaders = {
     "authorization, x-client-info, apikey, content-type, x-supabase-client-platform, x-supabase-client-platform-version, x-supabase-client-runtime, x-supabase-client-runtime-version",
 };
 
+import { resilientSearch } from "../_shared/resilient-search.ts";
+
 async function findHeadshot(name: string, company: string, firecrawlKey: string): Promise<string | null> {
   try {
     const query = `${name} ${company} headshot portrait photo`;
@@ -27,7 +29,6 @@ async function findHeadshot(name: string, company: string, firecrawlKey: string)
     if (!resp.ok) return null;
     const data = await resp.json();
     const results = data.data || [];
-    // Look for image URLs in results
     for (const r of results) {
       const links: string[] = r.links || [];
       for (const link of links) {
@@ -35,7 +36,6 @@ async function findHeadshot(name: string, company: string, firecrawlKey: string)
           return link;
         }
       }
-      // Check if the URL itself is an image
       if (r.url && /\.(jpg|jpeg|png|webp)/i.test(r.url)) {
         return r.url;
       }
