@@ -292,16 +292,3 @@ ${combinedText}`,
     );
   }
 });
-
-async function fetchFirecrawl(apiKey: string, body: Record<string, unknown>): Promise<any> {
-  const res = await fetch("https://api.firecrawl.dev/v1/search", {
-    method: "POST",
-    headers: {
-      Authorization: `Bearer ${apiKey}`,
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify(body),
-  });
-  if (!res.ok) return null;
-  return res.json();
-}
