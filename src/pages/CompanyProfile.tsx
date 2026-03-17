@@ -116,6 +116,8 @@ import { EmployerRebuttalSection } from "@/components/company/EmployerRebuttalSe
 import { NarrativeGapCard } from "@/components/company/NarrativeGapCard";
 import { RecruitmentAdvantageScore } from "@/components/company/RecruitmentAdvantageScore";
 import { VerificationBountyCard } from "@/components/company/VerificationBountyCard";
+import { PrivateCompanyIdentityCard } from "@/components/company/PrivateCompanyIdentityCard";
+import { StartupDNACard } from "@/components/company/StartupDNACard";
 import { CIOAuditBadge } from "@/components/company/CIOAuditBadge";
 /* ─── Status labels ─── */
 const STATUS_LABELS: Record<string, { label: string; color: string }> = {
