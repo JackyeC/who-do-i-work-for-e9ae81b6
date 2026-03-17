@@ -91,7 +91,7 @@ export default function ForEmployers() {
 
   usePageSEO({
     title: "For Employers — Claim, Respond & Get Certified",
-    description: "Post values-aligned jobs and earn Gold Shield certification on Who Do I Work For. Founding Partner pricing available now.",
+    description: "Post values-aligned jobs and earn Gold Shield certification on Who Do I Work For. Narrative Alignment Package available now.",
     path: "/for-employers",
   });
 
