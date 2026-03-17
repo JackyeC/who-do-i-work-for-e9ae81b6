@@ -1,7 +1,6 @@
 import { useState } from "react";
-import { useJobMatcher, useApplicationsTracker, MatchedJob } from "@/hooks/use-job-matcher";
+import { useJobMatcher, MatchedJob } from "@/hooks/use-job-matcher";
 import { useApplyQueue } from "@/hooks/use-auto-apply";
-import { useAuth } from "@/contexts/AuthContext";
 import { supabase } from "@/integrations/supabase/client";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -15,6 +14,7 @@ import {
 import { generateCandidateAdvocacyPdf } from "@/lib/generateCandidateAdvocacyPdf";
 import { Link } from "react-router-dom";
 import { cn } from "@/lib/utils";
+import { EasyApplyButton } from "./EasyApplyButton";
 
 const AI_TRANSPARENCY_THRESHOLD = 70;
 
@@ -39,12 +39,9 @@ function AlignmentGuardBadge() {
   );
 }
 
-function JobCard({ job, onApply, onQueue, applying, generating, queueing, isQueued }: {
+function JobCard({ job, onQueue, queueing, isQueued }: {
   job: MatchedJob;
-  onApply: (job: MatchedJob) => void;
   onQueue: (job: MatchedJob) => void;
-  applying: boolean;
-  generating: boolean;
   queueing: boolean;
   isQueued: boolean;
 }) {
@@ -94,16 +91,18 @@ function JobCard({ job, onApply, onQueue, applying, generating, queueing, isQueu
             )}
           </div>
           <div className="flex flex-col gap-2 shrink-0">
-            <Button
-              size="sm"
-              onClick={() => onApply(job)}
-              disabled={applying || generating || belowThreshold}
+            <EasyApplyButton
+              job={{
+                id: job.job_id,
+                company_id: job.company_id,
+                title: job.title,
+                company_name: job.company_name,
+                url: job.url,
+                alignment_score: job.alignment_score,
+                matched_signals: job.matched_signals,
+              }}
               className="gap-1.5"
-              title={belowThreshold ? `Alignment score must be ${AI_TRANSPARENCY_THRESHOLD}%+ to apply` : undefined}
-            >
-              {generating ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <Wand2 className="w-3.5 h-3.5" />}
-              Apply Now
-            </Button>
+            />
             {!belowThreshold && (
               <Button
                 size="sm"
@@ -231,11 +230,8 @@ function ClipboardBanner({ payload, onDismiss }: {
 
 export function AlignedJobsList() {
   const { data, isLoading, error } = useJobMatcher();
-  const { trackApplication } = useApplicationsTracker();
   const { queue, addToQueue } = useApplyQueue();
-  const { user } = useAuth();
   const { toast } = useToast();
-  const [generatingFor, setGeneratingFor] = useState<string | null>(null);
   const [activePayload, setActivePayload] = useState<any>(null);
 
   const queuedJobIds = new Set(queue.map(q => q.job_id).filter(Boolean));
@@ -252,66 +248,6 @@ export function AlignedJobsList() {
     });
   };
 
-  const handleApply = async (job: MatchedJob) => {
-    if (!user) {
-      toast({ title: "Please sign in", variant: "destructive" });
-      return;
-    }
-
-    if (job.alignment_score < AI_TRANSPARENCY_THRESHOLD) {
-      toast({
-        title: "Alignment too low",
-        description: `This company scores ${job.alignment_score}% — below the ${AI_TRANSPARENCY_THRESHOLD}% transparency threshold.`,
-        variant: "destructive",
-      });
-      return;
-    }
-
-    setGeneratingFor(job.job_id);
-    try {
-      const { data: result, error: fnError } = await supabase.functions.invoke("generate-application-payload", {
-        body: { company_id: job.company_id, user_id: user.id },
-      });
-      if (fnError) throw fnError;
-
-      if (result?.payload) {
-        try {
-          await navigator.clipboard.writeText(result.payload.matchingStatement);
-        } catch { /* clipboard may fail silently */ }
-
-        trackApplication.mutate({
-          company_id: job.company_id,
-          job_id: job.job_id,
-          job_title: job.title,
-          company_name: job.company_name,
-          application_link: job.url || undefined,
-          alignment_score: job.alignment_score,
-          matched_signals: job.matched_signals,
-          status: "Submitted",
-        });
-
-        const targetUrl = job.url || result.payload.careerSiteUrl;
-        if (targetUrl) {
-          window.open(targetUrl, "_blank", "noopener,noreferrer");
-        }
-
-        setActivePayload(result.payload);
-        toast({ title: "Custom Value Proposition copied to clipboard. Redirecting to Career Site..." });
-      }
-    } catch (e: any) {
-      console.error("Payload generation error:", e);
-      const msg = e?.message || "Failed to generate payload";
-      if (msg.includes("429") || msg.includes("rate limit")) {
-        toast({ title: "Rate limited", description: "Please try again in a moment.", variant: "destructive" });
-      } else if (msg.includes("402")) {
-        toast({ title: "AI credits exhausted", description: "Please add funds to continue.", variant: "destructive" });
-      } else {
-        toast({ title: "Generation failed", description: msg, variant: "destructive" });
-      }
-    } finally {
-      setGeneratingFor(null);
-    }
-  };
 
   if (isLoading) {
     return (
@@ -367,10 +303,7 @@ export function AlignedJobsList() {
         <JobCard
           key={job.job_id}
           job={job}
-          onApply={handleApply}
           onQueue={handleQueue}
-          applying={trackApplication.isPending}
-          generating={generatingFor === job.job_id}
           queueing={addToQueue.isPending}
           isQueued={queuedJobIds.has(job.job_id)}
         />
