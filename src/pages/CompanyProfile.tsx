@@ -1368,6 +1368,11 @@ export default function CompanyProfile() {
                   {dbCompanyId && <ReceiptsTimeline companyId={dbCompanyId} companyName={name} />}
                 </section>
               ),
+              off_the_record: () => (
+                <section className="mb-10 scroll-mt-28">
+                  <OffTheRecordSignals companyId={dbCompanyId || ""} companyName={name} />
+                </section>
+              ),
             };
 
             const BUCKET_ICONS: Record<string, any> = {

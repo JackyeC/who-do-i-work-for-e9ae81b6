@@ -85,6 +85,12 @@ export const PERSONAS: PersonaConfig[] = [
         title: "Stability & Business Health",
         subtitle: "Layoff history, WARN notices, leadership turnover, and market signals — even if a company aligns with your values, it still needs to survive.",
         iconName: "Activity",
+        sections: ["workforce_stability", "off_the_record"],
+      },
+    ],
+  },
+  // NOTE: replaced the rest below
+        iconName: "Activity",
         sections: ["workforce_stability"],
       },
     ],
