@@ -236,6 +236,15 @@ const ATS_LINK_PATTERNS: { platform: string; pattern: RegExp; extractUrl?: (matc
   { platform: 'taleo', pattern: /(?:href=["']|)(https?:\/\/[a-z0-9_-]+\.taleo\.net[^\s"']*)/gi },
   { platform: 'jobvite', pattern: /(?:href=["']|)(https?:\/\/jobs\.jobvite\.com\/[a-z0-9_-]+)/gi },
   { platform: 'phenom', pattern: /(?:href=["']|)(https?:\/\/[a-z0-9_-]+\.phenom\.com[^\s"']*)/gi },
+  { platform: 'bamboohr', pattern: /(?:href=["']|)(https?:\/\/[a-z0-9_-]+\.bamboohr\.com[^\s"']*)/gi },
+  { platform: 'rippling', pattern: /(?:href=["']|)(https?:\/\/[a-z0-9_-]+\.rippling\.com[^\s"']*)/gi },
+  { platform: 'breezy', pattern: /(?:href=["']|)(https?:\/\/[a-z0-9_-]+\.breezy\.hr[^\s"']*)/gi },
+  { platform: 'teamtailor', pattern: /(?:href=["']|)(https?:\/\/[a-z0-9_-]+\.teamtailor\.com[^\s"']*)/gi },
+  { platform: 'recruitee', pattern: /(?:href=["']|)(https?:\/\/[a-z0-9_-]+\.recruitee\.com[^\s"']*)/gi },
+  { platform: 'zohorecruit', pattern: /(?:href=["']|)(https?:\/\/[a-z0-9_-]+\.zohorecruit\.com[^\s"']*)/gi },
+  { platform: 'pinpoint', pattern: /(?:href=["']|)(https?:\/\/[a-z0-9_-]+\.pinpointhq\.com[^\s"']*)/gi },
+  { platform: 'manatal', pattern: /(?:href=["']|)(https?:\/\/[a-z0-9_-]+\.manatal\.com[^\s"']*)/gi },
+  { platform: 'gem', pattern: /(?:href=["']|)(https?:\/\/[a-z0-9_-]+\.gem\.com[^\s"']*\/jobs[^\s"']*)/gi },
 ];
 
 function detectWorkMode(location: string, description: string): string | null {
