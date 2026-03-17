@@ -722,6 +722,18 @@ export default function CompanyProfile() {
           </div>
 
           {/* ═══════════════════════════════════════════════════════════
+              CAREER INTELLIGENCE SCORE — EXPLAINABILITY
+             ═══════════════════════════════════════════════════════════ */}
+          {dbCompanyId && (
+            <div className="mb-6">
+              <ScoreExplainabilityDrawer
+                companyId={dbCompanyId}
+                score={(dbCompany as any)?.career_intelligence_score ?? null}
+              />
+            </div>
+          )}
+
+          {/* ═══════════════════════════════════════════════════════════
               CORPORATE BEHAVIOR INDEX™
              ═══════════════════════════════════════════════════════════ */}
           {(() => {
