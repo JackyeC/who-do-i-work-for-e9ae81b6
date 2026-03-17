@@ -3,10 +3,11 @@ import { Link, useNavigate, useLocation } from "react-router-dom";
 import { useAuth } from "@/contexts/AuthContext";
 import { useDemoSafeMode } from "@/contexts/DemoSafeModeContext";
 import { cn } from "@/lib/utils";
-import { Search, LogIn, LogOut, Menu, X, Shield, Map, ChevronDown } from "lucide-react";
+import { Search, LogIn, LogOut, Menu, X, Shield, Map, ChevronDown, Lock } from "lucide-react";
 import { ThemeToggle } from "@/components/ThemeToggle";
 import { supabase } from "@/integrations/supabase/client";
 import { useQuery } from "@tanstack/react-query";
+import { SignupModal } from "@/components/SignupModal";
 
 export const MAIN_SECTIONS = [
   {
@@ -80,6 +81,7 @@ function isSectionActive(section: typeof MAIN_SECTIONS[0], pathname: string) {
 export function TopBar() {
   const [searchQuery, setSearchQuery] = useState("");
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [signupModalOpen, setSignupModalOpen] = useState(false);
   const navigate = useNavigate();
   const location = useLocation();
   const { user, signOut } = useAuth();
@@ -169,24 +171,37 @@ export function TopBar() {
         {/* Center Nav */}
         <nav className="hidden md:flex items-center justify-center gap-0 h-full flex-1 min-w-0">
           {MAIN_SECTIONS.map(section => {
-            if ((section as any).auth && !user) return null;
+            const requiresAuth = (section as any).auth && !user;
             const active = isSectionActive(section, location.pathname);
             const hasDropdown = section.subItems && section.subItems.length > 0;
             return (
               <div key={section.id} className="relative h-full group">
-                <Link
-                  to={section.path}
-                  className={cn(
-                    "font-mono text-[10px] tracking-wider uppercase px-3 h-full flex items-center border-b-2 transition-colors gap-1 whitespace-nowrap",
-                    active
-                      ? "text-primary border-primary"
-                      : "text-muted-foreground border-transparent hover:text-foreground"
-                  )}
-                >
-                  {section.label}
-                  {hasDropdown && <ChevronDown className="w-2.5 h-2.5" />}
-                </Link>
-                {hasDropdown && (
+                {requiresAuth ? (
+                  <button
+                    onClick={() => setSignupModalOpen(true)}
+                    className={cn(
+                      "font-mono text-[10px] tracking-wider uppercase px-3 h-full flex items-center border-b-2 transition-colors gap-1 whitespace-nowrap",
+                      "text-muted-foreground border-transparent hover:text-foreground"
+                    )}
+                  >
+                    {section.label}
+                    <Lock className="w-2.5 h-2.5 opacity-50" />
+                  </button>
+                ) : (
+                  <Link
+                    to={section.path}
+                    className={cn(
+                      "font-mono text-[10px] tracking-wider uppercase px-3 h-full flex items-center border-b-2 transition-colors gap-1 whitespace-nowrap",
+                      active
+                        ? "text-primary border-primary"
+                        : "text-muted-foreground border-transparent hover:text-foreground"
+                    )}
+                  >
+                    {section.label}
+                    {hasDropdown && <ChevronDown className="w-2.5 h-2.5" />}
+                  </Link>
+                )}
+                {hasDropdown && !requiresAuth && (
                   <div className="absolute top-full left-0 hidden group-hover:block bg-card border border-border shadow-lg min-w-[200px] z-50">
                     {section.subItems.map(sub => (
                       <Link
@@ -265,9 +280,17 @@ export function TopBar() {
       {mobileMenuOpen && (
         <div className="md:hidden border-b border-border bg-card py-2 px-4 space-y-1">
           {MAIN_SECTIONS.map(section => {
-            if ((section as any).auth && !user) return null;
+            const requiresAuth = (section as any).auth && !user;
             const active = isSectionActive(section, location.pathname);
-            return (
+            return requiresAuth ? (
+              <button
+                key={section.id}
+                onClick={() => { setMobileMenuOpen(false); setSignupModalOpen(true); }}
+                className="block w-full text-left px-3 py-2.5 font-mono text-[11px] tracking-wider uppercase text-muted-foreground"
+              >
+                {section.label} <Lock className="w-2.5 h-2.5 inline opacity-50 ml-1" />
+              </button>
+            ) : (
               <Link
                 key={section.id}
                 to={section.path}
@@ -282,6 +305,14 @@ export function TopBar() {
           })}
         </div>
       )}
+
+      {/* Signup gate modal */}
+      <SignupModal
+        open={signupModalOpen}
+        onOpenChange={setSignupModalOpen}
+        headline="Sign up to see the receipts"
+        subtext="Create a free account to access Dashboard, Career Intelligence, and more."
+      />
     </>
   );
 }
