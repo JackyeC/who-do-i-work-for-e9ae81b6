@@ -1137,6 +1137,7 @@ export default function CompanyProfile() {
                     <RealityCheckCard companyId={dbCompanyId} companyName={name} />
                     <EarlyWarningSignals companyId={dbCompanyId} companyName={name} />
                     <GhostJobDetector companyId={dbCompanyId} companyName={name} />
+                    <HiringScanContextCard companyId={dbCompanyId} companyName={name} />
                     <RecruitingHealthCard companyId={dbCompanyId} companyName={name} />
                     <EEO1WorkforceCard companyId={dbCompanyId} companyName={name} />
                     <ExecutiveInclusionSnapshot companyId={dbCompanyId} companyName={name} />
