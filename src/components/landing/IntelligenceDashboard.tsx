@@ -24,6 +24,9 @@ interface PanelConfig {
   metric: (c: PanelCompany) => string;
 }
 
+const VISIBLE_STATUSES = ["verified", "active", "published"];
+const FIELDS = "id, name, slug, civic_footprint_score, career_intelligence_score, lobbying_spend, government_contracts, is_startup, category_tags, industry";
+
 const fmt = (n: number | null) => {
   if (!n) return "—";
   if (n >= 1e9) return `$${(n / 1e9).toFixed(1)}B`;
@@ -38,12 +41,9 @@ const PANELS: PanelConfig[] = [
     icon: TrendingUp,
     queryKey: "panel-trending",
     queryFn: async () => {
-      const { data } = await supabase
-        .from("companies")
-        .select("id, name, slug, civic_footprint_score, career_intelligence_score, lobbying_spend, government_contracts, is_startup, category_tags, industry")
-        .eq("record_status", "published")
-        .order("civic_footprint_score", { ascending: false })
-        .limit(10);
+      const { data } = await supabase.from("companies").select(FIELDS)
+        .in("record_status", VISIBLE_STATUSES)
+        .order("civic_footprint_score", { ascending: false }).limit(10);
       return (data as any[] || []) as PanelCompany[];
     },
     metric: (c) => `${c.civic_footprint_score}/10`,
@@ -53,13 +53,10 @@ const PANELS: PanelConfig[] = [
     icon: Rocket,
     queryKey: "panel-startups",
     queryFn: async () => {
-      const { data } = await supabase
-        .from("companies")
-        .select("id, name, slug, civic_footprint_score, career_intelligence_score, lobbying_spend, government_contracts, is_startup, category_tags, industry")
-        .eq("record_status", "published")
+      const { data } = await supabase.from("companies").select(FIELDS)
+        .in("record_status", VISIBLE_STATUSES)
         .eq("is_startup", true)
-        .order("civic_footprint_score", { ascending: false })
-        .limit(10);
+        .order("civic_footprint_score", { ascending: false }).limit(10);
       return (data as any[] || []) as PanelCompany[];
     },
     metric: (c) => c.industry,
@@ -69,13 +66,10 @@ const PANELS: PanelConfig[] = [
     icon: Cpu,
     queryKey: "panel-hrtech",
     queryFn: async () => {
-      const { data } = await supabase
-        .from("companies")
-        .select("id, name, slug, civic_footprint_score, career_intelligence_score, lobbying_spend, government_contracts, is_startup, category_tags, industry")
-        .eq("record_status", "published")
+      const { data } = await supabase.from("companies").select(FIELDS)
+        .in("record_status", VISIBLE_STATUSES)
         .contains("category_tags", ["HR Tech"])
-        .order("civic_footprint_score", { ascending: false })
-        .limit(10);
+        .order("civic_footprint_score", { ascending: false }).limit(10);
       return (data as any[] || []) as PanelCompany[];
     },
     metric: (c) => `${c.career_intelligence_score ?? "—"}/10`,
@@ -85,12 +79,9 @@ const PANELS: PanelConfig[] = [
     icon: AlertTriangle,
     queryKey: "panel-layoff",
     queryFn: async () => {
-      const { data } = await supabase
-        .from("companies")
-        .select("id, name, slug, civic_footprint_score, career_intelligence_score, lobbying_spend, government_contracts, is_startup, category_tags, industry")
-        .eq("record_status", "published")
-        .order("civic_footprint_score", { ascending: true })
-        .limit(10);
+      const { data } = await supabase.from("companies").select(FIELDS)
+        .in("record_status", VISIBLE_STATUSES)
+        .order("civic_footprint_score", { ascending: true }).limit(10);
       return (data as any[] || []) as PanelCompany[];
     },
     metric: (c) => `${c.civic_footprint_score}/10`,
@@ -100,13 +91,10 @@ const PANELS: PanelConfig[] = [
     icon: Landmark,
     queryKey: "panel-lobbying",
     queryFn: async () => {
-      const { data } = await supabase
-        .from("companies")
-        .select("id, name, slug, civic_footprint_score, career_intelligence_score, lobbying_spend, government_contracts, is_startup, category_tags, industry")
-        .eq("record_status", "published")
+      const { data } = await supabase.from("companies").select(FIELDS)
+        .in("record_status", VISIBLE_STATUSES)
         .not("lobbying_spend", "is", null)
-        .order("lobbying_spend", { ascending: false })
-        .limit(10);
+        .order("lobbying_spend", { ascending: false }).limit(10);
       return (data as any[] || []) as PanelCompany[];
     },
     metric: (c) => fmt(c.lobbying_spend),
@@ -116,13 +104,10 @@ const PANELS: PanelConfig[] = [
     icon: Eye,
     queryKey: "panel-transparent",
     queryFn: async () => {
-      const { data } = await supabase
-        .from("companies")
-        .select("id, name, slug, civic_footprint_score, career_intelligence_score, lobbying_spend, government_contracts, is_startup, category_tags, industry")
-        .eq("record_status", "published")
+      const { data } = await supabase.from("companies").select(FIELDS)
+        .in("record_status", VISIBLE_STATUSES)
         .not("career_intelligence_score", "is", null)
-        .order("career_intelligence_score", { ascending: false })
-        .limit(10);
+        .order("career_intelligence_score", { ascending: false }).limit(10);
       return (data as any[] || []) as PanelCompany[];
     },
     metric: (c) => `${c.career_intelligence_score ?? "—"}/10`,
@@ -132,13 +117,10 @@ const PANELS: PanelConfig[] = [
     icon: ShieldCheck,
     queryKey: "panel-govcon",
     queryFn: async () => {
-      const { data } = await supabase
-        .from("companies")
-        .select("id, name, slug, civic_footprint_score, career_intelligence_score, lobbying_spend, government_contracts, is_startup, category_tags, industry")
-        .eq("record_status", "published")
+      const { data } = await supabase.from("companies").select(FIELDS)
+        .in("record_status", VISIBLE_STATUSES)
         .contains("category_tags", ["Government Contractors"])
-        .order("government_contracts", { ascending: false })
-        .limit(10);
+        .order("government_contracts", { ascending: false }).limit(10);
       return (data as any[] || []) as PanelCompany[];
     },
     metric: (c) => fmt(c.government_contracts),
@@ -148,13 +130,10 @@ const PANELS: PanelConfig[] = [
     icon: RadioTower,
     queryKey: "panel-risk",
     queryFn: async () => {
-      const { data } = await supabase
-        .from("companies")
-        .select("id, name, slug, civic_footprint_score, career_intelligence_score, lobbying_spend, government_contracts, is_startup, category_tags, industry")
-        .eq("record_status", "published")
+      const { data } = await supabase.from("companies").select(FIELDS)
+        .in("record_status", VISIBLE_STATUSES)
         .or("lobbying_spend.gt.1000000,total_pac_spending.gt.500000")
-        .order("lobbying_spend", { ascending: false })
-        .limit(10);
+        .order("lobbying_spend", { ascending: false }).limit(10);
       return (data as any[] || []) as PanelCompany[];
     },
     metric: (c) => fmt(c.lobbying_spend),

@@ -5,7 +5,7 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { CompanyLogo } from "@/components/CompanyLogo";
 import {
-  Shield, ShieldCheck, ExternalLink, Building2, Sparkles, Network, Eye
+  Shield, ShieldCheck, ExternalLink, Sparkles, Network, Eye
 } from "lucide-react";
 import { Link } from "react-router-dom";
 import { cn } from "@/lib/utils";
@@ -44,7 +44,6 @@ export function JobIntegrityCard({ job }: JobIntegrityCardProps) {
   const isCertified = co?.vetted_status === "certified";
   const isVerified = co?.vetted_status === "verified";
 
-  // Fetch connection chain summary (latest approved research)
   const { data: research } = useQuery({
     queryKey: ["job-research-snippet", job.company_id],
     queryFn: async () => {
@@ -64,8 +63,8 @@ export function JobIntegrityCard({ job }: JobIntegrityCardProps) {
 
   return (
     <Card className={cn(
-      "border-border/40 hover:border-primary/20 transition-all group",
-      isCertified && "ring-1 ring-amber-500/20 border-amber-500/15"
+      "bg-card/80 backdrop-blur-sm border-border/30 hover:border-primary/30 hover:shadow-2xl hover:shadow-primary/10 transition-all duration-300 group",
+      isCertified && "ring-1 ring-amber-500/20 border-amber-500/15 hover:shadow-amber-500/10"
     )}>
       <CardContent className="p-5 space-y-3">
         {/* Header */}
@@ -94,9 +93,9 @@ export function JobIntegrityCard({ job }: JobIntegrityCardProps) {
           </div>
         </div>
 
-        {/* Strategic Context — read-only, cannot be edited by employers */}
+        {/* Strategic Context */}
         {co?.jackye_insight && (
-          <div className="p-3 bg-primary/[0.04] border border-primary/10 rounded-lg">
+          <div className="p-3 bg-primary/[0.04] border border-primary/10 rounded-lg backdrop-blur-sm">
             <p className="text-[10px] font-medium text-primary mb-1 flex items-center gap-1">
               <Sparkles className="w-3 h-3" /> Strategic Context
             </p>
@@ -106,9 +105,9 @@ export function JobIntegrityCard({ job }: JobIntegrityCardProps) {
           </div>
         )}
 
-        {/* Connection Chain snippet — read-only */}
+        {/* Connection Chain snippet */}
         {research?.connection_chain && (
-          <div className="p-3 bg-muted/30 border border-border/40 rounded-lg">
+          <div className="p-3 bg-muted/20 border border-border/30 rounded-lg backdrop-blur-sm">
             <p className="text-[10px] font-medium text-foreground mb-1 flex items-center gap-1">
               <Network className="w-3 h-3 text-muted-foreground" /> Connection Chain
             </p>
@@ -139,9 +138,9 @@ export function JobIntegrityCard({ job }: JobIntegrityCardProps) {
               Apply
             </Button>
           )}
-          <Button size="sm" variant="outline" asChild className="gap-1 shrink-0">
+          <Button size="sm" variant="default" asChild className="gap-1 shrink-0">
             <Link to={`/company/${co?.slug}`}>
-              <Eye className="w-3 h-3" /> Profile
+              <Eye className="w-3 h-3" /> Receipts
             </Link>
           </Button>
         </div>
