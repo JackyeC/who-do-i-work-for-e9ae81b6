@@ -18,6 +18,7 @@ import { HowToReadThis } from "@/components/company/HowToReadThis";
 import { UpgradeMoment } from "@/components/company/UpgradeMoment";
 import { ValuesSignalMatch } from "@/components/company/ValuesSignalMatch";
 import { RealityGapBlock } from "@/components/company/RealityGapBlock";
+import { DecisionCheckpointBeforeSign } from "@/components/company/DecisionCheckpointBeforeSign";
 import { ReportTeaserGate } from "@/components/ReportTeaserGate";
 import { PostReportNudge } from "@/components/PostReportNudge";
 import { ContentProtector } from "@/components/ContentProtector";
@@ -389,6 +390,26 @@ export default function CompanyProfile() {
               updatedAt={dbCompany?.updated_at}
             />
           )}
+
+          {/* ═══════════════════════════════════════════════════════
+              2.7 DECISION CHECKPOINT — "Before You Sign"
+             ═══════════════════════════════════════════════════════ */}
+          <DecisionCheckpointBeforeSign
+            companyName={name}
+            companySlug={id || ""}
+            hasLayoffSignals={false}
+            hasWarnNotices={false}
+            hasPayEquity={!!tiPayEquity}
+            hasBenefitsData={!!tiBenefits}
+            hasAiHrSignals={!!tiAiHr}
+            hasSentimentData={!!tiSentiment}
+            hasCompensationData={!!tiBenefits}
+            hasJobPostings={false}
+            executiveCount={dbExecutives?.length || 0}
+            revolvingDoorCount={dbRevolvingDoor?.length || 0}
+            totalPacSpending={totalPac}
+            lobbyingSpend={lobbyingSpend}
+          />
 
           {/* ═══════════════════════════════════════════════════════
               3. HOW TO READ THIS
