@@ -7,6 +7,7 @@ import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
 import { JobIntegrityCard } from "@/components/jobs/JobIntegrityCard";
+import { AskJackyeWidget } from "@/components/jobs/AskJackyeWidget";
 import { EmptyState } from "@/components/EmptyState";
 import { Loader2, Search, Shield, ShieldCheck, Briefcase, Landmark, Scale } from "lucide-react";
 import { usePageSEO } from "@/hooks/use-page-seo";
