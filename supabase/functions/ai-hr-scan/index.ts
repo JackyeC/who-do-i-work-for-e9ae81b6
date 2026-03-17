@@ -4,6 +4,7 @@ const corsHeaders = {
 };
 
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2';
+import { resilientSearch } from '../_shared/resilient-search.ts';
 
 const HR_KEYWORDS = [
   'AI recruiting', 'automated candidate screening', 'automated screening', 'resume ranking',
@@ -119,9 +120,9 @@ Deno.serve(async (req) => {
     const supabaseKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!;
     const supabase = createClient(supabaseUrl, supabaseKey);
 
-    if (!firecrawlKey || !lovableKey) {
-      console.error('SCAN_LOG:', JSON.stringify({ ...scanLog, steps: { config: 'MISSING_API_KEYS' } }));
-      return new Response(JSON.stringify({ success: false, error: 'Required API keys not configured', scanStatus: 'failed' }), {
+    if (!lovableKey) {
+      console.error('SCAN_LOG:', JSON.stringify({ ...scanLog, steps: { config: 'MISSING_LOVABLE_KEY' } }));
+      return new Response(JSON.stringify({ success: false, error: 'AI gateway not configured', scanStatus: 'failed' }), {
         status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' }
       });
     }
@@ -137,7 +138,7 @@ Deno.serve(async (req) => {
 
     console.log(`[ai-hr-scan] Searching with ${entityNames.length} entity names`);
 
-    // ── Step 1: Build search queries (general + vendor case studies) ──
+    // ── Step 1: Build search queries ──
     const searchQueries = [
       `"${primaryName}" AI hiring recruiting automation technology`,
       `"${primaryName}" automated screening candidate assessment applicant scoring`,
@@ -147,7 +148,6 @@ Deno.serve(async (req) => {
       `"${primaryName}" AI governance policy hiring transparency`,
       `"${primaryName}" recruiting chatbot interview intelligence video interview`,
       `"${primaryName}" privacy policy automated decision making`,
-      // Vendor case study queries
       `"${primaryName}" HireVue`,
       `"${primaryName}" Eightfold AI`,
       `"${primaryName}" Phenom recruiting`,
@@ -155,111 +155,95 @@ Deno.serve(async (req) => {
       `"${primaryName}" talent intelligence recruiting automation`,
     ];
 
-    // Add queries for related entities (subsidiaries, parent, etc.)
     for (const altName of additionalNames) {
       searchQueries.push(`"${altName}" AI hiring recruiting automation HR technology`);
       searchQueries.push(`"${altName}" employee monitoring workforce analytics bias audit`);
     }
 
+    // Use resilient search: Firecrawl → Gemini fallback (free)
+    const { results: searchResults, source: searchSource } = await resilientSearch(
+      searchQueries, firecrawlKey, lovableKey, { batchSize: 3 }
+    );
+
     let allContent = '';
     const allSourceUrls: string[] = [];
-    let pagesReturnedCount = 0;
-    let searchSuccessCount = 0;
-    let searchFailCount = 0;
+    let pagesReturnedCount = searchResults.length;
 
-    for (const query of searchQueries) {
-      try {
-        const searchResp = await fetch('https://api.firecrawl.dev/v1/search', {
-          method: 'POST',
-          headers: {
-            'Authorization': `Bearer ${firecrawlKey}`,
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify({ query, limit: 5 }),
-        });
-
-        if (searchResp.ok) {
-          const searchData = await searchResp.json();
-          const results = searchData.data || [];
-          searchSuccessCount++;
-          pagesReturnedCount += results.length;
-          for (const r of results) {
-            allSourceUrls.push(r.url);
-            allContent += `\n\nSOURCE: ${r.url}\nTITLE: ${r.title}\n${r.description || ''}\n${r.markdown?.slice(0, 2000) || ''}`;
-          }
-        } else {
-          searchFailCount++;
-          const errText = await searchResp.text();
-          console.warn(`[ai-hr-scan] Search returned ${searchResp.status} for query: ${query.slice(0, 60)}... - ${errText.slice(0, 200)}`);
-        }
-      } catch (e) {
-        searchFailCount++;
-        console.error(`[ai-hr-scan] Search exception for: ${query.slice(0, 60)}...`, e);
-      }
+    for (const r of searchResults) {
+      allSourceUrls.push(r.url);
+      allContent += `\n\nSOURCE: ${r.url}\nTITLE: ${r.title}\n${r.description || ''}\n${r.markdown?.slice(0, 2000) || ''}`;
     }
 
-    scanLog.steps.search = { queries_sent: searchQueries.length, success: searchSuccessCount, failed: searchFailCount, pages_returned: pagesReturnedCount };
-    console.log(`[ai-hr-scan] Search complete: ${searchSuccessCount}/${searchQueries.length} succeeded, ${pagesReturnedCount} pages`);
+    scanLog.steps.search = { source: searchSource, pages_returned: pagesReturnedCount };
+    console.log(`[ai-hr-scan] Search complete via ${searchSource}: ${pagesReturnedCount} results`);
 
-    // ── Step 2: Crawl company pages (careers, privacy, etc.) ──
-    const { data: companyRow } = await supabase
-      .from('companies')
-      .select('careers_url')
-      .eq('id', companyId)
-      .single();
-
-    const pagesToScrape: { url: string; type: string }[] = [];
-    if (companyRow?.careers_url) {
-      pagesToScrape.push({ url: companyRow.careers_url, type: 'company careers page' });
-    }
-
-    const companyDomain = extractDomain(companyName);
-    if (companyDomain) {
-      const paths = ['/careers', '/jobs', '/talent', '/recruiting', '/work-with-us', '/privacy', '/about', '/blog', '/news'];
-      for (const path of paths) {
-        pagesToScrape.push({ url: `https://www.${companyDomain}${path}`, type: `company ${path.slice(1)} page` });
-      }
-    }
-
+    // ── Step 2: Crawl company pages (only if Firecrawl is available) ──
     let scrapeSuccessCount = 0;
     let scrapeFailCount = 0;
 
-    for (const page of pagesToScrape) {
-      try {
-        const scrapeResp = await fetch('https://api.firecrawl.dev/v1/scrape', {
-          method: 'POST',
-          headers: {
-            'Authorization': `Bearer ${firecrawlKey}`,
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify({
-            url: page.url,
-            formats: ['markdown'],
-            onlyMainContent: true,
-            waitFor: 4000,
-          }),
-        });
+    if (firecrawlKey) {
+      const { data: companyRow } = await supabase
+        .from('companies')
+        .select('careers_url')
+        .eq('id', companyId)
+        .single();
 
-        if (scrapeResp.ok) {
-          const scrapeData = await scrapeResp.json();
-          const md = scrapeData.data?.markdown || scrapeData.markdown || '';
-          if (md.length > 50) {
-            scrapeSuccessCount++;
-            pagesReturnedCount++;
-            allContent += `\n\nSOURCE: ${page.url}\nTYPE: ${page.type}\n${md.slice(0, 5000)}`;
-            allSourceUrls.push(page.url);
+      const pagesToScrape: { url: string; type: string }[] = [];
+      if (companyRow?.careers_url) {
+        pagesToScrape.push({ url: companyRow.careers_url, type: 'company careers page' });
+      }
+
+      const companyDomain = extractDomain(companyName);
+      if (companyDomain) {
+        const paths = ['/careers', '/jobs', '/privacy', '/about'];
+        for (const path of paths) {
+          pagesToScrape.push({ url: `https://www.${companyDomain}${path}`, type: `company ${path.slice(1)} page` });
+        }
+      }
+
+      for (const page of pagesToScrape) {
+        try {
+          const scrapeResp = await fetch('https://api.firecrawl.dev/v1/scrape', {
+            method: 'POST',
+            headers: {
+              'Authorization': `Bearer ${firecrawlKey}`,
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+              url: page.url,
+              formats: ['markdown'],
+              onlyMainContent: true,
+              waitFor: 4000,
+            }),
+          });
+
+          if (scrapeResp.status === 402) {
+            console.log('[ai-hr-scan] Firecrawl credits exhausted, skipping remaining scrapes');
+            break;
           }
-        } else {
+
+          if (scrapeResp.ok) {
+            const scrapeData = await scrapeResp.json();
+            const md = scrapeData.data?.markdown || scrapeData.markdown || '';
+            if (md.length > 50) {
+              scrapeSuccessCount++;
+              pagesReturnedCount++;
+              allContent += `\n\nSOURCE: ${page.url}\nTYPE: ${page.type}\n${md.slice(0, 5000)}`;
+              allSourceUrls.push(page.url);
+            }
+          } else {
+            scrapeFailCount++;
+          }
+        } catch (e) {
           scrapeFailCount++;
         }
-      } catch (e) {
-        scrapeFailCount++;
-        console.warn(`[ai-hr-scan] Scrape failed for ${page.url}`);
       }
+    } else {
+      console.log('[ai-hr-scan] No Firecrawl key, skipping page scraping');
     }
 
-    scanLog.steps.scrape = { attempted: pagesToScrape.length, success: scrapeSuccessCount, failed: scrapeFailCount };
-    console.log(`[ai-hr-scan] Scrape complete: ${scrapeSuccessCount}/${pagesToScrape.length} succeeded`);
+    scanLog.steps.scrape = { attempted: scrapeSuccessCount + scrapeFailCount, success: scrapeSuccessCount, failed: scrapeFailCount };
+    console.log(`[ai-hr-scan] Scrape: ${scrapeSuccessCount} succeeded`);
 
     const now = new Date().toISOString();
     const totalSourcesScanned = pagesReturnedCount;

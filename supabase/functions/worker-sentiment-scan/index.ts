@@ -4,60 +4,9 @@ const corsHeaders = {
 };
 
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2';
+import { resilientSearch } from '../_shared/resilient-search.ts';
 
 const CACHE_TTL_DAYS = 7;
-
-// Run searches in parallel batches to speed up scanning
-async function batchSearch(queries: string[], firecrawlKey: string, batchSize = 3): Promise<{ results: any[]; creditExhausted: boolean }> {
-  const allResults: any[] = [];
-  let creditExhausted = false;
-
-  for (let i = 0; i < queries.length; i += batchSize) {
-    if (creditExhausted) break;
-    const batch = queries.slice(i, i + batchSize);
-    console.log(`Batch ${Math.floor(i / batchSize) + 1}: searching ${batch.length} queries in parallel`);
-
-    const batchResults = await Promise.allSettled(
-      batch.map(async (query) => {
-        const searchResp = await fetch('https://api.firecrawl.dev/v1/search', {
-          method: 'POST',
-          headers: {
-            'Authorization': `Bearer ${firecrawlKey}`,
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify({ query, limit: 5, lang: 'en', country: 'us' }),
-        });
-
-        if (searchResp.status === 402) {
-          throw new Error('CREDIT_EXHAUSTED');
-        }
-
-        const searchData = await searchResp.json();
-        if (searchResp.ok && searchData.success && searchData.data) {
-          return searchData.data.map((r: any) => ({
-            title: r.title || '',
-            url: r.url || '',
-            description: r.description || '',
-            markdown: (r.markdown || '').slice(0, 2000),
-            query,
-          }));
-        }
-        return [];
-      })
-    );
-
-    for (const r of batchResults) {
-      if (r.status === 'fulfilled') {
-        allResults.push(...r.value);
-      } else if (r.reason?.message === 'CREDIT_EXHAUSTED') {
-        creditExhausted = true;
-        break;
-      }
-    }
-  }
-
-  return { results: allResults, creditExhausted };
-}
 
 Deno.serve(async (req) => {
   if (req.method === 'OPTIONS') {
@@ -120,13 +69,6 @@ Deno.serve(async (req) => {
     }
 
     const firecrawlKey = Deno.env.get('FIRECRAWL_API_KEY');
-    if (!firecrawlKey) {
-      return new Response(
-        JSON.stringify({ success: false, error: 'Firecrawl connector not configured' }),
-        { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
-      );
-    }
-
     const lovableKey = Deno.env.get('LOVABLE_API_KEY');
     if (!lovableKey) {
       return new Response(
@@ -135,7 +77,7 @@ Deno.serve(async (req) => {
       );
     }
 
-    // Consolidated search queries — reduced from 8 to 5 targeted ones
+    // Consolidated search queries
     const searchQueries = [
       `${companyName} Glassdoor reviews employee ratings work-life balance`,
       `${companyName} Indeed employee reviews salary culture`,
@@ -144,17 +86,12 @@ Deno.serve(async (req) => {
       `"${companyName}" toxic culture whistleblower worker safety`,
     ];
 
-    // Run all searches in parallel batches of 3 (reduced from 4)
-    const { results: allResults, creditExhausted } = await batchSearch(searchQueries, firecrawlKey, 3);
+    // Use resilient search: Firecrawl → Gemini fallback (free)
+    const { results: allResults, source: searchSource } = await resilientSearch(
+      searchQueries, firecrawlKey, lovableKey, { batchSize: 3 }
+    );
 
-    console.log(`Total results collected: ${allResults.length}`);
-
-    if (creditExhausted) {
-      return new Response(JSON.stringify({
-        success: false,
-        error: 'Firecrawl credits exhausted. Please upgrade your Firecrawl plan to continue scanning.'
-      }), { status: 402, headers: { ...corsHeaders, 'Content-Type': 'application/json' } });
-    }
+    console.log(`[worker-sentiment] ${allResults.length} results via ${searchSource}`);
 
     if (allResults.length === 0) {
       return new Response(JSON.stringify({
@@ -184,9 +121,14 @@ Deno.serve(async (req) => {
       `[${i + 1}] "${r.title}" (${r.url})\n${r.description}\n${r.markdown?.slice(0, 600) || ''}`
     ).join('\n\n---\n\n');
 
-    const aiPrompt = `You are a corporate labor intelligence analyst for CivicLens. Analyze the following search results about "${companyName}" employee satisfaction and worker conditions.
+    const sourceNote = searchSource === 'gemini_fallback'
+      ? '\nNote: This research data comes from AI knowledge rather than live web scraping. Focus on well-known facts and be conservative with ratings.'
+      : '';
 
-Search Results:
+    const aiPrompt = `You are a corporate labor intelligence analyst for CivicLens. Analyze the following research about "${companyName}" employee satisfaction and worker conditions.
+${sourceNote}
+
+Research Data:
 ${contentForAI}
 
 ${laborStancesContext ? `\nCompany's Public Labor Stances:\n${laborStancesContext}` : ''}
@@ -259,17 +201,12 @@ Only include items you find evidence for. Return valid JSON only.`;
           status: 429, headers: { ...corsHeaders, 'Content-Type': 'application/json' }
         });
       }
-      if (status === 402) {
-        return new Response(JSON.stringify({ success: false, error: 'AI credits exhausted. Please add funds.' }), {
-          status: 402, headers: { ...corsHeaders, 'Content-Type': 'application/json' }
-        });
-      }
     }
 
     // Store in database
     const { error: insertError } = await supabase.from('company_worker_sentiment').insert({
       company_id: companyId,
-      scan_type: 'firecrawl_ai',
+      scan_type: searchSource === 'gemini_fallback' ? 'gemini_research' : 'firecrawl_ai',
       overall_rating: aiAnalysis.overallRating || null,
       ceo_approval: aiAnalysis.ceoApproval || null,
       recommend_to_friend: aiAnalysis.recommendToFriend || null,
@@ -294,6 +231,7 @@ Only include items you find evidence for. Return valid JSON only.`;
       success: true,
       signalsFound: 1,
       sourcesScanned: allResults.length,
+      searchSource,
       data: {
         overallRating: aiAnalysis.overallRating,
         ceoApproval: aiAnalysis.ceoApproval,
