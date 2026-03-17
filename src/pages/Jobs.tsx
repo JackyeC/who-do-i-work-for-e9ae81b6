@@ -598,6 +598,20 @@ export default function Jobs() {
                       );
                     })}
                   </div>
+
+                  {/* Infinite scroll sentinel + loading skeletons */}
+                  {hasMore && (
+                    <div ref={sentinelRef} className="space-y-2 mt-2">
+                      {loadingMore && Array.from({ length: 3 }).map((_, i) => (
+                        <JobCardSkeleton key={`load-${i}`} />
+                      ))}
+                    </div>
+                  )}
+                  {!isLoading && filtered.length > 0 && (
+                    <p className="text-center text-xs text-muted-foreground mt-4">
+                      Showing {Math.min(visibleCount, filtered.length)} of {filtered.length} jobs
+                    </p>
+                  )}
                 </div>
               </div>
             </TabsContent>
