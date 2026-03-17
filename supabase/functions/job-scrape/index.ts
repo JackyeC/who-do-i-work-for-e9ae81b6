@@ -4,7 +4,7 @@ const corsHeaders = {
 };
 
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2';
-
+import { resilientSearch } from '../_shared/resilient-search.ts';
 // ─── ATS API endpoints (public, no auth needed) ───
 const ATS_CONFIGS: Record<string, { detect: (url: string) => boolean; fetchJobs: (url: string) => Promise<any[]>; platform: string }> = {
   greenhouse: {
