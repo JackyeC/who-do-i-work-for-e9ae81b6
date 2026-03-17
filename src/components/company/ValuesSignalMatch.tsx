@@ -2,8 +2,9 @@ import { useMemo } from "react";
 import { getStoredWorkProfile } from "@/components/WorkProfileQuiz";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { ArrowRight } from "lucide-react";
+import { ArrowRight, Lock } from "lucide-react";
 import { useNavigate } from "react-router-dom";
+import { usePremium } from "@/hooks/use-premium";
 
 interface SignalInputs {
   hasLayoffSignals: boolean;
@@ -27,6 +28,8 @@ interface MatchResult {
   summary: string;
   type: "aligned" | "mismatch";
   confidence: "Low" | "Medium" | "High";
+  tacticalQuestion?: string;
+  source?: string;
 }
 
 function getRecency(lastReviewed?: string, updatedAt?: string): string {
@@ -44,7 +47,7 @@ function computeMatches(signals: SignalInputs): MatchResult[] {
 
   const results: MatchResult[] = [];
 
-  // Priority matching
+  // --- Priority matching ---
   for (const priority of profile.priorities) {
     switch (priority) {
       case "Stability":
@@ -101,7 +104,7 @@ function computeMatches(signals: SignalInputs): MatchResult[] {
     }
   }
 
-  // Avoidance matching
+  // --- Avoidance matching ---
   for (const avoid of profile.avoids) {
     switch (avoid) {
       case "Frequent layoffs or instability":
@@ -115,14 +118,112 @@ function computeMatches(signals: SignalInputs): MatchResult[] {
         }
         break;
       case "High turnover or negative culture signals":
-        if (signals.hasSentimentData) {
-          // Sentiment exists — neutral, can't determine negative without deeper analysis
-        } else {
+        if (!signals.hasSentimentData) {
           results.push({ label: "Culture risk", summary: "No sentiment data to evaluate turnover or culture patterns.", type: "mismatch", confidence: "Low" });
         }
         break;
       default:
         break;
+    }
+  }
+
+  // --- Slider clash detection (30/70 threshold) ---
+  const sliders = profile.sliders;
+  if (sliders) {
+    // Flexible (<30) vs structured hiring signals
+    if (sliders.flexible_structured < 30 && signals.hasAiHrSignals) {
+      results.push({
+        label: "Structure Friction",
+        summary: "You prioritize flexibility, but this company shows signals of highly structured processes.",
+        type: "mismatch",
+        confidence: "Medium",
+        source: "Hiring automation signals",
+        tacticalQuestion: "How does the team balance process with individual autonomy in day-to-day work?",
+      });
+    } else if (sliders.flexible_structured > 70 && !signals.hasAiHrSignals) {
+      results.push({
+        label: "Structure",
+        summary: "You prefer structured environments. This company does not show strong process-driven signals.",
+        type: "aligned",
+        confidence: "Low",
+        source: "Hiring data",
+      });
+    }
+
+    // Remote (<30) vs in-office sentiment
+    if (sliders.remote_inperson < 30 && signals.hasSentimentData) {
+      results.push({
+        label: "Location Friction",
+        summary: "You prefer remote work, but employee signals suggest in-office expectations may be present.",
+        type: "mismatch",
+        confidence: "Low",
+        source: "Employee sentiment",
+        tacticalQuestion: "How has the team's collaboration model evolved since recent office-presence changes, and how is deep-work time protected?",
+      });
+    }
+
+    // Steady (<30) vs rapid hiring
+    if (sliders.steady_fastmoving < 30 && signals.hasJobPostings) {
+      results.push({
+        label: "Velocity Alert",
+        summary: "You prefer a steady pace, but hiring patterns suggest rapid scaling or high organizational velocity.",
+        type: "mismatch",
+        confidence: "Low",
+        source: "Hiring data",
+        tacticalQuestion: "What does onboarding look like during a scaling phase, and how are expectations set for new hires?",
+      });
+    }
+
+    // Stable (<30) vs layoff/restructuring signals
+    if (sliders.stable_dynamic < 30 && (signals.hasLayoffSignals || signals.hasWarnNotices)) {
+      results.push({
+        label: "Structural Shift",
+        summary: "You value stability, but current signals indicate organizational restructuring is underway.",
+        type: "mismatch",
+        confidence: "Medium",
+        source: "Workforce filings",
+        tacticalQuestion: "How is the current restructuring affecting team composition and project continuity?",
+      });
+    } else if (sliders.stable_dynamic > 70 && !(signals.hasLayoffSignals || signals.hasWarnNotices)) {
+      results.push({
+        label: "Stability",
+        summary: "You thrive in dynamic environments. No restructuring signals detected — this may be a steady-state employer.",
+        type: "aligned",
+        confidence: "Low",
+        source: "Workforce data",
+      });
+    }
+
+    // Hands-off (<30) vs high-oversight sentiment
+    if (sliders.handsoff_handson < 30 && signals.hasSentimentData) {
+      results.push({
+        label: "Autonomy Risk",
+        summary: "You value independence, but employee signals suggest management oversight patterns may be present.",
+        type: "mismatch",
+        confidence: "Low",
+        source: "Employee sentiment",
+        tacticalQuestion: "How much latitude do individual contributors have in setting priorities and managing their own time?",
+      });
+    }
+
+    // Open (<30) vs no transparency data
+    if (sliders.open_needtoknow < 30 && !signals.hasPayEquity && !signals.hasBenefitsData) {
+      results.push({
+        label: "Transparency Gap",
+        summary: "You prefer open communication, but public disclosure signals for compensation and benefits are limited.",
+        type: "mismatch",
+        confidence: "Low",
+        source: "Disclosure records",
+        tacticalQuestion: "How does leadership communicate compensation philosophy and organizational changes to the team?",
+      });
+    } else if (sliders.open_needtoknow < 30 && signals.hasPayEquity && signals.hasBenefitsData) {
+      results.push({
+        label: "Transparency",
+        summary: "You value openness, and this company publicly discloses compensation and benefits data.",
+        type: "aligned",
+        confidence: "Medium",
+        source: "Public records",
+      });
     }
   }
 
@@ -138,6 +239,7 @@ function computeAlignmentScore(matches: MatchResult[]): number {
 export function ValuesSignalMatch(props: SignalInputs) {
   const navigate = useNavigate();
   const profile = getStoredWorkProfile();
+  const { isPremium } = usePremium();
   const matches = useMemo(() => computeMatches(props), [props]);
   const recency = getRecency(props.lastReviewed, props.updatedAt);
 
@@ -184,6 +286,7 @@ export function ValuesSignalMatch(props: SignalInputs) {
             {aligned.map((m, i) => (
               <li key={i} className="text-sm text-foreground/85 leading-relaxed pl-3 relative before:content-[''] before:absolute before:left-0 before:top-[9px] before:w-1.5 before:h-1.5 before:rounded-full before:bg-[hsl(var(--civic-green))]/40">
                 <span className="font-medium">{m.label}:</span> {m.summary}
+                {m.source && <span className="ml-1.5 text-[10px] text-muted-foreground/70 font-mono">{m.source}</span>}
                 <span className="ml-1.5 text-[10px] text-muted-foreground font-mono">{m.confidence}</span>
               </li>
             ))}
@@ -194,11 +297,35 @@ export function ValuesSignalMatch(props: SignalInputs) {
       {mismatched.length > 0 && (
         <div className="px-5 py-4">
           <p className="text-xs font-medium text-[hsl(var(--civic-yellow))] uppercase tracking-wider mb-2.5">Potential mismatches</p>
-          <ul className="space-y-1.5">
+          <ul className="space-y-3">
             {mismatched.map((m, i) => (
-              <li key={i} className="text-sm text-foreground/85 leading-relaxed pl-3 relative before:content-[''] before:absolute before:left-0 before:top-[9px] before:w-1.5 before:h-1.5 before:rounded-full before:bg-[hsl(var(--civic-yellow))]/40">
-                <span className="font-medium">{m.label}:</span> {m.summary}
-                <span className="ml-1.5 text-[10px] text-muted-foreground font-mono">{m.confidence}</span>
+              <li key={i} className="text-sm text-foreground/85 leading-relaxed pl-3 border-l-2 border-[hsl(var(--civic-yellow))]/30">
+                <div className="relative">
+                  <span className="font-medium">{m.label}:</span> {m.summary}
+                  {m.source && <span className="ml-1.5 text-[10px] text-muted-foreground/70 font-mono">{m.source}</span>}
+                  <span className="ml-1.5 text-[10px] text-muted-foreground font-mono">{m.confidence}</span>
+                </div>
+                {m.tacticalQuestion && (
+                  <div className="mt-1.5 relative">
+                    {isPremium ? (
+                      <p className="text-xs text-muted-foreground italic leading-relaxed">
+                        Ask in your interview: "{m.tacticalQuestion}"
+                      </p>
+                    ) : (
+                      <div className="flex items-center gap-1.5">
+                        <p className="text-xs text-muted-foreground blur-[4px] select-none pointer-events-none italic leading-relaxed">
+                          Ask in your interview: "{m.tacticalQuestion}"
+                        </p>
+                        <button
+                          onClick={() => navigate("/pricing")}
+                          className="shrink-0 flex items-center gap-1 text-[10px] text-primary font-medium hover:underline"
+                        >
+                          <Lock className="w-3 h-3" /> Unlock
+                        </button>
+                      </div>
+                    )}
+                  </div>
+                )}
               </li>
             ))}
           </ul>
