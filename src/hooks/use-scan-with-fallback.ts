@@ -2,11 +2,9 @@ import { useCallback } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
 import {
-  isFirecrawlUnavailable,
   classifyFirecrawlError,
   recordFirecrawlFailure,
   logScanError,
-  getCooldownMinutes,
 } from "@/lib/firecrawl-circuit-breaker";
 import type { IntelligenceSection } from "@/lib/intelligence-provider";
 import { isSectionStale } from "@/lib/intelligence-provider";
@@ -15,23 +13,17 @@ interface UseScanOptions {
   functionName: string;
   companyId?: string;
   companyName?: string;
-  /** Extra body params beyond companyId/companyName */
   extraBody?: Record<string, any>;
-  /** Called on success with response data */
   onSuccess?: (data: any) => void;
-  /** Called when scan is blocked or fails */
-  onError?: (reason: 'circuit_open' | 'firecrawl_error' | 'other_error', message: string) => void;
-  /** Set loading state */
+  onError?: (reason: 'firecrawl_error' | 'other_error', message: string) => void;
   setLoading?: (v: boolean) => void;
-  /** Intelligence section for freshness checking */
   section?: IntelligenceSection;
-  /** Last update timestamp from cached data — skip scan if fresh */
   lastUpdated?: string | null;
 }
 
 /**
- * Returns a scan trigger that respects the Firecrawl circuit breaker.
- * If the circuit is open, it won't call the edge function.
+ * Returns a scan trigger that always attempts the edge function.
+ * Edge functions now have built-in Gemini fallback, so we never hard-block.
  */
 export function useScanWithFallback({
   functionName,
@@ -46,28 +38,14 @@ export function useScanWithFallback({
 }: UseScanOptions) {
   const { toast } = useToast();
 
-  const firecrawlState = isFirecrawlUnavailable();
-
   const runScan = useCallback(async (_eventOrForce?: React.MouseEvent | boolean) => {
     const forceRefresh = typeof _eventOrForce === 'boolean' ? _eventOrForce : false;
-    // Freshness check — skip scan if data is still fresh (unless forced)
+
     if (!forceRefresh && section && lastUpdated && !isSectionStale(lastUpdated, section)) {
       toast({
         title: "Intelligence is current",
         description: "This data was recently updated. No refresh needed.",
       });
-      return;
-    }
-
-    // Circuit breaker check
-    const state = isFirecrawlUnavailable();
-    if (state) {
-      const mins = getCooldownMinutes();
-      toast({
-        title: "Live scan paused",
-        description: `Web extraction is temporarily unavailable. Try again in ~${mins} minutes.`,
-      });
-      onError?.('circuit_open', state.errorMessage);
       return;
     }
 
@@ -94,9 +72,10 @@ export function useScanWithFallback({
             scanType: functionName,
             rawError: classified.message,
           });
+          // Don't block — function may have used Gemini fallback
           toast({
-            title: "Live scan temporarily unavailable",
-            description: "Showing saved intelligence where available.",
+            title: "Using AI research mode",
+            description: "Live web scraping unavailable. Results powered by AI research.",
           });
           onError?.('firecrawl_error', classified.message);
           return;
@@ -105,9 +84,15 @@ export function useScanWithFallback({
       }
 
       if (data?.success) {
+        const source = data?.source;
+        if (source === 'gemini_fallback') {
+          toast({
+            title: "AI-powered results",
+            description: "Results generated via AI research (web scraping unavailable).",
+          });
+        }
         onSuccess?.(data);
       } else {
-        // Check if the error in data body is Firecrawl-related
         const classified = classifyFirecrawlError(data?.error || data?.message || 'Scan failed');
         if (classified.isFirecrawl) {
           recordFirecrawlFailure(classified.errorType, classified.message);
@@ -120,8 +105,8 @@ export function useScanWithFallback({
             rawError: classified.message,
           });
           toast({
-            title: "Live scan temporarily unavailable",
-            description: "Showing saved intelligence where available.",
+            title: "Using AI research mode",
+            description: "Showing AI-powered intelligence where available.",
           });
           onError?.('firecrawl_error', classified.message);
           return;
@@ -129,7 +114,6 @@ export function useScanWithFallback({
         throw new Error(data?.error || "Scan failed");
       }
     } catch (e: any) {
-      // Final catch — also check for Firecrawl errors
       const classified = classifyFirecrawlError(e);
       if (classified.isFirecrawl) {
         recordFirecrawlFailure(classified.errorType, classified.message);
@@ -142,8 +126,8 @@ export function useScanWithFallback({
           rawError: classified.message,
         });
         toast({
-          title: "Live scan temporarily unavailable",
-          description: "Showing saved intelligence where available.",
+          title: "Using AI research mode",
+          description: "Showing AI-powered intelligence where available.",
         });
         onError?.('firecrawl_error', classified.message);
       } else {
@@ -157,8 +141,8 @@ export function useScanWithFallback({
 
   return {
     runScan,
-    isFirecrawlDown: !!firecrawlState,
-    firecrawlErrorType: firecrawlState?.errorType ?? null,
-    cooldownMinutes: getCooldownMinutes(),
+    isFirecrawlDown: false, // Never hard-block — functions have Gemini fallback
+    firecrawlErrorType: null,
+    cooldownMinutes: 0,
   };
 }
