@@ -1,0 +1,1 @@
+ALTER VIEW public.compensation_freshness_audit SET (security_invoker = on);
