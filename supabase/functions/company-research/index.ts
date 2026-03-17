@@ -11,7 +11,7 @@ Deno.serve(async (req) => {
   }
 
   try {
-    const { companyName, companyId, enrichExisting } = await req.json();
+    const { companyName, companyId: inputCompanyId, enrichExisting } = await req.json();
 
     if (!companyName || typeof companyName !== 'string' || companyName.trim().length < 2) {
       return new Response(
