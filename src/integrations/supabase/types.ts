@@ -2756,6 +2756,68 @@ export type Database = {
           },
         ]
       }
+      company_patents: {
+        Row: {
+          abstract: string | null
+          assignee_name: string | null
+          category: string | null
+          company_id: string
+          confidence: string | null
+          created_at: string
+          filing_date: string | null
+          grant_date: string | null
+          id: string
+          inventors: string[] | null
+          patent_number: string
+          patent_type: string | null
+          source: string | null
+          source_url: string | null
+          title: string
+        }
+        Insert: {
+          abstract?: string | null
+          assignee_name?: string | null
+          category?: string | null
+          company_id: string
+          confidence?: string | null
+          created_at?: string
+          filing_date?: string | null
+          grant_date?: string | null
+          id?: string
+          inventors?: string[] | null
+          patent_number: string
+          patent_type?: string | null
+          source?: string | null
+          source_url?: string | null
+          title: string
+        }
+        Update: {
+          abstract?: string | null
+          assignee_name?: string | null
+          category?: string | null
+          company_id?: string
+          confidence?: string | null
+          created_at?: string
+          filing_date?: string | null
+          grant_date?: string | null
+          id?: string
+          inventors?: string[] | null
+          patent_number?: string
+          patent_type?: string | null
+          source?: string | null
+          source_url?: string | null
+          title?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "company_patents_company_id_fkey"
+            columns: ["company_id"]
+            isOneToOne: false
+            referencedRelation: "companies"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       company_political_risk: {
         Row: {
           company_id: string
