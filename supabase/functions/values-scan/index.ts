@@ -401,7 +401,7 @@ serve(async (req) => {
       adminClient.from("company_candidates").select("name, party, amount").eq("company_id", companyId).limit(30),
     ]);
 
-    // ─── Phase 1: Scrape company pages (Layer 1, 3, 5) ───
+    // ─── Phase 1: Scrape company pages (Layer 1, 3, 5) — only if Firecrawl available ───
     let scrapedContent = "";
     if (firecrawlKey && company.website_url) {
       const urls = getScrapePaths(company.website_url, company.careers_url);
@@ -410,7 +410,7 @@ serve(async (req) => {
       for (let i = 0; i < urls.length; i += 3) {
         const batch = urls.slice(i, i + 3);
         const results = await Promise.allSettled(
-          batch.map(async (url) => {
+          batch.map(async (url: string) => {
             const scrapeRes = await fetch("https://api.firecrawl.dev/v1/scrape", {
               method: "POST",
               headers: { Authorization: `Bearer ${firecrawlKey}`, "Content-Type": "application/json" },
@@ -431,39 +431,14 @@ serve(async (req) => {
       }
     }
 
-    // ─── Phase 2: Search for reports across all 7 layers ───
-    let searchContent = "";
-    if (firecrawlKey) {
-      const queries = getSearchQueries(company.name);
-      console.log(`[values-scan] Running ${queries.length} search queries for ${company.name}`);
+    // ─── Phase 2: Search for reports across all 7 layers — uses resilient search ───
+    const queries = getSearchQueries(company.name);
+    console.log(`[values-scan] Running ${queries.length} search queries for ${company.name}`);
 
-      const searchResults = await Promise.allSettled(
-        queries.map(async (query) => {
-          const res = await fetch("https://api.firecrawl.dev/v1/search", {
-            method: "POST",
-            headers: { Authorization: `Bearer ${firecrawlKey}`, "Content-Type": "application/json" },
-            body: JSON.stringify({
-              query,
-              limit: 3,
-              lang: "en",
-              country: "us",
-              tbs: "qdr:y",
-            }),
-          });
-          if (res.ok) {
-            const data = await res.json();
-            if (data?.data) {
-              return data.data
-                .map((r: any) => `--- Search result: ${r.title} (${r.url}) ---\n${r.description || ""}`)
-                .join("\n\n");
-            }
-          }
-          return "";
-        })
-      );
-      for (const r of searchResults) {
-        if (r.status === "fulfilled" && r.value) searchContent += "\n\n" + r.value;
-      }
+    const { results: searchResultsList } = await resilientSearch(queries, firecrawlKey, lovableKey!);
+    let searchContent = "";
+    for (const r of searchResultsList) {
+      searchContent += `\n\n--- Search result: ${r.title} (${r.url}) ---\n${r.description || ""}`;
     }
 
     // ─── AI analysis with 7-layer evidence model + career trajectory triangulation ───

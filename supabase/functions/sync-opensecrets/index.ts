@@ -176,11 +176,7 @@ Deno.serve(async (req) => {
     }
 
     if (!firecrawlKey) {
-      console.warn('[sync-opensecrets] FIRECRAWL_API_KEY not configured, skipping');
-      return new Response(JSON.stringify({
-        success: true, signalsFound: 0, sourcesScanned: 0,
-        note: 'Firecrawl not configured - OpenSecrets ingestion skipped',
-      }), { headers: { ...corsHeaders, 'Content-Type': 'application/json' } });
+      console.warn('[sync-opensecrets] FIRECRAWL_API_KEY not configured, using limited mode');
     }
 
     console.log(`[sync-opensecrets] START: ${companyName} (${companyId})`);

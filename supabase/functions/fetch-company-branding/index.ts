@@ -22,10 +22,25 @@ Deno.serve(async (req) => {
 
     const firecrawlKey = Deno.env.get('FIRECRAWL_API_KEY');
     if (!firecrawlKey) {
-      return new Response(
-        JSON.stringify({ success: false, error: 'Firecrawl not configured' }),
-        { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
-      );
+      // No Firecrawl — return favicon fallback
+      try {
+        const baseUrl = new URL(url);
+        const logoUrl = `${baseUrl.origin}/favicon.ico`;
+        const { error: updateError } = await supabase
+          .from('companies')
+          .update({ logo_url: logoUrl, website_url: url })
+          .eq('id', companyId);
+        if (updateError) console.error('Failed to update company logo:', updateError);
+        return new Response(
+          JSON.stringify({ success: true, logoUrl, source: 'favicon_fallback' }),
+          { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+        );
+      } catch {
+        return new Response(
+          JSON.stringify({ success: false, error: 'Firecrawl not configured, no favicon available' }),
+          { status: 200, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+        );
+      }
     }
 
     const supabaseUrl = Deno.env.get('SUPABASE_URL')!;
