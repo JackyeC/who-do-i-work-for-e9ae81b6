@@ -37,6 +37,7 @@ import { EarlyWarningSignals } from "@/components/intelligence/EarlyWarningSigna
 import { EEO1WorkforceCard } from "@/components/intelligence/EEO1WorkforceCard";
 import { DiversityDisclosureTracker } from "@/components/intelligence/DiversityDisclosureTracker";
 import { GhostJobDetector } from "@/components/intelligence/GhostJobDetector";
+import { HiringScanContextCard } from "@/components/company/HiringScanContextCard";
 import { RecruitingHealthCard } from "@/components/intelligence/RecruitingHealthCard";
 import { RealityCheckCard } from "@/components/intelligence/RealityCheckCard";
 
