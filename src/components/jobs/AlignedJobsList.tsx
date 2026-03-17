@@ -40,12 +40,9 @@ function AlignmentGuardBadge() {
   );
 }
 
-function JobCard({ job, onApply, onQueue, applying, generating, queueing, isQueued }: {
+function JobCard({ job, onQueue, queueing, isQueued }: {
   job: MatchedJob;
-  onApply: (job: MatchedJob) => void;
   onQueue: (job: MatchedJob) => void;
-  applying: boolean;
-  generating: boolean;
   queueing: boolean;
   isQueued: boolean;
 }) {
