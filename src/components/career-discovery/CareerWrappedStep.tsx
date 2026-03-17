@@ -103,8 +103,26 @@ export function CareerWrappedStep({ profile, careerPaths, companies, skillGap, f
       });
       return;
     }
-    // Trigger the existing CareerReportView download logic
     toast.success("Generating your full PDF roadmap...");
+  };
+
+  const handleEmailResults = async () => {
+    setEmailing(true);
+    try {
+      const { data, error } = await supabase.functions.invoke("email-career-results", {
+        body: { profile, careerPaths, companies, skillGap, futures, actionPlan },
+      });
+      if (error) throw error;
+      if (data?.method === 'saved') {
+        toast.success("Results saved! They'll be emailed once email sending is fully configured.");
+      } else {
+        toast.success("Career Map Results sent to your email!");
+      }
+    } catch (e: any) {
+      toast.error(e?.message || "Failed to send email. Please try again.");
+    } finally {
+      setEmailing(false);
+    }
   };
 
   const slideKey = REVEAL_SLIDES[currentSlide]?.key;
