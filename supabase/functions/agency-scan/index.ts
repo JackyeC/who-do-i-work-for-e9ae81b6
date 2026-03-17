@@ -4,7 +4,7 @@ const corsHeaders = {
 };
 
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2';
-
+import { resilientSearch } from '../_shared/resilient-search.ts';
 const CONTROVERSIAL_AGENCIES = [
   { name: 'Immigration and Customs Enforcement', acronym: 'ICE', category: 'immigration_enforcement' },
   { name: 'Customs and Border Protection', acronym: 'CBP', category: 'immigration_enforcement' },
