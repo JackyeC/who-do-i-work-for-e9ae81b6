@@ -14,6 +14,28 @@ import { User, Save, Loader2, Plus, X, Upload, FileText } from "lucide-react";
 export function UserProfileForm() {
   const { user } = useAuth();
   const { toast } = useToast();
+  const { data: latestResume, refetch: refetchResume } = useQuery({
+    queryKey: ["latest-resume-profile", user?.id],
+    queryFn: async () => {
+      const { data } = await (supabase as any)
+        .from("user_documents")
+        .select("id, file_path, original_filename, created_at")
+        .eq("user_id", user!.id)
+        .eq("document_type", "resume")
+        .order("created_at", { ascending: false })
+        .limit(1)
+        .maybeSingle();
+      // Get parsed skills count from profile
+      const { data: profile } = await supabase
+        .from("profiles")
+        .select("skills")
+        .eq("id", user!.id)
+        .single();
+      return data ? { ...data, parsed_skills_count: (profile as any)?.skills?.length || 0 } : null;
+    },
+    enabled: !!user,
+    staleTime: 60_000,
+  });
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [uploading, setUploading] = useState(false);
