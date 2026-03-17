@@ -104,6 +104,7 @@ import { CivilRightsIntelligencePanel } from "@/components/CivilRightsIntelligen
 import { AlignmentSignalsPanel } from "@/components/AlignmentSignalsPanel";
 import { EntityResolutionReport } from "@/components/EntityResolutionReport";
 import { EvidenceQualityBadge } from "@/components/EvidenceQualityBadge";
+import { ScoreExplainabilityDrawer } from "@/components/company/ScoreExplainabilityDrawer";
 import { computeEvidenceQuality, sourceTypeToTier, type SourceSignal } from "@/lib/evidenceQualityScore";
 import { LayoffProbabilityCard } from "@/components/LayoffProbabilityCard";
 import { EthicsRiskCard } from "@/components/EthicsRiskCard";
@@ -719,6 +720,18 @@ export default function CompanyProfile() {
               }}
             />
           </div>
+
+          {/* ═══════════════════════════════════════════════════════════
+              CAREER INTELLIGENCE SCORE — EXPLAINABILITY
+             ═══════════════════════════════════════════════════════════ */}
+          {dbCompanyId && (
+            <div className="mb-6">
+              <ScoreExplainabilityDrawer
+                companyId={dbCompanyId}
+                score={(dbCompany as any)?.career_intelligence_score ?? null}
+              />
+            </div>
+          )}
 
           {/* ═══════════════════════════════════════════════════════════
               CORPORATE BEHAVIOR INDEX™
