@@ -70,11 +70,11 @@ export function UpdateTheRecordButton({ companyId, companyName }: UpdateTheRecor
       <Button
         variant="outline"
         size="sm"
-        className="text-xs gap-1.5 border-primary/30 text-primary hover:bg-primary/5"
+        className="text-xs gap-1.5 border-[hsl(var(--civic-gold))]/40 text-[hsl(var(--civic-gold))] hover:bg-[hsl(var(--civic-gold))]/5 bg-[hsl(var(--civic-gold))]/[0.04]"
         onClick={() => setOpen(true)}
       >
         <FileUp className="w-3.5 h-3.5" />
-        Update the Record
+        Claim This Profile
       </Button>
 
       <Dialog open={open} onOpenChange={setOpen}>
