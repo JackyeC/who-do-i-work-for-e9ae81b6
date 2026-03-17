@@ -142,6 +142,7 @@ export default function Jobs() {
     return () => clearTimeout(timer);
   }, [search, handleSemanticSearch]);
 
+  const { data: jobs, isLoading } = useQuery({
     queryKey: ["jobs-with-companies"],
     queryFn: async () => {
       const { data, error } = await supabase
