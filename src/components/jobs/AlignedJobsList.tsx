@@ -249,66 +249,6 @@ export function AlignedJobsList() {
     });
   };
 
-  const handleApply = async (job: MatchedJob) => {
-    if (!user) {
-      toast({ title: "Please sign in", variant: "destructive" });
-      return;
-    }
-
-    if (job.alignment_score < AI_TRANSPARENCY_THRESHOLD) {
-      toast({
-        title: "Alignment too low",
-        description: `This company scores ${job.alignment_score}% — below the ${AI_TRANSPARENCY_THRESHOLD}% transparency threshold.`,
-        variant: "destructive",
-      });
-      return;
-    }
-
-    setGeneratingFor(job.job_id);
-    try {
-      const { data: result, error: fnError } = await supabase.functions.invoke("generate-application-payload", {
-        body: { company_id: job.company_id, user_id: user.id },
-      });
-      if (fnError) throw fnError;
-
-      if (result?.payload) {
-        try {
-          await navigator.clipboard.writeText(result.payload.matchingStatement);
-        } catch { /* clipboard may fail silently */ }
-
-        trackApplication.mutate({
-          company_id: job.company_id,
-          job_id: job.job_id,
-          job_title: job.title,
-          company_name: job.company_name,
-          application_link: job.url || undefined,
-          alignment_score: job.alignment_score,
-          matched_signals: job.matched_signals,
-          status: "Submitted",
-        });
-
-        const targetUrl = job.url || result.payload.careerSiteUrl;
-        if (targetUrl) {
-          window.open(targetUrl, "_blank", "noopener,noreferrer");
-        }
-
-        setActivePayload(result.payload);
-        toast({ title: "Custom Value Proposition copied to clipboard. Redirecting to Career Site..." });
-      }
-    } catch (e: any) {
-      console.error("Payload generation error:", e);
-      const msg = e?.message || "Failed to generate payload";
-      if (msg.includes("429") || msg.includes("rate limit")) {
-        toast({ title: "Rate limited", description: "Please try again in a moment.", variant: "destructive" });
-      } else if (msg.includes("402")) {
-        toast({ title: "AI credits exhausted", description: "Please add funds to continue.", variant: "destructive" });
-      } else {
-        toast({ title: "Generation failed", description: msg, variant: "destructive" });
-      }
-    } finally {
-      setGeneratingFor(null);
-    }
-  };
 
   if (isLoading) {
     return (
