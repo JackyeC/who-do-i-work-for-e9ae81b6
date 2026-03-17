@@ -38,6 +38,7 @@ export function CareerWrappedStep({ profile, careerPaths, companies, skillGap, f
   const [currentSlide, setCurrentSlide] = useState(0);
   const [revealed, setRevealed] = useState(false);
   const [autoPlaying, setAutoPlaying] = useState(true);
+  const [emailing, setEmailing] = useState(false);
   const cardRef = useRef<HTMLDivElement>(null);
   const { isPremium } = usePremium();
 
