@@ -171,24 +171,37 @@ export function TopBar() {
         {/* Center Nav */}
         <nav className="hidden md:flex items-center justify-center gap-0 h-full flex-1 min-w-0">
           {MAIN_SECTIONS.map(section => {
-            if ((section as any).auth && !user) return null;
+            const requiresAuth = (section as any).auth && !user;
             const active = isSectionActive(section, location.pathname);
             const hasDropdown = section.subItems && section.subItems.length > 0;
             return (
               <div key={section.id} className="relative h-full group">
-                <Link
-                  to={section.path}
-                  className={cn(
-                    "font-mono text-[10px] tracking-wider uppercase px-3 h-full flex items-center border-b-2 transition-colors gap-1 whitespace-nowrap",
-                    active
-                      ? "text-primary border-primary"
-                      : "text-muted-foreground border-transparent hover:text-foreground"
-                  )}
-                >
-                  {section.label}
-                  {hasDropdown && <ChevronDown className="w-2.5 h-2.5" />}
-                </Link>
-                {hasDropdown && (
+                {requiresAuth ? (
+                  <button
+                    onClick={() => setSignupModalOpen(true)}
+                    className={cn(
+                      "font-mono text-[10px] tracking-wider uppercase px-3 h-full flex items-center border-b-2 transition-colors gap-1 whitespace-nowrap",
+                      "text-muted-foreground border-transparent hover:text-foreground"
+                    )}
+                  >
+                    {section.label}
+                    <Lock className="w-2.5 h-2.5 opacity-50" />
+                  </button>
+                ) : (
+                  <Link
+                    to={section.path}
+                    className={cn(
+                      "font-mono text-[10px] tracking-wider uppercase px-3 h-full flex items-center border-b-2 transition-colors gap-1 whitespace-nowrap",
+                      active
+                        ? "text-primary border-primary"
+                        : "text-muted-foreground border-transparent hover:text-foreground"
+                    )}
+                  >
+                    {section.label}
+                    {hasDropdown && <ChevronDown className="w-2.5 h-2.5" />}
+                  </Link>
+                )}
+                {hasDropdown && !requiresAuth && (
                   <div className="absolute top-full left-0 hidden group-hover:block bg-card border border-border shadow-lg min-w-[200px] z-50">
                     {section.subItems.map(sub => (
                       <Link
