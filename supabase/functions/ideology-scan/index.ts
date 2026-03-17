@@ -4,6 +4,7 @@ const corsHeaders = {
 };
 
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2';
+import { resilientSearch } from '../_shared/resilient-search.ts';
 
 Deno.serve(async (req) => {
   if (req.method === 'OPTIONS') {
@@ -12,50 +13,39 @@ Deno.serve(async (req) => {
 
   try {
     const { companyId, companyName } = await req.json();
-
     if (!companyId || !companyName) {
-      return new Response(
-        JSON.stringify({ success: false, error: 'companyId and companyName are required' }),
-        { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
-      );
+      return new Response(JSON.stringify({ success: false, error: 'companyId and companyName are required' }),
+        { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } });
     }
 
     const firecrawlKey = Deno.env.get('FIRECRAWL_API_KEY');
     const lovableKey = Deno.env.get('LOVABLE_API_KEY');
-    if (!firecrawlKey || !lovableKey) {
-      return new Response(
-        JSON.stringify({ success: false, error: 'Required API keys not configured' }),
-        { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
-      );
+    if (!lovableKey) {
+      return new Response(JSON.stringify({ success: false, error: 'AI gateway not configured' }),
+        { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } });
     }
 
     const supabase = createClient(Deno.env.get('SUPABASE_URL')!, Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!);
 
-    // 1. Load watchlist org names for matching
     const { data: watchlist } = await supabase
       .from('ideology_watchlist')
       .select('id, org_name, category, severity, aliases, splc_designated, adl_designated');
 
     const watchlistOrgs = watchlist || [];
-    const orgNames = watchlistOrgs.map(w => w.org_name);
     const aliasMap = new Map<string, any>();
     for (const w of watchlistOrgs) {
       aliasMap.set(w.org_name.toLowerCase(), w);
       if (w.aliases) {
-        for (const alias of w.aliases) {
-          aliasMap.set(alias.toLowerCase(), w);
-        }
+        for (const alias of w.aliases) aliasMap.set(alias.toLowerCase(), w);
       }
     }
 
-    // 2. Search for company ties to these orgs
     const searchQueries = [
-      `"${companyName}" "Alliance Defending Freedom" OR "Family Research Council" OR "Heritage Foundation" OR "Council for National Policy" OR "ALEC" donation sponsorship`,
+      `"${companyName}" "Alliance Defending Freedom" OR "Family Research Council" OR "Heritage Foundation" donation sponsorship`,
       `"${companyName}" SPLC hate group white nationalist Christian nationalist ties`,
       `"${companyName}" anti-LGBTQ anti-union voter suppression climate denial funding`,
       `"${companyName}" conversion therapy school voucher private prison reproductive rights lobbying`,
       `"${companyName}" PAC donation extremist organization radical group`,
-      // Labor & civil rights controversies
       `"${companyName}" racial discrimination lawsuit EEOC class action settlement`,
       `"${companyName}" mass firing layoffs DOGE government workforce reduction`,
       `"${companyName}" union busting NLRB unfair labor practice retaliation`,
@@ -63,79 +53,32 @@ Deno.serve(async (req) => {
       `"${companyName}" CEO executive political donation controversy statement`,
     ];
 
-    const allResults: any[] = [];
-    for (const query of searchQueries) {
-      try {
-        const resp = await fetch('https://api.firecrawl.dev/v1/search', {
-          method: 'POST',
-          headers: { 'Authorization': `Bearer ${firecrawlKey}`, 'Content-Type': 'application/json' },
-          body: JSON.stringify({ query, limit: 5, scrapeOptions: { formats: ['markdown'] } }),
-        });
-        if (resp.ok) {
-          const data = await resp.json();
-          if (data.data) {
-            allResults.push(...data.data.map((r: any) => ({
-              title: r.title || '', url: r.url || '',
-              description: r.description || '',
-              markdown: (r.markdown || '').slice(0, 2000), query,
-            })));
-          }
-        }
-      } catch (e) {
-        console.error(`Search failed: ${query}`, e);
-      }
-    }
+    const { results: allResults, source } = await resilientSearch(searchQueries, firecrawlKey, lovableKey);
 
-    // 3. AI analysis with watchlist context
     const content = allResults.slice(0, 12).map((r, i) =>
       `[${i + 1}] "${r.title}" (${r.url})\n${r.description}\n${r.markdown?.slice(0, 500) || ''}`
     ).join('\n\n---\n\n');
 
-    const categoryList = [
-      'christian_nationalism', 'white_supremacy', 'anti_lgbtq', 'anti_labor',
+    const categoryList = ['christian_nationalism', 'white_supremacy', 'anti_lgbtq', 'anti_labor',
       'voter_suppression', 'climate_denial', 'anti_reproductive_rights', 'privatization',
       'racial_discrimination', 'mass_layoffs', 'executive_controversy', 'dei_rollback',
-      'worker_retaliation', 'government_influence'
-    ];
+      'worker_retaliation', 'government_influence'];
 
     const aiPrompt = `You are a corporate accountability analyst for CivicLens. Analyze these search results about "${companyName}" for ties to ideological organizations and movements.
 
-KNOWN WATCHLIST ORGANIZATIONS (match against these):
-${watchlistOrgs.slice(0, 30).map(w => `- ${w.org_name} (${w.category})${w.splc_designated ? ' [SPLC HATE GROUP]' : ''}${w.adl_designated ? ' [ADL DESIGNATED]' : ''}`).join('\n')}
+KNOWN WATCHLIST ORGANIZATIONS:
+${watchlistOrgs.slice(0, 30).map(w => `- ${w.org_name} (${w.category})${w.splc_designated ? ' [SPLC]' : ''}${w.adl_designated ? ' [ADL]' : ''}`).join('\n')}
 
-CATEGORIES TO FLAG: ${categoryList.join(', ')}
+CATEGORIES: ${categoryList.join(', ')}
 
-CRITICAL FALSE-POSITIVE RULES — DO NOT FLAG these:
-- Company or person names that coincidentally contain religious words (e.g. "Church's Chicken", "Churchhill", "Church & Dwight", "Temple Industries", "Bishop Staffing")
-- Generic charitable giving to local churches, food banks, or community organizations
-- Standard holiday messaging (Christmas, Easter references in marketing)
-- Employee resource groups for faith-based communities (these are internal diversity efforts)
-- A company headquartered near a church or religious landmark
-- Names like "Christian" as a first name (e.g. "Christian Dior", "Christian Bale")
-- Only flag if there is a SPECIFIC, DOCUMENTED financial or organizational connection to a POLITICAL advocacy organization
+CRITICAL: Do NOT flag commercial brands with religious-sounding names. Only flag SPECIFIC, DOCUMENTED political connections.
 
 Search Results:
-${content}
+${content || 'No search results available. Use your knowledge to provide analysis.'}
 
 Return JSON:
-{
-  "flags": [
-    {
-      "orgName": "organization name (must be a REAL political advocacy organization, not a commercial brand)",
-      "category": "one of: ${categoryList.join('|')}",
-      "relationshipType": "direct_funding|pac_contribution|executive_donation|board_membership|trade_association|lobbying_alignment|event_sponsorship|foundation_grant",
-      "description": "specific evidence of the connection — cite the actual financial or organizational link",
-      "amount": number|null,
-      "evidenceUrl": "source URL",
-      "severity": "critical|high|medium|low",
-      "confidence": "direct|inferred|unverified"
-    }
-  ],
-  "summary": "2-3 paragraph analysis of ideological alignment patterns",
-  "riskLevel": "critical|high|medium|low|none"
-}
-
-Only include flags with actual evidence of a POLITICAL connection. Do NOT flag commercial brands, restaurants, or businesses that happen to have religious-sounding names. Return valid JSON only.`;
+{"flags": [{"orgName": "string", "category": "string", "relationshipType": "string", "description": "string", "amount": null, "evidenceUrl": "string", "severity": "critical|high|medium|low", "confidence": "direct|inferred|unverified"}], "summary": "2-3 paragraph analysis", "riskLevel": "critical|high|medium|low|none"}
+Return valid JSON only.`;
 
     const aiResp = await fetch('https://ai.gateway.lovable.dev/v1/chat/completions', {
       method: 'POST',
@@ -150,107 +93,61 @@ Only include flags with actual evidence of a POLITICAL connection. Do NOT flag c
     });
 
     let analysis: any = { flags: [], summary: '', riskLevel: 'none' };
-
     if (aiResp.ok) {
       const aiData = await aiResp.json();
       const raw = aiData.choices?.[0]?.message?.content || '';
       try {
         const jsonMatch = raw.match(/```(?:json)?\s*([\s\S]*?)```/) || [null, raw];
         analysis = JSON.parse(jsonMatch[1].trim());
-      } catch (e) {
-        console.error('Failed to parse AI response:', e);
-        analysis.summary = raw.slice(0, 1000);
-      }
+      } catch { analysis.summary = raw.slice(0, 1000); }
     } else {
-      const status = aiResp.status;
-      if (status === 429) {
-        return new Response(JSON.stringify({ success: false, error: 'Rate limited. Please try again.' }), {
-          status: 429, headers: { ...corsHeaders, 'Content-Type': 'application/json' }
-        });
-      }
-      if (status === 402) {
-        return new Response(JSON.stringify({ success: false, error: 'AI credits exhausted.' }), {
-          status: 402, headers: { ...corsHeaders, 'Content-Type': 'application/json' }
-        });
-      }
+      if (aiResp.status === 429) return new Response(JSON.stringify({ success: false, error: 'Rate limited.' }), { status: 429, headers: { ...corsHeaders, 'Content-Type': 'application/json' } });
+      if (aiResp.status === 402) return new Response(JSON.stringify({ success: false, error: 'AI credits exhausted.' }), { status: 402, headers: { ...corsHeaders, 'Content-Type': 'application/json' } });
     }
 
-    // 4. Store flags and match to watchlist (with false-positive filtering)
-    const FALSE_POSITIVE_NAMES = [
-      "church's chicken", "church & dwight", "churchhill", "church's texas chicken",
-      "temple industries", "bishop staffing", "christian dior", "christian louboutin",
-      "st. jude", "salvation army thrift", "goodwill industries",
-    ];
+    const FALSE_POSITIVE_NAMES = ["church's chicken", "church & dwight", "christian dior", "christian louboutin", "st. jude", "salvation army thrift", "goodwill industries"];
 
     const flags = (analysis.flags || [])
       .filter((f: any) => {
         const orgLower = (f.orgName || "").toLowerCase();
-        // Filter out commercial brands with religious-sounding names
         if (FALSE_POSITIVE_NAMES.some(fp => orgLower.includes(fp))) return false;
-        // Filter out flags with no org name
         if (!f.orgName || f.orgName.trim().length < 3) return false;
         return true;
       })
       .map((f: any) => {
         const match = aliasMap.get(f.orgName?.toLowerCase());
         return {
-          company_id: companyId,
-          watchlist_org_id: match?.id || null,
-          category: f.category,
-          org_name: f.orgName,
+          company_id: companyId, watchlist_org_id: match?.id || null,
+          category: f.category, org_name: f.orgName,
           relationship_type: f.relationshipType || 'lobbying_alignment',
-          description: f.description,
-          amount: f.amount,
-          evidence_url: f.evidenceUrl,
-          severity: f.severity || 'medium',
-          confidence: f.confidence || 'inferred',
-          detected_by: 'ai_scan',
+          description: f.description, amount: f.amount,
+          evidence_url: f.evidenceUrl, severity: f.severity || 'medium',
+          confidence: f.confidence || 'inferred', detected_by: 'ai_scan',
         };
       });
 
     if (flags.length > 0) {
-      const { error } = await supabase.from('company_ideology_flags').insert(flags);
-      if (error) console.error('Insert ideology flags error:', error);
+      await supabase.from('company_ideology_flags').insert(flags);
     }
 
-    // 5. Create alerts for critical/high findings
     const criticalFlags = flags.filter((f: any) => f.severity === 'critical' || f.severity === 'high');
     if (criticalFlags.length > 0) {
-      const alerts = criticalFlags.map((f: any) => ({
-        company_id: companyId,
-        scan_type: 'ideology',
-        alert_type: 'controversy_detected',
+      await supabase.from('scan_alerts').insert(criticalFlags.map((f: any) => ({
+        company_id: companyId, scan_type: 'ideology', alert_type: 'controversy_detected',
         title: `${f.category.replace(/_/g, ' ')} tie: ${f.org_name}`,
-        description: f.description,
-        severity: f.severity,
+        description: f.description, severity: f.severity,
         data: { category: f.category, orgName: f.org_name, relationship: f.relationship_type },
-      }));
-      await supabase.from('scan_alerts').insert(alerts);
+      })));
     }
 
     return new Response(JSON.stringify({
-      success: true,
-      signalsFound: flags.length,
-      sourcesScanned: allResults.length,
-      data: {
-        flags: analysis.flags || [],
-        summary: analysis.summary || '',
-        riskLevel: analysis.riskLevel || 'none',
-        flagCount: flags.length,
-        alertCount: criticalFlags.length,
-        resultCount: allResults.length,
-      }
-    }), {
-      headers: { ...corsHeaders, 'Content-Type': 'application/json' }
-    });
+      success: true, source, signalsFound: flags.length, sourcesScanned: allResults.length,
+      data: { flags: analysis.flags || [], summary: analysis.summary || '', riskLevel: analysis.riskLevel || 'none',
+        flagCount: flags.length, alertCount: criticalFlags.length, resultCount: allResults.length }
+    }), { headers: { ...corsHeaders, 'Content-Type': 'application/json' } });
   } catch (error) {
     console.error('Ideology scan error:', error);
-    return new Response(JSON.stringify({
-      success: false,
-      error: error instanceof Error ? error.message : 'Unknown error'
-    }), {
-      status: 500,
-      headers: { ...corsHeaders, 'Content-Type': 'application/json' }
-    });
+    return new Response(JSON.stringify({ success: false, error: error instanceof Error ? error.message : 'Unknown error' }),
+      { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } });
   }
 });
