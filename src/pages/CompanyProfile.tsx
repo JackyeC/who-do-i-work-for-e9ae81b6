@@ -108,6 +108,9 @@ import { LayoffProbabilityCard } from "@/components/LayoffProbabilityCard";
 import { EthicsRiskCard } from "@/components/EthicsRiskCard";
 import { ExecutivePowerNetworkCard } from "@/components/ExecutivePowerNetworkCard";
 import { CompanyRiskRadar } from "@/components/company/CompanyRiskRadar";
+import { LastAuditedStamp } from "@/components/company/LastAuditedStamp";
+import { UpdateTheRecordButton } from "@/components/company/UpdateTheRecordButton";
+import { EmployerRebuttalSection } from "@/components/company/EmployerRebuttalSection";
 /* ─── Status labels ─── */
 const STATUS_LABELS: Record<string, { label: string; color: string }> = {
   discovered: { label: "Discovered", color: "bg-[hsl(var(--civic-yellow))]/10 text-[hsl(var(--civic-yellow))] border-[hsl(var(--civic-yellow))]/30" },
@@ -518,6 +521,7 @@ export default function CompanyProfile() {
                       )}
                     </div>
                     <div className="flex items-center gap-1.5 shrink-0 flex-wrap justify-end">
+                      {dbCompanyId && <UpdateTheRecordButton companyId={dbCompanyId} companyName={name} />}
                       <AdminCompanyActions companyId={dbCompany?.id || company?.id || ""} companyName={name} companySlug={id || ""} />
                       <Button
                         variant="outline"
@@ -580,6 +584,10 @@ export default function CompanyProfile() {
                         Transparency: {transparencyScore}%
                       </Badge>
                     )}
+                    <LastAuditedStamp
+                      lastAuditedAt={(dbCompany as any)?.last_audited_at}
+                      lastReviewed={dbCompany?.last_reviewed}
+                    />
                   </div>
                   {/* Entity Resolution Report */}
                   {dbCompanyId && (
@@ -1376,6 +1384,11 @@ export default function CompanyProfile() {
               </Button>
             </CardContent>
           </Card>
+
+          {/* Employer Rebuttal */}
+          {dbCompanyId && (
+            <EmployerRebuttalSection companyId={dbCompanyId} companyName={name} />
+          )}
 
           {/* Related Reports */}
           <RelatedReportsCard companyName={name} companyId={dbCompanyId} />

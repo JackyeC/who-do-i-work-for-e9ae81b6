@@ -66,6 +66,10 @@ export const Footer = forwardRef<HTMLElement>((_, ref) => {
           <p className="text-xs text-primary-foreground/30">
             © {new Date().getFullYear()} Who Do I Work For? — Career Intelligence by Jackye Clayton. All rights reserved. This platform surfaces publicly available data as employer reality signals for informational purposes only.
           </p>
+          <p className="text-[10px] text-primary-foreground/25 leading-relaxed">
+            WDIWF is a live intelligence aggregator. Because corporate and political landscapes shift daily, we rely on public filings and community verification. Found a discrepancy?{" "}
+            <Link to="/request-correction" className="text-primary-foreground/50 hover:text-primary-foreground/70 underline underline-offset-2">Report it here</Link>.
+          </p>
           <p className="text-[10px] text-primary-foreground/20 leading-relaxed">
             AI Training Restriction: Content on this website may not be used to train artificial intelligence systems, machine learning models, or large language models without explicit written permission. Automated scraping, dataset creation, or model training using this content is prohibited.
           </p>
