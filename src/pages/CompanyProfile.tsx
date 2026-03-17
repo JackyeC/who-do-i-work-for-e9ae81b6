@@ -592,6 +592,15 @@ export default function CompanyProfile() {
                       lastAuditedAt={(dbCompany as any)?.last_audited_at}
                       lastReviewed={dbCompany?.last_reviewed}
                     />
+                    <RecruitmentAdvantageScore
+                      lastAuditedAt={(dbCompany as any)?.last_audited_at}
+                      isCertified={dbCompany?.vetted_status === "certified"}
+                      hasCompensationData={false}
+                      hasDEIReports={false}
+                      hasEmployerRebuttal={false}
+                      transparencyScore={transparencyScore}
+                      signalGroupCount={0}
+                    />
                   </div>
                   {/* Entity Resolution Report */}
                   {dbCompanyId && (
