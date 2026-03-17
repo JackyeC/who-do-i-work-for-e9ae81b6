@@ -299,7 +299,7 @@ export const PERSONAS: PersonaConfig[] = [
     question: "What do candidates see?",
     accessTier: "freemium",
     primarySections: ["cbi", "workforce_intel", "narrative_power", "compensation", "recruiter_reality", "workforce_stability"],
-    secondarySections: ["governance", "values"],
+    secondarySections: ["governance", "values", "off_the_record"],
     hiddenSections: ["influence", "public_records", "gtm"],
     primaryScores: ["cbi", "recruiter_reality"],
     buckets: [
