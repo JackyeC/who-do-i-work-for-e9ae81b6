@@ -115,6 +115,8 @@ import { UpdateTheRecordButton } from "@/components/company/UpdateTheRecordButto
 import { EmployerRebuttalSection } from "@/components/company/EmployerRebuttalSection";
 import { NarrativeGapCard } from "@/components/company/NarrativeGapCard";
 import { RecruitmentAdvantageScore } from "@/components/company/RecruitmentAdvantageScore";
+import { VerificationBountyCard } from "@/components/company/VerificationBountyCard";
+import { CIOAuditBadge } from "@/components/company/CIOAuditBadge";
 /* ─── Status labels ─── */
 const STATUS_LABELS: Record<string, { label: string; color: string }> = {
   discovered: { label: "Discovered", color: "bg-[hsl(var(--civic-yellow))]/10 text-[hsl(var(--civic-yellow))] border-[hsl(var(--civic-yellow))]/30" },
@@ -588,6 +590,7 @@ export default function CompanyProfile() {
                         Transparency: {transparencyScore}%
                       </Badge>
                     )}
+                    <CIOAuditBadge lastAuditedAt={(dbCompany as any)?.last_audited_at} />
                     <LastAuditedStamp
                       lastAuditedAt={(dbCompany as any)?.last_audited_at}
                       lastReviewed={dbCompany?.last_reviewed}
@@ -664,6 +667,15 @@ export default function CompanyProfile() {
             signalGroupCount={0}
             isCertified={dbCompany?.vetted_status === "certified"}
           />
+
+          {/* Verification Bounty — Archive Signal */}
+          {dbCompanyId && (
+            <VerificationBountyCard
+              companyId={dbCompanyId}
+              companyName={name}
+              lastAuditedAt={(dbCompany as any)?.last_audited_at}
+            />
+          )}
 
           {/* ═══════════════════════════════════════════════════════════
               PERSONA SELECTOR
