@@ -34,7 +34,6 @@ Deno.serve(async (req) => {
 
     console.log(`[warn-scan] Scanning: ${company_name} (national: ${national})`);
 
-    const allResults: any[] = [];
     const currentYear = new Date().getFullYear();
 
     // Search strategy — prioritize official .gov WARN sources
