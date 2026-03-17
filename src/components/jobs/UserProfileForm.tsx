@@ -131,6 +131,7 @@ export function UserProfileForm() {
         }));
       }
 
+      refetchResume();
       toast({ title: "Resume parsed successfully", description: "Profile fields have been auto-filled" });
     } catch (error: any) {
       console.error("Upload error:", error);
