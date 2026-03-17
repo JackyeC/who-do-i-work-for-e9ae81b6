@@ -218,12 +218,17 @@ Deno.serve(async (req) => {
             messages: [
               {
                 role: "system",
-                content: `You are an investigative workplace intelligence analyst specializing in PRIVATE companies. Focus on labor disputes, regulatory enforcement, workplace safety, employee experience, and corporate controversies. Return factual, verifiable information only.`,
+                content: `You are an investigative workplace intelligence analyst specializing in PRIVATE companies. Focus on who owns and runs the company, its history, labor disputes, regulatory enforcement, workplace safety, employee experience, and corporate controversies. Return factual, verifiable information only.`,
               },
               {
                 role: "user",
                 content: `Research "${companyName}" as a private company employer. Return a structured JSON analysis:
 {
+  "founder_names": ["string — full names of founders or current owners/principals"],
+  "founder_previous_companies": ["string — notable companies founders previously worked at or founded"],
+  "founded_year": 2000,
+  "company_history": "string — 2-3 sentence history of the company including key milestones, acquisitions, or pivots",
+  "ownership_type": "string — e.g. family-owned, PE-backed, employee-owned, franchise, cooperative, privately held",
   "employee_count_estimate": "string or null",
   "glassdoor_rating": "number or null",
   "union_activity": [{"description": "string", "year": 2024, "location": "string", "source": "string"}],
@@ -237,7 +242,7 @@ Deno.serve(async (req) => {
   "recent_news": [{"headline": "string", "date": "2024-01-01", "source": "string", "url": "string"}],
   "watchdog_flags": [{"organization": "string", "flag_type": "string", "description": "string"}]
 }
-Include ONLY verified, factual information. Empty arrays for fields with no data.`,
+Include ONLY verified, factual information. Empty arrays for fields with no data. null for unknown fields.`,
               },
             ],
             search_recency_filter: "year",
