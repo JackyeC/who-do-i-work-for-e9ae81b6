@@ -284,6 +284,10 @@ export function CareerWrappedStep({ profile, careerPaths, companies, skillGap, f
 
       {/* Action Buttons */}
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+        <Button onClick={handleEmailResults} disabled={emailing} className="gap-2">
+          {emailing ? <Loader2 className="w-4 h-4 animate-spin" /> : <Mail className="w-4 h-4" />}
+          {emailing ? "Sending…" : "Email My Results"}
+        </Button>
         <Button onClick={handleShareLinkedIn} className="gap-2 bg-[#0A66C2] hover:bg-[#004182] text-white">
           <Linkedin className="w-4 h-4" /> Share on LinkedIn
         </Button>
@@ -295,7 +299,7 @@ export function CareerWrappedStep({ profile, careerPaths, companies, skillGap, f
         </Button>
         <Button
           onClick={handleDownloadPDF}
-          className={cn("gap-2", !isPremium && "opacity-80")}
+          className={cn("gap-2 sm:col-span-2", !isPremium && "opacity-80")}
           variant={isPremium ? "default" : "outline"}
         >
           {isPremium ? <Download className="w-4 h-4" /> : <Lock className="w-4 h-4" />}
