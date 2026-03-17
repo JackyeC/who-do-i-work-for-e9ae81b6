@@ -109,25 +109,10 @@ Deno.serve(async (req) => {
       try {
         // Quick web search for company identity
         let searchContent = '';
-        if (firecrawlKey) {
-          try {
-            const searchResp = await fetch('https://api.firecrawl.dev/v1/search', {
-              method: 'POST',
-              headers: {
-                'Authorization': `Bearer ${firecrawlKey}`,
-                'Content-Type': 'application/json',
-              },
-              body: JSON.stringify({ query: `"${name}" company official website headquarters industry`, limit: 5 }),
-            });
-            if (searchResp.ok) {
-              const searchData = await searchResp.json();
-              for (const r of (searchData.data || [])) {
-                searchContent += `\nURL: ${r.url}\nTitle: ${r.title}\n${r.description || ''}\n`;
-              }
-            }
-          } catch (e) {
-            console.error('Search failed:', e);
-          }
+        const identityQueries = [`"${name}" company official website headquarters industry`];
+        const { results: identityResults } = await resilientSearch(identityQueries, firecrawlKey, lovableKey!);
+        for (const r of identityResults) {
+          searchContent += `\nURL: ${r.url}\nTitle: ${r.title}\n${r.description || ''}\n`;
         }
 
         const aiResp = await fetch('https://ai.gateway.lovable.dev/v1/chat/completions', {

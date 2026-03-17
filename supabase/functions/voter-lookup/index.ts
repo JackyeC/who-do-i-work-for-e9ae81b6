@@ -193,7 +193,7 @@ Deno.serve(async (req) => {
     });
 
     // 3. AI to identify representatives from search results
-    const contentForAI = searchResults.map((r, i) =>
+    const contentForAI = formattedResults.map((r: any, i: number) =>
       `[${i + 1}] "${r.title}" (${r.url})\n${r.markdown?.slice(0, 800) || ''}`
     ).join('\n\n---\n\n');
 

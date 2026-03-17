@@ -96,30 +96,32 @@ Deno.serve(async (req) => {
       allContent += `\n\nSOURCE: ${r.url}\nTITLE: ${r.title}\n${r.description || ''}\n${(r.markdown || '').slice(0, 2000)}`;
     }
 
-    // Scrape careers page if available
-    const { data: company } = await supabase
-      .from('companies')
-      .select('careers_url')
-      .eq('id', companyId)
-      .single();
+    // Optionally scrape careers page if Firecrawl available
+    if (firecrawlKey) {
+      const { data: company } = await supabase
+        .from('companies')
+        .select('careers_url')
+        .eq('id', companyId)
+        .single();
 
-    if (company?.careers_url) {
-      try {
-        const scrapeResp = await fetch('https://api.firecrawl.dev/v1/scrape', {
-          method: 'POST',
-          headers: { 'Authorization': `Bearer ${firecrawlKey}`, 'Content-Type': 'application/json' },
-          body: JSON.stringify({ url: company.careers_url, formats: ['markdown'], onlyMainContent: true, waitFor: 3000 }),
-        });
-        if (scrapeResp.ok) {
-          const scrapeData = await scrapeResp.json();
-          const md = scrapeData.data?.markdown || scrapeData.markdown || '';
-          if (md.length > 50) {
-            allContent += `\n\nSOURCE: ${company.careers_url}\nTYPE: careers page\n${md.slice(0, 5000)}`;
-            sourcesScanned++;
+      if (company?.careers_url) {
+        try {
+          const scrapeResp = await fetch('https://api.firecrawl.dev/v1/scrape', {
+            method: 'POST',
+            headers: { 'Authorization': `Bearer ${firecrawlKey}`, 'Content-Type': 'application/json' },
+            body: JSON.stringify({ url: company.careers_url, formats: ['markdown'], onlyMainContent: true, waitFor: 3000 }),
+          });
+          if (scrapeResp.ok) {
+            const scrapeData = await scrapeResp.json();
+            const md = scrapeData.data?.markdown || scrapeData.markdown || '';
+            if (md.length > 50) {
+              allContent += `\n\nSOURCE: ${company.careers_url}\nTYPE: careers page\n${md.slice(0, 5000)}`;
+              sourcesScanned++;
+            }
           }
+        } catch (e) {
+          console.error('Careers scrape failed', e);
         }
-      } catch (e) {
-        console.error('Careers scrape failed', e);
       }
     }
 

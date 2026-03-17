@@ -113,49 +113,51 @@ Deno.serve(async (req) => {
       allContent += `\n\nSOURCE: ${r.url}\nTITLE: ${r.title}\n${r.description || ''}\n${(r.markdown || '').slice(0, 2500)}`;
     }
 
-    // Step 2: Scrape company careers and privacy pages
-    const { data: company } = await supabase
-      .from('companies')
-      .select('careers_url')
-      .eq('id', companyId)
-      .single();
+    // Step 2: Optionally scrape company careers and privacy pages (only if Firecrawl available)
+    if (firecrawlKey) {
+      const { data: company } = await supabase
+        .from('companies')
+        .select('careers_url')
+        .eq('id', companyId)
+        .single();
 
-    const pagesToScrape: { url: string; label: string }[] = [];
-    if (company?.careers_url) {
-      pagesToScrape.push({ url: company.careers_url, label: 'careers page' });
-    }
+      const pagesToScrape: { url: string; label: string }[] = [];
+      if (company?.careers_url) {
+        pagesToScrape.push({ url: company.careers_url, label: 'careers page' });
+      }
 
-    const domain = companyName.toLowerCase().replace(/[^a-z0-9]/g, '');
-    pagesToScrape.push(
-      { url: `https://www.${domain}.com/privacy`, label: 'privacy policy' },
-      { url: `https://www.${domain}.com/careers`, label: 'careers page' },
-    );
+      const domain = companyName.toLowerCase().replace(/[^a-z0-9]/g, '');
+      pagesToScrape.push(
+        { url: `https://www.${domain}.com/privacy`, label: 'privacy policy' },
+        { url: `https://www.${domain}.com/careers`, label: 'careers page' },
+      );
 
-    for (const page of pagesToScrape) {
-      try {
-        const scrapeResp = await fetch('https://api.firecrawl.dev/v1/scrape', {
-          method: 'POST',
-          headers: {
-            'Authorization': `Bearer ${firecrawlKey}`,
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify({
-            url: page.url,
-            formats: ['markdown', 'html'],
-            onlyMainContent: false, // Need full HTML for script detection
-            waitFor: 4000,
-          }),
-        });
-        if (scrapeResp.ok) {
-          const scrapeData = await scrapeResp.json();
-          const md = scrapeData.data?.markdown || scrapeData.markdown || '';
-          const html = scrapeData.data?.html || scrapeData.html || '';
-          if (md.length > 50 || html.length > 50) {
-            allContent += `\n\nSOURCE: ${page.url}\nTYPE: ${page.label}\nMARKDOWN:\n${md.slice(0, 5000)}\nHTML_EXCERPT:\n${html.slice(0, 5000)}`;
+      for (const page of pagesToScrape) {
+        try {
+          const scrapeResp = await fetch('https://api.firecrawl.dev/v1/scrape', {
+            method: 'POST',
+            headers: {
+              'Authorization': `Bearer ${firecrawlKey}`,
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+              url: page.url,
+              formats: ['markdown', 'html'],
+              onlyMainContent: false,
+              waitFor: 4000,
+            }),
+          });
+          if (scrapeResp.ok) {
+            const scrapeData = await scrapeResp.json();
+            const md = scrapeData.data?.markdown || scrapeData.markdown || '';
+            const html = scrapeData.data?.html || scrapeData.html || '';
+            if (md.length > 50 || html.length > 50) {
+              allContent += `\n\nSOURCE: ${page.url}\nTYPE: ${page.label}\nMARKDOWN:\n${md.slice(0, 5000)}\nHTML_EXCERPT:\n${html.slice(0, 5000)}`;
+            }
           }
+        } catch (e) {
+          console.error(`Scrape failed for ${page.url}`, e);
         }
-      } catch (e) {
-        console.error(`Scrape failed for ${page.url}`, e);
       }
     }
 
