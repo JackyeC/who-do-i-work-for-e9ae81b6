@@ -23,14 +23,14 @@ interface WarningSignal {
 }
 
 const STATUS_STYLES = {
-  elevated: "bg-destructive/8 border-destructive/20 text-destructive",
-  moderate: "bg-[hsl(var(--civic-yellow))]/8 border-[hsl(var(--civic-yellow))]/20 text-[hsl(var(--civic-yellow))]",
+  elevated: "bg-[hsl(var(--civic-yellow))]/8 border-[hsl(var(--civic-yellow))]/20 text-[hsl(var(--civic-yellow))]",
+  moderate: "bg-[hsl(var(--civic-yellow))]/5 border-[hsl(var(--civic-yellow))]/15 text-[hsl(var(--civic-yellow))]",
   low: "bg-[hsl(var(--civic-green))]/8 border-[hsl(var(--civic-green))]/20 text-[hsl(var(--civic-green))]",
   no_data: "bg-muted/50 border-border/30 text-muted-foreground",
 };
 
 const STATUS_BADGE = {
-  elevated: "Elevated",
+  elevated: "Review Required",
   moderate: "Moderate",
   low: "Low Risk",
   no_data: "No Data",
