@@ -85,7 +85,11 @@ export function UpdateTheRecordButton({ companyId, companyName }: UpdateTheRecor
               Update the Record for {companyName}
             </DialogTitle>
             <DialogDescription>
-              If you have a more recent filing, article, or public record, submit it here. All submissions are tagged as{" "}
+              <span className="block p-3 rounded-lg bg-[hsl(var(--civic-gold))]/[0.06] border border-[hsl(var(--civic-gold))]/20 mb-3 text-xs">
+                <span className="font-semibold text-foreground block mb-1">Are you this employer?</span>
+                Claim your <a href="/for-employers" className="text-[hsl(var(--civic-gold))] font-semibold underline">Narrative Alignment Package ($599/yr)</a> to provide full context, earn your Gold Shield, and control your narrative.
+              </span>
+              If you have a more recent filing, article, or public record, submit it below. All community submissions are tagged as{" "}
               <span className="font-semibold text-foreground">Community-Sourced Intelligence (Pending CIO Audit)</span>.
             </DialogDescription>
           </DialogHeader>

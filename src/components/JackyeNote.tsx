@@ -96,7 +96,7 @@ export function JackyeNote(props: JackyeNoteProps) {
       parts.push(`Gaps exist in ${gaps.join(", ")}.`);
     }
 
-    parts.push("The signals below are sourced from public filings, federal databases, and open records. No judgment, just receipts.");
+    parts.push("The signals below are sourced from public filings, federal databases, and open records. Employers can provide context through the Narrative Alignment Package.");
 
     return parts.join(" ");
   }, [companyName, props]);

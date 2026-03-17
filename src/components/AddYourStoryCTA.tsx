@@ -8,16 +8,16 @@ export function AddYourStoryCTA() {
         <PenLine className="w-4 h-4 text-primary shrink-0 mt-0.5" />
         <div>
           <p className="text-xs font-semibold text-foreground mb-1">
-            Add Your Story
+            Claim Your Story
           </p>
           <p className="text-xs text-muted-foreground leading-relaxed mb-2">
-            Standard public data is only half the story. Become a Founding Partner to provide the full context for your future talent.
+            Standard public data is only half the story. Claim your Narrative Alignment Package to provide the full context for your future talent.
           </p>
           <Link
             to="/for-employers"
             className="inline-flex items-center gap-1 text-xs font-semibold text-primary hover:underline"
           >
-            Learn about the $599 Founding Partner program →
+            Learn about the $599 Narrative Alignment Package →
           </Link>
         </div>
       </div>

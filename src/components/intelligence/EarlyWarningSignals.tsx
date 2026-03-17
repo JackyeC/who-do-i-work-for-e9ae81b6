@@ -284,8 +284,8 @@ export function EarlyWarningSignals({ companyId, companyName }: Props) {
         })}
 
         <p className="text-[10px] text-muted-foreground border-t border-border pt-2 mt-3">
-          These signals highlight patterns observed in public records. No single signal is conclusive —
-          review the full intelligence report for context.
+          These signals highlight patterns observed in public records. We recommend employers provide
+          an "Insider Context" statement to clarify their stance. No single signal is conclusive.
         </p>
       </CardContent>
     </Card>

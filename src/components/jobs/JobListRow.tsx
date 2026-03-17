@@ -149,8 +149,8 @@ export function JobListRow({ job, companyValueSignals = [], companySignalFlags =
                     </TooltipTrigger>
                     <TooltipContent side="top" className="max-w-[200px] text-xs">
                       {isCertified
-                        ? "Verified by Jackye Certification Audit"
-                        : "This employer has not completed the $599 Founding Partner audit. Stance is unverified."}
+                        ? "Verified by Narrative Alignment Audit"
+                        : "This employer has not completed the $599 Narrative Alignment Package. Stance is unverified."}
                     </TooltipContent>
                   </Tooltip>
                 </TooltipProvider>
