@@ -14,7 +14,7 @@ interface ReportTeaserGateProps {
   hiddenSignalCount?: number;
 }
 
-export function ReportTeaserGate({ children, teaser, companyName }: ReportTeaserGateProps) {
+export function ReportTeaserGate({ children, teaser, companyName, hiddenSignalCount }: ReportTeaserGateProps) {
   const { user } = useAuth();
   const { isPremium } = usePremium();
   const { hasCredits } = useCredits();
