@@ -89,12 +89,6 @@ export const PERSONAS: PersonaConfig[] = [
       },
     ],
   },
-  // NOTE: replaced the rest below
-        iconName: "Activity",
-        sections: ["workforce_stability"],
-      },
-    ],
-  },
   {
     id: "employee",
     label: "Employee",
