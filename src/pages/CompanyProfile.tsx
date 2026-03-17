@@ -668,6 +668,15 @@ export default function CompanyProfile() {
             isCertified={dbCompany?.vetted_status === "certified"}
           />
 
+          {/* Verification Bounty — Archive Signal */}
+          {dbCompanyId && (
+            <VerificationBountyCard
+              companyId={dbCompanyId}
+              companyName={name}
+              lastAuditedAt={(dbCompany as any)?.last_audited_at}
+            />
+          )}
+
           {/* ═══════════════════════════════════════════════════════════
               PERSONA SELECTOR
              ═══════════════════════════════════════════════════════════ */}
