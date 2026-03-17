@@ -128,7 +128,7 @@ export function BetaFeedbackWidget() {
                     Ready to lock it in?
                   </h4>
                   <p className="text-xs text-muted-foreground leading-relaxed">
-                    Your beta access stays active until launch. Subscribe now to guarantee your rate — prices go up at GA.
+                    Your beta access stays active until launch. Subscribe now to lock in your current rate — pricing increases at GA.
                   </p>
                 </div>
 

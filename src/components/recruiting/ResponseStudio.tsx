@@ -96,7 +96,7 @@ export function ResponseStudio() {
           severity: "medium",
           source: sig.signal_type?.replace(/_/g, " ") || "Signal",
           sourceUrl: sig.source_url,
-          script: `"Our research shows a documented ${sig.issue_category?.replace(/_/g, " ")} signal for ${company.name}. This comes from verified public records${sig.amount ? ` involving $${Number(sig.amount).toLocaleString()}` : ""}. I'm sharing this so you have the complete picture."`,
+          script: `"Our research shows a documented ${sig.issue_category?.replace(/_/g, " ")} signal for ${company.name}. This comes from verified public records${sig.amount ? ` involving $${Number(sig.amount).toLocaleString()}` : ""}. I'm sharing this so you have additional context from public records."`,
         });
       }
 

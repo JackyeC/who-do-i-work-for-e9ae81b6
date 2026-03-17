@@ -205,7 +205,7 @@ const METRIC_EXPLANATIONS: Record<string, MetricExplanation> = {
   },
   "signal-timeline": {
     title: "Signal Timeline",
-    what: "A chronological view of all signals detected for this company — when each data point was first found, last verified, and any changes over time.",
+    what: "A chronological view of signals detected for this company — when each data point was first found, last verified, and any changes over time.",
     why: "Timing matters. A spike in lobbying before a regulatory vote, or a benefits page change before layoffs, tells a different story than the same signals in isolation.",
     source: "All platform data sources",
   },

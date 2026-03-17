@@ -181,7 +181,7 @@ const Index = forwardRef<HTMLDivElement>((_, ref) => {
         <div className="max-w-[960px] mx-auto">
           <div className="font-mono text-sm tracking-[0.2em] uppercase text-primary mb-3">What You'll See</div>
           <h2 className="text-2xl lg:text-3xl mb-4 text-foreground">
-            Five pillars. One complete picture.
+            Five pillars. One informed perspective.
           </h2>
           <p className="text-muted-foreground text-base mb-14 max-w-[520px]">
             Every company report is organized around the signals that actually matter for your career decision.
