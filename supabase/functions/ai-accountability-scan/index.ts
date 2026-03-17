@@ -85,8 +85,8 @@ Deno.serve(async (req) => {
     const supabaseKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!;
     const supabase = createClient(supabaseUrl, supabaseKey);
 
-    if (!firecrawlKey || !lovableKey) {
-      return new Response(JSON.stringify({ success: false, error: 'Required API keys not configured' }), {
+    if (!lovableKey) {
+      return new Response(JSON.stringify({ success: false, error: 'LOVABLE_API_KEY not configured' }), {
         status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' }
       });
     }
@@ -103,30 +103,14 @@ Deno.serve(async (req) => {
       `site:${companyName.toLowerCase().replace(/\s+/g, '')}.com careers`,
     ];
 
+    const { results: searchResults } = await resilientSearch(searchQueries, firecrawlKey, lovableKey);
+
     let allContent = '';
     const foundUrls: string[] = [];
 
-    for (const query of searchQueries) {
-      try {
-        const searchResp = await fetch('https://api.firecrawl.dev/v1/search', {
-          method: 'POST',
-          headers: {
-            'Authorization': `Bearer ${firecrawlKey}`,
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify({ query, limit: 5 }),
-        });
-
-        if (searchResp.ok) {
-          const searchData = await searchResp.json();
-          for (const r of (searchData.data || [])) {
-            foundUrls.push(r.url || '');
-            allContent += `\n\nSOURCE: ${r.url}\nTITLE: ${r.title}\n${r.description || ''}\n${r.markdown?.slice(0, 2500) || ''}`;
-          }
-        }
-      } catch (e) {
-        console.error(`Search failed: ${query}`, e);
-      }
+    for (const r of searchResults) {
+      foundUrls.push(r.url || '');
+      allContent += `\n\nSOURCE: ${r.url}\nTITLE: ${r.title}\n${r.description || ''}\n${(r.markdown || '').slice(0, 2500)}`;
     }
 
     // Step 2: Scrape company careers and privacy pages
