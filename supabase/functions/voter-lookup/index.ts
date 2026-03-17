@@ -6,11 +6,66 @@ const corsHeaders = {
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2';
 import { resilientSearch } from '../_shared/resilient-search.ts';
 const FEC_API_BASE = 'https://api.open.fec.gov/v1';
+const CONGRESS_API_BASE = 'https://api.congress.gov/v3';
+const LEGISLATORS_URL = 'https://theunitedstates.io/congress-legislators/legislators-current.json';
+
+// Resolve bioguide ID from name
+async function resolveBioguideId(name: string, state?: string): Promise<{ bioguideId: string; legislator: any } | null> {
+  try {
+    const resp = await fetch(LEGISLATORS_URL, { headers: { 'User-Agent': 'CivicLens/1.0' } });
+    if (!resp.ok) return null;
+    const legislators = await resp.json();
+    const normalized = name.toUpperCase().replace(/[^A-Z\s]/g, '').trim();
+
+    for (const leg of legislators) {
+      const fullName = (leg.name.official_full || `${leg.name.first} ${leg.name.last}`).toUpperCase();
+      const lastName = leg.name.last.toUpperCase();
+      const firstName = leg.name.first.toUpperCase();
+
+      if (fullName.includes(normalized) || normalized.includes(fullName) ||
+          (normalized.includes(lastName) && normalized.includes(firstName.slice(0, 3)))) {
+        if (state) {
+          const currentTerm = leg.terms[leg.terms.length - 1];
+          if (currentTerm.state !== state.toUpperCase()) continue;
+        }
+        return { bioguideId: leg.id.bioguide, legislator: leg };
+      }
+    }
+    return null;
+  } catch { return null; }
+}
+
+// Fetch Congress.gov member details
+async function fetchCongressMember(bioguideId: string, apiKey: string) {
+  try {
+    const resp = await fetch(
+      `${CONGRESS_API_BASE}/member/${bioguideId}?api_key=${apiKey}&format=json`,
+      { headers: { 'User-Agent': 'CivicLens/1.0' } }
+    );
+    if (!resp.ok) return null;
+    const data = await resp.json();
+    const m = data?.member;
+    if (!m) return null;
+
+    const currentTerm = m.terms?.[m.terms.length - 1];
+    return {
+      party: m.partyName,
+      chamber: currentTerm?.chamber || null,
+      committees: (currentTerm?.committees || []).map((c: any) => c.name),
+      termsServed: m.terms?.length || 0,
+      photoUrl: m.depiction?.imageUrl || null,
+      leadership: m.leadership || [],
+      officialName: m.directOrderName || m.invertedOrderName,
+    };
+  } catch (e: any) {
+    console.warn(`Congress.gov fetch error for ${bioguideId}:`, e.message);
+    return null;
+  }
+}
 
 // Search FEC for a candidate and get their top PAC/organization donors
 async function fetchFECDonors(candidateName: string, state: string, fecApiKey: string): Promise<any[]> {
   try {
-    // Step 1: Find the candidate in FEC
     const nameParts = candidateName.trim().split(/\s+/);
     const lastName = nameParts[nameParts.length - 1];
     const firstName = nameParts[0];
@@ -23,13 +78,12 @@ async function fetchFECDonors(candidateName: string, state: string, fecApiKey: s
     }
     const searchData = await searchResp.json();
     const candidates = searchData.results || [];
-    
+
     if (candidates.length === 0) {
       console.log(`No FEC candidate found for "${candidateName}" in ${state}`);
       return [];
     }
 
-    // Find best match
     const candidate = candidates.find((c: any) => {
       const cName = (c.name || '').toUpperCase();
       return cName.includes(lastName.toUpperCase()) && cName.includes(firstName.toUpperCase().slice(0, 3));
@@ -38,45 +92,34 @@ async function fetchFECDonors(candidateName: string, state: string, fecApiKey: s
     const candidateId = candidate.candidate_id;
     console.log(`FEC match: ${candidate.name} (${candidateId})`);
 
-    // Step 2: Find their principal committee
     const committeeUrl = `${FEC_API_BASE}/candidate/${candidateId}/committees/?api_key=${fecApiKey}&designation=P&per_page=3`;
     const committeeResp = await fetch(committeeUrl, { headers: { 'User-Agent': 'CivicLens/1.0' } });
     let committeeId = '';
     if (committeeResp.ok) {
       const committeeData = await committeeResp.json();
       const committees = committeeData.results || [];
-      if (committees.length > 0) {
-        committeeId = committees[0].committee_id;
-      }
+      if (committees.length > 0) committeeId = committees[0].committee_id;
     }
 
-    // Step 3: Get top PAC/organization contributors
-    // Use schedules/schedule_a to get contributions by contributor type
     const donors: any[] = [];
 
-    // Fetch PAC contributions to this candidate
     if (committeeId) {
       const pacUrl = `${FEC_API_BASE}/schedules/schedule_a/?api_key=${fecApiKey}&committee_id=${committeeId}&contributor_type=C&sort=-contribution_receipt_amount&per_page=20&two_year_transaction_period=2024`;
       const pacResp = await fetch(pacUrl, { headers: { 'User-Agent': 'CivicLens/1.0' } });
       if (pacResp.ok) {
         const pacData = await pacResp.json();
         const results = pacData.results || [];
-        
-        // Aggregate by contributor name
         const aggregated: Record<string, { name: string; total: number; type: string }> = {};
         for (const r of results) {
           const name = r.contributor_name || r.committee?.name || 'Unknown';
           const cleanName = name.replace(/\s+(PAC|POLITICAL ACTION COMMITTEE|COMMITTEE|FOR CONGRESS|FOR SENATE|FOR AMERICA)\s*$/i, '').trim();
-          if (!aggregated[cleanName]) {
-            aggregated[cleanName] = { name: cleanName, total: 0, type: 'pac' };
-          }
+          if (!aggregated[cleanName]) aggregated[cleanName] = { name: cleanName, total: 0, type: 'pac' };
           aggregated[cleanName].total += r.contribution_receipt_amount || 0;
         }
         donors.push(...Object.values(aggregated));
       }
     }
 
-    // Also try the /totals endpoint for overall top donors  
     if (candidateId) {
       const totalsUrl = `${FEC_API_BASE}/schedules/schedule_a/by_employer/?api_key=${fecApiKey}&candidate_id=${candidateId}&sort=-total&per_page=15&cycle=2024`;
       const totalsResp = await fetch(totalsUrl, { headers: { 'User-Agent': 'CivicLens/1.0' } });
@@ -86,16 +129,12 @@ async function fetchFECDonors(candidateName: string, state: string, fecApiKey: s
         for (const r of results) {
           const employer = r.employer || '';
           if (!employer || employer === 'NONE' || employer === 'SELF-EMPLOYED' || employer === 'RETIRED' || employer === 'NOT EMPLOYED' || employer === 'N/A' || employer.length < 3) continue;
-          // Avoid duplicates with PAC donors
           const exists = donors.some(d => d.name.toUpperCase() === employer.toUpperCase());
-          if (!exists) {
-            donors.push({ name: employer, total: r.total || 0, type: 'employee-donors' });
-          }
+          if (!exists) donors.push({ name: employer, total: r.total || 0, type: 'employee-donors' });
         }
       }
     }
 
-    // Sort by total descending and take top 15
     donors.sort((a, b) => b.total - a.total);
     return donors.slice(0, 15);
   } catch (err: any) {
@@ -104,12 +143,19 @@ async function fetchFECDonors(candidateName: string, state: string, fecApiKey: s
   }
 }
 
-// Title case helper
 function toTitleCase(str: string): string {
   return str.replace(/\b\w+/g, (word) => {
     if (['LLC', 'PAC', 'USA', 'US', 'LLP', 'INC', 'LP', 'NA'].includes(word.toUpperCase())) return word.toUpperCase();
     return word.charAt(0).toUpperCase() + word.slice(1).toLowerCase();
   });
+}
+
+// Compute confidence level based on data sources available
+function computeConfidence(sources: string[]): { level: string; score: number } {
+  const score = sources.length;
+  if (score >= 3) return { level: 'high', score: 1.0 };
+  if (score >= 2) return { level: 'medium', score: 0.7 };
+  return { level: 'low', score: 0.4 };
 }
 
 Deno.serve(async (req) => {
@@ -136,7 +182,11 @@ Deno.serve(async (req) => {
       );
     }
 
-    const fecApiKey = Deno.env.get('FEC_API_KEY') || 'DEMO_KEY';
+    // FIX: Use correct secret name
+    const fecApiKey = Deno.env.get('OPENFEC_API_KEY') || 'DEMO_KEY';
+    const congressApiKey = Deno.env.get('CONGRESS_GOV_API_KEY');
+
+    console.log(`[voter-lookup] FEC key present: ${fecApiKey !== 'DEMO_KEY'}, Congress key present: ${!!congressApiKey}`);
 
     // 1. Search for representatives
     const searchQuery = address
@@ -166,7 +216,6 @@ Deno.serve(async (req) => {
     const companyMap: Record<string, any> = {};
     (companies || []).forEach((c: any) => { companyMap[c.id] = c; });
 
-    // Build candidate-to-companies mapping
     const candidateCompanyMap: Record<string, any[]> = {};
     (allCandidates || []).forEach((c: any) => {
       const key = c.name.toLowerCase();
@@ -186,13 +235,12 @@ Deno.serve(async (req) => {
       }
     });
 
-    // Build company name → slug mapping for linking FEC results
     const companyNameToSlug: Record<string, { slug: string; score: number; industry: string }> = {};
     (companies || []).forEach((c: any) => {
       companyNameToSlug[c.name.toUpperCase()] = { slug: c.slug, score: c.civic_footprint_score, industry: c.industry };
     });
 
-    // 3. AI to identify representatives from search results
+    // 3. AI to identify representatives
     const contentForAI = formattedResults.map((r: any, i: number) =>
       `[${i + 1}] "${r.title}" (${r.url})\n${r.markdown?.slice(0, 800) || ''}`
     ).join('\n\n---\n\n');
@@ -215,6 +263,7 @@ Return JSON:
       "name": "Full Name",
       "title": "U.S. Senator | U.S. Representative | Governor",
       "party": "D|R|I",
+      "level": "federal",
       "state": "XX",
       "district": "district if applicable",
       "inOurDatabase": true/false,
@@ -226,6 +275,7 @@ Return JSON:
       "name": "Full Name",
       "title": "State Senator | State Representative | etc",
       "party": "D|R|I",
+      "level": "state",
       "district": "district if applicable"
     }
   ]
@@ -272,16 +322,28 @@ Focus on federal-level reps (Senators + House). Include state-level if found. Re
       }
     }
 
-    // 4. Enrich each rep with BOTH our DB data AND live FEC data
+    // 4. Enrich each rep with DB data, FEC data, AND Congress.gov data
     const enrichedReps = await Promise.all((reps.representatives || []).map(async (rep: any) => {
       const key = rep.name.toLowerCase();
-      // Our DB data
       const dbFunders = candidateCompanyMap[key] || [];
+      const dataSources: string[] = ['ai'];
+
+      // Congress.gov enrichment
+      let congressData: any = null;
+      if (congressApiKey) {
+        const resolved = await resolveBioguideId(rep.name, rep.state || reps.state);
+        if (resolved) {
+          congressData = await fetchCongressMember(resolved.bioguideId, congressApiKey);
+          if (congressData) dataSources.push('congress.gov');
+        }
+      }
 
       // Live FEC data
       const fecDonors = await fetchFECDonors(rep.name, rep.state || reps.state, fecApiKey);
+      if (fecDonors.length > 0) dataSources.push('fec');
+      if (dbFunders.length > 0 && !dataSources.includes('database')) dataSources.push('database');
 
-      // Merge: start with DB funders, then add FEC donors not already present
+      // Merge funders
       const existingNames = new Set(dbFunders.map((f: any) => f.companyName.toUpperCase()));
       const fecFunders = fecDonors
         .filter(d => !existingNames.has(d.name.toUpperCase()))
@@ -301,14 +363,36 @@ Focus on federal-level reps (Senators + House). Include state-level if found. Re
         });
 
       const allFunders = [...dbFunders, ...fecFunders].sort((a, b) => (b.amount || 0) - (a.amount || 0));
+      const confidence = computeConfidence(dataSources);
 
       return {
         ...rep,
+        level: rep.level || 'federal',
         corporateFunders: allFunders,
         totalCorporateFunding: allFunders.reduce((s: number, f: any) => s + (f.amount || 0), 0),
         flaggedDonations: allFunders.filter((f: any) => f.flagged),
         fecDataFound: fecDonors.length > 0,
+        // Congress.gov enrichment
+        photoUrl: congressData?.photoUrl || null,
+        chamber: congressData?.chamber || null,
+        committees: congressData?.committees || [],
+        termsServed: congressData?.termsServed || null,
+        officialParty: congressData?.party || null,
+        // Confidence & metadata
+        dataSources,
+        confidence: confidence.level,
+        confidenceScore: confidence.score,
+        lastUpdated: new Date().toISOString(),
       };
+    }));
+
+    // Add level to state-level reps
+    const stateLevel = (reps.stateLevel || []).map((rep: any) => ({
+      ...rep,
+      level: 'state',
+      dataSources: ['ai'],
+      confidence: 'low',
+      lastUpdated: new Date().toISOString(),
     }));
 
     return new Response(JSON.stringify({
@@ -317,7 +401,7 @@ Focus on federal-level reps (Senators + House). Include state-level if found. Re
         state: reps.state,
         district: reps.district,
         representatives: enrichedReps,
-        stateLevel: reps.stateLevel || [],
+        stateLevel,
         searchedAddress: address || `${state} ${district || ''}`,
       }
     }), {
