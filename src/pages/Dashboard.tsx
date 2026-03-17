@@ -18,6 +18,7 @@ import { RelationshipDashboard } from "@/components/career/RelationshipDashboard
 import { FirstLoginOnboarding } from "@/components/FirstLoginOnboarding";
 import { DataWipeButton } from "@/components/career/DataWipeButton";
 import { PostPurchaseUpsell } from "@/components/PostPurchaseUpsell";
+import { DecisionCheckpoint } from "@/components/dashboard/DecisionCheckpoint";
 import { supabase } from "@/integrations/supabase/client";
 import { ClipboardCheck } from "lucide-react";
 
