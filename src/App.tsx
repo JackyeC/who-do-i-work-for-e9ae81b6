@@ -225,6 +225,7 @@ const App = () => (
         </DemoSafeModeProvider>
       </AuthProvider>
     </QueryClientProvider>
+  </HelmetProvider>
   </ErrorBoundary>
 );
 
