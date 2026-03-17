@@ -36,11 +36,11 @@ Deno.serve(async (req) => {
 
     // Check if company already exists — prefer companyId if provided
     let existing: any = null;
-    if (companyId) {
+    if (inputCompanyId) {
       const { data } = await supabase
         .from('companies')
         .select('id, name, slug')
-        .eq('id', companyId)
+        .eq('id', inputCompanyId)
         .maybeSingle();
       existing = data;
     }
