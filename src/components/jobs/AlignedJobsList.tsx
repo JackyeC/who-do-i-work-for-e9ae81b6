@@ -10,8 +10,9 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { useToast } from "@/hooks/use-toast";
 import {
   ExternalLink, Briefcase, MapPin, Building2, Shield, Sparkles,
-  Loader2, Copy, Check, Wand2, ShieldAlert, X, Zap,
+  Loader2, Copy, Check, Wand2, ShieldAlert, X, Zap, FileDown,
 } from "lucide-react";
+import { generateCandidateAdvocacyPdf } from "@/lib/generateCandidateAdvocacyPdf";
 import { Link } from "react-router-dom";
 import { cn } from "@/lib/utils";
 
