@@ -271,8 +271,8 @@ ${combinedText}`,
 
     // Log sync
     await supabase.from("warn_sync_log").insert({
-      source_name: `Firecrawl WARN search for ${company_name}`,
-      source_type: "firecrawl_search",
+      source_name: `WARN search for ${company_name}`,
+      source_type: "resilient_search",
       records_fetched: notices.length,
       records_inserted: inserted,
       status: "success",
