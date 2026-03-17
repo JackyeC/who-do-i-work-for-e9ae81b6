@@ -382,6 +382,13 @@ export default function CompanyProfile() {
           </ReportTeaserGate>
 
           {/* ═══════════════════════════════════════════════════════
+              2.6 INNOVATION SIGNALS (Patents)
+             ═══════════════════════════════════════════════════════ */}
+          {dbCompanyId && (
+            <InnovationSignals companyId={dbCompanyId} companyName={name} />
+          )}
+
+          {/* ═══════════════════════════════════════════════════════
               2.5 REALITY GAP
              ═══════════════════════════════════════════════════════ */}
           {dbCompanyId && (
