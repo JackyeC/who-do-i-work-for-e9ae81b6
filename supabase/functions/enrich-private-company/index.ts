@@ -319,10 +319,15 @@ Include ONLY verified, factual information. Empty arrays for fields with no data
                 }).catch(() => {});
               }
 
-              // Update company metadata
+              // Update company metadata — founders, history, ownership
               const updateFields: Record<string, any> = {};
               if (aiEnrichment.employee_count_estimate) updateFields.employee_count = aiEnrichment.employee_count_estimate;
               if (aiEnrichment.parent_company) updateFields.parent_company = aiEnrichment.parent_company;
+              if (aiEnrichment.founder_names?.length) updateFields.founder_names = aiEnrichment.founder_names;
+              if (aiEnrichment.founder_previous_companies?.length) updateFields.founder_previous_companies = aiEnrichment.founder_previous_companies;
+              if (aiEnrichment.founded_year) updateFields.founded_year = aiEnrichment.founded_year;
+              if (aiEnrichment.company_history) updateFields.description = aiEnrichment.company_history;
+              if (aiEnrichment.ownership_type) updateFields.funding_stage = aiEnrichment.ownership_type;
               if (Object.keys(updateFields).length > 0) {
                 await sb.from("companies").update(updateFields).eq("id", companyId);
               }

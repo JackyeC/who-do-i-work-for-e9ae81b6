@@ -661,6 +661,35 @@ export default function CompanyProfile() {
           )}
 
           {/* ═══════════════════════════════════════════════════════════
+              PRIVATE COMPANY IDENTITY — Who Runs This Company
+             ═══════════════════════════════════════════════════════════ */}
+          {dbCompany?.is_publicly_traded === false && (
+            <PrivateCompanyIdentityCard
+              companyName={name}
+              founderNames={(dbCompany as any)?.founder_names}
+              founderPreviousCompanies={(dbCompany as any)?.founder_previous_companies}
+              foundedYear={(dbCompany as any)?.founded_year}
+              fundingStage={(dbCompany as any)?.funding_stage}
+              parentCompany={(dbCompany as any)?.parent_company}
+              employeeCount={(dbCompany as any)?.employee_count}
+              description={(dbCompany as any)?.description}
+            />
+          )}
+
+          {/* ═══════════════════════════════════════════════════════════
+              STARTUP DNA — For startup-flagged companies
+             ═══════════════════════════════════════════════════════════ */}
+          {(dbCompany as any)?.is_startup === true && (
+            <StartupDNACard
+              companyName={name}
+              founderNames={(dbCompany as any)?.founder_names}
+              founderPreviousCompanies={(dbCompany as any)?.founder_previous_companies}
+              fundingStage={(dbCompany as any)?.funding_stage}
+              foundedYear={(dbCompany as any)?.founded_year}
+            />
+          )}
+
+          {/* ═══════════════════════════════════════════════════════════
               NARRATIVE GAP CARD
              ═══════════════════════════════════════════════════════════ */}
           <NarrativeGapCard
