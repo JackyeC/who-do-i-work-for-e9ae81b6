@@ -203,6 +203,21 @@ function ClipboardBanner({ payload, onDismiss }: {
               {copied ? <Check className="w-3.5 h-3.5" /> : <Copy className="w-3.5 h-3.5" />}
               {copied ? "Copied!" : "Copy Statement"}
             </Button>
+            {payload.advocacyData && (
+              <Button
+                size="sm"
+                variant="outline"
+                className="gap-1.5"
+                onClick={() => {
+                  const pdf = generateCandidateAdvocacyPdf(payload.advocacyData);
+                  const slug = payload.companyName.toLowerCase().replace(/[^a-z0-9]+/g, "-");
+                  pdf.save(`${slug}-advocacy-dossier.pdf`);
+                }}
+              >
+                <FileDown className="w-3.5 h-3.5" />
+                Advocacy Dossier
+              </Button>
+            )}
             <Button size="icon" variant="ghost" onClick={onDismiss} className="h-8 w-8">
               <X className="w-4 h-4" />
             </Button>
