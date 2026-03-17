@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { useJobMatcher, useApplicationsTracker, MatchedJob } from "@/hooks/use-job-matcher";
+import { useApplyQueue } from "@/hooks/use-auto-apply";
 import { useAuth } from "@/contexts/AuthContext";
 import { supabase } from "@/integrations/supabase/client";
 import { Card, CardContent } from "@/components/ui/card";
@@ -9,7 +10,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { useToast } from "@/hooks/use-toast";
 import {
   ExternalLink, Briefcase, MapPin, Building2, Shield, Sparkles,
-  Loader2, Copy, Check, Wand2, ShieldAlert, X,
+  Loader2, Copy, Check, Wand2, ShieldAlert, X, Zap,
 } from "lucide-react";
 import { Link } from "react-router-dom";
 import { cn } from "@/lib/utils";
@@ -37,11 +38,14 @@ function AlignmentGuardBadge() {
   );
 }
 
-function JobCard({ job, onApply, applying, generating }: {
+function JobCard({ job, onApply, onQueue, applying, generating, queueing, isQueued }: {
   job: MatchedJob;
   onApply: (job: MatchedJob) => void;
+  onQueue: (job: MatchedJob) => void;
   applying: boolean;
   generating: boolean;
+  queueing: boolean;
+  isQueued: boolean;
 }) {
   const belowThreshold = job.alignment_score < AI_TRANSPARENCY_THRESHOLD;
 
@@ -97,8 +101,29 @@ function JobCard({ job, onApply, applying, generating }: {
               title={belowThreshold ? `Alignment score must be ${AI_TRANSPARENCY_THRESHOLD}%+ to apply` : undefined}
             >
               {generating ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <Wand2 className="w-3.5 h-3.5" />}
-              Apply to Aligned Job
+              Apply Now
             </Button>
+            {!belowThreshold && (
+              <Button
+                size="sm"
+                variant="outline"
+                onClick={() => onQueue(job)}
+                disabled={queueing || isQueued}
+                className="gap-1.5 text-xs"
+              >
+                {isQueued ? (
+                  <>
+                    <Check className="w-3.5 h-3.5" />
+                    Queued
+                  </>
+                ) : (
+                  <>
+                    <Zap className="w-3.5 h-3.5" />
+                    Auto-Apply
+                  </>
+                )}
+              </Button>
+            )}
             {job.url && (
               <Button size="sm" variant="ghost" asChild className="gap-1.5 text-xs">
                 <a href={job.url} target="_blank" rel="noopener noreferrer">
@@ -149,22 +174,15 @@ function ClipboardBanner({ payload, onDismiss }: {
               </span>
               <Badge variant="secondary" className="text-xs">{payload.alignmentScore}% aligned</Badge>
             </div>
-
-            {/* Pitch line */}
             {payload.targetedIntro && (
               <p className="text-sm font-medium text-foreground mb-2 italic">"{payload.targetedIntro}"</p>
             )}
-
-            {/* Values note */}
             {payload.valuesCheck && (
               <p className="text-xs text-muted-foreground mb-2">{payload.valuesCheck}</p>
             )}
-
-            {/* Cover letter */}
             <div className="bg-background border border-border rounded-md p-3 text-sm text-foreground/90 leading-relaxed max-h-48 overflow-y-auto whitespace-pre-line">
               {payload.matchingStatement}
             </div>
-
             <div className="flex gap-1 mt-2 flex-wrap">
               {payload.detectedVendor && payload.detectedVendor !== 'Unknown' && (
                 <Badge variant="outline" className="text-xs bg-accent/10 border-accent/30">
@@ -172,9 +190,7 @@ function ClipboardBanner({ payload, onDismiss }: {
                 </Badge>
               )}
               {payload.biasAuditStatus && (
-                <Badge variant="outline" className="text-xs">
-                  {payload.biasAuditStatus}
-                </Badge>
+                <Badge variant="outline" className="text-xs">{payload.biasAuditStatus}</Badge>
               )}
               {payload.matchedSignals.map(s => (
                 <Badge key={s} variant="outline" className="text-xs">{s}</Badge>
@@ -199,10 +215,25 @@ function ClipboardBanner({ payload, onDismiss }: {
 export function AlignedJobsList() {
   const { data, isLoading, error } = useJobMatcher();
   const { trackApplication } = useApplicationsTracker();
+  const { queue, addToQueue } = useApplyQueue();
   const { user } = useAuth();
   const { toast } = useToast();
   const [generatingFor, setGeneratingFor] = useState<string | null>(null);
   const [activePayload, setActivePayload] = useState<any>(null);
+
+  const queuedJobIds = new Set(queue.map(q => q.job_id).filter(Boolean));
+
+  const handleQueue = (job: MatchedJob) => {
+    addToQueue.mutate({
+      job_id: job.job_id,
+      company_id: job.company_id,
+      job_title: job.title,
+      company_name: job.company_name,
+      alignment_score: job.alignment_score,
+      matched_signals: job.matched_signals,
+      application_url: job.url || undefined,
+    });
+  };
 
   const handleApply = async (job: MatchedJob) => {
     if (!user) {
@@ -221,19 +252,16 @@ export function AlignedJobsList() {
 
     setGeneratingFor(job.job_id);
     try {
-      // 1. Call edge function to generate the payload
       const { data: result, error: fnError } = await supabase.functions.invoke("generate-application-payload", {
         body: { company_id: job.company_id, user_id: user.id },
       });
       if (fnError) throw fnError;
 
       if (result?.payload) {
-        // 2. Auto-copy statement to clipboard
         try {
           await navigator.clipboard.writeText(result.payload.matchingStatement);
         } catch { /* clipboard may fail silently */ }
 
-        // 3. Save to application tracker with status "Redirected"
         trackApplication.mutate({
           company_id: job.company_id,
           job_id: job.job_id,
@@ -245,16 +273,12 @@ export function AlignedJobsList() {
           status: "Submitted",
         });
 
-        // 4. Open the job URL or career site
         const targetUrl = job.url || result.payload.careerSiteUrl;
         if (targetUrl) {
           window.open(targetUrl, "_blank", "noopener,noreferrer");
         }
 
-        // 5. Show clipboard proxy banner
         setActivePayload(result.payload);
-
-        // 6. Success toast
         toast({ title: "Custom Value Proposition copied to clipboard. Redirecting to Career Site..." });
       }
     } catch (e: any) {
@@ -288,15 +312,12 @@ export function AlignedJobsList() {
     );
   }
 
-  // Filter to US-only jobs
   const NON_US_PATTERNS = /\b(london|uk|united kingdom|toronto|canada|berlin|germany|paris|france|mumbai|india|bangalore|singapore|sydney|australia|tokyo|japan|amsterdam|netherlands|dublin|ireland|são paulo|brazil|mexico city|mexico|hong kong|shanghai|china|beijing|seoul|south korea|lagos|nigeria|nairobi|kenya|dubai|uae|tel aviv|israel)\b/i;
-  const US_STATE_PATTERN = /\b([A-Z]{2})\b|united states|USA|U\.S\./i;
 
   const matches = (data?.matches || []).filter((job) => {
-    if (!job.location) return true; // no location = assume US
+    if (!job.location) return true;
     const loc = job.location;
     if (NON_US_PATTERNS.test(loc)) return false;
-    // If it looks like a US location or has a state abbreviation, keep it
     return true;
   });
 
@@ -330,8 +351,11 @@ export function AlignedJobsList() {
           key={job.job_id}
           job={job}
           onApply={handleApply}
+          onQueue={handleQueue}
           applying={trackApplication.isPending}
           generating={generatingFor === job.job_id}
+          queueing={addToQueue.isPending}
+          isQueued={queuedJobIds.has(job.job_id)}
         />
       ))}
     </div>

@@ -1,11 +1,12 @@
 import { useApplyQueue, useAutoApplySettings } from "@/hooks/use-auto-apply";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
+import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import {
   Loader2, Play, Trash2, ExternalLink, Copy, Check,
-  ListTodo, CheckCircle2, AlertCircle, Clock,
+  ListTodo, CheckCircle2, AlertCircle, Clock, RotateCcw, Zap,
 } from "lucide-react";
 import { useState } from "react";
 import { Link } from "react-router-dom";
@@ -21,10 +22,12 @@ const STATUS_CONFIG: Record<string, { label: string; icon: React.ElementType; co
 function QueueItemCard({
   item,
   onRemove,
+  onRetry,
   removing,
 }: {
   item: any;
   onRemove: (id: string) => void;
+  onRetry: (item: any) => void;
   removing: boolean;
 }) {
   const [copied, setCopied] = useState(false);
@@ -64,7 +67,7 @@ function QueueItemCard({
               )}
             </div>
             {item.error_message && (
-              <p className="text-xs text-destructive mt-1">{item.error_message}</p>
+              <p className="text-xs text-destructive mt-1 bg-destructive/5 rounded px-2 py-1">{item.error_message}</p>
             )}
             {item.generated_payload?.matchingStatement && (
               <div className="mt-2 bg-muted/50 border border-border rounded-md p-2 text-xs text-foreground/80 line-clamp-3">
@@ -86,6 +89,17 @@ function QueueItemCard({
                 </a>
               </Button>
             )}
+            {item.status === "failed" && (
+              <Button
+                size="sm"
+                variant="outline"
+                onClick={() => onRetry(item)}
+                className="gap-1 text-xs h-7 text-primary hover:text-primary"
+              >
+                <RotateCcw className="w-3 h-3" />
+                Retry
+              </Button>
+            )}
             <Button
               size="sm"
               variant="ghost"
@@ -102,13 +116,37 @@ function QueueItemCard({
   );
 }
 
+type StatusFilter = "all" | "queued" | "completed" | "failed";
+
 export function ApplyQueueDashboard() {
-  const { queue, isLoading, processQueue, removeFromQueue, todayCount } = useApplyQueue();
+  const { queue, isLoading, processQueue, removeFromQueue, addToQueue, todayCount } = useApplyQueue();
   const { settings } = useAutoApplySettings();
+  const [statusFilter, setStatusFilter] = useState<StatusFilter>("all");
 
   const queuedCount = queue.filter((i) => i.status === "queued").length;
   const completedCount = queue.filter((i) => i.status === "completed").length;
   const failedCount = queue.filter((i) => i.status === "failed").length;
+
+  const filteredQueue = statusFilter === "all"
+    ? queue
+    : queue.filter((i) => i.status === statusFilter);
+
+  const handleRetry = (item: any) => {
+    // Remove the failed item and re-add it as queued
+    removeFromQueue.mutate(item.id, {
+      onSuccess: () => {
+        addToQueue.mutate({
+          job_id: item.job_id || undefined,
+          company_id: item.company_id,
+          job_title: item.job_title,
+          company_name: item.company_name,
+          alignment_score: item.alignment_score,
+          matched_signals: item.matched_signals || [],
+          application_url: item.application_url || undefined,
+        });
+      },
+    });
+  };
 
   if (isLoading) {
     return (
@@ -144,41 +182,62 @@ export function ApplyQueueDashboard() {
         </div>
       </div>
 
-      {/* Process button */}
-      {queuedCount > 0 && (
-        <Button
-          onClick={() => processQueue.mutate()}
-          disabled={processQueue.isPending || (settings?.is_paused ?? false)}
-          className="gap-1.5"
-          size="sm"
-        >
-          {processQueue.isPending ? (
-            <Loader2 className="w-3.5 h-3.5 animate-spin" />
-          ) : (
-            <Play className="w-3.5 h-3.5" />
-          )}
-          Process {queuedCount} Queued Job{queuedCount !== 1 ? "s" : ""}
-        </Button>
-      )}
+      {/* Filter + Process */}
+      <div className="flex items-center justify-between gap-3 flex-wrap">
+        {queue.length > 0 && (
+          <Tabs value={statusFilter} onValueChange={(v) => setStatusFilter(v as StatusFilter)}>
+            <TabsList className="h-8">
+              <TabsTrigger value="all" className="text-xs px-3 h-7">All ({queue.length})</TabsTrigger>
+              <TabsTrigger value="queued" className="text-xs px-3 h-7">Queued ({queuedCount})</TabsTrigger>
+              <TabsTrigger value="completed" className="text-xs px-3 h-7">Done ({completedCount})</TabsTrigger>
+              {failedCount > 0 && (
+                <TabsTrigger value="failed" className="text-xs px-3 h-7">Failed ({failedCount})</TabsTrigger>
+              )}
+            </TabsList>
+          </Tabs>
+        )}
+        {queuedCount > 0 && (
+          <Button
+            onClick={() => processQueue.mutate()}
+            disabled={processQueue.isPending || (settings?.is_paused ?? false)}
+            className="gap-1.5"
+            size="sm"
+          >
+            {processQueue.isPending ? (
+              <Loader2 className="w-3.5 h-3.5 animate-spin" />
+            ) : (
+              <Play className="w-3.5 h-3.5" />
+            )}
+            Process {queuedCount} Job{queuedCount !== 1 ? "s" : ""}
+          </Button>
+        )}
+      </div>
 
       {/* Queue list */}
       {queue.length === 0 ? (
         <Card>
           <CardContent className="p-8 text-center">
-            <ListTodo className="w-10 h-10 text-muted-foreground mx-auto mb-3" />
+            <Zap className="w-10 h-10 text-muted-foreground mx-auto mb-3" />
             <h3 className="text-sm font-semibold text-foreground mb-1">No jobs in your queue yet</h3>
             <p className="text-xs text-muted-foreground max-w-sm mx-auto leading-relaxed">
-              When we find jobs at companies that match your values above your threshold, they'll show up here with AI-generated cover letters ready to go. Browse jobs and make sure your <strong>Profile</strong> and values are set up.
+              Browse <strong>Matched Jobs</strong> and click <strong>"Auto-Apply"</strong> on any job card to add it here. We'll generate a personalized cover letter based on your values profile.
             </p>
+          </CardContent>
+        </Card>
+      ) : filteredQueue.length === 0 ? (
+        <Card>
+          <CardContent className="p-6 text-center">
+            <p className="text-sm text-muted-foreground">No items with this status.</p>
           </CardContent>
         </Card>
       ) : (
         <div className="space-y-2">
-          {queue.map((item) => (
+          {filteredQueue.map((item) => (
             <QueueItemCard
               key={item.id}
               item={item}
               onRemove={(id) => removeFromQueue.mutate(id)}
+              onRetry={handleRetry}
               removing={removeFromQueue.isPending}
             />
           ))}
