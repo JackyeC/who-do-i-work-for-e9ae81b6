@@ -1,7 +1,6 @@
 import { useState } from "react";
-import { useJobMatcher, useApplicationsTracker, MatchedJob } from "@/hooks/use-job-matcher";
+import { useJobMatcher, MatchedJob } from "@/hooks/use-job-matcher";
 import { useApplyQueue } from "@/hooks/use-auto-apply";
-import { useAuth } from "@/contexts/AuthContext";
 import { supabase } from "@/integrations/supabase/client";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
