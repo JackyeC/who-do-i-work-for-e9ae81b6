@@ -1,4 +1,5 @@
 import { Suspense, lazy, useEffect } from "react";
+import { HelmetProvider } from "react-helmet-async";
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
@@ -115,6 +116,7 @@ function RouteLoader() {
 
 const App = () => (
   <ErrorBoundary>
+  <HelmetProvider>
     <QueryClientProvider client={queryClient}>
       <AuthProvider>
         <DemoSafeModeProvider>
@@ -223,6 +225,7 @@ const App = () => (
         </DemoSafeModeProvider>
       </AuthProvider>
     </QueryClientProvider>
+  </HelmetProvider>
   </ErrorBoundary>
 );
 

@@ -21,6 +21,7 @@ import { ApplyQueueDashboard } from "@/components/jobs/ApplyQueueDashboard";
 import { UserProfileForm } from "@/components/jobs/UserProfileForm";
 import { PreferenceCenter } from "@/components/jobs/PreferenceCenter";
 import { JobAlertPreferences } from "@/components/jobs/JobAlertPreferences";
+import { AskJackyeWidget } from "@/components/jobs/AskJackyeWidget";
 import { useInfiniteScroll } from "@/hooks/use-infinite-scroll";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/contexts/AuthContext";
@@ -108,6 +109,39 @@ export default function Jobs() {
   const [copied, setCopied] = useState(false);
   const PAGE_SIZE = 50;
   const [visibleCount, setVisibleCount] = useState(PAGE_SIZE);
+  const [semanticTerms, setSemanticTerms] = useState<string[]>([]);
+  const [semanticLoading, setSemanticLoading] = useState(false);
+
+  // Semantic search expansion
+  const handleSemanticSearch = useCallback(async (query: string) => {
+    if (!query.trim() || query.length < 3) {
+      setSemanticTerms([]);
+      return;
+    }
+    setSemanticLoading(true);
+    try {
+      const { data, error } = await supabase.functions.invoke("semantic-search", {
+        body: { query },
+      });
+      if (!error && data) {
+        const terms = [...(data.expandedTerms || []), ...(data.relatedTitles || [])];
+        setSemanticTerms(terms.filter((t: string) => t.toLowerCase() !== query.toLowerCase()));
+      }
+    } catch (e) {
+      console.error("Semantic search error:", e);
+    } finally {
+      setSemanticLoading(false);
+    }
+  }, []);
+
+  // Debounced semantic search trigger
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      if (search.length >= 3) handleSemanticSearch(search);
+      else setSemanticTerms([]);
+    }, 600);
+    return () => clearTimeout(timer);
+  }, [search, handleSemanticSearch]);
 
   const { data: jobs, isLoading } = useQuery({
     queryKey: ["jobs-with-companies"],
@@ -206,10 +240,16 @@ export default function Jobs() {
         /,\s*(in|de|cn|jp|kr|mx|br|ca|gb|fr|es|it|au|sg|ie|nl|il|se|ch)\s*$/i.test(loc);
       if (isNonUS) return false;
       if (salaryOnly && !job.salary_range) return false;
+      const searchLower = search.toLowerCase();
       const matchesSearch = !search ||
-        job.title.toLowerCase().includes(search.toLowerCase()) ||
-        company.name.toLowerCase().includes(search.toLowerCase()) ||
-        loc.includes(search.toLowerCase());
+        job.title.toLowerCase().includes(searchLower) ||
+        company.name.toLowerCase().includes(searchLower) ||
+        loc.includes(searchLower) ||
+        // Semantic expanded terms matching
+        semanticTerms.some(term => {
+          const t = term.toLowerCase();
+          return job.title.toLowerCase().includes(t) || company.name.toLowerCase().includes(t) || loc.includes(t);
+        });
       const matchesScore = company.civic_footprint_score >= parseInt(minScore);
       const matchesIndustry = industryFilter === "all" || company.industry === industryFilter;
       const matchesWorkMode = workModeFilter === "all" || job.work_mode === workModeFilter;
@@ -228,7 +268,7 @@ export default function Jobs() {
       if (!aSponsored && bSponsored) return 1;
       return (jobScores[b.id] || 0) - (jobScores[a.id] || 0);
     });
-  }, [jobs, search, minScore, industryFilter, workModeFilter, salaryOnly, valuesFilters, valuesSignals, jobScores]);
+  }, [jobs, search, semanticTerms, minScore, industryFilter, workModeFilter, salaryOnly, valuesFilters, valuesSignals, jobScores]);
 
   // Reset visible count when filters change
   useEffect(() => {
@@ -443,6 +483,22 @@ export default function Jobs() {
                     onChange={(e) => setSearch(e.target.value)}
                     className="pl-10"
                   />
+                  {/* Semantic search expansion indicator */}
+                  {semanticLoading && (
+                    <span className="absolute right-3 top-1/2 -translate-y-1/2">
+                      <Loader2 className="w-3.5 h-3.5 animate-spin text-primary" />
+                    </span>
+                  )}
+                  {semanticTerms.length > 0 && !semanticLoading && (
+                    <div className="flex flex-wrap gap-1 mt-1.5">
+                      <span className="text-[10px] text-muted-foreground">AI expanded:</span>
+                      {semanticTerms.slice(0, 5).map((term) => (
+                        <Badge key={term} variant="outline" className="text-[10px] py-0 px-1.5 bg-primary/5">
+                          {term}
+                        </Badge>
+                      ))}
+                    </div>
+                  )}
                 </div>
                 <div className="flex gap-2 flex-wrap">
                   <Select value={minScore} onValueChange={setMinScore}>
@@ -688,6 +744,7 @@ export default function Jobs() {
         </div>
       )}
 
+      <AskJackyeWidget />
       <Footer />
     </div>
   );

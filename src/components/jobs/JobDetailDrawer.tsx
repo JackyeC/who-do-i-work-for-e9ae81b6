@@ -7,6 +7,7 @@ import { Separator } from "@/components/ui/separator";
 import { CivicScoreCard, CivicScoreBadge } from "@/components/CivicScoreCard";
 import { JobMatchBadge } from "./JobMatchBadge";
 import { EasyApplyButton } from "./EasyApplyButton";
+import { JobPostingSchema } from "./JobPostingSchema";
 import { VALUES_LENSES } from "@/lib/valuesLenses";
 import {
   MapPin, Building2, ExternalLink, FileCheck, Wifi, Monitor, Home,
@@ -35,6 +36,7 @@ export function JobDetailDrawer({ job, companyValueSignals = [], matchScore, ope
   return (
     <Sheet open={open} onOpenChange={onOpenChange}>
       <SheetContent className="w-full sm:max-w-lg overflow-y-auto">
+        {open && job && <JobPostingSchema job={job} />}
         <SheetHeader className="text-left pb-0">
           <SheetTitle className="text-lg leading-snug">{job.title}</SheetTitle>
           <Link
