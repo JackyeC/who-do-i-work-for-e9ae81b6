@@ -108,8 +108,40 @@ export default function Jobs() {
   const [copied, setCopied] = useState(false);
   const PAGE_SIZE = 50;
   const [visibleCount, setVisibleCount] = useState(PAGE_SIZE);
+  const [semanticTerms, setSemanticTerms] = useState<string[]>([]);
+  const [semanticLoading, setSemanticLoading] = useState(false);
 
-  const { data: jobs, isLoading } = useQuery({
+  // Semantic search expansion
+  const handleSemanticSearch = useCallback(async (query: string) => {
+    if (!query.trim() || query.length < 3) {
+      setSemanticTerms([]);
+      return;
+    }
+    setSemanticLoading(true);
+    try {
+      const { data, error } = await supabase.functions.invoke("semantic-search", {
+        body: { query },
+      });
+      if (!error && data) {
+        const terms = [...(data.expandedTerms || []), ...(data.relatedTitles || [])];
+        setSemanticTerms(terms.filter((t: string) => t.toLowerCase() !== query.toLowerCase()));
+      }
+    } catch (e) {
+      console.error("Semantic search error:", e);
+    } finally {
+      setSemanticLoading(false);
+    }
+  }, []);
+
+  // Debounced semantic search trigger
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      if (search.length >= 3) handleSemanticSearch(search);
+      else setSemanticTerms([]);
+    }, 600);
+    return () => clearTimeout(timer);
+  }, [search, handleSemanticSearch]);
+
     queryKey: ["jobs-with-companies"],
     queryFn: async () => {
       const { data, error } = await supabase
