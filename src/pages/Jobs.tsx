@@ -267,7 +267,7 @@ export default function Jobs() {
       if (!aSponsored && bSponsored) return 1;
       return (jobScores[b.id] || 0) - (jobScores[a.id] || 0);
     });
-  }, [jobs, search, minScore, industryFilter, workModeFilter, salaryOnly, valuesFilters, valuesSignals, jobScores]);
+  }, [jobs, search, semanticTerms, minScore, industryFilter, workModeFilter, salaryOnly, valuesFilters, valuesSignals, jobScores]);
 
   // Reset visible count when filters change
   useEffect(() => {
