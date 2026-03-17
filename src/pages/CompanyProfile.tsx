@@ -101,6 +101,8 @@ import { CorporateOwnershipCard } from "@/components/CorporateOwnershipCard";
 import { ReceiptsTimeline } from "@/components/ReceiptsTimeline";
 import { OffTheRecordSignals } from "@/components/company/OffTheRecordSignals";
 import { SourcesCheckedBanner } from "@/components/company/SourcesCheckedBanner";
+import { EmptyStateExplainer } from "@/components/company/EmptyStateExplainer";
+import { TacticalQuestionsCard } from "@/components/company/TacticalQuestionsCard";
 import { LevelsFyiEmbed } from "@/components/company/LevelsFyiEmbed";
 import { TransparencyResearchTab } from "@/components/company/TransparencyResearchTab";
 import { CivilRightsIntelligencePanel } from "@/components/CivilRightsIntelligencePanel";
