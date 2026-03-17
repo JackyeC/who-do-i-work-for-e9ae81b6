@@ -145,6 +145,7 @@ export type Database = {
           applied_at: string | null
           company_id: string
           company_name: string
+          cover_letter_text: string | null
           created_at: string | null
           id: string
           job_id: string | null
@@ -161,6 +162,7 @@ export type Database = {
           applied_at?: string | null
           company_id: string
           company_name: string
+          cover_letter_text?: string | null
           created_at?: string | null
           id?: string
           job_id?: string | null
@@ -177,6 +179,7 @@ export type Database = {
           applied_at?: string | null
           company_id?: string
           company_name?: string
+          cover_letter_text?: string | null
           created_at?: string | null
           id?: string
           job_id?: string | null

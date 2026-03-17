@@ -1,0 +1,1 @@
+ALTER TABLE public.applications_tracker ADD COLUMN IF NOT EXISTS cover_letter_text TEXT;

@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { useAuth } from "@/contexts/AuthContext";
 import { supabase } from "@/integrations/supabase/client";
+import { useQuery } from "@tanstack/react-query";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
@@ -13,6 +14,28 @@ import { User, Save, Loader2, Plus, X, Upload, FileText } from "lucide-react";
 export function UserProfileForm() {
   const { user } = useAuth();
   const { toast } = useToast();
+  const { data: latestResume, refetch: refetchResume } = useQuery({
+    queryKey: ["latest-resume-profile", user?.id],
+    queryFn: async () => {
+      const { data } = await (supabase as any)
+        .from("user_documents")
+        .select("id, file_path, original_filename, created_at")
+        .eq("user_id", user!.id)
+        .eq("document_type", "resume")
+        .order("created_at", { ascending: false })
+        .limit(1)
+        .maybeSingle();
+      // Get parsed skills count from profile
+      const { data: profile } = await supabase
+        .from("profiles")
+        .select("skills")
+        .eq("id", user!.id)
+        .single();
+      return data ? { ...data, parsed_skills_count: (profile as any)?.skills?.length || 0 } : null;
+    },
+    enabled: !!user,
+    staleTime: 60_000,
+  });
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [uploading, setUploading] = useState(false);
@@ -108,6 +131,7 @@ export function UserProfileForm() {
         }));
       }
 
+      refetchResume();
       toast({ title: "Resume parsed successfully", description: "Profile fields have been auto-filled" });
     } catch (error: any) {
       console.error("Upload error:", error);
@@ -160,37 +184,69 @@ export function UserProfileForm() {
         </CardDescription>
       </CardHeader>
       <CardContent className="space-y-5">
-        <div className="space-y-2">
-          <Label>Upload Resume (Auto-Fill)</Label>
-          <div className="flex items-center gap-2">
-            <Button
-              type="button"
-              variant="outline"
-              className="gap-2"
-              disabled={uploading}
-              onClick={() => document.getElementById("resume-upload")?.click()}
-            >
-              {uploading ? (
-                <>
-                  <Loader2 className="w-4 h-4 animate-spin" />
-                  Parsing...
-                </>
-              ) : (
-                <>
-                  <Upload className="w-4 h-4" />
-                  Upload Resume
-                </>
-              )}
-            </Button>
-            <input
-              id="resume-upload"
-              type="file"
-              accept=".pdf,.doc,.docx,.txt"
-              onChange={handleFileUpload}
-              className="hidden"
-            />
-            <p className="text-xs text-muted-foreground">PDF, DOC, DOCX • Max 20MB</p>
-          </div>
+        {/* Resume Upload + Status */}
+        <div className="space-y-3">
+          <Label>Resume</Label>
+          {latestResume ? (
+            <div className="rounded-lg border border-border bg-muted/30 p-3 space-y-2">
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-2">
+                  <FileText className="w-4 h-4 text-primary" />
+                  <div>
+                    <p className="text-sm font-medium text-foreground">{latestResume.original_filename}</p>
+                    <p className="text-xs text-muted-foreground">
+                      Uploaded {new Date(latestResume.created_at).toLocaleDateString()}
+                      {latestResume.parsed_skills_count != null && ` • ${latestResume.parsed_skills_count} skills extracted`}
+                    </p>
+                  </div>
+                </div>
+                <Badge variant="outline" className="text-[hsl(var(--civic-green))] border-[hsl(var(--civic-green))]/30 text-xs">
+                  Ready for Quick Apply
+                </Badge>
+              </div>
+              <Button
+                type="button"
+                variant="ghost"
+                size="sm"
+                className="gap-1.5 text-xs"
+                disabled={uploading}
+                onClick={() => document.getElementById("resume-upload")?.click()}
+              >
+                <Upload className="w-3 h-3" />
+                Replace Resume
+              </Button>
+            </div>
+          ) : (
+            <div className="flex items-center gap-2">
+              <Button
+                type="button"
+                variant="outline"
+                className="gap-2"
+                disabled={uploading}
+                onClick={() => document.getElementById("resume-upload")?.click()}
+              >
+                {uploading ? (
+                  <>
+                    <Loader2 className="w-4 h-4 animate-spin" />
+                    Parsing...
+                  </>
+                ) : (
+                  <>
+                    <Upload className="w-4 h-4" />
+                    Upload Resume
+                  </>
+                )}
+              </Button>
+              <p className="text-xs text-muted-foreground">PDF, DOC, DOCX • Max 20MB</p>
+            </div>
+          )}
+          <input
+            id="resume-upload"
+            type="file"
+            accept=".pdf,.doc,.docx,.txt"
+            onChange={handleFileUpload}
+            className="hidden"
+          />
           <p className="text-xs text-muted-foreground flex items-center gap-1">
             <FileText className="w-3 h-3" />
             AI will extract your skills, experience, and job titles automatically
