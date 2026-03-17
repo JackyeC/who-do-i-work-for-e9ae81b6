@@ -85,7 +85,7 @@ export const PERSONAS: PersonaConfig[] = [
         title: "Stability & Business Health",
         subtitle: "Layoff history, WARN notices, leadership turnover, and market signals — even if a company aligns with your values, it still needs to survive.",
         iconName: "Activity",
-        sections: ["workforce_stability"],
+        sections: ["workforce_stability", "off_the_record"],
       },
     ],
   },
@@ -142,7 +142,7 @@ export const PERSONAS: PersonaConfig[] = [
         title: "Company Reputation in the Talent Market",
         subtitle: "Employer reputation trends, media coverage, narrative power, and alumni success. Does having this company on my resume open doors or close them?",
         iconName: "Eye",
-        sections: ["narrative_power", "public_records"],
+        sections: ["narrative_power", "public_records", "off_the_record"],
       },
       {
         id: "ethical_alignment",
@@ -179,7 +179,7 @@ export const PERSONAS: PersonaConfig[] = [
         title: "Talent Brand Reality",
         subtitle: "Candidate sentiment, layoff impact, media reputation, and recruiter response rate signals. Will candidates trust this company?",
         iconName: "Eye",
-        sections: ["workforce_intel", "narrative_power"],
+        sections: ["workforce_intel", "narrative_power", "off_the_record"],
       },
       {
         id: "hiring_manager_landscape",
@@ -221,7 +221,7 @@ export const PERSONAS: PersonaConfig[] = [
     accessTier: "paid",
     requiredPlan: "candidate",
     primarySections: ["workforce_intel", "cbi", "compensation", "promotion_velocity"],
-    secondarySections: ["workforce_stability", "governance"],
+    secondarySections: ["workforce_stability", "governance", "off_the_record"],
     hiddenSections: ["recruiter_reality", "gtm", "influence", "values", "narrative_power", "public_records"],
     primaryScores: ["cbi", "hr_tech_ethics"],
   },
@@ -235,7 +235,7 @@ export const PERSONAS: PersonaConfig[] = [
     accessTier: "paid",
     requiredPlan: "professional",
     primarySections: ["cbi", "influence", "narrative_power", "public_records", "receipts_timeline", "governance", "workforce_stability", "compensation", "workforce_intel", "promotion_velocity", "gtm", "values"],
-    secondarySections: ["recruiter_reality", "career_risk"],
+    secondarySections: ["recruiter_reality", "career_risk", "off_the_record"],
     hiddenSections: [],
     primaryScores: ["cbi", "career_risk", "gtm", "promotion_velocity", "layoff_probability", "recruiter_reality"],
     buckets: [
@@ -299,7 +299,7 @@ export const PERSONAS: PersonaConfig[] = [
     question: "What do candidates see?",
     accessTier: "freemium",
     primarySections: ["cbi", "workforce_intel", "narrative_power", "compensation", "recruiter_reality", "workforce_stability"],
-    secondarySections: ["governance", "values"],
+    secondarySections: ["governance", "values", "off_the_record"],
     hiddenSections: ["influence", "public_records", "gtm"],
     primaryScores: ["cbi", "recruiter_reality"],
     buckets: [

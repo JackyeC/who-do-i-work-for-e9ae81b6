@@ -98,6 +98,7 @@ import { NarrativePowerSection } from "@/components/narrative-power";
 import { JackyeNote } from "@/components/JackyeNote";
 import { CorporateOwnershipCard } from "@/components/CorporateOwnershipCard";
 import { ReceiptsTimeline } from "@/components/ReceiptsTimeline";
+import { OffTheRecordSignals } from "@/components/company/OffTheRecordSignals";
 import { LevelsFyiEmbed } from "@/components/company/LevelsFyiEmbed";
 import { TransparencyResearchTab } from "@/components/company/TransparencyResearchTab";
 import { CivilRightsIntelligencePanel } from "@/components/CivilRightsIntelligencePanel";
@@ -1365,6 +1366,11 @@ export default function CompanyProfile() {
                 <section id="section-receipts-timeline" className="mb-10 scroll-mt-28">
                   <SectionHeader icon={Clock} title="Receipts Timeline" subtitle="Chronological evidence trail — what happened, when, and according to whom" />
                   {dbCompanyId && <ReceiptsTimeline companyId={dbCompanyId} companyName={name} />}
+                </section>
+              ),
+              off_the_record: () => (
+                <section className="mb-10 scroll-mt-28">
+                  <OffTheRecordSignals companyId={dbCompanyId || ""} companyName={name} />
                 </section>
               ),
             };
