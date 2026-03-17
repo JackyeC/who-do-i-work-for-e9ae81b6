@@ -1253,6 +1253,10 @@ export default function CompanyProfile() {
                     {dbCompanyId && (
                       <InstitutionalDNACard companyId={dbCompanyId} companyName={name} />
                     )}
+                    {/* Community Family-First Tag */}
+                    {dbCompanyId && (
+                      <FamilyFirstTag companyId={dbCompanyId} companyName={name} />
+                    )}
                     {/* Alignment Signals — Contradiction Heatmap */}
                     {dbCompanyId && (
                       <AlignmentSignalsPanel companyId={dbCompanyId} companyName={name} />

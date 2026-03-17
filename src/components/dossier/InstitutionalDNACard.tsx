@@ -199,9 +199,10 @@ export function InstitutionalDNACard({ companyId, companyName }: Props) {
         <div className="flex items-start gap-2 pt-2">
           <ShieldCheck className="w-3.5 h-3.5 text-muted-foreground shrink-0 mt-0.5" />
           <p className="text-[10px] text-muted-foreground leading-relaxed">
-            A documented link to a policy network does not, by itself, establish endorsement of all positions
-            held by that network. Sources: FEC filings · OpenSecrets · Organization leadership directories ·
-            Public board disclosures · SEC filings. No judgment, just receipts.
+            Institutional alignment indicates which policy blueprints a company or its leadership supports
+            through funding or board membership. WDIWF provides these receipts so you can align your career
+            with the future you believe in. Sources: FEC filings · OpenSecrets · Organization leadership
+            directories · Public board disclosures · SEC filings.
           </p>
         </div>
       </CardContent>
