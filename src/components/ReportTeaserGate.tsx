@@ -11,6 +11,7 @@ interface ReportTeaserGateProps {
   children: ReactNode;
   teaser: ReactNode;
   companyName?: string;
+  hiddenSignalCount?: number;
 }
 
 export function ReportTeaserGate({ children, teaser, companyName }: ReportTeaserGateProps) {
