@@ -18,6 +18,7 @@ import { HowToReadThis } from "@/components/company/HowToReadThis";
 import { UpgradeMoment } from "@/components/company/UpgradeMoment";
 import { ValuesSignalMatch } from "@/components/company/ValuesSignalMatch";
 import { RealityGapBlock } from "@/components/company/RealityGapBlock";
+import { DecisionCheckpointBeforeSign } from "@/components/company/DecisionCheckpointBeforeSign";
 import { ReportTeaserGate } from "@/components/ReportTeaserGate";
 import { PostReportNudge } from "@/components/PostReportNudge";
 import { ContentProtector } from "@/components/ContentProtector";
