@@ -380,6 +380,17 @@ export default function CompanyProfile() {
           </ReportTeaserGate>
 
           {/* ═══════════════════════════════════════════════════════
+              2.5 REALITY GAP
+             ═══════════════════════════════════════════════════════ */}
+          {dbCompanyId && (
+            <RealityGapBlock
+              companyId={dbCompanyId}
+              companyName={name}
+              updatedAt={dbCompany?.updated_at}
+            />
+          )}
+
+          {/* ═══════════════════════════════════════════════════════
               3. HOW TO READ THIS
              ═══════════════════════════════════════════════════════ */}
           <HowToReadThis />
