@@ -6,13 +6,14 @@ import { Progress } from "@/components/ui/progress";
 import {
   Download, Share2, Sparkles, TrendingUp, Target, GitBranch,
   Building2, GraduationCap, Users, Lock, Linkedin, Link2, Copy,
-  CheckCircle2, ArrowRight, Zap, BarChart3, Calendar,
+  CheckCircle2, ArrowRight, Zap, BarChart3, Calendar, Mail, Loader2,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { motion, AnimatePresence } from "framer-motion";
 import { usePremium } from "@/hooks/use-premium";
 import { toast } from "sonner";
 import html2canvas from "html2canvas";
+import { supabase } from "@/integrations/supabase/client";
 import type { CareerDiscoveryData, CompanyDiscoveryData, SkillGapData, MultipleFuturesData, ActionPlanData, CareerProfile } from "@/hooks/use-career-discovery";
 
 interface CareerWrappedStepProps {
