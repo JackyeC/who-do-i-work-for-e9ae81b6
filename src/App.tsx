@@ -116,6 +116,7 @@ function RouteLoader() {
 
 const App = () => (
   <ErrorBoundary>
+  <HelmetProvider>
     <QueryClientProvider client={queryClient}>
       <AuthProvider>
         <DemoSafeModeProvider>
