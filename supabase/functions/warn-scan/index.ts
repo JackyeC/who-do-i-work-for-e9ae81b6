@@ -59,19 +59,14 @@ Deno.serve(async (req) => {
           `"${company_name}" layoffs cuts ${currentYear} site:reuters.com OR site:cnbc.com`,
         ];
 
-    await Promise.allSettled(
-      searches.map((query) =>
-        fetchFirecrawl(firecrawlKey, { query, limit: 10, scrapeOptions: { formats: ["markdown"] } })
-          .then((data) => { if (data?.data) allResults.push(...data.data); })
-          .catch((e) => console.error(`Search failed: ${query}`, e))
-      )
-    );
+    const { results: searchResults } = await resilientSearch(searches, firecrawlKey, lovableKey, { batchSize: 3 });
+    const allResults = searchResults;
 
     if (allResults.length === 0) {
       console.log("[warn-scan] No results found");
       await supabase.from("warn_sync_log").insert({
-        source_name: `Firecrawl WARN search for ${company_name}`,
-        source_type: "firecrawl_search",
+        source_name: `WARN search for ${company_name}`,
+        source_type: "resilient_search",
         records_fetched: 0,
         records_inserted: 0,
         status: "success",
