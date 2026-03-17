@@ -5235,6 +5235,54 @@ export type Database = {
           },
         ]
       }
+      job_alert_preferences: {
+        Row: {
+          created_at: string | null
+          frequency: string | null
+          id: string
+          industries: string[] | null
+          is_active: boolean | null
+          keywords: string[] | null
+          last_sent_at: string | null
+          locations: string[] | null
+          min_civic_score: number | null
+          salary_only: boolean | null
+          updated_at: string | null
+          user_id: string
+          work_modes: string[] | null
+        }
+        Insert: {
+          created_at?: string | null
+          frequency?: string | null
+          id?: string
+          industries?: string[] | null
+          is_active?: boolean | null
+          keywords?: string[] | null
+          last_sent_at?: string | null
+          locations?: string[] | null
+          min_civic_score?: number | null
+          salary_only?: boolean | null
+          updated_at?: string | null
+          user_id: string
+          work_modes?: string[] | null
+        }
+        Update: {
+          created_at?: string | null
+          frequency?: string | null
+          id?: string
+          industries?: string[] | null
+          is_active?: boolean | null
+          keywords?: string[] | null
+          last_sent_at?: string | null
+          locations?: string[] | null
+          min_civic_score?: number | null
+          salary_only?: boolean | null
+          updated_at?: string | null
+          user_id?: string
+          work_modes?: string[] | null
+        }
+        Relationships: []
+      }
       job_alerts: {
         Row: {
           alert_type: string
