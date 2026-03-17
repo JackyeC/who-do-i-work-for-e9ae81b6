@@ -521,6 +521,7 @@ export default function CompanyProfile() {
                       )}
                     </div>
                     <div className="flex items-center gap-1.5 shrink-0 flex-wrap justify-end">
+                      {dbCompanyId && <UpdateTheRecordButton companyId={dbCompanyId} companyName={name} />}
                       <AdminCompanyActions companyId={dbCompany?.id || company?.id || ""} companyName={name} companySlug={id || ""} />
                       <Button
                         variant="outline"
