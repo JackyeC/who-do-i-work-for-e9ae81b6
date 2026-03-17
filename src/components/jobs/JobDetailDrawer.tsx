@@ -7,6 +7,7 @@ import { Separator } from "@/components/ui/separator";
 import { CivicScoreCard, CivicScoreBadge } from "@/components/CivicScoreCard";
 import { JobMatchBadge } from "./JobMatchBadge";
 import { EasyApplyButton } from "./EasyApplyButton";
+import { JobPostingSchema } from "./JobPostingSchema";
 import { VALUES_LENSES } from "@/lib/valuesLenses";
 import {
   MapPin, Building2, ExternalLink, FileCheck, Wifi, Monitor, Home,
