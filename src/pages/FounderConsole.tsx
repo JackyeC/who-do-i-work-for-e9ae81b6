@@ -10,6 +10,7 @@ import { ConversionFunnelPanel } from "@/components/admin/ConversionFunnelPanel"
 import { ResearchPublishQueue } from "@/components/admin/ResearchPublishQueue";
 import { JobApprovalQueue } from "@/components/admin/JobApprovalQueue";
 import { CertificationQueue } from "@/components/admin/CertificationQueue";
+import { CareerWaitlistQueue } from "@/components/admin/CareerWaitlistQueue";
 import { useUserRole } from "@/hooks/use-user-role";
 import { Header } from "@/components/Header";
 import { Footer } from "@/components/Footer";
@@ -345,6 +346,11 @@ export default function FounderConsole() {
           <ResearchPublishQueue />
           <JobApprovalQueue />
           <CertificationQueue />
+        </div>
+
+        {/* Career Waitlist */}
+        <div className="mt-6">
+          <CareerWaitlistQueue />
         </div>
 
         {/* Legacy Pending Reviews */}
