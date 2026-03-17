@@ -254,6 +254,29 @@ The letter must read like something a smart, busy professional would actually se
       valuesCheck = 'Ethical employment practices matter to me.';
     }
 
+    // Build advocacy dossier data for client-side PDF generation
+    const advocacyData = {
+      candidateName: profile.full_name || 'Candidate',
+      candidateEmail: profile.email || '',
+      candidateSkills: profile.skills || [],
+      candidateTargetRoles: profile.target_job_titles || [],
+      candidateLinkedin: profile.linkedin_url || '',
+      candidateBio: profile.bio || '',
+      companyName: company.name,
+      companyIndustry: company.industry,
+      alignmentScore,
+      civicFootprintScore: company.civic_footprint_score,
+      matchedSignals,
+      missingSignals,
+      publicStances: (publicStances || []).map((s: any) => ({
+        topic: s.topic,
+        public_position: s.public_position,
+        spending_reality: s.spending_reality,
+        gap: s.gap,
+      })),
+      verificationDate: new Date().toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' }),
+    };
+
     return new Response(JSON.stringify({
       success: true,
       payload: {
@@ -273,6 +296,7 @@ The letter must read like something a smart, busy professional would actually se
         companyName: company.name,
         civicScore: company.civic_footprint_score,
         careerSiteUrl: company.careers_url || null,
+        advocacyData,
       },
     }), {
       headers: { ...corsHeaders, 'Content-Type': 'application/json' },

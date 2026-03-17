@@ -83,6 +83,20 @@ function QueueItemCard({
                 {copied ? "Copied" : "Copy"}
               </Button>
             )}
+            {item.generated_payload?.advocacyData && (
+              <Button
+                size="sm"
+                variant="outline"
+                className="gap-1 text-xs h-7"
+                onClick={() => {
+                  const pdf = generateCandidateAdvocacyPdf(item.generated_payload.advocacyData);
+                  const slug = item.company_name.toLowerCase().replace(/[^a-z0-9]+/g, "-");
+                  pdf.save(`${slug}-advocacy-dossier.pdf`);
+                }}
+              >
+                <FileDown className="w-3 h-3" /> Dossier
+              </Button>
+            )}
             {item.application_url && (
               <Button size="sm" variant="ghost" asChild className="gap-1 text-xs h-7">
                 <a href={item.application_url} target="_blank" rel="noopener noreferrer">

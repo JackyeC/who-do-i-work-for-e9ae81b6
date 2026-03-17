@@ -152,6 +152,7 @@ function ClipboardBanner({ payload, onDismiss }: {
     companyName: string;
     matchedSignals: string[];
     careerSiteUrl?: string;
+    advocacyData?: any;
   };
   onDismiss: () => void;
 }) {
