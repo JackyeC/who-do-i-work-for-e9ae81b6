@@ -1135,6 +1135,56 @@ export type Database = {
           },
         ]
       }
+      community_record_updates: {
+        Row: {
+          company_id: string
+          created_at: string
+          evidence_description: string
+          evidence_url: string | null
+          id: string
+          reviewed_at: string | null
+          reviewer_notes: string | null
+          source_type: string
+          status: string
+          update_type: string
+          user_id: string
+        }
+        Insert: {
+          company_id: string
+          created_at?: string
+          evidence_description: string
+          evidence_url?: string | null
+          id?: string
+          reviewed_at?: string | null
+          reviewer_notes?: string | null
+          source_type?: string
+          status?: string
+          update_type?: string
+          user_id: string
+        }
+        Update: {
+          company_id?: string
+          created_at?: string
+          evidence_description?: string
+          evidence_url?: string | null
+          id?: string
+          reviewed_at?: string | null
+          reviewer_notes?: string | null
+          source_type?: string
+          status?: string
+          update_type?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "community_record_updates_company_id_fkey"
+            columns: ["company_id"]
+            isOneToOne: false
+            referencedRelation: "companies"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       companies: {
         Row: {
           career_intelligence_score: number | null
@@ -1160,6 +1210,7 @@ export type Database = {
           is_publicly_traded: boolean | null
           is_startup: boolean | null
           jackye_insight: string | null
+          last_audited_at: string | null
           last_reviewed: string
           last_scan_attempted: string | null
           lobbying_spend: number | null
@@ -1208,6 +1259,7 @@ export type Database = {
           is_publicly_traded?: boolean | null
           is_startup?: boolean | null
           jackye_insight?: string | null
+          last_audited_at?: string | null
           last_reviewed?: string
           last_scan_attempted?: string | null
           lobbying_spend?: number | null
@@ -1256,6 +1308,7 @@ export type Database = {
           is_publicly_traded?: boolean | null
           is_startup?: boolean | null
           jackye_insight?: string | null
+          last_audited_at?: string | null
           last_reviewed?: string
           last_scan_attempted?: string | null
           lobbying_spend?: number | null
@@ -4098,6 +4151,50 @@ export type Database = {
         Relationships: [
           {
             foreignKeyName: "employer_profiles_company_id_fkey"
+            columns: ["company_id"]
+            isOneToOne: false
+            referencedRelation: "companies"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      employer_rebuttals: {
+        Row: {
+          company_id: string
+          created_at: string
+          evidence_url: string
+          id: string
+          rebuttal_text: string
+          reviewed_at: string | null
+          reviewer_notes: string | null
+          status: string
+          submitted_by_email: string
+        }
+        Insert: {
+          company_id: string
+          created_at?: string
+          evidence_url: string
+          id?: string
+          rebuttal_text: string
+          reviewed_at?: string | null
+          reviewer_notes?: string | null
+          status?: string
+          submitted_by_email: string
+        }
+        Update: {
+          company_id?: string
+          created_at?: string
+          evidence_url?: string
+          id?: string
+          rebuttal_text?: string
+          reviewed_at?: string | null
+          reviewer_notes?: string | null
+          status?: string
+          submitted_by_email?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "employer_rebuttals_company_id_fkey"
             columns: ["company_id"]
             isOneToOne: false
             referencedRelation: "companies"
