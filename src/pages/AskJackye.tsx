@@ -104,7 +104,7 @@ const FAQ_ITEMS: FAQItem[] = [
   },
   {
     question: 'What methodology powers the intelligence engine?',
-    answer: "The intelligence engine is built on 15+ years of Talent Acquisition expertise across global tech firms. The methodology includes Signal Weighting (knowing which data points actually predict a healthy 'inclusive vibe'), Normalization (standardizing messy corporate reporting into clear insights), and Risk Detection (spotting 'red flag' patterns that standard algorithms miss).",
+    answer: "The intelligence engine is built on 15+ years of Talent Acquisition expertise across global tech firms. The methodology includes Signal Weighting (weighting data points most commonly associated with workplace transparency), Normalization (standardizing messy corporate reporting into clear insights), and Risk Detection (spotting 'red flag' patterns that standard algorithms miss).",
   },
   {
     question: "How is the intelligence generated?",
