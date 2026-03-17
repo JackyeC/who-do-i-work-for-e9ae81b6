@@ -231,11 +231,8 @@ function ClipboardBanner({ payload, onDismiss }: {
 
 export function AlignedJobsList() {
   const { data, isLoading, error } = useJobMatcher();
-  const { trackApplication } = useApplicationsTracker();
   const { queue, addToQueue } = useApplyQueue();
-  const { user } = useAuth();
   const { toast } = useToast();
-  const [generatingFor, setGeneratingFor] = useState<string | null>(null);
   const [activePayload, setActivePayload] = useState<any>(null);
 
   const queuedJobIds = new Set(queue.map(q => q.job_id).filter(Boolean));
