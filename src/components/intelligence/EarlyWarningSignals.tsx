@@ -236,7 +236,7 @@ export function EarlyWarningSignals({ companyId, companyName }: Props) {
   const elevatedCount = signals.filter(s => s.status === "elevated").length;
   const moderateCount = signals.filter(s => s.status === "moderate").length;
   const compositeLevel = elevatedCount >= 3 ? "High" : elevatedCount >= 1 || moderateCount >= 3 ? "Moderate" : "Low";
-  const compositeColor = compositeLevel === "High" ? "text-destructive" : compositeLevel === "Moderate" ? "text-[hsl(var(--civic-yellow))]" : "text-[hsl(var(--civic-green))]";
+  const compositeColor = compositeLevel === "High" ? "text-[hsl(var(--civic-yellow))]" : compositeLevel === "Moderate" ? "text-[hsl(var(--civic-yellow))]" : "text-[hsl(var(--civic-green))]";
 
   return (
     <Card className="border-border/50">
