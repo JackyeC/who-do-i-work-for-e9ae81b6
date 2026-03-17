@@ -139,7 +139,7 @@ export function CareerWrappedStep({ profile, careerPaths, companies, skillGap, f
                 <motion.div initial={{ scale: 0 }} animate={{ scale: 1 }} transition={{ delay: 0.3, type: "spring" }}>
                   <Sparkles className="w-16 h-16 mx-auto mb-4 opacity-90" />
                 </motion.div>
-                <h2 className="text-3xl font-bold font-display">Your Career, Mapped.</h2>
+                <h2 className="text-3xl font-bold font-display">Your Career Map Results</h2>
                 <p className="text-primary-foreground/80 text-sm">
                   Here's what we discovered for <span className="font-semibold">{profile.jobTitle}</span>
                 </p>
