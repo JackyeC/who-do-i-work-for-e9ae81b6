@@ -7,9 +7,11 @@ import { formatCurrency } from "@/data/sampleData";
 import { motion } from "framer-motion";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { ConfidenceBadge, type ConfidenceLevel } from "@/components/ConfidenceBadge";
 import {
   User, ArrowLeft, DollarSign, Building2, Flag,
-  ExternalLink, TrendingUp, PieChart, Loader2, AlertTriangle
+  ExternalLink, TrendingUp, PieChart, Loader2, AlertTriangle,
+  Shield, Clock, Database, FileText
 } from "lucide-react";
 
 const partyMeta: Record<string, { label: string; color: string }> = {
@@ -17,6 +19,22 @@ const partyMeta: Record<string, { label: string; color: string }> = {
   R: { label: "Republican", color: "bg-red-500/10 text-red-700 dark:text-red-400 border-red-500/30" },
   I: { label: "Independent", color: "bg-muted text-muted-foreground border-border" },
 };
+
+// Fetch voting summary from edge function
+function useVotingSummary(name: string, party: string, state: string, district?: string) {
+  return useQuery({
+    queryKey: ["voting-summary", name],
+    queryFn: async () => {
+      const { data, error } = await supabase.functions.invoke("candidate-voting-summary", {
+        body: { candidate_name: name, party, state, district },
+      });
+      if (error) throw error;
+      return data;
+    },
+    enabled: !!name,
+    staleTime: 1000 * 60 * 30,
+  });
+}
 
 export default function RepresentativeProfile() {
   const { name } = useParams<{ name: string }>();
@@ -28,7 +46,6 @@ export default function RepresentativeProfile() {
     path: `/representative/${name}`,
   });
 
-  // Fetch all candidate records matching this name
   const { data: records, isLoading } = useQuery({
     queryKey: ["rep-profile", decodedName],
     queryFn: async () => {
@@ -59,20 +76,15 @@ export default function RepresentativeProfile() {
         existing.donations.push(r);
       } else {
         uniqueCompanies.set(company.id, {
-          id: company.id,
-          name: company.name,
-          slug: company.slug,
-          industry: company.industry,
-          score: company.civic_footprint_score,
-          totalAmount: r.amount || 0,
-          donations: [r],
+          id: company.id, name: company.name, slug: company.slug,
+          industry: company.industry, score: company.civic_footprint_score,
+          totalAmount: r.amount || 0, donations: [r],
         });
       }
     }
 
     const companiesByAmount = [...uniqueCompanies.values()].sort((a, b) => b.totalAmount - a.totalAmount);
 
-    // Industry breakdown
     const industryMap = new Map<string, number>();
     for (const c of companiesByAmount) {
       const ind = c.industry || "Unknown";
@@ -83,17 +95,14 @@ export default function RepresentativeProfile() {
       .map(([industry, amount]) => ({ industry, amount, pct: Math.round((amount / totalFunding) * 100) }));
 
     return {
-      name: first.name,
-      party: first.party,
-      state: first.state,
-      district: first.district,
-      totalFunding,
-      flaggedCount,
-      companies: companiesByAmount,
-      industries,
-      donationCount: records.length,
+      name: first.name, party: first.party, state: first.state, district: first.district,
+      totalFunding, flaggedCount, companies: companiesByAmount, industries, donationCount: records.length,
     };
   }, [records]);
+
+  const { data: votingSummary, isLoading: votingLoading } = useVotingSummary(
+    decodedName, profile?.party || "", profile?.state || "", profile?.district
+  );
 
   if (isLoading) {
     return (
@@ -109,20 +118,21 @@ export default function RepresentativeProfile() {
         <User className="w-12 h-12 mx-auto mb-4 text-muted-foreground/40" />
         <h1 className="text-2xl font-bold text-foreground mb-2">Representative Not Found</h1>
         <p className="text-muted-foreground mb-6">No corporate funding data found for "{decodedName}" in our database.</p>
-        <Link to="/voter-lookup" className="text-primary hover:underline text-sm font-medium">
-          ← Back to Voter Lookup
-        </Link>
+        <Link to="/voter-lookup" className="text-primary hover:underline text-sm font-medium">← Back to Voter Lookup</Link>
       </div>
     );
   }
 
   const pm = partyMeta[profile.party] || partyMeta.I;
+  const dataSources = ["database"];
+  if (votingSummary?.data_source === "congress.gov") dataSources.push("congress.gov");
+  if (profile.donationCount > 0) dataSources.push("fec");
+  const confidence: ConfidenceLevel = dataSources.length >= 3 ? "high" : dataSources.length >= 2 ? "medium" : "low";
 
   return (
     <div className="flex flex-col bg-background min-h-0 flex-1">
       <div className="container mx-auto px-4 py-8 flex-1">
         <motion.div initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} className="max-w-3xl mx-auto">
-          {/* Back */}
           <Link to="/voter-lookup" className="inline-flex items-center gap-1.5 text-sm text-muted-foreground hover:text-foreground transition-colors mb-6">
             <ArrowLeft className="w-4 h-4" /> Back to Voter Lookup
           </Link>
@@ -141,9 +151,23 @@ export default function RepresentativeProfile() {
                   {profile.state}{profile.district ? ` — District ${profile.district}` : ""}
                 </p>
               </div>
-              <Badge variant="outline" className={`text-sm px-3 py-1 ${pm.color}`}>
-                {pm.label}
-              </Badge>
+              <div className="flex flex-col items-end gap-2">
+                <Badge variant="outline" className={`text-sm px-3 py-1 ${pm.color}`}>{pm.label}</Badge>
+                <ConfidenceBadge level={confidence} />
+              </div>
+            </div>
+            {/* Source badges */}
+            <div className="flex items-center gap-2 mt-3 flex-wrap">
+              {dataSources.map(s => (
+                <Badge key={s} variant="outline" className="text-[9px] px-1.5 py-0 border-border text-muted-foreground gap-1">
+                  {s === "congress.gov" ? <Shield className="w-2.5 h-2.5" /> : <Database className="w-2.5 h-2.5" />}
+                  {s === "congress.gov" ? "Congress.gov" : s === "fec" ? "FEC" : "CivicLens DB"}
+                </Badge>
+              ))}
+              <span className="flex items-center gap-1 text-[10px] text-muted-foreground/50">
+                <Clock className="w-2.5 h-2.5" />
+                {new Date().toLocaleDateString()}
+              </span>
             </div>
           </div>
 
@@ -167,6 +191,64 @@ export default function RepresentativeProfile() {
             ))}
           </div>
 
+          {/* Voting summary */}
+          {votingSummary?.committees?.length > 0 && (
+            <Card className="mb-6">
+              <CardHeader className="pb-3">
+                <CardTitle className="text-base flex items-center gap-2">
+                  <Shield className="w-4 h-4 text-primary" />
+                  Committee Assignments
+                  <Badge variant="outline" className="text-[9px] px-1.5 py-0 border-primary/20 text-primary/70">Congress.gov</Badge>
+                </CardTitle>
+              </CardHeader>
+              <CardContent>
+                <div className="flex flex-wrap gap-1.5">
+                  {votingSummary.committees.map((c: string) => (
+                    <Badge key={c} variant="secondary" className="text-xs font-normal">{c}</Badge>
+                  ))}
+                </div>
+              </CardContent>
+            </Card>
+          )}
+
+          {votingSummary?.summary && (
+            <Card className="mb-6">
+              <CardHeader className="pb-3">
+                <CardTitle className="text-base flex items-center gap-2">
+                  <FileText className="w-4 h-4 text-primary" />
+                  Legislative Activity Summary
+                  {votingSummary.data_source === "congress.gov" && (
+                    <Badge variant="outline" className="text-[9px] px-1.5 py-0 border-primary/20 text-primary/70">Verified</Badge>
+                  )}
+                </CardTitle>
+              </CardHeader>
+              <CardContent>
+                <div className="prose prose-sm dark:prose-invert max-w-none text-sm text-muted-foreground leading-relaxed whitespace-pre-wrap">
+                  {votingSummary.summary}
+                </div>
+                {votingSummary.policy_areas?.length > 0 && (
+                  <div className="mt-4">
+                    <span className="text-[10px] font-medium text-muted-foreground uppercase tracking-wider">Policy Focus</span>
+                    <div className="flex flex-wrap gap-1 mt-1.5">
+                      {votingSummary.policy_areas.map((area: string) => (
+                        <Badge key={area} variant="outline" className="text-[10px] font-normal">{area}</Badge>
+                      ))}
+                    </div>
+                  </div>
+                )}
+              </CardContent>
+            </Card>
+          )}
+
+          {votingLoading && (
+            <Card className="mb-6">
+              <CardContent className="py-6 flex items-center justify-center gap-2 text-sm text-muted-foreground">
+                <Loader2 className="w-4 h-4 animate-spin" />
+                Loading legislative activity from Congress.gov...
+              </CardContent>
+            </Card>
+          )}
+
           {/* Industry breakdown */}
           {profile.industries.length > 0 && (
             <Card className="mb-6">
@@ -186,10 +268,7 @@ export default function RepresentativeProfile() {
                           <span className="text-sm text-muted-foreground">{formatCurrency(ind.amount)}</span>
                         </div>
                         <div className="h-1.5 bg-muted rounded-full overflow-hidden">
-                          <div
-                            className="h-full bg-primary rounded-full transition-all"
-                            style={{ width: `${ind.pct}%` }}
-                          />
+                          <div className="h-full bg-primary rounded-full transition-all" style={{ width: `${ind.pct}%` }} />
                         </div>
                       </div>
                       <span className="font-mono text-xs text-muted-foreground w-10 text-right">{ind.pct}%</span>
@@ -209,49 +288,53 @@ export default function RepresentativeProfile() {
               </CardTitle>
             </CardHeader>
             <CardContent>
-              <div className="space-y-2">
-                {profile.companies.map((company) => (
-                  <Link
-                    key={company.id}
-                    to={`/company/${company.slug}`}
-                    className="flex items-center justify-between p-3 rounded-lg border border-border hover:border-primary/30 hover:bg-primary/5 transition-colors group"
-                  >
-                    <div className="flex items-center gap-3">
-                      <div className="w-8 h-8 rounded-lg bg-muted flex items-center justify-center">
-                        <Building2 className="w-4 h-4 text-muted-foreground" />
+              {profile.companies.length > 0 ? (
+                <div className="space-y-2">
+                  {profile.companies.map((company) => (
+                    <Link
+                      key={company.id}
+                      to={`/company/${company.slug}`}
+                      className="flex items-center justify-between p-3 rounded-lg border border-border hover:border-primary/30 hover:bg-primary/5 transition-colors group"
+                    >
+                      <div className="flex items-center gap-3">
+                        <div className="w-8 h-8 rounded-lg bg-muted flex items-center justify-center">
+                          <Building2 className="w-4 h-4 text-muted-foreground" />
+                        </div>
+                        <div>
+                          <div className="flex items-center gap-2">
+                            <span className="font-medium text-foreground group-hover:text-primary transition-colors">{company.name}</span>
+                            <ExternalLink className="w-3 h-3 text-muted-foreground opacity-0 group-hover:opacity-100 transition-opacity" />
+                          </div>
+                          <div className="flex items-center gap-2 text-xs text-muted-foreground">
+                            <span>{company.industry}</span><span>·</span>
+                            <span>Score: {company.score}/100</span><span>·</span>
+                            <span>{company.donations.length} donation{company.donations.length !== 1 ? "s" : ""}</span>
+                          </div>
+                        </div>
                       </div>
-                      <div>
-                        <div className="flex items-center gap-2">
-                          <span className="font-medium text-foreground group-hover:text-primary transition-colors">{company.name}</span>
-                          <ExternalLink className="w-3 h-3 text-muted-foreground opacity-0 group-hover:opacity-100 transition-opacity" />
-                        </div>
-                        <div className="flex items-center gap-2 text-xs text-muted-foreground">
-                          <span>{company.industry}</span>
-                          <span>•</span>
-                          <span>Score: {company.score}/100</span>
-                          <span>•</span>
-                          <span>{company.donations.length} donation{company.donations.length !== 1 ? "s" : ""}</span>
-                        </div>
+                      <div className="text-right shrink-0">
+                        <span className="font-semibold text-foreground">{formatCurrency(company.totalAmount)}</span>
+                        {company.donations.some((d: any) => d.flagged) && (
+                          <div className="flex items-center gap-1 text-xs text-destructive mt-0.5 justify-end">
+                            <Flag className="w-3 h-3" />Flagged
+                          </div>
+                        )}
                       </div>
-                    </div>
-                    <div className="text-right shrink-0">
-                      <span className="font-semibold text-foreground">{formatCurrency(company.totalAmount)}</span>
-                      {company.donations.some((d: any) => d.flagged) && (
-                        <div className="flex items-center gap-1 text-xs text-destructive mt-0.5 justify-end">
-                          <Flag className="w-3 h-3" />
-                          Flagged
-                        </div>
-                      )}
-                    </div>
-                  </Link>
-                ))}
-              </div>
+                    </Link>
+                  ))}
+                </div>
+              ) : (
+                <div className="text-center py-6 text-sm text-muted-foreground bg-muted/30 rounded-lg border border-border/50">
+                  <Database className="w-6 h-6 mx-auto mb-2 text-muted-foreground/40" />
+                  <p className="font-medium">Limited public data available</p>
+                  <p className="text-xs mt-1 text-muted-foreground/70">FEC records were searched — details not fully available for this representative.</p>
+                </div>
+              )}
             </CardContent>
           </Card>
 
-          {/* Data source note */}
           <p className="text-center text-[10px] text-muted-foreground/60 font-mono mt-8">
-            Data sourced from FEC filings and public records · Corporate Character Scores powered by verified intelligence
+            Data sourced from FEC filings, Congress.gov, and public records · Corporate Character Scores powered by verified intelligence
           </p>
         </motion.div>
       </div>
