@@ -16,6 +16,8 @@ import { InsiderBriefSection } from "@/components/company/InsiderBriefSection";
 import { StructuredSignalsSection } from "@/components/company/StructuredSignalsSection";
 import { HowToReadThis } from "@/components/company/HowToReadThis";
 import { UpgradeMoment } from "@/components/company/UpgradeMoment";
+import { ValuesSignalMatch } from "@/components/company/ValuesSignalMatch";
+import { RealityGapBlock } from "@/components/company/RealityGapBlock";
 import { ReportTeaserGate } from "@/components/ReportTeaserGate";
 import { PostReportNudge } from "@/components/PostReportNudge";
 import { ContentProtector } from "@/components/ContentProtector";
@@ -333,6 +335,26 @@ export default function CompanyProfile() {
           />
 
           {/* ═══════════════════════════════════════════════════════
+              1.5 VALUES-SIGNAL MATCH (personalized)
+             ═══════════════════════════════════════════════════════ */}
+          <ValuesSignalMatch
+            hasLayoffSignals={false}
+            hasWarnNotices={false}
+            hasPayEquity={!!tiPayEquity}
+            hasBenefitsData={!!tiBenefits}
+            hasAiHrSignals={!!tiAiHr}
+            hasSentimentData={!!tiSentiment}
+            hasCompensationData={!!tiBenefits}
+            hasJobPostings={false}
+            executiveCount={dbExecutives?.length || 0}
+            revolvingDoorCount={dbRevolvingDoor?.length || 0}
+            totalPacSpending={totalPac}
+            lobbyingSpend={lobbyingSpend}
+            lastReviewed={dbCompany?.last_reviewed}
+            updatedAt={dbCompany?.updated_at}
+          />
+
+          {/* ═══════════════════════════════════════════════════════
               2. WHAT WE'RE SEEING (Structured Signals)
              ═══════════════════════════════════════════════════════ */}
           <ReportTeaserGate companyName={name} teaser={null}>
@@ -356,6 +378,17 @@ export default function CompanyProfile() {
               updatedAt={dbCompany?.updated_at}
             />
           </ReportTeaserGate>
+
+          {/* ═══════════════════════════════════════════════════════
+              2.5 REALITY GAP
+             ═══════════════════════════════════════════════════════ */}
+          {dbCompanyId && (
+            <RealityGapBlock
+              companyId={dbCompanyId}
+              companyName={name}
+              updatedAt={dbCompany?.updated_at}
+            />
+          )}
 
           {/* ═══════════════════════════════════════════════════════
               3. HOW TO READ THIS
