@@ -533,7 +533,13 @@ export default function Jobs() {
                 )}
 
                 <div className="flex-1 min-w-0">
-                  {isLoading && <LoadingState message="Loading job listings..." />}
+                  {isLoading && (
+                    <div className="space-y-2">
+                      {Array.from({ length: 8 }).map((_, i) => (
+                        <JobCardSkeleton key={i} />
+                      ))}
+                    </div>
+                  )}
                   {!isLoading && filtered?.length === 0 && (
                     <EmptyState
                       icon={Briefcase}
@@ -549,7 +555,7 @@ export default function Jobs() {
                   )}
 
                   <div className="space-y-2">
-                    {filtered?.map((job: any) => {
+                    {visibleJobs.map((job: any) => {
                       const company = job.companies;
                       const companyValueSignals = valuesSignals?.[company?.id] || [];
                       const companySignals = signalFlags?.[company?.id] || [];
