@@ -30,7 +30,7 @@ import { CompensationTransparencyCard } from "@/components/CompensationTranspare
 import { CompensationMarketCard } from "@/components/CompensationMarketCard";
 import { PromotionEquityCard } from "@/components/PromotionEquityCard";
 import { WarnTrackerCard } from "@/components/WarnTrackerCard";
-import { BLSDemographicsCard } from "@/components/bls/BLSDemographicsCard";
+
 import { WorkforceDemographicsLayer } from "@/components/dossier/WorkforceDemographicsLayer";
 import { ExecutiveInclusionSnapshot } from "@/components/intelligence/ExecutiveInclusionSnapshot";
 import { EarlyWarningSignals } from "@/components/intelligence/EarlyWarningSignals";
