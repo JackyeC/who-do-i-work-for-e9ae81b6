@@ -584,6 +584,10 @@ export default function CompanyProfile() {
                         Transparency: {transparencyScore}%
                       </Badge>
                     )}
+                    <LastAuditedStamp
+                      lastAuditedAt={(dbCompany as any)?.last_audited_at}
+                      lastReviewed={dbCompany?.last_reviewed}
+                    />
                   </div>
                   {/* Entity Resolution Report */}
                   {dbCompanyId && (
