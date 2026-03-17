@@ -235,7 +235,7 @@ export const PERSONAS: PersonaConfig[] = [
     accessTier: "paid",
     requiredPlan: "professional",
     primarySections: ["cbi", "influence", "narrative_power", "public_records", "receipts_timeline", "governance", "workforce_stability", "compensation", "workforce_intel", "promotion_velocity", "gtm", "values"],
-    secondarySections: ["recruiter_reality", "career_risk"],
+    secondarySections: ["recruiter_reality", "career_risk", "off_the_record"],
     hiddenSections: [],
     primaryScores: ["cbi", "career_risk", "gtm", "promotion_velocity", "layoff_probability", "recruiter_reality"],
     buckets: [
