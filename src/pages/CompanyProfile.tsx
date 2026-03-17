@@ -1114,7 +1114,7 @@ export default function CompanyProfile() {
                     {dbCompanyId && (
                       <WorkforceDemographicsLayer companyId={dbCompanyId} companyName={name} />
                     )}
-                    <BLSDemographicsCard companyName={name} />
+                    
                   </div>
                 </section>
               ),
