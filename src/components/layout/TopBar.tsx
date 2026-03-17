@@ -280,9 +280,17 @@ export function TopBar() {
       {mobileMenuOpen && (
         <div className="md:hidden border-b border-border bg-card py-2 px-4 space-y-1">
           {MAIN_SECTIONS.map(section => {
-            if ((section as any).auth && !user) return null;
+            const requiresAuth = (section as any).auth && !user;
             const active = isSectionActive(section, location.pathname);
-            return (
+            return requiresAuth ? (
+              <button
+                key={section.id}
+                onClick={() => { setMobileMenuOpen(false); setSignupModalOpen(true); }}
+                className="block w-full text-left px-3 py-2.5 font-mono text-[11px] tracking-wider uppercase text-muted-foreground"
+              >
+                {section.label} <Lock className="w-2.5 h-2.5 inline opacity-50 ml-1" />
+              </button>
+            ) : (
               <Link
                 key={section.id}
                 to={section.path}
@@ -297,6 +305,14 @@ export function TopBar() {
           })}
         </div>
       )}
+
+      {/* Signup gate modal */}
+      <SignupModal
+        open={signupModalOpen}
+        onOpenChange={setSignupModalOpen}
+        headline="Sign up to see the receipts"
+        subtext="Create a free account to access Dashboard, Career Intelligence, and more."
+      />
     </>
   );
 }

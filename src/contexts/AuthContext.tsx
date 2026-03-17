@@ -48,13 +48,29 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     }
   }, []);
 
+  // Post-login redirect
+  const navigateRef = useCallback(() => {
+    try {
+      // Navigate to dashboard on sign-in (only from non-app pages)
+      const path = window.location.pathname;
+      if (path === "/" || path === "/login" || path === "/signup") {
+        window.location.href = "/dashboard";
+      }
+    } catch {}
+  }, []);
+
   useEffect(() => {
-    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
       setSession(session);
       setUser(session?.user ?? null);
       setLoading(false);
-      if (session?.user) {
+      if (event === "SIGNED_IN" && session?.user) {
         // Defer to avoid deadlock with auth state change
+        setTimeout(() => {
+          checkSubscription();
+          navigateRef();
+        }, 0);
+      } else if (session?.user) {
         setTimeout(() => checkSubscription(), 0);
       } else {
         setSubscriptionStatus(null);
