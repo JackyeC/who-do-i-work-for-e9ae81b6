@@ -29,7 +29,7 @@ export function ReportTeaserGate({ children, teaser, companyName, hiddenSignalCo
       <div className="mb-4">{teaser}</div>
 
       <div className="relative">
-        <div className="blur-[6px] pointer-events-none select-none max-h-[400px] overflow-hidden">
+        <div className="blur-[8px] pointer-events-none select-none max-h-[400px] overflow-hidden">
           {children}
         </div>
 
