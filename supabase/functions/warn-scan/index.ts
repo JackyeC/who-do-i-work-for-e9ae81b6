@@ -87,16 +87,9 @@ Deno.serve(async (req) => {
     });
 
     const combinedText = uniqueResults
-      .map((r) => `URL: ${r.url}\nTitle: ${r.title || ""}\n${(r.markdown || r.description || "").slice(0, 2000)}`)
+      .map((r: any) => `URL: ${r.url}\nTitle: ${r.title || ""}\n${(r.markdown || r.description || "").slice(0, 2000)}`)
       .join("\n---\n")
       .slice(0, 15000);
-
-    const lovableKey = Deno.env.get("LOVABLE_API_KEY");
-    if (!lovableKey) {
-      return new Response(JSON.stringify({ error: "LOVABLE_API_KEY not configured" }), {
-        status: 500, headers: { ...corsHeaders, "Content-Type": "application/json" },
-      });
-    }
 
     const nationalPrompt = national
       ? `This is a NATIONAL scan. Extract WARN notices from ALL US states. Include every distinct location/state filing separately. Also look for SEC 8-K Item 2.05 filings.`
