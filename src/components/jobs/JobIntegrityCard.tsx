@@ -89,6 +89,7 @@ export function JobIntegrityCard({ job, matchCount = 0, matchedCategories = [] }
                   <ShieldCheck className="w-2.5 h-2.5" /> Certified
                 </Badge>
               )}
+              <MatchIndicator matchCount={matchCount} matchedCategories={matchedCategories} />
             </div>
             <p className="text-[11px] text-muted-foreground mt-0.5">
               {job.location || "Remote"} {job.work_mode ? `· ${job.work_mode}` : ""}
