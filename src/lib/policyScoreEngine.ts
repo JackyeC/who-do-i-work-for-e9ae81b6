@@ -102,8 +102,8 @@ interface PolicyDataInput {
   linkages: Array<{ link_type: string; amount: number | null; description: string | null; source_entity_name: string; target_entity_name: string }>;
   darkMoney: Array<{ name: string; org_type: string; estimated_amount: number | null }>;
   tradeAssociations: Array<{ name: string }>;
-  lobbyingRecords: Array<{ state: string; amount: number | null }>;
-  signalScans: Array<{ signal_category: string; signal_type: string; signal_value: number | null }>;
+  lobbyingRecords: Array<{ state: string; lobbying_spend?: number | null }>;
+  signalScans: Array<{ signal_category: string; signal_type: string; signal_value: string | number | null }>;
 }
 
 function scoreDisclosure(data: PolicyDataInput): { score: number; signals: string[] } {

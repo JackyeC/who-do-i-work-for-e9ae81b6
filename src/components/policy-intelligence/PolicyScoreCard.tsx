@@ -23,7 +23,7 @@ export function PolicyScoreCard({ companyId, companyName }: Props) {
         (supabase as any).from("entity_linkages").select("link_type, amount, description, source_entity_name, target_entity_name").eq("company_id", companyId),
         supabase.from("company_dark_money").select("name, org_type, estimated_amount").eq("company_id", companyId),
         supabase.from("company_trade_associations").select("name").eq("company_id", companyId),
-        supabase.from("company_state_lobbying").select("state, amount").eq("company_id", companyId),
+        supabase.from("company_state_lobbying").select("state, lobbying_spend").eq("company_id", companyId),
         supabase.from("company_signal_scans").select("signal_category, signal_type, signal_value").eq("company_id", companyId),
       ]);
 

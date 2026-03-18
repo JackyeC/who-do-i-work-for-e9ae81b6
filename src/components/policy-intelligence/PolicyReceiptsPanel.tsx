@@ -89,7 +89,7 @@ export function PolicyReceiptsPanel({ stances, linkages, lobbyingRecords, tradeA
                   <CardContent className="p-2.5 flex items-center justify-between">
                     <span className="text-xs text-foreground">{l.state} — state lobbying</span>
                     <div className="flex items-center gap-2">
-                      {l.amount && <span className="text-xs font-mono text-muted-foreground">${l.amount.toLocaleString()}</span>}
+                      {l.lobbying_spend && <span className="text-xs font-mono text-muted-foreground">${l.lobbying_spend.toLocaleString()}</span>}
                       <Badge variant="outline" className="text-[10px]">State</Badge>
                     </div>
                   </CardContent>
