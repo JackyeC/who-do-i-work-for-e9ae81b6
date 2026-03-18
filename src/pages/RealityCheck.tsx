@@ -10,6 +10,7 @@ import {
 } from "@/lib/realityGapScore";
 import { VibeMatchQuestionnaire } from "@/components/reality-check/VibeMatchQuestionnaire";
 import { RealityGapResults } from "@/components/reality-check/RealityGapResults";
+import { FlinchTest } from "@/components/reality-check/FlinchTest";
 import {
   Terminal, ClipboardCheck, ArrowLeft,
 } from "lucide-react";
@@ -21,6 +22,7 @@ export default function RealityCheckPage() {
   const { toast } = useToast();
   const [result, setResult] = useState<RealityGapResult | null>(null);
   const [submitting, setSubmitting] = useState(false);
+  const [lastInput, setLastInput] = useState<{ companyId: string; companyName: string } | null>(null);
 
   usePageSEO({
     title: "Employer Red Flags Before Accepting a Job Offer — Reality Check",
@@ -104,6 +106,7 @@ export default function RealityCheckPage() {
 
       const gapResult = calculateRealityGap(input, publicSignals);
       setResult(gapResult);
+      setLastInput({ companyId: input.companyId, companyName: input.companyName });
 
       // Save to database
       const { error } = await supabase.from("vibe_match_responses" as any).insert({
@@ -161,7 +164,12 @@ export default function RealityCheckPage() {
 
       <div className="max-w-4xl mx-auto px-6 py-8">
         {result ? (
-          <RealityGapResults result={result} onReset={() => setResult(null)} />
+          <div className="space-y-6">
+            <RealityGapResults result={result} onReset={() => { setResult(null); setLastInput(null); }} />
+            {lastInput && (
+              <FlinchTest companyId={lastInput.companyId} companyName={lastInput.companyName} />
+            )}
+          </div>
         ) : (
           <VibeMatchQuestionnaire onSubmit={handleSubmit} isSubmitting={submitting} />
         )}
