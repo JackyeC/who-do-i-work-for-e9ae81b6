@@ -92,7 +92,7 @@ export function TacticalQuestionsCard({ signals, companyName }: Props) {
               >
                 {q.severity === "red" ? "High" : "Medium"}
               </Badge>
-              <span className="text-[10px] text-muted-foreground font-mono">{q.context}</span>
+              <span className="text-xs text-muted-foreground font-mono">{q.context}</span>
             </div>
             <p className="text-sm text-foreground leading-relaxed">"{q.question}"</p>
           </div>
