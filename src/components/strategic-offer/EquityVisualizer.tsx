@@ -236,7 +236,7 @@ export function EquityVisualizer() {
                           style={{ width: `${(year.taxHit / (year.grossValue || 1)) * pctOfTotal}%` }}
                         />
                       </div>
-                      <span className="text-[10px] text-muted-foreground w-24 text-right">
+                      <span className="text-xs text-muted-foreground w-24 text-right">
                         {year.vestedShares.toLocaleString()} shares
                       </span>
                     </div>
