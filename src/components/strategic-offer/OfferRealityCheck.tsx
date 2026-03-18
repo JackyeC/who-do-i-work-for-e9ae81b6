@@ -59,7 +59,7 @@ function buildSummary(position: OfferPosition, companyName: string, gaps: string
 }
 
 export function OfferRealityCheck(props: Props) {
-  const { offerStrengthScore, offerSalary, annualBaseline, legalFlags, report, hasEquity, hasBonus, companyName, roleTitle, riskLevel, salaryTransparency, internalConsistency } = props;
+  const { offerStrengthScore, offerSalary, annualBaseline, legalFlags, report, hasEquity, hasBonus, companyName, roleTitle, riskLevel, salaryTransparency, internalConsistency, situations = [] } = props;
 
   const redFlags = legalFlags.filter(f => f.severity === "red").length;
   const position = derivePosition(offerStrengthScore, redFlags, offerSalary, annualBaseline, riskLevel);
