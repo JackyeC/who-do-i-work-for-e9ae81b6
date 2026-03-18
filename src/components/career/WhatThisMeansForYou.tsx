@@ -15,13 +15,13 @@ function deriveFit(company: CompanyResult): { strengths: string[]; risks: string
   const risks: string[] = [];
 
   if (score >= 7) strengths.push("You value transparent, well-governed employers");
-  if (company.civic_footprint_score >= 60) strengths.push("You want a company with strong public accountability");
-  if (company.employee_count) strengths.push("You prefer employers with visible workforce data");
-  if (strengths.length === 0) strengths.push("You're comfortable navigating ambiguity in employer data");
+  if (company.civic_footprint_score >= 60) strengths.push("You thrive where public accountability is strong");
+  if (company.employee_count) strengths.push("You value brand exposure and visible workforce data");
+  if (strengths.length === 0) strengths.push("You thrive in ambiguous environments and can navigate uncertainty");
 
-  if (company.total_pac_spending > 50000) risks.push("Political spending doesn't align with your values");
-  if (score < 5) risks.push("You need high transparency to feel secure in a role");
-  if (company.record_status !== "verified") risks.push("You rely on fully verified employer profiles for decisions");
+  if (company.total_pac_spending > 50000) risks.push("Political spending may not align with your values");
+  if (score < 5) risks.push("You need clear promotion paths and transparent comp structures");
+  if (company.record_status !== "verified") risks.push("You prefer predictable org structures with verified data");
   if (risks.length === 0) risks.push("No significant risk factors identified for most candidates");
 
   return { strengths: strengths.slice(0, 3), risks: risks.slice(0, 3) };

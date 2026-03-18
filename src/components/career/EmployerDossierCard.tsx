@@ -46,7 +46,7 @@ export function EmployerDossierCard({ company }: EmployerDossierCardProps) {
       <div className="text-center py-4">
         <div className="font-mono text-[10px] tracking-[0.2em] uppercase text-muted-foreground mb-2">Employer Clarity Score</div>
         <div className="flex items-end justify-center gap-2">
-          <span className={`font-data text-5xl sm:text-6xl font-black tabular-nums ${risk.color}`}>
+          <span className={`font-data text-6xl sm:text-7xl font-black tabular-nums ${risk.color}`}>
             {score.toFixed(1)}
           </span>
           <span className="text-lg text-muted-foreground mb-2">/10</span>
@@ -59,11 +59,15 @@ export function EmployerDossierCard({ company }: EmployerDossierCardProps) {
         </div>
       </div>
 
-      {company.dossier?.bottom_line && (
-        <p className="text-sm text-foreground/80 text-center mt-3 font-medium">
-          {company.dossier.bottom_line}
-        </p>
-      )}
+      <p className="text-sm text-foreground/80 text-center mt-3 font-medium">
+        {company.dossier?.bottom_line
+          ? company.dossier.bottom_line
+          : score >= 7
+            ? "Strong signals across transparency and governance — a solid foundation."
+            : score >= 4
+              ? "Mixed signals — worth a deeper look before committing."
+              : "Limited transparency — proceed with caution and ask hard questions."}
+      </p>
 
       <p className="text-[11px] text-muted-foreground text-center mt-4 italic">
         Sources analyzed: {company.dossier?.sources_note || "public filings, workforce data, compensation benchmarks, and employee sentiment signals"}

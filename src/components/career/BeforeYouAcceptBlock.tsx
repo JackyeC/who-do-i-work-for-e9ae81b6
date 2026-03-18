@@ -45,14 +45,14 @@ function deriveSignals(company: CompanyResult, preComputed?: any[] | null): stri
   }
 
   const signals: string[] = [];
-  if (company.total_pac_spending > 100000) signals.push("Significant political spending detected (transparency risk)");
-  if ((company.lobbying_spend ?? 0) > 50000) signals.push("Active lobbying presence — check policy alignment");
-  if (!company.employee_count) signals.push("Employee headcount not publicly disclosed");
-  if (company.civic_footprint_score < 40) signals.push("Limited public transparency across governance metrics");
+  if (company.total_pac_spending > 100000) signals.push("Heavy political spending — check if it aligns with your values");
+  if ((company.lobbying_spend ?? 0) > 50000) signals.push("Active lobbying presence — verify policy alignment before signing");
+  if (!company.employee_count) signals.push("Employee headcount not publicly disclosed (workforce blind spot)");
+  if (company.civic_footprint_score < 40) signals.push("Low transparency across key governance areas");
   if (company.record_status !== "verified") signals.push("Company record has not been fully verified yet");
-  if ((company.career_intelligence_score ?? 5) < 5) signals.push("Below-average career intelligence indicators");
+  if ((company.career_intelligence_score ?? 5) < 5) signals.push("Salary data not publicly disclosed (negotiation blind spot)");
   if (signals.length === 0) {
-    signals.push("No major red flags detected in available data");
+    signals.push("No major red flags detected — but keep asking hard questions");
     signals.push("Continue due diligence with role-specific research");
   }
   return signals.slice(0, 5);

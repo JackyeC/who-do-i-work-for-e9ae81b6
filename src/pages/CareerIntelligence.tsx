@@ -57,14 +57,10 @@ export default function CareerIntelligence() {
       <main className="container mx-auto px-4 py-6 sm:py-8 flex-1">
         <div className="text-center mb-6 sm:mb-8">
           <h1 className="text-2xl sm:text-3xl font-bold text-foreground mb-2 font-display">
-            Map My Career
+            You vetted the role. We vet the employer.
           </h1>
           <p className="text-muted-foreground max-w-2xl mx-auto text-sm sm:text-base">
-            Search any employer to generate a risk-scored Employer Dossier. Get signals on transparency,
-            political spending, and workplace culture — before you accept.
-          </p>
-          <p className="text-xs text-muted-foreground mt-2 max-w-xl mx-auto italic">
-            This tool detects signals from public sources. It provides educational insights only — not legal, financial, or employment advice.
+            Analyze compensation risk, leadership signals, hiring practices, and company behavior — before you accept an offer.
           </p>
         </div>
 
