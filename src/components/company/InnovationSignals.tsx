@@ -186,13 +186,13 @@ export function InnovationSignals({ companyId, companyName }: InnovationSignalsP
                 <div className="flex-1 text-foreground/85 leading-relaxed">{s.summary}</div>
                 <div className="flex items-center gap-2 shrink-0">
                   <Badge variant="outline" className={cn(
-                    "text-[10px]",
+                    "text-xs",
                     s.confidence === "High" ? "border-[hsl(var(--civic-green))]/30 text-[hsl(var(--civic-green))]" :
                     "border-[hsl(var(--civic-yellow))]/30 text-[hsl(var(--civic-yellow))]"
                   )}>
                     {s.confidence}
                   </Badge>
-                  <span className="text-[10px] text-muted-foreground whitespace-nowrap">{s.recency}</span>
+                  <span className="text-xs text-muted-foreground whitespace-nowrap">{s.recency}</span>
                 </div>
               </div>
             ))}
