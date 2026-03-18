@@ -1,3 +1,4 @@
+import { useState } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -6,6 +7,7 @@ import {
   EyeOff, Shield, ChevronRight, Vote
 } from "lucide-react";
 import { formatCurrency } from "@/data/sampleData";
+import { EntityDetailDrawer, type DarkMoneyEntity } from "@/components/company/EntityDetailDrawer";
 import { PartyBadge } from "@/components/PartyBadge";
 
 interface Executive {
