@@ -189,7 +189,7 @@ export function DashboardOverview({ onNavigate }: DashboardOverviewProps) {
       <motion.div {...anim(0.14)}>
         <Card className="border-border/40">
           <CardContent className="p-5">
-            <h3 className="text-xs font-semibold uppercase tracking-wider text-muted-foreground mb-3">
+            <h3 className="text-sm font-semibold uppercase tracking-wider text-muted-foreground mb-3">
               Your compensation baseline
             </h3>
             {profile ? (
