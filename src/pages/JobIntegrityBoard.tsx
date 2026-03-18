@@ -176,6 +176,9 @@ export default function JobIntegrityBoard() {
         {/* Personalization Banner */}
         <PersonalizationBanner />
 
+        {/* External RSS Job Feeds */}
+        <ExternalJobFeed />
+
         {/* Results */}
         {isLoading ? (
           <div className="flex items-center justify-center py-16">
