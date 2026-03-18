@@ -570,6 +570,31 @@ export default function StrategicOfferReview() {
                       <label className="text-sm font-medium text-foreground mb-1.5 block">Years of Experience</label>
                       <Input type="number" placeholder="e.g. 5" value={offer.yearsExperience} onChange={e => update("yearsExperience", e.target.value)} />
                     </div>
+                    <div>
+                      <label className="text-sm font-medium text-foreground mb-1.5 block">Interview Start Date</label>
+                      <Popover>
+                        <PopoverTrigger asChild>
+                          <Button
+                            variant="outline"
+                            className={cn("w-full justify-start text-left font-normal", !offer.interviewStartDate && "text-muted-foreground")}
+                          >
+                            <CalendarIcon className="w-4 h-4 mr-2" />
+                            {offer.interviewStartDate ? format(offer.interviewStartDate, "PPP") : "When did you start interviewing?"}
+                          </Button>
+                        </PopoverTrigger>
+                        <PopoverContent className="w-auto p-0" align="start">
+                          <Calendar
+                            mode="single"
+                            selected={offer.interviewStartDate}
+                            onSelect={(d) => setOffer(prev => ({ ...prev, interviewStartDate: d || undefined }))}
+                            disabled={(date) => date > new Date() || date < new Date("2024-01-01")}
+                            initialFocus
+                            className={cn("p-3 pointer-events-auto")}
+                          />
+                        </PopoverContent>
+                      </Popover>
+                      <p className="text-[10px] text-muted-foreground mt-1">Optional — enables "What Changed" delta scan</p>
+                    </div>
                   </CardContent>
                 </Card>
 
