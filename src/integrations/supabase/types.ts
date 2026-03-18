@@ -14,6 +14,33 @@ export type Database = {
   }
   public: {
     Tables: {
+      advisory_interest: {
+        Row: {
+          created_at: string
+          email: string
+          id: string
+          message: string | null
+          name: string
+          service_type: string
+        }
+        Insert: {
+          created_at?: string
+          email: string
+          id?: string
+          message?: string | null
+          name: string
+          service_type?: string
+        }
+        Update: {
+          created_at?: string
+          email?: string
+          id?: string
+          message?: string | null
+          name?: string
+          service_type?: string
+        }
+        Relationships: []
+      }
       ai_hiring_signals: {
         Row: {
           bias_audit_link: string | null
