@@ -150,7 +150,7 @@ export function DashboardOverview({ onNavigate }: DashboardOverviewProps) {
                 <h3 className="text-sm font-semibold uppercase tracking-wider text-muted-foreground">
                   Companies you're evaluating
                 </h3>
-                <Button variant="ghost" size="sm" className="text-xs h-7" onClick={() => onNavigate("tracked")}>
+                <Button variant="ghost" size="sm" className="text-sm h-7" onClick={() => onNavigate("tracked")}>
                   View all <ArrowRight className="w-3 h-3 ml-1" />
                 </Button>
               </div>
