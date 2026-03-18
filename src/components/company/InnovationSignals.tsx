@@ -204,7 +204,7 @@ export function InnovationSignals({ companyId, companyName }: InnovationSignalsP
               <Badge
                 key={cat}
                 variant="outline"
-                className={cn("text-[10px] gap-1", CATEGORY_COLORS[cat] || "bg-muted text-muted-foreground")}
+                className={cn("text-xs gap-1", CATEGORY_COLORS[cat] || "bg-muted text-muted-foreground")}
               >
                 {cat} ({count})
               </Badge>
