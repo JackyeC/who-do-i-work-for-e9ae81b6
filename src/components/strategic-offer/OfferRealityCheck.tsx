@@ -101,14 +101,14 @@ export function OfferRealityCheck(props: Props) {
         <div className="flex gap-3">
           <div className="flex-1 text-center p-3 bg-muted/50 rounded-xl">
             <p className="text-2xl font-display font-bold text-foreground">{offerStrengthScore}</p>
-            <p className="text-[10px] text-muted-foreground">Offer Strength</p>
+            <p className="text-xs text-muted-foreground">Offer Strength</p>
           </div>
           <div className="flex-1 text-center p-3 bg-muted/50 rounded-xl">
             <p className={cn("text-2xl font-display font-bold",
               confidence === "High" ? "text-[hsl(var(--civic-green))]" :
               confidence === "Medium" ? "text-[hsl(var(--civic-yellow))]" : "text-muted-foreground"
             )}>{confidence}</p>
-            <p className="text-[10px] text-muted-foreground">Confidence</p>
+            <p className="text-xs text-muted-foreground">Confidence</p>
           </div>
         </div>
 

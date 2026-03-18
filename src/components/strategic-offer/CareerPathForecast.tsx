@@ -110,7 +110,7 @@ export function CareerPathForecast({ companyName, roleTitle, signals }: CareerPa
           <TrendingUp className="w-4 h-4 text-primary" />
           Jackye's Career Path Forecast
         </CardTitle>
-        <p className="text-[10px] text-muted-foreground">
+        <p className="text-xs text-muted-foreground">
           Future-value analysis for {roleTitle} at {companyName}
         </p>
       </CardHeader>
@@ -148,24 +148,24 @@ export function CareerPathForecast({ companyName, roleTitle, signals }: CareerPa
         {/* Metrics grid */}
         <div className="grid grid-cols-2 gap-2">
           <div className="rounded border border-border p-2.5">
-            <div className="flex items-center gap-1.5 text-[10px] text-muted-foreground mb-0.5">
+             <div className="flex items-center gap-1.5 text-xs text-muted-foreground mb-0.5">
               <Clock className="w-3 h-3" />
               Time to Next Level
             </div>
             <div className="text-xs font-semibold text-foreground">{forecast.promoTimeline}</div>
-            <Badge variant="outline" className="text-[8px] mt-1">
+            <Badge variant="outline" className="text-xs mt-1">
               {forecast.promoConfidence} confidence
             </Badge>
           </div>
           <div className="rounded border border-border p-2.5">
-            <div className="flex items-center gap-1.5 text-[10px] text-muted-foreground mb-0.5">
+             <div className="flex items-center gap-1.5 text-xs text-muted-foreground mb-0.5">
               <ArrowRight className="w-3 h-3" />
               Likely Next Role
             </div>
             <div className="text-xs font-semibold text-foreground">{forecast.nextRole}</div>
           </div>
           <div className="rounded border border-border p-2.5">
-            <div className="flex items-center gap-1.5 text-[10px] text-muted-foreground mb-0.5">
+             <div className="flex items-center gap-1.5 text-xs text-muted-foreground mb-0.5">
               {forecast.isPitstop ? (
                 <AlertTriangle className="w-3 h-3 text-[hsl(var(--civic-yellow))]" />
               ) : (
@@ -178,7 +178,7 @@ export function CareerPathForecast({ companyName, roleTitle, signals }: CareerPa
             </div>
           </div>
           <div className="rounded border border-border p-2.5">
-            <div className="flex items-center gap-1.5 text-[10px] text-muted-foreground mb-0.5">
+            <div className="flex items-center gap-1.5 text-xs text-muted-foreground mb-0.5">
               <TrendingUp className="w-3 h-3" />
               Growth Infrastructure
             </div>
@@ -188,7 +188,7 @@ export function CareerPathForecast({ companyName, roleTitle, signals }: CareerPa
           </div>
         </div>
 
-        <p className="text-[9px] text-muted-foreground border-t border-border pt-2">
+        <p className="text-xs text-muted-foreground border-t border-border pt-2">
           Based on {forecast.signalCount} public workforce signals. This is an educational estimate, not a guarantee of advancement.
         </p>
       </CardContent>

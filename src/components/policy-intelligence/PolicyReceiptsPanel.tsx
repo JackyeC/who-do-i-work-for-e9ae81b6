@@ -18,7 +18,7 @@ function ReceiptSection({ icon: Icon, title, count, children }: { icon: any; tit
         <div className="flex items-center gap-2">
           <Icon className="w-4 h-4 text-muted-foreground" />
           <span className="text-sm font-medium text-foreground">{title}</span>
-          <Badge variant="outline" className="text-[10px]">{count}</Badge>
+          <Badge variant="outline" className="text-xs">{count}</Badge>
         </div>
         <ChevronDown className="w-4 h-4 text-muted-foreground transition-transform group-data-[state=open]:rotate-180" />
       </CollapsibleTrigger>
@@ -80,7 +80,7 @@ export function PolicyReceiptsPanel({ stances, linkages, lobbyingRecords, tradeA
                 <Card key={`f-${i}`} className="border-border/30">
                   <CardContent className="p-2.5 flex items-center justify-between">
                     <span className="text-xs text-foreground">{l.description || l.target_entity_name}</span>
-                    <Badge variant="outline" className="text-[10px]">Federal</Badge>
+                    <Badge variant="outline" className="text-xs">Federal</Badge>
                   </CardContent>
                 </Card>
               ))}
@@ -90,7 +90,7 @@ export function PolicyReceiptsPanel({ stances, linkages, lobbyingRecords, tradeA
                     <span className="text-xs text-foreground">{l.state} — state lobbying</span>
                     <div className="flex items-center gap-2">
                       {l.lobbying_spend && <span className="text-xs font-mono text-muted-foreground">${l.lobbying_spend.toLocaleString()}</span>}
-                      <Badge variant="outline" className="text-[10px]">State</Badge>
+                      <Badge variant="outline" className="text-xs">State</Badge>
                     </div>
                   </CardContent>
                 </Card>
@@ -120,7 +120,7 @@ export function PolicyReceiptsPanel({ stances, linkages, lobbyingRecords, tradeA
                 <CardContent className="p-2.5">
                   <div className="flex items-center justify-between">
                     <span className="text-xs font-medium text-foreground">{s.topic}</span>
-                    <Badge variant={s.gap === "aligned" ? "success" : s.gap === "direct-conflict" ? "destructive" : "outline"} className="text-[10px]">
+                    <Badge variant={s.gap === "aligned" ? "success" : s.gap === "direct-conflict" ? "destructive" : "outline"} className="text-xs">
                       {s.gap === "aligned" ? "Aligned" : s.gap === "direct-conflict" ? "Contradiction" : "Mixed"}
                     </Badge>
                   </div>

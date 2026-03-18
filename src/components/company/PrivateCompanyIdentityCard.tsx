@@ -51,7 +51,7 @@ export function PrivateCompanyIdentityCard({
           <div className="flex items-start gap-3">
             <User className="w-4 h-4 text-muted-foreground mt-0.5 shrink-0" strokeWidth={1.5} />
             <div>
-              <div className="font-mono text-[10px] uppercase text-muted-foreground mb-1 tracking-wider">
+               <div className="font-mono text-xs uppercase text-muted-foreground mb-1 tracking-wider">
                 Founders / Owners
               </div>
               <div className="text-sm font-medium text-foreground">{founderNames!.join(", ")}</div>
@@ -64,7 +64,7 @@ export function PrivateCompanyIdentityCard({
           <div className="flex items-start gap-3">
             <Briefcase className="w-4 h-4 text-muted-foreground mt-0.5 shrink-0" strokeWidth={1.5} />
             <div>
-              <div className="font-mono text-[10px] uppercase text-muted-foreground mb-1 tracking-wider">
+               <div className="font-mono text-xs uppercase text-muted-foreground mb-1 tracking-wider">
                 Previously At
               </div>
               <div className="flex flex-wrap gap-1.5">
@@ -83,7 +83,7 @@ export function PrivateCompanyIdentityCard({
           <div className="flex items-start gap-3">
             <Building2 className="w-4 h-4 text-muted-foreground mt-0.5 shrink-0" strokeWidth={1.5} />
             <div>
-              <div className="font-mono text-[10px] uppercase text-muted-foreground mb-1 tracking-wider">
+               <div className="font-mono text-xs uppercase text-muted-foreground mb-1 tracking-wider">
                 Parent Company
               </div>
               <div className="text-sm font-medium text-foreground">{parentCompany}</div>
@@ -96,7 +96,7 @@ export function PrivateCompanyIdentityCard({
           <div className="flex items-start gap-3">
             <Building2 className="w-4 h-4 text-muted-foreground mt-0.5 shrink-0" strokeWidth={1.5} />
             <div>
-              <div className="font-mono text-[10px] uppercase text-muted-foreground mb-1 tracking-wider">
+              <div className="font-mono text-xs uppercase text-muted-foreground mb-1 tracking-wider">
                 Ownership Structure
               </div>
               <div className="text-sm text-foreground">{ownershipStructure}</div>
@@ -111,7 +111,7 @@ export function PrivateCompanyIdentityCard({
               <div className="bg-card p-3">
                 <div className="flex items-center gap-1.5 mb-1">
                   <Calendar className="w-3 h-3 text-muted-foreground" />
-                  <span className="font-mono text-[10px] uppercase text-muted-foreground">Founded</span>
+                  <span className="font-mono text-xs uppercase text-muted-foreground">Founded</span>
                 </div>
                 <div className="text-sm font-semibold text-foreground">{foundedYear}</div>
               </div>
@@ -120,7 +120,7 @@ export function PrivateCompanyIdentityCard({
               <div className="bg-card p-3">
                 <div className="flex items-center gap-1.5 mb-1">
                   <TrendingUp className="w-3 h-3 text-muted-foreground" />
-                  <span className="font-mono text-[10px] uppercase text-muted-foreground">Stage</span>
+                  <span className="font-mono text-xs uppercase text-muted-foreground">Stage</span>
                 </div>
                 <div className="text-sm font-semibold text-foreground">{fundingStage}</div>
               </div>
@@ -129,7 +129,7 @@ export function PrivateCompanyIdentityCard({
               <div className="bg-card p-3">
                 <div className="flex items-center gap-1.5 mb-1">
                   <Users className="w-3 h-3 text-muted-foreground" />
-                  <span className="font-mono text-[10px] uppercase text-muted-foreground">Employees</span>
+                  <span className="font-mono text-xs uppercase text-muted-foreground">Employees</span>
                 </div>
                 <div className="text-sm font-semibold text-foreground">{employeeCount}</div>
               </div>

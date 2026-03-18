@@ -160,10 +160,10 @@ export function InsiderBriefSection(props: InsiderBriefProps) {
           </div>
         </div>
         <div className="flex flex-col items-end gap-1.5">
-          <Badge variant="outline" className="text-[10px] font-mono tracking-wider">
+           <Badge variant="outline" className="text-xs font-mono tracking-wider">
             Confidence: {confidence}
           </Badge>
-          <Badge variant="outline" className="text-[10px] font-mono tracking-wider">
+          <Badge variant="outline" className="text-xs font-mono tracking-wider">
             Data: {recency}
           </Badge>
         </div>

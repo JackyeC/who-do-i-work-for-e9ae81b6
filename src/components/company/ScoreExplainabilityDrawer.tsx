@@ -153,7 +153,7 @@ export function ScoreExplainabilityDrawer({ companyId, score }: Props) {
           </span>
           {signalCounts && (
             <Badge variant="outline" className={cn(
-              "text-[10px]",
+              "text-xs",
               getConfidenceLabel() === "High" ? "bg-[hsl(var(--civic-green))]/10 text-[hsl(var(--civic-green))] border-[hsl(var(--civic-green))]/20" :
               getConfidenceLabel() === "Medium" ? "bg-[hsl(var(--civic-yellow))]/10 text-[hsl(var(--civic-yellow))] border-[hsl(var(--civic-yellow))]/20" :
               "bg-muted text-muted-foreground"
@@ -170,7 +170,7 @@ export function ScoreExplainabilityDrawer({ companyId, score }: Props) {
           {/* Info banner */}
           <div className="flex items-start gap-2 p-3 rounded-lg bg-primary/5 border border-primary/10">
             <Info className="w-3.5 h-3.5 text-primary shrink-0 mt-0.5" />
-            <p className="text-[10px] text-foreground/80 leading-relaxed">
+            <p className="text-xs text-foreground/80 leading-relaxed">
               This score is computed from 6 weighted signal groups. Every factor includes its data source
               and evidence count. Click any factor to understand what drives it.
             </p>
@@ -190,7 +190,7 @@ export function ScoreExplainabilityDrawer({ companyId, score }: Props) {
                       <TooltipProvider>
                         <Tooltip>
                           <TooltipTrigger>
-                            <Badge variant="outline" className="text-[9px] px-1.5">{(sub.weight * 100).toFixed(0)}% weight</Badge>
+                            <Badge variant="outline" className="text-xs px-1.5">{(sub.weight * 100).toFixed(0)}% weight</Badge>
                           </TooltipTrigger>
                           <TooltipContent className="text-xs">
                             Contributes {weightedContribution} to the final score
@@ -209,8 +209,8 @@ export function ScoreExplainabilityDrawer({ companyId, score }: Props) {
                     <div className={cn("h-full rounded-full transition-all", getBarColor(sub.value))} style={{ width: `${(sub.value / 10) * 100}%` }} />
                   </div>
                   <div className="flex items-center justify-between">
-                    <span className="text-[10px] text-muted-foreground">{sub.description}</span>
-                    <span className="text-[9px] text-muted-foreground/70">Source: {sub.sources[0]}</span>
+                     <span className="text-xs text-muted-foreground">{sub.description}</span>
+                    <span className="text-xs text-muted-foreground/70">Source: {sub.sources[0]}</span>
                   </div>
                 </div>
               );
@@ -219,7 +219,7 @@ export function ScoreExplainabilityDrawer({ companyId, score }: Props) {
 
           {/* Formula */}
           <div className="p-3 rounded-lg bg-muted/30 border border-border/20">
-            <p className="text-[10px] text-muted-foreground font-mono leading-relaxed">
+            <p className="text-xs text-muted-foreground font-mono leading-relaxed">
               CIS = (0.20 × Salary) + (0.15 × Layoff) + (0.15 × Lobbying) + (0.20 × Sentiment) + (0.15 × Hiring) + (0.15 × Turnover)
             </p>
           </div>

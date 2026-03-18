@@ -270,10 +270,10 @@ export function ValuesSignalMatch(props: SignalInputs) {
       <div className="px-5 py-4 border-b border-border/40 flex items-center justify-between">
         <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">How this aligns with you</p>
         <div className="flex items-center gap-2">
-          <Badge variant="outline" className="text-[10px] font-mono tracking-wider">
+           <Badge variant="outline" className="text-xs font-mono tracking-wider">
             Alignment: {score}/100
           </Badge>
-          <Badge variant="outline" className="text-[10px] font-mono tracking-wider">
+          <Badge variant="outline" className="text-xs font-mono tracking-wider">
             Data: {recency}
           </Badge>
         </div>
@@ -286,8 +286,8 @@ export function ValuesSignalMatch(props: SignalInputs) {
             {aligned.map((m, i) => (
               <li key={i} className="text-sm text-foreground/85 leading-relaxed pl-3 relative before:content-[''] before:absolute before:left-0 before:top-[9px] before:w-1.5 before:h-1.5 before:rounded-full before:bg-[hsl(var(--civic-green))]/40">
                 <span className="font-medium">{m.label}:</span> {m.summary}
-                {m.source && <span className="ml-1.5 text-[10px] text-muted-foreground/70 font-mono">{m.source}</span>}
-                <span className="ml-1.5 text-[10px] text-muted-foreground font-mono">{m.confidence}</span>
+                 {m.source && <span className="ml-1.5 text-xs text-muted-foreground/70 font-mono">{m.source}</span>}
+                <span className="ml-1.5 text-xs text-muted-foreground font-mono">{m.confidence}</span>
               </li>
             ))}
           </ul>
@@ -302,8 +302,8 @@ export function ValuesSignalMatch(props: SignalInputs) {
               <li key={i} className="text-sm text-foreground/85 leading-relaxed pl-3 border-l-2 border-[hsl(var(--civic-yellow))]/30">
                 <div className="relative">
                   <span className="font-medium">{m.label}:</span> {m.summary}
-                  {m.source && <span className="ml-1.5 text-[10px] text-muted-foreground/70 font-mono">{m.source}</span>}
-                  <span className="ml-1.5 text-[10px] text-muted-foreground font-mono">{m.confidence}</span>
+                   {m.source && <span className="ml-1.5 text-xs text-muted-foreground/70 font-mono">{m.source}</span>}
+                  <span className="ml-1.5 text-xs text-muted-foreground font-mono">{m.confidence}</span>
                 </div>
                 {m.tacticalQuestion && (
                   <div className="mt-1.5 relative">
@@ -318,7 +318,7 @@ export function ValuesSignalMatch(props: SignalInputs) {
                         </p>
                         <button
                           onClick={() => navigate("/pricing")}
-                          className="shrink-0 flex items-center gap-1 text-[10px] text-primary font-medium hover:underline"
+                          className="shrink-0 flex items-center gap-1 text-xs text-primary font-medium hover:underline"
                         >
                           <Lock className="w-3 h-3" /> Unlock
                         </button>

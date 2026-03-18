@@ -88,7 +88,7 @@ export function VerificationBountyCard({ companyId, companyName, lastAuditedAt }
             <div className="flex-1 min-w-0">
               <div className="flex items-center gap-2 mb-1.5">
                 <h3 className="text-sm font-bold text-foreground">Archive Signal</h3>
-                <Badge variant="outline" className="text-[9px] font-mono tracking-wider border-[hsl(var(--civic-red))]/20 text-[hsl(var(--civic-red))]">
+                <Badge variant="outline" className="text-xs font-mono tracking-wider border-[hsl(var(--civic-red))]/20 text-[hsl(var(--civic-red))]">
                   {daysSince ? `${daysSince} DAYS STALE` : "NO AUDIT DATE"}
                 </Badge>
               </div>
@@ -125,7 +125,7 @@ export function VerificationBountyCard({ companyId, companyName, lastAuditedAt }
             <div className="flex flex-col items-center py-6 gap-3">
               <CheckCircle2 className="w-10 h-10 text-[hsl(var(--civic-green))]" />
               <p className="text-sm font-medium text-foreground">Submitted for Review</p>
-              <Badge variant="outline" className="text-[10px]">$5 Credit Pending Verification</Badge>
+              <Badge variant="outline" className="text-xs">$5 Credit Pending Verification</Badge>
             </div>
           ) : (
             <div className="space-y-4">
@@ -159,7 +159,7 @@ export function VerificationBountyCard({ companyId, companyName, lastAuditedAt }
               </div>
               <div className="flex items-start gap-2 p-3 rounded-lg bg-muted/50 border border-border">
                 <AlertCircle className="w-3.5 h-3.5 text-muted-foreground mt-0.5 shrink-0" />
-                <p className="text-[10px] text-muted-foreground leading-relaxed">
+                <p className="text-xs text-muted-foreground leading-relaxed">
                   Submissions are reviewed by our intelligence team. Only publicly verifiable information will be incorporated.
                   Credits are issued after admin approval.
                 </p>

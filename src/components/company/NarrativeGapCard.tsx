@@ -30,7 +30,7 @@ export function NarrativeGapCard({ companyName, lastAuditedAt, signalGroupCount,
           <div className="flex-1 min-w-0">
             <div className="flex items-center gap-2 mb-1.5">
               <h3 className="text-sm font-bold text-foreground">The Narrative Gap</h3>
-              <Badge variant="outline" className="text-[9px] font-mono tracking-wider border-[hsl(var(--civic-gold))]/20 text-[hsl(var(--civic-gold))]">
+              <Badge variant="outline" className="text-xs font-mono tracking-wider border-[hsl(var(--civic-gold))]/20 text-[hsl(var(--civic-gold))]">
                 OPPORTUNITY
               </Badge>
             </div>
@@ -47,7 +47,7 @@ export function NarrativeGapCard({ companyName, lastAuditedAt, signalGroupCount,
                   Claim This Profile & Provide Context
                 </Link>
               </Button>
-              <span className="text-[10px] text-muted-foreground">
+              <span className="text-xs text-muted-foreground">
                 Narrative Alignment Package · $599/yr
               </span>
             </div>

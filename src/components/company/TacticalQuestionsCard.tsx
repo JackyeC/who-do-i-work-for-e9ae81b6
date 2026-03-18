@@ -86,18 +86,18 @@ export function TacticalQuestionsCard({ signals, companyName }: Props) {
               <Badge
                 className={
                   q.severity === "red"
-                    ? "bg-destructive/10 text-destructive border-destructive/30 text-[10px]"
-                    : "bg-[hsl(var(--civic-yellow))]/10 text-[hsl(var(--civic-yellow))] border-[hsl(var(--civic-yellow))]/30 text-[10px]"
+                     ? "bg-destructive/10 text-destructive border-destructive/30 text-xs"
+                    : "bg-[hsl(var(--civic-yellow))]/10 text-[hsl(var(--civic-yellow))] border-[hsl(var(--civic-yellow))]/30 text-xs"
                 }
               >
                 {q.severity === "red" ? "High" : "Medium"}
               </Badge>
-              <span className="text-[10px] text-muted-foreground font-mono">{q.context}</span>
+              <span className="text-xs text-muted-foreground font-mono">{q.context}</span>
             </div>
             <p className="text-sm text-foreground leading-relaxed">"{q.question}"</p>
           </div>
         ))}
-        <p className="text-[10px] text-muted-foreground text-center pt-1 italic">
+        <p className="text-xs text-muted-foreground text-center pt-1 italic">
           Questions are generated from detected risk signals — not assumptions. Use your judgment.
         </p>
       </CardContent>

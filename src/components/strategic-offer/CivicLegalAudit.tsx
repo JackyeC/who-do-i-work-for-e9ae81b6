@@ -49,7 +49,7 @@ export function CivicLegalAudit({ flags }: Props) {
         ].map(item => (
           <div key={item.label} className={cn("rounded-xl p-3 text-center", item.bg)}>
             <p className={cn("text-2xl font-display font-bold", item.color)}>{item.count}</p>
-            <p className="text-[10px] text-muted-foreground uppercase tracking-wider">{item.label}</p>
+            <p className="text-xs text-muted-foreground uppercase tracking-wider">{item.label}</p>
           </div>
         ))}
       </div>
@@ -76,7 +76,7 @@ export function CivicLegalAudit({ flags }: Props) {
                   <div className="flex-1">
                     <div className="flex items-center gap-2 mb-1">
                       <h3 className="text-sm font-semibold text-foreground">{flag.title}</h3>
-                      <Badge variant="outline" className={cn("text-[9px]", config.color)}>
+                      <Badge variant="outline" className={cn("text-xs", config.color)}>
                         {flag.category}
                       </Badge>
                     </div>

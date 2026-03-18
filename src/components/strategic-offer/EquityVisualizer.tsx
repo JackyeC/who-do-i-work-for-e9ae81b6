@@ -218,11 +218,11 @@ export function EquityVisualizer() {
                           <Unlock className="w-3.5 h-3.5 text-civic-green" />
                         )}
                         <span className="text-sm font-medium text-foreground">Year {year.year}</span>
-                        {year.isCliff && <Badge variant="outline" className="text-[9px]">Cliff</Badge>}
+                        {year.isCliff && <Badge variant="outline" className="text-xs">Cliff</Badge>}
                       </div>
                       <div className="text-right">
                         <span className="text-sm font-mono font-semibold text-foreground">${year.netValue.toLocaleString(undefined, { maximumFractionDigits: 0 })}</span>
-                        <span className="text-[10px] text-muted-foreground ml-1">net</span>
+                        <span className="text-xs text-muted-foreground ml-1">net</span>
                       </div>
                     </div>
                     <div className="flex items-center gap-2">
@@ -236,11 +236,11 @@ export function EquityVisualizer() {
                           style={{ width: `${(year.taxHit / (year.grossValue || 1)) * pctOfTotal}%` }}
                         />
                       </div>
-                      <span className="text-[10px] text-muted-foreground w-24 text-right">
+                      <span className="text-xs text-muted-foreground w-24 text-right">
                         {year.vestedShares.toLocaleString()} shares
                       </span>
                     </div>
-                    <div className="flex gap-3 text-[10px] text-muted-foreground pl-5">
+                    <div className="flex gap-3 text-xs text-muted-foreground pl-5">
                       <span>Gross: ${year.grossValue.toLocaleString(undefined, { maximumFractionDigits: 0 })}</span>
                       <span className="text-destructive">Tax: ~${year.taxHit.toLocaleString(undefined, { maximumFractionDigits: 0 })}</span>
                     </div>
@@ -251,11 +251,11 @@ export function EquityVisualizer() {
 
             <div className="mt-4 pt-4 border-t border-border grid grid-cols-2 gap-4 text-center">
               <div className="p-3 bg-muted/50 rounded-xl">
-                <p className="text-[10px] text-muted-foreground uppercase tracking-wider mb-1">Total Gross Value</p>
+                <p className="text-xs text-muted-foreground uppercase tracking-wider mb-1">Total Gross Value</p>
                 <p className="text-lg font-display font-bold text-foreground">${totalGross.toLocaleString(undefined, { maximumFractionDigits: 0 })}</p>
               </div>
               <div className="p-3 bg-civic-green/5 rounded-xl border border-civic-green/10">
-                <p className="text-[10px] text-muted-foreground uppercase tracking-wider mb-1">Estimated Net</p>
+                <p className="text-xs text-muted-foreground uppercase tracking-wider mb-1">Estimated Net</p>
                 <p className="text-lg font-display font-bold text-civic-green">${totalNet.toLocaleString(undefined, { maximumFractionDigits: 0 })}</p>
               </div>
             </div>

@@ -51,7 +51,7 @@ export function ShareableScoreCard({ companyName, clarityScore, signals, slug }:
         <div className={`absolute top-0 left-0 w-1 h-full ${band.accent}`} />
 
         <div className="pl-4">
-          <div className="font-mono text-[9px] tracking-[0.25em] uppercase text-primary mb-2">
+          <div className="font-mono text-xs tracking-[0.25em] uppercase text-primary mb-2">
             Employer Intelligence Report
           </div>
           <div className="font-serif text-xl mb-1 text-foreground">{companyName}</div>
@@ -59,8 +59,8 @@ export function ShareableScoreCard({ companyName, clarityScore, signals, slug }:
           {/* Big score */}
           <div className="flex items-baseline gap-3 mb-4">
             <span className="font-data text-4xl font-bold text-foreground">{clarityScore}</span>
-            <span className="font-mono text-[10px] tracking-wider uppercase text-muted-foreground">/100</span>
-            <span className={`font-mono text-[10px] tracking-wider uppercase ${band.color} px-2 py-0.5 ${band.bg}`}>
+            <span className="font-mono text-xs tracking-wider uppercase text-muted-foreground">/100</span>
+            <span className={`font-mono text-xs tracking-wider uppercase ${band.color} px-2 py-0.5 ${band.bg}`}>
               {band.label}
             </span>
           </div>
@@ -69,7 +69,7 @@ export function ShareableScoreCard({ companyName, clarityScore, signals, slug }:
           <div className="grid gap-2">
             {signals.slice(0, 5).map((s) => (
               <div key={s.label} className="flex items-center gap-3">
-                <div className="w-[120px] font-mono text-[9px] tracking-wider uppercase text-muted-foreground truncate">
+                <div className="w-[120px] font-mono text-xs tracking-wider uppercase text-muted-foreground truncate">
                   {s.label}
                 </div>
                 <div className="flex-1 h-1.5 bg-muted rounded-full overflow-hidden">
@@ -84,10 +84,10 @@ export function ShareableScoreCard({ companyName, clarityScore, signals, slug }:
           </div>
 
           <div className="mt-4 pt-3 border-t border-border flex items-center justify-between">
-            <span className="font-mono text-[8px] tracking-widest uppercase text-muted-foreground">
+            <span className="font-mono text-xs tracking-widest uppercase text-muted-foreground">
               whodoimworkfor.com
             </span>
-            <span className="font-mono text-[8px] tracking-widest uppercase text-muted-foreground">
+            <span className="font-mono text-xs tracking-widest uppercase text-muted-foreground">
               Workforce Transparency Standard
             </span>
           </div>

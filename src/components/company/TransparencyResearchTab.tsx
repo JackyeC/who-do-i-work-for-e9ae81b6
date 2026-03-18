@@ -71,11 +71,11 @@ export function TransparencyResearchTab({ companyId, companyName }: Transparency
   return (
     <div className="space-y-4">
       <div className="flex items-center gap-2 mb-2">
-        <Badge variant="outline" className="text-[10px] bg-primary/5 text-primary border-primary/20 gap-1">
+         <Badge variant="outline" className="text-xs bg-primary/5 text-primary border-primary/20 gap-1">
           <ShieldCheck className="w-3 h-3" /> Vetted by Jackye Clayton
         </Badge>
         {research.approved_at && (
-          <span className="text-[10px] text-muted-foreground flex items-center gap-1">
+          <span className="text-xs text-muted-foreground flex items-center gap-1">
             <Clock className="w-3 h-3" />
             {new Date(research.approved_at).toLocaleDateString()}
           </span>
@@ -99,7 +99,7 @@ export function TransparencyResearchTab({ companyId, companyName }: Transparency
         <div className="flex flex-wrap gap-1.5 pt-2">
           {citations.map((url: string, i: number) => (
             <a key={i} href={url} target="_blank" rel="noopener noreferrer"
-              className="text-[10px] text-primary hover:underline inline-flex items-center gap-0.5">
+              className="text-xs text-primary hover:underline inline-flex items-center gap-0.5">
               Source [{i + 1}] <ExternalLink className="w-2.5 h-2.5" />
             </a>
           ))}

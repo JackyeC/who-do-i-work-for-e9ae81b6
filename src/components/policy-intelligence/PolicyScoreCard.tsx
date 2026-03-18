@@ -52,7 +52,7 @@ export function PolicyScoreCard({ companyId, companyName }: Props) {
           </div>
           <div className="flex items-center gap-2">
             <span className={`text-2xl font-bold font-mono ${scoreColor}`}>{result.total}</span>
-            <Badge variant="outline" className={`text-[10px] ${scoreColor}`}>{result.grade}</Badge>
+            <Badge variant="outline" className={`text-xs ${scoreColor}`}>{result.grade}</Badge>
           </div>
         </div>
         <div className="space-y-1.5">
@@ -60,7 +60,7 @@ export function PolicyScoreCard({ companyId, companyName }: Props) {
             <div key={p.key} className="flex items-center gap-2">
               <span className="text-[11px] text-muted-foreground w-24 shrink-0">{p.label}</span>
               <Progress value={p.score} className="h-1 flex-1" />
-              <span className="text-[10px] font-mono text-muted-foreground w-8 text-right">{p.score}</span>
+              <span className="text-xs font-mono text-muted-foreground w-8 text-right">{p.score}</span>
             </div>
           ))}
         </div>

@@ -89,18 +89,18 @@ export function EmployerRebuttalSection({ companyId, companyName }: EmployerRebu
               {rebuttals.map((r: any) => (
                 <div key={r.id} className="p-3 rounded-lg border border-border bg-muted/20">
                   <div className="flex items-center gap-2 mb-2">
-                    <Badge variant="outline" className="text-[10px] gap-1 bg-primary/5 text-primary border-primary/20">
+                    <Badge variant="outline" className="text-xs gap-1 bg-primary/5 text-primary border-primary/20">
                       <MessageSquareWarning className="w-2.5 h-2.5" />
                       Employer Response
                     </Badge>
-                    <span className="text-[10px] text-muted-foreground">
+                    <span className="text-xs text-muted-foreground">
                       {new Date(r.created_at).toLocaleDateString()}
                     </span>
                   </div>
                   <p className="text-sm text-foreground leading-relaxed">{r.rebuttal_text}</p>
                   {r.evidence_url && (
                     <a href={r.evidence_url} target="_blank" rel="noopener noreferrer"
-                      className="text-[10px] text-primary hover:underline inline-flex items-center gap-0.5 mt-2">
+                      className="text-xs text-primary hover:underline inline-flex items-center gap-0.5 mt-2">
                       Supporting Record <ExternalLink className="w-2.5 h-2.5" />
                     </a>
                   )}
@@ -159,7 +159,7 @@ export function EmployerRebuttalSection({ companyId, companyName }: EmployerRebu
                   className={wordCount > 200 ? "border-destructive" : ""}
                 />
                 {wordCount > 200 && (
-                  <p className="text-[10px] text-destructive mt-1">Exceeds 200-word limit.</p>
+                  <p className="text-xs text-destructive mt-1">Exceeds 200-word limit.</p>
                 )}
               </div>
               <div>
@@ -172,7 +172,7 @@ export function EmployerRebuttalSection({ companyId, companyName }: EmployerRebu
               </div>
               <div className="flex items-start gap-2 p-3 rounded-lg bg-muted/50 border border-border">
                 <AlertCircle className="w-3.5 h-3.5 text-muted-foreground mt-0.5 shrink-0" />
-                <p className="text-[10px] text-muted-foreground leading-relaxed">
+                <p className="text-xs text-muted-foreground leading-relaxed">
                   Rebuttals are reviewed before publication. Only responses backed by a verifiable public record will be displayed.
                   Responses may not alter independent research findings.
                 </p>

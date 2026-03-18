@@ -48,13 +48,13 @@ export function MismatchEngine({ stances, darkMoney, tradeAssociations }: Props)
       <div className="flex items-center gap-3 flex-wrap">
         <h3 className="text-sm font-semibold text-foreground">Say vs. Do Analysis</h3>
         {conflicts.length > 0 && (
-          <Badge variant="destructive" className="text-[10px]">{conflicts.length} contradiction{conflicts.length > 1 ? "s" : ""}</Badge>
+           <Badge variant="destructive" className="text-xs">{conflicts.length} contradiction{conflicts.length > 1 ? "s" : ""}</Badge>
         )}
         {mixed.length > 0 && (
-          <Badge variant="warning" className="text-[10px]">{mixed.length} mixed</Badge>
+          <Badge variant="warning" className="text-xs">{mixed.length} mixed</Badge>
         )}
         {aligned.length > 0 && (
-          <Badge variant="success" className="text-[10px]">{aligned.length} aligned</Badge>
+          <Badge variant="success" className="text-xs">{aligned.length} aligned</Badge>
         )}
       </div>
 
@@ -75,7 +75,7 @@ export function MismatchEngine({ stances, darkMoney, tradeAssociations }: Props)
                   <div className="flex-1 min-w-0 space-y-1">
                     <div className="flex items-center gap-2">
                       <p className="text-sm font-medium text-foreground">{s.topic}</p>
-                      <span className={`text-[10px] font-medium ${config.color}`}>{config.label}</span>
+                      <span className={`text-xs font-medium ${config.color}`}>{config.label}</span>
                     </div>
                     <p className="text-xs text-muted-foreground">
                       <strong className="text-foreground">Public position:</strong> {s.public_position}
@@ -122,7 +122,7 @@ export function MismatchEngine({ stances, darkMoney, tradeAssociations }: Props)
           <h4 className="text-xs font-semibold text-foreground mb-2">Trade Association Memberships</h4>
           <div className="flex flex-wrap gap-1.5">
             {tradeAssociations.map((ta, i) => (
-              <Badge key={i} variant="outline" className="text-[10px]">{ta.name}</Badge>
+              <Badge key={i} variant="outline" className="text-xs">{ta.name}</Badge>
             ))}
           </div>
         </div>

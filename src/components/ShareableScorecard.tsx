@@ -37,7 +37,7 @@ function ScorecardCanvas({ data }: { data: ScorecardData }) {
         width: 600,
         padding: 40,
         background: "linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%)",
-        fontFamily: "'Inter', 'Helvetica Neue', sans-serif",
+        fontFamily: "'IBM Plex Sans', 'Helvetica Neue', sans-serif",
         color: "#1e293b",
         borderRadius: 16,
         position: "relative",

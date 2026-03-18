@@ -86,7 +86,7 @@ export function LevelsFyiEmbed({ companyName }: LevelsFyiEmbedProps) {
           <div className="flex items-center gap-2 mb-2">
             <p className="text-xs font-semibold text-foreground uppercase tracking-wider">Title Comparison & Leveling</p>
             {!isPremium && (
-              <Badge variant="outline" className="text-[9px] gap-0.5">
+              <Badge variant="outline" className="text-xs gap-0.5">
                 <Lock className="w-2.5 h-2.5" /> Pro
               </Badge>
             )}

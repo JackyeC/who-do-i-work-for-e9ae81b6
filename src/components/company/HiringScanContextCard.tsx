@@ -80,7 +80,7 @@ export function HiringScanContextCard({ companyId, companyName }: HiringScanCont
       {/* Header */}
       <div className="flex items-center gap-2 px-4 py-3 border-b border-border bg-muted/30">
         <Search className="w-4 h-4 text-primary" strokeWidth={1.5} />
-        <span className="font-mono text-[10px] tracking-[0.15em] uppercase text-primary font-semibold">
+        <span className="font-mono text-xs tracking-[0.15em] uppercase text-primary font-semibold">
           Hiring Scan Context
         </span>
       </div>
@@ -100,7 +100,7 @@ export function HiringScanContextCard({ companyId, companyName }: HiringScanCont
           <span className="font-medium text-foreground/70">Source checked:</span>
           <span className="truncate">{scanContext.sourceChecked}</span>
           {scanContext.atsDetected && (
-            <span className="ml-auto shrink-0 px-1.5 py-0.5 bg-primary/10 text-primary rounded text-[10px] font-semibold uppercase">
+            <span className="ml-auto shrink-0 px-1.5 py-0.5 bg-primary/10 text-primary rounded text-xs font-semibold uppercase">
               {scanContext.atsDetected}
             </span>
           )}
@@ -126,7 +126,7 @@ export function HiringScanContextCard({ companyId, companyName }: HiringScanCont
         {/* Department breakdown */}
         {deptBreakdown && Object.keys(deptBreakdown).length > 0 && (
           <div className="pt-2 border-t border-border/50">
-            <p className="text-[10px] uppercase tracking-wider text-muted-foreground mb-2 font-semibold">
+            <p className="text-xs uppercase tracking-wider text-muted-foreground mb-2 font-semibold">
               Role Distribution
             </p>
             <div className="flex flex-wrap gap-1.5">
@@ -145,7 +145,7 @@ export function HiringScanContextCard({ companyId, companyName }: HiringScanCont
         {/* Hiring signals */}
         {hiringSignals.length > 0 && (
           <div className="pt-2 border-t border-border/50 space-y-2">
-            <p className="text-[10px] uppercase tracking-wider text-muted-foreground font-semibold">
+            <p className="text-xs uppercase tracking-wider text-muted-foreground font-semibold">
               Hiring Signals
             </p>
             {hiringSignals.map((signal, i) => (

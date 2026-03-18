@@ -57,7 +57,7 @@ export function HighRiskConnectionCard({ companyId, companyName }: HighRiskConne
               <div className="flex-1 min-w-0">
                 <div className="flex items-center gap-2 flex-wrap mb-1">
                   <p className="text-sm font-semibold text-foreground">⚠️ High-Risk Connection</p>
-                  <Badge variant="outline" className="text-[9px] bg-destructive/10 text-destructive border-destructive/20">
+                  <Badge variant="outline" className="text-xs bg-destructive/10 text-destructive border-destructive/20">
                     {org.confidence} Confidence
                   </Badge>
                 </div>

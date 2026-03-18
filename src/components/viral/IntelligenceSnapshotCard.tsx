@@ -59,7 +59,7 @@ export function IntelligenceSnapshotCard({ companyName, overallScore, scoreLabel
 
         <div className="pl-4">
           {/* Brand header */}
-          <div className="font-mono text-[9px] tracking-[0.25em] uppercase text-primary mb-2">
+          <div className="font-mono text-xs tracking-[0.25em] uppercase text-primary mb-2">
             Corporate Behavior Index™
           </div>
           <div className="font-serif text-xl mb-1 text-foreground font-bold">{companyName}</div>
@@ -67,8 +67,8 @@ export function IntelligenceSnapshotCard({ companyName, overallScore, scoreLabel
           {/* Score display */}
           <div className="flex items-baseline gap-3 mb-5">
             <span className="font-mono text-5xl font-black text-foreground">{overallScore}</span>
-            <span className="font-mono text-[10px] tracking-wider uppercase text-muted-foreground">/100</span>
-            <Badge className={cn("text-[10px]", band.color, band.bg, "border", band.accent)}>
+            <span className="font-mono text-xs tracking-wider uppercase text-muted-foreground">/100</span>
+            <Badge className={cn("text-xs", band.color, band.bg, "border", band.accent)}>
               {scoreLabel || band.label}
             </Badge>
           </div>
@@ -79,7 +79,7 @@ export function IntelligenceSnapshotCard({ companyName, overallScore, scoreLabel
               {metrics.slice(0, 3).map((m) => (
                 <div key={m.label} className="p-2 rounded-lg bg-muted/30 border border-border/50 text-center">
                   <p className="text-sm font-bold text-foreground">{m.value}</p>
-                  <p className="text-[9px] text-muted-foreground uppercase tracking-wider">{m.label}</p>
+                  <p className="text-xs text-muted-foreground uppercase tracking-wider">{m.label}</p>
                 </div>
               ))}
             </div>
@@ -89,7 +89,7 @@ export function IntelligenceSnapshotCard({ companyName, overallScore, scoreLabel
           <div className="grid gap-2">
             {signals.slice(0, 5).map((s) => (
               <div key={s.label} className="flex items-center gap-3">
-                <div className="w-[130px] font-mono text-[9px] tracking-wider uppercase text-muted-foreground truncate">
+                <div className="w-[130px] font-mono text-xs tracking-wider uppercase text-muted-foreground truncate">
                   {s.label}
                 </div>
                 <div className="flex-1 h-1.5 bg-muted rounded-full overflow-hidden">
@@ -108,10 +108,10 @@ export function IntelligenceSnapshotCard({ companyName, overallScore, scoreLabel
 
           {/* Footer */}
           <div className="mt-5 pt-3 border-t border-border flex items-center justify-between">
-            <span className="font-mono text-[8px] tracking-widest uppercase text-muted-foreground">
+            <span className="font-mono text-xs tracking-widest uppercase text-muted-foreground">
               whodoimworkfor.com
             </span>
-            <span className="font-mono text-[8px] tracking-widest uppercase text-muted-foreground">
+            <span className="font-mono text-xs tracking-widest uppercase text-muted-foreground">
               Workforce Transparency Standard
             </span>
           </div>

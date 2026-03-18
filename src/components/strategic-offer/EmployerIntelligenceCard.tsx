@@ -184,7 +184,7 @@ export function EmployerIntelligenceCard({ companyId, companyName }: Props) {
               Who Will You Work For?
             </CardTitle>
             <Link to={`/company/${company.slug}`}>
-              <Badge variant="outline" className="text-[10px] gap-1 cursor-pointer hover:bg-accent">
+              <Badge variant="outline" className="text-xs gap-1 cursor-pointer hover:bg-accent">
                 Full Profile <ExternalLink className="w-2.5 h-2.5" />
               </Badge>
             </Link>
@@ -197,15 +197,15 @@ export function EmployerIntelligenceCard({ companyId, companyName }: Props) {
           <div className="grid grid-cols-3 gap-3">
             <div className="p-3 bg-muted/30 rounded-xl text-center">
               <p className="text-lg font-bold text-foreground">{company.civic_footprint_score}</p>
-              <p className="text-[10px] text-muted-foreground">Civic Score</p>
+              <p className="text-xs text-muted-foreground">Civic Score</p>
             </div>
             <div className="p-3 bg-muted/30 rounded-xl text-center">
               <p className="text-lg font-bold text-foreground">{formatCurrency(company.total_pac_spending || 0)}</p>
-              <p className="text-[10px] text-muted-foreground">PAC Spending</p>
+              <p className="text-xs text-muted-foreground">PAC Spending</p>
             </div>
             <div className="p-3 bg-muted/30 rounded-xl text-center">
               <p className="text-lg font-bold text-foreground">{formatCurrency(company.lobbying_spend || 0)}</p>
-              <p className="text-[10px] text-muted-foreground">Lobbying</p>
+              <p className="text-xs text-muted-foreground">Lobbying</p>
             </div>
           </div>
         </CardContent>
@@ -238,7 +238,7 @@ export function EmployerIntelligenceCard({ companyId, companyName }: Props) {
                   <span className={cn("text-xs font-bold w-5 text-center", partyMap[c.party] || "")}>{c.party}</span>
                   <span className="text-sm text-foreground">{c.name}</span>
                   {c.flagged && (
-                    <Badge variant="destructive" className="text-[9px]">{c.flag_reason || "Flagged"}</Badge>
+                    <Badge variant="destructive" className="text-xs">{c.flag_reason || "Flagged"}</Badge>
                   )}
                 </div>
                 <span className="text-sm font-semibold text-foreground">{formatCurrency(c.amount)}</span>
@@ -265,7 +265,7 @@ export function EmployerIntelligenceCard({ companyId, companyName }: Props) {
               <div key={i} className="p-3 bg-muted/20 rounded-lg space-y-1">
                 <div className="flex items-center justify-between">
                   <span className="text-xs font-semibold text-foreground">{s.topic}</span>
-                  <Badge variant="outline" className={cn("text-[9px]", gapColors[s.gap?.toLowerCase() || "none"] || "")}>
+                  <Badge variant="outline" className={cn("text-xs", gapColors[s.gap?.toLowerCase() || "none"] || "")}>
                     {s.gap || "Aligned"}
                   </Badge>
                 </div>
@@ -300,7 +300,7 @@ export function EmployerIntelligenceCard({ companyId, companyName }: Props) {
                 )} />
                 <div>
                   <p className="text-xs font-medium text-foreground">{f.org_name}</p>
-                  <p className="text-[10px] text-muted-foreground">{f.category} · {f.description?.substring(0, 120)}</p>
+                  <p className="text-xs text-muted-foreground">{f.category} · {f.description?.substring(0, 120)}</p>
                 </div>
               </div>
             ))}

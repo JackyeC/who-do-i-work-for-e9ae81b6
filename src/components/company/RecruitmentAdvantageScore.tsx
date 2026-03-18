@@ -84,14 +84,14 @@ export function RecruitmentAdvantageScore(props: RecruitmentAdvantageScoreProps)
             <Icon className={cn("w-3.5 h-3.5", config.color)} />
             <div className="flex items-baseline gap-1.5">
               <span className={cn("text-sm font-bold font-mono", config.color)}>{score}</span>
-              <span className="text-[10px] text-muted-foreground">Recruitment Advantage</span>
+              <span className="text-xs text-muted-foreground">Recruitment Advantage</span>
             </div>
           </div>
         </TooltipTrigger>
         <TooltipContent side="bottom" className="max-w-[240px] text-xs leading-relaxed">
           <p className="font-semibold mb-1">Recruitment Advantage Score ({score}/100)</p>
           <p className="text-muted-foreground mb-1">{config.desc}</p>
-          <Badge variant="outline" className={cn("text-[9px]", config.color)}>{config.label}</Badge>
+          <Badge variant="outline" className={cn("text-xs", config.color)}>{config.label}</Badge>
         </TooltipContent>
       </Tooltip>
     </TooltipProvider>

@@ -84,7 +84,7 @@ export function RecruiterIntelligencePanel({
             <div key={m.label} className={`p-4 border ${levelColor(m.level)}`}>
               <div className="flex items-center gap-1.5 mb-2">
                 <Icon className="w-3.5 h-3.5" strokeWidth={1.5} />
-                <span className="font-mono text-[10px] uppercase tracking-wider">{m.label}</span>
+                <span className="font-mono text-xs uppercase tracking-wider">{m.label}</span>
               </div>
               <div className="text-sm font-semibold">{m.value}</div>
             </div>

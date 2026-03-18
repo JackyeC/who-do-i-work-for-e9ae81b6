@@ -59,10 +59,10 @@ export function OfferCheckShareCard({
           <ClipboardCheck className="w-5 h-5 text-primary" />
           <div className="flex flex-col leading-none">
             <span className="font-bold text-foreground text-sm">Offer Check</span>
-            <span className="text-[8px] text-muted-foreground">by Jackye Clayton</span>
+            <span className="text-xs text-muted-foreground">by Jackye Clayton</span>
           </div>
           {confidenceRating && (
-            <Badge variant="secondary" className="text-[10px] ml-auto">
+            <Badge variant="secondary" className="text-xs ml-auto">
               {confidenceRating} confidence
             </Badge>
           )}
@@ -88,11 +88,11 @@ export function OfferCheckShareCard({
                   <Icon className="w-3 h-3 text-primary shrink-0" />
                   <span className="text-foreground font-medium flex-1">{label}</span>
                   {section.hasData ? (
-                    <Badge variant="secondary" className="text-[9px] h-4">
+                    <Badge variant="secondary" className="text-xs h-4">
                       {section.signals.length} signal{section.signals.length !== 1 ? 's' : ''}
                     </Badge>
                   ) : (
-                    <span className="text-[9px] text-muted-foreground">No public evidence</span>
+                    <span className="text-xs text-muted-foreground">No public evidence</span>
                   )}
                 </div>
               );
@@ -104,29 +104,29 @@ export function OfferCheckShareCard({
         <div className="grid grid-cols-3 gap-3 mb-4">
           <div className="text-center p-2 bg-muted/50 rounded-lg">
             <div className="text-lg font-bold text-foreground">{totalSignals}</div>
-            <div className="text-[10px] text-muted-foreground">Signals</div>
+            <div className="text-xs text-muted-foreground">Signals</div>
           </div>
           <div className="text-center p-2 bg-muted/50 rounded-lg">
             <div className="text-lg font-bold text-foreground">{sectionsWithSignals}/{totalSections}</div>
-            <div className="text-[10px] text-muted-foreground">Sections</div>
+            <div className="text-xs text-muted-foreground">Sections</div>
           </div>
           <div className="text-center p-2 bg-muted/50 rounded-lg">
             <div className="text-lg font-bold text-foreground">{transparencyCount}/7</div>
-            <div className="text-[10px] text-muted-foreground">Categories</div>
+            <div className="text-xs text-muted-foreground">Categories</div>
           </div>
         </div>
 
         {/* Footer */}
         <div className="flex items-center justify-between">
-          <span className="text-[10px] text-muted-foreground">
+           <span className="text-xs text-muted-foreground">
             Scanned {new Date(generatedAt).toLocaleDateString()}
           </span>
-          <span className="text-[10px] text-muted-foreground">
+          <span className="text-xs text-muted-foreground">
             offercheck.app
           </span>
         </div>
 
-        <p className="text-[9px] text-muted-foreground/60 mt-3 pt-2 border-t border-border">
+        <p className="text-xs text-muted-foreground/60 mt-3 pt-2 border-t border-border">
           Signals detected from public sources. No conclusions drawn. Interpretation is left to the user.
         </p>
       </CardContent>

@@ -11,7 +11,7 @@ export function LegalDisclaimer() {
             Not legal advice. Does not create an attorney-client relationship. Consult an attorney for contract reviews.
           </p>
         </div>
-        <p className="text-[10px] text-muted-foreground/70 text-center">
+        <p className="text-xs text-muted-foreground/70 text-center">
           All career decisions remain the sole responsibility of the user.{" "}
           <a href="/terms" className="text-primary hover:underline">Terms</a>{" · "}
           <a href="/privacy" className="text-primary hover:underline">Privacy</a>{" · "}

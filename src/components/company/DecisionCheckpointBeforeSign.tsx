@@ -253,7 +253,7 @@ export function DecisionCheckpointBeforeSign(props: DecisionCheckpointProps) {
             </div>
 
             <div className="px-6 pb-5">
-              <p className="text-[10px] text-muted-foreground/60 leading-relaxed">
+              <p className="text-xs text-muted-foreground/60 leading-relaxed">
                 This summary is generated from public records and your stated preferences. It does not represent complete information — always verify independently before making a decision.
               </p>
             </div>

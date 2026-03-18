@@ -116,7 +116,7 @@ export function QuestionsToAsk(props: Props) {
                 <div className="flex items-center gap-2">
                   <Icon className="w-3.5 h-3.5 text-primary" />
                   <span className="text-sm font-semibold text-foreground">{group.label}</span>
-                  <Badge variant="secondary" className="text-[10px]">{group.questions.length}</Badge>
+                  <Badge variant="secondary" className="text-xs">{group.questions.length}</Badge>
                 </div>
                 <ul className="space-y-1.5 ml-5">
                   {group.questions.map((q, i) => (

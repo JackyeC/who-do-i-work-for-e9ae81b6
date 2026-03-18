@@ -44,21 +44,21 @@ function StanceRow({ stance }: { stance: { id: string; topic: string; public_pos
           <Icon className={`w-3.5 h-3.5 ${config.color} shrink-0`} />
           <span className="text-xs font-medium text-foreground uppercase tracking-wider">{stance.topic}</span>
         </div>
-        <Badge className={`text-[10px] shrink-0 ${config.bg}`}>
+        <Badge className={`text-xs shrink-0 ${config.bg}`}>
           {config.label}
         </Badge>
       </div>
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
         <div className="rounded-lg bg-muted/30 p-3">
-          <p className="text-[10px] text-muted-foreground uppercase tracking-wider font-semibold mb-1.5">What they say</p>
+          <p className="text-xs text-muted-foreground uppercase tracking-wider font-semibold mb-1.5">What they say</p>
           <p className="text-sm text-foreground/85 leading-relaxed">{stance.public_position}</p>
         </div>
         <div className="rounded-lg bg-muted/30 p-3">
-          <p className="text-[10px] text-muted-foreground uppercase tracking-wider font-semibold mb-1.5">What records show</p>
+          <p className="text-xs text-muted-foreground uppercase tracking-wider font-semibold mb-1.5">What records show</p>
           <p className="text-sm text-foreground/85 leading-relaxed">{stance.spending_reality}</p>
         </div>
       </div>
-      <p className="text-[10px] text-muted-foreground mt-2 font-mono">Confidence: Medium — based on public spending patterns</p>
+      <p className="text-xs text-muted-foreground mt-2 font-mono">Confidence: Medium — based on public spending patterns</p>
     </div>
   );
 }
@@ -98,11 +98,11 @@ export function RealityGapBlock({ companyId, companyName, updatedAt }: RealityGa
         </div>
         <div className="flex items-center gap-2">
           {hasGaps && (
-            <Badge variant="outline" className="text-[10px] font-mono tracking-wider text-[hsl(var(--civic-yellow))]">
+             <Badge variant="outline" className="text-xs font-mono tracking-wider text-[hsl(var(--civic-yellow))]">
               {gapCount} gap{gapCount !== 1 ? "s" : ""} detected
             </Badge>
           )}
-          <Badge variant="outline" className="text-[10px] font-mono tracking-wider">
+          <Badge variant="outline" className="text-xs font-mono tracking-wider">
             Data: {recency}
           </Badge>
         </div>
@@ -137,7 +137,7 @@ export function RealityGapBlock({ companyId, companyName, updatedAt }: RealityGa
       )}
 
       <div className="px-5 py-3 border-t border-border/30">
-        <p className="text-[10px] text-muted-foreground text-center italic">
+        <p className="text-xs text-muted-foreground text-center italic">
           Signals do not imply wrongdoing. Data reflects public records and may be incomplete.
         </p>
       </div>

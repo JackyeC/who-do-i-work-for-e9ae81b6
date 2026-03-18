@@ -121,7 +121,7 @@ export function NegotiationBot({ flags, offerSalary, annualBaseline, companyName
                   <div>
                     <div className="flex items-center gap-2">
                       <span>{script.title}</span>
-                      <Badge variant="outline" className={cn("text-[9px]", config.color)}>
+                      <Badge variant="outline" className={cn("text-xs", config.color)}>
                         {config.label}
                       </Badge>
                     </div>

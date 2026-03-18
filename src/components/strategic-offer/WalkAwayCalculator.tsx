@@ -80,7 +80,7 @@ export function WalkAwayCalculator({ onComplete, offerSalary }: Props) {
                 </div>
                 <div className="flex-1 min-w-0">
                   <label className="text-sm font-medium text-foreground block">{cat.label}</label>
-                  <span className="text-[10px] text-muted-foreground">{cat.sublabel}</span>
+                  <span className="text-xs text-muted-foreground">{cat.sublabel}</span>
                 </div>
                 <div className="relative w-32">
                   <span className="absolute left-3 top-1/2 -translate-y-1/2 text-xs text-muted-foreground">$</span>
@@ -104,17 +104,17 @@ export function WalkAwayCalculator({ onComplete, offerSalary }: Props) {
           <CardContent className="p-6 space-y-4">
             <div className="grid grid-cols-2 gap-4 text-center">
               <div className="p-4 bg-muted/50 rounded-xl">
-                <p className="text-[10px] text-muted-foreground uppercase tracking-wider mb-1">Monthly Total</p>
+                <p className="text-xs text-muted-foreground uppercase tracking-wider mb-1">Monthly Total</p>
                 <p className="text-xl font-display font-bold text-foreground">
                   ${monthlyTotal.toLocaleString()}
                 </p>
               </div>
               <div className="p-4 bg-primary/5 rounded-xl border border-primary/10">
-                <p className="text-[10px] text-muted-foreground uppercase tracking-wider mb-1">Your Safety Line</p>
+                <p className="text-xs text-muted-foreground uppercase tracking-wider mb-1">Your Safety Line</p>
                 <p className="text-xl font-display font-bold text-primary">
                   ${annualBaseline.toLocaleString()}
                 </p>
-                <p className="text-[10px] text-muted-foreground">annual minimum</p>
+                <p className="text-xs text-muted-foreground">annual minimum</p>
               </div>
             </div>
 
@@ -124,7 +124,7 @@ export function WalkAwayCalculator({ onComplete, offerSalary }: Props) {
                 <h3 className="text-sm font-semibold text-foreground">Offer vs. Safety Line</h3>
                 <div className="space-y-2">
                   <div className="flex items-center gap-3">
-                    <span className="text-[10px] text-muted-foreground w-16 text-right">Safety Line</span>
+                    <span className="text-xs text-muted-foreground w-16 text-right">Safety Line</span>
                     <div className="flex-1 h-6 bg-muted rounded-full overflow-hidden relative">
                       <div
                         className="h-full bg-destructive/20 border-r-2 border-destructive rounded-full"
@@ -134,7 +134,7 @@ export function WalkAwayCalculator({ onComplete, offerSalary }: Props) {
                     <span className="text-xs font-mono text-muted-foreground w-20">${annualBaseline.toLocaleString()}</span>
                   </div>
                   <div className="flex items-center gap-3">
-                    <span className="text-[10px] text-muted-foreground w-16 text-right">Offer</span>
+                    <span className="text-xs text-muted-foreground w-16 text-right">Offer</span>
                     <div className="flex-1 h-6 bg-muted rounded-full overflow-hidden relative">
                       <div
                         className={cn(
