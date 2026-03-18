@@ -294,17 +294,22 @@ export function LeadershipInfluenceSection({
           <CardContent className="pt-0">
             <div className="divide-y divide-border">
               {darkMoney.map((dm) => (
-                <div key={dm.id} className="py-3 px-1">
-                  <div className="flex items-center justify-between">
-                    <div>
-                      <p className="text-sm font-semibold text-foreground">{dm.name}</p>
-                      <p className="text-xs text-muted-foreground">{dm.org_type} · {dm.relationship}</p>
-                    </div>
+                <button
+                  key={dm.id}
+                  onClick={() => setSelectedEntity(dm)}
+                  className="flex items-center justify-between w-full py-3 px-1 text-left hover:bg-muted/50 rounded-md transition-colors group"
+                >
+                  <div>
+                    <p className="text-sm font-semibold text-foreground">{dm.name}</p>
+                    <p className="text-xs text-muted-foreground">{dm.org_type} · {dm.relationship}</p>
+                  </div>
+                  <div className="flex items-center gap-2 shrink-0">
                     {dm.estimated_amount && dm.estimated_amount > 0 && (
                       <span className="text-sm font-mono font-medium text-foreground">{formatCurrency(dm.estimated_amount)}</span>
                     )}
+                    <ChevronRight className="w-4 h-4 text-muted-foreground group-hover:text-foreground transition-colors" />
                   </div>
-                </div>
+                </button>
               ))}
             </div>
           </CardContent>
