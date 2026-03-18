@@ -80,7 +80,7 @@ export function HiringScanContextCard({ companyId, companyName }: HiringScanCont
       {/* Header */}
       <div className="flex items-center gap-2 px-4 py-3 border-b border-border bg-muted/30">
         <Search className="w-4 h-4 text-primary" strokeWidth={1.5} />
-        <span className="font-mono text-[10px] tracking-[0.15em] uppercase text-primary font-semibold">
+        <span className="font-mono text-xs tracking-[0.15em] uppercase text-primary font-semibold">
           Hiring Scan Context
         </span>
       </div>
