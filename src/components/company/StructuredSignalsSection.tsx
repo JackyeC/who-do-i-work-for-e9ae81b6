@@ -86,7 +86,7 @@ function SignalCategory({ title, signals, emptyType, companyName, scanContext }:
               )}
               {/* Detail summary */}
               <div className="flex items-start gap-3 text-sm">
-                <div className="flex-1 text-foreground/85 leading-relaxed">{s.summary}</div>
+                <div className="flex-1 text-foreground/85 leading-relaxed">{safeSignalSummary(s.summary)}</div>
                 <div className="flex items-center gap-2 shrink-0">
                   <div className="flex items-center gap-1">
                     <div className={cn("w-1.5 h-1.5 rounded-full", RECENCY_DOT[s.recency] || RECENCY_DOT["Unknown"])} />
