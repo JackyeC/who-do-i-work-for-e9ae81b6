@@ -135,6 +135,7 @@ export default function JobDetailPage() {
 
   // Simulator config
   const simConfig: SimulatorConfig = {
+    perspective: "candidate",
     company: co?.name || "",
     role: job?.title || "",
     baseSalary: job?.salary_range || "",
