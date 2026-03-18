@@ -24,6 +24,7 @@ export interface JobBoardFilterState {
   valuesAligned: boolean;
   freshOnly: boolean;
   salaryMin: number;
+  location: string;
 }
 
 interface JobBoardFiltersProps {
