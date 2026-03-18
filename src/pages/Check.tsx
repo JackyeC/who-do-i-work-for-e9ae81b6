@@ -31,11 +31,27 @@ import {
 import { toast } from "sonner";
 import { formatDistanceToNow } from "date-fns";
 
+const SCAN_STEPS = [
+  "Finding careers page…",
+  "Scanning hiring signals…",
+  "Pulling open roles…",
+];
+
 function AddCompanyCard({ companyName, onDiscovered }: { companyName: string; onDiscovered: (id: string, slug: string, name: string) => void }) {
   const [scanning, setScanning] = useState(false);
+  const [scanStep, setScanStep] = useState(0);
+
+  useEffect(() => {
+    if (!scanning) return;
+    const interval = setInterval(() => {
+      setScanStep((s) => Math.min(s + 1, SCAN_STEPS.length - 1));
+    }, 3000);
+    return () => clearInterval(interval);
+  }, [scanning]);
 
   const handleScan = async () => {
     setScanning(true);
+    setScanStep(0);
     try {
       const { data, error } = await supabase.functions.invoke("company-discover", {
         body: { companyName, searchQuery: companyName },
@@ -43,7 +59,7 @@ function AddCompanyCard({ companyName, onDiscovered }: { companyName: string; on
       if (error) throw error;
       if (data?.companyId && data?.slug) {
         toast.success("Company discovered! Loading intelligence…");
-        onDiscovered(data.companyId, data.slug, data.name || companyName);
+        onDiscovered(data.companyId, data.slug, data.identity?.name || companyName);
       } else {
         toast.error("No matching company found. Try a different name.");
       }
@@ -55,12 +71,30 @@ function AddCompanyCard({ companyName, onDiscovered }: { companyName: string; on
   };
 
   return (
-    <div className="p-4 text-center space-y-2">
+    <div className="p-4 text-center space-y-3">
       <p className="text-sm text-muted-foreground">
         Can't find <span className="font-semibold text-foreground">{companyName}</span>?
       </p>
       <p className="text-xs text-muted-foreground">If we don't have it, we'll build it.</p>
-      <Button onClick={handleScan} disabled={scanning} size="sm" className="gap-2 mt-1">
+      {scanning && (
+        <div className="space-y-2 py-2">
+          {SCAN_STEPS.map((step, i) => (
+            <div key={step} className="flex items-center gap-2 justify-center">
+              {i < scanStep ? (
+                <ShieldCheck className="w-3.5 h-3.5 text-primary" />
+              ) : i === scanStep ? (
+                <Loader2 className="w-3.5 h-3.5 animate-spin text-primary" />
+              ) : (
+                <div className="w-3.5 h-3.5 rounded-full border border-muted-foreground/30" />
+              )}
+              <span className={`text-xs ${i <= scanStep ? 'text-foreground' : 'text-muted-foreground/50'}`}>
+                {step}
+              </span>
+            </div>
+          ))}
+        </div>
+      )}
+      <Button onClick={handleScan} disabled={scanning} size="sm" className="gap-2">
         {scanning ? (
           <>
             <Loader2 className="w-3.5 h-3.5 animate-spin" />
@@ -74,6 +108,172 @@ function AddCompanyCard({ companyName, onDiscovered }: { companyName: string; on
         )}
       </Button>
     </div>
+  );
+}
+
+const WORK_MODE_COLORS: Record<string, string> = {
+  remote: "bg-emerald-500/10 text-emerald-700 border-emerald-500/20",
+  hybrid: "bg-amber-500/10 text-amber-700 border-amber-500/20",
+  onsite: "bg-sky-500/10 text-sky-700 border-sky-500/20",
+};
+
+function OpenRolesSection({ companyId, companyName }: { companyId: string; companyName: string }) {
+  const pollingCountRef = useRef(0);
+  const [shouldPoll, setShouldPoll] = useState(true);
+
+  const { data: jobs, isLoading } = useQuery({
+    queryKey: ["check-open-roles", companyId],
+    queryFn: async () => {
+      const { data } = await supabase
+        .from("company_jobs")
+        .select("id, title, location, work_mode, department, salary_range, application_url, posted_at, source_url")
+        .eq("company_id", companyId)
+        .eq("is_active", true)
+        .order("posted_at", { ascending: false })
+        .limit(20);
+      return data || [];
+    },
+    enabled: !!companyId,
+    refetchInterval: shouldPoll ? 5000 : false,
+  });
+
+  useEffect(() => {
+    if (jobs && jobs.length > 0) {
+      setShouldPoll(false);
+    } else {
+      pollingCountRef.current += 1;
+      if (pollingCountRef.current >= 12) {
+        setShouldPoll(false);
+      }
+    }
+  }, [jobs]);
+
+  // Reset polling when companyId changes
+  useEffect(() => {
+    pollingCountRef.current = 0;
+    setShouldPoll(true);
+  }, [companyId]);
+
+  if (isLoading && (!jobs || jobs.length === 0)) {
+    return (
+      <Card className="border-border/40">
+        <CardContent className="p-5 space-y-3">
+          <div className="flex items-center gap-2">
+            <Briefcase className="w-4 h-4 text-primary" />
+            <h3 className="text-sm font-semibold font-display text-foreground">Open Roles</h3>
+          </div>
+          <div className="space-y-2 py-2">
+            {SCAN_STEPS.map((step, i) => (
+              <div key={step} className="flex items-center gap-2">
+                {i === 0 ? (
+                  <Loader2 className="w-3.5 h-3.5 animate-spin text-primary" />
+                ) : (
+                  <div className="w-3.5 h-3.5 rounded-full border border-muted-foreground/30" />
+                )}
+                <span className={`text-xs ${i === 0 ? 'text-foreground' : 'text-muted-foreground/50'}`}>
+                  {step}
+                </span>
+              </div>
+            ))}
+          </div>
+        </CardContent>
+      </Card>
+    );
+  }
+
+  if (!jobs || jobs.length === 0) {
+    if (shouldPoll) {
+      return (
+        <Card className="border-border/40">
+          <CardContent className="p-5 space-y-3">
+            <div className="flex items-center gap-2">
+              <Briefcase className="w-4 h-4 text-primary" />
+              <h3 className="text-sm font-semibold font-display text-foreground">Open Roles</h3>
+            </div>
+            <div className="flex items-center gap-2 py-2">
+              <Loader2 className="w-3.5 h-3.5 animate-spin text-primary" />
+              <span className="text-xs text-muted-foreground">Scanning {companyName} careers page…</span>
+            </div>
+          </CardContent>
+        </Card>
+      );
+    }
+    return (
+      <Card className="border-border/40">
+        <CardContent className="p-5 space-y-2">
+          <div className="flex items-center gap-2">
+            <Briefcase className="w-4 h-4 text-primary" />
+            <h3 className="text-sm font-semibold font-display text-foreground">Open Roles</h3>
+          </div>
+          <p className="text-xs text-muted-foreground">
+            Still scanning careers page — check back soon.
+          </p>
+        </CardContent>
+      </Card>
+    );
+  }
+
+  return (
+    <Card className="border-border/40">
+      <CardContent className="p-5 space-y-3">
+        <div className="flex items-center justify-between">
+          <div className="flex items-center gap-2">
+            <Briefcase className="w-4 h-4 text-primary" />
+            <h3 className="text-sm font-semibold font-display text-foreground">Open Roles</h3>
+            <Badge variant="secondary" className="text-[10px]">{jobs.length}</Badge>
+          </div>
+        </div>
+        <div className="space-y-2 max-h-[400px] overflow-y-auto pr-1">
+          {jobs.map((job) => (
+            <a
+              key={job.id}
+              href={job.application_url || job.source_url || '#'}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="flex items-start justify-between gap-3 p-3 rounded-lg border border-border/50 hover:border-primary/30 hover:bg-primary/[0.02] transition-all group"
+            >
+              <div className="min-w-0 flex-1">
+                <p className="text-sm font-medium text-foreground truncate group-hover:text-primary transition-colors">
+                  {job.title}
+                </p>
+                <div className="flex items-center gap-2 mt-1 flex-wrap">
+                  {job.location && (
+                    <div className="flex items-center gap-1 text-xs text-muted-foreground">
+                      <MapPin className="w-3 h-3" />
+                      {job.location}
+                    </div>
+                  )}
+                  {job.department && (
+                    <>
+                      <span className="text-xs text-muted-foreground">·</span>
+                      <span className="text-xs text-muted-foreground">{job.department}</span>
+                    </>
+                  )}
+                  {job.salary_range && (
+                    <>
+                      <span className="text-xs text-muted-foreground">·</span>
+                      <span className="text-xs text-foreground font-medium">{job.salary_range}</span>
+                    </>
+                  )}
+                </div>
+              </div>
+              <div className="flex flex-col items-end gap-1.5 shrink-0">
+                {job.work_mode && (
+                  <Badge variant="outline" className={`text-[10px] py-0 ${WORK_MODE_COLORS[job.work_mode] || ''}`}>
+                    {job.work_mode}
+                  </Badge>
+                )}
+                {job.posted_at && (
+                  <span className="text-[10px] text-muted-foreground">
+                    {formatDistanceToNow(new Date(job.posted_at), { addSuffix: true })}
+                  </span>
+                )}
+              </div>
+            </a>
+          ))}
+        </div>
+      </CardContent>
+    </Card>
   );
 }
 
