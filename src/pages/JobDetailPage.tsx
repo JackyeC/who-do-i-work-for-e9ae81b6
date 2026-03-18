@@ -1,3 +1,4 @@
+import { useState } from "react";
 import { useParams, Link } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
@@ -10,16 +11,27 @@ import { CompanyLogo } from "@/components/CompanyLogo";
 import { JobPostingSchema } from "@/components/jobs/JobPostingSchema";
 import { JobQualityBadge } from "@/components/jobs/JobQualityBadge";
 import { WhatThisMeansForYou } from "@/components/jobs/WhatThisMeansForYou";
+import { JobFitPanel } from "@/components/jobs/JobFitPanel";
+import { OfferIntelligence } from "@/components/jobs/OfferIntelligence";
+import { LeverageScore, computeLeverage } from "@/components/jobs/LeverageScore";
+import { RealitySignals } from "@/components/jobs/RealitySignals";
+import { WhatToAsk } from "@/components/jobs/WhatToAsk";
+import { useJobPreferences } from "@/hooks/use-job-preferences";
+import { evaluateJobFit } from "@/lib/jobFitEngine";
 import { usePageSEO } from "@/hooks/use-page-seo";
 import { EasyApplyButton } from "@/components/jobs/EasyApplyButton";
 import { SaveJobButton } from "@/components/jobs/SaveJobButton";
+import { Collapsible, CollapsibleTrigger, CollapsibleContent } from "@/components/ui/collapsible";
+import { SimulatorChat } from "@/components/negotiation/SimulatorChat";
+import type { SimulatorConfig } from "@/components/negotiation/SimulatorSetup";
+import type { FeedbackData } from "@/components/negotiation/RoundFeedback";
 import {
   ExternalLink, MapPin, Wifi, Monitor, Home, DollarSign,
   Shield, ShieldCheck, Network, Building2, AlertTriangle, Eye, ChevronLeft, Briefcase, MessageSquare,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Loader2 } from "lucide-react";
-import { evaluateJobQuality, detectRepost, hasEvergreenSignals } from "@/lib/jobQuality";
+import { evaluateJobQuality, hasEvergreenSignals } from "@/lib/jobQuality";
 import { differenceInDays } from "date-fns";
 
 const WORK_MODE_META: Record<string, { icon: any; label: string }> = {
@@ -58,6 +70,10 @@ function trackApplyClick(jobId: string, companyId: string, url: string) {
 
 export default function JobDetailPage() {
   const { id } = useParams<{ id: string }>();
+  const { preferences } = useJobPreferences();
+  const [simOpen, setSimOpen] = useState(false);
+  const [simMessages, setSimMessages] = useState<{ role: "user" | "assistant"; content: string }[]>([]);
+  const [simFeedbacks, setSimFeedbacks] = useState<FeedbackData[]>([]);
 
   const { data: job, isLoading } = useQuery({
     queryKey: ["job-detail", id],
@@ -73,7 +89,6 @@ export default function JobDetailPage() {
     enabled: !!id,
   });
 
-  // Fetch alignment signals
   const { data: alignmentSignals } = useQuery({
     queryKey: ["alignment-signals-detail", job?.company_id],
     queryFn: async () => {
@@ -87,7 +102,6 @@ export default function JobDetailPage() {
     staleTime: 5 * 60 * 1000,
   });
 
-  // Fetch research
   const { data: research } = useQuery({
     queryKey: ["job-research-snippet", job?.company_id],
     queryFn: async () => {
@@ -114,6 +128,24 @@ export default function JobDetailPage() {
   const qualitySignal = job ? evaluateJobQuality(job) : null;
   const isEvergreen = job ? hasEvergreenSignals(job.description) : false;
   const jobAgeDays = job ? differenceInDays(new Date(), new Date(job.posted_at || job.created_at)) : 0;
+
+  // Fit + leverage (computed once)
+  const fit = job ? evaluateJobFit(job, preferences) : null;
+  const leverage = job ? computeLeverage(job, civicScore, false) : null;
+
+  // Simulator config
+  const simConfig: SimulatorConfig = {
+    company: co?.name || "",
+    role: job?.title || "",
+    baseSalary: job?.salary_range || "",
+    bonus: "",
+    equity: "",
+    location: job?.location || "",
+    workMode: job?.work_mode || "hybrid",
+    negotiationStyle: "collaborative",
+    riskTolerance: "balanced",
+    scenario: "salary",
+  };
 
   const pageTitle = job ? `${job.title} at ${co?.name || "Unknown"} | Job Board` : "Job Details";
   const pageDesc = job
@@ -157,7 +189,6 @@ export default function JobDetailPage() {
       <Header />
       {job && <JobPostingSchema job={job} />}
       <main className="flex-1 container mx-auto px-4 py-8 max-w-3xl">
-        {/* Back link */}
         <Link to="/job-board" className="inline-flex items-center gap-1 text-sm text-muted-foreground hover:text-foreground mb-6">
           <ChevronLeft className="w-4 h-4" /> Back to Job Board
         </Link>
@@ -182,7 +213,6 @@ export default function JobDetailPage() {
                 </Badge>
               )}
             </div>
-            {/* Meta strip */}
             <div className="flex flex-wrap items-center gap-3 text-xs text-muted-foreground mt-2">
               {job.location && (
                 <span className="flex items-center gap-1"><MapPin className="w-3 h-3" /> {job.location}</span>
@@ -193,14 +223,9 @@ export default function JobDetailPage() {
               {job.employment_type && (
                 <span className="flex items-center gap-1"><Briefcase className="w-3 h-3" /> {job.employment_type}</span>
               )}
-              {job.seniority_level && (
-                <Badge variant="outline" className="text-[10px] py-0">{job.seniority_level}</Badge>
-              )}
-              {job.department && (
-                <Badge variant="outline" className="text-[10px] py-0">{job.department}</Badge>
-              )}
+              {job.seniority_level && <Badge variant="outline" className="text-[10px] py-0">{job.seniority_level}</Badge>}
+              {job.department && <Badge variant="outline" className="text-[10px] py-0">{job.department}</Badge>}
             </div>
-            {/* Quality badge */}
             {qualitySignal && (
               <div className="mt-2">
                 <JobQualityBadge signal={qualitySignal} isEvergreen={isEvergreen} />
@@ -245,6 +270,38 @@ export default function JobDetailPage() {
           />
         </div>
 
+        {/* ═══ INTELLIGENCE DECISION LAYER ═══ */}
+        <div className="space-y-4 mb-6">
+          {/* Fit Score */}
+          {fit && <JobFitPanel job={job} />}
+
+          {/* Offer Intelligence + Leverage side by side on md */}
+          {leverage && (
+            <div className="grid md:grid-cols-2 gap-4">
+              <OfferIntelligence salaryRange={job.salary_range} leverageLevel={leverage.level} civicScore={civicScore} />
+              <LeverageScore leverage={leverage} />
+            </div>
+          )}
+
+          {/* Reality Signals */}
+          <RealitySignals
+            isRepost={false}
+            hasSalary={!!job.salary_range}
+            isEvergreen={isEvergreen}
+            qualityTier={qualitySignal?.tier || "recent"}
+            civicScore={civicScore}
+          />
+
+          {/* What to Ask */}
+          <WhatToAsk
+            jobTitle={job.title}
+            companyName={co?.name || "Unknown"}
+            hasSalary={!!job.salary_range}
+            civicScore={civicScore}
+            mismatches={fit?.mismatches || []}
+          />
+        </div>
+
         {/* Strategic Context */}
         {co?.jackye_insight && (
           <div className="p-4 rounded-lg border border-border/50 bg-muted/20 mb-4">
@@ -275,7 +332,6 @@ export default function JobDetailPage() {
           </div>
         )}
 
-        {/* Company snapshot */}
         {co?.description && (
           <div className="mb-6">
             <h2 className="text-sm font-semibold text-foreground uppercase tracking-wider mb-3">About {co.name}</h2>
@@ -300,7 +356,7 @@ export default function JobDetailPage() {
         </div>
 
         {/* CTA buttons */}
-        <div className="flex flex-col sm:flex-row gap-3">
+        <div className="flex flex-col sm:flex-row gap-3 mb-6">
           {job.url ? (
             <Button className="flex-1 gap-2" size="lg" asChild
               onClick={() => trackApplyClick(job.id, job.company_id, job.url!)}>
@@ -320,12 +376,32 @@ export default function JobDetailPage() {
               <Building2 className="w-4 h-4" /> Full Company Intelligence
             </Link>
           </Button>
-          <Button variant="secondary" size="lg" className="gap-2" asChild>
-            <Link to={`/negotiation-simulator?company=${encodeURIComponent(co?.name || "")}&role=${encodeURIComponent(job.title)}&salary=${encodeURIComponent(job.salary_range || "")}`}>
-              <MessageSquare className="w-4 h-4" /> Practice the Conversation
-            </Link>
-          </Button>
         </div>
+
+        {/* Inline Negotiation Simulator */}
+        <Collapsible open={simOpen} onOpenChange={setSimOpen}>
+          <CollapsibleTrigger asChild>
+            <Button variant="secondary" size="lg" className="w-full gap-2 mb-2">
+              <MessageSquare className="w-4 h-4" />
+              {simOpen ? "Close Negotiation Simulator" : "Practice the Negotiation"}
+            </Button>
+          </CollapsibleTrigger>
+          <CollapsibleContent>
+            <div className="border border-border/50 rounded-lg p-4 bg-muted/10">
+              <p className="text-xs text-muted-foreground mb-3">
+                Practice negotiating for <span className="font-medium text-foreground">{job.title}</span> at <span className="font-medium text-foreground">{co?.name}</span>
+              </p>
+              <SimulatorChat
+                config={simConfig}
+                messages={simMessages}
+                setMessages={setSimMessages}
+                feedbacks={simFeedbacks}
+                setFeedbacks={setSimFeedbacks}
+                onEndSession={() => setSimOpen(false)}
+              />
+            </div>
+          </CollapsibleContent>
+        </Collapsible>
       </main>
       <Footer />
     </div>

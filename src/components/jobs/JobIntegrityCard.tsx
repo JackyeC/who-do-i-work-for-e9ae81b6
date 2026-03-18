@@ -51,7 +51,7 @@ interface JobIntegrityCardProps {
   leverageLevel?: "low" | "medium" | "high";
 }
 
-export function JobIntegrityCard({ job, matchCount = 0, matchedCategories = [], fitBadges = [] }: JobIntegrityCardProps) {
+export function JobIntegrityCard({ job, matchCount = 0, matchedCategories = [], fitBadges = [], fitScore, leverageLevel }: JobIntegrityCardProps) {
   const co = job.companies;
   const isCertified = co?.vetted_status === "certified";
   const isVerified = co?.vetted_status === "verified";
