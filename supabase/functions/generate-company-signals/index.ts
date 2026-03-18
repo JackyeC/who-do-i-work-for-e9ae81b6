@@ -261,7 +261,7 @@ Deno.serve(async (req) => {
     let stabilityConf: string;
 
     if (recentWarns.length > 0) {
-      const totalAffected = recentWarns.reduce((sum, w) => sum + (w.num_affected || 0), 0);
+      const totalAffected = recentWarns.reduce((sum, w) => sum + (w.employees_affected || 0), 0);
       stabilityNorm = 'low';
       stabilityDir = 'decrease';
       stabilitySummary = `${recentWarns.length} WARN notice(s) filed in the past year` +
