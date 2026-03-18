@@ -141,8 +141,9 @@ function scoreTransparency(data: PolicyDataInput): { score: number; signals: str
 
   const compTransp = data.signalScans.find(s => s.signal_category === "compensation_transparency");
   if (compTransp && compTransp.signal_value != null) {
-    if (compTransp.signal_value >= 70) { score += 20; signals.push("Compensation transparency signals are strong"); }
-    else if (compTransp.signal_value >= 40) { score += 5; signals.push("Some compensation transparency signals detected"); }
+    const val = Number(compTransp.signal_value);
+    if (val >= 70) { score += 20; signals.push("Compensation transparency signals are strong"); }
+    else if (val >= 40) { score += 5; signals.push("Some compensation transparency signals detected"); }
     else { score -= 10; signals.push("Weak compensation transparency signals"); }
   }
 
