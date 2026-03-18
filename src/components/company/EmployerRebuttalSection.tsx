@@ -100,7 +100,7 @@ export function EmployerRebuttalSection({ companyId, companyName }: EmployerRebu
                   <p className="text-sm text-foreground leading-relaxed">{r.rebuttal_text}</p>
                   {r.evidence_url && (
                     <a href={r.evidence_url} target="_blank" rel="noopener noreferrer"
-                      className="text-[10px] text-primary hover:underline inline-flex items-center gap-0.5 mt-2">
+                      className="text-xs text-primary hover:underline inline-flex items-center gap-0.5 mt-2">
                       Supporting Record <ExternalLink className="w-2.5 h-2.5" />
                     </a>
                   )}
