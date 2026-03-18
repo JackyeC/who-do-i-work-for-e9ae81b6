@@ -133,7 +133,7 @@ export function SmartJobRow({ job, isSelected, matchScore, matchLabel, onClick }
 
         {/* Seniority */}
         {job.seniority_level && (
-          <Badge variant="outline" className="text-[10px] py-0 text-muted-foreground">
+          <Badge variant="outline" className="text-xs py-0 text-muted-foreground">
             {job.seniority_level}
           </Badge>
         )}
