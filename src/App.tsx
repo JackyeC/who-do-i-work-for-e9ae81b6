@@ -97,6 +97,7 @@ const CorporateAlignment = lazy(() => import("./pages/CorporateAlignment"));
 const AskJackyeWidget = lazy(() => import("./components/AskJackyeWidget").then(m => ({ default: m.AskJackyeWidget })));
 const BetaFeedbackWidget = lazy(() => import("./components/BetaFeedbackWidget").then(m => ({ default: m.BetaFeedbackWidget })));
 const CookieNotice = lazy(() => import("./components/CookieNotice").then(m => ({ default: m.CookieNotice })));
+const PreviewTierToolbar = lazy(() => import("./components/PreviewTierToolbar").then(m => ({ default: m.PreviewTierToolbar })));
 
 const queryClient = new QueryClient();
 
