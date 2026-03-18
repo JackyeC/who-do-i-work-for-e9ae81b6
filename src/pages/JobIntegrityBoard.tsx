@@ -128,6 +128,12 @@ export default function JobIntegrityBoard() {
       );
     }
 
+    // Location filter
+    if (filters.location.trim()) {
+      const loc = filters.location.toLowerCase();
+      result = result.filter((j: any) => j.location?.toLowerCase().includes(loc));
+    }
+
     // Work mode
     if (filters.workMode !== "all") {
       result = result.filter((j: any) => j.work_mode === filters.workMode);
