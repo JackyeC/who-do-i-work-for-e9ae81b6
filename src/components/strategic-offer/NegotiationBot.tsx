@@ -22,6 +22,7 @@ interface Props {
   annualBaseline: number;
   companyName: string;
   roleTitle: string;
+  situations?: Situation[];
 }
 
 const LEVEL_CONFIG = {
