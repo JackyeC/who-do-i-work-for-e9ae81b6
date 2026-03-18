@@ -127,6 +127,13 @@ export function MismatchEngine({ stances, darkMoney, tradeAssociations, companyN
           </div>
         </div>
       )}
+
+      <EntityDetailDrawer
+        entity={selectedEntity}
+        companyName={companyName}
+        open={!!selectedEntity}
+        onOpenChange={(open) => { if (!open) setSelectedEntity(null); }}
+      />
     </div>
   );
 }

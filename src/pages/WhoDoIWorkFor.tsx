@@ -451,16 +451,23 @@ export default function WhoDoIWorkFor() {
                   <CardContent>
                     <div className="space-y-2">
                       {(darkMoney || []).map((d) => (
-                        <div key={d.id} className="flex items-center justify-between p-3 rounded-lg border border-destructive/20 bg-destructive/5">
+                        <button
+                          key={d.id}
+                          onClick={() => setSelectedDarkEntity(d)}
+                          className="flex items-center justify-between w-full p-3 rounded-lg border border-destructive/20 bg-destructive/5 text-left hover:bg-destructive/10 transition-colors group"
+                        >
                           <div>
                             <span className="font-medium text-foreground">{d.name}</span>
                             <p className="text-xs text-muted-foreground">{d.org_type} · {d.relationship}</p>
                             {d.description && <p className="text-xs text-muted-foreground mt-1">{d.description}</p>}
                           </div>
-                          {d.estimated_amount && (
-                            <span className="font-semibold text-foreground">{formatCurrency(d.estimated_amount)}</span>
-                          )}
-                        </div>
+                          <div className="flex items-center gap-2 shrink-0">
+                            {d.estimated_amount && (
+                              <span className="font-semibold text-foreground">{formatCurrency(d.estimated_amount)}</span>
+                            )}
+                            <ChevronRight className="w-4 h-4 text-muted-foreground group-hover:text-foreground transition-colors" />
+                          </div>
+                        </button>
                       ))}
                     </div>
                   </CardContent>

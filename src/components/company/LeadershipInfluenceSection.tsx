@@ -337,6 +337,13 @@ export function LeadershipInfluenceSection({
           </CardContent>
         </Card>
       )}
+
+      <EntityDetailDrawer
+        entity={selectedEntity}
+        companyName={companyName}
+        open={!!selectedEntity}
+        onOpenChange={(open) => { if (!open) setSelectedEntity(null); }}
+      />
     </section>
   );
 }
