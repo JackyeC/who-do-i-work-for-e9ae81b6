@@ -5,19 +5,45 @@ import { Header } from "@/components/Header";
 import { Footer } from "@/components/Footer";
 import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
 import { JobIntegrityCard } from "@/components/jobs/JobIntegrityCard";
 import { AskJackyeWidget } from "@/components/jobs/AskJackyeWidget";
 import { EmptyState } from "@/components/EmptyState";
-import { Loader2, Search, Shield, ShieldCheck, Briefcase, Landmark, Scale } from "lucide-react";
+import { Loader2, Search, Shield, ShieldCheck, Briefcase } from "lucide-react";
 import { usePageSEO } from "@/hooks/use-page-seo";
 
-type AlignmentFilter = "all" | "traditional" | "progressive";
+/**
+ * Reads the user's saved Work Profile preferences from localStorage
+ * and returns a set of category keywords to boost in sorting.
+ */
+function getUserPreferenceCategories(): Set<string> {
+  try {
+    const raw = localStorage.getItem("userWorkProfile");
+    if (!raw) return new Set();
+    const profile = JSON.parse(raw);
+    const cats = new Set<string>();
+
+    // Map work profile priorities to institutional signal categories
+    if (profile.priorities?.includes("values")) {
+      cats.add("progress_policy");
+      cats.add("traditional_policy");
+    }
+    if (profile.priorities?.includes("stability")) cats.add("labor_policy");
+    if (profile.priorities?.includes("sustainability")) cats.add("climate_policy");
+    if (profile.priorities?.includes("equity")) cats.add("equity_policy");
+
+    // Map avoidances
+    if (profile.avoidances?.includes("fossil_fuel")) cats.add("climate_policy");
+    if (profile.avoidances?.includes("union_busting")) cats.add("labor_policy");
+
+    return cats;
+  } catch {
+    return new Set();
+  }
+}
 
 export default function JobIntegrityBoard() {
   const [search, setSearch] = useState("");
   const [filter, setFilter] = useState<string>("all");
-  const [alignment, setAlignment] = useState<AlignmentFilter>("all");
 
   usePageSEO({
     title: "Job Integrity Board | Who Do I Work For?",
@@ -48,7 +74,7 @@ export default function JobIntegrityBoard() {
     },
   });
 
-  // Fetch alignment signals for company-level filtering
+  // Fetch alignment signals for preference-based sorting
   const companyIds = useMemo(() => jobs?.map((j: any) => j.company_id).filter(Boolean) || [], [jobs]);
 
   const { data: alignmentSignals } = useQuery({
@@ -84,19 +110,25 @@ export default function JobIntegrityBoard() {
       );
     }
 
-    // Values alignment filter
-    if (alignment !== "all" && alignmentSignals) {
-      result = result.filter((j: any) => {
-        const categories = alignmentSignals[j.company_id];
-        if (!categories) return false;
-        if (alignment === "traditional") return categories.has("traditional_policy");
-        if (alignment === "progressive") return categories.has("progress_policy");
-        return true;
+    // Auto-sort by user's saved preferences (silent ranking boost)
+    const prefCategories = getUserPreferenceCategories();
+    if (prefCategories.size > 0 && alignmentSignals) {
+      result = [...result].sort((a: any, b: any) => {
+        // Featured jobs always stay on top
+        if (a.is_featured !== b.is_featured) return a.is_featured ? -1 : 1;
+
+        const aCats = alignmentSignals[a.company_id];
+        const bCats = alignmentSignals[b.company_id];
+        const aScore = aCats ? [...prefCategories].filter(c => aCats.has(c)).length : 0;
+        const bScore = bCats ? [...prefCategories].filter(c => bCats.has(c)).length : 0;
+
+        if (aScore !== bScore) return bScore - aScore;
+        return 0; // preserve existing order (created_at desc)
       });
     }
 
     return result;
-  }, [jobs, search, alignment, alignmentSignals]);
+  }, [jobs, search, alignmentSignals]);
 
   return (
     <div className="min-h-screen flex flex-col bg-background">
@@ -113,62 +145,30 @@ export default function JobIntegrityBoard() {
         </div>
 
         {/* Filters */}
-        <div className="flex flex-col gap-3 mb-6">
-          <div className="flex flex-col sm:flex-row gap-3">
-            <div className="relative flex-1">
-              <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
-              <Input
-                value={search}
-                onChange={e => setSearch(e.target.value)}
-                placeholder="Search jobs, companies, locations..."
-                className="pl-9"
-              />
-            </div>
-            <Select value={filter} onValueChange={setFilter}>
-              <SelectTrigger className="w-[180px]">
-                <SelectValue placeholder="All companies" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="all">All Companies</SelectItem>
-                <SelectItem value="verified">
-                  <span className="flex items-center gap-1.5"><Shield className="w-3 h-3" /> Verified+</span>
-                </SelectItem>
-                <SelectItem value="certified">
-                  <span className="flex items-center gap-1.5"><ShieldCheck className="w-3 h-3" /> Certified Only</span>
-                </SelectItem>
-              </SelectContent>
-            </Select>
+        <div className="flex flex-col sm:flex-row gap-3 mb-6">
+          <div className="relative flex-1">
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
+            <Input
+              value={search}
+              onChange={e => setSearch(e.target.value)}
+              placeholder="Search jobs, companies, locations..."
+              className="pl-9"
+            />
           </div>
-
-          {/* Values Alignment Toggle */}
-          <div className="flex items-center gap-3">
-            <span className="text-xs font-medium text-muted-foreground uppercase tracking-wider">Values:</span>
-            <ToggleGroup
-              type="single"
-              value={alignment}
-              onValueChange={(v) => v && setAlignment(v as AlignmentFilter)}
-              className="bg-muted/30 rounded-full p-0.5 border border-border/50"
-            >
-              <ToggleGroupItem
-                value="all"
-                className="rounded-full px-4 py-1.5 text-xs font-medium data-[state=on]:bg-primary data-[state=on]:text-primary-foreground"
-              >
-                <Scale className="w-3 h-3 mr-1" /> All
-              </ToggleGroupItem>
-              <ToggleGroupItem
-                value="traditional"
-                className="rounded-full px-4 py-1.5 text-xs font-medium data-[state=on]:bg-primary data-[state=on]:text-primary-foreground"
-              >
-                <Landmark className="w-3 h-3 mr-1" /> Heritage
-              </ToggleGroupItem>
-              <ToggleGroupItem
-                value="progressive"
-                className="rounded-full px-4 py-1.5 text-xs font-medium data-[state=on]:bg-primary data-[state=on]:text-primary-foreground"
-              >
-                <ShieldCheck className="w-3 h-3 mr-1" /> Progressive
-              </ToggleGroupItem>
-            </ToggleGroup>
-          </div>
+          <Select value={filter} onValueChange={setFilter}>
+            <SelectTrigger className="w-[180px]">
+              <SelectValue placeholder="All companies" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="all">All Companies</SelectItem>
+              <SelectItem value="verified">
+                <span className="flex items-center gap-1.5"><Shield className="w-3 h-3" /> Verified+</span>
+              </SelectItem>
+              <SelectItem value="certified">
+                <span className="flex items-center gap-1.5"><ShieldCheck className="w-3 h-3" /> Certified Only</span>
+              </SelectItem>
+            </SelectContent>
+          </Select>
         </div>
 
         {/* Results */}
@@ -180,7 +180,7 @@ export default function JobIntegrityBoard() {
           <EmptyState
             icon={Briefcase}
             title="No jobs found"
-            description={search || alignment !== "all" ? "Try adjusting your filters" : "No approved job listings yet. Check back soon!"}
+            description={search ? "Try adjusting your search" : "No approved job listings yet. Check back soon!"}
           />
         ) : (
           <div className="grid gap-4 md:grid-cols-2">
