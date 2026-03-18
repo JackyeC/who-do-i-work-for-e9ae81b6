@@ -59,6 +59,7 @@ function parseSalaryMin(salaryRange: string | null): number {
 
 export default function JobIntegrityBoard() {
   const [filters, setFilters] = useState<JobBoardFilterState>(DEFAULT_FILTERS);
+  const { preferences } = useJobPreferences();
 
   usePageSEO({
     title: "Job Integrity Board | Who Do I Work For?",
