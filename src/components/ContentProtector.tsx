@@ -1,4 +1,5 @@
 import { useEffect, ReactNode } from "react";
+import { useUserRole } from "@/hooks/use-user-role";
 
 interface ContentProtectorProps {
   children: ReactNode;
@@ -7,13 +8,15 @@ interface ContentProtectorProps {
 
 /**
  * Wraps premium content with copy/print/screenshot protections.
- * - Disables text selection (CSS)
- * - Blocks right-click context menu
- * - Blocks Ctrl+C / Cmd+C / Ctrl+P / Cmd+P
- * - Blocks print via CSS @media print
+ * Admins and owners bypass all protections.
  */
 export function ContentProtector({ children, className }: ContentProtectorProps) {
+  const { isAdmin, isOwner } = useUserRole();
+  const bypass = isAdmin || isOwner;
+
   useEffect(() => {
+    if (bypass) return;
+
     const handleContextMenu = (e: MouseEvent) => {
       const target = e.target as HTMLElement;
       if (target.closest(".protected-content")) {
@@ -25,7 +28,6 @@ export function ContentProtector({ children, className }: ContentProtectorProps)
       const target = e.target as HTMLElement;
       if (!target.closest(".protected-content")) return;
 
-      // Block Ctrl/Cmd + C (copy), P (print), S (save), A (select all)
       if ((e.ctrlKey || e.metaKey) && ["c", "p", "s", "a"].includes(e.key.toLowerCase())) {
         e.preventDefault();
       }
@@ -38,10 +40,10 @@ export function ContentProtector({ children, className }: ContentProtectorProps)
       document.removeEventListener("contextmenu", handleContextMenu);
       document.removeEventListener("keydown", handleKeyDown);
     };
-  }, []);
+  }, [bypass]);
 
   return (
-    <div className={`protected-content ${className || ""}`}>
+    <div className={`protected-content ${className || ""}`} style={bypass ? undefined : { userSelect: "none", WebkitUserSelect: "none" }}>
       {children}
     </div>
   );
