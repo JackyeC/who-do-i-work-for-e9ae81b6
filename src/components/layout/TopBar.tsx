@@ -8,6 +8,7 @@ import { ThemeToggle } from "@/components/ThemeToggle";
 import { supabase } from "@/integrations/supabase/client";
 import { useQuery } from "@tanstack/react-query";
 import { SignupModal } from "@/components/SignupModal";
+import { getUiStatement } from "@/lib/signalPersonalization";
 
 export const MAIN_SECTIONS = [
   {
