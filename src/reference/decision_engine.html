@@ -1,0 +1,816 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>TruthStack — Decision Support Engine</title>
+<link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=Syne:wght@400;600;700;800&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0a0a0f;
+    --surface: #111118;
+    --card: #16161f;
+    --border: #2a2a3a;
+    --accent: #e8ff47;
+    --amber: #ffb347;
+    --red: #ff4d6d;
+    --green: #47ffb3;
+    --blue: #47b3ff;
+    --muted: #6b6b8a;
+    --text: #e8e8f0;
+    --text-dim: #9898b0;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'DM Sans', sans-serif;
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+
+  /* NOISE OVERLAY */
+  body::before {
+    content: '';
+    position: fixed; inset: 0;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E");
+    pointer-events: none; z-index: 0; opacity: 0.4;
+  }
+
+  .header {
+    position: relative; z-index: 10;
+    padding: 32px 40px 24px;
+    border-bottom: 1px solid var(--border);
+    display: flex; align-items: center; justify-content: space-between;
+  }
+
+  .logo {
+    font-family: 'Syne', sans-serif;
+    font-weight: 800; font-size: 22px;
+    letter-spacing: -0.5px;
+  }
+  .logo span { color: var(--accent); }
+
+  .tagline {
+    font-family: 'Space Mono', monospace;
+    font-size: 10px; color: var(--muted);
+    letter-spacing: 2px; text-transform: uppercase;
+    margin-top: 4px;
+  }
+
+  .tier-badge {
+    display: flex; gap: 8px;
+  }
+  .badge {
+    font-family: 'Space Mono', monospace;
+    font-size: 10px; padding: 6px 12px;
+    border-radius: 20px; cursor: pointer;
+    border: 1px solid var(--border);
+    transition: all 0.2s;
+    letter-spacing: 1px;
+  }
+  .badge.active { background: var(--accent); color: #000; border-color: var(--accent); font-weight: 700; }
+  .badge:not(.active):hover { border-color: var(--accent); color: var(--accent); }
+
+  .main { position: relative; z-index: 1; padding: 40px; max-width: 1200px; margin: 0 auto; }
+
+  /* DNA PANEL */
+  .dna-panel {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 28px 32px;
+    margin-bottom: 40px;
+    position: relative;
+    overflow: hidden;
+  }
+  .dna-panel::before {
+    content: 'VALUES DNA';
+    position: absolute; top: 20px; right: 24px;
+    font-family: 'Space Mono', monospace;
+    font-size: 10px; color: var(--border);
+    letter-spacing: 3px;
+  }
+
+  .panel-title {
+    font-family: 'Syne', sans-serif;
+    font-weight: 700; font-size: 14px;
+    color: var(--accent); letter-spacing: 1px;
+    text-transform: uppercase; margin-bottom: 20px;
+  }
+
+  .sliders-grid {
+    display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 20px;
+  }
+
+  .slider-row {
+    display: flex; flex-direction: column; gap: 8px;
+  }
+
+  .slider-labels {
+    display: flex; justify-content: space-between;
+    font-size: 11px; color: var(--text-dim);
+    font-family: 'Space Mono', monospace;
+  }
+  .slider-labels span:last-child { color: var(--accent); }
+
+  .slider-name {
+    font-size: 12px; font-weight: 500; color: var(--text);
+    letter-spacing: 0.5px;
+  }
+
+  input[type=range] {
+    -webkit-appearance: none;
+    width: 100%; height: 3px;
+    background: var(--border); border-radius: 2px; outline: none;
+  }
+  input[type=range]::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    width: 14px; height: 14px;
+    border-radius: 50%;
+    background: var(--accent);
+    cursor: pointer;
+    box-shadow: 0 0 10px var(--accent);
+    transition: transform 0.15s;
+  }
+  input[type=range]::-webkit-slider-thumb:hover { transform: scale(1.3); }
+
+  /* JOB CATEGORY */
+  .category-row {
+    display: flex; gap: 10px; margin-bottom: 32px; flex-wrap: wrap;
+  }
+
+  .cat-btn {
+    font-family: 'Space Mono', monospace;
+    font-size: 11px; padding: 8px 18px;
+    border-radius: 8px; cursor: pointer;
+    border: 1px solid var(--border);
+    background: transparent; color: var(--text-dim);
+    transition: all 0.2s; letter-spacing: 1px;
+  }
+  .cat-btn.active {
+    background: var(--surface); border-color: var(--accent);
+    color: var(--accent);
+  }
+  .cat-btn:hover { border-color: var(--text-dim); color: var(--text); }
+
+  /* JOB CARDS */
+  .cards-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
+    gap: 20px;
+  }
+
+  .job-card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 24px;
+    position: relative;
+    overflow: hidden;
+    transition: border-color 0.2s, transform 0.2s;
+    cursor: pointer;
+  }
+  .job-card:hover {
+    border-color: var(--accent);
+    transform: translateY(-2px);
+  }
+  .job-card.clash {
+    border-color: var(--amber) !important;
+  }
+  .job-card.clash::after {
+    content: '⚡ VALUES CLASH';
+    position: absolute; top: 14px; right: 14px;
+    font-family: 'Space Mono', monospace;
+    font-size: 9px; color: var(--amber);
+    letter-spacing: 1.5px;
+    background: rgba(255,179,71,0.1);
+    padding: 4px 8px; border-radius: 4px;
+    border: 1px solid rgba(255,179,71,0.3);
+  }
+
+  .ghost-ribbon {
+    position: absolute; top: 0; left: 0;
+    background: var(--red); color: #fff;
+    font-family: 'Space Mono', monospace;
+    font-size: 9px; padding: 4px 12px;
+    letter-spacing: 1px;
+    border-bottom-right-radius: 8px;
+  }
+
+  .company-row {
+    display: flex; align-items: flex-start; gap: 12px;
+    margin-bottom: 16px;
+    padding-top: 8px;
+  }
+
+  .company-logo {
+    width: 40px; height: 40px; border-radius: 8px;
+    background: var(--surface); border: 1px solid var(--border);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 16px; flex-shrink: 0;
+  }
+
+  .company-info h3 {
+    font-family: 'Syne', sans-serif;
+    font-weight: 700; font-size: 16px;
+    color: var(--text); line-height: 1.2;
+  }
+  .company-info .role {
+    font-size: 12px; color: var(--text-dim); margin-top: 2px;
+  }
+  .company-info .comp {
+    font-family: 'Space Mono', monospace;
+    font-size: 11px; color: var(--green);
+    margin-top: 4px;
+  }
+
+  /* CLARITY SCORE */
+  .clarity-row {
+    display: flex; align-items: center; gap: 10px;
+    margin-bottom: 16px;
+    padding-bottom: 16px;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .clarity-label {
+    font-family: 'Space Mono', monospace;
+    font-size: 10px; color: var(--muted);
+    letter-spacing: 1px; text-transform: uppercase;
+  }
+
+  .clarity-bar {
+    flex: 1; height: 4px;
+    background: var(--border); border-radius: 2px;
+    overflow: hidden;
+  }
+  .clarity-fill {
+    height: 100%; border-radius: 2px;
+    transition: width 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+  .fill-high { background: var(--green); }
+  .fill-med { background: var(--amber); }
+  .fill-low { background: var(--red); }
+
+  .clarity-val {
+    font-family: 'Space Mono', monospace;
+    font-size: 11px; font-weight: 700;
+    min-width: 36px; text-align: right;
+  }
+
+  /* SIGNAL CHIPS */
+  .signals { display: flex; flex-direction: column; gap: 8px; margin-bottom: 16px; }
+
+  .signal-chip {
+    display: flex; align-items: flex-start; gap: 8px;
+    padding: 10px 12px;
+    border-radius: 8px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+  }
+  .signal-chip.positive { border-color: rgba(71,255,179,0.2); background: rgba(71,255,179,0.05); }
+  .signal-chip.neutral { border-color: rgba(255,179,71,0.2); background: rgba(255,179,71,0.05); }
+  .signal-chip.negative { border-color: rgba(255,77,109,0.15); background: rgba(255,77,109,0.05); }
+  .signal-chip.clash { border-color: rgba(255,179,71,0.5); background: rgba(255,179,71,0.08); }
+
+  .signal-icon { font-size: 14px; flex-shrink: 0; margin-top: 1px; }
+
+  .signal-text { font-size: 12px; line-height: 1.45; }
+  .signal-label {
+    font-family: 'Space Mono', monospace;
+    font-size: 10px; font-weight: 700;
+    letter-spacing: 0.5px;
+    display: block; margin-bottom: 2px;
+  }
+  .signal-label.green { color: var(--green); }
+  .signal-label.amber { color: var(--amber); }
+  .signal-label.red { color: var(--red); }
+  .signal-desc { color: var(--text-dim); font-size: 11px; }
+
+  /* PRO BLUR SECTION */
+  .pro-section {
+    position: relative; margin-top: 12px;
+    border-radius: 8px; overflow: hidden;
+  }
+  .pro-blur {
+    filter: blur(4px);
+    pointer-events: none;
+    padding: 10px 12px;
+    background: var(--surface);
+    border-radius: 8px;
+    font-size: 11px; color: var(--text-dim);
+    border: 1px solid var(--border);
+  }
+  .pro-overlay {
+    position: absolute; inset: 0;
+    display: flex; flex-direction: column;
+    align-items: center; justify-content: center;
+    background: rgba(10,10,15,0.7);
+    backdrop-filter: blur(2px);
+    border-radius: 8px;
+    gap: 6px;
+    border: 1px solid rgba(232,255,71,0.2);
+  }
+  .pro-cta {
+    font-family: 'Space Mono', monospace;
+    font-size: 9px; color: var(--accent);
+    letter-spacing: 1px; text-align: center;
+    padding: 0 16px; line-height: 1.5;
+  }
+  .pro-btn {
+    background: var(--accent); color: #000;
+    font-family: 'Space Mono', monospace;
+    font-size: 9px; font-weight: 700;
+    padding: 6px 14px; border-radius: 4px;
+    border: none; cursor: pointer;
+    letter-spacing: 1px; transition: opacity 0.2s;
+  }
+  .pro-btn:hover { opacity: 0.85; }
+
+  /* AUDIT BUTTON */
+  .audit-btn {
+    width: 100%; margin-top: 12px;
+    background: transparent;
+    border: 1px solid var(--border);
+    color: var(--text-dim);
+    font-family: 'Space Mono', monospace;
+    font-size: 10px; padding: 9px;
+    border-radius: 8px; cursor: pointer;
+    letter-spacing: 1.5px;
+    transition: all 0.2s;
+    display: flex; align-items: center; justify-content: center; gap: 6px;
+  }
+  .audit-btn:hover {
+    border-color: var(--blue); color: var(--blue);
+    background: rgba(71,179,255,0.05);
+  }
+
+  .audit-result {
+    margin-top: 10px;
+    padding: 10px 12px;
+    background: rgba(71,179,255,0.05);
+    border: 1px solid rgba(71,179,255,0.2);
+    border-radius: 8px;
+    font-family: 'Space Mono', monospace;
+    font-size: 10px; color: var(--blue);
+    line-height: 1.6; display: none;
+  }
+  .audit-result.visible { display: block; animation: fadeIn 0.3s ease; }
+
+  .clash-explain {
+    margin-top: 10px;
+    padding: 10px 12px;
+    background: rgba(255,179,71,0.06);
+    border: 1px solid rgba(255,179,71,0.25);
+    border-radius: 8px;
+    font-size: 11px; color: var(--amber);
+    line-height: 1.5; display: none;
+  }
+  .clash-explain.visible { display: block; animation: fadeIn 0.3s ease; }
+  .clash-explain strong { font-weight: 600; }
+
+  @keyframes fadeIn { from { opacity: 0; transform: translateY(4px); } to { opacity: 1; transform: translateY(0); } }
+
+  .section-header {
+    font-family: 'Syne', sans-serif;
+    font-weight: 700; font-size: 20px;
+    margin-bottom: 20px; color: var(--text);
+    display: flex; align-items: center; gap: 12px;
+  }
+  .section-header::after {
+    content: ''; flex: 1; height: 1px;
+    background: var(--border);
+  }
+
+  /* Loading spinner */
+  .spinner {
+    width: 12px; height: 12px;
+    border: 2px solid var(--border);
+    border-top-color: var(--blue);
+    border-radius: 50%;
+    animation: spin 0.7s linear infinite;
+    display: none;
+  }
+  .loading .spinner { display: block; }
+  @keyframes spin { to { transform: rotate(360deg); } }
+
+  /* PRO is active */
+  body.pro-active .pro-overlay { display: none; }
+  body.pro-active .pro-blur { filter: none; pointer-events: auto; }
+</style>
+</head>
+<body>
+
+<header class="header">
+  <div>
+    <div class="logo">Truth<span>Stack</span></div>
+    <div class="tagline">Truth-over-Vibes · Decision Support Engine</div>
+  </div>
+  <div class="tier-badge">
+    <div class="badge active" id="freeBtn" onclick="setTier('free')">FREE</div>
+    <div class="badge" id="proBtn" onclick="setTier('pro')">PRO ✦</div>
+  </div>
+</header>
+
+<main class="main">
+
+  <!-- DNA PANEL -->
+  <div class="dna-panel">
+    <div class="panel-title">⬡ Calibrate Your Values DNA</div>
+    <div class="sliders-grid" id="sliders"></div>
+  </div>
+
+  <!-- CATEGORY FILTER -->
+  <div class="category-row" id="catRow"></div>
+
+  <div class="section-header">Live Job Board</div>
+  <div class="cards-grid" id="cardsGrid"></div>
+
+</main>
+
+<script>
+// ═══════════════════════════════════════════════
+// DATA LAYER
+// ═══════════════════════════════════════════════
+
+const DNA_FADERS = [
+  { id: 'stability', label: 'Work Style', left: 'Flexible', right: 'Structured', value: 60 },
+  { id: 'autonomy',  label: 'Ownership',  left: 'Guided',   right: 'Autonomous', value: 70 },
+  { id: 'pace',      label: 'Pace',       left: 'Steady',   right: 'Fast-Paced', value: 55 },
+  { id: 'innovation',label: 'Culture',    left: 'Traditional', right: 'Innovative', value: 65 },
+  { id: 'comp',      label: 'Priority',   left: 'Mission',  right: 'Compensation', value: 45 },
+];
+
+const JOBS = [
+  {
+    id: 1,
+    company: '7-Eleven',
+    emoji: '🏪',
+    role: 'Senior Software Engineer',
+    category: 'tech',
+    comp: '$145K–$175K',
+    compTransparency: 0.85,
+    hiringActivity: 0.75,
+    workforceStability: 0.80,
+    companyBehavior: 0.65,
+    innovation: 0.55,
+    employeeExperience: 0.70,
+    ghost: false,
+    clashSignals: ['innovation'],
+    proData: 'Workday ATS: 3 active postings confirmed. Reddit r/cscareerquestions: 12 mentions in 30d — majority neutral. Glassdoor trajectory: ↑ 0.2 pts over 6 months.',
+  },
+  {
+    id: 2,
+    company: 'Stripe',
+    emoji: '⚡',
+    role: 'Staff Platform Engineer',
+    category: 'tech',
+    comp: 'Not Listed',
+    compTransparency: 0.10,
+    hiringActivity: 0.90,
+    workforceStability: 0.85,
+    companyBehavior: 0.80,
+    innovation: 0.92,
+    employeeExperience: 0.78,
+    ghost: false,
+    clashSignals: ['comp'],
+    proData: 'Greenhouse ATS: 5 matching roles. Recent layoff data: none detected. Reddit sentiment: 86% positive. 2 new signals found in past 24h.',
+  },
+  {
+    id: 3,
+    company: 'Acme Logistics',
+    emoji: '📦',
+    role: 'Head of Operations',
+    category: 'operations',
+    comp: '$115K–$130K + bonus',
+    compTransparency: 0.90,
+    hiringActivity: 0.40,
+    workforceStability: 0.30,
+    companyBehavior: 0.35,
+    innovation: 0.25,
+    employeeExperience: 0.35,
+    ghost: true,
+    clashSignals: ['stability'],
+    proData: 'No ATS match found. Possible ghost posting. Last Glassdoor review: 9 months ago. LinkedIn headcount: dropped 18% YoY.',
+  },
+  {
+    id: 4,
+    company: 'Salesforce',
+    emoji: '☁️',
+    role: 'Enterprise Account Executive',
+    category: 'sales',
+    comp: '$120K base + uncapped OTE',
+    compTransparency: 0.95,
+    hiringActivity: 0.85,
+    workforceStability: 0.60,
+    companyBehavior: 0.70,
+    innovation: 0.75,
+    employeeExperience: 0.58,
+    ghost: false,
+    clashSignals: ['pace'],
+    proData: 'Workday ATS confirmed. 8 open AE roles in this region. Quota attainment reports: ~62% of reps. Blind sentiment: mixed.',
+  },
+  {
+    id: 5,
+    company: 'Notion',
+    emoji: '📝',
+    role: 'People Ops Lead',
+    category: 'hr',
+    comp: '$130K–$155K',
+    compTransparency: 0.88,
+    hiringActivity: 0.65,
+    workforceStability: 0.82,
+    companyBehavior: 0.90,
+    innovation: 0.70,
+    employeeExperience: 0.88,
+    ghost: false,
+    clashSignals: [],
+    proData: 'Greenhouse ATS: 2 People roles confirmed. Glassdoor: 4.4/5, trending up. Blind: overwhelmingly positive culture mentions. No recent reductions.',
+  },
+  {
+    id: 6,
+    company: 'ShadowTech',
+    emoji: '👻',
+    role: 'Growth Marketing Manager',
+    category: 'sales',
+    comp: 'Competitive (DOE)',
+    compTransparency: 0.15,
+    hiringActivity: 0.30,
+    workforceStability: 0.20,
+    companyBehavior: 0.10,
+    innovation: 0.40,
+    employeeExperience: 0.25,
+    ghost: true,
+    clashSignals: ['stability', 'comp', 'innovation'],
+    proData: 'No ATS found. Crunchbase: last funding round 3 years ago, undisclosed. LinkedIn: 12 employees listed. High ghost risk.',
+  },
+];
+
+const CATEGORIES = ['All', 'Tech', 'Operations', 'Sales', 'HR'];
+
+const SIGNAL_CONFIG = {
+  tech:       ['innovation', 'workforceStability'],
+  operations: ['workforceStability', 'compTransparency'],
+  sales:      ['hiringActivity', 'innovation'],
+  hr:         ['employeeExperience', 'companyBehavior'],
+};
+
+const SIGNAL_META = {
+  compTransparency: {
+    name: 'COMP TRANSPARENCY',
+    high: { label: 'green', icon: '✦', text: 'Salary listed — no games, no wasted interviews.' },
+    med:  { label: 'amber', icon: '◈', text: 'Vague comp range. Budget exists, but they\'re coy.' },
+    low:  { label: 'red',   icon: '▲', text: 'No comp listed. Proceed with negotiation armor on.' },
+  },
+  hiringActivity: {
+    name: 'HIRING ACTIVITY',
+    high: { label: 'green', icon: '✦', text: 'Fresh roles across multiple teams — genuine growth.' },
+    med:  { label: 'amber', icon: '◈', text: 'Reposts detected. Roles may be slow to close.' },
+    low:  { label: 'red',   icon: '▲', text: 'Stale listings. Headcount freeze possible.' },
+  },
+  workforceStability: {
+    name: 'WORKFORCE STABILITY',
+    high: { label: 'green', icon: '✦', text: 'Steady headcount growth, no layoff signals detected.' },
+    med:  { label: 'amber', icon: '◈', text: 'Headcount data patchy. Can\'t confirm direction.' },
+    low:  { label: 'red',   icon: '▲', text: 'Layoff activity or significant headcount reduction detected.' },
+  },
+  companyBehavior: {
+    name: 'COMPANY BEHAVIOR',
+    high: { label: 'green', icon: '✦', text: 'Clear public footprint — press, execs, roadmap visible.' },
+    med:  { label: 'amber', icon: '◈', text: 'Partial visibility. Some signals, some silence.' },
+    low:  { label: 'red',   icon: '▲', text: 'Stealth mode. Very little public signal available.' },
+  },
+  innovation: {
+    name: 'INNOVATION',
+    high: { label: 'green', icon: '✦', text: 'Active patents or product launches. Builder culture evident.' },
+    med:  { label: 'amber', icon: '◈', text: 'Steady tech stack, legacy modernization in progress.' },
+    low:  { label: 'red',   icon: '▲', text: 'Limited product movement. Maintenance mode possible.' },
+  },
+  employeeExperience: {
+    name: 'EMPLOYEE EXPERIENCE',
+    high: { label: 'green', icon: '✦', text: 'Glassdoor trending up. People seem to stay and refer.' },
+    med:  { label: 'amber', icon: '◈', text: 'Mixed reviews. High variance in team experiences.' },
+    low:  { label: 'red',   icon: '▲', text: 'Consistent concerns around management or culture.' },
+  },
+};
+
+// ═══════════════════════════════════════════════
+// STATE
+// ═══════════════════════════════════════════════
+let activeCategory = 'all';
+let isPro = false;
+let dnaValues = {};
+let auditStates = {};
+DNA_FADERS.forEach(f => dnaValues[f.id] = f.value);
+
+// ═══════════════════════════════════════════════
+// BUILD DNA SLIDERS
+// ═══════════════════════════════════════════════
+function buildSliders() {
+  const grid = document.getElementById('sliders');
+  grid.innerHTML = '';
+  DNA_FADERS.forEach(f => {
+    const row = document.createElement('div');
+    row.className = 'slider-row';
+    row.innerHTML = `
+      <div class="slider-name">${f.label}</div>
+      <div class="slider-labels"><span>${f.left}</span><span>${f.right}</span></div>
+      <input type="range" min="0" max="100" value="${dnaValues[f.id]}" data-id="${f.id}" />
+    `;
+    grid.appendChild(row);
+    row.querySelector('input').addEventListener('input', e => {
+      dnaValues[f.id] = parseInt(e.target.value);
+      renderCards();
+    });
+  });
+}
+
+// ═══════════════════════════════════════════════
+// BUILD CATEGORY BUTTONS
+// ═══════════════════════════════════════════════
+function buildCategories() {
+  const row = document.getElementById('catRow');
+  row.innerHTML = '';
+  CATEGORIES.forEach(c => {
+    const btn = document.createElement('button');
+    btn.className = 'cat-btn' + (c.toLowerCase() === activeCategory ? ' active' : '');
+    btn.textContent = c;
+    btn.onclick = () => { activeCategory = c.toLowerCase(); buildCategories(); renderCards(); };
+    row.appendChild(btn);
+  });
+}
+
+// ═══════════════════════════════════════════════
+// SCORING HELPERS
+// ═══════════════════════════════════════════════
+function getLevel(score) {
+  if (score >= 0.65) return 'high';
+  if (score >= 0.35) return 'med';
+  return 'low';
+}
+
+function clarityScore(job) {
+  const fields = ['compTransparency','hiringActivity','workforceStability','companyBehavior','innovation','employeeExperience'];
+  return fields.reduce((a, k) => a + job[k], 0) / fields.length;
+}
+
+function getSignalKeys(category) {
+  return SIGNAL_CONFIG[category] || ['innovation', 'workforceStability'];
+}
+
+function detectClash(job) {
+  const clashes = [];
+  if (dnaValues.stability > 70 && job.workforceStability < 0.35) clashes.push('Your preference for structure clashes with detected workforce instability.');
+  if (dnaValues.comp > 65 && job.compTransparency < 0.35) clashes.push('You prioritize compensation clarity — but this company buries their numbers.');
+  if (dnaValues.innovation > 70 && job.innovation < 0.4) clashes.push('You thrive in builder cultures, but this role shows limited innovation signals.');
+  if (dnaValues.pace < 35 && job.hiringActivity > 0.8) clashes.push('You prefer a steady pace — this company is in high-velocity hiring mode.');
+  return clashes;
+}
+
+// ═══════════════════════════════════════════════
+// RENDER CARDS
+// ═══════════════════════════════════════════════
+function renderCards() {
+  const grid = document.getElementById('cardsGrid');
+  grid.innerHTML = '';
+
+  const filtered = JOBS.filter(j => activeCategory === 'all' || j.category === activeCategory);
+
+  filtered.forEach(job => {
+    const clashes = detectClash(job);
+    const clarity = clarityScore(job);
+    const clarityPct = Math.round(clarity * 100);
+    const clarityClass = clarity >= 0.65 ? 'fill-high' : clarity >= 0.35 ? 'fill-med' : 'fill-low';
+    const clarityLabel = clarity >= 0.65 ? 'HIGH CLARITY' : clarity >= 0.35 ? 'MED CLARITY' : 'LOW CLARITY';
+    const clarityColor = clarity >= 0.65 ? '#47ffb3' : clarity >= 0.35 ? '#ffb347' : '#ff4d6d';
+
+    const signalKeys = getSignalKeys(job.category);
+
+    const card = document.createElement('div');
+    card.className = 'job-card' + (clashes.length ? ' clash' : '');
+
+    // Ghost ribbon
+    const ghostHTML = job.ghost ? `<div class="ghost-ribbon">👻 GHOST_POSTING_RISK</div>` : '';
+
+    // Signals
+    const signalsHTML = signalKeys.map(key => {
+      const meta = SIGNAL_META[key];
+      const score = job[key];
+      const level = getLevel(score);
+      const data = meta[level];
+      const chipClass = level === 'high' ? 'positive' : level === 'med' ? 'neutral' : 'negative';
+      return `
+        <div class="signal-chip ${chipClass}">
+          <div class="signal-icon">${data.icon}</div>
+          <div class="signal-text">
+            <span class="signal-label ${data.label}">[${meta.name}: ${level.toUpperCase()}]</span>
+            <span class="signal-desc">${data.text}</span>
+          </div>
+        </div>`;
+    }).join('');
+
+    // Clash section
+    const clashHTML = clashes.length ? `
+      <div class="clash-explain ${clashes.length ? 'visible' : ''}" id="clash-${job.id}">
+        <strong>⚡ What this means for you:</strong><br>
+        ${clashes.map(c => `• ${c}`).join('<br>')}
+      </div>` : '';
+
+    // Pro blur section
+    const proHTML = `
+      <div class="pro-section">
+        <div class="pro-blur">${job.proData}</div>
+        <div class="pro-overlay" id="proOverlay-${job.id}">
+          <div class="pro-cta">This deep-dive found 2 new signals.<br>Unlock to see what changed in 24h.</div>
+          <button class="pro-btn" onclick="setTier('pro')">UNLOCK PRO ✦</button>
+        </div>
+      </div>`;
+
+    const auditedHTML = `
+      <div class="audit-result" id="audit-${job.id}">
+        ⟳ AUDIT COMPLETE<br>
+        ATS: ${job.ghost ? '❌ No matching role found on company ATS — GHOST_POSTING_RISK confirmed.' : '✓ Matching role confirmed on ATS.'}<br>
+        Reddit scan: Sentiment scan returned ${Math.floor(Math.random()*20)+5} mentions (30d).<br>
+        Signal delta: ${job.ghost ? 'Stability score worsened -0.12 since last index.' : 'No significant change since last snapshot.'}
+      </div>`;
+
+    card.innerHTML = `
+      ${ghostHTML}
+      <div class="company-row">
+        <div class="company-logo">${job.emoji}</div>
+        <div class="company-info">
+          <h3>${job.company}</h3>
+          <div class="role">${job.role}</div>
+          <div class="comp">${job.comp}</div>
+        </div>
+      </div>
+      <div class="clarity-row">
+        <span class="clarity-label">CLARITY SCORE</span>
+        <div class="clarity-bar"><div class="clarity-fill ${clarityClass}" style="width: ${clarityPct}%"></div></div>
+        <span class="clarity-val" style="color:${clarityColor}">${clarityPct}</span>
+      </div>
+      <div class="signals">${signalsHTML}</div>
+      ${clashHTML}
+      ${proHTML}
+      ${auditedHTML}
+      <button class="audit-btn" id="auditBtn-${job.id}" onclick="triggerAudit(${job.id})">
+        <div class="spinner" id="spin-${job.id}"></div>
+        <span id="auditLabel-${job.id}">AUDIT NOW</span>
+      </button>
+    `;
+
+    grid.appendChild(card);
+  });
+
+  // Apply pro state
+  if (isPro) {
+    document.querySelectorAll('[id^=proOverlay-]').forEach(el => el.style.display = 'none');
+    document.querySelectorAll('.pro-blur').forEach(el => el.style.filter = 'none');
+  }
+}
+
+// ═══════════════════════════════════════════════
+// TIER TOGGLE
+// ═══════════════════════════════════════════════
+function setTier(tier) {
+  isPro = tier === 'pro';
+  document.getElementById('freeBtn').className = 'badge' + (!isPro ? ' active' : '');
+  document.getElementById('proBtn').className  = 'badge' + (isPro ? ' active' : '');
+  renderCards();
+}
+
+// ═══════════════════════════════════════════════
+// AUDIT NOW
+// ═══════════════════════════════════════════════
+function triggerAudit(jobId) {
+  if (!isPro) { setTier('pro'); return; }
+  const btn = document.getElementById(`auditBtn-${jobId}`);
+  const spinner = document.getElementById(`spin-${jobId}`);
+  const label = document.getElementById(`auditLabel-${jobId}`);
+  const result = document.getElementById(`audit-${jobId}`);
+
+  btn.style.borderColor = 'var(--blue)';
+  spinner.style.display = 'block';
+  label.textContent = 'SCANNING...';
+
+  setTimeout(() => {
+    spinner.style.display = 'none';
+    label.textContent = '✓ AUDIT COMPLETE';
+    btn.style.borderColor = 'var(--green)';
+    btn.style.color = 'var(--green)';
+    result.classList.add('visible');
+  }, 1800);
+}
+
+// ═══════════════════════════════════════════════
+// INIT
+// ═══════════════════════════════════════════════
+buildSliders();
+buildCategories();
+renderCards();
+</script>
+</body>
+</html>
