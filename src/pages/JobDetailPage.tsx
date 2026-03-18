@@ -11,6 +11,8 @@ import { JobPostingSchema } from "@/components/jobs/JobPostingSchema";
 import { JobQualityBadge } from "@/components/jobs/JobQualityBadge";
 import { WhatThisMeansForYou } from "@/components/jobs/WhatThisMeansForYou";
 import { usePageSEO } from "@/hooks/use-page-seo";
+import { EasyApplyButton } from "@/components/jobs/EasyApplyButton";
+import { SaveJobButton } from "@/components/jobs/SaveJobButton";
 import {
   ExternalLink, MapPin, Wifi, Monitor, Home, DollarSign,
   Shield, ShieldCheck, Network, Building2, AlertTriangle, Eye, ChevronLeft, Briefcase,
@@ -311,6 +313,8 @@ export default function JobDetailPage() {
               <Link to={`/company/${co?.slug}`}>View All Roles</Link>
             </Button>
           )}
+          <EasyApplyButton job={job} className="flex-1" />
+          <SaveJobButton job={job as any} size="sm" className="h-11" />
           <Button variant="outline" size="lg" className="gap-2" asChild>
             <Link to={`/company/${co?.slug}`}>
               <Building2 className="w-4 h-4" /> Full Company Intelligence

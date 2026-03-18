@@ -230,7 +230,7 @@ export default function JobIntegrityBoard() {
             description={filters.search ? "Try adjusting your search or filters" : "No approved job listings yet. Check back soon!"}
           />
         ) : (
-          <div className="grid gap-4 md:grid-cols-2">
+          <div className="grid gap-3 md:gap-4 md:grid-cols-2">
             {filtered.map((job: any) => {
               const prefCategories = getUserPreferenceCategories();
               const companyCats = alignmentSignals?.[job.company_id];
