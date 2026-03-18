@@ -8,12 +8,14 @@ interface ShareVoteCardProps {
   opponentName: string;
   regionName: string;
   votePercent: number;
+  tensionLabel?: string;
 }
 
-export function ShareVoteCard({ brandName, brandEmoji, opponentName, regionName, votePercent }: ShareVoteCardProps) {
+export function ShareVoteCard({ brandName, brandEmoji, opponentName, regionName, votePercent, tensionLabel }: ShareVoteCardProps) {
   const { toast } = useToast();
 
-  const shareText = `I just backed ${brandEmoji} ${brandName} over ${opponentName} in the ${regionName} Region of Brand Madness 2026! ${votePercent}% agree with me. See the receipts 👇`;
+  const tensionLine = tensionLabel ? `\nTension: ${tensionLabel}` : "";
+  const shareText = `I just backed ${brandEmoji} ${brandName} over ${opponentName} in the ${regionName} Region of Brand Madness 2026!${tensionLine} ${votePercent}% agree with me. See the receipts 👇`;
   const shareUrl = "https://who-do-i-work-for.lovable.app/brand-madness";
 
   const shareToTwitter = () => {
@@ -45,6 +47,11 @@ export function ShareVoteCard({ brandName, brandEmoji, opponentName, regionName,
           <div className="font-mono text-[9px] text-muted-foreground mt-0.5">
             vs {opponentName} · {regionName} Region
           </div>
+          {tensionLabel && (
+            <div className="font-mono text-[8px] tracking-wider uppercase text-accent-foreground/60 mt-1">
+              ⚡ {tensionLabel}
+            </div>
+          )}
           <div className="mt-2 font-mono text-lg font-black text-primary">{votePercent}%</div>
           <div className="font-mono text-[8px] tracking-wider uppercase text-muted-foreground">of voters agree</div>
         </div>
