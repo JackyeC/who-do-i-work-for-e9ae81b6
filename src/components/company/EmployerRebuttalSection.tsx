@@ -93,7 +93,7 @@ export function EmployerRebuttalSection({ companyId, companyName }: EmployerRebu
                       <MessageSquareWarning className="w-2.5 h-2.5" />
                       Employer Response
                     </Badge>
-                    <span className="text-[10px] text-muted-foreground">
+                    <span className="text-xs text-muted-foreground">
                       {new Date(r.created_at).toLocaleDateString()}
                     </span>
                   </div>
