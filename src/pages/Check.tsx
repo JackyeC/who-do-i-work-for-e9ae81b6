@@ -158,7 +158,7 @@ function OpenRolesSection({ companyId, companyName }: { companyId: string; compa
     setShouldPoll(true);
   }, [companyId]);
 
-  if (isLoading && (!jobs || jobs.length === 0)) {
+  if (isLoading && (!jobs || (jobs as any[]).length === 0)) {
     return (
       <Card className="border-border/40">
         <CardContent className="p-5 space-y-3">
