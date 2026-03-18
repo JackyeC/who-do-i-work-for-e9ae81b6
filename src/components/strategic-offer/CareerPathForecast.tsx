@@ -148,7 +148,7 @@ export function CareerPathForecast({ companyName, roleTitle, signals }: CareerPa
         {/* Metrics grid */}
         <div className="grid grid-cols-2 gap-2">
           <div className="rounded border border-border p-2.5">
-            <div className="flex items-center gap-1.5 text-[10px] text-muted-foreground mb-0.5">
+             <div className="flex items-center gap-1.5 text-xs text-muted-foreground mb-0.5">
               <Clock className="w-3 h-3" />
               Time to Next Level
             </div>
