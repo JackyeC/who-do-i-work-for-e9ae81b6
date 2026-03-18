@@ -31,7 +31,8 @@ const GAP_CONFIG = {
   aligned: { icon: CheckCircle2, color: "text-[hsl(var(--civic-green))]", bg: "bg-[hsl(var(--civic-green))]/5 border-[hsl(var(--civic-green))]/20", label: "Aligned" },
 } as const;
 
-export function MismatchEngine({ stances, darkMoney, tradeAssociations }: Props) {
+export function MismatchEngine({ stances, darkMoney, tradeAssociations, companyName }: Props) {
+  const [selectedEntity, setSelectedEntity] = useState<DarkMoneyEntity | null>(null);
   const conflicts = stances.filter(s => s.gap === "direct-conflict");
   const mixed = stances.filter(s => s.gap === "mixed");
   const aligned = stances.filter(s => s.gap === "aligned");
