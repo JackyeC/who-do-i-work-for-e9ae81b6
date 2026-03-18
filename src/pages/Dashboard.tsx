@@ -102,7 +102,7 @@ export default function Dashboard() {
       case "auto-apply": {
         const hasCompleted = !!localStorage.getItem("purpleSquirrelParams");
         if (!hasCompleted) {
-          return <PurpleSquirrelOnboarding onComplete={() => setActiveTab("auto-apply")} />;
+          return <PurpleSquirrelOnboarding onComplete={() => setTab("auto-apply")} />;
         }
         return (
           <div className="space-y-6">
