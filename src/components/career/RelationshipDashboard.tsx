@@ -137,7 +137,7 @@ function Column({
       <div className="flex items-center gap-2 mb-4">
         <Icon className="w-4 h-4 text-primary" />
         <h3 className="text-sm font-semibold text-foreground">{title}</h3>
-        <Badge variant="secondary" className="text-[10px]">{count}</Badge>
+        <Badge variant="secondary" className="text-xs">{count}</Badge>
       </div>
       <div className={cn("space-y-3 relative", blurred && "select-none")}>
         {blurred && (
