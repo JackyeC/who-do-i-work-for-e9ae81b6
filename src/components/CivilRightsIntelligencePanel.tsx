@@ -20,7 +20,7 @@ const SEVERITY_STYLES: Record<string, { bg: string; text: string; label: string 
   low: { bg: "bg-[hsl(var(--civic-green))]/10", text: "text-[hsl(var(--civic-green))]", label: "Low" },
 };
 
-export function CivilRightsIntelligencePanel({ companyId, companyName }: CivilRightsIntelligencePanelProps) {
+export function CivilRightsIntelligencePanel({ companyId, companyName, stateCode }: CivilRightsIntelligencePanelProps) {
   // Fetch all civil rights-related data in parallel
   const { data: stances } = useQuery({
     queryKey: ["cr-stances", companyId],
