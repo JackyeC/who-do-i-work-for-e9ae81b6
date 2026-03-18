@@ -660,7 +660,7 @@ Deno.serve(async (req) => {
         const mapResp = await fetch('https://api.firecrawl.dev/v1/map', {
           method: 'POST',
           headers: { 'Authorization': `Bearer ${firecrawlKey}`, 'Content-Type': 'application/json' },
-          body: JSON.stringify({ url: careersUrl, search: 'jobs careers positions openings apply search', limit: 30 }),
+          body: JSON.stringify({ url: careersUrl, search: 'jobs careers positions openings apply search vacancy', limit: 30 }),
         });
 
         let jobPageUrls: string[] = [];
