@@ -31,6 +31,7 @@ interface JobIntegrityCardProps {
     work_mode: string | null;
     url: string | null;
     created_at: string;
+    posted_at?: string | null;
     company_id: string;
     salary_range?: string | null;
     companies?: {
@@ -40,11 +41,14 @@ interface JobIntegrityCardProps {
       vetted_status: string | null;
       jackye_insight: string | null;
       description: string | null;
+      civic_footprint_score?: number;
     };
   };
   matchCount?: number;
   matchedCategories?: string[];
   fitBadges?: string[];
+  fitScore?: number;
+  leverageLevel?: "low" | "medium" | "high";
 }
 
 export function JobIntegrityCard({ job, matchCount = 0, matchedCategories = [], fitBadges = [] }: JobIntegrityCardProps) {
