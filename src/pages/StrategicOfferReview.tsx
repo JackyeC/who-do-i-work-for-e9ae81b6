@@ -951,7 +951,9 @@ export default function StrategicOfferReview() {
                   hasBonus={!!offer.bonus}
                 />
 
-                {/* Start Over / Practice */}
+                {/* 13. Outcome Feedback */}
+                <OutcomeFeedback companyName={offer.companyName} />
+
                 <div className="flex justify-center gap-3 pt-4">
                   <Button
                     variant="outline"
