@@ -223,7 +223,7 @@ export function DashboardOverview({ onNavigate }: DashboardOverviewProps) {
                     <Briefcase className="w-4 h-4 text-primary shrink-0" />
                     <div>
                       <p className="text-xs font-medium text-foreground capitalize">{profile.seniority_level}</p>
-                      <p className="text-[10px] text-muted-foreground">Seniority level</p>
+                      <p className="text-xs text-muted-foreground">Seniority level</p>
                     </div>
                   </div>
                 )}
