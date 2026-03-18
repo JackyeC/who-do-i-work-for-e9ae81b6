@@ -152,9 +152,9 @@ export function JobIntegrityCard({ job, matchCount = 0, matchedCategories = [] }
               Apply
             </Button>
           )}
-          <Button size="sm" variant="default" asChild className="gap-1 shrink-0">
-            <Link to={`/company/${co?.slug}`}>
-              <Eye className="w-3 h-3" /> Receipts
+          <Button size="sm" variant="outline" asChild className="gap-1 shrink-0">
+            <Link to={`/job-board/${job.id}`}>
+              <ChevronRight className="w-3 h-3" /> Details
             </Link>
           </Button>
         </div>
