@@ -6,6 +6,7 @@ import { useState } from "react";
 import { useToast } from "@/hooks/use-toast";
 import { cn } from "@/lib/utils";
 import type { LegalFlag } from "./CivicLegalAudit";
+import type { Situation } from "@/lib/policyScoreEngine";
 
 interface NegotiationScript {
   level: "gentle" | "hard" | "mobility";
