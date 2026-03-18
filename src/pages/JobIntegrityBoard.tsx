@@ -13,6 +13,8 @@ import { Loader2, Briefcase } from "lucide-react";
 import { usePageSEO } from "@/hooks/use-page-seo";
 import { computeRankingScore, evaluateJobQuality, hasEvergreenSignals } from "@/lib/jobQuality";
 import { differenceInDays } from "date-fns";
+import { useJobPreferences } from "@/hooks/use-job-preferences";
+import { evaluateJobFit } from "@/lib/jobFitEngine";
 
 function getUserPreferenceCategories(): Set<string> {
   try {
