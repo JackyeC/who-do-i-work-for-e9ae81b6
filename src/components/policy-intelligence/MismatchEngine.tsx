@@ -1,6 +1,8 @@
-import { AlertTriangle, ExternalLink, Shield, CheckCircle2, HelpCircle } from "lucide-react";
+import { useState } from "react";
+import { AlertTriangle, ExternalLink, Shield, CheckCircle2, HelpCircle, ChevronRight } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
+import { EntityDetailDrawer, type DarkMoneyEntity } from "@/components/company/EntityDetailDrawer";
 
 interface Stance {
   topic: string;
