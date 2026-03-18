@@ -22,6 +22,7 @@ export default function RealityCheckPage() {
   const { toast } = useToast();
   const [result, setResult] = useState<RealityGapResult | null>(null);
   const [submitting, setSubmitting] = useState(false);
+  const [lastInput, setLastInput] = useState<{ companyId: string; companyName: string } | null>(null);
 
   usePageSEO({
     title: "Employer Red Flags Before Accepting a Job Offer — Reality Check",
