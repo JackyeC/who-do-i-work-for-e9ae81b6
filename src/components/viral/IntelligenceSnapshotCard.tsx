@@ -67,8 +67,8 @@ export function IntelligenceSnapshotCard({ companyName, overallScore, scoreLabel
           {/* Score display */}
           <div className="flex items-baseline gap-3 mb-5">
             <span className="font-mono text-5xl font-black text-foreground">{overallScore}</span>
-            <span className="font-mono text-[10px] tracking-wider uppercase text-muted-foreground">/100</span>
-            <Badge className={cn("text-[10px]", band.color, band.bg, "border", band.accent)}>
+            <span className="font-mono text-xs tracking-wider uppercase text-muted-foreground">/100</span>
+            <Badge className={cn("text-xs", band.color, band.bg, "border", band.accent)}>
               {scoreLabel || band.label}
             </Badge>
           </div>
