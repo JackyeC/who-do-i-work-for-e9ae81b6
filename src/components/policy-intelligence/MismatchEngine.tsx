@@ -102,18 +102,14 @@ export function MismatchEngine({ stances, darkMoney, tradeAssociations, companyN
             Undisclosed Spending Channels
           </h4>
           {darkMoney.map((dm, i) => (
-            <Card key={i} className="border-border/40">
+            <Card key={i} className="border-border/40 cursor-pointer hover:bg-muted/50 transition-colors" onClick={() => setSelectedEntity({ name: dm.name, org_type: dm.org_type, estimated_amount: dm.estimated_amount, source: dm.source ?? undefined, relationship: "Undisclosed spending channel", confidence: null })}>
               <CardContent className="p-3">
                 <div className="flex items-center justify-between">
                   <div>
                     <p className="text-sm font-medium text-foreground">{dm.name}</p>
                     <p className="text-xs text-muted-foreground">{dm.org_type} · {dm.estimated_amount ? `~$${dm.estimated_amount.toLocaleString()}` : "Amount undisclosed"}</p>
                   </div>
-                  {dm.source && (
-                    <a href={dm.source} target="_blank" rel="noopener noreferrer" className="text-primary hover:underline">
-                      <ExternalLink className="w-3.5 h-3.5" />
-                    </a>
-                  )}
+                  <ChevronRight className="w-4 h-4 text-muted-foreground shrink-0" />
                 </div>
               </CardContent>
             </Card>
