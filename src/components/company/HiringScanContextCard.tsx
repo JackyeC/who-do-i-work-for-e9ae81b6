@@ -206,7 +206,7 @@ export function HiringScanContextCard({ companyId, companyName }: HiringScanCont
                   signal.confidence === "medium" ? "text-amber-500" :
                   "text-muted-foreground"
                 }`} strokeWidth={1.5} />
-                <p className="text-muted-foreground leading-relaxed">{signal.description}</p>
+                <p className="text-muted-foreground leading-relaxed">{safeSignalSummary(signal.description, "Hiring signal detected")}</p>
               </div>
             ))}
           </div>

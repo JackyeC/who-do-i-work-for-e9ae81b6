@@ -115,7 +115,7 @@ export function CompensationTransparencyCard({ companyName, dbCompanyId }: Props
   });
 
   const grouped = (signals || []).reduce<Record<string, any[]>>((acc, s) => {
-    const cat = s.signal_category || "pay_reporting";
+    const cat = normalizeCategory(s.signal_category || "pay_reporting");
     if (!acc[cat]) acc[cat] = [];
     acc[cat].push(s);
     return acc;
