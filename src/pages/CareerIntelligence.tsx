@@ -10,10 +10,11 @@ import { MyDocuments } from "@/components/career/MyDocuments";
 import { ResumeTailor } from "@/components/career/ResumeTailor";
 import { DataWipeButton } from "@/components/career/DataWipeButton";
 import { CareerChecklist } from "@/components/career/CareerChecklist";
+import { SkillGapBridge } from "@/components/career/SkillGapBridge";
 import { useAuth } from "@/contexts/AuthContext";
 import { Navigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
-import { FileText, User, Bell, Upload, Wand2, Compass, CheckCircle2 } from "lucide-react";
+import { FileText, User, Bell, Upload, Wand2, Compass, CheckCircle2, Zap } from "lucide-react";
 import { CareerMappingView } from "@/components/career/CareerMappingView";
 import { EmployerDossierSearch, type CompanyResult } from "@/components/career/EmployerDossierSearch";
 import { EmployerDossierCard } from "@/components/career/EmployerDossierCard";
@@ -51,7 +52,6 @@ export default function CareerIntelligence() {
 
   const handleUploadComplete = () => {
     setActiveTab("documents");
-    // Trigger dream job matching in background after upload
     if (user) {
       supabase.functions.invoke("dream-job-detect", {
         body: { user_id: user.id },
@@ -98,7 +98,7 @@ export default function CareerIntelligence() {
 
         {/* Deep Dive Tabs */}
         <Tabs value={activeTab} onValueChange={setActiveTab} className="max-w-4xl mx-auto">
-          <TabsList className="grid w-full grid-cols-7">
+          <TabsList className="grid w-full grid-cols-8">
             <TabsTrigger value="upload" className="flex items-center gap-1.5 text-xs sm:text-sm">
               <Upload className="w-3.5 h-3.5" /> <span className="hidden sm:inline">Upload</span>
             </TabsTrigger>
@@ -113,6 +113,9 @@ export default function CareerIntelligence() {
             </TabsTrigger>
             <TabsTrigger value="alerts" className="flex items-center gap-1.5 text-xs sm:text-sm">
               <Bell className="w-3.5 h-3.5" /> <span className="hidden sm:inline">Alerts</span>
+            </TabsTrigger>
+            <TabsTrigger value="gigs" className="flex items-center gap-1.5 text-xs sm:text-sm">
+              <Zap className="w-3.5 h-3.5" /> <span className="hidden sm:inline">Gigs</span>
             </TabsTrigger>
             <TabsTrigger value="pathing" className="flex items-center gap-1.5 text-xs sm:text-sm">
               <Compass className="w-3.5 h-3.5" /> <span className="hidden sm:inline">Next Move</span>
@@ -136,6 +139,9 @@ export default function CareerIntelligence() {
           </TabsContent>
           <TabsContent value="alerts" className="mt-6">
             <DreamJobAlerts />
+          </TabsContent>
+          <TabsContent value="gigs" className="mt-6">
+            <SkillGapBridge />
           </TabsContent>
           <TabsContent value="pathing" className="mt-6">
             <CareerMappingView />
