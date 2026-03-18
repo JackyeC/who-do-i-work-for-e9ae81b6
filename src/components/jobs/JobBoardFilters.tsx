@@ -91,6 +91,15 @@ export function JobBoardFilters({ filters, onFiltersChange, availableDepartments
 
       {/* Structured filters */}
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-3">
+        {/* Location */}
+        <div>
+          <label className="text-[10px] font-medium text-muted-foreground uppercase tracking-wider mb-1 block">Location</label>
+          <div className="relative">
+            <MapPin className="absolute left-2.5 top-1/2 -translate-y-1/2 w-3 h-3 text-muted-foreground" />
+            <Input value={filters.location} onChange={(e) => update({ location: e.target.value })} placeholder="City, state..." className="h-8 text-xs pl-7" />
+          </div>
+        </div>
+
         {/* Work Mode */}
         <div>
           <label className="text-[10px] font-medium text-muted-foreground uppercase tracking-wider mb-1 block">Work Mode</label>
