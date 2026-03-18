@@ -84,10 +84,10 @@ export function ShareableScoreCard({ companyName, clarityScore, signals, slug }:
           </div>
 
           <div className="mt-4 pt-3 border-t border-border flex items-center justify-between">
-            <span className="font-mono text-[8px] tracking-widest uppercase text-muted-foreground">
+            <span className="font-mono text-xs tracking-widest uppercase text-muted-foreground">
               whodoimworkfor.com
             </span>
-            <span className="font-mono text-[8px] tracking-widest uppercase text-muted-foreground">
+            <span className="font-mono text-xs tracking-widest uppercase text-muted-foreground">
               Workforce Transparency Standard
             </span>
           </div>

@@ -122,7 +122,7 @@ export function MismatchEngine({ stances, darkMoney, tradeAssociations }: Props)
           <h4 className="text-xs font-semibold text-foreground mb-2">Trade Association Memberships</h4>
           <div className="flex flex-wrap gap-1.5">
             {tradeAssociations.map((ta, i) => (
-              <Badge key={i} variant="outline" className="text-[10px]">{ta.name}</Badge>
+              <Badge key={i} variant="outline" className="text-xs">{ta.name}</Badge>
             ))}
           </div>
         </div>

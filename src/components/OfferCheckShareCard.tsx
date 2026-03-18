@@ -126,7 +126,7 @@ export function OfferCheckShareCard({
           </span>
         </div>
 
-        <p className="text-[9px] text-muted-foreground/60 mt-3 pt-2 border-t border-border">
+        <p className="text-xs text-muted-foreground/60 mt-3 pt-2 border-t border-border">
           Signals detected from public sources. No conclusions drawn. Interpretation is left to the user.
         </p>
       </CardContent>

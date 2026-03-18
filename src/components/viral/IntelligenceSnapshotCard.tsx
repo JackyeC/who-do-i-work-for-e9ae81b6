@@ -108,10 +108,10 @@ export function IntelligenceSnapshotCard({ companyName, overallScore, scoreLabel
 
           {/* Footer */}
           <div className="mt-5 pt-3 border-t border-border flex items-center justify-between">
-            <span className="font-mono text-[8px] tracking-widest uppercase text-muted-foreground">
+            <span className="font-mono text-xs tracking-widest uppercase text-muted-foreground">
               whodoimworkfor.com
             </span>
-            <span className="font-mono text-[8px] tracking-widest uppercase text-muted-foreground">
+            <span className="font-mono text-xs tracking-widest uppercase text-muted-foreground">
               Workforce Transparency Standard
             </span>
           </div>

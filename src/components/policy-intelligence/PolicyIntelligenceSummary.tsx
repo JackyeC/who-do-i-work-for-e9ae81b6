@@ -51,7 +51,7 @@ export function PolicyIntelligenceSummary({ result, companyName, situations }: P
             <div className="text-center">
               <div className={`text-4xl font-bold font-mono ${scoreColor}`}>{result.total}</div>
               <div className="text-xs text-muted-foreground mt-1">Policy Score</div>
-              <Badge variant="outline" className={`mt-1 text-[10px] ${scoreColor}`}>{result.grade}</Badge>
+              <Badge variant="outline" className={`mt-1 text-xs ${scoreColor}`}>{result.grade}</Badge>
             </div>
             <div className="flex-1 space-y-3">
               {result.pillars.map((p) => (
