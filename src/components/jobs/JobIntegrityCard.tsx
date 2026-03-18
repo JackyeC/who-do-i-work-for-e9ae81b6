@@ -4,6 +4,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { CompanyLogo } from "@/components/CompanyLogo";
+import { MatchIndicator } from "@/components/jobs/MatchIndicator";
 import {
   Shield, ShieldCheck, ExternalLink, Sparkles, Network, Eye
 } from "lucide-react";
