@@ -5,6 +5,8 @@ import { cn } from "@/lib/utils";
 import type { LegalFlag } from "./CivicLegalAudit";
 import type { OfferClarityReport } from "@/components/offer-clarity/OfferClarityDashboard";
 import type { RiskLevel } from "./OfferRiskSignals";
+import type { Situation } from "@/lib/policyScoreEngine";
+import { SITUATION_LABELS } from "@/lib/policyScoreEngine";
 
 type OfferPosition = "Strong Offer" | "Fair Offer" | "Needs Review" | "Proceed Carefully";
 
@@ -21,6 +23,7 @@ interface Props {
   riskLevel: RiskLevel | null;
   salaryTransparency: "transparent" | "delayed" | "unclear";
   internalConsistency: "aligned" | "lower" | "unclear";
+  situations?: Situation[];
 }
 
 const POSITION_CONFIG: Record<OfferPosition, { color: string; bg: string; border: string; icon: typeof CheckCircle2 }> = {
