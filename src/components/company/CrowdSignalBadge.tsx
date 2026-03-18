@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { Badge } from "@/components/ui/badge";
 import { Users } from "lucide-react";
+import { normalizeCategory } from "@/utils/signalTextSanitizer";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 
 interface CrowdSignal {
@@ -57,7 +58,7 @@ export function CrowdSignalBadge({ companyId, compact = false }: CrowdSignalBadg
             <p className="font-mono text-xs mb-1 font-semibold">Crowd Intelligence</p>
             {signals.map((s) => (
               <p key={s.signal_category} className="text-xs text-muted-foreground">
-                {CATEGORY_LABELS[s.signal_category] || s.signal_category}: {s.flinch_count} of {s.total_responses} flagged
+                {CATEGORY_LABELS[s.signal_category] || normalizeCategory(s.signal_category)}: {s.flinch_count} of {s.total_responses} flagged
               </p>
             ))}
           </TooltipContent>
@@ -83,7 +84,7 @@ export function CrowdSignalBadge({ companyId, compact = false }: CrowdSignalBadg
               variant={pct >= 60 ? "destructive" : "warning"}
               className="font-mono text-[10px] gap-1"
             >
-              {CATEGORY_LABELS[s.signal_category] || s.signal_category}: {s.flinch_count}/{s.total_responses}
+              {CATEGORY_LABELS[s.signal_category] || normalizeCategory(s.signal_category)}: {s.flinch_count}/{s.total_responses}
             </Badge>
           );
         })}

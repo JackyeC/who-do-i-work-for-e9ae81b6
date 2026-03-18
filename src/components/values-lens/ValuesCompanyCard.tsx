@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { safeSignalLabel } from "@/utils/signalTextSanitizer";
 import { Link } from "react-router-dom";
 import { motion } from "framer-motion";
 import { ExternalLink, ChevronDown, ChevronUp, AlertTriangle, Shield } from "lucide-react";
@@ -103,11 +104,11 @@ export function ValuesCompanyCard({ company, signals, evidence, lensLabel, hasCo
                         rel="noopener noreferrer"
                         className="text-foreground font-medium hover:text-primary hover:underline transition-colors cursor-pointer"
                       >
-                        {signal.signal_label || signal.signal_summary || signal.signal_type?.replace(/_/g, " ")}
+                        {safeSignalLabel(signal.signal_label || signal.signal_summary || signal.signal_type?.replace(/_/g, " "), "Signal Detected")}
                       </a>
                     ) : (
                       <span className="text-foreground font-medium">
-                        {signal.signal_label || signal.signal_summary || signal.signal_type?.replace(/_/g, " ")}
+                        {safeSignalLabel(signal.signal_label || signal.signal_summary || signal.signal_type?.replace(/_/g, " "), "Signal Detected")}
                       </span>
                     )}
                     {signal.signal_summary && signal.signal_label && (

@@ -1,5 +1,6 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { CheckCircle2, AlertTriangle } from "lucide-react";
+import { safeSignalLabel } from "@/utils/signalTextSanitizer";
 
 export function FlagsPanel({ signals }: { signals: any[] }) {
   const greenFlags = signals.filter(
@@ -31,7 +32,7 @@ export function FlagsPanel({ signals }: { signals: any[] }) {
               {greenFlags.slice(0, 6).map((s: any, i: number) => (
                 <li key={i} className="text-xs text-foreground flex items-start gap-2">
                   <CheckCircle2 className="w-3 h-3 text-civic-green mt-0.5 shrink-0" />
-                  {s.signal_summary || s.signal_type}
+                  {safeSignalLabel(s.signal_summary || s.signal_type, "Verified Signal")}
                 </li>
               ))}
             </ul>
@@ -51,7 +52,7 @@ export function FlagsPanel({ signals }: { signals: any[] }) {
               {riskFlags.slice(0, 6).map((s: any, i: number) => (
                 <li key={i} className="text-xs text-foreground flex items-start gap-2">
                   <AlertTriangle className="w-3 h-3 text-destructive mt-0.5 shrink-0" />
-                  {s.signal_summary || s.signal_type}
+                  {safeSignalLabel(s.signal_summary || s.signal_type, "Risk Signal Detected")}
                 </li>
               ))}
             </ul>

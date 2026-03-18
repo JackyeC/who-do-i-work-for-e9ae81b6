@@ -1,5 +1,6 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
+import { safeSignalLabel } from "@/utils/signalTextSanitizer";
 import { cn } from "@/lib/utils";
 import {
   CheckCircle2, ArrowUpRight, AlertTriangle, EyeOff, Info,
@@ -85,7 +86,7 @@ export function SignalSection({
                     <div className="mt-1 space-y-0.5">
                       {matching.slice(0, 2).map((s: any, i: number) => (
                         <p key={i} className="text-[11px] text-muted-foreground">
-                          {s.signal_summary}
+                          {safeSignalLabel(s.signal_summary, "Signal detected")}
                           {s.evidence_url && (
                             <a
                               href={s.evidence_url}

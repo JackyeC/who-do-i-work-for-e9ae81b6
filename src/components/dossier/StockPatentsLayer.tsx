@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { safeSignalLabel } from "@/utils/signalTextSanitizer";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { TrendingUp, Lightbulb, BarChart3, Loader2, ExternalLink, Calendar, Lock } from "lucide-react";
@@ -103,7 +104,7 @@ export function StockPatentsLayer({ companyId, companyName, unlocked = true }: S
         markers.push({ date: w.notice_date.split("T")[0], label: `WARN: ${w.employees_affected} employees (${w.layoff_type || "Layoff"})`, type: "warn" });
       });
       (signalRes.data || []).forEach(s => {
-        markers.push({ date: (s.scan_timestamp || "").split("T")[0], label: s.signal_type, type: s.signal_category });
+        markers.push({ date: (s.scan_timestamp || "").split("T")[0], label: safeSignalLabel(s.signal_type, "Signal") || "Signal", type: s.signal_category });
       });
       return markers;
     },
