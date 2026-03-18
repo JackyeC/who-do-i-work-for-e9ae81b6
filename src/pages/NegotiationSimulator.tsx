@@ -74,7 +74,7 @@ export default function NegotiationSimulator() {
           <div className="space-y-4">
             <div className="flex items-center justify-between">
               <p className="text-sm text-muted-foreground">
-                Practicing <span className="font-medium text-foreground">{config.scenario.replace("-", " ")}</span> with <span className="font-medium text-foreground">{config.company}</span>
+                Practicing <span className="font-medium text-foreground">{config.scenario.replace("-", " ")}</span> as <span className="font-medium text-foreground">{config.perspective === "recruiter" ? "Recruiter" : "Candidate"}</span> with <span className="font-medium text-foreground">{config.company}</span>
               </p>
             </div>
             <SimulatorChat

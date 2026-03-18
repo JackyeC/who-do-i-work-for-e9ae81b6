@@ -241,7 +241,7 @@ export function SimulatorChat({ config, messages, setMessages, feedbacks, setFee
             <Input
               value={input}
               onChange={(e) => setInput(e.target.value)}
-              placeholder={isListening ? "Listening…" : "Type your response to the recruiter…"}
+              placeholder={isListening ? "Listening…" : config.perspective === "recruiter" ? "Type your response to the candidate…" : "Type your response to the recruiter…"}
               className="h-10 text-sm"
               onKeyDown={(e) => e.key === "Enter" && !e.shiftKey && (e.preventDefault(), send())}
               disabled={isStreaming}
