@@ -5,8 +5,7 @@ import { Header } from "@/components/Header";
 import { Footer } from "@/components/Footer";
 import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { SmartJobRow } from "@/components/jobs/SmartJobRow";
-import { JobDetailPanel } from "@/components/jobs/JobDetailPanel";
+import { JobIntegrityCard } from "@/components/jobs/JobIntegrityCard";
 import { AskJackyeWidget } from "@/components/jobs/AskJackyeWidget";
 import { PersonalizationBanner } from "@/components/jobs/PersonalizationBanner";
 import { ExternalJobFeed } from "@/components/jobs/ExternalJobFeed";
@@ -14,7 +13,6 @@ import { EmptyState } from "@/components/EmptyState";
 import { Loader2, Search, Shield, ShieldCheck, Briefcase, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { usePageSEO } from "@/hooks/use-page-seo";
-import { cn } from "@/lib/utils";
 
 function getUserPreferenceCategories(): Set<string> {
   try {
@@ -38,7 +36,6 @@ function getUserPreferenceCategories(): Set<string> {
 export default function JobIntegrityBoard() {
   const [search, setSearch] = useState("");
   const [filter, setFilter] = useState<string>("all");
-  const [selectedJobId, setSelectedJobId] = useState<string | null>(null);
 
   usePageSEO({
     title: "Job Integrity Board | Who Do I Work For?",
@@ -121,137 +118,89 @@ export default function JobIntegrityBoard() {
     return result;
   }, [jobs, search, alignmentSignals]);
 
-  const selectedJob = useMemo(() => {
-    if (!selectedJobId || !filtered.length) return null;
-    return filtered.find((j: any) => j.id === selectedJobId) || null;
-  }, [selectedJobId, filtered]);
-
-  const getMatchData = useCallback((job: any) => {
-    const prefCategories = getUserPreferenceCategories();
-    const companyCats = alignmentSignals?.[job.company_id];
-    const matchedCats = companyCats ? [...prefCategories].filter(c => companyCats.has(c)) : [];
-    return { matchCount: matchedCats.length, matchedCategories: matchedCats };
-  }, [alignmentSignals]);
-
   return (
     <div className="min-h-screen flex flex-col bg-background">
       <Header />
-      <main className="flex-1 flex flex-col">
-        {/* Page header */}
-        <div className="border-b border-border/60 bg-background">
-          <div className="container mx-auto px-4 py-6 max-w-7xl">
-            <h1 className="text-2xl font-bold text-foreground tracking-tight mb-1">
-              Job Integrity Board
-            </h1>
-            <p className="text-sm text-muted-foreground max-w-xl">
-              Every listing includes transparency signals, strategic context, and employer intelligence.
-            </p>
-
-            {/* Filters */}
-            <div className="flex flex-col sm:flex-row gap-2 mt-4">
-              <div className="relative flex-1 max-w-md">
-                <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
-                <Input
-                  value={search}
-                  onChange={e => setSearch(e.target.value)}
-                  placeholder="Search jobs, companies, locations..."
-                  className="pl-9 h-9"
-                />
-                {search && (
-                  <Button size="icon" variant="ghost" className="absolute right-1 top-1/2 -translate-y-1/2 h-7 w-7" onClick={() => setSearch("")}>
-                    <X className="w-3 h-3" />
-                  </Button>
-                )}
-              </div>
-              <Select value={filter} onValueChange={setFilter}>
-                <SelectTrigger className="w-[180px] h-9">
-                  <SelectValue placeholder="All companies" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="all">All Companies</SelectItem>
-                  <SelectItem value="verified">
-                    <span className="flex items-center gap-1.5"><Shield className="w-3 h-3" /> Verified+</span>
-                  </SelectItem>
-                  <SelectItem value="certified">
-                    <span className="flex items-center gap-1.5"><ShieldCheck className="w-3 h-3" /> Certified Only</span>
-                  </SelectItem>
-                  <SelectItem value="pay_transparent">
-                    <span className="flex items-center gap-1.5">💰 Pay Transparent</span>
-                  </SelectItem>
-                </SelectContent>
-              </Select>
-            </div>
-          </div>
+      <main className="flex-1 container mx-auto px-4 py-8 max-w-4xl">
+        <div className="text-center mb-8">
+          <h1 className="text-3xl font-bold text-foreground tracking-tight mb-2">
+            Job Integrity Board
+          </h1>
+          <p className="text-muted-foreground max-w-xl mx-auto">
+            Every listing includes employer transparency signals, strategic context, and
+            Connection Chain data — so you know who you're really working for.
+          </p>
         </div>
 
-        {/* Content area: list + panel */}
-        <div className="flex-1 flex overflow-hidden">
-          {/* Job list */}
-          <div className={cn(
-            "flex-1 overflow-y-auto border-r border-border/40",
-            selectedJob ? "hidden md:block md:max-w-[420px] lg:max-w-[480px]" : "w-full"
-          )}>
-            <div className="px-4 py-3">
-              <PersonalizationBanner />
-              <ExternalJobFeed />
-            </div>
-
-            {isLoading ? (
-              <div className="flex items-center justify-center py-16">
-                <Loader2 className="w-5 h-5 animate-spin text-primary" />
-              </div>
-            ) : filtered.length === 0 ? (
-              <div className="px-4">
-                <EmptyState
-                  icon={Briefcase}
-                  title="No jobs found"
-                  description={search ? "Try adjusting your search" : "No approved listings yet."}
-                />
-              </div>
-            ) : (
-              <>
-                <div className="px-4 pb-2">
-                  <p className="text-xs text-muted-foreground">{filtered.length} listings</p>
-                </div>
-                {filtered.map((job: any) => {
-                  const { matchCount } = getMatchData(job);
-                  return (
-                    <SmartJobRow
-                      key={job.id}
-                      job={job}
-                      isSelected={job.id === selectedJobId}
-                      matchScore={matchCount}
-                      onClick={() => setSelectedJobId(job.id)}
-                    />
-                  );
-                })}
-              </>
+        {/* Filters */}
+        <div className="flex flex-col sm:flex-row gap-3 mb-6">
+          <div className="relative flex-1">
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
+            <Input
+              value={search}
+              onChange={e => setSearch(e.target.value)}
+              placeholder="Search jobs, companies, locations..."
+              className="pl-9"
+            />
+            {search && (
+              <Button size="icon" variant="ghost" className="absolute right-1 top-1/2 -translate-y-1/2 h-7 w-7" onClick={() => setSearch("")}>
+                <X className="w-3 h-3" />
+              </Button>
             )}
           </div>
-
-          {/* Detail panel */}
-          {selectedJob && (
-            <div className={cn(
-              "bg-background",
-              "w-full md:flex-1"
-            )}>
-              {(() => {
-                const { matchCount, matchedCategories } = getMatchData(selectedJob);
-                return (
-                  <JobDetailPanel
-                    job={selectedJob}
-                    matchCount={matchCount}
-                    matchedCategories={matchedCategories}
-                    onClose={() => setSelectedJobId(null)}
-                  />
-                );
-              })()}
-            </div>
-          )}
+          <Select value={filter} onValueChange={setFilter}>
+            <SelectTrigger className="w-[180px]">
+              <SelectValue placeholder="All companies" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="all">All Companies</SelectItem>
+              <SelectItem value="verified">
+                <span className="flex items-center gap-1.5"><Shield className="w-3 h-3" /> Verified+</span>
+              </SelectItem>
+              <SelectItem value="certified">
+                <span className="flex items-center gap-1.5"><ShieldCheck className="w-3 h-3" /> Certified Only</span>
+              </SelectItem>
+              <SelectItem value="pay_transparent">
+                <span className="flex items-center gap-1.5">💰 Pay Transparent</span>
+              </SelectItem>
+            </SelectContent>
+          </Select>
         </div>
+
+        <PersonalizationBanner />
+        <ExternalJobFeed />
+
+        {/* Results */}
+        {isLoading ? (
+          <div className="flex items-center justify-center py-16">
+            <Loader2 className="w-6 h-6 animate-spin text-primary" />
+          </div>
+        ) : filtered.length === 0 ? (
+          <EmptyState
+            icon={Briefcase}
+            title="No jobs found"
+            description={search ? "Try adjusting your search" : "No approved job listings yet. Check back soon!"}
+          />
+        ) : (
+          <div className="grid gap-4 md:grid-cols-2">
+            {filtered.map((job: any) => {
+              const prefCategories = getUserPreferenceCategories();
+              const companyCats = alignmentSignals?.[job.company_id];
+              const matchedCats = companyCats ? [...prefCategories].filter(c => companyCats.has(c)) : [];
+              return (
+                <JobIntegrityCard
+                  key={job.id}
+                  job={job}
+                  matchCount={matchedCats.length}
+                  matchedCategories={matchedCats}
+                />
+              );
+            })}
+          </div>
+        )}
       </main>
       <AskJackyeWidget />
-      {!selectedJob && <Footer />}
+      <Footer />
     </div>
   );
 }
