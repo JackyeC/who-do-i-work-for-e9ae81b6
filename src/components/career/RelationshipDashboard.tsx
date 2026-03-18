@@ -99,7 +99,7 @@ function ConnectionCard({
           </button>
         )}
         {connection.match_confidence != null && (
-          <Badge variant="secondary" className="text-[10px] mt-1">
+          <Badge variant="secondary" className="text-xs mt-1">
             {Math.round(connection.match_confidence * 100)}% match
           </Badge>
         )}
