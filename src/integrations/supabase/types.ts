@@ -5184,6 +5184,47 @@ export type Database = {
           },
         ]
       }
+      interview_flinch_signals: {
+        Row: {
+          company_id: string | null
+          company_name: string
+          created_at: string | null
+          flinch_detected: boolean
+          id: string
+          notes: string | null
+          signal_category: string
+          user_id: string
+        }
+        Insert: {
+          company_id?: string | null
+          company_name: string
+          created_at?: string | null
+          flinch_detected: boolean
+          id?: string
+          notes?: string | null
+          signal_category: string
+          user_id: string
+        }
+        Update: {
+          company_id?: string | null
+          company_name?: string
+          created_at?: string | null
+          flinch_detected?: boolean
+          id?: string
+          notes?: string | null
+          signal_category?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "interview_flinch_signals_company_id_fkey"
+            columns: ["company_id"]
+            isOneToOne: false
+            referencedRelation: "companies"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       issue_legislation_map: {
         Row: {
           bill_keyword: string
@@ -9494,6 +9535,14 @@ export type Database = {
       }
       deactivate_expired_jobs: { Args: never; Returns: number }
       get_company_roi_pipeline: { Args: { _company_id: string }; Returns: Json }
+      get_crowd_flinch_signals: {
+        Args: { _company_id: string }
+        Returns: {
+          flinch_count: number
+          signal_category: string
+          total_responses: number
+        }[]
+      }
       has_role: {
         Args: {
           _role: Database["public"]["Enums"]["app_role"]
