@@ -15,6 +15,50 @@ const corsHeaders = {
   'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type, x-supabase-client-platform, x-supabase-client-platform-version, x-supabase-client-runtime, x-supabase-client-runtime-version',
 };
 
+// Logic Bible V8.0 — UI Statement mapping
+const UI_STATEMENTS: Record<string, Record<string, string>> = {
+  compensation_transparency: {
+    high: "Salary range provided",
+    medium: "Compensation unclear",
+    low: "Compensation not listed",
+    not_disclosed: "Compensation not listed",
+  },
+  hiring_activity: {
+    high: "Active hiring across roles",
+    medium: "Hiring activity mixed",
+    low: "Role reposted multiple times",
+    not_disclosed: "No hiring data",
+  },
+  workforce_stability: {
+    high: "Workforce appears stable",
+    medium: "Stability data limited",
+    low: "Recent layoffs reported",
+    not_disclosed: "Stability data limited",
+  },
+  company_behavior: {
+    high: "Federal contractor",
+    medium: "Limited public activity data",
+    low: "No public activity data found",
+    not_disclosed: "No public activity data found",
+  },
+  innovation_activity: {
+    high: "Growth signals present",
+    medium: "Moderate innovation signals",
+    low: "Limited growth activity",
+    not_disclosed: "Limited growth activity",
+  },
+  public_sentiment: {
+    high: "Employee sentiment trending positive",
+    medium: "Employee sentiment mixed",
+    low: "Recent employee concerns reported",
+    not_disclosed: "No sentiment data",
+  },
+};
+
+function getUiStatement(category: string, norm: string): string {
+  return UI_STATEMENTS[category]?.[norm] || "Data unavailable";
+}
+
 interface SignalOutput {
   company_id: string;
   signal_category: string;
@@ -22,6 +66,7 @@ interface SignalOutput {
   signal_value: string;
   direction: string;
   summary: string;
+  ui_statement: string;
   value_normalized: string;
   confidence_level: string;
   source_url: string | null;
