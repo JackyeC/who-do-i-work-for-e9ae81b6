@@ -86,7 +86,7 @@ export function TalentRiskSignals({ companyId, companyName }: Props) {
       if (aiHrRes.data && aiHrRes.data.length > 0) {
         detected.push({
           label: "AI Hiring Technology concerns detected",
-          description: `${aiHrRes.data.length} signal${aiHrRes.data.length > 1 ? "s" : ""} related to ${[...new Set(aiHrRes.data.map(s => s.signal_category))].slice(0, 2).join(", ")}`,
+          description: `${aiHrRes.data.length} signal${aiHrRes.data.length > 1 ? "s" : ""} related to ${[...new Set(aiHrRes.data.map(s => normalizeCategory(s.signal_category)))].slice(0, 2).join(", ")}`,
           severity: "medium",
           sourceUrl: aiHrRes.data[0]?.source_url || undefined,
           sourceLabel: "Source",
