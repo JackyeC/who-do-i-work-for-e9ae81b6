@@ -131,7 +131,11 @@ function OpenRolesSection({ companyId, companyName }: { companyId: string; compa
         .eq("is_active", true)
         .order("posted_at", { ascending: false })
         .limit(20);
-      return data || [];
+      return (data ?? []) as Array<{
+        id: string; title: string; location: string | null; work_mode: string | null;
+        department: string | null; salary_range: string | null; url: string | null;
+        posted_at: string | null; source_url: string | null;
+      }>;
     },
     enabled: !!companyId,
     refetchInterval: shouldPoll ? 5000 : false,
