@@ -119,3 +119,6 @@ verify_jwt = false
 
 [functions.seed-company-intelligence]
 verify_jwt = false
+
+[functions.negotiation-simulator]
+verify_jwt = false
