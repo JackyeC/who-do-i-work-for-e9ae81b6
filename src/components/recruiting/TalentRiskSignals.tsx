@@ -75,7 +75,7 @@ export function TalentRiskSignals({ companyId, companyName }: Props) {
         const highSeverity = ideologyRes.data.filter(f => f.severity === "high" || f.severity === "critical");
         detected.push({
           label: "Policy alignment signals detected",
-          description: `${ideologyRes.data.length} ideology flag${ideologyRes.data.length > 1 ? "s" : ""} including ${ideologyRes.data.map(f => f.category).slice(0, 2).join(", ")}`,
+          description: `${ideologyRes.data.length} ideology flag${ideologyRes.data.length > 1 ? "s" : ""} including ${ideologyRes.data.map(f => normalizeCategory(f.category)).slice(0, 2).join(", ")}`,
           severity: highSeverity.length > 0 ? "high" : "medium",
           sourceUrl: ideologyRes.data[0]?.evidence_url || undefined,
           sourceLabel: "Evidence",
