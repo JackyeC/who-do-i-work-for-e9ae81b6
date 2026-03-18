@@ -86,7 +86,7 @@ export function DashboardOverview({ onNavigate }: DashboardOverviewProps) {
         <Card className="border-border/40 overflow-hidden">
           <div className="h-0.5 bg-gradient-to-r from-primary to-primary/40" />
           <CardContent className="p-5">
-            <h3 className="text-xs font-semibold uppercase tracking-wider text-muted-foreground mb-3">
+            <h3 className="text-sm font-semibold uppercase tracking-wider text-muted-foreground mb-3">
               Continue where you left off
             </h3>
             {lastTracked?.company ? (
