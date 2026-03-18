@@ -188,9 +188,19 @@ export default function JobIntegrityBoard() {
           />
         ) : (
           <div className="grid gap-4 md:grid-cols-2">
-            {filtered.map((job: any) => (
-              <JobIntegrityCard key={job.id} job={job} />
-            ))}
+            {filtered.map((job: any) => {
+              const prefCategories = getUserPreferenceCategories();
+              const companyCats = alignmentSignals?.[job.company_id];
+              const matchedCats = companyCats ? [...prefCategories].filter(c => companyCats.has(c)) : [];
+              return (
+                <JobIntegrityCard
+                  key={job.id}
+                  job={job}
+                  matchCount={matchedCats.length}
+                  matchedCategories={matchedCats}
+                />
+              );
+            })}
           </div>
         )}
       </main>
