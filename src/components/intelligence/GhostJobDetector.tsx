@@ -115,9 +115,9 @@ function ZeroStateIntelligence({ companyName, scanContext }: { companyName: stri
             <div className="p-3 bg-muted/30">
               <div className="flex items-center gap-1.5 mb-1.5">
                 <Eye className="w-3 h-3 text-muted-foreground" />
-                <span className="text-[10px] font-semibold text-muted-foreground uppercase tracking-wider">What They Say</span>
+                <span className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">What They Say</span>
               </div>
-              <p className="text-[11px] text-foreground/80 leading-relaxed italic">{scanContext!.whatTheySay}</p>
+              <p className="text-sm text-foreground/80 leading-relaxed italic">{scanContext!.whatTheySay}</p>
             </div>
             <div className="p-3 bg-primary/5">
               <div className="flex items-center gap-1.5 mb-1.5">
