@@ -51,7 +51,7 @@ export function ShareableScoreCard({ companyName, clarityScore, signals, slug }:
         <div className={`absolute top-0 left-0 w-1 h-full ${band.accent}`} />
 
         <div className="pl-4">
-          <div className="font-mono text-[9px] tracking-[0.25em] uppercase text-primary mb-2">
+          <div className="font-mono text-xs tracking-[0.25em] uppercase text-primary mb-2">
             Employer Intelligence Report
           </div>
           <div className="font-serif text-xl mb-1 text-foreground">{companyName}</div>
