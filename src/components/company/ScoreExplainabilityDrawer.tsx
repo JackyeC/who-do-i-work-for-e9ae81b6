@@ -190,7 +190,7 @@ export function ScoreExplainabilityDrawer({ companyId, score }: Props) {
                       <TooltipProvider>
                         <Tooltip>
                           <TooltipTrigger>
-                            <Badge variant="outline" className="text-[9px] px-1.5">{(sub.weight * 100).toFixed(0)}% weight</Badge>
+                            <Badge variant="outline" className="text-xs px-1.5">{(sub.weight * 100).toFixed(0)}% weight</Badge>
                           </TooltipTrigger>
                           <TooltipContent className="text-xs">
                             Contributes {weightedContribution} to the final score
