@@ -75,7 +75,7 @@ export function MismatchEngine({ stances, darkMoney, tradeAssociations }: Props)
                   <div className="flex-1 min-w-0 space-y-1">
                     <div className="flex items-center gap-2">
                       <p className="text-sm font-medium text-foreground">{s.topic}</p>
-                      <span className={`text-[10px] font-medium ${config.color}`}>{config.label}</span>
+                      <span className={`text-xs font-medium ${config.color}`}>{config.label}</span>
                     </div>
                     <p className="text-xs text-muted-foreground">
                       <strong className="text-foreground">Public position:</strong> {s.public_position}
