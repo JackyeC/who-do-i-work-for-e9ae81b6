@@ -332,7 +332,11 @@ export function WhatYoureSupportingCard({
                     {darkMoneyRecords.length > 0 && (
                       <div className="space-y-1.5">
                         {darkMoneyRecords.map((dm, i) => (
-                          <div key={i} className="p-2.5 rounded-lg bg-card border border-border/50 text-xs">
+                          <button
+                            key={i}
+                            onClick={() => setSelectedDarkEntity({ name: dm.name, org_type: dm.org_type, relationship: dm.relationship, estimated_amount: dm.estimated_amount, description: dm.description, source: dm.source, confidence: dm.confidence })}
+                            className="w-full p-2.5 rounded-lg bg-card border border-border/50 text-xs text-left hover:bg-muted/50 transition-colors group"
+                          >
                             <div className="flex items-center justify-between mb-1">
                               <span className="font-medium text-foreground">{dm.name}</span>
                               <div className="flex items-center gap-1.5">
@@ -340,16 +344,11 @@ export function WhatYoureSupportingCard({
                                 {dm.estimated_amount && dm.estimated_amount > 0 && (
                                   <span className="font-data font-semibold text-foreground">{formatCurrency(dm.estimated_amount)}</span>
                                 )}
+                                <ChevronRight className="w-3 h-3 text-muted-foreground group-hover:text-foreground transition-colors" />
                               </div>
                             </div>
                             <p className="text-muted-foreground">{dm.relationship}</p>
-                            {dm.description && <p className="text-muted-foreground mt-0.5 italic">{dm.description}</p>}
-                            {dm.source && (
-                              <a href={dm.source} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-1 text-primary hover:underline mt-1">
-                                View source <ExternalLink className="w-2.5 h-2.5" />
-                              </a>
-                            )}
-                          </div>
+                          </button>
                         ))}
                       </div>
                     )}
