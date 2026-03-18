@@ -164,7 +164,12 @@ export default function RealityCheckPage() {
 
       <div className="max-w-4xl mx-auto px-6 py-8">
         {result ? (
-          <RealityGapResults result={result} onReset={() => setResult(null)} />
+          <div className="space-y-6">
+            <RealityGapResults result={result} onReset={() => { setResult(null); setLastInput(null); }} />
+            {lastInput && (
+              <FlinchTest companyId={lastInput.companyId} companyName={lastInput.companyName} />
+            )}
+          </div>
         ) : (
           <VibeMatchQuestionnaire onSubmit={handleSubmit} isSubmitting={submitting} />
         )}
