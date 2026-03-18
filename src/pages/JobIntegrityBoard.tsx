@@ -172,6 +172,9 @@ export default function JobIntegrityBoard() {
           </Select>
         </div>
 
+        {/* Personalization Banner */}
+        <PersonalizationBanner />
+
         {/* Results */}
         {isLoading ? (
           <div className="flex items-center justify-center py-16">
