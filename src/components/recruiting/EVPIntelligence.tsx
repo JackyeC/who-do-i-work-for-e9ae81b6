@@ -170,7 +170,7 @@ export function EVPIntelligence() {
       }
 
       if (signalScansRes.data && signalScansRes.data.length > 0) {
-        const categories = [...new Set(signalScansRes.data.map((s: any) => s.signal_category))];
+        const categories = [...new Set(signalScansRes.data.map((s: any) => normalizeCategory(s.signal_category)))];
         signals.push({
           category: "Workforce Programs",
           detail: `${signalScansRes.data.length} signals across ${categories.slice(0, 3).join(", ")}`,
