@@ -114,7 +114,7 @@ export function WalkAwayCalculator({ onComplete, offerSalary }: Props) {
                 <p className="text-xl font-display font-bold text-primary">
                   ${annualBaseline.toLocaleString()}
                 </p>
-                <p className="text-[10px] text-muted-foreground">annual minimum</p>
+                <p className="text-xs text-muted-foreground">annual minimum</p>
               </div>
             </div>
 
