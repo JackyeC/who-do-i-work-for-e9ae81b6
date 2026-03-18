@@ -302,7 +302,7 @@ export function DashboardOverview({ onNavigate }: DashboardOverviewProps) {
                       <FileText className="w-4 h-4 text-muted-foreground shrink-0" />
                       <div className="flex-1 min-w-0">
                         <p className="text-xs font-medium text-foreground truncate">{doc.original_filename}</p>
-                        <p className="text-[10px] text-muted-foreground">
+                        <p className="text-xs text-muted-foreground">
                           {doc.document_type.replace("_", " ")} · {doc.status === "parsed" ? "✓ Parsed" : doc.status}
                         </p>
                       </div>
