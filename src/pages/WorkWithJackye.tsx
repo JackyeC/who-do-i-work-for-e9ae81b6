@@ -41,6 +41,9 @@ const SERVICES = [
 
 export default function WorkWithJackye() {
   const navigate = useNavigate();
+  const [formState, setFormState] = useState({ name: "", email: "", service: "general", message: "" });
+  const [submitting, setSubmitting] = useState(false);
+  const [submitted, setSubmitted] = useState(false);
   usePageSEO({
     title: "Work With Jackye — Career Strategy & HR Advisory",
     description: "Book Jackye Clayton for career strategy, recruiting advisory, HR tech go-to-market, employer brand strategy, and offer review. 20+ years of HR expertise.",
