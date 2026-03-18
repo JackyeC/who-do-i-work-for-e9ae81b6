@@ -37,11 +37,10 @@ interface PartyBreakdown {
 
 interface RevolvingDoor {
   id: string;
-  person_name: string;
-  government_role: string;
-  corporate_role: string;
-  government_agency?: string | null;
-  direction?: string | null;
+  person: string;
+  prior_role: string;
+  new_role: string;
+  relevance?: string | null;
 }
 
 interface DarkMoney {
