@@ -793,6 +793,12 @@ export default function StrategicOfferReview() {
                   />
                 </div>
 
+                {/* 5.5 Risk Signals */}
+                <OfferRiskSignals
+                  companyId={offer.companyId}
+                  companyName={offer.companyName}
+                />
+
                 {/* 6. Compensation Analysis */}
                 <div id="compensation">
                   {report ? (
