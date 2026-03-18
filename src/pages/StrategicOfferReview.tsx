@@ -41,6 +41,7 @@ import { CareerPathForecast } from "@/components/strategic-offer/CareerPathForec
 import { StabilityDelta } from "@/components/strategic-offer/StabilityDelta";
 import { NegotiationCoach } from "@/components/strategic-offer/NegotiationCoach";
 import { OutcomeFeedback } from "@/components/strategic-offer/OutcomeFeedback";
+import { AcceptanceEmail } from "@/components/strategic-offer/AcceptanceEmail";
 import { SituationContextBanner } from "@/components/policy-intelligence/SituationContextBanner";
 import { getSituationsFromStorage, type Situation } from "@/lib/policyScoreEngine";
 import { useQuery } from "@tanstack/react-query";
@@ -97,6 +98,7 @@ const DASHBOARD_SECTIONS = [
   { id: "career-freedom", label: "Career Freedom" },
   { id: "negotiate", label: "Negotiate" },
   { id: "negotiate-coach", label: "Coach" },
+  { id: "acceptance-email", label: "Accept" },
   { id: "questions-to-ask", label: "Questions" },
   { id: "culture-snapshot", label: "Culture" },
   { id: "decision-summary", label: "Decision" },
@@ -911,6 +913,17 @@ export default function StrategicOfferReview() {
                   legalFlags={legalFlags}
                   riskSignals={riskSignals}
                   userPriorities={userSituations}
+                />
+
+                {/* 9.6. Offer Acceptance Email */}
+                <AcceptanceEmail
+                  companyName={offer.companyName}
+                  roleTitle={offer.roleTitle}
+                  baseSalary={Number(offer.baseSalary) || 0}
+                  bonus={offer.bonus}
+                  equity={offer.equity}
+                  signOnBonus={offer.signOnBonus}
+                  riskSignals={riskSignals}
                 />
 
                 {/* 10. Questions to Ask */}
