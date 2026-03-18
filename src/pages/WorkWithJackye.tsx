@@ -1,6 +1,9 @@
+import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { ArrowRight } from "lucide-react";
+import { ArrowRight, CheckCircle2, Loader2 } from "lucide-react";
 import jackyeHeadshot from "@/assets/jackye-headshot.png";
+import { supabase } from "@/integrations/supabase/client";
+import { toast } from "sonner";
 import { usePageSEO } from "@/hooks/use-page-seo";
 
 const SERVICES = [
