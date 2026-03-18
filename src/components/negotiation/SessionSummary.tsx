@@ -1,14 +1,15 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
-import { Trophy, TrendingUp, MessageSquare } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { Trophy, TrendingUp, MessageSquare, RotateCcw } from "lucide-react";
 import type { FeedbackData } from "./RoundFeedback";
 
 interface Props {
   feedbacks: FeedbackData[];
   totalRounds: number;
+  onTryAgain?: () => void;
 }
 
-export function SessionSummary({ feedbacks, totalRounds }: Props) {
+export function SessionSummary({ feedbacks, totalRounds, onTryAgain }: Props) {
   const balanced = feedbacks.filter((f) => f.tone === "balanced").length;
   const toneScore = totalRounds > 0 ? Math.round((balanced / totalRounds) * 100) : 0;
 
@@ -43,6 +44,12 @@ export function SessionSummary({ feedbacks, totalRounds }: Props) {
               </div>
             ))}
           </div>
+        )}
+
+        {onTryAgain && (
+          <Button onClick={onTryAgain} variant="outline" className="w-full gap-2">
+            <RotateCcw className="w-4 h-4" /> Try Again (Same Scenario)
+          </Button>
         )}
 
         <p className="text-[11px] text-muted-foreground text-center">

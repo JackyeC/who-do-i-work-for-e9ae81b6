@@ -25,7 +25,6 @@ export default function NegotiationSimulator() {
     description: "Practice real negotiation conversations with an AI-powered simulator. Get round-by-round feedback on your approach.",
   });
 
-  // Pre-fill from URL params (from Offer Review or Job Detail)
   const initialConfig: Partial<SimulatorConfig> = {
     company: searchParams.get("company") || "",
     role: searchParams.get("role") || "",
@@ -41,10 +40,17 @@ export default function NegotiationSimulator() {
   };
 
   const handleEnd = () => setPhase("summary");
+
   const handleRestart = () => {
     setMessages([]);
     setFeedbacks([]);
     setPhase("setup");
+  };
+
+  const handleTryAgain = () => {
+    setMessages([]);
+    setFeedbacks([]);
+    setPhase("active");
   };
 
   return (
@@ -84,7 +90,11 @@ export default function NegotiationSimulator() {
 
         {phase === "summary" && (
           <div className="space-y-4">
-            <SessionSummary feedbacks={feedbacks} totalRounds={messages.filter((m) => m.role === "user").length} />
+            <SessionSummary
+              feedbacks={feedbacks}
+              totalRounds={messages.filter((m) => m.role === "user").length}
+              onTryAgain={config ? handleTryAgain : undefined}
+            />
             <Button onClick={handleRestart} variant="outline" className="w-full gap-2">
               <ArrowLeft className="w-4 h-4" /> Start New Session
             </Button>

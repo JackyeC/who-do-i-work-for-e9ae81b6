@@ -1,7 +1,8 @@
-import { useState, useRef, useEffect } from "react";
+import { useState, useRef, useEffect, useCallback } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Send, Loader2, StopCircle } from "lucide-react";
+import { Progress } from "@/components/ui/progress";
+import { Send, Loader2, StopCircle, Mic, MicOff } from "lucide-react";
 import ReactMarkdown from "react-markdown";
 import { RoundFeedback, type FeedbackData } from "./RoundFeedback";
 import type { SimulatorConfig } from "./SimulatorSetup";
@@ -17,13 +18,21 @@ interface Props {
   onEndSession: () => void;
 }
 
+const MAX_ROUNDS = 5;
 const CHAT_URL = `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/negotiation-simulator`;
+
+const SpeechRecognitionAPI =
+  typeof window !== "undefined"
+    ? (window as any).SpeechRecognition || (window as any).webkitSpeechRecognition
+    : null;
 
 export function SimulatorChat({ config, messages, setMessages, feedbacks, setFeedbacks, onEndSession }: Props) {
   const [input, setInput] = useState("");
   const [isStreaming, setIsStreaming] = useState(false);
+  const [isListening, setIsListening] = useState(false);
   const bottomRef = useRef<HTMLDivElement>(null);
-  const round = Math.ceil(messages.filter((m) => m.role === "user").length);
+  const recognitionRef = useRef<any>(null);
+  const userRounds = messages.filter((m) => m.role === "user").length;
 
   useEffect(() => {
     bottomRef.current?.scrollIntoView({ behavior: "smooth" });
@@ -36,6 +45,43 @@ export function SimulatorChat({ config, messages, setMessages, feedbacks, setFee
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
+
+  // Auto-end when round limit reached
+  useEffect(() => {
+    if (userRounds >= MAX_ROUNDS && !isStreaming) {
+      onEndSession();
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [userRounds, isStreaming]);
+
+  const toggleMic = useCallback(() => {
+    if (!SpeechRecognitionAPI) return;
+
+    if (isListening && recognitionRef.current) {
+      recognitionRef.current.stop();
+      setIsListening(false);
+      return;
+    }
+
+    const recognition = new SpeechRecognitionAPI();
+    recognition.continuous = false;
+    recognition.interimResults = true;
+    recognition.lang = "en-US";
+
+    recognition.onresult = (event: any) => {
+      const transcript = Array.from(event.results)
+        .map((r: any) => r[0].transcript)
+        .join("");
+      setInput(transcript);
+    };
+
+    recognition.onend = () => setIsListening(false);
+    recognition.onerror = () => setIsListening(false);
+
+    recognitionRef.current = recognition;
+    recognition.start();
+    setIsListening(true);
+  }, [isListening]);
 
   async function streamMessage(history: Msg[]) {
     setIsStreaming(true);
@@ -80,12 +126,8 @@ export function SimulatorChat({ config, messages, setMessages, feedbacks, setFee
 
           try {
             const parsed = JSON.parse(jsonStr);
-            // Check for tool calls (feedback)
             const toolCalls = parsed.choices?.[0]?.delta?.tool_calls;
-            if (toolCalls?.[0]?.function?.arguments) {
-              // Accumulate tool call args — will parse at end
-              continue;
-            }
+            if (toolCalls?.[0]?.function?.arguments) continue;
             const content = parsed.choices?.[0]?.delta?.content;
             if (content) {
               assistantSoFar += content;
@@ -104,20 +146,18 @@ export function SimulatorChat({ config, messages, setMessages, feedbacks, setFee
         }
       }
 
-      // Try to extract feedback from the response
+      // Extract feedback
       try {
         const feedbackMatch = assistantSoFar.match(/\[FEEDBACK\]([\s\S]*?)\[\/FEEDBACK\]/);
         if (feedbackMatch) {
           const fb = JSON.parse(feedbackMatch[1]) as FeedbackData;
           setFeedbacks((prev) => [...prev, fb]);
-          // Clean the feedback tag from displayed message
           const cleanContent = assistantSoFar.replace(/\[FEEDBACK\][\s\S]*?\[\/FEEDBACK\]/, "").trim();
           if (cleanContent) {
             setMessages((prev) => prev.map((m, i) => i === prev.length - 1 ? { ...m, content: cleanContent } : m));
           }
         }
-      } catch { /* feedback parsing is best-effort */ }
-
+      } catch { /* best-effort */ }
     } catch (e) {
       console.error("Stream error:", e);
       setMessages((prev) => [...prev, { role: "assistant", content: "Connection interrupted. Please try again." }]);
@@ -128,7 +168,7 @@ export function SimulatorChat({ config, messages, setMessages, feedbacks, setFee
 
   const send = async () => {
     const text = input.trim();
-    if (!text || isStreaming) return;
+    if (!text || isStreaming || userRounds >= MAX_ROUNDS) return;
     setInput("");
     const userMsg: Msg = { role: "user", content: text };
     const newHistory = [...messages, userMsg];
@@ -136,8 +176,18 @@ export function SimulatorChat({ config, messages, setMessages, feedbacks, setFee
     await streamMessage(newHistory);
   };
 
+  const roundProgress = (userRounds / MAX_ROUNDS) * 100;
+
   return (
     <div className="flex flex-col h-full">
+      {/* Round indicator */}
+      <div className="flex items-center gap-3 mb-3">
+        <p className="text-xs font-medium text-muted-foreground whitespace-nowrap">
+          Round {Math.min(userRounds + 1, MAX_ROUNDS)} of {MAX_ROUNDS}
+        </p>
+        <Progress value={roundProgress} className="h-1.5 flex-1" />
+      </div>
+
       {/* Messages */}
       <div className="flex-1 overflow-y-auto space-y-3 px-1 py-3 min-h-[300px] max-h-[500px]">
         {messages.map((m, i) => (
@@ -156,7 +206,6 @@ export function SimulatorChat({ config, messages, setMessages, feedbacks, setFee
           </div>
         ))}
 
-        {/* Show feedback after assistant rounds */}
         {feedbacks.map((fb, i) => (
           <RoundFeedback key={i} feedback={fb} round={i + 1} />
         ))}
@@ -173,19 +222,35 @@ export function SimulatorChat({ config, messages, setMessages, feedbacks, setFee
 
       {/* Input */}
       <div className="border-t border-border/30 pt-3 space-y-2">
-        <div className="flex gap-2">
-          <Input
-            value={input}
-            onChange={(e) => setInput(e.target.value)}
-            placeholder="Type your response to the recruiter…"
-            className="h-10 text-sm"
-            onKeyDown={(e) => e.key === "Enter" && !e.shiftKey && (e.preventDefault(), send())}
-            disabled={isStreaming}
-          />
-          <Button size="icon" onClick={send} disabled={isStreaming || !input.trim()} className="h-10 w-10 shrink-0">
-            <Send className="w-4 h-4" />
-          </Button>
-        </div>
+        {userRounds >= MAX_ROUNDS ? (
+          <p className="text-xs text-muted-foreground text-center py-2">Session complete — {MAX_ROUNDS} rounds reached.</p>
+        ) : (
+          <div className="flex gap-2">
+            {SpeechRecognitionAPI && (
+              <Button
+                size="icon"
+                variant={isListening ? "default" : "outline"}
+                onClick={toggleMic}
+                disabled={isStreaming}
+                className={`h-10 w-10 shrink-0 ${isListening ? "animate-pulse" : ""}`}
+                title={isListening ? "Stop listening" : "Speak your response"}
+              >
+                {isListening ? <MicOff className="w-4 h-4" /> : <Mic className="w-4 h-4" />}
+              </Button>
+            )}
+            <Input
+              value={input}
+              onChange={(e) => setInput(e.target.value)}
+              placeholder={isListening ? "Listening…" : "Type your response to the recruiter…"}
+              className="h-10 text-sm"
+              onKeyDown={(e) => e.key === "Enter" && !e.shiftKey && (e.preventDefault(), send())}
+              disabled={isStreaming}
+            />
+            <Button size="icon" onClick={send} disabled={isStreaming || !input.trim()} className="h-10 w-10 shrink-0">
+              <Send className="w-4 h-4" />
+            </Button>
+          </div>
+        )}
         <div className="flex justify-end">
           <Button variant="ghost" size="sm" onClick={onEndSession} className="text-xs text-muted-foreground gap-1">
             <StopCircle className="w-3 h-3" /> End Session
