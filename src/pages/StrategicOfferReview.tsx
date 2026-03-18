@@ -8,13 +8,14 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Progress } from "@/components/ui/progress";
 import { Separator } from "@/components/ui/separator";
+import { Switch } from "@/components/ui/switch";
 import { useToast } from "@/hooks/use-toast";
 import { useAuth } from "@/contexts/AuthContext";
 import { supabase } from "@/integrations/supabase/client";
 import {
   ShieldCheck, Shield, Lock, Upload, ClipboardPaste, ArrowRight, ArrowLeft,
   Loader2, CheckCircle2, Building2, Briefcase, DollarSign,
-  Scale, AlertOctagon, FileText
+  Scale, AlertOctagon, FileText, Eye
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { WalkAwayCalculator } from "@/components/strategic-offer/WalkAwayCalculator";
@@ -29,6 +30,8 @@ import { GreenFlagsPanel } from "@/components/strategic-offer/GreenFlagsPanel";
 import { QuestionsToAsk } from "@/components/strategic-offer/QuestionsToAsk";
 import { CultureSnapshot } from "@/components/strategic-offer/CultureSnapshot";
 import { OfferDecisionSummary } from "@/components/strategic-offer/OfferDecisionSummary";
+import { OfferRealityCheck } from "@/components/strategic-offer/OfferRealityCheck";
+import { OfferRiskSignals, computeRiskLevel, type RiskSignal } from "@/components/strategic-offer/OfferRiskSignals";
 import { OfferClarityDashboard, type OfferClarityReport } from "@/components/offer-clarity/OfferClarityDashboard";
 import { OfferLetterUpload } from "@/components/offer-review/OfferLetterUpload";
 import { OfferReviewResults } from "@/components/offer-review/OfferReviewResults";
@@ -57,6 +60,7 @@ interface OfferInput {
   nonCompete: string;
   arbitrationClause: boolean;
   ipClause: boolean;
+  salarySharedUpfront: boolean;
 }
 
 const STEPS = [
@@ -71,9 +75,11 @@ const sanitize = (v: string, maxLen = 500): string =>
 
 /* ── Navigation anchors for the scrolling dashboard ── */
 const DASHBOARD_SECTIONS = [
+  { id: "reality-check", label: "Reality Check" },
   { id: "offer-strength-score", label: "Score" },
   { id: "red-flags", label: "Red Flags" },
   { id: "green-flags", label: "Green Flags" },
+  { id: "risk-signals", label: "Risk Signals" },
   { id: "employer-intel", label: "Employer" },
   { id: "compensation", label: "Compensation" },
   { id: "equity", label: "Equity" },
@@ -103,10 +109,10 @@ export default function StrategicOfferReview() {
     baseSalary: "", bonus: "", equity: "", additionalDetails: "",
     hasInterview: true, asksToBuyEquipment: false,
     signOnBonus: "", repaymentClause: "", benefitWaitingPeriod: "",
-    nonCompete: "", arbitrationClause: false, ipClause: false,
+    nonCompete: "", arbitrationClause: false, ipClause: false, salarySharedUpfront: true,
   });
 
-  // Career path signals for the forecast module (must be after offer declaration)
+  // Career path signals for the forecast module
   const { data: careerSignals = [] } = useQuery({
     queryKey: ["career-forecast-signals", offer.companyId],
     queryFn: async () => {
@@ -120,6 +126,57 @@ export default function StrategicOfferReview() {
     },
     enabled: !!offer.companyId && step === 3,
   });
+
+  // Internal consistency: compare offer to compensation_data for same company
+  const { data: companyCompData = [] } = useQuery({
+    queryKey: ["internal-comp", offer.companyId, offer.roleTitle],
+    queryFn: async () => {
+      if (!offer.companyId) return [];
+      const { data } = await supabase
+        .from("compensation_data" as any)
+        .select("base_salary, total_comp, role_title")
+        .eq("company", offer.companyId)
+        .limit(20);
+      return (data || []) as any[];
+    },
+    enabled: !!offer.companyId && step === 3,
+  });
+
+  // Risk signals for reality check
+  const { data: riskSignals = [] } = useQuery({
+    queryKey: ["offer-risk-signals-inline", offer.companyId],
+    queryFn: async () => {
+      if (!offer.companyId) return [];
+      const { data } = await supabase
+        .from("company_signal_scans" as any)
+        .select("signal_category, normalized_value, direction, summary, confidence_score")
+        .eq("company_id", offer.companyId)
+        .order("scanned_at", { ascending: false })
+        .limit(12);
+      const seen = new Set<string>();
+      return ((data || []) as unknown as RiskSignal[]).filter(s => {
+        if (seen.has(s.signal_category)) return false;
+        seen.add(s.signal_category);
+        return true;
+      });
+    },
+    enabled: !!offer.companyId && step === 3,
+  });
+
+  const riskLevel = riskSignals.length > 0 ? computeRiskLevel(riskSignals) : null;
+
+  // Derive internal consistency
+  const internalConsistency: "aligned" | "lower" | "unclear" = (() => {
+    if (companyCompData.length === 0 || !offer.baseSalary) return "unclear";
+    const salaries = companyCompData.map((c: any) => Number(c.base_salary) || Number(c.total_comp) || 0).filter((v: number) => v > 0);
+    if (salaries.length === 0) return "unclear";
+    const avg = salaries.reduce((a: number, b: number) => a + b, 0) / salaries.length;
+    const offerSal = Number(offer.baseSalary);
+    if (offerSal >= avg * 0.9) return "aligned";
+    return "lower";
+  })();
+
+  const salaryTransparency: "transparent" | "delayed" | "unclear" = offer.salarySharedUpfront ? "transparent" : "delayed";
 
   const update = (field: keyof OfferInput, value: any) => {
     if (typeof value === "string") {
@@ -538,6 +595,19 @@ export default function StrategicOfferReview() {
                       <label className="text-sm font-medium text-foreground mb-1.5 block">Equity</label>
                       <Input placeholder="e.g. 10,000 RSUs over 4 years" value={offer.equity} onChange={e => update("equity", e.target.value)} />
                     </div>
+
+                    <Separator />
+
+                    <div className="flex items-center justify-between p-3 bg-muted/30 rounded-xl">
+                      <div>
+                        <p className="text-sm font-medium text-foreground">Was the salary range shared before you applied?</p>
+                        <p className="text-[10px] text-muted-foreground">Helps assess employer transparency</p>
+                      </div>
+                      <Switch
+                        checked={offer.salarySharedUpfront}
+                        onCheckedChange={(checked) => update("salarySharedUpfront", checked)}
+                      />
+                    </div>
                   </CardContent>
                 </Card>
 
@@ -667,6 +737,24 @@ export default function StrategicOfferReview() {
                   </div>
                 </div>
 
+                {/* 0. Offer Reality Check — Hero Summary */}
+                <div id="reality-check">
+                  <OfferRealityCheck
+                    offerStrengthScore={strengthScore.result.totalScore}
+                    offerSalary={Number(offer.baseSalary) || 0}
+                    annualBaseline={annualBaseline}
+                    legalFlags={legalFlags}
+                    report={report}
+                    hasEquity={!!offer.equity}
+                    hasBonus={!!offer.bonus}
+                    companyName={offer.companyName}
+                    roleTitle={offer.roleTitle}
+                    riskLevel={riskLevel}
+                    salaryTransparency={salaryTransparency}
+                    internalConsistency={internalConsistency}
+                  />
+                </div>
+
                 {/* 1. Offer Strength Score */}
                 <OfferStrengthScore
                   result={strengthScore.result}
@@ -704,6 +792,12 @@ export default function StrategicOfferReview() {
                     companyName={offer.companyName}
                   />
                 </div>
+
+                {/* 5.5 Risk Signals */}
+                <OfferRiskSignals
+                  companyId={offer.companyId}
+                  companyName={offer.companyName}
+                />
 
                 {/* 6. Compensation Analysis */}
                 <div id="compensation">

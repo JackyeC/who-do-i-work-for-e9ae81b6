@@ -3,7 +3,7 @@ import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
 import {
   ClipboardCheck, CheckCircle2, AlertTriangle, XCircle,
-  ShieldCheck, Scale, MessageSquare, FileSearch, ArrowRight
+  ShieldCheck, Scale, Search, ArrowRight
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import type { LegalFlag } from "./CivicLegalAudit";
@@ -21,22 +21,20 @@ interface Props {
   hasBonus: boolean;
 }
 
-type Verdict = "Ready to Sign" | "Worth Negotiating" | "Proceed Carefully" | "Get More Information" | "High-Risk Offer";
+type Verdict = "Strong Offer" | "Fair Offer" | "Needs Review" | "Proceed Carefully";
 
 const VERDICT_CONFIG: Record<Verdict, { color: string; bg: string; border: string; icon: typeof CheckCircle2 }> = {
-  "Ready to Sign": { color: "text-[hsl(var(--civic-green))]", bg: "bg-[hsl(var(--civic-green))]/10", border: "border-[hsl(var(--civic-green))]/30", icon: CheckCircle2 },
-  "Worth Negotiating": { color: "text-primary", bg: "bg-primary/10", border: "border-primary/30", icon: Scale },
-  "Proceed Carefully": { color: "text-[hsl(var(--civic-yellow))]", bg: "bg-[hsl(var(--civic-yellow))]/10", border: "border-[hsl(var(--civic-yellow))]/30", icon: AlertTriangle },
-  "Get More Information": { color: "text-[hsl(var(--civic-yellow))]", bg: "bg-[hsl(var(--civic-yellow))]/10", border: "border-[hsl(var(--civic-yellow))]/30", icon: FileSearch },
-  "High-Risk Offer": { color: "text-destructive", bg: "bg-destructive/10", border: "border-destructive/30", icon: XCircle },
+  "Strong Offer": { color: "text-[hsl(var(--civic-green))]", bg: "bg-[hsl(var(--civic-green))]/10", border: "border-[hsl(var(--civic-green))]/30", icon: CheckCircle2 },
+  "Fair Offer": { color: "text-primary", bg: "bg-primary/10", border: "border-primary/30", icon: Scale },
+  "Needs Review": { color: "text-[hsl(var(--civic-yellow))]", bg: "bg-[hsl(var(--civic-yellow))]/10", border: "border-[hsl(var(--civic-yellow))]/30", icon: Search },
+  "Proceed Carefully": { color: "text-destructive", bg: "bg-destructive/10", border: "border-destructive/30", icon: XCircle },
 };
 
 function deriveVerdict(score: number, redFlags: number, salary: number, baseline: number): Verdict {
-  if (score >= 85 && redFlags === 0) return "Ready to Sign";
-  if (score >= 70 && redFlags <= 1) return "Worth Negotiating";
-  if (score >= 55) return "Proceed Carefully";
-  if (score >= 40 || salary < baseline) return "Get More Information";
-  return "High-Risk Offer";
+  if (score >= 80 && redFlags === 0) return "Strong Offer";
+  if (score >= 65 && redFlags <= 1) return "Fair Offer";
+  if (score >= 45) return "Needs Review";
+  return "Proceed Carefully";
 }
 
 function deriveConfidence(report: OfferClarityReport | null, hasCompanyMatch: boolean): string {
@@ -54,7 +52,6 @@ export function OfferDecisionSummary(props: Props) {
   const VerdictIcon = verdictStyle.icon;
   const confidence = deriveConfidence(report, !!report);
 
-  // Build top strengths
   const strengths: string[] = [];
   if (offerSalary >= annualBaseline * 1.15) strengths.push(`Salary ${((offerSalary / annualBaseline - 1) * 100).toFixed(0)}% above your safety line`);
   if (hasEquity) strengths.push("Equity component included");
@@ -63,19 +60,17 @@ export function OfferDecisionSummary(props: Props) {
   if (report?.compensation.percentile && report.compensation.percentile >= 70) strengths.push(`${report.compensation.percentile}th percentile compensation`);
   if (report?.employeeExperience.score && report.employeeExperience.score >= 70) strengths.push("Positive employee experience signals");
 
-  // Build top risks
   const risks: string[] = [];
   if (offerSalary < annualBaseline) risks.push("Salary below your calculated safety line");
   redFlags.forEach(f => risks.push(f.title));
   yellowFlags.slice(0, 2).forEach(f => risks.push(f.title));
   if (report?.legalRisk.score && report.legalRisk.score < 50) risks.push("Elevated legal risk environment");
 
-  // Build next moves
   const moves: string[] = [];
-  if (redFlags.length > 0) moves.push("Negotiate the restrictive clauses flagged in the Legal Audit");
-  if (offerSalary < annualBaseline * 1.1) moves.push("Negotiate base salary or supplemental compensation");
-  if (hasEquity) moves.push("Clarify equity grant type, vesting, and valuation");
-  moves.push("Ask the tailored questions listed above before making a decision");
+  if (redFlags.length > 0) moves.push("Explore the restrictive clauses flagged in the Legal Audit");
+  if (offerSalary < annualBaseline * 1.1) moves.push("Consider discussing base salary or supplemental compensation");
+  if (hasEquity) moves.push("Ask about equity grant type, vesting schedule, and current valuation");
+  moves.push("Review the suggested questions above before making a decision");
   if (redFlags.length >= 2) moves.push("Consider having an employment attorney review the offer");
 
   return (
@@ -86,7 +81,7 @@ export function OfferDecisionSummary(props: Props) {
             <div>
               <CardTitle className="text-xl font-display font-bold tracking-tight flex items-center gap-2">
                 <ClipboardCheck className="w-5 h-5 text-primary" />
-                Should You Sign?
+                Decision Summary
               </CardTitle>
               <p className="text-xs text-muted-foreground mt-1">
                 {roleTitle} at {companyName}
@@ -103,7 +98,6 @@ export function OfferDecisionSummary(props: Props) {
         </CardHeader>
 
         <CardContent className="space-y-5">
-          {/* Score + Confidence */}
           <div className="grid grid-cols-3 gap-3">
             <div className="text-center p-3 bg-muted/50 rounded-xl">
               <p className="text-2xl font-display font-bold text-foreground">{offerStrengthScore}</p>
@@ -124,7 +118,6 @@ export function OfferDecisionSummary(props: Props) {
 
           <Separator />
 
-          {/* Strengths */}
           {strengths.length > 0 && (
             <div className="space-y-2">
               <h4 className="text-xs font-semibold text-muted-foreground uppercase tracking-wider flex items-center gap-1.5">
@@ -140,12 +133,11 @@ export function OfferDecisionSummary(props: Props) {
             </div>
           )}
 
-          {/* Risks */}
           {risks.length > 0 && (
             <div className="space-y-2">
               <h4 className="text-xs font-semibold text-muted-foreground uppercase tracking-wider flex items-center gap-1.5">
                 <AlertTriangle className="w-3 h-3 text-destructive" />
-                Biggest Risks
+                Areas to Explore
               </h4>
               {risks.slice(0, 3).map((r, i) => (
                 <div key={i} className="flex items-start gap-2 text-sm text-foreground">
@@ -158,11 +150,10 @@ export function OfferDecisionSummary(props: Props) {
 
           <Separator />
 
-          {/* Next Moves */}
           <div className="space-y-2">
             <h4 className="text-xs font-semibold text-muted-foreground uppercase tracking-wider flex items-center gap-1.5">
               <ArrowRight className="w-3 h-3 text-primary" />
-              Best Next Moves
+              Optional Next Steps
             </h4>
             {moves.slice(0, 4).map((m, i) => (
               <div key={i} className="flex items-start gap-2 text-sm text-foreground">
@@ -172,7 +163,6 @@ export function OfferDecisionSummary(props: Props) {
             ))}
           </div>
 
-          {/* Disclaimer */}
           <div className="p-3 bg-muted/30 rounded-xl">
             <p className="text-[11px] text-muted-foreground">
               This summary provides educational insights based on publicly available data and the terms you provided. It does not constitute legal, financial, or employment advice. For complex or high-risk clauses, consult an employment attorney.

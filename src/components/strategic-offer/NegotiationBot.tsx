@@ -1,6 +1,6 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { MessageSquare, Sparkles, ArrowRight, Copy, CheckCircle2, Shield, Zap, MapPin } from "lucide-react";
+import { MessageSquare, Zap, MapPin, Copy, CheckCircle2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useState } from "react";
 import { useToast } from "@/hooks/use-toast";
@@ -24,64 +24,58 @@ interface Props {
 }
 
 const LEVEL_CONFIG = {
-  gentle: { label: "The Gentle Ask", color: "text-primary", bg: "bg-primary/5", border: "border-primary/20", icon: MessageSquare },
-  hard: { label: "The Hard Pivot", color: "text-civic-yellow", bg: "bg-civic-yellow/5", border: "border-civic-yellow/20", icon: Zap },
-  mobility: { label: "The Mobility Edit", color: "text-civic-green", bg: "bg-civic-green/5", border: "border-civic-green/20", icon: MapPin },
+  gentle: { label: "Conversation Starter", color: "text-primary", bg: "bg-primary/5", border: "border-primary/20", icon: MessageSquare },
+  hard: { label: "Deeper Conversation", color: "text-[hsl(var(--civic-yellow))]", bg: "bg-[hsl(var(--civic-yellow))]/5", border: "border-[hsl(var(--civic-yellow))]/20", icon: Zap },
+  mobility: { label: "Career Protection", color: "text-[hsl(var(--civic-green))]", bg: "bg-[hsl(var(--civic-green))]/5", border: "border-[hsl(var(--civic-green))]/20", icon: MapPin },
 };
 
 function generateScripts(flags: LegalFlag[], salary: number, baseline: number, company: string, role: string): NegotiationScript[] {
   const scripts: NegotiationScript[] = [];
 
-  // Gentle Ask — always generate for job duties
   scripts.push({
     level: "gentle",
-    title: "Clarify Job Duties & Classification",
-    context: "Vague job descriptions can lead to misclassification, making you do work outside your pay grade.",
-    script: `"I'm excited about this opportunity at ${company}. To make sure we're aligned, could we clarify the core responsibilities for the ${role} position? I want to ensure the role description accurately reflects the day-to-day work, as I've seen situations where vague descriptions lead to scope creep. Would you be open to defining 3-5 primary deliverables?"`,
+    title: "Have you thought about clarifying the role scope?",
+    context: "Vague job descriptions sometimes lead to scope creep. Getting clarity upfront can help set expectations.",
+    script: `"I'm really excited about this opportunity at ${company}. Before I finalize, would it be possible to walk through the core responsibilities for the ${role} position? I'd love to make sure we're aligned on the day-to-day scope — maybe we could outline 3-5 primary deliverables together?"`,
     icon: MessageSquare,
   });
 
-  // Hard Pivot — if salary is low
   if (salary < baseline * 1.15) {
     scripts.push({
       level: "hard",
-      title: "Pivot to Total Compensation",
-      context: "When base salary is below or near your walk-away number, pivot the conversation to total value.",
-      script: `"I appreciate the offer for ${role}. The base salary of $${salary.toLocaleString()} is ${salary < baseline ? 'below' : 'close to'} my target range. Rather than focusing solely on base, could we explore a performance bonus structure — say, a ${Math.round((baseline * 1.2 - salary) / salary * 100)}% annual target bonus tied to clear KPIs? Alternatively, I'd value additional PTO (25 days vs. the standard) or a flexible work arrangement that offsets commuting costs."`,
+      title: "Have you considered exploring total compensation?",
+      context: "When base salary feels tight, there may be room to discuss the total package — bonus, PTO, flexibility.",
+      script: `"Thank you for the offer for ${role}. The base of $${salary.toLocaleString()} is ${salary < baseline ? 'a bit below' : 'close to'} what I had in mind. I'm curious — would it be possible to explore a performance bonus, additional PTO, or a flexible arrangement that could round out the total compensation? I'm open to creative solutions."`,
       icon: Zap,
     });
   }
 
-  // Hard Pivot — repayment clause
   const repaymentFlag = flags.find(f => f.category === "Stay-or-Pay");
   if (repaymentFlag) {
     scripts.push({
       level: "hard",
-      title: "Challenge the Repayment Clause",
-      context: "Under CA AB 692 (2026), repayment clauses must be prorated and capped at 2 years.",
-      script: `"I noticed the offer includes a repayment clause for the signing/relocation bonus. Under current regulations, these should be prorated — meaning if I leave after 18 months on a 2-year agreement, I'd only owe 25% back. Can we confirm the clause follows the prorated model? I'm also happy to discuss extending the commitment period if the bonus amount is adjusted upward."`,
+      title: "Have you asked about the repayment structure?",
+      context: "Under recent regulations, repayment clauses should be prorated. It's worth confirming the terms.",
+      script: `"I noticed the offer includes a repayment clause for the signing bonus. Could we confirm whether repayment is prorated — so if I stayed 18 months on a 2-year agreement, the remaining obligation would reflect that? I'm happy to discuss the commitment period if we can make sure the structure is fair on both sides."`,
       icon: Zap,
     });
   }
 
-  // Mobility Edit — non-compete
-  const nonCompeteFlag = flags.find(f => f.category === "Non-Compete" || f.title.toLowerCase().includes("non-compete"));
   scripts.push({
     level: "mobility",
-    title: "Narrow the Non-Compete",
-    context: "Broad non-competes can trap you. Most are negotiable — especially geographic scope and duration.",
-    script: `"I'd like to discuss the non-compete provision. While I understand ${company}'s interest in protecting trade secrets, the current scope feels broad. Could we narrow it to: (1) only direct competitors in the same product category, (2) within a 50-mile radius of my primary work location, and (3) for a duration of 6 months rather than 12? This protects ${company}'s interests while preserving my career mobility."`,
+    title: "Have you explored narrowing the non-compete?",
+    context: "Broad non-competes can limit your future options. Many employers are open to reasonable scope adjustments.",
+    script: `"I'd like to discuss the non-compete provision. I completely understand ${company}'s interest in protecting its business — would it be possible to narrow it to direct competitors in the same product category, within a reasonable geographic area, and for a shorter duration like 6 months? That way, both sides are protected."`,
     icon: MapPin,
   });
 
-  // Arbitration push-back
   const arbFlag = flags.find(f => f.category === "Arbitration");
   if (arbFlag) {
     scripts.push({
       level: "hard",
-      title: "Address the Arbitration Clause",
-      context: "Mandatory arbitration waives your constitutional right to a jury trial. This is a civic concession worth discussing.",
-      script: `"I want to flag the mandatory arbitration clause. I understand this is standard in many offers, but I'd prefer to negotiate a carve-out for claims involving discrimination, harassment, or wage theft — issues where public accountability matters. At minimum, could we add a provision that the arbitrator selection is mutually agreed upon and that ${company} covers the arbitration costs?"`,
+      title: "Have you thought about the arbitration clause?",
+      context: "Mandatory arbitration waives your right to a jury trial. Some employers will agree to carve-outs for key claims.",
+      script: `"I wanted to flag the mandatory arbitration clause. Would it be possible to add a carve-out for claims involving discrimination, harassment, or wage issues? I'd also appreciate if we could agree on mutual arbitrator selection and have ${company} cover the arbitration costs. I think that makes it fair for both of us."`,
       icon: Zap,
     });
   }
@@ -106,10 +100,10 @@ export function NegotiationBot({ flags, offerSalary, annualBaseline, companyName
     <div className="space-y-6">
       <div className="text-center">
         <h2 className="text-xl font-display font-bold text-foreground mb-1">
-          Strategic Negotiation Scripts
+          Negotiation Conversation Starters
         </h2>
         <p className="text-sm text-muted-foreground max-w-lg mx-auto">
-          Based on the flags we found, here are ready-to-use scripts at three escalation levels. You have leverage here — use it.
+          Optional talking points framed as questions — use what feels right for your situation.
         </p>
       </div>
 
@@ -145,7 +139,7 @@ export function NegotiationBot({ flags, offerSalary, annualBaseline, companyName
                     onClick={() => copyScript(script.script, idx)}
                   >
                     {copiedIdx === idx ? (
-                      <CheckCircle2 className="w-3.5 h-3.5 text-civic-green" />
+                      <CheckCircle2 className="w-3.5 h-3.5 text-[hsl(var(--civic-green))]" />
                     ) : (
                       <Copy className="w-3.5 h-3.5 text-muted-foreground" />
                     )}
