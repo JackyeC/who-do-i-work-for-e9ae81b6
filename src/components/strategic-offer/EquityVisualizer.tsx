@@ -218,7 +218,7 @@ export function EquityVisualizer() {
                           <Unlock className="w-3.5 h-3.5 text-civic-green" />
                         )}
                         <span className="text-sm font-medium text-foreground">Year {year.year}</span>
-                        {year.isCliff && <Badge variant="outline" className="text-[9px]">Cliff</Badge>}
+                        {year.isCliff && <Badge variant="outline" className="text-xs">Cliff</Badge>}
                       </div>
                       <div className="text-right">
                         <span className="text-sm font-mono font-semibold text-foreground">${year.netValue.toLocaleString(undefined, { maximumFractionDigits: 0 })}</span>
