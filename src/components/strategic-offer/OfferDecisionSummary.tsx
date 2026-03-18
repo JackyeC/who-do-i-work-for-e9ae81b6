@@ -101,7 +101,7 @@ export function OfferDecisionSummary(props: Props) {
           <div className="grid grid-cols-3 gap-3">
             <div className="text-center p-3 bg-muted/50 rounded-xl">
               <p className="text-2xl font-display font-bold text-foreground">{offerStrengthScore}</p>
-              <p className="text-[10px] text-muted-foreground">Offer Strength™</p>
+              <p className="text-xs text-muted-foreground">Offer Strength™</p>
             </div>
             <div className="text-center p-3 bg-muted/50 rounded-xl">
               <p className="text-2xl font-display font-bold text-foreground">{report?.overallScore || "—"}</p>
