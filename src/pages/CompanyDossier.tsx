@@ -43,6 +43,7 @@ import { useViewMode } from "@/contexts/ViewModeContext";
 import { HighRiskConnectionCard } from "@/components/company/HighRiskConnectionCard";
 import { StateWomenStatusCard } from "@/components/StateWomenStatusCard";
 import { PolicyScoreCard } from "@/components/policy-intelligence/PolicyScoreCard";
+import { SituationContextBanner } from "@/components/policy-intelligence/SituationContextBanner";
 
 /* ─── Lens config ─── */
 const LENS_META = {
@@ -198,6 +199,9 @@ export default function CompanyDossier() {
         <span className="text-sm font-medium text-foreground">{LensMeta.label}</span>
         <span className="text-xs text-muted-foreground ml-1">— viewing dossier through this lens. Switch via header toggle.</span>
       </div>
+
+      {/* Situation-Aware Context Banner */}
+      <SituationContextBanner companyName={company.name} />
 
       {/* Score gauges */}
       <div className="grid grid-cols-2 md:grid-cols-4 gap-6 mb-8 p-6 rounded-2xl border border-border/40 bg-card">

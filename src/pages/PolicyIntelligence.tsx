@@ -13,6 +13,10 @@ import { SituationSelector } from "@/components/policy-intelligence/SituationSel
 import { MismatchEngine } from "@/components/policy-intelligence/MismatchEngine";
 import { PolicyReceiptsPanel } from "@/components/policy-intelligence/PolicyReceiptsPanel";
 import { PolicyIntelligenceSummary } from "@/components/policy-intelligence/PolicyIntelligenceSummary";
+import { LeadershipSnapshot } from "@/components/policy-intelligence/LeadershipSnapshot";
+import { CompensationInsight } from "@/components/policy-intelligence/CompensationInsight";
+import { IssueBreakdownGrid } from "@/components/policy-intelligence/IssueBreakdownGrid";
+import { LastAuditedStamp } from "@/components/company/LastAuditedStamp";
 import { computePolicyScore, getSituationsFromStorage, type Situation } from "@/lib/policyScoreEngine";
 
 export default function PolicyIntelligence() {
@@ -63,13 +67,14 @@ export default function PolicyIntelligence() {
   const { data: policyData, isLoading } = useQuery({
     queryKey: ["pi-data", selectedCompanyId],
     queryFn: async () => {
-      const [stancesRes, linkagesRes, darkRes, tradeRes, lobbyRes, signalsRes] = await Promise.all([
+      const [stancesRes, linkagesRes, darkRes, tradeRes, lobbyRes, signalsRes, companyRes] = await Promise.all([
         supabase.from("company_public_stances").select("*").eq("company_id", selectedCompanyId!),
         (supabase as any).from("entity_linkages").select("*").eq("company_id", selectedCompanyId!).limit(100),
         supabase.from("company_dark_money").select("*").eq("company_id", selectedCompanyId!),
         supabase.from("company_trade_associations").select("*").eq("company_id", selectedCompanyId!),
         supabase.from("company_state_lobbying").select("*").eq("company_id", selectedCompanyId!),
         supabase.from("company_signal_scans").select("*").eq("company_id", selectedCompanyId!),
+        supabase.from("companies").select("last_audited_at, last_reviewed").eq("id", selectedCompanyId!).maybeSingle(),
       ]);
       return {
         stances: stancesRes.data || [],
@@ -78,6 +83,8 @@ export default function PolicyIntelligence() {
         tradeAssociations: tradeRes.data || [],
         lobbyingRecords: lobbyRes.data || [],
         signalScans: signalsRes.data || [],
+        lastAuditedAt: companyRes.data?.last_audited_at,
+        lastReviewed: companyRes.data?.last_reviewed,
       };
     },
     enabled: !!selectedCompanyId,
@@ -177,17 +184,35 @@ export default function PolicyIntelligence() {
         {/* Results */}
         {scoreResult && policyData && (
           <div className="space-y-8">
+            {/* Last Verified */}
+            <div className="flex justify-center">
+              <LastAuditedStamp lastAuditedAt={policyData.lastAuditedAt} lastReviewed={policyData.lastReviewed} />
+            </div>
+
             <PolicyIntelligenceSummary
               result={scoreResult}
               companyName={selectedCompanyName}
               situations={situations}
             />
 
+            {/* Issue-by-Issue Breakdown */}
+            <IssueBreakdownGrid stances={policyData.stances} />
+
             <MismatchEngine
               stances={policyData.stances}
               darkMoney={policyData.darkMoney}
               tradeAssociations={policyData.tradeAssociations}
             />
+
+            {/* Leadership Snapshot */}
+            {selectedCompanyId && (
+              <LeadershipSnapshot companyId={selectedCompanyId} companyName={selectedCompanyName} />
+            )}
+
+            {/* Compensation Insight */}
+            {selectedCompanyId && (
+              <CompensationInsight companyId={selectedCompanyId} companyName={selectedCompanyName} situations={situations} />
+            )}
 
             <PolicyReceiptsPanel
               stances={policyData.stances}
@@ -199,7 +224,7 @@ export default function PolicyIntelligence() {
 
             {/* Transparency Disclaimer */}
             <div className="p-4 rounded-lg border border-border/30 bg-muted/20">
-              <p className="text-[11px] text-muted-foreground leading-relaxed">
+              <p className="text-xs text-muted-foreground leading-relaxed">
                 <strong className="text-foreground">About this analysis:</strong> Policy scores reflect publicly available governance, spending, and disclosure records.
                 Signals do not imply wrongdoing. Data may be incomplete. Alignment analysis is based on observable patterns, not internal company intent.
                 This tool is designed to inform your decisions — not to make them for you.

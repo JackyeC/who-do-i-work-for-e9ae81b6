@@ -6,6 +6,7 @@ import { useState } from "react";
 import { useToast } from "@/hooks/use-toast";
 import { cn } from "@/lib/utils";
 import type { LegalFlag } from "./CivicLegalAudit";
+import type { Situation } from "@/lib/policyScoreEngine";
 
 interface NegotiationScript {
   level: "gentle" | "hard" | "mobility";
@@ -21,6 +22,7 @@ interface Props {
   annualBaseline: number;
   companyName: string;
   roleTitle: string;
+  situations?: Situation[];
 }
 
 const LEVEL_CONFIG = {
@@ -29,7 +31,7 @@ const LEVEL_CONFIG = {
   mobility: { label: "Career Protection", color: "text-[hsl(var(--civic-green))]", bg: "bg-[hsl(var(--civic-green))]/5", border: "border-[hsl(var(--civic-green))]/20", icon: MapPin },
 };
 
-function generateScripts(flags: LegalFlag[], salary: number, baseline: number, company: string, role: string): NegotiationScript[] {
+function generateScripts(flags: LegalFlag[], salary: number, baseline: number, company: string, role: string, situations: Situation[] = []): NegotiationScript[] {
   const scripts: NegotiationScript[] = [];
 
   scripts.push({
@@ -47,6 +49,37 @@ function generateScripts(flags: LegalFlag[], salary: number, baseline: number, c
       context: "When base salary feels tight, there may be room to discuss the total package — bonus, PTO, flexibility.",
       script: `"Thank you for the offer for ${role}. The base of $${salary.toLocaleString()} is ${salary < baseline ? 'a bit below' : 'close to'} what I had in mind. I'm curious — would it be possible to explore a performance bonus, additional PTO, or a flexible arrangement that could round out the total compensation? I'm open to creative solutions."`,
       icon: Zap,
+    });
+  }
+
+  // Situation-aware scripts
+  if (situations.includes("caregiver")) {
+    scripts.push({
+      level: "gentle",
+      title: "Have you asked about flexibility and leave policies?",
+      context: "As someone with caregiving responsibilities, understanding scheduling flexibility and leave options is essential.",
+      script: `"I'm very interested in this role at ${company}. As I think about the day-to-day, could we discuss the flexibility around scheduling — things like remote work options, core hours, and how the team handles unexpected family needs? I'd also love to understand the parental leave and dependent care benefits."`,
+      icon: MessageSquare,
+    });
+  }
+
+  if (situations.includes("early-career")) {
+    scripts.push({
+      level: "gentle",
+      title: "Have you explored growth and mentorship opportunities?",
+      context: "Early in your career, development opportunities can be worth more than a salary bump.",
+      script: `"I'm excited about joining ${company} as a ${role}. Since I'm focused on long-term growth, could we discuss what professional development looks like here? Are there mentorship programs, learning budgets, or clear paths for advancement within the first 1-2 years?"`,
+      icon: MessageSquare,
+    });
+  }
+
+  if (situations.includes("career-switcher")) {
+    scripts.push({
+      level: "gentle",
+      title: "Have you discussed onboarding and ramp-up support?",
+      context: "Career switchers benefit from strong onboarding. Clarifying support upfront sets you up for success.",
+      script: `"I'm making a transition into this field and I'm very excited about ${company}. Could we talk about the onboarding process for the ${role} position? I'd love to understand how the team supports new hires who bring transferable skills from different industries, and whether there's a structured ramp-up period."`,
+      icon: MessageSquare,
     });
   }
 
@@ -83,11 +116,11 @@ function generateScripts(flags: LegalFlag[], salary: number, baseline: number, c
   return scripts;
 }
 
-export function NegotiationBot({ flags, offerSalary, annualBaseline, companyName, roleTitle }: Props) {
+export function NegotiationBot({ flags, offerSalary, annualBaseline, companyName, roleTitle, situations = [] }: Props) {
   const { toast } = useToast();
   const [copiedIdx, setCopiedIdx] = useState<number | null>(null);
 
-  const scripts = generateScripts(flags, offerSalary, annualBaseline, companyName, roleTitle);
+  const scripts = generateScripts(flags, offerSalary, annualBaseline, companyName, roleTitle, situations);
 
   const copyScript = (script: string, idx: number) => {
     navigator.clipboard.writeText(script);

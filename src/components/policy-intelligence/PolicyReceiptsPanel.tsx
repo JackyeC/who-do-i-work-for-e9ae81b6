@@ -49,7 +49,12 @@ export function PolicyReceiptsPanel({ stances, linkages, lobbyingRecords, tradeA
             donations.slice(0, 10).map((d, i) => (
               <Card key={i} className="border-border/30">
                 <CardContent className="p-2.5 flex items-center justify-between">
-                  <span className="text-xs text-foreground">{d.target_entity_name}</span>
+                  <div className="flex items-center gap-2">
+                    <span className="text-xs text-foreground">{d.target_entity_name}</span>
+                    <Badge variant="outline" className="text-xs text-muted-foreground">
+                      {d.link_type === "pac_contribution" ? "Action" : "Action"}
+                    </Badge>
+                  </div>
                   {d.amount && <span className="text-xs font-mono text-muted-foreground">${d.amount.toLocaleString()}</span>}
                 </CardContent>
               </Card>
@@ -105,7 +110,10 @@ export function PolicyReceiptsPanel({ stances, linkages, lobbyingRecords, tradeA
           ) : (
             <div className="flex flex-wrap gap-1.5 px-3 py-2">
               {tradeAssociations.map((ta, i) => (
-                <Badge key={i} variant="secondary" className="text-[11px]">{ta.name}</Badge>
+                <Badge key={i} variant="secondary" className="text-xs gap-1">
+                  {ta.name}
+                  <span className="text-muted-foreground">· Association</span>
+                </Badge>
               ))}
             </div>
           )}
@@ -119,12 +127,15 @@ export function PolicyReceiptsPanel({ stances, linkages, lobbyingRecords, tradeA
               <Card key={i} className="border-border/30">
                 <CardContent className="p-2.5">
                   <div className="flex items-center justify-between">
-                    <span className="text-xs font-medium text-foreground">{s.topic}</span>
+                    <div className="flex items-center gap-2">
+                      <span className="text-xs font-medium text-foreground">{s.topic}</span>
+                      <Badge variant="outline" className="text-xs text-muted-foreground">Statement</Badge>
+                    </div>
                     <Badge variant={s.gap === "aligned" ? "success" : s.gap === "direct-conflict" ? "destructive" : "outline"} className="text-xs">
                       {s.gap === "aligned" ? "Aligned" : s.gap === "direct-conflict" ? "Contradiction" : "Mixed"}
                     </Badge>
                   </div>
-                  <p className="text-[11px] text-muted-foreground mt-1">{s.public_position}</p>
+                  <p className="text-xs text-muted-foreground mt-1">{s.public_position}</p>
                 </CardContent>
               </Card>
             ))

@@ -38,6 +38,8 @@ import { OfferReviewResults } from "@/components/offer-review/OfferReviewResults
 import { LegalDisclaimer } from "@/components/strategic-offer/LegalDisclaimer";
 import { ConsentModal } from "@/components/strategic-offer/ConsentModal";
 import { CareerPathForecast } from "@/components/strategic-offer/CareerPathForecast";
+import { SituationContextBanner } from "@/components/policy-intelligence/SituationContextBanner";
+import { getSituationsFromStorage, type Situation } from "@/lib/policyScoreEngine";
 import { useQuery } from "@tanstack/react-query";
 
 type InputMode = null | "manual" | "upload";
@@ -101,6 +103,7 @@ export default function StrategicOfferReview() {
   const [legalFlags, setLegalFlags] = useState<LegalFlag[]>([]);
   const [uploadReviewId, setUploadReviewId] = useState<string | null>(null);
   const [showConsentModal, setShowConsentModal] = useState(false);
+  const userSituations = getSituationsFromStorage();
 
   const [companyResults, setCompanyResults] = useState<any[]>([]);
 
@@ -737,6 +740,11 @@ export default function StrategicOfferReview() {
                   </div>
                 </div>
 
+                {/* Situation Context */}
+                {userSituations.length > 0 && (
+                  <SituationContextBanner companyName={offer.companyName} />
+                )}
+
                 {/* 0. Offer Reality Check — Hero Summary */}
                 <div id="reality-check">
                   <OfferRealityCheck
@@ -752,6 +760,7 @@ export default function StrategicOfferReview() {
                     riskLevel={riskLevel}
                     salaryTransparency={salaryTransparency}
                     internalConsistency={internalConsistency}
+                    situations={userSituations}
                   />
                 </div>
 
@@ -844,6 +853,7 @@ export default function StrategicOfferReview() {
                     annualBaseline={annualBaseline}
                     companyName={offer.companyName}
                     roleTitle={offer.roleTitle}
+                    situations={userSituations}
                   />
                 </div>
 

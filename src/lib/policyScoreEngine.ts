@@ -9,6 +9,7 @@ export type Situation =
   | "stability"
   | "caregiver"
   | "early-career"
+  | "career-switcher"
   | "values-first"
   | "risk-aware"
   | "leadership"
@@ -19,6 +20,7 @@ export const SITUATION_LABELS: Record<Situation, string> = {
   stability: "Stability Seeking",
   caregiver: "Caregiver / Flexibility",
   "early-career": "Early Career Growth",
+  "career-switcher": "Career Switcher",
   "values-first": "Values-First",
   "risk-aware": "Risk-Aware",
   leadership: "Leadership Track",
@@ -30,6 +32,7 @@ export const SITUATION_ICONS: Record<Situation, string> = {
   stability: "🛡️",
   caregiver: "👨‍👩‍👧",
   "early-career": "🚀",
+  "career-switcher": "🔄",
   "values-first": "🧭",
   "risk-aware": "⚠️",
   leadership: "📈",
@@ -57,6 +60,7 @@ const SITUATION_WEIGHT_MAP: Record<Situation, PillarWeights> = {
   compensation: { disclosure: 0.30, oversight: 0.10, transparency: 0.40, consistency: 0.20 },
   stability: { disclosure: 0.20, oversight: 0.30, transparency: 0.20, consistency: 0.30 },
   "early-career": { disclosure: 0.25, oversight: 0.15, transparency: 0.30, consistency: 0.30 },
+  "career-switcher": { disclosure: 0.20, oversight: 0.30, transparency: 0.25, consistency: 0.25 },
   leadership: { disclosure: 0.20, oversight: 0.30, transparency: 0.15, consistency: 0.35 },
   "culture-safety": { disclosure: 0.15, oversight: 0.20, transparency: 0.25, consistency: 0.40 },
 };

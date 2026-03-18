@@ -11,7 +11,7 @@ import {
 
 const ALL_SITUATIONS: Situation[] = [
   "compensation", "stability", "caregiver", "early-career",
-  "values-first", "risk-aware", "leadership", "culture-safety",
+  "career-switcher", "values-first", "risk-aware", "leadership", "culture-safety",
 ];
 
 interface Props {

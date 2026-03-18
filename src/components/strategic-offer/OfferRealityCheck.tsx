@@ -5,6 +5,8 @@ import { cn } from "@/lib/utils";
 import type { LegalFlag } from "./CivicLegalAudit";
 import type { OfferClarityReport } from "@/components/offer-clarity/OfferClarityDashboard";
 import type { RiskLevel } from "./OfferRiskSignals";
+import type { Situation } from "@/lib/policyScoreEngine";
+import { SITUATION_LABELS } from "@/lib/policyScoreEngine";
 
 type OfferPosition = "Strong Offer" | "Fair Offer" | "Needs Review" | "Proceed Carefully";
 
@@ -21,6 +23,7 @@ interface Props {
   riskLevel: RiskLevel | null;
   salaryTransparency: "transparent" | "delayed" | "unclear";
   internalConsistency: "aligned" | "lower" | "unclear";
+  situations?: Situation[];
 }
 
 const POSITION_CONFIG: Record<OfferPosition, { color: string; bg: string; border: string; icon: typeof CheckCircle2 }> = {
@@ -56,7 +59,7 @@ function buildSummary(position: OfferPosition, companyName: string, gaps: string
 }
 
 export function OfferRealityCheck(props: Props) {
-  const { offerStrengthScore, offerSalary, annualBaseline, legalFlags, report, hasEquity, hasBonus, companyName, roleTitle, riskLevel, salaryTransparency, internalConsistency } = props;
+  const { offerStrengthScore, offerSalary, annualBaseline, legalFlags, report, hasEquity, hasBonus, companyName, roleTitle, riskLevel, salaryTransparency, internalConsistency, situations = [] } = props;
 
   const redFlags = legalFlags.filter(f => f.severity === "red").length;
   const position = derivePosition(offerStrengthScore, redFlags, offerSalary, annualBaseline, riskLevel);
@@ -73,6 +76,11 @@ export function OfferRealityCheck(props: Props) {
   if (riskLevel === "elevated") gaps.push("elevated employer risk signals");
   if (redFlags > 0) gaps.push(`${redFlags} high-risk legal clause${redFlags > 1 ? "s" : ""}`);
 
+  // Situation-aware gap emphasis
+  if (situations.includes("caregiver") && !hasBonus) gaps.push("no benefits or flexibility signals visible in this offer");
+  if (situations.includes("compensation") && offerSalary > 0 && offerSalary < annualBaseline * 1.1) gaps.push("offer may not maximize your earning potential");
+  if (situations.includes("stability") && riskLevel === "moderate") gaps.push("moderate employer stability concerns for stability seekers");
+  if (situations.includes("early-career") && !hasEquity) gaps.push("no equity component — consider growth vs. pay tradeoff");
   // Build evaluation badges
   const marketPosition = offerSalary > 0
     ? report?.compensation.percentile
