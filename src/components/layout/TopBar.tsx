@@ -139,18 +139,18 @@ export function TopBar() {
   return (
     <>
       {/* Ticker Bar */}
-      <div className="bg-primary text-primary-foreground overflow-hidden whitespace-nowrap h-[26px] flex items-center">
+      <div className="bg-primary text-primary-foreground overflow-hidden whitespace-nowrap h-[30px] flex items-center">
         <div className="inline-block animate-ticker">
           {tickerItems.map((t, i) => (
             <span key={i} className="px-8">
-              <span className="font-mono text-[10px] font-medium tracking-wider">{t}</span>
+              <span className="font-mono text-xs font-medium tracking-wider">{t}</span>
               <span className="opacity-50 px-4">|</span>
             </span>
           ))}
           {/* Duplicate for seamless loop */}
           {tickerItems.slice(0, 2).map((t, i) => (
             <span key={`dup-${i}`} className="px-8">
-              <span className="font-mono text-[10px] font-medium tracking-wider">{t}</span>
+              <span className="font-mono text-xs font-medium tracking-wider">{t}</span>
               <span className="opacity-50 px-4">|</span>
             </span>
           ))}
