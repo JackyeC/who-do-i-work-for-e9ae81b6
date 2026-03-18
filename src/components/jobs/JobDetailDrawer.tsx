@@ -8,6 +8,7 @@ import { CivicScoreCard, CivicScoreBadge } from "@/components/CivicScoreCard";
 import { JobMatchBadge } from "./JobMatchBadge";
 import { EasyApplyButton } from "./EasyApplyButton";
 import { JobPostingSchema } from "./JobPostingSchema";
+import { PremiumGate } from "@/components/PremiumGate";
 import { VALUES_LENSES } from "@/lib/valuesLenses";
 import {
   getStoredWorkProfile,
@@ -16,13 +17,14 @@ import {
   generateBeforeYouSignItems,
   generateDualFramings,
   generateRankingExplanation,
+  generateClashAlerts,
   getUiStatement,
   type CanonicalSignal,
 } from "@/lib/signalPersonalization";
 import {
   MapPin, Building2, ExternalLink, FileCheck, Wifi, Monitor, Home,
   Briefcase, DollarSign, Calendar, Clock, AlertTriangle, CheckCircle2,
-  Sparkles, Info,
+  Sparkles, Info, Ghost, ShieldAlert,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 
@@ -50,6 +52,13 @@ export function JobDetailDrawer({ job, companyValueSignals = [], companySignals 
   const beforeYouSign = generateBeforeYouSignItems(companySignals, profile, job);
   const dualFramings = generateDualFramings(companySignals, profile);
   const rankingExplanation = generateRankingExplanation(companySignals, profile, matchScore);
+  const clashAlerts = generateClashAlerts(companySignals, profile);
+
+  // Ghost Posting Risk: detect if hiring_activity signal is "low" or job lacks ATS source
+  const hiringSignal = companySignals.find(s => s.signal_category === "hiring_activity");
+  const hasGhostRisk = hiringSignal?.value_normalized === "low" ||
+    (hiringSignal?.summary?.toLowerCase().includes("repost") ?? false) ||
+    (hiringSignal?.summary?.toLowerCase().includes("ghost") ?? false);
 
   return (
     <Sheet open={open} onOpenChange={onOpenChange}>
@@ -109,6 +118,19 @@ export function JobDetailDrawer({ job, companyValueSignals = [], companySignals 
 
           <Separator />
 
+          {/* ── Ghost Posting Risk Banner ── */}
+          {hasGhostRisk && (
+            <div className="p-3 rounded-lg border border-[hsl(var(--civic-yellow))]/30 bg-[hsl(var(--civic-yellow))]/5 flex items-start gap-2.5">
+              <Ghost className="w-4 h-4 text-[hsl(var(--civic-yellow))] mt-0.5 shrink-0" />
+              <div>
+                <p className="text-sm font-medium text-foreground">Ghost Posting Risk</p>
+                <p className="text-xs text-muted-foreground mt-0.5 leading-relaxed">
+                  This role may not appear on the company's own careers page. Confirm the listing is still active before applying.
+                </p>
+              </div>
+            </div>
+          )}
+
           {/* ── Before You Sign (Logic Bible V8.0) ── */}
           {beforeYouSign.length > 0 && (
             <div className="p-4 rounded-lg border border-border/60 bg-muted/30 space-y-3">
@@ -116,16 +138,44 @@ export function JobDetailDrawer({ job, companyValueSignals = [], companySignals 
                 <AlertTriangle className="w-4 h-4 text-[hsl(var(--civic-yellow))]" />
                 Before you sign…
               </p>
+              {/* First 2 items always visible */}
               <div className="space-y-2">
-                {beforeYouSign.map((item, i) => (
+                {beforeYouSign.slice(0, 2).map((item, i) => (
+                  <BeforeYouSignRow key={i} item={item} />
+                ))}
+              </div>
+              {/* Remaining items gated behind blur for free users */}
+              {beforeYouSign.length > 2 && (
+                <PremiumGate
+                  feature="Deep-Dive Signals"
+                  variant="blur"
+                  blurCta={`This deep-dive found ${beforeYouSign.length - 2} more signals. Unlock to see what changed.`}
+                >
+                  <div className="space-y-2">
+                    {beforeYouSign.slice(2).map((item, i) => (
+                      <BeforeYouSignRow key={i + 2} item={item} />
+                    ))}
+                  </div>
+                </PremiumGate>
+              )}
+            </div>
+          )}
+
+          {/* ── Values DNA Clash Alerts ── */}
+          {clashAlerts.length > 0 && (
+            <div className="p-4 rounded-lg border border-[hsl(var(--civic-yellow))]/20 bg-[hsl(var(--civic-yellow))]/[0.03] space-y-3">
+              <p className="text-sm font-semibold text-foreground flex items-center gap-1.5">
+                <ShieldAlert className="w-4 h-4 text-[hsl(var(--civic-yellow))]" />
+                Values Clash Detected
+              </p>
+              <div className="space-y-2">
+                {clashAlerts.map((alert, i) => (
                   <div key={i} className="flex items-start gap-2 text-sm">
-                    {item.type === "positive" && <CheckCircle2 className="w-4 h-4 text-[hsl(var(--civic-green))] mt-0.5 shrink-0" />}
-                    {item.type === "warning" && <AlertTriangle className="w-4 h-4 text-[hsl(var(--civic-yellow))] mt-0.5 shrink-0" />}
-                    {item.type === "neutral" && <Info className="w-4 h-4 text-muted-foreground mt-0.5 shrink-0" />}
-                    <div>
-                      <span className="font-medium text-foreground">{item.label}</span>
-                      <p className="text-muted-foreground text-xs mt-0.5 leading-relaxed">{item.detail}</p>
-                    </div>
+                    <AlertTriangle className={cn(
+                      "w-4 h-4 mt-0.5 shrink-0",
+                      alert.severity === "clash" ? "text-destructive" : "text-[hsl(var(--civic-yellow))]"
+                    )} />
+                    <p className="text-muted-foreground leading-relaxed">{alert.statement}</p>
                   </div>
                 ))}
               </div>
@@ -238,5 +288,20 @@ export function JobDetailDrawer({ job, companyValueSignals = [], companySignals 
         </div>
       </SheetContent>
     </Sheet>
+  );
+}
+
+// Extracted sub-component for Before You Sign rows
+function BeforeYouSignRow({ item }: { item: { type: "positive" | "warning" | "neutral"; label: string; detail: string } }) {
+  return (
+    <div className="flex items-start gap-2 text-sm">
+      {item.type === "positive" && <CheckCircle2 className="w-4 h-4 text-[hsl(var(--civic-green))] mt-0.5 shrink-0" />}
+      {item.type === "warning" && <AlertTriangle className="w-4 h-4 text-[hsl(var(--civic-yellow))] mt-0.5 shrink-0" />}
+      {item.type === "neutral" && <Info className="w-4 h-4 text-muted-foreground mt-0.5 shrink-0" />}
+      <div>
+        <span className="font-medium text-foreground">{item.label}</span>
+        <p className="text-muted-foreground text-xs mt-0.5 leading-relaxed">{item.detail}</p>
+      </div>
+    </div>
   );
 }

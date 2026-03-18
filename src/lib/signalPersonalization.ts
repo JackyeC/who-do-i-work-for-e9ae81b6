@@ -435,3 +435,80 @@ export function generateRankingExplanation(
   if (parts.length === 1) return `${sentence}.`;
   return `${sentence}. ${parts[1].charAt(0).toUpperCase() + parts[1].slice(1)}.`;
 }
+
+// ── Values DNA Clash Alerts (Truth-Over-Vibes) ──
+
+export interface ClashAlert {
+  userPriority: string;
+  signalCategory: string;
+  statement: string;
+  severity: "clash" | "caution";
+}
+
+const AVOIDANCE_TO_CLASH: Record<string, { category: string; clashOn: string }> = {
+  "Frequent layoffs or instability": { category: "workforce_stability", clashOn: "low" },
+  "Below-market compensation": { category: "compensation_transparency", clashOn: "low" },
+  "Limited growth opportunities": { category: "innovation_activity", clashOn: "low" },
+  "High turnover or negative culture signals": { category: "public_sentiment", clashOn: "low" },
+};
+
+const PRIORITY_TO_CLASH: Record<string, { category: string; clashOn: string }> = {
+  "Stability": { category: "workforce_stability", clashOn: "low" },
+  "Higher pay": { category: "compensation_transparency", clashOn: "low" },
+  "Clear growth and advancement paths": { category: "innovation_activity", clashOn: "low" },
+  "Respectful team environment": { category: "public_sentiment", clashOn: "low" },
+  "Clear and consistent leadership": { category: "company_behavior", clashOn: "low" },
+  "Transparent communication": { category: "company_behavior", clashOn: "low" },
+};
+
+export function generateClashAlerts(
+  signals: CanonicalSignal[],
+  profile: WorkProfile | null
+): ClashAlert[] {
+  if (!profile) return [];
+  const alerts: ClashAlert[] = [];
+  const weights = getCategoryWeights(profile);
+
+  // Check priorities
+  for (const p of profile.priorities) {
+    const mapping = PRIORITY_TO_CLASH[p];
+    if (!mapping) continue;
+    const signal = signals.find(s => s.signal_category === mapping.category);
+    if (!signal) continue;
+    if (signal.value_normalized === mapping.clashOn) {
+      const label = CATEGORY_PRIORITY_LABELS[mapping.category] || mapping.category;
+      alerts.push({
+        userPriority: p,
+        signalCategory: mapping.category,
+        statement: `You prioritize "${p}" — but this company shows ${getUiStatement(mapping.category, signal.value_normalized).toLowerCase()}.`,
+        severity: "clash",
+      });
+    } else if (signal.value_normalized === "medium" && (weights[mapping.category] || 0) > 70) {
+      const label = CATEGORY_PRIORITY_LABELS[mapping.category] || mapping.category;
+      alerts.push({
+        userPriority: p,
+        signalCategory: mapping.category,
+        statement: `"${p}" matters to you, and this signal is mixed — consider verifying ${label} directly.`,
+        severity: "caution",
+      });
+    }
+  }
+
+  // Check avoidances
+  for (const a of profile.avoids) {
+    const mapping = AVOIDANCE_TO_CLASH[a];
+    if (!mapping) continue;
+    const signal = signals.find(s => s.signal_category === mapping.category);
+    if (!signal) continue;
+    if (signal.value_normalized === mapping.clashOn) {
+      alerts.push({
+        userPriority: a,
+        signalCategory: mapping.category,
+        statement: `You want to avoid "${a}" — and this signal confirms the concern.`,
+        severity: "clash",
+      });
+    }
+  }
+
+  return alerts;
+}
