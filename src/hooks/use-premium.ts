@@ -126,7 +126,18 @@ function getFeaturesForTier(tier: PremiumTier): PremiumFeatures {
 
 export function usePremium(): PremiumFeatures & { isPremium: boolean; isLoggedIn: boolean; subscriptionEnd: string | null } {
   const { user, subscriptionStatus } = useAuth();
-  const { isDemoSafe } = useDemoSafeMode();
+  const { isDemoSafe, previewTier } = useDemoSafeMode();
+
+  // Preview tier override — lets founders see exactly what each tier looks like
+  if (previewTier && user) {
+    const features = getFeaturesForTier(previewTier);
+    return {
+      ...features,
+      isPremium: previewTier !== "free",
+      isLoggedIn: true,
+      subscriptionEnd: null,
+    };
+  }
 
   // Demo Safe Mode: treat as professional tier (bypass all paywalls)
   if (isDemoSafe && user) {
