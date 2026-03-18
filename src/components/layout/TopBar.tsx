@@ -191,7 +191,7 @@ export function TopBar() {
                   <Link
                     to={section.path}
                     className={cn(
-                      "font-mono text-[10px] tracking-wider uppercase px-3 h-full flex items-center border-b-2 transition-colors gap-1 whitespace-nowrap",
+                      "font-mono text-xs tracking-wider uppercase px-3 h-full flex items-center border-b-2 transition-colors gap-1 whitespace-nowrap",
                       active
                         ? "text-primary border-primary"
                         : "text-muted-foreground border-transparent hover:text-foreground"
