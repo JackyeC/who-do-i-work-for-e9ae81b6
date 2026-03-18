@@ -153,22 +153,31 @@ export default function Check() {
               </div>
 
               {/* Search dropdown */}
-              {searchResults && searchResults.length > 0 && !selectedCompanyId && (
+              {!selectedCompanyId && searchTerm.length >= 2 && (
                 <Card className="absolute z-10 w-full mt-1 shadow-lg">
                   <CardContent className="p-1">
-                    {searchResults.map((c) => (
-                      <button
-                        key={c.id}
-                        onClick={() => selectCompany(c.id, c.name, c.slug)}
-                        className="w-full flex items-center gap-3 px-3 py-2.5 text-left rounded-md hover:bg-muted/50 transition-colors"
-                      >
-                        <Building2 className="w-4 h-4 text-muted-foreground shrink-0" />
-                        <div>
-                          <p className="text-sm font-medium text-foreground">{c.name}</p>
-                          <p className="text-[11px] text-muted-foreground">{c.industry}</p>
-                        </div>
-                      </button>
-                    ))}
+                    {searchResults && searchResults.length > 0 ? (
+                      searchResults.map((c) => (
+                        <button
+                          key={c.id}
+                          onClick={() => selectCompany(c.id, c.name, c.slug)}
+                          className="w-full flex items-center gap-3 px-3 py-2.5 text-left rounded-md hover:bg-muted/50 transition-colors"
+                        >
+                          <Building2 className="w-4 h-4 text-muted-foreground shrink-0" />
+                          <div>
+                            <p className="text-sm font-medium text-foreground">{c.name}</p>
+                            <p className="text-[11px] text-muted-foreground">{c.industry}</p>
+                          </div>
+                        </button>
+                      ))
+                    ) : (
+                      <AddCompanyCard
+                        companyName={searchTerm}
+                        onDiscovered={(id, slug, name) => {
+                          selectCompany(id, name, slug);
+                        }}
+                      />
+                    )}
                   </CardContent>
                 </Card>
               )}

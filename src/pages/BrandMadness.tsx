@@ -94,7 +94,7 @@ export default function BrandMadness() {
             const mv = votes[lastVote.matchupId] || {};
             const total = Object.values(mv).reduce((a, b) => a + b, 0);
             const pct = total > 0 ? Math.round(((mv[lastVote.brandSlug] || 0) / total) * 100) : 100;
-            return { brandName: brand.name, brandEmoji: brand.emoji, opponentName: opponent.name, regionName: r.name, votePercent: pct };
+            return { brandName: brand.name, brandEmoji: brand.emoji, opponentName: opponent.name, regionName: r.name, votePercent: pct, tensionLabel: m.tension?.label };
           }
         }
         return null;
