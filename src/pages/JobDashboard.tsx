@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { useSearchParams } from "react-router-dom";
 import { Header } from "@/components/Header";
 import { Footer } from "@/components/Footer";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -14,7 +15,8 @@ import { Briefcase, Settings, User, LayoutDashboard, Zap } from "lucide-react";
 
 export default function JobDashboard() {
   const { user, loading } = useAuth();
-  const [tab, setTab] = useState("matches");
+  const [searchParams] = useSearchParams();
+  const [tab, setTab] = useState(searchParams.get("tab") || "matches");
 
   if (loading) return null;
   if (!user) return <Navigate to="/login" replace />;
