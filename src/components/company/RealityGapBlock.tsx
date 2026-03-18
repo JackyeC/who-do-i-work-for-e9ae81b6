@@ -58,7 +58,7 @@ function StanceRow({ stance }: { stance: { id: string; topic: string; public_pos
           <p className="text-sm text-foreground/85 leading-relaxed">{stance.spending_reality}</p>
         </div>
       </div>
-      <p className="text-[10px] text-muted-foreground mt-2 font-mono">Confidence: Medium — based on public spending patterns</p>
+      <p className="text-xs text-muted-foreground mt-2 font-mono">Confidence: Medium — based on public spending patterns</p>
     </div>
   );
 }
