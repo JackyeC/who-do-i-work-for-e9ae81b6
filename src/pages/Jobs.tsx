@@ -747,6 +747,7 @@ export default function Jobs() {
       <JobDetailDrawer
         job={selectedJob}
         companyValueSignals={selectedJob ? (valuesSignals?.[selectedJob.companies?.id] || []) : []}
+        companySignals={selectedJob ? (canonicalSignalsMap?.[selectedJob.companies?.id] || []) : []}
         matchScore={selectedJob ? jobScores[selectedJob.id] : undefined}
         open={!!selectedJob}
         onOpenChange={(open) => { if (!open) setSelectedJob(null); }}
