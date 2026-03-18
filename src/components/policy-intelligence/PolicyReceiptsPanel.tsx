@@ -6,7 +6,7 @@ import { Card, CardContent } from "@/components/ui/card";
 interface Props {
   stances: Array<{ topic: string; public_position: string; gap: string }>;
   linkages: Array<{ link_type: string; amount: number | null; description: string | null; target_entity_name: string }>;
-  lobbyingRecords: Array<{ state: string; amount: number | null }>;
+  lobbyingRecords: Array<{ state: string; lobbying_spend?: number | null }>;
   tradeAssociations: Array<{ name: string }>;
   darkMoney: Array<{ name: string; org_type: string; estimated_amount: number | null }>;
 }
