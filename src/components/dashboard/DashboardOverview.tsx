@@ -257,7 +257,7 @@ export function DashboardOverview({ onNavigate }: DashboardOverviewProps) {
                 <h3 className="text-sm font-semibold uppercase tracking-wider text-muted-foreground">
                    Recent signals
                 </h3>
-                <Button variant="ghost" size="sm" className="text-xs h-7" onClick={() => onNavigate("alerts")}>
+                <Button variant="ghost" size="sm" className="text-sm h-7" onClick={() => onNavigate("alerts")}>
                   View all <ArrowRight className="w-3 h-3 ml-1" />
                 </Button>
               </div>
