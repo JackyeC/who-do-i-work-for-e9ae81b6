@@ -109,7 +109,7 @@ export default function StrategicOfferReview() {
     baseSalary: "", bonus: "", equity: "", additionalDetails: "",
     hasInterview: true, asksToBuyEquipment: false,
     signOnBonus: "", repaymentClause: "", benefitWaitingPeriod: "",
-    nonCompete: "", arbitrationClause: false, ipClause: false,
+    nonCompete: "", arbitrationClause: false, ipClause: false, salarySharedUpfront: true,
   });
 
   // Career path signals for the forecast module (must be after offer declaration)
