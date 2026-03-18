@@ -254,8 +254,8 @@ export function DashboardOverview({ onNavigate }: DashboardOverviewProps) {
           <Card className="border-border/40">
             <CardContent className="p-5">
               <div className="flex items-center justify-between mb-3">
-                <h3 className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
-                  Recent signals
+                <h3 className="text-sm font-semibold uppercase tracking-wider text-muted-foreground">
+                   Recent signals
                 </h3>
                 <Button variant="ghost" size="sm" className="text-xs h-7" onClick={() => onNavigate("alerts")}>
                   View all <ArrowRight className="w-3 h-3 ml-1" />
