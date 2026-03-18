@@ -48,13 +48,13 @@ export function MismatchEngine({ stances, darkMoney, tradeAssociations }: Props)
       <div className="flex items-center gap-3 flex-wrap">
         <h3 className="text-sm font-semibold text-foreground">Say vs. Do Analysis</h3>
         {conflicts.length > 0 && (
-          <Badge variant="destructive" className="text-[10px]">{conflicts.length} contradiction{conflicts.length > 1 ? "s" : ""}</Badge>
+           <Badge variant="destructive" className="text-xs">{conflicts.length} contradiction{conflicts.length > 1 ? "s" : ""}</Badge>
         )}
         {mixed.length > 0 && (
-          <Badge variant="warning" className="text-[10px]">{mixed.length} mixed</Badge>
+          <Badge variant="warning" className="text-xs">{mixed.length} mixed</Badge>
         )}
         {aligned.length > 0 && (
-          <Badge variant="success" className="text-[10px]">{aligned.length} aligned</Badge>
+          <Badge variant="success" className="text-xs">{aligned.length} aligned</Badge>
         )}
       </div>
 
