@@ -77,7 +77,7 @@ export function DashboardSidebar({ activeTab, onTabChange }: DashboardSidebarPro
             </div>
             <div className="leading-none">
               <p className="text-sm font-bold text-foreground font-display">My Dashboard</p>
-              <p className="text-[10px] text-muted-foreground mt-0.5">Career Intelligence Hub</p>
+              <p className="text-xs text-muted-foreground mt-0.5">Career Intelligence Hub</p>
             </div>
           </div>
         )}
