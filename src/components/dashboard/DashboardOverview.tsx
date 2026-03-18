@@ -86,7 +86,7 @@ export function DashboardOverview({ onNavigate }: DashboardOverviewProps) {
         <Card className="border-border/40 overflow-hidden">
           <div className="h-0.5 bg-gradient-to-r from-primary to-primary/40" />
           <CardContent className="p-5">
-            <h3 className="text-xs font-semibold uppercase tracking-wider text-muted-foreground mb-3">
+            <h3 className="text-sm font-semibold uppercase tracking-wider text-muted-foreground mb-3">
               Continue where you left off
             </h3>
             {lastTracked?.company ? (
@@ -99,7 +99,7 @@ export function DashboardOverview({ onNavigate }: DashboardOverviewProps) {
                   <p className="text-sm font-semibold text-foreground group-hover:text-primary transition-colors">
                     {lastTracked.company.name}
                   </p>
-                  <p className="text-[11px] text-muted-foreground">
+                  <p className="text-sm text-muted-foreground">
                     {lastTracked.company.industry}
                     {lastTracked.company.civic_footprint_score != null && ` · Score: ${lastTracked.company.civic_footprint_score}/100`}
                   </p>
@@ -116,7 +116,7 @@ export function DashboardOverview({ onNavigate }: DashboardOverviewProps) {
                   <p className="text-sm font-semibold text-foreground group-hover:text-primary transition-colors">
                     {lastApp.job_title}
                   </p>
-                  <p className="text-[11px] text-muted-foreground">{lastApp.company_name} · {lastApp.status}</p>
+                  <p className="text-sm text-muted-foreground">{lastApp.company_name} · {lastApp.status}</p>
                 </div>
                 <ArrowRight className="w-4 h-4 text-muted-foreground/40 group-hover:text-primary transition-all shrink-0" />
               </div>
@@ -130,7 +130,7 @@ export function DashboardOverview({ onNavigate }: DashboardOverviewProps) {
                   <p className="text-sm font-semibold text-foreground group-hover:text-primary transition-colors">
                     Check your first company
                   </p>
-                  <p className="text-[11px] text-muted-foreground">
+                  <p className="text-sm text-muted-foreground">
                     Search any employer for civic footprint & hiring signals
                   </p>
                 </div>
@@ -147,10 +147,10 @@ export function DashboardOverview({ onNavigate }: DashboardOverviewProps) {
           <Card className="border-border/40">
             <CardContent className="p-5">
               <div className="flex items-center justify-between mb-3">
-                <h3 className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
+                <h3 className="text-sm font-semibold uppercase tracking-wider text-muted-foreground">
                   Companies you're evaluating
                 </h3>
-                <Button variant="ghost" size="sm" className="text-xs h-7" onClick={() => onNavigate("tracked")}>
+                <Button variant="ghost" size="sm" className="text-sm h-7" onClick={() => onNavigate("tracked")}>
                   View all <ArrowRight className="w-3 h-3 ml-1" />
                 </Button>
               </div>
@@ -189,7 +189,7 @@ export function DashboardOverview({ onNavigate }: DashboardOverviewProps) {
       <motion.div {...anim(0.14)}>
         <Card className="border-border/40">
           <CardContent className="p-5">
-            <h3 className="text-xs font-semibold uppercase tracking-wider text-muted-foreground mb-3">
+            <h3 className="text-sm font-semibold uppercase tracking-wider text-muted-foreground mb-3">
               Your compensation baseline
             </h3>
             {profile ? (
@@ -198,14 +198,14 @@ export function DashboardOverview({ onNavigate }: DashboardOverviewProps) {
                   <div className="flex items-center gap-2 p-2.5 rounded-lg bg-muted/20 border border-border/30">
                     <DollarSign className="w-4 h-4 text-primary shrink-0" />
                     <div>
-                      <p className="text-xs font-medium text-foreground">
+                      <p className="text-sm font-medium text-foreground">
                         {profile.target_salary_min && profile.target_salary_max
                           ? `$${(profile.target_salary_min / 1000).toFixed(0)}k – $${(profile.target_salary_max / 1000).toFixed(0)}k`
                           : profile.target_salary_min
                           ? `From $${(profile.target_salary_min / 1000).toFixed(0)}k`
                           : `Up to $${(profile.target_salary_max / 1000).toFixed(0)}k`}
                       </p>
-                      <p className="text-xs text-muted-foreground">Target range</p>
+                      <p className="text-sm text-muted-foreground">Target range</p>
                     </div>
                   </div>
                 )}
@@ -213,8 +213,8 @@ export function DashboardOverview({ onNavigate }: DashboardOverviewProps) {
                   <div className="flex items-center gap-2 p-2.5 rounded-lg bg-muted/20 border border-border/30">
                     <Briefcase className="w-4 h-4 text-primary shrink-0" />
                     <div>
-                      <p className="text-xs font-medium text-foreground">{profile.skills.length} skills</p>
-                      <p className="text-xs text-muted-foreground">Detected from profile</p>
+                      <p className="text-sm font-medium text-foreground">{profile.skills.length} skills</p>
+                      <p className="text-sm text-muted-foreground">Detected from profile</p>
                     </div>
                   </div>
                 )}
@@ -222,8 +222,8 @@ export function DashboardOverview({ onNavigate }: DashboardOverviewProps) {
                   <div className="flex items-center gap-2 p-2.5 rounded-lg bg-muted/20 border border-border/30">
                     <Briefcase className="w-4 h-4 text-primary shrink-0" />
                     <div>
-                      <p className="text-xs font-medium text-foreground capitalize">{profile.seniority_level}</p>
-                      <p className="text-xs text-muted-foreground">Seniority level</p>
+                      <p className="text-sm font-medium text-foreground capitalize">{profile.seniority_level}</p>
+                      <p className="text-sm text-muted-foreground">Seniority level</p>
                     </div>
                   </div>
                 )}
@@ -254,10 +254,10 @@ export function DashboardOverview({ onNavigate }: DashboardOverviewProps) {
           <Card className="border-border/40">
             <CardContent className="p-5">
               <div className="flex items-center justify-between mb-3">
-                <h3 className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
-                  Recent signals
+                <h3 className="text-sm font-semibold uppercase tracking-wider text-muted-foreground">
+                   Recent signals
                 </h3>
-                <Button variant="ghost" size="sm" className="text-xs h-7" onClick={() => onNavigate("alerts")}>
+                <Button variant="ghost" size="sm" className="text-sm h-7" onClick={() => onNavigate("alerts")}>
                   View all <ArrowRight className="w-3 h-3 ml-1" />
                 </Button>
               </div>
@@ -270,7 +270,7 @@ export function DashboardOverview({ onNavigate }: DashboardOverviewProps) {
                     <Bell className="w-3.5 h-3.5 text-primary mt-0.5 shrink-0" />
                     <div className="flex-1 min-w-0">
                       <div className="flex items-center gap-2 flex-wrap">
-                        <span className="text-xs font-medium text-foreground">{alert.company_name}</span>
+                        <span className="text-sm font-medium text-foreground">{alert.company_name}</span>
                         <Badge variant="outline" className="text-xs">{alert.signal_category}</Badge>
                       </div>
                       <p className="text-sm text-muted-foreground leading-relaxed line-clamp-1">
@@ -301,8 +301,8 @@ export function DashboardOverview({ onNavigate }: DashboardOverviewProps) {
                     <div key={doc.id} className="flex items-center gap-3 p-2.5 rounded-lg bg-muted/20 border border-border/20">
                       <FileText className="w-4 h-4 text-muted-foreground shrink-0" />
                       <div className="flex-1 min-w-0">
-                        <p className="text-xs font-medium text-foreground truncate">{doc.original_filename}</p>
-                        <p className="text-xs text-muted-foreground">
+                        <p className="text-sm font-medium text-foreground truncate">{doc.original_filename}</p>
+                        <p className="text-sm text-muted-foreground">
                           {doc.document_type.replace("_", " ")} · {doc.status === "parsed" ? "✓ Parsed" : doc.status}
                         </p>
                       </div>
@@ -317,9 +317,9 @@ export function DashboardOverview({ onNavigate }: DashboardOverviewProps) {
               ) : (
                 <div className="text-center py-6">
                   <Upload className="w-8 h-8 text-muted-foreground/30 mx-auto mb-2" />
-                  <p className="text-xs text-muted-foreground">No documents uploaded yet</p>
-                  <Button variant="link" size="sm" className="text-xs mt-1" asChild>
-                    <Link to="/career-map">Upload Resume →</Link>
+                   <p className="text-sm text-muted-foreground">No documents uploaded yet</p>
+                   <Button variant="link" size="sm" className="text-sm mt-1" asChild>
+                     <Link to="/career-map">Upload Resume →</Link>
                   </Button>
                 </div>
               )}
@@ -333,7 +333,7 @@ export function DashboardOverview({ onNavigate }: DashboardOverviewProps) {
             <CardContent className="p-5">
               <div className="flex items-center justify-between mb-3">
                 <h3 className="text-sm font-bold text-foreground">Recent Applications</h3>
-                <Button variant="ghost" size="sm" className="text-xs h-7" onClick={() => onNavigate("tracker")}>
+                <Button variant="ghost" size="sm" className="text-sm h-7" onClick={() => onNavigate("tracker")}>
                   View all <ArrowRight className="w-3 h-3 ml-1" />
                 </Button>
               </div>
@@ -342,8 +342,8 @@ export function DashboardOverview({ onNavigate }: DashboardOverviewProps) {
                   {apps.map((app: any) => (
                     <div key={app.id} className="flex items-center justify-between gap-3 p-2.5 rounded-lg bg-muted/20 border border-border/20">
                       <div className="flex-1 min-w-0">
-                        <p className="text-xs font-medium text-foreground truncate">{app.job_title}</p>
-                        <p className="text-xs text-muted-foreground">{app.company_name}</p>
+                        <p className="text-sm font-medium text-foreground truncate">{app.job_title}</p>
+                        <p className="text-sm text-muted-foreground">{app.company_name}</p>
                       </div>
                       <Badge
                         variant="outline"
@@ -361,9 +361,9 @@ export function DashboardOverview({ onNavigate }: DashboardOverviewProps) {
               ) : (
                 <div className="text-center py-6">
                   <Briefcase className="w-8 h-8 text-muted-foreground/30 mx-auto mb-2" />
-                  <p className="text-xs text-muted-foreground">No applications tracked yet</p>
-                  <Button variant="link" size="sm" className="text-xs mt-1" onClick={() => onNavigate("tracker")}>
-                    Track an application →
+                   <p className="text-sm text-muted-foreground">No applications tracked yet</p>
+                   <Button variant="link" size="sm" className="text-sm mt-1" onClick={() => onNavigate("tracker")}>
+                     Track an application →
                   </Button>
                 </div>
               )}

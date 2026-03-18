@@ -24,7 +24,7 @@ const LABELS: Record<ConfidenceLevel, string> = {
 /** Reusable confidence indicator badge for intelligence signals */
 export function ConfidenceBadge({ level, label, className }: ConfidenceBadgeProps) {
   return (
-    <Badge variant="outline" className={cn("text-[9px]", STYLES[level], className)}>
+    <Badge variant="outline" className={cn("text-xs", STYLES[level], className)}>
       {label || LABELS[level]}
     </Badge>
   );

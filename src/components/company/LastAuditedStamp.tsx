@@ -18,7 +18,7 @@ export function LastAuditedStamp({ lastAuditedAt, lastReviewed }: LastAuditedSta
   return (
     <Badge
       variant="outline"
-      className={`text-[10px] gap-1.5 font-medium ${
+      className={`text-xs gap-1.5 font-medium ${
         isFresh
           ? "text-[hsl(var(--civic-green))] border-[hsl(var(--civic-green))]/30 bg-[hsl(var(--civic-green))]/5"
           : "text-muted-foreground border-border/50"
