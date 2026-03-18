@@ -126,7 +126,7 @@ export function HiringScanContextCard({ companyId, companyName }: HiringScanCont
         {/* Department breakdown */}
         {deptBreakdown && Object.keys(deptBreakdown).length > 0 && (
           <div className="pt-2 border-t border-border/50">
-            <p className="text-[10px] uppercase tracking-wider text-muted-foreground mb-2 font-semibold">
+            <p className="text-xs uppercase tracking-wider text-muted-foreground mb-2 font-semibold">
               Role Distribution
             </p>
             <div className="flex flex-wrap gap-1.5">
