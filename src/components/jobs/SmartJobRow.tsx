@@ -103,7 +103,7 @@ export function SmartJobRow({ job, isSelected, matchScore, matchLabel, onClick }
       {/* Row 2: Signals strip */}
       <div className="flex flex-wrap items-center gap-1.5 mt-2">
         {/* Freshness */}
-        <Badge variant="outline" className={cn("text-[10px] gap-0.5 py-0", freshness.className)}>
+        <Badge variant="outline" className={cn("text-xs gap-0.5 py-0", freshness.className)}>
           <FreshnessIcon className="w-2.5 h-2.5" /> {freshness.label}
         </Badge>
 
