@@ -74,7 +74,7 @@ export function JobIntegrityCard({ job, matchCount = 0, matchedCategories = [] }
       "bg-card/80 backdrop-blur-sm border-border/30 hover:border-primary/30 hover:shadow-2xl hover:shadow-primary/10 transition-all duration-300 group",
       isCertified && "ring-1 ring-amber-500/20 border-amber-500/15 hover:shadow-amber-500/10"
     )}>
-      <CardContent className="p-5 space-y-3">
+      <CardContent className="p-4 md:p-5 space-y-2.5 md:space-y-3">
         {/* Header */}
         <div className="flex items-start gap-3">
           <CompanyLogo companyName={co?.name || "Unknown"} logoUrl={co?.logo_url} size="sm" />
