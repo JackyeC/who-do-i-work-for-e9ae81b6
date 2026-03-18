@@ -8,13 +8,14 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Progress } from "@/components/ui/progress";
 import { Separator } from "@/components/ui/separator";
+import { Switch } from "@/components/ui/switch";
 import { useToast } from "@/hooks/use-toast";
 import { useAuth } from "@/contexts/AuthContext";
 import { supabase } from "@/integrations/supabase/client";
 import {
   ShieldCheck, Shield, Lock, Upload, ClipboardPaste, ArrowRight, ArrowLeft,
   Loader2, CheckCircle2, Building2, Briefcase, DollarSign,
-  Scale, AlertOctagon, FileText
+  Scale, AlertOctagon, FileText, Eye
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { WalkAwayCalculator } from "@/components/strategic-offer/WalkAwayCalculator";
@@ -29,6 +30,8 @@ import { GreenFlagsPanel } from "@/components/strategic-offer/GreenFlagsPanel";
 import { QuestionsToAsk } from "@/components/strategic-offer/QuestionsToAsk";
 import { CultureSnapshot } from "@/components/strategic-offer/CultureSnapshot";
 import { OfferDecisionSummary } from "@/components/strategic-offer/OfferDecisionSummary";
+import { OfferRealityCheck } from "@/components/strategic-offer/OfferRealityCheck";
+import { OfferRiskSignals, computeRiskLevel, type RiskSignal } from "@/components/strategic-offer/OfferRiskSignals";
 import { OfferClarityDashboard, type OfferClarityReport } from "@/components/offer-clarity/OfferClarityDashboard";
 import { OfferLetterUpload } from "@/components/offer-review/OfferLetterUpload";
 import { OfferReviewResults } from "@/components/offer-review/OfferReviewResults";
