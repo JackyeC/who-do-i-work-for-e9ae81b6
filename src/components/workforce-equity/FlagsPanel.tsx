@@ -1,5 +1,6 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { CheckCircle2, AlertTriangle } from "lucide-react";
+import { safeSignalLabel } from "@/utils/signalTextSanitizer";
 
 export function FlagsPanel({ signals }: { signals: any[] }) {
   const greenFlags = signals.filter(
