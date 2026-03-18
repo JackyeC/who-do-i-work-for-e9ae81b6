@@ -197,7 +197,7 @@ export function EmployerIntelligenceCard({ companyId, companyName }: Props) {
           <div className="grid grid-cols-3 gap-3">
             <div className="p-3 bg-muted/30 rounded-xl text-center">
               <p className="text-lg font-bold text-foreground">{company.civic_footprint_score}</p>
-              <p className="text-[10px] text-muted-foreground">Civic Score</p>
+              <p className="text-xs text-muted-foreground">Civic Score</p>
             </div>
             <div className="p-3 bg-muted/30 rounded-xl text-center">
               <p className="text-lg font-bold text-foreground">{formatCurrency(company.total_pac_spending || 0)}</p>
