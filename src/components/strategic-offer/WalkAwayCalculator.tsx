@@ -124,7 +124,7 @@ export function WalkAwayCalculator({ onComplete, offerSalary }: Props) {
                 <h3 className="text-sm font-semibold text-foreground">Offer vs. Safety Line</h3>
                 <div className="space-y-2">
                   <div className="flex items-center gap-3">
-                    <span className="text-[10px] text-muted-foreground w-16 text-right">Safety Line</span>
+                    <span className="text-xs text-muted-foreground w-16 text-right">Safety Line</span>
                     <div className="flex-1 h-6 bg-muted rounded-full overflow-hidden relative">
                       <div
                         className="h-full bg-destructive/20 border-r-2 border-destructive rounded-full"
