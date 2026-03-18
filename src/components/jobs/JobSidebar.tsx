@@ -27,7 +27,7 @@ export function JobSidebar() {
   return (
     <aside className="w-56 shrink-0 border-r border-border bg-sidebar-background hidden lg:flex flex-col h-[calc(100vh-64px)] sticky top-16">
       <div className="p-4 flex-1 overflow-y-auto">
-        <p className="text-[10px] font-semibold uppercase tracking-widest text-muted-foreground mb-3">Main</p>
+        <p className="text-xs font-semibold uppercase tracking-widest text-muted-foreground mb-3">Main</p>
         <nav className="space-y-0.5">
           {NAV_ITEMS.map((item) => {
             if (item.auth && !user) return null;
