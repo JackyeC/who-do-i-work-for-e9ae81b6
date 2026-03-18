@@ -153,6 +153,7 @@ export function JobIntegrityCard({ job, matchCount = 0, matchedCategories = [] }
               Apply
             </Button>
           )}
+          <SaveJobButton job={job as any} size="icon" className="h-8 w-8" />
           <Button size="sm" variant="outline" asChild className="gap-1 shrink-0">
             <Link to={`/job-board/${job.id}`}>
               <ChevronRight className="w-3 h-3" /> Details
