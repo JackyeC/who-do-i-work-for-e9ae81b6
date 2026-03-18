@@ -1,17 +1,19 @@
 import { useState } from "react";
 import { motion } from "framer-motion";
 import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
-import { ArrowRight, Check, Sparkles } from "lucide-react";
-import { VALUES_GROUPS, VALUES_LENSES } from "@/lib/valuesLenses";
+import { ArrowRight, Check, Sparkles, Info } from "lucide-react";
+import { VALUES_GROUPS, VALUES_LENSES, type ValuesGroupKey } from "@/lib/valuesLenses";
 
 interface ValuesOnboardingStepProps {
   onComplete: (selectedValues: string[]) => void;
   onSkip: () => void;
 }
 
-// Pick top values from each group for a quick-select experience
-const QUICK_VALUES = VALUES_LENSES.filter((_, i) => i % 2 === 0).slice(0, 12);
+// Pick representative values from each group for quick selection
+const QUICK_VALUES = VALUES_GROUPS.flatMap((group) => {
+  const groupLenses = VALUES_LENSES.filter((l) => l.group === group.key);
+  return groupLenses.slice(0, 2); // 2 per group = ~12 total
+});
 
 export function ValuesOnboardingStep({ onComplete, onSkip }: ValuesOnboardingStepProps) {
   const [selected, setSelected] = useState<Set<string>>(new Set());
@@ -32,9 +34,17 @@ export function ValuesOnboardingStep({ onComplete, onSkip }: ValuesOnboardingSte
           <Sparkles className="w-5 h-5 text-primary" />
         </div>
         <div>
-          <h3 className="text-lg font-bold text-foreground font-display">What matters to you?</h3>
-          <p className="text-sm text-muted-foreground">Pick the values you care about most. This powers your Career DNA.</p>
+          <h3 className="text-lg font-bold text-foreground font-display">What matters to you at work?</h3>
+          <p className="text-sm text-muted-foreground">Pick the workplace priorities you care about most. This powers your Career DNA.</p>
         </div>
+      </div>
+
+      {/* Neutral framing microcopy */}
+      <div className="flex items-start gap-2 p-3 rounded-lg bg-muted/50 border border-border/50">
+        <Info className="w-4 h-4 text-muted-foreground shrink-0 mt-0.5" />
+        <p className="text-xs text-muted-foreground leading-relaxed">
+          These aren't political positions. They're signals about how companies operate — so you can decide what matters to you.
+        </p>
       </div>
 
       <div className="flex flex-wrap gap-2">
@@ -65,7 +75,7 @@ export function ValuesOnboardingStep({ onComplete, onSkip }: ValuesOnboardingSte
           animate={{ opacity: 1, y: 0 }}
           className="text-xs text-primary font-medium"
         >
-          {selected.size} value{selected.size !== 1 ? "s" : ""} selected — you can fine-tune weights later in your dashboard.
+          {selected.size} priorit{selected.size !== 1 ? "ies" : "y"} selected — you can adjust importance later in your dashboard.
         </motion.p>
       )}
 
