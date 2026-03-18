@@ -41,6 +41,7 @@ import { CareerPathForecast } from "@/components/strategic-offer/CareerPathForec
 import { StabilityDelta } from "@/components/strategic-offer/StabilityDelta";
 import { NegotiationCoach } from "@/components/strategic-offer/NegotiationCoach";
 import { OutcomeFeedback } from "@/components/strategic-offer/OutcomeFeedback";
+import { AcceptanceEmail } from "@/components/strategic-offer/AcceptanceEmail";
 import { SituationContextBanner } from "@/components/policy-intelligence/SituationContextBanner";
 import { getSituationsFromStorage, type Situation } from "@/lib/policyScoreEngine";
 import { useQuery } from "@tanstack/react-query";
