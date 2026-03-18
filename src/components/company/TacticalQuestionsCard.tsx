@@ -86,8 +86,8 @@ export function TacticalQuestionsCard({ signals, companyName }: Props) {
               <Badge
                 className={
                   q.severity === "red"
-                    ? "bg-destructive/10 text-destructive border-destructive/30 text-[10px]"
-                    : "bg-[hsl(var(--civic-yellow))]/10 text-[hsl(var(--civic-yellow))] border-[hsl(var(--civic-yellow))]/30 text-[10px]"
+                     ? "bg-destructive/10 text-destructive border-destructive/30 text-xs"
+                    : "bg-[hsl(var(--civic-yellow))]/10 text-[hsl(var(--civic-yellow))] border-[hsl(var(--civic-yellow))]/30 text-xs"
                 }
               >
                 {q.severity === "red" ? "High" : "Medium"}
