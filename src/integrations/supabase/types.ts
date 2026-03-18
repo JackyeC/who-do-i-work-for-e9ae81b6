@@ -1507,6 +1507,41 @@ export type Database = {
           },
         ]
       }
+      company_aliases: {
+        Row: {
+          alias_name: string
+          alias_type: string
+          company_id: string
+          confidence: number | null
+          created_at: string
+          id: string
+        }
+        Insert: {
+          alias_name: string
+          alias_type?: string
+          company_id: string
+          confidence?: number | null
+          created_at?: string
+          id?: string
+        }
+        Update: {
+          alias_name?: string
+          alias_type?: string
+          company_id?: string
+          confidence?: number | null
+          created_at?: string
+          id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "company_aliases_company_id_fkey"
+            columns: ["company_id"]
+            isOneToOne: false
+            referencedRelation: "companies"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       company_alignment_categories: {
         Row: {
           alignment_level: string
@@ -2459,6 +2494,68 @@ export type Database = {
             foreignKeyName: "company_international_influence_company_id_fkey"
             columns: ["company_id"]
             isOneToOne: false
+            referencedRelation: "companies"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      company_ip_signals: {
+        Row: {
+          company_id: string
+          created_at: string
+          expansion_signal_score: number | null
+          id: string
+          innovation_signal_score: number | null
+          ip_complexity_score: number | null
+          last_scanned_at: string | null
+          ownership_change_flag: boolean | null
+          patent_count_12m: number | null
+          patent_count_36m: number | null
+          patent_trend: string | null
+          top_cpc_categories: Json | null
+          trademark_count_12m: number | null
+          trademark_trend: string | null
+          updated_at: string
+        }
+        Insert: {
+          company_id: string
+          created_at?: string
+          expansion_signal_score?: number | null
+          id?: string
+          innovation_signal_score?: number | null
+          ip_complexity_score?: number | null
+          last_scanned_at?: string | null
+          ownership_change_flag?: boolean | null
+          patent_count_12m?: number | null
+          patent_count_36m?: number | null
+          patent_trend?: string | null
+          top_cpc_categories?: Json | null
+          trademark_count_12m?: number | null
+          trademark_trend?: string | null
+          updated_at?: string
+        }
+        Update: {
+          company_id?: string
+          created_at?: string
+          expansion_signal_score?: number | null
+          id?: string
+          innovation_signal_score?: number | null
+          ip_complexity_score?: number | null
+          last_scanned_at?: string | null
+          ownership_change_flag?: boolean | null
+          patent_count_12m?: number | null
+          patent_count_36m?: number | null
+          patent_trend?: string | null
+          top_cpc_categories?: Json | null
+          trademark_count_12m?: number | null
+          trademark_trend?: string | null
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "company_ip_signals_company_id_fkey"
+            columns: ["company_id"]
+            isOneToOne: true
             referencedRelation: "companies"
             referencedColumns: ["id"]
           },
@@ -5252,6 +5349,47 @@ export type Database = {
           },
         ]
       }
+      ip_scan_jobs: {
+        Row: {
+          company_id: string
+          created_at: string
+          error_message: string | null
+          finished_at: string | null
+          id: string
+          job_type: string
+          started_at: string | null
+          status: string
+        }
+        Insert: {
+          company_id: string
+          created_at?: string
+          error_message?: string | null
+          finished_at?: string | null
+          id?: string
+          job_type?: string
+          started_at?: string | null
+          status?: string
+        }
+        Update: {
+          company_id?: string
+          created_at?: string
+          error_message?: string | null
+          finished_at?: string | null
+          id?: string
+          job_type?: string
+          started_at?: string | null
+          status?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "ip_scan_jobs_company_id_fkey"
+            columns: ["company_id"]
+            isOneToOne: false
+            referencedRelation: "companies"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       issue_legislation_map: {
         Row: {
           bill_keyword: string
@@ -6314,6 +6452,121 @@ export type Database = {
         Relationships: [
           {
             foreignKeyName: "organization_profile_enrichment_company_id_fkey"
+            columns: ["company_id"]
+            isOneToOne: false
+            referencedRelation: "companies"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      patent_assignments: {
+        Row: {
+          assignee: string | null
+          assignor: string | null
+          company_id: string
+          created_at: string
+          execution_date: string | null
+          id: string
+          patent_number: string | null
+          recorded_date: string | null
+          source_payload: Json | null
+          source_record_id: string | null
+        }
+        Insert: {
+          assignee?: string | null
+          assignor?: string | null
+          company_id: string
+          created_at?: string
+          execution_date?: string | null
+          id?: string
+          patent_number?: string | null
+          recorded_date?: string | null
+          source_payload?: Json | null
+          source_record_id?: string | null
+        }
+        Update: {
+          assignee?: string | null
+          assignor?: string | null
+          company_id?: string
+          created_at?: string
+          execution_date?: string | null
+          id?: string
+          patent_number?: string | null
+          recorded_date?: string | null
+          source_payload?: Json | null
+          source_record_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "patent_assignments_company_id_fkey"
+            columns: ["company_id"]
+            isOneToOne: false
+            referencedRelation: "companies"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      patent_records: {
+        Row: {
+          application_number: string | null
+          assignee_name: string | null
+          assignee_normalized: string | null
+          company_id: string
+          cpc_codes: Json | null
+          created_at: string
+          filing_date: string | null
+          government_interest: boolean | null
+          grant_date: string | null
+          id: string
+          inventor_count: number | null
+          patent_number: string | null
+          source_payload: Json | null
+          source_record_id: string | null
+          tech_keywords: Json | null
+          title: string | null
+          updated_at: string
+        }
+        Insert: {
+          application_number?: string | null
+          assignee_name?: string | null
+          assignee_normalized?: string | null
+          company_id: string
+          cpc_codes?: Json | null
+          created_at?: string
+          filing_date?: string | null
+          government_interest?: boolean | null
+          grant_date?: string | null
+          id?: string
+          inventor_count?: number | null
+          patent_number?: string | null
+          source_payload?: Json | null
+          source_record_id?: string | null
+          tech_keywords?: Json | null
+          title?: string | null
+          updated_at?: string
+        }
+        Update: {
+          application_number?: string | null
+          assignee_name?: string | null
+          assignee_normalized?: string | null
+          company_id?: string
+          cpc_codes?: Json | null
+          created_at?: string
+          filing_date?: string | null
+          government_interest?: boolean | null
+          grant_date?: string | null
+          id?: string
+          inventor_count?: number | null
+          patent_number?: string | null
+          source_payload?: Json | null
+          source_record_id?: string | null
+          tech_keywords?: Json | null
+          title?: string | null
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "patent_records_company_id_fkey"
             columns: ["company_id"]
             isOneToOne: false
             referencedRelation: "companies"
@@ -8543,6 +8796,115 @@ export type Database = {
         Relationships: [
           {
             foreignKeyName: "tracked_companies_company_id_fkey"
+            columns: ["company_id"]
+            isOneToOne: false
+            referencedRelation: "companies"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      trademark_assignments: {
+        Row: {
+          assignee: string | null
+          assignor: string | null
+          company_id: string
+          created_at: string
+          execution_date: string | null
+          id: string
+          mark_text: string | null
+          recorded_date: string | null
+          source_payload: Json | null
+          source_record_id: string | null
+        }
+        Insert: {
+          assignee?: string | null
+          assignor?: string | null
+          company_id: string
+          created_at?: string
+          execution_date?: string | null
+          id?: string
+          mark_text?: string | null
+          recorded_date?: string | null
+          source_payload?: Json | null
+          source_record_id?: string | null
+        }
+        Update: {
+          assignee?: string | null
+          assignor?: string | null
+          company_id?: string
+          created_at?: string
+          execution_date?: string | null
+          id?: string
+          mark_text?: string | null
+          recorded_date?: string | null
+          source_payload?: Json | null
+          source_record_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "trademark_assignments_company_id_fkey"
+            columns: ["company_id"]
+            isOneToOne: false
+            referencedRelation: "companies"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      trademark_records: {
+        Row: {
+          classes: Json | null
+          company_id: string
+          created_at: string
+          filing_date: string | null
+          goods_services: string | null
+          id: string
+          mark_text: string | null
+          owner_name: string | null
+          registration_date: string | null
+          registration_number: string | null
+          serial_number: string | null
+          source_payload: Json | null
+          source_record_id: string | null
+          status: string | null
+          updated_at: string
+        }
+        Insert: {
+          classes?: Json | null
+          company_id: string
+          created_at?: string
+          filing_date?: string | null
+          goods_services?: string | null
+          id?: string
+          mark_text?: string | null
+          owner_name?: string | null
+          registration_date?: string | null
+          registration_number?: string | null
+          serial_number?: string | null
+          source_payload?: Json | null
+          source_record_id?: string | null
+          status?: string | null
+          updated_at?: string
+        }
+        Update: {
+          classes?: Json | null
+          company_id?: string
+          created_at?: string
+          filing_date?: string | null
+          goods_services?: string | null
+          id?: string
+          mark_text?: string | null
+          owner_name?: string | null
+          registration_date?: string | null
+          registration_number?: string | null
+          serial_number?: string | null
+          source_payload?: Json | null
+          source_record_id?: string | null
+          status?: string | null
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "trademark_records_company_id_fkey"
             columns: ["company_id"]
             isOneToOne: false
             referencedRelation: "companies"
