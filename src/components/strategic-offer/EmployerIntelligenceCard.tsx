@@ -205,7 +205,7 @@ export function EmployerIntelligenceCard({ companyId, companyName }: Props) {
             </div>
             <div className="p-3 bg-muted/30 rounded-xl text-center">
               <p className="text-lg font-bold text-foreground">{formatCurrency(company.lobbying_spend || 0)}</p>
-              <p className="text-[10px] text-muted-foreground">Lobbying</p>
+              <p className="text-xs text-muted-foreground">Lobbying</p>
             </div>
           </div>
         </CardContent>
