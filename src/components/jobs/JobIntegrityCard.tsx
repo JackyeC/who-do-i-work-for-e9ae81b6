@@ -38,6 +38,8 @@ interface JobIntegrityCardProps {
       description: string | null;
     };
   };
+  matchCount?: number;
+  matchedCategories?: string[];
 }
 
 export function JobIntegrityCard({ job }: JobIntegrityCardProps) {
