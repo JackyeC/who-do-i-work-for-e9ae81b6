@@ -1,6 +1,6 @@
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
-import { AlertTriangle, CheckCircle, ExternalLink, Info, Layers, Search } from "lucide-react";
+import { AlertTriangle, CheckCircle, ExternalLink, Globe, Info, Layers, Search } from "lucide-react";
 
 interface ScanContext {
   classification: string;
@@ -10,6 +10,7 @@ interface ScanContext {
   atsDetected: string | null;
   departmentBreakdown: Record<string, number> | null;
   deeperUrlFound: string | null;
+  layersChecked?: string[];
 }
 
 interface HiringSignal {
@@ -32,6 +33,8 @@ const CLASSIFICATION_LABELS: Record<string, { label: string; icon: React.Element
   department_landing: { label: "Department Landing Page", icon: Layers, color: "text-amber-500" },
   no_active_jobs: { label: "No Active Jobs Detected", icon: AlertTriangle, color: "text-destructive" },
   limited_active_jobs: { label: "Limited Active Jobs", icon: AlertTriangle, color: "text-amber-500" },
+  careers_site_detected: { label: "Careers Site Detected", icon: Globe, color: "text-amber-500" },
+  ats_detected_jobs_found: { label: "ATS Detected — Jobs Found", icon: CheckCircle, color: "text-primary" },
 };
 
 const DEPT_LABELS: Record<string, string> = {
@@ -43,6 +46,16 @@ const DEPT_LABELS: Record<string, string> = {
   customer_support: "Customer Support",
   design: "Design",
   other: "Other",
+};
+
+const LAYER_LABELS: Record<string, string> = {
+  direct_ats_detection: "Direct ATS Detection",
+  company_site: "Company Careers Page",
+  site_map: "Site Map Discovery",
+  careers_subdomain: "Careers Subdomain Search",
+  ats_detection: "ATS Platform Detection",
+  web_search: "Web Search",
+  indexed_pages: "Indexed Job Pages",
 };
 
 export function HiringScanContextCard({ companyId, companyName }: HiringScanContextCardProps) {
@@ -74,6 +87,7 @@ export function HiringScanContextCard({ companyId, companyName }: HiringScanCont
 
   const classInfo = CLASSIFICATION_LABELS[scanContext.classification] || CLASSIFICATION_LABELS.informational_landing;
   const ClassIcon = classInfo.icon;
+  const layersChecked = scanContext.layersChecked || [];
 
   return (
     <div className="bg-card border border-border rounded-lg overflow-hidden">
@@ -106,6 +120,26 @@ export function HiringScanContextCard({ companyId, companyName }: HiringScanCont
           )}
         </div>
 
+        {/* Layers checked */}
+        {layersChecked.length > 0 && (
+          <div className="pt-1">
+            <p className="text-xs uppercase tracking-wider text-muted-foreground mb-1.5 font-semibold">
+              Discovery Layers Checked
+            </p>
+            <div className="flex flex-wrap gap-1.5">
+              {[...new Set(layersChecked)].map((layer) => (
+                <span
+                  key={layer}
+                  className="inline-flex items-center gap-1 px-2 py-0.5 rounded bg-muted text-xs text-foreground/70"
+                >
+                  <CheckCircle className="w-3 h-3 text-primary/60" strokeWidth={2} />
+                  {LAYER_LABELS[layer] || layer}
+                </span>
+              ))}
+            </div>
+          </div>
+        )}
+
         {/* Confidence */}
         <div className="flex items-center gap-2">
           <span className="text-xs text-muted-foreground">Confidence:</span>
@@ -122,6 +156,22 @@ export function HiringScanContextCard({ companyId, companyName }: HiringScanCont
             </span>
           )}
         </div>
+
+        {/* Deeper URL found */}
+        {scanContext.deeperUrlFound && (
+          <div className="flex items-center gap-2 text-xs text-muted-foreground bg-muted/40 rounded px-3 py-2">
+            <Globe className="w-3.5 h-3.5 text-primary/60 shrink-0" strokeWidth={1.5} />
+            <span className="font-medium text-foreground/70">Discovered:</span>
+            <a
+              href={scanContext.deeperUrlFound}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="truncate text-primary hover:underline"
+            >
+              {scanContext.deeperUrlFound}
+            </a>
+          </div>
+        )}
 
         {/* Department breakdown */}
         {deptBreakdown && Object.keys(deptBreakdown).length > 0 && (
