@@ -1,88 +1,184 @@
 /**
- * Signal Text Sanitizer
+ * Signal Text Sanitizer & Taxonomy Engine
  * 
- * Ensures all displayed signal labels are clean, readable, English-only,
- * and mapped to a controlled vocabulary when possible.
+ * Structured, consistent signal system for all company intelligence.
+ * Every signal displayed must be clean, readable, and mapped to a
+ * controlled 7-category taxonomy.
  */
 
-// Controlled vocabulary — canonical signal category labels
-const CANONICAL_CATEGORIES: Record<string, string> = {
-  // Direct matches
-  compensation_transparency: "Compensation Transparency",
-  hiring_activity: "Hiring Activity",
-  workforce_stability: "Workforce Stability",
-  company_behavior: "Company Behavior",
-  innovation_activity: "Innovation Activity",
-  public_sentiment: "Public Sentiment",
-  organizational_transformation: "Organizational Transformation",
-  leadership: "Leadership",
-  restructuring: "Restructuring",
-  innovation: "Innovation",
-  regulatory: "Regulatory",
-  layoffs: "Layoffs",
-  retention_risk: "Retention Risk",
-  pay_reporting: "Pay Reporting",
-  pay_equity: "Pay Equity",
-  benefits: "Benefits",
-  ai_hiring: "AI in Hiring",
-  culture: "Culture",
-  compliance: "Compliance",
-  governance: "Governance",
-  diversity: "Diversity",
-  transparency: "Transparency",
-  political_spending: "Political Spending",
-  lobbying: "Lobbying",
-  labor: "Labor",
-  climate: "Climate",
-  immigration: "Immigration",
-  civil_rights: "Civil Rights",
-  healthcare: "Healthcare",
-  consumer_protection: "Consumer Protection",
-  gun_policy: "Gun Policy",
-};
+// ═══════════════════════════════════════════════════════
+// 1. THE 7 CANONICAL SIGNAL CATEGORIES
+// ═══════════════════════════════════════════════════════
 
-// Fuzzy keyword → canonical mapping for partial matches
-const KEYWORD_MAP: [RegExp, string][] = [
-  [/compensat|salary|pay|wage/i, "Compensation Transparency"],
-  [/hiring|recruit|talent.?acqui/i, "Hiring Activity"],
-  [/workforce|stability|turnover|attrition|churn/i, "Workforce Stability"],
-  [/innovat|patent|r.?&.?d|research/i, "Innovation Activity"],
-  [/sentiment|glassdoor|indeed|review/i, "Public Sentiment"],
-  [/transform|restructur|reorg/i, "Organizational Transformation"],
-  [/leader|executive|c-suite|ceo|cfo/i, "Leadership"],
-  [/layoff|warn|rif|downsiz/i, "Layoffs"],
-  [/retention|exit|flight.?risk/i, "Retention Risk"],
-  [/benefit|insurance|401k|pto|leave/i, "Benefits"],
-  [/ai.?hir|automat.?screen|aedt/i, "AI in Hiring"],
-  [/cultur|values|workplace/i, "Culture"],
-  [/complian|regulat|enforcement|osha|eeoc/i, "Compliance"],
-  [/govern|board|fiduciar/i, "Governance"],
-  [/divers|equit|inclus|dei|eeo/i, "Diversity"],
-  [/transparen|disclos/i, "Transparency"],
-  [/politic|pac|donat|campaign/i, "Political Spending"],
-  [/lobby/i, "Lobbying"],
-  [/labor|union|nlrb|worker.?right/i, "Labor"],
-  [/climate|emission|carbon|esg/i, "Climate"],
-  [/immigrat|visa|h-?1b/i, "Immigration"],
-  [/civil.?right|discriminat|hrc/i, "Civil Rights"],
-  [/health|pharma|drug|medical/i, "Healthcare"],
-  [/consumer|product.?safe|ftc|recall/i, "Consumer Protection"],
-  [/gun|firearm|nra|second.?amend/i, "Gun Policy"],
+export type SignalCategoryKey =
+  | "hiring_behavior"
+  | "workforce_stability"
+  | "compensation_transparency"
+  | "employee_sentiment"
+  | "policy_influence"
+  | "leadership_governance"
+  | "risk_signals";
+
+export interface SignalCategoryMeta {
+  key: SignalCategoryKey;
+  label: string;
+  description: string;
+}
+
+export const SIGNAL_TAXONOMY: SignalCategoryMeta[] = [
+  { key: "hiring_behavior",            label: "Hiring Behavior",            description: "Patterns in job postings, ATS usage, and recruitment activity" },
+  { key: "workforce_stability",        label: "Workforce Stability",        description: "Layoffs, WARN notices, turnover, and retention signals" },
+  { key: "compensation_transparency",  label: "Compensation Transparency",  description: "Pay equity, salary disclosure, and benefits data" },
+  { key: "employee_sentiment",         label: "Employee Sentiment",         description: "Worker reviews, culture signals, and satisfaction indicators" },
+  { key: "policy_influence",           label: "Policy & Influence",         description: "PAC spending, lobbying, dark money, and political ties" },
+  { key: "leadership_governance",      label: "Leadership & Governance",    description: "Executive changes, board composition, and governance practices" },
+  { key: "risk_signals",               label: "Risk Signals",               description: "Regulatory actions, lawsuits, and compliance concerns" },
 ];
 
-/**
- * Detect non-Latin / non-English characters (CJK, Cyrillic, Arabic, etc.)
- */
-const NON_LATIN_RE = /[\u0400-\u04FF\u0600-\u06FF\u3000-\u9FFF\uAC00-\uD7AF\uF900-\uFAFF]/;
+export const TAXONOMY_MAP: Record<SignalCategoryKey, string> = Object.fromEntries(
+  SIGNAL_TAXONOMY.map(t => [t.key, t.label])
+) as Record<SignalCategoryKey, string>;
 
-/**
- * Detect control characters, unusual whitespace, or broken encoding
- */
+// ═══════════════════════════════════════════════════════
+// 2. RAW → TAXONOMY MAPPING
+// ═══════════════════════════════════════════════════════
+
+// Maps legacy/raw category keys to the canonical 7
+const CATEGORY_REMAP: Record<string, SignalCategoryKey> = {
+  // Hiring Behavior
+  hiring_activity: "hiring_behavior",
+  ai_hiring: "hiring_behavior",
+  ai_in_hiring: "hiring_behavior",
+  ghost_jobs: "hiring_behavior",
+  recruitment: "hiring_behavior",
+  talent_acquisition: "hiring_behavior",
+
+  // Workforce Stability
+  workforce_stability: "workforce_stability",
+  layoffs: "workforce_stability",
+  retention_risk: "workforce_stability",
+  restructuring: "workforce_stability",
+  organizational_transformation: "workforce_stability",
+  warn_notices: "workforce_stability",
+
+  // Compensation Transparency
+  compensation_transparency: "compensation_transparency",
+  pay_reporting: "compensation_transparency",
+  pay_equity: "compensation_transparency",
+  benefits: "compensation_transparency",
+  salary: "compensation_transparency",
+
+  // Employee Sentiment
+  public_sentiment: "employee_sentiment",
+  employee_sentiment: "employee_sentiment",
+  culture: "employee_sentiment",
+  sentiment: "employee_sentiment",
+  workplace: "employee_sentiment",
+  diversity: "employee_sentiment",
+
+  // Policy & Influence
+  political_spending: "policy_influence",
+  lobbying: "policy_influence",
+  dark_money: "policy_influence",
+  policy_influence: "policy_influence",
+  company_behavior: "policy_influence",
+
+  // Leadership & Governance
+  leadership: "leadership_governance",
+  governance: "leadership_governance",
+  leadership_governance: "leadership_governance",
+  executive: "leadership_governance",
+  board: "leadership_governance",
+
+  // Risk Signals
+  risk_signals: "risk_signals",
+  regulatory: "risk_signals",
+  compliance: "risk_signals",
+  litigation: "risk_signals",
+  innovation: "risk_signals",
+  innovation_activity: "risk_signals",
+};
+
+// Fuzzy keyword patterns → canonical category
+const KEYWORD_CATEGORY_MAP: [RegExp, SignalCategoryKey][] = [
+  [/hiring|recruit|talent.?acqui|job.?post|ats|ghost.?job|applicat/i, "hiring_behavior"],
+  [/layoff|warn|rif|downsiz|turnover|attrition|churn|restructur|reorg|stability/i, "workforce_stability"],
+  [/compensat|salary|pay|wage|benefit|401k|pto|leave|bonus|equity.?comp/i, "compensation_transparency"],
+  [/sentiment|glassdoor|indeed|review|culture|workplace|satisfact|morale|divers|inclus|dei/i, "employee_sentiment"],
+  [/politic|pac|donat|campaign|lobby|dark.?money|501c|trade.?assoc|influence|spending/i, "policy_influence"],
+  [/leader|executive|c-suite|ceo|cfo|board|govern|fiduciar|appoint/i, "leadership_governance"],
+  [/regulat|complian|enforcement|osha|eeoc|lawsuit|litigation|violat|fine|penalt|risk|patent|innovat/i, "risk_signals"],
+];
+
+// ═══════════════════════════════════════════════════════
+// 3. CURATED SIGNAL LABELS (4–6 words, plain English)
+// ═══════════════════════════════════════════════════════
+
+// Maps raw signal_type strings to clean 4-6 word labels
+const SIGNAL_LABEL_MAP: Record<string, string> = {
+  // Hiring Behavior
+  ghost_job: "Role posted but not filling",
+  reposted_role: "Role reposted multiple times",
+  ai_screening: "AI screening tools detected",
+  aedt_detected: "Automated hiring tool in use",
+  high_volume_posting: "High volume of job posts",
+  low_posting_activity: "Limited hiring activity detected",
+  ats_redirect: "Application redirects to external ATS",
+  no_active_jobs: "No active jobs detected",
+
+  // Workforce Stability
+  warn_notice: "WARN layoff notice filed",
+  mass_layoff: "Mass layoff event reported",
+  executive_departure: "Senior executive recently departed",
+  restructuring: "Organizational restructuring underway",
+  hiring_freeze: "Hiring freeze signals detected",
+  high_turnover: "Above-average employee turnover rate",
+  stable_workforce: "Stable workforce signals observed",
+
+  // Compensation Transparency
+  salary_not_disclosed: "Compensation not publicly listed",
+  salary_disclosed: "Salary ranges publicly posted",
+  pay_equity_gap: "Pay equity gaps detected",
+  benefits_indexed: "Benefits data publicly available",
+  no_comp_data: "No compensation data found",
+  below_market: "Below market rate detected",
+  above_market: "Above market compensation observed",
+
+  // Employee Sentiment
+  negative_reviews: "Negative employee reviews trending",
+  positive_culture: "Positive culture signals present",
+  diversity_concerns: "Diversity commitment questioned",
+  messaging_gap: "Messaging doesn't match experience",
+  culture_shift: "Workplace culture shift detected",
+
+  // Policy & Influence
+  pac_spending: "Corporate PAC spending detected",
+  lobbying_activity: "Active lobbying spend recorded",
+  dark_money_link: "Dark money connections identified",
+  political_donations: "Political donation patterns detected",
+  revolving_door: "Government-to-corporate pipeline found",
+
+  // Leadership & Governance
+  ceo_change: "CEO change recently announced",
+  board_turnover: "Board membership recently changed",
+  leadership_stable: "Leadership team appears stable",
+  independent_board: "Majority independent board members",
+
+  // Risk Signals
+  regulatory_action: "Regulatory enforcement action taken",
+  lawsuit_filed: "Active litigation case detected",
+  osha_violation: "Workplace safety violations found",
+  eeoc_complaint: "EEOC complaint on record",
+  patent_activity: "Patent filing activity detected",
+};
+
+// ═══════════════════════════════════════════════════════
+// 4. TEXT CLEANING (non-English, encoding, garbage)
+// ═══════════════════════════════════════════════════════
+
+const NON_LATIN_RE = /[\u0400-\u04FF\u0600-\u06FF\u3000-\u9FFF\uAC00-\uD7AF\uF900-\uFAFF]/;
 const GARBAGE_RE = /[\x00-\x08\x0E-\x1F\uFFFD\uFEFF]|â€|Ã|Â|ï¼/;
 
-/**
- * Strip non-Latin tokens from a string while preserving English words
- */
 function stripNonLatinTokens(text: string): string {
   return text
     .split(/\s+/)
@@ -91,9 +187,6 @@ function stripNonLatinTokens(text: string): string {
     .trim();
 }
 
-/**
- * Clean broken encoding artifacts
- */
 function cleanEncodingArtifacts(text: string): string {
   return text
     .replace(/â€[™"œ"˜]/g, "'")
@@ -106,64 +199,70 @@ function cleanEncodingArtifacts(text: string): string {
 }
 
 /**
- * Sanitize a signal text string.
- * Returns cleaned English text, or null if the text is unsalvageable.
+ * Sanitize any signal text string.
+ * Returns cleaned English text, or null if unsalvageable.
  */
 export function sanitizeSignalText(text: string | null | undefined): string | null {
   if (!text || typeof text !== "string") return null;
 
   let cleaned = cleanEncodingArtifacts(text.trim());
 
-  // Strip non-Latin tokens
   if (NON_LATIN_RE.test(cleaned)) {
     cleaned = stripNonLatinTokens(cleaned);
   }
 
-  // Remove any remaining garbage
   if (GARBAGE_RE.test(cleaned)) {
     cleaned = cleaned.replace(GARBAGE_RE, "").trim();
   }
 
-  // If nothing useful remains, return null
   if (!cleaned || cleaned.length < 2) return null;
 
-  // If mostly non-ASCII after cleaning, reject
   const asciiRatio = (cleaned.match(/[\x20-\x7E]/g) || []).length / cleaned.length;
   if (asciiRatio < 0.7) return null;
 
   return cleaned;
 }
 
-/**
- * Normalize a signal category key to a human-readable canonical label.
- * Falls back to title-casing the input if no match found.
- */
-export function normalizeCategory(category: string | null | undefined): string {
-  if (!category) return "General";
+// ═══════════════════════════════════════════════════════
+// 5. PUBLIC API
+// ═══════════════════════════════════════════════════════
 
-  // Clean first
-  const cleaned = sanitizeSignalText(category);
-  if (!cleaned) return "General";
+/**
+ * Map a raw category string to the canonical 7-category taxonomy.
+ * Returns the SignalCategoryKey.
+ */
+export function mapToCategory(rawCategory: string | null | undefined): SignalCategoryKey {
+  if (!rawCategory) return "risk_signals";
+
+  const cleaned = sanitizeSignalText(rawCategory);
+  if (!cleaned) return "risk_signals";
 
   const key = cleaned.toLowerCase().replace(/[\s-]+/g, "_");
 
-  // Direct match
-  if (CANONICAL_CATEGORIES[key]) return CANONICAL_CATEGORIES[key];
+  // Direct remap
+  if (CATEGORY_REMAP[key]) return CATEGORY_REMAP[key];
 
   // Fuzzy keyword match
-  for (const [pattern, label] of KEYWORD_MAP) {
-    if (pattern.test(cleaned)) return label;
+  for (const [pattern, category] of KEYWORD_CATEGORY_MAP) {
+    if (pattern.test(cleaned)) return category;
   }
 
-  // Fallback: title-case the cleaned input
-  return cleaned
-    .replace(/_/g, " ")
-    .replace(/\b\w/g, c => c.toUpperCase());
+  return "risk_signals";
 }
 
 /**
- * Normalize a signal type string for display.
- * Converts snake_case to readable text, cleans artifacts.
+ * Get the human-readable label for a canonical category.
+ */
+export function normalizeCategory(category: string | null | undefined): string {
+  if (!category) return "Risk Signals";
+
+  const mapped = mapToCategory(category);
+  return TAXONOMY_MAP[mapped] || "Risk Signals";
+}
+
+/**
+ * Normalize a signal_type to a clean 4-6 word label.
+ * First checks the curated map, then cleans and title-cases.
  */
 export function normalizeSignalType(signalType: string | null | undefined): string | null {
   if (!signalType) return null;
@@ -171,19 +270,59 @@ export function normalizeSignalType(signalType: string | null | undefined): stri
   const cleaned = sanitizeSignalText(signalType);
   if (!cleaned) return null;
 
-  return cleaned
+  const key = cleaned.toLowerCase().replace(/[\s-]+/g, "_");
+
+  // Curated label match
+  if (SIGNAL_LABEL_MAP[key]) return SIGNAL_LABEL_MAP[key];
+
+  // Fuzzy match on curated labels
+  for (const [mapKey, label] of Object.entries(SIGNAL_LABEL_MAP)) {
+    if (key.includes(mapKey) || mapKey.includes(key)) return label;
+  }
+
+  // Fallback: clean title-case, enforce 6-word max
+  const words = cleaned
     .replace(/_/g, " ")
-    .replace(/\b\w/g, c => c.toUpperCase());
+    .replace(/\b\w/g, c => c.toUpperCase())
+    .split(" ");
+
+  return words.slice(0, 6).join(" ");
 }
 
 /**
- * Safe display text — returns the sanitized text or a fallback.
- * Use this as the final rendering helper.
+ * Safe display text — returns sanitized text or a contextual fallback.
+ * The last line of defense before rendering.
  */
 export function safeSignalLabel(
   text: string | null | undefined,
-  fallback: string = "Signal Detected"
+  fallback: string = "Signal detected"
 ): string {
-  const result = sanitizeSignalText(text);
-  return result || fallback;
+  if (!text) return fallback;
+
+  // Try curated label first
+  const normalized = normalizeSignalType(text);
+  if (normalized) return normalized;
+
+  // Try basic sanitize
+  const cleaned = sanitizeSignalText(text);
+  if (cleaned) {
+    // Enforce 6-word max
+    const words = cleaned.split(" ");
+    if (words.length > 6) return words.slice(0, 6).join(" ") + "…";
+    return cleaned;
+  }
+
+  return fallback;
+}
+
+/**
+ * Sanitize a full signal summary (longer text, not a label).
+ * Allows longer text but still strips garbage.
+ */
+export function safeSignalSummary(
+  text: string | null | undefined,
+  fallback: string = "Signal data available — details pending verification."
+): string {
+  const cleaned = sanitizeSignalText(text);
+  return cleaned || fallback;
 }

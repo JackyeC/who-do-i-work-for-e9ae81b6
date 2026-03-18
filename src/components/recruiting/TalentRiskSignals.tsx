@@ -4,6 +4,7 @@ import { Badge } from "@/components/ui/badge";
 import { supabase } from "@/integrations/supabase/client";
 import { ShieldAlert, ExternalLink, Users, Building2, Scale, AlertTriangle, Briefcase, FileWarning } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { normalizeCategory } from "@/utils/signalTextSanitizer";
 
 interface RiskSignal {
   label: string;
@@ -74,7 +75,7 @@ export function TalentRiskSignals({ companyId, companyName }: Props) {
         const highSeverity = ideologyRes.data.filter(f => f.severity === "high" || f.severity === "critical");
         detected.push({
           label: "Policy alignment signals detected",
-          description: `${ideologyRes.data.length} ideology flag${ideologyRes.data.length > 1 ? "s" : ""} including ${ideologyRes.data.map(f => f.category).slice(0, 2).join(", ")}`,
+          description: `${ideologyRes.data.length} ideology flag${ideologyRes.data.length > 1 ? "s" : ""} including ${ideologyRes.data.map(f => normalizeCategory(f.category)).slice(0, 2).join(", ")}`,
           severity: highSeverity.length > 0 ? "high" : "medium",
           sourceUrl: ideologyRes.data[0]?.evidence_url || undefined,
           sourceLabel: "Evidence",
@@ -85,7 +86,7 @@ export function TalentRiskSignals({ companyId, companyName }: Props) {
       if (aiHrRes.data && aiHrRes.data.length > 0) {
         detected.push({
           label: "AI Hiring Technology concerns detected",
-          description: `${aiHrRes.data.length} signal${aiHrRes.data.length > 1 ? "s" : ""} related to ${[...new Set(aiHrRes.data.map(s => s.signal_category))].slice(0, 2).join(", ")}`,
+          description: `${aiHrRes.data.length} signal${aiHrRes.data.length > 1 ? "s" : ""} related to ${[...new Set(aiHrRes.data.map(s => normalizeCategory(s.signal_category)))].slice(0, 2).join(", ")}`,
           severity: "medium",
           sourceUrl: aiHrRes.data[0]?.source_url || undefined,
           sourceLabel: "Source",

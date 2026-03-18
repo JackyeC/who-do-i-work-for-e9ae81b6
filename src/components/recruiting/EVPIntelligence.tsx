@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { normalizeCategory } from "@/utils/signalTextSanitizer";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -170,7 +171,7 @@ export function EVPIntelligence() {
       }
 
       if (signalScansRes.data && signalScansRes.data.length > 0) {
-        const categories = [...new Set(signalScansRes.data.map((s: any) => s.signal_category))];
+        const categories = [...new Set(signalScansRes.data.map((s: any) => normalizeCategory(s.signal_category)))];
         signals.push({
           category: "Workforce Programs",
           detail: `${signalScansRes.data.length} signals across ${categories.slice(0, 3).join(", ")}`,
@@ -256,7 +257,7 @@ export function EVPIntelligence() {
       }
 
       if (signalScansRes.data && signalScansRes.data.length > 0) {
-        const topCategories = [...new Set((signalScansRes.data as any[]).map(s => s.signal_category))].slice(0, 2);
+        const topCategories = [...new Set((signalScansRes.data as any[]).map(s => normalizeCategory(s.signal_category)))].slice(0, 2);
         narrativeSuggestions.push(`📋 I see programs in ${topCategories.join(" and ")}. If these are real and active, showcase them with specifics — numbers, outcomes, real employee stories. Vague claims don't close candidates.`);
       }
 

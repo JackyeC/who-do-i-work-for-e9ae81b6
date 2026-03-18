@@ -6,6 +6,7 @@ import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { getUiStatement } from "@/lib/signalPersonalization";
 import { AlertTriangle, TrendingUp, TrendingDown, Minus } from "lucide-react";
+import { safeSignalSummary, mapToCategory, TAXONOMY_MAP } from "@/utils/signalTextSanitizer";
 
 interface Signal {
   summary: string;
@@ -80,12 +81,12 @@ function SignalCategory({ title, signals, emptyType, companyName, scanContext }:
               {s.uiStatement && (
                 <div className="flex items-center gap-2">
                   {DirIcon && <DirIcon className={cn("w-3.5 h-3.5", dirColor)} />}
-                  <span className="text-sm font-medium text-foreground">{s.uiStatement}</span>
+                  <span className="text-sm font-medium text-foreground">{safeSignalSummary(s.uiStatement, "Signal observed")}</span>
                 </div>
               )}
               {/* Detail summary */}
               <div className="flex items-start gap-3 text-sm">
-                <div className="flex-1 text-foreground/85 leading-relaxed">{s.summary}</div>
+                <div className="flex-1 text-foreground/85 leading-relaxed">{safeSignalSummary(s.summary)}</div>
                 <div className="flex items-center gap-2 shrink-0">
                   <div className="flex items-center gap-1">
                     <div className={cn("w-1.5 h-1.5 rounded-full", RECENCY_DOT[s.recency] || RECENCY_DOT["Unknown"])} />

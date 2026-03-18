@@ -1,6 +1,7 @@
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { AlertTriangle, CheckCircle, ExternalLink, Globe, Info, Layers, Search } from "lucide-react";
+import { safeSignalSummary } from "@/utils/signalTextSanitizer";
 
 interface ScanContext {
   classification: string;
@@ -205,7 +206,7 @@ export function HiringScanContextCard({ companyId, companyName }: HiringScanCont
                   signal.confidence === "medium" ? "text-amber-500" :
                   "text-muted-foreground"
                 }`} strokeWidth={1.5} />
-                <p className="text-muted-foreground leading-relaxed">{signal.description}</p>
+                <p className="text-muted-foreground leading-relaxed">{safeSignalSummary(signal.description, "Hiring signal detected")}</p>
               </div>
             ))}
           </div>
