@@ -737,6 +737,24 @@ export default function StrategicOfferReview() {
                   </div>
                 </div>
 
+                {/* 0. Offer Reality Check — Hero Summary */}
+                <div id="reality-check">
+                  <OfferRealityCheck
+                    offerStrengthScore={strengthScore.result.totalScore}
+                    offerSalary={Number(offer.baseSalary) || 0}
+                    annualBaseline={annualBaseline}
+                    legalFlags={legalFlags}
+                    report={report}
+                    hasEquity={!!offer.equity}
+                    hasBonus={!!offer.bonus}
+                    companyName={offer.companyName}
+                    roleTitle={offer.roleTitle}
+                    riskLevel={riskLevel}
+                    salaryTransparency={salaryTransparency}
+                    internalConsistency={internalConsistency}
+                  />
+                </div>
+
                 {/* 1. Offer Strength Score */}
                 <OfferStrengthScore
                   result={strengthScore.result}
