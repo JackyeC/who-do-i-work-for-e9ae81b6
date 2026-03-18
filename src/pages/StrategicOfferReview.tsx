@@ -899,6 +899,20 @@ export default function StrategicOfferReview() {
                   />
                 </div>
 
+                {/* 9.5. AI Negotiation Coach */}
+                <NegotiationCoach
+                  companyName={offer.companyName}
+                  roleTitle={offer.roleTitle}
+                  baseSalary={Number(offer.baseSalary) || 0}
+                  bonus={offer.bonus}
+                  equity={offer.equity}
+                  signOnBonus={offer.signOnBonus}
+                  annualBaseline={annualBaseline}
+                  legalFlags={legalFlags}
+                  riskSignals={riskSignals}
+                  userPriorities={userSituations}
+                />
+
                 {/* 10. Questions to Ask */}
                 <QuestionsToAsk
                   legalFlags={legalFlags}
