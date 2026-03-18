@@ -99,7 +99,7 @@ export function TransparencyResearchTab({ companyId, companyName }: Transparency
         <div className="flex flex-wrap gap-1.5 pt-2">
           {citations.map((url: string, i: number) => (
             <a key={i} href={url} target="_blank" rel="noopener noreferrer"
-              className="text-[10px] text-primary hover:underline inline-flex items-center gap-0.5">
+              className="text-xs text-primary hover:underline inline-flex items-center gap-0.5">
               Source [{i + 1}] <ExternalLink className="w-2.5 h-2.5" />
             </a>
           ))}

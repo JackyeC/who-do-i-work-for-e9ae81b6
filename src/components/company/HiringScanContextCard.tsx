@@ -100,7 +100,7 @@ export function HiringScanContextCard({ companyId, companyName }: HiringScanCont
           <span className="font-medium text-foreground/70">Source checked:</span>
           <span className="truncate">{scanContext.sourceChecked}</span>
           {scanContext.atsDetected && (
-            <span className="ml-auto shrink-0 px-1.5 py-0.5 bg-primary/10 text-primary rounded text-[10px] font-semibold uppercase">
+            <span className="ml-auto shrink-0 px-1.5 py-0.5 bg-primary/10 text-primary rounded text-xs font-semibold uppercase">
               {scanContext.atsDetected}
             </span>
           )}

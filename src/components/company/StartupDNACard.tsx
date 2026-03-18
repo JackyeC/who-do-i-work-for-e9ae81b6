@@ -67,7 +67,7 @@ export function StartupDNACard({
             <div className="bg-card p-3">
               <div className="flex items-center gap-1.5 mb-1">
                 <Calendar className="w-3 h-3 text-muted-foreground" />
-                <span className="font-mono text-[10px] uppercase text-muted-foreground">Founded</span>
+                <span className="font-mono text-xs uppercase text-muted-foreground">Founded</span>
               </div>
               <div className="text-sm font-semibold text-foreground">{foundedYear}</div>
             </div>

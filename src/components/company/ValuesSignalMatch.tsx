@@ -318,7 +318,7 @@ export function ValuesSignalMatch(props: SignalInputs) {
                         </p>
                         <button
                           onClick={() => navigate("/pricing")}
-                          className="shrink-0 flex items-center gap-1 text-[10px] text-primary font-medium hover:underline"
+                          className="shrink-0 flex items-center gap-1 text-xs text-primary font-medium hover:underline"
                         >
                           <Lock className="w-3 h-3" /> Unlock
                         </button>

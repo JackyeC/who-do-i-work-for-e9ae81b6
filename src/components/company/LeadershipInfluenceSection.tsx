@@ -234,7 +234,7 @@ export function LeadershipInfluenceSection({
                   <div className="flex items-center gap-2 shrink-0">
                     <span className="text-sm font-mono font-medium text-foreground">{formatCurrency(c.amount)}</span>
                     {c.flagged && (
-                      <Badge variant="destructive" className="text-[10px]">Flagged</Badge>
+                      <Badge variant="destructive" className="text-xs">Flagged</Badge>
                     )}
                     <ChevronRight className="w-4 h-4 text-muted-foreground group-hover:text-foreground" />
                   </div>
