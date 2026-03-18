@@ -9,9 +9,12 @@ interface PremiumGateProps {
   description?: string;
   requiredTier?: "candidate" | "professional";
   children: React.ReactNode;
+  variant?: "card" | "blur";
+  /** Dynamic CTA for blur variant */
+  blurCta?: string;
 }
 
-export function PremiumGate({ feature, description, requiredTier = "candidate", children }: PremiumGateProps) {
+export function PremiumGate({ feature, description, requiredTier = "candidate", children, variant = "card", blurCta }: PremiumGateProps) {
   const { tier, isLoggedIn } = usePremium();
   const navigate = useNavigate();
   
@@ -31,6 +34,38 @@ export function PremiumGate({ feature, description, requiredTier = "candidate", 
     navigate("/pricing");
   };
 
+  // Blur variant: show blurred content with overlay CTA
+  if (variant === "blur") {
+    return (
+      <div className="relative overflow-hidden rounded-lg">
+        {/* Blurred content underneath */}
+        <div className="select-none pointer-events-none" aria-hidden="true">
+          {children}
+        </div>
+        {/* Overlay */}
+        <div className="absolute inset-0 flex flex-col items-center justify-center gap-3 rounded-lg backdrop-blur-[8px] bg-background/40 border border-primary/10">
+          <div className="w-10 h-10 rounded-xl bg-primary/10 flex items-center justify-center">
+            <Crown className="w-5 h-5 text-primary" />
+          </div>
+          <p className="text-sm text-foreground font-medium text-center max-w-xs px-4 leading-relaxed">
+            {blurCta || `This deep-dive found new signals. Unlock to see what changed.`}
+          </p>
+          {!isLoggedIn ? (
+            <Button size="sm" onClick={() => navigate("/login")}>
+              Sign Up Free
+            </Button>
+          ) : (
+            <Button size="sm" onClick={handleUpgrade} className="gap-1.5">
+              <Lock className="w-3.5 h-3.5" />
+              Upgrade to {targetTier.label} — {targetTier.price}
+            </Button>
+          )}
+        </div>
+      </div>
+    );
+  }
+
+  // Card variant (default)
   return (
     <Card className="border-dashed border-2 border-primary/15 bg-muted/30">
       <CardContent className="p-8 text-center">

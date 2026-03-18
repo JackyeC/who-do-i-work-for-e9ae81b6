@@ -58,7 +58,7 @@ export function JobListRow({ job, companyValueSignals = [], companySignalFlags =
 
   // Logic Bible V8.0: Show 1-3 personalized signal statements
   const profile = getStoredWorkProfile();
-  const topSignals = getTopSignalsForJob(companySignals, profile, 3);
+  const topSignals = getTopSignalsForJob(companySignals, profile, 3, job.department);
 
   return (
     <button
