@@ -118,7 +118,7 @@ export function OfferCheckShareCard({
 
         {/* Footer */}
         <div className="flex items-center justify-between">
-          <span className="text-[10px] text-muted-foreground">
+           <span className="text-xs text-muted-foreground">
             Scanned {new Date(generatedAt).toLocaleDateString()}
           </span>
           <span className="text-[10px] text-muted-foreground">
