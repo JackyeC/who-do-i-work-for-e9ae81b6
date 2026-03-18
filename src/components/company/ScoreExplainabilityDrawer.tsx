@@ -209,8 +209,8 @@ export function ScoreExplainabilityDrawer({ companyId, score }: Props) {
                     <div className={cn("h-full rounded-full transition-all", getBarColor(sub.value))} style={{ width: `${(sub.value / 10) * 100}%` }} />
                   </div>
                   <div className="flex items-center justify-between">
-                    <span className="text-[10px] text-muted-foreground">{sub.description}</span>
-                    <span className="text-[9px] text-muted-foreground/70">Source: {sub.sources[0]}</span>
+                     <span className="text-xs text-muted-foreground">{sub.description}</span>
+                    <span className="text-xs text-muted-foreground/70">Source: {sub.sources[0]}</span>
                   </div>
                 </div>
               );
