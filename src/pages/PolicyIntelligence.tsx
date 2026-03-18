@@ -67,13 +67,14 @@ export default function PolicyIntelligence() {
   const { data: policyData, isLoading } = useQuery({
     queryKey: ["pi-data", selectedCompanyId],
     queryFn: async () => {
-      const [stancesRes, linkagesRes, darkRes, tradeRes, lobbyRes, signalsRes] = await Promise.all([
+      const [stancesRes, linkagesRes, darkRes, tradeRes, lobbyRes, signalsRes, companyRes] = await Promise.all([
         supabase.from("company_public_stances").select("*").eq("company_id", selectedCompanyId!),
         (supabase as any).from("entity_linkages").select("*").eq("company_id", selectedCompanyId!).limit(100),
         supabase.from("company_dark_money").select("*").eq("company_id", selectedCompanyId!),
         supabase.from("company_trade_associations").select("*").eq("company_id", selectedCompanyId!),
         supabase.from("company_state_lobbying").select("*").eq("company_id", selectedCompanyId!),
         supabase.from("company_signal_scans").select("*").eq("company_id", selectedCompanyId!),
+        supabase.from("companies").select("last_audited_at, last_reviewed").eq("id", selectedCompanyId!).maybeSingle(),
       ]);
       return {
         stances: stancesRes.data || [],
@@ -82,6 +83,8 @@ export default function PolicyIntelligence() {
         tradeAssociations: tradeRes.data || [],
         lobbyingRecords: lobbyRes.data || [],
         signalScans: signalsRes.data || [],
+        lastAuditedAt: companyRes.data?.last_audited_at,
+        lastReviewed: companyRes.data?.last_reviewed,
       };
     },
     enabled: !!selectedCompanyId,
