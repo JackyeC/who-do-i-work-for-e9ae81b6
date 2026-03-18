@@ -110,7 +110,7 @@ Deno.serve(async (req) => {
       supabase.from('company_warn_notices').select('id, notice_date, employees_affected').eq('company_id', companyId),
       supabase.from('company_worker_sentiment').select('id, sentiment, sources, created_at').eq('company_id', companyId),
       supabase.from('compensation_data').select('id, freshness_status').eq('company', companyId),
-      supabase.from('company_patents').select('id, filing_date, patent_category').eq('company_id', companyId),
+      supabase.from('company_patents').select('id, filing_date, category').eq('company_id', companyId),
       supabase.from('company_signal_scans').select('*').eq('company_id', companyId).eq('signal_category', 'news'),
       supabase.from('company_court_cases').select('id, case_type, status').eq('company_id', companyId),
       supabase.from('company_agency_contracts').select('id, contract_value, controversy_flag').eq('company_id', companyId),
