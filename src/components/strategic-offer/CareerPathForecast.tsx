@@ -110,7 +110,7 @@ export function CareerPathForecast({ companyName, roleTitle, signals }: CareerPa
           <TrendingUp className="w-4 h-4 text-primary" />
           Jackye's Career Path Forecast
         </CardTitle>
-        <p className="text-[10px] text-muted-foreground">
+        <p className="text-xs text-muted-foreground">
           Future-value analysis for {roleTitle} at {companyName}
         </p>
       </CardHeader>
