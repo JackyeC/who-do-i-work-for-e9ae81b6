@@ -38,9 +38,16 @@ import { OfferReviewResults } from "@/components/offer-review/OfferReviewResults
 import { LegalDisclaimer } from "@/components/strategic-offer/LegalDisclaimer";
 import { ConsentModal } from "@/components/strategic-offer/ConsentModal";
 import { CareerPathForecast } from "@/components/strategic-offer/CareerPathForecast";
+import { StabilityDelta } from "@/components/strategic-offer/StabilityDelta";
+import { NegotiationCoach } from "@/components/strategic-offer/NegotiationCoach";
+import { OutcomeFeedback } from "@/components/strategic-offer/OutcomeFeedback";
 import { SituationContextBanner } from "@/components/policy-intelligence/SituationContextBanner";
 import { getSituationsFromStorage, type Situation } from "@/lib/policyScoreEngine";
 import { useQuery } from "@tanstack/react-query";
+import { format } from "date-fns";
+import { Calendar } from "@/components/ui/calendar";
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
+import { CalendarIcon } from "lucide-react";
 
 type InputMode = null | "manual" | "upload";
 
