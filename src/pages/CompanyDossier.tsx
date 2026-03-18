@@ -41,6 +41,7 @@ import { useEEOCByCompanyName } from "@/hooks/use-eeoc-cases";
 import { PremiumGate } from "@/components/PremiumGate";
 import { useViewMode } from "@/contexts/ViewModeContext";
 import { HighRiskConnectionCard } from "@/components/company/HighRiskConnectionCard";
+import { StateWomenStatusCard } from "@/components/StateWomenStatusCard";
 
 /* ─── Lens config ─── */
 const LENS_META = {
@@ -247,6 +248,11 @@ export default function CompanyDossier() {
       <DossierLayer title="Workforce Demographics" subtitle="Role distribution, pay equity, diversity, and promotion signals" icon={BarChart3} layerNumber={5}>
         <WorkforceDemographicsLayer companyId={companyId!} companyName={company.name} />
       </DossierLayer>
+
+      {/* State-level women's status context */}
+      {company.state && (
+        <StateWomenStatusCard stateCode={company.state} companyName={company.name} />
+      )}
 
       <DossierLayer title="Influence & Policy Signals" subtitle="PAC giving, lobbying, government contracts" icon={Landmark} layerNumber={6}>
         <InfluencePolicyLayer

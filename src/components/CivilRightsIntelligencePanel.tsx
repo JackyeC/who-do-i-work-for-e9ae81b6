@@ -6,10 +6,12 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@
 import { SignalFreshness, REFRESH_CADENCES } from "@/components/SignalFreshness";
 import { Scale, AlertTriangle, DollarSign, FileText, Megaphone, Shield } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { StateWomenStatusCard } from "@/components/StateWomenStatusCard";
 
 interface CivilRightsIntelligencePanelProps {
   companyId: string;
   companyName: string;
+  stateCode?: string;
 }
 
 const SEVERITY_STYLES: Record<string, { bg: string; text: string; label: string }> = {
@@ -18,7 +20,7 @@ const SEVERITY_STYLES: Record<string, { bg: string; text: string; label: string 
   low: { bg: "bg-[hsl(var(--civic-green))]/10", text: "text-[hsl(var(--civic-green))]", label: "Low" },
 };
 
-export function CivilRightsIntelligencePanel({ companyId, companyName }: CivilRightsIntelligencePanelProps) {
+export function CivilRightsIntelligencePanel({ companyId, companyName, stateCode }: CivilRightsIntelligencePanelProps) {
   // Fetch all civil rights-related data in parallel
   const { data: stances } = useQuery({
     queryKey: ["cr-stances", companyId],
@@ -292,6 +294,13 @@ export function CivilRightsIntelligencePanel({ companyId, companyName }: CivilRi
               Documented gaps between {companyName}'s public statements and verified spending, lobbying, or enforcement records. 
               All findings link to primary sources — no subjective labels applied.
             </p>
+          </div>
+        )}
+
+        {/* State-level women's status context */}
+        {stateCode && (
+          <div className="mx-4 mb-4 mt-2">
+            <StateWomenStatusCard stateCode={stateCode} companyName={companyName} />
           </div>
         )}
       </CardContent>

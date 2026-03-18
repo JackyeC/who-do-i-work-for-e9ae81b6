@@ -8240,6 +8240,63 @@ export type Database = {
           },
         ]
       }
+      state_women_status_grades: {
+        Row: {
+          composite_grade: string | null
+          created_at: string | null
+          data_year: number
+          employment_earnings_grade: string | null
+          health_wellbeing_grade: string | null
+          id: string
+          political_participation_grade: string | null
+          poverty_opportunity_grade: string | null
+          reproductive_rights_grade: string | null
+          source_name: string | null
+          source_url: string | null
+          state_code: string
+          state_name: string
+          updated_at: string | null
+          violence_safety_grade: string | null
+          work_family_grade: string | null
+        }
+        Insert: {
+          composite_grade?: string | null
+          created_at?: string | null
+          data_year?: number
+          employment_earnings_grade?: string | null
+          health_wellbeing_grade?: string | null
+          id?: string
+          political_participation_grade?: string | null
+          poverty_opportunity_grade?: string | null
+          reproductive_rights_grade?: string | null
+          source_name?: string | null
+          source_url?: string | null
+          state_code: string
+          state_name: string
+          updated_at?: string | null
+          violence_safety_grade?: string | null
+          work_family_grade?: string | null
+        }
+        Update: {
+          composite_grade?: string | null
+          created_at?: string | null
+          data_year?: number
+          employment_earnings_grade?: string | null
+          health_wellbeing_grade?: string | null
+          id?: string
+          political_participation_grade?: string | null
+          poverty_opportunity_grade?: string | null
+          reproductive_rights_grade?: string | null
+          source_name?: string | null
+          source_url?: string | null
+          state_code?: string
+          state_name?: string
+          updated_at?: string | null
+          violence_safety_grade?: string | null
+          work_family_grade?: string | null
+        }
+        Relationships: []
+      }
       tracked_companies: {
         Row: {
           company_id: string
