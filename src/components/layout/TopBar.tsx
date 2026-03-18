@@ -180,7 +180,7 @@ export function TopBar() {
                   <button
                     onClick={() => setSignupModalOpen(true)}
                     className={cn(
-                      "font-mono text-[10px] tracking-wider uppercase px-3 h-full flex items-center border-b-2 transition-colors gap-1 whitespace-nowrap",
+                      "font-mono text-xs tracking-wider uppercase px-3 h-full flex items-center border-b-2 transition-colors gap-1 whitespace-nowrap",
                       "text-muted-foreground border-transparent hover:text-foreground"
                     )}
                   >
