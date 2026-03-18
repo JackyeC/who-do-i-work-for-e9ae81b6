@@ -125,7 +125,7 @@ export function VerificationBountyCard({ companyId, companyName, lastAuditedAt }
             <div className="flex flex-col items-center py-6 gap-3">
               <CheckCircle2 className="w-10 h-10 text-[hsl(var(--civic-green))]" />
               <p className="text-sm font-medium text-foreground">Submitted for Review</p>
-              <Badge variant="outline" className="text-[10px]">$5 Credit Pending Verification</Badge>
+              <Badge variant="outline" className="text-xs">$5 Credit Pending Verification</Badge>
             </div>
           ) : (
             <div className="space-y-4">
