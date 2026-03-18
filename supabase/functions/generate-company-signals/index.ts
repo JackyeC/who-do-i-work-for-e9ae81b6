@@ -107,10 +107,10 @@ Deno.serve(async (req) => {
     ] = await Promise.all([
       supabase.from('companies').select('*').eq('id', companyId).single(),
       supabase.from('company_jobs').select('id, title, salary_range, is_active, department, created_at, posting_date').eq('company_id', companyId),
-      supabase.from('company_warn_notices').select('id, notice_date, num_affected').eq('company_id', companyId),
-      supabase.from('company_worker_sentiment').select('id, sentiment, source, created_at').eq('company_id', companyId),
-      supabase.from('compensation_data').select('id, source, confidence_level').eq('company', companyId),
-      supabase.from('company_patents').select('id, filing_date, patent_category').eq('company_id', companyId),
+      supabase.from('company_warn_notices').select('id, notice_date, employees_affected').eq('company_id', companyId),
+      supabase.from('company_worker_sentiment').select('id, sentiment, sources, created_at').eq('company_id', companyId),
+      supabase.from('compensation_data').select('id, freshness_status').eq('company', companyId),
+      supabase.from('company_patents').select('id, filing_date, category').eq('company_id', companyId),
       supabase.from('company_signal_scans').select('*').eq('company_id', companyId).eq('signal_category', 'news'),
       supabase.from('company_court_cases').select('id, case_type, status').eq('company_id', companyId),
       supabase.from('company_agency_contracts').select('id, contract_value, controversy_flag').eq('company_id', companyId),
@@ -261,7 +261,7 @@ Deno.serve(async (req) => {
     let stabilityConf: string;
 
     if (recentWarns.length > 0) {
-      const totalAffected = recentWarns.reduce((sum, w) => sum + (w.num_affected || 0), 0);
+      const totalAffected = recentWarns.reduce((sum, w) => sum + (w.employees_affected || 0), 0);
       stabilityNorm = 'low';
       stabilityDir = 'decrease';
       stabilitySummary = `${recentWarns.length} WARN notice(s) filed in the past year` +
