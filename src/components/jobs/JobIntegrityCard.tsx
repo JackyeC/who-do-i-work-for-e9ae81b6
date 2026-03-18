@@ -32,6 +32,7 @@ interface JobIntegrityCardProps {
     url: string | null;
     created_at: string;
     company_id: string;
+    salary_range?: string | null;
     companies?: {
       name: string;
       slug: string;
@@ -43,6 +44,7 @@ interface JobIntegrityCardProps {
   };
   matchCount?: number;
   matchedCategories?: string[];
+  fitBadges?: string[];
 }
 
 export function JobIntegrityCard({ job, matchCount = 0, matchedCategories = [] }: JobIntegrityCardProps) {
