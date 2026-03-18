@@ -265,7 +265,7 @@ export function EmployerIntelligenceCard({ companyId, companyName }: Props) {
               <div key={i} className="p-3 bg-muted/20 rounded-lg space-y-1">
                 <div className="flex items-center justify-between">
                   <span className="text-xs font-semibold text-foreground">{s.topic}</span>
-                  <Badge variant="outline" className={cn("text-[9px]", gapColors[s.gap?.toLowerCase() || "none"] || "")}>
+                  <Badge variant="outline" className={cn("text-xs", gapColors[s.gap?.toLowerCase() || "none"] || "")}>
                     {s.gap || "Aligned"}
                   </Badge>
                 </div>
