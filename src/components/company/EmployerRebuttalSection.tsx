@@ -159,7 +159,7 @@ export function EmployerRebuttalSection({ companyId, companyName }: EmployerRebu
                   className={wordCount > 200 ? "border-destructive" : ""}
                 />
                 {wordCount > 200 && (
-                  <p className="text-[10px] text-destructive mt-1">Exceeds 200-word limit.</p>
+                  <p className="text-xs text-destructive mt-1">Exceeds 200-word limit.</p>
                 )}
               </div>
               <div>
