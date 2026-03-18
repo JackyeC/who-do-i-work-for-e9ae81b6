@@ -1,6 +1,7 @@
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { AlertTriangle, CheckCircle, ExternalLink, Globe, Info, Layers, Search } from "lucide-react";
+import { safeSignalSummary } from "@/utils/signalTextSanitizer";
 
 interface ScanContext {
   classification: string;
