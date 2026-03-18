@@ -110,7 +110,10 @@ export function PolicyReceiptsPanel({ stances, linkages, lobbyingRecords, tradeA
           ) : (
             <div className="flex flex-wrap gap-1.5 px-3 py-2">
               {tradeAssociations.map((ta, i) => (
-                <Badge key={i} variant="secondary" className="text-[11px]">{ta.name}</Badge>
+                <Badge key={i} variant="secondary" className="text-xs gap-1">
+                  {ta.name}
+                  <span className="text-muted-foreground">· Association</span>
+                </Badge>
               ))}
             </div>
           )}
