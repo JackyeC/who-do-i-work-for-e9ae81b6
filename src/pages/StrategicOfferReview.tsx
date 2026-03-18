@@ -915,6 +915,17 @@ export default function StrategicOfferReview() {
                   userPriorities={userSituations}
                 />
 
+                {/* 9.6. Offer Acceptance Email */}
+                <AcceptanceEmail
+                  companyName={offer.companyName}
+                  roleTitle={offer.roleTitle}
+                  baseSalary={Number(offer.baseSalary) || 0}
+                  bonus={offer.bonus}
+                  equity={offer.equity}
+                  signOnBonus={offer.signOnBonus}
+                  riskSignals={riskSignals}
+                />
+
                 {/* 10. Questions to Ask */}
                 <QuestionsToAsk
                   legalFlags={legalFlags}
