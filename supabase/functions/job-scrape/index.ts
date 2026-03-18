@@ -213,7 +213,46 @@ const ATS_CONFIGS: Record<string, { detect: (url: string) => boolean; fetchJobs:
   pinpoint: {
     platform: 'pinpoint',
     detect: (url) => /pinpointhq\.com/i.test(url),
-    fetchJobs: async (_url) => [],
+    fetchJobs: async (url) => {
+      // Pinpoint doesn't have a public API, but job boards render HTML lists
+      // Try to scrape the job board page
+      const firecrawlKey = Deno.env.get('FIRECRAWL_API_KEY');
+      if (!firecrawlKey) return [];
+      try {
+        const resp = await fetch('https://api.firecrawl.dev/v1/scrape', {
+          method: 'POST',
+          headers: { 'Authorization': `Bearer ${firecrawlKey}`, 'Content-Type': 'application/json' },
+          body: JSON.stringify({ url, formats: ['markdown'], onlyMainContent: true, waitFor: 8000 }),
+        });
+        if (!resp.ok) return [];
+        const data = await resp.json();
+        const md = data.data?.markdown || data.markdown || '';
+        if (md.length < 50) return [];
+        // Use AI to extract jobs from the scraped Pinpoint page
+        const lovableKey = Deno.env.get('LOVABLE_API_KEY');
+        if (!lovableKey) return [];
+        const aiResp = await fetch('https://ai.gateway.lovable.dev/v1/chat/completions', {
+          method: 'POST',
+          headers: { 'Authorization': `Bearer ${lovableKey}`, 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            model: 'google/gemini-2.5-flash',
+            messages: [
+              { role: 'system', content: 'Extract REAL job listings from this Pinpoint HQ job board page. Return only valid JSON array. Only include actual job postings with specific titles. Return [] if none found.' },
+              { role: 'user', content: `Extract jobs. Return JSON: [{"title":"..","department":"..","location":"..","employment_type":"full-time","description":"..","url":"..","salary_range":null,"work_mode":null}]\n\nContent:\n${md.slice(0, 15000)}` },
+            ],
+          }),
+        });
+        if (!aiResp.ok) return [];
+        const aiData = await aiResp.json();
+        const content = aiData.choices?.[0]?.message?.content || '[]';
+        const jsonMatch = content.match(/```(?:json)?\s*([\s\S]*?)```/) || [null, content];
+        const parsed = JSON.parse(jsonMatch[1].trim());
+        return Array.isArray(parsed) ? parsed.filter((j: any) => j.title && j.title.length >= 4 && j.title.length <= 120) : [];
+      } catch (e) {
+        console.warn('[job-scrape] Pinpoint scrape failed:', e);
+        return [];
+      }
+    },
   },
   manatal: {
     platform: 'manatal',
