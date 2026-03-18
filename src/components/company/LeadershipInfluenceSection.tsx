@@ -264,12 +264,11 @@ export function LeadershipInfluenceSection({
             <div className="divide-y divide-border">
               {revolvingDoor.map((rd) => (
                 <div key={rd.id} className="py-3 px-1">
-                  <p className="text-sm font-semibold text-foreground">{rd.person_name}</p>
+                  <p className="text-sm font-semibold text-foreground">{rd.person}</p>
                   <div className="flex items-center gap-1.5 mt-1 text-xs text-muted-foreground">
-                    <span>{rd.government_role}</span>
-                    {rd.government_agency && <span className="text-muted-foreground/60">({rd.government_agency})</span>}
+                    <span>{rd.prior_role}</span>
                     <ArrowRightLeft className="w-3 h-3 text-primary" />
-                    <span>{rd.corporate_role}</span>
+                    <span>{rd.new_role}</span>
                   </div>
                 </div>
               ))}
