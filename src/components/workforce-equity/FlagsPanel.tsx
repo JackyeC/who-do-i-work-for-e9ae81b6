@@ -32,7 +32,7 @@ export function FlagsPanel({ signals }: { signals: any[] }) {
               {greenFlags.slice(0, 6).map((s: any, i: number) => (
                 <li key={i} className="text-xs text-foreground flex items-start gap-2">
                   <CheckCircle2 className="w-3 h-3 text-civic-green mt-0.5 shrink-0" />
-                  {s.signal_summary || s.signal_type}
+                  {safeSignalLabel(s.signal_summary || s.signal_type, "Verified Signal")}
                 </li>
               ))}
             </ul>
