@@ -9,6 +9,7 @@ export type Situation =
   | "stability"
   | "caregiver"
   | "early-career"
+  | "career-switcher"
   | "values-first"
   | "risk-aware"
   | "leadership"
