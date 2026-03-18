@@ -217,7 +217,7 @@ ${searchContent ? `Search results:\n${searchContent}` : 'Use your knowledge.'}`,
 
     await supabase.from('companies').update(updateFields).eq('id', newCompany.id);
 
-    // Step 5: Trigger company-research in background (fire-and-forget)
+    // Step 5: Trigger company-research + job-scrape in background (fire-and-forget)
     // NOTE: Do NOT trigger company-intelligence-scan here — the profile page's
     // useROIPipeline hook auto-triggers it when it detects empty data, avoiding double invocation.
     try {
@@ -231,6 +231,26 @@ ${searchContent ? `Search results:\n${searchContent}` : 'Use your knowledge.'}`,
       }).catch(e => console.error('Background company-research failed:', e));
     } catch (e) {
       console.error('Failed to trigger company-research:', e);
+    }
+
+    // Step 5b: Trigger job-scrape if we have a careers URL
+    const careersUrl = identityData.careers_url || null;
+    try {
+      console.log(`Triggering job-scrape for new company: ${newCompany.id} (careers: ${careersUrl || 'none'})`);
+      fetch(`${supabaseUrl}/functions/v1/job-scrape`, {
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${supabaseKey}`,
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          companyName: identityData.official_name || name,
+          companyId: newCompany.id,
+          careersUrl,
+        }),
+      }).catch(e => console.error('Background job-scrape failed:', e));
+    } catch (e) {
+      console.error('Failed to trigger job-scrape:', e);
     }
 
     // Update status to research in progress

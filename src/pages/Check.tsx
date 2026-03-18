@@ -491,6 +491,9 @@ export default function Check() {
                 darkMoney={policyData.darkMoney}
               />
 
+              {/* 6. Open Roles */}
+              <OpenRolesSection companyId={selectedCompanyId} companyName={selectedCompanyName} />
+
               {/* View Full Dossier CTA */}
               {selectedCompanySlug && (
                 <div className="text-center">
