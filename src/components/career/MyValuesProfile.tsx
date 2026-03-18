@@ -154,7 +154,7 @@ export function MyValuesProfile() {
               {item.dataSources && item.dataSources.length > 0 && (
                 <div className="flex items-center gap-1 mt-1">
                   <Database className="w-3 h-3 text-muted-foreground/60" />
-                  <span className="text-[10px] text-muted-foreground/60">
+                  <span className="text-xs text-muted-foreground/60">
                     {item.dataSources.slice(0, 2).join(" · ")}
                     {item.dataSources.length > 2 && ` +${item.dataSources.length - 2}`}
                   </span>
