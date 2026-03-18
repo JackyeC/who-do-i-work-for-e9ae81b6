@@ -270,10 +270,10 @@ export function ValuesSignalMatch(props: SignalInputs) {
       <div className="px-5 py-4 border-b border-border/40 flex items-center justify-between">
         <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">How this aligns with you</p>
         <div className="flex items-center gap-2">
-          <Badge variant="outline" className="text-[10px] font-mono tracking-wider">
+           <Badge variant="outline" className="text-xs font-mono tracking-wider">
             Alignment: {score}/100
           </Badge>
-          <Badge variant="outline" className="text-[10px] font-mono tracking-wider">
+          <Badge variant="outline" className="text-xs font-mono tracking-wider">
             Data: {recency}
           </Badge>
         </div>
