@@ -43,18 +43,29 @@ serve(async (req) => {
       }
     }
 
-    // Query PatentsView API v1 (free, no key required)
-    // Search by assignee organization name
+    // Query PatentSearch API (replaced legacy api.patentsview.org, discontinued May 2025)
     const query = encodeURIComponent(companyName.replace(/,?\s*(Inc|LLC|Corp|Ltd|Co)\.?$/i, "").trim());
-    const apiUrl = `https://api.patentsview.org/patents/query?q={"_contains":{"assignees.assignee_organization":"${query}"}}&f=["patent_number","patent_title","patent_abstract","patent_date","patent_type","assignees.assignee_organization","inventors.inventor_first_name","inventors.inventor_last_name"]&o={"page":1,"per_page":50}&s=[{"patent_date":"desc"}]`;
+    const apiUrl = `https://search.patentsview.org/api/v1/patent/?q={"_contains":{"assignees_at_grant.assignee_organization":"${query}"}}&f=["patent_id","patent_title","patent_abstract","patent_date","patent_type","assignees_at_grant.assignee_organization","inventors_at_grant.name_first","inventors_at_grant.name_last"]&o={"page":1,"per_page":50}&s=[{"patent_date":"desc"}]`;
 
+    const patentsviewKey = Deno.env.get("PATENTSVIEW_API_KEY") ?? "";
     const response = await fetch(apiUrl, {
-      headers: { "Content-Type": "application/json" },
+      headers: {
+        "X-Api-Key": patentsviewKey,
+        "Content-Type": "application/json",
+      },
     });
 
+    if (response.status === 410) {
+      console.error("PatentsView Legacy API is discontinued.");
+      return new Response(JSON.stringify({ success: false, error: "PatentsView Legacy API discontinued. Migration required." }), {
+        status: 502,
+        headers: { ...corsHeaders, "Content-Type": "application/json" },
+      });
+    }
+
     if (!response.ok) {
-      console.error(`PatentsView API error: ${response.status}`);
-      return new Response(JSON.stringify({ success: false, error: `PatentsView API returned ${response.status}` }), {
+      console.error(`PatentSearch API error: ${response.status}`);
+      return new Response(JSON.stringify({ success: false, error: `PatentSearch API returned ${response.status}` }), {
         status: 502,
         headers: { ...corsHeaders, "Content-Type": "application/json" },
       });
