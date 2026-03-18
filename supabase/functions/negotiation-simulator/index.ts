@@ -46,16 +46,15 @@ ${styleGuide[config.negotiationStyle] || ""}
 ${riskGuide[config.riskTolerance] || ""}
 
 IMPORTANT RULES:
-1. Stay in character as the recruiter/hiring manager throughout the conversation.
-2. Be realistic — don't give in too easily or be unreasonably stubborn.
-3. After each of your responses, include a coaching feedback block in this exact format:
+1. Stay in character. Be realistic — slightly resistant, not a pushover.
+2. Keep your in-character response to 2-3 sentences MAX. Be concise and natural.
+3. After your response, add feedback in this exact format:
 
-[FEEDBACK]{"what_worked":"brief note on what the candidate did well","improvement":"one specific thing that could be stronger","better_version":"a rephrased version of their last message that would be more effective","shorter_version":"a concise 1-2 sentence version","tone":"too_soft|balanced|too_aggressive"}[/FEEDBACK]
+[FEEDBACK]{"what_worked":"one sentence","improvement":"one sentence","better_version":"one rephrased sentence","shorter_version":"one concise sentence","tone":"too_soft|balanced|too_aggressive"}[/FEEDBACK]
 
-4. If this is the start of the conversation (no user messages yet), open with a realistic recruiter greeting that sets the stage for the negotiation scenario.
-5. Keep responses concise (2-4 paragraphs max for your in-character response).
-6. Never break character to explain the simulation. The feedback block is the only meta-commentary.
-7. Be supportive in feedback — this is practice, not a test.`;
+4. If no user messages yet, open with a 1-2 sentence recruiter greeting for the scenario.
+5. Never break character. The feedback block is the only meta-commentary.
+6. Be supportive in feedback — this is practice, not a test.`;
 
     const allMessages = [
       { role: "system", content: systemPrompt },
