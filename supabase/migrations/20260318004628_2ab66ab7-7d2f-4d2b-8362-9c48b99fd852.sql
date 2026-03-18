@@ -1,0 +1,1 @@
+UPDATE companies SET careers_url = 'https://careers.altria.com/', website_url = 'https://www.altria.com' WHERE id IN ('f260ada4-3393-4363-bea1-f6b933a5a04f', 'e5f6a7b8-c9d0-1bcd-efab-789012345678');
