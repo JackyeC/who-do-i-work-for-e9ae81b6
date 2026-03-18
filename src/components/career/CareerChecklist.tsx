@@ -1,12 +1,12 @@
 import { useState, useEffect } from "react";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Progress } from "@/components/ui/progress";
 import { Input } from "@/components/ui/input";
 import {
   CheckCircle2, Circle, GraduationCap, Users, Building2, Wrench,
-  Plus, Trash2, Sparkles, TrendingUp,
+  Plus, Trash2, Sparkles, TrendingUp, ExternalLink, BookOpen, Award,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { supabase } from "@/integrations/supabase/client";
@@ -28,6 +28,72 @@ const TYPE_META: Record<string, { icon: any; color: string; label: string }> = {
   project: { icon: Sparkles, color: "text-accent", label: "Project" },
 };
 
+/** Generate a learning search URL based on item text and type */
+function getLearningUrl(text: string, type: string): string | null {
+  if (type === "connect" || type === "company") return null;
+
+  // Extract key skill/topic from the text
+  const cleaned = text
+    .replace(/^(Master|Learn|Complete|Build|Obtain|Gain|Develop|Improve|Study|Enroll in|Take)\s+/i, "")
+    .replace(/\s+(course|certification|certificate|class|training|experience|skills?)\s*$/i, "")
+    .trim();
+
+  const query = encodeURIComponent(cleaned);
+
+  // Route to most relevant platform by type
+  if (type === "course") {
+    return `https://www.coursera.org/search?query=${query}`;
+  }
+  if (type === "skill") {
+    return `https://www.linkedin.com/learning/search?keywords=${query}`;
+  }
+  // project and general
+  return `https://www.coursera.org/search?query=${query}`;
+}
+
+const SPONSORED_RESOURCES = [
+  {
+    title: "Google Career Certificates",
+    description: "Professional certificates in Data Analytics, IT Support, UX Design, and more — no degree required.",
+    url: "https://grow.google/certificates/",
+    platform: "Google",
+    free: false,
+    tag: "Popular",
+  },
+  {
+    title: "LinkedIn Learning Free Courses",
+    description: "Build in-demand skills with free courses in business, tech, and creative fields.",
+    url: "https://www.linkedin.com/learning/",
+    platform: "LinkedIn",
+    free: true,
+    tag: "Free Trial",
+  },
+  {
+    title: "Coursera for Government & Policy",
+    description: "University-level courses in public policy, law, and government from top institutions.",
+    url: "https://www.coursera.org/browse/social-sciences/governance-and-society",
+    platform: "Coursera",
+    free: false,
+    tag: "University",
+  },
+  {
+    title: "freeCodeCamp",
+    description: "Learn to code for free with thousands of hours of tutorials, projects, and certifications.",
+    url: "https://www.freecodecamp.org/",
+    platform: "freeCodeCamp",
+    free: true,
+    tag: "Free",
+  },
+  {
+    title: "edX Professional Certificates",
+    description: "Career-focused programs from Harvard, MIT, and industry leaders.",
+    url: "https://www.edx.org/certificates/professional-certificate",
+    platform: "edX",
+    free: false,
+    tag: "Certificates",
+  },
+];
+
 const DEFAULT_CHECKLIST: Omit<ChecklistItem, "id">[] = [
   { text: "Update your resume with recent accomplishments", type: "project", completed: false },
   { text: "Research 3 companies that match your values", type: "company", completed: false },
@@ -48,7 +114,6 @@ export function CareerChecklist() {
   const [newType, setNewType] = useState<ChecklistItem["type"]>("skill");
   const [loading, setLoading] = useState(true);
 
-  // Load from SMART goals table (reuse existing infra)
   useEffect(() => {
     if (!user) return;
     const load = async () => {
@@ -67,7 +132,6 @@ export function CareerChecklist() {
         })));
         setLoading(false);
       } else {
-        // Seed default checklist items
         const rows = DEFAULT_CHECKLIST.map((item, i) => ({
           user_id: user.id,
           title: item.text,
@@ -189,6 +253,7 @@ export function CareerChecklist() {
           {items.map(item => {
             const meta = TYPE_META[item.type] || TYPE_META.skill;
             const Icon = meta.icon;
+            const learningUrl = getLearningUrl(item.text, item.type);
             return (
               <div
                 key={item.id}
@@ -205,12 +270,26 @@ export function CareerChecklist() {
                   )}
                 </button>
                 <Icon className={cn("w-4 h-4 shrink-0", meta.color)} />
-                <span className={cn(
-                  "flex-1 text-sm",
-                  item.completed ? "line-through text-muted-foreground" : "text-foreground"
-                )}>
-                  {item.text}
-                </span>
+                <div className="flex-1 min-w-0">
+                  <span className={cn(
+                    "text-sm",
+                    item.completed ? "line-through text-muted-foreground" : "text-foreground"
+                  )}>
+                    {item.text}
+                  </span>
+                  {learningUrl && (
+                    <a
+                      href={learningUrl}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="inline-flex items-center gap-1 ml-2 text-xs text-primary hover:text-primary/80 transition font-medium"
+                    >
+                      <BookOpen className="w-3 h-3" />
+                      Find courses
+                      <ExternalLink className="w-2.5 h-2.5" />
+                    </a>
+                  )}
+                </div>
                 <Badge variant="outline" className="text-[10px] shrink-0">{meta.label}</Badge>
                 <button
                   onClick={() => removeItem(item.id)}
@@ -223,6 +302,58 @@ export function CareerChecklist() {
           })}
         </div>
       )}
+
+      {/* Sponsored Learning Resources */}
+      <Card className="border-[hsl(var(--civic-gold))]/20 bg-[hsl(var(--civic-gold))]/[0.03]">
+        <CardContent className="p-5">
+          <div className="flex items-center gap-2 mb-4">
+            <Award className="w-4 h-4 text-[hsl(var(--civic-gold))]" />
+            <h3 className="text-sm font-bold text-foreground">Recommended Learning Resources</h3>
+            <Badge variant="outline" className="text-[9px] ml-auto border-[hsl(var(--civic-gold))]/30 text-[hsl(var(--civic-gold))]">
+              Curated
+            </Badge>
+          </div>
+          <p className="text-xs text-muted-foreground mb-4">
+            Free and affordable platforms to build the skills you need. We earn nothing from these links — they're here because they work.
+          </p>
+          <div className="grid sm:grid-cols-2 gap-3">
+            {SPONSORED_RESOURCES.map((resource, i) => (
+              <a
+                key={i}
+                href={resource.url}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="flex flex-col gap-1.5 p-3 rounded-lg border border-border/50 bg-card hover:border-primary/30 hover:shadow-sm transition-all group"
+              >
+                <div className="flex items-center gap-2">
+                  <GraduationCap className="w-4 h-4 text-primary shrink-0" />
+                  <span className="text-sm font-semibold text-foreground group-hover:text-primary transition flex-1">
+                    {resource.title}
+                  </span>
+                  <Badge
+                    variant="outline"
+                    className={cn(
+                      "text-[9px] shrink-0",
+                      resource.free
+                        ? "border-[hsl(var(--civic-green))]/30 text-[hsl(var(--civic-green))]"
+                        : "border-border text-muted-foreground"
+                    )}
+                  >
+                    {resource.tag}
+                  </Badge>
+                </div>
+                <p className="text-xs text-muted-foreground leading-relaxed">
+                  {resource.description}
+                </p>
+                <div className="flex items-center gap-1 text-[10px] text-primary font-medium mt-0.5">
+                  <span>{resource.platform}</span>
+                  <ExternalLink className="w-2.5 h-2.5" />
+                </div>
+              </a>
+            ))}
+          </div>
+        </CardContent>
+      </Card>
     </div>
   );
 }
