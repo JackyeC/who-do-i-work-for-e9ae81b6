@@ -85,7 +85,7 @@ export function SignalSection({
                     <div className="mt-1 space-y-0.5">
                       {matching.slice(0, 2).map((s: any, i: number) => (
                         <p key={i} className="text-[11px] text-muted-foreground">
-                          {s.signal_summary}
+                          {safeSignalLabel(s.signal_summary, "Signal detected")}
                           {s.evidence_url && (
                             <a
                               href={s.evidence_url}

@@ -311,7 +311,7 @@ export function CompensationTransparencyCard({ companyName, dbCompanyId }: Props
                         {grouped[cat].map((signal: any) => (
                           <div key={signal.id} className="bg-muted/50 rounded-md p-2.5">
                             <div className="flex items-start justify-between gap-2 mb-1">
-                              <span className="text-sm font-medium text-foreground">{signal.signal_type}</span>
+                              <span className="text-sm font-medium text-foreground">{safeSignalLabel(signal.signal_type, "Compensation Signal")}</span>
                               <Badge
                                 variant="outline"
                                 className={cn("text-[10px] shrink-0", CONFIDENCE_STYLES[signal.confidence] || CONFIDENCE_STYLES.moderate_inference)}

@@ -52,7 +52,7 @@ export function FlagsPanel({ signals }: { signals: any[] }) {
               {riskFlags.slice(0, 6).map((s: any, i: number) => (
                 <li key={i} className="text-xs text-foreground flex items-start gap-2">
                   <AlertTriangle className="w-3 h-3 text-destructive mt-0.5 shrink-0" />
-                  {s.signal_summary || s.signal_type}
+                  {safeSignalLabel(s.signal_summary || s.signal_type, "Risk Signal Detected")}
                 </li>
               ))}
             </ul>

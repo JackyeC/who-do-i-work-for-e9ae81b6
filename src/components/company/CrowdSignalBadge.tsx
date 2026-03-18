@@ -84,7 +84,7 @@ export function CrowdSignalBadge({ companyId, compact = false }: CrowdSignalBadg
               variant={pct >= 60 ? "destructive" : "warning"}
               className="font-mono text-[10px] gap-1"
             >
-              {CATEGORY_LABELS[s.signal_category] || s.signal_category}: {s.flinch_count}/{s.total_responses}
+              {CATEGORY_LABELS[s.signal_category] || normalizeCategory(s.signal_category)}: {s.flinch_count}/{s.total_responses}
             </Badge>
           );
         })}

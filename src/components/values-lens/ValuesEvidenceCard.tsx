@@ -117,7 +117,7 @@ export function ValuesEvidenceCard({ evidence }: Props) {
 
         {/* Main summary — the "headline" */}
         <p className="text-sm text-foreground font-semibold leading-snug">
-          {evidence.evidence_summary || evidence.signal_type.replace(/_/g, " ")}
+          {safeSignalLabel(evidence.evidence_summary || evidence.signal_type?.replace(/_/g, " "), "Evidence Record")}
         </p>
 
         {/* Dollar amount callout */}
