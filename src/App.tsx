@@ -213,6 +213,7 @@ const App = () => (
                   <Route path="/rankings" element={<Rankings />} />
                   <Route path="/corporate-impact" element={<CorporateImpactMap />} />
                   <Route path="/alignment/:slug" element={<CorporateAlignment />} />
+                  <Route path="/policy-intelligence" element={<PolicyIntelligence />} />
                   <Route path="*" element={<NotFound />} />
                 </Routes>
               </Suspense>
