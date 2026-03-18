@@ -205,7 +205,7 @@ export function DashboardOverview({ onNavigate }: DashboardOverviewProps) {
                           ? `From $${(profile.target_salary_min / 1000).toFixed(0)}k`
                           : `Up to $${(profile.target_salary_max / 1000).toFixed(0)}k`}
                       </p>
-                      <p className="text-[10px] text-muted-foreground">Target range</p>
+                      <p className="text-xs text-muted-foreground">Target range</p>
                     </div>
                   </div>
                 )}
