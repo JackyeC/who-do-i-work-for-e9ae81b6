@@ -59,8 +59,8 @@ export function ShareableScoreCard({ companyName, clarityScore, signals, slug }:
           {/* Big score */}
           <div className="flex items-baseline gap-3 mb-4">
             <span className="font-data text-4xl font-bold text-foreground">{clarityScore}</span>
-            <span className="font-mono text-[10px] tracking-wider uppercase text-muted-foreground">/100</span>
-            <span className={`font-mono text-[10px] tracking-wider uppercase ${band.color} px-2 py-0.5 ${band.bg}`}>
+            <span className="font-mono text-xs tracking-wider uppercase text-muted-foreground">/100</span>
+            <span className={`font-mono text-xs tracking-wider uppercase ${band.color} px-2 py-0.5 ${band.bg}`}>
               {band.label}
             </span>
           </div>
