@@ -80,7 +80,7 @@ export function WalkAwayCalculator({ onComplete, offerSalary }: Props) {
                 </div>
                 <div className="flex-1 min-w-0">
                   <label className="text-sm font-medium text-foreground block">{cat.label}</label>
-                  <span className="text-[10px] text-muted-foreground">{cat.sublabel}</span>
+                  <span className="text-xs text-muted-foreground">{cat.sublabel}</span>
                 </div>
                 <div className="relative w-32">
                   <span className="absolute left-3 top-1/2 -translate-y-1/2 text-xs text-muted-foreground">$</span>
