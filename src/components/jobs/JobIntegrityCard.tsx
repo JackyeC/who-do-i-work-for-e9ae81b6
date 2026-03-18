@@ -5,6 +5,7 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { CompanyLogo } from "@/components/CompanyLogo";
 import { MatchIndicator } from "@/components/jobs/MatchIndicator";
+import { SaveJobButton } from "@/components/jobs/SaveJobButton";
 import {
   Shield, ShieldCheck, ExternalLink, Sparkles, Network, Eye, ChevronRight,
 } from "lucide-react";
