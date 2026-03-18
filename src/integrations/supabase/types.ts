@@ -3149,6 +3149,7 @@ export type Database = {
           company_id: string
           confidence_level: string
           created_at: string
+          direction: string | null
           id: string
           raw_excerpt: string | null
           scan_timestamp: string
@@ -3156,11 +3157,14 @@ export type Database = {
           signal_type: string
           signal_value: string | null
           source_url: string | null
+          summary: string | null
+          value_normalized: string | null
         }
         Insert: {
           company_id: string
           confidence_level?: string
           created_at?: string
+          direction?: string | null
           id?: string
           raw_excerpt?: string | null
           scan_timestamp?: string
@@ -3168,11 +3172,14 @@ export type Database = {
           signal_type: string
           signal_value?: string | null
           source_url?: string | null
+          summary?: string | null
+          value_normalized?: string | null
         }
         Update: {
           company_id?: string
           confidence_level?: string
           created_at?: string
+          direction?: string | null
           id?: string
           raw_excerpt?: string | null
           scan_timestamp?: string
@@ -3180,6 +3187,8 @@ export type Database = {
           signal_type?: string
           signal_value?: string | null
           source_url?: string | null
+          summary?: string | null
+          value_normalized?: string | null
         }
         Relationships: [
           {
