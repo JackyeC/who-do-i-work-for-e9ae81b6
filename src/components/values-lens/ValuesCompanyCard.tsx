@@ -103,7 +103,7 @@ export function ValuesCompanyCard({ company, signals, evidence, lensLabel, hasCo
                         rel="noopener noreferrer"
                         className="text-foreground font-medium hover:text-primary hover:underline transition-colors cursor-pointer"
                       >
-                        {signal.signal_label || signal.signal_summary || signal.signal_type?.replace(/_/g, " ")}
+                        {safeSignalLabel(signal.signal_label || signal.signal_summary || signal.signal_type?.replace(/_/g, " "), "Signal Detected")}
                       </a>
                     ) : (
                       <span className="text-foreground font-medium">
