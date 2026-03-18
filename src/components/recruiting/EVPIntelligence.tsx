@@ -256,7 +256,7 @@ export function EVPIntelligence() {
       }
 
       if (signalScansRes.data && signalScansRes.data.length > 0) {
-        const topCategories = [...new Set((signalScansRes.data as any[]).map(s => s.signal_category))].slice(0, 2);
+        const topCategories = [...new Set((signalScansRes.data as any[]).map(s => normalizeCategory(s.signal_category)))].slice(0, 2);
         narrativeSuggestions.push(`📋 I see programs in ${topCategories.join(" and ")}. If these are real and active, showcase them with specifics — numbers, outcomes, real employee stories. Vague claims don't close candidates.`);
       }
 
