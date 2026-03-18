@@ -1,7 +1,44 @@
 import { AlertTriangle } from "lucide-react";
+import { useQuery } from "@tanstack/react-query";
+import { supabase } from "@/integrations/supabase/client";
 import type { CompanyResult } from "./EmployerDossierSearch";
 
-function deriveSignals(company: CompanyResult): string[] {
+/** Fetch pre-computed signal summaries from the signal engine */
+function useSignalSummaries(companyId: string) {
+  return useQuery({
+    queryKey: ['signal-summaries', companyId],
+    queryFn: async () => {
+      if (!companyId) return null;
+      const { data } = await supabase
+        .from('company_signal_scans')
+        .select('signal_category, summary, value_normalized, direction, confidence_level')
+        .eq('company_id', companyId)
+        .in('signal_category', [
+          'compensation_transparency', 'hiring_activity', 'workforce_stability',
+          'company_behavior', 'innovation_activity', 'public_sentiment',
+        ])
+        .not('summary', 'is', null);
+      return data;
+    },
+    enabled: !!companyId,
+    staleTime: 5 * 60 * 1000,
+  });
+}
+
+function deriveSignals(company: CompanyResult, preComputed?: any[] | null): string[] {
+  // Use pre-computed signal summaries if available
+  if (preComputed?.length) {
+    // Prioritize actionable signals (low/not_disclosed values, negative direction)
+    const actionable = preComputed.filter(
+      s => s.value_normalized === 'low' || s.value_normalized === 'not_disclosed' || s.direction === 'decrease'
+    );
+    const neutral = preComputed.filter(
+      s => !actionable.includes(s)
+    );
+    const ordered = [...actionable, ...neutral];
+    return ordered.map(s => s.summary).filter(Boolean).slice(0, 5);
+  }
+
   // Use curated dossier insights if available
   if (company.dossier?.insights?.length) {
     return company.dossier.insights.slice(0, 5);
@@ -26,7 +63,8 @@ interface BeforeYouAcceptBlockProps {
 }
 
 export function BeforeYouAcceptBlock({ company }: BeforeYouAcceptBlockProps) {
-  const signals = deriveSignals(company);
+  const { data: preComputedSignals } = useSignalSummaries(company.id);
+  const signals = deriveSignals(company, preComputedSignals);
 
   return (
     <div className="max-w-2xl mx-auto mt-5">
