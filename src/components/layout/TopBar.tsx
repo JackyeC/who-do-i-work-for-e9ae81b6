@@ -158,14 +158,14 @@ export function TopBar() {
       </div>
 
       {/* Header */}
-      <header className="sticky top-0 z-50 bg-card border-b border-border h-[52px] flex items-center px-4 lg:px-6">
+      <header className="sticky top-0 z-50 bg-card border-b border-border h-[56px] flex items-center px-4 lg:px-6">
         {/* Brand — left */}
         <Link to="/" className="flex flex-col shrink-0 mr-4">
-          <span className="font-serif text-[13px] text-primary leading-none whitespace-nowrap flex items-center gap-1.5">
+          <span className="font-serif text-sm text-primary leading-none whitespace-nowrap flex items-center gap-1.5">
             Who Do I Work For?
-            <span className="font-mono text-[8px] tracking-wider uppercase px-1.5 py-0.5 bg-primary/10 text-primary border border-primary/20 rounded-sm leading-none">Beta</span>
+            <span className="font-mono text-[9px] tracking-wider uppercase px-1.5 py-0.5 bg-primary/10 text-primary border border-primary/20 rounded-sm leading-none">Beta</span>
           </span>
-          <span className="font-mono text-micro uppercase text-muted-foreground tracking-[0.2em] whitespace-nowrap">Career Intelligence Platform</span>
+          <span className="font-mono text-[10px] uppercase text-muted-foreground tracking-[0.2em] whitespace-nowrap">Career Intelligence Platform</span>
         </Link>
 
         {/* Center Nav */}
@@ -180,7 +180,7 @@ export function TopBar() {
                   <button
                     onClick={() => setSignupModalOpen(true)}
                     className={cn(
-                      "font-mono text-[10px] tracking-wider uppercase px-3 h-full flex items-center border-b-2 transition-colors gap-1 whitespace-nowrap",
+                      "font-mono text-xs tracking-wider uppercase px-3 h-full flex items-center border-b-2 transition-colors gap-1 whitespace-nowrap",
                       "text-muted-foreground border-transparent hover:text-foreground"
                     )}
                   >
@@ -191,7 +191,7 @@ export function TopBar() {
                   <Link
                     to={section.path}
                     className={cn(
-                      "font-mono text-[10px] tracking-wider uppercase px-3 h-full flex items-center border-b-2 transition-colors gap-1 whitespace-nowrap",
+                      "font-mono text-xs tracking-wider uppercase px-3 h-full flex items-center border-b-2 transition-colors gap-1 whitespace-nowrap",
                       active
                         ? "text-primary border-primary"
                         : "text-muted-foreground border-transparent hover:text-foreground"
@@ -207,7 +207,7 @@ export function TopBar() {
                       <Link
                         key={sub.path}
                         to={sub.path}
-                        className="block px-4 py-2.5 font-mono text-[10px] tracking-wider text-muted-foreground hover:text-primary hover:bg-primary/[0.04] transition-colors whitespace-nowrap"
+                        className="block px-4 py-2.5 font-mono text-xs tracking-wider text-muted-foreground hover:text-primary hover:bg-primary/[0.04] transition-colors whitespace-nowrap"
                       >
                         {sub.label}
                       </Link>
@@ -227,7 +227,7 @@ export function TopBar() {
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
               placeholder="Search..."
-              className="bg-transparent border-none outline-none text-foreground font-mono text-[10px] w-full placeholder:text-muted-foreground"
+              className="bg-transparent border-none outline-none text-foreground font-mono text-xs w-full placeholder:text-muted-foreground"
             />
           </form>
 
