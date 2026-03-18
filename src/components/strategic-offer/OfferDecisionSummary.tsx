@@ -105,7 +105,7 @@ export function OfferDecisionSummary(props: Props) {
             </div>
             <div className="text-center p-3 bg-muted/50 rounded-xl">
               <p className="text-2xl font-display font-bold text-foreground">{report?.overallScore || "—"}</p>
-              <p className="text-[10px] text-muted-foreground">Career Alignment</p>
+              <p className="text-xs text-muted-foreground">Career Alignment</p>
             </div>
             <div className="text-center p-3 bg-muted/50 rounded-xl">
               <p className={cn("text-2xl font-display font-bold",
