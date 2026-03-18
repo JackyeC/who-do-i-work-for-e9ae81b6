@@ -299,6 +299,22 @@ export default function CompanyProfile() {
                       </Badge>
                     )}
                   </div>
+
+                  {/* Website & Careers links */}
+                  <div className="flex flex-wrap items-center gap-3 mt-2">
+                    {(dbCompany as any)?.website_url && (
+                      <a href={(dbCompany as any).website_url} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-1.5 text-sm text-primary hover:underline">
+                        <ExternalLink className="w-3.5 h-3.5" />
+                        Website
+                      </a>
+                    )}
+                    {(dbCompany as any)?.careers_url && (
+                      <a href={(dbCompany as any).careers_url} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-1.5 text-sm text-primary hover:underline">
+                        <ExternalLink className="w-3.5 h-3.5" />
+                        Careers
+                      </a>
+                    )}
+                  </div>
                 </div>
               </div>
             </CardContent>
