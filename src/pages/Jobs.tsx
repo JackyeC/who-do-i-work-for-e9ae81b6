@@ -648,6 +648,7 @@ export default function Jobs() {
                             job={job}
                             companyValueSignals={companyValueSignals}
                             companySignalFlags={companySignals}
+                            companySignals={canonicalSignalsMap?.[company?.id] || []}
                             matchScore={score}
                             isSelected={selectedJob?.id === job.id}
                             onClick={() => setSelectedJob(job)}
