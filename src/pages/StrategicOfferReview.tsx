@@ -60,6 +60,7 @@ interface OfferInput {
   nonCompete: string;
   arbitrationClause: boolean;
   ipClause: boolean;
+  salarySharedUpfront: boolean;
 }
 
 const STEPS = [
