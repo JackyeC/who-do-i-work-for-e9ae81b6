@@ -51,7 +51,7 @@ export function SourcesCheckedBanner({ scanCompletion, intelligenceReports, isPu
           <Badge
             key={s.key}
             variant="outline"
-            className="text-[10px] font-mono px-2 py-0.5 bg-muted/40 text-muted-foreground border-border/60 whitespace-nowrap"
+            className="text-xs font-mono px-2 py-0.5 bg-muted/40 text-muted-foreground border-border/60 whitespace-nowrap"
           >
             {s.label}
           </Badge>

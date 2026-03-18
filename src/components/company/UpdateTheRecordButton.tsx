@@ -132,7 +132,7 @@ export function UpdateTheRecordButton({ companyId, companyName }: UpdateTheRecor
               </div>
               <div className="flex items-start gap-2 p-3 rounded-lg bg-muted/50 border border-border">
                 <AlertCircle className="w-3.5 h-3.5 text-muted-foreground mt-0.5 shrink-0" />
-                <p className="text-[10px] text-muted-foreground leading-relaxed">
+                <p className="text-xs text-muted-foreground leading-relaxed">
                   Submissions are reviewed by our intelligence team before updating the record.
                   Only publicly verifiable information will be incorporated.
                 </p>

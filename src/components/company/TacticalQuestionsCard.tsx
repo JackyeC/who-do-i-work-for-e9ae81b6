@@ -97,7 +97,7 @@ export function TacticalQuestionsCard({ signals, companyName }: Props) {
             <p className="text-sm text-foreground leading-relaxed">"{q.question}"</p>
           </div>
         ))}
-        <p className="text-[10px] text-muted-foreground text-center pt-1 italic">
+        <p className="text-xs text-muted-foreground text-center pt-1 italic">
           Questions are generated from detected risk signals — not assumptions. Use your judgment.
         </p>
       </CardContent>

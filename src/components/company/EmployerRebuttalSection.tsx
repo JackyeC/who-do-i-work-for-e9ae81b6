@@ -172,7 +172,7 @@ export function EmployerRebuttalSection({ companyId, companyName }: EmployerRebu
               </div>
               <div className="flex items-start gap-2 p-3 rounded-lg bg-muted/50 border border-border">
                 <AlertCircle className="w-3.5 h-3.5 text-muted-foreground mt-0.5 shrink-0" />
-                <p className="text-[10px] text-muted-foreground leading-relaxed">
+                <p className="text-xs text-muted-foreground leading-relaxed">
                   Rebuttals are reviewed before publication. Only responses backed by a verifiable public record will be displayed.
                   Responses may not alter independent research findings.
                 </p>
