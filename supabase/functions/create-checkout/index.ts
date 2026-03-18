@@ -16,6 +16,8 @@ const EMPLOYER_PRICES = new Set([
 // One-time purchase prices (not subscriptions)
 const ONE_TIME_PRICES = new Set([
   "price_1TBO3F7Qj0W6UtN9oEHb8dHf", // Single Job Credit $199
+  "price_1TCTQW7Qj0W6UtN9eFTxOpYg", // Career Strategy Session $350
+  "price_1TCTQX7Qj0W6UtN9T019lM6x", // Offer Review Intensive $275
 ]);
 
 serve(async (req) => {

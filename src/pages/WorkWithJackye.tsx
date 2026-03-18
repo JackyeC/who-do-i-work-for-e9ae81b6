@@ -1,18 +1,33 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { ArrowRight, CheckCircle2, Loader2 } from "lucide-react";
+import { ArrowRight, CheckCircle2, Loader2, Clock, FileSearch, Zap } from "lucide-react";
 import jackyeHeadshot from "@/assets/jackye-headshot.png";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import { usePageSEO } from "@/hooks/use-page-seo";
 
-const SERVICES = [
+const BOOKABLE_SERVICES = [
   {
     title: "Career Strategy Session",
     desc: "One-on-one with Jackye. We'll review your intelligence report, assess your offer, map your options, and build a decision framework. You leave with a plan.",
     for: "Candidates · Employees",
     format: "60-minute virtual session",
+    price: 350,
+    priceId: "price_1TCTQW7Qj0W6UtN9eFTxOpYg",
+    icon: Zap,
   },
+  {
+    title: "Offer Review Intensive",
+    desc: "Bring your offer letter. Jackye will break it down — compensation benchmarks, contract red flags, non-compete analysis, and negotiation strategy. You'll know exactly what to ask for.",
+    for: "Candidates · Executives",
+    format: "45-minute deep dive",
+    price: 275,
+    priceId: "price_1TCTQX7Qj0W6UtN9T019lM6x",
+    icon: FileSearch,
+  },
+];
+
+const CUSTOM_SERVICES = [
   {
     title: "Recruiting & Talent Acquisition Advisory",
     desc: "Jackye works with your recruiting team to audit your employer promises, anticipate candidate objections, and build intelligence-backed talk tracks that close.",
@@ -31,13 +46,71 @@ const SERVICES = [
     for: "CHROs · People Leaders",
     format: "Workshop + deliverable",
   },
-  {
-    title: "Offer Review Intensive",
-    desc: "Bring your offer letter. Jackye will break it down — compensation benchmarks, contract red flags, non-compete analysis, and negotiation strategy. You'll know exactly what to ask for.",
-    for: "Candidates · Executives",
-    format: "45-minute deep dive",
-  },
 ];
+
+function PricingCard({ service }: { service: typeof BOOKABLE_SERVICES[0] }) {
+  const [loading, setLoading] = useState(false);
+  const Icon = service.icon;
+
+  const handleCheckout = async () => {
+    setLoading(true);
+    try {
+      const { data: { session } } = await supabase.auth.getSession();
+      if (!session) {
+        toast.error("Please sign in to book a session.");
+        setLoading(false);
+        return;
+      }
+      const { data, error } = await supabase.functions.invoke("create-checkout", {
+        body: { priceId: service.priceId },
+      });
+      if (error) throw error;
+      if (data?.url) {
+        window.open(data.url, "_blank");
+      }
+    } catch {
+      toast.error("Something went wrong. Please try again.");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  return (
+    <div className="border border-border bg-card p-6 lg:p-8 flex flex-col">
+      <div className="flex items-start gap-3 mb-4">
+        <div className="w-10 h-10 rounded-lg bg-primary/10 flex items-center justify-center shrink-0">
+          <Icon className="w-5 h-5 text-primary" />
+        </div>
+        <div className="flex-1">
+          <h3 className="font-serif text-lg text-foreground">{service.title}</h3>
+          <div className="flex items-center gap-2 mt-1">
+            <Clock className="w-3 h-3 text-muted-foreground" />
+            <span className="font-mono text-[9px] tracking-wider uppercase text-muted-foreground">{service.format}</span>
+          </div>
+        </div>
+      </div>
+      <p className="text-[13px] text-muted-foreground leading-relaxed mb-4 flex-1">{service.desc}</p>
+      <div className="font-mono text-[9px] tracking-wider uppercase text-muted-foreground mb-5">
+        For: {service.for}
+      </div>
+      <div className="flex items-end justify-between gap-4">
+        <div>
+          <span className="text-2xl font-bold text-foreground">${service.price}</span>
+          <span className="text-xs text-muted-foreground ml-1">one-time</span>
+        </div>
+        <button
+          onClick={handleCheckout}
+          disabled={loading}
+          className="bg-primary text-primary-foreground px-6 py-2.5 font-mono text-[11px] font-semibold tracking-wider uppercase hover:brightness-110 transition-all inline-flex items-center gap-2 disabled:opacity-50"
+        >
+          {loading ? <Loader2 className="w-3 h-3 animate-spin" /> : null}
+          {loading ? "Loading…" : "Book Now"}
+          {!loading && <ArrowRight className="w-3 h-3" />}
+        </button>
+      </div>
+    </div>
+  );
+}
 
 export default function WorkWithJackye() {
   const navigate = useNavigate();
@@ -70,10 +143,21 @@ export default function WorkWithJackye() {
         </div>
       </section>
 
-      {/* Services */}
-      <section className="px-6 lg:px-16 pb-20 max-w-[900px] mx-auto w-full">
+      {/* Bookable Services — Pricing Cards */}
+      <section className="px-6 lg:px-16 pb-16 max-w-[900px] mx-auto w-full">
+        <div className="font-mono text-[9px] tracking-[0.25em] uppercase text-primary mb-6">Book a Session</div>
+        <div className="grid sm:grid-cols-2 gap-px bg-border border border-border">
+          {BOOKABLE_SERVICES.map(s => (
+            <PricingCard key={s.title} service={s} />
+          ))}
+        </div>
+      </section>
+
+      {/* Custom Services */}
+      <section className="px-6 lg:px-16 pb-16 max-w-[900px] mx-auto w-full">
+        <div className="font-mono text-[9px] tracking-[0.25em] uppercase text-primary mb-6">Custom Engagements</div>
         <div className="flex flex-col gap-px bg-border border border-border">
-          {SERVICES.map(s => (
+          {CUSTOM_SERVICES.map(s => (
             <div key={s.title} className="bg-card p-6 lg:p-8">
               <div className="flex justify-between items-start gap-4 mb-3">
                 <h3 className="font-serif text-lg text-foreground">{s.title}</h3>
@@ -88,12 +172,12 @@ export default function WorkWithJackye() {
         </div>
       </section>
 
-      {/* Interest Form */}
+      {/* Interest Form for Custom Services */}
       <section className="px-6 lg:px-16 pb-16 max-w-[900px] mx-auto w-full">
         <div className="border border-border bg-card p-6 lg:p-10">
-          <h2 className="font-serif text-xl text-foreground mb-2">Get Started</h2>
+          <h2 className="font-serif text-xl text-foreground mb-2">Inquire About Custom Engagements</h2>
           <p className="text-[13px] text-muted-foreground mb-6 max-w-[480px]">
-            Tell us what you need — we'll get back to you within 24 hours with next steps.
+            Need a recruiting advisory, HR tech positioning, or employer brand strategy? Tell us what you need — we'll get back within 24 hours.
           </p>
 
           {submitted ? (
@@ -110,7 +194,7 @@ export default function WorkWithJackye() {
                 e.preventDefault();
                 if (!formState.name.trim() || !formState.email.trim()) return;
                 setSubmitting(true);
-                const { error } = await supabase.from("advisory_interest" as any).insert({
+                const { error } = await supabase.from("advisory_interest").insert({
                   name: formState.name.trim(),
                   email: formState.email.trim(),
                   service_type: formState.service,
@@ -159,7 +243,7 @@ export default function WorkWithJackye() {
                   className="w-full border border-border bg-background px-4 py-2.5 text-sm text-foreground focus:border-primary outline-none transition"
                 >
                   <option value="general">General Inquiry</option>
-                  {SERVICES.map(s => (
+                  {CUSTOM_SERVICES.map(s => (
                     <option key={s.title} value={s.title}>{s.title}</option>
                   ))}
                 </select>
@@ -181,7 +265,7 @@ export default function WorkWithJackye() {
                 className="bg-primary text-primary-foreground px-7 py-3 font-mono text-[11px] font-semibold tracking-wider uppercase hover:brightness-110 transition-all inline-flex items-center gap-2 disabled:opacity-50"
               >
                 {submitting ? <Loader2 className="w-3 h-3 animate-spin" /> : null}
-                {submitting ? "Submitting…" : "Submit Request"}
+                {submitting ? "Submitting…" : "Submit Inquiry"}
                 {!submitting && <ArrowRight className="w-3 h-3" />}
               </button>
             </form>
