@@ -46,6 +46,38 @@ Deno.serve(async (req) => {
 
     if (existing) {
       console.log(`Company already exists: ${existing.slug}`);
+
+      // Trigger job-scrape for stale existing companies (no scan or >48h old)
+      const { data: companyDetail } = await supabase
+        .from('companies')
+        .select('last_scan_attempted, careers_url, name')
+        .eq('id', existing.id)
+        .single();
+
+      const lastScan = companyDetail?.last_scan_attempted ? new Date(companyDetail.last_scan_attempted).getTime() : 0;
+      const hoursSinceLastScan = (Date.now() - lastScan) / (1000 * 60 * 60);
+
+      if (hoursSinceLastScan > 48) {
+        console.log(`Triggering background job-scrape for stale company: ${existing.slug}`);
+        fetch(`${supabaseUrl}/functions/v1/job-scrape`, {
+          method: 'POST',
+          headers: {
+            'Authorization': `Bearer ${supabaseKey}`,
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            companyName: companyDetail?.name || name,
+            companyId: existing.id,
+            careersUrl: companyDetail?.careers_url || null,
+          }),
+        }).catch(e => console.error('Background job-scrape (existing) failed:', e));
+
+        // Update last_scan_attempted to prevent duplicate triggers
+        await supabase.from('companies').update({
+          last_scan_attempted: new Date().toISOString(),
+        }).eq('id', existing.id);
+      }
+
       return new Response(JSON.stringify({
         success: true,
         action: 'existing',
