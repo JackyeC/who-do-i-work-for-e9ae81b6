@@ -1,74 +1,69 @@
 import { useState, lazy, Suspense, forwardRef } from "react";
 import jackyeHeadshotSm from "@/assets/jackye-headshot-sm.webp";
 import { useNavigate, Link } from "react-router-dom";
-import { Shield, FileText, MessageSquare, Compass, ArrowRight, ArrowLeftRight, Zap, Briefcase, Search, BarChart3, Eye, Users, DollarSign, Scale, Cpu, CheckCircle2, Menu, X } from "lucide-react";
+import { Shield, ArrowRight, ArrowLeftRight, Zap, Search, Eye, Target, Brain, Rocket, CheckCircle2, Menu, X, Crosshair } from "lucide-react";
 import { useAuth } from "@/contexts/AuthContext";
 import { Button } from "@/components/ui/button";
 import { usePageSEO } from "@/hooks/use-page-seo";
 import { HeroSearch } from "@/components/landing/HeroSearch";
-const LiveIntelligenceTicker = lazy(() => import("@/components/landing/LiveIntelligenceTicker").then(m => ({ default: m.LiveIntelligenceTicker })));
+import { STRIPE_TIERS } from "@/hooks/use-premium";
+import { supabase } from "@/integrations/supabase/client";
+import { toast } from "sonner";
 
-// Lazy-load below-fold components
+const LiveIntelligenceTicker = lazy(() => import("@/components/landing/LiveIntelligenceTicker").then(m => ({ default: m.LiveIntelligenceTicker })));
 const SocialProofStrip = lazy(() => import("@/components/landing/SocialProofStrip").then(m => ({ default: m.SocialProofStrip })));
-const MiniReportTeaser = lazy(() => import("@/components/landing/MiniReportTeaser").then(m => ({ default: m.MiniReportTeaser })));
 const IntelligenceDashboard = lazy(() => import("@/components/landing/IntelligenceDashboard").then(m => ({ default: m.IntelligenceDashboard })));
 const FAQSection = lazy(() => import("@/components/landing/FAQSection").then(m => ({ default: m.FAQSection })));
 const EmailCapture = lazy(() => import("@/components/landing/EmailCapture").then(m => ({ default: m.EmailCapture })));
 const ExitIntentCapture = lazy(() => import("@/components/ExitIntentCapture").then(m => ({ default: m.ExitIntentCapture })));
 const RivalryBattleCard = lazy(() => import("@/components/RivalryBattleCard").then(m => ({ default: m.RivalryBattleCard })));
-const DreamJobWidget = lazy(() => import("@/components/community/DreamJobWidget").then(m => ({ default: m.DreamJobWidget })));
-
-// Lazy-load framer-motion SectionReveal — not needed for hero
 const SectionReveal = lazy(() => import("@/components/landing/SectionReveal").then(m => ({ default: m.SectionReveal })));
 
-// Lazy-load data
 const loadRivalries = () => import("@/data/rivalries2026").then(m => m.rivalries2026);
 
-// Static trust sources (no fetch needed)
 const TRUST_SOURCES = ["FEC Filings", "USASpending.gov", "SEC EDGAR", "Senate Lobbying", "BLS Wage Data", "OpenSecrets"];
-
-// Hardcoded company count — avoids Supabase fetch on landing page critical path
 const STATIC_COMPANY_COUNT = 850;
-
-const tools = [
-  { icon: Shield, title: "Company Intelligence", desc: "Workforce signals, compensation patterns, political influence — one report.", cta: "Run a scan", href: "/browse" },
-  { icon: FileText, title: "Offer Intelligence", desc: "Benchmark salary, flag non-competes, get negotiation language.", cta: "Analyze an offer", href: "/check" },
-  { icon: MessageSquare, title: "Intelligence Advisor", desc: "20+ years of HR strategy, on demand. Real advice, not platitudes.", cta: "Ask the Advisor", href: "/ask-jackye" },
-  { icon: Compass, title: "Career Intelligence", desc: "Map skills to demand, align values to employers, build a plan.", cta: "Discover paths", href: "/career-intelligence" },
-];
-
-const audiences = [
-  { who: "Candidates", question: "Should I work here?", desc: "Run the intelligence before you accept. Know the political footprint, compensation reality, and culture signals." },
-  { who: "Employees", question: "What kind of company am I inside?", desc: "Understand the signal trail behind your employer. Influence exposure, workforce stability, and what your leadership funds." },
-  { who: "Recruiters & HR", question: "How do I recruit here honestly?", desc: "Audit your EVP against real data. Anticipate candidate objections. Close with confidence, not spin." },
-  { who: "Sales", question: "How do I sell here smartly?", desc: "Understand buying committees, workforce priorities, and the political context that shapes procurement." },
-  { who: "Journalists", question: "What is the signal trail?", desc: "Source-linked corporate intelligence. PAC donations, lobbying, federal contracts, revolving-door hires." },
-];
 
 const Index = forwardRef<HTMLDivElement>((_, ref) => {
   const navigate = useNavigate();
   const { user, loading: authLoading } = useAuth();
   const [rivalries, setRivalries] = useState<any[] | null>(null);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
-  const [activeAudience, setActiveAudience] = useState("Candidates");
+  const [checkoutLoading, setCheckoutLoading] = useState<string | null>(null);
 
   usePageSEO({
-    title: "Employer Background Check for Recruiters — Career Intelligence",
-    description: "Vet employers before your candidates do. SEC filings, PAC spending, layoff history, and pay equity data — in one scan. Workforce Transparency Standard.",
+    title: "Career Intelligence — Stop Guessing, Start Auditing",
+    description: "Not a job board. A career audit center. Use 15+ years of recruiting intelligence to find the job that matches your DNA and your worth.",
     path: "/",
     jsonLd: {
       "@type": "WebApplication",
       name: "Who Do I Work For?",
-      description: "Career Intelligence platform. Understand the company behind the job offer.",
+      description: "Career Intelligence platform. Audit your career, not just search for jobs.",
       applicationCategory: "BusinessApplication",
       creator: { "@type": "Person", name: "Jackye Clayton" },
       url: "https://wdiwf.jackyeclayton.com",
     },
   });
 
-  // Load rivalries only when section comes into viewport (triggered by Suspense)
   const loadRivalriesOnce = () => {
     if (!rivalries) loadRivalries().then(setRivalries);
+  };
+
+  const handleCheckout = async (priceId: string) => {
+    if (!user) {
+      toast.error("Sign in first to continue.", { action: { label: "Sign in", onClick: () => navigate("/login") } });
+      return;
+    }
+    setCheckoutLoading(priceId);
+    try {
+      const { data, error } = await supabase.functions.invoke("create-checkout", { body: { priceId } });
+      if (error) throw error;
+      if (data?.url) window.open(data.url, "_blank");
+    } catch (err: any) {
+      toast.error(err.message || "Checkout failed");
+    } finally {
+      setCheckoutLoading(null);
+    }
   };
 
   return (
@@ -83,8 +78,6 @@ const Index = forwardRef<HTMLDivElement>((_, ref) => {
         <Link to="/" className="font-mono text-sm tracking-wider text-foreground font-semibold uppercase">
           WDIWF
         </Link>
-
-        {/* Desktop nav */}
         <nav className="hidden md:flex items-center gap-4">
           {!authLoading && (
             user ? (
@@ -93,10 +86,7 @@ const Index = forwardRef<HTMLDivElement>((_, ref) => {
               </Button>
             ) : (
               <>
-                <button
-                  onClick={() => navigate("/login")}
-                  className="font-mono text-xs tracking-wider uppercase text-muted-foreground hover:text-foreground transition-colors"
-                >
+                <button onClick={() => navigate("/login")} className="font-mono text-xs tracking-wider uppercase text-muted-foreground hover:text-foreground transition-colors">
                   Sign in
                 </button>
                 <Button size="sm" onClick={() => navigate("/login")} className="font-mono text-xs tracking-wider uppercase">
@@ -106,37 +96,21 @@ const Index = forwardRef<HTMLDivElement>((_, ref) => {
             )
           )}
         </nav>
-
-        {/* Mobile menu toggle */}
-        <button
-          className="md:hidden p-1 text-muted-foreground hover:text-foreground transition-colors"
-          onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-          aria-label="Toggle menu"
-        >
+        <button className="md:hidden p-1 text-muted-foreground hover:text-foreground transition-colors" onClick={() => setMobileMenuOpen(!mobileMenuOpen)} aria-label="Toggle menu">
           {mobileMenuOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
         </button>
       </header>
 
-      {/* Mobile menu */}
       {mobileMenuOpen && (
         <div className="md:hidden px-6 pb-4 border-b border-border/50">
           <nav className="flex flex-col gap-3">
             {!authLoading && (
               user ? (
-                <Button size="sm" variant="outline" onClick={() => { setMobileMenuOpen(false); navigate("/dashboard"); }} className="font-mono text-xs tracking-wider uppercase w-full">
-                  Dashboard
-                </Button>
+                <Button size="sm" variant="outline" onClick={() => { setMobileMenuOpen(false); navigate("/dashboard"); }} className="font-mono text-xs tracking-wider uppercase w-full">Dashboard</Button>
               ) : (
                 <>
-                  <button
-                    onClick={() => { setMobileMenuOpen(false); navigate("/login"); }}
-                    className="font-mono text-xs tracking-wider uppercase text-muted-foreground hover:text-foreground transition-colors py-2"
-                  >
-                    Sign in
-                  </button>
-                  <Button size="sm" onClick={() => { setMobileMenuOpen(false); navigate("/login"); }} className="font-mono text-xs tracking-wider uppercase w-full">
-                    Get started
-                  </Button>
+                  <button onClick={() => { setMobileMenuOpen(false); navigate("/login"); }} className="font-mono text-xs tracking-wider uppercase text-muted-foreground hover:text-foreground transition-colors py-2">Sign in</button>
+                  <Button size="sm" onClick={() => { setMobileMenuOpen(false); navigate("/login"); }} className="font-mono text-xs tracking-wider uppercase w-full">Get started</Button>
                 </>
               )
             )}
@@ -144,35 +118,49 @@ const Index = forwardRef<HTMLDivElement>((_, ref) => {
         </div>
       )}
 
-      {/* Exit intent deferred */}
       <Suspense fallback={null}><ExitIntentCapture /></Suspense>
 
-      {/* ── Hero — NO ANIMATIONS, renders instantly ── */}
+      {/* ══════════════════════════════════════════════════════════════════
+          HERO — "Stop Guessing. Start Auditing."
+      ══════════════════════════════════════════════════════════════════ */}
       <section className="px-6 lg:px-16 py-24 lg:py-36 max-w-[1100px] mx-auto w-full grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-16 items-center">
         <div>
           <div className="font-mono text-sm uppercase text-primary mb-4 flex items-center gap-2">
             <span className="w-8 h-px bg-primary inline-block" />
-            Career Intelligence Platform
+            Career Audit Center
           </div>
           <h1 className="text-3xl lg:text-[clamp(2.4rem,5vw,3.6rem)] leading-tight mb-6 text-foreground">
-            See who you really work for{" "}
-            <span className="text-primary">before you say yes.</span>
+            Stop guessing.{" "}
+            <span className="text-primary">Start Auditing.</span>
           </h1>
           <p className="text-base lg:text-lg text-muted-foreground mb-10 max-w-[480px] leading-relaxed">
-            Founded by a long-time Talent Acquisition executive who has been in the room where it happens, WDIWF was built to help both sides tell a clearer story through transparency.
+            Most job boards show you <em>Marketing</em>. We show you <strong>Intelligence</strong>. Use 15+ years of recruiting data to find your "Purple Squirrel" job — the one that actually matches your DNA and your worth.
           </p>
-          <HeroSearch />
-          <div className="mt-6">
+          <div className="flex flex-col sm:flex-row gap-3 mb-6">
             <button
-              onClick={() => navigate("/login")}
-              className="bg-primary text-primary-foreground px-8 py-3.5 font-mono text-sm font-semibold tracking-wider uppercase hover:brightness-110 transition-all"
+              onClick={() => navigate("/career-map")}
+              className="bg-primary text-primary-foreground px-8 py-3.5 font-mono text-sm font-semibold tracking-wider uppercase hover:brightness-110 transition-all flex items-center gap-2"
             >
-              Scan the Employer
+              <Crosshair className="w-4 h-4" />
+              Calibrate My Workplace DNA
             </button>
+            <button
+              onClick={() => {
+                const el = document.getElementById("hero-search-anchor");
+                el?.scrollIntoView({ behavior: "smooth" });
+              }}
+              className="border border-border bg-card px-6 py-3.5 font-mono text-sm tracking-wider uppercase text-muted-foreground hover:text-foreground hover:border-primary/40 transition-all flex items-center gap-2"
+            >
+              <Search className="w-4 h-4" />
+              Scan an Employer
+            </button>
+          </div>
+          <div id="hero-search-anchor">
+            <HeroSearch />
           </div>
         </div>
 
-        {/* Static preview card — no motion dependency */}
+        {/* Static preview card */}
         <div>
           <div className="bg-card border border-border p-6 relative">
             <div className="absolute -top-2.5 left-4 bg-background px-2 font-mono text-sm uppercase text-primary tracking-widest">
@@ -204,7 +192,7 @@ const Index = forwardRef<HTMLDivElement>((_, ref) => {
         </div>
       </section>
 
-      {/* ── Evidence Strip (static, no AnimatedCounter to avoid JS overhead) ── */}
+      {/* ── Evidence Strip ── */}
       <div className="border-y border-border px-6 py-8">
         <div className="max-w-[1100px] mx-auto flex items-center justify-between flex-wrap gap-6">
           <div className="flex items-center gap-8 lg:gap-14 flex-wrap">
@@ -220,57 +208,114 @@ const Index = forwardRef<HTMLDivElement>((_, ref) => {
         </div>
       </div>
 
-      {/* ── Intelligence Dashboard — NEWS TERMINAL FEEL ── */}
-      <Suspense fallback={<div className="h-96 animate-pulse bg-muted/10" />}>
-        <IntelligenceDashboard />
-      </Suspense>
-      {/* ── How It Works — 1-2-3 Flow ── */}
+      {/* ══════════════════════════════════════════════════════════════════
+          CHOOSE YOUR TRACK — Investigator vs Executive
+      ══════════════════════════════════════════════════════════════════ */}
       <section className="px-6 lg:px-16 py-24 lg:py-32 max-w-[960px] mx-auto w-full">
-        <div className="font-mono text-sm tracking-[0.2em] uppercase text-primary mb-3">How It Works</div>
-        <h2 className="text-2xl lg:text-3xl mb-14 text-foreground">
-          Three steps. Full clarity.
-        </h2>
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-px bg-border border border-border">
-          {[
-            { step: "01", icon: Search, title: "Search a company", desc: "Type any employer you're considering — or dreaming about. We'll pull the intelligence." },
-            { step: "02", icon: BarChart3, title: "Get a Company Intelligence Report", desc: "Political spend, lawsuits, sentiment, diversity indicators, benefits, hiring tech — all sourced from public records." },
-            { step: "03", icon: Eye, title: "Decide with eyes open", desc: "Ask better interview questions, negotiate smarter, or walk away. The intelligence is yours." },
-          ].map(s => (
-            <div key={s.step} className="bg-card p-8 lg:p-10">
-              <div className="font-mono text-sm text-primary/50 mb-4">{s.step}</div>
-              <s.icon className="w-5 h-5 text-primary mb-4" strokeWidth={1.5} />
-              <div className="font-serif text-lg mb-2 text-foreground">{s.title}</div>
-              <div className="text-sm text-muted-foreground leading-relaxed">{s.desc}</div>
+        <div className="text-center mb-14">
+          <div className="font-mono text-sm tracking-[0.2em] uppercase text-primary mb-3">Choose Your Track</div>
+          <h2 className="text-2xl lg:text-3xl text-foreground mb-3">
+            One audit. Or total autopilot.
+          </h2>
+          <p className="text-muted-foreground text-base max-w-[520px] mx-auto">
+            Whether you need intelligence on a single company or want us hunting for your next move year-round.
+          </p>
+        </div>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-px bg-border border border-border">
+          {/* The Investigator */}
+          <div className="bg-card p-8 lg:p-10 flex flex-col">
+            <div className="font-mono text-xs tracking-[0.2em] uppercase text-primary mb-2">The Investigator</div>
+            <div className="font-serif text-xl text-foreground mb-2">One-Off Deep Dive</div>
+            <div className="text-sm text-muted-foreground italic mb-6">"I have an interview or an offer."</div>
+            <ul className="space-y-2.5 mb-8 flex-1">
+              {["Deep-Dive Company Audit", "Reality Gap Analysis", "Negotiation Script", "Red flag detection", "Salary benchmarking"].map(f => (
+                <li key={f} className="flex items-start gap-2 text-sm text-foreground">
+                  <CheckCircle2 className="w-3.5 h-3.5 text-primary mt-0.5 shrink-0" strokeWidth={2} />
+                  {f}
+                </li>
+              ))}
+            </ul>
+            <div className="font-data text-3xl font-bold text-foreground mb-1">$275</div>
+            <div className="font-mono text-xs tracking-wider uppercase text-muted-foreground mb-6">One-time · Instant access</div>
+            <button
+              onClick={() => handleCheckout(STRIPE_TIERS.single_job_credit.price_id)}
+              disabled={checkoutLoading === STRIPE_TIERS.single_job_credit.price_id}
+              className="w-full bg-card border border-primary text-primary px-6 py-3 font-mono text-sm font-semibold tracking-wider uppercase hover:bg-primary hover:text-primary-foreground transition-all disabled:opacity-50"
+            >
+              {checkoutLoading === STRIPE_TIERS.single_job_credit.price_id ? "Loading..." : "Buy One Audit — $275"}
+            </button>
+          </div>
+
+          {/* The Executive */}
+          <div className="bg-card p-8 lg:p-10 flex flex-col relative">
+            <div className="absolute top-4 right-4 bg-primary text-primary-foreground font-mono text-[9px] tracking-wider uppercase px-2 py-1">
+              Best Value
             </div>
-          ))}
+            <div className="font-mono text-xs tracking-[0.2em] uppercase text-primary mb-2">The Executive</div>
+            <div className="font-serif text-xl text-foreground mb-2">Yearly Autopilot</div>
+            <div className="text-sm text-muted-foreground italic mb-6">"I want to be hunted."</div>
+            <ul className="space-y-2.5 mb-8 flex-1">
+              {["5-Year Career Map", "Purple Squirrel Auto-Apply", "1-on-1 Strategy Sessions with Jackye", "Unlimited company audits", "Priority intelligence alerts", "DNA Calibration engine"].map(f => (
+                <li key={f} className="flex items-start gap-2 text-sm text-foreground">
+                  <CheckCircle2 className="w-3.5 h-3.5 text-primary mt-0.5 shrink-0" strokeWidth={2} />
+                  {f}
+                </li>
+              ))}
+            </ul>
+            <div className="font-data text-3xl font-bold text-foreground mb-1">$999<span className="text-lg font-normal text-muted-foreground">/yr</span></div>
+            <div className="font-mono text-xs tracking-wider uppercase text-muted-foreground mb-6">Billed annually · Cancel anytime</div>
+            <button
+              onClick={() => handleCheckout(STRIPE_TIERS.executive_autopilot.price_id)}
+              disabled={checkoutLoading === STRIPE_TIERS.executive_autopilot.price_id}
+              className="w-full bg-primary text-primary-foreground px-6 py-3 font-mono text-sm font-semibold tracking-wider uppercase hover:brightness-110 transition-all disabled:opacity-50"
+            >
+              {checkoutLoading === STRIPE_TIERS.executive_autopilot.price_id ? "Loading..." : "Go on Autopilot — $999/yr"}
+            </button>
+          </div>
         </div>
       </section>
 
-      {/* ── Five Pillars of Intelligence ── */}
+      {/* ══════════════════════════════════════════════════════════════════
+          WHAT YOU GET — Three Value Cards
+      ══════════════════════════════════════════════════════════════════ */}
       <section className="bg-card border-y border-border px-6 lg:px-16 py-24 lg:py-32">
         <div className="max-w-[960px] mx-auto">
-          <div className="font-mono text-sm tracking-[0.2em] uppercase text-primary mb-3">What You'll See</div>
+          <div className="font-mono text-sm tracking-[0.2em] uppercase text-primary mb-3">What You Get</div>
           <h2 className="text-2xl lg:text-3xl mb-4 text-foreground">
-            Five pillars. One informed perspective.
+            Three layers of career intelligence.
           </h2>
           <p className="text-muted-foreground text-base mb-14 max-w-[520px]">
-            Every company report is organized around the signals that actually matter for your career decision.
+            This isn't a job board. It's a war room for your career.
           </p>
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-px bg-border border border-border">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-px bg-border border border-border">
             {[
-              { icon: Scale, title: "Power & Influence", signals: ["Political contributions", "Lobbying spend", "Board ties & interlocks"] },
-              { icon: Users, title: "People & Experience", signals: ["Turnover signals", "Sentiment analysis", "Lawsuits & complaints"] },
-              { icon: DollarSign, title: "Pay & Benefits", signals: ["Comp benchmarks", "Pay equity signals", "Benefits data"] },
-              { icon: Shield, title: "Practice & Policy", signals: ["DEI actions vs. words", "ESG commitments", "Public stances"] },
-              { icon: Cpu, title: "Process & Tech", signals: ["ATS detection", "AI hiring tools", "Surveillance signals"] },
-            ].map(p => (
-              <div key={p.title} className="bg-card p-6">
-                <p.icon className="w-5 h-5 text-primary mb-3" strokeWidth={1.5} />
-                <div className="font-mono text-sm tracking-wider uppercase text-foreground mb-3">{p.title}</div>
-                <ul className="space-y-1.5">
-                  {p.signals.map(s => (
-                    <li key={s} className="text-sm text-muted-foreground flex items-start gap-1.5">
-                      <span className="w-1 h-1 bg-primary/50 rounded-full mt-1.5 shrink-0" />
+              {
+                icon: Eye,
+                title: "The Truth",
+                desc: "See what companies don't put on the careers page.",
+                signals: ["Employer Clarity Scores", "Ghost-Post Detection", "Reality Gap Analysis", "Pay equity signals"],
+              },
+              {
+                icon: Brain,
+                title: "The Strategy",
+                desc: "Build a career plan based on data, not vibes.",
+                signals: ["Workplace DNA Calibration", "5-Year Career Mapping", "Internal role matching", "Skills gap analysis"],
+              },
+              {
+                icon: Rocket,
+                title: "The Strike",
+                desc: "Execute your move with precision.",
+                signals: ["Purple Squirrel Auto-Apply", "Interview Intelligence Briefs", "Negotiation Coaching", "Offer review & benchmarking"],
+              },
+            ].map(card => (
+              <div key={card.title} className="bg-background p-8 lg:p-10">
+                <card.icon className="w-6 h-6 text-primary mb-4" strokeWidth={1.5} />
+                <div className="font-mono text-sm tracking-wider uppercase text-foreground mb-2">{card.title}</div>
+                <p className="text-sm text-muted-foreground mb-5 leading-relaxed">{card.desc}</p>
+                <ul className="space-y-2">
+                  {card.signals.map(s => (
+                    <li key={s} className="text-sm text-foreground flex items-start gap-1.5">
+                      <span className="w-1 h-1 bg-primary/60 rounded-full mt-1.5 shrink-0" />
                       {s}
                     </li>
                   ))}
@@ -281,75 +326,71 @@ const Index = forwardRef<HTMLDivElement>((_, ref) => {
         </div>
       </section>
 
-      {/* ── Use This To — Decision Moments ── */}
+      {/* ══════════════════════════════════════════════════════════════════
+          COMPARISON TABLE — Generic Job Boards vs WDIWF
+      ══════════════════════════════════════════════════════════════════ */}
       <section className="px-6 lg:px-16 py-24 lg:py-32 max-w-[960px] mx-auto w-full">
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-20">
-          <div>
-            <div className="font-mono text-sm tracking-[0.2em] uppercase text-primary mb-3">Real Decisions</div>
-            <h2 className="text-2xl lg:text-3xl mb-4 text-foreground">
-              Use this before the moment that matters.
-            </h2>
-            <p className="text-muted-foreground text-base leading-relaxed">
-              Before you accept an offer. Before you move across the country. Before you stay at a company that keeps making the news.
-            </p>
-          </div>
-          <div className="flex flex-col gap-3">
-            {[
-              "Write smarter questions for your interviews.",
-              "Spot red flags early — before the ink is dry.",
-              "Compare multiple offers beyond salary.",
-              "Gather receipts before you refer your community.",
-            ].map(item => (
-              <div key={item} className="flex items-start gap-3 p-4 border border-border bg-card">
-                <CheckCircle2 className="w-4 h-4 text-primary mt-0.5 shrink-0" strokeWidth={1.5} />
-                <span className="text-sm text-foreground leading-relaxed">{item}</span>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* ── Core Tools ── */}
-      <section className="bg-card border-y border-border px-6 lg:px-16 py-24 lg:py-32">
-        <div className="max-w-[960px] mx-auto">
-          <div className="font-mono text-sm tracking-[0.2em] uppercase text-primary mb-3">Core Intelligence</div>
-          <h2 className="text-2xl lg:text-3xl mb-4 text-foreground">
-            Four tools. One truth. Zero surprises.
+        <div className="text-center mb-14">
+          <div className="font-mono text-sm tracking-[0.2em] uppercase text-primary mb-3">The Difference</div>
+          <h2 className="text-2xl lg:text-3xl text-foreground">
+            Phone Book vs. War Room.
           </h2>
-          <p className="text-muted-foreground text-base mb-14 max-w-[480px]">
-            Every tool connects to the same intelligence engine. Same data, same sources, same rigor.
-          </p>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-px bg-border border border-border">
-            {tools.map((t) => (
-              <div
-                key={t.title}
-                className="bg-background p-8 lg:p-10 hover:bg-muted/30 transition-colors cursor-pointer group"
-                onClick={() => navigate(t.href)}
-              >
-                <t.icon className="w-5 h-5 text-primary mb-4" strokeWidth={1.5} />
-                <div className="font-serif text-lg mb-2 text-foreground">{t.title}</div>
-                <div className="text-sm text-muted-foreground leading-relaxed mb-5">{t.desc}</div>
-                <div className="flex items-center gap-1.5 font-mono text-sm tracking-wider uppercase text-primary group-hover:gap-2.5 transition-all">
-                  {t.cta} <ArrowRight className="w-3.5 h-3.5" />
-                </div>
-              </div>
-            ))}
+        </div>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-px bg-border border border-border">
+          {/* Generic */}
+          <div className="bg-card p-8 lg:p-10">
+            <div className="font-mono text-xs tracking-[0.2em] uppercase text-muted-foreground mb-4">Indeed / LinkedIn</div>
+            <ul className="space-y-3">
+              {[
+                "Lists of job titles",
+                "Company marketing copy",
+                "Apply and pray",
+                "No salary transparency",
+                "No culture intelligence",
+                "No negotiation support",
+              ].map(item => (
+                <li key={item} className="flex items-start gap-2 text-sm text-muted-foreground">
+                  <X className="w-3.5 h-3.5 text-destructive mt-0.5 shrink-0" strokeWidth={2} />
+                  {item}
+                </li>
+              ))}
+            </ul>
+          </div>
+          {/* WDIWF */}
+          <div className="bg-card p-8 lg:p-10 border-l-2 border-l-primary">
+            <div className="font-mono text-xs tracking-[0.2em] uppercase text-primary mb-4">WDIWF Intelligence</div>
+            <ul className="space-y-3">
+              {[
+                "Intelligence reports on every employer",
+                "Reality Gap analysis — claims vs. facts",
+                "Auto-Apply with DNA-matched targeting",
+                "BLS wage benchmarks + offer scoring",
+                "Political influence, lawsuits, sentiment",
+                "Negotiation scripts + coaching",
+              ].map(item => (
+                <li key={item} className="flex items-start gap-2 text-sm text-foreground">
+                  <CheckCircle2 className="w-3.5 h-3.5 text-primary mt-0.5 shrink-0" strokeWidth={2} />
+                  {item}
+                </li>
+              ))}
+            </ul>
           </div>
         </div>
       </section>
 
-      {/* Intelligence Dashboard moved above fold */}
+      {/* ── Intelligence Dashboard ── */}
+      <Suspense fallback={<div className="h-96 animate-pulse bg-muted/10" />}>
+        <IntelligenceDashboard />
+      </Suspense>
 
-      {/* ── Below-fold sections: lazy-loaded ── */}
+      {/* ── Social Proof ── */}
       <Suspense fallback={null}>
         <SocialProofStrip />
       </Suspense>
 
-      <Suspense fallback={null}>
-        <MiniReportTeaser />
-      </Suspense>
-
-      {/* ── Jackye Section (below fold, uses small webp) ── */}
+      {/* ══════════════════════════════════════════════════════════════════
+          THE JACKYE FACTOR — Authority
+      ══════════════════════════════════════════════════════════════════ */}
       <Suspense fallback={null}>
         <SectionReveal>
           <section className="bg-card border-y border-border px-6 lg:px-16 py-24 lg:py-32">
@@ -366,126 +407,25 @@ const Index = forwardRef<HTMLDivElement>((_, ref) => {
                 />
                 <div className="font-serif text-xl text-primary mb-1">Jackye Clayton</div>
                 <div className="font-mono text-sm tracking-wider uppercase text-muted-foreground">
-                  Founder · Career Strategist · HR Intelligence Expert
+                  Founder & Executive Agent
                 </div>
               </div>
               <div>
                 <blockquote className="border-l-2 border-primary pl-4 text-lg italic text-foreground leading-relaxed mb-2 font-serif" style={{ fontWeight: 400 }}>
-                  "I've been in the rooms where corporate decisions are made, where talent strategies are set, and where power is wielded. Who Do I Work For? is the intelligence the industry never wanted you to have."
+                  "I've spent 15+ years building the hiring machines for the biggest names in Tech. I know exactly where the 'Ghost Jobs' are hidden and where the hidden budget lives. I built WDIWF to put that power in your hands."
                 </blockquote>
-                <div className="font-mono text-sm tracking-wider uppercase text-muted-foreground pl-4 mb-6">— Jackye Clayton, Founder</div>
-                <p className="text-base text-muted-foreground leading-relaxed">
-                  WDIWF was built to help both sides tell a clearer story through transparency. 20+ years in the rooms where it happens — now that intelligence is yours.
-                </p>
-                <p className="font-mono text-sm italic text-primary mt-6 tracking-wide">
-                  No judgment, just receipts.
-                </p>
+                <div className="font-mono text-sm tracking-wider uppercase text-muted-foreground pl-4 mb-6">— Jackye Clayton, Founder & Executive Agent</div>
+                <div className="flex items-center gap-3 pl-4">
+                  <Shield className="w-5 h-5 text-primary" />
+                  <span className="font-mono text-xs tracking-wider uppercase text-primary">Data-Backed by Jackye Clayton</span>
+                </div>
               </div>
             </div>
           </section>
         </SectionReveal>
       </Suspense>
 
-      {/* ── Audiences ── */}
-      <section className="px-6 lg:px-16 py-24 lg:py-32 max-w-[960px] mx-auto w-full">
-        <div className="font-mono text-sm tracking-[0.2em] uppercase text-primary mb-3">Who It's For</div>
-        <h2 className="text-2xl lg:text-3xl mb-2 text-foreground">
-          Built for people who care about where people land.
-        </h2>
-        <p className="text-sm text-muted-foreground mb-10 max-w-[520px]">
-          Not another background check on you — this time, it's about them.
-        </p>
-
-        {/* Mobile: simplified tabs without heavy Radix */}
-        <div className="lg:hidden">
-          <div className="flex flex-wrap gap-1 mb-6">
-            {audiences.map(a => (
-              <button
-                key={a.who}
-                onClick={() => setActiveAudience(a.who)}
-                className={`font-mono text-sm tracking-wider uppercase px-3 py-2 transition-colors ${
-                  activeAudience === a.who
-                    ? "bg-primary text-primary-foreground"
-                    : "bg-muted text-muted-foreground hover:text-foreground"
-                }`}
-              >
-                {a.who}
-              </button>
-            ))}
-          </div>
-          {audiences.filter(a => a.who === activeAudience).map(a => (
-            <div key={a.who} className="bg-card border border-border p-6">
-              <div className="font-serif text-base text-foreground mb-2">{a.question}</div>
-              <div className="text-sm text-muted-foreground leading-relaxed">{a.desc}</div>
-            </div>
-          ))}
-        </div>
-
-        {/* Desktop: static rows */}
-        <div className="hidden lg:flex flex-col gap-px bg-border border border-border">
-          {audiences.map((a) => (
-            <div key={a.who} className="bg-card p-8 grid grid-cols-[160px_1fr_2fr] gap-8 items-center">
-              <div className="font-mono text-sm tracking-[0.15em] uppercase text-primary">{a.who}</div>
-              <div className="font-serif text-base text-foreground">{a.question}</div>
-              <div className="text-sm text-muted-foreground">{a.desc}</div>
-            </div>
-          ))}
-        </div>
-      </section>
-
-      {/* ── Values-Aligned Jobs ── */}
-      <section className="bg-card border-y border-border px-6 lg:px-16 py-16 lg:py-20">
-        <div className="max-w-[960px] mx-auto grid grid-cols-1 lg:grid-cols-[1fr_auto] gap-8 items-center">
-          <div>
-            <div className="flex items-center gap-2 mb-2">
-              <Briefcase className="w-4 h-4 text-primary" />
-              <span className="font-mono text-sm tracking-[0.2em] uppercase text-primary">Values-Aligned Jobs</span>
-            </div>
-            <h2 className="text-xl lg:text-2xl text-foreground mb-2">
-              Find roles that match what matters to you.
-            </h2>
-            <p className="text-sm text-muted-foreground max-w-[480px] leading-relaxed">
-              Every listing enriched with civic scores, political signals, and culture data.
-            </p>
-          </div>
-          <button
-            onClick={() => navigate("/jobs")}
-            className="bg-primary text-primary-foreground px-7 py-3 font-mono text-sm font-semibold tracking-wider uppercase hover:brightness-110 transition-all whitespace-nowrap flex items-center gap-2"
-          >
-            Browse Jobs <ArrowRight className="w-3.5 h-3.5" />
-          </button>
-        </div>
-      </section>
-
-      {/* ── Methodology ── */}
-      <section className="px-6 lg:px-16 py-16 lg:py-20">
-        <div className="max-w-[960px] mx-auto">
-          <div className="text-center mb-8">
-            <h2 className="text-xl mb-4 text-foreground">Built on public records. Every signal sourced.</h2>
-            <p className="text-sm text-muted-foreground max-w-[520px] mx-auto mb-6">
-              FEC filings · Senate lobbying · USAspending · BLS wage data · SEC reports · FRED indicators.
-            </p>
-            <button
-              onClick={() => navigate("/methodology")}
-              className="font-mono text-sm tracking-wider uppercase text-primary hover:underline"
-            >
-              Read our methodology →
-            </button>
-          </div>
-          {/* Trust Card */}
-          <div className="bg-card border border-primary/20 p-6 lg:p-8 max-w-[640px] mx-auto">
-            <div className="flex items-center gap-2 mb-3">
-              <Shield className="w-5 h-5 text-primary" />
-              <span className="font-mono text-sm tracking-[0.15em] uppercase text-primary font-semibold">Our Standard</span>
-            </div>
-            <p className="text-sm text-foreground leading-relaxed">
-              Public records only. Verified watchdog data. No partisan endorsements. We connect the dots; you make the call.
-            </p>
-          </div>
-        </div>
-      </section>
-
-      {/* ── Rivalries Teaser (lazy, loads data on demand) ── */}
+      {/* ── Rivalries Teaser ── */}
       <Suspense fallback={null}>
         <SectionReveal>
           <section className="px-6 lg:px-16 py-16 lg:py-20 max-w-[960px] mx-auto w-full" onMouseEnter={loadRivalriesOnce}>
@@ -493,16 +433,11 @@ const Index = forwardRef<HTMLDivElement>((_, ref) => {
               <div>
                 <div className="flex items-center gap-2 mb-1">
                   <Zap className="w-4 h-4 text-primary" />
-                  <span className="font-mono text-sm tracking-[0.2em] uppercase text-primary font-semibold">
-                    2026 Intelligence
-                  </span>
+                  <span className="font-mono text-sm tracking-[0.2em] uppercase text-primary font-semibold">2026 Intelligence</span>
                 </div>
                 <h2 className="text-xl font-bold text-foreground">Rivalry Super Tracker</h2>
               </div>
-              <button
-                onClick={() => navigate("/rivalries")}
-                className="font-mono text-sm tracking-wider uppercase text-primary hover:underline flex items-center gap-1 whitespace-nowrap"
-              >
+              <button onClick={() => navigate("/rivalries")} className="font-mono text-sm tracking-wider uppercase text-primary hover:underline flex items-center gap-1 whitespace-nowrap">
                 View all <ArrowRight className="w-3 h-3" />
               </button>
             </div>
@@ -538,18 +473,33 @@ const Index = forwardRef<HTMLDivElement>((_, ref) => {
         </div>
       </section>
 
-      {/* ── FAQ + Email (lazy) ── */}
-      <Suspense fallback={null}><FAQSection /></Suspense>
-      <Suspense fallback={null}><EmailCapture /></Suspense>
-
-      {/* ── Dream Job Widget ── */}
-      <section className="px-6 lg:px-16 py-20 lg:py-28">
-        <div className="max-w-[480px] mx-auto">
-          <Suspense fallback={<div className="h-64 animate-pulse bg-muted/30 rounded-xl" />}>
-            <DreamJobWidget />
-          </Suspense>
+      {/* ── Methodology ── */}
+      <section className="px-6 lg:px-16 py-16 lg:py-20">
+        <div className="max-w-[960px] mx-auto">
+          <div className="text-center mb-8">
+            <h2 className="text-xl mb-4 text-foreground">Built on public records. Every signal sourced.</h2>
+            <p className="text-sm text-muted-foreground max-w-[520px] mx-auto mb-6">
+              FEC filings · Senate lobbying · USAspending · BLS wage data · SEC reports · FRED indicators.
+            </p>
+            <button onClick={() => navigate("/methodology")} className="font-mono text-sm tracking-wider uppercase text-primary hover:underline">
+              Read our methodology →
+            </button>
+          </div>
+          <div className="bg-card border border-primary/20 p-6 lg:p-8 max-w-[640px] mx-auto">
+            <div className="flex items-center gap-2 mb-3">
+              <Shield className="w-5 h-5 text-primary" />
+              <span className="font-mono text-sm tracking-[0.15em] uppercase text-primary font-semibold">Our Standard</span>
+            </div>
+            <p className="text-sm text-foreground leading-relaxed">
+              Public records only. Verified watchdog data. No partisan endorsements. We connect the dots; you make the call.
+            </p>
+          </div>
         </div>
       </section>
+
+      {/* ── FAQ + Email ── */}
+      <Suspense fallback={null}><FAQSection /></Suspense>
+      <Suspense fallback={null}><EmailCapture /></Suspense>
 
       {/* ── Final CTA ── */}
       <section className="px-6 lg:px-16 py-28 lg:py-36 text-center">
@@ -557,14 +507,22 @@ const Index = forwardRef<HTMLDivElement>((_, ref) => {
           You deserve to know exactly who you work for.
         </h2>
         <p className="text-base text-muted-foreground max-w-[480px] mx-auto mb-10 leading-relaxed">
-          Every candidate. Every offer. Every career decision. Run the intelligence first.
+          Stop applying blind. Start auditing your career with intelligence.
         </p>
-        <button
-          onClick={() => navigate("/login")}
-          className="bg-primary text-primary-foreground px-8 py-3.5 font-mono text-sm font-semibold tracking-wider uppercase hover:brightness-110 transition-all"
-        >
-          Scan the Employer
-        </button>
+        <div className="flex flex-col sm:flex-row gap-3 justify-center">
+          <button
+            onClick={() => navigate("/career-map")}
+            className="bg-primary text-primary-foreground px-8 py-3.5 font-mono text-sm font-semibold tracking-wider uppercase hover:brightness-110 transition-all"
+          >
+            Calibrate My Workplace DNA
+          </button>
+          <button
+            onClick={() => navigate("/login")}
+            className="border border-border bg-card px-8 py-3.5 font-mono text-sm tracking-wider uppercase text-muted-foreground hover:text-foreground hover:border-primary/40 transition-all"
+          >
+            Scan an Employer
+          </button>
+        </div>
       </section>
 
       {/* ── Footer ── */}

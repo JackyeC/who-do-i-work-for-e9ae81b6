@@ -56,6 +56,12 @@ export const STRIPE_TIERS = {
     label: "Founding Partner Certification",
     price: "$599/yr",
   },
+  executive_autopilot: {
+    price_id: "price_1TCTiJ7Qj0W6UtN9hARvCvgh",
+    product_id: "prod_UApNtIY5ulWQ2o",
+    label: "Executive Autopilot",
+    price: "$999/yr",
+  },
 } as const;
 
 export interface PremiumFeatures {
@@ -113,6 +119,7 @@ const PROFESSIONAL_FEATURES: PremiumFeatures = {
 function getTierFromProductId(productId: string | null): PremiumTier {
   if (productId === STRIPE_TIERS.professional.product_id) return "professional";
   if (productId === STRIPE_TIERS.candidate.product_id) return "candidate";
+  if (productId === STRIPE_TIERS.executive_autopilot.product_id) return "professional";
   return "free";
 }
 
@@ -128,7 +135,6 @@ export function usePremium(): PremiumFeatures & { isPremium: boolean; isLoggedIn
   const { user, subscriptionStatus } = useAuth();
   const { isDemoSafe, previewTier } = useDemoSafeMode();
 
-  // Preview tier override — lets founders see exactly what each tier looks like
   if (previewTier && user) {
     const features = getFeaturesForTier(previewTier);
     return {
@@ -139,7 +145,6 @@ export function usePremium(): PremiumFeatures & { isPremium: boolean; isLoggedIn
     };
   }
 
-  // Demo Safe Mode: treat as professional tier (bypass all paywalls)
   if (isDemoSafe && user) {
     return {
       ...PROFESSIONAL_FEATURES,
@@ -167,7 +172,8 @@ export function useAutoApplySubscription() {
   const hasAutoApply =
     subscriptionStatus?.subscribed === true &&
     (subscriptionStatus?.product_id === STRIPE_TIERS.auto_apply.product_id ||
-     subscriptionStatus?.product_id === STRIPE_TIERS.professional.product_id);
+     subscriptionStatus?.product_id === STRIPE_TIERS.professional.product_id ||
+     subscriptionStatus?.product_id === STRIPE_TIERS.executive_autopilot.product_id);
 
   return {
     hasAutoApply: hasAutoApply ?? false,

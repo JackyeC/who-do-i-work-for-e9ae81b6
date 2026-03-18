@@ -20,6 +20,11 @@ const ONE_TIME_PRICES = new Set([
   "price_1TCTQX7Qj0W6UtN9T019lM6x", // Offer Review Intensive $275
 ]);
 
+// Subscription prices (recurring)
+const SUBSCRIPTION_PRICES = new Set([
+  "price_1TCTiJ7Qj0W6UtN9hARvCvgh", // Executive Autopilot $999/yr
+]);
+
 serve(async (req) => {
   if (req.method === "OPTIONS") {
     return new Response(null, { headers: corsHeaders });
