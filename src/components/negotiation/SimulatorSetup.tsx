@@ -7,6 +7,7 @@ import { Badge } from "@/components/ui/badge";
 import { MessageSquare, DollarSign, Wifi, Award, Shield, Zap } from "lucide-react";
 
 export interface SimulatorConfig {
+  perspective: "candidate" | "recruiter";
   company: string;
   role: string;
   baseSalary: string;
@@ -46,6 +47,7 @@ const RISK = [
 
 export function SimulatorSetup({ initialConfig, onStart }: Props) {
   const [config, setConfig] = useState<SimulatorConfig>({
+    perspective: initialConfig?.perspective || "candidate",
     company: initialConfig?.company || "",
     role: initialConfig?.role || "",
     baseSalary: initialConfig?.baseSalary || "",
@@ -74,6 +76,27 @@ export function SimulatorSetup({ initialConfig, onStart }: Props) {
         </p>
       </CardHeader>
       <CardContent className="space-y-5">
+        {/* Perspective toggle */}
+        <div>
+          <Label className="text-xs text-muted-foreground font-medium">I'm practicing as…</Label>
+          <div className="flex gap-2 mt-2">
+            {([
+              { value: "candidate" as const, label: "Candidate", desc: "Negotiating with a recruiter" },
+              { value: "recruiter" as const, label: "Recruiter", desc: "Negotiating with a candidate" },
+            ]).map((p) => (
+              <Badge
+                key={p.value}
+                variant={config.perspective === p.value ? "default" : "outline"}
+                className="cursor-pointer text-xs py-1.5 px-3 flex flex-col items-start gap-0.5"
+                onClick={() => update("perspective", p.value)}
+              >
+                <span className="font-medium">{p.label}</span>
+                <span className="text-[10px] opacity-70 font-normal">{p.desc}</span>
+              </Badge>
+            ))}
+          </div>
+        </div>
+
         {/* Scenario */}
         <div>
           <Label className="text-xs text-muted-foreground font-medium">What do you want to practice?</Label>
