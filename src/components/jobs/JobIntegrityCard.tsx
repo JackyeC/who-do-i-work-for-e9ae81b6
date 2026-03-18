@@ -103,6 +103,26 @@ export function JobIntegrityCard({ job, matchCount = 0, matchedCategories = [], 
                 </Badge>
               )}
               <MatchIndicator matchCount={matchCount} matchedCategories={matchedCategories} />
+              {fitScore !== undefined && fitScore > 0 && (
+                <Badge variant="outline" className={cn(
+                  "text-[9px] gap-0.5",
+                  fitScore >= 75 ? "bg-[hsl(var(--civic-green))]/10 text-[hsl(var(--civic-green))] border-[hsl(var(--civic-green))]/20" :
+                  fitScore >= 50 ? "bg-[hsl(var(--civic-yellow))]/10 text-[hsl(var(--civic-yellow))] border-[hsl(var(--civic-yellow))]/20" :
+                  "bg-muted/50 text-muted-foreground border-border/30"
+                )}>
+                  {fitScore}% fit
+                </Badge>
+              )}
+              {leverageLevel && (
+                <Badge variant="outline" className={cn(
+                  "text-[9px] gap-0.5",
+                  leverageLevel === "high" ? "bg-[hsl(var(--civic-green))]/10 text-[hsl(var(--civic-green))] border-[hsl(var(--civic-green))]/20" :
+                  leverageLevel === "medium" ? "bg-[hsl(var(--civic-yellow))]/10 text-[hsl(var(--civic-yellow))] border-[hsl(var(--civic-yellow))]/20" :
+                  "bg-muted/50 text-muted-foreground border-border/30"
+                )}>
+                  {leverageLevel === "high" ? "High" : leverageLevel === "medium" ? "Med" : "Low"} Lev.
+                </Badge>
+              )}
               {fitBadges.map((badge) => (
                 <Badge key={badge} variant="outline" className={cn(
                   "text-[9px] gap-0.5",

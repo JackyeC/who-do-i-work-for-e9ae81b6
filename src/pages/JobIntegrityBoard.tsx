@@ -247,6 +247,8 @@ export default function JobIntegrityBoard() {
               const companyCats = alignmentSignals?.[job.company_id];
               const matchedCats = companyCats ? [...prefCategories].filter((c) => companyCats.has(c)) : [];
               const fit = evaluateJobFit(job, preferences);
+              const civicScore = (job.companies as any)?.civic_footprint_score || 0;
+              const leverage = computeLeverage(job, civicScore, false);
               return (
                 <JobIntegrityCard
                   key={job.id}
@@ -254,6 +256,8 @@ export default function JobIntegrityBoard() {
                   matchCount={matchedCats.length}
                   matchedCategories={matchedCats}
                   fitBadges={fit.fitBadges}
+                  fitScore={fit.fitScore}
+                  leverageLevel={leverage.level}
                 />
               );
             })}
