@@ -106,6 +106,7 @@ export default function RealityCheckPage() {
 
       const gapResult = calculateRealityGap(input, publicSignals);
       setResult(gapResult);
+      setLastInput({ companyId: input.companyId, companyName: input.companyName });
 
       // Save to database
       const { error } = await supabase.from("vibe_match_responses" as any).insert({
