@@ -8440,6 +8440,54 @@ export type Database = {
         }
         Relationships: []
       }
+      stretch_projects: {
+        Row: {
+          ai_generated: boolean
+          created_at: string
+          id: string
+          project_title: string
+          proposal_script: string | null
+          readiness_points: number
+          skill_gap: string
+          status: string
+          target_company: string | null
+          target_role: string | null
+          updated_at: string
+          user_id: string
+          why_it_matters: string | null
+        }
+        Insert: {
+          ai_generated?: boolean
+          created_at?: string
+          id?: string
+          project_title: string
+          proposal_script?: string | null
+          readiness_points?: number
+          skill_gap: string
+          status?: string
+          target_company?: string | null
+          target_role?: string | null
+          updated_at?: string
+          user_id: string
+          why_it_matters?: string | null
+        }
+        Update: {
+          ai_generated?: boolean
+          created_at?: string
+          id?: string
+          project_title?: string
+          proposal_script?: string | null
+          readiness_points?: number
+          skill_gap?: string
+          status?: string
+          target_company?: string | null
+          target_role?: string | null
+          updated_at?: string
+          user_id?: string
+          why_it_matters?: string | null
+        }
+        Relationships: []
+      }
       tracked_companies: {
         Row: {
           company_id: string
