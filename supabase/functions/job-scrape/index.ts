@@ -656,6 +656,7 @@ Deno.serve(async (req) => {
       // 2c. If still no jobs, map the site and discover deeper job pages
       if (jobs.length === 0 && firecrawlKey) {
         console.log('[job-scrape] Layer 2c: Mapping site for deeper job pages...');
+        scanContext.layersChecked.push('site_map');
         const mapResp = await fetch('https://api.firecrawl.dev/v1/map', {
           method: 'POST',
           headers: { 'Authorization': `Bearer ${firecrawlKey}`, 'Content-Type': 'application/json' },
