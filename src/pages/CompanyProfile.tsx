@@ -2,7 +2,7 @@ import { useState, useMemo, useCallback, useEffect, useRef } from "react";
 import { useParams, Link, useNavigate } from "react-router-dom";
 import { useCompanyIntelligence } from "@/hooks/use-company-intelligence";
 import { motion } from "framer-motion";
-import { Building2, ArrowLeft, EyeOff, Loader2, Sparkles, Search, Scan } from "lucide-react";
+import { Building2, ArrowLeft, EyeOff, Loader2, Sparkles, Search, Scan, ExternalLink } from "lucide-react";
 import { CompanyLogo } from "@/components/CompanyLogo";
 import { WatchCompanyButton } from "@/components/WatchCompanyButton";
 import { ShareableScorecard } from "@/components/ShareableScorecard";
@@ -297,6 +297,22 @@ export default function CompanyProfile() {
                         <EyeOff className="w-3 h-3" />
                         Private
                       </Badge>
+                    )}
+                  </div>
+
+                  {/* Website & Careers links */}
+                  <div className="flex flex-wrap items-center gap-3 mt-2">
+                    {(dbCompany as any)?.website_url && (
+                      <a href={(dbCompany as any).website_url} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-1.5 text-sm text-primary hover:underline">
+                        <ExternalLink className="w-3.5 h-3.5" />
+                        Website
+                      </a>
+                    )}
+                    {(dbCompany as any)?.careers_url && (
+                      <a href={(dbCompany as any).careers_url} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-1.5 text-sm text-primary hover:underline">
+                        <ExternalLink className="w-3.5 h-3.5" />
+                        Careers
+                      </a>
                     )}
                   </div>
                 </div>
