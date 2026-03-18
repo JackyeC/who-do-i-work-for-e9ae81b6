@@ -99,13 +99,18 @@ export default function Dashboard() {
         return <RelationshipDashboard />;
       case "tracker":
         return <TrackingDashboard />;
-      case "auto-apply":
+      case "auto-apply": {
+        const hasCompleted = !!localStorage.getItem("purpleSquirrelParams");
+        if (!hasCompleted) {
+          return <PurpleSquirrelOnboarding onComplete={() => setActiveTab("auto-apply")} />;
+        }
         return (
           <div className="space-y-6">
             <AutoApplySettings />
             <ApplyQueueDashboard />
           </div>
         );
+      }
       case "offers":
         return (
           <div className="text-center py-12">
