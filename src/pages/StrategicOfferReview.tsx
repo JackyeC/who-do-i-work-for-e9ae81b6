@@ -780,6 +780,13 @@ export default function StrategicOfferReview() {
                   <SituationContextBanner companyName={offer.companyName} />
                 )}
 
+                {/* -1. Stability Delta — What Changed */}
+                <StabilityDelta
+                  companyId={offer.companyId}
+                  companyName={offer.companyName}
+                  interviewStartDate={offer.interviewStartDate}
+                />
+
                 {/* 0. Offer Reality Check — Hero Summary */}
                 <div id="reality-check">
                   <OfferRealityCheck
