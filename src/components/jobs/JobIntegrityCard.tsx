@@ -6,9 +6,11 @@ import { Button } from "@/components/ui/button";
 import { CompanyLogo } from "@/components/CompanyLogo";
 import { MatchIndicator } from "@/components/jobs/MatchIndicator";
 import {
-  Shield, ShieldCheck, ExternalLink, Sparkles, Network, Eye
+  Shield, ShieldCheck, ExternalLink, Sparkles, Network, Eye, ChevronRight,
 } from "lucide-react";
 import { Link } from "react-router-dom";
+import { JobQualityBadge } from "@/components/jobs/JobQualityBadge";
+import { evaluateJobQuality, hasEvergreenSignals, detectRepost } from "@/lib/jobQuality";
 import { cn } from "@/lib/utils";
 
 function trackApplyClick(jobId: string, companyId: string, url: string) {
@@ -46,6 +48,8 @@ export function JobIntegrityCard({ job, matchCount = 0, matchedCategories = [] }
   const co = job.companies;
   const isCertified = co?.vetted_status === "certified";
   const isVerified = co?.vetted_status === "verified";
+  const qualitySignal = evaluateJobQuality(job as any);
+  const isEvergreen = hasEvergreenSignals((job as any).description);
 
   const { data: research } = useQuery({
     queryKey: ["job-research-snippet", job.company_id],
@@ -74,8 +78,10 @@ export function JobIntegrityCard({ job, matchCount = 0, matchedCategories = [] }
         <div className="flex items-start gap-3">
           <CompanyLogo companyName={co?.name || "Unknown"} logoUrl={co?.logo_url} size="sm" />
           <div className="flex-1 min-w-0">
-            <h3 className="font-semibold text-foreground text-sm leading-tight">{job.title}</h3>
-            <div className="flex items-center gap-2 mt-1">
+            <Link to={`/job-board/${job.id}`} className="font-semibold text-foreground text-sm leading-tight hover:text-primary transition-colors">
+              {job.title}
+            </Link>
+            <div className="flex items-center gap-2 mt-1 flex-wrap">
               <Link to={`/company/${co?.slug}`} className="text-xs text-primary hover:underline">
                 {co?.name || "Unknown Company"}
               </Link>
@@ -94,6 +100,10 @@ export function JobIntegrityCard({ job, matchCount = 0, matchedCategories = [] }
             <p className="text-[11px] text-muted-foreground mt-0.5">
               {job.location || "Remote"} {job.work_mode ? `· ${job.work_mode}` : ""}
             </p>
+            {/* Quality signal */}
+            <div className="mt-1">
+              <JobQualityBadge signal={qualitySignal} isEvergreen={isEvergreen} />
+            </div>
           </div>
         </div>
 
@@ -142,9 +152,9 @@ export function JobIntegrityCard({ job, matchCount = 0, matchedCategories = [] }
               Apply
             </Button>
           )}
-          <Button size="sm" variant="default" asChild className="gap-1 shrink-0">
-            <Link to={`/company/${co?.slug}`}>
-              <Eye className="w-3 h-3" /> Receipts
+          <Button size="sm" variant="outline" asChild className="gap-1 shrink-0">
+            <Link to={`/job-board/${job.id}`}>
+              <ChevronRight className="w-3 h-3" /> Details
             </Link>
           </Button>
         </div>

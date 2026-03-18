@@ -31,6 +31,7 @@ const RepresentativeProfile = lazy(() => import("./pages/RepresentativeProfile")
 const AddCompany = lazy(() => import("./pages/AddCompany"));
 const Jobs = lazy(() => import("./pages/Jobs"));
 const JobIntegrityBoard = lazy(() => import("./pages/JobIntegrityBoard"));
+const JobDetailPage = lazy(() => import("./pages/JobDetailPage"));
 const RequestCorrection = lazy(() => import("./pages/RequestCorrection"));
 const OfferCheck = lazy(() => import("./pages/OfferCheck"));
 const MyOfferChecks = lazy(() => import("./pages/MyOfferChecks"));
@@ -173,6 +174,7 @@ const App = () => (
                   <Route path="/add-company" element={<AddCompany />} />
                   <Route path="/jobs" element={<Jobs />} />
                   <Route path="/job-board" element={<JobIntegrityBoard />} />
+                  <Route path="/job-board/:id" element={<JobDetailPage />} />
                   <Route path="/request-correction" element={<RequestCorrection />} />
                   <Route path="/offer-check/:companyId" element={<OfferCheck />} />
                   <Route path="/strategic-offer-review" element={<StrategicOfferReview />} />
