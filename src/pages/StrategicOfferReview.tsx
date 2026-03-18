@@ -112,7 +112,7 @@ export default function StrategicOfferReview() {
     nonCompete: "", arbitrationClause: false, ipClause: false, salarySharedUpfront: true,
   });
 
-  // Career path signals for the forecast module (must be after offer declaration)
+  // Career path signals for the forecast module
   const { data: careerSignals = [] } = useQuery({
     queryKey: ["career-forecast-signals", offer.companyId],
     queryFn: async () => {
@@ -126,6 +126,57 @@ export default function StrategicOfferReview() {
     },
     enabled: !!offer.companyId && step === 3,
   });
+
+  // Internal consistency: compare offer to compensation_data for same company
+  const { data: companyCompData = [] } = useQuery({
+    queryKey: ["internal-comp", offer.companyId, offer.roleTitle],
+    queryFn: async () => {
+      if (!offer.companyId) return [];
+      const { data } = await supabase
+        .from("compensation_data" as any)
+        .select("base_salary, total_comp, role_title")
+        .eq("company", offer.companyId)
+        .limit(20);
+      return (data || []) as any[];
+    },
+    enabled: !!offer.companyId && step === 3,
+  });
+
+  // Risk signals for reality check
+  const { data: riskSignals = [] } = useQuery({
+    queryKey: ["offer-risk-signals-inline", offer.companyId],
+    queryFn: async () => {
+      if (!offer.companyId) return [];
+      const { data } = await supabase
+        .from("company_signal_scans" as any)
+        .select("signal_category, normalized_value, direction, summary, confidence_score")
+        .eq("company_id", offer.companyId)
+        .order("scanned_at", { ascending: false })
+        .limit(12);
+      const seen = new Set<string>();
+      return ((data || []) as unknown as RiskSignal[]).filter(s => {
+        if (seen.has(s.signal_category)) return false;
+        seen.add(s.signal_category);
+        return true;
+      });
+    },
+    enabled: !!offer.companyId && step === 3,
+  });
+
+  const riskLevel = riskSignals.length > 0 ? computeRiskLevel(riskSignals) : null;
+
+  // Derive internal consistency
+  const internalConsistency: "aligned" | "lower" | "unclear" = (() => {
+    if (companyCompData.length === 0 || !offer.baseSalary) return "unclear";
+    const salaries = companyCompData.map((c: any) => Number(c.base_salary) || Number(c.total_comp) || 0).filter((v: number) => v > 0);
+    if (salaries.length === 0) return "unclear";
+    const avg = salaries.reduce((a: number, b: number) => a + b, 0) / salaries.length;
+    const offerSal = Number(offer.baseSalary);
+    if (offerSal >= avg * 0.9) return "aligned";
+    return "lower";
+  })();
+
+  const salaryTransparency: "transparent" | "delayed" | "unclear" = offer.salarySharedUpfront ? "transparent" : "delayed";
 
   const update = (field: keyof OfferInput, value: any) => {
     if (typeof value === "string") {
