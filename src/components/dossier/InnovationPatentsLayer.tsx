@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
-import { Lightbulb, ExternalLink, Loader2, Search, Cpu, FlaskConical, Cog, BarChart3, Lock } from "lucide-react";
+import { Lightbulb, ExternalLink, Loader2, Search, Cpu, FlaskConical, Cog, BarChart3, Lock, TrendingUp, TrendingDown, Minus, Shield } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -17,12 +17,24 @@ interface TopPatent {
   url?: string | null;
 }
 
+interface IpSignals {
+  patent_count_12m: number;
+  patent_count_36m: number;
+  patent_trend: string;
+  trademark_count_12m: number;
+  trademark_trend: string;
+  ownership_change_flag: boolean;
+  innovation_signal_score: number;
+  expansion_signal_score: number;
+  ip_complexity_score: number;
+  top_cpc_categories?: string[];
+}
+
 interface InnovationPatentsProps {
   totalPatents: number;
   clusters: PatentCluster[];
   companyName: string;
   companyId?: string;
-  /** When false, show blurred teaser over clusters */
   unlocked?: boolean;
 }
 
@@ -50,25 +62,46 @@ const clusterColors = [
   "bg-accent text-accent-foreground border-accent/20",
 ];
 
+function TrendIcon({ trend }: { trend: string }) {
+  if (trend === 'rising') return <TrendingUp className="w-4 h-4 text-[hsl(var(--civic-green))]" />;
+  if (trend === 'declining') return <TrendingDown className="w-4 h-4 text-destructive" />;
+  return <Minus className="w-4 h-4 text-muted-foreground" />;
+}
+
+function trendLabel(trend: string) {
+  if (trend === 'rising') return 'Rising';
+  if (trend === 'declining') return 'Declining';
+  if (trend === 'flat') return 'Stable';
+  return 'Unknown';
+}
+
 export function InnovationPatentsLayer({ totalPatents, clusters, companyName, companyId, unlocked = true }: InnovationPatentsProps) {
   const [scanTriggered, setScanTriggered] = useState(false);
 
-  const { data: patentData, isLoading, error } = useQuery({
-    queryKey: ["patent-intelligence", companyName],
+  const { data: scanData, isLoading, error } = useQuery({
+    queryKey: ["uspto-scan", companyName, companyId],
     queryFn: async () => {
-      const { data, error } = await supabase.functions.invoke("patent-scan", {
-        body: { companyName },
+      const { data, error } = await supabase.functions.invoke("uspto-scan", {
+        body: { companyName, companyId },
       });
       if (error) throw error;
-      return data as { totalResults: number; clusters: PatentCluster[]; topPatents: TopPatent[] };
+      return data as {
+        cached: boolean;
+        usedFallback?: boolean;
+        signals: IpSignals;
+        clusters: PatentCluster[];
+        topPatents: TopPatent[];
+        totalResults: number;
+      };
     },
     enabled: scanTriggered,
     staleTime: 1000 * 60 * 60,
   });
 
-  const displayClusters = patentData?.clusters || clusters;
-  const displayTotal = patentData?.totalResults || totalPatents;
-  const topPatents = patentData?.topPatents || [];
+  const displayClusters = scanData?.clusters || clusters;
+  const displayTotal = scanData?.totalResults || totalPatents;
+  const topPatents = scanData?.topPatents || [];
+  const signals = scanData?.signals;
   const hasData = displayTotal > 0 || displayClusters.length > 0;
 
   if (!scanTriggered && !hasData) {
@@ -79,8 +112,11 @@ export function InnovationPatentsLayer({ totalPatents, clusters, companyName, co
           No patent data loaded yet for {companyName}.
         </p>
         <Button variant="outline" size="sm" onClick={() => setScanTriggered(true)} className="gap-2">
-          <Search className="w-4 h-4" /> Scan Google Patents
+          <Search className="w-4 h-4" /> Scan USPTO Records
         </Button>
+        <p className="text-micro text-muted-foreground mt-2">
+          Queries PatentsView (USPTO) · Results cached for 7 days
+        </p>
       </div>
     );
   }
@@ -89,7 +125,7 @@ export function InnovationPatentsLayer({ totalPatents, clusters, companyName, co
     return (
       <div className="flex flex-col items-center justify-center py-12 gap-3">
         <Loader2 className="w-6 h-6 animate-spin text-primary" />
-        <p className="text-caption text-muted-foreground">Searching patents and clustering innovations…</p>
+        <p className="text-caption text-muted-foreground">Resolving company entities & scanning USPTO records…</p>
       </div>
     );
   }
@@ -108,13 +144,26 @@ export function InnovationPatentsLayer({ totalPatents, clusters, companyName, co
 
   return (
     <div className="space-y-5">
+      {/* Signal Summary Banner */}
+      {signals && (
+        <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+          <SignalCard label="Patents (12m)" value={signals.patent_count_12m} trend={signals.patent_trend} />
+          <SignalCard label="Patents (3yr)" value={signals.patent_count_36m} />
+          <SignalCard label="Innovation Score" value={signals.innovation_signal_score} suffix="/100" />
+          <SignalCard label="IP Complexity" value={signals.ip_complexity_score} suffix="/100" />
+        </div>
+      )}
+
       {/* Total count banner */}
       {displayTotal > 0 && (
         <div className="flex items-center gap-4 p-4 rounded-xl bg-muted/40 border border-border/30">
           <div className="text-3xl font-bold text-foreground font-mono">{displayTotal.toLocaleString()}</div>
           <div>
             <div className="text-body font-semibold text-foreground">Patents Identified</div>
-            <div className="text-micro text-muted-foreground">via Google Patents for "{companyName}"</div>
+            <div className="text-micro text-muted-foreground">
+              via {scanData?.usedFallback ? 'Google Patents (fallback)' : 'USPTO PatentsView'} for "{companyName}"
+              {scanData?.cached && <Badge variant="outline" className="ml-2 text-micro">Cached</Badge>}
+            </div>
           </div>
           {!scanTriggered && (
             <Button variant="ghost" size="sm" className="ml-auto gap-1.5 text-xs" onClick={() => setScanTriggered(true)}>
@@ -124,7 +173,15 @@ export function InnovationPatentsLayer({ totalPatents, clusters, companyName, co
         </div>
       )}
 
-      {/* Innovation Clusters — blurred for non-subscribers */}
+      {/* Ownership change flag */}
+      {signals?.ownership_change_flag && (
+        <div className="flex items-center gap-2 p-3 rounded-lg bg-destructive/5 border border-destructive/20">
+          <Shield className="w-4 h-4 text-destructive" />
+          <p className="text-caption text-foreground">Ownership changes detected — recent patent or trademark assignments found.</p>
+        </div>
+      )}
+
+      {/* Innovation Clusters */}
       {displayClusters.length > 0 && (
         <div className="relative">
           {!unlocked && (
@@ -206,6 +263,25 @@ export function InnovationPatentsLayer({ totalPatents, clusters, companyName, co
           </p>
         </div>
       )}
+    </div>
+  );
+}
+
+// ── Signal Card sub-component ─────────────────────────────────────────
+
+function SignalCard({ label, value, trend, suffix }: { label: string; value: number; trend?: string; suffix?: string }) {
+  return (
+    <div className="p-3 rounded-lg bg-muted/30 border border-border/20">
+      <p className="text-micro text-muted-foreground mb-1">{label}</p>
+      <div className="flex items-center gap-2">
+        <span className="text-lg font-bold font-mono text-foreground">{value}{suffix}</span>
+        {trend && (
+          <div className="flex items-center gap-1">
+            <TrendIcon trend={trend} />
+            <span className="text-micro text-muted-foreground">{trendLabel(trend)}</span>
+          </div>
+        )}
+      </div>
     </div>
   );
 }
