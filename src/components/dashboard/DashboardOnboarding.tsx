@@ -16,15 +16,16 @@ export function DashboardOnboarding({ onNavigate }: DashboardOnboardingProps) {
   const { data: progress } = useQuery({
     queryKey: ["onboarding-progress", user?.id],
     queryFn: async () => {
-      const [values, docs, apps] = await Promise.all([
+      const [values, docs, tracked, watchlist] = await Promise.all([
         (supabase as any).from("user_values_profile").select("id").eq("user_id", user!.id).maybeSingle(),
         (supabase as any).from("user_career_documents").select("id", { count: "exact", head: true }).eq("user_id", user!.id),
-        supabase.from("applications_tracker").select("id", { count: "exact", head: true }).eq("user_id", user!.id),
+        (supabase as any).from("tracked_companies").select("id", { count: "exact", head: true }).eq("user_id", user!.id).eq("is_active", true),
+        (supabase as any).from("user_company_watchlist").select("id", { count: "exact", head: true }).eq("user_id", user!.id),
       ]);
       return {
         hasValues: !!values.data,
         hasDocuments: (docs.count || 0) > 0,
-        hasApplications: (apps.count || 0) > 0,
+        hasExploredCompany: (tracked.count || 0) > 0 || (watchlist.count || 0) > 0,
       };
     },
     enabled: !!user,
@@ -53,7 +54,7 @@ export function DashboardOnboarding({ onNavigate }: DashboardOnboardingProps) {
       id: "explore",
       label: "Check your first company",
       description: "Search any employer to see their civic footprint, hiring signals, and influence data.",
-      done: progress.hasApplications,
+      done: progress.hasExploredCompany,
       action: () => window.location.href = "/check?tab=company",
       icon: Building2,
     },
