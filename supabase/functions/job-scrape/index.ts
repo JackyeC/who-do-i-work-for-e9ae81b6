@@ -1023,9 +1023,27 @@ Content:\n${allMarkdown.slice(0, 20000)}`
     const deptBreakdown = jobs.length > 0 ? categorizeDepartments(jobs) : {};
     scanContext.departmentBreakdown = Object.keys(deptBreakdown).length > 0 ? deptBreakdown : null;
 
-    // Update classification for zero-job results
-    if (jobs.length === 0 && scanContext.classification === 'informational_landing') {
-      scanContext.explanation = `This appears to be an informational career page, not a live jobs feed. ${scanContext.atsDetected ? `An ATS (${scanContext.atsDetected}) was detected but returned no listings.` : 'No linked ATS was found.'}`;
+    // Update classification for zero-job results with detailed layer info
+    if (jobs.length === 0) {
+      const uniqueLayers = [...new Set(scanContext.layersChecked)];
+      const layerLabels: Record<string, string> = {
+        direct_ats_detection: 'direct ATS detection',
+        company_site: 'company careers page',
+        site_map: 'site map discovery',
+        careers_subdomain: 'careers subdomain search',
+        ats_detection: 'ATS platform detection',
+        web_search: 'web search',
+        indexed_pages: 'indexed job page search',
+      };
+      const checkedDesc = uniqueLayers.map(l => layerLabels[l] || l).join(', ');
+      
+      if (scanContext.classification === 'informational_landing' || scanContext.classification === 'no_active_jobs') {
+        scanContext.explanation = `Checked: ${checkedDesc}. ${scanContext.atsDetected ? `ATS detected: ${scanContext.atsDetected}, but returned no active listings.` : 'No linked ATS was found.'} ${scanContext.deeperUrlFound ? `Careers site detected at ${scanContext.deeperUrlFound}, but active jobs could not be confirmed.` : 'No dedicated careers domain was discovered.'}`;
+      } else if (scanContext.classification === 'careers_site_detected') {
+        scanContext.explanation = `Checked: ${checkedDesc}. Careers site detected at ${scanContext.deeperUrlFound || 'discovered URL'}, but active jobs could not be confirmed. ${scanContext.atsDetected ? `ATS detected: ${scanContext.atsDetected}.` : ''}`;
+      }
+      // Deduplicate layersChecked
+      scanContext.layersChecked = uniqueLayers;
     }
 
     // Generate hiring signals
