@@ -112,7 +112,7 @@ export function OfferCheckShareCard({
           </div>
           <div className="text-center p-2 bg-muted/50 rounded-lg">
             <div className="text-lg font-bold text-foreground">{transparencyCount}/7</div>
-            <div className="text-[10px] text-muted-foreground">Categories</div>
+            <div className="text-xs text-muted-foreground">Categories</div>
           </div>
         </div>
 
