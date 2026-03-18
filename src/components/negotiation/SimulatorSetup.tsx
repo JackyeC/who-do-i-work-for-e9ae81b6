@@ -47,6 +47,7 @@ const RISK = [
 
 export function SimulatorSetup({ initialConfig, onStart }: Props) {
   const [config, setConfig] = useState<SimulatorConfig>({
+    perspective: initialConfig?.perspective || "candidate",
     company: initialConfig?.company || "",
     role: initialConfig?.role || "",
     baseSalary: initialConfig?.baseSalary || "",
