@@ -126,15 +126,57 @@ export function getCategoryWeights(profile: WorkProfile | null): Record<string, 
   return weights;
 }
 
+// ── Department-Aware Signal Priority (Truth-Over-Vibes) ──
+
+const DEPARTMENT_SIGNAL_PRIORITY: Record<string, [string, string]> = {
+  engineering: ["innovation_activity", "workforce_stability"],
+  technology: ["innovation_activity", "workforce_stability"],
+  tech: ["innovation_activity", "workforce_stability"],
+  product: ["innovation_activity", "workforce_stability"],
+  operations: ["workforce_stability", "compensation_transparency"],
+  ops: ["workforce_stability", "compensation_transparency"],
+  finance: ["workforce_stability", "compensation_transparency"],
+  sales: ["hiring_activity", "innovation_activity"],
+  marketing: ["hiring_activity", "innovation_activity"],
+  growth: ["hiring_activity", "innovation_activity"],
+  hr: ["public_sentiment", "company_behavior"],
+  people: ["public_sentiment", "company_behavior"],
+  "human resources": ["public_sentiment", "company_behavior"],
+  talent: ["public_sentiment", "company_behavior"],
+};
+
+function getDepartmentKey(department?: string | null): string | null {
+  if (!department) return null;
+  const normalized = department.toLowerCase().trim();
+  if (DEPARTMENT_SIGNAL_PRIORITY[normalized]) return normalized;
+  // Fuzzy match
+  for (const key of Object.keys(DEPARTMENT_SIGNAL_PRIORITY)) {
+    if (normalized.includes(key) || key.includes(normalized)) return key;
+  }
+  return null;
+}
+
 /** Get top 1-3 personalized signal statements for a job card */
 export function getTopSignalsForJob(
   companySignals: CanonicalSignal[],
   profile: WorkProfile | null,
-  maxSignals = 3
+  maxSignals = 3,
+  department?: string | null
 ): { statement: string; category: string; level: SignalLevel }[] {
   if (!companySignals || companySignals.length === 0) return [];
 
-  const weights = getCategoryWeights(profile);
+  const weights = { ...getCategoryWeights(profile) };
+
+  // Department-aware boost: +30 to the two priority categories
+  const deptKey = getDepartmentKey(department);
+  if (deptKey) {
+    const [first, second] = DEPARTMENT_SIGNAL_PRIORITY[deptKey];
+    weights[first] = Math.min(100, (weights[first] || 50) + 30);
+    weights[second] = Math.min(100, (weights[second] || 50) + 30);
+  }
+
+  // Cap at 2 when department is known for focused display
+  const cap = deptKey ? Math.min(maxSignals, 2) : maxSignals;
 
   const ranked = companySignals
     .map(s => ({
@@ -142,11 +184,10 @@ export function getTopSignalsForJob(
       category: s.signal_category,
       level: s.value_normalized as SignalLevel,
       weight: weights[s.signal_category] || 50,
-      // Boost signals that are non-neutral (high/low) since they carry more info
       importance: s.value_normalized === "high" || s.value_normalized === "low" ? 10 : 0,
     }))
     .sort((a, b) => (b.weight + b.importance) - (a.weight + a.importance))
-    .slice(0, maxSignals);
+    .slice(0, cap);
 
   return ranked.map(r => ({
     statement: r.statement,
