@@ -20,6 +20,7 @@ import { ValuesSignalMatch } from "@/components/company/ValuesSignalMatch";
 import { RealityGapBlock } from "@/components/company/RealityGapBlock";
 import { DecisionCheckpointBeforeSign } from "@/components/company/DecisionCheckpointBeforeSign";
 import { InnovationSignals } from "@/components/company/InnovationSignals";
+import { LeadershipInfluenceSection } from "@/components/company/LeadershipInfluenceSection";
 import { ReportTeaserGate } from "@/components/ReportTeaserGate";
 import { PostReportNudge } from "@/components/PostReportNudge";
 import { ContentProtector } from "@/components/ContentProtector";
@@ -396,6 +397,26 @@ export default function CompanyProfile() {
               updatedAt={dbCompany?.updated_at}
             />
           </ReportTeaserGate>
+
+          {/* ═══════════════════════════════════════════════════════
+              2.3 LEADERSHIP & INFLUENCE (Detail)
+             ═══════════════════════════════════════════════════════ */}
+          <LeadershipInfluenceSection
+            executives={dbExecutives || []}
+            candidates={dbCandidates || []}
+            partyBreakdown={dbPartyBreakdown?.map(p => ({ party: p.party, amount: p.amount, color: p.color })) || []}
+            revolvingDoor={dbRevolvingDoor || []}
+            darkMoney={dbDarkMoney || []}
+            boardMembers={dbBoardMembers || []}
+            companyName={name}
+            totalPacSpending={totalPac}
+            lobbyingSpend={lobbyingSpend}
+            onExecutiveClick={handleExecutiveClick}
+            onCandidateClick={handleCandidateClick}
+            onPacClick={() => setPacDrawerOpen(true)}
+            onLobbyingClick={() => setLobbyingDrawerOpen(true)}
+            onContractsClick={() => setContractsDrawerOpen(true)}
+          />
 
           {/* ═══════════════════════════════════════════════════════
               2.6 INNOVATION SIGNALS (Patents)
