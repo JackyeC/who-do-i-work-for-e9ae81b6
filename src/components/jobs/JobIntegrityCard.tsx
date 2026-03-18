@@ -6,9 +6,11 @@ import { Button } from "@/components/ui/button";
 import { CompanyLogo } from "@/components/CompanyLogo";
 import { MatchIndicator } from "@/components/jobs/MatchIndicator";
 import {
-  Shield, ShieldCheck, ExternalLink, Sparkles, Network, Eye
+  Shield, ShieldCheck, ExternalLink, Sparkles, Network, Eye, ChevronRight,
 } from "lucide-react";
 import { Link } from "react-router-dom";
+import { JobQualityBadge } from "@/components/jobs/JobQualityBadge";
+import { evaluateJobQuality, hasEvergreenSignals, detectRepost } from "@/lib/jobQuality";
 import { cn } from "@/lib/utils";
 
 function trackApplyClick(jobId: string, companyId: string, url: string) {
