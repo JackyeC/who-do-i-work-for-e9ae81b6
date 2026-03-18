@@ -1,12 +1,13 @@
 import { useState } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { AlertTriangle, HandCoins, Users, Scale, HelpCircle, ExternalLink, Share2, ChevronDown, ChevronUp, Info } from "lucide-react";
+import { AlertTriangle, HandCoins, Users, Scale, HelpCircle, ExternalLink, Share2, ChevronDown, ChevronUp, Info, ChevronRight } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { formatCurrency } from "@/data/sampleData";
 import { PartyBadge } from "@/components/PartyBadge";
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
+import { EntityDetailDrawer, type DarkMoneyEntity } from "@/components/company/EntityDetailDrawer";
 
 interface LobbyingDetail {
   target: string;
@@ -76,6 +77,7 @@ export function WhatYoureSupportingCard({
   issueSignals = [],
 }: Props) {
   const [worthKnowingExpanded, setWorthKnowingExpanded] = useState(false);
+  const [selectedDarkEntity, setSelectedDarkEntity] = useState<DarkMoneyEntity | null>(null);
   const hasActivity = totalPacSpending > 0 || lobbyingSpend > 0 || topCandidates.length > 0 || issueSignals.length > 0;
 
   // Aggregate issue signals by category
@@ -330,7 +332,11 @@ export function WhatYoureSupportingCard({
                     {darkMoneyRecords.length > 0 && (
                       <div className="space-y-1.5">
                         {darkMoneyRecords.map((dm, i) => (
-                          <div key={i} className="p-2.5 rounded-lg bg-card border border-border/50 text-xs">
+                          <button
+                            key={i}
+                            onClick={() => setSelectedDarkEntity({ name: dm.name, org_type: dm.org_type, relationship: dm.relationship, estimated_amount: dm.estimated_amount, description: dm.description, source: dm.source, confidence: dm.confidence })}
+                            className="w-full p-2.5 rounded-lg bg-card border border-border/50 text-xs text-left hover:bg-muted/50 transition-colors group"
+                          >
                             <div className="flex items-center justify-between mb-1">
                               <span className="font-medium text-foreground">{dm.name}</span>
                               <div className="flex items-center gap-1.5">
@@ -338,16 +344,11 @@ export function WhatYoureSupportingCard({
                                 {dm.estimated_amount && dm.estimated_amount > 0 && (
                                   <span className="font-data font-semibold text-foreground">{formatCurrency(dm.estimated_amount)}</span>
                                 )}
+                                <ChevronRight className="w-3 h-3 text-muted-foreground group-hover:text-foreground transition-colors" />
                               </div>
                             </div>
                             <p className="text-muted-foreground">{dm.relationship}</p>
-                            {dm.description && <p className="text-muted-foreground mt-0.5 italic">{dm.description}</p>}
-                            {dm.source && (
-                              <a href={dm.source} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-1 text-primary hover:underline mt-1">
-                                View source <ExternalLink className="w-2.5 h-2.5" />
-                              </a>
-                            )}
-                          </div>
+                          </button>
                         ))}
                       </div>
                     )}
@@ -366,6 +367,13 @@ export function WhatYoureSupportingCard({
         <p className="text-xs text-muted-foreground border-t border-border pt-3">
           All of this is public record. Campaign donations come from <a href="https://www.fec.gov" target="_blank" rel="noopener noreferrer" className="text-primary hover:underline inline-flex items-center gap-0.5">FEC filings <ExternalLink className="w-2.5 h-2.5" /></a> and lobbying reports come from the <a href="https://lda.senate.gov" target="_blank" rel="noopener noreferrer" className="text-primary hover:underline inline-flex items-center gap-0.5">Senate disclosure database <ExternalLink className="w-2.5 h-2.5" /></a>. We just organized it so you can understand it.
         </p>
+
+        <EntityDetailDrawer
+          entity={selectedDarkEntity}
+          companyName={companyName}
+          open={!!selectedDarkEntity}
+          onOpenChange={(open) => { if (!open) setSelectedDarkEntity(null); }}
+        />
       </CardContent>
     </Card>
   );

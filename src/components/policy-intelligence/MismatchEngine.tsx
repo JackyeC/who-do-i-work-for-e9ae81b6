@@ -1,6 +1,8 @@
-import { AlertTriangle, ExternalLink, Shield, CheckCircle2, HelpCircle } from "lucide-react";
+import { useState } from "react";
+import { AlertTriangle, ExternalLink, Shield, CheckCircle2, HelpCircle, ChevronRight } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
+import { EntityDetailDrawer, type DarkMoneyEntity } from "@/components/company/EntityDetailDrawer";
 
 interface Stance {
   topic: string;
@@ -20,6 +22,7 @@ interface Props {
   stances: Stance[];
   darkMoney: DarkMoneyEntry[];
   tradeAssociations: Array<{ name: string }>;
+  companyName?: string;
 }
 
 const GAP_CONFIG = {
@@ -28,7 +31,8 @@ const GAP_CONFIG = {
   aligned: { icon: CheckCircle2, color: "text-[hsl(var(--civic-green))]", bg: "bg-[hsl(var(--civic-green))]/5 border-[hsl(var(--civic-green))]/20", label: "Aligned" },
 } as const;
 
-export function MismatchEngine({ stances, darkMoney, tradeAssociations }: Props) {
+export function MismatchEngine({ stances, darkMoney, tradeAssociations, companyName }: Props) {
+  const [selectedEntity, setSelectedEntity] = useState<DarkMoneyEntity | null>(null);
   const conflicts = stances.filter(s => s.gap === "direct-conflict");
   const mixed = stances.filter(s => s.gap === "mixed");
   const aligned = stances.filter(s => s.gap === "aligned");
@@ -98,18 +102,14 @@ export function MismatchEngine({ stances, darkMoney, tradeAssociations }: Props)
             Undisclosed Spending Channels
           </h4>
           {darkMoney.map((dm, i) => (
-            <Card key={i} className="border-border/40">
+            <Card key={i} className="border-border/40 cursor-pointer hover:bg-muted/50 transition-colors" onClick={() => setSelectedEntity({ name: dm.name, org_type: dm.org_type, estimated_amount: dm.estimated_amount, source: dm.source ?? undefined, relationship: "Undisclosed spending channel", confidence: null })}>
               <CardContent className="p-3">
                 <div className="flex items-center justify-between">
                   <div>
                     <p className="text-sm font-medium text-foreground">{dm.name}</p>
                     <p className="text-xs text-muted-foreground">{dm.org_type} · {dm.estimated_amount ? `~$${dm.estimated_amount.toLocaleString()}` : "Amount undisclosed"}</p>
                   </div>
-                  {dm.source && (
-                    <a href={dm.source} target="_blank" rel="noopener noreferrer" className="text-primary hover:underline">
-                      <ExternalLink className="w-3.5 h-3.5" />
-                    </a>
-                  )}
+                  <ChevronRight className="w-4 h-4 text-muted-foreground shrink-0" />
                 </div>
               </CardContent>
             </Card>
@@ -127,6 +127,13 @@ export function MismatchEngine({ stances, darkMoney, tradeAssociations }: Props)
           </div>
         </div>
       )}
+
+      <EntityDetailDrawer
+        entity={selectedEntity}
+        companyName={companyName}
+        open={!!selectedEntity}
+        onOpenChange={(open) => { if (!open) setSelectedEntity(null); }}
+      />
     </div>
   );
 }

@@ -16,10 +16,11 @@ import { formatCurrency } from "@/data/sampleData";
 import {
   Building2, Search, Loader2, User, DollarSign, AlertTriangle,
   ExternalLink, LogOut, Flag, Users, Briefcase, ArrowRight,
-  UserCheck, Scale, Megaphone, X
+  UserCheck, Scale, Megaphone, X, ChevronRight
 } from "lucide-react";
 import { WorkforceEquityModule } from "@/components/workforce-equity/WorkforceEquityModule";
 import { FlightRiskModule } from "@/components/flight-risk/FlightRiskModule";
+import { EntityDetailDrawer, type DarkMoneyEntity } from "@/components/company/EntityDetailDrawer";
 
 interface CompanyOption {
   id: string;
@@ -44,6 +45,7 @@ export default function WhoDoIWorkFor() {
   const queryClient = useQueryClient();
   const [searchQuery, setSearchQuery] = useState("");
   const [showSearch, setShowSearch] = useState(false);
+  const [selectedDarkEntity, setSelectedDarkEntity] = useState<DarkMoneyEntity | null>(null);
 
   // Get user profile with employer
   const { data: profile, isLoading: profileLoading } = useQuery({
@@ -449,16 +451,23 @@ export default function WhoDoIWorkFor() {
                   <CardContent>
                     <div className="space-y-2">
                       {(darkMoney || []).map((d) => (
-                        <div key={d.id} className="flex items-center justify-between p-3 rounded-lg border border-destructive/20 bg-destructive/5">
+                        <button
+                          key={d.id}
+                          onClick={() => setSelectedDarkEntity(d)}
+                          className="flex items-center justify-between w-full p-3 rounded-lg border border-destructive/20 bg-destructive/5 text-left hover:bg-destructive/10 transition-colors group"
+                        >
                           <div>
                             <span className="font-medium text-foreground">{d.name}</span>
                             <p className="text-xs text-muted-foreground">{d.org_type} · {d.relationship}</p>
                             {d.description && <p className="text-xs text-muted-foreground mt-1">{d.description}</p>}
                           </div>
-                          {d.estimated_amount && (
-                            <span className="font-semibold text-foreground">{formatCurrency(d.estimated_amount)}</span>
-                          )}
-                        </div>
+                          <div className="flex items-center gap-2 shrink-0">
+                            {d.estimated_amount && (
+                              <span className="font-semibold text-foreground">{formatCurrency(d.estimated_amount)}</span>
+                            )}
+                            <ChevronRight className="w-4 h-4 text-muted-foreground group-hover:text-foreground transition-colors" />
+                          </div>
+                        </button>
                       ))}
                     </div>
                   </CardContent>
@@ -505,6 +514,12 @@ export default function WhoDoIWorkFor() {
           )}
         </motion.div>
       </div>
+      <EntityDetailDrawer
+        entity={selectedDarkEntity}
+        companyName={employerCompany?.name}
+        open={!!selectedDarkEntity}
+        onOpenChange={(open) => { if (!open) setSelectedDarkEntity(null); }}
+      />
       <Footer />
     </div>
   );
