@@ -157,7 +157,7 @@ export function FamilyFirstTag({ companyId, companyName }: Props) {
             </Button>
           </div>
         ) : (
-          <p className="text-[10px] text-muted-foreground">Sign in to tag this company as Family-First.</p>
+          <p className="text-xs text-muted-foreground">Sign in to tag this company as Family-First.</p>
         )}
 
         <p className="text-[10px] text-muted-foreground leading-relaxed">
