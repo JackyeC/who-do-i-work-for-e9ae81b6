@@ -595,6 +595,19 @@ export default function StrategicOfferReview() {
                       <label className="text-sm font-medium text-foreground mb-1.5 block">Equity</label>
                       <Input placeholder="e.g. 10,000 RSUs over 4 years" value={offer.equity} onChange={e => update("equity", e.target.value)} />
                     </div>
+
+                    <Separator />
+
+                    <div className="flex items-center justify-between p-3 bg-muted/30 rounded-xl">
+                      <div>
+                        <p className="text-sm font-medium text-foreground">Was the salary range shared before you applied?</p>
+                        <p className="text-[10px] text-muted-foreground">Helps assess employer transparency</p>
+                      </div>
+                      <Switch
+                        checked={offer.salarySharedUpfront}
+                        onCheckedChange={(checked) => update("salarySharedUpfront", checked)}
+                      />
+                    </div>
                   </CardContent>
                 </Card>
 
