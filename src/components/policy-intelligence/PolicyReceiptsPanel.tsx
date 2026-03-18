@@ -49,7 +49,12 @@ export function PolicyReceiptsPanel({ stances, linkages, lobbyingRecords, tradeA
             donations.slice(0, 10).map((d, i) => (
               <Card key={i} className="border-border/30">
                 <CardContent className="p-2.5 flex items-center justify-between">
-                  <span className="text-xs text-foreground">{d.target_entity_name}</span>
+                  <div className="flex items-center gap-2">
+                    <span className="text-xs text-foreground">{d.target_entity_name}</span>
+                    <Badge variant="outline" className="text-xs text-muted-foreground">
+                      {d.link_type === "pac_contribution" ? "Action" : "Action"}
+                    </Badge>
+                  </div>
                   {d.amount && <span className="text-xs font-mono text-muted-foreground">${d.amount.toLocaleString()}</span>}
                 </CardContent>
               </Card>
