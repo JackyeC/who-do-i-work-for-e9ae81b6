@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useMemo } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -6,9 +6,11 @@ import {
   Users, User, Briefcase, DollarSign, ArrowRightLeft,
   EyeOff, Shield, ChevronRight, Vote
 } from "lucide-react";
+import { Link } from "react-router-dom";
 import { formatCurrency } from "@/data/sampleData";
 import { EntityDetailDrawer, type DarkMoneyEntity } from "@/components/company/EntityDetailDrawer";
 import { PartyBadge } from "@/components/PartyBadge";
+import { processExecutives, processBoardMembers } from "@/lib/executive-utils";
 
 interface Executive {
   id: string;
@@ -17,6 +19,7 @@ interface Executive {
   total_donations: number;
   photo_url?: string | null;
   verification_status?: string | null;
+  departed_at?: string | null;
 }
 
 interface Candidate {
@@ -55,7 +58,17 @@ interface DarkMoney {
 
 interface BoardMember {
   id: string;
+  name: string;
+  title: string;
   is_independent?: boolean | null;
+  departed_at?: string | null;
+  verification_status?: string | null;
+  bio?: string | null;
+  committees?: string[] | null;
+  previous_company?: string | null;
+  start_year?: number | null;
+  photo_url?: string | null;
+  source?: string | null;
 }
 
 interface LeadershipInfluenceSectionProps {
@@ -73,6 +86,17 @@ interface LeadershipInfluenceSectionProps {
   onPacClick: () => void;
   onLobbyingClick: () => void;
   onContractsClick: () => void;
+}
+
+function SourceNote() {
+  return (
+    <p className="text-[11px] text-[#3d3a4a] mt-2" style={{ fontFamily: "'DM Sans', sans-serif" }}>
+      Leadership data sourced from SEC proxy statements and public disclosures.{" "}
+      <Link to="/request-correction" className="underline hover:text-primary transition-colors">
+        Found an error? Report it →
+      </Link>
+    </p>
+  );
 }
 
 export function LeadershipInfluenceSection({
@@ -93,8 +117,14 @@ export function LeadershipInfluenceSection({
 }: LeadershipInfluenceSectionProps) {
   const [selectedEntity, setSelectedEntity] = useState<DarkMoneyEntity | null>(null);
 
-  const hasAnyData = executives.length > 0 || candidates.length > 0 || revolvingDoor.length > 0 || darkMoney.length > 0;
-  if (!hasAnyData) return null;
+  const processedExecs = useMemo(() => processExecutives(executives), [executives]);
+  const processedBoard = useMemo(() => processBoardMembers(boardMembers), [boardMembers]);
+
+  const hasAnyData = processedExecs.length > 0 || candidates.length > 0 || revolvingDoor.length > 0 || darkMoney.length > 0 || processedBoard.length > 0;
+
+  // Show section even if only pending states — but not if truly nothing
+  const showSection = hasAnyData || executives.length === 0;
+  if (!showSection && candidates.length === 0 && revolvingDoor.length === 0 && darkMoney.length === 0) return null;
 
   const totalParty = partyBreakdown.reduce((s, p) => s + p.amount, 0);
 
@@ -106,18 +136,25 @@ export function LeadershipInfluenceSection({
       </div>
 
       {/* ── Executive Leadership ── */}
-      {executives.length > 0 && (
-        <Card>
-          <CardHeader className="pb-2">
-            <CardTitle className="flex items-center gap-2 text-base">
-              <Briefcase className="w-4 h-4 text-primary" />
-              Executive Leadership
-              <Badge variant="secondary" className="text-xs ml-auto">{executives.length}</Badge>
-            </CardTitle>
-          </CardHeader>
-          <CardContent className="pt-0">
+      <Card>
+        <CardHeader className="pb-2">
+          <CardTitle className="flex items-center gap-2 text-base">
+            <Briefcase className="w-4 h-4 text-primary" />
+            Executive Leadership
+            {processedExecs.length > 0 && (
+              <Badge variant="secondary" className="text-xs ml-auto">{processedExecs.length}</Badge>
+            )}
+          </CardTitle>
+        </CardHeader>
+        <CardContent className="pt-0">
+          {processedExecs.length === 0 && (
+            <p className="text-sm text-muted-foreground py-2">
+              Executive data pending — sourced from SEC proxy filings
+            </p>
+          )}
+          {processedExecs.length > 0 && (
             <div className="divide-y divide-border">
-              {executives.map((exec) => (
+              {processedExecs.map((exec) => (
                 <button
                   key={exec.id}
                   onClick={() => onExecutiveClick(exec)}
@@ -147,9 +184,51 @@ export function LeadershipInfluenceSection({
                 </button>
               ))}
             </div>
-          </CardContent>
-        </Card>
-      )}
+          )}
+          {processedExecs.length >= 1 && processedExecs.length <= 2 && (
+            <p className="text-xs text-muted-foreground mt-2">Additional leadership data pending</p>
+          )}
+          <SourceNote />
+        </CardContent>
+      </Card>
+
+      {/* ── Board of Directors ── */}
+      <Card>
+        <CardHeader className="pb-2">
+          <CardTitle className="flex items-center gap-2 text-base">
+            <Shield className="w-4 h-4 text-primary" />
+            Board of Directors
+            {processedBoard.length > 0 && (
+              <Badge variant="secondary" className="text-xs ml-auto">{processedBoard.length}</Badge>
+            )}
+          </CardTitle>
+        </CardHeader>
+        <CardContent className="pt-0">
+          {processedBoard.length === 0 && (
+            <p className="text-sm text-muted-foreground py-2">
+              Board composition data pending — sourced from SEC proxy filings
+            </p>
+          )}
+          {processedBoard.length > 0 && (
+            <div className="divide-y divide-border">
+              {processedBoard.map((member) => (
+                <div key={member.id} className="flex items-center justify-between py-3 px-1">
+                  <div className="min-w-0">
+                    <p className="text-sm font-semibold text-foreground truncate">{member.name}</p>
+                    <p className="text-xs text-muted-foreground truncate">{member.title}</p>
+                  </div>
+                  <div className="flex items-center gap-2 shrink-0">
+                    {member.is_independent && (
+                      <Badge variant="outline" className="text-xs text-[hsl(var(--civic-green))]">Independent</Badge>
+                    )}
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
+          <SourceNote />
+        </CardContent>
+      </Card>
 
       {/* ── PAC & Party Breakdown ── */}
       {(totalPacSpending > 0 || partyBreakdown.length > 0) && (
@@ -311,28 +390,6 @@ export function LeadershipInfluenceSection({
                   </div>
                 </button>
               ))}
-            </div>
-          </CardContent>
-        </Card>
-      )}
-
-      {/* ── Board Members (summary) ── */}
-      {boardMembers.length > 0 && (
-        <Card>
-          <CardHeader className="pb-2">
-            <CardTitle className="flex items-center gap-2 text-base">
-              <Shield className="w-4 h-4 text-primary" />
-              Board of Directors
-            </CardTitle>
-          </CardHeader>
-          <CardContent className="pt-0">
-            <div className="flex items-center gap-3">
-              <span className="text-sm text-foreground">{boardMembers.length} board member{boardMembers.length !== 1 ? "s" : ""} identified</span>
-              {boardMembers.filter(b => b.is_independent).length > 0 && (
-                <Badge variant="outline" className="text-xs">
-                  {boardMembers.filter(b => b.is_independent).length} independent
-                </Badge>
-              )}
             </div>
           </CardContent>
         </Card>

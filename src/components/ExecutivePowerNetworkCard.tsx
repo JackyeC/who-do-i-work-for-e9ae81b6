@@ -1,9 +1,11 @@
+import { useMemo } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Network, Building2, Landmark, Users, ExternalLink, Briefcase, Globe } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { deduplicatePeople } from "@/lib/executive-utils";
 
 interface Props {
   companyId?: string;

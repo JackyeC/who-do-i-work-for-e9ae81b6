@@ -1,8 +1,11 @@
+import { useMemo } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Users } from "lucide-react";
+import { Link } from "react-router-dom";
+import { processExecutives, processBoardMembers } from "@/lib/executive-utils";
 
 interface Props {
   companyId: string;
@@ -10,33 +13,35 @@ interface Props {
 }
 
 export function LeadershipSnapshot({ companyId, companyName }: Props) {
-  const { data: executives = [] } = useQuery({
+  const { data: rawExecutives = [] } = useQuery({
     queryKey: ["leadership-snapshot", companyId],
     queryFn: async () => {
       const { data } = await supabase
         .from("company_executives")
-        .select("name, title, total_donations")
+        .select("name, title, total_donations, departed_at, verification_status")
         .eq("company_id", companyId)
         .order("total_donations", { ascending: false })
-        .limit(6);
+        .limit(12);
       return data || [];
     },
     enabled: !!companyId,
   });
 
-  const { data: boardMembers = [] } = useQuery({
+  const { data: rawBoardMembers = [] } = useQuery({
     queryKey: ["leadership-board", companyId],
     queryFn: async () => {
       const { data } = await supabase
         .from("board_members")
-        .select("name, title, is_independent")
+        .select("name, title, is_independent, departed_at, verification_status")
         .eq("company_id", companyId)
-        .is("departed_at", null)
-        .limit(6);
+        .limit(12);
       return data || [];
     },
     enabled: !!companyId,
   });
+
+  const executives = useMemo(() => processExecutives(rawExecutives).slice(0, 6), [rawExecutives]);
+  const boardMembers = useMemo(() => processBoardMembers(rawBoardMembers).slice(0, 6), [rawBoardMembers]);
 
   if (executives.length === 0 && boardMembers.length === 0) return null;
 
@@ -90,6 +95,13 @@ export function LeadershipSnapshot({ companyId, companyName }: Props) {
           </div>
         </div>
       )}
+
+      <p className="text-[11px] text-[#3d3a4a]" style={{ fontFamily: "'DM Sans', sans-serif" }}>
+        Leadership data sourced from SEC proxy statements and public disclosures.{" "}
+        <Link to="/request-correction" className="underline hover:text-primary transition-colors">
+          Found an error? Report it →
+        </Link>
+      </p>
     </div>
   );
 }
