@@ -28,10 +28,10 @@ export default function Hire() {
         .from("early_access_signups")
         .insert({
           email,
+          first_name: "Recruiter",
           persona: "I recruit or hire",
-          source: "hire-landing",
-          utm_source: new URLSearchParams(window.location.search).get("utm_source"),
-        } as any);
+          referral_source: new URLSearchParams(window.location.search).get("utm_source") || "hire-landing",
+        });
 
       if (dbError) {
         if (dbError.code === "23505") {
