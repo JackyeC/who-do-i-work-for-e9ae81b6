@@ -95,6 +95,12 @@ export default function PolicyHub() {
     title: "Policy Intelligence — How Legislation Shapes Careers",
     description: "Track federal bills and regulations that affect companies, industries, and careers. See workforce impact, affected employers, and career signals.",
     path: "/policy",
+    jsonLd: {
+      "@type": "WebPage",
+      name: "Policy Intelligence Hub",
+      description: "Track federal bills and regulations affecting companies, industries, and careers. Workforce impact analysis and career signals.",
+      isPartOf: { "@type": "WebApplication", name: "Who Do I Work For?" },
+    },
   });
 
   const [searchParams] = useSearchParams();

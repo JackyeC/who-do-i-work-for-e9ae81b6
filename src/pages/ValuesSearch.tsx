@@ -31,6 +31,12 @@ export default function ValuesSearch() {
     title: "Values Search — Find Employers Aligned with Your Values",
     description: "Search companies by values: climate action, racial equity, labor rights, LGBTQ+ inclusion, and more. Evidence-based employer alignment signals.",
     path: "/values-search",
+    jsonLd: {
+      "@type": "SearchAction",
+      target: "https://wdiwf.jackyeclayton.com/values-search?lens={lens}",
+      name: "Values-Based Employer Search",
+      description: "Find employers aligned with your values using evidence-based signals across climate, equity, labor, and inclusion categories.",
+    },
   });
 
   const [searchParams, setSearchParams] = useSearchParams();
