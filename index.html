@@ -106,53 +106,35 @@
   </head>
 
   <body>
-    <!-- Static pre-render content for crawlers & loading state -->
+    <!-- Static pre-render content for crawlers & no-JS fallback -->
     <div id="static-hero" style="background:#0a0a0e;color:#f0ebe0;font-family:'DM Sans',system-ui,sans-serif;min-height:100vh;display:flex;flex-direction:column;justify-content:center;align-items:center;padding:48px 24px;text-align:center;">
-      <header style="margin-bottom:32px;">
-        <h1 style="font-size:clamp(36px,6vw,64px);font-weight:800;letter-spacing:-2px;line-height:1.05;margin:0;">Who Do I Work For?</h1>
-      </header>
       <main style="max-width:720px;width:100%;">
-        <p style="font-size:clamp(20px,3vw,32px);font-weight:600;color:#f0c040;margin:0 0 24px;">Career Intelligence Platform</p>
-        <p style="font-size:clamp(18px,2.5vw,28px);font-weight:500;margin:0 0 8px;">Every company runs a background check on you.</p>
-        <p style="font-size:clamp(18px,2.5vw,28px);font-weight:700;color:#f0c040;margin:0 0 24px;">But who's running one on them?</p>
-        <p style="font-size:16px;color:#b0aac0;line-height:1.6;margin:0 0 32px;">WDIWF surfaces what companies don't put on their careers page — built on FEC filings, SEC reports, BLS wages, OSHA records, and NLRB data. Free to start.</p>
-        <a href="/check" style="display:inline-block;background:#f0c040;color:#0a0a0e;font-weight:700;font-size:16px;padding:14px 36px;border-radius:50px;text-decoration:none;margin-bottom:48px;">Start your audit →</a>
+        <h1 style="font-size:clamp(36px,6vw,64px);font-weight:800;letter-spacing:-2px;line-height:1.05;margin:0 0 24px;">Every company runs a background check on you.</h1>
+        <p style="font-size:clamp(20px,3vw,32px);font-weight:700;color:#f0c040;margin:0 0 32px;">But who's running one on them?</p>
+        <p style="font-size:16px;color:#b8b4a8;line-height:1.7;margin:0 0 32px;text-align:left;">Who Do I Work For? is a career intelligence platform that researches any employer using public records — FEC filings, SEC reports, BLS wage data, OSHA citations, and NLRB cases. We surface what companies don't put on their careers page: political spending, CEO pay ratios, ghost job postings, workforce stability signals, and leadership network concentration. Built by Jackye Clayton, 15+ years in talent acquisition.</p>
+        <a href="/browse" style="display:inline-block;background:#f0c040;color:#0a0a0e;font-weight:700;font-size:16px;padding:14px 36px;border-radius:50px;text-decoration:none;">Start your audit →</a>
 
-        <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:20px;text-align:left;margin-top:24px;">
+        <div style="margin-top:48px;display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:20px;text-align:left;">
           <div style="background:#141420;border-radius:12px;padding:20px;">
             <p style="font-weight:700;color:#f0c040;margin:0 0 6px;font-size:15px;">Reality Gap</p>
             <p style="font-size:13px;color:#9992a8;margin:0;">What companies say vs. what the public record actually shows.</p>
           </div>
           <div style="background:#141420;border-radius:12px;padding:20px;">
             <p style="font-weight:700;color:#f0c040;margin:0 0 6px;font-size:15px;">Insider Score</p>
-            <p style="font-size:13px;color:#9992a8;margin:0;">How concentrated is the leadership network? Did they earn their seats?</p>
+            <p style="font-size:13px;color:#9992a8;margin:0;">How concentrated is the leadership network?</p>
           </div>
           <div style="background:#141420;border-radius:12px;padding:20px;">
             <p style="font-weight:700;color:#f0c040;margin:0 0 6px;font-size:15px;">Political Giving</p>
-            <p style="font-size:13px;color:#9992a8;margin:0;">Where does the company — and its executives — actually send their money?</p>
-          </div>
-          <div style="background:#141420;border-radius:12px;padding:20px;">
-            <p style="font-weight:700;color:#f0c040;margin:0 0 6px;font-size:15px;">Comp Transparency</p>
-            <p style="font-size:13px;color:#9992a8;margin:0;">BLS wage benchmarks, CEO pay ratio, and whether they list salaries.</p>
+            <p style="font-size:13px;color:#9992a8;margin:0;">Where the company and its executives send their money.</p>
           </div>
           <div style="background:#141420;border-radius:12px;padding:20px;">
             <p style="font-weight:700;color:#f0c040;margin:0 0 6px;font-size:15px;">Ghost Posting</p>
             <p style="font-size:13px;color:#9992a8;margin:0;">Is the role real? Or just keeping the pipeline warm?</p>
           </div>
-          <div style="background:#141420;border-radius:12px;padding:20px;">
-            <p style="font-weight:700;color:#f0c040;margin:0 0 6px;font-size:15px;">Civic Footprint</p>
-            <p style="font-size:13px;color:#9992a8;margin:0;">PAC spending, lobbying dollars, and institutional influence networks.</p>
-          </div>
-        </div>
-
-        <div style="margin-top:48px;text-align:left;max-width:600px;margin-left:auto;margin-right:auto;">
-          <p style="font-size:13px;color:#7a7590;margin:0 0 4px;">Built by</p>
-          <p style="font-size:20px;font-weight:700;color:#f0ebe0;margin:0 0 12px;">Jackye Clayton</p>
-          <p style="font-size:14px;color:#9992a8;line-height:1.6;margin:0;">15+ years in talent acquisition. Board member. HR Technology advisor. LinkedIn Learning instructor. I built WDIWF because I spent over a decade building the hiring machines for major tech companies — and I know exactly where the ghost jobs are hidden, where the budget actually lives, and what the public record says that no recruiter will tell you. This platform puts that intelligence in your hands.</p>
         </div>
 
         <div style="margin-top:48px;border-top:1px solid #1e1e2e;padding-top:24px;">
-          <p style="font-size:12px;color:#7a7590;margin:0;">Built on public records: FEC filings · SEC EDGAR · USAspending.gov · BLS wage data · OSHA · NLRB · Senate Lobbying Disclosures · ProPublica · OpenSecrets · CourtListener</p>
+          <p style="font-size:12px;color:#7a7590;margin:0;">Built on public records: FEC filings · SEC EDGAR · USAspending.gov · BLS · OSHA · NLRB · ProPublica · OpenSecrets · CourtListener</p>
         </div>
       </main>
     </div>
