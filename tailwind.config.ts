@@ -80,8 +80,8 @@ export default {
         },
       },
       fontFamily: {
-        display: ["'Playfair Display'", "Georgia", "serif"],
-        serif: ["'Playfair Display'", "Georgia", "serif"],
+        display: ["'DM Sans'", "system-ui", "sans-serif"],
+        serif: ["'DM Sans'", "system-ui", "sans-serif"],
         sans: ["'DM Sans'", "system-ui", "sans-serif"],
         mono: ["'DM Mono'", "'Courier New'", "monospace"],
       },
