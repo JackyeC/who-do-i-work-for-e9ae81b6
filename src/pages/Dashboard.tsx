@@ -22,6 +22,8 @@ import { PostPurchaseUpsell } from "@/components/PostPurchaseUpsell";
 import { DecisionCheckpoint } from "@/components/dashboard/DecisionCheckpoint";
 import { supabase } from "@/integrations/supabase/client";
 import { ClipboardCheck } from "lucide-react";
+import { OfferClarityWizard } from "@/components/offer-clarity/OfferClarityWizard";
+import { PremiumGate } from "@/components/PremiumGate";
 
 const TAB_TITLES: Record<string, string> = {
   overview: "Dashboard Overview",
@@ -113,11 +115,15 @@ export default function Dashboard() {
       }
       case "offers":
         return (
-          <div className="text-center py-12">
-            <ClipboardCheck className="w-10 h-10 text-muted-foreground mx-auto mb-3" />
-            <h3 className="text-lg font-semibold text-foreground mb-1">My Offer Checks</h3>
-            <p className="text-sm text-muted-foreground mb-4">View and compare your saved offer check reports.</p>
-            <a href="/my-offer-checks" className="text-sm text-primary underline">Go to My Offer Checks →</a>
+          <div className="space-y-6">
+            <PremiumGate feature="Offer Clarity Check" requiredTier="candidate">
+              <OfferClarityWizard />
+            </PremiumGate>
+            <div className="text-center">
+              <a href="/my-offer-checks" className="text-sm text-muted-foreground hover:text-primary underline transition-colors">
+                View past reports →
+              </a>
+            </div>
           </div>
         );
       case "alerts":
