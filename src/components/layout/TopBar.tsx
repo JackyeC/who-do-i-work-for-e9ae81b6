@@ -261,7 +261,7 @@ export function TopBar() {
       <header className="sticky top-0 z-50 border-b h-[64px] flex items-center px-4 lg:px-6" style={{ background: 'rgba(10,10,14,0.92)', backdropFilter: 'blur(20px)', borderColor: 'rgba(255,255,255,0.06)' }}>
         {/* Brand */}
         <Link to="/" className="flex flex-col shrink-0 mr-4">
-          <span className="font-serif text-foreground leading-none whitespace-nowrap flex items-center gap-1.5" style={{ fontSize: '20px', fontWeight: 700 }}>
+          <span className="font-sans text-foreground leading-none whitespace-nowrap flex items-center gap-1.5" style={{ fontSize: '20px', fontWeight: 800, letterSpacing: '-0.5px' }}>
             Who Do I Work For?
             <span className="font-sans text-[11px] tracking-wider uppercase px-1.5 py-0.5 bg-primary/10 text-primary border border-primary/20 rounded-sm leading-none font-semibold">Beta</span>
           </span>
