@@ -4,13 +4,17 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import {
   Users, User, Briefcase, DollarSign, ArrowRightLeft,
-  EyeOff, Shield, ChevronRight, Vote, Flag
+  EyeOff, Shield, ChevronRight, Vote, Flag, ChevronDown
 } from "lucide-react";
 import { Link } from "react-router-dom";
 import { formatCurrency } from "@/data/sampleData";
 import { EntityDetailDrawer, type DarkMoneyEntity } from "@/components/company/EntityDetailDrawer";
 import { PartyBadge } from "@/components/PartyBadge";
 import { processExecutives, processBoardMembers } from "@/lib/executive-utils";
+import { splitByVerification, hasStaleRecords } from "@/lib/freshness-utils";
+import { FreshnessLabel } from "@/components/company/FreshnessLabel";
+import { InlineReportForm } from "@/components/company/InlineReportForm";
+import { StalenessWarning } from "@/components/company/StalenessWarning";
 
 interface Executive {
   id: string;
@@ -20,6 +24,7 @@ interface Executive {
   photo_url?: string | null;
   verification_status?: string | null;
   departed_at?: string | null;
+  last_verified_at?: string | null;
 }
 
 interface Candidate {
@@ -69,6 +74,7 @@ interface BoardMember {
   start_year?: number | null;
   photo_url?: string | null;
   source?: string | null;
+  last_verified_at?: string | null;
 }
 
 interface LeadershipInfluenceSectionProps {
@@ -91,7 +97,7 @@ interface LeadershipInfluenceSectionProps {
 function SourceNote() {
   return (
     <p className="text-[11px] text-[#3d3a4a] mt-2" style={{ fontFamily: "'DM Sans', sans-serif" }}>
-      Leadership data sourced from SEC proxy statements and public disclosures.{" "}
+      Leadership data sourced from SEC proxy statements, public disclosures, and 8-K filings.{" "}
       <Link to="/request-correction" className="underline hover:text-primary transition-colors">
         Found an error? Report it →
       </Link>
@@ -116,17 +122,109 @@ export function LeadershipInfluenceSection({
   onContractsClick,
 }: LeadershipInfluenceSectionProps) {
   const [selectedEntity, setSelectedEntity] = useState<DarkMoneyEntity | null>(null);
+  const [reportingPerson, setReportingPerson] = useState<string | null>(null);
+  const [showUnverifiedExecs, setShowUnverifiedExecs] = useState(false);
+  const [showUnverifiedBoard, setShowUnverifiedBoard] = useState(false);
 
   const processedExecs = useMemo(() => processExecutives(executives, companyName), [executives, companyName]);
   const processedBoard = useMemo(() => processBoardMembers(boardMembers, companyName), [boardMembers, companyName]);
 
-  const hasAnyData = processedExecs.length > 0 || candidates.length > 0 || revolvingDoor.length > 0 || darkMoney.length > 0 || processedBoard.length > 0;
+  const { confirmed: confirmedExecs, unverified: unverifiedExecs } = useMemo(
+    () => splitByVerification(processedExecs),
+    [processedExecs]
+  );
+  const { confirmed: confirmedBoard, unverified: unverifiedBoard } = useMemo(
+    () => splitByVerification(processedBoard),
+    [processedBoard]
+  );
 
-  // Show section even if only pending states — but not if truly nothing
+  const execsStale = useMemo(() => hasStaleRecords(processedExecs), [processedExecs]);
+  const boardStale = useMemo(() => hasStaleRecords(processedBoard), [processedBoard]);
+
+  const hasAnyData = processedExecs.length > 0 || candidates.length > 0 || revolvingDoor.length > 0 || darkMoney.length > 0 || processedBoard.length > 0;
   const showSection = hasAnyData || executives.length === 0;
   if (!showSection && candidates.length === 0 && revolvingDoor.length === 0 && darkMoney.length === 0) return null;
 
   const totalParty = partyBreakdown.reduce((s, p) => s + p.amount, 0);
+
+  const renderExecRow = (exec: Executive) => (
+    <div key={exec.id}>
+      <button
+        onClick={() => onExecutiveClick(exec)}
+        className="flex items-center justify-between w-full py-3 px-1 text-left hover:bg-muted/50 rounded-md transition-colors group"
+      >
+        <div className="flex items-center gap-3 min-w-0">
+          {exec.photo_url ? (
+            <img src={exec.photo_url} alt={exec.name} className="w-9 h-9 rounded-full object-cover border border-border shrink-0" crossOrigin="anonymous" referrerPolicy="no-referrer" />
+          ) : (
+            <div className="w-9 h-9 rounded-full bg-muted flex items-center justify-center shrink-0">
+              <User className="w-4 h-4 text-muted-foreground" />
+            </div>
+          )}
+          <div className="min-w-0">
+            <p className="text-sm font-semibold text-foreground truncate">{exec.name}</p>
+            <p className="text-xs text-muted-foreground truncate">{exec.title}</p>
+            <FreshnessLabel lastVerifiedAt={exec.last_verified_at} />
+          </div>
+        </div>
+        <div className="flex items-center gap-2 shrink-0">
+          {exec.total_donations > 0 && (
+            <Badge variant="outline" className="text-xs text-[hsl(var(--civic-yellow))] border-[hsl(var(--civic-yellow))]/30">
+              {formatCurrency(exec.total_donations)}
+            </Badge>
+          )}
+          <button
+            onClick={(e) => { e.stopPropagation(); setReportingPerson(reportingPerson === exec.name ? null : exec.name); }}
+            className="text-[11px] text-[#3d3a4a] hover:text-primary transition-colors flex items-center gap-0.5"
+            style={{ fontFamily: "'DM Sans', sans-serif" }}
+            title="Report incorrect data"
+          >
+            <Flag className="w-3 h-3" />
+          </button>
+          <ChevronRight className="w-4 h-4 text-muted-foreground group-hover:text-foreground transition-colors" />
+        </div>
+      </button>
+      {reportingPerson === exec.name && (
+        <InlineReportForm
+          personName={exec.name}
+          companyName={companyName}
+          onClose={() => setReportingPerson(null)}
+        />
+      )}
+    </div>
+  );
+
+  const renderBoardRow = (member: BoardMember) => (
+    <div key={member.id}>
+      <div className="flex items-center justify-between py-3 px-1">
+        <div className="min-w-0">
+          <p className="text-sm font-semibold text-foreground truncate">{member.name}</p>
+          <p className="text-xs text-muted-foreground truncate">{member.title}</p>
+          <FreshnessLabel lastVerifiedAt={member.last_verified_at} />
+        </div>
+        <div className="flex items-center gap-2 shrink-0">
+          {member.is_independent && (
+            <Badge variant="outline" className="text-xs text-[hsl(var(--civic-green))]">Independent</Badge>
+          )}
+          <button
+            onClick={() => setReportingPerson(reportingPerson === member.name ? null : member.name)}
+            className="text-[11px] text-[#3d3a4a] hover:text-primary transition-colors flex items-center gap-0.5"
+            style={{ fontFamily: "'DM Sans', sans-serif" }}
+            title="Report incorrect data"
+          >
+            <Flag className="w-3 h-3" />
+          </button>
+        </div>
+      </div>
+      {reportingPerson === member.name && (
+        <InlineReportForm
+          personName={member.name}
+          companyName={companyName}
+          onClose={() => setReportingPerson(null)}
+        />
+      )}
+    </div>
+  );
 
   return (
     <section className="mb-6 space-y-4">
@@ -141,62 +239,56 @@ export function LeadershipInfluenceSection({
           <CardTitle className="flex items-center gap-2 text-base">
             <Briefcase className="w-4 h-4 text-primary" />
             Executive Leadership
-            {processedExecs.length > 0 && (
-              <Badge variant="secondary" className="text-xs ml-auto">{processedExecs.length}</Badge>
+            {confirmedExecs.length > 0 && (
+              <Badge variant="secondary" className="text-xs ml-auto">{confirmedExecs.length}</Badge>
             )}
           </CardTitle>
         </CardHeader>
         <CardContent className="pt-0">
-          {processedExecs.length === 0 && (
+          {execsStale && <StalenessWarning companyName={companyName} />}
+
+          {confirmedExecs.length === 0 && unverifiedExecs.length === 0 && (
             <p className="text-sm text-muted-foreground py-2">
               Executive data pending — sourced from SEC proxy filings
             </p>
           )}
-          {processedExecs.length > 0 && (
+          {confirmedExecs.length > 0 && (
             <div className="divide-y divide-border">
-              {processedExecs.map((exec) => (
-                <button
-                  key={exec.id}
-                  onClick={() => onExecutiveClick(exec)}
-                  className="flex items-center justify-between w-full py-3 px-1 text-left hover:bg-muted/50 rounded-md transition-colors group"
-                >
-                  <div className="flex items-center gap-3 min-w-0">
-                    {exec.photo_url ? (
-                      <img src={exec.photo_url} alt={exec.name} className="w-9 h-9 rounded-full object-cover border border-border shrink-0" crossOrigin="anonymous" referrerPolicy="no-referrer" />
-                    ) : (
-                      <div className="w-9 h-9 rounded-full bg-muted flex items-center justify-center shrink-0">
-                        <User className="w-4 h-4 text-muted-foreground" />
-                      </div>
-                    )}
-                    <div className="min-w-0">
-                      <p className="text-sm font-semibold text-foreground truncate">{exec.name}</p>
-                      <p className="text-xs text-muted-foreground truncate">{exec.title}</p>
-                    </div>
-                  </div>
-                  <div className="flex items-center gap-2 shrink-0">
-                    {exec.total_donations > 0 && (
-                      <Badge variant="outline" className="text-xs text-[hsl(var(--civic-yellow))] border-[hsl(var(--civic-yellow))]/30">
-                        {formatCurrency(exec.total_donations)}
-                      </Badge>
-                    )}
-                    <Link
-                      to={`/request-correction?company=${encodeURIComponent(companyName)}&person=${encodeURIComponent(exec.name)}`}
-                      onClick={(e) => e.stopPropagation()}
-                      className="text-[11px] text-[#3d3a4a] hover:text-primary transition-colors flex items-center gap-0.5"
-                      style={{ fontFamily: "'DM Sans', sans-serif" }}
-                      title="Report incorrect data"
-                    >
-                      <Flag className="w-3 h-3" />
-                    </Link>
-                    <ChevronRight className="w-4 h-4 text-muted-foreground group-hover:text-foreground transition-colors" />
-                  </div>
-                </button>
-              ))}
+              {confirmedExecs.map(renderExecRow)}
             </div>
           )}
-          {processedExecs.length >= 1 && processedExecs.length <= 2 && (
+          {confirmedExecs.length >= 1 && confirmedExecs.length <= 2 && (
             <p className="text-xs text-muted-foreground mt-2">Additional leadership data pending</p>
           )}
+
+          {/* Unverified executives */}
+          {unverifiedExecs.length > 0 && (
+            <div className="mt-3 rounded-lg" style={{ border: "1px solid rgba(240,192,64,0.3)" }}>
+              <button
+                onClick={() => setShowUnverifiedExecs(!showUnverifiedExecs)}
+                className="w-full flex items-center justify-between px-3 py-2 text-left hover:bg-muted/30 rounded-lg transition-colors"
+              >
+                <span className="text-xs font-medium" style={{ color: "#f0c040", fontFamily: "'DM Sans', sans-serif" }}>
+                  Unverified — may no longer be current ({unverifiedExecs.length})
+                </span>
+                <ChevronDown
+                  className="w-4 h-4 transition-transform"
+                  style={{ color: "#f0c040", transform: showUnverifiedExecs ? "rotate(180deg)" : "rotate(0deg)" }}
+                />
+              </button>
+              {showUnverifiedExecs && (
+                <div className="px-3 pb-3">
+                  <p className="text-[11px] text-muted-foreground mb-2" style={{ fontFamily: "'DM Sans', sans-serif" }}>
+                    These individuals appeared in filings but current status could not be confirmed. Verify independently.
+                  </p>
+                  <div className="divide-y divide-border/50">
+                    {unverifiedExecs.map(renderExecRow)}
+                  </div>
+                </div>
+              )}
+            </div>
+          )}
+
           <SourceNote />
         </CardContent>
       </Card>
@@ -207,42 +299,53 @@ export function LeadershipInfluenceSection({
           <CardTitle className="flex items-center gap-2 text-base">
             <Shield className="w-4 h-4 text-primary" />
             Board of Directors
-            {processedBoard.length > 0 && (
-              <Badge variant="secondary" className="text-xs ml-auto">{processedBoard.length}</Badge>
+            {confirmedBoard.length > 0 && (
+              <Badge variant="secondary" className="text-xs ml-auto">{confirmedBoard.length}</Badge>
             )}
           </CardTitle>
         </CardHeader>
         <CardContent className="pt-0">
-          {processedBoard.length === 0 && (
+          {boardStale && <StalenessWarning companyName={companyName} />}
+
+          {confirmedBoard.length === 0 && unverifiedBoard.length === 0 && (
             <p className="text-sm text-muted-foreground py-2">
               Board composition data pending — sourced from SEC proxy filings
             </p>
           )}
-          {processedBoard.length > 0 && (
+          {confirmedBoard.length > 0 && (
             <div className="divide-y divide-border">
-              {processedBoard.map((member) => (
-                <div key={member.id} className="flex items-center justify-between py-3 px-1">
-                  <div className="min-w-0">
-                    <p className="text-sm font-semibold text-foreground truncate">{member.name}</p>
-                    <p className="text-xs text-muted-foreground truncate">{member.title}</p>
-                  </div>
-                  <div className="flex items-center gap-2 shrink-0">
-                    {member.is_independent && (
-                      <Badge variant="outline" className="text-xs text-[hsl(var(--civic-green))]">Independent</Badge>
-                    )}
-                    <Link
-                      to={`/request-correction?company=${encodeURIComponent(companyName)}&person=${encodeURIComponent(member.name)}`}
-                      className="text-[11px] text-[#3d3a4a] hover:text-primary transition-colors flex items-center gap-0.5"
-                      style={{ fontFamily: "'DM Sans', sans-serif" }}
-                      title="Report incorrect data"
-                    >
-                      <Flag className="w-3 h-3" />
-                    </Link>
-                  </div>
-                </div>
-              ))}
+              {confirmedBoard.map(renderBoardRow)}
             </div>
           )}
+
+          {/* Unverified board members */}
+          {unverifiedBoard.length > 0 && (
+            <div className="mt-3 rounded-lg" style={{ border: "1px solid rgba(240,192,64,0.3)" }}>
+              <button
+                onClick={() => setShowUnverifiedBoard(!showUnverifiedBoard)}
+                className="w-full flex items-center justify-between px-3 py-2 text-left hover:bg-muted/30 rounded-lg transition-colors"
+              >
+                <span className="text-xs font-medium" style={{ color: "#f0c040", fontFamily: "'DM Sans', sans-serif" }}>
+                  Unverified — may no longer be current ({unverifiedBoard.length})
+                </span>
+                <ChevronDown
+                  className="w-4 h-4 transition-transform"
+                  style={{ color: "#f0c040", transform: showUnverifiedBoard ? "rotate(180deg)" : "rotate(0deg)" }}
+                />
+              </button>
+              {showUnverifiedBoard && (
+                <div className="px-3 pb-3">
+                  <p className="text-[11px] text-muted-foreground mb-2" style={{ fontFamily: "'DM Sans', sans-serif" }}>
+                    These individuals appeared in filings but current status could not be confirmed. Verify independently.
+                  </p>
+                  <div className="divide-y divide-border/50">
+                    {unverifiedBoard.map(renderBoardRow)}
+                  </div>
+                </div>
+              )}
+            </div>
+          )}
+
           <SourceNote />
         </CardContent>
       </Card>
@@ -276,7 +379,6 @@ export function LeadershipInfluenceSection({
               </button>
             )}
 
-            {/* Party bar */}
             {partyBreakdown.length > 0 && totalParty > 0 && (
               <div className="pt-1">
                 <p className="text-xs text-muted-foreground mb-2">Party Split</p>
@@ -285,10 +387,7 @@ export function LeadershipInfluenceSection({
                     <div
                       key={p.party}
                       className="h-full transition-all"
-                      style={{
-                        width: `${(p.amount / totalParty) * 100}%`,
-                        backgroundColor: p.color,
-                      }}
+                      style={{ width: `${(p.amount / totalParty) * 100}%`, backgroundColor: p.color }}
                       title={`${p.party}: ${formatCurrency(p.amount)}`}
                     />
                   ))}
@@ -333,18 +432,14 @@ export function LeadershipInfluenceSection({
                   </div>
                   <div className="flex items-center gap-2 shrink-0">
                     <span className="text-sm font-mono font-medium text-foreground">{formatCurrency(c.amount)}</span>
-                    {c.flagged && (
-                      <Badge variant="destructive" className="text-xs">Flagged</Badge>
-                    )}
+                    {c.flagged && <Badge variant="destructive" className="text-xs">Flagged</Badge>}
                     <ChevronRight className="w-4 h-4 text-muted-foreground group-hover:text-foreground" />
                   </div>
                 </button>
               ))}
             </div>
             {candidates.length > 10 && (
-              <p className="text-xs text-muted-foreground text-center mt-2">
-                + {candidates.length - 10} more candidates
-              </p>
+              <p className="text-xs text-muted-foreground text-center mt-2">+ {candidates.length - 10} more candidates</p>
             )}
           </CardContent>
         </Card>

@@ -6,6 +6,7 @@ import { Badge } from "@/components/ui/badge";
 import { Users } from "lucide-react";
 import { Link } from "react-router-dom";
 import { processExecutives, processBoardMembers } from "@/lib/executive-utils";
+import { FreshnessLabel } from "@/components/company/FreshnessLabel";
 
 interface Props {
   companyId: string;
@@ -18,7 +19,7 @@ export function LeadershipSnapshot({ companyId, companyName }: Props) {
     queryFn: async () => {
       const { data } = await supabase
         .from("company_executives")
-        .select("name, title, total_donations, departed_at, verification_status")
+        .select("name, title, total_donations, departed_at, verification_status, last_verified_at")
         .eq("company_id", companyId)
         .order("total_donations", { ascending: false })
         .limit(12);
@@ -32,7 +33,7 @@ export function LeadershipSnapshot({ companyId, companyName }: Props) {
     queryFn: async () => {
       const { data } = await supabase
         .from("board_members")
-        .select("name, title, is_independent, departed_at, verification_status")
+        .select("name, title, is_independent, departed_at, verification_status, last_verified_at")
         .eq("company_id", companyId)
         .limit(12);
       return data || [];
@@ -62,6 +63,7 @@ export function LeadershipSnapshot({ companyId, companyName }: Props) {
                   <div>
                     <p className="text-sm font-medium text-foreground">{exec.name}</p>
                     <p className="text-xs text-muted-foreground">{exec.title}</p>
+                    <FreshnessLabel lastVerifiedAt={(exec as any).last_verified_at} />
                   </div>
                   {exec.total_donations > 0 && (
                     <Badge variant="outline" className="text-xs font-mono">
@@ -85,6 +87,7 @@ export function LeadershipSnapshot({ companyId, companyName }: Props) {
                   <div>
                     <p className="text-sm font-medium text-foreground">{member.name}</p>
                     <p className="text-xs text-muted-foreground">{member.title}</p>
+                    <FreshnessLabel lastVerifiedAt={(member as any).last_verified_at} />
                   </div>
                   {member.is_independent && (
                     <Badge variant="outline" className="text-xs text-[hsl(var(--civic-green))]">Independent</Badge>
@@ -97,7 +100,7 @@ export function LeadershipSnapshot({ companyId, companyName }: Props) {
       )}
 
       <p className="text-[11px] text-[#3d3a4a]" style={{ fontFamily: "'DM Sans', sans-serif" }}>
-        Leadership data sourced from SEC proxy statements and public disclosures.{" "}
+        Leadership data sourced from SEC proxy statements, public disclosures, and 8-K filings.{" "}
         <Link to="/request-correction" className="underline hover:text-primary transition-colors">
           Found an error? Report it →
         </Link>
