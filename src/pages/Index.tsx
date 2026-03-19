@@ -48,22 +48,6 @@ const Index = forwardRef<HTMLDivElement>((_, ref) => {
     if (!rivalries) loadRivalries().then(setRivalries);
   };
 
-  const handleCheckout = async (priceId: string) => {
-    if (!user) {
-      toast.error("Sign in first to continue.", { action: { label: "Sign in", onClick: () => navigate("/login") } });
-      return;
-    }
-    setCheckoutLoading(priceId);
-    try {
-      const { data, error } = await supabase.functions.invoke("create-checkout", { body: { priceId } });
-      if (error) throw error;
-      if (data?.url) window.open(data.url, "_blank");
-    } catch (err: any) {
-      toast.error(err.message || "Checkout failed");
-    } finally {
-      setCheckoutLoading(null);
-    }
-  };
 
   return (
     <div ref={ref} className="flex flex-col min-h-screen bg-background">
