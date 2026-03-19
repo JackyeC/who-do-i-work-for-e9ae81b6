@@ -110,10 +110,7 @@ export default function EarlyAccess() {
     );
   };
 
-  if (IS_LAUNCHED) {
-    window.location.href = "/quiz";
-    return null;
-  }
+  // /join always shows the signup form — no redirect
 
   return (
     <div
