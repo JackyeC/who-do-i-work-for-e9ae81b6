@@ -154,13 +154,31 @@ export function TopBar() {
         }
       }
 
+      // NEW: FEC donation alerts from executive_recipients
+      const { data: recentDonations } = await supabase
+        .from("executive_recipients")
+        .select("name, party, amount, executive_id, company_executives!inner(name, title, company_id, companies!inner(name))")
+        .order("amount", { ascending: false })
+        .limit(5);
+      if (recentDonations && recentDonations.length > 0) {
+        for (const d of recentDonations.slice(0, 3)) {
+          const companyName = (d as any).company_executives?.companies?.name ?? "—";
+          const execName = (d as any).company_executives?.name ?? "—";
+          items.push({ text: `${companyName}: New FEC filing — ${execName} donated $${(d.amount || 0).toLocaleString()} to ${d.name}` });
+        }
+      }
+
+      // NEW: Cause flag alerts (amber color for flagged causes)
       // PLACEHOLDER — replace with live data when pipeline ready
-      if (items.length < 5) {
+      if (items.length < 8) {
         items.push({ text: "Tesla: Insider Score · 74/100 · High Concentration", color: "#ff6b35" });
         items.push({ text: "Airbnb: Insider Score · 31/100 · Open Network", color: "#47ffb3" });
         items.push({ text: "Meta Platforms: 2 new related-party disclosures found — SEC Proxy Filing" });
         items.push({ text: "Goldman Sachs: Insider Score · 68/100 · Moderate Concentration", color: "#f0c040" });
         items.push({ text: "Boeing: Board interlock detected — ProPublica" });
+        // PLACEHOLDER — donation ticker alerts
+        items.push({ text: "Meta Platforms: Leadership giving flagged — Mark Zuckerberg → Heritage Foundation (Project 2025)", color: "#f0c040" });
+        items.push({ text: "Amazon: New FEC filing — Andy Jassy donated $5,000 to Senate Leadership Fund" });
       }
 
       if (items.length < 3) {
