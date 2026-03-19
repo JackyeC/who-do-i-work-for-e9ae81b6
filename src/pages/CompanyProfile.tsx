@@ -101,7 +101,7 @@ export default function CompanyProfile() {
     queryKey: ["company-executives", dbCompanyId],
     queryFn: async () => {
       const { data } = await supabase.from("company_executives").select("*").eq("company_id", dbCompanyId!).order("total_donations", { ascending: false });
-      return data || [];
+      return (data || []).map((e: any) => ({ ...e, last_verified_at: e.last_verified_at || null }));
     },
     enabled: !!dbCompanyId, refetchInterval: pollInterval,
   });
