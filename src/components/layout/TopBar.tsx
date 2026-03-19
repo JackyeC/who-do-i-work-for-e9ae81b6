@@ -347,7 +347,7 @@ export function TopBar() {
           {isDemoSafe && (
             <button
               onClick={canToggle ? toggleDemoSafe : undefined}
-              className="hidden lg:flex items-center gap-1.5 font-mono text-[9px] tracking-wider uppercase px-2 py-1 border border-civic-green/60 text-civic-green bg-civic-green/10 cursor-pointer hover:bg-civic-green/20 transition-colors whitespace-nowrap"
+              className="hidden lg:flex items-center gap-1.5 font-sans text-caption tracking-wider uppercase px-2 py-1 border border-civic-green/60 text-civic-green bg-civic-green/10 cursor-pointer hover:bg-civic-green/20 transition-colors whitespace-nowrap"
               title="Demo Safe Mode"
             >
               <Shield className="w-3 h-3" />
@@ -355,7 +355,7 @@ export function TopBar() {
             </button>
           )}
           {user && !isDemoSafe && (
-            <div className="hidden lg:flex font-mono text-[9px] tracking-wider uppercase px-2 py-1 border border-primary/40 text-primary whitespace-nowrap">
+            <div className="hidden lg:flex font-sans text-caption tracking-wider uppercase px-2 py-1 border border-primary/40 text-primary whitespace-nowrap">
               Pro
             </div>
           )}
@@ -366,8 +366,7 @@ export function TopBar() {
           ) : (
             <Link
               to="/quiz"
-              className="hidden sm:inline-flex whitespace-nowrap"
-              style={{ fontFamily: "'DM Sans', sans-serif", fontSize: "12px", color: "#f0c040" }}
+              className="hidden sm:inline-flex whitespace-nowrap font-sans text-label text-primary hover-btn"
             >
               Get your lens →
             </Link>
@@ -378,17 +377,17 @@ export function TopBar() {
           {user ? (
             <button
               onClick={signOut}
-              className="font-mono text-[10px] tracking-wider text-muted-foreground hover:text-foreground flex items-center gap-1.5 whitespace-nowrap"
+              className="font-sans text-caption text-muted-foreground hover:text-foreground flex items-center gap-1.5 whitespace-nowrap transition-colors"
             >
-              <LogOut className="w-3 h-3" />
+              <LogOut className="w-3.5 h-3.5" />
               <span className="hidden lg:inline">Sign Out</span>
             </button>
           ) : (
             <Link
               to="/login"
-              className="bg-primary text-primary-foreground px-4 py-1.5 font-mono text-[10px] font-semibold tracking-wider uppercase hover:brightness-110 transition-all flex items-center gap-1.5 whitespace-nowrap"
+              className="bg-primary text-primary-foreground px-5 py-2 font-sans text-btn rounded-full hover:brightness-110 transition-all flex items-center gap-1.5 whitespace-nowrap"
             >
-              <LogIn className="w-3 h-3" />
+              <LogIn className="w-3.5 h-3.5" />
               Sign In
             </Link>
           )}
