@@ -217,8 +217,8 @@ export function TopBar() {
 
   /* Primary nav items (desktop) */
   const PRIMARY_NAV = [
-    { id: "intelligence", label: "My Intelligence", icon: BarChart3, onClick: handleMyIntelligence, matchPaths: ["/dashboard"] },
-    { id: "signals", label: "Live Signals", icon: Radio, path: "/signal-alerts", matchPaths: ["/signal-alerts"] },
+    { id: "intelligence", label: "My Intel", icon: BarChart3, onClick: handleMyIntelligence, matchPaths: ["/dashboard"] },
+    { id: "signals", label: "Signals", icon: Radio, path: "/signal-alerts", matchPaths: ["/signal-alerts"] },
     { id: "career-map", label: "Career Map", icon: Compass, path: "/career-intelligence", matchPaths: ["/career-intelligence", "/career-map"], auth: true },
   ];
 
