@@ -499,7 +499,7 @@ export default function Quiz() {
   return (
     <div
       className="fixed inset-0 overflow-hidden"
-      style={{ background: "#0d0c0f", fontFamily: "'DM Sans', sans-serif" }}
+      style={{ background: "#0a0a0e", fontFamily: "'DM Sans', sans-serif" }}
     >
       {/* Grain overlay */}
       <svg
