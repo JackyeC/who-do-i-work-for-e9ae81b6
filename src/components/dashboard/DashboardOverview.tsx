@@ -1,6 +1,7 @@
 import { useAuth } from "@/contexts/AuthContext";
 import { usePersona, PERSONA_NAMES, type PersonaId } from "@/hooks/use-persona";
 import { useDashboardBriefing } from "@/hooks/use-dashboard-briefing";
+import { useGNews } from "@/hooks/use-gnews";
 import { Link, useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
 import { Search, ArrowRight, ExternalLink } from "lucide-react";
@@ -90,6 +91,7 @@ export function DashboardOverview({ onNavigate }: DashboardOverviewProps) {
   const { user } = useAuth();
   const { persona, personaName, hasTakenQuiz } = usePersona();
   const { data, isLoading } = useDashboardBriefing();
+  const { data: gnewsArticles } = useGNews();
   const navigate = useNavigate();
   const [searchQuery, setSearchQuery] = useState("");
 
@@ -342,33 +344,37 @@ export function DashboardOverview({ onNavigate }: DashboardOverviewProps) {
           </BriefingCard>
         </motion.div>
 
-        {/* 3B — World of Work Today */}
-        <motion.div {...anim(0.18)}>
-          <BriefingCard className="h-full">
-            <h3 style={{ fontFamily: "'DM Sans', sans-serif", fontSize: "14px", fontWeight: 700, color: "#f0ebe0", marginBottom: "12px" }}>
-              World of Work — Today
-            </h3>
-            {data?.news && data.news.length > 0 ? (
+        {/* 3B — World of Work Today (GNews) */}
+        {gnewsArticles && gnewsArticles.length > 0 && (
+          <motion.div {...anim(0.18)}>
+            <BriefingCard className="h-full">
+              <h3 style={{ fontFamily: "'DM Sans', sans-serif", fontSize: "14px", fontWeight: 700, color: "#f0ebe0", marginBottom: "12px" }}>
+                World of Work — Today
+              </h3>
               <div className="space-y-2.5">
-                {data.news.map((item: any) => {
-                  const relTime = item.published_at
-                    ? formatDistanceToNow(new Date(item.published_at), { addSuffix: true })
-                    : "";
+                {gnewsArticles.map((item, i) => {
+                  const relTime = formatDistanceToNow(new Date(item.publishedAt), { addSuffix: true });
                   return (
-                    <div key={item.id} className="flex items-start gap-2.5">
+                    <div key={i} className="flex items-start gap-2.5">
                       <span
                         className="shrink-0 rounded-full text-[9px] font-bold uppercase px-1.5 py-0.5 mt-0.5"
                         style={{
-                          background: `${sourceBadgeColor(item.source_name || "")}20`,
-                          color: sourceBadgeColor(item.source_name || ""),
+                          background: `${sourceBadgeColor(item.source.name)}20`,
+                          color: sourceBadgeColor(item.source.name),
                         }}
                       >
-                        {(item.source_name || "NEWS").split(".")[0].toUpperCase().slice(0, 8)}
+                        {item.source.name.split(".")[0].toUpperCase().slice(0, 8)}
                       </span>
                       <div className="min-w-0">
-                        <p style={{ fontFamily: "'DM Sans', sans-serif", fontSize: "13px", fontWeight: 500, color: "#f0ebe0", lineHeight: 1.4 }}>
-                          {item.headline.length > 80 ? item.headline.slice(0, 80) + "…" : item.headline}
-                        </p>
+                        <a
+                          href={item.url}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="hover:underline"
+                          style={{ fontFamily: "'DM Sans', sans-serif", fontSize: "13px", fontWeight: 500, color: "#f0ebe0", lineHeight: 1.4 }}
+                        >
+                          {item.title.length > 80 ? item.title.slice(0, 80) + "…" : item.title}
+                        </a>
                         <p style={{ fontFamily: "'DM Sans', sans-serif", fontSize: "11px", color: "#7a7590", marginTop: "2px" }}>
                           {relTime}
                         </p>
@@ -376,21 +382,10 @@ export function DashboardOverview({ onNavigate }: DashboardOverviewProps) {
                     </div>
                   );
                 })}
-                <Link
-                  to="/signal-alerts"
-                  className="text-xs font-medium mt-2 flex items-center gap-1 transition-colors"
-                  style={{ color: "#f0c040" }}
-                >
-                  Full feed <ArrowRight className="w-3 h-3" />
-                </Link>
               </div>
-            ) : (
-              <p style={{ fontFamily: "'DM Sans', sans-serif", fontSize: "13px", color: "#7a7590" }}>
-                No new labor and workplace news in the last 48 hours.
-              </p>
-            )}
-          </BriefingCard>
-        </motion.div>
+            </BriefingCard>
+          </motion.div>
+        )}
       </div>
 
       {/* ═══ SECTION 4 — Companies You're Watching ═══ */}
