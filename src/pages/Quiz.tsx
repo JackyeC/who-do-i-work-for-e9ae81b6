@@ -868,7 +868,8 @@ function ResultsScreen({
         style={{
           fontFamily: "'DM Sans', sans-serif",
           fontWeight: 700,
-          fontSize: "clamp(38px, 7vw, 58px)",
+          fontSize: "clamp(32px, 5vw, 56px)",
+          letterSpacing: "-1.5px",
           color: "#f0ebe0",
           textAlign: "center",
           lineHeight: 1.1,
