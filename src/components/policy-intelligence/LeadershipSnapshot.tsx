@@ -19,7 +19,7 @@ export function LeadershipSnapshot({ companyId, companyName }: Props) {
     queryFn: async () => {
       const { data } = await supabase
         .from("company_executives")
-        .select("name, title, total_donations, departed_at, verification_status")
+        .select("name, title, total_donations, departed_at, verification_status, last_verified_at")
         .eq("company_id", companyId)
         .order("total_donations", { ascending: false })
         .limit(12);
