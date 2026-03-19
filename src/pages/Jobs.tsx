@@ -311,7 +311,7 @@ export default function Jobs() {
     }, 300);
   }, []);
 
-  const sentinelRef = useInfiniteScroll(loadMore, hasMore, loadingMore);
+  
 
   const companiesWithJobs = useMemo(() => {
     if (!filtered) return 0;
