@@ -14,18 +14,18 @@ export function CompanyCard({ company }: CompanyCardProps) {
   const { ctaCopy } = usePersona();
   return (
     <Link to={`/company/${company.id}`}>
-      <Card className="group hover:shadow-elevated transition-all duration-200 hover:border-primary/15 cursor-pointer h-full">
-        <CardContent className="p-5">
+      <Card className="group hover:border-primary/30 transition-all duration-200 cursor-pointer h-full hover-lift" style={{ borderRadius: '16px', padding: 0 }}>
+        <CardContent className="p-6">
           <div className="flex items-start justify-between gap-3">
             <div className="flex items-start gap-3 min-w-0">
               <div className="w-10 h-10 rounded-xl bg-muted/60 flex items-center justify-center shrink-0">
                 <Building2 className="w-5 h-5 text-muted-foreground/70" />
               </div>
               <div className="min-w-0">
-                <h3 className="font-semibold text-foreground group-hover:text-primary transition-colors truncate">
+                <h3 className="font-serif text-foreground group-hover:text-primary transition-colors truncate" style={{ fontSize: '20px', fontWeight: 600 }}>
                   {company.name}
                 </h3>
-                <p className="text-caption text-muted-foreground">
+                <p className="text-label text-muted-foreground">
                   {company.industry} · {company.state}
                 </p>
               </div>
@@ -38,12 +38,12 @@ export function CompanyCard({ company }: CompanyCardProps) {
               <InsiderScorePill score={company.insiderScore ?? null} />
             </div>
             <div className="flex items-center gap-2">
-              <span className="text-micro text-muted-foreground">
+              <span className="text-caption text-muted-foreground">
                 {company.totalPacSpending > 0
                   ? `PAC: ${formatCurrency(company.totalPacSpending)}`
                   : "No PAC spending"}
               </span>
-              <span className="text-[10px] text-primary font-medium opacity-0 group-hover:opacity-100 transition-opacity">{ctaCopy} →</span>
+              <span className="text-caption text-primary font-medium opacity-0 group-hover:opacity-100 transition-opacity">{ctaCopy} →</span>
             </div>
           </div>
         </CardContent>
