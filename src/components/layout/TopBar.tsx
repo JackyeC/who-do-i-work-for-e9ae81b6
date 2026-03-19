@@ -85,27 +85,87 @@ export function TopBar() {
   const { hasTakenQuiz } = usePersona();
 
   // Live signal intelligence ticker
+  // Ticker item with optional inline color for score highlights
+  type TickerItem = { text: string; color?: string };
+
+  function getInsiderColor(score: number): string {
+    if (score <= 39) return "#47ffb3";
+    if (score <= 69) return "#f0c040";
+    return "#ff6b35";
+  }
+  function getInsiderLabel(score: number): string {
+    if (score <= 39) return "Open Network";
+    if (score <= 69) return "Moderate Concentration";
+    return "High Concentration";
+  }
+
   const { data: tickerItems } = useQuery({
     queryKey: ["signal-ticker"],
     queryFn: async () => {
       const DIRECTION_ICON: Record<string, string> = { increase: "↑", decrease: "↓", stable: "—" };
+      const items: TickerItem[] = [];
+
+      // Existing: signal scans
       const { data: signals } = await supabase
         .from("company_signal_scans")
         .select("signal_category, value_normalized, direction, companies!inner(name)")
         .order("scan_timestamp", { ascending: false })
         .limit(10);
-      const items: string[] = [];
       if (signals && signals.length > 0) {
         for (const s of signals) {
           const companyName = (s.companies as any)?.name ?? "—";
           const statement = getUiStatement(s.signal_category, s.value_normalized ?? "not_disclosed");
           const arrow = DIRECTION_ICON[s.direction ?? "stable"] ?? "—";
-          items.push(`${companyName}: ${statement} ${arrow}`);
+          items.push({ text: `${companyName}: ${statement} ${arrow}` });
         }
       }
+
+      // NEW TYPE 1: Insider Score updates from companies table
+      const { data: insiderCompanies } = await supabase
+        .from("companies")
+        .select("name, insider_score")
+        .not("insider_score", "is", null)
+        .order("updated_at", { ascending: false })
+        .limit(5);
+      if (insiderCompanies && insiderCompanies.length > 0) {
+        for (const c of insiderCompanies) {
+          const score = c.insider_score!;
+          items.push({
+            text: `${c.name}: Insider Score · ${score}/100 · ${getInsiderLabel(score)}`,
+            color: getInsiderColor(score),
+          });
+        }
+      }
+
+      // NEW TYPE 2: Related-party / board interlock alerts
+      const { data: interlocks } = await (supabase as any)
+        .from("board_interlocks")
+        .select("person_name, interlock_type, source, company_a_name")
+        .order("created_at", { ascending: false })
+        .limit(5);
+      if (interlocks && interlocks.length > 0) {
+        for (const il of interlocks) {
+          const src = il.source || "Public Filing";
+          if (il.interlock_type === "board_interlock" || il.interlock_type === "board") {
+            items.push({ text: `${il.company_a_name}: Board interlock detected — ${src}` });
+          } else {
+            items.push({ text: `${il.company_a_name}: 1 new related-party disclosure found — ${src}` });
+          }
+        }
+      }
+
+      // PLACEHOLDER — replace with live data when pipeline ready
+      if (items.length < 5) {
+        items.push({ text: "Tesla: Insider Score · 74/100 · High Concentration", color: "#ff6b35" });
+        items.push({ text: "Airbnb: Insider Score · 31/100 · Open Network", color: "#47ffb3" });
+        items.push({ text: "Meta Platforms: 2 new related-party disclosures found — SEC Proxy Filing" });
+        items.push({ text: "Goldman Sachs: Insider Score · 68/100 · Moderate Concentration", color: "#f0c040" });
+        items.push({ text: "Boeing: Board interlock detected — ProPublica" });
+      }
+
       if (items.length < 3) {
-        items.push("PLATFORM: Live intelligence scanning active");
-        items.push(`UPDATED: ${new Date().toLocaleDateString()} — signals refreshed`);
+        items.push({ text: "PLATFORM: Live intelligence scanning active" });
+        items.push({ text: `UPDATED: ${new Date().toLocaleDateString()} — signals refreshed` });
       }
       return items;
     },
@@ -113,7 +173,7 @@ export function TopBar() {
     refetchInterval: 120_000,
   });
 
-  const finalTickerItems = tickerItems ?? ["PLATFORM: Live intelligence scanning active"];
+  const finalTickerItems: TickerItem[] = tickerItems ?? [{ text: "PLATFORM: Live intelligence scanning active" }];
 
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault();
@@ -166,13 +226,13 @@ export function TopBar() {
         <div className="inline-block animate-ticker">
           {finalTickerItems.map((t, i) => (
             <span key={i} className="px-8">
-              <span className="font-mono text-xs font-medium tracking-wider">{t}</span>
+              <span className="font-mono text-xs font-medium tracking-wider" style={t.color ? { color: t.color } : undefined}>{t.text}</span>
               <span className="opacity-50 px-4">|</span>
             </span>
           ))}
           {finalTickerItems.slice(0, 2).map((t, i) => (
             <span key={`dup-${i}`} className="px-8">
-              <span className="font-mono text-xs font-medium tracking-wider">{t}</span>
+              <span className="font-mono text-xs font-medium tracking-wider" style={t.color ? { color: t.color } : undefined}>{t.text}</span>
               <span className="opacity-50 px-4">|</span>
             </span>
           ))}
