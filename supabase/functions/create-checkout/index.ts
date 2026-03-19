@@ -18,6 +18,8 @@ const ONE_TIME_PRICES = new Set([
   "price_1TBO3F7Qj0W6UtN9oEHb8dHf", // Single Job Credit $199
   "price_1TCTQW7Qj0W6UtN9eFTxOpYg", // Career Strategy Session $350
   "price_1TCTQX7Qj0W6UtN9T019lM6x", // Offer Review Intensive $275
+  "price_1TCdDA7Qj0W6UtN9VPMXRkyY", // Strategist Dossier $149
+  "price_1TCdDB7Qj0W6UtN9VEaLssdN", // Partner Strategy Session $299
 ]);
 
 // Subscription prices (recurring)
