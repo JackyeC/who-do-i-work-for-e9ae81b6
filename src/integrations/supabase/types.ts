@@ -4270,6 +4270,33 @@ export type Database = {
           },
         ]
       }
+      early_access_signups: {
+        Row: {
+          created_at: string
+          email: string
+          first_name: string
+          id: string
+          persona: string
+          referral_source: string | null
+        }
+        Insert: {
+          created_at?: string
+          email: string
+          first_name: string
+          id?: string
+          persona: string
+          referral_source?: string | null
+        }
+        Update: {
+          created_at?: string
+          email?: string
+          first_name?: string
+          id?: string
+          persona?: string
+          referral_source?: string | null
+        }
+        Relationships: []
+      }
       eeoc_dropped_cases: {
         Row: {
           action_type: string
