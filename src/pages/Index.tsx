@@ -103,62 +103,148 @@ const Index = forwardRef<HTMLDivElement>((_, ref) => {
       <Suspense fallback={null}><ExitIntentCapture /></Suspense>
 
       {/* ══════════════════════════════════════════════════════════════════
-          HERO — "Stop Guessing. Start Auditing."
+          HERO — "The Flip Moment"
       ══════════════════════════════════════════════════════════════════ */}
-      <section className="px-6 lg:px-16 py-24 lg:py-36 max-w-[1100px] mx-auto w-full grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-16 items-center">
-        <div>
-          <div className="font-mono text-sm uppercase text-primary mb-4 flex items-center gap-2">
-            <span className="w-8 h-px bg-primary inline-block" />
-            Career Audit Center
-          </div>
-          <h1 className="text-3xl lg:text-[clamp(2.4rem,5vw,3.6rem)] leading-tight mb-6 text-foreground">
-            Stop guessing.{" "}
-            <span className="text-primary">Start Auditing.</span>
-          </h1>
-          <p className="text-base lg:text-lg text-muted-foreground mb-10 max-w-[480px] leading-relaxed">
-            Most job boards show you <em>Marketing</em>. We show you <strong>Intelligence</strong>. Use 15+ years of recruiting data to find your "Purple Squirrel" job — the one that actually matches your DNA and your worth.
-          </p>
-          <div className="flex flex-col sm:flex-row gap-3 mb-6">
-            <button
-              onClick={() => navigate("/career-map")}
-              className="bg-primary text-primary-foreground px-8 py-3.5 font-mono text-sm font-semibold tracking-wider uppercase hover:brightness-110 transition-all flex items-center gap-2"
-            >
-              <Crosshair className="w-4 h-4" />
-              Calibrate My Workplace DNA
-            </button>
-            <button
-              onClick={() => {
-                const el = document.getElementById("hero-search-anchor");
-                el?.scrollIntoView({ behavior: "smooth" });
-              }}
-              className="border border-border bg-card px-6 py-3.5 font-mono text-sm tracking-wider uppercase text-muted-foreground hover:text-foreground hover:border-primary/40 transition-all flex items-center gap-2"
-            >
-              <Search className="w-4 h-4" />
-              Scan an Employer
-            </button>
-          </div>
-          <div id="hero-search-anchor">
-            <HeroSearch />
-          </div>
-        </div>
+      <section
+        className="relative flex flex-col items-center justify-center px-6 text-center"
+        style={{ minHeight: "100vh", background: "#0d0c0f" }}
+      >
+        {/* Grain overlay */}
+        <svg className="fixed inset-0 w-full h-full pointer-events-none" style={{ zIndex: 0, opacity: 0.04 }}>
+          <filter id="hero-grain">
+            <feTurbulence type="fractalNoise" baseFrequency="0.8" numOctaves="4" stitchTiles="stitch" />
+          </filter>
+          <rect width="100%" height="100%" filter="url(#hero-grain)" />
+        </svg>
 
-        {/* Scroll anchor to demo */}
-        <div className="hidden lg:flex items-center justify-center">
-          <button
-            onClick={() => {
-              const el = document.getElementById("demo-dossier");
-              el?.scrollIntoView({ behavior: "smooth" });
+        <div className="relative z-[1] flex flex-col items-center">
+          {/* Line 1 */}
+          <h1
+            style={{
+              fontFamily: "'Playfair Display', serif",
+              fontWeight: 700,
+              fontSize: "clamp(28px, 5vw, 52px)",
+              color: "#f0ebe0",
+              lineHeight: 1.15,
+              animation: "heroFadeIn 0.8s ease forwards",
             }}
-            className="border border-border bg-card p-6 text-center hover:border-primary/30 transition-colors group"
           >
-            <div className="font-mono text-sm tracking-wider uppercase text-primary mb-2">Live Intelligence Preview</div>
-            <div className="text-sm text-muted-foreground mb-3">See what a real employer audit looks like — before you sign up.</div>
-            <span className="font-mono text-xs tracking-wider uppercase text-primary group-hover:underline">
-              Scroll to preview ↓
-            </span>
-          </button>
+            Every company runs a background check on you.
+          </h1>
+
+          {/* Line 2 — delayed */}
+          <h1
+            style={{
+              fontFamily: "'Playfair Display', serif",
+              fontWeight: 700,
+              fontSize: "clamp(28px, 5vw, 52px)",
+              color: "#f0c040",
+              lineHeight: 1.15,
+              opacity: 0,
+              animation: "heroFadeIn 0.6s ease 0.9s forwards",
+            }}
+          >
+            But who's running one on them?
+          </h1>
+
+          {/* Line 3 */}
+          <p
+            style={{
+              fontFamily: "'DM Sans', sans-serif",
+              fontWeight: 400,
+              fontSize: "17px",
+              color: "#7a7590",
+              lineHeight: 1.6,
+              maxWidth: "460px",
+              marginTop: "20px",
+              opacity: 0,
+              animation: "heroFadeIn 0.6s ease 1.6s forwards",
+            }}
+          >
+            WDIWF does. Answer 7 questions — we'll show you exactly what you need to see.
+          </p>
+
+          {/* CTA */}
+          <div
+            style={{
+              marginTop: "36px",
+              opacity: 0,
+              animation: "heroFadeIn 0.5s ease 2s forwards",
+            }}
+          >
+            {(() => {
+              const hasPersona = typeof window !== "undefined" && !!localStorage.getItem("wdiwf_persona");
+              return (
+                <div className="flex flex-col items-center">
+                  <button
+                    onClick={() => navigate(hasPersona ? "/dashboard" : "/quiz")}
+                    style={{
+                      fontFamily: "'DM Sans', sans-serif",
+                      fontSize: "15px",
+                      fontWeight: 600,
+                      background: "#f0c040",
+                      color: "#0d0c0f",
+                      padding: "15px 40px",
+                      borderRadius: "50px",
+                      border: "none",
+                      cursor: "pointer",
+                      transition: "opacity 0.2s, transform 0.2s",
+                    }}
+                    onMouseEnter={e => { e.currentTarget.style.opacity = "0.88"; e.currentTarget.style.transform = "translateY(-1px)"; }}
+                    onMouseLeave={e => { e.currentTarget.style.opacity = "1"; e.currentTarget.style.transform = "translateY(0)"; }}
+                  >
+                    {hasPersona ? "Continue to my intelligence →" : "Start your audit →"}
+                  </button>
+                  {hasPersona && (
+                    <button
+                      onClick={() => navigate("/quiz")}
+                      style={{
+                        fontFamily: "'DM Sans', sans-serif",
+                        fontSize: "12px",
+                        color: "#7a7590",
+                        marginTop: "8px",
+                        cursor: "pointer",
+                        background: "none",
+                        border: "none",
+                      }}
+                    >
+                      Or retake the quiz →
+                    </button>
+                  )}
+                </div>
+              );
+            })()}
+          </div>
         </div>
       </section>
+
+      {/* ── Company Scan — repositioned below hero ── */}
+      <section className="px-6 lg:px-16 py-16 max-w-[700px] mx-auto w-full text-center">
+        <div
+          style={{
+            fontFamily: "'DM Sans', sans-serif",
+            fontSize: "11px",
+            fontWeight: 500,
+            letterSpacing: "2px",
+            textTransform: "uppercase",
+            color: "#7a7590",
+            marginBottom: "12px",
+          }}
+        >
+          Or scan a company directly
+        </div>
+        <div id="hero-search-anchor">
+          <HeroSearch />
+        </div>
+      </section>
+
+      {/* heroFadeIn keyframe */}
+      <style>{`
+        @keyframes heroFadeIn {
+          from { opacity: 0; }
+          to { opacity: 1; }
+        }
+      `}</style>
 
       {/* ── Evidence Strip ── */}
       <div className="border-y border-border px-6 py-8">
