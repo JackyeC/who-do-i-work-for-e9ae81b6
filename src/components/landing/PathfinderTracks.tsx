@@ -92,7 +92,7 @@ const tracks = [
     priceNote: "",
     period: "/year",
     mode: "subscription" as const,
-    priceId: "price_executive_annual", // placeholder
+    priceId: "price_1TCTiJ7Qj0W6UtN9hARvCvgh",
     hook: "The Autopilot.",
     description: "Full search management + Priority access. Your career, on cruise control.",
     action: "Go Executive",
