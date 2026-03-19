@@ -11,9 +11,9 @@ export default function Hire() {
   const [error, setError] = useState("");
 
   usePageSEO({
-    title: "Talent Intelligence — ValuHire by WDIWF",
+    title: "Who Works For You? — Values-Aligned Hiring by WDIWF",
     description:
-      "The first AI recruiting tool that audits the company before it screens the candidate. Built on WDIWF intelligence. Coming April 6th.",
+      "The first AI recruiting tool that audits the company before it screens the candidate. Values-aligned hiring built on 15 years of recruiting intelligence.",
     path: "/hire",
   });
 
@@ -53,12 +53,12 @@ export default function Hire() {
   return (
     <div className="min-h-screen flex flex-col items-center justify-center px-4" style={{ background: "#0a0a0e" }}>
       <Helmet>
-        <title>Talent Intelligence — ValuHire by WDIWF</title>
+        <title>Who Works For You? — WDIWF</title>
       </Helmet>
 
       {/* Banner */}
       <div
-        className="w-full max-w-2xl rounded-lg px-4 py-3 mb-10 flex items-center gap-3 text-sm"
+        className="w-full max-w-2xl rounded-lg px-4 py-3 mb-12 flex items-center gap-3 text-sm"
         style={{ background: "rgba(240,192,64,0.08)", border: "1px solid rgba(240,192,64,0.18)" }}
       >
         <Shield className="w-4 h-4 shrink-0" style={{ color: "#f0c040" }} />
@@ -69,19 +69,30 @@ export default function Hire() {
 
       {/* Content */}
       <div className="text-center max-w-2xl">
+        {/* Eyebrow */}
+        <p
+          className="text-xs uppercase tracking-[3px] font-semibold mb-4"
+          style={{ color: "#f0c040" }}
+        >
+          Coming April 6th
+        </p>
+
+        {/* Headline */}
         <h1
           className="font-sans leading-[1.05] mb-5"
-          style={{ fontSize: "clamp(32px, 5vw, 52px)", fontWeight: 800, letterSpacing: "-2px", color: "#f0ebe0" }}
+          style={{ fontSize: "clamp(36px, 6vw, 60px)", fontWeight: 800, letterSpacing: "-3px", color: "#f0ebe0" }}
         >
-          Talent Intelligence
-          <span className="block text-lg mt-2 font-normal tracking-normal" style={{ color: "#f0c040" }}>
-            coming April 6th
-          </span>
+          Who Works For You?
         </h1>
 
-        <p className="text-base sm:text-lg leading-relaxed mb-10 mx-auto max-w-lg" style={{ color: "rgba(240,235,224,0.65)" }}>
-          The first AI recruiting tool that audits the company before it screens the candidate.
-          Built on WDIWF intelligence.
+        {/* Subline */}
+        <p className="text-base sm:text-lg leading-relaxed mb-4 mx-auto max-w-lg" style={{ color: "rgba(240,235,224,0.65)" }}>
+          The first AI recruiting tool that audits the company before it screens the candidate. Values-aligned hiring — built on 15 years of recruiting intelligence.
+        </p>
+
+        {/* Attribution */}
+        <p className="text-xs uppercase tracking-[2px] mb-10" style={{ color: "rgba(240,235,224,0.35)" }}>
+          A WDIWF product by Jackye Clayton
         </p>
 
         {submitted ? (
@@ -93,7 +104,7 @@ export default function Hire() {
               You're on the list ✓
             </p>
             <p className="text-sm mt-1" style={{ color: "rgba(240,235,224,0.55)" }}>
-              We'll let you know when Talent Intelligence launches.
+              We'll let you know when recruiter access launches.
             </p>
           </div>
         ) : (
@@ -114,10 +125,10 @@ export default function Hire() {
             <button
               type="submit"
               disabled={submitting}
-              className="h-12 px-6 rounded-lg text-sm font-semibold flex items-center justify-center gap-2 transition-opacity hover:opacity-90 disabled:opacity-50"
+              className="h-12 px-6 rounded-lg text-sm font-semibold flex items-center justify-center gap-2 transition-opacity hover:opacity-90 disabled:opacity-50 whitespace-nowrap"
               style={{ background: "#f0c040", color: "#0a0a0e" }}
             >
-              {submitting ? "Joining…" : "Get early access"}
+              {submitting ? "Joining…" : "Get early recruiter access"}
               <ArrowRight className="w-4 h-4" />
             </button>
           </form>
