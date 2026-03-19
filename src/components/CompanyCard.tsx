@@ -30,7 +30,10 @@ export function CompanyCard({ company }: CompanyCardProps) {
             <ArrowRight className="w-4 h-4 text-muted-foreground/50 group-hover:text-primary transition-all group-hover:translate-x-0.5 shrink-0 mt-1" />
           </div>
           <div className="mt-4 flex items-center justify-between gap-2 flex-wrap">
-            <CivicFootprintBadge score={company.civicFootprintScore} size="sm" />
+            <div className="flex items-center gap-2 flex-wrap">
+              <CivicFootprintBadge score={company.civicFootprintScore} size="sm" />
+              <InsiderScorePill score={company.insiderScore ?? null} />
+            </div>
             <div className="flex items-center gap-2">
               <span className="text-micro text-muted-foreground">
                 {company.totalPacSpending > 0

@@ -84,6 +84,7 @@ export function ValuesCompanyCard({ company, signals, evidence, lensLabel, hasCo
               <Badge variant="secondary" className="text-xs">
                 {signals.length} record{signals.length !== 1 ? "s" : ""}
               </Badge>
+              <InsiderScorePill score={company.insider_score ?? null} />
             </div>
           </div>
 

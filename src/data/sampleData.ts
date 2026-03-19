@@ -47,6 +47,7 @@ export interface Company {
   consumerRelevance: string;
 
   civicFootprintScore: number; // 0-100, higher = more concentrated influence
+  insiderScore?: number; // 0-100, network concentration metric
 
   // Scoring
   influenceROI?: InfluenceROIData;

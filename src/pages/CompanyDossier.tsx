@@ -284,7 +284,11 @@ export default function CompanyDossier() {
         )}
       </DossierLayer>
 
-      <DossierLayer title="Patterns & Synthesis" subtitle="Key observations and notable patterns" icon={Sparkles} layerNumber={7}>
+      <DossierLayer title="Insider Score" subtitle="Leadership network concentration and hiring pattern transparency" icon={Eye} layerNumber={7}>
+        <InsiderScoreBreakdown companyId={companyId!} companyName={company.name} insiderScore={(company as any).insider_score ?? null} />
+      </DossierLayer>
+
+      <DossierLayer title="Patterns & Synthesis" subtitle="Key observations and notable patterns" icon={Sparkles} layerNumber={8}>
         <PatternsSynthesisLayer patterns={[]} companyName={company.name} />
       </DossierLayer>
     </>

@@ -37,9 +37,10 @@ export function EmployerDossierCard({ company }: EmployerDossierCardProps) {
     <div className="bg-card border border-border rounded-xl p-6 sm:p-8 shadow-elevated max-w-2xl mx-auto">
       <div className="flex items-center justify-between mb-1">
         <h2 className="text-lg sm:text-xl font-display font-bold text-foreground">{company.name}</h2>
-        <div className="flex gap-2">
+        <div className="flex gap-2 flex-wrap">
           <Badge variant="outline" className={risk.bg}>{risk.label}</Badge>
           <ConfidenceBadge level={confidence} />
+          <InsiderScorePill score={(company as any).insider_score ?? null} />
         </div>
       </div>
       <p className="text-xs text-muted-foreground mb-5">{company.industry} · {company.state} {company.employee_count ? `· ${company.employee_count} employees` : ""}</p>

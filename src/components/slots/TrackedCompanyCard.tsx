@@ -37,6 +37,7 @@ export function TrackedCompanyCard({ tracked, onUntrack, isUntracking }: Tracked
           <div className="text-lg font-bold font-mono text-primary">{score}</div>
           <div className="text-micro text-muted-foreground">Influence</div>
         </div>
+        <InsiderScorePill score={(company as any).insider_score ?? null} />
 
         <Button
           size="sm"
