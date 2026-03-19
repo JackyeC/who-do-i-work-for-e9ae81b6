@@ -22,6 +22,8 @@ import { PostPurchaseUpsell } from "@/components/PostPurchaseUpsell";
 import { DecisionCheckpoint } from "@/components/dashboard/DecisionCheckpoint";
 import { supabase } from "@/integrations/supabase/client";
 import { ClipboardCheck } from "lucide-react";
+import { OfferClarityWizard } from "@/components/offer-clarity/OfferClarityWizard";
+import { PremiumGate } from "@/components/PremiumGate";
 
 const TAB_TITLES: Record<string, string> = {
   overview: "Dashboard Overview",
