@@ -53,7 +53,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       // Navigate to dashboard on sign-in (only from non-app pages)
       const path = window.location.pathname;
       if (path === "/" || path === "/login" || path === "/signup") {
-        window.location.href = "/dashboard";
+        window.location.href = "/welcome";
       }
     } catch {}
   }, []);
