@@ -1,8 +1,8 @@
-import { useState, useCallback } from "react";
+import { useState } from "react";
 import { useAuth } from "@/contexts/AuthContext";
 import { usePersona } from "@/hooks/use-persona";
 import { PersonaQuizBanner } from "@/components/PersonaQuizBanner";
-import { Navigate, useSearchParams, useNavigate } from "react-router-dom";
+import { Navigate, useSearchParams } from "react-router-dom";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { DashboardOverview } from "@/components/dashboard/DashboardOverview";
 import { AlignedJobsList } from "@/components/jobs/AlignedJobsList";
@@ -21,14 +21,13 @@ import { RelationshipDashboard } from "@/components/career/RelationshipDashboard
 import { FirstLoginOnboarding } from "@/components/FirstLoginOnboarding";
 import { DataWipeButton } from "@/components/career/DataWipeButton";
 import { PostPurchaseUpsell } from "@/components/PostPurchaseUpsell";
-import { DecisionCheckpoint } from "@/components/dashboard/DecisionCheckpoint";
 import { supabase } from "@/integrations/supabase/client";
-import { ClipboardCheck } from "lucide-react";
 import { OfferClarityWizard } from "@/components/offer-clarity/OfferClarityWizard";
 import { PremiumGate } from "@/components/PremiumGate";
+import { Helmet } from "react-helmet-async";
 
 const TAB_TITLES: Record<string, string> = {
-  overview: "Dashboard Overview",
+  overview: "My Intelligence",
   tracked: "Tracked Companies",
   matches: "Matched Jobs",
   values: "My Values Profile",
@@ -84,12 +83,7 @@ export default function Dashboard() {
   const renderContent = () => {
     switch (tab) {
       case "overview":
-        return (
-          <>
-            <DecisionCheckpoint />
-            <DashboardOverview onNavigate={setTab} />
-          </>
-        );
+        return <DashboardOverview onNavigate={setTab} />;
       case "tracked":
         return <SlotManagementDashboard />;
       case "matches":
@@ -147,6 +141,10 @@ export default function Dashboard() {
 
   return (
     <div className="flex flex-col flex-1">
+      <Helmet>
+        <title>My Intelligence — Who Do I Work For?</title>
+      </Helmet>
+
       {showOnboarding && (
         <FirstLoginOnboarding
           onComplete={() => {
@@ -157,11 +155,11 @@ export default function Dashboard() {
 
       <div className="flex items-center gap-3 border-b border-border/30 px-6 h-12">
         <h1 className="text-sm font-semibold text-foreground truncate">
-          {TAB_TITLES[tab] || "Dashboard"}
+          {TAB_TITLES[tab] || "My Intelligence"}
         </h1>
       </div>
-      <div className="flex-1 overflow-y-auto px-6 py-6 max-w-5xl">
-        {!hasTakenQuiz && <PersonaQuizBanner />}
+      <div className="flex-1 overflow-y-auto px-4 sm:px-6 py-6">
+        {!hasTakenQuiz && tab === "overview" && <PersonaQuizBanner />}
         {showUpsell && <PostPurchaseUpsell onDismiss={dismissUpsell} />}
         {renderContent()}
       </div>
