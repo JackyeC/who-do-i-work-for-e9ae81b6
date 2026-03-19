@@ -324,7 +324,7 @@ export function TopBar() {
                 isMoreActive ? "text-foreground border-primary" : "text-muted-foreground border-transparent hover:text-foreground"
               )}
             >
-              More <ChevronDown className="w-3 h-3" />
+              ··· <ChevronDown className="w-3 h-3" />
             </button>
             <div className="absolute top-full left-0 hidden group-hover:block border min-w-[220px] z-50 py-1" style={{ background: 'hsl(252 25% 8%)', borderColor: 'rgba(255,255,255,0.1)' }}>
               {SECONDARY_NAV.map(sub => (
