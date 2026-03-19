@@ -223,7 +223,7 @@ const Index = forwardRef<HTMLDivElement>((_, ref) => {
             Three layers of career intelligence.
           </h2>
           <p className="text-muted-foreground text-base mb-14 max-w-[520px]">
-            This isn't a job board. It's a war room for your career.
+            This isn't a job board. It's a clarity engine for your career.
           </p>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-px bg-border border border-border">
             {[
