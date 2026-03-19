@@ -1,52 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
-  <!-- Core Pages -->
-  <url><loc>https://wdiwf.jackyeclayton.com/</loc><lastmod>2026-03-14</lastmod><changefreq>weekly</changefreq><priority>1.0</priority></url>
-  <url><loc>https://wdiwf.jackyeclayton.com/browse</loc><lastmod>2026-03-14</lastmod><changefreq>daily</changefreq><priority>0.9</priority></url>
-  <url><loc>https://wdiwf.jackyeclayton.com/check</loc><lastmod>2026-03-14</lastmod><changefreq>weekly</changefreq><priority>0.9</priority></url>
-  <url><loc>https://wdiwf.jackyeclayton.com/search</loc><lastmod>2026-03-14</lastmod><changefreq>daily</changefreq><priority>0.8</priority></url>
-  <url><loc>https://wdiwf.jackyeclayton.com/ask-jackye</loc><lastmod>2026-03-14</lastmod><changefreq>weekly</changefreq><priority>0.8</priority></url>
-
-  <!-- Tools & Analyzers -->
-  <url><loc>https://wdiwf.jackyeclayton.com/would-you-work-here</loc><lastmod>2026-03-14</lastmod><changefreq>weekly</changefreq><priority>0.9</priority></url>
-  <url><loc>https://wdiwf.jackyeclayton.com/strategic-offer-review</loc><lastmod>2026-03-14</lastmod><changefreq>weekly</changefreq><priority>0.8</priority></url>
-  <url><loc>https://wdiwf.jackyeclayton.com/offer-clarity</loc><lastmod>2026-03-14</lastmod><changefreq>weekly</changefreq><priority>0.8</priority></url>
-  <url><loc>https://wdiwf.jackyeclayton.com/compare</loc><lastmod>2026-03-14</lastmod><changefreq>weekly</changefreq><priority>0.8</priority></url>
-  <url><loc>https://wdiwf.jackyeclayton.com/compare-offer-checks</loc><lastmod>2026-03-14</lastmod><changefreq>weekly</changefreq><priority>0.7</priority></url>
-  <url><loc>https://wdiwf.jackyeclayton.com/employer-receipt</loc><lastmod>2026-03-14</lastmod><changefreq>weekly</changefreq><priority>0.8</priority></url>
-  <url><loc>https://wdiwf.jackyeclayton.com/evp-reality-check</loc><lastmod>2026-03-14</lastmod><changefreq>weekly</changefreq><priority>0.7</priority></url>
-  <url><loc>https://wdiwf.jackyeclayton.com/what-am-i-supporting</loc><lastmod>2026-03-14</lastmod><changefreq>weekly</changefreq><priority>0.7</priority></url>
-  <url><loc>https://wdiwf.jackyeclayton.com/values-search</loc><lastmod>2026-03-14</lastmod><changefreq>weekly</changefreq><priority>0.7</priority></url>
-
-  <!-- Policy & Economy -->
-  <url><loc>https://wdiwf.jackyeclayton.com/policy</loc><lastmod>2026-03-14</lastmod><changefreq>weekly</changefreq><priority>0.7</priority></url>
-  <url><loc>https://wdiwf.jackyeclayton.com/economy</loc><lastmod>2026-03-14</lastmod><changefreq>weekly</changefreq><priority>0.7</priority></url>
-  <url><loc>https://wdiwf.jackyeclayton.com/follow-the-money</loc><lastmod>2026-03-14</lastmod><changefreq>weekly</changefreq><priority>0.8</priority></url>
-  <url><loc>https://wdiwf.jackyeclayton.com/board-intelligence</loc><lastmod>2026-03-14</lastmod><changefreq>weekly</changefreq><priority>0.7</priority></url>
-  <url><loc>https://wdiwf.jackyeclayton.com/intelligence-chain</loc><lastmod>2026-03-14</lastmod><changefreq>weekly</changefreq><priority>0.6</priority></url>
-  <url><loc>https://wdiwf.jackyeclayton.com/investigative</loc><lastmod>2026-03-14</lastmod><changefreq>weekly</changefreq><priority>0.7</priority></url>
-
-  <!-- Intelligence & Reports -->
-  <url><loc>https://wdiwf.jackyeclayton.com/intelligence</loc><lastmod>2026-03-14</lastmod><changefreq>weekly</changefreq><priority>0.8</priority></url>
-  <url><loc>https://wdiwf.jackyeclayton.com/signals</loc><lastmod>2026-03-14</lastmod><changefreq>daily</changefreq><priority>0.7</priority></url>
-  <url><loc>https://wdiwf.jackyeclayton.com/rivalries</loc><lastmod>2026-03-14</lastmod><changefreq>weekly</changefreq><priority>0.6</priority></url>
-  <url><loc>https://wdiwf.jackyeclayton.com/brand-madness</loc><lastmod>2026-03-14</lastmod><changefreq>weekly</changefreq><priority>0.6</priority></url>
-
-  <!-- Resources -->
-  <url><loc>https://wdiwf.jackyeclayton.com/pricing</loc><lastmod>2026-03-14</lastmod><changefreq>monthly</changefreq><priority>0.7</priority></url>
-  <url><loc>https://wdiwf.jackyeclayton.com/methodology</loc><lastmod>2026-03-14</lastmod><changefreq>monthly</changefreq><priority>0.6</priority></url>
-  <url><loc>https://wdiwf.jackyeclayton.com/work-with-jackye</loc><lastmod>2026-03-14</lastmod><changefreq>monthly</changefreq><priority>0.7</priority></url>
-  <url><loc>https://wdiwf.jackyeclayton.com/recruiting</loc><lastmod>2026-03-14</lastmod><changefreq>monthly</changefreq><priority>0.6</priority></url>
-  <url><loc>https://wdiwf.jackyeclayton.com/examples</loc><lastmod>2026-03-14</lastmod><changefreq>monthly</changefreq><priority>0.5</priority></url>
-  <url><loc>https://wdiwf.jackyeclayton.com/jobs</loc><lastmod>2026-03-14</lastmod><changefreq>daily</changefreq><priority>0.7</priority></url>
-  <url><loc>https://wdiwf.jackyeclayton.com/request-correction</loc><lastmod>2026-03-14</lastmod><changefreq>monthly</changefreq><priority>0.4</priority></url>
-  <url><loc>https://wdiwf.jackyeclayton.com/add-company</loc><lastmod>2026-03-14</lastmod><changefreq>monthly</changefreq><priority>0.5</priority></url>
-  <url><loc>https://wdiwf.jackyeclayton.com/search-your-employer</loc><lastmod>2026-03-14</lastmod><changefreq>weekly</changefreq><priority>0.7</priority></url>
-
-  <!-- Legal & Info -->
-  <url><loc>https://wdiwf.jackyeclayton.com/privacy</loc><lastmod>2026-03-14</lastmod><changefreq>yearly</changefreq><priority>0.3</priority></url>
-  <url><loc>https://wdiwf.jackyeclayton.com/terms</loc><lastmod>2026-03-14</lastmod><changefreq>yearly</changefreq><priority>0.3</priority></url>
-  <url><loc>https://wdiwf.jackyeclayton.com/disclaimers</loc><lastmod>2026-03-14</lastmod><changefreq>yearly</changefreq><priority>0.3</priority></url>
-  <url><loc>https://wdiwf.jackyeclayton.com/site-map</loc><lastmod>2026-03-14</lastmod><changefreq>monthly</changefreq><priority>0.4</priority></url>
-  <url><loc>https://wdiwf.jackyeclayton.com/login</loc><lastmod>2026-03-14</lastmod><changefreq>monthly</changefreq><priority>0.3</priority></url>
-</urlset>
+<sitemapindex xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+  <sitemap>
+    <loc>https://tdetybqdxadmowjivtjy.supabase.co/functions/v1/dynamic-sitemap</loc>
+    <lastmod>2026-03-19</lastmod>
+  </sitemap>
+</sitemapindex>
