@@ -34,6 +34,7 @@ export default function Hire() {
         });
 
       if (dbError) {
+        console.error("Hire signup error:", dbError.code, dbError.message, dbError.details);
         if (dbError.code === "23505") {
           setSubmitted(true);
         } else {
