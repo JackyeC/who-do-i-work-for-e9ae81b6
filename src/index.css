@@ -200,10 +200,11 @@
   }
 
   .text-h1 {
-    font-family: 'Playfair Display', Georgia, serif;
-    font-size: clamp(28px, 4vw, 44px);
+    font-family: 'DM Sans', system-ui, sans-serif;
+    font-size: clamp(28px, 4vw, 48px);
     font-weight: 700;
-    line-height: 1.15;
+    line-height: 1.1;
+    letter-spacing: -1px;
     color: hsl(var(--foreground));
   }
 
