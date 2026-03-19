@@ -906,7 +906,7 @@ function ResultsScreen({
           animation: "quizFadeUp 0.6s ease 0.35s both",
         }}
       >
-        You also think like a{" "}
+        You also think like{" "}
         <span style={{ color: "#f0ebe0" }}>{secondaryProfile.name}</span>
       </p>
 
