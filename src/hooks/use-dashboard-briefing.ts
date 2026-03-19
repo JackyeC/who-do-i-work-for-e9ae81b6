@@ -58,7 +58,7 @@ export function useDashboardBriefing() {
 
       const docs = docsRes.data || [];
       const hasResume = docs.length > 0 || localStorage.getItem("wdiwf_resume_uploaded") === "true";
-      const parsedSkillsCount = docs[0]?.parsed_signals?.skills?.length || 0;
+      const parsedSkillsCount = (docs[0]?.parsed_signals as any)?.skills?.length || 0;
 
       // Extract first name
       const fullName = profileNameRes.data?.full_name || "";
