@@ -17,13 +17,22 @@ async function getLegislators(): Promise<any[]> {
   if (legislatorsCache && Date.now() - legislatorsCacheTime < CACHE_TTL_MS) {
     return legislatorsCache;
   }
-  const resp = await fetch(LEGISLATORS_URL, {
-    headers: { "User-Agent": "CivicLens/1.0" },
-  });
-  if (!resp.ok) return [];
-  legislatorsCache = await resp.json();
-  legislatorsCacheTime = Date.now();
-  return legislatorsCache!;
+  try {
+    const controller = new AbortController();
+    const timeout = setTimeout(() => controller.abort(), 5000);
+    const resp = await fetch(LEGISLATORS_URL, {
+      headers: { "User-Agent": "CivicLens/1.0" },
+      signal: controller.signal,
+    });
+    clearTimeout(timeout);
+    if (!resp.ok) return [];
+    legislatorsCache = await resp.json();
+    legislatorsCacheTime = Date.now();
+    return legislatorsCache!;
+  } catch (err: any) {
+    console.warn("[voting-summary] Legislators fetch failed, skipping:", err.message);
+    return [];
+  }
 }
 
 function resolveBioguideId(legislators: any[], candidateName: string, state?: string): string | null {
