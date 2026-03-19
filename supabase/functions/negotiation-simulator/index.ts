@@ -35,6 +35,15 @@ serve(async (req) => {
 
     const isRecruiterMode = config.perspective === "recruiter";
 
+    const feedbackSchema = `[FEEDBACK]{"tactic_used":"name the negotiation tactic they used e.g. anchoring, value framing, concession trading, silence, bracketing, nibbling, or none","what_worked":"one sentence on what was effective","missed_opportunity":"one sentence on leverage or angle they left on the table","suggested_response":"one rewritten sentence they could have said instead","power_move":"one bold alternative for advanced practice","tone":"too_soft|balanced|too_aggressive","effectiveness":3}[/FEEDBACK]
+
+The effectiveness field is a 1-5 integer:
+1 = weak, unlikely to move the negotiation
+2 = below average, missed key leverage
+3 = competent, reasonable approach
+4 = strong, good use of tactics
+5 = exceptional, would impress a seasoned negotiator`;
+
     const candidateSystemPrompt = `You are a realistic recruiter/hiring manager at ${config.company} for the ${config.role} position. You are conducting ${scenarioDescriptions[config.scenario] || "a negotiation conversation"}.
 
 Context:
@@ -52,11 +61,11 @@ IMPORTANT RULES:
 2. Keep your in-character response to 2-3 sentences MAX. Be concise and natural.
 3. After your response, add feedback in this exact format:
 
-[FEEDBACK]{"what_worked":"one sentence","improvement":"one sentence","better_version":"one rephrased sentence","shorter_version":"one concise sentence","tone":"too_soft|balanced|too_aggressive"}[/FEEDBACK]
+${feedbackSchema}
 
-4. If no user messages yet, open with a 1-2 sentence recruiter greeting for the scenario.
+4. If no user messages yet, open with a 1-2 sentence recruiter greeting for the scenario. Do NOT include a [FEEDBACK] block on the opening message — there is nothing to coach yet.
 5. Never break character. The feedback block is the only meta-commentary.
-6. Be supportive in feedback — this is practice, not a test.`;
+6. Be supportive in feedback — this is practice, not a test. Focus on negotiation tactics, leverage, and strategy.`;
 
     const recruiterSystemPrompt = `You are a realistic job candidate who has received an offer for the ${config.role} position at ${config.company}. The user is the recruiter/hiring manager practicing their negotiation skills. You are conducting ${scenarioDescriptions[config.scenario] || "a negotiation conversation"}.
 
@@ -81,11 +90,11 @@ IMPORTANT RULES:
 2. Keep your in-character response to 2-3 sentences MAX. Be concise and natural.
 3. After your response, add feedback on the RECRUITER's (user's) performance in this exact format:
 
-[FEEDBACK]{"what_worked":"one sentence about their recruiter tactic","improvement":"one sentence on closing technique, empathy, or firmness","better_version":"one rephrased sentence they could use","shorter_version":"one concise sentence","tone":"too_soft|balanced|too_aggressive"}[/FEEDBACK]
+${feedbackSchema}
 
-4. If no user messages yet, open with a 1-2 sentence candidate greeting expressing interest but hinting you have concerns about the offer.
+4. If no user messages yet, open with a 1-2 sentence candidate greeting expressing interest but hinting you have concerns about the offer. Do NOT include a [FEEDBACK] block on the opening message — there is nothing to coach yet.
 5. Never break character. The feedback block is the only meta-commentary.
-6. Be supportive in feedback — this is practice, not a test.`;
+6. Be supportive in feedback — this is practice, not a test. Focus on closing technique, empathy, and firmness.`;
 
     const systemPrompt = isRecruiterMode ? recruiterSystemPrompt : candidateSystemPrompt;
 
@@ -104,7 +113,7 @@ IMPORTANT RULES:
         model: "google/gemini-3-flash-preview",
         messages: allMessages,
         stream: true,
-        max_tokens: 400,
+        max_tokens: 600,
       }),
     });
 

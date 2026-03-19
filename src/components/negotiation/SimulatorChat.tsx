@@ -36,7 +36,7 @@ export function SimulatorChat({ config, messages, setMessages, feedbacks, setFee
 
   useEffect(() => {
     bottomRef.current?.scrollIntoView({ behavior: "smooth" });
-  }, [messages]);
+  }, [messages, feedbacks]);
 
   // Auto-start: send initial system context
   useEffect(() => {
@@ -178,6 +178,42 @@ export function SimulatorChat({ config, messages, setMessages, feedbacks, setFee
 
   const roundProgress = (userRounds / MAX_ROUNDS) * 100;
 
+  // Build interleaved message + feedback rendering
+  // feedbacks[i] corresponds to the (i+1)th assistant message (the one after the i-th user message)
+  const renderMessages = () => {
+    const elements: React.ReactNode[] = [];
+    let feedbackIndex = 0;
+
+    for (let i = 0; i < messages.length; i++) {
+      const m = messages[i];
+      elements.push(
+        <div key={`msg-${i}`} className={`flex ${m.role === "user" ? "justify-end" : "justify-start"}`}>
+          <div className={`max-w-[85%] rounded-xl px-4 py-2.5 text-sm ${
+            m.role === "user"
+              ? "bg-primary text-primary-foreground"
+              : "bg-muted/50 text-foreground border border-border/30"
+          }`}>
+            {m.role === "assistant" ? (
+              <div className="prose prose-sm dark:prose-invert max-w-none">
+                <ReactMarkdown>{m.content}</ReactMarkdown>
+              </div>
+            ) : m.content}
+          </div>
+        </div>
+      );
+
+      // Show feedback after an assistant message that follows a user message
+      if (m.role === "assistant" && i > 0 && messages[i - 1]?.role === "user" && feedbackIndex < feedbacks.length) {
+        elements.push(
+          <RoundFeedback key={`fb-${feedbackIndex}`} feedback={feedbacks[feedbackIndex]} round={feedbackIndex + 1} />
+        );
+        feedbackIndex++;
+      }
+    }
+
+    return elements;
+  };
+
   return (
     <div className="flex flex-col h-full">
       {/* Round indicator */}
@@ -190,25 +226,7 @@ export function SimulatorChat({ config, messages, setMessages, feedbacks, setFee
 
       {/* Messages */}
       <div className="flex-1 overflow-y-auto space-y-3 px-1 py-3 min-h-[300px] max-h-[500px]">
-        {messages.map((m, i) => (
-          <div key={i} className={`flex ${m.role === "user" ? "justify-end" : "justify-start"}`}>
-            <div className={`max-w-[85%] rounded-xl px-4 py-2.5 text-sm ${
-              m.role === "user"
-                ? "bg-primary text-primary-foreground"
-                : "bg-muted/50 text-foreground border border-border/30"
-            }`}>
-              {m.role === "assistant" ? (
-                <div className="prose prose-sm dark:prose-invert max-w-none">
-                  <ReactMarkdown>{m.content}</ReactMarkdown>
-                </div>
-              ) : m.content}
-            </div>
-          </div>
-        ))}
-
-        {feedbacks.map((fb, i) => (
-          <RoundFeedback key={i} feedback={fb} round={i + 1} />
-        ))}
+        {renderMessages()}
 
         {isStreaming && messages[messages.length - 1]?.role !== "assistant" && (
           <div className="flex justify-start">
