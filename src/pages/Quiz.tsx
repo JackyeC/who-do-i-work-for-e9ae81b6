@@ -499,7 +499,7 @@ export default function Quiz() {
   return (
     <div
       className="fixed inset-0 overflow-hidden"
-      style={{ background: "#0d0c0f", fontFamily: "'DM Sans', sans-serif" }}
+      style={{ background: "#0a0a0e", fontFamily: "'DM Sans', sans-serif" }}
     >
       {/* Grain overlay */}
       <svg
@@ -616,7 +616,7 @@ export default function Quiz() {
                   disabled={!canAdvance}
                   style={{
                     background: canAdvance ? "#f0c040" : "rgba(240,192,64,0.25)",
-                    color: "#0d0c0f",
+                    color: "#0a0a0e",
                     borderRadius: 50,
                     padding: "14px 36px",
                     fontSize: 14,
@@ -916,7 +916,7 @@ function ResultsScreen({
           href="/dashboard"
           style={{
             background: "#f0c040",
-            color: "#0d0c0f",
+            color: "#0a0a0e",
             borderRadius: 50,
             padding: "14px 36px",
             fontSize: 14,

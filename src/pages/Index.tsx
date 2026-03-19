@@ -107,7 +107,7 @@ const Index = forwardRef<HTMLDivElement>((_, ref) => {
       ══════════════════════════════════════════════════════════════════ */}
       <section
         className="relative flex flex-col items-center justify-center px-6 text-center"
-        style={{ minHeight: "100vh", background: "#0d0c0f" }}
+        style={{ minHeight: "100vh", background: "#0a0a0e" }}
       >
         {/* Grain overlay */}
         <svg className="fixed inset-0 w-full h-full pointer-events-none" style={{ zIndex: 0, opacity: 0.04 }}>
@@ -118,6 +118,11 @@ const Index = forwardRef<HTMLDivElement>((_, ref) => {
         </svg>
 
         <div className="relative z-[1] flex flex-col items-center">
+          {/* Eyebrow label */}
+          <p className="text-eyebrow" style={{ marginBottom: '24px' }}>
+            Career Intelligence Platform
+          </p>
+
           {/* Line 1 */}
           <h1
             className="text-display"
@@ -141,21 +146,24 @@ const Index = forwardRef<HTMLDivElement>((_, ref) => {
             But who's running one on them?
           </h1>
 
-          {/* Line 3 */}
+          {/* Subheadline */}
           <p
             style={{
               fontFamily: "'DM Sans', sans-serif",
               fontWeight: 400,
-              fontSize: "18px",
-              color: "hsl(252 14% 52%)",
+              fontSize: "17px",
+              color: "#b8b4a8",
               lineHeight: 1.7,
-              maxWidth: "480px",
+              maxWidth: "520px",
               marginTop: "24px",
+              textAlign: "center",
               opacity: 0,
               animation: "heroFadeIn 0.6s ease 1.6s forwards",
             }}
           >
-            WDIWF does. Answer 7 questions — we'll show you exactly what you need to see.
+            WDIWF surfaces what companies don't put on their careers page — built on FEC filings, SEC reports, BLS wages, OSHA records, and NLRB data.
+            <br />
+            Answer 7 questions and we'll show you exactly what you need to see.
           </p>
 
           {/* CTA */}
@@ -178,7 +186,7 @@ const Index = forwardRef<HTMLDivElement>((_, ref) => {
                       fontSize: "16px",
                       fontWeight: 600,
                       background: "#f0c040",
-                      color: "#0d0c0f",
+                      color: "#0a0a0e",
                       padding: "16px 44px",
                       borderRadius: "50px",
                       border: "none",
@@ -216,7 +224,7 @@ const Index = forwardRef<HTMLDivElement>((_, ref) => {
                     onMouseEnter={(e) => (e.currentTarget.style.textDecoration = "underline")}
                     onMouseLeave={(e) => (e.currentTarget.style.textDecoration = "none")}
                   >
-                    Launching April 1 — get early access →
+                    Launching April 6 — get early access →
                   </Link>
                 </div>
               );
@@ -259,7 +267,7 @@ const Index = forwardRef<HTMLDivElement>((_, ref) => {
           <div className="flex items-center gap-8 lg:gap-14 flex-wrap">
             <div><div className="font-data text-2xl font-bold text-foreground tabular-nums">{STATIC_COMPANY_COUNT}+</div><div className="font-mono text-xs uppercase text-muted-foreground tracking-wider">Companies Tracked</div></div>
             <div><div className="font-data text-2xl font-bold text-foreground tabular-nums">6</div><div className="font-mono text-xs uppercase text-muted-foreground tracking-wider">Federal Sources</div></div>
-            <div><div className="font-data text-2xl font-bold text-foreground tabular-nums">20+</div><div className="font-mono text-xs uppercase text-muted-foreground tracking-wider">Years HR Expertise</div></div>
+            <div><div className="font-data text-2xl font-bold text-foreground tabular-nums">15+</div><div className="font-mono text-xs uppercase text-muted-foreground tracking-wider">Years HR Expertise</div></div>
           </div>
           <div className="flex items-center gap-4 flex-wrap">
             {TRUST_SOURCES.map((src) => (
@@ -267,6 +275,17 @@ const Index = forwardRef<HTMLDivElement>((_, ref) => {
             ))}
           </div>
         </div>
+        <p style={{
+          fontSize: '12px',
+          fontWeight: 400,
+          color: '#3d3a4a',
+          textAlign: 'center',
+          lineHeight: 1.6,
+          maxWidth: '600px',
+          margin: '16px auto 0',
+        }}>
+          Built on public records: FEC filings · SEC EDGAR · USAspending.gov · BLS wage data · OSHA · NLRB · Senate Lobbying Disclosures · ProPublica · OpenSecrets · CourtListener
+        </p>
       </div>
 
       {/* ══════════════════════════════════════════════════════════════════

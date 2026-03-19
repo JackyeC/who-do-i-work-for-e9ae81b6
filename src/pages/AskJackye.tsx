@@ -162,7 +162,7 @@ export default function AskJackyePage() {
     jsonLd: {
       "@type": "WebApplication",
       name: "Ask Jackye — AI Career Intelligence Advisor",
-      description: "AI-powered career strategy assistant built on Jackye Clayton's 20+ years of HR expertise. Analyze companies, leadership, and market signals.",
+      description: "AI-powered career strategy assistant built on Jackye Clayton's 15+ years of HR expertise. Analyze companies, leadership, and market signals.",
       applicationCategory: "BusinessApplication",
       creator: { "@type": "Person", name: "Jackye Clayton" },
       featureList: "Company analysis, career strategy, employer transparency, offer negotiation guidance",

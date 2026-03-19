@@ -119,7 +119,7 @@ export default function WorkWithJackye() {
   const [submitted, setSubmitted] = useState(false);
   usePageSEO({
     title: "Work With Jackye — Career Strategy & HR Advisory",
-    description: "Book Jackye Clayton for career strategy, recruiting advisory, HR tech go-to-market, employer brand strategy, and offer review. 20+ years of HR expertise.",
+    description: "Book Jackye Clayton for career strategy, recruiting advisory, HR tech go-to-market, employer brand strategy, and offer review. 15+ years of HR expertise.",
     path: "/work-with-jackye",
     jsonLd: {
       "@type": "Service",
@@ -150,7 +150,7 @@ export default function WorkWithJackye() {
           <img src={jackyeHeadshot} alt="Jackye Clayton" className="w-16 h-16 object-cover shrink-0" />
           <div>
             <div className="font-serif text-base text-primary">Jackye Clayton</div>
-            <div className="text-[11px] text-muted-foreground">20+ years in HR · Recruiting · Talent Strategy · HR Tech</div>
+            <div className="text-[11px] text-muted-foreground">15+ years in HR · Recruiting · Talent Strategy · HR Tech</div>
           </div>
         </div>
       </section>

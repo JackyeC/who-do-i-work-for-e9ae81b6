@@ -37,7 +37,7 @@ const OnePager = () => {
           {[
             { num: "01 — Intelligence", title: "Connection Chain", body: "Every verified link between a company and its political donors, lobbying firms, PAC contributions, federal contracts, and regulatory relationships. Bloomberg-grade transparency for hiring decisions.", tag: "FEC · USASpending · OpenSecrets · SEC EDGAR" },
             { num: "02 — Protection", title: "Offer Letter Analyzer", body: "Benchmarks salary, flags non-compete language, identifies benefits gaps, and provides a negotiation guide — before you sign. Know your number. Know your rights. Know what to push back on.", tag: "Real-time salary data · Contract language detection" },
-            { num: "03 — Coaching", title: "Intelligence Advisor", body: "20+ years of HR expertise as your personal career strategist. Available 24/7. The advisor tells you what HR won't say and what most coaches are afraid to say out loud.", tag: "Talent framework · Your situation · Your decisions" },
+            { num: "03 — Coaching", title: "Intelligence Advisor", body: "15+ years of HR expertise as your personal career strategist. Available 24/7. The advisor tells you what HR won't say and what most coaches are afraid to say out loud.", tag: "Talent framework · Your situation · Your decisions" },
             { num: "04 — HR Intelligence", title: "Employer Promise Check", body: "HR professionals: audit your Employee Value Proposition against what the data actually shows. Close the gap between what you promise and what employees experience — before candidates surface it first.", tag: "For CHROs · Recruiters · HR Business Partners" },
           ].map(m => (
             <div key={m.num} className="bg-background p-5">

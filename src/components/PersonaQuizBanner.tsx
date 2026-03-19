@@ -39,7 +39,7 @@ export function PersonaQuizBanner() {
             fontWeight: 600,
             fontSize: "13px",
             background: "#f0c040",
-            color: "#0d0c0f",
+            color: "#0a0a0e",
           }}
         >
           Start the quiz →
