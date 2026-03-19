@@ -174,7 +174,7 @@ export function ExecutivePowerNetworkCard({ companyId, companyName }: Props) {
 
   const totalConnections = dedupedNetworks.reduce((a, n) => a + n.connections.length, 0);
   const uniqueOrgs = new Set(dedupedNetworks.flatMap(n => n.connections.map(c => c.name)));
-  const uniqueOrgs = new Set(networks.flatMap(n => n.connections.map(c => c.name)));
+  
 
   return (
     <Card>
