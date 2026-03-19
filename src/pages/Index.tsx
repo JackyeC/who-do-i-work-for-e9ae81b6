@@ -177,6 +177,33 @@ const Index = forwardRef<HTMLDivElement>((_, ref) => {
       </div>
 
       {/* ══════════════════════════════════════════════════════════════════
+          DEMO DOSSIER — Conversion Engine
+      ══════════════════════════════════════════════════════════════════ */}
+      <section id="demo-dossier" className="px-6 lg:px-16 py-20 lg:py-28 bg-card border-y border-border">
+        <div className="max-w-[720px] mx-auto">
+          <div className="text-center mb-10">
+            <div className="font-mono text-sm tracking-[0.2em] uppercase text-primary mb-3">
+              This is what you won't see on a job board
+            </div>
+            <h2 className="text-2xl lg:text-3xl text-foreground mb-4">
+              Most candidates never see this before they accept.{" "}
+              <span className="text-primary">You should.</span>
+            </h2>
+          </div>
+          <DemoCompanyProfile />
+          <div className="flex justify-center mt-8">
+            <button
+              onClick={() => navigate(user ? "/dashboard" : "/login")}
+              className="bg-primary text-primary-foreground px-8 py-3.5 font-mono text-sm font-semibold tracking-wider uppercase hover:brightness-110 transition-all flex items-center gap-2"
+            >
+              Run this for a company you're considering
+              <ArrowRight className="w-4 h-4" />
+            </button>
+          </div>
+        </div>
+      </section>
+
+      {/* ══════════════════════════════════════════════════════════════════
           5-TRACK PATHFINDER
       ══════════════════════════════════════════════════════════════════ */}
       <PathfinderTracks />
