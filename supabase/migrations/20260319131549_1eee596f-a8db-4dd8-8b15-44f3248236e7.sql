@@ -1,0 +1,1 @@
+ALTER TABLE public.companies ADD COLUMN insider_score integer DEFAULT NULL;

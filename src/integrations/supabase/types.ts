@@ -1270,6 +1270,7 @@ export type Database = {
           id: string
           identity_matched: boolean | null
           industry: string
+          insider_score: number | null
           is_publicly_traded: boolean | null
           is_startup: boolean | null
           jackye_insight: string | null
@@ -1319,6 +1320,7 @@ export type Database = {
           id?: string
           identity_matched?: boolean | null
           industry: string
+          insider_score?: number | null
           is_publicly_traded?: boolean | null
           is_startup?: boolean | null
           jackye_insight?: string | null
@@ -1368,6 +1370,7 @@ export type Database = {
           id?: string
           identity_matched?: boolean | null
           industry?: string
+          insider_score?: number | null
           is_publicly_traded?: boolean | null
           is_startup?: boolean | null
           jackye_insight?: string | null
