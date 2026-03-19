@@ -191,11 +191,11 @@
 
   /* ── TYPOGRAPHY CLASSES ── */
   .text-display {
-    font-family: 'Playfair Display', Georgia, serif;
-    font-size: clamp(36px, 6vw, 64px);
-    font-weight: 700;
-    line-height: 1.1;
-    letter-spacing: -0.5px;
+    font-family: 'DM Sans', system-ui, sans-serif;
+    font-size: clamp(36px, 6vw, 72px);
+    font-weight: 800;
+    line-height: 1.05;
+    letter-spacing: -2px;
     color: hsl(var(--foreground));
   }
 
