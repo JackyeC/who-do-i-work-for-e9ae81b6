@@ -35,6 +35,24 @@ export function AlignedValuesSearch({ hasTakenQuiz }: { hasTakenQuiz: boolean })
   const inputRef = useRef<HTMLInputElement>(null);
   const [trackedIds, setTrackedIds] = useState<Set<string>>(new Set());
 
+  // Suggested companies (top-scoring from DB, shown when focused but no query)
+  const { data: suggestedCompanies } = useQuery({
+    queryKey: ["aligned-suggestions"],
+    queryFn: async () => {
+      const { data } = await supabase
+        .from("companies")
+        .select("id, name, slug, industry, civic_footprint_score, category_tags, insider_score")
+        .order("civic_footprint_score", { ascending: false })
+        .limit(5);
+      return (data || []).map((c: any) => ({
+        ...c,
+        category_tags: c.category_tags || [],
+        narrative_gap: (c.insider_score ?? 0) > 60,
+      })) as CompanyResult[];
+    },
+    staleTime: 5 * 60_000,
+  });
+
   // Search DB companies
   const { data: dbResults } = useQuery({
     queryKey: ["aligned-search", query],
