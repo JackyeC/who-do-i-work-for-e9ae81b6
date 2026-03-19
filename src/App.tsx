@@ -200,6 +200,7 @@ const App = () => (
                   <Route path="/admin/reports" element={<AdminRoute><ReportsList /></AdminRoute>} />
                   <Route path="/admin/reports/:id" element={<AdminRoute><ReportEditor /></AdminRoute>} />
                   <Route path="/founder-console" element={<AdminRoute><FounderConsole /></AdminRoute>} />
+                  <Route path="/admin/ticker" element={<AdminRoute><AdminTicker /></AdminRoute>} />
                   <Route path="/recruiting" element={<RecruitingIntelligence />} />
                   <Route path="/employer/verification-pending" element={<ProtectedRoute><EmployerVerificationPending /></ProtectedRoute>} />
                   <Route path="/for-employers" element={<ForEmployers />} />
