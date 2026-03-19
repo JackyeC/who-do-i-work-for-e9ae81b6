@@ -8,15 +8,6 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/hooks/use-toast";
 
-/* ── Sample companies shown when search is focused but empty ── */
-const SAMPLE_COMPANIES = [
-  { id: "sample-1", name: "Patagonia", slug: "patagonia", industry: "Retail / Apparel", civic_footprint_score: 88, category_tags: ["Climate", "Worker Rights"], narrative_gap: false },
-  { id: "sample-2", name: "Ben & Jerry's", slug: "ben-jerrys", industry: "Food & Beverage", civic_footprint_score: 82, category_tags: ["Social Justice", "Climate"], narrative_gap: false },
-  { id: "sample-3", name: "Salesforce", slug: "salesforce", industry: "Technology", civic_footprint_score: 71, category_tags: ["Equality", "Education"], narrative_gap: true },
-  { id: "sample-4", name: "Warby Parker", slug: "warby-parker", industry: "Retail / Eyewear", civic_footprint_score: 76, category_tags: ["Health Equity", "B Corp"], narrative_gap: false },
-  { id: "sample-5", name: "Seventh Generation", slug: "seventh-generation", industry: "Consumer Goods", civic_footprint_score: 79, category_tags: ["Climate", "Community"], narrative_gap: false },
-];
-
 interface CompanyResult {
   id: string;
   name: string;
