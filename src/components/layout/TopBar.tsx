@@ -390,6 +390,22 @@ export function TopBar() {
             </Link>
           )}
 
+          {/* Audit CTA */}
+          <Link
+            to="/browse"
+            className="hidden sm:inline-flex items-center whitespace-nowrap font-sans transition-all hover:brightness-110"
+            style={{
+              background: '#f0c040',
+              color: '#0a0a0e',
+              borderRadius: '50px',
+              padding: '8px 20px',
+              fontSize: '14px',
+              fontWeight: 600,
+            }}
+          >
+            Audit →
+          </Link>
+
           {/* Mobile hamburger */}
           <button
             className="md:hidden p-2 text-muted-foreground hover:text-foreground"
