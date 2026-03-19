@@ -146,8 +146,21 @@ export default function Pricing() {
           Whether you're a candidate, recruiter, or employer — pick the plan that matches how you hire.
         </p>
 
-        {/* Tier Cards */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 max-w-[960px] w-full">
+        {/* Candidate Tiers */}
+        <p className="text-xs uppercase tracking-[3px] font-semibold mb-5" style={{ color: "#f0c040" }}>
+          For Candidates
+        </p>
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 max-w-[960px] w-full mb-12">
+          {tiers.slice(0, 3).map((tier) => (
+            <TierCard key={tier.name} tier={tier} navigate={navigate} />
+          ))}
+        </div>
+
+        {/* Employer / Recruiter Tiers */}
+        <p className="text-xs uppercase tracking-[3px] font-semibold mb-5" style={{ color: "#f0c040" }}>
+          For Recruiters & Employers
+        </p>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 max-w-[640px] w-full">
           {tiers.map((tier) => (
             <div
               key={tier.name}
