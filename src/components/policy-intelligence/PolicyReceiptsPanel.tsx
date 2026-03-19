@@ -1,7 +1,20 @@
-import { ChevronDown, FileText, Users, Landmark, Building2, Megaphone } from "lucide-react";
+import { useState } from "react";
+import { ChevronDown, ChevronRight, FileText, Users, Landmark, Building2, Megaphone, AlertTriangle, DollarSign } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
 import { Card, CardContent } from "@/components/ui/card";
+import { PartyBadge } from "@/components/PartyBadge";
+
+interface CandidateRecord {
+  name: string;
+  party: string;
+  state: string;
+  district?: string | null;
+  amount: number;
+  donation_type: string;
+  flagged: boolean;
+  flag_reason?: string | null;
+}
 
 interface Props {
   stances: Array<{ topic: string; public_position: string; gap: string }>;
@@ -9,6 +22,7 @@ interface Props {
   lobbyingRecords: Array<{ state: string; lobbying_spend?: number | null }>;
   tradeAssociations: Array<{ name: string }>;
   darkMoney: Array<{ name: string; org_type: string; estimated_amount: number | null }>;
+  candidates?: CandidateRecord[];
 }
 
 function ReceiptSection({ icon: Icon, title, count, children }: { icon: any; title: string; count: number; children: React.ReactNode }) {
@@ -29,12 +43,95 @@ function ReceiptSection({ icon: Icon, title, count, children }: { icon: any; tit
   );
 }
 
-export function PolicyReceiptsPanel({ stances, linkages, lobbyingRecords, tradeAssociations, darkMoney }: Props) {
+function PartyBreakdownBar({ candidates }: { candidates: CandidateRecord[] }) {
+  const totals: Record<string, number> = { R: 0, D: 0, Other: 0 };
+  let grandTotal = 0;
+  for (const c of candidates) {
+    const p = c.party?.toLowerCase() || "";
+    const amt = c.amount || 0;
+    if (p.includes("republican") || p === "r") totals.R += amt;
+    else if (p.includes("democrat") || p === "d") totals.D += amt;
+    else totals.Other += amt;
+    grandTotal += amt;
+  }
+  if (grandTotal === 0) return null;
+
+  const rPct = Math.round((totals.R / grandTotal) * 100);
+  const dPct = Math.round((totals.D / grandTotal) * 100);
+  const oPct = 100 - rPct - dPct;
+
+  return (
+    <div className="px-3 py-2 space-y-1.5">
+      <div className="flex items-center justify-between text-xs text-muted-foreground">
+        <span>{candidates.length} recipients · ${grandTotal.toLocaleString()} total</span>
+        <div className="flex items-center gap-3">
+          {totals.R > 0 && <span className="flex items-center gap-1"><span className="w-2 h-2 rounded-full bg-[hsl(0,65%,50%)]" />R {rPct}%</span>}
+          {totals.D > 0 && <span className="flex items-center gap-1"><span className="w-2 h-2 rounded-full bg-[hsl(218,55%,48%)]" />D {dPct}%</span>}
+          {totals.Other > 0 && <span className="flex items-center gap-1"><span className="w-2 h-2 rounded-full bg-muted-foreground" />Other {oPct}%</span>}
+        </div>
+      </div>
+      <div className="flex h-2 rounded-full overflow-hidden bg-muted">
+        {totals.R > 0 && <div className="bg-[hsl(0,65%,50%)]" style={{ width: `${rPct}%` }} />}
+        {totals.D > 0 && <div className="bg-[hsl(218,55%,48%)]" style={{ width: `${dPct}%` }} />}
+        {totals.Other > 0 && <div className="bg-muted-foreground/40" style={{ width: `${oPct}%` }} />}
+      </div>
+    </div>
+  );
+}
+
+function CandidateRow({ candidate }: { candidate: CandidateRecord }) {
+  const [expanded, setExpanded] = useState(false);
+
+  return (
+    <Card className={`border-border/30 ${candidate.flagged ? "border-destructive/30 bg-destructive/5" : ""}`}>
+      <CardContent className="p-0">
+        <button
+          onClick={() => setExpanded(!expanded)}
+          className="flex items-center justify-between w-full p-2.5 text-left hover:bg-muted/20 transition-colors"
+        >
+          <div className="flex items-center gap-2 min-w-0">
+            {expanded ? <ChevronDown className="w-3 h-3 text-muted-foreground shrink-0" /> : <ChevronRight className="w-3 h-3 text-muted-foreground shrink-0" />}
+            <PartyBadge party={candidate.party} size="xs" />
+            <span className="text-xs font-medium text-foreground truncate">{candidate.name}</span>
+            <span className="text-[11px] text-muted-foreground shrink-0">{candidate.state}{candidate.district ? `-${candidate.district}` : ""}</span>
+            {candidate.flagged && <AlertTriangle className="w-3 h-3 text-destructive shrink-0" />}
+          </div>
+          <div className="flex items-center gap-2 shrink-0">
+            <Badge variant="outline" className="text-[10px]">{candidate.donation_type === "pac" ? "PAC" : candidate.donation_type === "direct" ? "Direct" : candidate.donation_type}</Badge>
+            <span className="text-xs font-mono text-muted-foreground">${candidate.amount.toLocaleString()}</span>
+          </div>
+        </button>
+        {expanded && (
+          <div className="px-3 pb-2.5 pt-0 border-t border-border/20 space-y-1">
+            {candidate.district && (
+              <p className="text-[11px] text-muted-foreground">District: {candidate.state}-{candidate.district}</p>
+            )}
+            <p className="text-[11px] text-muted-foreground">
+              Donation type: {candidate.donation_type === "pac" ? "PAC contribution" : candidate.donation_type === "direct" ? "Direct contribution" : candidate.donation_type}
+            </p>
+            {candidate.flagged && candidate.flag_reason && (
+              <div className="flex items-start gap-1.5 mt-1 p-1.5 rounded bg-destructive/10">
+                <AlertTriangle className="w-3 h-3 text-destructive shrink-0 mt-0.5" />
+                <p className="text-[11px] text-destructive">{candidate.flag_reason}</p>
+              </div>
+            )}
+            <p className="text-[10px] text-muted-foreground mt-1">Source: FEC filings</p>
+          </div>
+        )}
+      </CardContent>
+    </Card>
+  );
+}
+
+export function PolicyReceiptsPanel({ stances, linkages, lobbyingRecords, tradeAssociations, darkMoney, candidates = [] }: Props) {
   const donations = linkages.filter(l => l.link_type === "donation_to_member" || l.link_type === "pac_contribution");
   const lobbyingLinks = linkages.filter(l => l.link_type === "lobbying_on_bill" || l.link_type === "lobbying_expenditure");
   const policyStances = stances.filter(s => ["Climate", "Labor", "Civil Rights", "Healthcare", "ESG", "Data Privacy", "Workers Rights", "Environment"].some(
     cat => s.topic.toLowerCase().includes(cat.toLowerCase())
   ));
+
+  const hasCandidates = candidates.length > 0;
+  const spendingCount = hasCandidates ? candidates.length : donations.length;
 
   return (
     <div className="space-y-3">
@@ -42,9 +139,17 @@ export function PolicyReceiptsPanel({ stances, linkages, lobbyingRecords, tradeA
       <p className="text-xs text-muted-foreground">Documented records of corporate political activity and governance disclosures.</p>
 
       <div className="space-y-2">
-        <ReceiptSection icon={FileText} title="Political Spending Disclosure" count={donations.length}>
-          {donations.length === 0 ? (
+        {/* Political Spending — intelligence-grade */}
+        <ReceiptSection icon={DollarSign} title="Political Spending Disclosure" count={spendingCount}>
+          {spendingCount === 0 ? (
             <p className="text-xs text-muted-foreground px-3 py-2">No documented political spending records found.</p>
+          ) : hasCandidates ? (
+            <div className="space-y-1.5">
+              <PartyBreakdownBar candidates={candidates} />
+              {candidates.map((c, i) => (
+                <CandidateRow key={i} candidate={c} />
+              ))}
+            </div>
           ) : (
             donations.slice(0, 10).map((d, i) => (
               <Card key={i} className="border-border/30">
@@ -52,7 +157,7 @@ export function PolicyReceiptsPanel({ stances, linkages, lobbyingRecords, tradeA
                   <div className="flex items-center gap-2">
                     <span className="text-xs text-foreground">{d.target_entity_name}</span>
                     <Badge variant="outline" className="text-xs text-muted-foreground">
-                      {d.link_type === "pac_contribution" ? "Action" : "Action"}
+                      {d.link_type === "pac_contribution" ? "PAC" : "Direct"}
                     </Badge>
                   </div>
                   {d.amount && <span className="text-xs font-mono text-muted-foreground">${d.amount.toLocaleString()}</span>}
