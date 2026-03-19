@@ -449,9 +449,9 @@ export function PurpleSquirrelOnboarding({ onComplete }: PurpleSquirrelOnboardin
                     </p>
                   </div>
 
-                  <Button onClick={handleLaunch} size="lg" className="gap-2 mt-2">
+                  <Button onClick={handleLaunch} size="lg" className="gap-2 mt-2" disabled={submitting}>
                     <Zap className="w-4 h-4" />
-                    Engage Engine
+                    {submitting ? "Activating…" : "Engage Engine"}
                   </Button>
                 </div>
               )}
