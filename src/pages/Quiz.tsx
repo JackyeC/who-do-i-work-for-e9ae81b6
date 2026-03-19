@@ -927,7 +927,7 @@ function ResultsScreen({
       </p>
 
       {/* Signal chips */}
-      <div className="w-full flex flex-col gap-2.5">
+      <div className="w-full flex flex-col gap-3" style={{ maxWidth: 560 }}>
         {profile.signals.map((sig, i) => (
           <SignalChip key={i} signal={sig} delay={0.4 + i * 0.15} />
         ))}
