@@ -3,14 +3,9 @@ import { useAuth } from "@/contexts/AuthContext";
 import { Header } from "@/components/Header";
 import { Footer } from "@/components/Footer";
 import { Button } from "@/components/ui/button";
-import { CheckCircle2, ArrowRight, Youtube, Linkedin, Mail, Sparkles } from "lucide-react";
+import { ArrowRight, CheckCircle2, Search } from "lucide-react";
 import { useEffect } from "react";
-
-const SOCIAL_LINKS = {
-  newsletter: "https://jackyeclayton.com/newsletter", // People Puzzles Collective
-  linkedin: "https://www.linkedin.com/in/jackyeclayton/",
-  youtube: "https://www.youtube.com/@JackyeClayton",
-};
+import { WelcomeLiveTicker } from "@/components/welcome/WelcomeLiveTicker";
 
 export default function Welcome() {
   const { user, loading } = useAuth();
@@ -22,126 +17,80 @@ export default function Welcome() {
 
   if (loading || !user) return null;
 
+  const capabilities = [
+    "Run real company checks before you apply or accept",
+    "Spot risk signals most candidates miss",
+    "Compare what companies say vs what they actually do",
+    "Ask better questions in interviews",
+    "Make decisions based on evidence, not guesswork",
+  ];
+
   return (
     <div className="min-h-screen flex flex-col bg-background">
       <Header />
-      <div className="flex-1 flex items-center justify-center px-4 py-20">
-        <div className="w-full max-w-lg">
-          {/* Success badge */}
-          <div className="text-center mb-8">
-            <div className="w-16 h-16 mx-auto rounded-2xl bg-primary/8 flex items-center justify-center mb-4 border border-primary/10">
-              <Sparkles className="w-8 h-8 text-primary" />
-            </div>
-            <h1 className="font-serif text-2xl lg:text-3xl text-foreground mb-2">
-              Welcome to the People Puzzles Collective
-            </h1>
-            <p className="text-sm text-muted-foreground leading-relaxed max-w-md mx-auto">
-              You're in. Your Workplace DNA Calibration and Public Intelligence Dashboard are unlocked.
-              Stay connected for weekly clarity from Jackye Clayton.
-            </p>
+      <div className="flex-1 flex items-center justify-center px-4 py-16 md:py-24">
+        <div className="w-full max-w-xl text-center">
+          {/* Headline */}
+          <h1 className="font-serif text-2xl sm:text-3xl lg:text-4xl text-foreground leading-tight mb-4">
+            You're in. Now let's make sure you don't walk into the wrong company.
+          </h1>
+
+          {/* Subhead */}
+          <p className="text-sm sm:text-base text-muted-foreground leading-relaxed max-w-lg mx-auto mb-10">
+            Most people accept jobs based on titles, salary, and vibes. You now have the ability to see what's actually happening behind the offer.
+          </p>
+
+          {/* Primary CTA */}
+          <Button
+            onClick={() => navigate("/search")}
+            size="lg"
+            className="gap-2 font-mono text-sm tracking-wider uppercase px-10 py-6 text-base"
+          >
+            <Search className="w-5 h-5" />
+            Scan a Company
+          </Button>
+
+          {/* Live ticker */}
+          <div className="mt-5 mb-3">
+            <WelcomeLiveTicker />
           </div>
 
-          {/* The Follow Loop */}
-          <div className="bg-card border border-border p-6 mb-6">
-            <div className="font-mono text-xs tracking-[0.2em] uppercase text-primary mb-4">
-              Stay in the loop
-            </div>
-            <p className="text-sm text-muted-foreground mb-6 leading-relaxed">
-              Get the truth about the market delivered to your inbox every Monday.
-              Follow Jackye for daily career clarity.
-            </p>
+          {/* Supporting text */}
+          <p className="font-mono text-xs text-muted-foreground/70 tracking-wide mb-10">
+            Most candidates never see this before they accept. You will.
+          </p>
 
-            <div className="space-y-3">
-              <a
-                href={SOCIAL_LINKS.newsletter}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="flex items-center gap-3 bg-primary text-primary-foreground p-4 hover:brightness-110 transition-all group"
-              >
-                <Mail className="w-5 h-5 shrink-0" />
-                <div className="flex-1">
-                  <div className="font-mono text-xs tracking-wider uppercase font-semibold">
-                    Join Monday Momentum
-                  </div>
-                  <div className="text-xs opacity-80">
-                    Weekly career intelligence newsletter
-                  </div>
-                </div>
-                <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
-              </a>
-
-              <a
-                href={SOCIAL_LINKS.linkedin}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="flex items-center gap-3 bg-card border border-border p-4 hover:border-primary/40 transition-all group"
-              >
-                <Linkedin className="w-5 h-5 text-primary shrink-0" />
-                <div className="flex-1">
-                  <div className="font-mono text-xs tracking-wider uppercase font-semibold text-foreground">
-                    Follow on LinkedIn
-                  </div>
-                  <div className="text-xs text-muted-foreground">
-                    Daily clarity from Jackye Clayton
-                  </div>
-                </div>
-                <ArrowRight className="w-4 h-4 text-muted-foreground group-hover:translate-x-1 group-hover:text-primary transition-all" />
-              </a>
-
-              <a
-                href={SOCIAL_LINKS.youtube}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="flex items-center gap-3 bg-card border border-border p-4 hover:border-primary/40 transition-all group"
-              >
-                <Youtube className="w-5 h-5 text-primary shrink-0" />
-                <div className="flex-1">
-                  <div className="font-mono text-xs tracking-wider uppercase font-semibold text-foreground">
-                    Subscribe on YouTube
-                  </div>
-                  <div className="text-xs text-muted-foreground">
-                    @JackyeClayton — career intelligence videos
-                  </div>
-                </div>
-                <ArrowRight className="w-4 h-4 text-muted-foreground group-hover:translate-x-1 group-hover:text-primary transition-all" />
-              </a>
-            </div>
-          </div>
-
-          {/* What's unlocked */}
-          <div className="bg-card border border-border p-6 mb-6">
-            <div className="font-mono text-xs tracking-[0.2em] uppercase text-primary mb-4">
-              What you've unlocked
-            </div>
-            <ul className="space-y-2.5">
-              {[
-                "Workplace DNA Calibration",
-                "Public Intelligence Dashboard",
-                "3 free company scans per month",
-                "Monday Momentum newsletter",
-              ].map((item) => (
-                <li key={item} className="flex items-center gap-2 text-sm text-foreground">
-                  <CheckCircle2 className="w-4 h-4 text-primary shrink-0" strokeWidth={2} />
-                  {item}
-                </li>
-              ))}
-            </ul>
-          </div>
-
-          <div className="flex flex-col sm:flex-row gap-3">
+          {/* Secondary CTAs */}
+          <div className="flex flex-col sm:flex-row gap-3 justify-center mb-14">
             <Button
+              variant="outline"
               onClick={() => navigate("/career-map")}
-              className="flex-1 gap-1.5 font-mono text-xs tracking-wider uppercase"
+              className="gap-1.5 font-mono text-xs tracking-wider uppercase"
             >
-              Calibrate My DNA <ArrowRight className="w-3 h-3" />
+              Calibrate My Workplace DNA <ArrowRight className="w-3 h-3" />
             </Button>
             <Button
               variant="outline"
               onClick={() => navigate("/dashboard")}
-              className="flex-1 gap-1.5 font-mono text-xs tracking-wider uppercase"
+              className="gap-1.5 font-mono text-xs tracking-wider uppercase"
             >
               Go to Dashboard <ArrowRight className="w-3 h-3" />
             </Button>
+          </div>
+
+          {/* What you can do now */}
+          <div className="bg-card border border-border p-6 sm:p-8 text-left max-w-md mx-auto">
+            <div className="font-mono text-xs tracking-[0.2em] uppercase text-primary mb-5">
+              What you can do now
+            </div>
+            <ul className="space-y-3">
+              {capabilities.map((item) => (
+                <li key={item} className="flex items-start gap-2.5 text-sm text-foreground leading-relaxed">
+                  <CheckCircle2 className="w-4 h-4 text-primary shrink-0 mt-0.5" strokeWidth={2} />
+                  {item}
+                </li>
+              ))}
+            </ul>
           </div>
         </div>
       </div>
