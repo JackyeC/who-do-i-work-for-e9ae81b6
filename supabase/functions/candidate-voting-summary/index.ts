@@ -8,70 +8,68 @@ const corsHeaders = {
 const CONGRESS_API_BASE = "https://api.congress.gov/v3";
 const LEGISLATORS_URL = "https://theunitedstates.io/congress-legislators/legislators-current.json";
 
-// Find bioguide ID by name matching
-async function resolveBioguideId(candidateName: string, state?: string): Promise<string | null> {
-  try {
-    const resp = await fetch(LEGISLATORS_URL, {
-      headers: { "User-Agent": "CivicLens/1.0" },
-    });
-    if (!resp.ok) return null;
-    const legislators = await resp.json();
+// In-memory cache for legislators list (stable data, ~1MB)
+let legislatorsCache: any[] | null = null;
+let legislatorsCacheTime = 0;
+const CACHE_TTL_MS = 60 * 60 * 1000; // 1 hour
 
-    const normalized = candidateName.toUpperCase().replace(/[^A-Z\s]/g, "").trim();
-
-    for (const leg of legislators) {
-      const fullName = (leg.name.official_full || `${leg.name.first} ${leg.name.last}`).toUpperCase();
-      const lastName = leg.name.last.toUpperCase();
-      const firstName = leg.name.first.toUpperCase();
-
-      // Match full name, or last + first initial
-      if (
-        fullName.includes(normalized) ||
-        normalized.includes(fullName) ||
-        (normalized.includes(lastName) && normalized.includes(firstName.slice(0, 3)))
-      ) {
-        // Optional state check
-        if (state) {
-          const currentTerm = leg.terms[leg.terms.length - 1];
-          if (currentTerm.state !== state.toUpperCase()) continue;
-        }
-        return leg.id.bioguide;
-      }
-    }
-    return null;
-  } catch {
-    return null;
+async function getLegislators(): Promise<any[]> {
+  if (legislatorsCache && Date.now() - legislatorsCacheTime < CACHE_TTL_MS) {
+    return legislatorsCache;
   }
+  const resp = await fetch(LEGISLATORS_URL, {
+    headers: { "User-Agent": "CivicLens/1.0" },
+  });
+  if (!resp.ok) return [];
+  legislatorsCache = await resp.json();
+  legislatorsCacheTime = Date.now();
+  return legislatorsCache!;
 }
 
-// Fetch real data from Congress.gov API
+function resolveBioguideId(legislators: any[], candidateName: string, state?: string): string | null {
+  const normalized = candidateName.toUpperCase().replace(/[^A-Z\s]/g, "").trim();
+
+  for (const leg of legislators) {
+    const fullName = (leg.name.official_full || `${leg.name.first} ${leg.name.last}`).toUpperCase();
+    const lastName = leg.name.last.toUpperCase();
+    const firstName = leg.name.first.toUpperCase();
+
+    if (
+      fullName.includes(normalized) ||
+      normalized.includes(fullName) ||
+      (normalized.includes(lastName) && normalized.includes(firstName.slice(0, 3)))
+    ) {
+      if (state) {
+        const currentTerm = leg.terms[leg.terms.length - 1];
+        if (currentTerm.state !== state.toUpperCase()) continue;
+      }
+      return leg.id.bioguide;
+    }
+  }
+  return null;
+}
+
+// Fetch all Congress.gov data in parallel
 async function fetchCongressData(bioguideId: string, apiKey: string) {
   const controller = new AbortController();
-  const timeout = setTimeout(() => controller.abort(), 20000);
+  const timeout = setTimeout(() => controller.abort(), 12000);
+  const opts = { signal: controller.signal, headers: { "User-Agent": "CivicLens/1.0" } };
 
   try {
-    // Member profile
-    const memberResp = await fetch(
-      `${CONGRESS_API_BASE}/member/${bioguideId}?api_key=${apiKey}&format=json`,
-      { signal: controller.signal, headers: { "User-Agent": "CivicLens/1.0" } }
-    );
-    const memberData = memberResp.ok ? await memberResp.json() : null;
+    const [memberResp, sponsoredResp, cosponsoredResp] = await Promise.all([
+      fetch(`${CONGRESS_API_BASE}/member/${bioguideId}?api_key=${apiKey}&format=json`, opts),
+      fetch(`${CONGRESS_API_BASE}/member/${bioguideId}/sponsored-legislation?limit=15&api_key=${apiKey}&format=json`, opts),
+      fetch(`${CONGRESS_API_BASE}/member/${bioguideId}/cosponsored-legislation?limit=15&api_key=${apiKey}&format=json`, opts),
+    ]);
+
+    const [memberData, sponsoredData, cosponsoredData] = await Promise.all([
+      memberResp.ok ? memberResp.json() : null,
+      sponsoredResp.ok ? sponsoredResp.json() : null,
+      cosponsoredResp.ok ? cosponsoredResp.json() : null,
+    ]);
+
     const member = memberData?.member;
-
-    // Sponsored legislation
-    const sponsoredResp = await fetch(
-      `${CONGRESS_API_BASE}/member/${bioguideId}/sponsored-legislation?limit=15&api_key=${apiKey}&format=json`,
-      { signal: controller.signal, headers: { "User-Agent": "CivicLens/1.0" } }
-    );
-    const sponsoredData = sponsoredResp.ok ? await sponsoredResp.json() : null;
     const bills = sponsoredData?.sponsoredLegislation || [];
-
-    // Cosponsored legislation
-    const cosponsoredResp = await fetch(
-      `${CONGRESS_API_BASE}/member/${bioguideId}/cosponsored-legislation?limit=15&api_key=${apiKey}&format=json`,
-      { signal: controller.signal, headers: { "User-Agent": "CivicLens/1.0" } }
-    );
-    const cosponsoredData = cosponsoredResp.ok ? await cosponsoredResp.json() : null;
     const cosponsored = cosponsoredData?.cosponsoredLegislation || [];
 
     return {
@@ -83,8 +81,6 @@ async function fetchCongressData(bioguideId: string, apiKey: string) {
             district: member.district || null,
             chamber: member.terms?.[member.terms.length - 1]?.chamber || null,
             terms_served: member.terms?.length || 0,
-            depiction: member.depiction?.imageUrl || null,
-            leadership: member.leadership || [],
             committees: (member.terms?.[member.terms.length - 1]?.committees || []).map((c: any) => c.name),
           }
         : null,
@@ -131,24 +127,22 @@ serve(async (req) => {
 
     const CONGRESS_API_KEY = Deno.env.get("CONGRESS_GOV_API_KEY");
 
-    // Try to resolve bioguide ID and fetch real data
+    // Resolve bioguide + fetch data
     let congressData: any = null;
     let dataSource = "ai_inference";
 
     if (CONGRESS_API_KEY) {
-      console.log(`[voting-summary] Resolving bioguide ID for "${candidate_name}"...`);
-      const bioguideId = await resolveBioguideId(candidate_name, state);
+      const legislators = await getLegislators();
+      const bioguideId = resolveBioguideId(legislators, candidate_name, state);
 
       if (bioguideId) {
-        console.log(`[voting-summary] Found bioguide: ${bioguideId}, fetching Congress.gov data...`);
+        console.log(`[voting-summary] Found bioguide: ${bioguideId}`);
         congressData = await fetchCongressData(bioguideId, CONGRESS_API_KEY);
         if (congressData) dataSource = "congress.gov";
-      } else {
-        console.log(`[voting-summary] No bioguide match for "${candidate_name}"`);
       }
     }
 
-    // Build the AI prompt with real data if available
+    // Build prompt
     const districtContext = district ? `, District ${district}` : "";
     let prompt: string;
 
@@ -210,7 +204,7 @@ Keep it factual and under 300 words. Note that this summary is based on publicly
         "Content-Type": "application/json",
       },
       body: JSON.stringify({
-        model: "google/gemini-2.5-flash",
+        model: "google/gemini-2.5-flash-lite",
         messages: [
           {
             role: "system",
@@ -240,9 +234,6 @@ Keep it factual and under 300 words. Note that this summary is based on publicly
       policy_areas: congressData?.sponsored_bills
         ? [...new Set(congressData.sponsored_bills.map((b: any) => b.policy_area).filter(Boolean))]
         : [],
-      congress_gov_profile: congressData?.member
-        ? `https://bioguide.congress.gov/search/bio/${congressData.member.name}`
-        : null,
     }), {
       headers: { ...corsHeaders, "Content-Type": "application/json" },
     });
