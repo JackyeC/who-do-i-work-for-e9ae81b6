@@ -98,6 +98,7 @@ const NegotiationSimulator = lazy(() => import("./pages/NegotiationSimulator"));
 const DecisionEngine = lazy(() => import("./pages/DecisionEngine"));
 const Hire = lazy(() => import("./pages/Hire"));
 const AutoApplyOnboarding = lazy(() => import("./pages/AutoApply"));
+const SampleDossier = lazy(() => import("./pages/SampleDossier"));
 const Welcome = lazy(() => import("./pages/Welcome"));
 const Quiz = lazy(() => import("./pages/Quiz"));
 const EarlyAccess = lazy(() => import("./pages/EarlyAccess"));
