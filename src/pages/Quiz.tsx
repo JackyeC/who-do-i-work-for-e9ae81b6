@@ -831,7 +831,7 @@ function ResultsScreen({
       {/* Primary persona name */}
       <h1
         style={{
-          fontFamily: "'Playfair Display', serif",
+          fontFamily: "'DM Sans', sans-serif",
           fontWeight: 700,
           fontSize: "clamp(38px, 7vw, 58px)",
           color: "#f0ebe0",

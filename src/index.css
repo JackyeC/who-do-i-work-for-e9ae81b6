@@ -243,10 +243,11 @@
   }
 
   .text-score {
-    font-family: 'Playfair Display', Georgia, serif;
-    font-size: clamp(32px, 5vw, 52px);
-    font-weight: 700;
+    font-family: 'DM Sans', system-ui, sans-serif;
+    font-size: clamp(40px, 6vw, 64px);
+    font-weight: 800;
     line-height: 1;
+    letter-spacing: -2px;
   }
 
   /* ── CARD STYLES ── */
