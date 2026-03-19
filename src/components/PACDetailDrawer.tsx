@@ -356,7 +356,19 @@ export function PACDetailDrawer({ open, onOpenChange, companyId, companyName, to
                   </h3>
                   <div className="space-y-1.5">
                     {executives.map((exec: any) => (
-                      <div key={exec.id} className="flex items-center justify-between p-2.5 rounded-lg bg-muted/40 border border-border/60">
+                      <div
+                        key={exec.id}
+                        className={cn(
+                          "flex items-center justify-between p-2.5 rounded-lg bg-muted/40 border border-border/60",
+                          onExecutiveClick && "cursor-pointer hover:bg-muted/70 hover:border-primary/30 transition-colors"
+                        )}
+                        onClick={() => {
+                          if (onExecutiveClick) {
+                            onOpenChange(false);
+                            setTimeout(() => onExecutiveClick(exec), 300);
+                          }
+                        }}
+                      >
                         <div className="flex items-center gap-2">
                           {exec.photo_url ? (
                             <img src={exec.photo_url} alt={exec.name} className="w-7 h-7 rounded-full object-cover border border-border/60" crossOrigin="anonymous" referrerPolicy="no-referrer" />
