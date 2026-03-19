@@ -79,7 +79,7 @@ function ExecCard({ exec, recipients, companyName, companySlug, locked }: {
             <Link
               to="/pricing"
               className="inline-block px-5 py-2 text-sm font-semibold rounded-full"
-              style={{ background: "#f0c040", color: "#0d0c0f" }}
+              style={{ background: "#f0c040", color: "#0a0a0e" }}
             >
               Upgrade to Scout
             </Link>
