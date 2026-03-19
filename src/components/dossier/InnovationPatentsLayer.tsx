@@ -236,7 +236,7 @@ export function InnovationPatentsLayer({ totalPatents, clusters, companyName, co
       )}
 
       {/* No results after scan */}
-      {scanTriggered && !isLoading && displayTotal === 0 && (
+      {!isLoading && displayTotal === 0 && (
         <IntelligenceEmptyState category="patents" state="after" />
       )}
     </div>
