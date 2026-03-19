@@ -77,8 +77,6 @@ function trendLabel(trend: string) {
 }
 
 export function InnovationPatentsLayer({ totalPatents, clusters, companyName, companyId, unlocked = true }: InnovationPatentsProps) {
-  const [scanTriggered, setScanTriggered] = useState(false);
-
   const { data: scanData, isLoading, error } = useQuery({
     queryKey: ["uspto-scan", companyName, companyId],
     queryFn: async () => {
@@ -95,8 +93,9 @@ export function InnovationPatentsLayer({ totalPatents, clusters, companyName, co
         totalResults: number;
       };
     },
-    enabled: scanTriggered,
+    enabled: !!companyName,
     staleTime: 1000 * 60 * 60,
+    retry: 1,
   });
 
   const displayClusters = scanData?.clusters || clusters;

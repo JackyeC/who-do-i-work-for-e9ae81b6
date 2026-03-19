@@ -1,93 +1,62 @@
 import { useQuery } from "@tanstack/react-query";
+import { useEffect } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
-import { Lightbulb, TrendingUp, TrendingDown, Minus, ExternalLink, ChevronDown, ChevronUp, Loader2 } from "lucide-react";
-import { useState } from "react";
+import { Lightbulb, ExternalLink, AlertCircle } from "lucide-react";
 import { cn } from "@/lib/utils";
-import { EmptyStateExplainer } from "./EmptyStateExplainer";
+import {
+  fetchPatentData,
+  calculateInnovationSignal,
+  getPatentGoogleLink,
+  getSignalDotColor,
+  type PatentScanResult,
+} from "@/lib/patent-utils";
 
 interface InnovationSignalsProps {
   companyId: string;
   companyName: string;
 }
 
-const CATEGORY_COLORS: Record<string, string> = {
-  "AI & Machine Learning": "bg-purple-100 text-purple-700 border-purple-200",
-  "Cybersecurity": "bg-red-100 text-red-700 border-red-200",
-  "Healthcare": "bg-emerald-100 text-emerald-700 border-emerald-200",
-  "Cloud Computing": "bg-blue-100 text-blue-700 border-blue-200",
-  "Energy & Sustainability": "bg-green-100 text-green-700 border-green-200",
-  "Semiconductors": "bg-orange-100 text-orange-700 border-orange-200",
-  "Communications": "bg-cyan-100 text-cyan-700 border-cyan-200",
-  "Blockchain": "bg-indigo-100 text-indigo-700 border-indigo-200",
-  "Autonomous Systems": "bg-amber-100 text-amber-700 border-amber-200",
-  "User Interface": "bg-pink-100 text-pink-700 border-pink-200",
-};
-
 export function InnovationSignals({ companyId, companyName }: InnovationSignalsProps) {
-  const [expanded, setExpanded] = useState(false);
-  const [scanning, setScanning] = useState(false);
-
-  const { data: patents, isLoading, refetch } = useQuery({
-    queryKey: ["company-patents", companyId],
-    queryFn: async () => {
-      const { data, error } = await (supabase as any)
-        .from("company_patents")
-        .select("*")
-        .eq("company_id", companyId)
-        .order("filing_date", { ascending: false });
-      if (error) throw error;
-      return data || [];
-    },
-    enabled: !!companyId,
+  const { data, isLoading, error } = useQuery({
+    queryKey: ["patent-scan", companyName, companyId],
+    queryFn: () => fetchPatentData(companyName, companyId),
+    enabled: !!companyName,
+    staleTime: 1000 * 60 * 60,
+    retry: 1,
   });
 
-  const handleScan = async () => {
-    setScanning(true);
-    try {
-      await supabase.functions.invoke("scan-patents", {
-        body: { companyId, companyName },
-      });
-      refetch();
-    } finally {
-      setScanning(false);
+  // Ticker integration — upsert notable patent activity
+  useEffect(() => {
+    if (!data || !companyId || data.totalResults < 100) return;
+    const recentCount = data.signals?.patent_count_12m ?? 0;
+    let message = "";
+    if (data.totalResults >= 100) {
+      message = `${companyName}: ${data.totalResults.toLocaleString()} USPTO patents on record — active IP portfolio · PatentsView`;
     }
-  };
+    if (recentCount >= 5) {
+      message = `${companyName}: ${recentCount} new patents filed in 12 months — R&D signal · USPTO`;
+    }
+    if (!message) return;
+
+    supabase
+      .from("ticker_items" as any)
+      .upsert(
+        {
+          company_name: companyName,
+          message,
+          source_tag: "USPTO",
+          item_type: "innovation",
+          is_hidden: false,
+        } as any,
+        { onConflict: "company_name,item_type" as any }
+      )
+      .then(() => {});
+  }, [data, companyId, companyName]);
 
   if (isLoading) {
-    return <Skeleton className="h-32 w-full" />;
-  }
-
-  // Calculate signals from patent data
-  const total = patents?.length || 0;
-  const categories: Record<string, number> = {};
-  const yearCounts: Record<number, number> = {};
-
-  patents?.forEach((p: any) => {
-    const cat = p.category || "Other";
-    categories[cat] = (categories[cat] || 0) + 1;
-    if (p.filing_date) {
-      const year = new Date(p.filing_date).getFullYear();
-      yearCounts[year] = (yearCounts[year] || 0) + 1;
-    }
-  });
-
-  const sortedCategories = Object.entries(categories).sort(([, a], [, b]) => b - a);
-  const years = Object.keys(yearCounts).map(Number).sort();
-  const recentYear = years[years.length - 1];
-  const prevYear = years[years.length - 2];
-  const trend = recentYear && prevYear
-    ? ((yearCounts[recentYear] - yearCounts[prevYear]) / yearCounts[prevYear]) * 100
-    : null;
-
-  // Generate signals
-  const signals: { summary: string; confidence: string; recency: string }[] = [];
-
-  if (total === 0) {
-    // Show scan prompt
     return (
       <section className="mb-6">
         <Card>
@@ -95,168 +64,159 @@ export function InnovationSignals({ companyId, companyName }: InnovationSignalsP
             <div className="flex items-center gap-2 mb-3">
               <Lightbulb className="w-4 h-4 text-primary" />
               <h3 className="text-sm font-semibold text-foreground">Innovation Signals</h3>
-              <Badge variant="outline" className="text-xs ml-auto">Patents</Badge>
             </div>
-            <EmptyStateExplainer type="jobs" />
-            <p className="text-xs text-muted-foreground mt-2">
-              No patent data yet. Scan to check USPTO records.
-            </p>
-            <Button
-              size="sm"
-              variant="outline"
-              onClick={handleScan}
-              disabled={scanning}
-              className="mt-3 text-xs h-7 gap-1.5"
-            >
-              {scanning ? <Loader2 className="w-3 h-3 animate-spin" /> : <Lightbulb className="w-3 h-3" />}
-              {scanning ? "Scanning patents…" : "Scan USPTO Records"}
-            </Button>
+            <Skeleton className="h-4 w-3/4 mb-2" />
+            <Skeleton className="h-4 w-1/2 mb-2" />
+            <p className="text-xs text-muted-foreground mt-2">Checking USPTO records…</p>
           </CardContent>
         </Card>
       </section>
     );
   }
 
-  // Build intelligence signals
-  if (trend !== null) {
-    const direction = trend > 10 ? "increased" : trend < -10 ? "decreased" : "remained stable";
-    const pct = Math.abs(Math.round(trend));
-    signals.push({
-      summary: `Patent filings ${direction}${pct > 0 ? ` ${pct}%` : ""} year-over-year${sortedCategories[0] ? `, led by ${sortedCategories[0][0]}` : ""}`,
-      confidence: "High",
-      recency: recentYear >= new Date().getFullYear() - 1 ? "Last 12 months" : "Last 2 years",
-    });
+  if (error || !data) {
+    return (
+      <section className="mb-6">
+        <Card>
+          <CardContent className="p-5">
+            <div className="flex items-center gap-2 mb-3">
+              <Lightbulb className="w-4 h-4 text-primary" />
+              <h3 className="text-sm font-semibold text-foreground">Innovation Signals</h3>
+            </div>
+            <p className="text-xs text-muted-foreground">
+              USPTO data temporarily unavailable — check back shortly
+            </p>
+          </CardContent>
+        </Card>
+      </section>
+    );
   }
 
-  if (sortedCategories.length > 0) {
-    const topCats = sortedCategories.slice(0, 3).map(([c]) => c).join(", ");
-    signals.push({
-      summary: `Top innovation areas: ${topCats}`,
-      confidence: "High",
-      recency: "Current portfolio",
-    });
-  }
+  const totalCount = data.totalResults || 0;
+  const recentCount = data.signals?.patent_count_36m ?? 0;
+  const signal = calculateInnovationSignal(totalCount, recentCount);
+  const dotColor = getSignalDotColor(signal.level);
+  const topPatents = data.topPatents || [];
 
-  if (total > 20) {
-    signals.push({
-      summary: `Active innovation portfolio with ${total} patents on file`,
-      confidence: "High",
-      recency: "Cumulative",
-    });
-  } else if (total > 0) {
-    signals.push({
-      summary: `${total} patent${total > 1 ? "s" : ""} detected — modest innovation footprint`,
-      confidence: "Medium",
-      recency: "Cumulative",
-    });
+  if (totalCount === 0) {
+    return (
+      <section className="mb-6">
+        <Card>
+          <CardContent className="p-5">
+            <div className="flex items-center gap-2 mb-3">
+              <Lightbulb className="w-4 h-4 text-primary" />
+              <h3 className="text-sm font-semibold text-foreground">Innovation Signals</h3>
+              <div className="ml-auto flex items-center gap-1.5">
+                <span className={cn("w-2 h-2 rounded-full", dotColor)} />
+                <span className="text-xs text-muted-foreground">{signal.label}</span>
+              </div>
+            </div>
+            <p className="text-xs text-muted-foreground">
+              No patents found under "{companyName}". Large companies often file under subsidiaries.{" "}
+              <a
+                href="https://patentsview.org/search"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-primary hover:text-primary/80 inline-flex items-center gap-0.5"
+              >
+                Search USPTO directly <ExternalLink className="w-2.5 h-2.5" />
+              </a>
+            </p>
+            <p className="text-[11px] text-muted-foreground/60 mt-3">
+              Source: USPTO PatentsView · Public record
+            </p>
+          </CardContent>
+        </Card>
+      </section>
+    );
   }
-
-  const displayPatents = expanded ? patents : patents?.slice(0, 3);
-  const TrendIcon = trend && trend > 10 ? TrendingUp : trend && trend < -10 ? TrendingDown : Minus;
 
   return (
     <section className="mb-6">
       <Card>
         <CardContent className="p-5">
-          {/* Header */}
+          {/* Header with signal pill */}
           <div className="flex items-center gap-2 mb-4">
             <Lightbulb className="w-4 h-4 text-primary" />
             <h3 className="text-sm font-semibold text-foreground">Innovation Signals</h3>
-            <span className="text-xs text-muted-foreground ml-1">What they're building</span>
             <div className="ml-auto flex items-center gap-2">
-              {trend !== null && (
-                <div className={cn(
-                  "flex items-center gap-1 text-xs font-medium px-1.5 py-0.5 rounded",
-                  trend > 10 ? "text-[hsl(var(--civic-green))] bg-[hsl(var(--civic-green))]/10" :
-                  trend < -10 ? "text-destructive bg-destructive/10" :
-                  "text-muted-foreground bg-muted"
-                )}>
-                  <TrendIcon className="w-3 h-3" />
-                  {Math.abs(Math.round(trend))}% YoY
-                </div>
-              )}
-              <Badge variant="outline" className="text-xs">{total} patents</Badge>
+              <div className="flex items-center gap-1.5 px-2 py-0.5 rounded-full bg-muted/50">
+                <span className={cn("w-2 h-2 rounded-full", dotColor)} />
+                <span className="text-xs font-medium text-foreground">{signal.label}</span>
+              </div>
+              <Badge variant="outline" className="text-xs font-mono">
+                {totalCount.toLocaleString()} patents
+              </Badge>
             </div>
           </div>
 
-          {/* Signals */}
-          <div className="space-y-2 mb-4">
-            {signals.map((s, i) => (
-              <div key={i} className="flex items-start gap-3 text-sm">
-                <div className="flex-1 text-foreground/85 leading-relaxed">{s.summary}</div>
-                <div className="flex items-center gap-2 shrink-0">
-                  <Badge variant="outline" className={cn(
-                    "text-xs",
-                    s.confidence === "High" ? "border-[hsl(var(--civic-green))]/30 text-[hsl(var(--civic-green))]" :
-                    "border-[hsl(var(--civic-yellow))]/30 text-[hsl(var(--civic-yellow))]"
-                  )}>
-                    {s.confidence}
-                  </Badge>
-                  <span className="text-xs text-muted-foreground whitespace-nowrap">{s.recency}</span>
-                </div>
-              </div>
-            ))}
+          {/* Signal description */}
+          <p className="text-sm text-foreground/85 leading-relaxed mb-4">
+            {signal.description}
+          </p>
+
+          {/* Counts */}
+          <div className="flex gap-4 mb-4 text-xs text-muted-foreground">
+            <span>{totalCount.toLocaleString()} total USPTO patents</span>
+            <span>·</span>
+            <span>{recentCount} filed in last 3 years</span>
           </div>
 
-          {/* Category breakdown */}
-          <div className="flex flex-wrap gap-1.5 mb-4">
-            {sortedCategories.slice(0, 6).map(([cat, count]) => (
-              <Badge
-                key={cat}
-                variant="outline"
-                className={cn("text-xs gap-1", CATEGORY_COLORS[cat] || "bg-muted text-muted-foreground")}
-              >
-                {cat} ({count})
-              </Badge>
-            ))}
-          </div>
-
-          {/* Recent patents list */}
-          <div className="border-t border-border/30 pt-3">
-            <p className="text-xs font-medium text-muted-foreground mb-2">Recent Filings</p>
-            <div className="space-y-2">
-              {displayPatents?.map((p: any) => (
-                <div key={p.id} className="flex items-start gap-2 text-xs">
-                  <div className="flex-1 min-w-0">
-                    <p className="text-foreground font-medium truncate">{p.title}</p>
-                    <p className="text-muted-foreground">
-                      {p.filing_date && new Date(p.filing_date).toLocaleDateString("en-US", { year: "numeric", month: "short" })}
-                      {p.category && ` · ${p.category}`}
-                    </p>
-                  </div>
-                  {p.source_url && (
-                    <a href={p.source_url} target="_blank" rel="noopener noreferrer" className="text-primary hover:text-primary/80 shrink-0">
-                      <ExternalLink className="w-3 h-3" />
-                    </a>
-                  )}
-                </div>
+          {/* Clusters */}
+          {data.clusters && data.clusters.length > 0 && (
+            <div className="flex flex-wrap gap-1.5 mb-4">
+              {data.clusters.slice(0, 6).map((c, i) => (
+                <Badge key={i} variant="outline" className="text-xs gap-1">
+                  {c.theme} ({c.count})
+                </Badge>
               ))}
             </div>
-            {patents && patents.length > 3 && (
-              <Button
-                variant="ghost"
-                size="sm"
-                onClick={() => setExpanded(!expanded)}
-                className="text-xs h-6 mt-2 gap-1 text-primary"
-              >
-                {expanded ? <ChevronUp className="w-3 h-3" /> : <ChevronDown className="w-3 h-3" />}
-                {expanded ? "Show less" : `Show all ${patents.length} patents`}
-              </Button>
-            )}
-          </div>
+          )}
 
-          {/* Refresh button */}
-          <div className="border-t border-border/30 pt-3 mt-3">
-            <Button
-              size="sm"
-              variant="outline"
-              onClick={handleScan}
-              disabled={scanning}
-              className="text-xs h-7 gap-1.5"
+          {/* Recent filings */}
+          {topPatents.length > 0 && (
+            <div className="border-t border-border/30 pt-3">
+              <p className="text-xs font-medium text-muted-foreground mb-2">Most Recent Filings</p>
+              <div className="space-y-2">
+                {topPatents.slice(0, 5).map((p, i) => (
+                  <div key={i} className="flex items-start gap-2 text-xs">
+                    <div className="flex-1 min-w-0">
+                      <p className="text-foreground font-medium leading-relaxed line-clamp-2">
+                        {p.title}
+                      </p>
+                    </div>
+                    {p.url && (
+                      <a
+                        href={p.url}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="text-primary hover:text-primary/80 shrink-0"
+                      >
+                        <ExternalLink className="w-3 h-3" />
+                      </a>
+                    )}
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+
+          {/* Source + view all */}
+          <div className="border-t border-border/30 pt-3 mt-3 flex items-center justify-between">
+            <p className="text-[11px] text-muted-foreground/60">
+              Source: USPTO PatentsView · Public record
+              {data.cached && (
+                <Badge variant="outline" className="ml-2 text-[10px]">Cached</Badge>
+              )}
+            </p>
+            <a
+              href={`https://patentsview.org/search#q=${encodeURIComponent(companyName)}`}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-[11px] text-muted-foreground hover:text-primary flex items-center gap-1"
             >
-              {scanning ? <Loader2 className="w-3 h-3 animate-spin" /> : <Lightbulb className="w-3 h-3" />}
-              {scanning ? "Refreshing…" : "Refresh Patent Data"}
-            </Button>
+              View all on USPTO <ExternalLink className="w-2.5 h-2.5" />
+            </a>
           </div>
         </CardContent>
       </Card>
