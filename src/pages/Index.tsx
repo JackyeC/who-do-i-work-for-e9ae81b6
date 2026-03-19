@@ -120,12 +120,9 @@ const Index = forwardRef<HTMLDivElement>((_, ref) => {
         <div className="relative z-[1] flex flex-col items-center">
           {/* Line 1 */}
           <h1
+            className="text-display"
             style={{
-              fontFamily: "'Playfair Display', serif",
-              fontWeight: 700,
-              fontSize: "clamp(28px, 5vw, 52px)",
               color: "#f0ebe0",
-              lineHeight: 1.15,
               animation: "heroFadeIn 0.8s ease forwards",
             }}
           >
@@ -134,12 +131,9 @@ const Index = forwardRef<HTMLDivElement>((_, ref) => {
 
           {/* Line 2 — delayed */}
           <h1
+            className="text-display"
             style={{
-              fontFamily: "'Playfair Display', serif",
-              fontWeight: 700,
-              fontSize: "clamp(28px, 5vw, 52px)",
               color: "#f0c040",
-              lineHeight: 1.15,
               opacity: 0,
               animation: "heroFadeIn 0.6s ease 0.9s forwards",
             }}
@@ -152,11 +146,11 @@ const Index = forwardRef<HTMLDivElement>((_, ref) => {
             style={{
               fontFamily: "'DM Sans', sans-serif",
               fontWeight: 400,
-              fontSize: "17px",
-              color: "#7a7590",
-              lineHeight: 1.6,
-              maxWidth: "460px",
-              marginTop: "20px",
+              fontSize: "18px",
+              color: "hsl(252 14% 52%)",
+              lineHeight: 1.7,
+              maxWidth: "480px",
+              marginTop: "24px",
               opacity: 0,
               animation: "heroFadeIn 0.6s ease 1.6s forwards",
             }}
