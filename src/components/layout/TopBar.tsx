@@ -115,6 +115,7 @@ export function TopBar() {
 
   /* Secondary nav items (More dropdown) */
   const SECONDARY_NAV = [
+    { label: "Hire", path: "/hire" },
     { label: "Job Board", path: "/job-board" },
     { label: "Offer Analysis", path: "/check" },
     { label: "Career Path Explorer", path: "/career-map" },
