@@ -117,8 +117,8 @@ export function LeadershipInfluenceSection({
 }: LeadershipInfluenceSectionProps) {
   const [selectedEntity, setSelectedEntity] = useState<DarkMoneyEntity | null>(null);
 
-  const processedExecs = useMemo(() => processExecutives(executives), [executives]);
-  const processedBoard = useMemo(() => processBoardMembers(boardMembers), [boardMembers]);
+  const processedExecs = useMemo(() => processExecutives(executives, companyName), [executives, companyName]);
+  const processedBoard = useMemo(() => processBoardMembers(boardMembers, companyName), [boardMembers, companyName]);
 
   const hasAnyData = processedExecs.length > 0 || candidates.length > 0 || revolvingDoor.length > 0 || darkMoney.length > 0 || processedBoard.length > 0;
 
