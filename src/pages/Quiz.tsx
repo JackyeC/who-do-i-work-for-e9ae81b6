@@ -954,6 +954,24 @@ function ResultsScreen({
         </button>
       </div>
 
+      {/* Early access link */}
+      <a
+        href="/join"
+        style={{
+          marginTop: 16,
+          fontSize: 13,
+          color: "#7a7590",
+          textDecoration: "none",
+          fontFamily: "'DM Sans', sans-serif",
+          animation: "quizFadeUp 0.6s ease 1.1s both",
+          display: "inline-block",
+        }}
+        onMouseEnter={(e) => (e.currentTarget.style.textDecoration = "underline")}
+        onMouseLeave={(e) => (e.currentTarget.style.textDecoration = "none")}
+      >
+        Launching April 1 — secure your spot →
+      </a>
+
       {/* Reset */}
       <button
         onClick={onReset}

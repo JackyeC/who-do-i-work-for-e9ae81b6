@@ -202,7 +202,22 @@ const Index = forwardRef<HTMLDivElement>((_, ref) => {
                     >
                       Or retake the quiz →
                     </button>
-                  )}
+                   )}
+                  <Link
+                    to="/join"
+                    style={{
+                      fontFamily: "'DM Sans', sans-serif",
+                      fontSize: "13px",
+                      color: "#7a7590",
+                      marginTop: "10px",
+                      textDecoration: "none",
+                      display: "inline-block",
+                    }}
+                    onMouseEnter={(e) => (e.currentTarget.style.textDecoration = "underline")}
+                    onMouseLeave={(e) => (e.currentTarget.style.textDecoration = "none")}
+                  >
+                    Launching April 1 — get early access →
+                  </Link>
                 </div>
               );
             })()}

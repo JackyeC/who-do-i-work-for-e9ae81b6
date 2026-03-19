@@ -233,6 +233,7 @@ export function TopBar() {
     { label: "Methodology", path: "/methodology" },
     { label: "Pricing", path: "/pricing" },
     { label: "All Tools →", path: "/site-map" },
+    { label: "Get early access", path: "/join" },
   ];
 
   const isMoreActive = SECONDARY_NAV.some(s => location.pathname.startsWith(s.path.split("?")[0]));
