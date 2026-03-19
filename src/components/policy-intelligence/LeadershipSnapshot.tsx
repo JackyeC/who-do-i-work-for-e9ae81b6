@@ -87,6 +87,7 @@ export function LeadershipSnapshot({ companyId, companyName }: Props) {
                   <div>
                     <p className="text-sm font-medium text-foreground">{member.name}</p>
                     <p className="text-xs text-muted-foreground">{member.title}</p>
+                    <FreshnessLabel lastVerifiedAt={(member as any).last_verified_at} />
                   </div>
                   {member.is_independent && (
                     <Badge variant="outline" className="text-xs text-[hsl(var(--civic-green))]">Independent</Badge>
