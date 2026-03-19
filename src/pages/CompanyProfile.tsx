@@ -152,7 +152,7 @@ export default function CompanyProfile() {
   const { data: tiSentiment } = useQuery({ queryKey: ["ti-sentiment", dbCompanyId], queryFn: async () => { const { count } = await supabase.from("company_worker_sentiment" as any).select("id", { count: "exact", head: true }).eq("company_id", dbCompanyId!); return (count || 0) > 0; }, enabled: !!dbCompanyId });
   const { data: dbBoardMembers } = useQuery({
     queryKey: ["board-members-full", dbCompanyId],
-    queryFn: async () => { const { data } = await (supabase as any).from("board_members").select("id, name, title, is_independent, departed_at, verification_status, bio, committees, previous_company, start_year, photo_url, source").eq("company_id", dbCompanyId!); return data || []; },
+    queryFn: async () => { const { data } = await (supabase as any).from("board_members").select("id, name, title, is_independent, departed_at, verification_status, bio, committees, previous_company, start_year, photo_url, source, last_verified_at").eq("company_id", dbCompanyId!); return data || []; },
     enabled: !!dbCompanyId,
   });
 
