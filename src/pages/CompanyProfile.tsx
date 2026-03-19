@@ -21,6 +21,8 @@ import { RealityGapBlock } from "@/components/company/RealityGapBlock";
 import { DecisionCheckpointBeforeSign } from "@/components/company/DecisionCheckpointBeforeSign";
 import { InnovationSignals } from "@/components/company/InnovationSignals";
 import { LeadershipInfluenceSection } from "@/components/company/LeadershipInfluenceSection";
+import { WhatToWatch } from "@/components/company/WhatToWatch";
+import { WhatToAsk } from "@/components/company/WhatToAsk";
 import { ReportTeaserGate } from "@/components/ReportTeaserGate";
 import { PostReportNudge } from "@/components/PostReportNudge";
 import { ContentProtector } from "@/components/ContentProtector";
