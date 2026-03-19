@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useMemo } from "react";
 import { safeSignalLabel } from "@/utils/signalTextSanitizer";
 import { Link } from "react-router-dom";
 import { motion } from "framer-motion";
@@ -8,6 +8,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { ValuesEvidenceCard } from "./ValuesEvidenceCard";
 import { InsiderScorePill } from "@/components/InsiderScorePill";
+import { usePersona } from "@/hooks/use-persona";
 import { SIGNAL_DIRECTION_CONFIG, CONFIDENCE_CONFIG } from "@/lib/valuesLenses";
 
 interface Signal {
