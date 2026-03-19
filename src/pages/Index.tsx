@@ -271,7 +271,7 @@ const Index = forwardRef<HTMLDivElement>((_, ref) => {
         <div className="text-center mb-14">
           <div className="font-mono text-sm tracking-[0.2em] uppercase text-primary mb-3">The Difference</div>
           <h2 className="text-2xl lg:text-3xl text-foreground">
-            Phone Book vs. War Room.
+            Phone Book vs. Clarity Engine.
           </h2>
         </div>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-px bg-border border border-border">
