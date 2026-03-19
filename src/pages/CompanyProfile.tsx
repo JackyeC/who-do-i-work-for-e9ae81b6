@@ -164,7 +164,8 @@ export default function CompanyProfile() {
   useScanTracker(dbCompany?.id || undefined, dbCompany?.name || company?.name);
 
   // Recruiter integrity check (must be before early returns)
-  const { data: integrityResult, isLoading: integrityLoading } = useCompanyIntegrity(name || undefined, id);
+  const integrityName = dbCompany?.name || company?.name;
+  const { data: integrityResult, isLoading: integrityLoading } = useCompanyIntegrity(integrityName || undefined, id);
 
   const {
     reports: intelligenceReports,
