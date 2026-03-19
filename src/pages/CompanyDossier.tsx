@@ -304,7 +304,7 @@ export default function CompanyDossier() {
         <InsiderScoreBreakdown companyId={companyId!} companyName={company.name} insiderScore={(company as any).insider_score ?? null} />
       </DossierLayer>
 
-      <DossierLayer title="Patterns & Synthesis" subtitle="Key observations and notable patterns" icon={Sparkles} layerNumber={8}>
+      <DossierLayer title="Patterns & Synthesis" subtitle="Key observations and notable patterns" icon={Sparkles} layerNumber={10}>
         <PatternsSynthesisLayer patterns={[]} companyName={company.name} />
       </DossierLayer>
     </>
