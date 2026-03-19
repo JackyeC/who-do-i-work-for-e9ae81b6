@@ -5,16 +5,73 @@
  * ⚠️ Display-layer only — does NOT modify data pipelines or scoring.
  */
 
+// ── Nickname mapping ──
+
+const NICKNAME_MAP: Record<string, string> = {
+  steve: "steven", bob: "robert", rob: "robert", bill: "william", will: "william",
+  willie: "william", mike: "michael", mick: "michael", mickey: "michael",
+  dave: "david", dan: "daniel", danny: "daniel", jim: "james", jimmy: "james",
+  jamie: "james", joe: "joseph", joey: "joseph", tom: "thomas", tommy: "thomas",
+  chris: "christopher", chuck: "charles", charlie: "charles", dick: "richard",
+  rick: "richard", rich: "richard", ricky: "richard", nick: "nicholas",
+  nicky: "nicholas", sam: "samuel", sammy: "samuel", andy: "andrew", drew: "andrew",
+  tony: "anthony", ant: "anthony", matt: "matthew", matty: "matthew",
+  pat: "patrick", paddy: "patrick", ted: "edward", ed: "edward", eddie: "edward",
+  ned: "edward", jeff: "jeffrey", geoff: "geoffrey", greg: "gregory",
+  ken: "kenneth", kenny: "kenneth", larry: "lawrence", len: "leonard",
+  lenny: "leonard", pete: "peter", petey: "peter", phil: "philip",
+  ron: "ronald", ronny: "ronald", tim: "timothy", timmy: "timothy",
+  walt: "walter", wally: "walter", ben: "benjamin", benny: "benjamin",
+  brad: "bradley", bret: "brett", don: "donald", donny: "donald",
+  doug: "douglas", fred: "frederick", freddy: "frederick", hal: "harold",
+  harry: "harold", hank: "henry", jack: "john", jake: "jacob", jay: "jason",
+  jon: "jonathan", josh: "joshua",
+  // Female nicknames
+  kate: "katherine", kathy: "katherine", katie: "katherine", kat: "katherine",
+  sue: "susan", susie: "susan", liz: "elizabeth", beth: "elizabeth",
+  betty: "elizabeth", lisa: "elizabeth", jen: "jennifer", jenny: "jennifer",
+  jenn: "jennifer", meg: "margaret", maggie: "margaret", marge: "margaret",
+  margie: "margaret", peg: "margaret", peggy: "margaret", nan: "nancy",
+  nance: "nancy", barb: "barbara", bev: "beverly", carol: "caroline",
+  carrie: "caroline", deb: "deborah", debbie: "deborah", dee: "diana",
+  di: "diana", dot: "dorothy", dottie: "dorothy", fran: "frances",
+  frankie: "frances", gail: "abigail", abby: "abigail", jan: "janet",
+  janie: "jane", jo: "joanne", joanie: "joanne", judy: "judith", judi: "judith",
+  lyn: "linda", lynda: "linda", lindy: "linda", patty: "patricia",
+  tricia: "patricia", trish: "patricia", penny: "penelope", pam: "pamela",
+  pammy: "pamela", sandy: "sandra", sandi: "sandra", sherry: "sharon",
+  sheri: "sharon", sherri: "sharon", steph: "stephanie", stevie: "stephanie",
+  terri: "theresa", terry: "theresa", tess: "theresa", vicky: "victoria",
+  vic: "victoria", vikki: "victoria",
+};
+
+// ── Known departures (temporary overrides until data pipeline catches up) ──
+
+const KNOWN_DEPARTURES: string[] = [
+  "amazon|steven kissel",
+];
+
 // ── Name normalization ──
 
+function normalizeFirstName(firstName: string): string {
+  return NICKNAME_MAP[firstName] || firstName;
+}
+
 function normalizeName(name: string): string {
-  return name
+  const parts = name
     .toLowerCase()
     .trim()
     .replace(/\s+/g, " ")
     .replace(/[.,]/g, "")
     .replace(/\b(jr|sr|ii|iii|iv)\b/g, "")
-    .trim();
+    .trim()
+    .split(" ")
+    .filter(Boolean);
+
+  if (parts.length === 0) return name.toLowerCase();
+
+  parts[0] = normalizeFirstName(parts[0]);
+  return parts.join(" ");
 }
 
 // ── Completeness scoring ──
@@ -44,7 +101,6 @@ export function deduplicatePeople<T extends { name: string }>(people: T[]): T[] 
     const existing = seen.get(key);
 
     if (existing) {
-      // Keep the more complete record
       if (scoreCompleteness(person as any) > scoreCompleteness(existing.person as any)) {
         result[existing.index] = person;
         seen.set(key, { index: existing.index, person });
@@ -72,8 +128,16 @@ export function isCurrentMember(person: Record<string, unknown>): boolean {
 
   const title = (person.title || "") as string;
   if (/\bformer\b/i.test(title)) return false;
+  if (/\bex-/i.test(title)) return false;
 
   return true;
+}
+
+// ── Known departure check ──
+
+export function isKnownDeparture(person: { name: string }, companyName: string): boolean {
+  const key = `${companyName.toLowerCase()}|${normalizeName(person.name)}`;
+  return KNOWN_DEPARTURES.includes(key);
 }
 
 // ── Executive sort ──
@@ -132,14 +196,20 @@ export function sortBoardMembers<T extends { name: string; title: string }>(memb
 
 // ── Full pipeline ──
 
-export function processExecutives<T extends { name: string; title: string }>(raw: T[]): T[] {
-  const current = raw.filter(p => isCurrentMember(p as any));
+export function processExecutives<T extends { name: string; title: string }>(raw: T[], companyName?: string): T[] {
+  const filtered = companyName
+    ? raw.filter(p => !isKnownDeparture(p, companyName))
+    : raw;
+  const current = filtered.filter(p => isCurrentMember(p as any));
   const deduped = deduplicatePeople(current);
   return sortExecutives(deduped);
 }
 
-export function processBoardMembers<T extends { name: string; title: string }>(raw: T[]): T[] {
-  const current = raw.filter(p => isCurrentMember(p as any));
+export function processBoardMembers<T extends { name: string; title: string }>(raw: T[], companyName?: string): T[] {
+  const filtered = companyName
+    ? raw.filter(p => !isKnownDeparture(p, companyName))
+    : raw;
+  const current = filtered.filter(p => isCurrentMember(p as any));
   const deduped = deduplicatePeople(current);
   return sortBoardMembers(deduped);
 }

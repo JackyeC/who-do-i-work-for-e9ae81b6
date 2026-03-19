@@ -40,8 +40,8 @@ export function LeadershipSnapshot({ companyId, companyName }: Props) {
     enabled: !!companyId,
   });
 
-  const executives = useMemo(() => processExecutives(rawExecutives).slice(0, 6), [rawExecutives]);
-  const boardMembers = useMemo(() => processBoardMembers(rawBoardMembers).slice(0, 6), [rawBoardMembers]);
+  const executives = useMemo(() => processExecutives(rawExecutives, companyName).slice(0, 6), [rawExecutives, companyName]);
+  const boardMembers = useMemo(() => processBoardMembers(rawBoardMembers, companyName).slice(0, 6), [rawBoardMembers, companyName]);
 
   if (executives.length === 0 && boardMembers.length === 0) return null;
 

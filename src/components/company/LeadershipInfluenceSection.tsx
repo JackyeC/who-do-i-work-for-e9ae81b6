@@ -4,7 +4,7 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import {
   Users, User, Briefcase, DollarSign, ArrowRightLeft,
-  EyeOff, Shield, ChevronRight, Vote
+  EyeOff, Shield, ChevronRight, Vote, Flag
 } from "lucide-react";
 import { Link } from "react-router-dom";
 import { formatCurrency } from "@/data/sampleData";
@@ -117,8 +117,8 @@ export function LeadershipInfluenceSection({
 }: LeadershipInfluenceSectionProps) {
   const [selectedEntity, setSelectedEntity] = useState<DarkMoneyEntity | null>(null);
 
-  const processedExecs = useMemo(() => processExecutives(executives), [executives]);
-  const processedBoard = useMemo(() => processBoardMembers(boardMembers), [boardMembers]);
+  const processedExecs = useMemo(() => processExecutives(executives, companyName), [executives, companyName]);
+  const processedBoard = useMemo(() => processBoardMembers(boardMembers, companyName), [boardMembers, companyName]);
 
   const hasAnyData = processedExecs.length > 0 || candidates.length > 0 || revolvingDoor.length > 0 || darkMoney.length > 0 || processedBoard.length > 0;
 
@@ -179,6 +179,15 @@ export function LeadershipInfluenceSection({
                         {formatCurrency(exec.total_donations)}
                       </Badge>
                     )}
+                    <Link
+                      to={`/request-correction?company=${encodeURIComponent(companyName)}&person=${encodeURIComponent(exec.name)}`}
+                      onClick={(e) => e.stopPropagation()}
+                      className="text-[11px] text-[#3d3a4a] hover:text-primary transition-colors flex items-center gap-0.5"
+                      style={{ fontFamily: "'DM Sans', sans-serif" }}
+                      title="Report incorrect data"
+                    >
+                      <Flag className="w-3 h-3" />
+                    </Link>
                     <ChevronRight className="w-4 h-4 text-muted-foreground group-hover:text-foreground transition-colors" />
                   </div>
                 </button>
@@ -221,6 +230,14 @@ export function LeadershipInfluenceSection({
                     {member.is_independent && (
                       <Badge variant="outline" className="text-xs text-[hsl(var(--civic-green))]">Independent</Badge>
                     )}
+                    <Link
+                      to={`/request-correction?company=${encodeURIComponent(companyName)}&person=${encodeURIComponent(member.name)}`}
+                      className="text-[11px] text-[#3d3a4a] hover:text-primary transition-colors flex items-center gap-0.5"
+                      style={{ fontFamily: "'DM Sans', sans-serif" }}
+                      title="Report incorrect data"
+                    >
+                      <Flag className="w-3 h-3" />
+                    </Link>
                   </div>
                 </div>
               ))}

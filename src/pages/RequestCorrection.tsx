@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { useSearchParams } from "react-router-dom";
 import { Header } from "@/components/Header";
 import { Footer } from "@/components/Footer";
 import { Button } from "@/components/ui/button";
@@ -32,16 +33,23 @@ const issueTypes = [
 ];
 
 export default function RequestCorrection() {
+  const [searchParams] = useSearchParams();
   const [submitted, setSubmitted] = useState(false);
   const [loading, setLoading] = useState(false);
   const [errors, setErrors] = useState<Record<string, string>>({});
+
+  const prefilledCompany = searchParams.get("company") || "";
+  const prefilledPerson = searchParams.get("person") || "";
+
   const [form, setForm] = useState({
-    company_name: "",
+    company_name: prefilledCompany,
     company_profile_url: "",
     contact_name: "",
     contact_email: "",
-    issue_type: "",
-    description: "",
+    issue_type: prefilledPerson ? "data_error" : "",
+    description: prefilledPerson
+      ? `Incorrect executive data: ${prefilledPerson} at ${prefilledCompany}`
+      : "",
     source_links: "",
   });
 
