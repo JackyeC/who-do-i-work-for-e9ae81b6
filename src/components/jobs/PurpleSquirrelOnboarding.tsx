@@ -37,6 +37,8 @@ interface PurpleSquirrelOnboardingProps {
 export function PurpleSquirrelOnboarding({ onComplete }: PurpleSquirrelOnboardingProps) {
   const { user } = useAuth();
   const { upsert } = useAutoApplySettings();
+  const { toast } = useToast();
+  const [submitting, setSubmitting] = useState(false);
   const [step, setStep] = useState(0);
 
   // DNA Dials
