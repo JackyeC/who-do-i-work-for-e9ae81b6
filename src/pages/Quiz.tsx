@@ -916,7 +916,7 @@ function ResultsScreen({
           href="/dashboard"
           style={{
             background: "#f0c040",
-            color: "#0d0c0f",
+            color: "#0a0a0e",
             borderRadius: 50,
             padding: "14px 36px",
             fontSize: 14,

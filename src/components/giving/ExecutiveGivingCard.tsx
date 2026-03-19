@@ -251,7 +251,7 @@ export function ExecutiveGivingSection({ companyId, companyName, companySlug }: 
           <Link
             to="/pricing"
             className="inline-block px-6 py-2.5 text-sm font-semibold rounded-full"
-            style={{ background: "#f0c040", color: "#0d0c0f" }}
+            style={{ background: "#f0c040", color: "#0a0a0e" }}
           >
             See all {executives.length} executive giving records — upgrade to Scout
           </Link>

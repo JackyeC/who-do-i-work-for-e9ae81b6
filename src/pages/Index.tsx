@@ -275,6 +275,17 @@ const Index = forwardRef<HTMLDivElement>((_, ref) => {
             ))}
           </div>
         </div>
+        <p style={{
+          fontSize: '12px',
+          fontWeight: 400,
+          color: '#3d3a4a',
+          textAlign: 'center',
+          lineHeight: 1.6,
+          maxWidth: '600px',
+          margin: '16px auto 0',
+        }}>
+          Built on public records: FEC filings · SEC EDGAR · USAspending.gov · BLS wage data · OSHA · NLRB · Senate Lobbying Disclosures · ProPublica · OpenSecrets · CourtListener
+        </p>
       </div>
 
       {/* ══════════════════════════════════════════════════════════════════
