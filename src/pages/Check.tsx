@@ -495,6 +495,7 @@ export default function Check() {
                 lobbyingRecords={policyData.lobbyingRecords}
                 tradeAssociations={policyData.tradeAssociations}
                 darkMoney={policyData.darkMoney}
+                candidates={policyData.candidates}
               />
 
               {/* 6. Open Roles */}
