@@ -21,6 +21,7 @@ import { EmployerDossierCard } from "@/components/career/EmployerDossierCard";
 import { BeforeYouAcceptBlock } from "@/components/career/BeforeYouAcceptBlock";
 import { WhatThisMeansForYou } from "@/components/career/WhatThisMeansForYou";
 import { SampleDossierPreview } from "@/components/career/SampleDossierPreview";
+import { CompanyResearchTrigger } from "@/components/research/CompanyResearchTrigger";
 
 export default function CareerIntelligence() {
   const { user } = useAuth();
