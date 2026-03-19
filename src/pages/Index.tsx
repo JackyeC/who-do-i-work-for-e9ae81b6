@@ -267,7 +267,7 @@ const Index = forwardRef<HTMLDivElement>((_, ref) => {
           <div className="flex items-center gap-8 lg:gap-14 flex-wrap">
             <div><div className="font-data text-2xl font-bold text-foreground tabular-nums">{STATIC_COMPANY_COUNT}+</div><div className="font-mono text-xs uppercase text-muted-foreground tracking-wider">Companies Tracked</div></div>
             <div><div className="font-data text-2xl font-bold text-foreground tabular-nums">6</div><div className="font-mono text-xs uppercase text-muted-foreground tracking-wider">Federal Sources</div></div>
-            <div><div className="font-data text-2xl font-bold text-foreground tabular-nums">20+</div><div className="font-mono text-xs uppercase text-muted-foreground tracking-wider">Years HR Expertise</div></div>
+            <div><div className="font-data text-2xl font-bold text-foreground tabular-nums">15+</div><div className="font-mono text-xs uppercase text-muted-foreground tracking-wider">Years HR Expertise</div></div>
           </div>
           <div className="flex items-center gap-4 flex-wrap">
             {TRUST_SOURCES.map((src) => (
