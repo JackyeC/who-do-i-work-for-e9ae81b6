@@ -96,7 +96,9 @@ export default function Pricing() {
       mainEntity: {
         "@type": "ItemList",
         itemListElement: [
-          { "@type": "Offer", name: "Candidate", price: "0", priceCurrency: "USD" },
+          { "@type": "Offer", name: "Free", price: "0", priceCurrency: "USD" },
+          { "@type": "Offer", name: "Job Seeker", price: "29", priceCurrency: "USD" },
+          { "@type": "Offer", name: "Active Seeker", price: "79", priceCurrency: "USD" },
           { "@type": "Offer", name: "Recruiter", price: "79", priceCurrency: "USD" },
           { "@type": "Offer", name: "Employer Verified", price: "349", priceCurrency: "USD" },
         ],
