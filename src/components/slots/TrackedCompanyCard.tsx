@@ -3,6 +3,7 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { useNavigate } from "react-router-dom";
 import { CompanyLogo } from "@/components/CompanyLogo";
+import { InsiderScorePill } from "@/components/InsiderScorePill";
 import type { TrackedCompany } from "@/hooks/use-tracked-companies";
 
 interface TrackedCompanyCardProps {
