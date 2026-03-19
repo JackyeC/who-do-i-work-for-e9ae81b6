@@ -53,7 +53,7 @@ const tracks = [
     priceNote: "",
     period: " one-time",
     mode: "payment" as const,
-    priceId: "price_strategist_onetime", // placeholder
+    priceId: "price_1TCdDA7Qj0W6UtN9VPMXRkyY",
     hook: "The Audit.",
     description: "Deep-dive dossier for one specific interview. Walk in prepared.",
     action: "Get My Dossier",
