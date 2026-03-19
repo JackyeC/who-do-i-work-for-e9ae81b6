@@ -4,11 +4,20 @@ import { usePageSEO } from "@/hooks/use-page-seo";
 import { Helmet } from "react-helmet-async";
 import { ArrowRight, Shield } from "lucide-react";
 
+type WaitlistRole = "candidate" | "recruiter" | "employer";
+
+const inMemoryWaitlist: Array<{ email: string; created_at: string; role: WaitlistRole }> = [];
+
+const addToInMemoryWaitlist = (email: string, role: WaitlistRole) => {
+  if (!inMemoryWaitlist.some((entry) => entry.email === email && entry.role === role)) {
+    inMemoryWaitlist.push({ email, created_at: new Date().toISOString(), role });
+  }
+};
+
 export default function Hire() {
   const [email, setEmail] = useState("");
   const [submitted, setSubmitted] = useState(false);
   const [submitting, setSubmitting] = useState(false);
-  const [error, setError] = useState("");
 
   usePageSEO({
     title: "Who Works For You? — Values-Aligned Hiring by WDIWF",
@@ -25,30 +34,6 @@ export default function Hire() {
     }
   };
 
-  const queueLocalSignupFallback = (emailValue: string, referralSource: string) => {
-    try {
-      const existing = localStorage.getItem("wdiwf_pending_signups");
-      const queue = existing ? JSON.parse(existing) : [];
-
-      if (!Array.isArray(queue)) return false;
-      if (!queue.some((entry) => entry?.email === emailValue)) {
-        queue.push({
-          email: emailValue,
-          first_name: "Recruiter",
-          persona: "I recruit or hire",
-          referral_source: referralSource,
-          created_at: new Date().toISOString(),
-        });
-        localStorage.setItem("wdiwf_pending_signups", JSON.stringify(queue));
-      }
-
-      return true;
-    } catch (storageError) {
-      console.warn("Could not queue local signup fallback:", storageError);
-      return false;
-    }
-  };
-
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
@@ -56,11 +41,6 @@ export default function Hire() {
     if (!normalizedEmail) return;
 
     setSubmitting(true);
-    setError("");
-
-    const referralSource = new URLSearchParams(window.location.search).get("utm_source") || "hire-landing";
-    const isDuplicateError = (code?: string | null, message?: string | null, details?: string | null) =>
-      code === "23505" || `${message ?? ""} ${details ?? ""}`.toLowerCase().includes("duplicate key");
 
     const completeSignup = () => {
       setSubmitted(true);
@@ -68,50 +48,21 @@ export default function Hire() {
     };
 
     try {
-      const { error: primaryError } = await supabase
-        .from("early_access_signups")
-        .insert({
-          email: normalizedEmail,
-          first_name: "Recruiter",
-          persona: "I recruit or hire",
-          referral_source: referralSource,
-        });
+      const { error: waitlistError } = await supabase.from("waitlist").insert({
+        email: normalizedEmail,
+        role: "recruiter",
+      });
 
-      if (!primaryError || isDuplicateError(primaryError.code, primaryError.message, primaryError.details)) {
-        completeSignup();
-        return;
+      if (waitlistError && waitlistError.code !== "23505") {
+        console.warn("Waitlist insert failed, using in-memory fallback:", waitlistError.code, waitlistError.message);
+        addToInMemoryWaitlist(normalizedEmail, "recruiter");
       }
 
-      console.error("Hire signup primary insert error:", primaryError.code, primaryError.message, primaryError.details);
-
-      const { error: fallbackError } = await supabase
-        .from("email_signups")
-        .insert({ email: normalizedEmail, source: referralSource });
-
-      if (!fallbackError || isDuplicateError(fallbackError.code, fallbackError.message, fallbackError.details)) {
-        completeSignup();
-        return;
-      }
-
-      console.error("Hire signup fallback insert error:", fallbackError.code, fallbackError.message, fallbackError.details);
-
-      if (queueLocalSignupFallback(normalizedEmail, referralSource)) {
-        console.warn("Signup saved locally due to backend error.");
-        completeSignup();
-        return;
-      }
-
-      setError("Something went wrong. Please try again.");
+      completeSignup();
     } catch (unexpectedError) {
-      console.error("Hire signup unexpected error:", unexpectedError);
-
-      if (queueLocalSignupFallback(normalizedEmail, referralSource)) {
-        console.warn("Signup saved locally due to unexpected error.");
-        completeSignup();
-        return;
-      }
-
-      setError("Something went wrong. Please try again.");
+      console.warn("Unexpected waitlist error, using in-memory fallback:", unexpectedError);
+      addToInMemoryWaitlist(normalizedEmail, "recruiter");
+      completeSignup();
     } finally {
       setSubmitting(false);
     }
@@ -123,7 +74,6 @@ export default function Hire() {
         <title>Who Works For You? — WDIWF</title>
       </Helmet>
 
-      {/* Banner */}
       <div
         className="w-full max-w-2xl rounded-lg px-4 py-3 mb-12 flex items-center gap-3 text-sm"
         style={{ background: "rgba(240,192,64,0.08)", border: "1px solid rgba(240,192,64,0.18)" }}
@@ -134,17 +84,11 @@ export default function Hire() {
         </span>
       </div>
 
-      {/* Content */}
       <div className="text-center max-w-2xl">
-        {/* Eyebrow */}
-        <p
-          className="text-xs uppercase tracking-[3px] font-semibold mb-4"
-          style={{ color: "#f0c040" }}
-        >
+        <p className="text-xs uppercase tracking-[3px] font-semibold mb-4" style={{ color: "#f0c040" }}>
           Coming April 6th
         </p>
 
-        {/* Headline */}
         <h1
           className="font-sans leading-[1.05] mb-5"
           style={{ fontSize: "clamp(36px, 6vw, 60px)", fontWeight: 800, letterSpacing: "-3px", color: "#f0ebe0" }}
@@ -152,12 +96,10 @@ export default function Hire() {
           Who Works For You?
         </h1>
 
-        {/* Subline */}
         <p className="text-base sm:text-lg leading-relaxed mb-4 mx-auto max-w-lg" style={{ color: "rgba(240,235,224,0.65)" }}>
           The first AI recruiting tool that audits the company before it screens the candidate. Values-aligned hiring — built on 15 years of recruiting intelligence.
         </p>
 
-        {/* Attribution */}
         <p className="text-xs uppercase tracking-[2px] mb-10" style={{ color: "rgba(240,235,224,0.35)" }}>
           A WDIWF product by Jackye Clayton
         </p>
@@ -168,10 +110,7 @@ export default function Hire() {
             style={{ background: "rgba(240,192,64,0.08)", border: "1px solid rgba(240,192,64,0.15)" }}
           >
             <p className="text-lg font-semibold" style={{ color: "#f0c040" }}>
-              You're on the list ✓
-            </p>
-            <p className="text-sm mt-1" style={{ color: "rgba(240,235,224,0.55)" }}>
-              We'll let you know when recruiter access launches.
+              You're on the list. We'll reach out when your spot opens.
             </p>
           </div>
         ) : (
@@ -199,12 +138,6 @@ export default function Hire() {
               <ArrowRight className="w-4 h-4" />
             </button>
           </form>
-        )}
-
-        {error && (
-          <p className="text-sm mt-3" style={{ color: "#f87171" }}>
-            {error}
-          </p>
         )}
       </div>
     </div>
