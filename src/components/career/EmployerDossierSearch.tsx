@@ -32,6 +32,7 @@ interface CompanyResult {
 interface EmployerDossierSearchProps {
   onSelect: (company: CompanyResult) => void;
   selectedCompany: CompanyResult | null;
+  onNotFound?: (name: string) => void;
 }
 
 export function EmployerDossierSearch({ onSelect, selectedCompany }: EmployerDossierSearchProps) {
