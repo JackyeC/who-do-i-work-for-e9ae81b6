@@ -771,7 +771,7 @@ function SliderInput({
       <p
         className="text-center mt-6"
         style={{
-          fontFamily: "'Playfair Display', serif",
+          fontFamily: "'DM Sans', sans-serif",
           fontStyle: "italic",
           fontSize: 18,
           color: "#f0c040",
