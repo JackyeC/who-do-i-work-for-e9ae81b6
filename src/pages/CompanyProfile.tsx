@@ -570,7 +570,7 @@ export default function CompanyProfile() {
       <CandidateDetailDrawer open={candidateDrawerOpen} onOpenChange={setCandidateDrawerOpen} candidate={selectedCandidate} companyName={name} />
       <ExecutiveDetailDrawer open={executiveDrawerOpen} onOpenChange={setExecutiveDrawerOpen} executive={selectedExecutive} companyName={name} onCandidateClick={(c) => { setExecutiveDrawerOpen(false); setTimeout(() => handleCandidateClick(c), 300); }} />
       <LobbyingDetailDrawer open={lobbyingDrawerOpen} onOpenChange={setLobbyingDrawerOpen} companyId={dbCompany?.id} companyName={name} totalLobbyingSpend={dbCompany?.lobbying_spend} />
-      <PACDetailDrawer open={pacDrawerOpen} onOpenChange={setPacDrawerOpen} companyId={dbCompany?.id} companyName={name} totalPACSpending={totalPac} corporatePACExists={dbCompany?.corporate_pac_exists || false} />
+      <PACDetailDrawer open={pacDrawerOpen} onOpenChange={setPacDrawerOpen} companyId={dbCompany?.id} companyName={name} totalPACSpending={totalPac} corporatePACExists={dbCompany?.corporate_pac_exists || false} onExecutiveClick={handleExecutiveClick} />
       <ContractsDetailDrawer open={contractsDrawerOpen} onOpenChange={setContractsDrawerOpen} companyId={dbCompany?.id} companyName={name} totalContracts={govContracts || undefined} totalSubsidies={subsidies || undefined} />
     </ContentProtector>
   );
