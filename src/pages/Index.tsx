@@ -6,7 +6,7 @@ import { useAuth } from "@/contexts/AuthContext";
 import { Button } from "@/components/ui/button";
 import { usePageSEO } from "@/hooks/use-page-seo";
 import { HeroSearch } from "@/components/landing/HeroSearch";
-import { STRIPE_TIERS } from "@/hooks/use-premium";
+import { PathfinderTracks } from "@/components/landing/PathfinderTracks";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 
