@@ -26,7 +26,7 @@ function getMockResult(companyName: string): CompanyIntegrityResult {
   };
 }
 
-const API_URL = "https://api.wdiwf.jackyeclayton.com/api/company-integrity-check";
+const API_URL = "https://wdiwf-integrity-api.onrender.com/api/company-integrity-check";
 
 export function useCompanyIntegrity(companyName: string | undefined) {
   return useQuery<CompanyIntegrityResult | null>({
