@@ -1,0 +1,12 @@
+services:
+  - type: web
+    name: who-works-for-you
+    runtime: node
+    buildCommand: npm install && npm run build
+    startCommand: node dist/index.cjs
+    plan: free
+    envVars:
+      - key: ANTHROPIC_API_KEY
+        sync: false
+      - key: NODE_ENV
+        value: production
