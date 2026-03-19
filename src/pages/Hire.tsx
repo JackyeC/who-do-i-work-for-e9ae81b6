@@ -19,32 +19,57 @@ export default function Hire() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!email) return;
+
+    const normalizedEmail = email.trim().toLowerCase();
+    if (!normalizedEmail) return;
+
     setSubmitting(true);
     setError("");
 
+    const referralSource = new URLSearchParams(window.location.search).get("utm_source") || "hire-landing";
+    const isDuplicateError = (code?: string | null, message?: string | null, details?: string | null) =>
+      code === "23505" || `${message ?? ""} ${details ?? ""}`.toLowerCase().includes("duplicate key");
+
     try {
-      const { error: dbError } = await supabase
+      const { error: primaryError } = await supabase
         .from("early_access_signups")
         .insert({
-          email,
+          email: normalizedEmail,
           first_name: "Recruiter",
           persona: "I recruit or hire",
-          referral_source: new URLSearchParams(window.location.search).get("utm_source") || "hire-landing",
+          referral_source: referralSource,
         });
 
-      if (dbError) {
-        console.error("Hire signup error:", dbError.code, dbError.message, dbError.details);
-        if (dbError.code === "23505") {
-          setSubmitted(true);
-        } else {
-          setError("Something went wrong. Please try again.");
-        }
-      } else {
+      if (!primaryError || isDuplicateError(primaryError.code, primaryError.message, primaryError.details)) {
         setSubmitted(true);
-        localStorage.setItem("wdiwf_signed_up", "true");
+        try {
+          localStorage.setItem("wdiwf_signed_up", "true");
+        } catch (storageError) {
+          console.warn("Could not persist signup state:", storageError);
+        }
+        return;
       }
-    } catch {
+
+      console.error("Hire signup primary insert error:", primaryError.code, primaryError.message, primaryError.details);
+
+      const { error: fallbackError } = await supabase
+        .from("email_signups")
+        .insert({ email: normalizedEmail, source: referralSource });
+
+      if (!fallbackError || isDuplicateError(fallbackError.code, fallbackError.message, fallbackError.details)) {
+        setSubmitted(true);
+        try {
+          localStorage.setItem("wdiwf_signed_up", "true");
+        } catch (storageError) {
+          console.warn("Could not persist signup state:", storageError);
+        }
+        return;
+      }
+
+      console.error("Hire signup fallback insert error:", fallbackError.code, fallbackError.message, fallbackError.details);
+      setError("Something went wrong. Please try again.");
+    } catch (unexpectedError) {
+      console.error("Hire signup unexpected error:", unexpectedError);
       setError("Something went wrong. Please try again.");
     } finally {
       setSubmitting(false);
