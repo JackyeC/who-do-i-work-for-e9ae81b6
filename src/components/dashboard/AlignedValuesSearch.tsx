@@ -25,7 +25,11 @@ function scoreColor(score: number) {
   return { bg: "rgba(255,77,109,0.1)", text: "#ff4d6d" };
 }
 
-const VALUES_LABELS = ["Transparency", "Worker Rights", "Climate Action", "Pay Equity", "Inclusive Culture"];
+const VALUES_LABELS = [
+  "Transparency", "Worker Protections", "Mission Integrity", "Pay Equity",
+  "Inclusive Culture", "National Security", "Faith & Values", "Innovation",
+  "Small Government", "Free Enterprise", "Community Investment", "Veteran Support",
+];
 
 export function AlignedValuesSearch({ hasTakenQuiz }: { hasTakenQuiz: boolean }) {
   const { user } = useAuth();
