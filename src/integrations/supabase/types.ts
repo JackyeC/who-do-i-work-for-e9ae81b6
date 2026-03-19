@@ -8798,6 +8798,51 @@ export type Database = {
         }
         Relationships: []
       }
+      ticker_items: {
+        Row: {
+          company_name: string | null
+          created_at: string
+          expires_at: string | null
+          id: string
+          is_hidden: boolean
+          is_manual: boolean
+          is_pinned: boolean
+          item_type: string
+          message: string
+          source_record_id: string | null
+          source_table: string | null
+          source_tag: string | null
+        }
+        Insert: {
+          company_name?: string | null
+          created_at?: string
+          expires_at?: string | null
+          id?: string
+          is_hidden?: boolean
+          is_manual?: boolean
+          is_pinned?: boolean
+          item_type?: string
+          message: string
+          source_record_id?: string | null
+          source_table?: string | null
+          source_tag?: string | null
+        }
+        Update: {
+          company_name?: string | null
+          created_at?: string
+          expires_at?: string | null
+          id?: string
+          is_hidden?: boolean
+          is_manual?: boolean
+          is_pinned?: boolean
+          item_type?: string
+          message?: string
+          source_record_id?: string | null
+          source_table?: string | null
+          source_tag?: string | null
+        }
+        Relationships: []
+      }
       tracked_companies: {
         Row: {
           company_id: string
