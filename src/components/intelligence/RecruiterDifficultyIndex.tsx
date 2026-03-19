@@ -130,7 +130,7 @@ export function RecruiterDifficultyIndex({ companyId, companyName }: Props) {
     : 0;
   signals.push({
     label: "Time to Fill",
-    value: avgDays > 0 ? `~${avgDays} days avg` : "No data",
+    value: avgDays > 0 ? `~${avgDays} days avg` : "Limited data",
     severity: getSeverity(ttfScore),
     icon: Clock,
     weight: 0.25,
