@@ -29,7 +29,6 @@ const Index = forwardRef<HTMLDivElement>((_, ref) => {
   const { user, loading: authLoading } = useAuth();
   const [rivalries, setRivalries] = useState<any[] | null>(null);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
-  const [checkoutLoading, setCheckoutLoading] = useState<string | null>(null);
 
   usePageSEO({
     title: "Career Intelligence — Stop Guessing, Start Auditing",
