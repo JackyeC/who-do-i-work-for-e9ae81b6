@@ -479,12 +479,47 @@ export default function Quiz() {
     setResult(null);
   }, []);
 
-  const copyProfile = useCallback(() => {
+  const copyProfile = useCallback(async () => {
     if (!result) return;
     const name = PERSONA_PROFILES[result.primary].name;
-    navigator.clipboard.writeText(
-      `I'm ${name}. I audit before I apply. wdiwf.jackyeclayton.com`
-    );
+    const shareText = `I'm ${name}. I audit before I apply. wdiwf.jackyeclayton.com/join`;
+
+    const showCopyToast = (message: string) => {
+      let toast = document.getElementById('share-toast');
+      if (!toast) {
+        toast = document.createElement('div');
+        toast.id = 'share-toast';
+        Object.assign(toast.style, {
+          position: 'fixed', bottom: '32px', left: '50%', transform: 'translateX(-50%)',
+          background: '#f0c040', color: '#0a0a0e', fontFamily: "'DM Sans', sans-serif",
+          fontSize: '13px', fontWeight: '600', padding: '10px 24px', borderRadius: '50px',
+          zIndex: '9999', whiteSpace: 'nowrap', pointerEvents: 'none',
+          transition: 'opacity 0.3s ease', opacity: '0',
+        });
+        document.body.appendChild(toast);
+      }
+      toast.textContent = message;
+      toast.style.opacity = '1';
+      setTimeout(() => { toast!.style.opacity = '0'; }, 2500);
+    };
+
+    try {
+      await navigator.clipboard.writeText(shareText);
+      showCopyToast('Copied to clipboard ✓');
+    } catch {
+      try {
+        const ta = document.createElement('textarea');
+        ta.value = shareText;
+        Object.assign(ta.style, { position: 'fixed', left: '-9999px', top: '-9999px' });
+        document.body.appendChild(ta);
+        ta.focus(); ta.select();
+        document.execCommand('copy');
+        document.body.removeChild(ta);
+        showCopyToast('Copied to clipboard ✓');
+      } catch {
+        showCopyToast('Copy this: ' + shareText);
+      }
+    }
   }, [result]);
 
   // Keyboard nav
@@ -638,7 +673,7 @@ export default function Quiz() {
         {/* Results screen */}
         <div
           className="flex flex-col items-center justify-center px-6"
-          style={{ width: "100vw", minHeight: "100vh" }}
+          style={{ width: "100vw", minHeight: "calc(100vh - 100px)", paddingTop: 100 }}
         >
           {result && <ResultsScreen result={result} onReset={reset} onCopy={copyProfile} />}
         </div>
@@ -833,7 +868,8 @@ function ResultsScreen({
         style={{
           fontFamily: "'DM Sans', sans-serif",
           fontWeight: 700,
-          fontSize: "clamp(38px, 7vw, 58px)",
+          fontSize: "clamp(32px, 5vw, 56px)",
+          letterSpacing: "-1.5px",
           color: "#f0ebe0",
           textAlign: "center",
           lineHeight: 1.1,
@@ -871,7 +907,7 @@ function ResultsScreen({
           animation: "quizFadeUp 0.6s ease 0.35s both",
         }}
       >
-        You also think like a{" "}
+        You also think like{" "}
         <span style={{ color: "#f0ebe0" }}>{secondaryProfile.name}</span>
       </p>
 
@@ -891,7 +927,7 @@ function ResultsScreen({
       </p>
 
       {/* Signal chips */}
-      <div className="w-full flex flex-col gap-2.5">
+      <div className="w-full flex flex-col gap-3" style={{ maxWidth: 560 }}>
         {profile.signals.map((sig, i) => (
           <SignalChip key={i} signal={sig} delay={0.4 + i * 0.15} />
         ))}
@@ -909,8 +945,8 @@ function ResultsScreen({
 
       {/* CTA buttons */}
       <div
-        className="flex flex-wrap items-center justify-center gap-3 mt-10"
-        style={{ animation: "quizFadeUp 0.6s ease 0.95s both" }}
+        className="flex flex-col sm:flex-row items-center justify-center gap-3 mt-10 w-full sm:w-auto"
+        style={{ animation: "quizFadeUp 0.6s ease 0.95s both", paddingBottom: 48 }}
       >
         <a
           href="/dashboard"

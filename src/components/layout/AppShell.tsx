@@ -13,7 +13,7 @@ export function AppShell({ children }: AppShellProps) {
   return (
     <div className="min-h-screen flex flex-col w-full bg-background">
       <TopBar />
-      <main className="flex-1 min-w-0">
+      <main className="flex-1 min-w-0" style={{ paddingTop: 'var(--nav-offset, 100px)' }}>
         {children}
       </main>
       <Suspense fallback={null}>
