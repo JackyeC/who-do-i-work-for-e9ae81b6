@@ -5,7 +5,7 @@ import { useQuery } from "@tanstack/react-query";
 import { usePageSEO } from "@/hooks/use-page-seo";
 import { getOGImageUrl } from "@/lib/social-share";
 import {
-  Building2, Lightbulb, Network, Landmark,
+  Building2, Lightbulb, Network, Landmark, Eye,
   Sparkles, Users, Heart, Loader2, ShoppingCart,
   BarChart3, TrendingUp, User, Megaphone, Target, AlertTriangle,
 } from "lucide-react";
