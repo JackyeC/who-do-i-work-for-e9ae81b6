@@ -21,12 +21,14 @@ import { EmployerDossierCard } from "@/components/career/EmployerDossierCard";
 import { BeforeYouAcceptBlock } from "@/components/career/BeforeYouAcceptBlock";
 import { WhatThisMeansForYou } from "@/components/career/WhatThisMeansForYou";
 import { SampleDossierPreview } from "@/components/career/SampleDossierPreview";
+import { CompanyResearchTrigger } from "@/components/research/CompanyResearchTrigger";
 
 export default function CareerIntelligence() {
   const { user } = useAuth();
   const [searchParams] = useSearchParams();
   const [activeTab, setActiveTab] = useState(searchParams.get("tab") || "upload");
   const [selectedCompany, setSelectedCompany] = useState<CompanyResult | null>(null);
+  const [unknownCompanyName, setUnknownCompanyName] = useState<string | null>(null);
 
   // Auto-create a career profile for every authenticated user
   useEffect(() => {
@@ -81,7 +83,18 @@ export default function CareerIntelligence() {
         </div>
 
         {/* Employer Dossier Search */}
-        <EmployerDossierSearch onSelect={setSelectedCompany} selectedCompany={selectedCompany} />
+        <EmployerDossierSearch
+          onSelect={(c) => { setSelectedCompany(c); setUnknownCompanyName(null); }}
+          selectedCompany={selectedCompany}
+          onNotFound={(name) => { setUnknownCompanyName(name); setSelectedCompany(null); }}
+        />
+
+        {/* Research trigger for unknown companies */}
+        {unknownCompanyName && !selectedCompany && (
+          <div className="max-w-2xl mx-auto mb-8">
+            <CompanyResearchTrigger companyName={unknownCompanyName} />
+          </div>
+        )}
 
         {/* Dossier Results or Sample Preview */}
         {selectedCompany ? (
@@ -90,11 +103,11 @@ export default function CareerIntelligence() {
             <BeforeYouAcceptBlock company={selectedCompany} />
             <WhatThisMeansForYou company={selectedCompany} />
           </div>
-        ) : (
+        ) : !unknownCompanyName ? (
           <div className="mb-8">
             <SampleDossierPreview />
           </div>
-        )}
+        ) : null}
 
         {/* Deep Dive Tabs */}
         <Tabs value={activeTab} onValueChange={setActiveTab} className="max-w-4xl mx-auto">
