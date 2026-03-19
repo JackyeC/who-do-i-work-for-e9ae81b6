@@ -118,6 +118,11 @@ const Index = forwardRef<HTMLDivElement>((_, ref) => {
         </svg>
 
         <div className="relative z-[1] flex flex-col items-center">
+          {/* Eyebrow label */}
+          <p className="text-eyebrow" style={{ marginBottom: '24px' }}>
+            Career Intelligence Platform
+          </p>
+
           {/* Line 1 */}
           <h1
             className="text-display"
