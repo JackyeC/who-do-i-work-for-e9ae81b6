@@ -42,13 +42,8 @@ export function MediaNarrativeCard({ companyId, companyName }: MediaNarrativeCar
             Media Narrative
           </span>
         </div>
-        <div className="p-6 text-center">
-          <span className="font-mono text-xs text-muted-foreground">
-            Intelligence Gathering in Progress...
-          </span>
-          <p className="text-xs text-muted-foreground/70 mt-1">
-            We are verifying the receipts to ensure 100% accuracy.
-          </p>
+        <div className="p-4">
+          <IntelligenceEmptyState category="media" state="after" />
         </div>
       </div>
     );
