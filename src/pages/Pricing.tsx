@@ -94,6 +94,19 @@ export default function Pricing() {
     title: "Pricing — Career Intelligence Plans",
     description: "Choose your career intelligence plan. Free, Pro, and Enterprise tiers with offer analysis, employer tracking, and AI-powered career strategy.",
     path: "/pricing",
+    jsonLd: {
+      "@type": "WebPage",
+      name: "Pricing — Career Intelligence Plans",
+      description: "Free, Pro, and Enterprise tiers with offer analysis, employer tracking, and AI-powered career strategy.",
+      mainEntity: {
+        "@type": "ItemList",
+        itemListElement: [
+          { "@type": "Offer", name: "Free", price: "0", priceCurrency: "USD", description: "Basic employer intelligence" },
+          { "@type": "Offer", name: "Pro", priceCurrency: "USD", description: "Full career intelligence with AI strategy" },
+          { "@type": "Offer", name: "Enterprise", priceCurrency: "USD", description: "Team-level employer intelligence" },
+        ],
+      },
+    },
   });
 
   const { user } = useAuth();

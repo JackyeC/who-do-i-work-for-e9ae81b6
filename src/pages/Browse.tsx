@@ -35,6 +35,13 @@ export default function Browse() {
     title: "Browse Companies — Employer Intelligence Directory",
     description: "Browse 200+ employer profiles with civic footprint scores, PAC spending, lobbying data, and career intelligence. Filter by industry and category.",
     path: "/browse",
+    jsonLd: {
+      "@type": "CollectionPage",
+      name: "Employer Intelligence Directory",
+      description: "Browse 200+ employer profiles with civic footprint scores, PAC spending, lobbying data, and career intelligence.",
+      isPartOf: { "@type": "WebApplication", name: "Who Do I Work For?" },
+      provider: { "@type": "Person", name: "Jackye Clayton" },
+    },
   });
 
   const [selectedIndustry, setSelectedIndustry] = useState<string>("all");

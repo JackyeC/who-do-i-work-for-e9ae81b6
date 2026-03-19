@@ -110,6 +110,14 @@ export default function OfferCheck() {
     title: "Offer Check — Employer Intelligence Report",
     description: "Get a comprehensive employer intelligence report before you accept. Leadership stability, layoff history, PAC spending, and career signals.",
     path: companyId ? `/check/${companyId}` : "/check",
+    jsonLd: {
+      "@type": "WebApplication",
+      name: "Offer Check — Employer Intelligence Report",
+      description: "Comprehensive employer intelligence report covering leadership stability, layoff history, PAC spending, and career signals.",
+      applicationCategory: "BusinessApplication",
+      offers: { "@type": "Offer", price: "0", priceCurrency: "USD", description: "Free employer intelligence check" },
+      creator: { "@type": "Person", name: "Jackye Clayton" },
+    },
   });
   const { user } = useAuth();
   const { toast } = useToast();

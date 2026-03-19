@@ -11,6 +11,13 @@ export default function Methodology() {
     title: "Methodology — How We Verify Company Intelligence",
     description: "Our evidence quality framework: tiered source verification, confidence ratings, and transparent methodology for all employer intelligence data.",
     path: "/methodology",
+    jsonLd: {
+      "@type": "AboutPage",
+      name: "Methodology — How We Verify Company Intelligence",
+      description: "Tiered source verification framework using FEC filings, SEC EDGAR, BLS data, Senate lobbying disclosures, and USAspending.gov.",
+      isPartOf: { "@type": "WebApplication", name: "Who Do I Work For?" },
+      author: { "@type": "Person", name: "Jackye Clayton" },
+    },
   });
 
   return (

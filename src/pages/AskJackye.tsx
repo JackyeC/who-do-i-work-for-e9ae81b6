@@ -159,6 +159,14 @@ export default function AskJackyePage() {
     title: "Intelligence Advisor — AI Career Strategy",
     description: "Analyze companies, leadership, and market signals with an AI-powered intelligence assistant. Powered by Jackye Clayton's talent framework.",
     path: "/ask-jackye",
+    jsonLd: {
+      "@type": "WebApplication",
+      name: "Ask Jackye — AI Career Intelligence Advisor",
+      description: "AI-powered career strategy assistant built on Jackye Clayton's 20+ years of HR expertise. Analyze companies, leadership, and market signals.",
+      applicationCategory: "BusinessApplication",
+      creator: { "@type": "Person", name: "Jackye Clayton" },
+      featureList: "Company analysis, career strategy, employer transparency, offer negotiation guidance",
+    },
   });
 
   useEffect(() => {

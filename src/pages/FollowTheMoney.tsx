@@ -840,6 +840,13 @@ export default function FollowTheMoney() {
     title: "Follow the Money — Corporate Political Influence Map",
     description: "Interactive influence graph showing corporate PAC donations, lobbying, dark money channels, and revolving door connections to Congress.",
     path: "/follow-the-money",
+    jsonLd: {
+      "@type": "WebApplication",
+      name: "Follow the Money — Corporate Political Influence Map",
+      description: "Interactive graph mapping corporate PAC donations, lobbying spend, dark money channels, and revolving door connections to Congress.",
+      applicationCategory: "BusinessApplication",
+      creator: { "@type": "Person", name: "Jackye Clayton" },
+    },
   });
 
   const navigate = useNavigate();

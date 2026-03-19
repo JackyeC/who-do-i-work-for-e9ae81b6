@@ -121,6 +121,18 @@ export default function WorkWithJackye() {
     title: "Work With Jackye — Career Strategy & HR Advisory",
     description: "Book Jackye Clayton for career strategy, recruiting advisory, HR tech go-to-market, employer brand strategy, and offer review. 20+ years of HR expertise.",
     path: "/work-with-jackye",
+    jsonLd: {
+      "@type": "Service",
+      name: "Work With Jackye — Career Strategy & HR Advisory",
+      description: "Direct access to Jackye Clayton for career strategy, recruiting advisory, HR tech positioning, and offer review.",
+      provider: {
+        "@type": "Person",
+        name: "Jackye Clayton",
+        jobTitle: "Career Strategist & HR Intelligence Expert",
+        knowsAbout: ["Career Strategy", "Recruiting", "HR Technology", "Employer Brand", "Offer Negotiation"],
+      },
+      serviceType: "Career Advisory",
+    },
   });
 
   return (
