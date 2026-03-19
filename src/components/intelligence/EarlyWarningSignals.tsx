@@ -33,7 +33,7 @@ const STATUS_BADGE = {
   elevated: "Review Required",
   moderate: "Moderate",
   low: "Low Risk",
-  no_data: "No Data",
+  no_data: "Limited Data",
 };
 
 export function EarlyWarningSignals({ companyId, companyName }: Props) {
@@ -141,7 +141,7 @@ export function EarlyWarningSignals({ companyId, companyName }: Props) {
     icon: Users,
     status: !executiveTurnover?.length ? "no_data" : turnoverPct > 30 ? "elevated" : turnoverPct > 15 ? "moderate" : "low",
     detail: !executiveTurnover?.length
-      ? "No executive roster data available"
+      ? "Executive roster not yet indexed. We checked SEC filings and corporate pages — data may be limited for private companies."
       : `${departedExecs.length} of ${executiveTurnover.length} tracked executives have departed (${turnoverPct}% turnover)`,
     source: "SEC filings, corporate pages",
   });
@@ -152,7 +152,7 @@ export function EarlyWarningSignals({ companyId, companyName }: Props) {
     label: "Compensation Position",
     icon: DollarSign,
     status: "no_data",
-    detail: "Compare offered salaries against BLS benchmarks using Offer Check",
+    detail: "We checked public pay disclosures — no indexed compensation data found. Use Offer Check to compare against BLS benchmarks.",
     source: "BLS OES, company postings",
   });
 

@@ -48,31 +48,46 @@ export function IntelligenceSectionWrapper({
   const hasData = report && report.content &&
     (typeof report.content !== 'object' || Object.keys(report.content).length > 0);
 
-  // No data at all
+  // No data at all — interpreted intelligence state
   if (!hasData) {
+    const sectionLabel = SECTION_LABELS[section]?.toLowerCase() || section;
     return (
-      <div className="flex flex-col items-center justify-center py-6 text-center space-y-2.5">
-        <AlertTriangle className="w-6 h-6 text-muted-foreground/40" />
-        <p className="text-sm text-muted-foreground">
-          No {SECTION_LABELS[section]?.toLowerCase() || section} data available yet
-        </p>
-        {report?.last_error && (
-          <p className="text-xs text-muted-foreground/60">
-            Some live data sources are temporarily unavailable
-          </p>
-        )}
-        {showRefresh && onRefresh && (
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={onRefresh}
-            disabled={isRefreshing}
-            className="text-xs"
-          >
-            <RefreshCw className={`w-3 h-3 mr-1.5 ${isRefreshing ? 'animate-spin' : ''}`} />
-            {isRefreshing ? 'Scanning…' : 'Scan Now'}
-          </Button>
-        )}
+      <div className="space-y-3">
+        <div className="rounded-xl border border-border/40 bg-muted/10 overflow-hidden">
+          <div className="flex items-start gap-3 p-4">
+            <div className="w-8 h-8 rounded-lg bg-primary/10 flex items-center justify-center shrink-0 mt-0.5">
+              <Database className="w-4 h-4 text-primary" />
+            </div>
+            <div className="flex-1 min-w-0">
+              <p className="text-sm text-foreground leading-relaxed">
+                We checked public sources for {sectionLabel} signals. No records were found in the databases we monitor.
+              </p>
+              {report?.last_error ? (
+                <p className="text-xs text-muted-foreground/70 mt-2">
+                  Some live sources were temporarily unavailable during the last scan.
+                </p>
+              ) : (
+                <p className="text-xs text-muted-foreground/70 mt-2 italic">
+                  Absence of data is still a signal.
+                </p>
+              )}
+            </div>
+          </div>
+          {showRefresh && onRefresh && (
+            <div className="px-4 pb-3">
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={onRefresh}
+                disabled={isRefreshing}
+                className="text-xs"
+              >
+                <RefreshCw className={`w-3 h-3 mr-1.5 ${isRefreshing ? 'animate-spin' : ''}`} />
+                {isRefreshing ? 'Scanning…' : 'Scan Again'}
+              </Button>
+            </div>
+          )}
+        </div>
       </div>
     );
   }

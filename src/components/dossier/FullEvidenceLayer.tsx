@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { IntelligenceEmptyState } from "@/components/intelligence/IntelligenceEmptyState";
 import { FileText, ExternalLink, DollarSign, Megaphone, Landmark, Lightbulb, Network, Globe, Users } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { cn } from "@/lib/utils";
@@ -40,12 +41,7 @@ export function FullEvidenceLayer(props: FullEvidenceProps) {
   const nonEmptyTabs = TABS.filter(t => (props[t.key as keyof FullEvidenceProps] || []).length > 0);
 
   if (nonEmptyTabs.length === 0) {
-    return (
-      <div className="text-center py-8">
-        <FileText className="w-8 h-8 text-muted-foreground/40 mx-auto mb-3" />
-        <p className="text-caption text-muted-foreground">No evidence records available yet.</p>
-      </div>
-    );
+    return <IntelligenceEmptyState category="evidence" state="after" />;
   }
 
   return (

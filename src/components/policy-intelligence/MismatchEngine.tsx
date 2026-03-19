@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { IntelligenceEmptyState } from "@/components/intelligence/IntelligenceEmptyState";
 import { AlertTriangle, ExternalLink, Shield, CheckCircle2, HelpCircle, ChevronRight } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -40,11 +41,7 @@ export function MismatchEngine({ stances, darkMoney, tradeAssociations, companyN
   const sortedStances = [...conflicts, ...mixed, ...aligned];
 
   if (sortedStances.length === 0 && darkMoney.length === 0) {
-    return (
-      <div className="text-center py-8 text-muted-foreground text-sm">
-        No public stance or spending data available for mismatch analysis.
-      </div>
-    );
+    return <IntelligenceEmptyState category="mismatch" state="after" />;
   }
 
   return (

@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import { IntelligenceEmptyState } from "@/components/intelligence/IntelligenceEmptyState";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -170,11 +171,7 @@ export function WorkerSentimentCard({ companyName, dbCompanyId }: WorkerSentimen
         )}
 
         {!result ? (
-          <div className="text-center py-8 text-muted-foreground">
-            <HardHat className="w-8 h-8 mx-auto mb-2 opacity-40" />
-            <p className="text-sm mb-1">No public worker sentiment signals detected yet.</p>
-            <p className="text-xs text-muted-foreground/60">Click "Run Scan" to search public sources. Scans typically take 30–60 seconds.</p>
-          </div>
+          <IntelligenceEmptyState category="sentiment" state="before" />
         ) : (
           <>
             {/* Signal Density */}

@@ -1,3 +1,4 @@
+import { IntelligenceEmptyState } from "@/components/intelligence/IntelligenceEmptyState";
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetDescription } from "@/components/ui/sheet";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent } from "@/components/ui/card";
@@ -225,19 +226,7 @@ export function LobbyingDetailDrawer({ open, onOpenChange, companyId, companyNam
 
               {/* No data fallback */}
               {topIssues.length === 0 && topStates.length === 0 && (!lobbyingLinkages || lobbyingLinkages.length === 0) && (
-                <div className="text-center py-8">
-                  <p className="text-sm text-muted-foreground mb-3">
-                    Detailed lobbying breakdown not yet available for {companyName}.
-                  </p>
-                  <a
-                    href={`https://www.opensecrets.org/federal-lobbying/lookup?search=${encodeURIComponent(companyName)}`}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="text-xs text-primary hover:underline flex items-center gap-1 justify-center"
-                  >
-                    Search OpenSecrets for lobbying records <ExternalLink className="w-3 h-3" />
-                  </a>
-                </div>
+                <IntelligenceEmptyState category="lobbying" state="after" />
               )}
 
               {/* Source attribution */}

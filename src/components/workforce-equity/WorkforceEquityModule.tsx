@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { IntelligenceEmptyState } from "@/components/intelligence/IntelligenceEmptyState";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
@@ -268,21 +269,12 @@ export function WorkforceEquityModule({
       </div>
 
       {!hasScanned ? (
-        <Card>
-          <CardContent className="py-12 text-center">
-            <BarChart3 className="w-10 h-10 mx-auto mb-3 text-muted-foreground opacity-40" />
-            <p className="text-sm text-muted-foreground mb-1">
-              No workforce equity signals detected yet for {companyName}.
-            </p>
-            <p className="text-[11px] text-muted-foreground mb-4">
-              Click "Run Scan" to search ESG reports, diversity disclosures, career pages, SEC filings, and public partnerships.
-            </p>
-            <Button onClick={handleScan} disabled={scanning} size="sm" className="gap-1.5">
-              {scanning ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <RefreshCw className="w-3.5 h-3.5" />}
-              Run Scan
-            </Button>
-          </CardContent>
-        </Card>
+        <IntelligenceEmptyState category="workforce" state="before">
+          <Button onClick={handleScan} disabled={scanning} size="sm" className="gap-1.5">
+            {scanning ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <RefreshCw className="w-3.5 h-3.5" />}
+            Run Scan
+          </Button>
+        </IntelligenceEmptyState>
       ) : (
         <>
           {/* Inclusive Vibe Score */}
