@@ -224,7 +224,7 @@ const Index = forwardRef<HTMLDivElement>((_, ref) => {
                     onMouseEnter={(e) => (e.currentTarget.style.textDecoration = "underline")}
                     onMouseLeave={(e) => (e.currentTarget.style.textDecoration = "none")}
                   >
-                    Launching April 1 — get early access →
+                    Launching April 6 — get early access →
                   </Link>
                 </div>
               );
