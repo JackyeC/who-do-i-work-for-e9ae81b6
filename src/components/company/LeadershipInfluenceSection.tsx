@@ -230,6 +230,14 @@ export function LeadershipInfluenceSection({
                     {member.is_independent && (
                       <Badge variant="outline" className="text-xs text-[hsl(var(--civic-green))]">Independent</Badge>
                     )}
+                    <Link
+                      to={`/request-correction?company=${encodeURIComponent(companyName)}&person=${encodeURIComponent(member.name)}`}
+                      className="text-[11px] text-[#3d3a4a] hover:text-primary transition-colors flex items-center gap-0.5"
+                      style={{ fontFamily: "'DM Sans', sans-serif" }}
+                      title="Report incorrect data"
+                    >
+                      <Flag className="w-3 h-3" />
+                    </Link>
                   </div>
                 </div>
               ))}
