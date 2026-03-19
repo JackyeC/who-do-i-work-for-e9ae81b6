@@ -2,6 +2,7 @@ import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { Lightbulb, ExternalLink, Loader2, Search, Cpu, FlaskConical, Cog, BarChart3, Lock, TrendingUp, TrendingDown, Minus, Shield } from "lucide-react";
+import { IntelligenceEmptyState } from "@/components/intelligence/IntelligenceEmptyState";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
