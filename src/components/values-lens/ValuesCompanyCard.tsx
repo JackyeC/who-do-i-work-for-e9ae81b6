@@ -53,6 +53,33 @@ interface Props {
 
 export function ValuesCompanyCard({ company, signals, evidence, lensLabel, hasConflict }: Props) {
   const [expanded, setExpanded] = useState(false);
+  const { signalPriority, nepotismFlag, ctaCopy, sectionHeader } = usePersona();
+
+  // Persona-aware signal reordering
+  const sortedSignals = useMemo(() => {
+    if (!signalPriority.length) return signals;
+    const priorityLower = signalPriority.map(s => s.toLowerCase());
+    const insiderFirst = nepotismFlag === "high";
+
+    return [...signals].sort((a, b) => {
+      const labelA = (a.signal_label || a.signal_type || "").toLowerCase();
+      const labelB = (b.signal_label || b.signal_type || "").toLowerCase();
+
+      // If nepotism high, Insider Score related signals first
+      if (insiderFirst) {
+        const aInsider = labelA.includes("insider");
+        const bInsider = labelB.includes("insider");
+        if (aInsider && !bInsider) return -1;
+        if (!aInsider && bInsider) return 1;
+      }
+
+      const aIdx = priorityLower.findIndex(p => labelA.includes(p.toLowerCase().split(" ")[0]));
+      const bIdx = priorityLower.findIndex(p => labelB.includes(p.toLowerCase().split(" ")[0]));
+      const aPri = aIdx >= 0 ? aIdx : 999;
+      const bPri = bIdx >= 0 ? bIdx : 999;
+      return aPri - bPri;
+    });
+  }, [signals, signalPriority, nepotismFlag]);
 
   return (
     <motion.div
