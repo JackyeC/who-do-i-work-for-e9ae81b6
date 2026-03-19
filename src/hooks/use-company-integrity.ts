@@ -28,7 +28,7 @@ function getMockResult(companyName: string): CompanyIntegrityResult {
 
 const API_URL = "https://wdiwf-integrity-api.onrender.com/api/company-integrity-check";
 
-export function useCompanyIntegrity(companyName: string | undefined) {
+export function useCompanyIntegrity(companyName: string | undefined, companyId?: string) {
   return useQuery<CompanyIntegrityResult | null>({
     queryKey: ["company-integrity", companyName],
     queryFn: async () => {
@@ -41,7 +41,7 @@ export function useCompanyIntegrity(companyName: string | undefined) {
         const res = await fetch(API_URL, {
           method: "POST",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ company_name: companyName }),
+          body: JSON.stringify({ company_name: companyName, company_id: companyId }),
           signal: controller.signal,
         });
         clearTimeout(timeout);
