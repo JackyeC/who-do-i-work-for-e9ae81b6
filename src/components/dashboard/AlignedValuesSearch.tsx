@@ -109,7 +109,7 @@ export function AlignedValuesSearch({ hasTakenQuiz }: { hasTakenQuiz: boolean })
   const showSuggestions = focused && query.trim().length < 2;
   const results: CompanyResult[] = useMemo(() => {
     if (query.trim().length >= 2 && dbResults) return dbResults;
-    if (showSuggestions) return SAMPLE_COMPANIES;
+    if (showSuggestions) return suggestedCompanies || [];
     return [];
   }, [query, dbResults, showSuggestions]);
 
