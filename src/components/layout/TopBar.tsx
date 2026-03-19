@@ -5,6 +5,7 @@ import { useDemoSafeMode } from "@/contexts/DemoSafeModeContext";
 import { cn } from "@/lib/utils";
 import { Search, LogIn, LogOut, Menu, X, Shield, Map, ChevronDown, Lock } from "lucide-react";
 import { ThemeToggle } from "@/components/ThemeToggle";
+import { PersonaChip } from "@/components/PersonaChip";
 import { supabase } from "@/integrations/supabase/client";
 import { useQuery } from "@tanstack/react-query";
 import { SignupModal } from "@/components/SignupModal";
