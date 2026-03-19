@@ -3,7 +3,7 @@ import { Link } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { usePageSEO } from "@/hooks/use-page-seo";
 
-const LAUNCH_DATE = new Date("2025-04-01");
+const LAUNCH_DATE = new Date("2025-04-06");
 const IS_LAUNCHED = new Date() >= LAUNCH_DATE;
 const BASE_COUNT = 312;
 
