@@ -276,7 +276,84 @@ const Index = forwardRef<HTMLDivElement>((_, ref) => {
         </div>
       </section>
 
-      {/* ── Company Scan — repositioned below hero ── */}
+      {/* ══════════════════════════════════════════════════════════════════
+          HOW IT WORKS
+      ══════════════════════════════════════════════════════════════════ */}
+      <section className="px-6 lg:px-16 py-24" style={{ background: "#0a0a0e" }}>
+        <div className="max-w-[900px] mx-auto">
+          <p
+            className="text-xs uppercase tracking-[3px] font-semibold text-center mb-3"
+            style={{ color: "#f0c040" }}
+          >
+            How It Works
+          </p>
+          <h2
+            className="font-sans text-center leading-[1.1] mb-16"
+            style={{ fontSize: "clamp(24px, 4vw, 40px)", fontWeight: 800, letterSpacing: "-2px", color: "#f0ebe0" }}
+          >
+            Four steps. Full transparency.
+          </h2>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            {[
+              {
+                step: "01",
+                title: "Company gets audited",
+                body: "We pull public signals — Glassdoor trajectory, leadership turnover, workforce stability, public legal and civic record.",
+              },
+              {
+                step: "02",
+                title: "Integrity score calculated",
+                body: "Our model flags Reality Gaps (what companies say vs. what employees report) and Insider Risk. High-risk employers are flagged before any candidate is matched.",
+              },
+              {
+                step: "03",
+                title: "Candidates matched on values, not just skills",
+                body: "Our AI scores alignment across skills (40%), values (35%), and experience (25%). Protected attributes are masked.",
+              },
+              {
+                step: "04",
+                title: "Everyone walks in informed",
+                body: "Candidates see company integrity data. Employers see values-aligned candidates. Recruiters see it all.",
+              },
+            ].map((item) => (
+              <div
+                key={item.step}
+                className="rounded-2xl p-7"
+                style={{
+                  background: "rgba(255,255,255,0.02)",
+                  border: "1px solid rgba(255,255,255,0.08)",
+                }}
+              >
+                <span
+                  className="inline-block font-sans mb-4"
+                  style={{
+                    fontSize: "13px",
+                    fontWeight: 700,
+                    color: "#f0c040",
+                    letterSpacing: "1px",
+                  }}
+                >
+                  STEP {item.step}
+                </span>
+                <h3
+                  className="font-sans font-bold mb-3"
+                  style={{ fontSize: "17px", color: "#f0ebe0", lineHeight: 1.3 }}
+                >
+                  {item.title}
+                </h3>
+                <p
+                  className="font-sans"
+                  style={{ fontSize: "14px", color: "#9994a8", lineHeight: 1.65 }}
+                >
+                  {item.body}
+                </p>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
       <section className="px-6 lg:px-16 py-16 max-w-[700px] mx-auto w-full text-center">
         <div
           style={{
