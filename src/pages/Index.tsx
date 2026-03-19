@@ -123,7 +123,7 @@ const Index = forwardRef<HTMLDivElement>((_, ref) => {
             Career Intelligence Platform
           </p>
 
-          {/* Line 1 */}
+          {/* Headline */}
           <h1
             className="text-display"
             style={{
@@ -131,19 +131,7 @@ const Index = forwardRef<HTMLDivElement>((_, ref) => {
               animation: "heroFadeIn 0.8s ease forwards",
             }}
           >
-            Every company runs a background check on you.
-          </h1>
-
-          {/* Line 2 — delayed */}
-          <h1
-            className="text-display"
-            style={{
-              color: "#f0c040",
-              opacity: 0,
-              animation: "heroFadeIn 0.6s ease 0.9s forwards",
-            }}
-          >
-            But who's running one on them?
+            The recruiting platform that audits the company first.
           </h1>
 
           {/* Subheadline */}
@@ -154,16 +142,15 @@ const Index = forwardRef<HTMLDivElement>((_, ref) => {
               fontSize: "17px",
               color: "#b8b4a8",
               lineHeight: 1.7,
-              maxWidth: "520px",
+              maxWidth: "580px",
               marginTop: "24px",
               textAlign: "center",
               opacity: 0,
-              animation: "heroFadeIn 0.6s ease 1.6s forwards",
+              animation: "heroFadeIn 0.6s ease 0.9s forwards",
             }}
           >
-            WDIWF surfaces what companies don't put on their careers page — built on FEC filings, SEC reports, BLS wages, OSHA records, and NLRB data.
-            <br />
-            Answer 7 questions and we'll show you exactly what you need to see.
+            Before we match you with a job, we check whether the employer deserves great talent.
+            Verified integrity scores. Value-aligned hiring. Built for people who won't settle.
           </p>
 
           {/* CTA */}
@@ -171,7 +158,7 @@ const Index = forwardRef<HTMLDivElement>((_, ref) => {
             style={{
               marginTop: "36px",
               opacity: 0,
-              animation: "heroFadeIn 0.5s ease 2s forwards",
+              animation: "heroFadeIn 0.5s ease 1.5s forwards",
             }}
           >
             {(() => {
@@ -229,6 +216,62 @@ const Index = forwardRef<HTMLDivElement>((_, ref) => {
                 </div>
               );
             })()}
+          </div>
+
+          {/* ── Benefit Cards ── */}
+          <div
+            className="grid grid-cols-1 md:grid-cols-3 gap-5 w-full max-w-[900px]"
+            style={{
+              marginTop: "64px",
+              opacity: 0,
+              animation: "heroFadeIn 0.6s ease 2s forwards",
+            }}
+          >
+            {[
+              {
+                icon: <Shield className="w-5 h-5" style={{ color: "#f0c040" }} />,
+                title: "Company Integrity Score",
+                body: "We audit culture, turnover, leadership stability, and Glassdoor trajectory before any candidate sees the job.",
+              },
+              {
+                icon: <Target className="w-5 h-5" style={{ color: "#f0c040" }} />,
+                title: "Value Alignment Matching",
+                body: "Skills get you in the door. Values keep you there. Our AI matches on both.",
+              },
+              {
+                icon: <Eye className="w-5 h-5" style={{ color: "#f0c040" }} />,
+                title: "Candidate Intelligence",
+                body: "Job seekers see exactly what they're walking into — so only the right people apply.",
+              },
+            ].map((card) => (
+              <div
+                key={card.title}
+                className="rounded-2xl p-6 text-left"
+                style={{
+                  background: "rgba(255,255,255,0.03)",
+                  border: "1px solid rgba(255,255,255,0.08)",
+                }}
+              >
+                <div
+                  className="w-10 h-10 rounded-xl flex items-center justify-center mb-4"
+                  style={{ background: "rgba(240,192,64,0.10)" }}
+                >
+                  {card.icon}
+                </div>
+                <h3
+                  className="font-sans font-semibold mb-2"
+                  style={{ fontSize: "15px", color: "#f0ebe0" }}
+                >
+                  {card.title}
+                </h3>
+                <p
+                  className="font-sans"
+                  style={{ fontSize: "13px", color: "#9994a8", lineHeight: 1.6 }}
+                >
+                  {card.body}
+                </p>
+              </div>
+            ))}
           </div>
         </div>
       </section>
