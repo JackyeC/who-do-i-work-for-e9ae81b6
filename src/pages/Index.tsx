@@ -31,7 +31,7 @@ const Index = forwardRef<HTMLDivElement>((_, ref) => {
 
   usePageSEO({
     title: "Career Intelligence — Stop Guessing, Start Auditing",
-    description: "Not a job board. A career audit center. Use 15+ years of recruiting intelligence to find the job that matches your DNA and your worth.",
+    description: "You deserve to know exactly who you work for. Use 15+ years of recruiting intelligence to find aligned roles that match your DNA and your worth.",
     path: "/",
     jsonLd: {
       "@type": "WebApplication",
