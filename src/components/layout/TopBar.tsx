@@ -270,15 +270,7 @@ export function TopBar() {
           {/* Audit CTA */}
           <Link
             to="/browse"
-            className="hidden sm:inline-flex items-center whitespace-nowrap font-sans transition-all hover:brightness-110"
-            style={{
-              background: '#f0c040',
-              color: '#0a0a0e',
-              borderRadius: '50px',
-              padding: '8px 20px',
-              fontSize: '14px',
-              fontWeight: 600,
-            }}
+            className="hidden sm:inline-flex items-center whitespace-nowrap font-sans transition-all hover:brightness-110 bg-primary text-primary-foreground rounded-full px-5 py-2 text-btn"
           >
             Audit →
           </Link>
