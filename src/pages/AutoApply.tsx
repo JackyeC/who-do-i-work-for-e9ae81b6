@@ -553,8 +553,6 @@ export default function AutoApply() {
   };
 
   /* ── done screen ── */
-  // showKit state is declared at the top level — moved up to avoid hooks-after-return
-  const [showKit, setShowKit] = useState(false);
 
   if (done) {
     return (
