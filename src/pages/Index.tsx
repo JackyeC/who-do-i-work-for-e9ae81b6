@@ -167,15 +167,7 @@ const Index = forwardRef<HTMLDivElement>((_, ref) => {
                   {hasPersona && (
                     <button
                       onClick={() => navigate("/quiz")}
-                      style={{
-                        fontFamily: "'DM Sans', sans-serif",
-                        fontSize: "12px",
-                        color: "#7a7590",
-                        marginTop: "8px",
-                        cursor: "pointer",
-                        background: "none",
-                        border: "none",
-                      }}
+                      className="font-sans text-xs text-muted-foreground mt-2 cursor-pointer bg-transparent border-none"
                     >
                       Or retake the quiz →
                     </button>
