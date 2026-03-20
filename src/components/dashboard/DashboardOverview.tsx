@@ -181,7 +181,7 @@ export function DashboardOverview({ onNavigate }: DashboardOverviewProps) {
               Resume parsed — {data.parsedSkillsCount} skills extracted
             </p>
           )}
-          <p style={{ fontFamily: "'DM Sans', sans-serif", fontSize: "12px", color: "#3d3a4a", marginTop: "4px" }}>
+          <p style={{ fontFamily: "'DM Sans', sans-serif", fontSize: "12px", marginTop: "4px" }} className="text-muted-foreground">
             {dateStr}
           </p>
         </BriefingCard>

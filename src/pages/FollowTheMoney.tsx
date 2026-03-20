@@ -1480,7 +1480,7 @@ export default function FollowTheMoney() {
           {/* Legend */}
           <div className="absolute bottom-3 left-3 z-10 flex flex-wrap gap-1.5">
             {Object.entries(GROUP_COLORS).map(([group, color]) => (
-              <div key={group} className="flex items-center gap-1.5 text-[9px] text-white/60 bg-black/40 backdrop-blur-sm px-2 py-1 rounded-full">
+              <div key={group} className="flex items-center gap-1.5 text-[9px] text-muted-foreground bg-background/60 backdrop-blur-sm px-2 py-1 rounded-full">
                 <div className="w-2.5 h-2.5 rounded-full" style={{ backgroundColor: color }} />
                 {group}
               </div>
@@ -1489,8 +1489,8 @@ export default function FollowTheMoney() {
 
           {/* Loading overlay */}
           {loading && (
-            <div className="absolute inset-0 flex items-center justify-center bg-[#0B0F1A]/80 backdrop-blur-sm z-20">
-              <div className="flex items-center gap-3 text-white/70">
+            <div className="absolute inset-0 flex items-center justify-center bg-background/80 backdrop-blur-sm z-20">
+              <div className="flex items-center gap-3 text-muted-foreground">
                 <Loader2 className="w-5 h-5 animate-spin" />
                 <span className="text-sm font-medium">Mapping influence network…</span>
               </div>
@@ -1501,9 +1501,9 @@ export default function FollowTheMoney() {
           {!loading && graphData.nodes.length === 0 && (
             <div className="absolute inset-0 flex items-center justify-center z-10">
               <div className="text-center max-w-sm">
-                <Globe className="w-10 h-10 text-white/20 mx-auto mb-3" />
-                <h3 className="text-sm font-semibold text-white/60 mb-1">No connections match your filters</h3>
-                <p className="text-xs text-white/40 mb-3">Try broadening your filters or searching for a different company.</p>
+                <Globe className="w-10 h-10 text-muted-foreground/30 mx-auto mb-3" />
+                <h3 className="text-sm font-semibold text-muted-foreground mb-1">No connections match your filters</h3>
+                <p className="text-xs text-muted-foreground/60 mb-3">Try broadening your filters or searching for a different company.</p>
                 <Button variant="outline" size="sm" onClick={resetGraph} className="gap-1.5">
                   <RotateCcw className="w-3 h-3" /> Reset Filters
                 </Button>
