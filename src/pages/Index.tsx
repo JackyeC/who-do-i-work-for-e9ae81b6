@@ -107,8 +107,7 @@ const Index = forwardRef<HTMLDivElement>((_, ref) => {
           HERO — "The Flip Moment"
       ══════════════════════════════════════════════════════════════════ */}
       <section
-        className="relative flex flex-col items-center justify-center px-6 text-center"
-        style={{ minHeight: "100vh", background: "#0a0a0e" }}
+        className="relative flex flex-col items-center justify-center px-6 text-center min-h-screen bg-background"
       >
         {/* Grain overlay */}
         <svg className="fixed inset-0 w-full h-full pointer-events-none" style={{ zIndex: 0, opacity: 0.04 }}>
