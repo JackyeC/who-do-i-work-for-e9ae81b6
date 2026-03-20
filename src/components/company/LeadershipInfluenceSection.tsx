@@ -96,7 +96,7 @@ interface LeadershipInfluenceSectionProps {
 
 function SourceNote() {
   return (
-    <p className="text-[11px] text-[#3d3a4a] mt-2" style={{ fontFamily: "'DM Sans', sans-serif" }}>
+    <p className="text-[11px] text-muted-foreground mt-2" style={{ fontFamily: "'DM Sans', sans-serif" }}>
       Leadership data sourced from SEC proxy statements, public disclosures, and 8-K filings.{" "}
       <Link to="/request-correction" className="underline hover:text-primary transition-colors">
         Found an error? Report it →
