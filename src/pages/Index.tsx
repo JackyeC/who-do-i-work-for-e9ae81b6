@@ -194,45 +194,32 @@ const Index = forwardRef<HTMLDivElement>((_, ref) => {
           >
             {[
               {
-                icon: <Shield className="w-5 h-5" style={{ color: "#f0c040" }} />,
+                icon: <Shield className="w-5 h-5 text-primary" />,
                 title: "Company Integrity Score",
                 body: "We audit culture, turnover, leadership stability, and Glassdoor trajectory before any candidate sees the job.",
               },
               {
-                icon: <Target className="w-5 h-5" style={{ color: "#f0c040" }} />,
+                icon: <Target className="w-5 h-5 text-primary" />,
                 title: "Value Alignment Matching",
                 body: "Skills get you in the door. Values keep you there. Our AI matches on both.",
               },
               {
-                icon: <Eye className="w-5 h-5" style={{ color: "#f0c040" }} />,
+                icon: <Eye className="w-5 h-5 text-primary" />,
                 title: "Candidate Intelligence",
                 body: "Job seekers see exactly what they're walking into — so only the right people apply.",
               },
             ].map((card) => (
               <div
                 key={card.title}
-                className="rounded-2xl p-6 text-left"
-                style={{
-                  background: "rgba(255,255,255,0.03)",
-                  border: "1px solid rgba(255,255,255,0.08)",
-                }}
+                className="rounded-2xl p-6 text-left bg-muted/30 border border-border"
               >
-                <div
-                  className="w-10 h-10 rounded-xl flex items-center justify-center mb-4"
-                  style={{ background: "rgba(240,192,64,0.10)" }}
-                >
+                <div className="w-10 h-10 rounded-xl flex items-center justify-center mb-4 bg-primary/10">
                   {card.icon}
                 </div>
-                <h3
-                  className="font-sans font-semibold mb-2"
-                  style={{ fontSize: "15px", color: "#f0ebe0" }}
-                >
+                <h3 className="font-sans font-semibold mb-2 text-[15px] text-foreground">
                   {card.title}
                 </h3>
-                <p
-                  className="font-sans"
-                  style={{ fontSize: "13px", color: "#9994a8", lineHeight: 1.6 }}
-                >
+                <p className="font-sans text-caption text-muted-foreground leading-relaxed">
                   {card.body}
                 </p>
               </div>
