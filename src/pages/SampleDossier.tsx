@@ -1,3 +1,4 @@
+import { useState } from "react";
 import { Helmet } from "react-helmet-async";
 import { usePageSEO } from "@/hooks/use-page-seo";
 import {
@@ -14,7 +15,9 @@ import {
   MapPin,
   Calendar,
   DollarSign,
+  BookOpen,
 } from "lucide-react";
+import { InterviewKit } from "@/components/interview/InterviewKit";
 
 const amber = "#f0c040";
 const cream = "#f0ebe0";
