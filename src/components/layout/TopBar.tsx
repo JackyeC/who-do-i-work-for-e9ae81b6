@@ -251,21 +251,25 @@ export function TopBar() {
 
           <ThemeToggle />
 
-          <SignedIn>
-            <UserButton afterSignOutUrl="/" />
-          </SignedIn>
-          <SignedOut>
-            <SignInButton mode="modal">
-              <button className="bg-primary text-primary-foreground px-5 py-2 font-sans text-btn rounded-full hover:brightness-110 transition-all whitespace-nowrap">
-                Sign In
-              </button>
-            </SignInButton>
-            <SignUpButton mode="modal">
-              <button className="border border-primary text-primary px-5 py-2 font-sans text-btn rounded-full hover:bg-primary/10 transition-all whitespace-nowrap">
-                Sign Up
-              </button>
-            </SignUpButton>
-          </SignedOut>
+          {clerkLoaded && (
+            <>
+              <SignedIn>
+                <UserButton afterSignOutUrl="/" />
+              </SignedIn>
+              <SignedOut>
+                <SignInButton mode="modal">
+                  <button className="bg-primary text-primary-foreground px-5 py-2 font-sans text-btn rounded-full hover:brightness-110 transition-all whitespace-nowrap">
+                    Sign In
+                  </button>
+                </SignInButton>
+                <SignUpButton mode="modal">
+                  <button className="border border-primary text-primary px-5 py-2 font-sans text-btn rounded-full hover:bg-primary/10 transition-all whitespace-nowrap">
+                    Sign Up
+                  </button>
+                </SignUpButton>
+              </SignedOut>
+            </>
+          )}
 
           {/* Audit CTA */}
           <Link
