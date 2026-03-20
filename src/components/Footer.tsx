@@ -54,7 +54,12 @@ export const Footer = forwardRef<HTMLElement>((_, ref) => {
         We don't have a bias. We have receipts.
       </p>
 
-      {/* Row 3 — Copyright */}
+      {/* Row 3 — Primary tagline */}
+      <p style={{ fontSize: 13, fontWeight: 500, color: 'hsl(var(--foreground))', lineHeight: 1.5, marginTop: 4 }}>
+        You deserve to know exactly who you work for.
+      </p>
+
+      {/* Row 4 — Copyright */}
       <p style={{ fontSize: 11, fontWeight: 400, color: '#3d3a4a', lineHeight: 1.5 }}>
         © {new Date().getFullYear()} Who Do I Work For? — Public records only. We connect the dots; you make the call.
       </p>

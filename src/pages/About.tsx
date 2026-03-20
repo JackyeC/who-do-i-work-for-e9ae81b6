@@ -15,6 +15,13 @@ const About = () => {
     <div className="min-h-screen flex flex-col bg-background">
       <Header />
       <main className="flex-1 max-w-3xl mx-auto px-4 py-16 space-y-14">
+        {/* Opening pull quote */}
+        <div className="text-center py-8">
+          <p className="font-serif text-2xl md:text-3xl font-bold text-foreground leading-snug max-w-xl mx-auto">
+            "You deserve to know exactly who you work for."
+          </p>
+        </div>
+
         {/* Page headline */}
         <div className="space-y-3">
           <h1 className="text-3xl font-bold text-foreground font-display">

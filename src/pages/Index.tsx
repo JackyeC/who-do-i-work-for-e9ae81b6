@@ -118,6 +118,22 @@ const Index = forwardRef<HTMLDivElement>((_, ref) => {
         </svg>
 
         <div className="relative z-[1] flex flex-col items-center">
+          {/* Primary tagline opener */}
+          <p
+            className="font-sans text-muted-foreground text-center"
+            style={{
+              fontSize: "15px",
+              fontWeight: 500,
+              letterSpacing: "0.01em",
+              lineHeight: 1.5,
+              marginBottom: "16px",
+              opacity: 0,
+              animation: "heroFadeIn 0.6s ease 0.2s forwards",
+            }}
+          >
+            You deserve to know exactly who you work for.
+          </p>
+
           {/* Eyebrow label */}
           <p className="text-eyebrow" style={{ marginBottom: '24px' }}>
             Career Intelligence Platform
@@ -126,7 +142,7 @@ const Index = forwardRef<HTMLDivElement>((_, ref) => {
           {/* Headline */}
           <h1
             className="text-display text-foreground"
-            style={{ animation: "heroFadeIn 0.8s ease forwards" }}
+            style={{ animation: "heroFadeIn 0.8s ease 0.5s forwards", opacity: 0 }}
           >
             Stop applying. Start aligning.
           </h1>

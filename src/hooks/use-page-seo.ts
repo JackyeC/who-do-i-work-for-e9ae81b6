@@ -2,7 +2,7 @@ import { useEffect } from "react";
 
 const BASE_URL = "https://wdiwf.jackyeclayton.com";
 const SITE_NAME = "Who Do I Work For?";
-const DEFAULT_DESC = "Employer Intelligence platform. Know who you're really working for before you sign. Company intelligence, offer analysis, career strategy by Jackye Clayton.";
+const DEFAULT_DESC = "You deserve to know exactly who you work for. Employer intelligence, career strategy, and values-aligned hiring by Jackye Clayton.";
 const DEFAULT_IMAGE = "https://wdiwf.jackyeclayton.com/og-image.png";
 
 interface PageSEOProps {
