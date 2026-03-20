@@ -75,6 +75,23 @@ export function DashboardSidebar({ activeTab, onTabChange }: DashboardSidebarPro
   const { state } = useSidebar();
   const collapsed = state === "collapsed";
   const { signOut } = useAuth();
+  const navigate = useNavigate();
+  const location = useLocation();
+
+  const handleClick = (id: string) => {
+    if (id.startsWith("link:")) {
+      navigate(id.slice(5));
+    } else {
+      onTabChange(id);
+    }
+  };
+
+  const isActive = (id: string) => {
+    if (id.startsWith("link:")) {
+      return location.pathname === id.slice(5);
+    }
+    return activeTab === id;
+  };
 
   return (
     <Sidebar collapsible="icon" className="border-r border-border/40">
@@ -103,17 +120,17 @@ export function DashboardSidebar({ activeTab, onTabChange }: DashboardSidebarPro
                 {group.items.map((item) => (
                   <SidebarMenuItem key={item.id}>
                     <SidebarMenuButton
-                      onClick={() => onTabChange(item.id)}
+                      onClick={() => handleClick(item.id)}
                       className={cn(
                         "transition-all duration-200 rounded-lg",
-                        activeTab === item.id
+                        isActive(item.id)
                           ? "bg-primary/[0.08] text-foreground font-medium border border-primary/[0.08]"
                           : "text-muted-foreground hover:text-foreground hover:bg-accent/50"
                       )}
                     >
                       <item.icon className={cn(
                         "w-4 h-4 shrink-0",
-                        activeTab === item.id ? "text-primary" : ""
+                        isActive(item.id) ? "text-primary" : ""
                       )} />
                       {!collapsed && <span>{item.label}</span>}
                     </SidebarMenuButton>
