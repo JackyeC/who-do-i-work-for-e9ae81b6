@@ -1,6 +1,5 @@
 import { useState, useCallback, useRef } from "react";
 import { Navigate, useNavigate } from "react-router-dom";
-import { useAuth } from "@/contexts/AuthContext";
 import { useAuth as useClerkAuth } from "@clerk/clerk-react";
 import { InterviewKit } from "@/components/interview/InterviewKit";
 import { Helmet } from "react-helmet-async";
@@ -327,8 +326,7 @@ const STEP_META = [
 ];
 
 export default function AutoApply() {
-  const { isLoaded } = useClerkAuth();
-  const { user, loading } = useAuth();
+  const { isLoaded, isSignedIn } = useClerkAuth();
   const navigate = useNavigate();
   const [step, setStep] = useState(0);
   const [form, setForm] = useState<FormData>(INITIAL);
@@ -346,8 +344,8 @@ export default function AutoApply() {
     []
   );
 
-  if (!isLoaded || loading) return null;
-  if (!user) return <Navigate to="/join" replace />;
+  if (!isLoaded) return null;
+  if (!isSignedIn) return <Navigate to="/join" replace />;
 
   const next = () => {
     if (step < 3) setStep(step + 1);
