@@ -146,6 +146,18 @@ export default function Dashboard() {
             <DataWipeButton />
           </div>
         );
+      case "jobs":
+        return <JobsFeedSection />;
+      case "app-tracker":
+        return <TrackerSection />;
+      case "apply-kit":
+        return <ApplyKitSection />;
+      case "mock-interview":
+        return <MockInterviewSection />;
+      case "search-inbox":
+        return <InboxSection />;
+      case "search-saved":
+        return <SavedSection />;
       default:
         return <DashboardOverview onNavigate={setTab} />;
     }
