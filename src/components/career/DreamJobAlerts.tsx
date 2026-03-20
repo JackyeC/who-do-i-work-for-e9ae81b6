@@ -62,7 +62,7 @@ export function DreamJobAlerts() {
       toast({
         title: count > 0 ? `Found ${count} match${count !== 1 ? "es" : ""}!` : "No new matches",
         description: count > 0
-          ? "Your dream job alerts are ready below."
+          ? "Your aligned role alerts are ready below."
           : `Scanned ${data?.jobsScanned || 0} jobs — none met the match threshold yet.`,
       });
       queryClient.invalidateQueries({ queryKey: ["job-alerts"] });
@@ -90,7 +90,7 @@ export function DreamJobAlerts() {
           description={
             hasProfileData
               ? "Your career profile is set up. Run a scan to match your skills and preferences against open roles."
-              : "Upload your resume and build a career profile first, then we'll match you with dream jobs from companies in the directory."
+              : "Upload your resume and build a career profile first, then we'll match you with aligned roles from companies in the directory."
           }
         />
         {hasProfileData && (

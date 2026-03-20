@@ -18,7 +18,7 @@ export function DreamJobWidget() {
   const submitMutation = useMutation({
     mutationFn: async () => {
       const { data: { user } } = await supabase.auth.getUser();
-      if (!user) throw new Error("Sign in to manifest your dream job");
+      if (!user) throw new Error("Sign in to map your aligned role");
 
       const slug = dreamCompany.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '');
       const { data: existing } = await supabase
@@ -54,7 +54,7 @@ export function DreamJobWidget() {
         });
       } else {
         toast({
-          title: "Dream job mapped! ✨",
+          title: "Aligned role mapped! ✨",
           description: `${result.companyName} is already in our system. Check their profile for the full intelligence report.`,
         });
       }
@@ -64,8 +64,8 @@ export function DreamJobWidget() {
     },
   });
 
-  const linkedInShareText = `I just mapped my values to my dream role at ${matchedCompanyName}. It's time we knew who we really worked for. Check your alignment at ${BASE_URL}`;
-  const copyShareText = `I just mapped my values to my dream role at ${matchedCompanyName}. It's time we knew who we really worked for. Check your alignment → ${BASE_URL}`;
+  const linkedInShareText = `I just mapped my values to my aligned role at ${matchedCompanyName}. It's time we knew who we really worked for. Check your alignment at ${BASE_URL}`;
+  const copyShareText = `I just mapped my values to my aligned role at ${matchedCompanyName}. It's time we knew who we really worked for. Check your alignment → ${BASE_URL}`;
 
   if (submitted) {
     return (
@@ -104,7 +104,7 @@ export function DreamJobWidget() {
           <Shield className="w-2.5 h-2.5" /> No judgment, just receipts.
         </p>
         <Button variant="link" size="sm" className="px-0" onClick={() => { setSubmitted(false); setDreamRole(""); setDreamCompany(""); }}>
-          Map another dream job →
+          Map another aligned role →
         </Button>
       </div>
     );
@@ -114,7 +114,7 @@ export function DreamJobWidget() {
     <div className="p-6 lg:p-8 border border-border bg-card rounded-xl space-y-5">
       <div>
         <div className="font-mono text-[11px] tracking-[0.2em] uppercase text-primary mb-2">Where Do You Belong?</div>
-        <h3 className="font-serif text-xl text-foreground mb-1">Manifest Your Dream Job</h3>
+        <h3 className="font-serif text-xl text-foreground mb-1">Map Your Aligned Role</h3>
         <p className="text-sm text-muted-foreground">
           Tell us where you want to be — and we'll get the receipts before you get the offer.
         </p>
@@ -124,7 +124,7 @@ export function DreamJobWidget() {
         <Input
           value={dreamRole}
           onChange={(e) => setDreamRole(e.target.value)}
-          placeholder="What is your dream role?"
+          placeholder="What is your ideal aligned role?"
           maxLength={120}
         />
         <Input
@@ -149,7 +149,7 @@ export function DreamJobWidget() {
       </Button>
 
       <p className="text-[10px] text-muted-foreground/60 flex items-center gap-1">
-        <Lock className="w-2.5 h-2.5" /> Your dream job stays private. We only use it to prioritize intelligence requests.
+        <Lock className="w-2.5 h-2.5" /> Your aligned role stays private. We only use it to prioritize intelligence requests.
       </p>
     </div>
   );

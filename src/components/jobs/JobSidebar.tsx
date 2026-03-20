@@ -9,7 +9,7 @@ import { Button } from "@/components/ui/button";
 
 const NAV_ITEMS = [
   { label: "Browse Jobs", icon: Search, path: "/jobs", tab: "browse" },
-  { label: "Auto-Apply", icon: Zap, path: "/jobs", tab: "auto-apply", auth: true },
+  { label: "Apply When It Counts™", icon: Zap, path: "/jobs", tab: "auto-apply", auth: true },
   { label: "My Applications", icon: LayoutDashboard, path: "/jobs", tab: "tracker", auth: true },
   { label: "Career Map", icon: Map, path: "/career-map", auth: true },
 ];
@@ -88,7 +88,7 @@ export function JobSidebar() {
             </Button>
           </Link>
           <p className="text-xs text-muted-foreground mt-2 text-center">
-            Sign in for AI cover letters & auto-apply
+            Sign in for AI cover letters & smart placement
           </p>
         </div>
       )}

@@ -27,7 +27,7 @@ const tiers = [
     cta: "Join Waitlist",
     ctaLink: "/hire",
     features: [
-      "Auto-apply to up to 10 jobs per month",
+      "Apply When It Counts™ — up to 10 placements per month",
       "Full dossier for every application: company intel, who's there, how to prepare, questions to ask, custom cover letter",
       "Only applies to companies that pass YOUR integrity threshold",
       "Weekly status updates on all applications",
@@ -43,7 +43,7 @@ const tiers = [
     ctaLink: "/hire",
     features: [
       "Everything in Job Seeker",
-      "Up to 50 auto-applications per month",
+      "Up to 50 placements per month",
       "Priority matching to new roles within 24hrs of posting",
       "Interview prep notes updated as you progress",
     ],

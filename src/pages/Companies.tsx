@@ -9,11 +9,17 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
+import { Slider } from "@/components/ui/slider";
 import {
-  Search, Shield, ShieldCheck, AlertTriangle, Briefcase, ChevronDown, ArrowRight, Building2, PenLine,
+  Search, Shield, ShieldCheck, AlertTriangle, Briefcase, ChevronDown, ArrowRight, Building2, PenLine, MessageSquareQuote,
 } from "lucide-react";
 
 // ── Types ──
+interface ScoreEntry {
+  label: string;
+  value: number;
+}
+
 interface SampleOrg {
   id: string;
   name: string;
@@ -21,95 +27,204 @@ interface SampleOrg {
   color: string;
   mission: string;
   categories: string[];
-  realityCheckScore: number;
+  scores: ScoreEntry[];
+  confidence: "High" | "Medium" | "Low";
+  legalStatus: "B Corp" | "Public Benefit Corp" | "501(c)(3)" | "For-Purpose" | "For-Profit" | "Co-op";
   verified: ("b-corp" | "501c3" | "mission-verified")[];
-  orgType: string;
   location: string;
   size: string;
   openRoles: number;
   narrativeGap: boolean;
+  signals: string[];
+  jackyeTake: string;
 }
 
 // ── Constants ──
 const MISSION_CATEGORIES = [
   "Climate", "Health Equity", "Education", "Civic/Policy", "Veterans",
   "Faith-Based", "Community/Social", "Economic Justice", "LGBTQ Rights",
-  "Disability Rights", "Rural Development", "Other",
+  "Disability Rights", "Rural Development", "Sustainability", "Food/Agriculture",
+  "Tech/AI", "Retail/Food", "Animal Welfare", "Retail/Outdoor", "Retail",
+  "Fashion", "EdTech", "International Development", "Other",
 ] as const;
 
-const ORG_TYPES = ["All", "Nonprofit", "B Corp", "Social Enterprise", "For-Purpose"] as const;
-const LOCATIONS = ["All", "Remote-friendly", "Northeast", "Southeast", "Midwest", "West"] as const;
+const LEGAL_STATUSES = ["All", "B Corp", "Public Benefit Corp", "501(c)(3)", "For-Purpose", "For-Profit", "Co-op"] as const;
+const LOCATIONS = ["All", "Remote-friendly", "National", "Texas", "Northeast", "Southeast", "Midwest", "West"] as const;
 const SIZES = ["All", "Under 50", "50-200", "200-1000", "1000+"] as const;
 
-// ── Sample data ──
-const SAMPLE_ORGS: SampleOrg[] = [
+// ── Seed Data — 12 Integrity Companies ──
+const SEED_ORGS: SampleOrg[] = [
+  {
+    id: "seed-1", name: "Patagonia", initial: "P", color: "hsl(var(--civic-green))",
+    mission: "Build the best product, cause no unnecessary harm, use business to inspire and implement solutions to the environmental crisis.",
+    categories: ["Sustainability", "Climate"],
+    scores: [{ label: "Mission", value: 5.0 }, { label: "Work-life", value: 4.2 }, { label: "Compensation", value: 3.8 }],
+    confidence: "High", legalStatus: "B Corp",
+    verified: ["b-corp", "mission-verified"], location: "West", size: "1000+", openRoles: 8, narrativeGap: false,
+    signals: ["Donates 1% of revenue to environmental causes", "Employee-led activism encouraged", "Below-market salaries with strong benefits and purpose premium"],
+    jackyeTake: "Patagonia walks it. The pay gap versus tech is real, but the people who stay do so because the mission isn't marketing — it's operations. If you need top-dollar comp, look elsewhere. If you need meaning baked into every sprint, this is it.",
+  },
+  {
+    id: "seed-2", name: "Vital Farms", initial: "V", color: "hsl(var(--civic-green))",
+    mission: "Bringing ethical food to the table through pasture-raised standards and stakeholder capitalism.",
+    categories: ["Food/Agriculture"],
+    scores: [{ label: "Mission", value: 4.8 }, { label: "Culture", value: 4.5 }, { label: "Growth", value: 3.9 }],
+    confidence: "High", legalStatus: "B Corp",
+    verified: ["b-corp", "mission-verified"], location: "Remote-friendly", size: "200-1000", openRoles: 5, narrativeGap: false,
+    signals: ["Pasture-raised standards independently audited", "Employee ownership program", "Strong Glassdoor trajectory"],
+    jackyeTake: "A genuine B Corp success story. Growth is steady but not explosive — that's by design. The ownership program is a real differentiator for retention. Watch for scaling pressures as they expand retail partnerships.",
+  },
+  {
+    id: "seed-3", name: "NVIDIA", initial: "N", color: "hsl(var(--primary))",
+    mission: "Pioneering accelerated computing to solve the world's most complex computational challenges.",
+    categories: ["Tech/AI"],
+    scores: [{ label: "Innovation", value: 5.0 }, { label: "Growth", value: 4.9 }, { label: "Work-life", value: 3.2 }],
+    confidence: "High", legalStatus: "For-Profit",
+    verified: [], location: "West", size: "1000+", openRoles: 142, narrativeGap: false,
+    signals: ["Top AI research investment globally", "Fast-paced, high-performance culture", "Work-life balance consistently flagged in reviews"],
+    jackyeTake: "The innovation is undeniable, and the stock has made millionaires. But the intensity is real. If you thrive under pressure and want to be at the center of AI, this is the place. If you need boundaries, know what you're signing up for.",
+  },
+  {
+    id: "seed-4", name: "H-E-B", initial: "H", color: "hsl(var(--civic-blue))",
+    mission: "Serving Texas communities with quality products and genuine care for people.",
+    categories: ["Retail/Food", "Community/Social"],
+    scores: [{ label: "Culture", value: 4.8 }, { label: "Stability", value: 5.0 }, { label: "Mission", value: 4.0 }],
+    confidence: "High", legalStatus: "For-Profit",
+    verified: [], location: "Texas", size: "1000+", openRoles: 67, narrativeGap: false,
+    signals: ["Legendary community response during disasters", "Employee-first culture documented over decades", "Limited geographic reach — Texas-based"],
+    jackyeTake: "H-E-B doesn't market its culture — Texans just know. The disaster response isn't PR, it's DNA. The limitation is geography: if you're not in Texas, this isn't for you. But if you are, few retailers come close.",
+  },
+  {
+    id: "seed-5", name: "Best Friends Animal Society", initial: "B", color: "hsl(var(--civic-gold))",
+    mission: "Leading the no-kill movement to save the lives of homeless pets across America.",
+    categories: ["Animal Welfare", "Community/Social"],
+    scores: [{ label: "Mission", value: 5.0 }, { label: "Compensation", value: 3.2 }, { label: "Culture", value: 4.6 }],
+    confidence: "High", legalStatus: "501(c)(3)",
+    verified: ["501c3", "mission-verified"], location: "National", size: "1000+", openRoles: 14, narrativeGap: false,
+    signals: ["No-kill animal shelter mission with measurable outcomes", "High mission-passion culture", "Nonprofit compensation trade-off"],
+    jackyeTake: "The passion here is palpable — people don't just work here, they believe. Compensation reflects the nonprofit reality, and that's an honest trade-off. If animal welfare is your calling, the culture will carry you. If you need market-rate pay, it won't.",
+  },
+  {
+    id: "seed-6", name: "REI Co-op", initial: "R", color: "hsl(var(--civic-green))",
+    mission: "Inspiring, educating, and outfitting for a lifetime of outdoor adventure and stewardship.",
+    categories: ["Retail/Outdoor", "Sustainability"],
+    scores: [{ label: "Culture", value: 4.7 }, { label: "Work-life", value: 4.5 }, { label: "Innovation", value: 3.8 }],
+    confidence: "High", legalStatus: "Co-op",
+    verified: ["mission-verified"], location: "National", size: "1000+", openRoles: 23, narrativeGap: false,
+    signals: ["Employee-owned cooperative structure", "Closes on Black Friday as values statement", "Growth slower than investor-backed competitors"],
+    jackyeTake: "The co-op model is real and it shows in how employees are treated. Closing on Black Friday isn't a stunt — they've done it for years. Innovation pace is slower because they're not chasing quarterly earnings. That's a feature, not a bug.",
+  },
+  {
+    id: "seed-7", name: "Costco", initial: "C", color: "hsl(var(--civic-blue))",
+    mission: "Providing quality goods at the lowest possible prices while taking care of employees and members.",
+    categories: ["Retail"],
+    scores: [{ label: "Stability", value: 5.0 }, { label: "Compensation", value: 4.6 }, { label: "Mission", value: 3.5 }],
+    confidence: "High", legalStatus: "For-Profit",
+    verified: [], location: "National", size: "1000+", openRoles: 89, narrativeGap: false,
+    signals: ["Highest retail wages in sector consistently", "Low executive pay ratio vs frontline workers", "Mission not explicitly stated but behavior consistent"],
+    jackyeTake: "Costco proves you don't need a mission statement to have a mission. The pay, the benefits, the retention rates — the data speaks louder than any careers page. The work itself is retail, so calibrate expectations, but the employer behind it is exceptional.",
+  },
+  {
+    id: "seed-8", name: "Teach For America", initial: "T", color: "hsl(var(--primary))",
+    mission: "Enlisting, developing, and mobilizing leaders to strengthen the movement for educational equity.",
+    categories: ["Education"],
+    scores: [{ label: "Mission", value: 4.5 }, { label: "Work-life", value: 3.0 }, { label: "Growth", value: 4.2 }],
+    confidence: "Medium", legalStatus: "501(c)(3)",
+    verified: ["501c3", "mission-verified"], location: "National", size: "1000+", openRoles: 31, narrativeGap: true,
+    signals: ["Clear educational equity mission", "High-intensity culture with burnout risk", "Strong alumni network and career development"],
+    jackyeTake: "TFA is a launchpad, not a landing pad. The alumni network is genuinely powerful and the mission is real. But the burnout rate is documented and the 2-year commitment is intense. Go in with eyes open and an exit plan, and it can be transformative.",
+  },
+  {
+    id: "seed-9", name: "Salesforce", initial: "S", color: "hsl(var(--civic-blue))",
+    mission: "Improving the state of the world through business as a platform for change.",
+    categories: ["Tech/AI", "Community/Social"],
+    scores: [{ label: "Inclusion", value: 4.8 }, { label: "Growth", value: 4.5 }, { label: "Work-life", value: 3.6 }],
+    confidence: "High", legalStatus: "For-Profit",
+    verified: [], location: "Remote-friendly", size: "1000+", openRoles: 203, narrativeGap: false,
+    signals: ["1-1-1 model (1% product, equity, time to community)", "Chief Equality Officer role sustained over time", "Fast pace and high performance expectations"],
+    jackyeTake: "The 1-1-1 model is institutionalized, not performative — that matters. The Chief Equality Officer role has survived multiple reorgs. But this is still big tech with big-tech intensity. The values infrastructure is real; the pace is relentless.",
+  },
+  {
+    id: "seed-10", name: "Eileen Fisher", initial: "E", color: "hsl(var(--civic-gold))",
+    mission: "Creating simple, sustainable clothing while championing women's empowerment and responsible business.",
+    categories: ["Fashion", "Sustainability"],
+    scores: [{ label: "Mission", value: 4.7 }, { label: "Work-life", value: 4.4 }, { label: "Compensation", value: 3.7 }],
+    confidence: "Medium", legalStatus: "B Corp",
+    verified: ["b-corp", "mission-verified"], location: "Northeast", size: "200-1000", openRoles: 3, narrativeGap: false,
+    signals: ["Employee ownership program", "Sustainability commitments with audit trail", "Smaller company — limited growth trajectory"],
+    jackyeTake: "A quiet giant in ethical fashion. The employee ownership is genuine and the sustainability audit trail is public. Growth opportunities are limited by the company's deliberate scale. Perfect for someone who wants depth over trajectory.",
+  },
+  {
+    id: "seed-11", name: "Khan Academy", initial: "K", color: "hsl(var(--primary))",
+    mission: "Providing a free, world-class education for anyone, anywhere.",
+    categories: ["EdTech", "Education"],
+    scores: [{ label: "Mission", value: 5.0 }, { label: "Compensation", value: 3.5 }, { label: "Innovation", value: 4.6 }],
+    confidence: "High", legalStatus: "501(c)(3)",
+    verified: ["501c3", "mission-verified"], location: "Remote-friendly", size: "200-1000", openRoles: 7, narrativeGap: false,
+    signals: ["Free education for anyone, anywhere — lived consistently", "Remote-first culture", "Nonprofit compensation with equity upside absent"],
+    jackyeTake: "Khan Academy is one of the rare organizations where the mission statement and the product are identical. The remote culture is mature and intentional. Compensation is nonprofit-level, and there's no equity event coming. You work here for the impact, period.",
+  },
+  {
+    id: "seed-12", name: "Mercy Corps", initial: "M", color: "hsl(var(--civic-green))",
+    mission: "Alleviating suffering, poverty, and oppression by helping people build secure, productive communities.",
+    categories: ["International Development", "Community/Social"],
+    scores: [{ label: "Mission", value: 4.9 }, { label: "Stability", value: 4.0 }, { label: "Work-life", value: 3.8 }],
+    confidence: "Medium", legalStatus: "501(c)(3)",
+    verified: ["501c3", "mission-verified"], location: "Remote-friendly", size: "1000+", openRoles: 19, narrativeGap: false,
+    signals: ["Measurable humanitarian impact published annually", "Field work can be high-stress and high-stakes", "Strong internal culture of purpose and resilience"],
+    jackyeTake: "Mercy Corps publishes their impact data — that's rare and it's verifiable. Field roles are genuinely demanding, and the organization is transparent about that. HQ roles offer more balance. The culture of resilience is real but not for everyone.",
+  },
+];
+
+// Legacy orgs kept for variety
+const LEGACY_ORGS: SampleOrg[] = [
   {
     id: "1", name: "GreenGrid Energy", initial: "G", color: "hsl(var(--civic-green))",
     mission: "Accelerating equitable access to clean energy in underserved communities.",
-    categories: ["Climate", "Economic Justice"], realityCheckScore: 88,
-    verified: ["b-corp", "mission-verified"], orgType: "B Corp", location: "Remote-friendly",
-    size: "50-200", openRoles: 4, narrativeGap: false,
+    categories: ["Climate", "Economic Justice"],
+    scores: [{ label: "Mission", value: 4.4 }, { label: "Culture", value: 4.0 }, { label: "Stability", value: 3.6 }],
+    confidence: "High", legalStatus: "B Corp",
+    verified: ["b-corp", "mission-verified"], location: "Remote-friendly", size: "50-200", openRoles: 4, narrativeGap: false,
+    signals: ["Clean energy equity focus verified", "B Corp certified with public audit", "Still in growth phase — some operational gaps"],
+    jackyeTake: "A promising clean energy player with genuine equity focus. Still scaling, so expect startup-adjacent energy with mission-driven guardrails.",
   },
   {
     id: "2", name: "Pathways Health Alliance", initial: "P", color: "hsl(var(--civic-blue))",
     mission: "Closing the health equity gap through community-based primary care.",
-    categories: ["Health Equity", "Community/Social"], realityCheckScore: 76,
-    verified: ["501c3", "mission-verified"], orgType: "Nonprofit", location: "Southeast",
-    size: "200-1000", openRoles: 12, narrativeGap: false,
+    categories: ["Health Equity", "Community/Social"],
+    scores: [{ label: "Mission", value: 4.2 }, { label: "Stability", value: 4.5 }, { label: "Compensation", value: 3.8 }],
+    confidence: "High", legalStatus: "501(c)(3)",
+    verified: ["501c3", "mission-verified"], location: "Southeast", size: "200-1000", openRoles: 12, narrativeGap: false,
+    signals: ["Community health outcomes tracked and published", "Strong leadership tenure", "Nonprofit compensation reality"],
+    jackyeTake: "Solid health equity org with years of community trust. Leadership is stable and the outcomes are measurable. Compensation is what you'd expect for a nonprofit of this size.",
   },
   {
     id: "3", name: "VetBridge", initial: "V", color: "hsl(var(--primary))",
     mission: "Connecting transitioning service members with mission-aligned employers.",
-    categories: ["Veterans", "Education"], realityCheckScore: 82,
-    verified: ["501c3"], orgType: "Nonprofit", location: "Midwest",
-    size: "Under 50", openRoles: 2, narrativeGap: false,
-  },
-  {
-    id: "4", name: "EqualFuture Labs", initial: "E", color: "hsl(var(--civic-red))",
-    mission: "Building accessible technology for people with disabilities — by people with disabilities.",
-    categories: ["Disability Rights", "Education"], realityCheckScore: 91,
-    verified: ["b-corp", "mission-verified"], orgType: "Social Enterprise", location: "West",
-    size: "Under 50", openRoles: 3, narrativeGap: false,
-  },
-  {
-    id: "5", name: "Civic Compass", initial: "C", color: "hsl(var(--civic-gold))",
-    mission: "Making local policy data actionable for everyday voters.",
-    categories: ["Civic/Policy"], realityCheckScore: 72,
-    verified: ["mission-verified"], orgType: "For-Purpose", location: "Remote-friendly",
-    size: "Under 50", openRoles: 1, narrativeGap: false,
-  },
-  {
-    id: "6", name: "Rooted Harvest", initial: "R", color: "hsl(var(--civic-green))",
-    mission: "Revitalizing rural food systems through cooperative agriculture.",
-    categories: ["Rural Development", "Economic Justice", "Climate"], realityCheckScore: 65,
-    verified: ["501c3"], orgType: "Nonprofit", location: "Midwest",
-    size: "50-200", openRoles: 6, narrativeGap: true,
-  },
-  {
-    id: "7", name: "PrideWorks Collective", initial: "P", color: "hsl(var(--civic-blue))",
-    mission: "Creating safe, affirming workplaces through employer certification and training.",
-    categories: ["LGBTQ Rights", "Community/Social"], realityCheckScore: 85,
-    verified: ["mission-verified"], orgType: "Social Enterprise", location: "Northeast",
-    size: "Under 50", openRoles: 0, narrativeGap: false,
-  },
-  {
-    id: "8", name: "LightHouse Learning", initial: "L", color: "hsl(var(--primary))",
-    mission: "Delivering free K-12 tutoring in faith communities across 14 states.",
-    categories: ["Faith-Based", "Education"], realityCheckScore: 47,
-    verified: ["501c3"], orgType: "Nonprofit", location: "Southeast",
-    size: "1000+", openRoles: 22, narrativeGap: true,
+    categories: ["Veterans", "Education"],
+    scores: [{ label: "Mission", value: 4.6 }, { label: "Culture", value: 4.3 }, { label: "Growth", value: 3.5 }],
+    confidence: "High", legalStatus: "501(c)(3)",
+    verified: ["501c3"], location: "Midwest", size: "Under 50", openRoles: 2, narrativeGap: false,
+    signals: ["Veteran-led and veteran-focused", "Small team with tight culture", "Limited growth trajectory due to niche focus"],
+    jackyeTake: "Small but mighty. The team is veteran-led, which gives them credibility that larger orgs can't replicate. Growth is limited by design — they're deep, not wide.",
   },
 ];
 
+const SAMPLE_ORGS: SampleOrg[] = [...SEED_ORGS, ...LEGACY_ORGS];
+
 // ── Helpers ──
+function avgScore(scores: ScoreEntry[]) {
+  return scores.reduce((sum, s) => sum + s.value, 0) / scores.length;
+}
+
 function scoreColor(score: number) {
-  if (score >= 70) return "text-civic-green";
-  if (score >= 50) return "text-civic-yellow";
+  if (score >= 4.0) return "text-civic-green";
+  if (score >= 3.0) return "text-civic-yellow";
   return "text-civic-red";
 }
 function scoreBg(score: number) {
-  if (score >= 70) return "bg-civic-green/10";
-  if (score >= 50) return "bg-civic-yellow/10";
+  if (score >= 4.0) return "bg-civic-green/10";
+  if (score >= 3.0) return "bg-civic-yellow/10";
   return "bg-civic-red/10";
 }
 
@@ -119,10 +234,14 @@ function verificationLabel(v: string) {
   return "Mission Verified";
 }
 
+function isMissionVerifiedStatus(status: string) {
+  return status === "B Corp" || status === "501(c)(3)";
+}
+
 // ── Component ──
 export default function Companies() {
   usePageSEO({
-    title: "Mission-Driven Organizations",
+    title: "Aligned Companies Directory",
     description: "Browse verified mission-driven organizations. No bias. Just receipts.",
     path: "/companies",
   });
@@ -130,9 +249,11 @@ export default function Companies() {
   const [search, setSearch] = useState("");
   const [selectedCategories, setSelectedCategories] = useState<string[]>([]);
   const [verifiedOnly, setVerifiedOnly] = useState(false);
-  const [orgType, setOrgType] = useState("All");
+  const [legalStatus, setLegalStatus] = useState("All");
   const [location, setLocation] = useState("All");
   const [size, setSize] = useState("All");
+  const [scoreRange, setScoreRange] = useState([0, 5]);
+  const [expandedJackye, setExpandedJackye] = useState<string | null>(null);
 
   const toggleCategory = (cat: string) => {
     setSelectedCategories((prev) =>
@@ -145,12 +266,14 @@ export default function Companies() {
       if (search && !org.name.toLowerCase().includes(search.toLowerCase()) && !org.mission.toLowerCase().includes(search.toLowerCase())) return false;
       if (selectedCategories.length > 0 && !selectedCategories.some((c) => org.categories.includes(c))) return false;
       if (verifiedOnly && org.verified.length === 0) return false;
-      if (orgType !== "All" && org.orgType !== orgType) return false;
+      if (legalStatus !== "All" && org.legalStatus !== legalStatus) return false;
       if (location !== "All" && org.location !== location) return false;
       if (size !== "All" && org.size !== size) return false;
+      const avg = avgScore(org.scores);
+      if (avg < scoreRange[0] || avg > scoreRange[1]) return false;
       return true;
     });
-  }, [search, selectedCategories, verifiedOnly, orgType, location, size]);
+  }, [search, selectedCategories, verifiedOnly, legalStatus, location, size, scoreRange]);
 
   return (
     <div className="min-h-screen bg-background">
@@ -214,7 +337,7 @@ export default function Companies() {
                   <ChevronDown className="w-3 h-3" />
                 </Button>
               </PopoverTrigger>
-              <PopoverContent className="w-64 p-3" align="start">
+              <PopoverContent className="w-64 p-3 max-h-64 overflow-y-auto" align="start">
                 <div className="grid grid-cols-1 gap-2">
                   {MISSION_CATEGORIES.map((cat) => (
                     <label key={cat} className="flex items-center gap-2 text-xs cursor-pointer">
@@ -239,13 +362,13 @@ export default function Companies() {
               Verified Only
             </Button>
 
-            {/* Org Type */}
-            <Select value={orgType} onValueChange={setOrgType}>
+            {/* Legal Status */}
+            <Select value={legalStatus} onValueChange={setLegalStatus}>
               <SelectTrigger className="w-auto h-9 text-xs gap-1 bg-card border-border">
                 <SelectValue />
               </SelectTrigger>
               <SelectContent>
-                {ORG_TYPES.map((t) => (
+                {LEGAL_STATUSES.map((t) => (
                   <SelectItem key={t} value={t}>{t === "All" ? "All Types" : t}</SelectItem>
                 ))}
               </SelectContent>
@@ -274,6 +397,29 @@ export default function Companies() {
                 ))}
               </SelectContent>
             </Select>
+
+            {/* Score Range */}
+            <Popover>
+              <PopoverTrigger asChild>
+                <Button variant="outline" size="sm" className="gap-1.5 text-xs">
+                  Score: {scoreRange[0].toFixed(1)}–{scoreRange[1].toFixed(1)}
+                  <ChevronDown className="w-3 h-3" />
+                </Button>
+              </PopoverTrigger>
+              <PopoverContent className="w-56 p-4" align="start">
+                <p className="text-xs text-muted-foreground mb-3">Average score range (0–5)</p>
+                <Slider
+                  min={0} max={5} step={0.5}
+                  value={scoreRange}
+                  onValueChange={setScoreRange}
+                  className="w-full"
+                />
+                <div className="flex justify-between text-[10px] text-muted-foreground mt-1">
+                  <span>{scoreRange[0].toFixed(1)}</span>
+                  <span>{scoreRange[1].toFixed(1)}</span>
+                </div>
+              </PopoverContent>
+            </Popover>
           </div>
         </div>
       </section>
@@ -295,7 +441,7 @@ export default function Companies() {
                   key={org.id}
                   initial={{ opacity: 0, y: 16 }}
                   animate={{ opacity: 1, y: 0 }}
-                  transition={{ delay: i * 0.05, duration: 0.35 }}
+                  transition={{ delay: i * 0.04, duration: 0.35 }}
                 >
                   <Card className="h-full hover:border-primary/30 transition-all group">
                     <CardContent className="p-5 flex flex-col gap-3">
@@ -311,8 +457,24 @@ export default function Companies() {
                           <h3 className="font-serif font-semibold text-foreground text-base truncate group-hover:text-primary transition-colors">
                             {org.name}
                           </h3>
-                          <p className="text-xs text-muted-foreground truncate">{org.mission}</p>
+                          <p className="text-xs text-muted-foreground line-clamp-2">{org.mission}</p>
                         </div>
+                      </div>
+
+                      {/* Legal status + Mission Verified badge */}
+                      <div className="flex flex-wrap gap-1.5">
+                        <Badge variant="outline" className="text-[10px] px-1.5 py-0 font-mono">
+                          {org.legalStatus}
+                        </Badge>
+                        {isMissionVerifiedStatus(org.legalStatus) && (
+                          <Badge className="text-[10px] px-1.5 py-0 bg-civic-green/15 text-civic-green border-civic-green/30 hover:bg-civic-green/20">
+                            <ShieldCheck className="w-2.5 h-2.5 mr-0.5" />
+                            Mission-Verified
+                          </Badge>
+                        )}
+                        <Badge variant="secondary" className="text-[10px] px-1.5 py-0">
+                          {org.confidence} confidence
+                        </Badge>
                       </div>
 
                       {/* Category tags */}
@@ -322,29 +484,60 @@ export default function Companies() {
                         ))}
                       </div>
 
-                      {/* Scores & badges row */}
-                      <div className="flex items-center gap-2 flex-wrap">
-                        {/* Reality Check Score */}
-                        <span className={`text-xs font-semibold px-2 py-0.5 rounded-md ${scoreBg(org.realityCheckScore)} ${scoreColor(org.realityCheckScore)}`}>
-                          {org.realityCheckScore}/100
-                        </span>
-
-                        {/* Verification badges */}
-                        {org.verified.map((v) => (
-                          <span key={v} className="inline-flex items-center gap-1 text-[10px] text-muted-foreground">
-                            <Shield className="w-3 h-3 text-civic-green" />
-                            {verificationLabel(v)}
-                          </span>
+                      {/* Scores */}
+                      <div className="flex flex-wrap gap-2">
+                        {org.scores.map((s) => (
+                          <div key={s.label} className="flex items-center gap-1">
+                            <span className="text-[10px] text-muted-foreground">{s.label}</span>
+                            <span className={`text-xs font-semibold px-1.5 py-0 rounded ${scoreBg(s.value)} ${scoreColor(s.value)}`}>
+                              {s.value.toFixed(1)}
+                            </span>
+                          </div>
                         ))}
-
-                        {/* Narrative gap */}
-                        {org.narrativeGap && (
-                          <span className="inline-flex items-center gap-1 text-[10px] text-civic-yellow">
-                            <AlertTriangle className="w-3 h-3" />
-                            Narrative Gap
-                          </span>
-                        )}
                       </div>
+
+                      {/* Signals */}
+                      <ul className="space-y-1">
+                        {org.signals.map((signal) => (
+                          <li key={signal} className="text-[11px] text-muted-foreground flex items-start gap-1.5">
+                            <span className="w-1 h-1 bg-primary/50 rounded-full mt-1.5 shrink-0" />
+                            {signal}
+                          </li>
+                        ))}
+                      </ul>
+
+                      {/* Narrative gap */}
+                      {org.narrativeGap && (
+                        <span className="inline-flex items-center gap-1 text-[10px] text-civic-yellow">
+                          <AlertTriangle className="w-3 h-3" />
+                          Narrative Gap Detected
+                        </span>
+                      )}
+
+                      {/* Jackye's Take */}
+                      <button
+                        onClick={() => setExpandedJackye(expandedJackye === org.id ? null : org.id)}
+                        className="flex items-center gap-1.5 text-[11px] font-semibold text-primary hover:text-primary/80 transition-colors text-left"
+                      >
+                        <MessageSquareQuote className="w-3.5 h-3.5 shrink-0" />
+                        Jackye's Take
+                        <ChevronDown className={`w-3 h-3 transition-transform ${expandedJackye === org.id ? "rotate-180" : ""}`} />
+                      </button>
+                      {expandedJackye === org.id && (
+                        <motion.div
+                          initial={{ opacity: 0, height: 0 }}
+                          animate={{ opacity: 1, height: "auto" }}
+                          exit={{ opacity: 0, height: 0 }}
+                          className="rounded-lg bg-primary/[0.04] border border-primary/10 p-3"
+                        >
+                          <p className="text-[11px] text-foreground/80 leading-relaxed italic">
+                            "{org.jackyeTake}"
+                          </p>
+                          <p className="text-[9px] text-muted-foreground mt-2 font-mono uppercase tracking-wider">
+                            — Jackye Clayton, Professional Insight
+                          </p>
+                        </motion.div>
+                      )}
 
                       {/* Open roles */}
                       {org.openRoles > 0 ? (

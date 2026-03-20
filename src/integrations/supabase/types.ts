@@ -1277,6 +1277,7 @@ export type Database = {
           last_audited_at: string | null
           last_reviewed: string
           last_scan_attempted: string | null
+          legal_status: string | null
           lobbying_spend: number | null
           logo_url: string | null
           market_cap: number | null
@@ -1327,6 +1328,7 @@ export type Database = {
           last_audited_at?: string | null
           last_reviewed?: string
           last_scan_attempted?: string | null
+          legal_status?: string | null
           lobbying_spend?: number | null
           logo_url?: string | null
           market_cap?: number | null
@@ -1377,6 +1379,7 @@ export type Database = {
           last_audited_at?: string | null
           last_reviewed?: string
           last_scan_attempted?: string | null
+          legal_status?: string | null
           lobbying_spend?: number | null
           logo_url?: string | null
           market_cap?: number | null

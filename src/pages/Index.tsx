@@ -128,10 +128,10 @@ const Index = forwardRef<HTMLDivElement>((_, ref) => {
             className="text-display text-foreground"
             style={{ animation: "heroFadeIn 0.8s ease forwards" }}
           >
-            The recruiting platform that audits the company first.
+            Stop applying. Start aligning.
           </h1>
 
-          {/* Subheadline */}
+          {/* Subheadlines */}
           <p
             className="font-sans text-muted-foreground text-center max-w-[580px]"
             style={{
@@ -142,8 +142,19 @@ const Index = forwardRef<HTMLDivElement>((_, ref) => {
               animation: "heroFadeIn 0.6s ease 0.9s forwards",
             }}
           >
-            Before we match you with a job, we check whether the employer deserves great talent.
-            Verified integrity scores. Value-aligned hiring. Built for people who won't settle.
+            No company is perfect. But some are perfect for you.
+          </p>
+          <p
+            className="font-sans text-muted-foreground/70 text-center max-w-[520px]"
+            style={{
+              fontSize: "15px",
+              lineHeight: 1.7,
+              marginTop: "12px",
+              opacity: 0,
+              animation: "heroFadeIn 0.6s ease 1.2s forwards",
+            }}
+          >
+            We don't show you more jobs. We show you better decisions.
           </p>
 
           {/* CTA */}
@@ -254,7 +265,7 @@ const Index = forwardRef<HTMLDivElement>((_, ref) => {
                 onClick={() => navigate("/auto-apply")}
                 className="w-full rounded-full gap-2"
               >
-                Find Your Match <ArrowRight className="w-4 h-4" />
+                Find Your Alignment <ArrowRight className="w-4 h-4" />
               </Button>
             </div>
 
@@ -442,7 +453,7 @@ const Index = forwardRef<HTMLDivElement>((_, ref) => {
                 icon: Rocket,
                 title: "The Alignment",
                 desc: "Execute your move with clarity and advocacy.",
-                signals: ["Purple Squirrel Auto-Apply", "Interview Intelligence Briefs", "Negotiation Coaching", "Offer review & benchmarking"],
+                signals: ["Apply When It Counts™ Placement", "Interview Intelligence Briefs", "Negotiation Coaching", "Offer review & benchmarking"],
               },
             ].map(card => (
               <div key={card.title} className="bg-background p-8 lg:p-10">
@@ -500,7 +511,7 @@ const Index = forwardRef<HTMLDivElement>((_, ref) => {
               {[
                 "Intelligence reports on every employer",
                 "Reality Gap analysis — claims vs. facts",
-                "Auto-Apply with DNA-matched targeting",
+                "Apply When It Counts™ — DNA-matched placement",
                 "BLS wage benchmarks + offer scoring",
                 "Political influence, lawsuits, sentiment",
                 "Negotiation scripts + coaching",
