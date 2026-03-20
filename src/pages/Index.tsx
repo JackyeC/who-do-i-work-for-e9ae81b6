@@ -133,15 +133,11 @@ const Index = forwardRef<HTMLDivElement>((_, ref) => {
 
           {/* Subheadline */}
           <p
+            className="font-sans text-muted-foreground text-center max-w-[580px]"
             style={{
-              fontFamily: "'DM Sans', sans-serif",
-              fontWeight: 400,
               fontSize: "17px",
-              color: "#b8b4a8",
               lineHeight: 1.7,
-              maxWidth: "580px",
               marginTop: "24px",
-              textAlign: "center",
               opacity: 0,
               animation: "heroFadeIn 0.6s ease 0.9s forwards",
             }}
