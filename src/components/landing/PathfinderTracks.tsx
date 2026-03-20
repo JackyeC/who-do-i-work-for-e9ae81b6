@@ -97,7 +97,7 @@ const tracks = [
     description: "Full search management + Priority access. Your career, on cruise control.",
     action: "Go Executive",
     features: [
-      "Purple Squirrel Auto-Apply engine",
+      "Apply When It Counts™ placement engine",
       "Full career mapping & 5-year plan",
       "Priority 1-on-1 access to Jackye",
       "All Scout + Strategist features",

@@ -42,7 +42,7 @@ export default function JobDashboard() {
             </TabsTrigger>
             <TabsTrigger value="auto-apply" className="gap-1.5">
               <Zap className="w-4 h-4" />
-              Auto-Apply
+              Apply When It Counts™
             </TabsTrigger>
             <TabsTrigger value="tracker" className="gap-1.5">
               <LayoutDashboard className="w-4 h-4" />

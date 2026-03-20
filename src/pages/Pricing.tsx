@@ -43,7 +43,7 @@ const tiers = [
     ctaLink: "/hire",
     features: [
       "Everything in Job Seeker",
-      "Up to 50 auto-applications per month",
+      "Up to 50 placements per month",
       "Priority matching to new roles within 24hrs of posting",
       "Interview prep notes updated as you progress",
     ],

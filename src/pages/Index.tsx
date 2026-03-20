@@ -511,7 +511,7 @@ const Index = forwardRef<HTMLDivElement>((_, ref) => {
               {[
                 "Intelligence reports on every employer",
                 "Reality Gap analysis — claims vs. facts",
-                "Auto-Apply with DNA-matched targeting",
+                "Apply When It Counts™ — DNA-matched placement",
                 "BLS wage benchmarks + offer scoring",
                 "Political influence, lawsuits, sentiment",
                 "Negotiation scripts + coaching",

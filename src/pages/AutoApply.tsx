@@ -328,8 +328,8 @@ export default function AutoApply() {
   const [done, setDone] = useState(false);
 
   usePageSEO({
-    title: "Set Up Your Job Search Agent — WDIWF",
-    description: "Configure your AI job search agent. Tell us your dream job, values, and non-negotiables.",
+    title: "Apply When It Counts™ — WDIWF",
+    description: "Configure your AI job search agent. Tell us your aligned role, values, and non-negotiables.",
     path: "/auto-apply",
   });
 
