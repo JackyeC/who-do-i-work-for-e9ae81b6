@@ -25,6 +25,12 @@ import { supabase } from "@/integrations/supabase/client";
 import { OfferClarityWizard } from "@/components/offer-clarity/OfferClarityWizard";
 import { PremiumGate } from "@/components/PremiumGate";
 import { Helmet } from "react-helmet-async";
+import { JobsFeedSection } from "@/components/dashboard/JobsFeedSection";
+import { TrackerSection } from "@/components/dashboard/TrackerSection";
+import { ApplyKitSection } from "@/components/dashboard/ApplyKitSection";
+import { MockInterviewSection } from "@/components/dashboard/MockInterviewSection";
+import { InboxSection } from "@/components/dashboard/InboxSection";
+import { SavedSection } from "@/components/dashboard/SavedSection";
 
 const TAB_TITLES: Record<string, string> = {
   overview: "My Intelligence",
@@ -40,6 +46,12 @@ const TAB_TITLES: Record<string, string> = {
   alerts: "Signal Alerts",
   preferences: "Preferences",
   profile: "My Profile",
+  jobs: "Jobs Feed",
+  "app-tracker": "Tracker",
+  "apply-kit": "Apply Kit",
+  "mock-interview": "Mock Interview",
+  "search-inbox": "Inbox",
+  "search-saved": "Saved",
 };
 
 export default function Dashboard() {
@@ -134,6 +146,18 @@ export default function Dashboard() {
             <DataWipeButton />
           </div>
         );
+      case "jobs":
+        return <JobsFeedSection />;
+      case "app-tracker":
+        return <TrackerSection />;
+      case "apply-kit":
+        return <ApplyKitSection />;
+      case "mock-interview":
+        return <MockInterviewSection />;
+      case "search-inbox":
+        return <InboxSection />;
+      case "search-saved":
+        return <SavedSection />;
       default:
         return <DashboardOverview onNavigate={setTab} />;
     }

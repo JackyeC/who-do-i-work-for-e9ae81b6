@@ -24,37 +24,32 @@ import { cn } from "@/lib/utils";
 
 const navGroups = [
   {
-    label: "Align",
+    label: "Intelligence",
     items: [
       { id: "overview", label: "Dashboard", icon: Home },
-      { id: "link:/jobs-feed", label: "Jobs Feed", icon: Briefcase },
-      { id: "values", label: "My Values", icon: Heart },
       { id: "tracked", label: "Tracked Companies", icon: Building2 },
+      { id: "values", label: "My Values", icon: Heart },
+      { id: "alerts", label: "Signal Alerts", icon: Bell },
+      { id: "how", label: "Dossier History", icon: Route },
+    ],
+  },
+  {
+    label: "My Search",
+    items: [
+      { id: "jobs", label: "Jobs Feed", icon: Briefcase },
+      { id: "app-tracker", label: "Tracker", icon: LayoutDashboard },
+      { id: "apply-kit", label: "Apply Kit", icon: PenTool },
+      { id: "mock-interview", label: "Mock Interview", icon: Mic },
+      { id: "search-inbox", label: "Inbox", icon: Inbox },
+      { id: "search-saved", label: "Saved", icon: Bookmark },
     ],
   },
   {
     label: "Apply",
     items: [
       { id: "auto-apply", label: "Apply When It Counts™", icon: Zap },
-      { id: "tracker", label: "Application Tracker", icon: LayoutDashboard },
-      { id: "link:/saved", label: "Saved", icon: Bookmark },
-    ],
-  },
-  {
-    label: "Prepare",
-    items: [
-      { id: "link:/resume", label: "Resume Optimizer", icon: FileText },
-      { id: "link:/cover-letter", label: "Cover Letter", icon: PenTool },
-      { id: "link:/mock-interview", label: "Mock Interview", icon: Mic },
-      { id: "matches", label: "Interview Kits", icon: ClipboardCheck },
-    ],
-  },
-  {
-    label: "Activity",
-    items: [
-      { id: "link:/inbox", label: "Inbox", icon: Inbox },
-      { id: "how", label: "Dossier History", icon: Route },
-      { id: "alerts", label: "Signal Alerts", icon: Bell },
+      { id: "tracker", label: "Application Tracker", icon: ClipboardCheck },
+      { id: "matches", label: "Interview Kits", icon: Network },
     ],
   },
   {
