@@ -6,13 +6,51 @@ import { Card, CardContent } from "@/components/ui/card";
 import {
   Building2, ShieldCheck, TrendingUp, Users, Star, Landmark,
   AlertTriangle, CheckCircle2, XCircle, MessageCircle, FileText,
-  HelpCircle, Eye, ChevronDown,
+  Eye, ChevronDown, ArrowRight, Sparkles, Route, Check,
 } from "lucide-react";
 import { useState } from "react";
 import { cn } from "@/lib/utils";
 import { motion } from "framer-motion";
 
-/* ── Sample data keyed by slug ── */
+/* ── Types ── */
+
+interface SignalData {
+  icon: string;
+  label: string;
+  status: "confirmed" | "watch" | "flag";
+  detail: string;
+}
+
+interface RedFlagData {
+  observed: string;
+  maySuggest: string;
+  askInInterview: string;
+}
+
+interface TrajectoryData {
+  avgTenure: string;
+  nextSteps: string[];
+  tradeoff: string;
+}
+
+interface CompanyDossier {
+  name: string;
+  industry: string;
+  location: string;
+  employees: string;
+  integrityScore: number;
+  worthYourTime: string;
+  verdict: string;
+  jackyeRead: string;
+  signals: SignalData[];
+  coachingNote: string;
+  coverLetterAngle: string;
+  interviewQuestions: string[];
+  redFlags: RedFlagData[];
+  trajectory: TrajectoryData;
+}
+
+/* ── Sample data ── */
 const COMPANY_DATA: Record<string, CompanyDossier> = {
   patagonia: {
     name: "Patagonia",
@@ -20,8 +58,12 @@ const COMPANY_DATA: Record<string, CompanyDossier> = {
     location: "Ventura, CA",
     employees: "~4,200",
     integrityScore: 8.7,
+    worthYourTime:
+      "Yes — if you want a high-integrity environment and can tolerate a longer hiring process. This is one of the few where the mission is structural, not decorative.",
     verdict:
       "This is one of the few companies where the mission isn't marketing — it's embedded in the business model. But don't confuse purpose with comfort. They move fast and expect a lot.",
+    jackyeRead:
+      "I've watched Patagonia for years. The ownership transfer was real — not a PR stunt with a legal loophole. That said, the new leadership team is still finding its footing operationally. The culture is strong, but don't assume 'mission-driven' means 'low-pressure.' These people work hard and hold each other to a very high bar. If you're looking for meaningful work with real accountability, this is it. If you're looking for a chill vibe because you like hiking — keep looking.",
     signals: [
       {
         icon: "pay",
@@ -64,33 +106,34 @@ const COMPANY_DATA: Record<string, CompanyDossier> = {
       "How do you handle disagreements between business targets and environmental commitments at the team level?",
     ],
     redFlags: [
-      "If the hiring manager can't name a specific time the company chose mission over margin, the culture may be thinner than the brand suggests.",
-      "Watch for vague answers about the ownership transition — if they deflect, the internal narrative may still be unsettled.",
-      "If the interview process takes more than 4 weeks with no status updates, that's a sign of internal disorganization, not thoroughness.",
+      {
+        observed: "The hiring manager deflects when asked about the 2022 ownership transition.",
+        maySuggest: "The internal narrative around the restructuring may still be unsettled, which could affect team direction.",
+        askInInterview: "Can you walk me through how the ownership change has affected your team's day-to-day priorities?",
+      },
+      {
+        observed: "Interview process exceeds 4 weeks with gaps in communication.",
+        maySuggest: "Internal hiring coordination may be under-resourced, which sometimes signals competing priorities at the leadership level.",
+        askInInterview: "What does a typical hiring timeline look like for this role, and who's involved in the final decision?",
+      },
+      {
+        observed: "Job description emphasizes 'passion for the mission' over specific competencies.",
+        maySuggest: "The role scope may be loosely defined, which can mean high autonomy or high ambiguity depending on the team.",
+        askInInterview: "What would success look like in the first 6 months, and how is that measured?",
+      },
     ],
+    trajectory: {
+      avgTenure: "3.4 years",
+      nextSteps: [
+        "Senior Operations or Program Manager",
+        "Sustainability Strategy Lead",
+        "Director-level role at a peer B Corp or nonprofit",
+      ],
+      tradeoff:
+        "People who do well here often move into senior ops or sustainability roles elsewhere within 3–4 years. The tradeoff: strong mission alignment and resume credibility, but slower comp growth than corporate peers.",
+    },
   },
 };
-
-interface SignalData {
-  icon: string;
-  label: string;
-  status: "confirmed" | "watch" | "flag";
-  detail: string;
-}
-
-interface CompanyDossier {
-  name: string;
-  industry: string;
-  location: string;
-  employees: string;
-  integrityScore: number;
-  verdict: string;
-  signals: SignalData[];
-  coachingNote: string;
-  coverLetterAngle: string;
-  interviewQuestions: string[];
-  redFlags: string[];
-}
 
 /* ── Helpers ── */
 
@@ -179,6 +222,37 @@ function ExpandableQuestion({ question, index }: { question: string; index: numb
   );
 }
 
+/* ── Pricing tiers ── */
+const PRICING_TIERS = [
+  {
+    name: "Career Fit Report",
+    price: "$49",
+    interval: "one-time",
+    description: "Full integrity analysis of this company, tailored to your background and role.",
+    features: ["Complete signal breakdown", "Personalized coaching notes", "Cover letter angle"],
+    cta: "Get Your Report",
+    highlighted: false,
+  },
+  {
+    name: "Monthly",
+    price: "$19",
+    interval: "/month",
+    description: "Continuous scanning across all companies. Every dossier, every update.",
+    features: ["Unlimited dossiers", "Signal alerts", "Cover letter builder", "Interview prep questions"],
+    cta: "Start Monthly",
+    highlighted: true,
+  },
+  {
+    name: "Premium",
+    price: "$99",
+    interval: "/month",
+    description: "Everything, plus personalized interview prep and decision support from Jackye's framework.",
+    features: ["Everything in Monthly", "Mock interview coaching", "Decision support engine", "Priority signal updates"],
+    cta: "Go Premium",
+    highlighted: false,
+  },
+];
+
 /* ── Page ── */
 export default function DossierCoachingGuide() {
   const { slug } = useParams<{ slug: string }>();
@@ -192,10 +266,22 @@ export default function DossierCoachingGuide() {
       </Helmet>
 
       <div className="min-h-screen bg-background">
-        <div className="max-w-2xl mx-auto px-4 sm:px-6 py-10 sm:py-16 space-y-10">
+        <div className="max-w-2xl mx-auto px-4 sm:px-6 py-10 sm:py-16 space-y-12">
 
-          {/* ─── 1. COMPANY VERDICT ─── */}
+          {/* ─── 0. WHY THIS ROLE IS WORTH YOUR TIME ─── */}
           <Reveal>
+            <div className="bg-primary/8 border border-primary/20 p-5 sm:p-6">
+              <div className="font-mono text-[9px] tracking-[0.25em] uppercase text-primary font-semibold mb-2">
+                Should you spend energy on this?
+              </div>
+              <p className="text-base sm:text-lg font-display font-bold text-foreground leading-snug tracking-tight">
+                {data.worthYourTime}
+              </p>
+            </div>
+          </Reveal>
+
+          {/* ─── 1. COMPANY HEADER + SCORE ─── */}
+          <Reveal delay={0.03}>
             <div className="space-y-4">
               <div className="flex items-center gap-2 mb-1">
                 <Badge variant="outline" className="text-[9px] font-mono tracking-wider bg-primary/5 border-primary/20 text-primary">
@@ -217,7 +303,6 @@ export default function DossierCoachingGuide() {
                 </div>
               </div>
 
-              {/* Score + verdict */}
               <div className="flex items-center gap-3 flex-wrap">
                 <div className="flex items-end gap-1.5">
                   <span className={cn("font-data text-4xl font-black tabular-nums", scoreColor(data.integrityScore))}>
@@ -236,8 +321,26 @@ export default function DossierCoachingGuide() {
             </div>
           </Reveal>
 
-          {/* ─── 2. WHAT THE RECORD SHOWS ─── */}
+          {/* ─── 2. JACKYE'S READ ─── */}
           <Reveal delay={0.05}>
+            <div className="bg-primary/10 border border-primary/25 p-5 sm:p-6 space-y-3">
+              <div className="flex items-center gap-2">
+                <Sparkles className="w-4 h-4 text-primary" />
+                <span className="font-mono text-[9px] tracking-[0.25em] uppercase text-primary font-bold">
+                  Jackye's Read
+                </span>
+              </div>
+              <p className="text-sm sm:text-[15px] text-foreground/90 leading-relaxed font-medium">
+                {data.jackyeRead}
+              </p>
+              <p className="text-[10px] text-muted-foreground font-mono italic">
+                Pattern-based insight · Not a verdict · Based on public signals
+              </p>
+            </div>
+          </Reveal>
+
+          {/* ─── 3. WHAT THE RECORD SHOWS ─── */}
+          <Reveal delay={0.07}>
             <SectionHeader number="01" title="What the Record Shows" />
             <div className="space-y-3">
               {data.signals.map((signal, i) => {
@@ -267,8 +370,8 @@ export default function DossierCoachingGuide() {
             </div>
           </Reveal>
 
-          {/* ─── 3. HOW TO HANDLE THIS APPLICATION ─── */}
-          <Reveal delay={0.08}>
+          {/* ─── 4. HOW TO HANDLE THIS APPLICATION ─── */}
+          <Reveal delay={0.09}>
             <SectionHeader number="02" title="How to Handle This Application" />
             <div className="bg-primary/5 border border-primary/15 p-5">
               <div className="flex items-start gap-3">
@@ -280,9 +383,39 @@ export default function DossierCoachingGuide() {
             </div>
           </Reveal>
 
-          {/* ─── 4. YOUR COVER LETTER ANGLE ─── */}
+          {/* ─── 5. ROLE REALITY + TRAJECTORY ─── */}
           <Reveal delay={0.1}>
-            <SectionHeader number="03" title="Your Cover Letter Angle" />
+            <SectionHeader number="03" title="Where This Role Usually Leads" />
+            <div className="border border-border/40 bg-card p-5 space-y-4">
+              <div className="flex items-center gap-3">
+                <Route className="w-5 h-5 text-primary shrink-0" />
+                <div>
+                  <div className="text-xs text-muted-foreground font-mono uppercase tracking-wider">Avg. tenure in this type of role</div>
+                  <div className="text-lg font-display font-bold text-foreground tabular-nums">{data.trajectory.avgTenure}</div>
+                </div>
+              </div>
+
+              <div className="space-y-2">
+                <div className="text-xs text-muted-foreground font-mono uppercase tracking-wider">Common next steps</div>
+                {data.trajectory.nextSteps.map((step, i) => (
+                  <div key={i} className="flex items-center gap-2 text-sm text-foreground/80">
+                    <ArrowRight className="w-3 h-3 text-primary shrink-0" />
+                    {step}
+                  </div>
+                ))}
+              </div>
+
+              <div className="border-t border-border/30 pt-3">
+                <p className="text-xs text-muted-foreground leading-relaxed italic">
+                  {data.trajectory.tradeoff}
+                </p>
+              </div>
+            </div>
+          </Reveal>
+
+          {/* ─── 6. YOUR COVER LETTER ANGLE ─── */}
+          <Reveal delay={0.11}>
+            <SectionHeader number="04" title="Your Cover Letter Angle" />
             <div className="border border-border/40 bg-card p-5 space-y-4">
               <div className="flex items-start gap-3">
                 <FileText className="w-5 h-5 text-primary shrink-0 mt-0.5" />
@@ -296,9 +429,9 @@ export default function DossierCoachingGuide() {
             </div>
           </Reveal>
 
-          {/* ─── 5. QUESTIONS TO ASK THEM ─── */}
+          {/* ─── 7. QUESTIONS TO ASK THEM ─── */}
           <Reveal delay={0.12}>
-            <SectionHeader number="04" title="Questions to Ask Them" />
+            <SectionHeader number="05" title="Questions to Ask Them" />
             <div className="space-y-2">
               {data.interviewQuestions.map((q, i) => (
                 <ExpandableQuestion key={i} question={q} index={i} />
@@ -306,24 +439,103 @@ export default function DossierCoachingGuide() {
             </div>
           </Reveal>
 
-          {/* ─── 6. RED FLAGS TO WATCH ─── */}
-          <Reveal delay={0.14}>
-            <SectionHeader number="05" title="Red Flags to Watch in This Process" />
-            <div className="space-y-3">
+          {/* ─── 8. RED FLAGS TO WATCH ─── */}
+          <Reveal delay={0.13}>
+            <SectionHeader number="06" title="Patterns to Watch in This Process" />
+            <div className="space-y-4">
               {data.redFlags.map((flag, i) => (
-                <div key={i} className="flex items-start gap-3 border border-destructive/15 bg-destructive/5 p-4">
-                  <Eye className="w-4 h-4 text-destructive shrink-0 mt-0.5" />
-                  <p className="text-xs text-foreground/80 leading-relaxed">{flag}</p>
+                <div key={i} className="border border-destructive/15 bg-destructive/5 p-4 space-y-3">
+                  <div>
+                    <div className="font-mono text-[9px] tracking-[0.2em] uppercase text-destructive/70 font-semibold mb-1">
+                      What was observed
+                    </div>
+                    <p className="text-sm text-foreground/85 leading-relaxed">{flag.observed}</p>
+                  </div>
+                  <div>
+                    <div className="font-mono text-[9px] tracking-[0.2em] uppercase text-civic-yellow font-semibold mb-1">
+                      What it may suggest
+                    </div>
+                    <p className="text-xs text-muted-foreground leading-relaxed">{flag.maySuggest}</p>
+                  </div>
+                  <div className="border-t border-border/20 pt-2">
+                    <div className="font-mono text-[9px] tracking-[0.2em] uppercase text-primary font-semibold mb-1">
+                      What to explore further
+                    </div>
+                    <p className="text-xs text-foreground/75 leading-relaxed italic">"{flag.askInInterview}"</p>
+                  </div>
                 </div>
               ))}
             </div>
           </Reveal>
 
+          {/* ─── 9. PRICING CTA ─── */}
+          <Reveal delay={0.15}>
+            <div className="space-y-5">
+              <div className="text-center">
+                <div className="font-mono text-[9px] tracking-[0.25em] uppercase text-primary font-semibold mb-1">
+                  Go deeper
+                </div>
+                <h2 className="text-lg sm:text-xl font-display font-bold text-foreground tracking-tight">
+                  Get the full picture before you decide.
+                </h2>
+                <p className="text-xs text-muted-foreground mt-1">No criticism. No shame. Just receipts.</p>
+              </div>
+
+              <div className="grid gap-4">
+                {PRICING_TIERS.map((tier) => (
+                  <div
+                    key={tier.name}
+                    className={cn(
+                      "border p-5 transition-all",
+                      tier.highlighted
+                        ? "border-primary/40 bg-primary/5 shadow-[0_0_0_1px_hsl(var(--primary)/0.15)]"
+                        : "border-border/40 bg-card"
+                    )}
+                  >
+                    <div className="flex items-start justify-between gap-4 mb-3">
+                      <div>
+                        <div className="flex items-center gap-2">
+                          <h3 className="text-sm font-display font-bold text-foreground">{tier.name}</h3>
+                          {tier.highlighted && (
+                            <Badge variant="outline" className="text-[8px] font-mono bg-primary/10 border-primary/30 text-primary">
+                              Popular
+                            </Badge>
+                          )}
+                        </div>
+                        <p className="text-xs text-muted-foreground mt-0.5 leading-relaxed">{tier.description}</p>
+                      </div>
+                      <div className="text-right shrink-0">
+                        <span className="text-xl font-data font-bold text-foreground tabular-nums">{tier.price}</span>
+                        <span className="text-xs text-muted-foreground">{tier.interval}</span>
+                      </div>
+                    </div>
+                    <div className="flex flex-wrap gap-x-4 gap-y-1 mb-4">
+                      {tier.features.map((f) => (
+                        <span key={f} className="text-[11px] text-muted-foreground flex items-center gap-1">
+                          <Check className="w-3 h-3 text-civic-green" />
+                          {f}
+                        </span>
+                      ))}
+                    </div>
+                    <Button
+                      asChild
+                      variant={tier.highlighted ? "default" : "outline"}
+                      className="w-full font-mono text-xs tracking-wider"
+                    >
+                      <Link to="/pricing">{tier.cta}</Link>
+                    </Button>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </Reveal>
+
           {/* Disclaimer */}
-          <Reveal delay={0.16}>
+          <Reveal delay={0.17}>
             <div className="border border-border/30 bg-muted/30 px-5 py-4 text-[10px] text-muted-foreground leading-relaxed font-mono">
               <span className="text-primary font-semibold tracking-wider uppercase text-[9px]">NOTE</span>{" "}
               This coaching guide is generated from public records and documented signals. It does not constitute legal or employment advice.
+              WDIWF does not evaluate the content of your mission. We evaluate whether you're living it.
             </div>
           </Reveal>
         </div>
