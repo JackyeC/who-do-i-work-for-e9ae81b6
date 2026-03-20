@@ -175,7 +175,7 @@ const App = () => (
                   <Route path="/follow-the-money" element={<FollowTheMoney />} />
                   <Route path="/company/:id" element={<ProtectedRoute><CompanyProfile /></ProtectedRoute>} />
                   <Route path="/company/:id/influence" element={<ProtectedRoute><InfluenceGraph /></ProtectedRoute>} />
-                  <Route path="/dossier/:id" element={<ProtectedRoute><CompanyDossier /></ProtectedRoute>} />
+                  <Route path="/dossier/:id" element={<CompanyDossier />} />
                   <Route path="/dossier/guide/:slug" element={<DossierCoachingGuide />} />
                   <Route path="/pricing" element={<Pricing />} />
                   <Route path="/search" element={<SearchResults />} />
