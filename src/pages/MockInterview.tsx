@@ -27,9 +27,9 @@ const QUESTIONS: InterviewQuestion[] = [
   { id: 2, question: "How do you approach building consensus across teams with competing priorities?", category: "behavioral" },
   { id: 3, question: "Describe a project where the right thing to do conflicted with the fastest thing to do. What happened?", category: "behavioral" },
   { id: 4, question: "Walk me through how you'd design a product feature that serves both revenue goals and user wellbeing.", category: "technical" },
-  { id: 5, question: "How do you measure success beyond traditional KPIs?", category: "technical" },
-  { id: 6, question: "What's your approach to giving feedback that might challenge leadership?", category: "culture" },
-  { id: 7, question: "How do you handle misalignment between stated company values and actual behavior?", category: "integrity", companySpecific: true },
+  { id: 5, question: "Ask them about the gap between their careers page and their employee reviews — they will tell you everything.", category: "integrity", companySpecific: true },
+  { id: 6, question: "How do you measure success beyond traditional KPIs?", category: "technical" },
+  { id: 7, question: "What's your approach to giving feedback that might challenge leadership?", category: "culture" },
   { id: 8, question: "What does accountability look like to you — both from leadership and from yourself?", category: "culture" },
 ];
 
