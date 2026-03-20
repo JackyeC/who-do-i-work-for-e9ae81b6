@@ -124,7 +124,7 @@ export function DreamJobWidget() {
         <Input
           value={dreamRole}
           onChange={(e) => setDreamRole(e.target.value)}
-          placeholder="What is your dream role?"
+          placeholder="What is your ideal aligned role?"
           maxLength={120}
         />
         <Input
