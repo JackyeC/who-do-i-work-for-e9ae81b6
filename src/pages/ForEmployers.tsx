@@ -351,8 +351,6 @@ export default function ForEmployers() {
             </CardContent>
           </Card>
         </section>
-      </main>
-      <Footer />
-    </div>
+    </main>
   );
 }
