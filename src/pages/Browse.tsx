@@ -102,7 +102,7 @@ export default function Browse() {
   const CATEGORY_FILTERS = ["HR Tech", "Big Tech", "Finance", "Defense", "Government Contractors", "Startups", "Healthcare", "Energy", "Retail"];
 
   const filtered = useMemo(() => {
-    setVisibleCount(PAGE_SIZE);
+    setCurrentPage(1);
     let list = allCompanies;
     if (selectedIndustry !== "all") list = list.filter((c) => c.industry === selectedIndustry);
     if (selectedCategory !== "all") {
@@ -123,8 +123,27 @@ export default function Browse() {
     });
   }, [allCompanies, selectedIndustry, selectedCategory, sortBy, searchQuery]);
 
-  const visibleCompanies = filtered.slice(0, visibleCount);
-  const hasMore = visibleCount < filtered.length;
+  const totalPages = Math.ceil(filtered.length / PAGE_SIZE);
+  const visibleCompanies = filtered.slice((currentPage - 1) * PAGE_SIZE, currentPage * PAGE_SIZE);
+
+  const goToPage = useCallback((page: number) => {
+    setCurrentPage(page);
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  }, []);
+
+  const getPageNumbers = () => {
+    const pages: (number | "ellipsis")[] = [];
+    if (totalPages <= 7) {
+      for (let i = 1; i <= totalPages; i++) pages.push(i);
+    } else {
+      pages.push(1);
+      if (currentPage > 3) pages.push("ellipsis");
+      for (let i = Math.max(2, currentPage - 1); i <= Math.min(totalPages - 1, currentPage + 1); i++) pages.push(i);
+      if (currentPage < totalPages - 2) pages.push("ellipsis");
+      pages.push(totalPages);
+    }
+    return pages;
+  };
 
   return (
     <div className="flex-1">
