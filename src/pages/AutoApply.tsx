@@ -494,9 +494,11 @@ export default function AutoApply() {
   };
 
   /* ── done screen ── */
+  const [showKit, setShowKit] = useState(false);
+
   if (done) {
     return (
-      <div className="min-h-screen flex flex-col items-center justify-center px-6" style={{ background: "#0a0a0e" }}>
+      <div className="min-h-screen flex flex-col items-center px-6 py-16" style={{ background: "#0a0a0e" }}>
         <Helmet><title>Agent Ready — WDIWF</title></Helmet>
         <svg className="fixed inset-0 w-full h-full pointer-events-none" style={{ zIndex: 0, opacity: 0.04 }}>
           <filter id="aa-grain"><feTurbulence type="fractalNoise" baseFrequency="0.8" numOctaves="4" stitchTiles="stitch" /></filter>
@@ -513,14 +515,14 @@ export default function AutoApply() {
             className="font-sans mb-3"
             style={{ fontSize: "clamp(24px, 4vw, 36px)", fontWeight: 800, letterSpacing: "-2px", color: "#f0ebe0" }}
           >
-            Your Job Search Agent is ready.
+            Your agent applied. Here's your Interview Kit.
           </h1>
-          <p className="text-base mb-10" style={{ color: "#b8b4a8", lineHeight: 1.7 }}>
+          <p className="text-base mb-8" style={{ color: "#b8b4a8", lineHeight: 1.7 }}>
             We'll send your first dossier within 24 hours.
           </p>
 
           {/* Summary */}
-          <div className="rounded-2xl p-6 text-left space-y-4" style={{ background: sectionBg, border: sectionBorder }}>
+          <div className="rounded-2xl p-6 text-left space-y-4 mb-8" style={{ background: sectionBg, border: sectionBorder }}>
             <SummaryRow label="Targeting" value={form.jobTitles.length ? form.jobTitles.join(", ") : "Not set"} />
             <SummaryRow label="Industries" value={form.industries.length ? form.industries.join(", ") : "Any"} />
             <SummaryRow label="Location" value={form.locationPrefs.length ? form.locationPrefs.join(", ") : "Any"} />
@@ -529,7 +531,36 @@ export default function AutoApply() {
             <SummaryRow label="Min integrity" value={`${form.minIntegrityScore}/100`} />
             <SummaryRow label="Resume" value={form.resumeFile ? form.resumeFile.name : "Not uploaded"} />
           </div>
+
+          {/* Interview Kit CTA */}
+          {!showKit && (
+            <button
+              onClick={() => setShowKit(true)}
+              className="inline-flex items-center gap-2 h-12 px-8 rounded-lg text-sm font-semibold transition-opacity hover:opacity-90"
+              style={{ background: "#f0c040", color: "#0a0a0e" }}
+            >
+              Prepare for This Interview →
+            </button>
+          )}
         </div>
+
+        {/* Interview Kit — full width below */}
+        {showKit && (
+          <div className="relative z-[1] w-full mt-12">
+            <div className="text-center mb-8">
+              <p className="text-xs uppercase tracking-[3px] font-semibold mb-2" style={{ color: "#f0c040" }}>
+                Interview Kit
+              </p>
+              <h2
+                className="font-sans"
+                style={{ fontSize: "clamp(20px, 3vw, 28px)", fontWeight: 800, letterSpacing: "-1.5px", color: "#f0ebe0" }}
+              >
+                You're prepared. They won't be ready for you.
+              </h2>
+            </div>
+            <InterviewKit />
+          </div>
+        )}
       </div>
     );
   }
