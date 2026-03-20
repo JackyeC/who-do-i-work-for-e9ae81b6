@@ -236,16 +236,9 @@ const Index = forwardRef<HTMLDivElement>((_, ref) => {
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             {/* For Candidates */}
             <div
-              className="rounded-2xl p-8 text-left flex flex-col"
-              style={{
-                background: "rgba(255,255,255,0.03)",
-                border: "1px solid rgba(255,255,255,0.08)",
-              }}
+              className="rounded-2xl p-8 text-left flex flex-col bg-muted/30 border border-border"
             >
-              <div
-                className="w-12 h-12 rounded-xl flex items-center justify-center mb-5"
-                style={{ background: "rgba(240,192,64,0.10)" }}
-              >
+              <div className="w-12 h-12 rounded-xl flex items-center justify-center mb-5 bg-primary/10">
                 <Crosshair className="w-6 h-6 text-primary" />
               </div>
               <p className="text-xs uppercase tracking-[2px] font-semibold text-primary mb-3">
