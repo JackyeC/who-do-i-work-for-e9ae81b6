@@ -203,7 +203,7 @@ export function TopBar() {
             >
               ··· <ChevronDown className="w-3 h-3" />
             </button>
-            <div className="absolute top-full left-0 hidden group-hover:block border min-w-[220px] z-50 py-1" style={{ background: 'hsl(252 25% 8%)', borderColor: 'rgba(255,255,255,0.1)' }}>
+            <div className="absolute top-full left-0 hidden group-hover:block border border-border min-w-[220px] z-50 py-1 bg-popover rounded-md shadow-lg">
               {SECONDARY_NAV.map(sub => (
                 <Link
                   key={sub.path}
