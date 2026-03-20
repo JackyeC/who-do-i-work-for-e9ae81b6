@@ -174,16 +174,7 @@ const Index = forwardRef<HTMLDivElement>((_, ref) => {
                    )}
                   <Link
                     to="/join"
-                    style={{
-                      fontFamily: "'DM Sans', sans-serif",
-                      fontSize: "13px",
-                      color: "#7a7590",
-                      marginTop: "10px",
-                      textDecoration: "none",
-                      display: "inline-block",
-                    }}
-                    onMouseEnter={(e) => (e.currentTarget.style.textDecoration = "underline")}
-                    onMouseLeave={(e) => (e.currentTarget.style.textDecoration = "none")}
+                    className="font-sans text-caption text-muted-foreground mt-2.5 inline-block hover:underline"
                   >
                     Launching April 6 — get early access →
                   </Link>
