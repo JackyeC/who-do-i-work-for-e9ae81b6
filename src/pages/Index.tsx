@@ -345,17 +345,7 @@ const Index = forwardRef<HTMLDivElement>((_, ref) => {
       </section>
 
       <section className="px-6 lg:px-16 py-16 max-w-[700px] mx-auto w-full text-center">
-        <div
-          style={{
-            fontFamily: "'DM Sans', sans-serif",
-            fontSize: "11px",
-            fontWeight: 500,
-            letterSpacing: "2px",
-            textTransform: "uppercase",
-            color: "#7a7590",
-            marginBottom: "12px",
-          }}
-        >
+        <div className="font-sans text-micro uppercase text-muted-foreground mb-3">
           Or scan a company directly
         </div>
         <div id="hero-search-anchor">
