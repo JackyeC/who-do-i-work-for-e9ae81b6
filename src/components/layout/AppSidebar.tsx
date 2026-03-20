@@ -22,6 +22,7 @@ import {
   Megaphone, Users, Target, CreditCard,
   LayoutDashboard, Zap, Bell, Settings, User, ClipboardCheck,
   LogIn, LogOut, Compass, Flame, Shield,
+  Bookmark, Inbox, MessageSquare, Columns3, FileEdit, Mic,
 } from "lucide-react";
 
 /* ------------------------------------------------------------------ */
@@ -71,7 +72,19 @@ const NAV_GROUPS = [
     ],
   },
   {
-    label: "Dashboard",
+    label: "My Search",
+    auth: true,
+    items: [
+      { id: "jobs-feed", label: "Jobs", icon: Briefcase, path: "/jobs-feed" },
+      { id: "tracker", label: "Tracker", icon: Columns3, path: "/tracker" },
+      { id: "apply-kit", label: "Apply Kit", icon: FileEdit, path: "/apply-kit" },
+      { id: "mock-interview", label: "Mock Interview", icon: Mic, path: "/mock-interview" },
+      { id: "inbox", label: "Inbox", icon: Inbox, path: "/inbox" },
+      { id: "saved", label: "Saved", icon: Bookmark, path: "/saved" },
+    ],
+  },
+  {
+    label: "Intelligence",
     auth: true,
     items: [
       { id: "dashboard", label: "Overview", icon: LayoutDashboard, path: "/dashboard" },
