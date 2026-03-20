@@ -1,10 +1,14 @@
 import { useAuth } from "@/contexts/AuthContext";
 import { useUserRole } from "@/hooks/use-user-role";
 import { Loader2 } from "lucide-react";
+import { useAuth as useClerkAuth } from "@clerk/clerk-react";
 
 export function AdminRoute({ children }: { children: React.ReactNode }) {
+  const { isLoaded } = useClerkAuth();
   const { user, loading } = useAuth();
   const { isAdmin, isOwner, isLoading } = useUserRole();
+
+  if (!isLoaded) return null;
 
   if (loading || isLoading) {
     return (

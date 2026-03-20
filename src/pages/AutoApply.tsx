@@ -1,6 +1,7 @@
 import { useState, useCallback, useRef } from "react";
-import { useNavigate } from "react-router-dom";
+import { Navigate, useNavigate } from "react-router-dom";
 import { useAuth } from "@/contexts/AuthContext";
+import { useAuth as useClerkAuth } from "@clerk/clerk-react";
 import { InterviewKit } from "@/components/interview/InterviewKit";
 import { Helmet } from "react-helmet-async";
 import { usePageSEO } from "@/hooks/use-page-seo";
@@ -326,6 +327,7 @@ const STEP_META = [
 ];
 
 export default function AutoApply() {
+  const { isLoaded } = useClerkAuth();
   const { user, loading } = useAuth();
   const navigate = useNavigate();
   const [step, setStep] = useState(0);
@@ -344,59 +346,8 @@ export default function AutoApply() {
     []
   );
 
-  // Public preview for logged-out users
-  if (!loading && !user) {
-    return (
-      <div style={{ minHeight: "100vh", background: "#0a0a0e", color: "#f0ebe0", fontFamily: "'DM Sans', sans-serif" }}>
-        <div style={{ maxWidth: 640, margin: "0 auto", padding: "80px 24px", textAlign: "center" }}>
-          <div style={{ fontSize: 11, letterSpacing: "0.2em", textTransform: "uppercase", color: "#f0c040", marginBottom: 20 }}>
-            Apply When It Counts™
-          </div>
-          <h1 style={{ fontSize: 32, fontWeight: 800, lineHeight: 1.15, marginBottom: 16 }}>
-            Stop blasting résumés.{" "}
-            <span style={{ color: "#f0c040" }}>Start applying with intelligence.</span>
-          </h1>
-          <p style={{ fontSize: 15, color: "#b8b4a8", lineHeight: 1.7, marginBottom: 32, maxWidth: 500, marginLeft: "auto", marginRight: "auto" }}>
-            WDIWF's auto-apply agent only sends your application to companies that pass your integrity filter. You set your values, your non-negotiables, and your minimum integrity score. The agent does the rest.
-          </p>
-
-          <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: 16, marginBottom: 40 }}>
-            {[
-              { num: "1", label: "Set your values & role criteria" },
-              { num: "2", label: "Agent matches you to aligned roles" },
-              { num: "3", label: "Review & approve before anything sends" },
-            ].map((s) => (
-              <div key={s.num} style={{ background: "rgba(255,255,255,0.03)", border: "1px solid rgba(255,255,255,0.08)", borderRadius: 12, padding: 20 }}>
-                <div style={{ width: 28, height: 28, borderRadius: 8, background: "rgba(240,192,64,0.12)", color: "#f0c040", display: "flex", alignItems: "center", justifyContent: "center", fontSize: 13, fontWeight: 700, margin: "0 auto 10px" }}>
-                  {s.num}
-                </div>
-                <p style={{ fontSize: 13, color: "#b8b4a8", lineHeight: 1.5 }}>{s.label}</p>
-              </div>
-            ))}
-          </div>
-
-          <div style={{ display: "flex", gap: 12, justifyContent: "center", flexWrap: "wrap" }}>
-            <button
-              onClick={() => navigate("/join")}
-              style={{ background: "#f0c040", color: "#0a0a0e", border: "none", borderRadius: 999, padding: "14px 32px", fontSize: 14, fontWeight: 700, cursor: "pointer" }}
-            >
-              Get Early Access →
-            </button>
-            <button
-              onClick={() => navigate("/browse")}
-              style={{ background: "transparent", color: "#f0c040", border: "1px solid rgba(240,192,64,0.35)", borderRadius: 999, padding: "14px 32px", fontSize: 14, fontWeight: 600, cursor: "pointer" }}
-            >
-              Browse Companies
-            </button>
-          </div>
-
-          <p style={{ fontSize: 12, color: "#7a7590", marginTop: 32 }}>
-            "You deserve to know exactly who you work for."
-          </p>
-        </div>
-      </div>
-    );
-  }
+  if (!isLoaded || loading) return null;
+  if (!user) return <Navigate to="/join" replace />;
 
   const next = () => {
     if (step < 3) setStep(step + 1);

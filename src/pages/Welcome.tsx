@@ -1,14 +1,16 @@
-import { useNavigate, Link } from "react-router-dom";
-import { useAuth } from "@/contexts/AuthContext";
+import { useNavigate } from "react-router-dom";
+import { useAuth as useClerkAuth } from "@clerk/clerk-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { ArrowRight, CheckCircle2, Search, Shield, Eye, Zap, BarChart3 } from "lucide-react";
+import { ArrowRight, Search, Shield, Eye, Zap, BarChart3 } from "lucide-react";
 import { motion } from "framer-motion";
 import { usePageSEO } from "@/hooks/use-page-seo";
 
 export default function Welcome() {
-  const { user, loading } = useAuth();
+  const { isLoaded } = useClerkAuth();
   const navigate = useNavigate();
+
+  if (!isLoaded) return null;
 
   usePageSEO({
     title: "Who Do I Work For? — Know Exactly Who You Work For",
@@ -30,36 +32,6 @@ export default function Welcome() {
     { value: "50+", label: "Public Data Sources" },
   ];
 
-  // Logged-in users get a personalized welcome
-  if (!loading && user) {
-    return (
-      <main className="flex-1">
-        <div className="flex items-center justify-center px-4 py-16 md:py-24">
-          <div className="w-full max-w-xl text-center">
-            <h1 className="font-serif text-2xl sm:text-3xl lg:text-4xl text-foreground leading-tight mb-4">
-              You're in. Now let's make sure you don't walk into the wrong company.
-            </h1>
-            <p className="text-sm sm:text-base text-muted-foreground leading-relaxed max-w-lg mx-auto mb-10">
-              Most people accept jobs based on titles, salary, and vibes. You now have the ability to see what's actually happening behind the offer.
-            </p>
-            <Button onClick={() => navigate("/search")} size="lg" className="gap-2 font-mono text-sm tracking-wider uppercase px-10 py-6 text-base">
-              <Search className="w-5 h-5" /> Scan a Company
-            </Button>
-            <div className="flex flex-col sm:flex-row gap-3 justify-center mt-8">
-              <Button variant="outline" onClick={() => navigate("/career-map")} className="gap-1.5 font-mono text-xs tracking-wider uppercase">
-                Calibrate My Workplace DNA <ArrowRight className="w-3 h-3" />
-              </Button>
-              <Button variant="outline" onClick={() => navigate("/dashboard")} className="gap-1.5 font-mono text-xs tracking-wider uppercase">
-                Go to Dashboard <ArrowRight className="w-3 h-3" />
-              </Button>
-            </div>
-          </div>
-        </div>
-      </main>
-    );
-  }
-
-  // Public homepage for logged-out visitors
   return (
     <main className="flex-1">
       {/* Hero */}
