@@ -1,4 +1,6 @@
 import { useState, useCallback, useRef } from "react";
+import { useNavigate } from "react-router-dom";
+import { useAuth } from "@/contexts/AuthContext";
 import { InterviewKit } from "@/components/interview/InterviewKit";
 import { Helmet } from "react-helmet-async";
 import { usePageSEO } from "@/hooks/use-page-seo";

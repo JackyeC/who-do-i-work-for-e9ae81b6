@@ -228,7 +228,7 @@ const App = () => (
                   <Route path="/relationship-intelligence" element={<ProtectedRoute><RelationshipIntelligence /></ProtectedRoute>} />
                   <Route path="/compare" element={<CompareCompanies />} />
                   <Route path="/investigative" element={<InvestigativeExplorer />} />
-                  <Route path="/auto-apply" element={<ProtectedRoute><AutoApplyOnboarding /></ProtectedRoute>} />
+                  <Route path="/auto-apply" element={<AutoApplyOnboarding />} />
                   <Route path="/my-values" element={<Navigate to="/dashboard?tab=values" replace />} />
                   <Route path="/how-do-i-get-there" element={<Navigate to="/dashboard?tab=how" replace />} />
                   <Route path="/offer-checks" element={<Navigate to="/my-offer-checks" replace />} />
