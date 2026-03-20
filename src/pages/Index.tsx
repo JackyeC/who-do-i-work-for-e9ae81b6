@@ -453,7 +453,7 @@ const Index = forwardRef<HTMLDivElement>((_, ref) => {
                 icon: Rocket,
                 title: "The Alignment",
                 desc: "Execute your move with clarity and advocacy.",
-                signals: ["Purple Squirrel Auto-Apply", "Interview Intelligence Briefs", "Negotiation Coaching", "Offer review & benchmarking"],
+                signals: ["Apply When It Counts™ Placement", "Interview Intelligence Briefs", "Negotiation Coaching", "Offer review & benchmarking"],
               },
             ].map(card => (
               <div key={card.title} className="bg-background p-8 lg:p-10">
