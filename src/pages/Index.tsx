@@ -125,11 +125,8 @@ const Index = forwardRef<HTMLDivElement>((_, ref) => {
 
           {/* Headline */}
           <h1
-            className="text-display"
-            style={{
-              color: "#f0ebe0",
-              animation: "heroFadeIn 0.8s ease forwards",
-            }}
+            className="text-display text-foreground"
+            style={{ animation: "heroFadeIn 0.8s ease forwards" }}
           >
             The recruiting platform that audits the company first.
           </h1>
