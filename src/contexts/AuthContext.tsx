@@ -47,17 +47,6 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     }
   }, []);
 
-  // Post-login redirect
-  const navigateRef = useCallback(() => {
-    try {
-      // Navigate to dashboard on sign-in (only from non-app pages)
-      const path = window.location.pathname;
-      if (path === "/" || path === "/login" || path === "/signup") {
-        window.location.href = "/welcome";
-      }
-    } catch {}
-  }, []);
-
   useEffect(() => {
     const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
       setSession(session);
@@ -67,7 +56,6 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         // Defer to avoid deadlock with auth state change
         setTimeout(() => {
           checkSubscription();
-          navigateRef();
         }, 0);
       } else if (session?.user) {
         setTimeout(() => checkSubscription(), 0);
