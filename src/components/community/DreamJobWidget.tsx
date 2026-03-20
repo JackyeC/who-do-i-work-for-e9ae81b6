@@ -64,8 +64,8 @@ export function DreamJobWidget() {
     },
   });
 
-  const linkedInShareText = `I just mapped my values to my dream role at ${matchedCompanyName}. It's time we knew who we really worked for. Check your alignment at ${BASE_URL}`;
-  const copyShareText = `I just mapped my values to my dream role at ${matchedCompanyName}. It's time we knew who we really worked for. Check your alignment → ${BASE_URL}`;
+  const linkedInShareText = `I just mapped my values to my aligned role at ${matchedCompanyName}. It's time we knew who we really worked for. Check your alignment at ${BASE_URL}`;
+  const copyShareText = `I just mapped my values to my aligned role at ${matchedCompanyName}. It's time we knew who we really worked for. Check your alignment → ${BASE_URL}`;
 
   if (submitted) {
     return (
