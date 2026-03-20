@@ -136,24 +136,20 @@ export default function ForEmployers() {
 
   if (submitted) {
     return (
-      <div className="min-h-screen flex flex-col bg-background">
-        <Header />
-        <main className="flex-1 flex items-center justify-center px-6 py-24">
-          <motion.div
-            initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }}
-            className="max-w-lg text-center"
-          >
-            <div className="w-16 h-16 rounded-2xl bg-civic-green/10 flex items-center justify-center mx-auto mb-6">
-              <Check className="w-8 h-8 text-civic-green" />
-            </div>
-            <h2 className="text-2xl font-bold text-foreground mb-4 font-serif">Submission received.</h2>
-            <p className="text-muted-foreground leading-relaxed">
-              We'll review your organization's public data and send you a preliminary Reality Check report within 48 hours. No bias. Just receipts.
-            </p>
-          </motion.div>
-        </main>
-        <Footer />
-      </div>
+      <main className="flex-1 flex items-center justify-center px-6 py-24">
+        <motion.div
+          initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }}
+          className="max-w-lg text-center"
+        >
+          <div className="w-16 h-16 rounded-2xl bg-civic-green/10 flex items-center justify-center mx-auto mb-6">
+            <Check className="w-8 h-8 text-civic-green" />
+          </div>
+          <h2 className="text-2xl font-bold text-foreground mb-4 font-serif">Submission received.</h2>
+          <p className="text-muted-foreground leading-relaxed">
+            We'll review your organization's public data and send you a preliminary Reality Check report within 48 hours. No bias. Just receipts.
+          </p>
+        </motion.div>
+      </main>
     );
   }
 
