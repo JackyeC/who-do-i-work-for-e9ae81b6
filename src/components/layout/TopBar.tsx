@@ -1,9 +1,10 @@
 import { useState, useEffect } from "react";
 import { Link, useNavigate, useLocation } from "react-router-dom";
+import { SignedIn, SignedOut, SignInButton, SignUpButton, UserButton } from "@clerk/clerk-react";
 import { useAuth } from "@/contexts/AuthContext";
 import { useDemoSafeMode } from "@/contexts/DemoSafeModeContext";
 import { cn } from "@/lib/utils";
-import { Search, LogIn, LogOut, Menu, X, Shield, ChevronDown, Lock, Compass, BarChart3, Radio } from "lucide-react";
+import { Search, Menu, X, Shield, ChevronDown, Lock, Compass, BarChart3, Radio } from "lucide-react";
 import { ThemeToggle } from "@/components/ThemeToggle";
 import { PersonaChip } from "@/components/PersonaChip";
 import { usePersona } from "@/hooks/use-persona";
@@ -249,23 +250,21 @@ export function TopBar() {
 
           <ThemeToggle />
 
-          {user ? (
-            <button
-              onClick={signOut}
-              className="font-sans text-caption text-muted-foreground hover:text-foreground flex items-center gap-1.5 whitespace-nowrap transition-colors"
-            >
-              <LogOut className="w-3.5 h-3.5" />
-              <span className="hidden lg:inline">Sign Out</span>
-            </button>
-          ) : (
-            <Link
-              to="/login"
-              className="bg-primary text-primary-foreground px-5 py-2 font-sans text-btn rounded-full hover:brightness-110 transition-all flex items-center gap-1.5 whitespace-nowrap"
-            >
-              <LogIn className="w-3.5 h-3.5" />
-              Sign In
-            </Link>
-          )}
+          <SignedIn>
+            <UserButton afterSignOutUrl="/" />
+          </SignedIn>
+          <SignedOut>
+            <SignInButton mode="modal">
+              <button className="bg-primary text-primary-foreground px-5 py-2 font-sans text-btn rounded-full hover:brightness-110 transition-all whitespace-nowrap">
+                Sign In
+              </button>
+            </SignInButton>
+            <SignUpButton mode="modal">
+              <button className="border border-primary text-primary px-5 py-2 font-sans text-btn rounded-full hover:bg-primary/10 transition-all whitespace-nowrap">
+                Sign Up
+              </button>
+            </SignUpButton>
+          </SignedOut>
 
           {/* Audit CTA */}
           <Link
