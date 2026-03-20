@@ -1,39 +1,19 @@
 
 
-## Fix: Resume Parsing Fails on Career Map for PDFs
+## Replace "Show More" with Pagination on /browse
 
-### Problem
-The edge function `parse-career-document` fails when text extraction returns insufficient content (under 100 chars). It falls back to sending the raw file as base64, but uses an unsupported `type: "file"` format that the AI gateway rejects with `400: File data is missing`.
+### Changes
 
-From the logs:
-- DOCX files work (text extraction via JSZip succeeds)
-- PDF files fail when `pdf-parse` doesn't work in Deno (package export error), leaving 0 chars, then the fallback raw-file path uses wrong API format
+**`src/pages/Browse.tsx`**
 
-### Root Cause
-Lines 237-246 in `parse-career-document/index.ts` send the file as `{ type: "file", file: { ... } }` which is not a valid OpenAI-compatible content part. The Lovable AI gateway expects `{ type: "image_url", image_url: { url: "data:mime;base64,..." } }` for inline binary data.
+1. Replace `visibleCount` state with `currentPage` state (starting at 1)
+2. Compute `totalPages`, `visibleCompanies` from `currentPage` and `PAGE_SIZE`
+3. Reset `currentPage` to 1 when filters/search change (already handled since `filtered` recalculates)
+4. Replace the "Show More" button block with a pagination bar using the existing `Pagination` components from `src/components/ui/pagination.tsx`:
+   - Previous / Next buttons (disabled at boundaries)
+   - Page number links with ellipsis for large page counts
+   - Shows "Page X of Y" count
+5. Scroll to top of the list when page changes
 
-### Fix (1 file change)
-
-**`supabase/functions/parse-career-document/index.ts`**
-
-1. Change the `useDirectFile` content block to use the correct data-URI format via `image_url` type, which Gemini models support for PDFs and docs:
-```typescript
-userContent.push({
-  type: "image_url",
-  image_url: {
-    url: `data:${getMimeType(filename)};base64,${fileBase64}`,
-  },
-});
-```
-
-2. Fix the message construction on line 265 -- when `useDirectFile` is true, the user content should be an array (multimodal), not just the first element:
-```typescript
-messages: [
-  { role: "system", content: systemPrompt },
-  { role: "user", content: useDirectFile ? userContent : documentText-based-string },
-],
-```
-This part already works correctly for the array case, but the `image_url` format fix is what's needed.
-
-This is a single-line fix in the edge function that will auto-deploy.
+Single file change, no new dependencies.
 
