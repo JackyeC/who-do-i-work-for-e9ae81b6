@@ -62,7 +62,7 @@ export function DreamJobAlerts() {
       toast({
         title: count > 0 ? `Found ${count} match${count !== 1 ? "es" : ""}!` : "No new matches",
         description: count > 0
-          ? "Your dream job alerts are ready below."
+          ? "Your aligned role alerts are ready below."
           : `Scanned ${data?.jobsScanned || 0} jobs — none met the match threshold yet.`,
       });
       queryClient.invalidateQueries({ queryKey: ["job-alerts"] });

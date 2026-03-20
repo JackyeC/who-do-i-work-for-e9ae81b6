@@ -149,7 +149,7 @@ export function DreamJobWidget() {
       </Button>
 
       <p className="text-[10px] text-muted-foreground/60 flex items-center gap-1">
-        <Lock className="w-2.5 h-2.5" /> Your dream job stays private. We only use it to prioritize intelligence requests.
+        <Lock className="w-2.5 h-2.5" /> Your aligned role stays private. We only use it to prioritize intelligence requests.
       </p>
     </div>
   );

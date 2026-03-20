@@ -51,7 +51,7 @@ export function CareerWaitlistGate() {
             </div>
             <h2 className="text-xl font-bold text-foreground">Career Intelligence Beta</h2>
             <p className="text-sm text-muted-foreground leading-relaxed">
-              AI-powered career mapping, resume tailoring, and dream job alerts — available to early testers first.
+              AI-powered career mapping, resume tailoring, and aligned role alerts — available to early testers first.
               Join the waitlist to get access.
             </p>
           </div>
