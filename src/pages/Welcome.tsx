@@ -10,13 +10,13 @@ export default function Welcome() {
   const { isLoaded } = useClerkAuth();
   const navigate = useNavigate();
 
-  if (!isLoaded) return null;
-
   usePageSEO({
     title: "Who Do I Work For? — Know Exactly Who You Work For",
     description: "Company intelligence for candidates. Check any employer's integrity before you apply, interview, or accept.",
     path: "/welcome",
   });
+
+  if (!isLoaded) return null;
 
   const capabilities = [
     { icon: Search, text: "Run integrity checks on any employer before you apply" },
