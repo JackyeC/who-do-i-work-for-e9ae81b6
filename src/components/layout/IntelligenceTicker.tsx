@@ -8,7 +8,6 @@ export function IntelligenceTicker() {
 
   const hasRealItems = items && items.length > 0;
 
-  // Calculate scroll duration: ~18px per char, ~60px/s, min 60s
   const totalChars = hasRealItems
     ? items.reduce((sum, i) => sum + (i.company_name?.length || 0) + i.message.length + (i.source_tag?.length || 0) + 10, 0)
     : FALLBACK_MESSAGE.length;
@@ -16,50 +15,43 @@ export function IntelligenceTicker() {
 
   return (
     <div
-      className="fixed top-0 left-0 right-0 overflow-hidden whitespace-nowrap h-[36px] flex items-center"
-      style={{
-        background: "#0a0a0e",
-        borderBottom: "1px solid rgba(255,255,255,0.08)",
-        zIndex: 1001,
-      }}
+      className="fixed top-0 left-0 right-0 overflow-hidden whitespace-nowrap h-[36px] flex items-center bg-background border-b border-border"
+      style={{ zIndex: 1001 }}
     >
       {hasRealItems ? (
         <div
           className="ticker-track"
           style={{ ["--ticker-duration" as string]: `${duration}s` }}
         >
-          {/* Render items twice for seamless loop */}
           {[...items, ...items].map((item, i) => (
             <span key={`${item.id}-${i}`} className="inline-flex items-center">
-              {/* Color-coded left accent */}
               <span
                 className="inline-block w-[3px] h-[18px] rounded-sm mr-2 shrink-0"
                 style={{ background: getTickerItemColor(item.item_type) }}
               />
               {item.company_name && (
                 <>
-                  <span style={{ fontFamily: "'DM Sans', sans-serif", fontSize: "13px", fontWeight: 700, color: "#f0ebe0" }}>
+                  <span className="font-sans text-ticker font-bold text-foreground">
                     {item.company_name}
                   </span>
-                  <span style={{ color: "#f0c040", margin: "0 4px", fontWeight: 400 }}>:</span>
+                  <span className="text-primary mx-1 font-normal">:</span>
                 </>
               )}
-              <span style={{ fontFamily: "'DM Sans', sans-serif", fontSize: "13px", fontWeight: 400, color: "#b8b4a8" }}>
+              <span className="font-sans text-ticker font-normal text-muted-foreground">
                 {item.message}
               </span>
               {item.source_tag && (
-                <span style={{ fontFamily: "'DM Sans', sans-serif", fontSize: "10px", color: "#3d3a4a", marginLeft: "6px" }}>
+                <span className="font-sans text-[10px] text-muted-foreground/50 ml-1.5">
                   · {item.source_tag}
                 </span>
               )}
-              {/* Separator dot */}
-              <span style={{ color: "#f0c040", margin: "0 16px", fontSize: "13px" }}>·</span>
+              <span className="text-primary mx-4 text-ticker">·</span>
             </span>
           ))}
         </div>
       ) : (
         <div className="flex items-center justify-center w-full">
-          <span style={{ fontFamily: "'DM Sans', sans-serif", fontSize: "13px", fontWeight: 400, color: "#b8b4a8" }}>
+          <span className="font-sans text-ticker font-normal text-muted-foreground">
             {FALLBACK_MESSAGE}
           </span>
         </div>
