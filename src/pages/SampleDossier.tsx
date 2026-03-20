@@ -146,7 +146,6 @@ export default function SampleDossier() {
         {activeView === "interview-kit" ? (
           <InterviewKit />
         ) : (
-        {/* Dossier document */}
         <div className="w-full max-w-[640px] space-y-5">
           {/* ── Application header card ── */}
           <div
