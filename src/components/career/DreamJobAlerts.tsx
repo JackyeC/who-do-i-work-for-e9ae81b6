@@ -90,7 +90,7 @@ export function DreamJobAlerts() {
           description={
             hasProfileData
               ? "Your career profile is set up. Run a scan to match your skills and preferences against open roles."
-              : "Upload your resume and build a career profile first, then we'll match you with dream jobs from companies in the directory."
+              : "Upload your resume and build a career profile first, then we'll match you with aligned roles from companies in the directory."
           }
         />
         {hasProfileData && (
