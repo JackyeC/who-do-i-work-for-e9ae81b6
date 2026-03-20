@@ -12,7 +12,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 export function ProtectedRoute({ children }: { children: React.ReactNode }) {
   const { isLoaded } = useClerkAuth();
   const location = useLocation();
-  const isDossierRoute = location.pathname.startsWith("/dossier");
+  const isDossierRoute = /^\/dossier(?:\/|$)/.test(location.pathname);
 
   if (!isLoaded) return null;
   if (isDossierRoute) return <>{children}</>;
@@ -20,7 +20,7 @@ export function ProtectedRoute({ children }: { children: React.ReactNode }) {
   return (
     <>
       <SignedOut>
-        <RedirectToSignIn />
+        {isDossierRoute ? <>{children}</> : <RedirectToSignIn />}
       </SignedOut>
       <SignedIn>
         <ProtectedRouteInner>{children}</ProtectedRouteInner>
