@@ -75,19 +75,11 @@ const SCAN_PHASES = [
 
 const OPENING_MESSAGE: Msg = {
   role: "assistant",
-  content: `## 🛡️ Intelligence Advisor — Online
+  content: `Welcome — I'm your career intelligence advisor.
 
-**System:** People Puzzles Proprietary Talent Framework v2.6
-**Engine:** WDIWF Intelligence Engine
-**Status:** All intelligence feeds active
+I analyze **company filings**, **political spending**, **workforce signals**, and **leadership data** to give you the full picture before you make a decision.
 
----
-
-I cross-reference **SEC filings**, **EEO-1 data**, **labor market benchmarks**, **WARN notices**, and **workforce signals** to deliver objective intelligence briefings.
-
-Select an intelligence category below, or ask me anything about a company, offer, or career decision.
-
-*Run the chain first. Always.*`,
+Select a category below, or ask me anything about a company, an offer, or your next career move.`,
 };
 
 const CHAT_URL = `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/ask-jackye`;
@@ -334,7 +326,7 @@ export default function AskJackyePage() {
                 </span>
               </div>
               <div className="text-[10px] text-muted-foreground font-mono">
-                WDIWF Intelligence Engine · Framework v2.6
+                Career Intelligence · Online
               </div>
             </div>
           </div>
