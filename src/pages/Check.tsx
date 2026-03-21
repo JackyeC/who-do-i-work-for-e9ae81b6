@@ -41,6 +41,7 @@ const SCAN_STEPS = [
 function AddCompanyCard({ companyName, onDiscovered }: { companyName: string; onDiscovered: (id: string, slug: string, name: string) => void }) {
   const [scanning, setScanning] = useState(false);
   const [scanStep, setScanStep] = useState(0);
+  const [scanFailed, setScanFailed] = useState(false);
 
   useEffect(() => {
     if (!scanning) return;
@@ -53,6 +54,7 @@ function AddCompanyCard({ companyName, onDiscovered }: { companyName: string; on
   const handleScan = async () => {
     setScanning(true);
     setScanStep(0);
+    setScanFailed(false);
     try {
       const { data, error } = await supabase.functions.invoke("company-discover", {
         body: { companyName, searchQuery: companyName },
@@ -62,14 +64,22 @@ function AddCompanyCard({ companyName, onDiscovered }: { companyName: string; on
         toast.success("Company discovered! Loading intelligence…");
         onDiscovered(data.companyId, data.slug, data.identity?.name || companyName);
       } else {
-        toast.error("No matching company found. Try a different name.");
+        setScanFailed(true);
       }
     } catch {
-      toast.error("Intelligence scan failed. Please try again.");
+      setScanFailed(true);
     } finally {
       setScanning(false);
     }
   };
+
+  if (scanFailed) {
+    return (
+      <div className="p-2">
+        <AuditRequestForm companyName={companyName} onClose={() => setScanFailed(false)} />
+      </div>
+    );
+  }
 
   return (
     <div className="p-4 text-center space-y-3">
