@@ -2,7 +2,7 @@ import { useState, useMemo, useCallback, useEffect, useRef } from "react";
 import { useParams, Link, useNavigate } from "react-router-dom";
 import { useCompanyIntelligence } from "@/hooks/use-company-intelligence";
 import { motion } from "framer-motion";
-import { Building2, ArrowLeft, EyeOff, Loader2, Sparkles, Search, Scan, ExternalLink } from "lucide-react";
+import { Building2, ArrowLeft, EyeOff, Loader2, Sparkles, Search, Scan, ExternalLink, MessageSquareWarning, FileSearch } from "lucide-react";
 import { CompanyLogo } from "@/components/CompanyLogo";
 import { WatchCompanyButton } from "@/components/WatchCompanyButton";
 import { ShareableScorecard } from "@/components/ShareableScorecard";
