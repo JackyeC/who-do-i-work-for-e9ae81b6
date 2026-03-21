@@ -115,6 +115,8 @@ const SavedPage = lazy(() => import("./pages/Saved"));
 const TrackerPage = lazy(() => import("./pages/Tracker"));
 const ApplyKitPage = lazy(() => import("./pages/ApplyKit"));
 const DossierCoachingGuide = lazy(() => import("./pages/DossierCoachingGuide"));
+const InterviewDossier = lazy(() => import("./pages/InterviewDossier"));
+const RecruiterBrief = lazy(() => import("./pages/RecruiterBrief"));
 
 // Lazy-load floating widgets — not needed on first paint
 const AskJackyeWidget = lazy(() => import("./components/AskJackyeWidget").then(m => ({ default: m.AskJackyeWidget })));
@@ -155,6 +157,8 @@ const App = () => (
               <Suspense fallback={<RouteLoader />}>
                 <Routes>
                   <Route path="/" element={<Index />} />
+                  <Route path="/interview" element={<InterviewDossier />} />
+                  <Route path="/recruiter" element={<RecruiterBrief />} />
                   <Route path="/ask-jackye" element={<AskJackye />} />
                   <Route path="/reality-check" element={<ProtectedRoute><RealityCheck /></ProtectedRoute>} />
                   <Route path="/would-you-work-here" element={<WouldYouWorkHere />} />
