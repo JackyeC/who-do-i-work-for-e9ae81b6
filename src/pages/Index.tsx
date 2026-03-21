@@ -29,6 +29,8 @@ const Index = forwardRef<HTMLDivElement>((_, ref) => {
   const { user, loading: authLoading } = useAuth();
   const { isLoaded } = useClerkWithFallback();
 
+  if (!isLoaded || authLoading) return null;
+
   const [rivalries, setRivalries] = useState<any[] | null>(null);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
