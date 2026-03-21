@@ -81,7 +81,7 @@ export function TopBar() {
   const navigate = useNavigate();
   const location = useLocation();
   const { user, signOut } = useAuth();
-  const { isLoaded } = useClerkWithFallback();
+  const { isLoaded, isFallback } = useClerkWithFallback();
   const { isDemoSafe, toggleDemoSafe, canToggle } = useDemoSafeMode();
   const { hasTakenQuiz } = usePersona();
 
