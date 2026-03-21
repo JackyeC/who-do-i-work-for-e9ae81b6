@@ -117,8 +117,8 @@ async function generateUserBriefing(supabase: any, userId: string) {
   // Fetch user profile
   const { data: user } = await supabase
     .from("profiles")
-    .select("id, user_id, user_values, industries, interests, location_state")
-    .or(`id.eq.${userId},user_id.eq.${userId}`)
+    .select("id, user_values, industries, interests, location_state")
+    .eq("id", userId)
     .maybeSingle();
 
   if (!user) {
