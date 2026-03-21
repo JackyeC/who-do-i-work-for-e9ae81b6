@@ -198,28 +198,12 @@ export default function SearchResults() {
                 </p>
               </>
             ) : (
-              <>
-                <Search className="w-8 h-8 text-muted-foreground mx-auto mb-4" />
-                <h2 className="text-lg font-semibold text-foreground mb-2">
-                  🔍 Company not vetted yet.
-                </h2>
-                <p className="text-sm text-muted-foreground mb-2 max-w-md mx-auto">
-                  <span className="font-medium text-foreground">"{initialQuery}"</span> isn't in our vetted database.
-                  Start a Global Intelligence Scan to pull leadership, political spending, and workplace policy signals.
-                </p>
-                <Badge variant="outline" className="text-[10px] mb-4">
-                  <AlertTriangle className="w-2.5 h-2.5 mr-1" />
-                  AI Draft — Jackye's Vetting Pending
-                </Badge>
-                <br />
-                <Button onClick={handleManualDiscover} disabled={isDiscovering} className="gap-2">
-                  {isDiscovering ? <Loader2 className="w-4 h-4 animate-spin" /> : <Search className="w-4 h-4" />}
-                  Start Global Intelligence Scan
-                </Button>
-                <p className="text-[11px] text-muted-foreground mt-3">
-                  Results are AI-generated previews. Full vetting requires Jackye's review.
-                </p>
-              </>
+              <div className="max-w-md mx-auto">
+                <AuditRequestForm
+                  companyName={initialQuery}
+                  onClose={() => setSearchParams({})}
+                />
+              </div>
             )}
           </div>
         )}
