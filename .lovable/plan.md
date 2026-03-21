@@ -1,33 +1,37 @@
 
 
-# Fix Flagged Candidate Reasoning + Recruiter View Quality
+# Fix Ticker Company Links
 
-## Two Problems
+## Problem
+Two issues cause "company not found" when clicking ticker items:
 
-### 1. Flagged candidate reasons not visible in PACDetailDrawer
-The `flag_reason` data **exists in the database** (e.g., "Anti-net neutrality stance", "Sponsored anti-privacy legislation") and is already shown inline on some pages (WhoDoIWorkFor, CandidateDetailDrawer, PolicyReceiptsPanel). But in the **PACDetailDrawer** — the main place users explore PAC spending — flagged candidates only show a red "Flagged" badge with no reason. The reasons are collapsed into a single combined string at the bottom of the section, which is easy to miss.
+1. **Wrong route**: Ticker links to `/company/{slug}` which is login-gated (`ProtectedRoute`). The public dossier page is at `/dossier/{slug}`.
 
-### 2. Recruiter View card shows fake/generic data
-The `useCompanyIntegrity` hook tries to call an external API (`wdiwf-integrity-api.onrender.com`), and when it fails (which it does), it falls back to a **mock function** that generates meaningless text like *"Meta shows moderate risk indicators based on WDIWF's intelligence pipeline."* The scores (Reality Gap: 70, Insider Score: 65) are computed from `companyName.length % 4` — literally the character count of the name. This is misleading.
+2. **Slug mismatch**: The ticker generates slugs from `company_name` via regex (e.g. "Apple Inc." → `apple-inc`), but actual DB slugs differ (e.g. `apple`, `meta`, `google-alphabet`). Examples:
+   - "Meta Platforms (Facebook)" → generates `meta-platforms-facebook`, actual slug: `meta`
+   - "Alphabet Inc. (Google)" → generates `alphabet-inc-google`, actual slug: `google-alphabet`
+   - "Apple Inc." → generates `apple-inc`, actual slug: `apple`
 
-## Plan
+## Fix
 
-### Step 1: Show flag_reason inline on each candidate in PACDetailDrawer
-In `src/components/PACDetailDrawer.tsx`, add the `flag_reason` text directly under each flagged candidate row (lines 294–308), so users can see **why** each person is flagged right next to their name and amount. Keep the summary block at the bottom as a recap.
+### Step 1: Add `company_slug` to ticker query
+- Modify `use-ticker-items.ts` to join against the `companies` table (via `company_name`) and return the real `slug`
+- Since `ticker_items` doesn't have a `company_id` foreign key, we'll do a subquery or add the slug lookup in the query
 
-### Step 2: Replace mock Recruiter View with real DB-derived data
-In `src/hooks/use-company-integrity.ts`, replace the `getMockResult` fallback with a function that queries actual database tables:
-- **Reality Gap score**: derive from `company_public_stances` gap values (count of "Large"/"Medium" gaps → higher score)
-- **Insider Score**: use `insider_score` if stored, or derive from executive concentration data
-- **Risk level**: compute from civic_footprint_score + signal count
-- **Summary**: generate from actual company data (jackye_insight, signal categories, score)
+**Alternative (simpler)**: Add a lookup in the component — fetch the slug from the `companies` table by matching `company_name`, or better yet, just query the slug inline in the existing ticker query using a Postgres subselect.
 
-This ensures the Recruiter View card shows real, company-specific intelligence instead of character-count-derived nonsense.
+**Simplest approach**: Modify the `use-ticker-items.ts` query to also return a computed slug by joining companies on name. Since this is a Supabase client query and can't do arbitrary joins on non-FK columns easily, instead we'll:
+- Fetch the company name → slug mapping separately
+- Or modify `IntelligenceTicker.tsx` to use `/dossier/` route and look up slugs
 
-### Step 3: Add "why flagged" context to the Recruiter View summary
-When the company has flagged candidates in its PAC data, include a line in the recruiter summary noting how many flagged recipients exist and their top reasons.
+### Step 2: Change link route from `/company/` to `/dossier/`
+- In `IntelligenceTicker.tsx`, change the `Link` `to` from `/company/...` to `/dossier/{actual_slug}`
 
-## Files to Modify
-- `src/components/PACDetailDrawer.tsx` — inline flag_reason per candidate
-- `src/hooks/use-company-integrity.ts` — replace mock with real DB queries
+### Implementation approach
+1. **`use-ticker-items.ts`**: Also fetch a slug map from `companies` table (names → slugs) alongside ticker items
+2. **`IntelligenceTicker.tsx`**: Use the slug map to resolve the correct slug, link to `/dossier/{slug}` instead of `/company/{generated-slug}`
+
+## Files to modify
+- `src/hooks/use-ticker-items.ts` — add slug lookup helper
+- `src/components/layout/IntelligenceTicker.tsx` — use real slugs and `/dossier/` route
 
