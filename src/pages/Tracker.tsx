@@ -62,7 +62,7 @@ export default function Tracker() {
   const counts = {
     total: apps.length,
     interviewing: apps.filter(a => a.status === "interviewing").length,
-    offer: apps.filter(a => a.status === "offer").length,
+    offer: apps.filter(a => a.status === "offer_rejected").length,
   };
 
   const handleAdd = () => {
