@@ -56,10 +56,9 @@ export default function EarlyAccess() {
     if (stored === "true") setAlreadySigned(true);
 
     supabase
-      .from("early_access_signups")
-      .select("id", { count: "exact", head: true })
-      .then(({ count }) => {
-        if (count != null) setSignupCount(BASE_COUNT + count);
+      .rpc("get_early_access_count")
+      .then(({ data }) => {
+        if (data != null) setSignupCount(BASE_COUNT + Number(data));
       });
   }, []);
 
