@@ -8,7 +8,7 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import {
-  Plus, Briefcase, Users, Gift, Archive, GripVertical, Building2, Calendar, Shield,
+  Plus, Briefcase, Users, Gift, GripVertical, Building2, Calendar, Shield,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { motion } from "framer-motion";
