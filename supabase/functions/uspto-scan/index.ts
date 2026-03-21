@@ -107,8 +107,12 @@ async function queryGooglePatents(
           filing_date: pat.filing_date || undefined,
           grant_date: pat.grant_date || undefined,
           publication_date: pat.publication_date || undefined,
-          assignees: (pat.assignee || []).map((a: any) => a.name || '').filter(Boolean),
-          inventors: (pat.inventor || []).map((i: any) => i.name || '').filter(Boolean),
+          assignees: Array.isArray(pat.assignee)
+            ? pat.assignee.map((a: any) => typeof a === 'string' ? a : (a?.name || '')).filter(Boolean)
+            : (typeof pat.assignee === 'string' ? [pat.assignee] : []),
+          inventors: Array.isArray(pat.inventor)
+            ? pat.inventor.map((i: any) => typeof i === 'string' ? i : (i?.name || '')).filter(Boolean)
+            : (typeof pat.inventor === 'string' ? [pat.inventor] : []),
           snippet: (pat.snippet || '').replace(/<[^>]*>/g, '').trim() || undefined,
         });
       }
