@@ -7,6 +7,9 @@ import { createClient } from 'https://esm.sh/@supabase/supabase-js@2';
 
 const FEC_BASE = 'https://api.open.fec.gov/v1';
 
+// FEC rate limits: 120 requests/minute, 1000/day for DEMO_KEY
+const sleep = (ms: number) => new Promise(r => setTimeout(r, ms));
+
 // Valid FEC committee_type codes
 const VALID_COMMITTEE_TYPES = new Set([
   'C', 'D', 'E', 'H', 'I', 'N', 'O', 'P', 'Q', 'S', 'U', 'V', 'W', 'X', 'Y', 'Z'
@@ -108,6 +111,7 @@ async function fecFetch(endpoint: string, params: Record<string, string | string
 
   console.log(`[sync-openfec] FEC request: ${endpoint} params=${JSON.stringify(params)}`);
 
+  await sleep(400); // Rate limit: 120 req/min max
   const resp = await fetch(url.toString());
   if (!resp.ok) {
     const errText = await resp.text();
@@ -227,7 +231,6 @@ Deno.serve(async (req) => {
           }
         }
         console.log(`[sync-openfec] "${searchName}": ${committees.length} committees`);
-        await new Promise(r => setTimeout(r, 300));
       } catch (e: any) {
         if (e.upstreamStatus === 422) {
           console.warn(`[sync-openfec] FEC validation error for "${searchName}": ${e.upstreamBody}`);
@@ -335,7 +338,6 @@ Deno.serve(async (req) => {
           }
 
           if (!lastIndex || disbursements.length < 100) break;
-          await new Promise(r => setTimeout(r, 500));
         } catch (e: any) {
           if (e.upstreamStatus === 422) {
             console.error(`[sync-openfec] FEC validation error for ${committee.committee_id}: ${e.upstreamBody}`);
@@ -345,7 +347,6 @@ Deno.serve(async (req) => {
           break;
         }
       }
-      await new Promise(r => setTimeout(r, 300));
     }
 
     // ─── Step 3: Individual contributions by employer (using all name variants) ───
@@ -520,7 +521,6 @@ Deno.serve(async (req) => {
             }
           }
         }
-        await new Promise(r => setTimeout(r, 500));
       } catch (e: any) {
         if (e.upstreamStatus === 422) {
           console.error(`[sync-openfec] FEC validation error on individual contributions: ${e.upstreamBody}`);

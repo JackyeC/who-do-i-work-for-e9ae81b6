@@ -6,13 +6,18 @@ const corsHeaders = {
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2';
 
 // DOL enforcement data API
-const DOL_ENFORCEMENT_BASE = 'https://enforcedata.dol.gov/api';
+// NOTE: enforcedata.dol.gov was decommissioned Feb 23, 2026.
+// New portal: apiprod.dol.gov — but OSHA/WHD data not yet migrated.
+const DOL_LEGACY_BASE = 'https://enforcedata.dol.gov/api';
+const DOL_NEW_BASE = 'https://apiprod.dol.gov/v4/get';
 
-// OSHA enforcement
-const OSHA_BASE = 'https://enforcedata.dol.gov/api/osha_inspection';
+// Legacy endpoints (decommissioned)
+const OSHA_LEGACY = `${DOL_LEGACY_BASE}/osha_inspection`;
+const WHD_LEGACY = `${DOL_LEGACY_BASE}/whd_compliance`;
 
-// Wage & Hour (WHD) enforcement
-const WHD_BASE = 'https://enforcedata.dol.gov/api/whd_compliance';
+// New endpoints (OSHA data not yet migrated)
+const OSHA_NEW = `${DOL_NEW_BASE}/OSHA/inspection/json`;
+const WHD_NEW = `${DOL_NEW_BASE}/WHD/compliance/json`;
 
 function normalizeCompanyName(name: string): string {
   return name
@@ -21,38 +26,77 @@ function normalizeCompanyName(name: string): string {
     .toUpperCase();
 }
 
-async function searchDOLEnforcement(endpoint: string, companyName: string, searchNames: string[]): Promise<any[]> {
+async function searchDOLEnforcement(
+  legacyEndpoint: string,
+  newEndpoint: string,
+  companyName: string,
+  searchNames: string[],
+): Promise<{ results: any[]; dataGap: boolean }> {
+  console.warn(`[sync-workplace-enforcement] WARNING: enforcedata.dol.gov API was decommissioned Feb 2026. Trying new + legacy endpoints.`);
   const allResults: any[] = [];
   const namesToSearch = [companyName, ...searchNames.slice(0, 2)].map(normalizeCompanyName);
   const uniqueNames = [...new Set(namesToSearch)];
+  let dataGap = false;
 
   for (const name of uniqueNames) {
+    const encoded = encodeURIComponent(name);
+    let found = false;
+
+    // Attempt 1: New DOL data portal
     try {
-      const encoded = encodeURIComponent(name);
-      const url = `${endpoint}?trade_nm=${encoded}&page=0&size=20`;
-
-      const resp = await fetch(url, {
-        headers: { 'Accept': 'application/json' },
-      });
-
-      if (!resp.ok) {
-        console.warn(`[sync-workplace-enforcement] ${endpoint} returned ${resp.status} for "${name}"`);
-        continue;
+      const newUrl = `${newEndpoint}?trade_nm=${encoded}&page=0&size=20`;
+      const newResp = await fetch(newUrl, { headers: { 'Accept': 'application/json' } });
+      if (newResp.ok) {
+        const ct = newResp.headers.get('content-type') || '';
+        if (ct.includes('json')) {
+          const data = await newResp.json();
+          if (Array.isArray(data) && data.length > 0) {
+            console.log(`[sync-workplace-enforcement] New DOL portal returned ${data.length} records for "${name}"`);
+            allResults.push(...data);
+            found = true;
+          }
+        }
       }
-
-      const data = await resp.json();
-      if (Array.isArray(data)) {
-        allResults.push(...data);
-      }
-
-      // Rate limiting
-      await new Promise(r => setTimeout(r, 300));
+      if (!found) console.log(`[sync-workplace-enforcement] New DOL portal: ${newResp.status} for "${name}" — data not yet migrated`);
     } catch (err) {
-      console.warn(`[sync-workplace-enforcement] Error fetching ${endpoint}:`, err);
+      console.warn(`[sync-workplace-enforcement] New DOL portal error (expected):`, err instanceof Error ? err.message : err);
     }
+
+    // Attempt 2: Legacy endpoint (decommissioned)
+    if (!found) {
+      try {
+        const legacyUrl = `${legacyEndpoint}?trade_nm=${encoded}&page=0&size=20`;
+        const resp = await fetch(legacyUrl, { headers: { 'Accept': 'application/json' } });
+        if (resp.ok) {
+          const ct = resp.headers.get('content-type') || '';
+          if (ct.includes('json')) {
+            const data = await resp.json();
+            if (Array.isArray(data) && data.length > 0) {
+              console.log(`[sync-workplace-enforcement] Legacy API unexpectedly returned ${data.length} records for "${name}"`);
+              allResults.push(...data);
+              found = true;
+            }
+          }
+        }
+        if (!found) {
+          console.log(`[sync-workplace-enforcement] Legacy enforcedata.dol.gov: ${resp.status} / non-JSON for "${name}" — confirmed decommissioned`);
+          await resp.text();
+        }
+      } catch (err) {
+        console.warn(`[sync-workplace-enforcement] Legacy API error (expected — API is decommissioned):`, err instanceof Error ? err.message : err);
+      }
+    }
+
+    if (!found) {
+      dataGap = true;
+      console.warn(`[sync-workplace-enforcement] No data source available for "${name}". DOL is migrating data to apiprod.dol.gov.`);
+    }
+
+    // Rate limiting
+    await new Promise(r => setTimeout(r, 300));
   }
 
-  return allResults;
+  return { results: allResults, dataGap };
 }
 
 function mapOSHAToSignal(record: any, companyId: string): any {
@@ -135,26 +179,29 @@ Deno.serve(async (req) => {
     let sourcesScanned = 0;
     let signalsFound = 0;
     const allSignals: any[] = [];
+    const dataGaps: string[] = [];
 
     // 1. OSHA Inspections
     console.log('[sync-workplace-enforcement] Searching OSHA inspections...');
-    const oshaResults = await searchDOLEnforcement(OSHA_BASE, companyName, searchNames);
+    const oshaResult = await searchDOLEnforcement(OSHA_LEGACY, OSHA_NEW, companyName, searchNames);
     sourcesScanned++;
 
-    for (const record of oshaResults.slice(0, 20)) {
+    for (const record of oshaResult.results.slice(0, 20)) {
       allSignals.push(mapOSHAToSignal(record, companyId));
     }
-    console.log(`[sync-workplace-enforcement] OSHA: ${oshaResults.length} records found`);
+    if (oshaResult.dataGap) dataGaps.push('OSHA data temporarily unavailable — DOL is migrating to a new portal');
+    console.log(`[sync-workplace-enforcement] OSHA: ${oshaResult.results.length} records found${oshaResult.dataGap ? ' (DATA GAP)' : ''}`);
 
     // 2. Wage & Hour Division
     console.log('[sync-workplace-enforcement] Searching WHD compliance...');
-    const whdResults = await searchDOLEnforcement(WHD_BASE, companyName, searchNames);
+    const whdResult = await searchDOLEnforcement(WHD_LEGACY, WHD_NEW, companyName, searchNames);
     sourcesScanned++;
 
-    for (const record of whdResults.slice(0, 20)) {
+    for (const record of whdResult.results.slice(0, 20)) {
       allSignals.push(mapWHDToSignal(record, companyId));
     }
-    console.log(`[sync-workplace-enforcement] WHD: ${whdResults.length} records found`);
+    if (whdResult.dataGap) dataGaps.push('WHD wage & hour data temporarily unavailable — DOL is migrating to a new portal');
+    console.log(`[sync-workplace-enforcement] WHD: ${whdResult.results.length} records found${whdResult.dataGap ? ' (DATA GAP)' : ''}`);
 
     // Insert signals
     if (allSignals.length > 0) {
@@ -176,14 +223,17 @@ Deno.serve(async (req) => {
       }
     }
 
-    console.log(`[sync-workplace-enforcement] COMPLETE: ${signalsFound} signals from ${sourcesScanned} sources`);
+    const dataGapDetected = dataGaps.length > 0;
+    console.log(`[sync-workplace-enforcement] COMPLETE: ${signalsFound} signals from ${sourcesScanned} sources${dataGapDetected ? ' [DATA GAPS DETECTED]' : ''}`);
 
     return new Response(JSON.stringify({
       success: true,
       sourcesScanned,
       signalsFound,
-      oshaRecords: oshaResults.length,
-      whdRecords: whdResults.length,
+      oshaRecords: oshaResult.results.length,
+      whdRecords: whdResult.results.length,
+      data_gap_detected: dataGapDetected,
+      data_gaps: dataGaps.length > 0 ? dataGaps : undefined,
     }), { headers: { ...corsHeaders, 'Content-Type': 'application/json' } });
 
   } catch (error) {

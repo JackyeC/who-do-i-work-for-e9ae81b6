@@ -28,112 +28,123 @@ function normalizeCompanyName(name: string): string {
 }
 
 // ─── 1. DOL OSHA Inspections ───
-async function fetchOSHA(companyName: string): Promise<any[]> {
+// NOTE: enforcedata.dol.gov was decommissioned Feb 23, 2026. OSHA data has NOT
+// been migrated to the new DOL data portal (apiprod.dol.gov) yet. We attempt
+// both old and new endpoints; when both fail we return empty and flag the gap.
+async function fetchOSHA(companyName: string): Promise<{ results: any[]; dataGap: boolean }> {
+  console.warn('[OSHA] WARNING: enforcedata.dol.gov API was decommissioned Feb 2026. Using fallback strategy.');
   const names = [normalizeCompanyName(companyName)];
   const allResults: any[] = [];
+  let dataGap = false;
 
   for (const name of names) {
+    const encoded = encodeURIComponent(name);
+
+    // Attempt 1: New DOL data portal (OSHA data not migrated yet, will likely 404)
     try {
-      const encoded = encodeURIComponent(name);
-      // Use the DOL data API v2 with JSON response
-      const url = `https://enforcedata.dol.gov/api/osha_inspection?trade_nm=${encoded}&page=0&size=25`;
-      const resp = await fetch(url, { headers: { 'Accept': 'application/json' } });
-      if (!resp.ok) { console.warn(`[OSHA] ${resp.status} for "${name}"`); await resp.text(); continue; }
-      const contentType = resp.headers.get('content-type') || '';
-      if (!contentType.includes('json')) {
-        console.warn(`[OSHA] Got non-JSON response (${contentType}) for "${name}" — API may have changed`);
-        await resp.text(); // consume body
-        // Fallback: try DOL v2 enforcement search
-        try {
-          const fallbackUrl = `https://enforcedata.dol.gov/api/search?query=${encoded}&agency=osha&size=20`;
-          const fallbackResp = await fetch(fallbackUrl, { headers: { 'Accept': 'application/json' } });
-          const fallbackCt = fallbackResp.headers.get('content-type') || '';
-          if (fallbackResp.ok && fallbackCt.includes('json')) {
-            const fallbackData = await fallbackResp.json();
-            const hits = fallbackData?.hits?.hits || [];
-            for (const hit of hits) {
-              const src = hit._source || {};
-              allResults.push({
-                activity_nr: src.activity_nr,
-                estab_name: src.establishment_name || name,
-                site_state: src.site_state,
-                open_date: src.open_date,
-                close_case_date: src.close_date,
-                total_current_penalty: src.total_penalty ? parseFloat(src.total_penalty) : 0,
-                viol_type_desc: src.violation_type || 'Serious',
-                total_violations: src.total_violations || 1,
-              });
-            }
-          } else {
-            await fallbackResp.text();
+      const newUrl = `https://apiprod.dol.gov/v4/get/OSHA/inspection/json?trade_nm=${encoded}&page=0&size=25`;
+      const newResp = await fetch(newUrl, { headers: { 'Accept': 'application/json' } });
+      if (newResp.ok) {
+        const ct = newResp.headers.get('content-type') || '';
+        if (ct.includes('json')) {
+          const data = await newResp.json();
+          if (Array.isArray(data) && data.length > 0) {
+            console.log(`[OSHA] New DOL portal returned ${data.length} records for "${name}"`);
+            allResults.push(...data);
+            continue; // Success — skip legacy attempts
           }
-        } catch (fallbackErr) {
-          console.warn('[OSHA fallback] Error:', fallbackErr);
         }
-        continue;
       }
-      const data = await resp.json();
-      if (Array.isArray(data)) allResults.push(...data);
-      await new Promise(r => setTimeout(r, 500));
+      console.log(`[OSHA] New DOL portal returned ${newResp.status} for "${name}" — OSHA data not yet migrated`);
     } catch (e) {
-      console.warn('[OSHA] Error:', e);
+      console.warn('[OSHA] New DOL portal error (expected):', e instanceof Error ? e.message : e);
     }
+
+    // Attempt 2: Legacy enforcedata.dol.gov (decommissioned, will likely return HTML or 404)
+    try {
+      const legacyUrl = `https://enforcedata.dol.gov/api/osha_inspection?trade_nm=${encoded}&page=0&size=25`;
+      const resp = await fetch(legacyUrl, { headers: { 'Accept': 'application/json' } });
+      if (resp.ok) {
+        const ct = resp.headers.get('content-type') || '';
+        if (ct.includes('json')) {
+          const data = await resp.json();
+          if (Array.isArray(data) && data.length > 0) {
+            console.log(`[OSHA] Legacy API unexpectedly returned ${data.length} records for "${name}"`);
+            allResults.push(...data);
+            continue;
+          }
+        }
+      }
+      console.log(`[OSHA] Legacy enforcedata.dol.gov returned ${resp.status} / non-JSON for "${name}" — confirmed decommissioned`);
+      await resp.text(); // consume body
+    } catch (e) {
+      console.warn('[OSHA] Legacy API error (expected — API is decommissioned):', e instanceof Error ? e.message : e);
+    }
+
+    // Both APIs failed — flag the data gap
+    dataGap = true;
+    console.warn(`[OSHA] No data source available for "${name}". DOL is migrating OSHA data to apiprod.dol.gov — check back periodically.`);
   }
-  return allResults;
+  return { results: allResults, dataGap };
 }
 
 // ─── 2. DOL WHD Wage & Hour ───
-async function fetchWHD(companyName: string): Promise<any[]> {
+// NOTE: Same decommission issue as OSHA — enforcedata.dol.gov is down.
+async function fetchWHD(companyName: string): Promise<{ results: any[]; dataGap: boolean }> {
+  console.warn('[WHD] WARNING: enforcedata.dol.gov API was decommissioned Feb 2026. Using fallback strategy.');
   const names = [normalizeCompanyName(companyName)];
   const allResults: any[] = [];
+  let dataGap = false;
 
   for (const name of names) {
+    const encoded = encodeURIComponent(name);
+
+    // Attempt 1: New DOL data portal
     try {
-      const encoded = encodeURIComponent(name);
-      const url = `https://enforcedata.dol.gov/api/whd_compliance?trade_nm=${encoded}&page=0&size=25`;
-      const resp = await fetch(url, { headers: { 'Accept': 'application/json' } });
-      if (!resp.ok) { console.warn(`[WHD] ${resp.status} for "${name}"`); await resp.text(); continue; }
-      const contentType = resp.headers.get('content-type') || '';
-      if (!contentType.includes('json')) {
-        console.warn(`[WHD] Got non-JSON response (${contentType}) for "${name}" — API may have changed`);
-        await resp.text();
-        // Fallback: DOL enforcement search for WHD
-        try {
-          const fallbackUrl = `https://enforcedata.dol.gov/api/search?query=${encoded}&agency=whd&size=20`;
-          const fallbackResp = await fetch(fallbackUrl, { headers: { 'Accept': 'application/json' } });
-          const fallbackCt = fallbackResp.headers.get('content-type') || '';
-          if (fallbackResp.ok && fallbackCt.includes('json')) {
-            const fallbackData = await fallbackResp.json();
-            const hits = fallbackData?.hits?.hits || [];
-            for (const hit of hits) {
-              const src = hit._source || {};
-              allResults.push({
-                trade_nm: src.establishment_name || name,
-                st_cd: src.site_state,
-                findings_start_date: src.open_date,
-                findings_end_date: src.close_date,
-                bw_amt: src.back_wages ? parseFloat(src.back_wages) : 0,
-                flsa_mw_bw_amt: 0,
-                flsa_ot_bw_amt: 0,
-                ee_violtd_cnt: src.employees_affected || 0,
-              });
-            }
-          } else {
-            await fallbackResp.text();
+      const newUrl = `https://apiprod.dol.gov/v4/get/WHD/compliance/json?trade_nm=${encoded}&page=0&size=25`;
+      const newResp = await fetch(newUrl, { headers: { 'Accept': 'application/json' } });
+      if (newResp.ok) {
+        const ct = newResp.headers.get('content-type') || '';
+        if (ct.includes('json')) {
+          const data = await newResp.json();
+          if (Array.isArray(data) && data.length > 0) {
+            console.log(`[WHD] New DOL portal returned ${data.length} records for "${name}"`);
+            allResults.push(...data);
+            continue;
           }
-        } catch (fallbackErr) {
-          console.warn('[WHD fallback] Error:', fallbackErr);
         }
-        continue;
       }
-      const data = await resp.json();
-      if (Array.isArray(data)) allResults.push(...data);
-      await new Promise(r => setTimeout(r, 500));
+      console.log(`[WHD] New DOL portal returned ${newResp.status} for "${name}" — WHD data may not be migrated yet`);
     } catch (e) {
-      console.warn('[WHD] Error:', e);
+      console.warn('[WHD] New DOL portal error (expected):', e instanceof Error ? e.message : e);
     }
+
+    // Attempt 2: Legacy enforcedata.dol.gov
+    try {
+      const legacyUrl = `https://enforcedata.dol.gov/api/whd_compliance?trade_nm=${encoded}&page=0&size=25`;
+      const resp = await fetch(legacyUrl, { headers: { 'Accept': 'application/json' } });
+      if (resp.ok) {
+        const ct = resp.headers.get('content-type') || '';
+        if (ct.includes('json')) {
+          const data = await resp.json();
+          if (Array.isArray(data) && data.length > 0) {
+            console.log(`[WHD] Legacy API unexpectedly returned ${data.length} records for "${name}"`);
+            allResults.push(...data);
+            continue;
+          }
+        }
+      }
+      console.log(`[WHD] Legacy enforcedata.dol.gov returned ${resp.status} / non-JSON for "${name}" — confirmed decommissioned`);
+      await resp.text();
+    } catch (e) {
+      console.warn('[WHD] Legacy API error (expected — API is decommissioned):', e instanceof Error ? e.message : e);
+    }
+
+    // Both APIs failed — flag the data gap
+    dataGap = true;
+    console.warn(`[WHD] No data source available for "${name}". DOL is migrating WHD data to apiprod.dol.gov — check back periodically.`);
   }
-  return allResults;
+  return { results: allResults, dataGap };
 }
 
 // ─── 3. NLRB Cases (Union Elections + ULP) ───
@@ -342,24 +353,27 @@ Deno.serve(async (req) => {
 
     const laborSignals: any[] = [];
     const stats = { osha: 0, whd: 0, nlrb: 0, bls: 0 };
+    const dataGaps: string[] = [];
 
     // 1. OSHA
     console.log('[sync-labor-rights] Fetching OSHA data...');
-    const oshaRecords = await fetchOSHA(companyName);
-    for (const r of oshaRecords.slice(0, 25)) {
+    const oshaResult = await fetchOSHA(companyName);
+    for (const r of oshaResult.results.slice(0, 25)) {
       laborSignals.push(mapOSHAToLabor(r, companyId));
     }
-    stats.osha = oshaRecords.length;
-    console.log(`[sync-labor-rights] OSHA: ${oshaRecords.length} records`);
+    stats.osha = oshaResult.results.length;
+    if (oshaResult.dataGap) dataGaps.push('OSHA data temporarily unavailable — DOL is migrating to a new portal');
+    console.log(`[sync-labor-rights] OSHA: ${oshaResult.results.length} records${oshaResult.dataGap ? ' (DATA GAP — DOL API decommissioned)' : ''}`);
 
     // 2. WHD
     console.log('[sync-labor-rights] Fetching WHD data...');
-    const whdRecords = await fetchWHD(companyName);
-    for (const r of whdRecords.slice(0, 25)) {
+    const whdResult = await fetchWHD(companyName);
+    for (const r of whdResult.results.slice(0, 25)) {
       laborSignals.push(mapWHDToLabor(r, companyId));
     }
-    stats.whd = whdRecords.length;
-    console.log(`[sync-labor-rights] WHD: ${whdRecords.length} records`);
+    stats.whd = whdResult.results.length;
+    if (whdResult.dataGap) dataGaps.push('WHD wage & hour data temporarily unavailable — DOL is migrating to a new portal');
+    console.log(`[sync-labor-rights] WHD: ${whdResult.results.length} records${whdResult.dataGap ? ' (DATA GAP — DOL API decommissioned)' : ''}`);
 
     // 3. NLRB
     console.log('[sync-labor-rights] Fetching NLRB data...');
@@ -448,24 +462,27 @@ Deno.serve(async (req) => {
       if (issueErr) console.warn('[sync-labor-rights] issue_signals insert error:', issueErr);
     }
 
-    // Record scan
+    // Record scan (with data gap flag for UI)
+    const dataGapDetected = dataGaps.length > 0;
     await supabase.from('company_signal_scans').insert({
       company_id: companyId,
       signal_category: 'labor_rights',
       signal_type: 'full_scan',
-      confidence_level: 'high',
-      signal_value: `OSHA:${stats.osha} WHD:${stats.whd} NLRB:${stats.nlrb} BLS:${stats.bls}`,
-      source_url: 'https://enforcedata.dol.gov',
+      confidence_level: dataGapDetected ? 'low' : 'high',
+      signal_value: `OSHA:${stats.osha} WHD:${stats.whd} NLRB:${stats.nlrb} BLS:${stats.bls}${dataGapDetected ? ' [DATA GAP: DOL API decommissioned]' : ''}`,
+      source_url: 'https://apiprod.dol.gov',
     }).then(({ error }) => {
       if (error) console.warn('[sync-labor-rights] scan record error:', error);
     });
 
-    console.log(`[sync-labor-rights] COMPLETE: ${laborSignals.length} signals (OSHA:${stats.osha} WHD:${stats.whd} NLRB:${stats.nlrb} BLS:${stats.bls})`);
+    console.log(`[sync-labor-rights] COMPLETE: ${laborSignals.length} signals (OSHA:${stats.osha} WHD:${stats.whd} NLRB:${stats.nlrb} BLS:${stats.bls})${dataGapDetected ? ' [DATA GAPS DETECTED]' : ''}`);
 
     return new Response(JSON.stringify({
       success: true,
       totalSignals: laborSignals.length,
       stats,
+      data_gap_detected: dataGapDetected,
+      data_gaps: dataGaps.length > 0 ? dataGaps : undefined,
     }), { headers: { ...corsHeaders, 'Content-Type': 'application/json' } });
 
   } catch (error) {

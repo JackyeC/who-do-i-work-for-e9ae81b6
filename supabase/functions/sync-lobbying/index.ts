@@ -7,6 +7,8 @@ import { createClient } from 'https://esm.sh/@supabase/supabase-js@2';
 
 const LOBBY_API_BASE = 'https://lda.senate.gov/api/v1';
 
+const sleep = (ms: number) => new Promise(r => setTimeout(r, ms));
+
 // Generate company name variants for matching
 function generateNameVariants(name: string): string[] {
   const base = name.trim();
@@ -83,6 +85,8 @@ Deno.serve(async (req) => {
           }
         }
 
+        await sleep(500); // Rate limit Senate LDA API
+
         // Search as client (company hires a lobbying firm)
         const clientUrl = new URL(`${LOBBY_API_BASE}/filings/`);
         clientUrl.searchParams.set('client_name', variant);
@@ -100,6 +104,8 @@ Deno.serve(async (req) => {
             console.log(`[sync-lobbying] Found ${clientData.results.length} client filings for "${variant}"`);
           }
         }
+
+        await sleep(500); // Rate limit Senate LDA API
 
         // Also search previous year for broader coverage
         const prevYear = (new Date().getFullYear() - 1).toString();
@@ -120,7 +126,7 @@ Deno.serve(async (req) => {
           }
         }
 
-        await new Promise(r => setTimeout(r, 300));
+        await sleep(500); // Rate limit Senate LDA API
 
         // If we have enough results, stop searching more variants
         if (allFilings.length >= 20) break;

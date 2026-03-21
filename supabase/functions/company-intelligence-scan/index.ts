@@ -266,6 +266,11 @@ Deno.serve(async (req) => {
     const errorLog: any[] = [];
     const retryQueue: { mod: typeof ALL_MODULES[0]; isPipeline: boolean }[] = [];
 
+    // Circuit breaker: stop processing if too many consecutive modules fail
+    let consecutiveFailures = 0;
+    const CIRCUIT_BREAKER_THRESHOLD = 3;
+    let circuitBreakerTripped = false;
+
     // Helper: run a single module and return its result
     async function runModule(mod: typeof ALL_MODULES[0], isPipeline: boolean, isRetry = false) {
       const moduleStartedAt = new Date().toISOString();
@@ -327,6 +332,7 @@ Deno.serve(async (req) => {
 
           if (isTrulyCompleted(resolvedStatus)) {
             trulyCompleted++;
+            consecutiveFailures = 0; // Reset circuit breaker on success
             if (resolvedStatus === 'completed_with_signals') withSignals++;
           } else {
             noSourcesFound++;
@@ -338,6 +344,7 @@ Deno.serve(async (req) => {
         } else {
           const errText = await moduleResp.text().catch(() => 'Unknown error');
           failed++;
+          consecutiveFailures++;
 
           let parsedErr: any = {};
           try { parsedErr = JSON.parse(errText); } catch { /* raw text */ }
@@ -384,6 +391,7 @@ Deno.serve(async (req) => {
         }
 
         failed++;
+        consecutiveFailures++;
         moduleStatuses[mod.key] = {
           status: 'failed', label: mod.label, phase: mod.phase,
           error: msg, errorType: isTimeout ? 'timeout' : 'exception',
@@ -407,10 +415,21 @@ Deno.serve(async (req) => {
       }).eq('id', scanId);
     }
 
-    // Helper: run module and immediately persist progress
+    // Helper: run module and immediately persist progress (with circuit breaker)
     async function runAndSave(mod: typeof ALL_MODULES[0], isPipeline: boolean) {
+      if (circuitBreakerTripped) {
+        moduleStatuses[mod.key] = { status: 'skipped', label: mod.label, phase: mod.phase, reason: 'Circuit breaker tripped — too many consecutive failures' };
+        console.warn(`[intelligence-scan] SKIPPING ${mod.key} — circuit breaker tripped after ${CIRCUIT_BREAKER_THRESHOLD} consecutive failures`);
+        return;
+      }
       moduleStatuses[mod.key] = { status: 'in_progress', label: mod.label, phase: mod.phase, startedAt: new Date().toISOString() };
       await runModule(mod, isPipeline);
+      if (consecutiveFailures >= CIRCUIT_BREAKER_THRESHOLD && !circuitBreakerTripped) {
+        circuitBreakerTripped = true;
+        const msg = `Circuit breaker tripped: ${consecutiveFailures} consecutive module failures. Stopping remaining modules to prevent cascading failures.`;
+        console.error(`[intelligence-scan] ${msg}`);
+        warnings.push(msg);
+      }
       await updateProgress();
     }
 
@@ -655,6 +674,7 @@ Deno.serve(async (req) => {
       warnings,
       entityResolution: resolutionLog,
       searchNamesUsed: searchNames.length,
+      circuit_breaker_tripped: circuitBreakerTripped,
     }), { headers: { ...corsHeaders, 'Content-Type': 'application/json' } });
 
   } catch (error) {
