@@ -507,10 +507,12 @@ export default function Companies() {
 
                       {/* Open roles */}
                       {org.openRoles > 0 ? (
-                        <Button size="sm" variant="outline" className="w-full gap-1.5 text-xs mt-auto">
-                          <Briefcase className="w-3 h-3" />
-                          Open Roles: {org.openRoles}
-                        </Button>
+                        <Link to={`/browse?search=${encodeURIComponent(org.name)}`}>
+                          <Button size="sm" variant="outline" className="w-full gap-1.5 text-xs mt-auto">
+                            <Briefcase className="w-3 h-3" />
+                            Open Roles: {org.openRoles}
+                          </Button>
+                        </Link>
                       ) : (
                         <Button size="sm" variant="ghost" className="w-full text-xs mt-auto opacity-50" disabled>
                           No open roles
