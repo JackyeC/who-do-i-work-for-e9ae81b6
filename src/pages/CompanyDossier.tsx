@@ -1,6 +1,8 @@
-import { useMemo } from "react";
+import { useMemo, useState } from "react";
 import { ContentProtector } from "@/components/ContentProtector";
 import { useParams, Link } from "react-router-dom";
+import { CompanyZeroState } from "@/components/CompanyZeroState";
+import { AuditRequestForm } from "@/components/AuditRequestForm";
 import { useQuery } from "@tanstack/react-query";
 import { usePageSEO } from "@/hooks/use-page-seo";
 import { getOGImageUrl } from "@/lib/social-share";
