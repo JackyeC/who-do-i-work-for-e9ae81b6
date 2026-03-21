@@ -1,43 +1,33 @@
 
 
-# Fix Company Dossier Page — Remaining Issues
+# Fix Flagged Candidate Reasoning + Recruiter View Quality
 
-## Issues Found
+## Two Problems
 
-1. **Slug typo**: MAC Cosmetics stored as `mac-costmetics` instead of `mac-cosmetics`
-2. **No fallback state on CompanyDossier page**: The no-data fallback was only added to `CompanyProfile.tsx`, not `CompanyDossier.tsx` — which is the actual public-facing dossier page at `/dossier/:id`
-3. **3-second blank loading** while Clerk times out before content renders
-4. **CompanyProfile page is login-gated**: `/company/:id` is behind `ProtectedRoute`, so unauthenticated users never see it. The public route is `/dossier/:id`
-5. **No Jackye's Insight on the dossier page** even though it was added to CompanyProfile
-6. **Remaining data seeding incomplete**: 310 issue signals and all public stances still pending
+### 1. Flagged candidate reasons not visible in PACDetailDrawer
+The `flag_reason` data **exists in the database** (e.g., "Anti-net neutrality stance", "Sponsored anti-privacy legislation") and is already shown inline on some pages (WhoDoIWorkFor, CandidateDetailDrawer, PolicyReceiptsPanel). But in the **PACDetailDrawer** — the main place users explore PAC spending — flagged candidates only show a red "Flagged" badge with no reason. The reasons are collapsed into a single combined string at the bottom of the section, which is easy to miss.
+
+### 2. Recruiter View card shows fake/generic data
+The `useCompanyIntegrity` hook tries to call an external API (`wdiwf-integrity-api.onrender.com`), and when it fails (which it does), it falls back to a **mock function** that generates meaningless text like *"Meta shows moderate risk indicators based on WDIWF's intelligence pipeline."* The scores (Reality Gap: 70, Insider Score: 65) are computed from `companyName.length % 4` — literally the character count of the name. This is misleading.
 
 ## Plan
 
-### Step 1: Fix the slug typo in database
-- Update `mac-costmetics` → `mac-cosmetics` via migration
+### Step 1: Show flag_reason inline on each candidate in PACDetailDrawer
+In `src/components/PACDetailDrawer.tsx`, add the `flag_reason` text directly under each flagged candidate row (lines 294–308), so users can see **why** each person is flagged right next to their name and amount. Keep the summary block at the bottom as a recap.
 
-### Step 2: Add no-data fallback to CompanyDossier.tsx
-- When a company has all scores at 0, no signals, and no insight, show the "We don't have receipts on this company yet" block with:
-  - CompanyZeroState scan button
-  - AuditRequestForm fallback
-- Place this after the overview/basics layer, before the paywall layers
+### Step 2: Replace mock Recruiter View with real DB-derived data
+In `src/hooks/use-company-integrity.ts`, replace the `getMockResult` fallback with a function that queries actual database tables:
+- **Reality Gap score**: derive from `company_public_stances` gap values (count of "Large"/"Medium" gaps → higher score)
+- **Insider Score**: use `insider_score` if stored, or derive from executive concentration data
+- **Risk level**: compute from civic_footprint_score + signal count
+- **Summary**: generate from actual company data (jackye_insight, signal categories, score)
 
-### Step 3: Add Jackye's Insight to CompanyDossier.tsx
-- Render `jackye_insight` (or `description`) as a styled coaching block inside the overview content, matching what was done in CompanyProfile
+This ensures the Recruiter View card shows real, company-specific intelligence instead of character-count-derived nonsense.
 
-### Step 4: Seed remaining issue signals and public stances
-- Insert the remaining 310 issue signals from the uploaded SQL
-- Insert public stances data, working around the `gap` column constraint
+### Step 3: Add "why flagged" context to the Recruiter View summary
+When the company has flagged candidates in its PAC data, include a line in the recruiter summary noting how many flagged recipients exist and their top reasons.
 
-### Step 5: (Optional) Reduce Clerk timeout impact
-- Consider showing a skeleton/placeholder immediately instead of a blank spinner during the 3-second Clerk timeout on public dossier pages
-
-## Technical Details
-
-**Files to modify:**
-- Database migration: fix `mac-costmetics` slug
-- `src/pages/CompanyDossier.tsx` — add Jackye's Insight block + no-data fallback state
-- Database inserts for remaining issue_signals and company_public_stances
-
-**No schema changes needed.**
+## Files to Modify
+- `src/components/PACDetailDrawer.tsx` — inline flag_reason per candidate
+- `src/hooks/use-company-integrity.ts` — replace mock with real DB queries
 
