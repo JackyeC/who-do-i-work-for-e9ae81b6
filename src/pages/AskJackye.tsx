@@ -326,7 +326,7 @@ export default function AskJackyePage() {
                 </span>
               </div>
               <div className="text-[10px] text-muted-foreground font-mono">
-                WDIWF Intelligence Engine · Framework v2.6
+                Career Intelligence · Online
               </div>
             </div>
           </div>
