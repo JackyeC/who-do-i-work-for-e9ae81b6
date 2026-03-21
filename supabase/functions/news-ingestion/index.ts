@@ -91,7 +91,7 @@ const COMPANY_SLUG_MAP: Record<string, string> = {
   // Add more as your companies table grows
 };
 
-serve(async (req: Request) => {
+Deno.serve(async (req: Request) => {
   try {
     const supabase = createClient(SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY);
 
