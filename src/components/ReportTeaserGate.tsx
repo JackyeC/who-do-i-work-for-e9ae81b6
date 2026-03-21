@@ -25,7 +25,7 @@ export function ReportTeaserGate({ children, teaser, companyName, hiddenSignalCo
   }
 
   return (
-    <div className="relative">
+    <div className="relative overflow-hidden">
       <div className="mb-4">{teaser}</div>
 
       <div className="relative">

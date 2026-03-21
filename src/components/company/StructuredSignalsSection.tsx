@@ -1,11 +1,12 @@
 import { Badge } from "@/components/ui/badge";
 import { EmptyStateExplainer } from "@/components/company/EmptyStateExplainer";
 import { OffTheRecordSignals } from "@/components/company/OffTheRecordSignals";
+import { ExpandableSignalItem } from "@/components/company/ExpandableSignalItem";
 import { cn } from "@/lib/utils";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { getUiStatement } from "@/lib/signalPersonalization";
-import { AlertTriangle, TrendingUp, TrendingDown, Minus } from "lucide-react";
+import { AlertTriangle } from "lucide-react";
 import { safeSignalSummary, mapToCategory, TAXONOMY_MAP } from "@/utils/signalTextSanitizer";
 
 interface Signal {
@@ -14,6 +15,8 @@ interface Signal {
   recency: string;
   uiStatement?: string;
   direction?: string;
+  detail?: string;
+  deepLinks?: { label: string; to: string }[];
 }
 
 interface SignalCategoryProps {
@@ -29,32 +32,6 @@ interface SignalCategoryProps {
     whatWeSee?: string;
   };
 }
-
-const CONFIDENCE_COLOR: Record<string, string> = {
-  Low: "border-destructive/30 text-destructive",
-  Medium: "border-[hsl(var(--civic-yellow))]/30 text-[hsl(var(--civic-yellow))]",
-  High: "border-[hsl(var(--civic-green))]/30 text-[hsl(var(--civic-green))]",
-};
-
-const RECENCY_DOT: Record<string, string> = {
-  "Last 30 days": "bg-[hsl(var(--civic-green))]",
-  "Last 30–60 days": "bg-[hsl(var(--civic-yellow))]",
-  "Last 6 months": "bg-destructive/60",
-  "6+ months ago": "bg-muted-foreground/40",
-  "Unknown": "bg-muted-foreground/20",
-};
-
-const DIRECTION_ICON: Record<string, typeof TrendingUp> = {
-  increase: TrendingUp,
-  decrease: TrendingDown,
-  stable: Minus,
-};
-
-const DIRECTION_COLOR: Record<string, string> = {
-  increase: "text-[hsl(var(--civic-green))]",
-  decrease: "text-destructive",
-  stable: "text-muted-foreground",
-};
 
 function SignalCategory({ title, signals, emptyType, companyName, scanContext }: SignalCategoryProps) {
   if (signals.length === 0 && emptyType) {
@@ -72,34 +49,9 @@ function SignalCategory({ title, signals, emptyType, companyName, scanContext }:
     <div className="py-4 border-b border-border/30 last:border-b-0">
       <p className="text-sm font-semibold text-foreground mb-3">{title}</p>
       <div className="space-y-2.5">
-        {signals.map((s, i) => {
-          const DirIcon = s.direction ? DIRECTION_ICON[s.direction] : null;
-          const dirColor = s.direction ? DIRECTION_COLOR[s.direction] : "";
-          return (
-            <div key={i} className="space-y-1">
-              {/* UI Statement headline */}
-              {s.uiStatement && (
-                <div className="flex items-center gap-2">
-                  {DirIcon && <DirIcon className={cn("w-3.5 h-3.5", dirColor)} />}
-                  <span className="text-sm font-medium text-foreground">{safeSignalSummary(s.uiStatement, "Signal observed")}</span>
-                </div>
-              )}
-              {/* Detail summary */}
-              <div className="flex items-start gap-3 text-sm">
-                <div className="flex-1 text-foreground/85 leading-relaxed">{safeSignalSummary(s.summary)}</div>
-                <div className="flex items-center gap-2 shrink-0">
-                  <div className="flex items-center gap-1">
-                    <div className={cn("w-1.5 h-1.5 rounded-full", RECENCY_DOT[s.recency] || RECENCY_DOT["Unknown"])} />
-                    <span className="text-xs text-muted-foreground whitespace-nowrap">{s.recency}</span>
-                  </div>
-                  <Badge variant="outline" className={cn("text-xs px-1.5 py-0", CONFIDENCE_COLOR[s.confidence])}>
-                    {s.confidence}
-                  </Badge>
-                </div>
-              </div>
-            </div>
-          );
-        })}
+        {signals.map((s, i) => (
+          <ExpandableSignalItem key={i} signal={s} />
+        ))}
       </div>
     </div>
   );
@@ -122,6 +74,7 @@ interface StructuredSignalsProps {
   darkMoneyCount: number;
   companyId: string;
   companyName: string;
+  companySlug: string;
   lastReviewed?: string;
   updatedAt?: string;
   scanContext?: {
@@ -164,7 +117,6 @@ function mapRecency(timestamp: string): string {
   return "6+ months ago";
 }
 
-/** Check if data is stale (>30 days) */
 function getStaleWarning(canonicalSignals: any[] | null): { isStale: boolean; daysSince: number } | null {
   if (!canonicalSignals || canonicalSignals.length === 0) return null;
   const oldest = canonicalSignals.reduce((min, s) => {
@@ -175,7 +127,6 @@ function getStaleWarning(canonicalSignals: any[] | null): { isStale: boolean; da
   return daysSince > 30 ? { isStale: true, daysSince } : null;
 }
 
-/** Hook to fetch pre-computed canonical signals */
 function useCanonicalSignals(companyId: string) {
   return useQuery({
     queryKey: ['canonical-signals', companyId],
@@ -197,19 +148,22 @@ function useCanonicalSignals(companyId: string) {
   });
 }
 
-function buildSignalFromCanonical(canonical: any): Signal {
+function buildSignalFromCanonical(canonical: any, deepLinks?: { label: string; to: string }[], detail?: string): Signal {
   return {
     summary: canonical.summary,
     confidence: mapConfidence(canonical.confidence_level),
     recency: mapRecency(canonical.scan_timestamp),
     uiStatement: getUiStatement(canonical.signal_category, canonical.value_normalized || "not_disclosed"),
     direction: canonical.direction || undefined,
+    detail,
+    deepLinks,
   };
 }
 
 export function StructuredSignalsSection(props: StructuredSignalsProps) {
   const recency = getRecency(props.lastReviewed, props.updatedAt);
   const { data: canonicalSignals } = useCanonicalSignals(props.companyId);
+  const slug = props.companySlug;
 
   const signalMap = new Map(
     (canonicalSignals || []).map(s => [s.signal_category, s])
@@ -221,74 +175,162 @@ export function StructuredSignalsSection(props: StructuredSignalsProps) {
   const hiringSignals: Signal[] = [];
   const hiringCanonical = signalMap.get('hiring_activity');
   if (hiringCanonical?.summary) {
-    hiringSignals.push(buildSignalFromCanonical(hiringCanonical));
+    hiringSignals.push(buildSignalFromCanonical(
+      hiringCanonical,
+      [{ label: "Workforce Brief", to: `/workforce-brief?company=${slug}` }],
+      "Hiring activity is derived from active job postings, ATS detection, and career page analysis. Patterns like sudden surges or drops can indicate restructuring, growth, or ghost-job behavior."
+    ));
   } else {
     if (props.hasJobPostings)
-      hiringSignals.push({ summary: `Active job postings detected. ${props.activeJobCount ? props.activeJobCount + " live role" + (props.activeJobCount !== 1 ? "s" : "") + " indexed." : "No unusual hiring patterns flagged."}`, confidence: "Medium", recency, uiStatement: props.activeJobCount ? `${props.activeJobCount} Active Job${props.activeJobCount !== 1 ? "s" : ""} Found` : "Active Hiring Detected" });
+      hiringSignals.push({
+        summary: `Active job postings detected. ${props.activeJobCount ? props.activeJobCount + " live role" + (props.activeJobCount !== 1 ? "s" : "") + " indexed." : "No unusual hiring patterns flagged."}`,
+        confidence: "Medium", recency,
+        uiStatement: props.activeJobCount ? `${props.activeJobCount} Active Job${props.activeJobCount !== 1 ? "s" : ""} Found` : "Active Hiring Detected",
+        detail: "We scan career pages and aggregator sites to identify active roles. Volume changes over time can signal organizational health or strategic shifts.",
+        deepLinks: [{ label: "Workforce Brief", to: `/workforce-brief?company=${slug}` }],
+      });
     if (props.hasAiHrSignals)
-      hiringSignals.push({ summary: "AI-powered hiring tools detected in application pipeline. Bias audit status is pending.", confidence: "Medium", recency });
+      hiringSignals.push({
+        summary: "AI-powered hiring tools detected in application pipeline. Bias audit status is pending.",
+        confidence: "Medium", recency,
+        detail: "AI hiring tools can affect candidate evaluation. We check for public bias audit disclosures and vendor transparency to assess risk to applicants.",
+      });
     if (props.hasGhostJobs)
-      hiringSignals.push({ summary: "Potential ghost job postings identified — roles listed but not actively being filled.", confidence: "Low", recency });
+      hiringSignals.push({
+        summary: "Potential ghost job postings identified — roles listed but not actively being filled.",
+        confidence: "Low", recency,
+        detail: "Ghost jobs are listings that remain open for extended periods without active hiring. They can inflate company presence on job boards without real intent to fill positions.",
+      });
   }
 
   // ── Workforce Stability ──
   const stabilitySignals: Signal[] = [];
   const stabilityCanonical = signalMap.get('workforce_stability');
   if (stabilityCanonical?.summary) {
-    stabilitySignals.push(buildSignalFromCanonical(stabilityCanonical));
+    stabilitySignals.push(buildSignalFromCanonical(
+      stabilityCanonical,
+      [{ label: "Workforce Brief", to: `/workforce-brief?company=${slug}` }],
+      "Workforce stability is assessed through WARN Act filings, news reports of layoffs, and organizational restructuring signals detected in public filings."
+    ));
   } else {
     if (props.hasWarnNotices)
-      stabilitySignals.push({ summary: "WARN Act notices filed within the past 12 months — potential layoffs or plant closings.", confidence: "High", recency });
+      stabilitySignals.push({
+        summary: "WARN Act notices filed within the past 12 months — potential layoffs or plant closings.",
+        confidence: "High", recency,
+        detail: "The WARN Act requires employers with 100+ employees to provide 60-day notice before mass layoffs or plant closings. Filed notices are a strong indicator of workforce reduction.",
+        deepLinks: [{ label: "Workforce Brief", to: `/workforce-brief?company=${slug}` }],
+      });
     if (props.hasLayoffSignals)
-      stabilitySignals.push({ summary: "Workforce reduction signals detected from news or regulatory filings.", confidence: "Medium", recency });
+      stabilitySignals.push({
+        summary: "Workforce reduction signals detected from news or regulatory filings.",
+        confidence: "Medium", recency,
+        detail: "Layoff signals are gathered from news reports, SEC filings, and social media. They may indicate restructuring, cost-cutting, or strategic pivots.",
+        deepLinks: [{ label: "Workforce Brief", to: `/workforce-brief?company=${slug}` }],
+      });
     if (!props.hasWarnNotices && !props.hasLayoffSignals)
-      stabilitySignals.push({ summary: "No recent WARN notices or layoff signals detected in public records.", confidence: "Medium", recency });
+      stabilitySignals.push({
+        summary: "No recent WARN notices or layoff signals detected in public records.",
+        confidence: "Medium", recency,
+        detail: "The absence of layoff signals in public records is generally positive, but does not guarantee stability. Private companies may restructure without triggering public disclosure requirements.",
+      });
   }
 
   // ── Compensation & Market Position ──
   const compSignals: Signal[] = [];
   const compCanonical = signalMap.get('compensation_transparency');
   if (compCanonical?.summary) {
-    compSignals.push(buildSignalFromCanonical(compCanonical));
+    compSignals.push(buildSignalFromCanonical(
+      compCanonical,
+      undefined,
+      "Compensation transparency reflects whether the company publishes salary ranges, benefits details, and pay equity data. Higher transparency correlates with stronger employer branding."
+    ));
   } else {
     if (props.hasPayEquity)
-      compSignals.push({ summary: "Pay equity data available — signals suggest some level of compensation reporting.", confidence: "Medium", recency });
+      compSignals.push({
+        summary: "Pay equity data available — signals suggest some level of compensation reporting.",
+        confidence: "Medium", recency,
+        detail: "Pay equity disclosures indicate the company tracks and reports on compensation fairness across demographics. This is increasingly expected by candidates and regulators.",
+      });
     if (props.hasBenefitsData)
-      compSignals.push({ summary: "Benefits information has been indexed from public or disclosed sources.", confidence: "Medium", recency });
+      compSignals.push({
+        summary: "Benefits information has been indexed from public or disclosed sources.",
+        confidence: "Medium", recency,
+        detail: "Benefits data is gathered from career pages, Glassdoor, and public filings. Coverage, quality, and accessibility of benefits vary widely even within the same industry.",
+      });
     if (!props.hasPayEquity && !props.hasBenefitsData && !props.hasCompensationData)
-      compSignals.push({ summary: "No compensation or benefits data has been publicly disclosed or indexed.", confidence: "Low", recency });
+      compSignals.push({
+        summary: "No compensation or benefits data has been publicly disclosed or indexed.",
+        confidence: "Low", recency,
+        detail: "The absence of public compensation data may reflect a company's privacy preferences or a lack of regulatory pressure. It limits ability to benchmark offers.",
+      });
   }
 
   // ── Leadership & Influence ──
   const leadershipSignals: Signal[] = [];
   const behaviorCanonical = signalMap.get('company_behavior');
   if (behaviorCanonical?.summary) {
-    leadershipSignals.push(buildSignalFromCanonical(behaviorCanonical));
+    leadershipSignals.push(buildSignalFromCanonical(
+      behaviorCanonical,
+      [
+        { label: "Follow the Money", to: `/follow-the-money?company=${slug}` },
+        { label: "Influence Graph", to: `/influence-graph?company=${slug}` },
+      ],
+      "Company behavior signals aggregate political spending, lobbying activity, revolving-door connections, and public policy positions into a holistic influence profile."
+    ));
   } else {
     if (props.executiveCount > 0)
-      leadershipSignals.push({ summary: `${props.executiveCount} executive(s) identified with public donation records.`, confidence: "Medium", recency });
+      leadershipSignals.push({
+        summary: `${props.executiveCount} executive(s) identified with public donation records.`,
+        confidence: "Medium", recency,
+        detail: "Executive donation records are sourced from FEC filings. Personal political contributions by company leaders can signal organizational culture and policy priorities.",
+        deepLinks: [
+          { label: "Follow the Money", to: `/follow-the-money?company=${slug}` },
+          { label: "Influence Graph", to: `/influence-graph?company=${slug}` },
+        ],
+      });
     if (props.totalPacSpending > 0 || props.lobbyingSpend > 0) {
       const parts: string[] = [];
       if (props.totalPacSpending > 0) parts.push(`${formatMoney(props.totalPacSpending)} PAC spending`);
       if (props.lobbyingSpend > 0) parts.push(`${formatMoney(props.lobbyingSpend)} lobbying`);
-      leadershipSignals.push({ summary: `Political influence footprint: ${parts.join(", ")}.`, confidence: "High", recency });
+      leadershipSignals.push({
+        summary: `Political influence footprint: ${parts.join(", ")}.`,
+        confidence: "High", recency,
+        detail: "PAC spending and lobbying data come from FEC and Senate LDA disclosures. These expenditures fund political campaigns and legislative influence efforts that may affect workers and communities.",
+        deepLinks: [
+          { label: "Follow the Money", to: `/follow-the-money?company=${slug}` },
+          { label: "Policy Intelligence", to: `/policy-intelligence?company=${slug}` },
+        ],
+      });
     }
     if (props.revolvingDoorCount > 0)
-      leadershipSignals.push({ summary: `${props.revolvingDoorCount} revolving door connection(s) between government and corporate roles.`, confidence: "Medium", recency });
+      leadershipSignals.push({
+        summary: `${props.revolvingDoorCount} revolving door connection(s) between government and corporate roles.`,
+        confidence: "Medium", recency,
+        detail: "Revolving-door connections occur when individuals move between government positions and corporate roles. These connections can create regulatory conflicts of interest.",
+        deepLinks: [{ label: "Influence Graph", to: `/influence-graph?company=${slug}` }],
+      });
   }
 
-  // ── Innovation & Growth (NEW — Logic Bible V8.0) ──
+  // ── Innovation & Growth ──
   const innovationSignals: Signal[] = [];
   const innovCanonical = signalMap.get('innovation_activity');
   if (innovCanonical?.summary) {
-    innovationSignals.push(buildSignalFromCanonical(innovCanonical));
+    innovationSignals.push(buildSignalFromCanonical(
+      innovCanonical,
+      undefined,
+      "Innovation signals are derived from patent filings, R&D investment disclosures, and technology adoption patterns. Active innovation often correlates with job growth and competitive positioning."
+    ));
   }
 
-  // ── Employee Experience (NEW — Logic Bible V8.0) ──
+  // ── Employee Experience ──
   const sentimentSignals: Signal[] = [];
   const sentCanonical = signalMap.get('public_sentiment');
   if (sentCanonical?.summary) {
-    sentimentSignals.push(buildSignalFromCanonical(sentCanonical));
+    sentimentSignals.push(buildSignalFromCanonical(
+      sentCanonical,
+      undefined,
+      "Employee sentiment is gathered from public review platforms, social media mentions, and workforce surveys. Trends in sentiment can predict retention challenges and cultural shifts."
+    ));
   }
 
   return (
@@ -298,7 +340,6 @@ export function StructuredSignalsSection(props: StructuredSignalsProps) {
         <p className="text-xs text-muted-foreground mt-0.5">Structured signals from public records and open data. Not all signals are complete or current.</p>
       </div>
 
-      {/* Stale data warning (Logic Bible V8.0) */}
       {staleWarning && (
         <div className="mx-5 mt-3 p-3 rounded-lg border border-[hsl(var(--civic-yellow))]/30 bg-[hsl(var(--civic-yellow))]/5 flex items-start gap-2">
           <AlertTriangle className="w-4 h-4 text-[hsl(var(--civic-yellow))] mt-0.5 shrink-0" />

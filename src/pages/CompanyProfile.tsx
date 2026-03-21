@@ -440,6 +440,7 @@ export default function CompanyProfile() {
               darkMoneyCount={dbDarkMoney?.length || 0}
               companyId={dbCompanyId || ""}
               companyName={name}
+              companySlug={id || ""}
               lastReviewed={dbCompany?.last_reviewed}
               updatedAt={dbCompany?.updated_at}
             />
@@ -559,7 +560,7 @@ export default function CompanyProfile() {
           {/* ═══════════════════════════════════════════════════════
               5. FULL SCAN + FOOTER
              ═══════════════════════════════════════════════════════ */}
-          <section className="mb-8">
+          <section className="mb-8 relative z-10">
             <Card className="border-primary/20 bg-gradient-to-r from-primary/[0.04] to-transparent">
               <CardContent className="p-6 text-center">
                 <Scan className="w-8 h-8 text-primary mx-auto mb-3" />
@@ -567,7 +568,7 @@ export default function CompanyProfile() {
                 <p className="text-sm text-muted-foreground mb-4 max-w-md mx-auto">
                   Pull the latest public records from FEC, Senate LDA, USAspending, and more.
                 </p>
-                <Button onClick={handleFullScan} disabled={isScanning || !!isDiscovering} size="lg" className="gap-2">
+                <Button onClick={handleFullScan} disabled={isScanning || !!isDiscovering} size="lg" className="gap-2 pointer-events-auto">
                   {isScanning ? <Loader2 className="w-4 h-4 animate-spin" /> : <Sparkles className="w-4 h-4" />}
                   {isScanning ? "Scanning…" : "Run Full Company Scan"}
                 </Button>
