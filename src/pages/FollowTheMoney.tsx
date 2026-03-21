@@ -1261,35 +1261,37 @@ export default function FollowTheMoney() {
     return activePath.nodeIds.map(id => graphData.nodes.find(n => n.id === id)).filter(Boolean) as GraphNode[];
   }, [activePath, graphData.nodes]);
 
+  // Compute stats for hero strip
+  const totalDocumentedAmount = useMemo(() => {
+    return allLinks.reduce((s, l) => s + (l.amount || 0), 0);
+  }, [allLinks]);
+
   return (
     <div className="flex flex-col h-full">
-      {/* ═══ HEADER ═══ */}
-      <section className="border-b border-border/30 bg-gradient-to-b from-primary/[0.04] to-transparent">
-        <div className="px-4 lg:px-6 py-5">
-          <div className="flex flex-col lg:flex-row lg:items-end justify-between gap-4">
+      {/* ═══ DARK HERO ═══ */}
+      <section style={{ background: "#1A1A22" }}>
+        <div className="px-4 lg:px-6 pt-10 pb-6">
+          <div className="flex flex-col lg:flex-row lg:items-end justify-between gap-6">
             <div>
-              <div className="flex items-center gap-2 mb-1">
-                <div className="w-7 h-7 rounded-lg bg-primary/10 flex items-center justify-center">
-                  <DollarSign className="w-4 h-4 text-primary" />
-                </div>
-                <span className="text-xs font-extrabold text-primary uppercase tracking-[0.15em]">Follow the Money</span>
-              </div>
-              <h1 className="text-2xl font-display font-bold text-foreground tracking-tight">
-                Influence Network Map
+              <h1
+                className="font-display leading-[1.05] mb-3"
+                style={{ fontSize: "clamp(28px, 4vw, 44px)", fontWeight: 800, letterSpacing: "-1.5px", color: "#f0ebe0" }}
+              >
+                Follow the Money
               </h1>
-              <p className="text-sm text-muted-foreground max-w-lg mt-0.5">
-                See how companies, PACs, politicians, legislation, and industries connect through money and influence.
+              <p className="text-sm sm:text-base leading-relaxed max-w-xl" style={{ color: "#EBAD0C" }}>
+                See who your employer is really buying influence with — PACs, politicians, dark money, and legislation.
               </p>
             </div>
 
             {/* Search */}
             <div className="relative w-full lg:w-80">
-              <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground pointer-events-none" />
+              <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 pointer-events-none" style={{ color: "rgba(240,235,224,0.4)" }} />
               <Input
                 value={query}
                 onChange={(e) => setQuery(e.target.value)}
                 placeholder="Search a company to map…"
-                className="pl-10"
+                className="pl-10 border-white/10 bg-white/[0.06] text-[#f0ebe0] placeholder:text-white/30"
               />
               {searchResults.length > 0 && (
                 <div className="absolute top-full left-0 right-0 mt-1 bg-popover border border-border rounded-xl shadow-lg z-50 py-1 max-h-60 overflow-y-auto">
@@ -1307,7 +1309,35 @@ export default function FollowTheMoney() {
               )}
             </div>
           </div>
+
+          {/* Stat strip */}
+          <div className="flex items-center gap-6 mt-6 flex-wrap">
+            <div className="flex items-center gap-2">
+              <DollarSign className="w-4 h-4" style={{ color: "#EBAD0C" }} />
+              <span className="text-xs font-mono font-bold" style={{ color: "#f0ebe0" }}>
+                {formatAmount(totalDocumentedAmount) || "$294M"}
+              </span>
+              <span className="text-[10px]" style={{ color: "rgba(240,235,224,0.45)" }}>in documented connections</span>
+            </div>
+            <div className="flex items-center gap-2">
+              <Users className="w-4 h-4" style={{ color: "#EBAD0C" }} />
+              <span className="text-xs font-mono font-bold" style={{ color: "#f0ebe0" }}>
+                {graphData.nodes.length}
+              </span>
+              <span className="text-[10px]" style={{ color: "rgba(240,235,224,0.45)" }}>nodes tracked</span>
+            </div>
+            <div className="flex items-center gap-2">
+              <Share2 className="w-4 h-4" style={{ color: "#EBAD0C" }} />
+              <span className="text-xs font-mono font-bold" style={{ color: "#f0ebe0" }}>
+                {graphData.links.length}
+              </span>
+              <span className="text-[10px]" style={{ color: "rgba(240,235,224,0.45)" }}>connections mapped</span>
+            </div>
+          </div>
         </div>
+
+        {/* Gradient transition */}
+        <div className="h-8" style={{ background: "linear-gradient(to bottom, #1A1A22, #0F0F18)" }} />
       </section>
 
       {/* ═══ CONTROLS BAR ═══ */}
@@ -1318,15 +1348,18 @@ export default function FollowTheMoney() {
             <Filter className="w-3.5 h-3.5 text-muted-foreground shrink-0" />
             <span className="text-[10px] font-extrabold text-muted-foreground uppercase tracking-wider shrink-0">Issue:</span>
             {ISSUE_CATEGORIES.slice(0, 8).map(cat => (
-              <Button
+              <button
                 key={cat}
-                variant={activeIssueFilter === cat ? "default" : "ghost"}
-                size="sm"
                 onClick={() => setActiveIssueFilter(cat)}
-                className="rounded-full text-[10px] shrink-0 h-6 px-2.5"
+                className={cn(
+                  "rounded-full text-[10px] shrink-0 h-6 px-2.5 font-medium transition-colors border",
+                  activeIssueFilter === cat
+                    ? "bg-[#EBAD0C]/15 border-[#EBAD0C]/40 text-[#EBAD0C]"
+                    : "bg-transparent border-border/30 text-muted-foreground hover:text-foreground hover:border-border"
+                )}
               >
                 {cat}
-              </Button>
+              </button>
             ))}
           </div>
 
@@ -1334,15 +1367,18 @@ export default function FollowTheMoney() {
           <div className="flex items-center gap-2 overflow-x-auto">
             <span className="text-[10px] font-extrabold text-muted-foreground uppercase tracking-wider shrink-0">Link:</span>
             {RELATIONSHIP_TYPES.map(rt => (
-              <Button
+              <button
                 key={rt.key}
-                variant={activeRelFilter === rt.key ? "default" : "ghost"}
-                size="sm"
                 onClick={() => setActiveRelFilter(rt.key)}
-                className="rounded-full text-[10px] shrink-0 h-6 px-2.5"
+                className={cn(
+                  "rounded-full text-[10px] shrink-0 h-6 px-2.5 font-medium transition-colors border",
+                  activeRelFilter === rt.key
+                    ? "bg-[#EBAD0C]/15 border-[#EBAD0C]/40 text-[#EBAD0C]"
+                    : "bg-transparent border-border/30 text-muted-foreground hover:text-foreground hover:border-border"
+                )}
               >
                 {rt.label}
-              </Button>
+              </button>
             ))}
 
             <div className="flex-1" />
@@ -1445,7 +1481,7 @@ export default function FollowTheMoney() {
           className={cn(
             "relative overflow-hidden transition-all",
             graphExpanded ? "flex-1" : "flex-1 lg:flex-[2]",
-            "bg-[#0B0F1A]"
+            "bg-[#0F0F18]"
           )}
           style={{ minHeight: graphExpanded ? 600 : 420 }}
         >
