@@ -226,7 +226,7 @@ const Index = forwardRef<HTMLDivElement>((_, ref) => {
               {
                 icon: <Shield className="w-5 h-5 text-primary" />,
                 title: "Company Integrity Score",
-                body: "We audit culture, turnover, leadership stability, and Glassdoor trajectory before any candidate sees the job.",
+                body: "We scan culture, turnover, leadership stability, and workplace signals from public sources before any candidate sees the job.",
               },
               {
                 icon: <Target className="w-5 h-5 text-primary" />,
