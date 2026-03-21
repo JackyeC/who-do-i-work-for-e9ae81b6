@@ -2766,6 +2766,45 @@ export type Database = {
           },
         ]
       }
+      company_news_mentions: {
+        Row: {
+          company_id: string | null
+          created_at: string | null
+          id: string
+          mention_type: string | null
+          news_id: string | null
+        }
+        Insert: {
+          company_id?: string | null
+          created_at?: string | null
+          id?: string
+          mention_type?: string | null
+          news_id?: string | null
+        }
+        Update: {
+          company_id?: string | null
+          created_at?: string | null
+          id?: string
+          mention_type?: string | null
+          news_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "company_news_mentions_company_id_fkey"
+            columns: ["company_id"]
+            isOneToOne: false
+            referencedRelation: "companies"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "company_news_mentions_news_id_fkey"
+            columns: ["news_id"]
+            isOneToOne: false
+            referencedRelation: "personalized_news"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       company_news_signals: {
         Row: {
           company_id: string
@@ -4261,6 +4300,36 @@ export type Database = {
           id?: string
           product_id?: string
           stripe_session_id?: string | null
+          user_id?: string
+        }
+        Relationships: []
+      }
+      daily_briefings: {
+        Row: {
+          briefing_date: string
+          company_rec_ids: string[] | null
+          generated_at: string | null
+          id: string
+          news_ids: string[] | null
+          top_values_matched: string[] | null
+          user_id: string
+        }
+        Insert: {
+          briefing_date?: string
+          company_rec_ids?: string[] | null
+          generated_at?: string | null
+          id?: string
+          news_ids?: string[] | null
+          top_values_matched?: string[] | null
+          user_id: string
+        }
+        Update: {
+          briefing_date?: string
+          company_rec_ids?: string[] | null
+          generated_at?: string | null
+          id?: string
+          news_ids?: string[] | null
+          top_values_matched?: string[] | null
           user_id?: string
         }
         Relationships: []
@@ -6776,6 +6845,63 @@ export type Database = {
           },
         ]
       }
+      personalized_news: {
+        Row: {
+          category: string
+          company_slugs: string[] | null
+          expires_at: string | null
+          fetched_at: string | null
+          id: string
+          importance_score: number | null
+          industry_tags: string[] | null
+          is_active: boolean | null
+          location_tags: string[] | null
+          published_at: string
+          source: string
+          source_url: string | null
+          summary: string
+          tags: string[] | null
+          title: string
+          value_tags: string[] | null
+        }
+        Insert: {
+          category: string
+          company_slugs?: string[] | null
+          expires_at?: string | null
+          fetched_at?: string | null
+          id?: string
+          importance_score?: number | null
+          industry_tags?: string[] | null
+          is_active?: boolean | null
+          location_tags?: string[] | null
+          published_at: string
+          source: string
+          source_url?: string | null
+          summary: string
+          tags?: string[] | null
+          title: string
+          value_tags?: string[] | null
+        }
+        Update: {
+          category?: string
+          company_slugs?: string[] | null
+          expires_at?: string | null
+          fetched_at?: string | null
+          id?: string
+          importance_score?: number | null
+          industry_tags?: string[] | null
+          is_active?: boolean | null
+          location_tags?: string[] | null
+          published_at?: string
+          source?: string
+          source_url?: string | null
+          summary?: string
+          tags?: string[] | null
+          title?: string
+          value_tags?: string[] | null
+        }
+        Relationships: []
+      }
       pipeline_benefits_out: {
         Row: {
           agency: string | null
@@ -7352,61 +7478,91 @@ export type Database = {
           ai_transparency_required: boolean | null
           beta_agreement_accepted_at: string | null
           bio: string | null
+          briefing_timezone: string | null
           created_at: string
           email: string | null
           employer_company_id: string | null
           full_name: string | null
           id: string
+          industries: string[] | null
+          interests: string[] | null
+          last_briefing_date: string | null
           linkedin_url: string | null
+          location: string | null
+          location_state: string | null
           min_safety_score: number | null
           min_salary: number | null
+          news_onboarding_complete: boolean | null
           onboarding_completed: boolean
           pay_transparency_required: boolean | null
+          persona_type: string | null
           required_benefits: string[] | null
+          resume_keywords: string[] | null
           resume_url: string | null
           skills: string[] | null
           target_job_titles: string[] | null
           updated_at: string
+          user_values: string[] | null
         }
         Insert: {
           ai_transparency_required?: boolean | null
           beta_agreement_accepted_at?: string | null
           bio?: string | null
+          briefing_timezone?: string | null
           created_at?: string
           email?: string | null
           employer_company_id?: string | null
           full_name?: string | null
           id: string
+          industries?: string[] | null
+          interests?: string[] | null
+          last_briefing_date?: string | null
           linkedin_url?: string | null
+          location?: string | null
+          location_state?: string | null
           min_safety_score?: number | null
           min_salary?: number | null
+          news_onboarding_complete?: boolean | null
           onboarding_completed?: boolean
           pay_transparency_required?: boolean | null
+          persona_type?: string | null
           required_benefits?: string[] | null
+          resume_keywords?: string[] | null
           resume_url?: string | null
           skills?: string[] | null
           target_job_titles?: string[] | null
           updated_at?: string
+          user_values?: string[] | null
         }
         Update: {
           ai_transparency_required?: boolean | null
           beta_agreement_accepted_at?: string | null
           bio?: string | null
+          briefing_timezone?: string | null
           created_at?: string
           email?: string | null
           employer_company_id?: string | null
           full_name?: string | null
           id?: string
+          industries?: string[] | null
+          interests?: string[] | null
+          last_briefing_date?: string | null
           linkedin_url?: string | null
+          location?: string | null
+          location_state?: string | null
           min_safety_score?: number | null
           min_salary?: number | null
+          news_onboarding_complete?: boolean | null
           onboarding_completed?: boolean
           pay_transparency_required?: boolean | null
+          persona_type?: string | null
           required_benefits?: string[] | null
+          resume_keywords?: string[] | null
           resume_url?: string | null
           skills?: string[] | null
           target_job_titles?: string[] | null
           updated_at?: string
+          user_values?: string[] | null
         }
         Relationships: [
           {
@@ -10108,6 +10264,21 @@ export type Database = {
         Returns: number
       }
       deactivate_expired_jobs: { Args: never; Returns: number }
+      get_company_recommendations: {
+        Args: { p_limit?: number; p_user_id: string }
+        Returns: {
+          career_intelligence_score: number
+          category_tags: string[]
+          civic_footprint_score: number
+          id: string
+          industry: string
+          lobbying_spend: number
+          match_reason: string
+          name: string
+          slug: string
+          values_matched: string[]
+        }[]
+      }
       get_company_roi_pipeline: { Args: { _company_id: string }; Returns: Json }
       get_crowd_flinch_signals: {
         Args: { _company_id: string }
@@ -10118,12 +10289,33 @@ export type Database = {
         }[]
       }
       get_early_access_count: { Args: never; Returns: number }
+      get_personalized_news: {
+        Args: { p_category?: string; p_limit?: number; p_user_id: string }
+        Returns: {
+          category: string
+          company_slugs: string[]
+          id: string
+          importance_score: number
+          published_at: string
+          relevance_score: number
+          source: string
+          source_url: string
+          summary: string
+          tags: string[]
+          title: string
+          value_tags: string[]
+        }[]
+      }
       has_role: {
         Args: {
           _role: Database["public"]["Enums"]["app_role"]
           _user_id: string
         }
         Returns: boolean
+      }
+      score_news_for_user: {
+        Args: { p_news_id: string; p_user_id: string }
+        Returns: number
       }
       trace_influence_chain: {
         Args: { _company_id: string; _max_depth?: number }
