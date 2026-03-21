@@ -138,7 +138,7 @@ export default function Tracker() {
                   <Textarea placeholder="Optional notes..." value={form.notes} onChange={e => update("notes", e.target.value)} className="mt-1" rows={3} />
                 </div>
                 <Button onClick={handleAdd} className="w-full" disabled={!form.company.trim() || !form.role.trim()}>
-                  Add to Applied
+                  Add to Researching
                 </Button>
               </div>
             </DialogContent>
