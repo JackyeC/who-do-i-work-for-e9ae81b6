@@ -456,5 +456,23 @@ export function CompanyIntelligenceScanCard({ companyId, companyName }: Props) {
         }}
       />
     </Card>
+
+    <AlertDialog open={showRescanConfirm} onOpenChange={setShowRescanConfirm}>
+      <AlertDialogContent>
+        <AlertDialogHeader>
+          <AlertDialogTitle>Re-scan {companyName}?</AlertDialogTitle>
+          <AlertDialogDescription>
+            This company was already scanned {scanCompletedAt ? timeAgoLabel(scanCompletedAt) : 'recently'}.
+            Intelligence data is already populated. Re-scanning will count against your daily limit.
+            Only re-scan if you believe new public filings have been released.
+          </AlertDialogDescription>
+        </AlertDialogHeader>
+        <AlertDialogFooter>
+          <AlertDialogCancel>Keep Current Data</AlertDialogCancel>
+          <AlertDialogAction onClick={() => runScan(true)}>Re-scan Anyway</AlertDialogAction>
+        </AlertDialogFooter>
+      </AlertDialogContent>
+    </AlertDialog>
+    </>
   );
 }
