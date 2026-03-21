@@ -674,7 +674,7 @@ const Index = forwardRef<HTMLDivElement>((_, ref) => {
           You deserve to know exactly who you work for.
         </h2>
         <p className="text-base text-muted-foreground max-w-[480px] mx-auto mb-10 leading-relaxed">
-          Stop applying blind. Start auditing your career with intelligence.
+          Stop applying blind. Start scanning employers with intelligence.
         </p>
         <div className="flex flex-col sm:flex-row gap-3 justify-center">
           <button
