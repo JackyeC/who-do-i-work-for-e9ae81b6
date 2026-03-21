@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { Link, useNavigate, useLocation } from "react-router-dom";
-import { SignedIn, SignedOut, SignInButton, SignUpButton, UserButton, useAuth as useClerkAuth } from "@clerk/clerk-react";
+import { SignedIn, SignedOut, SignInButton, SignUpButton, UserButton } from "@clerk/clerk-react";
+import { useClerkWithFallback } from "@/hooks/use-clerk-fallback";
 import { useAuth } from "@/contexts/AuthContext";
 import { useDemoSafeMode } from "@/contexts/DemoSafeModeContext";
 import { cn } from "@/lib/utils";
@@ -80,7 +81,7 @@ export function TopBar() {
   const navigate = useNavigate();
   const location = useLocation();
   const { user, signOut } = useAuth();
-  const { isLoaded } = useClerkAuth();
+  const { isLoaded } = useClerkWithFallback();
   const { isDemoSafe, toggleDemoSafe, canToggle } = useDemoSafeMode();
   const { hasTakenQuiz } = usePersona();
 

@@ -1,10 +1,10 @@
 import { useAuth } from "@/contexts/AuthContext";
 import { useUserRole } from "@/hooks/use-user-role";
 import { Loader2 } from "lucide-react";
-import { useAuth as useClerkAuth } from "@clerk/clerk-react";
+import { useClerkWithFallback } from "@/hooks/use-clerk-fallback";
 
 export function AdminRoute({ children }: { children: React.ReactNode }) {
-  const { isLoaded } = useClerkAuth();
+  const { isLoaded } = useClerkWithFallback();
   const { user, loading } = useAuth();
   const { isAdmin, isOwner, isLoading } = useUserRole();
 

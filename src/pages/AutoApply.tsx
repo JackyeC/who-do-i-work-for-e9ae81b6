@@ -1,6 +1,6 @@
 import { useState, useCallback, useRef } from "react";
 import { Navigate, useNavigate } from "react-router-dom";
-import { useAuth as useClerkAuth } from "@clerk/clerk-react";
+import { useClerkWithFallback } from "@/hooks/use-clerk-fallback";
 import { InterviewKit } from "@/components/interview/InterviewKit";
 import { Helmet } from "react-helmet-async";
 import { usePageSEO } from "@/hooks/use-page-seo";
@@ -326,7 +326,7 @@ const STEP_META = [
 ];
 
 export default function AutoApply() {
-  const { isLoaded, isSignedIn } = useClerkAuth();
+  const { isLoaded, isSignedIn } = useClerkWithFallback();
   const navigate = useNavigate();
   const [step, setStep] = useState(0);
   const [form, setForm] = useState<FormData>(INITIAL);

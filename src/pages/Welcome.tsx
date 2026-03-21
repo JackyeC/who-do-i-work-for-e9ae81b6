@@ -1,5 +1,5 @@
 import { useNavigate } from "react-router-dom";
-import { useAuth as useClerkAuth } from "@clerk/clerk-react";
+import { useClerkWithFallback } from "@/hooks/use-clerk-fallback";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { ArrowRight, Search, Shield, Eye, Zap, BarChart3 } from "lucide-react";
@@ -7,7 +7,7 @@ import { motion } from "framer-motion";
 import { usePageSEO } from "@/hooks/use-page-seo";
 
 export default function Welcome() {
-  const { isLoaded } = useClerkAuth();
+  const { isLoaded } = useClerkWithFallback();
   const navigate = useNavigate();
 
   usePageSEO({

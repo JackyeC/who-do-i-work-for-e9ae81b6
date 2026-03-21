@@ -1,4 +1,5 @@
-import { SignedIn, SignedOut, RedirectToSignIn, useAuth as useClerkAuth } from "@clerk/clerk-react";
+import { SignedIn, SignedOut, RedirectToSignIn } from "@clerk/clerk-react";
+import { useClerkWithFallback } from "@/hooks/use-clerk-fallback";
 import { useLocation } from "react-router-dom";
 import { useAuth } from "@/contexts/AuthContext";
 import { useCareerWaitlist } from "@/hooks/use-career-waitlist";
@@ -10,7 +11,7 @@ import { Loader2 } from "lucide-react";
 import { Skeleton } from "@/components/ui/skeleton";
 
 export function ProtectedRoute({ children }: { children: React.ReactNode }) {
-  const { isLoaded } = useClerkAuth();
+  const { isLoaded } = useClerkWithFallback();
   const location = useLocation();
   const isDossierRoute = /^\/dossier(?:\/|$)/.test(location.pathname);
 
