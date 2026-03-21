@@ -1348,15 +1348,18 @@ export default function FollowTheMoney() {
             <Filter className="w-3.5 h-3.5 text-muted-foreground shrink-0" />
             <span className="text-[10px] font-extrabold text-muted-foreground uppercase tracking-wider shrink-0">Issue:</span>
             {ISSUE_CATEGORIES.slice(0, 8).map(cat => (
-              <Button
+              <button
                 key={cat}
-                variant={activeIssueFilter === cat ? "default" : "ghost"}
-                size="sm"
                 onClick={() => setActiveIssueFilter(cat)}
-                className="rounded-full text-[10px] shrink-0 h-6 px-2.5"
+                className={cn(
+                  "rounded-full text-[10px] shrink-0 h-6 px-2.5 font-medium transition-colors border",
+                  activeIssueFilter === cat
+                    ? "bg-[#EBAD0C]/15 border-[#EBAD0C]/40 text-[#EBAD0C]"
+                    : "bg-transparent border-border/30 text-muted-foreground hover:text-foreground hover:border-border"
+                )}
               >
                 {cat}
-              </Button>
+              </button>
             ))}
           </div>
 
@@ -1364,15 +1367,18 @@ export default function FollowTheMoney() {
           <div className="flex items-center gap-2 overflow-x-auto">
             <span className="text-[10px] font-extrabold text-muted-foreground uppercase tracking-wider shrink-0">Link:</span>
             {RELATIONSHIP_TYPES.map(rt => (
-              <Button
+              <button
                 key={rt.key}
-                variant={activeRelFilter === rt.key ? "default" : "ghost"}
-                size="sm"
                 onClick={() => setActiveRelFilter(rt.key)}
-                className="rounded-full text-[10px] shrink-0 h-6 px-2.5"
+                className={cn(
+                  "rounded-full text-[10px] shrink-0 h-6 px-2.5 font-medium transition-colors border",
+                  activeRelFilter === rt.key
+                    ? "bg-[#EBAD0C]/15 border-[#EBAD0C]/40 text-[#EBAD0C]"
+                    : "bg-transparent border-border/30 text-muted-foreground hover:text-foreground hover:border-border"
+                )}
               >
                 {rt.label}
-              </Button>
+              </button>
             ))}
 
             <div className="flex-1" />
