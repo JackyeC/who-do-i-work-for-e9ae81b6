@@ -33,10 +33,10 @@ const INITIAL_APPS: TrackerApp[] = [
 ];
 
 const COLUMNS: { status: Status; label: string; icon: typeof Briefcase; accent: string }[] = [
-  { status: "applied", label: "Applied", icon: Briefcase, accent: "text-[hsl(var(--civic-blue))]" },
+  { status: "researching", label: "Researching", icon: Shield, accent: "text-[hsl(var(--civic-blue))]" },
+  { status: "applied", label: "Applied", icon: Briefcase, accent: "text-primary" },
   { status: "interviewing", label: "Interviewing", icon: Users, accent: "text-[hsl(var(--civic-gold))]" },
-  { status: "offer", label: "Offer", icon: Gift, accent: "text-[hsl(var(--civic-green))]" },
-  { status: "archived", label: "Archived", icon: Archive, accent: "text-muted-foreground" },
+  { status: "offer_rejected", label: "Offer / Rejected", icon: Gift, accent: "text-[hsl(var(--civic-green))]" },
 ];
 
 function IntegrityDot({ score }: { score: number }) {
