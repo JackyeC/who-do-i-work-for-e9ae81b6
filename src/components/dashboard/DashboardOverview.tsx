@@ -1,12 +1,12 @@
 import { useAuth } from "@/contexts/AuthContext";
 import { usePersona, PERSONA_NAMES, type PersonaId } from "@/hooks/use-persona";
 import { useDashboardBriefing } from "@/hooks/use-dashboard-briefing";
-import { useGNews } from "@/hooks/use-gnews";
+import DailyBriefingCard from "@/components/DailyBriefingCard";
 import { Link, useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
 import { Search, ArrowRight, ExternalLink } from "lucide-react";
 import { useState } from "react";
-import { formatDistanceToNow } from "date-fns";
+
 import { AlignedValuesSearch } from "./AlignedValuesSearch";
 
 interface DashboardOverviewProps {
@@ -49,13 +49,8 @@ function scoreColor(score: number): string {
   return "#ff4d6d";
 }
 
-/* ── News source badge color ── */
-function sourceBadgeColor(source: string): string {
-  const s = (source || "").toLowerCase();
-  if (s.includes("nlrb")) return "#ff6b35";
-  if (s.includes("osha")) return "#f0c040";
-  return "#7eb8f7";
-}
+
+
 
 /* ── Skeleton shimmer ── */
 function Skeleton({ className = "" }: { className?: string }) {
@@ -92,7 +87,6 @@ export function DashboardOverview({ onNavigate }: DashboardOverviewProps) {
   const { user } = useAuth();
   const { persona, personaName, hasTakenQuiz } = usePersona();
   const { data, isLoading } = useDashboardBriefing();
-  const { data: gnewsArticles } = useGNews();
   const navigate = useNavigate();
   const [searchQuery, setSearchQuery] = useState("");
 
@@ -292,48 +286,10 @@ export function DashboardOverview({ onNavigate }: DashboardOverviewProps) {
           </BriefingCard>
         </motion.div>
 
-        {/* 3B — World of Work Today (GNews) */}
-        {gnewsArticles && gnewsArticles.length > 0 && (
-          <motion.div {...anim(0.18)}>
-            <BriefingCard className="h-full">
-              <h3 style={{ fontFamily: "'DM Sans', sans-serif", fontSize: "14px", fontWeight: 700, color: "#f0ebe0", marginBottom: "12px" }}>
-                World of Work — Today
-              </h3>
-              <div className="space-y-2.5">
-                {gnewsArticles.map((item, i) => {
-                  const relTime = formatDistanceToNow(new Date(item.publishedAt), { addSuffix: true });
-                  return (
-                    <div key={i} className="flex items-start gap-2.5">
-                      <span
-                        className="shrink-0 rounded-full text-[9px] font-bold uppercase px-1.5 py-0.5 mt-0.5"
-                        style={{
-                          background: `${sourceBadgeColor(item.source.name)}20`,
-                          color: sourceBadgeColor(item.source.name),
-                        }}
-                      >
-                        {item.source.name.split(".")[0].toUpperCase().slice(0, 8)}
-                      </span>
-                      <div className="min-w-0">
-                        <a
-                          href={item.url}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className="hover:underline"
-                          style={{ fontFamily: "'DM Sans', sans-serif", fontSize: "13px", fontWeight: 500, color: "#f0ebe0", lineHeight: 1.4 }}
-                        >
-                          {item.title.length > 80 ? item.title.slice(0, 80) + "…" : item.title}
-                        </a>
-                        <p style={{ fontFamily: "'DM Sans', sans-serif", fontSize: "11px", color: "#7a7590", marginTop: "2px" }}>
-                          {relTime}
-                        </p>
-                      </div>
-                    </div>
-                  );
-                })}
-              </div>
-            </BriefingCard>
-          </motion.div>
-        )}
+        {/* 3B — Your Daily Briefing */}
+        <motion.div {...anim(0.18)}>
+          <DailyBriefingCard />
+        </motion.div>
       </div>
 
       {/* ═══ SECTION 4 — Companies You're Watching ═══ */}
