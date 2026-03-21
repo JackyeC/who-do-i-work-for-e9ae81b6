@@ -35,6 +35,11 @@ const tracks = [
     period: "/mo",
     mode: "subscription" as const,
     priceId: "price_1TCdD87Qj0W6UtN9NBt8Wtb9",
+    annualPrice: "$15",
+    annualPeriod: "/mo",
+    annualPriceNote: "billed annually",
+    // TODO: Create annual Stripe price and replace this placeholder
+    annualPriceId: "price_scout_annual_placeholder",
     hook: "Your AI Coach.",
     description: "24/7 values-audit of any job link. Know before you apply.",
     action: "Activate AI Coach",
@@ -93,6 +98,11 @@ const tracks = [
     period: "/year",
     mode: "subscription" as const,
     priceId: "price_1TCTiJ7Qj0W6UtN9hARvCvgh",
+    annualPrice: "$799",
+    annualPeriod: "/year",
+    annualPriceNote: "",
+    // TODO: Create annual Stripe price and replace this placeholder
+    annualPriceId: "price_executive_annual_placeholder",
     hook: "The Autopilot.",
     description: "Full search management + Priority access. Your career, on cruise control.",
     action: "Go Executive",
@@ -109,6 +119,7 @@ export function PathfinderTracks() {
   const navigate = useNavigate();
   const { user } = useAuth();
   const [loading, setLoading] = useState<string | null>(null);
+  const [isAnnual, setIsAnnual] = useState(false);
 
   const handleTrackAction = async (track: typeof tracks[0]) => {
     if (track.mode === "free") {
@@ -127,15 +138,19 @@ export function PathfinderTracks() {
       return;
     }
 
-    if (!track.priceId) {
+    const effectivePriceId = isAnnual && "annualPriceId" in track
+      ? (track as any).annualPriceId
+      : track.priceId;
+
+    if (!effectivePriceId) {
       navigate("/work-with-jackye");
       return;
     }
 
-    setLoading(track.priceId || null);
+    setLoading(effectivePriceId);
     try {
       const { data, error } = await supabase.functions.invoke("create-checkout", {
-        body: { priceId: track.priceId },
+        body: { priceId: effectivePriceId },
       });
       if (error) throw error;
       if (data?.url) window.open(data.url, "_blank");
@@ -144,6 +159,23 @@ export function PathfinderTracks() {
     } finally {
       setLoading(null);
     }
+  };
+
+  const getDisplayPrice = (track: typeof tracks[0]) => {
+    if (isAnnual && "annualPrice" in track) {
+      return {
+        price: (track as any).annualPrice,
+        period: (track as any).annualPeriod,
+        priceNote: (track as any).annualPriceNote,
+        originalPrice: track.price,
+      };
+    }
+    return {
+      price: track.price,
+      period: track.period,
+      priceNote: track.priceNote,
+      originalPrice: null,
+    };
   };
 
   return (
@@ -156,75 +188,117 @@ export function PathfinderTracks() {
           <h2 className="text-2xl lg:text-3xl text-foreground mb-3">
             Choose Your Track
           </h2>
-          <p className="text-sm text-muted-foreground max-w-[520px] mx-auto">
+          <p className="text-sm text-muted-foreground max-w-[520px] mx-auto mb-8">
             From free career calibration to full autopilot search management. Start where you are.
           </p>
+
+          {/* Billing Toggle */}
+          <div className="inline-flex items-center gap-3 rounded-full border border-border bg-card px-1.5 py-1.5">
+            <button
+              onClick={() => setIsAnnual(false)}
+              className={cn(
+                "font-mono text-xs tracking-wider uppercase px-4 py-1.5 rounded-full transition-all duration-200",
+                !isAnnual
+                  ? "bg-primary text-primary-foreground"
+                  : "text-muted-foreground hover:text-foreground"
+              )}
+            >
+              Monthly
+            </button>
+            <button
+              onClick={() => setIsAnnual(true)}
+              className={cn(
+                "font-mono text-xs tracking-wider uppercase px-4 py-1.5 rounded-full transition-all duration-200 flex items-center gap-2",
+                isAnnual
+                  ? "bg-primary text-primary-foreground"
+                  : "text-muted-foreground hover:text-foreground"
+              )}
+            >
+              Annual
+              <span className={cn(
+                "text-[10px] font-semibold tracking-wider px-2 py-0.5 rounded-full",
+                isAnnual
+                  ? "bg-primary-foreground/20 text-primary-foreground"
+                  : "bg-primary/15 text-primary"
+              )}>
+                Save 20%
+              </span>
+            </button>
+          </div>
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-px bg-border border border-border">
-          {tracks.map((track) => (
-            <div
-              key={track.number}
-              className={cn(
-                "bg-card p-6 lg:p-7 flex flex-col relative",
-                track.popular && "ring-2 ring-primary ring-inset"
-              )}
-            >
-              {track.popular && (
-                <div className="absolute top-0 left-0 right-0 bg-primary text-primary-foreground text-center font-mono text-[10px] tracking-[0.2em] uppercase py-1">
-                  Most Popular
-                </div>
-              )}
-
-              <div className={cn("mb-4", track.popular && "mt-4")}>
-                <div className="flex items-center gap-2 mb-3">
-                  <span className="font-mono text-[10px] tracking-[0.2em] uppercase text-muted-foreground">
-                    Track {track.number}
-                  </span>
-                </div>
-                <track.icon className="w-6 h-6 text-primary mb-3" strokeWidth={1.5} />
-                <div className="font-mono text-sm tracking-wider uppercase text-foreground font-semibold mb-1">
-                  {track.name}
-                </div>
-                <div className="font-mono text-xs tracking-wider uppercase text-primary mb-1">
-                  {track.hook}
-                </div>
-              </div>
-
-              <div className="mb-4">
-                <span className="text-2xl font-bold text-foreground">{track.price}</span>
-                {track.period && (
-                  <span className="text-sm text-muted-foreground">{track.period}</span>
+          {tracks.map((track) => {
+            const display = getDisplayPrice(track);
+            return (
+              <div
+                key={track.number}
+                className={cn(
+                  "bg-card p-6 lg:p-7 flex flex-col relative",
+                  track.popular && "ring-2 ring-primary ring-inset"
                 )}
-                {track.priceNote && (
-                  <div className="text-[11px] text-muted-foreground mt-0.5">{track.priceNote}</div>
-                )}
-              </div>
-
-              <p className="text-sm text-muted-foreground leading-relaxed mb-5 flex-grow">
-                {track.description}
-              </p>
-
-              <ul className="space-y-2 mb-6">
-                {track.features.map((f) => (
-                  <li key={f} className="text-sm text-foreground flex items-start gap-1.5">
-                    <CheckCircle2 className="w-3.5 h-3.5 text-primary mt-0.5 shrink-0" strokeWidth={2} />
-                    {f}
-                  </li>
-                ))}
-              </ul>
-
-              <Button
-                onClick={() => handleTrackAction(track)}
-                variant={track.popular ? "default" : "outline"}
-                className="w-full gap-1.5 font-mono text-xs tracking-wider uppercase mt-auto"
-                disabled={loading === track.priceId}
               >
-                {track.action}
-                <ArrowRight className="w-3 h-3" />
-              </Button>
-            </div>
-          ))}
+                {track.popular && (
+                  <div className="absolute top-0 left-0 right-0 bg-primary text-primary-foreground text-center font-mono text-[10px] tracking-[0.2em] uppercase py-1">
+                    Most Popular
+                  </div>
+                )}
+
+                <div className={cn("mb-4", track.popular && "mt-4")}>
+                  <div className="flex items-center gap-2 mb-3">
+                    <span className="font-mono text-[10px] tracking-[0.2em] uppercase text-muted-foreground">
+                      Track {track.number}
+                    </span>
+                  </div>
+                  <track.icon className="w-6 h-6 text-primary mb-3" strokeWidth={1.5} />
+                  <div className="font-mono text-sm tracking-wider uppercase text-foreground font-semibold mb-1">
+                    {track.name}
+                  </div>
+                  <div className="font-mono text-xs tracking-wider uppercase text-primary mb-1">
+                    {track.hook}
+                  </div>
+                </div>
+
+                <div className="mb-4">
+                  {display.originalPrice && (
+                    <span className="text-sm text-muted-foreground line-through mr-2">
+                      {display.originalPrice}
+                    </span>
+                  )}
+                  <span className="text-2xl font-bold text-foreground">{display.price}</span>
+                  {display.period && (
+                    <span className="text-sm text-muted-foreground">{display.period}</span>
+                  )}
+                  {display.priceNote && (
+                    <div className="text-[11px] text-muted-foreground mt-0.5">{display.priceNote}</div>
+                  )}
+                </div>
+
+                <p className="text-sm text-muted-foreground leading-relaxed mb-5 flex-grow">
+                  {track.description}
+                </p>
+
+                <ul className="space-y-2 mb-6">
+                  {track.features.map((f) => (
+                    <li key={f} className="text-sm text-foreground flex items-start gap-1.5">
+                      <CheckCircle2 className="w-3.5 h-3.5 text-primary mt-0.5 shrink-0" strokeWidth={2} />
+                      {f}
+                    </li>
+                  ))}
+                </ul>
+
+                <Button
+                  onClick={() => handleTrackAction(track)}
+                  variant={track.popular ? "default" : "outline"}
+                  className="w-full gap-1.5 font-mono text-xs tracking-wider uppercase mt-auto"
+                  disabled={loading === (isAnnual && "annualPriceId" in track ? (track as any).annualPriceId : track.priceId)}
+                >
+                  {track.action}
+                  <ArrowRight className="w-3 h-3" />
+                </Button>
+              </div>
+            );
+          })}
         </div>
       </div>
     </section>
