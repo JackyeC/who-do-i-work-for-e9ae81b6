@@ -222,6 +222,29 @@ export default function CompanyDossier() {
         <InfluenceGauge value={0} label="Attraction Score" />
       </div>
 
+      {/* Jackye's Read — coaching insight */}
+      {insightText && (
+        <div className="rounded-none border border-primary/30 bg-primary/[0.03] p-5 space-y-2">
+          <div className="flex items-center gap-2">
+            <Sparkles className="w-4 h-4 text-primary" />
+            <span className="font-mono text-[9px] tracking-[0.25em] uppercase text-primary font-semibold">
+              JACKYE'S READ
+            </span>
+          </div>
+          <p className="text-sm text-foreground/90 leading-relaxed italic">
+            "{insightText}"
+          </p>
+        </div>
+      )}
+
+      {/* Zero-state fallback */}
+      {isZeroState && (
+        <div className="space-y-4">
+          <CompanyZeroState companyName={company.name} />
+          <AuditRequestForm companyName={company.name} />
+        </div>
+      )}
+
       {/* Layer 1: Basics — always shown */}
       <DossierLayer title="Basics" subtitle="Products, markets, segments, and company overview" icon={Building2} layerNumber={1} defaultOpen>
         <div className="space-y-6">
