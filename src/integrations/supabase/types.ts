@@ -10029,6 +10029,14 @@ export type Database = {
       }
     }
     Views: {
+      bracket_vote_totals: {
+        Row: {
+          matchup_id: string | null
+          vote_count: number | null
+          voted_for: string | null
+        }
+        Relationships: []
+      }
       compensation_freshness_audit: {
         Row: {
           company: string | null

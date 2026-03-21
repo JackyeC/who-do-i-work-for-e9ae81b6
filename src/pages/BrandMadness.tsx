@@ -29,18 +29,19 @@ export default function BrandMadness() {
   useEffect(() => {
     const loadVotes = async () => {
       const { data } = await supabase
-        .from("bracket_votes")
-        .select("matchup_id, voted_for");
+        .from("bracket_vote_totals")
+        .select("matchup_id, voted_for, vote_count");
 
       if (data) {
         const agg: Record<string, Record<string, number>> = {};
-        const uniqueUsers = new Set<string>();
+        let total = 0;
         data.forEach((v: any) => {
           if (!agg[v.matchup_id]) agg[v.matchup_id] = {};
-          agg[v.matchup_id][v.voted_for] = (agg[v.matchup_id][v.voted_for] || 0) + 1;
+          agg[v.matchup_id][v.voted_for] = v.vote_count;
+          total += v.vote_count;
         });
         setVotes(agg);
-        setTotalVoters(data.length);
+        setTotalVoters(total);
       }
     };
     loadVotes();
