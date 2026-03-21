@@ -83,18 +83,23 @@ function MetaRow({ icon, children }: { icon: React.ReactNode; children: React.Re
 
 export default function SampleDossier() {
   const [activeView, setActiveView] = useState<"dossier" | "interview-kit">("dossier");
+  const navigate = useNavigate();
 
   usePageSEO({
-    title: "Sample Application Dossier — WDIWF",
+    title: "Audit Any Employer — WDIWF Company Dossier",
     description:
-      "You deserve to know exactly who you work for. See what candidates receive when the WDIWF Job Search Agent applies on their behalf.",
+      "Search any company and get a full integrity dossier powered by public data. Know who you're working for before you accept the offer.",
     path: "/dossier",
   });
+
+  const handleCompanySelect = (company: CompanyResult) => {
+    navigate(`/dossier/${company.slug}`);
+  };
 
   return (
     <div className="min-h-screen flex flex-col" style={{ background: "#0a0a0e" }}>
       <Helmet>
-        <title>Sample Application Dossier — WDIWF</title>
+        <title>Audit Any Employer — WDIWF Company Dossier</title>
       </Helmet>
 
       {/* Grain */}
@@ -108,16 +113,25 @@ export default function SampleDossier() {
       <div className="relative z-[1] flex-1 flex flex-col items-center px-6 py-16 sm:py-20">
         {/* Header */}
         <p className="text-xs uppercase tracking-[3px] font-semibold mb-3" style={{ color: amber }}>
-          Sample Dossier
+          Company Dossier
         </p>
         <h1
           className="font-sans text-center leading-[1.08] mb-2"
           style={{ fontSize: "clamp(26px, 5vw, 44px)", fontWeight: 800, letterSpacing: "-2px", color: cream }}
         >
-          Your Application Dossier
+          Audit Any Employer
         </h1>
         <p className="text-center mb-8" style={{ fontSize: 15, color: dimmed }}>
-          Prepared by your WDIWF Job Search Agent
+          Search a company to see their full integrity dossier — powered by public data.
+        </p>
+
+        {/* Search bar */}
+        <div className="w-full max-w-[640px] mb-10">
+          <EmployerDossierSearch
+            onSelect={handleCompanySelect}
+            selectedCompany={null}
+          />
+        </div>
         </p>
 
         {/* View toggle — Dossier vs Interview Kit */}
