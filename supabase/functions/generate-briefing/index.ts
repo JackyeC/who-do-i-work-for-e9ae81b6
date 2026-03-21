@@ -182,7 +182,7 @@ async function buildBriefingForUser(supabase: any, userId: string, userProfile: 
   await supabase
     .from("profiles")
     .update({ last_briefing_date: today })
-    .or(`id.eq.${userId},user_id.eq.${userId}`);
+    .eq("id", userId);
 }
 
 // ============================================================
