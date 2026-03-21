@@ -440,6 +440,7 @@ export default function CompanyProfile() {
               darkMoneyCount={dbDarkMoney?.length || 0}
               companyId={dbCompanyId || ""}
               companyName={name}
+              companySlug={id || ""}
               lastReviewed={dbCompany?.last_reviewed}
               updatedAt={dbCompany?.updated_at}
             />
