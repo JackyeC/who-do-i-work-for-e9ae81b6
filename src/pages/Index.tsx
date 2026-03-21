@@ -3,6 +3,7 @@ import jackyeHeadshotSm from "@/assets/jackye-headshot-sm.webp";
 import { useNavigate, Link } from "react-router-dom";
 import { Shield, ArrowRight, ArrowLeftRight, Zap, Search, Eye, Target, Brain, Rocket, CheckCircle2, Menu, X, Crosshair } from "lucide-react";
 import { useAuth } from "@/contexts/AuthContext";
+import { useAuth as useClerkAuth } from "@clerk/clerk-react";
 import { Button } from "@/components/ui/button";
 import { usePageSEO } from "@/hooks/use-page-seo";
 import { HeroSearch } from "@/components/landing/HeroSearch";
@@ -26,6 +27,8 @@ const STATIC_COMPANY_COUNT = 850;
 const Index = forwardRef<HTMLDivElement>((_, ref) => {
   const navigate = useNavigate();
   const { user, loading: authLoading } = useAuth();
+  const { isLoaded } = useClerkAuth();
+
   const [rivalries, setRivalries] = useState<any[] | null>(null);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
@@ -47,7 +50,7 @@ const Index = forwardRef<HTMLDivElement>((_, ref) => {
     if (!rivalries) loadRivalries().then(setRivalries);
   };
 
-
+  if (!isLoaded) return null;
 
   return (
     <div ref={ref} className="flex flex-col min-h-screen bg-background">
