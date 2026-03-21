@@ -57,7 +57,7 @@ async function generateBatchBriefings(supabase: any) {
   const { data: users, error: userError } = await supabase
     .from("profiles")
     .select("id, user_id, user_values, industries, interests, location_state")
-    .eq("onboarding_complete", true)
+    .eq("news_onboarding_complete", true)
     .or(`last_briefing_date.is.null,last_briefing_date.lt.${today}`);
 
   if (userError) {
