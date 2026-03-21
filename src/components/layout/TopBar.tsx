@@ -254,7 +254,7 @@ export function TopBar() {
 
           <ThemeToggle />
 
-          {isLoaded && (
+          {isLoaded && !isFallback && (
             <>
               <SignedIn>
                 <UserButton afterSignOutUrl="/" />
@@ -272,6 +272,9 @@ export function TopBar() {
                 </SignUpButton>
               </SignedOut>
             </>
+          )}
+          {isLoaded && isFallback && (
+            <span className="font-sans text-caption text-muted-foreground whitespace-nowrap">Preview Mode</span>
           )}
 
           {/* Audit CTA */}
