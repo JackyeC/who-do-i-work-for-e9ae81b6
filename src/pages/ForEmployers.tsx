@@ -23,19 +23,19 @@ const ORG_TYPES = ["Nonprofit", "B Corp", "Social Enterprise", "For-Purpose"];
 
 const VALUE_COLUMNS = [
   {
-    icon: ClipboardCheck,
+    icon: ShieldCheck,
     title: "Get Verified",
-    body: "We audit your organization using public data: Glassdoor, leadership tenure, impact reports, grant history, CSR disclosures. No questionnaire you fill out yourself. Just receipts.",
+    body: "Complete WDIWF's employer transparency audit and earn a verified badge candidates trust.",
   },
   {
     icon: Search,
     title: "Get Found",
-    body: "Verified organizations are featured in our repository. Mission-aligned candidates browse here specifically because they trust the vetting. They already want to work somewhere like you.",
+    body: "Appear in candidate dossiers when they research your company. Be the employer they choose.",
   },
   {
     icon: Users,
     title: "Get Matched",
-    body: "Access our talent pool of values-aligned candidates, scored against YOUR mission and culture — not a generic rubric.",
+    body: "Connect with candidates who already know your culture, values, and leadership — no cold outreach.",
   },
 ];
 
