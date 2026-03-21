@@ -94,16 +94,16 @@ export default function Tracker() {
 
   return (
     <>
-      <Helmet><title>Application Tracker — WDIWF</title></Helmet>
+      <Helmet><title>My Application Tracker — WDIWF</title></Helmet>
       <div className="max-w-7xl mx-auto px-4 sm:px-6 py-8">
         {/* Header */}
         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-8">
           <div>
             <h1 className="text-2xl font-extrabold text-foreground tracking-tight font-display">
-              Application Tracker
+              My Application Tracker
             </h1>
             <p className="text-sm text-muted-foreground mt-1">
-              Drag cards between columns to update status.
+              Every application. One place.
             </p>
           </div>
           <Dialog open={modalOpen} onOpenChange={setModalOpen}>
