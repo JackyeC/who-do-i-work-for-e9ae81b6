@@ -27,6 +27,8 @@ const STATIC_COMPANY_COUNT = 850;
 const Index = forwardRef<HTMLDivElement>((_, ref) => {
   const navigate = useNavigate();
   const { user, loading: authLoading } = useAuth();
+  const { isLoaded } = useClerkAuth();
+
   const [rivalries, setRivalries] = useState<any[] | null>(null);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
