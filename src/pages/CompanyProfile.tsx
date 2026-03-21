@@ -2,7 +2,7 @@ import { useState, useMemo, useCallback, useEffect, useRef } from "react";
 import { useParams, Link, useNavigate } from "react-router-dom";
 import { useCompanyIntelligence } from "@/hooks/use-company-intelligence";
 import { motion } from "framer-motion";
-import { Building2, ArrowLeft, EyeOff, Loader2, Sparkles, Search, Scan, ExternalLink } from "lucide-react";
+import { Building2, ArrowLeft, EyeOff, Loader2, Sparkles, Search, Scan, ExternalLink, MessageSquareWarning, FileSearch } from "lucide-react";
 import { CompanyLogo } from "@/components/CompanyLogo";
 import { WatchCompanyButton } from "@/components/WatchCompanyButton";
 import { ShareableScorecard } from "@/components/ShareableScorecard";
@@ -366,6 +366,50 @@ export default function CompanyProfile() {
               </div>
             </CardContent>
           </Card>
+
+          {/* ═══════════════════════════════════════════════════════
+              JACKYE'S INSIGHT / DESCRIPTION
+             ═══════════════════════════════════════════════════════ */}
+          {(dbCompany?.jackye_insight || (dbCompany as any)?.description) && (
+            <Card className="mb-6 border-primary/20 bg-primary/[0.03]">
+              <CardContent className="p-5">
+                <div className="flex items-start gap-3">
+                  <MessageSquareWarning className="w-5 h-5 text-primary mt-0.5 shrink-0" />
+                  <div>
+                    <h3 className="text-sm font-bold text-foreground mb-1.5">Jackye's Read</h3>
+                    <p className="text-sm text-foreground/85 leading-relaxed">
+                      {dbCompany?.jackye_insight || (dbCompany as any)?.description}
+                    </p>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+          )}
+
+          {/* ═══════════════════════════════════════════════════════
+              NO-DATA FALLBACK
+             ═══════════════════════════════════════════════════════ */}
+          {dbCompany && !dbCompany.jackye_insight && totalPac === 0 && lobbyingSpend === 0 && civicScore === 0 && (dbIssueSignals?.length || 0) === 0 && (dbPublicStances?.length || 0) === 0 && (
+            <Card className="mb-6 border-dashed border-border/60 bg-muted/20">
+              <CardContent className="p-6 text-center">
+                <FileSearch className="w-10 h-10 text-muted-foreground mx-auto mb-3" />
+                <h3 className="text-base font-semibold text-foreground mb-1">We don't have receipts on this company yet.</h3>
+                <p className="text-sm text-muted-foreground mb-4 max-w-md mx-auto">
+                  Our research team hasn't completed a full scan. You can request one or run an automated scan now.
+                </p>
+                <div className="flex items-center justify-center gap-3 flex-wrap">
+                  <Button onClick={handleFullScan} disabled={isScanning || !!isDiscovering} className="gap-2">
+                    {isScanning ? <Loader2 className="w-4 h-4 animate-spin" /> : <Scan className="w-4 h-4" />}
+                    {isScanning ? "Scanning…" : "Run Scan Now"}
+                  </Button>
+                  <Button variant="outline" onClick={() => navigate("/check")} className="gap-2">
+                    <Search className="w-4 h-4" />
+                    Request Audit
+                  </Button>
+                </div>
+              </CardContent>
+            </Card>
+          )}
 
           {/* ═══════════════════════════════════════════════════════
               1. INSIDER BRIEF
