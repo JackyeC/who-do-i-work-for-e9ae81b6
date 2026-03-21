@@ -226,7 +226,7 @@ export default function Tracker() {
                     </Card>
                   ))}
                   {colApps.length === 0 && (
-                    <p className="text-xs text-muted-foreground/50 text-center py-8">Drop here</p>
+                    <p className="text-xs text-muted-foreground/50 text-center py-8">No applications here yet</p>
                   )}
                 </div>
               </motion.div>
