@@ -1,4 +1,5 @@
 import { useTickerItems, getTickerItemColor } from "@/hooks/use-ticker-items";
+import { Link } from "react-router-dom";
 
 const FALLBACK_MESSAGE =
   "WDIWF is monitoring 850+ companies across FEC, SEC, OSHA, NLRB, BLS, and USASpending.gov — intelligence updates as new filings are detected.";
@@ -31,9 +32,13 @@ export function IntelligenceTicker() {
               />
               {item.company_name && (
                 <>
-                  <span className="font-sans text-ticker font-bold text-foreground">
+                  <Link
+                    to={`/company/${item.company_name.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '')}`}
+                    className="font-sans text-ticker font-bold text-foreground hover:text-primary transition-colors cursor-pointer"
+                    onClick={(e) => e.stopPropagation()}
+                  >
                     {item.company_name}
-                  </span>
+                  </Link>
                   <span className="text-primary mx-1 font-normal">:</span>
                 </>
               )}

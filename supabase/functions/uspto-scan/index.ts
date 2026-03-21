@@ -321,7 +321,7 @@ serve(async (req) => {
               title: p.title,
               url: p.patent_number ? `https://patents.google.com/patent/US${p.patent_number}` : null,
             })),
-            totalResults: existing.patent_count_36m || 0,
+            totalResults: (cachedPatents?.length || 0) > 0 ? Math.max(cachedPatents!.length, existing.patent_count_36m || 0) : (existing.patent_count_36m || 0),
           }), { headers: { ...corsHeaders, 'Content-Type': 'application/json' } });
         }
       }
@@ -434,7 +434,7 @@ serve(async (req) => {
       signals,
       clusters,
       topPatents,
-      totalResults: usedFallback ? patents.length : (signals.patent_count_36m || patents.length),
+      totalResults: patents.length,
       aliasesUsed: aliases.length,
     }), { headers: { ...corsHeaders, 'Content-Type': 'application/json' } });
 

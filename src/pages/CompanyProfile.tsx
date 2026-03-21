@@ -158,6 +158,25 @@ export default function CompanyProfile() {
     enabled: !!dbCompanyId,
   });
 
+  // ─── Jobs Data ───
+  const { data: dbJobs } = useQuery({
+    queryKey: ["company-jobs", dbCompanyId],
+    queryFn: async () => {
+      const { data, count } = await supabase
+        .from("company_jobs")
+        .select("id, title, location, work_mode, department, url, posted_at, salary_range, source_platform", { count: "exact" })
+        .eq("company_id", dbCompanyId!)
+        .eq("is_active", true)
+        .order("posted_at", { ascending: false })
+        .limit(20);
+      return { jobs: data || [], count: count || 0 };
+    },
+    enabled: !!dbCompanyId,
+  });
+
+  const activeJobCount = dbJobs?.count || 0;
+  const hasJobPostings = activeJobCount > 0;
+
   const seoTarget = dbCompany || (company ? { name: company.name, industry: company.industry || "", state: company.state || "", description: "", slug: company.id } : null);
   useCompanySEO({ name: seoTarget?.name || "", industry: seoTarget?.industry || "", state: seoTarget?.state || "", description: (seoTarget as any)?.description || "", slug: id || seoTarget?.slug || "", score: dbCompany?.civic_footprint_score });
 
@@ -205,7 +224,7 @@ export default function CompanyProfile() {
       if (data?.success) {
         const count = Object.values(data.tablesPopulated || {}).reduce((a: number, b: any) => a + (b as number), 0);
         toast({ title: "Scan complete", description: `Found ${count} records for ${dbCompany.name}.` });
-        const keys = ["company-profile", "company-candidates", "company-executives", "company-party-breakdown", "company-public-stances", "company-dark-money", "company-revolving-door", "company-trade-assoc", "company-issue-signals", "ti-ai-hr", "ti-benefits", "ti-pay", "ti-sentiment", "company-patents"];
+        const keys = ["company-profile", "company-candidates", "company-executives", "company-party-breakdown", "company-public-stances", "company-dark-money", "company-revolving-door", "company-trade-assoc", "company-issue-signals", "ti-ai-hr", "ti-benefits", "ti-pay", "ti-sentiment", "company-patents", "company-jobs"];
         keys.forEach(k => queryClient.invalidateQueries({ queryKey: [k] }));
       } else { throw new Error(data?.error || "Scan failed"); }
     } catch (e: any) {
@@ -367,7 +386,7 @@ export default function CompanyProfile() {
             hasAiHrSignals={!!tiAiHr}
             employeeCount={(dbCompany as any)?.employee_count ?? null}
             hasWarnNotices={false}
-            hasJobPostings={false}
+            hasJobPostings={hasJobPostings}
             hasTradeAssociations={(dbTradeAssociations?.length || 0) > 0}
             hasGovernmentContracts={govContracts > 0}
             hasDarkMoney={(dbDarkMoney?.length || 0) > 0}
@@ -391,7 +410,7 @@ export default function CompanyProfile() {
             hasAiHrSignals={!!tiAiHr}
             hasSentimentData={!!tiSentiment}
             hasCompensationData={!!tiBenefits}
-            hasJobPostings={false}
+            hasJobPostings={hasJobPostings}
             executiveCount={dbExecutives?.length || 0}
             revolvingDoorCount={dbRevolvingDoor?.length || 0}
             totalPacSpending={totalPac}
@@ -405,7 +424,8 @@ export default function CompanyProfile() {
              ═══════════════════════════════════════════════════════ */}
           <ReportTeaserGate companyName={name} teaser={null}>
             <StructuredSignalsSection
-              hasJobPostings={false}
+              hasJobPostings={hasJobPostings}
+              activeJobCount={activeJobCount}
               hasAiHrSignals={!!tiAiHr}
               hasGhostJobs={false}
               hasWarnNotices={false}
@@ -470,17 +490,6 @@ export default function CompanyProfile() {
           )}
 
           {/* ═══════════════════════════════════════════════════════
-              6. REALITY GAP ANALYSIS
-             ═══════════════════════════════════════════════════════ */}
-          {dbCompanyId && (
-            <RealityGapBlock
-              companyId={dbCompanyId}
-              companyName={name}
-              updatedAt={dbCompany?.updated_at}
-            />
-          )}
-
-          {/* ═══════════════════════════════════════════════════════
               7. WHAT TO WATCH
              ═══════════════════════════════════════════════════════ */}
           <WhatToWatch
@@ -491,7 +500,7 @@ export default function CompanyProfile() {
             hasBenefitsData={!!tiBenefits}
             hasAiHrSignals={!!tiAiHr}
             hasSentimentData={!!tiSentiment}
-            hasJobPostings={false}
+            hasJobPostings={hasJobPostings}
             executiveCount={dbExecutives?.length || 0}
             revolvingDoorCount={dbRevolvingDoor?.length || 0}
             totalPacSpending={totalPac}
@@ -530,7 +539,7 @@ export default function CompanyProfile() {
             hasAiHrSignals={!!tiAiHr}
             hasSentimentData={!!tiSentiment}
             hasCompensationData={!!tiBenefits}
-            hasJobPostings={false}
+            hasJobPostings={hasJobPostings}
             executiveCount={dbExecutives?.length || 0}
             revolvingDoorCount={dbRevolvingDoor?.length || 0}
             totalPacSpending={totalPac}

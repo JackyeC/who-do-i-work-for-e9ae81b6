@@ -25,17 +25,18 @@ const INTERPRETATIONS: Record<string, IntelligenceSignalData> = {
     title: "Low Public Visibility",
     explanation: "No structured public discussion signals found.",
     intelligence: "This may indicate a quiet corporate culture, high employee NDA enforcement, or simply low online footprint among workers.",
-    suggestedAction: "Search Glassdoor or Blind directly for recent employee reviews.",
+    suggestedAction: "Search Glassdoor",
+    suggestedActionUrl: "https://www.glassdoor.com/Reviews/index.htm",
     checkedSources: ["Reddit", "Blind", "Public forums"],
   },
   jobs: {
-    title: "Evergreen Recruiting Page Detected — 0 Live Requisitions Found",
-    explanation: "A careers page exists, but no active job postings were found in the linked ATS.",
+    title: "No Active Job Postings Indexed",
+    explanation: "We haven't indexed active job postings for this company yet.",
     whatTheySay: "\"Join our growing team\" — career branding is active.",
-    whatWeSee: "0 active postings found in the applicant tracking system.",
-    intelligence: "Corporate roles may be filled internally, on seasonal freeze, or the careers page is an evergreen marketing asset.",
-    suggestedAction: "Check the company's careers page directly or set a watch alert for new postings.",
-    checkedSources: ["Careers landing page"],
+    whatWeSee: "0 active postings found in our database.",
+    intelligence: "Roles may be filled internally, on seasonal freeze, or not yet indexed. Check the company's careers page directly.",
+    suggestedAction: "Visit careers page",
+    checkedSources: ["Careers landing page", "ATS detection"],
   },
   court_records: {
     title: "No Public Court Filings Found",
@@ -47,14 +48,16 @@ const INTERPRETATIONS: Record<string, IntelligenceSignalData> = {
     title: "Low External Discussion Volume",
     explanation: "No structured employee sentiment data is available for this employer.",
     intelligence: "No recurring discussion themes found on public forums. This company may have low online visibility among workers, or employees may be under NDA.",
-    suggestedAction: "Search Glassdoor or Blind directly for recent reviews.",
+    suggestedAction: "Search Glassdoor",
+    suggestedActionUrl: "https://www.glassdoor.com/Reviews/index.htm",
     checkedSources: ["Reddit", "Blind", "Glassdoor (public)", "Public forums"],
   },
   compensation: {
     title: "Compensation Data Not Publicly Disclosed",
     explanation: "Compensation data has not been disclosed or indexed for this employer.",
     intelligence: "This is a low-transparency signal. Companies in states with pay transparency laws (CO, NY, CA, WA) are increasingly required to disclose salary ranges.",
-    suggestedAction: "Check levels.fyi or Glassdoor for crowdsourced salary data.",
+    suggestedAction: "Check levels.fyi",
+    suggestedActionUrl: "https://www.levels.fyi/",
     checkedSources: ["SEC proxy filings", "State pay transparency filings", "Job postings"],
   },
   benefits: {
@@ -67,7 +70,8 @@ const INTERPRETATIONS: Record<string, IntelligenceSignalData> = {
     title: "No Forum Signals Detected",
     explanation: "No recurring discussion themes were found on public forums.",
     intelligence: "This company may have low online visibility among workers, or forum discussions are too fragmented to aggregate.",
-    suggestedAction: "Search Reddit for the company name + \"work\" or \"employee\" for anecdotal signals.",
+    suggestedAction: "Search Reddit",
+    suggestedActionUrl: "https://www.reddit.com/search/",
     checkedSources: ["Reddit", "Blind", "HackerNews"],
   },
 };
@@ -154,12 +158,22 @@ export function EmptyStateExplainer({ type, className, companyName, scanContext 
             {lastChecked && ` · as of ${new Date(lastChecked).toLocaleDateString()}`}
           </span>
         </div>
-        {info.suggestedAction && (
-          <span className="text-xs text-primary font-medium whitespace-nowrap flex items-center gap-1 shrink-0 cursor-default">
+        {info.suggestedAction && info.suggestedActionUrl ? (
+          <a
+            href={info.suggestedActionUrl}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="text-xs text-primary font-medium whitespace-nowrap flex items-center gap-1 shrink-0 hover:text-primary/80 transition-colors"
+          >
+            <ExternalLink className="w-3 h-3" />
+            {info.suggestedAction.length > 50 ? info.suggestedAction.slice(0, 47) + "…" : info.suggestedAction}
+          </a>
+        ) : info.suggestedAction ? (
+          <span className="text-xs text-primary font-medium whitespace-nowrap flex items-center gap-1 shrink-0">
             <ExternalLink className="w-3 h-3" />
             {info.suggestedAction.length > 50 ? info.suggestedAction.slice(0, 47) + "…" : info.suggestedAction}
           </span>
-        )}
+        ) : null}
       </div>
     </div>
   );

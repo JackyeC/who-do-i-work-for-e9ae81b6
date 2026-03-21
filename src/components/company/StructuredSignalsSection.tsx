@@ -107,6 +107,7 @@ function SignalCategory({ title, signals, emptyType, companyName, scanContext }:
 
 interface StructuredSignalsProps {
   hasJobPostings: boolean;
+  activeJobCount?: number;
   hasAiHrSignals: boolean;
   hasGhostJobs: boolean;
   hasWarnNotices: boolean;
@@ -222,12 +223,12 @@ export function StructuredSignalsSection(props: StructuredSignalsProps) {
   if (hiringCanonical?.summary) {
     hiringSignals.push(buildSignalFromCanonical(hiringCanonical));
   } else {
+    if (props.hasJobPostings)
+      hiringSignals.push({ summary: `Active job postings detected. ${props.activeJobCount ? props.activeJobCount + " live role" + (props.activeJobCount !== 1 ? "s" : "") + " indexed." : "No unusual hiring patterns flagged."}`, confidence: "Medium", recency, uiStatement: props.activeJobCount ? `${props.activeJobCount} Active Job${props.activeJobCount !== 1 ? "s" : ""} Found` : "Active Hiring Detected" });
     if (props.hasAiHrSignals)
       hiringSignals.push({ summary: "AI-powered hiring tools detected in application pipeline. Bias audit status is pending.", confidence: "Medium", recency });
     if (props.hasGhostJobs)
       hiringSignals.push({ summary: "Potential ghost job postings identified — roles listed but not actively being filled.", confidence: "Low", recency });
-    if (props.hasJobPostings && !props.hasAiHrSignals && !props.hasGhostJobs)
-      hiringSignals.push({ summary: "Active job postings detected. No unusual hiring patterns flagged.", confidence: "Medium", recency });
   }
 
   // ── Workforce Stability ──
