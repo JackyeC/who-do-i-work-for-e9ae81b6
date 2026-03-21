@@ -8,13 +8,13 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import {
-  Plus, Briefcase, Users, Gift, Archive, GripVertical, Building2, Calendar, Shield,
+  Plus, Briefcase, Users, Gift, GripVertical, Building2, Calendar, Shield,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { motion } from "framer-motion";
 import { toast } from "sonner";
 
-type Status = "applied" | "interviewing" | "offer" | "archived";
+type Status = "researching" | "applied" | "interviewing" | "offer_rejected";
 
 interface TrackerApp {
   id: string;
@@ -27,16 +27,16 @@ interface TrackerApp {
 }
 
 const INITIAL_APPS: TrackerApp[] = [
-  { id: "1", company: "Patagonia", role: "Senior Product Manager", status: "applied", appliedDate: "Mar 14, 2026", integrityScore: 92, notes: "Strong mission alignment — B Corp certified" },
+  { id: "1", company: "Patagonia", role: "Senior Product Manager", status: "researching", appliedDate: "Mar 14, 2026", integrityScore: 92, notes: "Strong mission alignment — B Corp certified" },
   { id: "2", company: "Khan Academy", role: "Curriculum Designer", status: "applied", appliedDate: "Mar 16, 2026", integrityScore: 96, notes: "Non-profit, education-first culture" },
   { id: "3", company: "Costco", role: "Regional Operations Lead", status: "applied", appliedDate: "Mar 12, 2026", integrityScore: 84, notes: "Above-industry wages, low turnover" },
 ];
 
 const COLUMNS: { status: Status; label: string; icon: typeof Briefcase; accent: string }[] = [
-  { status: "applied", label: "Applied", icon: Briefcase, accent: "text-[hsl(var(--civic-blue))]" },
+  { status: "researching", label: "Researching", icon: Shield, accent: "text-[hsl(var(--civic-blue))]" },
+  { status: "applied", label: "Applied", icon: Briefcase, accent: "text-primary" },
   { status: "interviewing", label: "Interviewing", icon: Users, accent: "text-[hsl(var(--civic-gold))]" },
-  { status: "offer", label: "Offer", icon: Gift, accent: "text-[hsl(var(--civic-green))]" },
-  { status: "archived", label: "Archived", icon: Archive, accent: "text-muted-foreground" },
+  { status: "offer_rejected", label: "Offer / Rejected", icon: Gift, accent: "text-[hsl(var(--civic-green))]" },
 ];
 
 function IntegrityDot({ score }: { score: number }) {
@@ -62,7 +62,7 @@ export default function Tracker() {
   const counts = {
     total: apps.length,
     interviewing: apps.filter(a => a.status === "interviewing").length,
-    offer: apps.filter(a => a.status === "offer").length,
+    offer: apps.filter(a => a.status === "offer_rejected").length,
   };
 
   const handleAdd = () => {
@@ -71,7 +71,7 @@ export default function Tracker() {
       id: crypto.randomUUID(),
       company: form.company.trim(),
       role: form.role.trim(),
-      status: "applied",
+      status: "researching",
       appliedDate: form.date
         ? new Date(form.date).toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" })
         : new Date().toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" }),
@@ -94,16 +94,16 @@ export default function Tracker() {
 
   return (
     <>
-      <Helmet><title>Application Tracker — WDIWF</title></Helmet>
+      <Helmet><title>My Application Tracker — WDIWF</title></Helmet>
       <div className="max-w-7xl mx-auto px-4 sm:px-6 py-8">
         {/* Header */}
         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-8">
           <div>
             <h1 className="text-2xl font-extrabold text-foreground tracking-tight font-display">
-              Application Tracker
+              My Application Tracker
             </h1>
             <p className="text-sm text-muted-foreground mt-1">
-              Drag cards between columns to update status.
+              Every application. One place.
             </p>
           </div>
           <Dialog open={modalOpen} onOpenChange={setModalOpen}>
@@ -138,7 +138,7 @@ export default function Tracker() {
                   <Textarea placeholder="Optional notes..." value={form.notes} onChange={e => update("notes", e.target.value)} className="mt-1" rows={3} />
                 </div>
                 <Button onClick={handleAdd} className="w-full" disabled={!form.company.trim() || !form.role.trim()}>
-                  Add to Applied
+                  Add to Researching
                 </Button>
               </div>
             </DialogContent>
@@ -226,7 +226,7 @@ export default function Tracker() {
                     </Card>
                   ))}
                   {colApps.length === 0 && (
-                    <p className="text-xs text-muted-foreground/50 text-center py-8">Drop here</p>
+                    <p className="text-xs text-muted-foreground/50 text-center py-8">No applications here yet</p>
                   )}
                 </div>
               </motion.div>
