@@ -1144,7 +1144,7 @@ export default function InterviewDossier() {
                 {/* Recruiter Info */}
                 <div className="section">
                   <div style={{ fontWeight: 800, fontSize: "1rem", marginBottom: "0.2rem" }}>Your Information</div>
-                  <div style={{ color: T.muted, fontRize: "0.74rem", marginBottom: "0.75rem" }}>This appears on the dossier as the sending recruiter. It's how your candidate knows this came from you — and how to reach you.</div>
+                  <div style={{ color: T.muted, fontSize: "0.74rem", marginBottom: "0.75rem" }}>This appears on the dossier as the sending recruiter. It's how your candidate knows this came from you — and how to reach you.</div>
                   <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "0.55rem" }}>
                     {[
                       ["YOUR NAME *", recName, setRecName, "e.g. Jackye Clayton"],
