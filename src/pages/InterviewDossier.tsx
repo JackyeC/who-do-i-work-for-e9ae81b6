@@ -1131,9 +1131,11 @@ export default function InterviewDossier() {
               <div className="section">
                 <div style={{ fontWeight: 700, fontSize: "0.84rem", marginBottom: "0.65rem" }}>Scripts — Word for Word</div>
                 {[
-                  { s: "When they ask your salary expectations", t: `"Based on my research for ${co.role} at ${co.name}, I'm targeting ${co.negotiation.marketRange.split("+")[0].trim()}. I want to understand the full structure — can you walk me through how the offer is built?"` },
-                  { s: "When the first offer comes in below market", t: `"I appreciate this offer. Based on the market data I've researched for this level at ${co.name}, I was expecting to be closer to ${co.negotiation.marketRange.split("+")[0].trim()}. Is there flexibility to move toward that range?"` },
+                  { s: "When they ask your salary expectations", t: `"Based on my research for ${co.role} at ${co.name}, I'm targeting ${(co.negotiation?.marketRange ?? "").split("+")[0].trim()}. I want to understand the full structure — can you walk me through how the offer is built?"` },
+                  { s: "When the first offer comes in below market", t: `"I appreciate this offer. Based on the market data I've researched for this level at ${co.name}, I was expecting to be closer to ${(co.negotiation?.marketRange ?? "").split("+")[0].trim()}. Is there flexibility to move toward that range?"` },
                   { s: "When you need more time", t: `"This is an important decision and I want to give it the consideration it deserves. Can I have until [specific date]? I want to be fully committed when I say yes."` },
+                  { s: "Counter-offer script — when you have competing offers", t: `"I want to be transparent — I have another offer at [competing company] that comes in at [amount]. I'm genuinely more interested in ${co.name} because of [specific reason tied to role/team/mission]. Is there room to close the gap on [base/RSU/signing]? I want to make this work."` },
+                  { s: "When they say 'this is our best offer'", t: `"I understand this may be the top of the band for base. Can we look at other components — signing bonus, RSU acceleration, review timeline, or professional development budget? I'm trying to build a package that reflects the level of commitment I'm bringing."` },
                 ].map(({ s, t }) => (
                   <div key={s} style={{ marginBottom: "0.65rem", padding: "0.75rem 0.9rem", background: T.bg, borderRadius: 10, border: `1px solid ${T.border}` }}>
                     <div style={{ fontWeight: 700, fontSize: "0.75rem", color: T.blue, marginBottom: "0.28rem" }}>📌 {s}</div>
