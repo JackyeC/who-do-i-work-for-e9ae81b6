@@ -100,8 +100,8 @@ export function EmptyStateExplainer({ type, className, companyName, careersUrl, 
   const lastChecked = scanContext?.lastScanned || info.lastChecked;
   const hasComparison = whatTheySay && whatWeSee;
 
-  // For jobs type with ATS detected + careers URL, show prominent CTA button
-  const showCareersButton = type === "jobs" && scanContext?.atsDetected && careersUrl;
+  // For jobs type with careers URL available, show prominent CTA button
+  const showCareersButton = type === "jobs" && careersUrl;
 
   return (
     <div className={cn("rounded-xl border border-border/60 bg-muted/20 overflow-hidden", className)}>
