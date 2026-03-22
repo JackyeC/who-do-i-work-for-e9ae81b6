@@ -7,7 +7,7 @@ import { usePageSEO } from "@/hooks/use-page-seo";
 import {
   vibeMatchSchema, calculateRealityGap,
   type VibeMatchInput, type PublicDataSignals, type RealityGapResult,
-} from "@/lib/integrityGapScore";
+} from "@/lib/realityGapScore";
 import { VibeMatchQuestionnaire } from "@/components/reality-check/VibeMatchQuestionnaire";
 import { RealityGapResults } from "@/components/reality-check/RealityGapResults";
 import { FlinchTest } from "@/components/reality-check/FlinchTest";
