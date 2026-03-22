@@ -109,9 +109,11 @@ export function OfferClarityWizard() {
   };
 
   const selectCompany = (c: any) => {
-    setOfferData(d => ({ ...d, companyName: c.name, companyId: c.id }));
+    setOfferData(d => ({ ...d, companyName: c.name, companyId: c.id, unknownCompanyMeta: undefined }));
     setCompanyResults([]);
     setSearchedCompany(false);
+    setCompanyLookupStatus(true);
+    if (debounceRef.current) clearTimeout(debounceRef.current);
   };
 
   const handleAddNewCompany = async () => {
