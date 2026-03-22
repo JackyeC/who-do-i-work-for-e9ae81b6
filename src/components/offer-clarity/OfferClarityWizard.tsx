@@ -51,6 +51,45 @@ export function OfferClarityWizard() {
   const [searchedCompany, setSearchedCompany] = useState(false);
   const [creatingCompany, setCreatingCompany] = useState(false);
 
+  // Company lookup status: null = not checked, true = found, false = not found
+  const [companyLookupStatus, setCompanyLookupStatus] = useState<boolean | null>(null);
+  const [lookingUpCompany, setLookingUpCompany] = useState(false);
+  const debounceRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  const checkCompanyExists = useCallback(async (name: string) => {
+    const trimmed = name.trim();
+    if (trimmed.length < 2) {
+      setCompanyLookupStatus(null);
+      return;
+    }
+    // Skip if already matched via dropdown
+    if (offerData.companyId) return;
+
+    setLookingUpCompany(true);
+    const { data } = await supabase
+      .from("companies")
+      .select("id, name")
+      .ilike("name", `%${trimmed}%`)
+      .limit(1);
+
+    if (data && data.length > 0) {
+      setCompanyLookupStatus(true);
+    } else {
+      setCompanyLookupStatus(false);
+    }
+    setLookingUpCompany(false);
+  }, [offerData.companyId]);
+
+  const scheduleCompanyCheck = useCallback((name: string) => {
+    if (debounceRef.current) clearTimeout(debounceRef.current);
+    debounceRef.current = setTimeout(() => checkCompanyExists(name), 600);
+  }, [checkCompanyExists]);
+
+  // Cleanup debounce on unmount
+  useEffect(() => {
+    return () => { if (debounceRef.current) clearTimeout(debounceRef.current); };
+  }, []);
+
   const searchCompany = async (name: string) => {
     setOfferData(d => ({ ...d, companyName: name, companyId: undefined }));
     setSearchedCompany(false);
