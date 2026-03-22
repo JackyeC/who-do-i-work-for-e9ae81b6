@@ -912,7 +912,7 @@ export default function InterviewDossier() {
                     {dept && <span style={{ color: T.blue, fontWeight: 700 }}> Showing adjusted scores for {dept}.</span>}
                   </div>
                   <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "0.45rem" }}>
-                    {Object.entries(co.signals).map(([dim, base]) => {
+                    {Object.entries(co.signals).map(([dim, base]: [string, any]) => {
                       const adj = deptSignals[dim] || 0;
                       const adjScore = adjustedSignals[dim];
                       return (
