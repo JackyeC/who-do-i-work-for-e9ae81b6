@@ -31,6 +31,55 @@ export default function Methodology() {
           </p>
 
           <div className="space-y-14">
+            {/* ───── The Receipts Framework ───── */}
+            <section>
+              <h2 className="text-title text-foreground mb-5">The Receipts Framework</h2>
+              <p className="text-body text-muted-foreground mb-5 leading-relaxed">
+                Every company investigation is structured around four pillars. Together, they form a complete picture
+                of what a company does — not just what it says.
+              </p>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                {[
+                  {
+                    pillar: "Integrity Gap",
+                    desc: "Compares a company's public values claims against their actual behavior — FEC filings, lobbying disclosures, political spending, DEI program changes, and workforce data. Absorbs what we previously tracked as 'Political Giving.'",
+                    sources: "FEC/OpenFEC, LDA.gov, SEC EDGAR, company press releases, DEI reports",
+                  },
+                  {
+                    pillar: "Labor Impact",
+                    desc: "Tracks WARN Act layoffs, workforce restructuring, hiring freezes, and the human cost of corporate decisions — by state, date, and scale.",
+                    sources: "WARN Act filings (state-level), BLS, SEC 8-K filings, NLRB",
+                  },
+                  {
+                    pillar: "Safety Alert",
+                    desc: "Surfaces OSHA violations, NLRB complaints, EPA enforcement actions, workplace injury rates, and regulatory penalties.",
+                    sources: "OSHA, EPA ECHO, NLRB, MSHA, CFPB, CourtListener",
+                  },
+                  {
+                    pillar: "Connected Dots",
+                    desc: "Follows the money: PAC disbursements, executive donations, lobbying ties, federal contract awards, and political influence networks.",
+                    sources: "FEC/OpenFEC, USAspending.gov, LDA.gov, OpenSecrets, ProPublica",
+                  },
+                ].map((item) => (
+                  <Card key={item.pillar}>
+                    <CardContent className="p-5">
+                      <div className="flex items-center gap-2 mb-2">
+                        <Badge className="bg-primary/15 text-primary border-primary/30 text-[10px] font-mono">
+                          {item.pillar}
+                        </Badge>
+                      </div>
+                      <p className="text-caption text-muted-foreground leading-relaxed mb-2">{item.desc}</p>
+                      <p className="text-caption text-muted-foreground/70 font-mono text-[10px]">Sources: {item.sources}</p>
+                    </CardContent>
+                  </Card>
+                ))}
+              </div>
+              <p className="text-caption text-muted-foreground mt-4 leading-relaxed">
+                Receipts reports are free and ungated — anyone can read and share them. Our deeper intelligence tools
+                (career matching, offer analysis, employer verification) require an account.
+              </p>
+            </section>
+
             {/* ───── Source Hierarchy ───── */}
             <section>
               <h2 className="text-title text-foreground mb-5">Source Hierarchy (Tiers 1–5)</h2>

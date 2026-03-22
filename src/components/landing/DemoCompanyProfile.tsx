@@ -15,7 +15,7 @@ const SECTIONS = [
     content: (
       <div className="space-y-3">
         <div className="flex items-center gap-2 flex-wrap">
-          <span className="font-mono text-xs tracking-wider uppercase text-muted-foreground">Reality Gap:</span>
+          <span className="font-mono text-xs tracking-wider uppercase text-muted-foreground">Integrity Gap:</span>
           <Badge variant="warning" className="font-mono text-[10px] tracking-wider uppercase">Moderate → High</Badge>
         </div>
         <p className="text-sm text-muted-foreground leading-relaxed">
@@ -129,7 +129,7 @@ const SECTIONS = [
   {
     num: "07",
     icon: Scale,
-    title: "Reality Gap",
+    title: "Integrity Gap",
     content: (
       <div className="space-y-3">
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
@@ -189,7 +189,7 @@ export function DemoCompanyProfile() {
           <div className="font-serif text-lg text-foreground">Large National Restaurant Brand</div>
         </div>
         <Badge variant="warning" className="font-mono text-[10px] tracking-wider uppercase">
-          Reality Gap: Moderate → High
+          Integrity Gap: Moderate → High
         </Badge>
       </div>
 

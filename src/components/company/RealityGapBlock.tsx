@@ -94,7 +94,7 @@ export function RealityGapBlock({ companyId, companyName, updatedAt }: RealityGa
       <div className="px-5 py-4 border-b border-border/40 flex items-center justify-between">
         <div className="flex items-center gap-2">
           <Scale className="w-4 h-4 text-primary" />
-          <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">Reality Gap Analysis</p>
+          <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">Integrity Gap Analysis</p>
         </div>
         <div className="flex items-center gap-2">
           {hasGaps && (

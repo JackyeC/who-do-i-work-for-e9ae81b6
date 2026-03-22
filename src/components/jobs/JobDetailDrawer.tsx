@@ -54,7 +54,7 @@ export function JobDetailDrawer({ job, companyValueSignals = [], companySignals 
   const rankingExplanation = generateRankingExplanation(companySignals, profile, matchScore);
   const clashAlerts = generateClashAlerts(companySignals, profile);
 
-  // Ghost Posting Risk: detect if hiring_activity signal is "low" or job lacks ATS source
+  // Labor Impact Risk: detect if hiring_activity signal is "low" or job lacks ATS source
   const hiringSignal = companySignals.find(s => s.signal_category === "hiring_activity");
   const hasGhostRisk = hiringSignal?.value_normalized === "low" ||
     (hiringSignal?.summary?.toLowerCase().includes("repost") ?? false) ||
@@ -118,12 +118,12 @@ export function JobDetailDrawer({ job, companyValueSignals = [], companySignals 
 
           <Separator />
 
-          {/* ── Ghost Posting Risk Banner ── */}
+          {/* ── Labor Impact Risk Banner ── */}
           {hasGhostRisk && (
             <div className="p-3 rounded-lg border border-[hsl(var(--civic-yellow))]/30 bg-[hsl(var(--civic-yellow))]/5 flex items-start gap-2.5">
               <Ghost className="w-4 h-4 text-[hsl(var(--civic-yellow))] mt-0.5 shrink-0" />
               <div>
-                <p className="text-sm font-medium text-foreground">Ghost Posting Risk</p>
+                <p className="text-sm font-medium text-foreground">Labor Impact Risk</p>
                 <p className="text-xs text-muted-foreground mt-0.5 leading-relaxed">
                   This role may not appear on the company's own careers page. Confirm the listing is still active before applying.
                 </p>

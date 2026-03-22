@@ -1,12 +1,12 @@
 /**
- * Reality Gap Score™
+ * Integrity Gap Score™
  *
  * Compares a candidate's post-interview experience against
  * the company's public data signals to detect "Diversity Wash"
  * and "Say-Do" disconnects.
  *
  * Each questionnaire dimension is scored 0-100 via a sentiment slider.
- * The Reality Gap is the divergence between public signals and lived experience.
+ * The Integrity Gap is the divergence between public signals and lived experience.
  */
 
 import { z } from "zod";
@@ -51,7 +51,7 @@ export interface DimensionComparison {
 
 export interface RealityGapResult {
   overallVibeScore: number;
-  realityGapScore: number;
+  integrityGapScore: number;
   gapLabel: string;
   gapBand: "aligned" | "minor_gap" | "notable_gap" | "significant_disconnect" | "reality_check";
   dimensions: DimensionComparison[];
@@ -196,16 +196,16 @@ export function calculateRealityGap(
     dimensionPairs.reduce((sum, d) => sum + d.experience * d.weight, 0),
   );
 
-  // Reality gap = weighted average of absolute gaps
-  const realityGapScore = Math.round(
+  // Integrity gap = weighted average of absolute gaps
+  const integrityGapScore = Math.round(
     dimensionPairs.reduce((sum, d) => sum + Math.abs(d.publicData - d.experience) * d.weight, 0),
   );
 
-  const gapBand = getGapBand(realityGapScore);
+  const gapBand = getGapBand(integrityGapScore);
 
   return {
     overallVibeScore,
-    realityGapScore,
+    integrityGapScore,
     gapLabel: GAP_LABELS[gapBand],
     gapBand,
     dimensions,

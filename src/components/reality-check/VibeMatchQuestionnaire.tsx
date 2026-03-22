@@ -7,7 +7,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { cn } from "@/lib/utils";
-import type { VibeMatchInput } from "@/lib/realityGapScore";
+import type { VibeMatchInput } from "@/lib/integrityGapScore";
 import {
   Terminal, Search, Users, Shield, AlertTriangle,
   MessageSquare, ClipboardCheck, Loader2, ChevronRight,
@@ -356,7 +356,7 @@ export function VibeMatchQuestionnaire({ onSubmit, isSubmitting }: Props) {
             {isSubmitting ? (
               <>
                 <Loader2 className="w-4 h-4 animate-spin" />
-                Analyzing Reality Gap...
+                Analyzing Integrity Gap...
               </>
             ) : (
               <>

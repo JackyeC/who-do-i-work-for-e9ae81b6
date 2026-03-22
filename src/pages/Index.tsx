@@ -1,7 +1,7 @@
 import { useState, lazy, Suspense, forwardRef } from "react";
 import jackyeHeadshotSm from "@/assets/jackye-headshot-sm.webp";
 import { useNavigate, Link } from "react-router-dom";
-import { Shield, ArrowRight, Eye, Target, Brain, Rocket, CheckCircle2, Menu, X, Crosshair } from "lucide-react";
+import { Shield, ArrowRight, Eye, Target, Brain, Rocket, CheckCircle2, Menu, X, Crosshair, FileSearch, AlertTriangle, Link2 } from "lucide-react";
 import { useAuth } from "@/contexts/AuthContext";
 import { useClerkWithFallback } from "@/hooks/use-clerk-fallback";
 import { Button } from "@/components/ui/button";
@@ -54,6 +54,12 @@ const Index = forwardRef<HTMLDivElement>((_, ref) => {
   return (
     <div ref={ref} className="flex flex-col min-h-screen bg-background">
       {/* ── Site Header (Sticky) ── */}
+      {/* Receipts banner */}
+      <div className="bg-primary/10 border-b border-primary/20 px-6 py-2.5 text-center">
+        <Link to="/receipts" className="font-sans text-sm text-primary hover:underline">
+          New: The Receipts — company-by-company investigations powered by public records →
+        </Link>
+      </div>
       <header className="sticky top-0 z-50 bg-background/95 backdrop-blur-sm border-b border-border/50 px-6 lg:px-16 py-4 w-full">
         <div className="max-w-[1100px] mx-auto flex items-center justify-between">
         <Link to="/" className="font-serif text-foreground" style={{ fontSize: '18px', fontWeight: 700 }}>
@@ -180,38 +186,25 @@ const Index = forwardRef<HTMLDivElement>((_, ref) => {
               animation: "heroFadeIn 0.5s ease 1.5s forwards",
             }}
           >
-            {(() => {
-              const hasPersona = typeof window !== "undefined" && !!localStorage.getItem("wdiwf_persona");
-              return (
-                <div className="flex flex-col items-center">
-                  <button
-                    onClick={() => navigate(hasPersona ? "/dashboard" : "/quiz")}
-                    className="hover-btn bg-primary text-primary-foreground font-sans text-base font-semibold px-11 py-4 rounded-full border-none cursor-pointer"
-                  >
-                    {hasPersona ? "Continue to my intelligence →" : "Start your career scan →"}
-                  </button>
-                  {hasPersona && (
-                    <button
-                      onClick={() => navigate("/quiz")}
-                      className="font-sans text-xs text-muted-foreground mt-2 cursor-pointer bg-transparent border-none"
-                    >
-                      Or retake the quiz →
-                    </button>
-                   )}
-                  <Link
-                    to="/join"
-                    className="font-sans text-caption text-muted-foreground mt-2.5 inline-block hover:underline"
-                  >
-                    Launching April 6 — get early access →
-                  </Link>
-                </div>
-              );
-            })()}
+            <div className="flex flex-col items-center">
+              <button
+                onClick={() => navigate("/receipts")}
+                className="hover-btn bg-primary text-primary-foreground font-sans text-base font-semibold px-11 py-4 rounded-full border-none cursor-pointer"
+              >
+                See the receipts →
+              </button>
+              <Link
+                to="/join"
+                className="font-sans text-caption text-muted-foreground mt-2.5 inline-block hover:underline"
+              >
+                Launching April 6 — get early access →
+              </Link>
+            </div>
           </div>
 
-          {/* ── Benefit Cards ── */}
+          {/* ── The Four Pillars ── */}
           <div
-            className="grid grid-cols-1 md:grid-cols-3 gap-5 w-full max-w-[900px]"
+            className="grid grid-cols-1 sm:grid-cols-2 gap-4 w-full max-w-[900px]"
             style={{
               marginTop: "64px",
               opacity: 0,
@@ -220,19 +213,24 @@ const Index = forwardRef<HTMLDivElement>((_, ref) => {
           >
             {[
               {
-                icon: <Shield className="w-5 h-5 text-primary" />,
-                title: "Company Integrity Score",
-                body: "We scan culture, turnover, leadership stability, and workplace signals from public sources before any candidate sees the job.",
+                icon: <FileSearch className="w-5 h-5 text-primary" />,
+                title: "Integrity Gap",
+                body: "What companies say vs. what the public record shows. We compare their claims against FEC filings, lobbying disclosures, and workforce data.",
               },
               {
                 icon: <Target className="w-5 h-5 text-primary" />,
-                title: "Value Alignment Matching",
-                body: "Skills get you in the door. Values keep you there. Our AI matches on both.",
+                title: "Labor Impact",
+                body: "WARN Act layoffs, workforce cuts, and hiring freezes — tracked by state, date, and scale. The human cost behind restructuring.",
               },
               {
-                icon: <Eye className="w-5 h-5 text-primary" />,
-                title: "Candidate Intelligence",
-                body: "Job seekers see exactly what they're walking into — so only the right people apply.",
+                icon: <AlertTriangle className="w-5 h-5 text-primary" />,
+                title: "Safety Alert",
+                body: "OSHA violations, NLRB complaints, EPA enforcement, and workplace safety records. Red flags before you accept.",
+              },
+              {
+                icon: <Link2 className="w-5 h-5 text-primary" />,
+                title: "Connected Dots",
+                body: "PAC spending, executive donations, lobbying ties, and federal contracts. Follow the money to see who's really in charge.",
               },
             ].map((card) => (
               <div
@@ -330,30 +328,30 @@ const Index = forwardRef<HTMLDivElement>((_, ref) => {
             How It Works
           </p>
           <h2 className="font-sans text-center leading-[1.1] mb-16 text-display text-foreground">
-            Four steps. Full transparency.
+            Four pillars. Full transparency.
           </h2>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             {[
               {
                 step: "01",
-                title: "Company gets scanned",
-                body: "We pull public signals — leadership turnover, workforce stability, civic record, and workplace sentiment. Don't see a company? Request it and we'll add it to the queue.",
+                title: "We pull the receipts",
+                body: "FEC filings, WARN Act notices, SEC disclosures, lobbying records, OSHA violations — we collect every public signal about a company's real behavior.",
               },
               {
                 step: "02",
-                title: "Integrity score calculated",
-                body: "Our model flags Reality Gaps (what companies say vs. what employees report) and Insider Risk. High-risk employers are flagged before any candidate is matched.",
+                title: "We analyze the gaps",
+                body: "Our framework scores each company across four pillars — Integrity Gap, Labor Impact, Safety Alert, and Connected Dots — to surface what they don't put in the job posting.",
               },
               {
                 step: "03",
-                title: "Candidates matched on values, not just skills",
-                body: "Our AI scores alignment across skills (40%), values (35%), and experience (25%). Protected attributes are masked.",
+                title: "You see the full picture",
+                body: "Free, shareable Receipts reports for every company. No account required. Every claim sourced. Every dollar traced.",
               },
               {
                 step: "04",
-                title: "Everyone walks in informed",
-                body: "Candidates see company integrity data. Employers see values-aligned candidates. Recruiters see it all.",
+                title: "You make informed decisions",
+                body: "Use our intelligence tools to match values, benchmark offers, and plan your career with clarity — not just hope.",
               },
             ].map((item) => (
               <div
@@ -467,21 +465,21 @@ const Index = forwardRef<HTMLDivElement>((_, ref) => {
             {[
               {
                 icon: Eye,
-                title: "The Truth",
-                desc: "See what companies don't put on the careers page.",
-                signals: ["Employer Clarity Scores", "Ghost-Post Detection", "Reality Gap Analysis", "Pay equity signals"],
+                title: "The Receipts",
+                desc: "Free, ungated investigations on every company.",
+                signals: ["Integrity Gap Analysis", "Labor Impact Tracking", "Safety Alert Reports", "Connected Dots: PAC + Lobbying"],
               },
               {
                 icon: Brain,
-                title: "The Strategy",
+                title: "The Intelligence",
                 desc: "Build a career plan based on data, not vibes.",
-                signals: ["Workplace DNA Calibration", "5-Year Career Mapping", "Internal role matching", "Skills gap analysis"],
+                signals: ["Workplace DNA Calibration", "5-Year Career Mapping", "Values alignment matching", "Offer review & benchmarking"],
               },
               {
                 icon: Rocket,
-                title: "The Alignment",
-                desc: "Execute your move with clarity and advocacy.",
-                signals: ["Apply When It Counts™ Placement", "Interview Intelligence Briefs", "Negotiation Coaching", "Offer review & benchmarking"],
+                title: "The Advocacy",
+                desc: "Execute your move with clarity and support.",
+                signals: ["Apply When It Counts™ Placement", "Interview Intelligence Briefs", "Negotiation Coaching", "Employer verification reports"],
               },
             ].map(card => (
               <div key={card.title} className="bg-background p-8 lg:p-10">
@@ -537,11 +535,11 @@ const Index = forwardRef<HTMLDivElement>((_, ref) => {
             <div className="font-mono text-xs tracking-[0.2em] uppercase text-primary mb-4">WDIWF Intelligence</div>
             <ul className="space-y-3">
               {[
-                "Intelligence reports on every employer",
-                "Reality Gap analysis — claims vs. facts",
+                "Receipts: free investigations on every employer",
+                "Four-pillar framework — Integrity, Labor, Safety, Connections",
                 "Apply When It Counts™ — DNA-matched placement",
                 "BLS wage benchmarks + offer scoring",
-                "Political influence, lawsuits, sentiment",
+                "PAC spending, lobbying, federal contracts traced",
                 "Negotiation scripts + coaching",
               ].map(item => (
                 <li key={item} className="flex items-start gap-2 text-sm text-foreground">
@@ -637,20 +635,20 @@ const Index = forwardRef<HTMLDivElement>((_, ref) => {
           You deserve to know exactly who you work for.
         </h2>
         <p className="text-base text-muted-foreground max-w-[480px] mx-auto mb-10 leading-relaxed">
-          Stop applying blind. Start scanning employers with intelligence.
+          Every claim sourced. Every dollar traced. No account required.
         </p>
         <div className="flex flex-col sm:flex-row gap-3 justify-center">
           <button
-            onClick={() => navigate("/career-map")}
+            onClick={() => navigate("/receipts")}
             className="bg-primary text-primary-foreground px-8 py-3.5 font-mono text-sm font-semibold tracking-wider uppercase hover:brightness-110 transition-all"
           >
-            Calibrate My Workplace DNA
+            See the Receipts
           </button>
           <button
-            onClick={() => navigate("/login")}
+            onClick={() => navigate("/browse")}
             className="border border-border bg-card px-8 py-3.5 font-mono text-sm tracking-wider uppercase text-muted-foreground hover:text-foreground hover:border-primary/40 transition-all"
           >
-            Scan an Employer
+            Audit a Company
           </button>
         </div>
       </section>

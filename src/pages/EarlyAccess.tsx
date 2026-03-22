@@ -396,9 +396,9 @@ export default function EarlyAccess() {
           </p>
           <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit,minmax(240px,1fr))", gap: 16, maxWidth: 800, width: "100%" }} className="value-cards">
             {[
-              { eyebrow: "Free", color: "#f0c040", bg: "rgba(240,192,64,0.12)", border: "rgba(240,192,64,0.3)", title: "Employer Audit", body: "Scan any company. Reality Gap score, comp transparency, workforce stability, ghost posting detection." },
+              { eyebrow: "Free", color: "#f0c040", bg: "rgba(240,192,64,0.12)", border: "rgba(240,192,64,0.3)", title: "Employer Audit", body: "Scan any company. Integrity Gap score, comp transparency, workforce stability, labor impacting detection." },
               { eyebrow: "New", color: "#f0c040", bg: "rgba(240,192,64,0.12)", border: "rgba(240,192,64,0.3)", title: "Work DNA Quiz", body: "7 questions that reveal what kind of worker you are and which signals matter most for your decisions." },
-              { eyebrow: "April", color: "#47ffb3", bg: "rgba(71,255,179,0.12)", border: "rgba(71,255,179,0.3)", title: "Insider Score", body: "See whether leadership got there on merit — or on who they know. Sourced from SEC proxy statements and public filings." },
+              { eyebrow: "April", color: "#47ffb3", bg: "rgba(71,255,179,0.12)", border: "rgba(71,255,179,0.3)", title: "Connected Dots", body: "See whether leadership got there on merit — or on who they know. Sourced from SEC proxy statements and public filings." },
             ].map((card) => (
               <div key={card.title} style={{ background: "#13121a", border: "1px solid rgba(255,255,255,0.08)", borderRadius: 14, padding: 24 }}>
                 <span style={{ display: "inline-block", fontSize: 11, fontWeight: 600, color: card.color, background: card.bg, border: `1px solid ${card.border}`, borderRadius: 20, padding: "3px 12px", marginBottom: 12, letterSpacing: 1, textTransform: "uppercase" }}>
