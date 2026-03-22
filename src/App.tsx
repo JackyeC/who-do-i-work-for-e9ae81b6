@@ -116,6 +116,7 @@ const TrackerPage = lazy(() => import("./pages/Tracker"));
 const ApplyKitPage = lazy(() => import("./pages/ApplyKit"));
 const DossierCoachingGuide = lazy(() => import("./pages/DossierCoachingGuide"));
 const InterviewDossier = lazy(() => import("./pages/InterviewDossier"));
+const InterviewKits = lazy(() => import("./pages/InterviewKits"));
 const RecruiterBrief = lazy(() => import("./pages/RecruiterBrief"));
 const BriefingPage = lazy(() => import("./pages/BriefingPage"));
 const NewsOnboarding = lazy(() => import("./components/NewsOnboarding"));
