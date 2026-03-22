@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useRef, useCallback, useEffect } from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -12,6 +12,7 @@ import {
 import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
 import { OfferClarityDashboard, type OfferClarityReport } from "./OfferClarityDashboard";
+import { UnknownCompanyPrompt, type UnknownCompanyMeta } from "./UnknownCompanyPrompt";
 
 interface OfferData {
   roleTitle: string;
@@ -23,6 +24,7 @@ interface OfferData {
   additionalDetails: string;
   companyName: string;
   companyId?: string;
+  unknownCompanyMeta?: UnknownCompanyMeta;
 }
 
 const STEPS = [
