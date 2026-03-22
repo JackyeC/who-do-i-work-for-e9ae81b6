@@ -1069,11 +1069,11 @@ export default function InterviewDossier() {
                 <div style={{ fontWeight: 800, fontSize: "1rem", marginBottom: "0.85rem" }}>Market Intelligence</div>
                 <div style={{ background: `${T.gold}14`, border: `1.5px solid ${T.gold}40`, borderRadius: 11, padding: "0.85rem 1rem", marginBottom: "0.85rem" }}>
                   <div style={{ color: T.muted, fontSize: "0.65rem", fontWeight: 700, fontFamily: "'DM Mono',monospace", marginBottom: "0.15rem" }}>MARKET RANGE — WDIWF COMP DATA</div>
-                  <div style={{ color: T.gold, fontFamily: "'DM Mono',monospace", fontWeight: 900, fontSize: "1.35rem" }}>{co.negotiation.marketRange}</div>
-                  <div style={{ color: T.muted, fontSize: "0.72rem", lineHeight: 1.5, marginTop: "0.38rem" }}>{co.negotiation.rsuNote}</div>
+                  <div style={{ color: T.gold, fontFamily: "'DM Mono',monospace", fontWeight: 900, fontSize: "1.35rem" }}>{co.negotiation?.marketRange}</div>
+                  <div style={{ color: T.muted, fontSize: "0.72rem", lineHeight: 1.5, marginTop: "0.38rem" }}>{co.negotiation?.rsuNote}</div>
                 </div>
                 <div style={{ fontWeight: 700, fontSize: "0.84rem", marginBottom: "0.55rem" }}>Leverage Points</div>
-                {co.negotiation.leverageTips.map((tip, i) => (
+                {(co.negotiation?.leverageTips ?? []).map((tip: any, i: number) => (
                   <div key={i} style={{ display: "flex", gap: "0.6rem", padding: "0.5rem 0.7rem", background: T.bg, border: `1px solid ${T.border}`, borderRadius: 9, marginBottom: "0.35rem" }}>
                     <span style={{ color: T.green, fontWeight: 800, flexShrink: 0 }}>{i + 1}</span>
                     <div style={{ fontSize: "0.77rem", color: T.fg, lineHeight: 1.45 }}>{tip}</div>
