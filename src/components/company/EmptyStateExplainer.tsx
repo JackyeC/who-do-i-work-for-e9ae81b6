@@ -1,5 +1,6 @@
-import { Info, ExternalLink, Search, Eye, EyeOff, Shield } from "lucide-react";
+import { ExternalLink, Search, Eye, EyeOff, Shield, ArrowRight } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 
 interface IntelligenceSignalData {
@@ -80,6 +81,7 @@ interface EmptyStateExplainerProps {
   type: keyof typeof INTERPRETATIONS;
   className?: string;
   companyName?: string;
+  careersUrl?: string;
   scanContext?: {
     atsDetected?: string;
     pageClassification?: string;
@@ -89,7 +91,7 @@ interface EmptyStateExplainerProps {
   };
 }
 
-export function EmptyStateExplainer({ type, className, companyName, scanContext }: EmptyStateExplainerProps) {
+export function EmptyStateExplainer({ type, className, companyName, careersUrl, scanContext }: EmptyStateExplainerProps) {
   const info = INTERPRETATIONS[type];
   if (!info) return null;
 
@@ -97,6 +99,9 @@ export function EmptyStateExplainer({ type, className, companyName, scanContext 
   const whatWeSee = scanContext?.whatWeSee || info.whatWeSee;
   const lastChecked = scanContext?.lastScanned || info.lastChecked;
   const hasComparison = whatTheySay && whatWeSee;
+
+  // For jobs type with ATS detected + careers URL, show prominent CTA button
+  const showCareersButton = type === "jobs" && scanContext?.atsDetected && careersUrl;
 
   return (
     <div className={cn("rounded-xl border border-border/60 bg-muted/20 overflow-hidden", className)}>
@@ -149,6 +154,23 @@ export function EmptyStateExplainer({ type, className, companyName, scanContext 
         </div>
       )}
 
+      {/* Prominent careers button when ATS detected and 0 jobs */}
+      {showCareersButton && (
+        <div className="mx-4 mb-3">
+          <Button
+            variant="outline"
+            size="lg"
+            className="w-full gap-2 border-primary/30 text-primary hover:bg-primary/5"
+            asChild
+          >
+            <a href={careersUrl} target="_blank" rel="noopener noreferrer">
+              Browse Open Roles on {companyName || "Company"} Careers
+              <ArrowRight className="w-4 h-4" />
+            </a>
+          </Button>
+        </div>
+      )}
+
       {/* Footer: Checked Sources + Suggested Action */}
       <div className="px-4 py-2.5 bg-muted/30 border-t border-border/30 flex items-center justify-between gap-3">
         <div className="flex items-center gap-1.5 min-w-0">
@@ -158,7 +180,7 @@ export function EmptyStateExplainer({ type, className, companyName, scanContext 
             {lastChecked && ` · as of ${new Date(lastChecked).toLocaleDateString()}`}
           </span>
         </div>
-        {info.suggestedAction && info.suggestedActionUrl ? (
+        {!showCareersButton && info.suggestedAction && info.suggestedActionUrl ? (
           <a
             href={info.suggestedActionUrl}
             target="_blank"
@@ -168,7 +190,7 @@ export function EmptyStateExplainer({ type, className, companyName, scanContext 
             <ExternalLink className="w-3 h-3" />
             {info.suggestedAction.length > 50 ? info.suggestedAction.slice(0, 47) + "…" : info.suggestedAction}
           </a>
-        ) : info.suggestedAction ? (
+        ) : !showCareersButton && info.suggestedAction ? (
           <span className="text-xs text-primary font-medium whitespace-nowrap flex items-center gap-1 shrink-0">
             <ExternalLink className="w-3 h-3" />
             {info.suggestedAction.length > 50 ? info.suggestedAction.slice(0, 47) + "…" : info.suggestedAction}

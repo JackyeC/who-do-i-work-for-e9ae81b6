@@ -472,6 +472,7 @@ export default function CompanyProfile() {
               companyId={dbCompanyId || ""}
               companyName={name}
               companySlug={id || ""}
+              careersUrl={(dbCompany as any)?.careers_url || company?.careersUrl}
               lastReviewed={dbCompany?.last_reviewed}
               updatedAt={dbCompany?.updated_at}
             />
@@ -595,13 +596,13 @@ export default function CompanyProfile() {
             <Card className="border-primary/20 bg-gradient-to-r from-primary/[0.04] to-transparent">
               <CardContent className="p-6 text-center">
                 <Scan className="w-8 h-8 text-primary mx-auto mb-3" />
-                <h3 className="text-base font-semibold text-foreground mb-1">Run Full Company Scan</h3>
+                <h3 className="text-base font-semibold text-foreground mb-1">Refresh Intelligence Data</h3>
                 <p className="text-sm text-muted-foreground mb-4 max-w-md mx-auto">
                   Pull the latest public records from FEC, Senate LDA, USAspending, and more.
                 </p>
                 <Button onClick={handleFullScan} disabled={isScanning || !!isDiscovering} size="lg" className="gap-2 pointer-events-auto">
                   {isScanning ? <Loader2 className="w-4 h-4 animate-spin" /> : <Sparkles className="w-4 h-4" />}
-                  {isScanning ? "Scanning…" : "Run Full Company Scan"}
+                  {isScanning ? "Scanning…" : "Refresh Intelligence Data"}
                 </Button>
               </CardContent>
             </Card>
