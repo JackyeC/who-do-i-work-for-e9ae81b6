@@ -566,10 +566,10 @@ export default function InterviewDossier() {
             {[
               ["Latest Intel", `${co.currentPriorities.length} priorities · ${co.recentNews.length} news items`],
               ["Values & Culture", `${co.values.length} values mapped to signals`],
-              ["Process & People", `${co.process.rounds} rounds · ${co.orgContext.likelyPeople.length} likely contacts`],
+              ["Process & People", `${co.process?.rounds ?? "?"} rounds · ${co.orgContext?.likelyPeople?.length ?? 0} likely contacts`],
               ["Smart Questions", `${co.redFlags.length + co.strengthsToAsk.length} data-derived questions`],
               ["Practice", `${co.practice.length} questions + coaching`],
-              ["Negotiation Brief", `${co.negotiation.leverageTips.length} leverage points`],
+              ["Negotiation Brief", `${co.negotiation?.leverageTips?.length ?? 0} leverage points`],
             ].map(([item, val]) => (
               <div key={item} style={{ display: "flex", justifyContent: "space-between", alignItems: "center", padding: "0.22rem 0", borderBottom: `1px solid ${T.border}`, fontSize: "0.71rem" }}>
                 <span style={{ color: T.muted }}>{item}</span>
@@ -718,9 +718,9 @@ export default function InterviewDossier() {
                 <div style={{ fontWeight: 800, fontSize: "1rem", marginBottom: "0.85rem" }}>The {co.name} Interview Process — What You'll Actually Face</div>
                 <div style={{ background: T.fg, borderRadius: 11, padding: "0.85rem 1rem", marginBottom: "0.85rem" }}>
                   <div style={{ color: T.gold, fontWeight: 700, fontSize: "0.72rem", fontFamily: "'DM Mono',monospace", marginBottom: "0.35rem" }}>FULL PROCESS</div>
-                  <div style={{ color: "rgba(240,235,224,0.82)", fontSize: "0.8rem", lineHeight: 1.65 }}>{co.process.format}</div>
+                  <div style={{ color: "rgba(240,235,224,0.82)", fontSize: "0.8rem", lineHeight: 1.65 }}>{co.process?.format}</div>
                   <div style={{ display: "flex", gap: "1.5rem", marginTop: "0.65rem" }}>
-                    {[["Rounds", co.process.rounds], ["Timeline", co.process.duration]].map(([k, v]) => (
+                    {[["Rounds", co.process?.rounds], ["Timeline", co.process?.duration]].map(([k, v]) => (
                       <div key={k}>
                         <div style={{ color: "rgba(240,235,224,0.35)", fontSize: "0.62rem", fontFamily: "'DM Mono',monospace" }}>{k}</div>
                         <div style={{ color: T.gold, fontWeight: 900, fontSize: "1rem", fontFamily: "'DM Mono',monospace" }}>{v}</div>
@@ -729,15 +729,15 @@ export default function InterviewDossier() {
                   </div>
                 </div>
                 <div style={{ fontWeight: 700, fontSize: "0.84rem", marginBottom: "0.5rem" }}>Interview Style & What They're Really Filtering For</div>
-                <div style={{ padding: "0.75rem 0.9rem", background: T.bg, borderRadius: 10, border: `1px solid ${T.border}`, marginBottom: "0.75rem", fontSize: "0.8rem", color: T.fg, lineHeight: 1.6 }}>{co.process.style}</div>
-                {co.process.barraiser && (
+                <div style={{ padding: "0.75rem 0.9rem", background: T.bg, borderRadius: 10, border: `1px solid ${T.border}`, marginBottom: "0.75rem", fontSize: "0.8rem", color: T.fg, lineHeight: 1.6 }}>{co.process?.style}</div>
+                {co.process?.barraiser && (
                   <div style={{ padding: "0.75rem 0.9rem", background: `${T.red}09`, border: `1px solid ${T.red}30`, borderRadius: 10, marginBottom: "0.75rem" }}>
                     <div style={{ color: T.red, fontWeight: 700, fontSize: "0.75rem", fontFamily: "'DM Mono',monospace", marginBottom: "0.2rem" }}>⚠ BAR RAISER — Independent Veto</div>
                     <div style={{ fontSize: "0.77rem", color: T.fg, lineHeight: 1.5 }}>The Bar Raiser has veto power and comes from a different org. Their only question: would this person raise the bar for the team? Behavioral depth and cultural signal matter most here — not technical depth.</div>
                   </div>
                 )}
                 <div style={{ fontWeight: 700, fontSize: "0.84rem", marginBottom: "0.5rem" }}>What They Actually Filter On</div>
-                {co.process.knownFilters.map((f, i) => (
+                {(co.process?.knownFilters ?? []).map((f: any, i: number) => (
                   <div key={i} style={{ display: "flex", gap: "0.6rem", padding: "0.5rem 0.7rem", background: T.bg, border: `1px solid ${T.border}`, borderRadius: 9, marginBottom: "0.35rem" }}>
                     <span style={{ color: T.blue, fontWeight: 700, flexShrink: 0 }}>→</span>
                     <div style={{ fontSize: "0.77rem", color: T.fg, lineHeight: 1.45 }}>{f}</div>
@@ -747,8 +747,8 @@ export default function InterviewDossier() {
 
               <div className="section">
                 <div style={{ fontWeight: 800, fontSize: "1rem", marginBottom: "0.25rem" }}>Who You'll Likely Meet</div>
-                <div style={{ color: T.muted, fontSize: "0.75rem", marginBottom: "0.75rem" }}>{co.orgContext.description}</div>
-                {co.orgContext.likelyPeople.map((p, i) => (
+                <div style={{ color: T.muted, fontSize: "0.75rem", marginBottom: "0.75rem" }}>{co.orgContext?.description}</div>
+                {(co.orgContext?.likelyPeople ?? []).map((p: any, i: number) => (
                   <div key={i} style={{ display: "flex", gap: "0.75rem", padding: "0.65rem 0.8rem", background: T.bg, border: `1px solid ${T.border}`, borderRadius: 10, marginBottom: "0.4rem" }}>
                     <span style={{ color: T.blue, fontWeight: 900, fontFamily: "'DM Mono',monospace", flexShrink: 0, marginTop: "0.15rem" }}>{i + 1}</span>
                     <div>
@@ -759,7 +759,7 @@ export default function InterviewDossier() {
                 ))}
                 <div style={{ marginTop: "0.65rem", padding: "0.6rem 0.8rem", background: `${T.gold}10`, border: `1px solid ${T.gold}30`, borderRadius: 9 }}>
                   <div style={{ fontSize: "0.67rem", fontWeight: 800, color: T.gold, fontFamily: "'DM Mono',monospace", marginBottom: "0.18rem" }}>HOW TO RESEARCH YOUR ACTUAL INTERVIEWERS</div>
-                  <div style={{ fontSize: "0.75rem", color: T.fg, lineHeight: 1.5 }}>{co.orgContext.searchTip}</div>
+                  <div style={{ fontSize: "0.75rem", color: T.fg, lineHeight: 1.5 }}>{co.orgContext?.searchTip}</div>
                 </div>
               </div>
             </>
@@ -1069,11 +1069,11 @@ export default function InterviewDossier() {
                 <div style={{ fontWeight: 800, fontSize: "1rem", marginBottom: "0.85rem" }}>Market Intelligence</div>
                 <div style={{ background: `${T.gold}14`, border: `1.5px solid ${T.gold}40`, borderRadius: 11, padding: "0.85rem 1rem", marginBottom: "0.85rem" }}>
                   <div style={{ color: T.muted, fontSize: "0.65rem", fontWeight: 700, fontFamily: "'DM Mono',monospace", marginBottom: "0.15rem" }}>MARKET RANGE — WDIWF COMP DATA</div>
-                  <div style={{ color: T.gold, fontFamily: "'DM Mono',monospace", fontWeight: 900, fontSize: "1.35rem" }}>{co.negotiation.marketRange}</div>
-                  <div style={{ color: T.muted, fontSize: "0.72rem", lineHeight: 1.5, marginTop: "0.38rem" }}>{co.negotiation.rsuNote}</div>
+                  <div style={{ color: T.gold, fontFamily: "'DM Mono',monospace", fontWeight: 900, fontSize: "1.35rem" }}>{co.negotiation?.marketRange}</div>
+                  <div style={{ color: T.muted, fontSize: "0.72rem", lineHeight: 1.5, marginTop: "0.38rem" }}>{co.negotiation?.rsuNote}</div>
                 </div>
                 <div style={{ fontWeight: 700, fontSize: "0.84rem", marginBottom: "0.55rem" }}>Leverage Points</div>
-                {co.negotiation.leverageTips.map((tip, i) => (
+                {(co.negotiation?.leverageTips ?? []).map((tip: any, i: number) => (
                   <div key={i} style={{ display: "flex", gap: "0.6rem", padding: "0.5rem 0.7rem", background: T.bg, border: `1px solid ${T.border}`, borderRadius: 9, marginBottom: "0.35rem" }}>
                     <span style={{ color: T.green, fontWeight: 800, flexShrink: 0 }}>{i + 1}</span>
                     <div style={{ fontSize: "0.77rem", color: T.fg, lineHeight: 1.45 }}>{tip}</div>
@@ -1082,7 +1082,7 @@ export default function InterviewDossier() {
               </div>
               <div className="section" style={{ border: `1.5px solid ${T.red}40`, background: `${T.red}05` }}>
                 <div style={{ color: T.red, fontWeight: 800, fontSize: "0.72rem", fontFamily: "'DM Mono',monospace", marginBottom: "0.3rem" }}>YOUR RED LINE</div>
-                <div style={{ fontSize: "0.82rem", color: T.fg, lineHeight: 1.5 }}>{co.negotiation.redLine}</div>
+                <div style={{ fontSize: "0.82rem", color: T.fg, lineHeight: 1.5 }}>{co.negotiation?.redLine}</div>
               </div>
               <div className="section">
                 <div style={{ fontWeight: 700, fontSize: "0.84rem", marginBottom: "0.65rem" }}>Scripts — Word for Word</div>
