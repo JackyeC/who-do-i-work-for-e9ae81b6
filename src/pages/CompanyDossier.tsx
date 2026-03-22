@@ -53,9 +53,6 @@ import { StateWomenStatusCard } from "@/components/StateWomenStatusCard";
 import { PolicyScoreCard } from "@/components/policy-intelligence/PolicyScoreCard";
 import { SituationContextBanner } from "@/components/policy-intelligence/SituationContextBanner";
 import { TrustFramingLine } from "@/components/TrustFramingLine";
-import { JackyesInsightBlock } from "@/components/company/JackyesInsightBlock";
-import { CompanyZeroState } from "@/components/CompanyZeroState";
-import { AuditRequestForm } from "@/components/AuditRequestForm";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 

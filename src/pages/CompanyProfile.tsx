@@ -26,7 +26,6 @@ import { useCompanyIntegrity } from "@/hooks/use-company-integrity";
 import { LeadershipInfluenceSection } from "@/components/company/LeadershipInfluenceSection";
 import { WhatToWatch } from "@/components/company/WhatToWatch";
 import { WhatToAsk } from "@/components/company/WhatToAsk";
-import { JackyesInsightBlock } from "@/components/company/JackyesInsightBlock";
 import { ReportTeaserGate } from "@/components/ReportTeaserGate";
 import { PostReportNudge } from "@/components/PostReportNudge";
 import { ContentProtector } from "@/components/ContentProtector";
