@@ -36,7 +36,6 @@ const INTERPRETATIONS: Record<string, IntelligenceSignalData> = {
     whatTheySay: "\"Join our growing team\" — career branding is active.",
     whatWeSee: "0 active postings found in our database.",
     intelligence: "Roles may be filled internally, on seasonal freeze, or not yet indexed. Check the company's careers page directly.",
-    suggestedAction: "Visit careers page",
     checkedSources: ["Careers landing page", "ATS detection"],
   },
   court_records: {
