@@ -116,6 +116,7 @@ const TrackerPage = lazy(() => import("./pages/Tracker"));
 const ApplyKitPage = lazy(() => import("./pages/ApplyKit"));
 const DossierCoachingGuide = lazy(() => import("./pages/DossierCoachingGuide"));
 const InterviewDossier = lazy(() => import("./pages/InterviewDossier"));
+const InterviewKits = lazy(() => import("./pages/InterviewKits"));
 const RecruiterBrief = lazy(() => import("./pages/RecruiterBrief"));
 const BriefingPage = lazy(() => import("./pages/BriefingPage"));
 const NewsOnboarding = lazy(() => import("./components/NewsOnboarding"));
@@ -214,6 +215,7 @@ const App = () => (
                   <Route path="/saved" element={<ProtectedRoute><SavedPage /></ProtectedRoute>} />
                   <Route path="/tracker" element={<ProtectedRoute><TrackerPage /></ProtectedRoute>} />
                   <Route path="/apply-kit" element={<ProtectedRoute><ApplyKitPage /></ProtectedRoute>} />
+                  <Route path="/interview-kits" element={<ProtectedRoute><InterviewKits /></ProtectedRoute>} />
                   <Route path="/job-board" element={<JobIntegrityBoard />} />
                   <Route path="/job-board/:id" element={<JobDetailPage />} />
                   <Route path="/request-correction" element={<RequestCorrection />} />
