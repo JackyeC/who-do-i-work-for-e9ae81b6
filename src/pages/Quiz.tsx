@@ -949,7 +949,7 @@ function ResultsScreen({
         style={{ animation: "quizFadeUp 0.6s ease 0.95s both", paddingBottom: 48 }}
       >
         <a
-          href="/dossier"
+          href="/dashboard"
           style={{
             background: "#f0c040",
             color: "#0a0a0e",
@@ -963,7 +963,7 @@ function ResultsScreen({
             display: "inline-block",
           }}
         >
-          Run your first company audit →
+          Go to my dashboard →
         </a>
         <button
           onClick={onCopy}
@@ -1005,7 +1005,7 @@ function ResultsScreen({
         onMouseEnter={(e) => (e.currentTarget.style.textDecoration = "underline")}
         onMouseLeave={(e) => (e.currentTarget.style.textDecoration = "none")}
       >
-        Launching April 1 — secure your spot →
+        Launching April 6 — secure your spot →
       </a>
 
       {/* Reset */}

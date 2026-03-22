@@ -1,4 +1,5 @@
 import { useNavigate } from "react-router-dom";
+import { useAuth } from "@/contexts/AuthContext";
 import { useClerkWithFallback } from "@/hooks/use-clerk-fallback";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -8,15 +9,18 @@ import { usePageSEO } from "@/hooks/use-page-seo";
 
 export default function Welcome() {
   const { isLoaded } = useClerkWithFallback();
+  const { user } = useAuth();
   const navigate = useNavigate();
 
   usePageSEO({
-    title: "Who Do I Work For? — Know Exactly Who You Work For",
+    title: "Welcome — Who Do I Work For?",
     description: "Company intelligence for candidates. Check any employer's integrity before you apply, interview, or accept.",
     path: "/welcome",
   });
 
   if (!isLoaded) return null;
+
+  const hasPersona = typeof window !== "undefined" && !!localStorage.getItem("wdiwf_persona");
 
   const capabilities = [
     { icon: Search, text: "Run integrity checks on any employer before you apply" },
@@ -26,19 +30,13 @@ export default function Welcome() {
     { icon: Zap, text: "Apply only to companies that pass your values filter" },
   ];
 
-  const stats = [
-    { value: "2,400+", label: "Companies Audited" },
-    { value: "12", label: "Signal Categories" },
-    { value: "50+", label: "Public Data Sources" },
-  ];
-
   return (
     <main className="flex-1">
       {/* Hero */}
       <section className="px-6 lg:px-16 pt-20 pb-16 max-w-[960px] mx-auto text-center">
         <motion.div initial={{ opacity: 0, y: 18 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5 }}>
           <Badge variant="secondary" className="mb-5 text-xs font-mono uppercase tracking-wider">
-            Company Intelligence for Candidates
+            {user ? "You're in. Let's go." : "Company Intelligence for Candidates"}
           </Badge>
         </motion.div>
 
@@ -62,27 +60,27 @@ export default function Welcome() {
           initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.24, duration: 0.4 }}
           className="flex flex-col sm:flex-row gap-3 justify-center"
         >
-          <Button size="lg" onClick={() => navigate("/join")} className="gap-2 px-8 py-6 text-base">
-            Get Early Access <ArrowRight className="w-4 h-4" />
-          </Button>
-          <Button size="lg" variant="outline" onClick={() => navigate("/browse")} className="gap-2 px-8 py-6 text-base">
-            <Search className="w-4 h-4" /> Browse Companies
-          </Button>
-        </motion.div>
-      </section>
-
-      {/* Stats row */}
-      <section className="px-6 lg:px-16 pb-16 max-w-[800px] mx-auto">
-        <motion.div
-          initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.35, duration: 0.5 }}
-          className="grid grid-cols-3 gap-4"
-        >
-          {stats.map((s) => (
-            <div key={s.label} className="text-center py-5 rounded-xl border border-border/40 bg-card">
-              <p className="text-2xl font-bold font-mono text-primary">{s.value}</p>
-              <p className="text-xs text-muted-foreground mt-1">{s.label}</p>
-            </div>
-          ))}
+          {user ? (
+            <>
+              <Button size="lg" onClick={() => navigate("/dashboard")} className="gap-2 px-8 py-6 text-base">
+                Go to Dashboard <ArrowRight className="w-4 h-4" />
+              </Button>
+              {!hasPersona && (
+                <Button size="lg" variant="outline" onClick={() => navigate("/quiz")} className="gap-2 px-8 py-6 text-base">
+                  <Zap className="w-4 h-4" /> Take the DNA Quiz
+                </Button>
+              )}
+            </>
+          ) : (
+            <>
+              <Button size="lg" onClick={() => navigate("/login")} className="gap-2 px-8 py-6 text-base">
+                Get Started <ArrowRight className="w-4 h-4" />
+              </Button>
+              <Button size="lg" variant="outline" onClick={() => navigate("/browse")} className="gap-2 px-8 py-6 text-base">
+                <Search className="w-4 h-4" /> Browse Companies
+              </Button>
+            </>
+          )}
         </motion.div>
       </section>
 
@@ -112,9 +110,14 @@ export default function Welcome() {
           className="rounded-xl border border-primary/20 bg-primary/5 p-8"
         >
           <h3 className="font-serif text-lg font-bold text-foreground mb-3">Stop guessing. Start checking.</h3>
-          <p className="text-sm text-muted-foreground mb-6">Join thousands of candidates who refuse to apply blind.</p>
-          <Button onClick={() => navigate("/join")} className="gap-2">
-            Get Early Access <ArrowRight className="w-4 h-4" />
+          <p className="text-sm text-muted-foreground mb-6">
+            {user ? "Your dashboard is ready. Scan a company." : "Join candidates who refuse to apply blind."}
+          </p>
+          <Button
+            onClick={() => navigate(user ? "/dashboard" : "/login")}
+            className="gap-2"
+          >
+            {user ? "Open Dashboard" : "Get Started"} <ArrowRight className="w-4 h-4" />
           </Button>
         </motion.div>
       </section>
