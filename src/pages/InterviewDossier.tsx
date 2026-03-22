@@ -569,7 +569,7 @@ export default function InterviewDossier() {
               ["Process & People", `${co.process?.rounds ?? "?"} rounds · ${co.orgContext?.likelyPeople?.length ?? 0} likely contacts`],
               ["Smart Questions", `${co.redFlags.length + co.strengthsToAsk.length} data-derived questions`],
               ["Practice", `${co.practice.length} questions + coaching`],
-              ["Negotiation Brief", `${co.negotiation.leverageTips.length} leverage points`],
+              ["Negotiation Brief", `${co.negotiation?.leverageTips?.length ?? 0} leverage points`],
             ].map(([item, val]) => (
               <div key={item} style={{ display: "flex", justifyContent: "space-between", alignItems: "center", padding: "0.22rem 0", borderBottom: `1px solid ${T.border}`, fontSize: "0.71rem" }}>
                 <span style={{ color: T.muted }}>{item}</span>
