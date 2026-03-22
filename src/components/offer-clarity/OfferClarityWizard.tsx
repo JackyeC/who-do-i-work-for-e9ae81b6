@@ -412,6 +412,7 @@ export function OfferClarityWizard() {
           onStartOver={() => {
             setStep(0);
             setReport(null);
+            setCompanyLookupStatus(null);
             setOfferData({
               roleTitle: "", location: "", yearsExperience: "",
               baseSalary: "", bonus: "", equity: "",
