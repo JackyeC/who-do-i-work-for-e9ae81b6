@@ -153,7 +153,7 @@ const Index = forwardRef<HTMLDivElement>((_, ref) => {
 
           {/* Eyebrow label */}
           <p className="text-eyebrow" style={{ marginBottom: '24px' }}>
-            Career Intelligence Platform
+            Corporate Accountability + Career Intelligence
           </p>
 
           {/* Headline */}
@@ -268,68 +268,6 @@ const Index = forwardRef<HTMLDivElement>((_, ref) => {
         <LiveIntelligenceTicker />
       </Suspense>
 
-      {/* ══════════════════════════════════════════════════════════════════
-          TWO-SIDED PLATFORM PATHS
-      ══════════════════════════════════════════════════════════════════ */}
-      <section className="px-6 lg:px-16 py-20 bg-background">
-        <div className="max-w-[900px] mx-auto">
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            {/* For Candidates */}
-            <div
-              className="rounded-2xl p-8 text-left flex flex-col bg-muted/30 border border-border"
-            >
-              <div className="w-12 h-12 rounded-xl flex items-center justify-center mb-5 bg-primary/10">
-                <Crosshair className="w-6 h-6 text-primary" />
-              </div>
-              <p className="text-xs uppercase tracking-[2px] font-semibold text-primary mb-3">
-                For Candidates
-              </p>
-              <h3 className="font-sans font-bold text-foreground mb-3" style={{ fontSize: "18px", lineHeight: 1.3 }}>
-                Find work that matches what you actually believe in.
-              </h3>
-              <p className="font-sans text-muted-foreground mb-6 flex-1" style={{ fontSize: "14px", lineHeight: 1.65 }}>
-                We verify the company before you apply.
-              </p>
-              <Button
-                onClick={() => navigate("/auto-apply")}
-                className="w-full rounded-full gap-2"
-              >
-                Find Your Alignment <ArrowRight className="w-4 h-4" />
-              </Button>
-            </div>
-
-            {/* For Organizations */}
-            <div
-              className="rounded-2xl p-8 text-left flex flex-col bg-muted/30 border border-border"
-            >
-              <div className="w-12 h-12 rounded-xl flex items-center justify-center mb-5 bg-primary/10">
-                <Shield className="w-6 h-6 text-primary" />
-              </div>
-              <p className="text-xs uppercase tracking-[2px] font-semibold text-primary mb-3">
-                For Organizations
-              </p>
-              <h3 className="font-sans font-bold text-foreground mb-3" style={{ fontSize: "18px", lineHeight: 1.3 }}>
-                Prove your mission is real. Find candidates who are already bought in.
-              </h3>
-              <p className="font-sans text-muted-foreground mb-6 flex-1" style={{ fontSize: "14px", lineHeight: 1.65 }}>
-                Get verified against public data — not your marketing copy.
-              </p>
-              <Button
-                variant="outline"
-                onClick={() => navigate("/for-employers")}
-                className="w-full rounded-full gap-2"
-              >
-                Get Verified <ArrowRight className="w-4 h-4" />
-              </Button>
-            </div>
-          </div>
-
-          <p className="text-center mt-8 font-sans text-sm text-muted-foreground tracking-wider">
-            No bias. Just receipts.
-          </p>
-        </div>
-      </section>
-
       {/*
           HOW IT WORKS
       ══════════════════════════════════════════════════════════════════ */}
@@ -390,6 +328,68 @@ const Index = forwardRef<HTMLDivElement>((_, ref) => {
         </div>
         <div id="hero-search-anchor">
           <HeroSearch />
+        </div>
+      </section>
+
+      {/* ══════════════════════════════════════════════════════════════════
+          TWO-SIDED PLATFORM PATHS
+      ══════════════════════════════════════════════════════════════════ */}
+      <section className="px-6 lg:px-16 py-20 bg-background">
+        <div className="max-w-[900px] mx-auto">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            {/* For Candidates */}
+            <div
+              className="rounded-2xl p-8 text-left flex flex-col bg-muted/30 border border-border"
+            >
+              <div className="w-12 h-12 rounded-xl flex items-center justify-center mb-5 bg-primary/10">
+                <Crosshair className="w-6 h-6 text-primary" />
+              </div>
+              <p className="text-xs uppercase tracking-[2px] font-semibold text-primary mb-3">
+                For Candidates
+              </p>
+              <h3 className="font-sans font-bold text-foreground mb-3" style={{ fontSize: "18px", lineHeight: 1.3 }}>
+                Find work that matches what you actually believe in.
+              </h3>
+              <p className="font-sans text-muted-foreground mb-6 flex-1" style={{ fontSize: "14px", lineHeight: 1.65 }}>
+                We verify the company before you apply.
+              </p>
+              <Button
+                onClick={() => navigate("/auto-apply")}
+                className="w-full rounded-full gap-2"
+              >
+                Find Your Alignment <ArrowRight className="w-4 h-4" />
+              </Button>
+            </div>
+
+            {/* For Organizations */}
+            <div
+              className="rounded-2xl p-8 text-left flex flex-col bg-muted/30 border border-border"
+            >
+              <div className="w-12 h-12 rounded-xl flex items-center justify-center mb-5 bg-primary/10">
+                <Shield className="w-6 h-6 text-primary" />
+              </div>
+              <p className="text-xs uppercase tracking-[2px] font-semibold text-primary mb-3">
+                For Organizations
+              </p>
+              <h3 className="font-sans font-bold text-foreground mb-3" style={{ fontSize: "18px", lineHeight: 1.3 }}>
+                Prove your mission is real. Find candidates who are already bought in.
+              </h3>
+              <p className="font-sans text-muted-foreground mb-6 flex-1" style={{ fontSize: "14px", lineHeight: 1.65 }}>
+                Get verified against public data — not your marketing copy.
+              </p>
+              <Button
+                variant="outline"
+                onClick={() => navigate("/for-employers")}
+                className="w-full rounded-full gap-2"
+              >
+                Get Verified <ArrowRight className="w-4 h-4" />
+              </Button>
+            </div>
+          </div>
+
+          <p className="text-center mt-8 font-sans text-sm text-muted-foreground tracking-wider">
+            No bias. Just receipts.
+          </p>
         </div>
       </section>
 
