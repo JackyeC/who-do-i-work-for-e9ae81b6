@@ -91,6 +91,20 @@ const COMPANIES = {
       ],
       redLine: "Never accept 'competitive with market' without seeing the band. You have the market data. Use it.",
     },
+    process: {
+      rounds: "5",
+      duration: "4–6 weeks",
+      format: "Phone screen → Online Assessment (OA) → Virtual onsite (4–5 interviews, 45 min each) → Debrief with Bar Raiser. Each interview maps to 2–3 Leadership Principles. The Bar Raiser interview is behavioral-only and has independent veto power.",
+      style: "Every answer must be STAR format (Situation, Task, Action, Result) and mapped to a Leadership Principle. Interviewers are trained to probe with 'Tell me more about YOUR role' — they will strip away team credit. Data points and metrics are expected. 'We shipped it' is not enough — what moved?",
+      barraiser: true,
+      knownFilters: [
+        "Leadership Principle alignment — every question maps to at least one LP. If your answer doesn't connect, it's a miss regardless of technical quality.",
+        "Ownership language — 'I' not 'we.' Amazon interviewers are trained to probe for individual contribution. Team-first framing will cost you.",
+        "Data-driven decision making — 'I believed' is weaker than 'The data showed.' Bring numbers to every story.",
+        "Customer obsession framing — trace every outcome back to customer impact. If the customer isn't in your answer, add them.",
+        "Bar Raiser veto — one interviewer from outside the team has independent veto power. They assess purely on LP behavioral depth, not technical skill.",
+      ],
+    },
     practice: [
       { category: "Leadership Principles", q: "Tell me about a time you took ownership of something that wasn't your responsibility.", hint: "Ownership LP. Lead with 'I' not 'we.' Make the stakes real — what broke if you didn't act? Use STAR. Amazon rewards stories where the outcome mattered to customers or the business." },
       { category: "Leadership Principles", q: "Tell me about a time you disagreed with your manager's decision. What did you do and what happened?", hint: "Disagree and Commit — both halves matter. Show intellectual honesty AND that you executed fully after the decision was made. The worst answers either capitulate immediately or refuse to move forward." },
