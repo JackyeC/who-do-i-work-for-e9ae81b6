@@ -2597,6 +2597,41 @@ export type Database = {
           },
         ]
       }
+      company_job_sponsors: {
+        Row: {
+          created_at: string
+          id: string
+          job_id: string
+          sponsor_email: string
+          sponsor_expires_at: string | null
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          job_id: string
+          sponsor_email: string
+          sponsor_expires_at?: string | null
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          job_id?: string
+          sponsor_email?: string
+          sponsor_expires_at?: string | null
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "company_job_sponsors_job_id_fkey"
+            columns: ["job_id"]
+            isOneToOne: true
+            referencedRelation: "company_jobs"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       company_jobs: {
         Row: {
           admin_approved: boolean | null
@@ -2620,8 +2655,6 @@ export type Database = {
           source_platform: string
           source_type: string
           source_url: string | null
-          sponsor_email: string | null
-          sponsor_expires_at: string | null
           title: string
           url: string | null
           work_mode: string | null
@@ -2648,8 +2681,6 @@ export type Database = {
           source_platform?: string
           source_type?: string
           source_url?: string | null
-          sponsor_email?: string | null
-          sponsor_expires_at?: string | null
           title: string
           url?: string | null
           work_mode?: string | null
@@ -2676,8 +2707,6 @@ export type Database = {
           source_platform?: string
           source_type?: string
           source_url?: string | null
-          sponsor_email?: string | null
-          sponsor_expires_at?: string | null
           title?: string
           url?: string | null
           work_mode?: string | null
@@ -4559,6 +4588,30 @@ export type Database = {
           },
         ]
       }
+      employer_billing_profiles: {
+        Row: {
+          created_at: string
+          id: string
+          stripe_customer_id: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          stripe_customer_id: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          stripe_customer_id?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       employer_profiles: {
         Row: {
           company_id: string | null
@@ -4566,7 +4619,6 @@ export type Database = {
           created_at: string
           id: string
           job_credits: number
-          stripe_customer_id: string | null
           tier: string
           updated_at: string
           user_id: string
@@ -4578,7 +4630,6 @@ export type Database = {
           created_at?: string
           id?: string
           job_credits?: number
-          stripe_customer_id?: string | null
           tier?: string
           updated_at?: string
           user_id: string
@@ -4590,7 +4641,6 @@ export type Database = {
           created_at?: string
           id?: string
           job_credits?: number
-          stripe_customer_id?: string | null
           tier?: string
           updated_at?: string
           user_id?: string
