@@ -718,7 +718,7 @@ export default function InterviewDossier() {
                 <div style={{ fontWeight: 800, fontSize: "1rem", marginBottom: "0.85rem" }}>The {co.name} Interview Process — What You'll Actually Face</div>
                 <div style={{ background: T.fg, borderRadius: 11, padding: "0.85rem 1rem", marginBottom: "0.85rem" }}>
                   <div style={{ color: T.gold, fontWeight: 700, fontSize: "0.72rem", fontFamily: "'DM Mono',monospace", marginBottom: "0.35rem" }}>FULL PROCESS</div>
-                  <div style={{ color: "rgba(240,235,224,0.82)", fontSize: "0.8rem", lineHeight: 1.65 }}>{co.process.format}</div>
+                  <div style={{ color: "rgba(240,235,224,0.82)", fontSize: "0.8rem", lineHeight: 1.65 }}>{co.process?.format}</div>
                   <div style={{ display: "flex", gap: "1.5rem", marginTop: "0.65rem" }}>
                     {[["Rounds", co.process.rounds], ["Timeline", co.process.duration]].map(([k, v]) => (
                       <div key={k}>
