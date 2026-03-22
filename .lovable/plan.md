@@ -1,33 +1,26 @@
 
 
-# Fix News Ingestion Edge Function
+## Current State
 
-The `news-ingestion` function is failing for two reasons. Here's the plan to fix both.
+The W? logomark JSX and Inter 900 font are **already implemented** exactly as specified:
 
-## Problem 1: No unique constraint on `title`
-The code does `upsert(..., { onConflict: "title" })` but the `personalized_news` table has no unique constraint on `title`. The upsert fails with a Postgres error.
+- **`src/components/layout/TopBar.tsx` (lines 154-157)**: Contains the W? logo with `fontFamily:"'Inter',sans-serif"`, `fontWeight:900`, `letterSpacing:"-0.03em"`, `fontSize:"26px"`, colors `#111111` and `#F0C040`.
+- **`index.html` (line 8)**: Already loads `Inter:wght@900`.
 
-**Fix:** Add a unique index on `title` via a database migration, so the upsert deduplication works correctly.
+## Likely Issue
 
-## Problem 2: NewsData.io API response format
-The API call to `newsdata.io/api/1/latest` returns a response where `data.results` is not an array (likely `undefined` or an error object when rate-limited or when the API format changed). The code does `(data.results || []).map(...)` but if `data.results` is a non-array truthy value (like an error string), the `||` fallback doesn't trigger.
+The "W" is hardcoded to `#111111` (near-black). If the site is rendering in **dark mode**, the "W" is invisible against the dark background. This would make it look like only "?" appears, or that the logo is missing entirely.
 
-**Fix:** Update the edge function to:
-- Add a proper array check: `Array.isArray(data.results) ? data.results : []`
-- Add logging of the raw API response status for debugging
-- Handle the case where the API returns an error gracefully
+## Plan
 
-## Implementation Steps
+1. **Update the logo span** in `TopBar.tsx` (line 154-157) to match the user's exact JSX (remove extra `lineHeight` and `display` properties, remove quotes around `Inter`) and use a **theme-aware color** for the "W":
+   - Use `currentColor` or `inherit` so it picks up `text-foreground` from the parent, **or**
+   - Keep `#111111` if the user truly wants it black-only (but flag the dark-mode issue).
 
-1. **Database migration** — Add unique constraint:
-   ```sql
-   CREATE UNIQUE INDEX IF NOT EXISTS idx_news_title_unique ON personalized_news (title);
-   ```
+   Since the user explicitly specified `color:"#111111"`, I will apply it exactly as given. If it's invisible in dark mode, that's a follow-up fix.
 
-2. **Update `supabase/functions/news-ingestion/index.ts`** — Fix the NewsData.io response parsing (line 172) to safely handle non-array responses, and add response status logging.
+2. **No changes needed** to `index.html` — Inter 900 is already loaded.
 
-3. **Redeploy** — The edge function auto-deploys on save.
-
-## After Fix
-Once deployed, the user can re-trigger the ingestion and news will populate correctly, enabling the Daily Briefing card to show real content.
+### Files to Edit
+- `src/components/layout/TopBar.tsx` — lines 154-157: replace with the user's exact JSX (minor cleanup of extra style properties).
 
