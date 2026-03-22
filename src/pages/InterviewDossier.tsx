@@ -106,7 +106,7 @@ const COMPANIES = {
     verdict: "PROCEED WITH PREP", verdictColor: T.gold,
     summary: "Google is in a full AI transformation and hiring selectively for Gemini infrastructure, Search defense, and Cloud. Layoffs of 12,000+ in 2023 and further cuts in 2024 have shifted the culture toward performance accountability. Know the AI landscape — nthey expect you to.",
 
-    researchDate: "March 2026,
+    researchDate: "March 2026",
     currentPriorities: [
       { icon: "🤖", title: "Gemini AI Platform", detail: "Google's all-in response to GPT-4/Claude. Gemini Ultra, Pro, and Nano are competing across every product surface. Every SWE hire is expected to understand Google's AI strategy — and to have used the products." },
       { icon: "🔍", title: "Search Revenue Defense", detail: "AI-powered search (SearchGPT, Perplexity) is threatening Google's core ad revenue. Search engineering is a high-priority, high-scrutiny org. Expect pressure questions about working in a high-stakes, legacy system under competitive threat." },
