@@ -39,7 +39,6 @@ export function BetaFeedbackWidget() {
     try {
       const { error } = await (supabase as any).from("beta_feedback").insert({
         user_id: user.id,
-        user_email: user.email,
         page_url: location.pathname,
         feedback_type: wantReal ? "subscribe_intent" : feedbackType,
         message: message.trim() + (wantReal ? " [WANTS TO SUBSCRIBE]" : ""),
