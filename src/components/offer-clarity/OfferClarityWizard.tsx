@@ -116,27 +116,14 @@ export function OfferClarityWizard() {
     if (debounceRef.current) clearTimeout(debounceRef.current);
   };
 
-  const handleAddNewCompany = async () => {
+  const handleAddNewCompany = () => {
     const name = offerData.companyName.trim();
     if (!name) return;
-    setCreatingCompany(true);
-    try {
-      const { data, error } = await supabase.functions.invoke("company-discover", {
-        body: { companyName: name, searchQuery: name },
-      });
-      if (error) throw error;
-      if (data?.companyId) {
-        setOfferData(d => ({ ...d, companyName: data.identity?.name || name, companyId: data.companyId }));
-        setCompanyResults([]);
-        setSearchedCompany(false);
-        toast({ title: "Company added", description: `"${data.identity?.name || name}" is now being scanned.` });
-      }
-    } catch (e: any) {
-      console.error("Add company failed:", e);
-      toast({ title: "Failed to add company", description: e.message, variant: "destructive" });
-    } finally {
-      setCreatingCompany(false);
-    }
+    // Mark as unknown company — show the inline detail fields instead of scanning
+    setCompanyResults([]);
+    setSearchedCompany(false);
+    setCompanyLookupStatus(false);
+    if (debounceRef.current) clearTimeout(debounceRef.current);
   };
 
   const update = (field: keyof OfferData, value: string) =>
