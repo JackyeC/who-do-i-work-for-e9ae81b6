@@ -37,6 +37,13 @@ export const MAIN_SECTIONS = [
     subItems: [],
   },
   {
+    id: "receipts",
+    label: "Receipts",
+    path: "/receipts",
+    matchPaths: ["/receipts"],
+    subItems: [],
+  },
+  {
     id: "career-map",
     label: "Career Map",
     path: "/career-intelligence",
