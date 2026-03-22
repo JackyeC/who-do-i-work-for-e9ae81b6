@@ -7,7 +7,7 @@ import { usePageSEO } from "@/hooks/use-page-seo";
 import {
   vibeMatchSchema, calculateRealityGap,
   type VibeMatchInput, type PublicDataSignals, type RealityGapResult,
-} from "@/lib/realityGapScore";
+} from "@/lib/integrityGapScore";
 import { VibeMatchQuestionnaire } from "@/components/reality-check/VibeMatchQuestionnaire";
 import { RealityGapResults } from "@/components/reality-check/RealityGapResults";
 import { FlinchTest } from "@/components/reality-check/FlinchTest";
@@ -36,7 +36,7 @@ export default function RealityCheckPage() {
         { "@type": "HowToStep", name: "Search for the company", text: "Search for the company you interviewed with using the company search." },
         { "@type": "HowToStep", name: "Rate your interview experience", text: "Rate your interview experience across 6 dimensions: leadership transparency, message consistency, panel diversity, boundary culture, professional respect, and process quality." },
         { "@type": "HowToStep", name: "Compare against public data", text: "The system cross-references your ratings against public SEC, FEC, and BLS data to identify gaps." },
-        { "@type": "HowToStep", name: "Review your Reality Gap Score", text: "Review your Reality Gap Score, Vibe Variance chart, and Jackye's AI Twin analysis to make an informed decision." },
+        { "@type": "HowToStep", name: "Review your Integrity Gap Score", text: "Review your Integrity Gap Score, Vibe Variance chart, and Jackye's AI Twin analysis to make an informed decision." },
       ],
     },
   });
@@ -122,13 +122,13 @@ export default function RealityCheckPage() {
         predecessor_respect: input.predecessorRespect,
         process_organization: input.processOrganization,
         overall_vibe_score: gapResult.overallVibeScore,
-        reality_gap_score: gapResult.realityGapScore,
+        reality_gap_score: gapResult.integrityGapScore,
         additional_notes: input.additionalNotes || null,
       } as any);
 
       if (error) console.error("Save error:", error);
 
-      toast({ title: "Reality Check complete", description: `Reality Gap Score: ${gapResult.realityGapScore}` });
+      toast({ title: "Reality Check complete", description: `Integrity Gap Score: ${gapResult.integrityGapScore}` });
     } catch (e: any) {
       toast({ title: "Error", description: e.message, variant: "destructive" });
     } finally {

@@ -122,7 +122,7 @@ export function InsiderScoreBreakdown({ companyId, companyName, insiderScore }: 
           onClick={() => setExplainerOpen(!explainerOpen)}
           className="w-full flex items-center justify-between px-4 py-3 text-left hover:bg-muted/30 transition-colors"
         >
-          <span className="text-xs font-medium text-muted-foreground">What is the Insider Score?</span>
+          <span className="text-xs font-medium text-muted-foreground">What is the Connected Dots?</span>
           {explainerOpen ? <ChevronUp className="w-3.5 h-3.5 text-muted-foreground" /> : <ChevronDown className="w-3.5 h-3.5 text-muted-foreground" />}
         </button>
         {explainerOpen && (

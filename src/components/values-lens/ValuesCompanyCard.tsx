@@ -65,7 +65,7 @@ export function ValuesCompanyCard({ company, signals, evidence, lensLabel, hasCo
       const labelA = (a.signal_label || a.signal_type || "").toLowerCase();
       const labelB = (b.signal_label || b.signal_type || "").toLowerCase();
 
-      // If nepotism high, Insider Score related signals first
+      // If nepotism high, Connected Dots related signals first
       if (insiderFirst) {
         const aInsider = labelA.includes("insider");
         const bInsider = labelB.includes("insider");

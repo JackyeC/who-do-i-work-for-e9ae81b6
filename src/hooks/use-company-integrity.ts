@@ -25,7 +25,7 @@ async function buildIntegrityFromDB(companyName: string, companyId?: string): Pr
 
   const cid = company.id;
 
-  // Fetch reality gap data
+  // Fetch integrity gap data
   const { data: stances } = await supabase
     .from("company_public_stances")
     .select("gap")
@@ -36,12 +36,12 @@ async function buildIntegrityFromDB(companyName: string, companyId?: string): Pr
   const mediumGaps = gaps.filter((g: string) => g === "medium").length;
   const totalStances = gaps.length;
 
-  // Reality Gap: 0-100 based on proportion of large/medium gaps
-  const realityGapScore = totalStances > 0
+  // Integrity Gap: 0-100 based on proportion of large/medium gaps
+  const integrityGapScore = totalStances > 0
     ? Math.min(100, Math.round(((largeGaps * 2 + mediumGaps) / totalStances) * 50))
     : 0;
 
-  // Insider Score: use stored value or derive from board/exec concentration
+  // Connected Dots: use stored value or derive from board/exec concentration
   let insiderScore = company.insider_score ?? 0;
   if (!insiderScore) {
     const { count: boardCount } = await supabase
@@ -67,7 +67,7 @@ async function buildIntegrityFromDB(companyName: string, companyId?: string): Pr
 
   // Risk level from civic footprint (lower = higher risk) + signal density
   const cfs = company.civic_footprint_score ?? 50;
-  const riskInput = Math.round((100 - cfs + realityGapScore + insiderScore) / 3);
+  const riskInput = Math.round((100 - cfs + integrityGapScore + insiderScore) / 3);
   const risk_level: CompanyIntegrityResult["risk_level"] =
     riskInput >= 70 ? "CRITICAL" :
     riskInput >= 50 ? "HIGH" :
@@ -82,7 +82,7 @@ async function buildIntegrityFromDB(companyName: string, companyId?: string): Pr
   }
 
   if (totalStances > 0) {
-    summaryParts.push(`Reality gap analysis across ${totalStances} public stances found ${largeGaps} large and ${mediumGaps} medium discrepancies between stated values and observed actions.`);
+    summaryParts.push(`Integrity gap analysis across ${totalStances} public stances found ${largeGaps} large and ${mediumGaps} medium discrepancies between stated values and observed actions.`);
   }
 
   if (flaggedCount > 0) {
@@ -104,7 +104,7 @@ async function buildIntegrityFromDB(companyName: string, companyId?: string): Pr
   return {
     company_name: company.name,
     risk_level,
-    reality_gap_score: realityGapScore,
+    reality_gap_score: integrityGapScore,
     insider_score: insiderScore,
     summary_for_recruiter: summaryParts.join(" "),
     company_integrity_flag: integrityFlag,

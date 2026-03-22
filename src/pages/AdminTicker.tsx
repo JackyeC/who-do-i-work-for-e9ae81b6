@@ -17,7 +17,7 @@ const ITEM_TYPES = [
   { value: "warn_act", label: "WARN Act" },
   { value: "nlrb", label: "NLRB" },
   { value: "osha", label: "OSHA" },
-  { value: "ghost_posting", label: "Ghost Posting" },
+  { value: "ghost_posting", label: "Labor Impact" },
   { value: "institutional_link", label: "Institutional Link" },
   { value: "government_contract", label: "Government Contract" },
   { value: "score_update", label: "Score Update" },

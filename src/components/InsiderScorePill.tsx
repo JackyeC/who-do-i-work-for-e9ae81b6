@@ -44,11 +44,11 @@ export function InsiderScorePill({ score, className = "" }: InsiderScorePillProp
               border: "1px solid rgba(255,255,255,0.07)",
             }}
           >
-            Insider Score · Pending
+            Connected Dots · Pending
           </div>
         </TooltipTrigger>
         <TooltipContent side="top" className="max-w-xs text-xs">
-          Insider Score data is not yet available for this company. Check back soon.
+          Connected Dots data is not yet available for this company. Check back soon.
         </TooltipContent>
       </Tooltip>
     );
@@ -70,7 +70,7 @@ export function InsiderScorePill({ score, className = "" }: InsiderScorePillProp
             border: `1px solid ${config.border}`,
           }}
         >
-          Insider Score · {score} · {config.label}
+          Connected Dots · {score} · {config.label}
         </div>
       </TooltipTrigger>
       <TooltipContent side="top" className="max-w-sm text-xs leading-relaxed">

@@ -74,8 +74,8 @@ export function RecruiterIntegrityCard({ result }: Props) {
       <CardContent className="space-y-4">
         {/* Score bars */}
         <div className="space-y-3">
-          <ScoreRow label="Reality Gap" value={result.reality_gap_score} icon={TrendingUp} />
-          <ScoreRow label="Insider Score" value={result.insider_score} icon={Users} />
+          <ScoreRow label="Integrity Gap" value={result.reality_gap_score} icon={TrendingUp} />
+          <ScoreRow label="Connected Dots" value={result.insider_score} icon={Users} />
         </div>
 
         {/* Summary */}

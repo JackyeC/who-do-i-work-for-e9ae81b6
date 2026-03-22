@@ -65,7 +65,7 @@ const About = () => {
               },
               {
                 icon: Eye,
-                title: "Reality Gap analysis",
+                title: "Integrity Gap analysis",
                 desc: "We compare what companies say on their careers page to what the public record actually shows.",
               },
               {

@@ -126,6 +126,8 @@ const AskJackyeWidget = lazy(() => import("./components/AskJackyeWidget").then(m
 const BetaFeedbackWidget = lazy(() => import("./components/BetaFeedbackWidget").then(m => ({ default: m.BetaFeedbackWidget })));
 const CookieNotice = lazy(() => import("./components/CookieNotice").then(m => ({ default: m.CookieNotice })));
 const PreviewTierToolbar = lazy(() => import("./components/PreviewTierToolbar").then(m => ({ default: m.PreviewTierToolbar })));
+const Receipts = lazy(() => import("./pages/Receipts"));
+const ReceiptsReport = lazy(() => import("./pages/ReceiptsReport"));
 
 const queryClient = new QueryClient();
 
@@ -181,6 +183,8 @@ const App = () => (
                   <Route path="/policy/:id" element={<PolicyDetail />} />
                   <Route path="/economy" element={<EconomyDashboard />} />
                   <Route path="/follow-the-money" element={<FollowTheMoney />} />
+                  <Route path="/receipts" element={<Receipts />} />
+                  <Route path="/receipts/:slug" element={<ReceiptsReport />} />
                   <Route path="/company/:id" element={<ProtectedRoute><CompanyProfile /></ProtectedRoute>} />
                   <Route path="/company/:id/influence" element={<ProtectedRoute><InfluenceGraph /></ProtectedRoute>} />
                   <Route path="/dossier/:id" element={<CompanyDossier />} />

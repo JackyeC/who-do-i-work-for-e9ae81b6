@@ -142,7 +142,7 @@ const PERSONA_PROFILES: Record<PersonaKey, PersonaProfile> = {
       "You don't apply blind. You want to know what you're walking into before you ever say yes — culture, comp, values, and whether the offer is real.",
     signals: [
       {
-        label: "Reality Gap score",
+        label: "Integrity Gap score",
         text: "See the distance between what they claim and what the data shows — before you interview.",
       },
       {
@@ -180,7 +180,7 @@ const PERSONA_PROFILES: Record<PersonaKey, PersonaProfile> = {
       "You've seen the employer brand deck. Now see the audit. What talent finds before they apply is already shaping who says yes — and who says nothing at all.",
     signals: [
       {
-        label: "Reality Gap on your own org",
+        label: "Integrity Gap on your own org",
         text: "What the public record says about your company vs. what your comms team publishes.",
       },
       {
@@ -265,7 +265,7 @@ const PERSONA_PROFILES: Record<PersonaKey, PersonaProfile> = {
       },
       {
         label: "Executive network concentration",
-        text: "The Insider Score — how concentrated is this leadership team's hiring network?",
+        text: "The Connected Dots — how concentrated is this leadership team's hiring network?",
       },
     ],
   },
@@ -934,7 +934,7 @@ function ResultsScreen({
         {showNepotism && (
           <SignalChip
             signal={{
-              label: "Insider Score",
+              label: "Connected Dots",
               text: "You flagged hidden networks as a priority. Every company audit will surface this signal first.",
             }}
             delay={0.85}

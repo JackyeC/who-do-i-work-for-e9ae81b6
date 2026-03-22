@@ -23,7 +23,7 @@ const DEMO_JOBS: DemoJob[] = [
     id: 3, company: "Acme Logistics", emoji: "📦", role: "Head of Operations", category: "operations",
     comp: "$115K–$130K + bonus", compTransparency: 0.90, hiringActivity: 0.40, workforceStability: 0.30,
     companyBehavior: 0.35, innovation: 0.25, employeeExperience: 0.35, ghost: true,
-    proData: "No ATS match found. Possible ghost posting. Last Glassdoor review: 9 months ago. LinkedIn headcount: dropped 18% YoY.",
+    proData: "No ATS match found. Possible labor impacting. Last Glassdoor review: 9 months ago. LinkedIn headcount: dropped 18% YoY.",
   },
   {
     id: 4, company: "Salesforce", emoji: "☁️", role: "Enterprise Account Executive", category: "sales",

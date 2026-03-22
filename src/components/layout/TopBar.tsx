@@ -5,7 +5,7 @@ import { useClerkWithFallback } from "@/hooks/use-clerk-fallback";
 import { useAuth } from "@/contexts/AuthContext";
 import { useDemoSafeMode } from "@/contexts/DemoSafeModeContext";
 import { cn } from "@/lib/utils";
-import { Search, Menu, X, Shield, ChevronDown, Lock, Compass, BarChart3, Radio } from "lucide-react";
+import { Search, Menu, X, Shield, ChevronDown, Lock, Compass, BarChart3, Radio, FileSearch } from "lucide-react";
 import { ThemeToggle } from "@/components/ThemeToggle";
 import { PersonaChip } from "@/components/PersonaChip";
 import { usePersona } from "@/hooks/use-persona";
@@ -34,6 +34,13 @@ export const MAIN_SECTIONS = [
     label: "Live Signals",
     path: "/signal-alerts",
     matchPaths: ["/signal-alerts"],
+    subItems: [],
+  },
+  {
+    id: "receipts",
+    label: "Receipts",
+    path: "/receipts",
+    matchPaths: ["/receipts"],
     subItems: [],
   },
   {
@@ -113,6 +120,7 @@ export function TopBar() {
 
   /* Primary nav items (desktop) */
   const PRIMARY_NAV = [
+    { id: "receipts", label: "Receipts", icon: FileSearch, path: "/receipts", matchPaths: ["/receipts"] },
     { id: "intelligence", label: "My Intel", icon: BarChart3, onClick: handleMyIntelligence, matchPaths: ["/dashboard"] },
     { id: "signals", label: "Signals", icon: Radio, path: "/signal-alerts", matchPaths: ["/signal-alerts"] },
     { id: "career-map", label: "Career Map", icon: Compass, path: "/career-intelligence", matchPaths: ["/career-intelligence", "/career-map"], auth: true },
@@ -310,6 +318,9 @@ export function TopBar() {
           </form>
 
           {/* Primary */}
+          <Link to="/receipts" className="block px-3 py-3 font-sans text-nav text-primary font-semibold hover:text-foreground transition-colors">
+            Receipts
+          </Link>
           <button
             onClick={() => { setMobileMenuOpen(false); handleMyIntelligence(); }}
             className="block w-full text-left px-3 py-3 font-sans text-nav text-muted-foreground hover:text-foreground transition-colors"

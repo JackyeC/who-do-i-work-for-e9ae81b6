@@ -393,7 +393,7 @@ export default function CompanyDossier() {
         </DossierLayer>
       )}
 
-      <DossierLayer title="Insider Score" subtitle="Leadership network concentration and hiring pattern transparency" icon={Eye} layerNumber={9}>
+      <DossierLayer title="Connected Dots" subtitle="Leadership network concentration and hiring pattern transparency" icon={Eye} layerNumber={9}>
         <InsiderScoreBreakdown companyId={companyId!} companyName={company.name} insiderScore={(company as any).insider_score ?? null} />
       </DossierLayer>
 

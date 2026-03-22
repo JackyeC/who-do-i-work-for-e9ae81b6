@@ -1,4 +1,4 @@
-import type { RealityGapResult } from "@/lib/realityGapScore";
+import type { RealityGapResult } from "@/lib/integrityGapScore";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -81,7 +81,7 @@ interface Props {
 
 export function RealityGapResults({ result, onReset }: Props) {
   const style = bandStyles[result.gapBand];
-  const GapIcon = result.realityGapScore <= 25 ? TrendingUp : result.realityGapScore >= 50 ? TrendingDown : Minus;
+  const GapIcon = result.integrityGapScore <= 25 ? TrendingUp : result.integrityGapScore >= 50 ? TrendingDown : Minus;
 
   return (
     <div className="space-y-6 animate-fade-in">
@@ -96,11 +96,11 @@ export function RealityGapResults({ result, onReset }: Props) {
           </CardContent>
         </Card>
 
-        {/* Reality Gap Score */}
+        {/* Integrity Gap Score */}
         <Card className={cn("ring-1", style.bg, style.ring)}>
           <CardContent className="p-5 text-center">
-            <p className="font-mono text-[9px] tracking-widest uppercase text-muted-foreground mb-2">Reality Gap</p>
-            <p className={cn("text-4xl font-black tabular-nums", style.text)}>{result.realityGapScore}</p>
+            <p className="font-mono text-[9px] tracking-widest uppercase text-muted-foreground mb-2">Integrity Gap</p>
+            <p className={cn("text-4xl font-black tabular-nums", style.text)}>{result.integrityGapScore}</p>
             <Badge variant="outline" className={cn("mt-2 gap-1 text-[10px]", style.text)}>
               <GapIcon className="w-3 h-3" />
               {result.gapLabel}
@@ -109,15 +109,15 @@ export function RealityGapResults({ result, onReset }: Props) {
         </Card>
       </div>
 
-      {/* Reality Gap bar */}
+      {/* Integrity Gap bar */}
       <Card>
         <CardContent className="p-5">
           <div className="flex items-center gap-2 mb-3">
             <BarChart3 className="w-4 h-4 text-civic-green" />
-            <h3 className="font-mono text-xs font-bold tracking-wider uppercase text-civic-green">Reality Gap Scale</h3>
+            <h3 className="font-mono text-xs font-bold tracking-wider uppercase text-civic-green">Integrity Gap Scale</h3>
           </div>
           <div className="relative h-3 bg-muted rounded-full overflow-hidden">
-            <div className={cn("h-full rounded-full transition-all duration-700", style.bar)} style={{ width: `${result.realityGapScore}%` }} />
+            <div className={cn("h-full rounded-full transition-all duration-700", style.bar)} style={{ width: `${result.integrityGapScore}%` }} />
             {[10, 25, 40, 60].map((mark) => (
               <div key={mark} className="absolute top-0 h-full w-px bg-foreground/10" style={{ left: `${mark}%` }} />
             ))}
@@ -193,11 +193,11 @@ export function RealityGapResults({ result, onReset }: Props) {
             <h3 className="font-mono text-xs font-bold tracking-wider uppercase text-civic-green">Jackye's Take</h3>
           </div>
           <blockquote className="border-l-2 border-civic-green pl-4 py-2 text-sm text-foreground italic leading-relaxed">
-            {result.realityGapScore <= 15
+            {result.integrityGapScore <= 15
               ? `"The data and your experience are telling the same story — that's rare and it's a green flag. This company appears to walk the talk. Trust your instincts on this one, but still negotiate hard. Aligned culture doesn't mean you should leave money on the table."`
-              : result.realityGapScore <= 35
+              : result.integrityGapScore <= 35
               ? `"There's a small gap between what the data shows and what you experienced. That's normal — no company is perfectly consistent. Pay attention to the specific dimensions where the gap appeared and ask follow-up questions in your next conversation. The gap isn't a dealbreaker, but it's worth probing."`
-              : result.realityGapScore <= 55
+              : result.integrityGapScore <= 55
               ? `"Here's the truth: there's a noticeable disconnect between this company's public persona and what you actually experienced in the interview. That's a 'Diversity Wash' signal — the Board-level work hasn't scaled down to the hiring manager level. If you take this role, you might be expected to be the 'culture builder' rather than just a contributor. Are you ready for that work?"`
               : `"Let me be direct: your interview experience is significantly different from what the public data suggests. That's not a data gap — that's a character gap. The company has invested in looking good on paper, but the people running the daily show haven't caught up. If you're considering this role, you need to go in with eyes wide open and a clear exit plan. Facts over Feelings."`
             }

@@ -62,15 +62,15 @@ export const TRUST_FRAMING: Record<TrustLevel, string> = {
 
 /* ── Signal priority order by persona ── */
 export const SIGNAL_PRIORITY: Record<PersonaId, string[]> = {
-  job_seeker: ["Reality Gap score", "Comp Transparency", "Ghost Posting"],
+  job_seeker: ["Integrity Gap score", "Comp Transparency", "Labor Impact"],
   recruiter: ["Glassdoor Trajectory", "Employee Experience", "Hiring Activity"],
-  executive: ["Reality Gap", "Workforce Stability", "Peer Benchmarking"],
+  executive: ["Integrity Gap", "Workforce Stability", "Peer Benchmarking"],
   researcher: ["Lobbying/PAC data", "Institutional Links", "Civic Footprint"],
   sales: ["Financial Stability", "Leadership Network", "Government Contracts"],
   marketing: ["Employer Brand vs. Record", "Narrative Risk", "Glassdoor Gap"],
-  investor: ["Leadership Stability", "Workforce Health", "Insider Score"],
+  investor: ["Leadership Stability", "Workforce Health", "Connected Dots"],
   journalist: ["Civic Footprint", "Board Interlocks", "Institutional Links"],
-  career_changer: ["Reality Gap", "Culture vs. Claims", "Industry Stability"],
+  career_changer: ["Integrity Gap", "Culture vs. Claims", "Industry Stability"],
 };
 
 /* ── Read from localStorage ── */
