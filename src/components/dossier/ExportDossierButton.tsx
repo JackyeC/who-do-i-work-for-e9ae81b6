@@ -53,7 +53,7 @@ export function ExportDossierButton({ companyId, companyName, company }: ExportD
         supabase.from("company_dark_money").select("*").eq("company_id", companyId),
         supabase.from("company_revolving_door").select("*").eq("company_id", companyId),
         supabase.from("company_public_stances").select("*").eq("company_id", companyId),
-        supabase.from("company_benchmarks").select("*").eq("company_id", companyId).single(),
+        supabase.from("company_benchmarks").select("*").eq("company_id", companyId).maybeSingle(),
         supabase.from("company_candidates").select("*").eq("company_id", companyId).order("amount", { ascending: false }),
       ]);
 
