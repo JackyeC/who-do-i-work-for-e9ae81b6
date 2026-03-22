@@ -462,7 +462,7 @@ function PracticeCard({ item }) {
 }
 
 export default function InterviewDossier() {
-  const [coKey, setCoKey] = useState("amazon");
+  const [coKey, setCoKey] = useState<keyof typeof COMPANIES>("amazon");
   const [tab, setTab] = useState("intel");
   const [filterCat, setFilterCat] = useState("All");
   const [dept, setDept] = useState("");
