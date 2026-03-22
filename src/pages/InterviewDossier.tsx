@@ -1082,7 +1082,7 @@ export default function InterviewDossier() {
               </div>
               <div className="section" style={{ border: `1.5px solid ${T.red}40`, background: `${T.red}05` }}>
                 <div style={{ color: T.red, fontWeight: 800, fontSize: "0.72rem", fontFamily: "'DM Mono',monospace", marginBottom: "0.3rem" }}>YOUR RED LINE</div>
-                <div style={{ fontSize: "0.82rem", color: T.fg, lineHeight: 1.5 }}>{co.negotiation.redLine}</div>
+                <div style={{ fontSize: "0.82rem", color: T.fg, lineHeight: 1.5 }}>{co.negotiation?.redLine}</div>
               </div>
               <div className="section">
                 <div style={{ fontWeight: 700, fontSize: "0.84rem", marginBottom: "0.65rem" }}>Scripts — Word for Word</div>
