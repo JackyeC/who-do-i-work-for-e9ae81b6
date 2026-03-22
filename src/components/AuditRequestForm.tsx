@@ -25,7 +25,7 @@ export function AuditRequestForm({ companyName, onClose }: AuditRequestFormProps
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!name.trim() || !email.trim() || !user) return;
+    if (!name.trim() || !email.trim() || !user?.id) return;
 
     setSubmitting(true);
     try {
