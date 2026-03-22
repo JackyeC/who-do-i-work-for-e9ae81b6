@@ -1145,6 +1145,8 @@ export default function InterviewDossier() {
           )}
           {/* ── SEND TO CANDIDATE ── */}
           {tab === "send" && (() => {
+            const dossierUrl = `wdiwf.jackyeclayton.com/interview-dossier?company=${coKey}`;
+            const shareMessage = `I put together an interview prep dossier for your upcoming conversation with ${co.name}. It includes employer signal data, practice questions calibrated to their interview style, and negotiation intelligence.\n\nHere's your link:\n${dossierUrl}\n\nReview the Smart Questions tab especially — those are built from real employer data, not generic lists. Go in prepared.\n\nLet me know if you have questions.`;
             const NOTE_TEMPLATES = {
               truth: {
                 label: "The Full Truth (Jackye's Way)",
