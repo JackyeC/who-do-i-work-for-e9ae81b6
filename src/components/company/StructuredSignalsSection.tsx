@@ -24,6 +24,7 @@ interface SignalCategoryProps {
   signals: Signal[];
   emptyType?: "jobs" | "sentiment" | "compensation" | "benefits" | "off_the_record";
   companyName?: string;
+  careersUrl?: string;
   scanContext?: {
     atsDetected?: string;
     pageClassification?: string;
@@ -33,12 +34,12 @@ interface SignalCategoryProps {
   };
 }
 
-function SignalCategory({ title, signals, emptyType, companyName, scanContext }: SignalCategoryProps) {
+function SignalCategory({ title, signals, emptyType, companyName, careersUrl, scanContext }: SignalCategoryProps) {
   if (signals.length === 0 && emptyType) {
     return (
       <div className="py-4 border-b border-border/30 last:border-b-0">
         <p className="text-sm font-semibold text-foreground mb-3">{title}</p>
-        <EmptyStateExplainer type={emptyType} companyName={companyName} scanContext={scanContext} />
+        <EmptyStateExplainer type={emptyType} companyName={companyName} careersUrl={careersUrl} scanContext={scanContext} />
       </div>
     );
   }
