@@ -1,5 +1,6 @@
 // InterviewDossier — Interview preparation dossier page
 import { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 
 const T = {
   bg: "#F7F5F0", fg: "#1A1A22", card: "#FFFFFF", gold: "#EBAD0C",
