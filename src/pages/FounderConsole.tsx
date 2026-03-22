@@ -138,7 +138,7 @@ export default function FounderConsole() {
     queryFn: async () => {
       const { data } = await supabase
         .from("beta_feedback")
-        .select("feedback_type, message, created_at, user_email")
+        .select("feedback_type, message, created_at, user_id")
         .order("created_at", { ascending: false })
         .limit(5);
       return data || [];
@@ -248,7 +248,7 @@ export default function FounderConsole() {
                     <div className="flex items-center gap-2 mb-1">
                       <Badge variant="outline" className="text-[9px] font-mono uppercase">{f.feedback_type}</Badge>
                       <span className="text-[10px] text-muted-foreground">{timeAgo(f.created_at)}</span>
-                      {f.user_email && <span className="text-[10px] text-muted-foreground/60 ml-auto">{f.user_email}</span>}
+                      {f.user_id && <span className="text-[10px] text-muted-foreground/60 ml-auto">{String(f.user_id).slice(0, 8)}…</span>}
                     </div>
                     <p className="text-xs text-foreground leading-relaxed">{f.message}</p>
                   </div>
