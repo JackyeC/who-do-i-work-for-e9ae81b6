@@ -625,7 +625,7 @@ export default function InterviewDossier() {
           <div style={{ background: T.fg, borderRadius: 11, padding: "0.85rem 1rem" }}>
             <div style={{ color: T.gold, fontWeight: 800, fontSize: "0.78rem", marginBottom: "0.2rem" }}>Interview Dossier — $49</div>
             <div style={{ color: "rgba(240,235,224,0.55)", fontSize: "0.7rem", lineHeight: 1.45, marginBottom: "0.55rem" }}>Per company · Full research · PDF export · Refreshed with every search</div>
-            <div style={{ background: T.gold, borderRadius: 7, padding: "0.42rem", textAlign: "center", cursor: "pointer" }}>
+            <div onClick={() => navigate("/pricing")} style={{ background: T.gold, borderRadius: 7, padding: "0.42rem", textAlign: "center", cursor: "pointer" }}>
               <div style={{ fontWeight: 800, fontSize: "0.8rem", color: T.fg }}>Unlock Full Dossier →</div>
             </div>
             <div style={{ color: "rgba(240,235,224,0.35)", fontSize: "0.65rem", textAlign: "center", marginTop: "0.35rem" }}>Also included in Premium ($79/mo)</div>
