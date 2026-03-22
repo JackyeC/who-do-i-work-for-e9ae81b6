@@ -213,6 +213,7 @@ export function OfferClarityWizard() {
                     placeholder="e.g. Google, Hines, Amazon"
                     value={offerData.companyName}
                     onChange={e => searchCompany(e.target.value)}
+                    onBlur={() => checkCompanyExists(offerData.companyName)}
                     className="pl-9"
                   />
                 </div>
@@ -250,6 +251,23 @@ export function OfferClarityWizard() {
                   <Badge variant="secondary" className="mt-2 text-[10px]">
                     <CheckCircle2 className="w-3 h-3 mr-1" /> Matched — company signals will be included
                   </Badge>
+                )}
+                {!offerData.companyId && companyLookupStatus === true && (
+                  <Badge variant="success" className="mt-2 text-[10px]">
+                    <CheckCircle2 className="w-3 h-3 mr-1" /> Company found in database
+                  </Badge>
+                )}
+                {lookingUpCompany && !offerData.companyId && (
+                  <div className="mt-2 flex items-center gap-1.5 text-xs text-muted-foreground">
+                    <Loader2 className="w-3 h-3 animate-spin" /> Checking database…
+                  </div>
+                )}
+                {!offerData.companyId && companyLookupStatus === false && offerData.companyName.trim().length >= 2 && (
+                  <UnknownCompanyPrompt
+                    companyName={offerData.companyName.trim()}
+                    meta={offerData.unknownCompanyMeta || {}}
+                    onChange={meta => setOfferData(d => ({ ...d, unknownCompanyMeta: meta }))}
+                  />
                 )}
               </div>
 
