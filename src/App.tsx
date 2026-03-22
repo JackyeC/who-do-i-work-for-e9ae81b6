@@ -165,6 +165,7 @@ const App = () => (
                   <Route path="/interview" element={<ProtectedRoute><InterviewDossier /></ProtectedRoute>} />
                   <Route path="/interview-dossier" element={<ProtectedRoute><InterviewDossier /></ProtectedRoute>} />
                   <Route path="/recruiter" element={<RecruiterBrief />} />
+                  <Route path="/recruiter-brief" element={<RecruiterBrief />} />
                   <Route path="/ask-jackye" element={<AskJackye />} />
                   <Route path="/reality-check" element={<ProtectedRoute><RealityCheck /></ProtectedRoute>} />
                   <Route path="/would-you-work-here" element={<WouldYouWorkHere />} />
