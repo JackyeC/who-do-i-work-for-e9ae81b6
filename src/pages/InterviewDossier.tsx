@@ -187,6 +187,20 @@ const COMPANIES = {
       ],
       redLine: "Never accept without confirming the level. An L4 vs L5 difference is worth $80K+ over 4 years in total comp.",
     },
+    process: {
+      rounds: "4–5",
+      duration: "6–10 weeks",
+      format: "Recruiter screen → Technical phone screen (45 min, coding on Google Docs) → Virtual/onsite loop (4–5 interviews: 2 coding, 1 system design, 1 Googleyness/behavioral, 1 cross-functional) → Hiring Committee review → Team matching → Offer.",
+      style: "Google's Hiring Committee (not the interviewers) makes the final hire/no-hire decision based on your full interview packet. This means every interview matters equally — there's no 'acing 4 and tanking 1.' Interviewers are calibrated and will offer hints; accepting hints gracefully is a positive Googleyness signal. Coding interviews use Google Docs (no IDE, no autocomplete). System design is open-ended and scale-focused.",
+      barraiser: false,
+      knownFilters: [
+        "Googleyness — intellectual humility, comfort with ambiguity, collaborative instinct. This is assessed in a dedicated behavioral interview and cross-referenced across all interviewers' feedback.",
+        "Coding fluency without IDE support — you'll code in Google Docs. Practice without autocomplete, syntax highlighting, or compilation. Clean, readable code matters more than speed.",
+        "System design at Google scale — design for billions of users, not millions. Interviewers expect you to reason about consistency models, latency SLOs, and failure modes at planetary scale.",
+        "Level calibration — the Hiring Committee evaluates whether your packet matches L5 (or your target level). Under-leveling is common. Push for clarity on level before the onsite.",
+        "Cross-functional communication — the PM/TPM interviewer assesses your ability to explain technical decisions to non-engineers and navigate ambiguity across teams.",
+      ],
+    },
     practice: [
       { category: "Coding", q: "Given a list of meeting time intervals, find the minimum number of conference rooms required.", hint: "Classic Google medium. Min-heap on end times. Walk through your logic before coding. Google interviewers want to see how you think, not just the solution." },
       { category: "System Design", q: "Design a real-time global search index that serves 8 billion queries per day.", hint: "You're at Google — design at Google's scale. Cover: distributed indexing, crawl pipeline, inverted index sharding, consistency model, latency SLOs. Acknowledge the antitrust context if it's relevant to the tradeoffs." },
