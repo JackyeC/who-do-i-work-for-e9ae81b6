@@ -24,6 +24,8 @@ import {
   LogIn, LogOut, Compass, Flame, Shield,
   Bookmark, Inbox, MessageSquare, Columns3, FileEdit, Mic,
 } from "lucide-react";
+import logoSquare from "@/assets/wdiwf-logo-square.png";
+import logoNav from "@/assets/wdiwf-logo-nav-light.png";
 
 /* ------------------------------------------------------------------ */
 /*  Nav structure                                                      */
@@ -124,11 +126,12 @@ export function AppSidebar() {
     <Sidebar collapsible="icon" className="border-r border-border/40">
       {/* ── Logo ── */}
       <SidebarHeader className="p-3">
-        <Link to="/" className="flex items-center gap-2.5 group px-1">
-          <span style={{fontFamily:"Inter,sans-serif",fontWeight:900,letterSpacing:"-0.03em",fontSize: collapsed ? "20px" : "26px"}}>
-            <span style={{color:"#111111"}}>W</span>
-            <span style={{color:"#F0C040"}}>?</span>
-          </span>
+        <Link to="/" className="flex items-center group">
+          {collapsed ? (
+            <img src={logoSquare} alt="W?" className="w-8 h-8 rounded-lg" />
+          ) : (
+            <img src={logoNav} alt="Who Do I Work For?" className="h-8" />
+          )}
         </Link>
       </SidebarHeader>
 

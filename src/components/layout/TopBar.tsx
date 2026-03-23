@@ -8,6 +8,7 @@ import { cn } from "@/lib/utils";
 import { Search, Menu, X, Shield, ChevronDown, Lock, Compass, BarChart3, Radio, FileSearch } from "lucide-react";
 import { ThemeToggle } from "@/components/ThemeToggle";
 import { PersonaChip } from "@/components/PersonaChip";
+import logoNav from "@/assets/wdiwf-logo-nav-light.png";
 import { usePersona } from "@/hooks/use-persona";
 import { SignupModal } from "@/components/SignupModal";
 import { IntelligenceTicker } from "@/components/layout/IntelligenceTicker";
@@ -153,10 +154,7 @@ export function TopBar() {
       <header className="fixed top-[36px] left-0 right-0 z-50 border-b border-border h-[64px] flex items-center px-4 lg:px-6 bg-background/[0.92] backdrop-blur-[20px]">
         {/* Brand */}
         <Link to="/" className="flex items-center shrink-0 mr-4">
-          <span style={{fontFamily:"Inter,sans-serif",fontWeight:900,letterSpacing:"-0.03em",fontSize:"26px"}}>
-            <span style={{color:"#111111"}}>W</span>
-            <span style={{color:"#F0C040"}}>?</span>
-          </span>
+          <img src={logoNav} alt="Who Do I Work For?" className="h-7" />
         </Link>
 
         {/* ── Audit search bar (always visible, most prominent) ── */}
