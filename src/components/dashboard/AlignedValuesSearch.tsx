@@ -127,7 +127,7 @@ export function AlignedValuesSearch({ hasTakenQuiz }: { hasTakenQuiz: boolean })
   if (!hasTakenQuiz) {
     return (
       <div className="py-4">
-        <p style={{ fontFamily: "'DM Sans', sans-serif", fontSize: "13px", color: "#b8b4a8", lineHeight: 1.6, marginBottom: "12px" }}>
+        <p style={{ fontFamily: "'DM Sans', sans-serif", fontSize: "13px", color: "hsl(var(--muted-foreground))", lineHeight: 1.6, marginBottom: "12px" }}>
           Complete your Work DNA profile to see which companies actually match who you are.
         </p>
         <Link

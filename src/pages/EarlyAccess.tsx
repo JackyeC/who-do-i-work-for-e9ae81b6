@@ -148,7 +148,7 @@ export default function EarlyAccess() {
               <span style={{ color: "#F0C040" }}>Before you sign.</span>
             </h1>
 
-            <p className="text-center max-w-[520px] mb-10" style={{ fontSize: "clamp(15px, 2vw, 18px)", color: "#b8b4a8", lineHeight: 1.65 }}>
+            <p className="text-center max-w-[520px] mb-10" style={{ fontSize: "clamp(15px, 2vw, 18px)", color: "hsl(var(--muted-foreground))", lineHeight: 1.65 }}>
               Research any employer using public records — FEC filings, SEC reports,
               WARN notices, OSHA violations — all in one audit. Built by a recruiter,
               for everyone who's ever taken a job that looked great on paper.

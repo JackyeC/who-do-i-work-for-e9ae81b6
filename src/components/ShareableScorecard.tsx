@@ -38,7 +38,7 @@ function ScorecardCanvas({ data }: { data: ScorecardData }) {
         padding: 40,
         background: "linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%)",
         fontFamily: "'IBM Plex Sans', 'Helvetica Neue', sans-serif",
-        color: "#1e293b",
+        color: "hsl(var(--foreground))",
         borderRadius: 16,
         position: "relative",
         overflow: "hidden",
@@ -60,7 +60,7 @@ function ScorecardCanvas({ data }: { data: ScorecardData }) {
             <ClipboardCheck style={{ width: 14, height: 14, color: "white" }} />
           </div>
           <div style={{ display: "flex", flexDirection: "column" }}>
-            <span style={{ fontSize: 13, fontWeight: 600, color: "#1e293b", letterSpacing: 0.5 }}>
+            <span style={{ fontSize: 13, fontWeight: 600, color: "hsl(var(--foreground))", letterSpacing: 0.5 }}>
               OFFER CHECK
             </span>
             <span style={{ fontSize: 12, color: "hsl(var(--muted-foreground))" }}>by Jackye Clayton</span>
@@ -72,11 +72,11 @@ function ScorecardCanvas({ data }: { data: ScorecardData }) {
         <div style={{ display: "flex", gap: 8, marginTop: 8 }}>
           <span style={{
             fontSize: 12, padding: "3px 10px", borderRadius: 99,
-            background: "#e2e8f0", color: "#475569", fontWeight: 500,
+            background: "#e2e8f0", color: "hsl(var(--foreground))", fontWeight: 500,
           }}>{data.industry}</span>
           <span style={{
             fontSize: 12, padding: "3px 10px", borderRadius: 99,
-            background: "#e2e8f0", color: "#475569", fontWeight: 500,
+            background: "#e2e8f0", color: "hsl(var(--foreground))", fontWeight: 500,
           }}>{data.state}</span>
         </div>
       </div>
@@ -134,7 +134,7 @@ function ScorecardCanvas({ data }: { data: ScorecardData }) {
               </div>
               <div style={{ display: "flex", gap: 12, marginTop: 6 }}>
                 {data.partyBreakdown.map((p, i) => (
-                  <div key={i} style={{ display: "flex", alignItems: "center", gap: 4, fontSize: 12, color: "#64748b" }}>
+                  <div key={i} style={{ display: "flex", alignItems: "center", gap: 4, fontSize: 12, color: "hsl(var(--muted-foreground))" }}>
                     <div style={{ width: 6, height: 6, borderRadius: 99, background: p.color }} />
                     {p.party}
                   </div>
@@ -166,7 +166,7 @@ function SignalItem({ label, value }: { label: string; value: string }) {
   return (
     <div style={{ background: "rgba(255,255,255,0.7)", borderRadius: 8, padding: "8px 12px" }}>
       <div style={{ fontSize: 12, color: "hsl(var(--muted-foreground))", fontWeight: 500, marginBottom: 2 }}>{label}</div>
-      <div style={{ fontSize: 16, fontWeight: 700, color: "#1e293b" }}>{value}</div>
+      <div style={{ fontSize: 16, fontWeight: 700, color: "hsl(var(--foreground))" }}>{value}</div>
     </div>
   );
 }

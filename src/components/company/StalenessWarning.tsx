@@ -16,7 +16,7 @@ export function StalenessWarning({ companyName }: StalenessWarningProps) {
       }}
     >
       <AlertTriangle className="w-4 h-4 shrink-0 mt-0.5" style={{ color: "#f0c040" }} />
-      <div className="text-xs" style={{ color: "#b8b4a8" }}>
+      <div className="text-xs" style={{ color: "hsl(var(--muted-foreground))" }}>
         <p>Some leadership data may be outdated. 8-K departure filings are checked regularly.</p>
         <Link
           to={`/request-correction?company=${encodeURIComponent(companyName)}`}

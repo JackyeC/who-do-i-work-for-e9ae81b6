@@ -362,25 +362,25 @@ export default function AutoApply() {
       return (
         <div className="space-y-6">
           <div>
-            <label className="block text-sm font-medium mb-2" style={{ color: "#b8b4a8" }}>
+            <label className="block text-sm font-medium mb-2" style={{ color: "hsl(var(--muted-foreground))" }}>
               Job title(s) you're targeting
             </label>
             <TagInput tags={form.jobTitles} setTags={(t) => update("jobTitles", t)} placeholder="e.g. Product Manager" />
           </div>
           <div>
-            <label className="block text-sm font-medium mb-2" style={{ color: "#b8b4a8" }}>
+            <label className="block text-sm font-medium mb-2" style={{ color: "hsl(var(--muted-foreground))" }}>
               Industry / sector
             </label>
             <MultiSelect options={INDUSTRIES} selected={form.industries} setSelected={(s) => update("industries", s)} />
           </div>
           <div>
-            <label className="block text-sm font-medium mb-2" style={{ color: "#b8b4a8" }}>
+            <label className="block text-sm font-medium mb-2" style={{ color: "hsl(var(--muted-foreground))" }}>
               Location preference
             </label>
             <MultiSelect options={LOCATION_OPTIONS} selected={form.locationPrefs} setSelected={(s) => update("locationPrefs", s)} />
           </div>
           <div>
-            <label className="block text-sm font-medium mb-2" style={{ color: "#b8b4a8" }}>
+            <label className="block text-sm font-medium mb-2" style={{ color: "hsl(var(--muted-foreground))" }}>
               Target salary range
             </label>
             <DualSlider
@@ -399,7 +399,7 @@ export default function AutoApply() {
     if (step === 1) {
       return (
         <div className="space-y-4">
-          <p className="text-sm leading-relaxed" style={{ color: "#b8b4a8" }}>
+          <p className="text-sm leading-relaxed" style={{ color: "hsl(var(--muted-foreground))" }}>
             What matters most to you in a workplace? Drag to rank — #1 is your highest priority.
           </p>
           <RankList items={form.valuesRanking} setItems={(i) => update("valuesRanking", i)} />
@@ -411,7 +411,7 @@ export default function AutoApply() {
       return (
         <div className="space-y-6">
           <div>
-            <label className="block text-sm font-medium mb-2" style={{ color: "#b8b4a8" }}>
+            <label className="block text-sm font-medium mb-2" style={{ color: "hsl(var(--muted-foreground))" }}>
               Companies you will NOT work for <span style={{ color: "hsl(var(--muted-foreground))" }}>(optional)</span>
             </label>
             <TagInput
@@ -421,7 +421,7 @@ export default function AutoApply() {
             />
           </div>
           <div>
-            <label className="block text-sm font-medium mb-2" style={{ color: "#b8b4a8" }}>
+            <label className="block text-sm font-medium mb-2" style={{ color: "hsl(var(--muted-foreground))" }}>
               Industries you will NOT work in
             </label>
             <MultiSelect
@@ -431,7 +431,7 @@ export default function AutoApply() {
             />
           </div>
           <div>
-            <label className="block text-sm font-medium mb-2" style={{ color: "#b8b4a8" }}>
+            <label className="block text-sm font-medium mb-2" style={{ color: "hsl(var(--muted-foreground))" }}>
               Minimum company integrity score required
             </label>
             <Slider
@@ -524,7 +524,7 @@ export default function AutoApply() {
           >
             Your agent applied. Here's your Interview Kit.
           </h1>
-          <p className="text-base mb-8" style={{ color: "#b8b4a8", lineHeight: 1.7 }}>
+          <p className="text-base mb-8" style={{ color: "hsl(var(--muted-foreground))", lineHeight: 1.7 }}>
             We'll send your first dossier within 24 hours.
           </p>
 
