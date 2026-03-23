@@ -5490,6 +5490,62 @@ export type Database = {
           },
         ]
       }
+      integrity_indicators: {
+        Row: {
+          company_id: string
+          confidence: string
+          created_at: string
+          description: string
+          evidence_url: string | null
+          id: string
+          indicator_key: string
+          indicator_type: string
+          is_active: boolean
+          label: string
+          legislation_ref: string | null
+          section_ref: string | null
+          updated_at: string
+        }
+        Insert: {
+          company_id: string
+          confidence?: string
+          created_at?: string
+          description: string
+          evidence_url?: string | null
+          id?: string
+          indicator_key: string
+          indicator_type: string
+          is_active?: boolean
+          label: string
+          legislation_ref?: string | null
+          section_ref?: string | null
+          updated_at?: string
+        }
+        Update: {
+          company_id?: string
+          confidence?: string
+          created_at?: string
+          description?: string
+          evidence_url?: string | null
+          id?: string
+          indicator_key?: string
+          indicator_type?: string
+          is_active?: boolean
+          label?: string
+          legislation_ref?: string | null
+          section_ref?: string | null
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "integrity_indicators_company_id_fkey"
+            columns: ["company_id"]
+            isOneToOne: false
+            referencedRelation: "companies"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       interview_flinch_signals: {
         Row: {
           company_id: string | null
