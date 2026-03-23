@@ -1293,7 +1293,10 @@ function DemoReceiptsReport({ data, slug }: { data: { companyName: string; ticke
             {activeTab === "integrity-gap" && (
               <div className="space-y-6">
                 <div>
-                  <p className="font-mono text-xs text-primary tracking-wider uppercase">Section 01</p>
+                  <div className="flex items-center gap-2">
+                    <p className="font-mono text-xs text-primary tracking-wider uppercase">Section 01</p>
+                    <Badge variant="secondary" className="text-xs">Demo Data</Badge>
+                  </div>
                   <h2 className="text-2xl font-bold text-foreground mt-1">Integrity Gap</h2>
                   <p className="text-muted-foreground text-sm mt-1">The gap between what a company says and what it does.</p>
                 </div>
@@ -1306,12 +1309,16 @@ function DemoReceiptsReport({ data, slug }: { data: { companyName: string; ticke
                     <span>{f}</span>
                   </div>
                 ))}
+                <p className="text-xs text-muted-foreground italic mt-4">This is a demonstration report. Full investigation in progress.</p>
               </div>
             )}
             {activeTab === "labor-impact" && (
               <div className="space-y-6">
                 <div>
-                  <p className="font-mono text-xs text-primary tracking-wider uppercase">Section 02</p>
+                  <div className="flex items-center gap-2">
+                    <p className="font-mono text-xs text-primary tracking-wider uppercase">Section 02</p>
+                    <Badge variant="secondary" className="text-xs">Demo Data</Badge>
+                  </div>
                   <h2 className="text-2xl font-bold text-foreground mt-1">Labor Impact</h2>
                   <p className="text-muted-foreground text-sm mt-1">How corporate decisions affect the workforce.</p>
                 </div>
@@ -1325,12 +1332,16 @@ function DemoReceiptsReport({ data, slug }: { data: { companyName: string; ticke
                     </div>
                   ))}
                 </div>
+                <p className="text-xs text-muted-foreground italic mt-4">This is a demonstration report. Full investigation in progress.</p>
               </div>
             )}
             {activeTab === "safety-alert" && (
               <div className="space-y-6">
                 <div>
-                  <p className="font-mono text-xs text-primary tracking-wider uppercase">Section 03</p>
+                  <div className="flex items-center gap-2">
+                    <p className="font-mono text-xs text-primary tracking-wider uppercase">Section 03</p>
+                    <Badge variant="secondary" className="text-xs">Demo Data</Badge>
+                  </div>
                   <h2 className="text-2xl font-bold text-foreground mt-1">Safety Alert</h2>
                   <p className="text-muted-foreground text-sm mt-1">Federal contracts, regulatory exposure, and accountability signals.</p>
                 </div>
@@ -1340,12 +1351,16 @@ function DemoReceiptsReport({ data, slug }: { data: { companyName: string; ticke
                     <span className="text-sm text-foreground">{s}</span>
                   </div>
                 ))}
+                <p className="text-xs text-muted-foreground italic mt-4">This is a demonstration report. Full investigation in progress.</p>
               </div>
             )}
             {activeTab === "connected-dots" && (
               <div className="space-y-6">
                 <div>
-                  <p className="font-mono text-xs text-primary tracking-wider uppercase">Section 04</p>
+                  <div className="flex items-center gap-2">
+                    <p className="font-mono text-xs text-primary tracking-wider uppercase">Section 04</p>
+                    <Badge variant="secondary" className="text-xs">Demo Data</Badge>
+                  </div>
                   <h2 className="text-2xl font-bold text-foreground mt-1">Connected Dots</h2>
                   <p className="text-muted-foreground text-sm mt-1">Following the money from corporate treasury to political influence.</p>
                 </div>
@@ -1355,6 +1370,7 @@ function DemoReceiptsReport({ data, slug }: { data: { companyName: string; ticke
                     <span className="text-sm text-foreground">{d}</span>
                   </div>
                 ))}
+                <p className="text-xs text-muted-foreground italic mt-4">This is a demonstration report. Full investigation in progress.</p>
               </div>
             )}
           </motion.div>
