@@ -1,5 +1,6 @@
 import { forwardRef } from "react";
 import { Link } from "react-router-dom";
+import logoNav from "@/assets/wdiwf-logo-nav-light.png";
 
 export const Footer = forwardRef<HTMLElement>((_, ref) => {
   return (
