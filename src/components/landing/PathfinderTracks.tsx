@@ -315,6 +315,11 @@ export function PathfinderTracks({ showAll = false }: { showAll?: boolean }) {
                   <div className="font-mono text-xs tracking-wider uppercase text-primary mb-1">
                     {track.hook}
                   </div>
+                  {"subtitle" in track && (track as any).subtitle && (
+                    <div className="text-xs text-muted-foreground mt-0.5">
+                      {(track as any).subtitle}
+                    </div>
+                  )}
                 </div>
 
                 <div className="mb-4">
