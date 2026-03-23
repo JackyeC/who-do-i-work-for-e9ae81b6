@@ -2,6 +2,7 @@ import { useState, lazy, Suspense, forwardRef } from "react";
 import jackyeHeadshotSm from "@/assets/jackye-headshot-sm.webp";
 import { useNavigate, Link } from "react-router-dom";
 import { Shield, ArrowRight, Eye, Target, Brain, Rocket, CheckCircle2, Menu, X, Crosshair, FileSearch, AlertTriangle, Link2 } from "lucide-react";
+import { CareerFitReportCTA } from "@/components/CareerFitReportCTA";
 import { useAuth } from "@/contexts/AuthContext";
 import { useClerkWithFallback } from "@/hooks/use-clerk-fallback";
 import { Button } from "@/components/ui/button";

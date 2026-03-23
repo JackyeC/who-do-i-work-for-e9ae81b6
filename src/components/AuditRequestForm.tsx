@@ -150,7 +150,7 @@ export function AuditRequestForm({ companyName, onClose }: AuditRequestFormProps
               </>
             ) : (
               <>
-                Request this audit
+                Request Company Scan
                 <ArrowRight className="w-4 h-4" />
               </>
             )}
