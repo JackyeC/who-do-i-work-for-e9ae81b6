@@ -374,6 +374,9 @@ export default function CompanyProfile() {
             </CardContent>
           </Card>
 
+          {/* Integrity Indicators — sticky badges */}
+          {dbCompany?.id && <IntegrityIndicators companyId={dbCompany.id} />}
+
           {/* ═══════════════════════════════════════════════════════
               JACKYE'S INSIGHT / DESCRIPTION
              ═══════════════════════════════════════════════════════ */}
