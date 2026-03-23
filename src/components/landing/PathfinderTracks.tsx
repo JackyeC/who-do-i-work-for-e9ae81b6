@@ -126,11 +126,7 @@ export function PathfinderTracks({ showAll = false }: { showAll?: boolean }) {
 
   const handleTrackAction = async (track: typeof tracks[0]) => {
     if (track.mode === "free") {
-      if (user) {
-        navigate("/welcome");
-      } else {
-        navigate("/login?beta=false");
-      }
+      navigate("/join");
       return;
     }
 
@@ -145,20 +141,25 @@ export function PathfinderTracks({ showAll = false }: { showAll?: boolean }) {
       ? (track as any).annualPriceId
       : track.priceId;
 
-    if (!effectivePriceId) {
-      navigate("/work-with-jackye");
+    if (!effectivePriceId || effectivePriceId.includes("placeholder")) {
+      toast("This plan is coming soon — check back soon!");
       return;
     }
 
     setLoading(effectivePriceId);
     try {
       const { data, error } = await supabase.functions.invoke("create-checkout", {
-        body: { priceId: effectivePriceId },
+        body: { priceId: effectivePriceId, mode: track.mode },
       });
-      if (error) throw error;
-      if (data?.url) window.open(data.url, "_blank");
+      if (error) {
+        toast.error("Unable to start checkout. Please try again.");
+        return;
+      }
+      if (data?.url) {
+        window.location.href = data.url;
+      }
     } catch (err: any) {
-      toast.error(err.message || "Checkout failed");
+      toast.error("Unable to start checkout. Please try again.");
     } finally {
       setLoading(null);
     }
