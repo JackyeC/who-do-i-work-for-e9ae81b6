@@ -660,8 +660,12 @@ const Index = forwardRef<HTMLDivElement>((_, ref) => {
       <footer className="border-t border-border px-6 lg:px-16 py-6">
         <div className="max-w-[1100px] mx-auto">
           <div className="flex justify-between items-center flex-wrap gap-4 mb-4">
-            <div className="font-mono text-sm tracking-wider text-muted-foreground">
-              Who Do I Work For? · by Jackye Clayton
+            <div className="flex items-center gap-1">
+              <span style={{ fontFamily: 'Inter, sans-serif', fontWeight: 900, fontSize: '1.1rem', letterSpacing: '-0.03em' }}>
+                <span style={{ color: '#111111' }}>W</span>
+                <span style={{ color: '#F0C040' }}>?</span>
+              </span>
+              <span className="text-sm text-muted-foreground"> · by Jackye Clayton</span>
             </div>
             <div className="flex gap-6">
               <a href="/privacy" className="font-mono text-sm tracking-wider text-muted-foreground hover:text-foreground transition-colors">Privacy</a>
