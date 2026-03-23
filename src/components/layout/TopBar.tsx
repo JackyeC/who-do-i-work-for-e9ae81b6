@@ -16,7 +16,7 @@ import { IntelligenceTicker } from "@/components/layout/IntelligenceTicker";
 export const MAIN_SECTIONS = [
   {
     id: "audit",
-    label: "Audit a Company",
+    label: "Scan a Company",
     path: "/browse",
     matchPaths: ["/browse", "/search", "/company/", "/dossier/", "/add-company", "/values-search", "/intelligence", "/what-am-i-supporting"],
     subItems: [],
