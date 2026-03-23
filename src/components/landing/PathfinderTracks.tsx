@@ -300,10 +300,16 @@ export function PathfinderTracks({ showAll = false }: { showAll?: boolean }) {
                   onClick={() => handleTrackAction(track)}
                   variant={track.popular ? "default" : "outline"}
                   className="w-full gap-1.5 font-mono text-xs tracking-wider uppercase mt-auto"
-                  disabled={loading === (isAnnual && "annualPriceId" in track ? (track as any).annualPriceId : track.priceId)}
+                  disabled={!!loading}
                 >
-                  {track.action}
-                  <ArrowRight className="w-3 h-3" />
+                  {loading === (isAnnual && "annualPriceId" in track ? (track as any).annualPriceId : track.priceId) ? (
+                    <Loader2 className="w-3 h-3 animate-spin" />
+                  ) : (
+                    <>
+                      {track.action}
+                      <ArrowRight className="w-3 h-3" />
+                    </>
+                  )}
                 </Button>
               </div>
             );
