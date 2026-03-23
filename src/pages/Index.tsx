@@ -627,6 +627,12 @@ const Index = forwardRef<HTMLDivElement>((_, ref) => {
           </div>
         </div>
       </section>
+      {/* ── Career Fit Report CTA ── */}
+      <section className="px-6 lg:px-16 py-12">
+        <div className="max-w-[960px] mx-auto">
+          <CareerFitReportCTA />
+        </div>
+      </section>
 
       {/* ── FAQ + Email ── */}
       <Suspense fallback={null}><FAQSection /></Suspense>
