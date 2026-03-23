@@ -155,6 +155,9 @@ export function UserAlertsList() {
       <CardContent className="px-4 sm:px-6">
         {isLoading ? (
           <p className="text-sm text-muted-foreground py-4">Loading alerts…</p>
+        ) : filteredAlerts.length === 0 && (alerts || []).length === 0 ? (
+          /* Demo placeholder alerts when user has no real alerts */
+          <DemoAlerts />
         ) : filteredAlerts.length === 0 ? (
           <p className="text-sm text-muted-foreground py-4">
             {filter === "all"
