@@ -18,13 +18,11 @@ export const Footer = forwardRef<HTMLElement>((_, ref) => {
       {/* Row 1 — Brand + Links */}
       <div className="flex items-center justify-between flex-wrap gap-3 sm:flex-row flex-col sm:items-center items-start">
         <div className="flex items-baseline gap-2">
-          <span style={{fontFamily:"Inter,sans-serif",fontWeight:900,letterSpacing:"-0.03em",fontSize:"22px"}}>
-            <span style={{color:"#111111"}}>W</span>
-            <span style={{color:"#F0C040"}}>?</span>
+          <span style={{ fontFamily: 'Inter, sans-serif', fontWeight: 900, fontSize: '1.1rem', letterSpacing: '-0.03em' }}>
+            <span style={{ color: '#111111' }}>W</span>
+            <span style={{ color: '#F0C040' }}>?</span>
           </span>
-          <span style={{ fontSize: 13, fontWeight: 400, color: 'hsl(var(--muted-foreground))' }}>
-            by Jackye Clayton
-          </span>
+          <span style={{ color: '#666', fontWeight: 400, fontSize: '0.85rem' }}> · by Jackye Clayton</span>
         </div>
         <nav className="flex items-center flex-wrap gap-5 sm:gap-5" style={{ gap: undefined }}>
           {[
