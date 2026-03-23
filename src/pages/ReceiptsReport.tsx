@@ -1187,27 +1187,36 @@ const DEMO_INTEGRITY = {
 
 const DEMO_LABOR = {
   google: [
-    { date: "Jan 2023", title: "12,000 employees laid off (~6% of workforce)", description: "CEO Sundar Pichai cited 'economic reality' and over-hiring during pandemic growth period." },
-    { date: "Jan 2024", title: "Additional rounds across Ads, Hardware, Engineering", description: "Restructuring continued with targeted team eliminations across multiple divisions." },
-    { date: "Feb 2025", title: "Hiring diversity targets eliminated", description: "Internal memo confirmed all demographic hiring goals would be discontinued." },
+    { date: "Jan 2023", title: "12,000 employees laid off (~6% of workforce)", description: "CEO Sundar Pichai cited 'economic reality' and over-hiring during pandemic growth period. Affected every major division." },
+    { date: "Throughout 2024", title: "Additional cuts across YouTube, Hardware, and Recruiting", description: "Targeted layoffs continued with reductions in YouTube content ops, Pixel hardware team, and internal recruiting organization." },
+    { date: "2024–2025", title: "Role reposting patterns detected in engineering", description: "Multiple engineering positions reposted within 30–60 days of layoffs, suggesting backfill-at-lower-cost strategy." },
+    { date: "2024–2025", title: "Hiring freeze in non-AI roles", description: "Internal communications indicated a company-wide hiring freeze for all roles not directly related to AI/ML product development." },
+    { date: "Jan 2023", title: "WARN Act filings in California and New York", description: "California EDD and NY Department of Labor received WARN notices covering thousands of affected workers across Mountain View, Sunnyvale, and New York City offices." },
+    { date: "Feb 2025", title: "Hiring diversity targets eliminated", description: "Internal memo confirmed all demographic hiring goals would be discontinued, citing 'legal landscape changes.'" },
   ],
   amazon: [
-    { date: "Nov 2022", title: "18,000 employees — largest layoff in company history", description: "Affected primarily corporate, retail, and HR teams. WARN filings across WA, CA, TX." },
-    { date: "Mar 2023", title: "9,000 additional cuts announced", description: "Second wave targeting AWS, Twitch, advertising, and PXT (HR) divisions." },
-    { date: "Dec 2024", title: "DEI programs quietly wound down", description: "Internal communications indicated diversity programs being 'streamlined' and 'deprioritized.'" },
+    { date: "Nov 2022 – Mar 2023", title: "27,000 layoffs across two major waves", description: "First wave (Nov 2022): 18,000 employees, the largest layoff in company history. Second wave (Mar 2023): 9,000 additional cuts targeting AWS, Twitch, advertising, and PXT (HR) divisions." },
+    { date: "2023–2024", title: "14,000 additional corporate cuts", description: "Continued restructuring affecting corporate, operations, and HR teams across multiple business units." },
+    { date: "2022–2026", title: "WARN Act: 4,085 employees in Washington state", description: "WARN filings submitted to Washington Employment Security Department covering Seattle, Bellevue, and Kent facilities." },
+    { date: "Sep 2024", title: "Mandatory return-to-office 5 days/week", description: "CEO Andy Jassy mandated full-time in-office work for all corporate employees, reversing hybrid work policies established during pandemic." },
+    { date: "2021–Present", title: "Union activity at multiple fulfillment centers (ALU)", description: "Amazon Labor Union (ALU) won historic election at Staten Island JFK8 facility. Ongoing organizing efforts at warehouses in Alabama, Kentucky, and California despite company opposition." },
+    { date: "Dec 2024", title: "DEI programs quietly wound down", description: "Internal communications indicated diversity programs being 'streamlined' and 'deprioritized.' DEI page removed from public website." },
   ],
 };
 
 const DEMO_SAFETY = {
   google: [
-    "Federal contractor with multiple active DoD and intelligence community contracts.",
+    "OSHA complaint filed at a Google data center facility in 2023 regarding contractor working conditions.",
+    "No major workplace safety violations on public OSHA record for Google corporate offices.",
+    "Psychological safety concerns raised in internal Googler surveys (leaked 2024) — employees cited fear of retaliation for dissent and 'culture of silence' around layoff decisions.",
     "Antitrust ruling: Found to hold illegal monopoly in search (August 2024, DOJ v. Google).",
-    "OSHA: No major violations on public record, but contractor workforce oversight gaps flagged.",
     "ADF Viewpoint Diversity Score: 12% (2025 index).",
   ],
   amazon: [
+    "OSHA cited Amazon 17 times for safety violations at warehouses between 2022 and 2024, including ergonomic hazards and pace-of-work injuries.",
+    "Injury rates at Amazon warehouses documented as 2× the industry average, per Strategic Organizing Center annual reports using Amazon's own data.",
+    "Settlement reached with New York Attorney General over COVID-19 safety protocols at Staten Island and NYC-area fulfillment centers.",
     "Largest federal contractor in tech sector — $15B+ in active government contracts (AWS GovCloud).",
-    "OSHA: 59 warehouse safety citations since 2020, including 6 'serious' violations.",
     "FTC antitrust complaint filed September 2023, alleging monopoly maintenance practices.",
     "Delivery driver classification disputes ongoing across multiple states.",
   ],
@@ -1215,14 +1224,18 @@ const DEMO_SAFETY = {
 
 const DEMO_DOTS = {
   google: [
+    "Sundar Pichai donated to Republican candidates in the 2024 election cycle.",
+    "Board interlocks: Stanford University (multiple board members hold faculty/trustee positions), Salesforce (shared board member), John Doerr (KPCB venture capital, major Google investor and board advisor).",
+    "53% of Google's lobbying spend in 2024 was directed at AI regulation — pushing for federal preemption of state-level AI laws.",
     "8 external lobbying firms retained in 2024, spending $13.4M on 24 bills.",
-    "Notable focus: AI regulation preemption, Section 230 reform, antitrust defense.",
     "Former Google policy leads now holding positions at FTC, FCC, and White House OSTP.",
     "PAC donated to members on both Judiciary and Commerce committees overseeing tech regulation.",
   ],
   amazon: [
+    "Andy Jassy PAC contributions leaned Republican in 2023–2024 cycle.",
+    "Board interlocks: JPMorgan Chase (Jamie Dimon — shared advisory relationships), Starbucks (overlapping board/executive network).",
+    "Amazon lobbying focused on four key areas: antitrust reform, labor regulation, AI governance, and drone delivery authorization.",
     "12 external lobbying firms retained in 2024, spending $21.8M — highest in company history.",
-    "Key targets: Labor regulation, warehouse safety standards, antitrust reform, AI governance.",
     "Former Amazon executives now serving on federal advisory boards for commerce and logistics.",
     "PAC contributions concentrated in Commerce and Labor committee members across both parties.",
   ],
