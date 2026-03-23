@@ -119,6 +119,7 @@ const InterviewDossier = lazy(() => import("./pages/InterviewDossier"));
 const InterviewKits = lazy(() => import("./pages/InterviewKits"));
 const RecruiterBrief = lazy(() => import("./pages/RecruiterBrief"));
 const BriefingPage = lazy(() => import("./pages/BriefingPage"));
+const Tools = lazy(() => import("./pages/Tools"));
 const NewsOnboarding = lazy(() => import("./components/NewsOnboarding"));
 
 // Lazy-load floating widgets — not needed on first paint
@@ -272,6 +273,7 @@ const App = () => (
                   <Route path="/hire" element={<Hire />} />
                   <Route path="/dossier" element={<SampleDossier />} />
                   <Route path="/welcome" element={<Welcome />} />
+                  <Route path="/tools" element={<Tools />} />
                   <Route path="*" element={<NotFound />} />
                 </Routes>
               </Suspense>

@@ -150,7 +150,16 @@ export default function Jobs() {
     return () => clearTimeout(timer);
   }, [search, handleSemanticSearch]);
 
-  const { data: jobs, isLoading } = useQuery({
+  const DEMO_JOBS = [
+    { id: "demo-1", title: "HR Manager", salary_range: "$95,000–$125,000", location: "Ventura, CA", work_mode: "hybrid", url: "#", company_id: "demo-patagonia", is_active: true, scraped_at: "2026-03-20T10:00:00Z", companies: { id: "demo-patagonia", name: "Patagonia", slug: "patagonia", industry: "Retail", civic_footprint_score: 88, state: "CA" } },
+    { id: "demo-2", title: "Talent Acquisition Lead", salary_range: "$85,000–$110,000", location: "Issaquah, WA", work_mode: "onsite", url: "#", company_id: "demo-costco", is_active: true, scraped_at: "2026-03-19T10:00:00Z", companies: { id: "demo-costco", name: "Costco", slug: "costco", industry: "Retail", civic_footprint_score: 76, state: "WA" } },
+    { id: "demo-3", title: "DEI Program Manager", salary_range: "$120,000–$155,000", location: "Redmond, WA (Hybrid)", work_mode: "hybrid", url: "#", company_id: "demo-microsoft", is_active: true, scraped_at: "2026-03-18T10:00:00Z", companies: { id: "demo-microsoft", name: "Microsoft", slug: "microsoft", industry: "Technology", civic_footprint_score: 52, state: "WA" } },
+    { id: "demo-4", title: "People Operations Specialist", salary_range: "$90,000–$120,000", location: "San Francisco, CA", work_mode: "hybrid", url: "#", company_id: "demo-salesforce", is_active: true, scraped_at: "2026-03-17T10:00:00Z", companies: { id: "demo-salesforce", name: "Salesforce", slug: "salesforce", industry: "Technology", civic_footprint_score: 71, state: "CA" } },
+    { id: "demo-5", title: "Employee Relations Director", salary_range: "$130,000–$165,000", location: "Burlington, VT", work_mode: "onsite", url: "#", company_id: "demo-bj", is_active: true, scraped_at: "2026-03-16T10:00:00Z", companies: { id: "demo-bj", name: "Ben & Jerry's", slug: "ben-and-jerrys", industry: "Food & Beverage", civic_footprint_score: 82, state: "VT" } },
+    { id: "demo-6", title: "Workforce Analytics Manager", salary_range: "$105,000–$140,000", location: "Kent, WA", work_mode: "onsite", url: "#", company_id: "demo-rei", is_active: true, scraped_at: "2026-03-15T10:00:00Z", companies: { id: "demo-rei", name: "REI Co-op", slug: "rei", industry: "Retail", civic_footprint_score: 84, state: "WA" } },
+  ];
+
+  const { data: dbJobs, isLoading } = useQuery({
     queryKey: ["jobs-with-companies"],
     queryFn: async () => {
       const { data, error } = await supabase
@@ -163,6 +172,12 @@ export default function Jobs() {
       return data || [];
     },
   });
+
+  // Merge demo jobs at the top, then DB jobs
+  const jobs = useMemo(() => {
+    const db = dbJobs || [];
+    return [...DEMO_JOBS, ...db];
+  }, [dbJobs]);
 
   const { data: signalFlags } = useQuery({
     queryKey: ["company-signal-flags"],

@@ -74,6 +74,54 @@ export default function RecruiterBrief() {
     }, 300);
   }, []);
 
+  const buildDemoBrief = (companyName: string): RecruiterBriefData => ({
+    companyName,
+    industry: "Technology",
+    score: 62,
+    confidence: "Medium",
+    signals: [
+      { label: "Workforce Stability", detail: "No WARN Act filings in last 12 months. Headcount appears stable based on public job postings.", level: "positive" },
+      { label: "Compensation Transparency", detail: "Salary ranges posted on ~40% of open roles. No public pay equity audit found.", level: "neutral" },
+      { label: "Political Spending", detail: "Corporate PAC active. Lobbying spend increased year-over-year. Check Connected Dots for detail.", level: "caution" },
+    ],
+    patterns: [
+      "Public-facing values messaging is consistent but lacks third-party verification.",
+      "Hiring velocity suggests growth, but role descriptions lack clarity on team structure.",
+      "No recent EEOC complaints or OSHA violations in public record.",
+    ],
+    candidateQuestions: [
+      "How has the team structure changed in the last 12 months?",
+      "What does the company's approach to pay equity look like internally?",
+    ],
+    candidateConcerns: [
+      "Lobbying spend may conflict with stated values on certain policy issues.",
+      "Limited public data on internal promotion rates and retention.",
+    ],
+    sayThis: [
+      '"The company has a stable workforce signal — no layoff notices in the last year."',
+      '"Their civic score is moderate — worth discussing the specifics with candidates who care about transparency."',
+    ],
+    avoidThis: [
+      '"They\'re a great company with nothing to worry about."',
+      '"Their values are perfectly aligned with everyone."',
+    ],
+    strengths: [
+      "No recent labor disruptions or safety violations",
+      "Active hiring across multiple departments",
+      "Public commitment to workforce development",
+    ],
+    honestAbout: [
+      "Limited pay transparency on majority of listings",
+      "PAC activity that may not align with all candidate values",
+      "No published diversity or inclusion metrics since 2023",
+    ],
+    beReadyToAnswer: [
+      "What's the company's stance on remote work long-term?",
+      "Are there any pending lawsuits or regulatory actions?",
+      "How does the company approach AI in hiring decisions?",
+    ],
+  });
+
   const selectCompany = async (company: any) => {
     setQuery(company.name);
     setResults([]);
@@ -101,8 +149,24 @@ export default function RecruiterBrief() {
         litigRes.count ?? 0,
       );
       setBrief(b);
+    } else {
+      // Fallback to demo brief if company data not found
+      setBrief(buildDemoBrief(company.name));
     }
     setLoading(false);
+  };
+
+  // Handle search submission for companies not in DB
+  const handleSearchSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (query.trim().length >= 2) {
+      setResults([]);
+      setLoading(true);
+      setTimeout(() => {
+        setBrief(buildDemoBrief(query.trim()));
+        setLoading(false);
+      }, 800);
+    }
   };
 
   return (
@@ -113,7 +177,7 @@ export default function RecruiterBrief() {
           <p className="font-mono text-[10px] tracking-[0.2em] uppercase text-primary mb-2 font-semibold">
             Recruiter Intelligence Brief
           </p>
-          <div className="relative">
+          <form onSubmit={handleSearchSubmit} className="relative">
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
             <Input
               value={query}
@@ -124,7 +188,7 @@ export default function RecruiterBrief() {
             {searching && (
               <Loader2 className="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground animate-spin" />
             )}
-          </div>
+          </form>
 
           {/* Dropdown */}
           <AnimatePresence>

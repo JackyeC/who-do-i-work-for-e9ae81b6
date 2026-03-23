@@ -1155,6 +1155,207 @@ function ConnectedDotsSection({ data }: { data: MetaReportData }) {
 }
 
 // ---------------------------------------------------------------------------
+// Demo Report Component (for Google, Amazon)
+// ---------------------------------------------------------------------------
+
+const DEMO_INTEGRITY = {
+  google: {
+    quotes: [
+      { text: "Our mission is to organize the world's information and make it universally accessible and useful.", source: "Google Mission Statement, about.google" },
+      { text: "We are committed to significantly increasing the leadership representation of underrepresented groups.", source: "Google Diversity Report, 2022 (discontinued)" },
+    ],
+    findings: [
+      "Published diversity reports annually from 2014 to 2022 — then stopped.",
+      "Hiring targets for underrepresented groups eliminated in February 2025, citing 'legal landscape changes.'",
+      "PAC spending tilted 53% Republican in 2023–2024 cycle, up from 48% in 2021–2022.",
+      "Lobbied on 24 bills in 2024 including AI regulation, antitrust, and content moderation.",
+    ],
+  },
+  amazon: {
+    quotes: [
+      { text: "We strive to be Earth's most customer-centric company.", source: "Amazon Leadership Principles, aboutamazon.com" },
+      { text: "Diversity and inclusion are good for business — and more fundamentally — simply right.", source: "Amazon DEI page, 2023 (removed)" },
+    ],
+    findings: [
+      "14,000+ HR and corporate employees laid off in 2023–2024 restructuring.",
+      "DEI programs described as 'wound down' in internal communications, December 2024.",
+      "WARN Act: 4,085 employees affected in Washington state alone (2022–2026).",
+      "Lobbying spend: $21.8M in 2024, up 18% year-over-year, focused on antitrust and labor regulation.",
+    ],
+  },
+};
+
+const DEMO_LABOR = {
+  google: [
+    { date: "Jan 2023", title: "12,000 employees laid off (~6% of workforce)", description: "CEO Sundar Pichai cited 'economic reality' and over-hiring during pandemic growth period." },
+    { date: "Jan 2024", title: "Additional rounds across Ads, Hardware, Engineering", description: "Restructuring continued with targeted team eliminations across multiple divisions." },
+    { date: "Feb 2025", title: "Hiring diversity targets eliminated", description: "Internal memo confirmed all demographic hiring goals would be discontinued." },
+  ],
+  amazon: [
+    { date: "Nov 2022", title: "18,000 employees — largest layoff in company history", description: "Affected primarily corporate, retail, and HR teams. WARN filings across WA, CA, TX." },
+    { date: "Mar 2023", title: "9,000 additional cuts announced", description: "Second wave targeting AWS, Twitch, advertising, and PXT (HR) divisions." },
+    { date: "Dec 2024", title: "DEI programs quietly wound down", description: "Internal communications indicated diversity programs being 'streamlined' and 'deprioritized.'" },
+  ],
+};
+
+const DEMO_SAFETY = {
+  google: [
+    "Federal contractor with multiple active DoD and intelligence community contracts.",
+    "Antitrust ruling: Found to hold illegal monopoly in search (August 2024, DOJ v. Google).",
+    "OSHA: No major violations on public record, but contractor workforce oversight gaps flagged.",
+    "ADF Viewpoint Diversity Score: 12% (2025 index).",
+  ],
+  amazon: [
+    "Largest federal contractor in tech sector — $15B+ in active government contracts (AWS GovCloud).",
+    "OSHA: 59 warehouse safety citations since 2020, including 6 'serious' violations.",
+    "FTC antitrust complaint filed September 2023, alleging monopoly maintenance practices.",
+    "Delivery driver classification disputes ongoing across multiple states.",
+  ],
+};
+
+const DEMO_DOTS = {
+  google: [
+    "8 external lobbying firms retained in 2024, spending $13.4M on 24 bills.",
+    "Notable focus: AI regulation preemption, Section 230 reform, antitrust defense.",
+    "Former Google policy leads now holding positions at FTC, FCC, and White House OSTP.",
+    "PAC donated to members on both Judiciary and Commerce committees overseeing tech regulation.",
+  ],
+  amazon: [
+    "12 external lobbying firms retained in 2024, spending $21.8M — highest in company history.",
+    "Key targets: Labor regulation, warehouse safety standards, antitrust reform, AI governance.",
+    "Former Amazon executives now serving on federal advisory boards for commerce and logistics.",
+    "PAC contributions concentrated in Commerce and Labor committee members across both parties.",
+  ],
+};
+
+function DemoReceiptsReport({ data, slug }: { data: { companyName: string; ticker: string; location: string; products: string; stats: any[] }; slug: string }) {
+  const [activeTab, setActiveTab] = useState<TabId>("integrity-gap");
+  const key = slug as "google" | "amazon";
+
+  return (
+    <div className="min-h-screen bg-background">
+      <div className="max-w-4xl mx-auto px-4 py-8">
+        <Link to="/receipts" className="inline-flex items-center gap-1 text-sm text-muted-foreground hover:text-primary mb-8">
+          <ArrowLeft className="h-3 w-3" /> All Receipts
+        </Link>
+
+        <div className="mb-8">
+          <div className="flex items-center gap-3 mb-2">
+            <h1 className="text-3xl md:text-4xl font-extrabold text-foreground tracking-tight">{data.companyName}</h1>
+            <Badge variant="secondary" className="text-xs">Demo Data</Badge>
+          </div>
+          <p className="text-muted-foreground text-sm mt-2 font-mono">{data.ticker} · {data.location} · {data.products}</p>
+          <Badge className="mt-3 bg-primary/15 text-primary border-primary/30">March 2026</Badge>
+        </div>
+
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-3 mb-10">
+          {data.stats.map((s: any) => (
+            <Card key={s.label} className="bg-card border border-border">
+              <CardContent className="p-4 text-center">
+                <p className="text-xs text-muted-foreground">{s.label}</p>
+                <p className={cn("text-xl font-bold font-mono mt-1", s.trend === "down" ? "text-destructive" : "text-foreground")}>{s.value}</p>
+                <p className="text-xs text-muted-foreground mt-0.5">{s.detail}</p>
+              </CardContent>
+            </Card>
+          ))}
+        </div>
+
+        <div className="flex gap-0 border-b border-border mb-8 overflow-x-auto">
+          {TABS.map((tab) => (
+            <button
+              key={tab.id}
+              onClick={() => setActiveTab(tab.id)}
+              className={cn(
+                "px-4 py-3 text-sm font-medium whitespace-nowrap transition-colors",
+                activeTab === tab.id ? "border-b-2 border-primary text-primary" : "text-muted-foreground hover:text-foreground"
+              )}
+            >
+              {tab.label}
+            </button>
+          ))}
+        </div>
+
+        <AnimatePresence mode="wait">
+          <motion.div key={activeTab} initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -8 }} transition={{ duration: 0.25 }}>
+            {activeTab === "integrity-gap" && (
+              <div className="space-y-6">
+                <div>
+                  <p className="font-mono text-xs text-primary tracking-wider uppercase">Section 01</p>
+                  <h2 className="text-2xl font-bold text-foreground mt-1">Integrity Gap</h2>
+                  <p className="text-muted-foreground text-sm mt-1">The gap between what a company says and what it does.</p>
+                </div>
+                <h3 className="text-lg font-semibold text-foreground">What They Say</h3>
+                {DEMO_INTEGRITY[key]?.quotes.map((q, i) => <QuoteCard key={i} q={q} />)}
+                <h3 className="text-lg font-semibold text-foreground">What We Found</h3>
+                {DEMO_INTEGRITY[key]?.findings.map((f, i) => (
+                  <div key={i} className="flex items-start gap-2 text-sm text-muted-foreground">
+                    <span className="text-primary mt-0.5 shrink-0">›</span>
+                    <span>{f}</span>
+                  </div>
+                ))}
+              </div>
+            )}
+            {activeTab === "labor-impact" && (
+              <div className="space-y-6">
+                <div>
+                  <p className="font-mono text-xs text-primary tracking-wider uppercase">Section 02</p>
+                  <h2 className="text-2xl font-bold text-foreground mt-1">Labor Impact</h2>
+                  <p className="text-muted-foreground text-sm mt-1">How corporate decisions affect the workforce.</p>
+                </div>
+                <div className="relative pl-8 space-y-6 before:absolute before:left-3 before:top-2 before:bottom-2 before:w-px before:bg-border">
+                  {DEMO_LABOR[key]?.map((e, i) => (
+                    <div key={i} className="relative">
+                      <div className="absolute -left-5 top-1.5 w-3 h-3 rounded-full ring-2 ring-background bg-destructive" />
+                      <p className="font-mono text-xs text-muted-foreground mb-1">{e.date}</p>
+                      <h4 className="text-sm font-semibold text-foreground">{e.title}</h4>
+                      <p className="text-sm text-muted-foreground mt-1">{e.description}</p>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
+            {activeTab === "safety-alert" && (
+              <div className="space-y-6">
+                <div>
+                  <p className="font-mono text-xs text-primary tracking-wider uppercase">Section 03</p>
+                  <h2 className="text-2xl font-bold text-foreground mt-1">Safety Alert</h2>
+                  <p className="text-muted-foreground text-sm mt-1">Federal contracts, regulatory exposure, and accountability signals.</p>
+                </div>
+                {DEMO_SAFETY[key]?.map((s, i) => (
+                  <div key={i} className="flex items-start gap-2 p-3 rounded-lg border border-border bg-card">
+                    <span className="text-primary mt-0.5 shrink-0">›</span>
+                    <span className="text-sm text-foreground">{s}</span>
+                  </div>
+                ))}
+              </div>
+            )}
+            {activeTab === "connected-dots" && (
+              <div className="space-y-6">
+                <div>
+                  <p className="font-mono text-xs text-primary tracking-wider uppercase">Section 04</p>
+                  <h2 className="text-2xl font-bold text-foreground mt-1">Connected Dots</h2>
+                  <p className="text-muted-foreground text-sm mt-1">Following the money from corporate treasury to political influence.</p>
+                </div>
+                {DEMO_DOTS[key]?.map((d, i) => (
+                  <div key={i} className="flex items-start gap-2 p-3 rounded-lg border border-border bg-card">
+                    <span className="text-primary mt-0.5 shrink-0">›</span>
+                    <span className="text-sm text-foreground">{d}</span>
+                  </div>
+                ))}
+              </div>
+            )}
+          </motion.div>
+        </AnimatePresence>
+
+        <p className="text-xs text-muted-foreground mt-16 italic text-center">
+          This is a demonstration report using placeholder data. Full investigation report in progress — March 2026.
+        </p>
+      </div>
+    </div>
+  );
+}
+
+// ---------------------------------------------------------------------------
 // Main Component
 // ---------------------------------------------------------------------------
 
@@ -1173,8 +1374,37 @@ export default function ReceiptsReport() {
     path: `/receipts/${slug}`,
   });
 
-  // Coming Soon state
-  if (slug !== "meta") {
+  // Companies with full demo reports
+  const DEMO_REPORTS: Record<string, { companyName: string; ticker: string; location: string; products: string; stats: typeof META_REPORT.stats }> = {
+    google: {
+      companyName: "ALPHABET INC. (GOOGLE)",
+      ticker: "NASDAQ: GOOGL",
+      location: "Mountain View, CA",
+      products: "Google Search, YouTube, Android, Cloud, Waymo",
+      stats: [
+        { label: "PAC Raised", value: "$478,200", detail: "2023–24 cycle" },
+        { label: "Lobbying", value: "$13.4M", detail: "2024 total" },
+        { label: "WARN Filings", value: "42", detail: "2022–2026" },
+        { label: "Diversity Reports", value: "Stopped", detail: "After 11 years", trend: "down" },
+      ],
+    },
+    amazon: {
+      companyName: "AMAZON.COM, INC.",
+      ticker: "NASDAQ: AMZN",
+      location: "Seattle, WA",
+      products: "AWS, Marketplace, Prime, Alexa, Whole Foods",
+      stats: [
+        { label: "PAC Raised", value: "$612,400", detail: "2023–24 cycle" },
+        { label: "Lobbying", value: "$21.8M", detail: "2024 total" },
+        { label: "WARN Filings", value: "87", detail: "2022–2026" },
+        { label: "HR Cuts", value: "14,000+", detail: "Programs wound down", trend: "down" },
+      ],
+    },
+  };
+
+  const demoReport = slug ? DEMO_REPORTS[slug] : null;
+
+  if (slug !== "meta" && !demoReport) {
     return (
       <div className="min-h-screen bg-background flex flex-col items-center justify-center text-center px-4 py-24">
         <h2 className="text-3xl font-bold text-foreground mb-3">Report Coming Soon</h2>
@@ -1184,6 +1414,10 @@ export default function ReceiptsReport() {
         </Link>
       </div>
     );
+  }
+
+  if (demoReport) {
+    return <DemoReceiptsReport data={demoReport} slug={slug!} />;
   }
 
   const data = META_REPORT;

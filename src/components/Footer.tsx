@@ -18,8 +18,9 @@ export const Footer = forwardRef<HTMLElement>((_, ref) => {
       {/* Row 1 — Brand + Links */}
       <div className="flex items-center justify-between flex-wrap gap-3 sm:flex-row flex-col sm:items-center items-start">
         <div className="flex items-baseline gap-2">
-          <span style={{ fontSize: 15, fontWeight: 700, color: '#f0ebe0', letterSpacing: '-0.25px' }}>
-            WDIWF
+          <span style={{fontFamily:"Inter,sans-serif",fontWeight:900,letterSpacing:"-0.03em",fontSize:"22px"}}>
+            <span style={{color:"#111111"}}>W</span>
+            <span style={{color:"#F0C040"}}>?</span>
           </span>
           <span style={{ fontSize: 13, fontWeight: 400, color: 'hsl(var(--muted-foreground))' }}>
             by Jackye Clayton

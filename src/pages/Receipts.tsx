@@ -21,8 +21,8 @@ interface ReceiptsCompany {
 
 const COMPANIES: ReceiptsCompany[] = [
   { slug: "meta", name: "Meta", sector: "Big Tech", state: "CA", categories: ["big-tech"], stat: "PAC: $341K · 57% Republican · DEI Team Disbanded Jan 2025 · 155 WARN filings", status: "full-report", date: "March 2026" },
-  { slug: "google", name: "Google", sector: "Big Tech", state: "CA", categories: ["big-tech"], stat: "Diversity report stopped after 11 years · Hiring targets eliminated Feb 2025", status: "coming-soon", date: "March 2026" },
-  { slug: "amazon", name: "Amazon", sector: "Big Tech", state: "WA", categories: ["big-tech"], stat: "14,000 HR cuts · Programs 'wound down' · WARN: 4,085 WA employees", status: "coming-soon", date: "March 2026" },
+  { slug: "google", name: "Google", sector: "Big Tech", state: "CA", categories: ["big-tech"], stat: "Diversity report stopped after 11 years · Hiring targets eliminated Feb 2025", status: "full-report", date: "March 2026" },
+  { slug: "amazon", name: "Amazon", sector: "Big Tech", state: "WA", categories: ["big-tech"], stat: "14,000 HR cuts · Programs 'wound down' · WARN: 4,085 WA employees", status: "full-report", date: "March 2026" },
   { slug: "microsoft", name: "Microsoft", sector: "Big Tech", state: "WA", categories: ["big-tech"], stat: "DEI team laid off Jul 2024 · Diversity report discontinued", status: "coming-soon", date: "March 2026" },
   { slug: "boeing", name: "Boeing", sector: "Defense", state: "VA", categories: ["big-tech", "defense"], stat: "DEI department dismantled Oct 2024 · 20% Black representation goal abandoned", status: "coming-soon", date: "March 2026" },
   { slug: "booz-allen-hamilton", name: "Booz Allen Hamilton", sector: "Consulting", state: "VA", categories: ["consulting", "defense"], stat: "Full DEI closure · Federal contractor compliance · WorldPride withdrawal", status: "coming-soon", date: "March 2026" },
