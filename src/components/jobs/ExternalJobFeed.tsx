@@ -56,12 +56,12 @@ export function ExternalJobFeed() {
     "workforce", "organizational development",
     "people team", "people strategy", "employee experience",
     "talent acquisition", "employer brand",
-    "learning and development", "l&d",
-    "culture", "employee relations",
+    "learning and development", "l&d", "learning",
+    "culture", "employee relations", "onboarding", "ta",
   ];
 
   const jobs = (data?.jobs || []).filter((job) => {
-    const text = `${job.title} ${job.category || ""}`.toLowerCase();
+    const text = `${job.title} ${job.category || ""} ${job.company || ""}`.toLowerCase();
     return HR_KEYWORDS.some((kw) => text.includes(kw));
   });
 
@@ -114,7 +114,7 @@ export function ExternalJobFeed() {
               </p>
             ) : jobs.length === 0 ? (
               <p className="text-sm text-muted-foreground py-4 text-center">
-                No external listings found right now.
+                No HR/People/Talent roles in this feed right now — check back soon.
               </p>
             ) : (
               <div className="space-y-2 max-h-[400px] overflow-y-auto pr-1">
