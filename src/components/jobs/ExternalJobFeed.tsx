@@ -76,12 +76,12 @@ export function ExternalJobFeed() {
               </div>
               <div>
                 <p className="text-sm font-semibold text-foreground">
-                  Remote Job Feeds
+                  People & HR Job Feeds
                 </p>
                 <p className="text-xs text-muted-foreground">
                   {isLoading
                     ? "Loading feeds…"
-                    : `${jobs.length} listings from We Work Remotely, Remotive & Himalayas`}
+                    : `${jobs.length} HR & Talent roles from We Work Remotely, Remotive & Himalayas`}
                 </p>
               </div>
             </div>
