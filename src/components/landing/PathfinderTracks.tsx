@@ -1,7 +1,7 @@
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "@/contexts/AuthContext";
 import { Button } from "@/components/ui/button";
-import { Compass, Bot, Target, Users, Rocket, ArrowRight, CheckCircle2 } from "lucide-react";
+import { Compass, Bot, Target, Users, Rocket, ArrowRight, CheckCircle2, Loader2 } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import { useState } from "react";
@@ -126,11 +126,7 @@ export function PathfinderTracks({ showAll = false }: { showAll?: boolean }) {
 
   const handleTrackAction = async (track: typeof tracks[0]) => {
     if (track.mode === "free") {
-      if (user) {
-        navigate("/welcome");
-      } else {
-        navigate("/login?beta=false");
-      }
+      navigate("/join");
       return;
     }
 
@@ -145,20 +141,25 @@ export function PathfinderTracks({ showAll = false }: { showAll?: boolean }) {
       ? (track as any).annualPriceId
       : track.priceId;
 
-    if (!effectivePriceId) {
-      navigate("/work-with-jackye");
+    if (!effectivePriceId || effectivePriceId.includes("placeholder")) {
+      toast("This plan is coming soon — check back soon!");
       return;
     }
 
     setLoading(effectivePriceId);
     try {
       const { data, error } = await supabase.functions.invoke("create-checkout", {
-        body: { priceId: effectivePriceId },
+        body: { priceId: effectivePriceId, mode: track.mode },
       });
-      if (error) throw error;
-      if (data?.url) window.open(data.url, "_blank");
+      if (error) {
+        toast.error("Unable to start checkout. Please try again.");
+        return;
+      }
+      if (data?.url) {
+        window.location.href = data.url;
+      }
     } catch (err: any) {
-      toast.error(err.message || "Checkout failed");
+      toast.error("Unable to start checkout. Please try again.");
     } finally {
       setLoading(null);
     }
@@ -299,10 +300,16 @@ export function PathfinderTracks({ showAll = false }: { showAll?: boolean }) {
                   onClick={() => handleTrackAction(track)}
                   variant={track.popular ? "default" : "outline"}
                   className="w-full gap-1.5 font-mono text-xs tracking-wider uppercase mt-auto"
-                  disabled={loading === (isAnnual && "annualPriceId" in track ? (track as any).annualPriceId : track.priceId)}
+                  disabled={!!loading}
                 >
-                  {track.action}
-                  <ArrowRight className="w-3 h-3" />
+                  {loading === (isAnnual && "annualPriceId" in track ? (track as any).annualPriceId : track.priceId) ? (
+                    <Loader2 className="w-3 h-3 animate-spin" />
+                  ) : (
+                    <>
+                      {track.action}
+                      <ArrowRight className="w-3 h-3" />
+                    </>
+                  )}
                 </Button>
               </div>
             );
