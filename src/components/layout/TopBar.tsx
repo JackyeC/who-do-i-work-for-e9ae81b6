@@ -315,7 +315,7 @@ export function TopBar() {
             <input
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              placeholder="Audit a company..."
+              placeholder="Scan a company..."
               className="bg-transparent border-none outline-none text-foreground font-sans text-body w-full placeholder:text-muted-foreground"
             />
           </form>
