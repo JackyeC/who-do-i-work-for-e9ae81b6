@@ -2,6 +2,7 @@ import { useState, lazy, Suspense, forwardRef } from "react";
 import jackyeHeadshotSm from "@/assets/jackye-headshot-sm.webp";
 import { useNavigate, Link } from "react-router-dom";
 import { Shield, ArrowRight, Eye, Target, Brain, Rocket, CheckCircle2, Menu, X, Crosshair, FileSearch, AlertTriangle, Link2 } from "lucide-react";
+import { CareerFitReportCTA } from "@/components/CareerFitReportCTA";
 import { useAuth } from "@/contexts/AuthContext";
 import { useClerkWithFallback } from "@/hooks/use-clerk-fallback";
 import { Button } from "@/components/ui/button";
@@ -627,6 +628,12 @@ const Index = forwardRef<HTMLDivElement>((_, ref) => {
           </div>
         </div>
       </section>
+      {/* ── Career Fit Report CTA ── */}
+      <section className="px-6 lg:px-16 py-12">
+        <div className="max-w-[960px] mx-auto">
+          <CareerFitReportCTA />
+        </div>
+      </section>
 
       {/* ── FAQ + Email ── */}
       <Suspense fallback={null}><FAQSection /></Suspense>
@@ -648,10 +655,10 @@ const Index = forwardRef<HTMLDivElement>((_, ref) => {
             See the Receipts
           </button>
           <button
-            onClick={() => navigate("/browse")}
+            onClick={() => navigate("/check")}
             className="border border-border bg-card px-8 py-3.5 font-mono text-sm tracking-wider uppercase text-muted-foreground hover:text-foreground hover:border-primary/40 transition-all"
           >
-            Audit a Company
+            Scan a Company
           </button>
         </div>
       </section>

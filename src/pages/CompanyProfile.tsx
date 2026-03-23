@@ -3,6 +3,8 @@ import { useParams, Link, useNavigate } from "react-router-dom";
 import { useCompanyIntelligence } from "@/hooks/use-company-intelligence";
 import { motion } from "framer-motion";
 import { Building2, ArrowLeft, EyeOff, Loader2, Sparkles, Search, Scan, ExternalLink, FileSearch } from "lucide-react";
+import { AuditRequestForm } from "@/components/AuditRequestForm";
+import { CareerFitReportCTA } from "@/components/CareerFitReportCTA";
 import { JackyesInsightBlock } from "@/components/company/JackyesInsightBlock";
 import { CompanyLogo } from "@/components/CompanyLogo";
 import { WatchCompanyButton } from "@/components/WatchCompanyButton";
@@ -251,13 +253,16 @@ export default function CompanyProfile() {
   const displayCompany = dbCompany || company;
 
   if (!displayCompany) {
+    const companyNameFromSlug = id?.replace(/-/g, ' ') || "this company";
     return (
-      <div className="flex-1 flex items-center justify-center py-20">
-        <div className="text-center max-w-md">
-          <Building2 className="w-12 h-12 text-muted-foreground mx-auto mb-4" />
-          <h1 className="text-2xl font-bold text-foreground mb-2">Company Not Found</h1>
-          <p className="text-sm text-muted-foreground mb-4">This company isn't in our database yet.</p>
-          <Link to="/search"><Button className="gap-2"><Search className="w-4 h-4" />Search & Discover</Button></Link>
+      <div className="flex-1 container mx-auto px-4 py-12 max-w-2xl">
+        <Link to="/browse" className="inline-flex items-center gap-1.5 text-xs text-muted-foreground hover:text-foreground transition-colors mb-6">
+          <ArrowLeft className="w-3.5 h-3.5" />
+          Back to directory
+        </Link>
+        <AuditRequestForm companyName={companyNameFromSlug} />
+        <div className="mt-6">
+          <CareerFitReportCTA companyName={companyNameFromSlug} variant="inline" />
         </div>
       </div>
     );
@@ -387,11 +392,11 @@ export default function CompanyProfile() {
                 <div className="flex items-center justify-center gap-3 flex-wrap">
                   <Button onClick={handleFullScan} disabled={isScanning || !!isDiscovering} className="gap-2">
                     {isScanning ? <Loader2 className="w-4 h-4 animate-spin" /> : <Scan className="w-4 h-4" />}
-                    {isScanning ? "Scanning…" : "Run Scan Now"}
+                    {isScanning ? "Scanning…" : "Run Full Company Scan"}
                   </Button>
                   <Button variant="outline" onClick={() => navigate("/check")} className="gap-2">
                     <Search className="w-4 h-4" />
-                    Request Audit
+                    Request Company Scan
                   </Button>
                 </div>
               </CardContent>

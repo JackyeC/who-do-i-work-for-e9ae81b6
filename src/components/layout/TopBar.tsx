@@ -16,7 +16,7 @@ import { IntelligenceTicker } from "@/components/layout/IntelligenceTicker";
 export const MAIN_SECTIONS = [
   {
     id: "audit",
-    label: "Audit a Company",
+    label: "Scan a Company",
     path: "/browse",
     matchPaths: ["/browse", "/search", "/company/", "/dossier/", "/add-company", "/values-search", "/intelligence", "/what-am-i-supporting"],
     subItems: [],
@@ -165,7 +165,7 @@ export function TopBar() {
           <input
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
-            placeholder="Audit a company..."
+             placeholder="Scan a company..."
             className="bg-transparent border-none outline-none text-foreground font-sans text-nav w-full placeholder:text-muted-foreground"
           />
         </form>
@@ -315,7 +315,7 @@ export function TopBar() {
             <input
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              placeholder="Audit a company..."
+              placeholder="Scan a company..."
               className="bg-transparent border-none outline-none text-foreground font-sans text-body w-full placeholder:text-muted-foreground"
             />
           </form>
