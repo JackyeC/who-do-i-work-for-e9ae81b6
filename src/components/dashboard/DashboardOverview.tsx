@@ -402,7 +402,7 @@ export function DashboardOverview({ onNavigate }: DashboardOverviewProps) {
                     <p style={{ fontSize: 13, fontWeight: 600, color: C.cream, lineHeight: 1.4, marginTop: 4 }}>
                       {item.title}
                     </p>
-                    <p style={{ fontSize: 11.5, color: C.muted, lineHeight: 1.45, marginTop: 3 }}>
+                    <p style={{ fontSize: 12, color: C.muted, lineHeight: 1.45, marginTop: 3 }}>
                       {item.desc}
                     </p>
                     <p style={{ fontSize: 12, color: C.dimmed, marginTop: 4 }} className="flex items-center gap-1">
