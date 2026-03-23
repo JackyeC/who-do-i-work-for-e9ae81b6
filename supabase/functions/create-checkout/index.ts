@@ -15,17 +15,22 @@ const EMPLOYER_PRICES = new Set([
 
 // One-time purchase prices (not subscriptions)
 const ONE_TIME_PRICES = new Set([
+  "price_1TEEvz89MyCOs8yvWbLINfKw", // The Dossier $199 (one-time deep-dive) — LIVE
+  // Legacy test-mode prices (kept for existing test purchases)
   "price_1TBO3F7Qj0W6UtN9oEHb8dHf", // Single Job Credit $199
   "price_1TCTQW7Qj0W6UtN9eFTxOpYg", // Career Strategy Session $350
   "price_1TCTQX7Qj0W6UtN9T019lM6x", // Offer Review Intensive $275
-  "price_1TCdDA7Qj0W6UtN9VPMXRkyY", // The Dossier $199 (one-time deep-dive)
-  "price_1TCdDB7Qj0W6UtN9VEaLssdN", // Partner Strategy Session $299 (legacy)
+  "price_1TCdDA7Qj0W6UtN9VPMXRkyY", // Strategist Dossier $149 (test)
+  "price_1TCdDB7Qj0W6UtN9VEaLssdN", // Partner Strategy Session $299 (test)
 ]);
 
 // Subscription prices (recurring)
 const SUBSCRIPTION_PRICES = new Set([
-  "price_1TCTiJ7Qj0W6UtN9hARvCvgh", // The Executive $999/yr
-  "price_1TCdD87Qj0W6UtN9NBt8Wtb9", // Pro $19/mo
+  "price_1TEEvt89MyCOs8yv7SV1TeUJ", // Pro $19/mo — LIVE
+  "price_1TEEw589MyCOs8yvQI8FpHJx", // The Executive $999/yr — LIVE
+  // Legacy test-mode prices
+  "price_1TCTiJ7Qj0W6UtN9hARvCvgh", // Executive $999/yr (test)
+  "price_1TCdD87Qj0W6UtN9NBt8Wtb9", // Scout $19/mo (test)
 ]);
 
 serve(async (req) => {

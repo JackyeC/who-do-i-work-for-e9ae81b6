@@ -56,28 +56,48 @@ export const STRIPE_TIERS = {
     label: "Founding Partner Certification",
     price: "$599/yr",
   },
+  // ── Live-mode tiers (current pricing) ──
+  pro: {
+    price_id: "price_1TEEvt89MyCOs8yv7SV1TeUJ",
+    product_id: "prod_UCeDHlvmHhO9tX",
+    label: "Pro",
+    price: "$19/mo",
+  },
+  dossier: {
+    price_id: "price_1TEEvz89MyCOs8yvWbLINfKw",
+    product_id: "prod_UCeEak56pqgewl",
+    label: "The Dossier",
+    price: "$199",
+  },
+  executive: {
+    price_id: "price_1TEEw589MyCOs8yvQI8FpHJx",
+    product_id: "prod_UCeELQ7Cmi386u",
+    label: "The Executive",
+    price: "$999/yr",
+  },
+  // ── Legacy test-mode tiers (kept for backward compat) ──
   executive_autopilot: {
     price_id: "price_1TCTiJ7Qj0W6UtN9hARvCvgh",
     product_id: "prod_UApNtIY5ulWQ2o",
-    label: "Executive Autopilot",
+    label: "Executive Autopilot (legacy)",
     price: "$999/yr",
   },
   scout: {
     price_id: "price_1TCdD87Qj0W6UtN9NBt8Wtb9",
     product_id: "prod_UAzBIZUsEKJOoC",
-    label: "Scout AI Coach",
+    label: "Scout (legacy)",
     price: "$19/mo",
   },
   strategist: {
     price_id: "price_1TCdDA7Qj0W6UtN9VPMXRkyY",
     product_id: "prod_UAzBBIzLrVAXLH",
-    label: "The Dossier",
+    label: "The Dossier (legacy)",
     price: "$199",
   },
   partner: {
     price_id: "price_1TCdDB7Qj0W6UtN9VEaLssdN",
     product_id: "prod_UAzB5EKILjmGlq",
-    label: "Partner Strategy Session",
+    label: "Partner (legacy)",
     price: "$299",
   },
 } as const;
@@ -137,7 +157,12 @@ const PROFESSIONAL_FEATURES: PremiumFeatures = {
 function getTierFromProductId(productId: string | null): PremiumTier {
   if (productId === STRIPE_TIERS.professional.product_id) return "professional";
   if (productId === STRIPE_TIERS.candidate.product_id) return "candidate";
+  // Live-mode products
+  if (productId === STRIPE_TIERS.pro.product_id) return "candidate";
+  if (productId === STRIPE_TIERS.executive.product_id) return "professional";
+  // Legacy test-mode products
   if (productId === STRIPE_TIERS.executive_autopilot.product_id) return "professional";
+  if (productId === STRIPE_TIERS.scout.product_id) return "candidate";
   return "free";
 }
 
