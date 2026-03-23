@@ -69,7 +69,7 @@ export function WhatThisMeansForYou({ matchCount, matchedCategories, civicScore,
       {matchedCategories.length > 0 && (
         <div className="flex flex-wrap gap-1 pt-1">
           {matchedCategories.map((c) => (
-            <Badge key={c} variant="outline" className="text-[10px] py-0 bg-primary/5 border-primary/15 text-primary">
+            <Badge key={c} variant="outline" className="text-xs py-0 bg-primary/5 border-primary/15 text-primary">
               {CATEGORY_LABELS[c] || c.replace(/_/g, " ")}
             </Badge>
           ))}

@@ -86,7 +86,7 @@ export default function MyOfferReviews() {
                           </span>
                           <Badge
                             variant={review.processing_status === "completed" ? "secondary" : "outline"}
-                            className="text-[10px]"
+                            className="text-xs"
                           >
                             {review.processing_status}
                           </Badge>
@@ -94,7 +94,7 @@ export default function MyOfferReviews() {
                         {snapshot.role_title && (
                           <p className="text-xs text-muted-foreground">{snapshot.role_title}</p>
                         )}
-                        <div className="flex gap-3 mt-2 text-[10px] text-muted-foreground">
+                        <div className="flex gap-3 mt-2 text-xs text-muted-foreground">
                           <span>{termCount} terms</span>
                           <span>{clauseCount} clauses</span>
                           <span>{new Date(review.created_at).toLocaleDateString()}</span>

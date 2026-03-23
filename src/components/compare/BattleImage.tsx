@@ -31,12 +31,12 @@ function BattleFallback({ companyA, companyB, onRetry }: { companyA: string; com
       <div className="font-bold text-sm text-foreground mb-1">
         {companyA} vs {companyB}
       </div>
-      <div className="font-mono text-[9px] tracking-[0.2em] uppercase text-muted-foreground mb-4">
+      <div className="font-mono text-xs tracking-[0.2em] uppercase text-muted-foreground mb-4">
         No Judgment · Just Receipts
       </div>
       <button
         onClick={onRetry}
-        className="inline-flex items-center gap-1.5 px-4 py-2 border border-primary/30 bg-primary/5 hover:bg-primary/10 text-primary font-mono text-[9px] tracking-wider uppercase transition-colors"
+        className="inline-flex items-center gap-1.5 px-4 py-2 border border-primary/30 bg-primary/5 hover:bg-primary/10 text-primary font-mono text-xs tracking-wider uppercase transition-colors"
       >
         <RefreshCw className="w-3 h-3" /> Generate Battle Art
       </button>
@@ -69,7 +69,7 @@ function BattleLoading({ companyA, companyB }: { companyA: string; companyB: str
         <div className="absolute inset-0 rounded-full border-2 border-primary/30 animate-ping" style={{ animationDuration: '2s' }} />
       </div>
       <div className="text-center">
-        <div className="font-mono text-[10px] tracking-wider uppercase text-primary mb-1">
+        <div className="font-mono text-xs tracking-wider uppercase text-primary mb-1">
           Generating Battle Intelligence
         </div>
         <div className="text-[12px] text-muted-foreground transition-opacity duration-500">
@@ -175,14 +175,14 @@ export function BattleImage({ companyA, companyB, industryA, industryB, scoreA, 
       <div className="px-5 py-3 border-b border-border bg-muted/20 flex items-center justify-between">
         <div className="flex items-center gap-2">
           <Sparkles className="w-3.5 h-3.5 text-primary" />
-          <span className="font-mono text-[9px] tracking-[0.2em] uppercase text-primary font-semibold">
+          <span className="font-mono text-xs tracking-[0.2em] uppercase text-primary font-semibold">
             AI Battle Arena
           </span>
         </div>
         {imageUrl && !loading && (
           <button
             onClick={generate}
-            className="flex items-center gap-1 font-mono text-[9px] tracking-wider uppercase text-muted-foreground hover:text-primary transition-colors"
+            className="flex items-center gap-1 font-mono text-xs tracking-wider uppercase text-muted-foreground hover:text-primary transition-colors"
           >
             <RefreshCw className="w-3 h-3" /> Regenerate
           </button>
@@ -211,7 +211,7 @@ export function BattleImage({ companyA, companyB, industryA, industryB, scoreA, 
         <div className="px-5 py-4 border-t border-border bg-muted/10">
           <div className="flex items-center gap-2 mb-3">
             <Share2 className="w-3.5 h-3.5 text-primary" />
-            <span className="font-mono text-[9px] tracking-[0.2em] uppercase text-primary font-semibold">
+            <span className="font-mono text-xs tracking-[0.2em] uppercase text-primary font-semibold">
               Share This Battle
             </span>
           </div>
@@ -221,25 +221,25 @@ export function BattleImage({ companyA, companyB, industryA, industryB, scoreA, 
           <div className="flex flex-wrap gap-2">
             <button
               onClick={shareLinkedIn}
-              className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-[hsl(210,80%,40%)] hover:bg-[hsl(210,80%,30%)] text-white font-mono text-[9px] tracking-wider uppercase transition-colors"
+              className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-[hsl(210,80%,40%)] hover:bg-[hsl(210,80%,30%)] text-white font-mono text-xs tracking-wider uppercase transition-colors"
             >
               <Linkedin className="w-3.5 h-3.5" /> LinkedIn
             </button>
             <button
               onClick={shareFacebook}
-              className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-[hsl(220,46%,48%)] hover:bg-[hsl(220,46%,38%)] text-white font-mono text-[9px] tracking-wider uppercase transition-colors"
+              className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-[hsl(220,46%,48%)] hover:bg-[hsl(220,46%,38%)] text-white font-mono text-xs tracking-wider uppercase transition-colors"
             >
               <Facebook className="w-3.5 h-3.5" /> Facebook
             </button>
             <button
               onClick={shareTwitter}
-              className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-foreground hover:bg-foreground/80 text-background font-mono text-[9px] tracking-wider uppercase transition-colors"
+              className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-foreground hover:bg-foreground/80 text-background font-mono text-xs tracking-wider uppercase transition-colors"
             >
               <Twitter className="w-3.5 h-3.5" /> Twitter / X
             </button>
             <button
               onClick={copyLink}
-              className="inline-flex items-center gap-1.5 px-3 py-1.5 border border-border bg-card hover:bg-muted/30 text-foreground font-mono text-[9px] tracking-wider uppercase transition-colors"
+              className="inline-flex items-center gap-1.5 px-3 py-1.5 border border-border bg-card hover:bg-muted/30 text-foreground font-mono text-xs tracking-wider uppercase transition-colors"
             >
               {copied ? <Check className="w-3.5 h-3.5 text-primary" /> : <Link2 className="w-3.5 h-3.5" />}
               {copied ? "Copied!" : "Copy Link"}
@@ -247,7 +247,7 @@ export function BattleImage({ companyA, companyB, industryA, industryB, scoreA, 
             {imageUrl && (
               <button
                 onClick={downloadImage}
-                className="inline-flex items-center gap-1.5 px-3 py-1.5 border border-primary/30 bg-primary/5 hover:bg-primary/10 text-primary font-mono text-[9px] tracking-wider uppercase transition-colors"
+                className="inline-flex items-center gap-1.5 px-3 py-1.5 border border-primary/30 bg-primary/5 hover:bg-primary/10 text-primary font-mono text-xs tracking-wider uppercase transition-colors"
               >
                 📸 Download Image
               </button>
@@ -257,7 +257,7 @@ export function BattleImage({ companyA, companyB, industryA, industryB, scoreA, 
       )}
 
       <div className="px-5 py-2 border-t border-border bg-muted/10 text-center">
-        <span className="font-mono text-[8px] tracking-wider uppercase text-muted-foreground">
+        <span className="font-mono text-xs tracking-wider uppercase text-muted-foreground">
           Powered by AI · For entertainment purposes · No judgment, just receipts
         </span>
       </div>

@@ -340,13 +340,13 @@ export function WorkforceEquityModule({
               <div className="flex items-start gap-2">
                 <BookOpen className="w-4 h-4 text-muted-foreground mt-0.5 shrink-0" />
                 <div>
-                  <p className="text-[11px] font-semibold text-foreground mb-1">Sources & Methodology</p>
-                  <p className="text-[10px] text-muted-foreground">
+                  <p className="text-xs font-semibold text-foreground mb-1">Sources & Methodology</p>
+                  <p className="text-xs text-muted-foreground">
                     Signals sourced from ESG / impact reports, diversity reports, SEC filings, company career pages,
                     press releases, public partnership announcements, and workforce data platforms. Confidence levels
                     are based on source count, quality, recency, and whether data was directly reported or inferred.
                   </p>
-                  <p className="text-[10px] text-muted-foreground mt-2 pt-2 border-t border-border">
+                  <p className="text-xs text-muted-foreground mt-2 pt-2 border-t border-border">
                     <strong>Educational insights only.</strong> This module does not provide legal advice, employment advice,
                     or definitive judgments. It distinguishes between direct evidence, inferred patterns, and missing public
                     disclosure. Protected traits are never inferred from photos or names — only self-disclosed or

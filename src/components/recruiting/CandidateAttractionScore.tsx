@@ -308,7 +308,7 @@ export function CandidateAttractionScore({ companyId, companyName }: Props) {
                 </div>
                 <div>
                   <p className="text-sm font-semibold text-foreground">{r.persona.name}</p>
-                  <p className="text-[11px] text-muted-foreground">{r.persona.description}</p>
+                  <p className="text-xs text-muted-foreground">{r.persona.description}</p>
                 </div>
               </div>
               <Badge className={cn("shrink-0 text-xs", getLevelColor(r.level))}>
@@ -318,7 +318,7 @@ export function CandidateAttractionScore({ companyId, companyName }: Props) {
 
             {r.matchedSignals.length > 0 && (
               <div className="mt-2 pl-10">
-                <p className="text-[10px] uppercase tracking-widest text-muted-foreground font-semibold mb-1">
+                <p className="text-xs uppercase tracking-widest text-muted-foreground font-semibold mb-1">
                   Signals detected
                 </p>
                 <div className="space-y-0.5">
@@ -347,7 +347,7 @@ export function CandidateAttractionScore({ companyId, companyName }: Props) {
           </div>
         ))}
 
-        <p className="text-[10px] text-muted-foreground text-center pt-2 italic">
+        <p className="text-xs text-muted-foreground text-center pt-2 italic">
           All scores are calculated from publicly available data. No conclusions are drawn — interpretation is left to the user.
         </p>
       </CardContent>

@@ -48,16 +48,16 @@ export function ReportTemplatePicker({ onSelect }: ReportTemplatePickerProps) {
                   <div className="flex-1 min-w-0">
                     <div className="flex items-center gap-2 mb-1">
                       <h3 className="text-sm font-semibold text-foreground">{t.name}</h3>
-                      <Badge variant="outline" className="text-[9px] shrink-0">
+                      <Badge variant="outline" className="text-xs shrink-0">
                         {t.report.report_type.replace(/_/g, " ")}
                       </Badge>
                     </div>
                     <p className="text-xs text-muted-foreground leading-relaxed">{t.description}</p>
                     <div className="flex gap-1.5 mt-2">
-                      <Badge variant="secondary" className="text-[9px]">
+                      <Badge variant="secondary" className="text-xs">
                         {t.sections.length} sections
                       </Badge>
-                      <Badge variant="secondary" className="text-[9px]">
+                      <Badge variant="secondary" className="text-xs">
                         {t.claims.length} claims
                       </Badge>
                     </div>

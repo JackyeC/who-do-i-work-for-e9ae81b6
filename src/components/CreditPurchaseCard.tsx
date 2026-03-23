@@ -125,7 +125,7 @@ export function CreditPurchaseCard({ variant = "card", message }: CreditPurchase
                 <div>
                   <span className="text-sm font-medium text-foreground">{pack.label}</span>
                   {pack.savings && (
-                    <span className="ml-2 text-[10px] font-mono text-primary bg-primary/10 px-1.5 py-0.5 rounded">
+                    <span className="ml-2 text-xs font-mono text-primary bg-primary/10 px-1.5 py-0.5 rounded">
                       {pack.savings}
                     </span>
                   )}
@@ -140,7 +140,7 @@ export function CreditPurchaseCard({ variant = "card", message }: CreditPurchase
                 )}
               </div>
               {pack.popular && (
-                <Badge className="absolute -top-2 right-3 text-[9px] bg-primary text-primary-foreground">
+                <Badge className="absolute -top-2 right-3 text-xs bg-primary text-primary-foreground">
                   POPULAR
                 </Badge>
               )}

@@ -38,7 +38,7 @@ function ScorecardCanvas({ data }: { data: ScorecardData }) {
         padding: 40,
         background: "linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%)",
         fontFamily: "'IBM Plex Sans', 'Helvetica Neue', sans-serif",
-        color: "#1e293b",
+        color: "hsl(var(--foreground))",
         borderRadius: 16,
         position: "relative",
         overflow: "hidden",
@@ -60,10 +60,10 @@ function ScorecardCanvas({ data }: { data: ScorecardData }) {
             <ClipboardCheck style={{ width: 14, height: 14, color: "white" }} />
           </div>
           <div style={{ display: "flex", flexDirection: "column" }}>
-            <span style={{ fontSize: 13, fontWeight: 600, color: "#1e293b", letterSpacing: 0.5 }}>
+            <span style={{ fontSize: 13, fontWeight: 600, color: "hsl(var(--foreground))", letterSpacing: 0.5 }}>
               OFFER CHECK
             </span>
-            <span style={{ fontSize: 9, color: "#94a3b8" }}>by Jackye Clayton</span>
+            <span style={{ fontSize: 12, color: "hsl(var(--muted-foreground))" }}>by Jackye Clayton</span>
           </div>
         </div>
         <h2 style={{ fontSize: 28, fontWeight: 700, margin: 0, lineHeight: 1.2 }}>
@@ -71,12 +71,12 @@ function ScorecardCanvas({ data }: { data: ScorecardData }) {
         </h2>
         <div style={{ display: "flex", gap: 8, marginTop: 8 }}>
           <span style={{
-            fontSize: 11, padding: "3px 10px", borderRadius: 99,
-            background: "#e2e8f0", color: "#475569", fontWeight: 500,
+            fontSize: 12, padding: "3px 10px", borderRadius: 99,
+            background: "#e2e8f0", color: "hsl(var(--foreground))", fontWeight: 500,
           }}>{data.industry}</span>
           <span style={{
-            fontSize: 11, padding: "3px 10px", borderRadius: 99,
-            background: "#e2e8f0", color: "#475569", fontWeight: 500,
+            fontSize: 12, padding: "3px 10px", borderRadius: 99,
+            background: "#e2e8f0", color: "hsl(var(--foreground))", fontWeight: 500,
           }}>{data.state}</span>
         </div>
       </div>
@@ -109,7 +109,7 @@ function ScorecardCanvas({ data }: { data: ScorecardData }) {
         </div>
 
         <div style={{ flex: 1 }}>
-          <div style={{ fontSize: 11, fontWeight: 600, color: "#94a3b8", textTransform: "uppercase", letterSpacing: 1, marginBottom: 12 }}>
+          <div style={{ fontSize: 12, fontWeight: 600, color: "hsl(var(--muted-foreground))", textTransform: "uppercase", letterSpacing: 1, marginBottom: 12 }}>
             KEY SIGNALS DETECTED
           </div>
           <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 12 }}>
@@ -121,7 +121,7 @@ function ScorecardCanvas({ data }: { data: ScorecardData }) {
 
           {data.partyBreakdown && data.partyBreakdown.length > 0 && (
             <div style={{ marginTop: 16 }}>
-              <div style={{ fontSize: 11, fontWeight: 600, color: "#94a3b8", textTransform: "uppercase", letterSpacing: 1, marginBottom: 6 }}>
+              <div style={{ fontSize: 12, fontWeight: 600, color: "hsl(var(--muted-foreground))", textTransform: "uppercase", letterSpacing: 1, marginBottom: 6 }}>
                 PAC BY PARTY
               </div>
               <div style={{ display: "flex", height: 8, borderRadius: 99, overflow: "hidden", background: "#e2e8f0" }}>
@@ -134,7 +134,7 @@ function ScorecardCanvas({ data }: { data: ScorecardData }) {
               </div>
               <div style={{ display: "flex", gap: 12, marginTop: 6 }}>
                 {data.partyBreakdown.map((p, i) => (
-                  <div key={i} style={{ display: "flex", alignItems: "center", gap: 4, fontSize: 10, color: "#64748b" }}>
+                  <div key={i} style={{ display: "flex", alignItems: "center", gap: 4, fontSize: 12, color: "hsl(var(--muted-foreground))" }}>
                     <div style={{ width: 6, height: 6, borderRadius: 99, background: p.color }} />
                     {p.party}
                   </div>
@@ -151,10 +151,10 @@ function ScorecardCanvas({ data }: { data: ScorecardData }) {
         borderTop: "1px solid #cbd5e1",
         display: "flex", justifyContent: "space-between", alignItems: "center",
       }}>
-        <span style={{ fontSize: 10, color: "#94a3b8" }}>
+        <span style={{ fontSize: 12, color: "hsl(var(--muted-foreground))" }}>
           Offer Check by Jackye Clayton • offercheck.app
         </span>
-        <span style={{ fontSize: 10, color: "#94a3b8" }}>
+        <span style={{ fontSize: 12, color: "hsl(var(--muted-foreground))" }}>
           Generated {new Date().toLocaleDateString()}
         </span>
       </div>
@@ -165,8 +165,8 @@ function ScorecardCanvas({ data }: { data: ScorecardData }) {
 function SignalItem({ label, value }: { label: string; value: string }) {
   return (
     <div style={{ background: "rgba(255,255,255,0.7)", borderRadius: 8, padding: "8px 12px" }}>
-      <div style={{ fontSize: 10, color: "#94a3b8", fontWeight: 500, marginBottom: 2 }}>{label}</div>
-      <div style={{ fontSize: 16, fontWeight: 700, color: "#1e293b" }}>{value}</div>
+      <div style={{ fontSize: 12, color: "hsl(var(--muted-foreground))", fontWeight: 500, marginBottom: 2 }}>{label}</div>
+      <div style={{ fontSize: 16, fontWeight: 700, color: "hsl(var(--foreground))" }}>{value}</div>
     </div>
   );
 }

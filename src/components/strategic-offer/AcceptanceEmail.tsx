@@ -122,11 +122,11 @@ export function AcceptanceEmail({
               </div>
               <div>
                 <span className="text-foreground">Offer Acceptance Email</span>
-                <p className="text-[11px] text-muted-foreground font-normal mt-0.5">
+                <p className="text-xs text-muted-foreground font-normal mt-0.5">
                   The "Closing Script" — document your negotiated terms
                 </p>
               </div>
-              <Badge className="ml-auto text-[9px] bg-primary/10 text-primary border-0 gap-1">
+              <Badge className="ml-auto text-xs bg-primary/10 text-primary border-0 gap-1">
                 <Sparkles className="w-3 h-3" /> AI
               </Badge>
             </CardTitle>
@@ -182,7 +182,7 @@ export function AcceptanceEmail({
                       <Badge
                         key={term}
                         variant={selectedTerms.includes(term) ? "default" : "outline"}
-                        className="cursor-pointer text-[10px] transition-colors"
+                        className="cursor-pointer text-xs transition-colors"
                         onClick={() => toggleTerm(term)}
                       >
                         {term}
@@ -215,7 +215,7 @@ export function AcceptanceEmail({
               <div className="space-y-4">
                 {/* Subject line */}
                 <div className="p-3 bg-primary/5 border border-primary/20 rounded-xl">
-                  <p className="text-[10px] text-primary font-semibold mb-1">Subject Line</p>
+                  <p className="text-xs text-primary font-semibold mb-1">Subject Line</p>
                   <p className="text-sm text-foreground font-medium font-mono">{result.subject}</p>
                 </div>
 

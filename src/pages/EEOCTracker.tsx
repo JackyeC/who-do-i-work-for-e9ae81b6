@@ -94,7 +94,7 @@ export default function EEOCTracker() {
             <div className="p-2.5 rounded-xl bg-red-500/10 border border-red-500/20">
               <Gavel className="w-6 h-6 text-red-400" />
             </div>
-            <Badge variant="outline" className="text-[10px] font-mono tracking-wider border-red-500/30 text-red-400">
+            <Badge variant="outline" className="text-xs font-mono tracking-wider border-red-500/30 text-red-400">
               ENFORCEMENT TRACKER
             </Badge>
           </div>
@@ -105,7 +105,7 @@ export default function EEOCTracker() {
             Tracking federal employment discrimination lawsuits where the EEOC moved to dismiss or 
             withdrew participation. These shifts in enforcement directly affect worker protections.
           </p>
-          <p className="text-[11px] text-muted-foreground/60 mt-4 italic flex items-center gap-1.5">
+          <p className="text-xs text-muted-foreground/60 mt-4 italic flex items-center gap-1.5">
             <Shield className="w-3 h-3" />
             Data sourced from court filings, AP reporting, and public records. A documented filing does not establish wrongdoing.
           </p>
@@ -172,10 +172,10 @@ export default function EEOCTracker() {
                         <div className="flex-1 min-w-0 space-y-2">
                           <div className="flex flex-wrap items-center gap-2">
                             <h3 className="font-semibold text-foreground">{c.company_name}</h3>
-                            <Badge variant="outline" className={`text-[10px] ${action.color}`}>
+                            <Badge variant="outline" className={`text-xs ${action.color}`}>
                               {action.label}
                             </Badge>
-                            <Badge variant="outline" className="text-[10px] border-border text-muted-foreground">
+                            <Badge variant="outline" className="text-xs border-border text-muted-foreground">
                               <CatIcon className="w-3 h-3 mr-1" />
                               {cat.label}
                             </Badge>
@@ -199,7 +199,7 @@ export default function EEOCTracker() {
                                 <Calendar className="w-3 h-3" /> Dropped {new Date(c.eeoc_drop_date).toLocaleDateString()}
                               </span>
                             )}
-                            <Badge variant="outline" className="text-[9px] font-mono">
+                            <Badge variant="outline" className="text-xs font-mono">
                               {c.confidence.toUpperCase()} CONFIDENCE
                             </Badge>
                           </div>

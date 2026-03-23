@@ -413,7 +413,7 @@ export function PowerMap({ companyId, companyName, executives }: PowerMapProps) 
       <CardContent>
         {/* Filters + Legend */}
         <div className="flex flex-wrap gap-2 mb-3">
-          <span className="flex items-center gap-1 text-[10px] text-muted-foreground mr-1">
+          <span className="flex items-center gap-1 text-xs text-muted-foreground mr-1">
             <Filter className="w-3 h-3" /> Filter:
           </span>
           {Object.entries(NODE_LABELS).map(([type, label]) => {
@@ -423,7 +423,7 @@ export function PowerMap({ companyId, companyName, executives }: PowerMapProps) 
               <button
                 key={type}
                 onClick={() => toggleFilter(type)}
-                className={`flex items-center gap-1.5 px-2 py-0.5 border text-[10px] transition-all ${
+                className={`flex items-center gap-1.5 px-2 py-0.5 border text-xs transition-all ${
                   isActive
                     ? "border-border text-foreground bg-muted/50"
                     : "border-transparent text-muted-foreground/40 opacity-50"
@@ -440,7 +440,7 @@ export function PowerMap({ companyId, companyName, executives }: PowerMapProps) 
           {activeFilters.size > 0 && (
             <button
               onClick={() => setActiveFilters(new Set())}
-              className="text-[10px] text-primary hover:underline ml-1"
+              className="text-xs text-primary hover:underline ml-1"
             >
               Show all
             </button>
@@ -468,7 +468,7 @@ export function PowerMap({ companyId, companyName, executives }: PowerMapProps) 
                     style={{ backgroundColor: NODE_COLORS[selectedNodeData.type] }}
                   />
                   <span className="text-sm font-semibold text-foreground">{selectedNodeData.label}</span>
-                  <Badge variant="outline" className="text-[10px]">
+                  <Badge variant="outline" className="text-xs">
                     {NODE_LABELS[selectedNodeData.type]}
                   </Badge>
                 </div>
@@ -478,7 +478,7 @@ export function PowerMap({ companyId, companyName, executives }: PowerMapProps) 
               </div>
               {selectedEdges.length > 0 && (
                 <div className="space-y-1">
-                  <p className="text-[10px] text-muted-foreground uppercase tracking-wider font-semibold">Connections</p>
+                  <p className="text-xs text-muted-foreground uppercase tracking-wider font-semibold">Connections</p>
                   {selectedEdges.slice(0, 5).map((e, i) => {
                     const other = e.source === selectedNode
                       ? nodes.find((n) => n.id === e.target)
@@ -487,7 +487,7 @@ export function PowerMap({ companyId, companyName, executives }: PowerMapProps) 
                       <div key={i} className="flex items-center gap-2 text-xs text-foreground/80">
                         <span className="text-muted-foreground">→</span>
                         <span>{other?.label || "Unknown"}</span>
-                        <Badge variant="outline" className="text-[9px] px-1">{e.label}</Badge>
+                        <Badge variant="outline" className="text-xs px-1">{e.label}</Badge>
                         {e.amount && e.amount > 0 && (
                           <span className="text-muted-foreground ml-auto">${e.amount.toLocaleString()}</span>
                         )}
@@ -495,7 +495,7 @@ export function PowerMap({ companyId, companyName, executives }: PowerMapProps) 
                     );
                   })}
                   {selectedEdges.length > 5 && (
-                    <p className="text-[10px] text-muted-foreground">+ {selectedEdges.length - 5} more</p>
+                    <p className="text-xs text-muted-foreground">+ {selectedEdges.length - 5} more</p>
                   )}
                 </div>
               )}

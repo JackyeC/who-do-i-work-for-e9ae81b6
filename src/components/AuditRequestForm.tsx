@@ -122,7 +122,7 @@ export function AuditRequestForm({ companyName, onClose }: AuditRequestFormProps
           </div>
           <div>
             <label className="text-xs font-medium text-muted-foreground mb-1 block">
-              Role you're considering <Badge variant="outline" className="text-[9px] ml-1">optional</Badge>
+              Role you're considering <Badge variant="outline" className="text-xs ml-1">optional</Badge>
             </label>
             <Input
               value={roleTitle}

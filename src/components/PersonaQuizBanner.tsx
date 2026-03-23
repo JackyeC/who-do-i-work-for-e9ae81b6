@@ -49,7 +49,7 @@ export function PersonaQuizBanner() {
           className="p-1 rounded-full hover:bg-white/5 transition-colors"
           aria-label="Dismiss"
         >
-          <X className="w-4 h-4" style={{ color: "#7a7590" }} />
+          <X className="w-4 h-4" style={{ color: "hsl(var(--muted-foreground))" }} />
         </button>
       </div>
     </div>

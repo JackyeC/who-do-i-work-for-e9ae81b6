@@ -100,7 +100,7 @@ export function DreamJobWidget() {
             <Copy className="w-3.5 h-3.5" /> Copy Share Text
           </Button>
         </div>
-        <p className="text-[10px] text-civic-gold-muted flex items-center gap-1">
+        <p className="text-xs text-civic-gold-muted flex items-center gap-1">
           <Shield className="w-2.5 h-2.5" /> No judgment, just receipts.
         </p>
         <Button variant="link" size="sm" className="px-0" onClick={() => { setSubmitted(false); setDreamRole(""); setDreamCompany(""); }}>
@@ -113,7 +113,7 @@ export function DreamJobWidget() {
   return (
     <div className="p-6 lg:p-8 border border-border bg-card rounded-xl space-y-5">
       <div>
-        <div className="font-mono text-[11px] tracking-[0.2em] uppercase text-primary mb-2">Where Do You Belong?</div>
+        <div className="font-mono text-xs tracking-[0.2em] uppercase text-primary mb-2">Where Do You Belong?</div>
         <h3 className="font-serif text-xl text-foreground mb-1">Map Your Aligned Role</h3>
         <p className="text-sm text-muted-foreground">
           Tell us where you want to be — and we'll get the receipts before you get the offer.
@@ -148,7 +148,7 @@ export function DreamJobWidget() {
         Map My Values
       </Button>
 
-      <p className="text-[10px] text-muted-foreground/60 flex items-center gap-1">
+      <p className="text-xs text-muted-foreground/60 flex items-center gap-1">
         <Lock className="w-2.5 h-2.5" /> Your aligned role stays private. We only use it to prioritize intelligence requests.
       </p>
     </div>

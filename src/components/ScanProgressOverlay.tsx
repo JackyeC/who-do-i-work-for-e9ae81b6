@@ -124,7 +124,7 @@ export function ScanProgressOverlay({
                 </div>
                 <div className="text-right shrink-0">
                   <div className="text-sm font-mono font-bold text-foreground">{formatTime(elapsed)}</div>
-                  <div className="text-[10px] text-muted-foreground">elapsed</div>
+                  <div className="text-xs text-muted-foreground">elapsed</div>
                 </div>
               </div>
 
@@ -149,7 +149,7 @@ export function ScanProgressOverlay({
                   <div key={phase}>
                     <div className="flex items-center gap-2 mb-2">
                       <span className={cn(
-                        "text-[10px] uppercase tracking-widest font-semibold",
+                        "text-xs uppercase tracking-widest font-semibold",
                         phaseActive ? "text-primary" : phaseCompleted ? "text-[hsl(var(--civic-green))]" : "text-muted-foreground"
                       )}>
                         {phase}
@@ -186,7 +186,7 @@ export function ScanProgressOverlay({
                               {mod?.label || key}
                             </span>
                             {signals > 0 && (
-                              <Badge variant="secondary" className="text-[10px] px-1.5 py-0">
+                              <Badge variant="secondary" className="text-xs px-1.5 py-0">
                                 {signals} signal{signals !== 1 ? "s" : ""}
                               </Badge>
                             )}
@@ -215,7 +215,7 @@ export function ScanProgressOverlay({
                 <div className="space-y-3">
                   <div className="flex items-start gap-2">
                     <Shield className="w-3.5 h-3.5 text-muted-foreground shrink-0 mt-0.5" />
-                    <p className="text-[11px] text-muted-foreground leading-relaxed">
+                    <p className="text-xs text-muted-foreground leading-relaxed">
                       Scanning federal databases, corporate records, and web sources. 
                       This typically takes <strong>2–4 minutes</strong>. You can close this and continue browsing — the scan runs in the background.
                     </p>

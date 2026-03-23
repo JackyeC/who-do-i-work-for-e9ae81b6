@@ -17,7 +17,7 @@ function TrustBadge({ rating }: { rating?: string }) {
     ? "text-[hsl(var(--civic-yellow))] bg-[hsl(var(--civic-yellow))]/10 border-[hsl(var(--civic-yellow))]/20"
     : "text-destructive bg-destructive/10 border-destructive/20";
   return (
-    <span className={cn("font-mono text-[9px] font-bold tracking-wider px-1.5 py-0.5 border", color)}>
+    <span className={cn("font-mono text-xs font-bold tracking-wider px-1.5 py-0.5 border", color)}>
       {rating}
     </span>
   );
@@ -30,12 +30,12 @@ export function RivalryBattleCard({ rivalry, compact }: RivalryBattleCardProps) 
       <div className="px-4 py-2 border-b border-border bg-muted/20 flex items-center justify-between">
         <div className="flex items-center gap-2">
           <span className="text-sm">{rivalry.categoryIcon}</span>
-          <span className="font-mono text-[9px] tracking-[0.2em] uppercase text-muted-foreground font-semibold">
+          <span className="font-mono text-xs tracking-[0.2em] uppercase text-muted-foreground font-semibold">
             {rivalry.title}
           </span>
         </div>
         {rivalry.geoTag && (
-          <div className="flex items-center gap-1 text-[9px] text-muted-foreground font-mono">
+          <div className="flex items-center gap-1 text-xs text-muted-foreground font-mono">
             <MapPin className="w-2.5 h-2.5" />
             <span className="hidden sm:inline">{rivalry.geoTag.split("—")[0].trim()}</span>
           </div>
@@ -55,7 +55,7 @@ export function RivalryBattleCard({ rivalry, compact }: RivalryBattleCardProps) 
           <div className="text-xl font-black text-primary tabular-nums leading-none mb-0.5">
             {rivalry.companyA.stat}
           </div>
-          <div className="font-mono text-[8px] tracking-wider uppercase text-muted-foreground">
+          <div className="font-mono text-xs tracking-wider uppercase text-muted-foreground">
             {rivalry.companyA.statLabel}
           </div>
           {rivalry.trustSignalA && (
@@ -85,7 +85,7 @@ export function RivalryBattleCard({ rivalry, compact }: RivalryBattleCardProps) 
           <div className="text-xl font-black text-primary tabular-nums leading-none mb-0.5">
             {rivalry.companyB.stat}
           </div>
-          <div className="font-mono text-[8px] tracking-wider uppercase text-muted-foreground">
+          <div className="font-mono text-xs tracking-wider uppercase text-muted-foreground">
             {rivalry.companyB.statLabel}
           </div>
           {rivalry.trustSignalB && (
@@ -102,7 +102,7 @@ export function RivalryBattleCard({ rivalry, compact }: RivalryBattleCardProps) 
           <div className="px-4 py-3 border-t border-border bg-muted/10">
             <div className="flex items-center gap-1.5 mb-1">
               <Shield className="w-3 h-3 text-primary" />
-              <span className="font-mono text-[8px] tracking-[0.2em] uppercase text-primary font-semibold">
+              <span className="font-mono text-xs tracking-[0.2em] uppercase text-primary font-semibold">
                 2026 Signal
               </span>
             </div>
@@ -111,7 +111,7 @@ export function RivalryBattleCard({ rivalry, compact }: RivalryBattleCardProps) 
 
           {/* Verdict */}
           <div className="px-4 py-3 border-t border-border">
-            <div className="font-mono text-[8px] tracking-[0.2em] uppercase text-muted-foreground mb-1">
+            <div className="font-mono text-xs tracking-[0.2em] uppercase text-muted-foreground mb-1">
               The Verdict
             </div>
             <p className="text-[12px] text-muted-foreground leading-relaxed">{rivalry.verdict}</p>
@@ -121,7 +121,7 @@ export function RivalryBattleCard({ rivalry, compact }: RivalryBattleCardProps) 
           {rivalry.geoTag && (
             <div className="px-4 py-2 border-t border-border bg-muted/5 flex items-center gap-1.5">
               <MapPin className="w-3 h-3 text-muted-foreground" />
-              <span className="text-[10px] text-muted-foreground">{rivalry.geoTag}</span>
+              <span className="text-xs text-muted-foreground">{rivalry.geoTag}</span>
             </div>
           )}
         </>
@@ -132,14 +132,14 @@ export function RivalryBattleCard({ rivalry, compact }: RivalryBattleCardProps) 
         <div className="flex gap-2">
           <Link
             to={`/company/${rivalry.companyA.slug}`}
-            className="font-mono text-[9px] tracking-wider uppercase text-primary hover:underline"
+            className="font-mono text-xs tracking-wider uppercase text-primary hover:underline"
           >
             {rivalry.companyA.name} Intel →
           </Link>
           <span className="text-border">|</span>
           <Link
             to={`/company/${rivalry.companyB.slug}`}
-            className="font-mono text-[9px] tracking-wider uppercase text-primary hover:underline"
+            className="font-mono text-xs tracking-wider uppercase text-primary hover:underline"
           >
             {rivalry.companyB.name} Intel →
           </Link>
@@ -148,7 +148,7 @@ export function RivalryBattleCard({ rivalry, compact }: RivalryBattleCardProps) 
           <FollowRivalryButton rivalryId={rivalry.id} rivalryTitle={rivalry.title} compact />
           <Link
             to={`/compare?a=${rivalry.companyA.slug}&b=${rivalry.companyB.slug}`}
-            className="font-mono text-[9px] tracking-wider uppercase text-muted-foreground hover:text-primary transition-colors flex items-center gap-1"
+            className="font-mono text-xs tracking-wider uppercase text-muted-foreground hover:text-primary transition-colors flex items-center gap-1"
           >
             Compare <ArrowRight className="w-2.5 h-2.5" />
           </Link>

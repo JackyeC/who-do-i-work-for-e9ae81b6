@@ -47,14 +47,14 @@ export function DemoAlerts() {
   return (
     <div className="space-y-6 max-h-[600px] overflow-y-auto pr-1">
       <div className="flex items-center gap-2 mb-2">
-        <Badge variant="secondary" className="text-[10px]">Demo Data</Badge>
-        <span className="text-[10px] text-muted-foreground">Sample alerts for demonstration purposes</span>
+        <Badge variant="secondary" className="text-xs">Demo Data</Badge>
+        <span className="text-xs text-muted-foreground">Sample alerts for demonstration purposes</span>
       </div>
       {Object.entries(grouped).map(([date, dateAlerts]) => (
         <div key={date}>
           <div className="flex items-center gap-3 mb-3">
             <div className="h-px flex-1 bg-border" />
-            <span className="text-[10px] font-semibold text-muted-foreground uppercase tracking-wider shrink-0">{date}</span>
+            <span className="text-xs font-semibold text-muted-foreground uppercase tracking-wider shrink-0">{date}</span>
             <div className="h-px flex-1 bg-border" />
           </div>
           <div className="space-y-2 relative">
@@ -74,15 +74,15 @@ export function DemoAlerts() {
                 <div className="flex-1 min-w-0">
                   <div className="flex items-center gap-2 mb-1 flex-wrap">
                     <span className="text-sm font-medium text-foreground">{alert.company_name}</span>
-                    <Badge variant="outline" className="text-[10px]">{alert.signal_category}</Badge>
+                    <Badge variant="outline" className="text-xs">{alert.signal_category}</Badge>
                     <Badge variant="outline" className={cn(
-                      "text-[10px]",
+                      "text-xs",
                       alert.change_type === "new_signal" && "border-[hsl(var(--civic-green))]/30 text-[hsl(var(--civic-green))]",
                       alert.change_type === "changed" && "border-amber-500/30 text-amber-500",
                     )}>{alert.change_type}</Badge>
                   </div>
                   <p className="text-xs text-muted-foreground leading-relaxed">{alert.change_description}</p>
-                  <span className="text-[10px] text-muted-foreground mt-1 block">
+                  <span className="text-xs text-muted-foreground mt-1 block">
                     {new Date(alert.date_detected).toLocaleTimeString("en-US", { hour: "numeric", minute: "2-digit" })}
                   </span>
                 </div>

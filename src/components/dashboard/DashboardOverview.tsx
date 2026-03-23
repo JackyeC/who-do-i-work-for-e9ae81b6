@@ -226,11 +226,11 @@ export function DashboardOverview({ onNavigate }: DashboardOverviewProps) {
           <div className="flex items-center gap-2 mb-3">
             <span
               className="inline-flex items-center gap-1.5 rounded-full text-xs font-bold px-3 py-1"
-              style={{ background: "rgba(240,192,64,0.1)", border: "1px solid rgba(240,192,64,0.3)", color: C.gold, fontSize: 11 }}
+              style={{ background: "rgba(240,192,64,0.1)", border: "1px solid rgba(240,192,64,0.3)", color: C.gold, fontSize: 12 }}
             >
               <Eye className="w-3 h-3" /> LIVE INTELLIGENCE
             </span>
-            <span style={{ fontSize: 11, color: C.dimmed, fontFamily: "'DM Mono',monospace" }}>{dateStr}</span>
+            <span style={{ fontSize: 12, color: C.dimmed, fontFamily: "'DM Mono',monospace" }}>{dateStr}</span>
           </div>
           <h2 style={{ fontSize: 24, fontWeight: 700, color: C.cream, letterSpacing: "-0.5px", lineHeight: 1.3 }}>
             Good morning, {firstName}.
@@ -285,7 +285,7 @@ export function DashboardOverview({ onNavigate }: DashboardOverviewProps) {
                           color: s.badgeColor,
                           border: `1px solid ${s.badgeColor}40`,
                           fontFamily: "'DM Mono',monospace",
-                          fontSize: 10,
+                          fontSize: 12,
                         }}
                       >
                         {s.badge}
@@ -296,7 +296,7 @@ export function DashboardOverview({ onNavigate }: DashboardOverviewProps) {
                           background: s.severity === "CRITICAL" ? `${C.red}18` : `${C.orange}18`,
                           color: s.severity === "CRITICAL" ? C.red : C.orange,
                           fontFamily: "'DM Mono',monospace",
-                          fontSize: 10,
+                          fontSize: 12,
                         }}
                       >
                         {s.severity}
@@ -307,10 +307,10 @@ export function DashboardOverview({ onNavigate }: DashboardOverviewProps) {
                       <span style={{ fontSize: 12, fontWeight: 700, color: C.gold, fontFamily: "'DM Mono',monospace" }}>
                         {s.amount}
                       </span>
-                      <span style={{ fontSize: 11, color: C.dimmed }}>·</span>
-                      <span style={{ fontSize: 11, color: C.dimmed, fontFamily: "'DM Mono',monospace" }}>{s.date}</span>
-                      <span style={{ fontSize: 11, color: C.dimmed }}>·</span>
-                      <span style={{ fontSize: 11, color: C.dimmed }}>{s.source}</span>
+                      <span style={{ fontSize: 12, color: C.dimmed }}>·</span>
+                      <span style={{ fontSize: 12, color: C.dimmed, fontFamily: "'DM Mono',monospace" }}>{s.date}</span>
+                      <span style={{ fontSize: 12, color: C.dimmed }}>·</span>
+                      <span style={{ fontSize: 12, color: C.dimmed }}>{s.source}</span>
                     </div>
                   </div>
                   <span style={{ color: C.gold, fontSize: 12, fontWeight: 600, whiteSpace: "nowrap", marginTop: 2 }} className="flex items-center gap-1">
@@ -344,12 +344,12 @@ export function DashboardOverview({ onNavigate }: DashboardOverviewProps) {
                         color: b.riskColor,
                         border: `1px solid ${b.riskColor}40`,
                         fontFamily: "'DM Mono',monospace",
-                        fontSize: 10,
+                        fontSize: 12,
                       }}
                     >
                       {b.risk} RISK
                     </span>
-                    <span style={{ fontSize: 10, color: C.dimmed, fontFamily: "'DM Mono',monospace" }}>
+                    <span style={{ fontSize: 12, color: C.dimmed, fontFamily: "'DM Mono',monospace" }}>
                       Source: {b.source}
                     </span>
                   </div>
@@ -367,7 +367,7 @@ export function DashboardOverview({ onNavigate }: DashboardOverviewProps) {
               <BookOpen className="w-4 h-4" style={{ color: C.gold }} />
               <h3 style={{ fontSize: 14, fontWeight: 700, color: C.cream }}>From Jackye</h3>
             </div>
-            <p style={{ fontSize: 11, color: C.dimmed, marginBottom: 12 }}>Curated insider intel — not generic advice</p>
+            <p style={{ fontSize: 12, color: C.dimmed, marginBottom: 12 }}>Curated insider intel — not generic advice</p>
             <div className="space-y-3">
               {JACKYE_CONTENT.map((item) => {
                 const Wrapper = item.internal ? Link : "a";
@@ -382,13 +382,13 @@ export function DashboardOverview({ onNavigate }: DashboardOverviewProps) {
                     style={{ background: "rgba(255,255,255,0.03)", border: `1px solid ${C.border}` }}
                   >
                     <div className="flex items-center gap-2 mb-1">
-                      <span style={{ fontSize: 10, fontWeight: 800, color: C.gold, fontFamily: "'DM Mono',monospace" }}>
+                      <span style={{ fontSize: 12, fontWeight: 800, color: C.gold, fontFamily: "'DM Mono',monospace" }}>
                         {item.number}
                       </span>
                       <span
                         className="rounded px-1.5 py-0.5"
                         style={{
-                          fontSize: 9,
+                          fontSize: 12,
                           fontWeight: 700,
                           color: C.blue,
                           background: `${C.blue}15`,
@@ -402,10 +402,10 @@ export function DashboardOverview({ onNavigate }: DashboardOverviewProps) {
                     <p style={{ fontSize: 13, fontWeight: 600, color: C.cream, lineHeight: 1.4, marginTop: 4 }}>
                       {item.title}
                     </p>
-                    <p style={{ fontSize: 11.5, color: C.muted, lineHeight: 1.45, marginTop: 3 }}>
+                    <p style={{ fontSize: 12, color: C.muted, lineHeight: 1.45, marginTop: 3 }}>
                       {item.desc}
                     </p>
-                    <p style={{ fontSize: 10, color: C.dimmed, marginTop: 4 }} className="flex items-center gap-1">
+                    <p style={{ fontSize: 12, color: C.dimmed, marginTop: 4 }} className="flex items-center gap-1">
                       {item.source} {!item.internal && <ExternalLink className="w-2.5 h-2.5" />}
                     </p>
                   </Wrapper>
@@ -426,7 +426,7 @@ export function DashboardOverview({ onNavigate }: DashboardOverviewProps) {
               <h3 style={{ fontSize: 14, fontWeight: 700, color: C.cream }}>
                 Companies You're Watching
               </h3>
-              <span style={{ fontSize: 11, color: C.dimmed, fontFamily: "'DM Mono',monospace" }}>
+              <span style={{ fontSize: 12, color: C.dimmed, fontFamily: "'DM Mono',monospace" }}>
                 {trackedCompanies.length} tracked
               </span>
             </div>
@@ -480,7 +480,7 @@ export function DashboardOverview({ onNavigate }: DashboardOverviewProps) {
             <h3 style={{ fontSize: 14, fontWeight: 700, color: C.cream, marginBottom: 2 }}>
               Aligned With Your Values
             </h3>
-            <p style={{ fontSize: 11, color: C.dimmed, marginBottom: 12 }}>Based on your Work DNA profile</p>
+            <p style={{ fontSize: 12, color: C.dimmed, marginBottom: 12 }}>Based on your Work DNA profile</p>
             <AlignedValuesSearch hasTakenQuiz={hasTakenQuiz} />
           </BriefingCard>
         </motion.div>

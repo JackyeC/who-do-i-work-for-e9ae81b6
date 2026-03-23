@@ -23,7 +23,7 @@ export function ValueConflictAlert({ conflicts }: Props) {
       <div className="flex items-center gap-2">
         <AlertTriangle className="w-4 h-4 text-[hsl(var(--civic-yellow))]" />
         <h3 className="text-sm font-semibold text-foreground">Saying one thing, spending another</h3>
-        <Badge variant="outline" className="text-[10px] border-[hsl(var(--civic-yellow))]/30 text-[hsl(var(--civic-yellow))]">
+        <Badge variant="outline" className="text-xs border-[hsl(var(--civic-yellow))]/30 text-[hsl(var(--civic-yellow))]">
           {conflicts.length} found
         </Badge>
       </div>
@@ -50,7 +50,7 @@ export function ValueConflictAlert({ conflicts }: Props) {
                       href={c.evidence_url}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="inline-flex items-center gap-1 text-[11px] text-primary hover:underline"
+                      className="inline-flex items-center gap-1 text-xs text-primary hover:underline"
                     >
                       <Shield className="w-3 h-3" /> See the record <ExternalLink className="w-2.5 h-2.5" />
                     </a>

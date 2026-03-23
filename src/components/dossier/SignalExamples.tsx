@@ -65,7 +65,7 @@ export function SignalExamples() {
                 <span className="text-micro font-mono text-muted-foreground uppercase">
                   {signal.category}
                 </span>
-                <Badge variant={signal.badgeVariant} className="text-[10px]">
+                <Badge variant={signal.badgeVariant} className="text-xs">
                   {signal.confidence}
                 </Badge>
               </div>

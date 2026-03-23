@@ -57,7 +57,7 @@ export function LeadershipVerifiedBadge({
             <Badge
               variant="outline"
               className={cn(
-                "text-[10px] gap-1 cursor-help",
+                "text-xs gap-1 cursor-help",
                 status.stale
                   ? "text-[hsl(var(--civic-yellow))] border-[hsl(var(--civic-yellow))]/30"
                   : "text-[hsl(var(--civic-green))] border-[hsl(var(--civic-green))]/30"
@@ -91,17 +91,17 @@ export function LeadershipVerifiedBadge({
       <div className="space-y-0.5">
         <p className="text-xs font-semibold text-foreground">Leadership Data</p>
         {dateFormatted && (
-          <p className="text-[10px] text-muted-foreground">
+          <p className="text-xs text-muted-foreground">
             Verified: {dateFormatted}
           </p>
         )}
-        <p className="text-[10px] text-muted-foreground">
+        <p className="text-xs text-muted-foreground">
           Source: {sourceLabel}
         </p>
         {status.days !== null && status.days > 0 && (
           <div className="flex items-center gap-1 mt-1">
             <Clock className="w-2.5 h-2.5 text-muted-foreground" />
-            <span className="text-[10px] text-muted-foreground">
+            <span className="text-xs text-muted-foreground">
               Last leadership update: {status.days} days ago
             </span>
           </div>

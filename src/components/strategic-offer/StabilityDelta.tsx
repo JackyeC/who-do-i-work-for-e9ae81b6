@@ -124,7 +124,7 @@ export function StabilityDelta({ companyId, companyName, interviewStartDate }: P
               <span className="text-foreground">
                 {hasDrift ? "Stability Delta Detected" : "No Significant Changes"}
               </span>
-              <p className="text-[11px] text-muted-foreground font-normal mt-0.5">
+              <p className="text-xs text-muted-foreground font-normal mt-0.5">
                 What changed at {companyName} since you started interviewing
               </p>
             </div>
@@ -139,23 +139,23 @@ export function StabilityDelta({ companyId, companyName, interviewStartDate }: P
               return (
                 <div key={i} className="p-3 bg-background rounded-xl border border-border/40 space-y-1.5">
                   <div className="flex items-center justify-between">
-                    <Badge variant="outline" className="text-[10px] capitalize">
+                    <Badge variant="outline" className="text-xs capitalize">
                       {delta.category.replace(/_/g, " ")}
                     </Badge>
                     <DirIcon className={cn("w-3.5 h-3.5", dirColor)} />
                   </div>
                   <div className="grid grid-cols-2 gap-3 text-xs">
                     <div>
-                      <p className="text-muted-foreground text-[10px] mb-0.5">Before Interview</p>
+                      <p className="text-muted-foreground text-xs mb-0.5">Before Interview</p>
                       <p className="text-foreground font-medium">{delta.before}</p>
                     </div>
                     <div>
-                      <p className="text-muted-foreground text-[10px] mb-0.5">Current</p>
+                      <p className="text-muted-foreground text-xs mb-0.5">Current</p>
                       <p className={cn("font-medium", dirColor)}>{delta.after}</p>
                     </div>
                   </div>
                   {delta.summary && (
-                    <p className="text-[11px] text-muted-foreground italic">{delta.summary}</p>
+                    <p className="text-xs text-muted-foreground italic">{delta.summary}</p>
                   )}
                 </div>
               );

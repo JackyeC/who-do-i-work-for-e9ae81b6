@@ -143,7 +143,7 @@ export function WhatToWatch({
       <Card>
         <CardContent className="p-5">
           <div className="flex items-center gap-2 mb-4">
-            <div className="font-mono text-[10px] tracking-[0.2em] uppercase text-muted-foreground bg-muted px-2 py-0.5">
+            <div className="font-mono text-xs tracking-[0.2em] uppercase text-muted-foreground bg-muted px-2 py-0.5">
               07
             </div>
             <Eye className="w-4 h-4 text-primary" strokeWidth={1.5} />

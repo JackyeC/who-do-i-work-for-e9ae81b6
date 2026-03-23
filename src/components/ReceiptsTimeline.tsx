@@ -250,10 +250,10 @@ export function ReceiptsTimeline({ companyId, companyName }: ReceiptsTimelinePro
                   <div className="flex-1 min-w-0">
                     <div className="flex items-center gap-2 flex-wrap">
                       <span className="text-sm font-medium text-foreground">{p.label}</span>
-                      <Badge variant="outline" className="text-[10px] px-1.5 py-0">
+                      <Badge variant="outline" className="text-xs px-1.5 py-0">
                         {p.event_count} event{p.event_count !== 1 ? "s" : ""}
                       </Badge>
-                      <span className={cn("text-[10px] font-mono uppercase", CONFIDENCE_STYLES[p.confidence])}>
+                      <span className={cn("text-xs font-mono uppercase", CONFIDENCE_STYLES[p.confidence])}>
                         {p.confidence}
                       </span>
                     </div>
@@ -279,7 +279,7 @@ export function ReceiptsTimeline({ companyId, companyName }: ReceiptsTimelinePro
             <CardTitle className="text-base flex items-center gap-2">
               <Clock className="w-4 h-4 text-primary" />
               Receipts Timeline
-              <Badge variant="outline" className="text-[10px] font-mono ml-1">
+              <Badge variant="outline" className="text-xs font-mono ml-1">
                 {filteredEvents.length} event{filteredEvents.length !== 1 ? "s" : ""}
               </Badge>
             </CardTitle>
@@ -310,7 +310,7 @@ export function ReceiptsTimeline({ companyId, companyName }: ReceiptsTimelinePro
             <Button
               variant={activeEventFilter === null ? "secondary" : "ghost"}
               size="sm"
-              className="text-[10px] h-6 px-2"
+              className="text-xs h-6 px-2"
               onClick={() => setActiveEventFilter(null)}
             >
               All types
@@ -322,7 +322,7 @@ export function ReceiptsTimeline({ companyId, companyName }: ReceiptsTimelinePro
                   key={type}
                   variant={activeEventFilter === type ? "secondary" : "ghost"}
                   size="sm"
-                  className="text-[10px] h-6 px-2 gap-1"
+                  className="text-xs h-6 px-2 gap-1"
                   onClick={() => setActiveEventFilter(activeEventFilter === type ? null : type)}
                 >
                   {config?.label || type}
@@ -340,7 +340,7 @@ export function ReceiptsTimeline({ companyId, companyName }: ReceiptsTimelinePro
                 key={tag}
                 variant="outline"
                 className={cn(
-                  "text-[10px] cursor-pointer transition-all",
+                  "text-xs cursor-pointer transition-all",
                   activeImpactFilter === tag ? IMPACT_TAG_COLORS[tag] || "" : "opacity-60 hover:opacity-100"
                 )}
                 onClick={() => setActiveImpactFilter(activeImpactFilter === tag ? null : tag)}
@@ -362,7 +362,7 @@ export function ReceiptsTimeline({ companyId, companyName }: ReceiptsTimelinePro
                 <div key={month}>
                   {/* Month separator */}
                   <div className="sticky top-0 z-10 bg-card/95 backdrop-blur-sm py-1.5 mb-1">
-                    <span className="text-[10px] font-mono uppercase tracking-widest text-muted-foreground">
+                    <span className="text-xs font-mono uppercase tracking-widest text-muted-foreground">
                       {month || "Unknown date"}
                     </span>
                   </div>
@@ -389,13 +389,13 @@ export function ReceiptsTimeline({ companyId, companyName }: ReceiptsTimelinePro
                         {/* Content */}
                         <div className="flex-1 min-w-0">
                           <div className="flex items-center gap-2 flex-wrap">
-                            <Badge variant="outline" className={cn("text-[10px] px-1.5 py-0 border", config.color)}>
+                            <Badge variant="outline" className={cn("text-xs px-1.5 py-0 border", config.color)}>
                               {config.label}
                             </Badge>
-                            <span className="text-[10px] text-muted-foreground font-mono">
+                            <span className="text-xs text-muted-foreground font-mono">
                               {formatDate(event.date)}
                             </span>
-                            <span className={cn("text-[10px] font-mono uppercase", CONFIDENCE_STYLES[event.confidence])}>
+                            <span className={cn("text-xs font-mono uppercase", CONFIDENCE_STYLES[event.confidence])}>
                               ● {event.confidence}
                             </span>
                           </div>
@@ -414,13 +414,13 @@ export function ReceiptsTimeline({ companyId, companyName }: ReceiptsTimelinePro
                                 href={event.source_url}
                                 target="_blank"
                                 rel="noopener noreferrer"
-                                className="inline-flex items-center gap-0.5 text-[10px] text-primary hover:underline font-medium"
+                                className="inline-flex items-center gap-0.5 text-xs text-primary hover:underline font-medium"
                               >
                                 {event.source_name}
                                 <ExternalLink className="w-2.5 h-2.5" />
                               </a>
                             ) : (
-                              <span className="text-[10px] text-muted-foreground font-medium">
+                              <span className="text-xs text-muted-foreground font-medium">
                                 {event.source_name}
                               </span>
                             )}
@@ -428,7 +428,7 @@ export function ReceiptsTimeline({ companyId, companyName }: ReceiptsTimelinePro
                               <Badge
                                 key={tag}
                                 variant="outline"
-                                className={cn("text-[9px] px-1 py-0", IMPACT_TAG_COLORS[tag] || "")}
+                                className={cn("text-xs px-1 py-0", IMPACT_TAG_COLORS[tag] || "")}
                               >
                                 {tag}
                               </Badge>
@@ -460,7 +460,7 @@ export function ReceiptsTimeline({ companyId, companyName }: ReceiptsTimelinePro
 
           {/* Footer */}
           <div className="mt-4 pt-3 border-t border-border/30">
-            <p className="text-[10px] text-muted-foreground leading-relaxed">
+            <p className="text-xs text-muted-foreground leading-relaxed">
               This timeline aggregates publicly available signals from FEC, Senate LDA, CourtListener, WARN, SEC, USASpending, GDELT, and other open data sources.
               Events are presented chronologically for informational purposes. Inclusion does not imply wrongdoing.
             </p>

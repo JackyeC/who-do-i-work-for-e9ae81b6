@@ -67,7 +67,7 @@ export function PoliticalGivingCard({ companyId, companyName, companySlug }: Pol
     <div className="space-y-6" id={`giving-${companySlug}`}>
       <div>
         <h3 className="text-base font-semibold text-foreground mb-1">Political Giving & Influence</h3>
-        <p style={{ fontFamily: "'DM Sans', sans-serif", fontSize: "11px", color: "#7a7590" }}>
+        <p style={{ fontFamily: "'DM Sans', sans-serif", fontSize: "12px", color: "hsl(var(--muted-foreground))" }}>
           Sourced from FEC filings, Senate LDA disclosures, and OpenSecrets. All figures represent publicly disclosed activity.
         </p>
       </div>
@@ -106,7 +106,7 @@ export function PoliticalGivingCard({ companyId, companyName, companySlug }: Pol
               Annual lobbying: <span className="text-foreground font-medium">{formatCurrency(lobbyingSpend)}</span>
             </p>
             <div className="flex items-center gap-2 mt-2">
-              <span className="inline-flex items-center gap-1 text-[10px] text-muted-foreground border border-border/40 rounded px-2 py-0.5">
+              <span className="inline-flex items-center gap-1 text-xs text-muted-foreground border border-border/40 rounded px-2 py-0.5">
                 <ExternalLink className="w-2.5 h-2.5" /> LDA.gov · Senate Lobbying Disclosure
               </span>
             </div>
@@ -134,7 +134,7 @@ export function PoliticalGivingCard({ companyId, companyName, companySlug }: Pol
                       {link.link_description || `Connection: ${link.link_type}`}
                     </p>
                   </div>
-                  <span className="text-[10px] text-muted-foreground shrink-0">
+                  <span className="text-xs text-muted-foreground shrink-0">
                     {link.evidence_source || "Public Filing"} · {link.confidence === "high" ? "Verified ✓" : "Cross-Referenced"}
                   </span>
                 </div>
@@ -154,8 +154,8 @@ export function PoliticalGivingCard({ companyId, companyName, companySlug }: Pol
       {/* Legal footer */}
       <p style={{
         fontFamily: "'DM Sans', sans-serif",
-        fontSize: "11px",
-        color: "#7a7590",
+        fontSize: "12px",
+        color: "hsl(var(--muted-foreground))",
         marginTop: "16px",
         borderTop: "1px solid rgba(255,255,255,0.07)",
         paddingTop: "12px",

@@ -311,7 +311,7 @@ export function OfferCheckSnapshot({
       <CardHeader className="pb-3">
         <div className="flex items-start justify-between gap-3">
           <div>
-            <div className="font-mono text-[9px] tracking-[0.25em] uppercase text-primary font-semibold mb-1">
+            <div className="font-mono text-xs tracking-[0.25em] uppercase text-primary font-semibold mb-1">
               Career Transparency System
             </div>
             <CardTitle className="text-lg font-display font-bold tracking-tight">
@@ -385,7 +385,7 @@ export function OfferCheckSnapshot({
                   </div>
                   <Badge
                     variant="outline"
-                    className={cn("text-[10px] font-bold shrink-0 px-2 py-0.5", levelStyle.color, levelStyle.border, levelStyle.bg)}
+                    className={cn("text-xs font-bold shrink-0 px-2 py-0.5", levelStyle.color, levelStyle.border, levelStyle.bg)}
                   >
                     {levelStyle.label}
                   </Badge>
@@ -402,7 +402,7 @@ export function OfferCheckSnapshot({
 
                 {/* Evidence bullets */}
                 <div>
-                  <div className="font-mono text-[8px] tracking-wider uppercase text-muted-foreground/60 mb-1">
+                  <div className="font-mono text-xs tracking-wider uppercase text-muted-foreground/60 mb-1">
                     Evidence
                   </div>
                   <ul className="space-y-1 pl-1">
@@ -418,14 +418,14 @@ export function OfferCheckSnapshot({
                 {/* Evidence source + Explore link */}
                 <div className="flex items-center justify-between pt-1">
                   {section.evidenceSource && (
-                    <span className="text-[9px] text-muted-foreground/60 font-mono">
+                    <span className="text-xs text-muted-foreground/60 font-mono">
                       Source: {section.evidenceSource}
                     </span>
                   )}
                   {section.exploreLabel && (
                     <a
                       href={section.exploreAnchor || "#"}
-                      className="inline-flex items-center gap-1 text-[11px] font-medium text-primary hover:underline ml-auto"
+                      className="inline-flex items-center gap-1 text-xs font-medium text-primary hover:underline ml-auto"
                     >
                       {section.exploreLabel}
                       <ArrowRight className="w-3 h-3" />
@@ -446,7 +446,7 @@ export function OfferCheckSnapshot({
                 <img src={jackyeHeadshot} alt="Jackye Clayton" className="w-7 h-7 rounded-full object-cover" />
                 <div>
                   <p className="text-sm font-semibold text-foreground">Jackye's Take</p>
-                  <p className="text-[10px] text-muted-foreground">Accountability Intelligence</p>
+                  <p className="text-xs text-muted-foreground">Accountability Intelligence</p>
                 </div>
               </div>
               <p className="text-sm text-foreground leading-relaxed italic">

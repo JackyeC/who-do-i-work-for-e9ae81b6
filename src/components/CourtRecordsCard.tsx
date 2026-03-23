@@ -43,9 +43,9 @@ export function CourtRecordsCard({ companyId, companyName }: Props) {
   const displayCases = expanded ? cases : cases?.slice(0, 5);
 
   const getRoleBadge = (role: string) => {
-    if (role === "defendant") return <Badge variant="destructive" className="text-[10px]">Defendant</Badge>;
-    if (role === "plaintiff") return <Badge className="bg-primary/10 text-primary border-primary/30 text-[10px]">Plaintiff</Badge>;
-    return <Badge variant="outline" className="text-[10px]">Party</Badge>;
+    if (role === "defendant") return <Badge variant="destructive" className="text-xs">Defendant</Badge>;
+    if (role === "plaintiff") return <Badge className="bg-primary/10 text-primary border-primary/30 text-xs">Plaintiff</Badge>;
+    return <Badge variant="outline" className="text-xs">Party</Badge>;
   };
 
   const getStatusColor = (status: string) =>
@@ -120,7 +120,7 @@ export function CourtRecordsCard({ companyId, companyName }: Props) {
           ].map(s => (
             <div key={s.label} className="text-center p-2 bg-muted/30 rounded-lg">
               <div className="font-mono font-bold text-foreground">{s.value}</div>
-              <div className="text-[10px] text-muted-foreground">{s.label}</div>
+              <div className="text-xs text-muted-foreground">{s.label}</div>
             </div>
           ))}
         </div>
@@ -141,7 +141,7 @@ export function CourtRecordsCard({ companyId, companyName }: Props) {
                       {c.case_name}
                     </span>
                     {getRoleBadge(c.plaintiff_or_defendant)}
-                    <span className={cn("text-[10px] font-mono", getStatusColor(c.status))}>
+                    <span className={cn("text-xs font-mono", getStatusColor(c.status))}>
                       {c.status?.toUpperCase()}
                     </span>
                   </div>
@@ -161,7 +161,7 @@ export function CourtRecordsCard({ companyId, companyName }: Props) {
 
                   {c.nature_of_suit && (
                     <div className="mt-1">
-                      <Badge variant="outline" className="text-[10px]">
+                      <Badge variant="outline" className="text-xs">
                         {c.nature_of_suit}
                       </Badge>
                     </div>
@@ -198,7 +198,7 @@ export function CourtRecordsCard({ companyId, companyName }: Props) {
           </Button>
         )}
 
-        <div className="text-[10px] text-muted-foreground flex items-center gap-1 pt-2">
+        <div className="text-xs text-muted-foreground flex items-center gap-1 pt-2">
           <FileText className="h-3 w-3" />
           Source: CourtListener RECAP Archive (PACER mirror) • Public federal court records
         </div>

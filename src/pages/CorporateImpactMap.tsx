@@ -292,13 +292,13 @@ export default function CorporateImpactMap() {
           >
             <CardContent className="p-3 text-center">
               <div className="text-lg font-bold text-foreground">{globalStats.totalSignals}</div>
-              <div className="text-[10px] text-muted-foreground">All Signals</div>
+              <div className="text-xs text-muted-foreground">All Signals</div>
             </CardContent>
           </Card>
           <Card className="border-border/50">
             <CardContent className="p-3 text-center">
               <div className="text-lg font-bold text-foreground">{globalStats.totalCompanies}</div>
-              <div className="text-[10px] text-muted-foreground">Companies</div>
+              <div className="text-xs text-muted-foreground">Companies</div>
             </CardContent>
           </Card>
           {IMPACT_CATEGORIES.map(cat => {
@@ -316,7 +316,7 @@ export default function CorporateImpactMap() {
                 <CardContent className="p-3 text-center">
                   <Icon className={cn("w-4 h-4 mx-auto mb-1", cat.color)} />
                   <div className="text-lg font-bold text-foreground">{count}</div>
-                  <div className="text-[10px] text-muted-foreground">{cat.label}</div>
+                  <div className="text-xs text-muted-foreground">{cat.label}</div>
                 </CardContent>
               </Card>
             );
@@ -396,12 +396,12 @@ export default function CorporateImpactMap() {
                           <div className="flex items-center gap-2 mb-2">
                             <Icon className={cn("w-4 h-4", signal.color)} />
                             <span className="text-xs font-medium text-foreground">{signal.label}</span>
-                            <Badge variant="secondary" className="text-[10px] ml-auto px-1.5 py-0">
+                            <Badge variant="secondary" className="text-xs ml-auto px-1.5 py-0">
                               {signal.count}
                             </Badge>
                           </div>
                           {signal.topSignals.slice(0, 2).map((ts, i) => (
-                            <div key={i} className="text-[10px] text-muted-foreground mb-1 line-clamp-2">
+                            <div key={i} className="text-xs text-muted-foreground mb-1 line-clamp-2">
                               • {ts.description?.slice(0, 120) || ts.type}
                             </div>
                           ))}

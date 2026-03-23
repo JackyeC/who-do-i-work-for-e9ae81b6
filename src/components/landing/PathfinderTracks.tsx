@@ -219,7 +219,7 @@ export function PathfinderTracks({ showAll = false }: { showAll?: boolean }) {
             >
               Annual
               <span className={cn(
-                "text-[10px] font-semibold tracking-wider px-2 py-0.5 rounded-full",
+                "text-xs font-semibold tracking-wider px-2 py-0.5 rounded-full",
                 isAnnual
                   ? "bg-primary-foreground/20 text-primary-foreground"
                   : "bg-primary/15 text-primary"
@@ -247,14 +247,14 @@ export function PathfinderTracks({ showAll = false }: { showAll?: boolean }) {
                 )}
               >
                 {track.popular && (
-                  <div className="absolute top-0 left-0 right-0 bg-primary text-primary-foreground text-center font-mono text-[10px] tracking-[0.2em] uppercase py-1">
+                  <div className="absolute top-0 left-0 right-0 bg-primary text-primary-foreground text-center font-mono text-xs tracking-[0.2em] uppercase py-1">
                     Most Popular
                   </div>
                 )}
 
                 <div className={cn("mb-4", track.popular && "mt-4")}>
                   <div className="flex items-center gap-2 mb-3">
-                    <span className="font-mono text-[10px] tracking-[0.2em] uppercase text-muted-foreground">
+                    <span className="font-mono text-xs tracking-[0.2em] uppercase text-muted-foreground">
                       Track {track.number}
                     </span>
                   </div>
@@ -278,7 +278,7 @@ export function PathfinderTracks({ showAll = false }: { showAll?: boolean }) {
                     <span className="text-sm text-muted-foreground">{display.period}</span>
                   )}
                   {display.priceNote && (
-                    <div className="text-[11px] text-muted-foreground mt-0.5">{display.priceNote}</div>
+                    <div className="text-xs text-muted-foreground mt-0.5">{display.priceNote}</div>
                   )}
                 </div>
 

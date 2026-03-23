@@ -105,19 +105,19 @@ export function MiniReportTeaser() {
                     <div className={`text-2xl font-bold font-data ${scoreColor(report.civic_footprint_score)}`}>
                       {report.civic_footprint_score}
                     </div>
-                    <div className="font-mono text-[9px] uppercase text-muted-foreground">Civic Score</div>
+                    <div className="font-mono text-xs uppercase text-muted-foreground">Civic Score</div>
                   </div>
                 </div>
 
                 <div className="grid grid-cols-2 gap-px bg-border border border-border mb-4">
                   <div className="bg-card p-3">
-                    <div className="font-mono text-[10px] uppercase text-muted-foreground mb-0.5">Corporate PAC</div>
+                    <div className="font-mono text-xs uppercase text-muted-foreground mb-0.5">Corporate PAC</div>
                     <div className={`text-sm font-semibold ${report.corporate_pac_exists ? "text-[hsl(var(--civic-red))]" : "text-[hsl(var(--civic-green))]"}`}>
                       {report.corporate_pac_exists ? "Active" : "None Detected"}
                     </div>
                   </div>
                   <div className="bg-card p-3">
-                    <div className="font-mono text-[10px] uppercase text-muted-foreground mb-0.5">Lobbying Spend</div>
+                    <div className="font-mono text-xs uppercase text-muted-foreground mb-0.5">Lobbying Spend</div>
                     <div className="text-sm font-semibold text-foreground">
                       {report.lobbying_spend ? `$${(report.lobbying_spend / 1000000).toFixed(1)}M` : "Not reported"}
                     </div>

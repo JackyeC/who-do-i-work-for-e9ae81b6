@@ -247,7 +247,7 @@ export default function PolicyHub() {
                     {/* Workforce impact badge */}
                     <div className="lg:w-32 border-t lg:border-t-0 lg:border-l border-border/30 flex items-center justify-center p-4 bg-muted/30">
                       <div className="text-center">
-                        <p className="text-[10px] uppercase tracking-wider text-muted-foreground mb-1">Workforce Impact</p>
+                        <p className="text-xs uppercase tracking-wider text-muted-foreground mb-1">Workforce Impact</p>
                         <Badge variant={bill.workforceImpact === "Very High" ? "destructive" : "default"} className="text-xs">
                           {bill.workforceImpact}
                         </Badge>

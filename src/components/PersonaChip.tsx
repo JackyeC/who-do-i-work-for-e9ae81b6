@@ -30,7 +30,7 @@ export function PersonaChip() {
         className="inline-flex items-center gap-1.5 rounded-[20px] px-3 py-[5px] cursor-pointer transition-colors hover:brightness-110"
         style={{
           fontFamily: "'DM Sans', sans-serif",
-          fontSize: "11px",
+          fontSize: "12px",
           fontWeight: 500,
           color: "#f0c040",
           background: "rgba(240,192,64,0.1)",

@@ -100,14 +100,14 @@ export function InsiderScoreBreakdown({ companyId, companyName, insiderScore }: 
               <div className="flex-1 min-w-0">
                 <span className="text-sm font-medium text-foreground">{row.label}</span>
                 {row.tier && (
-                  <span className="ml-2 text-[10px] text-muted-foreground italic">{row.tier}</span>
+                  <span className="ml-2 text-xs text-muted-foreground italic">{row.tier}</span>
                 )}
               </div>
               <div className="flex items-center gap-3 shrink-0">
                 <span className="text-sm text-muted-foreground">
                   {row.value ?? "Data pending"}
                 </span>
-                <Badge variant="outline" className={`text-[9px] ${badge.className}`}>
+                <Badge variant="outline" className={`text-xs ${badge.className}`}>
                   {badge.label}
                 </Badge>
               </div>

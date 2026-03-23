@@ -113,7 +113,7 @@ export function PromotionExitPattern({
           <ArrowLeftRight className="w-4 h-4 text-primary" />
           Promotion vs Exit Pattern
         </CardTitle>
-        <p className="text-[10px] text-muted-foreground">
+        <p className="text-xs text-muted-foreground">
           Do employees grow internally — or leave the company to advance?
         </p>
       </CardHeader>
@@ -131,14 +131,14 @@ export function PromotionExitPattern({
         {/* Supporting evidence */}
         {promotionSignals.length > 0 && (
           <div className="mt-3 space-y-1.5">
-            <p className="text-[10px] font-semibold uppercase tracking-wider text-muted-foreground">
+            <p className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
               Supporting Signals
             </p>
             {promotionSignals.slice(0, 4).map((s: any, i: number) => (
               <div key={i} className="flex items-start gap-2 text-xs p-2 rounded border border-border">
                 <Badge
                   variant="outline"
-                  className={cn("text-[9px] px-1.5 py-0 shrink-0 mt-0.5", {
+                  className={cn("text-xs px-1.5 py-0 shrink-0 mt-0.5", {
                     "bg-civic-green/10 text-civic-green border-civic-green/20": s.confidence === "direct",
                     "bg-civic-yellow/10 text-civic-yellow border-civic-yellow/20": s.confidence === "inferred",
                     "bg-muted text-muted-foreground": s.confidence === "weak",
@@ -155,7 +155,7 @@ export function PromotionExitPattern({
         {/* Layoff / retention context */}
         {(layoffSignals.length > 0 || retentionPositive.length > 0) && (
           <div className="mt-3 space-y-1.5">
-            <p className="text-[10px] font-semibold uppercase tracking-wider text-muted-foreground">
+            <p className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
               Workforce Context
             </p>
             {layoffSignals.slice(0, 2).map((s: any, i: number) => (
@@ -174,7 +174,7 @@ export function PromotionExitPattern({
         )}
 
         {pattern === "unknown" && promotionSignals.length === 0 && (
-          <div className="mt-3 flex items-start gap-2 text-[11px] text-muted-foreground">
+          <div className="mt-3 flex items-start gap-2 text-xs text-muted-foreground">
             <Info className="w-3.5 h-3.5 mt-0.5 shrink-0" />
             <span>
               {companyName} has not published detectable career progression data.

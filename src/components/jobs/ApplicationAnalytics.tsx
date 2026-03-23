@@ -84,28 +84,28 @@ export function ApplicationAnalytics() {
           <CardContent className="p-4 text-center">
             <Briefcase className="w-5 h-5 text-primary mx-auto mb-1" />
             <p className="text-2xl font-bold text-foreground">{total}</p>
-            <p className="text-[10px] text-muted-foreground uppercase tracking-wider">Total Apps</p>
+            <p className="text-xs text-muted-foreground uppercase tracking-wider">Total Apps</p>
           </CardContent>
         </Card>
         <Card>
           <CardContent className="p-4 text-center">
             <TrendingUp className="w-5 h-5 text-primary mx-auto mb-1" />
             <p className="text-2xl font-bold text-foreground">{responseRate}%</p>
-            <p className="text-[10px] text-muted-foreground uppercase tracking-wider">Response Rate</p>
+            <p className="text-xs text-muted-foreground uppercase tracking-wider">Response Rate</p>
           </CardContent>
         </Card>
         <Card>
           <CardContent className="p-4 text-center">
             <Target className="w-5 h-5 text-primary mx-auto mb-1" />
             <p className="text-2xl font-bold text-foreground">{avgAlignment}%</p>
-            <p className="text-[10px] text-muted-foreground uppercase tracking-wider">Avg Alignment</p>
+            <p className="text-xs text-muted-foreground uppercase tracking-wider">Avg Alignment</p>
           </CardContent>
         </Card>
         <Card>
           <CardContent className="p-4 text-center">
             <Clock className="w-5 h-5 text-primary mx-auto mb-1" />
             <p className="text-2xl font-bold text-foreground">{pastSubmitted}</p>
-            <p className="text-[10px] text-muted-foreground uppercase tracking-wider">Interviews</p>
+            <p className="text-xs text-muted-foreground uppercase tracking-wider">Interviews</p>
           </CardContent>
         </Card>
       </div>
@@ -121,7 +121,7 @@ export function ApplicationAnalytics() {
             <ResponsiveContainer width="100%" height="100%">
               <BarChart data={funnelData} layout="vertical" margin={{ left: 0, right: 16 }}>
                 <XAxis type="number" hide />
-                <YAxis type="category" dataKey="name" width={80} tick={{ fontSize: 11 }} />
+                <YAxis type="category" dataKey="name" width={80} tick={{ fontSize: 12 }} />
                 <Tooltip
                   contentStyle={{ fontSize: 12, borderRadius: 8, border: "1px solid hsl(var(--border))" }}
                 />
@@ -147,7 +147,7 @@ export function ApplicationAnalytics() {
             <div className="h-40">
               <ResponsiveContainer width="100%" height="100%">
                 <BarChart data={companyData} margin={{ left: 0, right: 8 }}>
-                  <XAxis dataKey="name" tick={{ fontSize: 9 }} interval={0} angle={-20} textAnchor="end" height={40} />
+                  <XAxis dataKey="name" tick={{ fontSize: 12 }} interval={0} angle={-20} textAnchor="end" height={40} />
                   <YAxis hide />
                   <Tooltip contentStyle={{ fontSize: 12, borderRadius: 8 }} />
                   <Bar dataKey="count" fill="hsl(var(--primary))" radius={[4, 4, 0, 0]} barSize={24} />
@@ -167,7 +167,7 @@ export function ApplicationAnalytics() {
             <div className="h-40">
               <ResponsiveContainer width="100%" height="100%">
                 <BarChart data={alignmentBuckets} margin={{ left: 0, right: 8 }}>
-                  <XAxis dataKey="range" tick={{ fontSize: 10 }} />
+                  <XAxis dataKey="range" tick={{ fontSize: 12 }} />
                   <YAxis hide />
                   <Tooltip contentStyle={{ fontSize: 12, borderRadius: 8 }} />
                   <Bar dataKey="count" fill="hsl(var(--accent-foreground))" radius={[4, 4, 0, 0]} barSize={32} />

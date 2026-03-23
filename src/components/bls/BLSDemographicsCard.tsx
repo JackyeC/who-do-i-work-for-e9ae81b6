@@ -55,7 +55,7 @@ export function BLSDemographicsCard({ className, offeredSalary, companyName }: B
         <CardTitle className="text-sm flex items-center gap-2">
           <BarChart3 className="w-4 h-4 text-[hsl(var(--civic-blue))]" />
           National Earnings Benchmarks
-          <Badge variant="outline" className="text-[10px] ml-auto">{latestYear}</Badge>
+          <Badge variant="outline" className="text-xs ml-auto">{latestYear}</Badge>
         </CardTitle>
         <p className="text-xs text-muted-foreground">
           U.S. median earnings by demographics — compare {companyName ? `${companyName}'s` : "company"} compensation against national data
@@ -92,11 +92,11 @@ export function BLSDemographicsCard({ className, offeredSalary, companyName }: B
 
         {offeredSalary && (
           <div className="p-2 bg-primary/5 rounded-lg border border-primary/10">
-            <p className="text-[10px] text-muted-foreground">Your offered salary: <span className="font-bold text-foreground">${offeredSalary.toLocaleString()}</span></p>
+            <p className="text-xs text-muted-foreground">Your offered salary: <span className="font-bold text-foreground">${offeredSalary.toLocaleString()}</span></p>
           </div>
         )}
 
-        <p className="text-[10px] text-muted-foreground border-t border-border pt-2">
+        <p className="text-xs text-muted-foreground border-t border-border pt-2">
           Source: BLS Current Population Survey (CPS). Full-time wage and salary workers. This is national benchmark data, not company-specific.
         </p>
       </CardContent>

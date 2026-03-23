@@ -309,15 +309,15 @@ export function WarnTrackerCard({ companyName, dbCompanyId }: { companyName: str
                         </TooltipProvider>
                       )}
                       {isHistorical && (
-                        <Badge variant="outline" className="text-[9px] px-1.5 py-0 text-muted-foreground">Historical</Badge>
+                        <Badge variant="outline" className="text-xs px-1.5 py-0 text-muted-foreground">Historical</Badge>
                       )}
                       {!isHistorical && (
-                        <Badge variant="default" className="text-[9px] px-1.5 py-0 bg-destructive/90">{currentYear}</Badge>
+                        <Badge variant="default" className="text-xs px-1.5 py-0 bg-destructive/90">{currentYear}</Badge>
                       )}
                     </div>
                     <div className="flex items-center gap-1.5 shrink-0">
                       <SourceBadge sourceType={notice.source_type} />
-                      <Badge variant={notice.layoff_type === "closure" ? "destructive" : "outline"} className="text-[10px]">
+                      <Badge variant={notice.layoff_type === "closure" ? "destructive" : "outline"} className="text-xs">
                         {layoffTypeLabel(notice.layoff_type)}
                       </Badge>
                     </div>
@@ -351,7 +351,7 @@ export function WarnTrackerCard({ companyName, dbCompanyId }: { companyName: str
                       </TooltipProvider>
                     )}
                     {!notice.reason && (
-                      <span className="text-muted-foreground/60 italic text-[10px]">Reason not stated</span>
+                      <span className="text-muted-foreground/60 italic text-xs">Reason not stated</span>
                     )}
                   </div>
 
@@ -413,7 +413,7 @@ export function WarnTrackerCard({ companyName, dbCompanyId }: { companyName: str
                       {/* Source link */}
                       {notice.source_url && (
                         <a href={notice.source_url} target="_blank" rel="noopener noreferrer"
-                          className="inline-flex items-center gap-1 text-[10px] text-primary hover:underline">
+                          className="inline-flex items-center gap-1 text-xs text-primary hover:underline">
                           <ExternalLink className="w-2.5 h-2.5" /> View Source
                         </a>
                       )}
@@ -427,11 +427,11 @@ export function WarnTrackerCard({ companyName, dbCompanyId }: { companyName: str
 
         {/* Last updated & Attribution */}
         <div className="pt-3 border-t border-border flex items-center justify-between flex-wrap gap-2">
-          <p className="text-[10px] text-muted-foreground flex items-center gap-1">
+          <p className="text-xs text-muted-foreground flex items-center gap-1">
             <Clock className="w-3 h-3" />
             Last updated: {syncLog?.last_synced_at ? formatDate(syncLog.last_synced_at) : "Never synced"}
           </p>
-          <p className="text-[10px] text-muted-foreground">
+          <p className="text-xs text-muted-foreground">
             Sources:{" "}
             <a href="https://github.com/biglocalnews/warn-transformer" target="_blank" rel="noopener noreferrer" className="text-primary hover:underline">
               Big Local News
@@ -451,7 +451,7 @@ function SummaryCard({ icon: Icon, label, value, color }: { icon: any; label: st
     <div className="text-center p-3 bg-muted/40 border border-border rounded-lg">
       <Icon className={cn("w-4 h-4 mx-auto mb-1", color)} />
       <div className={cn("text-xl font-bold", color)}>{value}</div>
-      <div className="text-[10px] text-muted-foreground">{label}</div>
+      <div className="text-xs text-muted-foreground">{label}</div>
     </div>
   );
 }
@@ -459,7 +459,7 @@ function SummaryCard({ icon: Icon, label, value, color }: { icon: any; label: st
 function SourceBadge({ sourceType }: { sourceType: string }) {
   const info = SOURCE_LABELS[sourceType] || SOURCE_LABELS.unknown;
   return (
-    <Badge variant="outline" className={cn("text-[9px] px-1.5 py-0 border", info.color)}>
+    <Badge variant="outline" className={cn("text-xs px-1.5 py-0 border", info.color)}>
       {info.label}
     </Badge>
   );

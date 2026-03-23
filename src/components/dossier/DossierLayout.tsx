@@ -47,15 +47,15 @@ export function DossierLayer({
         </div>
         <div className="flex-1 min-w-0">
           <div className="flex items-center gap-2">
-            <span className="font-mono text-[9px] tracking-[0.25em] uppercase text-primary font-semibold">
+            <span className="font-mono text-xs tracking-[0.25em] uppercase text-primary font-semibold">
               LAYER {String(layerNumber).padStart(2, "0")}
             </span>
             {recruiterOnly && (
-              <span className="font-mono text-[8px] font-semibold uppercase tracking-wider text-primary bg-primary/10 px-2 py-0.5">Pro</span>
+              <span className="font-mono text-xs font-semibold uppercase tracking-wider text-primary bg-primary/10 px-2 py-0.5">Pro</span>
             )}
           </div>
           <h3 className="text-sm font-bold text-foreground leading-tight mt-0.5 tracking-tight">{title}</h3>
-          {subtitle && <p className="text-[11px] text-muted-foreground mt-0.5">{subtitle}</p>}
+          {subtitle && <p className="text-xs text-muted-foreground mt-0.5">{subtitle}</p>}
         </div>
         {locked ? (
           <Button size="sm" variant="outline" className="shrink-0 text-xs font-mono" onClick={(e) => { e.stopPropagation(); navigate("/login"); }}>
@@ -89,9 +89,9 @@ export function DossierLayer({
 
 export function TransparencyDisclaimer() {
   return (
-    <div className="rounded-none bg-muted/40 border border-border/30 px-5 py-4 text-[11px] text-muted-foreground leading-relaxed font-mono">
+    <div className="rounded-none bg-muted/40 border border-border/30 px-5 py-4 text-xs text-muted-foreground leading-relaxed font-mono">
       <p>
-        <span className="text-primary font-semibold tracking-wider uppercase text-[9px]">DISCLAIMER</span>{" "}
+        <span className="text-primary font-semibold tracking-wider uppercase text-xs">DISCLAIMER</span>{" "}
         This platform surfaces signals from public records, documented disclosures, and clearly labeled enrichment sources. 
         It does not assign moral or legal judgments. Interpretation is left to the user.
       </p>

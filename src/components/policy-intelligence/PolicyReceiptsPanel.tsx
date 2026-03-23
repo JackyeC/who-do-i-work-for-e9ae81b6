@@ -93,29 +93,29 @@ function CandidateRow({ candidate }: { candidate: CandidateRecord }) {
             {expanded ? <ChevronDown className="w-3 h-3 text-muted-foreground shrink-0" /> : <ChevronRight className="w-3 h-3 text-muted-foreground shrink-0" />}
             <PartyBadge party={candidate.party} size="xs" />
             <span className="text-xs font-medium text-foreground truncate">{candidate.name}</span>
-            <span className="text-[11px] text-muted-foreground shrink-0">{candidate.state}{candidate.district ? `-${candidate.district}` : ""}</span>
+            <span className="text-xs text-muted-foreground shrink-0">{candidate.state}{candidate.district ? `-${candidate.district}` : ""}</span>
             {candidate.flagged && <AlertTriangle className="w-3 h-3 text-destructive shrink-0" />}
           </div>
           <div className="flex items-center gap-2 shrink-0">
-            <Badge variant="outline" className="text-[10px]">{candidate.donation_type === "pac" ? "PAC" : candidate.donation_type === "direct" ? "Direct" : candidate.donation_type}</Badge>
+            <Badge variant="outline" className="text-xs">{candidate.donation_type === "pac" ? "PAC" : candidate.donation_type === "direct" ? "Direct" : candidate.donation_type}</Badge>
             <span className="text-xs font-mono text-muted-foreground">${candidate.amount.toLocaleString()}</span>
           </div>
         </button>
         {expanded && (
           <div className="px-3 pb-2.5 pt-0 border-t border-border/20 space-y-1">
             {candidate.district && (
-              <p className="text-[11px] text-muted-foreground">District: {candidate.state}-{candidate.district}</p>
+              <p className="text-xs text-muted-foreground">District: {candidate.state}-{candidate.district}</p>
             )}
-            <p className="text-[11px] text-muted-foreground">
+            <p className="text-xs text-muted-foreground">
               Donation type: {candidate.donation_type === "pac" ? "PAC contribution" : candidate.donation_type === "direct" ? "Direct contribution" : candidate.donation_type}
             </p>
             {candidate.flagged && candidate.flag_reason && (
               <div className="flex items-start gap-1.5 mt-1 p-1.5 rounded bg-destructive/10">
                 <AlertTriangle className="w-3 h-3 text-destructive shrink-0 mt-0.5" />
-                <p className="text-[11px] text-destructive">{candidate.flag_reason}</p>
+                <p className="text-xs text-destructive">{candidate.flag_reason}</p>
               </div>
             )}
-            <p className="text-[10px] text-muted-foreground mt-1">Source: FEC filings</p>
+            <p className="text-xs text-muted-foreground mt-1">Source: FEC filings</p>
           </div>
         )}
       </CardContent>
@@ -251,7 +251,7 @@ export function PolicyReceiptsPanel({ stances, linkages, lobbyingRecords, tradeA
       {darkMoney.length > 0 && (
         <div className="mt-3 p-3 rounded-lg border border-destructive/20 bg-destructive/5">
           <p className="text-xs font-medium text-destructive mb-1">⚠️ Undisclosed Channels Detected</p>
-          <p className="text-[11px] text-muted-foreground">
+          <p className="text-xs text-muted-foreground">
             {darkMoney.length} organization(s) linked to undisclosed spending — totaling ~${darkMoney.reduce((s, d) => s + (d.estimated_amount || 0), 0).toLocaleString()}.
           </p>
         </div>

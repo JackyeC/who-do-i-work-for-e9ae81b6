@@ -155,7 +155,7 @@ export default function OfferReviewDirect() {
         <div className="flex items-center gap-2 mb-2">
           <ShieldCheck className="w-6 h-6 text-primary" />
           <h1 className="text-2xl font-bold text-foreground font-display">Private Offer Review</h1>
-          <Badge variant="outline" className="text-[10px]">Private</Badge>
+          <Badge variant="outline" className="text-xs">Private</Badge>
         </div>
         <p className="text-sm text-muted-foreground mb-6">
           Upload your offer letter for a private, AI-powered review. Your document is visible only to you.
@@ -175,7 +175,7 @@ export default function OfferReviewDirect() {
                   className="pl-10"
                 />
               </div>
-              <p className="text-[10px] text-muted-foreground mt-1">
+              <p className="text-xs text-muted-foreground mt-1">
                 If provided, your review will be linked to the company's public signals for comparison.
               </p>
             </div>
@@ -209,7 +209,7 @@ export default function OfferReviewDirect() {
                     <>
                       <Upload className="w-10 h-10 text-muted-foreground mx-auto mb-3" />
                       <p className="text-sm text-muted-foreground">Click to upload PDF, DOCX, or TXT</p>
-                      <p className="text-[10px] text-muted-foreground mt-1">Max 10MB · Your document is encrypted and private</p>
+                      <p className="text-xs text-muted-foreground mt-1">Max 10MB · Your document is encrypted and private</p>
                     </>
                   )}
                 </div>
@@ -231,7 +231,7 @@ export default function OfferReviewDirect() {
             )}
 
             {/* Disclaimer */}
-            <div className="bg-muted/50 rounded-lg p-3 text-[11px] text-muted-foreground">
+            <div className="bg-muted/50 rounded-lg p-3 text-xs text-muted-foreground">
               This tool identifies terms and clauses from uploaded documents. It provides educational insights only — not legal, financial, or employment advice. Analysis typically takes 30–60 seconds.
             </div>
 

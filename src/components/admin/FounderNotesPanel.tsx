@@ -73,8 +73,8 @@ export function FounderNotesPanel() {
         {notes.map((n) => (
           <div key={n.id} className="p-2.5 bg-muted/30 rounded-xl border border-border/40">
             <div className="flex items-center justify-between mb-1">
-              <span className="text-[10px] font-mono text-muted-foreground">{n.week_label}</span>
-              <span className="text-[10px] text-muted-foreground">{timeAgo(n.created_at)}</span>
+              <span className="text-xs font-mono text-muted-foreground">{n.week_label}</span>
+              <span className="text-xs text-muted-foreground">{timeAgo(n.created_at)}</span>
             </div>
             <p className="text-xs text-foreground leading-relaxed">{n.note}</p>
           </div>

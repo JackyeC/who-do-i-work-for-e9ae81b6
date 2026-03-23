@@ -239,14 +239,14 @@ export function WorkforceIntelligenceBrief({
       <div className="px-5 py-4 border-b border-border bg-muted/30">
         <div className="flex items-center gap-2 mb-0.5">
           <Shield className="w-4 h-4 text-primary" />
-          <span className="font-mono text-[9px] tracking-[0.25em] uppercase text-primary font-semibold">
+          <span className="font-mono text-xs tracking-[0.25em] uppercase text-primary font-semibold">
             Workforce Intelligence System
           </span>
         </div>
         <h3 className="text-base font-bold text-foreground leading-tight">
           Workforce Intelligence Brief
         </h3>
-        <p className="text-[11px] text-muted-foreground mt-1">
+        <p className="text-xs text-muted-foreground mt-1">
           Pre-application transparency assessment · Generated from public workforce signals
         </p>
       </div>
@@ -255,14 +255,14 @@ export function WorkforceIntelligenceBrief({
       <div className="px-5 py-4 border-b border-border">
         <div className="flex items-center gap-1.5 mb-3">
           <CircleDot className="w-3.5 h-3.5 text-muted-foreground" />
-          <span className="font-mono text-[9px] tracking-[0.2em] uppercase text-muted-foreground font-semibold">
+          <span className="font-mono text-xs tracking-[0.2em] uppercase text-muted-foreground font-semibold">
             Career Signal Meter
           </span>
         </div>
         <div className="grid grid-cols-3 gap-3">
           {/* Transparency Signals */}
           <div className="border border-border bg-background p-3 space-y-2">
-            <div className="font-mono text-[8px] tracking-wider uppercase text-muted-foreground">
+            <div className="font-mono text-xs tracking-wider uppercase text-muted-foreground">
               Transparency Signals
             </div>
             <div className={cn("text-2xl font-black tabular-nums leading-none", getMeterTextColor(totalScore))}>
@@ -279,7 +279,7 @@ export function WorkforceIntelligenceBrief({
 
           {/* Confidence in Data */}
           <div className="border border-border bg-background p-3 space-y-2">
-            <div className="font-mono text-[8px] tracking-wider uppercase text-muted-foreground">
+            <div className="font-mono text-xs tracking-wider uppercase text-muted-foreground">
               Confidence in Data
             </div>
             <div className={cn("text-2xl font-black tabular-nums leading-none", getMeterTextColor(confScore))}>
@@ -296,7 +296,7 @@ export function WorkforceIntelligenceBrief({
 
           {/* Offer Risk Level */}
           <div className={cn("border p-3 space-y-2", risk.border, risk.bg)}>
-            <div className="font-mono text-[8px] tracking-wider uppercase text-muted-foreground">
+            <div className="font-mono text-xs tracking-wider uppercase text-muted-foreground">
               Offer Risk Level
             </div>
             <div className={cn("text-xl font-black leading-none", risk.color)}>
@@ -306,7 +306,7 @@ export function WorkforceIntelligenceBrief({
               {risk.level === "Low" && <CheckCircle2 className="w-3 h-3 text-[hsl(var(--civic-green))]" />}
               {risk.level === "Moderate" && <MinusCircle className="w-3 h-3 text-[hsl(var(--civic-yellow))]" />}
               {risk.level === "Elevated" && <AlertTriangle className="w-3 h-3 text-destructive" />}
-              <span className="text-[9px] text-muted-foreground">
+              <span className="text-xs text-muted-foreground">
                 {risk.level === "Low" && "Strong transparency signals"}
                 {risk.level === "Moderate" && "Incomplete transparency signals"}
                 {risk.level === "Elevated" && "Risk indicators detected"}
@@ -320,25 +320,25 @@ export function WorkforceIntelligenceBrief({
       <div className="px-5 py-4 border-b border-border">
         <div className="flex items-center gap-1.5 mb-3">
           <Eye className="w-3.5 h-3.5 text-muted-foreground" />
-          <span className="font-mono text-[9px] tracking-[0.2em] uppercase text-muted-foreground font-semibold">
+          <span className="font-mono text-xs tracking-[0.2em] uppercase text-muted-foreground font-semibold">
             Workforce Analysis
           </span>
         </div>
         <div className="space-y-3">
           <div>
-            <div className="font-mono text-[8px] tracking-wider uppercase text-muted-foreground/70 mb-1">
+            <div className="font-mono text-xs tracking-wider uppercase text-muted-foreground/70 mb-1">
               What the system knows
             </div>
             <p className="text-[13px] text-foreground leading-relaxed">{analysis.known}</p>
           </div>
           <div>
-            <div className="font-mono text-[8px] tracking-wider uppercase text-muted-foreground/70 mb-1">
+            <div className="font-mono text-xs tracking-wider uppercase text-muted-foreground/70 mb-1">
               What signals are missing
             </div>
             <p className="text-[13px] text-foreground/75 leading-relaxed">{analysis.gaps}</p>
           </div>
           <div>
-            <div className="font-mono text-[8px] tracking-wider uppercase text-muted-foreground/70 mb-1">
+            <div className="font-mono text-xs tracking-wider uppercase text-muted-foreground/70 mb-1">
               Impact on candidate decision
             </div>
             <p className="text-[13px] text-foreground/75 leading-relaxed">{analysis.impact}</p>
@@ -351,7 +351,7 @@ export function WorkforceIntelligenceBrief({
         <div className="px-5 py-4 border-b border-border">
           <div className="flex items-center gap-1.5 mb-3">
             <AlertTriangle className="w-3.5 h-3.5 text-muted-foreground" />
-            <span className="font-mono text-[9px] tracking-[0.2em] uppercase text-muted-foreground font-semibold">
+            <span className="font-mono text-xs tracking-[0.2em] uppercase text-muted-foreground font-semibold">
               Key Workforce Signals Missing
             </span>
           </div>
@@ -363,13 +363,13 @@ export function WorkforceIntelligenceBrief({
               >
                 <div className="w-1.5 h-1.5 rounded-full bg-destructive/60 shrink-0" />
                 <span className="text-[12px] text-foreground/70">{signal.label}</span>
-                <span className="text-[9px] text-muted-foreground/60 font-mono uppercase ml-auto shrink-0">
+                <span className="text-xs text-muted-foreground/60 font-mono uppercase ml-auto shrink-0">
                   {signal.category}
                 </span>
               </div>
             ))}
           </div>
-          <p className="text-[10px] text-muted-foreground mt-2">
+          <p className="text-xs text-muted-foreground mt-2">
             These indicators could not be independently verified from available public sources.
           </p>
         </div>
@@ -379,21 +379,21 @@ export function WorkforceIntelligenceBrief({
       <div className="px-5 py-4 border-b border-border">
         <div className="flex items-center gap-1.5 mb-3">
           <HelpCircle className="w-3.5 h-3.5 text-muted-foreground" />
-          <span className="font-mono text-[9px] tracking-[0.2em] uppercase text-muted-foreground font-semibold">
+          <span className="font-mono text-xs tracking-[0.2em] uppercase text-muted-foreground font-semibold">
             Questions Worth Asking
           </span>
         </div>
         <div className="space-y-2">
           {questions.map((q, i) => (
             <div key={i} className="flex items-start gap-2.5 py-1.5">
-              <span className="font-mono text-[10px] text-primary font-bold mt-0.5 shrink-0 w-4 text-right">
+              <span className="font-mono text-xs text-primary font-bold mt-0.5 shrink-0 w-4 text-right">
                 {String(i + 1).padStart(2, "0")}
               </span>
               <p className="text-[13px] text-foreground/80 leading-relaxed">{q}</p>
             </div>
           ))}
         </div>
-        <p className="text-[10px] text-muted-foreground mt-2">
+        <p className="text-xs text-muted-foreground mt-2">
           These questions address the specific transparency gaps detected for this employer.
         </p>
       </div>
@@ -402,11 +402,11 @@ export function WorkforceIntelligenceBrief({
       <div className="px-5 py-4">
         <div className="flex items-center gap-1.5 mb-3">
           <Database className="w-3.5 h-3.5 text-muted-foreground" />
-          <span className="font-mono text-[9px] tracking-[0.2em] uppercase text-muted-foreground font-semibold">
+          <span className="font-mono text-xs tracking-[0.2em] uppercase text-muted-foreground font-semibold">
             Data Confidence
           </span>
           <span className={cn(
-            "ml-auto font-mono text-[9px] font-bold uppercase tracking-wider px-2 py-0.5",
+            "ml-auto font-mono text-xs font-bold uppercase tracking-wider px-2 py-0.5",
             confidence.level === "High" && "text-[hsl(var(--civic-green))] bg-[hsl(var(--civic-green))]/10",
             confidence.level === "Moderate" && "text-[hsl(var(--civic-yellow))] bg-[hsl(var(--civic-yellow))]/10",
             confidence.level === "Low" && "text-destructive bg-destructive/10",
@@ -419,7 +419,7 @@ export function WorkforceIntelligenceBrief({
           <FileSearch className="w-3 h-3 text-muted-foreground mt-0.5 shrink-0" />
           <div className="flex flex-wrap gap-x-3 gap-y-1">
             {confidence.sources.map((src) => (
-              <span key={src} className="text-[10px] text-muted-foreground flex items-center gap-1">
+              <span key={src} className="text-xs text-muted-foreground flex items-center gap-1">
                 <TrendingUp className="w-2.5 h-2.5" />
                 {src}
               </span>
@@ -430,10 +430,10 @@ export function WorkforceIntelligenceBrief({
 
       {/* System footer */}
       <div className="px-5 py-2.5 border-t border-border bg-muted/20 flex items-center justify-between flex-wrap gap-2">
-        <p className="text-[9px] text-muted-foreground/60 font-mono">
+        <p className="text-xs text-muted-foreground/60 font-mono">
           Career Transparency System · Workforce Intelligence Brief · Signals-based analysis — not legal or employment advice
         </p>
-        <span className="text-[9px] text-muted-foreground/40 font-mono">
+        <span className="text-xs text-muted-foreground/40 font-mono">
           Generated {new Date().toLocaleDateString("en-US", { month: "long", year: "numeric" })}
         </span>
       </div>

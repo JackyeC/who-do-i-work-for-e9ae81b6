@@ -80,14 +80,14 @@ export function ValuesSignalCard({ signal, getConfidenceBadge, getVerificationBa
 
           <div className="flex items-center gap-1.5 mt-2 flex-wrap">
             {issueInfo && (
-              <Badge variant="outline" className="text-[10px] px-1.5 py-0 gap-1">
+              <Badge variant="outline" className="text-xs px-1.5 py-0 gap-1">
                 {issueInfo.label}
               </Badge>
             )}
-            <Badge variant="outline" className={cn("text-[10px] px-1.5 py-0", conf.className)}>
+            <Badge variant="outline" className={cn("text-xs px-1.5 py-0", conf.className)}>
               {conf.text}
             </Badge>
-            <Badge variant="outline" className={cn("text-[10px] px-1.5 py-0", verif.className)}>
+            <Badge variant="outline" className={cn("text-xs px-1.5 py-0", verif.className)}>
               {verif.text}
             </Badge>
           </div>
@@ -101,7 +101,7 @@ export function ValuesSignalCard({ signal, getConfidenceBadge, getVerificationBa
             <ChevronDown className="w-4 h-4 text-muted-foreground group-hover:text-primary transition-colors" />
           )}
           {!expanded && hasDetail && (
-            <span className="text-[8px] text-muted-foreground opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap">
+            <span className="text-xs text-muted-foreground opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap">
               details
             </span>
           )}
@@ -128,9 +128,9 @@ export function ValuesSignalCard({ signal, getConfidenceBadge, getVerificationBa
               {/* PAC donation recipients — clickable to FEC */}
               {pacRecipients.length > 0 && (
                 <div className="space-y-1.5">
-                  <p className="text-[11px] font-semibold text-foreground flex items-center gap-1.5">
+                  <p className="text-xs font-semibold text-foreground flex items-center gap-1.5">
                     Corporate PAC donations
-                    <Badge variant="outline" className="text-[9px] px-1 py-0 font-normal">PAC</Badge>
+                    <Badge variant="outline" className="text-xs px-1 py-0 font-normal">PAC</Badge>
                   </p>
                   <div className="space-y-1">
                     {pacRecipients.map((r, i) => (
@@ -139,7 +139,7 @@ export function ValuesSignalCard({ signal, getConfidenceBadge, getVerificationBa
                         href={fecSearchUrl(r.name)}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="flex items-center justify-between text-[11px] py-1.5 px-2.5 rounded-lg bg-muted/40 hover:bg-primary/5 hover:border-primary/20 border border-transparent transition-colors cursor-pointer group/r"
+                        className="flex items-center justify-between text-xs py-1.5 px-2.5 rounded-lg bg-muted/40 hover:bg-primary/5 hover:border-primary/20 border border-transparent transition-colors cursor-pointer group/r"
                       >
                         <div className="flex items-center gap-1.5 min-w-0">
                           <span className="font-medium text-foreground truncate group-hover/r:text-primary transition-colors">{r.name}</span>
@@ -147,7 +147,7 @@ export function ValuesSignalCard({ signal, getConfidenceBadge, getVerificationBa
                         </div>
                         <div className="flex items-center gap-1.5 shrink-0 ml-2">
                           {r.amount > 0 && (
-                            <span className="text-[10px] font-bold text-primary">
+                            <span className="text-xs font-bold text-primary">
                               {formatAmount(r.amount)}
                             </span>
                           )}
@@ -162,9 +162,9 @@ export function ValuesSignalCard({ signal, getConfidenceBadge, getVerificationBa
               {/* Individual executive donations — clickable to open drawer */}
               {individualRecipients.length > 0 && (
                 <div className="space-y-1.5">
-                  <p className="text-[11px] font-semibold text-foreground flex items-center gap-1.5">
+                  <p className="text-xs font-semibold text-foreground flex items-center gap-1.5">
                     Individual executive donations
-                    <Badge variant="outline" className="text-[9px] px-1 py-0 font-normal">Individual</Badge>
+                    <Badge variant="outline" className="text-xs px-1 py-0 font-normal">Individual</Badge>
                   </p>
                   <div className="space-y-1">
                     {individualRecipients.map((r, i) => {
@@ -175,7 +175,7 @@ export function ValuesSignalCard({ signal, getConfidenceBadge, getVerificationBa
                       return (
                         <div
                           key={`ind-${i}`}
-                          className="flex items-center justify-between text-[11px] py-1.5 px-2.5 rounded-lg bg-muted/40 hover:bg-primary/5 hover:border-primary/20 border border-transparent transition-colors cursor-pointer group/r"
+                          className="flex items-center justify-between text-xs py-1.5 px-2.5 rounded-lg bg-muted/40 hover:bg-primary/5 hover:border-primary/20 border border-transparent transition-colors cursor-pointer group/r"
                           onClick={(e) => {
                             e.stopPropagation();
                             if (canOpenDrawer) {
@@ -196,7 +196,7 @@ export function ValuesSignalCard({ signal, getConfidenceBadge, getVerificationBa
                           </div>
                           <div className="flex items-center gap-1.5 shrink-0 ml-2">
                             {r.amount > 0 && (
-                              <span className="text-[10px] font-bold text-primary">
+                              <span className="text-xs font-bold text-primary">
                                 {formatAmount(r.amount)}
                               </span>
                             )}
@@ -207,7 +207,7 @@ export function ValuesSignalCard({ signal, getConfidenceBadge, getVerificationBa
                     })}
                   </div>
                   {onExecutiveClick && (
-                    <p className="text-[9px] text-muted-foreground mt-1">Click to see full donation breakdown & voting records</p>
+                    <p className="text-xs text-muted-foreground mt-1">Click to see full donation breakdown & voting records</p>
                   )}
                 </div>
               )}
@@ -215,7 +215,7 @@ export function ValuesSignalCard({ signal, getConfidenceBadge, getVerificationBa
               {/* Legacy: executive_activity recipients without donation_type */}
               {signal.signal_category === "executive_activity" && recipients.length > 0 && !recipients[0]?.donation_type && (
                 <div className="space-y-1.5">
-                  <p className="text-[11px] font-semibold text-foreground">Donated to:</p>
+                  <p className="text-xs font-semibold text-foreground">Donated to:</p>
                   <div className="space-y-1">
                     {recipients.map((r, i) => (
                       <a
@@ -223,7 +223,7 @@ export function ValuesSignalCard({ signal, getConfidenceBadge, getVerificationBa
                         href={fecSearchUrl(r.name)}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="flex items-center justify-between text-[11px] py-1.5 px-2.5 rounded-lg bg-muted/40 hover:bg-primary/5 border border-transparent transition-colors cursor-pointer group/r"
+                        className="flex items-center justify-between text-xs py-1.5 px-2.5 rounded-lg bg-muted/40 hover:bg-primary/5 border border-transparent transition-colors cursor-pointer group/r"
                       >
                         <div className="flex items-center gap-1.5 min-w-0">
                           <span className="font-medium text-foreground truncate group-hover/r:text-primary transition-colors">{r.name}</span>
@@ -231,7 +231,7 @@ export function ValuesSignalCard({ signal, getConfidenceBadge, getVerificationBa
                         </div>
                         <div className="flex items-center gap-1.5 shrink-0 ml-2">
                           {r.amount > 0 && (
-                            <span className="text-[10px] font-bold text-primary">
+                            <span className="text-xs font-bold text-primary">
                               {formatAmount(r.amount)}
                             </span>
                           )}
@@ -244,7 +244,7 @@ export function ValuesSignalCard({ signal, getConfidenceBadge, getVerificationBa
               )}
 
               {/* Source info */}
-              <div className="grid grid-cols-2 gap-3 text-[11px]">
+              <div className="grid grid-cols-2 gap-3 text-xs">
                 <div>
                   <span className="text-muted-foreground font-medium">Source:</span>
                   <p className="text-foreground mt-0.5">{signal.source_name}</p>
@@ -282,7 +282,7 @@ export function ValuesSignalCard({ signal, getConfidenceBadge, getVerificationBa
               </div>
 
               {/* Source messaging */}
-              <p className="text-[10px] text-muted-foreground italic leading-relaxed">
+              <p className="text-xs text-muted-foreground italic leading-relaxed">
                 Signal based on {signal.source_type === "campaign_finance" ? "campaign finance records" :
                   signal.source_type === "lobbying" ? "lobbying disclosures" :
                   signal.source_type === "executive_donation" ? "executive donation matching" :
@@ -297,7 +297,7 @@ export function ValuesSignalCard({ signal, getConfidenceBadge, getVerificationBa
                   href={signal.source_url}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="inline-flex items-center gap-1 text-[11px] text-primary hover:underline font-medium"
+                  className="inline-flex items-center gap-1 text-xs text-primary hover:underline font-medium"
                 >
                   View original filing <ExternalLink className="w-3 h-3" />
                 </a>

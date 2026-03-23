@@ -16,7 +16,7 @@ const SECTIONS = [
       <div className="space-y-3">
         <div className="flex items-center gap-2 flex-wrap">
           <span className="font-mono text-xs tracking-wider uppercase text-muted-foreground">Integrity Gap:</span>
-          <Badge variant="warning" className="font-mono text-[10px] tracking-wider uppercase">Moderate → High</Badge>
+          <Badge variant="warning" className="font-mono text-xs tracking-wider uppercase">Moderate → High</Badge>
         </div>
         <p className="text-sm text-muted-foreground leading-relaxed">
           This company presents a strong public mission around values and culture, but several internal and structural signals suggest potential gaps between messaging and operational reality.
@@ -56,11 +56,11 @@ const SECTIONS = [
       <div className="space-y-3">
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
           <div className="bg-muted/30 border border-border p-3">
-            <div className="font-mono text-[10px] tracking-wider uppercase text-muted-foreground mb-1">Workforce</div>
+            <div className="font-mono text-xs tracking-wider uppercase text-muted-foreground mb-1">Workforce</div>
             <p className="text-sm text-foreground">Store-level workforce skews younger and more diverse</p>
           </div>
           <div className="bg-muted/30 border border-border p-3">
-            <div className="font-mono text-[10px] tracking-wider uppercase text-muted-foreground mb-1">Leadership</div>
+            <div className="font-mono text-xs tracking-wider uppercase text-muted-foreground mb-1">Leadership</div>
             <p className="text-sm text-foreground">Executive and board leadership less representative</p>
           </div>
         </div>
@@ -134,11 +134,11 @@ const SECTIONS = [
       <div className="space-y-3">
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
           <div className="bg-primary/5 border border-primary/20 p-3">
-            <div className="font-mono text-[10px] tracking-wider uppercase text-primary mb-1">What They Say</div>
+            <div className="font-mono text-xs tracking-wider uppercase text-primary mb-1">What They Say</div>
             <p className="text-sm text-foreground italic">"Cultivate a better world"</p>
           </div>
           <div className="bg-destructive/5 border border-destructive/20 p-3">
-            <div className="font-mono text-[10px] tracking-wider uppercase text-destructive mb-1">What We Found</div>
+            <div className="font-mono text-xs tracking-wider uppercase text-destructive mb-1">What We Found</div>
             <ul className="text-sm text-foreground space-y-1">
               <li>• Legal exposure</li>
               <li>• Compensation gap</li>
@@ -183,12 +183,12 @@ export function DemoCompanyProfile() {
       {/* Header */}
       <div className="flex items-center justify-between flex-wrap gap-3 mb-2">
         <div>
-          <div className="font-mono text-[10px] tracking-[0.2em] uppercase text-muted-foreground mb-1">
+          <div className="font-mono text-xs tracking-[0.2em] uppercase text-muted-foreground mb-1">
             Example Intelligence Report
           </div>
           <div className="font-serif text-lg text-foreground">Large National Restaurant Brand</div>
         </div>
-        <Badge variant="warning" className="font-mono text-[10px] tracking-wider uppercase">
+        <Badge variant="warning" className="font-mono text-xs tracking-wider uppercase">
           Integrity Gap: Moderate → High
         </Badge>
       </div>
@@ -198,7 +198,7 @@ export function DemoCompanyProfile() {
         <Card key={section.num} className="rounded-none">
           <CardContent className="p-4 sm:p-5">
             <div className="flex items-center gap-2 mb-3">
-              <div className="font-mono text-[10px] tracking-[0.2em] uppercase text-muted-foreground bg-muted px-2 py-0.5">
+              <div className="font-mono text-xs tracking-[0.2em] uppercase text-muted-foreground bg-muted px-2 py-0.5">
                 {section.num}
               </div>
               <section.icon className="w-4 h-4 text-primary" strokeWidth={1.5} />
@@ -215,7 +215,7 @@ export function DemoCompanyProfile() {
       <Card className="rounded-none">
         <CardContent className="p-4 sm:p-5">
           <div className="flex items-center gap-2 mb-3">
-            <div className="font-mono text-[10px] tracking-[0.2em] uppercase text-muted-foreground bg-muted px-2 py-0.5">
+            <div className="font-mono text-xs tracking-[0.2em] uppercase text-muted-foreground bg-muted px-2 py-0.5">
               08
             </div>
             <MessageCircleQuestion className="w-4 h-4 text-primary" strokeWidth={1.5} />
@@ -243,7 +243,7 @@ export function DemoCompanyProfile() {
                     )}
                   </Button>
                 </div>
-                <span className="font-mono text-[10px] tracking-wider uppercase text-primary bg-primary/8 px-1.5 py-0.5">
+                <span className="font-mono text-xs tracking-wider uppercase text-primary bg-primary/8 px-1.5 py-0.5">
                   {q.category}
                 </span>
               </div>
@@ -253,7 +253,7 @@ export function DemoCompanyProfile() {
       </Card>
 
       {/* Disclaimer */}
-      <p className="text-[11px] text-muted-foreground leading-relaxed text-center pt-1">
+      <p className="text-xs text-muted-foreground leading-relaxed text-center pt-1">
         Composite example based on real signal types. Not a specific company report.
       </p>
     </div>

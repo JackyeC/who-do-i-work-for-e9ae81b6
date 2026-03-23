@@ -10,7 +10,7 @@ export function TrustFramingLine() {
       style={{
         fontFamily: "'DM Sans', sans-serif",
         fontSize: "12px",
-        color: "#7a7590",
+        color: "hsl(var(--muted-foreground))",
       }}
     >
       {trustFraming}

@@ -46,7 +46,7 @@ export function IntelligenceTicker() {
                 {item.message}
               </span>
               {item.source_tag && (
-                <span className="font-sans text-[10px] text-muted-foreground/50 ml-1.5">
+                <span className="font-sans text-xs text-muted-foreground/50 ml-1.5">
                   · {item.source_tag}
                 </span>
               )}

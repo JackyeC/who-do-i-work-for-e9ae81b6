@@ -132,7 +132,7 @@ export function WhatToAsk({
       <Card>
         <CardContent className="p-5">
           <div className="flex items-center gap-2 mb-4">
-            <div className="font-mono text-[10px] tracking-[0.2em] uppercase text-muted-foreground bg-muted px-2 py-0.5">
+            <div className="font-mono text-xs tracking-[0.2em] uppercase text-muted-foreground bg-muted px-2 py-0.5">
               08
             </div>
             <MessageCircleQuestion className="w-4 h-4 text-primary" strokeWidth={1.5} />
@@ -167,7 +167,7 @@ export function WhatToAsk({
                   </Button>
                 </div>
                 <div className="flex items-center gap-2">
-                  <span className="font-mono text-[10px] tracking-wider uppercase text-primary bg-primary/8 px-1.5 py-0.5">
+                  <span className="font-mono text-xs tracking-wider uppercase text-primary bg-primary/8 px-1.5 py-0.5">
                     {q.category}
                   </span>
                   <span className="text-xs text-muted-foreground">
@@ -177,7 +177,7 @@ export function WhatToAsk({
               </div>
             ))}
           </div>
-          <p className="text-[11px] text-muted-foreground mt-4 leading-relaxed">
+          <p className="text-xs text-muted-foreground mt-4 leading-relaxed">
             These questions are generated from publicly available signals — not opinions.
             Use them to probe specific areas during your interview or evaluation.
           </p>

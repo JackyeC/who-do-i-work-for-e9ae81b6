@@ -57,7 +57,7 @@ function ScoreRing({ score, size = 120, band }: { score: number; size?: number; 
         >
           {score}
         </motion.span>
-        <span className="text-[10px] text-muted-foreground uppercase tracking-wider font-medium">/ 100</span>
+        <span className="text-xs text-muted-foreground uppercase tracking-wider font-medium">/ 100</span>
       </div>
     </div>
   );
@@ -124,13 +124,13 @@ export function CorporateBehaviorIndexCard({ result, companyName }: CorporateBeh
       <CardHeader className="pb-2">
         <div className="flex items-center justify-between">
           <div>
-            <p className="text-[10px] uppercase tracking-[0.15em] text-muted-foreground font-semibold mb-1">Corporate Behavior Index™</p>
+            <p className="text-xs uppercase tracking-[0.15em] text-muted-foreground font-semibold mb-1">Corporate Behavior Index™</p>
             <CardTitle className="text-xl">{companyName}</CardTitle>
           </div>
           <TooltipProvider>
             <Tooltip>
               <TooltipTrigger>
-                <Badge variant="outline" className="text-[10px] gap-1">
+                <Badge variant="outline" className="text-xs gap-1">
                   <Info className="w-3 h-3" />
                   {result.confidence} Confidence
                 </Badge>
@@ -182,7 +182,7 @@ export function CorporateBehaviorIndexCard({ result, companyName }: CorporateBeh
 
         {/* Disclaimer */}
         <div className="mt-5 pt-4 border-t border-border/50">
-          <p className="text-[10px] text-muted-foreground leading-relaxed">
+          <p className="text-xs text-muted-foreground leading-relaxed">
             The Corporate Behavior Index™ measures observable signals from public data — not employer marketing claims.
             Scores reflect data availability and detected patterns, not moral judgments.
           </p>

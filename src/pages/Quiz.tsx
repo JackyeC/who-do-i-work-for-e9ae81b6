@@ -625,7 +625,7 @@ export default function Quiz() {
                     style={{
                       background: "transparent",
                       border: "1px solid rgba(255,255,255,0.07)",
-                      color: "#7a7590",
+                      color: "hsl(var(--muted-foreground))",
                       borderRadius: 50,
                       padding: "12px 24px",
                       fontSize: 14,
@@ -798,7 +798,7 @@ function SliderInput({
       />
       <div
         className="flex justify-between mt-3"
-        style={{ fontSize: 11, color: "#7a7590", fontFamily: "'DM Sans', sans-serif" }}
+        style={{ fontSize: 12, color: "hsl(var(--muted-foreground))", fontFamily: "'DM Sans', sans-serif" }}
       >
         <span>{leftLabel}</span>
         <span>{rightLabel}</span>
@@ -851,7 +851,7 @@ function ResultsScreen({
           color: "#f0c040",
           borderRadius: 20,
           padding: "6px 16px",
-          fontSize: 11,
+          fontSize: 12,
           fontWeight: 500,
           letterSpacing: 2,
           textTransform: "uppercase",
@@ -884,7 +884,7 @@ function ResultsScreen({
       <p
         style={{
           fontSize: 16,
-          color: "#7a7590",
+          color: "hsl(var(--muted-foreground))",
           lineHeight: 1.7,
           maxWidth: 420,
           textAlign: "center",
@@ -900,7 +900,7 @@ function ResultsScreen({
       <p
         style={{
           fontSize: 13,
-          color: "#7a7590",
+          color: "hsl(var(--muted-foreground))",
           textAlign: "center",
           marginBottom: 36,
           fontFamily: "'DM Sans', sans-serif",
@@ -914,10 +914,10 @@ function ResultsScreen({
       {/* Signals header */}
       <p
         style={{
-          fontSize: 11,
+          fontSize: 12,
           textTransform: "uppercase",
           letterSpacing: 2,
-          color: "#7a7590",
+          color: "hsl(var(--muted-foreground))",
           marginBottom: 14,
           fontFamily: "'DM Sans', sans-serif",
           animation: "quizFadeUp 0.6s ease 0.35s both",
@@ -951,7 +951,7 @@ function ResultsScreen({
         {/* Framing text */}
         <p style={{
           fontSize: 14,
-          color: "#7a7590",
+          color: "hsl(var(--muted-foreground))",
           fontFamily: "'DM Sans', sans-serif",
           textAlign: "center",
           maxWidth: 400,
@@ -1009,7 +1009,7 @@ function ResultsScreen({
           href="/browse"
           style={{
             fontSize: 13,
-            color: "#7a7590",
+            color: "hsl(var(--muted-foreground))",
             textDecoration: "none",
             fontFamily: "'DM Sans', sans-serif",
           }}
@@ -1027,7 +1027,7 @@ function ResultsScreen({
           marginTop: 24,
           background: "none",
           border: "none",
-          color: "#7a7590",
+          color: "hsl(var(--muted-foreground))",
           fontSize: 12,
           cursor: "pointer",
           fontFamily: "'DM Sans', sans-serif",
@@ -1084,7 +1084,7 @@ function SignalChip({
         <span
           style={{
             fontFamily: "'DM Sans', sans-serif",
-            fontSize: 11,
+            fontSize: 12,
             fontWeight: 600,
             textTransform: "uppercase",
             letterSpacing: 1,
@@ -1099,7 +1099,7 @@ function SignalChip({
           style={{
             fontFamily: "'DM Sans', sans-serif",
             fontSize: 13,
-            color: "#7a7590",
+            color: "hsl(var(--muted-foreground))",
             lineHeight: 1.5,
           }}
         >

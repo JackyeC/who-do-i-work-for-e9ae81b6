@@ -306,7 +306,7 @@ export function ExecutiveDetailDrawer({ open, onOpenChange, executive, companyNa
                               <Badge
                                 variant="outline"
                                 className={cn(
-                                  "text-[10px] px-1.5 py-0",
+                                  "text-xs px-1.5 py-0",
                                   r.party === "Republican" && "border-destructive/50 text-destructive",
                                   r.party === "Democrat" && "border-primary/50 text-primary"
                                 )}
@@ -314,13 +314,13 @@ export function ExecutiveDetailDrawer({ open, onOpenChange, executive, companyNa
                                 {r.party === "Republican" ? "R" : r.party === "Democrat" ? "D" : r.party}
                               </Badge>
                               {stateDisplay && (
-                                <span className="text-[10px] text-muted-foreground flex items-center gap-0.5">
+                                <span className="text-xs text-muted-foreground flex items-center gap-0.5">
                                   <MapPin className="w-2.5 h-2.5" />{stateDisplay}
                                 </span>
                               )}
                             </div>
                             {(r as any).committee_name && (
-                              <p className="text-[10px] text-muted-foreground mt-0.5 truncate">{(r as any).committee_name}</p>
+                              <p className="text-xs text-muted-foreground mt-0.5 truncate">{(r as any).committee_name}</p>
                             )}
                           </div>
                         </div>
@@ -380,7 +380,7 @@ export function ExecutiveDetailDrawer({ open, onOpenChange, executive, companyNa
                               <ArrowRight className="w-3 h-3" /> Full Profile
                             </Button>
                           </div>
-                          <p className="text-[10px] text-muted-foreground italic">
+                          <p className="text-xs text-muted-foreground italic">
                             Research this person to understand what policies and legislation your executive is financially supporting.
                           </p>
                         </div>
@@ -452,15 +452,15 @@ export function ExecutiveDetailDrawer({ open, onOpenChange, executive, companyNa
                         )}
                         <div className="flex items-center gap-2 mt-1.5 flex-wrap">
                           {mention.page_number && (
-                            <span className="text-[10px] text-muted-foreground">p. {mention.page_number}</span>
+                            <span className="text-xs text-muted-foreground">p. {mention.page_number}</span>
                           )}
                           {mention.confidence && (
-                            <Badge variant="outline" className="text-[10px] px-1.5 py-0">
+                            <Badge variant="outline" className="text-xs px-1.5 py-0">
                               {mention.confidence >= 0.8 ? "High match" : mention.confidence >= 0.5 ? "Likely match" : "Possible match"}
                             </Badge>
                           )}
                           {mention.document?.source_url && (
-                            <a href={mention.document.source_url} target="_blank" rel="noopener noreferrer" className="text-[10px] text-primary hover:underline flex items-center gap-0.5">
+                            <a href={mention.document.source_url} target="_blank" rel="noopener noreferrer" className="text-xs text-primary hover:underline flex items-center gap-0.5">
                               <ExternalLink className="w-2.5 h-2.5" /> Source
                             </a>
                           )}
@@ -470,7 +470,7 @@ export function ExecutiveDetailDrawer({ open, onOpenChange, executive, companyNa
                   </div>
                 ))}
                 {investigativeMentions.length > 5 && (
-                  <p className="text-[10px] text-muted-foreground text-center pt-1">
+                  <p className="text-xs text-muted-foreground text-center pt-1">
                     + {investigativeMentions.length - 5} more mentions in the archive
                   </p>
                 )}

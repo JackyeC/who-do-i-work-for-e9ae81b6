@@ -245,13 +245,13 @@ export default function EmployerVerificationPending() {
                         {isComplete && (
                           <Badge
                             variant="outline"
-                            className="text-[9px] bg-primary/10 text-primary border-primary/20"
+                            className="text-xs bg-primary/10 text-primary border-primary/20"
                           >
                             Complete
                           </Badge>
                         )}
                         {!isComplete && (
-                          <Badge variant="outline" className="text-[9px]">
+                          <Badge variant="outline" className="text-xs">
                             Pending
                           </Badge>
                         )}

@@ -82,7 +82,7 @@ export function RelatedReportsCard({ companyName, companyId, issueCategory }: Re
                 <div className="flex items-start justify-between gap-3">
                   <div className="flex-1 min-w-0">
                     <div className="flex items-center gap-1.5 mb-1">
-                      <Badge variant="secondary" className="text-[9px] uppercase tracking-wider">
+                      <Badge variant="secondary" className="text-xs uppercase tracking-wider">
                         {r.report_type?.replace(/_/g, " ")}
                       </Badge>
                     </div>
@@ -93,18 +93,18 @@ export function RelatedReportsCard({ companyName, companyId, issueCategory }: Re
                       <div className="mt-2 p-2 rounded bg-muted/30 border border-border/30">
                         <div className="flex items-center gap-1.5 mb-0.5">
                           <Building2 className="w-3 h-3 text-primary" />
-                          <span className="text-[11px] font-medium text-foreground">Company Alignment</span>
+                          <span className="text-xs font-medium text-foreground">Company Alignment</span>
                           {r.alignment.dirty_receipt_label && (
-                            <Badge variant="destructive" className="text-[9px]">{r.alignment.dirty_receipt_label}</Badge>
+                            <Badge variant="destructive" className="text-xs">{r.alignment.dirty_receipt_label}</Badge>
                           )}
                         </div>
                         {r.alignment.alignment_summary && (
-                          <p className="text-[11px] text-muted-foreground line-clamp-2">{r.alignment.alignment_summary}</p>
+                          <p className="text-xs text-muted-foreground line-clamp-2">{r.alignment.alignment_summary}</p>
                         )}
                       </div>
                     )}
 
-                    <div className="flex items-center gap-3 mt-2 text-[10px] text-muted-foreground">
+                    <div className="flex items-center gap-3 mt-2 text-xs text-muted-foreground">
                       {r.publication_date && (
                         <span className="flex items-center gap-0.5">
                           <Calendar className="w-2.5 h-2.5" />

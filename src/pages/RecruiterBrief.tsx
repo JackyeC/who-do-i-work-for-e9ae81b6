@@ -34,7 +34,7 @@ function SectionCard({ icon: Icon, title, children, delay = 0 }: {
         <CardContent className="p-4 sm:p-5">
           <div className="flex items-center gap-2 mb-3">
             <Icon className="w-4 h-4 text-primary" strokeWidth={1.5} />
-            <h2 className="font-mono text-[11px] tracking-[0.15em] uppercase text-primary font-semibold">
+            <h2 className="font-mono text-xs tracking-[0.15em] uppercase text-primary font-semibold">
               {title}
             </h2>
           </div>
@@ -174,7 +174,7 @@ export default function RecruiterBrief() {
       {/* Header */}
       <div className="border-b border-border/50 bg-card/50 backdrop-blur-sm sticky top-0 z-20">
         <div className="max-w-2xl mx-auto px-4 py-4">
-          <p className="font-mono text-[10px] tracking-[0.2em] uppercase text-primary mb-2 font-semibold">
+          <p className="font-mono text-xs tracking-[0.2em] uppercase text-primary mb-2 font-semibold">
             Recruiter Intelligence Brief
           </p>
           <form onSubmit={handleSearchSubmit} className="relative">
@@ -257,7 +257,7 @@ export default function RecruiterBrief() {
                 </span>
                 <span className="text-xs text-muted-foreground ml-1">/ 100</span>
                 <div className="mt-1">
-                  <Badge variant="outline" className="text-[10px]">{brief.confidence} Confidence</Badge>
+                  <Badge variant="outline" className="text-xs">{brief.confidence} Confidence</Badge>
                 </div>
               </div>
             </div>
@@ -299,7 +299,7 @@ export default function RecruiterBrief() {
           <SectionCard icon={Users} title="Candidate Perspective" delay={0.15}>
             <div className="space-y-3">
               <div>
-                <p className="text-[11px] font-mono uppercase tracking-wider text-muted-foreground mb-1.5">
+                <p className="text-xs font-mono uppercase tracking-wider text-muted-foreground mb-1.5">
                   Candidates are likely to ask about
                 </p>
                 <ul className="space-y-1">
@@ -311,7 +311,7 @@ export default function RecruiterBrief() {
                 </ul>
               </div>
               <div>
-                <p className="text-[11px] font-mono uppercase tracking-wider text-muted-foreground mb-1.5">
+                <p className="text-xs font-mono uppercase tracking-wider text-muted-foreground mb-1.5">
                   Candidates may be concerned about
                 </p>
                 <ul className="space-y-1">
@@ -329,7 +329,7 @@ export default function RecruiterBrief() {
           <SectionCard icon={MessageSquare} title="Communication Guidance" delay={0.2}>
             <div className="space-y-3">
               <div>
-                <Badge className="mb-2 bg-[hsl(var(--civic-green))]/10 text-[hsl(var(--civic-green))] border-[hsl(var(--civic-green))]/20 text-[10px]">
+                <Badge className="mb-2 bg-[hsl(var(--civic-green))]/10 text-[hsl(var(--civic-green))] border-[hsl(var(--civic-green))]/20 text-xs">
                   Say this
                 </Badge>
                 <ul className="space-y-1.5">
@@ -339,7 +339,7 @@ export default function RecruiterBrief() {
                 </ul>
               </div>
               <div>
-                <Badge className="mb-2 bg-destructive/10 text-destructive border-destructive/20 text-[10px]">
+                <Badge className="mb-2 bg-destructive/10 text-destructive border-destructive/20 text-xs">
                   Avoid this
                 </Badge>
                 <ul className="space-y-1.5">
@@ -355,7 +355,7 @@ export default function RecruiterBrief() {
           <SectionCard icon={Scale} title="Tradeoffs" delay={0.25}>
             <div className="grid sm:grid-cols-2 gap-3">
               <div className="p-3 rounded-lg border border-[hsl(var(--civic-green))]/20 bg-[hsl(var(--civic-green))]/[0.03]">
-                <p className="text-[10px] font-mono uppercase tracking-wider text-[hsl(var(--civic-green))] mb-2">What's strong</p>
+                <p className="text-xs font-mono uppercase tracking-wider text-[hsl(var(--civic-green))] mb-2">What's strong</p>
                 <ul className="space-y-1">
                   {brief.strengths.map((s, i) => (
                     <li key={i} className="text-sm text-foreground/90">+ {s}</li>
@@ -363,7 +363,7 @@ export default function RecruiterBrief() {
                 </ul>
               </div>
               <div className="p-3 rounded-lg border border-[hsl(var(--civic-yellow))]/20 bg-[hsl(var(--civic-yellow))]/[0.03]">
-                <p className="text-[10px] font-mono uppercase tracking-wider text-[hsl(var(--civic-yellow))] mb-2">What to be honest about</p>
+                <p className="text-xs font-mono uppercase tracking-wider text-[hsl(var(--civic-yellow))] mb-2">What to be honest about</p>
                 <ul className="space-y-1">
                   {brief.honestAbout.map((h, i) => (
                     <li key={i} className="text-sm text-foreground/90">– {h}</li>

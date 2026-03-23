@@ -43,7 +43,7 @@ export function CauseTag({ label, color, source, sourceUrl }: CauseTagData) {
           className="inline-block cursor-default"
           style={{
             fontFamily: "'DM Sans', sans-serif",
-            fontSize: "10px",
+            fontSize: "12px",
             fontWeight: 500,
             borderRadius: "20px",
             padding: "2px 8px",

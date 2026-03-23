@@ -139,11 +139,11 @@ export function BetaFeedbackWidget() {
                   >
                     <div>
                       <span className="text-sm font-semibold text-foreground block">Candidate</span>
-                      <span className="text-[11px] text-muted-foreground font-mono">10 scans · 5 offer checks · all layers</span>
+                      <span className="text-xs text-muted-foreground font-mono">10 scans · 5 offer checks · all layers</span>
                     </div>
                     <div className="flex items-center gap-1.5">
                       <span className="font-mono font-bold text-foreground">$29</span>
-                      <span className="text-[10px] text-muted-foreground">/mo</span>
+                      <span className="text-xs text-muted-foreground">/mo</span>
                     </div>
                   </button>
 
@@ -154,11 +154,11 @@ export function BetaFeedbackWidget() {
                   >
                     <div>
                       <span className="text-sm font-semibold text-foreground block">Professional</span>
-                      <span className="text-[11px] text-muted-foreground font-mono">50 scans · dossier export · EVP audit</span>
+                      <span className="text-xs text-muted-foreground font-mono">50 scans · dossier export · EVP audit</span>
                     </div>
                     <div className="flex items-center gap-1.5">
                       <span className="font-mono font-bold text-foreground">$99</span>
-                      <span className="text-[10px] text-muted-foreground">/mo</span>
+                      <span className="text-xs text-muted-foreground">/mo</span>
                     </div>
                   </button>
                 </div>
@@ -182,7 +182,7 @@ export function BetaFeedbackWidget() {
                   </Button>
                 </div>
 
-                <p className="text-[10px] text-muted-foreground text-center">
+                <p className="text-xs text-muted-foreground text-center">
                   Your intent has been recorded. We'll notify you at launch either way.
                 </p>
               </motion.div>
@@ -244,7 +244,7 @@ export function BetaFeedbackWidget() {
                     <motion.p
                       initial={{ opacity: 0, height: 0 }}
                       animate={{ opacity: 1, height: "auto" }}
-                      className="text-[10px] text-primary pl-5 leading-relaxed"
+                      className="text-xs text-primary pl-5 leading-relaxed"
                     >
                       After submitting, we'll show you early-bird pricing — you can lock in your rate today.
                     </motion.p>
@@ -261,7 +261,7 @@ export function BetaFeedbackWidget() {
                   {submitting ? "Sending..." : wantReal ? "Send & Show Me Plans" : "Send Feedback"}
                 </Button>
 
-                <p className="text-[10px] text-muted-foreground text-center font-mono">
+                <p className="text-xs text-muted-foreground text-center font-mono">
                   Page: {location.pathname}
                 </p>
               </>

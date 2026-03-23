@@ -158,7 +158,7 @@ export function NegotiationBot({ flags, offerSalary, annualBaseline, companyName
                         {config.label}
                       </Badge>
                     </div>
-                    <p className="text-[11px] text-muted-foreground font-normal mt-0.5">{script.context}</p>
+                    <p className="text-xs text-muted-foreground font-normal mt-0.5">{script.context}</p>
                   </div>
                 </CardTitle>
               </CardHeader>

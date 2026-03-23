@@ -61,7 +61,7 @@ export function FollowRivalryButton({ rivalryId, rivalryTitle, compact }: Follow
       <button
         onClick={handleToggle}
         disabled={loading}
-        className="font-mono text-[9px] tracking-wider uppercase text-muted-foreground hover:text-primary transition-colors flex items-center gap-1"
+        className="font-mono text-xs tracking-wider uppercase text-muted-foreground hover:text-primary transition-colors flex items-center gap-1"
       >
         {loading ? (
           <Loader2 className="w-2.5 h-2.5 animate-spin" />
@@ -81,7 +81,7 @@ export function FollowRivalryButton({ rivalryId, rivalryTitle, compact }: Follow
       variant={following ? "default" : "outline"}
       onClick={handleToggle}
       disabled={loading}
-      className="text-[10px] font-mono"
+      className="text-xs font-mono"
     >
       {loading ? (
         <Loader2 className="w-3 h-3 mr-1 animate-spin" />

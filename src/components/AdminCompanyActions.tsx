@@ -149,7 +149,7 @@ export function AdminCompanyActions({ companyId, companyName, companySlug }: Adm
 
   return (
     <div className="flex items-center gap-1.5">
-      <Badge variant="outline" className="text-[10px] text-muted-foreground border-muted">Admin</Badge>
+      <Badge variant="outline" className="text-xs text-muted-foreground border-muted">Admin</Badge>
       
       {/* Merge */}
       <Dialog open={mergeOpen} onOpenChange={setMergeOpen}>

@@ -166,7 +166,7 @@ export function CandidateDetailDrawer({ open, onOpenChange, candidate, companyNa
         </div>
 
         <div className="mt-4 border-t border-border pt-3">
-          <p className="text-[10px] text-muted-foreground">
+          <p className="text-xs text-muted-foreground">
             Party badge reflects official FEC filing data. Sources: Federal Election Commission, Congress.gov.
           </p>
         </div>

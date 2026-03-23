@@ -125,13 +125,13 @@ export function NarrativePowerSection({ companyName, companyId }: NarrativePower
       <div className="flex items-center gap-2 flex-wrap">
         <div className="flex items-center gap-1.5 mr-2">
           <SlidersHorizontal className="w-3.5 h-3.5 text-muted-foreground" />
-          <span className="font-mono text-[10px] uppercase tracking-wider text-muted-foreground">Filter</span>
+          <span className="font-mono text-xs uppercase tracking-wider text-muted-foreground">Filter</span>
         </div>
 
         <select
           value={sort}
           onChange={e => setSort(e.target.value as SortOption)}
-          className="font-mono text-[10px] bg-card border border-border rounded-sm px-2 py-1 text-foreground"
+          className="font-mono text-xs bg-card border border-border rounded-sm px-2 py-1 text-foreground"
         >
           <option value="confidence">Strongest Evidence</option>
           <option value="recent">Most Recent</option>
@@ -143,7 +143,7 @@ export function NarrativePowerSection({ companyName, companyId }: NarrativePower
               key={key}
               onClick={() => setSignalFilter(key)}
               className={cn(
-                "font-mono text-[10px] tracking-wider px-2 py-1 border rounded-sm transition-colors whitespace-nowrap",
+                "font-mono text-xs tracking-wider px-2 py-1 border rounded-sm transition-colors whitespace-nowrap",
                 signalFilter === key
                   ? "bg-primary/10 border-primary/25 text-primary"
                   : "bg-card border-border text-muted-foreground hover:text-foreground"
@@ -156,7 +156,7 @@ export function NarrativePowerSection({ companyName, companyId }: NarrativePower
       </div>
 
       {/* Count */}
-      <p className="font-mono text-[10px] text-muted-foreground uppercase tracking-wider">
+      <p className="font-mono text-xs text-muted-foreground uppercase tracking-wider">
         {filtered.length} signal{filtered.length !== 1 ? "s" : ""}
       </p>
 

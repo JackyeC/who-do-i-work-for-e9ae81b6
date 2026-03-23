@@ -170,7 +170,7 @@ export function OutreachIntelligence() {
                   <div className="min-w-0 flex-1">
                     <div className="flex items-center gap-2">
                       <p className="text-sm font-medium text-foreground">{c.name}</p>
-                      <Badge className={`text-[10px] px-1.5 py-0 ${CONTACT_TYPE_COLORS[c.contact_type] || ""}`}>
+                      <Badge className={`text-xs px-1.5 py-0 ${CONTACT_TYPE_COLORS[c.contact_type] || ""}`}>
                         {CONTACT_TYPE_LABELS[c.contact_type] || c.contact_type}
                       </Badge>
                     </div>

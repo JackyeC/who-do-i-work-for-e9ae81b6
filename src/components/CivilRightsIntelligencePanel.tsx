@@ -260,7 +260,7 @@ export function CivilRightsIntelligencePanel({ companyId, companyName, stateCode
                             href={row.sourceUrl}
                             target="_blank"
                             rel="noopener noreferrer"
-                            className="text-[10px] text-primary shrink-0 opacity-0 group-hover:opacity-100 transition-opacity"
+                            className="text-xs text-primary shrink-0 opacity-0 group-hover:opacity-100 transition-opacity"
                           >
                             Source →
                           </a>
@@ -290,7 +290,7 @@ export function CivilRightsIntelligencePanel({ companyId, companyName, stateCode
                 {(contradictions || []).length} Alignment Mismatch{(contradictions || []).length !== 1 ? "es" : ""} Detected
               </span>
             </div>
-            <p className="text-[10px] text-muted-foreground leading-relaxed">
+            <p className="text-xs text-muted-foreground leading-relaxed">
               Documented gaps between {companyName}'s public statements and verified spending, lobbying, or enforcement records. 
               All findings link to primary sources — no subjective labels applied.
             </p>

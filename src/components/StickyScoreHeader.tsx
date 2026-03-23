@@ -82,9 +82,9 @@ export function StickyScoreHeader({ companyName, score, ticker, industry }: Stic
               <div className="flex items-center gap-3 min-w-0">
                 <span className="font-bold text-foreground text-sm truncate">{companyName}</span>
                 {ticker && (
-                  <Badge variant="outline" className="font-mono text-[10px] shrink-0 tabular-nums">{ticker}</Badge>
+                  <Badge variant="outline" className="font-mono text-xs shrink-0 tabular-nums">{ticker}</Badge>
                 )}
-                <span className="text-[10px] text-muted-foreground hidden sm:inline">{industry}</span>
+                <span className="text-xs text-muted-foreground hidden sm:inline">{industry}</span>
               </div>
 
               {/* Right: Terminal-style scores */}
@@ -92,7 +92,7 @@ export function StickyScoreHeader({ companyName, score, ticker, industry }: Stic
                 {/* Score in monospaced terminal style */}
                 <div className="flex items-center gap-1.5 px-2.5 py-1 rounded border border-border/50 bg-muted/30">
                   <Shield className="w-3 h-3 text-primary" />
-                  <span className="font-mono text-[9px] tracking-wider uppercase text-muted-foreground">CCS™</span>
+                  <span className="font-mono text-xs tracking-wider uppercase text-muted-foreground">CCS™</span>
                   <span className={cn("font-mono text-base font-black tabular-nums leading-none", getScoreColor(score))}>
                     {score}
                   </span>
@@ -100,7 +100,7 @@ export function StickyScoreHeader({ companyName, score, ticker, industry }: Stic
 
                 {/* Risk badge with pulsing CAUTION for elevated */}
                 <div className={cn(
-                  "flex items-center gap-1.5 px-2.5 py-1 rounded border text-[10px] font-semibold font-mono uppercase tracking-wider",
+                  "flex items-center gap-1.5 px-2.5 py-1 rounded border text-xs font-semibold font-mono uppercase tracking-wider",
                   risk.bg, risk.color, risk.border,
                   isElevated && "animate-caution"
                 )}>
@@ -121,7 +121,7 @@ export function StickyScoreHeader({ companyName, score, ticker, industry }: Stic
                   key={s.id}
                   onClick={() => scrollTo(s.id)}
                   className={cn(
-                    "px-3 py-1.5 text-[11px] font-medium whitespace-nowrap transition-colors border-b-2 font-mono",
+                    "px-3 py-1.5 text-xs font-medium whitespace-nowrap transition-colors border-b-2 font-mono",
                     activeSection === s.id
                       ? "border-primary text-primary"
                       : "border-transparent text-muted-foreground hover:text-foreground"

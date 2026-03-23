@@ -213,7 +213,7 @@ function RankList({ items, setItems }: { items: string[]; setItems: (i: string[]
           >
             {i + 1}
           </span>
-          <GripVertical className="w-4 h-4 shrink-0" style={{ color: "#7a7590" }} />
+          <GripVertical className="w-4 h-4 shrink-0" style={{ color: "hsl(var(--muted-foreground))" }} />
           <span className="text-sm" style={{ color: "#f0ebe0" }}>
             {item}
           </span>
@@ -251,7 +251,7 @@ function Slider({
         className="w-full accent-[#f0c040]"
         style={{ height: 6 }}
       />
-      <div className="flex justify-between text-xs mt-1" style={{ color: "#7a7590" }}>
+      <div className="flex justify-between text-xs mt-1" style={{ color: "hsl(var(--muted-foreground))" }}>
         <span>{format(min)}</span>
         <span className="font-semibold" style={{ color: "#f0c040" }}>
           {format(value)}
@@ -281,11 +281,11 @@ function DualSlider({
     <div className="space-y-3">
       <div className="flex items-center justify-between text-sm" style={{ color: "#f0ebe0" }}>
         <span>{format(value[0])}</span>
-        <span style={{ color: "#7a7590" }}>to</span>
+        <span style={{ color: "hsl(var(--muted-foreground))" }}>to</span>
         <span>{format(value[1])}</span>
       </div>
       <div className="space-y-2">
-        <label className="text-xs" style={{ color: "#7a7590" }}>Min</label>
+        <label className="text-xs" style={{ color: "hsl(var(--muted-foreground))" }}>Min</label>
         <input
           type="range"
           min={min}
@@ -298,7 +298,7 @@ function DualSlider({
           }}
           className="w-full accent-[#f0c040]"
         />
-        <label className="text-xs" style={{ color: "#7a7590" }}>Max</label>
+        <label className="text-xs" style={{ color: "hsl(var(--muted-foreground))" }}>Max</label>
         <input
           type="range"
           min={min}
@@ -362,25 +362,25 @@ export default function AutoApply() {
       return (
         <div className="space-y-6">
           <div>
-            <label className="block text-sm font-medium mb-2" style={{ color: "#b8b4a8" }}>
+            <label className="block text-sm font-medium mb-2" style={{ color: "hsl(var(--muted-foreground))" }}>
               Job title(s) you're targeting
             </label>
             <TagInput tags={form.jobTitles} setTags={(t) => update("jobTitles", t)} placeholder="e.g. Product Manager" />
           </div>
           <div>
-            <label className="block text-sm font-medium mb-2" style={{ color: "#b8b4a8" }}>
+            <label className="block text-sm font-medium mb-2" style={{ color: "hsl(var(--muted-foreground))" }}>
               Industry / sector
             </label>
             <MultiSelect options={INDUSTRIES} selected={form.industries} setSelected={(s) => update("industries", s)} />
           </div>
           <div>
-            <label className="block text-sm font-medium mb-2" style={{ color: "#b8b4a8" }}>
+            <label className="block text-sm font-medium mb-2" style={{ color: "hsl(var(--muted-foreground))" }}>
               Location preference
             </label>
             <MultiSelect options={LOCATION_OPTIONS} selected={form.locationPrefs} setSelected={(s) => update("locationPrefs", s)} />
           </div>
           <div>
-            <label className="block text-sm font-medium mb-2" style={{ color: "#b8b4a8" }}>
+            <label className="block text-sm font-medium mb-2" style={{ color: "hsl(var(--muted-foreground))" }}>
               Target salary range
             </label>
             <DualSlider
@@ -399,7 +399,7 @@ export default function AutoApply() {
     if (step === 1) {
       return (
         <div className="space-y-4">
-          <p className="text-sm leading-relaxed" style={{ color: "#b8b4a8" }}>
+          <p className="text-sm leading-relaxed" style={{ color: "hsl(var(--muted-foreground))" }}>
             What matters most to you in a workplace? Drag to rank — #1 is your highest priority.
           </p>
           <RankList items={form.valuesRanking} setItems={(i) => update("valuesRanking", i)} />
@@ -411,8 +411,8 @@ export default function AutoApply() {
       return (
         <div className="space-y-6">
           <div>
-            <label className="block text-sm font-medium mb-2" style={{ color: "#b8b4a8" }}>
-              Companies you will NOT work for <span style={{ color: "#7a7590" }}>(optional)</span>
+            <label className="block text-sm font-medium mb-2" style={{ color: "hsl(var(--muted-foreground))" }}>
+              Companies you will NOT work for <span style={{ color: "hsl(var(--muted-foreground))" }}>(optional)</span>
             </label>
             <TagInput
               tags={form.blockedCompanies}
@@ -421,7 +421,7 @@ export default function AutoApply() {
             />
           </div>
           <div>
-            <label className="block text-sm font-medium mb-2" style={{ color: "#b8b4a8" }}>
+            <label className="block text-sm font-medium mb-2" style={{ color: "hsl(var(--muted-foreground))" }}>
               Industries you will NOT work in
             </label>
             <MultiSelect
@@ -431,7 +431,7 @@ export default function AutoApply() {
             />
           </div>
           <div>
-            <label className="block text-sm font-medium mb-2" style={{ color: "#b8b4a8" }}>
+            <label className="block text-sm font-medium mb-2" style={{ color: "hsl(var(--muted-foreground))" }}>
               Minimum company integrity score required
             </label>
             <Slider
@@ -463,7 +463,7 @@ export default function AutoApply() {
               <button
                 onClick={() => update("resumeFile", null)}
                 className="text-xs underline"
-                style={{ color: "#7a7590" }}
+                style={{ color: "hsl(var(--muted-foreground))" }}
               >
                 Remove and choose another
               </button>
@@ -479,7 +479,7 @@ export default function AutoApply() {
               <p className="text-sm font-medium" style={{ color: "#f0ebe0" }}>
                 Click to upload your resume
               </p>
-              <p className="text-xs" style={{ color: "#7a7590" }}>
+              <p className="text-xs" style={{ color: "hsl(var(--muted-foreground))" }}>
                 PDF or Word doc
               </p>
               <input
@@ -494,7 +494,7 @@ export default function AutoApply() {
             </label>
           )}
         </div>
-        <p className="text-xs text-center leading-relaxed" style={{ color: "#7a7590" }}>
+        <p className="text-xs text-center leading-relaxed" style={{ color: "hsl(var(--muted-foreground))" }}>
           We use this to apply on your behalf. We never share it without your permission.
         </p>
       </div>
@@ -524,7 +524,7 @@ export default function AutoApply() {
           >
             Your agent applied. Here's your Interview Kit.
           </h1>
-          <p className="text-base mb-8" style={{ color: "#b8b4a8", lineHeight: 1.7 }}>
+          <p className="text-base mb-8" style={{ color: "hsl(var(--muted-foreground))", lineHeight: 1.7 }}>
             We'll send your first dossier within 24 hours.
           </p>
 
@@ -603,7 +603,7 @@ export default function AutoApply() {
                 className="w-full h-1 rounded-full transition-all"
                 style={{ background: i <= step ? "#f0c040" : "rgba(255,255,255,0.08)" }}
               />
-              <span className="text-[10px] font-medium" style={{ color: i <= step ? "#f0c040" : "#7a7590" }}>
+              <span className="text-xs font-medium" style={{ color: i <= step ? "#f0c040" : "#7a7590" }}>
                 {s.label}
               </span>
             </div>
@@ -637,7 +637,7 @@ export default function AutoApply() {
             <button
               onClick={back}
               className="flex items-center gap-2 text-sm font-medium transition-opacity hover:opacity-80"
-              style={{ color: "#7a7590" }}
+              style={{ color: "hsl(var(--muted-foreground))" }}
             >
               <ArrowLeft className="w-4 h-4" /> Back
             </button>
@@ -661,7 +661,7 @@ export default function AutoApply() {
 function SummaryRow({ label, value }: { label: string; value: string }) {
   return (
     <div className="flex items-start justify-between gap-4">
-      <span className="text-xs font-medium shrink-0" style={{ color: "#7a7590" }}>
+      <span className="text-xs font-medium shrink-0" style={{ color: "hsl(var(--muted-foreground))" }}>
         {label}
       </span>
       <span className="text-sm text-right" style={{ color: "#f0ebe0" }}>

@@ -72,7 +72,7 @@ export function MonitoredPagesPanel({ companyId }: MonitoredPagesPanelProps) {
         <CardTitle className="text-base flex items-center gap-2">
           <Radio className="w-4 h-4 text-primary" />
           Monitored Pages
-          <Badge variant="secondary" className="text-[10px] ml-auto">
+          <Badge variant="secondary" className="text-xs ml-auto">
             {activeCount}/{monitors.length} active
           </Badge>
         </CardTitle>
@@ -120,13 +120,13 @@ export function MonitoredPagesPanel({ companyId }: MonitoredPagesPanelProps) {
               {recentEvents.slice(0, 3).map((event: any) => (
                 <div key={event.id} className="text-xs p-2 rounded bg-muted/20 border border-border/50">
                   <div className="flex items-center gap-2 mb-0.5">
-                    <Badge variant="outline" className="text-[10px]">
+                    <Badge variant="outline" className="text-xs">
                       {PAGE_TYPE_LABELS[event.page_type] || event.page_type}
                     </Badge>
                     <Badge
                       variant="outline"
                       className={cn(
-                        "text-[10px]",
+                        "text-xs",
                         event.processing_status === "completed"
                           ? "border-green-200 text-green-600"
                           : event.processing_status === "failed"

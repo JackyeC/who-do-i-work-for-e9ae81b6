@@ -42,7 +42,7 @@ export function SignalFreshness({
 }: SignalFreshnessProps) {
   if (!lastUpdated) {
     return (
-      <span className={cn("inline-flex items-center gap-1 text-[10px] font-mono text-muted-foreground/50", className)}>
+      <span className={cn("inline-flex items-center gap-1 text-xs font-mono text-muted-foreground/50", className)}>
         <Clock className="w-3 h-3" />
         No data
       </span>
@@ -54,7 +54,7 @@ export function SignalFreshness({
 
   if (compact) {
     return (
-      <span className={cn("inline-flex items-center gap-1 text-[10px] font-mono", LEVEL_STYLES[level], className)}>
+      <span className={cn("inline-flex items-center gap-1 text-xs font-mono", LEVEL_STYLES[level], className)}>
         <span className={cn("w-1.5 h-1.5 rounded-full", LEVEL_DOT[level])} />
         {days}d
       </span>
@@ -62,7 +62,7 @@ export function SignalFreshness({
   }
 
   return (
-    <span className={cn("inline-flex items-center gap-1.5 text-[10px] font-mono", LEVEL_STYLES[level], className)}>
+    <span className={cn("inline-flex items-center gap-1.5 text-xs font-mono", LEVEL_STYLES[level], className)}>
       <span className={cn("w-1.5 h-1.5 rounded-full shrink-0", LEVEL_DOT[level])} />
       <span>Signal freshness: {days} day{days !== 1 ? "s" : ""}</span>
       {refreshCadence && (

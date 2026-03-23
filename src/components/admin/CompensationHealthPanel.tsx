@@ -39,19 +39,19 @@ export function CompensationHealthPanel() {
           <div className="grid grid-cols-4 gap-3 mb-4">
             <div className="text-center">
               <p className="text-lg font-bold text-civic-green">{ok}</p>
-              <p className="text-[10px] text-muted-foreground">Fresh</p>
+              <p className="text-xs text-muted-foreground">Fresh</p>
             </div>
             <div className="text-center">
               <p className="text-lg font-bold text-civic-yellow">{needs}</p>
-              <p className="text-[10px] text-muted-foreground">Stale</p>
+              <p className="text-xs text-muted-foreground">Stale</p>
             </div>
             <div className="text-center">
               <p className="text-lg font-bold text-destructive">{failed}</p>
-              <p className="text-[10px] text-muted-foreground">Failed</p>
+              <p className="text-xs text-muted-foreground">Failed</p>
             </div>
             <div className="text-center">
               <p className="text-lg font-bold text-muted-foreground">{partial}</p>
-              <p className="text-[10px] text-muted-foreground">Partial</p>
+              <p className="text-xs text-muted-foreground">Partial</p>
             </div>
           </div>
           <div className="space-y-1.5 max-h-40 overflow-y-auto">

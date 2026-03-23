@@ -104,7 +104,7 @@ export function ValuesCompanyCard({ company, signals, evidence, lensLabel, hasCo
             </div>
             <div className="flex items-center gap-2 shrink-0">
               {hasConflict && (
-                <Badge variant="outline" className="text-[10px] border-[hsl(var(--civic-red))]/30 text-[hsl(var(--civic-red))] gap-1">
+                <Badge variant="outline" className="text-xs border-[hsl(var(--civic-red))]/30 text-[hsl(var(--civic-red))] gap-1">
                   <AlertTriangle className="w-3 h-3" />
                   Says one thing, does another
                 </Badge>
@@ -146,11 +146,11 @@ export function ValuesCompanyCard({ company, signals, evidence, lensLabel, hasCo
                     )}
                     <div className="flex items-center gap-2 mt-0.5 flex-wrap">
                       {dirConfig && (
-                        <Badge variant="outline" className={`text-[10px] px-1.5 py-0 ${dirConfig.color}`}>
+                        <Badge variant="outline" className={`text-xs px-1.5 py-0 ${dirConfig.color}`}>
                           {dirConfig.plainLabel}
                         </Badge>
                       )}
-                      <Badge variant="outline" className={`text-[10px] px-1.5 py-0 ${confConfig.color}`}>
+                      <Badge variant="outline" className={`text-xs px-1.5 py-0 ${confConfig.color}`}>
                         {confConfig.plainLabel}
                       </Badge>
                       {signal.evidence_url && (
@@ -158,7 +158,7 @@ export function ValuesCompanyCard({ company, signals, evidence, lensLabel, hasCo
                           href={signal.evidence_url}
                           target="_blank"
                           rel="noopener noreferrer"
-                          className="inline-flex items-center gap-0.5 text-[10px] text-primary hover:underline font-semibold"
+                          className="inline-flex items-center gap-0.5 text-xs text-primary hover:underline font-semibold"
                         >
                           <ExternalLink className="w-2.5 h-2.5" /> View source
                         </a>

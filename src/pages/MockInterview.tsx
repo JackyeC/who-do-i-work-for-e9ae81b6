@@ -67,7 +67,7 @@ export default function MockInterview() {
             <h1 className="text-2xl font-extrabold text-foreground tracking-tight font-display">
               Mock Interview
             </h1>
-            <Badge className="bg-[hsl(var(--civic-gold))]/10 text-[hsl(var(--civic-gold))] border-[hsl(var(--civic-gold))]/20 text-[10px] font-mono">
+            <Badge className="bg-[hsl(var(--civic-gold))]/10 text-[hsl(var(--civic-gold))] border-[hsl(var(--civic-gold))]/20 text-xs font-mono">
               <Shield className="w-3 h-3 mr-1" /> Integrity-aware interview prep
             </Badge>
           </div>
@@ -144,10 +144,10 @@ export default function MockInterview() {
                         <div className="flex items-start justify-between gap-3">
                           <div className="flex-1 min-w-0">
                             <div className="flex items-center gap-2 mb-1.5">
-                              <Badge variant="outline" className="text-[10px] font-mono text-muted-foreground">
+                              <Badge variant="outline" className="text-xs font-mono text-muted-foreground">
                                 {q.category}
                               </Badge>
-                              <span className="text-[10px] text-muted-foreground/60 tabular-nums">
+                              <span className="text-xs text-muted-foreground/60 tabular-nums">
                                 Q{i + 1}
                               </span>
                             </div>

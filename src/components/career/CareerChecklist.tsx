@@ -290,7 +290,7 @@ export function CareerChecklist() {
                     </a>
                   )}
                 </div>
-                <Badge variant="outline" className="text-[10px] shrink-0">{meta.label}</Badge>
+                <Badge variant="outline" className="text-xs shrink-0">{meta.label}</Badge>
                 <button
                   onClick={() => removeItem(item.id)}
                   className="opacity-0 group-hover:opacity-100 transition shrink-0"
@@ -309,7 +309,7 @@ export function CareerChecklist() {
           <div className="flex items-center gap-2 mb-4">
             <Award className="w-4 h-4 text-[hsl(var(--civic-gold))]" />
             <h3 className="text-sm font-bold text-foreground">Recommended Learning Resources</h3>
-            <Badge variant="outline" className="text-[9px] ml-auto border-[hsl(var(--civic-gold))]/30 text-[hsl(var(--civic-gold))]">
+            <Badge variant="outline" className="text-xs ml-auto border-[hsl(var(--civic-gold))]/30 text-[hsl(var(--civic-gold))]">
               Curated
             </Badge>
           </div>
@@ -333,7 +333,7 @@ export function CareerChecklist() {
                   <Badge
                     variant="outline"
                     className={cn(
-                      "text-[9px] shrink-0",
+                      "text-xs shrink-0",
                       resource.free
                         ? "border-[hsl(var(--civic-green))]/30 text-[hsl(var(--civic-green))]"
                         : "border-border text-muted-foreground"
@@ -345,7 +345,7 @@ export function CareerChecklist() {
                 <p className="text-xs text-muted-foreground leading-relaxed">
                   {resource.description}
                 </p>
-                <div className="flex items-center gap-1 text-[10px] text-primary font-medium mt-0.5">
+                <div className="flex items-center gap-1 text-xs text-primary font-medium mt-0.5">
                   <span>{resource.platform}</span>
                   <ExternalLink className="w-2.5 h-2.5" />
                 </div>

@@ -29,7 +29,7 @@ export function InternalGigCard({
       <div className="flex items-start justify-between gap-2 mb-2">
         <p className="text-sm font-medium text-foreground leading-tight">{title}</p>
         {isRelevant && (
-          <Badge variant="success" className="text-[10px] flex-shrink-0">Fills Gap</Badge>
+          <Badge variant="success" className="text-xs flex-shrink-0">Fills Gap</Badge>
         )}
       </div>
 
@@ -42,14 +42,14 @@ export function InternalGigCard({
           <Badge
             key={i}
             variant={relevantSkills.includes(skill) ? "success" : "secondary"}
-            className="text-[10px]"
+            className="text-xs"
           >
             {skill}
           </Badge>
         ))}
       </div>
 
-      <div className="flex items-center gap-3 text-[10px] text-muted-foreground">
+      <div className="flex items-center gap-3 text-xs text-muted-foreground">
         {durationWeeks && (
           <span className="flex items-center gap-1">
             <Clock className="w-3 h-3" /> {durationWeeks}w

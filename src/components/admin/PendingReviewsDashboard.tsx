@@ -120,11 +120,11 @@ function ReviewCard({ review, onUpdate }: { review: PendingReview; onUpdate: () 
           <StatusIcon className="w-4 h-4 shrink-0 text-muted-foreground" />
           <div className="flex-1 min-w-0">
             <p className="font-medium text-foreground text-sm truncate">{review.company_name}</p>
-            <p className="text-[11px] text-muted-foreground">
+            <p className="text-xs text-muted-foreground">
               Requested by {review.requester_email || "Unknown"} · {timeAgo}
             </p>
           </div>
-          <Badge variant="outline" className={cn("text-[10px] shrink-0", statusConfig.color)}>
+          <Badge variant="outline" className={cn("text-xs shrink-0", statusConfig.color)}>
             {statusConfig.label}
           </Badge>
           {expanded ? <ChevronUp className="w-4 h-4 text-muted-foreground" /> : <ChevronDown className="w-4 h-4 text-muted-foreground" />}
@@ -156,7 +156,7 @@ function ReviewCard({ review, onUpdate }: { review: PendingReview; onUpdate: () 
             {/* Citations */}
             {review.ai_citations?.length > 0 && (
               <div className="space-y-1">
-                <p className="text-[10px] font-mono uppercase text-muted-foreground tracking-wider">Sources</p>
+                <p className="text-xs font-mono uppercase text-muted-foreground tracking-wider">Sources</p>
                 <div className="flex flex-wrap gap-1">
                   {review.ai_citations.map((url, i) => (
                     <a
@@ -164,7 +164,7 @@ function ReviewCard({ review, onUpdate }: { review: PendingReview; onUpdate: () 
                       href={url}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="text-[10px] text-primary hover:underline inline-flex items-center gap-0.5"
+                      className="text-xs text-primary hover:underline inline-flex items-center gap-0.5"
                     >
                       [{i + 1}] <ExternalLink className="w-2.5 h-2.5" />
                     </a>
@@ -186,7 +186,7 @@ function ReviewCard({ review, onUpdate }: { review: PendingReview; onUpdate: () 
             </div>
 
             {/* Model info */}
-            <p className="text-[10px] text-muted-foreground">
+            <p className="text-xs text-muted-foreground">
               AI Model: {review.ai_model_used || "Unknown"} · Generated {timeAgo}
             </p>
 
@@ -315,7 +315,7 @@ export function PendingReviewsDashboard() {
           <Card key={key} className="border-border/30">
             <CardContent className="p-3 text-center">
               <p className="text-2xl font-black tabular-nums">{counts?.[key] ?? 0}</p>
-              <p className="text-[10px] text-muted-foreground uppercase tracking-wider">{config.label}</p>
+              <p className="text-xs text-muted-foreground uppercase tracking-wider">{config.label}</p>
             </CardContent>
           </Card>
         ))}

@@ -424,7 +424,7 @@ export default function Jobs() {
             <p className="text-muted-foreground text-sm mt-0.5">
               Find jobs at companies that align with your values. Like AIApply — but with transparency built in.
             </p>
-            <p className="text-muted-foreground text-[11px] mt-1.5 flex items-center gap-1.5">
+            <p className="text-muted-foreground text-xs mt-1.5 flex items-center gap-1.5">
               <span className="inline-block w-2 h-2 rounded-full bg-[hsl(var(--civic-green))]" />
               <span><strong className="text-foreground/80">Civic Score</strong> measures employer transparency across governance, lobbying, workforce data, and public accountability. Hover or tap any score to learn more.</span>
             </p>
@@ -536,9 +536,9 @@ export default function Jobs() {
                   )}
                   {semanticTerms.length > 0 && !semanticLoading && (
                     <div className="flex flex-wrap gap-1 mt-1.5">
-                      <span className="text-[10px] text-muted-foreground">AI expanded:</span>
+                      <span className="text-xs text-muted-foreground">AI expanded:</span>
                       {semanticTerms.slice(0, 5).map((term) => (
-                        <Badge key={term} variant="outline" className="text-[10px] py-0 px-1.5 bg-primary/5">
+                        <Badge key={term} variant="outline" className="text-xs py-0 px-1.5 bg-primary/5">
                           {term}
                         </Badge>
                       ))}

@@ -70,7 +70,7 @@ export function ExternalJobFeed() {
             </div>
             <div className="flex items-center gap-2">
               {!open && jobs.length > 0 && (
-                <Badge variant="secondary" className="text-[10px]">
+                <Badge variant="secondary" className="text-xs">
                   {jobs.length} new
                 </Badge>
               )}
@@ -125,7 +125,7 @@ export function ExternalJobFeed() {
                         {job.category && (
                           <>
                             <span className="text-xs text-muted-foreground">·</span>
-                            <span className="text-[10px] text-muted-foreground">
+                            <span className="text-xs text-muted-foreground">
                               {job.category}
                             </span>
                           </>
@@ -135,11 +135,11 @@ export function ExternalJobFeed() {
                     <div className="flex flex-col items-end gap-1.5 shrink-0">
                       <Badge
                         variant="outline"
-                        className={`text-[10px] py-0 ${SOURCE_COLORS[job.source] || ""}`}
+                        className={`text-xs py-0 ${SOURCE_COLORS[job.source] || ""}`}
                       >
                         {job.source}
                       </Badge>
-                      <span className="text-[10px] text-muted-foreground">
+                      <span className="text-xs text-muted-foreground">
                         {formatDistanceToNow(new Date(job.publishedAt), {
                           addSuffix: true,
                         })}
@@ -151,7 +151,7 @@ export function ExternalJobFeed() {
             )}
 
             {jobs.length > 0 && (
-              <p className="text-[10px] text-muted-foreground text-center mt-3">
+              <p className="text-xs text-muted-foreground text-center mt-3">
                 These listings are sourced from external job boards and are not vetted by our platform.
               </p>
             )}

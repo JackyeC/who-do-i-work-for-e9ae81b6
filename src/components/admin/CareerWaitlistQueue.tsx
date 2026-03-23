@@ -37,9 +37,9 @@ export function CareerWaitlistQueue() {
   const approved = entries.filter((e) => e.status === "approved");
 
   const statusBadge = (status: string) => {
-    if (status === "approved") return <Badge className="bg-civic-green/10 text-civic-green border-civic-green/20 text-[9px]">Approved</Badge>;
-    if (status === "rejected") return <Badge variant="destructive" className="text-[9px]">Rejected</Badge>;
-    return <Badge variant="outline" className="text-[9px]"><Clock className="w-2.5 h-2.5 mr-1" />Pending</Badge>;
+    if (status === "approved") return <Badge className="bg-civic-green/10 text-civic-green border-civic-green/20 text-xs">Approved</Badge>;
+    if (status === "rejected") return <Badge variant="destructive" className="text-xs">Rejected</Badge>;
+    return <Badge variant="outline" className="text-xs"><Clock className="w-2.5 h-2.5 mr-1" />Pending</Badge>;
   };
 
   const timeAgo = (ts: string) => {
@@ -71,7 +71,7 @@ export function CareerWaitlistQueue() {
                   <span className="text-sm font-medium text-foreground">{entry.email}</span>
                   {statusBadge(entry.status)}
                 </div>
-                <span className="text-[10px] text-muted-foreground">{timeAgo(entry.created_at)}</span>
+                <span className="text-xs text-muted-foreground">{timeAgo(entry.created_at)}</span>
               </div>
               {entry.reason && (
                 <p className="text-xs text-muted-foreground mb-2 line-clamp-2">"{entry.reason}"</p>

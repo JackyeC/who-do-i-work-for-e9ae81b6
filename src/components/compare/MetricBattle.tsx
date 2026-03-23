@@ -34,7 +34,7 @@ export function MetricBattle({ companyA, companyB }: { companyA: CompanyData; co
     <div className="border border-border bg-card overflow-hidden mb-8">
       <div className="px-5 py-3 border-b border-border bg-muted/20 flex items-center gap-2">
         <Zap className="w-3.5 h-3.5 text-primary" />
-        <span className="font-mono text-[9px] tracking-[0.2em] uppercase text-primary font-semibold">
+        <span className="font-mono text-xs tracking-[0.2em] uppercase text-primary font-semibold">
           Head-to-Head Metrics
         </span>
       </div>
@@ -50,8 +50,8 @@ export function MetricBattle({ companyA, companyB }: { companyA: CompanyData; co
             {/* Metric label */}
             <div className="px-5 pt-4 pb-2 flex items-center gap-2">
               <Icon className="w-3.5 h-3.5 text-primary" strokeWidth={1.5} />
-              <span className="font-mono text-[9px] tracking-[0.15em] uppercase text-muted-foreground font-medium">{label}</span>
-              <span className="text-[10px] text-muted-foreground/60 ml-auto hidden sm:inline">{description}</span>
+              <span className="font-mono text-xs tracking-[0.15em] uppercase text-muted-foreground font-medium">{label}</span>
+              <span className="text-xs text-muted-foreground/60 ml-auto hidden sm:inline">{description}</span>
             </div>
 
             {/* Battle bars */}
@@ -61,7 +61,7 @@ export function MetricBattle({ companyA, companyB }: { companyA: CompanyData; co
                 { company: companyB, val: valB, isWinner: winner === "b", side: "b" },
               ].map(({ company, val, isWinner }) => (
                 <div key={company.id} className="flex items-center gap-3">
-                  <span className={cn("font-mono text-[10px] w-24 truncate", isWinner ? "text-primary font-bold" : "text-muted-foreground")}>
+                  <span className={cn("font-mono text-xs w-24 truncate", isWinner ? "text-primary font-bold" : "text-muted-foreground")}>
                     {company.name}
                   </span>
                   <div className="flex-1 h-6 bg-muted/40 relative overflow-hidden">
@@ -75,7 +75,7 @@ export function MetricBattle({ companyA, companyB }: { companyA: CompanyData; co
                       style={{ width: `${Math.max((val / maxVal) * 100, 8)}%` }}
                     >
                       <span className={cn(
-                        "font-mono text-[10px] font-bold whitespace-nowrap",
+                        "font-mono text-xs font-bold whitespace-nowrap",
                         isWinner ? "text-primary" : "text-muted-foreground"
                       )}>
                         {format(val)}

@@ -151,10 +151,10 @@ export default function Rankings() {
                       <Link to={`/company/${c.slug}`} className="font-medium text-foreground hover:text-primary transition-colors">
                         {c.name}
                       </Link>
-                      <div className="text-[10px] text-muted-foreground">{c.state}</div>
+                      <div className="text-xs text-muted-foreground">{c.state}</div>
                     </TableCell>
                     <TableCell>
-                      <Badge variant="outline" className="text-[10px]">{c.industry}</Badge>
+                      <Badge variant="outline" className="text-xs">{c.industry}</Badge>
                     </TableCell>
                     <TableCell className="text-center">
                       <span className={cn("font-bold text-lg",
@@ -167,7 +167,7 @@ export default function Rankings() {
                       </span>
                     </TableCell>
                     <TableCell className="text-center">
-                      <Badge variant="outline" className="text-[10px]">{c.confidence_rating}</Badge>
+                      <Badge variant="outline" className="text-xs">{c.confidence_rating}</Badge>
                     </TableCell>
                     <TableCell className="text-right text-sm text-muted-foreground">
                       {c.employee_count || "—"}

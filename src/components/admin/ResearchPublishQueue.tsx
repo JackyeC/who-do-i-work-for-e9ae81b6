@@ -144,11 +144,11 @@ function DraftCard({ review, onRefresh }: { review: PendingReview; onRefresh: ()
           <Building2 className="w-4 h-4 text-muted-foreground shrink-0" />
           <div className="flex-1 min-w-0">
             <p className="font-medium text-foreground text-sm truncate">{review.company_name}</p>
-            <p className="text-[11px] text-muted-foreground">
+            <p className="text-xs text-muted-foreground">
               {review.requester_email || "System"} · {formatDistanceToNow(new Date(review.created_at), { addSuffix: true })}
             </p>
           </div>
-          <Badge variant="outline" className={cn("text-[10px]",
+          <Badge variant="outline" className={cn("text-xs",
             review.status === "pending" ? "bg-amber-500/10 text-amber-600" : "bg-primary/10 text-primary"
           )}>
             {review.status}
@@ -178,7 +178,7 @@ function DraftCard({ review, onRefresh }: { review: PendingReview; onRefresh: ()
             {Array.isArray(review.ai_citations) && review.ai_citations.length > 0 && (
               <div className="flex flex-wrap gap-1">
                 {review.ai_citations.map((url: string, i: number) => (
-                  <a key={i} href={url} target="_blank" rel="noopener noreferrer" className="text-[10px] text-primary hover:underline inline-flex items-center gap-0.5">
+                  <a key={i} href={url} target="_blank" rel="noopener noreferrer" className="text-xs text-primary hover:underline inline-flex items-center gap-0.5">
                     Source [{i + 1}] <ExternalLink className="w-2.5 h-2.5" />
                   </a>
                 ))}

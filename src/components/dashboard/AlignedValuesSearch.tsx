@@ -127,7 +127,7 @@ export function AlignedValuesSearch({ hasTakenQuiz }: { hasTakenQuiz: boolean })
   if (!hasTakenQuiz) {
     return (
       <div className="py-4">
-        <p style={{ fontFamily: "'DM Sans', sans-serif", fontSize: "13px", color: "#b8b4a8", lineHeight: 1.6, marginBottom: "12px" }}>
+        <p style={{ fontFamily: "'DM Sans', sans-serif", fontSize: "13px", color: "hsl(var(--muted-foreground))", lineHeight: 1.6, marginBottom: "12px" }}>
           Complete your Work DNA profile to see which companies actually match who you are.
         </p>
         <Link
@@ -159,7 +159,7 @@ export function AlignedValuesSearch({ hasTakenQuiz }: { hasTakenQuiz: boolean })
         />
       </div>
 
-      <p style={{ fontFamily: "'DM Sans', sans-serif", fontSize: "11px", color: "#7a7590", lineHeight: 1.5, marginBottom: "10px" }}>
+      <p style={{ fontFamily: "'DM Sans', sans-serif", fontSize: "12px", color: "hsl(var(--muted-foreground))", lineHeight: 1.5, marginBottom: "10px" }}>
         We score every company against your Work DNA — skills, values, mission alignment, and integrity. Only companies with receipts make the cut.
       </p>
 
@@ -167,7 +167,7 @@ export function AlignedValuesSearch({ hasTakenQuiz }: { hasTakenQuiz: boolean })
       {results.length > 0 && (
         <div className="space-y-2 max-h-[340px] overflow-y-auto pr-0.5">
           {showSuggestions && (
-            <p style={{ fontFamily: "'DM Sans', sans-serif", fontSize: "10px", color: "#7a7590", textTransform: "uppercase", letterSpacing: "0.5px", marginBottom: "4px" }}>
+            <p style={{ fontFamily: "'DM Sans', sans-serif", fontSize: "12px", color: "hsl(var(--muted-foreground))", textTransform: "uppercase", letterSpacing: "0.5px", marginBottom: "4px" }}>
               Suggested Companies
             </p>
           )}
@@ -209,7 +209,7 @@ export function AlignedValuesSearch({ hasTakenQuiz }: { hasTakenQuiz: boolean })
                       <Badge
                         key={tag}
                         variant="outline"
-                        className="text-[10px] py-0 px-1.5 border-border/40 text-muted-foreground"
+                        className="text-xs py-0 px-1.5 border-border/40 text-muted-foreground"
                       >
                         {tag}
                       </Badge>
@@ -218,7 +218,7 @@ export function AlignedValuesSearch({ hasTakenQuiz }: { hasTakenQuiz: boolean })
                 )}
 
                 {/* Matched values */}
-                <p style={{ fontFamily: "'DM Sans', sans-serif", fontSize: "11px", color: "#7a7590", marginBottom: "8px" }}>
+                <p style={{ fontFamily: "'DM Sans', sans-serif", fontSize: "12px", color: "hsl(var(--muted-foreground))", marginBottom: "8px" }}>
                   Matches: {matched.join(" · ")}
                 </p>
 
@@ -252,7 +252,7 @@ export function AlignedValuesSearch({ hasTakenQuiz }: { hasTakenQuiz: boolean })
 
       {/* No results state */}
       {query.trim().length >= 2 && dbResults && dbResults.length === 0 && (
-        <p style={{ fontFamily: "'DM Sans', sans-serif", fontSize: "12px", color: "#7a7590", textAlign: "center", padding: "16px 0" }}>
+        <p style={{ fontFamily: "'DM Sans', sans-serif", fontSize: "12px", color: "hsl(var(--muted-foreground))", textAlign: "center", padding: "16px 0" }}>
           No companies found for "{query}". Try a different name.
         </p>
       )}

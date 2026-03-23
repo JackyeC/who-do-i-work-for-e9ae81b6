@@ -131,7 +131,7 @@ export function RecentSignalsFeed() {
                         )}
                         <Badge
                           variant="outline"
-                          className="text-[10px] shrink-0 capitalize"
+                          className="text-xs shrink-0 capitalize"
                         >
                           {signal.confidence_level === "high" ? "Strong evidence" : signal.confidence_level === "medium" ? "Some evidence" : "Weak evidence"}
                         </Badge>
@@ -140,7 +140,7 @@ export function RecentSignalsFeed() {
                         {signal.signal_type}
                         {signal.signal_value && !signal.signal_value.startsWith('{') && !signal.signal_value.startsWith('[') && ` — ${signal.signal_value}`}
                       </p>
-                      <p className="text-[10px] text-muted-foreground/60 mt-1">
+                      <p className="text-xs text-muted-foreground/60 mt-1">
                         {formatDistanceToNow(new Date(signal.scan_timestamp), {
                           addSuffix: true,
                         })}

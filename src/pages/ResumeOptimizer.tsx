@@ -171,7 +171,7 @@ export default function ResumeOptimizer() {
                       </p>
                       <div className="flex flex-wrap gap-1">
                         {result.keywordsPresent.map(k => (
-                          <Badge key={k} variant="secondary" className="text-[10px] bg-emerald-500/10 text-emerald-400 border-emerald-500/20">{k}</Badge>
+                          <Badge key={k} variant="secondary" className="text-xs bg-emerald-500/10 text-emerald-400 border-emerald-500/20">{k}</Badge>
                         ))}
                       </div>
                     </div>
@@ -181,7 +181,7 @@ export default function ResumeOptimizer() {
                       </p>
                       <div className="flex flex-wrap gap-1">
                         {result.keywordsMissing.map(k => (
-                          <Badge key={k} variant="secondary" className="text-[10px] bg-red-500/10 text-red-400 border-red-500/20">{k}</Badge>
+                          <Badge key={k} variant="secondary" className="text-xs bg-red-500/10 text-red-400 border-red-500/20">{k}</Badge>
                         ))}
                       </div>
                     </div>
@@ -204,11 +204,11 @@ export default function ResumeOptimizer() {
                     <CardContent className="p-4 space-y-3">
                       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                         <div>
-                          <p className="text-[10px] uppercase tracking-wider text-muted-foreground mb-1">Before</p>
+                          <p className="text-xs uppercase tracking-wider text-muted-foreground mb-1">Before</p>
                           <p className="text-sm text-foreground/60 leading-relaxed bg-muted/30 rounded p-3">{item.original}</p>
                         </div>
                         <div>
-                          <p className="text-[10px] uppercase tracking-wider text-primary mb-1">After</p>
+                          <p className="text-xs uppercase tracking-wider text-primary mb-1">After</p>
                           <p className="text-sm text-foreground leading-relaxed bg-primary/[0.04] border border-primary/10 rounded p-3">{item.optimized}</p>
                         </div>
                       </div>

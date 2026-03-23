@@ -61,7 +61,7 @@ ${scriptTag}`;
                   <ExternalLink className="w-3.5 h-3.5 text-primary-foreground" />
                 </div>
                 <div>
-                  <div className="text-[10px] text-muted-foreground font-medium tracking-wide">CIVIC FOOTPRINT</div>
+                  <div className="text-xs text-muted-foreground font-medium tracking-wide">CIVIC FOOTPRINT</div>
                   <div className="text-xs text-muted-foreground mt-0.5">Transparency Profile Available · WDIWF?</div>
                 </div>
               </div>
@@ -89,8 +89,8 @@ ${scriptTag}`;
                   <ExternalLink className="w-3.5 h-3.5 text-primary-foreground" />
                 </div>
                 <div>
-                  <div className="text-[10px] font-medium tracking-wide" style={{ color: "#94a3b8" }}>CIVIC FOOTPRINT</div>
-                  <div className="text-xs mt-0.5" style={{ color: "#94a3b8" }}>Transparency Profile Available · WDIWF?</div>
+                  <div className="text-xs font-medium tracking-wide" style={{ color: "hsl(var(--muted-foreground))" }}>CIVIC FOOTPRINT</div>
+                  <div className="text-xs mt-0.5" style={{ color: "hsl(var(--muted-foreground))" }}>Transparency Profile Available · WDIWF?</div>
                 </div>
               </div>
             </div>

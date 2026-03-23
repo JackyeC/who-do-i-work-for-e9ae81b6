@@ -129,7 +129,7 @@ export default function DailyBriefingCard() {
         <div className="px-5 pb-3 flex items-center gap-1.5 flex-wrap">
           <span className="text-xs text-muted-foreground">Prioritized for:</span>
           {topValues.map((v: string) => (
-            <span key={v} className="px-2 py-0.5 rounded-full text-[10px] font-medium bg-primary/10 text-primary border border-primary/20">
+            <span key={v} className="px-2 py-0.5 rounded-full text-xs font-medium bg-primary/10 text-primary border border-primary/20">
               {v}
             </span>
           ))}
@@ -158,10 +158,10 @@ export default function DailyBriefingCard() {
                     {item.title}
                   </p>
                   <div className="flex items-center gap-2 mt-1">
-                    <span className="text-[10px] font-medium px-1.5 py-0.5 rounded" style={{ backgroundColor: `${config.color}15`, color: config.color }}>
+                    <span className="text-xs font-medium px-1.5 py-0.5 rounded" style={{ backgroundColor: `${config.color}15`, color: config.color }}>
                       {config.label}
                     </span>
-                    <span className="text-[10px] text-muted-foreground font-mono">{item.source}</span>
+                    <span className="text-xs text-muted-foreground font-mono">{item.source}</span>
                   </div>
                 </div>
               </div>
@@ -184,7 +184,7 @@ export default function DailyBriefingCard() {
                 <Building2 className="w-3 h-3 text-muted-foreground group-hover:text-primary" />
                 <span className="text-xs font-medium text-foreground">{company.name}</span>
                 {company.civic_footprint_score && (
-                  <span className="text-[10px] font-mono text-primary">{Math.round(company.civic_footprint_score)}</span>
+                  <span className="text-xs font-mono text-primary">{Math.round(company.civic_footprint_score)}</span>
                 )}
               </button>
             ))}

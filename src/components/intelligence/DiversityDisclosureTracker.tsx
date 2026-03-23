@@ -66,7 +66,7 @@ export function DiversityDisclosureTracker({ companyId, companyName }: Props) {
             Diversity Disclosure Tracker
           </CardTitle>
           {decliningTypes.length > 0 && (
-            <Badge variant="outline" className="text-[10px] text-[hsl(var(--civic-yellow))] border-[hsl(var(--civic-yellow))]/20">
+            <Badge variant="outline" className="text-xs text-[hsl(var(--civic-yellow))] border-[hsl(var(--civic-yellow))]/20">
               <TrendingDown className="w-3 h-3 mr-1" />
               Transparency Declining
             </Badge>
@@ -83,7 +83,7 @@ export function DiversityDisclosureTracker({ companyId, companyName }: Props) {
             <p className="text-xs text-muted-foreground">
               No diversity disclosure history tracked for {companyName}.
             </p>
-            <p className="text-[10px] text-muted-foreground mt-1 flex items-center justify-center gap-1">
+            <p className="text-xs text-muted-foreground mt-1 flex items-center justify-center gap-1">
               <Info className="w-3 h-3" />
               Non-disclosure is itself a transparency signal.
             </p>
@@ -102,7 +102,7 @@ export function DiversityDisclosureTracker({ companyId, companyName }: Props) {
                     <div className="flex-1">
                       <span className="text-xs text-muted-foreground">{dt.label}</span>
                     </div>
-                    <Badge variant="outline" className="text-[9px] text-muted-foreground">Not tracked</Badge>
+                    <Badge variant="outline" className="text-xs text-muted-foreground">Not tracked</Badge>
                   </div>
                 );
               }
@@ -129,7 +129,7 @@ export function DiversityDisclosureTracker({ companyId, companyName }: Props) {
                   <div className="flex-1 min-w-0">
                     <span className="text-xs font-medium text-foreground">{dt.label}</span>
                     {isDeclining && (
-                      <p className="text-[10px] text-[hsl(var(--civic-yellow))]">Previously published — now stopped</p>
+                      <p className="text-xs text-[hsl(var(--civic-yellow))]">Previously published — now stopped</p>
                     )}
                   </div>
                   <div className="flex items-center gap-1.5 shrink-0">
@@ -138,7 +138,7 @@ export function DiversityDisclosureTracker({ companyId, companyName }: Props) {
                         key={y.year}
                         title={`${y.year}: ${y.published ? "Published" : "Not published"}`}
                         className={cn(
-                          "w-5 h-5 rounded text-[8px] font-mono flex items-center justify-center border",
+                          "w-5 h-5 rounded text-xs font-mono flex items-center justify-center border",
                           y.published
                             ? "bg-[hsl(var(--civic-green))]/15 border-[hsl(var(--civic-green))]/30 text-[hsl(var(--civic-green))]"
                             : "bg-muted/50 border-border/40 text-muted-foreground"
@@ -154,7 +154,7 @@ export function DiversityDisclosureTracker({ companyId, companyName }: Props) {
           </div>
         )}
 
-        <p className="text-[10px] text-muted-foreground border-t border-border pt-2 mt-3">
+        <p className="text-xs text-muted-foreground border-t border-border pt-2 mt-3">
           Sources: Company websites, SEC filings, Open Diversity Data, ESG reports.
           Many companies have reduced diversity reporting since 2023 — declining transparency is tracked as a signal.
         </p>

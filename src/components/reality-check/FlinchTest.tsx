@@ -118,7 +118,7 @@ export function FlinchTest({ companyId, companyName }: FlinchTestProps) {
             The Flinch Test
           </CardTitle>
           {flinchCount > 0 && (
-            <Badge variant="warning" className="font-mono text-[10px]">
+            <Badge variant="warning" className="font-mono text-xs">
               {flinchCount} flinch{flinchCount !== 1 ? "es" : ""} detected
             </Badge>
           )}

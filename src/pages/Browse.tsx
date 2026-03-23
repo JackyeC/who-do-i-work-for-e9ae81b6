@@ -339,7 +339,7 @@ export default function Browse() {
                       </div>
                       <div className="mt-2.5 pt-2.5 border-t border-border/30 flex items-center justify-between">
                         <CivicFootprintBadge score={company.civicFootprintScore} size="sm" />
-                        <span className="text-[11px] text-muted-foreground tabular-nums">
+                        <span className="text-xs text-muted-foreground tabular-nums">
                           {company.totalPacSpending > 0 ? formatCurrency(company.totalPacSpending) : "No PAC"}
                         </span>
                       </div>

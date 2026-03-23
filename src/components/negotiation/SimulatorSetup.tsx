@@ -91,7 +91,7 @@ export function SimulatorSetup({ initialConfig, onStart }: Props) {
                 onClick={() => update("perspective", p.value)}
               >
                 <span className="font-medium">{p.label}</span>
-                <span className="text-[10px] opacity-70 font-normal">{p.desc}</span>
+                <span className="text-xs opacity-70 font-normal">{p.desc}</span>
               </Badge>
             ))}
           </div>

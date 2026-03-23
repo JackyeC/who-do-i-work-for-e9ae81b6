@@ -89,7 +89,7 @@ export function AlertPreferencesPanel({ watchId, companyName, currentPreferences
             }`}
           >
             <div className="font-medium">{cat.label}</div>
-            <div className="text-[10px] text-muted-foreground mt-0.5">{cat.desc}</div>
+            <div className="text-xs text-muted-foreground mt-0.5">{cat.desc}</div>
           </button>
         ))}
       </div>

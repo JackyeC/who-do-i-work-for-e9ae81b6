@@ -10,7 +10,7 @@ const OnePager = () => {
         <div className="grid grid-cols-[1fr_auto] items-start gap-8 pb-8 border-b-2 border-primary mb-8">
           <div>
             <div className="font-serif text-3xl font-bold text-primary mb-1">Who Do I Work For</div>
-            <div className="font-mono text-[9px] tracking-[0.2em] uppercase text-muted-foreground">
+            <div className="font-mono text-xs tracking-[0.2em] uppercase text-muted-foreground">
               Workforce Transparency Standard
             </div>
           </div>
@@ -18,7 +18,7 @@ const OnePager = () => {
             <div className="font-mono text-micro tracking-wider uppercase border border-primary/40 text-primary px-3 py-1 inline-block mb-1.5">
               Product Overview
             </div>
-            <div className="font-mono text-[9px] text-muted-foreground">March 2026</div>
+            <div className="font-mono text-xs text-muted-foreground">March 2026</div>
           </div>
         </div>
 
@@ -41,9 +41,9 @@ const OnePager = () => {
             { num: "04 — HR Intelligence", title: "Employer Promise Check", body: "HR professionals: audit your Employee Value Proposition against what the data actually shows. Close the gap between what you promise and what employees experience — before candidates surface it first.", tag: "For CHROs · Recruiters · HR Business Partners" },
           ].map(m => (
             <div key={m.num} className="bg-background p-5">
-              <div className="font-mono text-[9px] text-muted-foreground tracking-wider mb-2">{m.num}</div>
+              <div className="font-mono text-xs text-muted-foreground tracking-wider mb-2">{m.num}</div>
               <div className="font-serif text-base font-bold text-foreground mb-2">{m.title}</div>
-              <div className="text-[11px] text-muted-foreground leading-relaxed">{m.body}</div>
+              <div className="text-xs text-muted-foreground leading-relaxed">{m.body}</div>
               <div className="mt-3 font-mono text-micro tracking-wider uppercase text-primary border-l-2 border-primary pl-2">{m.tag}</div>
             </div>
           ))}
@@ -61,7 +61,7 @@ const OnePager = () => {
               <div className="font-serif text-sm font-bold mb-2">{a.title}</div>
               <div className="flex flex-col gap-1">
                 {a.items.map(item => (
-                  <div key={item} className="text-[10px] text-muted-foreground flex gap-1.5">
+                  <div key={item} className="text-xs text-muted-foreground flex gap-1.5">
                     <span className="text-primary shrink-0">—</span>{item}
                   </div>
                 ))}
@@ -76,7 +76,7 @@ const OnePager = () => {
           <div>
             <div className="font-serif text-base font-bold text-primary">Jackye Clayton</div>
             <div className="font-mono text-micro tracking-wider uppercase text-muted-foreground mb-1.5">Founder · Who Do I Work For?</div>
-            <div className="text-[11px] text-muted-foreground italic leading-relaxed">
+            <div className="text-xs text-muted-foreground italic leading-relaxed">
               "The question isn't just whether you want the job. It's whether you know exactly who you're going to work for. Every candidate deserves to walk into that negotiation armed with the same information the company already has about them."
             </div>
           </div>
@@ -97,10 +97,10 @@ const OnePager = () => {
               )}
               <div className="font-mono text-micro tracking-[0.18em] uppercase text-muted-foreground mb-1.5">{p.tier}</div>
               <div className="font-serif text-2xl font-bold text-foreground">{p.price}</div>
-              <div className="font-mono text-[9px] text-muted-foreground mb-3">{p.per}</div>
+              <div className="font-mono text-xs text-muted-foreground mb-3">{p.per}</div>
               <div className="flex flex-col gap-1">
                 {p.items.map(item => (
-                  <div key={item} className="text-[10px] text-muted-foreground flex gap-1.5">
+                  <div key={item} className="text-xs text-muted-foreground flex gap-1.5">
                     <span className="text-primary shrink-0">—</span>{item}
                   </div>
                 ))}
@@ -115,7 +115,7 @@ const OnePager = () => {
             <div className="font-mono text-micro tracking-[0.18em] uppercase text-muted-foreground mb-2">Verified Evidence Sources</div>
             <div className="flex flex-wrap gap-3">
               {trustSources.map(s => (
-                <span key={s} className="font-mono text-[9px] text-muted-foreground">{s}</span>
+                <span key={s} className="font-mono text-xs text-muted-foreground">{s}</span>
               ))}
             </div>
           </div>

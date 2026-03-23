@@ -89,7 +89,7 @@ export function AutoApplySettings() {
           <div className="flex items-center gap-2">
             <Badge
               variant={paused ? "secondary" : enabled ? "default" : "outline"}
-              className="text-[10px] font-medium"
+              className="text-xs font-medium"
             >
               {paused ? "Paused" : enabled ? "Active" : "Off"}
             </Badge>
@@ -150,7 +150,7 @@ export function AutoApplySettings() {
               <Zap className="w-3.5 h-3.5 text-primary" />
               Daily Limit
             </Label>
-            <p className="text-[11px] text-muted-foreground mt-0.5">Max applications per day</p>
+            <p className="text-xs text-muted-foreground mt-0.5">Max applications per day</p>
           </div>
           <Input
             type="number"
@@ -189,12 +189,12 @@ export function AutoApplySettings() {
                       { n: "4", t: "You review before anything is sent" },
                     ].map(s => (
                       <div key={s.n} className="flex items-start gap-2 p-2 rounded-md bg-muted/50 border border-border">
-                        <span className="w-4 h-4 rounded-full bg-primary/15 text-primary text-[10px] font-bold flex items-center justify-center shrink-0 mt-0.5">{s.n}</span>
+                        <span className="w-4 h-4 rounded-full bg-primary/15 text-primary text-xs font-bold flex items-center justify-center shrink-0 mt-0.5">{s.n}</span>
                         <span className="leading-relaxed">{s.t}</span>
                       </div>
                     ))}
                   </div>
-                  <p className="text-[11px] leading-relaxed p-2 bg-primary/5 rounded-md border border-primary/10">
+                  <p className="text-xs leading-relaxed p-2 bg-primary/5 rounded-md border border-primary/10">
                     <strong className="text-foreground">🔒 You stay in control.</strong> Nothing is submitted without you clicking "Apply."
                   </p>
                 </div>

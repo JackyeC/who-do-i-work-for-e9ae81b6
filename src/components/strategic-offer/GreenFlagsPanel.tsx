@@ -72,7 +72,7 @@ export function GreenFlagsPanel(props: Props) {
           <CardTitle className="text-base flex items-center gap-2">
             <Sparkles className="w-4 h-4 text-[hsl(var(--civic-green))]" />
             Green Flags
-            <Badge variant="outline" className="text-[10px] ml-auto text-[hsl(var(--civic-green))] border-[hsl(var(--civic-green))]/30 bg-[hsl(var(--civic-green))]/5">
+            <Badge variant="outline" className="text-xs ml-auto text-[hsl(var(--civic-green))] border-[hsl(var(--civic-green))]/30 bg-[hsl(var(--civic-green))]/5">
               {flags.length} detected
             </Badge>
           </CardTitle>

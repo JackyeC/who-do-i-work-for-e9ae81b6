@@ -149,14 +149,14 @@ export function ScanCoveragePanel({
                   <div className="flex items-center gap-2 p-2 rounded-md bg-primary/5 border border-primary/20">
                     <div className="w-2 h-2 rounded-full bg-primary" />
                     <span className="text-xs font-medium text-foreground">{resolutionLog.canonical_name}</span>
-                    <Badge variant="outline" className="text-[10px] ml-auto">Primary</Badge>
+                    <Badge variant="outline" className="text-xs ml-auto">Primary</Badge>
                   </div>
                   {/* Parent company */}
                   {resolutionLog.parent_company && (
                     <div className="flex items-center gap-2 p-2 rounded-md bg-muted/50 border border-border">
                       <div className="w-2 h-2 rounded-full bg-accent-foreground" />
                       <span className="text-xs text-foreground">{resolutionLog.parent_company}</span>
-                      <Badge variant="outline" className="text-[10px] ml-auto">Parent</Badge>
+                      <Badge variant="outline" className="text-xs ml-auto">Parent</Badge>
                     </div>
                   )}
                   {/* Related entities */}
@@ -170,14 +170,14 @@ export function ScanCoveragePanel({
                           rel.confidence >= 0.8 ? "bg-primary" : rel.confidence >= 0.5 ? "bg-accent-foreground" : "bg-muted-foreground"
                         )} />
                         <span className="text-xs text-foreground truncate">{rel.name}</span>
-                        <Badge variant="outline" className="text-[10px] ml-auto shrink-0">
+                        <Badge variant="outline" className="text-xs ml-auto shrink-0">
                           {RELATIONSHIP_LABELS[rel.type] || rel.type}
                         </Badge>
                       </div>
                     ))}
                 </div>
                 {relationships.filter(r => r.type === "legal_variant").length > 0 && (
-                  <p className="text-[11px] text-muted-foreground">
+                  <p className="text-xs text-muted-foreground">
                     + {relationships.filter(r => r.type === "legal_variant").length} legal name variants also checked
                   </p>
                 )}
@@ -209,21 +209,21 @@ export function ScanCoveragePanel({
                        </div>
                        <div className="flex items-center gap-2 shrink-0">
                          {hasCompleted && signalsFound > 0 && (
-                           <Badge variant="default" className="text-[10px] px-1.5 py-0">
+                           <Badge variant="default" className="text-xs px-1.5 py-0">
                              {signalsFound} match{signalsFound !== 1 ? "es" : ""}
                            </Badge>
                          )}
                          {hasCompleted && signalsFound === 0 && (
-                           <span className="text-[11px] text-muted-foreground">No records</span>
+                           <span className="text-xs text-muted-foreground">No records</span>
                          )}
                          {hasFailed && !hasCompleted && (
-                           <span className="text-[11px] text-destructive">Failed</span>
+                           <span className="text-xs text-destructive">Failed</span>
                          )}
                          {!hasCompleted && !hasFailed && (
-                           <span className="text-[11px] text-muted-foreground/50">Not checked</span>
+                           <span className="text-xs text-muted-foreground/50">Not checked</span>
                          )}
                          {latestTimestamp && (
-                           <span className="text-[10px] text-muted-foreground/70 ml-1 hidden sm:inline">
+                           <span className="text-xs text-muted-foreground/70 ml-1 hidden sm:inline">
                              {formatDistanceToNow(new Date(latestTimestamp), { addSuffix: true })}
                            </span>
                          )}

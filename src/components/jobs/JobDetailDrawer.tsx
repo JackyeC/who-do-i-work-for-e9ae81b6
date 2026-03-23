@@ -80,13 +80,13 @@ export function JobDetailDrawer({ job, companyValueSignals = [], companySignals 
           <div className="flex items-center gap-3">
             {matchScore != null && (
               <div className="flex flex-col items-center gap-1 p-3 rounded-xl bg-muted/50 flex-1">
-                <span className="text-[10px] uppercase tracking-wider text-muted-foreground font-semibold">Job Match</span>
+                <span className="text-xs uppercase tracking-wider text-muted-foreground font-semibold">Job Match</span>
                 <span className="text-2xl font-bold text-foreground">{matchScore}%</span>
                 <JobMatchBadge score={matchScore} size="md" />
               </div>
             )}
             <div className="flex flex-col items-center gap-1 p-3 rounded-xl bg-muted/50 flex-1">
-              <span className="text-[10px] uppercase tracking-wider text-muted-foreground font-semibold">Civic Score</span>
+              <span className="text-xs uppercase tracking-wider text-muted-foreground font-semibold">Civic Score</span>
               <CivicScoreCard score={company?.civic_footprint_score || 0} size="sm" showLabel={false} />
               <CivicScoreBadge score={company?.civic_footprint_score || 0} />
             </div>
@@ -107,7 +107,7 @@ export function JobDetailDrawer({ job, companyValueSignals = [], companySignals 
               <span className="flex items-center gap-1 text-civic-green font-medium"><DollarSign className="w-3.5 h-3.5" />{job.salary_range}</span>
             )}
             {job.salary_range && (
-              <Badge variant="success" className="text-[10px] gap-0.5">
+              <Badge variant="success" className="text-xs gap-0.5">
                 <DollarSign className="w-2.5 h-2.5" /> Pay Transparent
               </Badge>
             )}

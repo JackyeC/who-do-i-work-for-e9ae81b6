@@ -58,7 +58,7 @@ function QueueItemCard({
             <div className="flex-1 min-w-0">
               <div className="flex items-center gap-2 mb-1 flex-wrap">
                 <h4 className="font-medium text-foreground text-sm truncate">{item.job_title}</h4>
-                <span className={cn("inline-flex items-center gap-1 px-1.5 py-0.5 rounded-full text-[10px] font-medium border", config.color)}>
+                <span className={cn("inline-flex items-center gap-1 px-1.5 py-0.5 rounded-full text-xs font-medium border", config.color)}>
                   <Icon className={cn("w-2.5 h-2.5", item.status === "processing" && "animate-spin")} />
                   {config.label}
                 </span>
@@ -80,10 +80,10 @@ function QueueItemCard({
                 )}
               </div>
               {item.error_message && (
-                <p className="text-[11px] text-destructive mt-1.5 bg-destructive/5 rounded px-2 py-1">{item.error_message}</p>
+                <p className="text-xs text-destructive mt-1.5 bg-destructive/5 rounded px-2 py-1">{item.error_message}</p>
               )}
               {item.generated_payload?.matchingStatement && (
-                <div className="mt-2 bg-muted/40 border border-border/60 rounded p-2 text-[11px] text-foreground/70 line-clamp-2 leading-relaxed">
+                <div className="mt-2 bg-muted/40 border border-border/60 rounded p-2 text-xs text-foreground/70 line-clamp-2 leading-relaxed">
                   {item.generated_payload.matchingStatement}
                 </div>
               )}
@@ -200,7 +200,7 @@ export function ApplyQueueDashboard() {
               <strong className="text-foreground">{failedCount}</strong> failed
             </span>
           )}
-          <span className="text-[11px] ml-1 px-1.5 py-0.5 rounded bg-muted border border-border">
+          <span className="text-xs ml-1 px-1.5 py-0.5 rounded bg-muted border border-border">
             {todayCount}/{settings?.max_daily_applications || 5} today
           </span>
         </div>
@@ -225,11 +225,11 @@ export function ApplyQueueDashboard() {
       {queue.length > 0 && (
         <Tabs value={statusFilter} onValueChange={(v) => setStatusFilter(v as StatusFilter)}>
           <TabsList className="h-7 p-0.5">
-            <TabsTrigger value="all" className="text-[11px] px-2.5 h-6">All ({queue.length})</TabsTrigger>
-            <TabsTrigger value="queued" className="text-[11px] px-2.5 h-6">Queued ({queuedCount})</TabsTrigger>
-            <TabsTrigger value="completed" className="text-[11px] px-2.5 h-6">Done ({completedCount})</TabsTrigger>
+            <TabsTrigger value="all" className="text-xs px-2.5 h-6">All ({queue.length})</TabsTrigger>
+            <TabsTrigger value="queued" className="text-xs px-2.5 h-6">Queued ({queuedCount})</TabsTrigger>
+            <TabsTrigger value="completed" className="text-xs px-2.5 h-6">Done ({completedCount})</TabsTrigger>
             {failedCount > 0 && (
-              <TabsTrigger value="failed" className="text-[11px] px-2.5 h-6">Failed ({failedCount})</TabsTrigger>
+              <TabsTrigger value="failed" className="text-xs px-2.5 h-6">Failed ({failedCount})</TabsTrigger>
             )}
           </TabsList>
         </Tabs>

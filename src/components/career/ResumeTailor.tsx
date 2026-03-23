@@ -149,10 +149,10 @@ export function ResumeTailor() {
                   maxLength={15000}
                 />
                 <div className="flex justify-between mt-1">
-                  <p className="text-[10px] text-muted-foreground">
+                  <p className="text-xs text-muted-foreground">
                     {pastedJD.length > 0 && pastedJD.length < 50 ? "Paste at least 50 characters for a meaningful analysis" : ""}
                   </p>
-                  <p className="text-[10px] text-muted-foreground">{pastedJD.length.toLocaleString()} / 15,000</p>
+                  <p className="text-xs text-muted-foreground">{pastedJD.length.toLocaleString()} / 15,000</p>
                 </div>
               </TabsContent>
               <TabsContent value="select" className="mt-2">

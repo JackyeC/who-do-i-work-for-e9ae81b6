@@ -241,8 +241,8 @@ export default function IntelligenceReports() {
                     <CardContent>
                       <ResponsiveContainer width="100%" height={280}>
                         <BarChart data={analytics.issueChartData} layout="vertical" margin={{ left: 10, right: 20 }}>
-                          <XAxis type="number" tickFormatter={(v) => formatCurrency(v)} tick={{ fontSize: 10 }} />
-                          <YAxis type="category" dataKey="name" width={110} tick={{ fontSize: 10 }} />
+                          <XAxis type="number" tickFormatter={(v) => formatCurrency(v)} tick={{ fontSize: 12 }} />
+                          <YAxis type="category" dataKey="name" width={110} tick={{ fontSize: 12 }} />
                           <RechartsTooltip
                             formatter={(value: number) => [`$${value.toLocaleString()}`, "Amount"]}
                             contentStyle={{ fontSize: 12, borderRadius: 8, border: "1px solid hsl(var(--border))" }}
@@ -282,7 +282,7 @@ export default function IntelligenceReports() {
                                 </span>
                               </div>
                               <div className="flex items-center gap-3 shrink-0">
-                                <Badge variant="outline" className="text-[10px]">{company.count} signals</Badge>
+                                <Badge variant="outline" className="text-xs">{company.count} signals</Badge>
                                 {company.amount > 0 && (
                                   <span className="text-xs font-bold text-primary">{formatCurrency(company.amount)}</span>
                                 )}
@@ -309,7 +309,7 @@ export default function IntelligenceReports() {
                       {analytics.sourceData.map((src, i) => (
                         <div key={i} className="flex items-center gap-2 px-3 py-2 rounded-lg bg-muted/40 border border-border/30">
                           <span className="text-sm font-medium text-foreground">{src.name}</span>
-                          <Badge variant="secondary" className="text-[10px]">{src.value}</Badge>
+                          <Badge variant="secondary" className="text-xs">{src.value}</Badge>
                         </div>
                       ))}
                     </div>
@@ -355,9 +355,9 @@ export default function IntelligenceReports() {
                                 </div>
                                 <div className="flex-1 min-w-0">
                                   <div className="flex items-center gap-2 mb-1 flex-wrap">
-                                    <Badge variant="outline" className="text-[10px] capitalize">{s.issue_category?.replace(/_/g, " ")}</Badge>
-                                    <Badge variant="secondary" className="text-[10px]">{sourceInfo.label}</Badge>
-                                    <Badge variant={s.confidence_score === "high" ? "default" : "outline"} className="text-[10px]">
+                                    <Badge variant="outline" className="text-xs capitalize">{s.issue_category?.replace(/_/g, " ")}</Badge>
+                                    <Badge variant="secondary" className="text-xs">{sourceInfo.label}</Badge>
+                                    <Badge variant={s.confidence_score === "high" ? "default" : "outline"} className="text-xs">
                                       {s.confidence_score === "high" ? "Strong Evidence" : "Some Evidence"}
                                     </Badge>
                                   </div>

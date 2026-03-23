@@ -99,7 +99,7 @@ export function InfluenceROICard({ data }: { data: InfluenceROI }) {
           </p>
         </div>
 
-        <p className="text-[10px] text-muted-foreground mt-3 border-t border-border pt-3">
+        <p className="text-xs text-muted-foreground mt-3 border-t border-border pt-3">
           We add up government contracts, subsidies, and tax breaks, then compare that to what the company spent
           on campaign donations and lobbying. Sources: USASpending.gov, Good Jobs First, FEC.
         </p>

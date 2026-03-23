@@ -110,7 +110,7 @@ export function ManualSignalEntry({ companyId, companyName, onSignalAdded }: Man
             <X className="w-3.5 h-3.5" />
           </Button>
         </CardTitle>
-        <p className="text-[11px] text-muted-foreground">
+        <p className="text-xs text-muted-foreground">
           Add a signal from a verified public source. Include the source URL for transparency.
         </p>
       </CardHeader>

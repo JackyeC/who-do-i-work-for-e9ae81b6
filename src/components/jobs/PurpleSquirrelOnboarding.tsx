@@ -152,7 +152,7 @@ export function PurpleSquirrelOnboarding({ onComplete }: PurpleSquirrelOnboardin
     <div className="max-w-2xl mx-auto">
       {/* Header */}
       <div className="text-center mb-8">
-        <div className="font-mono text-[10px] tracking-[0.25em] uppercase text-primary mb-2">
+        <div className="font-mono text-xs tracking-[0.25em] uppercase text-primary mb-2">
           Mission Briefing
         </div>
         <h2 className="font-display text-2xl font-bold text-foreground mb-1">
@@ -233,7 +233,7 @@ export function PurpleSquirrelOnboarding({ onComplete }: PurpleSquirrelOnboardin
                         max={100}
                         step={5}
                       />
-                      <div className="flex justify-between text-[10px] text-muted-foreground">
+                      <div className="flex justify-between text-xs text-muted-foreground">
                         <span>{dial.low}</span>
                         <span>{dial.high}</span>
                       </div>
@@ -322,7 +322,7 @@ export function PurpleSquirrelOnboarding({ onComplete }: PurpleSquirrelOnboardin
                       onChange={e => setMinComp(e.target.value)}
                       className="text-sm max-w-xs"
                     />
-                    <p className="text-[11px] text-muted-foreground">
+                    <p className="text-xs text-muted-foreground">
                       Minimum annual compensation. We skip anything below this.
                     </p>
                   </div>
@@ -345,7 +345,7 @@ export function PurpleSquirrelOnboarding({ onComplete }: PurpleSquirrelOnboardin
                       max={100}
                       step={5}
                     />
-                    <p className="text-[11px] text-muted-foreground">
+                    <p className="text-xs text-muted-foreground">
                       Only fire on jobs with this level of values alignment or higher.
                     </p>
                   </div>
@@ -381,7 +381,7 @@ export function PurpleSquirrelOnboarding({ onComplete }: PurpleSquirrelOnboardin
                           <Upload className="w-3 h-3" />
                           Upload Resume
                         </Button>
-                        <p className="text-[11px] text-muted-foreground">
+                        <p className="text-xs text-muted-foreground">
                           You can also upload later from the Career Intelligence page.
                         </p>
                       </div>
@@ -393,7 +393,7 @@ export function PurpleSquirrelOnboarding({ onComplete }: PurpleSquirrelOnboardin
                       <Shield className="w-3 h-3 text-primary" />
                       Security Note
                     </h4>
-                    <p className="text-[11px] text-muted-foreground leading-relaxed">
+                    <p className="text-xs text-muted-foreground leading-relaxed">
                       Your documents are encrypted and stored securely. They are only used to generate tailored application materials. You can delete them at any time.
                     </p>
                   </div>
@@ -417,25 +417,25 @@ export function PurpleSquirrelOnboarding({ onComplete }: PurpleSquirrelOnboardin
                   {/* Summary */}
                   <div className="grid grid-cols-2 gap-3 text-left max-w-md mx-auto">
                     <div className="bg-muted/50 border border-border rounded-lg p-3">
-                      <div className="text-[10px] font-mono uppercase tracking-wider text-muted-foreground mb-1">Targets</div>
+                      <div className="text-xs font-mono uppercase tracking-wider text-muted-foreground mb-1">Targets</div>
                       <div className="text-sm font-medium text-foreground">
                         {targetTitles.length} title{targetTitles.length !== 1 ? "s" : ""}
                       </div>
                     </div>
                     <div className="bg-muted/50 border border-border rounded-lg p-3">
-                      <div className="text-[10px] font-mono uppercase tracking-wider text-muted-foreground mb-1">Companies</div>
+                      <div className="text-xs font-mono uppercase tracking-wider text-muted-foreground mb-1">Companies</div>
                       <div className="text-sm font-medium text-foreground">
                         {targetCompanies.length > 0 ? `${targetCompanies.length} tracked` : "All eligible"}
                       </div>
                     </div>
                     <div className="bg-muted/50 border border-border rounded-lg p-3">
-                      <div className="text-[10px] font-mono uppercase tracking-wider text-muted-foreground mb-1">Salary Floor</div>
+                      <div className="text-xs font-mono uppercase tracking-wider text-muted-foreground mb-1">Salary Floor</div>
                       <div className="text-sm font-medium text-foreground">
                         {minComp ? `$${Number(minComp).toLocaleString()}` : "No minimum"}
                       </div>
                     </div>
                     <div className="bg-muted/50 border border-border rounded-lg p-3">
-                      <div className="text-[10px] font-mono uppercase tracking-wider text-muted-foreground mb-1">Values Lock</div>
+                      <div className="text-xs font-mono uppercase tracking-wider text-muted-foreground mb-1">Values Lock</div>
                       <div className="text-sm font-medium text-primary">
                         {dnaLockThreshold}% minimum
                       </div>

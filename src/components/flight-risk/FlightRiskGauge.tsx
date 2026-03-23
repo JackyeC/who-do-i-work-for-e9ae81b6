@@ -29,7 +29,7 @@ export function FlightRiskGauge({ result }: { result: FRSResult }) {
     <div className={cn("rounded-lg border ring-1 p-6", style.bg, style.ring)}>
       <div className="flex items-start justify-between mb-4">
         <div>
-          <p className="text-[11px] font-semibold uppercase tracking-widest text-muted-foreground mb-1">
+          <p className="text-xs font-semibold uppercase tracking-widest text-muted-foreground mb-1">
             Flight Risk Score™
           </p>
           <div className="flex items-baseline gap-3">
@@ -61,7 +61,7 @@ export function FlightRiskGauge({ result }: { result: FRSResult }) {
           <div key={m} className="absolute top-0 h-full w-px bg-foreground/10" style={{ left: `${m}%` }} />
         ))}
       </div>
-      <div className="flex justify-between mt-1.5 text-[9px] text-muted-foreground font-medium">
+      <div className="flex justify-between mt-1.5 text-xs text-muted-foreground font-medium">
         <span>Burn & Replace</span>
         <span>High Churn</span>
         <span>Moderate</span>

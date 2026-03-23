@@ -92,7 +92,7 @@ export function MockInterviewSection() {
                   <span className="text-lg font-bold text-primary/30 font-mono shrink-0 w-6 text-right">{i + 1}</span>
                   <div className="flex-1">
                     <div className="flex items-center gap-2 mb-2">
-                      <Badge variant="secondary" className="text-[10px]">{q.category}</Badge>
+                      <Badge variant="secondary" className="text-xs">{q.category}</Badge>
                     </div>
                     <p className="text-sm font-medium text-foreground leading-relaxed">{q.question}</p>
                   </div>

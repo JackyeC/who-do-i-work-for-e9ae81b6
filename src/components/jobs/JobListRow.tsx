@@ -117,13 +117,13 @@ export function JobListRow({ job, companyValueSignals = [], companySignalFlags =
                 <span className="text-xs font-medium text-[hsl(var(--civic-green))] flex items-center gap-0.5">
                   <DollarSign className="w-3 h-3" />{job.salary_range}
                 </span>
-                <Badge variant="success" className="text-[10px] gap-0.5">
+                <Badge variant="success" className="text-xs gap-0.5">
                   <DollarSign className="w-2.5 h-2.5" /> Pay Transparent
                 </Badge>
               </>
             )}
             {job.source_platform && job.source_platform !== "custom" && (
-              <Badge variant="outline" className="text-[10px] bg-muted/50">
+              <Badge variant="outline" className="text-xs bg-muted/50">
                 via {SOURCE_LABELS[job.source_platform] || job.source_platform}
               </Badge>
             )}
@@ -136,7 +136,7 @@ export function JobListRow({ job, companyValueSignals = [], companySignalFlags =
                 <Badge
                   key={idx}
                   variant="outline"
-                  className={cn("text-[10px] gap-0.5", SIGNAL_LEVEL_STYLES[sig.level] || SIGNAL_LEVEL_STYLES.not_disclosed)}
+                  className={cn("text-xs gap-0.5", SIGNAL_LEVEL_STYLES[sig.level] || SIGNAL_LEVEL_STYLES.not_disclosed)}
                 >
                   {sig.statement}
                 </Badge>
@@ -159,7 +159,7 @@ export function JobListRow({ job, companyValueSignals = [], companySignalFlags =
                         <Badge
                           variant="outline"
                           className={cn(
-                            "text-[10px] gap-0.5",
+                            "text-xs gap-0.5",
                             !isCertified && "opacity-60 border-dashed"
                           )}
                         >
@@ -201,13 +201,13 @@ export function JobListRow({ job, companyValueSignals = [], companySignalFlags =
                 >
                   {civicScore}
                 </div>
-                <span className="text-[9px] text-muted-foreground">Civic Score</span>
+                <span className="text-xs text-muted-foreground">Civic Score</span>
               </Link>
             </TooltipTrigger>
             <TooltipContent side="left" className="max-w-[220px] text-xs leading-relaxed">
               <p className="font-semibold mb-1">Civic Footprint Score™ ({civicScore}/100)</p>
               <p className="text-muted-foreground">{getCivicScoreExplainer(civicScore)}</p>
-              <p className="text-primary mt-1 text-[10px]">Click to view full company profile →</p>
+              <p className="text-primary mt-1 text-xs">Click to view full company profile →</p>
             </TooltipContent>
           </Tooltip>
         </TooltipProvider>

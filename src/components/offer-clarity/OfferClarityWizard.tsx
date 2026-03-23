@@ -236,12 +236,12 @@ export function OfferClarityWizard() {
                   </div>
                 )}
                 {offerData.companyId && (
-                  <Badge variant="secondary" className="mt-2 text-[10px]">
+                  <Badge variant="secondary" className="mt-2 text-xs">
                     <CheckCircle2 className="w-3 h-3 mr-1" /> Matched — company signals will be included
                   </Badge>
                 )}
                 {!offerData.companyId && companyLookupStatus === true && (
-                  <Badge variant="success" className="mt-2 text-[10px]">
+                  <Badge variant="success" className="mt-2 text-xs">
                     <CheckCircle2 className="w-3 h-3 mr-1" /> Company found in database
                   </Badge>
                 )}
@@ -385,7 +385,7 @@ export function OfferClarityWizard() {
             </div>
             <div className="max-w-xs mx-auto space-y-2">
               <Progress value={scanning ? 65 : 100} className="h-2" />
-              <p className="text-[11px] text-muted-foreground">This typically takes 10–20 seconds</p>
+              <p className="text-xs text-muted-foreground">This typically takes 10–20 seconds</p>
             </div>
           </CardContent>
         </Card>

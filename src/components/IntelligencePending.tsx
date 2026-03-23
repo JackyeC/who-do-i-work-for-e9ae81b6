@@ -31,14 +31,14 @@ export function IntelligencePending({ category, className, checkedSources, lastC
           {hasContext && (
             <div className="flex items-center gap-1.5 min-w-0">
               <Search className="w-3 h-3 text-muted-foreground shrink-0" />
-              <span className="text-[10px] text-muted-foreground truncate">
+              <span className="text-xs text-muted-foreground truncate">
                 {checkedSources?.length ? `Checked: ${checkedSources.join(" · ")}` : ""}
                 {lastChecked && `${checkedSources?.length ? " · " : ""}Last scan: ${new Date(lastChecked).toLocaleDateString()}`}
               </span>
             </div>
           )}
           {suggestedAction && (
-            <span className="text-[10px] text-primary font-medium whitespace-nowrap flex items-center gap-1 shrink-0">
+            <span className="text-xs text-primary font-medium whitespace-nowrap flex items-center gap-1 shrink-0">
               <ExternalLink className="w-3 h-3" />
               {suggestedAction}
             </span>

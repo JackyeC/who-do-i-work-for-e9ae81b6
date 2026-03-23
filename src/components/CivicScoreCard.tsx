@@ -75,7 +75,7 @@ export function CivicScoreCard({ score, companyName, size = "md", showLabel = tr
       {showLabel && (
         <div className="flex flex-col">
           <span className={cn("text-xs font-semibold uppercase tracking-wider", colors.text)}>{label}</span>
-          <span className="text-[10px] text-muted-foreground">Employer Reality Score</span>
+          <span className="text-xs text-muted-foreground">Employer Reality Score</span>
         </div>
       )}
     </div>

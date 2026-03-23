@@ -32,7 +32,7 @@ export function CoverageBalanceChart({ sourceUrls, className }: CoverageBalanceC
         <CardTitle className="text-xs font-semibold uppercase tracking-wider text-muted-foreground flex items-center gap-2">
           Coverage Perspective Distribution
           {balance.narrativeRisk && (
-            <Badge variant="destructive" className="text-[9px] gap-1">
+            <Badge variant="destructive" className="text-xs gap-1">
               <AlertTriangle className="w-3 h-3" />
               Narrative Risk
             </Badge>
@@ -58,7 +58,7 @@ export function CoverageBalanceChart({ sourceUrls, className }: CoverageBalanceC
         </div>
 
         {/* Legend */}
-        <div className="flex flex-wrap gap-x-4 gap-y-1 text-[10px]">
+        <div className="flex flex-wrap gap-x-4 gap-y-1 text-xs">
           {leans.map((lean) => {
             const count = balance[lean];
             if (count === 0) return null;
@@ -79,12 +79,12 @@ export function CoverageBalanceChart({ sourceUrls, className }: CoverageBalanceC
         </div>
 
         {balance.narrativeRisk && (
-          <p className="text-[10px] text-destructive">
+          <p className="text-xs text-destructive">
             ⚠ Over 80% of coverage originates from one political perspective. Independent reporting may be limited.
           </p>
         )}
 
-        <p className="text-[10px] text-muted-foreground">
+        <p className="text-xs text-muted-foreground">
           {balance.total} articles analyzed · Perspective ratings from AllSides, Ad Fontes Media, and Media Bias Fact Check
         </p>
       </CardContent>

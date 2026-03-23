@@ -148,7 +148,7 @@ export function RecruitingHealthCard({ companyId, companyName }: Props) {
             <Headphones className="w-4 h-4 text-primary" />
             Recruiting Infrastructure Health
           </CardTitle>
-          <Badge variant="outline" className={cn("text-[10px]", overallColor)}>
+          <Badge variant="outline" className={cn("text-xs", overallColor)}>
             {overallHealth}
           </Badge>
         </div>
@@ -173,12 +173,12 @@ export function RecruitingHealthCard({ companyId, companyName }: Props) {
                 <span className="text-xs font-medium text-foreground">{signal.label}</span>
                 <span className={cn("text-xs font-bold", STATUS_COLOR[signal.status])}>{signal.value}</span>
               </div>
-              <p className="text-[11px] text-muted-foreground mt-0.5">{signal.detail}</p>
+              <p className="text-xs text-muted-foreground mt-0.5">{signal.detail}</p>
             </div>
           </div>
         ))}
 
-        <p className="text-[10px] text-muted-foreground border-t border-border pt-2 mt-3">
+        <p className="text-xs text-muted-foreground border-t border-border pt-2 mt-3">
           Recruiting team instability correlates with longer hiring cycles, candidate ghosting, and poor onboarding.
           Sources: Job postings, leadership records, career pages.
         </p>

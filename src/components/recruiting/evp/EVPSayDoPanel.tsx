@@ -46,7 +46,7 @@ export function EVPSayDoPanel({ items }: { items: SayDoItem[] }) {
                 <Icon className={`w-4 h-4 shrink-0 mt-0.5 ${item.gap === "major" ? "text-destructive" : item.gap === "minor" ? "text-[hsl(var(--civic-yellow))]" : "text-[hsl(var(--civic-green))]"}`} />
                 <div className="flex-1 min-w-0 space-y-1.5">
                   <div className="flex items-center gap-2">
-                    <Badge className={`text-[10px] ${config.color}`}>{config.label}</Badge>
+                    <Badge className={`text-xs ${config.color}`}>{config.label}</Badge>
                   </div>
                   <p className="text-xs text-muted-foreground">
                     <strong className="text-foreground">What they say:</strong> "{item.whatTheySay}"
@@ -55,7 +55,7 @@ export function EVPSayDoPanel({ items }: { items: SayDoItem[] }) {
                     <strong className="text-foreground">What records show:</strong> {item.whatRecordsShow}
                   </p>
                   {item.source && (
-                    <p className="text-[10px] text-muted-foreground/70 italic">{item.source}</p>
+                    <p className="text-xs text-muted-foreground/70 italic">{item.source}</p>
                   )}
                 </div>
               </div>

@@ -44,7 +44,7 @@ export function SearchIntelligencePanel() {
             {topSearched.map((co, i) => (
               <div key={i} className="flex items-center justify-between text-sm p-2 rounded-lg bg-muted/20">
                 <span className="text-foreground font-medium truncate max-w-[160px]">{co.name}</span>
-                <Badge variant="outline" className="text-[9px] font-mono">{co.civic_footprint_score}</Badge>
+                <Badge variant="outline" className="text-xs font-mono">{co.civic_footprint_score}</Badge>
               </div>
             ))}
           </div>
@@ -61,7 +61,7 @@ export function SearchIntelligencePanel() {
               {gapCompanies.map((co, i) => (
                 <div key={i} className="flex items-center justify-between text-sm p-2 rounded-lg bg-destructive/5 border border-destructive/10">
                   <span className="text-foreground font-medium truncate max-w-[160px]">{co.name}</span>
-                  <span className="text-[10px] text-muted-foreground">{co.industry}</span>
+                  <span className="text-xs text-muted-foreground">{co.industry}</span>
                 </div>
               ))}
             </div>

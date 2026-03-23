@@ -114,7 +114,7 @@ export default function EarlyAccess() {
             >
               WORK FOR?
             </p>
-            <p className="text-white/40 text-[10px] tracking-[0.15em] uppercase mt-0.5">
+            <p className="text-white/40 text-xs tracking-[0.15em] uppercase mt-0.5">
               Career Intelligence
             </p>
           </div>
@@ -123,7 +123,7 @@ export default function EarlyAccess() {
         {!submitted ? (
           <>
             {/* Eyebrow */}
-            <span className="inline-block mb-6 px-4 py-1.5 rounded-full text-[11px] font-semibold uppercase tracking-[2.5px] border"
+            <span className="inline-block mb-6 px-4 py-1.5 rounded-full text-xs font-semibold uppercase tracking-[2.5px] border"
               style={{
                 background: "rgba(240,192,64,0.10)",
                 borderColor: "rgba(240,192,64,0.28)",
@@ -148,7 +148,7 @@ export default function EarlyAccess() {
               <span style={{ color: "#F0C040" }}>Before you sign.</span>
             </h1>
 
-            <p className="text-center max-w-[520px] mb-10" style={{ fontSize: "clamp(15px, 2vw, 18px)", color: "#b8b4a8", lineHeight: 1.65 }}>
+            <p className="text-center max-w-[520px] mb-10" style={{ fontSize: "clamp(15px, 2vw, 18px)", color: "hsl(var(--muted-foreground))", lineHeight: 1.65 }}>
               Research any employer using public records — FEC filings, SEC reports,
               WARN notices, OSHA violations — all in one audit. Built by a recruiter,
               for everyone who's ever taken a job that looked great on paper.
@@ -165,7 +165,7 @@ export default function EarlyAccess() {
                   <p className="text-2xl sm:text-3xl font-extrabold text-white tracking-tight" style={{ fontFamily: "'DM Mono', monospace" }}>
                     {n}
                   </p>
-                  <p className="text-[11px] uppercase tracking-[1.5px] text-white/35 font-medium mt-0.5">
+                  <p className="text-xs uppercase tracking-[1.5px] text-white/35 font-medium mt-0.5">
                     {l}
                   </p>
                 </div>
@@ -211,7 +211,7 @@ export default function EarlyAccess() {
               </button>
             </form>
 
-            <p className="mt-4 text-[11px] text-white/20 text-center">
+            <p className="mt-4 text-xs text-white/20 text-center">
               No spam. Access notification only. Built by Jackye Clayton.
             </p>
           </>

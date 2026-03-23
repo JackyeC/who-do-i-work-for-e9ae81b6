@@ -96,7 +96,7 @@ export function SignupModal({
 
         <div className="flex items-center gap-3 mb-4">
           <div className="flex-1 h-px bg-border" />
-          <span className="font-mono text-[10px] tracking-widest uppercase text-muted-foreground">or</span>
+          <span className="font-mono text-xs tracking-widest uppercase text-muted-foreground">or</span>
           <div className="flex-1 h-px bg-border" />
         </div>
 

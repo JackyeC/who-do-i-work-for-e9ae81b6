@@ -167,7 +167,7 @@ export function DreamJobAlerts() {
                   {reasons.length > 0 && (
                     <div className="flex flex-wrap gap-1 mt-2">
                       {reasons.map((reason, idx) => (
-                        <Badge key={idx} variant="outline" className="text-[10px] bg-primary/5 border-primary/20 gap-0.5">
+                        <Badge key={idx} variant="outline" className="text-xs bg-primary/5 border-primary/20 gap-0.5">
                           <Sparkles className="w-2.5 h-2.5" /> {reason}
                         </Badge>
                       ))}

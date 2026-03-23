@@ -148,7 +148,7 @@ export function FlightRiskGraph({
         maxZoom={4}
       />
       {/* Legend */}
-      <div className="flex items-center justify-center gap-6 py-2 border-t border-border bg-muted/30 text-[10px]">
+      <div className="flex items-center justify-center gap-6 py-2 border-t border-border bg-muted/30 text-xs">
         <div className="flex items-center gap-1.5">
           <div className="w-3 h-3 rounded-full" style={{ backgroundColor: NODE_COLORS.center }} />
           <span className="text-foreground font-medium">{companyName}</span>

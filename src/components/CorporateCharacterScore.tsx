@@ -227,7 +227,7 @@ function CategoryRow({ category }: { category: CategoryScore }) {
         <div className="flex items-center gap-2">
           <Icon className="w-3.5 h-3.5 text-muted-foreground" />
           <span className="font-medium text-foreground">{category.label}</span>
-          <Badge variant="outline" className="text-[10px] px-1.5 py-0">
+          <Badge variant="outline" className="text-xs px-1.5 py-0">
             {Math.round(category.weight * 100)}%
           </Badge>
         </div>
@@ -256,7 +256,7 @@ function CategoryRow({ category }: { category: CategoryScore }) {
       {/* Signals */}
       <div className="flex flex-wrap gap-1 mt-0.5">
         {category.signals.map((s, i) => (
-          <span key={i} className={cn("text-[10px]", s.startsWith("⚠") ? "text-destructive" : "text-muted-foreground")}>
+          <span key={i} className={cn("text-xs", s.startsWith("⚠") ? "text-destructive" : "text-muted-foreground")}>
             {i > 0 && "·"} {s}
           </span>
         ))}
@@ -270,13 +270,13 @@ function CategoryRow({ category }: { category: CategoryScore }) {
           exit={{ opacity: 0, height: 0 }}
           className="pt-2 pb-1 space-y-1.5"
         >
-          <p className="text-[10px] font-semibold text-muted-foreground uppercase tracking-wider">Evidence Sources</p>
+          <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">Evidence Sources</p>
           <div className="flex flex-wrap gap-1.5">
             {category.evidence.map((e, i) => (
               <Badge
                 key={i}
                 variant="outline"
-                className={cn("text-[10px] gap-1", getEvidenceBadgeStyle(e.type))}
+                className={cn("text-xs gap-1", getEvidenceBadgeStyle(e.type))}
               >
                 <ExternalLink className="w-2.5 h-2.5" />
                 {e.label}
@@ -352,7 +352,7 @@ export function CorporateCharacterScore(props: CorporateCharacterScoreProps) {
             Corporate Character Score™
           </div>
           {totalScore < 40 && (
-            <Badge variant="destructive" className="animate-pulse font-mono text-[10px] tracking-wider">
+            <Badge variant="destructive" className="animate-pulse font-mono text-xs tracking-wider">
               CAUTION
             </Badge>
           )}
@@ -380,7 +380,7 @@ export function CorporateCharacterScore(props: CorporateCharacterScoreProps) {
               <span className={cn("text-2xl font-black tabular-nums font-display", getScoreColor(totalScore))}>
                 {totalScore}
               </span>
-              <span className="text-[9px] text-muted-foreground">/100</span>
+              <span className="text-xs text-muted-foreground">/100</span>
             </div>
           </div>
           <div className="flex-1 min-w-0">

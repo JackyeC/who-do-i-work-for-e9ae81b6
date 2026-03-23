@@ -67,13 +67,13 @@ export function EvidenceCard({
           <div className="min-w-0">
             <p className="text-sm font-medium text-foreground leading-tight truncate">{sourceTitle}</p>
             <div className="flex items-center gap-2 mt-0.5 flex-wrap">
-              <span className="font-mono text-[10px] text-muted-foreground uppercase tracking-wider">
+              <span className="font-mono text-xs text-muted-foreground uppercase tracking-wider">
                 {sourceType.replace(/_/g, " ")}
               </span>
               {documentDate && (
                 <>
                   <span className="text-muted-foreground/40">·</span>
-                  <span className="font-mono text-[10px] text-muted-foreground">
+                  <span className="font-mono text-xs text-muted-foreground">
                     {new Date(documentDate).toLocaleDateString("en-US", { year: "numeric", month: "short" })}
                   </span>
                 </>
@@ -86,16 +86,16 @@ export function EvidenceCard({
 
       {/* Tags */}
       <div className="flex items-center gap-1.5 mb-3 flex-wrap">
-        <Badge variant="outline" className="text-[10px] font-mono tracking-wider">
+        <Badge variant="outline" className="text-xs font-mono tracking-wider">
           {relLabel}
         </Badge>
         {personLinked && (
-          <Badge variant="secondary" className="text-[10px] font-mono tracking-wider">
+          <Badge variant="secondary" className="text-xs font-mono tracking-wider">
             {personLinked}
           </Badge>
         )}
         {riskTier && riskTier !== "informational" && (
-          <Badge variant="outline" className="text-[10px] font-mono tracking-wider border-primary/25 text-primary">
+          <Badge variant="outline" className="text-xs font-mono tracking-wider border-primary/25 text-primary">
             {riskTier}
           </Badge>
         )}

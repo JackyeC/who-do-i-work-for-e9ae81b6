@@ -48,15 +48,15 @@ export function TransparencyGhosting(props: TransparencyGhostingProps) {
     <div className="space-y-3">
       <div className="flex items-center gap-2">
         <Eye className="w-4 h-4 text-muted-foreground" />
-        <span className="font-mono text-[9px] tracking-[0.2em] uppercase text-muted-foreground font-semibold">
+        <span className="font-mono text-xs tracking-[0.2em] uppercase text-muted-foreground font-semibold">
           Transparency Gaps — They're Not Showing You This
         </span>
-        <span className="font-mono text-[10px] text-destructive/80 ml-auto">
+        <span className="font-mono text-xs text-destructive/80 ml-auto">
           {gaps.length} signal{gaps.length !== 1 ? "s" : ""} ghosted
         </span>
       </div>
 
-      <p className="text-[11px] text-muted-foreground leading-relaxed">
+      <p className="text-xs text-muted-foreground leading-relaxed">
         Data Not Disclosed: This employer has not made this information public. Omission is a signal — these are open questions, not negative findings.
       </p>
 
@@ -85,7 +85,7 @@ export function TransparencyGhosting(props: TransparencyGhostingProps) {
                          <div className="h-1.5 w-8 rounded-full shimmer-skeleton" style={{ animationDelay: "0.6s" }} />
                        </div>
                      </div>
-                     <span className="font-mono text-[8px] uppercase tracking-wider text-muted-foreground/30 shrink-0 relative">
+                     <span className="font-mono text-xs uppercase tracking-wider text-muted-foreground/30 shrink-0 relative">
                        {gap.category}
                      </span>
                    </div>

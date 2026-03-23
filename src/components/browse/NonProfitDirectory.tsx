@@ -151,7 +151,7 @@ export function NonProfitDirectory() {
                         <h3 className="text-sm font-semibold text-foreground truncate">
                           {org.name}
                         </h3>
-                        <Badge variant="outline" className="text-[10px] mt-1 capitalize">
+                        <Badge variant="outline" className="text-xs mt-1 capitalize">
                           {typeLabel(org.entity_type)}
                         </Badge>
                         {org.description && (

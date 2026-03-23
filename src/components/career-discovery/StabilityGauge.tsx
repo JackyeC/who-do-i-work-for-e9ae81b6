@@ -39,8 +39,8 @@ export function StabilityGauge({ score, label, size = "md" }: Props) {
           <span className={cn("font-bold text-foreground", size === "sm" ? "text-base" : "text-2xl")}>{score}</span>
         </div>
       </div>
-      <p className={cn("font-medium", size === "sm" ? "text-[10px]" : "text-xs", config.ring)}>{config.label}</p>
-      {label && <p className="text-[10px] text-muted-foreground text-center max-w-[120px]">{label}</p>}
+      <p className={cn("font-medium", size === "sm" ? "text-xs" : "text-xs", config.ring)}>{config.label}</p>
+      {label && <p className="text-xs text-muted-foreground text-center max-w-[120px]">{label}</p>}
     </div>
   );
 }

@@ -106,37 +106,37 @@ export function SignalMeta({
             confidence={verification.confidence_level}
           />
         ) : (
-          <span className="text-[10px] font-semibold text-muted-foreground">Algorithm Signal</span>
+          <span className="text-xs font-semibold text-muted-foreground">Algorithm Signal</span>
         )}
 
         {/* Detection source */}
-        <span className="text-[10px] text-muted-foreground flex items-center gap-1">
+        <span className="text-xs text-muted-foreground flex items-center gap-1">
           <Search className="w-2.5 h-2.5" />
           Detected via: {sourceLabel}
         </span>
 
         {/* Confidence */}
         {conf && (
-          <Badge variant="outline" className={cn("text-[10px] shrink-0", conf.className)}>
+          <Badge variant="outline" className={cn("text-xs shrink-0", conf.className)}>
             {conf.label} confidence
           </Badge>
         )}
 
         {/* Dates */}
         {detectedAt && (
-          <span className="text-[10px] text-muted-foreground flex items-center gap-0.5">
+          <span className="text-xs text-muted-foreground flex items-center gap-0.5">
             <Clock className="w-2.5 h-2.5" />
             Detected: {new Date(detectedAt).toLocaleDateString()}
           </span>
         )}
         {lastVerifiedAt && (
-          <span className="text-[10px] text-muted-foreground flex items-center gap-0.5">
+          <span className="text-xs text-muted-foreground flex items-center gap-0.5">
             <CheckCircle2 className="w-2.5 h-2.5" />
             Verified: {new Date(lastVerifiedAt).toLocaleDateString()}
           </span>
         )}
         {isStale && (
-          <span className="text-[10px] text-muted-foreground/70 italic">
+          <span className="text-xs text-muted-foreground/70 italic">
             Signal not recently verified.
           </span>
         )}
@@ -147,7 +147,7 @@ export function SignalMeta({
             href={sourceUrl}
             target="_blank"
             rel="noopener noreferrer"
-            className="text-[10px] text-primary hover:underline inline-flex items-center gap-0.5"
+            className="text-xs text-primary hover:underline inline-flex items-center gap-0.5"
           >
             View evidence <ExternalLink className="w-2.5 h-2.5" />
           </a>
@@ -184,7 +184,7 @@ interface SignalDensityProps {
  */
 export function SignalDensity({ sourcesScanned, signalsDetected, categories }: SignalDensityProps) {
   return (
-    <div className="flex flex-wrap items-center gap-2 text-[10px] text-muted-foreground p-2 rounded-md bg-muted/30 border border-border">
+    <div className="flex flex-wrap items-center gap-2 text-xs text-muted-foreground p-2 rounded-md bg-muted/30 border border-border">
       {sourcesScanned != null && (
         <span>Sources scanned: <strong className="text-foreground">{sourcesScanned}</strong></span>
       )}
@@ -194,7 +194,7 @@ export function SignalDensity({ sourcesScanned, signalsDetected, categories }: S
       {categories && categories.length > 0 && (
         <div className="flex flex-wrap gap-1 ml-1">
           {categories.map((cat) => (
-            <Badge key={cat} variant="outline" className="text-[10px]">{cat}</Badge>
+            <Badge key={cat} variant="outline" className="text-xs">{cat}</Badge>
           ))}
         </div>
       )}

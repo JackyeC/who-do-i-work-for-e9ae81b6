@@ -132,7 +132,7 @@ export default function OfferReview() {
         <div className="flex items-center gap-2 mb-2">
           <ShieldCheck className="w-6 h-6 text-primary" />
           <h1 className="text-2xl font-bold text-foreground">Private Offer Review</h1>
-          <Badge variant="outline" className="text-[10px]">Private</Badge>
+          <Badge variant="outline" className="text-xs">Private</Badge>
         </div>
         <p className="text-sm text-muted-foreground mb-6">
           You got an offer from {company.name}? Congratulations — now let's make sure it's as good as it looks. Keep the receipts.

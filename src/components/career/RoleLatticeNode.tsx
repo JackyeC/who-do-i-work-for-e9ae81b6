@@ -57,10 +57,10 @@ export function RoleLatticeNode({
       <div className="border border-border rounded-xl p-4 bg-card hover:shadow-sm transition-shadow">
         {/* Move type badge */}
         <div className="flex items-center justify-between mb-2">
-          <span className="text-[10px] uppercase tracking-wider text-muted-foreground flex items-center gap-1">
+          <span className="text-xs uppercase tracking-wider text-muted-foreground flex items-center gap-1">
             <MoveIcon className="w-3 h-3" /> {moveType} Move
           </span>
-          <Badge variant="outline" className="text-[10px] capitalize">{status}</Badge>
+          <Badge variant="outline" className="text-xs capitalize">{status}</Badge>
         </div>
 
         {/* Role title */}
@@ -78,7 +78,7 @@ export function RoleLatticeNode({
         {/* Values Alignment */}
         <div className="flex items-center gap-2 mb-2">
           <span className="text-xs text-muted-foreground">Values:</span>
-          <Badge variant={valuesVariant} className="text-[10px]">{valuesLabel}</Badge>
+          <Badge variant={valuesVariant} className="text-xs">{valuesLabel}</Badge>
         </div>
 
         {/* Estimated timeline */}
@@ -87,7 +87,7 @@ export function RoleLatticeNode({
             <Clock className="w-3 h-3" />
             ~{gapAnalysis.estimated_months} months
             {gapAnalysis?.difficulty && (
-              <span className="ml-auto text-[10px] opacity-70">Difficulty: {gapAnalysis.difficulty}/10</span>
+              <span className="ml-auto text-xs opacity-70">Difficulty: {gapAnalysis.difficulty}/10</span>
             )}
           </div>
         )}
@@ -102,10 +102,10 @@ export function RoleLatticeNode({
           {/* Missing skills */}
           {missingSkills.length > 0 && (
             <div>
-              <p className="text-[10px] uppercase tracking-wider text-muted-foreground mb-1">Missing Skills</p>
+              <p className="text-xs uppercase tracking-wider text-muted-foreground mb-1">Missing Skills</p>
               <div className="flex flex-wrap gap-1">
                 {missingSkills.map((s, i) => (
-                  <span key={i} className="text-[10px] bg-[hsl(var(--civic-red))]/10 text-[hsl(var(--civic-red))] rounded px-1.5 py-0.5 flex items-center gap-0.5">
+                  <span key={i} className="text-xs bg-[hsl(var(--civic-red))]/10 text-[hsl(var(--civic-red))] rounded px-1.5 py-0.5 flex items-center gap-0.5">
                     <AlertCircle className="w-2.5 h-2.5" /> {s}
                   </span>
                 ))}
@@ -116,10 +116,10 @@ export function RoleLatticeNode({
           {/* Completed skills */}
           {completedSkills.length > 0 && (
             <div>
-              <p className="text-[10px] uppercase tracking-wider text-muted-foreground mb-1">Your Matching Skills</p>
+              <p className="text-xs uppercase tracking-wider text-muted-foreground mb-1">Your Matching Skills</p>
               <div className="flex flex-wrap gap-1">
                 {completedSkills.slice(0, 6).map((s, i) => (
-                  <span key={i} className="text-[10px] bg-[hsl(var(--civic-green))]/10 text-[hsl(var(--civic-green))] rounded px-1.5 py-0.5 flex items-center gap-0.5">
+                  <span key={i} className="text-xs bg-[hsl(var(--civic-green))]/10 text-[hsl(var(--civic-green))] rounded px-1.5 py-0.5 flex items-center gap-0.5">
                     <CheckCircle2 className="w-2.5 h-2.5" /> {s}
                   </span>
                 ))}
@@ -130,7 +130,7 @@ export function RoleLatticeNode({
           {/* Suggested actions */}
           {gapAnalysis?.suggested_next && (
             <div>
-              <p className="text-[10px] uppercase tracking-wider text-muted-foreground mb-1">Recommended Next Steps</p>
+              <p className="text-xs uppercase tracking-wider text-muted-foreground mb-1">Recommended Next Steps</p>
               <ul className="space-y-1">
                 {(gapAnalysis.suggested_next as string[]).map((step: string, i: number) => (
                   <li key={i} className="text-xs text-muted-foreground flex items-start gap-1.5">

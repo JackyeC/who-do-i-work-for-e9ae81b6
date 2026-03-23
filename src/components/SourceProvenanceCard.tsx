@@ -58,8 +58,8 @@ export function SourceProvenanceCard({
 
   if (compact) {
     return (
-      <span className={cn("inline-flex items-center gap-1.5 text-[10px]", className)}>
-        <Badge variant="outline" className={cn("text-[9px] px-1.5 py-0 font-mono", TIER_COLORS[tier])}>
+      <span className={cn("inline-flex items-center gap-1.5 text-xs", className)}>
+        <Badge variant="outline" className={cn("text-xs px-1.5 py-0 font-mono", TIER_COLORS[tier])}>
           T{tier}
         </Badge>
         <span className="text-muted-foreground">{sourceName}</span>
@@ -79,7 +79,7 @@ export function SourceProvenanceCard({
         className="w-full flex items-center justify-between gap-3 p-3 text-left hover:bg-muted/30 transition-colors rounded-lg"
       >
         <div className="flex items-center gap-2 min-w-0">
-          <Badge variant="outline" className={cn("text-[9px] px-1.5 py-0 font-mono shrink-0", TIER_COLORS[tier])}>
+          <Badge variant="outline" className={cn("text-xs px-1.5 py-0 font-mono shrink-0", TIER_COLORS[tier])}>
             {TIER_LABELS[tier]}
           </Badge>
           <span className="font-medium text-foreground truncate">{sourceName}</span>

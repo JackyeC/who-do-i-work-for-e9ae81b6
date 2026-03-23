@@ -79,7 +79,7 @@ export function NarrativePowerScore(props: NarrativePowerScoreProps) {
               <Radio className="w-4 h-4 text-primary" />
             </div>
             <div>
-              <p className="font-mono text-[10px] uppercase tracking-wider text-muted-foreground">Narrative Power Score</p>
+              <p className="font-mono text-xs uppercase tracking-wider text-muted-foreground">Narrative Power Score</p>
               <p className={cn("text-lg font-bold", config.className)}>{config.label}</p>
             </div>
           </div>
@@ -110,19 +110,19 @@ export function NarrativePowerScore(props: NarrativePowerScoreProps) {
         <div className="grid grid-cols-4 gap-3 mt-4 pt-4 border-t border-border">
           <div>
             <p className="font-mono text-lg font-bold text-foreground">{props.signalCount}</p>
-            <p className="font-mono text-[9px] uppercase tracking-wider text-muted-foreground">Signals</p>
+            <p className="font-mono text-xs uppercase tracking-wider text-muted-foreground">Signals</p>
           </div>
           <div>
             <p className="font-mono text-lg font-bold text-foreground">{props.verifiedCount}</p>
-            <p className="font-mono text-[9px] uppercase tracking-wider text-muted-foreground">Verified</p>
+            <p className="font-mono text-xs uppercase tracking-wider text-muted-foreground">Verified</p>
           </div>
           <div>
             <p className="font-mono text-lg font-bold text-foreground">{props.intermediaryCount}</p>
-            <p className="font-mono text-[9px] uppercase tracking-wider text-muted-foreground">Intermediaries</p>
+            <p className="font-mono text-xs uppercase tracking-wider text-muted-foreground">Intermediaries</p>
           </div>
           <div>
             <p className="font-mono text-lg font-bold text-foreground">{props.uniqueActorTypes}</p>
-            <p className="font-mono text-[9px] uppercase tracking-wider text-muted-foreground">Actor Types</p>
+            <p className="font-mono text-xs uppercase tracking-wider text-muted-foreground">Actor Types</p>
           </div>
         </div>
       </div>

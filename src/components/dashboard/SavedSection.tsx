@@ -78,15 +78,15 @@ export function SavedSection() {
               <MapPin className="w-3 h-3" />{job.location} · {job.type} · {job.salary}
             </div>
             <div className="flex items-center justify-between">
-              <Badge variant="outline" className={cn("text-[10px] font-mono", getScoreColor(job.integrityLevel))}>
+              <Badge variant="outline" className={cn("text-xs font-mono", getScoreColor(job.integrityLevel))}>
                 {job.integrityScore} Integrity
               </Badge>
               <span className={cn("text-sm font-bold font-mono", getAlignmentColor(job.alignmentPct))}>
-                {job.alignmentPct}% <span className="text-[10px] font-normal">aligned</span>
+                {job.alignmentPct}% <span className="text-xs font-normal">aligned</span>
               </span>
             </div>
             <div className="flex gap-1.5 flex-wrap">
-              {job.skills.map((s) => <Badge key={s} variant="secondary" className="text-[10px] bg-muted/50 font-normal">{s}</Badge>)}
+              {job.skills.map((s) => <Badge key={s} variant="secondary" className="text-xs bg-muted/50 font-normal">{s}</Badge>)}
             </div>
             <Button variant="outline" size="sm" className="w-full text-xs" onClick={() => toast.info("Dossier generation coming soon")}>
               <FileText className="w-3.5 h-3.5 mr-1.5" /> Ready to Apply?

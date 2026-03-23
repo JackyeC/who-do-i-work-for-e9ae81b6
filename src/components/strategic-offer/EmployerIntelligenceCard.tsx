@@ -269,10 +269,10 @@ export function EmployerIntelligenceCard({ companyId, companyName }: Props) {
                     {s.gap || "Aligned"}
                   </Badge>
                 </div>
-                <p className="text-[11px] text-muted-foreground">
+                <p className="text-xs text-muted-foreground">
                   <span className="font-medium">Says:</span> {s.public_position}
                 </p>
-                <p className="text-[11px] text-muted-foreground">
+                <p className="text-xs text-muted-foreground">
                   <span className="font-medium">Funds:</span> {s.spending_reality}
                 </p>
               </div>
@@ -315,7 +315,7 @@ export function EmployerIntelligenceCard({ companyId, companyName }: Props) {
             <Info className="w-4 h-4 text-civic-yellow shrink-0" />
             <p className="text-xs font-semibold text-foreground">Things to Consider</p>
           </div>
-          <ul className="text-[11px] text-muted-foreground space-y-1.5 ml-6 list-disc">
+          <ul className="text-xs text-muted-foreground space-y-1.5 ml-6 list-disc">
             {totalPolitical > 0 && (
               <li>Your employer spends <span className="font-medium text-foreground">{formatCurrency(totalPolitical)}</span> on political influence. When you work here, your labor indirectly supports these activities.</li>
             )}

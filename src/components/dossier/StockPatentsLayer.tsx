@@ -198,13 +198,13 @@ export function StockPatentsLayer({ companyId, companyName, unlocked = true }: S
                     <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--border))" opacity={0.25} />
                     <XAxis
                       dataKey="date"
-                      tick={{ fontSize: 10, fill: "hsl(var(--muted-foreground))" }}
+                      tick={{ fontSize: 12, fill: "hsl(var(--muted-foreground))" }}
                       stroke="hsl(var(--border))"
                       tickFormatter={formatDate}
                       interval="preserveStartEnd"
                     />
                     <YAxis
-                      tick={{ fontSize: 10, fill: "hsl(var(--muted-foreground))" }}
+                      tick={{ fontSize: 12, fill: "hsl(var(--muted-foreground))" }}
                       stroke="hsl(var(--border))"
                       tickFormatter={(v: number) => `$${v.toFixed(0)}`}
                       domain={["auto", "auto"]}

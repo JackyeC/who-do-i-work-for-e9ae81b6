@@ -165,7 +165,7 @@ function MetricRow({ label, value, icon: Icon, status, detail }: {
           <span className="text-xs font-medium text-foreground">{label}</span>
           <span className="text-sm font-bold text-foreground">{value}</span>
         </div>
-        <p className="text-[11px] text-muted-foreground mt-0.5">{detail}</p>
+        <p className="text-xs text-muted-foreground mt-0.5">{detail}</p>
       </div>
     </div>
   );

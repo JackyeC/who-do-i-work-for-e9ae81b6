@@ -66,7 +66,7 @@ export function TransparencyScoreCard({
           ))}
         </div>
 
-        <p className="text-[10px] text-muted-foreground mt-3 pt-2 border-t border-border">
+        <p className="text-xs text-muted-foreground mt-3 pt-2 border-t border-border">
           Companies that publicly report advancement data score higher.
           Absence of disclosure is itself a meaningful accountability signal.
         </p>

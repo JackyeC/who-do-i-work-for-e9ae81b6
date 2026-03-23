@@ -118,33 +118,33 @@ function LeaderCard({
             {/* Meta info */}
             <div className="flex flex-wrap items-center gap-1.5 mt-2">
               {isFormer && (
-                <Badge variant="outline" className="text-[10px] gap-1 text-destructive border-destructive/30">
+                <Badge variant="outline" className="text-xs gap-1 text-destructive border-destructive/30">
                   <UserX className="w-2.5 h-2.5" /> Former
                 </Badge>
               )}
               {verificationStatus === "verified" && (
-                <Badge variant="outline" className="text-[10px] gap-1 text-[hsl(var(--civic-green))] border-[hsl(var(--civic-green))]/30">
+                <Badge variant="outline" className="text-xs gap-1 text-[hsl(var(--civic-green))] border-[hsl(var(--civic-green))]/30">
                   <ShieldCheck className="w-2.5 h-2.5" /> Verified
                 </Badge>
               )}
               {verificationStatus === "ai_verified" && (
-                <Badge variant="outline" className="text-[10px] gap-1 text-[hsl(var(--civic-yellow))] border-[hsl(var(--civic-yellow))]/30">
+                <Badge variant="outline" className="text-xs gap-1 text-[hsl(var(--civic-yellow))] border-[hsl(var(--civic-yellow))]/30">
                   <AlertTriangle className="w-2.5 h-2.5" /> AI Verified
                 </Badge>
               )}
               {startYear && (
-                <Badge variant="outline" className="text-[10px]">Since {startYear}</Badge>
+                <Badge variant="outline" className="text-xs">Since {startYear}</Badge>
               )}
               {previousCompany && (
-                <Badge variant="secondary" className="text-[10px]">Prev: {previousCompany}</Badge>
+                <Badge variant="secondary" className="text-xs">Prev: {previousCompany}</Badge>
               )}
               {donations !== undefined && donations > 0 && (
-                <Badge variant="outline" className="text-[10px] text-[hsl(var(--civic-yellow))] border-[hsl(var(--civic-yellow))]/30">
+                <Badge variant="outline" className="text-xs text-[hsl(var(--civic-yellow))] border-[hsl(var(--civic-yellow))]/30">
                   {formatCurrency(donations)} donated
                 </Badge>
               )}
               {badges?.map((b) => (
-                <Badge key={b} variant="outline" className="text-[10px]">{b}</Badge>
+                <Badge key={b} variant="outline" className="text-xs">{b}</Badge>
               ))}
             </div>
 
@@ -152,7 +152,7 @@ function LeaderCard({
             {committees && committees.length > 0 && (
               <div className="flex flex-wrap gap-1 mt-2">
                 {committees.map((c) => (
-                  <Badge key={c} variant="secondary" className="text-[10px] gap-1">
+                  <Badge key={c} variant="secondary" className="text-xs gap-1">
                     <Shield className="w-2.5 h-2.5" /> {c}
                   </Badge>
                 ))}
@@ -237,12 +237,12 @@ export function DecisionMakers({ executives, companyId, companyName, onExecutive
             <TabsTrigger value="executive" className="flex-1 gap-1.5">
               <Briefcase className="w-3.5 h-3.5" />
               Executive Team
-              {cSuite.length > 0 && <Badge variant="secondary" className="text-[10px] ml-1">{cSuite.length}</Badge>}
+              {cSuite.length > 0 && <Badge variant="secondary" className="text-xs ml-1">{cSuite.length}</Badge>}
             </TabsTrigger>
             <TabsTrigger value="board" className="flex-1 gap-1.5">
               <Shield className="w-3.5 h-3.5" />
               Board of Directors
-              {(boardMembers?.length || 0) > 0 && <Badge variant="secondary" className="text-[10px] ml-1">{boardMembers?.length}</Badge>}
+              {(boardMembers?.length || 0) > 0 && <Badge variant="secondary" className="text-xs ml-1">{boardMembers?.length}</Badge>}
             </TabsTrigger>
           </TabsList>
 

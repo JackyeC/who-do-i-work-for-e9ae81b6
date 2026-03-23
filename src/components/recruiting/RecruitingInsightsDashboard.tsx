@@ -208,7 +208,7 @@ export function RecruitingInsightsDashboard() {
           <CardContent>
             <div className="grid md:grid-cols-2 gap-4">
               <div>
-                <p className="text-[10px] uppercase tracking-widest text-muted-foreground font-semibold mb-2">Attracts Talent</p>
+                <p className="text-xs uppercase tracking-widest text-muted-foreground font-semibold mb-2">Attracts Talent</p>
                 <div className="space-y-1.5">
                   {["Pay equity & salary transparency", "Strong DEI programs with measurable outcomes", "Remote/flexible work policies", "Environmental commitments with evidence", "Worker benefits beyond industry standard", "Clean AI hiring practices with published audits"].map((s) => (
                     <div key={s} className="flex items-center gap-2 text-sm text-foreground">
@@ -219,7 +219,7 @@ export function RecruitingInsightsDashboard() {
                 </div>
               </div>
               <div>
-                <p className="text-[10px] uppercase tracking-widest text-muted-foreground font-semibold mb-2">Repels Talent</p>
+                <p className="text-xs uppercase tracking-widest text-muted-foreground font-semibold mb-2">Repels Talent</p>
                 <div className="space-y-1.5">
                   {["Say-Do gaps on public commitments", "Undisclosed AI hiring tools", "Recent mass layoffs without transparency", "Dark money political contributions", "DEI rollbacks or program closures", "Union-busting or labor violations"].map((s) => (
                     <div key={s} className="flex items-center gap-2 text-sm text-foreground">

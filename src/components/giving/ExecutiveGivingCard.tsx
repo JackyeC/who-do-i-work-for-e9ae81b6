@@ -97,7 +97,7 @@ function ExecCard({ exec, recipients, companyName, companySlug, locked }: {
         </div>
         <div className="flex-1 min-w-0">
           <p style={{ fontFamily: "'DM Sans', sans-serif", fontSize: "13px", fontWeight: 500 }} className="text-foreground truncate">{exec.name}</p>
-          <p style={{ fontFamily: "'DM Sans', sans-serif", fontSize: "11px" }} className="text-muted-foreground">{exec.title}</p>
+          <p style={{ fontFamily: "'DM Sans', sans-serif", fontSize: "12px" }} className="text-muted-foreground">{exec.title}</p>
         </div>
         <div className="text-right shrink-0">
           <p style={{ fontFamily: "'DM Sans', sans-serif", fontSize: "12px", fontWeight: 500 }} className="text-foreground">
@@ -107,7 +107,7 @@ function ExecCard({ exec, recipients, companyName, companySlug, locked }: {
             href={`https://www.fec.gov/data/receipts/individual-contributions/?contributor_name=${encodeURIComponent(exec.name)}`}
             target="_blank"
             rel="noopener noreferrer"
-            className="inline-flex items-center gap-0.5 text-[10px] text-muted-foreground hover:text-primary"
+            className="inline-flex items-center gap-0.5 text-xs text-muted-foreground hover:text-primary"
           >
             <ExternalLink className="w-2.5 h-2.5" /> FEC
           </a>
@@ -151,11 +151,11 @@ function ExecCard({ exec, recipients, companyName, companySlug, locked }: {
           href={`https://www.fec.gov/data/receipts/individual-contributions/?contributor_name=${encodeURIComponent(exec.name)}`}
           target="_blank"
           rel="noopener noreferrer"
-          className="text-[10px] text-primary hover:underline inline-flex items-center gap-1"
+          className="text-xs text-primary hover:underline inline-flex items-center gap-1"
         >
           View on FEC → <ExternalLink className="w-2.5 h-2.5" />
         </a>
-        <span className="text-[10px] text-muted-foreground">Source: FEC · Verified ✓</span>
+        <span className="text-xs text-muted-foreground">Source: FEC · Verified ✓</span>
       </div>
 
       {!locked && (
@@ -224,7 +224,7 @@ export function ExecutiveGivingSection({ companyId, companyName, companySlug }: 
         padding: "12px 16px",
         fontFamily: "'DM Sans', sans-serif",
         fontSize: "12px",
-        color: "#7a7590",
+        color: "hsl(var(--muted-foreground))",
         background: "rgba(255,255,255,0.03)",
         borderRadius: "0 8px 8px 0",
         marginBottom: "16px",
@@ -261,8 +261,8 @@ export function ExecutiveGivingSection({ companyId, companyName, companySlug }: 
       {/* Legal footer */}
       <p style={{
         fontFamily: "'DM Sans', sans-serif",
-        fontSize: "11px",
-        color: "#7a7590",
+        fontSize: "12px",
+        color: "hsl(var(--muted-foreground))",
         marginTop: "16px",
         borderTop: "1px solid rgba(255,255,255,0.07)",
         paddingTop: "12px",

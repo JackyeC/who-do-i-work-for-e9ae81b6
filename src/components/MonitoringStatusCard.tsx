@@ -58,7 +58,7 @@ export function MonitoringStatusCard({ companyId }: MonitoringStatusCardProps) {
             <div className="flex items-center gap-1.5">
               <Clock className="w-3.5 h-3.5" />
               Last signal: {new Date(data.latestChange.created_at).toLocaleDateString()}
-              <Badge variant="outline" className="text-[10px] ml-1">{data.latestChange.signal_category}</Badge>
+              <Badge variant="outline" className="text-xs ml-1">{data.latestChange.signal_category}</Badge>
             </div>
           )}
           <div className="flex items-center gap-1.5">
@@ -66,7 +66,7 @@ export function MonitoringStatusCard({ companyId }: MonitoringStatusCardProps) {
             <span className="font-medium text-foreground">{data.totalSignals}</span> signal events
           </div>
         </div>
-        <p className="text-[10px] text-muted-foreground mt-2 italic">
+        <p className="text-xs text-muted-foreground mt-2 italic">
           This reflects signals detected from publicly available sources. No conclusions are drawn.
         </p>
       </CardContent>

@@ -105,7 +105,7 @@ export function AlignmentSignalsPanel({ companyId, companyName }: Props) {
             Alignment Signals
           </CardTitle>
           {conflictCount > 0 && (
-            <Badge variant="destructive" className="text-[10px] gap-1">
+            <Badge variant="destructive" className="text-xs gap-1">
               <AlertTriangle className="w-3 h-3" />
               {conflictCount} area{conflictCount !== 1 ? "s" : ""} with conflicts
             </Badge>
@@ -143,7 +143,7 @@ export function AlignmentSignalsPanel({ companyId, companyName }: Props) {
                 <div className="min-w-0">
                   <p className="font-medium text-foreground truncate">{lens.label}</p>
                   <p className={cn(
-                    "text-[10px]",
+                    "text-xs",
                     lens.status === "conflict" ? "text-[hsl(var(--civic-red))]" :
                     lens.status === "neutral" ? "text-[hsl(var(--civic-green))]" :
                     "text-muted-foreground/50"
@@ -169,7 +169,7 @@ export function AlignmentSignalsPanel({ companyId, companyName }: Props) {
                   <StatusIcon status={lens.status} />
                   {lens.label}
                 </h4>
-                <Button variant="ghost" size="sm" className="h-6 text-[10px]" onClick={() => setExpanded(null)}>
+                <Button variant="ghost" size="sm" className="h-6 text-xs" onClick={() => setExpanded(null)}>
                   Close
                 </Button>
               </div>
@@ -178,12 +178,12 @@ export function AlignmentSignalsPanel({ companyId, companyName }: Props) {
                 <div key={i} className="p-3 rounded-lg bg-muted/30 border border-border/20 space-y-2">
                   {/* Public position */}
                   <div>
-                    <p className="text-[10px] font-mono uppercase tracking-wider text-muted-foreground mb-0.5">
+                    <p className="text-xs font-mono uppercase tracking-wider text-muted-foreground mb-0.5">
                       Public Position
                     </p>
                     <p className="text-xs text-foreground">{c.public_statement}</p>
                     {c.statement_source_url && (
-                      <a href={c.statement_source_url} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-1 text-[10px] text-primary hover:underline mt-0.5">
+                      <a href={c.statement_source_url} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-1 text-xs text-primary hover:underline mt-0.5">
                         Source <ExternalLink className="w-2.5 h-2.5" />
                       </a>
                     )}
@@ -193,12 +193,12 @@ export function AlignmentSignalsPanel({ companyId, companyName }: Props) {
 
                   {/* Political behavior */}
                   <div>
-                    <p className="text-[10px] font-mono uppercase tracking-wider text-muted-foreground mb-0.5">
+                    <p className="text-xs font-mono uppercase tracking-wider text-muted-foreground mb-0.5">
                       Political / Lobbying Behavior
                     </p>
                     <p className="text-xs text-foreground">{c.spending_reality}</p>
                     {c.spending_source_url && (
-                      <a href={c.spending_source_url} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-1 text-[10px] text-primary hover:underline mt-0.5">
+                      <a href={c.spending_source_url} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-1 text-xs text-primary hover:underline mt-0.5">
                         Evidence <ExternalLink className="w-2.5 h-2.5" />
                       </a>
                     )}
@@ -210,7 +210,7 @@ export function AlignmentSignalsPanel({ companyId, companyName }: Props) {
                       <Badge
                         variant="outline"
                         className={cn(
-                          "text-[10px]",
+                          "text-xs",
                           c.severity === "high" ? "border-[hsl(var(--civic-red))]/30 text-[hsl(var(--civic-red))]" :
                           c.severity === "medium" ? "border-[hsl(var(--civic-yellow))]/30 text-[hsl(var(--civic-yellow))]" :
                           "border-border/30 text-muted-foreground"
@@ -218,7 +218,7 @@ export function AlignmentSignalsPanel({ companyId, companyName }: Props) {
                       >
                         {c.severity === "high" ? "High confidence" : c.severity === "medium" ? "Medium confidence" : "Low confidence"}
                       </Badge>
-                      <Badge variant="outline" className="text-[10px] text-muted-foreground">
+                      <Badge variant="outline" className="text-xs text-muted-foreground">
                         Potential alignment conflict
                       </Badge>
                     </div>
@@ -235,7 +235,7 @@ export function AlignmentSignalsPanel({ companyId, companyName }: Props) {
         {/* Disclaimer */}
         <div className="flex items-start gap-2 pt-3 border-t border-border/10">
           <Info className="w-3 h-3 text-muted-foreground/40 shrink-0 mt-0.5" />
-          <p className="text-[9px] text-muted-foreground/60 leading-relaxed">
+          <p className="text-xs text-muted-foreground/60 leading-relaxed">
             Alignment signals compare public statements against FEC filings, Senate LDA records, and enforcement data.
             A detected conflict does not imply wrongdoing — it indicates a documented gap between stated positions and financial behavior.
           </p>

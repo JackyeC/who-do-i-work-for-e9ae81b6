@@ -45,9 +45,9 @@ function VibeVarianceBar({ label, experience, publicData }: { label: string; exp
 
   return (
     <div className="space-y-1.5">
-      <div className="flex items-center justify-between text-[11px]">
+      <div className="flex items-center justify-between text-xs">
         <span className="text-foreground font-medium">{label}</span>
-        <span className={cn("font-mono font-bold text-[10px]",
+        <span className={cn("font-mono font-bold text-xs",
           Math.abs(gap) <= 15 ? "text-civic-green" : Math.abs(gap) <= 35 ? "text-civic-yellow" : "text-destructive"
         )}>
           {gap > 0 ? "+" : ""}{gap} gap
@@ -64,7 +64,7 @@ function VibeVarianceBar({ label, experience, publicData }: { label: string; exp
           style={{ left: `${publicData}%` }}
         />
       </div>
-      <div className="flex justify-between text-[9px] text-muted-foreground font-mono">
+      <div className="flex justify-between text-xs text-muted-foreground font-mono">
         <span>Your Experience: {experience}</span>
         <span>Public Data: {publicData}</span>
       </div>
@@ -90,18 +90,18 @@ export function RealityGapResults({ result, onReset }: Props) {
         {/* Overall Vibe Score */}
         <Card className="border-civic-green/20 bg-civic-green/[0.03]">
           <CardContent className="p-5 text-center">
-            <p className="font-mono text-[9px] tracking-widest uppercase text-muted-foreground mb-2">Your Interview Vibe</p>
+            <p className="font-mono text-xs tracking-widest uppercase text-muted-foreground mb-2">Your Interview Vibe</p>
             <p className="text-4xl font-black tabular-nums text-civic-green">{result.overallVibeScore}</p>
-            <p className="text-[11px] text-muted-foreground mt-1">/ 100</p>
+            <p className="text-xs text-muted-foreground mt-1">/ 100</p>
           </CardContent>
         </Card>
 
         {/* Integrity Gap Score */}
         <Card className={cn("ring-1", style.bg, style.ring)}>
           <CardContent className="p-5 text-center">
-            <p className="font-mono text-[9px] tracking-widest uppercase text-muted-foreground mb-2">Integrity Gap</p>
+            <p className="font-mono text-xs tracking-widest uppercase text-muted-foreground mb-2">Integrity Gap</p>
             <p className={cn("text-4xl font-black tabular-nums", style.text)}>{result.integrityGapScore}</p>
-            <Badge variant="outline" className={cn("mt-2 gap-1 text-[10px]", style.text)}>
+            <Badge variant="outline" className={cn("mt-2 gap-1 text-xs", style.text)}>
               <GapIcon className="w-3 h-3" />
               {result.gapLabel}
             </Badge>
@@ -122,7 +122,7 @@ export function RealityGapResults({ result, onReset }: Props) {
               <div key={mark} className="absolute top-0 h-full w-px bg-foreground/10" style={{ left: `${mark}%` }} />
             ))}
           </div>
-          <div className="flex justify-between mt-1.5 text-[9px] text-muted-foreground font-mono">
+          <div className="flex justify-between mt-1.5 text-xs text-muted-foreground font-mono">
             <span>Aligned</span>
             <span>Minor</span>
             <span>Notable</span>
@@ -138,9 +138,9 @@ export function RealityGapResults({ result, onReset }: Props) {
           <div className="flex items-center gap-2 mb-1">
             <AlertTriangle className="w-4 h-4 text-civic-green" />
             <h3 className="font-mono text-xs font-bold tracking-wider uppercase text-civic-green">Vibe Variance</h3>
-            <span className="text-[10px] text-muted-foreground ml-auto font-mono">Public Data vs. Your Experience</span>
+            <span className="text-xs text-muted-foreground ml-auto font-mono">Public Data vs. Your Experience</span>
           </div>
-          <div className="flex items-center gap-4 text-[10px] text-muted-foreground mb-2">
+          <div className="flex items-center gap-4 text-xs text-muted-foreground mb-2">
             <span className="flex items-center gap-1.5"><span className="w-3 h-2 bg-civic-blue/60 rounded-sm" /> Your Experience</span>
             <span className="flex items-center gap-1.5"><span className="w-0.5 h-3 bg-civic-green rounded-sm" /> Public Data</span>
           </div>
@@ -172,12 +172,12 @@ export function RealityGapResults({ result, onReset }: Props) {
                   <div className="flex items-center gap-2">
                     <span className="text-sm">{signalEmojis[d.signal]}</span>
                     <span className="text-xs font-semibold text-foreground">{d.dimension}</span>
-                    <Badge variant="outline" className={cn("ml-auto text-[9px] gap-1", signalColors[d.signal])}>
+                    <Badge variant="outline" className={cn("ml-auto text-xs gap-1", signalColors[d.signal])}>
                       <SignalIcon className="w-3 h-3" />
                       {d.signal === "aligned" ? "Aligned" : d.signal === "caution" ? "Caution" : "Disconnect"}
                     </Badge>
                   </div>
-                  <p className="text-[11px] text-muted-foreground leading-relaxed pl-6">{d.insight}</p>
+                  <p className="text-xs text-muted-foreground leading-relaxed pl-6">{d.insight}</p>
                 </div>
               );
             })}
@@ -202,7 +202,7 @@ export function RealityGapResults({ result, onReset }: Props) {
               : `"Let me be direct: your interview experience is significantly different from what the public data suggests. That's not a data gap — that's a character gap. The company has invested in looking good on paper, but the people running the daily show haven't caught up. If you're considering this role, you need to go in with eyes wide open and a clear exit plan. Facts over Feelings."`
             }
           </blockquote>
-          <p className="text-[10px] text-civic-green/60 mt-3 font-mono italic">
+          <p className="text-xs text-civic-green/60 mt-3 font-mono italic">
             *Run the chain first. Always.*
           </p>
         </CardContent>

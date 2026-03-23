@@ -56,11 +56,11 @@ function NewsCard({ article, locked }: { article: WorkNewsArticle; locked: boole
         <div className="flex items-start justify-between gap-2">
           <div className="flex items-center gap-2 min-w-0">
             <Icon className={cn("w-4 h-4 shrink-0", config.color)} />
-            <Badge variant="outline" className="text-[10px] shrink-0">
+            <Badge variant="outline" className="text-xs shrink-0">
               {config.label}
             </Badge>
             {article.is_controversy && (
-              <Badge variant="destructive" className="text-[10px] shrink-0">
+              <Badge variant="destructive" className="text-xs shrink-0">
                 ⚠ Controversy
               </Badge>
             )}
@@ -68,7 +68,7 @@ function NewsCard({ article, locked }: { article: WorkNewsArticle; locked: boole
           {article.tone_label && (
             <Badge
               variant="outline"
-              className={cn("text-[10px] shrink-0", TONE_COLORS[article.tone_label])}
+              className={cn("text-xs shrink-0", TONE_COLORS[article.tone_label])}
             >
               {article.tone_label}
             </Badge>
@@ -79,7 +79,7 @@ function NewsCard({ article, locked }: { article: WorkNewsArticle; locked: boole
           {article.headline}
         </h3>
 
-        <div className="flex items-center justify-between text-[11px] text-muted-foreground">
+        <div className="flex items-center justify-between text-xs text-muted-foreground">
           <span>{article.source_name || "Unknown source"}</span>
           <span>{timeAgo}</span>
         </div>
@@ -87,7 +87,7 @@ function NewsCard({ article, locked }: { article: WorkNewsArticle; locked: boole
         {/* Jackye's Take section */}
         {article.jackye_take && article.jackye_take_approved ? (
           <div className="mt-2 p-2.5 bg-primary/5 border border-primary/10 rounded">
-            <p className="text-[10px] font-mono uppercase text-primary tracking-wider mb-1">
+            <p className="text-xs font-mono uppercase text-primary tracking-wider mb-1">
               Jackye's Take
             </p>
             <p className="text-xs text-foreground/80 leading-relaxed">{article.jackye_take}</p>
@@ -95,7 +95,7 @@ function NewsCard({ article, locked }: { article: WorkNewsArticle; locked: boole
         ) : !locked ? (
           <div className="mt-2 p-2.5 bg-muted/50 border border-border/50 rounded flex items-center gap-2">
             <Lock className="w-3 h-3 text-muted-foreground" />
-            <p className="text-[10px] text-muted-foreground">Jackye's Take — Pro members only</p>
+            <p className="text-xs text-muted-foreground">Jackye's Take — Pro members only</p>
           </div>
         ) : null}
 
@@ -104,7 +104,7 @@ function NewsCard({ article, locked }: { article: WorkNewsArticle; locked: boole
             href={article.source_url}
             target="_blank"
             rel="noopener noreferrer"
-            className="inline-flex items-center gap-1 text-[11px] text-primary hover:underline mt-1"
+            className="inline-flex items-center gap-1 text-xs text-primary hover:underline mt-1"
           >
             Read full article <ExternalLink className="w-3 h-3" />
           </a>
@@ -143,7 +143,7 @@ export function WorkNewsRepository({ className, isPro = false, maxFreeCards = 3 
       <Card className="bg-card border-primary/15">
         <CardContent className="p-5 flex items-center justify-between">
           <div>
-            <p className="font-mono text-[10px] uppercase tracking-widest text-primary mb-1">
+            <p className="font-mono text-xs uppercase tracking-widest text-primary mb-1">
               Global Workforce Signals
             </p>
             <p className="text-3xl font-black text-foreground tabular-nums">
@@ -202,7 +202,7 @@ export function WorkNewsRepository({ className, isPro = false, maxFreeCards = 3 
         </Card>
       )}
 
-      <p className="text-[10px] text-muted-foreground text-center">
+      <p className="text-xs text-muted-foreground text-center">
         Powered by GDELT Global Knowledge Graph · Updated every 4 hours · Free, open-source intelligence
       </p>
     </div>

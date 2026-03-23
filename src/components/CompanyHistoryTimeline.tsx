@@ -388,8 +388,8 @@ export function CompanyHistoryTimeline({ companyId, companyName }: CompanyHistor
                     </linearGradient>
                   </defs>
                   <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--border))" />
-                  <XAxis dataKey="month" tick={{ fontSize: 10 }} stroke="hsl(var(--muted-foreground))" />
-                  <YAxis tick={{ fontSize: 10 }} stroke="hsl(var(--muted-foreground))" />
+                  <XAxis dataKey="month" tick={{ fontSize: 12 }} stroke="hsl(var(--muted-foreground))" />
+                  <YAxis tick={{ fontSize: 12 }} stroke="hsl(var(--muted-foreground))" />
                   <Tooltip
                     contentStyle={{
                       backgroundColor: "hsl(var(--card))",
@@ -416,8 +416,8 @@ export function CompanyHistoryTimeline({ companyId, companyName }: CompanyHistor
                 <ResponsiveContainer width="100%" height={160}>
                   <AreaChart data={spendingTrend}>
                     <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--border))" />
-                    <XAxis dataKey="cycle" tick={{ fontSize: 10 }} stroke="hsl(var(--muted-foreground))" />
-                    <YAxis tick={{ fontSize: 10 }} stroke="hsl(var(--muted-foreground))" tickFormatter={(v) => `$${(v / 1000).toFixed(0)}k`} />
+                    <XAxis dataKey="cycle" tick={{ fontSize: 12 }} stroke="hsl(var(--muted-foreground))" />
+                    <YAxis tick={{ fontSize: 12 }} stroke="hsl(var(--muted-foreground))" tickFormatter={(v) => `$${(v / 1000).toFixed(0)}k`} />
                     <Tooltip
                       contentStyle={{
                         backgroundColor: "hsl(var(--card))",
@@ -504,7 +504,7 @@ export function CompanyHistoryTimeline({ companyId, companyName }: CompanyHistor
                               {event.type === "warn_notice" ? `${event.amount.toLocaleString()} workers` : `$${event.amount.toLocaleString()}`}
                             </span>
                           )}
-                          <span className="text-[10px] text-muted-foreground">{formatDate(event.date)}</span>
+                          <span className="text-xs text-muted-foreground">{formatDate(event.date)}</span>
                           {isExpanded ? <ChevronUp className="w-3.5 h-3.5 text-muted-foreground" /> : <ChevronDown className="w-3.5 h-3.5 text-muted-foreground" />}
                         </div>
                       </div>
@@ -517,16 +517,16 @@ export function CompanyHistoryTimeline({ companyId, companyName }: CompanyHistor
                             <div className="grid grid-cols-2 gap-2 pt-2">
                               {Object.entries(event.details).map(([key, val]) => val ? (
                                 <div key={key}>
-                                  <span className="text-[10px] text-muted-foreground uppercase tracking-wider">{key}</span>
+                                  <span className="text-xs text-muted-foreground uppercase tracking-wider">{key}</span>
                                   <p className="text-xs font-medium text-foreground">{String(val)}</p>
                                 </div>
                               ) : null)}
                             </div>
                           )}
 
-                          <div className="flex items-center gap-3 pt-2 text-[10px] text-muted-foreground border-t border-border">
+                          <div className="flex items-center gap-3 pt-2 text-xs text-muted-foreground border-t border-border">
                             {event.confidence && (
-                              <Badge variant="outline" className={cn("text-[9px]",
+                              <Badge variant="outline" className={cn("text-xs",
                                 event.confidence === "high" || event.confidence === "direct" ? "border-primary/30 text-primary" :
                                 event.confidence === "medium" ? "border-amber-500/30 text-amber-600" :
                                 "border-muted-foreground/30"
@@ -560,7 +560,7 @@ export function CompanyHistoryTimeline({ companyId, companyName }: CompanyHistor
 
       {/* Attribution */}
       <div className="text-center pt-4 border-t border-border">
-        <p className="text-[10px] text-muted-foreground">
+        <p className="text-xs text-muted-foreground">
           Historical data sourced from FEC, SEC EDGAR, USASpending, state WARN filings, and verified web sources.
           Dates reflect when records were filed or detected — not necessarily when events occurred.
         </p>

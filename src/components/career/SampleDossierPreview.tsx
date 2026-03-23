@@ -5,7 +5,7 @@ export function SampleDossierPreview() {
   return (
     <div className="max-w-2xl mx-auto select-none">
       <div className="text-center mb-3">
-        <Badge variant="outline" className="text-[10px] bg-muted/50">
+        <Badge variant="outline" className="text-xs bg-muted/50">
           Preview — Search a company above to get your report
         </Badge>
       </div>
@@ -16,13 +16,13 @@ export function SampleDossierPreview() {
           <h2 className="text-lg sm:text-xl font-display font-bold text-foreground">Amazon</h2>
           <div className="flex gap-2">
             <Badge variant="outline" className="bg-destructive/10 border-destructive/30 text-destructive">High Risk</Badge>
-            <Badge variant="outline" className="bg-[hsl(var(--civic-green))]/10 border-[hsl(var(--civic-green))]/30 text-[hsl(var(--civic-green))] text-[9px]">High Confidence</Badge>
+            <Badge variant="outline" className="bg-[hsl(var(--civic-green))]/10 border-[hsl(var(--civic-green))]/30 text-[hsl(var(--civic-green))] text-xs">High Confidence</Badge>
           </div>
         </div>
         <p className="text-xs text-muted-foreground mb-5">Technology · Washington · 1,500,000 employees</p>
 
         <div className="text-center py-4">
-          <div className="font-mono text-[10px] tracking-[0.2em] uppercase text-muted-foreground mb-2">Employer Clarity Score</div>
+          <div className="font-mono text-xs tracking-[0.2em] uppercase text-muted-foreground mb-2">Employer Clarity Score</div>
           <div className="flex items-end justify-center gap-2">
             <span className="font-data text-6xl sm:text-7xl font-black tabular-nums text-destructive">4.2</span>
             <span className="text-lg text-muted-foreground mb-2">/10</span>
@@ -36,7 +36,7 @@ export function SampleDossierPreview() {
           High opportunity, high volatility. You're not joining a steady system — you're joining a company mid-reset.
         </p>
 
-        <p className="text-[11px] text-muted-foreground text-center mt-4 italic">
+        <p className="text-xs text-muted-foreground text-center mt-4 italic">
           Sources analyzed: SEC filings, WARN notices, workforce data, compensation signals, and employee sentiment trends
         </p>
       </div>

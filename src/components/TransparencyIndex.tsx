@@ -66,15 +66,15 @@ export function TransparencyIndex({ categories }: TransparencyIndexProps) {
                 {cat.label}
               </span>
               {cat.hasSignals ? (
-                <Badge variant="secondary" className="text-[10px]">Signal detected</Badge>
+                <Badge variant="secondary" className="text-xs">Signal detected</Badge>
               ) : (
-                <span className="text-[10px] text-muted-foreground">No public evidence detected</span>
+                <span className="text-xs text-muted-foreground">No public evidence detected</span>
               )}
             </div>
           ))}
         </div>
 
-        <p className="text-[10px] text-muted-foreground mt-3 pt-2 border-t border-border">
+        <p className="text-xs text-muted-foreground mt-3 pt-2 border-t border-border">
           Signals are detected from publicly available sources. This index does not evaluate
           the quality or sufficiency of disclosures.
         </p>

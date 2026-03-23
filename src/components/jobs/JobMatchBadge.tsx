@@ -19,7 +19,7 @@ export function JobMatchBadge({ score, size = "sm" }: JobMatchBadgeProps) {
     <span
       className={cn(
         "inline-flex items-center gap-1 rounded-full border font-semibold",
-        size === "sm" ? "px-2 py-0.5 text-[10px]" : "px-3 py-1 text-xs",
+        size === "sm" ? "px-2 py-0.5 text-xs" : "px-3 py-1 text-xs",
         config.className
       )}
     >

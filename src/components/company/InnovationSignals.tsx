@@ -122,7 +122,7 @@ export function InnovationSignals({ companyId, companyName }: InnovationSignalsP
                 Search USPTO directly <ExternalLink className="w-2.5 h-2.5" />
               </a>
             </p>
-            <p className="text-[11px] text-muted-foreground/60 mt-3">
+            <p className="text-xs text-muted-foreground/60 mt-3">
               Source: USPTO PatentsView · Public record
             </p>
           </CardContent>
@@ -203,17 +203,17 @@ export function InnovationSignals({ companyId, companyName }: InnovationSignalsP
 
           {/* Source + view all */}
           <div className="border-t border-border/30 pt-3 mt-3 flex items-center justify-between">
-            <p className="text-[11px] text-muted-foreground/60">
+            <p className="text-xs text-muted-foreground/60">
               Source: USPTO PatentsView · Public record
               {data.cached && (
-                <Badge variant="outline" className="ml-2 text-[10px]">Cached</Badge>
+                <Badge variant="outline" className="ml-2 text-xs">Cached</Badge>
               )}
             </p>
             <a
               href={`https://patentsview.org/search#q=${encodeURIComponent(companyName)}`}
               target="_blank"
               rel="noopener noreferrer"
-              className="text-[11px] text-muted-foreground hover:text-primary flex items-center gap-1"
+              className="text-xs text-muted-foreground hover:text-primary flex items-center gap-1"
             >
               View all on USPTO <ExternalLink className="w-2.5 h-2.5" />
             </a>

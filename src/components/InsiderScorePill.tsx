@@ -39,7 +39,7 @@ export function InsiderScorePill({ score, className = "" }: InsiderScorePillProp
               fontFamily: "'DM Sans', sans-serif",
               fontSize: "12px",
               fontWeight: 500,
-              color: "#7a7590",
+              color: "hsl(var(--muted-foreground))",
               background: "transparent",
               border: "1px solid rgba(255,255,255,0.07)",
             }}

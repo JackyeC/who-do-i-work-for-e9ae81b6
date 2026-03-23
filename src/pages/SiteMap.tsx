@@ -119,7 +119,7 @@ export default function SiteMap() {
           {sections.map((section) => (
             <div key={section.title}>
               <div className="mb-4 border-b border-border pb-3">
-                <h2 className="font-mono text-[11px] tracking-[0.2em] uppercase text-primary font-semibold">
+                <h2 className="font-mono text-xs tracking-[0.2em] uppercase text-primary font-semibold">
                   {section.title}
                 </h2>
                 <p className="text-xs text-muted-foreground mt-1">{section.description}</p>
@@ -137,21 +137,21 @@ export default function SiteMap() {
                       <link.icon className="w-4 h-4 text-primary mt-0.5 shrink-0" />
                       <div className="min-w-0">
                         <div className="flex items-center gap-2">
-                          <span className="font-mono text-[11px] text-foreground group-hover:text-primary transition-colors tracking-wide">
+                          <span className="font-mono text-xs text-foreground group-hover:text-primary transition-colors tracking-wide">
                             {link.label}
                           </span>
                           {link.premium && (
-                            <span className="font-mono text-[8px] uppercase tracking-wider px-1.5 py-0.5 bg-accent text-accent-foreground border border-accent/40">
+                            <span className="font-mono text-xs uppercase tracking-wider px-1.5 py-0.5 bg-accent text-accent-foreground border border-accent/40">
                               {link.premium === "professional" ? "Pro" : "Paid"}
                             </span>
                           )}
                           {link.auth && (
-                            <span className="font-mono text-[8px] uppercase tracking-wider px-1.5 py-0.5 bg-primary/10 text-primary border border-primary/20">
+                            <span className="font-mono text-xs uppercase tracking-wider px-1.5 py-0.5 bg-primary/10 text-primary border border-primary/20">
                               Login
                             </span>
                           )}
                         </div>
-                        <p className="text-[10px] text-muted-foreground mt-0.5 leading-relaxed">
+                        <p className="text-xs text-muted-foreground mt-0.5 leading-relaxed">
                           {link.description}
                         </p>
                       </div>

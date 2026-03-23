@@ -56,8 +56,8 @@ export default function ReportsList() {
                   <div className="flex-1 min-w-0">
                     <div className="flex items-center gap-2 mb-1">
                       <span className="font-semibold text-foreground text-sm truncate">{r.title || "Untitled"}</span>
-                      <Badge variant={r.status === "published" ? "default" : "secondary"} className="text-[10px] capitalize shrink-0">{r.status}</Badge>
-                      <Badge variant="outline" className="text-[10px] capitalize shrink-0">{r.report_type?.replace(/_/g, " ")}</Badge>
+                      <Badge variant={r.status === "published" ? "default" : "secondary"} className="text-xs capitalize shrink-0">{r.status}</Badge>
+                      <Badge variant="outline" className="text-xs capitalize shrink-0">{r.report_type?.replace(/_/g, " ")}</Badge>
                     </div>
                     <p className="text-xs text-muted-foreground">
                       {r.author_name} · {new Date(r.created_at).toLocaleDateString()}

@@ -91,7 +91,7 @@ export function BLSBenefitsCard({ className }: Props) {
         <CardTitle className="text-sm flex items-center gap-2">
           <Shield className="w-4 h-4 text-primary" />
           National Benefits Benchmark
-          <Badge variant="outline" className="text-[10px] ml-auto">{latestYear} NCS</Badge>
+          <Badge variant="outline" className="text-xs ml-auto">{latestYear} NCS</Badge>
         </CardTitle>
         <p className="text-xs text-muted-foreground">
           What percentage of U.S. civilian workers have access to each benefit
@@ -104,7 +104,7 @@ export function BLSBenefitsCard({ className }: Props) {
           <div className="flex items-center gap-3 p-3 bg-muted/40 rounded-lg">
             <div className="text-center">
               <p className="text-2xl font-display font-bold text-foreground">{avgRate}%</p>
-              <p className="text-[10px] text-muted-foreground uppercase tracking-wider">Avg Access</p>
+              <p className="text-xs text-muted-foreground uppercase tracking-wider">Avg Access</p>
             </div>
             <div className="h-8 w-px bg-border" />
             <p className="text-xs text-muted-foreground leading-relaxed">
@@ -138,7 +138,7 @@ export function BLSBenefitsCard({ className }: Props) {
           );
         })}
 
-        <p className="text-[10px] text-muted-foreground border-t border-border pt-2">
+        <p className="text-xs text-muted-foreground border-t border-border pt-2">
           Source: Bureau of Labor Statistics National Compensation Survey (NCS). Participation rates for civilian workers.
         </p>
       </CardContent>

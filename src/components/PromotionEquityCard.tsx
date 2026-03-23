@@ -160,7 +160,7 @@ export function PromotionEquityCard({ companyName, dbCompanyId }: PromotionEquit
                     <span className={cn("text-sm font-bold", transparency.color)}>{transparency.label}</span>
                     <span className="text-xs text-muted-foreground">({transparency.score}% of categories covered)</span>
                   </div>
-                  <p className="text-[11px] text-muted-foreground mt-0.5">
+                  <p className="text-xs text-muted-foreground mt-0.5">
                     Companies that publish promotion data score higher. Absence of data is itself a meaningful signal.
                   </p>
                 </div>
@@ -184,7 +184,7 @@ export function PromotionEquityCard({ companyName, dbCompanyId }: PromotionEquit
                     <div className="flex-1 min-w-0">
                       <div className="flex items-center gap-2 mb-0.5">
                         <span className="text-sm font-medium text-foreground">{cat.label}</span>
-                        <Badge variant="outline" className={cn("text-[10px] gap-1", config.badgeClass)}>
+                        <Badge variant="outline" className={cn("text-xs gap-1", config.badgeClass)}>
                           <StatusIcon className="w-2.5 h-2.5" />
                           {config.label}
                         </Badge>
@@ -204,7 +204,7 @@ export function PromotionEquityCard({ companyName, dbCompanyId }: PromotionEquit
                           ))}
                         </div>
                       ) : hasScanned ? (
-                        <p className="text-[11px] text-muted-foreground flex items-start gap-1">
+                        <p className="text-xs text-muted-foreground flex items-start gap-1">
                           <Info className="w-3 h-3 mt-0.5 shrink-0" />
                           <span>
                             Public signals not detected in scanned sources. This does not necessarily mean {companyName} lacks
@@ -212,7 +212,7 @@ export function PromotionEquityCard({ companyName, dbCompanyId }: PromotionEquit
                           </span>
                         </p>
                       ) : (
-                        <p className="text-[11px] text-muted-foreground">
+                        <p className="text-xs text-muted-foreground">
                           Click Scan to search public sources.
                         </p>
                       )}
@@ -233,7 +233,7 @@ export function PromotionEquityCard({ companyName, dbCompanyId }: PromotionEquit
                     {(signals || []).filter((s: any) => s.confidence === "weak").length} limited
                   </span>
                 </div>
-                <p className="text-[11px] text-muted-foreground">
+                <p className="text-xs text-muted-foreground">
                   Signals detected from ESG reports, impact reports, diversity reports, career pages, press releases, SEC filings, and public partnerships.
                 </p>
               </div>
@@ -243,11 +243,11 @@ export function PromotionEquityCard({ companyName, dbCompanyId }: PromotionEquit
               <div className="text-center py-4">
                 <TrendingUp className="w-8 h-8 text-muted-foreground mx-auto mb-2" />
                 <p className="text-sm text-muted-foreground">Click "Scan" to detect promotion equity signals from public sources.</p>
-                <p className="text-[10px] text-muted-foreground mt-1">Scans ESG reports, diversity reports, career pages, press releases, SEC filings, and partnerships.</p>
+                <p className="text-xs text-muted-foreground mt-1">Scans ESG reports, diversity reports, career pages, press releases, SEC filings, and partnerships.</p>
               </div>
             )}
 
-            <p className="text-[10px] text-muted-foreground pt-2 border-t border-border">
+            <p className="text-xs text-muted-foreground pt-2 border-t border-border">
               Sources: ESG / impact reports, diversity reports, career pages, press releases, SEC filings, HBCU partnerships, skills-first hiring pledges.
               This tool reports public signals — it does not provide legal or employment advice. Educational insights only.
             </p>

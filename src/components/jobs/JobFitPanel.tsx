@@ -38,18 +38,18 @@ export function JobFitPanel({ job }: JobFitPanelProps) {
         <div className={cn("flex-shrink-0 w-16 h-16 rounded-full border-[3px] flex items-center justify-center", ringColor)}>
           <div className="text-center">
             <p className={cn("text-lg font-bold leading-none", scoreColor)}>{fit.fitScore}</p>
-            <p className="text-[8px] text-muted-foreground uppercase tracking-wider">fit</p>
+            <p className="text-xs text-muted-foreground uppercase tracking-wider">fit</p>
           </div>
         </div>
 
         <div className="flex-1 min-w-0 space-y-2">
           <div className="flex items-center gap-2 flex-wrap">
-            <p className="text-[10px] font-medium text-foreground uppercase tracking-wider flex items-center gap-1">
+            <p className="text-xs font-medium text-foreground uppercase tracking-wider flex items-center gap-1">
               <Target className="w-3 h-3 text-muted-foreground" /> Personal Fit Score
             </p>
             {fit.fitBadges.map((badge) => (
               <Badge key={badge} variant="outline" className={cn(
-                "text-[9px] gap-0.5",
+                "text-xs gap-0.5",
                 badge === "Strong Fit" && "bg-[hsl(var(--civic-green))]/10 text-[hsl(var(--civic-green))] border-[hsl(var(--civic-green))]/20",
                 badge === "Flexible Work Fit" && "bg-primary/5 text-primary border-primary/20",
                 (badge === "Location Mismatch" || badge === "Compensation Mismatch" || badge === "Relocation Required") && "bg-destructive/10 text-destructive border-destructive/20",

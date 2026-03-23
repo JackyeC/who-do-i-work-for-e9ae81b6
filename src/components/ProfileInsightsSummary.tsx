@@ -98,7 +98,7 @@ export function ProfileInsightsSummary({ companyName, hasPoliticalSpending, insi
 
         {/* Disclaimer */}
         <div className="px-6 py-3 bg-muted/20 border-t border-border/30">
-          <p className="text-[11px] text-muted-foreground leading-relaxed">
+          <p className="text-xs text-muted-foreground leading-relaxed">
             This reflects what was found in publicly available federal and state databases. Private companies and those with indirect influence channels may not appear in these records.
           </p>
         </div>

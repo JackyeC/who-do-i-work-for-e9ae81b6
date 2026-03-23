@@ -74,7 +74,7 @@ export function InsiderPrideBanner({ companyId, companyName, companySlug, isVeri
       {/* Testimonials display */}
       {testimonials && testimonials.length > 0 && (
         <div className="space-y-2">
-          <p className="text-[10px] font-semibold uppercase tracking-wider text-muted-foreground flex items-center gap-1.5">
+          <p className="text-xs font-semibold uppercase tracking-wider text-muted-foreground flex items-center gap-1.5">
             <Heart className="w-3 h-3 text-rose-500" /> Insider Wins
           </p>
           {testimonials.map((t: any) => (
@@ -122,7 +122,7 @@ export function InsiderPrideBanner({ companyId, companyName, companySlug, isVeri
               <Copy className="w-3.5 h-3.5" /> Copy Share Text
             </Button>
           </div>
-          <p className="text-[10px] text-civic-gold-muted flex items-center gap-1">
+          <p className="text-xs text-civic-gold-muted flex items-center gap-1">
             <Shield className="w-2.5 h-2.5" /> No judgment, just receipts.
           </p>
         </div>
@@ -151,7 +151,7 @@ export function InsiderPrideBanner({ companyId, companyName, companySlug, isVeri
             maxLength={280}
           />
           <div className="flex items-center justify-between">
-            <span className="text-[10px] text-muted-foreground">{text.length}/280</span>
+            <span className="text-xs text-muted-foreground">{text.length}/280</span>
             <div className="flex gap-2">
               <Button variant="ghost" size="sm" onClick={() => { setIsOpen(false); setText(""); }}>
                 Cancel

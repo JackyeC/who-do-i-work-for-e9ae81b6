@@ -103,13 +103,13 @@ export function OfferRiskSignals({ companyId, companyName }: Props) {
               {signals.map((sig) => (
                 <div key={sig.signal_category} className="p-3 bg-muted/30 rounded-xl border border-border/40 space-y-1.5">
                   <div className="flex items-center justify-between">
-                    <span className="text-[11px] font-medium text-muted-foreground">
+                    <span className="text-xs font-medium text-muted-foreground">
                       {CATEGORY_LABELS[sig.signal_category] || sig.signal_category}
                     </span>
                     <DirectionIcon direction={sig.direction} />
                   </div>
                   <p className="text-lg font-display font-bold text-foreground">{sig.normalized_value}</p>
-                  <p className="text-[10px] text-muted-foreground leading-snug line-clamp-2">{sig.summary}</p>
+                  <p className="text-xs text-muted-foreground leading-snug line-clamp-2">{sig.summary}</p>
                 </div>
               ))}
             </div>

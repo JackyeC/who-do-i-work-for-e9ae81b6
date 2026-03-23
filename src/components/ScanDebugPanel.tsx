@@ -251,7 +251,7 @@ export function ScanDebugPanel({ companyId }: Props) {
                                   {PAGE_TYPE_LABELS[mon.page_type] || mon.page_type}
                                 </span>
                               </div>
-                              <Badge variant="outline" className="text-[9px]">{mon.status}</Badge>
+                              <Badge variant="outline" className="text-xs">{mon.status}</Badge>
                             </div>
                             <div className="flex flex-wrap items-center gap-3 mt-0.5 ml-5 text-muted-foreground">
                               {mon.browse_ai_robot_id && (
@@ -268,7 +268,7 @@ export function ScanDebugPanel({ companyId }: Props) {
                               <div className="mt-1 ml-5 text-destructive">{mon.error_message}</div>
                             )}
                             <div className="mt-0.5 ml-5">
-                              <a href={mon.page_url} target="_blank" rel="noopener noreferrer" className="text-primary hover:underline text-[10px]">
+                              <a href={mon.page_url} target="_blank" rel="noopener noreferrer" className="text-primary hover:underline text-xs">
                                 {mon.page_url}
                               </a>
                             </div>
@@ -291,13 +291,13 @@ export function ScanDebugPanel({ companyId }: Props) {
                           <div key={evt.id} className="text-xs py-1.5 px-2 rounded bg-muted/20 border border-border/30">
                             <div className="flex items-center justify-between mb-0.5">
                               <div className="flex items-center gap-2">
-                                <Badge variant="outline" className="text-[9px]">
+                                <Badge variant="outline" className="text-xs">
                                   {PAGE_TYPE_LABELS[evt.page_type] || evt.page_type}
                                 </Badge>
                                 <Badge
                                   variant="outline"
                                   className={cn(
-                                    "text-[9px]",
+                                    "text-xs",
                                     evt.processing_status === 'completed' ? 'border-green-200 text-green-600' :
                                     evt.processing_status === 'failed' ? 'border-destructive/30 text-destructive' :
                                     'border-yellow-200 text-yellow-600'

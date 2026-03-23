@@ -203,11 +203,11 @@ export default function CorporateAlignment() {
               {stances.map((s: any) => (
                 <div key={s.id} className="grid grid-cols-[1fr_1fr_100px] gap-4 p-4 bg-card border border-border rounded-xl">
                   <div>
-                    <p className="text-[10px] font-semibold text-muted-foreground uppercase tracking-wider mb-1">Public Position</p>
+                    <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-1">Public Position</p>
                     <p className="text-sm text-foreground">{s.public_position}</p>
                   </div>
                   <div>
-                    <p className="text-[10px] font-semibold text-muted-foreground uppercase tracking-wider mb-1">Spending Reality</p>
+                    <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-1">Spending Reality</p>
                     <p className="text-sm text-foreground">{s.spending_reality}</p>
                   </div>
                   <div className="flex items-center justify-end">
@@ -256,7 +256,7 @@ export default function CorporateAlignment() {
           <p className="text-xs text-muted-foreground leading-relaxed">
             • Alignment analysis may be incomplete. Not all corporate activities are publicly disclosed or captured in available datasets.
           </p>
-          <p className="text-[10px] text-muted-foreground/70 mt-3 pt-3 border-t border-border/50">
+          <p className="text-xs text-muted-foreground/70 mt-3 pt-3 border-t border-border/50">
             WDIWF reports public data and does not provide character assessments. Verified watchdog data is used to connect public dots.
           </p>
         </div>

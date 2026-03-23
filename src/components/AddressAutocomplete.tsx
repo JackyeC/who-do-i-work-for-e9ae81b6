@@ -123,7 +123,7 @@ export function AddressAutocomplete({ value, onChange, placeholder, className }:
               <span className="line-clamp-2">{s.display_name}</span>
             </button>
           ))}
-          <div className="px-3 py-1.5 text-[10px] text-muted-foreground border-t border-border bg-muted/30">
+          <div className="px-3 py-1.5 text-xs text-muted-foreground border-t border-border bg-muted/30">
             Powered by OpenStreetMap
           </div>
         </div>

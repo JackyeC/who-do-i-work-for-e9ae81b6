@@ -207,7 +207,7 @@ export function SignalsThisWeek() {
 
       {/* ═══ TICKER BAR ═══ */}
       <div className="bg-card border-x border-border/50 px-4 py-2 flex items-center gap-4 overflow-x-auto">
-        <div className="flex items-center gap-4 text-[11px] font-medium whitespace-nowrap">
+        <div className="flex items-center gap-4 text-xs font-medium whitespace-nowrap">
           {totalWarnNotices > 0 && (
             <span className="flex items-center gap-1.5 text-destructive">
               <TrendingDown className="w-3 h-3" />
@@ -236,7 +236,7 @@ export function SignalsThisWeek() {
               variant={timeRange === tr.value ? "default" : "ghost"}
               size="sm"
               onClick={() => { setTimeRange(tr.value); setTranslated(false); setTranslations({}); }}
-              className="text-[10px] h-7 px-2.5"
+              className="text-xs h-7 px-2.5"
             >
               {tr.label}
             </Button>
@@ -275,10 +275,10 @@ export function SignalsThisWeek() {
               {/* Category tag */}
               <div className="flex items-center gap-2 mb-3">
                 <span className={cn("w-2 h-2 rounded-full", config.accent)} />
-                <span className={cn("text-[10px] font-extrabold uppercase tracking-[0.15em]", config.color)}>
+                <span className={cn("text-xs font-extrabold uppercase tracking-[0.15em]", config.color)}>
                   {config.label}
                 </span>
-                <span className="text-[10px] text-muted-foreground ml-auto">
+                <span className="text-xs text-muted-foreground ml-auto">
                   {getRelativeTime(signal.scan_timestamp)}
                 </span>
               </div>
@@ -289,13 +289,13 @@ export function SignalsThisWeek() {
                   {headline}
                 </h3>
                 {translation && !translation.is_fresh && (
-                  <span className="text-[10px] text-amber-600 italic">{translation.freshness_note}</span>
+                  <span className="text-xs text-amber-600 italic">{translation.freshness_note}</span>
                 )}
               </div>
 
               {/* Footer */}
               <div className="flex items-center justify-between mt-3 pt-2 border-t border-border/20">
-                <span className="text-[11px] font-semibold text-foreground flex items-center gap-1.5">
+                <span className="text-xs font-semibold text-foreground flex items-center gap-1.5">
                   {company?.logo_url ? (
                     <img src={company.logo_url} alt="" className="w-4 h-4 rounded object-contain" />
                   ) : (
@@ -304,7 +304,7 @@ export function SignalsThisWeek() {
                   {company?.name || "Unknown employer"}
                 </span>
                 <div className="flex items-center gap-2">
-                  <span className="text-[9px] text-muted-foreground flex items-center gap-0.5">
+                  <span className="text-xs text-muted-foreground flex items-center gap-0.5">
                     <Shield className="w-2.5 h-2.5" />
                     {signal.confidence_level === "high" ? "Strong" : signal.confidence_level === "medium" ? "Moderate" : "Emerging"}
                   </span>
@@ -348,7 +348,7 @@ export function SignalsThisWeek() {
       {/* ═══ DIVIDER ═══ */}
       <div className="border-x border-border/50 bg-muted/30 px-4 py-2 flex items-center gap-2">
         <Globe className="w-3.5 h-3.5 text-muted-foreground" />
-        <span className="text-[10px] font-semibold text-muted-foreground uppercase tracking-wider">All Signals</span>
+        <span className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">All Signals</span>
         <div className="flex-1 border-t border-border/30" />
       </div>
 
@@ -368,7 +368,7 @@ export function SignalsThisWeek() {
             <>
               {/* Time column */}
               <div className="w-14 shrink-0 pt-0.5">
-                <span className="text-[11px] font-mono text-muted-foreground">
+                <span className="text-xs font-mono text-muted-foreground">
                   {getRelativeTime(signal.scan_timestamp)}
                 </span>
               </div>
@@ -379,11 +379,11 @@ export function SignalsThisWeek() {
               {/* Content */}
               <div className="flex-1 min-w-0">
                 <div className="flex items-center gap-2 mb-0.5">
-                  <span className={cn("text-[9px] font-extrabold uppercase tracking-[0.12em]", config.color)}>
+                  <span className={cn("text-xs font-extrabold uppercase tracking-[0.12em]", config.color)}>
                     {config.label}
                   </span>
                   {translation && !translation.is_fresh && (
-                    <Badge variant="outline" className="text-[8px] px-1 py-0 border-amber-500/30 text-amber-600">
+                    <Badge variant="outline" className="text-xs px-1 py-0 border-amber-500/30 text-amber-600">
                       Historical
                     </Badge>
                   )}
@@ -392,13 +392,13 @@ export function SignalsThisWeek() {
                   {headline}
                 </p>
                 {translation && (
-                  <p className="text-[10px] text-muted-foreground mt-0.5 italic">{translation.freshness_note}</p>
+                  <p className="text-xs text-muted-foreground mt-0.5 italic">{translation.freshness_note}</p>
                 )}
               </div>
 
               {/* Company + source */}
               <div className="flex items-center gap-2 shrink-0 pt-0.5">
-                <span className="text-[10px] font-medium text-muted-foreground whitespace-nowrap">
+                <span className="text-xs font-medium text-muted-foreground whitespace-nowrap">
                   {company?.name || "Unknown"}
                 </span>
                 {signal.source_url && (
@@ -424,7 +424,7 @@ export function SignalsThisWeek() {
 
       {/* ═══ ATTRIBUTION ═══ */}
       <div className="text-center pt-4 pb-2">
-        <p className="text-[10px] text-muted-foreground">
+        <p className="text-xs text-muted-foreground">
           Signals auto-detected from public records: FEC, SEC EDGAR, USASpending, OSHA, state WARN filings, and verified web sources.
           This platform surfaces evidence — interpretation is left to you.
         </p>

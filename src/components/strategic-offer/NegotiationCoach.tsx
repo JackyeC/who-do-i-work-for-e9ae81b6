@@ -115,11 +115,11 @@ export function NegotiationCoach({
               </div>
               <div>
                 <span className="text-foreground">AI Negotiation Coach</span>
-                <p className="text-[11px] text-muted-foreground font-normal mt-0.5">
+                <p className="text-xs text-muted-foreground font-normal mt-0.5">
                   3 email drafts powered by {companyName}'s intelligence profile
                 </p>
               </div>
-              <Badge className="ml-auto text-[9px] bg-primary/10 text-primary border-0 gap-1">
+              <Badge className="ml-auto text-xs bg-primary/10 text-primary border-0 gap-1">
                 <Sparkles className="w-3 h-3" /> AI
               </Badge>
             </CardTitle>
@@ -167,7 +167,7 @@ export function NegotiationCoach({
                   {EMAIL_TABS.map(tab => (
                     <TabsContent key={tab.key} value={tab.key}>
                       <div className="relative p-4 bg-muted/30 rounded-xl border border-border/40 mt-3">
-                        <p className="text-[10px] text-muted-foreground mb-2 font-medium">{tab.desc}</p>
+                        <p className="text-xs text-muted-foreground mb-2 font-medium">{tab.desc}</p>
                         <p className="text-sm text-foreground leading-relaxed whitespace-pre-line pr-8">
                           {result[tab.key as keyof Pick<NegotiationPackage, "collaborative" | "dataDriven" | "highValue">]}
                         </p>
@@ -204,8 +204,8 @@ export function NegotiationCoach({
                       <div key={i} className="p-3 bg-[hsl(var(--civic-yellow))]/5 border border-[hsl(var(--civic-yellow))]/20 rounded-xl">
                         <p className="text-sm text-foreground font-medium">{li.insight}</p>
                         <div className="flex items-center gap-3 mt-1.5">
-                          <Badge variant="outline" className="text-[9px]">{li.source}</Badge>
-                          <p className="text-[11px] text-muted-foreground">{li.action}</p>
+                          <Badge variant="outline" className="text-xs">{li.source}</Badge>
+                          <p className="text-xs text-muted-foreground">{li.action}</p>
                         </div>
                       </div>
                     ))}

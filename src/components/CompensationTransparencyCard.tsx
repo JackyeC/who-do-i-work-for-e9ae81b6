@@ -178,7 +178,7 @@ export function CompensationTransparencyCard({ companyName, dbCompanyId }: Props
                   />
                 )}
               </div>
-              <div className="flex items-center gap-1 text-[10px] text-muted-foreground">
+              <div className="flex items-center gap-1 text-xs text-muted-foreground">
                 <span>Sources:</span>
                 <a href={NATIONAL_BENCHMARKS.bls.source} target="_blank" rel="noopener noreferrer" className="underline hover:text-foreground">BLS</a>
                 <span>·</span>
@@ -192,12 +192,12 @@ export function CompensationTransparencyCard({ companyName, dbCompanyId }: Props
                 <Calendar className="w-4 h-4 text-primary" />
                 <span className="text-xs font-semibold text-foreground uppercase tracking-wider">Equal Pay Day (2025)</span>
               </div>
-              <p className="text-[10px] text-muted-foreground mb-2">
+              <p className="text-xs text-muted-foreground mb-2">
                 How far into the next year women must work to match men's prior-year earnings.
               </p>
               <div className="flex flex-wrap gap-1.5">
                 {NATIONAL_BENCHMARKS.equalPayDates.map((d) => (
-                  <Badge key={d.group} variant="outline" className="text-[10px] gap-1">
+                  <Badge key={d.group} variant="outline" className="text-xs gap-1">
                     <div className={cn("w-2 h-2 rounded-full", d.color)} />
                     {d.group}: {d.date}
                   </Badge>
@@ -217,7 +217,7 @@ export function CompensationTransparencyCard({ companyName, dbCompanyId }: Props
                     <Badge key={v} variant="secondary" className="text-xs">{v}</Badge>
                   ))}
                 </div>
-                <p className="text-[10px] text-muted-foreground mt-2">
+                <p className="text-xs text-muted-foreground mt-2">
                   These tools analyze payroll data to detect statistically unexplained pay gaps. Detection suggests the company is actively monitoring pay equity.
                 </p>
               </div>
@@ -268,19 +268,19 @@ export function CompensationTransparencyCard({ companyName, dbCompanyId }: Props
                   {gapMetrics.gender_pay_gap_pct && (
                     <div className="text-center p-2 bg-muted/50 rounded-lg">
                       <div className="text-lg font-bold text-foreground">{gapMetrics.gender_pay_gap_pct}%</div>
-                      <div className="text-[10px] text-muted-foreground">Gender Gap</div>
+                      <div className="text-xs text-muted-foreground">Gender Gap</div>
                     </div>
                   )}
                   {gapMetrics.racial_pay_gap_pct && (
                     <div className="text-center p-2 bg-muted/50 rounded-lg">
                       <div className="text-lg font-bold text-foreground">{gapMetrics.racial_pay_gap_pct}%</div>
-                      <div className="text-[10px] text-muted-foreground">Racial Gap</div>
+                      <div className="text-xs text-muted-foreground">Racial Gap</div>
                     </div>
                   )}
                   {gapMetrics.ceo_worker_ratio && (
                     <div className="text-center p-2 bg-muted/50 rounded-lg">
                       <div className="text-lg font-bold text-foreground">{gapMetrics.ceo_worker_ratio}:1</div>
-                      <div className="text-[10px] text-muted-foreground">CEO-Worker Ratio</div>
+                      <div className="text-xs text-muted-foreground">CEO-Worker Ratio</div>
                     </div>
                   )}
                 </div>
@@ -315,7 +315,7 @@ export function CompensationTransparencyCard({ companyName, dbCompanyId }: Props
                               <span className="text-sm font-medium text-foreground">{safeSignalLabel(signal.signal_type, "Compensation Signal")}</span>
                               <Badge
                                 variant="outline"
-                                className={cn("text-[10px] shrink-0", CONFIDENCE_STYLES[signal.confidence] || CONFIDENCE_STYLES.moderate_inference)}
+                                className={cn("text-xs shrink-0", CONFIDENCE_STYLES[signal.confidence] || CONFIDENCE_STYLES.moderate_inference)}
                               >
                                 {signal.confidence?.replace("_", " ")}
                               </Badge>
@@ -331,7 +331,7 @@ export function CompensationTransparencyCard({ companyName, dbCompanyId }: Props
                               compact
                             />
                             {signal.jurisdiction && (
-                              <Badge variant="outline" className="text-[10px] mt-1">{signal.jurisdiction}</Badge>
+                              <Badge variant="outline" className="text-xs mt-1">{signal.jurisdiction}</Badge>
                             )}
                           </div>
                         ))}
@@ -345,7 +345,7 @@ export function CompensationTransparencyCard({ companyName, dbCompanyId }: Props
                     <p className="text-xs font-medium text-muted-foreground mb-2">Not Detected in Public Sources</p>
                     <div className="flex flex-wrap gap-1.5">
                       {missingCategories.map(cat => (
-                        <Badge key={cat} variant="outline" className="text-[10px] text-muted-foreground">
+                        <Badge key={cat} variant="outline" className="text-xs text-muted-foreground">
                           {CATEGORY_META[cat]?.label || cat}
                         </Badge>
                       ))}
@@ -357,7 +357,7 @@ export function CompensationTransparencyCard({ companyName, dbCompanyId }: Props
           </div>
         )}
 
-        <p className="text-[10px] text-muted-foreground mt-4 border-t border-border pt-3">
+        <p className="text-xs text-muted-foreground mt-4 border-t border-border pt-3">
           National benchmarks from BLS & AAUW. Company signals detected from public sources. No legal conclusions drawn.
           There is no real-time "gender pay gap alert system" yet — this is as close as it gets.
         </p>

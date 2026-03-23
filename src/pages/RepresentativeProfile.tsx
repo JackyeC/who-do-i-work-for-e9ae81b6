@@ -159,12 +159,12 @@ export default function RepresentativeProfile() {
             {/* Source badges */}
             <div className="flex items-center gap-2 mt-3 flex-wrap">
               {dataSources.map(s => (
-                <Badge key={s} variant="outline" className="text-[9px] px-1.5 py-0 border-border text-muted-foreground gap-1">
+                <Badge key={s} variant="outline" className="text-xs px-1.5 py-0 border-border text-muted-foreground gap-1">
                   {s === "congress.gov" ? <Shield className="w-2.5 h-2.5" /> : <Database className="w-2.5 h-2.5" />}
                   {s === "congress.gov" ? "Congress.gov" : s === "fec" ? "FEC" : "CivicLens DB"}
                 </Badge>
               ))}
-              <span className="flex items-center gap-1 text-[10px] text-muted-foreground/50">
+              <span className="flex items-center gap-1 text-xs text-muted-foreground/50">
                 <Clock className="w-2.5 h-2.5" />
                 {new Date().toLocaleDateString()}
               </span>
@@ -183,7 +183,7 @@ export default function RepresentativeProfile() {
                 <CardContent className="p-4">
                   <div className="flex items-center gap-2 mb-1">
                     <stat.icon className="w-4 h-4 text-primary" />
-                    <span className="font-mono text-[9px] tracking-wider uppercase text-muted-foreground">{stat.label}</span>
+                    <span className="font-mono text-xs tracking-wider uppercase text-muted-foreground">{stat.label}</span>
                   </div>
                   <span className="text-xl font-bold text-foreground">{stat.value}</span>
                 </CardContent>
@@ -198,7 +198,7 @@ export default function RepresentativeProfile() {
                 <CardTitle className="text-base flex items-center gap-2">
                   <Shield className="w-4 h-4 text-primary" />
                   Committee Assignments
-                  <Badge variant="outline" className="text-[9px] px-1.5 py-0 border-primary/20 text-primary/70">Congress.gov</Badge>
+                  <Badge variant="outline" className="text-xs px-1.5 py-0 border-primary/20 text-primary/70">Congress.gov</Badge>
                 </CardTitle>
               </CardHeader>
               <CardContent>
@@ -218,7 +218,7 @@ export default function RepresentativeProfile() {
                   <FileText className="w-4 h-4 text-primary" />
                   Legislative Activity Summary
                   {votingSummary.data_source === "congress.gov" && (
-                    <Badge variant="outline" className="text-[9px] px-1.5 py-0 border-primary/20 text-primary/70">Verified</Badge>
+                    <Badge variant="outline" className="text-xs px-1.5 py-0 border-primary/20 text-primary/70">Verified</Badge>
                   )}
                 </CardTitle>
               </CardHeader>
@@ -228,10 +228,10 @@ export default function RepresentativeProfile() {
                 </div>
                 {votingSummary.policy_areas?.length > 0 && (
                   <div className="mt-4">
-                    <span className="text-[10px] font-medium text-muted-foreground uppercase tracking-wider">Policy Focus</span>
+                    <span className="text-xs font-medium text-muted-foreground uppercase tracking-wider">Policy Focus</span>
                     <div className="flex flex-wrap gap-1 mt-1.5">
                       {votingSummary.policy_areas.map((area: string) => (
-                        <Badge key={area} variant="outline" className="text-[10px] font-normal">{area}</Badge>
+                        <Badge key={area} variant="outline" className="text-xs font-normal">{area}</Badge>
                       ))}
                     </div>
                   </div>
@@ -333,7 +333,7 @@ export default function RepresentativeProfile() {
             </CardContent>
           </Card>
 
-          <p className="text-center text-[10px] text-muted-foreground/60 font-mono mt-8">
+          <p className="text-center text-xs text-muted-foreground/60 font-mono mt-8">
             Data sourced from FEC filings, Congress.gov, and public records · Corporate Character Scores powered by verified intelligence
           </p>
         </motion.div>

@@ -43,7 +43,7 @@ export function InboxSection() {
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-2">
           {unreadCount > 0 && (
-            <Badge className="bg-primary text-primary-foreground text-[10px] h-5 min-w-5 flex items-center justify-center rounded-full">
+            <Badge className="bg-primary text-primary-foreground text-xs h-5 min-w-5 flex items-center justify-center rounded-full">
               {unreadCount}
             </Badge>
           )}
@@ -80,7 +80,7 @@ export function InboxSection() {
                       {!msg.read && <span className="w-2 h-2 rounded-full bg-primary shrink-0" />}
                     </div>
                     <p className="text-sm text-muted-foreground mt-0.5 leading-relaxed">{msg.body}</p>
-                    <p className="text-[11px] text-muted-foreground/50 mt-1.5">{msg.time}</p>
+                    <p className="text-xs text-muted-foreground/50 mt-1.5">{msg.time}</p>
                   </div>
                 </div>
               </div>

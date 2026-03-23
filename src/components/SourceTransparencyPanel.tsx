@@ -87,7 +87,7 @@ export function SourceTransparencyPanel({ verification, compact = false, classNa
 
   if (compact) {
     return (
-      <Badge variant="outline" className={cn("text-[9px] gap-1", status.className)}>
+      <Badge variant="outline" className={cn("text-xs gap-1", status.className)}>
         <StatusIcon className="w-2.5 h-2.5" />
         {status.label}
       </Badge>
@@ -106,11 +106,11 @@ export function SourceTransparencyPanel({ verification, compact = false, classNa
         >
           <div className="flex items-center gap-2 min-w-0">
             <StatusIcon className="w-3.5 h-3.5 shrink-0" />
-            <span className="font-mono text-[10px] uppercase tracking-wider font-semibold">
+            <span className="font-mono text-xs uppercase tracking-wider font-semibold">
               {status.label}
             </span>
             {verification.confidence_level && (
-              <span className="text-[9px] opacity-70">
+              <span className="text-xs opacity-70">
                 · {verification.confidence_level} confidence
               </span>
             )}
@@ -125,17 +125,17 @@ export function SourceTransparencyPanel({ verification, compact = false, classNa
           <div>
             <div className="flex items-center gap-1.5 mb-1.5">
               <Building2 className="w-3 h-3 text-muted-foreground" />
-              <span className="font-mono text-[9px] uppercase tracking-wider text-muted-foreground font-semibold">
+              <span className="font-mono text-xs uppercase tracking-wider text-muted-foreground font-semibold">
                 Layer 1 — Identity Verification
               </span>
-              <Badge variant="outline" className={cn("text-[8px] ml-auto", verification.identity_verified ? "text-[hsl(var(--civic-green))] border-[hsl(var(--civic-green))]/30" : "text-muted-foreground border-border")}>
+              <Badge variant="outline" className={cn("text-xs ml-auto", verification.identity_verified ? "text-[hsl(var(--civic-green))] border-[hsl(var(--civic-green))]/30" : "text-muted-foreground border-border")}>
                 {verification.identity_verified ? "Confirmed" : "Unconfirmed"}
               </Badge>
             </div>
             {verification.identity_sources && verification.identity_sources.length > 0 && (
               <div className="space-y-1 ml-4">
                 {verification.identity_sources.map((src, i) => (
-                  <div key={i} className="flex items-center gap-1.5 text-[10px] text-muted-foreground">
+                  <div key={i} className="flex items-center gap-1.5 text-xs text-muted-foreground">
                     <span className="w-1 h-1 rounded-full bg-muted-foreground/40 shrink-0" />
                     <span className="font-medium">{src.source?.replace(/_/g, " ")}</span>
                     {src.status && <span className="opacity-60">({src.status})</span>}
@@ -154,17 +154,17 @@ export function SourceTransparencyPanel({ verification, compact = false, classNa
           <div>
             <div className="flex items-center gap-1.5 mb-1.5">
               <FileSearch className="w-3 h-3 text-muted-foreground" />
-              <span className="font-mono text-[9px] uppercase tracking-wider text-muted-foreground font-semibold">
+              <span className="font-mono text-xs uppercase tracking-wider text-muted-foreground font-semibold">
                 Layer 2 — Claim Verification
               </span>
-              <Badge variant="outline" className={cn("text-[8px] ml-auto", verification.claim_verified ? "text-[hsl(var(--civic-green))] border-[hsl(var(--civic-green))]/30" : "text-muted-foreground border-border")}>
+              <Badge variant="outline" className={cn("text-xs ml-auto", verification.claim_verified ? "text-[hsl(var(--civic-green))] border-[hsl(var(--civic-green))]/30" : "text-muted-foreground border-border")}>
                 {verification.claim_verified ? "Sourced" : "Unsourced"}
               </Badge>
             </div>
             {verification.claim_sources && verification.claim_sources.length > 0 && (
               <div className="space-y-1 ml-4">
                 {verification.claim_sources.map((src, i) => (
-                  <div key={i} className="flex items-center gap-1.5 text-[10px] text-muted-foreground">
+                  <div key={i} className="flex items-center gap-1.5 text-xs text-muted-foreground">
                     <span className="w-1 h-1 rounded-full bg-muted-foreground/40 shrink-0" />
                     <span className="font-medium">{src.type?.replace(/_/g, " ")}</span>
                     {src.source && <span>— {src.source}</span>}
@@ -186,7 +186,7 @@ export function SourceTransparencyPanel({ verification, compact = false, classNa
                     href={url}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="inline-flex items-center gap-1 text-[10px] text-primary hover:underline font-mono"
+                    className="inline-flex items-center gap-1 text-xs text-primary hover:underline font-mono"
                   >
                     <ExternalLink className="w-2.5 h-2.5" />
                     Primary Source {verification.claim_evidence_urls!.length > 1 ? i + 1 : ""}
@@ -200,15 +200,15 @@ export function SourceTransparencyPanel({ verification, compact = false, classNa
           <div>
             <div className="flex items-center gap-1.5 mb-1.5">
               <Clock className="w-3 h-3 text-muted-foreground" />
-              <span className="font-mono text-[9px] uppercase tracking-wider text-muted-foreground font-semibold">
+              <span className="font-mono text-xs uppercase tracking-wider text-muted-foreground font-semibold">
                 Layer 3 — Data Freshness
               </span>
-              <span className={cn("text-[9px] font-medium ml-auto", freshness.className)}>
+              <span className={cn("text-xs font-medium ml-auto", freshness.className)}>
                 {freshness.label}
               </span>
             </div>
             {verification.data_last_updated && (
-              <p className="text-[10px] text-muted-foreground ml-4">
+              <p className="text-xs text-muted-foreground ml-4">
                 Last updated: {new Date(verification.data_last_updated).toLocaleDateString("en-US", { year: "numeric", month: "short", day: "numeric" })}
               </p>
             )}
@@ -216,7 +216,7 @@ export function SourceTransparencyPanel({ verification, compact = false, classNa
 
           {/* Footer */}
           <div className="pt-2 border-t border-border/30">
-            <p className="text-[9px] text-muted-foreground/60 leading-relaxed">
+            <p className="text-xs text-muted-foreground/60 leading-relaxed">
               Verified by: {verification.verified_by || "system"} · 
               {verification.updated_at && ` Last check: ${new Date(verification.updated_at).toLocaleDateString()}`}
             </p>
@@ -233,7 +233,7 @@ export function VerificationBadge({ status, confidence }: { status?: string; con
   const Icon = config.icon;
 
   return (
-    <span className={cn("inline-flex items-center gap-1 px-1.5 py-0.5 rounded text-[9px] font-mono uppercase tracking-wider border", config.className)}>
+    <span className={cn("inline-flex items-center gap-1 px-1.5 py-0.5 rounded text-xs font-mono uppercase tracking-wider border", config.className)}>
       <Icon className="w-2.5 h-2.5" />
       {config.label}
     </span>

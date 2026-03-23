@@ -68,7 +68,7 @@ export function ValuesEvidenceCard({ evidence }: Props) {
             loading="lazy"
           />
           <div className="absolute inset-0 bg-gradient-to-t from-background/80 via-transparent to-transparent" />
-          <Badge className="absolute top-2 left-2 text-[9px] gap-1 bg-background/80 backdrop-blur-sm text-foreground border-none">
+          <Badge className="absolute top-2 left-2 text-xs gap-1 bg-background/80 backdrop-blur-sm text-foreground border-none">
             <Camera className="w-2.5 h-2.5" />
             Document Screenshot
           </Badge>
@@ -100,16 +100,16 @@ export function ValuesEvidenceCard({ evidence }: Props) {
         <div className="flex items-center justify-between gap-2">
           <div className="flex items-center gap-2">
             <SourceIcon className={cn("w-4 h-4", conf.color || "text-muted-foreground")} />
-            <span className="text-[10px] font-extrabold uppercase tracking-[0.12em] text-muted-foreground">
+            <span className="text-xs font-extrabold uppercase tracking-[0.12em] text-muted-foreground">
               {meta.label}
             </span>
           </div>
           <div className="flex items-center gap-1.5">
-            <Badge variant="outline" className={`text-[9px] px-1.5 py-0 ${conf.color}`}>
+            <Badge variant="outline" className={`text-xs px-1.5 py-0 ${conf.color}`}>
               {conf.plainLabel}
             </Badge>
             {evidence.event_date && (
-              <span className="text-[10px] text-muted-foreground font-mono">
+              <span className="text-xs text-muted-foreground font-mono">
                 {new Date(evidence.event_date).toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" })}
               </span>
             )}
@@ -127,7 +127,7 @@ export function ValuesEvidenceCard({ evidence }: Props) {
             <span className="text-lg font-bold text-primary font-mono">
               {formatCurrency(evidence.amount)}
             </span>
-            <span className="text-[10px] text-muted-foreground">reported amount</span>
+            <span className="text-xs text-muted-foreground">reported amount</span>
           </div>
         )}
 
@@ -144,19 +144,19 @@ export function ValuesEvidenceCard({ evidence }: Props) {
         {(evidence.related_legislation || evidence.related_org || evidence.related_politician) && (
           <div className="flex flex-wrap gap-1.5">
             {evidence.related_legislation && (
-              <Badge variant="secondary" className="text-[10px] gap-1">
+              <Badge variant="secondary" className="text-xs gap-1">
                 <Scale className="w-2.5 h-2.5" />
                 {evidence.related_legislation}
               </Badge>
             )}
             {evidence.related_politician && (
-              <Badge variant="secondary" className="text-[10px] gap-1">
+              <Badge variant="secondary" className="text-xs gap-1">
                 <Info className="w-2.5 h-2.5" />
                 {evidence.related_politician}
               </Badge>
             )}
             {evidence.related_org && (
-              <Badge variant="outline" className="text-[10px]">
+              <Badge variant="outline" className="text-xs">
                 {evidence.related_org}
               </Badge>
             )}
@@ -173,10 +173,10 @@ export function ValuesEvidenceCard({ evidence }: Props) {
           >
             <Shield className="w-4 h-4 text-primary shrink-0" />
             <div className="flex-1 min-w-0">
-              <p className="text-[11px] font-semibold text-foreground group-hover:text-primary transition-colors truncate">
+              <p className="text-xs font-semibold text-foreground group-hover:text-primary transition-colors truncate">
                 {evidence.source_name || "View Original Record"}
               </p>
-              <p className="text-[9px] text-muted-foreground truncate">{evidence.source_url}</p>
+              <p className="text-xs text-muted-foreground truncate">{evidence.source_url}</p>
             </div>
             <ExternalLink className="w-3.5 h-3.5 text-muted-foreground group-hover:text-primary shrink-0" />
           </a>

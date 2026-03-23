@@ -9,7 +9,7 @@ export function FreshnessLabel({ lastVerifiedAt }: FreshnessLabelProps) {
 
   return (
     <span
-      className="inline-flex items-center gap-1 text-[11px] whitespace-nowrap"
+      className="inline-flex items-center gap-1 text-xs whitespace-nowrap"
       style={{ fontFamily: "'DM Sans', sans-serif", color: info.color }}
     >
       <span

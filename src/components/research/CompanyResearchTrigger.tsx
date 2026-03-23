@@ -66,13 +66,13 @@ export function CompanyResearchTrigger({ companyName, className, onPublished }: 
             <CheckCircle className="w-5 h-5 text-primary" />
             <div>
               <p className="text-sm font-medium text-foreground">AI Draft Preview</p>
-              <p className="text-[10px] text-muted-foreground">
+              <p className="text-xs text-muted-foreground">
                 AI-generated preview · Jackye's official vetting is in progress
               </p>
             </div>
           </div>
 
-          <Badge variant="outline" className="text-[10px] bg-amber-500/10 text-amber-600 border-amber-500/20">
+          <Badge variant="outline" className="text-xs bg-amber-500/10 text-amber-600 border-amber-500/20">
             <AlertTriangle className="w-3 h-3 mr-1" /> Unvetted — AI Research Draft
           </Badge>
 
@@ -93,7 +93,7 @@ export function CompanyResearchTrigger({ companyName, className, onPublished }: 
             <div className="flex flex-wrap gap-1 pt-2">
               {draft.citations.map((url, i) => (
                 <a key={i} href={url} target="_blank" rel="noopener noreferrer"
-                  className="text-[10px] text-primary hover:underline inline-flex items-center gap-0.5">
+                  className="text-xs text-primary hover:underline inline-flex items-center gap-0.5">
                   Source [{i + 1}] <ExternalLink className="w-2.5 h-2.5" />
                 </a>
               ))}
@@ -128,7 +128,7 @@ export function CompanyResearchTrigger({ companyName, className, onPublished }: 
             <><Search className="w-4 h-4" /> 🔍 Start Global Intelligence Scan</>
           )}
         </Button>
-        <p className="text-[10px] text-muted-foreground text-center">
+        <p className="text-xs text-muted-foreground text-center">
           Powered by Perplexity AI · Results reviewed by Jackye Clayton
         </p>
       </CardContent>

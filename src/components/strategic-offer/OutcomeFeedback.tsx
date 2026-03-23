@@ -92,7 +92,7 @@ export function OutcomeFeedback({ companyName }: Props) {
       <CardHeader className="pb-3">
         <CardTitle className="text-base text-center">
           <span className="text-foreground">Did you get the bag? 💰</span>
-          <p className="text-[11px] text-muted-foreground font-normal mt-1">
+          <p className="text-xs text-muted-foreground font-normal mt-1">
             How did your negotiation with {companyName} go?
           </p>
         </CardTitle>

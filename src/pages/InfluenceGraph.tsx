@@ -44,14 +44,14 @@ function EvidenceDrawer({
           <>
             <div className="flex items-center gap-2">
               <div className="w-3 h-3 rounded-full" style={{ backgroundColor: NODE_COLORS[node.type] }} />
-              <Badge variant="outline" className="text-[10px] font-mono">{NODE_LABELS[node.type]}</Badge>
+              <Badge variant="outline" className="text-xs font-mono">{NODE_LABELS[node.type]}</Badge>
             </div>
             <h4 className="text-lg font-semibold text-foreground">{node.label}</h4>
 
             <div className="space-y-2 text-xs">
               <div className="flex justify-between text-muted-foreground">
                 <span>Confidence</span>
-                <Badge variant={node.confidence === 'high' ? 'success' : node.confidence === 'medium' ? 'warning' : 'outline'} className="text-[10px]">
+                <Badge variant={node.confidence === 'high' ? 'success' : node.confidence === 'medium' ? 'warning' : 'outline'} className="text-xs">
                   {node.confidence}
                 </Badge>
               </div>
@@ -78,7 +78,7 @@ function EvidenceDrawer({
               <>
                 <Separator />
                 <div className="space-y-1.5">
-                  <p className="text-[10px] font-mono uppercase tracking-wider text-muted-foreground">Details</p>
+                  <p className="text-xs font-mono uppercase tracking-wider text-muted-foreground">Details</p>
                   {Object.entries(node.metadata).map(([key, val]) => (
                     <div key={key} className="flex justify-between text-xs">
                       <span className="text-muted-foreground capitalize">{key.replace(/_/g, ' ')}</span>
@@ -99,11 +99,11 @@ function EvidenceDrawer({
               <span className="font-mono">{typeof edge.target === 'string' ? edge.target.split('::')[1] : ''}</span>
             </div>
             <div className="flex items-center gap-2">
-              <Badge variant={edge.isContradiction ? 'destructive' : 'outline'} className="text-[10px] font-mono">
+              <Badge variant={edge.isContradiction ? 'destructive' : 'outline'} className="text-xs font-mono">
                 {EDGE_LABELS[edge.edgeType] || edge.edgeType}
               </Badge>
               {edge.isContradiction && (
-                <Badge variant="destructive" className="text-[10px] gap-1">
+                <Badge variant="destructive" className="text-xs gap-1">
                   <AlertTriangle className="w-3 h-3" /> Contradiction
                 </Badge>
               )}
@@ -120,7 +120,7 @@ function EvidenceDrawer({
               )}
               <div className="flex justify-between text-muted-foreground">
                 <span>Confidence</span>
-                <Badge variant={edge.confidence === 'high' ? 'success' : edge.confidence === 'medium' ? 'warning' : 'outline'} className="text-[10px]">
+                <Badge variant={edge.confidence === 'high' ? 'success' : edge.confidence === 'medium' ? 'warning' : 'outline'} className="text-xs">
                   {edge.confidence}
                 </Badge>
               </div>
@@ -302,9 +302,9 @@ export default function InfluenceGraph() {
             </Link>
             <div className="min-w-0">
               <h1 className="text-lg font-bold text-foreground truncate">{dbCompany.name}</h1>
-              <p className="text-[10px] font-mono text-muted-foreground uppercase tracking-wider">Corporate Influence Graph</p>
+              <p className="text-xs font-mono text-muted-foreground uppercase tracking-wider">Corporate Influence Graph</p>
             </div>
-            {dbCompany.ticker && <Badge variant="outline" className="font-mono text-[10px] shrink-0">{dbCompany.ticker}</Badge>}
+            {dbCompany.ticker && <Badge variant="outline" className="font-mono text-xs shrink-0">{dbCompany.ticker}</Badge>}
           </div>
 
           <div className="flex items-center gap-3 shrink-0">
@@ -314,7 +314,7 @@ export default function InfluenceGraph() {
                 {contradictionCount} Contradiction{contradictionCount !== 1 ? 's' : ''}
               </Badge>
             )}
-            <div className="text-[10px] font-mono text-muted-foreground">
+            <div className="text-xs font-mono text-muted-foreground">
               {filteredGraph.nodes.length} nodes · {filteredGraph.edges.length} edges
             </div>
           </div>
@@ -331,7 +331,7 @@ export default function InfluenceGraph() {
           {filtersOpen && (
             <div className="p-4 space-y-5 w-[260px]">
               <div>
-                <p className="text-[10px] font-mono uppercase tracking-wider text-muted-foreground mb-3">Display</p>
+                <p className="text-xs font-mono uppercase tracking-wider text-muted-foreground mb-3">Display</p>
                 <div className="space-y-3">
                   <label className="flex items-center justify-between gap-2 cursor-pointer">
                     <span className="text-xs text-foreground flex items-center gap-1.5">
@@ -353,7 +353,7 @@ export default function InfluenceGraph() {
               <Separator />
 
               <div>
-                <p className="text-[10px] font-mono uppercase tracking-wider text-muted-foreground mb-3">Topic Filters</p>
+                <p className="text-xs font-mono uppercase tracking-wider text-muted-foreground mb-3">Topic Filters</p>
                 <div className="space-y-1.5">
                   {(Object.entries(FILTER_LABELS) as [FilterCategory, string][]).map(([key, label]) => (
                     <button
@@ -373,7 +373,7 @@ export default function InfluenceGraph() {
                 {activeFilters.size > 0 && (
                   <button
                     onClick={() => setActiveFilters(new Set())}
-                    className="text-[10px] text-primary mt-2 hover:underline"
+                    className="text-xs text-primary mt-2 hover:underline"
                   >
                     Clear all filters
                   </button>
@@ -383,10 +383,10 @@ export default function InfluenceGraph() {
               <Separator />
 
               <div>
-                <p className="text-[10px] font-mono uppercase tracking-wider text-muted-foreground mb-3">Legend</p>
+                <p className="text-xs font-mono uppercase tracking-wider text-muted-foreground mb-3">Legend</p>
                 <div className="space-y-1">
                   {(Object.entries(NODE_LABELS) as [NodeType, string][]).map(([type, label]) => (
-                    <div key={type} className="flex items-center gap-2 text-[10px] text-muted-foreground">
+                    <div key={type} className="flex items-center gap-2 text-xs text-muted-foreground">
                       <div className="w-2.5 h-2.5 rounded-full shrink-0" style={{ backgroundColor: NODE_COLORS[type] }} />
                       {label}
                     </div>
@@ -503,7 +503,7 @@ export default function InfluenceGraph() {
 
           {/* Disclaimer */}
           <div className="absolute bottom-3 left-1/2 -translate-x-1/2 max-w-lg">
-            <p className="text-[9px] font-mono text-muted-foreground/50 text-center leading-relaxed px-4">
+            <p className="text-xs font-mono text-muted-foreground/50 text-center leading-relaxed px-4">
               This graph shows verified relationships from public records (FEC, Senate LDA, CourtListener, SEC).
               No intent is inferred — interpret connections using the evidence links provided.
             </p>

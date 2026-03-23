@@ -46,7 +46,7 @@ export function EmployerDossierCard({ company }: EmployerDossierCardProps) {
       <p className="text-xs text-muted-foreground mb-5">{company.industry} · {company.state} {company.employee_count ? `· ${company.employee_count} employees` : ""}</p>
 
       <div className="text-center py-4">
-        <div className="font-mono text-[10px] tracking-[0.2em] uppercase text-muted-foreground mb-2">Employer Clarity Score</div>
+        <div className="font-mono text-xs tracking-[0.2em] uppercase text-muted-foreground mb-2">Employer Clarity Score</div>
         <div className="flex items-end justify-center gap-2">
           <span className={`font-data text-6xl sm:text-7xl font-black tabular-nums ${risk.color}`}>
             {score.toFixed(1)}
@@ -71,7 +71,7 @@ export function EmployerDossierCard({ company }: EmployerDossierCardProps) {
               : "Limited transparency — proceed with caution and ask hard questions."}
       </p>
 
-      <p className="text-[11px] text-muted-foreground text-center mt-4 italic">
+      <p className="text-xs text-muted-foreground text-center mt-4 italic">
         Sources analyzed: {company.dossier?.sources_note || "public filings, workforce data, compensation benchmarks, and employee sentiment signals"}
       </p>
     </div>

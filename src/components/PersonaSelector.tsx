@@ -56,7 +56,7 @@ export function PersonaSelector({ activePersona, onPersonaChange }: PersonaSelec
 
   return (
     <div className="mb-6">
-      <p className="text-[10px] uppercase tracking-[0.15em] text-muted-foreground font-semibold mb-2">Report View</p>
+      <p className="text-xs uppercase tracking-[0.15em] text-muted-foreground font-semibold mb-2">Report View</p>
       <div className="w-full grid grid-cols-6 h-auto p-1 bg-muted rounded-lg">
         {PERSONAS.map((persona) => {
           const Icon = ICONS[persona.id];
@@ -70,7 +70,7 @@ export function PersonaSelector({ activePersona, onPersonaChange }: PersonaSelec
                 <button
                   onClick={() => handlePersonaClick(persona)}
                   className={cn(
-                    "flex items-center justify-center gap-1 py-2 text-[10px] sm:text-xs font-medium rounded-md transition-all duration-200 relative",
+                    "flex items-center justify-center gap-1 py-2 text-xs sm:text-xs font-medium rounded-md transition-all duration-200 relative",
                     isActive
                       ? "bg-primary text-primary-foreground shadow-sm"
                       : isLocked

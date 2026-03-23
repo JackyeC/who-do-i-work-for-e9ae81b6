@@ -237,7 +237,7 @@ export function CandidatePersonaBuilder() {
 
                 {p.skills.length > 0 && (
                   <div>
-                    <p className="text-[10px] uppercase tracking-widest text-muted-foreground font-semibold mb-1">Skills</p>
+                    <p className="text-xs uppercase tracking-widest text-muted-foreground font-semibold mb-1">Skills</p>
                     <div className="flex flex-wrap gap-1">
                       {p.skills.map((s) => <Badge key={s} variant="outline" className="text-xs">{s}</Badge>)}
                     </div>
@@ -246,7 +246,7 @@ export function CandidatePersonaBuilder() {
 
                 {p.motivators.length > 0 && (
                   <div>
-                    <p className="text-[10px] uppercase tracking-widest text-muted-foreground font-semibold mb-1">Motivators</p>
+                    <p className="text-xs uppercase tracking-widest text-muted-foreground font-semibold mb-1">Motivators</p>
                     <div className="flex flex-wrap gap-1">
                       {p.motivators.map((m) => <Badge key={m} className="text-xs bg-primary/10 text-primary border-primary/20">{m}</Badge>)}
                     </div>
@@ -255,7 +255,7 @@ export function CandidatePersonaBuilder() {
 
                 {p.values.length > 0 && (
                   <div>
-                    <p className="text-[10px] uppercase tracking-widest text-muted-foreground font-semibold mb-1">Values</p>
+                    <p className="text-xs uppercase tracking-widest text-muted-foreground font-semibold mb-1">Values</p>
                     <div className="flex flex-wrap gap-1">
                       {p.values.map((v) => <Badge key={v} className="text-xs bg-accent text-accent-foreground">{v}</Badge>)}
                     </div>
@@ -264,7 +264,7 @@ export function CandidatePersonaBuilder() {
 
                 {p.riskSignals.length > 0 && (
                   <div>
-                    <p className="text-[10px] uppercase tracking-widest text-muted-foreground font-semibold mb-1">Risk Signals</p>
+                    <p className="text-xs uppercase tracking-widest text-muted-foreground font-semibold mb-1">Risk Signals</p>
                     <div className="flex flex-wrap gap-1">
                       {p.riskSignals.map((r) => <Badge key={r} variant="destructive" className="text-xs">{r}</Badge>)}
                     </div>

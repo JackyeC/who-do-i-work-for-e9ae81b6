@@ -36,7 +36,7 @@ export function EvidenceQualityBadge({
     return (
       <Tooltip>
         <TooltipTrigger asChild>
-          <Badge variant="outline" className={cn("text-[10px] gap-1 cursor-help", color, className)}>
+          <Badge variant="outline" className={cn("text-xs gap-1 cursor-help", color, className)}>
             <ShieldCheck className="w-3 h-3" />
             Evidence Quality: {score}/100
           </Badge>

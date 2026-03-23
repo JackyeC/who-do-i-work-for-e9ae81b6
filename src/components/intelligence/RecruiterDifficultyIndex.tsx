@@ -227,7 +227,7 @@ export function RecruiterDifficultyIndex({ companyId, companyName }: Props) {
                 <Icon className={cn("w-4 h-4 shrink-0", sev.text)} />
                 <span className="text-sm font-medium text-foreground flex-1">{signal.label}</span>
                 <span className="text-xs text-muted-foreground">{signal.value}</span>
-                <Badge variant="outline" className={cn("text-[10px]", sev.bg, sev.text, sev.border)}>
+                <Badge variant="outline" className={cn("text-xs", sev.bg, sev.text, sev.border)}>
                   {sev.label}
                 </Badge>
               </div>
@@ -248,7 +248,7 @@ export function RecruiterDifficultyIndex({ companyId, companyName }: Props) {
           </p>
         </div>
 
-        <p className="text-[10px] text-muted-foreground">
+        <p className="text-xs text-muted-foreground">
           Based on listing age, compensation signals, workforce sentiment, WARN notices, and HR leadership stability. No judgment, just receipts.
         </p>
       </CardContent>

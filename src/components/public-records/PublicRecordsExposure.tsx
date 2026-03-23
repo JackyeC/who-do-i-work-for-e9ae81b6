@@ -158,14 +158,14 @@ export function PublicRecordsExposure({ companyName, companyId }: PublicRecordsE
       <div className="flex items-center gap-2 flex-wrap">
         <div className="flex items-center gap-1.5 mr-2">
           <SlidersHorizontal className="w-3.5 h-3.5 text-muted-foreground" />
-          <span className="font-mono text-[10px] uppercase tracking-wider text-muted-foreground">Filters</span>
+          <span className="font-mono text-xs uppercase tracking-wider text-muted-foreground">Filters</span>
         </div>
 
         {/* Sort */}
         <select
           value={sort}
           onChange={e => setSort(e.target.value as SortOption)}
-          className="font-mono text-[10px] bg-card border border-border rounded-sm px-2 py-1 text-foreground"
+          className="font-mono text-xs bg-card border border-border rounded-sm px-2 py-1 text-foreground"
         >
           {SORT_OPTIONS.map(o => (
             <option key={o.value} value={o.value}>{o.label}</option>
@@ -179,7 +179,7 @@ export function PublicRecordsExposure({ companyName, companyId }: PublicRecordsE
               key={f.value}
               onClick={() => setEntityFilter(f.value)}
               className={cn(
-                "font-mono text-[10px] tracking-wider px-2 py-1 border rounded-sm transition-colors",
+                "font-mono text-xs tracking-wider px-2 py-1 border rounded-sm transition-colors",
                 entityFilter === f.value
                   ? "bg-primary/10 border-primary/25 text-primary"
                   : "bg-card border-border text-muted-foreground hover:text-foreground"
@@ -195,7 +195,7 @@ export function PublicRecordsExposure({ companyName, companyId }: PublicRecordsE
           <select
             value={relationshipFilter}
             onChange={e => setRelationshipFilter(e.target.value)}
-            className="font-mono text-[10px] bg-card border border-border rounded-sm px-2 py-1 text-foreground"
+            className="font-mono text-xs bg-card border border-border rounded-sm px-2 py-1 text-foreground"
           >
             <option value="all">All Types</option>
             {relationshipTypes.map(t => (
@@ -208,7 +208,7 @@ export function PublicRecordsExposure({ companyName, companyId }: PublicRecordsE
         <button
           onClick={() => setOfficialOnly(!officialOnly)}
           className={cn(
-            "font-mono text-[10px] tracking-wider px-2 py-1 border rounded-sm transition-colors",
+            "font-mono text-xs tracking-wider px-2 py-1 border rounded-sm transition-colors",
             officialOnly
               ? "bg-primary/10 border-primary/25 text-primary"
               : "bg-card border-border text-muted-foreground hover:text-foreground"
@@ -220,11 +220,11 @@ export function PublicRecordsExposure({ companyName, companyId }: PublicRecordsE
 
       {/* Summary line */}
       <div className="flex items-center gap-2">
-        <span className="font-mono text-[10px] text-muted-foreground uppercase tracking-wider">
+        <span className="font-mono text-xs text-muted-foreground uppercase tracking-wider">
           {filtered.length} record{filtered.length !== 1 ? "s" : ""}
         </span>
         {hasStrongRecords && (
-          <Badge variant="outline" className="text-[10px] font-mono tracking-wider border-primary/25 text-primary">
+          <Badge variant="outline" className="text-xs font-mono tracking-wider border-primary/25 text-primary">
             Strong documentation available
           </Badge>
         )}

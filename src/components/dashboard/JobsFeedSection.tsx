@@ -207,7 +207,7 @@ export function JobsFeedSection() {
                 <div className="min-w-0 flex-1">
                   <div className="flex items-center gap-2 flex-wrap">
                     <h3 className="font-semibold text-foreground text-[15px]">{job.title}</h3>
-                    <Badge variant="outline" className={cn("text-[10px] font-mono", getScoreColor(job.integrityLevel))}>
+                    <Badge variant="outline" className={cn("text-xs font-mono", getScoreColor(job.integrityLevel))}>
                       {job.integrityScore} Integrity
                     </Badge>
                   </div>
@@ -221,14 +221,14 @@ export function JobsFeedSection() {
                   </div>
                   <div className="flex gap-1.5 mt-3 flex-wrap">
                     {job.skills.map((s) => (
-                      <Badge key={s} variant="secondary" className="text-[10px] bg-muted/50 font-normal">{s}</Badge>
+                      <Badge key={s} variant="secondary" className="text-xs bg-muted/50 font-normal">{s}</Badge>
                     ))}
                   </div>
                 </div>
               </div>
               <div className="flex flex-col items-end gap-2 shrink-0">
                 <span className={cn("text-lg font-bold font-mono", getAlignmentColor(job.alignmentPct))}>
-                  {job.alignmentPct}% <span className="text-[10px] font-normal">aligned</span>
+                  {job.alignmentPct}% <span className="text-xs font-normal">aligned</span>
                 </span>
                 <div className="flex gap-2">
                   <Button

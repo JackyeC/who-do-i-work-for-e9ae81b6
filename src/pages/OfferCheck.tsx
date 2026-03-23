@@ -48,7 +48,7 @@ function ReportTimeline({ company }: { company: any }) {
   const createdDate = company?.created_at;
 
   return (
-    <div className="flex items-center gap-4 flex-wrap text-[10px] text-muted-foreground mb-4">
+    <div className="flex items-center gap-4 flex-wrap text-xs text-muted-foreground mb-4">
       {createdDate && (
         <span className="flex items-center gap-1">
           <Clock className="w-2.5 h-2.5" />
@@ -285,15 +285,15 @@ export default function OfferCheck() {
               <div className="grid grid-cols-3 gap-3">
                 <div className="text-center p-2 bg-muted/50 rounded-lg">
                   <div className="text-lg font-bold text-foreground">{totalSignals}</div>
-                  <div className="text-[10px] text-muted-foreground">Total Signals</div>
+                  <div className="text-xs text-muted-foreground">Total Signals</div>
                 </div>
                 <div className="text-center p-2 bg-muted/50 rounded-lg">
                   <div className="text-lg font-bold text-foreground">{transparencyCount}/7</div>
-                  <div className="text-[10px] text-muted-foreground">Disclosure Categories</div>
+                  <div className="text-xs text-muted-foreground">Disclosure Categories</div>
                 </div>
                 <div className="text-center p-2 bg-muted/50 rounded-lg">
                   <div className="text-lg font-bold text-foreground">{staleSections}</div>
-                  <div className="text-[10px] text-muted-foreground">Stale Sections</div>
+                  <div className="text-xs text-muted-foreground">Stale Sections</div>
                 </div>
               </div>
               <ReportTimeline company={company} />
@@ -371,10 +371,10 @@ export default function OfferCheck() {
               </div>
               <div className="flex-1">
                 <p className="text-sm font-medium text-foreground">Review Your Offer Letter (Private)</p>
-                <p className="text-[10px] text-muted-foreground">Upload your offer letter for a private, structured review comparing against public signals.</p>
+                <p className="text-xs text-muted-foreground">Upload your offer letter for a private, structured review comparing against public signals.</p>
               </div>
               {!premium.isPremium && (
-                <Badge variant="outline" className="text-[9px] gap-1 shrink-0">
+                <Badge variant="outline" className="text-xs gap-1 shrink-0">
                   <Crown className="w-2.5 h-2.5" /> Premium
                 </Badge>
               )}
@@ -392,9 +392,9 @@ export default function OfferCheck() {
                 </div>
                 <div>
                   <p className="text-sm font-medium text-foreground">Compare Companies</p>
-                  <p className="text-[10px] text-muted-foreground">Side-by-side Offer Check comparison</p>
+                  <p className="text-xs text-muted-foreground">Side-by-side Offer Check comparison</p>
                   {!premium.isPremium && (
-                    <Badge variant="outline" className="text-[9px] mt-1 gap-1">
+                    <Badge variant="outline" className="text-xs mt-1 gap-1">
                       <Crown className="w-2.5 h-2.5" /> Premium
                     </Badge>
                   )}
@@ -410,7 +410,7 @@ export default function OfferCheck() {
                   </div>
                   <div>
                     <p className="text-sm font-medium text-foreground">Export Report</p>
-                    <p className="text-[10px] text-muted-foreground">Download as PDF</p>
+                    <p className="text-xs text-muted-foreground">Download as PDF</p>
                   </div>
                 </CardContent>
               </Card>

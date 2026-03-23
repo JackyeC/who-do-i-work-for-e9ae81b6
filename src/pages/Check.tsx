@@ -235,7 +235,7 @@ function OpenRolesSection({ companyId, companyName }: { companyId: string; compa
           <div className="flex items-center gap-2">
             <Briefcase className="w-4 h-4 text-primary" />
             <h3 className="text-sm font-semibold font-display text-foreground">Open Roles</h3>
-            <Badge variant="secondary" className="text-[10px]">{jobs.length}</Badge>
+            <Badge variant="secondary" className="text-xs">{jobs.length}</Badge>
           </div>
         </div>
         <div className="space-y-2 max-h-[400px] overflow-y-auto pr-1">
@@ -274,12 +274,12 @@ function OpenRolesSection({ companyId, companyName }: { companyId: string; compa
               </div>
               <div className="flex flex-col items-end gap-1.5 shrink-0">
                 {job.work_mode && (
-                  <Badge variant="outline" className={`text-[10px] py-0 ${WORK_MODE_COLORS[job.work_mode] || ''}`}>
+                  <Badge variant="outline" className={`text-xs py-0 ${WORK_MODE_COLORS[job.work_mode] || ''}`}>
                     {job.work_mode}
                   </Badge>
                 )}
                 {job.posted_at && (
-                  <span className="text-[10px] text-muted-foreground">
+                  <span className="text-xs text-muted-foreground">
                     {formatDistanceToNow(new Date(job.posted_at), { addSuffix: true })}
                   </span>
                 )}
@@ -432,7 +432,7 @@ export default function Check() {
                           <Building2 className="w-4 h-4 text-muted-foreground shrink-0" />
                           <div>
                             <p className="text-sm font-medium text-foreground">{c.name}</p>
-                            <p className="text-[11px] text-muted-foreground">{c.industry}</p>
+                            <p className="text-xs text-muted-foreground">{c.industry}</p>
                           </div>
                         </button>
                       ))
@@ -551,7 +551,7 @@ export default function Check() {
                 <ClipboardCheck className="w-5 h-5 text-primary shrink-0" />
                 <div>
                   <p className="text-sm font-medium text-foreground">Offer Check</p>
-                  <p className="text-[11px] text-muted-foreground">Score and review a job offer</p>
+                  <p className="text-xs text-muted-foreground">Score and review a job offer</p>
                 </div>
               </button>
               <button
@@ -561,7 +561,7 @@ export default function Check() {
                 <Users className="w-5 h-5 text-primary shrink-0" />
                 <div>
                   <p className="text-sm font-medium text-foreground">What Am I Supporting?</p>
-                  <p className="text-[11px] text-muted-foreground">Explore political funding links</p>
+                  <p className="text-xs text-muted-foreground">Explore political funding links</p>
                 </div>
               </button>
             </div>

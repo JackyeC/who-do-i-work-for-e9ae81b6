@@ -367,7 +367,7 @@ export default function StrategicOfferReview() {
             <span className="font-semibold text-foreground">Data Stays Local.</span>{" "}
             No PII is stored. Salary and title data are processed for analysis only and never shared.
           </p>
-          <Badge variant="outline" className="text-[9px] shrink-0">Encrypted</Badge>
+          <Badge variant="outline" className="text-xs shrink-0">Encrypted</Badge>
         </div>
 
         {/* Header */}
@@ -396,7 +396,7 @@ export default function StrategicOfferReview() {
                 <p className="text-xs text-muted-foreground">
                   Privacy-first. Just enter the key terms — no documents needed.
                 </p>
-                <Badge className="text-[10px] bg-primary/10 text-primary border-0">Recommended</Badge>
+                <Badge className="text-xs bg-primary/10 text-primary border-0">Recommended</Badge>
               </CardContent>
             </Card>
             <Card
@@ -418,7 +418,7 @@ export default function StrategicOfferReview() {
                 <p className="text-xs text-muted-foreground">
                   AI-powered term extraction from PDF/DOCX. Encrypted, auto-deleted after analysis.
                 </p>
-                <Badge variant="outline" className="text-[10px]">Premium</Badge>
+                <Badge variant="outline" className="text-xs">Premium</Badge>
               </CardContent>
             </Card>
           </div>
@@ -461,7 +461,7 @@ export default function StrategicOfferReview() {
                     </div>
                   )}
                   {offer.companyId && (
-                    <Badge variant="secondary" className="mt-2 text-[10px]">
+                    <Badge variant="secondary" className="mt-2 text-xs">
                       <CheckCircle2 className="w-3 h-3 mr-1" /> Matched — company signals included
                     </Badge>
                   )}
@@ -560,7 +560,7 @@ export default function StrategicOfferReview() {
                         </div>
                       )}
                       {offer.companyId && (
-                        <Badge variant="secondary" className="mt-2 text-[10px]">
+                        <Badge variant="secondary" className="mt-2 text-xs">
                           <CheckCircle2 className="w-3 h-3 mr-1" /> Matched — company signals included
                         </Badge>
                       )}
@@ -602,7 +602,7 @@ export default function StrategicOfferReview() {
                           />
                         </PopoverContent>
                       </Popover>
-                      <p className="text-[10px] text-muted-foreground mt-1">Optional — enables "What Changed" delta scan</p>
+                      <p className="text-xs text-muted-foreground mt-1">Optional — enables "What Changed" delta scan</p>
                     </div>
                   </CardContent>
                 </Card>
@@ -648,7 +648,7 @@ export default function StrategicOfferReview() {
                     <div className="flex items-center justify-between p-3 bg-muted/30 rounded-xl">
                       <div>
                         <p className="text-sm font-medium text-foreground">Was the salary range shared before you applied?</p>
-                        <p className="text-[10px] text-muted-foreground">Helps assess employer transparency</p>
+                        <p className="text-xs text-muted-foreground">Helps assess employer transparency</p>
                       </div>
                       <Switch
                         checked={offer.salarySharedUpfront}
@@ -671,12 +671,12 @@ export default function StrategicOfferReview() {
                       <div>
                         <label className="text-sm font-medium text-foreground mb-1.5 block">Repayment clause (months)</label>
                         <Input type="number" placeholder="e.g. 24" value={offer.repaymentClause} onChange={e => update("repaymentClause", e.target.value)} />
-                        <p className="text-[10px] text-muted-foreground mt-1">For sign-on/relocation bonus repayment</p>
+                        <p className="text-xs text-muted-foreground mt-1">For sign-on/relocation bonus repayment</p>
                       </div>
                       <div>
                         <label className="text-sm font-medium text-foreground mb-1.5 block">Benefit waiting period (days)</label>
                         <Input type="number" placeholder="e.g. 90" value={offer.benefitWaitingPeriod} onChange={e => update("benefitWaitingPeriod", e.target.value)} />
-                        <p className="text-[10px] text-muted-foreground mt-1">Days before health benefits activate</p>
+                        <p className="text-xs text-muted-foreground mt-1">Days before health benefits activate</p>
                       </div>
                     </div>
 
@@ -695,14 +695,14 @@ export default function StrategicOfferReview() {
                         <input type="checkbox" checked={offer.arbitrationClause} onChange={e => update("arbitrationClause", e.target.checked)} className="rounded border-border" />
                         <div>
                           <p className="text-sm font-medium text-foreground">Mandatory arbitration</p>
-                          <p className="text-[10px] text-muted-foreground">Waives right to jury trial</p>
+                          <p className="text-xs text-muted-foreground">Waives right to jury trial</p>
                         </div>
                       </label>
                       <label className="flex items-center gap-3 p-3 bg-muted/30 rounded-xl cursor-pointer">
                         <input type="checkbox" checked={offer.ipClause} onChange={e => update("ipClause", e.target.checked)} className="rounded border-border" />
                         <div>
                           <p className="text-sm font-medium text-foreground">Broad IP assignment</p>
-                          <p className="text-[10px] text-muted-foreground">Claims personal-time inventions</p>
+                          <p className="text-xs text-muted-foreground">Claims personal-time inventions</p>
                         </div>
                       </label>
                     </div>
@@ -712,14 +712,14 @@ export default function StrategicOfferReview() {
                         <input type="checkbox" checked={offer.hasInterview} onChange={e => update("hasInterview", e.target.checked)} className="rounded border-border" />
                         <div>
                           <p className="text-sm font-medium text-foreground">Had an interview</p>
-                          <p className="text-[10px] text-muted-foreground">Uncheck if no interview</p>
+                          <p className="text-xs text-muted-foreground">Uncheck if no interview</p>
                         </div>
                       </label>
                       <label className="flex items-center gap-3 p-3 bg-muted/30 rounded-xl cursor-pointer">
                         <input type="checkbox" checked={offer.asksToBuyEquipment} onChange={e => update("asksToBuyEquipment", e.target.checked)} className="rounded border-border" />
                         <div>
                           <p className="text-sm font-medium text-foreground">Buy-equipment request</p>
-                          <p className="text-[10px] text-muted-foreground">Asked to purchase via check</p>
+                          <p className="text-xs text-muted-foreground">Asked to purchase via check</p>
                         </div>
                       </label>
                     </div>
@@ -760,7 +760,7 @@ export default function StrategicOfferReview() {
                   </div>
                   <div className="max-w-xs mx-auto space-y-2">
                     <Progress value={scanning ? 60 : 100} className="h-2" />
-                    <p className="text-[11px] text-muted-foreground">This typically takes 15–30 seconds</p>
+                    <p className="text-xs text-muted-foreground">This typically takes 15–30 seconds</p>
                   </div>
                 </CardContent>
               </Card>
@@ -776,7 +776,7 @@ export default function StrategicOfferReview() {
                       <a
                         key={sec.id}
                         href={`#${sec.id}`}
-                        className="text-[11px] font-medium text-muted-foreground hover:text-foreground px-2.5 py-1.5 rounded-lg hover:bg-muted/50 whitespace-nowrap transition-colors"
+                        className="text-xs font-medium text-muted-foreground hover:text-foreground px-2.5 py-1.5 rounded-lg hover:bg-muted/50 whitespace-nowrap transition-colors"
                       >
                         {sec.label}
                       </a>
@@ -996,7 +996,7 @@ export default function StrategicOfferReview() {
 
                 {/* Disclaimer */}
                 <div className="p-4 bg-muted/30 rounded-xl border border-border/40">
-                  <p className="text-[11px] text-muted-foreground text-center">
+                  <p className="text-xs text-muted-foreground text-center">
                     Created by Jackye Clayton. This tool provides educational insights and risk signals based on publicly available data and user-provided terms. It does not constitute legal, financial, or employment advice.
                   </p>
                 </div>

@@ -55,14 +55,14 @@ const REPORT_TYPE_LABEL: Record<string, string> = {
 
 function ConfidenceBadge({ level }: { level: string }) {
   const config = CONFIDENCE_BADGE[level] || CONFIDENCE_BADGE.medium;
-  return <Badge variant="outline" className={cn("text-[10px]", config.class)}>{config.label}</Badge>;
+  return <Badge variant="outline" className={cn("text-xs", config.class)}>{config.label}</Badge>;
 }
 
 function VerificationBadge({ status }: { status: string }) {
   const config = VERIFICATION_BADGE[status] || VERIFICATION_BADGE.unverified;
   const Icon = config.icon;
   return (
-    <span className={cn("inline-flex items-center gap-1 text-[11px] font-medium", config.class)}>
+    <span className={cn("inline-flex items-center gap-1 text-xs font-medium", config.class)}>
       <Icon className="w-3 h-3" /> {config.label}
     </span>
   );
@@ -212,11 +212,11 @@ export default function IntelligenceReport() {
             </Link>
 
             <div className="flex flex-wrap gap-2 mb-4">
-              <Badge variant="secondary" className="text-[10px] uppercase tracking-wider">
+              <Badge variant="secondary" className="text-xs uppercase tracking-wider">
                 {REPORT_TYPE_LABEL[report.report_type] || report.report_type}
               </Badge>
               {issueCategories.map((cat: string) => (
-                <Badge key={cat} variant="outline" className="text-[10px] capitalize">
+                <Badge key={cat} variant="outline" className="text-xs capitalize">
                   {cat.replace(/_/g, " ")}
                 </Badge>
               ))}
@@ -333,7 +333,7 @@ export default function IntelligenceReport() {
                           <CardContent className="p-4">
                             <div className="flex items-start justify-between gap-2 mb-1">
                               <h5 className="text-sm font-semibold text-foreground">{claim.claim_title}</h5>
-                              <Badge variant="outline" className="text-[9px] shrink-0 capitalize">
+                              <Badge variant="outline" className="text-xs shrink-0 capitalize">
                                 {CLAIM_TYPE_LABEL[claim.claim_type] || claim.claim_type}
                               </Badge>
                             </div>
@@ -363,7 +363,7 @@ export default function IntelligenceReport() {
                               </div>
                             )}
                             {cEvidence.length === 0 && claim.evidence_required && (
-                              <p className="text-[10px] text-amber-600 mt-2 flex items-center gap-1">
+                              <p className="text-xs text-amber-600 mt-2 flex items-center gap-1">
                                 <AlertTriangle className="w-3 h-3" /> Evidence pending — labeled as analysis
                               </p>
                             )}
@@ -418,13 +418,13 @@ export default function IntelligenceReport() {
                         <div>
                           <div className="flex items-center gap-2">
                             <span className="font-semibold text-sm text-foreground">{leg.bill_name}</span>
-                            {leg.bill_number && <Badge variant="outline" className="text-[10px]">{leg.bill_number}</Badge>}
+                            {leg.bill_number && <Badge variant="outline" className="text-xs">{leg.bill_number}</Badge>}
                           </div>
                           {leg.description && <p className="text-xs text-muted-foreground mt-1">{leg.description}</p>}
-                          <div className="flex items-center gap-3 mt-2 text-[11px] text-muted-foreground">
+                          <div className="flex items-center gap-3 mt-2 text-xs text-muted-foreground">
                             {leg.legislative_body && <span>{leg.legislative_body}</span>}
                             {leg.jurisdiction && <span>{leg.jurisdiction}</span>}
-                            {leg.current_status && <Badge variant="secondary" className="text-[9px]">{leg.current_status}</Badge>}
+                            {leg.current_status && <Badge variant="secondary" className="text-xs">{leg.current_status}</Badge>}
                           </div>
                         </div>
                         {leg.source_url && (
@@ -462,7 +462,7 @@ export default function IntelligenceReport() {
                     <div className="flex-1 pb-4">
                       <div className="flex items-center gap-2">
                         <span className="text-sm font-semibold text-foreground">{evt.event_title}</span>
-                        <Badge variant="outline" className="text-[9px] capitalize">{evt.event_type?.replace(/_/g, " ")}</Badge>
+                        <Badge variant="outline" className="text-xs capitalize">{evt.event_type?.replace(/_/g, " ")}</Badge>
                       </div>
                       {evt.event_description && <p className="text-xs text-muted-foreground mt-1">{evt.event_description}</p>}
                     </div>
@@ -492,11 +492,11 @@ export default function IntelligenceReport() {
                             ) : (
                               <span className="font-semibold text-foreground text-sm">{a.entity_name_snapshot}</span>
                             )}
-                            {a.alignment_theme && <Badge variant="secondary" className="text-[10px]">{a.alignment_theme}</Badge>}
-                            {a.dirty_receipt_label && <Badge variant="destructive" className="text-[10px]">{a.dirty_receipt_label}</Badge>}
+                            {a.alignment_theme && <Badge variant="secondary" className="text-xs">{a.alignment_theme}</Badge>}
+                            {a.dirty_receipt_label && <Badge variant="destructive" className="text-xs">{a.dirty_receipt_label}</Badge>}
                           </div>
                           {a.alignment_summary && <p className="text-xs text-foreground/80">{a.alignment_summary}</p>}
-                          {a.evidence_note && <p className="text-[11px] text-muted-foreground mt-1 italic">{a.evidence_note}</p>}
+                          {a.evidence_note && <p className="text-xs text-muted-foreground mt-1 italic">{a.evidence_note}</p>}
                           <div className="flex items-center gap-2 mt-2">
                             <ConfidenceBadge level={a.confidence_level} />
                             <VerificationBadge status={a.verification_status} />
@@ -538,7 +538,7 @@ export default function IntelligenceReport() {
                     <div>
                       <span className="text-sm font-medium text-foreground">{a.action_title}</span>
                       {a.action_description && <p className="text-xs text-muted-foreground mt-0.5">{a.action_description}</p>}
-                      <Badge variant="outline" className="text-[9px] mt-1 capitalize">{a.action_type?.replace(/_/g, " ")}</Badge>
+                      <Badge variant="outline" className="text-xs mt-1 capitalize">{a.action_type?.replace(/_/g, " ")}</Badge>
                     </div>
                   </div>
                 ))}
@@ -562,8 +562,8 @@ export default function IntelligenceReport() {
                     <div>
                       <p className="text-sm text-foreground">{f.prompt_text}</p>
                       <div className="flex items-center gap-2 mt-1">
-                        <Badge variant="outline" className="text-[9px] capitalize">{f.status}</Badge>
-                        <Badge variant="outline" className="text-[9px] capitalize">{f.priority_level} priority</Badge>
+                        <Badge variant="outline" className="text-xs capitalize">{f.status}</Badge>
+                        <Badge variant="outline" className="text-xs capitalize">{f.priority_level} priority</Badge>
                       </div>
                     </div>
                   </div>
@@ -581,7 +581,7 @@ export default function IntelligenceReport() {
               <div className="flex flex-wrap gap-2">
                 {entities.map((e: any) => (
                   <Badge key={e.id} variant="secondary" className="text-xs gap-1.5 py-1">
-                    <span className="text-[9px] text-muted-foreground capitalize">{e.entity_type?.replace(/_/g, " ")}</span>
+                    <span className="text-xs text-muted-foreground capitalize">{e.entity_type?.replace(/_/g, " ")}</span>
                     {e.entity_name_snapshot}
                   </Badge>
                 ))}
