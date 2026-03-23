@@ -50,7 +50,7 @@ export function ApplicationStepper({ currentStatus, onStatusChange, compact }: A
               {isPast ? (
                 <Check className={cn(compact ? "w-2.5 h-2.5" : "w-3.5 h-3.5")} />
               ) : (
-                <span className={cn("font-medium", compact ? "text-[8px]" : "text-[10px]")}>
+                <span className={cn("font-medium", compact ? "text-xs" : "text-xs")}>
                   {i + 1}
                 </span>
               )}
@@ -66,7 +66,7 @@ export function ApplicationStepper({ currentStatus, onStatusChange, compact }: A
             key={t}
             onClick={() => onStatusChange(t)}
             className={cn(
-              "rounded-full px-2 py-0.5 text-[10px] font-medium transition-all border",
+              "rounded-full px-2 py-0.5 text-xs font-medium transition-all border",
               currentStatus === t
                 ? t === "Rejected"
                   ? "bg-destructive/10 text-destructive border-destructive/30"

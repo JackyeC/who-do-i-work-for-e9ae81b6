@@ -63,17 +63,17 @@ export function EconomicIntelligenceStep({ profile }: Props) {
               </p>
               <div className="flex flex-wrap gap-2">
                 {matchedGrowth.length > 0 && (
-                  <Badge className="bg-[hsl(var(--civic-green))]/10 text-[hsl(var(--civic-green))] border-[hsl(var(--civic-green))]/20 text-[10px]">
+                  <Badge className="bg-[hsl(var(--civic-green))]/10 text-[hsl(var(--civic-green))] border-[hsl(var(--civic-green))]/20 text-xs">
                     <TrendingUp className="w-3 h-3 mr-1" /> {matchedGrowth.length} high-growth skill match{matchedGrowth.length > 1 ? "es" : ""}
                   </Badge>
                 )}
                 {pivotRequired && (
-                  <Badge variant="destructive" className="text-[10px]">
+                  <Badge variant="destructive" className="text-xs">
                     <AlertTriangle className="w-3 h-3 mr-1" /> Pivot Alert
                   </Badge>
                 )}
                 {sectorSignals.some(s => s.trend === "contracting") && (
-                  <Badge className="bg-[hsl(var(--civic-yellow))]/10 text-[hsl(var(--civic-yellow))] border-[hsl(var(--civic-yellow))]/20 text-[10px]">
+                  <Badge className="bg-[hsl(var(--civic-yellow))]/10 text-[hsl(var(--civic-yellow))] border-[hsl(var(--civic-yellow))]/20 text-xs">
                     <Activity className="w-3 h-3 mr-1" /> Sector Volatility
                   </Badge>
                 )}
@@ -98,7 +98,7 @@ export function EconomicIntelligenceStep({ profile }: Props) {
                   <div className="flex flex-wrap gap-1 mt-1">
                     <ArrowRight className="w-3 h-3 text-[hsl(var(--civic-green))] shrink-0 mt-0.5" />
                     {d.adjacentPivots.map(p => (
-                      <Badge key={p} variant="outline" className="text-[10px] border-[hsl(var(--civic-green))]/30 text-[hsl(var(--civic-green))]">{p}</Badge>
+                      <Badge key={p} variant="outline" className="text-xs border-[hsl(var(--civic-green))]/30 text-[hsl(var(--civic-green))]">{p}</Badge>
                     ))}
                   </div>
                 )}
@@ -118,10 +118,10 @@ export function EconomicIntelligenceStep({ profile }: Props) {
             <p className="font-medium text-foreground mb-1">{EARLY_CAREER_AI_SIGNAL.strategy}</p>
             <div className="flex flex-wrap gap-1 mt-2">
               {EARLY_CAREER_AI_SIGNAL.recommendedSkills.map(s => (
-                <Badge key={s} className="text-[10px] bg-[hsl(var(--civic-blue))]/10 text-[hsl(var(--civic-blue))] border-[hsl(var(--civic-blue))]/20">{s}</Badge>
+                <Badge key={s} className="text-xs bg-[hsl(var(--civic-blue))]/10 text-[hsl(var(--civic-blue))] border-[hsl(var(--civic-blue))]/20">{s}</Badge>
               ))}
             </div>
-            <p className="text-[10px] text-muted-foreground mt-2 italic">Source: {EARLY_CAREER_AI_SIGNAL.source}</p>
+            <p className="text-xs text-muted-foreground mt-2 italic">Source: {EARLY_CAREER_AI_SIGNAL.source}</p>
           </AlertDescription>
         </Alert>
       )}
@@ -140,7 +140,7 @@ export function EconomicIntelligenceStep({ profile }: Props) {
             <OccupationRow key={path.occupation} data={path} />
           ))}
           {matchedGrowth.length === 0 && (
-            <p className="text-[10px] text-muted-foreground italic">No direct skill matches found — showing top national growth paths. Consider building skills in these areas.</p>
+            <p className="text-xs text-muted-foreground italic">No direct skill matches found — showing top national growth paths. Consider building skills in these areas.</p>
           )}
         </CardContent>
       </Card>
@@ -178,14 +178,14 @@ export function EconomicIntelligenceStep({ profile }: Props) {
                   <div className="flex items-center gap-2 mb-1">
                     <Building2 className="w-3.5 h-3.5 text-muted-foreground" />
                     <span className="text-sm font-medium text-foreground">{sector.sector}</span>
-                    <Badge variant={sector.gdpGrowthPct > 2 ? "default" : sector.gdpGrowthPct > 0 ? "secondary" : "destructive"} className="text-[10px]">
+                    <Badge variant={sector.gdpGrowthPct > 2 ? "default" : sector.gdpGrowthPct > 0 ? "secondary" : "destructive"} className="text-xs">
                       {sector.gdpGrowthPct > 0 ? "+" : ""}{sector.gdpGrowthPct}%
                     </Badge>
                   </div>
                   <p className="text-xs text-muted-foreground mb-1.5">{sector.opportunity}</p>
                   <div className="flex flex-wrap gap-1">
                     {sector.topRoles.map(r => (
-                      <Badge key={r} variant="outline" className="text-[10px]">{r}</Badge>
+                      <Badge key={r} variant="outline" className="text-xs">{r}</Badge>
                     ))}
                   </div>
                 </div>
@@ -223,7 +223,7 @@ export function EconomicIntelligenceStep({ profile }: Props) {
 
       {/* Data sources */}
       <div className="p-3 rounded-xl bg-muted/50 border border-border">
-        <p className="text-[10px] text-muted-foreground">
+        <p className="text-xs text-muted-foreground">
           <span className="font-semibold">Data sources:</span> BLS National Employment Matrix (2024–2034 projections),
           BLS Occupational Employment & Wage Statistics (OES), BLS Employment Cost Index (ECI),
           FRED Business Survey Indexes (ISM PMI, Q1 2026), BEA Real GDP by Industry (Q4 2025–Q1 2026),
@@ -247,22 +247,22 @@ function OccupationRow({ data }: { data: OccupationalOutlook }) {
             {isDecline ? <TrendingDown className="w-3.5 h-3.5 text-destructive shrink-0" /> : <TrendingUp className="w-3.5 h-3.5 text-[hsl(var(--civic-green))] shrink-0" />}
             <span className="text-sm font-semibold text-foreground">{data.occupation}</span>
             {data.velocity === "high-velocity" && (
-              <Badge className="text-[10px] bg-[hsl(var(--civic-green))]/15 text-[hsl(var(--civic-green))] border-[hsl(var(--civic-green))]/25">High Velocity</Badge>
+              <Badge className="text-xs bg-[hsl(var(--civic-green))]/15 text-[hsl(var(--civic-green))] border-[hsl(var(--civic-green))]/25">High Velocity</Badge>
             )}
             {data.velocity === "saturated" && (
-              <Badge variant="destructive" className="text-[10px]">Saturated</Badge>
+              <Badge variant="destructive" className="text-xs">Saturated</Badge>
             )}
           </div>
           {data.medianSalary && <p className="text-xs text-muted-foreground mt-0.5">Median: {data.medianSalary}</p>}
           <div className="flex flex-wrap gap-1 mt-1.5">
-            {data.relatedSkills.map(s => <Badge key={s} variant="secondary" className="text-[10px]">{s}</Badge>)}
+            {data.relatedSkills.map(s => <Badge key={s} variant="secondary" className="text-xs">{s}</Badge>)}
           </div>
         </div>
         <div className="text-right shrink-0">
           <div className={cn("text-lg font-bold", isDecline ? "text-destructive" : "text-[hsl(var(--civic-green))]")}>
             {data.growthPct > 0 ? "+" : ""}{data.growthPct}%
           </div>
-          <p className="text-[10px] text-muted-foreground">10yr growth</p>
+          <p className="text-xs text-muted-foreground">10yr growth</p>
         </div>
       </div>
     </div>
@@ -277,7 +277,7 @@ function SectorPulseRow({ data, highlighted }: { data: IndustryPulse; highlighte
         <div className="flex-1 min-w-0">
           <div className="flex items-center gap-2 mb-1">
             <span className="text-sm font-medium text-foreground">{data.sector}</span>
-            {highlighted && <Badge variant="outline" className="text-[10px] border-primary/30 text-primary">Your industry</Badge>}
+            {highlighted && <Badge variant="outline" className="text-xs border-primary/30 text-primary">Your industry</Badge>}
           </div>
           <p className="text-xs text-muted-foreground">{data.signal}</p>
           {data.investmentSignal && (
@@ -291,7 +291,7 @@ function SectorPulseRow({ data, highlighted }: { data: IndustryPulse; highlighte
             <div className={cn("w-2.5 h-2.5 rounded-full", color)} />
             <span className="text-base font-bold text-foreground">{data.pmiValue}</span>
           </div>
-          <p className="text-[10px] text-muted-foreground">PMI</p>
+          <p className="text-xs text-muted-foreground">PMI</p>
         </div>
       </div>
     </div>
@@ -304,18 +304,18 @@ function AffordabilityCard({ data }: { data: AffordabilityMarket }) {
       <div className="flex items-start justify-between gap-2 mb-2">
         <div>
           <p className="text-sm font-semibold text-foreground">{data.metro}</p>
-          <Badge variant="outline" className="text-[10px] mt-0.5 border-[hsl(var(--civic-gold))]/30">
+          <Badge variant="outline" className="text-xs mt-0.5 border-[hsl(var(--civic-gold))]/30">
             {data.category === "small-win" ? "Small Win Market" : "Emerging Market"}
           </Badge>
         </div>
         {data.purchasingPowerBonus && (
           <div className="text-right shrink-0">
             <div className="text-lg font-bold text-[hsl(var(--civic-green))]">+{data.purchasingPowerBonus}%</div>
-            <p className="text-[10px] text-muted-foreground">purchasing power</p>
+            <p className="text-xs text-muted-foreground">purchasing power</p>
           </div>
         )}
       </div>
-      <div className="grid grid-cols-2 gap-2 text-[10px]">
+      <div className="grid grid-cols-2 gap-2 text-xs">
         <div>
           <p className="text-muted-foreground">Median Rent</p>
           <p className="font-semibold text-foreground">${data.medianRent.toLocaleString()}/mo</p>

@@ -112,7 +112,7 @@ export function DataGlossary() {
               return (
                 <div key={category} className="mb-5 last:mb-0">
                   <div className="flex items-center gap-2 mb-2.5">
-                    <Badge variant="outline" className={cn("text-[10px] font-semibold", config.color)}>
+                    <Badge variant="outline" className={cn("text-xs font-semibold", config.color)}>
                       {config.label}
                     </Badge>
                     <div className="flex-1 h-px bg-border" />
@@ -123,7 +123,7 @@ export function DataGlossary() {
                         <div className="flex items-baseline gap-2">
                           <span className="text-sm font-semibold text-foreground">{entry.term}</span>
                           {entry.example && (
-                            <code className="text-[10px] bg-muted px-1.5 py-0.5 rounded text-muted-foreground">
+                            <code className="text-xs bg-muted px-1.5 py-0.5 rounded text-muted-foreground">
                               e.g. {entry.example}
                             </code>
                           )}

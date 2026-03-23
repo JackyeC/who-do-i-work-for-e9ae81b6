@@ -229,7 +229,7 @@ export function TalentRiskSignals({ companyId, companyName }: Props) {
           </div>
         ))}
 
-        <p className="text-[10px] text-muted-foreground text-center pt-2 italic">
+        <p className="text-xs text-muted-foreground text-center pt-2 italic">
           This platform reports signals detected from publicly available data sources. No conclusions are drawn. Interpretation is left to the user.
         </p>
       </CardContent>

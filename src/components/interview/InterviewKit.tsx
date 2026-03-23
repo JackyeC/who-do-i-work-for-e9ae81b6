@@ -268,7 +268,7 @@ function QuestionCard({ question, number }: { question: PracticeQuestion; number
         <div className="px-4 pb-4 space-y-3" style={{ borderTop: "1px solid rgba(255,255,255,0.04)" }}>
           {/* Why they ask */}
           <div className="pt-3">
-            <p className="text-[10px] font-semibold uppercase tracking-widest mb-1" style={{ color: dimmed }}>
+            <p className="text-xs font-semibold uppercase tracking-widest mb-1" style={{ color: dimmed }}>
               Why they ask this
             </p>
             <p className="text-xs leading-relaxed" style={{ color: muted }}>{question.whyTheyAsk}</p>
@@ -276,7 +276,7 @@ function QuestionCard({ question, number }: { question: PracticeQuestion; number
 
           {/* How to frame */}
           <div>
-            <p className="text-[10px] font-semibold uppercase tracking-widest mb-1" style={{ color: amber }}>
+            <p className="text-xs font-semibold uppercase tracking-widest mb-1" style={{ color: amber }}>
               How to frame your answer
             </p>
             <p className="text-xs leading-relaxed" style={{ color: cream }}>{question.howToFrame}</p>
@@ -308,12 +308,12 @@ function QuestionCard({ question, number }: { question: PracticeQuestion; number
                 }}
               />
               <div className="flex justify-between items-center">
-                <p className="text-[10px]" style={{ color: dimmed }}>
+                <p className="text-xs" style={{ color: dimmed }}>
                   {answer.length > 0 ? `${answer.split(/\s+/).filter(Boolean).length} words` : "Your answers stay private"}
                 </p>
                 <button
                   onClick={() => setPracticing(false)}
-                  className="text-[10px] font-medium"
+                  className="text-xs font-medium"
                   style={{ color: dimmed }}
                 >
                   Close
@@ -345,7 +345,7 @@ function QuestionsToAsk() {
                 <span className="text-sm leading-relaxed block" style={{ color: cream }}>
                   "{item.q}"
                 </span>
-                <span className="text-[10px] font-medium mt-1 block" style={{ color: dimmed }}>
+                <span className="text-xs font-medium mt-1 block" style={{ color: dimmed }}>
                   {item.note}
                 </span>
               </div>

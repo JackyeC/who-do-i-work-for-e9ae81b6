@@ -294,7 +294,7 @@ export default function Talent() {
                       </AvatarFallback>
                     </Avatar>
                     <div className="text-right">
-                      <p className="text-[10px] uppercase tracking-wider text-muted-foreground">
+                      <p className="text-xs uppercase tracking-wider text-muted-foreground">
                         Mission Alignment
                       </p>
                       <p className={cn("text-xl font-bold tabular-nums", scoreColor(c.missionAlignmentScore))}>
@@ -314,7 +314,7 @@ export default function Talent() {
                   {/* Top values */}
                   <div className="flex flex-wrap gap-1.5 mb-3">
                     {c.topValues.map((v) => (
-                      <Badge key={v} variant="secondary" className="text-[10px]">
+                      <Badge key={v} variant="secondary" className="text-xs">
                         {v}
                       </Badge>
                     ))}
@@ -323,7 +323,7 @@ export default function Talent() {
                   {/* Impact competencies */}
                   <div className="flex flex-wrap gap-1.5 mb-4">
                     {c.impactCompetencies.map((ic) => (
-                      <Badge key={ic} variant="outline" className="text-[10px]">
+                      <Badge key={ic} variant="outline" className="text-xs">
                         {ic}
                       </Badge>
                     ))}
@@ -331,7 +331,7 @@ export default function Talent() {
 
                   {/* Work orientation bar */}
                   <div className="mb-4">
-                    <div className="flex justify-between text-[10px] text-muted-foreground mb-1">
+                    <div className="flex justify-between text-xs text-muted-foreground mb-1">
                       <span>Compensation</span>
                       <span>Purpose</span>
                     </div>
@@ -341,7 +341,7 @@ export default function Talent() {
                         style={{ width: `${c.workOrientation * 100}%` }}
                       />
                     </div>
-                    <p className="text-[10px] text-muted-foreground mt-1">
+                    <p className="text-xs text-muted-foreground mt-1">
                       {orientationLabel(c.workOrientation)}
                     </p>
                   </div>

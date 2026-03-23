@@ -69,7 +69,7 @@ export function JobApprovalQueue() {
                 <Building2 className="w-4 h-4 text-muted-foreground shrink-0" />
                 <div className="flex-1 min-w-0">
                   <p className="text-sm font-medium text-foreground truncate">{job.title}</p>
-                  <p className="text-[11px] text-muted-foreground">
+                  <p className="text-xs text-muted-foreground">
                     {(job.companies as any)?.name || "Unknown"} · {job.location || "Remote"} · {formatDistanceToNow(new Date(job.created_at), { addSuffix: true })}
                   </p>
                 </div>

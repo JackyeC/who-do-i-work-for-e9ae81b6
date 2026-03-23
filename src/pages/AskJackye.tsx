@@ -125,7 +125,7 @@ function ScanLogLine({ text, isActive }: { text: string; isActive: boolean }) {
 
   return (
     <span className={cn(
-      "font-mono text-[10px] tracking-wider transition-colors duration-300",
+      "font-mono text-xs tracking-wider transition-colors duration-300",
       isActive ? "text-civic-green" : "text-civic-green/40"
     )}>
       <span className="text-civic-green/60 mr-1">❯</span>
@@ -325,7 +325,7 @@ export default function AskJackyePage() {
                   Your Intelligence Advisor
                 </span>
               </div>
-              <div className="text-[10px] text-muted-foreground font-mono">
+              <div className="text-xs text-muted-foreground font-mono">
                 Career Intelligence · Online
               </div>
             </div>
@@ -333,7 +333,7 @@ export default function AskJackyePage() {
           <div className="ml-auto flex items-center gap-3">
             <div className="hidden sm:flex items-center gap-1.5 px-2.5 py-1 border border-civic-green/20 bg-civic-green/5">
               <Fingerprint className="w-3 h-3 text-civic-green/70" />
-              <span className="font-mono text-[9px] text-civic-green/70 tracking-wider">
+              <span className="font-mono text-xs text-civic-green/70 tracking-wider">
                 ENCRYPTED
               </span>
             </div>
@@ -343,7 +343,7 @@ export default function AskJackyePage() {
                 <div className="w-1.5 h-1.5 rounded-full bg-civic-green/60" />
                 <div className="w-1.5 h-1.5 rounded-full bg-civic-green/30" />
               </div>
-              <span className="font-mono text-[9px] text-civic-green/80 tracking-widest uppercase">
+              <span className="font-mono text-xs text-civic-green/80 tracking-widest uppercase">
                 Online
               </span>
             </div>
@@ -357,11 +357,11 @@ export default function AskJackyePage() {
           <div className="px-6 py-3 space-y-1">
             <div className="flex items-center gap-2 mb-2">
               <Scan className="w-3.5 h-3.5 text-civic-green animate-pulse" />
-              <span className="font-mono text-[9px] tracking-widest uppercase text-civic-green font-bold">
+              <span className="font-mono text-xs tracking-widest uppercase text-civic-green font-bold">
                 Intelligence Scan Active
               </span>
               <div className="flex-1 h-px bg-civic-green/20 ml-2" />
-              <span className="font-mono text-[9px] text-civic-green/60">
+              <span className="font-mono text-xs text-civic-green/60">
                 {scanPhase + 1}/{SCAN_PHASES.length}
               </span>
             </div>
@@ -373,7 +373,7 @@ export default function AskJackyePage() {
               return (
                 <div key={i} className="flex items-center gap-2">
                   {isCompleted ? (
-                    <span className="text-[10px] text-civic-green/50">✓</span>
+                    <span className="text-xs text-civic-green/50">✓</span>
                   ) : isActive ? (
                     <Loader2 className="w-3 h-3 text-civic-green animate-spin" />
                   ) : null}
@@ -395,7 +395,7 @@ export default function AskJackyePage() {
       {/* Intelligence Prompts — shown at start */}
       {messages.length <= 1 && (
         <div className="px-6 py-4 border-b border-border bg-card/50 shrink-0">
-          <p className="font-mono text-[9px] text-muted-foreground tracking-widest uppercase mb-3">
+          <p className="font-mono text-xs text-muted-foreground tracking-widest uppercase mb-3">
             ▸ Select Intelligence Category
           </p>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-2">
@@ -407,10 +407,10 @@ export default function AskJackyePage() {
               >
                 <p.icon className={cn("w-4 h-4 mt-0.5 shrink-0 transition-colors group-hover:text-civic-green", p.color)} />
                 <div>
-                  <span className="font-mono text-[9px] tracking-wider uppercase text-muted-foreground group-hover:text-civic-green transition-colors">
+                  <span className="font-mono text-xs tracking-wider uppercase text-muted-foreground group-hover:text-civic-green transition-colors">
                     {p.category}
                   </span>
-                  <p className="text-[11px] text-foreground mt-0.5 leading-snug">
+                  <p className="text-xs text-foreground mt-0.5 leading-snug">
                     {p.label}
                   </p>
                 </div>
@@ -436,17 +436,17 @@ export default function AskJackyePage() {
               {msg.role === "assistant" ? (
                 <>
                   <Terminal className="w-3 h-3 text-civic-green" />
-                  <span className="font-mono text-[10px] tracking-widest uppercase text-civic-green font-bold">
+                  <span className="font-mono text-xs tracking-widest uppercase text-civic-green font-bold">
                     Intelligence Advisor
                   </span>
-                  <span className="font-mono text-[9px] text-civic-green/40 ml-1">
+                  <span className="font-mono text-xs text-civic-green/40 ml-1">
                     {new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })}
                   </span>
                 </>
               ) : (
                 <>
                   <Sparkles className="w-3 h-3 text-muted-foreground" />
-                  <span className="font-mono text-[10px] tracking-widest uppercase text-muted-foreground">
+                  <span className="font-mono text-xs tracking-widest uppercase text-muted-foreground">
                     Query
                   </span>
                 </>
@@ -472,11 +472,11 @@ export default function AskJackyePage() {
                   // Tables — intelligence report styling
                   "[&_table]:w-full [&_table]:text-[12px] [&_table]:border-collapse [&_table]:my-4",
                   "[&_thead]:bg-civic-green/10 [&_thead]:border-b [&_thead]:border-civic-green/20",
-                  "[&_th]:font-mono [&_th]:text-[10px] [&_th]:tracking-wider [&_th]:uppercase [&_th]:text-civic-green [&_th]:px-3 [&_th]:py-2 [&_th]:text-left [&_th]:font-bold",
+                  "[&_th]:font-mono [&_th]:text-xs [&_th]:tracking-wider [&_th]:uppercase [&_th]:text-civic-green [&_th]:px-3 [&_th]:py-2 [&_th]:text-left [&_th]:font-bold",
                   "[&_td]:px-3 [&_td]:py-2.5 [&_td]:border-b [&_td]:border-border/30 [&_td]:text-foreground",
                   "[&_tr:hover]:bg-civic-green/[0.03]",
                   // Code
-                  "[&_code]:text-civic-green [&_code]:bg-civic-green/10 [&_code]:px-1.5 [&_code]:py-0.5 [&_code]:text-[11px] [&_code]:font-mono",
+                  "[&_code]:text-civic-green [&_code]:bg-civic-green/10 [&_code]:px-1.5 [&_code]:py-0.5 [&_code]:text-xs [&_code]:font-mono",
                   // Links
                   "[&_a]:text-civic-blue [&_a]:underline [&_a]:underline-offset-2",
                   // Horizontal rules
@@ -497,13 +497,13 @@ export default function AskJackyePage() {
           <div className="px-6 py-5 border-b border-border/30 bg-civic-green/[0.02] border-l-2 border-l-civic-green/60">
             <div className="flex items-center gap-2 mb-3">
               <Terminal className="w-3 h-3 text-civic-green" />
-              <span className="font-mono text-[10px] tracking-widest uppercase text-civic-green font-bold">
+              <span className="font-mono text-xs tracking-widest uppercase text-civic-green font-bold">
                 Intelligence Advisor
               </span>
             </div>
             <div className="pl-5 flex items-center gap-2">
               <Loader2 className="w-3.5 h-3.5 text-civic-green animate-spin" />
-              <span className="font-mono text-[10px] text-civic-green/70 tracking-wider">
+              <span className="font-mono text-xs text-civic-green/70 tracking-wider">
                 Compiling intelligence briefing...
               </span>
             </div>
@@ -516,7 +516,7 @@ export default function AskJackyePage() {
       {messages.length <= 1 && (
         <div className="border-t border-border bg-card/30 shrink-0 max-h-[180px] overflow-y-auto">
           <div className="px-6 py-3">
-             <p className="font-mono text-[9px] text-muted-foreground tracking-widest uppercase mb-2">
+             <p className="font-mono text-xs text-muted-foreground tracking-widest uppercase mb-2">
               ▸ About the Intelligence Engine
             </p>
             <div className="space-y-0.5">
@@ -531,11 +531,11 @@ export default function AskJackyePage() {
                     ) : (
                       <ChevronRight className="w-3 h-3 text-muted-foreground shrink-0" />
                     )}
-                    <span className="text-[11px] text-foreground font-medium">{faq.question}</span>
+                    <span className="text-xs text-foreground font-medium">{faq.question}</span>
                   </button>
                   {expandedFaq === i && (
                     <div className="px-3 pb-2 pl-8 animate-fade-in">
-                      <p className="text-[11px] text-muted-foreground leading-relaxed">{faq.answer}</p>
+                      <p className="text-xs text-muted-foreground leading-relaxed">{faq.answer}</p>
                     </div>
                   )}
                 </div>
@@ -550,7 +550,7 @@ export default function AskJackyePage() {
         <div className="flex items-center">
           <div className="flex items-center gap-1.5 pl-5 pr-1">
             <Terminal className="w-3.5 h-3.5 text-civic-green/70" />
-            <span className="font-mono text-[11px] text-civic-green/50">❯</span>
+            <span className="font-mono text-xs text-civic-green/50">❯</span>
           </div>
           <input
             ref={inputRef}

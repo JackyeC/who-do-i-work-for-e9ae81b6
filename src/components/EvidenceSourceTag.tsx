@@ -39,7 +39,7 @@ export function EvidenceSourceTag({ source, url, date, className }: EvidenceSour
   const resolvedUrl = url || resolveUrl(source);
 
   return (
-    <span className={cn("inline-flex items-center gap-1.5 text-[10px]", className)}>
+    <span className={cn("inline-flex items-center gap-1.5 text-xs", className)}>
       <span className="font-mono uppercase tracking-wider text-muted-foreground/70 font-semibold">
         Evidence:
       </span>

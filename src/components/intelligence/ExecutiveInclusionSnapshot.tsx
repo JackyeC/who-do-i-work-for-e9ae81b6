@@ -46,7 +46,7 @@ function GapIndicator({ value, benchmark, label }: { value: number; benchmark: n
   return (
     <div className="flex items-center gap-1.5">
       <Icon className={cn("w-3 h-3", color)} />
-      <span className={cn("text-[10px] font-medium", color)}>
+      <span className={cn("text-xs font-medium", color)}>
         {isClose ? "At benchmark" : `${Math.abs(gap)}pp ${isAbove ? "above" : "below"} benchmark`}
       </span>
     </div>
@@ -57,7 +57,7 @@ function DemographicBar({ label, value, total, color }: { label: string; value: 
   const pct = total > 0 ? Math.round((value / total) * 100) : 0;
   return (
     <div className="space-y-0.5">
-      <div className="flex justify-between text-[11px]">
+      <div className="flex justify-between text-xs">
         <span className="text-muted-foreground">{label}</span>
         <span className="font-medium text-foreground">{pct}% ({value})</span>
       </div>
@@ -102,7 +102,7 @@ export function ExecutiveInclusionSnapshot({ companyId, companyName }: Props) {
           <Users className="w-4 h-4 text-primary" />
           Executive Inclusion Snapshot
           {hasData && (
-            <Badge variant="outline" className="text-[10px] ml-auto">
+            <Badge variant="outline" className="text-xs ml-auto">
               {byLevel.executive_team?.source || "SEC/Public"}
             </Badge>
           )}
@@ -118,7 +118,7 @@ export function ExecutiveInclusionSnapshot({ companyId, companyName }: Props) {
             <p className="text-xs text-muted-foreground">
               {companyName} has not disclosed leadership demographic data in scanned sources.
             </p>
-            <p className="text-[10px] text-muted-foreground mt-1 flex items-center justify-center gap-1">
+            <p className="text-xs text-muted-foreground mt-1 flex items-center justify-center gap-1">
               <Info className="w-3 h-3" />
               This represents a transparency gap — not the absence of diversity.
             </p>
@@ -139,7 +139,7 @@ export function ExecutiveInclusionSnapshot({ companyId, companyName }: Props) {
                 <div className="flex items-center justify-between">
                   <h4 className="text-xs font-semibold text-foreground">{levelLabel}</h4>
                   {row.report_year && (
-                    <Badge variant="secondary" className="text-[9px]">{row.report_year}</Badge>
+                    <Badge variant="secondary" className="text-xs">{row.report_year}</Badge>
                   )}
                 </div>
 
@@ -147,12 +147,12 @@ export function ExecutiveInclusionSnapshot({ companyId, companyName }: Props) {
                 <div className="grid grid-cols-2 gap-3">
                   <div className="p-2.5 rounded-lg bg-muted/40 border border-border/30">
                     <p className="text-lg font-bold text-foreground">{femalePct}%</p>
-                    <p className="text-[10px] text-muted-foreground">Women</p>
+                    <p className="text-xs text-muted-foreground">Women</p>
                     <GapIndicator value={femalePct} benchmark={benchmarks.female_pct} label="women" />
                   </div>
                   <div className="p-2.5 rounded-lg bg-muted/40 border border-border/30">
                     <p className="text-lg font-bold text-foreground">{pocPct}%</p>
-                    <p className="text-[10px] text-muted-foreground">People of Color</p>
+                    <p className="text-xs text-muted-foreground">People of Color</p>
                     <GapIndicator value={pocPct} benchmark={benchmarks.poc_pct} label="poc" />
                   </div>
                 </div>
@@ -166,8 +166,8 @@ export function ExecutiveInclusionSnapshot({ companyId, companyName }: Props) {
                   <DemographicBar label="Other / Two+" value={row.other_race_count} total={total} color="bg-muted-foreground/40" />
                 </div>
 
-                <div className="flex items-center gap-1 text-[9px] text-muted-foreground">
-                  <Badge variant="outline" className="text-[9px] px-1.5">
+                <div className="flex items-center gap-1 text-xs text-muted-foreground">
+                  <Badge variant="outline" className="text-xs px-1.5">
                     {row.confidence === "direct" ? "Strong Evidence" : "Inferred"}
                   </Badge>
                   <span>Industry benchmark: {benchmarks.female_pct}% women, {benchmarks.poc_pct}% PoC</span>
@@ -177,7 +177,7 @@ export function ExecutiveInclusionSnapshot({ companyId, companyName }: Props) {
           })
         )}
 
-        <p className="text-[10px] text-muted-foreground border-t border-border pt-2">
+        <p className="text-xs text-muted-foreground border-t border-border pt-2">
           Sources: SEC DEF 14A, company disclosures, Open Diversity Data. Benchmarks from Fortune 500 averages.
         </p>
       </CardContent>

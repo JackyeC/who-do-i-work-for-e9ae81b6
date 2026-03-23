@@ -34,7 +34,7 @@ export function AICompanyDiscoveryStep({ data, loading, error, onRetry }: Props)
                       <div className="flex items-center gap-2 mb-1">
                         <Building2 className="w-4 h-4 text-primary shrink-0" />
                         <h3 className="text-base font-semibold text-foreground">{company.name}</h3>
-                        <Badge variant="outline" className="text-[10px]">{company.industry}</Badge>
+                        <Badge variant="outline" className="text-xs">{company.industry}</Badge>
                       </div>
                       <p className="text-xs text-muted-foreground mb-3">{company.overview}</p>
 
@@ -45,19 +45,19 @@ export function AICompanyDiscoveryStep({ data, loading, error, onRetry }: Props)
 
                       <div className="space-y-2">
                         <div>
-                          <p className="text-[10px] font-medium text-muted-foreground uppercase tracking-wider mb-1 flex items-center gap-1">
+                          <p className="text-xs font-medium text-muted-foreground uppercase tracking-wider mb-1 flex items-center gap-1">
                             <Heart className="w-3 h-3" /> Values Signals
                           </p>
                           <div className="flex flex-wrap gap-1">
-                            {company.valuesSignals.map(s => <Badge key={s} variant="secondary" className="text-[10px]">{s}</Badge>)}
+                            {company.valuesSignals.map(s => <Badge key={s} variant="secondary" className="text-xs">{s}</Badge>)}
                           </div>
                         </div>
                         <div>
-                          <p className="text-[10px] font-medium text-muted-foreground uppercase tracking-wider mb-1 flex items-center gap-1">
+                          <p className="text-xs font-medium text-muted-foreground uppercase tracking-wider mb-1 flex items-center gap-1">
                             <Users className="w-3 h-3" /> Talent Signals
                           </p>
                           <div className="flex flex-wrap gap-1">
-                            {company.talentSignals.map(s => <Badge key={s} variant="outline" className="text-[10px]">{s}</Badge>)}
+                            {company.talentSignals.map(s => <Badge key={s} variant="outline" className="text-xs">{s}</Badge>)}
                           </div>
                         </div>
                       </div>
@@ -67,7 +67,7 @@ export function AICompanyDiscoveryStep({ data, loading, error, onRetry }: Props)
                       <div className="w-14 h-14 rounded-full border-2 border-primary flex items-center justify-center mb-1.5">
                         <span className="text-lg font-bold text-primary">{company.valuesMatch}</span>
                       </div>
-                      <p className="text-[10px] text-muted-foreground">values match</p>
+                      <p className="text-xs text-muted-foreground">values match</p>
                     </div>
                   </div>
                 </CardContent>

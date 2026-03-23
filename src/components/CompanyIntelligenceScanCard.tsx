@@ -255,7 +255,7 @@ export function CompanyIntelligenceScanCard({ companyId, companyName }: Props) {
           <div className="flex items-center gap-2">
             {overallStatusBadge()}
             {scanCompletedAt && scanIsComplete && (
-              <span className="text-[10px] font-mono text-muted-foreground flex items-center gap-1">
+              <span className="text-xs font-mono text-muted-foreground flex items-center gap-1">
                 <Clock className="w-2.5 h-2.5" />
                 {timeAgoLabel(scanCompletedAt)}
               </span>
@@ -360,11 +360,11 @@ export function CompanyIntelligenceScanCard({ companyId, companyName }: Props) {
                       {statusIcon(status)}
                       <span className="text-sm font-medium text-foreground">{label}</span>
                     </div>
-                    <Badge variant="outline" className={`text-[10px] ${statusBadgeClass(status)}`}>
+                    <Badge variant="outline" className={`text-xs ${statusBadgeClass(status)}`}>
                       {statusLabel(status)}
                     </Badge>
                   </div>
-                  <div className="flex items-center gap-4 text-[11px] text-muted-foreground ml-5.5">
+                  <div className="flex items-center gap-4 text-xs text-muted-foreground ml-5.5">
                     <span>Sources: {sources}</span>
                     <span>Signals: {signals}</span>
                     {completedAt && (
@@ -373,13 +373,13 @@ export function CompanyIntelligenceScanCard({ companyId, companyName }: Props) {
                   </div>
                   {/* Inline error detail for failed modules */}
                   {status === 'failed' && modStatus?.errorExplanation && (
-                    <div className="mt-1.5 ml-5.5 text-[11px] text-destructive">
+                    <div className="mt-1.5 ml-5.5 text-xs text-destructive">
                       {modStatus.error && <span className="font-medium">{modStatus.error}: </span>}
                       {modStatus.errorExplanation}
                     </div>
                   )}
                   {status === 'no_sources_found' && (
-                    <div className="mt-1.5 ml-5.5 text-[11px] text-[hsl(var(--civic-yellow))]">
+                    <div className="mt-1.5 ml-5.5 text-xs text-[hsl(var(--civic-yellow))]">
                       No usable source material was discovered. This is not the same as "no signals."
                     </div>
                   )}
@@ -399,8 +399,8 @@ export function CompanyIntelligenceScanCard({ companyId, companyName }: Props) {
             {errorLogEntries.map((entry: any, i: number) => (
               <div key={i} className="mb-2 last:mb-0 p-2 rounded bg-destructive/5">
                 <div className="text-xs font-medium text-foreground">{entry.label || entry.module}</div>
-                {entry.status && <div className="text-[11px] text-destructive">HTTP {entry.status}</div>}
-                <div className="text-[11px] text-muted-foreground">{entry.errorExplanation || entry.error}</div>
+                {entry.status && <div className="text-xs text-destructive">HTTP {entry.status}</div>}
+                <div className="text-xs text-muted-foreground">{entry.errorExplanation || entry.error}</div>
               </div>
             ))}
           </div>

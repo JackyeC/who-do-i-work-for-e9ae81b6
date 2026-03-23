@@ -46,40 +46,40 @@ function SignalRow({ signal }: { signal: OfferCheckSignal }) {
     <div className="py-3.5 border-b border-border/30 last:border-0">
       <div className="flex items-start justify-between gap-3 mb-1.5">
         <span className="text-sm text-foreground font-medium leading-snug">{signal.description}</span>
-        <Badge variant="outline" className={cn("text-[10px] shrink-0 rounded-lg px-2.5", CONFIDENCE_STYLES[signal.confidence] || CONFIDENCE_STYLES["Low"])}>
+        <Badge variant="outline" className={cn("text-xs shrink-0 rounded-lg px-2.5", CONFIDENCE_STYLES[signal.confidence] || CONFIDENCE_STYLES["Low"])}>
           {signal.confidence}
         </Badge>
       </div>
       <div className="flex items-center gap-4 flex-wrap">
-        <span className="font-mono text-[8px] tracking-wider uppercase text-muted-foreground/60 font-semibold">
+        <span className="font-mono text-xs tracking-wider uppercase text-muted-foreground/60 font-semibold">
           Evidence
         </span>
         {signal.detectionMethod && (
-          <span className="text-[10px] text-muted-foreground flex items-center gap-1">
+          <span className="text-xs text-muted-foreground flex items-center gap-1">
             <Search className="w-2.5 h-2.5" />
             {signal.detectionMethod.replace(/_/g, " ")}
           </span>
         )}
         {signal.detectedAt && (
-          <span className="text-[10px] text-muted-foreground flex items-center gap-1">
+          <span className="text-xs text-muted-foreground flex items-center gap-1">
             <Clock className="w-2.5 h-2.5" />
             {new Date(signal.detectedAt).toLocaleDateString()}
           </span>
         )}
         {signal.lastVerified && (
-          <span className="text-[10px] text-muted-foreground flex items-center gap-1">
+          <span className="text-xs text-muted-foreground flex items-center gap-1">
             <CheckCircle2 className="w-2.5 h-2.5" />
             Verified: {new Date(signal.lastVerified).toLocaleDateString()}
           </span>
         )}
         {signal.sourceUrl && (
-          <a href={signal.sourceUrl} target="_blank" rel="noopener noreferrer" className="text-[10px] text-primary hover:underline inline-flex items-center gap-0.5 font-medium">
+          <a href={signal.sourceUrl} target="_blank" rel="noopener noreferrer" className="text-xs text-primary hover:underline inline-flex items-center gap-0.5 font-medium">
             View evidence <ExternalLink className="w-2.5 h-2.5" />
           </a>
         )}
       </div>
       {signal.evidenceText && (
-        <p className="text-[11px] text-muted-foreground italic mt-2 pl-3 border-l-2 border-civic-gold-muted/30">"{signal.evidenceText}"</p>
+        <p className="text-xs text-muted-foreground italic mt-2 pl-3 border-l-2 border-civic-gold-muted/30">"{signal.evidenceText}"</p>
       )}
     </div>
   );
@@ -101,13 +101,13 @@ export function OfferCheckReport({ sections, lockedSections = [], onUnlock }: Of
                 </div>
                 {section.title}
                 {section.stale && (
-                  <Badge variant="outline" className="text-[10px] text-muted-foreground ml-auto rounded-lg">
+                  <Badge variant="outline" className="text-xs text-muted-foreground ml-auto rounded-lg">
                     <AlertTriangle className="w-2.5 h-2.5 mr-1" />
                     Signals not recently verified
                   </Badge>
                 )}
                 {!section.stale && section.hasData && (
-                  <Badge variant="secondary" className="text-[10px] ml-auto font-semibold rounded-lg">
+                  <Badge variant="secondary" className="text-xs ml-auto font-semibold rounded-lg">
                     {section.signals.length} signal{section.signals.length !== 1 ? "s" : ""}
                   </Badge>
                 )}

@@ -190,7 +190,7 @@ export default function CareerMap() {
                 <currentStep.icon className="w-5 h-5 text-primary" />
               </div>
               <div className="flex-1 min-w-0">
-                <p className="text-[10px] text-primary font-semibold uppercase tracking-wider">{currentStep.section}</p>
+                <p className="text-xs text-primary font-semibold uppercase tracking-wider">{currentStep.section}</p>
                 <h2 className="text-lg font-bold text-foreground font-display">{currentStep.label}</h2>
                 <p className="text-xs text-muted-foreground">Step {currentIndex + 1} of {STEPS.length}</p>
               </div>

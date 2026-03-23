@@ -164,7 +164,7 @@ export function OfferDecisionSummary(props: Props) {
           </div>
 
           <div className="p-3 bg-muted/30 rounded-xl">
-            <p className="text-[11px] text-muted-foreground">
+            <p className="text-xs text-muted-foreground">
               This summary provides educational insights based on publicly available data and the terms you provided. It does not constitute legal, financial, or employment advice. For complex or high-risk clauses, consult an employment attorney.
             </p>
           </div>

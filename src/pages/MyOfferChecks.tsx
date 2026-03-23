@@ -90,7 +90,7 @@ export default function MyOfferChecks() {
                 />
               </div>
               {savedCount >= premium.maxOfferChecks && (
-                <Badge variant="outline" className="text-[9px] gap-1">
+                <Badge variant="outline" className="text-xs gap-1">
                   <Crown className="w-2.5 h-2.5" /> Upgrade
                 </Badge>
               )}
@@ -129,11 +129,11 @@ export default function MyOfferChecks() {
                       <h3 className="font-semibold text-foreground truncate">{company?.name || "Unknown"}</h3>
                       <p className="text-xs text-muted-foreground">{company?.industry} · {company?.state}</p>
                       <div className="flex items-center gap-2 mt-0.5">
-                        <span className="text-[10px] text-muted-foreground">
+                        <span className="text-xs text-muted-foreground">
                           {check.signals_count} signals · Saved {new Date(check.updated_at).toLocaleDateString()}
                         </span>
                         {hasStale && (
-                          <Badge variant="outline" className="text-[9px] text-muted-foreground gap-0.5">
+                          <Badge variant="outline" className="text-xs text-muted-foreground gap-0.5">
                             <AlertTriangle className="w-2 h-2" />
                             {check.stale_sections_count} stale
                           </Badge>

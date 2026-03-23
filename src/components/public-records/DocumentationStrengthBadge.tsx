@@ -42,7 +42,7 @@ export function DocumentationStrengthBadge({ level }: { level: StrengthLevel }) 
         <TooltipTrigger asChild>
           <span
             className={cn(
-              "inline-flex items-center gap-1 px-2 py-0.5 text-[10px] font-mono uppercase tracking-wider border rounded-sm cursor-help whitespace-nowrap",
+              "inline-flex items-center gap-1 px-2 py-0.5 text-xs font-mono uppercase tracking-wider border rounded-sm cursor-help whitespace-nowrap",
               config.className
             )}
           >

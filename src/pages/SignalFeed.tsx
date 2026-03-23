@@ -93,11 +93,11 @@ function SignalCard({ signal, index }: { signal: Signal; index: number }) {
                 {signal.company_name}
               </Link>
               <div className="flex items-center gap-2 mt-0.5">
-                <span className="font-mono text-[10px] text-muted-foreground uppercase tracking-wider">
+                <span className="font-mono text-xs text-muted-foreground uppercase tracking-wider">
                   {signal.signal_type}
                 </span>
                 <span className="text-border">·</span>
-                <span className="font-mono text-[10px] text-muted-foreground">
+                <span className="font-mono text-xs text-muted-foreground">
                   {signal.issue_area}
                 </span>
               </div>
@@ -105,10 +105,10 @@ function SignalCard({ signal, index }: { signal: Signal; index: number }) {
           </div>
 
           <div className="flex items-center gap-2 shrink-0">
-            <Badge variant="outline" className={`font-mono text-[9px] px-1.5 py-0 ${conf.cls}`}>
+            <Badge variant="outline" className={`font-mono text-xs px-1.5 py-0 ${conf.cls}`}>
               {conf.text}
             </Badge>
-            <span className="font-mono text-[10px] text-muted-foreground flex items-center gap-1">
+            <span className="font-mono text-xs text-muted-foreground flex items-center gap-1">
               <Clock className="w-2.5 h-2.5" />
               {signal.date_published ? timeAgo(signal.date_published) : timeAgo(signal.created_at)}
             </span>
@@ -128,7 +128,7 @@ function SignalCard({ signal, index }: { signal: Signal; index: number }) {
                 href={signal.source_url}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="inline-flex items-center gap-1 text-[10px] font-mono text-primary/70 hover:text-primary transition-colors"
+                className="inline-flex items-center gap-1 text-xs font-mono text-primary/70 hover:text-primary transition-colors"
               >
                 <ExternalLink className="w-2.5 h-2.5" />
                 VIEW SOURCE
@@ -137,7 +137,7 @@ function SignalCard({ signal, index }: { signal: Signal; index: number }) {
           </div>
           <Link
             to={`/company/${signal.company_slug}`}
-            className="inline-flex items-center gap-1 text-[10px] font-mono text-muted-foreground hover:text-foreground transition-colors opacity-0 group-hover:opacity-100"
+            className="inline-flex items-center gap-1 text-xs font-mono text-muted-foreground hover:text-foreground transition-colors opacity-0 group-hover:opacity-100"
           >
             FULL REPORT <ChevronRight className="w-2.5 h-2.5" />
           </Link>
@@ -162,7 +162,7 @@ function TickerBar({ signals }: { signals: Signal[] }) {
             transition={{ duration: 30, repeat: Infinity, ease: "linear" }}
           >
             {[...items, ...items].map((s, i) => (
-              <span key={i} className="inline-flex items-center gap-2 font-mono text-[11px]">
+              <span key={i} className="inline-flex items-center gap-2 font-mono text-xs">
                 <span className="text-primary font-semibold">{s.company_name}</span>
                 <span className="text-muted-foreground">{s.signal_type}: {s.issue_area}</span>
                 <span className="text-border">|</span>
@@ -251,7 +251,7 @@ export default function SignalFeed() {
         <div className="space-y-3">
           <div className="flex items-center gap-2">
             <div className="w-2 h-2 rounded-full bg-red-500 animate-pulse" />
-            <span className="font-mono text-[11px] text-red-400 uppercase tracking-widest">Live Intelligence</span>
+            <span className="font-mono text-xs text-red-400 uppercase tracking-widest">Live Intelligence</span>
           </div>
           <h1 className="font-display text-3xl md:text-4xl font-black text-foreground tracking-tight">
             Signal Feed
@@ -273,7 +273,7 @@ export default function SignalFeed() {
             <button
               key={opt}
               onClick={() => setFilter(opt)}
-              className={`px-3 py-1.5 rounded-full text-[11px] font-mono font-medium transition-all whitespace-nowrap border ${
+              className={`px-3 py-1.5 rounded-full text-xs font-mono font-medium transition-all whitespace-nowrap border ${
                 filter === opt
                   ? "bg-primary/10 border-primary/30 text-primary"
                   : "bg-transparent border-border/50 text-muted-foreground hover:text-foreground hover:border-border"

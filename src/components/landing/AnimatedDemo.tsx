@@ -24,7 +24,7 @@ const steps = [
             className="w-0.5 h-4 bg-primary ml-0.5"
           />
         </div>
-        <div className="text-[10px] font-mono text-muted-foreground/60 uppercase tracking-wider">
+        <div className="text-xs font-mono text-muted-foreground/60 uppercase tracking-wider">
           850+ companies in database
         </div>
       </div>
@@ -62,7 +62,7 @@ const steps = [
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               transition={{ delay: src.delay + 0.5 }}
-              className="text-[9px] text-primary font-mono ml-auto"
+              className="text-xs text-primary font-mono ml-auto"
             >
               ✓ matched
             </motion.span>
@@ -78,7 +78,7 @@ const steps = [
       <div className="space-y-2">
         <div className="flex justify-between items-baseline">
           <span className="font-serif text-sm text-foreground">Amazon.com, Inc.</span>
-          <span className="font-mono text-[9px] text-primary">Score: 5.8 / 10</span>
+          <span className="font-mono text-xs text-primary">Score: 5.8 / 10</span>
         </div>
         <div className="grid grid-cols-2 gap-1">
           {[
@@ -94,12 +94,12 @@ const steps = [
               transition={{ delay: 0.2 }}
               className="bg-background p-2 border border-border"
             >
-              <div className="font-mono text-[8px] uppercase text-muted-foreground/70">{m.label}</div>
+              <div className="font-mono text-xs uppercase text-muted-foreground/70">{m.label}</div>
               <div className={`font-data text-sm font-bold ${m.color}`}>{m.val}</div>
             </motion.div>
           ))}
         </div>
-        <div className="text-[10px] text-muted-foreground/60 font-mono">
+        <div className="text-xs text-muted-foreground/60 font-mono">
           3 red flags · 2 caution signals · 1 positive signal
         </div>
       </div>
@@ -124,7 +124,7 @@ export function AnimatedDemo() {
     <SectionReveal>
       <section ref={ref} className="px-6 lg:px-16 py-16 lg:py-20 max-w-[1100px] mx-auto w-full">
         <div className="text-center mb-10">
-          <div className="font-mono text-[9px] tracking-[0.25em] uppercase text-primary mb-3">
+          <div className="font-mono text-xs tracking-[0.25em] uppercase text-primary mb-3">
             How It Works
           </div>
           <h2 className="text-xl lg:text-2xl text-foreground">
@@ -147,13 +147,13 @@ export function AnimatedDemo() {
               >
                 <div className="flex items-center gap-3 mb-1">
                   <span
-                    className={`font-mono text-[10px] font-bold w-5 h-5 flex items-center justify-center transition-colors ${
+                    className={`font-mono text-xs font-bold w-5 h-5 flex items-center justify-center transition-colors ${
                       activeStep === i ? "bg-primary text-primary-foreground" : "bg-muted text-muted-foreground"
                     }`}
                   >
                     {i + 1}
                   </span>
-                  <span className={`font-mono text-[11px] tracking-wider uppercase transition-colors ${
+                  <span className={`font-mono text-xs tracking-wider uppercase transition-colors ${
                     activeStep === i ? "text-primary" : "text-muted-foreground"
                   }`}>
                     {step.label}

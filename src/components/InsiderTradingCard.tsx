@@ -49,9 +49,9 @@ export function InsiderTradingCard({ companyId, companyName, ticker, cik }: Prop
         <CardTitle className="text-base flex items-center gap-2">
           <BarChart3 className="w-4 h-4" />
           Insider Trading Activity
-          {ticker && <Badge variant="outline" className="text-[10px] ml-1">{ticker}</Badge>}
+          {ticker && <Badge variant="outline" className="text-xs ml-1">{ticker}</Badge>}
           {netSelling && (
-            <Badge variant="destructive" className="text-[10px] ml-auto">
+            <Badge variant="destructive" className="text-xs ml-auto">
               <AlertTriangle className="w-3 h-3 mr-1" />
               Net Insider Selling
             </Badge>
@@ -63,21 +63,21 @@ export function InsiderTradingCard({ companyId, companyName, ticker, cik }: Prop
         <div className="grid grid-cols-3 gap-2">
           <div className="p-3 rounded-lg bg-muted/30 border border-border/50 text-center">
             <p className="text-lg font-bold text-foreground">{trades.length}</p>
-            <p className="text-[10px] text-muted-foreground uppercase tracking-wider">Transactions</p>
+            <p className="text-xs text-muted-foreground uppercase tracking-wider">Transactions</p>
           </div>
           <div className="p-3 rounded-lg bg-destructive/5 border border-destructive/15 text-center">
             <div className="flex items-center justify-center gap-1">
               <TrendingDown className="w-3.5 h-3.5 text-destructive" />
               <p className="text-lg font-bold text-foreground">{formatValue(totalSold)}</p>
             </div>
-            <p className="text-[10px] text-muted-foreground uppercase tracking-wider">Sold</p>
+            <p className="text-xs text-muted-foreground uppercase tracking-wider">Sold</p>
           </div>
           <div className="p-3 rounded-lg bg-[hsl(var(--civic-green))]/5 border border-[hsl(var(--civic-green))]/15 text-center">
             <div className="flex items-center justify-center gap-1">
               <TrendingUp className="w-3.5 h-3.5 text-[hsl(var(--civic-green))]" />
               <p className="text-lg font-bold text-foreground">{formatValue(totalBought)}</p>
             </div>
-            <p className="text-[10px] text-muted-foreground uppercase tracking-wider">Bought</p>
+            <p className="text-xs text-muted-foreground uppercase tracking-wider">Bought</p>
           </div>
         </div>
 
@@ -86,10 +86,10 @@ export function InsiderTradingCard({ companyId, companyName, ticker, cik }: Prop
           <Table>
             <TableHeader>
               <TableRow>
-                <TableHead className="text-[10px]">Insider</TableHead>
-                <TableHead className="text-[10px]">Type</TableHead>
-                <TableHead className="text-[10px]">Date</TableHead>
-                <TableHead className="text-[10px] text-right">Value</TableHead>
+                <TableHead className="text-xs">Insider</TableHead>
+                <TableHead className="text-xs">Type</TableHead>
+                <TableHead className="text-xs">Date</TableHead>
+                <TableHead className="text-xs text-right">Value</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
@@ -97,18 +97,18 @@ export function InsiderTradingCard({ companyId, companyName, ticker, cik }: Prop
                 <TableRow key={t.id}>
                   <TableCell className="text-sm">
                     <div className="font-medium text-foreground">{t.filer_name}</div>
-                    {t.filer_title && <div className="text-[10px] text-muted-foreground">{t.filer_title}</div>}
+                    {t.filer_title && <div className="text-xs text-muted-foreground">{t.filer_title}</div>}
                   </TableCell>
                   <TableCell>
                     <Badge
                       variant="outline"
-                      className={cn("text-[10px]",
+                      className={cn("text-xs",
                         t.transaction_type === "sale" ? "border-destructive/30 text-destructive" : "border-[hsl(var(--civic-green))]/30 text-[hsl(var(--civic-green))]"
                       )}
                     >
                       {t.transaction_type === "sale" ? "SELL" : "BUY"}
                     </Badge>
-                    {t.is_10b5_plan && <span className="text-[9px] text-muted-foreground ml-1">10b5-1</span>}
+                    {t.is_10b5_plan && <span className="text-xs text-muted-foreground ml-1">10b5-1</span>}
                   </TableCell>
                   <TableCell className="text-xs text-muted-foreground">
                     {t.transaction_date ? new Date(t.transaction_date).toLocaleDateString() : "—"}
@@ -124,12 +124,12 @@ export function InsiderTradingCard({ companyId, companyName, ticker, cik }: Prop
 
         {trades[0]?.sec_filing_url && (
           <a href={trades[0].sec_filing_url} target="_blank" rel="noopener noreferrer"
-            className="flex items-center gap-1 text-[10px] text-primary hover:underline justify-center">
+            className="flex items-center gap-1 text-xs text-primary hover:underline justify-center">
             View all SEC Form 4 filings <ExternalLink className="w-3 h-3" />
           </a>
         )}
 
-        <p className="text-[10px] text-muted-foreground text-center">
+        <p className="text-xs text-muted-foreground text-center">
           Source: SEC EDGAR Form 4 filings • Insider transactions by officers, directors, and 10% owners
         </p>
       </CardContent>

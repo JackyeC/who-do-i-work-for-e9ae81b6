@@ -93,9 +93,9 @@ export default function Saved() {
 
                         <div className="flex flex-wrap gap-1.5 mt-2">
                           {job.skills.map(s => (
-                            <Badge key={s} variant="secondary" className="text-[10px] px-1.5 py-0">{s}</Badge>
+                            <Badge key={s} variant="secondary" className="text-xs px-1.5 py-0">{s}</Badge>
                           ))}
-                          <Badge variant="outline" className="text-[10px] px-1.5 py-0">{job.type}</Badge>
+                          <Badge variant="outline" className="text-xs px-1.5 py-0">{job.type}</Badge>
                         </div>
 
                         <div className="flex items-center gap-2 mt-3">
@@ -105,7 +105,7 @@ export default function Saved() {
                           <Button size="sm" variant="ghost" onClick={() => unsave(job.id)} className="h-8 text-xs text-muted-foreground">
                             Remove
                           </Button>
-                          <span className="text-[10px] text-muted-foreground/60 ml-auto">Saved {job.savedAt}</span>
+                          <span className="text-xs text-muted-foreground/60 ml-auto">Saved {job.savedAt}</span>
                         </div>
                       </div>
                     </div>

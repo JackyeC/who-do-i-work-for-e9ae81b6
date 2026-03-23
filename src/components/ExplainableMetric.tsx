@@ -301,38 +301,38 @@ export function ExplainableMetric({ metricKey, children, className, align = "cen
           
           <div className="space-y-3">
             <div>
-              <p className="text-[10px] font-semibold text-muted-foreground uppercase tracking-wider mb-1">What is this?</p>
+              <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-1">What is this?</p>
               <p className="text-xs text-foreground/80 leading-relaxed">{explanation.what}</p>
             </div>
             
             <div>
-              <p className="text-[10px] font-semibold text-muted-foreground uppercase tracking-wider mb-1">Why it matters</p>
+              <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-1">Why it matters</p>
               <p className="text-xs text-foreground/80 leading-relaxed">{explanation.why}</p>
             </div>
 
             {explanation.context && (
               <div className="p-2.5 bg-muted/60 rounded-md">
-                <p className="text-[10px] font-semibold text-muted-foreground uppercase tracking-wider mb-1">Context</p>
+                <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-1">Context</p>
                 <p className="text-xs text-foreground/70 leading-relaxed">{explanation.context}</p>
               </div>
             )}
 
             {explanation.source && (
               <div className="flex items-center gap-1.5 pt-1 border-t border-border">
-                <span className="text-[10px] text-muted-foreground">Source:</span>
+                <span className="text-xs text-muted-foreground">Source:</span>
                 {explanation.sourceUrl ? (
                   <a
                     href={explanation.sourceUrl}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="text-[10px] text-primary hover:underline flex items-center gap-0.5"
+                    className="text-xs text-primary hover:underline flex items-center gap-0.5"
                     onClick={(e) => e.stopPropagation()}
                   >
                     {explanation.source}
                     <ExternalLink className="w-2.5 h-2.5" />
                   </a>
                 ) : (
-                  <span className="text-[10px] text-muted-foreground">{explanation.source}</span>
+                  <span className="text-xs text-muted-foreground">{explanation.source}</span>
                 )}
               </div>
             )}

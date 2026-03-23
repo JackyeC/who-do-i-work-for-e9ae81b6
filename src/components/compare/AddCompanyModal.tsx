@@ -119,7 +119,7 @@ export function AddCompanyModal({ open, onOpenChange, onCompanyAdded, initialNam
         <form onSubmit={handleSubmit} className="space-y-4 mt-2">
           {/* Required */}
           <div className="space-y-2">
-            <Label className="font-mono text-[10px] tracking-wider uppercase text-muted-foreground">
+            <Label className="font-mono text-xs tracking-wider uppercase text-muted-foreground">
               Company Name <span className="text-destructive">*</span>
             </Label>
             <Input
@@ -134,7 +134,7 @@ export function AddCompanyModal({ open, onOpenChange, onCompanyAdded, initialNam
 
           <div className="grid grid-cols-2 gap-3">
             <div className="space-y-2">
-              <Label className="font-mono text-[10px] tracking-wider uppercase text-muted-foreground">
+              <Label className="font-mono text-xs tracking-wider uppercase text-muted-foreground">
                 Industry <span className="text-destructive">*</span>
               </Label>
               <Select value={form.industry} onValueChange={(v) => setForm({ ...form, industry: v })}>
@@ -150,7 +150,7 @@ export function AddCompanyModal({ open, onOpenChange, onCompanyAdded, initialNam
             </div>
 
             <div className="space-y-2">
-              <Label className="font-mono text-[10px] tracking-wider uppercase text-muted-foreground">
+              <Label className="font-mono text-xs tracking-wider uppercase text-muted-foreground">
                 State <span className="text-destructive">*</span>
               </Label>
               <Select value={form.state} onValueChange={(v) => setForm({ ...form, state: v })}>
@@ -168,12 +168,12 @@ export function AddCompanyModal({ open, onOpenChange, onCompanyAdded, initialNam
 
           {/* Optional extended */}
           <div className="border-t border-border pt-4 mt-4">
-            <div className="font-mono text-[8px] tracking-[0.2em] uppercase text-muted-foreground mb-3 flex items-center gap-1">
+            <div className="font-mono text-xs tracking-[0.2em] uppercase text-muted-foreground mb-3 flex items-center gap-1">
               <Sparkles className="w-3 h-3" /> Optional Details
             </div>
             <div className="grid grid-cols-3 gap-3">
               <div className="space-y-1">
-                <Label className="font-mono text-[9px] text-muted-foreground">Employees</Label>
+                <Label className="font-mono text-xs text-muted-foreground">Employees</Label>
                 <Input
                   value={form.employee_count}
                   onChange={(e) => setForm({ ...form, employee_count: e.target.value })}
@@ -183,7 +183,7 @@ export function AddCompanyModal({ open, onOpenChange, onCompanyAdded, initialNam
                 />
               </div>
               <div className="space-y-1">
-                <Label className="font-mono text-[9px] text-muted-foreground">Website</Label>
+                <Label className="font-mono text-xs text-muted-foreground">Website</Label>
                 <Input
                   value={form.website_url}
                   onChange={(e) => setForm({ ...form, website_url: e.target.value })}
@@ -193,7 +193,7 @@ export function AddCompanyModal({ open, onOpenChange, onCompanyAdded, initialNam
                 />
               </div>
               <div className="space-y-1">
-                <Label className="font-mono text-[9px] text-muted-foreground">Ticker</Label>
+                <Label className="font-mono text-xs text-muted-foreground">Ticker</Label>
                 <Input
                   value={form.ticker}
                   onChange={(e) => setForm({ ...form, ticker: e.target.value })}

@@ -26,7 +26,7 @@ export function ScoreShowdown({ companyA, companyB }: { companyA: CompanyData; c
       {/* Section header */}
       <div className="px-5 py-3 border-b border-border bg-muted/20 flex items-center gap-2">
         <Trophy className="w-3.5 h-3.5 text-primary" />
-        <span className="font-mono text-[9px] tracking-[0.2em] uppercase text-primary font-semibold">
+        <span className="font-mono text-xs tracking-[0.2em] uppercase text-primary font-semibold">
           Employer Clarity Showdown
         </span>
       </div>
@@ -39,7 +39,7 @@ export function ScoreShowdown({ companyA, companyB }: { companyA: CompanyData; c
           <div key={company.id} className={cn("p-6 text-center relative", isWinner && "bg-primary/[0.03]")}>
             {isWinner && (
               <div className="absolute top-3 right-3">
-                <span className="inline-flex items-center gap-1 font-mono text-[8px] tracking-wider uppercase text-primary bg-primary/10 px-2 py-1 border border-primary/20">
+                <span className="inline-flex items-center gap-1 font-mono text-xs tracking-wider uppercase text-primary bg-primary/10 px-2 py-1 border border-primary/20">
                   <Trophy className="w-2.5 h-2.5" /> Winner
                 </span>
               </div>
@@ -63,7 +63,7 @@ export function ScoreShowdown({ companyA, companyB }: { companyA: CompanyData; c
             </div>
 
             {/* Badge */}
-            <span className={cn("inline-flex items-center gap-1 font-mono text-[9px] tracking-wider uppercase px-2.5 py-1 border", band.color, band.bg, `border-current/20`)}>
+            <span className={cn("inline-flex items-center gap-1 font-mono text-xs tracking-wider uppercase px-2.5 py-1 border", band.color, band.bg, `border-current/20`)}>
               {isWinner ? <TrendingUp className="w-3 h-3" /> : tie ? <Minus className="w-3 h-3" /> : <TrendingDown className="w-3 h-3" />}
               {band.label}
             </span>
@@ -73,7 +73,7 @@ export function ScoreShowdown({ companyA, companyB }: { companyA: CompanyData; c
 
       {/* Verdict strip */}
       <div className="px-5 py-3 border-t border-border bg-muted/10 text-center">
-        <span className="font-mono text-[10px] tracking-wider text-muted-foreground">
+        <span className="font-mono text-xs tracking-wider text-muted-foreground">
           {tie
             ? "Dead heat — both employers score equally on transparency."
             : `${aWins ? companyA.name : companyB.name} leads by ${Math.abs(companyA.civic_footprint_score - companyB.civic_footprint_score)} points in employer clarity.`

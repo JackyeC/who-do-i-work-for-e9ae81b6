@@ -152,7 +152,7 @@ export function ContractsDetailDrawer({ open, onOpenChange, companyId, companyNa
                             }
                             <div className="min-w-0">
                               <div className="text-sm font-medium text-foreground truncate">{group.agency}</div>
-                              <div className="text-[10px] text-muted-foreground">
+                              <div className="text-xs text-muted-foreground">
                                 {group.count} contract{group.count > 1 ? "s" : ""}
                                 {group.hasNotableContext && <span className="text-muted-foreground ml-1.5">• Additional context</span>}
                               </div>
@@ -176,13 +176,13 @@ export function ContractsDetailDrawer({ open, onOpenChange, companyId, companyNa
                                   )}
                                 </div>
                                 <div className="flex items-center gap-2 flex-wrap mt-1">
-                                  {c.fiscal_year && <Badge variant="outline" className="text-[10px]">FY{c.fiscal_year}</Badge>}
-                                  {c.controversy_flag && <Badge variant="outline" className="text-[10px]">Additional Info</Badge>}
-                                  <Badge variant="outline" className="text-[10px]">
+                                  {c.fiscal_year && <Badge variant="outline" className="text-xs">FY{c.fiscal_year}</Badge>}
+                                  {c.controversy_flag && <Badge variant="outline" className="text-xs">Additional Info</Badge>}
+                                  <Badge variant="outline" className="text-xs">
                                     {c.confidence === "high" ? "Strong evidence" : c.confidence === "medium" ? "Some evidence" : "Weak evidence"}
                                   </Badge>
                                   {c.source && (
-                                    <a href={c.source} target="_blank" rel="noopener noreferrer" className="text-[10px] text-primary hover:underline flex items-center gap-0.5">
+                                    <a href={c.source} target="_blank" rel="noopener noreferrer" className="text-xs text-primary hover:underline flex items-center gap-0.5">
                                       Source <ExternalLink className="w-2.5 h-2.5" />
                                     </a>
                                   )}
@@ -216,7 +216,7 @@ export function ContractsDetailDrawer({ open, onOpenChange, companyId, companyNa
 
               {/* Source */}
               <div className="border-t border-border pt-4">
-                <p className="text-[10px] text-muted-foreground">
+                <p className="text-xs text-muted-foreground">
                   Sources: <a href="https://www.usaspending.gov" target="_blank" rel="noopener noreferrer" className="text-primary hover:underline">USASpending.gov</a>, FPDS.
                   Contract data reflects official federal procurement records.
                 </p>

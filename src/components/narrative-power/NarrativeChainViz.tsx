@@ -21,7 +21,7 @@ export function NarrativeChainViz({ chain, className }: NarrativeChainVizProps) 
       {nodes.map((node, idx) => (
         <div key={idx} className="flex items-center gap-1">
           <span className={cn(
-            "px-2.5 py-1 text-[10px] font-mono tracking-wider rounded-sm border whitespace-nowrap",
+            "px-2.5 py-1 text-xs font-mono tracking-wider rounded-sm border whitespace-nowrap",
             idx === 0
               ? "bg-primary/8 border-primary/20 text-primary font-medium"
               : idx === nodes.length - 1

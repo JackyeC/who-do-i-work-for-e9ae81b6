@@ -205,7 +205,7 @@ function ConfidenceTag({ confidence }: { confidence: number }) {
     <TooltipProvider>
       <Tooltip>
         <TooltipTrigger asChild>
-          <span className={cn("inline-flex items-center gap-1 text-[10px] font-semibold px-2 py-0.5 rounded-full cursor-help", config.className)}>
+          <span className={cn("inline-flex items-center gap-1 text-xs font-semibold px-2 py-0.5 rounded-full cursor-help", config.className)}>
             {config.icon} {config.label}
           </span>
         </TooltipTrigger>
@@ -257,7 +257,7 @@ function EvidenceCard({ step, onEntityClick, companyName }: { step: ChainStep; o
       {/* Top row: type badge + confidence */}
       <div className="flex items-center justify-between mb-2">
         <div className="flex items-center gap-2">
-          <span className={cn("inline-flex items-center gap-1 text-[10px] font-semibold px-2 py-0.5 rounded-full bg-muted", config.color)}>
+          <span className={cn("inline-flex items-center gap-1 text-xs font-semibold px-2 py-0.5 rounded-full bg-muted", config.color)}>
             <Icon className="w-3 h-3" />
             {displayLabel}
           </span>
@@ -275,12 +275,12 @@ function EvidenceCard({ step, onEntityClick, companyName }: { step: ChainStep; o
           <ChevronRight className="w-3 h-3 text-muted-foreground/50 shrink-0" />
           <span className="text-sm font-semibold text-foreground truncate">{targetName}</span>
           {targetParty && <PartyBadge party={targetParty} entityType={step.target_type} />}
-          {targetLocation && <span className="text-[10px] text-muted-foreground">{targetLocation}</span>}
+          {targetLocation && <span className="text-xs text-muted-foreground">{targetLocation}</span>}
         </div>
       ) : (
         <div className="flex items-center gap-2 mb-1.5">
           <span className="text-sm font-semibold text-foreground truncate">{sourceName}</span>
-          <span className="text-[10px] text-muted-foreground">(company executive)</span>
+          <span className="text-xs text-muted-foreground">(company executive)</span>
         </div>
       )}
 
@@ -289,14 +289,14 @@ function EvidenceCard({ step, onEntityClick, companyName }: { step: ChainStep; o
 
       {/* Description detail — show for all types that have descriptions */}
       {step.description && !isExecAgg && (
-        <p className="text-[10px] text-muted-foreground/80 mt-1 leading-relaxed italic">
+        <p className="text-xs text-muted-foreground/80 mt-1 leading-relaxed italic">
           {expandAcronymsInText(summarizeDescription(step.description, step.link_type, sourceName, targetName))}
         </p>
       )}
 
       {/* Click CTA */}
       {isClickable && (
-        <p className="text-[10px] text-primary font-medium mt-1.5 flex items-center gap-1">
+        <p className="text-xs text-primary font-medium mt-1.5 flex items-center gap-1">
           {isExecutiveDonation ? "See who they donated to" : "View their voting record & politics"}
           <ChevronRight className="w-3 h-3" />
         </p>
@@ -310,7 +310,7 @@ function EvidenceCard({ step, onEntityClick, companyName }: { step: ChainStep; o
               <Link
                 key={issue}
                 to={`/values-search?issue=${encodeURIComponent(issue.toLowerCase().replace(/\s+/g, '_'))}`}
-                className="text-[9px] px-1.5 py-0.5 rounded-full bg-muted border border-border/50 hover:bg-primary/10 hover:border-primary/30 transition-colors text-muted-foreground hover:text-foreground"
+                className="text-xs px-1.5 py-0.5 rounded-full bg-muted border border-border/50 hover:bg-primary/10 hover:border-primary/30 transition-colors text-muted-foreground hover:text-foreground"
                 onClick={(e) => e.stopPropagation()}
               >
                 {issue}
@@ -318,7 +318,7 @@ function EvidenceCard({ step, onEntityClick, companyName }: { step: ChainStep; o
             ))}
           </div>
           {externalLink && (
-            <a href={externalLink} target="_blank" rel="noopener noreferrer" className="text-[10px] text-muted-foreground hover:text-primary transition-colors flex items-center gap-0.5" onClick={(e) => e.stopPropagation()}>
+            <a href={externalLink} target="_blank" rel="noopener noreferrer" className="text-xs text-muted-foreground hover:text-primary transition-colors flex items-center gap-0.5" onClick={(e) => e.stopPropagation()}>
               Source <ExternalLink className="w-3 h-3" />
             </a>
           )}
@@ -354,14 +354,14 @@ function CategorySection({ category, steps, defaultOpen, onEntityClick, companyN
           <div className="text-xs text-muted-foreground">{category.subtitle}</div>
         </div>
         <div className="flex items-center gap-2 shrink-0">
-          <Badge variant="secondary" className="text-[10px]">
+          <Badge variant="secondary" className="text-xs">
             {steps.length} record{steps.length !== 1 ? "s" : ""}
           </Badge>
           {totalAmount > 0 && (
             <span className="text-xs font-bold text-[hsl(var(--civic-green))]">{formatCurrency(totalAmount)}</span>
           )}
           {strongCount > 0 && (
-            <span className="text-[10px] text-[hsl(var(--civic-green))]">
+            <span className="text-xs text-[hsl(var(--civic-green))]">
               {strongCount} strong
             </span>
           )}
@@ -573,7 +573,7 @@ export function InfluenceChainCard({ companyId, companyName, onExecutiveClick, o
         <div className="absolute top-[-40px] right-[-40px] w-48 h-48 rounded-full bg-white/5" />
         <div className="absolute bottom-[-60px] left-[30%] w-72 h-72 rounded-full bg-white/[0.03]" />
         <div className="relative z-10">
-          <div className="inline-flex items-center gap-1.5 bg-white/15 rounded-full px-3 py-1 text-[11px] font-semibold tracking-wide uppercase mb-3">
+          <div className="inline-flex items-center gap-1.5 bg-white/15 rounded-full px-3 py-1 text-xs font-semibold tracking-wide uppercase mb-3">
             <TrendingUp className="w-3.5 h-3.5" /> Follow the Influence
           </div>
           <h2 className="text-xl font-bold font-display mb-2">
@@ -582,7 +582,7 @@ export function InfluenceChainCard({ companyId, companyName, onExecutiveClick, o
           <p className="text-sm opacity-90 max-w-lg leading-relaxed">
             This view traces how a company connects to politics, policy, and government through donations, lobbying, contracts, and institutional relationships — all from public records.
           </p>
-          <p className="text-[11px] opacity-70 mt-2 font-medium tracking-wide">
+          <p className="text-xs opacity-70 mt-2 font-medium tracking-wide">
             Built from public filings, lobbying disclosures, campaign finance records, and federal contract data.
           </p>
         </div>
@@ -614,12 +614,12 @@ export function InfluenceChainCard({ companyId, companyName, onExecutiveClick, o
                   <Icon className="w-4 h-4" />
                 </div>
                 <div className="text-lg font-bold text-foreground">{steps.length}</div>
-                <div className="text-[11px] text-muted-foreground leading-tight">{cat.title}</div>
+                <div className="text-xs text-muted-foreground leading-tight">{cat.title}</div>
                 {amount > 0 && (
-                  <div className="text-[10px] font-semibold text-[hsl(var(--civic-green))] mt-1">{formatCurrency(amount)}</div>
+                  <div className="text-xs font-semibold text-[hsl(var(--civic-green))] mt-1">{formatCurrency(amount)}</div>
                 )}
                 {strongCount > 0 && (
-                  <div className="text-[10px] text-muted-foreground mt-0.5">{strongCount} strong</div>
+                  <div className="text-xs text-muted-foreground mt-0.5">{strongCount} strong</div>
                 )}
               </div>
             );
@@ -668,7 +668,7 @@ export function InfluenceChainCard({ companyId, companyName, onExecutiveClick, o
                 <Link
                   key={i}
                   to={`/values-search?issue=${mix.label === "R" ? "conservative_alignment" : mix.label === "D" ? "progressive_alignment" : "bipartisan"}`}
-                  className="flex items-center gap-1 text-[10px] text-muted-foreground hover:text-foreground transition-colors"
+                  className="flex items-center gap-1 text-xs text-muted-foreground hover:text-foreground transition-colors"
                 >
                   <span className={cn(
                     "w-2 h-2 rounded-full inline-block",
@@ -721,7 +721,7 @@ export function InfluenceChainCard({ companyId, companyName, onExecutiveClick, o
 
         {/* ── Footer ── */}
         <div className="flex items-center justify-between pt-3 border-t border-border">
-          <p className="text-[10px] text-muted-foreground">
+          <p className="text-xs text-muted-foreground">
             All data from public records — FEC filings, lobbying reports, USASpending.gov
           </p>
           <Button variant="ghost" size="sm" className="gap-1.5 text-xs" onClick={handleShare}>

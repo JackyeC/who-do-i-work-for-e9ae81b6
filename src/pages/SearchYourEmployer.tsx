@@ -310,7 +310,7 @@ export default function SearchYourEmployer() {
                     </div>
                     <div className="min-w-0">
                       <p className="text-sm font-semibold text-foreground truncate group-hover:text-primary transition-colors">{company.name}</p>
-                      <p className="text-[11px] text-muted-foreground">{company.industry}</p>
+                      <p className="text-xs text-muted-foreground">{company.industry}</p>
                     </div>
                   </button>
                 ))}

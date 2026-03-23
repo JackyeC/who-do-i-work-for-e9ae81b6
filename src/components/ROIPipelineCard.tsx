@@ -149,7 +149,7 @@ function PipelineColumn({ title, icon: Icon, items, color }: {
                     <Badge variant="outline" className="text-xs mt-1">{item.type.replace(/_/g, ' ')}</Badge>
                   )}
                   {item.matched_entity_type && item.matched_entity_type !== "direct_company" && (
-                    <div className="mt-1.5 flex items-center gap-1 text-[10px] text-primary">
+                    <div className="mt-1.5 flex items-center gap-1 text-xs text-primary">
                       <Building2 className="w-3 h-3" />
                       {MATCH_LABELS[item.matched_entity_type] || `Via ${cleanEntityName(item.matched_entity_name || "related entity")}`}
                     </div>
@@ -160,24 +160,24 @@ function PipelineColumn({ title, icon: Icon, items, color }: {
                 <div className="mx-1 mb-1 p-2.5 rounded-b-lg border border-t-0 border-border bg-card space-y-2">
                   <div className="flex items-center gap-2">
                     <ShieldAlert className="w-3.5 h-3.5 text-muted-foreground shrink-0" />
-                    <span className="text-[11px] text-muted-foreground">
+                    <span className="text-xs text-muted-foreground">
                       Evidence strength: <span className={cn("font-semibold", confidenceLevel >= 0.8 ? "text-primary" : confidenceLevel >= 0.5 ? "text-accent-foreground" : "text-destructive")}>{confidenceLabel}</span>
                     </span>
                   </div>
                   {item.evidence_type && (
                     <div className="flex items-center gap-2">
                       <Info className="w-3.5 h-3.5 text-muted-foreground shrink-0" />
-                      <span className="text-[11px] text-muted-foreground">Source: <span className="font-medium text-foreground">{EVIDENCE_LABELS[item.evidence_type] || item.evidence_type.replace(/_/g, ' ')}</span></span>
+                      <span className="text-xs text-muted-foreground">Source: <span className="font-medium text-foreground">{EVIDENCE_LABELS[item.evidence_type] || item.evidence_type.replace(/_/g, ' ')}</span></span>
                     </div>
                   )}
                   {item.source_url && (
-                    <a href={item.source_url} target="_blank" rel="noopener noreferrer" className="flex items-center gap-1.5 text-[11px] text-primary hover:underline">
+                    <a href={item.source_url} target="_blank" rel="noopener noreferrer" className="flex items-center gap-1.5 text-xs text-primary hover:underline">
                       <ExternalLink className="w-3 h-3 shrink-0" />
                       View original public record
                     </a>
                   )}
                   {!item.source_url && !item.evidence_type && (
-                    <p className="text-[11px] text-muted-foreground italic">No direct source link available for this connection.</p>
+                    <p className="text-xs text-muted-foreground italic">No direct source link available for this connection.</p>
                   )}
                 </div>
               </CollapsibleContent>
@@ -295,7 +295,7 @@ const LinkageChain = forwardRef<HTMLDivElement, { linkages: ROIPipelineData["lin
                     <p className="text-xs text-muted-foreground leading-relaxed">{link.description}</p>
                     <div className="flex items-center gap-1.5 mt-2">
                       <div className={cn("w-1.5 h-1.5 rounded-full", dotColor)} />
-                      <span className={cn("text-[10px] font-medium uppercase tracking-wider", confidenceColor)}>
+                      <span className={cn("text-xs font-medium uppercase tracking-wider", confidenceColor)}>
                         {confidenceLabel} · {(link.confidence * 100).toFixed(0)}%
                       </span>
                     </div>
@@ -305,30 +305,30 @@ const LinkageChain = forwardRef<HTMLDivElement, { linkages: ROIPipelineData["lin
                   <div className="p-3 border border-t-0 border-border rounded-b-lg bg-card space-y-2">
                     <div className="flex items-center gap-2">
                       <ShieldAlert className="w-3.5 h-3.5 text-muted-foreground shrink-0" />
-                      <span className="text-[11px] text-muted-foreground">
+                      <span className="text-xs text-muted-foreground">
                         Confidence: <span className={cn("font-semibold", confidenceColor)}>{confidenceLabel} ({(link.confidence * 100).toFixed(0)}%)</span>
                       </span>
                     </div>
                     {link.evidence_type && (
                       <div className="flex items-center gap-2">
                         <Info className="w-3.5 h-3.5 text-muted-foreground shrink-0" />
-                        <span className="text-[11px] text-muted-foreground">Evidence: <span className="font-medium text-foreground">{EVIDENCE_SOURCE_LABELS[link.evidence_type] || link.evidence_type.replace(/_/g, ' ')}</span></span>
+                        <span className="text-xs text-muted-foreground">Evidence: <span className="font-medium text-foreground">{EVIDENCE_SOURCE_LABELS[link.evidence_type] || link.evidence_type.replace(/_/g, ' ')}</span></span>
                       </div>
                     )}
                     {link.source_name && (
                       <div className="flex items-center gap-2">
                         <FileText className="w-3.5 h-3.5 text-muted-foreground shrink-0" />
-                        <span className="text-[11px] text-muted-foreground">Data source: <span className="font-medium text-foreground">{link.source_name}</span></span>
+                        <span className="text-xs text-muted-foreground">Data source: <span className="font-medium text-foreground">{link.source_name}</span></span>
                       </div>
                     )}
                     {link.source_url && (
-                      <a href={link.source_url} target="_blank" rel="noopener noreferrer" className="flex items-center gap-1.5 text-[11px] text-primary hover:underline">
+                      <a href={link.source_url} target="_blank" rel="noopener noreferrer" className="flex items-center gap-1.5 text-xs text-primary hover:underline">
                         <ExternalLink className="w-3 h-3 shrink-0" />
                         View original public record
                       </a>
                     )}
                     {!link.source_url && !link.evidence_type && !link.source_name && (
-                      <p className="text-[11px] text-muted-foreground italic">Source details will be available after primary-source verification completes.</p>
+                      <p className="text-xs text-muted-foreground italic">Source details will be available after primary-source verification completes.</p>
                     )}
                   </div>
                 </CollapsibleContent>
@@ -469,7 +469,7 @@ export function ROIPipelineCard({
             {enrichmentData && (
               <div className="p-3 rounded-lg bg-accent/10 border border-accent/20 mb-4 max-w-sm">
                 <p className="text-xs text-accent-foreground font-medium mb-1">Third-party summary data found</p>
-                <p className="text-[11px] text-muted-foreground">
+                <p className="text-xs text-muted-foreground">
                   Primary-source verification is still in progress or incomplete. OpenSecrets profile data is available for reference.
                 </p>
               </div>
@@ -524,7 +524,7 @@ export function ROIPipelineCard({
               )}
             </div>
             {enrichmentData && (
-              <div className="flex items-center gap-2 text-[11px] text-muted-foreground">
+              <div className="flex items-center gap-2 text-xs text-muted-foreground">
                 <Building2 className="w-3 h-3 shrink-0" />
                 <span>
                   {enrichmentData.verification_status === 'cross_checked_primary_source'

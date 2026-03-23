@@ -189,7 +189,7 @@ function Reveal({ children, delay = 0 }: { children: React.ReactNode; delay?: nu
 function SectionHeader({ number, title }: { number: string; title: string }) {
   return (
     <div className="flex items-center gap-3 mb-5">
-      <span className="font-mono text-[9px] tracking-[0.25em] uppercase text-primary font-semibold shrink-0">
+      <span className="font-mono text-xs tracking-[0.25em] uppercase text-primary font-semibold shrink-0">
         {number}
       </span>
       <h2 className="text-base sm:text-lg font-display font-bold text-foreground tracking-tight">
@@ -208,7 +208,7 @@ function ExpandableQuestion({ question, index }: { question: string; index: numb
       className="w-full text-left border border-border/40 bg-card p-4 transition-colors hover:bg-accent/20 active:scale-[0.99]"
     >
       <div className="flex items-start gap-3">
-        <span className="font-mono text-[10px] text-primary font-semibold mt-0.5">Q{index + 1}</span>
+        <span className="font-mono text-xs text-primary font-semibold mt-0.5">Q{index + 1}</span>
         <div className="flex-1 min-w-0">
           <p className="text-sm font-medium text-foreground leading-relaxed">{question}</p>
           <div className={cn("overflow-hidden transition-all duration-300", open ? "max-h-40 mt-2" : "max-h-0")}>
@@ -263,7 +263,7 @@ function DossierGateOverlay({ companyName }: { companyName: string }) {
         <div className="bg-primary/10 border border-primary/25 p-5 space-y-3">
           <div className="flex items-center gap-2">
             <Sparkles className="w-4 h-4 text-primary" />
-            <span className="font-mono text-[9px] tracking-[0.25em] uppercase text-primary font-bold">Jackye's Read</span>
+            <span className="font-mono text-xs tracking-[0.25em] uppercase text-primary font-bold">Jackye's Read</span>
           </div>
           <p className="text-sm text-foreground/90 leading-relaxed font-medium">
             I've watched this company for years. The signals tell a story most candidates never see...
@@ -315,14 +315,14 @@ function FullDossierContent({ data }: { data: CompanyDossier }) {
         <div className="bg-primary/10 border border-primary/25 p-5 sm:p-6 space-y-3">
           <div className="flex items-center gap-2">
             <Sparkles className="w-4 h-4 text-primary" />
-            <span className="font-mono text-[9px] tracking-[0.25em] uppercase text-primary font-bold">
+            <span className="font-mono text-xs tracking-[0.25em] uppercase text-primary font-bold">
               Jackye's Read
             </span>
           </div>
           <p className="text-sm sm:text-[15px] text-foreground/90 leading-relaxed font-medium">
             {data.jackyeRead}
           </p>
-          <p className="text-[10px] text-muted-foreground font-mono italic">
+          <p className="text-xs text-muted-foreground font-mono italic">
             Pattern-based insight · Not a verdict · Based on public signals
           </p>
         </div>
@@ -345,7 +345,7 @@ function FullDossierContent({ data }: { data: CompanyDossier }) {
                   <div className="flex-1 min-w-0">
                     <div className="flex items-center gap-2 mb-1">
                       <span className="text-sm font-semibold text-foreground">{signal.label}</span>
-                      <span className={cn("inline-flex items-center gap-1 text-[10px] font-medium", status.cn)}>
+                      <span className={cn("inline-flex items-center gap-1 text-xs font-medium", status.cn)}>
                         <StatusIcon className="w-3 h-3" />
                         {status.label}
                       </span>
@@ -433,19 +433,19 @@ function FullDossierContent({ data }: { data: CompanyDossier }) {
           {data.redFlags.map((flag, i) => (
             <div key={i} className="border border-destructive/15 bg-destructive/5 p-4 space-y-3">
               <div>
-                <div className="font-mono text-[9px] tracking-[0.2em] uppercase text-destructive/70 font-semibold mb-1">
+                <div className="font-mono text-xs tracking-[0.2em] uppercase text-destructive/70 font-semibold mb-1">
                   What was observed
                 </div>
                 <p className="text-sm text-foreground/85 leading-relaxed">{flag.observed}</p>
               </div>
               <div>
-                <div className="font-mono text-[9px] tracking-[0.2em] uppercase text-civic-yellow font-semibold mb-1">
+                <div className="font-mono text-xs tracking-[0.2em] uppercase text-civic-yellow font-semibold mb-1">
                   What it may suggest
                 </div>
                 <p className="text-xs text-muted-foreground leading-relaxed">{flag.maySuggest}</p>
               </div>
               <div className="border-t border-border/20 pt-2">
-                <div className="font-mono text-[9px] tracking-[0.2em] uppercase text-primary font-semibold mb-1">
+                <div className="font-mono text-xs tracking-[0.2em] uppercase text-primary font-semibold mb-1">
                   What to explore further
                 </div>
                 <p className="text-xs text-foreground/75 leading-relaxed italic">"{flag.askInInterview}"</p>
@@ -459,7 +459,7 @@ function FullDossierContent({ data }: { data: CompanyDossier }) {
       <Reveal delay={0.15}>
         <div className="space-y-5">
           <div className="text-center">
-            <div className="font-mono text-[9px] tracking-[0.25em] uppercase text-primary font-semibold mb-1">
+            <div className="font-mono text-xs tracking-[0.25em] uppercase text-primary font-semibold mb-1">
               Go deeper
             </div>
             <h2 className="text-lg sm:text-xl font-display font-bold text-foreground tracking-tight">
@@ -484,7 +484,7 @@ function FullDossierContent({ data }: { data: CompanyDossier }) {
                     <div className="flex items-center gap-2">
                       <h3 className="text-sm font-display font-bold text-foreground">{tier.name}</h3>
                       {tier.highlighted && (
-                        <Badge variant="outline" className="text-[8px] font-mono bg-primary/10 border-primary/30 text-primary">
+                        <Badge variant="outline" className="text-xs font-mono bg-primary/10 border-primary/30 text-primary">
                           Popular
                         </Badge>
                       )}
@@ -498,7 +498,7 @@ function FullDossierContent({ data }: { data: CompanyDossier }) {
                 </div>
                 <div className="flex flex-wrap gap-x-4 gap-y-1 mb-4">
                   {tier.features.map((f) => (
-                    <span key={f} className="text-[11px] text-muted-foreground flex items-center gap-1">
+                    <span key={f} className="text-xs text-muted-foreground flex items-center gap-1">
                       <Check className="w-3 h-3 text-civic-green" />
                       {f}
                     </span>
@@ -519,8 +519,8 @@ function FullDossierContent({ data }: { data: CompanyDossier }) {
 
       {/* Disclaimer */}
       <Reveal delay={0.17}>
-        <div className="border border-border/30 bg-muted/30 px-5 py-4 text-[10px] text-muted-foreground leading-relaxed font-mono">
-          <span className="text-primary font-semibold tracking-wider uppercase text-[9px]">NOTE</span>{" "}
+        <div className="border border-border/30 bg-muted/30 px-5 py-4 text-xs text-muted-foreground leading-relaxed font-mono">
+          <span className="text-primary font-semibold tracking-wider uppercase text-xs">NOTE</span>{" "}
           This coaching guide is generated from public records and documented signals. It does not constitute legal or employment advice.
           WDIWF does not evaluate the content of your mission. We evaluate whether you're living it.
         </div>
@@ -553,7 +553,7 @@ export default function DossierCoachingGuide() {
           {/* ─── PUBLIC: Worth Your Time verdict ─── */}
           <Reveal>
             <div className="bg-primary/8 border border-primary/20 p-5 sm:p-6">
-              <div className="font-mono text-[9px] tracking-[0.25em] uppercase text-primary font-semibold mb-2">
+              <div className="font-mono text-xs tracking-[0.25em] uppercase text-primary font-semibold mb-2">
                 Should you spend energy on this?
               </div>
               <p className="text-base sm:text-lg font-display font-bold text-foreground leading-snug tracking-tight">
@@ -566,7 +566,7 @@ export default function DossierCoachingGuide() {
           <Reveal delay={0.03}>
             <div className="space-y-4">
               <div className="flex items-center gap-2 mb-1">
-                <Badge variant="outline" className="text-[9px] font-mono tracking-wider bg-primary/5 border-primary/20 text-primary">
+                <Badge variant="outline" className="text-xs font-mono tracking-wider bg-primary/5 border-primary/20 text-primary">
                   Coaching Guide
                 </Badge>
               </div>
@@ -592,7 +592,7 @@ export default function DossierCoachingGuide() {
                   </span>
                   <span className="text-sm text-muted-foreground mb-1">/10</span>
                 </div>
-                <Badge variant="outline" className={cn("text-[10px]", scoreBadgeCn(data.integrityScore))}>
+                <Badge variant="outline" className={cn("text-xs", scoreBadgeCn(data.integrityScore))}>
                   {scoreLabel(data.integrityScore)}
                 </Badge>
               </div>
@@ -614,7 +614,7 @@ export default function DossierCoachingGuide() {
                   <div className="flex-1 min-w-0">
                     <div className="flex items-center gap-2 mb-1">
                       <span className="text-sm font-semibold text-foreground">{firstSignal.label}</span>
-                      <span className={cn("inline-flex items-center gap-1 text-[10px] font-medium", firstStatus.cn)}>
+                      <span className={cn("inline-flex items-center gap-1 text-xs font-medium", firstStatus.cn)}>
                         <FirstStatusIcon className="w-3 h-3" />
                         {firstStatus.label}
                       </span>

@@ -175,7 +175,7 @@ export function CompensationMarketCard({ companyName, dbCompanyId }: Props) {
           <TrendingUp className="w-5 h-5 text-primary" />
           Compensation Market Position
           {/* Confidence badge */}
-          <Badge variant="outline" className={cn("text-[9px] ml-1", CONFIDENCE_COLORS[overallConfidence])}>
+          <Badge variant="outline" className={cn("text-xs ml-1", CONFIDENCE_COLORS[overallConfidence])}>
             {overallConfidence} Confidence
           </Badge>
           <Button
@@ -288,11 +288,11 @@ export function CompensationMarketCard({ companyName, dbCompanyId }: Props) {
 
             {/* Freshness + Updated */}
             <div className="flex items-center justify-between">
-              <Badge variant="outline" className={cn("text-[10px]", badge.className)}>
+              <Badge variant="outline" className={cn("text-xs", badge.className)}>
                 {badge.label}
               </Badge>
               {compData.last_updated && (
-                <span className="text-[10px] text-muted-foreground">
+                <span className="text-xs text-muted-foreground">
                   Updated: {new Date(compData.last_updated).toLocaleDateString()}
                 </span>
               )}
@@ -314,7 +314,7 @@ export function CompensationMarketCard({ companyName, dbCompanyId }: Props) {
                         key={i}
                         variant="outline"
                         className={cn(
-                          "text-[9px]",
+                          "text-xs",
                           tier ? CONFIDENCE_COLORS[tier.tier] : "text-muted-foreground"
                         )}
                       >
@@ -330,7 +330,7 @@ export function CompensationMarketCard({ companyName, dbCompanyId }: Props) {
             <div className="border-t border-border pt-3">
               <div className="flex items-start gap-1.5">
                 <Info className="w-3 h-3 text-muted-foreground shrink-0 mt-0.5" />
-                <p className="text-[10px] text-muted-foreground leading-relaxed">
+                <p className="text-xs text-muted-foreground leading-relaxed">
                   {COMPENSATION_DISCLAIMER}
                 </p>
               </div>

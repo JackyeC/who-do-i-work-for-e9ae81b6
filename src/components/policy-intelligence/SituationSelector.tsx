@@ -71,7 +71,7 @@ export function SituationSelector({ value, onChange, maxSelections = 3 }: Props)
         })}
       </div>
       {selected.length > 0 && (
-        <p className="text-[11px] text-muted-foreground">
+        <p className="text-xs text-muted-foreground">
           Policy scores are weighted toward {selected.map(s => SITUATION_LABELS[s].toLowerCase()).join(", ")} priorities.
         </p>
       )}

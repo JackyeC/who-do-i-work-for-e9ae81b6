@@ -163,7 +163,7 @@ export default function CompareCompanies() {
                   className="bg-card border border-border p-5 text-left hover:border-primary/30 transition-all group"
                 >
                   <div className="font-bold text-sm text-foreground group-hover:text-primary transition-colors">{c.name}</div>
-                  <div className="flex items-center gap-1 font-mono text-[10px] tracking-wider uppercase text-primary mt-2">
+                  <div className="flex items-center gap-1 font-mono text-xs tracking-wider uppercase text-primary mt-2">
                     Full intelligence report <ArrowRight className="w-3 h-3" />
                   </div>
                 </button>
@@ -185,7 +185,7 @@ export default function CompareCompanies() {
                   setCompanyB(null);
                   setSearchParams({});
                 }}
-                className="inline-flex items-center gap-2 px-5 py-2.5 bg-primary text-primary-foreground font-mono text-[10px] tracking-wider uppercase hover:bg-primary/90 transition-colors"
+                className="inline-flex items-center gap-2 px-5 py-2.5 bg-primary text-primary-foreground font-mono text-xs tracking-wider uppercase hover:bg-primary/90 transition-colors"
               >
                 <ArrowLeftRight className="w-3.5 h-3.5" /> Start New Comparison
               </button>

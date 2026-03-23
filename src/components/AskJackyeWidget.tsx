@@ -146,7 +146,7 @@ export function AskJackyeWidget() {
             <img src={jackyeHeadshot} alt="Jackye Clayton" className="w-10 h-10 rounded-full object-cover shrink-0" />
             <div className="flex-1 min-w-0">
               <div className="font-serif text-sm font-bold text-primary">Jackye Clayton</div>
-              <div className="text-[11px] text-muted-foreground">Career Strategist · Your Advocate</div>
+              <div className="text-xs text-muted-foreground">Career Strategist · Your Advocate</div>
             </div>
             <div className="font-mono text-micro tracking-wider uppercase px-2 py-0.5 border border-primary/40 text-primary">
               AI Coach
@@ -163,7 +163,7 @@ export function AskJackyeWidget() {
                 <button
                   key={p}
                   onClick={() => send(p)}
-                  className="text-[10px] px-2.5 py-1.5 border border-border bg-surface-2 text-muted-foreground hover:border-primary/40 hover:text-primary hover:bg-primary/5 transition-all"
+                  className="text-xs px-2.5 py-1.5 border border-border bg-surface-2 text-muted-foreground hover:border-primary/40 hover:text-primary hover:bg-primary/5 transition-all"
                 >
                   {p}
                 </button>
@@ -230,7 +230,7 @@ export function AskJackyeWidget() {
             <button
               onClick={() => send(input)}
               disabled={isLoading || !input.trim()}
-              className="bg-primary text-primary-foreground px-4 font-mono text-[10px] tracking-wider uppercase font-semibold hover:brightness-110 transition-all disabled:opacity-50"
+              className="bg-primary text-primary-foreground px-4 font-mono text-xs tracking-wider uppercase font-semibold hover:brightness-110 transition-all disabled:opacity-50"
             >
               <Send className="w-4 h-4" />
             </button>

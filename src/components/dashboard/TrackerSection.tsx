@@ -118,7 +118,7 @@ export function TrackerSection() {
           return (
             <div key={col.key} className="space-y-3">
               <div className="flex items-center gap-2">
-                <Badge variant="outline" className={cn("text-[10px] font-mono", col.color)}>{col.label}</Badge>
+                <Badge variant="outline" className={cn("text-xs font-mono", col.color)}>{col.label}</Badge>
                 <span className="text-xs text-muted-foreground">{colApps.length}</span>
               </div>
               <div className="space-y-2 min-h-[120px]">
@@ -132,14 +132,14 @@ export function TrackerSection() {
                       <GripVertical className="w-3.5 h-3.5 text-muted-foreground/30 shrink-0 mt-0.5" />
                     </div>
                     <div className="flex items-center justify-between">
-                      <span className="text-[10px] text-muted-foreground">{app.appliedDate}</span>
+                      <span className="text-xs text-muted-foreground">{app.appliedDate}</span>
                       {app.integrityScore > 0 && (
-                        <Badge variant="outline" className={cn("text-[9px] font-mono", getScoreBadge(app.integrityScore))}>
+                        <Badge variant="outline" className={cn("text-xs font-mono", getScoreBadge(app.integrityScore))}>
                           {app.integrityScore}
                         </Badge>
                       )}
                     </div>
-                    {app.notes && <p className="text-[11px] text-muted-foreground/70 leading-relaxed">{app.notes}</p>}
+                    {app.notes && <p className="text-xs text-muted-foreground/70 leading-relaxed">{app.notes}</p>}
                   </div>
                 ))}
                 {colApps.length === 0 && (

@@ -92,7 +92,7 @@ export function CareerJourneyTimeline() {
         <Card className="border-primary/20 bg-primary/5">
           <CardContent className="p-4 text-center">
             <MapPin className="w-6 h-6 text-primary mx-auto mb-2" />
-            <p className="text-[10px] uppercase tracking-wider text-muted-foreground mb-1">Question 1</p>
+            <p className="text-xs uppercase tracking-wider text-muted-foreground mb-1">Question 1</p>
             <p className="text-sm font-semibold text-foreground">Where am I now?</p>
             <p className="text-xs text-muted-foreground mt-1">{currentRole}</p>
           </CardContent>
@@ -100,7 +100,7 @@ export function CareerJourneyTimeline() {
         <Card className={cn("border-border", selectedTrack ? "border-primary/20 bg-primary/5" : "")}>
           <CardContent className="p-4 text-center">
             <Target className="w-6 h-6 text-primary mx-auto mb-2" />
-            <p className="text-[10px] uppercase tracking-wider text-muted-foreground mb-1">Question 2</p>
+            <p className="text-xs uppercase tracking-wider text-muted-foreground mb-1">Question 2</p>
             <p className="text-sm font-semibold text-foreground">Where do I want to go?</p>
             <p className="text-xs text-muted-foreground mt-1">
               {selectedTrack ? (selectedTrack as any).target_role : "Set a target below"}
@@ -110,7 +110,7 @@ export function CareerJourneyTimeline() {
         <Card className="border-border">
           <CardContent className="p-4 text-center">
             <Flag className="w-6 h-6 text-primary mx-auto mb-2" />
-            <p className="text-[10px] uppercase tracking-wider text-muted-foreground mb-1">Question 3</p>
+            <p className="text-xs uppercase tracking-wider text-muted-foreground mb-1">Question 3</p>
             <p className="text-sm font-semibold text-foreground">What do I need to do?</p>
             <p className="text-xs text-muted-foreground mt-1">Full report & SMART goals</p>
           </CardContent>
@@ -173,7 +173,7 @@ export function CareerJourneyTimeline() {
             </p>
             <div className="flex flex-wrap justify-center gap-2 mt-3">
               {["Career Roadmap", "Gap Analysis", "Salary Estimate", "Training", "Networking", "30-60-90 Plan"].map(f => (
-                <Badge key={f} variant="outline" className="text-[10px]">{f}</Badge>
+                <Badge key={f} variant="outline" className="text-xs">{f}</Badge>
               ))}
             </div>
           </CardContent>

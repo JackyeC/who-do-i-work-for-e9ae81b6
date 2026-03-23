@@ -1317,21 +1317,21 @@ export default function FollowTheMoney() {
               <span className="text-xs font-mono font-bold" style={{ color: "#f0ebe0" }}>
                 {formatAmount(totalDocumentedAmount) || "$294M"}
               </span>
-              <span className="text-[10px]" style={{ color: "rgba(240,235,224,0.45)" }}>in documented connections</span>
+              <span className="text-xs" style={{ color: "rgba(240,235,224,0.45)" }}>in documented connections</span>
             </div>
             <div className="flex items-center gap-2">
               <Users className="w-4 h-4" style={{ color: "#EBAD0C" }} />
               <span className="text-xs font-mono font-bold" style={{ color: "#f0ebe0" }}>
                 {graphData.nodes.length}
               </span>
-              <span className="text-[10px]" style={{ color: "rgba(240,235,224,0.45)" }}>nodes tracked</span>
+              <span className="text-xs" style={{ color: "rgba(240,235,224,0.45)" }}>nodes tracked</span>
             </div>
             <div className="flex items-center gap-2">
               <Share2 className="w-4 h-4" style={{ color: "#EBAD0C" }} />
               <span className="text-xs font-mono font-bold" style={{ color: "#f0ebe0" }}>
                 {graphData.links.length}
               </span>
-              <span className="text-[10px]" style={{ color: "rgba(240,235,224,0.45)" }}>connections mapped</span>
+              <span className="text-xs" style={{ color: "rgba(240,235,224,0.45)" }}>connections mapped</span>
             </div>
           </div>
         </div>
@@ -1346,13 +1346,13 @@ export default function FollowTheMoney() {
           {/* Issue filter row */}
           <div className="flex items-center gap-2 overflow-x-auto pb-1">
             <Filter className="w-3.5 h-3.5 text-muted-foreground shrink-0" />
-            <span className="text-[10px] font-extrabold text-muted-foreground uppercase tracking-wider shrink-0">Issue:</span>
+            <span className="text-xs font-extrabold text-muted-foreground uppercase tracking-wider shrink-0">Issue:</span>
             {ISSUE_CATEGORIES.slice(0, 8).map(cat => (
               <button
                 key={cat}
                 onClick={() => setActiveIssueFilter(cat)}
                 className={cn(
-                  "rounded-full text-[10px] shrink-0 h-6 px-2.5 font-medium transition-colors border",
+                  "rounded-full text-xs shrink-0 h-6 px-2.5 font-medium transition-colors border",
                   activeIssueFilter === cat
                     ? "bg-[#EBAD0C]/15 border-[#EBAD0C]/40 text-[#EBAD0C]"
                     : "bg-transparent border-border/30 text-muted-foreground hover:text-foreground hover:border-border"
@@ -1365,13 +1365,13 @@ export default function FollowTheMoney() {
 
           {/* Relationship + controls row */}
           <div className="flex items-center gap-2 overflow-x-auto">
-            <span className="text-[10px] font-extrabold text-muted-foreground uppercase tracking-wider shrink-0">Link:</span>
+            <span className="text-xs font-extrabold text-muted-foreground uppercase tracking-wider shrink-0">Link:</span>
             {RELATIONSHIP_TYPES.map(rt => (
               <button
                 key={rt.key}
                 onClick={() => setActiveRelFilter(rt.key)}
                 className={cn(
-                  "rounded-full text-[10px] shrink-0 h-6 px-2.5 font-medium transition-colors border",
+                  "rounded-full text-xs shrink-0 h-6 px-2.5 font-medium transition-colors border",
                   activeRelFilter === rt.key
                     ? "bg-[#EBAD0C]/15 border-[#EBAD0C]/40 text-[#EBAD0C]"
                     : "bg-transparent border-border/30 text-muted-foreground hover:text-foreground hover:border-border"
@@ -1387,7 +1387,7 @@ export default function FollowTheMoney() {
               variant={pathMode ? "default" : "outline"}
               size="sm"
               onClick={() => { setPathMode(!pathMode); setPathStart(null); setPathEnd(null); setActivePath(null); }}
-              className="gap-1.5 text-[10px] h-7 shrink-0"
+              className="gap-1.5 text-xs h-7 shrink-0"
             >
               <Route className="w-3 h-3" />
               Path Trace
@@ -1396,7 +1396,7 @@ export default function FollowTheMoney() {
               variant={strongOnly ? "default" : "outline"}
               size="sm"
               onClick={() => setStrongOnly(!strongOnly)}
-              className="gap-1 text-[10px] h-7 shrink-0"
+              className="gap-1 text-xs h-7 shrink-0"
             >
               <Zap className="w-3 h-3" />
               Strong Only
@@ -1433,7 +1433,7 @@ export default function FollowTheMoney() {
             )}
             {pathStart && !pathEnd && (
               <>
-                <Badge className="bg-primary text-primary-foreground text-[10px]">
+                <Badge className="bg-primary text-primary-foreground text-xs">
                   {graphData.nodes.find(n => n.id === pathStart)?.label || "Start"}
                 </Badge>
                 <ArrowRight className="w-3 h-3 text-muted-foreground" />
@@ -1448,7 +1448,7 @@ export default function FollowTheMoney() {
                     {i > 0 && <ArrowRight className="w-3 h-3 text-muted-foreground" />}
                     <Badge
                       variant="outline"
-                      className="text-[10px] gap-1 cursor-pointer hover:bg-accent/50"
+                      className="text-xs gap-1 cursor-pointer hover:bg-accent/50"
                       style={{ borderColor: GROUP_COLORS[node.group] + "60" }}
                       onClick={() => { setSelectedNode(node); }}
                     >
@@ -1465,7 +1465,7 @@ export default function FollowTheMoney() {
             )}
 
             {(pathStart || pathEnd) && (
-              <Button variant="ghost" size="sm" className="h-5 text-[10px] ml-auto" onClick={() => { setPathStart(null); setPathEnd(null); setActivePath(null); }}>
+              <Button variant="ghost" size="sm" className="h-5 text-xs ml-auto" onClick={() => { setPathStart(null); setPathEnd(null); setActivePath(null); }}>
                 Clear Path
               </Button>
             )}
@@ -1508,7 +1508,7 @@ export default function FollowTheMoney() {
 
           {/* Node count */}
           <div className="absolute top-3 left-1/2 -translate-x-1/2 z-10">
-            <Badge variant="outline" className="bg-card/80 backdrop-blur-sm text-[10px] text-muted-foreground border-border/30">
+            <Badge variant="outline" className="bg-card/80 backdrop-blur-sm text-xs text-muted-foreground border-border/30">
               {graphData.nodes.length} nodes · {graphData.links.length} connections
             </Badge>
           </div>
@@ -1516,7 +1516,7 @@ export default function FollowTheMoney() {
           {/* Legend */}
           <div className="absolute bottom-3 left-3 z-10 flex flex-wrap gap-1.5">
             {Object.entries(GROUP_COLORS).map(([group, color]) => (
-              <div key={group} className="flex items-center gap-1.5 text-[9px] text-muted-foreground bg-background/60 backdrop-blur-sm px-2 py-1 rounded-full">
+              <div key={group} className="flex items-center gap-1.5 text-xs text-muted-foreground bg-background/60 backdrop-blur-sm px-2 py-1 rounded-full">
                 <div className="w-2.5 h-2.5 rounded-full" style={{ backgroundColor: color }} />
                 {group}
               </div>
@@ -1622,7 +1622,7 @@ export default function FollowTheMoney() {
                     </div>
                     <div>
                       <h3 className="text-sm font-bold text-foreground font-display leading-tight">{selectedNode.label}</h3>
-                      <Badge variant="outline" className="text-[9px] mt-0.5">{selectedNode.group}</Badge>
+                      <Badge variant="outline" className="text-xs mt-0.5">{selectedNode.group}</Badge>
                     </div>
                   </div>
                   <Button variant="ghost" size="icon" className="w-7 h-7" onClick={() => setSelectedNode(null)}>
@@ -1633,7 +1633,7 @@ export default function FollowTheMoney() {
                 {/* Party / State (politicians) */}
                 {selectedNode.party && (
                   <div className="flex items-center gap-2">
-                    <Badge variant={selectedNode.party === "Democrat" ? "default" : "destructive"} className="text-[10px]">
+                    <Badge variant={selectedNode.party === "Democrat" ? "default" : "destructive"} className="text-xs">
                       {selectedNode.party}
                     </Badge>
                     {selectedNode.state && <span className="text-xs text-muted-foreground">{selectedNode.state}</span>}
@@ -1643,7 +1643,7 @@ export default function FollowTheMoney() {
                 {/* Amount */}
                 {selectedNode.amount && (
                   <div className="p-3 rounded-xl bg-primary/[0.06] border border-primary/10">
-                    <p className="text-[10px] text-muted-foreground uppercase tracking-wider mb-0.5">Documented Amount</p>
+                    <p className="text-xs text-muted-foreground uppercase tracking-wider mb-0.5">Documented Amount</p>
                     <p className="text-xl font-bold font-display text-foreground">{formatAmount(selectedNode.amount)}</p>
                   </div>
                 )}
@@ -1659,7 +1659,7 @@ export default function FollowTheMoney() {
                   </div>
                 )}
                 {selectedNode.metadata?.status && (
-                  <Badge variant="secondary" className="text-[10px]">{selectedNode.metadata.status}</Badge>
+                  <Badge variant="secondary" className="text-xs">{selectedNode.metadata.status}</Badge>
                 )}
                 {selectedNode.metadata?.description && (
                   <p className="text-xs text-muted-foreground leading-relaxed italic">"{selectedNode.metadata.description}"</p>
@@ -1668,10 +1668,10 @@ export default function FollowTheMoney() {
                 {/* Issue Areas */}
                 {selectedNode.issueCategories && selectedNode.issueCategories.length > 0 && (
                   <div>
-                    <p className="text-[10px] text-muted-foreground uppercase tracking-wider mb-1.5">Issue Areas</p>
+                    <p className="text-xs text-muted-foreground uppercase tracking-wider mb-1.5">Issue Areas</p>
                     <div className="flex flex-wrap gap-1">
                       {selectedNode.issueCategories.map(c => (
-                        <Badge key={c} variant="secondary" className="text-[10px] cursor-pointer hover:bg-accent" onClick={() => setActiveIssueFilter(c)}>
+                        <Badge key={c} variant="secondary" className="text-xs cursor-pointer hover:bg-accent" onClick={() => setActiveIssueFilter(c)}>
                           {c}
                         </Badge>
                       ))}
@@ -1707,18 +1707,18 @@ export default function FollowTheMoney() {
                             <ChevronRight className="w-3 h-3 text-muted-foreground ml-auto shrink-0" />
                           </div>
                           <div className="flex items-center gap-1.5 flex-wrap">
-                            <span className="text-[10px] text-muted-foreground">{isSource ? "→" : "←"} {edge.label}</span>
+                            <span className="text-xs text-muted-foreground">{isSource ? "→" : "←"} {edge.label}</span>
                             {style && (
-                              <span className="text-[9px] px-1.5 py-0.5 rounded-full bg-muted text-muted-foreground">
+                              <span className="text-xs px-1.5 py-0.5 rounded-full bg-muted text-muted-foreground">
                                 {style.label}
                               </span>
                             )}
                             {edge.amount && (
-                              <Badge variant="secondary" className="text-[10px] font-mono">{formatAmount(edge.amount)}</Badge>
+                              <Badge variant="secondary" className="text-xs font-mono">{formatAmount(edge.amount)}</Badge>
                             )}
                           </div>
                           {confLabel && (
-                            <p className="text-[9px] text-muted-foreground/60 mt-1 italic">{confLabel}</p>
+                            <p className="text-xs text-muted-foreground/60 mt-1 italic">{confLabel}</p>
                           )}
                         </button>
                       );
@@ -1765,7 +1765,7 @@ export default function FollowTheMoney() {
                       <Route className="w-4 h-4 text-primary" />
                       <span className="text-xs font-bold text-foreground">Path Trace Mode</span>
                     </div>
-                    <p className="text-[11px] text-muted-foreground leading-relaxed">
+                    <p className="text-xs text-muted-foreground leading-relaxed">
                       Click two nodes on the graph to trace the path of influence between them. The system will find the shortest connection chain.
                     </p>
                   </div>
@@ -1780,14 +1780,14 @@ export default function FollowTheMoney() {
 
                 {/* Node type legend */}
                 <div>
-                  <h4 className="text-[10px] font-bold text-muted-foreground uppercase tracking-wider mb-2">Entity Types</h4>
+                  <h4 className="text-xs font-bold text-muted-foreground uppercase tracking-wider mb-2">Entity Types</h4>
                   <div className="grid grid-cols-2 gap-1.5">
                     {Object.entries(GROUP_LABELS).map(([group, { icon: Icon, desc }]) => (
                       <div key={group} className="flex items-center gap-2 p-2 rounded-lg bg-muted/20">
-                        <div className="w-5 h-5 rounded-full flex items-center justify-center text-[10px]" style={{ backgroundColor: GROUP_COLORS[group] + "22", color: GROUP_COLORS[group] }}>
+                        <div className="w-5 h-5 rounded-full flex items-center justify-center text-xs" style={{ backgroundColor: GROUP_COLORS[group] + "22", color: GROUP_COLORS[group] }}>
                           {GROUP_SHAPES[group]}
                         </div>
-                        <span className="text-[10px] text-foreground font-medium">{group}</span>
+                        <span className="text-xs text-foreground font-medium">{group}</span>
                       </div>
                     ))}
                   </div>
@@ -1796,7 +1796,7 @@ export default function FollowTheMoney() {
                 {/* Insights */}
                 {insights.length > 0 && (
                   <div>
-                    <h4 className="text-[10px] font-bold text-muted-foreground uppercase tracking-wider mb-2 flex items-center gap-1.5">
+                    <h4 className="text-xs font-bold text-muted-foreground uppercase tracking-wider mb-2 flex items-center gap-1.5">
                       <Lightbulb className="w-3 h-3 text-primary" />
                       What Stands Out
                     </h4>
@@ -1804,7 +1804,7 @@ export default function FollowTheMoney() {
                       {insights.map((insight, i) => (
                         <div key={i} className="flex items-start gap-2 p-2.5 rounded-lg bg-primary/[0.04] border border-primary/10">
                           <Zap className="w-3 h-3 text-primary shrink-0 mt-0.5" />
-                          <p className="text-[11px] text-foreground leading-relaxed">{insight}</p>
+                          <p className="text-xs text-foreground leading-relaxed">{insight}</p>
                         </div>
                       ))}
                     </div>
@@ -1813,7 +1813,7 @@ export default function FollowTheMoney() {
 
                 {/* Connection type legend */}
                 <div>
-                  <h4 className="text-[10px] font-bold text-muted-foreground uppercase tracking-wider mb-2">Connection Types</h4>
+                  <h4 className="text-xs font-bold text-muted-foreground uppercase tracking-wider mb-2">Connection Types</h4>
                   <div className="space-y-1">
                     {[
                       { label: "Donation", desc: "FEC-documented financial contribution", color: LINK_STYLES.donation_to_member.color },
@@ -1825,8 +1825,8 @@ export default function FollowTheMoney() {
                       <div key={item.label} className="flex items-start gap-2 py-1">
                         <div className="w-3 h-0.5 rounded-full mt-1.5 shrink-0" style={{ backgroundColor: item.color.replace(/[\d.]+\)$/, "1)") }} />
                         <div>
-                          <p className="text-[10px] font-medium text-foreground">{item.label}</p>
-                          <p className="text-[9px] text-muted-foreground">{item.desc}</p>
+                          <p className="text-xs font-medium text-foreground">{item.label}</p>
+                          <p className="text-xs text-muted-foreground">{item.desc}</p>
                         </div>
                       </div>
                     ))}
@@ -1835,7 +1835,7 @@ export default function FollowTheMoney() {
 
                 {!selectedCompanyId && (
                   <div className="p-3 rounded-xl bg-primary/[0.06] border border-primary/10">
-                    <p className="text-[10px] text-muted-foreground leading-relaxed">
+                    <p className="text-xs text-muted-foreground leading-relaxed">
                       <strong className="text-foreground">Demo mode:</strong> Showing a sample influence network.
                       Search for a tracked company to see real data from FEC, lobbying disclosures, and contract records.
                     </p>
@@ -1852,7 +1852,7 @@ export default function FollowTheMoney() {
         <div className="border-t border-border/30 bg-card/50 px-4 lg:px-6 py-3">
           <div className="flex items-center gap-2 mb-1.5">
             <Lightbulb className="w-3.5 h-3.5 text-primary" />
-            <span className="text-[10px] font-extrabold text-muted-foreground uppercase tracking-wider">What Stands Out</span>
+            <span className="text-xs font-extrabold text-muted-foreground uppercase tracking-wider">What Stands Out</span>
           </div>
           <div className="flex flex-wrap gap-3">
             {insights.slice(0, 3).map((insight, i) => (
@@ -1867,7 +1867,7 @@ export default function FollowTheMoney() {
 
       {/* Attribution */}
       <div className="border-t border-border/30 px-4 lg:px-6 py-2 text-center">
-        <p className="text-[9px] text-muted-foreground">
+        <p className="text-xs text-muted-foreground">
           Built from FEC filings, Senate LDA lobbying disclosures, USASpending.gov contracts, and verified public records.
           Connections labeled "inferred" are pattern-based — not confirmed.
         </p>

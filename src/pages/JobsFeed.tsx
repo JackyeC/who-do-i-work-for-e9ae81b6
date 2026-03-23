@@ -244,12 +244,12 @@ export default function JobsFeed() {
                         <span className="inline-flex items-center gap-1"><MapPin className="w-3 h-3" /> {job.location}</span>
                         <span className="inline-flex items-center gap-1"><Clock className="w-3 h-3" /> {job.postedDate}</span>
                         <span className="inline-flex items-center gap-1"><Users className="w-3 h-3" /> {job.applicants} applicants</span>
-                        <Badge variant="outline" className="text-[10px] px-1.5 py-0">{job.type}</Badge>
+                        <Badge variant="outline" className="text-xs px-1.5 py-0">{job.type}</Badge>
                       </div>
 
                       <div className="flex flex-wrap gap-1.5 mt-2">
                         {job.skills.slice(0, 4).map(s => (
-                          <Badge key={s} variant="secondary" className="text-[10px] px-1.5 py-0 font-normal">{s}</Badge>
+                          <Badge key={s} variant="secondary" className="text-xs px-1.5 py-0 font-normal">{s}</Badge>
                         ))}
                       </div>
                     </div>

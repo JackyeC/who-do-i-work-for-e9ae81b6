@@ -27,7 +27,7 @@ function ConfidencePill({ level, color, description }: { level: string; color: s
   return (
     <div className="flex items-center gap-1.5">
       <div className={`w-1.5 h-1.5 rounded-full ${color} bg-current`} />
-      <span className="text-[10px] text-muted-foreground">
+      <span className="text-xs text-muted-foreground">
         <strong className={color}>{level}</strong> — {description}
       </span>
     </div>

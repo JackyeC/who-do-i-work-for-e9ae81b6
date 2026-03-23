@@ -98,7 +98,7 @@ export function ValuesPreferenceSidebar({ onFiltersChange, activeFilters }: Prop
                   <span className="text-xs font-medium text-foreground">{group.label}</span>
                 </div>
                 {activeInGroup > 0 && (
-                  <Badge variant="secondary" className="text-[10px] h-4 px-1.5">{activeInGroup}</Badge>
+                  <Badge variant="secondary" className="text-xs h-4 px-1.5">{activeInGroup}</Badge>
                 )}
               </CollapsibleTrigger>
               <CollapsibleContent className="space-y-0.5 pl-2">
@@ -132,14 +132,14 @@ export function ValuesPreferenceSidebar({ onFiltersChange, activeFilters }: Prop
               {activeFilters.map((f) => {
                 const lens = VALUES_LENSES.find((l) => l.key === f);
                 return lens ? (
-                  <Badge key={f} variant="secondary" className="text-[10px]">{lens.label}</Badge>
+                  <Badge key={f} variant="secondary" className="text-xs">{lens.label}</Badge>
                 ) : null;
               })}
             </div>
           </div>
         )}
         {!user && (
-          <p className="text-[10px] text-muted-foreground italic pt-1">
+          <p className="text-xs text-muted-foreground italic pt-1">
             Log in to save your preferences across sessions.
           </p>
         )}

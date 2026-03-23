@@ -159,7 +159,7 @@ export function AskJackyeWidget() {
             >
               <Sparkles className="w-6 h-6" />
             </Button>
-            <Badge className="absolute -top-1 -left-1 text-[9px] px-1.5 py-0.5 bg-primary text-primary-foreground shadow-md">
+            <Badge className="absolute -top-1 -left-1 text-xs px-1.5 py-0.5 bg-primary text-primary-foreground shadow-md">
               Ask Jackye
             </Badge>
           </motion.div>
@@ -181,7 +181,7 @@ export function AskJackyeWidget() {
               <div className="flex items-center gap-2">
                 <Sparkles className="w-4 h-4 text-primary" />
                 <span className="font-semibold text-sm text-foreground">Ask Jackye</span>
-                <Badge variant="outline" className="text-[9px]">AI</Badge>
+                <Badge variant="outline" className="text-xs">AI</Badge>
               </div>
               <div className="flex gap-1">
                 <Button size="icon" variant="ghost" className="h-7 w-7" onClick={() => setOpen(false)}>
@@ -263,7 +263,7 @@ export function AskJackyeWidget() {
                   <Send className="w-4 h-4" />
                 </Button>
               </form>
-              <p className="text-[10px] text-muted-foreground mt-1.5 text-center">
+              <p className="text-xs text-muted-foreground mt-1.5 text-center">
                 Powered by WDIWF Intelligence Engine
               </p>
             </div>

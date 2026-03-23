@@ -93,19 +93,19 @@ export function JobIntegrityCard({ job, matchCount = 0, matchedCategories = [], 
                 {co?.name || "Unknown Company"}
               </Link>
               {isVerified && (
-                <Badge variant="outline" className="text-[9px] gap-0.5 bg-primary/5 text-primary border-primary/20">
+                <Badge variant="outline" className="text-xs gap-0.5 bg-primary/5 text-primary border-primary/20">
                   <Shield className="w-2.5 h-2.5" /> Verified
                 </Badge>
               )}
               {isCertified && (
-                <Badge variant="outline" className="text-[9px] gap-0.5 bg-amber-500/10 text-amber-600 border-amber-500/20">
+                <Badge variant="outline" className="text-xs gap-0.5 bg-amber-500/10 text-amber-600 border-amber-500/20">
                   <ShieldCheck className="w-2.5 h-2.5" /> Certified
                 </Badge>
               )}
               <MatchIndicator matchCount={matchCount} matchedCategories={matchedCategories} />
               {fitScore !== undefined && fitScore > 0 && (
                 <Badge variant="outline" className={cn(
-                  "text-[9px] gap-0.5",
+                  "text-xs gap-0.5",
                   fitScore >= 75 ? "bg-[hsl(var(--civic-green))]/10 text-[hsl(var(--civic-green))] border-[hsl(var(--civic-green))]/20" :
                   fitScore >= 50 ? "bg-[hsl(var(--civic-yellow))]/10 text-[hsl(var(--civic-yellow))] border-[hsl(var(--civic-yellow))]/20" :
                   "bg-muted/50 text-muted-foreground border-border/30"
@@ -115,7 +115,7 @@ export function JobIntegrityCard({ job, matchCount = 0, matchedCategories = [], 
               )}
               {leverageLevel && (
                 <Badge variant="outline" className={cn(
-                  "text-[9px] gap-0.5",
+                  "text-xs gap-0.5",
                   leverageLevel === "high" ? "bg-[hsl(var(--civic-green))]/10 text-[hsl(var(--civic-green))] border-[hsl(var(--civic-green))]/20" :
                   leverageLevel === "medium" ? "bg-[hsl(var(--civic-yellow))]/10 text-[hsl(var(--civic-yellow))] border-[hsl(var(--civic-yellow))]/20" :
                   "bg-muted/50 text-muted-foreground border-border/30"
@@ -125,7 +125,7 @@ export function JobIntegrityCard({ job, matchCount = 0, matchedCategories = [], 
               )}
               {fitBadges.map((badge) => (
                 <Badge key={badge} variant="outline" className={cn(
-                  "text-[9px] gap-0.5",
+                  "text-xs gap-0.5",
                   badge === "Strong Fit" && "bg-[hsl(var(--civic-green))]/10 text-[hsl(var(--civic-green))] border-[hsl(var(--civic-green))]/20",
                   badge === "Flexible Work Fit" && "bg-primary/5 text-primary border-primary/20",
                   (badge === "Location Mismatch" || badge === "Compensation Mismatch" || badge === "Relocation Required") && "bg-destructive/10 text-destructive border-destructive/20",
@@ -134,7 +134,7 @@ export function JobIntegrityCard({ job, matchCount = 0, matchedCategories = [], 
                 </Badge>
               ))}
             </div>
-            <p className="text-[11px] text-muted-foreground mt-0.5">
+            <p className="text-xs text-muted-foreground mt-0.5">
               {job.location || "Remote"} {job.work_mode ? `· ${job.work_mode}` : ""}
             </p>
             {/* Quality signal */}
@@ -147,7 +147,7 @@ export function JobIntegrityCard({ job, matchCount = 0, matchedCategories = [], 
         {/* Strategic Context */}
         {co?.jackye_insight && (
           <div className="p-3 bg-primary/[0.04] border border-primary/10 rounded-lg backdrop-blur-sm">
-            <p className="text-[10px] font-medium text-primary mb-1 flex items-center gap-1">
+            <p className="text-xs font-medium text-primary mb-1 flex items-center gap-1">
               <Sparkles className="w-3 h-3" /> Strategic Context
             </p>
             <p className="text-xs text-muted-foreground leading-relaxed line-clamp-2">
@@ -159,7 +159,7 @@ export function JobIntegrityCard({ job, matchCount = 0, matchedCategories = [], 
         {/* Connection Chain snippet */}
         {research?.connection_chain && (
           <div className="p-3 bg-muted/20 border border-border/30 rounded-lg backdrop-blur-sm">
-            <p className="text-[10px] font-medium text-foreground mb-1 flex items-center gap-1">
+            <p className="text-xs font-medium text-foreground mb-1 flex items-center gap-1">
               <Network className="w-3 h-3 text-muted-foreground" /> Connection Chain
             </p>
             <p className="text-xs text-muted-foreground leading-relaxed line-clamp-2">

@@ -515,7 +515,7 @@ export default function CompanyDossier() {
               </div>
               <div>
                 <p className="text-sm font-semibold text-foreground group-hover:text-primary transition-colors">Got an offer from {company.name}?</p>
-                <p className="text-[11px] text-muted-foreground">Check for red flags with the Reality Check →</p>
+                <p className="text-xs text-muted-foreground">Check for red flags with the Reality Check →</p>
               </div>
             </Link>
             <Link
@@ -527,7 +527,7 @@ export default function CompanyDossier() {
               </div>
               <div>
                 <p className="text-sm font-semibold text-foreground group-hover:text-primary transition-colors">Ask the Intelligence Advisor</p>
-                <p className="text-[11px] text-muted-foreground">Get a deep analysis of {company.name} →</p>
+                <p className="text-xs text-muted-foreground">Get a deep analysis of {company.name} →</p>
               </div>
             </Link>
           </div>

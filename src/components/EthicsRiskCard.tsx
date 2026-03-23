@@ -109,7 +109,7 @@ export function EthicsRiskCard({ companyId, companyName, hasRevolvingDoor, hasDa
         <CardTitle className="text-base flex items-center gap-2">
           <ShieldAlert className="w-4 h-4" />
           Corporate Ethics Risk
-          <Badge variant="outline" className={cn("ml-auto text-[10px]", style.text, style.bg, style.border)}>
+          <Badge variant="outline" className={cn("ml-auto text-xs", style.text, style.bg, style.border)}>
             {result.score}/100 · {style.label}
           </Badge>
         </CardTitle>
@@ -140,7 +140,7 @@ export function EthicsRiskCard({ companyId, companyName, hasRevolvingDoor, hasDa
                 </div>
                 <div className="mt-1 space-y-0.5">
                   {cat.signals.map((s, i) => (
-                    <p key={i} className="text-[10px] text-muted-foreground pl-5">• {s}</p>
+                    <p key={i} className="text-xs text-muted-foreground pl-5">• {s}</p>
                   ))}
                 </div>
               </div>
@@ -157,7 +157,7 @@ export function EthicsRiskCard({ companyId, companyName, hasRevolvingDoor, hasDa
           </div>
         )}
 
-        <p className="text-[10px] text-muted-foreground">
+        <p className="text-xs text-muted-foreground">
           Sources: Court records · EPA · OSHA · FTC · NLRB · SEC · Civil rights watchdog organizations · This is a pattern analysis, not a legal assessment.
         </p>
       </CardContent>

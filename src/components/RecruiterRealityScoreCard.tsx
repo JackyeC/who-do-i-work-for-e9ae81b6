@@ -44,7 +44,7 @@ export function RecruiterRealityScoreCard({ result, companyName }: RecruiterReal
       <CardHeader className="pb-3">
         <div className="flex items-center justify-between">
           <div>
-            <p className="text-[10px] uppercase tracking-[0.15em] text-muted-foreground font-semibold mb-1">Recruiter Reality Score™</p>
+            <p className="text-xs uppercase tracking-[0.15em] text-muted-foreground font-semibold mb-1">Recruiter Reality Score™</p>
             <CardTitle className="text-lg">{companyName}</CardTitle>
           </div>
           <div className="text-right">
@@ -61,7 +61,7 @@ export function RecruiterRealityScoreCard({ result, companyName }: RecruiterReal
         </div>
         <div className="flex items-center gap-2 mt-2">
           <Badge variant="outline" className="text-xs">{result.label}</Badge>
-          <Badge variant="outline" className="text-[10px] gap-1">
+          <Badge variant="outline" className="text-xs gap-1">
             <Info className="w-3 h-3" />
             {result.confidence} Confidence
           </Badge>
@@ -92,7 +92,7 @@ export function RecruiterRealityScoreCard({ result, companyName }: RecruiterReal
           <p className="text-sm text-foreground leading-relaxed">{result.interpretation}</p>
         </div>
 
-        <p className="text-[10px] text-muted-foreground">
+        <p className="text-xs text-muted-foreground">
           The Recruiter Reality Score™ evaluates observable recruiting signals — not employer branding claims.
         </p>
       </CardContent>

@@ -162,7 +162,7 @@ export function PACDetailDrawer({ open, onOpenChange, companyId, companyName, to
                   </div>
                   <div className="flex items-center gap-3">
                     {recipientMix.map((mix, i) => (
-                      <span key={i} className="flex items-center gap-1 text-[10px] text-muted-foreground">
+                      <span key={i} className="flex items-center gap-1 text-xs text-muted-foreground">
                         <span className={cn(
                           "w-2 h-2 rounded-full inline-block",
                           mix.label === "R" ? "bg-[hsl(0,65%,50%)]" :
@@ -296,14 +296,14 @@ export function PACDetailDrawer({ open, onOpenChange, companyId, companyName, to
                           <div className="flex items-center gap-1.5 flex-wrap">
                             <span className="text-sm font-medium text-foreground">{c.name}</span>
                             <PartyBadge party={c.party} entityType="politician" size="sm" />
-                            {c.flagged && <Badge variant="destructive" className="text-[10px]">Flagged</Badge>}
+                            {c.flagged && <Badge variant="destructive" className="text-xs">Flagged</Badge>}
                           </div>
-                          <div className="flex items-center gap-2 mt-0.5 text-[10px] text-muted-foreground">
+                          <div className="flex items-center gap-2 mt-0.5 text-xs text-muted-foreground">
                             <span>{c.state}{c.district ? `-${c.district}` : ""}</span>
-                            <Badge variant="outline" className="text-[10px]">{c.donation_type}</Badge>
+                            <Badge variant="outline" className="text-xs">{c.donation_type}</Badge>
                           </div>
                           {c.flagged && c.flag_reason && (
-                            <p className="mt-1 text-[10px] text-destructive/80 leading-snug">
+                            <p className="mt-1 text-xs text-destructive/80 leading-snug">
                               ⚑ {c.flag_reason}
                             </p>
                           )}
@@ -318,7 +318,7 @@ export function PACDetailDrawer({ open, onOpenChange, companyId, companyName, to
                         <AlertTriangle className="w-3.5 h-3.5 text-destructive" />
                         <span className="text-xs font-semibold text-destructive">{flaggedCandidates.length} Flagged Recipients</span>
                       </div>
-                      <p className="text-[10px] text-muted-foreground">
+                      <p className="text-xs text-muted-foreground">
                         {flaggedCandidates.map((c: any) => c.flag_reason).filter(Boolean).join("; ")}
                       </p>
                     </div>
@@ -341,9 +341,9 @@ export function PACDetailDrawer({ open, onOpenChange, companyId, companyName, to
                           {sp.amount > 0 && <Badge variant="secondary" className="text-xs">{formatCurrency(sp.amount)}</Badge>}
                         </div>
                         <div className="flex items-center gap-2">
-                          <Badge variant="outline" className="text-[10px]">{sp.pac_type}</Badge>
-                          <Badge variant="outline" className="text-[10px]">{sp.relationship}</Badge>
-                          <Badge variant="outline" className="text-[10px]">{sp.confidence}</Badge>
+                          <Badge variant="outline" className="text-xs">{sp.pac_type}</Badge>
+                          <Badge variant="outline" className="text-xs">{sp.relationship}</Badge>
+                          <Badge variant="outline" className="text-xs">{sp.confidence}</Badge>
                         </div>
                         {sp.description && <p className="text-xs text-muted-foreground mt-1">{sp.description}</p>}
                       </div>
@@ -384,14 +384,14 @@ export function PACDetailDrawer({ open, onOpenChange, companyId, companyName, to
                           )}
                           <div>
                             <div className="text-sm font-medium text-foreground">{exec.name}</div>
-                            <div className="text-[10px] text-muted-foreground">{exec.title}</div>
+                            <div className="text-xs text-muted-foreground">{exec.title}</div>
                           </div>
                         </div>
                         <span className="text-sm font-semibold text-foreground">{formatCurrency(exec.total_donations)}</span>
                       </div>
                     ))}
                   </div>
-                  <p className="text-[10px] text-muted-foreground mt-2 italic">
+                  <p className="text-xs text-muted-foreground mt-2 italic">
                     Executive donations are personal contributions and do not necessarily reflect corporate policy.
                   </p>
                 </div>
@@ -416,7 +416,7 @@ export function PACDetailDrawer({ open, onOpenChange, companyId, companyName, to
               </Card>
 
               <div className="border-t border-border pt-4">
-                <p className="text-[10px] text-muted-foreground">
+                <p className="text-xs text-muted-foreground">
                   Sources: Federal Election Commission (OpenFEC). Party badges reflect official FEC filing data.
                   Dashed-border badges indicate inferred alignment. All data from official <a href="https://www.fec.gov" target="_blank" rel="noopener noreferrer" className="text-primary hover:underline">FEC filings</a>.
                 </p>

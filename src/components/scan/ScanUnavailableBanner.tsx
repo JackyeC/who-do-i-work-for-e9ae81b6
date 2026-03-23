@@ -20,7 +20,7 @@ export function ScanUnavailableBanner({ hasCachedData, lastUpdated, variant = "b
 
   if (variant === "badge") {
     return (
-      <Badge variant="outline" className="text-[10px] font-mono tracking-wider gap-1 border-amber-500/30 text-amber-600 dark:text-amber-400">
+      <Badge variant="outline" className="text-xs font-mono tracking-wider gap-1 border-amber-500/30 text-amber-600 dark:text-amber-400">
         <Database className="w-2.5 h-2.5" />
         {hasCachedData
           ? `Using saved intelligence${daysAgo !== null ? ` · ${daysAgo === 0 ? 'today' : `${daysAgo}d ago`}` : ''}`
@@ -37,7 +37,7 @@ export function ScanUnavailableBanner({ hasCachedData, lastUpdated, variant = "b
           Live scan temporarily unavailable
         </span>
       </div>
-      <p className="text-[11px] text-muted-foreground leading-relaxed pl-6">
+      <p className="text-xs text-muted-foreground leading-relaxed pl-6">
         {hasCachedData
           ? `This report depends on a web extraction service that has hit its current usage limit. Showing the most recent saved intelligence${daysAgo !== null ? ` from ${daysAgo === 0 ? 'today' : `${daysAgo} day${daysAgo !== 1 ? 's' : ''} ago`}` : ''}.`
           : 'This module depends on a web extraction service that is temporarily unavailable. No cached data is available for this section.'}
@@ -45,7 +45,7 @@ export function ScanUnavailableBanner({ hasCachedData, lastUpdated, variant = "b
       {cooldown > 0 && (
         <div className="flex items-center gap-1 pl-6">
           <Clock className="w-2.5 h-2.5 text-muted-foreground" />
-          <span className="text-[10px] text-muted-foreground font-mono">
+          <span className="text-xs text-muted-foreground font-mono">
             Refresh available in ~{cooldown} min
           </span>
         </div>

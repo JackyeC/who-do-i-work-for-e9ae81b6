@@ -50,7 +50,7 @@ export function CareerPathPreviewCard({
         </div>
 
         {/* Summary tags */}
-        <p className="text-[11px] text-muted-foreground leading-relaxed line-clamp-2">
+        <p className="text-xs text-muted-foreground leading-relaxed line-clamp-2">
           {summary}
         </p>
       </CardContent>

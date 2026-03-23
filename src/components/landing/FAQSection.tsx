@@ -37,7 +37,7 @@ export function FAQSection() {
   return (
     <SectionReveal>
       <section className="px-6 lg:px-16 py-16 lg:py-20 max-w-[740px] mx-auto w-full">
-        <div className="font-mono text-[9px] tracking-[0.25em] uppercase text-primary mb-3 text-center">
+        <div className="font-mono text-xs tracking-[0.25em] uppercase text-primary mb-3 text-center">
           Common Questions
         </div>
         <h2 className="text-xl lg:text-2xl mb-10 text-foreground text-center">

@@ -109,7 +109,7 @@ export function LayoffProbabilityCard({ companyId, companyName, isPubliclyTraded
         <CardTitle className="text-base flex items-center gap-2">
           <TrendingDown className="w-4 h-4" />
           Layoff Probability
-          <Badge variant="outline" className={cn("ml-auto text-[10px]", style.text, style.bg, style.border)}>
+          <Badge variant="outline" className={cn("ml-auto text-xs", style.text, style.bg, style.border)}>
             {result.score}/100 · {style.label}
           </Badge>
         </CardTitle>
@@ -155,16 +155,16 @@ export function LayoffProbabilityCard({ companyId, companyName, isPubliclyTraded
               <div key={cat.key} className={cn("p-2.5 rounded-lg border", catStyle.bg, catStyle.border)}>
                 <div className="flex items-center gap-1.5 mb-1">
                   <Icon className={cn("w-3.5 h-3.5", catStyle.text)} />
-                  <span className="text-[11px] font-medium text-foreground">{cat.name}</span>
+                  <span className="text-xs font-medium text-foreground">{cat.name}</span>
                 </div>
                 <span className={cn("text-lg font-bold", catStyle.text)}>{cat.score}</span>
-                <span className="text-[10px] text-muted-foreground ml-0.5">/ 100</span>
+                <span className="text-xs text-muted-foreground ml-0.5">/ 100</span>
               </div>
             );
           })}
         </div>
 
-        <p className="text-[10px] text-muted-foreground">
+        <p className="text-xs text-muted-foreground">
           Sources: State WARN databases · SEC filings · Court records · Executive disclosures · This is a signal-based estimate, not a prediction.
         </p>
       </CardContent>

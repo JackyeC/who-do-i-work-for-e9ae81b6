@@ -48,15 +48,15 @@ function CompanyColumn({ companyId, onRemove }: { companyId: string; onRemove: (
         <div className="grid grid-cols-3 gap-2">
           <div className="text-center p-2 bg-muted/50 rounded-lg">
             <div className="text-lg font-bold text-foreground">{totalSignals}</div>
-            <div className="text-[10px] text-muted-foreground">Signals</div>
+            <div className="text-xs text-muted-foreground">Signals</div>
           </div>
           <div className="text-center p-2 bg-muted/50 rounded-lg">
             <div className="text-lg font-bold text-foreground">{transparencyCount}/7</div>
-            <div className="text-[10px] text-muted-foreground">Disclosures</div>
+            <div className="text-xs text-muted-foreground">Disclosures</div>
           </div>
           <div className="text-center p-2 bg-muted/50 rounded-lg">
             <div className="text-lg font-bold text-foreground">{staleSections}</div>
-            <div className="text-[10px] text-muted-foreground">Stale</div>
+            <div className="text-xs text-muted-foreground">Stale</div>
           </div>
         </div>
 
@@ -66,23 +66,23 @@ function CompanyColumn({ companyId, onRemove }: { companyId: string; onRemove: (
             <div className="flex items-center justify-between mb-1">
               <span className="text-sm font-medium text-foreground">{section.title}</span>
               {section.stale && (
-                <Badge variant="outline" className="text-[9px] text-muted-foreground">Stale</Badge>
+                <Badge variant="outline" className="text-xs text-muted-foreground">Stale</Badge>
               )}
             </div>
             {section.hasData ? (
               <div className="space-y-1">
-                <Badge variant="secondary" className="text-[10px]">
+                <Badge variant="secondary" className="text-xs">
                   {section.signals.length} signal{section.signals.length !== 1 ? "s" : ""}
                 </Badge>
                 {section.signals.slice(0, 3).map((s, i) => (
-                  <p key={i} className="text-[11px] text-muted-foreground truncate">{s.description}</p>
+                  <p key={i} className="text-xs text-muted-foreground truncate">{s.description}</p>
                 ))}
                 {section.signals.length > 3 && (
-                  <p className="text-[10px] text-muted-foreground">+{section.signals.length - 3} more</p>
+                  <p className="text-xs text-muted-foreground">+{section.signals.length - 3} more</p>
                 )}
               </div>
             ) : (
-              <p className="text-[11px] text-muted-foreground">No signals detected.</p>
+              <p className="text-xs text-muted-foreground">No signals detected.</p>
             )}
           </div>
         ))}
@@ -131,7 +131,7 @@ function CompanySearch({ onSelect }: { onSelect: (id: string) => void }) {
               className="w-full text-left px-3 py-2 hover:bg-muted/50 transition-colors border-b border-border last:border-0"
             >
               <span className="text-sm font-medium text-foreground">{c.name}</span>
-              <span className="text-[10px] text-muted-foreground ml-2">{c.industry} · {c.state}</span>
+              <span className="text-xs text-muted-foreground ml-2">{c.industry} · {c.state}</span>
             </button>
           ))}
         </div>

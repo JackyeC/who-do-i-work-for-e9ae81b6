@@ -105,7 +105,7 @@ export function EEO1WorkforceCard({ companyId, companyName }: Props) {
           <BarChart3 className="w-4 h-4 text-primary" />
           EEO-1 Workforce Demographics
           {hasData && (
-            <Badge variant="outline" className="text-[10px] ml-auto">{latestYear}</Badge>
+            <Badge variant="outline" className="text-xs ml-auto">{latestYear}</Badge>
           )}
         </CardTitle>
         <p className="text-xs text-muted-foreground">
@@ -119,7 +119,7 @@ export function EEO1WorkforceCard({ companyId, companyName }: Props) {
             <p className="text-xs text-muted-foreground">
               {companyName} has not publicly disclosed EEO-1 workforce data.
             </p>
-            <p className="text-[10px] text-muted-foreground mt-1 flex items-center justify-center gap-1">
+            <p className="text-xs text-muted-foreground mt-1 flex items-center justify-center gap-1">
               <Info className="w-3 h-3" />
               Companies with 100+ employees are required to file — non-disclosure is itself a signal.
             </p>
@@ -127,7 +127,7 @@ export function EEO1WorkforceCard({ companyId, companyName }: Props) {
               href="https://www.opendiversitydata.org"
               target="_blank"
               rel="noopener noreferrer"
-              className="inline-flex items-center gap-1 text-[10px] text-primary hover:underline mt-2"
+              className="inline-flex items-center gap-1 text-xs text-primary hover:underline mt-2"
             >
               Check Open Diversity Data <ExternalLink className="w-3 h-3" />
             </a>
@@ -144,14 +144,14 @@ export function EEO1WorkforceCard({ companyId, companyName }: Props) {
               ].map(m => (
                 <div key={m.label} className="text-center p-2 rounded-lg bg-muted/40 border border-border/30">
                   <p className="text-base font-bold text-foreground">{m.value}</p>
-                  <p className="text-[10px] text-muted-foreground">{m.label}</p>
+                  <p className="text-xs text-muted-foreground">{m.label}</p>
                 </div>
               ))}
             </div>
 
             {/* Job category breakdown */}
             <div className="space-y-2">
-              <h4 className="text-[11px] font-semibold text-muted-foreground uppercase tracking-wider">By Job Category</h4>
+              <h4 className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">By Job Category</h4>
               {sorted.map(row => {
                 const t = row.total_employees || 1;
                 const segments = [
@@ -165,8 +165,8 @@ export function EEO1WorkforceCard({ companyId, companyName }: Props) {
                 return (
                   <div key={row.job_category}>
                     <div className="flex items-center justify-between mb-0.5">
-                      <span className="text-[11px] text-foreground font-medium truncate">{row.job_category}</span>
-                      <span className="text-[10px] text-muted-foreground font-mono shrink-0 ml-2">
+                      <span className="text-xs text-foreground font-medium truncate">{row.job_category}</span>
+                      <span className="text-xs text-muted-foreground font-mono shrink-0 ml-2">
                         {row.total_employees} • {Math.round((row.female_count / t) * 100)}% F
                       </span>
                     </div>
@@ -190,12 +190,12 @@ export function EEO1WorkforceCard({ companyId, companyName }: Props) {
               {Object.entries(RACE_COLORS).slice(0, 5).map(([label, color]) => (
                 <div key={label} className="flex items-center gap-1">
                   <div className={cn("w-2.5 h-2.5 rounded-sm", color)} />
-                  <span className="text-[9px] text-muted-foreground">{label}</span>
+                  <span className="text-xs text-muted-foreground">{label}</span>
                 </div>
               ))}
             </div>
 
-            <p className="text-[10px] text-muted-foreground border-t border-border pt-2">
+            <p className="text-xs text-muted-foreground border-t border-border pt-2">
               Source: EEOC EEO-1 filings. Companies with 100+ employees must file annually.
               {sorted[0]?.source_url && (
                 <a href={sorted[0].source_url} target="_blank" rel="noopener noreferrer" className="text-primary hover:underline ml-1">

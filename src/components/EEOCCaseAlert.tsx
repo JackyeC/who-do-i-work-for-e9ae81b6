@@ -22,7 +22,7 @@ export function EEOCCaseAlert({ cases }: Props) {
         <CardTitle className="text-sm flex items-center gap-2 text-red-400">
           <AlertTriangle className="w-4 h-4" />
           EEOC Enforcement Alert
-          <Badge variant="outline" className="text-[10px] ml-auto border-red-500/30 text-red-400">
+          <Badge variant="outline" className="text-xs ml-auto border-red-500/30 text-red-400">
             {cases.length} {cases.length === 1 ? "CASE" : "CASES"}
           </Badge>
         </CardTitle>
@@ -33,7 +33,7 @@ export function EEOCCaseAlert({ cases }: Props) {
             <div className="flex items-center gap-2 flex-wrap">
               <Gavel className="w-3.5 h-3.5 text-red-400 shrink-0" />
               <span className="text-sm font-medium text-foreground">{c.case_name}</span>
-              <Badge variant="outline" className={`text-[9px] ${ACTION_COLORS[c.action_type] || ""}`}>
+              <Badge variant="outline" className={`text-xs ${ACTION_COLORS[c.action_type] || ""}`}>
                 {c.action_type === "moved_to_dismiss" ? "MOVED TO DISMISS" : "WITHDREW"}
               </Badge>
             </div>
@@ -44,7 +44,7 @@ export function EEOCCaseAlert({ cases }: Props) {
             <div className="flex gap-3">
               {c.source_url && (
                 <a href={c.source_url} target="_blank" rel="noopener noreferrer"
-                  className="text-[10px] text-primary hover:underline flex items-center gap-1">
+                  className="text-xs text-primary hover:underline flex items-center gap-1">
                   <ExternalLink className="w-3 h-3" /> Source
                 </a>
               )}

@@ -247,8 +247,8 @@ export function EarlyWarningSignals({ companyId, companyName }: Props) {
             Early Warning Signals
           </CardTitle>
           <div className="flex items-center gap-2">
-            <span className="text-[10px] text-muted-foreground">Overall Risk:</span>
-            <Badge variant="outline" className={cn("text-[10px]", compositeColor)}>
+            <span className="text-xs text-muted-foreground">Overall Risk:</span>
+            <Badge variant="outline" className={cn("text-xs", compositeColor)}>
               {compositeLevel}
             </Badge>
           </div>
@@ -272,18 +272,18 @@ export function EarlyWarningSignals({ companyId, companyName }: Props) {
               <div className="flex-1 min-w-0">
                 <div className="flex items-center justify-between gap-2">
                   <p className="text-xs font-medium text-foreground">{signal.label}</p>
-                  <Badge variant="outline" className="text-[9px] shrink-0">
+                  <Badge variant="outline" className="text-xs shrink-0">
                     {STATUS_BADGE[signal.status]}
                   </Badge>
                 </div>
-                <p className="text-[11px] text-muted-foreground mt-0.5 leading-relaxed">{signal.detail}</p>
-                <p className="text-[9px] text-muted-foreground/70 mt-1">{signal.source}</p>
+                <p className="text-xs text-muted-foreground mt-0.5 leading-relaxed">{signal.detail}</p>
+                <p className="text-xs text-muted-foreground/70 mt-1">{signal.source}</p>
               </div>
             </div>
           );
         })}
 
-        <p className="text-[10px] text-muted-foreground border-t border-border pt-2 mt-3">
+        <p className="text-xs text-muted-foreground border-t border-border pt-2 mt-3">
           These signals highlight patterns observed in public records. We recommend employers provide
           an "Insider Context" statement to clarify their stance. No single signal is conclusive.
         </p>

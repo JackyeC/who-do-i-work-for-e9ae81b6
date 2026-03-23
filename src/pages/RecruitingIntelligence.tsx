@@ -84,7 +84,7 @@ export default function RecruitingIntelligence() {
 
         {/* Platform framing */}
         <div className="mt-12 border-t border-border/40 pt-8">
-          <p className="text-[10px] uppercase tracking-widest text-muted-foreground font-semibold mb-4">
+          <p className="text-xs uppercase tracking-widest text-muted-foreground font-semibold mb-4">
             This Platform Serves
           </p>
           <div className="grid md:grid-cols-3 gap-4">
@@ -102,7 +102,7 @@ export default function RecruitingIntelligence() {
               </div>
             ))}
           </div>
-          <p className="text-[10px] text-muted-foreground mt-4 text-center italic">
+          <p className="text-xs text-muted-foreground mt-4 text-center italic">
             All data is sourced from public records. No moral judgments are assigned. Available filings indicate employer signals — interpretation is left to the user.
           </p>
         </div>

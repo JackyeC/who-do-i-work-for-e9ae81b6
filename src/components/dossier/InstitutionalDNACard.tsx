@@ -73,15 +73,15 @@ function SignalRow({ signal }: { signal: Signal }) {
         <div className="flex items-center gap-2 flex-wrap mb-1">
           <span className="text-sm font-medium text-foreground">{signal.person_name}</span>
           {signal.person_title && (
-            <span className="text-[10px] text-muted-foreground">· {signal.person_title}</span>
+            <span className="text-xs text-muted-foreground">· {signal.person_title}</span>
           )}
         </div>
         <p className="text-xs text-muted-foreground leading-relaxed">{signal.link_description}</p>
         <div className="flex items-center gap-2 mt-2 flex-wrap">
-          <Badge variant="outline" className="text-[10px]">
+          <Badge variant="outline" className="text-xs">
             {LINK_TYPE_LABELS[signal.link_type] || signal.link_type}
           </Badge>
-          <Badge variant="outline" className={cn("text-[10px]", CONFIDENCE_STYLES[signal.confidence])}>
+          <Badge variant="outline" className={cn("text-xs", CONFIDENCE_STYLES[signal.confidence])}>
             {signal.confidence}
           </Badge>
           {signal.evidence_url && (
@@ -89,7 +89,7 @@ function SignalRow({ signal }: { signal: Signal }) {
               href={signal.evidence_url}
               target="_blank"
               rel="noopener noreferrer"
-              className="text-[10px] text-primary hover:underline inline-flex items-center gap-0.5"
+              className="text-xs text-primary hover:underline inline-flex items-center gap-0.5"
             >
               {signal.evidence_source || "Source"} <ExternalLink className="w-2.5 h-2.5" />
             </a>
@@ -110,7 +110,7 @@ function CategorySection({ category, signals }: { category: keyof typeof CATEGOR
       <div className="flex items-center gap-2">
         <Icon className={cn("w-4 h-4", meta.color)} />
         <h4 className="text-sm font-semibold text-foreground">Documented Link to {meta.label}</h4>
-        <Badge variant="outline" className={cn("text-[10px] ml-auto", meta.color)}>
+        <Badge variant="outline" className={cn("text-xs ml-auto", meta.color)}>
           {signals.length} link{signals.length !== 1 ? "s" : ""}
         </Badge>
       </div>
@@ -173,7 +173,7 @@ export function InstitutionalDNACard({ companyId, companyName }: Props) {
           <Building2 className="w-4 h-4" />
           Policy & Institutional Networks
           {isBipartisanFunder && (
-            <Badge variant="outline" className="ml-auto text-[10px] bg-primary/5 text-primary border-primary/20">
+            <Badge variant="outline" className="ml-auto text-xs bg-primary/5 text-primary border-primary/20">
               <Scale className="w-3 h-3 mr-1" />
               Bipartisan Institutional Funder
             </Badge>
@@ -198,7 +198,7 @@ export function InstitutionalDNACard({ companyId, companyName }: Props) {
         {/* Mandatory context note */}
         <div className="flex items-start gap-2 pt-2">
           <ShieldCheck className="w-3.5 h-3.5 text-muted-foreground shrink-0 mt-0.5" />
-          <p className="text-[10px] text-muted-foreground leading-relaxed">
+          <p className="text-xs text-muted-foreground leading-relaxed">
             Institutional alignment indicates which policy blueprints a company or its leadership supports
             through funding or board membership. WDIWF provides these receipts so you can align your career
             with the future you believe in. Sources: FEC filings · OpenSecrets · Organization leadership

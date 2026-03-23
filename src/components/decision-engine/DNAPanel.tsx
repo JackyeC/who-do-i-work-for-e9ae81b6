@@ -25,7 +25,7 @@ export function DNAPanel({ values, onChange }: DNAPanelProps) {
   return (
     <div className="relative rounded-2xl border border-[#2a2a3a] bg-[#16161f] p-7 mb-10 overflow-hidden">
       {/* Watermark */}
-      <span className="absolute top-5 right-6 font-mono text-[10px] text-[#2a2a3a] tracking-[3px] select-none">
+      <span className="absolute top-5 right-6 font-mono text-xs text-[#2a2a3a] tracking-[3px] select-none">
         VALUES DNA
       </span>
 
@@ -37,7 +37,7 @@ export function DNAPanel({ values, onChange }: DNAPanelProps) {
         {DNA_FADERS.map((f) => (
           <div key={f.id} className="flex flex-col gap-2">
             <span className="text-xs font-medium text-[#e8e8f0] tracking-wide">{f.label}</span>
-            <div className="flex justify-between font-mono text-[11px]">
+            <div className="flex justify-between font-mono text-xs">
               <span className="text-[#9898b0]">{f.left}</span>
               <span className="text-[#e8ff47]">{f.right}</span>
             </div>

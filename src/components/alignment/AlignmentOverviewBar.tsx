@@ -33,7 +33,7 @@ export function AlignmentOverviewBar({ categories }: { categories: CategoryScore
           </Tooltip>
         ))}
       </div>
-      <div className="flex items-center gap-3 text-[10px] text-muted-foreground">
+      <div className="flex items-center gap-3 text-xs text-muted-foreground">
         <div className="flex items-center gap-1"><div className="w-2 h-2 rounded-full bg-civic-green" /> Strong/Moderate</div>
         <div className="flex items-center gap-1"><div className="w-2 h-2 rounded-full bg-civic-yellow" /> Mixed</div>
         <div className="flex items-center gap-1"><div className="w-2 h-2 rounded-full bg-destructive" /> Low</div>

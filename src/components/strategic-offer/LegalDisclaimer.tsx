@@ -6,7 +6,7 @@ export function LegalDisclaimer() {
       <div className="container mx-auto max-w-3xl flex flex-col items-center gap-1 justify-center">
         <div className="flex items-center gap-2.5">
           <ShieldAlert className="w-3.5 h-3.5 text-muted-foreground shrink-0" />
-          <p className="text-[11px] text-muted-foreground text-center">
+          <p className="text-xs text-muted-foreground text-center">
             <span className="font-semibold text-foreground">Educational insights only.</span>{" "}
             Not legal advice. Does not create an attorney-client relationship. Consult an attorney for contract reviews.
           </p>

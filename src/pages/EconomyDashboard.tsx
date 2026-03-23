@@ -90,7 +90,7 @@ export default function EconomyDashboard() {
                 <CardContent className="p-4 h-full flex flex-col justify-between">
                   <div className="flex items-center justify-between mb-2">
                     <span className="text-xs text-muted-foreground">{sig.label}</span>
-                    <Badge variant="outline" className="text-[10px]">{sig.source}</Badge>
+                    <Badge variant="outline" className="text-xs">{sig.source}</Badge>
                   </div>
                   <div className="flex items-end gap-2">
                     <span className="text-2xl font-bold font-display text-foreground">{sig.value}</span>
@@ -137,7 +137,7 @@ export default function EconomyDashboard() {
                       </div>
                       <div className="text-right">
                         <span className={`text-sm font-bold ${ind.trend === "up" ? "text-civic-green" : "text-civic-red"}`}>{ind.growth}</span>
-                        <p className="text-[10px] text-muted-foreground">GDP: {ind.gdp}</p>
+                        <p className="text-xs text-muted-foreground">GDP: {ind.gdp}</p>
                       </div>
                       <div className="text-right hidden sm:block">
                         <span className="text-xs text-muted-foreground">{ind.employment} employed</span>
@@ -167,15 +167,15 @@ export default function EconomyDashboard() {
                       </div>
                       <div className="flex-1">
                         <span className="text-sm font-semibold text-foreground">{occ.occupation}</span>
-                        <p className="text-[10px] text-muted-foreground">{occ.openings} open positions</p>
+                        <p className="text-xs text-muted-foreground">{occ.openings} open positions</p>
                       </div>
                       <div className="text-right">
                         <span className="text-sm font-bold text-civic-green">{occ.growth}</span>
-                        <p className="text-[10px] text-muted-foreground">projected growth</p>
+                        <p className="text-xs text-muted-foreground">projected growth</p>
                       </div>
                       <div className="text-right hidden sm:block">
                         <span className="text-sm font-medium text-foreground">{occ.medianSalary}</span>
-                        <p className="text-[10px] text-muted-foreground">median salary</p>
+                        <p className="text-xs text-muted-foreground">median salary</p>
                       </div>
                     </div>
                   ))}
@@ -202,11 +202,11 @@ export default function EconomyDashboard() {
                       </div>
                       <div className="flex-1">
                         <span className="text-sm font-semibold text-foreground">{agency.agency}</span>
-                        <p className="text-[10px] text-muted-foreground">{agency.contractors.toLocaleString()} contractors</p>
+                        <p className="text-xs text-muted-foreground">{agency.contractors.toLocaleString()} contractors</p>
                       </div>
                       <div className="text-right">
                         <span className="text-sm font-bold text-foreground">{agency.amount}</span>
-                        <p className="text-[10px] text-civic-green">{agency.change} YoY</p>
+                        <p className="text-xs text-civic-green">{agency.change} YoY</p>
                       </div>
                     </div>
                   ))}

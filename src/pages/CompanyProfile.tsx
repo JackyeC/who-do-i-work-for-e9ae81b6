@@ -339,7 +339,7 @@ export default function CompanyProfile() {
                     <Badge variant="secondary" className="text-xs">{industry}</Badge>
                     <Badge variant="secondary" className="text-xs">{state}</Badge>
                     {(dbCompany as any)?.employee_count && <Badge variant="secondary" className="text-xs">{(dbCompany as any).employee_count} employees</Badge>}
-                    {(dbCompany as any)?.ticker && <Badge variant="outline" className="font-mono text-[10px]">{(dbCompany as any).ticker}</Badge>}
+                    {(dbCompany as any)?.ticker && <Badge variant="outline" className="font-mono text-xs">{(dbCompany as any).ticker}</Badge>}
                     {dbCompany?.is_publicly_traded === false && (
                       <Badge variant="outline" className="text-xs gap-1 border-[hsl(var(--civic-yellow))]/30 bg-[hsl(var(--civic-yellow))]/5 text-[hsl(var(--civic-yellow))]">
                         <EyeOff className="w-3 h-3" />

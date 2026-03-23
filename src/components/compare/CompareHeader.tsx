@@ -10,7 +10,7 @@ export function CompareHeader({ nameA, nameB }: CompareHeaderProps) {
 
   return (
     <div className="text-center mb-10">
-      <div className="font-mono text-[9px] tracking-[0.3em] uppercase text-primary mb-4 flex items-center justify-center gap-2">
+      <div className="font-mono text-xs tracking-[0.3em] uppercase text-primary mb-4 flex items-center justify-center gap-2">
         <span className="w-8 h-px bg-primary/40" />
         Intelligence Comparison
         <span className="w-8 h-px bg-primary/40" />

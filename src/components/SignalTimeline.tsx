@@ -107,7 +107,7 @@ export function SignalTimeline({ companyId }: SignalTimelineProps) {
         <CardTitle className="text-base flex items-center gap-2">
           <Clock className="w-4 h-4 text-primary" /> Signal Timeline
           {scans && scans.length > 0 && (
-            <Badge variant="secondary" className="text-[10px] ml-auto">{scans.length} scans recorded</Badge>
+            <Badge variant="secondary" className="text-xs ml-auto">{scans.length} scans recorded</Badge>
           )}
         </CardTitle>
       </CardHeader>
@@ -146,23 +146,23 @@ export function SignalTimeline({ companyId }: SignalTimelineProps) {
                         </div>
                         <div className="flex-1 min-w-0">
                           <div className="flex items-center gap-2 flex-wrap mb-0.5">
-                            <Badge variant="outline" className="text-[10px]">{change.signal_category}</Badge>
-                            <Badge variant="outline" className={cn("text-[10px]", colorClass)}>{change.change_type}</Badge>
+                            <Badge variant="outline" className="text-xs">{change.signal_category}</Badge>
+                            <Badge variant="outline" className={cn("text-xs", colorClass)}>{change.change_type}</Badge>
                           </div>
                           <p className="text-sm text-foreground">
                             {change.new_value || change.previous_value || "Signal change detected"}
                           </p>
                           {change.confidence_change && (
-                            <p className="text-[10px] text-muted-foreground mt-0.5">
+                            <p className="text-xs text-muted-foreground mt-0.5">
                               Evidence strength: {change.confidence_change === "high" ? "Strong" : change.confidence_change === "medium" ? "Some" : change.confidence_change}
                             </p>
                           )}
                           <div className="flex items-center gap-3 mt-1">
-                            <span className="text-[10px] text-muted-foreground">
+                            <span className="text-xs text-muted-foreground">
                               {new Date(change.scan_timestamp).toLocaleDateString()}
                             </span>
                             {change.source_url && (
-                              <a href={change.source_url} target="_blank" rel="noopener noreferrer" className="text-[10px] text-primary hover:underline inline-flex items-center gap-0.5">
+                              <a href={change.source_url} target="_blank" rel="noopener noreferrer" className="text-xs text-primary hover:underline inline-flex items-center gap-0.5">
                                 Source <ExternalLink className="w-2.5 h-2.5" />
                               </a>
                             )}

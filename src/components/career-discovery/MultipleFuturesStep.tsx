@@ -45,25 +45,25 @@ export function MultipleFuturesStep({ data, loading, error, onRetry }: Props) {
                 </CardHeader>
                 <CardContent className="space-y-4">
                   <div>
-                    <p className="text-[10px] font-medium text-muted-foreground uppercase tracking-wider mb-1.5 flex items-center gap-1">
+                    <p className="text-xs font-medium text-muted-foreground uppercase tracking-wider mb-1.5 flex items-center gap-1">
                       <TrendingUp className="w-3 h-3" /> Role Progression
                     </p>
                     <p className="text-sm font-medium text-foreground">{future.roles}</p>
                   </div>
                   <div>
-                    <p className="text-[10px] font-medium text-muted-foreground uppercase tracking-wider mb-1.5 flex items-center gap-1">
+                    <p className="text-xs font-medium text-muted-foreground uppercase tracking-wider mb-1.5 flex items-center gap-1">
                       <Wrench className="w-3 h-3" /> Skills Needed
                     </p>
                     <div className="flex flex-wrap gap-1.5">
-                      {future.skills.map(s => <Badge key={s} variant="secondary" className="text-[10px]">{s}</Badge>)}
+                      {future.skills.map(s => <Badge key={s} variant="secondary" className="text-xs">{s}</Badge>)}
                     </div>
                   </div>
                   <div>
-                    <p className="text-[10px] font-medium text-muted-foreground uppercase tracking-wider mb-1.5 flex items-center gap-1">
+                    <p className="text-xs font-medium text-muted-foreground uppercase tracking-wider mb-1.5 flex items-center gap-1">
                       <Building2 className="w-3 h-3" /> Companies to Watch
                     </p>
                     <div className="flex flex-wrap gap-1.5">
-                      {future.companies.map(c => <Badge key={c} variant="outline" className="text-[10px]">{c}</Badge>)}
+                      {future.companies.map(c => <Badge key={c} variant="outline" className="text-xs">{c}</Badge>)}
                     </div>
                   </div>
                   <div className="flex items-center gap-2 p-2.5 rounded-lg bg-muted/50">

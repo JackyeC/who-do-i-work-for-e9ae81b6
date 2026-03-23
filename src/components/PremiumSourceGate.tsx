@@ -58,7 +58,7 @@ export function PremiumSourceGate({ sourceLabel, sourceUrl, children }: PremiumS
               View Plans
             </Button>
           </DialogFooter>
-          <p className="text-[10px] text-muted-foreground text-center">
+          <p className="text-xs text-muted-foreground text-center">
             Professional Intelligence · $49/mo
           </p>
         </DialogContent>

@@ -49,7 +49,7 @@ export function CrowdSignalBadge({ companyId, compact = false }: CrowdSignalBadg
       <TooltipProvider>
         <Tooltip>
           <TooltipTrigger asChild>
-            <Badge variant="warning" className="gap-1 font-mono text-[10px] cursor-help">
+            <Badge variant="warning" className="gap-1 font-mono text-xs cursor-help">
               <Users className="w-3 h-3" />
               {totalFlinches}/{totalResponses} flagged
             </Badge>
@@ -82,7 +82,7 @@ export function CrowdSignalBadge({ companyId, compact = false }: CrowdSignalBadg
             <Badge
               key={s.signal_category}
               variant={pct >= 60 ? "destructive" : "warning"}
-              className="font-mono text-[10px] gap-1"
+              className="font-mono text-xs gap-1"
             >
               {CATEGORY_LABELS[s.signal_category] || normalizeCategory(s.signal_category)}: {s.flinch_count}/{s.total_responses}
             </Badge>

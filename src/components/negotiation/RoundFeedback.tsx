@@ -39,7 +39,7 @@ function EffectivenessBar({ score }: { score: number }) {
           }`}
         />
       ))}
-      <span className="text-[10px] text-muted-foreground ml-1">{score}/5</span>
+      <span className="text-xs text-muted-foreground ml-1">{score}/5</span>
     </div>
   );
 }
@@ -60,11 +60,11 @@ export function RoundFeedback({ feedback, round }: Props) {
             </span>
             <div className="flex items-center gap-2">
               {feedback.tactic_used && (
-                <Badge variant="secondary" className="text-[10px] px-1.5 py-0">
+                <Badge variant="secondary" className="text-xs px-1.5 py-0">
                   {feedback.tactic_used}
                 </Badge>
               )}
-              <Badge variant="outline" className={`text-[10px] ${tone.color} ${tone.bg} border-transparent`}>
+              <Badge variant="outline" className={`text-xs ${tone.color} ${tone.bg} border-transparent`}>
                 {tone.label}
               </Badge>
             </div>
@@ -77,7 +77,7 @@ export function RoundFeedback({ feedback, round }: Props) {
           <div className="flex items-center gap-2">
             <Target className="w-3.5 h-3.5 text-primary shrink-0" />
             <div className="flex items-center gap-2">
-              <span className="text-[10px] font-medium text-foreground uppercase tracking-wider">Effectiveness</span>
+              <span className="text-xs font-medium text-foreground uppercase tracking-wider">Effectiveness</span>
               <EffectivenessBar score={effectiveness} />
             </div>
           </div>

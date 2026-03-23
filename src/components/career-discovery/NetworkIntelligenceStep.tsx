@@ -100,14 +100,14 @@ function ConnectionNotePanel({
           ) : (
             <>
               <div>
-                <p className="text-[10px] text-muted-foreground mb-1.5">Connection note (max 300 chars):</p>
+                <p className="text-xs text-muted-foreground mb-1.5">Connection note (max 300 chars):</p>
                 <textarea
                   value={note}
                   onChange={e => setNote(e.target.value.slice(0, 300))}
                   maxLength={300}
                   className="w-full h-28 rounded-xl border border-border/40 bg-muted/30 p-3 text-sm text-foreground resize-none focus:outline-none focus:ring-1 focus:ring-[#0A66C2]/30"
                 />
-                <p className="text-[10px] text-muted-foreground text-right">{note.length}/300</p>
+                <p className="text-xs text-muted-foreground text-right">{note.length}/300</p>
               </div>
 
               <div className="flex items-center gap-2">
@@ -216,7 +216,7 @@ export function NetworkIntelligenceStep() {
           <div className="flex items-center gap-2">
             <Compass className="w-4 h-4 text-primary" />
             <h3 className="text-sm font-semibold text-foreground">Path Guides</h3>
-            <Badge variant="secondary" className="text-[10px]">{categorized.length} connections</Badge>
+            <Badge variant="secondary" className="text-xs">{categorized.length} connections</Badge>
           </div>
 
           {/* Filter badges */}
@@ -258,7 +258,7 @@ export function NetworkIntelligenceStep() {
                           <p className="text-sm font-semibold text-foreground">
                             {conn.first_name} {conn.last_name}
                           </p>
-                          <Badge variant="outline" className={`text-[10px] gap-1 ${config.color}`}>
+                          <Badge variant="outline" className={`text-xs gap-1 ${config.color}`}>
                             <Icon className="w-2.5 h-2.5" />
                             {config.label}
                           </Badge>
@@ -269,7 +269,7 @@ export function NetworkIntelligenceStep() {
                         {enriched.matched_company && (
                           <button
                             onClick={() => navigate(`/dossier/${enriched.matched_company!.slug}`)}
-                            className="text-[10px] text-primary hover:underline inline-flex items-center gap-1 mt-0.5"
+                            className="text-xs text-primary hover:underline inline-flex items-center gap-1 mt-0.5"
                           >
                             View company dossier <ExternalLink className="w-2.5 h-2.5" />
                           </button>

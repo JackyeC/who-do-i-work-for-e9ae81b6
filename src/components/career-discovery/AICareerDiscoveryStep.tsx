@@ -34,12 +34,12 @@ export function AICareerDiscoveryStep({ data, loading, error, onRetry }: Props) 
                       <span className="text-sm font-semibold text-primary">{path.to}</span>
                     </div>
                     <div className="flex flex-wrap gap-1.5 mt-1.5">
-                      {path.skills.map(s => <Badge key={s} variant="secondary" className="text-[10px]">{s}</Badge>)}
+                      {path.skills.map(s => <Badge key={s} variant="secondary" className="text-xs">{s}</Badge>)}
                     </div>
                   </div>
                   <div className="text-right shrink-0">
                     <div className="text-lg font-bold text-foreground">{path.confidence}%</div>
-                    <div className="text-[10px] text-muted-foreground">match</div>
+                    <div className="text-xs text-muted-foreground">match</div>
                   </div>
                 </div>
               ))}
@@ -61,7 +61,7 @@ export function AICareerDiscoveryStep({ data, loading, error, onRetry }: Props) 
                     <div>
                       <div className="flex items-center gap-2">
                         <p className="text-sm font-semibold text-foreground">{path.role}</p>
-                        <Badge variant="outline" className="text-[10px]">{path.industry}</Badge>
+                        <Badge variant="outline" className="text-xs">{path.industry}</Badge>
                       </div>
                       <p className="text-xs text-muted-foreground mt-1">{path.reason}</p>
                     </div>
@@ -91,7 +91,7 @@ export function AICareerDiscoveryStep({ data, loading, error, onRetry }: Props) 
                       </div>
                       <p className="text-xs text-muted-foreground mt-1">{path.reason}</p>
                       <div className="flex flex-wrap gap-1.5 mt-2">
-                        {path.skills.map(s => <Badge key={s} variant="outline" className="text-[10px] border-[hsl(var(--civic-gold))]/30">{s}</Badge>)}
+                        {path.skills.map(s => <Badge key={s} variant="outline" className="text-xs border-[hsl(var(--civic-gold))]/30">{s}</Badge>)}
                       </div>
                     </div>
                     <div className="text-lg font-bold text-[hsl(var(--civic-gold))] shrink-0">{path.match}%</div>

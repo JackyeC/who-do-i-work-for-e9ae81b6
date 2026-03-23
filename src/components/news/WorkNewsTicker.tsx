@@ -33,7 +33,7 @@ export function WorkNewsTicker({ className }: WorkNewsTickerProps) {
         {/* Label */}
         <div className="shrink-0 bg-destructive text-destructive-foreground px-3 py-1.5 flex items-center gap-1.5 z-10">
           <Radio className="w-3 h-3 animate-pulse" />
-          <span className="font-mono text-[10px] font-bold uppercase tracking-widest">Live</span>
+          <span className="font-mono text-xs font-bold uppercase tracking-widest">Live</span>
         </div>
 
         {/* Scrolling ticker */}
@@ -52,7 +52,7 @@ export function WorkNewsTicker({ className }: WorkNewsTickerProps) {
                 ) : (
                   <Newspaper className="w-3 h-3 text-muted-foreground shrink-0" />
                 )}
-                <span className="font-mono text-[10px] text-primary/70 uppercase">
+                <span className="font-mono text-xs text-primary/70 uppercase">
                   {CATEGORY_LABELS[article.category] || "NEWS"}
                 </span>
                 <span className={cn(
@@ -64,7 +64,7 @@ export function WorkNewsTicker({ className }: WorkNewsTickerProps) {
                     : article.headline}
                 </span>
                 <span className="text-muted-foreground/50">·</span>
-                <span className="text-muted-foreground text-[10px]">{article.source_name}</span>
+                <span className="text-muted-foreground text-xs">{article.source_name}</span>
               </span>
             ))}
           </motion.div>

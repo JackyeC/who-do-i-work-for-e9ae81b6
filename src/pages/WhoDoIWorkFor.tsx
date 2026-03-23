@@ -350,7 +350,7 @@ export default function WhoDoIWorkFor() {
                                 <div className="flex items-center gap-2 text-xs text-muted-foreground">
                                   <span>{c.state}{c.district ? `-${c.district}` : ""}</span>
                                   <span>·</span>
-                                  <Badge variant="outline" className="text-[10px] px-1.5 py-0 capitalize">
+                                  <Badge variant="outline" className="text-xs px-1.5 py-0 capitalize">
                                     {c.donation_type.replace(/-/g, " ")}
                                   </Badge>
                                 </div>
@@ -368,7 +368,7 @@ export default function WhoDoIWorkFor() {
                               </Badge>
                               <div className="text-right">
                                 <span className="font-semibold text-foreground">{formatCurrency(c.amount)}</span>
-                                <p className="text-[10px] text-muted-foreground">aggregate est.</p>
+                                <p className="text-xs text-muted-foreground">aggregate est.</p>
                               </div>
                             </div>
                           </div>

@@ -156,7 +156,7 @@ export default function PolicyDetail() {
                         <div className="flex-1">
                           <div className="flex items-center gap-2 mb-1">
                             <span className="text-sm font-semibold text-foreground">{ind.name}</span>
-                            <Badge variant={ind.impact === "High" ? "destructive" : "secondary"} className="text-[10px]">
+                            <Badge variant={ind.impact === "High" ? "destructive" : "secondary"} className="text-xs">
                               {ind.impact} Impact
                             </Badge>
                           </div>
@@ -192,7 +192,7 @@ export default function PolicyDetail() {
                         <div className="flex-1 min-w-0">
                           <div className="flex items-center gap-2">
                             <span className="text-sm font-semibold text-foreground group-hover:text-primary transition-colors">{co.name}</span>
-                            {co.ticker && <span className="text-[10px] text-muted-foreground font-mono">{co.ticker}</span>}
+                            {co.ticker && <span className="text-xs text-muted-foreground font-mono">{co.ticker}</span>}
                             <ChevronRight className="w-3 h-3 text-muted-foreground/40 ml-auto shrink-0" />
                           </div>
                           <p className="text-xs text-muted-foreground mt-0.5">{co.reason}</p>

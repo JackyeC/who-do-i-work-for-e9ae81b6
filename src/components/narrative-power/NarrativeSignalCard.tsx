@@ -108,7 +108,7 @@ export function NarrativeSignalCard({
           </div>
           <div className="min-w-0">
             <p className="text-sm font-medium text-foreground leading-tight">{signalTitle}</p>
-            <p className="font-mono text-[10px] text-muted-foreground uppercase tracking-wider mt-0.5">
+            <p className="font-mono text-xs text-muted-foreground uppercase tracking-wider mt-0.5">
               {signalLabel}
               {dateRangeStart && (
                 <>
@@ -124,7 +124,7 @@ export function NarrativeSignalCard({
           <Tooltip>
             <TooltipTrigger asChild>
               <span className={cn(
-                "inline-flex items-center gap-1 px-2 py-0.5 text-[10px] font-mono uppercase tracking-wider border rounded-sm cursor-help whitespace-nowrap shrink-0",
+                "inline-flex items-center gap-1 px-2 py-0.5 text-xs font-mono uppercase tracking-wider border rounded-sm cursor-help whitespace-nowrap shrink-0",
                 confidence.className
               )}>
                 {confidence.label}
@@ -140,20 +140,20 @@ export function NarrativeSignalCard({
       {/* Metadata grid */}
       <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 mb-3">
         <div className="p-2 rounded bg-muted/50">
-          <p className="font-mono text-[9px] uppercase tracking-wider text-muted-foreground mb-0.5">Actor</p>
+          <p className="font-mono text-xs uppercase tracking-wider text-muted-foreground mb-0.5">Actor</p>
           <p className="text-xs font-medium text-foreground truncate">{actorName}</p>
-          <p className="font-mono text-[9px] text-muted-foreground">{actorLabel}</p>
+          <p className="font-mono text-xs text-muted-foreground">{actorLabel}</p>
         </div>
         <div className="p-2 rounded bg-muted/50">
-          <p className="font-mono text-[9px] uppercase tracking-wider text-muted-foreground mb-0.5">Target</p>
+          <p className="font-mono text-xs uppercase tracking-wider text-muted-foreground mb-0.5">Target</p>
           <p className="text-xs font-medium text-foreground">{narrativeTarget.length > 50 ? narrativeTarget.slice(0, 50) + "…" : narrativeTarget}</p>
         </div>
         <div className="p-2 rounded bg-muted/50">
-          <p className="font-mono text-[9px] uppercase tracking-wider text-muted-foreground mb-0.5">Method</p>
+          <p className="font-mono text-xs uppercase tracking-wider text-muted-foreground mb-0.5">Method</p>
           <p className="text-xs font-medium text-foreground">{narrativeMethod}</p>
         </div>
         <div className="p-2 rounded bg-muted/50">
-          <p className="font-mono text-[9px] uppercase tracking-wider text-muted-foreground mb-0.5">Evidence</p>
+          <p className="font-mono text-xs uppercase tracking-wider text-muted-foreground mb-0.5">Evidence</p>
           <p className="text-xs font-medium text-foreground">{evidenceSource.replace(/_/g, " ")}</p>
         </div>
       </div>
@@ -167,16 +167,16 @@ export function NarrativeSignalCard({
       {narrativeChain && (
         <div className="flex items-center gap-1.5 mb-2 p-2 rounded bg-primary/[0.04] border border-primary/10">
           <Radio className="w-3 h-3 text-primary shrink-0" />
-          <p className="font-mono text-[10px] text-primary tracking-wider">{narrativeChain}</p>
+          <p className="font-mono text-xs text-primary tracking-wider">{narrativeChain}</p>
         </div>
       )}
 
       {/* Intermediaries */}
       {intermediaries && intermediaries.length > 0 && (
         <div className="flex items-center gap-1.5 mb-2 flex-wrap">
-          <span className="font-mono text-[9px] uppercase tracking-wider text-muted-foreground">Intermediaries:</span>
+          <span className="font-mono text-xs uppercase tracking-wider text-muted-foreground">Intermediaries:</span>
           {intermediaries.map((i, idx) => (
-            <Badge key={idx} variant="outline" className="text-[10px] font-mono">
+            <Badge key={idx} variant="outline" className="text-xs font-mono">
               {i}
             </Badge>
           ))}

@@ -209,7 +209,7 @@ export function AlignedValuesSearch({ hasTakenQuiz }: { hasTakenQuiz: boolean })
                       <Badge
                         key={tag}
                         variant="outline"
-                        className="text-[10px] py-0 px-1.5 border-border/40 text-muted-foreground"
+                        className="text-xs py-0 px-1.5 border-border/40 text-muted-foreground"
                       >
                         {tag}
                       </Badge>

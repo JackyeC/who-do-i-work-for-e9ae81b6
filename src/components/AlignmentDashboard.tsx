@@ -62,15 +62,15 @@ export function AlignmentDashboard({ stances }: AlignmentDashboardProps) {
         <div className="flex items-center gap-3 mt-2">
           <div className="flex items-center gap-1.5">
             <div className="w-2 h-2 rounded-full bg-[hsl(var(--civic-green))]" />
-            <span className="text-[11px] text-muted-foreground">{aligned} Aligned</span>
+            <span className="text-xs text-muted-foreground">{aligned} Aligned</span>
           </div>
           <div className="flex items-center gap-1.5">
             <div className="w-2 h-2 rounded-full bg-[hsl(var(--civic-yellow))]" />
-            <span className="text-[11px] text-muted-foreground">{mixed} Mixed</span>
+            <span className="text-xs text-muted-foreground">{mixed} Mixed</span>
           </div>
           <div className="flex items-center gap-1.5">
             <div className="w-2 h-2 rounded-full bg-destructive" />
-            <span className="text-[11px] text-muted-foreground">{conflicts} Gap{conflicts !== 1 ? "s" : ""}</span>
+            <span className="text-xs text-muted-foreground">{conflicts} Gap{conflicts !== 1 ? "s" : ""}</span>
           </div>
         </div>
         {/* Summary bar */}
@@ -82,7 +82,7 @@ export function AlignmentDashboard({ stances }: AlignmentDashboardProps) {
       </CardHeader>
       <CardContent className="space-y-0">
         {/* Table header */}
-        <div className="grid grid-cols-[1fr_1fr_1fr_90px] gap-3 px-3 py-2 text-[10px] font-semibold text-muted-foreground uppercase tracking-wider border-b border-border/30">
+        <div className="grid grid-cols-[1fr_1fr_1fr_90px] gap-3 px-3 py-2 text-xs font-semibold text-muted-foreground uppercase tracking-wider border-b border-border/30">
           <span>Issue</span>
           <span>Public Stance</span>
           <span>Spending Reality</span>
@@ -109,7 +109,7 @@ export function AlignmentDashboard({ stances }: AlignmentDashboardProps) {
               <span className="text-xs text-muted-foreground line-clamp-2">{stance.spending_reality}</span>
               <div className="flex items-center justify-end gap-1.5">
                 <Icon className={cn("w-3.5 h-3.5", style.color)} />
-                <Badge variant="outline" className={cn("text-[10px] px-1.5", style.color, style.border)}>
+                <Badge variant="outline" className={cn("text-xs px-1.5", style.color, style.border)}>
                   {style.label}
                 </Badge>
               </div>

@@ -118,7 +118,7 @@ export function OfferLetterUpload({ companyId, companyName, onReviewCreated }: O
         <div className="flex items-center gap-2 mb-1">
           <ShieldCheck className="w-5 h-5 text-primary" />
           <h3 className="font-semibold text-foreground">Private Offer Review</h3>
-          <Badge variant="outline" className="text-[10px]">Private</Badge>
+          <Badge variant="outline" className="text-xs">Private</Badge>
         </div>
 
         <p className="text-xs text-muted-foreground">
@@ -174,7 +174,7 @@ export function OfferLetterUpload({ companyId, companyName, onReviewCreated }: O
                 <>
                   <Upload className="w-8 h-8 text-muted-foreground mx-auto mb-2" />
                   <p className="text-sm text-muted-foreground">Click to upload PDF, DOCX, or TXT</p>
-                  <p className="text-[10px] text-muted-foreground mt-1">Max 10MB</p>
+                  <p className="text-xs text-muted-foreground mt-1">Max 10MB</p>
                 </>
               )}
             </div>
@@ -200,7 +200,7 @@ export function OfferLetterUpload({ companyId, companyName, onReviewCreated }: O
         )}
 
         {/* Disclaimer */}
-        <div className="bg-muted/50 rounded-lg p-3 text-[11px] text-muted-foreground">
+        <div className="bg-muted/50 rounded-lg p-3 text-xs text-muted-foreground">
           Your offer letter stays private — only you can see it. We extract terms, flag clauses, and compare against public company signals so you can negotiate from a position of knowledge. This is not legal advice — it's your receipts, organized.
         </div>
 

@@ -106,7 +106,7 @@ export function PoliticalGivingCard({ companyId, companyName, companySlug }: Pol
               Annual lobbying: <span className="text-foreground font-medium">{formatCurrency(lobbyingSpend)}</span>
             </p>
             <div className="flex items-center gap-2 mt-2">
-              <span className="inline-flex items-center gap-1 text-[10px] text-muted-foreground border border-border/40 rounded px-2 py-0.5">
+              <span className="inline-flex items-center gap-1 text-xs text-muted-foreground border border-border/40 rounded px-2 py-0.5">
                 <ExternalLink className="w-2.5 h-2.5" /> LDA.gov · Senate Lobbying Disclosure
               </span>
             </div>
@@ -134,7 +134,7 @@ export function PoliticalGivingCard({ companyId, companyName, companySlug }: Pol
                       {link.link_description || `Connection: ${link.link_type}`}
                     </p>
                   </div>
-                  <span className="text-[10px] text-muted-foreground shrink-0">
+                  <span className="text-xs text-muted-foreground shrink-0">
                     {link.evidence_source || "Public Filing"} · {link.confidence === "high" ? "Verified ✓" : "Cross-Referenced"}
                   </span>
                 </div>

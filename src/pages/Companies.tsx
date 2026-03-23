@@ -298,7 +298,7 @@ export default function Companies() {
                 <Button variant="outline" size="sm" className="gap-1.5 text-xs">
                   Mission Category
                   {selectedCategories.length > 0 && (
-                    <Badge variant="secondary" className="ml-1 text-[10px] px-1.5 py-0">{selectedCategories.length}</Badge>
+                    <Badge variant="secondary" className="ml-1 text-xs px-1.5 py-0">{selectedCategories.length}</Badge>
                   )}
                   <ChevronDown className="w-3 h-3" />
                 </Button>
@@ -380,7 +380,7 @@ export default function Companies() {
                   onValueChange={setScoreRange}
                   className="w-full"
                 />
-                <div className="flex justify-between text-[10px] text-muted-foreground mt-1">
+                <div className="flex justify-between text-xs text-muted-foreground mt-1">
                   <span>{scoreRange[0].toFixed(1)}</span>
                   <span>{scoreRange[1].toFixed(1)}</span>
                 </div>
@@ -429,16 +429,16 @@ export default function Companies() {
 
                       {/* Legal status + Mission Verified badge */}
                       <div className="flex flex-wrap gap-1.5">
-                        <Badge variant="outline" className="text-[10px] px-1.5 py-0 font-mono">
+                        <Badge variant="outline" className="text-xs px-1.5 py-0 font-mono">
                           {org.legalStatus}
                         </Badge>
                         {isMissionVerifiedStatus(org.legalStatus) && (
-                          <Badge className="text-[10px] px-1.5 py-0 bg-civic-green/15 text-civic-green border-civic-green/30 hover:bg-civic-green/20">
+                          <Badge className="text-xs px-1.5 py-0 bg-civic-green/15 text-civic-green border-civic-green/30 hover:bg-civic-green/20">
                             <ShieldCheck className="w-2.5 h-2.5 mr-0.5" />
                             Mission-Verified
                           </Badge>
                         )}
-                        <Badge variant="secondary" className="text-[10px] px-1.5 py-0">
+                        <Badge variant="secondary" className="text-xs px-1.5 py-0">
                           {org.confidence} confidence
                         </Badge>
                       </div>
@@ -446,7 +446,7 @@ export default function Companies() {
                       {/* Category tags */}
                       <div className="flex flex-wrap gap-1">
                         {org.categories.map((cat) => (
-                          <Badge key={cat} variant="secondary" className="text-[10px] px-1.5 py-0">{cat}</Badge>
+                          <Badge key={cat} variant="secondary" className="text-xs px-1.5 py-0">{cat}</Badge>
                         ))}
                       </div>
 
@@ -454,7 +454,7 @@ export default function Companies() {
                       <div className="flex flex-wrap gap-2">
                         {org.scores.map((s) => (
                           <div key={s.label} className="flex items-center gap-1">
-                            <span className="text-[10px] text-muted-foreground">{s.label}</span>
+                            <span className="text-xs text-muted-foreground">{s.label}</span>
                             <span className={`text-xs font-semibold px-1.5 py-0 rounded ${scoreBg(s.value)} ${scoreColor(s.value)}`}>
                               {s.value.toFixed(1)}
                             </span>
@@ -465,7 +465,7 @@ export default function Companies() {
                       {/* Signals */}
                       <ul className="space-y-1">
                         {org.signals.map((signal) => (
-                          <li key={signal} className="text-[11px] text-muted-foreground flex items-start gap-1.5">
+                          <li key={signal} className="text-xs text-muted-foreground flex items-start gap-1.5">
                             <span className="w-1 h-1 bg-primary/50 rounded-full mt-1.5 shrink-0" />
                             {signal}
                           </li>
@@ -474,7 +474,7 @@ export default function Companies() {
 
                       {/* Narrative gap */}
                       {org.narrativeGap && (
-                        <span className="inline-flex items-center gap-1 text-[10px] text-civic-yellow">
+                        <span className="inline-flex items-center gap-1 text-xs text-civic-yellow">
                           <AlertTriangle className="w-3 h-3" />
                           Narrative Gap Detected
                         </span>
@@ -483,7 +483,7 @@ export default function Companies() {
                       {/* Jackye's Take */}
                       <button
                         onClick={() => setExpandedJackye(expandedJackye === org.id ? null : org.id)}
-                        className="flex items-center gap-1.5 text-[11px] font-semibold text-primary hover:text-primary/80 transition-colors text-left"
+                        className="flex items-center gap-1.5 text-xs font-semibold text-primary hover:text-primary/80 transition-colors text-left"
                       >
                         <MessageSquareQuote className="w-3.5 h-3.5 shrink-0" />
                         Jackye's Take
@@ -496,10 +496,10 @@ export default function Companies() {
                           exit={{ opacity: 0, height: 0 }}
                           className="rounded-lg bg-primary/[0.04] border border-primary/10 p-3"
                         >
-                          <p className="text-[11px] text-foreground/80 leading-relaxed italic">
+                          <p className="text-xs text-foreground/80 leading-relaxed italic">
                             "{org.jackyeTake}"
                           </p>
-                          <p className="text-[9px] text-muted-foreground mt-2 font-mono uppercase tracking-wider">
+                          <p className="text-xs text-muted-foreground mt-2 font-mono uppercase tracking-wider">
                             — Jackye Clayton, Professional Insight
                           </p>
                         </motion.div>

@@ -37,10 +37,10 @@ const CATEGORIES = [
 ] as const;
 
 function GradeBadge({ grade }: { grade: string | null }) {
-  if (!grade) return <Badge variant="outline" className="text-[10px] font-mono">N/A</Badge>;
+  if (!grade) return <Badge variant="outline" className="text-xs font-mono">N/A</Badge>;
   const colors = GRADE_COLORS[grade] || "bg-muted text-muted-foreground border-border";
   return (
-    <Badge variant="outline" className={cn("text-[10px] font-mono font-bold px-1.5 py-0", colors)}>
+    <Badge variant="outline" className={cn("text-xs font-mono font-bold px-1.5 py-0", colors)}>
       {grade}
     </Badge>
   );
@@ -68,12 +68,12 @@ export function StateWomenStatusCard({ stateCode, companyName, variant = "full" 
     return (
       <div className="flex items-center gap-2 flex-wrap">
         <MapPin className="w-3 h-3 text-muted-foreground shrink-0" />
-        <span className="text-[10px] text-muted-foreground font-medium">
+        <span className="text-xs text-muted-foreground font-medium">
           {stateGrades.state_name} Women's Status:
         </span>
         {CATEGORIES.map(cat => (
           <div key={cat.key} className="flex items-center gap-0.5">
-            <span className="text-[9px] text-muted-foreground">{cat.shortLabel}</span>
+            <span className="text-xs text-muted-foreground">{cat.shortLabel}</span>
             <GradeBadge grade={stateGrades[cat.key]} />
           </div>
         ))}
@@ -102,7 +102,7 @@ export function StateWomenStatusCard({ stateCode, companyName, variant = "full" 
               <h4 className="text-xs font-bold text-foreground">
                 State Context: {stateGrades.state_name}
               </h4>
-              <p className="text-[10px] text-muted-foreground">
+              <p className="text-xs text-muted-foreground">
                 IWPR Status of Women in the States ({stateGrades.data_year})
               </p>
             </div>
@@ -111,7 +111,7 @@ export function StateWomenStatusCard({ stateCode, companyName, variant = "full" 
             href={`https://statusofwomendata.org/explore-the-data/state-data/${stateGrades.state_name.toLowerCase().replace(/\s+/g, "-")}/`}
             target="_blank"
             rel="noopener noreferrer"
-            className="text-[10px] text-muted-foreground hover:text-primary flex items-center gap-0.5"
+            className="text-xs text-muted-foreground hover:text-primary flex items-center gap-0.5"
           >
             Source <ExternalLink className="w-3 h-3" />
           </a>
@@ -120,7 +120,7 @@ export function StateWomenStatusCard({ stateCode, companyName, variant = "full" 
         <div className="grid grid-cols-2 sm:grid-cols-3 gap-2 mb-3">
           {CATEGORIES.map(cat => (
             <div key={cat.key} className="flex items-center justify-between px-2 py-1.5 rounded-lg bg-muted/30 border border-border/20">
-              <span className="text-[10px] text-muted-foreground truncate mr-1">{cat.label}</span>
+              <span className="text-xs text-muted-foreground truncate mr-1">{cat.label}</span>
               <GradeBadge grade={stateGrades[cat.key]} />
             </div>
           ))}
@@ -128,7 +128,7 @@ export function StateWomenStatusCard({ stateCode, companyName, variant = "full" 
 
         {/* Contextual callout */}
         {lowGrades.length > 0 && (
-          <div className="text-[10px] text-muted-foreground bg-[hsl(var(--civic-red))]/5 border border-[hsl(var(--civic-red))]/10 rounded-lg px-2.5 py-2">
+          <div className="text-xs text-muted-foreground bg-[hsl(var(--civic-red))]/5 border border-[hsl(var(--civic-red))]/10 rounded-lg px-2.5 py-2">
             <span className="font-semibold text-[hsl(var(--civic-red))]">State context: </span>
             {companyName} is headquartered in {stateGrades.state_name}, which grades poorly on{" "}
             {lowGrades.map(g => g.label.toLowerCase()).join(", ")} for women.
@@ -137,13 +137,13 @@ export function StateWomenStatusCard({ stateCode, companyName, variant = "full" 
         )}
 
         {lowGrades.length === 0 && highGrades.length >= 4 && (
-          <div className="text-[10px] text-muted-foreground bg-[hsl(var(--civic-green))]/5 border border-[hsl(var(--civic-green))]/10 rounded-lg px-2.5 py-2">
+          <div className="text-xs text-muted-foreground bg-[hsl(var(--civic-green))]/5 border border-[hsl(var(--civic-green))]/10 rounded-lg px-2.5 py-2">
             <span className="font-semibold text-[hsl(var(--civic-green))]">State context: </span>
             {stateGrades.state_name} performs above average for women across most indicators.
           </div>
         )}
 
-        <p className="text-[9px] text-muted-foreground mt-2 italic">
+        <p className="text-xs text-muted-foreground mt-2 italic">
           State-level grades reflect systemic conditions, not individual company practices. Source: Institute for Women's Policy Research.
         </p>
       </CardContent>

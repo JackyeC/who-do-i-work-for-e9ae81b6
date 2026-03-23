@@ -96,7 +96,7 @@ interface LeadershipInfluenceSectionProps {
 
 function SourceNote() {
   return (
-    <p className="text-[11px] text-muted-foreground mt-2" style={{ fontFamily: "'DM Sans', sans-serif" }}>
+    <p className="text-xs text-muted-foreground mt-2" style={{ fontFamily: "'DM Sans', sans-serif" }}>
       Leadership data sourced from SEC proxy statements, public disclosures, and 8-K filings.{" "}
       <Link to="/request-correction" className="underline hover:text-primary transition-colors">
         Found an error? Report it →
@@ -175,7 +175,7 @@ export function LeadershipInfluenceSection({
           )}
           <button
             onClick={(e) => { e.stopPropagation(); setReportingPerson(reportingPerson === exec.name ? null : exec.name); }}
-            className="text-[11px] text-muted-foreground hover:text-primary transition-colors flex items-center gap-0.5"
+            className="text-xs text-muted-foreground hover:text-primary transition-colors flex items-center gap-0.5"
             style={{ fontFamily: "'DM Sans', sans-serif" }}
             title="Report incorrect data"
           >
@@ -208,7 +208,7 @@ export function LeadershipInfluenceSection({
           )}
           <button
             onClick={() => setReportingPerson(reportingPerson === member.name ? null : member.name)}
-            className="text-[11px] text-muted-foreground hover:text-primary transition-colors flex items-center gap-0.5"
+            className="text-xs text-muted-foreground hover:text-primary transition-colors flex items-center gap-0.5"
             style={{ fontFamily: "'DM Sans', sans-serif" }}
             title="Report incorrect data"
           >
@@ -278,7 +278,7 @@ export function LeadershipInfluenceSection({
               </button>
               {showUnverifiedExecs && (
                 <div className="px-3 pb-3">
-                  <p className="text-[11px] text-muted-foreground mb-2" style={{ fontFamily: "'DM Sans', sans-serif" }}>
+                  <p className="text-xs text-muted-foreground mb-2" style={{ fontFamily: "'DM Sans', sans-serif" }}>
                     These individuals appeared in filings but current status could not be confirmed. Verify independently.
                   </p>
                   <div className="divide-y divide-border/50">
@@ -335,7 +335,7 @@ export function LeadershipInfluenceSection({
               </button>
               {showUnverifiedBoard && (
                 <div className="px-3 pb-3">
-                  <p className="text-[11px] text-muted-foreground mb-2" style={{ fontFamily: "'DM Sans', sans-serif" }}>
+                  <p className="text-xs text-muted-foreground mb-2" style={{ fontFamily: "'DM Sans', sans-serif" }}>
                     These individuals appeared in filings but current status could not be confirmed. Verify independently.
                   </p>
                   <div className="divide-y divide-border/50">

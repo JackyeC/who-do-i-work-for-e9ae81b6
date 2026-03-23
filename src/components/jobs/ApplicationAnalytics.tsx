@@ -84,28 +84,28 @@ export function ApplicationAnalytics() {
           <CardContent className="p-4 text-center">
             <Briefcase className="w-5 h-5 text-primary mx-auto mb-1" />
             <p className="text-2xl font-bold text-foreground">{total}</p>
-            <p className="text-[10px] text-muted-foreground uppercase tracking-wider">Total Apps</p>
+            <p className="text-xs text-muted-foreground uppercase tracking-wider">Total Apps</p>
           </CardContent>
         </Card>
         <Card>
           <CardContent className="p-4 text-center">
             <TrendingUp className="w-5 h-5 text-primary mx-auto mb-1" />
             <p className="text-2xl font-bold text-foreground">{responseRate}%</p>
-            <p className="text-[10px] text-muted-foreground uppercase tracking-wider">Response Rate</p>
+            <p className="text-xs text-muted-foreground uppercase tracking-wider">Response Rate</p>
           </CardContent>
         </Card>
         <Card>
           <CardContent className="p-4 text-center">
             <Target className="w-5 h-5 text-primary mx-auto mb-1" />
             <p className="text-2xl font-bold text-foreground">{avgAlignment}%</p>
-            <p className="text-[10px] text-muted-foreground uppercase tracking-wider">Avg Alignment</p>
+            <p className="text-xs text-muted-foreground uppercase tracking-wider">Avg Alignment</p>
           </CardContent>
         </Card>
         <Card>
           <CardContent className="p-4 text-center">
             <Clock className="w-5 h-5 text-primary mx-auto mb-1" />
             <p className="text-2xl font-bold text-foreground">{pastSubmitted}</p>
-            <p className="text-[10px] text-muted-foreground uppercase tracking-wider">Interviews</p>
+            <p className="text-xs text-muted-foreground uppercase tracking-wider">Interviews</p>
           </CardContent>
         </Card>
       </div>

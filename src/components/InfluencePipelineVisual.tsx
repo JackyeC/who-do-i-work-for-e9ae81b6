@@ -75,7 +75,7 @@ function FlowNodeCard({ node, color }: { node: FlowNode; color: string }) {
               <div className="flex items-center justify-between gap-1">
                 <span className="text-xs font-medium text-foreground truncate">{node.label}</span>
                 {node.amount && (
-                  <span className="font-mono text-[11px] font-bold text-foreground tabular-nums shrink-0">
+                  <span className="font-mono text-xs font-bold text-foreground tabular-nums shrink-0">
                     {node.amount}
                   </span>
                 )}
@@ -87,7 +87,7 @@ function FlowNodeCard({ node, color }: { node: FlowNode; color: string }) {
         <TooltipContent side="top" className="max-w-[240px]">
           <div className="space-y-1">
             <p className="font-semibold text-xs">{node.label}</p>
-            <p className="text-[11px] text-muted-foreground leading-relaxed">{node.detail}</p>
+            <p className="text-xs text-muted-foreground leading-relaxed">{node.detail}</p>
             {node.amount && (
               <p className="font-mono text-xs text-foreground">{node.amount}</p>
             )}
@@ -146,7 +146,7 @@ export function InfluencePipelineVisual() {
                   </div>
                   <div>
                     <h3 className="text-base font-bold text-foreground font-display">{step.label}</h3>
-                    <span className="font-mono text-[9px] tracking-wider uppercase text-muted-foreground">
+                    <span className="font-mono text-xs tracking-wider uppercase text-muted-foreground">
                       Stage {i + 1} of 3
                     </span>
                   </div>

@@ -117,7 +117,7 @@ export default function Inbox() {
                         {!n.read && <Circle className="w-2 h-2 fill-primary text-primary shrink-0" />}
                       </div>
                       <p className="text-xs text-muted-foreground mt-0.5 leading-relaxed">{n.body}</p>
-                      <p className="text-[10px] text-muted-foreground/60 mt-1">{n.time}</p>
+                      <p className="text-xs text-muted-foreground/60 mt-1">{n.time}</p>
                     </div>
                   </CardContent>
                 </Card>

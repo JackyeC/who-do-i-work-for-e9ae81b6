@@ -154,10 +154,10 @@ export function CareerMappingView() {
               {currentSkills.length > 0 && (
                 <div className="flex flex-wrap gap-1 mt-2 justify-center">
                   {currentSkills.slice(0, 4).map((s: string, i: number) => (
-                    <span key={i} className="text-[10px] bg-white/15 rounded px-1.5 py-0.5">{s}</span>
+                    <span key={i} className="text-xs bg-white/15 rounded px-1.5 py-0.5">{s}</span>
                   ))}
                   {currentSkills.length > 4 && (
-                    <span className="text-[10px] opacity-60">+{currentSkills.length - 4}</span>
+                    <span className="text-xs opacity-60">+{currentSkills.length - 4}</span>
                   )}
                 </div>
               )}

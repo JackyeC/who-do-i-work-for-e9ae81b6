@@ -104,7 +104,7 @@ export function OffTheRecordSignals({ companyId, companyName }: Props) {
                 <p className="text-sm text-muted-foreground leading-relaxed mb-2">
                   {theme.summary}
                 </p>
-                <div className="flex items-center gap-3 flex-wrap text-[11px]">
+                <div className="flex items-center gap-3 flex-wrap text-xs">
                   <span className="flex items-center gap-1.5">
                     <span className={cn("h-1.5 w-1.5 rounded-full", dotClass)} />
                     <span className="text-muted-foreground">{theme.recency}</span>
@@ -141,7 +141,7 @@ export function OffTheRecordSignals({ companyId, companyName }: Props) {
       )}
 
       {/* Context note */}
-      <p className="text-[11px] text-muted-foreground/70 mt-3 italic">
+      <p className="text-xs text-muted-foreground/70 mt-3 italic">
         These patterns are derived from public discussion forums. They reflect recurring themes, not verified facts.
       </p>
     </section>

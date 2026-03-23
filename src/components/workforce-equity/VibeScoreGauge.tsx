@@ -40,7 +40,7 @@ export function VibeScoreGauge({ result }: { result: VibeScoreResult }) {
           <div>
             <div className="flex items-center gap-2 mb-1">
               <Sparkles className={cn("w-4 h-4", style.text)} />
-              <p className="text-[11px] font-semibold uppercase tracking-widest text-muted-foreground">
+              <p className="text-xs font-semibold uppercase tracking-widest text-muted-foreground">
                 Inclusive Vibe Score™
               </p>
             </div>
@@ -78,7 +78,7 @@ export function VibeScoreGauge({ result }: { result: VibeScoreResult }) {
               />
             ))}
           </div>
-          <div className="flex justify-between mt-1.5 text-[9px] text-muted-foreground font-medium">
+          <div className="flex justify-between mt-1.5 text-xs text-muted-foreground font-medium">
             <span>Failed</span>
             <span>Surface</span>
             <span>Mixed</span>
@@ -95,20 +95,20 @@ export function VibeScoreGauge({ result }: { result: VibeScoreResult }) {
               <div key={b.pillar} className="rounded-lg bg-background/60 border border-border/40 p-3 space-y-1.5">
                 <div className="flex items-center gap-1.5">
                   <Icon className="w-3.5 h-3.5 text-muted-foreground" />
-                  <p className="text-[10px] font-semibold text-muted-foreground truncate">{b.pillar}</p>
+                  <p className="text-xs font-semibold text-muted-foreground truncate">{b.pillar}</p>
                 </div>
                 <p className={cn("text-xl font-bold tabular-nums", style.text)}>{b.raw}</p>
                 <div className="h-1 bg-muted rounded-full overflow-hidden">
                   <div className={cn("h-full rounded-full", style.bar)} style={{ width: `${b.raw}%` }} />
                 </div>
-                <p className="text-[9px] text-muted-foreground">{Math.round(b.weight * 100)}% weight → {b.weighted}</p>
+                <p className="text-xs text-muted-foreground">{Math.round(b.weight * 100)}% weight → {b.weighted}</p>
               </div>
             );
           })}
         </div>
 
         {/* Methodology note */}
-        <p className="text-[10px] text-muted-foreground border-t border-border pt-3">
+        <p className="text-xs text-muted-foreground border-t border-border pt-3">
           The Inclusive Vibe Score™ measures whether inclusive leadership translates to equitable employee experience.
           It combines leadership demographics (40%), retention &amp; promotion patterns (35%), and public social commitments (25%).
         </p>

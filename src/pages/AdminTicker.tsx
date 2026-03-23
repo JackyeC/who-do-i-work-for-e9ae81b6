@@ -186,7 +186,7 @@ export default function AdminTicker() {
                   {item.company_name && <span className="font-bold text-foreground">{item.company_name}:</span>}
                   <span className="text-muted-foreground truncate">{item.message}</span>
                 </div>
-                <div className="flex items-center gap-3 text-[10px] text-muted-foreground mt-1">
+                <div className="flex items-center gap-3 text-xs text-muted-foreground mt-1">
                   <span className="uppercase">{item.item_type}</span>
                   {item.source_tag && <span>· {item.source_tag}</span>}
                   {item.is_manual && <span className="text-primary">· Manual</span>}

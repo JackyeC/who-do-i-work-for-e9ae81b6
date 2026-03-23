@@ -188,7 +188,7 @@ export default function Tracker() {
                   <span className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
                     {col.label}
                   </span>
-                  <Badge variant="secondary" className="ml-auto text-[10px] tabular-nums">
+                  <Badge variant="secondary" className="ml-auto text-xs tabular-nums">
                     {colApps.length}
                   </Badge>
                 </div>
@@ -214,10 +214,10 @@ export default function Tracker() {
                           <GripVertical className="w-4 h-4 text-muted-foreground/40 shrink-0 mt-0.5" />
                         </div>
                         {app.notes && (
-                          <p className="text-[11px] text-muted-foreground/70 leading-relaxed line-clamp-2">{app.notes}</p>
+                          <p className="text-xs text-muted-foreground/70 leading-relaxed line-clamp-2">{app.notes}</p>
                         )}
                         <div className="flex items-center justify-between">
-                          <span className="text-[11px] text-muted-foreground flex items-center gap-1">
+                          <span className="text-xs text-muted-foreground flex items-center gap-1">
                             <Calendar className="w-3 h-3" /> {app.appliedDate}
                           </span>
                           {app.integrityScore > 0 && <IntegrityDot score={app.integrityScore} />}

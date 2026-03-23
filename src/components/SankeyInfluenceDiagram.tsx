@@ -112,7 +112,7 @@ export function SankeyInfluenceDiagram({
               {/* Stage header */}
               <div className="flex items-center gap-1.5 mb-3">
                 <stage.icon className={cn("w-3.5 h-3.5", stage.color)} />
-                <span className="font-mono text-[9px] tracking-[0.15em] uppercase text-muted-foreground font-semibold">
+                <span className="font-mono text-xs tracking-[0.15em] uppercase text-muted-foreground font-semibold">
                   {stage.title}
                 </span>
               </div>
@@ -133,9 +133,9 @@ export function SankeyInfluenceDiagram({
                   )}
                 >
                   <div className="flex items-center justify-between gap-1">
-                    <span className="text-[11px] font-medium text-foreground truncate">{item.label}</span>
+                    <span className="text-xs font-medium text-foreground truncate">{item.label}</span>
                     {item.value > 0 && (
-                      <span className="font-mono text-[11px] font-bold tabular-nums text-foreground shrink-0">
+                      <span className="font-mono text-xs font-bold tabular-nums text-foreground shrink-0">
                         {formatCurrency(item.value)}
                       </span>
                     )}
@@ -147,7 +147,7 @@ export function SankeyInfluenceDiagram({
               {si !== 1 && (
                 <div className="pt-1 border-t border-border/30 mt-2">
                   <div className="flex items-center justify-between">
-                    <span className="font-mono text-[9px] text-muted-foreground uppercase tracking-wider">Total</span>
+                    <span className="font-mono text-xs text-muted-foreground uppercase tracking-wider">Total</span>
                     <span className={cn("font-mono text-xs font-black tabular-nums", stage.color)}>
                       {formatCurrency(si === 0 ? moneyIn : benefitsOut)}
                     </span>
@@ -185,13 +185,13 @@ export function SankeyInfluenceDiagram({
             transition={{ delay: 0.6 }}
             className="mt-6 p-4 rounded border border-primary/20 bg-primary/5 text-center"
           >
-            <span className="font-mono text-[10px] uppercase tracking-[0.2em] text-muted-foreground block mb-1">
+            <span className="font-mono text-xs uppercase tracking-[0.2em] text-muted-foreground block mb-1">
               Influence Return on Investment
             </span>
             <span className="font-mono text-3xl font-black tabular-nums text-primary">
               {roi.toFixed(1)}×
             </span>
-            <p className="text-[11px] text-muted-foreground mt-1 font-mono">
+            <p className="text-xs text-muted-foreground mt-1 font-mono">
               For every $1 spent on political influence, {companyName || "this company"} received{" "}
               <span className="text-foreground font-semibold">{formatCurrency(benefitsOut / (moneyIn || 1))}</span> in government benefits.
             </p>

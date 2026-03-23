@@ -173,29 +173,29 @@ export default function BriefingPage() {
                       </div>
                       <div className="min-w-0 flex-1">
                         <div className="flex items-center gap-2 mb-1.5">
-                          <span className="text-[10px] font-semibold px-2 py-0.5 rounded-full uppercase tracking-wide" style={{ backgroundColor: `${config.color}15`, color: config.color }}>
+                          <span className="text-xs font-semibold px-2 py-0.5 rounded-full uppercase tracking-wide" style={{ backgroundColor: `${config.color}15`, color: config.color }}>
                             {config.label}
                           </span>
-                          <span className="text-[10px] text-muted-foreground font-mono">{item.source}</span>
-                          <span className="text-[10px] text-muted-foreground font-mono">{timeAgo(item.published_at)}</span>
+                          <span className="text-xs text-muted-foreground font-mono">{item.source}</span>
+                          <span className="text-xs text-muted-foreground font-mono">{timeAgo(item.published_at)}</span>
                         </div>
                         <h3 className="text-sm font-semibold text-foreground leading-snug mb-1.5">{item.title}</h3>
                         <p className={`text-sm text-muted-foreground leading-relaxed ${isExpanded ? "" : "line-clamp-2"}`}>{item.summary}</p>
                         <div className="flex items-center justify-between mt-3">
                           <div className="flex items-center gap-2 flex-wrap">
                             {(item.value_tags || []).slice(0, 3).map((tag: string) => (
-                              <span key={tag} className="text-[10px] px-1.5 py-0.5 rounded bg-muted text-muted-foreground">{tag}</span>
+                              <span key={tag} className="text-xs px-1.5 py-0.5 rounded bg-muted text-muted-foreground">{tag}</span>
                             ))}
                             {(item.company_slugs || []).slice(0, 2).map((slug: string) => (
-                              <a key={slug} href={`/company/${slug}`} className="text-[10px] px-1.5 py-0.5 rounded bg-primary/10 text-primary hover:bg-primary/20">{slug}</a>
+                              <a key={slug} href={`/company/${slug}`} className="text-xs px-1.5 py-0.5 rounded bg-primary/10 text-primary hover:bg-primary/20">{slug}</a>
                             ))}
                           </div>
                           <div className="flex items-center gap-2">
-                            <button onClick={() => setExpandedNews(isExpanded ? null : item.id)} className="text-[10px] text-muted-foreground hover:text-foreground transition-colors">
+                            <button onClick={() => setExpandedNews(isExpanded ? null : item.id)} className="text-xs text-muted-foreground hover:text-foreground transition-colors">
                               {isExpanded ? "Less" : "More"}
                             </button>
                             {item.source_url && (
-                              <a href={item.source_url} target="_blank" rel="noopener noreferrer" className="flex items-center gap-1 text-[10px] text-primary hover:text-primary/80 transition-colors">
+                              <a href={item.source_url} target="_blank" rel="noopener noreferrer" className="flex items-center gap-1 text-xs text-primary hover:text-primary/80 transition-colors">
                                 <ExternalLink className="w-3 h-3" /> Source
                               </a>
                             )}
@@ -230,7 +230,7 @@ export default function BriefingPage() {
                     <div className="flex items-start justify-between mb-1.5">
                       <div>
                         <h4 className="text-sm font-semibold text-foreground group-hover:text-primary transition-colors">{company.name}</h4>
-                        <p className="text-[10px] text-muted-foreground">{company.industry}</p>
+                        <p className="text-xs text-muted-foreground">{company.industry}</p>
                       </div>
                       {company.civic_footprint_score != null && (
                         <div className="text-right">
@@ -238,13 +238,13 @@ export default function BriefingPage() {
                             company.civic_footprint_score >= 70 ? "text-green-400" :
                             company.civic_footprint_score >= 40 ? "text-primary" : "text-red-400"
                           }`}>{Math.round(company.civic_footprint_score)}</span>
-                          <p className="text-[8px] text-muted-foreground font-mono uppercase tracking-wider">CFS</p>
+                          <p className="text-xs text-muted-foreground font-mono uppercase tracking-wider">CFS</p>
                         </div>
                       )}
                     </div>
                     <div className="flex items-center gap-1 mt-2">
                       <Eye className="w-3 h-3 text-primary" />
-                      <span className="text-[10px] text-primary">View full intel</span>
+                      <span className="text-xs text-primary">View full intel</span>
                       <ChevronRight className="w-3 h-3 text-primary ml-auto" />
                     </div>
                   </a>

@@ -204,12 +204,12 @@ export default function JobDetailPage() {
                 {co?.name || "Unknown Company"}
               </Link>
               {isVerified && (
-                <Badge variant="outline" className="text-[10px] gap-0.5 bg-primary/5 text-primary border-primary/20">
+                <Badge variant="outline" className="text-xs gap-0.5 bg-primary/5 text-primary border-primary/20">
                   <Shield className="w-2.5 h-2.5" /> Verified
                 </Badge>
               )}
               {isCertified && (
-                <Badge variant="outline" className="text-[10px] gap-0.5 bg-amber-500/10 text-amber-600 border-amber-500/20">
+                <Badge variant="outline" className="text-xs gap-0.5 bg-amber-500/10 text-amber-600 border-amber-500/20">
                   <ShieldCheck className="w-2.5 h-2.5" /> Certified
                 </Badge>
               )}
@@ -224,8 +224,8 @@ export default function JobDetailPage() {
               {job.employment_type && (
                 <span className="flex items-center gap-1"><Briefcase className="w-3 h-3" /> {job.employment_type}</span>
               )}
-              {job.seniority_level && <Badge variant="outline" className="text-[10px] py-0">{job.seniority_level}</Badge>}
-              {job.department && <Badge variant="outline" className="text-[10px] py-0">{job.department}</Badge>}
+              {job.seniority_level && <Badge variant="outline" className="text-xs py-0">{job.seniority_level}</Badge>}
+              {job.department && <Badge variant="outline" className="text-xs py-0">{job.department}</Badge>}
             </div>
             {qualitySignal && (
               <div className="mt-2">
@@ -238,7 +238,7 @@ export default function JobDetailPage() {
         {/* Salary + Clarity grid */}
         <div className="grid grid-cols-2 gap-3 mb-6">
           <div className="p-4 rounded-lg border border-border/50 bg-muted/20">
-            <p className="text-[10px] font-medium text-muted-foreground uppercase tracking-wider mb-1">Compensation</p>
+            <p className="text-xs font-medium text-muted-foreground uppercase tracking-wider mb-1">Compensation</p>
             {job.salary_range ? (
               <p className="text-base font-semibold text-[hsl(var(--civic-green))] flex items-center gap-1">
                 <DollarSign className="w-4 h-4" /> {job.salary_range}
@@ -248,7 +248,7 @@ export default function JobDetailPage() {
             )}
           </div>
           <div className="p-4 rounded-lg border border-border/50 bg-muted/20">
-            <p className="text-[10px] font-medium text-muted-foreground uppercase tracking-wider mb-1">Clarity Score</p>
+            <p className="text-xs font-medium text-muted-foreground uppercase tracking-wider mb-1">Clarity Score</p>
             <p className={cn(
               "text-base font-semibold",
               civicScore >= 70 ? "text-[hsl(var(--civic-green))]" :
@@ -306,7 +306,7 @@ export default function JobDetailPage() {
         {/* Strategic Context */}
         {co?.jackye_insight && (
           <div className="p-4 rounded-lg border border-border/50 bg-muted/20 mb-4">
-            <p className="text-[10px] font-medium text-foreground uppercase tracking-wider mb-1 flex items-center gap-1">
+            <p className="text-xs font-medium text-foreground uppercase tracking-wider mb-1 flex items-center gap-1">
               <Eye className="w-3 h-3 text-muted-foreground" /> Strategic Context
             </p>
             <p className="text-sm text-muted-foreground leading-relaxed">{co.jackye_insight}</p>
@@ -316,7 +316,7 @@ export default function JobDetailPage() {
         {/* Connection Chain */}
         {research?.connection_chain && (
           <div className="p-4 rounded-lg border border-border/50 bg-muted/20 mb-4">
-            <p className="text-[10px] font-medium text-foreground uppercase tracking-wider mb-1 flex items-center gap-1">
+            <p className="text-xs font-medium text-foreground uppercase tracking-wider mb-1 flex items-center gap-1">
               <Network className="w-3 h-3 text-muted-foreground" /> Connection Chain
             </p>
             <p className="text-sm text-muted-foreground leading-relaxed">{research.connection_chain}</p>

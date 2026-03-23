@@ -43,7 +43,7 @@ function PercentileBar({ data, offeredSalary }: { data: BLSWageBenchmark; offere
           />
         )}
       </div>
-      <div className="flex justify-between text-[10px] text-muted-foreground">
+      <div className="flex justify-between text-xs text-muted-foreground">
         <span>10th: {fmt(data.annual_10th)}</span>
         <span>Median: {fmt(data.annual_median)}</span>
         <span>90th: {fmt(data.annual_90th)}</span>
@@ -107,7 +107,7 @@ export function BLSWageBenchmarkCard({ occupationTitle, offeredSalary, className
 
         <PercentileBar data={best} offeredSalary={offeredSalary} />
 
-        <p className="text-[10px] text-muted-foreground border-t border-border pt-2">
+        <p className="text-xs text-muted-foreground border-t border-border pt-2">
           Source: BLS Occupational Employment & Wage Statistics (OES). National estimates.
         </p>
       </CardContent>
@@ -118,8 +118,8 @@ export function BLSWageBenchmarkCard({ occupationTitle, offeredSalary, className
 function StatBox({ label, value, sub, icon }: { label: string; value: string; sub?: string; icon?: React.ReactNode }) {
   return (
     <div className="p-2 rounded-lg bg-muted/50 text-center">
-      <p className="text-[10px] text-muted-foreground flex items-center justify-center gap-1">{icon}{label}</p>
-      <p className="text-sm font-bold text-foreground">{value}{sub && <span className="text-[10px] text-muted-foreground">{sub}</span>}</p>
+      <p className="text-xs text-muted-foreground flex items-center justify-center gap-1">{icon}{label}</p>
+      <p className="text-sm font-bold text-foreground">{value}{sub && <span className="text-xs text-muted-foreground">{sub}</span>}</p>
     </div>
   );
 }

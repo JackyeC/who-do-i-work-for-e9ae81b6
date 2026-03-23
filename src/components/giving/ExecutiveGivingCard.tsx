@@ -107,7 +107,7 @@ function ExecCard({ exec, recipients, companyName, companySlug, locked }: {
             href={`https://www.fec.gov/data/receipts/individual-contributions/?contributor_name=${encodeURIComponent(exec.name)}`}
             target="_blank"
             rel="noopener noreferrer"
-            className="inline-flex items-center gap-0.5 text-[10px] text-muted-foreground hover:text-primary"
+            className="inline-flex items-center gap-0.5 text-xs text-muted-foreground hover:text-primary"
           >
             <ExternalLink className="w-2.5 h-2.5" /> FEC
           </a>
@@ -151,11 +151,11 @@ function ExecCard({ exec, recipients, companyName, companySlug, locked }: {
           href={`https://www.fec.gov/data/receipts/individual-contributions/?contributor_name=${encodeURIComponent(exec.name)}`}
           target="_blank"
           rel="noopener noreferrer"
-          className="text-[10px] text-primary hover:underline inline-flex items-center gap-1"
+          className="text-xs text-primary hover:underline inline-flex items-center gap-1"
         >
           View on FEC → <ExternalLink className="w-2.5 h-2.5" />
         </a>
-        <span className="text-[10px] text-muted-foreground">Source: FEC · Verified ✓</span>
+        <span className="text-xs text-muted-foreground">Source: FEC · Verified ✓</span>
       </div>
 
       {!locked && (

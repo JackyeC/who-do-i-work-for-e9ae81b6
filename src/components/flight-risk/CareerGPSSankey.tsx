@@ -202,7 +202,7 @@ export function CareerGPSSankey({ companyName, signals, className }: CareerGPSSa
     <div className={cn("rounded-lg border border-border bg-card overflow-hidden", className)}>
       <div className="p-4 border-b border-border">
         <h3 className="text-sm font-semibold text-foreground">Career GPS™ — Talent Flow Map</h3>
-        <p className="text-[10px] text-muted-foreground mt-0.5">
+        <p className="text-xs text-muted-foreground mt-0.5">
           Where employees come from and where they go after {companyName}.
         </p>
       </div>
@@ -307,7 +307,7 @@ export function CareerGPSSankey({ companyName, signals, className }: CareerGPSSa
           })}
         </svg>
       </div>
-      <div className="px-4 py-2 border-t border-border bg-muted/30 text-[9px] text-muted-foreground">
+      <div className="px-4 py-2 border-t border-border bg-muted/30 text-xs text-muted-foreground">
         Patterns inferred from public career pages, workforce disclosures, and industry analysis. Not based on individual employee tracking.
       </div>
     </div>

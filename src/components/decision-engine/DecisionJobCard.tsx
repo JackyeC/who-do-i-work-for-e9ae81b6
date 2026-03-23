@@ -128,14 +128,14 @@ export function DecisionJobCard({ job, dna }: Props) {
     >
       {/* Values Clash badge */}
       {clashes.length > 0 && (
-        <span className="absolute top-3.5 right-3.5 font-mono text-[9px] text-[hsl(var(--civic-yellow))] tracking-[1.5px] bg-[hsl(var(--civic-yellow)_/_0.1)] px-2 py-1 rounded border border-[hsl(var(--civic-yellow)_/_0.3)]">
+        <span className="absolute top-3.5 right-3.5 font-mono text-xs text-[hsl(var(--civic-yellow))] tracking-[1.5px] bg-[hsl(var(--civic-yellow)_/_0.1)] px-2 py-1 rounded border border-[hsl(var(--civic-yellow)_/_0.3)]">
           ⚡ VALUES CLASH
         </span>
       )}
 
       {/* Ghost ribbon */}
       {job.ghost && (
-        <div className="absolute top-0 left-0 bg-destructive text-destructive-foreground font-mono text-[9px] px-3 py-1 tracking-wider rounded-br-lg z-10">
+        <div className="absolute top-0 left-0 bg-destructive text-destructive-foreground font-mono text-xs px-3 py-1 tracking-wider rounded-br-lg z-10">
           👻 GHOST_POSTING_RISK
         </div>
       )}
@@ -148,20 +148,20 @@ export function DecisionJobCard({ job, dna }: Props) {
         <div>
           <h3 className="font-bold text-base text-foreground leading-tight">{job.company}</h3>
           <div className="text-xs text-muted-foreground mt-0.5">{job.role}</div>
-          <div className="font-mono text-[11px] text-primary mt-1">{job.comp}</div>
+          <div className="font-mono text-xs text-primary mt-1">{job.comp}</div>
         </div>
       </div>
 
       {/* Clarity score */}
       <div className="flex items-center gap-2.5 mb-4 pb-4 border-b border-border">
-        <span className="font-mono text-[10px] text-muted-foreground tracking-wider uppercase">CLARITY SCORE</span>
+        <span className="font-mono text-xs text-muted-foreground tracking-wider uppercase">CLARITY SCORE</span>
         <div className="flex-1 h-1 bg-muted rounded-sm overflow-hidden">
           <div
             className="h-full rounded-sm transition-all duration-700"
             style={{ width: `${clarityPct}%`, backgroundColor: clarityColor }}
           />
         </div>
-        <span className="font-mono text-[11px] font-bold min-w-[36px] text-right" style={{ color: clarityColor }}>
+        <span className="font-mono text-xs font-bold min-w-[36px] text-right" style={{ color: clarityColor }}>
           {clarityPct}
         </span>
       </div>
@@ -186,10 +186,10 @@ export function DecisionJobCard({ job, dna }: Props) {
             >
               <span className="text-sm shrink-0 mt-px">{data.icon}</span>
               <div className="text-xs leading-relaxed">
-                <span className="font-mono text-[10px] font-bold tracking-wide block mb-0.5" style={{ color }}>
+                <span className="font-mono text-xs font-bold tracking-wide block mb-0.5" style={{ color }}>
                   [{meta.name}: {level.toUpperCase()}]
                 </span>
-                <span className="text-muted-foreground text-[11px]">{data.text}</span>
+                <span className="text-muted-foreground text-xs">{data.text}</span>
               </div>
             </div>
           );
@@ -198,7 +198,7 @@ export function DecisionJobCard({ job, dna }: Props) {
 
       {/* Clash explain */}
       {clashes.length > 0 && (
-        <div className="mt-2.5 px-3 py-2.5 rounded-lg bg-[hsl(var(--civic-yellow)_/_0.06)] border border-[hsl(var(--civic-yellow)_/_0.25)] text-[11px] text-[hsl(var(--civic-yellow))] leading-relaxed">
+        <div className="mt-2.5 px-3 py-2.5 rounded-lg bg-[hsl(var(--civic-yellow)_/_0.06)] border border-[hsl(var(--civic-yellow)_/_0.25)] text-xs text-[hsl(var(--civic-yellow))] leading-relaxed">
           <strong className="font-semibold">⚡ What this means for you:</strong>
           <br />
           {clashes.map((c, i) => (
@@ -210,19 +210,19 @@ export function DecisionJobCard({ job, dna }: Props) {
       {/* Pro blur section */}
       <div className="relative mt-3 rounded-lg overflow-hidden">
         <div
-          className="px-3 py-2.5 bg-muted rounded-lg font-mono text-[11px] text-muted-foreground border border-border leading-relaxed"
+          className="px-3 py-2.5 bg-muted rounded-lg font-mono text-xs text-muted-foreground border border-border leading-relaxed"
           style={{ filter: isPremium ? "none" : "blur(4px)", pointerEvents: isPremium ? "auto" : "none" }}
         >
           {job.proData}
         </div>
         {!isPremium && (
           <div className="absolute inset-0 flex flex-col items-center justify-center bg-background/70 backdrop-blur-sm rounded-lg gap-1.5 border border-primary/20">
-            <span className="font-mono text-[9px] text-primary tracking-wider text-center px-4 leading-relaxed">
+            <span className="font-mono text-xs text-primary tracking-wider text-center px-4 leading-relaxed">
               This deep-dive found 2 new signals.<br />Unlock to see what changed in 24h.
             </span>
             <button
               onClick={() => { if (!isLoggedIn) navigate("/login"); else navigate("/pricing"); }}
-              className="bg-primary text-primary-foreground font-mono text-[9px] font-bold px-3.5 py-1.5 rounded tracking-wider hover:opacity-85 transition-opacity"
+              className="bg-primary text-primary-foreground font-mono text-xs font-bold px-3.5 py-1.5 rounded tracking-wider hover:opacity-85 transition-opacity"
             >
               UNLOCK PRO ✦
             </button>
@@ -232,7 +232,7 @@ export function DecisionJobCard({ job, dna }: Props) {
 
       {/* Audit result */}
       {auditState === "done" && (
-        <div className="mt-2.5 px-3 py-2.5 rounded-lg bg-accent/50 border border-accent font-mono text-[10px] text-accent-foreground leading-relaxed animate-in fade-in slide-in-from-bottom-1">
+        <div className="mt-2.5 px-3 py-2.5 rounded-lg bg-accent/50 border border-accent font-mono text-xs text-accent-foreground leading-relaxed animate-in fade-in slide-in-from-bottom-1">
           ⟳ AUDIT COMPLETE<br />
           ATS: {job.ghost ? "❌ No matching role found on company ATS — GHOST_POSTING_RISK confirmed." : "✓ Matching role confirmed on ATS."}<br />
           Reddit scan: Sentiment scan returned {Math.floor(Math.random() * 20) + 5} mentions (30d).<br />
@@ -244,7 +244,7 @@ export function DecisionJobCard({ job, dna }: Props) {
       <button
         onClick={triggerAudit}
         disabled={auditState === "scanning"}
-        className="w-full mt-3 bg-transparent border border-border text-muted-foreground font-mono text-[10px] py-2.5 rounded-lg tracking-[1.5px] flex items-center justify-center gap-1.5 transition-all hover:border-primary hover:text-primary hover:bg-primary/5 disabled:opacity-60"
+        className="w-full mt-3 bg-transparent border border-border text-muted-foreground font-mono text-xs py-2.5 rounded-lg tracking-[1.5px] flex items-center justify-center gap-1.5 transition-all hover:border-primary hover:text-primary hover:bg-primary/5 disabled:opacity-60"
         style={{
           color: auditState === "done" ? "hsl(var(--civic-green))" : undefined,
           borderColor: auditState === "done" ? "hsl(var(--civic-green))" : undefined,

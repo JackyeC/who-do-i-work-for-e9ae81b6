@@ -157,7 +157,7 @@ export function SignalsDetectedSummary({ companyId, companyName }: Props) {
               </div>
               <div>
                 <p className="text-sm font-medium text-foreground">{s.label}</p>
-                <Badge variant="outline" className="text-[10px] mt-0.5">{s.category}</Badge>
+                <Badge variant="outline" className="text-xs mt-0.5">{s.category}</Badge>
               </div>
             </div>
             {s.sourceUrl && (
@@ -173,7 +173,7 @@ export function SignalsDetectedSummary({ companyId, companyName }: Props) {
           </div>
         ))}
 
-        <p className="text-[10px] text-muted-foreground text-center pt-2 italic">
+        <p className="text-xs text-muted-foreground text-center pt-2 italic">
           This platform reports signals detected from publicly available data sources. No conclusions are drawn. Interpretation is left to the user.
         </p>
       </CardContent>

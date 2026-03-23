@@ -90,7 +90,7 @@ export function PersonalizationBanner() {
           <span className="text-xs font-medium text-foreground">Sorted for you</span>
           <span className="text-xs text-muted-foreground">·</span>
           {activePriorities.map((p) => (
-            <Badge key={p} variant="outline" className="text-[10px] py-0 bg-primary/5 border-primary/15 text-primary">
+            <Badge key={p} variant="outline" className="text-xs py-0 bg-primary/5 border-primary/15 text-primary">
               {PRIORITY_LABELS[p] || p}
             </Badge>
           ))}

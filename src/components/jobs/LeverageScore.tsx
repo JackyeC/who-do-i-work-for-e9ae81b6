@@ -67,7 +67,7 @@ export function LeverageScore({ leverage, compact }: LeverageScoreProps) {
 
   if (compact) {
     return (
-      <Badge variant="outline" className={cn("text-[9px] gap-0.5", meta.className)}>
+      <Badge variant="outline" className={cn("text-xs gap-0.5", meta.className)}>
         <Icon className="w-2.5 h-2.5" /> {meta.label.split(" ")[0]}
       </Badge>
     );
@@ -79,7 +79,7 @@ export function LeverageScore({ leverage, compact }: LeverageScoreProps) {
         <Badge variant="outline" className={cn("gap-1", meta.className)}>
           <Icon className="w-3 h-3" /> {meta.label}
         </Badge>
-        <p className="text-[10px] font-medium text-foreground uppercase tracking-wider">Negotiation Leverage</p>
+        <p className="text-xs font-medium text-foreground uppercase tracking-wider">Negotiation Leverage</p>
       </div>
       {leverage.factors.length > 0 && (
         <ul className="space-y-1">

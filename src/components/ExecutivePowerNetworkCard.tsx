@@ -183,7 +183,7 @@ export function ExecutivePowerNetworkCard({ companyId, companyName }: Props) {
           <Network className="w-4 h-4" />
           Executive Power Network
           {totalConnections > 0 && (
-            <Badge variant="outline" className="ml-auto text-[10px]">
+            <Badge variant="outline" className="ml-auto text-xs">
               {totalConnections} connections · {uniqueOrgs.size} organizations
             </Badge>
           )}
@@ -203,7 +203,7 @@ export function ExecutivePowerNetworkCard({ companyId, companyName }: Props) {
                 <p className="text-xs text-muted-foreground">{net.title}</p>
               </div>
               {net.donationTotal > 0 && (
-                <Badge variant="outline" className="text-[10px] text-destructive border-destructive/30 bg-destructive/8">
+                <Badge variant="outline" className="text-xs text-destructive border-destructive/30 bg-destructive/8">
                   ${net.donationTotal.toLocaleString()} donations
                 </Badge>
               )}
@@ -218,8 +218,8 @@ export function ExecutivePowerNetworkCard({ companyId, companyName }: Props) {
                   <div key={j} className={cn("flex items-center gap-2 px-2.5 py-1.5 rounded-md border text-xs", typeStyle.bg)}>
                     <Icon className={cn("w-3.5 h-3.5 shrink-0", typeStyle.text)} />
                     <span className="text-foreground font-medium truncate">{conn.name}</span>
-                    {conn.role && <span className="text-muted-foreground ml-auto shrink-0 text-[10px]">{conn.role}</span>}
-                    <Badge variant="outline" className={cn("text-[8px] px-1 py-0 shrink-0", typeStyle.text)}>{typeStyle.label}</Badge>
+                    {conn.role && <span className="text-muted-foreground ml-auto shrink-0 text-xs">{conn.role}</span>}
+                    <Badge variant="outline" className={cn("text-xs px-1 py-0 shrink-0", typeStyle.text)}>{typeStyle.label}</Badge>
                   </div>
                 );
               })}
@@ -231,7 +231,7 @@ export function ExecutivePowerNetworkCard({ companyId, companyName }: Props) {
           <p className="text-xs text-muted-foreground text-center">+ {dedupedNetworks.length - 6} more executives with connections</p>
         )}
 
-        <p className="text-[10px] text-muted-foreground">
+        <p className="text-xs text-muted-foreground">
           Sources: SEC EDGAR · OpenCorporates · Board records · Political donation records · Advisory committee filings · 
           A documented mention does not establish wrongdoing.
         </p>

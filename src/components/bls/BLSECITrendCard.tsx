@@ -35,7 +35,7 @@ export function BLSECITrendCard({ className }: Props) {
           Wage Growth Trends
           {latestWageGrowth != null && (
             <Badge className={cn(
-              "text-[10px] ml-auto",
+              "text-xs ml-auto",
               latestWageGrowth >= 3.5
                 ? "bg-[hsl(var(--civic-green))]/10 text-[hsl(var(--civic-green))] border-[hsl(var(--civic-green))]/20"
                 : "bg-[hsl(var(--civic-yellow))]/10 text-[hsl(var(--civic-yellow))] border-[hsl(var(--civic-yellow))]/20"
@@ -51,7 +51,7 @@ export function BLSECITrendCard({ className }: Props) {
         <TrendSection label="Total Compensation" data={total} color="hsl(var(--primary))" />
         <TrendSection label="Benefits" data={benefits} color="hsl(var(--civic-blue))" />
 
-        <p className="text-[10px] text-muted-foreground border-t border-border pt-2">
+        <p className="text-xs text-muted-foreground border-t border-border pt-2">
           Source: BLS Employment Cost Index (ECI). 12-month percent changes.
         </p>
       </CardContent>
@@ -67,7 +67,7 @@ function TrendSection({ label, data, color }: { label: string; data: BLSECITrend
       <div className="flex gap-2">
         {data.reverse().map(d => (
           <div key={`${d.year}-${d.period}`} className="flex-1 text-center">
-            <div className="text-[10px] text-muted-foreground">{d.period} {d.year}</div>
+            <div className="text-xs text-muted-foreground">{d.period} {d.year}</div>
             <div className="text-xs font-bold" style={{ color }}>
               {d.percent_change_12mo != null ? `${d.percent_change_12mo > 0 ? "+" : ""}${d.percent_change_12mo.toFixed(1)}%` : `${d.value}`}
             </div>

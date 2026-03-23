@@ -30,7 +30,7 @@ export function MatchIndicator({ matchCount, matchedCategories, className }: Mat
         <Badge
           variant="outline"
           className={cn(
-            "text-[10px] gap-1 py-0 cursor-default",
+            "text-xs gap-1 py-0 cursor-default",
             matchCount >= 3
               ? "bg-green-500/10 text-green-700 border-green-500/20 dark:text-green-400"
               : matchCount >= 2

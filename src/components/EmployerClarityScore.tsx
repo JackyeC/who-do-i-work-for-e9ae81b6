@@ -186,7 +186,7 @@ export function EmployerClarityScore(props: EmployerClarityScoreProps) {
                 <div className="flex items-center gap-2">
                   <c.icon className="w-3.5 h-3.5 text-muted-foreground" />
                   <span className="font-medium text-foreground">{c.label}</span>
-                  <Badge variant="outline" className="text-[10px] px-1.5 py-0">
+                  <Badge variant="outline" className="text-xs px-1.5 py-0">
                     {Math.round(c.weight * 100)}%
                   </Badge>
                 </div>
@@ -202,7 +202,7 @@ export function EmployerClarityScore(props: EmployerClarityScoreProps) {
               </div>
               <div className="flex flex-wrap gap-1 mt-0.5">
                 {c.signals.map((s, i) => (
-                  <span key={i} className="text-[10px] text-muted-foreground">
+                  <span key={i} className="text-xs text-muted-foreground">
                     {i > 0 && "·"} {s}
                   </span>
                 ))}

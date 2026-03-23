@@ -132,11 +132,11 @@ export function CertificationQueue() {
                     <Building2 className="w-4 h-4 text-muted-foreground shrink-0" />
                     <div className="flex-1 min-w-0">
                       <p className="text-sm font-medium text-foreground truncate">{co.name}</p>
-                      <p className="text-[11px] text-muted-foreground">
+                      <p className="text-xs text-muted-foreground">
                         {co.industry} · {co.creation_source || "Unknown source"} · {formatDistanceToNow(new Date(co.created_at), { addSuffix: true })}
                       </p>
                     </div>
-                    <Badge variant="outline" className="text-[10px] shrink-0">Unverified</Badge>
+                    <Badge variant="outline" className="text-xs shrink-0">Unverified</Badge>
                   </div>
 
                   {/* 3-Point Checklist */}

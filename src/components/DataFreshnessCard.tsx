@@ -98,7 +98,7 @@ export function DataFreshnessCard({
                 <span className="text-sm font-semibold text-foreground">Intelligence Cache</span>
               </div>
               {isAnyRefreshing ? (
-                <Badge variant="secondary" className="text-[10px] font-mono gap-1">
+                <Badge variant="secondary" className="text-xs font-mono gap-1">
                   <RefreshCw className="w-2.5 h-2.5 animate-spin" />
                   Refreshing…
                 </Badge>
@@ -106,7 +106,7 @@ export function DataFreshnessCard({
                 <Badge
                   variant="outline"
                   className={cn(
-                    "text-[10px] font-mono",
+                    "text-xs font-mono",
                     cacheFreshness.stale
                       ? "text-[hsl(var(--civic-yellow))] border-[hsl(var(--civic-yellow))]/30"
                       : "text-[hsl(var(--civic-green))] border-[hsl(var(--civic-green))]/30"
@@ -120,19 +120,19 @@ export function DataFreshnessCard({
             {/* Section health bar */}
             <div className="flex items-center gap-1.5 text-xs">
               {freshSections > 0 && (
-                <Badge variant="secondary" className="text-[9px] font-mono gap-1 bg-[hsl(var(--civic-green))]/10 text-[hsl(var(--civic-green))] border-[hsl(var(--civic-green))]/20">
+                <Badge variant="secondary" className="text-xs font-mono gap-1 bg-[hsl(var(--civic-green))]/10 text-[hsl(var(--civic-green))] border-[hsl(var(--civic-green))]/20">
                   <Wifi className="w-2.5 h-2.5" />
                   {freshSections} fresh
                 </Badge>
               )}
               {staleSections > 0 && (
-                <Badge variant="secondary" className="text-[9px] font-mono gap-1 bg-[hsl(var(--civic-yellow))]/10 text-[hsl(var(--civic-yellow))] border-[hsl(var(--civic-yellow))]/20">
+                <Badge variant="secondary" className="text-xs font-mono gap-1 bg-[hsl(var(--civic-yellow))]/10 text-[hsl(var(--civic-yellow))] border-[hsl(var(--civic-yellow))]/20">
                   <Clock className="w-2.5 h-2.5" />
                   {staleSections} saved
                 </Badge>
               )}
               {failedSections > 0 && (
-                <Badge variant="secondary" className="text-[9px] font-mono gap-1 bg-destructive/10 text-destructive border-destructive/20">
+                <Badge variant="secondary" className="text-xs font-mono gap-1 bg-destructive/10 text-destructive border-destructive/20">
                   <WifiOff className="w-2.5 h-2.5" />
                   {failedSections} offline
                 </Badge>
@@ -145,7 +145,7 @@ export function DataFreshnessCard({
                 variant="ghost"
                 size="sm"
                 onClick={onRefreshAll}
-                className="w-full h-7 text-[10px] text-muted-foreground hover:text-foreground"
+                className="w-full h-7 text-xs text-muted-foreground hover:text-foreground"
               >
                 <RefreshCw className="w-3 h-3 mr-1.5" />
                 Refresh {staleSections} stale section{staleSections > 1 ? 's' : ''}
@@ -153,7 +153,7 @@ export function DataFreshnessCard({
             )}
 
             {failedSections > 0 && staleSections === 0 && (
-              <p className="text-[10px] text-muted-foreground/70 italic">
+              <p className="text-xs text-muted-foreground/70 italic">
                 Some live data sources are temporarily unavailable
               </p>
             )}
@@ -184,7 +184,7 @@ export function DataFreshnessCard({
         </div>
 
         {dateStr && (
-          <p className="text-[10px] text-muted-foreground">
+          <p className="text-xs text-muted-foreground">
             Last verified: {new Date(dateStr).toLocaleDateString("en-US", { year: "numeric", month: "long", day: "numeric" })}
           </p>
         )}
@@ -206,14 +206,14 @@ export function DataFreshnessCard({
 
         {/* Confidence Tiers Legend */}
         <div className="pt-2 border-t border-border space-y-2">
-          <p className="text-[10px] font-semibold text-muted-foreground uppercase tracking-wider">Signal Confidence Tiers</p>
+          <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">Signal Confidence Tiers</p>
           {CONFIDENCE_TIERS.map((tier) => (
             <div key={tier.level} className="flex items-start gap-2">
               <tier.icon className={cn("w-3.5 h-3.5 mt-0.5 shrink-0", tier.className)} />
               <div>
                 <span className={cn("text-xs font-medium", tier.className)}>{tier.level} Confidence</span>
-                <p className="text-[10px] text-muted-foreground">{tier.sources}</p>
-                <p className="text-[10px] text-muted-foreground/70 italic">{tier.note}</p>
+                <p className="text-xs text-muted-foreground">{tier.sources}</p>
+                <p className="text-xs text-muted-foreground/70 italic">{tier.note}</p>
               </div>
             </div>
           ))}

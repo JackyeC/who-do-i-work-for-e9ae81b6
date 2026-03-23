@@ -144,7 +144,7 @@ export function AppSidebar() {
           return (
             <SidebarGroup key={group.label}>
               {group.label !== "Home" && (
-                <SidebarGroupLabel className="text-[10px] uppercase tracking-[0.14em] text-muted-foreground/50 font-semibold px-3">
+                <SidebarGroupLabel className="text-xs uppercase tracking-[0.14em] text-muted-foreground/50 font-semibold px-3">
                   {group.label}
                 </SidebarGroupLabel>
               )}
@@ -191,7 +191,7 @@ export function AppSidebar() {
           <div className="rounded-xl bg-gradient-to-br from-civic-gold/10 to-primary/5 border border-civic-gold/15 p-3">
             <div className="flex items-center gap-2 mb-1">
               <Flame className="w-3.5 h-3.5 text-civic-gold" />
-              <span className="text-[10px] font-semibold uppercase tracking-wider text-muted-foreground">
+              <span className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
                 My Civic Impact
               </span>
             </div>
@@ -228,7 +228,7 @@ export function AppSidebar() {
         )}
 
         {!user && !collapsed && (
-          <p className="text-[10px] text-muted-foreground text-center">
+          <p className="text-xs text-muted-foreground text-center">
             Sign in for auto-apply, alerts & career tools
           </p>
         )}

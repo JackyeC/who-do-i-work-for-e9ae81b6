@@ -129,10 +129,10 @@ export function TalentSignalsCard({
             <div className="flex-1 min-w-0">
               <div className="flex items-center gap-2 mb-0.5">
                 <span className="text-sm font-medium text-foreground">{s.title}</span>
-                <Badge className={`text-[10px] ${severityBadge(s.severity)}`}>{s.type}</Badge>
+                <Badge className={`text-xs ${severityBadge(s.severity)}`}>{s.type}</Badge>
               </div>
               <p className="text-xs text-muted-foreground">{s.detail}</p>
-              {s.source && <p className="text-[10px] text-muted-foreground/60 mt-1">Source: {s.source}</p>}
+              {s.source && <p className="text-xs text-muted-foreground/60 mt-1">Source: {s.source}</p>}
             </div>
           </div>
         ))}

@@ -51,7 +51,7 @@ export function NewsIntelligenceCard({ companyId, companyName }: Props) {
           <Newspaper className="w-4 h-4" />
           News Intelligence
           {controversies.length > 0 && (
-            <Badge variant="destructive" className="text-[10px] ml-auto">
+            <Badge variant="destructive" className="text-xs ml-auto">
               <AlertTriangle className="w-3 h-3 mr-1" />
               {controversies.length} Controvers{controversies.length === 1 ? "y" : "ies"}
             </Badge>
@@ -84,14 +84,14 @@ export function NewsIntelligenceCard({ companyId, companyName }: Props) {
                 <div className="flex-1 min-w-0">
                   <p className="font-medium text-foreground text-sm leading-snug truncate">{s.headline}</p>
                   <div className="flex items-center gap-2 mt-1">
-                    {s.source_name && <span className="text-[10px] text-muted-foreground">{s.source_name}</span>}
+                    {s.source_name && <span className="text-xs text-muted-foreground">{s.source_name}</span>}
                     {s.published_at && (
-                      <span className="text-[10px] text-muted-foreground">
+                      <span className="text-xs text-muted-foreground">
                         {new Date(s.published_at).toLocaleDateString()}
                       </span>
                     )}
                     {s.is_controversy && (
-                      <Badge variant="destructive" className="text-[9px] px-1.5 py-0">
+                      <Badge variant="destructive" className="text-xs px-1.5 py-0">
                         {s.controversy_type || "controversy"}
                       </Badge>
                     )}
@@ -111,7 +111,7 @@ export function NewsIntelligenceCard({ companyId, companyName }: Props) {
         {/* Coverage Balance */}
         <CoverageBalanceChart sourceUrls={signals.map((s: any) => s.source_url).filter(Boolean)} />
 
-        <p className="text-[10px] text-muted-foreground text-center">
+        <p className="text-xs text-muted-foreground text-center">
           Source: GDELT Global News Database • Sentiment analysis via GDELT tone scoring • Bias ratings via AllSides / Ad Fontes Media
         </p>
       </CardContent>

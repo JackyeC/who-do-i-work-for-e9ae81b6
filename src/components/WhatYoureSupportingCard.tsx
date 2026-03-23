@@ -132,7 +132,7 @@ export function WhatYoureSupportingCard({
                 <HelpCircle className="w-3 h-3" />
               </div>
               <div className="text-lg font-bold font-data text-foreground">{formatCurrency(totalPacSpending)}</div>
-              <p className="text-[10px] text-muted-foreground mt-1">
+              <p className="text-xs text-muted-foreground mt-1">
                 Money from the company's political fund (PAC) given directly to politicians' campaigns.
               </p>
             </div>
@@ -144,7 +144,7 @@ export function WhatYoureSupportingCard({
                 <HelpCircle className="w-3 h-3" />
               </div>
               <div className="text-lg font-bold font-data text-foreground">{formatCurrency(lobbyingSpend)}</div>
-              <p className="text-[10px] text-muted-foreground mt-1">
+              <p className="text-xs text-muted-foreground mt-1">
                 Money spent hiring people to talk to lawmakers and try to change laws in the company's favor.
               </p>
             </div>
@@ -170,7 +170,7 @@ export function WhatYoureSupportingCard({
                     <p className="text-xs text-muted-foreground mt-0.5">{d.description}</p>
                   )}
                   {d.amount && d.amount > 0 && (
-                    <span className="text-[10px] font-medium text-foreground mt-0.5 inline-block">{formatCurrency(d.amount)}</span>
+                    <span className="text-xs font-medium text-foreground mt-0.5 inline-block">{formatCurrency(d.amount)}</span>
                   )}
                 </div>
               ))}
@@ -194,7 +194,7 @@ export function WhatYoureSupportingCard({
                   <p className="text-sm font-medium text-foreground">{stance.topic}</p>
                   <p className="text-xs text-muted-foreground mt-1">{stance.public_position}</p>
                   {stance.spending_reality && (
-                    <p className="text-[10px] text-muted-foreground mt-1 italic">
+                    <p className="text-xs text-muted-foreground mt-1 italic">
                       Evidence: {stance.spending_reality}
                     </p>
                   )}
@@ -286,7 +286,7 @@ export function WhatYoureSupportingCard({
                     <PartyBadge party={c.party} size="sm" />
                     <div className="min-w-0">
                       <span className="text-sm text-foreground block truncate group-hover:text-primary transition-colors">{c.name}</span>
-                      <span className="text-[10px] text-muted-foreground">
+                      <span className="text-xs text-muted-foreground">
                         {PARTY_FULL[c.party] || c.party}
                         {c.state ? ` — ${c.state}` : ""}
                       </span>
@@ -312,7 +312,7 @@ export function WhatYoureSupportingCard({
               <div className="flex items-center gap-2">
                 <Info className="w-4 h-4 text-muted-foreground" />
                 <span className="text-sm font-semibold text-foreground">Additional Information</span>
-                <Badge variant="outline" className="text-[10px]">
+                <Badge variant="outline" className="text-xs">
                   {darkMoneyConnections + flaggedOrgCount} item{(darkMoneyConnections + flaggedOrgCount) > 1 ? "s" : ""}
                 </Badge>
               </div>
@@ -340,7 +340,7 @@ export function WhatYoureSupportingCard({
                             <div className="flex items-center justify-between mb-1">
                               <span className="font-medium text-foreground">{dm.name}</span>
                               <div className="flex items-center gap-1.5">
-                                <Badge variant="outline" className="text-[9px] px-1.5">{dm.org_type}</Badge>
+                                <Badge variant="outline" className="text-xs px-1.5">{dm.org_type}</Badge>
                                 {dm.estimated_amount && dm.estimated_amount > 0 && (
                                   <span className="font-data font-semibold text-foreground">{formatCurrency(dm.estimated_amount)}</span>
                                 )}

@@ -31,15 +31,15 @@ export function SessionSummary({ feedbacks, totalRounds, onTryAgain }: Props) {
         <div className="flex gap-3">
           <div className="flex-1 p-3 rounded-lg bg-muted/30 text-center">
             <p className="text-2xl font-bold text-foreground">{totalRounds}</p>
-            <p className="text-[10px] text-muted-foreground uppercase tracking-wider">Rounds</p>
+            <p className="text-xs text-muted-foreground uppercase tracking-wider">Rounds</p>
           </div>
           <div className="flex-1 p-3 rounded-lg bg-muted/30 text-center">
             <p className="text-2xl font-bold text-foreground">{toneScore}%</p>
-            <p className="text-[10px] text-muted-foreground uppercase tracking-wider">Tone Score</p>
+            <p className="text-xs text-muted-foreground uppercase tracking-wider">Tone Score</p>
           </div>
           <div className="flex-1 p-3 rounded-lg bg-muted/30 text-center">
             <p className="text-2xl font-bold text-foreground">{avgEffectiveness}</p>
-            <p className="text-[10px] text-muted-foreground uppercase tracking-wider">Avg Effect.</p>
+            <p className="text-xs text-muted-foreground uppercase tracking-wider">Avg Effect.</p>
           </div>
         </div>
 
@@ -50,7 +50,7 @@ export function SessionSummary({ feedbacks, totalRounds, onTryAgain }: Props) {
             </p>
             <div className="flex flex-wrap gap-1.5">
               {uniqueTactics.map((t, i) => (
-                <span key={i} className="text-[10px] px-2 py-0.5 rounded-full bg-primary/10 text-primary font-medium">
+                <span key={i} className="text-xs px-2 py-0.5 rounded-full bg-primary/10 text-primary font-medium">
                   {t}
                 </span>
               ))}
@@ -82,7 +82,7 @@ export function SessionSummary({ feedbacks, totalRounds, onTryAgain }: Props) {
           </Button>
         )}
 
-        <p className="text-[11px] text-muted-foreground text-center">
+        <p className="text-xs text-muted-foreground text-center">
           Practice makes progress. Each session helps you find your voice.
         </p>
       </CardContent>

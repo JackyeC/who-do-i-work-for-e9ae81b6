@@ -62,15 +62,15 @@ export function RepresentationSnapshot({
                 <div className="flex items-center gap-2">
                   <span className="text-xs font-medium text-foreground">{cat.category}</span>
                   {cat.value && (
-                    <Badge variant="outline" className="text-[9px] px-1.5 py-0">
+                    <Badge variant="outline" className="text-xs px-1.5 py-0">
                       {cat.scope}
                     </Badge>
                   )}
                 </div>
                 {cat.value ? (
-                  <p className="text-[11px] text-muted-foreground mt-0.5">{cat.value}</p>
+                  <p className="text-xs text-muted-foreground mt-0.5">{cat.value}</p>
                 ) : (
-                  <p className="text-[11px] text-muted-foreground mt-0.5 flex items-center gap-1">
+                  <p className="text-xs text-muted-foreground mt-0.5 flex items-center gap-1">
                     <Info className="w-3 h-3" />
                     Public reporting not detected in scanned sources
                   </p>
@@ -80,7 +80,7 @@ export function RepresentationSnapshot({
           ))}
         </div>
         {!hasAny && (
-          <p className="text-[10px] text-muted-foreground mt-3">
+          <p className="text-xs text-muted-foreground mt-3">
             {companyName} has not published detectable workforce representation data in scanned sources.
             This represents a transparency gap — not necessarily the absence of programs.
           </p>

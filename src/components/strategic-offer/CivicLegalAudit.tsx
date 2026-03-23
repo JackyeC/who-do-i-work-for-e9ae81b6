@@ -87,14 +87,14 @@ export function CivicLegalAudit({ flags }: Props) {
                 <div className="ml-11 space-y-2">
                   <div className="flex items-start gap-2 p-2 bg-muted/30 rounded-lg">
                     <Scale className="w-3 h-3 text-muted-foreground mt-0.5 shrink-0" />
-                    <p className="text-[11px] text-muted-foreground">
+                    <p className="text-xs text-muted-foreground">
                       <span className="font-medium text-foreground">Legal basis: </span>
                       {flag.legalBasis}
                     </p>
                   </div>
                   <div className="flex items-start gap-2 p-2 bg-primary/5 rounded-lg">
                     <Lightbulb className="w-3 h-3 text-primary mt-0.5 shrink-0" />
-                    <p className="text-[11px] text-muted-foreground">
+                    <p className="text-xs text-muted-foreground">
                       <span className="font-medium text-primary">Negotiation tip: </span>
                       {flag.negotiationTip}
                     </p>

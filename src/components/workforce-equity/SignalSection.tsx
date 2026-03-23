@@ -77,7 +77,7 @@ export function SignalSection({
                 <div className="flex-1 min-w-0">
                   <div className="flex items-center gap-2 flex-wrap">
                     <span className="text-xs font-medium text-foreground">{item.label}</span>
-                    <Badge variant="outline" className={cn("text-[9px] gap-1 px-1.5 py-0", config.badge)}>
+                    <Badge variant="outline" className={cn("text-xs gap-1 px-1.5 py-0", config.badge)}>
                       <StatusIcon className="w-2.5 h-2.5" />
                       {config.label}
                     </Badge>
@@ -85,7 +85,7 @@ export function SignalSection({
                   {matching.length > 0 ? (
                     <div className="mt-1 space-y-0.5">
                       {matching.slice(0, 2).map((s: any, i: number) => (
-                        <p key={i} className="text-[11px] text-muted-foreground">
+                        <p key={i} className="text-xs text-muted-foreground">
                           {safeSignalLabel(s.signal_summary, "Signal detected")}
                           {s.evidence_url && (
                             <a
@@ -101,7 +101,7 @@ export function SignalSection({
                       ))}
                     </div>
                   ) : (
-                    <p className="text-[10px] text-muted-foreground mt-0.5 flex items-center gap-1">
+                    <p className="text-xs text-muted-foreground mt-0.5 flex items-center gap-1">
                       <Info className="w-2.5 h-2.5" />
                       No public signals found yet
                     </p>

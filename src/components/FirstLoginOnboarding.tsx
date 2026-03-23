@@ -183,7 +183,7 @@ export function FirstLoginOnboarding({ onComplete }: FirstLoginOnboardingProps) 
                         Search
                       </Button>
                     </div>
-                    <p className="text-[11px] text-muted-foreground/50 mt-2">
+                    <p className="text-xs text-muted-foreground/50 mt-2">
                       You can always search more companies later.
                     </p>
                   </form>

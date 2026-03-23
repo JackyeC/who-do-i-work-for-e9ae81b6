@@ -111,7 +111,7 @@ export function JackyeNote(props: JackyeNoteProps) {
       <div className="flex items-center gap-2.5 px-5 py-3 border-b border-primary/10 bg-primary/[0.04]">
         <MessageSquareWarning className="w-4.5 h-4.5 text-primary shrink-0" />
         <span className="text-sm font-bold text-foreground tracking-tight">Insider's Brief</span>
-        <Badge variant="outline" className="text-[9px] font-mono tracking-wider border-primary/20 text-primary ml-auto">
+        <Badge variant="outline" className="text-xs font-mono tracking-wider border-primary/20 text-primary ml-auto">
           SIGNAL SUMMARY
         </Badge>
       </div>
@@ -129,7 +129,7 @@ export function JackyeNote(props: JackyeNoteProps) {
               return (
                 <span
                   key={i}
-                  className="inline-flex items-center gap-1.5 text-[11px] text-muted-foreground bg-muted/60 border border-border/50 rounded-md px-2 py-1"
+                  className="inline-flex items-center gap-1.5 text-xs text-muted-foreground bg-muted/60 border border-border/50 rounded-md px-2 py-1"
                 >
                   <Icon className="w-3 h-3 shrink-0" />
                   {r.text}
@@ -142,7 +142,7 @@ export function JackyeNote(props: JackyeNoteProps) {
         {/* Add Your Story CTA for employers */}
         <AddYourStoryCTA />
 
-        <p className="text-[10px] text-muted-foreground/60 italic pt-1">
+        <p className="text-xs text-muted-foreground/60 italic pt-1">
           This summary is auto-generated from public data signals — not editorial opinion. A signal is not a verdict.
         </p>
       </div>

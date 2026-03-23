@@ -36,19 +36,19 @@ export function HeroSearch() {
           />
           <button
             type="submit"
-            className="mr-2 px-4 py-2 bg-primary text-primary-foreground font-mono text-[10px] tracking-wider uppercase font-semibold hover:brightness-110 transition-all flex items-center gap-1.5"
+            className="mr-2 px-4 py-2 bg-primary text-primary-foreground font-mono text-xs tracking-wider uppercase font-semibold hover:brightness-110 transition-all flex items-center gap-1.5"
           >
             Scan <ArrowRight className="w-3 h-3" />
           </button>
         </div>
       </form>
       <div className="flex items-center gap-2 mt-3">
-        <span className="font-mono text-[9px] tracking-wider uppercase text-muted-foreground/60">Try:</span>
+        <span className="font-mono text-xs tracking-wider uppercase text-muted-foreground/60">Try:</span>
         {suggestions.map((s) => (
           <button
             key={s}
             onClick={() => navigate(`/search?q=${encodeURIComponent(s)}`)}
-            className="font-mono text-[9px] tracking-wider text-muted-foreground hover:text-primary transition-colors"
+            className="font-mono text-xs tracking-wider text-muted-foreground hover:text-primary transition-colors"
           >
             {s}
           </button>

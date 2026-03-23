@@ -36,12 +36,12 @@ export function MediaBiasIndicator({ sourceUrl, sourceName, className }: MediaBi
   }
 
   return (
-    <span className={cn("inline-flex items-center gap-1.5 text-[10px]", className)}>
+    <span className={cn("inline-flex items-center gap-1.5 text-xs", className)}>
       <LeanDot lean={profile.lean} />
       <span className={cn("font-medium px-1 py-0 rounded", LEAN_COLORS[profile.lean])}>
         {LEAN_LABELS[profile.lean]}
       </span>
-      <Badge variant="outline" className={cn("text-[9px] px-1 py-0", RELIABILITY_COLORS[profile.reliability])}>
+      <Badge variant="outline" className={cn("text-xs px-1 py-0", RELIABILITY_COLORS[profile.reliability])}>
         {profile.reliability === "high" ? "High Reliability" : profile.reliability === "mixed" ? "Mixed Reliability" : "Low Reliability"}
       </Badge>
     </span>
@@ -51,7 +51,7 @@ export function MediaBiasIndicator({ sourceUrl, sourceName, className }: MediaBi
 /** Label for primary records — no bias applied */
 export function PrimaryRecordLabel({ className }: { className?: string }) {
   return (
-    <span className={cn("inline-flex items-center gap-1 text-[10px] text-muted-foreground/70", className)}>
+    <span className={cn("inline-flex items-center gap-1 text-xs text-muted-foreground/70", className)}>
       <span className="inline-block w-2 h-2 rounded-full bg-[hsl(var(--civic-green))]" />
       <span className="font-mono uppercase tracking-wider">Primary Record — No perspective applied</span>
     </span>

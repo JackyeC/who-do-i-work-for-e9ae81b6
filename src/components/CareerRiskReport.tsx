@@ -150,7 +150,7 @@ function RiskReportCanvas({
         {/* Header */}
         <div className="flex items-center gap-2 mb-1">
           <AlertTriangle className="w-4 h-4 text-primary" />
-          <span className="font-mono text-[9px] tracking-[0.3em] uppercase text-primary font-semibold">
+          <span className="font-mono text-xs tracking-[0.3em] uppercase text-primary font-semibold">
             Career Risk Report
           </span>
         </div>
@@ -185,7 +185,7 @@ function RiskReportCanvas({
                 / 100
               </text>
             </svg>
-            <div className={cn("mt-1 font-mono text-[10px] tracking-wider uppercase font-semibold", overall.color)}>
+            <div className={cn("mt-1 font-mono text-xs tracking-wider uppercase font-semibold", overall.color)}>
               {overall.label}
             </div>
           </div>
@@ -200,11 +200,11 @@ function RiskReportCanvas({
                   <div className="flex items-center justify-between mb-1">
                     <div className="flex items-center gap-1.5">
                       <Icon className="w-3 h-3 text-muted-foreground" />
-                      <span className="font-mono text-[9px] tracking-wider uppercase text-muted-foreground">
+                      <span className="font-mono text-xs tracking-wider uppercase text-muted-foreground">
                         {d.label}
                       </span>
                     </div>
-                    <span className={cn("font-mono text-[9px] tracking-wider uppercase font-semibold px-1.5 py-0.5 rounded", colors.text, colors.bgLight)}>
+                    <span className={cn("font-mono text-xs tracking-wider uppercase font-semibold px-1.5 py-0.5 rounded", colors.text, colors.bgLight)}>
                       {d.level}
                     </span>
                   </div>
@@ -222,10 +222,10 @@ function RiskReportCanvas({
 
         {/* Footer */}
         <div className="mt-6 pt-4 border-t border-border/50 flex items-center justify-between">
-          <span className="font-mono text-[8px] tracking-[0.2em] uppercase text-muted-foreground">
+          <span className="font-mono text-xs tracking-[0.2em] uppercase text-muted-foreground">
             whodoimworkfor.com
           </span>
-          <span className="font-mono text-[8px] tracking-[0.2em] uppercase text-muted-foreground">
+          <span className="font-mono text-xs tracking-[0.2em] uppercase text-muted-foreground">
             Employer Intelligence by Jackye Clayton
           </span>
         </div>
@@ -246,7 +246,7 @@ function RiskDimensionRow({ dimension, icon: Icon }: { dimension: RiskDimension;
       <div className="flex-1 min-w-0">
         <div className="flex items-center justify-between mb-0.5">
           <span className="text-xs font-medium text-foreground">{dimension.label}</span>
-          <span className={cn("text-[10px] font-semibold font-mono tracking-wider uppercase", colors.text)}>
+          <span className={cn("text-xs font-semibold font-mono tracking-wider uppercase", colors.text)}>
             {dimension.level}
           </span>
         </div>
@@ -340,7 +340,7 @@ export function CareerRiskReport(props: CareerRiskReportProps) {
             </div>
             <div>
               <h3 className="text-base font-bold text-foreground tracking-tight">Career Risk Report</h3>
-              <p className="text-[10px] font-mono tracking-wider uppercase text-muted-foreground">Before you say yes</p>
+              <p className="text-xs font-mono tracking-wider uppercase text-muted-foreground">Before you say yes</p>
             </div>
           </div>
 
@@ -353,8 +353,8 @@ export function CareerRiskReport(props: CareerRiskReportProps) {
           )}>
             <span className="text-xl font-bold text-foreground font-data">{overallScore}</span>
             <div className="text-left">
-              <div className="text-[9px] text-muted-foreground font-mono">/100</div>
-              <div className={cn("text-[9px] font-semibold font-mono tracking-wider uppercase", overall.color)}>
+              <div className="text-xs text-muted-foreground font-mono">/100</div>
+              <div className={cn("text-xs font-semibold font-mono tracking-wider uppercase", overall.color)}>
                 {overall.label}
               </div>
             </div>
@@ -410,7 +410,7 @@ export function CareerRiskReport(props: CareerRiskReportProps) {
             Copy Link
           </Button>
 
-          <span className="ml-auto text-[9px] font-mono tracking-wider text-muted-foreground uppercase">
+          <span className="ml-auto text-xs font-mono tracking-wider text-muted-foreground uppercase">
             Screenshot & share
           </span>
         </div>

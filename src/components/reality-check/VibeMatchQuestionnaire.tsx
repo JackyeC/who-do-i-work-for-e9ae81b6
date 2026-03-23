@@ -44,7 +44,7 @@ function SentimentSlider({
 
   return (
     <div className="space-y-2">
-      <div className="flex justify-between text-[10px] font-mono text-muted-foreground tracking-wider uppercase">
+      <div className="flex justify-between text-xs font-mono text-muted-foreground tracking-wider uppercase">
         <span>{leftLabel}</span>
         <span>{rightLabel}</span>
       </div>
@@ -78,7 +78,7 @@ function SectionHeader({ icon: Icon, title, number }: { icon: typeof Shield; tit
   return (
     <div className="flex items-center gap-2 mb-4 pb-2 border-b border-civic-green/20">
       <div className="flex items-center gap-1.5 px-2 py-0.5 bg-civic-green/10 border border-civic-green/20">
-        <span className="font-mono text-[9px] text-civic-green font-bold">{number.toString().padStart(2, "0")}</span>
+        <span className="font-mono text-xs text-civic-green font-bold">{number.toString().padStart(2, "0")}</span>
       </div>
       <Icon className="w-4 h-4 text-civic-green" />
       <h3 className="font-mono text-xs font-bold tracking-wider uppercase text-civic-green">{title}</h3>
@@ -106,7 +106,7 @@ function QuestionCard({
       <CardContent className="p-4 space-y-3">
         <p className="text-sm font-medium text-foreground leading-snug">{question}</p>
         {description && (
-          <p className="text-[11px] text-muted-foreground">{description}</p>
+          <p className="text-xs text-muted-foreground">{description}</p>
         )}
         <div className="space-y-1.5">
           {options.map((opt) => (
@@ -222,7 +222,7 @@ export function VibeMatchQuestionnaire({ onSubmit, isSubmitting }: Props) {
                     >
                       <div>
                         <span className="text-sm font-medium text-foreground">{c.name}</span>
-                        <span className="text-[11px] text-muted-foreground ml-2">{c.industry}</span>
+                        <span className="text-xs text-muted-foreground ml-2">{c.industry}</span>
                       </div>
                       <ChevronRight className="w-3.5 h-3.5 text-muted-foreground" />
                     </button>
@@ -241,11 +241,11 @@ export function VibeMatchQuestionnaire({ onSubmit, isSubmitting }: Props) {
 
           <div className="grid grid-cols-2 gap-3">
             <div>
-              <Label className="text-[11px] text-muted-foreground font-mono">Job Title (optional)</Label>
+              <Label className="text-xs text-muted-foreground font-mono">Job Title (optional)</Label>
               <Input value={jobTitle} onChange={(e) => setJobTitle(e.target.value)} placeholder="e.g., Senior Engineer" className="mt-1 text-sm" />
             </div>
             <div>
-              <Label className="text-[11px] text-muted-foreground font-mono">Interview Date (optional)</Label>
+              <Label className="text-xs text-muted-foreground font-mono">Interview Date (optional)</Label>
               <Input type="date" value={interviewDate} onChange={(e) => setInterviewDate(e.target.value)} className="mt-1 text-sm" />
             </div>
           </div>
@@ -344,7 +344,7 @@ export function VibeMatchQuestionnaire({ onSubmit, isSubmitting }: Props) {
               className="min-h-[100px] font-mono text-sm"
               maxLength={2000}
             />
-            <p className="text-[10px] text-muted-foreground text-right mt-1">{additionalNotes.length}/2000</p>
+            <p className="text-xs text-muted-foreground text-right mt-1">{additionalNotes.length}/2000</p>
           </div>
 
           {/* Submit */}

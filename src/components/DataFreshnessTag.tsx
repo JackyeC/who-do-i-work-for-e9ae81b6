@@ -34,7 +34,7 @@ export function DataFreshnessTag({
   return (
     <div
       className={cn(
-        "inline-flex items-center gap-1.5 text-[10px] font-mono",
+        "inline-flex items-center gap-1.5 text-xs font-mono",
         stale ? "text-muted-foreground/60" : "text-muted-foreground",
         className,
       )}

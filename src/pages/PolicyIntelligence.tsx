@@ -164,7 +164,7 @@ export default function PolicyIntelligence() {
                     <Building2 className="w-4 h-4 text-muted-foreground shrink-0" />
                     <div>
                       <p className="text-sm font-medium text-foreground">{c.name}</p>
-                      <p className="text-[11px] text-muted-foreground">{c.industry}</p>
+                      <p className="text-xs text-muted-foreground">{c.industry}</p>
                     </div>
                   </button>
                 ))}

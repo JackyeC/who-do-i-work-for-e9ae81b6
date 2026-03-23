@@ -29,7 +29,7 @@ export function OpenSecretsEnrichmentCard({ data }: OpenSecretsEnrichmentCardPro
             OpenSecrets Profile Summary
           </CardTitle>
           <div className="flex items-center gap-2">
-            <Badge variant="outline" className="text-[10px]">
+            <Badge variant="outline" className="text-xs">
               <VerIcon className={`w-3 h-3 mr-1 ${verStatus.color}`} />
               {verStatus.label}
             </Badge>
@@ -78,13 +78,13 @@ export function OpenSecretsEnrichmentCard({ data }: OpenSecretsEnrichmentCardPro
         {data.issue_tags && data.issue_tags.length > 0 && (
           <div className="flex flex-wrap gap-1.5">
             {data.issue_tags.map((tag: string) => (
-              <Badge key={tag} variant="outline" className="text-[10px] capitalize">{tag}</Badge>
+              <Badge key={tag} variant="outline" className="text-xs capitalize">{tag}</Badge>
             ))}
           </div>
         )}
 
         <div className="flex items-center justify-between pt-2 border-t border-border">
-          <p className="text-[11px] text-muted-foreground">
+          <p className="text-xs text-muted-foreground">
             {data.source_note || "Data from OpenSecrets.org public organization profiles."}
           </p>
           {data.profile_url && (
@@ -101,11 +101,11 @@ export function OpenSecretsEnrichmentCard({ data }: OpenSecretsEnrichmentCardPro
 
         {data.cross_check_results && Object.keys(data.cross_check_results).length > 0 && (
           <div className="space-y-1">
-            <p className="text-[11px] font-medium text-foreground">Cross-check results:</p>
+            <p className="text-xs font-medium text-foreground">Cross-check results:</p>
             {Object.entries(data.cross_check_results).map(([source, result]: [string, any]) => (
-              <div key={source} className="flex items-center justify-between text-[11px]">
+              <div key={source} className="flex items-center justify-between text-xs">
                 <span className="text-muted-foreground capitalize">{source}</span>
-                <Badge variant={result.status === 'consistent' ? 'success' : 'warning'} className="text-[10px]">
+                <Badge variant={result.status === 'consistent' ? 'success' : 'warning'} className="text-xs">
                   {result.status === 'consistent' ? 'Consistent' : 'Divergent'}
                 </Badge>
               </div>

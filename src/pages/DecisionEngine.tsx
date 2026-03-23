@@ -81,14 +81,14 @@ export default function DecisionEngine() {
             <div className="font-['Syne',sans-serif] font-extrabold text-[22px] tracking-tight">
               Truth<span className="text-[#e8ff47]">Stack</span>
             </div>
-            <div className="font-mono text-[10px] text-[#6b6b8a] tracking-[2px] uppercase mt-1">
+            <div className="font-mono text-xs text-[#6b6b8a] tracking-[2px] uppercase mt-1">
               Truth-over-Vibes · Decision Support Engine
             </div>
           </div>
           <div className="flex gap-2">
             <button
               className={cn(
-                "font-mono text-[10px] px-3 py-1.5 rounded-full border tracking-wider transition-all",
+                "font-mono text-xs px-3 py-1.5 rounded-full border tracking-wider transition-all",
                 !isPremium
                   ? "bg-[#e8ff47] text-black border-[#e8ff47] font-bold"
                   : "border-[#2a2a3a] text-[#9898b0] hover:border-[#e8ff47] hover:text-[#e8ff47]"
@@ -99,7 +99,7 @@ export default function DecisionEngine() {
             <button
               onClick={() => { if (!isLoggedIn) navigate("/login"); else if (!isPremium) navigate("/pricing"); }}
               className={cn(
-                "font-mono text-[10px] px-3 py-1.5 rounded-full border tracking-wider transition-all",
+                "font-mono text-xs px-3 py-1.5 rounded-full border tracking-wider transition-all",
                 isPremium
                   ? "bg-[#e8ff47] text-black border-[#e8ff47] font-bold"
                   : "border-[#2a2a3a] text-[#9898b0] hover:border-[#e8ff47] hover:text-[#e8ff47]"
@@ -123,7 +123,7 @@ export default function DecisionEngine() {
                   key={c}
                   onClick={() => setActiveCategory(key)}
                   className={cn(
-                    "font-mono text-[11px] px-4 py-2 rounded-lg border tracking-wider transition-all",
+                    "font-mono text-xs px-4 py-2 rounded-lg border tracking-wider transition-all",
                     key === activeCategory
                       ? "bg-[#111118] border-[#e8ff47] text-[#e8ff47]"
                       : "border-[#2a2a3a] text-[#9898b0] hover:border-[#9898b0] hover:text-[#e8e8f0]"

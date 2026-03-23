@@ -113,7 +113,7 @@ const Demo = () => {
       {/* Header */}
       <div className="border-b border-border bg-card">
         <div className="max-w-6xl mx-auto px-4 py-8 text-center">
-          <Badge variant="outline" className="mb-4 font-mono text-[10px] tracking-widest uppercase border-primary/40 text-primary">
+          <Badge variant="outline" className="mb-4 font-mono text-xs tracking-widest uppercase border-primary/40 text-primary">
             Interactive Demo — No Signup Required
           </Badge>
           <h1 className="font-serif text-3xl md:text-4xl font-bold text-foreground mb-3">
@@ -130,19 +130,19 @@ const Demo = () => {
       <div className="max-w-6xl mx-auto px-4 py-8">
         <Tabs value={activeTab} onValueChange={setActiveTab}>
           <TabsList className="grid grid-cols-4 max-w-xl mx-auto mb-8">
-            <TabsTrigger value="report" className="font-mono text-[10px] uppercase tracking-wider">
+            <TabsTrigger value="report" className="font-mono text-xs uppercase tracking-wider">
               <Building2 className="w-3.5 h-3.5 mr-1.5" />
               Report
             </TabsTrigger>
-            <TabsTrigger value="signals" className="font-mono text-[10px] uppercase tracking-wider">
+            <TabsTrigger value="signals" className="font-mono text-xs uppercase tracking-wider">
               <Zap className="w-3.5 h-3.5 mr-1.5" />
               Signals
             </TabsTrigger>
-            <TabsTrigger value="offer" className="font-mono text-[10px] uppercase tracking-wider">
+            <TabsTrigger value="offer" className="font-mono text-xs uppercase tracking-wider">
               <FileText className="w-3.5 h-3.5 mr-1.5" />
               Offer Check
             </TabsTrigger>
-            <TabsTrigger value="jackye" className="font-mono text-[10px] uppercase tracking-wider">
+            <TabsTrigger value="jackye" className="font-mono text-xs uppercase tracking-wider">
               <MessageSquare className="w-3.5 h-3.5 mr-1.5" />
               Ask Jackye
             </TabsTrigger>
@@ -157,8 +157,8 @@ const Demo = () => {
                   <div>
                     <div className="flex items-center gap-3 mb-2">
                       <h2 className="font-serif text-2xl font-bold text-foreground">{DEMO_COMPANY.name}</h2>
-                      <Badge variant="outline" className="font-mono text-[9px]">{DEMO_COMPANY.industry}</Badge>
-                      <Badge variant="outline" className="font-mono text-[9px]">{DEMO_COMPANY.state}</Badge>
+                      <Badge variant="outline" className="font-mono text-xs">{DEMO_COMPANY.industry}</Badge>
+                      <Badge variant="outline" className="font-mono text-xs">{DEMO_COMPANY.state}</Badge>
                     </div>
                     <p className="text-sm text-muted-foreground flex items-center gap-1.5">
                       <Building2 className="w-3.5 h-3.5" />
@@ -169,7 +169,7 @@ const Demo = () => {
                     <div className={`text-3xl font-bold font-data ${scoreColor(DEMO_COMPANY.civicScore)}`}>
                       {DEMO_COMPANY.civicScore}
                     </div>
-                    <div className="font-mono text-[9px] uppercase text-muted-foreground tracking-wider">
+                    <div className="font-mono text-xs uppercase text-muted-foreground tracking-wider">
                       Civic Score — Grade {scoreGrade(DEMO_COMPANY.civicScore)}
                     </div>
                   </div>
@@ -189,7 +189,7 @@ const Demo = () => {
                   <CardContent className="py-4 text-center">
                     <s.icon className="w-4 h-4 mx-auto text-primary mb-1" />
                     <div className="font-data text-lg font-bold text-foreground">{s.value}</div>
-                    <div className="font-mono text-[9px] uppercase text-muted-foreground tracking-wider">{s.label}</div>
+                    <div className="font-mono text-xs uppercase text-muted-foreground tracking-wider">{s.label}</div>
                   </CardContent>
                 </Card>
               ))}
@@ -209,7 +209,7 @@ const Demo = () => {
                     <div key={e.name} className="flex items-center justify-between py-2 border-b border-border last:border-0">
                       <div>
                         <div className="text-sm font-medium text-foreground">{e.name}</div>
-                        <div className="font-mono text-[10px] text-muted-foreground">{e.title}</div>
+                        <div className="font-mono text-xs text-muted-foreground">{e.title}</div>
                       </div>
                       <div className="font-data text-sm font-semibold text-foreground">
                         ${e.donations.toLocaleString()}
@@ -233,7 +233,7 @@ const Demo = () => {
                   {DEMO_CANDIDATES.map(c => (
                     <div key={c.name} className="flex items-center justify-between p-3 border border-border rounded-md">
                       <div className="flex items-center gap-2">
-                        <Badge variant="outline" className={`text-[9px] ${partyColor[c.party]}`}>{c.party}</Badge>
+                        <Badge variant="outline" className={`text-xs ${partyColor[c.party]}`}>{c.party}</Badge>
                         <span className="text-sm text-foreground">{c.name}</span>
                       </div>
                       <span className="font-data text-sm font-semibold">${c.amount.toLocaleString()}</span>
@@ -257,7 +257,7 @@ const Demo = () => {
                     <div key={l.issue} className="flex items-center justify-between py-2 border-b border-border last:border-0">
                       <div>
                         <div className="text-sm text-foreground">{l.issue}</div>
-                        <div className="font-mono text-[10px] text-muted-foreground">{l.year}</div>
+                        <div className="font-mono text-xs text-muted-foreground">{l.year}</div>
                       </div>
                       <div className="font-data text-sm font-semibold">${(l.amount / 1e6).toFixed(2)}M</div>
                     </div>
@@ -285,7 +285,7 @@ const Demo = () => {
                       {s.type === "positive" && <CheckCircle2 className="w-4 h-4 text-green-500 shrink-0 mt-0.5" />}
                       <div>
                         <div className="text-sm text-foreground">{s.text}</div>
-                        <div className="font-mono text-[9px] uppercase text-muted-foreground mt-1">
+                        <div className="font-mono text-xs uppercase text-muted-foreground mt-1">
                           Severity: {s.severity}
                         </div>
                       </div>
@@ -309,15 +309,15 @@ const Demo = () => {
                 <div className="grid grid-cols-3 gap-4 text-center">
                   <div className="p-3 border border-border rounded-lg">
                     <div className="font-data text-xl font-bold text-foreground">{DEMO_OFFER.salary}</div>
-                    <div className="font-mono text-[9px] uppercase text-muted-foreground">Your Offer</div>
+                    <div className="font-mono text-xs uppercase text-muted-foreground">Your Offer</div>
                   </div>
                   <div className="p-3 border border-border rounded-lg">
                     <div className="font-data text-xl font-bold text-yellow-500">{DEMO_OFFER.benchmarkMedian}</div>
-                    <div className="font-mono text-[9px] uppercase text-muted-foreground">Market Median</div>
+                    <div className="font-mono text-xs uppercase text-muted-foreground">Market Median</div>
                   </div>
                   <div className="p-3 border border-border rounded-lg">
                     <div className="font-data text-xl font-bold text-green-500">{DEMO_OFFER.benchmarkP75}</div>
-                    <div className="font-mono text-[9px] uppercase text-muted-foreground">75th Percentile</div>
+                    <div className="font-mono text-xs uppercase text-muted-foreground">75th Percentile</div>
                   </div>
                 </div>
 
@@ -351,12 +351,12 @@ const Demo = () => {
               <CardContent className="space-y-4">
                 {/* Simulated conversation */}
                 <div className="bg-muted/50 rounded-lg p-4 border border-border">
-                  <div className="font-mono text-[10px] text-muted-foreground uppercase tracking-wider mb-2">You</div>
+                  <div className="font-mono text-xs text-muted-foreground uppercase tracking-wider mb-2">You</div>
                   <p className="text-sm text-foreground">Should I accept this offer from Acme Corp? They're offering $145K for a Senior PM role.</p>
                 </div>
 
                 <div className="bg-primary/5 rounded-lg p-4 border border-primary/20">
-                  <div className="font-mono text-[10px] text-primary uppercase tracking-wider mb-2">Jackye</div>
+                  <div className="font-mono text-xs text-primary uppercase tracking-wider mb-2">Jackye</div>
                   <p className="text-sm text-foreground leading-relaxed">
                     Here's what I'd tell you if we were sitting across the table: <strong>that number is low.</strong> Market median for your role in your metro is $152K, and strong candidates are pulling $168K at the 75th percentile.
                   </p>
@@ -369,12 +369,12 @@ const Demo = () => {
                 </div>
 
                 <div className="bg-muted/50 rounded-lg p-4 border border-border">
-                  <div className="font-mono text-[10px] text-muted-foreground uppercase tracking-wider mb-2">You</div>
+                  <div className="font-mono text-xs text-muted-foreground uppercase tracking-wider mb-2">You</div>
                   <p className="text-sm text-foreground">What about the company's political activity? Should I be concerned?</p>
                 </div>
 
                 <div className="bg-primary/5 rounded-lg p-4 border border-primary/20">
-                  <div className="font-mono text-[10px] text-primary uppercase tracking-wider mb-2">Jackye</div>
+                  <div className="font-mono text-xs text-primary uppercase tracking-wider mb-2">Jackye</div>
                   <p className="text-sm text-foreground leading-relaxed">
                     Depends on what matters to you. Their CEO personally donated $15K to an anti-labor PAC last quarter. Their parent company, Globex Holdings, lobbied against the minimum wage increase. That's worth knowing before you put on their badge every morning.
                   </p>
@@ -384,7 +384,7 @@ const Demo = () => {
                 </div>
 
                 <div className="text-center pt-2">
-                  <p className="font-mono text-[10px] text-muted-foreground uppercase tracking-wider">
+                  <p className="font-mono text-xs text-muted-foreground uppercase tracking-wider">
                     This is a simulated conversation showing how Ask Jackye works
                   </p>
                 </div>

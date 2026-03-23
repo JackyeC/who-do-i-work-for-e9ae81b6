@@ -85,12 +85,12 @@ function PricingCard({ service }: { service: typeof BOOKABLE_SERVICES[0] }) {
           <h3 className="font-serif text-lg text-foreground">{service.title}</h3>
           <div className="flex items-center gap-2 mt-1">
             <Clock className="w-3 h-3 text-muted-foreground" />
-            <span className="font-mono text-[9px] tracking-wider uppercase text-muted-foreground">{service.format}</span>
+            <span className="font-mono text-xs tracking-wider uppercase text-muted-foreground">{service.format}</span>
           </div>
         </div>
       </div>
       <p className="text-[13px] text-muted-foreground leading-relaxed mb-4 flex-1">{service.desc}</p>
-      <div className="font-mono text-[9px] tracking-wider uppercase text-muted-foreground mb-5">
+      <div className="font-mono text-xs tracking-wider uppercase text-muted-foreground mb-5">
         For: {service.for}
       </div>
       <div className="flex items-end justify-between gap-4">
@@ -101,7 +101,7 @@ function PricingCard({ service }: { service: typeof BOOKABLE_SERVICES[0] }) {
         <button
           onClick={handleCheckout}
           disabled={loading}
-          className="bg-primary text-primary-foreground px-6 py-2.5 font-mono text-[11px] font-semibold tracking-wider uppercase hover:brightness-110 transition-all inline-flex items-center gap-2 disabled:opacity-50"
+          className="bg-primary text-primary-foreground px-6 py-2.5 font-mono text-xs font-semibold tracking-wider uppercase hover:brightness-110 transition-all inline-flex items-center gap-2 disabled:opacity-50"
         >
           {loading ? <Loader2 className="w-3 h-3 animate-spin" /> : null}
           {loading ? "Loading…" : "Book Now"}
@@ -139,7 +139,7 @@ export default function WorkWithJackye() {
     <div className="flex flex-col min-h-screen bg-background">
       {/* Hero */}
       <section className="px-6 lg:px-16 py-20 lg:py-28 max-w-[900px] mx-auto">
-        <div className="font-mono text-[9px] tracking-[0.25em] uppercase text-primary mb-4">Advisory Services</div>
+        <div className="font-mono text-xs tracking-[0.25em] uppercase text-primary mb-4">Advisory Services</div>
         <h1 className="text-3xl lg:text-[clamp(2.2rem,4.5vw,3.2rem)] leading-tight mb-6 text-foreground">
           Work With Jackye
         </h1>
@@ -150,14 +150,14 @@ export default function WorkWithJackye() {
           <img src={jackyeHeadshot} alt="Jackye Clayton" className="w-16 h-16 object-cover shrink-0" />
           <div>
             <div className="font-serif text-base text-primary">Jackye Clayton</div>
-            <div className="text-[11px] text-muted-foreground">15+ years in HR · Recruiting · Talent Strategy · HR Tech</div>
+            <div className="text-xs text-muted-foreground">15+ years in HR · Recruiting · Talent Strategy · HR Tech</div>
           </div>
         </div>
       </section>
 
       {/* Bookable Services — Pricing Cards */}
       <section className="px-6 lg:px-16 pb-16 max-w-[900px] mx-auto w-full">
-        <div className="font-mono text-[9px] tracking-[0.25em] uppercase text-primary mb-6">Book a Session</div>
+        <div className="font-mono text-xs tracking-[0.25em] uppercase text-primary mb-6">Book a Session</div>
         <div className="grid sm:grid-cols-2 gap-px bg-border border border-border">
           {BOOKABLE_SERVICES.map(s => (
             <PricingCard key={s.title} service={s} />
@@ -167,16 +167,16 @@ export default function WorkWithJackye() {
 
       {/* Custom Services */}
       <section className="px-6 lg:px-16 pb-16 max-w-[900px] mx-auto w-full">
-        <div className="font-mono text-[9px] tracking-[0.25em] uppercase text-primary mb-6">Custom Engagements</div>
+        <div className="font-mono text-xs tracking-[0.25em] uppercase text-primary mb-6">Custom Engagements</div>
         <div className="flex flex-col gap-px bg-border border border-border">
           {CUSTOM_SERVICES.map(s => (
             <div key={s.title} className="bg-card p-6 lg:p-8">
               <div className="flex justify-between items-start gap-4 mb-3">
                 <h3 className="font-serif text-lg text-foreground">{s.title}</h3>
-                <div className="font-mono text-[9px] tracking-wider uppercase text-primary shrink-0">{s.format}</div>
+                <div className="font-mono text-xs tracking-wider uppercase text-primary shrink-0">{s.format}</div>
               </div>
               <p className="text-[13px] text-muted-foreground leading-relaxed mb-3">{s.desc}</p>
-              <div className="font-mono text-[9px] tracking-wider uppercase text-muted-foreground">
+              <div className="font-mono text-xs tracking-wider uppercase text-muted-foreground">
                 For: {s.for}
               </div>
             </div>
@@ -224,7 +224,7 @@ export default function WorkWithJackye() {
             >
               <div className="grid sm:grid-cols-2 gap-4">
                 <div>
-                  <label className="font-mono text-[9px] tracking-wider uppercase text-muted-foreground mb-1.5 block">Name</label>
+                  <label className="font-mono text-xs tracking-wider uppercase text-muted-foreground mb-1.5 block">Name</label>
                   <input
                     required
                     maxLength={100}
@@ -235,7 +235,7 @@ export default function WorkWithJackye() {
                   />
                 </div>
                 <div>
-                  <label className="font-mono text-[9px] tracking-wider uppercase text-muted-foreground mb-1.5 block">Email</label>
+                  <label className="font-mono text-xs tracking-wider uppercase text-muted-foreground mb-1.5 block">Email</label>
                   <input
                     required
                     type="email"
@@ -248,7 +248,7 @@ export default function WorkWithJackye() {
                 </div>
               </div>
               <div>
-                <label className="font-mono text-[9px] tracking-wider uppercase text-muted-foreground mb-1.5 block">Service</label>
+                <label className="font-mono text-xs tracking-wider uppercase text-muted-foreground mb-1.5 block">Service</label>
                 <select
                   value={formState.service}
                   onChange={e => setFormState(s => ({ ...s, service: e.target.value }))}
@@ -261,7 +261,7 @@ export default function WorkWithJackye() {
                 </select>
               </div>
               <div>
-                <label className="font-mono text-[9px] tracking-wider uppercase text-muted-foreground mb-1.5 block">Message (optional)</label>
+                <label className="font-mono text-xs tracking-wider uppercase text-muted-foreground mb-1.5 block">Message (optional)</label>
                 <textarea
                   maxLength={1000}
                   rows={3}
@@ -274,7 +274,7 @@ export default function WorkWithJackye() {
               <button
                 type="submit"
                 disabled={submitting}
-                className="bg-primary text-primary-foreground px-7 py-3 font-mono text-[11px] font-semibold tracking-wider uppercase hover:brightness-110 transition-all inline-flex items-center gap-2 disabled:opacity-50"
+                className="bg-primary text-primary-foreground px-7 py-3 font-mono text-xs font-semibold tracking-wider uppercase hover:brightness-110 transition-all inline-flex items-center gap-2 disabled:opacity-50"
               >
                 {submitting ? <Loader2 className="w-3 h-3 animate-spin" /> : null}
                 {submitting ? "Submitting…" : "Submit Inquiry"}
@@ -294,19 +294,19 @@ export default function WorkWithJackye() {
         <div className="flex gap-3 justify-center flex-wrap">
           <button
             onClick={() => window.open('https://calendly.com/jackyeclayton', '_blank')}
-            className="border border-border text-muted-foreground px-7 py-3 font-mono text-[11px] tracking-wider uppercase hover:border-primary hover:text-primary transition-all inline-flex items-center gap-2"
+            className="border border-border text-muted-foreground px-7 py-3 font-mono text-xs tracking-wider uppercase hover:border-primary hover:text-primary transition-all inline-flex items-center gap-2"
           >
             Book on Calendly <ArrowRight className="w-3 h-3" />
           </button>
           <a
             href="mailto:jackye@jackyeclayton.com?subject=Advisory Request"
-            className="border border-border text-muted-foreground px-7 py-3 font-mono text-[11px] tracking-wider uppercase hover:border-primary hover:text-primary transition-all inline-flex items-center gap-2"
+            className="border border-border text-muted-foreground px-7 py-3 font-mono text-xs tracking-wider uppercase hover:border-primary hover:text-primary transition-all inline-flex items-center gap-2"
           >
             Email Jackye
           </a>
           <button
             onClick={() => navigate("/ask-jackye")}
-            className="border border-border text-muted-foreground px-7 py-3 font-mono text-[11px] tracking-wider uppercase hover:border-primary hover:text-primary transition-all"
+            className="border border-border text-muted-foreground px-7 py-3 font-mono text-xs tracking-wider uppercase hover:border-primary hover:text-primary transition-all"
           >
             Try Ask Jackye AI
           </button>

@@ -131,7 +131,7 @@ export function OfferReviewResults({ review, onDelete, onRerun, deleting }: Offe
                 <div className="flex items-start gap-2">
                   <Users className="w-3.5 h-3.5 text-muted-foreground mt-0.5 shrink-0" />
                   <div>
-                    <p className="text-[10px] text-muted-foreground">Role</p>
+                    <p className="text-xs text-muted-foreground">Role</p>
                     <p className="text-sm text-foreground">{snapshot.role_title}</p>
                   </div>
                 </div>
@@ -140,7 +140,7 @@ export function OfferReviewResults({ review, onDelete, onRerun, deleting }: Offe
                 <div className="flex items-start gap-2">
                   <DollarSign className="w-3.5 h-3.5 text-muted-foreground mt-0.5 shrink-0" />
                   <div>
-                    <p className="text-[10px] text-muted-foreground">Compensation</p>
+                    <p className="text-xs text-muted-foreground">Compensation</p>
                     <p className="text-sm text-foreground">{snapshot.base_salary}</p>
                   </div>
                 </div>
@@ -149,7 +149,7 @@ export function OfferReviewResults({ review, onDelete, onRerun, deleting }: Offe
                 <div className="flex items-start gap-2">
                   <MapPin className="w-3.5 h-3.5 text-muted-foreground mt-0.5 shrink-0" />
                   <div>
-                    <p className="text-[10px] text-muted-foreground">Location</p>
+                    <p className="text-xs text-muted-foreground">Location</p>
                     <p className="text-sm text-foreground">{snapshot.work_location}</p>
                   </div>
                 </div>
@@ -158,7 +158,7 @@ export function OfferReviewResults({ review, onDelete, onRerun, deleting }: Offe
                 <div className="flex items-start gap-2">
                   <Building2 className="w-3.5 h-3.5 text-muted-foreground mt-0.5 shrink-0" />
                   <div>
-                    <p className="text-[10px] text-muted-foreground">Arrangement</p>
+                    <p className="text-xs text-muted-foreground">Arrangement</p>
                     <p className="text-sm text-foreground">{snapshot.work_arrangement}</p>
                   </div>
                 </div>
@@ -167,7 +167,7 @@ export function OfferReviewResults({ review, onDelete, onRerun, deleting }: Offe
                 <div className="flex items-start gap-2">
                   <Calendar className="w-3.5 h-3.5 text-muted-foreground mt-0.5 shrink-0" />
                   <div>
-                    <p className="text-[10px] text-muted-foreground">Start Date</p>
+                    <p className="text-xs text-muted-foreground">Start Date</p>
                     <p className="text-sm text-foreground">{snapshot.start_date}</p>
                   </div>
                 </div>
@@ -176,7 +176,7 @@ export function OfferReviewResults({ review, onDelete, onRerun, deleting }: Offe
                 <div className="flex items-start gap-2">
                   <Users className="w-3.5 h-3.5 text-muted-foreground mt-0.5 shrink-0" />
                   <div>
-                    <p className="text-[10px] text-muted-foreground">Department</p>
+                    <p className="text-xs text-muted-foreground">Department</p>
                     <p className="text-sm text-foreground">{snapshot.department}</p>
                   </div>
                 </div>
@@ -196,7 +196,7 @@ export function OfferReviewResults({ review, onDelete, onRerun, deleting }: Offe
             <CardTitle className="text-base flex items-center gap-2">
               <Heart className="w-4.5 h-4.5 text-primary" />
               {categoryLabels[cat] || cat}
-              <Badge variant="secondary" className="text-[10px] ml-auto">{catTerms.length} term{catTerms.length !== 1 ? "s" : ""}</Badge>
+              <Badge variant="secondary" className="text-xs ml-auto">{catTerms.length} term{catTerms.length !== 1 ? "s" : ""}</Badge>
             </CardTitle>
           </CardHeader>
           <CardContent>
@@ -204,7 +204,7 @@ export function OfferReviewResults({ review, onDelete, onRerun, deleting }: Offe
               <div key={i} className="py-2.5 border-b border-border last:border-0">
                 <div className="flex items-start justify-between gap-2 mb-1">
                   <span className="text-sm font-medium text-foreground">{term.term_name}</span>
-                  <Badge variant="outline" className={`text-[10px] shrink-0 ${CONFIDENCE_COLORS[term.confidence] || CONFIDENCE_COLORS.low}`}>
+                  <Badge variant="outline" className={`text-xs shrink-0 ${CONFIDENCE_COLORS[term.confidence] || CONFIDENCE_COLORS.low}`}>
                     {term.confidence}
                   </Badge>
                 </div>
@@ -222,7 +222,7 @@ export function OfferReviewResults({ review, onDelete, onRerun, deleting }: Offe
             <CardTitle className="text-base flex items-center gap-2">
               <Shield className="w-4.5 h-4.5 text-primary" />
               Clause Signals
-              <Badge variant="secondary" className="text-[10px] ml-auto">{clauses.length} clause{clauses.length !== 1 ? "s" : ""}</Badge>
+              <Badge variant="secondary" className="text-xs ml-auto">{clauses.length} clause{clauses.length !== 1 ? "s" : ""}</Badge>
             </CardTitle>
           </CardHeader>
           <CardContent>
@@ -235,7 +235,7 @@ export function OfferReviewResults({ review, onDelete, onRerun, deleting }: Offe
                     <div className="flex-1">
                       <div className="flex items-center justify-between gap-2">
                         <span className="text-sm font-medium text-foreground">{clause.label}</span>
-                        <Badge variant="outline" className={`text-[10px] shrink-0 ${CONFIDENCE_COLORS[clause.confidence] || CONFIDENCE_COLORS.low}`}>
+                        <Badge variant="outline" className={`text-xs shrink-0 ${CONFIDENCE_COLORS[clause.confidence] || CONFIDENCE_COLORS.low}`}>
                           Clause detected
                         </Badge>
                       </div>
@@ -251,7 +251,7 @@ export function OfferReviewResults({ review, onDelete, onRerun, deleting }: Offe
 
       {/* Actions */}
       <div className="flex items-center justify-between pt-2">
-        <p className="text-[10px] text-muted-foreground">
+        <p className="text-xs text-muted-foreground">
           Analyzed {new Date(review.created_at).toLocaleDateString()} · Private to you
         </p>
         <div className="flex gap-2">

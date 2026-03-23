@@ -72,12 +72,12 @@ export function CompanyZeroState({ companyName, onDiscovered }: CompanyZeroState
           )}
         </Button>
         <div className="mt-4 flex items-center justify-center gap-2">
-          <Badge variant="outline" className="text-[10px]">
+          <Badge variant="outline" className="text-xs">
             <AlertTriangle className="w-2.5 h-2.5 mr-1" />
             AI Draft — Jackye's Vetting Pending
           </Badge>
         </div>
-        <p className="text-[11px] text-muted-foreground mt-2">
+        <p className="text-xs text-muted-foreground mt-2">
           Results are AI-generated previews. Full vetting requires Jackye's review.
         </p>
       </CardContent>

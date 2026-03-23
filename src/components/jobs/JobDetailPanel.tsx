@@ -87,12 +87,12 @@ export function JobDetailPanel({ job, matchCount = 0, matchedCategories = [], on
               {co?.name || "Unknown Company"}
             </Link>
             {isVerified && (
-              <Badge variant="outline" className="text-[10px] gap-0.5 bg-primary/5 text-primary border-primary/20">
+              <Badge variant="outline" className="text-xs gap-0.5 bg-primary/5 text-primary border-primary/20">
                 <Shield className="w-2.5 h-2.5" /> Verified
               </Badge>
             )}
             {isCertified && (
-              <Badge variant="outline" className="text-[10px] gap-0.5 bg-amber-500/10 text-amber-600 border-amber-500/20">
+              <Badge variant="outline" className="text-xs gap-0.5 bg-amber-500/10 text-amber-600 border-amber-500/20">
                 <ShieldCheck className="w-2.5 h-2.5" /> Certified
               </Badge>
             )}
@@ -124,7 +124,7 @@ export function JobDetailPanel({ job, matchCount = 0, matchedCategories = [], on
         {/* Salary + Clarity */}
         <div className="grid grid-cols-2 gap-3">
           <div className="p-3 rounded-lg border border-border/50 bg-muted/20">
-            <p className="text-[10px] font-medium text-muted-foreground uppercase tracking-wider mb-1">Compensation</p>
+            <p className="text-xs font-medium text-muted-foreground uppercase tracking-wider mb-1">Compensation</p>
             {job.salary_range ? (
               <p className="text-sm font-semibold text-[hsl(var(--civic-green))] flex items-center gap-1">
                 <DollarSign className="w-3.5 h-3.5" /> {job.salary_range}
@@ -134,7 +134,7 @@ export function JobDetailPanel({ job, matchCount = 0, matchedCategories = [], on
             )}
           </div>
           <div className="p-3 rounded-lg border border-border/50 bg-muted/20">
-            <p className="text-[10px] font-medium text-muted-foreground uppercase tracking-wider mb-1">Clarity Score</p>
+            <p className="text-xs font-medium text-muted-foreground uppercase tracking-wider mb-1">Clarity Score</p>
             <p className={cn(
               "text-sm font-semibold",
               civicScore >= 70 ? "text-[hsl(var(--civic-green))]" :
@@ -149,7 +149,7 @@ export function JobDetailPanel({ job, matchCount = 0, matchedCategories = [], on
         {/* Values fit */}
         {matchCount > 0 && (
           <div className="p-3 rounded-lg border border-primary/15 bg-primary/[0.03]">
-            <p className="text-[10px] font-medium text-primary uppercase tracking-wider mb-1 flex items-center gap-1">
+            <p className="text-xs font-medium text-primary uppercase tracking-wider mb-1 flex items-center gap-1">
               <Sparkles className="w-3 h-3" /> Values Alignment
             </p>
             <p className="text-xs text-foreground">
@@ -158,7 +158,7 @@ export function JobDetailPanel({ job, matchCount = 0, matchedCategories = [], on
             {matchedCategories.length > 0 && (
               <div className="flex flex-wrap gap-1 mt-1.5">
                 {matchedCategories.map((c) => (
-                  <Badge key={c} variant="outline" className="text-[10px] py-0 bg-primary/5 border-primary/15 text-primary">
+                  <Badge key={c} variant="outline" className="text-xs py-0 bg-primary/5 border-primary/15 text-primary">
                     {c.replace(/_/g, " ")}
                   </Badge>
                 ))}
@@ -170,7 +170,7 @@ export function JobDetailPanel({ job, matchCount = 0, matchedCategories = [], on
         {/* Strategic Context */}
         {co?.jackye_insight && (
           <div className="p-3 rounded-lg border border-border/50 bg-muted/20">
-            <p className="text-[10px] font-medium text-foreground uppercase tracking-wider mb-1 flex items-center gap-1">
+            <p className="text-xs font-medium text-foreground uppercase tracking-wider mb-1 flex items-center gap-1">
               <Eye className="w-3 h-3 text-muted-foreground" /> Strategic Context
             </p>
             <p className="text-xs text-muted-foreground leading-relaxed">{co.jackye_insight}</p>
@@ -180,7 +180,7 @@ export function JobDetailPanel({ job, matchCount = 0, matchedCategories = [], on
         {/* Connection Chain */}
         {research?.connection_chain && (
           <div className="p-3 rounded-lg border border-border/50 bg-muted/20">
-            <p className="text-[10px] font-medium text-foreground uppercase tracking-wider mb-1 flex items-center gap-1">
+            <p className="text-xs font-medium text-foreground uppercase tracking-wider mb-1 flex items-center gap-1">
               <Network className="w-3 h-3 text-muted-foreground" /> Connection Chain
             </p>
             <p className="text-xs text-muted-foreground leading-relaxed">{research.connection_chain}</p>
@@ -190,7 +190,7 @@ export function JobDetailPanel({ job, matchCount = 0, matchedCategories = [], on
         {/* Job Description */}
         {job.description && (
           <div>
-            <p className="text-[10px] font-medium text-foreground uppercase tracking-wider mb-2">About This Role</p>
+            <p className="text-xs font-medium text-foreground uppercase tracking-wider mb-2">About This Role</p>
             <div className="text-xs text-muted-foreground leading-relaxed whitespace-pre-line line-clamp-[20]">
               {job.description}
             </div>
@@ -200,7 +200,7 @@ export function JobDetailPanel({ job, matchCount = 0, matchedCategories = [], on
         {/* Company snapshot */}
         {co?.description && (
           <div>
-            <p className="text-[10px] font-medium text-foreground uppercase tracking-wider mb-2">About {co.name}</p>
+            <p className="text-xs font-medium text-foreground uppercase tracking-wider mb-2">About {co.name}</p>
             <p className="text-xs text-muted-foreground leading-relaxed line-clamp-4">{co.description}</p>
           </div>
         )}
@@ -209,7 +209,7 @@ export function JobDetailPanel({ job, matchCount = 0, matchedCategories = [], on
 
         {/* Before you apply */}
         <div className="p-3 rounded-lg border border-[hsl(var(--civic-yellow)/0.2)] bg-[hsl(var(--civic-yellow)/0.04)]">
-          <p className="text-[10px] font-medium text-[hsl(var(--civic-yellow))] uppercase tracking-wider mb-1 flex items-center gap-1">
+          <p className="text-xs font-medium text-[hsl(var(--civic-yellow))] uppercase tracking-wider mb-1 flex items-center gap-1">
             <AlertTriangle className="w-3 h-3" /> Before You Apply
           </p>
           <ul className="text-xs text-muted-foreground space-y-1">

@@ -251,7 +251,7 @@ export default function ForEmployers() {
                       rows={3}
                       className="flex w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 resize-none"
                     />
-                    <p className="text-[10px] text-muted-foreground/60 mt-1">{missionStatement.length}/1000</p>
+                    <p className="text-xs text-muted-foreground/60 mt-1">{missionStatement.length}/1000</p>
                   </div>
                   <div>
                     <label className="text-xs text-muted-foreground mb-1.5 block">Mission Category</label>

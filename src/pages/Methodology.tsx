@@ -64,12 +64,12 @@ export default function Methodology() {
                   <Card key={item.pillar}>
                     <CardContent className="p-5">
                       <div className="flex items-center gap-2 mb-2">
-                        <Badge className="bg-primary/15 text-primary border-primary/30 text-[10px] font-mono">
+                        <Badge className="bg-primary/15 text-primary border-primary/30 text-xs font-mono">
                           {item.pillar}
                         </Badge>
                       </div>
                       <p className="text-caption text-muted-foreground leading-relaxed mb-2">{item.desc}</p>
-                      <p className="text-caption text-muted-foreground/70 font-mono text-[10px]">Sources: {item.sources}</p>
+                      <p className="text-caption text-muted-foreground/70 font-mono text-xs">Sources: {item.sources}</p>
                     </CardContent>
                   </Card>
                 ))}
@@ -98,13 +98,13 @@ export default function Methodology() {
                   <Card key={item.tier}>
                     <CardContent className="p-5">
                       <div className="flex items-center gap-2 mb-2">
-                        <Badge variant="outline" className={`text-[10px] font-mono ${TIER_COLORS[item.tier]}`}>
+                        <Badge variant="outline" className={`text-xs font-mono ${TIER_COLORS[item.tier]}`}>
                           Tier {item.tier}
                         </Badge>
                         <span className="font-semibold text-foreground text-body">{TIER_LABELS[item.tier]}</span>
                       </div>
                       <p className="text-caption text-muted-foreground leading-relaxed mb-2">{item.desc}</p>
-                      <p className="text-caption text-muted-foreground/70 font-mono text-[10px]">{item.examples}</p>
+                      <p className="text-caption text-muted-foreground/70 font-mono text-xs">{item.examples}</p>
                     </CardContent>
                   </Card>
                 ))}

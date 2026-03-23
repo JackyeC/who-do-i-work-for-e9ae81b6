@@ -48,12 +48,12 @@ export function RealitySignals({ isRepost, hasSalary, isEvergreen, qualityTier, 
 
   return (
     <div className="p-4 rounded-lg border border-border/50 bg-muted/20">
-      <p className="text-[10px] font-medium text-foreground uppercase tracking-wider mb-2 flex items-center gap-1">
+      <p className="text-xs font-medium text-foreground uppercase tracking-wider mb-2 flex items-center gap-1">
         <Eye className="w-3 h-3 text-muted-foreground" /> Reality Signals
       </p>
       <div className="flex flex-wrap gap-1.5">
         {visible.map((s, i) => (
-          <Badge key={i} variant="outline" className={cn("text-[10px] gap-1", s.className)}>
+          <Badge key={i} variant="outline" className={cn("text-xs gap-1", s.className)}>
             <s.icon className="w-3 h-3" /> {s.label}
           </Badge>
         ))}

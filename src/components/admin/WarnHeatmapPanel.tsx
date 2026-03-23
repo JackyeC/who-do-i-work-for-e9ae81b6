@@ -84,7 +84,7 @@ export function WarnHeatmapPanel() {
     <div className="bg-card border border-border rounded-2xl p-6">
       <h3 className="text-base font-semibold text-foreground mb-5 flex items-center gap-2">
         <AlertTriangle className="w-4.5 h-4.5 text-destructive" /> WARN / Layoff Heatmap
-        <Badge variant="outline" className="text-[9px] font-mono ml-auto">Last 12 months</Badge>
+        <Badge variant="outline" className="text-xs font-mono ml-auto">Last 12 months</Badge>
       </h3>
 
       {isLoading ? (
@@ -132,7 +132,7 @@ export function WarnHeatmapPanel() {
                       >
                         <div className="flex items-center gap-2 min-w-0">
                           <span className="font-medium text-foreground">{st.state}</span>
-                          <Badge variant="outline" className={cn("text-[9px] font-mono", intensity.color)}>
+                          <Badge variant="outline" className={cn("text-xs font-mono", intensity.color)}>
                             {intensity.label}
                           </Badge>
                         </div>
@@ -150,7 +150,7 @@ export function WarnHeatmapPanel() {
                             </div>
                           ))}
                           {st.topCities.length > 0 && (
-                            <p className="text-[10px] text-muted-foreground/70 pt-1">
+                            <p className="text-xs text-muted-foreground/70 pt-1">
                               Cities: {st.topCities.slice(0, 4).join(", ")}
                             </p>
                           )}

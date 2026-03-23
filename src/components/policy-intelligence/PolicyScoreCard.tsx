@@ -58,7 +58,7 @@ export function PolicyScoreCard({ companyId, companyName }: Props) {
         <div className="space-y-1.5">
           {result.pillars.map(p => (
             <div key={p.key} className="flex items-center gap-2">
-              <span className="text-[11px] text-muted-foreground w-24 shrink-0">{p.label}</span>
+              <span className="text-xs text-muted-foreground w-24 shrink-0">{p.label}</span>
               <Progress value={p.score} className="h-1 flex-1" />
               <span className="text-xs font-mono text-muted-foreground w-8 text-right">{p.score}</span>
             </div>

@@ -85,7 +85,7 @@ export function RecruiterIntegrityCard({ result }: Props) {
           </p>
         </div>
 
-        <p className="text-[10px] text-muted-foreground">
+        <p className="text-xs text-muted-foreground">
           Source: WDIWF Intelligence Pipeline · Recruiter-grade analysis
         </p>
       </CardContent>

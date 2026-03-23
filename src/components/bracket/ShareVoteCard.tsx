@@ -35,7 +35,7 @@ export function ShareVoteCard({ brandName, brandEmoji, opponentName, regionName,
     <div className="border border-primary/30 bg-primary/5 p-4">
       <div className="flex items-center gap-2 mb-3">
         <Share2 className="w-3.5 h-3.5 text-primary" />
-        <span className="font-mono text-[9px] tracking-[0.2em] uppercase text-primary font-semibold">
+        <span className="font-mono text-xs tracking-[0.2em] uppercase text-primary font-semibold">
           Share Your Vote
         </span>
       </div>
@@ -44,27 +44,27 @@ export function ShareVoteCard({ brandName, brandEmoji, opponentName, regionName,
         <div className="text-center">
           <div className="text-2xl mb-1">{brandEmoji}</div>
           <div className="font-bold text-foreground text-sm">{brandName}</div>
-          <div className="font-mono text-[9px] text-muted-foreground mt-0.5">
+          <div className="font-mono text-xs text-muted-foreground mt-0.5">
             vs {opponentName} · {regionName} Region
           </div>
           {tensionLabel && (
-            <div className="font-mono text-[8px] tracking-wider uppercase text-accent-foreground/60 mt-1">
+            <div className="font-mono text-xs tracking-wider uppercase text-accent-foreground/60 mt-1">
               ⚡ {tensionLabel}
             </div>
           )}
           <div className="mt-2 font-mono text-lg font-black text-primary">{votePercent}%</div>
-          <div className="font-mono text-[8px] tracking-wider uppercase text-muted-foreground">of voters agree</div>
+          <div className="font-mono text-xs tracking-wider uppercase text-muted-foreground">of voters agree</div>
         </div>
       </div>
 
       <div className="flex gap-2">
-        <Button size="sm" variant="outline" className="flex-1 text-[10px] font-mono" onClick={shareToTwitter}>
+        <Button size="sm" variant="outline" className="flex-1 text-xs font-mono" onClick={shareToTwitter}>
           <Twitter className="w-3 h-3 mr-1" /> Post
         </Button>
-        <Button size="sm" variant="outline" className="flex-1 text-[10px] font-mono" onClick={shareToLinkedIn}>
+        <Button size="sm" variant="outline" className="flex-1 text-xs font-mono" onClick={shareToLinkedIn}>
           <Linkedin className="w-3 h-3 mr-1" /> Share
         </Button>
-        <Button size="sm" variant="outline" className="flex-1 text-[10px] font-mono" onClick={copyLink}>
+        <Button size="sm" variant="outline" className="flex-1 text-xs font-mono" onClick={copyLink}>
           <Copy className="w-3 h-3 mr-1" /> Copy
         </Button>
       </div>

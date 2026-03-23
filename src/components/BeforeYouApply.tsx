@@ -111,7 +111,7 @@ export function BeforeYouApply({ companyName, companyId, signals, onReviewSignal
 
           {/* Signal Summary */}
           <div className="p-7 space-y-3">
-            <p className="text-[10px] uppercase tracking-widest font-semibold text-muted-foreground mb-4">
+            <p className="text-xs uppercase tracking-widest font-semibold text-muted-foreground mb-4">
               Values Signal Summary
             </p>
 
@@ -160,7 +160,7 @@ export function BeforeYouApply({ companyName, companyId, signals, onReviewSignal
               onClick={() => setExpanded(!expanded)}
               className="w-full flex items-center justify-between group cursor-pointer"
             >
-              <p className="text-[10px] uppercase tracking-widest font-semibold text-muted-foreground">
+              <p className="text-xs uppercase tracking-widest font-semibold text-muted-foreground">
                 Issue Lenses
               </p>
               {expanded ? (
@@ -255,7 +255,7 @@ export function BeforeYouApply({ companyName, companyId, signals, onReviewSignal
 
             <div className="flex items-start gap-2 p-3 rounded-lg bg-muted/40 border border-border/30">
               <Info className="w-3.5 h-3.5 text-muted-foreground shrink-0 mt-0.5" />
-              <p className="text-[11px] text-muted-foreground leading-relaxed">
+              <p className="text-xs text-muted-foreground leading-relaxed">
                 Signals shown here are based on public filings, political contribution records, lobbying disclosures,
                 trade association links, executive activity, and related public data where available.
               </p>

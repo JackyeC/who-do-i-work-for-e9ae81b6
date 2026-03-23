@@ -175,17 +175,17 @@ export default function LeaderProfile() {
                 <p className="text-sm text-primary font-medium mt-1">{displayCompanyName}</p>
               )}
               <div className="flex flex-wrap justify-center gap-1.5 mt-3">
-                <Badge variant="outline" className="gap-1 text-[10px]">
+                <Badge variant="outline" className="gap-1 text-xs">
                   <Briefcase className="w-2.5 h-2.5" /> {leaderType === "executive" ? "Executive" : "Board"}
                 </Badge>
                 {leader.verification_status === "former" && (
-                  <Badge variant="outline" className="gap-1 text-[10px] text-destructive border-destructive/30"><UserX className="w-2.5 h-2.5" /> Former</Badge>
+                  <Badge variant="outline" className="gap-1 text-xs text-destructive border-destructive/30"><UserX className="w-2.5 h-2.5" /> Former</Badge>
                 )}
                 {leader.verification_status === "verified" && (
-                  <Badge variant="outline" className="gap-1 text-[10px] text-[hsl(var(--civic-green))] border-[hsl(var(--civic-green))]/30"><ShieldCheck className="w-2.5 h-2.5" /> Verified</Badge>
+                  <Badge variant="outline" className="gap-1 text-xs text-[hsl(var(--civic-green))] border-[hsl(var(--civic-green))]/30"><ShieldCheck className="w-2.5 h-2.5" /> Verified</Badge>
                 )}
                 {leader.verification_status === "ai_verified" && (
-                  <Badge variant="outline" className="gap-1 text-[10px] text-[hsl(var(--civic-yellow))] border-[hsl(var(--civic-yellow))]/30"><AlertTriangle className="w-2.5 h-2.5" /> AI Verified</Badge>
+                  <Badge variant="outline" className="gap-1 text-xs text-[hsl(var(--civic-yellow))] border-[hsl(var(--civic-yellow))]/30"><AlertTriangle className="w-2.5 h-2.5" /> AI Verified</Badge>
                 )}
               </div>
               <div className="mt-4 w-full">
@@ -201,35 +201,35 @@ export default function LeaderProfile() {
                   <div className="bg-muted/40 rounded-lg p-3 text-center">
                     <DollarSign className="w-4 h-4 text-[hsl(var(--civic-yellow))] mx-auto mb-1" />
                     <p className="text-lg font-bold text-foreground">{formatCurrency(executive.total_donations)}</p>
-                    <p className="text-[10px] text-muted-foreground uppercase tracking-wide">Donated</p>
+                    <p className="text-xs text-muted-foreground uppercase tracking-wide">Donated</p>
                   </div>
                 )}
                 {recipients && recipients.length > 0 && (
                   <div className="bg-muted/40 rounded-lg p-3 text-center">
                     <Target className="w-4 h-4 text-primary mx-auto mb-1" />
                     <p className="text-lg font-bold text-foreground">{recipients.length}</p>
-                    <p className="text-[10px] text-muted-foreground uppercase tracking-wide">Recipients</p>
+                    <p className="text-xs text-muted-foreground uppercase tracking-wide">Recipients</p>
                   </div>
                 )}
                 {(boardMember as any)?.is_independent && (
                   <div className="bg-muted/40 rounded-lg p-3 text-center">
                     <Shield className="w-4 h-4 text-[hsl(var(--civic-green))] mx-auto mb-1" />
                     <p className="text-sm font-bold text-foreground">Independent</p>
-                    <p className="text-[10px] text-muted-foreground uppercase tracking-wide">Director</p>
+                    <p className="text-xs text-muted-foreground uppercase tracking-wide">Director</p>
                   </div>
                 )}
                 {(boardMember as any)?.start_year && (
                   <div className="bg-muted/40 rounded-lg p-3 text-center">
                     <Calendar className="w-4 h-4 text-muted-foreground mx-auto mb-1" />
                     <p className="text-lg font-bold text-foreground">{(boardMember as any).start_year}</p>
-                    <p className="text-[10px] text-muted-foreground uppercase tracking-wide">Since</p>
+                    <p className="text-xs text-muted-foreground uppercase tracking-wide">Since</p>
                   </div>
                 )}
                 {linkages && linkages.length > 0 && (
                   <div className="bg-muted/40 rounded-lg p-3 text-center">
                     <Network className="w-4 h-4 text-primary mx-auto mb-1" />
                     <p className="text-lg font-bold text-foreground">{linkages.length}</p>
-                    <p className="text-[10px] text-muted-foreground uppercase tracking-wide">Connections</p>
+                    <p className="text-xs text-muted-foreground uppercase tracking-wide">Connections</p>
                   </div>
                 )}
               </div>
@@ -276,7 +276,7 @@ export default function LeaderProfile() {
           <CardHeader className="pb-3">
             <CardTitle className="text-base flex items-center gap-2">
               <Sparkles className="w-4 h-4 text-primary" /> Intelligence Brief
-              <Badge variant="outline" className="text-[10px] ml-auto font-mono">
+              <Badge variant="outline" className="text-xs ml-auto font-mono">
                 {enrichment.enrichment_source === "firecrawl+ai" ? "WEB + AI" : "AI GENERATED"}
               </Badge>
             </CardTitle>
@@ -294,7 +294,7 @@ export default function LeaderProfile() {
             )}
             <Separator />
             <div className="text-sm text-foreground leading-relaxed whitespace-pre-line">{enrichment.ai_narrative}</div>
-            <p className="text-[10px] text-muted-foreground/60 italic">
+            <p className="text-xs text-muted-foreground/60 italic">
               Generated {new Date(enrichment.enriched_at).toLocaleDateString()} · Source: {enrichment.enrichment_source}
             </p>
           </CardContent>
@@ -366,8 +366,8 @@ export default function LeaderProfile() {
                             <div className="min-w-0 flex-1">
                               <div className="flex items-center gap-1.5 flex-wrap">
                                 <span className="font-medium text-sm text-foreground">{r.name}</span>
-                                <Badge variant="outline" className={cn("text-[10px] px-1.5 py-0", r.party === "Republican" && "border-destructive/50 text-destructive", r.party === "Democrat" && "border-primary/50 text-primary")}>{r.party === "Republican" ? "R" : r.party === "Democrat" ? "D" : r.party}</Badge>
-                                {r.state && <span className="text-[10px] text-muted-foreground flex items-center gap-0.5"><MapPin className="w-2.5 h-2.5" />{r.state}</span>}
+                                <Badge variant="outline" className={cn("text-xs px-1.5 py-0", r.party === "Republican" && "border-destructive/50 text-destructive", r.party === "Democrat" && "border-primary/50 text-primary")}>{r.party === "Republican" ? "R" : r.party === "Democrat" ? "D" : r.party}</Badge>
+                                {r.state && <span className="text-xs text-muted-foreground flex items-center gap-0.5"><MapPin className="w-2.5 h-2.5" />{r.state}</span>}
                               </div>
                             </div>
                           </div>
@@ -408,12 +408,12 @@ export default function LeaderProfile() {
                     <div className="min-w-0 flex-1">
                       <div className="flex items-center gap-2 flex-wrap">
                         <span className="text-xs font-medium text-foreground">{l.source_entity_name}</span>
-                        <span className="text-[10px] text-muted-foreground">→</span>
+                        <span className="text-xs text-muted-foreground">→</span>
                         <span className="text-xs font-medium text-foreground">{l.target_entity_name}</span>
                       </div>
-                      {l.description && <p className="text-[10px] text-muted-foreground mt-0.5 truncate">{l.description}</p>}
+                      {l.description && <p className="text-xs text-muted-foreground mt-0.5 truncate">{l.description}</p>}
                     </div>
-                    <Badge variant="outline" className="text-[9px] shrink-0 ml-2">{l.link_type?.replace(/_/g, " ")}</Badge>
+                    <Badge variant="outline" className="text-xs shrink-0 ml-2">{l.link_type?.replace(/_/g, " ")}</Badge>
                   </div>
                 ))}
               </CardContent>

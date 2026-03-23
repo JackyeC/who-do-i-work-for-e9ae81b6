@@ -33,7 +33,7 @@ export function ValuesLensGrid({ counts, onSelect }: Props) {
                 <h3 className="font-semibold text-foreground text-sm mb-1">{lens.label}</h3>
                 <p className="text-xs text-muted-foreground leading-relaxed line-clamp-2">{lens.description}</p>
                 {count > 0 && (
-                  <Badge variant="secondary" className="mt-2 text-[10px]">
+                  <Badge variant="secondary" className="mt-2 text-xs">
                     {count} record{count !== 1 ? "s" : ""}
                   </Badge>
                 )}

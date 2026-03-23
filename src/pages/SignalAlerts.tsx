@@ -136,9 +136,9 @@ export default function SignalAlerts() {
                             )}
                             <div className="flex items-center gap-2 mt-0.5">
                               {item.company?.industry && (
-                                <Badge variant="outline" className="text-[10px]">{item.company.industry}</Badge>
+                                <Badge variant="outline" className="text-xs">{item.company.industry}</Badge>
                               )}
-                              <span className="text-[10px] text-muted-foreground hidden sm:inline">
+                              <span className="text-xs text-muted-foreground hidden sm:inline">
                                 Since {new Date(item.watch_timestamp).toLocaleDateString()}
                               </span>
                             </div>
@@ -177,7 +177,7 @@ export default function SignalAlerts() {
           </CardContent>
         </Card>
 
-        <p className="text-[10px] text-muted-foreground text-center mt-6 italic">
+        <p className="text-xs text-muted-foreground text-center mt-6 italic">
           Alerts reflect signals detected from publicly available sources. No conclusions are drawn.
         </p>
       </div>

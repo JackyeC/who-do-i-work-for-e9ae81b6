@@ -32,7 +32,7 @@ export function UnknownCompanyPrompt({ companyName, meta, onChange }: Props) {
 
       <div className="grid grid-cols-3 gap-2">
         <div>
-          <label className="text-[11px] font-medium text-muted-foreground mb-1 block">Industry</label>
+          <label className="text-xs font-medium text-muted-foreground mb-1 block">Industry</label>
           <Select value={meta.industry || ""} onValueChange={v => onChange({ ...meta, industry: v })}>
             <SelectTrigger className="h-8 text-xs">
               <SelectValue placeholder="Select" />
@@ -46,7 +46,7 @@ export function UnknownCompanyPrompt({ companyName, meta, onChange }: Props) {
         </div>
 
         <div>
-          <label className="text-[11px] font-medium text-muted-foreground mb-1 block">Company Size</label>
+          <label className="text-xs font-medium text-muted-foreground mb-1 block">Company Size</label>
           <Select value={meta.companySize || ""} onValueChange={v => onChange({ ...meta, companySize: v })}>
             <SelectTrigger className="h-8 text-xs">
               <SelectValue placeholder="Select" />
@@ -60,7 +60,7 @@ export function UnknownCompanyPrompt({ companyName, meta, onChange }: Props) {
         </div>
 
         <div>
-          <label className="text-[11px] font-medium text-muted-foreground mb-1 block">Public / Private</label>
+          <label className="text-xs font-medium text-muted-foreground mb-1 block">Public / Private</label>
           <Select value={meta.entityType || ""} onValueChange={v => onChange({ ...meta, entityType: v })}>
             <SelectTrigger className="h-8 text-xs">
               <SelectValue placeholder="Select" />

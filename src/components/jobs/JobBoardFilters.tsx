@@ -93,7 +93,7 @@ export function JobBoardFilters({ filters, onFiltersChange, availableDepartments
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-3">
         {/* Location */}
         <div>
-          <label className="text-[10px] font-medium text-muted-foreground uppercase tracking-wider mb-1 block">Location</label>
+          <label className="text-xs font-medium text-muted-foreground uppercase tracking-wider mb-1 block">Location</label>
           <div className="relative">
             <MapPin className="absolute left-2.5 top-1/2 -translate-y-1/2 w-3 h-3 text-muted-foreground" />
             <Input value={filters.location} onChange={(e) => update({ location: e.target.value })} placeholder="City, state..." className="h-8 text-xs pl-7" />
@@ -102,10 +102,10 @@ export function JobBoardFilters({ filters, onFiltersChange, availableDepartments
 
         {/* Work Mode */}
         <div>
-          <label className="text-[10px] font-medium text-muted-foreground uppercase tracking-wider mb-1 block">Work Mode</label>
+          <label className="text-xs font-medium text-muted-foreground uppercase tracking-wider mb-1 block">Work Mode</label>
           <div className="flex flex-wrap gap-1">
             {WORK_MODES.map((wm) => (
-              <Button key={wm.value} size="sm" variant={filters.workMode === wm.value ? "default" : "outline"} className="text-[11px] h-8 px-2.5 gap-1" onClick={() => update({ workMode: wm.value })}>
+              <Button key={wm.value} size="sm" variant={filters.workMode === wm.value ? "default" : "outline"} className="text-xs h-8 px-2.5 gap-1" onClick={() => update({ workMode: wm.value })}>
                 {wm.icon && <wm.icon className="w-3 h-3" />}
                 {wm.label}
               </Button>
@@ -115,7 +115,7 @@ export function JobBoardFilters({ filters, onFiltersChange, availableDepartments
 
         {/* Seniority */}
         <div>
-          <label className="text-[10px] font-medium text-muted-foreground uppercase tracking-wider mb-1 block">Seniority</label>
+          <label className="text-xs font-medium text-muted-foreground uppercase tracking-wider mb-1 block">Seniority</label>
           <Select value={filters.seniority} onValueChange={(v) => update({ seniority: v })}>
             <SelectTrigger className="h-8 text-xs"><SelectValue placeholder="All levels" /></SelectTrigger>
             <SelectContent>
@@ -127,7 +127,7 @@ export function JobBoardFilters({ filters, onFiltersChange, availableDepartments
 
         {/* Department */}
         <div>
-          <label className="text-[10px] font-medium text-muted-foreground uppercase tracking-wider mb-1 block">Department</label>
+          <label className="text-xs font-medium text-muted-foreground uppercase tracking-wider mb-1 block">Department</label>
           <Select value={filters.department} onValueChange={(v) => update({ department: v })}>
             <SelectTrigger className="h-8 text-xs"><SelectValue placeholder="All departments" /></SelectTrigger>
             <SelectContent>
@@ -139,7 +139,7 @@ export function JobBoardFilters({ filters, onFiltersChange, availableDepartments
 
         {/* Trust Level */}
         <div>
-          <label className="text-[10px] font-medium text-muted-foreground uppercase tracking-wider mb-1 block">Trust Level</label>
+          <label className="text-xs font-medium text-muted-foreground uppercase tracking-wider mb-1 block">Trust Level</label>
           <Select value={filters.trustFilter} onValueChange={(v) => update({ trustFilter: v })}>
             <SelectTrigger className="h-8 text-xs"><SelectValue placeholder="All companies" /></SelectTrigger>
             <SelectContent>
@@ -153,11 +153,11 @@ export function JobBoardFilters({ filters, onFiltersChange, availableDepartments
 
       {/* Salary minimum */}
       <div>
-        <label className="text-[10px] font-medium text-muted-foreground uppercase tracking-wider mb-1 block">
+        <label className="text-xs font-medium text-muted-foreground uppercase tracking-wider mb-1 block">
           Min Salary {filters.salaryMin > 0 ? `· $${(filters.salaryMin * 1000).toLocaleString()}+` : ""}
         </label>
         <Slider value={[filters.salaryMin]} onValueChange={([v]) => update({ salaryMin: v })} min={0} max={250} step={10} className="w-full" />
-        <div className="flex justify-between text-[9px] text-muted-foreground mt-0.5">
+        <div className="flex justify-between text-xs text-muted-foreground mt-0.5">
           <span>Any</span><span>$250k+</span>
         </div>
       </div>
@@ -192,7 +192,7 @@ export function JobBoardFilters({ filters, onFiltersChange, availableDepartments
               <Button variant="outline" size="sm" className="gap-1.5 shrink-0 h-11 min-w-[44px]">
                 <SlidersHorizontal className="w-4 h-4" />
                 {activeFilterCount > 0 && (
-                  <Badge variant="default" className="h-5 w-5 p-0 flex items-center justify-center text-[10px]">
+                  <Badge variant="default" className="h-5 w-5 p-0 flex items-center justify-center text-xs">
                     {activeFilterCount}
                   </Badge>
                 )}
@@ -215,7 +215,7 @@ export function JobBoardFilters({ filters, onFiltersChange, availableDepartments
             <SlidersHorizontal className="w-3.5 h-3.5" />
             Filters
             {activeFilterCount > 0 && (
-              <Badge variant="default" className="ml-1 h-4 w-4 p-0 flex items-center justify-center text-[9px]">
+              <Badge variant="default" className="ml-1 h-4 w-4 p-0 flex items-center justify-center text-xs">
                 {activeFilterCount}
               </Badge>
             )}
@@ -249,7 +249,7 @@ function ChipToggle({ active, onClick, icon, label }: { active: boolean; onClick
     <button
       onClick={onClick}
       className={cn(
-        "inline-flex items-center gap-1 rounded-full border px-2.5 py-1 text-[11px] font-medium transition-all",
+        "inline-flex items-center gap-1 rounded-full border px-2.5 py-1 text-xs font-medium transition-all",
         active
           ? "bg-primary text-primary-foreground border-primary shadow-sm"
           : "bg-background text-muted-foreground border-border hover:border-primary/40 hover:text-foreground"

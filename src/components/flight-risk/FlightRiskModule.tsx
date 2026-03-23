@@ -314,7 +314,7 @@ export function FlightRiskModule({
             <p className="text-sm text-muted-foreground mb-1">
               No flight risk signals detected yet for {companyName}.
             </p>
-            <p className="text-[11px] text-muted-foreground mb-4">
+            <p className="text-xs text-muted-foreground mb-4">
               Click "Run Scan" to analyze workforce stability, career progression, and employee movement patterns.
             </p>
             <Button onClick={handleScan} disabled={scanning} size="sm" className="gap-1.5">
@@ -418,7 +418,7 @@ export function FlightRiskModule({
                   <ArrowRightLeft className="w-4 h-4 text-primary" />
                   Employee Movement Network
                 </CardTitle>
-                <p className="text-[10px] text-muted-foreground">
+                <p className="text-xs text-muted-foreground">
                   Where employees come from and where they go after leaving {companyName}.
                 </p>
               </CardHeader>
@@ -497,7 +497,7 @@ export function FlightRiskModule({
                         <span className="text-muted-foreground ml-2">{exec.title}</span>
                       </div>
                       {exec.last_verified_at && (
-                        <Badge variant="outline" className="text-[9px]">
+                        <Badge variant="outline" className="text-xs">
                           Verified {new Date(exec.last_verified_at).toLocaleDateString()}
                         </Badge>
                       )}
@@ -514,13 +514,13 @@ export function FlightRiskModule({
               <div className="flex items-start gap-2">
                 <BookOpen className="w-4 h-4 text-muted-foreground mt-0.5 shrink-0" />
                 <div>
-                  <p className="text-[11px] font-semibold text-foreground mb-1">Sources & Methodology</p>
-                  <p className="text-[10px] text-muted-foreground">
+                  <p className="text-xs font-semibold text-foreground mb-1">Sources & Methodology</p>
+                  <p className="text-xs text-muted-foreground">
                     Signals sourced from ESG reports, SEC filings, career pages, WARN databases, press releases,
                     and public workforce disclosures. Career progression and movement patterns are derived from
                     lawful and permitted public or licensed workforce data sources.
                   </p>
-                  <p className="text-[10px] text-muted-foreground mt-2 pt-2 border-t border-border">
+                  <p className="text-xs text-muted-foreground mt-2 pt-2 border-t border-border">
                     <strong>Educational insights only.</strong> This module does not infer protected traits or
                     demographic attributes. It analyzes publicly available workforce data such as job titles,
                     tenure, and company transitions. It does not provide legal or employment advice.

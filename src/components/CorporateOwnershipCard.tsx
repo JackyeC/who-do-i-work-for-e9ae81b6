@@ -107,7 +107,7 @@ export function CorporateOwnershipCard({ companyId, companyName, parentCompany }
           <div className="rounded-lg border border-[hsl(var(--civic-yellow))]/20 bg-[hsl(var(--civic-yellow))]/5 p-4">
             <div className="flex items-center gap-2 mb-2">
               <Crown className="w-4 h-4 text-[hsl(var(--civic-yellow))]" />
-              <span className="font-mono text-[10px] tracking-[0.2em] uppercase text-[hsl(var(--civic-yellow))] font-semibold">
+              <span className="font-mono text-xs tracking-[0.2em] uppercase text-[hsl(var(--civic-yellow))] font-semibold">
                 Parent Company
               </span>
             </div>
@@ -123,7 +123,7 @@ export function CorporateOwnershipCard({ companyId, companyName, parentCompany }
               {parentRecord ? (
                 <Link
                   to={`/company/${parentRecord.slug}`}
-                  className="inline-flex items-center gap-1.5 px-3 py-1.5 border border-primary/30 bg-primary/5 hover:bg-primary/10 text-primary font-mono text-[10px] tracking-wider uppercase transition-colors rounded-md"
+                  className="inline-flex items-center gap-1.5 px-3 py-1.5 border border-primary/30 bg-primary/5 hover:bg-primary/10 text-primary font-mono text-xs tracking-wider uppercase transition-colors rounded-md"
                 >
                   View Report <ArrowRight className="w-3 h-3" />
                 </Link>
@@ -145,7 +145,7 @@ export function CorporateOwnershipCard({ companyId, companyName, parentCompany }
           <div>
             <div className="flex items-center gap-2 mb-3">
               <GitBranch className="w-4 h-4 text-primary" />
-              <span className="font-mono text-[10px] tracking-[0.2em] uppercase text-primary font-semibold">
+              <span className="font-mono text-xs tracking-[0.2em] uppercase text-primary font-semibold">
                 Sister Companies & Brands ({sisterCompanies.length})
               </span>
             </div>
@@ -162,7 +162,7 @@ export function CorporateOwnershipCard({ companyId, companyName, parentCompany }
                       <span className="text-sm font-medium text-foreground group-hover:text-primary transition-colors block truncate">
                         {sister.name}
                       </span>
-                      <span className="text-[11px] text-muted-foreground">{sister.industry}</span>
+                      <span className="text-xs text-muted-foreground">{sister.industry}</span>
                     </div>
                   </div>
                   <div className="flex items-center gap-2 shrink-0">
@@ -187,7 +187,7 @@ export function CorporateOwnershipCard({ companyId, companyName, parentCompany }
           <div>
             <div className="flex items-center gap-2 mb-3">
               <Building2 className="w-4 h-4 text-muted-foreground" />
-              <span className="font-mono text-[10px] tracking-[0.2em] uppercase text-muted-foreground font-semibold">
+              <span className="font-mono text-xs tracking-[0.2em] uppercase text-muted-foreground font-semibold">
                 Corporate Entities ({structures.length})
               </span>
             </div>
@@ -204,16 +204,16 @@ export function CorporateOwnershipCard({ companyId, companyName, parentCompany }
                       <TypeIcon className={cn("w-4 h-4 shrink-0", typeInfo.color)} />
                       <div className="min-w-0">
                         <span className="text-sm font-medium text-foreground block truncate">{entity.entity_name}</span>
-                        <div className="flex items-center gap-2 text-[11px] text-muted-foreground">
-                          <Badge variant="outline" className="text-[9px] px-1.5 py-0">{typeInfo.label}</Badge>
+                        <div className="flex items-center gap-2 text-xs text-muted-foreground">
+                          <Badge variant="outline" className="text-xs px-1.5 py-0">{typeInfo.label}</Badge>
                           {entity.jurisdiction && <span>{entity.jurisdiction}</span>}
                           {entity.status && <span>· {entity.status}</span>}
                         </div>
                       </div>
                     </div>
                     <div className="flex items-center gap-1.5 shrink-0">
-                      <Badge variant="outline" className="text-[9px] px-1.5">{entity.confidence}</Badge>
-                      <Badge variant="outline" className="text-[9px] px-1.5">{entity.source_name}</Badge>
+                      <Badge variant="outline" className="text-xs px-1.5">{entity.confidence}</Badge>
+                      <Badge variant="outline" className="text-xs px-1.5">{entity.source_name}</Badge>
                     </div>
                   </div>
                 );

@@ -64,12 +64,12 @@ export function SignalSourceLink({ source, url, className }: SignalSourceLinkPro
           href={resolvedUrl}
           target="_blank"
           rel="noopener noreferrer"
-          className="inline-flex items-center gap-0.5 text-primary hover:underline text-[10px] font-medium"
+          className="inline-flex items-center gap-0.5 text-primary hover:underline text-xs font-medium"
         >
           Source: {source} <ExternalLink className="w-2.5 h-2.5" />
         </a>
       ) : (
-        <span className="text-[10px] text-muted-foreground font-medium">Source: {source}</span>
+        <span className="text-xs text-muted-foreground font-medium">Source: {source}</span>
       )}
     </span>
   );

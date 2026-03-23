@@ -152,7 +152,7 @@ export function TargetDestinationStep({ profileData, onComplete }: Props) {
                   <div className="flex items-center justify-between mb-1">
                     <span className="font-medium text-sm text-foreground">{s.role}</span>
                     {s.growth && (
-                      <Badge variant="secondary" className="text-[10px]">{s.growth}</Badge>
+                      <Badge variant="secondary" className="text-xs">{s.growth}</Badge>
                     )}
                   </div>
                   <p className="text-xs text-muted-foreground line-clamp-2">{s.reason}</p>

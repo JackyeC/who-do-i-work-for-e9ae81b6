@@ -26,7 +26,7 @@ export default function Rivalries() {
         <div className="max-w-[1100px] mx-auto px-6 py-10">
           <div className="flex items-center gap-2 mb-2">
             <Zap className="w-4 h-4 text-primary" />
-            <span className="font-mono text-[9px] tracking-[0.25em] uppercase text-primary font-semibold">
+            <span className="font-mono text-xs tracking-[0.25em] uppercase text-primary font-semibold">
               2026 Intelligence
             </span>
           </div>
@@ -48,7 +48,7 @@ export default function Rivalries() {
               key={cat.key}
               onClick={() => setActiveCategory(cat.key)}
               className={cn(
-                "font-mono text-[10px] tracking-wider uppercase px-4 py-1.5 border transition-all whitespace-nowrap",
+                "font-mono text-xs tracking-wider uppercase px-4 py-1.5 border transition-all whitespace-nowrap",
                 activeCategory === cat.key
                   ? "bg-primary/10 border-primary/30 text-primary"
                   : "bg-transparent border-border text-muted-foreground hover:border-primary/20 hover:text-foreground"
@@ -72,7 +72,7 @@ export default function Rivalries() {
 
         {/* Footer note */}
         <div className="mt-8 text-center">
-          <p className="text-[10px] text-muted-foreground/60 font-mono">
+          <p className="text-xs text-muted-foreground/60 font-mono">
             Rivalry data curated from public signals · Corporate Character Scores powered by verified intelligence ·
             Updated March 2026
           </p>

@@ -31,7 +31,7 @@ export function PreviewTierToolbar() {
             transition={{ duration: 0.15 }}
             className="flex flex-col gap-1 bg-card border border-border rounded-lg p-2 shadow-xl"
           >
-            <span className="text-[10px] font-mono uppercase tracking-widest text-muted-foreground px-2 pb-1 border-b border-border mb-1">
+            <span className="text-xs font-mono uppercase tracking-widest text-muted-foreground px-2 pb-1 border-b border-border mb-1">
               Preview As
             </span>
             {TIERS.map((tier) => (

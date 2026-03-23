@@ -199,7 +199,7 @@ export function RealityCheckCard({ companyId, companyName }: Props) {
         {/* Overall verdict */}
         <div className={cn("text-center p-3 rounded-xl border", verdictColor)}>
           <p className="text-lg font-bold">{overallVerdict}</p>
-          <p className="text-[10px] mt-0.5 opacity-80">
+          <p className="text-xs mt-0.5 opacity-80">
             Based on {signals.filter(s => s.status !== "no_data").length} of {signals.length} signals with data
           </p>
         </div>
@@ -216,7 +216,7 @@ export function RealityCheckCard({ companyId, companyName }: Props) {
               >
                 <Icon className="w-3.5 h-3.5 text-muted-foreground shrink-0" />
                 <div className="flex-1 min-w-0">
-                  <p className="text-[10px] text-muted-foreground leading-tight">{signal.label}</p>
+                  <p className="text-xs text-muted-foreground leading-tight">{signal.label}</p>
                   <div className="flex items-center gap-1 mt-0.5">
                     <StatusIcon className={cn("w-3 h-3", STATUS_COLOR[signal.status])} />
                     <span className={cn("text-xs font-semibold", STATUS_COLOR[signal.status])}>{signal.value}</span>
@@ -227,7 +227,7 @@ export function RealityCheckCard({ companyId, companyName }: Props) {
           })}
         </div>
 
-        <p className="text-[10px] text-muted-foreground border-t border-border pt-2">
+        <p className="text-xs text-muted-foreground border-t border-border pt-2">
           Aggregated from WARN filings, court records, worker reviews, job postings, and leadership data.
           Signals are directional — verify during interviews.
         </p>

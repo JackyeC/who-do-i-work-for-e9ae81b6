@@ -215,7 +215,7 @@ export function ValuesCheckSection({
                 <Badge variant="outline" className={cn("text-xs font-medium", strengthConfig[overallStrength].color)}>
                   {strengthConfig[overallStrength].text}
                 </Badge>
-                <span className="text-[10px] text-muted-foreground">
+                <span className="text-xs text-muted-foreground">
                   {signals.length} record{signals.length !== 1 ? "s" : ""} analyzed
                 </span>
               </div>
@@ -227,7 +227,7 @@ export function ValuesCheckSection({
             <>
               <div className="px-7 pb-5">
                 <div className={cn("rounded-xl border p-4 space-y-3", strengthConfig[overallStrength].bg, "border-border/40")}>
-                  <p className="text-[10px] uppercase tracking-widest font-semibold text-muted-foreground">
+                  <p className="text-xs uppercase tracking-widest font-semibold text-muted-foreground">
                     What We Found
                   </p>
 
@@ -240,8 +240,8 @@ export function ValuesCheckSection({
                       >
                         <DollarSign className="w-4 h-4 text-primary mb-1" />
                         <p className="text-lg font-bold text-foreground font-data group-hover:text-primary transition-colors">{formatAmount(summaryStats.totalDonations)}</p>
-                        <p className="text-[10px] text-muted-foreground">Political donations</p>
-                        <p className="text-[8px] text-primary opacity-0 group-hover:opacity-100 transition-opacity mt-1">Click to see recipients →</p>
+                        <p className="text-xs text-muted-foreground">Political donations</p>
+                        <p className="text-xs text-primary opacity-0 group-hover:opacity-100 transition-opacity mt-1">Click to see recipients →</p>
                       </button>
                     )}
                     {summaryStats.totalLobbying > 0 && (
@@ -251,8 +251,8 @@ export function ValuesCheckSection({
                       >
                         <Megaphone className="w-4 h-4 text-primary mb-1" />
                         <p className="text-lg font-bold text-foreground font-data group-hover:text-primary transition-colors">{formatAmount(summaryStats.totalLobbying)}</p>
-                        <p className="text-[10px] text-muted-foreground">Lobbying spend</p>
-                        <p className="text-[8px] text-primary opacity-0 group-hover:opacity-100 transition-opacity mt-1">Click to view ↓</p>
+                        <p className="text-xs text-muted-foreground">Lobbying spend</p>
+                        <p className="text-xs text-primary opacity-0 group-hover:opacity-100 transition-opacity mt-1">Click to view ↓</p>
                       </button>
                     )}
                     {summaryStats.uniqueRecipients > 0 && (
@@ -262,8 +262,8 @@ export function ValuesCheckSection({
                       >
                         <Users className="w-4 h-4 text-primary mb-1" />
                         <p className="text-lg font-bold text-foreground font-data group-hover:text-primary transition-colors">{summaryStats.uniqueRecipients}</p>
-                        <p className="text-[10px] text-muted-foreground">Recipients funded</p>
-                        <p className="text-[8px] text-primary opacity-0 group-hover:opacity-100 transition-opacity mt-1">Click to see who →</p>
+                        <p className="text-xs text-muted-foreground">Recipients funded</p>
+                        <p className="text-xs text-primary opacity-0 group-hover:opacity-100 transition-opacity mt-1">Click to see who →</p>
                       </button>
                     )}
                     {summaryStats.execCount > 0 && (
@@ -273,8 +273,8 @@ export function ValuesCheckSection({
                       >
                         <UserCheck className="w-4 h-4 text-primary mb-1" />
                         <p className="text-lg font-bold text-foreground font-data group-hover:text-primary transition-colors">{summaryStats.execCount}</p>
-                        <p className="text-[10px] text-muted-foreground">Exec donors tracked</p>
-                        <p className="text-[8px] text-primary opacity-0 group-hover:opacity-100 transition-opacity mt-1">Click to view ↓</p>
+                        <p className="text-xs text-muted-foreground">Exec donors tracked</p>
+                        <p className="text-xs text-primary opacity-0 group-hover:opacity-100 transition-opacity mt-1">Click to view ↓</p>
                       </button>
                     )}
                   </div>
@@ -316,18 +316,18 @@ export function ValuesCheckSection({
             >
               <div className="flex items-center gap-2">
                 <Filter className="w-3.5 h-3.5 text-muted-foreground" />
-                <p className="text-[10px] uppercase tracking-widest font-semibold text-muted-foreground">
+                <p className="text-xs uppercase tracking-widest font-semibold text-muted-foreground">
                   Filter by Issue
                 </p>
                 {selectedIssue && (
-                  <Badge variant="secondary" className="text-[10px] px-1.5 py-0 gap-1">
+                  <Badge variant="secondary" className="text-xs px-1.5 py-0 gap-1">
                     {ISSUE_AREAS.find(i => i.key === selectedIssue)?.label}
                   </Badge>
                 )}
               </div>
               <div className="flex items-center gap-2">
                 {activeIssues.length > 0 && !issueFilterExpanded && (
-                  <span className="text-[10px] text-muted-foreground">{activeIssues.length} issue{activeIssues.length !== 1 ? "s" : ""} detected</span>
+                  <span className="text-xs text-muted-foreground">{activeIssues.length} issue{activeIssues.length !== 1 ? "s" : ""} detected</span>
                 )}
                 {issueFilterExpanded ? (
                   <ChevronUp className="w-4 h-4 text-muted-foreground group-hover:text-foreground transition-colors" />
@@ -358,7 +358,7 @@ export function ValuesCheckSection({
                     >
                       All signals
                     </button>
-                    <span className="text-[10px] text-muted-foreground">or pick an issue:</span>
+                    <span className="text-xs text-muted-foreground">or pick an issue:</span>
                   </div>
 
                   <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-2">
@@ -382,7 +382,7 @@ export function ValuesCheckSection({
                           <Icon className={cn("w-4 h-4 shrink-0", count > 0 ? issue.color : "text-muted-foreground")} />
                           <span className={cn("text-xs font-medium", count > 0 ? "text-foreground" : "text-muted-foreground")}>{issue.label}</span>
                           {count > 0 && (
-                            <span className="absolute top-1.5 right-2 text-[9px] font-bold text-primary bg-primary/10 rounded-full w-4 h-4 flex items-center justify-center">
+                            <span className="absolute top-1.5 right-2 text-xs font-bold text-primary bg-primary/10 rounded-full w-4 h-4 flex items-center justify-center">
                               {count}
                             </span>
                           )}
@@ -393,7 +393,7 @@ export function ValuesCheckSection({
 
                   {/* Explain general signals */}
                   {generalSignalCount > 0 && (
-                    <p className="text-[10px] text-muted-foreground mt-3 leading-relaxed">
+                    <p className="text-xs text-muted-foreground mt-3 leading-relaxed">
                       <Info className="w-3 h-3 inline mr-1 -mt-0.5" />
                       {generalSignalCount} signal{generalSignalCount !== 1 ? "s are" : " is"} not tied to a specific issue (e.g., total lobbying spend, executive donations).
                       {selectedIssue ? " These are included in your filtered view for context." : " These appear under every issue filter."}
@@ -408,7 +408,7 @@ export function ValuesCheckSection({
 
           {/* Signal Evidence by Category */}
           <div className="p-7 space-y-6">
-            <p className="text-[10px] uppercase tracking-widest font-semibold text-muted-foreground">
+            <p className="text-xs uppercase tracking-widest font-semibold text-muted-foreground">
               {selectedIssue
                 ? `Signals related to ${ISSUE_AREAS.find(i => i.key === selectedIssue)?.label || selectedIssue}`
                 : "All Signals by Category"}
@@ -440,9 +440,9 @@ export function ValuesCheckSection({
                       </div>
                       <div>
                         <h3 className="text-sm font-semibold text-foreground">{cat.label}</h3>
-                        <span className="text-[10px] text-muted-foreground">{cat.description}</span>
+                        <span className="text-xs text-muted-foreground">{cat.description}</span>
                       </div>
-                      <span className="ml-auto text-[10px] text-muted-foreground">{catSignals.length} record{catSignals.length !== 1 ? "s" : ""}</span>
+                      <span className="ml-auto text-xs text-muted-foreground">{catSignals.length} record{catSignals.length !== 1 ? "s" : ""}</span>
                     </div>
 
                     <div className="space-y-2.5 ml-10">
@@ -459,7 +459,7 @@ export function ValuesCheckSection({
 
                       {/* General signals with a subtle label */}
                       {generalSignals.length > 0 && specificSignals.length > 0 && (
-                        <p className="text-[10px] text-muted-foreground ml-1 mt-2 mb-1">
+                        <p className="text-xs text-muted-foreground ml-1 mt-2 mb-1">
                           General activity (applies across all issues):
                         </p>
                       )}
@@ -484,7 +484,7 @@ export function ValuesCheckSection({
             <>
               <Separator />
               <div className="p-7">
-                <p className="text-[10px] uppercase tracking-widest font-semibold text-muted-foreground mb-3">
+                <p className="text-xs uppercase tracking-widest font-semibold text-muted-foreground mb-3">
                   Issue Areas with Direct Signals
                 </p>
                 <div className="flex flex-wrap gap-2">
@@ -501,7 +501,7 @@ export function ValuesCheckSection({
                       >
                         <Icon className={cn("w-3 h-3", issue.color)} />
                         {issue.label}
-                        <span className="text-[9px] text-muted-foreground ml-0.5">({issueAreaCounts[issue.key]})</span>
+                        <span className="text-xs text-muted-foreground ml-0.5">({issueAreaCounts[issue.key]})</span>
                       </button>
                     );
                   })}
@@ -530,11 +530,11 @@ export function ValuesCheckSection({
             <div className="flex items-start gap-2 p-3 rounded-lg bg-muted/40 border border-border/30">
               <Info className="w-3.5 h-3.5 text-muted-foreground shrink-0 mt-0.5" />
               <div className="space-y-1">
-                <p className="text-[11px] text-muted-foreground leading-relaxed">
+                <p className="text-xs text-muted-foreground leading-relaxed">
                   <span className="font-medium text-foreground">How this works:</span> We pull from FEC campaign finance filings, Senate LDA lobbying disclosures, state-level contribution records, and corporate entity databases.
                   Each signal is tagged with its source and evidence strength. No moral judgments — just receipts.
                 </p>
-                <p className="text-[10px] text-muted-foreground">
+                <p className="text-xs text-muted-foreground">
                   "General" signals (like total lobbying spend) apply across all issues. Issue-specific signals are mapped using keyword analysis of recipient names, lobbied topics, and organizational descriptions.
                 </p>
               </div>

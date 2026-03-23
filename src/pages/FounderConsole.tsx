@@ -208,7 +208,7 @@ export default function FounderConsole() {
                       <span className="text-sm font-medium text-foreground">{co.name}</span>
                       <span className="text-xs text-muted-foreground ml-2">{co.industry}</span>
                     </div>
-                    <Badge variant="outline" className="font-mono text-[10px]">
+                    <Badge variant="outline" className="font-mono text-xs">
                       Score: {co.civic_footprint_score}
                     </Badge>
                   </div>
@@ -246,9 +246,9 @@ export default function FounderConsole() {
                 {recentFeedback.map((f, i) => (
                   <div key={i} className="p-3 bg-muted/30 rounded-xl border border-border/40">
                     <div className="flex items-center gap-2 mb-1">
-                      <Badge variant="outline" className="text-[9px] font-mono uppercase">{f.feedback_type}</Badge>
-                      <span className="text-[10px] text-muted-foreground">{timeAgo(f.created_at)}</span>
-                      {f.user_id && <span className="text-[10px] text-muted-foreground/60 ml-auto">{String(f.user_id).slice(0, 8)}…</span>}
+                      <Badge variant="outline" className="text-xs font-mono uppercase">{f.feedback_type}</Badge>
+                      <span className="text-xs text-muted-foreground">{timeAgo(f.created_at)}</span>
+                      {f.user_id && <span className="text-xs text-muted-foreground/60 ml-auto">{String(f.user_id).slice(0, 8)}…</span>}
                     </div>
                     <p className="text-xs text-foreground leading-relaxed">{f.message}</p>
                   </div>

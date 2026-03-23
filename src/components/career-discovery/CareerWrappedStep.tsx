@@ -261,7 +261,7 @@ export function CareerWrappedStep({ profile, careerPaths, companies, skillGap, f
       <div ref={cardRef} className="rounded-xl border border-border bg-card p-6 space-y-4">
         <div className="flex items-center gap-2 mb-1">
           <Sparkles className="w-4 h-4 text-[hsl(var(--civic-gold))]" />
-          <p className="text-[10px] uppercase tracking-widest text-muted-foreground font-semibold">Career Intelligence Report</p>
+          <p className="text-xs uppercase tracking-widest text-muted-foreground font-semibold">Career Intelligence Report</p>
         </div>
         <h3 className="text-lg font-bold text-foreground font-display">{profile.jobTitle}</h3>
         <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
@@ -272,12 +272,12 @@ export function CareerWrappedStep({ profile, careerPaths, companies, skillGap, f
         </div>
         {topFuture && (
           <div className="bg-muted/50 rounded-lg p-3">
-            <p className="text-[10px] uppercase text-muted-foreground mb-1">Top Career Path</p>
+            <p className="text-xs uppercase text-muted-foreground mb-1">Top Career Path</p>
             <p className="text-sm font-semibold text-foreground">{topFuture.label}</p>
             <p className="text-xs text-muted-foreground mt-0.5">{topFuture.description}</p>
           </div>
         )}
-        <p className="text-[9px] text-muted-foreground text-center italic pt-2 border-t border-border">
+        <p className="text-xs text-muted-foreground text-center italic pt-2 border-t border-border">
           Career Mapped by CivicLens · {new Date().toLocaleDateString()} · civiclens.com/career-map
         </p>
       </div>
@@ -349,7 +349,7 @@ function StatCard({ icon: Icon, label, value }: { icon: any; label: string; valu
     <div className="bg-muted/50 rounded-lg p-3 text-center">
       <Icon className="w-4 h-4 mx-auto text-primary mb-1" />
       <p className="text-lg font-bold font-mono text-foreground">{value}</p>
-      <p className="text-[10px] text-muted-foreground">{label}</p>
+      <p className="text-xs text-muted-foreground">{label}</p>
     </div>
   );
 }

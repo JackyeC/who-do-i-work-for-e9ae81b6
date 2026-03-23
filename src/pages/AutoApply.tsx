@@ -603,7 +603,7 @@ export default function AutoApply() {
                 className="w-full h-1 rounded-full transition-all"
                 style={{ background: i <= step ? "#f0c040" : "rgba(255,255,255,0.08)" }}
               />
-              <span className="text-[10px] font-medium" style={{ color: i <= step ? "#f0c040" : "#7a7590" }}>
+              <span className="text-xs font-medium" style={{ color: i <= step ? "#f0c040" : "#7a7590" }}>
                 {s.label}
               </span>
             </div>

@@ -75,7 +75,7 @@ export function InlineReportForm({ personName, companyName, onClose, onDeparture
       </div>
 
       <div className="space-y-1.5">
-        <p className="text-[11px] text-muted-foreground">What's wrong?</p>
+        <p className="text-xs text-muted-foreground">What's wrong?</p>
         {ISSUE_OPTIONS.map((opt) => (
           <label key={opt.value} className="flex items-center gap-2 text-xs text-foreground cursor-pointer">
             <input
@@ -92,7 +92,7 @@ export function InlineReportForm({ personName, companyName, onClose, onDeparture
       </div>
 
       <div>
-        <p className="text-[11px] text-muted-foreground mb-1">Source or link to verify (optional)</p>
+        <p className="text-xs text-muted-foreground mb-1">Source or link to verify (optional)</p>
         <Textarea
           value={sourceLink}
           onChange={(e) => setSourceLink(e.target.value)}

@@ -85,7 +85,7 @@ export function OfferStrengthScore({ result, isAIPowered, loading }: Props) {
                 ) : (
                   <>
                     <span className="text-4xl font-display font-bold text-foreground">{totalScore}</span>
-                    <span className="text-[10px] text-muted-foreground font-medium">/ 100</span>
+                    <span className="text-xs text-muted-foreground font-medium">/ 100</span>
                   </>
                 )}
               </div>
@@ -103,9 +103,9 @@ export function OfferStrengthScore({ result, isAIPowered, loading }: Props) {
                   ) : (
                     <span className={cn("text-sm font-semibold", label.color)}>{finalLabel}</span>
                   )}
-                  {!loading && <Badge variant="outline" className={cn("text-[10px]", confStyle.className)}>{confStyle.label}</Badge>}
-                  {isAIPowered && !loading && <Badge variant="outline" className="text-[10px] gap-1"><Sparkles className="w-2.5 h-2.5" /> AI-Powered</Badge>}
-                  {personalizationApplied && !loading && <Badge variant="outline" className="text-[10px]">Personalized</Badge>}
+                  {!loading && <Badge variant="outline" className={cn("text-xs", confStyle.className)}>{confStyle.label}</Badge>}
+                  {isAIPowered && !loading && <Badge variant="outline" className="text-xs gap-1"><Sparkles className="w-2.5 h-2.5" /> AI-Powered</Badge>}
+                  {personalizationApplied && !loading && <Badge variant="outline" className="text-xs">Personalized</Badge>}
                 </div>
               </div>
 
@@ -132,11 +132,11 @@ export function OfferStrengthScore({ result, isAIPowered, loading }: Props) {
           {/* Missing data warnings */}
           {!loading && missingDataWarnings.length > 0 && (
             <div className="mt-5 p-3 bg-muted/40 rounded-xl space-y-1">
-              <p className="text-[11px] font-medium text-muted-foreground flex items-center gap-1.5">
+              <p className="text-xs font-medium text-muted-foreground flex items-center gap-1.5">
                 <Info className="w-3 h-3" /> Missing Information
               </p>
               {missingDataWarnings.map((w, i) => (
-                <p key={i} className="text-[11px] text-muted-foreground pl-4">• {w}</p>
+                <p key={i} className="text-xs text-muted-foreground pl-4">• {w}</p>
               ))}
             </div>
           )}
@@ -213,9 +213,9 @@ function CategoryCard({ category, isExpanded, onToggle }: { category: ScoreCateg
           <div className="pt-2 space-y-2 border-t border-border/30">
             {category.positiveSignals && category.positiveSignals.length > 0 && (
               <div>
-                <p className="text-[10px] font-semibold text-[hsl(var(--civic-green))] mb-1">Positive Signals</p>
+                <p className="text-xs font-semibold text-[hsl(var(--civic-green))] mb-1">Positive Signals</p>
                 {category.positiveSignals.map((s, i) => (
-                  <p key={i} className="text-[11px] text-muted-foreground flex items-center gap-1.5">
+                  <p key={i} className="text-xs text-muted-foreground flex items-center gap-1.5">
                     <CheckCircle2 className="w-3 h-3 text-[hsl(var(--civic-green))]" /> {s}
                   </p>
                 ))}
@@ -223,23 +223,23 @@ function CategoryCard({ category, isExpanded, onToggle }: { category: ScoreCateg
             )}
             {category.negativeSignals && category.negativeSignals.length > 0 && (
               <div>
-                <p className="text-[10px] font-semibold text-destructive mb-1">Risk Signals</p>
+                <p className="text-xs font-semibold text-destructive mb-1">Risk Signals</p>
                 {category.negativeSignals.map((s, i) => (
-                  <p key={i} className="text-[11px] text-muted-foreground flex items-center gap-1.5">
+                  <p key={i} className="text-xs text-muted-foreground flex items-center gap-1.5">
                     <XCircle className="w-3 h-3 text-destructive" /> {s}
                   </p>
                 ))}
               </div>
             )}
             <div className="flex items-center justify-between">
-              <Badge variant="outline" className={cn("text-[9px]", confStyle.className)}>{confStyle.label}</Badge>
-              <span className="text-[10px] text-muted-foreground">{category.weight}% weight</span>
+              <Badge variant="outline" className={cn("text-xs", confStyle.className)}>{confStyle.label}</Badge>
+              <span className="text-xs text-muted-foreground">{category.weight}% weight</span>
             </div>
           </div>
         )}
 
         {!isExpanded && (
-          <span className="text-[10px] text-muted-foreground">{category.weight}% weight</span>
+          <span className="text-xs text-muted-foreground">{category.weight}% weight</span>
         )}
       </CardContent>
     </Card>

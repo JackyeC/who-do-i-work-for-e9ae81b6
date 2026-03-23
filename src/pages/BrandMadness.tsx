@@ -109,7 +109,7 @@ export default function BrandMadness() {
         <div className="max-w-[1100px] mx-auto px-6 py-10">
           <div className="flex items-center gap-2 mb-2">
             <Trophy className="w-4 h-4 text-primary" />
-            <span className="font-mono text-[9px] tracking-[0.25em] uppercase text-primary font-semibold">
+            <span className="font-mono text-xs tracking-[0.25em] uppercase text-primary font-semibold">
               March 2026
             </span>
           </div>
@@ -122,13 +122,13 @@ export default function BrandMadness() {
             the biggest bracket in career intelligence.
           </p>
           <div className="flex items-center gap-4">
-            <div className="flex items-center gap-1.5 text-[11px] text-muted-foreground">
+            <div className="flex items-center gap-1.5 text-xs text-muted-foreground">
               <Users className="w-3.5 h-3.5" />
               <span className="font-mono font-semibold text-foreground">{totalVoters.toLocaleString()}</span> votes cast
             </div>
             {!user && (
               <Link to="/login">
-                <Button size="sm" className="font-mono text-[10px]">
+                <Button size="sm" className="font-mono text-xs">
                   Sign Up to Vote
                 </Button>
               </Link>
@@ -145,7 +145,7 @@ export default function BrandMadness() {
               key={r.id}
               onClick={() => setActiveRegion(r.id)}
               className={cn(
-                "font-mono text-[10px] tracking-wider uppercase px-4 py-1.5 border transition-all whitespace-nowrap flex items-center gap-1.5",
+                "font-mono text-xs tracking-wider uppercase px-4 py-1.5 border transition-all whitespace-nowrap flex items-center gap-1.5",
                 activeRegion === r.id
                   ? "bg-primary/10 border-primary/30 text-primary"
                   : "bg-transparent border-border text-muted-foreground hover:border-primary/20 hover:text-foreground"
@@ -163,7 +163,7 @@ export default function BrandMadness() {
         <div className="flex items-center gap-2 mb-4">
           <span className="text-lg">{region.emoji}</span>
           <h2 className="font-bold text-foreground text-lg">{region.name} Region</h2>
-          <span className="font-mono text-[9px] tracking-wider text-muted-foreground ml-2">
+          <span className="font-mono text-xs tracking-wider text-muted-foreground ml-2">
             Round of 64
           </span>
         </div>
@@ -200,7 +200,7 @@ export default function BrandMadness() {
           </p>
           {!user && (
             <Link to="/login">
-              <Button size="sm" className="font-mono text-[10px]">
+              <Button size="sm" className="font-mono text-xs">
                 <Zap className="w-3 h-3 mr-1" />
                 Create Free Account
               </Button>
@@ -210,7 +210,7 @@ export default function BrandMadness() {
 
         {/* Footer */}
         <div className="mt-8 text-center">
-          <p className="text-[10px] text-muted-foreground/60 font-mono">
+          <p className="text-xs text-muted-foreground/60 font-mono">
             Brand Madness 2026 · 50% fan votes + 50% Corporate Character
             Score™ · Powered by verified intelligence · whodoiworkfor.com
           </p>

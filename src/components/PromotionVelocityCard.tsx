@@ -42,7 +42,7 @@ export function PromotionVelocityCard({ result, companyName }: Props) {
               Measures internal career growth speed using 6 weighted components from public filings, career pages, and workforce signals.
             </TooltipContent>
           </Tooltip>
-          <Badge variant="outline" className="text-[10px] ml-auto">{result.confidence} Confidence</Badge>
+          <Badge variant="outline" className="text-xs ml-auto">{result.confidence} Confidence</Badge>
         </CardTitle>
       </CardHeader>
       <CardContent className="space-y-4">
@@ -70,7 +70,7 @@ export function PromotionVelocityCard({ result, companyName }: Props) {
           ))}
         </div>
 
-        <p className="text-[10px] text-muted-foreground text-center pt-1">
+        <p className="text-xs text-muted-foreground text-center pt-1">
           Promotion Velocity Score™ — 7-Layer Evidence Model
         </p>
       </CardContent>

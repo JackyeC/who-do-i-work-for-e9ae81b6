@@ -51,7 +51,7 @@ export function VerifySignalButton({ signalType, signalId, companyId, compact = 
 
   if (submitted) {
     return (
-      <span className="text-[10px] text-muted-foreground flex items-center gap-0.5">
+      <span className="text-xs text-muted-foreground flex items-center gap-0.5">
         <CheckCircle2 className="w-2.5 h-2.5 text-[hsl(var(--civic-green))]" />
         Flagged for review
       </span>
@@ -62,7 +62,7 @@ export function VerifySignalButton({ signalType, signalId, companyId, compact = 
     <>
       <button
         onClick={() => setOpen(true)}
-        className="text-[10px] text-muted-foreground hover:text-foreground inline-flex items-center gap-0.5 transition-colors"
+        className="text-xs text-muted-foreground hover:text-foreground inline-flex items-center gap-0.5 transition-colors"
       >
         <Flag className="w-2.5 h-2.5" />
         {!compact && "Verify This Signal"}

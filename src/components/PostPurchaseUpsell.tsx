@@ -32,7 +32,7 @@ export function PostPurchaseUpsell({ onDismiss }: PostPurchaseUpsellProps) {
             <CheckCircle2 className="w-6 h-6 text-primary" />
           </div>
           <div className="flex-1 min-w-0">
-            <Badge variant="secondary" className="text-[10px] font-mono uppercase tracking-wider mb-2">
+            <Badge variant="secondary" className="text-xs font-mono uppercase tracking-wider mb-2">
               Credits Added
             </Badge>
             <h3 className="text-lg font-bold text-foreground mb-1">

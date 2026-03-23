@@ -111,7 +111,7 @@ export function LobbyingDetailDrawer({ open, onOpenChange, companyId, companyNam
                     View Senate LDA filings <ExternalLink className="w-3 h-3" />
                   </a>
                 </div>
-                <p className="text-[10px] text-muted-foreground">
+                <p className="text-xs text-muted-foreground">
                   Aggregated from quarterly Senate Lobbying Disclosure Act filings. This is what {companyName} paid to registered lobbying firms to advocate on their behalf in Congress — the money goes to lobbying firms, not directly to politicians.
                 </p>
               </CardContent>
@@ -182,7 +182,7 @@ export function LobbyingDetailDrawer({ open, onOpenChange, companyId, companyNam
                     <DollarSign className="w-4 h-4 text-muted-foreground" />
                     Who Receives the Money
                   </h3>
-                  <p className="text-[10px] text-muted-foreground mb-3">
+                  <p className="text-xs text-muted-foreground mb-3">
                     Lobbying dollars go to registered lobbying firms — not directly to politicians.
                     These firms advocate on {companyName}'s behalf in Congress.
                   </p>
@@ -197,9 +197,9 @@ export function LobbyingDetailDrawer({ open, onOpenChange, companyId, companyNam
                           </div>
                           {l.description && <p className="text-xs text-muted-foreground">{l.description}</p>}
                           <div className="flex items-center gap-2 mt-1.5 flex-wrap">
-                            <Badge variant="outline" className="text-[10px]">Lobbying Firm</Badge>
-                            {meta.filing_year && <span className="text-[10px] text-muted-foreground">Filed: {meta.filing_year}</span>}
-                            <span className="text-[10px] text-muted-foreground">
+                            <Badge variant="outline" className="text-xs">Lobbying Firm</Badge>
+                            {meta.filing_year && <span className="text-xs text-muted-foreground">Filed: {meta.filing_year}</span>}
+                            <span className="text-xs text-muted-foreground">
                               {Math.round(l.confidence_score * 100) >= 80 ? "Strong evidence" : Math.round(l.confidence_score * 100) >= 50 ? "Some evidence" : "Weak evidence"}
                             </span>
                           </div>
@@ -209,7 +209,7 @@ export function LobbyingDetailDrawer({ open, onOpenChange, companyId, companyNam
                               const url = citations?.[0]?.url;
                               if (url && url.startsWith("http")) {
                                 return (
-                                  <a href={url} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-1 text-[10px] text-primary hover:underline mt-1">
+                                  <a href={url} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-1 text-xs text-primary hover:underline mt-1">
                                     <ExternalLink className="w-2.5 h-2.5" /> View filing
                                   </a>
                                 );
@@ -231,7 +231,7 @@ export function LobbyingDetailDrawer({ open, onOpenChange, companyId, companyNam
 
               {/* Source attribution */}
               <div className="border-t border-border pt-4">
-                <p className="text-[10px] text-muted-foreground">
+                <p className="text-xs text-muted-foreground">
                   Sources: Senate Lobbying Disclosure Act filings, state lobbying registries, FollowTheMoney.org.
                   Federal lobbying data from <a href="https://lda.senate.gov" target="_blank" rel="noopener noreferrer" className="text-primary hover:underline">lda.senate.gov</a>.
                 </p>

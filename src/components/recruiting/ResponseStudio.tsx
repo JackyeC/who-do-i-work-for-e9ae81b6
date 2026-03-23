@@ -171,9 +171,9 @@ export function ResponseStudio() {
                     <div className="flex-1 min-w-0">
                       <p className="text-sm font-medium text-foreground">{point.signal}</p>
                       <div className="flex items-center gap-2 mt-1">
-                        <Badge variant="secondary" className="text-[10px]">{point.source}</Badge>
+                        <Badge variant="secondary" className="text-xs">{point.source}</Badge>
                         {point.sourceUrl && /^https?:\/\//.test(point.sourceUrl) && (
-                          <a href={point.sourceUrl} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-1 text-[10px] text-primary hover:underline">
+                          <a href={point.sourceUrl} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-1 text-xs text-primary hover:underline">
                             <ExternalLink className="w-2.5 h-2.5" /> View Receipt
                           </a>
                         )}
@@ -183,7 +183,7 @@ export function ResponseStudio() {
 
                   <div className="bg-muted/40 rounded-lg p-4 border border-border/40">
                     <div className="flex items-center justify-between mb-2">
-                      <span className="text-[10px] font-semibold uppercase tracking-wider text-muted-foreground">Suggested Script</span>
+                      <span className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">Suggested Script</span>
                       <Button variant="ghost" size="sm" className="h-6 text-xs gap-1" onClick={() => copyScript(point.script)}>
                         <Copy className="w-3 h-3" /> Copy
                       </Button>

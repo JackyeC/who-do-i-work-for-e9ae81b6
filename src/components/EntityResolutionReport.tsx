@@ -63,9 +63,9 @@ export function EntityResolutionReport({
     <div className={cn("inline-flex flex-col", className)}>
       <button
         onClick={() => setExpanded(!expanded)}
-        className="inline-flex items-center gap-1.5 text-[10px] hover:opacity-80 transition-opacity"
+        className="inline-flex items-center gap-1.5 text-xs hover:opacity-80 transition-opacity"
       >
-        <Badge variant="outline" className={cn("text-[10px] gap-1 cursor-help", color)}>
+        <Badge variant="outline" className={cn("text-xs gap-1 cursor-help", color)}>
           <ShieldCheck className="w-3 h-3" />
           Entity Match: {matchConfidence}%
         </Badge>
@@ -119,7 +119,7 @@ export function EntityResolutionReport({
             </div>
             <div className="flex justify-between">
               <span className="text-muted-foreground">Match Confidence</span>
-              <Badge variant="outline" className={cn("text-[9px]", color)}>{matchConfidence}%</Badge>
+              <Badge variant="outline" className={cn("text-xs", color)}>{matchConfidence}%</Badge>
             </div>
           </div>
 
@@ -131,7 +131,7 @@ export function EntityResolutionReport({
               </p>
               <div className="space-y-1 max-h-32 overflow-y-auto">
                 {subsidiaries!.map((s: any, i: number) => (
-                  <div key={i} className="flex items-center gap-2 text-[10px]">
+                  <div key={i} className="flex items-center gap-2 text-xs">
                     <Building2 className="w-2.5 h-2.5 text-muted-foreground shrink-0" />
                     <span className="text-foreground truncate">{s.entity_name}</span>
                     {s.jurisdiction && <span className="text-muted-foreground ml-auto shrink-0">{s.jurisdiction}</span>}

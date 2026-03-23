@@ -96,7 +96,7 @@ function ScoreRing({ score, size = 120 }: { score: number; size?: number }) {
       </svg>
       <div className="absolute inset-0 flex flex-col items-center justify-center">
         <span className="text-3xl font-display font-bold text-foreground">{score}</span>
-        <span className="text-[10px] text-muted-foreground font-medium">/ 100</span>
+        <span className="text-xs text-muted-foreground font-medium">/ 100</span>
       </div>
     </div>
   );
@@ -125,7 +125,7 @@ function CategoryCard({ config, score, findings, sublabel }: {
             </Badge>
           </div>
         </CardTitle>
-        <p className="text-[11px] text-muted-foreground">{sublabel}</p>
+        <p className="text-xs text-muted-foreground">{sublabel}</p>
       </CardHeader>
       <CardContent className="pt-0">
         <Progress value={score} className="h-1.5 mb-3" />
@@ -178,9 +178,9 @@ export function OfferClarityDashboard({ report, offerData, onStartOver }: Props)
               </div>
               <p className="text-sm text-muted-foreground leading-relaxed">{report.summary}</p>
               <div className="mt-3 flex items-center gap-2 text-xs text-muted-foreground">
-                <Badge variant="outline" className="text-[10px]">{offerData.companyName}</Badge>
-                <Badge variant="outline" className="text-[10px]">{offerData.roleTitle}</Badge>
-                {offerData.location && <Badge variant="outline" className="text-[10px]">{offerData.location}</Badge>}
+                <Badge variant="outline" className="text-xs">{offerData.companyName}</Badge>
+                <Badge variant="outline" className="text-xs">{offerData.roleTitle}</Badge>
+                {offerData.location && <Badge variant="outline" className="text-xs">{offerData.location}</Badge>}
               </div>
             </div>
           </div>
@@ -198,19 +198,19 @@ export function OfferClarityDashboard({ report, offerData, onStartOver }: Props)
         <CardContent>
           <div className="grid grid-cols-3 gap-4 mb-4">
             <div className="text-center p-3 bg-muted/50 rounded-lg">
-              <p className="text-[10px] text-muted-foreground uppercase tracking-wider mb-1">Market Range</p>
+              <p className="text-xs text-muted-foreground uppercase tracking-wider mb-1">Market Range</p>
               <p className="text-sm font-semibold text-foreground">
                 ${(report.compensation.marketRangeLow / 1000).toFixed(0)}k – ${(report.compensation.marketRangeHigh / 1000).toFixed(0)}k
               </p>
             </div>
             <div className="text-center p-3 bg-muted/50 rounded-lg">
-              <p className="text-[10px] text-muted-foreground uppercase tracking-wider mb-1">Your Offer</p>
+              <p className="text-xs text-muted-foreground uppercase tracking-wider mb-1">Your Offer</p>
               <p className="text-sm font-semibold text-foreground">
                 ${(baseSalary / 1000).toFixed(0)}k
               </p>
             </div>
             <div className="text-center p-3 bg-muted/50 rounded-lg">
-              <p className="text-[10px] text-muted-foreground uppercase tracking-wider mb-1">Percentile</p>
+              <p className="text-xs text-muted-foreground uppercase tracking-wider mb-1">Percentile</p>
               <div className="flex items-center justify-center gap-1">
                 {report.compensation.percentile >= 70 ? <TrendingUp className="w-3.5 h-3.5 text-civic-green" /> :
                  report.compensation.percentile >= 30 ? <Minus className="w-3.5 h-3.5 text-civic-yellow" /> :
@@ -230,7 +230,7 @@ export function OfferClarityDashboard({ report, offerData, onStartOver }: Props)
               style={{ left: `${Math.min(Math.max(report.compensation.percentile, 2), 98)}%` }}
             />
           </div>
-          <div className="flex justify-between mt-1 text-[10px] text-muted-foreground">
+          <div className="flex justify-between mt-1 text-xs text-muted-foreground">
             <span>Under Market</span>
             <span>Market Aligned</span>
             <span>Strong Offer</span>
@@ -297,7 +297,7 @@ export function OfferClarityDashboard({ report, offerData, onStartOver }: Props)
             ].map(item => (
               <div key={item.range} className="text-center p-2 bg-muted/30 rounded-lg">
                 <p className={cn("text-sm font-bold", item.color)}>{item.range}</p>
-                <p className="text-[10px] text-muted-foreground">{item.label}</p>
+                <p className="text-xs text-muted-foreground">{item.label}</p>
               </div>
             ))}
           </div>

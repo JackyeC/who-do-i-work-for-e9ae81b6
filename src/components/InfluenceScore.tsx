@@ -66,7 +66,7 @@ export function InfluenceScore({ score, size = "md", showLabel = true, animated 
   const strokeDashoffset = circumference - (score / 100) * circumference;
 
   const sizes = {
-    sm: { container: "w-16 h-16", text: "text-lg", label: "text-[10px]" },
+    sm: { container: "w-16 h-16", text: "text-lg", label: "text-xs" },
     md: { container: "w-24 h-24", text: "text-2xl", label: "text-xs" },
     lg: { container: "w-32 h-32", text: "text-4xl", label: "text-sm" },
   };
@@ -94,7 +94,7 @@ export function InfluenceScore({ score, size = "md", showLabel = true, animated 
       {showLabel && (
         <div className="text-center">
           <p className={cn("font-semibold text-foreground", s.label)}>{label}</p>
-          <p className="text-[10px] text-muted-foreground mt-0.5">How much this company tries to influence government</p>
+          <p className="text-xs text-muted-foreground mt-0.5">How much this company tries to influence government</p>
         </div>
       )}
     </div>

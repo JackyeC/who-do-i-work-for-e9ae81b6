@@ -112,7 +112,7 @@ export function SurvivorAlertCard({ companyName, dbCompanyId }: SurvivorAlertPro
             <Shield className="w-5 h-5 text-destructive" />
             RIF Intelligence & Survivor Alerts
           </CardTitle>
-          <Badge variant="destructive" className="text-[10px]">
+          <Badge variant="destructive" className="text-xs">
             {(data.totalAffected ?? 0).toLocaleString()} affected
           </Badge>
         </div>
@@ -147,7 +147,7 @@ export function SurvivorAlertCard({ companyName, dbCompanyId }: SurvivorAlertPro
                 key={state}
                 onClick={() => setSelectedState(state === selectedState ? null : state)}
                 className={cn(
-                  "text-[10px] px-2 py-1 rounded-md border transition-colors font-mono",
+                  "text-xs px-2 py-1 rounded-md border transition-colors font-mono",
                   selectedState === state
                     ? "bg-primary text-primary-foreground border-primary"
                     : "border-border hover:bg-accent/40"
@@ -164,7 +164,7 @@ export function SurvivorAlertCard({ companyName, dbCompanyId }: SurvivorAlertPro
           <div className="flex items-center gap-2 mb-2">
             <MapPin className="w-3.5 h-3.5 text-muted-foreground" />
             <span className="text-sm font-semibold">Layoff Heatmap</span>
-            <span className="text-[10px] text-muted-foreground">
+            <span className="text-xs text-muted-foreground">
               {filteredStates.length} state{filteredStates.length !== 1 ? "s" : ""} impacted
             </span>
           </div>
@@ -185,7 +185,7 @@ export function SurvivorAlertCard({ companyName, dbCompanyId }: SurvivorAlertPro
                   <div className="text-xs opacity-90">
                     {info.affected.toLocaleString()} affected
                   </div>
-                  <div className="text-[10px] opacity-70">
+                  <div className="text-xs opacity-70">
                     {info.notices} filing{info.notices !== 1 ? "s" : ""}
                     {info.cities.length > 0 && ` · ${info.cities.slice(0, 2).join(", ")}`}
                   </div>
@@ -213,15 +213,15 @@ export function SurvivorAlertCard({ companyName, dbCompanyId }: SurvivorAlertPro
                     {alert.contact_title && (
                       <span className="text-xs text-muted-foreground ml-1.5">· {alert.contact_title}</span>
                     )}
-                    <p className="text-[11px] text-destructive/80 mt-0.5">{alert.reason}</p>
+                    <p className="text-xs text-destructive/80 mt-0.5">{alert.reason}</p>
                   </div>
-                  <Badge variant="destructive" className="text-[9px] shrink-0">
+                  <Badge variant="destructive" className="text-xs shrink-0">
                     {alert.risk_level.toUpperCase()}
                   </Badge>
                 </div>
               ))}
             </div>
-            <p className="text-[10px] text-muted-foreground mt-3 italic">
+            <p className="text-xs text-muted-foreground mt-3 italic">
               💡 These connections may be high-priority poaching targets or need outreach support.
             </p>
           </div>
@@ -240,7 +240,7 @@ export function SurvivorAlertCard({ companyName, dbCompanyId }: SurvivorAlertPro
               US WARN filings detected alongside international entity growth — potential offshoring pattern.
             </p>
             {data.offshoreSignals.map((sig, i) => (
-              <p key={i} className="text-[11px] text-foreground/80 pl-3 border-l-2 border-orange-500/40 mb-1">
+              <p key={i} className="text-xs text-foreground/80 pl-3 border-l-2 border-orange-500/40 mb-1">
                 {sig}
               </p>
             ))}
@@ -259,7 +259,7 @@ export function SurvivorAlertCard({ companyName, dbCompanyId }: SurvivorAlertPro
                 <span className="text-sm font-semibold">Strategic Autopsy</span>
                 <Badge
                   variant={autopsy.risk_level === "critical" ? "destructive" : "outline"}
-                  className="text-[9px]"
+                  className="text-xs"
                 >
                   {autopsy.risk_level.toUpperCase()} RISK
                 </Badge>
@@ -270,24 +270,24 @@ export function SurvivorAlertCard({ companyName, dbCompanyId }: SurvivorAlertPro
             {showAutopsy && (
               <div className="mt-3 space-y-3">
                 <div>
-                  <span className="text-[10px] font-semibold uppercase text-destructive tracking-wider">Abolished Roles</span>
+                  <span className="text-xs font-semibold uppercase text-destructive tracking-wider">Abolished Roles</span>
                   <p className="text-xs text-foreground mt-0.5">{autopsy.abolished_pattern}</p>
                 </div>
                 <div>
-                  <span className="text-[10px] font-semibold uppercase text-green-600 tracking-wider">Retained / Growing</span>
+                  <span className="text-xs font-semibold uppercase text-green-600 tracking-wider">Retained / Growing</span>
                   <p className="text-xs text-foreground mt-0.5">{autopsy.retained_pattern}</p>
                 </div>
                 <div>
-                  <span className="text-[10px] font-semibold uppercase text-primary tracking-wider">Strategic Shift</span>
+                  <span className="text-xs font-semibold uppercase text-primary tracking-wider">Strategic Shift</span>
                   <p className="text-xs text-foreground mt-0.5">{autopsy.strategic_shift}</p>
                 </div>
                 <div>
-                  <span className="text-[10px] font-semibold uppercase text-amber-600 tracking-wider">Poaching Targets</span>
+                  <span className="text-xs font-semibold uppercase text-amber-600 tracking-wider">Poaching Targets</span>
                   <p className="text-xs text-foreground mt-0.5">{autopsy.poaching_targets}</p>
                 </div>
                 {autopsy.offshore_alert && (
                   <div>
-                    <span className="text-[10px] font-semibold uppercase text-orange-600 tracking-wider">Offshore Alert</span>
+                    <span className="text-xs font-semibold uppercase text-orange-600 tracking-wider">Offshore Alert</span>
                     <p className="text-xs text-foreground mt-0.5">{autopsy.offshore_alert}</p>
                   </div>
                 )}
@@ -298,7 +298,7 @@ export function SurvivorAlertCard({ companyName, dbCompanyId }: SurvivorAlertPro
 
         {/* Legend */}
         <div className="flex items-center gap-3 pt-2 border-t border-border">
-          <span className="text-[10px] text-muted-foreground">Intensity:</span>
+          <span className="text-xs text-muted-foreground">Intensity:</span>
           {[
             { label: "Low", color: "bg-yellow-500/60" },
             { label: "Moderate", color: "bg-orange-500/80" },
@@ -307,7 +307,7 @@ export function SurvivorAlertCard({ companyName, dbCompanyId }: SurvivorAlertPro
           ].map((l) => (
             <div key={l.label} className="flex items-center gap-1">
               <div className={cn("w-2.5 h-2.5 rounded-sm", l.color)} />
-              <span className="text-[10px] text-muted-foreground">{l.label}</span>
+              <span className="text-xs text-muted-foreground">{l.label}</span>
             </div>
           ))}
         </div>

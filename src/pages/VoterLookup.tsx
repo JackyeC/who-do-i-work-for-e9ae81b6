@@ -76,7 +76,7 @@ function SourceBadges({ sources }: { sources: string[] }) {
       {sources.map((s) => {
         const meta = sourceIcons[s] || { label: s, icon: Globe };
         return (
-          <Badge key={s} variant="outline" className="text-[9px] px-1.5 py-0 gap-1 border-border text-muted-foreground">
+          <Badge key={s} variant="outline" className="text-xs px-1.5 py-0 gap-1 border-border text-muted-foreground">
             <meta.icon className="w-2.5 h-2.5" />
             {meta.label}
           </Badge>
@@ -141,12 +141,12 @@ function RepCard({ rep }: { rep: RepData }) {
         {rep.committees && rep.committees.length > 0 && (
           <div className="mt-3 flex flex-wrap gap-1">
             {rep.committees.slice(0, 4).map((c) => (
-              <Badge key={c} variant="secondary" className="text-[10px] font-normal">
+              <Badge key={c} variant="secondary" className="text-xs font-normal">
                 {c}
               </Badge>
             ))}
             {rep.committees.length > 4 && (
-              <Badge variant="secondary" className="text-[10px] font-normal">
+              <Badge variant="secondary" className="text-xs font-normal">
                 +{rep.committees.length - 4} more
               </Badge>
             )}
@@ -162,7 +162,7 @@ function RepCard({ rep }: { rep: RepData }) {
             {rep.dataSources && <SourceBadges sources={rep.dataSources} />}
           </div>
           {rep.lastUpdated && (
-            <span className="flex items-center gap-1 text-[10px] text-muted-foreground/60">
+            <span className="flex items-center gap-1 text-xs text-muted-foreground/60">
               <Clock className="w-2.5 h-2.5" />
               {new Date(rep.lastUpdated).toLocaleDateString()}
             </span>
@@ -205,7 +205,7 @@ function RepCard({ rep }: { rep: RepData }) {
                           {funder.companyScore != null && <><span>Score: {funder.companyScore}/100</span><span>·</span></>}
                           <span className="capitalize">{(funder.donationType || "pac").replace(/[-_]/g, " ")}</span>
                           {funder.source === "fec" && (
-                            <Badge variant="outline" className="text-[10px] px-1.5 py-0 ml-1 border-primary/20 text-primary/70">FEC</Badge>
+                            <Badge variant="outline" className="text-xs px-1.5 py-0 ml-1 border-primary/20 text-primary/70">FEC</Badge>
                           )}
                         </div>
                       </div>
@@ -233,7 +233,7 @@ function RepCard({ rep }: { rep: RepData }) {
                 ? "FEC records were searched — no corporate PAC donations found for current cycle."
                 : "We're continuously expanding our data coverage."}
             </p>
-            <p className="text-[10px] mt-2 text-muted-foreground/50">
+            <p className="text-xs mt-2 text-muted-foreground/50">
               Check <a href="https://www.fec.gov" target="_blank" rel="noopener noreferrer" className="underline hover:text-primary">FEC.gov</a> for the latest filings
             </p>
           </div>
@@ -373,7 +373,7 @@ export default function VoterLookup() {
               )}
 
               {/* Data note */}
-              <p className="text-center text-[10px] text-muted-foreground/50 font-mono mt-6">
+              <p className="text-center text-xs text-muted-foreground/50 font-mono mt-6">
                 Data sourced from FEC filings, Congress.gov, and public records · Last searched {new Date().toLocaleDateString()}
               </p>
             </motion.div>

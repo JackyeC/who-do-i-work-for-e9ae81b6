@@ -34,7 +34,7 @@ export function WhatToAsk({ jobTitle, companyName, hasSalary, civicScore, mismat
   if (!user) {
     return (
       <div className="p-4 rounded-lg border border-border/50 bg-muted/20 relative overflow-hidden">
-        <p className="text-[10px] font-medium text-foreground uppercase tracking-wider mb-2 flex items-center gap-1">
+        <p className="text-xs font-medium text-foreground uppercase tracking-wider mb-2 flex items-center gap-1">
           <MessageCircleQuestion className="w-3 h-3 text-muted-foreground" /> What to Ask in the Interview
         </p>
         <div className="blur-sm select-none pointer-events-none space-y-2">
@@ -53,7 +53,7 @@ export function WhatToAsk({ jobTitle, companyName, hasSalary, civicScore, mismat
   if (!revealed) {
     return (
       <div className="p-4 rounded-lg border border-border/50 bg-muted/20">
-        <p className="text-[10px] font-medium text-foreground uppercase tracking-wider mb-2 flex items-center gap-1">
+        <p className="text-xs font-medium text-foreground uppercase tracking-wider mb-2 flex items-center gap-1">
           <MessageCircleQuestion className="w-3 h-3 text-muted-foreground" /> What to Ask in the Interview
         </p>
         <Button variant="outline" size="sm" className="gap-1.5 text-xs" onClick={() => setRevealed(true)}>
@@ -65,7 +65,7 @@ export function WhatToAsk({ jobTitle, companyName, hasSalary, civicScore, mismat
 
   return (
     <div className="p-4 rounded-lg border border-border/50 bg-muted/20">
-      <p className="text-[10px] font-medium text-foreground uppercase tracking-wider mb-2 flex items-center gap-1">
+      <p className="text-xs font-medium text-foreground uppercase tracking-wider mb-2 flex items-center gap-1">
         <MessageCircleQuestion className="w-3 h-3 text-muted-foreground" /> What to Ask in the Interview
       </p>
       {isLoading ? (

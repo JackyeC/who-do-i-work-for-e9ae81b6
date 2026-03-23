@@ -127,7 +127,7 @@ export function UserAlertsList() {
           <CardTitle className="text-base flex items-center gap-2">
             <Bell className="w-4 h-4 text-primary" />
             Alert Timeline
-            {unreadCount > 0 && <Badge className="text-[10px]">{unreadCount} new</Badge>}
+            {unreadCount > 0 && <Badge className="text-xs">{unreadCount} new</Badge>}
           </CardTitle>
           <div className="flex items-center gap-2">
             <DropdownMenu>
@@ -172,7 +172,7 @@ export function UserAlertsList() {
                 {/* Date header */}
                 <div className="flex items-center gap-3 mb-3">
                   <div className="h-px flex-1 bg-border" />
-                  <span className="text-[10px] font-semibold text-muted-foreground uppercase tracking-wider shrink-0">{date}</span>
+                  <span className="text-xs font-semibold text-muted-foreground uppercase tracking-wider shrink-0">{date}</span>
                   <div className="h-px flex-1 bg-border" />
                 </div>
 
@@ -213,22 +213,22 @@ export function UserAlertsList() {
                             >
                               {alert.company_name}
                             </Link>
-                            <Badge variant="outline" className="text-[10px]">{alert.signal_category}</Badge>
+                            <Badge variant="outline" className="text-xs">{alert.signal_category}</Badge>
                             <Badge variant="outline" className={cn(
-                              "text-[10px]",
+                              "text-xs",
                               alert.change_type === "new_signal" && "border-civic-green/30 text-civic-green",
                               alert.change_type === "removed" && "border-destructive/30 text-destructive",
                               alert.change_type === "changed" && "border-civic-yellow/30 text-civic-yellow",
                             )}>{alert.change_type}</Badge>
                             {isSnoozed && (
-                              <Badge variant="outline" className="text-[10px] border-civic-yellow/30 text-civic-yellow">
+                              <Badge variant="outline" className="text-xs border-civic-yellow/30 text-civic-yellow">
                                 <Clock className="w-2.5 h-2.5 mr-0.5" />
                                 Snoozed
                               </Badge>
                             )}
                           </div>
                           <p className="text-xs text-muted-foreground leading-relaxed">{alert.change_description}</p>
-                          <span className="text-[10px] text-muted-foreground mt-1 block">
+                          <span className="text-xs text-muted-foreground mt-1 block">
                             {new Date(alert.date_detected || alert.created_at).toLocaleTimeString("en-US", {
                               hour: "numeric",
                               minute: "2-digit",

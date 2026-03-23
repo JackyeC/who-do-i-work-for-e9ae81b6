@@ -36,8 +36,8 @@ export function GivingShareRow({ permalink, plainText, tweetText, companySlug }:
     window.open(`https://twitter.com/intent/tweet?text=${encodeURIComponent(tweetText)}&url=${encodeURIComponent(permalink)}`, "_blank");
   };
 
-  const btnClass = "inline-flex items-center gap-1.5 px-3 py-1.5 text-[11px] font-medium rounded-lg border border-border/60 bg-card hover:bg-muted/50 text-muted-foreground hover:text-foreground transition-colors cursor-pointer";
-  const lockedClass = "inline-flex items-center gap-1.5 px-3 py-1.5 text-[11px] font-medium rounded-lg border border-border/30 bg-muted/20 text-muted-foreground/50 cursor-not-allowed";
+  const btnClass = "inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium rounded-lg border border-border/60 bg-card hover:bg-muted/50 text-muted-foreground hover:text-foreground transition-colors cursor-pointer";
+  const lockedClass = "inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium rounded-lg border border-border/30 bg-muted/20 text-muted-foreground/50 cursor-not-allowed";
 
   return (
     <div className="flex items-center gap-2 flex-wrap mt-3 pt-3 border-t border-border/30">
@@ -67,10 +67,10 @@ export function GivingShareRow({ permalink, plainText, tweetText, companySlug }:
       ) : (
         <>
           <button className={lockedClass} title="Upgrade to Strategist to unlock">
-            <Lock className="w-2.5 h-2.5" /> Image <span className="text-[9px]">Pro</span>
+            <Lock className="w-2.5 h-2.5" /> Image <span className="text-xs">Pro</span>
           </button>
           <button className={lockedClass} title="Upgrade to Strategist to unlock">
-            <Lock className="w-2.5 h-2.5" /> PDF <span className="text-[9px]">Pro</span>
+            <Lock className="w-2.5 h-2.5" /> PDF <span className="text-xs">Pro</span>
           </button>
         </>
       )}

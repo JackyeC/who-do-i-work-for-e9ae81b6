@@ -37,7 +37,7 @@ export function CompareShareBar({ nameA, nameB, slugA, slugB, scoreA, scoreB }: 
     <div className="border border-border bg-card overflow-hidden mb-8">
       <div className="px-5 py-3 border-b border-border bg-muted/20 flex items-center gap-2">
         <Share2 className="w-3.5 h-3.5 text-primary" />
-        <span className="font-mono text-[9px] tracking-[0.2em] uppercase text-primary font-semibold">
+        <span className="font-mono text-xs tracking-[0.2em] uppercase text-primary font-semibold">
           Share This Matchup
         </span>
       </div>
@@ -46,10 +46,10 @@ export function CompareShareBar({ nameA, nameB, slugA, slugB, scoreA, scoreB }: 
           Think someone's choosing between these two? Send them the data.
         </p>
         <div className="flex gap-2 shrink-0">
-          <Button onClick={shareLinkedIn} size="sm" className="gap-1.5 bg-[#0A66C2] hover:bg-[#004182] text-white font-mono text-[10px] tracking-wider uppercase">
+          <Button onClick={shareLinkedIn} size="sm" className="gap-1.5 bg-[#0A66C2] hover:bg-[#004182] text-white font-mono text-xs tracking-wider uppercase">
             <Linkedin className="w-3.5 h-3.5" /> LinkedIn
           </Button>
-          <Button onClick={copyLink} variant="outline" size="sm" className="gap-1.5 font-mono text-[10px] tracking-wider uppercase">
+          <Button onClick={copyLink} variant="outline" size="sm" className="gap-1.5 font-mono text-xs tracking-wider uppercase">
             {copied ? <Check className="w-3.5 h-3.5" /> : <Link2 className="w-3.5 h-3.5" />}
             {copied ? "Copied!" : "Copy Link"}
           </Button>

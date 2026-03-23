@@ -102,14 +102,14 @@ export function IssueRelatedReports({ issueCategory, issueLabel }: Props) {
                         <p className="font-semibold text-sm text-foreground">{r.title}</p>
                         {r.subtitle && <p className="text-xs text-muted-foreground mt-0.5">{r.subtitle}</p>}
                         <div className="flex items-center gap-2 mt-2 flex-wrap">
-                          <span className="text-[10px] text-muted-foreground flex items-center gap-1">
+                          <span className="text-xs text-muted-foreground flex items-center gap-1">
                             <Calendar className="w-3 h-3" />
                             {r.publication_date ? new Date(r.publication_date).toLocaleDateString() : "Draft"}
                           </span>
-                          <Badge variant="outline" className={`text-[10px] px-1.5 py-0 ${vStatus.className}`}>
+                          <Badge variant="outline" className={`text-xs px-1.5 py-0 ${vStatus.className}`}>
                             <Shield className="w-2.5 h-2.5 mr-0.5" />{vStatus.text}
                           </Badge>
-                          {r.author_name && <span className="text-[10px] text-muted-foreground">{r.author_name}</span>}
+                          {r.author_name && <span className="text-xs text-muted-foreground">{r.author_name}</span>}
                         </div>
                       </div>
                       <ArrowRight className="w-4 h-4 text-muted-foreground/40 shrink-0 mt-1" />
@@ -131,7 +131,7 @@ export function IssueRelatedReports({ issueCategory, issueLabel }: Props) {
               <div key={c.id} className="flex items-start gap-2 text-sm">
                 <span className="w-1.5 h-1.5 rounded-full bg-primary mt-1.5 shrink-0" />
                 <span className="text-foreground">{c.claim_title}</span>
-                <Badge variant="outline" className="text-[10px] px-1.5 py-0 shrink-0 capitalize">{c.claim_type?.replace(/_/g, " ")}</Badge>
+                <Badge variant="outline" className="text-xs px-1.5 py-0 shrink-0 capitalize">{c.claim_type?.replace(/_/g, " ")}</Badge>
               </div>
             ))}
           </div>

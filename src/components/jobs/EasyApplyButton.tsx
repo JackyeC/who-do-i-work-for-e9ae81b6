@@ -85,7 +85,7 @@ export function EasyApplyButton({ job, className }: EasyApplyButtonProps) {
         <Zap className="w-3.5 h-3.5" />
         Quick Apply
         {!hasResume && (
-          <Badge variant="outline" className="text-[9px] ml-1 py-0">
+          <Badge variant="outline" className="text-xs ml-1 py-0">
             <Upload className="w-2.5 h-2.5 mr-0.5" /> Resume needed
           </Badge>
         )}

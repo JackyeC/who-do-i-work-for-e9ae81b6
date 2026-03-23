@@ -144,7 +144,7 @@ function IntroRequestPanel({
               </p>
             </div>
             {email && (
-              <Badge variant="outline" className="text-[10px] shrink-0">{email}</Badge>
+              <Badge variant="outline" className="text-xs shrink-0">{email}</Badge>
             )}
           </div>
 
@@ -166,7 +166,7 @@ function IntroRequestPanel({
           )}
 
           <div className="flex items-center justify-between">
-            <p className="text-[10px] text-muted-foreground">Professional & neutral — edit as needed.</p>
+            <p className="text-xs text-muted-foreground">Professional & neutral — edit as needed.</p>
             <div className="flex gap-2">
               <Button variant="outline" size="sm" onClick={generateMessage} disabled={generating}>
                 <Sparkles className="w-3 h-3 mr-1" /> Regenerate
@@ -216,19 +216,19 @@ function NetworkMatchCard({
   return (
     <>
       <div className="ml-7 mt-1.5 p-2.5 rounded-lg bg-primary/5 border border-primary/10 space-y-2">
-        <p className="text-[10px] font-medium text-primary flex items-center gap-1">
+        <p className="text-xs font-medium text-primary flex items-center gap-1">
           <Users className="w-3 h-3" />
           People in your network who can help
         </p>
         {relevant.map(c => (
           <div key={c.id} className="flex items-center gap-2 justify-between">
             <div className="flex items-center gap-2 min-w-0">
-              <div className="w-6 h-6 rounded-full bg-primary/10 flex items-center justify-center text-primary font-bold text-[10px] shrink-0">
+              <div className="w-6 h-6 rounded-full bg-primary/10 flex items-center justify-center text-primary font-bold text-xs shrink-0">
                 {c.first_name[0]}{c.last_name[0]}
               </div>
               <div className="min-w-0">
                 <p className="text-xs font-medium text-foreground truncate">{c.first_name} {c.last_name}</p>
-                <p className="text-[10px] text-muted-foreground truncate">
+                <p className="text-xs text-muted-foreground truncate">
                   {c.title}{c.title && (c.company || c.matched_company?.name) ? " at " : ""}
                   {c.matched_company?.name || c.company}
                 </p>
@@ -237,7 +237,7 @@ function NetworkMatchCard({
             <Button
               variant="outline"
               size="sm"
-              className="text-[10px] h-6 px-2 gap-1 shrink-0"
+              className="text-xs h-6 px-2 gap-1 shrink-0"
               onClick={() => setShowIntro(c)}
             >
               <MessageSquare className="w-2.5 h-2.5" />
@@ -345,7 +345,7 @@ export function ActionPlanStep({ data, loading, error, onRetry }: Props) {
                             </button>
                           )}
                         </div>
-                        <Badge variant="outline" className="text-[10px] shrink-0 gap-1">
+                        <Badge variant="outline" className="text-xs shrink-0 gap-1">
                           <ActionIcon className="w-2.5 h-2.5" />
                           {ACTION_LABELS[action.type] || action.type}
                         </Badge>
