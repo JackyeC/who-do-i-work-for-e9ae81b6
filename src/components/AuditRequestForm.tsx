@@ -95,7 +95,7 @@ export function AuditRequestForm({ companyName, onClose }: AuditRequestFormProps
             We don't have receipts on this company yet.
           </h3>
           <p className="text-sm text-muted-foreground">
-            Request an audit and we'll add it to the queue.
+            Request a full company scan and we'll add it to the queue.
           </p>
         </div>
 
