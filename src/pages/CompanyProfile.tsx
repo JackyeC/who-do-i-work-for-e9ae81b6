@@ -392,11 +392,11 @@ export default function CompanyProfile() {
                 <div className="flex items-center justify-center gap-3 flex-wrap">
                   <Button onClick={handleFullScan} disabled={isScanning || !!isDiscovering} className="gap-2">
                     {isScanning ? <Loader2 className="w-4 h-4 animate-spin" /> : <Scan className="w-4 h-4" />}
-                    {isScanning ? "Scanning…" : "Run Scan Now"}
+                    {isScanning ? "Scanning…" : "Run Full Company Scan"}
                   </Button>
                   <Button variant="outline" onClick={() => navigate("/check")} className="gap-2">
                     <Search className="w-4 h-4" />
-                    Request Audit
+                    Request Company Scan
                   </Button>
                 </div>
               </CardContent>

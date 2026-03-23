@@ -648,10 +648,10 @@ const Index = forwardRef<HTMLDivElement>((_, ref) => {
             See the Receipts
           </button>
           <button
-            onClick={() => navigate("/browse")}
+            onClick={() => navigate("/check")}
             className="border border-border bg-card px-8 py-3.5 font-mono text-sm tracking-wider uppercase text-muted-foreground hover:text-foreground hover:border-primary/40 transition-all"
           >
-            Audit a Company
+            Scan a Company
           </button>
         </div>
       </section>

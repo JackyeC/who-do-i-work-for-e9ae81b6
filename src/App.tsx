@@ -275,6 +275,7 @@ const App = () => (
                   <Route path="/dossier" element={<SampleDossier />} />
                   <Route path="/welcome" element={<Welcome />} />
                   <Route path="/tools" element={<Tools />} />
+                  <Route path="/report-confirmation" element={<ReportConfirmation />} />
                   <Route path="*" element={<NotFound />} />
                 </Routes>
               </Suspense>
