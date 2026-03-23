@@ -1173,8 +1173,37 @@ export default function ReceiptsReport() {
     path: `/receipts/${slug}`,
   });
 
-  // Coming Soon state
-  if (slug !== "meta") {
+  // Companies with full demo reports
+  const DEMO_REPORTS: Record<string, { companyName: string; ticker: string; location: string; products: string; stats: typeof META_REPORT.stats }> = {
+    google: {
+      companyName: "ALPHABET INC. (GOOGLE)",
+      ticker: "NASDAQ: GOOGL",
+      location: "Mountain View, CA",
+      products: "Google Search, YouTube, Android, Cloud, Waymo",
+      stats: [
+        { label: "PAC Raised", value: "$478,200", detail: "2023–24 cycle" },
+        { label: "Lobbying", value: "$13.4M", detail: "2024 total" },
+        { label: "WARN Filings", value: "42", detail: "2022–2026" },
+        { label: "Diversity Reports", value: "Stopped", detail: "After 11 years", trend: "down" },
+      ],
+    },
+    amazon: {
+      companyName: "AMAZON.COM, INC.",
+      ticker: "NASDAQ: AMZN",
+      location: "Seattle, WA",
+      products: "AWS, Marketplace, Prime, Alexa, Whole Foods",
+      stats: [
+        { label: "PAC Raised", value: "$612,400", detail: "2023–24 cycle" },
+        { label: "Lobbying", value: "$21.8M", detail: "2024 total" },
+        { label: "WARN Filings", value: "87", detail: "2022–2026" },
+        { label: "HR Cuts", value: "14,000+", detail: "Programs wound down", trend: "down" },
+      ],
+    },
+  };
+
+  const demoReport = slug ? DEMO_REPORTS[slug] : null;
+
+  if (slug !== "meta" && !demoReport) {
     return (
       <div className="min-h-screen bg-background flex flex-col items-center justify-center text-center px-4 py-24">
         <h2 className="text-3xl font-bold text-foreground mb-3">Report Coming Soon</h2>
@@ -1184,6 +1213,10 @@ export default function ReceiptsReport() {
         </Link>
       </div>
     );
+  }
+
+  if (demoReport) {
+    return <DemoReceiptsReport data={demoReport} slug={slug!} />;
   }
 
   const data = META_REPORT;
