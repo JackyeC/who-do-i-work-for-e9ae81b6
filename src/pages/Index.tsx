@@ -1,49 +1,31 @@
 import { useState, lazy, Suspense, forwardRef } from "react";
 import jackyeHeadshotSm from "@/assets/jackye-headshot-sm.webp";
 import { useNavigate, Link } from "react-router-dom";
-import { Shield, ArrowRight, Eye, Target, Brain, Rocket, CheckCircle2, Menu, X, Crosshair, FileSearch, AlertTriangle, Link2 } from "lucide-react";
-import { CareerFitReportCTA } from "@/components/CareerFitReportCTA";
+import { Shield, ArrowRight, Eye, Target, Brain, Rocket, CheckCircle2, Menu, X, FileSearch, AlertTriangle, Link2, Search, Layers, BarChart3, Users, Briefcase, Mic, Award, Building } from "lucide-react";
 import { useAuth } from "@/contexts/AuthContext";
 import { useClerkWithFallback } from "@/hooks/use-clerk-fallback";
 import { Button } from "@/components/ui/button";
 import { usePageSEO } from "@/hooks/use-page-seo";
-import { HeroSearch } from "@/components/landing/HeroSearch";
-import { PathfinderTracks } from "@/components/landing/PathfinderTracks";
-import { DemoCompanyProfile } from "@/components/landing/DemoCompanyProfile";
 
 const LiveIntelligenceTicker = lazy(() => import("@/components/landing/LiveIntelligenceTicker").then(m => ({ default: m.LiveIntelligenceTicker })));
-const SocialProofStrip = lazy(() => import("@/components/landing/SocialProofStrip").then(m => ({ default: m.SocialProofStrip })));
-const IntelligenceDashboard = lazy(() => import("@/components/landing/IntelligenceDashboard").then(m => ({ default: m.IntelligenceDashboard })));
-const FAQSection = lazy(() => import("@/components/landing/FAQSection").then(m => ({ default: m.FAQSection })));
 const EmailCapture = lazy(() => import("@/components/landing/EmailCapture").then(m => ({ default: m.EmailCapture })));
 const ExitIntentCapture = lazy(() => import("@/components/ExitIntentCapture").then(m => ({ default: m.ExitIntentCapture })));
 const SectionReveal = lazy(() => import("@/components/landing/SectionReveal").then(m => ({ default: m.SectionReveal })));
-
-const TRUST_SOURCES: { label: string; url: string }[] = [
-  { label: "FEC Filings", url: "https://www.fec.gov/data/" },
-  { label: "USASpending.gov", url: "https://www.usaspending.gov/" },
-  { label: "SEC EDGAR", url: "https://www.sec.gov/edgar" },
-  { label: "Senate Lobbying", url: "https://lda.senate.gov/system/public/" },
-  { label: "BLS Wage Data", url: "https://www.bls.gov/oes/" },
-  { label: "OpenSecrets", url: "https://www.opensecrets.org/" },
-];
-const STATIC_COMPANY_COUNT = 250;
 
 const Index = forwardRef<HTMLDivElement>((_, ref) => {
   const navigate = useNavigate();
   const { user, loading: authLoading } = useAuth();
   const { isLoaded } = useClerkWithFallback();
-
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
   usePageSEO({
-    title: "Career Intelligence — Stop Guessing, Start Auditing",
-    description: "You deserve to know exactly who you work for. Use 15+ years of recruiting intelligence to find aligned roles that match your DNA and your worth.",
+    title: "WDIWF — Know Who You're Really Working For",
+    description: "WDIWF is career intelligence for people who refuse to find out the hard way. Forensically evaluate companies before you accept the offer.",
     path: "/",
     jsonLd: {
       "@type": "WebApplication",
-      name: "Who Do I Work For?",
-      description: "Career Intelligence platform. Audit your career, not just search for jobs.",
+      name: "WDIWF — Who Do I Work For?",
+      description: "Career intelligence platform that forensically evaluates companies — so you never accept an offer blind again.",
       applicationCategory: "BusinessApplication",
       creator: { "@type": "Person", name: "Jackye Clayton" },
       url: "https://wdiwf.jackyeclayton.com",
@@ -54,64 +36,52 @@ const Index = forwardRef<HTMLDivElement>((_, ref) => {
 
   return (
     <div ref={ref} className="flex flex-col min-h-screen bg-background">
-      {/* ── Site Header (Sticky) ── */}
-      {/* Receipts banner */}
-      <div className="bg-primary/10 border-b border-primary/20 px-6 py-2.5 text-center">
-        <Link to="/receipts" className="font-sans text-sm text-primary hover:underline">
-          New: The Receipts — company-by-company investigations powered by public records →
-        </Link>
-      </div>
+      {/* ── Site Header ── */}
       <header className="sticky top-0 z-50 bg-background/95 backdrop-blur-sm border-b border-border/50 px-6 lg:px-16 py-4 w-full">
         <div className="max-w-[1100px] mx-auto flex items-center justify-between">
-        <Link to="/" className="flex items-center shrink-0">
-          <span style={{fontFamily:"Inter,sans-serif",fontWeight:900,letterSpacing:"-0.03em",fontSize:"26px"}}>
-            <span style={{color:"#111111"}}>W</span>
-            <span style={{color:"#F0C040"}}>?</span>
-          </span>
-        </Link>
-        <nav className="hidden md:flex items-center gap-6">
-          <Link to="/receipts" className="font-sans text-nav text-muted-foreground hover:text-foreground transition-colors">Receipts</Link>
-          <Link to="/browse" className="font-sans text-nav text-muted-foreground hover:text-foreground transition-colors">Companies</Link>
-          <Link to="/pricing" className="font-sans text-nav text-muted-foreground hover:text-foreground transition-colors">Pricing</Link>
-          <Link to="/about" className="font-sans text-nav text-muted-foreground hover:text-foreground transition-colors">About</Link>
-          {!authLoading && (
-            user ? (
-              <Button size="sm" variant="outline" onClick={() => navigate("/dashboard")} className="font-sans text-btn">
-                Dashboard
-              </Button>
-            ) : (
-              <>
-                <button onClick={() => navigate("/login")} className="font-sans text-nav text-muted-foreground hover:text-foreground transition-colors">
-                  Sign in
-                </button>
-                <Button size="sm" onClick={() => navigate("/login")} className="font-sans text-btn rounded-full px-5">
-                  Get started
+          <Link to="/" className="flex items-center shrink-0">
+            <span style={{fontFamily:"Inter,sans-serif",fontWeight:900,letterSpacing:"-0.03em",fontSize:"26px"}}>
+              <span className="text-foreground">W</span>
+              <span style={{color:"#F0C040"}}>?</span>
+            </span>
+          </Link>
+          <nav className="hidden md:flex items-center gap-6">
+            <Link to="/receipts" className="font-sans text-sm text-muted-foreground hover:text-foreground transition-colors">How It Works</Link>
+            <Link to="/about" className="font-sans text-sm text-muted-foreground hover:text-foreground transition-colors">About</Link>
+            <Link to="/for-employers" className="font-sans text-sm text-muted-foreground hover:text-foreground transition-colors">For Companies</Link>
+            <Link to="/browse" className="font-sans text-sm text-muted-foreground hover:text-foreground transition-colors">Insights</Link>
+            <Link to="/contact" className="font-sans text-sm text-muted-foreground hover:text-foreground transition-colors">Contact</Link>
+            {!authLoading && (
+              user ? (
+                <Button size="sm" variant="outline" onClick={() => navigate("/dashboard")} className="font-sans text-sm">
+                  Dashboard
                 </Button>
-              </>
-            )
-          )}
-        </nav>
-        <button className="md:hidden p-1 text-muted-foreground hover:text-foreground transition-colors" onClick={() => setMobileMenuOpen(!mobileMenuOpen)} aria-label="Toggle menu">
-          {mobileMenuOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
-        </button>
+              ) : (
+                <Button size="sm" onClick={() => navigate("/login")} className="font-sans text-sm rounded-full px-5">
+                  Get Early Access
+                </Button>
+              )
+            )}
+          </nav>
+          <button className="md:hidden p-1 text-muted-foreground hover:text-foreground transition-colors" onClick={() => setMobileMenuOpen(!mobileMenuOpen)} aria-label="Toggle menu">
+            {mobileMenuOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
+          </button>
         </div>
       </header>
 
       {mobileMenuOpen && (
-        <div className="md:hidden px-6 pb-4 border-b border-border/50">
+        <div className="md:hidden px-6 pb-4 border-b border-border/50 bg-background">
           <nav className="flex flex-col gap-3">
-            <Link to="/receipts" onClick={() => setMobileMenuOpen(false)} className="font-mono text-xs tracking-wider uppercase text-muted-foreground hover:text-foreground transition-colors py-2">Receipts</Link>
-            <Link to="/browse" onClick={() => setMobileMenuOpen(false)} className="font-mono text-xs tracking-wider uppercase text-muted-foreground hover:text-foreground transition-colors py-2">Companies</Link>
-            <Link to="/pricing" onClick={() => setMobileMenuOpen(false)} className="font-mono text-xs tracking-wider uppercase text-muted-foreground hover:text-foreground transition-colors py-2">Pricing</Link>
-            <Link to="/about" onClick={() => setMobileMenuOpen(false)} className="font-mono text-xs tracking-wider uppercase text-muted-foreground hover:text-foreground transition-colors py-2">About</Link>
+            <Link to="/receipts" onClick={() => setMobileMenuOpen(false)} className="font-sans text-sm text-muted-foreground hover:text-foreground transition-colors py-2">How It Works</Link>
+            <Link to="/about" onClick={() => setMobileMenuOpen(false)} className="font-sans text-sm text-muted-foreground hover:text-foreground transition-colors py-2">About</Link>
+            <Link to="/for-employers" onClick={() => setMobileMenuOpen(false)} className="font-sans text-sm text-muted-foreground hover:text-foreground transition-colors py-2">For Companies</Link>
+            <Link to="/browse" onClick={() => setMobileMenuOpen(false)} className="font-sans text-sm text-muted-foreground hover:text-foreground transition-colors py-2">Insights</Link>
+            <Link to="/contact" onClick={() => setMobileMenuOpen(false)} className="font-sans text-sm text-muted-foreground hover:text-foreground transition-colors py-2">Contact</Link>
             {!authLoading && (
               user ? (
-                <Button size="sm" variant="outline" onClick={() => { setMobileMenuOpen(false); navigate("/dashboard"); }} className="font-mono text-xs tracking-wider uppercase w-full">Dashboard</Button>
+                <Button size="sm" variant="outline" onClick={() => { setMobileMenuOpen(false); navigate("/dashboard"); }} className="w-full">Dashboard</Button>
               ) : (
-                <>
-                  <button onClick={() => { setMobileMenuOpen(false); navigate("/login"); }} className="font-mono text-xs tracking-wider uppercase text-muted-foreground hover:text-foreground transition-colors py-2">Sign in</button>
-                  <Button size="sm" onClick={() => { setMobileMenuOpen(false); navigate("/login"); }} className="font-mono text-xs tracking-wider uppercase w-full">Get started</Button>
-                </>
+                <Button size="sm" onClick={() => { setMobileMenuOpen(false); navigate("/login"); }} className="w-full">Get Early Access</Button>
               )
             )}
           </nav>
@@ -121,140 +91,91 @@ const Index = forwardRef<HTMLDivElement>((_, ref) => {
       <Suspense fallback={null}><ExitIntentCapture /></Suspense>
 
       {/* ══════════════════════════════════════════════════════════════════
-          HERO — "The Flip Moment"
+          SECTION 1: HERO
       ══════════════════════════════════════════════════════════════════ */}
-      <section
-        className="relative flex flex-col items-center justify-center px-6 text-center py-24 lg:py-32 bg-background"
-      >
-        {/* Grain overlay */}
-        <svg className="fixed inset-0 w-full h-full pointer-events-none" style={{ zIndex: 0, opacity: 0.04 }}>
-          <filter id="hero-grain">
-            <feTurbulence type="fractalNoise" baseFrequency="0.8" numOctaves="4" stitchTiles="stitch" />
-          </filter>
-          <rect width="100%" height="100%" filter="url(#hero-grain)" />
-        </svg>
+      <section className="relative flex flex-col justify-center px-6 lg:px-16 min-h-[85vh] py-24 lg:py-32 bg-background overflow-hidden">
+        {/* Subtle gold gradient */}
+        <div className="absolute top-[-20%] right-[-10%] w-[50%] h-[70%] pointer-events-none" style={{ background: "radial-gradient(ellipse, rgba(240,192,64,0.06) 0%, transparent 70%)" }} />
 
-        <div className="relative z-[1] flex flex-col items-center">
-          {/* Primary tagline opener */}
-          <p
-            className="font-sans text-muted-foreground text-center"
-            style={{
-              fontSize: "15px",
-              fontWeight: 500,
-              letterSpacing: "0.01em",
-              lineHeight: 1.5,
-              marginBottom: "16px",
-              opacity: 0,
-              animation: "heroFadeIn 0.6s ease 0.2s forwards",
-            }}
-          >
-            You deserve to know exactly who you work for.
-          </p>
-
-          {/* Eyebrow label */}
-          <p className="text-eyebrow" style={{ marginBottom: '24px' }}>
-            Corporate Accountability + Career Intelligence
-          </p>
-
-          {/* Headline */}
+        <div className="relative z-[1] max-w-[1100px] mx-auto w-full">
           <h1
-            className="text-display text-foreground"
-            style={{ animation: "heroFadeIn 0.8s ease 0.5s forwards", opacity: 0 }}
+            className="text-foreground font-sans leading-[1.05] tracking-tight"
+            style={{ fontSize: "clamp(2.5rem, 7vw, 5.5rem)", fontWeight: 800, maxWidth: "14ch", opacity: 0, animation: "heroFadeIn 0.8s ease 0.3s forwards" }}
           >
-            Stop applying. Start aligning.
+            Know who you're{" "}
+            <span className="text-primary">really</span>{" "}
+            working for.
           </h1>
 
-          {/* Subheadline — single, tighter */}
           <p
-            className="font-sans text-muted-foreground text-center max-w-[580px]"
-            style={{
-              fontSize: "17px",
-              lineHeight: 1.7,
-              marginTop: "20px",
-              opacity: 0,
-              animation: "heroFadeIn 0.6s ease 0.9s forwards",
-            }}
+            className="text-muted-foreground max-w-[52ch] leading-relaxed"
+            style={{ fontSize: "clamp(1rem, 1.5vw, 1.25rem)", marginTop: "24px", opacity: 0, animation: "heroFadeIn 0.6s ease 0.7s forwards" }}
           >
-            No company is perfect. But some are perfect for you.
+            WDIWF is career intelligence for people who refuse to find out the hard way. We forensically evaluate companies — so you can negotiate smarter, ask harder questions, and never accept an offer blind again.
           </p>
 
-          {/* CTA — immediately after subheadline */}
           <div
-            style={{
-              marginTop: "28px",
-              opacity: 0,
-              animation: "heroFadeIn 0.5s ease 1.1s forwards",
-            }}
+            className="flex items-center gap-4 flex-wrap"
+            style={{ marginTop: "32px", opacity: 0, animation: "heroFadeIn 0.5s ease 1s forwards" }}
           >
-            <div className="flex flex-col items-center gap-3">
-              <div className="flex flex-col sm:flex-row gap-3">
-                <button
-                  onClick={() => navigate("/receipts")}
-                  className="hover-btn bg-primary text-primary-foreground font-sans text-base font-semibold px-11 py-4 rounded-full border-none cursor-pointer"
-                >
-                  See the receipts →
-                </button>
-                <button
-                  onClick={() => {
-                    const el = document.getElementById('demo-dossier');
-                    el?.scrollIntoView({ behavior: 'smooth' });
-                  }}
-                  className="font-sans text-base font-medium px-8 py-4 rounded-full border border-border bg-card text-foreground hover:border-primary/40 transition-all cursor-pointer"
-                >
-                  See a sample report
-                </button>
-              </div>
-              <Link
-                to="/pricing"
-                className="font-sans text-caption text-muted-foreground inline-block hover:underline"
-              >
-                See pricing & plans →
-              </Link>
-            </div>
+            <button
+              onClick={() => navigate(user ? "/dashboard" : "/login")}
+              className="bg-primary text-primary-foreground font-sans text-base font-semibold px-8 py-4 rounded-lg hover:brightness-110 transition-all cursor-pointer"
+            >
+              Get Early Access
+            </button>
+            <button
+              onClick={() => {
+                const el = document.getElementById("how-it-works");
+                el?.scrollIntoView({ behavior: "smooth" });
+              }}
+              className="font-sans text-base text-muted-foreground hover:text-foreground transition-colors cursor-pointer bg-transparent border-none"
+            >
+              See how it works ↓
+            </button>
           </div>
+        </div>
+      </section>
 
-          {/* ── The Four Pillars ── */}
-          <div
-            className="grid grid-cols-1 sm:grid-cols-2 gap-4 w-full max-w-[900px]"
-            style={{
-              marginTop: "64px",
-              opacity: 0,
-              animation: "heroFadeIn 0.6s ease 2s forwards",
-            }}
-          >
+      <style>{`
+        @keyframes heroFadeIn {
+          from { opacity: 0; }
+          to { opacity: 1; }
+        }
+      `}</style>
+
+      {/* ══════════════════════════════════════════════════════════════════
+          SECTION 2: THREE VALUE PROPS
+      ══════════════════════════════════════════════════════════════════ */}
+      <section className="bg-card border-y border-border px-6 lg:px-16 py-16 lg:py-20">
+        <div className="max-w-[1100px] mx-auto">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-0">
             {[
               {
-                icon: <FileSearch className="w-5 h-5 text-primary" />,
-                title: "Integrity Gap",
-                body: "What companies say vs. what the public record shows. We compare their claims against FEC filings, lobbying disclosures, and workforce data.",
+                icon: <FileSearch className="w-8 h-8 text-primary" strokeWidth={1.5} />,
+                title: "Forensic Intelligence",
+                body: "Go deeper than Glassdoor. WDIWF pulls the data companies hope you never see — leadership turnover, DEIB follow-through, legal filings, and the gap between what they promise and what they deliver.",
               },
               {
-                icon: <Target className="w-5 h-5 text-primary" />,
-                title: "Labor Impact",
-                body: "WARN Act layoffs, workforce cuts, and hiring freezes — tracked by state, date, and scale. The human cost behind restructuring.",
+                icon: <Layers className="w-8 h-8 text-primary" strokeWidth={1.5} />,
+                title: "Integrity Scoring",
+                body: "Every company gets a score based on receipts, not branding. We measure what they actually do against what they say — so you can see the truth before you sign.",
               },
               {
-                icon: <AlertTriangle className="w-5 h-5 text-primary" />,
-                title: "Safety Alert",
-                body: "OSHA violations, NLRB complaints, EPA enforcement, and workplace safety records. Red flags before you accept.",
+                icon: <BarChart3 className="w-8 h-8 text-primary" strokeWidth={1.5} />,
+                title: "Career Leverage",
+                body: "Walk into every interview, negotiation, and offer conversation with intelligence that shifts the power dynamic. Stop auditioning. Start evaluating.",
               },
-              {
-                icon: <Link2 className="w-5 h-5 text-primary" />,
-                title: "Connected Dots",
-                body: "PAC spending, executive donations, lobbying ties, and federal contracts. Follow the money to see who's really in charge.",
-              },
-            ].map((card) => (
+            ].map((card, i) => (
               <div
                 key={card.title}
-                className="rounded-2xl p-6 text-left bg-muted/30 border border-border"
+                className={`py-8 ${i < 2 ? "md:border-r md:border-border md:pr-8" : ""} ${i > 0 ? "md:pl-8" : ""} ${i < 2 ? "border-b md:border-b-0 border-border pb-8 md:pb-0" : ""}`}
               >
-                <div className="w-10 h-10 rounded-xl flex items-center justify-center mb-4 bg-primary/10">
-                  {card.icon}
-                </div>
-                <h3 className="font-sans font-semibold mb-2 text-[15px] text-foreground">
+                <div className="mb-4">{card.icon}</div>
+                <h2 className="font-sans font-bold text-foreground mb-2" style={{ fontSize: "18px" }}>
                   {card.title}
-                </h3>
-                <p className="font-sans text-caption text-muted-foreground leading-relaxed">
+                </h2>
+                <p className="font-sans text-sm text-muted-foreground leading-relaxed">
                   {card.body}
                 </p>
               </div>
@@ -263,54 +184,77 @@ const Index = forwardRef<HTMLDivElement>((_, ref) => {
         </div>
       </section>
 
-      {/* Live Intelligence Ticker — below the fold */}
-      <Suspense fallback={null}>
-        <LiveIntelligenceTicker />
-      </Suspense>
-
-      {/*
-          HOW IT WORKS
+      {/* ══════════════════════════════════════════════════════════════════
+          SECTION 3: THE INTEGRITY GAP (The Problem)
       ══════════════════════════════════════════════════════════════════ */}
-      <section className="px-6 lg:px-16 py-24 bg-background">
-        <div className="max-w-[900px] mx-auto">
-          <p className="text-xs uppercase tracking-[3px] font-semibold text-center mb-3 text-primary">
+      <section className="px-6 lg:px-16 py-24 lg:py-32 bg-background">
+        <div className="max-w-[1100px] mx-auto">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-20 items-center">
+            <div>
+              <p className="font-mono text-xs tracking-[0.15em] uppercase text-primary mb-4">
+                The Integrity Gap
+              </p>
+              <h2 className="font-sans text-foreground leading-[1.1] mb-6" style={{ fontSize: "clamp(1.5rem, 3vw, 2.5rem)", fontWeight: 800 }}>
+                Companies interview you. But who's interviewing them?
+              </h2>
+              <div className="space-y-4">
+                <p className="text-sm text-muted-foreground leading-relaxed">
+                  Right now, the hiring process is a one-way mirror. Companies run background checks, AI screenings, and behavioral assessments on you — while you're left Googling their CEO and hoping the Glassdoor reviews are real.
+                </p>
+                <p className="text-sm text-muted-foreground leading-relaxed">
+                  That's the Integrity Gap: the distance between what a company says about itself and what it actually does. Their careers page says "people-first culture." Their turnover data says otherwise. Their press release says "committed to diversity." Their leadership team tells a different story.
+                </p>
+                <p className="text-sm text-muted-foreground leading-relaxed">
+                  WDIWF closes that gap. We give you the forensic tools to evaluate employers with the same rigor they use to evaluate you.
+                </p>
+              </div>
+            </div>
+            <div>
+              <blockquote className="border-l-2 border-primary pl-6 py-2">
+                <p className="font-sans text-foreground leading-snug italic" style={{ fontSize: "clamp(1.25rem, 2vw, 1.75rem)", fontWeight: 700 }}>
+                  "You wouldn't buy a house without an inspection. Why would you accept a job without one?"
+                </p>
+              </blockquote>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* ══════════════════════════════════════════════════════════════════
+          SECTION 4: HOW IT WORKS (3 Steps)
+      ══════════════════════════════════════════════════════════════════ */}
+      <section id="how-it-works" className="px-6 lg:px-16 py-24 lg:py-32 bg-background">
+        <div className="max-w-[1100px] mx-auto">
+          <p className="font-mono text-xs tracking-[0.15em] uppercase text-primary mb-4">
             How It Works
           </p>
-          <h2 className="font-sans text-center leading-[1.1] mb-16 text-display text-foreground">
-            Four pillars. Full transparency.
+          <h2 className="font-sans text-foreground leading-[1.1] mb-12" style={{ fontSize: "clamp(1.5rem, 3vw, 2.5rem)", fontWeight: 800 }}>
+            Three steps to knowing the truth.
           </h2>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
             {[
               {
                 step: "01",
-                title: "We pull the receipts",
-                body: "FEC filings, WARN Act notices, SEC disclosures, lobbying records, OSHA violations — we collect every public signal about a company's real behavior.",
+                title: "Search",
+                body: "Enter a company name. WDIWF aggregates publicly available data — leadership changes, legal records, employee sentiment, DEIB commitments, funding history, and more — into one forensic profile.",
               },
               {
                 step: "02",
-                title: "We analyze the gaps",
-                body: "Our framework scores each company across four pillars — Integrity Gap, Labor Impact, Safety Alert, and Connected Dots — to surface what they don't put in the job posting.",
+                title: "Score",
+                body: "Our Integrity Score measures the gap between what a company claims and what the data shows. No sponsored results. No employer branding. Just receipts.",
               },
               {
                 step: "03",
-                title: "You see the full picture",
-                body: "Free, shareable Receipts reports for every company. No account required. Every claim sourced. Every dollar traced.",
-              },
-              {
-                step: "04",
-                title: "You make informed decisions",
-                body: "Use our intelligence tools to match values, benchmark offers, and plan your career with clarity — not just hope.",
+                title: "Decide",
+                body: "Use your intelligence report to ask better questions in interviews, negotiate from a position of strength, or walk away before it costs you. Your career. Your terms.",
               },
             ].map((item) => (
-              <div
-                key={item.step}
-                className="rounded-2xl p-7 bg-muted/30 border border-border"
-              >
-                <span className="inline-block font-sans mb-4 text-caption font-bold text-primary tracking-wider">
-                  STEP {item.step}
+              <div key={item.step} className="rounded-xl p-7 bg-card border border-border">
+                <span className="font-mono text-xs font-bold text-primary tracking-wider mb-4 block">
+                  {item.step}
                 </span>
-                <h3 className="font-sans font-bold mb-3 text-heading-3 text-foreground">
+                <h3 className="font-sans font-bold text-foreground mb-3" style={{ fontSize: "18px" }}>
                   {item.title}
                 </h3>
                 <p className="font-sans text-sm text-muted-foreground leading-relaxed">
@@ -322,189 +266,51 @@ const Index = forwardRef<HTMLDivElement>((_, ref) => {
         </div>
       </section>
 
-      <section className="px-6 lg:px-16 py-16 max-w-[700px] mx-auto w-full text-center">
-        <div className="font-sans text-micro uppercase text-muted-foreground mb-3">
-          Or scan a company directly
-        </div>
-        <div id="hero-search-anchor">
-          <HeroSearch />
-        </div>
-      </section>
-
       {/* ══════════════════════════════════════════════════════════════════
-          TWO-SIDED PLATFORM PATHS
-      ══════════════════════════════════════════════════════════════════ */}
-      <section className="px-6 lg:px-16 py-20 bg-background">
-        <div className="max-w-[900px] mx-auto">
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            {/* For Candidates */}
-            <div
-              className="rounded-2xl p-8 text-left flex flex-col bg-muted/30 border border-border"
-            >
-              <div className="w-12 h-12 rounded-xl flex items-center justify-center mb-5 bg-primary/10">
-                <Crosshair className="w-6 h-6 text-primary" />
-              </div>
-              <p className="text-xs uppercase tracking-[2px] font-semibold text-primary mb-3">
-                For Candidates
-              </p>
-              <h3 className="font-sans font-bold text-foreground mb-3" style={{ fontSize: "18px", lineHeight: 1.3 }}>
-                Find work that matches what you actually believe in.
-              </h3>
-              <p className="font-sans text-muted-foreground mb-6 flex-1" style={{ fontSize: "14px", lineHeight: 1.65 }}>
-                We verify the company before you apply.
-              </p>
-              <Button
-                onClick={() => navigate("/auto-apply")}
-                className="w-full rounded-full gap-2"
-              >
-                Find Your Alignment <ArrowRight className="w-4 h-4" />
-              </Button>
-            </div>
-
-            {/* For Organizations */}
-            <div
-              className="rounded-2xl p-8 text-left flex flex-col bg-muted/30 border border-border"
-            >
-              <div className="w-12 h-12 rounded-xl flex items-center justify-center mb-5 bg-primary/10">
-                <Shield className="w-6 h-6 text-primary" />
-              </div>
-              <p className="text-xs uppercase tracking-[2px] font-semibold text-primary mb-3">
-                For Organizations
-              </p>
-              <h3 className="font-sans font-bold text-foreground mb-3" style={{ fontSize: "18px", lineHeight: 1.3 }}>
-                Prove your mission is real. Find candidates who are already bought in.
-              </h3>
-              <p className="font-sans text-muted-foreground mb-6 flex-1" style={{ fontSize: "14px", lineHeight: 1.65 }}>
-                Get verified against public data — not your marketing copy.
-              </p>
-              <Button
-                variant="outline"
-                onClick={() => navigate("/for-employers")}
-                className="w-full rounded-full gap-2"
-              >
-                Get Verified <ArrowRight className="w-4 h-4" />
-              </Button>
-            </div>
-          </div>
-
-          <p className="text-center mt-8 font-sans text-sm text-muted-foreground tracking-wider">
-            No bias. Just receipts.
-          </p>
-        </div>
-      </section>
-
-      {/* heroFadeIn keyframe */}
-      <style>{`
-        @keyframes heroFadeIn {
-          from { opacity: 0; }
-          to { opacity: 1; }
-        }
-      `}</style>
-
-      {/* ── Evidence Strip ── */}
-      <div className="border-y border-border px-6 py-8">
-        <div className="max-w-[1100px] mx-auto flex items-center justify-between flex-wrap gap-6">
-          <div className="flex items-center gap-8 lg:gap-14 flex-wrap">
-            <div><div className="font-data text-2xl font-bold text-foreground tabular-nums">{STATIC_COMPANY_COUNT}+</div><div className="font-mono text-xs uppercase text-muted-foreground tracking-wider">Companies Tracked</div></div>
-            <div><div className="font-data text-2xl font-bold text-foreground tabular-nums">6</div><div className="font-mono text-xs uppercase text-muted-foreground tracking-wider">Federal Sources</div></div>
-            <div><div className="font-data text-2xl font-bold text-foreground tabular-nums">15+</div><div className="font-mono text-xs uppercase text-muted-foreground tracking-wider">Years HR Expertise</div></div>
-          </div>
-          <div className="flex items-center gap-4 flex-wrap">
-            {TRUST_SOURCES.map((src) => (
-              <a
-                key={src.label}
-                href={src.url}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="font-mono text-sm tracking-wider uppercase text-muted-foreground/70 hover:text-primary transition-colors"
-              >
-                {src.label}
-              </a>
-            ))}
-          </div>
-        </div>
-        <p className="text-xs text-muted-foreground/50 text-center leading-relaxed max-w-[600px] mx-auto mt-4">
-          Built on public records: FEC filings · SEC EDGAR · USAspending.gov · BLS wage data · OSHA · NLRB · Senate Lobbying Disclosures · ProPublica · OpenSecrets · CourtListener
-        </p>
-      </div>
-
-      {/* ══════════════════════════════════════════════════════════════════
-          DEMO DOSSIER — Conversion Engine
-      ══════════════════════════════════════════════════════════════════ */}
-      <section id="demo-dossier" className="px-6 lg:px-16 py-20 lg:py-28 bg-card border-y border-border">
-        <div className="max-w-[720px] mx-auto">
-          <div className="text-center mb-10">
-            <div className="font-mono text-sm tracking-[0.2em] uppercase text-primary mb-3">
-              This is what you won't see on a job board
-            </div>
-            <h2 className="text-2xl lg:text-3xl text-foreground mb-4">
-              Most candidates never see this before they accept.{" "}
-              <span className="text-primary">You should.</span>
-            </h2>
-          </div>
-          <DemoCompanyProfile />
-          <div className="flex justify-center mt-8">
-            <button
-              onClick={() => navigate(user ? "/dashboard" : "/login")}
-              className="bg-primary text-primary-foreground px-8 py-3.5 font-mono text-sm font-semibold tracking-wider uppercase hover:brightness-110 transition-all flex items-center gap-2"
-            >
-              Run this for a company you're considering
-              <ArrowRight className="w-4 h-4" />
-            </button>
-          </div>
-        </div>
-      </section>
-
-      {/* ══════════════════════════════════════════════════════════════════
-          5-TRACK PATHFINDER
-      ══════════════════════════════════════════════════════════════════ */}
-      <PathfinderTracks showAll />
-
-      {/* ══════════════════════════════════════════════════════════════════
-          WHAT YOU GET — Three Value Cards
+          SECTION 5: WHO IT'S FOR (4 Persona Cards)
       ══════════════════════════════════════════════════════════════════ */}
       <section className="bg-card border-y border-border px-6 lg:px-16 py-24 lg:py-32">
-        <div className="max-w-[960px] mx-auto">
-          <div className="font-mono text-sm tracking-[0.2em] uppercase text-primary mb-3">What You Get</div>
-          <h2 className="text-2xl lg:text-3xl mb-4 text-foreground">
-            Three layers of career intelligence.
-          </h2>
-          <p className="text-muted-foreground text-base mb-14 max-w-[520px]">
-            This isn't a job board. It's a clarity engine for your career.
+        <div className="max-w-[1100px] mx-auto">
+          <p className="font-mono text-xs tracking-[0.15em] uppercase text-primary mb-4">
+            Who It's For
           </p>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-px bg-border border border-border">
+          <h2 className="font-sans text-foreground leading-[1.1] mb-12" style={{ fontSize: "clamp(1.5rem, 3vw, 2.5rem)", fontWeight: 800 }}>
+            Built for people who ask the hard questions.
+          </h2>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             {[
               {
-                icon: Eye,
-                title: "The Receipts",
-                desc: "Free, ungated investigations on every company.",
-                signals: ["Integrity Gap Analysis", "Labor Impact Tracking", "Safety Alert Reports", "Connected Dots: PAC + Lobbying"],
+                persona: "Job Seekers",
+                quote: '"I got the offer. Now what?"',
+                body: "Evaluate your next company before you say yes. See the data behind the culture deck and know exactly what you're walking into.",
               },
               {
-                icon: Brain,
-                title: "The Intelligence",
-                desc: "Build a career plan based on data, not vibes.",
-                signals: ["Workplace DNA Calibration", "5-Year Career Mapping", "Values alignment matching", "Offer review & benchmarking"],
+                persona: "Employees Reconsidering",
+                quote: '"Something feels off."',
+                body: "Validate what your gut is telling you. Compare your company's public commitments to their actual track record — and decide whether to stay, push for change, or move on.",
               },
               {
-                icon: Rocket,
-                title: "The Advocacy",
-                desc: "Execute your move with clarity and support.",
-                signals: ["Apply When It Counts™ Placement", "Interview Intelligence Briefs", "Negotiation Coaching", "Employer verification reports"],
+                persona: "Career Coaches & Advisors",
+                quote: '"My client deserves better intel."',
+                body: "Give your clients real data to fuel career decisions. WDIWF turns your coaching conversations from opinion-based to evidence-based.",
               },
-            ].map(card => (
-              <div key={card.title} className="bg-background p-8 lg:p-10">
-                <card.icon className="w-6 h-6 text-primary mb-4" strokeWidth={1.5} />
-                <div className="font-mono text-sm tracking-wider uppercase text-foreground mb-2">{card.title}</div>
-                <p className="text-sm text-muted-foreground mb-5 leading-relaxed">{card.desc}</p>
-                <ul className="space-y-2">
-                  {card.signals.map(s => (
-                    <li key={s} className="text-sm text-foreground flex items-start gap-1.5">
-                      <span className="w-1 h-1 bg-primary/60 rounded-full mt-1.5 shrink-0" />
-                      {s}
-                    </li>
-                  ))}
-                </ul>
+              {
+                persona: "TA Leaders",
+                quote: '"Is our house in order?"',
+                body: "The best candidates are already researching you. WDIWF shows you what they'll find — so you can fix it before it costs you a hire.",
+              },
+            ].map((card) => (
+              <div key={card.persona} className="rounded-xl p-7 bg-background border border-border hover:border-primary/30 transition-colors">
+                <p className="font-mono text-xs tracking-[0.1em] uppercase text-primary mb-2">
+                  {card.persona}
+                </p>
+                <p className="font-sans text-foreground italic mb-3" style={{ fontSize: "18px", fontWeight: 600 }}>
+                  {card.quote}
+                </p>
+                <p className="font-sans text-sm text-muted-foreground leading-relaxed">
+                  {card.body}
+                </p>
               </div>
             ))}
           </div>
@@ -512,97 +318,39 @@ const Index = forwardRef<HTMLDivElement>((_, ref) => {
       </section>
 
       {/* ══════════════════════════════════════════════════════════════════
-          COMPARISON TABLE — Generic Job Boards vs WDIWF
-      ══════════════════════════════════════════════════════════════════ */}
-      <section className="px-6 lg:px-16 py-24 lg:py-32 max-w-[960px] mx-auto w-full">
-        <div className="text-center mb-14">
-          <div className="font-mono text-sm tracking-[0.2em] uppercase text-primary mb-3">The Difference</div>
-          <h2 className="text-2xl lg:text-3xl text-foreground">
-            Phone Book vs. Clarity Engine.
-          </h2>
-        </div>
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-px bg-border border border-border">
-          {/* Generic */}
-          <div className="bg-card p-8 lg:p-10">
-            <div className="font-mono text-xs tracking-[0.2em] uppercase text-muted-foreground mb-4">Indeed / LinkedIn</div>
-            <ul className="space-y-3">
-              {[
-                "Lists of job titles",
-                "Company marketing copy",
-                "Apply and pray",
-                "No salary transparency",
-                "No culture intelligence",
-                "No negotiation support",
-              ].map(item => (
-                <li key={item} className="flex items-start gap-2 text-sm text-muted-foreground">
-                  <X className="w-3.5 h-3.5 text-destructive mt-0.5 shrink-0" strokeWidth={2} />
-                  {item}
-                </li>
-              ))}
-            </ul>
-          </div>
-          {/* WDIWF */}
-          <div className="bg-card p-8 lg:p-10 border-l-2 border-l-primary">
-            <div className="font-mono text-xs tracking-[0.2em] uppercase text-primary mb-4">WDIWF Intelligence</div>
-            <ul className="space-y-3">
-              {[
-                "Receipts: free investigations on every employer",
-                "Four-pillar framework — Integrity, Labor, Safety, Connections",
-                "Apply When It Counts™ — DNA-matched placement",
-                "BLS wage benchmarks + offer scoring",
-                "PAC spending, lobbying, federal contracts traced",
-                "Negotiation scripts + coaching",
-              ].map(item => (
-                <li key={item} className="flex items-start gap-2 text-sm text-foreground">
-                  <CheckCircle2 className="w-3.5 h-3.5 text-primary mt-0.5 shrink-0" strokeWidth={2} />
-                  {item}
-                </li>
-              ))}
-            </ul>
-          </div>
-        </div>
-      </section>
-
-      {/* ── Intelligence Dashboard ── */}
-      <Suspense fallback={<div className="h-96 animate-pulse bg-muted/10" />}>
-        <IntelligenceDashboard />
-      </Suspense>
-
-      {/* ── Social Proof ── */}
-      <Suspense fallback={null}>
-        <SocialProofStrip />
-      </Suspense>
-
-      {/* ══════════════════════════════════════════════════════════════════
-          THE JACKYE FACTOR — Authority
+          SECTION 6: CREDIBILITY / SOCIAL PROOF
       ══════════════════════════════════════════════════════════════════ */}
       <Suspense fallback={null}>
         <SectionReveal>
           <section className="bg-card border-y border-border px-6 lg:px-16 py-24 lg:py-32">
-            <div className="max-w-[960px] mx-auto grid grid-cols-1 lg:grid-cols-[1fr_2fr] gap-12 lg:gap-20 items-center">
-              <div>
+            <div className="max-w-[1100px] mx-auto">
+              <p className="font-mono text-xs tracking-[0.15em] uppercase text-primary mb-6">
+                Built by someone who knows where the bodies are buried
+              </p>
+              <div className="grid grid-cols-1 lg:grid-cols-[auto_1fr] gap-12 items-start">
                 <img
                   src={jackyeHeadshotSm}
-                  alt="Jackye Clayton, Founder of Who Do I Work For"
-                  className="w-24 h-24 object-cover mb-4"
+                  alt="Jackye Clayton, Founder of WDIWF"
+                  className="w-24 h-24 rounded-full object-cover"
                   width={96}
                   height={96}
                   loading="lazy"
                   decoding="async"
                 />
-                <div className="font-serif text-xl text-primary mb-1">Jackye Clayton</div>
-                <div className="font-mono text-sm tracking-wider uppercase text-muted-foreground">
-                  Founder & Executive Agent
-                </div>
-              </div>
-              <div>
-                <blockquote className="border-l-2 border-primary pl-4 text-lg italic text-foreground leading-relaxed mb-2 font-serif" style={{ fontWeight: 400 }}>
-                  "I've spent 15+ years building the hiring machines for the biggest names in Tech. I know exactly where the 'Ghost Jobs' are hidden and where the hidden budget lives. I built WDIWF to put that power in your hands."
-                </blockquote>
-                <div className="font-mono text-sm tracking-wider uppercase text-muted-foreground pl-4 mb-6">— Jackye Clayton, Founder & Executive Agent</div>
-                <div className="flex items-center gap-3 pl-4">
-                  <Shield className="w-5 h-5 text-primary" />
-                  <span className="font-mono text-xs tracking-wider uppercase text-primary">Data-Backed by Jackye Clayton</span>
+                <div>
+                  <p className="font-sans text-muted-foreground leading-relaxed mb-6" style={{ fontSize: "15px", maxWidth: "56ch" }}>
+                    WDIWF is created by Jackye Clayton — TA architect, HR Tech strategist, and the voice behind the Inclusive AF podcast. After building and auditing hiring systems for companies like Textio and SeekOut, she's now building the tool she wished candidates always had.
+                  </p>
+                  <div className="flex items-center gap-3 flex-wrap">
+                    {["Inclusive AF Podcast", "Leapsome Top 26 HR Influencer", "WRKdefined", "Transform Speaker", "Board Member"].map((badge) => (
+                      <span key={badge} className="inline-flex items-center px-3 py-1 text-xs font-medium text-muted-foreground border border-border rounded-full whitespace-nowrap">
+                        {badge}
+                      </span>
+                    ))}
+                  </div>
+                  <Link to="/about" className="font-sans text-sm text-muted-foreground hover:text-primary transition-colors mt-6 inline-block">
+                    Meet Jackye →
+                  </Link>
                 </div>
               </div>
             </div>
@@ -610,89 +358,91 @@ const Index = forwardRef<HTMLDivElement>((_, ref) => {
         </SectionReveal>
       </Suspense>
 
-      {/* Rivalry Super Tracker + Compare CTA moved to /dashboard */}
-
-      {/* ── Methodology ── */}
-      <section className="px-6 lg:px-16 py-16 lg:py-20">
-        <div className="max-w-[960px] mx-auto">
-          <div className="text-center mb-8">
-            <h2 className="text-xl mb-4 text-foreground">Built on public records. Every signal sourced.</h2>
-            <p className="text-sm text-muted-foreground max-w-[520px] mx-auto mb-6">
-              FEC filings · Senate lobbying · USAspending · BLS wage data · SEC reports · FRED indicators.
-            </p>
-            <button onClick={() => navigate("/methodology")} className="font-mono text-sm tracking-wider uppercase text-primary hover:underline">
-              Read our methodology →
+      {/* ══════════════════════════════════════════════════════════════════
+          SECTION 7: EMAIL CAPTURE / CTA
+      ══════════════════════════════════════════════════════════════════ */}
+      <section className="px-6 lg:px-16 py-28 lg:py-36 text-center relative overflow-hidden">
+        <div className="absolute bottom-[-20%] left-[-5%] w-[40%] h-[60%] pointer-events-none" style={{ background: "radial-gradient(ellipse, rgba(240,192,64,0.05) 0%, transparent 70%)" }} />
+        <div className="relative z-[1] max-w-[600px] mx-auto">
+          <h2 className="font-sans text-foreground leading-[1.1] mb-4" style={{ fontSize: "clamp(1.5rem, 3vw, 2.5rem)", fontWeight: 800 }}>
+            The hiring process is about to get a lot more honest.
+          </h2>
+          <p className="text-sm text-muted-foreground leading-relaxed max-w-[48ch] mx-auto mb-8">
+            WDIWF is building the career intelligence platform that flips the interview. Get early access and be the first to pull receipts on your next employer.
+          </p>
+          <div className="flex flex-col sm:flex-row gap-3 justify-center">
+            <button
+              onClick={() => navigate(user ? "/dashboard" : "/login")}
+              className="bg-primary text-primary-foreground px-8 py-3.5 font-sans text-sm font-semibold rounded-lg hover:brightness-110 transition-all"
+            >
+              Join the Waitlist
+            </button>
+            <button
+              onClick={() => navigate("/receipts")}
+              className="border border-border bg-card px-8 py-3.5 font-sans text-sm text-muted-foreground hover:text-foreground hover:border-primary/40 transition-all rounded-lg"
+            >
+              See the Receipts
             </button>
           </div>
-          <div className="bg-card border border-primary/20 p-6 lg:p-8 max-w-[640px] mx-auto">
-            <div className="flex items-center gap-2 mb-3">
-              <Shield className="w-5 h-5 text-primary" />
-              <span className="font-mono text-sm tracking-[0.15em] uppercase text-primary font-semibold">Our Standard</span>
-            </div>
-            <p className="text-sm text-foreground leading-relaxed">
-              Public records only. Verified watchdog data. No partisan endorsements. We connect the dots; you make the call.
-            </p>
-          </div>
-        </div>
-      </section>
-      {/* ── Career Fit Report CTA ── */}
-      <section className="px-6 lg:px-16 py-12">
-        <div className="max-w-[960px] mx-auto">
-          <CareerFitReportCTA />
+          <p className="font-sans text-xs text-muted-foreground/50 mt-4">
+            No spam. No selling your data. That would be ironic.
+          </p>
         </div>
       </section>
 
-      {/* ── FAQ + Email ── */}
-      <Suspense fallback={null}><FAQSection /></Suspense>
+      {/* ── Email Capture (existing component) ── */}
       <Suspense fallback={null}><EmailCapture /></Suspense>
 
-      {/* ── Final CTA ── */}
-      <section className="px-6 lg:px-16 py-28 lg:py-36 text-center">
-        <h2 className="text-2xl lg:text-3xl mb-4 text-foreground">
-          You deserve to know exactly who you work for.
-        </h2>
-        <p className="text-base text-muted-foreground max-w-[480px] mx-auto mb-10 leading-relaxed">
-          Every claim sourced. Every dollar traced. No account required.
-        </p>
-        <div className="flex flex-col sm:flex-row gap-3 justify-center">
-          <button
-            onClick={() => navigate("/receipts")}
-            className="bg-primary text-primary-foreground px-8 py-3.5 font-mono text-sm font-semibold tracking-wider uppercase hover:brightness-110 transition-all"
-          >
-            See the Receipts
-          </button>
-          <button
-            onClick={() => navigate("/check")}
-            className="border border-border bg-card px-8 py-3.5 font-mono text-sm tracking-wider uppercase text-muted-foreground hover:text-foreground hover:border-primary/40 transition-all"
-          >
-            Scan a Company
-          </button>
-        </div>
-      </section>
-
-      {/* ── Footer ── */}
-      <footer className="border-t border-border px-6 lg:px-16 py-6">
+      {/* ══════════════════════════════════════════════════════════════════
+          SECTION 8: FOOTER
+      ══════════════════════════════════════════════════════════════════ */}
+      <footer className="bg-card border-t border-border px-6 lg:px-16 py-12">
         <div className="max-w-[1100px] mx-auto">
-          <div className="flex justify-between items-center flex-wrap gap-4 mb-4">
-            <div className="flex items-center gap-1">
-              <span style={{ fontFamily: 'Inter, sans-serif', fontWeight: 900, fontSize: '1.1rem', letterSpacing: '-0.03em' }}>
-                <span style={{ color: '#111111' }}>W</span>
-                <span style={{ color: '#F0C040' }}>?</span>
-              </span>
-              <span className="text-sm text-muted-foreground"> · by Jackye Clayton</span>
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-8 mb-8">
+            <div className="col-span-2 md:col-span-1">
+              <Link to="/" className="flex items-center mb-3">
+                <span style={{fontFamily:"Inter,sans-serif",fontWeight:900,letterSpacing:"-0.03em",fontSize:"22px"}}>
+                  <span className="text-foreground">W</span>
+                  <span style={{color:"#F0C040"}}>?</span>
+                </span>
+              </Link>
+              <p className="font-sans text-sm text-muted-foreground leading-relaxed max-w-[28ch]">
+                Career intelligence that closes the Integrity Gap. Know before you go.
+              </p>
             </div>
-            <div className="flex gap-6 flex-wrap">
-              <a href="/receipts" className="font-mono text-sm tracking-wider text-muted-foreground hover:text-foreground transition-colors">Receipts</a>
-              <a href="/pricing" className="font-mono text-sm tracking-wider text-muted-foreground hover:text-foreground transition-colors">Pricing</a>
-              <a href="/about" className="font-mono text-sm tracking-wider text-muted-foreground hover:text-foreground transition-colors">About</a>
-              <a href="/methodology" className="font-mono text-sm tracking-wider text-muted-foreground hover:text-foreground transition-colors">Methodology</a>
-              <a href="/privacy" className="font-mono text-sm tracking-wider text-muted-foreground hover:text-foreground transition-colors">Privacy</a>
-              <a href="/terms" className="font-mono text-sm tracking-wider text-muted-foreground hover:text-foreground transition-colors">Terms</a>
+            <div>
+              <p className="font-mono text-xs tracking-[0.15em] uppercase text-muted-foreground/50 mb-3">WDIWF</p>
+              <nav className="flex flex-col gap-2">
+                <Link to="/" className="font-sans text-sm text-muted-foreground hover:text-foreground transition-colors">Home</Link>
+                <Link to="/receipts" className="font-sans text-sm text-muted-foreground hover:text-foreground transition-colors">How It Works</Link>
+                <Link to="/about" className="font-sans text-sm text-muted-foreground hover:text-foreground transition-colors">About</Link>
+                <Link to="/for-employers" className="font-sans text-sm text-muted-foreground hover:text-foreground transition-colors">For Companies</Link>
+                <Link to="/browse" className="font-sans text-sm text-muted-foreground hover:text-foreground transition-colors">Insights</Link>
+                <Link to="/contact" className="font-sans text-sm text-muted-foreground hover:text-foreground transition-colors">Contact</Link>
+              </nav>
+            </div>
+            <div>
+              <p className="font-mono text-xs tracking-[0.15em] uppercase text-muted-foreground/50 mb-3">Connect</p>
+              <nav className="flex flex-col gap-2">
+                <a href="https://www.linkedin.com/in/jackyeclayton/" target="_blank" rel="noopener noreferrer" className="font-sans text-sm text-muted-foreground hover:text-foreground transition-colors">LinkedIn</a>
+                <a href="https://jackyeclayton.com/speaking" target="_blank" rel="noopener noreferrer" className="font-sans text-sm text-muted-foreground hover:text-foreground transition-colors">Speaking</a>
+                <a href="#" className="font-sans text-sm text-muted-foreground hover:text-foreground transition-colors">Inclusive AF Podcast</a>
+              </nav>
+            </div>
+            <div>
+              <p className="font-mono text-xs tracking-[0.15em] uppercase text-muted-foreground/50 mb-3">Legal</p>
+              <nav className="flex flex-col gap-2">
+                <Link to="/privacy" className="font-sans text-sm text-muted-foreground hover:text-foreground transition-colors">Privacy Policy</Link>
+                <Link to="/terms" className="font-sans text-sm text-muted-foreground hover:text-foreground transition-colors">Terms of Service</Link>
+              </nav>
             </div>
           </div>
-          <div className="border-t border-border/50 pt-4">
-            <p className="font-mono text-xs tracking-wider text-muted-foreground/60 leading-relaxed max-w-[800px]">
-              WDIWF reports publicly available data and does not provide character assessments, legal advice, or employment recommendations. All signals are sourced from public records and verified watchdog databases. Users should independently verify information before making employment decisions.
+          <div className="border-t border-border pt-4 flex justify-between items-center flex-wrap gap-3">
+            <p className="font-sans text-xs text-muted-foreground/50">
+              © 2026 WDIWF. A People Puzzles venture. Built because you deserve to know.
+            </p>
+            <p className="font-sans text-xs text-muted-foreground/50">
+              Built on public records: FEC · SEC · BLS · OSHA · NLRB · Senate Lobbying
             </p>
           </div>
         </div>
