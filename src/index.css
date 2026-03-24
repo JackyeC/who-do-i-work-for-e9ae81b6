@@ -43,7 +43,7 @@
     --input: 40 12% 86%;
     --ring: 43 85% 50%;
 
-    --radius: 12px;
+    --radius: 8px;
 
     /* ── SIGNAL TOKENS ── */
     --civic-red: 348 85% 50%;
@@ -254,12 +254,45 @@
   }
 
   .text-eyebrow {
-    font-family: 'DM Sans', sans-serif;
-    font-size: 12px;
-    font-weight: 600;
-    letter-spacing: 2px;
+    font-family: 'DM Mono', 'Courier New', monospace;
+    font-size: 11px;
+    font-weight: 500;
+    letter-spacing: 0.15em;
     text-transform: uppercase;
     color: hsl(var(--primary));
+  }
+
+  .text-nav {
+    font-family: 'DM Sans', sans-serif;
+    font-size: 14px;
+    font-weight: 500;
+    letter-spacing: 0;
+  }
+
+  .text-btn {
+    font-family: 'DM Sans', sans-serif;
+    font-size: 14px;
+    font-weight: 600;
+  }
+
+  .text-caption {
+    font-family: 'DM Sans', sans-serif;
+    font-size: 13px;
+    line-height: 1.5;
+  }
+
+  .text-heading-3 {
+    font-family: 'DM Sans', sans-serif;
+    font-size: clamp(16px, 2vw, 18px);
+    font-weight: 700;
+    line-height: 1.3;
+  }
+
+  .text-micro {
+    font-family: 'DM Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
   }
 
   .text-score {
@@ -273,13 +306,13 @@
   /* ── CARD STYLES ── */
   .card-terminal {
     @apply bg-card border border-border;
-    border-radius: 16px;
+    border-radius: 8px;
   }
 
   .card-official {
     @apply bg-card border border-border;
     border-top: 2px solid hsl(var(--primary));
-    border-radius: 16px;
+    border-radius: 8px;
   }
 
   /* Amber shimmer line */
