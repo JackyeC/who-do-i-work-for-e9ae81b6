@@ -142,6 +142,3 @@ verify_jwt = false
 
 [functions.parse-resume]
 verify_jwt = false
-
-[functions.exec-seed-sql]
-verify_jwt = false
