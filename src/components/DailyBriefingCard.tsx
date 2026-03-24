@@ -22,6 +22,10 @@ const CATEGORY_CONFIG: Record<string, { icon: any; color: string; label: string 
   industry: { icon: TrendingUp, color: "#40C080", label: "Industry" },
   remote_work: { icon: MapPin, color: "#40C0E8", label: "Remote Work" },
   ai_hiring: { icon: Zap, color: "#E8A040", label: "AI & Hiring" },
+  regulation: { icon: Shield, color: "#E87040", label: "Regulation" },
+  future_of_work: { icon: TrendingUp, color: "#40C0E8", label: "Future of Work" },
+  labor_organizing: { icon: Building2, color: "#9B6FE8", label: "Labor" },
+  ai_workplace: { icon: Zap, color: "#E8A040", label: "AI & Work" },
 };
 
 export default function DailyBriefingCard() {
@@ -31,38 +35,92 @@ export default function DailyBriefingCard() {
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
 
+  // Fallback: query work_news directly when personalized pipeline is empty
+  const fetchWorkNewsFallback = useCallback(async (): Promise<BriefingData | null> => {
+    try {
+      const { data: workNews, error } = await supabase
+        .from("work_news")
+        .select("id, headline, source_name, source_url, category, is_controversy, published_at")
+        .order("published_at", { ascending: false })
+        .limit(8);
+
+      if (error || !workNews || workNews.length === 0) return null;
+
+      // Transform work_news rows to match the briefing news shape
+      return {
+        briefing: {
+          date: new Date().toISOString().split("T")[0],
+          generated_at: new Date().toISOString(),
+          top_values_matched: [],
+        },
+        news: workNews.map((n: any) => ({
+          id: n.id,
+          title: n.headline,
+          source: n.source_name,
+          source_url: n.source_url,
+          category: n.category || "industry",
+          published_at: n.published_at,
+        })),
+        companies: [],
+      };
+    } catch (err) {
+      console.error("[Briefing] work_news fallback error:", err);
+      return null;
+    }
+  }, []);
+
   const fetchBriefing = useCallback(async (forceRefresh = false) => {
     if (!user) return;
     try {
       if (forceRefresh) setRefreshing(true);
+
+      // Step 1: Try the personalized pipeline
       const response = await supabase.functions.invoke("generate-briefing", {
         body: { mode: "single", user_id: user.id },
       });
+
       if (response.data?.success && response.data.news?.length > 0) {
         setBriefing(response.data);
-      } else if (response.data?.success && response.data.news?.length === 0) {
-        // No news articles available — trigger news-ingestion to seed data, then retry once
-        console.log("[Briefing] No news found, triggering news-ingestion...");
-        try {
-          await supabase.functions.invoke("news-ingestion", { body: {} });
-          // Small delay to let inserts settle
-          await new Promise(r => setTimeout(r, 1500));
-          const retry = await supabase.functions.invoke("generate-briefing", {
-            body: { mode: "single", user_id: user.id },
-          });
-          if (retry.data?.success) {
-            setBriefing(retry.data);
-          }
-        } catch (seedErr) {
-          console.error("[Briefing] News seeding error:", seedErr);
+        setLoading(false);
+        setRefreshing(false);
+        return;
+      }
+
+      // Step 2: Personalized pipeline returned empty — try seeding news first
+      console.log("[Briefing] Personalized pipeline empty, triggering news-ingestion...");
+      try {
+        await supabase.functions.invoke("news-ingestion", { body: {} });
+        await new Promise(r => setTimeout(r, 2000));
+        const retry = await supabase.functions.invoke("generate-briefing", {
+          body: { mode: "single", user_id: user.id },
+        });
+        if (retry.data?.success && retry.data.news?.length > 0) {
+          setBriefing(retry.data);
+          setLoading(false);
+          setRefreshing(false);
+          return;
         }
+      } catch (seedErr) {
+        console.error("[Briefing] News seeding error:", seedErr);
+      }
+
+      // Step 3: Everything failed — fall back to work_news table directly
+      console.log("[Briefing] Falling back to work_news...");
+      const fallback = await fetchWorkNewsFallback();
+      if (fallback) {
+        setBriefing(fallback);
       }
     } catch (err) {
       console.error("Briefing fetch error:", err);
+      // Final fallback on total failure
+      const fallback = await fetchWorkNewsFallback();
+      if (fallback) {
+        setBriefing(fallback);
+      }
     }
     setLoading(false);
     setRefreshing(false);
-  }, [user]);
+  }, [user, fetchWorkNewsFallback]);
 
   useEffect(() => {
     fetchBriefing();

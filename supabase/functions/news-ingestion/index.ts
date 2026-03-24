@@ -120,13 +120,13 @@ Deno.serve(async (req: Request) => {
     // Deduplicate by title similarity
     const uniqueNews = deduplicateNews(newsItems);
 
-    // Upsert into personalized_news
+    // Upsert into personalized_news (update existing rows to refresh published_at)
     if (uniqueNews.length > 0) {
       const { error } = await supabase
         .from("personalized_news")
         .upsert(uniqueNews, { 
           onConflict: "title",
-          ignoreDuplicates: true 
+          ignoreDuplicates: false 
         });
 
       if (error) {
