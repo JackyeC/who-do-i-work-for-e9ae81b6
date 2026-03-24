@@ -69,6 +69,7 @@ const OnePager = lazy(() => import("./pages/OnePager"));
 const Demo = lazy(() => import("./pages/Demo"));
 const WouldYouWorkHere = lazy(() => import("./pages/WouldYouWorkHere"));
 const WorkWithJackye = lazy(() => import("./pages/WorkWithJackye"));
+const Contact = lazy(() => import("./pages/Contact"));
 const EmployerReceipt = lazy(() => import("./pages/EmployerReceipt"));
 const EVPRealityCheck = lazy(() => import("./pages/EVPRealityCheck"));
 const WhatAmISupporting = lazy(() => import("./pages/WhatAmISupporting"));
@@ -173,6 +174,7 @@ const App = () => (
                   <Route path="/reality-check" element={<ProtectedRoute><RealityCheck /></ProtectedRoute>} />
                   <Route path="/would-you-work-here" element={<WouldYouWorkHere />} />
                   <Route path="/work-with-jackye" element={<WorkWithJackye />} />
+                  <Route path="/contact" element={<Contact />} />
                   <Route path="/employer-receipt" element={<EmployerReceipt />} />
                   <Route path="/employer-promise-check" element={<EVPRealityCheck />} />
                   <Route path="/evp-reality-check" element={<EVPRealityCheck />} />

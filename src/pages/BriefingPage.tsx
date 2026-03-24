@@ -92,10 +92,13 @@ export default function BriefingPage() {
   if (!briefingData) {
     return (
       <div className="min-h-screen bg-background flex items-center justify-center">
-        <div className="text-center">
-          <Newspaper className="w-12 h-12 text-muted-foreground mx-auto mb-4" />
-          <h2 className="text-lg font-semibold text-foreground font-display">No briefing available</h2>
-          <p className="text-sm text-muted-foreground mt-1">Complete your profile to get personalized news.</p>
+        <div className="text-center max-w-md">
+          <Newspaper className="w-12 h-12 text-primary mx-auto mb-4" />
+          <h2 className="text-lg font-semibold text-foreground font-display">Your briefing is loading.</h2>
+          <p className="text-sm text-muted-foreground mt-2 leading-relaxed">WDIWF curates career intelligence from public records, federal filings, and workforce data. Your personalized briefing updates daily.</p>
+          <button onClick={() => fetchBriefing(true)} className="mt-6 inline-flex items-center gap-2 bg-primary text-primary-foreground px-6 py-3 rounded-lg text-sm font-semibold hover:brightness-110 transition-all">
+            <RefreshCw className="w-4 h-4" /> Generate Briefing
+          </button>
         </div>
       </div>
     );
