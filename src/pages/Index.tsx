@@ -145,6 +145,142 @@ const Index = forwardRef<HTMLDivElement>((_, ref) => {
       `}</style>
 
       {/* ══════════════════════════════════════════════════════════════════
+          SECTION: START HERE — Decision Path
+      ══════════════════════════════════════════════════════════════════ */}
+      <section className="bg-card border-y border-border px-6 lg:px-16 py-20 lg:py-24">
+        <div className="max-w-[1100px] mx-auto">
+          <p className="font-mono text-xs tracking-[0.15em] uppercase text-primary mb-3 text-center">
+            Start Here
+          </p>
+          <h2 className="font-sans text-foreground leading-[1.1] mb-12 text-center" style={{ fontSize: "clamp(1.5rem, 3vw, 2.5rem)", fontWeight: 800 }}>
+            Where do you start?
+          </h2>
+
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+            <div className="border border-border bg-background p-7 flex flex-col">
+              <Search className="w-8 h-8 text-primary mb-4" strokeWidth={1.5} />
+              <span className="font-mono text-[11px] tracking-[0.15em] uppercase text-primary font-semibold mb-2">For Candidates</span>
+              <h3 className="font-sans font-bold text-foreground text-lg mb-2">Is your offer safe?</h3>
+              <p className="font-sans text-sm text-muted-foreground leading-relaxed mb-6 flex-1">
+                Run a forensic audit on any employer before you sign.
+              </p>
+              <Button onClick={() => navigate("/pricing")} className="w-full">
+                Get a Candidate Report — $49
+              </Button>
+            </div>
+
+            <div className="border border-border bg-background p-7 flex flex-col">
+              <Briefcase className="w-8 h-8 text-primary mb-4" strokeWidth={1.5} />
+              <span className="font-mono text-[11px] tracking-[0.15em] uppercase text-primary font-semibold mb-2">For Recruiters</span>
+              <h3 className="font-sans font-bold text-foreground text-lg mb-2">Stop losing talent to the Integrity Gap.</h3>
+              <p className="font-sans text-sm text-muted-foreground leading-relaxed mb-6 flex-1">
+                Show candidates your company passes the receipts test before they walk.
+              </p>
+              <Button onClick={() => navigate("/recruiter-brief")} variant="outline" className="w-full">
+                Get the RecruiterBrief
+              </Button>
+            </div>
+
+            <div className="border border-border bg-background p-7 flex flex-col">
+              <Shield className="w-8 h-8 text-primary mb-4" strokeWidth={1.5} />
+              <span className="font-mono text-[11px] tracking-[0.15em] uppercase text-primary font-semibold mb-2">For Executives</span>
+              <h3 className="font-sans font-bold text-foreground text-lg mb-2">Is your brand audit-proof?</h3>
+              <p className="font-sans text-sm text-muted-foreground leading-relaxed mb-6 flex-1">
+                Before your next executive hire finds your PAC filings — we will.
+              </p>
+              <Button onClick={() => { window.location.href = "mailto:jackyeclayton@gmail.com"; }} variant="outline" className="w-full">
+                Book a Corporate Integrity Audit
+              </Button>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* ══════════════════════════════════════════════════════════════════
+          SECTION: SEE THE RECEIPTS — Live Forensic Snapshot
+      ══════════════════════════════════════════════════════════════════ */}
+      <section className="px-6 lg:px-16 py-20 lg:py-24 bg-background">
+        <div className="max-w-[900px] mx-auto">
+          <p className="font-mono text-xs tracking-[0.15em] uppercase text-primary mb-3 text-center">
+            See The Receipts
+          </p>
+          <h2 className="font-sans text-foreground leading-[1.1] mb-3 text-center" style={{ fontSize: "clamp(1.5rem, 3vw, 2.5rem)", fontWeight: 800 }}>
+            See What We Find
+          </h2>
+          <p className="text-sm text-muted-foreground text-center mb-10 max-w-[600px] mx-auto">
+            This is what a Forensic Integrity Snapshot looks like. Every employer has a receipt.
+          </p>
+
+          <div className="border border-border bg-card p-6 lg:p-8">
+            <div className="flex items-start justify-between flex-wrap gap-4 mb-6">
+              <div>
+                <h3 className="font-sans font-bold text-foreground text-xl">Amazon</h3>
+                <span className="font-mono text-xs text-muted-foreground tracking-wider">NASDAQ: AMZN</span>
+              </div>
+              <div className="flex flex-col items-center">
+                <span className="text-xs font-mono uppercase tracking-wider text-muted-foreground mb-1">Integrity Score</span>
+                <span className="inline-flex items-center justify-center w-14 h-14 rounded-lg bg-destructive/15 text-destructive font-bold text-xl font-mono">
+                  41
+                </span>
+                <span className="text-[10px] text-muted-foreground mt-0.5">/ 100</span>
+              </div>
+            </div>
+
+            <div className="space-y-4 mb-6">
+              <div className="flex items-start gap-3 p-3 bg-destructive/5 border border-destructive/10 rounded-md">
+                <span className="text-base mt-0.5">🔴</span>
+                <div>
+                  <p className="text-sm font-semibold text-foreground">Worker Safety Risk</p>
+                  <p className="text-xs text-muted-foreground leading-relaxed mt-0.5">
+                    17 OSHA warehouse citations 2022-2024. Injury rates 2x industry average. Corporate-wide settlement Dec 2024.
+                  </p>
+                </div>
+              </div>
+              <div className="flex items-start gap-3 p-3 bg-destructive/5 border border-destructive/10 rounded-md">
+                <span className="text-base mt-0.5">🔴</span>
+                <div>
+                  <p className="text-sm font-semibold text-foreground">Legislative Receipts</p>
+                  <p className="text-xs text-muted-foreground leading-relaxed mt-0.5">
+                    PAC contributions to candidates supporting rollback of worker ergonomic protections. FEC filings on record.
+                  </p>
+                </div>
+              </div>
+              <div className="flex items-start gap-3 p-3 bg-yellow-500/5 border border-yellow-500/10 rounded-md">
+                <span className="text-base mt-0.5">🟡</span>
+                <div>
+                  <p className="text-sm font-semibold text-foreground">Workforce Stability</p>
+                  <p className="text-xs text-muted-foreground leading-relaxed mt-0.5">
+                    27,000 layoffs 2022-2023. Mandatory 5-day RTO implemented 2024. Active union organizing (ALU) at fulfillment centers.
+                  </p>
+                </div>
+              </div>
+            </div>
+
+            <div className="relative overflow-hidden rounded-md mb-6">
+              <div className="h-24 bg-muted/40 blur-[6px] flex flex-col justify-center px-4 gap-2 select-none pointer-events-none" aria-hidden="true">
+                <div className="h-3 bg-muted-foreground/10 rounded w-3/4" />
+                <div className="h-3 bg-muted-foreground/10 rounded w-1/2" />
+                <div className="h-3 bg-muted-foreground/10 rounded w-2/3" />
+                <div className="h-3 bg-muted-foreground/10 rounded w-5/6" />
+              </div>
+              <div className="absolute inset-0 flex items-center justify-center">
+                <span className="font-mono text-xs tracking-wider text-muted-foreground bg-background/80 px-3 py-1 rounded-full">
+                  Full Receipt Available →
+                </span>
+              </div>
+            </div>
+
+            <Button onClick={() => navigate("/company/amazon")} className="w-full mb-3">
+              View Full Amazon Report <ArrowRight className="w-4 h-4 ml-1" />
+            </Button>
+            <p className="text-[11px] text-muted-foreground text-center font-mono tracking-wide">
+              Data sourced from OSHA, FEC, WARN Act filings, and BLS — all public record.
+            </p>
+          </div>
+        </div>
+      </section>
+
+      {/* ══════════════════════════════════════════════════════════════════
           SECTION 2: THREE VALUE PROPS
       ══════════════════════════════════════════════════════════════════ */}
       <section className="bg-card border-y border-border px-6 lg:px-16 py-16 lg:py-20">
