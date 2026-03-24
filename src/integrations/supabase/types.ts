@@ -772,6 +772,45 @@ export type Database = {
         }
         Relationships: []
       }
+      briefing_items: {
+        Row: {
+          company: string
+          created_at: string | null
+          detail: string | null
+          headline: string
+          id: string
+          is_active: boolean | null
+          published_at: string | null
+          signal_type: string
+          source_name: string | null
+          source_url: string | null
+        }
+        Insert: {
+          company: string
+          created_at?: string | null
+          detail?: string | null
+          headline: string
+          id?: string
+          is_active?: boolean | null
+          published_at?: string | null
+          signal_type: string
+          source_name?: string | null
+          source_url?: string | null
+        }
+        Update: {
+          company?: string
+          created_at?: string | null
+          detail?: string | null
+          headline?: string
+          id?: string
+          is_active?: boolean | null
+          published_at?: string | null
+          signal_type?: string
+          source_name?: string | null
+          source_url?: string | null
+        }
+        Relationships: []
+      }
       browse_ai_change_events: {
         Row: {
           change_summary: string | null

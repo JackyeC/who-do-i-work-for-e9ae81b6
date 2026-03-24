@@ -3,321 +3,119 @@ import { useAuth } from "@/contexts/AuthContext";
 import { supabase } from "@/integrations/supabase/client";
 import {
   Newspaper, ArrowRight, Clock, Shield, AlertTriangle,
-  TrendingUp, Building2, RefreshCw, Loader2, MapPin, Zap
+  TrendingUp, Building2, RefreshCw, Loader2, MapPin, Zap, Info
 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
+import { formatDistanceToNow } from "date-fns";
 
-interface BriefingData {
-  briefing: { date: string; generated_at: string; top_values_matched: string[] };
-  news: any[];
-  companies: any[];
+interface BriefingItem {
+  id: string;
+  company: string;
+  signal_type: string;
+  headline: string;
+  detail: string | null;
+  source_name: string | null;
+  source_url: string | null;
+  published_at: string;
 }
 
-const CATEGORY_CONFIG: Record<string, { icon: any; color: string; label: string }> = {
-  wdiwf_intel: { icon: Shield, color: "hsl(var(--primary))", label: "WDIWF Intel" },
-  policy: { icon: AlertTriangle, color: "#E87040", label: "Policy" },
-  dei: { icon: TrendingUp, color: "#9B6FE8", label: "DEI" },
-  layoffs: { icon: AlertTriangle, color: "#E84040", label: "Layoffs" },
-  workplace: { icon: Building2, color: "#40A0E8", label: "Workplace" },
-  industry: { icon: TrendingUp, color: "#40C080", label: "Industry" },
-  remote_work: { icon: MapPin, color: "#40C0E8", label: "Remote Work" },
-  ai_hiring: { icon: Zap, color: "#E8A040", label: "AI & Hiring" },
-  regulation: { icon: Shield, color: "#E87040", label: "Regulation" },
-  future_of_work: { icon: TrendingUp, color: "#40C0E8", label: "Future of Work" },
-  labor_organizing: { icon: Building2, color: "#9B6FE8", label: "Labor" },
-  ai_workplace: { icon: Zap, color: "#E8A040", label: "AI & Work" },
+const SIGNAL_CONFIG: Record<string, { label: string; emoji: string; bg: string; text: string; dot: string }> = {
+  red_flag: { label: "RED FLAG", emoji: "🔴", bg: "bg-destructive/10", text: "text-destructive", dot: "bg-destructive" },
+  amber_flag: { label: "SIGNAL", emoji: "🟡", bg: "bg-amber-500/10", text: "text-amber-500", dot: "bg-amber-500" },
+  green_badge: { label: "CLEAR", emoji: "🟢", bg: "bg-emerald-500/10", text: "text-emerald-500", dot: "bg-emerald-500" },
+  info: { label: "INTEL", emoji: "🔵", bg: "bg-blue-500/10", text: "text-blue-500", dot: "bg-blue-500" },
 };
 
 export default function DailyBriefingCard() {
-  const { user } = useAuth();
   const navigate = useNavigate();
-  const [briefing, setBriefing] = useState<BriefingData | null>(null);
+  const [items, setItems] = useState<BriefingItem[]>([]);
   const [loading, setLoading] = useState(true);
-  const [refreshing, setRefreshing] = useState(false);
 
-  // Fallback: query work_news directly when personalized pipeline is empty
-  const fetchWorkNewsFallback = useCallback(async (): Promise<BriefingData | null> => {
+  const fetchItems = useCallback(async () => {
     try {
-      const { data: workNews, error } = await supabase
-        .from("work_news")
-        .select("id, headline, source_name, source_url, category, is_controversy, published_at")
+      const { data, error } = await supabase
+        .from("briefing_items")
+        .select("*")
+        .eq("is_active", true)
         .order("published_at", { ascending: false })
-        .limit(8);
-
-      if (error || !workNews || workNews.length === 0) return null;
-
-      // Transform work_news rows to match the briefing news shape
-      return {
-        briefing: {
-          date: new Date().toISOString().split("T")[0],
-          generated_at: new Date().toISOString(),
-          top_values_matched: [],
-        },
-        news: workNews.map((n: any) => ({
-          id: n.id,
-          title: n.headline,
-          source: n.source_name,
-          source_url: n.source_url,
-          category: n.category || "industry",
-          published_at: n.published_at,
-        })),
-        companies: [],
-      };
-    } catch (err) {
-      console.error("[Briefing] work_news fallback error:", err);
-      return null;
-    }
-  }, []);
-
-  const fetchBriefing = useCallback(async (forceRefresh = false) => {
-    if (!user) return;
-    try {
-      if (forceRefresh) setRefreshing(true);
-
-      // Step 1: Try the personalized pipeline
-      const response = await supabase.functions.invoke("generate-briefing", {
-        body: { mode: "single", user_id: user.id },
-      });
-
-      if (response.data?.success && response.data.news?.length > 0) {
-        setBriefing(response.data);
-        setLoading(false);
-        setRefreshing(false);
-        return;
-      }
-
-      // Step 2: Personalized pipeline returned empty — try seeding news first
-      console.log("[Briefing] Personalized pipeline empty, triggering news-ingestion...");
-      try {
-        await supabase.functions.invoke("news-ingestion", { body: {} });
-        await new Promise(r => setTimeout(r, 2000));
-        const retry = await supabase.functions.invoke("generate-briefing", {
-          body: { mode: "single", user_id: user.id },
-        });
-        if (retry.data?.success && retry.data.news?.length > 0) {
-          setBriefing(retry.data);
-          setLoading(false);
-          setRefreshing(false);
-          return;
-        }
-      } catch (seedErr) {
-        console.error("[Briefing] News seeding error:", seedErr);
-      }
-
-      // Step 3: Everything failed — fall back to work_news table directly
-      console.log("[Briefing] Falling back to work_news...");
-      const fallback = await fetchWorkNewsFallback();
-      if (fallback) {
-        setBriefing(fallback);
-      }
+        .limit(10);
+      if (!error && data) setItems(data as unknown as BriefingItem[]);
     } catch (err) {
       console.error("Briefing fetch error:", err);
-      // Final fallback on total failure
-      const fallback = await fetchWorkNewsFallback();
-      if (fallback) {
-        setBriefing(fallback);
-      }
     }
     setLoading(false);
-    setRefreshing(false);
-  }, [user, fetchWorkNewsFallback]);
+  }, []);
 
-  useEffect(() => {
-    fetchBriefing();
-    const interval = setInterval(() => {
-      const now = new Date();
-      if (now.getHours() === 8 && now.getMinutes() < 2) {
-        const today = now.toISOString().split("T")[0];
-        if (briefing?.briefing?.date !== today) fetchBriefing(true);
-      }
-    }, 60_000);
-    return () => clearInterval(interval);
-  }, [fetchBriefing, briefing?.briefing?.date]);
+  useEffect(() => { fetchItems(); }, [fetchItems]);
 
   if (loading) {
     return (
-      <div className="rounded-2xl p-5 animate-pulse" style={{ background: "#13121a", border: "1px solid rgba(255,255,255,0.08)" }}>
-        <div className="h-5 w-48 rounded mb-4" style={{ background: "#1c1a27" }} />
+      <div className="rounded-2xl p-5 animate-pulse bg-card border border-border/30">
+        <div className="h-5 w-48 rounded mb-4 bg-muted" />
         <div className="space-y-3">
-          <div className="h-16 rounded-lg" style={{ background: "#1c1a27" }} />
-          <div className="h-16 rounded-lg" style={{ background: "#1c1a27" }} />
-          <div className="h-16 rounded-lg" style={{ background: "#1c1a27" }} />
+          <div className="h-16 rounded-lg bg-muted" />
+          <div className="h-16 rounded-lg bg-muted" />
+          <div className="h-16 rounded-lg bg-muted" />
         </div>
       </div>
     );
   }
 
-  const DEMO_BRIEFING = [
-    { title: "Amazon files WARN Act notice for 847 employees in Seattle tech division", category: "layoffs", source: "Washington State WARN Act Database", time: "2 hours ago", flag: "red" },
-    { title: "Meta posts 312 engineering roles marked 'urgent' — same roles posted 4x in 90 days", category: "ai_hiring", source: "LinkedIn Jobs Analysis", time: "5 hours ago", flag: "yellow" },
-    { title: "Oracle PAC contributes $180K to candidates backing H-1B restriction legislation", category: "policy", source: "FEC Filings", time: "Yesterday", flag: "red" },
-    { title: "Salesforce pay equity audit published: 98.6% pay parity across gender and race", category: "workplace", source: "Salesforce Equality Report", time: "2 days ago", flag: "green" },
-    { title: "Google halts hiring in non-AI divisions per internal memo (via WARN filings pattern)", category: "layoffs", source: "CA WARN Act + LinkedIn data", time: "3 days ago", flag: "yellow" },
-  ];
-
-  const FLAG_STYLES: Record<string, { label: string; bg: string; text: string; dot: string }> = {
-    red: { label: "RED FLAG", bg: "bg-destructive/10", text: "text-destructive", dot: "bg-destructive" },
-    yellow: { label: "SIGNAL", bg: "bg-amber-500/10", text: "text-amber-500", dot: "bg-amber-500" },
-    green: { label: "CLEAR", bg: "bg-emerald-500/10", text: "text-emerald-500", dot: "bg-emerald-500" },
-  };
-
-  const showDemo = !briefing || briefing.news.length === 0;
-  const displayNews = showDemo ? DEMO_BRIEFING : null;
-
-  if (displayNews) {
-    return (
-      <div className="rounded-xl overflow-hidden" style={{ background: "#13121a", border: "1px solid rgba(255,255,255,0.08)" }}>
-        <div className="px-5 pt-5 pb-3 flex items-center justify-between">
-          <div className="flex items-center gap-2">
-            <div className="w-8 h-8 rounded-lg bg-primary/10 flex items-center justify-center">
-              <Newspaper className="w-4 h-4 text-primary" />
-            </div>
-            <div>
-              <h3 className="text-sm font-semibold text-foreground font-display">Your Daily Briefing</h3>
-              <div className="flex items-center gap-1.5 text-xs text-muted-foreground font-mono">
-                <Clock className="w-3 h-3" />
-                {new Date().toLocaleString("en-US", { month: "short", day: "numeric", hour: "numeric", minute: "2-digit" })}
-              </div>
-            </div>
-          </div>
-          <span className="text-[10px] font-medium px-2 py-0.5 rounded-full bg-muted text-muted-foreground border border-border/50">Demo Data</span>
-        </div>
-        <div className="divide-y divide-border/30">
-          {displayNews.map((item, i) => {
-            const config = CATEGORY_CONFIG[item.category] || CATEGORY_CONFIG.industry;
-            const Icon = config.icon;
-            const flag = FLAG_STYLES[item.flag];
-            return (
-              <div key={i} className="px-5 py-3 hover:bg-muted/30 transition-colors">
-                <div className="flex items-start gap-3">
-                  <div className={`w-2 h-2 rounded-full mt-2 shrink-0 ${flag.dot}`} />
-                  <div className="min-w-0 flex-1">
-                    <div className="flex items-center gap-2 mb-1">
-                      <span className={`text-[10px] font-bold px-1.5 py-0.5 rounded ${flag.bg} ${flag.text}`}>{flag.label}</span>
-                      <span className="text-xs font-medium px-1.5 py-0.5 rounded" style={{ backgroundColor: `${config.color}15`, color: config.color }}>{config.label}</span>
-                    </div>
-                    <p className="text-sm font-medium text-foreground leading-snug">{item.title}</p>
-                    <div className="flex items-center gap-2 mt-1">
-                      <span className="text-xs text-muted-foreground font-mono">{item.source}</span>
-                      <span className="text-xs text-muted-foreground/60">·</span>
-                      <span className="text-xs text-muted-foreground/60">{item.time}</span>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            );
-          })}
-        </div>
-        <button
-          onClick={() => navigate("/briefing")}
-          className="w-full px-5 py-3 border-t border-border/30 flex items-center justify-center gap-1.5 text-sm font-medium text-primary hover:bg-primary/5 transition-colors"
-        >
-          View full briefing <ArrowRight className="w-4 h-4" />
-        </button>
-      </div>
-    );
-  }
-
-  const topNews = briefing.news.slice(0, 4);
-  const topCompanies = briefing.companies.slice(0, 3);
-  const topValues = briefing.briefing.top_values_matched || [];
+  if (items.length === 0) return null;
 
   return (
-    <div className="rounded-2xl overflow-hidden" style={{ background: "#13121a", border: "1px solid rgba(255,255,255,0.08)" }}>
-      {/* Header */}
-      <div className="px-5 pt-5 pb-3 flex items-center justify-between">
-        <div className="flex items-center gap-2">
-          <div className="w-8 h-8 rounded-lg bg-primary/10 flex items-center justify-center">
-            <Newspaper className="w-4 h-4 text-primary" />
-          </div>
-          <div>
-            <h3 className="text-sm font-semibold text-foreground font-display">Your Daily Briefing</h3>
-            <div className="flex items-center gap-1.5 text-xs text-muted-foreground font-mono">
-              <Clock className="w-3 h-3" />
-              {new Date(briefing.briefing.generated_at).toLocaleString("en-US", {
-                month: "short", day: "numeric", hour: "numeric", minute: "2-digit",
-              })}
-            </div>
+    <div className="rounded-xl overflow-hidden bg-card border border-border/30">
+      <div className="px-5 pt-5 pb-3 flex items-center gap-2">
+        <div className="w-8 h-8 rounded-lg bg-primary/10 flex items-center justify-center">
+          <Newspaper className="w-4 h-4 text-primary" />
+        </div>
+        <div>
+          <h3 className="text-sm font-semibold text-foreground font-display">Your Daily Briefing</h3>
+          <div className="flex items-center gap-1.5 text-xs text-muted-foreground font-mono">
+            <Clock className="w-3 h-3" />
+            {new Date().toLocaleString("en-US", { month: "short", day: "numeric", hour: "numeric", minute: "2-digit" })}
           </div>
         </div>
-        <button
-          onClick={() => fetchBriefing(true)}
-          disabled={refreshing}
-          className="p-1.5 rounded-md hover:bg-muted text-muted-foreground hover:text-primary transition-colors"
-        >
-          <RefreshCw className={`w-4 h-4 ${refreshing ? "animate-spin" : ""}`} />
-        </button>
       </div>
 
-      {/* Values */}
-      {topValues.length > 0 && (
-        <div className="px-5 pb-3 flex items-center gap-1.5 flex-wrap">
-          <span className="text-xs text-muted-foreground">Prioritized for:</span>
-          {topValues.map((v: string) => (
-            <span key={v} className="px-2 py-0.5 rounded-full text-xs font-medium bg-primary/10 text-primary border border-primary/20">
-              {v}
-            </span>
-          ))}
-        </div>
-      )}
-
-      {/* News */}
       <div className="divide-y divide-border/30">
-        {topNews.map((item: any, i: number) => {
-          const config = CATEGORY_CONFIG[item.category] || CATEGORY_CONFIG.industry;
-          const Icon = config.icon;
+        {items.map((item) => {
+          const signal = SIGNAL_CONFIG[item.signal_type] || SIGNAL_CONFIG.info;
+          const timeAgo = formatDistanceToNow(new Date(item.published_at), { addSuffix: true });
+
           return (
-            <a
-              key={item.id || i}
-              href={item.source_url || "#"}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="block px-5 py-3 hover:bg-muted/30 transition-colors group"
-            >
+            <div key={item.id} className="px-5 py-3 hover:bg-muted/30 transition-colors">
               <div className="flex items-start gap-3">
-                <div className="w-6 h-6 rounded flex items-center justify-center mt-0.5 shrink-0" style={{ backgroundColor: `${config.color}15` }}>
-                  <Icon className="w-3.5 h-3.5" style={{ color: config.color }} />
-                </div>
+                <div className={`w-2 h-2 rounded-full mt-2 shrink-0 ${signal.dot}`} />
                 <div className="min-w-0 flex-1">
-                  <p className="text-sm font-medium text-foreground leading-snug group-hover:text-primary transition-colors line-clamp-2">
-                    {item.title}
-                  </p>
-                  <div className="flex items-center gap-2 mt-1">
-                    <span className="text-xs font-medium px-1.5 py-0.5 rounded" style={{ backgroundColor: `${config.color}15`, color: config.color }}>
-                      {config.label}
+                  <div className="flex items-center gap-2 mb-1">
+                    <span className={`text-[10px] font-bold px-1.5 py-0.5 rounded ${signal.bg} ${signal.text}`}>
+                      {signal.emoji} {signal.label}
                     </span>
-                    <span className="text-xs text-muted-foreground font-mono">{item.source}</span>
+                    <span className="text-xs font-semibold text-foreground">{item.company}</span>
+                  </div>
+                  <p className="text-sm font-medium text-foreground leading-snug">{item.headline}</p>
+                  {item.detail && (
+                    <p className="text-xs text-muted-foreground mt-1 line-clamp-2">{item.detail}</p>
+                  )}
+                  <div className="flex items-center gap-2 mt-1.5">
+                    {item.source_url ? (
+                      <a href={item.source_url} target="_blank" rel="noopener noreferrer" className="text-xs text-primary hover:underline font-mono">
+                        {item.source_name}
+                      </a>
+                    ) : (
+                      <span className="text-xs text-muted-foreground font-mono">{item.source_name}</span>
+                    )}
+                    <span className="text-xs text-muted-foreground/60">·</span>
+                    <span className="text-xs text-muted-foreground/60">{timeAgo}</span>
                   </div>
                 </div>
               </div>
-            </a>
+            </div>
           );
         })}
       </div>
 
-      {/* Companies */}
-      {topCompanies.length > 0 && (
-        <div className="px-5 py-3 border-t border-border/30">
-          <p className="text-xs text-muted-foreground mb-2">Companies to watch</p>
-          <div className="flex gap-2 flex-wrap">
-            {topCompanies.map((company: any) => (
-              <button
-                key={company.id}
-                onClick={() => navigate(`/company/${company.slug}`)}
-                className="flex items-center gap-1.5 px-2.5 py-1.5 bg-background border border-border/50 rounded-lg hover:border-primary/30 transition-colors group"
-              >
-                <Building2 className="w-3 h-3 text-muted-foreground group-hover:text-primary" />
-                <span className="text-xs font-medium text-foreground">{company.name}</span>
-                {company.civic_footprint_score && (
-                  <span className="text-xs font-mono text-primary">{Math.round(company.civic_footprint_score)}</span>
-                )}
-              </button>
-            ))}
-          </div>
-        </div>
-      )}
-
-      {/* View full */}
       <button
         onClick={() => navigate("/briefing")}
         className="w-full px-5 py-3 border-t border-border/30 flex items-center justify-center gap-1.5 text-sm font-medium text-primary hover:bg-primary/5 transition-colors"
