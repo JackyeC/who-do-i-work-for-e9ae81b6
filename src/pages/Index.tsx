@@ -46,10 +46,10 @@ const Index = forwardRef<HTMLDivElement>((_, ref) => {
             </span>
           </Link>
           <nav className="hidden md:flex items-center gap-6">
-            <Link to="/receipts" className="font-sans text-sm text-muted-foreground hover:text-foreground transition-colors">How It Works</Link>
+            <Link to="/receipts" className="font-sans text-sm text-muted-foreground hover:text-foreground transition-colors">Receipts</Link>
+            <Link to="/browse" className="font-sans text-sm text-muted-foreground hover:text-foreground transition-colors">Companies</Link>
             <Link to="/about" className="font-sans text-sm text-muted-foreground hover:text-foreground transition-colors">About</Link>
             <Link to="/for-employers" className="font-sans text-sm text-muted-foreground hover:text-foreground transition-colors">For Companies</Link>
-            <Link to="/browse" className="font-sans text-sm text-muted-foreground hover:text-foreground transition-colors">Insights</Link>
             <Link to="/contact" className="font-sans text-sm text-muted-foreground hover:text-foreground transition-colors">Contact</Link>
             {!authLoading && (
               user ? (
@@ -57,7 +57,7 @@ const Index = forwardRef<HTMLDivElement>((_, ref) => {
                   Dashboard
                 </Button>
               ) : (
-                <Button size="sm" onClick={() => navigate("/login")} className="font-sans text-sm rounded-full px-5">
+                <Button size="sm" onClick={() => navigate("/join")} className="font-sans text-sm rounded-full px-5">
                   Get Early Access
                 </Button>
               )
@@ -72,16 +72,16 @@ const Index = forwardRef<HTMLDivElement>((_, ref) => {
       {mobileMenuOpen && (
         <div className="md:hidden px-6 pb-4 border-b border-border/50 bg-background">
           <nav className="flex flex-col gap-3">
-            <Link to="/receipts" onClick={() => setMobileMenuOpen(false)} className="font-sans text-sm text-muted-foreground hover:text-foreground transition-colors py-2">How It Works</Link>
+            <Link to="/receipts" onClick={() => setMobileMenuOpen(false)} className="font-sans text-sm text-muted-foreground hover:text-foreground transition-colors py-2">Receipts</Link>
+            <Link to="/browse" onClick={() => setMobileMenuOpen(false)} className="font-sans text-sm text-muted-foreground hover:text-foreground transition-colors py-2">Companies</Link>
             <Link to="/about" onClick={() => setMobileMenuOpen(false)} className="font-sans text-sm text-muted-foreground hover:text-foreground transition-colors py-2">About</Link>
             <Link to="/for-employers" onClick={() => setMobileMenuOpen(false)} className="font-sans text-sm text-muted-foreground hover:text-foreground transition-colors py-2">For Companies</Link>
-            <Link to="/browse" onClick={() => setMobileMenuOpen(false)} className="font-sans text-sm text-muted-foreground hover:text-foreground transition-colors py-2">Insights</Link>
             <Link to="/contact" onClick={() => setMobileMenuOpen(false)} className="font-sans text-sm text-muted-foreground hover:text-foreground transition-colors py-2">Contact</Link>
             {!authLoading && (
               user ? (
                 <Button size="sm" variant="outline" onClick={() => { setMobileMenuOpen(false); navigate("/dashboard"); }} className="w-full">Dashboard</Button>
               ) : (
-                <Button size="sm" onClick={() => { setMobileMenuOpen(false); navigate("/login"); }} className="w-full">Get Early Access</Button>
+                <Button size="sm" onClick={() => { setMobileMenuOpen(false); navigate("/join"); }} className="w-full">Get Early Access</Button>
               )
             )}
           </nav>
@@ -119,7 +119,7 @@ const Index = forwardRef<HTMLDivElement>((_, ref) => {
             style={{ marginTop: "32px", opacity: 0, animation: "heroFadeIn 0.5s ease 1s forwards" }}
           >
             <button
-              onClick={() => navigate(user ? "/dashboard" : "/login")}
+              onClick={() => navigate(user ? "/dashboard" : "/join")}
               className="bg-primary text-primary-foreground font-sans text-base font-semibold px-8 py-4 rounded-lg hover:brightness-110 transition-all cursor-pointer"
             >
               Get Early Access
@@ -388,7 +388,7 @@ const Index = forwardRef<HTMLDivElement>((_, ref) => {
           </p>
           <div className="flex flex-col sm:flex-row gap-3 justify-center">
             <button
-              onClick={() => navigate(user ? "/dashboard" : "/login")}
+              onClick={() => navigate(user ? "/dashboard" : "/join")}
               className="bg-primary text-primary-foreground px-8 py-3.5 font-sans text-sm font-semibold rounded-lg hover:brightness-110 transition-all"
             >
               Join the Waitlist
@@ -430,10 +430,11 @@ const Index = forwardRef<HTMLDivElement>((_, ref) => {
               <p className="font-mono text-xs tracking-[0.15em] uppercase text-muted-foreground/50 mb-3">WDIWF</p>
               <nav className="flex flex-col gap-2">
                 <Link to="/" className="font-sans text-sm text-muted-foreground hover:text-foreground transition-colors">Home</Link>
-                <Link to="/receipts" className="font-sans text-sm text-muted-foreground hover:text-foreground transition-colors">How It Works</Link>
+                <Link to="/receipts" className="font-sans text-sm text-muted-foreground hover:text-foreground transition-colors">Receipts</Link>
+                <Link to="/browse" className="font-sans text-sm text-muted-foreground hover:text-foreground transition-colors">Companies</Link>
                 <Link to="/about" className="font-sans text-sm text-muted-foreground hover:text-foreground transition-colors">About</Link>
                 <Link to="/for-employers" className="font-sans text-sm text-muted-foreground hover:text-foreground transition-colors">For Companies</Link>
-                <Link to="/browse" className="font-sans text-sm text-muted-foreground hover:text-foreground transition-colors">Insights</Link>
+                <Link to="/pricing" className="font-sans text-sm text-muted-foreground hover:text-foreground transition-colors">Pricing</Link>
                 <Link to="/contact" className="font-sans text-sm text-muted-foreground hover:text-foreground transition-colors">Contact</Link>
               </nav>
             </div>

@@ -122,7 +122,7 @@ const About = () => {
           </p>
           <div className="flex flex-col sm:flex-row gap-3 justify-center">
             <Link
-              to="/login"
+              to="/join"
               className="inline-flex items-center justify-center gap-2 bg-primary text-primary-foreground px-8 py-3.5 font-sans text-sm font-semibold rounded-lg hover:brightness-110 transition-all"
             >
               Get Early Access <ArrowRight className="w-4 h-4" />
