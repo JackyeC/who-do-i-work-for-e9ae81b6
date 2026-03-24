@@ -339,13 +339,26 @@ const Index = forwardRef<HTMLDivElement>((_, ref) => {
                 />
                 <div>
                   <p className="font-sans text-muted-foreground leading-relaxed mb-6" style={{ fontSize: "15px", maxWidth: "56ch" }}>
-                    WDIWF is created by Jackye Clayton — TA architect, HR Tech strategist, and the voice behind the Inclusive AF podcast. After building and auditing hiring systems for companies like Textio and SeekOut, she's now building the tool she wished candidates always had.
+                    WDIWF is created by Jackye Clayton — TA architect, HR Tech strategist, and the voice behind the Inclusive AF podcast and But First, Coffee. After building and auditing hiring systems for companies like Textio and SeekOut, she's now building the tool she wished candidates always had.
                   </p>
                   <div className="flex items-center gap-3 flex-wrap">
-                    {["Inclusive AF Podcast", "Leapsome Top 26 HR Influencer", "WRKdefined", "Transform Speaker", "Board Member"].map((badge) => (
-                      <span key={badge} className="inline-flex items-center px-3 py-1 text-xs font-medium text-muted-foreground border border-border rounded-full whitespace-nowrap">
-                        {badge}
-                      </span>
+                    {[
+                      { label: "Inclusive AF Podcast", url: "https://www.inclusiveafpodcast.com" },
+                      { label: "But First, Coffee", url: "https://wrkdefined.com/podcast/but-first-coffee" },
+                      { label: "Leapsome Top 26 HR Influencer", url: "https://www.leapsome.com/blog/hr-influencers" },
+                      { label: "WRKdefined", url: "https://wrkdefined.com/person/jackye-clayton" },
+                      { label: "Transform Speaker", url: "https://jackyeclayton.com/speaking" },
+                      { label: "Board Member", url: null },
+                    ].map((badge) => (
+                      badge.url ? (
+                        <a key={badge.label} href={badge.url} target="_blank" rel="noopener noreferrer" className="inline-flex items-center px-3 py-1 text-xs font-medium text-muted-foreground border border-border rounded-full whitespace-nowrap hover:border-primary/40 hover:text-primary transition-colors">
+                          {badge.label}
+                        </a>
+                      ) : (
+                        <span key={badge.label} className="inline-flex items-center px-3 py-1 text-xs font-medium text-muted-foreground border border-border rounded-full whitespace-nowrap">
+                          {badge.label}
+                        </span>
+                      )
                     ))}
                   </div>
                   <Link to="/about" className="font-sans text-sm text-muted-foreground hover:text-primary transition-colors mt-6 inline-block">
@@ -426,7 +439,8 @@ const Index = forwardRef<HTMLDivElement>((_, ref) => {
               <nav className="flex flex-col gap-2">
                 <a href="https://www.linkedin.com/in/jackyeclayton/" target="_blank" rel="noopener noreferrer" className="font-sans text-sm text-muted-foreground hover:text-foreground transition-colors">LinkedIn</a>
                 <a href="https://jackyeclayton.com/speaking" target="_blank" rel="noopener noreferrer" className="font-sans text-sm text-muted-foreground hover:text-foreground transition-colors">Speaking</a>
-                <a href="#" className="font-sans text-sm text-muted-foreground hover:text-foreground transition-colors">Inclusive AF Podcast</a>
+                <a href="https://www.inclusiveafpodcast.com" target="_blank" rel="noopener noreferrer" className="font-sans text-sm text-muted-foreground hover:text-foreground transition-colors">Inclusive AF Podcast</a>
+                <a href="https://wrkdefined.com/podcast/but-first-coffee" target="_blank" rel="noopener noreferrer" className="font-sans text-sm text-muted-foreground hover:text-foreground transition-colors">But First, Coffee</a>
               </nav>
             </div>
             <div>

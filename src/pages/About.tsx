@@ -1,13 +1,24 @@
 import { Link } from "react-router-dom";
 import { usePageSEO } from "@/hooks/use-page-seo";
-import { ArrowRight } from "lucide-react";
+import { ArrowRight, ExternalLink } from "lucide-react";
 import jackyeHeadshotSm from "@/assets/jackye-headshot-sm.webp";
+
+const CREDENTIAL_BADGES: { label: string; url: string | null }[] = [
+  { label: "Inclusive AF Podcast", url: "https://www.inclusiveafpodcast.com" },
+  { label: "But First, Coffee", url: "https://wrkdefined.com/podcast/but-first-coffee" },
+  { label: "Leapsome Top 26 HR Influencer", url: "https://www.leapsome.com/blog/hr-influencers" },
+  { label: "WRKdefined", url: "https://wrkdefined.com/person/jackye-clayton" },
+  { label: "Transform Speaker", url: "https://jackyeclayton.com/speaking" },
+  { label: "Board Member", url: null },
+  { label: "Textio", url: null },
+  { label: "SeekOut", url: null },
+];
 
 const About = () => {
   usePageSEO({
     title: "About — WDIWF by Jackye Clayton",
     description:
-      "Meet Jackye Clayton — TA architect, HR Tech strategist, and voice behind the Inclusive AF podcast. After building hiring systems for companies like Textio and SeekOut, she built the tool she wished candidates always had.",
+      "Meet Jackye Clayton — TA architect, HR Tech strategist, and voice behind the Inclusive AF podcast and But First, Coffee. After building hiring systems for companies like Textio and SeekOut, she built the tool she wished candidates always had.",
     path: "/about",
   });
 
@@ -63,26 +74,31 @@ const About = () => {
               <div>
                 <h2 className="font-sans text-lg font-bold text-foreground mb-3">The Voice Behind It</h2>
                 <p className="text-sm text-muted-foreground leading-relaxed">
-                  As the host of the Inclusive AF podcast, Jackye has spent years having the conversations the industry avoids — about accountability, performative diversity, and what "people-first culture" actually looks like when the cameras are off. WDIWF is the logical next step: turning those conversations into a tool.
+                  As the host of the <a href="https://www.inclusiveafpodcast.com" target="_blank" rel="noopener noreferrer" className="text-primary hover:underline">Inclusive AF podcast</a> and co-host of <a href="https://wrkdefined.com/podcast/but-first-coffee" target="_blank" rel="noopener noreferrer" className="text-primary hover:underline">But First, Coffee</a>, Jackye has spent years having the conversations the industry avoids — about accountability, performative diversity, and what "people-first culture" actually looks like when the cameras are off. WDIWF is the logical next step: turning those conversations into a tool.
                 </p>
               </div>
 
               <div className="flex items-center gap-3 flex-wrap pt-2">
-                {[
-                  "Inclusive AF Podcast",
-                  "Leapsome Top 26 HR Influencer",
-                  "WRKdefined",
-                  "Transform Speaker",
-                  "Board Member",
-                  "Textio",
-                  "SeekOut",
-                ].map((badge) => (
-                  <span
-                    key={badge}
-                    className="inline-flex items-center px-3 py-1 text-xs font-medium text-muted-foreground border border-border rounded-full whitespace-nowrap"
-                  >
-                    {badge}
-                  </span>
+                {CREDENTIAL_BADGES.map((badge) => (
+                  badge.url ? (
+                    <a
+                      key={badge.label}
+                      href={badge.url}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="inline-flex items-center gap-1.5 px-3 py-1 text-xs font-medium text-muted-foreground border border-border rounded-full whitespace-nowrap hover:border-primary/40 hover:text-primary transition-colors"
+                    >
+                      {badge.label}
+                      <ExternalLink className="w-3 h-3" />
+                    </a>
+                  ) : (
+                    <span
+                      key={badge.label}
+                      className="inline-flex items-center px-3 py-1 text-xs font-medium text-muted-foreground border border-border rounded-full whitespace-nowrap"
+                    >
+                      {badge.label}
+                    </span>
+                  )
                 ))}
               </div>
             </div>
