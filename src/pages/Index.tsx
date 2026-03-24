@@ -97,42 +97,112 @@ const Index = forwardRef<HTMLDivElement>((_, ref) => {
         {/* Subtle gold gradient */}
         <div className="absolute top-[-20%] right-[-10%] w-[50%] h-[70%] pointer-events-none" style={{ background: "radial-gradient(ellipse, rgba(240,192,64,0.06) 0%, transparent 70%)" }} />
 
-        <div className="relative z-[1] max-w-[1100px] mx-auto w-full">
-          <h1
-            className="text-foreground font-sans leading-[1.05] tracking-tight"
-            style={{ fontSize: "clamp(2.5rem, 7vw, 5.5rem)", fontWeight: 800, maxWidth: "14ch", opacity: 0, animation: "heroFadeIn 0.8s ease 0.3s forwards" }}
-          >
-            Know who you're{" "}
-            <span className="text-primary">really</span>{" "}
-            working for.
-          </h1>
-
-          <p
-            className="text-muted-foreground max-w-[52ch] leading-relaxed"
-            style={{ fontSize: "clamp(1rem, 1.5vw, 1.25rem)", marginTop: "24px", opacity: 0, animation: "heroFadeIn 0.6s ease 0.7s forwards" }}
-          >
-            WDIWF is career intelligence for people who refuse to find out the hard way. We forensically evaluate companies — so you can negotiate smarter, ask harder questions, and never accept an offer blind again.
-          </p>
-
-          <div
-            className="flex items-center gap-4 flex-wrap"
-            style={{ marginTop: "32px", opacity: 0, animation: "heroFadeIn 0.5s ease 1s forwards" }}
-          >
-            <button
-              onClick={() => navigate(user ? "/dashboard" : "/join")}
-              className="bg-primary text-primary-foreground font-sans text-base font-semibold px-8 py-4 rounded-lg hover:brightness-110 transition-all cursor-pointer"
+        <div className="relative z-[1] max-w-[1100px] mx-auto w-full grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-16 items-center">
+          {/* LEFT — Text */}
+          <div>
+            <h1
+              className="text-foreground font-sans leading-[1.05] tracking-tight"
+              style={{ fontSize: "clamp(2.5rem, 7vw, 5.5rem)", fontWeight: 800, maxWidth: "14ch", opacity: 0, animation: "heroFadeIn 0.8s ease 0.3s forwards" }}
             >
-              Get Early Access
-            </button>
-            <button
-              onClick={() => {
-                const el = document.getElementById("how-it-works");
-                el?.scrollIntoView({ behavior: "smooth" });
-              }}
-              className="font-sans text-base text-muted-foreground hover:text-foreground transition-colors cursor-pointer bg-transparent border-none"
+              Know who you're{" "}
+              <span className="text-primary">really</span>{" "}
+              working for.
+            </h1>
+
+            <p
+              className="text-muted-foreground max-w-[52ch] leading-relaxed"
+              style={{ fontSize: "clamp(1rem, 1.5vw, 1.25rem)", marginTop: "24px", opacity: 0, animation: "heroFadeIn 0.6s ease 0.7s forwards" }}
             >
-              See how it works ↓
-            </button>
+              WDIWF is career intelligence for people who refuse to find out the hard way. We forensically evaluate companies — so you can negotiate smarter, ask harder questions, and never accept an offer blind again.
+            </p>
+
+            <div
+              className="flex items-center gap-4 flex-wrap"
+              style={{ marginTop: "32px", opacity: 0, animation: "heroFadeIn 0.5s ease 1s forwards" }}
+            >
+              <button
+                onClick={() => navigate(user ? "/dashboard" : "/join")}
+                className="bg-primary text-primary-foreground font-sans text-base font-semibold px-8 py-4 rounded-lg hover:brightness-110 transition-all cursor-pointer"
+              >
+                Get Early Access
+              </button>
+              <button
+                onClick={() => {
+                  const el = document.getElementById("how-it-works");
+                  el?.scrollIntoView({ behavior: "smooth" });
+                }}
+                className="font-sans text-base text-muted-foreground hover:text-foreground transition-colors cursor-pointer bg-transparent border-none"
+              >
+                See how it works ↓
+              </button>
+            </div>
+          </div>
+
+          {/* RIGHT — Live Intelligence Card */}
+          <div style={{ opacity: 0, animation: "heroFadeIn 0.7s ease 0.6s forwards" }}>
+            <div className="bg-[#111118] rounded-xl border border-border/30 shadow-2xl p-6 text-white">
+              {/* Header */}
+              <div className="flex items-center justify-between mb-5">
+                <span className="font-mono text-[11px] tracking-[0.2em] uppercase" style={{ color: "#F0C040" }}>
+                  Integrity Snapshot
+                </span>
+                <div className="flex items-center gap-1.5">
+                  <Building className="w-3.5 h-3.5 text-white/50" />
+                  <span className="font-sans text-sm font-semibold text-white/90">Amazon</span>
+                </div>
+              </div>
+
+              {/* Score */}
+              <div className="flex items-baseline gap-2 mb-1">
+                <span className="font-sans text-5xl font-black text-red-400">41</span>
+                <span className="font-mono text-sm text-white/40">/100</span>
+              </div>
+              <p className="font-mono text-[11px] tracking-wider uppercase text-white/40 mb-6">Integrity Score</p>
+
+              {/* Signals */}
+              <div className="space-y-3">
+                <div className="flex items-start gap-3 p-3 rounded-lg bg-white/[0.04] border border-white/[0.06]">
+                  <span className="mt-0.5 w-2.5 h-2.5 rounded-full bg-red-500 shrink-0" />
+                  <div>
+                    <p className="font-mono text-[11px] tracking-wider uppercase text-red-400 mb-0.5">OSHA Safety</p>
+                    <p className="text-sm text-white/70">17 citations · 2x industry avg</p>
+                  </div>
+                </div>
+                <div className="flex items-start gap-3 p-3 rounded-lg bg-white/[0.04] border border-white/[0.06]">
+                  <span className="mt-0.5 w-2.5 h-2.5 rounded-full bg-red-500 shrink-0" />
+                  <div>
+                    <p className="font-mono text-[11px] tracking-wider uppercase text-red-400 mb-0.5">Political Spending</p>
+                    <p className="text-sm text-white/70">Anti-worker ergonomics funding</p>
+                  </div>
+                </div>
+                <div className="flex items-start gap-3 p-3 rounded-lg bg-white/[0.04] border border-white/[0.06]">
+                  <span className="mt-0.5 w-2.5 h-2.5 rounded-full bg-amber-400 shrink-0" />
+                  <div>
+                    <p className="font-mono text-[11px] tracking-wider uppercase text-amber-400 mb-0.5">Workforce Stability</p>
+                    <p className="text-sm text-white/70">27,000 layoffs · 5-day RTO</p>
+                  </div>
+                </div>
+              </div>
+
+              {/* Blurred locked row */}
+              <div className="mt-4 relative overflow-hidden rounded-lg">
+                <div className="p-3 bg-white/[0.03] border border-white/[0.06] rounded-lg backdrop-blur-sm" style={{ filter: "blur(2px)" }}>
+                  <div className="flex items-center gap-2">
+                    <span className="w-2.5 h-2.5 rounded-full bg-white/20" />
+                    <span className="h-3 w-32 bg-white/10 rounded" />
+                  </div>
+                </div>
+                <Link
+                  to="/company/amazon"
+                  className="absolute inset-0 flex items-center justify-center font-sans text-sm font-semibold text-primary hover:text-primary/80 transition-colors"
+                >
+                  View Full Receipt →
+                </Link>
+              </div>
+            </div>
+            <p className="text-center font-mono text-[11px] text-muted-foreground mt-3 tracking-wide">
+              Updated in real time from public records
+            </p>
           </div>
         </div>
       </section>
