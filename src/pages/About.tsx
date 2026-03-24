@@ -51,11 +51,11 @@ const About = () => {
         {/* ── Two-column: Photo + Story ── */}
         <section className="max-w-[1100px] mx-auto px-6 lg:px-16 py-16">
           <div className="grid grid-cols-1 lg:grid-cols-[1fr_1.4fr] gap-12 items-start">
-            <div className="bg-card border border-border rounded-lg overflow-hidden">
+            <div className="bg-card border border-border rounded-lg overflow-hidden max-w-[320px]">
               <img
                 src={jackyeHeadshotSm}
                 alt="Jackye Clayton, Founder of WDIWF"
-                className="w-full aspect-[3/4] object-cover"
+                className="w-full aspect-square object-cover object-top"
                 loading="lazy"
                 decoding="async"
               />
