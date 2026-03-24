@@ -4,12 +4,20 @@ import { ArrowRight, ExternalLink } from "lucide-react";
 import jackyeHeadshotSm from "@/assets/jackye-headshot-sm.webp";
 
 const CREDENTIAL_BADGES: { label: string; url: string | null }[] = [
+  { label: "LinkedIn Learning Instructor", url: "https://www.linkedin.com/learning/human-resources-writing-an-effective-job-description" },
+  { label: "Associate Editor, HR Gazette", url: "https://hr-gazette.com/category/news-reviews/events/" },
   { label: "Inclusive AF Podcast", url: "https://www.inclusiveafpodcast.com" },
   { label: "But First, Coffee", url: "https://wrkdefined.com/podcast/but-first-coffee" },
-  { label: "Leapsome Top 26 HR Influencer", url: "https://www.leapsome.com/blog/hr-influencers" },
+  { label: "People in Squares", url: "https://www.linkedin.com/posts/jackyeclayton_people-in-squares-valentines-day-show-activity-7428078957075525633-kxn8" },
+  { label: "People Puzzles Collective", url: "https://podcasts.apple.com/us/podcast/the-people-puzzles-collective/id1810747382" },
+  { label: "Leapsome Top 26 HR Influencer 2026", url: "https://www.leapsome.com/blog/hr-influencers" },
+  { label: "Peoplebox Top 68 HR Experts 2026", url: "https://www.peoplebox.ai/blog/top-50-hr-influencers-2024/" },
+  { label: "People Managing People Top 68 HR Experts", url: "https://peoplemanagingpeople.com/career/hr-experts/" },
+  { label: "Unleash America 2025", url: "https://hr-gazette.com/unleash-america-2025-preview-with-jackye-clayton/" },
+  { label: "Workhuman Live 2025", url: null },
+  { label: "The Well-led Podcast", url: "https://open.spotify.com/episode/1rxa6JAQD2LFRQIsCI9U7L" },
+  { label: "The POZcast", url: "https://www.youtube.com/watch?v=2dAeURaRogg" },
   { label: "WRKdefined", url: "https://wrkdefined.com/person/jackye-clayton" },
-  { label: "Transform Speaker", url: "https://jackyeclayton.com/speaking" },
-  { label: "Board Member", url: null },
   { label: "Textio", url: null },
   { label: "SeekOut", url: null },
 ];
@@ -57,7 +65,7 @@ const About = () => {
               <div>
                 <h2 className="font-sans text-lg font-bold text-foreground mb-3">The Origin</h2>
                 <p className="text-sm text-muted-foreground leading-relaxed mb-4">
-                  Jackye Clayton has spent her career inside the machinery of hiring — building recruiting tech stacks, auditing talent acquisition pipelines, and advising HR teams on everything from AI screening tools to DEIB strategy. She's worked with companies like Textio and SeekOut, served on boards, and spoken on stages at Transform, HR Tech, and beyond.
+                  Jackye Clayton has spent her career inside the machinery of hiring — building recruiting tech stacks, auditing talent acquisition pipelines, and advising HR teams on everything from AI screening tools to DEIB strategy. She's worked with companies like Textio and SeekOut, spoken on stages at Unleash America, Workhuman Live, and Transform, and currently serves as Associate Editor at <a href="https://hr-gazette.com/category/news-reviews/events/" target="_blank" rel="noopener noreferrer" className="text-primary hover:underline">The HR Gazette</a>.
                 </p>
                 <p className="text-sm text-muted-foreground leading-relaxed">
                   Along the way, she noticed a fundamental asymmetry: companies have sophisticated systems for evaluating candidates. Candidates have Glassdoor and Google. That's the gap WDIWF was built to close.
@@ -74,7 +82,7 @@ const About = () => {
               <div>
                 <h2 className="font-sans text-lg font-bold text-foreground mb-3">The Voice Behind It</h2>
                 <p className="text-sm text-muted-foreground leading-relaxed">
-                  As the host of the <a href="https://www.inclusiveafpodcast.com" target="_blank" rel="noopener noreferrer" className="text-primary hover:underline">Inclusive AF podcast</a> and co-host of <a href="https://wrkdefined.com/podcast/but-first-coffee" target="_blank" rel="noopener noreferrer" className="text-primary hover:underline">But First, Coffee</a>, Jackye has spent years having the conversations the industry avoids — about accountability, performative diversity, and what "people-first culture" actually looks like when the cameras are off. WDIWF is the logical next step: turning those conversations into a tool.
+                  As the host of the <a href="https://www.inclusiveafpodcast.com" target="_blank" rel="noopener noreferrer" className="text-primary hover:underline">Inclusive AF podcast</a>, co-host of <a href="https://wrkdefined.com/podcast/but-first-coffee" target="_blank" rel="noopener noreferrer" className="text-primary hover:underline">But First, Coffee</a> and <a href="https://www.linkedin.com/posts/jackyeclayton_people-in-squares-valentines-day-show-activity-7428078957075525633-kxn8" target="_blank" rel="noopener noreferrer" className="text-primary hover:underline">People in Squares</a>, and as a <a href="https://www.linkedin.com/learning/human-resources-writing-an-effective-job-description" target="_blank" rel="noopener noreferrer" className="text-primary hover:underline">LinkedIn Learning instructor</a>, Jackye has spent years having the conversations the industry avoids — about accountability, performative diversity, and what "people-first culture" actually looks like when the cameras are off. WDIWF is the logical next step: turning those conversations into a tool.
                 </p>
               </div>
 

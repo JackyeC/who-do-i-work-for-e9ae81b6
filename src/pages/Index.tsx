@@ -339,16 +339,19 @@ const Index = forwardRef<HTMLDivElement>((_, ref) => {
                 />
                 <div>
                   <p className="font-sans text-muted-foreground leading-relaxed mb-6" style={{ fontSize: "15px", maxWidth: "56ch" }}>
-                    WDIWF is created by Jackye Clayton — TA architect, HR Tech strategist, and the voice behind the Inclusive AF podcast and But First, Coffee. After building and auditing hiring systems for companies like Textio and SeekOut, she's now building the tool she wished candidates always had.
+                    WDIWF is created by Jackye Clayton — TA architect, HR Tech strategist, LinkedIn Learning instructor, and Associate Editor at The HR Gazette. Host of the Inclusive AF podcast, co-host of But First, Coffee and People in Squares. After building and auditing hiring systems for companies like Textio and SeekOut, she's now building the tool she wished candidates always had.
                   </p>
                   <div className="flex items-center gap-3 flex-wrap">
                     {[
+                      { label: "LinkedIn Learning Instructor", url: "https://www.linkedin.com/learning/human-resources-writing-an-effective-job-description" },
+                      { label: "Associate Editor, HR Gazette", url: "https://hr-gazette.com/category/news-reviews/events/" },
                       { label: "Inclusive AF Podcast", url: "https://www.inclusiveafpodcast.com" },
                       { label: "But First, Coffee", url: "https://wrkdefined.com/podcast/but-first-coffee" },
+                      { label: "People in Squares", url: "https://www.linkedin.com/posts/jackyeclayton_people-in-squares-valentines-day-show-activity-7428078957075525633-kxn8" },
                       { label: "Leapsome Top 26 HR Influencer", url: "https://www.leapsome.com/blog/hr-influencers" },
-                      { label: "WRKdefined", url: "https://wrkdefined.com/person/jackye-clayton" },
-                      { label: "Transform Speaker", url: "https://jackyeclayton.com/speaking" },
-                      { label: "Board Member", url: null },
+                      { label: "Peoplebox Top 68 HR Experts", url: "https://www.peoplebox.ai/blog/top-50-hr-influencers-2024/" },
+                      { label: "Unleash 2025 Speaker", url: "https://hr-gazette.com/unleash-america-2025-preview-with-jackye-clayton/" },
+                      { label: "Workhuman Live 2025", url: null },
                     ].map((badge) => (
                       badge.url ? (
                         <a key={badge.label} href={badge.url} target="_blank" rel="noopener noreferrer" className="inline-flex items-center px-3 py-1 text-xs font-medium text-muted-foreground border border-border rounded-full whitespace-nowrap hover:border-primary/40 hover:text-primary transition-colors">
