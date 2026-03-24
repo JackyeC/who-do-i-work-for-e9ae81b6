@@ -67,12 +67,14 @@ export const MAIN_SECTIONS = [
       "/check", "/offer-check", "/offer-review", "/strategic-offer-review", "/offer-clarity",
       "/job-board", "/jobs", "/ask-jackye", "/methodology",
       "/would-you-work-here", "/employer-receipt", "/employer-promise-check", "/follow-the-money", "/compare", "/site-map",
+      "/about", "/for-employers", "/contact",
     ],
     subItems: [
+      { label: "About", path: "/about" },
+      { label: "For Companies", path: "/for-employers" },
+      { label: "Contact", path: "/contact" },
       { label: "Job Board", path: "/job-board" },
       { label: "Offer Analysis", path: "/check" },
-      { label: "Career Path Explorer", path: "/career-intelligence" },
-      { label: "Advisor", path: "/career-intelligence" },
       { label: "Compare Companies", path: "/compare" },
       { label: "Follow the Money", path: "/follow-the-money" },
       { label: "Recruiter Brief", path: "/recruiter-brief" },
@@ -137,11 +139,12 @@ export function TopBar() {
 
   /* Secondary nav items (More dropdown) */
   const SECONDARY_NAV = [
+    { label: "About", path: "/about" },
+    { label: "For Companies", path: "/for-employers" },
+    { label: "Contact", path: "/contact" },
     { label: "Hire", path: "/hire" },
     { label: "Job Board", path: "/job-board" },
     { label: "Offer Analysis", path: "/check" },
-    { label: "Career Path Explorer", path: "/career-intelligence" },
-    { label: "Advisor", path: "/career-intelligence" },
     { label: "Compare Companies", path: "/compare" },
     { label: "Follow the Money", path: "/follow-the-money" },
     { label: "Recruiter Brief", path: "/recruiter-brief" },

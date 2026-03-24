@@ -164,37 +164,7 @@ export default function Pricing() {
   };
 
   return (
-    <div className="min-h-screen flex flex-col bg-background">
-      {/* Header */}
-      <header className="sticky top-0 z-50 bg-background/95 backdrop-blur-sm border-b border-border/50 px-6 lg:px-16 py-4 w-full">
-        <div className="max-w-[1200px] mx-auto flex items-center justify-between">
-          <Link to="/" className="flex items-center shrink-0">
-            <span style={{ fontFamily: "Inter,sans-serif", fontWeight: 900, letterSpacing: "-0.03em", fontSize: "26px" }}>
-              <span style={{ color: "#111111" }}>W</span>
-              <span style={{ color: "#F0C040" }}>?</span>
-            </span>
-          </Link>
-          <nav className="flex items-center gap-4">
-            {!authLoading && isLoaded && (
-              user ? (
-                <Button size="sm" variant="outline" onClick={() => navigate("/dashboard")} className="font-sans text-btn">
-                  Dashboard
-                </Button>
-              ) : (
-                <>
-                  <button onClick={() => navigate("/login")} className="font-sans text-nav text-muted-foreground hover:text-foreground transition-colors">
-                    Sign in
-                  </button>
-                  <Button size="sm" onClick={() => navigate("/login")} className="font-sans text-btn rounded-full px-5">
-                    Get started
-                  </Button>
-                </>
-              )
-            )}
-          </nav>
-        </div>
-      </header>
-
+    <>
       <main className="flex-1">
         {/* Hero */}
         <section className="px-6 lg:px-16 pt-16 pb-8 text-center">
@@ -334,31 +304,6 @@ export default function Pricing() {
           </div>
         </section>
       </main>
-
-      {/* Footer */}
-      <footer className="border-t border-border px-6 lg:px-16 py-6">
-        <div className="max-w-[1200px] mx-auto">
-          <div className="flex justify-between items-center flex-wrap gap-4 mb-4">
-            <div className="flex items-center gap-1">
-              <span style={{ fontFamily: 'Inter, sans-serif', fontWeight: 900, fontSize: '1.1rem', letterSpacing: '-0.03em' }}>
-                <span style={{ color: '#111111' }}>W</span>
-                <span style={{ color: '#F0C040' }}>?</span>
-              </span>
-              <span className="text-sm text-muted-foreground"> · by Jackye Clayton</span>
-            </div>
-            <div className="flex gap-6">
-              <a href="/privacy" className="font-mono text-sm tracking-wider text-muted-foreground hover:text-foreground transition-colors">Privacy</a>
-              <a href="/terms" className="font-mono text-sm tracking-wider text-muted-foreground hover:text-foreground transition-colors">Terms</a>
-              <a href="/methodology" className="font-mono text-sm tracking-wider text-muted-foreground hover:text-foreground transition-colors">Methodology</a>
-            </div>
-          </div>
-          <div className="border-t border-border/50 pt-4">
-            <p className="font-mono text-xs tracking-wider text-muted-foreground/60 leading-relaxed max-w-[800px]">
-              WDIWF reports publicly available data and does not provide character assessments, legal advice, or employment recommendations. All signals are sourced from public records and verified watchdog databases.
-            </p>
-          </div>
-        </div>
-      </footer>
-    </div>
+    </>
   );
 }

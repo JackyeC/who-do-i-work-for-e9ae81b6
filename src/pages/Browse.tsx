@@ -11,6 +11,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { useQuery } from "@tanstack/react-query";
 import { useToast } from "@/hooks/use-toast";
 import { Building2, ArrowRight, Search, TrendingUp, SortAsc, Sparkles, Loader2, Landmark } from "lucide-react";
+import { Tooltip, TooltipTrigger, TooltipContent } from "@/components/ui/tooltip";
 import { EmptyState } from "@/components/EmptyState";
 import {
   Pagination,
@@ -210,24 +211,38 @@ export default function Browse() {
           </Select>
 
           <div className="flex items-center gap-0.5 bg-muted/40 rounded-lg p-0.5 border border-border/40 shrink-0">
-            <button
-              onClick={() => setSortBy("score")}
-              className={`flex items-center gap-1.5 text-xs font-medium px-2.5 py-1.5 rounded-md transition-all ${
-                sortBy === "score" ? "bg-card text-foreground shadow-sm" : "text-muted-foreground hover:text-foreground"
-              }`}
-            >
-              <TrendingUp className="w-3 h-3" />
-              CFS
-            </button>
-            <button
-              onClick={() => setSortBy("cis")}
-              className={`flex items-center gap-1.5 text-xs font-medium px-2.5 py-1.5 rounded-md transition-all ${
-                sortBy === "cis" ? "bg-card text-foreground shadow-sm" : "text-muted-foreground hover:text-foreground"
-              }`}
-            >
-              <TrendingUp className="w-3 h-3" />
-              CIS
-            </button>
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <button
+                  onClick={() => setSortBy("score")}
+                  className={`flex items-center gap-1.5 text-xs font-medium px-2.5 py-1.5 rounded-md transition-all ${
+                    sortBy === "score" ? "bg-card text-foreground shadow-sm" : "text-muted-foreground hover:text-foreground"
+                  }`}
+                >
+                  <TrendingUp className="w-3 h-3" />
+                  CFS
+                </button>
+              </TooltipTrigger>
+              <TooltipContent side="bottom" className="max-w-xs text-xs">
+                <strong>Corporate Funding Score</strong> — Measures the concentration and partisan alignment of a company's PAC spending and lobbying activity.
+              </TooltipContent>
+            </Tooltip>
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <button
+                  onClick={() => setSortBy("cis")}
+                  className={`flex items-center gap-1.5 text-xs font-medium px-2.5 py-1.5 rounded-md transition-all ${
+                    sortBy === "cis" ? "bg-card text-foreground shadow-sm" : "text-muted-foreground hover:text-foreground"
+                  }`}
+                >
+                  <TrendingUp className="w-3 h-3" />
+                  CIS
+                </button>
+              </TooltipTrigger>
+              <TooltipContent side="bottom" className="max-w-xs text-xs">
+                <strong>Corporate Integrity Score</strong> — Overall integrity rating combining labor practices, DEI track record, legal history, and leadership accountability.
+              </TooltipContent>
+            </Tooltip>
             <button
               onClick={() => setSortBy("name")}
               className={`flex items-center gap-1.5 text-xs font-medium px-2.5 py-1.5 rounded-md transition-all ${
