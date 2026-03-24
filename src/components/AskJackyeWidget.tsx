@@ -146,7 +146,7 @@ export function AskJackyeWidget() {
             <img src={jackyeHeadshot} alt="Jackye Clayton" className="w-10 h-10 rounded-full object-cover shrink-0" />
             <div className="flex-1 min-w-0">
               <div className="font-serif text-sm font-bold text-primary">Jackye Clayton</div>
-              <div className="text-xs text-muted-foreground">Career Strategist · Your Advocate</div>
+              <div className="text-xs text-muted-foreground"><div className="text-xs text-muted-foreground">Your Career Advocate</div></div>
             </div>
             <div className="font-mono text-micro tracking-wider uppercase px-2 py-0.5 border border-primary/40 text-primary">
               AI Coach
