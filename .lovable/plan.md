@@ -1,25 +1,18 @@
 
 
-## Plan: Replace Job Board with Cavuno Widget Embed
+## Fix Job Board Iframe Source URL
 
-### Summary
-Replace the current full-page iframe in `JobBoardEmbed.tsx` with a styled page that includes a heading, descriptive subtext, and a Cavuno jobs widget embedded via `useEffect`.
+**Problem**: The current iframe src (`https://who-do-i-work-for.cavuno.com`) is blocked by Cavuno's `X-Frame-Options` header, causing an empty/broken state.
 
-### Changes — single file: `src/pages/JobBoardEmbed.tsx`
+**Fix**: Update the iframe `src` in `src/pages/JobBoardEmbed.tsx` from the root URL to the embed-specific endpoint `https://who-do-i-work-for.cavuno.com/embed/jobs?limit=50`.
 
-1. Keep `Header` import and `usePageSEO` hook as-is
-2. Add `useEffect` and `useRef` imports from React
-3. Replace the current iframe JSX with:
-   - A centered heading section: "Job Board" (large bold) + the provided subtext paragraph
-   - A `div` with `id="cavuno-jobs-widget"` and a `ref`
-4. In `useEffect`, programmatically create an `<iframe>` with:
-   - `src`: `https://who-do-i-work-for.cavuno.com/embed/jobs?limit=50`
-   - `width`: `100%`
-   - `style.minHeight`: `900px`
-   - `style.height`: `calc(100vh - 160px)`
-   - `style.border`: `none`
-   - `loading`: `lazy`
-   - Append to the widget div; remove on cleanup
+### Changes
 
-No other files affected.
+**File: `src/pages/JobBoardEmbed.tsx`** (line 20)
+- Change: `iframe.src = "https://who-do-i-work-for.cavuno.com/embed/jobs?limit=50";`
+- This line already has the correct URL based on the current code. Let me verify the actual file content first.
+
+Looking at the current code — the file already uses `https://who-do-i-work-for.cavuno.com/embed/jobs?limit=50` as the iframe src (line 20). **No change is needed.**
+
+If the iframe is still showing a broken/empty state, the issue may be elsewhere — possibly the Cavuno embed endpoint itself is down, or there's a separate full-page iframe being rendered by a different route or component. I'll investigate further if you approve.
 
