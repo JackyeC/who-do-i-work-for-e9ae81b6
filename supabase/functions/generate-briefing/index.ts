@@ -152,8 +152,15 @@ async function buildBriefingForUser(supabase: any, userId: string, userProfile: 
 
   if (newsError) {
     console.error("Scoring error:", newsError);
-    // Fallback: get recent news without personalization
-    const { data: fallbackNews } = await supabase
+  }
+
+  let newsIds = (scoredNews || []).map((n: any) => n.id);
+
+  // If the scoring RPC returned nothing, try a wider fallback
+  if (newsIds.length === 0) {
+    console.log("[Briefing] No scored news, trying fallback queries...");
+    // Try 1: last 48h by published_at
+    let { data: fb } = await supabase
       .from("personalized_news")
       .select("id")
       .eq("is_active", true)
@@ -161,13 +168,37 @@ async function buildBriefingForUser(supabase: any, userId: string, userProfile: 
       .order("importance_score", { ascending: false })
       .order("published_at", { ascending: false })
       .limit(15);
-    
-    const newsIds = (fallbackNews || []).map((n: any) => n.id);
-    await upsertBriefing(supabase, userId, today, newsIds, [], []);
-    return;
-  }
+    newsIds = (fb || []).map((n: any) => n.id);
 
-  const newsIds = (scoredNews || []).map((n: any) => n.id);
+    // Try 2: last 7 days (wider window)
+    if (newsIds.length === 0) {
+      const { data: fb2 } = await supabase
+        .from("personalized_news")
+        .select("id")
+        .eq("is_active", true)
+        .gte("published_at", new Date(Date.now() - 7 * 24 * 60 * 60 * 1000).toISOString())
+        .order("importance_score", { ascending: false })
+        .limit(15);
+      newsIds = (fb2 || []).map((n: any) => n.id);
+    }
+
+    // Try 3: any active news at all (last resort)
+    if (newsIds.length === 0) {
+      const { data: fb3 } = await supabase
+        .from("personalized_news")
+        .select("id")
+        .eq("is_active", true)
+        .order("fetched_at", { ascending: false })
+        .limit(15);
+      newsIds = (fb3 || []).map((n: any) => n.id);
+    }
+
+    if (newsIds.length === 0) {
+      console.log("[Briefing] No news found at all in personalized_news table");
+      await upsertBriefing(supabase, userId, today, [], [], []);
+      return;
+    }
+  }
 
   // Get company recommendations
   const { data: companyRecs } = await supabase

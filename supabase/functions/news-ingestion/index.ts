@@ -212,6 +212,15 @@ async function fetchExternalNews() {
         const titleLower = article.title.toLowerCase();
         const textLower = (article.title + " " + article.summary).toLowerCase();
 
+        // Ensure published_at is within the 48h window used by get_personalized_news.
+        // If the API returns an old date or no date, use the current time.
+        const now = new Date();
+        const cutoff = new Date(now.getTime() - 47 * 60 * 60 * 1000); // 47h to stay safely inside 48h window
+        let pubDate = article.published_at ? new Date(article.published_at) : now;
+        if (isNaN(pubDate.getTime()) || pubDate < cutoff) {
+          pubDate = now;
+        }
+
         items.push({
           title: article.title,
           summary: article.summary.slice(0, 500),
@@ -224,8 +233,8 @@ async function fetchExternalNews() {
           location_tags: extractLocationTags(textLower),
           company_slugs: extractCompanySlugs(textLower),
           importance_score: 0.5,
-          published_at: article.published_at,
-          fetched_at: new Date().toISOString(),
+          published_at: pubDate.toISOString(),
+          fetched_at: now.toISOString(),
           is_active: true,
         });
       }
