@@ -1,7 +1,7 @@
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "@/contexts/AuthContext";
 import { Button } from "@/components/ui/button";
-import { Compass, Bot, Target, Rocket, ArrowRight, CheckCircle2, Loader2, Lock } from "lucide-react";
+import { Compass, Bot, Target, Users, Rocket, ArrowRight, CheckCircle2 } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import { useState } from "react";
@@ -13,80 +13,104 @@ const tracks = [
     name: "The Explorer",
     icon: Compass,
     price: "Free",
-    priceNote: "No credit card required",
+    priceNote: "Registration required",
     period: "",
     mode: "free" as const,
-    hook: "Start Here.",
-    description: "Calibrate your Workplace DNA and access the public intelligence dashboard. See what most job boards won't show you.",
-    action: "Create Free Account",
+    hook: "Start for Free.",
+    description: "Calibrate your DNA and join 1,000+ career researchers for weekly clarity.",
+    action: "Unlock DNA Calibration",
     features: [
       "Workplace DNA Calibration results",
       "Public Intelligence Dashboard access",
-      "Monday Momentum weekly newsletter",
-      "Receipts — free company investigations",
-      "Community access",
+      "Monday Momentum newsletter",
+      "Follow Jackye on LinkedIn & YouTube",
     ],
   },
   {
     number: 2,
-    name: "Pro",
+    name: "The Scout",
     icon: Bot,
     price: "$19",
-    priceNote: "Cancel anytime",
+    priceNote: "",
     period: "/mo",
     mode: "subscription" as const,
-    priceId: "price_1TEEvt89MyCOs8yv7SV1TeUJ",
+    priceId: "price_1TCdD87Qj0W6UtN9NBt8Wtb9",
+    annualPrice: "$15",
+    annualPeriod: "/mo",
+    annualPriceNote: "billed annually",
+    // TODO: Create annual Stripe price and replace this placeholder
+    annualPriceId: "price_scout_annual_placeholder",
     hook: "Your AI Coach.",
-    description: "Unlimited AI-powered audits on any job link. Values alignment scoring, real-time employer alerts, and direct access to Ask Jackye.",
-    action: "Go Pro",
+    description: "24/7 values-audit of any job link. Know before you apply.",
+    action: "Activate AI Coach",
     features: [
       "Unlimited AI job-link audits",
       "Values alignment scoring",
-      "Weekly Signal Alerts (employer red flags)",
+      "Real-time signal alerts",
       "Ask Jackye — unlimited questions",
-      "Everything in Explorer",
     ],
   },
   {
     number: 3,
-    name: "The Dossier",
+    name: "The Strategist",
     icon: Target,
-    price: "$199",
-    priceNote: "One company, one report",
+    price: "$149",
+    priceNote: "",
     period: " one-time",
     mode: "payment" as const,
-    priceId: "price_1TEEvz89MyCOs8yvWbLINfKw",
-    hook: "Walk In Prepared.",
-    description: "A deep-dive employer intelligence report built for one specific company and interview. Data-backed negotiation prep included.",
+    priceId: "price_1TCdDA7Qj0W6UtN9VPMXRkyY",
+    hook: "The Audit.",
+    description: "Deep-dive dossier for one specific interview. Walk in prepared.",
     action: "Get My Dossier",
     popular: true,
     features: [
       "Full employer intelligence dossier",
-      "Compensation benchmarks (BLS data)",
-      "Negotiation talking points & scripts",
+      "Negotiation talking points",
+      "Compensation benchmarks (BLS)",
       "Interview intelligence brief",
-      "Red flag summary with sources",
     ],
   },
   {
     number: 4,
+    name: "The Partner",
+    icon: Users,
+    price: "$299",
+    priceNote: "",
+    period: " one-time",
+    mode: "payment" as const,
+    priceId: "price_1TCdDB7Qj0W6UtN9VEaLssdN",
+    hook: "The Session.",
+    description: "45-min 1-on-1 strategy session with Jackye Clayton.",
+    action: "Book Your Session",
+    features: [
+      "45-minute 1-on-1 with Jackye",
+      "Personalized career strategy",
+      "Offer negotiation coaching",
+      "Post-session action plan",
+    ],
+  },
+  {
+    number: 5,
     name: "The Executive",
     icon: Rocket,
     price: "$999",
-    priceNote: "Billed annually",
+    priceNote: "",
     period: "/year",
     mode: "subscription" as const,
-    priceId: "price_1TEEw589MyCOs8yvQI8FpHJx",
-    hook: "Career On Autopilot.",
-    description: "Full-service career management. Jackye and the WDIWF intelligence engine working for you year-round.",
+    priceId: "price_1TCTiJ7Qj0W6UtN9hARvCvgh",
+    annualPrice: "$799",
+    annualPeriod: "/year",
+    annualPriceNote: "",
+    // TODO: Create annual Stripe price and replace this placeholder
+    annualPriceId: "price_executive_annual_placeholder",
+    hook: "The Autopilot.",
+    description: "Full search management + Priority access. Your career, on cruise control.",
     action: "Go Executive",
     features: [
       "Apply When It Counts™ placement engine",
       "Full career mapping & 5-year plan",
-      "Quarterly 1-on-1 strategy sessions with Jackye",
-      "Priority response within 24 hours",
-      "All Pro + Dossier features included",
-      "Dedicated Slack channel for ongoing support",
+      "Priority 1-on-1 access to Jackye",
+      "All Scout + Strategist features",
     ],
   },
 ];
@@ -95,13 +119,18 @@ export function PathfinderTracks({ showAll = false }: { showAll?: boolean }) {
   const navigate = useNavigate();
   const { user } = useAuth();
   const [loading, setLoading] = useState<string | null>(null);
+  const [isAnnual, setIsAnnual] = useState(false);
 
-  // On homepage: show first 3 tiers. On /pricing: show all 4.
+  // On homepage: show only first 3 tiers. On /pricing: show all 5.
   const visibleTracks = showAll ? tracks : tracks.slice(0, 3);
 
   const handleTrackAction = async (track: typeof tracks[0]) => {
     if (track.mode === "free") {
-      navigate("/join");
+      if (user) {
+        navigate("/welcome");
+      } else {
+        navigate("/login?beta=false");
+      }
       return;
     }
 
@@ -112,28 +141,44 @@ export function PathfinderTracks({ showAll = false }: { showAll?: boolean }) {
       return;
     }
 
-    if (!track.priceId) {
-      toast.error("Unable to start checkout. Please try again.");
+    const effectivePriceId = isAnnual && "annualPriceId" in track
+      ? (track as any).annualPriceId
+      : track.priceId;
+
+    if (!effectivePriceId) {
+      navigate("/work-with-jackye");
       return;
     }
 
-    setLoading(track.priceId);
+    setLoading(effectivePriceId);
     try {
       const { data, error } = await supabase.functions.invoke("create-checkout", {
-        body: { priceId: track.priceId, mode: track.mode },
+        body: { priceId: effectivePriceId },
       });
-      if (error) {
-        toast.error("Unable to start checkout. Please try again.");
-        return;
-      }
-      if (data?.url) {
-        window.location.href = data.url;
-      }
+      if (error) throw error;
+      if (data?.url) window.open(data.url, "_blank");
     } catch (err: any) {
-      toast.error("Unable to start checkout. Please try again.");
+      toast.error(err.message || "Checkout failed");
     } finally {
       setLoading(null);
     }
+  };
+
+  const getDisplayPrice = (track: typeof tracks[0]) => {
+    if (isAnnual && "annualPrice" in track) {
+      return {
+        price: (track as any).annualPrice,
+        period: (track as any).annualPeriod,
+        priceNote: (track as any).annualPriceNote,
+        originalPrice: track.price,
+      };
+    }
+    return {
+      price: track.price,
+      period: track.period,
+      priceNote: track.priceNote,
+      originalPrice: null,
+    };
   };
 
   return (
@@ -146,18 +191,57 @@ export function PathfinderTracks({ showAll = false }: { showAll?: boolean }) {
           <h2 className="text-2xl lg:text-3xl text-foreground mb-3">
             Choose Your Track
           </h2>
-          <p className="text-sm text-muted-foreground max-w-[520px] mx-auto mb-8">
-            From free career calibration to full career management. Start where you are.
+          <p className="text-sm text-muted-foreground max-w-[520px] mx-auto mb-3">
+            From free career calibration to full autopilot search management. Start where you are.
           </p>
+          <p className="text-xs text-primary font-mono tracking-wider uppercase mb-8">
+            Receipts reports are always free — no account required
+          </p>
+
+          {/* Billing Toggle */}
+          <div className="inline-flex items-center gap-3 rounded-full border border-border bg-card px-1.5 py-1.5">
+            <button
+              onClick={() => setIsAnnual(false)}
+              className={cn(
+                "font-mono text-xs tracking-wider uppercase px-4 py-1.5 rounded-full transition-all duration-200",
+                !isAnnual
+                  ? "bg-primary text-primary-foreground"
+                  : "text-muted-foreground hover:text-foreground"
+              )}
+            >
+              Monthly
+            </button>
+            <button
+              onClick={() => setIsAnnual(true)}
+              className={cn(
+                "font-mono text-xs tracking-wider uppercase px-4 py-1.5 rounded-full transition-all duration-200 flex items-center gap-2",
+                isAnnual
+                  ? "bg-primary text-primary-foreground"
+                  : "text-muted-foreground hover:text-foreground"
+              )}
+            >
+              Annual
+              <span className={cn(
+                "text-[10px] font-semibold tracking-wider px-2 py-0.5 rounded-full",
+                isAnnual
+                  ? "bg-primary-foreground/20 text-primary-foreground"
+                  : "bg-primary/15 text-primary"
+              )}>
+                Save 20%
+              </span>
+            </button>
+          </div>
         </div>
 
         <div className={cn(
           "grid gap-px bg-border border border-border",
           showAll
-            ? "grid-cols-1 md:grid-cols-2 lg:grid-cols-4"
+            ? "grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5"
             : "grid-cols-1 md:grid-cols-3"
         )}>
-          {visibleTracks.map((track) => (
+          {visibleTracks.map((track) => {
+            const display = getDisplayPrice(track);
+            return (
               <div
                 key={track.number}
                 className={cn(
@@ -166,12 +250,17 @@ export function PathfinderTracks({ showAll = false }: { showAll?: boolean }) {
                 )}
               >
                 {track.popular && (
-                  <div className="absolute top-0 left-0 right-0 bg-primary text-primary-foreground text-center font-mono text-xs tracking-[0.2em] uppercase py-1">
+                  <div className="absolute top-0 left-0 right-0 bg-primary text-primary-foreground text-center font-mono text-[10px] tracking-[0.2em] uppercase py-1">
                     Most Popular
                   </div>
                 )}
 
                 <div className={cn("mb-4", track.popular && "mt-4")}>
+                  <div className="flex items-center gap-2 mb-3">
+                    <span className="font-mono text-[10px] tracking-[0.2em] uppercase text-muted-foreground">
+                      Track {track.number}
+                    </span>
+                  </div>
                   <track.icon className="w-6 h-6 text-primary mb-3" strokeWidth={1.5} />
                   <div className="font-mono text-sm tracking-wider uppercase text-foreground font-semibold mb-1">
                     {track.name}
@@ -182,12 +271,17 @@ export function PathfinderTracks({ showAll = false }: { showAll?: boolean }) {
                 </div>
 
                 <div className="mb-4">
-                  <span className="text-2xl font-bold text-foreground">{track.price}</span>
-                  {track.period && (
-                    <span className="text-sm text-muted-foreground">{track.period}</span>
+                  {display.originalPrice && (
+                    <span className="text-sm text-muted-foreground line-through mr-2">
+                      {display.originalPrice}
+                    </span>
                   )}
-                  {track.priceNote && (
-                    <div className="text-xs text-muted-foreground mt-0.5">{track.priceNote}</div>
+                  <span className="text-2xl font-bold text-foreground">{display.price}</span>
+                  {display.period && (
+                    <span className="text-sm text-muted-foreground">{display.period}</span>
+                  )}
+                  {display.priceNote && (
+                    <div className="text-[11px] text-muted-foreground mt-0.5">{display.priceNote}</div>
                   )}
                 </div>
 
@@ -208,25 +302,14 @@ export function PathfinderTracks({ showAll = false }: { showAll?: boolean }) {
                   onClick={() => handleTrackAction(track)}
                   variant={track.popular ? "default" : "outline"}
                   className="w-full gap-1.5 font-mono text-xs tracking-wider uppercase mt-auto"
-                  disabled={!!loading}
+                  disabled={loading === (isAnnual && "annualPriceId" in track ? (track as any).annualPriceId : track.priceId)}
                 >
-                  {loading === track.priceId ? (
-                    <Loader2 className="w-3 h-3 animate-spin" />
-                  ) : (
-                    <>
-                      {track.action}
-                      <ArrowRight className="w-3 h-3" />
-                    </>
-                  )}
+                  {track.action}
+                  <ArrowRight className="w-3 h-3" />
                 </Button>
-                {track.mode !== "free" && (
-                  <div className="flex items-center justify-center gap-1 mt-2 text-muted-foreground/50">
-                    <Lock className="w-3 h-3" />
-                    <span className="font-mono text-[10px] tracking-wider uppercase">Secured by Stripe</span>
-                  </div>
-                )}
               </div>
-          ))}
+            );
+          })}
         </div>
 
         {!showAll && (
@@ -238,7 +321,7 @@ export function PathfinderTracks({ showAll = false }: { showAll?: boolean }) {
               See all plans <ArrowRight className="w-3.5 h-3.5" />
             </button>
             <p className="text-xs text-muted-foreground mt-2">
-              Including deep-dive dossiers and full career management.
+              Including 1-on-1 sessions with Jackye and full career autopilot.
             </p>
           </div>
         )}

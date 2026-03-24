@@ -31,6 +31,7 @@ const RepresentativeProfile = lazy(() => import("./pages/RepresentativeProfile")
 const AddCompany = lazy(() => import("./pages/AddCompany"));
 const Jobs = lazy(() => import("./pages/Jobs"));
 const JobIntegrityBoard = lazy(() => import("./pages/JobIntegrityBoard"));
+const JobBoardEmbed = lazy(() => import("./pages/JobBoardEmbed"));
 const JobDetailPage = lazy(() => import("./pages/JobDetailPage"));
 const RequestCorrection = lazy(() => import("./pages/RequestCorrection"));
 const OfferCheck = lazy(() => import("./pages/OfferCheck"));
@@ -223,7 +224,7 @@ const App = () => (
                   <Route path="/tracker" element={<ProtectedRoute><TrackerPage /></ProtectedRoute>} />
                   <Route path="/apply-kit" element={<ProtectedRoute><ApplyKitPage /></ProtectedRoute>} />
                   <Route path="/interview-kits" element={<ProtectedRoute><InterviewKits /></ProtectedRoute>} />
-                  <Route path="/job-board" element={<JobIntegrityBoard />} />
+                  <Route path="/job-board" element={<JobBoardEmbed />} />
                   <Route path="/job-board/:id" element={<JobDetailPage />} />
                   <Route path="/request-correction" element={<RequestCorrection />} />
                   <Route path="/offer-check/:companyId" element={<ProtectedRoute><OfferCheck /></ProtectedRoute>} />
