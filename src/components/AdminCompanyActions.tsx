@@ -33,6 +33,7 @@ interface AdminCompanyActionsProps {
   companyId: string;
   companyName: string;
   companySlug: string;
+  onEditClick?: () => void;
 }
 
 export function AdminCompanyActions({ companyId, companyName, companySlug }: AdminCompanyActionsProps) {
