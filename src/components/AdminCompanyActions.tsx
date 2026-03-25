@@ -36,7 +36,7 @@ interface AdminCompanyActionsProps {
   onEditClick?: () => void;
 }
 
-export function AdminCompanyActions({ companyId, companyName, companySlug }: AdminCompanyActionsProps) {
+export function AdminCompanyActions({ companyId, companyName, companySlug, onEditClick }: AdminCompanyActionsProps) {
   const { isAdmin, isOwner } = useUserRole();
   const navigate = useNavigate();
   const queryClient = useQueryClient();
