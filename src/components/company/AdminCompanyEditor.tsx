@@ -29,9 +29,10 @@ interface AdminCompanyEditorProps {
   companyId: string;
   companySlug: string;
   currentData: CompanyEditableFields;
+  onClose: () => void;
 }
 
-export function AdminCompanyEditor({ companyId, companySlug, currentData }: AdminCompanyEditorProps) {
+export function AdminCompanyEditor({ companyId, companySlug, currentData, onClose }: AdminCompanyEditorProps) {
   const { isAdmin, isOwner } = useUserRole();
   const { toast } = useToast();
   const queryClient = useQueryClient();
