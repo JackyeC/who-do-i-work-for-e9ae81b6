@@ -27,7 +27,7 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
-import { Trash2, Merge, Loader2, Search, Building2 } from "lucide-react";
+import { Trash2, Merge, Loader2, Search, Building2, Pencil } from "lucide-react";
 
 interface AdminCompanyActionsProps {
   companyId: string;
