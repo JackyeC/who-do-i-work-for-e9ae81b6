@@ -60,7 +60,7 @@ import { Button } from "@/components/ui/button";
 const LENS_META = {
   candidate: { label: "Candidate View", icon: User, color: "text-primary" },
   sales: { label: "Sales Intelligence", icon: TrendingUp, color: "text-civic-yellow" },
-  hr: { label: "HR Strategy", icon: Users, color: "text-teal-500" },
+  hr: { label: "HR Strategy", icon: Users, color: "text-civic-blue" },
 } as const;
 
 export default function CompanyDossier() {
