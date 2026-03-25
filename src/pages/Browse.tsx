@@ -296,7 +296,6 @@ export default function Browse() {
           <div className="text-center py-12">
             <EmptyState icon={Building2} title="Failed to load companies" description="There was a problem loading the directory. The page will show cached data if available." />
           </div>
-        ) :
         ) : filtered.length === 0 ? (
           <div className="text-center py-12">
             <EmptyState icon={Building2} title="No companies match" description="Try adjusting your search or filter." />
