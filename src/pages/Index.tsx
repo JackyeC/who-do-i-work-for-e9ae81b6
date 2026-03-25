@@ -434,10 +434,10 @@ const Index = forwardRef<HTMLDivElement>((_, ref) => {
         <div className="absolute bottom-[-20%] left-[-5%] w-[40%] h-[60%] pointer-events-none" style={{ background: "radial-gradient(ellipse, rgba(240,192,64,0.05) 0%, transparent 70%)" }} />
         <div className="relative z-[1] max-w-[600px] mx-auto">
           <h2 className="font-sans text-foreground leading-[1.1] mb-4" style={{ fontSize: "clamp(1.5rem, 3vw, 2.5rem)", fontWeight: 800 }}>
-            The hiring process is about to get a lot more honest.
+            Stop applying. Start aligning.
           </h2>
           <p className="text-sm text-muted-foreground leading-relaxed max-w-[48ch] mx-auto mb-8">
-            WDIWF is building the career intelligence platform that flips the interview. Get early access and be the first to pull receipts on your next employer.
+            You don't need more applications. You need better decisions.
           </p>
           <div className="flex flex-col sm:flex-row gap-3 justify-center">
             <button

@@ -54,8 +54,7 @@ export function PromotionVelocityGauge({ result }: { result: PVSResult }) {
           className={cn("h-full rounded-full transition-all duration-700", {
             "bg-civic-green": result.band === "strong_growth",
             "bg-primary": result.band === "healthy_mobility",
-            "bg-civic-yellow": result.band === "mixed_mobility",
-            "bg-civic-yellow": result.band === "slow_advancement",
+            "bg-civic-yellow": result.band === "mixed_mobility" || result.band === "slow_advancement",
             "bg-destructive": result.band === "stagnation_risk",
           })}
           style={{ width: `${result.score}%` }}
