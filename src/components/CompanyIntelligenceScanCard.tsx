@@ -77,7 +77,7 @@ const statusBadgeClass = (status: string) => {
   switch (status) {
     case 'completed_with_signals': return 'bg-primary/10 text-primary border-primary/30';
     case 'completed_no_signals': return 'bg-muted text-muted-foreground border-border';
-    case 'no_sources_found': return 'bg-yellow-500/10 text-yellow-600 border-yellow-500/30';
+    case 'no_sources_found': return 'bg-civic-yellow/10 text-civic-yellow border-civic-yellow/30';
     case 'failed': return 'bg-destructive/10 text-destructive border-destructive/30';
     default: return 'bg-muted text-muted-foreground border-border';
   }
@@ -234,8 +234,8 @@ export function CompanyIntelligenceScanCard({ companyId, companyName }: Props) {
     if (!latestScan) return null;
     switch (latestScan.scan_status) {
       case 'completed': return <Badge className="bg-primary/10 text-primary border-primary/30">Complete</Badge>;
-      case 'completed_with_warnings': return <Badge className="bg-yellow-500/10 text-yellow-600 border-yellow-500/30">Completed with warnings</Badge>;
-      case 'in_progress': return <Badge className="bg-blue-500/10 text-blue-500 border-blue-500/30">In Progress</Badge>;
+      case 'completed_with_warnings': return <Badge className="bg-civic-yellow/10 text-civic-yellow border-civic-yellow/30">Completed with warnings</Badge>;
+      case 'in_progress': return <Badge className="bg-civic-blue/10 text-civic-blue border-civic-blue/30">In Progress</Badge>;
       case 'failed': return <Badge variant="destructive">Failed</Badge>;
       default: return null;
     }
@@ -408,8 +408,8 @@ export function CompanyIntelligenceScanCard({ companyId, companyName }: Props) {
 
         {/* General warnings */}
         {latestScan?.warnings?.length > 0 && errorLogEntries.length === 0 && (
-          <div className="mt-3 p-3 rounded-lg bg-yellow-500/5 border border-yellow-500/20">
-            <div className="flex items-center gap-1.5 text-xs font-medium text-yellow-600 mb-1">
+          <div className="mt-3 p-3 rounded-lg bg-civic-yellow/5 border border-civic-yellow/20">
+            <div className="flex items-center gap-1.5 text-xs font-medium text-civic-yellow mb-1">
               <AlertTriangle className="w-3.5 h-3.5" />
               Warnings
             </div>

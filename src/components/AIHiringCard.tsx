@@ -20,7 +20,7 @@ type ScanStatus = 'not_run' | 'in_progress' | 'completed_no_signals' | 'complete
 
 const confidenceColors: Record<string, string> = {
   direct: "text-civic-green border-civic-green/30",
-  strong_inference: "text-blue-500 border-blue-500/30",
+  strong_inference: "text-civic-blue border-civic-blue/30",
   moderate_inference: "text-civic-yellow border-civic-yellow/30",
   weak_inference: "text-muted-foreground border-border",
   unverified: "text-muted-foreground border-border",

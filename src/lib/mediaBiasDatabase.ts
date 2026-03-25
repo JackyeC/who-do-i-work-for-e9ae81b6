@@ -135,11 +135,11 @@ export const LEAN_LABELS: Record<PoliticalLean, string> = {
 };
 
 export const LEAN_COLORS: Record<PoliticalLean, string> = {
-  left: "text-blue-500 bg-blue-500/10",
-  lean_left: "text-blue-400 bg-blue-400/10",
+  left: "text-civic-blue bg-civic-blue/10",
+  lean_left: "text-civic-blue bg-civic-blue/10",
   center: "text-[hsl(var(--civic-green))] bg-[hsl(var(--civic-green))]/10",
-  lean_right: "text-red-400 bg-red-400/10",
-  right: "text-red-500 bg-red-500/10",
+  lean_right: "text-civic-red bg-civic-red/10",
+  right: "text-civic-red bg-civic-red/10",
 };
 
 export const RELIABILITY_COLORS: Record<ReliabilityRating, string> = {

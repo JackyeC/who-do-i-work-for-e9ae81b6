@@ -78,7 +78,7 @@ export function DemoAlerts() {
                     <Badge variant="outline" className={cn(
                       "text-xs",
                       alert.change_type === "new_signal" && "border-[hsl(var(--civic-green))]/30 text-[hsl(var(--civic-green))]",
-                      alert.change_type === "changed" && "border-amber-500/30 text-amber-500",
+                      alert.change_type === "changed" && "border-civic-yellow/30 text-civic-yellow",
                     )}>{alert.change_type}</Badge>
                   </div>
                   <p className="text-xs text-muted-foreground leading-relaxed">{alert.change_description}</p>

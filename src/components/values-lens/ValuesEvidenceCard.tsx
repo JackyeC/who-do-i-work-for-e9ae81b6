@@ -30,14 +30,14 @@ interface Props {
 }
 
 const SOURCE_TYPE_META: Record<string, { icon: any; label: string; accent: string }> = {
-  lobbying_filing: { icon: FileText, label: "Lobbying Filing", accent: "border-blue-500/40 bg-blue-500/5" },
+  lobbying_filing: { icon: FileText, label: "Lobbying Filing", accent: "border-civic-blue/40 bg-civic-blue/5" },
   pac_donation: { icon: FileText, label: "PAC Donation Record", accent: "border-purple-500/40 bg-purple-500/5" },
   executive_donation: { icon: FileText, label: "Executive Donation", accent: "border-indigo-500/40 bg-indigo-500/5" },
-  sec_filing: { icon: FileText, label: "SEC Filing", accent: "border-amber-500/40 bg-amber-500/5" },
-  government_contract: { icon: FileText, label: "Federal Contract", accent: "border-emerald-500/40 bg-emerald-500/5" },
-  enforcement_action: { icon: Shield, label: "Enforcement Action", accent: "border-red-500/40 bg-red-500/5" },
+  sec_filing: { icon: FileText, label: "SEC Filing", accent: "border-civic-yellow/40 bg-civic-yellow/5" },
+  government_contract: { icon: FileText, label: "Federal Contract", accent: "border-civic-green/40 bg-civic-green/5" },
+  enforcement_action: { icon: Shield, label: "Enforcement Action", accent: "border-civic-red/40 bg-civic-red/5" },
   corporate_statement: { icon: MessageSquare, label: "Corporate Statement", accent: "border-sky-500/40 bg-sky-500/5" },
-  advocacy_alignment: { icon: Globe, label: "Advocacy Link", accent: "border-orange-500/40 bg-orange-500/5" },
+  advocacy_alignment: { icon: Globe, label: "Advocacy Link", accent: "border-civic-yellow/40 bg-civic-yellow/5" },
   social_media: { icon: MessageSquare, label: "Social Post", accent: "border-pink-500/40 bg-pink-500/5" },
   news_article: { icon: Globe, label: "News Coverage", accent: "border-cyan-500/40 bg-cyan-500/5" },
 };

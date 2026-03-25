@@ -18,10 +18,10 @@ const PAGE_TYPE_LABELS: Record<string, string> = {
 };
 
 const STATUS_CONFIG: Record<string, { icon: typeof CheckCircle2; color: string; label: string }> = {
-  active: { icon: CheckCircle2, color: "text-green-600", label: "Active" },
+  active: { icon: CheckCircle2, color: "text-civic-green", label: "Active" },
   pending: { icon: Clock, color: "text-muted-foreground", label: "Pending" },
   error: { icon: XCircle, color: "text-destructive", label: "Error" },
-  paused: { icon: AlertTriangle, color: "text-yellow-600", label: "Paused" },
+  paused: { icon: AlertTriangle, color: "text-civic-yellow", label: "Paused" },
 };
 
 interface MonitoredPagesPanelProps {
@@ -128,10 +128,10 @@ export function MonitoredPagesPanel({ companyId }: MonitoredPagesPanelProps) {
                       className={cn(
                         "text-xs",
                         event.processing_status === "completed"
-                          ? "border-green-200 text-green-600"
+                          ? "border-civic-green/20 text-civic-green"
                           : event.processing_status === "failed"
                           ? "border-destructive/30 text-destructive"
-                          : "border-yellow-200 text-yellow-600"
+                          : "border-civic-yellow/20 text-civic-yellow"
                       )}
                     >
                       {event.processing_status}

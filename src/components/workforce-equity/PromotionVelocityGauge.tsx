@@ -7,7 +7,7 @@ const bandStyles: Record<PVSResult["band"], { bg: string; text: string; ring: st
   strong_growth: { bg: "bg-civic-green/10", text: "text-civic-green", ring: "ring-civic-green/30" },
   healthy_mobility: { bg: "bg-primary/10", text: "text-primary", ring: "ring-primary/30" },
   mixed_mobility: { bg: "bg-civic-yellow/10", text: "text-civic-yellow", ring: "ring-civic-yellow/30" },
-  slow_advancement: { bg: "bg-orange-500/10", text: "text-orange-600", ring: "ring-orange-500/30" },
+  slow_advancement: { bg: "bg-civic-yellow/10", text: "text-civic-yellow", ring: "ring-orange-500/30" },
   stagnation_risk: { bg: "bg-destructive/10", text: "text-destructive", ring: "ring-destructive/30" },
 };
 
@@ -55,7 +55,7 @@ export function PromotionVelocityGauge({ result }: { result: PVSResult }) {
             "bg-civic-green": result.band === "strong_growth",
             "bg-primary": result.band === "healthy_mobility",
             "bg-civic-yellow": result.band === "mixed_mobility",
-            "bg-orange-500": result.band === "slow_advancement",
+            "bg-civic-yellow": result.band === "slow_advancement",
             "bg-destructive": result.band === "stagnation_risk",
           })}
           style={{ width: `${result.score}%` }}

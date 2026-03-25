@@ -69,7 +69,7 @@ export default function ResumeOptimizer() {
   };
 
   const scoreColor = (score: number) =>
-    score >= 80 ? "text-emerald-400" : score >= 60 ? "text-amber-400" : "text-red-400";
+    score >= 80 ? "text-civic-green" : score >= 60 ? "text-civic-yellow" : "text-civic-red";
 
   return (
     <div className="min-h-screen bg-background">
@@ -166,22 +166,22 @@ export default function ResumeOptimizer() {
                   <p className="text-xs uppercase tracking-wider text-muted-foreground mb-3">Keywords</p>
                   <div className="space-y-2">
                     <div>
-                      <p className="text-xs text-emerald-400 font-medium mb-1 flex items-center gap-1">
+                      <p className="text-xs text-civic-green font-medium mb-1 flex items-center gap-1">
                         <CheckCircle2 className="w-3 h-3" /> Present ({result.keywordsPresent.length})
                       </p>
                       <div className="flex flex-wrap gap-1">
                         {result.keywordsPresent.map(k => (
-                          <Badge key={k} variant="secondary" className="text-xs bg-emerald-500/10 text-emerald-400 border-emerald-500/20">{k}</Badge>
+                          <Badge key={k} variant="secondary" className="text-xs bg-civic-green/10 text-civic-green border-civic-green/20">{k}</Badge>
                         ))}
                       </div>
                     </div>
                     <div>
-                      <p className="text-xs text-red-400 font-medium mb-1 flex items-center gap-1">
+                      <p className="text-xs text-civic-red font-medium mb-1 flex items-center gap-1">
                         <XCircle className="w-3 h-3" /> Missing ({result.keywordsMissing.length})
                       </p>
                       <div className="flex flex-wrap gap-1">
                         {result.keywordsMissing.map(k => (
-                          <Badge key={k} variant="secondary" className="text-xs bg-red-500/10 text-red-400 border-red-500/20">{k}</Badge>
+                          <Badge key={k} variant="secondary" className="text-xs bg-civic-red/10 text-civic-red border-civic-red/20">{k}</Badge>
                         ))}
                       </div>
                     </div>
@@ -228,7 +228,7 @@ export default function ResumeOptimizer() {
                     <div className="flex flex-wrap gap-2">
                       {result.skillsGap.map(s => (
                         <Badge key={s} variant="outline" className="text-xs gap-1">
-                          <AlertTriangle className="w-3 h-3 text-amber-400" /> {s}
+                          <AlertTriangle className="w-3 h-3 text-civic-yellow" /> {s}
                         </Badge>
                       ))}
                     </div>
@@ -247,18 +247,18 @@ export default function ResumeOptimizer() {
                     </div>
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                       <div>
-                        <p className="text-xs text-emerald-400 font-medium mb-2">Values Reflected</p>
+                        <p className="text-xs text-civic-green font-medium mb-2">Values Reflected</p>
                         {result.valuesCheck.present.map(v => (
                           <p key={v} className="text-sm text-foreground/70 flex items-center gap-1.5 mb-1">
-                            <CheckCircle2 className="w-3 h-3 text-emerald-400" /> {v}
+                            <CheckCircle2 className="w-3 h-3 text-civic-green" /> {v}
                           </p>
                         ))}
                       </div>
                       <div>
-                        <p className="text-xs text-amber-400 font-medium mb-2">Values to Add</p>
+                        <p className="text-xs text-civic-yellow font-medium mb-2">Values to Add</p>
                         {result.valuesCheck.missing.map(v => (
                           <p key={v} className="text-sm text-foreground/70 flex items-center gap-1.5 mb-1">
-                            <AlertTriangle className="w-3 h-3 text-amber-400" /> {v}
+                            <AlertTriangle className="w-3 h-3 text-civic-yellow" /> {v}
                           </p>
                         ))}
                       </div>

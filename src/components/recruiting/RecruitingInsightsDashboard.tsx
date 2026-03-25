@@ -101,7 +101,7 @@ export function RecruitingInsightsDashboard() {
         </Card>
         <Card>
           <CardContent className="p-4 text-center">
-            <AlertTriangle className="w-5 h-5 text-amber-500 mx-auto mb-2" />
+            <AlertTriangle className="w-5 h-5 text-civic-yellow mx-auto mb-2" />
             <p className="text-2xl font-bold text-foreground">{stats.companiesWithWarn}</p>
             <p className="text-xs text-muted-foreground">WARN Notices Filed</p>
           </CardContent>
@@ -173,7 +173,7 @@ export function RecruitingInsightsDashboard() {
         <Card className="md:col-span-2">
           <CardHeader className="pb-3">
             <CardTitle className="text-base flex items-center gap-2">
-              <AlertTriangle className="w-4 h-4 text-amber-500" /> Recent Layoff Activity
+              <AlertTriangle className="w-4 h-4 text-civic-yellow" /> Recent Layoff Activity
             </CardTitle>
             <p className="text-xs text-muted-foreground">WARN Act notices — potential talent pool opportunities</p>
           </CardHeader>
@@ -212,7 +212,7 @@ export function RecruitingInsightsDashboard() {
                 <div className="space-y-1.5">
                   {["Pay equity & salary transparency", "Strong DEI programs with measurable outcomes", "Remote/flexible work policies", "Environmental commitments with evidence", "Worker benefits beyond industry standard", "Clean AI hiring practices with published audits"].map((s) => (
                     <div key={s} className="flex items-center gap-2 text-sm text-foreground">
-                      <div className="w-1.5 h-1.5 rounded-full bg-green-500 shrink-0" />
+                      <div className="w-1.5 h-1.5 rounded-full bg-civic-green shrink-0" />
                       {s}
                     </div>
                   ))}

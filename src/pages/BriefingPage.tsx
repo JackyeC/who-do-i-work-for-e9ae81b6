@@ -238,8 +238,8 @@ export default function BriefingPage() {
                       {company.civic_footprint_score != null && (
                         <div className="text-right">
                           <span className={`text-lg font-bold font-mono ${
-                            company.civic_footprint_score >= 70 ? "text-green-400" :
-                            company.civic_footprint_score >= 40 ? "text-primary" : "text-red-400"
+                            company.civic_footprint_score >= 70 ? "text-civic-green" :
+                            company.civic_footprint_score >= 40 ? "text-primary" : "text-civic-red"
                           }`}>{Math.round(company.civic_footprint_score)}</span>
                           <p className="text-xs text-muted-foreground font-mono uppercase tracking-wider">CFS</p>
                         </div>

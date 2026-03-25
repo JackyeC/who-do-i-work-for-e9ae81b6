@@ -11,11 +11,11 @@ interface CoverageBalanceChartProps {
 }
 
 const BAR_COLORS: Record<PoliticalLean, string> = {
-  left: "bg-blue-500",
-  lean_left: "bg-blue-400",
+  left: "bg-civic-blue",
+  lean_left: "bg-civic-blue",
   center: "bg-[hsl(var(--civic-green))]",
-  lean_right: "bg-red-400",
-  right: "bg-red-500",
+  lean_right: "bg-civic-red",
+  right: "bg-civic-red",
 };
 
 export function CoverageBalanceChart({ sourceUrls, className }: CoverageBalanceChartProps) {

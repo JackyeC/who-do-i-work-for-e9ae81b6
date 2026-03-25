@@ -23,10 +23,10 @@ const SAMPLE_MESSAGES: InboxMessage[] = [
 
 const TYPE_ICONS: Record<string, { icon: typeof FileText; color: string }> = {
   dossier: { icon: FileText, color: "text-primary" },
-  alert: { icon: AlertTriangle, color: "text-amber-400" },
-  viewed: { icon: Eye, color: "text-emerald-400" },
-  match: { icon: Bell, color: "text-blue-400" },
-  update: { icon: CheckCircle2, color: "text-emerald-400" },
+  alert: { icon: AlertTriangle, color: "text-civic-yellow" },
+  viewed: { icon: Eye, color: "text-civic-green" },
+  match: { icon: Bell, color: "text-civic-blue" },
+  update: { icon: CheckCircle2, color: "text-civic-green" },
 };
 
 export function InboxSection() {

@@ -20,11 +20,11 @@ interface PromotionEquityCardProps {
 const EQUITY_CATEGORIES = [
   { key: "internal_promotion", label: "Promotes From Within", icon: TrendingUp, color: "text-primary" },
   { key: "women_leadership", label: "Women in Leadership / Promotions", icon: Users, color: "text-pink-500" },
-  { key: "minority_advancement", label: "Minority Advancement", icon: Award, color: "text-amber-500" },
-  { key: "deaf_accessibility", label: "Deaf / Hard-of-Hearing Inclusion", icon: Ear, color: "text-blue-500" },
+  { key: "minority_advancement", label: "Minority Advancement", icon: Award, color: "text-civic-yellow" },
+  { key: "deaf_accessibility", label: "Deaf / Hard-of-Hearing Inclusion", icon: Ear, color: "text-civic-blue" },
   { key: "learning_disability", label: "Learning Disability Support", icon: Brain, color: "text-purple-500" },
-  { key: "hbcu_pipeline", label: "HBCU Pipeline / Partnerships", icon: School, color: "text-green-600" },
-  { key: "no_degree", label: "No-Degree Pathways", icon: GraduationCap, color: "text-orange-500" },
+  { key: "hbcu_pipeline", label: "HBCU Pipeline / Partnerships", icon: School, color: "text-civic-green" },
+  { key: "no_degree", label: "No-Degree Pathways", icon: GraduationCap, color: "text-civic-yellow" },
 ];
 
 type SignalStrength = "strong" | "moderate" | "limited" | "no_public_signals";
@@ -49,14 +49,14 @@ const strengthConfig = {
   moderate: {
     icon: ArrowUpRight,
     label: "Moderate Evidence",
-    badgeClass: "bg-amber-500/10 text-amber-600 border-amber-500/20",
-    rowClass: "border-amber-500/20 bg-amber-500/[0.02]",
+    badgeClass: "bg-civic-yellow/10 text-civic-yellow border-civic-yellow/20",
+    rowClass: "border-civic-yellow/20 bg-civic-yellow/[0.02]",
   },
   limited: {
     icon: AlertTriangle,
     label: "Limited Evidence",
-    badgeClass: "bg-orange-500/10 text-orange-600 border-orange-500/20",
-    rowClass: "border-orange-500/20 bg-orange-500/[0.02]",
+    badgeClass: "bg-civic-yellow/10 text-civic-yellow border-civic-yellow/20",
+    rowClass: "border-civic-yellow/20 bg-civic-yellow/[0.02]",
   },
   no_public_signals: {
     icon: EyeOff,
@@ -71,8 +71,8 @@ function getTransparencyScore(signals: any[]): { score: number; label: string; c
   const covered = EQUITY_CATEGORIES.filter(c => categoriesWithSignals.has(c.key)).length;
   const pct = Math.round((covered / EQUITY_CATEGORIES.length) * 100);
   if (pct >= 70) return { score: pct, label: "High", color: "text-primary" };
-  if (pct >= 40) return { score: pct, label: "Moderate", color: "text-amber-500" };
-  if (pct > 0) return { score: pct, label: "Low", color: "text-orange-500" };
+  if (pct >= 40) return { score: pct, label: "Moderate", color: "text-civic-yellow" };
+  if (pct > 0) return { score: pct, label: "Low", color: "text-civic-yellow" };
   return { score: 0, label: "Opaque", color: "text-destructive" };
 }
 

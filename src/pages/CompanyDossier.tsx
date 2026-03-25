@@ -59,7 +59,7 @@ import { Button } from "@/components/ui/button";
 /* ─── Lens config ─── */
 const LENS_META = {
   candidate: { label: "Candidate View", icon: User, color: "text-primary" },
-  sales: { label: "Sales Intelligence", icon: TrendingUp, color: "text-amber-500" },
+  sales: { label: "Sales Intelligence", icon: TrendingUp, color: "text-civic-yellow" },
   hr: { label: "HR Strategy", icon: Users, color: "text-teal-500" },
 } as const;
 

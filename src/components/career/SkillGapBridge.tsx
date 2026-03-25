@@ -16,7 +16,7 @@ import {
 const STATUS_CONFIG: Record<string, { label: string; icon: any; color: string; badgeVariant: "default" | "outline" | "secondary" }> = {
   pending: { label: "Pending", icon: Clock, color: "text-muted-foreground", badgeVariant: "outline" },
   in_progress: { label: "In Progress", icon: Rocket, color: "text-primary", badgeVariant: "default" },
-  skill_unlocked: { label: "Skill Unlocked", icon: CheckCircle2, color: "text-green-600", badgeVariant: "secondary" },
+  skill_unlocked: { label: "Skill Unlocked", icon: CheckCircle2, color: "text-civic-green", badgeVariant: "secondary" },
 };
 
 export function SkillGapBridge() {
@@ -276,7 +276,7 @@ export function SkillGapBridge() {
                     </Button>
                   )}
                   {project.status === "skill_unlocked" && (
-                    <span className="text-xs text-green-600 font-medium flex items-center gap-1">
+                    <span className="text-xs text-civic-green font-medium flex items-center gap-1">
                       <CheckCircle2 className="w-3.5 h-3.5" /> Completed — skill signal added to your profile
                     </span>
                   )}

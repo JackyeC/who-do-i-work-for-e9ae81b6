@@ -15,8 +15,8 @@ import {
 } from "lucide-react";
 
 const partyMeta: Record<string, { label: string; color: string }> = {
-  D: { label: "Democrat", color: "bg-blue-500/10 text-blue-700 dark:text-blue-400 border-blue-500/30" },
-  R: { label: "Republican", color: "bg-red-500/10 text-red-700 dark:text-red-400 border-red-500/30" },
+  D: { label: "Democrat", color: "bg-civic-blue/10 text-civic-blue border-civic-blue/30" },
+  R: { label: "Republican", color: "bg-civic-red/10 text-civic-red border-civic-red/30" },
   I: { label: "Independent", color: "bg-muted text-muted-foreground border-border" },
 };
 

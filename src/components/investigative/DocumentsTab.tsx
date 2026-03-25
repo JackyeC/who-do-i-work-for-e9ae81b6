@@ -56,9 +56,9 @@ export function DocumentsTab({ searchQuery }: Props) {
 
   const reliabilityColor = (level: string) => {
     switch (level) {
-      case "verified": return "bg-emerald-500/10 text-emerald-400 border-emerald-500/20";
-      case "partially_verified": return "bg-amber-500/10 text-amber-400 border-amber-500/20";
-      default: return "bg-red-500/10 text-red-400 border-red-500/20";
+      case "verified": return "bg-civic-green/10 text-civic-green border-civic-green/20";
+      case "partially_verified": return "bg-civic-yellow/10 text-civic-yellow border-civic-yellow/20";
+      default: return "bg-civic-red/10 text-civic-red border-civic-red/20";
     }
   };
 
@@ -123,7 +123,7 @@ export function DocumentsTab({ searchQuery }: Props) {
                         </Badge>
                       )}
                       {doc.has_redactions && (
-                        <Badge variant="outline" className="text-xs text-amber-400 border-amber-500/20">
+                        <Badge variant="outline" className="text-xs text-civic-yellow border-civic-yellow/20">
                           <AlertTriangle className="h-3 w-3 mr-1" />
                           Redacted
                         </Badge>

@@ -10,7 +10,7 @@ const bandStyles: Record<FRSResult["band"], { bg: string; text: string; ring: st
   stable_builder: { bg: "bg-civic-green/10", text: "text-civic-green", ring: "ring-civic-green/30", bar: "bg-civic-green" },
   healthy_mobility: { bg: "bg-primary/10", text: "text-primary", ring: "ring-primary/30", bar: "bg-primary" },
   moderate_churn: { bg: "bg-civic-yellow/10", text: "text-civic-yellow", ring: "ring-civic-yellow/30", bar: "bg-civic-yellow" },
-  high_churn: { bg: "bg-orange-500/10", text: "text-orange-600", ring: "ring-orange-500/30", bar: "bg-orange-500" },
+  high_churn: { bg: "bg-civic-yellow/10", text: "text-civic-yellow", ring: "ring-orange-500/30", bar: "bg-civic-yellow" },
   burn_replace: { bg: "bg-destructive/10", text: "text-destructive", ring: "ring-destructive/30", bar: "bg-destructive" },
 };
 

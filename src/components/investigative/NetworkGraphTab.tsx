@@ -64,9 +64,9 @@ export function NetworkGraphTab({ searchQuery }: Props) {
   });
 
   const confidenceColor = (c: number) => {
-    if (c >= 0.8) return "text-emerald-400";
-    if (c >= 0.5) return "text-amber-400";
-    return "text-red-400";
+    if (c >= 0.8) return "text-civic-green";
+    if (c >= 0.5) return "text-civic-yellow";
+    return "text-civic-red";
   };
 
   return (
@@ -170,7 +170,7 @@ export function NetworkGraphTab({ searchQuery }: Props) {
                       {Math.round(rel.confidence * 100)}% confidence
                     </span>
                     {rel.is_verified && (
-                      <Badge variant="outline" className="text-xs text-emerald-400 border-emerald-500/20">
+                      <Badge variant="outline" className="text-xs text-civic-green border-civic-green/20">
                         Verified
                       </Badge>
                     )}

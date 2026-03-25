@@ -20,22 +20,22 @@ interface WorkNewsRepositoryProps {
 }
 
 const CATEGORY_CONFIG: Record<string, { label: string; icon: any; color: string }> = {
-  regulation: { label: "Regulation", icon: Scale, color: "text-blue-500" },
-  future_of_work: { label: "Future of Work", icon: TrendingUp, color: "text-emerald-500" },
-  worker_rights: { label: "Worker Rights", icon: Users, color: "text-orange-500" },
+  regulation: { label: "Regulation", icon: Scale, color: "text-civic-blue" },
+  future_of_work: { label: "Future of Work", icon: TrendingUp, color: "text-civic-green" },
+  worker_rights: { label: "Worker Rights", icon: Users, color: "text-civic-yellow" },
   ai_workplace: { label: "AI & Work", icon: Brain, color: "text-violet-500" },
-  legislation: { label: "Legislation", icon: Gavel, color: "text-amber-500" },
+  legislation: { label: "Legislation", icon: Gavel, color: "text-civic-yellow" },
   layoffs: { label: "Layoffs", icon: AlertTriangle, color: "text-destructive" },
-  pay_equity: { label: "Pay Equity", icon: DollarSign, color: "text-green-500" },
+  pay_equity: { label: "Pay Equity", icon: DollarSign, color: "text-civic-green" },
   labor_organizing: { label: "Labor", icon: Megaphone, color: "text-rose-500" },
   general: { label: "General", icon: Newspaper, color: "text-muted-foreground" },
 };
 
 const TONE_COLORS: Record<string, string> = {
-  "Very Positive": "bg-green-500/10 text-green-600 border-green-500/20",
-  "Positive": "bg-emerald-500/10 text-emerald-600 border-emerald-500/20",
+  "Very Positive": "bg-civic-green/10 text-civic-green border-civic-green/20",
+  "Positive": "bg-civic-green/10 text-civic-green border-civic-green/20",
   "Neutral": "bg-muted text-muted-foreground border-border",
-  "Negative": "bg-orange-500/10 text-orange-600 border-orange-500/20",
+  "Negative": "bg-civic-yellow/10 text-civic-yellow border-civic-yellow/20",
   "Very Negative": "bg-destructive/10 text-destructive border-destructive/20",
 };
 

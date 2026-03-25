@@ -72,7 +72,7 @@ export function CompanyResearchTrigger({ companyName, className, onPublished }: 
             </div>
           </div>
 
-          <Badge variant="outline" className="text-xs bg-amber-500/10 text-amber-600 border-amber-500/20">
+          <Badge variant="outline" className="text-xs bg-civic-yellow/10 text-civic-yellow border-civic-yellow/20">
             <AlertTriangle className="w-3 h-3 mr-1" /> Unvetted — AI Research Draft
           </Badge>
 

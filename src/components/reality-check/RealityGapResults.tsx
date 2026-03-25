@@ -15,7 +15,7 @@ const bandStyles: Record<RealityGapResult["gapBand"], { bg: string; text: string
   aligned:                  { bg: "bg-civic-green/10",  text: "text-civic-green",  ring: "ring-civic-green/30",  bar: "bg-civic-green" },
   minor_gap:                { bg: "bg-civic-blue/10",   text: "text-civic-blue",   ring: "ring-civic-blue/30",   bar: "bg-civic-blue" },
   notable_gap:              { bg: "bg-civic-yellow/10", text: "text-civic-yellow", ring: "ring-civic-yellow/30", bar: "bg-civic-yellow" },
-  significant_disconnect:   { bg: "bg-orange-500/10",   text: "text-orange-600",   ring: "ring-orange-500/30",   bar: "bg-orange-500" },
+  significant_disconnect:   { bg: "bg-civic-yellow/10",   text: "text-civic-yellow",   ring: "ring-orange-500/30",   bar: "bg-civic-yellow" },
   reality_check:            { bg: "bg-destructive/10",  text: "text-destructive",  ring: "ring-destructive/30",  bar: "bg-destructive" },
 };
 

@@ -82,7 +82,7 @@ export function PersonaSelector({ activePersona, onPersonaChange }: PersonaSelec
                   <Icon className="w-3.5 h-3.5 shrink-0" />
                   <span className="hidden md:inline">{persona.shortLabel}</span>
                   {persona.accessTier === "paid" && !isActive && (
-                    <Crown className="w-2.5 h-2.5 text-amber-500 shrink-0" />
+                    <Crown className="w-2.5 h-2.5 text-civic-yellow shrink-0" />
                   )}
                 </button>
               </TooltipTrigger>

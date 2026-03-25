@@ -27,16 +27,16 @@ const INITIAL_SAVED: SavedJob[] = [
 
 function getScoreColor(level: string) {
   switch (level) {
-    case "LOW": return "bg-emerald-500/10 text-emerald-400 border-emerald-500/20";
-    case "MODERATE": return "bg-amber-500/10 text-amber-400 border-amber-500/20";
-    default: return "bg-red-500/10 text-red-400 border-red-500/20";
+    case "LOW": return "bg-civic-green/10 text-civic-green border-civic-green/20";
+    case "MODERATE": return "bg-civic-yellow/10 text-civic-yellow border-civic-yellow/20";
+    default: return "bg-civic-red/10 text-civic-red border-civic-red/20";
   }
 }
 
 function getAlignmentColor(pct: number) {
-  if (pct >= 80) return "text-emerald-400";
-  if (pct >= 60) return "text-amber-400";
-  return "text-red-400";
+  if (pct >= 80) return "text-civic-green";
+  if (pct >= 60) return "text-civic-yellow";
+  return "text-civic-red";
 }
 
 export function SavedSection() {

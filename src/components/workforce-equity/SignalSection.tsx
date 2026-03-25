@@ -12,7 +12,7 @@ type Strength = "strong" | "moderate" | "limited" | "none";
 const strengthConfig: Record<Strength, { icon: LucideIcon; label: string; badge: string }> = {
   strong: { icon: CheckCircle2, label: "Strong Evidence", badge: "bg-civic-green/10 text-civic-green border-civic-green/20" },
   moderate: { icon: ArrowUpRight, label: "Moderate Evidence", badge: "bg-civic-yellow/10 text-civic-yellow border-civic-yellow/20" },
-  limited: { icon: AlertTriangle, label: "Limited Evidence", badge: "bg-orange-500/10 text-orange-600 border-orange-500/20" },
+  limited: { icon: AlertTriangle, label: "Limited Evidence", badge: "bg-civic-yellow/10 text-civic-yellow border-civic-yellow/20" },
   none: { icon: EyeOff, label: "No Public Signals", badge: "bg-muted text-muted-foreground border-border" },
 };
 

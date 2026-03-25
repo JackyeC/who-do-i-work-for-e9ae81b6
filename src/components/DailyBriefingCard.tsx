@@ -21,9 +21,9 @@ interface BriefingItem {
 
 const SIGNAL_CONFIG: Record<string, { label: string; emoji: string; bg: string; text: string; dot: string }> = {
   red_flag: { label: "RED FLAG", emoji: "🔴", bg: "bg-destructive/10", text: "text-destructive", dot: "bg-destructive" },
-  amber_flag: { label: "SIGNAL", emoji: "🟡", bg: "bg-amber-500/10", text: "text-amber-500", dot: "bg-amber-500" },
-  green_badge: { label: "CLEAR", emoji: "🟢", bg: "bg-emerald-500/10", text: "text-emerald-500", dot: "bg-emerald-500" },
-  info: { label: "INTEL", emoji: "🔵", bg: "bg-blue-500/10", text: "text-blue-500", dot: "bg-blue-500" },
+  amber_flag: { label: "SIGNAL", emoji: "🟡", bg: "bg-civic-yellow/10", text: "text-civic-yellow", dot: "bg-civic-yellow" },
+  green_badge: { label: "CLEAR", emoji: "🟢", bg: "bg-civic-green/10", text: "text-civic-green", dot: "bg-civic-green" },
+  info: { label: "INTEL", emoji: "🔵", bg: "bg-civic-blue/10", text: "text-civic-blue", dot: "bg-civic-blue" },
 };
 
 export default function DailyBriefingCard() {

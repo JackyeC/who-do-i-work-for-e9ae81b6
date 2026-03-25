@@ -158,7 +158,7 @@ export function ResponseStudio() {
 
           {points.map((point, i) => {
             const SeverityIcon = point.severity === "high" ? AlertTriangle : point.severity === "medium" ? Shield : CheckCircle2;
-            const severityColor = point.severity === "high" ? "text-destructive" : point.severity === "medium" ? "text-yellow-600 dark:text-yellow-400" : "text-green-600 dark:text-green-400";
+            const severityColor = point.severity === "high" ? "text-destructive" : point.severity === "medium" ? "text-civic-yellow" : "text-civic-green";
 
             return (
               <Card key={i} className={cn(
@@ -200,7 +200,7 @@ export function ResponseStudio() {
       {!loading && points.length === 0 && companyName && (
         <Card>
           <CardContent className="p-8 text-center">
-            <CheckCircle2 className="w-10 h-10 text-green-500 mx-auto mb-3" />
+            <CheckCircle2 className="w-10 h-10 text-civic-green mx-auto mb-3" />
             <h3 className="text-lg font-semibold text-foreground mb-1">No Red Flags Found</h3>
             <p className="text-sm text-muted-foreground">No significant signals requiring candidate disclosure were found for {companyName}.</p>
           </CardContent>

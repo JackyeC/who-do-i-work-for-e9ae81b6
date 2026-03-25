@@ -42,10 +42,10 @@ const ICON_MAP = {
 
 const COLOR_MAP = {
   aligned_role: "text-primary",
-  status_update: "text-emerald-400",
-  interview: "text-blue-400",
+  status_update: "text-civic-green",
+  interview: "text-civic-blue",
   dossier_ready: "text-violet-400",
-  integrity_alert: "text-amber-400",
+  integrity_alert: "text-civic-yellow",
 };
 
 export default function Inbox() {

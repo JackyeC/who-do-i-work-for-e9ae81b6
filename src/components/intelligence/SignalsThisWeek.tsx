@@ -15,12 +15,12 @@ import { useToast } from "@/hooks/use-toast";
 
 const CATEGORY_CONFIG: Record<string, { label: string; icon: any; color: string; accent: string; headline: string }> = {
   warn_layoffs: { label: "WORKFORCE", icon: TrendingDown, color: "text-destructive", accent: "bg-destructive", headline: "Layoff signal detected" },
-  sec_executive_compensation: { label: "GOVERNANCE", icon: DollarSign, color: "text-amber-600", accent: "bg-amber-500", headline: "Executive pay filing" },
-  sec_insider_trading: { label: "MARKETS", icon: BarChart3, color: "text-orange-600", accent: "bg-orange-500", headline: "Insider trading activity" },
-  lobbying: { label: "INFLUENCE", icon: Scale, color: "text-blue-600", accent: "bg-blue-500", headline: "Lobbying disclosure" },
+  sec_executive_compensation: { label: "GOVERNANCE", icon: DollarSign, color: "text-civic-yellow", accent: "bg-civic-yellow", headline: "Executive pay filing" },
+  sec_insider_trading: { label: "MARKETS", icon: BarChart3, color: "text-civic-yellow", accent: "bg-civic-yellow", headline: "Insider trading activity" },
+  lobbying: { label: "INFLUENCE", icon: Scale, color: "text-civic-blue", accent: "bg-civic-blue", headline: "Lobbying disclosure" },
   pac_spending: { label: "POLITICAL SPENDING", icon: DollarSign, color: "text-purple-600", accent: "bg-purple-500", headline: "PAC spending detected" },
-  federal_contracts: { label: "CONTRACTS", icon: Briefcase, color: "text-emerald-600", accent: "bg-emerald-500", headline: "Federal contract awarded" },
-  workplace_enforcement: { label: "ENFORCEMENT", icon: Shield, color: "text-red-600", accent: "bg-red-500", headline: "Workplace enforcement action" },
+  federal_contracts: { label: "CONTRACTS", icon: Briefcase, color: "text-civic-green", accent: "bg-civic-green", headline: "Federal contract awarded" },
+  workplace_enforcement: { label: "ENFORCEMENT", icon: Shield, color: "text-civic-red", accent: "bg-civic-red", headline: "Workplace enforcement action" },
   ai_hiring: { label: "AI & HIRING", icon: Eye, color: "text-indigo-600", accent: "bg-indigo-500", headline: "AI hiring practice detected" },
 };
 
@@ -289,7 +289,7 @@ export function SignalsThisWeek() {
                   {headline}
                 </h3>
                 {translation && !translation.is_fresh && (
-                  <span className="text-xs text-amber-600 italic">{translation.freshness_note}</span>
+                  <span className="text-xs text-civic-yellow italic">{translation.freshness_note}</span>
                 )}
               </div>
 
@@ -383,7 +383,7 @@ export function SignalsThisWeek() {
                     {config.label}
                   </span>
                   {translation && !translation.is_fresh && (
-                    <Badge variant="outline" className="text-xs px-1 py-0 border-amber-500/30 text-amber-600">
+                    <Badge variant="outline" className="text-xs px-1 py-0 border-civic-yellow/30 text-civic-yellow">
                       Historical
                     </Badge>
                   )}

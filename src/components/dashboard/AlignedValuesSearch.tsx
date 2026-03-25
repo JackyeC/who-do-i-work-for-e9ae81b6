@@ -191,7 +191,7 @@ export function AlignedValuesSearch({ hasTakenQuiz }: { hasTakenQuiz: boolean })
                   </Link>
                   <div className="flex items-center gap-1.5 shrink-0">
                     {company.narrative_gap && (
-                      <AlertTriangle className="w-3.5 h-3.5 text-amber-400" />
+                      <AlertTriangle className="w-3.5 h-3.5 text-civic-yellow" />
                     )}
                     <span
                       className="text-xs font-bold rounded-full px-2 py-0.5 tabular-nums"

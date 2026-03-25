@@ -20,7 +20,7 @@ export function ScanUnavailableBanner({ hasCachedData, lastUpdated, variant = "b
 
   if (variant === "badge") {
     return (
-      <Badge variant="outline" className="text-xs font-mono tracking-wider gap-1 border-amber-500/30 text-amber-600 dark:text-amber-400">
+      <Badge variant="outline" className="text-xs font-mono tracking-wider gap-1 border-civic-yellow/30 text-civic-yellow">
         <Database className="w-2.5 h-2.5" />
         {hasCachedData
           ? `Using saved intelligence${daysAgo !== null ? ` · ${daysAgo === 0 ? 'today' : `${daysAgo}d ago`}` : ''}`
@@ -30,10 +30,10 @@ export function ScanUnavailableBanner({ hasCachedData, lastUpdated, variant = "b
   }
 
   return (
-    <div className="rounded-lg border border-amber-500/20 bg-amber-500/5 p-3 space-y-1.5">
+    <div className="rounded-lg border border-civic-yellow/20 bg-civic-yellow/5 p-3 space-y-1.5">
       <div className="flex items-center gap-2">
-        <ShieldCheck className="w-4 h-4 text-amber-600 dark:text-amber-400 shrink-0" />
-        <span className="font-mono text-xs font-medium text-amber-700 dark:text-amber-300 tracking-wide">
+        <ShieldCheck className="w-4 h-4 text-civic-yellow shrink-0" />
+        <span className="font-mono text-xs font-medium text-civic-yellow dark:text-civic-yellow tracking-wide">
           Live scan temporarily unavailable
         </span>
       </div>

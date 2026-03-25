@@ -9,20 +9,20 @@ interface Props {
 }
 
 const ACTION_COLORS: Record<string, string> = {
-  moved_to_dismiss: "text-red-400 border-red-500/30 bg-red-500/10",
-  withdrew: "text-amber-400 border-amber-500/30 bg-amber-500/10",
+  moved_to_dismiss: "text-civic-red border-civic-red/30 bg-civic-red/10",
+  withdrew: "text-civic-yellow border-civic-yellow/30 bg-civic-yellow/10",
 };
 
 export function EEOCCaseAlert({ cases }: Props) {
   if (!cases.length) return null;
 
   return (
-    <Card className="border-red-500/30 bg-red-500/[0.03]">
+    <Card className="border-civic-red/30 bg-civic-red/[0.03]">
       <CardHeader className="pb-2">
-        <CardTitle className="text-sm flex items-center gap-2 text-red-400">
+        <CardTitle className="text-sm flex items-center gap-2 text-civic-red">
           <AlertTriangle className="w-4 h-4" />
           EEOC Enforcement Alert
-          <Badge variant="outline" className="text-xs ml-auto border-red-500/30 text-red-400">
+          <Badge variant="outline" className="text-xs ml-auto border-civic-red/30 text-civic-red">
             {cases.length} {cases.length === 1 ? "CASE" : "CASES"}
           </Badge>
         </CardTitle>
@@ -31,7 +31,7 @@ export function EEOCCaseAlert({ cases }: Props) {
         {cases.map((c) => (
           <div key={c.id} className="p-3 rounded-lg bg-muted/30 border border-border/50 space-y-1.5">
             <div className="flex items-center gap-2 flex-wrap">
-              <Gavel className="w-3.5 h-3.5 text-red-400 shrink-0" />
+              <Gavel className="w-3.5 h-3.5 text-civic-red shrink-0" />
               <span className="text-sm font-medium text-foreground">{c.case_name}</span>
               <Badge variant="outline" className={`text-xs ${ACTION_COLORS[c.action_type] || ""}`}>
                 {c.action_type === "moved_to_dismiss" ? "MOVED TO DISMISS" : "WITHDREW"}

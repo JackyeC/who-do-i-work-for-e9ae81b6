@@ -161,8 +161,8 @@ export function EmployerIntelligenceCard({ companyId, companyName }: Props) {
 
   const totalPolitical = (company.total_pac_spending || 0) + (company.lobbying_spend || 0);
   const partyMap: Record<string, string> = {
-    D: "text-blue-600 dark:text-blue-400",
-    R: "text-red-600 dark:text-red-400",
+    D: "text-civic-blue",
+    R: "text-civic-red",
     I: "text-muted-foreground",
   };
 

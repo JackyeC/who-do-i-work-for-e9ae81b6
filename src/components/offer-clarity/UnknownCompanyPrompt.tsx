@@ -21,10 +21,10 @@ interface Props {
 
 export function UnknownCompanyPrompt({ companyName, meta, onChange }: Props) {
   return (
-    <div className="mt-2 border border-amber-400/50 bg-amber-50/60 dark:bg-amber-950/20 rounded-lg p-3 space-y-3">
+    <div className="mt-2 border border-civic-yellow/50 bg-civic-yellow/5/60 dark:bg-civic-yellow/20 rounded-lg p-3 space-y-3">
       <div className="flex items-start gap-2">
-        <AlertTriangle className="w-4 h-4 text-amber-500 mt-0.5 shrink-0" />
-        <p className="text-xs text-amber-800 dark:text-amber-300">
+        <AlertTriangle className="w-4 h-4 text-civic-yellow mt-0.5 shrink-0" />
+        <p className="text-xs text-civic-yellow dark:text-civic-yellow">
           We don't have <span className="font-semibold">"{companyName}"</span> in our database yet.
           Add a few details and we'll still evaluate your offer.
         </p>

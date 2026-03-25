@@ -35,9 +35,9 @@ interface PendingReview {
 }
 
 const STATUS_CONFIG: Record<string, { label: string; color: string; icon: any }> = {
-  pending: { label: "Pending", color: "bg-amber-500/10 text-amber-600 border-amber-500/20", icon: Clock },
-  reviewing: { label: "Reviewing", color: "bg-blue-500/10 text-blue-600 border-blue-500/20", icon: Eye },
-  approved: { label: "Approved", color: "bg-green-500/10 text-green-600 border-green-500/20", icon: Check },
+  pending: { label: "Pending", color: "bg-civic-yellow/10 text-civic-yellow border-civic-yellow/20", icon: Clock },
+  reviewing: { label: "Reviewing", color: "bg-civic-blue/10 text-civic-blue border-civic-blue/20", icon: Eye },
+  approved: { label: "Approved", color: "bg-civic-green/10 text-civic-green border-civic-green/20", icon: Check },
   published: { label: "Published", color: "bg-primary/10 text-primary border-primary/20", icon: Building2 },
   rejected: { label: "Rejected", color: "bg-destructive/10 text-destructive border-destructive/20", icon: X },
 };
@@ -109,7 +109,7 @@ function ReviewCard({ review, onUpdate }: { review: PendingReview; onUpdate: () 
   return (
     <Card className={cn(
       "border-border/40 transition-all",
-      review.status === "pending" && "border-amber-500/20",
+      review.status === "pending" && "border-civic-yellow/20",
     )}>
       <CardContent className="p-0">
         {/* Header row */}
@@ -324,13 +324,13 @@ export function PendingReviewsDashboard() {
       {/* Tabs */}
       <Tabs value={activeTab} onValueChange={setActiveTab}>
         <TabsList className="bg-transparent p-0 gap-1">
-          <TabsTrigger value="pending" className="text-xs data-[state=active]:bg-amber-500/10 data-[state=active]:text-amber-700">
+          <TabsTrigger value="pending" className="text-xs data-[state=active]:bg-civic-yellow/10 data-[state=active]:text-civic-yellow">
             Pending {counts?.pending ? `(${counts.pending})` : ""}
           </TabsTrigger>
-          <TabsTrigger value="reviewing" className="text-xs data-[state=active]:bg-blue-500/10 data-[state=active]:text-blue-700">
+          <TabsTrigger value="reviewing" className="text-xs data-[state=active]:bg-civic-blue/10 data-[state=active]:text-civic-blue">
             Reviewing
           </TabsTrigger>
-          <TabsTrigger value="approved" className="text-xs data-[state=active]:bg-green-500/10 data-[state=active]:text-green-700">
+          <TabsTrigger value="approved" className="text-xs data-[state=active]:bg-civic-green/10 data-[state=active]:text-civic-green">
             Approved
           </TabsTrigger>
           <TabsTrigger value="published" className="text-xs data-[state=active]:bg-primary/10 data-[state=active]:text-primary">

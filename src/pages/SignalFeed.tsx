@@ -27,10 +27,10 @@ type Signal = {
 };
 
 const CATEGORY_CONFIG: Record<string, { icon: typeof Activity; color: string; bg: string }> = {
-  "PAC Donation": { icon: DollarSign, color: "text-red-400", bg: "bg-red-500/10 border-red-500/20" },
-  "Lobbying": { icon: Building2, color: "text-amber-400", bg: "bg-amber-500/10 border-amber-500/20" },
-  "Federal Contract": { icon: FileText, color: "text-emerald-400", bg: "bg-emerald-500/10 border-emerald-500/20" },
-  "Workforce Action": { icon: Users, color: "text-blue-400", bg: "bg-blue-500/10 border-blue-500/20" },
+  "PAC Donation": { icon: DollarSign, color: "text-civic-red", bg: "bg-civic-red/10 border-civic-red/20" },
+  "Lobbying": { icon: Building2, color: "text-civic-yellow", bg: "bg-civic-yellow/10 border-civic-yellow/20" },
+  "Federal Contract": { icon: FileText, color: "text-civic-green", bg: "bg-civic-green/10 border-civic-green/20" },
+  "Workforce Action": { icon: Users, color: "text-civic-blue", bg: "bg-civic-blue/10 border-civic-blue/20" },
   "Corporate Policy": { icon: Shield, color: "text-violet-400", bg: "bg-violet-500/10 border-violet-500/20" },
   "Hiring Practice": { icon: Eye, color: "text-cyan-400", bg: "bg-cyan-500/10 border-cyan-500/20" },
 };
@@ -42,10 +42,10 @@ function getConfig(type: string) {
 }
 
 function confidenceLabel(level: number) {
-  if (level >= 5) return { text: "VERIFIED", cls: "text-emerald-400 border-emerald-500/30" };
-  if (level >= 4) return { text: "STRONG", cls: "text-amber-400 border-amber-500/30" };
-  if (level >= 3) return { text: "MODERATE", cls: "text-orange-400 border-orange-500/30" };
-  return { text: "WEAK", cls: "text-red-400 border-red-500/30" };
+  if (level >= 5) return { text: "VERIFIED", cls: "text-civic-green border-civic-green/30" };
+  if (level >= 4) return { text: "STRONG", cls: "text-civic-yellow border-civic-yellow/30" };
+  if (level >= 3) return { text: "MODERATE", cls: "text-civic-yellow border-civic-yellow/30" };
+  return { text: "WEAK", cls: "text-civic-red border-civic-red/30" };
 }
 
 function timeAgo(dateStr: string) {
@@ -73,9 +73,9 @@ function SignalCard({ signal, index }: { signal: Signal; index: number }) {
     >
       {/* Confidence stripe */}
       <div className={`absolute left-0 top-0 bottom-0 w-1 ${
-        signal.confidence_level >= 5 ? "bg-emerald-500" :
-        signal.confidence_level >= 4 ? "bg-amber-500" :
-        signal.confidence_level >= 3 ? "bg-orange-500" : "bg-red-500"
+        signal.confidence_level >= 5 ? "bg-civic-green" :
+        signal.confidence_level >= 4 ? "bg-civic-yellow" :
+        signal.confidence_level >= 3 ? "bg-civic-yellow" : "bg-civic-red"
       }`} />
 
       <div className="p-5 pl-6">
@@ -192,7 +192,7 @@ function StatsBar({ signals }: { signals: Signal[] }) {
         <span className="text-foreground font-bold">{companies}</span>
       </div>
       <div className="flex items-center gap-1.5">
-        <Shield className="w-3.5 h-3.5 text-emerald-400" />
+        <Shield className="w-3.5 h-3.5 text-civic-green" />
         <span className="text-muted-foreground">HIGH CONFIDENCE</span>
         <span className="text-foreground font-bold">{highConf}</span>
       </div>
@@ -250,8 +250,8 @@ export default function SignalFeed() {
         {/* Header */}
         <div className="space-y-3">
           <div className="flex items-center gap-2">
-            <div className="w-2 h-2 rounded-full bg-red-500 animate-pulse" />
-            <span className="font-mono text-xs text-red-400 uppercase tracking-widest">Live Intelligence</span>
+            <div className="w-2 h-2 rounded-full bg-civic-red animate-pulse" />
+            <span className="font-mono text-xs text-civic-red uppercase tracking-widest">Live Intelligence</span>
           </div>
           <h1 className="font-display text-3xl md:text-4xl font-black text-foreground tracking-tight">
             Signal Feed

@@ -32,15 +32,15 @@ interface ScanResult {
 }
 
 const sentimentColors: Record<string, string> = {
-  positive: "bg-green-500/10 text-green-700 dark:text-green-400",
+  positive: "bg-civic-green/10 text-civic-green",
   negative: "bg-destructive/10 text-destructive",
   neutral: "bg-muted text-muted-foreground",
-  mixed: "bg-amber-500/10 text-amber-700 dark:text-amber-400",
+  mixed: "bg-civic-yellow/10 text-civic-yellow",
 };
 
 const severityColors: Record<string, string> = {
   high: "bg-destructive/10 text-destructive",
-  medium: "bg-amber-500/10 text-amber-700 dark:text-amber-400",
+  medium: "bg-civic-yellow/10 text-civic-yellow",
   low: "bg-muted text-muted-foreground",
 };
 
@@ -173,7 +173,7 @@ export function SocialMonitorCard({ companyId, companyName, executiveNames, dbCo
             {/* Stance Shifts */}
             {result.stanceShifts.length > 0 && (
               <div className="space-y-2">
-                <h4 className="text-sm font-semibold flex items-center gap-1.5 text-amber-600 dark:text-amber-400">
+                <h4 className="text-sm font-semibold flex items-center gap-1.5 text-civic-yellow">
                   <TrendingUp className="w-4 h-4" />
                   Stance Shifts ({result.stanceShifts.length})
                 </h4>

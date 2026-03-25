@@ -44,8 +44,8 @@ type ViewScope = "national" | "state" | "local";
 const HEATMAP_COLORS: Record<string, string> = {
   critical: "bg-destructive text-destructive-foreground",
   high: "bg-destructive/70 text-destructive-foreground",
-  moderate: "bg-orange-500/80 text-white",
-  low: "bg-yellow-500/60 text-foreground",
+  moderate: "bg-civic-yellow/80 text-white",
+  low: "bg-civic-yellow/60 text-foreground",
 };
 
 export function SurvivorAlertCard({ companyName, dbCompanyId }: SurvivorAlertProps) {
@@ -229,10 +229,10 @@ export function SurvivorAlertCard({ companyName, dbCompanyId }: SurvivorAlertPro
 
         {/* Offshore / Strategic Workforce Shift */}
         {data.offshoreFlag && (
-          <div className="rounded-lg border border-orange-500/30 bg-orange-500/5 p-4">
+          <div className="rounded-lg border border-civic-yellow/30 bg-civic-yellow/5 p-4">
             <div className="flex items-center gap-2 mb-2">
-              <Globe className="w-4 h-4 text-orange-600" />
-              <span className="text-sm font-semibold text-orange-700 dark:text-orange-400">
+              <Globe className="w-4 h-4 text-civic-yellow" />
+              <span className="text-sm font-semibold text-civic-yellow">
                 Strategic Workforce Shift Detected
               </span>
             </div>
@@ -240,7 +240,7 @@ export function SurvivorAlertCard({ companyName, dbCompanyId }: SurvivorAlertPro
               US WARN filings detected alongside international entity growth — potential offshoring pattern.
             </p>
             {data.offshoreSignals.map((sig, i) => (
-              <p key={i} className="text-xs text-foreground/80 pl-3 border-l-2 border-orange-500/40 mb-1">
+              <p key={i} className="text-xs text-foreground/80 pl-3 border-l-2 border-civic-yellow/40 mb-1">
                 {sig}
               </p>
             ))}
@@ -274,7 +274,7 @@ export function SurvivorAlertCard({ companyName, dbCompanyId }: SurvivorAlertPro
                   <p className="text-xs text-foreground mt-0.5">{autopsy.abolished_pattern}</p>
                 </div>
                 <div>
-                  <span className="text-xs font-semibold uppercase text-green-600 tracking-wider">Retained / Growing</span>
+                  <span className="text-xs font-semibold uppercase text-civic-green tracking-wider">Retained / Growing</span>
                   <p className="text-xs text-foreground mt-0.5">{autopsy.retained_pattern}</p>
                 </div>
                 <div>
@@ -282,12 +282,12 @@ export function SurvivorAlertCard({ companyName, dbCompanyId }: SurvivorAlertPro
                   <p className="text-xs text-foreground mt-0.5">{autopsy.strategic_shift}</p>
                 </div>
                 <div>
-                  <span className="text-xs font-semibold uppercase text-amber-600 tracking-wider">Poaching Targets</span>
+                  <span className="text-xs font-semibold uppercase text-civic-yellow tracking-wider">Poaching Targets</span>
                   <p className="text-xs text-foreground mt-0.5">{autopsy.poaching_targets}</p>
                 </div>
                 {autopsy.offshore_alert && (
                   <div>
-                    <span className="text-xs font-semibold uppercase text-orange-600 tracking-wider">Offshore Alert</span>
+                    <span className="text-xs font-semibold uppercase text-civic-yellow tracking-wider">Offshore Alert</span>
                     <p className="text-xs text-foreground mt-0.5">{autopsy.offshore_alert}</p>
                   </div>
                 )}
@@ -300,8 +300,8 @@ export function SurvivorAlertCard({ companyName, dbCompanyId }: SurvivorAlertPro
         <div className="flex items-center gap-3 pt-2 border-t border-border">
           <span className="text-xs text-muted-foreground">Intensity:</span>
           {[
-            { label: "Low", color: "bg-yellow-500/60" },
-            { label: "Moderate", color: "bg-orange-500/80" },
+            { label: "Low", color: "bg-civic-yellow/60" },
+            { label: "Moderate", color: "bg-civic-yellow/80" },
             { label: "High", color: "bg-destructive/70" },
             { label: "Critical", color: "bg-destructive" },
           ].map((l) => (

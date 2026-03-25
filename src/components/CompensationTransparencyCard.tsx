@@ -37,7 +37,7 @@ const CATEGORY_META: Record<string, { label: string; icon: typeof DollarSign }> 
 
 const CONFIDENCE_STYLES: Record<string, string> = {
   direct: "bg-civic-green/10 text-[hsl(var(--civic-green))] border-[hsl(var(--civic-green))]/30",
-  strong_inference: "bg-blue-500/10 text-blue-500 border-blue-500/30",
+  strong_inference: "bg-civic-blue/10 text-civic-blue border-civic-blue/30",
   moderate_inference: "bg-civic-yellow/10 text-[hsl(var(--civic-yellow))] border-[hsl(var(--civic-yellow))]/30",
   weak_inference: "bg-muted text-muted-foreground border-border",
   unverified: "bg-muted text-muted-foreground border-border",
@@ -49,10 +49,10 @@ const NATIONAL_BENCHMARKS = {
   aauw: { label: "AAUW (2024)", gap: 84, source: "https://www.aauw.org/resources/research/simple-truth/" },
   equalPayDates: [
     { group: "All Women", date: "March 12", color: "bg-primary" },
-    { group: "AAPI Women", date: "April 3", color: "bg-blue-500" },
+    { group: "AAPI Women", date: "April 3", color: "bg-civic-blue" },
     { group: "Black Women", date: "July 9", color: "bg-purple-500" },
-    { group: "Native Women", date: "Sept 21", color: "bg-amber-600" },
-    { group: "Latina Women", date: "Oct 3", color: "bg-red-500" },
+    { group: "Native Women", date: "Sept 21", color: "bg-civic-yellow" },
+    { group: "Latina Women", date: "Oct 3", color: "bg-civic-red" },
   ],
 };
 

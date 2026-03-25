@@ -69,9 +69,9 @@ const DEMO_OFFER = {
 };
 
 function scoreColor(score: number) {
-  if (score >= 75) return "text-green-500";
-  if (score >= 50) return "text-yellow-500";
-  return "text-red-500";
+  if (score >= 75) return "text-civic-green";
+  if (score >= 50) return "text-civic-yellow";
+  return "text-civic-red";
 }
 
 function scoreGrade(score: number) {
@@ -83,21 +83,21 @@ function scoreGrade(score: number) {
 }
 
 const partyColor: Record<string, string> = {
-  D: "bg-blue-500/10 text-blue-700 dark:text-blue-400 border-blue-500/30",
-  R: "bg-red-500/10 text-red-700 dark:text-red-400 border-red-500/30",
+  D: "bg-civic-blue/10 text-civic-blue border-civic-blue/30",
+  R: "bg-civic-red/10 text-civic-red border-civic-red/30",
 };
 
 const severityStyle: Record<string, string> = {
   high: "border-l-civic-red bg-civic-red/5",
-  medium: "border-l-yellow-500 bg-yellow-500/5",
-  low: "border-l-green-500 bg-green-500/5",
+  medium: "border-l-yellow-500 bg-civic-yellow/5",
+  low: "border-l-green-500 bg-civic-green/5",
 };
 
 const flagStyle: Record<string, string> = {
-  warning: "text-yellow-600 dark:text-yellow-400",
-  danger: "text-red-600 dark:text-red-400",
-  caution: "text-orange-500 dark:text-orange-400",
-  ok: "text-green-600 dark:text-green-400",
+  warning: "text-civic-yellow",
+  danger: "text-civic-red",
+  caution: "text-civic-yellow",
+  ok: "text-civic-green",
 };
 
 const Demo = () => {
@@ -280,9 +280,9 @@ const Demo = () => {
                 {DEMO_SIGNALS.map((s, i) => (
                   <div key={i} className={`border-l-[3px] ${severityStyle[s.severity]} p-3 rounded-r-md`}>
                     <div className="flex items-start gap-2">
-                      {s.type === "warning" && <AlertTriangle className="w-4 h-4 text-yellow-500 shrink-0 mt-0.5" />}
-                      {s.type === "info" && <Eye className="w-4 h-4 text-blue-500 shrink-0 mt-0.5" />}
-                      {s.type === "positive" && <CheckCircle2 className="w-4 h-4 text-green-500 shrink-0 mt-0.5" />}
+                      {s.type === "warning" && <AlertTriangle className="w-4 h-4 text-civic-yellow shrink-0 mt-0.5" />}
+                      {s.type === "info" && <Eye className="w-4 h-4 text-civic-blue shrink-0 mt-0.5" />}
+                      {s.type === "positive" && <CheckCircle2 className="w-4 h-4 text-civic-green shrink-0 mt-0.5" />}
                       <div>
                         <div className="text-sm text-foreground">{s.text}</div>
                         <div className="font-mono text-xs uppercase text-muted-foreground mt-1">
@@ -312,11 +312,11 @@ const Demo = () => {
                     <div className="font-mono text-xs uppercase text-muted-foreground">Your Offer</div>
                   </div>
                   <div className="p-3 border border-border rounded-lg">
-                    <div className="font-data text-xl font-bold text-yellow-500">{DEMO_OFFER.benchmarkMedian}</div>
+                    <div className="font-data text-xl font-bold text-civic-yellow">{DEMO_OFFER.benchmarkMedian}</div>
                     <div className="font-mono text-xs uppercase text-muted-foreground">Market Median</div>
                   </div>
                   <div className="p-3 border border-border rounded-lg">
-                    <div className="font-data text-xl font-bold text-green-500">{DEMO_OFFER.benchmarkP75}</div>
+                    <div className="font-data text-xl font-bold text-civic-green">{DEMO_OFFER.benchmarkP75}</div>
                     <div className="font-mono text-xs uppercase text-muted-foreground">75th Percentile</div>
                   </div>
                 </div>

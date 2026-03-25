@@ -18,11 +18,11 @@ interface MediaBiasIndicatorProps {
 /** Lean indicator dot */
 function LeanDot({ lean }: { lean: PoliticalLean }) {
   const dotColors: Record<PoliticalLean, string> = {
-    left: "bg-blue-500",
-    lean_left: "bg-blue-400",
+    left: "bg-civic-blue",
+    lean_left: "bg-civic-blue",
     center: "bg-[hsl(var(--civic-green))]",
-    lean_right: "bg-red-400",
-    right: "bg-red-500",
+    lean_right: "bg-civic-red",
+    right: "bg-civic-red",
   };
   return <span className={cn("inline-block w-2 h-2 rounded-full shrink-0", dotColors[lean])} />;
 }

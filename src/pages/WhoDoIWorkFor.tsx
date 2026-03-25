@@ -34,8 +34,8 @@ interface CompanyOption {
 }
 
 const partyColors: Record<string, string> = {
-  D: "bg-blue-500/10 text-blue-700 dark:text-blue-400 border-blue-500/30",
-  R: "bg-red-500/10 text-red-700 dark:text-red-400 border-red-500/30",
+  D: "bg-civic-blue/10 text-civic-blue border-civic-blue/30",
+  R: "bg-civic-red/10 text-civic-red border-civic-red/30",
   I: "bg-muted text-muted-foreground",
 };
 
