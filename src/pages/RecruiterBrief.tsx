@@ -54,6 +54,7 @@ export default function RecruiterBrief() {
   const [brief, setBrief] = useState<RecruiterBriefData | null>(null);
   const [loading, setLoading] = useState(false);
   const debounceRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const { toast } = useToast();
 
   useEffect(() => {
     return () => { if (debounceRef.current) clearTimeout(debounceRef.current); };
