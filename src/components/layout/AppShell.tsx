@@ -33,7 +33,7 @@ export function AppShell({ children }: AppShellProps) {
     return <>{children}</>;
   }
 
-  // Homepage renders its own nav + footer inside Index.tsx
+  // Homepage manages its own nav + footer inside Index.tsx
   if (isHomepage) {
     return (
       <div className="min-h-screen flex flex-col w-full bg-background">

@@ -1,22 +1,28 @@
 import { useState, lazy, Suspense, forwardRef } from "react";
 import jackyeHeadshotSm from "@/assets/jackye-headshot-sm.webp";
 import { useNavigate, Link } from "react-router-dom";
-import { Shield, ArrowRight, Eye, Target, Brain, Rocket, CheckCircle2, Menu, X, FileSearch, AlertTriangle, Link2, Search, Layers, BarChart3, Users, Briefcase, Mic, Award, Building } from "lucide-react";
+import { Shield, ArrowRight, Search, FileSearch, Layers, BarChart3, Briefcase, Building } from "lucide-react";
 import { useAuth } from "@/contexts/AuthContext";
 import { useClerkWithFallback } from "@/hooks/use-clerk-fallback";
 import { Button } from "@/components/ui/button";
 import { usePageSEO } from "@/hooks/use-page-seo";
+import { useQuery } from "@tanstack/react-query";
+import { supabase } from "@/integrations/supabase/client";
+import { MarketingNav } from "@/components/layout/MarketingNav";
+import { SiteFooter } from "@/components/layout/SiteFooter";
 
 const LiveIntelligenceTicker = lazy(() => import("@/components/landing/LiveIntelligenceTicker").then(m => ({ default: m.LiveIntelligenceTicker })));
 const EmailCapture = lazy(() => import("@/components/landing/EmailCapture").then(m => ({ default: m.EmailCapture })));
 const ExitIntentCapture = lazy(() => import("@/components/ExitIntentCapture").then(m => ({ default: m.ExitIntentCapture })));
 const SectionReveal = lazy(() => import("@/components/landing/SectionReveal").then(m => ({ default: m.SectionReveal })));
 
+const FEATURED_SLUGS = ["meta", "google", "amazon", "boeing", "accenture", "att"];
+
 const Index = forwardRef<HTMLDivElement>((_, ref) => {
   const navigate = useNavigate();
   const { user, loading: authLoading } = useAuth();
   const { isLoaded } = useClerkWithFallback();
-  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [heroQuery, setHeroQuery] = useState("");
 
   usePageSEO({
     title: "WDIWF — Know Who You're Really Working For",
@@ -32,178 +38,81 @@ const Index = forwardRef<HTMLDivElement>((_, ref) => {
     },
   });
 
+  const { data: featuredCompanies } = useQuery({
+    queryKey: ["homepage-featured-companies"],
+    queryFn: async () => {
+      const { data } = await supabase
+        .from("companies")
+        .select("id, name, slug, industry, state, civic_footprint_score, total_pac_spending, insider_score")
+        .in("slug", FEATURED_SLUGS)
+        .limit(6);
+      return data || [];
+    },
+    staleTime: 300_000,
+  });
+
   if (!isLoaded || authLoading) return null;
+
+  const handleHeroSearch = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (heroQuery.trim()) {
+      navigate(`/search?q=${encodeURIComponent(heroQuery.trim())}`);
+    }
+  };
 
   return (
     <div ref={ref} className="flex flex-col min-h-screen bg-background">
-      {/* ── Site Header ── */}
-      <header className="sticky top-0 z-50 bg-background/95 backdrop-blur-sm border-b border-border/50 px-6 lg:px-16 py-4 w-full">
-        <div className="max-w-[1100px] mx-auto flex items-center justify-between">
-          <Link to="/" className="flex items-center shrink-0">
-            <span style={{fontFamily:"Inter,sans-serif",fontWeight:900,letterSpacing:"-0.03em",fontSize:"26px"}}>
-              <span className="text-foreground">W</span>
-              <span style={{color:"#F0C040"}}>?</span>
-            </span>
-          </Link>
-          <nav className="hidden md:flex items-center gap-6">
-            <Link to="/receipts" className="font-sans text-sm text-muted-foreground hover:text-foreground transition-colors">Receipts</Link>
-            <Link to="/browse" className="font-sans text-sm text-muted-foreground hover:text-foreground transition-colors">Companies</Link>
-            <Link to="/about" className="font-sans text-sm text-muted-foreground hover:text-foreground transition-colors">About</Link>
-            <Link to="/for-employers" className="font-sans text-sm text-muted-foreground hover:text-foreground transition-colors">For Companies</Link>
-            <Link to="/contact" className="font-sans text-sm text-muted-foreground hover:text-foreground transition-colors">Contact</Link>
-            {!authLoading && (
-              user ? (
-                <Button size="sm" variant="outline" onClick={() => navigate("/dashboard")} className="font-sans text-sm">
-                  Dashboard
-                </Button>
-              ) : (
-                <Button size="sm" onClick={() => navigate("/join")} className="font-sans text-sm rounded-full px-5">
-                  Get Early Access
-                </Button>
-              )
-            )}
-          </nav>
-          <button className="md:hidden p-1 text-muted-foreground hover:text-foreground transition-colors" onClick={() => setMobileMenuOpen(!mobileMenuOpen)} aria-label="Toggle menu">
-            {mobileMenuOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
-          </button>
-        </div>
-      </header>
-
-      {mobileMenuOpen && (
-        <div className="md:hidden px-6 pb-4 border-b border-border/50 bg-background">
-          <nav className="flex flex-col gap-3">
-            <Link to="/receipts" onClick={() => setMobileMenuOpen(false)} className="font-sans text-sm text-muted-foreground hover:text-foreground transition-colors py-2">Receipts</Link>
-            <Link to="/browse" onClick={() => setMobileMenuOpen(false)} className="font-sans text-sm text-muted-foreground hover:text-foreground transition-colors py-2">Companies</Link>
-            <Link to="/about" onClick={() => setMobileMenuOpen(false)} className="font-sans text-sm text-muted-foreground hover:text-foreground transition-colors py-2">About</Link>
-            <Link to="/for-employers" onClick={() => setMobileMenuOpen(false)} className="font-sans text-sm text-muted-foreground hover:text-foreground transition-colors py-2">For Companies</Link>
-            <Link to="/contact" onClick={() => setMobileMenuOpen(false)} className="font-sans text-sm text-muted-foreground hover:text-foreground transition-colors py-2">Contact</Link>
-            {!authLoading && (
-              user ? (
-                <Button size="sm" variant="outline" onClick={() => { setMobileMenuOpen(false); navigate("/dashboard"); }} className="w-full">Dashboard</Button>
-              ) : (
-                <Button size="sm" onClick={() => { setMobileMenuOpen(false); navigate("/join"); }} className="w-full">Get Early Access</Button>
-              )
-            )}
-          </nav>
-        </div>
-      )}
+      <MarketingNav />
 
       <Suspense fallback={null}><ExitIntentCapture /></Suspense>
 
-      {/* ══════════════════════════════════════════════════════════════════
-          SECTION 1: HERO
-      ══════════════════════════════════════════════════════════════════ */}
-      <section className="relative flex flex-col justify-center px-6 lg:px-16 min-h-[85vh] py-24 lg:py-32 bg-background overflow-hidden">
-        {/* Subtle gold gradient */}
+      {/* ── SECTION 1: HERO ── */}
+      <section className="relative flex flex-col justify-center px-6 lg:px-16 py-24 lg:py-32 bg-background overflow-hidden">
         <div className="absolute top-[-20%] right-[-10%] w-[50%] h-[70%] pointer-events-none" style={{ background: "radial-gradient(ellipse, rgba(240,192,64,0.06) 0%, transparent 70%)" }} />
+        <div className="relative z-[1] max-w-[720px] mx-auto text-center">
+          <h1
+            className="text-foreground font-sans leading-[1.05] tracking-tight mx-auto"
+            style={{ fontSize: "clamp(2.5rem, 7vw, 5rem)", fontWeight: 800, maxWidth: "18ch", opacity: 0, animation: "heroFadeIn 0.8s ease 0.3s forwards" }}
+          >
+            Know who you're{" "}
+            <span className="text-primary">really</span>{" "}
+            working for.
+          </h1>
 
-        <div className="relative z-[1] max-w-[1100px] mx-auto w-full grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-16 items-center">
-          {/* LEFT — Text */}
-          <div>
-            <h1
-              className="text-foreground font-sans leading-[1.05] tracking-tight"
-              style={{ fontSize: "clamp(2.5rem, 7vw, 5.5rem)", fontWeight: 800, maxWidth: "14ch", opacity: 0, animation: "heroFadeIn 0.8s ease 0.3s forwards" }}
-            >
-              Know who you're{" "}
-              <span className="text-primary">really</span>{" "}
-              working for.
-            </h1>
+          <p
+            className="text-muted-foreground max-w-[56ch] mx-auto leading-relaxed"
+            style={{ fontSize: "clamp(1rem, 1.5vw, 1.15rem)", marginTop: "20px", opacity: 0, animation: "heroFadeIn 0.6s ease 0.7s forwards" }}
+          >
+            Career intelligence built on public records. Search any employer. See the receipts.
+          </p>
 
-            <p
-              className="text-muted-foreground max-w-[52ch] leading-relaxed"
-              style={{ fontSize: "clamp(1rem, 1.5vw, 1.25rem)", marginTop: "24px", opacity: 0, animation: "heroFadeIn 0.6s ease 0.7s forwards" }}
-            >
-              WDIWF is career intelligence for people who refuse to find out the hard way. We forensically evaluate companies — so you can negotiate smarter, ask harder questions, and never accept an offer blind again.
-            </p>
-
-            <div
-              className="flex items-center gap-4 flex-wrap"
-              style={{ marginTop: "32px", opacity: 0, animation: "heroFadeIn 0.5s ease 1s forwards" }}
-            >
+          {/* Search bar */}
+          <form
+            onSubmit={handleHeroSearch}
+            className="mt-8 mx-auto max-w-[520px] relative group"
+            style={{ opacity: 0, animation: "heroFadeIn 0.5s ease 1s forwards" }}
+          >
+            <div className="absolute -inset-0.5 bg-gradient-to-r from-primary/30 via-primary/10 to-primary/30 opacity-0 group-focus-within:opacity-100 transition-opacity duration-500 blur-sm" />
+            <div className="relative flex items-center bg-card border border-border focus-within:border-primary/40 transition-colors">
+              <Search className="w-4 h-4 text-muted-foreground ml-4 shrink-0" />
+              <input
+                type="text"
+                value={heroQuery}
+                onChange={(e) => setHeroQuery(e.target.value)}
+                placeholder="Scan a company..."
+                className="flex-1 bg-transparent px-3 py-3.5 text-sm text-foreground placeholder:text-muted-foreground/60 focus:outline-none font-sans"
+              />
               <button
-                onClick={() => navigate(user ? "/dashboard" : "/join")}
-                className="bg-primary text-primary-foreground font-sans text-base font-semibold px-8 py-4 rounded-lg hover:brightness-110 transition-all cursor-pointer"
+                type="submit"
+                className="mr-2 px-4 py-2 bg-primary text-primary-foreground font-mono text-xs tracking-wider uppercase font-semibold hover:brightness-110 transition-all flex items-center gap-1.5"
               >
-                Get Early Access
-              </button>
-              <button
-                onClick={() => {
-                  const el = document.getElementById("how-it-works");
-                  el?.scrollIntoView({ behavior: "smooth" });
-                }}
-                className="font-sans text-base text-muted-foreground hover:text-foreground transition-colors cursor-pointer bg-transparent border-none"
-              >
-                See how it works ↓
+                Scan <ArrowRight className="w-3 h-3" />
               </button>
             </div>
-          </div>
-
-          {/* RIGHT — Live Intelligence Card */}
-          <div style={{ opacity: 0, animation: "heroFadeIn 0.7s ease 0.6s forwards" }}>
-            <div className="bg-[#111118] rounded-xl border border-border/30 shadow-2xl p-6 text-white">
-              {/* Header */}
-              <div className="flex items-center justify-between mb-5">
-                <span className="font-mono text-[11px] tracking-[0.2em] uppercase" style={{ color: "#F0C040" }}>
-                  Integrity Snapshot
-                </span>
-                <div className="flex items-center gap-1.5">
-                  <Building className="w-3.5 h-3.5 text-white/50" />
-                  <span className="font-sans text-sm font-semibold text-white/90">Amazon</span>
-                </div>
-              </div>
-
-              {/* Score */}
-              <div className="flex items-baseline gap-2 mb-1">
-                <span className="font-sans text-5xl font-black text-red-400">41</span>
-                <span className="font-mono text-sm text-white/40">/100</span>
-              </div>
-              <p className="font-mono text-[11px] tracking-wider uppercase text-white/40 mb-6">Integrity Score</p>
-
-              {/* Signals */}
-              <div className="space-y-3">
-                <div className="flex items-start gap-3 p-3 rounded-lg bg-white/[0.04] border border-white/[0.06]">
-                  <span className="mt-0.5 w-2.5 h-2.5 rounded-full bg-red-500 shrink-0" />
-                  <div>
-                    <p className="font-mono text-[11px] tracking-wider uppercase text-red-400 mb-0.5">OSHA Safety</p>
-                    <p className="text-sm text-white/70">17 citations · 2x industry avg</p>
-                  </div>
-                </div>
-                <div className="flex items-start gap-3 p-3 rounded-lg bg-white/[0.04] border border-white/[0.06]">
-                  <span className="mt-0.5 w-2.5 h-2.5 rounded-full bg-red-500 shrink-0" />
-                  <div>
-                    <p className="font-mono text-[11px] tracking-wider uppercase text-red-400 mb-0.5">Political Spending</p>
-                    <p className="text-sm text-white/70">Anti-worker ergonomics funding</p>
-                  </div>
-                </div>
-                <div className="flex items-start gap-3 p-3 rounded-lg bg-white/[0.04] border border-white/[0.06]">
-                  <span className="mt-0.5 w-2.5 h-2.5 rounded-full bg-amber-400 shrink-0" />
-                  <div>
-                    <p className="font-mono text-[11px] tracking-wider uppercase text-amber-400 mb-0.5">Workforce Stability</p>
-                    <p className="text-sm text-white/70">27,000 layoffs · 5-day RTO</p>
-                  </div>
-                </div>
-              </div>
-
-              {/* Blurred locked row */}
-              <div className="mt-4 relative overflow-hidden rounded-lg">
-                <div className="p-3 bg-white/[0.03] border border-white/[0.06] rounded-lg backdrop-blur-sm" style={{ filter: "blur(2px)" }}>
-                  <div className="flex items-center gap-2">
-                    <span className="w-2.5 h-2.5 rounded-full bg-white/20" />
-                    <span className="h-3 w-32 bg-white/10 rounded" />
-                  </div>
-                </div>
-                <Link
-                  to="/company/amazon"
-                  className="absolute inset-0 flex items-center justify-center font-sans text-sm font-semibold text-primary hover:text-primary/80 transition-colors"
-                >
-                  View Full Receipt →
-                </Link>
-              </div>
-            </div>
-            <p className="text-center font-mono text-[11px] text-muted-foreground mt-3 tracking-wide">
-              Updated in real time from public records
-            </p>
-          </div>
+          </form>
+          <p className="font-mono text-[10px] text-muted-foreground/50 mt-3 tracking-wide" style={{ opacity: 0, animation: "heroFadeIn 0.4s ease 1.2s forwards" }}>
+            Powered by FEC, SEC EDGAR, BLS, OSHA, NLRB, and Senate Lobbying data.
+          </p>
         </div>
       </section>
 
@@ -214,147 +123,81 @@ const Index = forwardRef<HTMLDivElement>((_, ref) => {
         }
       `}</style>
 
-      {/* ══════════════════════════════════════════════════════════════════
-          SECTION: START HERE — Decision Path
-      ══════════════════════════════════════════════════════════════════ */}
+      {/* ── SECTION 2: SCROLLING TICKER ── */}
+      <Suspense fallback={<div className="h-[36px] bg-background border-b border-border/10" />}>
+        <LiveIntelligenceTicker />
+      </Suspense>
+
+      {/* ── SECTION 3: FEATURED COMPANY CARDS ── */}
+      <section className="px-6 lg:px-16 py-16 lg:py-20 bg-background">
+        <div className="max-w-[1100px] mx-auto">
+          <p className="font-mono text-xs tracking-[0.15em] uppercase text-primary mb-3 text-center">
+            Recent Receipts
+          </p>
+          <h2 className="font-sans text-foreground leading-[1.1] mb-10 text-center" style={{ fontSize: "clamp(1.5rem, 3vw, 2.25rem)", fontWeight: 800 }}>
+            What we've found so far
+          </h2>
+
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
+            {(featuredCompanies || []).map((co: any) => (
+              <Link key={co.id} to={`/company/${co.slug}`} className="group">
+                <div className="border border-border bg-card p-5 hover:border-primary/30 transition-all h-full">
+                  <div className="flex items-start justify-between gap-3 mb-3">
+                    <div className="flex items-start gap-3 min-w-0">
+                      <div className="w-9 h-9 rounded-lg bg-muted/60 flex items-center justify-center shrink-0">
+                        <Building className="w-4 h-4 text-muted-foreground/70" />
+                      </div>
+                      <div className="min-w-0">
+                        <h3 className="font-sans text-foreground group-hover:text-primary transition-colors truncate font-semibold text-base">
+                          {co.name}
+                        </h3>
+                        <p className="text-xs text-muted-foreground">
+                          {co.industry} · {co.state}
+                        </p>
+                      </div>
+                    </div>
+                    <ArrowRight className="w-4 h-4 text-muted-foreground/40 group-hover:text-primary transition-all shrink-0 mt-1" />
+                  </div>
+                  <div className="flex items-center justify-between text-xs text-muted-foreground">
+                    <span className={`font-mono font-bold px-2 py-0.5 rounded ${
+                      co.civic_footprint_score >= 70 ? "bg-green-500/10 text-green-400" :
+                      co.civic_footprint_score >= 40 ? "bg-yellow-500/10 text-yellow-400" :
+                      "bg-red-500/10 text-red-400"
+                    }`}>
+                      {co.civic_footprint_score}/100
+                    </span>
+                    <span>
+                      {co.total_pac_spending > 0
+                        ? `PAC: $${co.total_pac_spending >= 1000000 ? (co.total_pac_spending / 1000000).toFixed(1) + "M" : co.total_pac_spending >= 1000 ? (co.total_pac_spending / 1000).toFixed(0) + "K" : co.total_pac_spending}`
+                        : "No PAC data"}
+                    </span>
+                  </div>
+                </div>
+              </Link>
+            ))}
+          </div>
+
+          <div className="text-center mt-8">
+            <Link to="/receipts" className="font-sans text-sm text-primary hover:text-primary/80 transition-colors font-medium">
+              View all receipts →
+            </Link>
+          </div>
+        </div>
+      </section>
+
+      {/* ── SECTION 4: WHAT IS WDIWF? ── */}
       <section className="bg-card border-y border-border px-6 lg:px-16 py-20 lg:py-24">
         <div className="max-w-[1100px] mx-auto">
           <p className="font-mono text-xs tracking-[0.15em] uppercase text-primary mb-3 text-center">
-            Start Here
+            What is WDIWF?
           </p>
-          <h2 className="font-sans text-foreground leading-[1.1] mb-12 text-center" style={{ fontSize: "clamp(1.5rem, 3vw, 2.5rem)", fontWeight: 800 }}>
-            Where do you start?
+          <h2 className="font-sans text-foreground leading-[1.1] mb-6 text-center" style={{ fontSize: "clamp(1.5rem, 3vw, 2.5rem)", fontWeight: 800 }}>
+            Every company runs a background check on you. This is yours on them.
           </h2>
-
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            <div className="border border-border bg-background p-7 flex flex-col">
-              <Search className="w-8 h-8 text-primary mb-4" strokeWidth={1.5} />
-              <span className="font-mono text-[11px] tracking-[0.15em] uppercase text-primary font-semibold mb-2">For Candidates</span>
-              <h3 className="font-sans font-bold text-foreground text-lg mb-2">Is your offer safe?</h3>
-              <p className="font-sans text-sm text-muted-foreground leading-relaxed mb-6 flex-1">
-                Run a forensic audit on any employer before you sign.
-              </p>
-              <Button onClick={() => navigate("/pricing")} className="w-full">
-                Get a Candidate Report — $49
-              </Button>
-            </div>
-
-            <div className="border border-border bg-background p-7 flex flex-col">
-              <Briefcase className="w-8 h-8 text-primary mb-4" strokeWidth={1.5} />
-              <span className="font-mono text-[11px] tracking-[0.15em] uppercase text-primary font-semibold mb-2">For Recruiters</span>
-              <h3 className="font-sans font-bold text-foreground text-lg mb-2">Stop losing talent to the Integrity Gap.</h3>
-              <p className="font-sans text-sm text-muted-foreground leading-relaxed mb-6 flex-1">
-                Show candidates your company passes the receipts test before they walk.
-              </p>
-              <Button onClick={() => navigate("/recruiter-brief")} variant="outline" className="w-full">
-                Get the RecruiterBrief
-              </Button>
-            </div>
-
-            <div className="border border-border bg-background p-7 flex flex-col">
-              <Shield className="w-8 h-8 text-primary mb-4" strokeWidth={1.5} />
-              <span className="font-mono text-[11px] tracking-[0.15em] uppercase text-primary font-semibold mb-2">For Executives</span>
-              <h3 className="font-sans font-bold text-foreground text-lg mb-2">Is your brand audit-proof?</h3>
-              <p className="font-sans text-sm text-muted-foreground leading-relaxed mb-6 flex-1">
-                Before your next executive hire finds your PAC filings — we will.
-              </p>
-              <Button onClick={() => { window.location.href = "mailto:jackyeclayton@gmail.com"; }} variant="outline" className="w-full">
-                Book a Corporate Integrity Audit
-              </Button>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* ══════════════════════════════════════════════════════════════════
-          SECTION: SEE THE RECEIPTS — Live Forensic Snapshot
-      ══════════════════════════════════════════════════════════════════ */}
-      <section className="px-6 lg:px-16 py-20 lg:py-24 bg-background">
-        <div className="max-w-[900px] mx-auto">
-          <p className="font-mono text-xs tracking-[0.15em] uppercase text-primary mb-3 text-center">
-            See The Receipts
-          </p>
-          <h2 className="font-sans text-foreground leading-[1.1] mb-3 text-center" style={{ fontSize: "clamp(1.5rem, 3vw, 2.5rem)", fontWeight: 800 }}>
-            See What We Find
-          </h2>
-          <p className="text-sm text-muted-foreground text-center mb-10 max-w-[600px] mx-auto">
-            This is what a Forensic Integrity Snapshot looks like. Every employer has a receipt.
+          <p className="font-sans text-sm text-muted-foreground leading-relaxed max-w-[600px] mx-auto text-center mb-14">
+            WDIWF aggregates public data — PAC filings, OSHA citations, lobbying disclosures, WARN Act notices, SEC filings — and turns it into a forensic employer profile. So you can see the receipts before you sign.
           </p>
 
-          <div className="border border-border bg-card p-6 lg:p-8">
-            <div className="flex items-start justify-between flex-wrap gap-4 mb-6">
-              <div>
-                <h3 className="font-sans font-bold text-foreground text-xl">Amazon</h3>
-                <span className="font-mono text-xs text-muted-foreground tracking-wider">NASDAQ: AMZN</span>
-              </div>
-              <div className="flex flex-col items-center">
-                <span className="text-xs font-mono uppercase tracking-wider text-muted-foreground mb-1">Integrity Score</span>
-                <span className="inline-flex items-center justify-center w-14 h-14 rounded-lg bg-destructive/15 text-destructive font-bold text-xl font-mono">
-                  41
-                </span>
-                <span className="text-[10px] text-muted-foreground mt-0.5">/ 100</span>
-              </div>
-            </div>
-
-            <div className="space-y-4 mb-6">
-              <div className="flex items-start gap-3 p-3 bg-destructive/5 border border-destructive/10 rounded-md">
-                <span className="text-base mt-0.5">🔴</span>
-                <div>
-                  <p className="text-sm font-semibold text-foreground">Worker Safety Risk</p>
-                  <p className="text-xs text-muted-foreground leading-relaxed mt-0.5">
-                    17 OSHA warehouse citations 2022-2024. Injury rates 2x industry average. Corporate-wide settlement Dec 2024.
-                  </p>
-                </div>
-              </div>
-              <div className="flex items-start gap-3 p-3 bg-destructive/5 border border-destructive/10 rounded-md">
-                <span className="text-base mt-0.5">🔴</span>
-                <div>
-                  <p className="text-sm font-semibold text-foreground">Legislative Receipts</p>
-                  <p className="text-xs text-muted-foreground leading-relaxed mt-0.5">
-                    PAC contributions to candidates supporting rollback of worker ergonomic protections. FEC filings on record.
-                  </p>
-                </div>
-              </div>
-              <div className="flex items-start gap-3 p-3 bg-yellow-500/5 border border-yellow-500/10 rounded-md">
-                <span className="text-base mt-0.5">🟡</span>
-                <div>
-                  <p className="text-sm font-semibold text-foreground">Workforce Stability</p>
-                  <p className="text-xs text-muted-foreground leading-relaxed mt-0.5">
-                    27,000 layoffs 2022-2023. Mandatory 5-day RTO implemented 2024. Active union organizing (ALU) at fulfillment centers.
-                  </p>
-                </div>
-              </div>
-            </div>
-
-            <div className="relative overflow-hidden rounded-md mb-6">
-              <div className="h-24 bg-muted/40 blur-[6px] flex flex-col justify-center px-4 gap-2 select-none pointer-events-none" aria-hidden="true">
-                <div className="h-3 bg-muted-foreground/10 rounded w-3/4" />
-                <div className="h-3 bg-muted-foreground/10 rounded w-1/2" />
-                <div className="h-3 bg-muted-foreground/10 rounded w-2/3" />
-                <div className="h-3 bg-muted-foreground/10 rounded w-5/6" />
-              </div>
-              <div className="absolute inset-0 flex items-center justify-center">
-                <span className="font-mono text-xs tracking-wider text-muted-foreground bg-background/80 px-3 py-1 rounded-full">
-                  Full Receipt Available →
-                </span>
-              </div>
-            </div>
-
-            <Button onClick={() => navigate("/company/amazon")} className="w-full mb-3">
-              View Full Amazon Report <ArrowRight className="w-4 h-4 ml-1" />
-            </Button>
-            <p className="text-[11px] text-muted-foreground text-center font-mono tracking-wide">
-              Data sourced from OSHA, FEC, WARN Act filings, and BLS — all public record.
-            </p>
-          </div>
-        </div>
-      </section>
-
-      {/* ══════════════════════════════════════════════════════════════════
-          SECTION 2: THREE VALUE PROPS
-      ══════════════════════════════════════════════════════════════════ */}
-      <section className="bg-card border-y border-border px-6 lg:px-16 py-16 lg:py-20">
-        <div className="max-w-[1100px] mx-auto">
           <div className="grid grid-cols-1 md:grid-cols-3 gap-0">
             {[
               {
@@ -378,9 +221,9 @@ const Index = forwardRef<HTMLDivElement>((_, ref) => {
                 className={`py-8 ${i < 2 ? "md:border-r md:border-border md:pr-8" : ""} ${i > 0 ? "md:pl-8" : ""} ${i < 2 ? "border-b md:border-b-0 border-border pb-8 md:pb-0" : ""}`}
               >
                 <div className="mb-4">{card.icon}</div>
-                <h2 className="font-sans font-bold text-foreground mb-2" style={{ fontSize: "18px" }}>
+                <h3 className="font-sans font-bold text-foreground mb-2" style={{ fontSize: "18px" }}>
                   {card.title}
-                </h2>
+                </h3>
                 <p className="font-sans text-sm text-muted-foreground leading-relaxed">
                   {card.body}
                 </p>
@@ -390,10 +233,61 @@ const Index = forwardRef<HTMLDivElement>((_, ref) => {
         </div>
       </section>
 
-      {/* ══════════════════════════════════════════════════════════════════
-          SECTION 3: THE INTEGRITY GAP (The Problem)
-      ══════════════════════════════════════════════════════════════════ */}
-      <section className="px-6 lg:px-16 py-24 lg:py-32 bg-background">
+      {/* ── SECTION 5: START HERE — Pricing Tiers ── */}
+      <section className="px-6 lg:px-16 py-20 lg:py-24 bg-background">
+        <div className="max-w-[1100px] mx-auto">
+          <p className="font-mono text-xs tracking-[0.15em] uppercase text-primary mb-3 text-center">
+            Start Here
+          </p>
+          <h2 className="font-sans text-foreground leading-[1.1] mb-12 text-center" style={{ fontSize: "clamp(1.5rem, 3vw, 2.5rem)", fontWeight: 800 }}>
+            Where do you start?
+          </h2>
+
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+            <div className="border border-border bg-card p-7 flex flex-col">
+              <Search className="w-8 h-8 text-primary mb-4" strokeWidth={1.5} />
+              <span className="font-mono text-[11px] tracking-[0.15em] uppercase text-primary font-semibold mb-2">For Candidates</span>
+              <h3 className="font-sans font-bold text-foreground text-lg mb-2">Is your offer safe?</h3>
+              <p className="font-sans text-sm text-muted-foreground leading-relaxed mb-6 flex-1">
+                Run a forensic audit on any employer before you sign.
+              </p>
+              <Button onClick={() => navigate("/pricing")} className="w-full mb-2">
+                Get a Candidate Report — $49
+              </Button>
+              <p className="text-[11px] text-muted-foreground text-center">Full integrity dossier on one employer, delivered in 48 hours.</p>
+            </div>
+
+            <div className="border border-border bg-card p-7 flex flex-col">
+              <Briefcase className="w-8 h-8 text-primary mb-4" strokeWidth={1.5} />
+              <span className="font-mono text-[11px] tracking-[0.15em] uppercase text-primary font-semibold mb-2">For Recruiters</span>
+              <h3 className="font-sans font-bold text-foreground text-lg mb-2">Stop losing talent to the Integrity Gap.</h3>
+              <p className="font-sans text-sm text-muted-foreground leading-relaxed mb-6 flex-1">
+                Show candidates your company passes the receipts test before they walk.
+              </p>
+              <Button onClick={() => navigate("/recruiter-brief")} variant="outline" className="w-full mb-2">
+                Get the RecruiterBrief
+              </Button>
+              <p className="text-[11px] text-muted-foreground text-center">Candidate-facing integrity report you can share during the hiring process.</p>
+            </div>
+
+            <div className="border border-border bg-card p-7 flex flex-col">
+              <Shield className="w-8 h-8 text-primary mb-4" strokeWidth={1.5} />
+              <span className="font-mono text-[11px] tracking-[0.15em] uppercase text-primary font-semibold mb-2">For Executives</span>
+              <h3 className="font-sans font-bold text-foreground text-lg mb-2">Is your brand audit-proof?</h3>
+              <p className="font-sans text-sm text-muted-foreground leading-relaxed mb-6 flex-1">
+                Before your next executive hire finds your PAC filings — we will.
+              </p>
+              <Button onClick={() => { window.location.href = "mailto:jackye@jackyeclayton.com"; }} variant="outline" className="w-full mb-2">
+                Book a Corporate Integrity Audit
+              </Button>
+              <p className="text-[11px] text-muted-foreground text-center">White-glove corporate integrity assessment with Jackye Clayton.</p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* ── SECTION 6: THE INTEGRITY GAP ── */}
+      <section className="bg-card border-y border-border px-6 lg:px-16 py-20 lg:py-24">
         <div className="max-w-[1100px] mx-auto">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-20 items-center">
             <div>
@@ -403,17 +297,9 @@ const Index = forwardRef<HTMLDivElement>((_, ref) => {
               <h2 className="font-sans text-foreground leading-[1.1] mb-6" style={{ fontSize: "clamp(1.5rem, 3vw, 2.5rem)", fontWeight: 800 }}>
                 Companies interview you. But who's interviewing them?
               </h2>
-              <div className="space-y-4">
-                <p className="text-sm text-muted-foreground leading-relaxed">
-                  Right now, the hiring process is a one-way mirror. Companies run background checks, AI screenings, and behavioral assessments on you — while you're left Googling their CEO and hoping the Glassdoor reviews are real.
-                </p>
-                <p className="text-sm text-muted-foreground leading-relaxed">
-                  That's the Integrity Gap: the distance between what a company says about itself and what it actually does. Their careers page says "people-first culture." Their turnover data says otherwise. Their press release says "committed to diversity." Their leadership team tells a different story.
-                </p>
-                <p className="text-sm text-muted-foreground leading-relaxed">
-                  WDIWF closes that gap. We give you the forensic tools to evaluate employers with the same rigor they use to evaluate you.
-                </p>
-              </div>
+              <p className="text-sm text-muted-foreground leading-relaxed">
+                The Integrity Gap is the distance between what a company says about itself and what it actually does. Their careers page says "people-first." Their turnover data says otherwise. WDIWF closes that gap — giving you the forensic tools to evaluate employers with the same rigor they use to evaluate you.
+              </p>
             </div>
             <div>
               <blockquote className="border-l-2 border-primary pl-6 py-2">
@@ -426,56 +312,8 @@ const Index = forwardRef<HTMLDivElement>((_, ref) => {
         </div>
       </section>
 
-      {/* ══════════════════════════════════════════════════════════════════
-          SECTION 4: HOW IT WORKS (3 Steps)
-      ══════════════════════════════════════════════════════════════════ */}
-      <section id="how-it-works" className="px-6 lg:px-16 py-24 lg:py-32 bg-background">
-        <div className="max-w-[1100px] mx-auto">
-          <p className="font-mono text-xs tracking-[0.15em] uppercase text-primary mb-4">
-            How It Works
-          </p>
-          <h2 className="font-sans text-foreground leading-[1.1] mb-12" style={{ fontSize: "clamp(1.5rem, 3vw, 2.5rem)", fontWeight: 800 }}>
-            Three steps to knowing the truth.
-          </h2>
-
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            {[
-              {
-                step: "01",
-                title: "Search",
-                body: "Enter a company name. WDIWF aggregates publicly available data — leadership changes, legal records, employee sentiment, DEIB commitments, funding history, and more — into one forensic profile.",
-              },
-              {
-                step: "02",
-                title: "Score",
-                body: "Our Integrity Score measures the gap between what a company claims and what the data shows. No sponsored results. No employer branding. Just receipts.",
-              },
-              {
-                step: "03",
-                title: "Decide",
-                body: "Use your intelligence report to ask better questions in interviews, negotiate from a position of strength, or walk away before it costs you. Your career. Your terms.",
-              },
-            ].map((item) => (
-              <div key={item.step} className="rounded-xl p-7 bg-card border border-border">
-                <span className="font-mono text-xs font-bold text-primary tracking-wider mb-4 block">
-                  {item.step}
-                </span>
-                <h3 className="font-sans font-bold text-foreground mb-3" style={{ fontSize: "18px" }}>
-                  {item.title}
-                </h3>
-                <p className="font-sans text-sm text-muted-foreground leading-relaxed">
-                  {item.body}
-                </p>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* ══════════════════════════════════════════════════════════════════
-          SECTION 5: WHO IT'S FOR (4 Persona Cards)
-      ══════════════════════════════════════════════════════════════════ */}
-      <section className="bg-card border-y border-border px-6 lg:px-16 py-24 lg:py-32">
+      {/* ── SECTION 7: WHO IT'S FOR ── */}
+      <section className="px-6 lg:px-16 py-20 lg:py-24 bg-background">
         <div className="max-w-[1100px] mx-auto">
           <p className="font-mono text-xs tracking-[0.15em] uppercase text-primary mb-4">
             Who It's For
@@ -507,7 +345,7 @@ const Index = forwardRef<HTMLDivElement>((_, ref) => {
                 body: "The best candidates are already researching you. WDIWF shows you what they'll find — so you can fix it before it costs you a hire.",
               },
             ].map((card) => (
-              <div key={card.persona} className="rounded-xl p-7 bg-background border border-border hover:border-primary/30 transition-colors">
+              <div key={card.persona} className="rounded-xl p-7 bg-card border border-border hover:border-primary/30 transition-colors">
                 <p className="font-mono text-xs tracking-[0.1em] uppercase text-primary mb-2">
                   {card.persona}
                 </p>
@@ -523,15 +361,13 @@ const Index = forwardRef<HTMLDivElement>((_, ref) => {
         </div>
       </section>
 
-      {/* ══════════════════════════════════════════════════════════════════
-          SECTION 6: CREDIBILITY / SOCIAL PROOF
-      ══════════════════════════════════════════════════════════════════ */}
+      {/* ── SECTION 8: CREDIBILITY ── */}
       <Suspense fallback={null}>
         <SectionReveal>
-          <section className="bg-card border-y border-border px-6 lg:px-16 py-24 lg:py-32">
+          <section className="bg-card border-y border-border px-6 lg:px-16 py-20 lg:py-24">
             <div className="max-w-[1100px] mx-auto">
               <p className="font-mono text-xs tracking-[0.15em] uppercase text-primary mb-6">
-                Built by someone who knows where the bodies are buried
+                Built by someone who helped build the machine — and knows what it misses.
               </p>
               <div className="grid grid-cols-1 lg:grid-cols-[auto_1fr] gap-12 items-start">
                 <img
@@ -580,10 +416,8 @@ const Index = forwardRef<HTMLDivElement>((_, ref) => {
         </SectionReveal>
       </Suspense>
 
-      {/* ══════════════════════════════════════════════════════════════════
-          SECTION 7: EMAIL CAPTURE / CTA
-      ══════════════════════════════════════════════════════════════════ */}
-      <section className="px-6 lg:px-16 py-28 lg:py-36 text-center relative overflow-hidden">
+      {/* ── SECTION 9: CTA + EMAIL CAPTURE ── */}
+      <section className="px-6 lg:px-16 py-24 lg:py-32 text-center relative overflow-hidden">
         <div className="absolute bottom-[-20%] left-[-5%] w-[40%] h-[60%] pointer-events-none" style={{ background: "radial-gradient(ellipse, rgba(240,192,64,0.05) 0%, transparent 70%)" }} />
         <div className="relative z-[1] max-w-[600px] mx-auto">
           <h2 className="font-sans text-foreground leading-[1.1] mb-4" style={{ fontSize: "clamp(1.5rem, 3vw, 2.5rem)", fontWeight: 800 }}>
@@ -612,65 +446,9 @@ const Index = forwardRef<HTMLDivElement>((_, ref) => {
         </div>
       </section>
 
-      {/* ── Email Capture (existing component) ── */}
       <Suspense fallback={null}><EmailCapture /></Suspense>
 
-      {/* ══════════════════════════════════════════════════════════════════
-          SECTION 8: FOOTER
-      ══════════════════════════════════════════════════════════════════ */}
-      <footer className="bg-card border-t border-border px-6 lg:px-16 py-12">
-        <div className="max-w-[1100px] mx-auto">
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-8 mb-8">
-            <div className="col-span-2 md:col-span-1">
-              <Link to="/" className="flex items-center mb-3">
-                <span style={{fontFamily:"Inter,sans-serif",fontWeight:900,letterSpacing:"-0.03em",fontSize:"22px"}}>
-                  <span className="text-foreground">W</span>
-                  <span style={{color:"#F0C040"}}>?</span>
-                </span>
-              </Link>
-              <p className="font-sans text-sm text-muted-foreground leading-relaxed max-w-[28ch]">
-                Career intelligence that closes the Integrity Gap. Know before you go.
-              </p>
-            </div>
-            <div>
-              <p className="font-mono text-xs tracking-[0.15em] uppercase text-muted-foreground/50 mb-3">WDIWF</p>
-              <nav className="flex flex-col gap-2">
-                <Link to="/" className="font-sans text-sm text-muted-foreground hover:text-foreground transition-colors">Home</Link>
-                <Link to="/receipts" className="font-sans text-sm text-muted-foreground hover:text-foreground transition-colors">Receipts</Link>
-                <Link to="/browse" className="font-sans text-sm text-muted-foreground hover:text-foreground transition-colors">Companies</Link>
-                <Link to="/about" className="font-sans text-sm text-muted-foreground hover:text-foreground transition-colors">About</Link>
-                <Link to="/for-employers" className="font-sans text-sm text-muted-foreground hover:text-foreground transition-colors">For Companies</Link>
-                <Link to="/pricing" className="font-sans text-sm text-muted-foreground hover:text-foreground transition-colors">Pricing</Link>
-                <Link to="/contact" className="font-sans text-sm text-muted-foreground hover:text-foreground transition-colors">Contact</Link>
-              </nav>
-            </div>
-            <div>
-              <p className="font-mono text-xs tracking-[0.15em] uppercase text-muted-foreground/50 mb-3">Connect</p>
-              <nav className="flex flex-col gap-2">
-                <a href="https://www.linkedin.com/in/jackyeclayton/" target="_blank" rel="noopener noreferrer" className="font-sans text-sm text-muted-foreground hover:text-foreground transition-colors">LinkedIn</a>
-                <a href="https://jackyeclayton.com/speaking" target="_blank" rel="noopener noreferrer" className="font-sans text-sm text-muted-foreground hover:text-foreground transition-colors">Speaking</a>
-                <a href="https://www.inclusiveafpodcast.com" target="_blank" rel="noopener noreferrer" className="font-sans text-sm text-muted-foreground hover:text-foreground transition-colors">Inclusive AF Podcast</a>
-                <a href="https://wrkdefined.com/podcast/but-first-coffee" target="_blank" rel="noopener noreferrer" className="font-sans text-sm text-muted-foreground hover:text-foreground transition-colors">But First, Coffee</a>
-              </nav>
-            </div>
-            <div>
-              <p className="font-mono text-xs tracking-[0.15em] uppercase text-muted-foreground/50 mb-3">Legal</p>
-              <nav className="flex flex-col gap-2">
-                <Link to="/privacy" className="font-sans text-sm text-muted-foreground hover:text-foreground transition-colors">Privacy Policy</Link>
-                <Link to="/terms" className="font-sans text-sm text-muted-foreground hover:text-foreground transition-colors">Terms of Service</Link>
-              </nav>
-            </div>
-          </div>
-          <div className="border-t border-border pt-4 flex justify-between items-center flex-wrap gap-3">
-            <p className="font-sans text-xs text-muted-foreground/50">
-              © 2026 WDIWF. A People Puzzles venture. Built because you deserve to know.
-            </p>
-            <p className="font-sans text-xs text-muted-foreground/50">
-              Built on public records: FEC · SEC · BLS · OSHA · NLRB · Senate Lobbying
-            </p>
-          </div>
-        </div>
-      </footer>
+      <SiteFooter />
     </div>
   );
 });
