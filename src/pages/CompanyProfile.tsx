@@ -376,7 +376,29 @@ export default function CompanyProfile() {
             </CardContent>
           </Card>
 
-          {/* Integrity Indicators — sticky badges */}
+          {/* Admin Editor Panel */}
+          {isEditingCompany && dbCompany && (
+            <AdminCompanyEditor
+              companyId={dbCompany.id}
+              companySlug={id || ""}
+              currentData={{
+                name: dbCompany.name,
+                industry: dbCompany.industry,
+                state: dbCompany.state,
+                description: (dbCompany as any)?.description ?? null,
+                employee_count: (dbCompany as any)?.employee_count ?? null,
+                website_url: (dbCompany as any)?.website_url ?? null,
+                careers_url: (dbCompany as any)?.careers_url ?? null,
+                parent_company: (dbCompany as any)?.parent_company ?? null,
+                jackye_insight: dbCompany.jackye_insight ?? null,
+                ticker: (dbCompany as any)?.ticker ?? null,
+                revenue: (dbCompany as any)?.revenue ?? null,
+                founded_year: (dbCompany as any)?.founded_year ?? null,
+              }}
+              onClose={() => setIsEditingCompany(false)}
+            />
+          )}
+
           {dbCompany?.id && <IntegrityIndicators companyId={dbCompany.id} />}
 
           {/* ═══════════════════════════════════════════════════════
