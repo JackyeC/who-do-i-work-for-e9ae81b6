@@ -45,6 +45,13 @@ export const MAIN_SECTIONS = [
     subItems: [],
   },
   {
+    id: "hrtech",
+    label: "HR Tech Intel",
+    path: "/hrtech",
+    matchPaths: ["/hrtech"],
+    subItems: [],
+  },
+  {
     id: "career-map",
     label: "Career Map",
     path: "/career-intelligence",
@@ -147,6 +154,7 @@ export function TopBar() {
     { label: "Offer Analysis", path: "/check" },
     { label: "Compare Companies", path: "/compare" },
     { label: "Follow the Money", path: "/follow-the-money" },
+    { label: "HR Tech Intel", path: "/hrtech" },
     { label: "Recruiter Brief", path: "/recruiter-brief" },
     { label: "Methodology", path: "/methodology" },
     { label: "Pricing", path: "/pricing" },
