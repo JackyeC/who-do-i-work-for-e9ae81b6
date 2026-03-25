@@ -160,9 +160,9 @@ const Index = forwardRef<HTMLDivElement>((_, ref) => {
                   </div>
                   <div className="flex items-center justify-between text-xs text-muted-foreground">
                     <span className={`font-mono font-bold px-2 py-0.5 rounded ${
-                      co.civic_footprint_score >= 70 ? "bg-green-500/10 text-green-400" :
-                      co.civic_footprint_score >= 40 ? "bg-yellow-500/10 text-yellow-400" :
-                      "bg-red-500/10 text-red-400"
+                      co.civic_footprint_score >= 70 ? "bg-civic-green/10 text-civic-green" :
+                      co.civic_footprint_score >= 40 ? "bg-civic-yellow/10 text-civic-yellow" :
+                      "bg-civic-red/10 text-civic-red"
                     }`}>
                       {co.civic_footprint_score}/100
                     </span>
