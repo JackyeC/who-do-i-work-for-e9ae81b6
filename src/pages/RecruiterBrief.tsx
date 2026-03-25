@@ -397,7 +397,16 @@ export default function RecruiterBrief() {
             <Button variant="outline" className="gap-2 text-sm">
               <Save className="w-4 h-4" /> Save Brief
             </Button>
-            <Button variant="outline" className="gap-2 text-sm">
+            <Button
+              variant="outline"
+              className="gap-2 text-sm"
+              onClick={() => {
+                if (brief) {
+                  generateCandidatePdf(brief);
+                  toast({ title: "Candidate brief downloaded 📄" });
+                }
+              }}
+            >
               <FileText className="w-4 h-4" /> Generate Candidate Version
             </Button>
             <Button variant="outline" className="gap-2 text-sm">
