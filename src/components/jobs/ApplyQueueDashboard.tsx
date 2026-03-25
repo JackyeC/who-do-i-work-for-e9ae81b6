@@ -17,8 +17,8 @@ import { motion } from "framer-motion";
 
 const STATUS_CONFIG: Record<string, { label: string; icon: React.ElementType; color: string }> = {
   queued: { label: "Queued", icon: Clock, color: "text-muted-foreground bg-muted border-border" },
-  processing: { label: "Processing", icon: Loader2, color: "text-yellow-600 bg-yellow-50 border-yellow-200 dark:bg-yellow-500/10 dark:border-yellow-500/20" },
-  completed: { label: "Completed", icon: CheckCircle2, color: "text-green-600 bg-green-50 border-green-200 dark:bg-green-500/10 dark:border-green-500/20" },
+  processing: { label: "Processing", icon: Loader2, color: "text-civic-yellow bg-yellow-50 border-yellow-200/10 dark:border-civic-yellow/20" },
+  completed: { label: "Completed", icon: CheckCircle2, color: "text-civic-green bg-green-50 border-green-200/10 dark:border-green-500/20" },
   failed: { label: "Failed", icon: AlertCircle, color: "text-destructive bg-destructive/5 border-destructive/30" },
 };
 
@@ -91,7 +91,7 @@ function QueueItemCard({
             <div className="flex items-center gap-1 shrink-0">
               {item.generated_payload?.matchingStatement && (
                 <Button size="icon" variant="ghost" onClick={handleCopy} className="h-7 w-7">
-                  {copied ? <Check className="w-3 h-3 text-green-500" /> : <Copy className="w-3 h-3" />}
+                  {copied ? <Check className="w-3 h-3 text-civic-green" /> : <Copy className="w-3 h-3" />}
                 </Button>
               )}
               {item.generated_payload?.advocacyData && (
@@ -191,7 +191,7 @@ export function ApplyQueueDashboard() {
             <strong className="text-foreground">{queuedCount}</strong> queued
           </span>
           <span className="flex items-center gap-1">
-            <CheckCircle2 className="w-3.5 h-3.5 text-green-500" />
+            <CheckCircle2 className="w-3.5 h-3.5 text-civic-green" />
             <strong className="text-foreground">{completedCount}</strong> done
           </span>
           {failedCount > 0 && (

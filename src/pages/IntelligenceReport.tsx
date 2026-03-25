@@ -18,20 +18,20 @@ import {
 
 const CONFIDENCE_BADGE: Record<string, { label: string; class: string }> = {
   high: { label: "High Confidence", class: "border-primary/30 text-primary bg-primary/5" },
-  medium: { label: "Medium Confidence", class: "border-amber-500/30 text-amber-600 bg-amber-500/5" },
-  low: { label: "Low Confidence", class: "border-orange-500/30 text-orange-600 bg-orange-500/5" },
+  medium: { label: "Medium Confidence", class: "border-civic-yellow/30 text-civic-yellow bg-civic-yellow/5" },
+  low: { label: "Low Confidence", class: "border-civic-yellow/30 text-civic-yellow bg-civic-yellow/5" },
 };
 
 const VERIFICATION_BADGE: Record<string, { label: string; icon: any; class: string }> = {
   fully_verified: { label: "Fully Verified", icon: CheckCircle2, class: "text-primary" },
-  partially_verified: { label: "Partially Verified", icon: Shield, class: "text-amber-600" },
-  analysis_with_linked_evidence: { label: "Analysis with Linked Evidence", icon: FileText, class: "text-blue-600" },
-  limited_evidence: { label: "Limited Evidence", icon: AlertTriangle, class: "text-orange-600" },
+  partially_verified: { label: "Partially Verified", icon: Shield, class: "text-civic-yellow" },
+  analysis_with_linked_evidence: { label: "Analysis with Linked Evidence", icon: FileText, class: "text-civic-blue" },
+  limited_evidence: { label: "Limited Evidence", icon: AlertTriangle, class: "text-civic-yellow" },
   unverified: { label: "Unverified / Open Question", icon: HelpCircle, class: "text-muted-foreground" },
   verified_primary_source: { label: "Verified Primary Source", icon: CheckCircle2, class: "text-primary" },
-  verified_secondary_source: { label: "Verified Secondary", icon: Shield, class: "text-amber-600" },
-  third_party_summary: { label: "Third-Party Summary", icon: FileText, class: "text-blue-500" },
-  partial_match: { label: "Partial Match", icon: AlertTriangle, class: "text-orange-500" },
+  verified_secondary_source: { label: "Verified Secondary", icon: Shield, class: "text-civic-yellow" },
+  third_party_summary: { label: "Third-Party Summary", icon: FileText, class: "text-civic-blue" },
+  partial_match: { label: "Partial Match", icon: AlertTriangle, class: "text-civic-yellow" },
 };
 
 const CLAIM_TYPE_LABEL: Record<string, string> = {
@@ -363,7 +363,7 @@ export default function IntelligenceReport() {
                               </div>
                             )}
                             {cEvidence.length === 0 && claim.evidence_required && (
-                              <p className="text-xs text-amber-600 mt-2 flex items-center gap-1">
+                              <p className="text-xs text-civic-yellow mt-2 flex items-center gap-1">
                                 <AlertTriangle className="w-3 h-3" /> Evidence pending — labeled as analysis
                               </p>
                             )}
@@ -533,7 +533,7 @@ export default function IntelligenceReport() {
                   <div key={a.id} className="flex items-start gap-3 p-3 rounded-lg border border-border/50 bg-muted/20">
                     <div className={cn(
                       "w-2 h-2 rounded-full mt-1.5 shrink-0",
-                      a.priority_level === "high" ? "bg-destructive" : a.priority_level === "medium" ? "bg-amber-500" : "bg-muted-foreground"
+                      a.priority_level === "high" ? "bg-destructive" : a.priority_level === "medium" ? "bg-civic-yellow" : "bg-muted-foreground"
                     )} />
                     <div>
                       <span className="text-sm font-medium text-foreground">{a.action_title}</span>
@@ -557,7 +557,7 @@ export default function IntelligenceReport() {
                   <div key={f.id} className="flex items-start gap-3 p-3 rounded-lg border border-border/50">
                     <HelpCircle className={cn(
                       "w-4 h-4 mt-0.5 shrink-0",
-                      f.status === "completed" ? "text-primary" : f.status === "in_progress" ? "text-amber-500" : "text-muted-foreground"
+                      f.status === "completed" ? "text-primary" : f.status === "in_progress" ? "text-civic-yellow" : "text-muted-foreground"
                     )} />
                     <div>
                       <p className="text-sm text-foreground">{f.prompt_text}</p>

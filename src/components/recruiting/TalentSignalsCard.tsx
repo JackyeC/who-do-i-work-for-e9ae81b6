@@ -102,13 +102,13 @@ export function TalentSignalsCard({
 
   const severityIcon = (s: string) => {
     if (s === "high") return <AlertTriangle className="w-4 h-4 text-destructive" />;
-    if (s === "medium") return <Shield className="w-4 h-4 text-amber-500" />;
+    if (s === "medium") return <Shield className="w-4 h-4 text-civic-yellow" />;
     return <Briefcase className="w-4 h-4 text-muted-foreground" />;
   };
 
   const severityBadge = (s: string) =>
     s === "high" ? "bg-destructive/10 text-destructive border-destructive/20" :
-    s === "medium" ? "bg-amber-500/10 text-amber-700 border-amber-500/20" :
+    s === "medium" ? "bg-civic-yellow/10 text-amber-700 border-civic-yellow/20" :
     "bg-muted text-muted-foreground";
 
   return (

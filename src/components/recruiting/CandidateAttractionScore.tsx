@@ -101,7 +101,7 @@ function getLevelFromScore(score: number): "High" | "Medium" | "Low" {
 function getLevelColor(level: "High" | "Medium" | "Low") {
   switch (level) {
     case "High": return "bg-primary/10 text-primary border-primary/30";
-    case "Medium": return "bg-amber-500/10 text-amber-600 border-amber-500/30";
+    case "Medium": return "bg-civic-yellow/10 text-civic-yellow border-civic-yellow/30";
     case "Low": return "bg-muted text-muted-foreground border-border";
   }
 }
@@ -338,7 +338,7 @@ export function CandidateAttractionScore({ companyId, companyName }: Props) {
                 <div
                   className={cn(
                     "h-full rounded-full transition-all",
-                    r.level === "High" ? "bg-primary" : r.level === "Medium" ? "bg-amber-500" : "bg-muted-foreground/30"
+                    r.level === "High" ? "bg-primary" : r.level === "Medium" ? "bg-civic-yellow" : "bg-muted-foreground/30"
                   )}
                   style={{ width: `${r.score}%` }}
                 />

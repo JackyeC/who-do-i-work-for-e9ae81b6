@@ -6,11 +6,11 @@ import { Card, CardContent } from "@/components/ui/card";
 import { FileText, Calendar, ArrowRight, Shield } from "lucide-react";
 
 const VERIFICATION_LABELS: Record<string, { text: string; className: string }> = {
-  fully_verified: { text: "Fully Verified", className: "border-green-500/30 text-green-700 dark:text-green-400" },
-  partially_verified: { text: "Partially Verified", className: "border-yellow-500/30 text-yellow-700 dark:text-yellow-400" },
-  analysis_with_linked_evidence: { text: "Analysis + Evidence", className: "border-blue-500/30 text-blue-700 dark:text-blue-400" },
-  limited_evidence: { text: "Limited Evidence", className: "border-orange-500/30 text-orange-700 dark:text-orange-400" },
-  unverified: { text: "Unverified", className: "border-red-500/30 text-red-700 dark:text-red-400" },
+  fully_verified: { text: "Fully Verified", className: "border-green-500/30 text-civic-green" },
+  partially_verified: { text: "Partially Verified", className: "border-civic-yellow/30 text-yellow-700" },
+  analysis_with_linked_evidence: { text: "Analysis + Evidence", className: "border-civic-blue/30 text-civic-blue" },
+  limited_evidence: { text: "Limited Evidence", className: "border-civic-yellow/30 text-orange-700" },
+  unverified: { text: "Unverified", className: "border-civic-red/30 text-civic-red" },
 };
 
 interface Props {

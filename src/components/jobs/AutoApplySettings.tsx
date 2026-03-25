@@ -16,11 +16,11 @@ import { cn } from "@/lib/utils";
 import { motion, AnimatePresence } from "framer-motion";
 
 const SCORE_TIERS = [
-  { min: 40, max: 54, label: "Wide net", color: "text-amber-500", bg: "bg-amber-500/10 border-amber-500/20", bar: "bg-amber-500" },
-  { min: 55, max: 64, label: "Some alignment", color: "text-amber-400", bg: "bg-amber-400/10 border-amber-400/20", bar: "bg-amber-400" },
+  { min: 40, max: 54, label: "Wide net", color: "text-civic-yellow", bg: "bg-civic-yellow/10 border-civic-yellow/20", bar: "bg-civic-yellow" },
+  { min: 55, max: 64, label: "Some alignment", color: "text-civic-yellow", bg: "bg-civic-yellow/10 border-civic-yellow/20", bar: "bg-civic-yellow" },
   { min: 65, max: 74, label: "Strong match", color: "text-primary", bg: "bg-primary/10 border-primary/20", bar: "bg-primary" },
-  { min: 75, max: 84, label: "Very selective", color: "text-emerald-500", bg: "bg-emerald-500/10 border-emerald-500/20", bar: "bg-emerald-500" },
-  { min: 85, max: 100, label: "Best only", color: "text-emerald-400", bg: "bg-emerald-400/10 border-emerald-400/20", bar: "bg-emerald-400" },
+  { min: 75, max: 84, label: "Very selective", color: "text-civic-green", bg: "bg-civic-green/10 border-civic-green/20", bar: "bg-civic-green" },
+  { min: 85, max: 100, label: "Best only", color: "text-civic-green", bg: "bg-civic-green/10 border-civic-green/20", bar: "bg-civic-green" },
 ];
 
 function getTier(threshold: number) {

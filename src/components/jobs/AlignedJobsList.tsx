@@ -19,8 +19,8 @@ import { EasyApplyButton } from "./EasyApplyButton";
 const AI_TRANSPARENCY_THRESHOLD = 70;
 
 function ScoreBadge({ score }: { score: number }) {
-  const color = score >= 70 ? "text-green-600 bg-green-50 border-green-200"
-    : score >= 40 ? "text-yellow-600 bg-yellow-50 border-yellow-200"
+  const color = score >= 70 ? "text-civic-green bg-green-50 border-green-200"
+    : score >= 40 ? "text-civic-yellow bg-yellow-50 border-yellow-200"
     : "text-muted-foreground bg-muted border-border";
   return (
     <span className={cn("inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-semibold border", color)}>

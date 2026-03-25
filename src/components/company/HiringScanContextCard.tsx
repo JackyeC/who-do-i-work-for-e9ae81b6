@@ -27,14 +27,14 @@ interface HiringScanContextCardProps {
 
 const CLASSIFICATION_LABELS: Record<string, { label: string; icon: React.ElementType; color: string }> = {
   informational_landing: { label: "Informational Landing Page", icon: Info, color: "text-muted-foreground" },
-  evergreen_recruiting: { label: "Evergreen Recruiting Page", icon: Layers, color: "text-amber-500" },
+  evergreen_recruiting: { label: "Evergreen Recruiting Page", icon: Layers, color: "text-civic-yellow" },
   live_jobs_page: { label: "Live Jobs Page", icon: CheckCircle, color: "text-primary" },
   ats_redirect: { label: "ATS Redirect", icon: ExternalLink, color: "text-primary" },
-  dynamic_jobs_feed: { label: "Dynamic Jobs Feed", icon: Search, color: "text-amber-500" },
-  department_landing: { label: "Department Landing Page", icon: Layers, color: "text-amber-500" },
+  dynamic_jobs_feed: { label: "Dynamic Jobs Feed", icon: Search, color: "text-civic-yellow" },
+  department_landing: { label: "Department Landing Page", icon: Layers, color: "text-civic-yellow" },
   no_active_jobs: { label: "No Active Jobs Detected", icon: AlertTriangle, color: "text-destructive" },
-  limited_active_jobs: { label: "Limited Active Jobs", icon: AlertTriangle, color: "text-amber-500" },
-  careers_site_detected: { label: "Careers Site Detected", icon: Globe, color: "text-amber-500" },
+  limited_active_jobs: { label: "Limited Active Jobs", icon: AlertTriangle, color: "text-civic-yellow" },
+  careers_site_detected: { label: "Careers Site Detected", icon: Globe, color: "text-civic-yellow" },
   ats_detected_jobs_found: { label: "ATS Detected — Jobs Found", icon: CheckCircle, color: "text-primary" },
 };
 
@@ -146,7 +146,7 @@ export function HiringScanContextCard({ companyId, companyName }: HiringScanCont
           <span className="text-xs text-muted-foreground">Confidence:</span>
           <span className={`text-xs font-semibold px-2 py-0.5 rounded-full ${
             scanContext.confidence === "high" ? "bg-primary/10 text-primary" :
-            scanContext.confidence === "medium" ? "bg-amber-500/10 text-amber-500" :
+            scanContext.confidence === "medium" ? "bg-civic-yellow/10 text-civic-yellow" :
             "bg-muted text-muted-foreground"
           }`}>
             {scanContext.confidence.charAt(0).toUpperCase() + scanContext.confidence.slice(1)}
@@ -203,7 +203,7 @@ export function HiringScanContextCard({ companyId, companyName }: HiringScanCont
               <div key={i} className="flex items-start gap-2 text-xs">
                 <AlertTriangle className={`w-3.5 h-3.5 mt-0.5 shrink-0 ${
                   signal.confidence === "high" ? "text-primary" :
-                  signal.confidence === "medium" ? "text-amber-500" :
+                  signal.confidence === "medium" ? "text-civic-yellow" :
                   "text-muted-foreground"
                 }`} strokeWidth={1.5} />
                 <p className="text-muted-foreground leading-relaxed">{safeSignalSummary(signal.description, "Hiring signal detected")}</p>

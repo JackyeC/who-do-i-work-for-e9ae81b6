@@ -110,7 +110,7 @@ export function IntelligenceSectionWrapper({
             </Badge>
           )}
           {report.isStale && refreshStatus !== 'refreshing' && (
-            <Badge variant="outline" className="text-xs font-mono gap-1 border-amber-500/30 text-amber-600 dark:text-amber-400">
+            <Badge variant="outline" className="text-xs font-mono gap-1 border-civic-yellow/30 text-civic-yellow">
               <Clock className="w-2.5 h-2.5" />
               Using saved intelligence
             </Badge>

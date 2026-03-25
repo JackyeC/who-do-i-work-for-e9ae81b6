@@ -18,7 +18,7 @@ interface RecruiterIntelligencePanelProps {
 function levelColor(level: "low" | "medium" | "high") {
   switch (level) {
     case "low": return "text-primary border-primary/30 bg-primary/5";
-    case "medium": return "text-amber-500 border-amber-500/30 bg-amber-500/5";
+    case "medium": return "text-civic-yellow border-civic-yellow/30 bg-civic-yellow/5";
     case "high": return "text-destructive border-destructive/30 bg-destructive/5";
   }
 }

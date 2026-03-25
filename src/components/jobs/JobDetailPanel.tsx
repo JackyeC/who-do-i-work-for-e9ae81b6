@@ -92,7 +92,7 @@ export function JobDetailPanel({ job, matchCount = 0, matchedCategories = [], on
               </Badge>
             )}
             {isCertified && (
-              <Badge variant="outline" className="text-xs gap-0.5 bg-amber-500/10 text-amber-600 border-amber-500/20">
+              <Badge variant="outline" className="text-xs gap-0.5 bg-civic-yellow/10 text-civic-yellow border-civic-yellow/20">
                 <ShieldCheck className="w-2.5 h-2.5" /> Certified
               </Badge>
             )}

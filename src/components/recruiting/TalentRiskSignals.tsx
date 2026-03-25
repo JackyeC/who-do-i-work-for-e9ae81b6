@@ -22,7 +22,7 @@ interface Props {
 function severityColor(s: "high" | "medium" | "low") {
   switch (s) {
     case "high": return "bg-destructive/10 text-destructive border-destructive/30";
-    case "medium": return "bg-amber-500/10 text-amber-600 border-amber-500/30";
+    case "medium": return "bg-civic-yellow/10 text-civic-yellow border-civic-yellow/30";
     case "low": return "bg-muted text-muted-foreground border-border";
   }
 }

@@ -38,9 +38,9 @@ interface EEOCCase {
 }
 
 const ACTION_LABELS: Record<string, { label: string; color: string }> = {
-  moved_to_dismiss: { label: "Moved to Dismiss", color: "text-red-400 border-red-500/30 bg-red-500/10" },
-  withdrew: { label: "Withdrew", color: "text-amber-400 border-amber-500/30 bg-amber-500/10" },
-  settled: { label: "Settled", color: "text-blue-400 border-blue-500/30 bg-blue-500/10" },
+  moved_to_dismiss: { label: "Moved to Dismiss", color: "text-civic-red border-civic-red/30 bg-civic-red/10" },
+  withdrew: { label: "Withdrew", color: "text-civic-yellow border-civic-yellow/30 bg-civic-yellow/10" },
+  settled: { label: "Settled", color: "text-civic-blue border-civic-blue/30 bg-civic-blue/10" },
   dismissed: { label: "Dismissed", color: "text-muted-foreground border-border bg-muted/50" },
 };
 
@@ -91,10 +91,10 @@ export default function EEOCTracker() {
       <div className="border-b border-border bg-card">
         <div className="max-w-6xl mx-auto px-4 py-12">
           <div className="flex items-center gap-3 mb-4">
-            <div className="p-2.5 rounded-xl bg-red-500/10 border border-red-500/20">
-              <Gavel className="w-6 h-6 text-red-400" />
+            <div className="p-2.5 rounded-xl bg-civic-red/10 border border-civic-red/20">
+              <Gavel className="w-6 h-6 text-civic-red" />
             </div>
-            <Badge variant="outline" className="text-xs font-mono tracking-wider border-red-500/30 text-red-400">
+            <Badge variant="outline" className="text-xs font-mono tracking-wider border-civic-red/30 text-civic-red">
               ENFORCEMENT TRACKER
             </Badge>
           </div>
@@ -123,13 +123,13 @@ export default function EEOCTracker() {
           </Card>
           <Card className="bg-card border-border">
             <CardContent className="pt-5 pb-4 text-center">
-              <p className="text-3xl font-bold text-red-400">{byAction["moved_to_dismiss"] || 0}</p>
+              <p className="text-3xl font-bold text-civic-red">{byAction["moved_to_dismiss"] || 0}</p>
               <p className="text-xs text-muted-foreground mt-1">Moved to Dismiss</p>
             </CardContent>
           </Card>
           <Card className="bg-card border-border">
             <CardContent className="pt-5 pb-4 text-center">
-              <p className="text-3xl font-bold text-amber-400">{byAction["withdrew"] || 0}</p>
+              <p className="text-3xl font-bold text-civic-yellow">{byAction["withdrew"] || 0}</p>
               <p className="text-xs text-muted-foreground mt-1">Withdrew</p>
             </CardContent>
           </Card>
@@ -164,8 +164,8 @@ export default function EEOCTracker() {
                     <CardContent className="p-5">
                       <div className="flex flex-col md:flex-row md:items-start gap-4">
                         {/* Left: Icon */}
-                        <div className="p-2.5 rounded-lg bg-red-500/10 border border-red-500/20 shrink-0 self-start">
-                          <AlertTriangle className="w-5 h-5 text-red-400" />
+                        <div className="p-2.5 rounded-lg bg-civic-red/10 border border-civic-red/20 shrink-0 self-start">
+                          <AlertTriangle className="w-5 h-5 text-civic-red" />
                         </div>
 
                         {/* Center: Details */}

@@ -8,13 +8,13 @@ export function CareerIntelligenceScore({ score }: CareerIntelligenceScoreProps)
 
   const getColor = () => {
     if (value >= 7) return "text-primary";
-    if (value >= 4) return "text-amber-500";
+    if (value >= 4) return "text-civic-yellow";
     return "text-destructive";
   };
 
   const getBg = () => {
     if (value >= 7) return "bg-primary";
-    if (value >= 4) return "bg-amber-500";
+    if (value >= 4) return "bg-civic-yellow";
     return "bg-destructive";
   };
 

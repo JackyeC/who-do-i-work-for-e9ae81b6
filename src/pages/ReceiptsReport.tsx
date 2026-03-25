@@ -762,18 +762,18 @@ function Td({ children, className, mono, highlight }: { children: React.ReactNod
 
 function StatusBadge({ status }: { status: "confirmed" | "data-gap" | "research-incomplete" }) {
   if (status === "confirmed") {
-    return <span className="inline-flex items-center rounded-md px-2 py-0.5 text-xs font-medium bg-emerald-500/20 text-emerald-400 border border-emerald-500/30">Confirmed</span>;
+    return <span className="inline-flex items-center rounded-md px-2 py-0.5 text-xs font-medium bg-civic-green/20 text-civic-green border border-civic-green/30">Confirmed</span>;
   }
   if (status === "data-gap") {
-    return <span className="inline-flex items-center rounded-md px-2 py-0.5 text-xs font-medium bg-amber-500/20 text-amber-400 border border-amber-500/30">Data Gap</span>;
+    return <span className="inline-flex items-center rounded-md px-2 py-0.5 text-xs font-medium bg-civic-yellow/20 text-civic-yellow border border-civic-yellow/30">Data Gap</span>;
   }
-  return <span className="inline-flex items-center rounded-md px-2 py-0.5 text-xs font-medium bg-amber-500/20 text-amber-400 border border-amber-500/30">Research Incomplete</span>;
+  return <span className="inline-flex items-center rounded-md px-2 py-0.5 text-xs font-medium bg-civic-yellow/20 text-civic-yellow border border-civic-yellow/30">Research Incomplete</span>;
 }
 
 function PriorityBadge({ priority }: { priority: "high" | "medium" | "lower" }) {
   const colors = {
     high: "bg-destructive/20 text-destructive border-destructive/30",
-    medium: "bg-amber-500/20 text-amber-400 border-amber-500/30",
+    medium: "bg-civic-yellow/20 text-civic-yellow border-civic-yellow/30",
     lower: "bg-muted text-muted-foreground border-border",
   };
   return <span className={cn("inline-flex items-center rounded-md px-2 py-0.5 text-xs font-medium border", colors[priority])}>{priority === "lower" ? "Lower" : priority.charAt(0).toUpperCase() + priority.slice(1)}</span>;
@@ -782,8 +782,8 @@ function PriorityBadge({ priority }: { priority: "high" | "medium" | "lower" }) 
 function Timeline({ entries }: { entries: TimelineEntry[] }) {
   const dotColors: Record<string, string> = {
     red: "bg-destructive",
-    amber: "bg-amber-500",
-    green: "bg-emerald-500",
+    amber: "bg-civic-yellow",
+    green: "bg-civic-green",
     muted: "bg-muted-foreground",
   };
   return (
@@ -845,7 +845,7 @@ function IntegrityGapSection({ data }: { data: MetaReportData }) {
         {ig.pacCycle.map((row) => (
           <tr key={row.metric}>
             <Td highlight>{row.metric}</Td>
-            <Td mono className={row.color === "red" ? "text-destructive" : row.color === "blue" ? "text-blue-400" : undefined}>{row.amount}</Td>
+            <Td mono className={row.color === "red" ? "text-destructive" : row.color === "blue" ? "text-civic-blue" : undefined}>{row.amount}</Td>
           </tr>
         ))}
       </DataTable>
@@ -889,11 +889,11 @@ function IntegrityGapSection({ data }: { data: MetaReportData }) {
           <tr key={s.member}>
             <Td highlight={s.highlight}>{s.member}</Td>
             <Td>{s.party}</Td>
-            <Td mono className={s.confirmed ? "text-emerald-400" : undefined}>
+            <Td mono className={s.confirmed ? "text-civic-green" : undefined}>
               {s.metaPac}
               {s.confirmed && <StatusBadge status="confirmed" />}
             </Td>
-            <Td className="text-amber-400 text-xs">{s.note}</Td>
+            <Td className="text-civic-yellow text-xs">{s.note}</Td>
           </tr>
         ))}
       </DataTable>
@@ -907,7 +907,7 @@ function IntegrityGapSection({ data }: { data: MetaReportData }) {
           <tr key={y.year}>
             <Td highlight>{y.year}</Td>
             <Td mono>{y.totalSpent}</Td>
-            <Td mono className={y.changeColor === "red" ? "text-destructive" : y.changeColor === "amber" ? "text-amber-400" : undefined}>{y.yoyChange}</Td>
+            <Td mono className={y.changeColor === "red" ? "text-destructive" : y.changeColor === "amber" ? "text-civic-yellow" : undefined}>{y.yoyChange}</Td>
           </tr>
         ))}
       </DataTable>
@@ -1068,7 +1068,7 @@ function SafetyAlertSection({ data }: { data: MetaReportData }) {
             </Td>
             <Td>
               {f.statusType === "confirmed" && <StatusBadge status="confirmed" />}
-              {f.statusType === "reduced" && <span className="inline-flex items-center rounded-md px-2 py-0.5 text-xs font-medium bg-amber-500/20 text-amber-400 border border-amber-500/30">Reduced</span>}
+              {f.statusType === "reduced" && <span className="inline-flex items-center rounded-md px-2 py-0.5 text-xs font-medium bg-civic-yellow/20 text-civic-yellow border border-civic-yellow/30">Reduced</span>}
               {f.statusType === "dismantled" && <span className="inline-flex items-center rounded-md px-2 py-0.5 text-xs font-medium bg-destructive/20 text-destructive">Dismantled</span>}
             </Td>
             <Td className="text-xs">{f.keyChanges}</Td>
@@ -1227,7 +1227,7 @@ function GeneralizedReport({ data }: { data: CompanyReportData }) {
                   {data.integrityGap.pacSummary.map((row) => (
                     <tr key={row.metric}>
                       <Td highlight>{row.metric}</Td>
-                      <Td mono className={row.color === "red" ? "text-destructive" : row.color === "blue" ? "text-blue-400" : undefined}>{row.amount}</Td>
+                      <Td mono className={row.color === "red" ? "text-destructive" : row.color === "blue" ? "text-civic-blue" : undefined}>{row.amount}</Td>
                     </tr>
                   ))}
                 </DataTable>
@@ -1240,7 +1240,7 @@ function GeneralizedReport({ data }: { data: CompanyReportData }) {
                     <tr key={y.year}>
                       <Td highlight>{y.year}</Td>
                       <Td mono>{y.totalSpent}</Td>
-                      <Td mono className={y.changeColor === "red" ? "text-destructive" : y.changeColor === "amber" ? "text-amber-400" : undefined}>{y.yoyChange}</Td>
+                      <Td mono className={y.changeColor === "red" ? "text-destructive" : y.changeColor === "amber" ? "text-civic-yellow" : undefined}>{y.yoyChange}</Td>
                     </tr>
                   ))}
                 </DataTable>
@@ -1278,7 +1278,7 @@ function GeneralizedReport({ data }: { data: CompanyReportData }) {
                         {p.badgeColor === "red" ? (
                           <span className="inline-flex items-center rounded-md px-2 py-0.5 text-xs font-medium bg-destructive/20 text-destructive">{p.status}</span>
                         ) : p.badgeColor === "amber" ? (
-                          <span className="inline-flex items-center rounded-md px-2 py-0.5 text-xs font-medium bg-amber-500/20 text-amber-400">{p.status}</span>
+                          <span className="inline-flex items-center rounded-md px-2 py-0.5 text-xs font-medium bg-civic-yellow/20 text-civic-yellow">{p.status}</span>
                         ) : (
                           <span className="text-muted-foreground text-sm">{p.status}</span>
                         )}

@@ -28,7 +28,7 @@ function SentimentSlider({
 }) {
   const getColor = (v: number) => {
     if (v <= 25) return "bg-destructive";
-    if (v <= 45) return "bg-orange-500";
+    if (v <= 45) return "bg-civic-yellow";
     if (v <= 60) return "bg-civic-yellow";
     if (v <= 80) return "bg-civic-blue";
     return "bg-civic-green";

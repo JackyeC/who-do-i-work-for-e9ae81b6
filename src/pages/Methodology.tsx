@@ -220,11 +220,11 @@ export default function Methodology() {
               </div>
               <div className="flex flex-wrap gap-3 mt-5">
                 {[
-                  { label: "Left", color: "bg-blue-500/10 text-blue-500 border-blue-500/20" },
-                  { label: "Lean Left", color: "bg-blue-400/10 text-blue-400 border-blue-400/20" },
+                  { label: "Left", color: "bg-civic-blue/10 text-civic-blue border-civic-blue/20" },
+                  { label: "Lean Left", color: "bg-civic-blue/10 text-civic-blue border-civic-blue/20" },
                   { label: "Center", color: "bg-[hsl(var(--civic-green))]/10 text-[hsl(var(--civic-green))] border-[hsl(var(--civic-green))]/20" },
-                  { label: "Lean Right", color: "bg-red-400/10 text-red-400 border-red-400/20" },
-                  { label: "Right", color: "bg-red-500/10 text-red-500 border-red-500/20" },
+                  { label: "Lean Right", color: "bg-civic-red/10 text-civic-red border-civic-red/20" },
+                  { label: "Right", color: "bg-civic-red/10 text-civic-red border-civic-red/20" },
                 ].map((item) => (
                   <Badge key={item.label} variant="outline" className={`${item.color}`}>{item.label}</Badge>
                 ))}

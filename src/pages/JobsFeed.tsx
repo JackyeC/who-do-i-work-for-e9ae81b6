@@ -111,9 +111,9 @@ const MOCK_JOBS: MockJob[] = [
 ];
 
 function IntegrityBadge({ score }: { score: number }) {
-  const color = score >= 85 ? "text-emerald-400 bg-emerald-500/10 border-emerald-500/20"
-    : score >= 65 ? "text-amber-400 bg-amber-500/10 border-amber-500/20"
-    : "text-red-400 bg-red-500/10 border-red-500/20";
+  const color = score >= 85 ? "text-civic-green bg-civic-green/10 border-civic-green/20"
+    : score >= 65 ? "text-civic-yellow bg-civic-yellow/10 border-civic-yellow/20"
+    : "text-civic-red bg-civic-red/10 border-civic-red/20";
   return (
     <span className={cn("inline-flex items-center gap-1 text-xs font-mono px-2 py-0.5 rounded-full border", color)}>
       <Shield className="w-3 h-3" /> {score}
@@ -305,10 +305,10 @@ export default function JobsFeed() {
 
                 {/* Narrative Gap Warning */}
                 {selectedJob.narrativeGap && (
-                  <div className="bg-amber-500/10 border border-amber-500/20 rounded-lg p-4 flex gap-3">
-                    <AlertTriangle className="w-4 h-4 text-amber-500 shrink-0 mt-0.5" />
+                  <div className="bg-civic-yellow/10 border border-civic-yellow/20 rounded-lg p-4 flex gap-3">
+                    <AlertTriangle className="w-4 h-4 text-civic-yellow shrink-0 mt-0.5" />
                     <div>
-                      <h4 className="text-xs font-semibold text-amber-400 uppercase tracking-wider mb-1">Narrative Gap Detected</h4>
+                      <h4 className="text-xs font-semibold text-civic-yellow uppercase tracking-wider mb-1">Narrative Gap Detected</h4>
                       <p className="text-sm text-foreground/70 leading-relaxed">{selectedJob.narrativeGap}</p>
                     </div>
                   </div>

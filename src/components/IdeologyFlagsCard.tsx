@@ -40,23 +40,23 @@ const CATEGORY_CONFIG: Record<string, { label: string; icon: React.ElementType; 
   christian_nationalism: { label: "Christian Nationalism", icon: BookOpen, color: "text-purple-600" },
   white_supremacy: { label: "White Supremacy", icon: AlertTriangle, color: "text-civic-red" },
   anti_lgbtq: { label: "Anti-LGBTQ+", icon: HeartOff, color: "text-pink-600" },
-  anti_labor: { label: "Anti-Labor", icon: Factory, color: "text-orange-600" },
+  anti_labor: { label: "Anti-Labor", icon: Factory, color: "text-civic-yellow" },
   voter_suppression: { label: "Voter Suppression", icon: Vote, color: "text-civic-red" },
-  climate_denial: { label: "Climate Denial", icon: Thermometer, color: "text-amber-600" },
+  climate_denial: { label: "Climate Denial", icon: Thermometer, color: "text-civic-yellow" },
   anti_reproductive_rights: { label: "Anti-Reproductive Rights", icon: Baby, color: "text-rose-600" },
   privatization: { label: "Privatization", icon: Building, color: "text-slate-600" },
 };
 
 function severityBadge(severity: string) {
   if (severity === "critical") return "bg-civic-red/10 text-civic-red border-civic-red/30";
-  if (severity === "high") return "bg-orange-500/10 text-orange-600 border-orange-500/30";
+  if (severity === "high") return "bg-civic-yellow/10 text-civic-yellow border-civic-yellow/30";
   if (severity === "medium") return "bg-civic-yellow/10 text-civic-yellow border-civic-yellow/30";
   return "text-muted-foreground";
 }
 
 function riskLevelStyle(level: string) {
   if (level === "critical") return "bg-civic-red/10 text-civic-red border-civic-red/30";
-  if (level === "high") return "bg-orange-500/10 text-orange-600 border-orange-500/30";
+  if (level === "high") return "bg-civic-yellow/10 text-civic-yellow border-civic-yellow/30";
   if (level === "medium") return "bg-civic-yellow/10 text-civic-yellow border-civic-yellow/30";
   if (level === "low") return "bg-civic-green/10 text-civic-green border-civic-green/30";
   return "text-muted-foreground";
@@ -127,7 +127,7 @@ export function IdeologyFlagsCard({ companyName, dbCompanyId }: Props) {
   return (
     <Card className={cn(
       totalFlags > 0 && result?.riskLevel === "critical" && "border-civic-red/30",
-      totalFlags > 0 && result?.riskLevel === "high" && "border-orange-500/30"
+      totalFlags > 0 && result?.riskLevel === "high" && "border-civic-yellow/30"
     )}>
       <CardHeader>
         <CardTitle className="text-lg flex items-center gap-2">

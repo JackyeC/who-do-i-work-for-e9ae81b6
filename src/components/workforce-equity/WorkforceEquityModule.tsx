@@ -30,7 +30,7 @@ import {
 
 const MOBILITY_ITEMS = [
   { key: "internal_mobility", label: "Internal Mobility Programs", icon: Compass, iconClass: "text-primary", keywords: ["internal mobility", "talent marketplace", "internal job"] },
-  { key: "leadership_dev", label: "Leadership Development Programs", icon: Award, iconClass: "text-amber-500", keywords: ["leadership development", "leadership program", "executive development"] },
+  { key: "leadership_dev", label: "Leadership Development Programs", icon: Award, iconClass: "text-civic-yellow", keywords: ["leadership development", "leadership program", "executive development"] },
   { key: "rotational", label: "Rotational Programs", icon: RefreshCw, iconClass: "text-civic-blue", keywords: ["rotational", "rotation program"] },
   { key: "succession", label: "Succession Planning", icon: UserCheck, iconClass: "text-civic-green", keywords: ["succession", "leadership pipeline"] },
   { key: "mentorship", label: "Mentorship & Sponsorship", icon: Heart, iconClass: "text-pink-500", keywords: ["mentorship", "sponsorship", "mentor program"] },
@@ -40,20 +40,20 @@ const MOBILITY_ITEMS = [
 const CAREER_PATH_ITEMS = [
   { key: "time_to_promotion", label: "Median Time to First Promotion", icon: BarChart3, iconClass: "text-primary", keywords: ["promotion rate", "time to promotion", "advancement rate"] },
   { key: "title_changes", label: "Title Progression Frequency", icon: ArrowUpRight, iconClass: "text-civic-green", keywords: ["title change", "career progression", "title progression"] },
-  { key: "internal_leaders", label: "% Leaders from Internal Promotion", icon: UserCheck, iconClass: "text-amber-500", keywords: ["internal leader", "promoted internally", "internal hire"] },
+  { key: "internal_leaders", label: "% Leaders from Internal Promotion", icon: UserCheck, iconClass: "text-civic-yellow", keywords: ["internal leader", "promoted internally", "internal hire"] },
   { key: "tenure_execs", label: "Executive Long Tenure", icon: Building2, iconClass: "text-civic-blue", keywords: ["tenure", "long-term", "years at company"] },
 ];
 
 const DIVERSITY_PIPELINE_ITEMS = [
   { key: "women_leadership", label: "Women in Leadership", icon: Users, iconClass: "text-pink-500", keywords: ["women in leadership", "female executive", "gender parity", "women_leadership"] },
-  { key: "minority_advancement", label: "Minority Advancement", icon: Award, iconClass: "text-amber-500", keywords: ["minority", "underrepresented", "black leadership", "minority_advancement"] },
+  { key: "minority_advancement", label: "Minority Advancement", icon: Award, iconClass: "text-civic-yellow", keywords: ["minority", "underrepresented", "black leadership", "minority_advancement"] },
   { key: "hbcu_pipeline", label: "HBCU Partnerships", icon: School, iconClass: "text-civic-green", keywords: ["hbcu", "historically black", "hbcu_pipeline"] },
-  { key: "hsi_pipeline", label: "Hispanic-Serving Institution Partnerships", icon: School, iconClass: "text-orange-500", keywords: ["hispanic-serving", "hsi", "latino partnership"] },
+  { key: "hsi_pipeline", label: "Hispanic-Serving Institution Partnerships", icon: School, iconClass: "text-civic-yellow", keywords: ["hispanic-serving", "hsi", "latino partnership"] },
   { key: "disability_inclusion", label: "Disability Inclusion Initiatives", icon: Heart, iconClass: "text-civic-blue", keywords: ["disability", "ada", "accessible", "disability_inclusion"] },
-  { key: "deaf_accessibility", label: "Deaf / Hard-of-Hearing Inclusion", icon: Ear, iconClass: "text-blue-500", keywords: ["deaf", "hard of hearing", "hearing impair", "deaf_accessibility"] },
+  { key: "deaf_accessibility", label: "Deaf / Hard-of-Hearing Inclusion", icon: Ear, iconClass: "text-civic-blue", keywords: ["deaf", "hard of hearing", "hearing impair", "deaf_accessibility"] },
   { key: "neurodiversity", label: "Neurodiversity Support", icon: Brain, iconClass: "text-purple-500", keywords: ["neurodiver", "learning disability", "autism", "learning_disability"] },
   { key: "veterans", label: "Veterans Pathways", icon: Shield, iconClass: "text-civic-navy", keywords: ["veteran", "military", "service member"] },
-  { key: "no_degree", label: "No-Degree / Skills-First Pathways", icon: GraduationCap, iconClass: "text-orange-500", keywords: ["no degree", "skills-first", "skills-based", "degree optional", "no_degree"] },
+  { key: "no_degree", label: "No-Degree / Skills-First Pathways", icon: GraduationCap, iconClass: "text-civic-yellow", keywords: ["no degree", "skills-first", "skills-based", "degree optional", "no_degree"] },
 ];
 
 const RETENTION_ITEMS = [

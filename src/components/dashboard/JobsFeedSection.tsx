@@ -113,18 +113,18 @@ const SAMPLE_JOBS: JobListing[] = [
 
 function getScoreColor(level: string) {
   switch (level) {
-    case "LOW": return "bg-emerald-500/10 text-emerald-400 border-emerald-500/20";
-    case "MODERATE": return "bg-amber-500/10 text-amber-400 border-amber-500/20";
-    case "HIGH": return "bg-orange-500/10 text-orange-400 border-orange-500/20";
-    case "CRITICAL": return "bg-red-500/10 text-red-400 border-red-500/20";
+    case "LOW": return "bg-civic-green/10 text-civic-green border-civic-green/20";
+    case "MODERATE": return "bg-civic-yellow/10 text-civic-yellow border-civic-yellow/20";
+    case "HIGH": return "bg-civic-yellow/10 text-civic-yellow border-civic-yellow/20";
+    case "CRITICAL": return "bg-civic-red/10 text-civic-red border-civic-red/20";
     default: return "bg-muted text-muted-foreground";
   }
 }
 
 function getAlignmentColor(pct: number) {
-  if (pct >= 80) return "text-emerald-400";
-  if (pct >= 60) return "text-amber-400";
-  return "text-red-400";
+  if (pct >= 80) return "text-civic-green";
+  if (pct >= 60) return "text-civic-yellow";
+  return "text-civic-red";
 }
 
 export function JobsFeedSection() {
@@ -152,9 +152,9 @@ export function JobsFeedSection() {
   return (
     <div className="space-y-6">
       {/* Banner */}
-      <div className="rounded-xl border border-emerald-500/20 bg-emerald-500/5 px-5 py-4">
+      <div className="rounded-xl border border-civic-green/20 bg-civic-green/5 px-5 py-4">
         <div className="flex items-center gap-3">
-          <Shield className="w-5 h-5 text-emerald-400 shrink-0" />
+          <Shield className="w-5 h-5 text-civic-green shrink-0" />
           <p className="text-sm text-foreground/90">
             <span className="font-semibold">WDIWF only shows you roles at companies that passed our integrity check.</span>
             {" "}Every listing here has been screened for transparency, governance, and worker treatment signals.
@@ -280,8 +280,8 @@ export function JobsFeedSection() {
                 <p className="text-sm text-muted-foreground leading-relaxed">{selectedJob.description}</p>
               </div>
 
-              <div className="rounded-lg border border-emerald-500/20 bg-emerald-500/5 p-4">
-                <h4 className="text-sm font-semibold text-emerald-400 mb-1.5">Why This Aligns</h4>
+              <div className="rounded-lg border border-civic-green/20 bg-civic-green/5 p-4">
+                <h4 className="text-sm font-semibold text-civic-green mb-1.5">Why This Aligns</h4>
                 <p className="text-sm text-foreground/80 leading-relaxed">{selectedJob.whyAligns}</p>
               </div>
 
@@ -291,8 +291,8 @@ export function JobsFeedSection() {
               </div>
 
               {selectedJob.narrativeGap && (
-                <div className="rounded-lg border border-amber-500/20 bg-amber-500/5 p-4">
-                  <h4 className="text-sm font-semibold text-amber-400 mb-1.5">⚠ Narrative Gap Detected</h4>
+                <div className="rounded-lg border border-civic-yellow/20 bg-civic-yellow/5 p-4">
+                  <h4 className="text-sm font-semibold text-civic-yellow mb-1.5">⚠ Narrative Gap Detected</h4>
                   <p className="text-sm text-foreground/80 leading-relaxed">{selectedJob.narrativeGap}</p>
                 </div>
               )}

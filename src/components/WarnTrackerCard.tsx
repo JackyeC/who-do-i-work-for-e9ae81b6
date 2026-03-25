@@ -56,11 +56,11 @@ function getTimeFilterDate(filter: TimeFilter): Date {
 }
 
 const SOURCE_LABELS: Record<string, { label: string; color: string }> = {
-  official_state_warn: { label: "Official WARN", color: "bg-green-500/10 text-green-700 border-green-500/20" },
-  structured_open_data: { label: "Open Data", color: "bg-blue-500/10 text-blue-700 border-blue-500/20" },
+  official_state_warn: { label: "Official WARN", color: "bg-civic-green/10 text-civic-green border-green-500/20" },
+  structured_open_data: { label: "Open Data", color: "bg-civic-blue/10 text-civic-blue border-civic-blue/20" },
   big_local_news: { label: "Big Local News", color: "bg-violet-500/10 text-violet-700 border-violet-500/20" },
-  news_report: { label: "News Report", color: "bg-amber-500/10 text-amber-700 border-amber-500/20" },
-  sec_8k: { label: "SEC 8-K", color: "bg-red-500/10 text-red-700 border-red-500/20" },
+  news_report: { label: "News Report", color: "bg-civic-yellow/10 text-amber-700 border-civic-yellow/20" },
+  sec_8k: { label: "SEC 8-K", color: "bg-civic-red/10 text-civic-red border-civic-red/20" },
   firecrawl_search: { label: "Web Search", color: "bg-muted text-muted-foreground" },
   unknown: { label: "Unknown", color: "bg-muted text-muted-foreground" },
 };
@@ -211,9 +211,9 @@ export function WarnTrackerCard({ companyName, dbCompanyId }: { companyName: str
       <CardContent className="space-y-5">
         {/* No current year data warning */}
         {!isLoading && !hasCurrentYearData && (notices || []).length > 0 && (
-          <div className="rounded-lg border border-amber-500/30 bg-amber-500/5 p-3">
+          <div className="rounded-lg border border-civic-yellow/30 bg-civic-yellow/5 p-3">
             <div className="flex items-start gap-2">
-              <AlertTriangle className="w-4 h-4 text-amber-600 mt-0.5 shrink-0" />
+              <AlertTriangle className="w-4 h-4 text-civic-yellow mt-0.5 shrink-0" />
               <div>
                 <p className="text-sm font-medium text-foreground">No {currentYear} WARN notices found in supported official sources.</p>
                 <p className="text-xs text-muted-foreground mt-0.5">
@@ -369,10 +369,10 @@ export function WarnTrackerCard({ companyName, dbCompanyId }: { companyName: str
 
                       {/* Worker Transition Support */}
                       {notice.support_services_mentioned && (
-                        <div className="rounded-md bg-green-500/5 border border-green-500/20 p-2.5">
+                        <div className="rounded-md bg-civic-green/5 border border-green-500/20 p-2.5">
                           <div className="flex items-center gap-1.5 mb-1">
-                            <ShieldCheck className="w-3.5 h-3.5 text-green-600" />
-                            <span className="text-xs font-semibold text-green-700">Worker Transition Support</span>
+                            <ShieldCheck className="w-3.5 h-3.5 text-civic-green" />
+                            <span className="text-xs font-semibold text-civic-green">Worker Transition Support</span>
                           </div>
                           <div className="text-xs text-foreground space-y-1">
                             <p>Support services: <strong>mentioned in filing</strong></p>

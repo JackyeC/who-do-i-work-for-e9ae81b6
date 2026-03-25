@@ -49,7 +49,7 @@ export function CourtRecordsCard({ companyId, companyName }: Props) {
   };
 
   const getStatusColor = (status: string) =>
-    status === "open" ? "text-amber-500" : "text-muted-foreground";
+    status === "open" ? "text-civic-yellow" : "text-muted-foreground";
 
   if (isLoading) {
     return (
@@ -92,7 +92,7 @@ export function CourtRecordsCard({ companyId, companyName }: Props) {
           </CardTitle>
           <div className="flex gap-2">
             {openCases.length > 0 && (
-              <Badge className="bg-amber-500/10 text-amber-500 border-amber-500/30 text-xs">
+              <Badge className="bg-civic-yellow/10 text-civic-yellow border-civic-yellow/30 text-xs">
                 {openCases.length} Open
               </Badge>
             )}

@@ -218,7 +218,7 @@ export function BetaFeedbackWidget() {
                     <button key={s} onClick={() => setRating(s)} className="p-0.5">
                       <Star
                         className={`w-4 h-4 transition-colors ${
-                          rating && s <= rating ? "text-amber-400 fill-amber-400" : "text-muted-foreground/30"
+                          rating && s <= rating ? "text-civic-yellow fill-amber-400" : "text-muted-foreground/30"
                         }`}
                       />
                     </button>

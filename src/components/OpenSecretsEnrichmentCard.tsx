@@ -5,7 +5,7 @@ import { formatCurrency } from "@/data/sampleData";
 
 const VERIFICATION_LABELS: Record<string, { label: string; color: string; icon: typeof ShieldCheck }> = {
   cross_checked_primary_source: { label: "Verified against primary records", color: "text-primary", icon: ShieldCheck },
-  partially_verified: { label: "Partial evidence found", color: "text-yellow-500", icon: ShieldAlert },
+  partially_verified: { label: "Partial evidence found", color: "text-civic-yellow", icon: ShieldAlert },
   unverified_opensecrets_only: { label: "Third-party summary — pending verification", color: "text-muted-foreground", icon: Info },
   failed_match: { label: "Match confidence low — review recommended", color: "text-destructive", icon: ShieldAlert },
 };

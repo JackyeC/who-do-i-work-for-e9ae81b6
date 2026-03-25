@@ -152,7 +152,7 @@ export default function CoverLetterOptimizer() {
                 <div className="space-y-2">
                   {VALUE_HIGHLIGHTS.map((v, i) => (
                     <div key={i} className="flex items-start gap-2 text-sm">
-                      <CheckCircle2 className="w-3.5 h-3.5 text-emerald-400 shrink-0 mt-0.5" />
+                      <CheckCircle2 className="w-3.5 h-3.5 text-civic-green shrink-0 mt-0.5" />
                       <span className="text-foreground/70">
                         <span className="text-foreground font-medium">"{v.text}"</span>
                         <span className="text-muted-foreground ml-1">→ {v.value}</span>

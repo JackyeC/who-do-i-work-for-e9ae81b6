@@ -7,9 +7,9 @@ import { useState } from "react";
 
 const TIERS: { value: PremiumTier | null; label: string; color: string }[] = [
   { value: null, label: "REAL", color: "bg-muted text-muted-foreground" },
-  { value: "free", label: "FREE", color: "bg-red-500/20 text-red-400 border-red-500/30" },
-  { value: "candidate", label: "PRO", color: "bg-amber-500/20 text-amber-400 border-amber-500/30" },
-  { value: "professional", label: "ENT", color: "bg-emerald-500/20 text-emerald-400 border-emerald-500/30" },
+  { value: "free", label: "FREE", color: "bg-civic-red/20 text-civic-red border-civic-red/30" },
+  { value: "candidate", label: "PRO", color: "bg-civic-yellow/20 text-civic-yellow border-civic-yellow/30" },
+  { value: "professional", label: "ENT", color: "bg-civic-green/20 text-civic-green border-civic-green/30" },
 ];
 
 export function PreviewTierToolbar() {

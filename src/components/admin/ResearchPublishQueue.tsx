@@ -135,7 +135,7 @@ function DraftCard({ review, onRefresh }: { review: PendingReview; onRefresh: ()
   };
 
   return (
-    <Card className={cn("border-border/40", review.status === "pending" && "border-amber-500/20")}>
+    <Card className={cn("border-border/40", review.status === "pending" && "border-civic-yellow/20")}>
       <CardContent className="p-0">
         <div
           className="flex items-center gap-3 p-4 cursor-pointer hover:bg-muted/30 transition-colors"
@@ -149,7 +149,7 @@ function DraftCard({ review, onRefresh }: { review: PendingReview; onRefresh: ()
             </p>
           </div>
           <Badge variant="outline" className={cn("text-xs",
-            review.status === "pending" ? "bg-amber-500/10 text-amber-600" : "bg-primary/10 text-primary"
+            review.status === "pending" ? "bg-civic-yellow/10 text-civic-yellow" : "bg-primary/10 text-primary"
           )}>
             {review.status}
           </Badge>

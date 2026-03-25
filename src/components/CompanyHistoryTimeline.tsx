@@ -71,9 +71,9 @@ function categorizeSignal(cat: string): EventCategory {
 const EVENT_ICONS: Record<EventCategory, { icon: any; color: string }> = {
   all: { icon: Activity, color: "text-primary bg-primary/10 border-primary/20" },
   influence: { icon: DollarSign, color: "text-purple-600 bg-purple-500/10 border-purple-500/20" },
-  signals: { icon: BarChart3, color: "text-blue-600 bg-blue-500/10 border-blue-500/20" },
-  workforce: { icon: Users, color: "text-orange-600 bg-orange-500/10 border-orange-500/20" },
-  governance: { icon: Shield, color: "text-emerald-600 bg-emerald-500/10 border-emerald-500/20" },
+  signals: { icon: BarChart3, color: "text-civic-blue bg-civic-blue/10 border-civic-blue/20" },
+  workforce: { icon: Users, color: "text-civic-yellow bg-civic-yellow/10 border-civic-yellow/20" },
+  governance: { icon: Shield, color: "text-emerald-600 bg-civic-green/10 border-civic-green/20" },
 };
 
 function formatDate(dateStr: string): string {
@@ -528,7 +528,7 @@ export function CompanyHistoryTimeline({ companyId, companyName }: CompanyHistor
                             {event.confidence && (
                               <Badge variant="outline" className={cn("text-xs",
                                 event.confidence === "high" || event.confidence === "direct" ? "border-primary/30 text-primary" :
-                                event.confidence === "medium" ? "border-amber-500/30 text-amber-600" :
+                                event.confidence === "medium" ? "border-civic-yellow/30 text-civic-yellow" :
                                 "border-muted-foreground/30"
                               )}>
                                 {event.confidence} confidence

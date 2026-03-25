@@ -39,13 +39,13 @@ interface CompanyImpact {
 // ─── Constants ───
 
 const IMPACT_CATEGORIES = [
-  { key: "labor_rights", label: "Labor Rights", icon: Factory, color: "text-orange-400", bgColor: "bg-orange-500/10", borderColor: "border-orange-500/20", table: "issue_signals", filter: "labor" },
-  { key: "immigration", label: "Immigration", icon: Globe, color: "text-blue-400", bgColor: "bg-blue-500/10", borderColor: "border-blue-500/20", table: "issue_signals", filter: "immigration" },
-  { key: "climate", label: "Climate", icon: Leaf, color: "text-green-400", bgColor: "bg-green-500/10", borderColor: "border-green-500/20", table: "climate_signals", filter: null },
-  { key: "gun_policy", label: "Gun Policy", icon: Crosshair, color: "text-red-400", bgColor: "bg-red-500/10", borderColor: "border-red-500/20", table: "gun_policy_signals", filter: null },
+  { key: "labor_rights", label: "Labor Rights", icon: Factory, color: "text-civic-yellow", bgColor: "bg-civic-yellow/10", borderColor: "border-civic-yellow/20", table: "issue_signals", filter: "labor" },
+  { key: "immigration", label: "Immigration", icon: Globe, color: "text-civic-blue", bgColor: "bg-civic-blue/10", borderColor: "border-civic-blue/20", table: "issue_signals", filter: "immigration" },
+  { key: "climate", label: "Climate", icon: Leaf, color: "text-civic-green", bgColor: "bg-civic-green/10", borderColor: "border-green-500/20", table: "climate_signals", filter: null },
+  { key: "gun_policy", label: "Gun Policy", icon: Crosshair, color: "text-civic-red", bgColor: "bg-civic-red/10", borderColor: "border-civic-red/20", table: "gun_policy_signals", filter: null },
   { key: "civil_rights", label: "Civil Rights", icon: Scale, color: "text-purple-400", bgColor: "bg-purple-500/10", borderColor: "border-purple-500/20", table: "civil_rights_signals", filter: null },
   { key: "healthcare", label: "Healthcare", icon: Heart, color: "text-pink-400", bgColor: "bg-pink-500/10", borderColor: "border-pink-500/20", table: "healthcare_signals", filter: null },
-  { key: "consumer_protection", label: "Consumer Protection", icon: ShieldAlert, color: "text-amber-400", bgColor: "bg-amber-500/10", borderColor: "border-amber-500/20", table: "consumer_protection_signals", filter: null },
+  { key: "consumer_protection", label: "Consumer Protection", icon: ShieldAlert, color: "text-civic-yellow", bgColor: "bg-civic-yellow/10", borderColor: "border-civic-yellow/20", table: "consumer_protection_signals", filter: null },
 ];
 
 const FEATURED_COMPANIES = [
@@ -443,8 +443,8 @@ export default function CorporateImpactMap() {
             onClick={() => navigate("/eeoc-tracker")}
           >
             <CardContent className="p-4 flex items-center gap-3">
-              <div className="p-2 rounded-lg bg-orange-500/10">
-                <Scale className="w-5 h-5 text-orange-400" />
+              <div className="p-2 rounded-lg bg-civic-yellow/10">
+                <Scale className="w-5 h-5 text-civic-yellow" />
               </div>
               <div>
                 <p className="font-medium text-sm">EEOC Tracker</p>
@@ -458,8 +458,8 @@ export default function CorporateImpactMap() {
             onClick={() => navigate("/economy")}
           >
             <CardContent className="p-4 flex items-center gap-3">
-              <div className="p-2 rounded-lg bg-green-500/10">
-                <BarChart3 className="w-5 h-5 text-green-400" />
+              <div className="p-2 rounded-lg bg-civic-green/10">
+                <BarChart3 className="w-5 h-5 text-civic-green" />
               </div>
               <div>
                 <p className="font-medium text-sm">Economy Dashboard</p>

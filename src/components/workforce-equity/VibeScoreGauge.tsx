@@ -11,7 +11,7 @@ const bandStyles: Record<VibeBand, { bg: string; text: string; ring: string; bar
   thriving_culture:   { bg: "bg-civic-green/10",  text: "text-civic-green",      ring: "ring-civic-green/30",  bar: "bg-civic-green" },
   strong_signals:     { bg: "bg-primary/10",       text: "text-primary",          ring: "ring-primary/30",      bar: "bg-primary" },
   mixed_signals:      { bg: "bg-civic-yellow/10",  text: "text-civic-yellow",     ring: "ring-civic-yellow/30", bar: "bg-civic-yellow" },
-  surface_level:      { bg: "bg-orange-500/10",    text: "text-orange-600",       ring: "ring-orange-500/30",   bar: "bg-orange-500" },
+  surface_level:      { bg: "bg-civic-yellow/10",    text: "text-civic-yellow",       ring: "ring-orange-500/30",   bar: "bg-civic-yellow" },
   vibe_check_failed:  { bg: "bg-destructive/10",   text: "text-destructive",      ring: "ring-destructive/30",  bar: "bg-destructive" },
 };
 

@@ -71,13 +71,13 @@ export function ScanDebugPanel({ companyId }: Props) {
   const statusIcon = (status: string) => {
     if (status === 'completed_with_signals') return <CheckCircle2 className="w-3.5 h-3.5 text-primary" />;
     if (status === 'completed_no_signals') return <CheckCircle2 className="w-3.5 h-3.5 text-muted-foreground" />;
-    if (status === 'no_sources_found') return <CircleSlash className="w-3.5 h-3.5 text-yellow-600" />;
+    if (status === 'no_sources_found') return <CircleSlash className="w-3.5 h-3.5 text-civic-yellow" />;
     if (status === 'failed') return <XCircle className="w-3.5 h-3.5 text-destructive" />;
     if (status === 'skipped') return <SkipForward className="w-3.5 h-3.5 text-muted-foreground" />;
     if (status === 'in_progress') return <Loader2 className="w-3.5 h-3.5 animate-spin text-primary" />;
-    if (status === 'active') return <CheckCircle2 className="w-3.5 h-3.5 text-green-600" />;
+    if (status === 'active') return <CheckCircle2 className="w-3.5 h-3.5 text-civic-green" />;
     if (status === 'error') return <XCircle className="w-3.5 h-3.5 text-destructive" />;
-    if (status === 'paused') return <AlertTriangle className="w-3.5 h-3.5 text-yellow-600" />;
+    if (status === 'paused') return <AlertTriangle className="w-3.5 h-3.5 text-civic-yellow" />;
     return <Clock className="w-3.5 h-3.5 text-muted-foreground" />;
   };
 
@@ -178,7 +178,7 @@ export function ScanDebugPanel({ companyId }: Props) {
                           </div>
                         )}
                         {mod.status === 'no_sources_found' && (
-                          <div className="mt-1 ml-5 text-yellow-600">
+                          <div className="mt-1 ml-5 text-civic-yellow">
                             No usable sources discovered. Not the same as "no signals detected."
                           </div>
                         )}
@@ -201,8 +201,8 @@ export function ScanDebugPanel({ companyId }: Props) {
                   )}
 
                   {run.warnings?.length > 0 && (
-                    <div className="p-2 rounded bg-yellow-500/5 border border-yellow-500/20 mb-2">
-                      <div className="flex items-center gap-1 text-xs font-medium text-yellow-600 mb-1">
+                    <div className="p-2 rounded bg-civic-yellow/5 border border-civic-yellow/20 mb-2">
+                      <div className="flex items-center gap-1 text-xs font-medium text-civic-yellow mb-1">
                         <AlertTriangle className="w-3 h-3" /> Warnings ({run.warnings.length})
                       </div>
                       {run.warnings.map((w: string, i: number) => (
@@ -298,9 +298,9 @@ export function ScanDebugPanel({ companyId }: Props) {
                                   variant="outline"
                                   className={cn(
                                     "text-xs",
-                                    evt.processing_status === 'completed' ? 'border-green-200 text-green-600' :
+                                    evt.processing_status === 'completed' ? 'border-green-200 text-civic-green' :
                                     evt.processing_status === 'failed' ? 'border-destructive/30 text-destructive' :
-                                    'border-yellow-200 text-yellow-600'
+                                    'border-yellow-200 text-civic-yellow'
                                   )}
                                 >
                                   {evt.processing_status}

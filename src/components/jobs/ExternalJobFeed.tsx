@@ -24,8 +24,8 @@ interface FeedJob {
 }
 
 const SOURCE_COLORS: Record<string, string> = {
-  "We Work Remotely": "bg-amber-500/10 text-amber-700 border-amber-500/20",
-  "Remotive": "bg-emerald-500/10 text-emerald-700 border-emerald-500/20",
+  "We Work Remotely": "bg-civic-yellow/10 text-amber-700 border-civic-yellow/20",
+  "Remotive": "bg-civic-green/10 text-emerald-700 border-civic-green/20",
   "Himalayas": "bg-sky-500/10 text-sky-700 border-sky-500/20",
 };
 

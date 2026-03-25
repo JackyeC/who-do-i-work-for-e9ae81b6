@@ -20,9 +20,9 @@ interface TrackedApp {
 }
 
 const COLUMNS: { key: TrackedApp["status"]; label: string; color: string }[] = [
-  { key: "applied", label: "Applied", color: "bg-blue-500/10 border-blue-500/20 text-blue-400" },
-  { key: "interviewing", label: "Interviewing", color: "bg-amber-500/10 border-amber-500/20 text-amber-400" },
-  { key: "offer", label: "Offer", color: "bg-emerald-500/10 border-emerald-500/20 text-emerald-400" },
+  { key: "applied", label: "Applied", color: "bg-civic-blue/10 border-civic-blue/20 text-civic-blue" },
+  { key: "interviewing", label: "Interviewing", color: "bg-civic-yellow/10 border-civic-yellow/20 text-civic-yellow" },
+  { key: "offer", label: "Offer", color: "bg-civic-green/10 border-civic-green/20 text-civic-green" },
   { key: "archived", label: "Archived", color: "bg-muted text-muted-foreground border-border/30" },
 ];
 
@@ -35,9 +35,9 @@ const INITIAL_APPS: TrackedApp[] = [
 ];
 
 function getScoreBadge(score: number) {
-  if (score >= 70) return "bg-emerald-500/10 text-emerald-400 border-emerald-500/20";
-  if (score >= 50) return "bg-amber-500/10 text-amber-400 border-amber-500/20";
-  return "bg-red-500/10 text-red-400 border-red-500/20";
+  if (score >= 70) return "bg-civic-green/10 text-civic-green border-civic-green/20";
+  if (score >= 50) return "bg-civic-yellow/10 text-civic-yellow border-civic-yellow/20";
+  return "bg-civic-red/10 text-civic-red border-civic-red/20";
 }
 
 export function TrackerSection() {
@@ -81,8 +81,8 @@ export function TrackerSection() {
       <div className="grid grid-cols-3 gap-4">
         {[
           { label: "Total Applications", value: counts.total, icon: Briefcase, color: "text-primary" },
-          { label: "Active Interviews", value: counts.interviews, icon: MessageSquare, color: "text-amber-400" },
-          { label: "Offers Received", value: counts.offers, icon: Trophy, color: "text-emerald-400" },
+          { label: "Active Interviews", value: counts.interviews, icon: MessageSquare, color: "text-civic-yellow" },
+          { label: "Offers Received", value: counts.offers, icon: Trophy, color: "text-civic-green" },
         ].map((stat) => (
           <div key={stat.label} className="rounded-xl border border-border/40 bg-card p-4 text-center">
             <stat.icon className={cn("w-5 h-5 mx-auto mb-2", stat.color)} />

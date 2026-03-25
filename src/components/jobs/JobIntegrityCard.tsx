@@ -78,7 +78,7 @@ export function JobIntegrityCard({ job, matchCount = 0, matchedCategories = [], 
   return (
     <Card className={cn(
       "bg-card/80 backdrop-blur-sm border-border/30 hover:border-primary/30 hover:shadow-2xl hover:shadow-primary/10 transition-all duration-300 group",
-      isCertified && "ring-1 ring-amber-500/20 border-amber-500/15 hover:shadow-amber-500/10"
+      isCertified && "ring-1 ring-amber-500/20 border-civic-yellow/15 hover:shadow-amber-500/10"
     )}>
       <CardContent className="p-4 md:p-5 space-y-2.5 md:space-y-3">
         {/* Header */}
@@ -98,7 +98,7 @@ export function JobIntegrityCard({ job, matchCount = 0, matchedCategories = [], 
                 </Badge>
               )}
               {isCertified && (
-                <Badge variant="outline" className="text-xs gap-0.5 bg-amber-500/10 text-amber-600 border-amber-500/20">
+                <Badge variant="outline" className="text-xs gap-0.5 bg-civic-yellow/10 text-civic-yellow border-civic-yellow/20">
                   <ShieldCheck className="w-2.5 h-2.5" /> Certified
                 </Badge>
               )}

@@ -90,10 +90,10 @@ export function ApplyKitSection() {
               <pre className="text-sm text-foreground/90 whitespace-pre-wrap font-sans leading-relaxed">{SAMPLE_COVER_LETTER}</pre>
             </div>
             <div className="flex gap-2 flex-wrap">
-              <Badge variant="outline" className="text-xs bg-emerald-500/5 text-emerald-400 border-emerald-500/20">✓ Values-forward tone</Badge>
-              <Badge variant="outline" className="text-xs bg-emerald-500/5 text-emerald-400 border-emerald-500/20">✓ Mirrors company language</Badge>
-              <Badge variant="outline" className="text-xs bg-emerald-500/5 text-emerald-400 border-emerald-500/20">✓ Evidence-based claims</Badge>
-              <Badge variant="outline" className="text-xs bg-emerald-500/5 text-emerald-400 border-emerald-500/20">✓ No generic openers</Badge>
+              <Badge variant="outline" className="text-xs bg-civic-green/5 text-civic-green border-civic-green/20">✓ Values-forward tone</Badge>
+              <Badge variant="outline" className="text-xs bg-civic-green/5 text-civic-green border-civic-green/20">✓ Mirrors company language</Badge>
+              <Badge variant="outline" className="text-xs bg-civic-green/5 text-civic-green border-civic-green/20">✓ Evidence-based claims</Badge>
+              <Badge variant="outline" className="text-xs bg-civic-green/5 text-civic-green border-civic-green/20">✓ No generic openers</Badge>
             </div>
           </div>
         )}
