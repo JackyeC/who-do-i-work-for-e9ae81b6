@@ -1,38 +1,43 @@
 
 
-## Plan: Seed Workforce Intelligence with Breaking News Data
+## Problem: Flash / stuck page in ProtectedRoute
 
-You shared 4 major workforce stories from this week. I'll insert them into the existing `work_news` and `briefing_items` tables so they appear on the Workforce Intelligence Brief page and the Daily Briefing card on the dashboard.
+The root cause is in `ProtectedRouteInner` (line 53-55 of `ProtectedRoute.tsx`):
 
-### Data to Insert
+```typescript
+// If Supabase user isn't loaded yet, show content
+if (!user) {
+  return <>{children}</>;  // ← Shows protected page to unauthenticated users
+}
+```
 
-**work_news table** (4 articles for the Workforce Brief page):
+When the auth state is settling (Clerk loaded but Supabase session not yet synced), `loading` finishes as `false` and `user` is `null`. Instead of redirecting to login, it **renders the protected content**. Then when the auth state updates again (or doesn't), the page either stays stuck showing content it shouldn't, or flashes away to login.
 
-| Headline | Category | Tone | Source |
-|----------|----------|------|--------|
-| More Workers Are Struggling Than Thriving for the First Time, Gallup Finds | future_of_work | Negative | Gallup |
-| Healthcare Is Carrying 109% of All US Private Sector Job Growth | future_of_work | Neutral | ADP Research |
-| Half of All Companies Expect AI to Replace Zero Roles in 2026, NBER Survey Finds | ai_workplace | Positive | NBER |
-| Tech Employment Declined in 2025 but AI-Skilled Roles Lead 2026 Rebound | ai_workplace | Neutral | CompTIA |
+Additionally, when Clerk is in **fallback mode** (after the 3-second timeout), the `SignedIn`/`SignedOut` wrappers are bypassed entirely, so there's no redirect to `/login` for unauthenticated users — they go straight to `ProtectedRouteInner` which renders children.
 
-**briefing_items table** (4 signal alerts for the Daily Briefing card):
+### Fix
 
-| Company/Topic | Signal | Headline |
-|---------------|--------|----------|
-| US Labor Market | amber_flag | Gallup: More US workers now "struggling" than "thriving" — first time ever recorded |
-| Healthcare Sector | info | ADP: Healthcare accounts for 109% of net private-sector job growth; all other sectors contracting |
-| AI Employment | green_badge | NBER: 50% of CFOs surveyed expect AI to replace zero roles in 2026; projected impact < 0.4% |
-| Tech Sector | info | CompTIA: Tech employment fell in 2025, but AI-skilled roles projected to lead 2026 rebound; median tech wages 126% above national average |
+**File: `src/components/ProtectedRoute.tsx`**
 
-### Technical Steps
+1. Change the `!user` check in `ProtectedRouteInner` to redirect to `/login` instead of rendering children — the original comment was a workaround that introduces the flash.
 
-1. **Run a single SQL migration** with INSERT statements for both tables, using the real source URLs (Gallup, ADP, NBER, CompTIA) and published date of 2026-03-24.
+2. Add a brief grace period (e.g. 2 seconds) after `loading` finishes to allow the Clerk→Supabase bridge to complete before redirecting. If `user` is still `null` after the grace period, redirect to `/login`.
 
-2. **No code changes needed** — the existing `WorkNewsRepository`, `WorkNewsTicker`, and `DailyBriefingCard` components will automatically pick up the new rows.
+```text
+ProtectedRouteInner flow (after fix):
 
-### What You'll See After
+  loading/roleLoading/waitlistLoading? → spinner
+  user is null AND grace period not elapsed? → spinner
+  user is null AND grace period elapsed? → redirect /login
+  user exists, not approved? → waitlist gate
+  user exists, approved? → render children
+```
 
-- The **Workforce Intelligence Brief** page will show the 4 new articles with category badges, tone labels, and source links.
-- The **Daily Briefing** card on the dashboard will show the 4 signal items with color-coded severity badges.
-- The **Work News Ticker** will scroll the new headlines.
+3. Keep the existing dossier route bypass (line 17-18) unchanged — dossier pages are intentionally public.
+
+### Scope
+
+- **1 file changed**: `src/components/ProtectedRoute.tsx`
+- No database changes
+- No new dependencies
 
