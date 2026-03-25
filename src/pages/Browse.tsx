@@ -162,7 +162,7 @@ export default function Browse() {
               Employer Directory
             </h1>
             <p className="text-sm text-muted-foreground mt-0.5">
-              {allCompanies.length} companies tracked
+              {isLoading ? "Loading companies…" : `${allCompanies.length} companies tracked`}
             </p>
           </div>
           <div className="flex items-center gap-3">
