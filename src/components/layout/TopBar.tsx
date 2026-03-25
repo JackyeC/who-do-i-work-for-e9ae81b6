@@ -273,7 +273,7 @@ export function TopBar() {
           ) : (
             <Link
               to="/pricing"
-              className="hidden sm:inline-flex whitespace-nowrap font-sans text-label text-primary hover-btn"
+              className="hidden 2xl:inline-flex whitespace-nowrap font-sans text-label text-primary hover-btn"
             >
               See pricing →
             </Link>
