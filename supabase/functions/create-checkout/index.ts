@@ -10,6 +10,9 @@ const corsHeaders = {
 // One-time purchase prices (not subscriptions)
 const ONE_TIME_PRICES = new Set([
   "price_1TEEvz89MyCOs8yvWbLINfKw", // The Dossier $199 (one-time deep-dive)
+  "price_1TCTQW7Qj0W6UtN9eFTxOpYg", // Career Strategy Session $350
+  "price_1TCTQX7Qj0W6UtN9T019lM6x", // Offer Review Intensive $275
+  "price_1TEGpC89MyCOs8yvhPDDHF8l",  // Career Fit Report $49
 ]);
 
 // Subscription prices (recurring)

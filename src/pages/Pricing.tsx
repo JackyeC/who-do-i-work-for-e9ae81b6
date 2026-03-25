@@ -41,8 +41,8 @@ const TIERS = [
     annualPrice: 182,
     annualMonthly: 15,
     annualSavings: 46,
-    monthlyPriceId: "price_signal_monthly_placeholder",
-    annualPriceId: "price_signal_annual_placeholder",
+    monthlyPriceId: "price_1TEEvt89MyCOs8yv7SV1TeUJ",
+    annualPriceId: "price_1TEEvt89MyCOs8yv7SV1TeUJ",
     features: [
       "Everything in The Check",
       "Unlimited AI job-link audits",
@@ -64,8 +64,8 @@ const TIERS = [
     annualPrice: 470,
     annualMonthly: 39,
     annualSavings: 118,
-    monthlyPriceId: "price_analyst_monthly_placeholder",
-    annualPriceId: "price_analyst_annual_placeholder",
+    monthlyPriceId: "price_1TEEvz89MyCOs8yvWbLINfKw",
+    annualPriceId: "price_1TEEvz89MyCOs8yvWbLINfKw",
     features: [
       "Everything in The Signal",
       "Full employer intelligence dossier",
@@ -88,8 +88,8 @@ const TIERS = [
     annualPrice: 950,
     annualMonthly: 79,
     annualSavings: 238,
-    monthlyPriceId: "price_brief_monthly_placeholder",
-    annualPriceId: "price_brief_annual_placeholder",
+    monthlyPriceId: "price_1TEEw589MyCOs8yvQI8FpHJx",
+    annualPriceId: "price_1TEEw589MyCOs8yvQI8FpHJx",
     features: [
       "Everything in The Analyst",
       "Monthly 30-min 1-on-1 with Jackye",
