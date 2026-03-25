@@ -1,29 +1,55 @@
 
 
-## Fix: Inconsistent Colors Across the Homepage
+## Fix: Hardcoded Colors Breaking Light/Dark Mode Across the Project
 
 ### Problem
-The homepage (`src/pages/Index.tsx`) mixes hardcoded Tailwind colors with theme-aware tokens. This means colors won't adapt correctly between light and dark modes and look visually inconsistent.
+458 instances of hardcoded Tailwind colors (`text-green-400`, `bg-red-500/10`, `text-yellow-600`, etc.) across **45 files** don't adapt between light and dark mode. The project already has a proper theme token system (`civic-red`, `civic-green`, `civic-yellow`, `civic-blue`, `destructive`, `primary`) defined in `tailwind.config.ts` and `index.css` — but most files bypass it.
 
-**Specific issues in `Index.tsx`:**
-- Lines 162-166: Score badges use `text-green-400`, `text-yellow-400`, `text-red-400` and their `bg-` variants instead of the civic signal tokens
-- These hardcoded colors look washed out in light mode and don't match the CivicScoreCard component used elsewhere
+### Fix Strategy
+Systematic replacement across all 45 files, using this token mapping:
 
-### Fix (Index.tsx only — scoped to homepage)
-
-Replace all hardcoded score color classes in the Featured Company Cards section:
-
-| Current (hardcoded) | Replacement (theme token) |
+| Hardcoded | Theme Token |
 |---|---|
-| `bg-green-500/10 text-green-400` | `bg-civic-green/10 text-civic-green` |
-| `bg-yellow-500/10 text-yellow-400` | `bg-civic-yellow/10 text-civic-yellow` |
-| `bg-red-500/10 text-red-400` | `bg-civic-red/10 text-civic-red` |
+| `text-green-400/500/600/700`, `bg-green-500/10` | `text-civic-green`, `bg-civic-green/10` |
+| `text-red-400/500/600/700`, `bg-red-500/10` | `text-civic-red`, `bg-civic-red/10` (or `text-destructive` for errors) |
+| `text-yellow-400/500/600`, `bg-yellow-500/10` | `text-civic-yellow`, `bg-civic-yellow/10` |
+| `text-amber-400/500/600`, `bg-amber-500/10` | `text-civic-yellow`, `bg-civic-yellow/10` |
+| `text-blue-400/500/700`, `bg-blue-500/10` | `text-civic-blue`, `bg-civic-blue/10` |
+| `text-emerald-400`, `bg-emerald-500/10` | `text-civic-green`, `bg-civic-green/10` |
+| `text-orange-400/500` | `text-civic-yellow` (closest match) |
+| `text-purple-400/500` | Keep as-is (decorative, no civic token) |
+| `text-pink-400` | Keep as-is (decorative) |
+| `dark:text-green-400` patterns | Remove the `dark:` variant — civic tokens auto-adapt |
 
-These civic tokens are already defined in `index.css` and adapt to both light and dark mode automatically.
+### Files to Update (grouped by priority)
+
+**High-visibility pages (7 files):**
+- `src/pages/Demo.tsx` — `scoreColor()`, `severityStyle`, `flagStyle`, `partyColor`
+- `src/pages/BriefingPage.tsx` — score colors
+- `src/pages/SignalFeed.tsx` — category config, confidence colors
+- `src/pages/VoterLookup.tsx` — party colors
+- `src/pages/EEOCTracker.tsx` — action labels, header icons
+- `src/pages/ResumeOptimizer.tsx` — score colors, missing keyword badges
+- `src/pages/CorporateImpactMap.tsx` — category config colors
+
+**High-visibility components (12 files):**
+- `src/components/WorkerSentimentCard.tsx` — sentiment colors, progress bars
+- `src/components/MonitoredPagesPanel.tsx` — status config
+- `src/components/ScanDebugPanel.tsx` — status icons
+- `src/components/OpenSecretsEnrichmentCard.tsx` — verification labels
+- `src/components/IssueRelatedReports.tsx` — verification labels
+- `src/components/PromotionEquityCard.tsx` — category colors
+- `src/components/CoverageBalanceChart.tsx` — political lean colors
+- `src/components/CompensationTransparencyCard.tsx` — equity day colors
+- `src/components/investigative/DocumentsTab.tsx` — verification status
+
+**Remaining ~26 files** — same pattern, lower traffic pages
+
+### Special Cases
+- **Political party colors** (`D: blue`, `R: red`): Use `civic-blue` / `civic-red` with the existing `dark:` pattern removed since civic tokens auto-adapt
+- **LinkedIn share button** (`bg-[#0A66C2]`): Keep as-is — brand color, not theme-dependent
+- **Purple/pink decorative colors**: Keep as-is — no civic equivalent, and they're used for category differentiation not status signals
 
 ### Scope
-This change is limited to **`src/pages/Index.tsx`** lines 162-166 (the featured company cards score badges). The broader codebase has similar issues in ~13 other files, but those are separate pages and should be addressed incrementally.
-
-### No other changes
-Layout, typography, and content remain untouched.
+~458 replacements across ~45 files. No layout, content, or logic changes. Pure color token migration.
 
