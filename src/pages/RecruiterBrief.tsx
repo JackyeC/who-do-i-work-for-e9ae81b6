@@ -12,6 +12,8 @@ import {
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { motion, AnimatePresence } from "framer-motion";
+import { generateCandidatePdf } from "@/lib/generateCandidatePdf";
+import { useToast } from "@/hooks/use-toast";
 
 const COMPANY_FIELDS = "id, name, industry, civic_footprint_score, career_intelligence_score, confidence_rating, lobbying_spend, employee_count, jackye_insight, is_publicly_traded, description" as const;
 
