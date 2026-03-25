@@ -289,6 +289,16 @@ const Index = forwardRef<HTMLDivElement>((_, ref) => {
         </div>
       </section>
 
+      {/* ── DIVIDER: STOP APPLYING ── */}
+      <section className="px-6 lg:px-16 py-16 lg:py-20 text-center">
+        <p className="font-sans text-foreground tracking-tight" style={{ fontSize: "clamp(1.3rem, 3vw, 2rem)", fontWeight: 800, letterSpacing: "-0.5px" }}>
+          Stop applying. Start aligning.
+        </p>
+        <p className="text-sm text-muted-foreground mt-3 max-w-[36ch] mx-auto leading-relaxed">
+          What the data shows — no opinions, no rankings, just patterns.
+        </p>
+      </section>
+
       {/* ── SECTION 6: THE INTEGRITY GAP ── */}
       <section className="bg-card border-y border-border px-6 lg:px-16 py-20 lg:py-24">
         <div className="max-w-[1100px] mx-auto">
