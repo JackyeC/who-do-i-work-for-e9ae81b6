@@ -63,16 +63,21 @@ export default function Browse() {
   const navigate = useNavigate();
   const { toast } = useToast();
 
-  const { data: dbCompanies, isLoading } = useQuery({
+  const { data: dbCompanies, isLoading, isError } = useQuery({
     queryKey: ["browse-companies"],
     queryFn: async () => {
       const { data, error } = await supabase
         .from("companies")
         .select("id, name, slug, industry, state, civic_footprint_score, total_pac_spending, lobbying_spend, revenue, employee_count, description, is_startup, category_tags, career_intelligence_score")
         .order("civic_footprint_score", { ascending: false });
-      if (error) throw error;
+      if (error) {
+        console.error("Browse companies query error:", error);
+        throw error;
+      }
       return data || [];
     },
+    retry: 2,
+    staleTime: 5 * 60 * 1000,
   });
 
   const allCompanies = useMemo(() => {
@@ -157,7 +162,7 @@ export default function Browse() {
               Employer Directory
             </h1>
             <p className="text-sm text-muted-foreground mt-0.5">
-              {allCompanies.length} companies tracked
+              {isLoading ? "Loading companies…" : `${allCompanies.length} companies tracked`}
             </p>
           </div>
           <div className="flex items-center gap-3">
@@ -285,8 +290,12 @@ export default function Browse() {
         </p>
 
         {/* Grid */}
-        {isLoading ? (
+        {isLoading && !isError ? (
           <LoadingState message="Loading companies…" />
+        ) : isError ? (
+          <div className="text-center py-12">
+            <EmptyState icon={Building2} title="Failed to load companies" description="There was a problem loading the directory. The page will show cached data if available." />
+          </div>
         ) : filtered.length === 0 ? (
           <div className="text-center py-12">
             <EmptyState icon={Building2} title="No companies match" description="Try adjusting your search or filter." />
