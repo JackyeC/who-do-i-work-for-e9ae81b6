@@ -151,6 +151,14 @@ export function AdminCompanyActions({ companyId, companyName, companySlug, onEdi
   return (
     <div className="flex items-center gap-1.5">
       <Badge variant="outline" className="text-xs text-muted-foreground border-muted">Admin</Badge>
+
+      {/* Edit */}
+      {onEditClick && (
+        <Button variant="ghost" size="sm" className="h-7 text-xs gap-1 text-muted-foreground hover:text-foreground" onClick={onEditClick}>
+          <Pencil className="w-3 h-3" />
+          Edit
+        </Button>
+      )}
       
       {/* Merge */}
       <Dialog open={mergeOpen} onOpenChange={setMergeOpen}>
