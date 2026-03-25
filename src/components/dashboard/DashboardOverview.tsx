@@ -15,31 +15,17 @@ interface DashboardOverviewProps {
   onNavigate: (tab: string) => void;
 }
 
-/* ── Theme tokens ── */
-const C = {
-  bg: "#0a0a0e",
-  card: "#13121a",
-  border: "rgba(255,255,255,0.08)",
-  gold: "#f0c040",
-  cream: "#f0ebe0",
-  muted: "#b8b4a8",
-  dimmed: "#7a7590",
-  red: "#ff4d6d",
-  green: "#47ffb3",
-  blue: "#1f7ad6",
-  orange: "#e07a10",
-};
-
 /* ── Signal card data ── */
 const SIGNAL_CARDS = [
   {
     company: "Amazon",
     slug: "amazon",
     badge: "OSHA",
-    badgeColor: C.red,
+    badgeVariant: "destructive" as const,
     summary: "6 OSHA citations across 4 fulfillment centers — ergonomic & rate-related injuries",
     amount: "$60K+ penalties",
     severity: "HIGH",
+    severityVariant: "destructive" as const,
     date: "Jan 2025",
     source: "OSHA",
   },
@@ -47,10 +33,11 @@ const SIGNAL_CARDS = [
     company: "Goldman Sachs",
     slug: "goldman-sachs",
     badge: "DOJ",
-    badgeColor: C.red,
+    badgeVariant: "destructive" as const,
     summary: "1MDB global bribery & money-laundering settlement — systemic compliance failure",
     amount: "$2.9B settlement",
     severity: "CRITICAL",
+    severityVariant: "destructive" as const,
     date: "2020",
     source: "DOJ",
   },
@@ -58,10 +45,11 @@ const SIGNAL_CARDS = [
     company: "JPMorgan Chase",
     slug: "jpmorgan-chase",
     badge: "SEC",
-    badgeColor: C.orange,
+    badgeVariant: "warning" as const,
     summary: "Spoofing precious-metals & Treasury markets — traders convicted",
     amount: "$920M fine",
     severity: "HIGH",
+    severityVariant: "warning" as const,
     date: "2020",
     source: "SEC / CFTC",
   },
@@ -69,10 +57,11 @@ const SIGNAL_CARDS = [
     company: "Starbucks",
     slug: "starbucks",
     badge: "NLRB",
-    badgeColor: C.orange,
+    badgeVariant: "warning" as const,
     summary: "$1B restructuring — 500+ store closures, 2,000 layoffs, union suppression findings",
     amount: "$1B restructuring",
     severity: "HIGH",
+    severityVariant: "warning" as const,
     date: "2025",
     source: "NLRB / Reuters",
   },
@@ -80,10 +69,11 @@ const SIGNAL_CARDS = [
     company: "Google / Alphabet",
     slug: "google-alphabet",
     badge: "DOJ",
-    badgeColor: C.red,
+    badgeVariant: "destructive" as const,
     summary: "Antitrust ruling — illegal monopoly on search ads, remedies pending breakup risk",
     amount: "Monopoly ruling",
     severity: "CRITICAL",
+    severityVariant: "destructive" as const,
     date: "2024",
     source: "DOJ Antitrust",
   },
@@ -95,25 +85,25 @@ const INTEL_BULLETS = [
     text: "Amazon is under active wage/hour scrutiny exceeding $100M in violations — verify comp equity before accepting any offer.",
     source: "DOJ / OSHA",
     risk: "HIGH",
-    riskColor: C.red,
+    variant: "destructive" as const,
   },
   {
     text: "Goldman Sachs' 1MDB settlement revealed systemic compliance gaps at the leadership level — ask about post-settlement governance reforms in any interview.",
     source: "DOJ / SEC",
     risk: "HIGH",
-    riskColor: C.red,
+    variant: "destructive" as const,
   },
   {
     text: "Starbucks has closed 500+ stores and laid off 2,000 employees while fighting NLRB union complaints in 30+ states — workforce stability is a live concern.",
     source: "Reuters / NLRB",
     risk: "MEDIUM",
-    riskColor: C.orange,
+    variant: "warning" as const,
   },
   {
     text: "Google's antitrust ruling could force structural changes to Search — any role tied to ad revenue should be evaluated for 12-month exposure.",
     source: "DOJ Antitrust",
     risk: "MEDIUM",
-    riskColor: C.orange,
+    variant: "warning" as const,
   },
 ];
 
@@ -156,22 +146,46 @@ const DEMO_WATCHED = [
 ];
 
 /* ── Helpers ── */
-function scoreColor(score: number): string {
-  if (score >= 70) return C.green;
-  if (score >= 40) return C.gold;
-  return C.red;
+function scoreColorClass(score: number): string {
+  if (score >= 70) return "text-civic-green";
+  if (score >= 40) return "text-primary";
+  return "text-destructive";
 }
+
+function scoreBgClass(score: number): string {
+  if (score >= 70) return "bg-civic-green/10 text-civic-green";
+  if (score >= 40) return "bg-primary/10 text-primary";
+  return "bg-destructive/10 text-destructive";
+}
+
+function scoreDotClass(score: number): string {
+  if (score >= 70) return "bg-civic-green";
+  if (score >= 40) return "bg-primary";
+  return "bg-destructive";
+}
+
+const VARIANT_CLASSES = {
+  destructive: {
+    badge: "bg-destructive/10 text-destructive border-destructive/30",
+  },
+  warning: {
+    badge: "bg-civic-yellow/10 text-civic-yellow border-civic-yellow/30",
+  },
+  info: {
+    badge: "bg-civic-blue/10 text-civic-blue border-civic-blue/30",
+  },
+};
 
 function BriefingCard({ children, className = "" }: { children: React.ReactNode; className?: string }) {
   return (
-    <div className={`rounded-2xl p-6 ${className}`} style={{ background: C.card, border: `1px solid ${C.border}` }}>
+    <div className={`rounded-2xl p-6 bg-card border border-border/30 ${className}`}>
       {children}
     </div>
   );
 }
 
 function Skeleton({ className = "" }: { className?: string }) {
-  return <div className={`rounded-lg animate-pulse ${className}`} style={{ background: "#1c1a27" }} />;
+  return <div className={`rounded-lg animate-pulse bg-muted ${className}`} />;
 }
 
 const anim = (delay: number) => ({
@@ -224,24 +238,21 @@ export function DashboardOverview({ onNavigate }: DashboardOverviewProps) {
       <motion.div {...anim(0)}>
         <BriefingCard>
           <div className="flex items-center gap-2 mb-3">
-            <span
-              className="inline-flex items-center gap-1.5 rounded-full text-xs font-bold px-3 py-1"
-              style={{ background: "rgba(240,192,64,0.1)", border: "1px solid rgba(240,192,64,0.3)", color: C.gold, fontSize: 12 }}
-            >
+            <span className="inline-flex items-center gap-1.5 rounded-full text-xs font-bold px-3 py-1 bg-primary/10 border border-primary/30 text-primary">
               <Eye className="w-3 h-3" /> LIVE INTELLIGENCE
             </span>
-            <span style={{ fontSize: 12, color: C.dimmed, fontFamily: "'DM Mono',monospace" }}>{dateStr}</span>
+            <span className="text-xs text-muted-foreground font-mono">{dateStr}</span>
           </div>
-          <h2 style={{ fontSize: 24, fontWeight: 700, color: C.cream, letterSpacing: "-0.5px", lineHeight: 1.3 }}>
+          <h2 className="text-2xl font-bold text-foreground tracking-tight leading-snug font-display">
             Good morning, {firstName}.
           </h2>
-          <p style={{ fontSize: 15, color: C.muted, lineHeight: 1.6, marginTop: 8 }}>
+          <p className="text-[15px] text-muted-foreground leading-relaxed mt-2">
             {data?.alerts && data.alerts.length > 0
               ? `${new Set(data.alerts.map((a: any) => a.company_name)).size} companies you're watching had signal updates. `
               : ""}
             5 employer signals require your attention today. Here's what the public record is showing.
           </p>
-          <p style={{ fontSize: 13, color: C.cream, marginTop: 10, fontWeight: 600, fontStyle: "italic" }}>
+          <p className="text-sm text-foreground mt-2.5 font-semibold italic">
             "You deserve to know exactly who you work for."
           </p>
         </BriefingCard>
@@ -252,17 +263,14 @@ export function DashboardOverview({ onNavigate }: DashboardOverviewProps) {
         <BriefingCard>
           <div className="flex items-center justify-between mb-4">
             <div>
-              <h3 style={{ fontSize: 16, fontWeight: 800, color: C.cream, letterSpacing: "-0.3px" }}>
+              <h3 className="text-base font-extrabold text-foreground tracking-tight">
                 Employer Signal Alerts
               </h3>
-              <p style={{ fontSize: 12, color: C.dimmed, marginTop: 2 }}>
+              <p className="text-xs text-muted-foreground mt-0.5">
                 Active violations, settlements, and regulatory actions from the public record
               </p>
             </div>
-            <span
-              className="shrink-0 rounded-full px-2.5 py-1 text-xs font-bold"
-              style={{ background: `${C.red}18`, color: C.red, border: `1px solid ${C.red}40` }}
-            >
+            <span className="shrink-0 rounded-full px-2.5 py-1 text-xs font-bold bg-destructive/10 text-destructive border border-destructive/30">
               {SIGNAL_CARDS.length} ACTIVE
             </span>
           </div>
@@ -271,49 +279,31 @@ export function DashboardOverview({ onNavigate }: DashboardOverviewProps) {
               <Link
                 key={i}
                 to={`/dossier/${s.slug}`}
-                className="block rounded-xl p-4 transition-all hover:scale-[1.005]"
-                style={{ background: "rgba(255,255,255,0.025)", border: `1px solid ${C.border}` }}
+                className="block rounded-xl p-4 transition-all hover:scale-[1.005] bg-muted/30 border border-border/30"
               >
                 <div className="flex items-start justify-between gap-3">
                   <div className="min-w-0 flex-1">
                     <div className="flex items-center gap-2 mb-1.5 flex-wrap">
-                      <span style={{ fontSize: 14, fontWeight: 700, color: C.cream }}>{s.company}</span>
-                      <span
-                        className="rounded px-1.5 py-0.5 text-xs font-bold"
-                        style={{
-                          background: `${s.badgeColor}18`,
-                          color: s.badgeColor,
-                          border: `1px solid ${s.badgeColor}40`,
-                          fontFamily: "'DM Mono',monospace",
-                          fontSize: 12,
-                        }}
-                      >
+                      <span className="text-sm font-bold text-foreground">{s.company}</span>
+                      <span className={`rounded px-1.5 py-0.5 text-xs font-bold font-mono border ${VARIANT_CLASSES[s.badgeVariant].badge}`}>
                         {s.badge}
                       </span>
-                      <span
-                        className="rounded px-1.5 py-0.5 text-xs font-bold"
-                        style={{
-                          background: s.severity === "CRITICAL" ? `${C.red}18` : `${C.orange}18`,
-                          color: s.severity === "CRITICAL" ? C.red : C.orange,
-                          fontFamily: "'DM Mono',monospace",
-                          fontSize: 12,
-                        }}
-                      >
+                      <span className={`rounded px-1.5 py-0.5 text-xs font-bold font-mono ${VARIANT_CLASSES[s.severityVariant].badge}`}>
                         {s.severity}
                       </span>
                     </div>
-                    <p style={{ fontSize: 13, color: C.muted, lineHeight: 1.45 }}>{s.summary}</p>
+                    <p className="text-[13px] text-muted-foreground leading-snug">{s.summary}</p>
                     <div className="flex items-center gap-3 mt-2">
-                      <span style={{ fontSize: 12, fontWeight: 700, color: C.gold, fontFamily: "'DM Mono',monospace" }}>
+                      <span className="text-xs font-bold text-primary font-mono">
                         {s.amount}
                       </span>
-                      <span style={{ fontSize: 12, color: C.dimmed }}>·</span>
-                      <span style={{ fontSize: 12, color: C.dimmed, fontFamily: "'DM Mono',monospace" }}>{s.date}</span>
-                      <span style={{ fontSize: 12, color: C.dimmed }}>·</span>
-                      <span style={{ fontSize: 12, color: C.dimmed }}>{s.source}</span>
+                      <span className="text-xs text-muted-foreground/50">·</span>
+                      <span className="text-xs text-muted-foreground/50 font-mono">{s.date}</span>
+                      <span className="text-xs text-muted-foreground/50">·</span>
+                      <span className="text-xs text-muted-foreground/50">{s.source}</span>
                     </div>
                   </div>
-                  <span style={{ color: C.gold, fontSize: 12, fontWeight: 600, whiteSpace: "nowrap", marginTop: 2 }} className="flex items-center gap-1">
+                  <span className="text-xs font-semibold text-primary whitespace-nowrap mt-0.5 flex items-center gap-1">
                     View Full Audit <ArrowRight className="w-3 h-3" />
                   </span>
                 </div>
@@ -330,30 +320,21 @@ export function DashboardOverview({ onNavigate }: DashboardOverviewProps) {
         <motion.div {...anim(0.12)}>
           <BriefingCard className="h-full">
             <div className="flex items-center gap-2 mb-4">
-              <AlertTriangle className="w-4 h-4" style={{ color: C.gold }} />
-              <h3 style={{ fontSize: 14, fontWeight: 700, color: C.cream }}>Intelligence Briefing</h3>
+              <AlertTriangle className="w-4 h-4 text-primary" />
+              <h3 className="text-sm font-bold text-foreground">Intelligence Briefing</h3>
             </div>
             <div className="space-y-3">
               {INTEL_BULLETS.map((b, i) => (
-                <div key={i} className="rounded-lg p-3" style={{ background: "rgba(255,255,255,0.025)", border: `1px solid ${C.border}` }}>
+                <div key={i} className="rounded-lg p-3 bg-muted/30 border border-border/30">
                   <div className="flex items-center gap-2 mb-1.5">
-                    <span
-                      className="rounded px-1.5 py-0.5 text-xs font-bold"
-                      style={{
-                        background: `${b.riskColor}18`,
-                        color: b.riskColor,
-                        border: `1px solid ${b.riskColor}40`,
-                        fontFamily: "'DM Mono',monospace",
-                        fontSize: 12,
-                      }}
-                    >
+                    <span className={`rounded px-1.5 py-0.5 text-xs font-bold font-mono border ${VARIANT_CLASSES[b.variant].badge}`}>
                       {b.risk} RISK
                     </span>
-                    <span style={{ fontSize: 12, color: C.dimmed, fontFamily: "'DM Mono',monospace" }}>
+                    <span className="text-xs text-muted-foreground font-mono">
                       Source: {b.source}
                     </span>
                   </div>
-                  <p style={{ fontSize: 12.5, color: C.cream, lineHeight: 1.5 }}>{b.text}</p>
+                  <p className="text-[12.5px] text-foreground leading-relaxed">{b.text}</p>
                 </div>
               ))}
             </div>
@@ -364,10 +345,10 @@ export function DashboardOverview({ onNavigate }: DashboardOverviewProps) {
         <motion.div {...anim(0.16)}>
           <BriefingCard className="h-full">
             <div className="flex items-center gap-2 mb-1">
-              <BookOpen className="w-4 h-4" style={{ color: C.gold }} />
-              <h3 style={{ fontSize: 14, fontWeight: 700, color: C.cream }}>From Jackye</h3>
+              <BookOpen className="w-4 h-4 text-primary" />
+              <h3 className="text-sm font-bold text-foreground">From Jackye</h3>
             </div>
-            <p style={{ fontSize: 12, color: C.dimmed, marginBottom: 12 }}>Curated insider intel — not generic advice</p>
+            <p className="text-xs text-muted-foreground mb-3">Curated insider intel — not generic advice</p>
             <div className="space-y-3">
               {JACKYE_CONTENT.map((item) => {
                 const Wrapper = item.internal ? Link : "a";
@@ -378,34 +359,23 @@ export function DashboardOverview({ onNavigate }: DashboardOverviewProps) {
                   <Wrapper
                     key={item.number}
                     {...(linkProps as any)}
-                    className="block rounded-lg p-3.5 transition-colors"
-                    style={{ background: "rgba(255,255,255,0.03)", border: `1px solid ${C.border}` }}
+                    className="block rounded-lg p-3.5 transition-colors bg-muted/20 border border-border/30 hover:bg-muted/40"
                   >
                     <div className="flex items-center gap-2 mb-1">
-                      <span style={{ fontSize: 12, fontWeight: 800, color: C.gold, fontFamily: "'DM Mono',monospace" }}>
+                      <span className="text-xs font-extrabold text-primary font-mono">
                         {item.number}
                       </span>
-                      <span
-                        className="rounded px-1.5 py-0.5"
-                        style={{
-                          fontSize: 12,
-                          fontWeight: 700,
-                          color: C.blue,
-                          background: `${C.blue}15`,
-                          border: `1px solid ${C.blue}30`,
-                          fontFamily: "'DM Mono',monospace",
-                        }}
-                      >
+                      <span className="rounded px-1.5 py-0.5 text-xs font-bold text-civic-blue bg-civic-blue/10 border border-civic-blue/30 font-mono">
                         {item.type}
                       </span>
                     </div>
-                    <p style={{ fontSize: 13, fontWeight: 600, color: C.cream, lineHeight: 1.4, marginTop: 4 }}>
+                    <p className="text-[13px] font-semibold text-foreground leading-snug mt-1">
                       {item.title}
                     </p>
-                    <p style={{ fontSize: 12, color: C.muted, lineHeight: 1.45, marginTop: 3 }}>
+                    <p className="text-xs text-muted-foreground leading-snug mt-1">
                       {item.desc}
                     </p>
-                    <p style={{ fontSize: 12, color: C.dimmed, marginTop: 4 }} className="flex items-center gap-1">
+                    <p className="text-xs text-muted-foreground/60 mt-1 flex items-center gap-1">
                       {item.source} {!item.internal && <ExternalLink className="w-2.5 h-2.5" />}
                     </p>
                   </Wrapper>
@@ -423,10 +393,10 @@ export function DashboardOverview({ onNavigate }: DashboardOverviewProps) {
         <motion.div {...anim(0.2)}>
           <BriefingCard className="h-full">
             <div className="flex items-center justify-between mb-3">
-              <h3 style={{ fontSize: 14, fontWeight: 700, color: C.cream }}>
+              <h3 className="text-sm font-bold text-foreground">
                 Companies You're Watching
               </h3>
-              <span style={{ fontSize: 12, color: C.dimmed, fontFamily: "'DM Mono',monospace" }}>
+              <span className="text-xs text-muted-foreground font-mono">
                 {trackedCompanies.length} tracked
               </span>
             </div>
@@ -437,18 +407,14 @@ export function DashboardOverview({ onNavigate }: DashboardOverviewProps) {
                   <Link
                     key={i}
                     to={`/dossier/${t.slug}`}
-                    className="flex items-center gap-3 p-2.5 rounded-lg transition-colors group"
-                    style={{ background: "rgba(255,255,255,0.02)" }}
+                    className="flex items-center gap-3 p-2.5 rounded-lg transition-colors group bg-muted/20 hover:bg-muted/40"
                   >
-                    <span className="shrink-0 rounded-full" style={{ width: 8, height: 8, background: scoreColor(score) }} />
-                    <span className="flex-1 min-w-0 truncate group-hover:text-primary transition-colors" style={{ fontSize: 14, fontWeight: 600, color: C.cream }}>
+                    <span className={`shrink-0 w-2 h-2 rounded-full ${scoreDotClass(score)}`} />
+                    <span className="flex-1 min-w-0 truncate text-sm font-semibold text-foreground group-hover:text-primary transition-colors">
                       {t.name}
                     </span>
-                    <span style={{ fontSize: 12, color: C.dimmed }} className="hidden sm:block">{t.industry}</span>
-                    <span
-                      className="text-xs font-bold shrink-0 rounded-full px-2 py-0.5"
-                      style={{ background: `${scoreColor(score)}15`, color: scoreColor(score) }}
-                    >
+                    <span className="text-xs text-muted-foreground hidden sm:block">{t.industry}</span>
+                    <span className={`text-xs font-bold shrink-0 rounded-full px-2 py-0.5 ${scoreBgClass(score)}`}>
                       {score}
                     </span>
                   </Link>
@@ -457,8 +423,7 @@ export function DashboardOverview({ onNavigate }: DashboardOverviewProps) {
             </div>
             <button
               onClick={() => onNavigate("tracked")}
-              className="text-xs font-medium mt-3 flex items-center gap-1 transition-colors"
-              style={{ color: C.gold }}
+              className="text-xs font-medium mt-3 flex items-center gap-1 transition-colors text-primary hover:text-primary/80"
             >
               Manage watchlist <ArrowRight className="w-3 h-3" />
             </button>
@@ -477,10 +442,10 @@ export function DashboardOverview({ onNavigate }: DashboardOverviewProps) {
         {/* 5A — Values Alignment */}
         <motion.div {...anim(0.28)}>
           <BriefingCard className="h-full">
-            <h3 style={{ fontSize: 14, fontWeight: 700, color: C.cream, marginBottom: 2 }}>
+            <h3 className="text-sm font-bold text-foreground mb-0.5">
               Aligned With Your Values
             </h3>
-            <p style={{ fontSize: 12, color: C.dimmed, marginBottom: 12 }}>Based on your Work DNA profile</p>
+            <p className="text-xs text-muted-foreground mb-3">Based on your Work DNA profile</p>
             <AlignedValuesSearch hasTakenQuiz={hasTakenQuiz} />
           </BriefingCard>
         </motion.div>
@@ -488,25 +453,21 @@ export function DashboardOverview({ onNavigate }: DashboardOverviewProps) {
         {/* 5B — Quick Audit */}
         <motion.div {...anim(0.32)}>
           <BriefingCard className="h-full flex flex-col justify-center">
-            <h3 style={{ fontSize: 16, fontWeight: 700, color: C.cream, marginBottom: 4 }}>
+            <h3 className="text-base font-bold text-foreground mb-1">
               Audit any employer →
             </h3>
-            <p style={{ fontSize: 12, color: C.dimmed, marginBottom: 12 }}>
+            <p className="text-xs text-muted-foreground mb-3">
               Search by name. We'll pull the public record, signals, and receipts.
             </p>
             <form onSubmit={handleSearch}>
-              <div
-                className="flex items-center rounded-xl px-4 py-3"
-                style={{ background: "rgba(255,255,255,0.04)", border: `1px solid rgba(255,255,255,0.1)` }}
-              >
-                <Search className="w-4 h-4 shrink-0 mr-3" style={{ color: C.gold }} />
+              <div className="flex items-center rounded-xl px-4 py-3 bg-muted/30 border border-border/30">
+                <Search className="w-4 h-4 shrink-0 mr-3 text-primary" />
                 <input
                   data-quick-audit
                   value={searchQuery}
                   onChange={e => setSearchQuery(e.target.value)}
                   placeholder="Amazon, Goldman Sachs, your next interview..."
-                  className="bg-transparent border-none outline-none w-full"
-                  style={{ fontSize: 14, color: C.cream }}
+                  className="bg-transparent border-none outline-none w-full text-sm text-foreground placeholder:text-muted-foreground/50"
                 />
               </div>
             </form>
