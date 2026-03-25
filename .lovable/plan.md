@@ -1,55 +1,45 @@
 
 
-## Fix: Hardcoded Colors Breaking Light/Dark Mode Across the Project
+## Add "Stop Applying. Start Aligning." to the Homepage
 
-### Problem
-458 instances of hardcoded Tailwind colors (`text-green-400`, `bg-red-500/10`, `text-yellow-600`, etc.) across **45 files** don't adapt between light and dark mode. The project already has a proper theme token system (`civic-red`, `civic-green`, `civic-yellow`, `civic-blue`, `destructive`, `primary`) defined in `tailwind.config.ts` and `index.css` — but most files bypass it.
+The tagline doesn't exist anywhere in the codebase currently. Based on your instructions, it should appear in **3 places** on `src/pages/Index.tsx` — each serving a different purpose.
 
-### Fix Strategy
-Systematic replacement across all 45 files, using this token mapping:
+### Placement 1 — Hero accent line (after the search bar micro-text, ~line 115)
+A standalone statement below the data sources line. Big, bold, centered, with whitespace. No box, no emoji.
 
-| Hardcoded | Theme Token |
-|---|---|
-| `text-green-400/500/600/700`, `bg-green-500/10` | `text-civic-green`, `bg-civic-green/10` |
-| `text-red-400/500/600/700`, `bg-red-500/10` | `text-civic-red`, `bg-civic-red/10` (or `text-destructive` for errors) |
-| `text-yellow-400/500/600`, `bg-yellow-500/10` | `text-civic-yellow`, `bg-civic-yellow/10` |
-| `text-amber-400/500/600`, `bg-amber-500/10` | `text-civic-yellow`, `bg-civic-yellow/10` |
-| `text-blue-400/500/700`, `bg-blue-500/10` | `text-civic-blue`, `bg-civic-blue/10` |
-| `text-emerald-400`, `bg-emerald-500/10` | `text-civic-green`, `bg-civic-green/10` |
-| `text-orange-400/500` | `text-civic-yellow` (closest match) |
-| `text-purple-400/500` | Keep as-is (decorative, no civic token) |
-| `text-pink-400` | Keep as-is (decorative) |
-| `dark:text-green-400` patterns | Remove the `dark:` variant — civic tokens auto-adapt |
+```
+Stop applying. Start aligning.
+```
 
-### Files to Update (grouped by priority)
+Small, clean, Helvetica-bold with slight letter-spacing. Sits between the search bar and the ticker.
 
-**High-visibility pages (7 files):**
-- `src/pages/Demo.tsx` — `scoreColor()`, `severityStyle`, `flagStyle`, `partyColor`
-- `src/pages/BriefingPage.tsx` — score colors
-- `src/pages/SignalFeed.tsx` — category config, confidence colors
-- `src/pages/VoterLookup.tsx` — party colors
-- `src/pages/EEOCTracker.tsx` — action labels, header icons
-- `src/pages/ResumeOptimizer.tsx` — score colors, missing keyword badges
-- `src/pages/CorporateImpactMap.tsx` — category config colors
+### Placement 2 — Before the Integrity Gap section (~line 289)
+A full-width divider statement that reframes what comes next:
 
-**High-visibility components (12 files):**
-- `src/components/WorkerSentimentCard.tsx` — sentiment colors, progress bars
-- `src/components/MonitoredPagesPanel.tsx` — status config
-- `src/components/ScanDebugPanel.tsx` — status icons
-- `src/components/OpenSecretsEnrichmentCard.tsx` — verification labels
-- `src/components/IssueRelatedReports.tsx` — verification labels
-- `src/components/PromotionEquityCard.tsx` — category colors
-- `src/components/CoverageBalanceChart.tsx` — political lean colors
-- `src/components/CompensationTransparencyCard.tsx` — equity day colors
-- `src/components/investigative/DocumentsTab.tsx` — verification status
+```
+Stop applying. Start aligning.
+What the data shows — no opinions, no rankings, just patterns.
+```
 
-**Remaining ~26 files** — same pattern, lower traffic pages
+This sits between the "Start Here" pricing tiers and the Integrity Gap section as a transitional beat.
 
-### Special Cases
-- **Political party colors** (`D: blue`, `R: red`): Use `civic-blue` / `civic-red` with the existing `dark:` pattern removed since civic tokens auto-adapt
-- **LinkedIn share button** (`bg-[#0A66C2]`): Keep as-is — brand color, not theme-dependent
-- **Purple/pink decorative colors**: Keep as-is — no civic equivalent, and they're used for category differentiation not status signals
+### Placement 3 — Bottom CTA section (replace generic CTA copy, ~line 423)
+Replace the current headline "The hiring process is about to get a lot more honest." with:
 
-### Scope
-~458 replacements across ~45 files. No layout, content, or logic changes. Pure color token migration.
+```
+Stop applying. Start aligning.
+```
+
+Subtext becomes: "You don't need more applications. You need better decisions."
+Buttons stay the same.
+
+### Design rules
+- Bold, centered, generous whitespace
+- No box/border/card around it
+- Font: `font-sans`, weight 800, slight tracking
+- Muted subtext below where applicable
+- No emoji
+
+### File changed
+- `src/pages/Index.tsx` — 3 insertions/edits, no deletions of existing sections
 
