@@ -16,6 +16,7 @@ import { LobbyingDetailDrawer } from "@/components/LobbyingDetailDrawer";
 import { PACDetailDrawer } from "@/components/PACDetailDrawer";
 import { ContractsDetailDrawer } from "@/components/ContractsDetailDrawer";
 import { AdminCompanyActions } from "@/components/AdminCompanyActions";
+import { AdminCompanyEditor } from "@/components/company/AdminCompanyEditor";
 import { InsiderBriefSection } from "@/components/company/InsiderBriefSection";
 import { StructuredSignalsSection } from "@/components/company/StructuredSignalsSection";
 import { HowToReadThis } from "@/components/company/HowToReadThis";
