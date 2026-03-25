@@ -27,15 +27,16 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
-import { Trash2, Merge, Loader2, Search, Building2 } from "lucide-react";
+import { Trash2, Merge, Loader2, Search, Building2, Pencil } from "lucide-react";
 
 interface AdminCompanyActionsProps {
   companyId: string;
   companyName: string;
   companySlug: string;
+  onEditClick?: () => void;
 }
 
-export function AdminCompanyActions({ companyId, companyName, companySlug }: AdminCompanyActionsProps) {
+export function AdminCompanyActions({ companyId, companyName, companySlug, onEditClick }: AdminCompanyActionsProps) {
   const { isAdmin, isOwner } = useUserRole();
   const navigate = useNavigate();
   const queryClient = useQueryClient();
@@ -150,6 +151,14 @@ export function AdminCompanyActions({ companyId, companyName, companySlug }: Adm
   return (
     <div className="flex items-center gap-1.5">
       <Badge variant="outline" className="text-xs text-muted-foreground border-muted">Admin</Badge>
+
+      {/* Edit */}
+      {onEditClick && (
+        <Button variant="ghost" size="sm" className="h-7 text-xs gap-1 text-muted-foreground hover:text-foreground" onClick={onEditClick}>
+          <Pencil className="w-3 h-3" />
+          Edit
+        </Button>
+      )}
       
       {/* Merge */}
       <Dialog open={mergeOpen} onOpenChange={setMergeOpen}>

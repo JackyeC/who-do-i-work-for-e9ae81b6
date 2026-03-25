@@ -16,6 +16,7 @@ import { LobbyingDetailDrawer } from "@/components/LobbyingDetailDrawer";
 import { PACDetailDrawer } from "@/components/PACDetailDrawer";
 import { ContractsDetailDrawer } from "@/components/ContractsDetailDrawer";
 import { AdminCompanyActions } from "@/components/AdminCompanyActions";
+import { AdminCompanyEditor } from "@/components/company/AdminCompanyEditor";
 import { InsiderBriefSection } from "@/components/company/InsiderBriefSection";
 import { StructuredSignalsSection } from "@/components/company/StructuredSignalsSection";
 import { HowToReadThis } from "@/components/company/HowToReadThis";
@@ -59,6 +60,7 @@ export default function CompanyProfile() {
   const queryClient = useQueryClient();
   const navigate = useNavigate();
   const [isScanning, setIsScanning] = useState(false);
+  const [isEditingCompany, setIsEditingCompany] = useState(false);
   const [selectedCandidate, setSelectedCandidate] = useState<any>(null);
   const [candidateDrawerOpen, setCandidateDrawerOpen] = useState(false);
   const [selectedExecutive, setSelectedExecutive] = useState<any>(null);
@@ -328,7 +330,7 @@ export default function CompanyProfile() {
                       )}
                     </div>
                     <div className="flex items-center gap-1.5 shrink-0">
-                      <AdminCompanyActions companyId={dbCompany?.id || company?.id || ""} companyName={name} companySlug={id || ""} />
+                      <AdminCompanyActions companyId={dbCompany?.id || company?.id || ""} companyName={name} companySlug={id || ""} onEditClick={() => setIsEditingCompany(true)} />
                       <WatchCompanyButton companyId={dbCompany?.id || company?.id || ""} companyName={name} />
                       <ShareableScorecard data={{
                         name, industry, state, civicFootprintScore: civicScore,
@@ -374,7 +376,29 @@ export default function CompanyProfile() {
             </CardContent>
           </Card>
 
-          {/* Integrity Indicators — sticky badges */}
+          {/* Admin Editor Panel */}
+          {isEditingCompany && dbCompany && (
+            <AdminCompanyEditor
+              companyId={dbCompany.id}
+              companySlug={id || ""}
+              currentData={{
+                name: dbCompany.name,
+                industry: dbCompany.industry,
+                state: dbCompany.state,
+                description: (dbCompany as any)?.description ?? null,
+                employee_count: (dbCompany as any)?.employee_count ?? null,
+                website_url: (dbCompany as any)?.website_url ?? null,
+                careers_url: (dbCompany as any)?.careers_url ?? null,
+                parent_company: (dbCompany as any)?.parent_company ?? null,
+                jackye_insight: dbCompany.jackye_insight ?? null,
+                ticker: (dbCompany as any)?.ticker ?? null,
+                revenue: (dbCompany as any)?.revenue ?? null,
+                founded_year: (dbCompany as any)?.founded_year ?? null,
+              }}
+              onClose={() => setIsEditingCompany(false)}
+            />
+          )}
+
           {dbCompany?.id && <IntegrityIndicators companyId={dbCompany.id} />}
 
           {/* ═══════════════════════════════════════════════════════
