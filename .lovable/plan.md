@@ -1,50 +1,29 @@
 
 
-## Cloudflare Turnstile Bot Protection — All Public Forms
+## Fix Build Error, Then Test Stripe Checkout
 
-**Site key**: `0x4AAAAAACwUKaSXORtxl_tu`
+### Problem
+The edge function `parse-career-document/index.ts` uses `import("npm:mammoth@1.6.0")` — a dynamic npm import that Deno requires to be listed in a `deno.json` or resolved differently. This blocks **all** edge functions from deploying, including `create-checkout`.
 
----
+### Step 1: Fix the mammoth import (line 27)
 
-### 1. Infrastructure
+Replace the `npm:` dynamic import with an `esm.sh` URL import, which works out of the box in Deno edge functions:
 
-**Add Turnstile script to `index.html`**
-```html
-<script src="https://challenges.cloudflare.com/turnstile/v0/api.js?render=explicit" async defer></script>
+```typescript
+const mammoth = await import("https://esm.sh/mammoth@1.6.0");
 ```
 
-**Create `src/hooks/useTurnstile.ts`** — reusable hook for invisible mode:
-- Renders a hidden Turnstile widget into a container ref
-- Exposes `getToken()` (calls `turnstile.execute()`) and `reset()`
-- Site key: `0x4AAAAAACwUKaSXORtxl_tu`
+This is a one-line change in `supabase/functions/parse-career-document/index.ts`.
 
-**Create `supabase/functions/verify-turnstile/index.ts`** — edge function:
-- Accepts `{ token }` in POST body
-- Calls `https://challenges.cloudflare.com/turnstile/v0/siteverify` with `TURNSTILE_SECRET_KEY` + token
-- Returns `{ success: true/false }`
+### Step 2: Test Stripe checkout
 
-**Store `TURNSTILE_SECRET_KEY`** as a backend secret (I'll prompt you to paste it).
+Once the build succeeds, I'll use the browser to:
+1. Navigate to `/pricing`
+2. Click a paid tier button (e.g. "Get The Signal")
+3. Verify the edge function responds and a Stripe Checkout session URL is returned
+4. Confirm the redirect to Stripe's hosted checkout page
 
----
-
-### 2. Form Integration (6 forms)
-
-Each form gets the same pattern:
-1. Render a hidden `<div ref={turnstileRef} />` inside the form
-2. On submit, call `getToken()` first
-3. Pass the token to the backend (either inline verification call or alongside existing edge function call)
-4. If verification fails → show error, block submission
-
-| Form | File | Backend |
-|------|------|---------|
-| Email subscribe | `EmailCapture.tsx` | Verify token before `supabase.from("email_signups").insert()` |
-| Hero search | `HeroSearch.tsx` | Verify token before navigating to `/search` |
-| Contact | `Contact.tsx` | Verify token before opening mailto |
-| Waitlist /join | `EarlyAccess.tsx` | Verify token before `early_access_signups` insert |
-| Check search | `Check.tsx` | Verify token before `company-discover` invoke |
-| Browse discover | `Browse.tsx` | Verify token before `company-discover` invoke |
-
-### 3. Secret needed
-
-I'll need you to paste your **Turnstile Secret Key** from the Cloudflare dashboard (different from the site key — found on the same widget settings page).
+### Technical note
+- The user must be logged in for checkout to work (the `create-checkout` function requires an auth token)
+- If not logged in, I'll note that and verify the error handling is correct
 
