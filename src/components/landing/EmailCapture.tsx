@@ -3,11 +3,14 @@ import { supabase } from "@/integrations/supabase/client";
 import { motion } from "framer-motion";
 import { Mail, ArrowRight, Check } from "lucide-react";
 import { SectionReveal } from "./SectionReveal";
+import { useTurnstile } from "@/hooks/useTurnstile";
+import { verifyTurnstileToken } from "@/lib/verifyTurnstile";
 
 export function EmailCapture() {
   const [email, setEmail] = useState("");
   const [status, setStatus] = useState<"idle" | "loading" | "success" | "error">("idle");
   const [errorMsg, setErrorMsg] = useState("");
+  const { containerRef, getToken, resetToken } = useTurnstile();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -18,10 +21,27 @@ export function EmailCapture() {
       return;
     }
     setStatus("loading");
+
+    const token = await getToken();
+    if (!token) {
+      setErrorMsg("Bot verification failed. Please try again.");
+      setStatus("error");
+      resetToken();
+      return;
+    }
+
+    const verified = await verifyTurnstileToken(token);
+    if (!verified) {
+      setErrorMsg("Verification failed. Please try again.");
+      setStatus("error");
+      resetToken();
+      return;
+    }
+
     const { error } = await supabase.from("email_signups").insert({ email: trimmed });
     if (error) {
       if (error.code === "23505") {
-        setStatus("success"); // already signed up
+        setStatus("success");
       } else {
         setErrorMsg("Something went wrong. Try again.");
         setStatus("error");
@@ -29,6 +49,7 @@ export function EmailCapture() {
     } else {
       setStatus("success");
     }
+    resetToken();
   };
 
   return (
@@ -36,7 +57,6 @@ export function EmailCapture() {
       <section className="px-6 lg:px-16 py-20 lg:py-28">
         <div className="max-w-[640px] mx-auto">
           <div className="relative rounded-2xl border border-primary/30 bg-gradient-to-br from-primary/10 via-primary/5 to-transparent p-8 lg:p-12 text-center overflow-hidden">
-            {/* Decorative glow */}
             <div className="absolute -top-20 -right-20 w-60 h-60 bg-primary/10 rounded-full blur-3xl pointer-events-none" />
             <div className="absolute -bottom-20 -left-20 w-60 h-60 bg-primary/8 rounded-full blur-3xl pointer-events-none" />
 
@@ -60,6 +80,7 @@ export function EmailCapture() {
                 </motion.div>
               ) : (
                 <form onSubmit={handleSubmit} className="relative group max-w-[480px] mx-auto">
+                  <div ref={containerRef} />
                   <div className="absolute -inset-1 bg-gradient-to-r from-primary/25 via-primary/10 to-primary/25 opacity-0 group-focus-within:opacity-100 transition-opacity duration-500 blur-md rounded-xl" />
                   <div className="relative flex items-center bg-background/80 backdrop-blur-sm border-2 border-primary/20 focus-within:border-primary/50 transition-colors rounded-xl">
                     <Mail className="w-4.5 h-4.5 text-muted-foreground ml-4 shrink-0" />

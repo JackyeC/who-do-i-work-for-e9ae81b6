@@ -2,6 +2,8 @@ import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { usePageSEO } from "@/hooks/use-page-seo";
+import { useTurnstile } from "@/hooks/useTurnstile";
+import { verifyTurnstileToken } from "@/lib/verifyTurnstile";
 
 const PARTICLE_LABELS = ["FEC", "SEC", "NLRB", "OSHA", "$", "§", "27", "WARN", "DOJ"];
 
@@ -10,6 +12,7 @@ export default function EarlyAccess() {
   const [role, setRole] = useState("");
   const [submitted, setSubmitted] = useState(false);
   const [loading, setLoading] = useState(false);
+  const { containerRef, getToken, resetToken } = useTurnstile();
 
   usePageSEO({
     title: "Get Early Access — Who Do I Work For?",
@@ -27,6 +30,15 @@ export default function EarlyAccess() {
     e.preventDefault();
     if (!email || !role) return;
     setLoading(true);
+
+    const token = await getToken();
+    const verified = token ? await verifyTurnstileToken(token) : false;
+    resetToken();
+
+    if (!verified) {
+      setLoading(false);
+      return;
+    }
 
     try {
       await supabase.from("early_access_signups").insert({
@@ -96,22 +108,10 @@ export default function EarlyAccess() {
           <div className="h-10 w-px bg-white/10" />
 
           <div className="text-left">
-            <p
-              className="text-white leading-none tracking-tight"
-              style={{ fontSize: 16, fontWeight: 700 }}
-            >
+            <p className="text-white leading-none tracking-tight" style={{ fontSize: 16, fontWeight: 700 }}>
               Who Do I
             </p>
-            <p
-              style={{
-                fontSize: 16,
-                fontWeight: 800,
-                letterSpacing: "0.08em",
-                color: "#F0C040",
-                textTransform: "uppercase",
-                lineHeight: 1.1,
-              }}
-            >
+            <p style={{ fontSize: 16, fontWeight: 800, letterSpacing: "0.08em", color: "#F0C040", textTransform: "uppercase", lineHeight: 1.1 }}>
               WORK FOR?
             </p>
             <p className="text-white/40 text-xs tracking-[0.15em] uppercase mt-0.5">
@@ -122,28 +122,13 @@ export default function EarlyAccess() {
 
         {!submitted ? (
           <>
-            {/* Eyebrow */}
             <span className="inline-block mb-6 px-4 py-1.5 rounded-full text-xs font-semibold uppercase tracking-[2.5px] border"
-              style={{
-                background: "rgba(240,192,64,0.10)",
-                borderColor: "rgba(240,192,64,0.28)",
-                color: "#F0C040",
-              }}
+              style={{ background: "rgba(240,192,64,0.10)", borderColor: "rgba(240,192,64,0.28)", color: "#F0C040" }}
             >
               Join WDIWF &nbsp;·&nbsp; Now Live
             </span>
 
-            {/* Headline */}
-            <h1
-              className="text-center max-w-[680px] mb-5"
-              style={{
-                fontWeight: 800,
-                fontSize: "clamp(32px, 5vw, 52px)",
-                color: "#f0ebe0",
-                letterSpacing: "-1.5px",
-                lineHeight: 1.08,
-              }}
-            >
+            <h1 className="text-center max-w-[680px] mb-5" style={{ fontWeight: 800, fontSize: "clamp(32px, 5vw, 52px)", color: "#f0ebe0", letterSpacing: "-1.5px", lineHeight: 1.08 }}>
               Know what you're walking into.{" "}
               <span style={{ color: "#F0C040" }}>Before you sign.</span>
             </h1>
@@ -154,7 +139,6 @@ export default function EarlyAccess() {
               for everyone who's ever taken a job that looked great on paper.
             </p>
 
-            {/* Stats row */}
             <div className="flex items-center justify-center gap-6 sm:gap-10 mb-10 flex-wrap">
               {[
                 { n: "47K+", l: "Employer Records" },
@@ -162,18 +146,14 @@ export default function EarlyAccess() {
                 { n: "100%", l: "Public Data" },
               ].map(({ n, l }) => (
                 <div key={l} className="text-center">
-                  <p className="text-2xl sm:text-3xl font-extrabold text-white tracking-tight" style={{ fontFamily: "'DM Mono', monospace" }}>
-                    {n}
-                  </p>
-                  <p className="text-xs uppercase tracking-[1.5px] text-white/35 font-medium mt-0.5">
-                    {l}
-                  </p>
+                  <p className="text-2xl sm:text-3xl font-extrabold text-white tracking-tight" style={{ fontFamily: "'DM Mono', monospace" }}>{n}</p>
+                  <p className="text-xs uppercase tracking-[1.5px] text-white/35 font-medium mt-0.5">{l}</p>
                 </div>
               ))}
             </div>
 
-            {/* Form */}
             <form onSubmit={handleSubmit} className="flex flex-col gap-3 w-full max-w-[380px]">
+              <div ref={containerRef} />
               <input
                 type="email"
                 required
@@ -202,10 +182,7 @@ export default function EarlyAccess() {
                 type="submit"
                 disabled={loading}
                 className="w-full py-3.5 rounded-full font-bold text-sm transition-all disabled:opacity-60"
-                style={{
-                  background: "#F0C040",
-                  color: "#0a0a0e",
-                }}
+                style={{ background: "#F0C040", color: "#0a0a0e" }}
               >
                 {loading ? "Requesting..." : "Request Early Access →"}
               </button>
@@ -216,36 +193,22 @@ export default function EarlyAccess() {
             </p>
           </>
         ) : (
-          /* ── Success state ── */
           <div className="text-center max-w-[400px]">
-            <div
-              className="w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-5 text-2xl font-extrabold"
-              style={{ background: "rgba(240,192,64,0.15)", color: "#F0C040" }}
-            >
+            <div className="w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-5 text-2xl font-extrabold" style={{ background: "rgba(240,192,64,0.15)", color: "#F0C040" }}>
               ✓
             </div>
-            <h2 className="text-3xl font-extrabold text-white tracking-tight mb-3">
-              You're on the list.
-            </h2>
+            <h2 className="text-3xl font-extrabold text-white tracking-tight mb-3">You're on the list.</h2>
             <p className="text-white/50 text-sm leading-relaxed mb-6">
-              Welcome to WDIWF. The public record
-              isn't going anywhere — and neither are we.
+              Welcome to WDIWF. The public record isn't going anywhere — and neither are we.
             </p>
-            <Link
-              to="/browse"
-              className="inline-block px-6 py-3 rounded-full text-sm font-bold transition-all hover:brightness-110"
-              style={{ background: "#F0C040", color: "#0a0a0e" }}
-            >
+            <Link to="/browse" className="inline-block px-6 py-3 rounded-full text-sm font-bold transition-all hover:brightness-110" style={{ background: "#F0C040", color: "#0a0a0e" }}>
               Start Auditing →
             </Link>
-            <p className="mt-4 text-xs text-white/20 uppercase tracking-widest">
-              Early Access Confirmed
-            </p>
+            <p className="mt-4 text-xs text-white/20 uppercase tracking-widest">Early Access Confirmed</p>
           </div>
         )}
       </div>
 
-      {/* Particle float animation */}
       <style>{`
         @keyframes float-particle {
           0%, 100% { transform: translateY(0px) rotate(0deg); opacity: 0.06; }
