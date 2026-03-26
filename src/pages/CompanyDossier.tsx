@@ -65,6 +65,7 @@ const LENS_META = {
 
 export default function CompanyDossier() {
   const { id } = useParams();
+  const navigate = useNavigate();
   const { isCompanyTracked } = useTrackedCompanies();
   const { canAccessRecruiter } = useViewMode();
   const { lens } = useDossierLens();
@@ -225,11 +226,18 @@ export default function CompanyDossier() {
   }
 
   if (!company) {
+    const derivedName = id
+      ? id.replace(/-/g, " ").replace(/\b\w/g, c => c.toUpperCase())
+      : "Unknown Company";
+
     return (
       <div className="min-h-screen flex flex-col bg-background">
         <Header />
-        <div className="flex-1 flex items-center justify-center">
-          <p className="text-muted-foreground">Company not found.</p>
+        <div className="flex-1 px-6 py-16 max-w-2xl mx-auto">
+          <CompanyZeroState
+            companyName={derivedName}
+            onDiscovered={(_, slug) => navigate(`/dossier/${slug}`)}
+          />
         </div>
       </div>
     );
