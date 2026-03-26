@@ -1,5 +1,7 @@
 import { useState, useMemo, useEffect, useRef } from "react";
 import { useNavigate } from "react-router-dom";
+import { useTurnstile } from "@/hooks/useTurnstile";
+import { verifyTurnstileToken } from "@/lib/verifyTurnstile";
 import { AuditRequestForm } from "@/components/AuditRequestForm";
 import { useQuery } from "@tanstack/react-query";
 import { Helmet } from "react-helmet-async";
@@ -42,6 +44,7 @@ function AddCompanyCard({ companyName, onDiscovered }: { companyName: string; on
   const [scanning, setScanning] = useState(false);
   const [scanStep, setScanStep] = useState(0);
   const [scanFailed, setScanFailed] = useState(false);
+  const { containerRef, getToken, resetToken } = useTurnstile();
 
   useEffect(() => {
     if (!scanning) return;
@@ -55,6 +58,17 @@ function AddCompanyCard({ companyName, onDiscovered }: { companyName: string; on
     setScanning(true);
     setScanStep(0);
     setScanFailed(false);
+
+    const token = await getToken();
+    const verified = token ? await verifyTurnstileToken(token) : false;
+    resetToken();
+
+    if (!verified) {
+      setScanFailed(true);
+      setScanning(false);
+      return;
+    }
+
     try {
       const { data, error } = await supabase.functions.invoke("company-discover", {
         body: { companyName, searchQuery: companyName },
@@ -83,6 +97,7 @@ function AddCompanyCard({ companyName, onDiscovered }: { companyName: string; on
 
   return (
     <div className="p-4 text-center space-y-3">
+      <div ref={containerRef} />
       <p className="text-sm text-muted-foreground">
         Can't find <span className="font-semibold text-foreground">{companyName}</span>?
       </p>

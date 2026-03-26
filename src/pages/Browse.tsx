@@ -1,4 +1,6 @@
 import { useState, useMemo, useCallback } from "react";
+import { useTurnstile } from "@/hooks/useTurnstile";
+import { verifyTurnstileToken } from "@/lib/verifyTurnstile";
 import { Link, useNavigate } from "react-router-dom";
 import { usePageSEO } from "@/hooks/use-page-seo";
 import { motion } from "framer-motion";
