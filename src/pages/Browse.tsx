@@ -156,6 +156,7 @@ export default function Browse() {
 
   return (
     <div className="flex-1">
+      <div ref={turnstileRef} />
       <Tabs defaultValue="companies" className="w-full">
       {/* Compact header */}
       <div className="border-b border-border/40 bg-card/30">
