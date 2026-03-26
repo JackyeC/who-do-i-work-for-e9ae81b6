@@ -1,4 +1,4 @@
-// Transform Conference Sponsors Data (2025 & 2026)
+// HR Tech Intelligence — Transform Sponsors Data (2025 & 2026)
 // Auto-generated for WDIWF HR Tech Intelligence page
 // Source: https://register.transform.us/2025/sponsors-2025/
 // Source: https://transform.us/conference/sponsors-2026/

@@ -208,11 +208,11 @@ export default function TransformSponsorsSection() {
         {/* Header */}
         <div className="mb-10">
           <p className="tracking-[0.2em] text-primary font-mono uppercase text-sm mb-3">
-            Transform Conference Intelligence
+            HR Tech Intelligence
           </p>
           <h2 className="text-2xl md:text-3xl font-bold text-foreground mb-2">
-            Who's Backing{" "}
-            <span className="text-primary">HR Tech</span>
+            Transform 2025 & 2026{" "}
+            <span className="text-primary">Sponsor Directory</span>
           </h2>
           <p className="text-muted-foreground max-w-2xl leading-relaxed">
             Every sponsor, exhibitor, and partner from Transform 2025 and 2026 —
