@@ -28,11 +28,16 @@ import {
   Mic,
   ChevronDown,
   ChevronUp,
+  ExternalLink,
+  Users,
+  CircleDollarSign,
+  AlertTriangle,
+  Building,
 } from "lucide-react";
 import {
-  TRANSFORM_SPONSORS,
-  TRANSFORM_CATEGORIES,
-  type TransformSponsor,
+  HR_TECH_COMPANIES,
+  HR_TECH_CATEGORIES,
+  type HRTechCompany,
 } from "@/data/transformSponsorsData";
 
 /* ─── animation variants ─── */
@@ -40,122 +45,197 @@ const stagger = {
   container: { hidden: {}, show: { transition: { staggerChildren: 0.03 } } },
   item: {
     hidden: { opacity: 0, y: 12 },
-    show: { opacity: 1, y: 0, transition: { duration: 0.3, ease: "easeOut" as const } },
+    show: {
+      opacity: 1,
+      y: 0,
+      transition: { duration: 0.3, ease: "easeOut" as const },
+    },
   },
 };
 
 /* ─── icon map ─── */
 const iconMap: Record<string, typeof Target> = {
-  Target,
-  Cpu,
-  Building2,
-  DollarSign,
-  Gift,
-  HeartPulse,
-  BookOpen,
-  Star,
-  Rocket,
-  Scale,
-  BarChart3,
-  Globe,
-  Wallet,
-  Home,
-  Briefcase,
-  Megaphone,
-  Link,
-  ShieldCheck,
-  Landmark,
-  Mic,
+  Target, Cpu, Building2, DollarSign, Gift, HeartPulse, BookOpen, Star,
+  Rocket, Scale, BarChart3, Globe, Wallet, Home, Briefcase, Megaphone,
+  Link, ShieldCheck, Landmark, Mic,
 };
 
-/* ─── tier config ─── */
-const tierConfig: Record<string, { bg: string; text: string }> = {
-  Title: { bg: "bg-primary", text: "text-primary-foreground" },
-  Gold: { bg: "bg-amber-600", text: "text-white" },
-  Silver: { bg: "bg-zinc-400", text: "text-zinc-900" },
-  Bronze: { bg: "bg-orange-700", text: "text-white" },
-};
-
-/* ─── CATEGORY CARD ─── */
-function CategoryCard({
-  name,
-  companies,
-}: {
-  name: string;
-  companies: TransformSponsor[];
-}) {
+/* ─── COMPANY CARD (with intel expand) ─── */
+function CompanyCard({ company }: { company: HRTechCompany }) {
   const [expanded, setExpanded] = useState(false);
-  const catMeta = TRANSFORM_CATEGORIES[name];
-  const Icon = iconMap[catMeta?.icon] || Target;
-  const displayCompanies = expanded ? companies : companies.slice(0, 12);
-  const hasMore = companies.length > 12;
+  const hasIntel = !!company.intel;
+
+  /* funding type badge color */
+  const fundingColor = (type: string) => {
+    const t = type.toLowerCase();
+    if (t.includes("pe")) return "text-red-400 bg-red-500/10";
+    if (t.includes("public")) return "text-amber-400 bg-amber-500/10";
+    if (t.includes("vc")) return "text-emerald-400 bg-emerald-500/10";
+    if (t.includes("mutual") || t.includes("bootstrap") || t.includes("private"))
+      return "text-blue-400 bg-blue-500/10";
+    return "text-muted-foreground bg-muted/30";
+  };
 
   return (
     <motion.div variants={stagger.item}>
-      <Card className="bg-card border border-border hover:border-primary/30 transition-colors h-full">
+      <Card
+        className={`bg-card border ${
+          hasIntel
+            ? "border-primary/20 hover:border-primary/40"
+            : "border-border hover:border-border/60"
+        } transition-colors ${hasIntel ? "cursor-pointer" : ""}`}
+        onClick={() => hasIntel && setExpanded(!expanded)}
+      >
         <CardContent className="p-5">
-          {/* Header */}
-          <div className="flex items-center gap-2.5 mb-1.5">
-            <Icon className="w-4 h-4 text-primary flex-shrink-0" />
-            <h3 className="font-semibold text-foreground text-sm">{name}</h3>
-          </div>
-          <p className="text-xs text-muted-foreground mb-3 leading-relaxed">
-            {catMeta?.desc}
-          </p>
-          <p className="text-xs font-mono text-primary/80 uppercase tracking-wider mb-3">
-            {companies.length} companies
-          </p>
-
-          {/* Company Chips */}
-          <div className="flex flex-wrap gap-1.5">
-            {displayCompanies.map((company) => (
-              <span
-                key={company.name}
-                className={`inline-flex items-center gap-1 px-2 py-0.5 rounded text-xs ${
-                  company.tier
-                    ? "bg-card border border-primary/20 text-foreground/80"
-                    : "bg-background/50 border border-border text-muted-foreground"
-                }`}
-              >
-                {/* Year dots */}
-                {company.years.map((y) => (
-                  <span
-                    key={y}
-                    className={`inline-block w-1.5 h-1.5 rounded-full flex-shrink-0 ${
-                      y === "2025" ? "bg-[#e8ff47]" : "bg-[#40c0f0]"
-                    }`}
-                  />
-                ))}
+          {/* Header Row */}
+          <div className="flex items-start justify-between gap-3 mb-2">
+            <div className="flex-1 min-w-0">
+              <h3 className="font-semibold text-foreground text-base truncate">
                 {company.name}
-                {company.tier && (
-                  <Badge
-                    className={`${tierConfig[company.tier]?.bg} ${
-                      tierConfig[company.tier]?.text
-                    } border-0 text-[9px] font-mono px-1 py-0 h-3.5 leading-none`}
-                  >
-                    {company.tier.toUpperCase()}
-                  </Badge>
-                )}
-              </span>
-            ))}
+              </h3>
+              <p className="text-xs font-mono text-muted-foreground tracking-wide uppercase">
+                {company.category}
+              </p>
+            </div>
+            {company.intel?.fundingType && (
+              <Badge
+                className={`${fundingColor(company.intel.fundingType)} border-0 text-xs font-mono shrink-0`}
+              >
+                {company.intel.fundingType.length > 20
+                  ? company.intel.fundingType.slice(0, 20) + "…"
+                  : company.intel.fundingType}
+              </Badge>
+            )}
           </div>
 
-          {/* Expand/Collapse */}
-          {hasMore && (
+          {/* One-liner */}
+          {company.intel?.oneLiner && (
+            <p className="text-sm text-muted-foreground leading-relaxed mb-3">
+              {company.intel.oneLiner}
+            </p>
+          )}
+
+          {/* Quick stats row */}
+          {company.intel && (
+            <div className="flex flex-wrap gap-1.5 mb-3">
+              {company.intel.ceo && (
+                <Badge variant="outline" className="text-xs border-border text-muted-foreground">
+                  <Users className="w-3 h-3 mr-1" />
+                  {company.intel.ceo.split(",")[0].split("(")[0].trim().length > 25
+                    ? company.intel.ceo.split(",")[0].split("(")[0].trim().slice(0, 25) + "…"
+                    : company.intel.ceo.split(",")[0].split("(")[0].trim()}
+                </Badge>
+              )}
+              {company.intel.totalFunding && company.intel.totalFunding !== "N/A" && company.intel.totalFunding !== "$0" && (
+                <Badge variant="outline" className="text-xs border-border text-muted-foreground">
+                  <CircleDollarSign className="w-3 h-3 mr-1" />
+                  {company.intel.totalFunding}
+                </Badge>
+              )}
+              {company.intel.peOwner && company.intel.peOwner !== "N/A" && company.intel.peOwner !== "None" && (
+                <Badge variant="outline" className="text-xs border-red-500/30 text-red-400">
+                  <Building className="w-3 h-3 mr-1" />
+                  PE: {company.intel.peOwner.length > 30
+                    ? company.intel.peOwner.slice(0, 30) + "…"
+                    : company.intel.peOwner}
+                </Badge>
+              )}
+            </div>
+          )}
+
+          {/* Expand toggle */}
+          {hasIntel && (
             <button
-              onClick={() => setExpanded(!expanded)}
-              className="flex items-center gap-1 text-xs text-primary hover:text-primary/80 transition-colors mt-3"
+              className="flex items-center gap-1 text-xs text-primary hover:text-primary/80 transition-colors"
+              onClick={(e) => {
+                e.stopPropagation();
+                setExpanded(!expanded);
+              }}
             >
               {expanded ? (
                 <>
-                  <ChevronUp className="w-3 h-3" /> Show less
+                  <ChevronUp className="w-3 h-3" /> Less
                 </>
               ) : (
                 <>
-                  <ChevronDown className="w-3 h-3" /> Show all {companies.length}
+                  <ChevronDown className="w-3 h-3" /> Full intel
                 </>
               )}
             </button>
+          )}
+
+          {/* Expanded Intel */}
+          {expanded && company.intel && (
+            <motion.div
+              initial={{ opacity: 0, height: 0 }}
+              animate={{ opacity: 1, height: "auto" }}
+              exit={{ opacity: 0, height: 0 }}
+              className="mt-4 pt-4 border-t border-border space-y-3"
+            >
+              {company.intel.founders && (
+                <IntelRow label="Founders" value={company.intel.founders} />
+              )}
+              {company.intel.keyExecs && (
+                <IntelRow label="Key Executives" value={company.intel.keyExecs} />
+              )}
+              {company.intel.fundingType && (
+                <IntelRow
+                  label="Funding"
+                  value={`${company.intel.fundingType}${
+                    company.intel.totalFunding && company.intel.totalFunding !== "N/A"
+                      ? ` · ${company.intel.totalFunding}`
+                      : ""
+                  }${
+                    company.intel.latestRound && company.intel.latestRound !== "N/A"
+                      ? ` · Latest: ${company.intel.latestRound}`
+                      : ""
+                  }`}
+                />
+              )}
+              {company.intel.keyInvestors &&
+                company.intel.keyInvestors !== "N/A" && (
+                  <IntelRow label="Key Investors" value={company.intel.keyInvestors} />
+                )}
+              {company.intel.peOwner &&
+                company.intel.peOwner !== "N/A" &&
+                company.intel.peOwner !== "None" && (
+                  <IntelRow label="PE Owner" value={company.intel.peOwner} warn />
+                )}
+              {company.intel.politicalSpending && (
+                <IntelRow
+                  label="Political Spending"
+                  value={company.intel.politicalSpending}
+                  warn={
+                    !company.intel.politicalSpending
+                      .toLowerCase()
+                      .includes("no public pac") &&
+                    !company.intel.politicalSpending
+                      .toLowerCase()
+                      .includes("no pac") &&
+                    !company.intel.politicalSpending
+                      .toLowerCase()
+                      .includes("none found")
+                  }
+                />
+              )}
+              {company.intel.lobbying &&
+                !company.intel.lobbying.toLowerCase().includes("no lobbying") &&
+                !company.intel.lobbying.toLowerCase().includes("none found") && (
+                  <IntelRow label="Lobbying" value={company.intel.lobbying} warn />
+                )}
+              {company.intel.whoTheySupport &&
+                !company.intel.whoTheySupport.toLowerCase().includes("no affiliations") &&
+                !company.intel.whoTheySupport.toLowerCase().includes("no specific") &&
+                !company.intel.whoTheySupport.toLowerCase().includes("none found") && (
+                  <IntelRow label="Who They Support" value={company.intel.whoTheySupport} />
+                )}
+              {company.intel.redFlags &&
+                !company.intel.redFlags.toLowerCase().includes("none found") &&
+                !company.intel.redFlags.toLowerCase().includes("no red flags") &&
+                !company.intel.redFlags.toLowerCase().includes("no major") && (
+                  <IntelRow label="Red Flags" value={company.intel.redFlags} warn />
+                )}
+            </motion.div>
           )}
         </CardContent>
       </Card>
@@ -163,231 +243,251 @@ function CategoryCard({
   );
 }
 
-/* ═══════════════════════════════════════════════════════
-   MAIN SECTION COMPONENT
-   ═══════════════════════════════════════════════════════ */
-export default function TransformSponsorsSection() {
-  const [search, setSearch] = useState("");
-  const [yearFilter, setYearFilter] = useState<"All" | "2025" | "2026">("All");
-  const [activeCategory, setActiveCategory] = useState("All");
+/* ─── Intel Row ─── */
+function IntelRow({
+  label,
+  value,
+  warn,
+}: {
+  label: string;
+  value: string;
+  warn?: boolean;
+}) {
+  return (
+    <div>
+      <p
+        className={`text-xs font-mono uppercase tracking-wider mb-1 ${
+          warn ? "text-red-400/70" : "text-primary/70"
+        }`}
+      >
+        {warn && <AlertTriangle className="w-3 h-3 inline mr-1 -mt-0.5" />}
+        {label}
+      </p>
+      <p className="text-sm text-muted-foreground leading-relaxed">{value}</p>
+    </div>
+  );
+}
 
-  const total = TRANSFORM_SPONSORS.length;
-  const bothYears = TRANSFORM_SPONSORS.filter((c) => c.years.length === 2).length;
-  const newIn2026 = TRANSFORM_SPONSORS.filter(
-    (c) => c.years.length === 1 && c.years[0] === "2026"
-  ).length;
+/* ─── Simple chip for non-intel companies ─── */
+function CompanyChip({ company }: { company: HRTechCompany }) {
+  return (
+    <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded text-xs bg-background/50 border border-border text-muted-foreground">
+      {company.name}
+    </span>
+  );
+}
+
+/* ═══════════════════════════════════════════════════════
+   HR TECH VENDOR DIRECTORY
+   ═══════════════════════════════════════════════════════ */
+export default function HRTechVendorDirectory() {
+  const [search, setSearch] = useState("");
+  const [activeCategory, setActiveCategory] = useState("All");
+  const [showAllInCategory, setShowAllInCategory] = useState<Set<string>>(
+    new Set()
+  );
+
+  const total = HR_TECH_COMPANIES.length;
+  const withIntel = HR_TECH_COMPANIES.filter((c) => c.intel).length;
 
   const filtered = useMemo(() => {
-    return TRANSFORM_SPONSORS.filter((c) => {
+    return HR_TECH_COMPANIES.filter((c) => {
       const matchesSearch =
         !search ||
         c.name.toLowerCase().includes(search.toLowerCase()) ||
-        c.category.toLowerCase().includes(search.toLowerCase());
-      const matchesYear =
-        yearFilter === "All" || c.years.includes(yearFilter);
+        c.category.toLowerCase().includes(search.toLowerCase()) ||
+        (c.intel?.oneLiner || "").toLowerCase().includes(search.toLowerCase()) ||
+        (c.intel?.ceo || "").toLowerCase().includes(search.toLowerCase()) ||
+        (c.intel?.keyInvestors || "").toLowerCase().includes(search.toLowerCase());
       const matchesCat =
         activeCategory === "All" || c.category === activeCategory;
-      return matchesSearch && matchesYear && matchesCat;
+      return matchesSearch && matchesCat;
     });
-  }, [search, yearFilter, activeCategory]);
+  }, [search, activeCategory]);
 
+  /* Split into intel cards and basic chips per category */
   const groupedByCategory = useMemo(() => {
-    const groups: Record<string, TransformSponsor[]> = {};
+    const groups: Record<
+      string,
+      { withIntel: HRTechCompany[]; basic: HRTechCompany[] }
+    > = {};
     for (const company of filtered) {
-      if (!groups[company.category]) groups[company.category] = [];
-      groups[company.category].push(company);
+      if (!groups[company.category])
+        groups[company.category] = { withIntel: [], basic: [] };
+      if (company.intel) {
+        groups[company.category].withIntel.push(company);
+      } else {
+        groups[company.category].basic.push(company);
+      }
     }
     return groups;
   }, [filtered]);
 
-  const categoryNames = Object.keys(TRANSFORM_CATEGORIES);
+  const categoryNames = Object.keys(HR_TECH_CATEGORIES);
+
+  const toggleShowAll = (cat: string) => {
+    setShowAllInCategory((prev) => {
+      const next = new Set(prev);
+      next.has(cat) ? next.delete(cat) : next.add(cat);
+      return next;
+    });
+  };
 
   return (
-    <section className="py-16 px-4 border-t border-border" id="transform-directory">
-      <div className="max-w-6xl mx-auto">
-        {/* Header */}
-        <div className="mb-10">
-          <p className="tracking-[0.2em] text-primary font-mono uppercase text-sm mb-3">
-            HR Tech Intelligence
-          </p>
-          <h2 className="text-2xl md:text-3xl font-bold text-foreground mb-2">
-            Transform 2025 & 2026{" "}
-            <span className="text-primary">Sponsor Directory</span>
-          </h2>
-          <p className="text-muted-foreground max-w-2xl leading-relaxed">
-            Every sponsor, exhibitor, and partner from Transform 2025 and 2026 —
-            categorized by what they actually do. {total} companies shaping the
-            HR tech landscape, tracked and organized by WDIWF.
-          </p>
-        </div>
+    <>
+      {/* Stats */}
+      <div className="flex flex-wrap gap-6 mb-8 text-sm text-muted-foreground">
+        <span>
+          <span className="text-lg font-bold font-mono text-primary">{total}</span>{" "}
+          companies tracked
+        </span>
+        <span>
+          <span className="text-lg font-bold font-mono text-primary">{withIntel}</span>{" "}
+          with full intel
+        </span>
+        <span>
+          <span className="text-lg font-bold font-mono text-primary">
+            {Object.keys(HR_TECH_CATEGORIES).length}
+          </span>{" "}
+          categories
+        </span>
+      </div>
 
-        {/* Stats Row */}
-        <motion.div
-          variants={stagger.container}
-          initial="hidden"
-          whileInView="show"
-          viewport={{ once: true, margin: "-50px" }}
-          className="grid gap-3 grid-cols-2 lg:grid-cols-4 mb-10"
+      {/* Search */}
+      <div className="relative max-w-sm mb-4">
+        <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
+        <Input
+          placeholder={`Search ${total} companies...`}
+          value={search}
+          onChange={(e) => setSearch(e.target.value)}
+          className="pl-10 bg-card border-border"
+        />
+      </div>
+
+      {/* Category Filter */}
+      <div className="flex flex-wrap gap-2 mb-8">
+        <Button
+          variant={activeCategory === "All" ? "default" : "outline"}
+          size="sm"
+          onClick={() => setActiveCategory("All")}
+          className={
+            activeCategory === "All"
+              ? "bg-primary text-primary-foreground"
+              : "border-border text-muted-foreground hover:bg-card"
+          }
         >
-          {[
-            { label: "Total Companies", value: total },
-            { label: "HR Categories", value: Object.keys(TRANSFORM_CATEGORIES).length },
-            { label: "Both Years", value: bothYears },
-            { label: "New in 2026", value: newIn2026 },
-          ].map((stat) => (
-            <motion.div key={stat.label} variants={stagger.item}>
-              <Card className="bg-card border border-border">
-                <CardContent className="p-4 text-center">
-                  <p className="text-2xl md:text-3xl font-bold font-mono text-primary tabular-nums">
-                    {stat.value}
-                  </p>
-                  <p className="text-xs font-mono text-muted-foreground uppercase tracking-wider mt-1">
-                    {stat.label}
-                  </p>
-                </CardContent>
-              </Card>
-            </motion.div>
-          ))}
-        </motion.div>
-
-        {/* Legend */}
-        <div className="flex flex-wrap items-center gap-4 mb-4 text-xs text-muted-foreground">
-          <span className="inline-flex items-center gap-1.5">
-            <span className="inline-block w-2 h-2 rounded-full bg-[#e8ff47]" /> 2025
-          </span>
-          <span className="inline-flex items-center gap-1.5">
-            <span className="inline-block w-2 h-2 rounded-full bg-[#40c0f0]" /> 2026
-          </span>
-          <Badge className="bg-primary text-primary-foreground border-0 text-[9px] font-mono px-1.5">
-            TITLE
-          </Badge>
-          <Badge className="bg-amber-600 text-white border-0 text-[9px] font-mono px-1.5">
-            GOLD
-          </Badge>
-          <Badge className="bg-zinc-400 text-zinc-900 border-0 text-[9px] font-mono px-1.5">
-            SILVER
-          </Badge>
-          <Badge className="bg-orange-700 text-white border-0 text-[9px] font-mono px-1.5">
-            BRONZE
-          </Badge>
-        </div>
-
-        {/* Search */}
-        <div className="relative max-w-sm mb-4">
-          <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
-          <Input
-            placeholder={`Search ${total} companies...`}
-            value={search}
-            onChange={(e) => setSearch(e.target.value)}
-            className="pl-10 bg-card border-border"
-          />
-        </div>
-
-        {/* Year Filter */}
-        <div className="flex gap-2 mb-4">
-          {(["All", "2025", "2026"] as const).map((year) => (
+          All ({filtered.length})
+        </Button>
+        {categoryNames.map((cat) => {
+          const group = groupedByCategory[cat];
+          const count = group
+            ? group.withIntel.length + group.basic.length
+            : 0;
+          if (count === 0 && activeCategory !== cat) return null;
+          const CatIcon = iconMap[HR_TECH_CATEGORIES[cat]?.icon] || Target;
+          const shortName = cat.split(" & ")[0].split(" / ")[0];
+          return (
             <Button
-              key={year}
-              variant={yearFilter === year ? "default" : "outline"}
+              key={cat}
+              variant={activeCategory === cat ? "default" : "outline"}
               size="sm"
-              onClick={() => setYearFilter(year)}
+              onClick={() => setActiveCategory(cat)}
               className={
-                yearFilter === year
+                activeCategory === cat
                   ? "bg-primary text-primary-foreground"
                   : "border-border text-muted-foreground hover:bg-card"
               }
             >
-              {year === "All" ? `All Years (${total})` : `Transform ${year}`}
+              <CatIcon className="w-3 h-3 mr-1" />
+              {shortName} ({count})
             </Button>
-          ))}
-        </div>
+          );
+        })}
+      </div>
 
-        {/* Category Filter */}
-        <div className="flex flex-wrap gap-2 mb-8">
-          <Button
-            variant={activeCategory === "All" ? "default" : "outline"}
-            size="sm"
-            onClick={() => setActiveCategory("All")}
-            className={
-              activeCategory === "All"
-                ? "bg-primary text-primary-foreground"
-                : "border-border text-muted-foreground hover:bg-card"
-            }
-          >
-            All ({filtered.length})
-          </Button>
-          {categoryNames.map((cat) => {
-            const count = groupedByCategory[cat]?.length || 0;
-            if (count === 0 && activeCategory !== cat) return null;
-            const CatIcon = iconMap[TRANSFORM_CATEGORIES[cat]?.icon] || Target;
-            const shortName = cat.split(" & ")[0].split(" / ")[0];
-            return (
-              <Button
-                key={cat}
-                variant={activeCategory === cat ? "default" : "outline"}
-                size="sm"
-                onClick={() => setActiveCategory(cat)}
-                className={
-                  activeCategory === cat
-                    ? "bg-primary text-primary-foreground"
-                    : "border-border text-muted-foreground hover:bg-card"
-                }
-              >
-                <CatIcon className="w-3 h-3 mr-1" />
-                {shortName} ({count})
-              </Button>
-            );
-          })}
-        </div>
+      {/* Directory by Category */}
+      {Object.entries(groupedByCategory)
+        .sort(
+          ([a], [b]) => categoryNames.indexOf(a) - categoryNames.indexOf(b)
+        )
+        .map(([cat, group]) => {
+          const catMeta = HR_TECH_CATEGORIES[cat];
+          const CatIcon = iconMap[catMeta?.icon] || Target;
+          const totalInCat = group.withIntel.length + group.basic.length;
+          const isExpanded = showAllInCategory.has(cat);
 
-        {/* Category Cards Grid */}
-        <motion.div
-          variants={stagger.container}
-          initial="hidden"
-          whileInView="show"
-          viewport={{ once: true, margin: "-50px" }}
-          className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3"
-        >
-          {Object.entries(groupedByCategory)
-            .sort(([a], [b]) => categoryNames.indexOf(a) - categoryNames.indexOf(b))
-            .map(([cat, companies]) => (
-              <CategoryCard key={cat} name={cat} companies={companies} />
-            ))}
-        </motion.div>
+          return (
+            <div key={cat} className="mb-12">
+              {/* Category Header */}
+              <div className="flex items-center gap-2.5 mb-2">
+                <CatIcon className="w-5 h-5 text-primary" />
+                <h3 className="text-lg font-bold text-foreground">{cat}</h3>
+                <span className="text-xs font-mono text-muted-foreground">
+                  {totalInCat}
+                </span>
+              </div>
+              <p className="text-xs text-muted-foreground mb-6 leading-relaxed">
+                {catMeta?.desc}
+              </p>
 
-        {filtered.length === 0 && (
-          <div className="text-center py-16">
-            <p className="text-muted-foreground">No companies match your search.</p>
-          </div>
-        )}
+              {/* Intel Cards (full profiles) */}
+              {group.withIntel.length > 0 && (
+                <motion.div
+                  variants={stagger.container}
+                  initial="hidden"
+                  whileInView="show"
+                  viewport={{ once: true, margin: "-50px" }}
+                  className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3 mb-4"
+                >
+                  {group.withIntel.map((company) => (
+                    <CompanyCard key={company.name} company={company} />
+                  ))}
+                </motion.div>
+              )}
 
-        {/* Source Footer */}
-        <div className="mt-12 pt-6 border-t border-border text-center">
-          <p className="text-xs text-muted-foreground leading-relaxed">
-            Data compiled from{" "}
-            <a
-              href="https://register.transform.us/2025/sponsors-2025/"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="text-primary/80 hover:text-primary underline-offset-2 hover:underline"
-            >
-              Transform 2025
-            </a>{" "}
-            and{" "}
-            <a
-              href="https://transform.us/conference/sponsors-2026/"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="text-primary/80 hover:text-primary underline-offset-2 hover:underline"
-            >
-              Transform 2026
-            </a>{" "}
-            · Updated March 2026
-            <br />
-            Categorized by WDIWF · This is not an endorsement — it's intelligence.
+              {/* Basic chips (no intel yet) */}
+              {group.basic.length > 0 && (
+                <div>
+                  <p className="text-xs font-mono text-muted-foreground/60 uppercase tracking-wider mb-2">
+                    Also in this category
+                  </p>
+                  <div className="flex flex-wrap gap-1.5">
+                    {(isExpanded ? group.basic : group.basic.slice(0, 20)).map(
+                      (company) => (
+                        <CompanyChip key={company.name} company={company} />
+                      )
+                    )}
+                  </div>
+                  {group.basic.length > 20 && (
+                    <button
+                      onClick={() => toggleShowAll(cat)}
+                      className="flex items-center gap-1 text-xs text-primary hover:text-primary/80 transition-colors mt-2"
+                    >
+                      {isExpanded ? (
+                        <>
+                          <ChevronUp className="w-3 h-3" /> Show less
+                        </>
+                      ) : (
+                        <>
+                          <ChevronDown className="w-3 h-3" /> Show all{" "}
+                          {group.basic.length}
+                        </>
+                      )}
+                    </button>
+                  )}
+                </div>
+              )}
+            </div>
+          );
+        })}
+
+      {filtered.length === 0 && (
+        <div className="text-center py-16">
+          <p className="text-muted-foreground">
+            No companies match your search.
           </p>
         </div>
-      </div>
-    </section>
+      )}
+    </>
   );
 }

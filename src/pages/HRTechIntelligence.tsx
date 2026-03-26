@@ -30,7 +30,7 @@ import {
   Cpu,
   Factory,
 } from "lucide-react";
-import TransformSponsorsSection from "@/components/TransformSponsorsSection";
+import HRTechVendorDirectory from "@/components/TransformSponsorsSection";
 import {
   HR_TECH_VENDORS,
   PE_OWNERS,
@@ -91,162 +91,7 @@ const trendIcon = (trend: LaborDataPoint["trend"]) => {
   }
 };
 
-/* ─── VENDOR CARD ─── */
-function VendorCard({ vendor }: { vendor: HRTechVendor }) {
-  const [expanded, setExpanded] = useState(false);
-  const cfg = ratingConfig[vendor.rating];
-  const Icon = cfg.icon;
 
-  return (
-    <motion.div variants={stagger.item}>
-      <Card
-        className={`bg-card border ${cfg.border} hover:border-primary/40 transition-colors cursor-pointer`}
-        onClick={() => setExpanded(!expanded)}
-      >
-        <CardContent className="p-5">
-          {/* Header */}
-          <div className="flex items-start justify-between gap-3 mb-3">
-            <div className="flex-1 min-w-0">
-              <div className="flex items-center gap-2 mb-1">
-                <Icon className={`w-4 h-4 flex-shrink-0 ${cfg.color}`} />
-                <h3 className="font-semibold text-foreground text-base truncate">
-                  {vendor.name}
-                </h3>
-              </div>
-              <p className="text-xs font-mono text-muted-foreground tracking-wide uppercase">
-                {vendor.category}
-                {vendor.ticker && (
-                  <span className="ml-2 text-primary/60">{vendor.ticker}</span>
-                )}
-              </p>
-            </div>
-            <Badge className={`${cfg.bg} ${cfg.color} border-0 text-xs font-mono shrink-0`}>
-              {cfg.label}
-            </Badge>
-          </div>
-
-          {/* Rating Note */}
-          {vendor.ratingNote && (
-            <p className="text-xs text-muted-foreground italic mb-2">{vendor.ratingNote}</p>
-          )}
-
-          {/* Key Finding */}
-          <p className="text-sm text-muted-foreground leading-relaxed mb-3">
-            {vendor.keyFinding}
-          </p>
-
-          {/* Expand/Collapse */}
-          <button
-            className="flex items-center gap-1 text-xs text-primary hover:text-primary/80 transition-colors"
-            onClick={(e) => {
-              e.stopPropagation();
-              setExpanded(!expanded);
-            }}
-          >
-            {expanded ? (
-              <>
-                <ChevronUp className="w-3 h-3" /> Less
-              </>
-            ) : (
-              <>
-                <ChevronDown className="w-3 h-3" /> Full intel
-              </>
-            )}
-          </button>
-
-          {/* Expanded Details */}
-          {expanded && (
-            <motion.div
-              initial={{ opacity: 0, height: 0 }}
-              animate={{ opacity: 1, height: "auto" }}
-              exit={{ opacity: 0, height: 0 }}
-              className="mt-4 pt-4 border-t border-border space-y-3"
-            >
-              {vendor.overview && (
-                <div>
-                  <p className="text-xs font-mono text-primary/70 uppercase tracking-wider mb-1">
-                    Overview
-                  </p>
-                  <p className="text-sm text-muted-foreground">{vendor.overview}</p>
-                </div>
-              )}
-              {vendor.ownership && (
-                <div>
-                  <p className="text-xs font-mono text-primary/70 uppercase tracking-wider mb-1">
-                    Ownership
-                  </p>
-                  <p className="text-sm text-muted-foreground">{vendor.ownership}</p>
-                </div>
-              )}
-              {vendor.politicalSpend && (
-                <div>
-                  <p className="text-xs font-mono text-primary/70 uppercase tracking-wider mb-1">
-                    Political Spending
-                  </p>
-                  <p className="text-sm text-muted-foreground">{vendor.politicalSpend}</p>
-                </div>
-              )}
-              {vendor.lobbying && (
-                <div>
-                  <p className="text-xs font-mono text-primary/70 uppercase tracking-wider mb-1">
-                    Lobbying
-                  </p>
-                  <p className="text-sm text-muted-foreground">{vendor.lobbying}</p>
-                </div>
-              )}
-              {vendor.laborPractices && (
-                <div>
-                  <p className="text-xs font-mono text-primary/70 uppercase tracking-wider mb-1">
-                    Labor Practices
-                  </p>
-                  <p className="text-sm text-muted-foreground">{vendor.laborPractices}</p>
-                </div>
-              )}
-              {vendor.deiStatus && (
-                <div>
-                  <p className="text-xs font-mono text-primary/70 uppercase tracking-wider mb-1">
-                    DEI Status
-                  </p>
-                  <p className="text-sm text-muted-foreground">{vendor.deiStatus}</p>
-                </div>
-              )}
-              {vendor.govContracts && (
-                <div>
-                  <p className="text-xs font-mono text-primary/70 uppercase tracking-wider mb-1">
-                    Government Contracts
-                  </p>
-                  <p className="text-sm text-muted-foreground">{vendor.govContracts}</p>
-                </div>
-              )}
-
-              {/* Sources */}
-              <div className="pt-2">
-                <p className="text-xs font-mono text-primary/70 uppercase tracking-wider mb-2">
-                  Sources
-                </p>
-                <div className="flex flex-wrap gap-2">
-                  {vendor.sources.map((s, i) => (
-                    <a
-                      key={i}
-                      href={s.url}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="inline-flex items-center gap-1 text-xs text-primary/80 hover:text-primary underline-offset-2 hover:underline"
-                      onClick={(e) => e.stopPropagation()}
-                    >
-                      <ExternalLink className="w-3 h-3" />
-                      {s.label}
-                    </a>
-                  ))}
-                </div>
-              </div>
-            </motion.div>
-          )}
-        </CardContent>
-      </Card>
-    </motion.div>
-  );
-}
 
 /* ─── PE OWNER CARD ─── */
 function PECard({ pe }: { pe: PEOwner }) {
@@ -432,30 +277,7 @@ export default function HRTechIntelligence() {
     path: "/hrtech",
   });
 
-  const [search, setSearch] = useState("");
-  const [ratingFilter, setRatingFilter] = useState<VendorRating | "all">("all");
 
-  const filteredVendors = useMemo(() => {
-    return HR_TECH_VENDORS.filter((v) => {
-      const matchesSearch =
-        !search ||
-        v.name.toLowerCase().includes(search.toLowerCase()) ||
-        v.category.toLowerCase().includes(search.toLowerCase()) ||
-        v.keyFinding.toLowerCase().includes(search.toLowerCase());
-      const matchesRating = ratingFilter === "all" || v.rating === ratingFilter;
-      return matchesSearch && matchesRating;
-    });
-  }, [search, ratingFilter]);
-
-  const counts = useMemo(
-    () => ({
-      all: HR_TECH_VENDORS.length,
-      "follow-the-money": HR_TECH_VENDORS.filter((v) => v.rating === "follow-the-money").length,
-      mixed: HR_TECH_VENDORS.filter((v) => v.rating === "mixed").length,
-      aligns: HR_TECH_VENDORS.filter((v) => v.rating === "aligns").length,
-    }),
-    []
-  );
 
   return (
     <div className="min-h-screen bg-background">
@@ -710,69 +532,11 @@ export default function HRTechIntelligence() {
               HR Tech Vendor Intelligence
             </h2>
             <p className="text-muted-foreground">
-              25 vendors rated on political spending, lobbying, labor practices, and ownership.
+              342 companies across 20 HR categories — founders, funding, political money, and red flags.
             </p>
           </div>
 
-          {/* Filters */}
-          <div className="flex flex-col sm:flex-row gap-3 mb-8">
-            <div className="relative flex-1 max-w-sm">
-              <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
-              <Input
-                placeholder="Search vendors..."
-                value={search}
-                onChange={(e) => setSearch(e.target.value)}
-                className="pl-10 bg-card border-border"
-              />
-            </div>
-            <div className="flex gap-2 flex-wrap">
-              {(
-                [
-                  { key: "all", label: `All (${counts.all})`, color: "text-foreground" },
-                  {
-                    key: "follow-the-money",
-                    label: `Follow the Money (${counts["follow-the-money"]})`,
-                    color: "text-red-400",
-                  },
-                  { key: "mixed", label: `Mixed (${counts.mixed})`, color: "text-amber-400" },
-                  { key: "aligns", label: `Aligns (${counts.aligns})`, color: "text-emerald-400" },
-                ] as const
-              ).map((f) => (
-                <Button
-                  key={f.key}
-                  variant={ratingFilter === f.key ? "default" : "outline"}
-                  size="sm"
-                  onClick={() => setRatingFilter(f.key as typeof ratingFilter)}
-                  className={
-                    ratingFilter === f.key
-                      ? "bg-primary text-primary-foreground"
-                      : `border-border ${f.color} hover:bg-card`
-                  }
-                >
-                  {f.label}
-                </Button>
-              ))}
-            </div>
-          </div>
-
-          {/* Vendor Cards */}
-          <motion.div
-            variants={stagger.container}
-            initial="hidden"
-            whileInView="show"
-            viewport={{ once: true, margin: "-50px" }}
-            className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3"
-          >
-            {filteredVendors.map((vendor) => (
-              <VendorCard key={vendor.slug} vendor={vendor} />
-            ))}
-          </motion.div>
-
-          {filteredVendors.length === 0 && (
-            <div className="text-center py-16">
-              <p className="text-muted-foreground">No vendors match your search.</p>
-            </div>
-          )}
+          <HRTechVendorDirectory />
         </div>
       </section>
 
@@ -806,9 +570,6 @@ export default function HRTechIntelligence() {
           </motion.div>
         </div>
       </section>
-
-      {/* ═══ TRANSFORM CONFERENCE SPONSORS ═══ */}
-      <TransformSponsorsSection />
 
       {/* ═══ CTA / METHODOLOGY ═══ */}
       <section className="py-16 px-4 border-t border-border">
