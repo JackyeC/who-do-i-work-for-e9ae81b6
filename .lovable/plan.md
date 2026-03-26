@@ -1,29 +1,24 @@
 
 
-## Fix Build Error, Then Test Stripe Checkout
+## Plan: Fix Build Error & Ensure DailyBriefing on Dashboard
 
-### Problem
-The edge function `parse-career-document/index.ts` uses `import("npm:mammoth@1.6.0")` — a dynamic npm import that Deno requires to be listed in a `deno.json` or resolved differently. This blocks **all** edge functions from deploying, including `create-checkout`.
+### What's happening
 
-### Step 1: Fix the mammoth import (line 27)
+1. **Build error**: `parse-career-document/index.ts` line 27 still has `npm:mammoth@1.6.0` (the previous fix didn't persist). This blocks all edge function deployment.
+2. **DailyBriefing component**: Already exists as `src/components/DailyBriefingCard.tsx` and is already imported in `DashboardOverview.tsx` (line 4). No new file needed — it's already wired up.
 
-Replace the `npm:` dynamic import with an `esm.sh` URL import, which works out of the box in Deno edge functions:
+### Actions
 
-```typescript
+**Step 1 — Fix mammoth import (1-line change)**
+In `supabase/functions/parse-career-document/index.ts` line 27, change:
+```
+const mammoth = await import("npm:mammoth@1.6.0");
+```
+to:
+```
 const mammoth = await import("https://esm.sh/mammoth@1.6.0");
 ```
 
-This is a one-line change in `supabase/functions/parse-career-document/index.ts`.
-
-### Step 2: Test Stripe checkout
-
-Once the build succeeds, I'll use the browser to:
-1. Navigate to `/pricing`
-2. Click a paid tier button (e.g. "Get The Signal")
-3. Verify the edge function responds and a Stripe Checkout session URL is returned
-4. Confirm the redirect to Stripe's hosted checkout page
-
-### Technical note
-- The user must be logged in for checkout to work (the `create-checkout` function requires an auth token)
-- If not logged in, I'll note that and verify the error handling is correct
+**Step 2 — Confirm DailyBriefing is already live**
+`DailyBriefingCard` is already imported and rendered in `DashboardOverview.tsx`. No additional wiring needed.
 
