@@ -1,55 +1,50 @@
 
 
-## Fix: Show research option on dossier page when company slug not found
+## Cloudflare Turnstile Bot Protection — All Public Forms
 
-**Problem**: When the Chrome extension links to `/dossier/mars-veterinary-health-inc` and no matching company exists in the database, the page shows a dead-end "Company not found." message with no action. The `CompanyZeroState` scan trigger only appears when a company record exists but lacks dossier data.
+**Site key**: `0x4AAAAAACwUKaSXORtxl_tu`
 
-**Solution**: Replace the empty "Company not found" state with a `CompanyZeroState`-style card that:
-1. Derives a human-readable company name from the URL slug (e.g., `mars-veterinary-health-inc` → `Mars Veterinary Health Inc`)
-2. Shows the Global Intelligence Scan button so users can trigger research
-3. On success, reloads the page with the newly created company data
+---
 
-### Technical details
+### 1. Infrastructure
 
-**File**: `src/pages/CompanyDossier.tsx` (lines 227–236)
-
-Replace the current empty state:
-```tsx
-if (!company) {
-  return (
-    <div className="min-h-screen flex flex-col bg-background">
-      <Header />
-      <div className="flex-1 flex items-center justify-center">
-        <p className="text-muted-foreground">Company not found.</p>
-      </div>
-    </div>
-  );
-}
+**Add Turnstile script to `index.html`**
+```html
+<script src="https://challenges.cloudflare.com/turnstile/v0/api.js?render=explicit" async defer></script>
 ```
 
-With a state that derives the company name from the slug and renders `CompanyZeroState` with an `onDiscovered` callback that navigates to the new slug:
+**Create `src/hooks/useTurnstile.ts`** — reusable hook for invisible mode:
+- Renders a hidden Turnstile widget into a container ref
+- Exposes `getToken()` (calls `turnstile.execute()`) and `reset()`
+- Site key: `0x4AAAAAACwUKaSXORtxl_tu`
 
-```tsx
-if (!company) {
-  const derivedName = id
-    ? id.replace(/-/g, " ").replace(/\b\w/g, c => c.toUpperCase())
-    : "Unknown Company";
+**Create `supabase/functions/verify-turnstile/index.ts`** — edge function:
+- Accepts `{ token }` in POST body
+- Calls `https://challenges.cloudflare.com/turnstile/v0/siteverify` with `TURNSTILE_SECRET_KEY` + token
+- Returns `{ success: true/false }`
 
-  return (
-    <div className="min-h-screen flex flex-col bg-background">
-      <Header />
-      <div className="flex-1 px-6 py-16 max-w-2xl mx-auto">
-        <CompanyZeroState
-          companyName={derivedName}
-          onDiscovered={(_, slug) => navigate(`/dossier/${slug}`)}
-        />
-      </div>
-    </div>
-  );
-}
-```
+**Store `TURNSTILE_SECRET_KEY`** as a backend secret (I'll prompt you to paste it).
 
-Also add `useNavigate` to the existing imports (it already imports `useParams` and `Link` from `react-router-dom`).
+---
 
-**Scope**: 1 file changed, ~10 lines modified. No database changes.
+### 2. Form Integration (6 forms)
+
+Each form gets the same pattern:
+1. Render a hidden `<div ref={turnstileRef} />` inside the form
+2. On submit, call `getToken()` first
+3. Pass the token to the backend (either inline verification call or alongside existing edge function call)
+4. If verification fails → show error, block submission
+
+| Form | File | Backend |
+|------|------|---------|
+| Email subscribe | `EmailCapture.tsx` | Verify token before `supabase.from("email_signups").insert()` |
+| Hero search | `HeroSearch.tsx` | Verify token before navigating to `/search` |
+| Contact | `Contact.tsx` | Verify token before opening mailto |
+| Waitlist /join | `EarlyAccess.tsx` | Verify token before `early_access_signups` insert |
+| Check search | `Check.tsx` | Verify token before `company-discover` invoke |
+| Browse discover | `Browse.tsx` | Verify token before `company-discover` invoke |
+
+### 3. Secret needed
+
+I'll need you to paste your **Turnstile Secret Key** from the Cloudflare dashboard (different from the site key — found on the same widget settings page).
 
