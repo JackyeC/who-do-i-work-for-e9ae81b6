@@ -255,7 +255,7 @@ function generateInsights(nodes: GraphNode[], links: GraphLink[]): string[] {
 
 const SAMPLE_NODES: GraphNode[] = [
   // ── Amazon (Technology, Consumer Protection, Defense, Labor Rights) ──
-  { id: "amazon", label: "Amazon", group: "Company", val: 22, metadata: { industry: "Technology / E-Commerce", summary: "One of the largest corporate political spenders in tech, with extensive lobbying on AI regulation, antitrust, and labor policy." } },
+  { id: "amazon", label: "Amazon", group: "Company", val: 22, metadata: { industry: "Technology / E-Commerce", summary: "One of the largest corporate political spenders in tech, with extensive lobbying on AI regulation, antitrust, and labor policy.", companySlug: "amazon", hasReceipt: true } },
   { id: "amazon-pac", label: "Amazon.com PAC", group: "PAC", val: 16, amount: 1_200_000, metadata: { summary: "Amazon's corporate PAC disbursing funds to candidates across both parties." } },
   { id: "sen-cantwell", label: "Sen. Maria Cantwell (D-WA)", group: "Politician", val: 12, party: "Democrat", state: "WA", issueCategories: ["Technology", "Consumer Protection"] },
   { id: "sen-wyden", label: "Sen. Ron Wyden (D-OR)", group: "Politician", val: 12, party: "Democrat", state: "OR", issueCategories: ["Technology", "Civil Rights"] },
@@ -270,11 +270,11 @@ const SAMPLE_NODES: GraphNode[] = [
   { id: "dod", label: "Dept. of Defense", group: "Agency", val: 18, amount: 10_000_000, issueCategories: ["Defense"] },
 
   // ── Microsoft (Technology, Defense) ──
-  { id: "microsoft", label: "Microsoft", group: "Company", val: 18, metadata: { industry: "Technology", summary: "Major government contractor and political spender with interests in AI regulation." } },
+  { id: "microsoft", label: "Microsoft", group: "Company", val: 18, metadata: { industry: "Technology", summary: "Major government contractor and political spender with interests in AI regulation.", companySlug: "microsoft", hasReceipt: true } },
   { id: "ms-pac", label: "Microsoft PAC", group: "PAC", val: 14, amount: 890_000 },
 
   // ── UnitedHealth Group (Healthcare) ──
-  { id: "unitedhealth", label: "UnitedHealth Group", group: "Company", val: 20, metadata: { industry: "Healthcare / Insurance", summary: "Largest health insurer in the US. Massive lobbying on ACA, Medicare, and drug pricing legislation." } },
+  { id: "unitedhealth", label: "UnitedHealth Group", group: "Company", val: 20, metadata: { industry: "Healthcare / Insurance", summary: "Largest health insurer in the US. Massive lobbying on ACA, Medicare, and drug pricing legislation.", companySlug: "unitedhealth-group" } },
   { id: "uhg-pac", label: "UnitedHealth Group PAC", group: "PAC", val: 15, amount: 2_800_000, metadata: { summary: "One of the top healthcare PACs, donating heavily to both parties." } },
   { id: "sen-cassidy", label: "Sen. Bill Cassidy (R-LA)", group: "Politician", val: 11, party: "Republican", state: "LA", issueCategories: ["Healthcare"] },
   { id: "sen-murray", label: "Sen. Patty Murray (D-WA)", group: "Politician", val: 11, party: "Democrat", state: "WA", issueCategories: ["Healthcare", "Education"] },
@@ -284,7 +284,7 @@ const SAMPLE_NODES: GraphNode[] = [
   { id: "hhs", label: "Dept. of Health & Human Services", group: "Agency", val: 16, issueCategories: ["Healthcare"] },
 
   // ── Tyson Foods (Immigration, Labor Rights) ──
-  { id: "tyson", label: "Tyson Foods", group: "Company", val: 16, metadata: { industry: "Food / Agriculture", summary: "One of the largest meatpacking companies. Heavily lobbied on immigration reform, guest worker programs, and OSHA standards." } },
+  { id: "tyson", label: "Tyson Foods", group: "Company", val: 16, metadata: { industry: "Food / Agriculture", summary: "One of the largest meatpacking companies. Heavily lobbied on immigration reform, guest worker programs, and OSHA standards.", companySlug: "tyson-foods" } },
   { id: "tyson-pac", label: "Tyson Foods PAC", group: "PAC", val: 12, amount: 420_000, metadata: { summary: "Funds candidates supporting agricultural labor and immigration reform." } },
   { id: "sen-cotton", label: "Sen. Tom Cotton (R-AR)", group: "Politician", val: 10, party: "Republican", state: "AR", issueCategories: ["Immigration", "Defense"] },
   { id: "rep-crawford", label: "Rep. Rick Crawford (R-AR)", group: "Politician", val: 9, party: "Republican", state: "AR", issueCategories: ["Immigration", "Labor Rights"] },
@@ -293,7 +293,7 @@ const SAMPLE_NODES: GraphNode[] = [
   { id: "agriculture-industry", label: "Agriculture Sector", group: "Industry", val: 13, issueCategories: ["Labor Rights", "Immigration"] },
 
   // ── Starbucks (Labor Rights — Union organizing) ──
-  { id: "starbucks", label: "Starbucks", group: "Company", val: 18, metadata: { industry: "Food & Beverage", summary: "Over 400 NLRB unfair labor practice complaints. Center of largest US union wave since the 1930s with Workers United/SBWU organizing 400+ stores." } },
+  { id: "starbucks", label: "Starbucks", group: "Company", val: 18, metadata: { industry: "Food & Beverage", summary: "Over 400 NLRB unfair labor practice complaints. Center of largest US union wave since the 1930s with Workers United/SBWU organizing 400+ stores.", companySlug: "starbucks" } },
   { id: "starbucks-pac", label: "Starbucks PAC", group: "PAC", val: 12, amount: 560_000 },
   { id: "sen-sanders", label: "Sen. Bernie Sanders (I-VT)", group: "Politician", val: 13, party: "Independent", state: "VT", issueCategories: ["Labor Rights", "Healthcare"] },
   { id: "labor-committee", label: "Senate HELP Committee (Labor)", group: "Committee", val: 14, issueCategories: ["Labor Rights", "Education"] },
@@ -302,29 +302,29 @@ const SAMPLE_NODES: GraphNode[] = [
   { id: "labor-industry", label: "Organized Labor Sector", group: "Industry", val: 14, issueCategories: ["Labor Rights"] },
 
   // ── Dollar General (Labor Rights — OSHA severe violator) ──
-  { id: "dollar-general", label: "Dollar General", group: "Company", val: 15, metadata: { industry: "Retail", summary: "Designated OSHA 'Severe Violator' for repeated willful safety violations including blocked exits, falling hazards, and understaffing across hundreds of stores." } },
+  { id: "dollar-general", label: "Dollar General", group: "Company", val: 15, metadata: { industry: "Retail", summary: "Designated OSHA 'Severe Violator' for repeated willful safety violations including blocked exits, falling hazards, and understaffing across hundreds of stores.", companySlug: "dollar-general" } },
   { id: "dol-agency", label: "Dept. of Labor", group: "Agency", val: 16, issueCategories: ["Labor Rights"] },
   { id: "workplace-safety-bill", label: "Workplace Violence Prevention Act (H.R.1195)", group: "Legislation", val: 11, issueCategories: ["Labor Rights"], metadata: { status: "In Committee", description: "Requires employers to develop and implement workplace violence prevention plans." } },
 
   // ── Tesla (Labor Rights — NLRB + safety) ──
-  { id: "tesla", label: "Tesla", group: "Company", val: 18, metadata: { industry: "Automotive / EV", summary: "Multiple NLRB complaints including illegal anti-union tweets by CEO. OSHA violations at Fremont plant. UAW launched organizing campaign in 2023." } },
+  { id: "tesla", label: "Tesla", group: "Company", val: 18, metadata: { industry: "Automotive / EV", summary: "Multiple NLRB complaints including illegal anti-union tweets by CEO. OSHA violations at Fremont plant. UAW launched organizing campaign in 2023.", companySlug: "tesla" } },
   { id: "tesla-pac", label: "Tesla PAC", group: "PAC", val: 11, amount: 280_000 },
   { id: "osha-agency", label: "OSHA", group: "Agency", val: 15, issueCategories: ["Labor Rights"] },
 
   // ── UPS (Labor Rights — Pro-union, Teamsters) ──
-  { id: "ups", label: "UPS", group: "Company", val: 17, metadata: { industry: "Logistics", summary: "Largest unionized private employer in the US. 2023 Teamsters contract covering 340,000 workers was the largest private-sector union contract in US history." } },
+  { id: "ups", label: "UPS", group: "Company", val: 17, metadata: { industry: "Logistics", summary: "Largest unionized private employer in the US. 2023 Teamsters contract covering 340,000 workers was the largest private-sector union contract in US history.", companySlug: "ups" } },
   { id: "ups-pac", label: "UPS PAC", group: "PAC", val: 13, amount: 1_100_000 },
   
 
   // ── Costco (Labor Rights — Pro-worker) ──
-  { id: "costco", label: "Costco", group: "Company", val: 16, metadata: { industry: "Retail", summary: "Known for above-average wages ($29.50/hr avg), comprehensive benefits, and relatively positive labor relations. CEO publicly opposed federal minimum wage cuts." } },
+  { id: "costco", label: "Costco", group: "Company", val: 16, metadata: { industry: "Retail", summary: "Known for above-average wages ($29.50/hr avg), comprehensive benefits, and relatively positive labor relations. CEO publicly opposed federal minimum wage cuts.", companySlug: "costco" } },
 
   // ── Apple (Labor Rights — Retail union drives) ──
-  { id: "apple-retail", label: "Apple (Retail)", group: "Company", val: 17, metadata: { industry: "Technology / Retail", summary: "Facing retail union organizing at Apple Stores nationwide. IAM won first Apple Store union in Towson, MD. CWA organizing in multiple states." } },
+  { id: "apple-retail", label: "Apple (Retail)", group: "Company", val: 17, metadata: { industry: "Technology / Retail", summary: "Facing retail union organizing at Apple Stores nationwide. IAM won first Apple Store union in Towson, MD. CWA organizing in multiple states.", companySlug: "apple" } },
   { id: "apple-pac", label: "Apple PAC", group: "PAC", val: 12, amount: 420_000 },
 
   // ── Google (Immigration — H-1B) ──
-  { id: "google", label: "Google (Alphabet)", group: "Company", val: 20, metadata: { industry: "Technology", summary: "Top H-1B sponsor with 8,000+ Labor Condition Applications annually. Co-founded FWD.us immigration advocacy coalition. Active lobbying on high-skilled visa reform." } },
+  { id: "google", label: "Google (Alphabet)", group: "Company", val: 20, metadata: { industry: "Technology", summary: "Top H-1B sponsor with 8,000+ Labor Condition Applications annually. Co-founded FWD.us immigration advocacy coalition. Active lobbying on high-skilled visa reform.", companySlug: "google", hasReceipt: true } },
   { id: "google-pac", label: "Google NetPAC", group: "PAC", val: 14, amount: 1_400_000 },
   { id: "sen-padilla", label: "Sen. Alex Padilla (D-CA)", group: "Politician", val: 10, party: "Democrat", state: "CA", issueCategories: ["Immigration", "Technology"] },
   { id: "immigration-subcommittee", label: "Senate Judiciary Immigration Subcommittee", group: "Committee", val: 14, issueCategories: ["Immigration"] },
@@ -333,17 +333,17 @@ const SAMPLE_NODES: GraphNode[] = [
   { id: "dol-flc", label: "DOL Foreign Labor Certification", group: "Agency", val: 15, issueCategories: ["Immigration"] },
 
   // ── Infosys (Immigration — Largest H-1B sponsor) ──
-  { id: "infosys", label: "Infosys", group: "Company", val: 16, metadata: { industry: "IT Outsourcing", summary: "Largest H-1B sponsor by volume with 30,000+ annual LCAs. Paid $34M to settle visa fraud allegations in 2013." } },
+  { id: "infosys", label: "Infosys", group: "Company", val: 16, metadata: { industry: "IT Outsourcing", summary: "Largest H-1B sponsor by volume with 30,000+ annual LCAs. Paid $34M to settle visa fraud allegations in 2013.", companySlug: "infosys" } },
 
   // ── Marriott (Immigration — H-2B hospitality) ──
-  { id: "marriott", label: "Marriott International", group: "Company", val: 15, metadata: { industry: "Hospitality", summary: "Major H-2B hospitality visa sponsor for seasonal hotel workers across the US." } },
+  { id: "marriott", label: "Marriott International", group: "Company", val: 15, metadata: { industry: "Hospitality", summary: "Major H-2B hospitality visa sponsor for seasonal hotel workers across the US.", companySlug: "marriott" } },
   { id: "marriott-pac", label: "Marriott PAC", group: "PAC", val: 12, amount: 680_000 },
   { id: "h2b-returning-bill", label: "H-2B Returning Worker Exception Act", group: "Legislation", val: 10, issueCategories: ["Immigration"], metadata: { status: "In Committee", description: "Exempts returning H-2B workers from the annual cap, expanding seasonal worker visas." } },
   { id: "hospitality-industry", label: "Hospitality Sector", group: "Industry", val: 13, issueCategories: ["Immigration"] },
   { id: "uscis", label: "USCIS", group: "Agency", val: 15, issueCategories: ["Immigration"] },
 
   // ── ExxonMobil (Climate, Energy) ──
-  { id: "exxon", label: "ExxonMobil", group: "Company", val: 20, metadata: { industry: "Oil & Gas / Energy", summary: "One of the largest fossil fuel companies. Decades-long lobbying against climate regulation while publicly pledging carbon reduction." } },
+  { id: "exxon", label: "ExxonMobil", group: "Company", val: 20, metadata: { industry: "Oil & Gas / Energy", summary: "One of the largest fossil fuel companies. Decades-long lobbying against climate regulation while publicly pledging carbon reduction.", companySlug: "exxonmobil" } },
   { id: "exxon-pac", label: "ExxonMobil PAC", group: "PAC", val: 15, amount: 1_650_000, metadata: { summary: "Funds candidates across parties, with concentration on energy and environment committee members." } },
   { id: "sen-manchin", label: "Sen. Joe Manchin (I-WV)", group: "Politician", val: 12, party: "Independent", state: "WV", issueCategories: ["Climate", "Energy"] },
   { id: "sen-capito", label: "Sen. Shelley Moore Capito (R-WV)", group: "Politician", val: 10, party: "Republican", state: "WV", issueCategories: ["Climate", "Energy"] },
@@ -353,29 +353,29 @@ const SAMPLE_NODES: GraphNode[] = [
   { id: "doe", label: "Dept. of Energy", group: "Agency", val: 15, issueCategories: ["Energy", "Climate"] },
 
   // ── Chevron (Climate — Major emitter, litigation target) ──
-  { id: "chevron", label: "Chevron", group: "Company", val: 19, metadata: { industry: "Oil & Gas", summary: "Major integrated energy company. Target of multiple municipal climate lawsuits. Significant EPA GHGRP-reported emissions." } },
+  { id: "chevron", label: "Chevron", group: "Company", val: 19, metadata: { industry: "Oil & Gas", summary: "Major integrated energy company. Target of multiple municipal climate lawsuits. Significant EPA GHGRP-reported emissions.", companySlug: "chevron" } },
   { id: "chevron-pac", label: "Chevron PAC", group: "PAC", val: 14, amount: 1_300_000 },
   { id: "sen-barrasso", label: "Sen. John Barrasso (R-WY)", group: "Politician", val: 11, party: "Republican", state: "WY", issueCategories: ["Climate", "Energy"] },
   { id: "ira-clean-energy", label: "Inflation Reduction Act (Clean Energy)", group: "Legislation", val: 13, issueCategories: ["Climate", "Energy"], metadata: { status: "Enacted", description: "$369B in clean energy investments, tax credits for EVs, renewable energy, and carbon capture." } },
   { id: "climate-action-100", label: "Climate Action 100+ (Investor Coalition)", group: "Industry", val: 14, issueCategories: ["Climate"], metadata: { summary: "Investor-led initiative ensuring the world's largest corporate GHG emitters take necessary action on climate change." } },
 
   // ── Duke Energy (Climate — Largest US utility emitter) ──
-  { id: "duke-energy", label: "Duke Energy", group: "Company", val: 17, metadata: { industry: "Utilities", summary: "Largest electric utility in the US by generation. Major EPA GHGRP reporter transitioning from coal to renewables." } },
+  { id: "duke-energy", label: "Duke Energy", group: "Company", val: 17, metadata: { industry: "Utilities", summary: "Largest electric utility in the US by generation. Major EPA GHGRP reporter transitioning from coal to renewables.", companySlug: "duke-energy" } },
   { id: "duke-pac", label: "Duke Energy PAC", group: "PAC", val: 13, amount: 920_000 },
   { id: "house-energy-committee", label: "House Energy & Commerce Committee", group: "Committee", val: 14, issueCategories: ["Climate", "Energy", "Healthcare"] },
   { id: "clean-air-amendments", label: "Clean Air Act Amendments", group: "Legislation", val: 12, issueCategories: ["Climate"], metadata: { status: "Ongoing", description: "Amendments to strengthen EPA authority to regulate power plant emissions under the Clean Air Act." } },
 
   // ── NextEra Energy (Climate — Largest US renewables) ──
-  { id: "nextera", label: "NextEra Energy", group: "Company", val: 16, metadata: { industry: "Utilities / Renewables", summary: "Largest generator of wind and solar energy in the world. Leading the utility industry's renewable energy transition." } },
+  { id: "nextera", label: "NextEra Energy", group: "Company", val: 16, metadata: { industry: "Utilities / Renewables", summary: "Largest generator of wind and solar energy in the world. Leading the utility industry's renewable energy transition.", companySlug: "nextera-energy" } },
   { id: "nextera-pac", label: "NextEra Energy PAC", group: "PAC", val: 12, amount: 780_000 },
 
   // ── Marathon Petroleum (Climate — Largest US refiner) ──
-  { id: "marathon", label: "Marathon Petroleum", group: "Company", val: 17, metadata: { industry: "Oil & Gas / Refining", summary: "Largest petroleum refiner in the US. Major EPA GHGRP emissions reporter. Lobbied against clean fuel standards." } },
+  { id: "marathon", label: "Marathon Petroleum", group: "Company", val: 17, metadata: { industry: "Oil & Gas / Refining", summary: "Largest petroleum refiner in the US. Major EPA GHGRP emissions reporter. Lobbied against clean fuel standards.", companySlug: "marathon-petroleum" } },
   { id: "marathon-pac", label: "Marathon Petroleum PAC", group: "PAC", val: 13, amount: 1_050_000 },
   { id: "ogci", label: "Oil & Gas Climate Initiative", group: "Industry", val: 13, issueCategories: ["Climate", "Energy"], metadata: { summary: "CEO-led consortium of major oil and gas companies investing in low-carbon technologies." } },
 
   // ── Smith & Wesson / NSSF (Gun Policy) ──
-  { id: "smith-wesson", label: "Smith & Wesson Brands", group: "Company", val: 14, metadata: { industry: "Firearms Manufacturing", summary: "Major US firearms manufacturer. Lobbies through NSSF trade association against gun safety legislation." } },
+  { id: "smith-wesson", label: "Smith & Wesson Brands", group: "Company", val: 14, metadata: { industry: "Firearms Manufacturing", summary: "Major US firearms manufacturer. Lobbies through NSSF trade association against gun safety legislation.", companySlug: "smith-wesson" } },
   { id: "nssf-pac", label: "NSSF PAC (Gun Industry)", group: "PAC", val: 13, amount: 780_000, metadata: { summary: "National Shooting Sports Foundation PAC — the gun industry's primary political spending vehicle." } },
   { id: "nra-pac", label: "NRA Political Victory Fund", group: "PAC", val: 18, amount: 14_000_000, metadata: { summary: "NRA's PAC — one of the most influential political spending vehicles in US politics. Grades politicians on gun policy stances." } },
   { id: "everytown-pac", label: "Everytown for Gun Safety PAC", group: "PAC", val: 14, amount: 6_500_000, metadata: { summary: "Gun safety advocacy PAC. Funded by Bloomberg Philanthropies. Supports universal background check legislation." } },
@@ -391,16 +391,16 @@ const SAMPLE_NODES: GraphNode[] = [
   { id: "house-judiciary", label: "House Judiciary Committee", group: "Committee", val: 14, issueCategories: ["Gun Policy", "Civil Rights", "Immigration"] },
 
   // ── Walmart (Gun Policy — Retailer that changed policy) ──
-  { id: "walmart-guns", label: "Walmart (Gun Sales)", group: "Company", val: 16, metadata: { industry: "Retail", summary: "Largest US retailer. Sold firearms until 2019 when it stopped selling handgun ammunition and raised purchase age to 21 after El Paso shooting." } },
+  { id: "walmart-guns", label: "Walmart (Gun Sales)", group: "Company", val: 16, metadata: { industry: "Retail", summary: "Largest US retailer. Sold firearms until 2019 when it stopped selling handgun ammunition and raised purchase age to 21 after El Paso shooting.", companySlug: "walmart" } },
 
   // ── Dick's Sporting Goods (Gun Policy — Removed assault rifles) ──
-  { id: "dicks-sporting", label: "Dick's Sporting Goods", group: "Company", val: 14, metadata: { industry: "Retail", summary: "Removed assault-style rifles from all 730+ stores after Parkland. CEO Ed Stack became corporate gun safety advocate. Destroyed $5M in firearms inventory." } },
+  { id: "dicks-sporting", label: "Dick's Sporting Goods", group: "Company", val: 14, metadata: { industry: "Retail", summary: "Removed assault-style rifles from all 730+ stores after Parkland. CEO Ed Stack became corporate gun safety advocate. Destroyed $5M in firearms inventory.", companySlug: "dicks-sporting-goods" } },
 
   // ── Levi Strauss (Gun Policy — Corporate gun safety advocacy) ──
-  { id: "levi-strauss", label: "Levi Strauss & Co", group: "Company", val: 13, metadata: { industry: "Apparel", summary: "CEO Chip Bergh launched 'Everytown Business Leaders for Gun Safety' corporate coalition. Donated $1M to gun safety organizations." } },
+  { id: "levi-strauss", label: "Levi Strauss & Co", group: "Company", val: 13, metadata: { industry: "Apparel", summary: "CEO Chip Bergh launched 'Everytown Business Leaders for Gun Safety' corporate coalition. Donated $1M to gun safety organizations.", companySlug: "levi-strauss" } },
 
   // ── Pearson / McGraw Hill (Education) ──
-  { id: "pearson", label: "Pearson Education", group: "Company", val: 14, metadata: { industry: "Education / Publishing", summary: "Largest education publisher globally. Lobbies on standardized testing mandates, EdTech procurement, and student data privacy." } },
+  { id: "pearson", label: "Pearson Education", group: "Company", val: 14, metadata: { industry: "Education / Publishing", summary: "Largest education publisher globally. Lobbies on standardized testing mandates, EdTech procurement, and student data privacy.", companySlug: "pearson" } },
   { id: "pearson-pac", label: "Pearson/Education Industry PAC", group: "PAC", val: 11, amount: 320_000, metadata: { summary: "EdTech industry PAC funding candidates who support standardized testing mandates." } },
   { id: "rep-scott", label: "Rep. Bobby Scott (D-VA)", group: "Politician", val: 10, party: "Democrat", state: "VA", issueCategories: ["Education", "Labor Rights"] },
   { id: "education-bill", label: "Student Data Privacy Act (S.1158)", group: "Legislation", val: 10, issueCategories: ["Education", "Consumer Protection"], metadata: { status: "In Committee", description: "Restricts how education technology companies can use student data." } },
@@ -408,7 +408,7 @@ const SAMPLE_NODES: GraphNode[] = [
   { id: "dept-education", label: "Dept. of Education", group: "Agency", val: 14, issueCategories: ["Education"] },
 
   // ── Blackstone (Housing, Financial Services) ──
-  { id: "blackstone", label: "Blackstone Group", group: "Company", val: 18, metadata: { industry: "Private Equity / Real Estate", summary: "Largest private equity firm and single-family home landlord in the US. Lobbies on housing deregulation, carried interest tax treatment, and financial services oversight." } },
+  { id: "blackstone", label: "Blackstone Group", group: "Company", val: 18, metadata: { industry: "Private Equity / Real Estate", summary: "Largest private equity firm and single-family home landlord in the US. Lobbies on housing deregulation, carried interest tax treatment, and financial services oversight.", companySlug: "blackstone" } },
   { id: "blackstone-pac", label: "Blackstone Group PAC", group: "PAC", val: 14, amount: 1_100_000, metadata: { summary: "Major financial services PAC. Top recipients sit on Banking and Finance committees." } },
   { id: "sen-scott-tim", label: "Sen. Tim Scott (R-SC)", group: "Politician", val: 11, party: "Republican", state: "SC", issueCategories: ["Housing", "Financial Services"] },
   { id: "sen-warren", label: "Sen. Elizabeth Warren (D-MA)", group: "Politician", val: 12, party: "Democrat", state: "MA", issueCategories: ["Housing", "Financial Services", "Consumer Protection"] },
@@ -420,7 +420,7 @@ const SAMPLE_NODES: GraphNode[] = [
   { id: "financial-industry", label: "Financial Services Sector", group: "Industry", val: 15, issueCategories: ["Financial Services"] },
 
   // ── Koch Industries (Dark Money — Climate, Energy) ──
-  { id: "koch", label: "Koch Industries", group: "Company", val: 20, metadata: { industry: "Conglomerate / Energy", summary: "Private conglomerate with one of the largest dark money networks in US politics. Funds 501(c)(4) groups that spend on elections without disclosing donors." } },
+  { id: "koch", label: "Koch Industries", group: "Company", val: 20, metadata: { industry: "Conglomerate / Energy", summary: "Private conglomerate with one of the largest dark money networks in US politics. Funds 501(c)(4) groups that spend on elections without disclosing donors.", companySlug: "koch-industries" } },
   { id: "koch-pac", label: "Koch Industries PAC", group: "PAC", val: 14, amount: 2_100_000, metadata: { summary: "Direct PAC spending — only the visible portion of Koch's political influence." } },
   { id: "americans-prosperity", label: "Americans for Prosperity (501c4)", group: "PAC", val: 18, amount: 65_000_000, metadata: { summary: "Koch-funded 501(c)(4) dark money group. Spent $65M+ on elections without disclosing donors. Opposes climate regulation and ACA." } },
   { id: "freedom-partners", label: "Freedom Partners Chamber", group: "PAC", val: 15, amount: 42_000_000, metadata: { summary: "Koch donor network hub. Distributed $42M to conservative groups opposing environmental and labor regulations." } },
@@ -429,7 +429,7 @@ const SAMPLE_NODES: GraphNode[] = [
   { id: "climate-deregulation-bill", label: "EPA Regulatory Reform Act", group: "Legislation", val: 11, issueCategories: ["Climate", "Energy"], metadata: { status: "In Committee", description: "Would restrict EPA authority to regulate greenhouse gas emissions from power plants." } },
 
   // ── Raytheon/RTX (Revolving Door — Defense) ──
-  { id: "raytheon", label: "RTX (Raytheon)", group: "Company", val: 20, metadata: { industry: "Defense / Aerospace", summary: "Major defense contractor. Former executives rotate between Pentagon leadership roles and corporate board seats — textbook revolving door." } },
+  { id: "raytheon", label: "RTX (Raytheon)", group: "Company", val: 20, metadata: { industry: "Defense / Aerospace", summary: "Major defense contractor. Former executives rotate between Pentagon leadership roles and corporate board seats — textbook revolving door.", companySlug: "raytheon" } },
   { id: "raytheon-pac", label: "RTX PAC", group: "PAC", val: 15, amount: 2_400_000, metadata: { summary: "One of the top defense industry PACs. Donates to Armed Services committee members from both parties." } },
   { id: "lloyd-austin-node", label: "Lloyd Austin (Fmr. Raytheon Board → SecDef)", group: "Politician", val: 14, issueCategories: ["Defense"], metadata: { summary: "Served on Raytheon board before becoming Secretary of Defense. Classic revolving door." } },
   { id: "mark-esper-node", label: "Mark Esper (Fmr. Raytheon Lobbyist → SecDef)", group: "Politician", val: 13, issueCategories: ["Defense"], metadata: { summary: "Was Raytheon's VP of Government Relations before serving as Secretary of Defense under Trump." } },
@@ -440,14 +440,14 @@ const SAMPLE_NODES: GraphNode[] = [
   { id: "defense-industry", label: "Defense Sector", group: "Industry", val: 16, issueCategories: ["Defense"] },
 
   // ── Comcast/NBCUniversal (Lobbying — Consumer Protection, Technology) ──
-  { id: "comcast", label: "Comcast / NBCUniversal", group: "Company", val: 18, metadata: { industry: "Telecom / Media", summary: "Top corporate lobbyist in the US. Spends $14M+/year lobbying on net neutrality, media consolidation, and broadband regulation." } },
+  { id: "comcast", label: "Comcast / NBCUniversal", group: "Company", val: 18, metadata: { industry: "Telecom / Media", summary: "Top corporate lobbyist in the US. Spends $14M+/year lobbying on net neutrality, media consolidation, and broadband regulation.", companySlug: "comcast" } },
   { id: "comcast-pac", label: "Comcast PAC", group: "PAC", val: 14, amount: 1_800_000 },
   { id: "fcc", label: "Federal Communications Commission", group: "Agency", val: 15, issueCategories: ["Technology", "Consumer Protection"] },
   { id: "net-neutrality-bill", label: "Net Neutrality & Broadband Justice Act", group: "Legislation", val: 11, issueCategories: ["Technology", "Consumer Protection"], metadata: { status: "In Committee", description: "Would restore FCC authority to enforce net neutrality and regulate broadband as a utility." } },
   { id: "telecom-industry", label: "Telecom Sector", group: "Industry", val: 14, issueCategories: ["Technology", "Consumer Protection"] },
 
   // ── Goldman Sachs (Revolving Door — Financial Services) ──
-  { id: "goldman", label: "Goldman Sachs", group: "Company", val: 20, metadata: { industry: "Investment Banking", summary: "The poster child for revolving door influence. Multiple former executives served as Treasury Secretary, Fed chairs, and White House advisors." } },
+  { id: "goldman", label: "Goldman Sachs", group: "Company", val: 20, metadata: { industry: "Investment Banking", summary: "The poster child for revolving door influence. Multiple former executives served as Treasury Secretary, Fed chairs, and White House advisors.", companySlug: "goldman-sachs" } },
   { id: "goldman-pac", label: "Goldman Sachs PAC", group: "PAC", val: 15, amount: 1_900_000 },
   { id: "hank-paulson-node", label: "Hank Paulson (Goldman CEO → Treasury Sec.)", group: "Politician", val: 13, issueCategories: ["Financial Services"], metadata: { summary: "Goldman Sachs CEO who became Treasury Secretary during 2008 crisis. Oversaw bank bailouts." } },
   { id: "gary-cohn-node", label: "Gary Cohn (Goldman Pres. → NEC Director)", group: "Politician", val: 12, issueCategories: ["Financial Services"], metadata: { summary: "Goldman Sachs president who became Trump's National Economic Council director." } },
@@ -456,7 +456,7 @@ const SAMPLE_NODES: GraphNode[] = [
   { id: "dodd-frank-bill", label: "Dodd-Frank Wall Street Reform Act", group: "Legislation", val: 12, issueCategories: ["Financial Services", "Consumer Protection"], metadata: { status: "Enacted (under rollback)", description: "Post-2008 financial regulation. Goldman lobbied heavily on derivatives trading rules." } },
 
   // ── Purdue Pharma / Sacklers (Dark Money — Healthcare) ──
-  { id: "purdue", label: "Purdue Pharma (Sackler Family)", group: "Company", val: 16, metadata: { industry: "Pharmaceuticals", summary: "Sackler family used philanthropic foundations and dark money channels to influence opioid policy while fueling the opioid crisis." } },
+  { id: "purdue", label: "Purdue Pharma (Sackler Family)", group: "Company", val: 16, metadata: { industry: "Pharmaceuticals", summary: "Sackler family used philanthropic foundations and dark money channels to influence opioid policy while fueling the opioid crisis.", companySlug: "purdue-pharma" } },
   { id: "sackler-foundation", label: "Sackler Family Foundations (501c3/c4)", group: "PAC", val: 14, amount: 18_000_000, metadata: { summary: "Sackler philanthropic entities that donated to institutions while lobbying against opioid restrictions." } },
   { id: "pain-care-forum", label: "Pain Care Forum (Industry Coalition)", group: "PAC", val: 13, amount: 740_000_000, metadata: { summary: "Pharma industry dark money coalition that spent $740M lobbying against opioid regulations over a decade." } },
   { id: "fda", label: "Food & Drug Administration", group: "Agency", val: 15, issueCategories: ["Healthcare"] },
@@ -464,7 +464,7 @@ const SAMPLE_NODES: GraphNode[] = [
   { id: "pharma-industry", label: "Pharmaceutical Sector", group: "Industry", val: 15, issueCategories: ["Healthcare"] },
 
   // ── Disney (Civil Rights — LGBTQ advocacy) ──
-  { id: "disney-cr", label: "Walt Disney Company", group: "Company", val: 17, metadata: { industry: "Entertainment", summary: "HRC CEI 100/100. Publicly opposed Florida 'Don't Say Gay' bill. Major corporate LGBTQ rights advocate." } },
+  { id: "disney-cr", label: "Walt Disney Company", group: "Company", val: 17, metadata: { industry: "Entertainment", summary: "HRC CEI 100/100. Publicly opposed Florida 'Don't Say Gay' bill. Major corporate LGBTQ rights advocate.", companySlug: "disney" } },
   { id: "eeoc-agency", label: "EEOC (Equal Employment Opportunity Commission)", group: "Agency", val: 15, issueCategories: ["Civil Rights", "Labor Rights"] },
   { id: "hrc-index", label: "HRC Corporate Equality Index", group: "Industry", val: 13, issueCategories: ["Civil Rights"], metadata: { summary: "Human Rights Campaign annual benchmark of LGBTQ workplace policies. Rates 1,300+ companies." } },
   { id: "equality-act", label: "Equality Act (H.R.5)", group: "Legislation", val: 13, issueCategories: ["Civil Rights"], metadata: { status: "Passed House", description: "Would add sexual orientation and gender identity to federal civil rights protections in employment, housing, and public accommodations." } },
@@ -472,19 +472,19 @@ const SAMPLE_NODES: GraphNode[] = [
   { id: "doj-civil-rights", label: "DOJ Civil Rights Division", group: "Agency", val: 14, issueCategories: ["Civil Rights"] },
 
   // ── Nike (Civil Rights — Racial equity, gender discrimination) ──
-  { id: "nike-cr", label: "Nike", group: "Company", val: 16, metadata: { industry: "Apparel", summary: "Colin Kaepernick campaign. Gender discrimination lawsuits from female employees. HRC CEI 100/100. $140M racial equity commitment." } },
+  { id: "nike-cr", label: "Nike", group: "Company", val: 16, metadata: { industry: "Apparel", summary: "Colin Kaepernick campaign. Gender discrimination lawsuits from female employees. HRC CEI 100/100. $140M racial equity commitment.", companySlug: "nike" } },
 
   // ── Target (Civil Rights — DEI, EEOC) ──
-  { id: "target-cr", label: "Target Corporation", group: "Company", val: 15, metadata: { industry: "Retail", summary: "HRC CEI 100/100. EEOC settlement for discriminatory pre-employment tests. DEI rollback controversy in 2024." } },
+  { id: "target-cr", label: "Target Corporation", group: "Company", val: 15, metadata: { industry: "Retail", summary: "HRC CEI 100/100. EEOC settlement for discriminatory pre-employment tests. DEI rollback controversy in 2024.", companySlug: "target" } },
 
   // ── Chick-fil-A (Civil Rights — Controversial donations) ──
-  { id: "chick-fil-a", label: "Chick-fil-A", group: "Company", val: 14, metadata: { industry: "Food & Beverage", summary: "Documented donations to organizations opposing LGBTQ rights. Changed foundation policy in 2019 after sustained advocacy pressure." } },
+  { id: "chick-fil-a", label: "Chick-fil-A", group: "Company", val: 14, metadata: { industry: "Food & Beverage", summary: "Documented donations to organizations opposing LGBTQ rights. Changed foundation policy in 2019 after sustained advocacy pressure.", companySlug: "chick-fil-a" } },
 
   // ── Healthcare nodes ──
-  { id: "unitedhealth", label: "UnitedHealth Group", group: "Company", val: 18, metadata: { industry: "Health Insurance", summary: "Largest US health insurer. $8.2M lobbying on ACA/Medicare Advantage. $3.1M on mental health parity." } },
-  { id: "cvs-health", label: "CVS Health", group: "Company", val: 16, metadata: { industry: "Healthcare / Pharmacy", summary: "PBM/pharmacy giant. $6.7M healthcare lobbying on PBM transparency and drug pricing." } },
-  { id: "pfizer-hc", label: "Pfizer", group: "Company", val: 17, metadata: { industry: "Pharmaceuticals", summary: "$7.8M lobbying on IRA drug pricing, patent protections, and vaccine policy." } },
-  { id: "jnj-hc", label: "Johnson & Johnson", group: "Company", val: 16, metadata: { industry: "Pharmaceuticals", summary: "$5.4M lobbying on FDA approval processes, drug pricing negotiation under IRA." } },
+  { id: "unitedhealth", label: "UnitedHealth Group", group: "Company", val: 18, metadata: { industry: "Health Insurance", summary: "Largest US health insurer. $8.2M lobbying on ACA/Medicare Advantage. $3.1M on mental health parity.", companySlug: "unitedhealth-group" } },
+  { id: "cvs-health", label: "CVS Health", group: "Company", val: 16, metadata: { industry: "Healthcare / Pharmacy", summary: "PBM/pharmacy giant. $6.7M healthcare lobbying on PBM transparency and drug pricing.", companySlug: "cvs-health" } },
+  { id: "pfizer-hc", label: "Pfizer", group: "Company", val: 17, metadata: { industry: "Pharmaceuticals", summary: "$7.8M lobbying on IRA drug pricing, patent protections, and vaccine policy.", companySlug: "pfizer" } },
+  { id: "jnj-hc", label: "Johnson & Johnson", group: "Company", val: 16, metadata: { industry: "Pharmaceuticals", summary: "$5.4M lobbying on FDA approval processes, drug pricing negotiation under IRA.", companySlug: "johnson-johnson" } },
   { id: "dol-ebsa", label: "DOL EBSA (Employee Benefits)", group: "Agency", val: 14, issueCategories: ["Healthcare"] },
   { id: "cms-agency", label: "CMS (Centers for Medicare & Medicaid)", group: "Agency", val: 15, issueCategories: ["Healthcare"] },
   { id: "ira-drug-pricing", label: "Inflation Reduction Act — Drug Pricing", group: "Legislation", val: 14, issueCategories: ["Healthcare"], metadata: { status: "Enacted 2022", description: "Allows Medicare to negotiate prices for select high-cost drugs. Caps insulin at $35/mo for Medicare." } },
@@ -492,11 +492,11 @@ const SAMPLE_NODES: GraphNode[] = [
   { id: "healthcare-industry", label: "Healthcare Sector", group: "Industry", val: 15, issueCategories: ["Healthcare"] },
 
   // ── Consumer Protection nodes ──
-  { id: "wells-fargo-cp", label: "Wells Fargo", group: "Company", val: 18, metadata: { industry: "Banking", summary: "CFPB $3.7B penalty for fake accounts and wrongful foreclosures. Massive consumer complaint volume." } },
-  { id: "equifax-cp", label: "Equifax", group: "Company", val: 16, metadata: { industry: "Credit Reporting", summary: "FTC $700M settlement for 2017 data breach exposing 147M consumers' personal data." } },
-  { id: "epic-games-cp", label: "Epic Games", group: "Company", val: 14, metadata: { industry: "Gaming", summary: "FTC $520M for COPPA violations and dark patterns tricking Fortnite players." } },
-  { id: "t-mobile-cp", label: "T-Mobile", group: "Company", val: 15, metadata: { industry: "Telecommunications", summary: "FCC $31.5M data breach settlement. 76.6M customer records exposed." } },
-  { id: "capital-one-cp", label: "Capital One", group: "Company", val: 15, metadata: { industry: "Banking", summary: "106M credit applicant records exposed in 2019 data breach." } },
+  { id: "wells-fargo-cp", label: "Wells Fargo", group: "Company", val: 18, metadata: { industry: "Banking", summary: "CFPB $3.7B penalty for fake accounts and wrongful foreclosures. Massive consumer complaint volume.", companySlug: "wells-fargo" } },
+  { id: "equifax-cp", label: "Equifax", group: "Company", val: 16, metadata: { industry: "Credit Reporting", summary: "FTC $700M settlement for 2017 data breach exposing 147M consumers' personal data.", companySlug: "equifax" } },
+  { id: "epic-games-cp", label: "Epic Games", group: "Company", val: 14, metadata: { industry: "Gaming", summary: "FTC $520M for COPPA violations and dark patterns tricking Fortnite players.", companySlug: "epic-games" } },
+  { id: "t-mobile-cp", label: "T-Mobile", group: "Company", val: 15, metadata: { industry: "Telecommunications", summary: "FCC $31.5M data breach settlement. 76.6M customer records exposed.", companySlug: "t-mobile", hasReceipt: true } },
+  { id: "capital-one-cp", label: "Capital One", group: "Company", val: 15, metadata: { industry: "Banking", summary: "106M credit applicant records exposed in 2019 data breach.", companySlug: "capital-one" } },
   { id: "cfpb-agency", label: "CFPB (Consumer Financial Protection Bureau)", group: "Agency", val: 16, issueCategories: ["Consumer Protection"] },
   { id: "ftc-agency", label: "FTC (Federal Trade Commission)", group: "Agency", val: 16, issueCategories: ["Consumer Protection"] },
   { id: "cpsc-agency", label: "CPSC (Consumer Product Safety Commission)", group: "Agency", val: 14, issueCategories: ["Consumer Protection"] },
@@ -1110,7 +1110,8 @@ export default function FollowTheMoney() {
     }
   }, [pathStart, pathEnd, graphData]);
 
-  // Handle node click in path mode
+  // Handle node click — single click opens detail panel, double click navigates into app
+  const lastClickRef = useRef<{ id: string; time: number } | null>(null);
   const handleNodeClick = useCallback((node: any) => {
     if (pathMode) {
       if (!pathStart) {
@@ -1122,11 +1123,30 @@ export default function FollowTheMoney() {
         setPathEnd(null);
         setActivePath(null);
       }
-    } else {
-      const n = graphData.nodes.find(gn => gn.id === node.id);
-      setSelectedNode(prev => prev?.id === node.id ? null : (n || null));
+      return;
     }
-  }, [pathMode, pathStart, pathEnd, graphData.nodes]);
+
+    const now = Date.now();
+    const last = lastClickRef.current;
+
+    // Double-click detection: same node within 400ms
+    if (last && last.id === node.id && now - last.time < 400) {
+      lastClickRef.current = null;
+      const n = graphData.nodes.find(gn => gn.id === node.id);
+      if (n?.group === "Company" && n.metadata?.companySlug) {
+        navigate(`/company/${n.metadata.companySlug}`);
+      } else if (n?.group === "Politician") {
+        navigate(`/search?q=${encodeURIComponent(n.label)}`);
+      } else if (n?.group === "Legislation") {
+        navigate(`/policy`);
+      }
+      return;
+    }
+
+    lastClickRef.current = { id: node.id, time: now };
+    const n = graphData.nodes.find(gn => gn.id === node.id);
+    setSelectedNode(prev => prev?.id === node.id ? null : (n || null));
+  }, [pathMode, pathStart, pathEnd, graphData.nodes, navigate]);
 
   // Connected edges for selected node
   const selectedEdges = useMemo(() => {
@@ -1742,15 +1762,70 @@ export default function FollowTheMoney() {
                     <Route className="w-3 h-3" />
                     Trace path from here
                   </Button>
-                  {selectedNode.group === "Company" && (
+                  {selectedNode.group === "Company" && selectedNode.metadata?.companySlug && (
+                    <>
+                      <Button
+                        variant="default"
+                        size="sm"
+                        className="w-full gap-1.5 text-xs"
+                        onClick={() => navigate(`/company/${selectedNode.metadata!.companySlug}`)}
+                      >
+                        <Building2 className="w-3 h-3" />
+                        Full Company Profile
+                      </Button>
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        className="w-full gap-1.5 text-xs"
+                        onClick={() => navigate(`/dossier/${selectedNode.metadata!.companySlug}`)}
+                      >
+                        <FileText className="w-3 h-3" />
+                        View Dossier
+                      </Button>
+                      {selectedNode.metadata?.hasReceipt && (
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          className="w-full gap-1.5 text-xs border-[#EBAD0C]/30 text-[#EBAD0C] hover:bg-[#EBAD0C]/10"
+                          onClick={() => navigate(`/receipts/${selectedNode.metadata!.companySlug}`)}
+                        >
+                          <AlertTriangle className="w-3 h-3" />
+                          Read the Receipt
+                        </Button>
+                      )}
+                    </>
+                  )}
+                  {selectedNode.group === "Company" && !selectedNode.metadata?.companySlug && (
                     <Button
                       variant="outline"
                       size="sm"
                       className="w-full gap-1.5 text-xs"
                       onClick={() => navigate(`/search?q=${encodeURIComponent(selectedNode.label)}`)}
                     >
-                      <ExternalLink className="w-3 h-3" />
-                      View Company Snapshot
+                      <Search className="w-3 h-3" />
+                      Search in WDIWF
+                    </Button>
+                  )}
+                  {selectedNode.group === "Politician" && (
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      className="w-full gap-1.5 text-xs"
+                      onClick={() => navigate(`/search?q=${encodeURIComponent(selectedNode.label)}`)}
+                    >
+                      <Landmark className="w-3 h-3" />
+                      Look Up Representative
+                    </Button>
+                  )}
+                  {selectedNode.group === "Legislation" && (
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      className="w-full gap-1.5 text-xs"
+                      onClick={() => navigate(`/policy`)}
+                    >
+                      <Scale className="w-3 h-3" />
+                      View in Policy Hub
                     </Button>
                   )}
                 </div>
@@ -1774,7 +1849,7 @@ export default function FollowTheMoney() {
                 <div>
                   <h3 className="text-sm font-bold text-foreground font-display mb-1.5">How to use</h3>
                   <p className="text-xs text-muted-foreground leading-relaxed">
-                    Search for a company to map its influence network. <strong>Hover</strong> to trace influence paths. <strong>Click</strong> for details. <strong>Drag</strong> to rearrange. Use <strong>Path Trace</strong> to find connections between any two entities.
+                    Search for a company to map its influence network. <strong>Click</strong> a node for details and navigation. <strong>Double-click</strong> to jump straight to its profile. <strong>Hover</strong> to trace influence paths. <strong>Drag</strong> to rearrange. Use <strong>Path Trace</strong> to find connections between any two entities.
                   </p>
                 </div>
 
