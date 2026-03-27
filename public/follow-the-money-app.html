@@ -11,8 +11,6 @@
         Created with Perplexity Computer
         https://www.perplexity.ai/computer
 -->
-
-<!-- Perplexity Computer Attribution — SEO Meta Tags -->
 <meta name="generator" content="Perplexity Computer">
 <meta name="author" content="Perplexity Computer">
 <meta property="og:see_also" content="https://www.perplexity.ai/computer">
@@ -20,2484 +18,1749 @@
 
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Follow the Money — WHO DO I WORK FOR?</title>
-<meta name="description" content="Investigate corporate political influence. Trace the money from your employer to PACs, politicians, legislation, and back again.">
+<title>FOLLOW THE MONEY — Investigation Terminal</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500;9..40,600;9..40,700;9..40,800&family=Inter:wght@900&display=swap" rel="stylesheet">
-<script src="https://cdn.jsdelivr.net/npm/d3@7"></script>
-
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;500;600;700&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>
-/* ========== RESET & BASE ========== */
-*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-html {
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  text-rendering: optimizeLegibility;
-  scroll-behavior: smooth;
-}
-body {
-  min-height: 100dvh;
-  font-family: 'DM Sans', sans-serif;
-  background: #0A0A0E;
-  color: #F0EBE0;
-  overflow: hidden;
-  line-height: 1.5;
-}
-button { cursor: pointer; background: none; border: none; font: inherit; color: inherit; }
-a { color: inherit; text-decoration: none; }
-input { font: inherit; color: inherit; background: none; border: none; outline: none; }
-::selection { background: rgba(240, 192, 64, 0.25); color: #F0EBE0; }
-:focus-visible { outline: 2px solid #F0C040; outline-offset: 2px; border-radius: 4px; }
-
-/* ========== CSS VARIABLES ========== */
+/* =========================================================
+   TOKENS
+   ========================================================= */
 :root {
+  --bg: #060608;
+  --surface: #0C0C10;
+  --surface-2: #111118;
+  --surface-3: #1A1A24;
+  --border: rgba(255,255,255,0.06);
+  --border-bright: rgba(255,255,255,0.12);
+  --fg: #E0DED8;
+  --fg-muted: #888880;
+  --fg-dim: #555550;
   --gold: #F0C040;
-  --gold-dim: rgba(240, 192, 64, 0.15);
-  --gold-glow: rgba(240, 192, 64, 0.3);
-  --bg: #0A0A0E;
-  --card: #13121A;
-  --card-hover: #1a1928;
-  --fg: #F0EBE0;
-  --fg-muted: rgba(240, 235, 224, 0.55);
-  --fg-faint: rgba(240, 235, 224, 0.3);
-  --border: #1a1a1a;
-  --border-light: rgba(240, 235, 224, 0.08);
-  --red: hsl(348, 90%, 65%);
-  --green: hsl(157, 100%, 64%);
-  --blue: hsl(213, 88%, 73%);
-  --purple: hsl(280, 70%, 70%);
-  --orange: hsl(30, 90%, 65%);
-  --font-body: 'DM Sans', sans-serif;
-  --font-mono: 'DM Mono', monospace;
-  --font-logo: 'Inter', sans-serif;
-  --radius-sm: 6px;
-  --radius-md: 8px;
-  --radius-lg: 12px;
-  --transition: 200ms cubic-bezier(0.16, 1, 0.3, 1);
+  --gold-dim: rgba(240,192,64,0.15);
+  --red: #FF3B4A;
+  --red-dim: rgba(255,59,74,0.12);
+  --blue: #4A9EFF;
+  --blue-dim: rgba(74,158,255,0.12);
+  --green: #34D399;
+  --green-dim: rgba(52,211,153,0.12);
+  --pink: #E879A8;
+  --font-mono: 'JetBrains Mono', monospace;
+  --font-display: 'Space Grotesk', sans-serif;
+  --scanline: repeating-linear-gradient(
+    0deg,
+    transparent,
+    transparent 2px,
+    rgba(0,0,0,0.03) 2px,
+    rgba(0,0,0,0.03) 4px
+  );
 }
 
-/* ========== LAYOUT ========== */
-.app {
-  display: flex;
-  flex-direction: column;
-  height: 100dvh;
-  width: 100vw;
+* { margin: 0; padding: 0; box-sizing: border-box; }
+html, body { 
+  height: 100%; overflow: hidden; 
+  background: var(--bg); color: var(--fg);
+  font-family: var(--font-mono);
+}
+
+/* =========================================================
+   BOOT SEQUENCE
+   ========================================================= */
+#boot-screen {
+  position: fixed; inset: 0; z-index: 1000;
+  background: var(--bg);
+  display: flex; flex-direction: column;
+  align-items: center; justify-content: center;
+  transition: opacity 0.8s ease;
+}
+#boot-screen.done { opacity: 0; pointer-events: none; }
+
+.boot-logo {
+  font-family: var(--font-display);
+  font-size: clamp(28px, 5vw, 48px);
+  font-weight: 700;
+  color: var(--gold);
+  letter-spacing: 4px;
+  margin-bottom: 32px;
+  text-shadow: 0 0 40px rgba(240,192,64,0.3);
+}
+.boot-logo span { color: var(--fg-muted); font-weight: 400; font-size: 0.5em; display: block; letter-spacing: 2px; margin-top: 4px; }
+
+#boot-log {
+  width: min(600px, 90vw);
+  font-size: 12px;
+  color: var(--fg-dim);
+  line-height: 1.8;
+  min-height: 200px;
+}
+#boot-log .line { opacity: 0; animation: bootLine 0.3s ease forwards; }
+#boot-log .line.ok { color: var(--green); }
+#boot-log .line.warn { color: var(--gold); }
+#boot-log .line.fail { color: var(--red); }
+#boot-log .line.access { color: var(--red); font-weight: 600; font-size: 16px; margin-top: 8px; }
+
+@keyframes bootLine { to { opacity: 1; } }
+
+.boot-progress {
+  width: min(600px, 90vw);
+  height: 2px;
+  background: var(--surface-2);
+  margin-top: 24px;
+  border-radius: 1px;
   overflow: hidden;
 }
+.boot-progress-bar {
+  height: 100%;
+  background: var(--gold);
+  width: 0%;
+  transition: width 0.3s ease;
+  box-shadow: 0 0 12px rgba(240,192,64,0.5);
+}
 
-/* ========== TOP BAR ========== */
+/* =========================================================
+   MAIN APP
+   ========================================================= */
+#app {
+  display: none;
+  height: 100vh;
+  flex-direction: column;
+  opacity: 0;
+  transition: opacity 0.6s ease;
+}
+#app.visible { display: flex; opacity: 1; }
+
+/* TOP BAR */
 .top-bar {
+  height: 48px;
   display: flex;
   align-items: center;
   justify-content: space-between;
   padding: 0 20px;
-  height: 52px;
-  background: rgba(19, 18, 26, 0.95);
+  background: var(--surface);
   border-bottom: 1px solid var(--border);
   flex-shrink: 0;
   z-index: 100;
-  backdrop-filter: blur(12px);
 }
-.logo {
-  display: flex;
-  align-items: center;
-  gap: 10px;
+.top-bar-left {
+  display: flex; align-items: center; gap: 16px;
 }
-.logo-mark {
-  display: flex;
-  align-items: center;
-  font-family: var(--font-logo);
-  font-weight: 900;
-  font-size: 20px;
-  line-height: 1;
-  letter-spacing: -0.02em;
-}
-.logo-mark .w { color: #F0EBE0; }
-.logo-mark .q { color: var(--gold); }
-.logo-text {
-  font-family: var(--font-body);
+.top-bar-logo {
+  font-family: var(--font-display);
   font-weight: 700;
-  font-size: 12px;
-  letter-spacing: 0.15em;
-  text-transform: uppercase;
-  color: var(--fg-muted);
-}
-.nav-links {
-  display: flex;
-  align-items: center;
-  gap: 24px;
-}
-.nav-links a {
   font-size: 13px;
-  font-weight: 500;
-  color: var(--fg-muted);
-  letter-spacing: 0.04em;
-  text-transform: uppercase;
-  transition: color var(--transition);
-}
-.nav-links a:hover { color: var(--fg); }
-.scan-cta {
-  font-size: 12px !important;
-  font-weight: 700 !important;
-  color: var(--gold) !important;
-  padding: 6px 14px;
-  border: 1px solid rgba(240, 192, 64, 0.3);
-  border-radius: 100px;
-  transition: all var(--transition) !important;
-}
-.scan-cta:hover {
-  background: rgba(240, 192, 64, 0.1) !important;
-  border-color: var(--gold) !important;
-}
-
-/* ========== STATS BAR ========== */
-.stats-bar {
-  display: flex;
-  align-items: center;
-  gap: 32px;
-  padding: 10px 20px;
-  background: rgba(19, 18, 26, 0.6);
-  border-bottom: 1px solid var(--border);
-  flex-shrink: 0;
-  overflow-x: auto;
-}
-.stat {
-  display: flex;
-  align-items: baseline;
-  gap: 8px;
-  white-space: nowrap;
-}
-.stat-value {
-  font-family: var(--font-mono);
-  font-weight: 500;
-  font-size: 18px;
   color: var(--gold);
+  letter-spacing: 2px;
 }
-.stat-label {
-  font-size: 12px;
-  color: var(--fg-muted);
-  text-transform: uppercase;
-  letter-spacing: 0.08em;
+.top-bar-status {
+  font-size: 11px;
+  color: var(--fg-dim);
+  display: flex; align-items: center; gap: 6px;
 }
+.top-bar-status::before {
+  content: '';
+  width: 6px; height: 6px;
+  border-radius: 50%;
+  background: var(--green);
+  animation: pulse-dot 2s ease infinite;
+}
+@keyframes pulse-dot { 0%,100% { opacity: 1; } 50% { opacity: 0.4; } }
 
-/* ========== CONTROLS BAR ========== */
-.controls-bar {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  padding: 10px 20px;
-  flex-shrink: 0;
-  flex-wrap: wrap;
+.score-display {
+  display: flex; align-items: center; gap: 16px;
 }
-.search-box {
-  position: relative;
-  flex: 0 1 320px;
-}
-.search-box input {
-  width: 100%;
-  padding: 8px 12px 8px 36px;
-  font-size: 14px;
-  background: var(--card);
-  border: 1px solid var(--border-light);
-  border-radius: var(--radius-md);
-  color: var(--fg);
-  transition: border-color var(--transition);
-}
-.search-box input::placeholder { color: var(--fg-faint); }
-.search-box input:focus { border-color: rgba(240, 192, 64, 0.4); }
-.search-icon {
-  position: absolute;
-  left: 10px;
-  top: 50%;
-  transform: translateY(-50%);
-  color: var(--fg-faint);
-  pointer-events: none;
-}
-.filter-chips {
-  display: flex;
-  gap: 6px;
-  flex-wrap: wrap;
-}
-.chip {
-  padding: 6px 14px;
-  font-size: 12px;
-  font-weight: 600;
-  border-radius: 100px;
-  border: 1px solid var(--border-light);
-  color: var(--fg-muted);
-  transition: all var(--transition);
-  text-transform: uppercase;
-  letter-spacing: 0.04em;
-  white-space: nowrap;
-}
-.chip:hover { border-color: rgba(240, 235, 224, 0.2); color: var(--fg); }
-.chip.active {
-  border-color: var(--gold);
-  color: var(--gold);
-  background: var(--gold-dim);
-}
-.chip[data-type="donation"] { --chip-color: var(--gold); }
-.chip[data-type="lobbying"] { --chip-color: var(--blue); }
-.chip[data-type="dark-money"] { --chip-color: var(--red); }
-.chip[data-type="revolving-door"] { --chip-color: var(--purple); }
-.chip[data-type="contract"] { --chip-color: var(--green); }
-.chip[data-type="donation"].active { border-color: var(--gold); color: var(--gold); background: rgba(240, 192, 64, 0.12); }
-.chip[data-type="lobbying"].active { border-color: var(--blue); color: var(--blue); background: rgba(139, 185, 242, 0.12); }
-.chip[data-type="dark-money"].active { border-color: var(--red); color: var(--red); background: rgba(236, 95, 124, 0.12); }
-.chip[data-type="revolving-door"].active { border-color: var(--purple); color: var(--purple); background: rgba(178, 132, 224, 0.12); }
-.chip[data-type="contract"].active { border-color: var(--green); color: var(--green); background: rgba(70, 255, 180, 0.12); }
-
-/* ========== LEGEND ========== */
-.legend {
-  display: flex;
-  align-items: center;
-  gap: 16px;
-  margin-left: auto;
-  flex-shrink: 0;
-}
-.legend-item {
-  display: flex;
-  align-items: center;
-  gap: 6px;
+.score-item {
   font-size: 11px;
   color: var(--fg-muted);
-  text-transform: uppercase;
-  letter-spacing: 0.06em;
+  display: flex; align-items: center; gap: 6px;
 }
-.legend-dot {
-  width: 10px;
-  height: 10px;
-  border-radius: 50%;
+.score-item strong {
+  color: var(--gold);
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
 }
 
-/* ========== GRAPH CONTAINER ========== */
-.graph-container {
+/* MAIN LAYOUT */
+.main-area {
   flex: 1;
+  display: flex;
+  overflow: hidden;
+}
+
+/* LEFT SIDEBAR — CASE FILES */
+.sidebar {
+  width: 280px;
+  background: var(--surface);
+  border-right: 1px solid var(--border);
+  display: flex;
+  flex-direction: column;
+  flex-shrink: 0;
+  overflow: hidden;
+}
+.sidebar-header {
+  padding: 16px;
+  border-bottom: 1px solid var(--border);
+  font-size: 10px;
+  letter-spacing: 2px;
+  color: var(--fg-dim);
+  text-transform: uppercase;
+}
+.case-list {
+  flex: 1;
+  overflow-y: auto;
+  padding: 8px;
+}
+.case-list::-webkit-scrollbar { width: 4px; }
+.case-list::-webkit-scrollbar-thumb { background: var(--border-bright); border-radius: 2px; }
+
+.case-file {
+  padding: 12px;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  margin-bottom: 6px;
+  cursor: pointer;
+  transition: all 0.2s ease;
   position: relative;
   overflow: hidden;
 }
-.graph-container svg {
-  width: 100%;
-  height: 100%;
-  display: block;
+.case-file::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0;
+  width: 3px; height: 100%;
+  background: var(--fg-dim);
+  transition: background 0.2s ease;
 }
+.case-file:hover {
+  border-color: var(--border-bright);
+  background: var(--surface-2);
+}
+.case-file.active {
+  border-color: var(--gold);
+  background: var(--gold-dim);
+}
+.case-file.active::before { background: var(--gold); }
+.case-file.classified {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+.case-file.classified .case-name::after {
+  content: ' [CLASSIFIED]';
+  color: var(--red);
+  font-size: 9px;
+}
+.case-file.declassified::before { background: var(--green); }
+.case-file.declassified .case-status { color: var(--green); }
 
-/* ========== TOOLTIP ========== */
-.tooltip {
-  position: fixed;
-  pointer-events: none;
-  background: rgba(19, 18, 26, 0.96);
-  border: 1px solid rgba(240, 192, 64, 0.2);
-  border-radius: var(--radius-md);
-  padding: 10px 14px;
-  font-size: 13px;
-  max-width: 280px;
-  z-index: 200;
-  opacity: 0;
-  transition: opacity 150ms;
-  backdrop-filter: blur(8px);
-  box-shadow: 0 8px 32px rgba(0,0,0,0.5);
-}
-.tooltip.visible { opacity: 1; }
-.tooltip-title {
-  font-weight: 700;
+.case-name {
+  font-size: 12px;
+  font-weight: 600;
   color: var(--fg);
   margin-bottom: 4px;
 }
-.tooltip-type {
-  font-size: 10px;
-  text-transform: uppercase;
-  letter-spacing: 0.1em;
-  margin-bottom: 6px;
-}
-.tooltip-detail {
-  font-size: 12px;
-  color: var(--fg-muted);
-  line-height: 1.5;
-}
-.tooltip-amount {
-  font-family: var(--font-mono);
+.case-amount {
+  font-size: 11px;
   color: var(--gold);
   font-weight: 500;
 }
-
-/* ========== DETAIL PANEL ========== */
-.detail-panel {
-  position: fixed;
-  top: 0;
-  right: 0;
-  width: 420px;
-  max-width: 90vw;
-  height: 100dvh;
-  background: rgba(13, 12, 18, 0.97);
-  border-left: 1px solid var(--border);
-  z-index: 150;
-  transform: translateX(100%);
-  transition: transform 350ms cubic-bezier(0.16, 1, 0.3, 1);
-  overflow-y: auto;
-  backdrop-filter: blur(20px);
-}
-.detail-panel.open { transform: translateX(0); }
-.detail-panel-header {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 16px 20px;
-  border-bottom: 1px solid var(--border);
-  position: sticky;
-  top: 0;
-  background: rgba(13, 12, 18, 0.97);
-  z-index: 5;
-}
-.detail-panel-title {
-  font-size: 18px;
-  font-weight: 700;
-}
-.detail-close {
-  width: 32px;
-  height: 32px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  border-radius: 50%;
-  transition: background var(--transition);
-}
-.detail-close:hover { background: rgba(240, 235, 224, 0.1); }
-.detail-content {
-  padding: 20px;
-}
-.detail-section {
-  margin-bottom: 24px;
-}
-.detail-section-title {
-  font-size: 10px;
+.case-status {
+  font-size: 9px;
+  color: var(--fg-dim);
   text-transform: uppercase;
-  letter-spacing: 0.12em;
-  color: var(--fg-faint);
-  margin-bottom: 10px;
-  padding-bottom: 6px;
-  border-bottom: 1px solid var(--border-light);
-}
-.detail-stat {
-  display: flex;
-  justify-content: space-between;
-  align-items: baseline;
-  padding: 6px 0;
-}
-.detail-stat-label {
-  font-size: 13px;
-  color: var(--fg-muted);
-}
-.detail-stat-value {
-  font-family: var(--font-mono);
-  font-size: 14px;
-  font-weight: 500;
-  color: var(--gold);
-}
-.detail-list-item {
-  display: flex;
-  align-items: flex-start;
-  gap: 10px;
-  padding: 8px 0;
-  border-bottom: 1px solid var(--border-light);
-}
-.detail-list-item:last-child { border-bottom: none; }
-.detail-list-dot {
-  width: 6px;
-  height: 6px;
-  border-radius: 50%;
+  letter-spacing: 1px;
   margin-top: 6px;
-  flex-shrink: 0;
-}
-.detail-list-text {
-  font-size: 13px;
-  line-height: 1.5;
-}
-.detail-list-text strong { color: var(--fg); font-weight: 600; }
-.detail-impact {
-  background: rgba(240, 192, 64, 0.06);
-  border: 1px solid rgba(240, 192, 64, 0.15);
-  border-radius: var(--radius-md);
-  padding: 14px;
-  font-size: 13px;
-  line-height: 1.6;
-  color: var(--fg-muted);
-}
-.detail-impact strong {
-  color: var(--red);
-  font-weight: 600;
-}
-.detail-tag {
-  display: inline-block;
-  padding: 3px 10px;
-  font-size: 10px;
-  font-weight: 600;
-  text-transform: uppercase;
-  letter-spacing: 0.08em;
-  border-radius: 100px;
-  margin: 2px 4px 2px 0;
 }
 
-/* ========== BOTTOM CTA ========== */
-.bottom-cta {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 16px;
-  padding: 12px 20px;
-  background: rgba(19, 18, 26, 0.95);
-  border-top: 1px solid var(--border);
-  flex-shrink: 0;
-  backdrop-filter: blur(12px);
-  z-index: 100;
-}
-.bottom-cta-text {
-  font-size: 14px;
-  color: var(--fg-muted);
-  font-style: italic;
-  font-weight: 300;
-}
-.bottom-cta-btn {
-  padding: 8px 20px;
-  font-size: 13px;
-  font-weight: 700;
-  letter-spacing: 0.06em;
-  text-transform: uppercase;
-  color: #0A0A0E;
-  background: var(--gold);
-  border-radius: 100px;
-  transition: all var(--transition);
-  white-space: nowrap;
-}
-.bottom-cta-btn:hover {
-  background: #f5cf60;
-  transform: translateY(-1px);
-  box-shadow: 0 4px 16px rgba(240, 192, 64, 0.3);
-}
-
-/* ========== DATA SOURCES FOOTER ========== */
-.data-footer {
-  text-align: center;
-  padding: 8px 20px;
-  font-size: 11px;
-  color: var(--fg-faint);
-  background: var(--bg);
-  border-top: 1px solid var(--border);
-  flex-shrink: 0;
-}
-.data-footer a {
-  color: var(--fg-faint);
-  text-decoration: underline;
-  text-underline-offset: 2px;
-}
-.data-footer a:hover { color: var(--fg-muted); }
-
-/* ========== NODE STYLES (SVG) ========== */
-.node-circle { cursor: pointer; }
-.link-line { fill: none; }
-
-/* ========== OVERLAY ========== */
-.panel-overlay {
-  position: fixed;
-  inset: 0;
-  background: rgba(0,0,0,0.4);
-  z-index: 140;
-  opacity: 0;
-  pointer-events: none;
-  transition: opacity 300ms;
-}
-.panel-overlay.visible {
-  opacity: 1;
-  pointer-events: auto;
-}
-
-/* ========== INSTRUCTIONS OVERLAY ========== */
-.instructions {
-  position: absolute;
-  bottom: 80px;
-  left: 20px;
-  background: rgba(19, 18, 26, 0.9);
-  border: 1px solid var(--border-light);
-  border-radius: var(--radius-lg);
-  padding: 14px 18px;
-  font-size: 12px;
-  color: var(--fg-muted);
-  max-width: 260px;
-  backdrop-filter: blur(8px);
-  z-index: 50;
-  transition: opacity 500ms;
-}
-.instructions strong { color: var(--gold); font-weight: 600; }
-.instructions p { margin-bottom: 4px; }
-.instructions .dismiss {
-  font-size: 11px;
-  color: var(--fg-faint);
-  margin-top: 8px;
-  cursor: pointer;
-}
-.instructions .dismiss:hover { color: var(--fg-muted); }
-
-/* ========== ANIMATIONS ========== */
-@keyframes pulse-gold {
-  0%, 100% { filter: drop-shadow(0 0 4px rgba(240, 192, 64, 0.2)); }
-  50% { filter: drop-shadow(0 0 12px rgba(240, 192, 64, 0.5)); }
-}
-@keyframes pulse-blue {
-  0%, 100% { filter: drop-shadow(0 0 4px rgba(139, 185, 242, 0.2)); }
-  50% { filter: drop-shadow(0 0 10px rgba(139, 185, 242, 0.4)); }
-}
-@keyframes fade-in { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: translateY(0); } }
-.fade-in { animation: fade-in 400ms ease-out forwards; }
-
-/* ========== MOBILE ========== */
-@media (max-width: 768px) {
-  .top-bar { padding: 0 12px; height: 48px; }
-  .logo-text { display: none; }
-  .nav-links { gap: 12px; }
-  .nav-links a { font-size: 11px; }
-  .scan-cta { display: none; }
-  .stats-bar { padding: 8px 12px; gap: 16px; }
-  .stat-value { font-size: 15px; }
-  .stat-label { font-size: 10px; }
-  .controls-bar { padding: 8px 12px; gap: 8px; }
-  .search-box { flex: 1 1 100%; }
-  .legend { display: none; }
-  .filter-chips { overflow-x: auto; flex-wrap: nowrap; }
-  .detail-panel { width: 100%; max-width: 100%; }
-  .bottom-cta { flex-direction: column; gap: 8px; padding: 10px 16px; }
-  .bottom-cta-text { font-size: 12px; text-align: center; }
-  .instructions { left: 12px; right: 12px; bottom: 70px; max-width: none; }
-}
-
-/* ========== RECEIPT CHAIN OVERLAY ========== */
-.rc-overlay {
-  position: fixed;
-  inset: 0;
-  z-index: 500;
-  background: rgba(10, 10, 14, 0.98);
-  transform: translateY(100%);
-  transition: transform 500ms cubic-bezier(0.16, 1, 0.3, 1);
-  overflow-y: auto;
-  overflow-x: hidden;
-}
-.rc-overlay.open {
-  transform: translateY(0);
-}
-/* Scanline texture */
-.rc-overlay::before {
-  content: '';
-  position: fixed;
-  inset: 0;
-  pointer-events: none;
-  z-index: 1;
-  background: repeating-linear-gradient(
-    0deg,
-    transparent,
-    transparent 2px,
-    rgba(240, 235, 224, 0.015) 2px,
-    rgba(240, 235, 224, 0.015) 4px
-  );
-}
-.rc-close {
-  position: fixed;
-  top: 20px;
-  right: 24px;
-  z-index: 510;
-  width: 44px;
-  height: 44px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  border-radius: 50%;
-  border: 1px solid var(--border-light);
-  background: rgba(19, 18, 26, 0.8);
-  backdrop-filter: blur(8px);
-  transition: all var(--transition);
-  cursor: pointer;
-}
-.rc-close:hover {
-  background: rgba(240, 235, 224, 0.1);
-  border-color: rgba(240, 235, 224, 0.3);
-}
-.rc-content {
-  position: relative;
-  z-index: 2;
-  max-width: 720px;
-  margin: 0 auto;
-  padding: 80px 24px 100px;
-}
-.rc-breadcrumb {
-  font-family: var(--font-mono);
-  font-size: 11px;
-  letter-spacing: 0.1em;
-  text-transform: uppercase;
-  color: var(--fg-faint);
-  margin-bottom: 32px;
-}
-.rc-breadcrumb span { color: var(--gold); }
-
-/* Beat sections */
-.rc-beat {
-  opacity: 0;
-  transform: translateY(30px);
-  transition: opacity 600ms ease-out, transform 600ms ease-out;
-  margin-bottom: 64px;
-}
-.rc-beat.revealed {
-  opacity: 1;
-  transform: translateY(0);
-}
-.rc-beat-label {
-  font-family: var(--font-mono);
-  font-size: 12px;
-  font-weight: 500;
-  letter-spacing: 0.2em;
-  text-transform: uppercase;
-  margin-bottom: 16px;
-  display: flex;
-  align-items: center;
-  gap: 12px;
-}
-.rc-beat-label::after {
-  content: '';
+/* CENTER — EVIDENCE BOARD */
+.evidence-board {
   flex: 1;
-  height: 1px;
-  background: currentColor;
-  opacity: 0.2;
-}
-.rc-beat--money .rc-beat-label { color: var(--gold); }
-.rc-beat--access .rc-beat-label { color: #73AAED; }
-.rc-beat--impact .rc-beat-label { color: var(--red); }
-
-/* Money beat */
-.rc-amount {
-  font-family: var(--font-mono);
-  font-weight: 500;
-  font-size: clamp(3rem, 8vw, 5rem);
-  color: var(--gold);
-  line-height: 1.1;
-  margin-bottom: 8px;
-}
-.rc-flow {
-  font-size: 18px;
-  color: var(--fg-muted);
-  margin-bottom: 16px;
-  line-height: 1.5;
-}
-.rc-flow strong { color: var(--fg); font-weight: 600; }
-.rc-context {
-  font-size: 14px;
-  color: var(--fg-faint);
-  line-height: 1.7;
-  margin-bottom: 20px;
-}
-.rc-accent-line {
-  height: 2px;
-  width: 0;
-  margin: 24px 0;
-  transition: width 800ms cubic-bezier(0.16, 1, 0.3, 1);
-}
-.revealed .rc-accent-line { width: 120px; }
-.rc-beat--money .rc-accent-line { background: var(--gold); }
-.rc-beat--access .rc-accent-line { background: #73AAED; }
-.rc-beat--impact .rc-accent-line { background: var(--red); }
-
-/* Access beat */
-.rc-committee {
-  font-size: clamp(1.5rem, 4vw, 2.2rem);
-  font-weight: 700;
-  color: var(--fg);
-  line-height: 1.25;
-  margin-bottom: 8px;
-}
-.rc-writes {
-  font-size: 16px;
-  color: #73AAED;
-  margin-bottom: 16px;
-  font-weight: 500;
-}
-.rc-access-detail {
-  font-size: 14px;
-  color: var(--fg-muted);
-  line-height: 1.7;
-}
-
-/* Impact beat */
-.rc-impact-stat {
-  font-family: var(--font-mono);
-  font-weight: 500;
-  font-size: clamp(3.5rem, 10vw, 6rem);
-  color: var(--red);
-  line-height: 1.1;
-  margin-bottom: 12px;
-  opacity: 0;
-  transform: scale(0.9);
-  transition: opacity 400ms ease-out 600ms, transform 400ms ease-out 600ms;
-}
-.rc-beat--impact.revealed .rc-impact-stat {
-  opacity: 1;
-  transform: scale(1);
-}
-.rc-impact-context {
-  font-size: 15px;
-  color: var(--fg-muted);
-  line-height: 1.7;
-  margin-bottom: 20px;
-}
-.rc-fact-list {
-  list-style: none;
-  padding: 0;
-  margin: 0 0 24px;
-}
-.rc-fact-list li {
   position: relative;
-  padding-left: 20px;
-  font-size: 14px;
-  color: var(--fg-muted);
-  line-height: 1.7;
-  margin-bottom: 8px;
+  overflow: hidden;
+  background: 
+    var(--scanline),
+    radial-gradient(ellipse at center, var(--surface-2) 0%, var(--bg) 70%);
 }
-.rc-fact-list li::before {
+
+/* GRID PATTERN */
+.evidence-board::before {
   content: '';
+  position: absolute; inset: 0;
+  background-image: 
+    linear-gradient(var(--border) 1px, transparent 1px),
+    linear-gradient(90deg, var(--border) 1px, transparent 1px);
+  background-size: 40px 40px;
+  opacity: 0.5;
+}
+
+/* EVIDENCE NODES */
+.evidence-node {
   position: absolute;
-  left: 0;
-  top: 10px;
-  width: 6px;
-  height: 6px;
-  border-radius: 50%;
-  background: var(--red);
-}
-.rc-verdict {
-  font-family: var(--font-mono);
-  font-size: 13px;
-  letter-spacing: 0.04em;
-  color: var(--fg-faint);
-  border-top: 1px solid rgba(240, 235, 224, 0.08);
-  padding-top: 20px;
-  margin-top: 32px;
-  font-style: italic;
-}
-
-/* Next beat button */
-.rc-next-btn {
-  display: inline-flex;
-  align-items: center;
-  gap: 8px;
-  padding: 10px 24px;
-  font-family: var(--font-mono);
-  font-size: 13px;
-  font-weight: 500;
-  letter-spacing: 0.04em;
-  border-radius: 100px;
-  border: 1px solid;
-  transition: all var(--transition);
-  cursor: pointer;
-  background: none;
-  margin-top: 16px;
-}
-.rc-beat--money .rc-next-btn {
-  color: var(--gold);
-  border-color: rgba(240, 192, 64, 0.3);
-}
-.rc-beat--money .rc-next-btn:hover {
-  background: rgba(240, 192, 64, 0.1);
-  border-color: var(--gold);
-}
-.rc-beat--access .rc-next-btn {
-  color: #73AAED;
-  border-color: rgba(115, 170, 237, 0.3);
-}
-.rc-beat--access .rc-next-btn:hover {
-  background: rgba(115, 170, 237, 0.1);
-  border-color: #73AAED;
-}
-
-/* Connected investigations */
-.rc-connected {
-  margin-top: 48px;
-  padding-top: 32px;
-  border-top: 1px solid rgba(240, 235, 224, 0.06);
-}
-.rc-connected-title {
-  font-family: var(--font-mono);
-  font-size: 11px;
-  letter-spacing: 0.15em;
-  text-transform: uppercase;
-  color: var(--fg-faint);
-  margin-bottom: 16px;
-}
-.rc-connected-cards {
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-}
-.rc-connected-card {
-  display: flex;
-  align-items: center;
-  gap: 12px;
   padding: 14px 18px;
-  background: rgba(19, 18, 26, 0.6);
-  border: 1px solid var(--border-light);
-  border-radius: var(--radius-md);
-  cursor: pointer;
-  transition: all var(--transition);
+  border-radius: 8px;
+  cursor: grab;
+  transition: box-shadow 0.2s ease, border-color 0.2s ease;
+  z-index: 10;
+  user-select: none;
+  min-width: 140px;
+  max-width: 220px;
 }
-.rc-connected-card:hover {
-  border-color: rgba(240, 192, 64, 0.3);
-  background: rgba(19, 18, 26, 0.9);
+.evidence-node:active { cursor: grabbing; }
+.evidence-node.company {
+  background: var(--surface-3);
+  border: 1px solid var(--gold);
+  box-shadow: 0 0 20px rgba(240,192,64,0.08);
 }
-.rc-connected-card-arrow {
-  font-family: var(--font-mono);
-  color: var(--gold);
-  font-size: 14px;
-  flex-shrink: 0;
+.evidence-node.politician {
+  background: var(--surface-3);
+  border: 1px solid var(--blue);
+  box-shadow: 0 0 20px rgba(74,158,255,0.08);
 }
-.rc-connected-card-text {
-  font-size: 14px;
-  color: var(--fg-muted);
+.evidence-node.impact {
+  background: var(--surface-3);
+  border: 1px solid var(--red);
+  box-shadow: 0 0 20px rgba(255,59,74,0.08);
 }
-.rc-connected-card-text strong {
-  color: var(--fg);
-  font-weight: 600;
+.evidence-node.classified-node {
+  background: var(--surface-2);
+  border: 1px dashed var(--fg-dim);
+  opacity: 0.4;
 }
-.rc-connected-card-tag {
-  font-family: var(--font-mono);
-  font-size: 10px;
-  letter-spacing: 0.06em;
-  padding: 3px 8px;
-  border-radius: 100px;
-  margin-left: auto;
-  flex-shrink: 0;
-  text-transform: uppercase;
+.evidence-node.revealed {
+  animation: nodeReveal 0.6s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+}
+@keyframes nodeReveal {
+  0% { transform: scale(0.3); opacity: 0; }
+  100% { transform: scale(1); opacity: 1; }
 }
 
-/* Investigate button in detail panel */
-.detail-investigate-btn {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 8px;
-  width: 100%;
-  padding: 14px 20px;
-  margin-top: 20px;
-  font-family: var(--font-mono);
-  font-size: 14px;
-  font-weight: 500;
-  letter-spacing: 0.06em;
+.node-type {
+  font-size: 9px;
+  letter-spacing: 2px;
   text-transform: uppercase;
-  color: #0A0A0E;
-  background: var(--gold);
-  border: none;
-  border-radius: var(--radius-md);
-  cursor: pointer;
-  transition: all var(--transition);
-  animation: investigate-pulse 2s ease-in-out infinite;
+  margin-bottom: 4px;
 }
-.detail-investigate-btn:hover {
-  background: #f5cf60;
-  transform: translateY(-1px);
-  box-shadow: 0 6px 24px rgba(240, 192, 64, 0.35);
+.company .node-type { color: var(--gold); }
+.politician .node-type { color: var(--blue); }
+.impact .node-type { color: var(--red); }
+
+.node-name {
+  font-family: var(--font-display);
+  font-size: 13px;
+  font-weight: 600;
+  line-height: 1.3;
 }
-@keyframes investigate-pulse {
-  0%, 100% { box-shadow: 0 0 0 0 rgba(240, 192, 64, 0); }
-  50% { box-shadow: 0 0 0 6px rgba(240, 192, 64, 0.15); }
-}
-.detail-receipt-link {
-  display: inline-flex;
-  align-items: center;
-  gap: 4px;
-  font-family: var(--font-mono);
-  font-size: 11px;
-  color: var(--gold);
-  opacity: 0.7;
-  cursor: pointer;
-  transition: opacity var(--transition);
+.node-detail {
+  font-size: 10px;
+  color: var(--fg-muted);
   margin-top: 4px;
 }
-.detail-receipt-link:hover { opacity: 1; }
-
-/* Counter animation */
-@keyframes rc-count-flash {
-  0% { opacity: 0.6; }
-  100% { opacity: 1; }
+.node-amount {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--gold);
+  margin-top: 6px;
+  font-variant-numeric: tabular-nums;
 }
 
-/* Mobile adjustments for receipt chain */
-@media (max-width: 768px) {
-  .rc-content { padding: 60px 16px 80px; }
-  .rc-close { top: 12px; right: 12px; }
-  .rc-connected-card { padding: 12px 14px; }
+/* CONNECTION LINES (SVG overlay) */
+#connections-svg {
+  position: absolute; inset: 0;
+  width: 100%; height: 100%;
+  z-index: 5;
+  pointer-events: none;
+}
+.connection-line {
+  stroke-width: 1.5;
+  fill: none;
+  opacity: 0.4;
+  stroke-dasharray: 6 4;
+  animation: dashFlow 20s linear infinite;
+}
+.connection-line.money { stroke: var(--gold); }
+.connection-line.access { stroke: var(--blue); }
+.connection-line.impact-line { stroke: var(--red); }
+.connection-line.highlighted { opacity: 1; stroke-width: 2.5; filter: drop-shadow(0 0 6px currentColor); }
+
+@keyframes dashFlow { to { stroke-dashoffset: -200; } }
+
+/* CLASSIFIED STAMP */
+.classified-stamp {
+  position: absolute;
+  font-family: var(--font-display);
+  font-size: clamp(48px, 8vw, 80px);
+  font-weight: 700;
+  color: var(--red);
+  opacity: 0.06;
+  transform: rotate(-15deg);
+  letter-spacing: 8px;
+  pointer-events: none;
+  white-space: nowrap;
+  z-index: 2;
+}
+
+/* RIGHT PANEL — DOSSIER */
+.dossier-panel {
+  width: 360px;
+  background: var(--surface);
+  border-left: 1px solid var(--border);
+  display: flex;
+  flex-direction: column;
+  flex-shrink: 0;
+  overflow: hidden;
+  transition: transform 0.3s ease;
+}
+.dossier-panel.collapsed {
+  transform: translateX(360px);
+  position: absolute;
+  right: 0; top: 48px; bottom: 0;
+}
+
+.dossier-header {
+  padding: 20px;
+  border-bottom: 1px solid var(--border);
+}
+.dossier-label {
+  font-size: 10px;
+  letter-spacing: 2px;
+  color: var(--fg-dim);
+  text-transform: uppercase;
+  margin-bottom: 8px;
+}
+.dossier-title {
+  font-family: var(--font-display);
+  font-size: 20px;
+  font-weight: 700;
+  color: var(--fg);
+  line-height: 1.2;
+}
+.dossier-subtitle {
+  font-size: 11px;
+  color: var(--fg-muted);
+  margin-top: 4px;
+}
+
+.dossier-body {
+  flex: 1;
+  overflow-y: auto;
+  padding: 0;
+}
+.dossier-body::-webkit-scrollbar { width: 4px; }
+.dossier-body::-webkit-scrollbar-thumb { background: var(--border-bright); border-radius: 2px; }
+
+/* RECEIPT CHAIN in dossier */
+.receipt-beat {
+  padding: 20px;
+  border-bottom: 1px solid var(--border);
+  position: relative;
+  overflow: hidden;
+}
+.receipt-beat.locked {
+  opacity: 0.3;
+  filter: blur(2px);
+  pointer-events: none;
+}
+.receipt-beat.locked::after {
+  content: '🔒 INVESTIGATE TO UNLOCK';
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 11px;
+  letter-spacing: 2px;
+  color: var(--fg-dim);
+  filter: blur(0);
+  background: rgba(6,6,8,0.7);
+}
+
+.beat-tag {
+  display: inline-block;
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  padding: 3px 10px;
+  border-radius: 3px;
+  margin-bottom: 10px;
+}
+.beat-tag.money { background: var(--gold-dim); color: var(--gold); }
+.beat-tag.access { background: var(--blue-dim); color: var(--blue); }
+.beat-tag.impact { background: var(--red-dim); color: var(--red); }
+
+.beat-headline {
+  font-family: var(--font-display);
+  font-size: 15px;
+  font-weight: 600;
+  line-height: 1.4;
+  margin-bottom: 8px;
+}
+.beat-body {
+  font-size: 11px;
+  line-height: 1.7;
+  color: var(--fg-muted);
+}
+.beat-amount {
+  font-size: 24px;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+  margin: 8px 0;
+}
+.beat-amount.gold { color: var(--gold); }
+.beat-amount.red { color: var(--red); }
+
+/* INVESTIGATE BUTTON */
+.investigate-btn {
+  display: block;
+  width: calc(100% - 40px);
+  margin: 16px 20px;
+  padding: 14px;
+  background: transparent;
+  border: 1px solid var(--gold);
+  color: var(--gold);
+  font-family: var(--font-mono);
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  text-align: center;
+  border-radius: 4px;
+}
+.investigate-btn:hover {
+  background: var(--gold);
+  color: var(--bg);
+  box-shadow: 0 0 20px rgba(240,192,64,0.3);
+}
+.investigate-btn.red-btn {
+  border-color: var(--red);
+  color: var(--red);
+}
+.investigate-btn.red-btn:hover {
+  background: var(--red);
+  color: white;
+  box-shadow: 0 0 20px rgba(255,59,74,0.3);
+}
+
+/* UNLOCK ANIMATION */
+.unlock-flash {
+  position: fixed; inset: 0;
+  background: var(--gold);
+  z-index: 999;
+  opacity: 0;
+  pointer-events: none;
+}
+.unlock-flash.fire {
+  animation: flashBang 0.6s ease-out;
+}
+.unlock-flash.red-flash.fire {
+  background: var(--red);
+  animation: flashBang 0.6s ease-out;
+}
+@keyframes flashBang {
+  0% { opacity: 0.4; }
+  100% { opacity: 0; }
+}
+
+/* SCORE POPUP */
+.score-popup {
+  position: fixed;
+  font-family: var(--font-display);
+  font-size: 20px;
+  font-weight: 700;
+  color: var(--gold);
+  pointer-events: none;
+  z-index: 998;
+  animation: scoreFloat 1.2s ease-out forwards;
+}
+@keyframes scoreFloat {
+  0% { opacity: 1; transform: translateY(0) scale(1); }
+  100% { opacity: 0; transform: translateY(-60px) scale(1.3); }
+}
+
+/* HUD OVERLAY */
+.hud-corner {
+  position: absolute;
+  font-size: 9px;
+  color: var(--fg-dim);
+  letter-spacing: 1px;
+  z-index: 50;
+  pointer-events: none;
+}
+.hud-corner.top-left { top: 16px; left: 16px; }
+.hud-corner.top-right { top: 16px; right: 16px; }
+.hud-corner.bottom-left { bottom: 16px; left: 16px; }
+.hud-corner.bottom-right { bottom: 16px; right: 16px; }
+
+/* BOTTOM STATUS BAR */
+.status-bar {
+  height: 28px;
+  display: flex;
+  align-items: center;
+  padding: 0 16px;
+  background: var(--surface);
+  border-top: 1px solid var(--border);
+  font-size: 10px;
+  color: var(--fg-dim);
+  gap: 20px;
+  flex-shrink: 0;
+}
+.status-bar .sep { color: var(--border-bright); }
+
+/* TOOLTIP */
+.game-tooltip {
+  position: fixed;
+  background: var(--surface-3);
+  border: 1px solid var(--border-bright);
+  border-radius: 6px;
+  padding: 10px 14px;
+  font-size: 11px;
+  color: var(--fg);
+  max-width: 250px;
+  z-index: 500;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.15s ease;
+  box-shadow: 0 8px 24px rgba(0,0,0,0.5);
+}
+.game-tooltip.visible { opacity: 1; }
+
+/* NOTIFICATION TOAST */
+.toast {
+  position: fixed;
+  bottom: 60px;
+  left: 50%;
+  transform: translateX(-50%) translateY(20px);
+  background: var(--surface-3);
+  border: 1px solid var(--gold);
+  padding: 12px 24px;
+  font-size: 12px;
+  color: var(--gold);
+  border-radius: 6px;
+  z-index: 600;
+  opacity: 0;
+  transition: all 0.3s ease;
+  white-space: nowrap;
+  box-shadow: 0 4px 20px rgba(240,192,64,0.15);
+}
+.toast.visible { opacity: 1; transform: translateX(-50%) translateY(0); }
+
+/* INTRO OVERLAY */
+#intro-overlay {
+  position: fixed; inset: 0;
+  background: rgba(6,6,8,0.92);
+  z-index: 200;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0;
+  transition: opacity 0.4s ease;
+  pointer-events: none;
+}
+#intro-overlay.visible { opacity: 1; pointer-events: auto; }
+
+.intro-card {
+  max-width: 520px;
+  padding: 40px;
+  text-align: center;
+}
+.intro-card h2 {
+  font-family: var(--font-display);
+  font-size: 28px;
+  font-weight: 700;
+  color: var(--gold);
+  margin-bottom: 16px;
+  letter-spacing: 2px;
+}
+.intro-card p {
+  font-size: 13px;
+  line-height: 1.8;
+  color: var(--fg-muted);
+  margin-bottom: 24px;
+}
+.intro-card .key-hint {
+  display: inline-block;
+  background: var(--surface-3);
+  border: 1px solid var(--border-bright);
+  padding: 2px 8px;
+  border-radius: 3px;
+  font-size: 11px;
+  color: var(--fg);
+  margin: 0 2px;
+}
+.intro-start-btn {
+  display: inline-block;
+  padding: 14px 40px;
+  background: var(--gold);
+  color: var(--bg);
+  font-family: var(--font-mono);
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: 3px;
+  text-transform: uppercase;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+.intro-start-btn:hover {
+  box-shadow: 0 0 30px rgba(240,192,64,0.4);
+  transform: scale(1.02);
+}
+
+/* SUMMARY OVERLAY */
+#summary-overlay {
+  position: fixed; inset: 0;
+  background: rgba(6,6,8,0.95);
+  z-index: 300;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0;
+  transition: opacity 0.5s ease;
+  pointer-events: none;
+}
+#summary-overlay.visible { opacity: 1; pointer-events: auto; }
+.summary-card {
+  max-width: 560px;
+  padding: 48px;
+  text-align: center;
+}
+.summary-card h2 {
+  font-family: var(--font-display);
+  font-size: 36px;
+  font-weight: 700;
+  color: var(--red);
+  margin-bottom: 8px;
+}
+.summary-card .summary-subtitle {
+  font-size: 13px;
+  color: var(--fg-muted);
+  margin-bottom: 32px;
+}
+.summary-stats {
+  display: flex; gap: 24px; justify-content: center; margin-bottom: 32px;
+}
+.summary-stat {
+  text-align: center;
+}
+.summary-stat .val {
+  font-family: var(--font-display);
+  font-size: 32px;
+  font-weight: 700;
+  color: var(--gold);
+}
+.summary-stat .lbl {
+  font-size: 10px;
+  color: var(--fg-dim);
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  margin-top: 4px;
+}
+.summary-verdict {
+  font-size: 14px;
+  line-height: 1.8;
+  color: var(--fg-muted);
+  margin-bottom: 32px;
+  padding: 20px;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  background: var(--surface-2);
+}
+.summary-cta {
+  display: flex; gap: 12px; justify-content: center; flex-wrap: wrap;
+}
+.summary-cta a, .summary-cta button {
+  padding: 12px 28px;
+  font-family: var(--font-mono);
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  border-radius: 4px;
+  cursor: pointer;
+  text-decoration: none;
+  transition: all 0.2s ease;
+}
+.cta-primary {
+  background: var(--gold);
+  color: var(--bg);
+  border: none;
+}
+.cta-primary:hover { box-shadow: 0 0 20px rgba(240,192,64,0.3); }
+.cta-secondary {
+  background: transparent;
+  color: var(--fg-muted);
+  border: 1px solid var(--border-bright);
+}
+.cta-secondary:hover { border-color: var(--fg-muted); color: var(--fg); }
+
+/* Embed mode */
+.embed-mode .top-bar { display: none !important; }
+.embed-mode .status-bar { display: none !important; }
+
+/* RESPONSIVE */
+@media (max-width: 900px) {
+  .sidebar { width: 220px; }
+  .dossier-panel { width: 300px; }
+}
+@media (max-width: 700px) {
+  .main-area { flex-direction: column; }
+  .sidebar { width: 100%; height: 120px; flex-direction: row; border-right: none; border-bottom: 1px solid var(--border); }
+  .sidebar-header { display: none; }
+  .case-list { display: flex; overflow-x: auto; overflow-y: hidden; padding: 8px; gap: 8px; }
+  .case-file { min-width: 160px; margin-bottom: 0; }
+  .dossier-panel { 
+    position: fixed; bottom: 0; left: 0; right: 0; 
+    width: 100%; height: 60vh; 
+    border-left: none; border-top: 1px solid var(--border);
+    transform: translateY(0);
+  }
+  .dossier-panel.collapsed { transform: translateY(100%); }
+  .evidence-board { flex: 1; }
 }
 
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after {
     animation-duration: 0.01ms !important;
-    animation-iteration-count: 1 !important;
     transition-duration: 0.01ms !important;
   }
 }
-/* Embed mode — hide nav when in iframe */
-.embed-mode .top-bar { display: none !important; }
-.embed-mode .bottom-cta { display: none !important; }
-.embed-mode .data-footer { display: none !important; }
-.embed-mode .stats-bar { margin-top: 0; padding-top: 12px; }
 </style>
 </head>
 <body>
-<div class="app">
-  <!-- TOP BAR -->
-  <header class="top-bar">
-    <div class="logo">
-      <span class="logo-mark"><span class="w">W</span><span class="q">?</span></span>
-      <span class="logo-text">Who Do I Work For?</span>
-    </div>
-    <nav class="nav-links">
-      <a href="https://wdiwf.jackyeclayton.com/receipts" target="_blank" rel="noopener noreferrer">Receipts</a>
-      <a href="https://wdiwf.jackyeclayton.com/companies" target="_blank" rel="noopener noreferrer">Companies</a>
-      <a href="https://wdiwf.jackyeclayton.com/scan" target="_blank" rel="noopener noreferrer" class="scan-cta">Scan Your Employer</a>
-    </nav>
-  </header>
 
-  <!-- STATS BAR -->
-  <div class="stats-bar">
-    <div class="stat">
-      <span class="stat-value" id="stat-money">$0</span>
-      <span class="stat-label">PAC $ Tracked</span>
+<!-- BOOT SEQUENCE -->
+<div id="boot-screen">
+  <div class="boot-logo">
+    FOLLOW THE MONEY
+    <span>investigation terminal v2.1</span>
+  </div>
+  <div id="boot-log"></div>
+  <div class="boot-progress"><div class="boot-progress-bar" id="boot-bar"></div></div>
+</div>
+
+<!-- UNLOCK FLASH -->
+<div class="unlock-flash" id="unlock-flash"></div>
+
+<!-- TOOLTIP -->
+<div class="game-tooltip" id="tooltip"></div>
+
+<!-- TOAST -->
+<div class="toast" id="toast"></div>
+
+<!-- INTRO OVERLAY -->
+<div id="intro-overlay">
+  <div class="intro-card">
+    <h2>CASE FILE OPENED</h2>
+    <p>
+      You've gained access to corporate PAC filings, lobbying disclosures, and legislative records. 
+      Your job: follow the money, uncover the connections, and expose the impact.
+    </p>
+    <p style="font-size:11px;">
+      <span class="key-hint">Click</span> case files to investigate &nbsp;
+      <span class="key-hint">Drag</span> evidence to rearrange &nbsp;
+      <span class="key-hint">Investigate</span> to go deeper
+    </p>
+    <button class="intro-start-btn" id="start-btn">BEGIN INVESTIGATION</button>
+  </div>
+</div>
+
+<!-- SUMMARY OVERLAY -->
+<div id="summary-overlay">
+  <div class="summary-card">
+    <h2>INVESTIGATION COMPLETE</h2>
+    <div class="summary-subtitle">All case files declassified</div>
+    <div class="summary-stats" id="summary-stats"></div>
+    <div class="summary-verdict" id="summary-verdict"></div>
+    <div class="summary-cta">
+      <a href="https://wdiwf.jackyeclayton.com/join" target="_blank" class="cta-primary">SEARCH YOUR EMPLOYER</a>
+      <button class="cta-secondary" onclick="location.reload()">REINVESTIGATE</button>
     </div>
-    <div class="stat">
-      <span class="stat-value" id="stat-companies">0</span>
-      <span class="stat-label">Companies</span>
+  </div>
+</div>
+
+<!-- MAIN APP -->
+<div id="app">
+  <div class="top-bar">
+    <div class="top-bar-left">
+      <div class="top-bar-logo">W? FOLLOW THE MONEY</div>
+      <div class="top-bar-status">TERMINAL ACTIVE</div>
     </div>
-    <div class="stat">
-      <span class="stat-value" id="stat-politicians">0</span>
-      <span class="stat-label">Politicians</span>
-    </div>
-    <div class="stat">
-      <span class="stat-value" id="stat-connections">0</span>
-      <span class="stat-label">Connections</span>
+    <div class="score-display">
+      <div class="score-item">INTEL <strong id="score-intel">0</strong></div>
+      <div class="score-item">CONNECTIONS <strong id="score-connections">0/0</strong></div>
+      <div class="score-item">DEPTH <strong id="score-depth">0</strong></div>
     </div>
   </div>
 
-  <!-- CONTROLS -->
-  <div class="controls-bar">
-    <div class="search-box">
-      <svg class="search-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/></svg>
-      <input type="text" id="search-input" placeholder="Search companies, politicians, legislation…" autocomplete="off">
+  <div class="main-area">
+    <!-- LEFT: CASE FILES -->
+    <div class="sidebar">
+      <div class="sidebar-header">Case Files</div>
+      <div class="case-list" id="case-list"></div>
     </div>
-    <div class="filter-chips">
-      <button class="chip active" data-type="all">All</button>
-      <button class="chip" data-type="donation">Donations</button>
-      <button class="chip" data-type="lobbying">Lobbying</button>
-      <button class="chip" data-type="dark-money">Dark Money</button>
-      <button class="chip" data-type="revolving-door">Revolving Door</button>
-      <button class="chip" data-type="legislation">Legislation</button>
-    </div>
-    <div class="legend">
-      <div class="legend-item"><div class="legend-dot" style="background: var(--gold);"></div>Company</div>
-      <div class="legend-item"><div class="legend-dot" style="background: var(--blue);"></div>Politician</div>
-      <div class="legend-item"><div class="legend-dot" style="background: var(--red);"></div>PAC / Dark $</div>
-      <div class="legend-item"><div class="legend-dot" style="background: var(--green);"></div>Legislation</div>
-      <div class="legend-item"><div class="legend-dot" style="background: var(--purple);"></div>Revolving Door</div>
-      <div class="legend-item"><div class="legend-dot" style="background: var(--orange);"></div>Agency</div>
-    </div>
-  </div>
 
-  <!-- GRAPH -->
-  <div class="graph-container" id="graph-container">
-    <div class="instructions" id="instructions">
-      <p><strong>Click</strong> a company to reveal its influence network</p>
-      <p><strong>Double-click</strong> a politician to see who funds them</p>
-      <p><strong>Drag</strong> nodes to rearrange · <strong>Scroll</strong> to zoom</p>
-      <div class="dismiss" onclick="this.parentElement.style.opacity='0';setTimeout(()=>this.parentElement.style.display='none',500)">Dismiss</div>
+    <!-- CENTER: EVIDENCE BOARD -->
+    <div class="evidence-board" id="evidence-board">
+      <svg id="connections-svg"></svg>
+      <div class="classified-stamp" style="top:30%;left:20%;">CLASSIFIED</div>
+      <div class="classified-stamp" style="top:55%;left:55%;">RESTRICTED</div>
+      <div class="hud-corner top-left">FEC / SENATE LDA / USASPENDING</div>
+      <div class="hud-corner bottom-right" id="hud-time"></div>
+    </div>
+
+    <!-- RIGHT: DOSSIER PANEL -->
+    <div class="dossier-panel collapsed" id="dossier-panel">
+      <div class="dossier-header">
+        <div class="dossier-label">Intelligence Report</div>
+        <div class="dossier-title" id="dossier-title">Select a case file</div>
+        <div class="dossier-subtitle" id="dossier-subtitle"></div>
+      </div>
+      <div class="dossier-body" id="dossier-body"></div>
     </div>
   </div>
 
-  <!-- TOOLTIP -->
-  <div class="tooltip" id="tooltip"></div>
-
-  <!-- DETAIL PANEL OVERLAY -->
-  <div class="panel-overlay" id="panel-overlay"></div>
-
-  <!-- DETAIL PANEL -->
-  <div class="detail-panel" id="detail-panel">
-    <div class="detail-panel-header">
-      <div class="detail-panel-title" id="panel-title"></div>
-      <button class="detail-close" id="panel-close" aria-label="Close panel">
-        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6L6 18M6 6l12 12"/></svg>
-      </button>
-    </div>
-    <div class="detail-content" id="panel-content"></div>
+  <div class="status-bar">
+    <span>Built from FEC filings, Senate LDA disclosures, USASpending.gov contracts</span>
+    <span class="sep">|</span>
+    <span><a href="https://www.perplexity.ai/computer" target="_blank" style="color:var(--fg-dim);text-decoration:none;">Created with Perplexity Computer</a></span>
   </div>
-
-  <!-- RECEIPT CHAIN OVERLAY -->
-  <div class="rc-overlay" id="rc-overlay">
-    <button class="rc-close" id="rc-close" aria-label="Close investigation">
-      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6L6 18M6 6l12 12"/></svg>
-    </button>
-    <div class="rc-content" id="rc-content"></div>
-  </div>
-
-  <!-- BOTTOM CTA -->
-  <div class="bottom-cta">
-    <span class="bottom-cta-text">"You deserve to work for a company you believe in."</span>
-    <a href="https://wdiwf.jackyeclayton.com/join" target="_blank" rel="noopener noreferrer" class="bottom-cta-btn">Get Early Access →</a>
-  </div>
-
-  <!-- DATA FOOTER -->
-  <footer class="data-footer">
-    Built from FEC filings, Senate LDA lobbying disclosures, USASpending.gov contracts, and verified public records. · 
-    <a href="https://www.perplexity.ai/computer" target="_blank" rel="noopener noreferrer">Created with Perplexity Computer</a>
-  </footer>
 </div>
 
 <script>
 // =========================================================
-// DATA
+// GAME DATA
 // =========================================================
-const companies = [
+const CASES = [
   {
-    id: "boeing", name: "Boeing", type: "company",
-    pacSpending: 5400000,
-    topRecipients: [
-      { name: "Richard Hudson", party: "R-NC", amount: 48000 },
-      { name: "Kay Granger", party: "R-TX", amount: 42000 },
-      { name: "Roger Wicker", party: "R-MS", amount: 38000 },
-      { name: "Marco Rubio", party: "R-FL", amount: 25000 }
-    ],
-    lobbying: ["NDAA", "FAA Reauthorization"],
-    darkMoney: [{ target: "Congressional Leadership Fund", amount: 500000 }],
-    revolvingDoor: [
-      { name: "Patrick Shanahan", from: "Boeing SVP", to: "Acting Secretary of Defense" },
-      { name: "James Mattis", from: "Boeing Board Member", to: "Secretary of Defense" }
-    ],
-    impact: "346 people killed in two 737 MAX crashes. $2.5B DOJ settlement. Self-certification deal let Boeing approve its own safety inspections.",
-    impactStat: "346 dead"
-  },
-  {
-    id: "amazon", name: "Amazon", type: "company",
-    pacSpending: 2800000,
-    topRecipients: [
-      { name: "Maria Cantwell", party: "D-WA", amount: 35000 },
-      { name: "Chuck Schumer", party: "D-NY", amount: 28000 },
-      { name: "Ted Cruz", party: "R-TX", amount: 22000 }
-    ],
-    lobbying: ["Antitrust Reform", "Labor Law", "NLRB Funding"],
-    darkMoney: [],
-    revolvingDoor: [],
-    impact: "$61.7M stolen tips settlement. 100K+ layoffs since 2022. Workers report injury rates 2× industry average. Numerous OSHA violations at warehouses.",
-    impactStat: "2× injury rate"
-  },
-  {
-    id: "disney", name: "Disney", type: "company",
-    pacSpending: 1900000,
-    topRecipients: [
-      { name: "Chuck Schumer", party: "D-NY", amount: 20000 },
-      { name: "Marco Rubio", party: "R-FL", amount: 18000 }
-    ],
-    lobbying: ["Copyright Extension", "Streaming Regulation"],
-    darkMoney: [{ target: "First Amendment Fund", amount: 200000 }],
-    revolvingDoor: [],
-    impact: "$233M wage theft settlement. 51,000 workers affected. Aggressive anti-union campaigns at parks and production facilities.",
-    impactStat: "$233M wage theft"
-  },
-  {
-    id: "mcdonalds", name: "McDonald's", type: "company",
-    pacSpending: 3200000,
-    topRecipients: [
-      { name: "Mitch McConnell", party: "R-KY", amount: 32000 },
-      { name: "Joe Manchin", party: "D-WV", amount: 25000 },
-      { name: "Kyrsten Sinema", party: "I-AZ", amount: 20000 }
-    ],
-    lobbying: ["Minimum Wage Opposition", "Franchise Labor Laws"],
-    darkMoney: [],
-    revolvingDoor: [],
-    impact: "$45.8M in workplace violations. 1 in 8 Americans has worked there. Lobbied aggressively against minimum wage increases that would help their own workers.",
-    impactStat: "$45.8M violations"
-  },
-  {
-    id: "fedex", name: "FedEx", type: "company",
-    pacSpending: 4100000,
-    topRecipients: [
-      { name: "Mitch McConnell", party: "R-KY", amount: 45000 },
-      { name: "Ted Cruz", party: "R-TX", amount: 30000 },
-      { name: "Richard Hudson", party: "R-NC", amount: 22000 }
-    ],
-    lobbying: ["Independent Contractor Classification", "Tax Reform"],
-    darkMoney: [],
-    revolvingDoor: [],
-    impact: "$530M stolen from workers. $1,400 per worker in wage theft. Lobbied for independent contractor reclassification to avoid benefits.",
-    impactStat: "$530M stolen"
-  },
-  {
-    id: "jpmorgan", name: "JPMorgan Chase", type: "company",
-    pacSpending: 5800000,
-    topRecipients: [
-      { name: "Chuck Schumer", party: "D-NY", amount: 55000 },
-      { name: "Kyrsten Sinema", party: "I-AZ", amount: 40000 },
-      { name: "Mitch McConnell", party: "R-KY", amount: 38000 },
-      { name: "Joe Manchin", party: "D-WV", amount: 30000 }
-    ],
-    lobbying: ["Dodd-Frank Rollback", "Crypto Regulation"],
-    darkMoney: [{ target: "American Action Network", amount: 350000 }],
-    revolvingDoor: [],
-    impact: "$39B in fines since 2000. Largest bank in the US by assets. Lobbied to weaken the very regulations designed to prevent another financial crisis.",
-    impactStat: "$39B in fines"
-  },
-  {
-    id: "meta", name: "Meta", type: "company",
-    pacSpending: 1700000,
-    topRecipients: [
-      { name: "Maria Cantwell", party: "D-WA", amount: 25000 },
-      { name: "Ted Cruz", party: "R-TX", amount: 18000 }
-    ],
-    lobbying: ["Section 230", "AI Regulation"],
-    darkMoney: [],
-    revolvingDoor: [],
-    impact: "363 WARN notice layoffs. Multiple privacy violation settlements totaling billions. Cambridge Analytica scandal affected 87M users.",
-    impactStat: "87M users exposed"
-  },
-  {
-    id: "google", name: "Alphabet / Google", type: "company",
-    pacSpending: 3400000,
-    topRecipients: [
-      { name: "Maria Cantwell", party: "D-WA", amount: 40000 },
-      { name: "Chuck Schumer", party: "D-NY", amount: 35000 },
-      { name: "Ted Cruz", party: "R-TX", amount: 25000 }
-    ],
-    lobbying: ["Antitrust", "AI Regulation", "Section 230"],
-    darkMoney: [],
-    revolvingDoor: [],
-    impact: "DOJ antitrust case — found to be an illegal monopoly in search. Spent more on lobbying than any other tech company.",
-    impactStat: "Illegal monopoly"
-  },
-  {
-    id: "walmart", name: "Walmart", type: "company",
-    pacSpending: 3600000,
-    topRecipients: [
-      { name: "Mitch McConnell", party: "R-KY", amount: 42000 },
-      { name: "Joe Manchin", party: "D-WV", amount: 30000 },
-      { name: "Kyrsten Sinema", party: "I-AZ", amount: 25000 }
-    ],
-    lobbying: ["Minimum Wage", "Healthcare Mandate Exemptions"],
-    darkMoney: [],
-    revolvingDoor: [],
-    impact: "Largest private employer in the US. Billions in wage theft settlements. Many workers qualify for food stamps despite full-time employment.",
-    impactStat: "Workers on food stamps"
-  },
-  {
-    id: "starbucks", name: "Starbucks", type: "company",
-    pacSpending: 1100000,
-    topRecipients: [
-      { name: "Maria Cantwell", party: "D-WA", amount: 22000 },
-      { name: "Chuck Schumer", party: "D-NY", amount: 15000 }
-    ],
-    lobbying: ["Labor Law", "NLRA Amendments"],
-    darkMoney: [],
-    revolvingDoor: [],
-    impact: "400+ NLRB complaints. Fired union organizers. Aggressive anti-union campaign spending $400M+ on 'partner experience'. Howard Schultz testified before Congress.",
-    impactStat: "400+ NLRB complaints"
-  },
-  {
-    id: "tesla", name: "Tesla", type: "company",
-    pacSpending: 0,
-    topRecipients: [],
-    lobbying: ["EV Tax Credits", "Autonomous Vehicle Regulation"],
-    darkMoney: [{ target: "Elon Musk Personal Contributions", amount: 250000000 }],
-    revolvingDoor: [],
-    impact: "No PAC but Elon Musk personal contributions $250M+. OSHA violations, racial discrimination lawsuits. NLRB violations for threatening workers.",
-    impactStat: "$250M+ Musk donations"
-  },
-  {
-    id: "trader-joes", name: "Trader Joe's", type: "company",
-    pacSpending: 0,
-    topRecipients: [],
-    lobbying: ["NLRA Amendments"],
-    darkMoney: [],
-    revolvingDoor: [],
-    impact: "Argues NLRB is unconstitutional despite being ranked #1 in customer satisfaction. Aggressive anti-union campaigns targeting workers who organize.",
-    impactStat: "NLRB unconstitutional"
-  }
-];
-
-const politicians = [
-  { id: "hudson", name: "Richard Hudson", party: "R-NC", committee: "Armed Services", type: "politician" },
-  { id: "granger", name: "Kay Granger", party: "R-TX", committee: "Appropriations", type: "politician" },
-  { id: "wicker", name: "Roger Wicker", party: "R-MS", committee: "Armed Services", type: "politician" },
-  { id: "mcconnell", name: "Mitch McConnell", party: "R-KY", committee: "Senate Leader", type: "politician" },
-  { id: "schumer", name: "Chuck Schumer", party: "D-NY", committee: "Senate Leader", type: "politician" },
-  { id: "cantwell", name: "Maria Cantwell", party: "D-WA", committee: "Commerce", type: "politician" },
-  { id: "cruz", name: "Ted Cruz", party: "R-TX", committee: "Commerce", type: "politician" },
-  { id: "manchin", name: "Joe Manchin", party: "D-WV", committee: "Energy", type: "politician" },
-  { id: "sinema", name: "Kyrsten Sinema", party: "I-AZ", committee: "Finance", type: "politician" },
-  { id: "rubio", name: "Marco Rubio", party: "R-FL", committee: "Commerce, Intel", type: "politician" }
-];
-
-const legislation = [
-  { id: "ndaa", name: "NDAA", fullName: "National Defense Authorization Act", type: "legislation", description: "Annual defense spending bill — $886B in FY2024" },
-  { id: "faa-reauth", name: "FAA Reauthorization", fullName: "FAA Reauthorization Act", type: "legislation", description: "Aviation safety and regulation funding" },
-  { id: "pro-act", name: "PRO Act", fullName: "Protecting the Right to Organize", type: "legislation", description: "Would strengthen union protections — blocked repeatedly" },
-  { id: "min-wage", name: "Minimum Wage Act", fullName: "Raise the Wage Act", type: "legislation", description: "Federal $15 minimum wage — blocked" },
-  { id: "dodd-frank", name: "Dodd-Frank", fullName: "Dodd-Frank Wall Street Reform", type: "legislation", description: "Post-2008 financial regulation — actively weakened" },
-  { id: "section230", name: "Section 230", fullName: "Section 230 of Communications Decency Act", type: "legislation", description: "Tech platform liability shield" },
-  { id: "antitrust", name: "Antitrust Reform", fullName: "American Innovation and Choice Online Act", type: "legislation", description: "Big tech antitrust reform — stalled" },
-  { id: "nlra", name: "NLRA Amendments", fullName: "National Labor Relations Act Amendments", type: "legislation", description: "Labor protections and union rights framework" }
-];
-
-const darkMoneyOrgs = [
-  { id: "clf", name: "Congressional Leadership Fund", type: "dark-money", description: "Super PAC aligned with House Republican leadership" },
-  { id: "aan", name: "American Action Network", type: "dark-money", description: "501(c)(4) dark money group — does not disclose donors" },
-  { id: "faf", name: "First Amendment Fund", type: "dark-money", description: "Dark money vehicle for media and entertainment industry" },
-  { id: "musk-pac", name: "Musk PAC Network", type: "dark-money", description: "Elon Musk's personal political contribution network" }
-];
-
-const agencies = [
-  { id: "dod", name: "Dept. of Defense", type: "agency" },
-  { id: "faa", name: "FAA", type: "agency" },
-  { id: "nlrb", name: "NLRB", type: "agency" }
-];
-
-// Build graph data
-function buildGraphData() {
-  const nodes = [];
-  const links = [];
-
-  // Add company nodes
-  companies.forEach(c => {
-    nodes.push({ id: c.id, name: c.name, type: "company", data: c, expanded: false, visible: true });
-  });
-
-  // Add politician nodes (hidden initially)
-  politicians.forEach(p => {
-    nodes.push({ id: p.id, name: p.name, type: "politician", data: p, visible: false });
-  });
-
-  // Add legislation nodes (hidden initially)
-  legislation.forEach(l => {
-    nodes.push({ id: l.id, name: l.name, type: "legislation", data: l, visible: false });
-  });
-
-  // Add dark money nodes (hidden initially)
-  darkMoneyOrgs.forEach(d => {
-    nodes.push({ id: d.id, name: d.name, type: "dark-money", data: d, visible: false });
-  });
-
-  // Add agency nodes (hidden initially)
-  agencies.forEach(a => {
-    nodes.push({ id: a.id, name: a.name, type: "agency", data: a, visible: false });
-  });
-
-  // Build links from company data
-  companies.forEach(c => {
-    // Donations to politicians
-    c.topRecipients.forEach(r => {
-      const polId = politicians.find(p => p.name === r.name)?.id;
-      if (polId) {
-        links.push({
-          source: c.id, target: polId, type: "donation",
-          amount: r.amount,
-          label: `$${(r.amount / 1000).toFixed(0)}K PAC donation`,
-          visible: false
-        });
-      }
-    });
-
-    // Lobbying on legislation
-    c.lobbying.forEach(lob => {
-      const legId = legislation.find(l => l.name === lob || l.fullName === lob)?.id;
-      if (legId) {
-        links.push({
-          source: c.id, target: legId, type: "lobbying",
-          label: `Lobbied on ${lob}`,
-          visible: false
-        });
-      }
-    });
-
-    // Dark money
-    c.darkMoney.forEach(dm => {
-      let dmId;
-      if (dm.target === "Congressional Leadership Fund") dmId = "clf";
-      else if (dm.target === "American Action Network") dmId = "aan";
-      else if (dm.target === "First Amendment Fund") dmId = "faf";
-      else if (dm.target.includes("Musk")) dmId = "musk-pac";
-      if (dmId) {
-        links.push({
-          source: c.id, target: dmId, type: "dark-money",
-          amount: dm.amount,
-          label: `$${dm.amount >= 1000000 ? (dm.amount / 1000000).toFixed(0) + 'M' : (dm.amount / 1000).toFixed(0) + 'K'} dark money`,
-          visible: false
-        });
-      }
-    });
-
-    // Revolving door
-    c.revolvingDoor.forEach(rd => {
-      const agencyId = rd.to.includes("Defense") ? "dod" : rd.to.includes("FAA") ? "faa" : null;
-      if (agencyId) {
-        links.push({
-          source: c.id, target: agencyId, type: "revolving-door",
-          label: `${rd.name}: ${rd.from} → ${rd.to}`,
-          visible: false
-        });
-      }
-    });
-  });
-
-  return { nodes, links };
-}
-
-// =========================================================
-// APP STATE
-// =========================================================
-let graphData = buildGraphData();
-let simulation;
-let selectedNode = null;
-let activeFilter = "all";
-let searchTerm = "";
-
-// =========================================================
-// STATS ANIMATION
-// =========================================================
-function animateStats() {
-  const totalPAC = companies.reduce((s, c) => s + c.pacSpending, 0);
-  const numCompanies = companies.length;
-  const numPoliticians = politicians.length;
-  const numConnections = graphData.links.length;
-
-  animateValue("stat-money", 0, totalPAC, 1500, v => "$" + (v / 1000000).toFixed(1) + "M");
-  animateValue("stat-companies", 0, numCompanies, 1000, v => v.toString());
-  animateValue("stat-politicians", 0, numPoliticians, 1200, v => v.toString());
-  animateValue("stat-connections", 0, numConnections, 1400, v => v.toString());
-}
-
-function animateValue(id, start, end, duration, formatter) {
-  const el = document.getElementById(id);
-  const startTime = performance.now();
-  function update(now) {
-    const elapsed = now - startTime;
-    const progress = Math.min(elapsed / duration, 1);
-    const eased = 1 - Math.pow(1 - progress, 3);
-    const current = Math.round(start + (end - start) * eased);
-    el.textContent = formatter(current);
-    if (progress < 1) requestAnimationFrame(update);
-  }
-  requestAnimationFrame(update);
-}
-
-// =========================================================
-// D3 FORCE GRAPH
-// =========================================================
-function initGraph() {
-  const container = document.getElementById("graph-container");
-  const width = container.clientWidth;
-  const height = container.clientHeight;
-
-  const svg = d3.select("#graph-container")
-    .append("svg")
-    .attr("width", width)
-    .attr("height", height);
-
-  // Defs for glow filters
-  const defs = svg.append("defs");
-
-  // Gold glow
-  const goldGlow = defs.append("filter").attr("id", "glow-gold");
-  goldGlow.append("feGaussianBlur").attr("stdDeviation", "4").attr("result", "blur");
-  goldGlow.append("feFlood").attr("flood-color", "#F0C040").attr("flood-opacity", "0.4");
-  goldGlow.append("feComposite").attr("in2", "blur").attr("operator", "in");
-  const goldMerge = goldGlow.append("feMerge");
-  goldMerge.append("feMergeNode");
-  goldMerge.append("feMergeNode").attr("in", "SourceGraphic");
-
-  // Blue glow
-  const blueGlow = defs.append("filter").attr("id", "glow-blue");
-  blueGlow.append("feGaussianBlur").attr("stdDeviation", "3").attr("result", "blur");
-  blueGlow.append("feFlood").attr("flood-color", "hsl(213, 88%, 73%)").attr("flood-opacity", "0.35");
-  blueGlow.append("feComposite").attr("in2", "blur").attr("operator", "in");
-  const blueMerge = blueGlow.append("feMerge");
-  blueMerge.append("feMergeNode");
-  blueMerge.append("feMergeNode").attr("in", "SourceGraphic");
-
-  // Red glow
-  const redGlow = defs.append("filter").attr("id", "glow-red");
-  redGlow.append("feGaussianBlur").attr("stdDeviation", "3").attr("result", "blur");
-  redGlow.append("feFlood").attr("flood-color", "hsl(348, 90%, 65%)").attr("flood-opacity", "0.35");
-  redGlow.append("feComposite").attr("in2", "blur").attr("operator", "in");
-  const redMerge = redGlow.append("feMerge");
-  redMerge.append("feMergeNode");
-  redMerge.append("feMergeNode").attr("in", "SourceGraphic");
-
-  // Arrow markers
-  const markerTypes = [
-    { id: "arrow-donation", color: "#F0C040" },
-    { id: "arrow-lobbying", color: "hsl(213, 88%, 73%)" },
-    { id: "arrow-dark-money", color: "hsl(348, 90%, 65%)" },
-    { id: "arrow-revolving-door", color: "hsl(280, 70%, 70%)" },
-    { id: "arrow-legislation", color: "hsl(157, 100%, 64%)" }
-  ];
-  markerTypes.forEach(m => {
-    defs.append("marker")
-      .attr("id", m.id)
-      .attr("viewBox", "0 -5 10 10")
-      .attr("refX", 25)
-      .attr("refY", 0)
-      .attr("markerWidth", 6)
-      .attr("markerHeight", 6)
-      .attr("orient", "auto")
-      .append("path")
-      .attr("d", "M0,-5L10,0L0,5")
-      .attr("fill", m.color)
-      .attr("opacity", 0.6);
-  });
-
-  // Zoom behavior
-  const zoomGroup = svg.append("g");
-  const zoom = d3.zoom()
-    .scaleExtent([0.2, 4])
-    .on("zoom", (event) => {
-      zoomGroup.attr("transform", event.transform);
-    });
-  svg.call(zoom);
-
-  // Center initial view
-  svg.call(zoom.transform, d3.zoomIdentity.translate(width / 2, height / 2).scale(0.85));
-
-  // Link group (behind nodes)
-  const linkGroup = zoomGroup.append("g").attr("class", "links");
-  // Node group
-  const nodeGroup = zoomGroup.append("g").attr("class", "nodes");
-
-  // Color mapping
-  function nodeColor(type) {
-    switch (type) {
-      case "company": return "#F0C040";
-      case "politician": return "hsl(213, 88%, 73%)";
-      case "legislation": return "hsl(157, 100%, 64%)";
-      case "dark-money": return "hsl(348, 90%, 65%)";
-      case "revolving-door": return "hsl(280, 70%, 70%)";
-      case "agency": return "hsl(30, 90%, 65%)";
-      default: return "#F0EBE0";
-    }
-  }
-
-  function nodeRadius(d) {
-    if (d.type === "company") {
-      const spending = d.data.pacSpending || 0;
-      return Math.max(18, Math.min(36, 18 + (spending / 1000000) * 3));
-    }
-    if (d.type === "politician") return 14;
-    if (d.type === "legislation") return 12;
-    if (d.type === "dark-money") return 13;
-    if (d.type === "agency") return 14;
-    return 12;
-  }
-
-  function linkColor(type) {
-    switch (type) {
-      case "donation": return "#F0C040";
-      case "lobbying": return "hsl(213, 88%, 73%)";
-      case "dark-money": return "hsl(348, 90%, 65%)";
-      case "revolving-door": return "hsl(280, 70%, 70%)";
-      case "legislation": return "hsl(157, 100%, 64%)";
-      default: return "rgba(240, 235, 224, 0.2)";
-    }
-  }
-
-  function linkWidth(d) {
-    if (!d.amount) return 1.5;
-    if (d.amount >= 1000000) return 4;
-    if (d.amount >= 100000) return 3;
-    if (d.amount >= 30000) return 2;
-    return 1.5;
-  }
-
-  function glowFilter(type) {
-    switch (type) {
-      case "company": return "url(#glow-gold)";
-      case "politician": return "url(#glow-blue)";
-      case "dark-money": return "url(#glow-red)";
-      default: return "none";
-    }
-  }
-
-  // Simulation
-  simulation = d3.forceSimulation()
-    .force("link", d3.forceLink().id(d => d.id).distance(120).strength(0.4))
-    .force("charge", d3.forceManyBody().strength(-300).distanceMax(500))
-    .force("center", d3.forceCenter(0, 0).strength(0.05))
-    .force("collision", d3.forceCollide().radius(d => nodeRadius(d) + 8))
-    .force("x", d3.forceX(0).strength(0.03))
-    .force("y", d3.forceY(0).strength(0.03))
-    .alphaDecay(0.02)
-    .velocityDecay(0.4);
-
-  // Tooltip
-  const tooltip = document.getElementById("tooltip");
-  function showTooltip(event, html) {
-    tooltip.innerHTML = html;
-    tooltip.classList.add("visible");
-    positionTooltip(event);
-  }
-  function hideTooltip() {
-    tooltip.classList.remove("visible");
-  }
-  function positionTooltip(event) {
-    const x = event.clientX || (event.touches && event.touches[0].clientX) || 0;
-    const y = event.clientY || (event.touches && event.touches[0].clientY) || 0;
-    const w = tooltip.offsetWidth;
-    const h = tooltip.offsetHeight;
-    let left = x + 14;
-    let top = y - 10;
-    if (left + w > window.innerWidth - 10) left = x - w - 14;
-    if (top + h > window.innerHeight - 10) top = y - h - 10;
-    if (top < 10) top = 10;
-    tooltip.style.left = left + "px";
-    tooltip.style.top = top + "px";
-  }
-
-  // Render function
-  function render() {
-    const visibleNodes = graphData.nodes.filter(n => n.visible);
-    const visibleLinks = graphData.links.filter(l => {
-      if (!l.visible) return false;
-      if (activeFilter !== "all" && l.type !== activeFilter) return false;
-      const sourceNode = graphData.nodes.find(n => n.id === (typeof l.source === "object" ? l.source.id : l.source));
-      const targetNode = graphData.nodes.find(n => n.id === (typeof l.target === "object" ? l.target.id : l.target));
-      return sourceNode?.visible && targetNode?.visible;
-    });
-
-    // Links
-    const linkSel = linkGroup.selectAll("line.link-line")
-      .data(visibleLinks, d => `${typeof d.source === "object" ? d.source.id : d.source}-${typeof d.target === "object" ? d.target.id : d.target}-${d.type}`);
-
-    linkSel.exit().transition().duration(300).attr("opacity", 0).remove();
-
-    const linkEnter = linkSel.enter()
-      .append("line")
-      .attr("class", "link-line")
-      .attr("stroke", d => linkColor(d.type))
-      .attr("stroke-width", d => linkWidth(d))
-      .attr("opacity", 0)
-      .attr("stroke-dasharray", d => d.type === "dark-money" ? "6,3" : d.type === "revolving-door" ? "3,3" : "none")
-      .attr("marker-end", d => `url(#arrow-${d.type})`)
-      .on("mouseover", function(event, d) {
-        d3.select(this).attr("opacity", 0.9).attr("stroke-width", linkWidth(d) + 1.5);
-        const amountStr = d.amount ? `<div class="tooltip-amount">$${d.amount >= 1000000 ? (d.amount/1000000).toFixed(1)+'M' : (d.amount/1000).toFixed(0)+'K'}</div>` : '';
-        showTooltip(event, `
-          <div class="tooltip-type" style="color:${linkColor(d.type)}">${d.type.replace('-', ' ')}</div>
-          <div class="tooltip-detail">${d.label}</div>
-          ${amountStr}
-        `);
-      })
-      .on("mousemove", positionTooltip)
-      .on("mouseout", function(event, d) {
-        d3.select(this).attr("opacity", 0.35).attr("stroke-width", linkWidth(d));
-        hideTooltip();
-      })
-      .on("click", function(event, d) {
-        event.stopPropagation();
-        // Check if this edge has a receipt chain
-        const srcId = typeof d.source === "object" ? d.source.id : d.source;
-        const tgtId = typeof d.target === "object" ? d.target.id : d.target;
-        const chainId = receiptChainLookup[`${srcId}-${tgtId}`];
-        if (chainId) {
-          openReceiptChain(chainId);
-        } else {
-          const sourceNode = graphData.nodes.find(n => n.id === srcId);
-          if (sourceNode) openDetailPanel(sourceNode);
-        }
-      });
-
-    linkEnter.transition().duration(600).attr("opacity", 0.35);
-
-    // Nodes
-    const nodeSel = nodeGroup.selectAll("g.node")
-      .data(visibleNodes, d => d.id);
-
-    nodeSel.exit().transition().duration(300).attr("opacity", 0).remove();
-
-    const nodeEnter = nodeSel.enter()
-      .append("g")
-      .attr("class", "node")
-      .attr("opacity", 0)
-      .call(d3.drag()
-        .on("start", dragStarted)
-        .on("drag", dragged)
-        .on("end", dragEnded)
-      );
-
-    // Circle
-    nodeEnter.append("circle")
-      .attr("class", "node-circle")
-      .attr("r", d => nodeRadius(d))
-      .attr("fill", d => {
-        const c = nodeColor(d.type);
-        return d.type === "company" ? "rgba(240, 192, 64, 0.12)" : `color-mix(in srgb, ${c} 12%, transparent)`;
-      })
-      .attr("stroke", d => nodeColor(d.type))
-      .attr("stroke-width", d => d.type === "company" ? 2 : 1.5)
-      .attr("filter", d => glowFilter(d.type));
-
-    // Label
-    nodeEnter.append("text")
-      .attr("dy", d => nodeRadius(d) + 14)
-      .attr("text-anchor", "middle")
-      .attr("fill", d => nodeColor(d.type))
-      .attr("font-size", d => d.type === "company" ? "11px" : "10px")
-      .attr("font-weight", d => d.type === "company" ? "600" : "500")
-      .attr("font-family", "DM Sans, sans-serif")
-      .attr("opacity", 0.85)
-      .text(d => {
-        const name = d.name;
-        return name.length > 18 ? name.substring(0, 16) + "…" : name;
-      });
-
-    // Icon text inside node
-    nodeEnter.append("text")
-      .attr("text-anchor", "middle")
-      .attr("dy", "0.35em")
-      .attr("fill", d => nodeColor(d.type))
-      .attr("font-size", d => d.type === "company" ? "14px" : "11px")
-      .attr("font-weight", "500")
-      .attr("pointer-events", "none")
-      .text(d => {
-        switch (d.type) {
-          case "company": return d.name.charAt(0);
-          case "politician": return d.data.party ? d.data.party.charAt(0) : "P";
-          case "legislation": return "§";
-          case "dark-money": return "$";
-          case "agency": return "★";
-          default: return "•";
-        }
-      });
-
-    nodeEnter.transition().duration(500).attr("opacity", 1);
-
-    // Events
-    nodeEnter
-      .on("mouseover", function(event, d) {
-        d3.select(this).select("circle")
-          .transition().duration(200)
-          .attr("stroke-width", d.type === "company" ? 3 : 2.5);
-        let html = `<div class="tooltip-title">${d.name}</div>`;
-        if (d.type === "company") {
-          html += `<div class="tooltip-type" style="color:var(--gold)">COMPANY</div>`;
-          if (d.data.pacSpending) html += `<div class="tooltip-detail">PAC: <span class="tooltip-amount">$${(d.data.pacSpending/1000000).toFixed(1)}M</span></div>`;
-          if (d.data.impactStat) html += `<div class="tooltip-detail" style="color:var(--red)">${d.data.impactStat}</div>`;
-          if (!d.expanded) html += `<div class="tooltip-detail" style="margin-top:6px;opacity:0.5">Click to investigate →</div>`;
-        } else if (d.type === "politician") {
-          html += `<div class="tooltip-type" style="color:var(--blue)">POLITICIAN (${d.data.party})</div>`;
-          html += `<div class="tooltip-detail">${d.data.committee}</div>`;
-          html += `<div class="tooltip-detail" style="margin-top:4px;opacity:0.5">Double-click to see funders</div>`;
-        } else if (d.type === "legislation") {
-          html += `<div class="tooltip-type" style="color:var(--green)">LEGISLATION</div>`;
-          html += `<div class="tooltip-detail">${d.data.description}</div>`;
-        } else if (d.type === "dark-money") {
-          html += `<div class="tooltip-type" style="color:var(--red)">DARK MONEY</div>`;
-          html += `<div class="tooltip-detail">${d.data.description}</div>`;
-        } else if (d.type === "agency") {
-          html += `<div class="tooltip-type" style="color:var(--orange)">AGENCY</div>`;
-        }
-        showTooltip(event, html);
-      })
-      .on("mousemove", positionTooltip)
-      .on("mouseout", function(event, d) {
-        d3.select(this).select("circle")
-          .transition().duration(200)
-          .attr("stroke-width", d.type === "company" ? 2 : 1.5);
-        hideTooltip();
-      })
-      .on("click", function(event, d) {
-        event.stopPropagation();
-        if (d.type === "company") {
-          expandCompany(d);
-          openDetailPanel(d);
-        } else {
-          openDetailPanel(d);
-        }
-      })
-      .on("dblclick", function(event, d) {
-        event.stopPropagation();
-        if (d.type === "politician") {
-          expandPolitician(d);
-        }
-      });
-
-    // Update simulation
-    simulation.nodes(visibleNodes);
-    simulation.force("link").links(visibleLinks);
-    simulation.alpha(0.5).restart();
-
-    simulation.on("tick", () => {
-      linkGroup.selectAll("line.link-line")
-        .attr("x1", d => d.source.x)
-        .attr("y1", d => d.source.y)
-        .attr("x2", d => d.target.x)
-        .attr("y2", d => d.target.y);
-
-      nodeGroup.selectAll("g.node")
-        .attr("transform", d => `translate(${d.x},${d.y})`);
-    });
-  }
-
-  function dragStarted(event, d) {
-    if (!event.active) simulation.alphaTarget(0.3).restart();
-    d.fx = d.x;
-    d.fy = d.y;
-  }
-  function dragged(event, d) {
-    d.fx = event.x;
-    d.fy = event.y;
-  }
-  function dragEnded(event, d) {
-    if (!event.active) simulation.alphaTarget(0);
-    d.fx = null;
-    d.fy = null;
-  }
-
-  // Expand company connections
-  function expandCompany(companyNode) {
-    if (companyNode.expanded) return;
-    companyNode.expanded = true;
-
-    const companyData = companyNode.data;
-
-    // Show connected politicians
-    companyData.topRecipients.forEach(r => {
-      const pol = graphData.nodes.find(n => n.name === r.name);
-      if (pol) pol.visible = true;
-    });
-
-    // Show connected legislation
-    companyData.lobbying.forEach(lob => {
-      const leg = graphData.nodes.find(n => n.name === lob || (n.data && n.data.fullName === lob));
-      if (leg) leg.visible = true;
-    });
-
-    // Show dark money
-    companyData.darkMoney.forEach(dm => {
-      let dmNode;
-      if (dm.target === "Congressional Leadership Fund") dmNode = graphData.nodes.find(n => n.id === "clf");
-      else if (dm.target === "American Action Network") dmNode = graphData.nodes.find(n => n.id === "aan");
-      else if (dm.target === "First Amendment Fund") dmNode = graphData.nodes.find(n => n.id === "faf");
-      else if (dm.target.includes("Musk")) dmNode = graphData.nodes.find(n => n.id === "musk-pac");
-      if (dmNode) dmNode.visible = true;
-    });
-
-    // Show agencies (revolving door)
-    companyData.revolvingDoor.forEach(rd => {
-      const agencyId = rd.to.includes("Defense") ? "dod" : rd.to.includes("FAA") ? "faa" : null;
-      if (agencyId) {
-        const agency = graphData.nodes.find(n => n.id === agencyId);
-        if (agency) agency.visible = true;
-      }
-    });
-
-    // Show all links from this company
-    graphData.links.forEach(l => {
-      const srcId = typeof l.source === "object" ? l.source.id : l.source;
-      if (srcId === companyNode.id) l.visible = true;
-    });
-
-    render();
-  }
-
-  // Expand politician connections (show all companies funding them)
-  function expandPolitician(polNode) {
-    companies.forEach(c => {
-      const funds = c.topRecipients.find(r => r.name === polNode.name);
-      if (funds) {
-        const compNode = graphData.nodes.find(n => n.id === c.id);
-        if (compNode && !compNode.expanded) {
-          expandCompany(compNode);
-        }
-        // Ensure the link is visible
-        graphData.links.forEach(l => {
-          const srcId = typeof l.source === "object" ? l.source.id : l.source;
-          const tgtId = typeof l.target === "object" ? l.target.id : l.target;
-          if (srcId === c.id && tgtId === polNode.id) l.visible = true;
-        });
-      }
-    });
-    render();
-  }
-
-  // Detail panel
-  function openDetailPanel(node) {
-    const panel = document.getElementById("detail-panel");
-    const overlay = document.getElementById("panel-overlay");
-    const title = document.getElementById("panel-title");
-    const content = document.getElementById("panel-content");
-
-    selectedNode = node;
-    title.textContent = node.name;
-
-    let html = "";
-
-    if (node.type === "company") {
-      const c = node.data;
-      const typeColor = "#F0C040";
-      html += `<div class="detail-tag" style="background:rgba(240,192,64,0.12);color:#F0C040;margin-bottom:16px;">Company</div>`;
-
-      // PAC Spending
-      html += `<div class="detail-section">
-        <div class="detail-section-title">PAC Spending</div>
-        <div class="detail-stat">
-          <span class="detail-stat-label">Total PAC Contributions</span>
-          <span class="detail-stat-value">${c.pacSpending ? '$' + (c.pacSpending / 1000000).toFixed(1) + 'M' : 'No PAC'}</span>
-        </div>
-      </div>`;
-
-      // Top Politicians Funded
-      if (c.topRecipients.length) {
-        html += `<div class="detail-section">
-          <div class="detail-section-title">Top Politicians Funded</div>`;
-        c.topRecipients.forEach(r => {
-          const polId = politicians.find(p => p.name === r.name)?.id;
-          const rcLinkId = polId ? receiptChainLookup[`${c.id}-${polId}`] : null;
-          const rcLink = rcLinkId ? `<div class="detail-receipt-link" onclick="event.stopPropagation(); openReceiptChain('${rcLinkId}')">See the receipt chain →</div>` : '';
-          html += `<div class="detail-list-item">
-            <div class="detail-list-dot" style="background:hsl(213,88%,73%)"></div>
-            <div class="detail-list-text"><strong>${r.name}</strong> (${r.party})<br><span style="font-family:var(--font-mono);color:var(--gold)">$${(r.amount/1000).toFixed(0)}K</span>${rcLink}</div>
-          </div>`;
-        });
-        html += `</div>`;
-      }
-
-      // Lobbying
-      if (c.lobbying.length) {
-        html += `<div class="detail-section">
-          <div class="detail-section-title">Key Legislation Lobbied</div>`;
-        c.lobbying.forEach(l => {
-          html += `<div class="detail-list-item">
-            <div class="detail-list-dot" style="background:hsl(157,100%,64%)"></div>
-            <div class="detail-list-text">${l}</div>
-          </div>`;
-        });
-        html += `</div>`;
-      }
-
-      // Dark Money
-      if (c.darkMoney.length) {
-        html += `<div class="detail-section">
-          <div class="detail-section-title">Dark Money Channels</div>`;
-        c.darkMoney.forEach(dm => {
-          html += `<div class="detail-list-item">
-            <div class="detail-list-dot" style="background:hsl(348,90%,65%)"></div>
-            <div class="detail-list-text"><strong>${dm.target}</strong><br><span style="font-family:var(--font-mono);color:hsl(348,90%,65%)">$${dm.amount >= 1000000 ? (dm.amount/1000000).toFixed(0)+'M' : (dm.amount/1000).toFixed(0)+'K'}</span></div>
-          </div>`;
-        });
-        html += `</div>`;
-      }
-
-      // Revolving Door
-      if (c.revolvingDoor.length) {
-        html += `<div class="detail-section">
-          <div class="detail-section-title">Revolving Door</div>`;
-        c.revolvingDoor.forEach(rd => {
-          html += `<div class="detail-list-item">
-            <div class="detail-list-dot" style="background:hsl(280,70%,70%)"></div>
-            <div class="detail-list-text"><strong>${rd.name}</strong><br>${rd.from} → ${rd.to}</div>
-          </div>`;
-        });
-        html += `</div>`;
-      }
-
-      // Impact
-      html += `<div class="detail-section">
-        <div class="detail-section-title">Why This Matters</div>
-        <div class="detail-impact">${c.impact.replace(/(\$[\d,.]+[BMK]?|\d+ dead|\d+\+? (?:layoffs|workers|complaints|violations|users))/g, '<strong>$1</strong>')}</div>
-      </div>`;
-
-      // INVESTIGATE button — find first matching receipt chain for this company
-      const companyChainId = receiptChainLookup[`company-${c.id}`];
-      if (companyChainId) {
-        html += `<button class="detail-investigate-btn" onclick="openReceiptChain('${companyChainId}')">
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/></svg>
-          INVESTIGATE →
-        </button>`;
-      }
-
-    } else if (node.type === "politician") {
-      const p = node.data;
-      const partyColor = p.party.startsWith("R") ? "hsl(348,70%,60%)" : p.party.startsWith("D") ? "hsl(213,88%,73%)" : "hsl(280,60%,65%)";
-      html += `<div class="detail-tag" style="background:${partyColor}22;color:${partyColor};margin-bottom:16px;">${p.party}</div>`;
-      html += `<div class="detail-section">
-        <div class="detail-section-title">Committee</div>
-        <div class="detail-list-item">
-          <div class="detail-list-text">${p.committee}</div>
-        </div>
-      </div>`;
-
-      // Who funds this politician
-      const funders = [];
-      companies.forEach(c => {
-        c.topRecipients.forEach(r => {
-          if (r.name === node.name) {
-            funders.push({ company: c.name, amount: r.amount });
-          }
-        });
-      });
-      if (funders.length) {
-        html += `<div class="detail-section">
-          <div class="detail-section-title">Funded By</div>`;
-        funders.sort((a, b) => b.amount - a.amount).forEach(f => {
-          html += `<div class="detail-list-item">
-            <div class="detail-list-dot" style="background:#F0C040"></div>
-            <div class="detail-list-text"><strong>${f.company}</strong><br><span style="font-family:var(--font-mono);color:var(--gold)">$${(f.amount/1000).toFixed(0)}K</span></div>
-          </div>`;
-        });
-        html += `</div>`;
-      }
-
-      const totalReceived = funders.reduce((s, f) => s + f.amount, 0);
-      if (totalReceived) {
-        html += `<div class="detail-section">
-          <div class="detail-stat">
-            <span class="detail-stat-label">Total from tracked companies</span>
-            <span class="detail-stat-value">$${(totalReceived/1000).toFixed(0)}K</span>
-          </div>
-        </div>`;
-      }
-
-    } else if (node.type === "legislation") {
-      const l = node.data;
-      html += `<div class="detail-tag" style="background:rgba(70,255,180,0.12);color:hsl(157,100%,64%);margin-bottom:16px;">Legislation</div>`;
-      html += `<div class="detail-section">
-        <div class="detail-section-title">${l.fullName}</div>
-        <div class="detail-list-item">
-          <div class="detail-list-text">${l.description}</div>
-        </div>
-      </div>`;
-
-      // Who lobbies on this
-      const lobbyists = [];
-      companies.forEach(c => {
-        if (c.lobbying.includes(node.name) || c.lobbying.includes(l.fullName)) {
-          lobbyists.push(c.name);
-        }
-      });
-      if (lobbyists.length) {
-        html += `<div class="detail-section">
-          <div class="detail-section-title">Lobbied By</div>`;
-        lobbyists.forEach(name => {
-          html += `<div class="detail-list-item">
-            <div class="detail-list-dot" style="background:#F0C040"></div>
-            <div class="detail-list-text"><strong>${name}</strong></div>
-          </div>`;
-        });
-        html += `</div>`;
-      }
-
-    } else if (node.type === "dark-money") {
-      html += `<div class="detail-tag" style="background:rgba(236,95,124,0.12);color:hsl(348,90%,65%);margin-bottom:16px;">Dark Money</div>`;
-      html += `<div class="detail-section">
-        <div class="detail-list-item">
-          <div class="detail-list-text">${node.data.description}</div>
-        </div>
-      </div>`;
-
-      // Who funds this
-      const donors = [];
-      companies.forEach(c => {
-        c.darkMoney.forEach(dm => {
-          const dmId = dm.target === "Congressional Leadership Fund" ? "clf" :
-                       dm.target === "American Action Network" ? "aan" :
-                       dm.target === "First Amendment Fund" ? "faf" :
-                       dm.target.includes("Musk") ? "musk-pac" : null;
-          if (dmId === node.id) {
-            donors.push({ company: c.name, amount: dm.amount });
-          }
-        });
-      });
-      if (donors.length) {
-        html += `<div class="detail-section">
-          <div class="detail-section-title">Funded By</div>`;
-        donors.forEach(d => {
-          html += `<div class="detail-list-item">
-            <div class="detail-list-dot" style="background:#F0C040"></div>
-            <div class="detail-list-text"><strong>${d.company}</strong><br><span style="font-family:var(--font-mono);color:hsl(348,90%,65%)">$${d.amount >= 1000000 ? (d.amount/1000000).toFixed(0)+'M' : (d.amount/1000).toFixed(0)+'K'}</span></div>
-          </div>`;
-        });
-        html += `</div>`;
-      }
-
-    } else if (node.type === "agency") {
-      html += `<div class="detail-tag" style="background:rgba(240,160,60,0.12);color:hsl(30,90%,65%);margin-bottom:16px;">Agency</div>`;
-      // Who has revolving door to this agency
-      const rds = [];
-      companies.forEach(c => {
-        c.revolvingDoor.forEach(rd => {
-          const agencyId = rd.to.includes("Defense") ? "dod" : rd.to.includes("FAA") ? "faa" : null;
-          if (agencyId === node.id) {
-            rds.push({ person: rd.name, company: c.name, from: rd.from, to: rd.to });
-          }
-        });
-      });
-      if (rds.length) {
-        html += `<div class="detail-section">
-          <div class="detail-section-title">Revolving Door Connections</div>`;
-        rds.forEach(rd => {
-          html += `<div class="detail-list-item">
-            <div class="detail-list-dot" style="background:hsl(280,70%,70%)"></div>
-            <div class="detail-list-text"><strong>${rd.person}</strong><br>${rd.company} (${rd.from}) → ${rd.to}</div>
-          </div>`;
-        });
-        html += `</div>`;
-      }
-    }
-
-    content.innerHTML = html;
-    panel.classList.add("open");
-    overlay.classList.add("visible");
-  }
-
-  function closeDetailPanel() {
-    document.getElementById("detail-panel").classList.remove("open");
-    document.getElementById("panel-overlay").classList.remove("visible");
-    selectedNode = null;
-  }
-
-  document.getElementById("panel-close").addEventListener("click", closeDetailPanel);
-  document.getElementById("panel-overlay").addEventListener("click", closeDetailPanel);
-
-  // SVG click to deselect
-  svg.on("click", () => {
-    closeDetailPanel();
-  });
-
-  // Filter chips
-  document.querySelectorAll(".chip").forEach(chip => {
-    chip.addEventListener("click", () => {
-      document.querySelectorAll(".chip").forEach(c => c.classList.remove("active"));
-      chip.classList.add("active");
-      activeFilter = chip.dataset.type;
-      render();
-    });
-  });
-
-  // Search
-  const searchInput = document.getElementById("search-input");
-  searchInput.addEventListener("input", () => {
-    searchTerm = searchInput.value.toLowerCase().trim();
-    if (!searchTerm) {
-      // Reset: show all visible nodes at full opacity
-      nodeGroup.selectAll("g.node").attr("opacity", 1);
-      linkGroup.selectAll("line.link-line").attr("opacity", 0.35);
-      return;
-    }
-
-    nodeGroup.selectAll("g.node").attr("opacity", d => {
-      return d.name.toLowerCase().includes(searchTerm) ? 1 : 0.15;
-    });
-    linkGroup.selectAll("line.link-line").attr("opacity", d => {
-      const srcName = (typeof d.source === "object" ? d.source.name : "").toLowerCase();
-      const tgtName = (typeof d.target === "object" ? d.target.name : "").toLowerCase();
-      return (srcName.includes(searchTerm) || tgtName.includes(searchTerm)) ? 0.6 : 0.05;
-    });
-
-    // If exact company match, expand it
-    const match = graphData.nodes.find(n => n.type === "company" && n.name.toLowerCase().includes(searchTerm) && !n.expanded);
-    if (match) expandCompany(match);
-  });
-
-  // Handle resize
-  window.addEventListener("resize", () => {
-    const w = container.clientWidth;
-    const h = container.clientHeight;
-    svg.attr("width", w).attr("height", h);
-  });
-
-  // Keyboard escape
-  document.addEventListener("keydown", (e) => {
-    if (e.key === "Escape") closeDetailPanel();
-  });
-
-  // Initial render — only companies visible
-  render();
-
-  // Expose render for external use
-  window.renderGraph = render;
-  window.expandCompany = expandCompany;
-}
-
-// =========================================================
-// RECEIPT CHAIN DATA
-// =========================================================
-const receiptChains = {
-  "boeing-hudson": {
-    id: "boeing-hudson",
-    company: "Boeing",
-    companyId: "boeing",
-    politician: "Rep. Richard Hudson (R-NC)",
-    politicianId: "hudson",
-    beats: {
-      money: {
-        amount: 48000,
-        amountDisplay: "$48,000",
-        flow: "from <strong>Boeing PAC</strong> → to <strong>Rep. Richard Hudson</strong> (R-NC)",
-        context: "Combined defense industry donations to Hudson: $76K+. Boeing spent $12.4M/year lobbying Congress. FEC filing, 2022-2024 cycle."
+    id: 'boeing',
+    company: 'Boeing',
+    amount: '$15.7M',
+    amountNum: 15700000,
+    status: 'open',
+    summary: 'Defense contractor PAC spending & lobbying on self-inspection policies',
+    beats: [
+      {
+        type: 'money',
+        tag: 'THE MONEY',
+        headline: 'Boeing PAC contributed $15.7M to federal candidates since 2000',
+        body: 'Top recipient: Rep. Richard Hudson (R-NC) — $48,200 this cycle alone. Boeing\'s PAC ranks among the top 20 corporate PACs in total federal giving. They also spent $12.4M on lobbying in 2023.',
+        amount: '$15.7M',
+        detail: 'PAC + lobbying combined'
       },
-      access: {
-        committee: "House Armed Services Committee",
-        writes: "Writes the NDAA — decides which defense contracts get funded",
-        detail: "Hudson sits on the committee that authorizes $886B in annual defense spending. Boeing spends $12.4M/year lobbying this committee. Every F-15, F/A-18, and KC-46 contract flows through here."
+      {
+        type: 'access',
+        tag: 'THE ACCESS',
+        headline: 'Hudson sits on the House Armed Services Committee',
+        body: 'This committee writes the National Defense Authorization Act — the bill that decides how $886 billion in military spending gets allocated. Boeing received $28.6B in Pentagon contracts in FY2023. The same politicians receiving Boeing money vote on Boeing contracts.',
+        amount: '$886B',
+        detail: 'NDAA authorization controlled by these committees'
       },
-      impact: {
-        stat: "346 DEAD",
-        context: "Boeing got self-certification authority over its own planes — the FAA let Boeing approve its own safety inspections.",
-        facts: [
-          "346 people died in two 737 MAX crashes (Lion Air 610, Ethiopian Airlines 302)",
-          "$2.5B DOJ settlement — Boeing admitted to fraud",
-          "Boeing employees who reported safety concerns were retaliated against",
-          "Whistleblower John Barnett found dead during lawsuit deposition",
-          "Self-certification deal meant Boeing approved its own safety — regulators looked away"
-        ],
-        verdict: "This is what your employer's PAC money pays for."
+      {
+        type: 'impact',
+        tag: 'THE IMPACT',
+        headline: '346 people died in two 737 MAX crashes',
+        body: 'After decades of lobbying, Boeing won the right to self-inspect its own aircraft through the FAA\'s Organization Designation Authorization program. Two 737 MAX planes crashed in 2018-2019 due to a faulty sensor system (MCAS) that Boeing\'s own inspectors approved. Whistleblower John Barnett, who raised safety concerns for years, was found dead during his lawsuit against Boeing.',
+        amount: '346',
+        detail: 'lives lost — Lion Air 610 & Ethiopian 302'
       }
+    ],
+    nodes: {
+      company: { name: 'Boeing', detail: 'Defense & Aerospace', x: 0.3, y: 0.3 },
+      politician: { name: 'Rep. Richard Hudson', detail: 'R-NC-09 · Armed Services', x: 0.6, y: 0.25 },
+      impact: { name: '737 MAX Crashes', detail: '346 dead · Self-inspection failure', x: 0.7, y: 0.55 }
     },
-    related: ["amazon-cantwell", "jpmorgan-schumer"]
+    connections: [
+      { from: 'company', to: 'politician', label: '$48,200 PAC', type: 'money' },
+      { from: 'politician', to: 'impact', label: 'Armed Services Committee', type: 'access' }
+    ]
   },
-  "amazon-cantwell": {
-    id: "amazon-cantwell",
-    company: "Amazon",
-    companyId: "amazon",
-    politician: "Sen. Maria Cantwell (D-WA)",
-    politicianId: "cantwell",
-    beats: {
-      money: {
-        amount: 35000,
-        amountDisplay: "$35,000",
-        flow: "from <strong>Amazon PAC</strong> → to <strong>Sen. Maria Cantwell</strong> (D-WA)",
-        context: "Amazon spent $20.3M on lobbying in 2023 alone. One of the largest corporate lobbying operations in Washington. FEC + LDA disclosures."
+  {
+    id: 'amazon',
+    company: 'Amazon',
+    amount: '$22.4M',
+    amountNum: 22400000,
+    status: 'open',
+    summary: 'Tech giant PAC & lobbying targeting labor and antitrust legislation',
+    beats: [
+      {
+        type: 'money',
+        tag: 'THE MONEY',
+        headline: 'Amazon spent $22.4M on lobbying in 2023 alone',
+        body: 'Sen. Maria Cantwell (D-WA) received $57,000 from Amazon-connected donors. Amazon\'s PAC gave to 128 members of Congress across both parties. Their lobbying spend has tripled since 2015.',
+        amount: '$22.4M',
+        detail: 'single-year lobbying spend (2023)'
       },
-      access: {
-        committee: "Senate Commerce Committee (Chair)",
-        writes: "Oversees antitrust, labor regulation, and tech policy",
-        detail: "Cantwell chairs the committee that regulates Amazon's core business. She represents Washington state — Amazon's home turf. Every antitrust bill, labor regulation, and tech policy proposal goes through her desk."
+      {
+        type: 'access',
+        tag: 'THE ACCESS',
+        headline: 'Cantwell chairs the Senate Commerce Committee',
+        body: 'This committee oversees tech regulation, antitrust enforcement, and consumer protection. Cantwell has repeatedly softened proposed tech regulations. Amazon HQ2 is in her state. She pushed for weaker versions of the American Innovation and Choice Online Act.',
+        amount: '128',
+        detail: 'members of Congress receiving Amazon PAC money'
       },
-      impact: {
-        stat: "2× INJURY RATE",
-        context: "Amazon warehouse workers report injury rates double the industry average. The company that delivers your packages in 24 hours does it by breaking workers' bodies.",
-        facts: [
-          "$61.7M settlement for stealing tips from delivery drivers",
-          "100,000+ layoffs since 2022 while revenue hit record highs",
-          "Workers forced to urinate in bottles due to impossible delivery quotas",
-          "Warehouse injury rates 2x the industry average — OSHA citations",
-          "Aggressive anti-union campaigns at warehouses nationwide"
-        ],
-        verdict: "This is what your employer's PAC money pays for."
+      {
+        type: 'impact',
+        tag: 'THE IMPACT',
+        headline: 'Amazon warehouse workers suffer injuries at 2x the industry rate',
+        body: 'OSHA data shows Amazon\'s serious injury rate is double the warehouse industry average. Workers report being penalized for bathroom breaks. In 2023, the NLRB found Amazon illegally fired union organizers at the JFK8 Staten Island warehouse. Meanwhile, Amazon argued to the Supreme Court that the NLRB itself is unconstitutional.',
+        amount: '2x',
+        detail: 'injury rate vs. industry average'
       }
+    ],
+    nodes: {
+      company: { name: 'Amazon', detail: 'Tech / Logistics', x: 0.25, y: 0.5 },
+      politician: { name: 'Sen. Maria Cantwell', detail: 'D-WA · Commerce Chair', x: 0.55, y: 0.35 },
+      impact: { name: 'Worker Safety Crisis', detail: '2x injury rate · Union busting', x: 0.65, y: 0.65 }
     },
-    related: ["boeing-hudson", "starbucks-antiunion"]
+    connections: [
+      { from: 'company', to: 'politician', label: '$57,000 donors', type: 'money' },
+      { from: 'politician', to: 'impact', label: 'Commerce Committee', type: 'access' }
+    ]
   },
-  "jpmorgan-schumer": {
-    id: "jpmorgan-schumer",
-    company: "JPMorgan Chase",
-    companyId: "jpmorgan",
-    politician: "Sen. Chuck Schumer (D-NY)",
-    politicianId: "schumer",
-    beats: {
-      money: {
-        amount: 45000,
-        amountDisplay: "$45,000",
-        flow: "from <strong>JPMorgan Chase PAC</strong> → to <strong>Sen. Chuck Schumer</strong> (D-NY)",
-        context: "JPMorgan spent $8.6M on lobbying in 2023. They lobby on Dodd-Frank rollback, crypto regulation, and banking deregulation. FEC + LDA disclosures."
+  {
+    id: 'jpmorgan',
+    company: 'JPMorgan Chase',
+    amount: '$11.2M',
+    amountNum: 11200000,
+    status: 'classified',
+    summary: 'Wall Street\'s largest bank and its influence over financial regulation',
+    beats: [
+      {
+        type: 'money',
+        tag: 'THE MONEY',
+        headline: 'JPMorgan PAC gave $11.2M to federal candidates since 2010',
+        body: 'Senate Majority Leader Chuck Schumer (D-NY) received $742,000 from JPMorgan-connected donors over his career. JPMorgan spent $9.8M on lobbying in 2023. Their PAC is the single largest bank PAC in America.',
+        amount: '$742K',
+        detail: 'to Schumer from JPMorgan-connected donors'
       },
-      access: {
-        committee: "Senate Majority Leader",
-        writes: "Controls which bills reach the Senate floor for a vote",
-        detail: "Schumer decides what gets voted on in the Senate. NYC is JPMorgan's home turf. They lobby him on Dodd-Frank rollback, crypto regulation, and banking deregulation — the rules that are supposed to prevent another 2008."
+      {
+        type: 'access',
+        tag: 'THE ACCESS',
+        headline: 'Schumer controls what legislation reaches the Senate floor',
+        body: 'As Majority Leader, Schumer decides which bills get a vote. He blocked the Restoring Wall Street Reform Act that would have reinstated Glass-Steagall separation of commercial and investment banking. JPMorgan lobbied on 47 separate bills in 2023.',
+        amount: '47',
+        detail: 'bills JPMorgan lobbied on in a single year'
       },
-      impact: {
-        stat: "$39 BILLION",
-        context: "$39 billion in fines since 2000 — and JPMorgan is still the largest bank in America. The fines are a cost of doing business.",
-        facts: [
-          "Paid $920M for manipulating precious metals and Treasury markets",
-          "Enabled Bernie Madoff's $65B Ponzi scheme — paid $2.6B in settlements",
-          "$13B settlement for mortgage fraud leading up to 2008 crisis",
-          "Still the largest bank in America by assets ($3.7 trillion)",
-          "CEO Jamie Dimon compensation: $36M in 2023"
-        ],
-        verdict: "This is what your employer's PAC money pays for."
+      {
+        type: 'impact',
+        tag: 'THE IMPACT',
+        headline: 'JPMorgan paid $39B in legal settlements since 2000',
+        body: 'The bank has paid more in fines and settlements than any company in history — for mortgage fraud, market manipulation, Epstein connections, and sanctions violations. Yet no senior executive has faced criminal charges. In 2023 alone, they paid $290M to settle Epstein-related claims. The cycle continues: pay fines, lobby against regulation, repeat.',
+        amount: '$39B',
+        detail: 'in legal settlements — zero executives jailed'
       }
+    ],
+    nodes: {
+      company: { name: 'JPMorgan Chase', detail: 'Banking / Finance', x: 0.35, y: 0.4 },
+      politician: { name: 'Sen. Chuck Schumer', detail: 'D-NY · Majority Leader', x: 0.6, y: 0.3 },
+      impact: { name: 'Regulatory Capture', detail: '$39B in fines · 0 executives jailed', x: 0.55, y: 0.65 }
     },
-    related: ["boeing-hudson", "disney-darkmoney"]
+    connections: [
+      { from: 'company', to: 'politician', label: '$742K career', type: 'money' },
+      { from: 'politician', to: 'impact', label: 'Blocks reform bills', type: 'access' }
+    ]
   },
-  "mcdonalds-minwage": {
-    id: "mcdonalds-minwage",
+  {
+    id: 'mcdonalds',
     company: "McDonald's",
-    companyId: "mcdonalds",
-    politician: "Minimum Wage Blockers",
-    politicianId: null,
-    beats: {
-      money: {
-        amount: 3200000,
-        amountDisplay: "$3.2M",
-        flow: "from <strong>McDonald's PAC</strong> → to <strong>Labor Committee members</strong>",
-        context: "$3.2M in total PAC spending. Top recipients sit on committees that control minimum wage legislation. Also funded the National Restaurant Association — 'the other NRA' — which blocks wage bills."
+    amount: '$8.3M',
+    amountNum: 8300000,
+    status: 'classified',
+    summary: 'Fast food lobbying against minimum wage and worker protections',
+    beats: [
+      {
+        type: 'money',
+        tag: 'THE MONEY',
+        headline: "McDonald's & the National Restaurant Association spent $8.3M lobbying in 2023",
+        body: "The NRA (the \"other NRA\") is the restaurant industry's lobbying arm, and McDonald's is its largest member. They gave to 83 members of Congress who sit on labor committees. McDonald's CEO made $19.2M in 2023 — 1,212x the median worker salary.",
+        amount: '$19.2M',
+        detail: "CEO compensation — 1,212x median worker pay"
       },
-      access: {
-        committee: "Labor & Workforce Committees",
-        writes: "Block every federal minimum wage increase since 2009",
-        detail: "McDonald's funded the National Restaurant Association ('the other NRA'), the most powerful lobby blocking federal wage increases. The federal minimum wage has been $7.25/hr since 2009 — the longest period without an increase in history."
+      {
+        type: 'access',
+        tag: 'THE ACCESS',
+        headline: 'Lobbied against every federal minimum wage increase since 2009',
+        body: "The federal minimum wage has been $7.25/hour since 2009 — the longest period without an increase in history. McDonald's and the NRA spent millions lobbying against the Raise the Wage Act every time it was introduced. They fund \"economic research\" claiming wage increases kill jobs, despite evidence from states that raised wages.",
+        amount: '$7.25',
+        detail: "federal minimum wage — frozen since 2009"
       },
-      impact: {
-        stat: "$7.25/HR",
-        context: "1 in 8 Americans has worked at McDonald's. The federal minimum wage hasn't moved since 2009 while McDonald's CEO makes $20M+.",
-        facts: [
-          "$45.8M in workplace violations — wage theft, safety, child labor",
-          "1 in 8 Americans has worked at McDonald's at some point",
-          "CEO Chris Kempczinski compensation: $20M+ per year",
-          "Franchise model shields corporate from direct liability for worker conditions",
-          "Federal minimum wage frozen at $7.25 since July 2009"
-        ],
-        verdict: "This is what your employer's PAC money pays for."
+      {
+        type: 'impact',
+        tag: 'THE IMPACT',
+        headline: "McDonald's workers rely on $1.2B in public assistance annually",
+        body: "A UC Berkeley study found McDonald's low wages cost taxpayers $1.2B per year in food stamps, Medicaid, and housing assistance for employees. Meanwhile, McDonald's spent $5.2B on stock buybacks in 2023, directly enriching shareholders instead of paying workers a living wage. The company has also been cited for child labor violations in multiple states.",
+        amount: '$1.2B',
+        detail: "annual taxpayer subsidy for McDonald's worker wages"
       }
+    ],
+    nodes: {
+      company: { name: "McDonald's", detail: 'Fast Food / QSR', x: 0.3, y: 0.45 },
+      politician: { name: 'National Restaurant Assn', detail: '"The Other NRA" · Lobby Group', x: 0.55, y: 0.3 },
+      impact: { name: 'Minimum Wage Freeze', detail: '$7.25 since 2009 · $1.2B taxpayer cost', x: 0.6, y: 0.6 }
     },
-    related: ["starbucks-antiunion", "disney-darkmoney"]
+    connections: [
+      { from: 'company', to: 'politician', label: '$8.3M lobbying', type: 'money' },
+      { from: 'politician', to: 'impact', label: 'Blocks wage bills', type: 'access' }
+    ]
   },
-  "starbucks-antiunion": {
-    id: "starbucks-antiunion",
-    company: "Starbucks",
-    companyId: "starbucks",
-    politician: "Anti-Union Apparatus",
-    politicianId: null,
-    beats: {
-      money: {
-        amount: 1100000,
-        amountDisplay: "$1.1M",
-        flow: "from <strong>Starbucks PAC</strong> + <strong>Howard Schultz personal donations</strong>",
-        context: "$1.1M in PAC spending. Howard Schultz personally donated to anti-labor candidates. But the real spend is on union-busting: Starbucks hired Littler Mendelson, the largest anti-union law firm in America."
+  {
+    id: 'starbucks',
+    company: 'Starbucks',
+    amount: '$4.8M',
+    amountNum: 4800000,
+    status: 'classified',
+    summary: 'Anti-union campaign spending and labor law violations',
+    beats: [
+      {
+        type: 'money',
+        tag: 'THE MONEY',
+        headline: 'Starbucks spent $4.8M on anti-union consultants and legal fees in 2 years',
+        body: "Since the first Starbucks union victory in Buffalo (2021), the company hired Littler Mendelson — the world's largest anti-union law firm — and spent millions on captive audience meetings, union avoidance consultants, and legal challenges to NLRB authority.",
+        amount: '$4.8M',
+        detail: 'on union avoidance in 2 years'
       },
-      access: {
-        committee: "NLRB + Federal Courts",
-        writes: "Filed challenges arguing the NLRB itself is unconstitutional",
-        detail: "Starbucks hired Littler Mendelson — the largest anti-union law firm in America. They didn't just fight individual union drives. They filed legal challenges arguing the National Labor Relations Board itself is unconstitutional — trying to destroy the entire framework of worker organizing rights."
+      {
+        type: 'access',
+        tag: 'THE ACCESS',
+        headline: 'Joined Amazon & SpaceX in challenging the NLRB\'s constitutionality',
+        body: 'Starbucks doesn\'t just fight individual union elections — they\'re trying to dismantle the agency that protects workers\' right to organize. They argue the NLRB\'s structure violates the Constitution. If successful, it would gut worker protections for every American employee.',
+        amount: '500+',
+        detail: 'unfair labor practice charges filed against Starbucks'
       },
-      impact: {
-        stat: "400+ COMPLAINTS",
-        context: "Over 400 NLRB complaints filed against Starbucks. Workers who organized faced retaliation, schedule cuts, and store closures.",
-        facts: [
-          "400+ unfair labor practice complaints filed with the NLRB",
-          "Fired union organizers — NLRB ordered reinstatement multiple times",
-          "Closed stores after workers voted to unionize",
-          "Workers faced retaliation: schedule cuts, hour reductions, discipline",
-          "Spent $400M+ on 'partner experience' — anti-union rebranding"
-        ],
-        verdict: "This is what your employer's PAC money pays for."
+      {
+        type: 'impact',
+        tag: 'THE IMPACT',
+        headline: 'NLRB found Starbucks illegally fired union organizers in 23 states',
+        body: "Starbucks has been ordered to reinstate fired workers, bargain in good faith, and stop retaliating. They've ignored or appealed most orders. Stores that voted to unionize had hours cut, benefits changed, and managers replaced. Despite 400+ stores voting to unionize, Starbucks has signed zero collective bargaining agreements.",
+        amount: 'ZERO',
+        detail: 'union contracts signed despite 400+ stores voting yes'
       }
+    ],
+    nodes: {
+      company: { name: 'Starbucks', detail: 'Coffee / Retail', x: 0.25, y: 0.35 },
+      politician: { name: 'NLRB Challenge', detail: 'Constitutional attack on labor rights', x: 0.55, y: 0.25 },
+      impact: { name: 'Union Busting', detail: '400+ stores voted · 0 contracts signed', x: 0.6, y: 0.55 }
     },
-    related: ["mcdonalds-minwage", "amazon-cantwell"]
+    connections: [
+      { from: 'company', to: 'politician', label: '$4.8M anti-union', type: 'money' },
+      { from: 'politician', to: 'impact', label: 'Guts NLRB authority', type: 'access' }
+    ]
   },
-  "disney-darkmoney": {
-    id: "disney-darkmoney",
-    company: "Disney",
-    companyId: "disney",
-    politician: "Dark Money Network",
-    politicianId: null,
-    beats: {
-      money: {
-        amount: 1900000,
-        amountDisplay: "$1.9M",
-        flow: "from <strong>Disney PAC</strong> → direct donations + <strong>First Amendment Fund</strong> (dark money)",
-        context: "$1.9M in direct PAC spending. Also contributed to the First Amendment Fund — a dark money vehicle that doesn't disclose its donors. You can't trace where all the money goes."
+  {
+    id: 'disney',
+    company: 'Disney',
+    amount: '$6.2M',
+    amountNum: 6200000,
+    status: 'classified',
+    summary: 'Dark money, copyright lobbying, and theme park labor exploitation',
+    beats: [
+      {
+        type: 'money',
+        tag: 'THE MONEY',
+        headline: 'Disney PAC & lobbying totaled $6.2M in 2023',
+        body: "Disney funds both parties generously and routes additional money through trade associations and dark money groups. They spent $4.1M on direct lobbying, focusing on copyright extension, streaming regulation, and Florida tax incentives. Disney's PAC gave to 94 members of Congress.",
+        amount: '$6.2M',
+        detail: 'PAC + direct lobbying (2023)'
       },
-      access: {
-        committee: "Copyright & Commerce Committees",
-        writes: "Lobbied for the Mickey Mouse Protection Act and streaming exemptions",
-        detail: "Disney lobbied for the Copyright Term Extension Act (nicknamed 'the Mickey Mouse Protection Act') — extending copyright from 75 to 95 years. They also lobbied for streaming regulation exemptions and theme park labor exemptions that let them pay workers less."
+      {
+        type: 'access',
+        tag: 'THE ACCESS',
+        headline: 'Disney has extended its copyrights 4 times through Congress',
+        body: "The Copyright Term Extension Act of 1998 (nicknamed the 'Mickey Mouse Protection Act') extended copyright to 95 years specifically to prevent Mickey Mouse from entering the public domain. Disney lobbied for every extension. They also received $578M in Florida tax breaks for Walt Disney World.",
+        amount: '95 yrs',
+        detail: 'copyright term — extended 4 times by Congress for Disney'
       },
-      impact: {
-        stat: "$233M STOLEN",
-        context: "$233M wage theft settlement affecting 51,000 workers. Disney park employees — the people who make the magic — can't afford to live near the parks.",
-        facts: [
-          "$233M wage theft settlement — 51,000 workers affected",
-          "Aggressive anti-union campaigns at parks and productions",
-          "CEO Bob Iger compensation: $32.5M in 2023",
-          "Park workers report poverty wages despite full-time hours",
-          "Dark money contributions through untraceable channels"
-        ],
-        verdict: "This is what your employer's PAC money pays for."
+      {
+        type: 'impact',
+        tag: 'THE IMPACT',
+        headline: 'Disney theme park workers qualify for food stamps',
+        body: "A 2018 study found 73% of Disneyland workers couldn't cover basic expenses. Many were homeless, sleeping in cars between shifts. Disney's CEO made $31.6M that year. After public pressure, Disney raised its minimum to $15/hour — but inflation has eroded those gains. Meanwhile, Disney spent $11B on stock buybacks since 2020.",
+        amount: '73%',
+        detail: "of Disneyland workers couldn't cover basic expenses"
       }
+    ],
+    nodes: {
+      company: { name: 'Disney', detail: 'Media / Entertainment', x: 0.3, y: 0.5 },
+      politician: { name: 'Copyright Lobbying', detail: '4 extensions · "Mickey Mouse Act"', x: 0.55, y: 0.35 },
+      impact: { name: 'Worker Poverty', detail: '73% can\'t cover expenses · CEO $31.6M', x: 0.6, y: 0.6 }
     },
-    related: ["jpmorgan-schumer", "mcdonalds-minwage"]
+    connections: [
+      { from: 'company', to: 'politician', label: '$6.2M lobbying', type: 'money' },
+      { from: 'politician', to: 'impact', label: 'Tax breaks + copyright', type: 'access' }
+    ]
   }
+];
+
+// =========================================================
+// GAME STATE
+// =========================================================
+const STATE = {
+  intel: 0,
+  connectionsFound: 0,
+  totalConnections: 0,
+  maxDepth: 0,
+  activeCaseId: null,
+  revealedBeats: {},  // { caseId: [0,1,2] }
+  declassifiedCases: new Set(),
+  nodesOnBoard: [],   // { el, caseId, nodeKey, x, y }
+  started: false,
+  complete: false,
 };
 
-// Map company+politician IDs to receipt chain IDs
-const receiptChainLookup = {};
-Object.values(receiptChains).forEach(chain => {
-  if (chain.companyId && chain.politicianId) {
-    receiptChainLookup[`${chain.companyId}-${chain.politicianId}`] = chain.id;
-  }
-  // Also map by company ID alone (for the INVESTIGATE button)
-  if (!receiptChainLookup[`company-${chain.companyId}`]) {
-    receiptChainLookup[`company-${chain.companyId}`] = chain.id;
-  }
+// Count total connections
+CASES.forEach(c => {
+  STATE.totalConnections += c.connections.length;
 });
 
 // =========================================================
-// RECEIPT CHAIN RENDERER
+// AUDIO (Web Audio API — procedural)
 // =========================================================
-function openReceiptChain(chainId) {
-  const chain = receiptChains[chainId];
-  if (!chain) return;
+let audioCtx;
+function initAudio() {
+  audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+}
+function playTone(freq, duration, type='square', vol=0.08) {
+  if (!audioCtx) return;
+  const osc = audioCtx.createOscillator();
+  const gain = audioCtx.createGain();
+  osc.type = type;
+  osc.frequency.value = freq;
+  gain.gain.setValueAtTime(vol, audioCtx.currentTime);
+  gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + duration);
+  osc.connect(gain).connect(audioCtx.destination);
+  osc.start();
+  osc.stop(audioCtx.currentTime + duration);
+}
+function sfxBoot() { playTone(200, 0.05, 'sine', 0.04); }
+function sfxClick() { playTone(800, 0.06, 'sine', 0.05); }
+function sfxUnlock() { 
+  playTone(400, 0.15, 'sine', 0.08); 
+  setTimeout(() => playTone(600, 0.15, 'sine', 0.08), 100);
+  setTimeout(() => playTone(900, 0.2, 'sine', 0.1), 200);
+}
+function sfxReveal() { playTone(300, 0.3, 'triangle', 0.06); }
+function sfxDeclassify() {
+  playTone(600, 0.1, 'sine', 0.1);
+  setTimeout(() => playTone(800, 0.1, 'sine', 0.1), 80);
+  setTimeout(() => playTone(1000, 0.15, 'sine', 0.12), 160);
+  setTimeout(() => playTone(1200, 0.2, 'sine', 0.08), 260);
+}
+function sfxComplete() {
+  [400,500,600,800,1000].forEach((f,i) => {
+    setTimeout(() => playTone(f, 0.3, 'sine', 0.08), i*120);
+  });
+}
 
-  const overlay = document.getElementById('rc-overlay');
-  const content = document.getElementById('rc-content');
+// =========================================================
+// BOOT SEQUENCE
+// =========================================================
+const BOOT_LINES = [
+  { text: '> Initializing secure connection...', cls: '' },
+  { text: '> Connecting to FEC.gov filing database...', cls: '' },
+  { text: '  ✓ FEC bulk data endpoint online', cls: 'ok' },
+  { text: '> Connecting to Senate LDA disclosure system...', cls: '' },
+  { text: '  ✓ Lobbying records loaded (2000-2025)', cls: 'ok' },
+  { text: '> Connecting to USASpending.gov...', cls: '' },
+  { text: '  ✓ Federal contract data indexed', cls: 'ok' },
+  { text: '> Loading OSHA violation records...', cls: '' },
+  { text: '  ✓ Workplace safety data merged', cls: 'ok' },
+  { text: '> Cross-referencing corporate PAC filings...', cls: '' },
+  { text: '  ⚠ 6 CASE FILES flagged for review', cls: 'warn' },
+  { text: '> Decrypting classified dossiers...', cls: '' },
+  { text: '  ⚠ 4 files require elevated clearance', cls: 'warn' },
+  { text: '> Building evidence graph...', cls: '' },
+  { text: '  ✓ 42 connections mapped', cls: 'ok' },
+  { text: '', cls: '' },
+  { text: 'ACCESS GRANTED', cls: 'access' },
+];
 
-  // Close detail panel if open
-  document.getElementById('detail-panel').classList.remove('open');
-  document.getElementById('panel-overlay').classList.remove('visible');
-
-  // Build HTML
-  const b = chain.beats;
-  let relatedHTML = '';
-  if (chain.related && chain.related.length) {
-    const cards = chain.related.map(rid => {
-      const rc = receiptChains[rid];
-      if (!rc) return '';
-      const tagColor = rc.id.includes('darkmoney') ? 'var(--red)' :
-                       rc.id.includes('antiunion') ? 'var(--purple)' :
-                       rc.id.includes('minwage') ? 'var(--orange)' : 'var(--gold)';
-      const tagBg = rc.id.includes('darkmoney') ? 'rgba(236,95,124,0.12)' :
-                    rc.id.includes('antiunion') ? 'rgba(178,132,224,0.12)' :
-                    rc.id.includes('minwage') ? 'rgba(240,160,60,0.12)' : 'rgba(240,192,64,0.12)';
-      const tagText = rc.politician.includes('Dark') ? 'DARK MONEY' :
-                      rc.politician.includes('Anti') ? 'UNION BUSTING' :
-                      rc.politician.includes('Minimum') ? 'WAGE THEFT' : 'PAC DONATION';
-      return `<div class="rc-connected-card" onclick="openReceiptChain('${rid}')">
-        <span class="rc-connected-card-arrow">→</span>
-        <span class="rc-connected-card-text"><strong>${rc.company}</strong> → ${rc.politician}</span>
-        <span class="rc-connected-card-tag" style="color:${tagColor};background:${tagBg}">${tagText}</span>
-      </div>`;
-    }).join('');
-
-    relatedHTML = `<div class="rc-connected">
-      <div class="rc-connected-title">Connected Investigations</div>
-      <div class="rc-connected-cards">${cards}</div>
-    </div>`;
+async function runBoot() {
+  const log = document.getElementById('boot-log');
+  const bar = document.getElementById('boot-bar');
+  
+  for (let i = 0; i < BOOT_LINES.length; i++) {
+    const line = BOOT_LINES[i];
+    const el = document.createElement('div');
+    el.className = 'line ' + line.cls;
+    el.textContent = line.text;
+    el.style.animationDelay = '0s';
+    log.appendChild(el);
+    log.scrollTop = log.scrollHeight;
+    bar.style.width = Math.round(((i + 1) / BOOT_LINES.length) * 100) + '%';
+    sfxBoot();
+    await sleep(line.cls === 'access' ? 600 : (line.text === '' ? 300 : 120 + Math.random() * 180));
   }
+  
+  await sleep(800);
+  document.getElementById('boot-screen').classList.add('done');
+  await sleep(400);
+  
+  const app = document.getElementById('app');
+  app.classList.add('visible');
+  
+  await sleep(300);
+  document.getElementById('intro-overlay').classList.add('visible');
+}
 
-  content.innerHTML = `
-    <div class="rc-breadcrumb">INVESTIGATION // <span>${chain.company}</span> → ${chain.politician}</div>
+// =========================================================
+// HELPERS
+// =========================================================
+function sleep(ms) { return new Promise(r => setTimeout(r, ms)); }
 
-    <div class="rc-beat rc-beat--money" id="rc-beat-1">
-      <div class="rc-beat-label">BEAT 1 — THE MONEY</div>
-      <div class="rc-amount" id="rc-amount-counter">${b.money.amountDisplay}</div>
-      <div class="rc-flow">${b.money.flow}</div>
-      <div class="rc-context">${b.money.context}</div>
-      <div class="rc-accent-line"></div>
-      <button class="rc-next-btn" onclick="revealBeat(2)">What does this buy? →</button>
-    </div>
+function showToast(msg, duration=2500) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('visible');
+  setTimeout(() => t.classList.remove('visible'), duration);
+}
 
-    <div class="rc-beat rc-beat--access" id="rc-beat-2">
-      <div class="rc-beat-label">BEAT 2 — THE ACCESS</div>
-      <div class="rc-committee">${b.access.committee}</div>
-      <div class="rc-writes">${b.access.writes}</div>
-      <div class="rc-access-detail">${b.access.detail}</div>
-      <div class="rc-accent-line"></div>
-      <button class="rc-next-btn" onclick="revealBeat(3)">So what happened? →</button>
-    </div>
+function showScorePopup(text, x, y) {
+  const el = document.createElement('div');
+  el.className = 'score-popup';
+  el.textContent = text;
+  el.style.left = x + 'px';
+  el.style.top = y + 'px';
+  document.body.appendChild(el);
+  setTimeout(() => el.remove(), 1200);
+}
 
-    <div class="rc-beat rc-beat--impact" id="rc-beat-3">
-      <div class="rc-beat-label">BEAT 3 — THE IMPACT</div>
-      <div class="rc-impact-stat">${b.impact.stat}</div>
-      <div class="rc-impact-context">${b.impact.context}</div>
-      <ul class="rc-fact-list">
-        ${b.impact.facts.map(f => `<li>${f}</li>`).join('')}
-      </ul>
-      <div class="rc-accent-line"></div>
-      <div class="rc-verdict">${b.impact.verdict}</div>
-    </div>
+function addIntel(pts, x, y) {
+  STATE.intel += pts;
+  document.getElementById('score-intel').textContent = STATE.intel;
+  if (x !== undefined) showScorePopup('+' + pts + ' INTEL', x, y);
+}
 
-    ${relatedHTML}
+function updateScoreDisplay() {
+  document.getElementById('score-connections').textContent = STATE.connectionsFound + '/' + STATE.totalConnections;
+  document.getElementById('score-depth').textContent = STATE.maxDepth;
+}
+
+function flash(isRed = false) {
+  const el = document.getElementById('unlock-flash');
+  el.className = 'unlock-flash' + (isRed ? ' red-flash' : '');
+  void el.offsetWidth;
+  el.classList.add('fire');
+}
+
+// =========================================================
+// RENDER CASE LIST
+// =========================================================
+function renderCaseList() {
+  const list = document.getElementById('case-list');
+  list.innerHTML = '';
+  
+  CASES.forEach(c => {
+    const el = document.createElement('div');
+    let cls = 'case-file';
+    if (c.id === STATE.activeCaseId) cls += ' active';
+    if (c.status === 'classified' && !STATE.declassifiedCases.has(c.id)) cls += ' classified';
+    if (STATE.declassifiedCases.has(c.id) || c.status === 'open') {
+      if ((STATE.revealedBeats[c.id] || []).length === 3) cls += ' declassified';
+    }
+    el.className = cls;
+    
+    const isLocked = c.status === 'classified' && !STATE.declassifiedCases.has(c.id);
+    
+    el.innerHTML = `
+      <div class="case-name">${c.company}</div>
+      <div class="case-amount">${isLocked ? '██████' : c.amount}</div>
+      <div class="case-status">${
+        isLocked ? 'CLASSIFIED — Investigate to unlock' :
+        (STATE.revealedBeats[c.id] || []).length === 3 ? 'FULLY DECLASSIFIED' :
+        (STATE.revealedBeats[c.id] || []).length > 0 ? 'UNDER INVESTIGATION' :
+        'OPEN — Click to investigate'
+      }</div>
+    `;
+    
+    el.addEventListener('click', () => {
+      if (isLocked) {
+        showToast('⚠ CLASSIFIED — Investigate open cases to earn clearance');
+        return;
+      }
+      sfxClick();
+      selectCase(c.id);
+    });
+    
+    list.appendChild(el);
+  });
+}
+
+// =========================================================
+// SELECT A CASE
+// =========================================================
+function selectCase(caseId) {
+  STATE.activeCaseId = caseId;
+  const c = CASES.find(x => x.id === caseId);
+  if (!c) return;
+  
+  renderCaseList();
+  renderEvidenceBoard(c);
+  renderDossier(c);
+  
+  document.getElementById('dossier-panel').classList.remove('collapsed');
+}
+
+// =========================================================
+// EVIDENCE BOARD
+// =========================================================
+function renderEvidenceBoard(c) {
+  const board = document.getElementById('evidence-board');
+  const svg = document.getElementById('connections-svg');
+  
+  // Clear old nodes (keep HUD elements and stamps)
+  board.querySelectorAll('.evidence-node').forEach(n => n.remove());
+  svg.innerHTML = '';
+  
+  const boardRect = board.getBoundingClientRect();
+  const revealed = STATE.revealedBeats[c.id] || [];
+  
+  // Always show company node
+  const companyNode = createNode(c.nodes.company, 'company', c.id, 'company', boardRect);
+  board.appendChild(companyNode);
+  
+  // Show politician node if beat 0 (money) revealed
+  if (revealed.includes(0)) {
+    const polNode = createNode(c.nodes.politician, 'politician', c.id, 'politician', boardRect);
+    board.appendChild(polNode);
+    
+    // Draw money connection
+    drawConnection(svg, c.nodes.company, c.nodes.politician, boardRect, 'money', revealed.includes(0));
+  } else {
+    // Show classified placeholder
+    const placeholder = createClassifiedNode(c.nodes.politician, boardRect, 'Investigate to reveal');
+    board.appendChild(placeholder);
+  }
+  
+  // Show impact node if beat 1 (access) revealed
+  if (revealed.includes(1)) {
+    const impNode = createNode(c.nodes.impact, 'impact', c.id, 'impact', boardRect);
+    board.appendChild(impNode);
+    
+    // Draw access connection
+    drawConnection(svg, c.nodes.politician, c.nodes.impact, boardRect, 'access', revealed.includes(1));
+  } else if (revealed.includes(0)) {
+    const placeholder = createClassifiedNode(c.nodes.impact, boardRect, 'Go deeper to reveal');
+    board.appendChild(placeholder);
+  }
+  
+  // Make nodes draggable
+  board.querySelectorAll('.evidence-node').forEach(makeDraggable);
+}
+
+function createNode(data, type, caseId, nodeKey, boardRect) {
+  const el = document.createElement('div');
+  el.className = `evidence-node ${type} revealed`;
+  el.style.left = (data.x * (boardRect.width - 220)) + 'px';
+  el.style.top = (data.y * (boardRect.height - 100)) + 'px';
+  el.dataset.caseId = caseId;
+  el.dataset.nodeKey = nodeKey;
+  
+  const typeLabel = type === 'company' ? 'COMPANY' : type === 'politician' ? 'POLITICAL CONNECTION' : 'REAL-WORLD IMPACT';
+  
+  el.innerHTML = `
+    <div class="node-type">${typeLabel}</div>
+    <div class="node-name">${data.name}</div>
+    <div class="node-detail">${data.detail}</div>
   `;
-
-  // Open overlay
-  overlay.classList.add('open');
-  overlay.scrollTop = 0;
-  document.body.style.overflow = 'hidden';
-
-  // Reveal beat 1 with delay
-  setTimeout(() => {
-    const beat1 = document.getElementById('rc-beat-1');
-    if (beat1) {
-      beat1.classList.add('revealed');
-      // Animate the dollar counter
-      animateCounter(document.getElementById('rc-amount-counter'), b.money.amount, b.money.amountDisplay);
-    }
-  }, 300);
+  
+  return el;
 }
 
-function revealBeat(num) {
-  const beat = document.getElementById(`rc-beat-${num}`);
-  if (!beat) return;
-  beat.classList.add('revealed');
-  // Smooth scroll to the beat
-  setTimeout(() => {
-    beat.scrollIntoView({ behavior: 'smooth', block: 'start' });
-  }, 50);
+function createClassifiedNode(data, boardRect, label) {
+  const el = document.createElement('div');
+  el.className = 'evidence-node classified-node';
+  el.style.left = (data.x * (boardRect.width - 220)) + 'px';
+  el.style.top = (data.y * (boardRect.height - 100)) + 'px';
+  
+  el.innerHTML = `
+    <div class="node-type" style="color:var(--fg-dim)">CLASSIFIED</div>
+    <div class="node-name" style="color:var(--fg-dim)">████████</div>
+    <div class="node-detail">${label}</div>
+  `;
+  
+  return el;
 }
 
-function animateCounter(el, targetValue, finalDisplay) {
-  if (!el) return;
-  const duration = 600;
-  const start = performance.now();
+function drawConnection(svg, from, to, boardRect, type, animated) {
+  const w = boardRect.width - 220;
+  const h = boardRect.height - 100;
+  const x1 = from.x * w + 70;
+  const y1 = from.y * h + 30;
+  const x2 = to.x * w + 70;
+  const y2 = to.y * h + 30;
+  
+  const line = document.createElementNS('http://www.w3.org/2000/svg', 'line');
+  line.setAttribute('x1', x1);
+  line.setAttribute('y1', y1);
+  line.setAttribute('x2', x2);
+  line.setAttribute('y2', y2);
+  line.className.baseVal = `connection-line ${type}` + (animated ? ' highlighted' : '');
+  svg.appendChild(line);
+}
 
-  // Determine format
-  const isMillions = targetValue >= 1000000;
-  const prefix = '$';
-
-  function update(now) {
-    const elapsed = now - start;
-    const progress = Math.min(elapsed / duration, 1);
-    const eased = 1 - Math.pow(1 - progress, 3);
-    const current = Math.round(targetValue * eased);
-
-    if (isMillions) {
-      el.textContent = prefix + (current / 1000000).toFixed(1) + 'M';
-    } else if (current >= 1000) {
-      el.textContent = prefix + current.toLocaleString();
-    } else {
-      el.textContent = prefix + current;
+// =========================================================
+// DRAG
+// =========================================================
+function makeDraggable(el) {
+  let isDragging = false, startX, startY, origLeft, origTop;
+  
+  el.addEventListener('mousedown', (e) => {
+    isDragging = true;
+    startX = e.clientX;
+    startY = e.clientY;
+    origLeft = parseInt(el.style.left);
+    origTop = parseInt(el.style.top);
+    el.style.zIndex = 20;
+    e.preventDefault();
+  });
+  
+  document.addEventListener('mousemove', (e) => {
+    if (!isDragging) return;
+    el.style.left = (origLeft + e.clientX - startX) + 'px';
+    el.style.top = (origTop + e.clientY - startY) + 'px';
+    
+    // Redraw connections
+    const c = CASES.find(x => x.id === STATE.activeCaseId);
+    if (c) updateNodePositions(c);
+  });
+  
+  document.addEventListener('mouseup', () => {
+    if (isDragging) {
+      isDragging = false;
+      el.style.zIndex = 10;
     }
+  });
+}
 
-    if (progress < 1) {
-      requestAnimationFrame(update);
-    } else {
-      el.textContent = finalDisplay;
+function updateNodePositions(c) {
+  const board = document.getElementById('evidence-board');
+  const svg = document.getElementById('connections-svg');
+  const nodes = board.querySelectorAll('.evidence-node:not(.classified-node)');
+  const positions = {};
+  
+  nodes.forEach(n => {
+    const rect = n.getBoundingClientRect();
+    const boardRect = board.getBoundingClientRect();
+    positions[n.dataset.nodeKey] = {
+      x: rect.left - boardRect.left + rect.width / 2,
+      y: rect.top - boardRect.top + rect.height / 2
+    };
+  });
+  
+  svg.innerHTML = '';
+  const revealed = STATE.revealedBeats[c.id] || [];
+  
+  if (revealed.includes(0) && positions.company && positions.politician) {
+    const line = document.createElementNS('http://www.w3.org/2000/svg', 'line');
+    line.setAttribute('x1', positions.company.x);
+    line.setAttribute('y1', positions.company.y);
+    line.setAttribute('x2', positions.politician.x);
+    line.setAttribute('y2', positions.politician.y);
+    line.className.baseVal = 'connection-line money highlighted';
+    svg.appendChild(line);
+  }
+  
+  if (revealed.includes(1) && positions.politician && positions.impact) {
+    const line = document.createElementNS('http://www.w3.org/2000/svg', 'line');
+    line.setAttribute('x1', positions.politician.x);
+    line.setAttribute('y1', positions.politician.y);
+    line.setAttribute('x2', positions.impact.x);
+    line.setAttribute('y2', positions.impact.y);
+    line.className.baseVal = 'connection-line access highlighted';
+    svg.appendChild(line);
+  }
+}
+
+// =========================================================
+// DOSSIER PANEL
+// =========================================================
+function renderDossier(c) {
+  document.getElementById('dossier-title').textContent = c.company;
+  document.getElementById('dossier-subtitle').textContent = c.summary;
+  
+  const body = document.getElementById('dossier-body');
+  body.innerHTML = '';
+  
+  const revealed = STATE.revealedBeats[c.id] || [];
+  
+  c.beats.forEach((beat, i) => {
+    const div = document.createElement('div');
+    div.className = 'receipt-beat' + (revealed.includes(i) ? '' : ' locked');
+    
+    const amountColor = beat.type === 'money' ? 'gold' : beat.type === 'impact' ? 'red' : '';
+    
+    div.innerHTML = `
+      <div class="beat-tag ${beat.type}">${beat.tag}</div>
+      <div class="beat-headline">${beat.headline}</div>
+      <div class="beat-amount ${amountColor}">${beat.amount}</div>
+      <div style="font-size:10px;color:var(--fg-dim);margin-bottom:8px;">${beat.detail}</div>
+      <div class="beat-body">${beat.body}</div>
+    `;
+    
+    body.appendChild(div);
+    
+    // Add investigate button after each locked beat (only next one)
+    if (!revealed.includes(i) && (i === 0 || revealed.includes(i - 1))) {
+      const btn = document.createElement('button');
+      btn.className = 'investigate-btn' + (beat.type === 'impact' ? ' red-btn' : '');
+      btn.textContent = i === 0 ? '▶ FOLLOW THE MONEY' :
+                        i === 1 ? '▶ UNCOVER THE ACCESS' :
+                        '▶ EXPOSE THE IMPACT';
+      btn.addEventListener('click', () => revealBeat(c.id, i));
+      body.appendChild(btn);
+    }
+  });
+  
+  // If all 3 beats revealed, show "case closed" + connected investigations
+  if (revealed.length === 3) {
+    const closed = document.createElement('div');
+    closed.style.cssText = 'padding:20px;text-align:center;';
+    closed.innerHTML = `
+      <div style="font-size:10px;letter-spacing:2px;color:var(--green);margin-bottom:8px;">✓ CASE FULLY DECLASSIFIED</div>
+      <div style="font-size:12px;color:var(--fg-muted);line-height:1.7;">
+        You followed ${c.company}'s money from PAC contributions through political access to real-world impact. This is one of ${CASES.length} active investigations.
+      </div>
+    `;
+    body.appendChild(closed);
+    
+    // Show connected investigations
+    const others = CASES.filter(x => x.id !== c.id);
+    const connDiv = document.createElement('div');
+    connDiv.style.cssText = 'padding:0 20px 20px;';
+    connDiv.innerHTML = `<div style="font-size:10px;letter-spacing:2px;color:var(--fg-dim);margin-bottom:12px;">CONNECTED INVESTIGATIONS</div>`;
+    
+    others.forEach(o => {
+      const isLocked = o.status === 'classified' && !STATE.declassifiedCases.has(o.id);
+      const btn = document.createElement('button');
+      btn.className = 'investigate-btn';
+      btn.textContent = isLocked ? `🔒 ${o.company} — CLASSIFIED` : `→ INVESTIGATE ${o.company.toUpperCase()}`;
+      btn.style.opacity = isLocked ? '0.4' : '1';
+      btn.addEventListener('click', () => {
+        if (isLocked) {
+          showToast('⚠ CLASSIFIED — Complete more investigations to earn clearance');
+          return;
+        }
+        selectCase(o.id);
+      });
+      connDiv.appendChild(btn);
+    });
+    
+    body.appendChild(connDiv);
+  }
+}
+
+// =========================================================
+// REVEAL BEAT (CORE GAME MECHANIC)
+// =========================================================
+async function revealBeat(caseId, beatIndex) {
+  const c = CASES.find(x => x.id === caseId);
+  if (!c) return;
+  
+  if (!STATE.revealedBeats[caseId]) STATE.revealedBeats[caseId] = [];
+  if (STATE.revealedBeats[caseId].includes(beatIndex)) return;
+  
+  STATE.revealedBeats[caseId].push(beatIndex);
+  
+  // Score
+  const pts = beatIndex === 0 ? 100 : beatIndex === 1 ? 200 : 500;
+  const boardRect = document.getElementById('evidence-board').getBoundingClientRect();
+  
+  // Flash
+  flash(beatIndex === 2);
+  if (beatIndex === 2) sfxDeclassify(); else sfxUnlock();
+  
+  await sleep(200);
+  addIntel(pts, boardRect.left + boardRect.width / 2, boardRect.top + boardRect.height / 2);
+  
+  // Connections
+  if (beatIndex < 2) {
+    STATE.connectionsFound++;
+  }
+  
+  // Depth
+  const depth = STATE.revealedBeats[caseId].length;
+  if (depth > STATE.maxDepth) STATE.maxDepth = depth;
+  
+  updateScoreDisplay();
+  
+  // Toast
+  const labels = ['MONEY TRAIL REVEALED', 'ACCESS POINT UNCOVERED', 'IMPACT EXPOSED'];
+  showToast('🔓 ' + labels[beatIndex]);
+  
+  // Re-render
+  renderEvidenceBoard(c);
+  renderDossier(c);
+  renderCaseList();
+  
+  // Check if this unlocks classified cases
+  const totalRevealed = Object.values(STATE.revealedBeats).reduce((sum, arr) => sum + arr.length, 0);
+  
+  // Unlock at: 3 beats = unlock jpmorgan, 6 = mcdonalds, 9 = starbucks, 12 = disney
+  const thresholds = [
+    { beats: 3, caseId: 'jpmorgan' },
+    { beats: 6, caseId: 'mcdonalds' },
+    { beats: 9, caseId: 'starbucks' },
+    { beats: 12, caseId: 'disney' },
+  ];
+  
+  for (const t of thresholds) {
+    if (totalRevealed >= t.beats && !STATE.declassifiedCases.has(t.caseId)) {
+      const target = CASES.find(x => x.id === t.caseId);
+      if (target && target.status === 'classified') {
+        STATE.declassifiedCases.add(t.caseId);
+        await sleep(600);
+        flash();
+        sfxDeclassify();
+        showToast(`🔓 NEW CASE DECLASSIFIED: ${target.company.toUpperCase()}`);
+        addIntel(250, window.innerWidth / 2, window.innerHeight / 2);
+        renderCaseList();
+      }
     }
   }
-  requestAnimationFrame(update);
-}
-
-function closeReceiptChain() {
-  const overlay = document.getElementById('rc-overlay');
-  overlay.classList.remove('open');
-  document.body.style.overflow = '';
-}
-
-// Close button
-document.getElementById('rc-close').addEventListener('click', closeReceiptChain);
-
-// Escape key closes receipt chain too
-document.addEventListener('keydown', (e) => {
-  if (e.key === 'Escape') {
-    const overlay = document.getElementById('rc-overlay');
-    if (overlay.classList.contains('open')) {
-      closeReceiptChain();
-      e.stopPropagation();
-    }
+  
+  // Check completion
+  const allRevealed = CASES.every(c => (STATE.revealedBeats[c.id] || []).length === 3);
+  if (allRevealed && !STATE.complete) {
+    STATE.complete = true;
+    await sleep(1000);
+    showSummary();
   }
-});
+}
 
-// Make functions globally available
-window.openReceiptChain = openReceiptChain;
-window.revealBeat = revealBeat;
-window.closeReceiptChain = closeReceiptChain;
+// =========================================================
+// SUMMARY
+// =========================================================
+function showSummary() {
+  sfxComplete();
+  
+  const totalMoney = CASES.reduce((s, c) => s + c.amountNum, 0);
+  const moneyStr = totalMoney >= 1000000 ? '$' + (totalMoney / 1000000).toFixed(1) + 'M' : '$' + totalMoney.toLocaleString();
+  
+  document.getElementById('summary-stats').innerHTML = `
+    <div class="summary-stat"><div class="val">${STATE.intel}</div><div class="lbl">Intel Score</div></div>
+    <div class="summary-stat"><div class="val">${CASES.length}</div><div class="lbl">Cases Declassified</div></div>
+    <div class="summary-stat"><div class="val">${moneyStr}</div><div class="lbl">PAC $ Tracked</div></div>
+    <div class="summary-stat"><div class="val">${STATE.connectionsFound}</div><div class="lbl">Connections Found</div></div>
+  `;
+  
+  document.getElementById('summary-verdict').innerHTML = `
+    You traced ${moneyStr} in PAC money and lobbying from ${CASES.length} corporations through political access points to real-world consequences. 
+    These aren't hypotheticals — they're public records from FEC filings, Senate LDA disclosures, and USASpending.gov contracts.
+    <br><br>
+    <strong style="color:var(--gold);">The question isn't whether your employer does this. It's whether you know.</strong>
+  `;
+  
+  document.getElementById('summary-overlay').classList.add('visible');
+}
+
+// =========================================================
+// HUD TIME
+// =========================================================
+function updateHudTime() {
+  const now = new Date();
+  document.getElementById('hud-time').textContent = 
+    now.toLocaleTimeString('en-US', { hour12: false }) + ' EDT';
+}
 
 // =========================================================
 // EMBED MODE
@@ -2509,10 +1772,23 @@ if (new URLSearchParams(window.location.search).get('embed') === 'true') {
 // =========================================================
 // INIT
 // =========================================================
-document.addEventListener("DOMContentLoaded", () => {
-  animateStats();
-  initGraph();
+document.getElementById('start-btn').addEventListener('click', () => {
+  initAudio();
+  sfxClick();
+  document.getElementById('intro-overlay').classList.remove('visible');
+  STATE.started = true;
+  renderCaseList();
+  updateScoreDisplay();
+  updateHudTime();
+  setInterval(updateHudTime, 1000);
 });
+
+// Boot on load
+if (document.readyState === 'loading') {
+  document.addEventListener('DOMContentLoaded', runBoot);
+} else {
+  runBoot();
+}
 </script>
 </body>
 </html>
