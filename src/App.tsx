@@ -193,6 +193,7 @@ const App = () => (
                   <Route path="/economy" element={<EconomyDashboard />} />
                   <Route path="/follow-the-money" element={<FollowTheMoney />} />
                   <Route path="/peoplepuzzles" element={<PeoplePuzzles />} />
+                  <Route path="/play" element={<PeoplePuzzles />} />
                   <Route path="/receipts" element={<Receipts />} />
                   <Route path="/receipts/:slug" element={<ReceiptsReport />} />
                   <Route path="/hrtech" element={<HRTechIntelligence />} />

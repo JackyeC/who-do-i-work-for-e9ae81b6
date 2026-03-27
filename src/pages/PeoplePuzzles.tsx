@@ -4,7 +4,7 @@ const PeoplePuzzles = () => {
   usePageSEO({
     title: "PeoplePuzzles™ — The Recruiting Intelligence Game | WDIWF",
     description: "Every company runs a background check on you. This game teaches you to run one on them. 72 combos. 6 tiers. 8 certifications. Built on real recruiting intelligence by Jackye Clayton.",
-    path: "/peoplepuzzles"
+    path: "/play"
   });
 
   return (
