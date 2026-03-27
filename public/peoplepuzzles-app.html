@@ -2553,6 +2553,86 @@ document.getElementById('feedback-btn').addEventListener('click',function(){
 });
 
 // ============================
+// SUPABASE LEAD TRACKING
+// ============================
+var SUPA_URL='https://wcmiwknxeuwjsfiscqgm.supabase.co';
+var SUPA_KEY='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6IndjbWl3a254ZXV3anNmaXNjcWdtIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDYwNDY3MDUsImV4cCI6MjA2MTYyMjcwNX0.ZbFo0HRYt2BsW7l1PmZIHHGdi0TWOPCTdWJuFl--DUs';
+var leadId=null;
+
+function saveLead(){
+  if(!playerEmail && playerName==='People Puzzler') return; // no info to save
+  var earnedCerts=CERTS.filter(function(c){return c.req.every(function(r){return state.discovered.indexOf(r)!==-1})}).map(function(c){return c.name});
+  var persona=detectPersona();
+  var body={
+    name:playerName,
+    email:playerEmail||null,
+    company:null, // will be filled from gate/signup if available
+    drive:playerDrive,
+    persona:persona?persona.name:null,
+    discoveries:state.discovered.length,
+    total_combos:TOTAL,
+    score:state.score,
+    certs_earned:earnedCerts,
+    traps_hit:state.traps,
+    source:'game'
+  };
+  // Try to get company from gate or signup forms
+  var gc=document.getElementById('gate-company');
+  var sc=document.getElementById('signup-company');
+  if(gc&&gc.value.trim()) body.company=gc.value.trim();
+  else if(sc&&sc.value.trim()) body.company=sc.value.trim();
+
+  if(leadId){
+    // Update existing lead
+    body.updated_at=new Date().toISOString();
+    fetch(SUPA_URL+'/rest/v1/peoplepuzzles_leads?id=eq.'+leadId,{
+      method:'PATCH',
+      headers:{'Content-Type':'application/json','apikey':SUPA_KEY,'Authorization':'Bearer '+SUPA_KEY,'Prefer':'return=minimal'},
+      body:JSON.stringify(body)
+    }).catch(function(){});
+  } else {
+    // Insert new lead
+    fetch(SUPA_URL+'/rest/v1/peoplepuzzles_leads',{
+      method:'POST',
+      headers:{'Content-Type':'application/json','apikey':SUPA_KEY,'Authorization':'Bearer '+SUPA_KEY,'Prefer':'return=representation'},
+      body:JSON.stringify(body)
+    }).then(function(r){return r.json()}).then(function(data){
+      if(data&&data[0]&&data[0].id) leadId=data[0].id;
+    }).catch(function(){});
+  }
+}
+
+function detectPersona(){
+  var d=state.discovered;
+  var count=function(ids){return ids.filter(function(id){return d.indexOf(id)!==-1}).length};
+  if(count(['neurodiversity','inclusion','bias-interruption','diversity-sourcing','inclusive-hiring-system','adhd-friendly-systems'])>=3)
+    return {name:'The Includer',emoji:'\uD83E\uDDE0'};
+  if(count(['dossier','deep-research','follow-the-money','board-intelligence','power-map','corporate-x-ray'])>=3)
+    return {name:'The Investigator',emoji:'\uD83D\uDD0D'};
+  if(count(['process-control','feedback-sla','acceptance-blockers','outreach','response-rate','manager-operating-manual'])>=3)
+    return {name:'The Operator',emoji:'\uD83C\uDF9B\uFE0F'};
+  if(count(['values-alignment','fair-process','accountability','comp-transparency','political-spending'])>=3)
+    return {name:'The Advocate',emoji:'\uD83D\uDC9B'};
+  if(d.length>=20&&state.traps<3)
+    return {name:'The Architect',emoji:'\uD83C\uDFD7\uFE0F'};
+  if(d.length>=20&&state.traps>=3)
+    return {name:'The Speedrunner',emoji:'\u26A1'};
+  return null;
+}
+
+// Save on key moments: after name capture, after discoveries, after certs
+var _origCapturePlayerInfo=capturePlayerInfo;
+capturePlayerInfo=function(){
+  _origCapturePlayerInfo();
+  setTimeout(saveLead,1000); // save after onboarding starts
+};
+
+// Save periodically during gameplay (every 5th discovery)
+var _saveInterval=setInterval(function(){
+  if(state.discovered.length>0&&state.discovered.length%5===0) saveLead();
+},10000);
+
+// ============================
 // INIT
 // ============================
 updateBadge();
