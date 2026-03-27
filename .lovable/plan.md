@@ -1,20 +1,47 @@
 
 
-## Plan: Fix persistent mammoth build error
+## Fix: Duplicate Industries in Browse Dropdown
 
-### Problem
-`supabase/functions/parse-career-document/index.ts` line 27 uses `npm:mammoth@1.6.0` which Deno cannot resolve, blocking **all** edge function deployments.
+### Root cause
+
+Line 109 of `Browse.tsx` builds the industry list:
+```ts
+const allIndustries = useMemo(() =>
+  [...new Set(allCompanies.map((c) => c.industry))].sort(),
+  [allCompanies]
+);
+```
+
+This deduplicates by exact string match. Duplicates appear because:
+1. Database rows have inconsistent casing or naming (e.g. "Technology" vs "Tech", "Financial Services" vs "Finance")
+2. Sample data from `sampleData.ts` may use different industry names than the database
 
 ### Fix
-Single line change on line 27:
+
+Normalize industries before deduplication:
+- Trim whitespace
+- Filter out null/undefined/empty values
+- Case-normalize for dedup (e.g. `.toLowerCase()` for Set key, but display the first-seen casing)
+
+**Single change in `src/pages/Browse.tsx` line 109:**
+
+```ts
+const allIndustries = useMemo(() => {
+  const seen = new Map<string, string>();
+  for (const c of allCompanies) {
+    const raw = (c.industry || "").trim();
+    if (!raw) continue;
+    const key = raw.toLowerCase();
+    if (!seen.has(key)) seen.set(key, raw);
+  }
+  return [...seen.values()].sort((a, b) =>
+    a.localeCompare(b, undefined, { sensitivity: "base" })
+  );
+}, [allCompanies]);
 ```
-npm:mammoth@1.6.0  →  https://esm.sh/mammoth@1.6.0
-```
 
-This is the same fix applied multiple times previously but keeps reverting. This time I'll also check if `deno.lock` needs deletion to prevent stale lockfile issues.
+This keeps the first-seen display name while deduplicating case-insensitively, and filters out empty/null values.
 
-### About the "internal error" message
-That error (ID `9343b6e1324d65a600163aaa9aabbd50`) is caused by this exact build failure — none of the edge functions can deploy while this import breaks the build. Fixing this one line unblocks everything.
-
-The resilient architecture work (retry, caching, fallback UI) was already implemented in the previous round and is ready once functions deploy successfully.
+### Scope
+One file, one line block replaced. No other pages affected (Jobs.tsx and Rankings.tsx use their own industry lists but could benefit from the same pattern later).
 
