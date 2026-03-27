@@ -24,7 +24,7 @@ async function tryExtractText(fileData: Blob, filename: string): Promise<string>
 
   if (ext === "docx") {
     try {
-      const mammoth = await import("npm:mammoth@1.6.0");
+      const mammoth = await import("https://esm.sh/mammoth@1.6.0");
       const ab = await fileData.arrayBuffer();
       const result = await mammoth.default.extractRawText({ arrayBuffer: ab });
       if (result.value && result.value.trim().length > 100) {
@@ -37,7 +37,7 @@ async function tryExtractText(fileData: Blob, filename: string): Promise<string>
 
     // JSZip fallback
     try {
-      const JSZip = (await import("npm:jszip@3.10.1")).default;
+      const JSZip = (await import("https://esm.sh/jszip@3.10.1")).default;
       const ab = await fileData.arrayBuffer();
       const zip = await JSZip.loadAsync(ab);
       const docXml = await zip.file("word/document.xml")?.async("string");
@@ -59,7 +59,7 @@ async function tryExtractText(fileData: Blob, filename: string): Promise<string>
 
   if (ext === "pdf") {
     try {
-      const { default: pdfParse } = await import("npm:pdf-parse/lib/pdf-parse.js");
+      const { default: pdfParse } = await import("https://esm.sh/pdf-parse@1.1.1/lib/pdf-parse.js");
       const ab = await fileData.arrayBuffer();
       const result = await pdfParse(new Uint8Array(ab));
       if (result.text?.trim().length > 100) return result.text;
