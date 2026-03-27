@@ -1,0 +1,2437 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<!--
+   ______                            __
+  / ____/___  ____ ___  ____  __  __/ /____  _____
+ / /   / __ \/ __ `__ \/ __ \/ / / / __/ _ \/ ___/
+/ /___/ /_/ / / / / / / /_/ / /_/ / /_/  __/ /
+\____/\____/_/ /_/ /_/ .___/\__,_/\__/\___/_/
+                    /_/
+        Created with Perplexity Computer
+        https://www.perplexity.ai/computer
+-->
+<meta name="generator" content="Perplexity Computer">
+<meta name="author" content="Perplexity Computer">
+<meta property="og:see_also" content="https://www.perplexity.ai/computer">
+<link rel="author" href="https://www.perplexity.ai/computer">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>PeoplePuzzles™ by WDIWF</title>
+<meta name="description" content="An alchemy-style strategy game for recruiters. Combine fundamental elements to discover recruiting concepts. Every combo links to a real WDIWF feature.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@300;400;500&family=DM+Sans:ital,opsz,wght@0,9..40,300..800;1,9..40,300..800&family=Inter:wght@900&family=Dancing+Script:wght@700&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#0A0A0E;--surface:#111118;--surface-2:#18171F;
+  --fg:#F0EBE0;--muted:#7A7590;--primary:#F0C040;
+  --gold-dim:rgba(240,192,64,0.15);--success:#34D399;--danger:#FF3B4A;
+  --border:rgba(255,255,255,0.08);--border-bright:rgba(255,255,255,0.14);
+  --purple:#A78BFA;--purple-dim:rgba(167,139,250,0.12);
+  --sidebar-w:220px;--toolbar-w:52px;
+  --font-display:'DM Sans',sans-serif;--font-mono:'DM Mono',monospace;
+  --font-logo:'Inter',sans-serif;
+}
+html,body{height:100%;overflow:hidden}
+body{font-family:var(--font-display);background:var(--bg);color:var(--fg);-webkit-font-smoothing:antialiased;user-select:none}
+a{color:var(--primary);text-decoration:none}
+button{font-family:inherit;cursor:pointer;border:none;outline:none;background:none;color:inherit}
+::-webkit-scrollbar{width:4px}::-webkit-scrollbar-track{background:transparent}::-webkit-scrollbar-thumb{background:rgba(255,255,255,0.1);border-radius:2px}
+
+/* ===== LAYOUT: Toolbar | Canvas | Sidebar ===== */
+#game{display:flex;height:100vh;width:100vw;overflow:hidden}
+
+/* Left toolbar */
+#toolbar{
+  width:var(--toolbar-w);flex-shrink:0;background:var(--surface);
+  border-right:1px solid var(--border);display:flex;flex-direction:column;
+  align-items:center;padding:12px 0;gap:6px;z-index:20;
+}
+.tool-btn{
+  width:38px;height:38px;border-radius:10px;display:flex;align-items:center;
+  justify-content:center;font-size:18px;color:var(--muted);transition:all .15s;
+  position:relative;
+}
+.tool-btn:hover{background:var(--gold-dim);color:var(--primary)}
+.tool-btn .badge{
+  position:absolute;top:2px;right:2px;background:var(--primary);color:var(--bg);
+  font-size:8px;font-weight:700;min-width:14px;height:14px;border-radius:7px;
+  display:flex;align-items:center;justify-content:center;font-family:var(--font-mono);
+}
+
+/* Canvas (freeform workspace) */
+#canvas{
+  flex:1;position:relative;overflow:hidden;
+  background:var(--bg);
+  background-image:
+    radial-gradient(circle at 20% 30%, rgba(240,192,64,0.015) 0%, transparent 50%),
+    radial-gradient(circle at 80% 70%, rgba(167,139,250,0.01) 0%, transparent 50%);
+  cursor:default;
+}
+
+/* Right sidebar */
+#sidebar{
+  width:var(--sidebar-w);flex-shrink:0;background:var(--surface);
+  border-left:1px solid var(--border);display:flex;flex-direction:column;
+  z-index:20;
+}
+#sidebar-search{
+  padding:8px 10px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:6px;
+}
+#sidebar-search input{
+  flex:1;background:transparent;border:none;outline:none;color:var(--fg);
+  font-family:var(--font-mono);font-size:13px;
+}
+#sidebar-search input::placeholder{color:var(--muted)}
+#sidebar-list{
+  flex:1;overflow-y:auto;padding:4px 0;
+}
+.sidebar-item{
+  display:flex;align-items:center;gap:8px;padding:6px 10px;
+  cursor:grab;transition:background .12s;
+}
+.sidebar-item:hover{background:rgba(240,192,64,0.06)}
+.sidebar-item:active{cursor:grabbing}
+.sidebar-item .si-emoji{font-size:26px;width:36px;text-align:center;flex-shrink:0}
+.sidebar-item .si-name{font-size:13px;color:var(--primary);font-family:var(--font-mono);line-height:1.3;font-weight:500}
+.sidebar-item .si-tier{font-size:10px;color:#B0A8C8;font-family:var(--font-mono);text-transform:uppercase}
+.sidebar-item.new-item{animation:sidebarFlash .8s ease-out}
+
+@keyframes sidebarFlash{0%{background:rgba(240,192,64,0.2)}100%{background:transparent}}
+
+/* Canvas elements (draggable) */
+.canvas-el{
+  position:absolute;cursor:grab;display:flex;flex-direction:column;
+  align-items:center;gap:2px;padding:8px;border-radius:12px;
+  transition:box-shadow .15s;z-index:1;touch-action:none;
+}
+.canvas-el:hover{z-index:5;box-shadow:0 0 20px rgba(240,192,64,0.15)}
+.canvas-el:active{cursor:grabbing;z-index:10}
+.canvas-el .ce-emoji{font-size:42px;line-height:1;pointer-events:none}
+.canvas-el .ce-name{
+  font-size:11px;font-family:var(--font-mono);color:var(--primary);
+  text-align:center;max-width:90px;pointer-events:none;opacity:0.9;
+  white-space:nowrap;overflow:hidden;text-overflow:ellipsis;font-weight:500;
+}
+.canvas-el.combining{
+  animation:combPulse .3s ease-out;
+  box-shadow:0 0 30px rgba(240,192,64,0.4);
+}
+@keyframes combPulse{0%{transform:scale(1)}50%{transform:scale(1.15)}100%{transform:scale(1)}}
+
+.canvas-el.shake{animation:shake .4s ease-out}
+@keyframes shake{0%,100%{transform:translateX(0)}20%{transform:translateX(-6px)}40%{transform:translateX(6px)}60%{transform:translateX(-3px)}80%{transform:translateX(3px)}}
+
+.canvas-el.fadeout{animation:fadeOut .3s ease-out forwards}
+@keyframes fadeOut{to{opacity:0;transform:scale(0.5)}}
+
+/* Discovery splash */
+#splash{
+  display:none;position:fixed;inset:0;z-index:100;
+  background:rgba(10,10,14,0.92);
+  align-items:center;justify-content:center;flex-direction:column;
+  cursor:pointer;
+}
+#splash.show{display:flex}
+#splash .splash-rays{
+  position:absolute;inset:0;overflow:hidden;pointer-events:none;
+  background:radial-gradient(circle at 50% 45%, rgba(240,192,64,0.08) 0%, transparent 60%);
+}
+@keyframes rayRotate{from{transform:rotate(0)}to{transform:rotate(360deg)}}
+#splash .splash-emoji{font-size:80px;animation:splashPop .5s cubic-bezier(.34,1.56,.64,1);position:relative;z-index:2}
+#splash .splash-name{
+  font-size:34px;font-weight:700;color:var(--primary);margin-top:12px;
+  animation:splashFade .6s ease-out .1s both;position:relative;z-index:2;
+}
+#splash .splash-quote{
+  font-size:17px;color:#D4BFFA;max-width:440px;text-align:center;
+  margin-top:10px;line-height:1.7;font-style:italic;
+  animation:splashFade .6s ease-out .2s both;position:relative;z-index:2;
+}
+#splash .splash-type{
+  font-size:13px;font-family:var(--font-mono);text-transform:uppercase;
+  letter-spacing:1px;margin-top:12px;padding:5px 14px;border-radius:4px;
+  animation:splashFade .6s ease-out .3s both;position:relative;z-index:2;
+}
+#splash .splash-wdiwf{
+  margin-top:16px;font-size:15px;font-family:var(--font-mono);
+  color:var(--bg);padding:12px 24px;border-radius:10px;
+  background:var(--primary);border:none;
+  animation:splashFade .6s ease-out .4s both;position:relative;z-index:2;
+  cursor:pointer;font-weight:600;
+}
+#splash .splash-wdiwf:hover{background:#F5D060;transform:scale(1.02)}
+#splash .splash-dismiss{
+  position:absolute;bottom:30px;font-size:15px;color:var(--fg);font-weight:600;
+  font-family:var(--font-mono);animation:splashFade .6s ease-out .5s both;
+  background:rgba(255,255,255,0.08);padding:10px 28px;border-radius:10px;
+  border:1px solid rgba(255,255,255,0.15);cursor:pointer;transition:all .2s;
+  letter-spacing:0.5px;
+}
+#splash .splash-dismiss:hover{background:rgba(255,255,255,0.14);border-color:rgba(255,255,255,0.25)}
+@keyframes dismissPulse{0%,100%{opacity:0.85}50%{opacity:1}}
+#splash .splash-dismiss{animation:splashFade .6s ease-out .5s both,dismissPulse 2s ease-in-out 1.5s infinite}
+@keyframes splashPop{0%{transform:scale(0);opacity:0}60%{transform:scale(1.2);opacity:1}100%{transform:scale(1)}}
+@keyframes splashFade{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+
+/* Encyclopedia modal */
+#encyclopedia{
+  display:none;position:fixed;inset:0;z-index:90;
+  background:rgba(10,10,14,0.88);align-items:center;justify-content:center;
+}
+#encyclopedia.show{display:flex}
+#encyclopedia .enc-panel{
+  background:var(--surface);border:1px solid var(--border);border-radius:20px;
+  width:90%;max-width:600px;max-height:80vh;display:flex;flex-direction:column;
+  overflow:hidden;animation:splashPop .3s ease-out;
+}
+#encyclopedia .enc-header{
+  padding:16px 20px;border-bottom:1px solid var(--border);display:flex;
+  align-items:center;justify-content:space-between;flex-shrink:0;
+}
+#encyclopedia .enc-body{overflow-y:auto;padding:16px 20px;flex:1}
+#encyclopedia .enc-close{font-size:20px;color:var(--muted);cursor:pointer}
+.enc-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(120px,1fr));gap:8px}
+.enc-item{
+  display:flex;align-items:center;gap:6px;padding:6px 8px;border-radius:8px;
+  background:var(--surface-2);border:1px solid var(--border);
+}
+.enc-item .enc-emoji{font-size:20px}
+.enc-item .enc-name{font-size:12px;font-family:var(--font-mono);color:var(--fg)}
+.enc-item.undiscovered{opacity:0.3}
+.enc-item.undiscovered .enc-emoji{filter:grayscale(1)}
+.enc-stats{
+  display:flex;gap:16px;margin-bottom:16px;flex-wrap:wrap;
+}
+.enc-stat{
+  background:var(--surface-2);border:1px solid var(--border);border-radius:10px;
+  padding:10px 14px;text-align:center;flex:1;min-width:100px;
+}
+.enc-stat-val{font-size:20px;font-weight:700;color:var(--primary);font-variant-numeric:tabular-nums}
+.enc-stat-label{font-size:9px;font-family:var(--font-mono);color:var(--muted);text-transform:uppercase;margin-top:2px}
+
+/* Trap toast */
+#trap-toast{
+  display:none;position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);
+  z-index:80;background:rgba(30,10,10,0.97);border:2px solid var(--danger);
+  border-radius:16px;padding:28px 36px;text-align:center;max-width:440px;min-width:320px;
+  animation:splashPop .3s ease-out;
+  box-shadow:0 0 40px rgba(255,59,74,0.25),0 0 80px rgba(255,59,74,0.1);
+}
+#trap-toast.show{display:block}
+#trap-toast .trap-icon{font-size:48px;margin-bottom:12px}
+#trap-toast .trap-msg{font-size:20px;color:#FF6B78;font-weight:700;line-height:1.5}
+#trap-toast .trap-quote{font-size:15px;color:#E0D8CC;margin-top:10px;font-style:italic;line-height:1.6}
+#trap-toast .trap-penalty{font-size:14px;color:#FF6B78;margin-top:10px;font-family:var(--font-mono);font-weight:600;letter-spacing:0.5px}
+
+/* No-match toast (for failed combos that aren't traps) */
+#nomatch-toast{
+  display:none;position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);
+  z-index:80;background:rgba(20,18,26,0.97);border:2px solid var(--muted);
+  border-radius:16px;padding:24px 32px;text-align:center;max-width:380px;min-width:280px;
+  animation:splashPop .3s ease-out;
+  box-shadow:0 0 30px rgba(122,117,144,0.15);
+}
+#nomatch-toast.show{display:block}
+#nomatch-toast .nm-icon{font-size:40px;margin-bottom:8px}
+#nomatch-toast .nm-msg{font-size:17px;color:var(--fg);font-weight:600;line-height:1.5}
+#nomatch-toast .nm-hint{font-size:13px;color:var(--muted);margin-top:8px;font-family:var(--font-mono)}
+
+/* W? logo watermark */
+#watermark{
+  position:fixed;bottom:12px;right:calc(var(--sidebar-w) + 12px);
+  z-index:15;display:flex;align-items:center;gap:8px;
+  opacity:0.25;pointer-events:none;
+}
+#watermark .wm-logo{font-family:var(--font-logo);font-weight:900;font-size:24px;color:var(--primary)}
+#watermark .wm-text{font-family:var(--font-mono);font-size:10px;color:var(--muted)}
+
+/* Discovery counter on canvas */
+#canvas-counter{
+  position:absolute;top:12px;left:50%;transform:translateX(-50%);
+  font-family:var(--font-mono);font-size:13px;color:#C8C0D8;
+  z-index:15;pointer-events:none;
+  background:rgba(10,10,14,0.7);padding:6px 16px;border-radius:8px;
+}
+#canvas-counter span{color:var(--primary);font-weight:700}
+
+/* Footer attribution */
+#footer-attr{
+  position:fixed;bottom:6px;left:var(--toolbar-w);z-index:15;
+  font-size:10px;color:#9990A8;font-family:var(--font-mono);
+  padding:0 12px;opacity:0.5;
+}
+#footer-attr a{color:#9990A8;text-decoration:underline}
+
+/* Intro overlay */
+#intro{
+  position:fixed;inset:0;z-index:200;background:var(--bg);
+  display:flex;align-items:center;justify-content:center;flex-direction:column;gap:16px;
+  overflow-y:auto;padding:24px 0;
+}
+#intro.hidden{display:none}
+#intro .intro-logo{font-family:var(--font-logo);font-weight:900;font-size:56px;color:var(--primary)}
+#intro h1{font-size:clamp(1.5rem,5vw,2.5rem);font-weight:700;text-align:center}
+#intro .intro-sub{font-family:var(--font-mono);font-size:14px;color:#C8C0D8;text-align:center;max-width:420px;line-height:1.8}
+#intro .intro-starters{display:flex;gap:12px;flex-wrap:wrap;justify-content:center;margin:8px 0}
+#intro .intro-el{
+  background:var(--surface);border:1px solid var(--border);border-radius:12px;
+  padding:12px 16px;text-align:center;
+}
+#intro .intro-el .ie-emoji{font-size:28px;margin-bottom:4px}
+#intro .intro-el .ie-name{font-size:12px;font-family:var(--font-mono);color:#C8C0D8}
+#intro .intro-stats{font-size:13px;color:#C8C0D8;opacity:0.6}
+#intro .play-btn{
+  background:var(--primary);color:var(--bg);font-weight:700;font-size:16px;
+  padding:14px 48px;border-radius:12px;cursor:pointer;transition:transform .15s;
+  margin-top:4px;
+}
+#intro .play-btn:hover{transform:scale(1.03)}
+#intro .intro-hint{font-size:13px;color:#B0A8C8}
+
+/* Signup modal (WDIWF feature waitlist) */
+#signup-modal{
+  display:none;position:fixed;inset:0;z-index:160;
+  background:rgba(10,10,14,0.95);align-items:center;justify-content:center;
+}
+#signup-modal.show{display:flex}
+.signup-panel{
+  background:var(--surface);border:1px solid var(--border);border-radius:20px;
+  width:92%;max-width:500px;padding:32px 28px;text-align:center;
+  animation:splashPop .3s ease-out;position:relative;max-height:90vh;overflow-y:auto;
+}
+.signup-panel .signup-close{
+  position:absolute;top:14px;right:18px;font-size:20px;color:var(--muted);cursor:pointer;
+  background:none;border:none;z-index:2;
+}
+.signup-panel .signup-close:hover{color:var(--fg)}
+.signup-panel .signup-emoji{font-size:48px;margin-bottom:6px}
+.signup-panel .signup-feature{font-size:18px;font-weight:700;color:var(--primary);margin-bottom:4px}
+.signup-panel .signup-headline{font-size:18px;color:var(--fg);font-weight:600;margin-bottom:8px;line-height:1.5}
+.signup-panel .signup-desc{font-size:14px;color:#C8C0D8;font-family:var(--font-mono);line-height:1.7;max-width:400px;margin:0 auto 16px}
+.signup-panel .signup-launch{font-size:13px;color:#D4BFFA;font-family:var(--font-mono);margin-bottom:16px;letter-spacing:0.5px;font-weight:600}
+.signup-form{display:flex;flex-direction:column;gap:10px;text-align:left}
+.signup-form label{font-size:10px;color:var(--muted);font-family:var(--font-mono);text-transform:uppercase;letter-spacing:0.5px}
+.signup-form input{
+  background:var(--surface-2);border:1px solid var(--border);border-radius:10px;
+  padding:11px 14px;color:var(--fg);font-size:14px;font-family:var(--font-display);
+  outline:none;transition:border-color .15s;width:100%;box-sizing:border-box;
+}
+.signup-form input:focus{border-color:var(--primary)}
+.signup-form input::placeholder{color:var(--muted)}
+.signup-submit{
+  background:var(--primary);color:var(--bg);font-weight:700;font-size:14px;
+  padding:13px;border-radius:10px;cursor:pointer;transition:transform .15s;
+  margin-top:4px;border:none;font-family:var(--font-display);width:100%;
+}
+.signup-submit:hover{transform:scale(1.02)}
+.signup-submit:disabled{opacity:0.5;cursor:not-allowed;transform:none}
+.signup-success{color:var(--success);font-size:13px;font-weight:600;margin-top:8px;display:none}
+.signup-later{font-size:11px;color:var(--muted);margin-top:12px;cursor:pointer;font-family:var(--font-mono)}
+.signup-later:hover{color:var(--fg)}
+
+/* Campaign gate modal */
+#gate-modal{
+  display:none;position:fixed;inset:0;z-index:150;
+  background:rgba(10,10,14,0.95);align-items:center;justify-content:center;
+}
+#gate-modal.show{display:flex}
+.gate-panel{
+  background:var(--surface);border:1px solid var(--border);border-radius:20px;
+  width:90%;max-width:480px;padding:36px 32px;text-align:center;
+  animation:splashPop .3s ease-out;position:relative;
+}
+.gate-panel .gate-logo{font-family:var(--font-logo);font-weight:900;font-size:36px;color:var(--primary);margin-bottom:4px}
+.gate-panel h2{font-size:22px;font-weight:700;margin-bottom:8px}
+.gate-panel .gate-sub{font-size:13px;color:var(--muted);line-height:1.7;max-width:380px;margin:0 auto 20px;font-family:var(--font-mono)}
+.gate-panel .gate-countdown{font-size:11px;color:var(--purple);font-family:var(--font-mono);margin-bottom:16px;letter-spacing:0.5px}
+.gate-form{display:flex;flex-direction:column;gap:10px;text-align:left}
+.gate-form label{font-size:11px;color:var(--muted);font-family:var(--font-mono);text-transform:uppercase;letter-spacing:0.5px}
+.gate-form input{
+  background:var(--surface-2);border:1px solid var(--border);border-radius:10px;
+  padding:12px 14px;color:var(--fg);font-size:14px;font-family:var(--font-display);
+  outline:none;transition:border-color .15s;
+}
+.gate-form input:focus{border-color:var(--primary)}
+.gate-form input::placeholder{color:var(--muted)}
+.gate-submit{
+  background:var(--primary);color:var(--bg);font-weight:700;font-size:15px;
+  padding:14px;border-radius:10px;cursor:pointer;transition:transform .15s;
+  margin-top:6px;border:none;font-family:var(--font-display);
+}
+.gate-submit:hover{transform:scale(1.02)}
+.gate-submit:disabled{opacity:0.5;cursor:not-allowed;transform:none}
+.gate-divider{
+  display:flex;align-items:center;gap:12px;margin:18px 0;
+  font-size:10px;color:var(--muted);font-family:var(--font-mono);
+}
+.gate-divider::before,.gate-divider::after{content:'';flex:1;height:1px;background:var(--border)}
+.gate-founder-toggle{font-size:11px;color:var(--muted);cursor:pointer;font-family:var(--font-mono);transition:color .15s}
+.gate-founder-toggle:hover{color:var(--primary)}
+.gate-founder-input{
+  display:none;margin-top:8px;
+}
+.gate-founder-input.show{display:flex;gap:8px}
+.gate-founder-input input{
+  flex:1;background:var(--surface-2);border:1px solid var(--border);border-radius:8px;
+  padding:10px 12px;color:var(--fg);font-size:13px;font-family:var(--font-mono);
+  outline:none;
+}
+.gate-founder-input input:focus{border-color:var(--primary)}
+.gate-founder-input button{
+  background:var(--gold-dim);border:1px solid rgba(240,192,64,0.2);color:var(--primary);
+  font-size:12px;font-family:var(--font-mono);padding:10px 16px;border-radius:8px;
+  cursor:pointer;white-space:nowrap;
+}
+.gate-founder-input button:hover{background:rgba(240,192,64,0.25)}
+.gate-success{color:var(--success);font-size:13px;font-weight:600;margin-top:8px;display:none}
+.gate-error{color:var(--danger);font-size:12px;margin-top:6px;display:none}
+
+/* ===== FEATURE 1: Guided Onboarding ===== */
+#intro .onboard-step{display:none;flex-direction:column;align-items:center;gap:16px;width:100%;max-width:540px;padding:0 20px}
+#intro .onboard-step.active{display:flex}
+#intro .onboard-subtitle{
+  font-family:var(--font-mono);font-size:15px;color:#C8C0D8;text-align:center;
+  max-width:480px;line-height:1.8;
+}
+.drive-cards{display:grid;grid-template-columns:repeat(6,1fr);gap:10px;margin:8px auto;max-width:640px}
+.drive-card:nth-child(1){grid-column:1/3}
+.drive-card:nth-child(2){grid-column:3/5}
+.drive-card:nth-child(3){grid-column:5/7}
+.drive-card:nth-child(4){grid-column:1/4}
+.drive-card:nth-child(5){grid-column:4/7}
+.drive-card{
+  background:var(--surface);border:1px solid var(--border);border-radius:14px;
+  padding:16px 18px;cursor:pointer;transition:all .2s;text-align:left;
+}
+.drive-card:hover{border-color:var(--primary);background:var(--gold-dim)}
+.drive-card.selected{border-color:var(--primary);background:var(--gold-dim);box-shadow:0 0 20px rgba(240,192,64,0.15)}
+.drive-card .dc-emoji{font-size:28px;margin-bottom:6px}
+.drive-card .dc-label{font-size:15px;font-weight:700;color:var(--fg);margin-bottom:2px}
+.drive-card .dc-desc{font-size:13px;color:#B0A8C8;font-family:var(--font-mono);line-height:1.5}
+
+/* Auto-combine animation (screen 2) */
+.auto-combine-stage{
+  position:relative;width:280px;height:180px;margin:12px auto;
+}
+.auto-combine-stage .ac-el{
+  position:absolute;display:flex;flex-direction:column;align-items:center;gap:2px;
+  transition:all .8s cubic-bezier(.34,1.56,.64,1);
+}
+.auto-combine-stage .ac-el .ac-emoji{font-size:48px}
+.auto-combine-stage .ac-el .ac-name{font-size:12px;font-family:var(--font-mono);color:var(--primary);font-weight:500}
+.auto-combine-stage .ac-result{
+  position:absolute;left:50%;top:50%;transform:translate(-50%,-50%) scale(0);opacity:0;
+  display:flex;flex-direction:column;align-items:center;gap:4px;
+  transition:all .5s cubic-bezier(.34,1.56,.64,1);
+}
+.auto-combine-stage .ac-result.visible{transform:translate(-50%,-50%) scale(1);opacity:1}
+.auto-combine-stage .ac-result .ac-emoji{font-size:56px}
+.auto-combine-stage .ac-result .ac-name{font-size:14px;font-family:var(--font-mono);color:var(--primary);font-weight:600}
+
+.auto-combine-stage .ac-el.merge-left{transform:translateX(60px)}
+.auto-combine-stage .ac-el.merge-right{transform:translateX(-60px)}
+
+/* Sidebar tooltip pulse */
+.sidebar-tooltip{
+  position:absolute;bottom:12px;left:8px;right:8px;
+  background:rgba(17,17,24,0.97);border:1px solid rgba(240,192,64,0.3);border-radius:10px;
+  padding:12px 14px;font-size:12px;color:#D4BFFA;font-family:var(--font-mono);
+  line-height:1.6;z-index:25;animation:tooltipPulse 2s ease-in-out 3;
+  pointer-events:none;text-align:center;
+}
+@keyframes tooltipPulse{0%,100%{opacity:1}50%{opacity:0.6}}
+
+/* ===== FEATURE 2: Consequence Path Modal ===== */
+#consequence-modal{
+  display:none;position:fixed;inset:0;z-index:170;
+  background:rgba(10,4,4,0.96);align-items:center;justify-content:center;
+}
+#consequence-modal.show{display:flex}
+.consequence-panel{
+  background:#1A0A0A;border:2px solid var(--danger);border-radius:20px;
+  width:92%;max-width:500px;padding:36px 32px;text-align:center;
+  animation:splashPop .3s ease-out;
+  box-shadow:0 0 60px rgba(255,59,74,0.2),0 0 120px rgba(255,59,74,0.08);
+}
+.consequence-panel .cq-headline{font-size:24px;font-weight:700;color:#FF6B78;margin-bottom:12px}
+.consequence-panel .cq-body{font-size:16px;color:#E0D8CC;line-height:1.7;margin-bottom:12px}
+.consequence-panel .cq-subtext{font-size:13px;color:#9990A8;font-family:var(--font-mono);font-style:italic;margin-bottom:20px;line-height:1.6}
+.consequence-panel .cq-btn{
+  background:var(--danger);color:#fff;font-weight:700;font-size:15px;
+  padding:14px 32px;border-radius:12px;cursor:pointer;transition:transform .15s;
+  border:none;font-family:var(--font-display);
+}
+.consequence-panel .cq-btn:hover{transform:scale(1.03);background:#FF5060}
+
+/* ===== FEATURE 3: Persona Badge + Share CTA ===== */
+#persona-badge{
+  position:absolute;top:40px;left:50%;transform:translateX(-50%);
+  font-family:var(--font-mono);font-size:12px;color:#D4BFFA;
+  z-index:15;pointer-events:none;
+  background:var(--purple-dim);border:1px solid rgba(167,139,250,0.2);
+  padding:5px 14px;border-radius:8px;
+  display:none;
+}
+#share-cta{
+  position:absolute;top:68px;left:50%;transform:translateX(-50%);
+  z-index:15;display:none;
+}
+#share-cta button{
+  font-family:var(--font-mono);font-size:12px;color:var(--primary);
+  background:var(--gold-dim);border:1px solid rgba(240,192,64,0.25);
+  padding:6px 16px;border-radius:8px;cursor:pointer;transition:all .15s;
+}
+#share-cta button:hover{background:rgba(240,192,64,0.25);transform:scale(1.02)}
+#share-copied{
+  position:absolute;top:-24px;left:50%;transform:translateX(-50%);
+  font-size:10px;color:var(--success);white-space:nowrap;display:none;
+}
+
+/* ===== FEATURE 4: WDIWF Bridge CTA in Splash ===== */
+#splash .splash-bridge{
+  margin-top:10px;font-size:13px;font-family:var(--font-mono);
+  color:var(--primary);padding:10px 22px;border-radius:10px;
+  background:transparent;border:1px solid rgba(240,192,64,0.4);
+  animation:splashFade .6s ease-out .45s both;position:relative;z-index:2;
+  cursor:pointer;transition:all .15s;display:none;
+}
+#splash .splash-bridge:hover{background:var(--gold-dim);border-color:var(--primary)}
+
+/* ===== FEATURE 5: Name Input Step ===== */
+#name-step{
+  display:none;flex-direction:column;align-items:center;gap:16px;width:100%;max-width:440px;padding:0 20px;
+}
+#name-step.active{display:flex}
+#name-step .name-logo{font-family:var(--font-logo);font-weight:900;font-size:42px;color:var(--primary)}
+#name-step .name-prompt{font-size:20px;font-weight:700;text-align:center;color:var(--fg)}
+#name-step .name-input{
+  width:100%;background:var(--surface-2);border:1px solid var(--border);border-radius:10px;
+  padding:14px 16px;color:var(--fg);font-size:18px;font-family:var(--font-display);
+  outline:none;transition:border-color .15s;text-align:center;
+}
+#name-step .name-input:focus{border-color:var(--primary)}
+#name-step .name-input::placeholder{color:var(--muted)}
+#name-step .name-go{
+  background:var(--primary);color:var(--bg);font-weight:700;font-size:16px;
+  padding:14px 48px;border-radius:12px;cursor:pointer;transition:transform .15s;
+  border:none;font-family:var(--font-display);
+}
+#name-step .name-go:hover{transform:scale(1.03)}
+#name-step .name-sub{font-size:13px;color:#B0A8C8;font-family:var(--font-mono);text-align:center;margin-bottom:8px;line-height:1.6}
+#name-step .name-skip{font-size:12px;color:var(--muted);font-family:var(--font-mono);cursor:pointer;margin-top:8px;transition:color .15s}
+#name-step .name-skip:hover{color:var(--fg)}
+
+/* ===== FEATURE 5: Certificate Modal ===== */
+#cert-modal{
+  display:none;position:fixed;inset:0;z-index:170;
+  background:rgba(10,10,14,0.95);align-items:center;justify-content:center;
+  flex-direction:column;overflow-y:auto;padding:24px 16px;
+}
+#cert-modal.show{display:flex}
+
+.cert-card{
+  background:linear-gradient(160deg,#13121A 0%,#18171F 100%);
+  border:2px solid rgba(240,192,64,0.5);border-radius:20px;
+  width:100%;max-width:560px;padding:36px 32px;text-align:center;
+  animation:splashPop .4s ease-out;
+  box-shadow:0 0 40px rgba(240,192,64,0.12),0 0 80px rgba(240,192,64,0.06);
+  position:relative;
+}
+.cert-card .cert-wordmark{
+  font-family:var(--font-mono);font-size:11px;color:var(--muted);
+  text-transform:uppercase;letter-spacing:2px;margin-bottom:2px;
+}
+.cert-card .cert-achievement{
+  font-family:var(--font-mono);font-size:10px;color:var(--primary);
+  text-transform:uppercase;letter-spacing:3px;margin-bottom:16px;
+}
+.cert-card .cert-badge{font-size:56px;margin-bottom:10px}
+.cert-card .cert-name{
+  font-size:28px;font-weight:700;color:var(--primary);margin-bottom:14px;
+}
+.cert-card .cert-awarded{
+  font-size:12px;color:var(--muted);font-family:var(--font-mono);text-transform:uppercase;
+  letter-spacing:1px;margin-bottom:4px;
+}
+.cert-card .cert-player{
+  font-size:28px;font-weight:700;color:var(--fg);font-family:var(--font-display);
+  margin-bottom:14px;
+}
+.cert-card .cert-insight{
+  font-size:15px;color:#D4BFFA;font-style:italic;line-height:1.7;
+  max-width:420px;margin:0 auto 16px;
+}
+.cert-card .cert-date{
+  font-family:var(--font-mono);font-size:11px;color:var(--muted);margin-bottom:4px;
+}
+.cert-card .cert-issuer{
+  font-family:var(--font-mono);font-size:10px;color:var(--muted);margin-bottom:16px;
+}
+.cert-card .cert-gold-line{
+  width:80%;height:1px;margin:0 auto 16px;
+  background:linear-gradient(90deg,transparent,var(--primary),transparent);
+}
+.cert-card .cert-signature{
+  font-family:'Dancing Script',cursive;font-size:28px;color:var(--primary);
+  margin-bottom:2px;
+}
+.cert-card .cert-sig-title{
+  font-family:var(--font-mono);font-size:10px;color:var(--muted);
+}
+
+/* Share buttons row */
+.cert-share-btns{
+  display:flex;gap:10px;margin-top:20px;flex-wrap:wrap;justify-content:center;
+  max-width:560px;width:100%;
+}
+.cert-share-btns button{
+  flex:1;min-width:140px;padding:12px 16px;border-radius:10px;font-size:13px;
+  font-weight:600;font-family:var(--font-display);cursor:pointer;transition:transform .15s;
+  border:none;display:flex;align-items:center;justify-content:center;gap:6px;
+}
+.cert-share-btns button:hover{transform:scale(1.03)}
+.cert-btn-linkedin{background:#0A66C2;color:#fff}
+.cert-btn-x{background:#000;color:#fff;border:1px solid rgba(255,255,255,0.2) !important}
+.cert-btn-download{background:transparent;color:var(--primary);border:2px solid var(--primary) !important}
+
+.cert-continue{
+  margin-top:16px;font-size:14px;color:#B0A8C8;cursor:pointer;font-family:var(--font-mono);
+  background:none;border:none;transition:color .15s;
+}
+.cert-continue:hover{color:var(--fg)}
+
+/* Certificate toast */
+#cert-toast{
+  position:fixed;bottom:24px;left:50%;transform:translateX(-50%);
+  background:rgba(17,17,24,0.97);border:1px solid rgba(240,192,64,0.3);border-radius:10px;
+  padding:10px 20px;font-size:12px;color:var(--success);font-family:var(--font-mono);
+  z-index:180;display:none;white-space:nowrap;
+  animation:splashFade .3s ease-out;
+}
+#cert-toast.show{display:block}
+
+/* Mobile adjustments */
+@media(max-width:700px){
+  :root{--sidebar-w:160px;--toolbar-w:42px}
+  .sidebar-item .si-emoji{font-size:22px;width:30px}
+  .sidebar-item .si-name{font-size:10px}
+  .canvas-el .ce-emoji{font-size:34px}
+  .canvas-el .ce-name{font-size:8px}
+  #splash .splash-emoji{font-size:56px}
+  #splash .splash-name{font-size:22px}
+  #splash .splash-quote{font-size:12px;max-width:280px}
+  .drive-card{width:100%;min-width:0}
+  .drive-card .dc-label{font-size:14px}
+  .drive-card .dc-desc{font-size:12px}
+  #intro .onboard-subtitle{font-size:13px}
+  .consequence-panel{padding:24px 20px}
+  .consequence-panel .cq-headline{font-size:20px}
+  .consequence-panel .cq-body{font-size:14px}
+  .cert-card{padding:24px 18px}
+  .cert-card .cert-badge{font-size:42px}
+  .cert-card .cert-name{font-size:22px}
+  .cert-card .cert-player{font-size:22px}
+  .cert-card .cert-insight{font-size:13px}
+  .cert-share-btns{flex-direction:column}
+  .cert-share-btns button{min-width:100%}
+}
+@media(max-width:480px){
+  :root{--sidebar-w:130px;--toolbar-w:38px}
+  .tool-btn{width:32px;height:32px;font-size:15px}
+}
+</style>
+</head>
+<body>
+
+<!-- Intro screen (Guided Onboarding) -->
+<div id="intro">
+  <!-- Screen 1: What drives you? -->
+  <div class="onboard-step active" id="onboard-1">
+    <div class="intro-logo">W?</div>
+    <h1>PeoplePuzzles™</h1>
+    <p class="onboard-subtitle">Every company runs a background check on you.<br>This game teaches you to run one on them.</p>
+    <div class="drive-cards" id="drive-cards">
+      <div class="drive-card" data-drive="money">
+        <div class="dc-emoji">💰</div>
+        <div class="dc-label">Money</div>
+        <div class="dc-desc">I want to know what I'm really worth</div>
+      </div>
+      <div class="drive-card" data-drive="stability">
+        <div class="dc-emoji">🧱</div>
+        <div class="dc-label">Stability</div>
+        <div class="dc-desc">I want to know if the company will be around</div>
+      </div>
+      <div class="drive-card" data-drive="values">
+        <div class="dc-emoji">⚖️</div>
+        <div class="dc-label">Values</div>
+        <div class="dc-desc">I want to work somewhere that matches who I am</div>
+      </div>
+      <div class="drive-card" data-drive="growth">
+        <div class="dc-emoji">📈</div>
+        <div class="dc-label">Growth</div>
+        <div class="dc-desc">I want to know where this role actually leads</div>
+      </div>
+      <div class="drive-card" data-drive="truth">
+        <div class="dc-emoji">🎯</div>
+        <div class="dc-label">Truth</div>
+        <div class="dc-desc">I want the receipts before I sign anything</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Screen 1.5: Name + Email Input -->
+  <div id="name-step">
+    <div class="name-logo">W?</div>
+    <div class="name-prompt">Before we start — who are you?</div>
+    <div class="name-sub">Your certificates will be personalized and emailed to you.</div>
+    <input type="text" class="name-input" id="player-name-input" placeholder="Full name" autocomplete="name">
+    <input type="email" class="name-input" id="player-email-input" placeholder="Email address" autocomplete="email" style="margin-top:8px">
+    <button class="name-go" id="name-go-btn">Let's go →</button>
+    <div class="name-skip" id="name-skip-btn">Skip for now</div>
+  </div>
+
+  <!-- Screen 2: Your first discovery (auto-combine) -->
+  <div class="onboard-step" id="onboard-2">
+    <div class="intro-logo">W?</div>
+    <h1 style="font-size:clamp(1.2rem,4vw,1.8rem)">Your first discovery</h1>
+    <p class="onboard-subtitle" id="onboard-2-desc"></p>
+    <div class="auto-combine-stage" id="ac-stage">
+      <div class="ac-el" id="ac-left" style="left:20px;top:50px">
+        <span class="ac-emoji" id="ac-left-emoji"></span>
+        <span class="ac-name" id="ac-left-name"></span>
+      </div>
+      <div class="ac-el" id="ac-right" style="right:20px;top:50px">
+        <span class="ac-emoji" id="ac-right-emoji"></span>
+        <span class="ac-name" id="ac-right-name"></span>
+      </div>
+      <div class="ac-result" id="ac-result">
+        <span class="ac-emoji" id="ac-result-emoji"></span>
+        <span class="ac-name" id="ac-result-name"></span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Legacy play button (hidden, used by screen 2 auto-advance) -->
+  <button class="play-btn" id="play-btn" style="display:none">PLAY</button>
+</div>
+
+<!-- Game UI -->
+<div id="game" style="display:none">
+  <!-- Left toolbar -->
+  <div id="toolbar">
+    <div class="tool-btn" id="btn-logo" title="PeoplePuzzles™" style="color:var(--primary);font-family:var(--font-logo);font-weight:900;font-size:14px;margin-bottom:8px">W?</div>
+    <button class="tool-btn" id="btn-cleanup" title="Clean up canvas">🧹</button>
+    <button class="tool-btn" id="btn-encyclopedia" title="Encyclopedia">📖<span class="badge" id="enc-badge" style="display:none">0</span></button>
+    <button class="tool-btn" id="btn-hint" title="Hint">💡</button>
+    <button class="tool-btn" id="btn-sound" title="Toggle sound">🔊</button>
+    <div style="flex:1"></div>
+    <button class="tool-btn" id="btn-certs" title="Certifications">🏆</button>
+  </div>
+
+  <!-- Canvas -->
+  <div id="canvas">
+    <div id="canvas-counter"><span id="cc-found">0</span> / <span id="cc-total">72</span> discovered</div>
+    <div id="persona-badge"></div>
+    <div id="share-cta"><span id="share-copied">Copied!</span><button id="share-btn">Share your play style</button></div>
+  </div>
+
+  <!-- Right sidebar -->
+  <div id="sidebar">
+    <div id="sidebar-search">
+      <span style="color:var(--muted);font-size:14px">🔍</span>
+      <input type="text" id="search-input" placeholder="Search elements...">
+    </div>
+    <div id="sidebar-list"></div>
+  </div>
+</div>
+
+<!-- Discovery splash -->
+<div id="splash">
+  <div class="splash-rays"></div>
+  <div class="splash-emoji" id="splash-emoji"></div>
+  <div class="splash-name" id="splash-name"></div>
+  <div class="splash-quote" id="splash-quote"></div>
+  <div class="splash-type" id="splash-type"></div>
+  <button class="splash-wdiwf" id="splash-wdiwf">Sign up to explore on WDIWF →</button>
+  <button class="splash-bridge" id="splash-bridge">🔍 Want to check a REAL company right now? → wdiwf.jackyeclayton.com</button>
+  <div class="splash-dismiss">Keep playing →</div>
+</div>
+
+<!-- Trap toast -->
+<div id="trap-toast">
+  <div class="trap-icon">⚠️</div>
+  <div class="trap-msg" id="trap-msg"></div>
+  <div class="trap-quote" id="trap-quote"></div>
+  <div class="trap-penalty">-10 Credibility</div>
+</div>
+
+<!-- No-match toast -->
+<div id="nomatch-toast">
+  <div class="nm-icon">🤔</div>
+  <div class="nm-msg" id="nm-msg">These don't combine</div>
+  <div class="nm-hint">Try a different pair</div>
+</div>
+
+<!-- Encyclopedia modal -->
+<div id="encyclopedia">
+  <div class="enc-panel">
+    <div class="enc-header">
+      <div>
+        <span style="font-weight:700;font-size:16px">📖 Encyclopedia</span>
+        <span style="font-size:12px;color:var(--muted);margin-left:8px" id="enc-count"></span>
+      </div>
+      <button class="enc-close" id="enc-close">✕</button>
+    </div>
+    <div class="enc-body" id="enc-body"></div>
+  </div>
+</div>
+
+<!-- Signup modal (WDIWF feature waitlist) -->
+<div id="signup-modal">
+  <div class="signup-panel">
+    <button class="signup-close" id="signup-close">✕</button>
+    <div class="signup-emoji" id="signup-emoji"></div>
+    <div class="signup-feature" id="signup-feature"></div>
+    <div class="signup-headline" id="signup-headline"></div>
+    <div class="signup-desc" id="signup-desc"></div>
+    <div class="signup-launch">Launching April 6, 2026</div>
+    <form class="signup-form" id="signup-form">
+      <div>
+        <label for="signup-name">Name</label>
+        <input type="text" id="signup-name" placeholder="Your name" required>
+      </div>
+      <div>
+        <label for="signup-email">Email</label>
+        <input type="email" id="signup-email" placeholder="you@company.com" required>
+      </div>
+      <div>
+        <label for="signup-company">Company</label>
+        <input type="text" id="signup-company" placeholder="Where do you work?" required>
+      </div>
+      <button type="submit" class="signup-submit" id="signup-submit-btn">GET EARLY ACCESS</button>
+      <div class="signup-success" id="signup-success">You're on the list. We'll be in touch.</div>
+    </form>
+    <div class="signup-later" id="signup-later">Maybe later — keep playing</div>
+  </div>
+</div>
+
+<!-- Campaign gate modal -->
+<div id="gate-modal">
+  <div class="gate-panel">
+    <div class="gate-logo">W?</div>
+    <h2>You're on a roll.</h2>
+    <p class="gate-sub">You've unlocked Tier 1 — but there's more to discover. Enter your info to keep playing and get early access when the full game launches April 6th.</p>
+    <div class="gate-countdown" id="gate-countdown"></div>
+    <form class="gate-form" id="gate-form">
+      <div>
+        <label for="gate-name">Name</label>
+        <input type="text" id="gate-name" placeholder="Your name" required>
+      </div>
+      <div>
+        <label for="gate-email">Email</label>
+        <input type="email" id="gate-email" placeholder="you@company.com" required>
+      </div>
+      <div>
+        <label for="gate-company">Company</label>
+        <input type="text" id="gate-company" placeholder="Where do you work?" required>
+      </div>
+      <button type="submit" class="gate-submit" id="gate-submit-btn">UNLOCK FULL GAME</button>
+      <div class="gate-success" id="gate-success">You're in — enjoy the full game.</div>
+      <div class="gate-error" id="gate-error"></div>
+    </form>
+    <div class="gate-divider">or</div>
+    <button class="gate-founder-toggle" id="gate-founder-toggle">I have a founder key</button>
+    <div class="gate-founder-input" id="gate-founder-input">
+      <input type="text" id="gate-key" placeholder="Enter key...">
+      <button id="gate-key-btn">Unlock</button>
+    </div>
+  </div>
+</div>
+
+<!-- Consequence modal -->
+<div id="consequence-modal">
+  <div class="consequence-panel">
+    <div style="font-size:48px;margin-bottom:12px">⚠️</div>
+    <div class="cq-headline">You skipped the receipts.</div>
+    <div class="cq-body">You took the job without checking the company. 6 months later: surprise layoffs, a PR scandal, and your name on the wrong side of it.</div>
+    <div class="cq-subtext">This is what happens when you don’t follow the money.</div>
+    <button class="cq-btn" id="cq-dismiss">Go back and investigate</button>
+  </div>
+</div>
+
+<!-- Certificate Modal -->
+<div id="cert-modal">
+  <div class="cert-card" id="cert-card">
+    <div class="cert-wordmark">PeoplePuzzles™</div>
+    <div class="cert-achievement">Certificate of Achievement</div>
+    <div class="cert-badge" id="cert-modal-badge"></div>
+    <div class="cert-name" id="cert-modal-name"></div>
+    <div class="cert-awarded">Awarded to</div>
+    <div class="cert-player" id="cert-modal-player"></div>
+    <div class="cert-insight" id="cert-modal-insight"></div>
+    <div class="cert-date" id="cert-modal-date"></div>
+    <div class="cert-issuer">Issued by Jackye Clayton · WDIWF</div>
+    <div class="cert-gold-line"></div>
+    <div class="cert-signature">Jackye Clayton</div>
+    <div class="cert-sig-title">Founder, PeoplePuzzles™ | WDIWF</div>
+  </div>
+  <div class="cert-share-btns">
+    <button class="cert-btn-linkedin" id="cert-share-linkedin">in &nbsp;Share on LinkedIn</button>
+    <button class="cert-btn-x" id="cert-share-x">𝕏 &nbsp;Share on X</button>
+    <button class="cert-btn-download" id="cert-download">⬇ &nbsp;Download Certificate</button>
+  </div>
+  <button class="cert-continue" id="cert-continue">Continue Playing →</button>
+</div>
+
+<!-- Certificate Toast -->
+<div id="cert-toast"></div>
+
+<!-- Watermark -->
+<div id="watermark">
+  <span class="wm-logo">W?</span>
+  <span class="wm-text">PeoplePuzzles™</span>
+</div>
+
+<!-- Footer -->
+<div id="footer-attr">
+  Created by Jackye Clayton · <a href="https://www.perplexity.ai/computer" target="_blank" rel="noopener noreferrer">Created with Perplexity Computer</a>
+</div>
+
+<script>
+// ============================
+// GAME DATA
+// ============================
+var WDIWF = 'https://wdiwf.jackyeclayton.com';
+
+var STARTERS = [
+  {id:'person',       name:'Person',       emoji:'\uD83D\uDC64', tier:0},
+  {id:'organization', name:'Organization', emoji:'\uD83C\uDFD7\uFE0F', tier:0},
+  {id:'information',  name:'Information',  emoji:'\uD83D\uDCA1', tier:0},
+  {id:'values',       name:'Values',       emoji:'\u2696\uFE0F', tier:0},
+];
+
+var COMBOS = [
+  // TIER 1: Fundamentals — Starters + Starters (6)
+  {a:'person',b:'organization',r:'job',n:'Job',e:'\uD83D\uDCBC',t:'core',tier:1,p:100,q:"Every job is just a person and an organization agreeing to need each other.",l:'/jobs'},
+  {a:'person',b:'information',r:'resume',n:'Resume',e:'\uD83D\uDCC4',t:'core',tier:1,p:100,q:"A resume is just a person trying to fit their story onto a page.",l:'/career-intelligence'},
+  {a:'person',b:'values',r:'character',n:'Character',e:'\uD83E\uDDED',t:'core',tier:1,p:100,q:"Values without a person are just words on a wall.",l:'/values-search'},
+  {a:'organization',b:'information',r:'company-profile',n:'Company Profile',e:'\uD83C\uDFE2',t:'core',tier:1,p:100,q:"Every company has two profiles \u2014 the one they show you, and the real one.",l:'/dossier'},
+  {a:'organization',b:'values',r:'culture',n:'Culture',e:'\uD83C\uDF31',t:'core',tier:1,p:100,q:"Culture isn\u2019t what\u2019s on the website. It\u2019s what happens when no one\u2019s watching.",l:'/evp-reality-check'},
+  {a:'information',b:'values',r:'transparency',n:'Transparency',e:'\uD83D\uDD0D',t:'core',tier:1,p:100,q:"When information meets values, you get the truth. Or at least closer to it.",l:'/methodology'},
+
+  // TIER 2: Core Concepts (16)
+  {a:'job',b:'person',r:'candidate',n:'Candidate',e:'\uD83D\uDE4B',t:'core',tier:2,p:150,q:"A candidate is just a person who raised their hand. Respect that.",l:'/jobs'},
+  {a:'job',b:'organization',r:'hiring-manager',n:'Hiring Manager',e:'\uD83D\uDC54',t:'core',tier:2,p:150,q:"Behind every job posting is a hiring manager with a story you need to hear.",l:'/recruiting'},
+  {a:'job',b:'information',r:'job-description',n:'Job Description',e:'\uD83D\uDCDD',t:'core',tier:2,p:150,q:"Most job descriptions describe a unicorn. Let\u2019s talk about the actual horse.",l:'/recruiter-brief'},
+  {a:'company-profile',b:'information',r:'dossier',n:'Dossier',e:'\uD83D\uDD0E',t:'solution',tier:2,p:150,q:"Every company runs a background check on you. Time to return the favor.",l:'/dossier'},
+  {a:'company-profile',b:'values',r:'evp',n:'EVP',e:'\uD83E\uDE9F',t:'core',tier:2,p:150,q:"An employer value proposition is a promise. WDIWF checks the receipts.",l:'/evp-reality-check'},
+  {a:'culture',b:'person',r:'fit',n:'Fit',e:'\uD83E\uDDE9',t:'core',tier:2,p:150,q:"Culture fit shouldn\u2019t mean \u2018looks like us.\u2019 It should mean \u2018thrives with us.\u2019",l:'/values-search'},
+  {a:'culture',b:'information',r:'reviews',n:'Reviews',e:'\u2B50',t:'core',tier:2,p:150,q:"Employee reviews are the Yelp of the workplace. Read between the stars.",l:'/reality-check'},
+  {a:'transparency',b:'organization',r:'accountability',n:'Accountability',e:'\uD83D\uDCCA',t:'advocacy',tier:2,p:150,q:"Transparency without accountability is just a press release.",l:'/receipts'},
+  {a:'transparency',b:'person',r:'trust',n:'Trust',e:'\uD83E\uDD1D',t:'core',tier:2,p:150,q:"Trust is transparency that\u2019s been tested and survived.",l:'/methodology'},
+  {a:'character',b:'organization',r:'leadership',n:'Leadership',e:'\uD83D\uDC51',t:'core',tier:2,p:150,q:"Character in leadership isn\u2019t optional \u2014 it\u2019s the whole job.",l:'/board-intelligence'},
+  {a:'resume',b:'values',r:'authentic-self',n:'Authentic Self',e:'\u2728',t:'core',tier:2,p:150,q:"The best resume is the one that sounds like you actually wrote it.",l:'/career-intelligence'},
+  {a:'job',b:'values',r:'process-control',n:'Process Control',e:'\uD83C\uDFDB\uFE0F',t:'core',tier:2,p:150,q:"Great recruiters are control freaks about the process \u2014 because process drift is where deals die.",l:'/recruiter-brief'},
+  {a:'person',b:'transparency',r:'permission',n:'Permission',e:'\uD83D\uDEAA',t:'core',tier:2,p:150,q:"Don\u2019t assume. Ask. \u2018Are you open to a conversation?\u2019 beats \u2018I have a great opportunity\u2019 every time.",l:'/recruiting'},
+  {a:'resume',b:'organization',r:'application',n:'Application',e:'\uD83D\uDCE8',t:'core',tier:2,p:150,q:"Every application is an act of hope. Treat it like one.",l:'/jobs'},
+  {a:'person',b:'character',r:'neurodiversity',n:'Neurodiversity',e:'\uD83E\uDDE0',t:'advocacy',tier:2,p:150,q:"Different brains built every system we rely on. Stop calling it a liability.",l:'/career-intelligence'},
+  {a:'culture',b:'values',r:'inclusion',n:'Inclusion',e:'\uD83C\uDF08',t:'advocacy',tier:2,p:150,q:"Diversity gets you in the room. Inclusion means the room was designed for you.",l:'/values-search'},
+
+  // TIER 3: Recruiter Strategy + Intelligence (18)
+  {a:'candidate',b:'job-description',r:'screening',n:'Screening',e:'\uD83D\uDD0D',t:'core',tier:3,p:200,q:"Screening isn\u2019t a filter \u2014 it\u2019s a conversation. Have the right one.",l:'/recruiter-brief'},
+  {a:'candidate',b:'dossier',r:'informed-decision',n:'Informed Decision',e:'\u2705',t:'solution',tier:3,p:200,q:"This is what WDIWF does \u2014 gives candidates the receipts before they sign.",l:'/check'},
+  {a:'hiring-manager',b:'candidate',r:'interview',n:'Interview',e:'\uD83D\uDDE3\uFE0F',t:'core',tier:3,p:200,q:"An interview should be a conversation, not an interrogation.",l:'/interview-kits'},
+  {a:'dossier',b:'information',r:'deep-research',n:'Deep Research',e:'\uD83D\uDD75\uFE0F',t:'solution',tier:3,p:200,q:"Surface-level research gets surface-level hires.",l:'/dossier'},
+  {a:'evp',b:'reviews',r:'reality-check',n:'Reality Check',e:'\uD83E\uDE9E',t:'solution',tier:3,p:200,q:"Does the employer promise match the employer practice? Let\u2019s find out.",l:'/reality-check'},
+  {a:'fit',b:'values',r:'values-alignment',n:'Values Alignment',e:'\uD83D\uDC9B',t:'advocacy',tier:3,p:200,q:"The best hires aren\u2019t just skilled \u2014 they\u2019re aligned.",l:'/values-search'},
+  {a:'leadership',b:'dossier',r:'board-intelligence',n:'Board Intelligence',e:'\uD83D\uDCCB',t:'solution',tier:3,p:200,q:"Who\u2019s really making decisions? The org chart only tells half the story.",l:'/board-intelligence'},
+  {a:'trust',b:'accountability',r:'fair-process',n:'Fair Process',e:'\u2696\uFE0F',t:'advocacy',tier:3,p:200,q:"Equity isn\u2019t a bonus feature. It\u2019s the baseline.",l:'/methodology'},
+  {a:'leadership',b:'information',r:'power-map',n:'Power Map',e:'\uD83D\uDDFA\uFE0F',t:'solution',tier:3,p:200,q:"Follow the org chart up, then follow the money sideways.",l:'/board-intelligence'},
+  {a:'accountability',b:'information',r:'follow-the-money',n:'Follow the Money',e:'\uD83D\uDCB0',t:'advocacy',tier:3,p:200,q:"Where a company sends its money tells you everything their careers page won\u2019t.",l:'/follow-the-money'},
+  {a:'job-description',b:'culture',r:'role-reality',n:'Role Reality',e:'\uD83C\uDFAD',t:'solution',tier:3,p:200,q:"The job description says \u2018fast-paced.\u2019 The reviews say \u2018burnout.\u2019",l:'/reality-check'},
+  {a:'process-control',b:'candidate',r:'acceptance-blockers',n:'Acceptance Blockers',e:'\uD83D\uDEA7',t:'core',tier:3,p:200,q:"What could prevent you from accepting if offered? Ask early. Ask directly. Don\u2019t improvise this at the offer stage.",l:'/recruiter-brief'},
+  {a:'process-control',b:'hiring-manager',r:'feedback-sla',n:'Feedback SLA',e:'\u23F1\uFE0F',t:'core',tier:3,p:200,q:"Time kills deals. If feedback isn\u2019t in 24 hours, you\u2019re losing the candidate.",l:'/recruiting'},
+  {a:'permission',b:'candidate',r:'outreach',n:'Outreach',e:'\u2709\uFE0F',t:'core',tier:3,p:200,q:"You can\u2019t close if they don\u2019t open. Start curious, not presumptive.",l:'/recruiting'},
+  {a:'interview',b:'fair-process',r:'structured-interview',n:'Structured Interview',e:'\uD83D\uDCDD',t:'advocacy',tier:3,p:200,q:"Gut feelings are for lunch orders, not hiring decisions.",l:'/interview-kits'},
+  {a:'application',b:'dossier',r:'smart-apply',n:'Smart Apply',e:'\uD83E\uDDE0',t:'solution',tier:3,p:200,q:"Don\u2019t waste time on companies that don\u2019t deserve your talent.",l:'/would-you-work-here'},
+  {a:'neurodiversity',b:'process-control',r:'adhd-friendly-systems',n:'ADHD-Friendly Systems',e:'\uD83D\uDCE6',t:'advocacy',tier:3,p:200,q:"The system isn\u2019t broken \u2014 it was just never built for you. Let\u2019s fix that.",l:'/career-intelligence'},
+  {a:'inclusion',b:'screening',r:'diversity-sourcing',n:'Diversity Sourcing',e:'\uD83C\uDF0D',t:'advocacy',tier:3,p:200,q:"If your pipeline isn\u2019t diverse, your process is the problem. Not the talent pool.",l:'/values-search'},
+
+  // TIER 4: Advanced Insights (16)
+  {a:'screening',b:'deep-research',r:'sourcing-strategy',n:'Sourcing Strategy',e:'\uD83C\uDFAF',t:'solution',tier:4,p:300,q:"Stop slinging resumes. Data turns recruiting into precision.",l:'/tools'},
+  {a:'informed-decision',b:'values-alignment',r:'strategic-offer-review',n:'Strategic Offer Review',e:'\u26A1',t:'solution',tier:4,p:300,q:"The best offer isn\u2019t always the biggest number.",l:'/strategic-offer-review'},
+  {a:'follow-the-money',b:'values',r:'political-spending',n:'Political Spending',e:'\uD83C\uDFDB\uFE0F',t:'advocacy',tier:4,p:300,q:"Your employer\u2019s PAC donations? That\u2019s your paycheck funding those campaigns.",l:'/what-am-i-supporting'},
+  {a:'board-intelligence',b:'follow-the-money',r:'influence-map',n:'Influence Map',e:'\uD83C\uDF10',t:'advocacy',tier:4,p:300,q:"Follow the connections. Follow the money. Find the truth.",l:'/follow-the-money'},
+  {a:'reality-check',b:'accountability',r:'employer-receipt',n:'Employer Receipt',e:'\uD83E\uDDFE',t:'solution',tier:4,p:300,q:"This is the receipt for everything they promised. Did they deliver?",l:'/receipts'},
+  {a:'smart-apply',b:'informed-decision',r:'career-intelligence',n:'Career Intelligence',e:'\uD83E\uDDED',t:'solution',tier:4,p:300,q:"Stop applying. Start aligning. That\u2019s the WDIWF way.",l:'/career-intelligence'},
+  {a:'role-reality',b:'reviews',r:'ghost-job-detector',n:'Ghost Job Detector',e:'\uD83D\uDC7B',t:'solution',tier:4,p:300,q:"30% of job postings are ghosts. WDIWF helps you see through them.",l:'/jobs'},
+  {a:'power-map',b:'political-spending',r:'integrity-score',n:'Integrity Score',e:'\uD83C\uDFAF',t:'advocacy',tier:4,p:300,q:"The Integrity Gap: the distance between what companies say and what they do.",l:'/methodology'},
+  {a:'sourcing-strategy',b:'fit',r:'perfect-match',n:'Perfect Match',e:'\uD83D\uDC8E',t:'solution',tier:4,p:300,q:"When data meets empathy and process meets people, you get hires that stick.",l:'/career-map'},
+  {a:'acceptance-blockers',b:'structured-interview',r:'offer-intelligence',n:'Offer Intelligence',e:'\uD83D\uDCCA',t:'solution',tier:4,p:300,q:"You asked the hard questions early. Now the offer conversation isn\u2019t a surprise \u2014 it\u2019s a closing.",l:'/offer-clarity'},
+  {a:'outreach',b:'trust',r:'response-rate',n:'Response Rate',e:'\uD83D\uDCC8',t:'core',tier:4,p:300,q:"13% to 68%. That\u2019s not magic \u2014 it\u2019s permission, curiosity, and follow-through.",l:'/recruiting'},
+  {a:'feedback-sla',b:'hiring-manager',r:'manager-operating-manual',n:'Manager Operating Manual',e:'\uD83D\uDCD3',t:'core',tier:4,p:300,q:"Share the quirks. Share the style. Share the expectations. Don\u2019t let the candidate walk in cold.",l:'/recruiter-brief'},
+  {a:'deep-research',b:'transparency',r:'safety-alert',n:'Safety Alert',e:'\u26A0\uFE0F',t:'advocacy',tier:4,p:300,q:"OSHA citations and NLRB cases are public. You just have to look.",l:'/check'},
+  {a:'candidate',b:'authentic-self',r:'candidate-prep',n:'Candidate Prep',e:'\uD83C\uDF92',t:'core',tier:4,p:300,q:"Extra resumes. Interviewer names. A plan for the first five minutes. Candidate experience isn\u2019t vibes \u2014 it\u2019s execution.",l:'/career-intelligence'},
+  {a:'inclusion',b:'structured-interview',r:'bias-interruption',n:'Bias Interruption',e:'\u2702\uFE0F',t:'advocacy',tier:4,p:300,q:"Bias doesn\u2019t announce itself. You have to build the interruption into the process.",l:'/interview-kits'},
+  {a:'diversity-sourcing',b:'deep-research',r:'hotdog-not-hotdog',n:'Hotdog Not Hotdog',e:'\uD83E\uDD16',t:'solution',tier:4,p:300,q:"AI can tell you if it\u2019s a hotdog. It can\u2019t tell you if the hire was fair. Know the difference.",l:'/tools'},
+
+  // TIER 5: Mastery (12)
+  {a:'career-intelligence',b:'employer-receipt',r:'full-audit',n:'Full Audit',e:'\u2728',t:'solution',tier:5,p:400,q:"The complete forensic picture. This is what WDIWF was built for.",l:'/check'},
+  {a:'structured-interview',b:'perfect-match',r:'quality-of-hire',n:'Quality of Hire',e:'\uD83C\uDFC6',t:'solution',tier:5,p:400,q:"Quality of hire isn\u2019t a metric. It\u2019s a promise you kept.",l:'/recruiting'},
+  {a:'influence-map',b:'integrity-score',r:'corporate-xray',n:'Corporate X-Ray',e:'\uD83D\uDD2C',t:'advocacy',tier:5,p:400,q:"See through the corporate mask. Every company has one.",l:'/check'},
+  {a:'ghost-job-detector',b:'fair-process',r:'job-integrity-board',n:'Job Integrity Board',e:'\uD83D\uDCCB',t:'advocacy',tier:5,p:400,q:"Every job posting should be accountable. We\u2019re making it happen.",l:'/jobs'},
+  {a:'employer-receipt',b:'integrity-score',r:'accountability-report',n:'Accountability Report',e:'\uD83D\uDCD1',t:'advocacy',tier:5,p:400,q:"Hold them to their word. Every promise tracked. Every receipt saved.",l:'/receipts'},
+  {a:'offer-intelligence',b:'strategic-offer-review',r:'comp-transparency',n:'Comp Transparency',e:'\uD83D\uDCB0',t:'advocacy',tier:5,p:400,q:"If they won\u2019t tell you the band, that\u2019s not a negotiation \u2014 it\u2019s a trap.",l:'/strategic-offer-review'},
+  {a:'response-rate',b:'candidate-prep',r:'relationship-equity',n:'Relationship Equity',e:'\uD83D\uDC9C',t:'core',tier:5,p:400,q:"Successful recruiters stay useful even after the \u2018no.\u2019 That\u2019s how you earn the next \u2018yes.\u2019",l:'/recruiting'},
+  {a:'manager-operating-manual',b:'structured-interview',r:'hiring-playbook',n:'Hiring Playbook',e:'\uD83D\uDCDA',t:'core',tier:5,p:400,q:"Control the process: intake to offer, no surprises, no excuses.",l:'/recruiter-brief'},
+  {a:'safety-alert',b:'accountability',r:'labor-impact',n:'Labor Impact',e:'\uD83C\uDFED',t:'advocacy',tier:5,p:400,q:"Is the role real? Or just keeping the pipeline warm? WDIWF checks.",l:'/reality-check'},
+  {a:'corporate-xray',b:'follow-the-money',r:'connected-dots',n:'Connected Dots',e:'\uD83D\uDD17',t:'advocacy',tier:5,p:400,q:"Board seats. Lobbying spend. PAC donations. The dots connect \u2014 if you look.",l:'/follow-the-money'},
+  {a:'bias-interruption',b:'diversity-sourcing',r:'inclusive-hiring-system',n:'Inclusive Hiring System',e:'\uD83C\uDFDB\uFE0F',t:'advocacy',tier:5,p:400,q:"This isn\u2019t a diversity add-on. This is the architecture. Build it right or build it again.",l:'/values-search'},
+  {a:'hotdog-not-hotdog',b:'accountability',r:'ai-compliance',n:'AI Compliance',e:'\u2696\uFE0F',t:'advocacy',tier:5,p:400,q:"NYC Local Law 144. EU AI Act. The rules exist. Now you have to know them.",l:'/tools'},
+
+  // TIER 6: Ultimate Discoveries (4)
+  {a:'full-audit',b:'quality-of-hire',r:'dream-job',n:'Dream Job',e:'\uD83C\uDF1F',t:'solution',tier:6,p:500,q:"When the right role meets the right company meets the right data \u2014 that\u2019s the dream.",l:'/dashboard'},
+  {a:'hiring-playbook',b:'relationship-equity',r:'recruiter-mastery',n:'Recruiter Mastery',e:'\uD83D\uDC51',t:'core',tier:6,p:500,q:"You control the process. You tell the truth. You follow the receipts. You treat people like people. That\u2019s mastery.",l:'/recruiting'},
+  {a:'connected-dots',b:'accountability-report',r:'patterns-not-opinions',n:'Patterns Not Opinions',e:'\uD83D\uDD2E',t:'advocacy',tier:6,p:500,q:"WDIWF doesn\u2019t give you opinions. It gives you patterns. What you do with them is your move.",l:'/methodology'},
+  {a:'inclusive-hiring-system',b:'ai-compliance',r:'the-equity-edge',n:'The Equity Edge',e:'\uD83C\uDF1F',t:'advocacy',tier:6,p:500,q:"Not a buzzword. Not a balance scorecard. The Equity Edge is what you build when you finally stop treating inclusion as optional.",l:'/check'},
+];
+
+var TRAPS = [
+  {a:'person',b:'person',m:"Two people without a plan isn\u2019t a team \u2014 it\u2019s a group chat.",q:"Headcount doesn\u2019t fix strategy."},
+  {a:'organization',b:'organization',m:"Merging two companies doesn\u2019t automatically merge their cultures.",q:"M&A stands for \u2018Maybe Actually\u2019 figure out the people stuff first."},
+  {a:'information',b:'information',m:"All data and no action is just a dashboard nobody reads.",q:"Data without decisions is decoration."},
+  {a:'values',b:'values',m:"Shared values without shared action is just a poster in the break room.",q:"Values are verbs, not nouns."},
+  {a:'resume',b:'resume',m:"Two resumes don\u2019t make a candidate. They make a stack nobody reads.",q:"Volume isn\u2019t a sourcing strategy."},
+  {a:'job',b:'job',m:"More open roles doesn\u2019t mean more hires. It means more chaos.",q:"Requisitions aren\u2019t a strategy."},
+  {a:'candidate',b:'candidate',m:"Collecting candidates without a process is hoarding, not recruiting.",q:"Pipeline is vanity. Placement is sanity."},
+  {a:'interview',b:'interview',m:"More interviews don\u2019t make better decisions. They make longer processes.",q:"If six people interview and nobody owns the scorecard, you\u2019re just polling."},
+  {a:'outreach',b:'outreach',m:"Sending more messages to the same people isn\u2019t persistence \u2014 it\u2019s spam.",q:"Per my last email energy isn\u2019t a strategy."},
+  {a:'reviews',b:'reviews',m:"Reading reviews without verifying them is just gossip with a star rating.",q:"Glassdoor is a starting point, not a verdict."},
+  {a:'inclusion',b:'inclusion',m:"Saying \u2018we\u2019re inclusive\u2019 twice doesn\u2019t make it true. Show the data.",q:"Inclusion is a practice, not a label."},
+  {a:'neurodiversity',b:'neurodiversity',m:"Awareness without accommodation is just applause. Do the structural work.",q:"Celebrating neurodiversity and removing barriers are two different things."},
+];
+
+var CERTS = [
+  {name:'Alignment',req:['job','candidate','hiring-manager'],badge:'\uD83D\uDD11',insight:"You\u2019ve aligned the basics. Now you have direction."},
+  {name:'Intelligence',req:['dossier','deep-research','company-profile'],badge:'\uD83D\uDD0D',insight:"Data is your advantage. Use it wisely."},
+  {name:'Process Control',req:['process-control','feedback-sla','acceptance-blockers'],badge:'\uD83C\uDFDB\uFE0F',insight:"You control the process. That\u2019s where outcomes live."},
+  {name:'Due Diligence',req:['reality-check','informed-decision','employer-receipt'],badge:'\uD83D\uDEE1\uFE0F',insight:"You\u2019re protecting candidates from bad fits."},
+  {name:'Advocacy',req:['follow-the-money','fair-process','values-alignment'],badge:'\u2696\uFE0F',insight:"You\u2019re not just filling roles \u2014 you\u2019re fighting for equity."},
+  {name:'Truth-Teller',req:['integrity-score','corporate-xray','accountability-report'],badge:'\uD83E\uDE9E',insight:"You don\u2019t hide the truth. You hand it over and let people choose."},
+  {name:'Mastery',req:['dream-job','recruiter-mastery','the-equity-edge'],badge:'\uD83D\uDC51',insight:"Certified People Puzzler\u2122 \u2014 you see the whole board."},
+  {name:'Inclusion Architect',req:['inclusive-hiring-system','bias-interruption','neurodiversity'],badge:'\uD83E\uDDE9',insight:"You don\u2019t add inclusion to the process. You build the process around it."},
+];
+
+var TOTAL = COMBOS.length;
+
+// ============================
+// STATE
+// ============================
+var state = {
+  discovered: [],  // combo result ids
+  inventory: STARTERS.map(function(s){return s.id}), // all available element ids
+  canvasEls: [],   // {id, elId, x, y} — instances on canvas
+  nextCanvasId: 1,
+  score: 0,
+  cred: 100,
+  traps: 0,
+  order: [],
+  soundOn: true,
+  searchQuery: '',
+  newlyDiscovered: 0, // badge count
+};
+
+// ============================
+// SOUND
+// ============================
+var SND = {
+  ctx: null,
+  init: function(){
+    if(!this.ctx) this.ctx = new (window.AudioContext||window.webkitAudioContext)();
+    if(this.ctx.state==='suspended') this.ctx.resume();
+  },
+  tone: function(f,d,w,v){
+    if(!this.ctx||!state.soundOn) return;
+    try{var o=this.ctx.createOscillator(),g=this.ctx.createGain();o.type=w||'sine';o.frequency.value=f;g.gain.setValueAtTime(v||0.1,this.ctx.currentTime);g.gain.exponentialRampToValueAtTime(0.001,this.ctx.currentTime+d);o.connect(g);g.connect(this.ctx.destination);o.start();o.stop(this.ctx.currentTime+d)}catch(e){}
+  },
+  drop:function(){this.tone(800,0.04,'triangle',0.08)},
+  ok:function(){var s=this;s.tone(440,0.1);setTimeout(function(){s.tone(660,0.1)},100)},
+  bad:function(){this.tone(200,0.2,'sawtooth',0.06)},
+  cert:function(){var s=this;[523,659,784].forEach(function(f,i){setTimeout(function(){s.tone(f,0.3,'sine',0.08)},i*130)})},
+};
+
+// ============================
+// HELPERS
+// ============================
+function getInfo(id){
+  var s=STARTERS.find(function(e){return e.id===id});
+  if(s) return s;
+  var c=COMBOS.find(function(c){return c.r===id});
+  if(c) return {id:c.r,name:c.n,emoji:c.e,type:c.t,tier:c.tier};
+  return {id:id,name:id,emoji:'?',type:'core',tier:0};
+}
+function findCombo(a,b){return COMBOS.find(function(c){return(c.a===a&&c.b===b)||(c.a===b&&c.b===a)})}
+function findTrap(a,b){return TRAPS.find(function(t){return(t.a===a&&t.b===b)||(t.a===b&&t.b===a)})}
+function typeColor(t){return t==='core'?'var(--primary)':t==='solution'?'var(--success)':t==='advocacy'?'var(--purple)':'var(--muted)'}
+
+function getAvailableHint(){
+  for(var i=0;i<COMBOS.length;i++){
+    var c=COMBOS[i];
+    if(state.discovered.indexOf(c.r)!==-1) continue;
+    if(state.inventory.indexOf(c.a)!==-1&&state.inventory.indexOf(c.b)!==-1) return c;
+  }
+  return null;
+}
+
+// ============================
+// INTRO / GUIDED ONBOARDING
+// ============================
+var playerDrive = null;
+var playerName = 'People Puzzler';
+var playerEmail = '';
+
+// Drive → combo mapping for auto-combine
+var DRIVE_COMBOS = {
+  money:     {a:'person', b:'organization'}, // = Job
+  stability: {a:'organization', b:'information'}, // = Company Profile
+  values:    {a:'person', b:'values'}, // = Character
+  growth:    {a:'person', b:'information'}, // = Resume
+  truth:     {a:'organization', b:'values'}, // = Culture
+};
+
+// Screen 1: Drive card selection
+document.getElementById('drive-cards').addEventListener('click',function(e){
+  var card=e.target.closest('.drive-card');
+  if(!card) return;
+  SND.init(); SND.drop();
+  // Deselect others
+  var cards=document.querySelectorAll('.drive-card');
+  for(var i=0;i<cards.length;i++) cards[i].classList.remove('selected');
+  card.classList.add('selected');
+  playerDrive=card.getAttribute('data-drive');
+
+  // Advance to name input step after brief delay
+  setTimeout(function(){ showNameStep() },600);
+});
+
+// Screen 1.5: Name input
+function showNameStep(){
+  document.getElementById('onboard-1').classList.remove('active');
+  document.getElementById('name-step').classList.add('active');
+  setTimeout(function(){ document.getElementById('player-name-input').focus() },300);
+}
+
+function capturePlayerInfo(){
+  var nameVal=document.getElementById('player-name-input').value.trim();
+  var emailVal=document.getElementById('player-email-input').value.trim();
+  playerName=nameVal||'People Puzzler';
+  playerEmail=emailVal||'';
+  // Pre-fill name and email in gate and signup forms
+  if(nameVal){
+    var gn=document.getElementById('gate-name');
+    var sn=document.getElementById('signup-name');
+    if(gn) gn.value=nameVal;
+    if(sn) sn.value=nameVal;
+  }
+  if(emailVal){
+    var ge=document.getElementById('gate-email');
+    var se=document.getElementById('signup-email');
+    if(ge) ge.value=emailVal;
+    if(se) se.value=emailVal;
+  }
+  document.getElementById('name-step').classList.remove('active');
+  showOnboardScreen2();
+}
+
+document.getElementById('name-go-btn').addEventListener('click', capturePlayerInfo);
+
+document.getElementById('name-skip-btn').addEventListener('click',function(){
+  playerName='People Puzzler';
+  playerEmail='';
+  document.getElementById('name-step').classList.remove('active');
+  showOnboardScreen2();
+});
+
+document.getElementById('player-email-input').addEventListener('keydown',function(e){
+  if(e.key==='Enter'){ e.preventDefault(); capturePlayerInfo(); }
+});
+document.getElementById('player-name-input').addEventListener('keydown',function(e){
+  if(e.key==='Enter'){
+    e.preventDefault();
+    // Tab to email if empty
+    var emailInput=document.getElementById('player-email-input');
+    if(!emailInput.value.trim()){ emailInput.focus(); return; }
+    capturePlayerInfo();
+  }
+});
+
+function showOnboardScreen2(){
+  document.getElementById('onboard-1').classList.remove('active');
+  document.getElementById('onboard-2').classList.add('active');
+
+  var dc=DRIVE_COMBOS[playerDrive];
+  var combo=findCombo(dc.a,dc.b);
+  if(!combo) return;
+
+  var infoA=getInfo(dc.a), infoB=getInfo(dc.b);
+
+  // Populate stage
+  document.getElementById('ac-left-emoji').textContent=infoA.emoji;
+  document.getElementById('ac-left-name').textContent=infoA.name;
+  document.getElementById('ac-right-emoji').textContent=infoB.emoji;
+  document.getElementById('ac-right-name').textContent=infoB.name;
+  document.getElementById('ac-result-emoji').textContent=combo.e;
+  document.getElementById('ac-result-name').textContent=combo.n;
+  document.getElementById('onboard-2-desc').textContent='Let\'s see what happens when you combine '+infoA.name+' and '+infoB.name+'...';
+
+  // Animate: slide together after 800ms
+  setTimeout(function(){
+    document.getElementById('ac-left').classList.add('merge-left');
+    document.getElementById('ac-right').classList.add('merge-right');
+  },800);
+
+  // Show result after merge
+  setTimeout(function(){
+    document.getElementById('ac-left').style.opacity='0';
+    document.getElementById('ac-right').style.opacity='0';
+    document.getElementById('ac-result').classList.add('visible');
+    SND.ok();
+  },1600);
+
+  // Register discovery + show splash after 2.4s
+  setTimeout(function(){
+    // Register the discovery in state
+    if(state.discovered.indexOf(combo.r)===-1){
+      state.discovered.push(combo.r);
+      state.order.push(combo.r);
+      state.score+=combo.p;
+      if(state.inventory.indexOf(combo.r)===-1) state.inventory.push(combo.r);
+      state.newlyDiscovered++;
+    }
+    // Hide the intro so splash is visible above it
+    document.getElementById('intro').style.display='none';
+    // Show the discovery splash
+    showSplash(combo);
+
+    // When splash is dismissed, start the game (screen 3)
+    var splashEl=document.getElementById('splash');
+    var startGameOnDismiss=function handler(e){
+      if(e.target.closest('.splash-wdiwf')||e.target.closest('.splash-bridge')) return;
+      splashEl.removeEventListener('click',handler);
+      startGameFromOnboarding();
+    };
+    splashEl.addEventListener('click',startGameOnDismiss);
+  },2400);
+}
+
+function startGameFromOnboarding(){
+  // Intro already hidden via display:none, add hidden class for consistency
+  var introEl=document.getElementById('intro');
+  introEl.classList.add('hidden');
+  introEl.style.display='';
+  document.getElementById('game').style.display='flex';
+  renderSidebar();
+  updateCounter();
+  updateBadge();
+
+  // Show sidebar tooltip
+  var sidebar=document.getElementById('sidebar');
+  var tip=document.createElement('div');
+  tip.className='sidebar-tooltip';
+  tip.textContent='Drag elements here. Drop them on each other to discover what\u2019s really going on.';
+  sidebar.style.position='relative';
+  sidebar.appendChild(tip);
+  setTimeout(function(){if(tip.parentNode) tip.parentNode.removeChild(tip)},8000);
+}
+
+// Legacy play-btn fallback (hidden, but keep for safety)
+document.getElementById('play-btn').addEventListener('click',function(){
+  SND.init();
+  document.getElementById('intro').classList.add('hidden');
+  document.getElementById('game').style.display='flex';
+  renderSidebar();
+  updateCounter();
+});
+
+// ============================
+// SIDEBAR
+// ============================
+function renderSidebar(){
+  var list=document.getElementById('sidebar-list');
+  var items=state.inventory.slice().sort(function(a,b){
+    var ia=getInfo(a),ib=getInfo(b);
+    return ia.name.localeCompare(ib.name);
+  });
+  var q=state.searchQuery.toLowerCase();
+  if(q){
+    items=items.filter(function(id){return getInfo(id).name.toLowerCase().indexOf(q)!==-1});
+  }
+  var html='';
+  items.forEach(function(id){
+    var inf=getInfo(id);
+    var isNew=state.discovered.indexOf(id)!==-1&&state.order.indexOf(id)===state.order.length-1;
+    html+='<div class="sidebar-item'+(isNew?' new-item':'')+'" data-el-id="'+id+'" draggable="true">'+
+      '<span class="si-emoji">'+inf.emoji+'</span>'+
+      '<div><div class="si-name">'+inf.name+'</div>'+
+      (inf.tier>0?'<div class="si-tier">tier '+inf.tier+'</div>':'')+
+      '</div></div>';
+  });
+  list.innerHTML=html;
+}
+
+document.getElementById('search-input').addEventListener('input',function(e){
+  state.searchQuery=e.target.value;
+  renderSidebar();
+});
+
+function updateCounter(){
+  document.getElementById('cc-found').textContent=state.discovered.length;
+  document.getElementById('cc-total').textContent=TOTAL;
+}
+
+// ============================
+// CANVAS DRAG & DROP
+// ============================
+var dragging=null; // {type:'sidebar'|'canvas', elId, canvasId, offsetX, offsetY, el}
+var canvas=document.getElementById('canvas');
+
+// Sidebar drag start
+document.getElementById('sidebar-list').addEventListener('mousedown',function(e){
+  var item=e.target.closest('.sidebar-item');
+  if(!item) return;
+  e.preventDefault();
+  SND.init();SND.drop();
+  var elId=item.getAttribute('data-el-id');
+  var rect=canvas.getBoundingClientRect();
+  // Create a new canvas element at mouse position
+  var x=e.clientX-rect.left-30;
+  var y=e.clientY-rect.top-30;
+  var cid=createCanvasElement(elId,x,y);
+  var cel=document.getElementById('cel-'+cid);
+  dragging={type:'canvas',elId:elId,canvasId:cid,offsetX:30,offsetY:30,el:cel};
+  cel.style.zIndex='10';
+});
+
+// Also handle touch for sidebar
+document.getElementById('sidebar-list').addEventListener('touchstart',function(e){
+  var item=e.target.closest('.sidebar-item');
+  if(!item) return;
+  e.preventDefault();
+  SND.init();SND.drop();
+  var elId=item.getAttribute('data-el-id');
+  var touch=e.touches[0];
+  var rect=canvas.getBoundingClientRect();
+  var x=touch.clientX-rect.left-30;
+  var y=touch.clientY-rect.top-30;
+  var cid=createCanvasElement(elId,x,y);
+  var cel=document.getElementById('cel-'+cid);
+  dragging={type:'canvas',elId:elId,canvasId:cid,offsetX:30,offsetY:30,el:cel};
+  cel.style.zIndex='10';
+},{passive:false});
+
+// Canvas element drag start
+canvas.addEventListener('mousedown',function(e){
+  var cel=e.target.closest('.canvas-el');
+  if(!cel) return;
+  e.preventDefault();
+  var cid=parseInt(cel.getAttribute('data-cid'));
+  var ci=state.canvasEls.find(function(c){return c.id===cid});
+  if(!ci) return;
+  var rect=canvas.getBoundingClientRect();
+  dragging={
+    type:'canvas',elId:ci.elId,canvasId:cid,
+    offsetX:e.clientX-rect.left-ci.x,
+    offsetY:e.clientY-rect.top-ci.y,
+    el:cel
+  };
+  cel.style.zIndex='10';
+});
+
+canvas.addEventListener('touchstart',function(e){
+  var cel=e.target.closest('.canvas-el');
+  if(!cel) return;
+  e.preventDefault();
+  var cid=parseInt(cel.getAttribute('data-cid'));
+  var ci=state.canvasEls.find(function(c){return c.id===cid});
+  if(!ci) return;
+  var touch=e.touches[0];
+  var rect=canvas.getBoundingClientRect();
+  dragging={
+    type:'canvas',elId:ci.elId,canvasId:cid,
+    offsetX:touch.clientX-rect.left-ci.x,
+    offsetY:touch.clientY-rect.top-ci.y,
+    el:cel
+  };
+  cel.style.zIndex='10';
+},{passive:false});
+
+// Move
+function onMove(clientX,clientY){
+  if(!dragging) return;
+  var rect=canvas.getBoundingClientRect();
+  var x=clientX-rect.left-dragging.offsetX;
+  var y=clientY-rect.top-dragging.offsetY;
+  // Clamp
+  x=Math.max(0,Math.min(rect.width-70,x));
+  y=Math.max(0,Math.min(rect.height-70,y));
+  var ci=state.canvasEls.find(function(c){return c.id===dragging.canvasId});
+  if(ci){ci.x=x;ci.y=y}
+  if(dragging.el){
+    dragging.el.style.left=x+'px';
+    dragging.el.style.top=y+'px';
+  }
+}
+document.addEventListener('mousemove',function(e){if(dragging){e.preventDefault();onMove(e.clientX,e.clientY)}});
+document.addEventListener('touchmove',function(e){if(dragging){e.preventDefault();onMove(e.touches[0].clientX,e.touches[0].clientY)}},{passive:false});
+
+// Drop / release
+function onRelease(){
+  if(!dragging) return;
+  var d=dragging;
+  dragging=null;
+  if(d.el) d.el.style.zIndex='1';
+
+  // Check overlap with other canvas elements
+  var myItem=state.canvasEls.find(function(c){return c.id===d.canvasId});
+  if(!myItem) return;
+
+  for(var i=0;i<state.canvasEls.length;i++){
+    var other=state.canvasEls[i];
+    if(other.id===d.canvasId) continue;
+    var dx=myItem.x-other.x;
+    var dy=myItem.y-other.y;
+    var dist=Math.sqrt(dx*dx+dy*dy);
+    if(dist<55){
+      // Attempt combination
+      attemptCombine(d.canvasId,other.id);
+      return;
+    }
+  }
+}
+document.addEventListener('mouseup',onRelease);
+document.addEventListener('touchend',onRelease);
+
+// ============================
+// CANVAS ELEMENT MANAGEMENT
+// ============================
+function createCanvasElement(elId,x,y){
+  var cid=state.nextCanvasId++;
+  state.canvasEls.push({id:cid,elId:elId,x:x,y:y});
+  var info=getInfo(elId);
+  var div=document.createElement('div');
+  div.className='canvas-el';
+  div.id='cel-'+cid;
+  div.setAttribute('data-cid',cid);
+  div.style.left=x+'px';
+  div.style.top=y+'px';
+  div.innerHTML='<span class="ce-emoji">'+info.emoji+'</span><span class="ce-name">'+info.name+'</span>';
+  canvas.appendChild(div);
+  return cid;
+}
+
+function removeCanvasElement(cid){
+  var el=document.getElementById('cel-'+cid);
+  if(el){
+    el.classList.add('fadeout');
+    setTimeout(function(){el.remove()},300);
+  }
+  state.canvasEls=state.canvasEls.filter(function(c){return c.id!==cid});
+}
+
+function clearCanvas(){
+  state.canvasEls.forEach(function(c){
+    var el=document.getElementById('cel-'+c.id);
+    if(el) el.remove();
+  });
+  state.canvasEls=[];
+}
+
+// ============================
+// COMBINE LOGIC
+// ============================
+function attemptCombine(cid1,cid2){
+  var c1=state.canvasEls.find(function(c){return c.id===cid1});
+  var c2=state.canvasEls.find(function(c){return c.id===cid2});
+  if(!c1||!c2) return;
+
+  var elA=c1.elId, elB=c2.elId;
+
+  // Check trap
+  var trap=findTrap(elA,elB);
+  if(trap){
+    SND.bad();
+    state.cred=Math.max(0,state.cred-10);
+    state.traps++;
+    // Shake both
+    var e1=document.getElementById('cel-'+cid1);
+    var e2=document.getElementById('cel-'+cid2);
+    if(e1) e1.classList.add('shake');
+    if(e2) e2.classList.add('shake');
+    setTimeout(function(){if(e1)e1.classList.remove('shake');if(e2)e2.classList.remove('shake')},500);
+    showTrap(trap);
+    return;
+  }
+
+  // Check combo
+  var combo=findCombo(elA,elB);
+  if(!combo){
+    // No match — shake + toast
+    var e1=document.getElementById('cel-'+cid1);
+    var e2=document.getElementById('cel-'+cid2);
+    if(e1){e1.classList.add('shake');setTimeout(function(){e1.classList.remove('shake')},500)}
+    if(e2){e2.classList.add('shake');setTimeout(function(){e2.classList.remove('shake')},500)}
+    state.cred=Math.max(0,state.cred-2);
+    showNoMatch(getInfo(elA).name, getInfo(elB).name);
+    return;
+  }
+
+  // GATE CHECK: if combo is Tier 2+ and gate is active, block it
+  if(combo.tier>1 && shouldShowGate()){
+    var e1=document.getElementById('cel-'+cid1);
+    var e2=document.getElementById('cel-'+cid2);
+    if(e1){e1.classList.add('shake');setTimeout(function(){e1.classList.remove('shake')},500)}
+    if(e2){e2.classList.add('shake');setTimeout(function(){e2.classList.remove('shake')},500)}
+    showGate();
+    return;
+  }
+
+  // Already discovered — just create result silently
+  var alreadyKnown=state.discovered.indexOf(combo.r)!==-1;
+
+  // Animate combining
+  var e1=document.getElementById('cel-'+cid1);
+  var e2=document.getElementById('cel-'+cid2);
+  if(e1) e1.classList.add('combining');
+  if(e2) e2.classList.add('combining');
+
+  var midX=(c1.x+c2.x)/2;
+  var midY=(c1.y+c2.y)/2;
+
+  setTimeout(function(){
+    // Remove source elements from canvas
+    removeCanvasElement(cid1);
+    removeCanvasElement(cid2);
+
+    // Create result on canvas
+    createCanvasElement(combo.r,midX,midY);
+
+    if(!alreadyKnown){
+      SND.ok();
+      // New discovery
+      state.discovered.push(combo.r);
+      state.order.push(combo.r);
+      state.score+=combo.p;
+      if(state.inventory.indexOf(combo.r)===-1) state.inventory.push(combo.r);
+      state.newlyDiscovered++;
+      updateBadge();
+      renderSidebar();
+      updateCounter();
+
+      // Show splash
+      showSplash(combo);
+
+      // Check certs
+      checkCerts();
+
+      // Feature 2: Check consequence path
+      checkConsequencePath();
+
+      // Feature 3: Update persona display
+      updatePersonaDisplay();
+    }
+  },200);
+}
+
+// ============================
+// SPLASH (Discovery animation)
+// ============================
+// ============================
+// LAUNCH MODE FLAG
+// ============================
+// Set to true on April 6 to switch from signup gate to direct WDIWF links
+var LAUNCH_MODE = new Date() >= new Date('2026-04-06T00:00:00-05:00');
+
+var currentSplashCombo = null;
+
+function showSplash(combo){
+  currentSplashCombo = combo;
+  var splash=document.getElementById('splash');
+  document.getElementById('splash-emoji').textContent=combo.e;
+  document.getElementById('splash-name').textContent=combo.n;
+  document.getElementById('splash-quote').textContent=combo.q;
+  var typeEl=document.getElementById('splash-type');
+  typeEl.textContent=(combo.t==='core'?'Core Element':combo.t==='solution'?'WDIWF Solution':'Advocacy Insight')+' \u00B7 Tier '+combo.tier+' \u00B7 +'+combo.p+' pts';
+  typeEl.style.color=typeColor(combo.t);
+  typeEl.style.background=combo.t==='core'?'var(--gold-dim)':combo.t==='solution'?'rgba(52,211,153,0.12)':'var(--purple-dim)';
+  var btn=document.getElementById('splash-wdiwf');
+  if(LAUNCH_MODE){
+    btn.textContent='Look up your company on WDIWF \u2192';
+  } else {
+    var splashCta = FEATURE_CTAS[combo.l] || DEFAULT_CTA;
+    btn.textContent=splashCta.h+' \u2192';
+  }
+  // Feature 4: WDIWF bridge CTA for high-intent routes
+  updateBridgeCTA(combo);
+  splash.classList.add('show');
+}
+
+document.getElementById('splash-wdiwf').addEventListener('click',function(e){
+  e.stopPropagation();
+  if(!currentSplashCombo) return;
+  if(LAUNCH_MODE){
+    // After April 6: go directly to WDIWF
+    window.open(WDIWF+currentSplashCombo.l,'_blank');
+  } else {
+    // Before April 6: open signup modal
+    document.getElementById('splash').classList.remove('show');
+    openSignupModal(currentSplashCombo);
+  }
+});
+
+document.getElementById('splash').addEventListener('click',function(e){
+  if(e.target.closest('.splash-wdiwf')) return;
+  document.getElementById('splash').classList.remove('show');
+  // Show pending cert modals after splash is dismissed
+  if(pendingCerts.length>0){
+    var nextCert=pendingCerts.shift();
+    setTimeout(function(){showCertModal(nextCert)},400);
+    // Queue remaining
+    while(pendingCerts.length>0){
+      certQueue.push(pendingCerts.shift());
+    }
+  }
+});
+
+// ============================
+// TRAP TOAST
+// ============================
+function showTrap(trap){
+  document.getElementById('trap-msg').textContent=trap.m;
+  document.getElementById('trap-quote').textContent='\u201C'+trap.q+'\u201D';
+  var tt=document.getElementById('trap-toast');
+  tt.classList.add('show');
+  setTimeout(function(){tt.classList.remove('show')},4500);
+}
+
+// ============================
+// ENCYCLOPEDIA
+// ============================
+function updateBadge(){
+  var badge=document.getElementById('enc-badge');
+  if(state.newlyDiscovered>0){
+    badge.style.display='flex';
+    badge.textContent=state.newlyDiscovered;
+  } else {
+    badge.style.display='none';
+  }
+}
+
+document.getElementById('btn-encyclopedia').addEventListener('click',function(){
+  state.newlyDiscovered=0;
+  updateBadge();
+  renderEncyclopedia();
+  document.getElementById('encyclopedia').classList.add('show');
+});
+
+document.getElementById('enc-close').addEventListener('click',function(){
+  document.getElementById('encyclopedia').classList.remove('show');
+});
+
+document.getElementById('encyclopedia').addEventListener('click',function(e){
+  if(e.target===this) this.classList.remove('show');
+});
+
+function renderEncyclopedia(){
+  document.getElementById('enc-count').textContent=state.discovered.length+'/'+TOTAL+' discovered';
+  var body=document.getElementById('enc-body');
+
+  // Stats
+  var completedCerts=CERTS.filter(function(c){return c.req.every(function(r){return state.discovered.indexOf(r)!==-1})});
+  var html='<div class="enc-stats">'+
+    '<div class="enc-stat"><div class="enc-stat-val">'+state.discovered.length+'/'+TOTAL+'</div><div class="enc-stat-label">Discovered</div></div>'+
+    '<div class="enc-stat"><div class="enc-stat-val">'+state.score+'</div><div class="enc-stat-label">Score</div></div>'+
+    '<div class="enc-stat"><div class="enc-stat-val">'+state.cred+'%</div><div class="enc-stat-label">Credibility</div></div>'+
+    '<div class="enc-stat"><div class="enc-stat-val">'+completedCerts.length+'/'+CERTS.length+'</div><div class="enc-stat-label">Certs</div></div>'+
+  '</div>';
+
+  // Certs
+  html+='<div style="margin-bottom:16px">';
+  CERTS.forEach(function(cert){
+    var done=cert.req.every(function(r){return state.discovered.indexOf(r)!==-1});
+    var prog=cert.req.filter(function(r){return state.discovered.indexOf(r)!==-1}).length;
+    html+='<div style="display:flex;align-items:center;gap:8px;padding:6px 0;border-bottom:1px solid var(--border)">'+
+      '<span style="font-size:18px">'+(done?cert.badge:'\uD83D\uDD12')+'</span>'+
+      '<div style="flex:1"><div style="font-size:12px;font-weight:600">'+cert.name+'</div>'+
+      (done?'<div style="font-size:10px;color:var(--success);font-style:italic">'+cert.insight+'</div>':
+      '<div style="font-size:10px;color:var(--muted)">'+prog+'/'+cert.req.length+' \u2014 '+cert.req.map(function(r){var found=state.discovered.indexOf(r)!==-1;return (found?'\u2713':'\u25CB')+' '+getInfo(r).name}).join(', ')+'</div>')+
+      '</div></div>';
+  });
+  html+='</div>';
+
+  // All elements grid
+  html+='<div style="font-size:12px;font-weight:600;margin-bottom:8px">All Elements</div>';
+  html+='<div class="enc-grid">';
+  // Starters
+  STARTERS.forEach(function(s){
+    html+='<div class="enc-item"><span class="enc-emoji">'+s.emoji+'</span><span class="enc-name">'+s.name+'</span></div>';
+  });
+  // Combos
+  COMBOS.forEach(function(c){
+    var found=state.discovered.indexOf(c.r)!==-1;
+    html+='<div class="enc-item'+(found?'':' undiscovered')+'"><span class="enc-emoji">'+(found?c.e:'?')+'</span><span class="enc-name">'+(found?c.n:'???')+'</span></div>';
+  });
+  html+='</div>';
+  body.innerHTML=html;
+}
+
+// ============================
+// CERTIFICATIONS CHECK
+// ============================
+var pendingCerts = [];
+
+function checkCerts(){
+  CERTS.forEach(function(cert){
+    var prevDisc=state.discovered.slice(0,state.discovered.length-1);
+    var wasBefore=cert.req.every(function(r){return prevDisc.indexOf(r)!==-1});
+    var isNow=cert.req.every(function(r){return state.discovered.indexOf(r)!==-1});
+    if(!wasBefore&&isNow){
+      SND.cert();
+      // Queue cert to show after splash is dismissed
+      pendingCerts.push(cert);
+    }
+  });
+  // Victory check
+  var allDone=CERTS.every(function(c){return c.req.every(function(r){return state.discovered.indexOf(r)!==-1})});
+  if(allDone){
+    setTimeout(function(){
+      // Victory splash handled via encyclopedia or special splash
+    },1000);
+  }
+}
+
+// ============================
+// TOOLBAR ACTIONS
+// ============================
+document.getElementById('btn-cleanup').addEventListener('click',function(){
+  clearCanvas();
+});
+
+document.getElementById('btn-hint').addEventListener('click',function(){
+  var hint=getAvailableHint();
+  if(hint){
+    var a=getInfo(hint.a),b=getInfo(hint.b);
+    showHintOnCanvas(a,b);
+  }
+});
+
+function showHintOnCanvas(a,b){
+  // Place the two hint elements on the canvas
+  var rect=canvas.getBoundingClientRect();
+  var cx=rect.width/2;
+  var cy=rect.height/2;
+  createCanvasElement(a.id,cx-60,cy-30);
+  createCanvasElement(b.id,cx+20,cy-30);
+  SND.drop();
+}
+
+document.getElementById('btn-sound').addEventListener('click',function(){
+  state.soundOn=!state.soundOn;
+  this.textContent=state.soundOn?'\uD83D\uDD0A':'\uD83D\uDD07';
+});
+
+document.getElementById('btn-certs').addEventListener('click',function(){
+  // Open encyclopedia to certs
+  state.newlyDiscovered=0;
+  updateBadge();
+  renderEncyclopedia();
+  document.getElementById('encyclopedia').classList.add('show');
+});
+
+// ============================
+// NO-MATCH TOAST
+// ============================
+var nmTimeout=null;
+function showNoMatch(nameA,nameB){
+  var msgs=[
+    nameA+' + '+nameB+' doesn\'t click. Yet.',
+    'No combo here — try something else.',
+    nameA+' and '+nameB+' aren\'t a match.',
+    'That combination doesn\'t work. Keep experimenting.',
+    'Not quite — but you\'re thinking.',
+  ];
+  document.getElementById('nm-msg').textContent=msgs[Math.floor(Math.random()*msgs.length)];
+  var tt=document.getElementById('nomatch-toast');
+  tt.classList.add('show');
+  if(nmTimeout) clearTimeout(nmTimeout);
+  nmTimeout=setTimeout(function(){tt.classList.remove('show')},2500);
+}
+
+// ============================
+// CAMPAIGN GATE
+// ============================
+var FOUNDER_KEY='WDIWF2026';
+var GATE_DATE=new Date('2026-04-06T00:00:00-05:00'); // April 6, CDT
+var TIER_1_MAX=1; // Gate triggers after Tier 1 is complete
+var gateState={
+  unlocked: false,
+  formSubmitted: false,
+};
+
+// Cookie helpers for state persistence
+function setCookie(name,val,days){
+  var d=new Date();d.setTime(d.getTime()+days*86400000);
+  document.cookie=name+'='+encodeURIComponent(val)+';expires='+d.toUTCString()+';path=/;SameSite=None;Secure';
+}
+function getCookie(name){
+  var m=document.cookie.match('(^|;)\\s*'+name+'=([^;]*)');
+  return m?decodeURIComponent(m[2]):null;
+}
+
+// Check if already unlocked via cookie
+(function(){
+  try{
+    var saved=getCookie('pp_gate');
+    if(saved){
+      var data=JSON.parse(saved);
+      if(data.unlocked) gateState.unlocked=true;
+      if(data.formSubmitted) gateState.formSubmitted=true;
+    }
+    // If past April 6, auto-unlock
+    if(new Date()>=GATE_DATE) gateState.unlocked=true;
+  }catch(e){}
+})();
+
+function saveGateState(){
+  try{setCookie('pp_gate',JSON.stringify(gateState),30)}catch(e){}
+}
+
+function shouldShowGate(){
+  if(gateState.unlocked) return false;
+  if(new Date()>=GATE_DATE) return false;
+  // Check if all Tier 1 combos discovered
+  var tier1=COMBOS.filter(function(c){return c.tier===1});
+  var allTier1=tier1.every(function(c){return state.discovered.indexOf(c.r)!==-1});
+  return allTier1;
+}
+
+function showGate(){
+  // Update countdown
+  updateGateCountdown();
+  document.getElementById('gate-modal').classList.add('show');
+}
+
+function hideGate(){
+  document.getElementById('gate-modal').classList.remove('show');
+}
+
+function updateGateCountdown(){
+  var now=new Date();
+  var diff=GATE_DATE-now;
+  if(diff<=0){
+    document.getElementById('gate-countdown').textContent='The full game is now live.';
+    return;
+  }
+  var days=Math.floor(diff/(1000*60*60*24));
+  var hrs=Math.floor((diff%(1000*60*60*24))/(1000*60*60));
+  document.getElementById('gate-countdown').textContent=
+    'Full game launches in '+days+' day'+(days!==1?'s':'')+' '+hrs+' hr'+(hrs!==1?'s':'');
+}
+
+function unlockGate(){
+  gateState.unlocked=true;
+  saveGateState();
+  hideGate();
+}
+
+// Form submission — sends email via formsubmit.co
+document.getElementById('gate-form').addEventListener('submit',function(e){
+  e.preventDefault();
+  var name=document.getElementById('gate-name').value.trim();
+  var email=document.getElementById('gate-email').value.trim();
+  var company=document.getElementById('gate-company').value.trim();
+  if(!name||!email||!company) return;
+
+  var btn=document.getElementById('gate-submit-btn');
+  btn.disabled=true;
+  btn.textContent='Sending...';
+
+  // Send via formsubmit.co (no backend needed)
+  var formData=new FormData();
+  formData.append('name',name);
+  formData.append('email',email);
+  formData.append('company',company);
+  formData.append('_subject','PeoplePuzzles Lead: '+name+' ('+company+')');
+  formData.append('_captcha','false');
+  formData.append('_template','table');
+  formData.append('game','PeoplePuzzles by WDIWF');
+  formData.append('discovered',state.discovered.length+'/'+TOTAL);
+  formData.append('score',state.score);
+
+  fetch('https://formsubmit.co/ajax/jackye@jackyeclayton.com',{
+    method:'POST',
+    body:formData
+  }).then(function(r){
+    if(r.ok){
+      document.getElementById('gate-success').style.display='block';
+      gateState.formSubmitted=true;
+      saveGateState();
+      setTimeout(function(){unlockGate()},1500);
+    } else {
+      throw new Error('Submit failed');
+    }
+  }).catch(function(){
+    // Fallback: mailto link + still unlock
+    var subject=encodeURIComponent('PeoplePuzzles Lead: '+name+' ('+company+')');
+    var body=encodeURIComponent('Name: '+name+'\nEmail: '+email+'\nCompany: '+company+'\nDiscovered: '+state.discovered.length+'/'+TOTAL+'\nScore: '+state.score);
+    window.open('mailto:jackye@jackyeclayton.com?subject='+subject+'&body='+body,'_blank');
+    document.getElementById('gate-success').style.display='block';
+    document.getElementById('gate-success').textContent='Opening your email client...';
+    gateState.formSubmitted=true;
+    saveGateState();
+    setTimeout(function(){unlockGate()},2000);
+  });
+});
+
+// Founder key
+document.getElementById('gate-founder-toggle').addEventListener('click',function(){
+  document.getElementById('gate-founder-input').classList.toggle('show');
+});
+
+document.getElementById('gate-key-btn').addEventListener('click',function(){
+  var key=document.getElementById('gate-key').value.trim();
+  if(key===FOUNDER_KEY){
+    gateState.unlocked=true;
+    saveGateState();
+    document.getElementById('gate-success').style.display='block';
+    document.getElementById('gate-success').textContent='Founder access granted.';
+    setTimeout(function(){hideGate()},1200);
+  } else {
+    var err=document.getElementById('gate-error');
+    err.style.display='block';
+    err.textContent='Invalid key. Try again.';
+    setTimeout(function(){err.style.display='none'},3000);
+  }
+});
+
+// Hook into discovery to check gate
+var _origShowSplash=showSplash;
+showSplash=function(combo){
+  _origShowSplash(combo);
+  // After splash is dismissed, check if we should gate
+  var _origDismiss=document.getElementById('splash').onclick;
+  var splashEl=document.getElementById('splash');
+  var checkGateOnDismiss=function(){
+    setTimeout(function(){
+      if(shouldShowGate()) showGate();
+    },400);
+  };
+  // Add one-time listener for splash dismiss
+  var _clickHandler=function handler(e){
+    if(e.target.closest('.splash-wdiwf')) return;
+    checkGateOnDismiss();
+    splashEl.removeEventListener('click',handler);
+  };
+  splashEl.addEventListener('click',_clickHandler);
+};
+
+// ============================
+// SIGNUP MODAL (WDIWF Feature Waitlist)
+// ============================
+var FEATURE_CTAS = {
+  '/jobs': {h:'Sign up to search verified jobs',d:'See real job listings with integrity scores, ghost job detection, and employer receipts.'},
+  '/career-intelligence': {h:'Sign up to build your career intelligence',d:'Get personalized career insights powered by data, not guesswork.'},
+  '/values-search': {h:'Sign up to find companies that match your values',d:'Search employers by what actually matters to you — not just what they put on the careers page.'},
+  '/dossier': {h:'Sign up to look up your company',d:'Run a full background check on any employer. Financials, leadership, culture, political spending — all in one place.'},
+  '/evp-reality-check': {h:'Sign up to reality-check any employer\'s promises',d:'Compare what companies say vs. what employees experience. EVP claims meet real data.'},
+  '/methodology': {h:'Sign up to see how we score companies',d:'Transparent methodology. Every score is backed by data you can verify yourself.'},
+  '/recruiting': {h:'Sign up to transform your recruiting',d:'Tools built for recruiters who care about quality, equity, and transparency.'},
+  '/recruiter-brief': {h:'Sign up to get smarter job briefs',d:'AI-powered briefs that go beyond the job description — culture, leadership, red flags included.'},
+  '/check': {h:'Sign up to check any company',d:'The full WDIWF audit — everything you need to know before you apply, hire, or invest.'},
+  '/would-you-work-here': {h:'Sign up to find out: would you work here?',d:'Answer a few questions, get a personalized company match score.'},
+  '/reality-check': {h:'Sign up to get the reality check',d:'Employee reviews decoded. Sentiment analysis beyond the star ratings.'},
+  '/receipts': {h:'Sign up to see the employer receipts',d:'Every promise tracked. Every claim verified. Hold employers accountable.'},
+  '/board-intelligence': {h:'Sign up to see who\'s really in charge',d:'Board members, investors, political connections — the full power map.'},
+  '/interview-kits': {h:'Sign up to get structured interview kits',d:'Evidence-based interview frameworks that reduce bias and improve quality of hire.'},
+  '/follow-the-money': {h:'Sign up to follow the money',d:'See where companies spend — PAC donations, lobbying, political contributions.'},
+  '/tools': {h:'Sign up to access WDIWF tools',d:'The full toolkit for data-driven recruiting and career decisions.'},
+  '/strategic-offer-review': {h:'Sign up to get strategic offer reviews',d:'Don\'t just look at the number. Understand the full picture before you accept.'},
+  '/what-am-i-supporting': {h:'Sign up to see what you\'re supporting',d:'Your employer\'s political spending — tracked and transparent.'},
+  '/offer-clarity': {h:'Sign up to get offer clarity',d:'Total comp breakdowns, hidden costs, and what that offer really means.'},
+  '/career-map': {h:'Sign up to map your career',d:'See where roles lead, what skills matter, and where the opportunities are.'},
+  '/dashboard': {h:'Sign up for your WDIWF dashboard',d:'Your personal command center for career intelligence and recruiting insights.'},
+};
+var DEFAULT_CTA = {h:'Sign up for early access to WDIWF',d:'The platform that gives recruiters and candidates the data they need to make better decisions.'};
+
+var signupCurrentCombo = null;
+
+function openSignupModal(combo){
+  signupCurrentCombo = combo;
+  var cta = FEATURE_CTAS[combo.l] || DEFAULT_CTA;
+  document.getElementById('signup-emoji').textContent = combo.e;
+  document.getElementById('signup-feature').textContent = combo.n;
+  document.getElementById('signup-headline').textContent = cta.h;
+  document.getElementById('signup-desc').textContent = cta.d;
+  // Reset form state
+  document.getElementById('signup-form').reset();
+  document.getElementById('signup-submit-btn').disabled = false;
+  document.getElementById('signup-submit-btn').textContent = 'GET EARLY ACCESS';
+  document.getElementById('signup-success').style.display = 'none';
+  document.getElementById('signup-modal').classList.add('show');
+}
+
+function closeSignupModal(){
+  document.getElementById('signup-modal').classList.remove('show');
+}
+
+document.getElementById('signup-close').addEventListener('click', closeSignupModal);
+document.getElementById('signup-later').addEventListener('click', closeSignupModal);
+document.getElementById('signup-modal').addEventListener('click',function(e){
+  if(e.target===this) closeSignupModal();
+});
+
+// Signup form submission
+document.getElementById('signup-form').addEventListener('submit',function(e){
+  e.preventDefault();
+  var name=document.getElementById('signup-name').value.trim();
+  var email=document.getElementById('signup-email').value.trim();
+  var company=document.getElementById('signup-company').value.trim();
+  if(!name||!email||!company) return;
+
+  var btn=document.getElementById('signup-submit-btn');
+  btn.disabled=true;
+  btn.textContent='Sending...';
+
+  var feature = signupCurrentCombo ? signupCurrentCombo.n : 'General';
+  var formData=new FormData();
+  formData.append('name',name);
+  formData.append('email',email);
+  formData.append('company',company);
+  formData.append('_subject','WDIWF Signup: '+name+' ('+company+') \u2014 '+feature);
+  formData.append('_captcha','false');
+  formData.append('_template','table');
+  formData.append('feature_discovered',feature);
+  formData.append('game','PeoplePuzzles by WDIWF');
+  formData.append('discovered',state.discovered.length+'/'+TOTAL);
+  formData.append('score',state.score);
+
+  fetch('https://formsubmit.co/ajax/jackye@jackyeclayton.com',{
+    method:'POST',
+    body:formData
+  }).then(function(r){
+    if(r.ok){
+      document.getElementById('signup-success').style.display='block';
+      setTimeout(function(){closeSignupModal()},2000);
+    } else {
+      throw new Error('fail');
+    }
+  }).catch(function(){
+    // Fallback: mailto
+    var subject=encodeURIComponent('WDIWF Signup: '+name+' ('+company+') \u2014 '+feature);
+    var body=encodeURIComponent('Name: '+name+'\nEmail: '+email+'\nCompany: '+company+'\nFeature: '+feature+'\nDiscovered: '+state.discovered.length+'/'+TOTAL);
+    window.open('mailto:jackye@jackyeclayton.com?subject='+subject+'&body='+body,'_blank');
+    document.getElementById('signup-success').style.display='block';
+    document.getElementById('signup-success').textContent='Opening email client...';
+    setTimeout(function(){closeSignupModal()},2500);
+  });
+});
+
+// ============================
+// FEATURE 2: CONSEQUENCE PATHS
+// ============================
+var consequenceShown = false;
+
+function checkConsequencePath(){
+  if(consequenceShown) return;
+  if(state.discovered.length < 15) return;
+  // Only check every 5th discovery
+  if(state.discovered.length % 5 !== 0) return;
+
+  // Has the player discovered risky elements but ignored safety?
+  var riskyFound = ['job','candidate','interview'].every(function(id){
+    return state.discovered.indexOf(id) !== -1;
+  });
+  var safetyFound = ['follow-the-money','safety-alert','reality-check','integrity-score'].some(function(id){
+    return state.discovered.indexOf(id) !== -1;
+  });
+
+  if(riskyFound && !safetyFound){
+    consequenceShown = true;
+    document.getElementById('consequence-modal').classList.add('show');
+  }
+}
+
+document.getElementById('cq-dismiss').addEventListener('click',function(){
+  document.getElementById('consequence-modal').classList.remove('show');
+  // Hint: place Follow the Money ingredients on canvas
+  var rect=canvas.getBoundingClientRect();
+  var cx=rect.width/2;
+  var cy=rect.height/2;
+  // accountability + information = follow-the-money
+  if(state.inventory.indexOf('accountability')!==-1 && state.inventory.indexOf('information')!==-1){
+    createCanvasElement('accountability',cx-60,cy-30);
+    createCanvasElement('information',cx+20,cy-30);
+  }
+});
+
+document.getElementById('consequence-modal').addEventListener('click',function(e){
+  if(e.target===this) this.classList.remove('show');
+});
+
+// ============================
+// FEATURE 3: PERSONA IDENTITY + SHARE CTA
+// ============================
+var PERSONAS = [
+  {
+    name:'The Includer',emoji:'\uD83E\uDDE0',slug:'includer',
+    req:['neurodiversity','inclusion','bias-interruption','diversity-sourcing','inclusive-hiring-system','adhd-friendly-systems'],
+    minMatch:3,
+    quote:"You don\u2019t add people to the table. You redesign the table."
+  },
+  {
+    name:'The Investigator',emoji:'\uD83D\uDD0D',slug:'investigator',
+    req:['dossier','deep-research','follow-the-money','board-intelligence','power-map','corporate-xray'],
+    minMatch:3,
+    quote:"You don\u2019t trust the brochure. You want the receipts."
+  },
+  {
+    name:'The Operator',emoji:'\uD83C\uDFDB\uFE0F',slug:'operator',
+    req:['process-control','feedback-sla','acceptance-blockers','outreach','response-rate','manager-operating-manual'],
+    minMatch:3,
+    quote:"Process is your superpower. Chaos is the enemy."
+  },
+  {
+    name:'The Advocate',emoji:'\uD83D\uDC9B',slug:'advocate',
+    req:['values-alignment','fair-process','accountability','comp-transparency','political-spending'],
+    minMatch:3,
+    quote:"You fight for what\u2019s right, not what\u2019s easy."
+  },
+];
+
+var currentPersona = null;
+
+function detectPersona(){
+  if(state.discovered.length < 20) return null;
+
+  // Check named personas first
+  for(var i=0;i<PERSONAS.length;i++){
+    var p=PERSONAS[i];
+    var matches=p.req.filter(function(r){return state.discovered.indexOf(r)!==-1}).length;
+    if(matches>=p.minMatch) return p;
+  }
+
+  // Fallback personas
+  if(state.traps < 3){
+    return {name:'The Architect',emoji:'\uD83C\uDFD7\uFE0F',slug:'architect',quote:"You see the whole board. Every move is intentional."};
+  } else {
+    return {name:'The Speedrunner',emoji:'\u26A1',slug:'speedrunner',quote:"Fast and fearless \u2014 but maybe check the map next time."};
+  }
+}
+
+function updatePersonaDisplay(){
+  var persona=detectPersona();
+  var badge=document.getElementById('persona-badge');
+  var shareCta=document.getElementById('share-cta');
+
+  if(!persona){
+    badge.style.display='none';
+    shareCta.style.display='none';
+    return;
+  }
+
+  currentPersona=persona;
+  badge.textContent=persona.emoji+' You play like '+persona.name;
+  badge.style.display='block';
+
+  // Show share at 30+
+  if(state.discovered.length>=30){
+    shareCta.style.display='block';
+  }
+}
+
+document.getElementById('share-btn').addEventListener('click',function(){
+  if(!currentPersona) return;
+  var shareText='I play like '+currentPersona.name+' '+currentPersona.emoji+' on PeoplePuzzles\u2122 by WDIWF \u2014 \u201C'+currentPersona.quote+'\u201D Play \u2192 '+window.location.href;
+
+  if(navigator.share){
+    navigator.share({text:shareText}).catch(function(){});
+  } else {
+    // Copy to clipboard
+    var ta=document.createElement('textarea');
+    ta.value=shareText;
+    ta.style.position='fixed';ta.style.left='-9999px';
+    document.body.appendChild(ta);
+    ta.select();
+    try{document.execCommand('copy')}catch(e){}
+    document.body.removeChild(ta);
+    var copied=document.getElementById('share-copied');
+    copied.style.display='block';
+    setTimeout(function(){copied.style.display='none'},2000);
+  }
+});
+
+// ============================
+// FEATURE 4: WDIWF BRIDGE CTA
+// ============================
+var HIGH_INTENT_ROUTES = ['/dossier','/check','/receipts','/follow-the-money'];
+
+function updateBridgeCTA(combo){
+  var bridge=document.getElementById('splash-bridge');
+  if(HIGH_INTENT_ROUTES.indexOf(combo.l)!==-1){
+    bridge.style.display='block';
+  } else {
+    bridge.style.display='none';
+  }
+}
+
+document.getElementById('splash-bridge').addEventListener('click',function(e){
+  e.stopPropagation();
+  window.open(WDIWF,'_blank');
+});
+
+// ============================
+// FEATURE 5: CERTIFICATE MODAL + SHARE
+// ============================
+var certQueue = [];
+var certModalOpen = false;
+var currentCertData = null;
+
+function formatCertDate(){
+  var d=new Date();
+  var months=['January','February','March','April','May','June','July','August','September','October','November','December'];
+  return months[d.getMonth()]+' '+d.getDate()+', '+d.getFullYear();
+}
+
+function showCertModal(cert){
+  currentCertData=cert;
+  certModalOpen=true;
+  document.getElementById('cert-modal-badge').textContent=cert.badge;
+  document.getElementById('cert-modal-name').textContent=cert.name+' '+cert.badge;
+  document.getElementById('cert-modal-player').textContent=playerName;
+  document.getElementById('cert-modal-insight').textContent='"'+cert.insight+'"';
+  document.getElementById('cert-modal-date').textContent=formatCertDate();
+  document.getElementById('cert-modal').classList.add('show');
+  // Email the cert to the player and to Jackye
+  emailCertNotification(cert);
+}
+
+function emailCertNotification(cert){
+  if(!playerEmail) return; // no email, skip
+  var formData=new FormData();
+  formData.append('name',playerName);
+  formData.append('email',playerEmail);
+  formData.append('_subject','\uD83C\uDFC6 PeoplePuzzles Certificate: '+cert.name+' \u2014 '+playerName);
+  formData.append('_captcha','false');
+  formData.append('_template','table');
+  formData.append('certificate',cert.name+' '+cert.badge);
+  formData.append('insight',cert.insight);
+  formData.append('date',formatCertDate());
+  formData.append('score',state.score);
+  formData.append('discovered',state.discovered.length+'/'+TOTAL);
+  formData.append('_cc',playerEmail); // CC the player so they get it too
+  fetch('https://formsubmit.co/ajax/jackye@jackyeclayton.com',{
+    method:'POST',
+    body:formData
+  }).catch(function(){}); // silent fail
+}
+
+function hideCertModal(){
+  document.getElementById('cert-modal').classList.remove('show');
+  certModalOpen=false;
+  currentCertData=null;
+  // Show next queued cert if any
+  if(certQueue.length>0){
+    var next=certQueue.shift();
+    setTimeout(function(){showCertModal(next)},400);
+  }
+}
+
+function showCertToast(msg){
+  var t=document.getElementById('cert-toast');
+  t.textContent=msg;
+  t.classList.add('show');
+  setTimeout(function(){t.classList.remove('show')},3500);
+}
+
+function getGameURL(){
+  return window.location.origin+window.location.pathname;
+}
+
+// LinkedIn share
+document.getElementById('cert-share-linkedin').addEventListener('click',function(){
+  if(!currentCertData) return;
+  var cert=currentCertData;
+  var gameURL=getGameURL();
+  var postText='\uD83C\uDFC6 I just earned the '+cert.name+' certification on PeoplePuzzles\u2122 by @Jackye Clayton!\n\n"'+cert.insight+'"\n\n72 elements to discover. Every combo teaches you something real about recruiting, hiring intelligence, and career decisions.\n\nPlay \u2192 '+gameURL+'\n\n#PeoplePuzzles #WDIWF #TalentAcquisition #Recruiting #HRTech';
+  // Copy post text to clipboard
+  if(navigator.clipboard&&navigator.clipboard.writeText){
+    navigator.clipboard.writeText(postText).then(function(){
+      showCertToast('Post text copied! Paste it in your LinkedIn post.');
+    }).catch(function(){
+      fallbackCopy(postText);
+      showCertToast('Post text copied! Paste it in your LinkedIn post.');
+    });
+  } else {
+    fallbackCopy(postText);
+    showCertToast('Post text copied! Paste it in your LinkedIn post.');
+  }
+  // Open LinkedIn share
+  var shareURL='https://www.linkedin.com/sharing/share-offsite/?url='+encodeURIComponent(gameURL);
+  window.open(shareURL,'_blank','width=600,height=600');
+});
+
+// X/Twitter share
+document.getElementById('cert-share-x').addEventListener('click',function(){
+  if(!currentCertData) return;
+  var cert=currentCertData;
+  var gameURL=getGameURL();
+  var tweetText='\uD83C\uDFC6 Just earned the '+cert.name+' cert on PeoplePuzzles\u2122 by @JackyeClayton!\n\n"'+cert.insight+'"\n\nPlay \u2192 '+gameURL+'\n\n#PeoplePuzzles #WDIWF #Recruiting';
+  var tweetURL='https://twitter.com/intent/tweet?text='+encodeURIComponent(tweetText);
+  window.open(tweetURL,'_blank','width=600,height=400');
+});
+
+// Download certificate as PNG using Canvas API
+document.getElementById('cert-download').addEventListener('click',function(){
+  if(!currentCertData) return;
+  var cert=currentCertData;
+  var W=1200,H=630;
+  var c=document.createElement('canvas');
+  c.width=W;c.height=H;
+  var ctx=c.getContext('2d');
+
+  // Background gradient
+  var bg=ctx.createLinearGradient(0,0,W,H);
+  bg.addColorStop(0,'#13121A');
+  bg.addColorStop(1,'#18171F');
+  ctx.fillStyle=bg;
+  ctx.fillRect(0,0,W,H);
+
+  // Gold border
+  ctx.strokeStyle='rgba(240,192,64,0.5)';
+  ctx.lineWidth=4;
+  ctx.roundRect?ctx.roundRect(8,8,W-16,H-16,16):ctx.rect(8,8,W-16,H-16);
+  ctx.stroke();
+
+  // PeoplePuzzles wordmark
+  ctx.fillStyle='#7A7590';
+  ctx.font='12px monospace';
+  ctx.textAlign='center';
+  ctx.fillText('PEOPLEPUZZLES\u2122',W/2,50);
+
+  // Certificate of Achievement
+  ctx.fillStyle='#F0C040';
+  ctx.font='11px monospace';
+  ctx.fillText('CERTIFICATE OF ACHIEVEMENT',W/2,70);
+
+  // Badge emoji (text fallback)
+  ctx.font='48px serif';
+  ctx.fillText(cert.badge,W/2,130);
+
+  // Cert name
+  ctx.fillStyle='#F0C040';
+  ctx.font='bold 32px sans-serif';
+  ctx.fillText(cert.name,W/2,180);
+
+  // Awarded to
+  ctx.fillStyle='#7A7590';
+  ctx.font='12px monospace';
+  ctx.fillText('AWARDED TO',W/2,215);
+
+  // Player name
+  ctx.fillStyle='#F0EBE0';
+  ctx.font='bold 28px sans-serif';
+  ctx.fillText(playerName,W/2,255);
+
+  // Insight quote
+  ctx.fillStyle='#D4BFFA';
+  ctx.font='italic 16px sans-serif';
+  // Word-wrap the insight
+  var fullQuote='"'+cert.insight+'"';
+  var words=fullQuote.split(' ');
+  var lines=[];var line='';
+  for(var i=0;i<words.length;i++){
+    var test=line+(line?' ':'')+words[i];
+    if(ctx.measureText(test).width>800&&line){
+      lines.push(line);line=words[i];
+    } else {line=test}
+  }
+  if(line) lines.push(line);
+  var insightY=290;
+  for(var j=0;j<lines.length;j++){
+    ctx.fillText(lines[j],W/2,insightY+j*24);
+  }
+
+  var afterInsight=insightY+lines.length*24+20;
+
+  // Date
+  ctx.fillStyle='#7A7590';
+  ctx.font='11px monospace';
+  ctx.fillText(formatCertDate(),W/2,afterInsight);
+
+  // Issuer
+  ctx.fillText('Issued by Jackye Clayton \u00b7 WDIWF',W/2,afterInsight+20);
+
+  // Gold line
+  var lineY=afterInsight+45;
+  var grad=ctx.createLinearGradient(W/2-200,0,W/2+200,0);
+  grad.addColorStop(0,'rgba(240,192,64,0)');
+  grad.addColorStop(0.5,'#F0C040');
+  grad.addColorStop(1,'rgba(240,192,64,0)');
+  ctx.strokeStyle=grad;
+  ctx.lineWidth=1;
+  ctx.beginPath();
+  ctx.moveTo(W/2-200,lineY);
+  ctx.lineTo(W/2+200,lineY);
+  ctx.stroke();
+
+  // Signature
+  ctx.fillStyle='#F0C040';
+  ctx.font='italic 28px cursive';
+  ctx.fillText('Jackye Clayton',W/2,lineY+36);
+
+  // Sig title
+  ctx.fillStyle='#7A7590';
+  ctx.font='10px monospace';
+  ctx.fillText('Founder, PeoplePuzzles\u2122 | WDIWF',W/2,lineY+56);
+
+  // Game URL
+  ctx.fillStyle='rgba(240,192,64,0.4)';
+  ctx.font='11px monospace';
+  ctx.fillText(getGameURL(),W/2,H-20);
+
+  // Download
+  var link=document.createElement('a');
+  var safeName=cert.name.replace(/[^a-zA-Z0-9]/g,'-');
+  var safePlayer=playerName.replace(/[^a-zA-Z0-9]/g,'-');
+  link.download='PeoplePuzzles-'+safeName+'-'+safePlayer+'.png';
+  link.href=c.toDataURL('image/png');
+  link.click();
+  showCertToast('Certificate downloaded!');
+});
+
+// Close / continue
+document.getElementById('cert-continue').addEventListener('click',hideCertModal);
+document.getElementById('cert-modal').addEventListener('click',function(e){
+  if(e.target===this) hideCertModal();
+});
+
+// Fallback clipboard copy
+function fallbackCopy(text){
+  var ta=document.createElement('textarea');
+  ta.value=text;
+  ta.style.position='fixed';ta.style.left='-9999px';
+  document.body.appendChild(ta);
+  ta.select();
+  try{document.execCommand('copy')}catch(e){}
+  document.body.removeChild(ta);
+}
+
+// ============================
+// INIT
+// ============================
+updateBadge();
+</script>
+</body>
+</html>

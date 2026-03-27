@@ -64,6 +64,7 @@ const PolicyHub = lazy(() => import("./pages/PolicyHub"));
 const PolicyDetail = lazy(() => import("./pages/PolicyDetail"));
 const EconomyDashboard = lazy(() => import("./pages/EconomyDashboard"));
 const FollowTheMoney = lazy(() => import("./pages/FollowTheMoney"));
+const PeoplePuzzles = lazy(() => import("./pages/PeoplePuzzles"));
 const AskJackye = lazy(() => import("./pages/AskJackye"));
 const OnePager = lazy(() => import("./pages/OnePager"));
 const Demo = lazy(() => import("./pages/Demo"));
@@ -191,6 +192,7 @@ const App = () => (
                   <Route path="/policy/:id" element={<PolicyDetail />} />
                   <Route path="/economy" element={<EconomyDashboard />} />
                   <Route path="/follow-the-money" element={<FollowTheMoney />} />
+                  <Route path="/peoplepuzzles" element={<PeoplePuzzles />} />
                   <Route path="/receipts" element={<Receipts />} />
                   <Route path="/receipts/:slug" element={<ReceiptsReport />} />
                   <Route path="/hrtech" element={<HRTechIntelligence />} />
