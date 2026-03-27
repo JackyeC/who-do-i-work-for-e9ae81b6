@@ -167,7 +167,7 @@ Deno.serve(async (req: Request) => {
         const result = moduleResp.ok ? await moduleResp.json() : { error: `HTTP ${moduleResp.status}` };
         moduleResults.push({ module: moduleFn, status: moduleResp.ok ? 'completed' : 'failed', result });
         console.log(`[browse-ai-webhook] ${moduleFn}: ${moduleResp.ok ? 'OK' : 'FAIL'}`);
-      } catch (modErr) {
+      } catch (modErr: any) {
         const msg = modErr instanceof Error ? modErr.message : 'Unknown error';
         moduleResults.push({ module: moduleFn, status: 'error', error: msg });
         console.error(`[browse-ai-webhook] ${moduleFn} error:`, msg);

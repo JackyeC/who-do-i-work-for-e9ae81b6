@@ -393,7 +393,7 @@ Deno.serve(async (req: Request) => {
           .eq('source_name', 'OpenSecrets');
 
         console.log(`[sync-opensecrets] Cross-check: ${verificationStatus} (confidence: ${confidenceScore})`);
-      } catch (crossErr) {
+      } catch (crossErr: any) {
         console.warn('[sync-opensecrets] Cross-check failed (non-critical):', crossErr);
       }
     }

@@ -226,7 +226,7 @@ Deno.serve(async (req: Request) => {
       } else {
         console.warn(`[intelligence-scan] Entity resolution failed (HTTP ${resolveResp.status}), using company name only`);
       }
-    } catch (resolveErr) {
+    } catch (resolveErr: any) {
       console.warn('[intelligence-scan] Entity resolution error (non-critical):', resolveErr);
     }
 
@@ -525,7 +525,7 @@ Deno.serve(async (req: Request) => {
       }, { onConflict: 'company_id' });
 
       console.log(`[intelligence-scan] ROI: $${totalPoliticalSpending.toLocaleString()} in → $${totalGovernmentBenefits.toLocaleString()} out (${roiRatio?.toFixed(1) || 'N/A'}x)`);
-    } catch (roiErr) {
+    } catch (roiErr: any) {
       console.error('[intelligence-scan] ROI calculation error:', roiErr);
       warnings.push('ROI calculation failed');
     }
@@ -547,7 +547,7 @@ Deno.serve(async (req: Request) => {
         console.warn(`[intelligence-scan] Issue signal mapping failed: HTTP ${issueResp.status}`);
         warnings.push('Issue signal mapping failed (non-critical)');
       }
-    } catch (issueErr) {
+    } catch (issueErr: any) {
       console.warn('[intelligence-scan] Issue signal mapping error (non-critical):', issueErr);
       warnings.push('Issue signal mapping error (non-critical)');
     }
@@ -580,7 +580,7 @@ Deno.serve(async (req: Request) => {
         console.warn(`[intelligence-scan] Browse AI setup failed: HTTP ${monitorResp.status}`);
         warnings.push('Browse AI monitoring setup failed (non-critical)');
       }
-    } catch (monitorErr) {
+    } catch (monitorErr: any) {
       console.warn('[intelligence-scan] Browse AI setup error (non-critical):', monitorErr);
       warnings.push('Browse AI monitoring setup error (non-critical)');
     }
@@ -634,7 +634,7 @@ Deno.serve(async (req: Request) => {
         headers: { 'Authorization': `Bearer ${supabaseKey}`, 'Content-Type': 'application/json' },
         body: JSON.stringify({ companyId }),
       });
-    } catch (issueErr) {
+    } catch (issueErr: any) {
       console.warn('[intelligence-scan] Issue signal mapping failed (non-critical):', issueErr);
     }
 
@@ -655,7 +655,7 @@ Deno.serve(async (req: Request) => {
       await supabase.functions.invoke('fetch-executive-photos', {
         body: { companyId, websiteUrl: companyCheck?.careers_url ? companyCheck.careers_url.replace(/\/careers.*$/i, '') : undefined, companyName },
       });
-    } catch (logoErr) {
+    } catch (logoErr: any) {
       console.warn('[intelligence-scan] Logo/photo fetch failed (non-critical):', logoErr);
     }
 

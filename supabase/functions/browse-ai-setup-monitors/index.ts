@@ -130,7 +130,7 @@ Deno.serve(async (req: Request) => {
 
         results.push({ type: page.type, status: 'active', robotId });
         console.log(`[browse-ai-setup] Created robot ${robotId} for ${companyName} - ${page.type}`);
-      } catch (pageErr) {
+      } catch (pageErr: any) {
         const msg = pageErr instanceof Error ? pageErr.message : 'Unknown error';
         console.error(`[browse-ai-setup] Error for ${page.type}:`, msg);
 

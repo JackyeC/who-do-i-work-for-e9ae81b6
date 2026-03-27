@@ -200,12 +200,12 @@ ${markdown.slice(0, 8000)}`;
                     break; // Found a good leadership page, stop trying URLs
                   }
                 }
-              } catch (urlErr) {
+              } catch (urlErr: any) {
                 // Try next URL
                 continue;
               }
             }
-          } catch (fcErr) {
+          } catch (fcErr: any) {
             console.warn(`[leadership-refresh] Firecrawl failed for ${company.name}:`, fcErr);
           }
         }

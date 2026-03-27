@@ -173,7 +173,7 @@ Deno.serve(async (req: Request) => {
       return new Response(JSON.stringify({ success: true, method: 'queued' }), {
         headers: { ...corsHeaders, 'Content-Type': 'application/json' },
       });
-    } catch (queueErr) {
+    } catch (queueErr: any) {
       console.log('Email queue not available, trying direct send:', queueErr);
     }
 
@@ -197,7 +197,7 @@ Deno.serve(async (req: Request) => {
           headers: { ...corsHeaders, 'Content-Type': 'application/json' },
         });
       }
-    } catch (directErr) {
+    } catch (directErr: any) {
       console.log('Direct email send failed:', directErr);
     }
 

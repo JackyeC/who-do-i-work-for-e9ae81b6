@@ -249,7 +249,7 @@ serve(async (req: Request) => {
             content: `INTELLIGENCE DOSSIER — Live data for the company the user is currently viewing:\n\n${JSON.stringify(enrichment, null, 2)}\n\nCross-reference this data in your responses. Cite specific numbers. Flag contradictions between stated values and actual data. When data is missing, note it as a "transparency gap."`,
           });
         }
-      } catch (enrichErr) {
+      } catch (enrichErr: any) {
         console.error("[INTELLIGENCE-ADVISOR] Enrichment failed:", enrichErr);
         // Continue without enrichment — degrade gracefully
       }

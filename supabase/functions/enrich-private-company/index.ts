@@ -343,7 +343,7 @@ Include ONLY verified, factual information. Empty arrays for fields with no data
                   confidence: "medium",
                 }).catch(() => {});
               }
-            } catch (parseErr) {
+            } catch (parseErr: any) {
               console.warn("[Perplexity] JSON parse failed");
               results.ai_enrichment = 0;
             }

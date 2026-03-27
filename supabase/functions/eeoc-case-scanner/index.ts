@@ -148,7 +148,7 @@ serve(async (req: Request) => {
             detection_method: "courtlistener_auto_scan",
           });
         }
-      } catch (searchErr) {
+      } catch (searchErr: any) {
         console.error(`[EEOC-SCANNER] Search error:`, searchErr);
       }
     }

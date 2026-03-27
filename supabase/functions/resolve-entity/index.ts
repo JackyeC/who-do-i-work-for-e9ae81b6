@@ -195,7 +195,7 @@ Only include entities you are confident about. Maximum 15 entries.`;
             console.log(`[resolve-entity] AI discovered ${aiDiscoveredEntities.length} entities`);
           }
         }
-      } catch (aiErr) {
+      } catch (aiErr: any) {
         console.warn('[resolve-entity] AI entity discovery failed (non-critical):', aiErr);
       }
     }

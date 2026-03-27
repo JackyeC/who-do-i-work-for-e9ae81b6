@@ -117,7 +117,7 @@ Deno.serve(async (req: Request) => {
           await supabase.functions.invoke("verify-signal", {
             body: { company_id: company.id },
           });
-        } catch (vErr) {
+        } catch (vErr: any) {
           console.warn(`[bulk-refresh] Verification failed for ${company.name}:`, vErr);
         }
 
@@ -126,7 +126,7 @@ Deno.serve(async (req: Request) => {
           await supabase.functions.invoke("generate-company-signals", {
             body: { companyId: company.id },
           });
-        } catch (sigErr) {
+        } catch (sigErr: any) {
           console.warn(`[bulk-refresh] Signal generation failed for ${company.name}:`, sigErr);
         }
       } catch (e: any) {

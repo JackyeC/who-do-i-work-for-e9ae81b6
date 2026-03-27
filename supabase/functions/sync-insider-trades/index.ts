@@ -99,7 +99,7 @@ Deno.serve(async (req: Request) => {
           form_type: "4",
           is_10b5_plan: is10b5,
         });
-      } catch (parseErr) {
+      } catch (parseErr: any) {
         console.error("Error parsing Form 4:", parseErr);
       }
     }
