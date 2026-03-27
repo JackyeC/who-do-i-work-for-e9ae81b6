@@ -1,47 +1,55 @@
 
 
-## Fix: Build Error + Employer Rebuttals Security
+## Fix: Build Error + Employer Rebuttals PII Exposure
 
-Two issues to resolve in one pass.
+Two issues need fixing — the build error is blocking **all** edge functions.
 
-### Issue 1: Build Error (blocking all edge functions)
+### Issue 1: Build Error (critical, blocks deployment)
 
 **File**: `supabase/functions/parse-career-document/index.ts`
 
-The `npm:` import specifier is not supported. Three lines need updating:
+The `npm:` import specifier is not supported in Deno edge functions. Three dynamic imports must change:
 
-- Line 27: `npm:mammoth@1.6.0` → `https://esm.sh/mammoth@1.6.0`
-- Line 40: `npm:jszip@3.10.1` → `https://esm.sh/jszip@3.10.1`
-- Line 62: `npm:pdf-parse/lib/pdf-parse.js` → `https://esm.sh/pdf-parse@1.1.1`
+| Line | Current | Fix |
+|------|---------|-----|
+| 27 | `npm:mammoth@1.6.0` | `https://esm.sh/mammoth@1.6.0` |
+| 40 | `npm:jszip@3.10.1` | `https://esm.sh/jszip@3.10.1` |
+| 62 | `npm:pdf-parse/lib/pdf-parse.js` | `https://esm.sh/pdf-parse@1.1.1` |
 
-### Issue 2: Employer Rebuttals PII Exposure
+### Issue 2: Employer Rebuttals — PII Exposure
 
-The `employer_rebuttals` table contains `submitted_by_email`, `reviewer_notes`, and `reviewed_at`. The component currently queries `SELECT *` from the base table, exposing all columns to the client.
+The component at `EmployerRebuttalSection.tsx` line 33 queries `SELECT *` from the raw `employer_rebuttals` table, which includes `submitted_by_email`, `reviewer_notes`, and `reviewed_at`.
 
-**Step A — Database migration**:
+**Step A — Database migration** (single SQL):
 
 ```sql
--- Drop the public SELECT policy on the base table
-DROP POLICY IF EXISTS "Public can view approved rebuttals" ON public.employer_rebuttals;
+-- Drop public SELECT policy on the base table
+DROP POLICY IF EXISTS "Public can view approved rebuttals"
+  ON public.employer_rebuttals;
 
--- Create a safe view exposing only public-safe fields
-CREATE VIEW public.public_employer_rebuttals AS
+-- Create safe view with only public-facing fields
+CREATE OR REPLACE VIEW public.public_employer_rebuttals
+WITH (security_invoker = on) AS
 SELECT id, company_id, rebuttal_text, evidence_url, status, created_at
 FROM public.employer_rebuttals
 WHERE status = 'approved';
 
--- Grant read access to anon and authenticated
+-- Allow anon + authenticated to read the safe view
 GRANT SELECT ON public.public_employer_rebuttals TO anon, authenticated;
 ```
 
-**Step B — Frontend update** (`EmployerRebuttalSection.tsx`, line 33):
+**Step B — Frontend** (`EmployerRebuttalSection.tsx`):
 
-Change `.from("employer_rebuttals")` to `.from("public_employer_rebuttals")`.
+Change line 33 from `.from("employer_rebuttals")` to `.from("public_employer_rebuttals")` and remove the `.eq("status", "approved")` filter on line 36 (the view handles it).
 
-Remove the `.eq("status", "approved")` filter since the view already handles that.
+**Step C — Run security scan** to confirm the fix.
 
-### Files changed
-- `supabase/functions/parse-career-document/index.ts` (3 import fixes)
-- `src/components/company/EmployerRebuttalSection.tsx` (1 query change)
-- New database migration (view creation + policy drop)
+### Summary
+
+| Change | File |
+|--------|------|
+| Fix 3 `npm:` → `esm.sh` imports | `supabase/functions/parse-career-document/index.ts` |
+| Migration: drop public policy + create safe view | New migration SQL |
+| Query safe view instead of raw table | `src/components/company/EmployerRebuttalSection.tsx` |
+| Verify | Security scan |
 
