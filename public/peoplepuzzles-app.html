@@ -1147,13 +1147,27 @@ function findCombo(a,b){return COMBOS.find(function(c){return(c.a===a&&c.b===b)|
 function findTrap(a,b){return TRAPS.find(function(t){return(t.a===a&&t.b===b)||(t.a===b&&t.b===a)})}
 function typeColor(t){return t==='core'?'var(--primary)':t==='solution'?'var(--success)':t==='advocacy'?'var(--purple)':'var(--muted)'}
 
+var hintHistory=[];
 function getAvailableHint(){
+  // Get ALL available hints (undiscovered combos where both ingredients are in inventory)
+  var available=[];
   for(var i=0;i<COMBOS.length;i++){
     var c=COMBOS[i];
     if(state.discovered.indexOf(c.r)!==-1) continue;
-    if(state.inventory.indexOf(c.a)!==-1&&state.inventory.indexOf(c.b)!==-1) return c;
+    if(state.inventory.indexOf(c.a)!==-1&&state.inventory.indexOf(c.b)!==-1) available.push(c);
   }
-  return null;
+  if(available.length===0) return null;
+  // Filter out recently shown hints
+  var fresh=available.filter(function(c){return hintHistory.indexOf(c.r)===-1});
+  // If all have been shown, reset history and start over
+  if(fresh.length===0){
+    hintHistory=[];
+    fresh=available;
+  }
+  // Pick a random one from fresh hints
+  var pick=fresh[Math.floor(Math.random()*fresh.length)];
+  hintHistory.push(pick.r);
+  return pick;
 }
 
 // ============================
