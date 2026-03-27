@@ -293,12 +293,14 @@ Return ONLY valid JSON. No markdown, no explanation.`;
 
     // Insert executives — SKIP if real API data already exists (from sync-openfec)
     if (research.executives?.length && !(existing && (await supabase.from('company_executives').select('id', { count: 'exact', head: true }).eq('company_id', companyId)).count)) {
+      const EXEC_TITLE_RE = /\b(CEO|CFO|COO|CTO|CIO|CISO|CMO|CPO|CLO|CDO|CSO|CHRO|CAO|CRO|CCO|CHAIRMAN|CHAIRWOMAN|CHAIR|PRESIDENT|VICE\s*PRESIDENT|SVP|EVP|MANAGING\s*DIRECTOR|GENERAL\s*COUNSEL|PARTNER|FOUNDER|CO-?FOUNDER|OWNER|CHIEF)\b/i;
       const { error } = await supabase.from('company_executives').insert(
         research.executives.slice(0, 10).map((e: any) => ({
           company_id: companyId,
           name: e.name,
           title: e.title,
           total_donations: e.total_donations || 0,
+          role_classification: EXEC_TITLE_RE.test(e.title || '') ? 'unverified' : 'fec_donor',
         }))
       );
       if (error) insertErrors.push(`executives: ${error.message}`);

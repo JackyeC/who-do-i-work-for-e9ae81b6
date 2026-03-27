@@ -25,6 +25,7 @@ interface Executive {
   verification_status?: string | null;
   departed_at?: string | null;
   last_verified_at?: string | null;
+  role_classification?: string | null;
 }
 
 interface Candidate {
@@ -137,12 +138,27 @@ export function LeadershipInfluenceSection({
   const [showUnverifiedExecs, setShowUnverifiedExecs] = useState(false);
   const [showUnverifiedBoard, setShowUnverifiedBoard] = useState(false);
 
-  const processedExecs = useMemo(() => processExecutives(executives, companyName), [executives, companyName]);
+  // Split by role_classification: verified executives vs FEC donors
+  const verifiedExecutives = useMemo(
+    () => executives.filter(e => e.role_classification === 'verified_executive'),
+    [executives]
+  );
+  const fecDonors = useMemo(
+    () => executives.filter(e => !e.role_classification || e.role_classification === 'fec_donor' || e.role_classification === 'unverified'),
+    [executives]
+  );
+
+  const processedExecs = useMemo(() => processExecutives(verifiedExecutives, companyName), [verifiedExecutives, companyName]);
+  const processedDonors = useMemo(() => processExecutives(fecDonors, companyName), [fecDonors, companyName]);
   const processedBoard = useMemo(() => processBoardMembers(boardMembers, companyName), [boardMembers, companyName]);
 
   const { confirmed: confirmedExecs, unverified: unverifiedExecs } = useMemo(
     () => splitByVerification(processedExecs),
     [processedExecs]
+  );
+  const { confirmed: confirmedDonors, unverified: unverifiedDonors } = useMemo(
+    () => splitByVerification(processedDonors),
+    [processedDonors]
   );
   const { confirmed: confirmedBoard, unverified: unverifiedBoard } = useMemo(
     () => splitByVerification(processedBoard),
@@ -150,9 +166,10 @@ export function LeadershipInfluenceSection({
   );
 
   const execsStale = useMemo(() => hasStaleRecords(processedExecs), [processedExecs]);
+  const donorsStale = useMemo(() => hasStaleRecords(processedDonors), [processedDonors]);
   const boardStale = useMemo(() => hasStaleRecords(processedBoard), [processedBoard]);
 
-  const hasAnyData = processedExecs.length > 0 || candidates.length > 0 || revolvingDoor.length > 0 || darkMoney.length > 0 || processedBoard.length > 0;
+  const hasAnyData = processedExecs.length > 0 || processedDonors.length > 0 || candidates.length > 0 || revolvingDoor.length > 0 || darkMoney.length > 0 || processedBoard.length > 0;
   const showSection = hasAnyData || executives.length === 0;
   if (!showSection && candidates.length === 0 && revolvingDoor.length === 0 && darkMoney.length === 0) return null;
 
@@ -244,65 +261,108 @@ export function LeadershipInfluenceSection({
         <h2 className="text-lg font-bold text-foreground">Leadership & Influence</h2>
       </div>
 
-      {/* ── Employee Political Donations (FEC) ── */}
-      <Card>
-        <CardHeader className="pb-2">
-          <CardTitle className="flex items-center gap-2 text-base">
-            <DollarSign className="w-4 h-4 text-primary" />
-            Employee Political Donations
-            {confirmedExecs.length > 0 && (
-              <Badge variant="secondary" className="text-xs ml-auto">{confirmedExecs.length}</Badge>
-            )}
-          </CardTitle>
-          <p className="text-xs text-muted-foreground mt-1">
-            Individuals who listed {companyName} as their employer on FEC donation filings. Job titles are self-reported by donors — not verified by WDIWF.
-          </p>
-        </CardHeader>
-        <CardContent className="pt-0">
-          {execsStale && <StalenessWarning companyName={companyName} />}
-
-          {confirmedExecs.length === 0 && unverifiedExecs.length === 0 && (
-            <p className="text-sm text-muted-foreground py-2">
-              No individual donation records found in FEC filings
-            </p>
-          )}
-          {confirmedExecs.length > 0 && (
-            <div className="divide-y divide-border">
-              {confirmedExecs.map(renderExecRow)}
-            </div>
-          )}
-
-          {/* Unverified donors */}
-          {unverifiedExecs.length > 0 && (
-            <div className="mt-3 rounded-lg" style={{ border: "1px solid rgba(240,192,64,0.3)" }}>
-              <button
-                onClick={() => setShowUnverifiedExecs(!showUnverifiedExecs)}
-                className="w-full flex items-center justify-between px-3 py-2 text-left hover:bg-muted/30 rounded-lg transition-colors"
-              >
-                <span className="text-xs font-medium" style={{ color: "#f0c040", fontFamily: "'DM Sans', sans-serif" }}>
-                  Unverified — employment status may have changed ({unverifiedExecs.length})
-                </span>
-                <ChevronDown
-                  className="w-4 h-4 transition-transform"
-                  style={{ color: "#f0c040", transform: showUnverifiedExecs ? "rotate(180deg)" : "rotate(0deg)" }}
-                />
-              </button>
-              {showUnverifiedExecs && (
-                <div className="px-3 pb-3">
-                  <p className="text-xs text-muted-foreground mb-2" style={{ fontFamily: "'DM Sans', sans-serif" }}>
-                    These individuals appeared in FEC filings but current employment could not be confirmed. Verify independently.
-                  </p>
-                  <div className="divide-y divide-border/50">
-                    {unverifiedExecs.map(renderExecRow)}
-                  </div>
-                </div>
+      {/* ── Verified Executive Leadership (only shown when SEC/verified data exists) ── */}
+      {(confirmedExecs.length > 0 || unverifiedExecs.length > 0) && (
+        <Card>
+          <CardHeader className="pb-2">
+            <CardTitle className="flex items-center gap-2 text-base">
+              <Briefcase className="w-4 h-4 text-primary" />
+              Executive Leadership
+              {confirmedExecs.length > 0 && (
+                <Badge variant="secondary" className="text-xs ml-auto">{confirmedExecs.length}</Badge>
               )}
-            </div>
-          )}
+            </CardTitle>
+          </CardHeader>
+          <CardContent className="pt-0">
+            {execsStale && <StalenessWarning companyName={companyName} />}
+            {confirmedExecs.length > 0 && (
+              <div className="divide-y divide-border">
+                {confirmedExecs.map(renderExecRow)}
+              </div>
+            )}
+            {unverifiedExecs.length > 0 && (
+              <div className="mt-3 rounded-lg" style={{ border: "1px solid rgba(240,192,64,0.3)" }}>
+                <button
+                  onClick={() => setShowUnverifiedExecs(!showUnverifiedExecs)}
+                  className="w-full flex items-center justify-between px-3 py-2 text-left hover:bg-muted/30 rounded-lg transition-colors"
+                >
+                  <span className="text-xs font-medium" style={{ color: "#f0c040", fontFamily: "'DM Sans', sans-serif" }}>
+                    Unverified — may no longer be current ({unverifiedExecs.length})
+                  </span>
+                  <ChevronDown
+                    className="w-4 h-4 transition-transform"
+                    style={{ color: "#f0c040", transform: showUnverifiedExecs ? "rotate(180deg)" : "rotate(0deg)" }}
+                  />
+                </button>
+                {showUnverifiedExecs && (
+                  <div className="px-3 pb-3">
+                    <p className="text-xs text-muted-foreground mb-2" style={{ fontFamily: "'DM Sans', sans-serif" }}>
+                      These executives appeared in filings but current status could not be confirmed. Verify independently.
+                    </p>
+                    <div className="divide-y divide-border/50">
+                      {unverifiedExecs.map(renderExecRow)}
+                    </div>
+                  </div>
+                )}
+              </div>
+            )}
+            <ExecutiveSourceNote />
+          </CardContent>
+        </Card>
+      )}
 
-          <DonorSourceNote />
-        </CardContent>
-      </Card>
+      {/* ── Employee Political Donations (FEC) ── */}
+      {(confirmedDonors.length > 0 || unverifiedDonors.length > 0) && (
+        <Card>
+          <CardHeader className="pb-2">
+            <CardTitle className="flex items-center gap-2 text-base">
+              <DollarSign className="w-4 h-4 text-primary" />
+              Employee Political Donations
+              {confirmedDonors.length > 0 && (
+                <Badge variant="secondary" className="text-xs ml-auto">{confirmedDonors.length}</Badge>
+              )}
+            </CardTitle>
+            <p className="text-xs text-muted-foreground mt-1">
+              Individuals who listed {companyName} as their employer on FEC donation filings. Job titles are self-reported by donors — not verified by WDIWF.
+            </p>
+          </CardHeader>
+          <CardContent className="pt-0">
+            {donorsStale && <StalenessWarning companyName={companyName} />}
+            {confirmedDonors.length > 0 && (
+              <div className="divide-y divide-border">
+                {confirmedDonors.map(renderExecRow)}
+              </div>
+            )}
+            {unverifiedDonors.length > 0 && (
+              <div className="mt-3 rounded-lg" style={{ border: "1px solid rgba(240,192,64,0.3)" }}>
+                <button
+                  onClick={() => setShowUnverifiedExecs(!showUnverifiedExecs)}
+                  className="w-full flex items-center justify-between px-3 py-2 text-left hover:bg-muted/30 rounded-lg transition-colors"
+                >
+                  <span className="text-xs font-medium" style={{ color: "#f0c040", fontFamily: "'DM Sans', sans-serif" }}>
+                    Unverified — employment status may have changed ({unverifiedDonors.length})
+                  </span>
+                  <ChevronDown
+                    className="w-4 h-4 transition-transform"
+                    style={{ color: "#f0c040", transform: showUnverifiedExecs ? "rotate(180deg)" : "rotate(0deg)" }}
+                  />
+                </button>
+                {showUnverifiedExecs && (
+                  <div className="px-3 pb-3">
+                    <p className="text-xs text-muted-foreground mb-2" style={{ fontFamily: "'DM Sans', sans-serif" }}>
+                      These individuals appeared in FEC filings but current employment could not be confirmed. Verify independently.
+                    </p>
+                    <div className="divide-y divide-border/50">
+                      {unverifiedDonors.map(renderExecRow)}
+                    </div>
+                  </div>
+                )}
+              </div>
+            )}
+            <DonorSourceNote />
+          </CardContent>
+        </Card>
+      )}
 
       {/* ── Board of Directors ── */}
       <Card>

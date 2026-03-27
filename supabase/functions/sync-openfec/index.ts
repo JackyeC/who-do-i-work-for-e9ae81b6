@@ -385,27 +385,23 @@ Deno.serve(async (req: Request) => {
           stats.totalIndividualGiving += r.contribution_receipt_amount;
         }
 
-        // Filter to C-suite / senior leadership titles only
-        const CSUITE_PATTERNS = /\b(CEO|CFO|COO|CTO|CIO|CISO|CMO|CPO|CLO|CDO|CSO|CHRO|CAO|CRO|CCO|CHAIRMAN|CHAIRWOMAN|CHAIR|PRESIDENT|VICE\s*PRESIDENT|VP|SVP|EVP|MANAGING\s*DIRECTOR|GENERAL\s*COUNSEL|PARTNER|FOUNDER|CO-?FOUNDER|OWNER|DIRECTOR|CHIEF|HEAD|EXECUTIVE|BOARD\s*MEMBER|TREASURER|SECRETARY|GENERAL\s*MANAGER|PRINCIPAL)\b/i;
+        // Classify donors by title: executive-level vs regular employees
+        const EXEC_TITLE_PATTERNS = /\b(CEO|CFO|COO|CTO|CIO|CISO|CMO|CPO|CLO|CDO|CSO|CHRO|CAO|CRO|CCO|CHAIRMAN|CHAIRWOMAN|CHAIR|PRESIDENT|VICE\s*PRESIDENT|SVP|EVP|MANAGING\s*DIRECTOR|GENERAL\s*COUNSEL|PARTNER|FOUNDER|CO-?FOUNDER|OWNER|CHIEF)\b/i;
 
-        const csuiteExecs = [...executiveMap.values()]
-          .filter(e => CSUITE_PATTERNS.test(e.occupation))
+        // ALL donors get stored — but classified correctly
+        const allDonors = [...executiveMap.values()]
           .sort((a, b) => b.total - a.total)
-          .slice(0, 20);
+          .slice(0, 30);
 
-        // Fallback: if no C-suite found, take top 5 by donation amount
-        const topExecs = csuiteExecs.length > 0 ? csuiteExecs : [...executiveMap.values()]
-          .sort((a, b) => b.total - a.total)
-          .slice(0, 5);
+        stats.executiveDonors += allDonors.length;
 
-        stats.executiveDonors += topExecs.length;
-
-        if (topExecs.length > 0) {
-          const execRows = topExecs.map(e => ({
+        if (allDonors.length > 0) {
+          const execRows = allDonors.map(e => ({
             company_id: companyId,
             name: e.name,
             title: e.occupation,
             total_donations: Math.round(e.total),
+            role_classification: EXEC_TITLE_PATTERNS.test(e.occupation) ? 'verified_executive' : 'fec_donor',
           }));
 
           // Only clear on first employer variant
@@ -461,7 +457,7 @@ Deno.serve(async (req: Request) => {
               return 'I'; // Default to Independent for unknown — satisfies DB constraint
             }
 
-            for (const exec of topExecs) {
+            for (const exec of allDonors) {
               const execId = execNameToId.get(exec.name?.toUpperCase());
               if (!execId || !exec.recipients.length) continue;
 
@@ -510,7 +506,7 @@ Deno.serve(async (req: Request) => {
                 link_type: 'donation_to_member',
                 amount: execRows.find(e => e.name === exec.name)?.total_donations || 0,
                 confidence_score: 0.95,
-                description: `Executive donor: ${exec.name} personal contributions (FEC individual receipts)`,
+                description: `Individual donor: ${exec.name} personal contributions (FEC individual receipts)`,
                 source_citation: JSON.stringify([{
                   source: 'FEC',
                   url: `https://www.fec.gov/data/receipts/individual-contributions/?contributor_employer=${encodeURIComponent(employerName)}&contributor_name=${encodeURIComponent(exec.name || '')}`,
@@ -595,13 +591,20 @@ Deno.serve(async (req: Request) => {
         .eq('link_type', 'donation_to_member')
         .like('description', 'PAC contribution:%');
 
-      // Also clear old executive donor linkages
+      // Also clear old individual/executive donor linkages
       await supabase
         .from('entity_linkages')
         .delete()
         .eq('company_id', companyId)
         .eq('link_type', 'donation_to_member')
         .like('description', 'Executive donor:%');
+
+      await supabase
+        .from('entity_linkages')
+        .delete()
+        .eq('company_id', companyId)
+        .eq('link_type', 'donation_to_member')
+        .like('description', 'Individual donor:%');
 
       for (let i = 0; i < linkages.length; i += 50) {
         const batch = linkages.slice(i, i + 50);
