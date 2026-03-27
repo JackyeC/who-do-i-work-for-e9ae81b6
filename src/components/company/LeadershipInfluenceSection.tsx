@@ -95,17 +95,6 @@ interface LeadershipInfluenceSectionProps {
   onContractsClick: () => void;
 }
 
-function DonorSourceNote() {
-  return (
-    <p className="text-xs text-muted-foreground mt-2" style={{ fontFamily: "'DM Sans', sans-serif" }}>
-      Individual donation data sourced from FEC individual contribution filings. Donors self-report their employer and occupation. These are personal political contributions — not company spending.{" "}
-      <Link to="/request-correction" className="underline hover:text-primary transition-colors">
-        Found an error? Report it →
-      </Link>
-    </p>
-  );
-}
-
 function ExecutiveSourceNote() {
   return (
     <p className="text-xs text-muted-foreground mt-2" style={{ fontFamily: "'DM Sans', sans-serif" }}>
@@ -138,27 +127,24 @@ export function LeadershipInfluenceSection({
   const [showUnverifiedExecs, setShowUnverifiedExecs] = useState(false);
   const [showUnverifiedBoard, setShowUnverifiedBoard] = useState(false);
 
-  // Split by role_classification: verified executives vs FEC donors
-  const verifiedExecutives = useMemo(
-    () => executives.filter(e => e.role_classification === 'verified_executive'),
-    [executives]
-  );
-  const fecDonors = useMemo(
-    () => executives.filter(e => !e.role_classification || e.role_classification === 'fec_donor' || e.role_classification === 'unverified'),
-    [executives]
-  );
+  // Executive title pattern — only show people with genuine executive-level titles
+  const EXEC_TITLE_RE = /\b(CEO|CFO|COO|CTO|CIO|CISO|CMO|CPO|CLO|CDO|CSO|CHRO|CAO|CRO|CCO|CHAIRMAN|CHAIRWOMAN|CHAIR|PRESIDENT|VICE\s*PRESIDENT|SVP|EVP|MANAGING\s*DIRECTOR|GENERAL\s*COUNSEL|PARTNER|FOUNDER|CO-?FOUNDER|OWNER|CHIEF)\b/i;
 
+  // Filter to verified executives only: use DB classification if available, otherwise match by title
+  const verifiedExecutives = useMemo(
+    () => executives.filter(e => {
+      if (e.role_classification) return e.role_classification === 'verified_executive';
+      // Fallback: classify on the client side by title when DB column is missing/null
+      return EXEC_TITLE_RE.test(e.title || '');
+    }),
+    [executives]
+  );
   const processedExecs = useMemo(() => processExecutives(verifiedExecutives, companyName), [verifiedExecutives, companyName]);
-  const processedDonors = useMemo(() => processExecutives(fecDonors, companyName), [fecDonors, companyName]);
   const processedBoard = useMemo(() => processBoardMembers(boardMembers, companyName), [boardMembers, companyName]);
 
   const { confirmed: confirmedExecs, unverified: unverifiedExecs } = useMemo(
     () => splitByVerification(processedExecs),
     [processedExecs]
-  );
-  const { confirmed: confirmedDonors, unverified: unverifiedDonors } = useMemo(
-    () => splitByVerification(processedDonors),
-    [processedDonors]
   );
   const { confirmed: confirmedBoard, unverified: unverifiedBoard } = useMemo(
     () => splitByVerification(processedBoard),
@@ -166,10 +152,9 @@ export function LeadershipInfluenceSection({
   );
 
   const execsStale = useMemo(() => hasStaleRecords(processedExecs), [processedExecs]);
-  const donorsStale = useMemo(() => hasStaleRecords(processedDonors), [processedDonors]);
   const boardStale = useMemo(() => hasStaleRecords(processedBoard), [processedBoard]);
 
-  const hasAnyData = processedExecs.length > 0 || processedDonors.length > 0 || candidates.length > 0 || revolvingDoor.length > 0 || darkMoney.length > 0 || processedBoard.length > 0;
+  const hasAnyData = processedExecs.length > 0 || candidates.length > 0 || revolvingDoor.length > 0 || darkMoney.length > 0 || processedBoard.length > 0;
   const showSection = hasAnyData || executives.length === 0;
   if (!showSection && candidates.length === 0 && revolvingDoor.length === 0 && darkMoney.length === 0) return null;
 
@@ -311,58 +296,7 @@ export function LeadershipInfluenceSection({
         </Card>
       )}
 
-      {/* ── Employee Political Donations (FEC) ── */}
-      {(confirmedDonors.length > 0 || unverifiedDonors.length > 0) && (
-        <Card>
-          <CardHeader className="pb-2">
-            <CardTitle className="flex items-center gap-2 text-base">
-              <DollarSign className="w-4 h-4 text-primary" />
-              Employee Political Donations
-              {confirmedDonors.length > 0 && (
-                <Badge variant="secondary" className="text-xs ml-auto">{confirmedDonors.length}</Badge>
-              )}
-            </CardTitle>
-            <p className="text-xs text-muted-foreground mt-1">
-              Individuals who listed {companyName} as their employer on FEC donation filings. Job titles are self-reported by donors — not verified by WDIWF.
-            </p>
-          </CardHeader>
-          <CardContent className="pt-0">
-            {donorsStale && <StalenessWarning companyName={companyName} />}
-            {confirmedDonors.length > 0 && (
-              <div className="divide-y divide-border">
-                {confirmedDonors.map(renderExecRow)}
-              </div>
-            )}
-            {unverifiedDonors.length > 0 && (
-              <div className="mt-3 rounded-lg" style={{ border: "1px solid rgba(240,192,64,0.3)" }}>
-                <button
-                  onClick={() => setShowUnverifiedExecs(!showUnverifiedExecs)}
-                  className="w-full flex items-center justify-between px-3 py-2 text-left hover:bg-muted/30 rounded-lg transition-colors"
-                >
-                  <span className="text-xs font-medium" style={{ color: "#f0c040", fontFamily: "'DM Sans', sans-serif" }}>
-                    Unverified — employment status may have changed ({unverifiedDonors.length})
-                  </span>
-                  <ChevronDown
-                    className="w-4 h-4 transition-transform"
-                    style={{ color: "#f0c040", transform: showUnverifiedExecs ? "rotate(180deg)" : "rotate(0deg)" }}
-                  />
-                </button>
-                {showUnverifiedExecs && (
-                  <div className="px-3 pb-3">
-                    <p className="text-xs text-muted-foreground mb-2" style={{ fontFamily: "'DM Sans', sans-serif" }}>
-                      These individuals appeared in FEC filings but current employment could not be confirmed. Verify independently.
-                    </p>
-                    <div className="divide-y divide-border/50">
-                      {unverifiedDonors.map(renderExecRow)}
-                    </div>
-                  </div>
-                )}
-              </div>
-            )}
-            <DonorSourceNote />
-          </CardContent>
-        </Card>
-      )}
+      {/* Employee Political Donations section removed — only verified executives are shown */}
 
       {/* ── Board of Directors ── */}
       <Card>

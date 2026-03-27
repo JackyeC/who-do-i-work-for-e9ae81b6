@@ -105,7 +105,9 @@ export default function CompanyProfile() {
     enabled: !!dbCompanyId, refetchInterval: pollInterval,
   });
 
-  const { data: dbExecutives } = useQuery({
+  const EXEC_TITLE_RE = /\b(CEO|CFO|COO|CTO|CIO|CISO|CMO|CPO|CLO|CDO|CSO|CHRO|CAO|CRO|CCO|CHAIRMAN|CHAIRWOMAN|CHAIR|PRESIDENT|VICE\s*PRESIDENT|SVP|EVP|MANAGING\s*DIRECTOR|GENERAL\s*COUNSEL|PARTNER|FOUNDER|CO-?FOUNDER|OWNER|CHIEF)\b/i;
+
+  const { data: dbExecutivesRaw } = useQuery({
     queryKey: ["company-executives", dbCompanyId],
     queryFn: async () => {
       const { data } = await supabase.from("company_executives").select("*").eq("company_id", dbCompanyId!).order("total_donations", { ascending: false });
@@ -113,6 +115,13 @@ export default function CompanyProfile() {
     },
     enabled: !!dbCompanyId, refetchInterval: pollInterval,
   });
+
+  // Only count verified executives for signals (filter out regular FEC donors)
+  const dbExecutives = dbExecutivesRaw;
+  const verifiedExecCount = (dbExecutivesRaw || []).filter((e: any) => {
+    if (e.role_classification) return e.role_classification === 'verified_executive';
+    return EXEC_TITLE_RE.test(e.title || '');
+  }).length;
 
   const { data: dbPartyBreakdown } = useQuery({
     queryKey: ["company-party-breakdown", dbCompanyId],
@@ -475,7 +484,7 @@ export default function CompanyProfile() {
             hasSentimentData={!!tiSentiment}
             hasCompensationData={!!tiBenefits}
             hasJobPostings={hasJobPostings}
-            executiveCount={dbExecutives?.length || 0}
+            executiveCount={verifiedExecCount}
             revolvingDoorCount={dbRevolvingDoor?.length || 0}
             totalPacSpending={totalPac}
             lobbyingSpend={lobbyingSpend}
@@ -497,7 +506,7 @@ export default function CompanyProfile() {
               hasPayEquity={!!tiPayEquity}
               hasBenefitsData={!!tiBenefits}
               hasCompensationData={!!tiBenefits}
-              executiveCount={dbExecutives?.length || 0}
+              executiveCount={verifiedExecCount}
               totalPacSpending={totalPac}
               lobbyingSpend={lobbyingSpend}
               revolvingDoorCount={dbRevolvingDoor?.length || 0}
@@ -567,7 +576,7 @@ export default function CompanyProfile() {
             hasAiHrSignals={!!tiAiHr}
             hasSentimentData={!!tiSentiment}
             hasJobPostings={hasJobPostings}
-            executiveCount={dbExecutives?.length || 0}
+            executiveCount={verifiedExecCount}
             revolvingDoorCount={dbRevolvingDoor?.length || 0}
             totalPacSpending={totalPac}
             lobbyingSpend={lobbyingSpend}
@@ -585,7 +594,7 @@ export default function CompanyProfile() {
             hasBenefitsData={!!tiBenefits}
             hasAiHrSignals={!!tiAiHr}
             hasSentimentData={!!tiSentiment}
-            executiveCount={dbExecutives?.length || 0}
+            executiveCount={verifiedExecCount}
             revolvingDoorCount={dbRevolvingDoor?.length || 0}
             totalPacSpending={totalPac}
             lobbyingSpend={lobbyingSpend}
@@ -606,7 +615,7 @@ export default function CompanyProfile() {
             hasSentimentData={!!tiSentiment}
             hasCompensationData={!!tiBenefits}
             hasJobPostings={hasJobPostings}
-            executiveCount={dbExecutives?.length || 0}
+            executiveCount={verifiedExecCount}
             revolvingDoorCount={dbRevolvingDoor?.length || 0}
             totalPacSpending={totalPac}
             lobbyingSpend={lobbyingSpend}
