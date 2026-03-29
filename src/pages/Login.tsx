@@ -1,7 +1,6 @@
 import { useNavigate, useSearchParams } from "react-router-dom";
 import { useAuth } from "@/contexts/AuthContext";
 import { usePageSEO } from "@/hooks/use-page-seo";
-import { lovable } from "@/integrations/lovable/index";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -72,8 +71,8 @@ export default function Login() {
   };
 
   const handleGoogleSignIn = async () => {
-    const { error } = await lovable.auth.signInWithOAuth("google", {
-      redirect_uri: window.location.origin,
+    const { error } = await supabase.auth.signInWithOAuth("google", {
+      redirectTo: window.location.origin,
     });
     if (error) {
       toast({
@@ -85,8 +84,8 @@ export default function Login() {
   };
 
   const handleAppleSignIn = async () => {
-    const { error } = await lovable.auth.signInWithOAuth("apple", {
-      redirect_uri: window.location.origin,
+    const { error } = await supabase.auth.signInWithOAuth("apple", {
+      redirectTo: window.location.origin,
     });
     if (error) {
       toast({

@@ -212,10 +212,10 @@ const App = () => (
                   <Route path="/privacy" element={<PrivacyPolicy />} />
                   <Route path="/disclaimers" element={<Disclaimers />} />
                   <Route path="/about" element={<About />} />
-                  <Route path="/companies" element={<Companies />} />
+                  <Route path="/companies" element={<Navigate to="/browse" replace />} />
                   <Route path="/talent" element={<ProtectedRoute><Talent /></ProtectedRoute>} />
                   <Route path="/examples" element={<Examples />} />
-                  <Route path="/signals" element={<SignalFeed />} />
+                  <Route path="/signals" element={<Navigate to="/signal-alerts" replace />} />
                   <Route path="/workforce-brief" element={<WorkforceBrief />} />
                   <Route path="/eeoc-tracker" element={<EEOCTracker />} />
                   <Route path="/search-your-employer" element={<SearchYourEmployer />} />
@@ -235,7 +235,6 @@ const App = () => (
                   <Route path="/tracker" element={<ProtectedRoute><TrackerPage /></ProtectedRoute>} />
                   <Route path="/apply-kit" element={<ProtectedRoute><ApplyKitPage /></ProtectedRoute>} />
                   <Route path="/interview-kits" element={<ProtectedRoute><InterviewKits /></ProtectedRoute>} />
-                  <Route path="/job-board" element={<JobBoardEmbed />} />
                   <Route path="/job-board/:id" element={<JobDetailPage />} />
                   <Route path="/request-correction" element={<RequestCorrection />} />
                   <Route path="/offer-check/:companyId" element={<ProtectedRoute><OfferCheck /></ProtectedRoute>} />
@@ -246,7 +245,7 @@ const App = () => (
                   <Route path="/dashboard" element={<ProtectedRoute><Dashboard /></ProtectedRoute>} />
                   <Route path="/briefing" element={<ProtectedRoute><BriefingPage /></ProtectedRoute>} />
                   <Route path="/news-setup" element={<ProtectedRoute><NewsOnboarding /></ProtectedRoute>} />
-                  <Route path="/career-map" element={<ProtectedRoute><CareerMap /></ProtectedRoute>} />
+                  <Route path="/career-map" element={<Navigate to="/career-intelligence" replace />} />
                   <Route path="/job-dashboard" element={<ProtectedRoute><JobDashboard /></ProtectedRoute>} />
                   <Route path="/my-offer-checks" element={<ProtectedRoute><MyOfferChecks /></ProtectedRoute>} />
                   <Route path="/my-offer-reviews" element={<ProtectedRoute><MyOfferReviews /></ProtectedRoute>} />
@@ -267,6 +266,7 @@ const App = () => (
                   <Route path="/auto-apply" element={<AutoApplyOnboarding />} />
                   <Route path="/my-values" element={<Navigate to="/dashboard?tab=values" replace />} />
                   <Route path="/how-do-i-get-there" element={<Navigate to="/dashboard?tab=how" replace />} />
+                  <Route path="/job-board" element={<Navigate to="/jobs" replace />} />
                   <Route path="/offer-checks" element={<Navigate to="/my-offer-checks" replace />} />
                   <Route path="/outreach" element={<Navigate to="/dashboard?tab=outreach" replace />} />
                   <Route path="/offer-clarity" element={<OfferClarity />} />

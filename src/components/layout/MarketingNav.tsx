@@ -8,9 +8,9 @@ import { Button } from "@/components/ui/button";
 const PRIMARY_LINKS = [
   { label: "Receipts", to: "/receipts" },
   { label: "Companies", to: "/browse" },
+  { label: "Tools", to: "/tools" },
   { label: "Pricing", to: "/pricing" },
   { label: "About", to: "/about" },
-  { label: "Contact", to: "/contact" },
 ];
 
 const TOOLS_LINKS = [
