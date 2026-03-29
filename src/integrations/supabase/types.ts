@@ -9718,6 +9718,48 @@ export type Database = {
         }
         Relationships: []
       }
+      tips: {
+        Row: {
+          id: string
+          company_name: string
+          categories: string[]
+          description: string
+          evidence_links: string | null
+          contact_email: string | null
+          is_public: boolean
+          status: string
+          admin_notes: string | null
+          created_at: string
+          updated_at: string
+        }
+        Insert: {
+          id?: string
+          company_name: string
+          categories: string[]
+          description: string
+          evidence_links?: string | null
+          contact_email?: string | null
+          is_public?: boolean
+          status?: string
+          admin_notes?: string | null
+          created_at?: string
+          updated_at?: string
+        }
+        Update: {
+          id?: string
+          company_name?: string
+          categories?: string[]
+          description?: string
+          evidence_links?: string | null
+          contact_email?: string | null
+          is_public?: boolean
+          status?: string
+          admin_notes?: string | null
+          created_at?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
       user_roles: {
         Row: {
           id: string

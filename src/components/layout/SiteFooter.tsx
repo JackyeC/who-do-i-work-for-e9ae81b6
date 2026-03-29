@@ -74,6 +74,12 @@ export function SiteFooter() {
               >
                 Contact
               </Link>
+              <Link
+                to="/submit-tip"
+                className="font-sans text-sm text-muted-foreground hover:text-foreground transition-colors"
+              >
+                Submit a Tip
+              </Link>
             </nav>
           </div>
 

@@ -94,9 +94,15 @@ export default function Receipts() {
           political spending, DEI actions, and labor impact. Every claim sourced.
           Every dollar traced.
         </p>
-        <p className="font-mono text-muted-foreground text-xs">
+        <p className="font-mono text-muted-foreground text-xs mb-4">
           Powered by FEC, BLS, LDA, SEC EDGAR, and WARN Act data
         </p>
+        <Link
+          to="/submit-tip"
+          className="inline-flex items-center gap-1.5 text-sm text-primary hover:underline"
+        >
+          Know something? Submit a tip anonymously →
+        </Link>
       </section>
 
       {/* Filter bar */}
