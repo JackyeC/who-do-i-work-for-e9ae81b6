@@ -87,8 +87,8 @@ export function JobDetailDrawer({ job, companyValueSignals = [], companySignals 
             )}
             <div className="flex flex-col items-center gap-1 p-3 rounded-xl bg-muted/50 flex-1">
               <span className="text-xs uppercase tracking-wider text-muted-foreground font-semibold">Employer Clarity Score</span>
-              <CivicScoreCard score={company?.civic_footprint_score || 0} size="sm" showLabel={false} />
-              <CivicScoreBadge score={company?.civic_footprint_score || 0} />
+              <CivicScoreCard score={company?.employer_clarity_score || 0} size="sm" showLabel={false} />
+              <CivicScoreBadge score={company?.employer_clarity_score || 0} />
             </div>
           </div>
 

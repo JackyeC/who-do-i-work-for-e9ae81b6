@@ -54,7 +54,7 @@ export function DashboardOnboarding({ onNavigate }: DashboardOnboardingProps) {
     {
       id: "explore",
       label: "Check your first company",
-      description: "Search any employer to see their civic footprint, hiring signals, and influence data.",
+      description: "Search any employer to see their Employer Clarity Score, hiring signals, and influence data.",
       done: progress.hasExploredCompany,
       action: () => window.location.href = "/check?tab=company",
       icon: Building2,

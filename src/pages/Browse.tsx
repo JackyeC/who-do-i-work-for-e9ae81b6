@@ -4,7 +4,7 @@ import { verifyTurnstileToken } from "@/lib/verifyTurnstile";
 import { Link, useNavigate } from "react-router-dom";
 import { usePageSEO } from "@/hooks/use-page-seo";
 import { motion } from "framer-motion";
-import { CivicFootprintBadge } from "@/components/CivicFootprintBadge";
+import { EmployerClarityBadge } from "@/components/EmployerClarityBadge";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
@@ -71,8 +71,8 @@ export default function Browse() {
     queryFn: async () => {
       const { data, error } = await supabase
         .from("companies")
-        .select("id, name, slug, industry, state, civic_footprint_score, total_pac_spending, lobbying_spend, revenue, employee_count, description, is_startup, category_tags, career_intelligence_score")
-        .order("civic_footprint_score", { ascending: false });
+        .select("id, name, slug, industry, state, employer_clarity_score, total_pac_spending, lobbying_spend, revenue, employee_count, description, is_startup, category_tags, career_intelligence_score")
+        .order("employer_clarity_score", { ascending: false });
       if (error) {
         console.error("Browse companies query error:", error);
         throw error;
@@ -86,7 +86,7 @@ export default function Browse() {
   const allCompanies = useMemo(() => {
     const dbList = (dbCompanies || []).map((c: any) => ({
       id: c.slug, dbId: c.id, name: c.name, slug: c.slug, industry: c.industry, state: c.state,
-      civicFootprintScore: c.civic_footprint_score, totalPacSpending: c.total_pac_spending,
+      civicFootprintScore: c.employer_clarity_score, totalPacSpending: c.total_pac_spending,
       lobbyingSpend: c.lobbying_spend, revenue: c.revenue, employeeCount: c.employee_count,
       description: c.description, isDbOnly: true,
       isStartup: c.is_startup, categoryTags: c.category_tags || [],
@@ -377,7 +377,7 @@ export default function Browse() {
                         <ArrowRight className="w-3.5 h-3.5 text-muted-foreground/30 group-hover:text-primary transition-all group-hover:translate-x-0.5 shrink-0" />
                       </div>
                       <div className="mt-2.5 pt-2.5 border-t border-border/30 flex items-center justify-between">
-                        <CivicFootprintBadge score={company.civicFootprintScore} size="sm" />
+                        <EmployerClarityBadge score={company.civicFootprintScore} size="sm" />
                         <span className="text-xs text-muted-foreground tabular-nums">
                           {company.totalPacSpending > 0 ? formatCurrency(company.totalPacSpending) : "No PAC"}
                         </span>

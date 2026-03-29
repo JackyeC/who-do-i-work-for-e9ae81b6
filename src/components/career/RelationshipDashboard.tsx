@@ -235,7 +235,7 @@ export function RelationshipDashboard() {
   const networkSignals = useMemo(
     () =>
       enrichedConnections.filter(
-        (c) => c.matched_company && !trackedCompanyIds.has(c.matched_company.id) && c.matched_company.civic_footprint_score < 40
+        (c) => c.matched_company && !trackedCompanyIds.has(c.matched_company.id) && c.matched_company.employer_clarity_score < 40
       ),
     [enrichedConnections, trackedCompanyIds]
   );
@@ -244,7 +244,7 @@ export function RelationshipDashboard() {
   const opportunityFeed = useMemo(
     () =>
       enrichedConnections.filter(
-        (c) => c.matched_company && !trackedCompanyIds.has(c.matched_company.id) && c.matched_company.civic_footprint_score >= 60
+        (c) => c.matched_company && !trackedCompanyIds.has(c.matched_company.id) && c.matched_company.employer_clarity_score >= 60
       ),
     [enrichedConnections, trackedCompanyIds]
   );

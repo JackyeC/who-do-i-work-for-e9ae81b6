@@ -30,8 +30,8 @@ function rankBadge(rank: number) {
 
 export default function Rankings() {
   usePageSEO({
-    title: "Employer Rankings — Civic Footprint Leaderboard",
-    description: "See how companies rank on transparency, governance, stability, and civic footprint. Evidence-based employer rankings from public records.",
+    title: "Employer Rankings — Employer Clarity Score Leaderboard",
+    description: "See how companies rank on transparency, governance, stability, and Employer Clarity Score. Evidence-based employer rankings from public records.",
     path: "/rankings",
   });
 
@@ -43,9 +43,9 @@ export default function Rankings() {
     queryFn: async () => {
       const { data } = await supabase
         .from("companies")
-        .select("id, name, slug, industry, state, civic_footprint_score, confidence_rating, record_status, employee_count")
+        .select("id, name, slug, industry, state, employer_clarity_score, confidence_rating, record_status, employee_count")
         .in("record_status", ["verified", "partially_verified", "research_in_progress"])
-        .order("civic_footprint_score", { ascending: true })
+        .order("employer_clarity_score", { ascending: true })
         .limit(100);
       return data || [];
     },
@@ -67,10 +67,10 @@ export default function Rankings() {
 
   // Sort by category
   const sorted = [...ranked].sort((a, b) => {
-    // Lower civic_footprint_score = more transparent = better
-    if (category === "overall") return a.civic_footprint_score - b.civic_footprint_score;
+    // Lower employer_clarity_score = more transparent = better
+    if (category === "overall") return a.employer_clarity_score - b.employer_clarity_score;
     if (category === "transparency") return (a.benchmark?.transparency_grade || "F").localeCompare(b.benchmark?.transparency_grade || "F");
-    return a.civic_footprint_score - b.civic_footprint_score;
+    return a.employer_clarity_score - b.employer_clarity_score;
   });
 
   const industries = [...new Set((companies || []).map((c: any) => c.industry))].sort();
@@ -158,12 +158,12 @@ export default function Rankings() {
                     </TableCell>
                     <TableCell className="text-center">
                       <span className={cn("font-bold text-lg",
-                        c.civic_footprint_score <= 25 ? "text-[hsl(var(--civic-green))]" :
-                        c.civic_footprint_score <= 50 ? "text-[hsl(var(--civic-blue))]" :
-                        c.civic_footprint_score <= 75 ? "text-[hsl(var(--civic-yellow))]" :
+                        c.employer_clarity_score <= 25 ? "text-[hsl(var(--civic-green))]" :
+                        c.employer_clarity_score <= 50 ? "text-[hsl(var(--civic-blue))]" :
+                        c.employer_clarity_score <= 75 ? "text-[hsl(var(--civic-yellow))]" :
                         "text-destructive"
                       )}>
-                        {c.civic_footprint_score}
+                        {c.employer_clarity_score}
                       </span>
                     </TableCell>
                     <TableCell className="text-center">

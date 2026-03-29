@@ -4,7 +4,7 @@ import { Trophy, TrendingUp, TrendingDown, Minus } from "lucide-react";
 interface CompanyData {
   id: string;
   name: string;
-  civic_footprint_score: number;
+  employer_clarity_score: number;
 }
 
 function scoreBand(score: number) {
@@ -15,11 +15,11 @@ function scoreBand(score: number) {
 }
 
 export function ScoreShowdown({ companyA, companyB }: { companyA: CompanyData; companyB: CompanyData }) {
-  const aWins = companyA.civic_footprint_score > companyB.civic_footprint_score;
-  const bWins = companyB.civic_footprint_score > companyA.civic_footprint_score;
-  const tie = companyA.civic_footprint_score === companyB.civic_footprint_score;
-  const bandA = scoreBand(companyA.civic_footprint_score);
-  const bandB = scoreBand(companyB.civic_footprint_score);
+  const aWins = companyA.employer_clarity_score > companyB.employer_clarity_score;
+  const bWins = companyB.employer_clarity_score > companyA.employer_clarity_score;
+  const tie = companyA.employer_clarity_score === companyB.employer_clarity_score;
+  const bandA = scoreBand(companyA.employer_clarity_score);
+  const bandB = scoreBand(companyB.employer_clarity_score);
 
   return (
     <div className="border border-border bg-card overflow-hidden mb-8">
@@ -49,7 +49,7 @@ export function ScoreShowdown({ companyA, companyB }: { companyA: CompanyData; c
             {/* Big score */}
             <div className="relative inline-block mb-3">
               <span className="font-mono text-6xl font-black text-foreground leading-none">
-                {company.civic_footprint_score}
+                {company.employer_clarity_score}
               </span>
               <span className="font-mono text-sm text-muted-foreground ml-1">/100</span>
             </div>
@@ -58,7 +58,7 @@ export function ScoreShowdown({ companyA, companyB }: { companyA: CompanyData; c
             <div className="w-full max-w-[200px] mx-auto h-2 bg-muted rounded-full overflow-hidden mb-3">
               <div
                 className={cn("h-full rounded-full transition-all duration-1000", band.bar)}
-                style={{ width: `${company.civic_footprint_score}%` }}
+                style={{ width: `${company.employer_clarity_score}%` }}
               />
             </div>
 
@@ -76,7 +76,7 @@ export function ScoreShowdown({ companyA, companyB }: { companyA: CompanyData; c
         <span className="font-mono text-xs tracking-wider text-muted-foreground">
           {tie
             ? "Dead heat — both employers score equally on transparency."
-            : `${aWins ? companyA.name : companyB.name} leads by ${Math.abs(companyA.civic_footprint_score - companyB.civic_footprint_score)} points in employer clarity.`
+            : `${aWins ? companyA.name : companyB.name} leads by ${Math.abs(companyA.employer_clarity_score - companyB.employer_clarity_score)} points in employer clarity.`
           }
         </span>
       </div>

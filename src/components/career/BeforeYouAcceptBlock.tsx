@@ -48,7 +48,7 @@ function deriveSignals(company: CompanyResult, preComputed?: any[] | null): stri
   if (company.total_pac_spending > 100000) signals.push("Heavy political spending — check if it aligns with your values");
   if ((company.lobbying_spend ?? 0) > 50000) signals.push("Active lobbying presence — verify policy alignment before signing");
   if (!company.employee_count) signals.push("Employee headcount not publicly disclosed (workforce blind spot)");
-  if (company.civic_footprint_score < 40) signals.push("Low transparency across key governance areas");
+  if (company.employer_clarity_score < 40) signals.push("Low transparency across key governance areas");
   if (company.record_status !== "verified") signals.push("Company record has not been fully verified yet");
   if ((company.career_intelligence_score ?? 5) < 5) signals.push("Salary data not publicly disclosed (negotiation blind spot)");
   if (signals.length === 0) {

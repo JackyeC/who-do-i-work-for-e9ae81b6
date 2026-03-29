@@ -11,7 +11,7 @@ import { Badge } from "@/components/ui/badge";
 import { supabase } from "@/integrations/supabase/client";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { useToast } from "@/hooks/use-toast";
-import { CivicFootprintBadge } from "@/components/CivicFootprintBadge";
+import { EmployerClarityBadge } from "@/components/EmployerClarityBadge";
 import { formatCurrency } from "@/data/sampleData";
 import {
   Building2, Search, Loader2, User, DollarSign, AlertTriangle,
@@ -28,7 +28,7 @@ interface CompanyOption {
   slug: string;
   industry: string;
   state: string;
-  civic_footprint_score: number;
+  employer_clarity_score: number;
   total_pac_spending: number;
   lobbying_spend: number | null;
 }
@@ -68,7 +68,7 @@ export default function WhoDoIWorkFor() {
     queryFn: async () => {
       const { data } = await supabase
         .from("companies")
-        .select("id, name, slug, industry, state, civic_footprint_score, total_pac_spending, lobbying_spend")
+        .select("id, name, slug, industry, state, employer_clarity_score, total_pac_spending, lobbying_spend")
         .ilike("name", `%${searchQuery}%`)
         .order("name")
         .limit(10);
@@ -247,7 +247,7 @@ export default function WhoDoIWorkFor() {
                             <p className="text-xs text-muted-foreground">{company.industry} · {company.state}</p>
                           </div>
                         </div>
-                        <CivicFootprintBadge score={company.civic_footprint_score} size="sm" />
+                        <EmployerClarityBadge score={company.employer_clarity_score} size="sm" />
                       </button>
                     ))}
                   </div>
@@ -274,7 +274,7 @@ export default function WhoDoIWorkFor() {
                       </div>
                     </div>
                     <div className="flex items-center gap-3">
-                      <CivicFootprintBadge score={employerCompany.civic_footprint_score} />
+                      <EmployerClarityBadge score={employerCompany.employer_clarity_score} />
                       <Button variant="outline" size="sm" onClick={() => setShowSearch(true)}>Change</Button>
                     </div>
                   </div>

@@ -43,7 +43,7 @@ export default function Examples() {
     queryFn: async () => {
       const { data } = await supabase
         .from("companies")
-        .select("slug, name, industry, state, civic_footprint_score, total_pac_spending, lobbying_spend, logo_url")
+        .select("slug, name, industry, state, employer_clarity_score, total_pac_spending, lobbying_spend, logo_url")
         .in("slug", FEATURED_SLUGS)
         .order("total_pac_spending", { ascending: false });
       return data || [];
@@ -137,7 +137,7 @@ export default function Examples() {
                       )}
                       <div className="flex items-center gap-2 text-xs text-muted-foreground">
                         <TrendingUp className="w-3.5 h-3.5 text-primary/60" />
-                        <span>Civic Footprint: {c.civic_footprint_score}/100</span>
+                        <span>Employer Clarity Score: {c.employer_clarity_score}/100</span>
                       </div>
                     </div>
 

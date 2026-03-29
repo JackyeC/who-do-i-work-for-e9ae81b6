@@ -55,7 +55,7 @@ export function EVPIntelligence() {
       setLoadingStep("Looking up company...");
       let { data: companies } = await supabase
         .from("companies")
-        .select("id, name, description, industry, state, civic_footprint_score, total_pac_spending, lobbying_spend, government_contracts, employee_count, revenue, effective_tax_rate, careers_url, website_url")
+        .select("id, name, description, industry, state, employer_clarity_score, total_pac_spending, lobbying_spend, government_contracts, employee_count, revenue, effective_tax_rate, careers_url, website_url")
         .ilike("name", `%${q}%`)
         .limit(1);
 
@@ -76,7 +76,7 @@ export function EVPIntelligence() {
         // Re-fetch after discovery
         const { data: refetched } = await supabase
           .from("companies")
-          .select("id, name, description, industry, state, civic_footprint_score, total_pac_spending, lobbying_spend, government_contracts, employee_count, revenue, effective_tax_rate, careers_url, website_url")
+          .select("id, name, description, industry, state, employer_clarity_score, total_pac_spending, lobbying_spend, government_contracts, employee_count, revenue, effective_tax_rate, careers_url, website_url")
           .eq("id", discoverResult.companyId)
           .single();
 
@@ -179,11 +179,11 @@ export function EVPIntelligence() {
         });
       }
 
-      if (company.civic_footprint_score) {
+      if (company.employer_clarity_score) {
         signals.push({
           category: "Employer Clarity",
-          detail: `Score: ${company.civic_footprint_score}/100`,
-          sentiment: company.civic_footprint_score >= 60 ? "positive" : company.civic_footprint_score >= 40 ? "neutral" : "caution",
+          detail: `Score: ${company.employer_clarity_score}/100`,
+          sentiment: company.employer_clarity_score >= 60 ? "positive" : company.employer_clarity_score >= 40 ? "neutral" : "caution",
         });
       }
 
@@ -282,7 +282,7 @@ export function EVPIntelligence() {
       if (company.government_contracts && company.government_contracts > 0) evpPositioning.push("Public sector impact");
       if (signalScansRes.data && signalScansRes.data.length > 5) evpPositioning.push("Strong employee programs");
       if (jobsRes.data?.some(j => j.work_mode === "remote")) evpPositioning.push("Remote work culture");
-      if (company.civic_footprint_score && company.civic_footprint_score >= 60) evpPositioning.push("Transparent governance");
+      if (company.employer_clarity_score && company.employer_clarity_score >= 60) evpPositioning.push("Transparent governance");
       if (sayDoAnalysis.every(s => s.gap === "aligned") && sayDoAnalysis.length > 0) evpPositioning.push("Receipts match the rhetoric");
       evpPositioning.push(`${company.industry} sector`);
 

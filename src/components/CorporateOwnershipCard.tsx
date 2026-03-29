@@ -58,7 +58,7 @@ export function CorporateOwnershipCard({ companyId, companyName, parentCompany }
     queryFn: async () => {
       const { data } = await supabase
         .from("companies")
-        .select("id, name, slug, industry, civic_footprint_score")
+        .select("id, name, slug, industry, employer_clarity_score")
         .ilike("name", `%${parentCompany}%`)
         .limit(1)
         .maybeSingle();
@@ -73,7 +73,7 @@ export function CorporateOwnershipCard({ companyId, companyName, parentCompany }
     queryFn: async () => {
       const { data } = await supabase
         .from("companies")
-        .select("id, name, slug, industry, civic_footprint_score")
+        .select("id, name, slug, industry, employer_clarity_score")
         .ilike("parent_company", `%${parentCompany}%`)
         .neq("id", companyId)
         .order("name")
@@ -116,7 +116,7 @@ export function CorporateOwnershipCard({ companyId, companyName, parentCompany }
                 <h4 className="text-lg font-bold text-foreground">{parentCompany}</h4>
                 {parentRecord && (
                   <p className="text-xs text-muted-foreground mt-0.5">
-                    {parentRecord.industry} · Score: {parentRecord.civic_footprint_score}/100
+                    {parentRecord.industry} · Score: {parentRecord.employer_clarity_score}/100
                   </p>
                 )}
               </div>
@@ -168,11 +168,11 @@ export function CorporateOwnershipCard({ companyId, companyName, parentCompany }
                   <div className="flex items-center gap-2 shrink-0">
                     <span className={cn(
                       "font-mono text-xs font-bold",
-                      sister.civic_footprint_score >= 60 ? "text-[hsl(var(--civic-green))]" :
-                      sister.civic_footprint_score >= 30 ? "text-[hsl(var(--civic-yellow))]" :
+                      sister.employer_clarity_score >= 60 ? "text-[hsl(var(--civic-green))]" :
+                      sister.employer_clarity_score >= 30 ? "text-[hsl(var(--civic-yellow))]" :
                       "text-destructive"
                     )}>
-                      {sister.civic_footprint_score}
+                      {sister.employer_clarity_score}
                     </span>
                     <ExternalLink className="w-3 h-3 text-muted-foreground opacity-0 group-hover:opacity-100 transition-opacity" />
                   </div>

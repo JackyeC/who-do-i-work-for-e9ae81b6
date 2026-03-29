@@ -13,7 +13,7 @@ export interface CompanyIntegrityResult {
 /** Derive recruiter intelligence from actual DB data instead of mocks */
 async function buildIntegrityFromDB(companyName: string, companyId?: string): Promise<CompanyIntegrityResult | null> {
   // Find the company
-  let query = supabase.from("companies").select("id, name, civic_footprint_score, insider_score, jackye_insight, total_pac_spending, lobbying_spend, corporate_pac_exists");
+  let query = supabase.from("companies").select("id, name, employer_clarity_score, insider_score, jackye_insight, total_pac_spending, lobbying_spend, corporate_pac_exists");
   if (companyId) {
     query = query.eq("slug", companyId);
   } else {
@@ -65,8 +65,8 @@ async function buildIntegrityFromDB(companyName: string, companyId?: string): Pr
     .filter(Boolean)
     .slice(0, 3);
 
-  // Risk level from civic footprint (lower = higher risk) + signal density
-  const cfs = company.civic_footprint_score ?? 50;
+  // Risk level from Employer Clarity Score (lower = higher risk) + signal density
+  const cfs = company.employer_clarity_score ?? 50;
   const riskInput = Math.round((100 - cfs + integrityGapScore + insiderScore) / 3);
   const risk_level: CompanyIntegrityResult["risk_level"] =
     riskInput >= 70 ? "CRITICAL" :

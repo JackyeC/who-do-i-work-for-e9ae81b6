@@ -16,7 +16,7 @@ interface CompanyData {
   name: string;
   slug: string;
   industry: string;
-  civic_footprint_score: number;
+  employer_clarity_score: number;
   total_pac_spending: number;
   lobbying_spend: number | null;
   government_contracts: number | null;
@@ -24,7 +24,7 @@ interface CompanyData {
   state: string;
 }
 
-const COMPANY_FIELDS = "id, name, slug, industry, civic_footprint_score, total_pac_spending, lobbying_spend, government_contracts, employee_count, state";
+const COMPANY_FIELDS = "id, name, slug, industry, employer_clarity_score, total_pac_spending, lobbying_spend, government_contracts, employee_count, state";
 
 export default function CompareCompanies() {
   const [searchParams, setSearchParams] = useSearchParams();
@@ -45,8 +45,8 @@ export default function CompareCompanies() {
         type: "battle",
         companyA: companyA.name,
         companyB: companyB.name,
-        scoreA: companyA.civic_footprint_score,
-        scoreB: companyB.civic_footprint_score,
+        scoreA: companyA.employer_clarity_score,
+        scoreB: companyB.employer_clarity_score,
         slugA: companyA.slug,
         slugB: companyB.slug,
       });
@@ -59,7 +59,7 @@ export default function CompareCompanies() {
       ? `${companyA.name} vs ${companyB.name} — Employer Intelligence Comparison`
       : "Compare Employers — Who Do I Work For?",
     description: companyA && companyB
-      ? `Side-by-side employer transparency comparison: ${companyA.name} (${companyA.civic_footprint_score}/100) vs ${companyB.name} (${companyB.civic_footprint_score}/100).`
+      ? `Side-by-side employer transparency comparison: ${companyA.name} (${companyA.employer_clarity_score}/100) vs ${companyB.name} (${companyB.employer_clarity_score}/100).`
       : "Compare two employers side-by-side on transparency, political spending, and workforce signals.",
     path: `/compare${slugA && slugB ? `?a=${slugA}&b=${slugB}` : ""}`,
     image: ogImage,
@@ -138,8 +138,8 @@ export default function CompareCompanies() {
               companyB={companyB.name}
               industryA={companyA.industry}
               industryB={companyB.industry}
-              scoreA={companyA.civic_footprint_score}
-              scoreB={companyB.civic_footprint_score}
+              scoreA={companyA.employer_clarity_score}
+              scoreB={companyB.employer_clarity_score}
               slugA={companyA.slug}
               slugB={companyB.slug}
             />
@@ -150,8 +150,8 @@ export default function CompareCompanies() {
               nameB={companyB.name}
               slugA={companyA.slug}
               slugB={companyB.slug}
-              scoreA={companyA.civic_footprint_score}
-              scoreB={companyB.civic_footprint_score}
+              scoreA={companyA.employer_clarity_score}
+              scoreB={companyB.employer_clarity_score}
             />
 
             {/* Deep links */}

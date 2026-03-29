@@ -84,12 +84,12 @@ export function AddCompanyModal({ open, onOpenChange, onCompanyAdded, initialNam
           employee_count: form.employee_count || null,
           website_url: form.website_url.trim() || null,
           ticker: form.ticker.trim().toUpperCase() || null,
-          civic_footprint_score: 0,
+          employer_clarity_score: 0,
           total_pac_spending: 0,
           confidence_rating: "low",
           creation_source: "user_submitted",
         })
-        .select("id, name, slug, industry, civic_footprint_score, total_pac_spending, lobbying_spend, government_contracts, employee_count, state")
+        .select("id, name, slug, industry, employer_clarity_score, total_pac_spending, lobbying_spend, government_contracts, employee_count, state")
         .single();
 
       if (error) throw error;

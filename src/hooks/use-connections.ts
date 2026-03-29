@@ -29,7 +29,7 @@ export interface EnrichedConnection extends UserConnection {
     name: string;
     slug: string;
     industry: string;
-    civic_footprint_score: number;
+    employer_clarity_score: number;
     logo_url: string | null;
     state: string;
   } | null;
@@ -61,7 +61,7 @@ export function useConnections() {
       const connectionIds = connections.map((c) => c.id);
       const { data, error } = await (supabase as any)
         .from("connection_company_map")
-        .select("*, company:companies(id, name, slug, industry, civic_footprint_score, logo_url, state)")
+        .select("*, company:companies(id, name, slug, industry, employer_clarity_score, logo_url, state)")
         .in("connection_id", connectionIds);
       if (error) throw error;
       return (data || []) as (ConnectionCompanyMap & { company: any })[];

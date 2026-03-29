@@ -41,7 +41,7 @@ interface JobIntegrityCardProps {
       vetted_status: string | null;
       jackye_insight: string | null;
       description: string | null;
-      civic_footprint_score?: number;
+      employer_clarity_score?: number;
     };
   };
   matchCount?: number;

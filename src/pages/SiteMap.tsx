@@ -27,7 +27,7 @@ const sections: SiteSection[] = [
     title: "Explore & Research",
     description: "Discover employers, non-profits, and power networks",
     links: [
-      { label: "Employer Directory", path: "/browse", icon: Building2, description: "Browse companies by industry and civic footprint" },
+      { label: "Employer Directory", path: "/browse", icon: Building2, description: "Browse companies by industry and Employer Clarity Score" },
       { label: "Search", path: "/search", icon: Search, description: "Search any company, executive, or organization" },
       { label: "Values-Based Search", path: "/values-search", icon: Eye, description: "Find employers aligned with your values" },
       { label: "Intelligence Reports", path: "/intelligence", icon: FileText, premium: "candidate", description: "Published investigative intelligence briefs" },

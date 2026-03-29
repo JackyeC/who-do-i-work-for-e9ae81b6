@@ -16,7 +16,7 @@ export interface TrackedCompany {
     name: string;
     slug: string;
     industry: string;
-    civic_footprint_score: number;
+    employer_clarity_score: number;
     logo_url: string | null;
     state: string;
   };
@@ -60,7 +60,7 @@ export function useTrackedCompanies() {
         .from("tracked_companies")
         .select(`
           *,
-          company:companies(id, name, slug, industry, civic_footprint_score, logo_url, state)
+          company:companies(id, name, slug, industry, employer_clarity_score, logo_url, state)
         `)
         .eq("user_id", user!.id)
         .eq("is_active", true)

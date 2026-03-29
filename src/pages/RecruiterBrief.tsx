@@ -15,7 +15,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { generateCandidatePdf } from "@/lib/generateCandidatePdf";
 import { useToast } from "@/hooks/use-toast";
 
-const COMPANY_FIELDS = "id, name, industry, civic_footprint_score, career_intelligence_score, confidence_rating, lobbying_spend, employee_count, jackye_insight, is_publicly_traded, description" as const;
+const COMPANY_FIELDS = "id, name, industry, employer_clarity_score, career_intelligence_score, confidence_rating, lobbying_spend, employee_count, jackye_insight, is_publicly_traded, description" as const;
 
 const signalIcon = (level: "positive" | "neutral" | "caution") => {
   if (level === "positive") return <CheckCircle2 className="w-3.5 h-3.5 text-[hsl(var(--civic-green))]" />;

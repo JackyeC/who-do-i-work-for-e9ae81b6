@@ -275,7 +275,7 @@ export default function Methodology() {
               <h2 className="text-title text-foreground mb-5">The Employer Clarity Score</h2>
               <div className="space-y-4 text-body text-muted-foreground leading-relaxed">
                 <p>
-                  The Civic Footprint score (0–100) measures how <strong className="text-foreground">concentrated</strong> a company's political influence is — 
+                  The Employer Clarity Score score (0–100) measures how <strong className="text-foreground">concentrated</strong> a company's political influence is — 
                   not how "good" or "bad" they are. A higher score means spending and affiliations are heavily concentrated 
                   in one political direction.
                 </p>

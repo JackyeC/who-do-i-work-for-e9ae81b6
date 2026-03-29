@@ -43,7 +43,7 @@ const Index = forwardRef<HTMLDivElement>((_, ref) => {
     queryFn: async () => {
       const { data } = await supabase
         .from("companies")
-        .select("id, name, slug, industry, state, civic_footprint_score, total_pac_spending, insider_score")
+        .select("id, name, slug, industry, state, employer_clarity_score, total_pac_spending, insider_score")
         .in("slug", FEATURED_SLUGS)
         .limit(6);
       return data || [];
@@ -160,11 +160,11 @@ const Index = forwardRef<HTMLDivElement>((_, ref) => {
                   </div>
                   <div className="flex items-center justify-between text-xs text-muted-foreground">
                     <span className={`font-mono font-bold px-2 py-0.5 rounded ${
-                      co.civic_footprint_score >= 70 ? "bg-civic-green/10 text-civic-green" :
-                      co.civic_footprint_score >= 40 ? "bg-civic-yellow/10 text-civic-yellow" :
+                      co.employer_clarity_score >= 70 ? "bg-civic-green/10 text-civic-green" :
+                      co.employer_clarity_score >= 40 ? "bg-civic-yellow/10 text-civic-yellow" :
                       "bg-civic-red/10 text-civic-red"
                     }`}>
-                      {co.civic_footprint_score}/100
+                      {co.employer_clarity_score}/100
                     </span>
                     <span>
                       {co.total_pac_spending > 0

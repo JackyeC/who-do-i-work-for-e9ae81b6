@@ -51,7 +51,7 @@ function trackApplyClick(jobId: string, companyId: string, url: string) {
 
 export function JobDetailPanel({ job, matchCount = 0, matchedCategories = [], onClose }: JobDetailPanelProps) {
   const co = job.companies;
-  const civicScore = co?.civic_footprint_score || 0;
+  const civicScore = co?.employer_clarity_score || 0;
   const isCertified = co?.vetted_status === "certified";
   const isVerified = co?.vetted_status === "verified";
   const workMode = job.work_mode ? WORK_MODE_META[job.work_mode] : null;

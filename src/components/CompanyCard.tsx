@@ -1,6 +1,6 @@
 import { Link } from "react-router-dom";
 import { Card, CardContent } from "@/components/ui/card";
-import { CivicFootprintBadge } from "@/components/CivicFootprintBadge";
+import { EmployerClarityBadge } from "@/components/EmployerClarityBadge";
 import { InsiderScorePill } from "@/components/InsiderScorePill";
 import { usePersona } from "@/hooks/use-persona";
 import { formatCurrency, type Company } from "@/data/sampleData";
@@ -34,7 +34,7 @@ export function CompanyCard({ company }: CompanyCardProps) {
           </div>
           <div className="mt-4 flex items-center justify-between gap-2 flex-wrap">
             <div className="flex items-center gap-2 flex-wrap">
-              <CivicFootprintBadge score={company.civicFootprintScore} size="sm" />
+              <EmployerClarityBadge score={company.civicFootprintScore} size="sm" />
               <InsiderScorePill score={company.insiderScore ?? null} />
             </div>
             <div className="flex items-center gap-2">

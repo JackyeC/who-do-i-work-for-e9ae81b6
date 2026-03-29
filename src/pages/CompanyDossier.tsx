@@ -243,7 +243,7 @@ export default function CompanyDossier() {
     );
   }
 
-  const influenceScore = company.civic_footprint_score || 0;
+  const influenceScore = company.employer_clarity_score || 0;
   const hasFullAccess = isTracked;
   const LensMeta = LENS_META[lens];
   const LensIcon = LensMeta.icon;

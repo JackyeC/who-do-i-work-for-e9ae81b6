@@ -114,7 +114,7 @@ export default function FounderConsole() {
     queryFn: async () => {
       const { data } = await supabase
         .from("companies")
-        .select("name, industry, civic_footprint_score")
+        .select("name, industry, employer_clarity_score")
         .order("updated_at", { ascending: false })
         .limit(6);
       return data || [];
@@ -209,7 +209,7 @@ export default function FounderConsole() {
                       <span className="text-xs text-muted-foreground ml-2">{co.industry}</span>
                     </div>
                     <Badge variant="outline" className="font-mono text-xs">
-                      Score: {co.civic_footprint_score}
+                      Score: {co.employer_clarity_score}
                     </Badge>
                   </div>
                 ))}

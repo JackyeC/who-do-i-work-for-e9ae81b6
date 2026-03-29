@@ -235,12 +235,12 @@ export default function BriefingPage() {
                         <h4 className="text-sm font-semibold text-foreground group-hover:text-primary transition-colors">{company.name}</h4>
                         <p className="text-xs text-muted-foreground">{company.industry}</p>
                       </div>
-                      {company.civic_footprint_score != null && (
+                      {company.employer_clarity_score != null && (
                         <div className="text-right">
                           <span className={`text-lg font-bold font-mono ${
-                            company.civic_footprint_score >= 70 ? "text-civic-green" :
-                            company.civic_footprint_score >= 40 ? "text-primary" : "text-civic-red"
-                          }`}>{Math.round(company.civic_footprint_score)}</span>
+                            company.employer_clarity_score >= 70 ? "text-civic-green" :
+                            company.employer_clarity_score >= 40 ? "text-primary" : "text-civic-red"
+                          }`}>{Math.round(company.employer_clarity_score)}</span>
                           <p className="text-xs text-muted-foreground font-mono uppercase tracking-wider">CFS</p>
                         </div>
                       )}

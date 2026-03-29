@@ -72,7 +72,7 @@ export default function JobIntegrityBoard() {
     queryFn: async () => {
       let query = supabase
         .from("company_jobs")
-        .select("id, title, location, work_mode, url, created_at, posted_at, company_id, is_featured, admin_approved, salary_range, seniority_level, department, description, employment_type, source_platform, companies(name, slug, logo_url, vetted_status, jackye_insight, description, civic_footprint_score)")
+        .select("id, title, location, work_mode, url, created_at, posted_at, company_id, is_featured, admin_approved, salary_range, seniority_level, department, description, employment_type, source_platform, companies(name, slug, logo_url, vetted_status, jackye_insight, description, employer_clarity_score)")
         .eq("is_active", true)
         .eq("admin_approved", true)
         .order("created_at", { ascending: false })
@@ -166,7 +166,7 @@ export default function JobIntegrityBoard() {
     }
 
     if (filters.highClarity) {
-      result = result.filter((j: any) => ((j.companies as any)?.civic_footprint_score || 0) >= 70);
+      result = result.filter((j: any) => ((j.companies as any)?.employer_clarity_score || 0) >= 70);
     }
 
     if (filters.valuesAligned && prefCategories.size > 0 && alignmentSignals) {
@@ -247,7 +247,7 @@ export default function JobIntegrityBoard() {
               const companyCats = alignmentSignals?.[job.company_id];
               const matchedCats = companyCats ? [...prefCategories].filter((c) => companyCats.has(c)) : [];
               const fit = evaluateJobFit(job, preferences);
-              const civicScore = (job.companies as any)?.civic_footprint_score || 0;
+              const civicScore = (job.companies as any)?.employer_clarity_score || 0;
               const leverage = computeLeverage(job, civicScore, false);
               return (
                 <JobIntegrityCard

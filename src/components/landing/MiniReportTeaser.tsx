@@ -12,7 +12,7 @@ interface MiniReport {
   name: string;
   slug: string;
   industry: string;
-  civic_footprint_score: number;
+  employer_clarity_score: number;
   state: string;
   corporate_pac_exists: boolean;
   lobbying_spend: number | null;
@@ -34,7 +34,7 @@ export function MiniReportTeaser() {
 
     const { data } = await supabase
       .from("companies")
-      .select("name, slug, industry, civic_footprint_score, state, corporate_pac_exists, lobbying_spend")
+      .select("name, slug, industry, employer_clarity_score, state, corporate_pac_exists, lobbying_spend")
       .ilike("name", `%${query.trim()}%`)
       .limit(1)
       .maybeSingle();
@@ -102,8 +102,8 @@ export function MiniReportTeaser() {
                     <span className="font-mono text-xs text-muted-foreground">{report.industry} · {report.state}</span>
                   </div>
                   <div className="text-center">
-                    <div className={`text-2xl font-bold font-data ${scoreColor(report.civic_footprint_score)}`}>
-                      {report.civic_footprint_score}
+                    <div className={`text-2xl font-bold font-data ${scoreColor(report.employer_clarity_score)}`}>
+                      {report.employer_clarity_score}
                     </div>
                     <div className="font-mono text-xs uppercase text-muted-foreground">Employer Clarity Score</div>
                   </div>

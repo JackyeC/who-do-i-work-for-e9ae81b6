@@ -130,7 +130,7 @@ export function CandidateAttractionScore({ companyId, companyName }: Props) {
         sentimentRes,
         benefitsRes,
       ] = await Promise.all([
-        supabase.from("companies").select("civic_footprint_score, total_pac_spending, lobbying_spend, government_contracts, subsidies_received, employee_count, revenue, effective_tax_rate").eq("id", companyId).maybeSingle(),
+        supabase.from("companies").select("employer_clarity_score, total_pac_spending, lobbying_spend, government_contracts, subsidies_received, employee_count, revenue, effective_tax_rate").eq("id", companyId).maybeSingle(),
         supabase.from("company_public_stances").select("topic, gap").eq("company_id", companyId),
         supabase.from("company_agency_contracts").select("id").eq("company_id", companyId).limit(1),
         supabase.from("company_warn_notices").select("id").eq("company_id", companyId).limit(1),
@@ -149,9 +149,9 @@ export function CandidateAttractionScore({ companyId, companyName }: Props) {
       const signalExplanations: Record<string, string> = {};
 
       // Transparency
-      if (company.civic_footprint_score && company.civic_footprint_score >= 55) {
+      if (company.employer_clarity_score && company.employer_clarity_score >= 55) {
         detectedSignals.high_transparency = true;
-        signalExplanations.high_transparency = `Civic transparency score: ${company.civic_footprint_score}/100`;
+        signalExplanations.high_transparency = `Civic transparency score: ${company.employer_clarity_score}/100`;
       }
 
       // Public stances

@@ -11,10 +11,10 @@ export interface Benchmark {
   cpaZicklinScore?: number;
   industryRank?: number;
   industryTotal?: number;
-  peerAvgCivicFootprint: number;
+  peerAvgEmployerClarity: number;
   peerAvgLobbying: number;
   peerAvgPacSpending: number;
-  companyCivicFootprint: number;
+  companyEmployerClarity: number;
   companyLobbying: number;
   companyPacSpending: number;
   isIndustryLeader: boolean;
@@ -104,8 +104,8 @@ export function BenchmarkCard({ data }: { data: Benchmark }) {
         <div className="space-y-4">
           <ComparisonBar
             label="Employer Clarity Score"
-            companyValue={data.companyCivicFootprint}
-            peerValue={data.peerAvgCivicFootprint}
+            companyValue={data.companyEmployerClarity}
+            peerValue={data.peerAvgEmployerClarity}
             formatter={(v) => `${v}/100`}
           />
           <ComparisonBar

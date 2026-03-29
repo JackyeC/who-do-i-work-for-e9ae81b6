@@ -14,7 +14,7 @@ interface MetricExplanation {
 
 const METRIC_EXPLANATIONS: Record<string, MetricExplanation> = {
   // ── Summary metrics ──
-  "civic-footprint": {
+  "employer-clarity": {
     title: "Employer Clarity Score",
     what: "A 0–100 composite score measuring how much political activity we've detected for this company — PAC spending, lobbying, executive donations, government contracts, and organizational ties.",
     why: "Higher doesn't mean worse. It means this company is more politically active. A score of 0 means we found no political spending. A score of 80+ means significant political engagement across multiple channels.",
@@ -91,7 +91,7 @@ const METRIC_EXPLANATIONS: Record<string, MetricExplanation> = {
   },
   "benchmarks": {
     title: "Industry Benchmarks",
-    what: "How this company's political spending, civic footprint, and transparency compare to peers in the same industry. Shows industry rank, peer averages, and whether the company is an outlier.",
+    what: "How this company's political spending, Employer Clarity Score, and transparency compare to peers in the same industry. Shows industry rank, peer averages, and whether the company is an outlier.",
     why: "Context matters. A $1M lobbying spend means very different things in Big Tech vs. a small retail chain. Benchmarks help you understand if a company's political activity is typical or unusual for its sector.",
     source: "CPA-Zicklin Index, aggregated industry data",
   },

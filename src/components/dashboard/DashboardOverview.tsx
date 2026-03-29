@@ -227,7 +227,7 @@ export function DashboardOverview({ onNavigate }: DashboardOverviewProps) {
         name: t.company?.name,
         slug: t.company?.slug,
         industry: t.company?.industry,
-        score: t.company?.civic_footprint_score ?? 0,
+        score: t.company?.employer_clarity_score ?? 0,
       }))
     : DEMO_WATCHED;
 

@@ -61,7 +61,7 @@ ${scriptTag}`;
                   <ExternalLink className="w-3.5 h-3.5 text-primary-foreground" />
                 </div>
                 <div>
-                  <div className="text-xs text-muted-foreground font-medium tracking-wide">CIVIC FOOTPRINT</div>
+                  <div className="text-xs text-muted-foreground font-medium tracking-wide">EMPLOYER CLARITY</div>
                   <div className="text-xs text-muted-foreground mt-0.5">Transparency Profile Available · Who Do I Work For?</div>
                 </div>
               </div>
@@ -89,7 +89,7 @@ ${scriptTag}`;
                   <ExternalLink className="w-3.5 h-3.5 text-primary-foreground" />
                 </div>
                 <div>
-                  <div className="text-xs font-medium tracking-wide" style={{ color: "hsl(var(--muted-foreground))" }}>CIVIC FOOTPRINT</div>
+                  <div className="text-xs font-medium tracking-wide" style={{ color: "hsl(var(--muted-foreground))" }}>EMPLOYER CLARITY</div>
                   <div className="text-xs mt-0.5" style={{ color: "hsl(var(--muted-foreground))" }}>Transparency Profile Available · Who Do I Work For?</div>
                 </div>
               </div>

@@ -1,13 +1,13 @@
 import { getFootprintLabel } from "@/data/sampleData";
 import { cn } from "@/lib/utils";
 
-interface CivicFootprintBadgeProps {
+interface EmployerClarityBadgeProps {
   score: number;
   size?: "sm" | "md" | "lg";
   showDescription?: boolean;
 }
 
-export function CivicFootprintBadge({ score, size = "md", showDescription = false }: CivicFootprintBadgeProps) {
+export function EmployerClarityBadge({ score, size = "md", showDescription = false }: EmployerClarityBadgeProps) {
   const { label, description, color } = getFootprintLabel(score);
 
   const sizeClasses = {

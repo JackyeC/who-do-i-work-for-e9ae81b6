@@ -10,7 +10,7 @@ function getRiskLevel(company: CompanyResult) {
     if (l === "Moderate") return { label: "Moderate Risk", color: "text-[hsl(var(--civic-yellow))]", bg: "bg-[hsl(var(--civic-yellow))]/10 border-[hsl(var(--civic-yellow))]/30" };
     return { label: "High Risk", color: "text-destructive", bg: "bg-destructive/10 border-destructive/30" };
   }
-  const score = company.career_intelligence_score ?? company.civic_footprint_score / 10;
+  const score = company.career_intelligence_score ?? company.employer_clarity_score / 10;
   if (score >= 7) return { label: "Low Risk", color: "text-[hsl(var(--civic-green))]", bg: "bg-[hsl(var(--civic-green))]/10 border-[hsl(var(--civic-green))]/30" };
   if (score >= 4) return { label: "Moderate Risk", color: "text-[hsl(var(--civic-yellow))]", bg: "bg-[hsl(var(--civic-yellow))]/10 border-[hsl(var(--civic-yellow))]/30" };
   return { label: "High Risk", color: "text-destructive", bg: "bg-destructive/10 border-destructive/30" };
@@ -18,7 +18,7 @@ function getRiskLevel(company: CompanyResult) {
 
 function getScore(company: CompanyResult): number {
   if (company.dossier) return company.dossier.score;
-  return company.career_intelligence_score ?? Math.min(10, company.civic_footprint_score / 10);
+  return company.career_intelligence_score ?? Math.min(10, company.employer_clarity_score / 10);
 }
 
 interface EmployerDossierCardProps {

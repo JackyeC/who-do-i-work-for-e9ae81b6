@@ -18,7 +18,7 @@ export interface MatchedJob {
   company_id: string;
   company_name: string;
   company_slug: string;
-  civic_footprint_score: number;
+  employer_clarity_score: number;
   industry: string;
   state: string;
   alignment_score: number;

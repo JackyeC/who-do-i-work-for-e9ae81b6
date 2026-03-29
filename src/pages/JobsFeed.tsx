@@ -25,7 +25,7 @@ interface MatchedJob {
   company: {
     name: string;
     slug: string;
-    civic_footprint_score: number;
+    employer_clarity_score: number;
     industry: string;
   };
   location: string;
@@ -192,7 +192,7 @@ export default function JobsFeed() {
                         </div>
                         <div className="flex items-center gap-2 shrink-0">
                           <span className="text-xs font-mono font-semibold text-primary">{job.alignment_score}% aligned</span>
-                          <IntegrityBadge score={job.company.civic_footprint_score} />
+                          <IntegrityBadge score={job.company.employer_clarity_score} />
                         </div>
                       </div>
 
@@ -250,7 +250,7 @@ export default function JobsFeed() {
 
                 <div className="flex items-center gap-3">
                   <span className="text-sm font-mono font-bold text-primary">{selectedJob.alignment_score}% aligned</span>
-                  <IntegrityBadge score={selectedJob.company.civic_footprint_score} />
+                  <IntegrityBadge score={selectedJob.company.employer_clarity_score} />
                   {selectedJob.work_mode && (
                     <Badge variant="outline" className="text-xs">{workModeLabel(selectedJob.work_mode)}</Badge>
                   )}

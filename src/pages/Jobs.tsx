@@ -110,7 +110,7 @@ export default function Jobs() {
     queryFn: async () => {
       const { data, error } = await supabase
         .from("company_jobs")
-        .select(`*, companies:company_id (id, name, slug, industry, civic_footprint_score, state)`)
+        .select(`*, companies:company_id (id, name, slug, industry, employer_clarity_score, state)`)
         .eq("is_active", true)
         .order("scraped_at", { ascending: false })
         .limit(500);
@@ -201,7 +201,7 @@ export default function Jobs() {
     jobs.forEach((job: any) => {
       const company = job.companies;
       if (!company) return;
-      let score = Math.min(Math.round((company.civic_footprint_score || 0) * 0.4), 40);
+      let score = Math.min(Math.round((company.employer_clarity_score || 0) * 0.4), 40);
       const flags = signalFlags?.[company.id] || [];
       score += flags.length * 8;
       // Bonus for values match
@@ -237,7 +237,7 @@ export default function Jobs() {
           const t = term.toLowerCase();
           return job.title.toLowerCase().includes(t) || company.name.toLowerCase().includes(t) || loc.includes(t);
         });
-      const matchesScore = company.civic_footprint_score >= parseInt(minScore);
+      const matchesScore = company.employer_clarity_score >= parseInt(minScore);
       const matchesIndustry = industryFilter === "all" || company.industry === industryFilter;
       const matchesWorkMode = workModeFilter === "all" || job.work_mode === workModeFilter;
       let matchesValues = true;

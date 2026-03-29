@@ -1322,7 +1322,7 @@ export type Database = {
           career_intelligence_score: number | null
           careers_url: string | null
           category_tags: string[] | null
-          civic_footprint_score: number
+          employer_clarity_score: number
           confidence_rating: string
           consumer_relevance: string | null
           corporate_pac_exists: boolean
@@ -1373,7 +1373,7 @@ export type Database = {
           career_intelligence_score?: number | null
           careers_url?: string | null
           category_tags?: string[] | null
-          civic_footprint_score?: number
+          employer_clarity_score?: number
           confidence_rating?: string
           consumer_relevance?: string | null
           corporate_pac_exists?: boolean
@@ -1424,7 +1424,7 @@ export type Database = {
           career_intelligence_score?: number | null
           careers_url?: string | null
           category_tags?: string[] | null
-          civic_footprint_score?: number
+          employer_clarity_score?: number
           confidence_rating?: string
           consumer_relevance?: string | null
           corporate_pac_exists?: boolean
@@ -1668,7 +1668,7 @@ export type Database = {
           industry_total: number | null
           is_industry_leader: boolean
           last_calculated: string
-          peer_avg_civic_footprint: number | null
+          peer_avg_employer_clarity: number | null
           peer_avg_lobbying: number | null
           peer_avg_pac_spending: number | null
           transparency_grade: string
@@ -1682,7 +1682,7 @@ export type Database = {
           industry_total?: number | null
           is_industry_leader?: boolean
           last_calculated?: string
-          peer_avg_civic_footprint?: number | null
+          peer_avg_employer_clarity?: number | null
           peer_avg_lobbying?: number | null
           peer_avg_pac_spending?: number | null
           transparency_grade?: string
@@ -1696,7 +1696,7 @@ export type Database = {
           industry_total?: number | null
           is_industry_leader?: boolean
           last_calculated?: string
-          peer_avg_civic_footprint?: number | null
+          peer_avg_employer_clarity?: number | null
           peer_avg_lobbying?: number | null
           peer_avg_pac_spending?: number | null
           transparency_grade?: string
@@ -9384,7 +9384,7 @@ export type Database = {
           environmental_commitment_weight: number
           government_contracts_weight: number
           id: string
-          min_civic_footprint_score: number | null
+          min_employer_clarity_score: number | null
           organizational_affiliations_weight: number
           pay_equity_weight: number
           political_neutrality_weight: number
@@ -9403,7 +9403,7 @@ export type Database = {
           environmental_commitment_weight?: number
           government_contracts_weight?: number
           id?: string
-          min_civic_footprint_score?: number | null
+          min_employer_clarity_score?: number | null
           organizational_affiliations_weight?: number
           pay_equity_weight?: number
           political_neutrality_weight?: number
@@ -9422,7 +9422,7 @@ export type Database = {
           environmental_commitment_weight?: number
           government_contracts_weight?: number
           id?: string
-          min_civic_footprint_score?: number | null
+          min_employer_clarity_score?: number | null
           organizational_affiliations_weight?: number
           pay_equity_weight?: number
           political_neutrality_weight?: number
@@ -10453,7 +10453,7 @@ export type Database = {
         Returns: {
           career_intelligence_score: number
           category_tags: string[]
-          civic_footprint_score: number
+          employer_clarity_score: number
           id: string
           industry: string
           lobbying_spend: number

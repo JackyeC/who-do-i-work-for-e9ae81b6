@@ -13,7 +13,7 @@ interface CompanyResult {
   name: string;
   slug: string;
   industry: string;
-  civic_footprint_score: number;
+  employer_clarity_score: number;
   category_tags: string[];
   narrative_gap: boolean;
   insider_score?: number | null;
@@ -45,8 +45,8 @@ export function AlignedValuesSearch({ hasTakenQuiz }: { hasTakenQuiz: boolean })
     queryFn: async () => {
       const { data } = await supabase
         .from("companies")
-        .select("id, name, slug, industry, civic_footprint_score, category_tags, insider_score")
-        .order("civic_footprint_score", { ascending: false })
+        .select("id, name, slug, industry, employer_clarity_score, category_tags, insider_score")
+        .order("employer_clarity_score", { ascending: false })
         .limit(5);
       return (data || []).map((c: any) => ({
         ...c,
@@ -64,9 +64,9 @@ export function AlignedValuesSearch({ hasTakenQuiz }: { hasTakenQuiz: boolean })
       if (!query.trim() || query.trim().length < 2) return [];
       const { data } = await supabase
         .from("companies")
-        .select("id, name, slug, industry, civic_footprint_score, category_tags, insider_score")
+        .select("id, name, slug, industry, employer_clarity_score, category_tags, insider_score")
         .ilike("name", `%${query.trim()}%`)
-        .order("civic_footprint_score", { ascending: false })
+        .order("employer_clarity_score", { ascending: false })
         .limit(8);
       return (data || []).map((c: any) => ({
         ...c,
@@ -172,8 +172,8 @@ export function AlignedValuesSearch({ hasTakenQuiz }: { hasTakenQuiz: boolean })
             </p>
           )}
           {results.map((company) => {
-            const sc = scoreColor(company.civic_footprint_score);
-            const matched = getMatchedValues(company.civic_footprint_score);
+            const sc = scoreColor(company.employer_clarity_score);
+            const matched = getMatchedValues(company.employer_clarity_score);
             const tracked = isTracked(company.id);
             return (
               <div
@@ -197,7 +197,7 @@ export function AlignedValuesSearch({ hasTakenQuiz }: { hasTakenQuiz: boolean })
                       className="text-xs font-bold rounded-full px-2 py-0.5 tabular-nums"
                       style={{ background: sc.bg, color: sc.text }}
                     >
-                      {company.civic_footprint_score}
+                      {company.employer_clarity_score}
                     </span>
                   </div>
                 </div>

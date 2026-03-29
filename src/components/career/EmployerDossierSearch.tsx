@@ -9,7 +9,7 @@ interface CompanyResult {
   slug: string;
   industry: string;
   state: string;
-  civic_footprint_score: number;
+  employer_clarity_score: number;
   career_intelligence_score: number | null;
   total_pac_spending: number;
   lobbying_spend: number | null;
@@ -55,7 +55,7 @@ export function EmployerDossierSearch({ onSelect, selectedCompany, onNotFound }:
     setSearched(false);
     const { data } = await supabase
       .from("companies")
-      .select("id, name, slug, industry, state, civic_footprint_score, career_intelligence_score, total_pac_spending, lobbying_spend, employee_count, confidence_rating, record_status")
+      .select("id, name, slug, industry, state, employer_clarity_score, career_intelligence_score, total_pac_spending, lobbying_spend, employee_count, confidence_rating, record_status")
       .ilike("name", `%${value.trim()}%`)
       .limit(8);
     const r = (data as CompanyResult[]) || [];

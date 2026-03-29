@@ -51,7 +51,7 @@ export default function RepresentativeProfile() {
     queryFn: async () => {
       const { data } = await supabase
         .from("company_candidates")
-        .select("*, companies!inner(id, name, slug, industry, civic_footprint_score)")
+        .select("*, companies!inner(id, name, slug, industry, employer_clarity_score)")
         .ilike("name", decodedName)
         .order("amount", { ascending: false });
       return (data || []) as any[];
@@ -77,7 +77,7 @@ export default function RepresentativeProfile() {
       } else {
         uniqueCompanies.set(company.id, {
           id: company.id, name: company.name, slug: company.slug,
-          industry: company.industry, score: company.civic_footprint_score,
+          industry: company.industry, score: company.employer_clarity_score,
           totalAmount: r.amount || 0, donations: [r],
         });
       }

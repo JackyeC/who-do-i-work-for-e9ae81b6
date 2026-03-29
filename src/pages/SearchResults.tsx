@@ -39,7 +39,7 @@ export default function SearchResults() {
       if (!initialQuery.trim()) return [];
       const { data } = await supabase
         .from("companies")
-        .select("id, name, slug, industry, state, civic_footprint_score, record_status, total_pac_spending")
+        .select("id, name, slug, industry, state, employer_clarity_score, record_status, total_pac_spending")
         .ilike("name", `%${initialQuery.trim()}%`)
         .limit(20);
       return data || [];

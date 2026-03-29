@@ -18,7 +18,7 @@ export interface DossierPdfData {
     employee_count?: string | null;
     revenue?: string | null;
     website_url?: string | null;
-    civic_footprint_score?: number;
+    employer_clarity_score?: number;
     lobbying_spend?: number | null;
     total_pac_spending?: number;
     government_contracts?: number | null;
@@ -210,7 +210,7 @@ function buildCoverPage(doc: jsPDF, data: DossierPdfData) {
   const nameEndY = 85 + nameLines.length * 15;
 
   // Influence Score badge
-  const score = company.civic_footprint_score ?? 0;
+  const score = company.employer_clarity_score ?? 0;
   const scoreColor = score > 70 ? C.red : score > 40 ? C.amber : C.green;
   doc.setFillColor(...scoreColor);
   doc.roundedRect(ML, nameEndY + 4, 50, 12, 2, 2, "F");
@@ -284,7 +284,7 @@ function buildExecutiveSummary(doc: jsPDF, data: DossierPdfData) {
 
   // KPI row
   let y = 42;
-  const score = company.civic_footprint_score ?? 0;
+  const score = company.employer_clarity_score ?? 0;
   const kpiW = (CW - 12) / 4;
   drawKpiBox(doc, ML, y, kpiW, "Influence Score", `${score}/100`, score > 70 ? C.red : score > 40 ? C.amber : C.green);
   drawKpiBox(doc, ML + kpiW + 4, y, kpiW, "PAC Spending", company.total_pac_spending ? fmt$(company.total_pac_spending) : "—", C.indigo);

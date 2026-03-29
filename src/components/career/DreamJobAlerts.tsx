@@ -22,7 +22,7 @@ export function DreamJobAlerts() {
     queryFn: async () => {
       const { data, error } = await supabase
         .from("job_alerts")
-        .select(`*, companies:company_id (name, slug, civic_footprint_score), company_jobs:job_id (title, location, url, work_mode)`)
+        .select(`*, companies:company_id (name, slug, employer_clarity_score), company_jobs:job_id (title, location, url, work_mode)`)
         .eq("user_id", user!.id)
         .order("created_at", { ascending: false })
         .limit(50);

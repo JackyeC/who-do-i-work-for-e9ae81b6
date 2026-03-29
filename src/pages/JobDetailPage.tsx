@@ -80,7 +80,7 @@ export default function JobDetailPage() {
     queryFn: async () => {
       const { data, error } = await supabase
         .from("company_jobs")
-        .select("*, companies(name, slug, logo_url, vetted_status, jackye_insight, description, civic_footprint_score, website_url)")
+        .select("*, companies(name, slug, logo_url, vetted_status, jackye_insight, description, employer_clarity_score, website_url)")
         .eq("id", id!)
         .maybeSingle();
       if (error) throw error;
@@ -120,7 +120,7 @@ export default function JobDetailPage() {
   });
 
   const co = job?.companies as any;
-  const civicScore = co?.civic_footprint_score || 0;
+  const civicScore = co?.employer_clarity_score || 0;
   const prefCategories = getUserPreferenceCategories();
   const companyCats = alignmentSignals || new Set<string>();
   const matchedCats = [...prefCategories].filter((c) => companyCats.has(c));

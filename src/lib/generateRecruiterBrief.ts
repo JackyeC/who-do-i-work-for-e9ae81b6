@@ -29,7 +29,7 @@ interface CompanyRow {
   id: string;
   name: string;
   industry: string;
-  civic_footprint_score: number;
+  employer_clarity_score: number;
   career_intelligence_score: number | null;
   confidence_rating: string;
   lobbying_spend: number | null;
@@ -49,7 +49,7 @@ export function generateRecruiterBrief(
   litigationCount: number,
 ): RecruiterBriefData {
   const cis = company.career_intelligence_score ?? 0;
-  const cfs = company.civic_footprint_score ?? 0;
+  const cfs = company.employer_clarity_score ?? 0;
   const score = Math.round((cis * 10 + cfs) / 2);
   const lobby = company.lobbying_spend ?? 0;
 

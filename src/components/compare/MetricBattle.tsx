@@ -4,7 +4,7 @@ import { Shield, Landmark, DollarSign, TrendingUp, Zap } from "lucide-react";
 interface CompanyData {
   id: string;
   name: string;
-  civic_footprint_score: number;
+  employer_clarity_score: number;
   total_pac_spending: number;
   lobbying_spend: number | null;
   government_contracts: number | null;
@@ -17,7 +17,7 @@ function formatCurrency(n: number) {
 }
 
 const METRICS = [
-  { key: "civic_footprint_score", label: "Employer Clarity Score", icon: Shield, format: (v: number) => `${v}/100`, compare: "higher" as const, description: "Overall transparency & accountability" },
+  { key: "employer_clarity_score", label: "Employer Clarity Score", icon: Shield, format: (v: number) => `${v}/100`, compare: "higher" as const, description: "Overall transparency & accountability" },
   { key: "total_pac_spending", label: "PAC Spending", icon: Landmark, format: formatCurrency, compare: "lower" as const, description: "Direct political action committee spend" },
   { key: "lobbying_spend", label: "Lobbying Spend", icon: DollarSign, format: (v: number) => v ? formatCurrency(v) : "None reported", compare: "lower" as const, description: "Registered federal lobbying expenditure" },
   { key: "government_contracts", label: "Gov. Contracts", icon: TrendingUp, format: (v: number) => v ? formatCurrency(v) : "None", compare: "neutral" as const, description: "Federal contract awards" },

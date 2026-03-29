@@ -8,7 +8,7 @@ interface CompanyData {
   name: string;
   slug: string;
   industry: string;
-  civic_footprint_score: number;
+  employer_clarity_score: number;
   total_pac_spending: number;
   lobbying_spend: number | null;
   government_contracts: number | null;
@@ -41,7 +41,7 @@ export function CompanySelector({ label, company, search, suggestions, onSearchC
         <div className="font-bold text-lg text-foreground mb-1">{company.name}</div>
         <div className="font-mono text-xs text-muted-foreground">{company.industry} · {company.state}</div>
         <div className="mt-3 flex items-baseline gap-1">
-          <span className="font-mono text-3xl font-black text-primary">{company.civic_footprint_score}</span>
+          <span className="font-mono text-3xl font-black text-primary">{company.employer_clarity_score}</span>
           <span className="font-mono text-xs text-muted-foreground">/100</span>
         </div>
       </div>
@@ -75,7 +75,7 @@ export function CompanySelector({ label, company, search, suggestions, onSearchC
                   <span className="text-foreground font-medium text-sm">{c.name}</span>
                   <span className="ml-2 font-mono text-xs text-muted-foreground">{c.industry}</span>
                 </div>
-                <span className="font-mono text-xs font-bold text-primary">{c.civic_footprint_score}</span>
+                <span className="font-mono text-xs font-bold text-primary">{c.employer_clarity_score}</span>
               </button>
             ))}
             {showNoResults && (

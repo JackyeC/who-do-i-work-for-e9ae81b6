@@ -298,7 +298,7 @@ export function ValuesCheckSection({
                         )}
                       </>
                     ) : (
-                      <>We found {signals.length} record{signals.length !== 1 ? "s" : ""} of political and policy-related activity. Explore the signals below to understand {companyName}'s civic footprint.</>
+                      <>We found {signals.length} record{signals.length !== 1 ? "s" : ""} of political and policy-related activity. Explore the signals below to understand {companyName}'s Employer Clarity Score.</>
                     )}
                   </p>
                 </div>

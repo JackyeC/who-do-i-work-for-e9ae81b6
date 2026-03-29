@@ -109,7 +109,7 @@ export function HowDoIGetThere() {
       const targetRoles = tracks.map((t: any) => t.target_role).filter(Boolean);
       const { data } = await supabase
         .from("company_jobs")
-        .select("company_id, title, companies(id, name, slug, civic_footprint_score)")
+        .select("company_id, title, companies(id, name, slug, employer_clarity_score)")
         .eq("is_active", true)
         .limit(100);
 
@@ -319,9 +319,9 @@ export function HowDoIGetThere() {
                     <p className="text-sm font-medium text-foreground">{match.companies.name}</p>
                     <p className="text-xs text-muted-foreground truncate">{match.title}</p>
                   </div>
-                  {match.companies.civic_footprint_score > 0 && (
+                  {match.companies.employer_clarity_score > 0 && (
                     <Badge variant="outline" className="text-xs ml-auto shrink-0">
-                      CF {match.companies.civic_footprint_score}
+                      CF {match.companies.employer_clarity_score}
                     </Badge>
                   )}
                 </a>

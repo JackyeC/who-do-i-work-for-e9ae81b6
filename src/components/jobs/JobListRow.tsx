@@ -54,7 +54,7 @@ export function JobListRow({ job, companyValueSignals = [], companySignalFlags =
   const company = job.companies;
   const WorkModeIcon = job.work_mode ? WORK_MODE_ICONS[job.work_mode] : null;
   const isSponsored = job.is_sponsored && (!job.sponsor_expires_at || new Date(job.sponsor_expires_at) > new Date());
-  const civicScore = company?.civic_footprint_score || 0;
+  const civicScore = company?.employer_clarity_score || 0;
 
   // Logic Bible V8.0: Show 1-3 personalized signal statements
   const profile = getStoredWorkProfile();

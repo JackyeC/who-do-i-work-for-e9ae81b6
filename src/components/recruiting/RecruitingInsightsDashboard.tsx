@@ -52,8 +52,8 @@ export function RecruitingInsightsDashboard() {
       // Top scored companies as "talent competitors"
       const { data: topCompanies } = await supabase
         .from("companies")
-        .select("name, industry, civic_footprint_score")
-        .order("civic_footprint_score", { ascending: false })
+        .select("name, industry, employer_clarity_score")
+        .order("employer_clarity_score", { ascending: false })
         .limit(10);
 
       setStats({
@@ -65,7 +65,7 @@ export function RecruitingInsightsDashboard() {
         competitorInsights: (topCompanies || []).map((c: any) => ({
           name: c.name,
           industry: c.industry,
-          score: c.civic_footprint_score,
+          score: c.employer_clarity_score,
         })),
       });
       setLoading(false);

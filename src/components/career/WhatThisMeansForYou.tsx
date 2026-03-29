@@ -10,12 +10,12 @@ function deriveFit(company: CompanyResult): { strengths: string[]; risks: string
     };
   }
 
-  const score = company.career_intelligence_score ?? company.civic_footprint_score / 10;
+  const score = company.career_intelligence_score ?? company.employer_clarity_score / 10;
   const strengths: string[] = [];
   const risks: string[] = [];
 
   if (score >= 7) strengths.push("You value transparent, well-governed employers");
-  if (company.civic_footprint_score >= 60) strengths.push("You thrive where public accountability is strong");
+  if (company.employer_clarity_score >= 60) strengths.push("You thrive where public accountability is strong");
   if (company.employee_count) strengths.push("You value brand exposure and visible workforce data");
   if (strengths.length === 0) strengths.push("You thrive in ambiguous environments and can navigate uncertainty");
 

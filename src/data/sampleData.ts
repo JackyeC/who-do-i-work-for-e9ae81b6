@@ -169,7 +169,7 @@ export interface BenchmarkData {
   cpaZicklinScore?: number;
   industryRank?: number;
   industryTotal?: number;
-  peerAvgCivicFootprint: number;
+  peerAvgEmployerClarity: number;
   peerAvgLobbying: number;
   peerAvgPacSpending: number;
   isIndustryLeader: boolean;
@@ -274,7 +274,7 @@ export const companies: Company[] = [
     influenceROI: { totalPoliticalSpending: 39300000, totalGovernmentBenefits: 630000000, roiRatio: 16.0, policyWinRate: 72, grade: "A+" },
     hypocrisyIndex: { chiScore: 68, grade: "D", directConflicts: 1, indirectConflicts: 0, alignedStances: 0, totalStances: 1 },
     politicalRisk: { riskScore: 62, grade: "D", revolvingDoorCount: 1, darkMoneyPercentage: 0, stakeholderDisconnect: 55, flaggedOrgCount: 1 },
-    benchmark: { industry: "Retail", transparencyGrade: "B", cpaZicklinScore: 65, industryRank: 3, industryTotal: 8, peerAvgCivicFootprint: 45, peerAvgLobbying: 3500000, peerAvgPacSpending: 2800000, isIndustryLeader: false },
+    benchmark: { industry: "Retail", transparencyGrade: "B", cpaZicklinScore: 65, industryRank: 3, industryTotal: 8, peerAvgEmployerClarity: 45, peerAvgLobbying: 3500000, peerAvgPacSpending: 2800000, isIndustryLeader: false },
     roiPipeline: {
       totalSpending: 39300000, totalBenefits: 630000000,
       moneyIn: [
@@ -350,7 +350,7 @@ export const companies: Company[] = [
     influenceROI: { totalPoliticalSpending: 8500000, totalGovernmentBenefits: 0, roiRatio: 0, grade: "N/A" },
     hypocrisyIndex: { chiScore: 85, grade: "F", directConflicts: 1, indirectConflicts: 0, alignedStances: 0, totalStances: 1 },
     politicalRisk: { riskScore: 72, grade: "F", revolvingDoorCount: 0, darkMoneyPercentage: 59, stakeholderDisconnect: 75, flaggedOrgCount: 2 },
-    benchmark: { industry: "Food & Beverage", transparencyGrade: "F", industryRank: 12, industryTotal: 12, peerAvgCivicFootprint: 35, peerAvgLobbying: 2000000, peerAvgPacSpending: 1500000, isIndustryLeader: false },
+    benchmark: { industry: "Food & Beverage", transparencyGrade: "F", industryRank: 12, industryTotal: 12, peerAvgEmployerClarity: 35, peerAvgLobbying: 2000000, peerAvgPacSpending: 1500000, isIndustryLeader: false },
   },
   {
     id: "hobby-lobby",
@@ -405,7 +405,7 @@ export const companies: Company[] = [
     influenceROI: { totalPoliticalSpending: 18000000, totalGovernmentBenefits: 0, roiRatio: 0, grade: "N/A" },
     hypocrisyIndex: { chiScore: 0, grade: "A+", directConflicts: 0, indirectConflicts: 0, alignedStances: 2, totalStances: 2 },
     politicalRisk: { riskScore: 78, grade: "F", revolvingDoorCount: 0, darkMoneyPercentage: 28, stakeholderDisconnect: 65, flaggedOrgCount: 2 },
-    benchmark: { industry: "Retail", transparencyGrade: "F", industryRank: 8, industryTotal: 8, peerAvgCivicFootprint: 45, peerAvgLobbying: 3500000, peerAvgPacSpending: 2800000, isIndustryLeader: false },
+    benchmark: { industry: "Retail", transparencyGrade: "F", industryRank: 8, industryTotal: 8, peerAvgEmployerClarity: 45, peerAvgLobbying: 3500000, peerAvgPacSpending: 2800000, isIndustryLeader: false },
   },
   {
     id: "google",
@@ -469,7 +469,7 @@ export const companies: Company[] = [
     influenceROI: { totalPoliticalSpending: 18750000, totalGovernmentBenefits: 2700000000, roiRatio: 144.0, policyWinRate: 68, grade: "A+" },
     hypocrisyIndex: { chiScore: 55, grade: "D", directConflicts: 1, indirectConflicts: 1, alignedStances: 0, totalStances: 2 },
     politicalRisk: { riskScore: 35, grade: "B", revolvingDoorCount: 1, darkMoneyPercentage: 0, stakeholderDisconnect: 30, flaggedOrgCount: 0 },
-    benchmark: { industry: "Technology", transparencyGrade: "A", cpaZicklinScore: 82, industryRank: 2, industryTotal: 15, peerAvgCivicFootprint: 30, peerAvgLobbying: 8000000, peerAvgPacSpending: 3000000, isIndustryLeader: true },
+    benchmark: { industry: "Technology", transparencyGrade: "A", cpaZicklinScore: 82, industryRank: 2, industryTotal: 15, peerAvgEmployerClarity: 30, peerAvgLobbying: 8000000, peerAvgPacSpending: 3000000, isIndustryLeader: true },
     roiPipeline: {
       totalSpending: 18750000, totalBenefits: 2700000000,
       moneyIn: [
@@ -560,7 +560,7 @@ export const companies: Company[] = [
     influenceROI: { totalPoliticalSpending: 19500000, totalGovernmentBenefits: 2090000000, roiRatio: 107.2, policyWinRate: 74, grade: "A+" },
     hypocrisyIndex: { chiScore: 72, grade: "F", directConflicts: 1, indirectConflicts: 1, alignedStances: 0, totalStances: 2 },
     politicalRisk: { riskScore: 52, grade: "C", revolvingDoorCount: 1, darkMoneyPercentage: 0, stakeholderDisconnect: 50, flaggedOrgCount: 1 },
-    benchmark: { industry: "Retail", transparencyGrade: "B+", cpaZicklinScore: 70, industryRank: 2, industryTotal: 8, peerAvgCivicFootprint: 45, peerAvgLobbying: 3500000, peerAvgPacSpending: 2800000, isIndustryLeader: false },
+    benchmark: { industry: "Retail", transparencyGrade: "B+", cpaZicklinScore: 70, industryRank: 2, industryTotal: 8, peerAvgEmployerClarity: 45, peerAvgLobbying: 3500000, peerAvgPacSpending: 2800000, isIndustryLeader: false },
     roiPipeline: {
       totalSpending: 19500000, totalBenefits: 2090000000,
       moneyIn: [
@@ -633,7 +633,7 @@ export const companies: Company[] = [
     influenceROI: { totalPoliticalSpending: 50000, totalGovernmentBenefits: 0, roiRatio: 0, grade: "N/A" },
     hypocrisyIndex: { chiScore: 0, grade: "A+", directConflicts: 0, indirectConflicts: 0, alignedStances: 1, totalStances: 1 },
     politicalRisk: { riskScore: 5, grade: "A+", revolvingDoorCount: 0, darkMoneyPercentage: 0, stakeholderDisconnect: 0, flaggedOrgCount: 0 },
-    benchmark: { industry: "Retail / Apparel", transparencyGrade: "A+", cpaZicklinScore: 95, industryRank: 1, industryTotal: 5, peerAvgCivicFootprint: 30, peerAvgLobbying: 500000, peerAvgPacSpending: 200000, isIndustryLeader: true },
+    benchmark: { industry: "Retail / Apparel", transparencyGrade: "A+", cpaZicklinScore: 95, industryRank: 1, industryTotal: 5, peerAvgEmployerClarity: 30, peerAvgLobbying: 500000, peerAvgPacSpending: 200000, isIndustryLeader: true },
   },
   {
     id: "koch-industries",
@@ -705,7 +705,7 @@ export const companies: Company[] = [
     influenceROI: { totalPoliticalSpending: 63700000, totalGovernmentBenefits: 350000000, roiRatio: 5.5, policyWinRate: 81, grade: "A" },
     hypocrisyIndex: { chiScore: 50, grade: "D", directConflicts: 1, indirectConflicts: 0, alignedStances: 1, totalStances: 2 },
     politicalRisk: { riskScore: 92, grade: "F", revolvingDoorCount: 2, darkMoneyPercentage: 78, stakeholderDisconnect: 70, flaggedOrgCount: 2 },
-    benchmark: { industry: "Conglomerate", transparencyGrade: "F", industryRank: 10, industryTotal: 10, peerAvgCivicFootprint: 40, peerAvgLobbying: 5000000, peerAvgPacSpending: 3000000, isIndustryLeader: false },
+    benchmark: { industry: "Conglomerate", transparencyGrade: "F", industryRank: 10, industryTotal: 10, peerAvgEmployerClarity: 40, peerAvgLobbying: 5000000, peerAvgPacSpending: 3000000, isIndustryLeader: false },
     roiPipeline: {
       totalSpending: 63700000, totalBenefits: 350000000,
       moneyIn: [
@@ -787,7 +787,7 @@ export const companies: Company[] = [
     influenceROI: { totalPoliticalSpending: 3000000, totalGovernmentBenefits: 0, roiRatio: 0, grade: "N/A" },
     hypocrisyIndex: { chiScore: 0, grade: "A+", directConflicts: 0, indirectConflicts: 0, alignedStances: 1, totalStances: 1 },
     politicalRisk: { riskScore: 8, grade: "A+", revolvingDoorCount: 0, darkMoneyPercentage: 0, stakeholderDisconnect: 5, flaggedOrgCount: 0 },
-    benchmark: { industry: "Retail", transparencyGrade: "A", cpaZicklinScore: 88, industryRank: 1, industryTotal: 8, peerAvgCivicFootprint: 45, peerAvgLobbying: 3500000, peerAvgPacSpending: 2800000, isIndustryLeader: true },
+    benchmark: { industry: "Retail", transparencyGrade: "A", cpaZicklinScore: 88, industryRank: 1, industryTotal: 8, peerAvgEmployerClarity: 45, peerAvgLobbying: 3500000, peerAvgPacSpending: 2800000, isIndustryLeader: true },
   },
 ];
 

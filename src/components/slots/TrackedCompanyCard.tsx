@@ -17,7 +17,7 @@ export function TrackedCompanyCard({ tracked, onUntrack, isUntracking }: Tracked
   const company = tracked.company;
   if (!company) return null;
 
-  const score = company.civic_footprint_score;
+  const score = company.employer_clarity_score;
 
   return (
     <div className="rounded-xl border border-border/40 bg-card p-5 flex items-center gap-4 hover:border-primary/20 transition-colors group">

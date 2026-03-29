@@ -10,7 +10,7 @@ export function SearchIntelligencePanel() {
     queryFn: async () => {
       const { data } = await supabase
         .from("companies")
-        .select("name, industry, civic_footprint_score, updated_at")
+        .select("name, industry, employer_clarity_score, updated_at")
         .order("updated_at", { ascending: false })
         .limit(8);
       return data || [];
@@ -23,8 +23,8 @@ export function SearchIntelligencePanel() {
     queryFn: async () => {
       const { data } = await supabase
         .from("companies")
-        .select("name, industry, civic_footprint_score, description")
-        .or("description.is.null,civic_footprint_score.eq.0")
+        .select("name, industry, employer_clarity_score, description")
+        .or("description.is.null,employer_clarity_score.eq.0")
         .order("created_at", { ascending: false })
         .limit(5);
       return data || [];
@@ -44,7 +44,7 @@ export function SearchIntelligencePanel() {
             {topSearched.map((co, i) => (
               <div key={i} className="flex items-center justify-between text-sm p-2 rounded-lg bg-muted/20">
                 <span className="text-foreground font-medium truncate max-w-[160px]">{co.name}</span>
-                <Badge variant="outline" className="text-xs font-mono">{co.civic_footprint_score}</Badge>
+                <Badge variant="outline" className="text-xs font-mono">{co.employer_clarity_score}</Badge>
               </div>
             ))}
           </div>

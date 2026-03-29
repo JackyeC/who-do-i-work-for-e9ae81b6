@@ -7,7 +7,7 @@ interface PanelCompany {
   id: string;
   name: string;
   slug: string;
-  civic_footprint_score: number;
+  employer_clarity_score: number;
   career_intelligence_score: number | null;
   lobbying_spend: number | null;
   government_contracts: number | null;
@@ -25,7 +25,7 @@ interface PanelConfig {
 }
 
 const VISIBLE_STATUSES = ["verified", "active", "published"];
-const FIELDS = "id, name, slug, civic_footprint_score, career_intelligence_score, lobbying_spend, government_contracts, is_startup, category_tags, industry";
+const FIELDS = "id, name, slug, employer_clarity_score, career_intelligence_score, lobbying_spend, government_contracts, is_startup, category_tags, industry";
 
 const fmt = (n: number | null) => {
   if (!n) return "—";
@@ -43,10 +43,10 @@ const PANELS: PanelConfig[] = [
     queryFn: async () => {
       const { data } = await supabase.from("companies").select(FIELDS)
         .in("record_status", VISIBLE_STATUSES)
-        .order("civic_footprint_score", { ascending: false }).limit(10);
+        .order("employer_clarity_score", { ascending: false }).limit(10);
       return (data as any[] || []) as PanelCompany[];
     },
-    metric: (c) => `${c.civic_footprint_score}/10`,
+    metric: (c) => `${c.employer_clarity_score}/10`,
   },
   {
     title: "Fastest Growing Startups",
@@ -56,7 +56,7 @@ const PANELS: PanelConfig[] = [
       const { data } = await supabase.from("companies").select(FIELDS)
         .in("record_status", VISIBLE_STATUSES)
         .eq("is_startup", true)
-        .order("civic_footprint_score", { ascending: false }).limit(10);
+        .order("employer_clarity_score", { ascending: false }).limit(10);
       return (data as any[] || []) as PanelCompany[];
     },
     metric: (c) => c.industry,
@@ -69,7 +69,7 @@ const PANELS: PanelConfig[] = [
       const { data } = await supabase.from("companies").select(FIELDS)
         .in("record_status", VISIBLE_STATUSES)
         .contains("category_tags", ["HR Tech"])
-        .order("civic_footprint_score", { ascending: false }).limit(10);
+        .order("employer_clarity_score", { ascending: false }).limit(10);
       return (data as any[] || []) as PanelCompany[];
     },
     metric: (c) => `${c.career_intelligence_score ?? "—"}/10`,
@@ -81,10 +81,10 @@ const PANELS: PanelConfig[] = [
     queryFn: async () => {
       const { data } = await supabase.from("companies").select(FIELDS)
         .in("record_status", VISIBLE_STATUSES)
-        .order("civic_footprint_score", { ascending: true }).limit(10);
+        .order("employer_clarity_score", { ascending: true }).limit(10);
       return (data as any[] || []) as PanelCompany[];
     },
-    metric: (c) => `${c.civic_footprint_score}/10`,
+    metric: (c) => `${c.employer_clarity_score}/10`,
   },
   {
     title: "High Lobbying Influence",
@@ -135,11 +135,11 @@ const PANELS: PanelConfig[] = [
       const { data } = await supabase.from("companies").select(FIELDS)
         .in("record_status", VISIBLE_STATUSES)
         .not("lobbying_spend", "is", null)
-        .lt("civic_footprint_score", 5)
-        .order("civic_footprint_score", { ascending: true }).limit(10);
+        .lt("employer_clarity_score", 5)
+        .order("employer_clarity_score", { ascending: true }).limit(10);
       return (data as any[] || []) as PanelCompany[];
     },
-    metric: (c) => `${c.civic_footprint_score}/10`,
+    metric: (c) => `${c.employer_clarity_score}/10`,
   },
 ];
 

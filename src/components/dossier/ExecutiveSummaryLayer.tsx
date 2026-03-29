@@ -13,7 +13,7 @@ interface ExecutiveSummaryProps {
     revenue?: string | null;
     website_url?: string | null;
     logo_url?: string | null;
-    civic_footprint_score?: number;
+    employer_clarity_score?: number;
   };
   influenceScore?: number;
   innovationScore?: number;

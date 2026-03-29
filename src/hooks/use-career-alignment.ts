@@ -108,7 +108,7 @@ export function useCareerAlignmentScore(companyId?: string) {
 
     const { data: company } = await supabase
       .from("companies")
-      .select("id, name, slug, civic_footprint_score, industry")
+      .select("id, name, slug, employer_clarity_score, industry")
       .eq("id", targetCompanyId)
       .single();
 
@@ -138,7 +138,7 @@ export function useCareerAlignmentScore(companyId?: string) {
     if ((valuesSignalsRes.data?.length || 0) > 0) { signalCount++; matchedSignals.push("Values Signals"); }
 
     signalsScore = Math.round((signalCount / totalSignalWeight) * 100);
-    signalsScore = Math.round(signalsScore * 0.5 + (company.civic_footprint_score || 0) * 0.5);
+    signalsScore = Math.round(signalsScore * 0.5 + (company.employer_clarity_score || 0) * 0.5);
 
     // Values alignment from unified profile
     if (valuesProfile) {

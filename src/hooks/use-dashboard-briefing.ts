@@ -19,7 +19,7 @@ export function useDashboardBriefing() {
         // Watched companies with scores & recent signals
         (supabase as any)
           .from("tracked_companies")
-          .select("id, company:companies(id, name, slug, industry, civic_footprint_score, insider_score, updated_at)")
+          .select("id, company:companies(id, name, slug, industry, employer_clarity_score, insider_score, updated_at)")
           .eq("user_id", user!.id)
           .eq("is_active", true)
           .order("created_at", { ascending: false })

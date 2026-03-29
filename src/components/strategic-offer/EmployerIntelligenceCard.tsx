@@ -30,7 +30,7 @@ export function EmployerIntelligenceCard({ companyId, companyName }: Props) {
     queryFn: async () => {
       const { data } = await supabase
         .from("companies")
-        .select("id, name, slug, civic_footprint_score, total_pac_spending, lobbying_spend, corporate_pac_exists, industry, state, description")
+        .select("id, name, slug, employer_clarity_score, total_pac_spending, lobbying_spend, corporate_pac_exists, industry, state, description")
         .eq("id", companyId!)
         .single();
       return data;
@@ -190,13 +190,13 @@ export function EmployerIntelligenceCard({ companyId, companyName }: Props) {
             </Link>
           </div>
           <p className="text-xs text-muted-foreground">
-            Before you sign, consider the civic footprint of <span className="font-medium text-foreground">{company.name}</span>. This isn't about whether the offer is "good" — it's about what you'll be supporting.
+            Before you sign, consider the Employer Clarity Score of <span className="font-medium text-foreground">{company.name}</span>. This isn't about whether the offer is "good" — it's about what you'll be supporting.
           </p>
         </CardHeader>
         <CardContent className="space-y-3">
           <div className="grid grid-cols-3 gap-3">
             <div className="p-3 bg-muted/30 rounded-xl text-center">
-              <p className="text-lg font-bold text-foreground">{company.civic_footprint_score}</p>
+              <p className="text-lg font-bold text-foreground">{company.employer_clarity_score}</p>
               <p className="text-xs text-muted-foreground">Employer Clarity Score</p>
             </div>
             <div className="p-3 bg-muted/30 rounded-xl text-center">

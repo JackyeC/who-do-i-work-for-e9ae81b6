@@ -86,7 +86,7 @@ export function computeRankingScore(job: {
   posted_at?: string | null;
   source_platform?: string | null;
   description?: string | null;
-  companies?: { civic_footprint_score?: number } | null;
+  companies?: { employer_clarity_score?: number } | null;
 }, alignmentScore: number = 0): number {
   let score = 0;
 
@@ -97,7 +97,7 @@ export function computeRankingScore(job: {
   if (job.salary_range) score += 25;
 
   // Clarity score contribution (0-100 mapped to 0-20)
-  const clarity = (job.companies as any)?.civic_footprint_score || 0;
+  const clarity = (job.companies as any)?.employer_clarity_score || 0;
   score += (clarity / 100) * 20;
 
   // Alignment boost (0-5 categories, each worth 8 points)

@@ -193,7 +193,7 @@ export default function CompanyProfile() {
   const hasJobPostings = activeJobCount > 0;
 
   const seoTarget = dbCompany || (company ? { name: company.name, industry: company.industry || "", state: company.state || "", description: "", slug: company.id } : null);
-  useCompanySEO({ name: seoTarget?.name || "", industry: seoTarget?.industry || "", state: seoTarget?.state || "", description: (seoTarget as any)?.description || "", slug: id || seoTarget?.slug || "", score: dbCompany?.civic_footprint_score });
+  useCompanySEO({ name: seoTarget?.name || "", industry: seoTarget?.industry || "", state: seoTarget?.state || "", description: (seoTarget as any)?.description || "", slug: id || seoTarget?.slug || "", score: dbCompany?.employer_clarity_score });
 
   useScanTracker(dbCompany?.id || undefined, dbCompany?.name || company?.name);
 
@@ -284,7 +284,7 @@ export default function CompanyProfile() {
   const name = dbCompany?.name || company?.name || "";
   const industry = dbCompany?.industry || company?.industry || "";
   const state = dbCompany?.state || company?.state || "";
-  const civicScore = dbCompany?.civic_footprint_score ?? company?.civicFootprintScore ?? 0;
+  const civicScore = dbCompany?.employer_clarity_score ?? company?.civicFootprintScore ?? 0;
   const totalPac = dbCompany?.total_pac_spending ?? company?.totalPacSpending ?? 0;
   const lobbyingSpend = dbCompany?.lobbying_spend ?? company?.lobbyingSpend ?? 0;
   const govContracts = dbCompany?.government_contracts ?? company?.governmentContracts ?? 0;

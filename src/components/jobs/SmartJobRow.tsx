@@ -41,7 +41,7 @@ export interface SmartJobRowProps {
 
 export function SmartJobRow({ job, isSelected, matchScore, matchLabel, onClick }: SmartJobRowProps) {
   const company = job.companies;
-  const civicScore = company?.civic_footprint_score || 0;
+  const civicScore = company?.employer_clarity_score || 0;
   const clarity = getClarityConfig(civicScore);
   const workMode = job.work_mode ? WORK_MODE_META[job.work_mode] : null;
   const freshness = getFreshness(job.posted_at || job.created_at);

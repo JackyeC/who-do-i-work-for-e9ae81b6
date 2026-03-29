@@ -160,7 +160,7 @@ export function generateCandidateAdvocacyPdf(data: AdvocacyDossierData): jsPDF {
   doc.setTextColor(...C.slate);
   const iqText = data.publicStances && data.publicStances.length > 0
     ? `The candidate has reviewed ${data.companyName}'s documented public positions across ${data.publicStances.length} policy area${data.publicStances.length !== 1 ? "s" : ""}, including ${data.publicStances.slice(0, 3).map(s => s.topic).join(", ")}. They understand the company's political spending patterns and workforce signals.`
-    : `The candidate has researched ${data.companyName}'s civic footprint, political spending, and workforce signals through the Who Do I Work For intelligence platform. They apply with full awareness of the company's institutional posture.`;
+    : `The candidate has researched ${data.companyName}'s Employer Clarity Score, political spending, and workforce signals through the Who Do I Work For intelligence platform. They apply with full awareness of the company's institutional posture.`;
   const iqLines = wrapText(doc, iqText, CW);
   doc.text(iqLines, ML, y);
   y += iqLines.length * 4 + 4;
