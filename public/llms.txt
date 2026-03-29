@@ -16,20 +16,35 @@ Who Do I Work For? is an Employer Intelligence platform created by Jackye Clayto
 
 ## Core Tools
 
+### The Receipts
+Company-by-company investigations connecting corporate values claims to political spending, DEI actions, and labor impact. Every claim sourced. Every dollar traced.
+
 ### Company Intelligence
 Full employer intelligence report for any company. Includes workforce signals, hiring technology signals, compensation patterns, culture signals, influence mapping, and an Employer Clarity Score.
 
-### Offer Intelligence
-Upload or paste an offer letter for analysis. Benchmarks salary against verified market data, flags non-compete clauses, identifies benefits gaps, calculates walk-away math, and provides negotiation guidance.
+### Compare Companies
+Side-by-side comparison of two employers across Employer Clarity Scores, lobbying, PAC spending, workforce signals, and transparency metrics.
 
-### Ask Jackye (AI Career Coach)
-Jackye Clayton's 20+ years of HR expertise available as an AI strategy layer. Interprets company signals, explains what they mean, gives tactical career advice. Not a generic chatbot — Jackye's voice, frameworks, and methodology.
+### Follow the Money
+Trace PAC donations, lobbying expenditures, and political spending from any company to the candidates and bills they support.
 
-### Career Intelligence
-Discover career paths using skills, values, career anchors, and market intelligence. Shows possible paths, skill gaps, companies you may not have considered, and action plans.
+### Career Map
+Explore career paths with intelligence-backed insights. Understand role progressions, skill gaps, and industry trajectories powered by public data.
 
-### Connection Chain
-Source-backed map of verified links between a company and political donors, lobbying firms, PACs, federal contracts, regulatory relationships, and revolving-door hires. Every connection includes confidence level, source links, and plain-English explanation.
+### Recruiter Brief
+Generate signal-grounded intelligence briefs for candidate conversations. Honest, non-salesy framing backed by real data.
+
+### Signal Alerts
+Monitor companies for new signals — WARN Act filings, lobbying changes, OSHA complaints, executive turnover — delivered in real time.
+
+### Workplace DNA Quiz
+Discover what matters to you in a workplace — so the platform can match you with companies that actually live it.
+
+### Submit a Tip
+Report employer misconduct anonymously. Reports are verified against public records and published if they check out.
+
+### Job Board
+Browse job listings enriched with employer transparency signals, Employer Clarity Scores, and values alignment data.
 
 ## Data Sources
 
@@ -54,17 +69,28 @@ Jackye Clayton is a career strategist, HR intelligence expert, and candidate adv
 - Website: https://wdiwf.jackyeclayton.com
 - Advisory services: https://wdiwf.jackyeclayton.com/work-with-jackye
 
+## Pricing
+
+- I'm Curious (Free): Receipts, basic intelligence, Workplace DNA quiz
+- The Signal ($49/month): Full dossiers, career intelligence, signal alerts
+- The Match ($149/month): Recruiter tools, values-based matching, recruiter briefs
+- The Closer ($199 one-time): Deep-dive dossier for a single company
+
 ## Key Pages
 
 - Homepage: https://wdiwf.jackyeclayton.com/
-- Company Intelligence: https://wdiwf.jackyeclayton.com/browse
-- Offer Intelligence: https://wdiwf.jackyeclayton.com/check
-- Ask Jackye: https://wdiwf.jackyeclayton.com/ask-jackye
+- The Receipts: https://wdiwf.jackyeclayton.com/receipts
+- Browse Companies: https://wdiwf.jackyeclayton.com/browse
+- All Tools: https://wdiwf.jackyeclayton.com/tools
+- Compare Companies: https://wdiwf.jackyeclayton.com/compare
+- Follow the Money: https://wdiwf.jackyeclayton.com/follow-the-money
 - Career Intelligence: https://wdiwf.jackyeclayton.com/career-intelligence
-- Would You Work Here?: https://wdiwf.jackyeclayton.com/would-you-work-here
-- Work With Jackye: https://wdiwf.jackyeclayton.com/work-with-jackye
-- Methodology: https://wdiwf.jackyeclayton.com/methodology
+- Recruiter Brief: https://wdiwf.jackyeclayton.com/recruiter-brief
+- Job Board: https://wdiwf.jackyeclayton.com/jobs
+- Workplace DNA Quiz: https://wdiwf.jackyeclayton.com/quiz
+- Submit a Tip: https://wdiwf.jackyeclayton.com/submit-tip
 - Pricing: https://wdiwf.jackyeclayton.com/pricing
+- About: https://wdiwf.jackyeclayton.com/about
 
 ## Full Documentation
 
