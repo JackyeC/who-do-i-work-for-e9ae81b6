@@ -3,7 +3,7 @@ import { usePageSEO } from "@/hooks/use-page-seo";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import {
-  FileSearch, Map, GitCompare, Landmark, Briefcase, Radio, UserCheck, ArrowRight,
+  FileSearch, Map, GitCompare, Landmark, Briefcase, Radio, UserCheck, ArrowRight, Dna, Shield,
 } from "lucide-react";
 
 const TOOLS = [
@@ -24,7 +24,7 @@ const TOOLS = [
   {
     icon: GitCompare,
     title: "Compare Companies",
-    description: "Side-by-side comparison of two employers across civic footprint, lobbying, PAC spending, workforce signals, and transparency metrics.",
+    description: "Side-by-side comparison of two employers across Employer Clarity Scores, lobbying, PAC spending, workforce signals, and transparency metrics.",
     path: "/compare",
   },
   {
@@ -51,6 +51,20 @@ const TOOLS = [
     title: "Job Board",
     description: "Browse job listings enriched with employer transparency signals, civic scores, and values alignment data. Know before you apply.",
     path: "/jobs",
+  },
+  {
+    icon: Dna,
+    title: "Workplace DNA",
+    description: "Discover what matters to you in a workplace — so we can match you with companies that actually live it.",
+    path: "/quiz",
+    badge: "Free",
+  },
+  {
+    icon: Shield,
+    title: "Submit a Tip",
+    description: "Report employer misconduct anonymously. We verify against public records and publish what checks out.",
+    path: "/submit-tip",
+    badge: "Free",
   },
 ];
 
