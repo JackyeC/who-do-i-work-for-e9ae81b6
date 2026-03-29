@@ -43,7 +43,7 @@ Deno.serve(async (req: Request) => {
       if (attempt < 3) await new Promise(r => setTimeout(r, 500 * attempt));
     }
     if (userError) throw new Error(`Authentication error: ${userError.message}`);
-    const user = userData.user;
+    const user = userData?.user;
     if (!user?.email) throw new Error("User not authenticated or email not available");
     logStep("User authenticated", { email: user.email });
 
