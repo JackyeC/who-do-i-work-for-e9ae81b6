@@ -4,6 +4,18 @@
 @tailwind components;
 @tailwind utilities;
 
+/* ── Hide Lovable platform badge ── */
+#lovable-badge,
+[data-lovable-badge],
+a[href*="lovable.dev"][style*="fixed"],
+body > a[href*="lovable"],
+body > div:last-child > a[href*="lovable"] {
+  display: none !important;
+  visibility: hidden !important;
+  opacity: 0 !important;
+  pointer-events: none !important;
+}
+
 @layer base {
   :root {
     color-scheme: dark;  /* dark is the site default — prevents browser white flash */

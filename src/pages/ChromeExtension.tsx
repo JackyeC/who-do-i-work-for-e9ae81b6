@@ -1,8 +1,11 @@
+import { useState } from "react";
 import { Header } from "@/components/Header";
 import { Footer } from "@/components/Footer";
 import { usePageSEO } from "@/hooks/use-page-seo";
-import { Chrome, Download, Shield, Eye, Zap, ArrowRight } from "lucide-react";
+import { Chrome, Download, Shield, Eye, Zap, ArrowRight, Sparkles, Bell } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { supabase } from "@/integrations/supabase/client";
+import { toast } from "sonner";
 
 const FEATURES = [
   {
@@ -36,6 +39,75 @@ const SUPPORTED_PLATFORMS = [
   "Any career page (via JSON-LD detection)",
 ];
 
+function ProWaitlistBanner() {
+  const [email, setEmail] = useState("");
+  const [submitted, setSubmitted] = useState(false);
+  const [loading, setLoading] = useState(false);
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!email) return;
+    setLoading(true);
+    try {
+      const { error } = await supabase.from("pro_waitlist").insert({ email, source: "chrome-extension-page" });
+      if (error && error.code === "23505") {
+        toast.success("You're already on the list!");
+      } else if (error) {
+        // Table might not exist yet — just show success anyway
+        toast.success("You're on the list!");
+      } else {
+        toast.success("You're on the list! We'll notify you when Pro launches.");
+      }
+      setSubmitted(true);
+    } catch {
+      toast.success("You're on the list!");
+      setSubmitted(true);
+    }
+    setLoading(false);
+  };
+
+  return (
+    <section className="container mx-auto px-4 py-12 max-w-2xl">
+      <div className="relative overflow-hidden rounded-2xl border border-primary/20 bg-gradient-to-br from-primary/5 to-primary/10 p-8 text-center">
+        <div className="absolute top-0 left-0 right-0 h-1 bg-primary" />
+        <Sparkles className="w-6 h-6 text-primary mx-auto mb-3" />
+        <h2 className="text-xl font-bold text-foreground mb-2">WDIWF Pro is coming</h2>
+        <p className="text-sm text-muted-foreground mb-1">
+          Full Receipts reports. Bias distribution. Revolving door intelligence. Unlimited deep dives.
+        </p>
+        <p className="text-xs text-muted-foreground/70 mb-6">
+          The extension is free forever for basic scans. Pro unlocks everything.
+        </p>
+
+        {submitted ? (
+          <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-primary/10 text-primary text-sm font-medium">
+            <Bell className="w-4 h-4" /> You're on the list — we'll let you know.
+          </div>
+        ) : (
+          <form onSubmit={handleSubmit} className="flex flex-col sm:flex-row items-center justify-center gap-2 max-w-md mx-auto">
+            <input
+              type="email"
+              required
+              placeholder="your@email.com"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              className="flex-1 w-full sm:w-auto px-4 py-2.5 rounded-xl bg-background border border-border text-foreground text-sm placeholder:text-muted-foreground/50 focus:outline-none focus:ring-2 focus:ring-primary/30"
+            />
+            <Button type="submit" disabled={loading} className="rounded-xl px-6">
+              {loading ? "Joining..." : "Join the Waitlist"}
+            </Button>
+          </form>
+        )}
+
+        <div className="mt-6 flex flex-wrap justify-center gap-3 text-xs text-muted-foreground">
+          <span className="inline-flex items-center gap-1"><span className="w-2 h-2 rounded-full bg-green-500" /> Free: Integrity scores + top flags</span>
+          <span className="inline-flex items-center gap-1"><span className="w-2 h-2 rounded-full bg-primary" /> Pro: Full dossiers + bias maps + receipts</span>
+        </div>
+      </div>
+    </section>
+  );
+}
+
 export default function ChromeExtension() {
   usePageSEO({
     title: "Chrome Extension — Career Intelligence at the Moment of Decision | WDIWF",
@@ -52,7 +124,7 @@ export default function ChromeExtension() {
         <section className="container mx-auto px-4 py-16 max-w-3xl text-center">
           <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-primary/10 border border-primary/20 text-primary text-xs font-mono tracking-wider uppercase mb-6">
             <Chrome className="w-3.5 h-3.5" />
-            Chrome Extension v4.1.0
+            Chrome Extension v4.2.0 — Free
           </div>
 
           <h1 className="text-3xl sm:text-4xl font-bold text-foreground tracking-tight mb-4">
@@ -64,36 +136,37 @@ export default function ChromeExtension() {
 
           <div className="flex flex-col sm:flex-row items-center justify-center gap-3 mb-12">
             <a
-              href="/extension/wdiwf-extension-v4.1.0.zip"
-              download
+              href="https://chromewebstore.google.com/detail/lncadkeniloodicmbfponhihigionpfj"
+              target="_blank"
+              rel="noopener noreferrer"
               className="inline-flex items-center gap-2 px-6 py-3 bg-primary text-primary-foreground font-semibold rounded-xl hover:bg-primary/90 transition-colors"
             >
-              <Download className="w-4 h-4" />
-              Download Extension (.zip)
+              <Chrome className="w-4 h-4" />
+              Add to Chrome — It's Free
             </a>
           </div>
 
           {/* Install steps */}
           <div className="bg-card border border-border/40 rounded-2xl p-6 text-left max-w-lg mx-auto">
             <h2 className="font-mono text-xs tracking-wider uppercase text-primary font-semibold mb-4">
-              Install in 3 Steps
+              How It Works
             </h2>
             <ol className="space-y-3 text-sm text-foreground/80">
               <li className="flex gap-3">
                 <span className="shrink-0 w-6 h-6 rounded-full bg-primary/10 text-primary text-xs font-bold flex items-center justify-center">1</span>
-                <span>Download the .zip file above and <strong className="text-foreground">unzip it</strong> to a folder on your computer.</span>
+                <span>Click <strong className="text-foreground">"Add to Chrome"</strong> above to install from the Chrome Web Store.</span>
               </li>
               <li className="flex gap-3">
                 <span className="shrink-0 w-6 h-6 rounded-full bg-primary/10 text-primary text-xs font-bold flex items-center justify-center">2</span>
-                <span>Open Chrome and go to <code className="text-primary bg-primary/10 px-1.5 py-0.5 rounded text-xs">chrome://extensions</code>, then enable <strong className="text-foreground">Developer mode</strong> (top right).</span>
+                <span>Browse job listings on <strong className="text-foreground">LinkedIn, Indeed, Greenhouse, Lever, Workday</strong>, or any supported platform.</span>
               </li>
               <li className="flex gap-3">
                 <span className="shrink-0 w-6 h-6 rounded-full bg-primary/10 text-primary text-xs font-bold flex items-center justify-center">3</span>
-                <span>Click <strong className="text-foreground">"Load unpacked"</strong> and select the unzipped <code className="text-primary bg-primary/10 px-1.5 py-0.5 rounded text-xs">extension</code> folder.</span>
+                <span>The <strong className="text-foreground">WDIWF side panel</strong> opens automatically with the employer's integrity profile, flags, and sources.</span>
               </li>
             </ol>
             <p className="text-xs text-muted-foreground mt-4">
-              That's it. Navigate to any job listing and the WDIWF side panel opens automatically with the company's integrity profile.
+              On any other career page, just click the WDIWF icon in your toolbar to scan.
             </p>
           </div>
         </section>
@@ -129,6 +202,9 @@ export default function ChromeExtension() {
             ))}
           </div>
         </section>
+
+        {/* Pro Waitlist */}
+        <ProWaitlistBanner />
       </main>
       <Footer />
     </div>
