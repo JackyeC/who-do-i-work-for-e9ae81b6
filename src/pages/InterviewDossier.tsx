@@ -510,6 +510,7 @@ export default function InterviewDossier() {
   const navigate = useNavigate();
   const [coKey, setCoKey] = useState("amazon");
   const [tab, setTab] = useState("intel");
+  const [dossierView, setDossierView] = useState<"warning" | "full">("full");
   const [filterCat, setFilterCat] = useState("All");
   const [dept, setDept] = useState("");
   const [hmName, setHmName] = useState("");
