@@ -122,12 +122,6 @@ export function LiveIntelligenceTicker() {
           </span>
         )}
 
-        {/* Jackye's take (if curated) */}
-        {item.jackye_take && (
-          <span className="font-sans text-ticker text-primary/80 italic shrink-0">
-            \u2014 {item.jackye_take}
-          </span>
-        )}
 
         {/* Source + bias label */}
         {item.source_name && (
