@@ -1,6 +1,6 @@
 -- ============================================================
 -- WDIWF Security Hardening — Pre-Launch Sweep
--- Run this in the Supabase SQL Editor (via Lovable dashboard)
+-- Run this in the Supabase SQL Editor
 -- ============================================================
 
 -- 1. BATTLE-IMAGES BUCKET: Lock down uploads to authenticated users only

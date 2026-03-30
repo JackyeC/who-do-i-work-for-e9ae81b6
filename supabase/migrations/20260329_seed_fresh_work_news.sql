@@ -1,6 +1,6 @@
 -- ============================================================
 -- Seed work_news with real, current headlines — March 29, 2026
--- Run in Lovable SQL Editor to populate the live ticker
+-- Run in Supabase SQL Editor to populate the live ticker
 -- ============================================================
 
 -- Clear stale items older than 7 days
