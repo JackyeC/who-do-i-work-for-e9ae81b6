@@ -1,5 +1,6 @@
 import { useMemo, useState } from "react";
 import { WarningLabelView } from "@/components/dossier/WarningLabelView";
+import { ClarityEngine } from "@/components/dossier/ClarityEngine";
 import { ContentProtector } from "@/components/ContentProtector";
 import { useParams, Link, useNavigate } from "react-router-dom";
 import { CompanyZeroState } from "@/components/CompanyZeroState";
