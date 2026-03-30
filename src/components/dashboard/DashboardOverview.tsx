@@ -301,7 +301,12 @@ export function DashboardOverview({ onNavigate }: DashboardOverviewProps) {
       {/* Founding Member Badge Modal */}
       {showFoundingBadge && (
         <FoundingMemberBadge
-          memberName={data?.firstName || user?.email?.split("@")[0]}
+          memberName={
+            // Prefer email-derived name for known accounts; full_name may be legal name from OAuth
+            user?.email === "jackyeclayton@gmail.com"
+              ? "Jackye Clayton"
+              : data?.firstName || user?.email?.split("@")[0]
+          }
           joinedDate={user?.created_at}
           onClose={() => setShowFoundingBadge(false)}
         />
