@@ -529,10 +529,41 @@ function FullDossierContent({ data }: { data: CompanyDossier }) {
   );
 }
 
+/* ── Warning Label adapter for static data ── */
+function StaticWarningLabel({ data }: { data: CompanyDossier }) {
+  const company = {
+    name: data.name,
+    industry: data.industry,
+    state: data.location,
+    employee_count: data.employees,
+    jackye_insight: data.jackyeRead,
+    lobbying_spend: null,
+    total_pac_spending: 0,
+    civic_footprint_score: data.integrityScore * 10,
+    employer_clarity_score: data.integrityScore * 10,
+  };
+
+  return (
+    <WarningLabelView
+      company={company as any}
+      executives={[]}
+      contracts={[]}
+      issueSignals={data.signals.filter(s => s.status === "flag").map(s => ({
+        issue_category: s.label,
+        signal_type: s.status,
+        description: s.detail,
+      }))}
+      publicStances={[]}
+      eeocCases={[]}
+    />
+  );
+}
+
 /* ── Page ── */
 export default function DossierCoachingGuide() {
   const { slug } = useParams<{ slug: string }>();
   const data = COMPANY_DATA[slug || ""] || COMPANY_DATA.patagonia;
+  const [viewMode, setViewMode] = useState<"warning" | "coaching">("warning");
 
   // Get the first signal for the public preview
   const firstSignal = data.signals[0];
@@ -549,6 +580,22 @@ export default function DossierCoachingGuide() {
 
       <div className="min-h-screen bg-background">
         <div className="max-w-2xl mx-auto px-4 sm:px-6 py-10 sm:py-16 space-y-12">
+
+          {/* ─── View Toggle ─── */}
+          <div className="flex items-center justify-center gap-1 bg-muted/50 rounded-lg p-0.5 w-fit mx-auto">
+            <button
+              onClick={() => setViewMode("warning")}
+              className={`px-4 py-1.5 rounded-md text-xs font-mono font-semibold transition-colors ${viewMode === "warning" ? "bg-primary text-primary-foreground" : "text-muted-foreground hover:text-foreground"}`}
+            >
+              ⚠️ Warning Label
+            </button>
+            <button
+              onClick={() => setViewMode("coaching")}
+              className={`px-4 py-1.5 rounded-md text-xs font-mono font-semibold transition-colors ${viewMode === "coaching" ? "bg-primary text-primary-foreground" : "text-muted-foreground hover:text-foreground"}`}
+            >
+              🎯 Coaching Guide
+            </button>
+          </div>
 
           {/* ─── PUBLIC: Worth Your Time verdict ─── */}
           <Reveal>
