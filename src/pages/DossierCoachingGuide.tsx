@@ -598,6 +598,10 @@ export default function DossierCoachingGuide() {
             </button>
           </div>
 
+          {viewMode === "warning" ? (
+            <StaticWarningLabel data={data} />
+          ) : (
+            <>
           {/* ─── PUBLIC: Worth Your Time verdict ─── */}
           <Reveal>
             <div className="bg-primary/8 border border-primary/20 p-5 sm:p-6">
