@@ -76,7 +76,7 @@ export function LiveIntelligenceTicker() {
     (sum, i) => sum + (i.headline?.length || 0) + (i.source_name?.length || 0) + 20,
     0
   );
-  const duration = Math.max(80, Math.min((totalChars * 0.35), 200));
+  const duration = Math.max(140, Math.min((totalChars * 0.6), 360));
 
   const renderItem = (item: TickerNewsItem, key: string) => {
     const profile = getSourceProfile(item.source_name);
