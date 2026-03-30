@@ -1,20 +1,41 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+  <!-- Core Pages -->
   <url><loc>https://wdiwf.jackyeclayton.com/</loc><changefreq>weekly</changefreq><priority>1.0</priority></url>
   <url><loc>https://wdiwf.jackyeclayton.com/receipts</loc><changefreq>daily</changefreq><priority>0.9</priority></url>
   <url><loc>https://wdiwf.jackyeclayton.com/browse</loc><changefreq>daily</changefreq><priority>0.9</priority></url>
-  <url><loc>https://wdiwf.jackyeclayton.com/tools</loc><changefreq>weekly</changefreq><priority>0.8</priority></url>
-  <url><loc>https://wdiwf.jackyeclayton.com/pricing</loc><changefreq>monthly</changefreq><priority>0.8</priority></url>
-  <url><loc>https://wdiwf.jackyeclayton.com/about</loc><changefreq>monthly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://wdiwf.jackyeclayton.com/ask-jackye</loc><changefreq>weekly</changefreq><priority>0.9</priority></url>
+
+  <!-- Intelligence Tools -->
   <url><loc>https://wdiwf.jackyeclayton.com/compare</loc><changefreq>weekly</changefreq><priority>0.8</priority></url>
   <url><loc>https://wdiwf.jackyeclayton.com/follow-the-money</loc><changefreq>weekly</changefreq><priority>0.8</priority></url>
-  <url><loc>https://wdiwf.jackyeclayton.com/career-intelligence</loc><changefreq>weekly</changefreq><priority>0.7</priority></url>
-  <url><loc>https://wdiwf.jackyeclayton.com/recruiter-brief</loc><changefreq>weekly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://wdiwf.jackyeclayton.com/intelligence-chain</loc><changefreq>weekly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://wdiwf.jackyeclayton.com/decision-engine</loc><changefreq>weekly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://wdiwf.jackyeclayton.com/career-intelligence</loc><changefreq>weekly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://wdiwf.jackyeclayton.com/recruiter-brief</loc><changefreq>weekly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://wdiwf.jackyeclayton.com/board-intelligence</loc><changefreq>monthly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://wdiwf.jackyeclayton.com/negotiation-simulator</loc><changefreq>monthly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://wdiwf.jackyeclayton.com/reality-check</loc><changefreq>monthly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://wdiwf.jackyeclayton.com/what-am-i-supporting</loc><changefreq>weekly</changefreq><priority>0.7</priority></url>
+
+  <!-- Career & Jobs -->
+  <url><loc>https://wdiwf.jackyeclayton.com/jobs</loc><changefreq>daily</changefreq><priority>0.8</priority></url>
   <url><loc>https://wdiwf.jackyeclayton.com/signal-alerts</loc><changefreq>daily</changefreq><priority>0.7</priority></url>
-  <url><loc>https://wdiwf.jackyeclayton.com/jobs</loc><changefreq>daily</changefreq><priority>0.7</priority></url>
+  <url><loc>https://wdiwf.jackyeclayton.com/check</loc><changefreq>weekly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://wdiwf.jackyeclayton.com/mock-interview</loc><changefreq>monthly</changefreq><priority>0.6</priority></url>
+
+  <!-- Extension & Tools -->
+  <url><loc>https://wdiwf.jackyeclayton.com/extension</loc><changefreq>monthly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://wdiwf.jackyeclayton.com/peoplepuzzles</loc><changefreq>monthly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://wdiwf.jackyeclayton.com/tools</loc><changefreq>weekly</changefreq><priority>0.7</priority></url>
   <url><loc>https://wdiwf.jackyeclayton.com/quiz</loc><changefreq>monthly</changefreq><priority>0.6</priority></url>
-  <url><loc>https://wdiwf.jackyeclayton.com/submit-tip</loc><changefreq>monthly</changefreq><priority>0.6</priority></url>
+
+  <!-- Business & Info -->
+  <url><loc>https://wdiwf.jackyeclayton.com/pricing</loc><changefreq>monthly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://wdiwf.jackyeclayton.com/about</loc><changefreq>monthly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://wdiwf.jackyeclayton.com/methodology</loc><changefreq>monthly</changefreq><priority>0.6</priority></url>
   <url><loc>https://wdiwf.jackyeclayton.com/for-employers</loc><changefreq>monthly</changefreq><priority>0.6</priority></url>
-  <url><loc>https://wdiwf.jackyeclayton.com/mock-interview</loc><changefreq>monthly</changefreq><priority>0.5</priority></url>
-  <url><loc>https://wdiwf.jackyeclayton.com/methodology</loc><changefreq>monthly</changefreq><priority>0.5</priority></url>
+  <url><loc>https://wdiwf.jackyeclayton.com/work-with-jackye</loc><changefreq>monthly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://wdiwf.jackyeclayton.com/newsletter</loc><changefreq>monthly</changefreq><priority>0.6</priority></url>
+  <url><loc>https://wdiwf.jackyeclayton.com/submit-tip</loc><changefreq>monthly</changefreq><priority>0.5</priority></url>
 </urlset>

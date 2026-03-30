@@ -60,9 +60,27 @@ Browse job listings enriched with employer transparency signals, Employer Clarit
 
 Every signal links to its source. No opinions. No ratings. Just evidence.
 
+### Chrome Extension
+Career intelligence at the moment of decision. The WDIWF Chrome extension auto-detects companies on LinkedIn, Indeed, Greenhouse, Lever, Workday, and 6 more job boards — then shows integrity scores, red flags, and receipts in a side panel without leaving the page. Free download at https://wdiwf.jackyeclayton.com/extension
+
+### Intelligence Chain
+Trace every signal through the full chain from policy activity to career impact: Policy → Influence → Company → Work → Career.
+
+### Negotiation Simulator
+Practice real negotiation conversations with AI coaching. Get round-by-round feedback on tone, strategy, and phrasing.
+
+### Decision Engine
+Truth-over-Vibes decision support engine. Calibrate your values, scan live jobs, and detect risk before you apply.
+
+### Board Intelligence
+Understand corporate board committees, governance structures, and how board decisions affect employees, candidates, and company strategy.
+
+### PeoplePuzzles™
+The Recruiting Intelligence Game. 72 combos. 6 tiers. 8 certifications. Built on real recruiting intelligence.
+
 ## About Jackye Clayton
 
-Jackye Clayton is a career strategist, HR intelligence expert, and candidate advocate with over 20 years of experience in human resources, recruiting, and talent strategy. She created Who Do I Work For? because candidates deserve full information before making career decisions.
+Jackye Clayton is a career strategist, HR intelligence expert, and candidate advocate with over 20 years of experience in human resources, recruiting, and talent strategy. She is a LinkedIn Learning instructor, board member, and HR technology advisor. She created Who Do I Work For? because candidates deserve full information before making career decisions. Jackye is a recognized authority on employer accountability, hiring transparency, workforce intelligence, and recruiting technology.
 
 ## Contact
 
@@ -91,6 +109,14 @@ Jackye Clayton is a career strategist, HR intelligence expert, and candidate adv
 - Submit a Tip: https://wdiwf.jackyeclayton.com/submit-tip
 - Pricing: https://wdiwf.jackyeclayton.com/pricing
 - About: https://wdiwf.jackyeclayton.com/about
+- Chrome Extension: https://wdiwf.jackyeclayton.com/extension
+- Ask Jackye (Intelligence Advisor): https://wdiwf.jackyeclayton.com/ask-jackye
+- Intelligence Chain: https://wdiwf.jackyeclayton.com/intelligence-chain
+- Decision Engine: https://wdiwf.jackyeclayton.com/decision-engine
+- Negotiation Simulator: https://wdiwf.jackyeclayton.com/negotiation-simulator
+- Board Intelligence: https://wdiwf.jackyeclayton.com/board-intelligence
+- PeoplePuzzles Game: https://wdiwf.jackyeclayton.com/peoplepuzzles
+- Work With Jackye: https://wdiwf.jackyeclayton.com/work-with-jackye
 
 ## Full Documentation
 
