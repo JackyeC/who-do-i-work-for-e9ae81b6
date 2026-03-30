@@ -300,6 +300,12 @@ export default function CompanyDossier() {
           >
             📋 Deep Dive
           </button>
+          <button
+            onClick={() => setDossierView("prep")}
+            className={`px-3 py-1 rounded-md text-xs font-mono font-semibold transition-colors ${dossierView === "prep" ? "bg-primary text-primary-foreground" : "text-muted-foreground hover:text-foreground"}`}
+          >
+            🎯 Interview Prep
+          </button>
         </div>
       </div>
 
