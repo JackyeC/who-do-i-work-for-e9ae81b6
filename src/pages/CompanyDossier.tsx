@@ -285,6 +285,20 @@ export default function CompanyDossier() {
         <LensIcon className={`w-4 h-4 ${LensMeta.color}`} />
         <span className="text-sm font-medium text-foreground">{LensMeta.label}</span>
         <span className="text-xs text-muted-foreground ml-1">— viewing dossier through this lens. Switch via header toggle.</span>
+        <div className="ml-auto flex items-center gap-1 bg-muted/50 rounded-lg p-0.5">
+          <button
+            onClick={() => setDossierView("warning")}
+            className={`px-3 py-1 rounded-md text-xs font-mono font-semibold transition-colors ${dossierView === "warning" ? "bg-primary text-primary-foreground" : "text-muted-foreground hover:text-foreground"}`}
+          >
+            ⚠️ Warning Label
+          </button>
+          <button
+            onClick={() => setDossierView("layers")}
+            className={`px-3 py-1 rounded-md text-xs font-mono font-semibold transition-colors ${dossierView === "layers" ? "bg-primary text-primary-foreground" : "text-muted-foreground hover:text-foreground"}`}
+          >
+            📋 Deep Dive
+          </button>
+        </div>
       </div>
 
       {/* Situation-Aware Context Banner */}
