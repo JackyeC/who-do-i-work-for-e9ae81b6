@@ -1,6 +1,7 @@
 import { useMemo, useState } from "react";
 import { WarningLabelView } from "@/components/dossier/WarningLabelView";
 import { ClarityEngine } from "@/components/dossier/ClarityEngine";
+import { CandidatePrepPack } from "@/components/dossier/CandidatePrepPack";
 import { ContentProtector } from "@/components/ContentProtector";
 import { useParams, Link, useNavigate } from "react-router-dom";
 import { CompanyZeroState } from "@/components/CompanyZeroState";
@@ -71,7 +72,7 @@ export default function CompanyDossier() {
   const { isCompanyTracked } = useTrackedCompanies();
   const { canAccessRecruiter } = useViewMode();
   const { lens } = useDossierLens();
-  const [dossierView, setDossierView] = useState<"warning" | "layers">("warning");
+  const [dossierView, setDossierView] = useState<"warning" | "layers" | "prep">("warning");
 
   const { data: company, isLoading } = useQuery({
     queryKey: ["dossier-company", id],
@@ -299,6 +300,12 @@ export default function CompanyDossier() {
           >
             📋 Deep Dive
           </button>
+          <button
+            onClick={() => setDossierView("prep")}
+            className={`px-3 py-1 rounded-md text-xs font-mono font-semibold transition-colors ${dossierView === "prep" ? "bg-primary text-primary-foreground" : "text-muted-foreground hover:text-foreground"}`}
+          >
+            🎯 Interview Prep
+          </button>
         </div>
       </div>
 
@@ -320,6 +327,8 @@ export default function CompanyDossier() {
           publicStances={publicStances as any}
           eeocCases={eeocCases as any}
         />
+      ) : dossierView === "prep" ? (
+        <CandidatePrepPack companyId={companyId} companyName={company.name} />
       ) : (
         <>
           {/* Score gauges */}
