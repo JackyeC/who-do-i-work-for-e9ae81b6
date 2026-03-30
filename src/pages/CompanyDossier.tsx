@@ -370,7 +370,7 @@ export default function CompanyDossier() {
             <EEOCCaseAlert cases={eeocCases} />
           )}
         </>
-      )}
+    </>
   );
 
   /* ─── CANDIDATE LENS — values, workforce, career ─── */
