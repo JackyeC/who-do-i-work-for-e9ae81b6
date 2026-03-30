@@ -1,5 +1,6 @@
 import { useMemo, useState } from "react";
 import { WarningLabelView } from "@/components/dossier/WarningLabelView";
+import { ClarityEngine } from "@/components/dossier/ClarityEngine";
 import { ContentProtector } from "@/components/ContentProtector";
 import { useParams, Link, useNavigate } from "react-router-dom";
 import { CompanyZeroState } from "@/components/CompanyZeroState";
@@ -304,6 +305,11 @@ export default function CompanyDossier() {
       {/* Situation-Aware Context Banner */}
       <TrustFramingLine />
       <SituationContextBanner companyName={company.name} />
+
+      {/* WDIWF Clarity Engine */}
+      <div className="mb-6">
+        <ClarityEngine companyId={companyId} companyName={company.name} />
+      </div>
 
       {dossierView === "warning" ? (
         <WarningLabelView
