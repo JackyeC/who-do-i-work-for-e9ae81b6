@@ -45,7 +45,7 @@ export function LiveIntelligenceTicker() {
           "id, headline, source_name, source_url, category, is_controversy, published_at, jackye_take"
         )
         .order("published_at", { ascending: false })
-        .limit(20);
+        .limit(10);
 
       if (error) throw error;
       return (data as TickerNewsItem[]) || [];
