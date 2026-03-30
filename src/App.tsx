@@ -200,6 +200,9 @@ const App = () => (
                   <Route path="/peoplepuzzles" element={<PeoplePuzzles />} />
                   <Route path="/play" element={<PeoplePuzzles />} />
                   <Route path="/receipts" element={<Receipts />} />
+                  <Route path="/the-receipts" element={<Navigate to="/receipts" replace />} />
+                  <Route path="/thereceipts" element={<Navigate to="/receipts" replace />} />
+                  <Route path="/the-receipts.html" element={<Navigate to="/receipts" replace />} />
                   <Route path="/receipts/:slug" element={<ReceiptsReport />} />
                   <Route path="/submit-tip" element={<SubmitTip />} />
                   <Route path="/newsletter" element={<Newsletter />} />
