@@ -1,9 +1,9 @@
 {
   "manifest_version": 3,
   "name": "WDIWF — Who Do I Work For?",
-  "version": "4.1.0",
+  "version": "4.2.0",
   "description": "Career intelligence at the moment of decision. See integrity scores, red flags, and receipts for any employer — right on the job page.",
-  "permissions": ["sidePanel", "storage", "activeTab"],
+  "permissions": ["sidePanel", "storage", "activeTab", "scripting"],
   "host_permissions": ["https://tdetybqdxadmowjivtjy.supabase.co/*"],
   "side_panel": {
     "default_path": "sidepanel.html"
@@ -29,11 +29,6 @@
       ],
       "js": ["detector.js"],
       "run_at": "document_idle"
-    },
-    {
-      "matches": ["<all_urls>"],
-      "js": ["generic-career-detector.js"],
-      "run_at": "document_idle"
     }
   ],
   "action": {
@@ -43,7 +38,7 @@
       "48": "icons/icon-48.png",
       "128": "icons/icon-128.png"
     },
-    "default_title": "WDIWF — Who Do I Work For?"
+    "default_title": "WDIWF — Scan this page for employer intel"
   },
   "icons": {
     "16": "icons/icon-16.png",

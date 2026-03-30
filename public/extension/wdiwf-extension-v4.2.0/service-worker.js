@@ -1,6 +1,7 @@
 /**
- * WDIWF Service Worker v4.1.0
+ * WDIWF Service Worker v4.2.0
  * Routes messages, queries Supabase, caches results, manages side panel.
+ * v4.2.0: Removed <all_urls> — generic career detection now triggered by icon click.
  */
 
 const SUPABASE_URL = 'https://tdetybqdxadmowjivtjy.supabase.co';
@@ -8,9 +9,24 @@ const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBh
 const CACHE_TTL = 30 * 60 * 1000; // 30 minutes
 const cache = new Map();
 
-// Open side panel on extension icon click
+// On icon click: open side panel + inject generic career detector on current page
 chrome.action.onClicked.addListener(async (tab) => {
-  await chrome.sidePanel.open({ tabId: tab.id });
+  try {
+    await chrome.sidePanel.open({ tabId: tab.id });
+  } catch {}
+
+  // Inject the generic career detector into the active tab (uses activeTab permission)
+  if (tab.id && tab.url && !tab.url.startsWith('chrome://')) {
+    try {
+      await chrome.scripting.executeScript({
+        target: { tabId: tab.id },
+        files: ['generic-career-detector.js'],
+      });
+    } catch (e) {
+      // Page may not allow script injection (e.g. chrome:// pages)
+      console.log('WDIWF: Could not inject career detector:', e.message);
+    }
+  }
 });
 
 // Handle messages from content scripts and side panel
