@@ -154,6 +154,12 @@ export function SiteFooter() {
               >
                 Methodology
               </Link>
+              <Link
+                to="/data-ethics"
+                className="font-sans text-sm text-muted-foreground hover:text-foreground transition-colors"
+              >
+                Data Ethics
+              </Link>
             </nav>
           </div>
         </div>
