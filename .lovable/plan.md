@@ -1,33 +1,43 @@
 
 
-# LinkedIn Integration Deployment Plan
+# Fix Build Errors
 
-## What needs to happen
+## Errors Summary
 
-1. **Run the migration** to create the `linkedin_profiles` table (file already exists at `supabase/migrations/20260327220000_linkedin_profiles.sql`)
+1. **SignupModal.tsx:34** and **Login.tsx:74,87** — `signInWithOAuth` called with 2 args instead of 1 object
+2. **use-linkedin.ts:26-36** — `linkedin_profiles` table not in generated types, causing TS2589/TS2769/TS2345
+3. **Quiz.tsx:985,1073,1078** — `showShareModal` / `setShowShareModal` not declared in `ResultsScreen`
 
-2. **Set secrets** — `LINKEDIN_CLIENT_ID` and `LINKEDIN_CLIENT_SECRET` already exist per the secrets list. `PUBLIC_SITE_URL` needs to be added.
+## Fixes
 
-3. **Deploy the three edge functions** — they already exist in the repo and are configured in `config.toml`. They just need deployment.
+### 1. SignupModal.tsx (line 34)
+Change:
+```ts
+await supabase.auth.signInWithOAuth("google", { redirectTo: ... })
+```
+To:
+```ts
+await supabase.auth.signInWithOAuth({ provider: "google", options: { redirectTo: window.location.origin } })
+```
 
-4. **Fix the 4 recurring build errors** that block deployment:
-   - `_shared/linkedin.ts:89` — cast `imageBytes as unknown as BodyInit`
-   - `check-subscription/index.ts:46` — change `userData.user` → `userData?.user`
-   - `company-intelligence-scan/index.ts:128` — change to `!!(roleData && roleData.length > 0)`
-   - `company-research/index.ts:226-235` — type `deletions` as `Array<PromiseLike<any>>` and append `.then()` to each `.delete()` call
+### 2. Login.tsx (lines 74, 87)
+Same fix for both Google and Apple `signInWithOAuth` calls — use single-object argument.
 
-## Steps (in order)
+### 3. use-linkedin.ts (lines 26-36)
+Cast supabase client to `any` and cast result to `LinkedInProfile | null`:
+```ts
+const { data, error } = await (supabase as any)
+  .from("linkedin_profiles")
+  .select("linkedin_id, name, email, profile_picture_url, expires_at")
+  .eq("user_id", user.id)
+  .maybeSingle();
+// ...
+setLinkedinProfile(data as LinkedInProfile | null);
+```
 
-1. Apply the migration SQL via the migration tool
-2. Add the `PUBLIC_SITE_URL` secret (the other two LinkedIn secrets already exist)
-3. Fix the 4 TypeScript build errors in the edge function files
-4. Deploy the three LinkedIn edge functions
-
-## Technical details
-
-- The migration creates `linkedin_profiles` with RLS policies for user self-access and service role full access
-- The `linkedin-auth` function redirects users to LinkedIn OAuth
-- The `linkedin-callback` function exchanges the code for a token, upserts the profile, and generates a magic link session
-- The `linkedin-share-certificate` function posts certificates to LinkedIn with optional image upload
-- All three functions are already set to `verify_jwt = false` in `config.toml`
+### 4. Quiz.tsx (line 841)
+Add state declaration inside `ResultsScreen` before the return:
+```ts
+const [showShareModal, setShowShareModal] = useState(false);
+```
 
