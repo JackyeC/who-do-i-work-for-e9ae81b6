@@ -85,8 +85,9 @@ export default function Login() {
   };
 
   const handleAppleSignIn = async () => {
-    const { error } = await supabase.auth.signInWithOAuth("apple", {
-      redirectTo: window.location.origin,
+    const { error } = await supabase.auth.signInWithOAuth({
+      provider: "apple",
+      options: { redirectTo: window.location.origin },
     });
     if (error) {
       toast({
