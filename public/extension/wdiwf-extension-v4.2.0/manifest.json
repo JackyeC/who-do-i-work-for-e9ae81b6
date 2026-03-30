@@ -2,7 +2,7 @@
   "manifest_version": 3,
   "name": "WDIWF — Who Do I Work For?",
   "version": "4.2.0",
-  "description": "Career intelligence at the moment of decision. See integrity scores, red flags, and receipts for any employer — right on the job page.",
+  "description": "Career intelligence when you need it. See integrity scores, red flags, and receipts for any employer on the job page.",
   "permissions": ["sidePanel", "storage", "activeTab", "scripting"],
   "host_permissions": ["https://tdetybqdxadmowjivtjy.supabase.co/*"],
   "side_panel": {
