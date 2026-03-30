@@ -70,6 +70,7 @@ export default function CompanyDossier() {
   const { isCompanyTracked } = useTrackedCompanies();
   const { canAccessRecruiter } = useViewMode();
   const { lens } = useDossierLens();
+  const [dossierView, setDossierView] = useState<"warning" | "layers">("warning");
 
   const { data: company, isLoading } = useQuery({
     queryKey: ["dossier-company", id],
