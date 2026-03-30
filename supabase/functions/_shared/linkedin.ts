@@ -9,7 +9,7 @@ export const LINKEDIN_SCOPES = 'openid profile email w_member_social';
 
 export function getLinkedInAuthUrl(clientId: string, redirectUri: string, state: string): string {
   const params = new URLSearchParams({
-    response_type: 'code
+    response_type: 'code',
     client_id: clientId,
     redirect_uri: redirectUri,
     state,
