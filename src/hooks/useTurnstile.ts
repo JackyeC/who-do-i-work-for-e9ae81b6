@@ -1,6 +1,7 @@
-import { useRef, useEffect, useCallback } from "react";
+import { useRef, useEffect, useCallback, useState } from "react";
 
 const SITE_KEY = "0x4AAAAAACwUKaSXORtxl_tu";
+const DOMAIN_NOT_AUTHORIZED = "110200";
 
 declare global {
   interface Window {
@@ -18,10 +19,38 @@ export function useTurnstile() {
   const widgetIdRef = useRef<string | null>(null);
   const tokenRef = useRef<string | null>(null);
   const resolveRef = useRef<((token: string) => void) | null>(null);
+  const disabledRef = useRef(false);
+  const isMountedRef = useRef(true);
+  const [isAvailable, setIsAvailable] = useState(true);
 
   useEffect(() => {
+    return () => {
+      isMountedRef.current = false;
+      if (widgetIdRef.current && window.turnstile) {
+        try {
+          window.turnstile.remove(widgetIdRef.current);
+        } catch {}
+        widgetIdRef.current = null;
+      }
+    };
+  }, []);
+
+  const handleError = useCallback((code?: string) => {
+    if (code === DOMAIN_NOT_AUTHORIZED) {
+      disabledRef.current = true;
+      if (isMountedRef.current) setIsAvailable(false);
+      console.warn("[Turnstile] Domain is not authorized for the current site key.");
+    }
+    resolveRef.current?.("");
+    resolveRef.current = null;
+  }, []);
+
+  const ensureWidget = useCallback(async (): Promise<boolean> => {
+    if (disabledRef.current || widgetIdRef.current) return !!widgetIdRef.current;
+    if (typeof window === "undefined" || !containerRef.current) return false;
+
     const mount = () => {
-      if (!containerRef.current || !window.turnstile || widgetIdRef.current) return;
+      if (!containerRef.current || !window.turnstile || widgetIdRef.current || disabledRef.current) return false;
       widgetIdRef.current = window.turnstile.render(containerRef.current, {
         sitekey: SITE_KEY,
         size: "invisible",
@@ -30,54 +59,51 @@ export function useTurnstile() {
           resolveRef.current?.(token);
           resolveRef.current = null;
         },
-        "error-callback": () => {
-          resolveRef.current?.("");
-          resolveRef.current = null;
-        },
+        "error-callback": (code?: string) => handleError(code),
       });
+      return true;
     };
 
-    if (window.turnstile) {
-      mount();
-    } else {
-      const interval = setInterval(() => {
+    if (window.turnstile) return mount();
+
+    return await new Promise<boolean>((resolve) => {
+      let attempts = 0;
+      const interval = window.setInterval(() => {
+        attempts += 1;
         if (window.turnstile) {
           clearInterval(interval);
-          mount();
+          resolve(mount());
+          return;
+        }
+        if (attempts >= 25) {
+          clearInterval(interval);
+          resolve(false);
         }
       }, 200);
-      return () => clearInterval(interval);
+    });
+  }, [handleError]);
+
+  const getToken = useCallback(async (): Promise<string> => {
+    if (tokenRef.current) return tokenRef.current;
+
+    const mounted = await ensureWidget();
+    if (!mounted || disabledRef.current || !widgetIdRef.current || !window.turnstile) {
+      return "";
     }
 
-    return () => {
-      if (widgetIdRef.current && window.turnstile) {
-        try { window.turnstile.remove(widgetIdRef.current); } catch {}
-        widgetIdRef.current = null;
-      }
-    };
-  }, []);
-
-  const getToken = useCallback((): Promise<string> => {
     return new Promise((resolve) => {
-      if (tokenRef.current) {
-        resolve(tokenRef.current);
-        return;
-      }
       resolveRef.current = resolve;
-      if (widgetIdRef.current && window.turnstile) {
-        window.turnstile.execute(widgetIdRef.current);
-      } else {
-        resolve("");
-      }
+      window.turnstile?.execute(widgetIdRef.current!);
     });
-  }, []);
+  }, [ensureWidget]);
 
   const resetToken = useCallback(() => {
     tokenRef.current = null;
+    if (disabledRef.current) return;
     if (widgetIdRef.current && window.turnstile) {
       window.turnstile.reset(widgetIdRef.current);
     }
   }, []);
 
-  return { containerRef, getToken, resetToken };
+  return { containerRef, getToken, resetToken, isAvailable };
 }
