@@ -1,4 +1,5 @@
 import { useState, useCallback, useMemo, useEffect } from "react";
+import { WorkplaceDNAShareCard } from "@/components/quiz/WorkplaceDNAShareCard";
 
 // ─── TYPES ───────────────────────────────────────────────
 type PersonaKey =
@@ -406,6 +407,7 @@ export default function Quiz() {
     secondary: PersonaKey;
     meta: MetaFlags;
   } | null>(null);
+  const [showShareModal, setShowShareModal] = useState(false);
 
   const isResults = step === TOTAL_QUESTIONS;
   const progressPct = isResults ? 100 : (step / TOTAL_QUESTIONS) * 100;
@@ -980,6 +982,29 @@ function ResultsScreen({
             Create free account →
           </a>
           <button
+            onClick={() => setShowShareModal(true)}
+            style={{
+              background: "#221f30",
+              border: "1px solid rgba(240,192,64,0.3)",
+              color: "#f0c040",
+              borderRadius: 50,
+              padding: "12px 24px",
+              fontSize: 14,
+              fontWeight: 500,
+              cursor: "pointer",
+              fontFamily: "'DM Sans', sans-serif",
+              transition: "border-color 0.2s",
+            }}
+            onMouseEnter={(e) =>
+              (e.currentTarget.style.borderColor = "rgba(240,192,64,0.5)")
+            }
+            onMouseLeave={(e) =>
+              (e.currentTarget.style.borderColor = "rgba(240,192,64,0.3)")
+            }
+          >
+            Share your DNA →
+          </button>
+          <button
             onClick={onCopy}
             style={{
               background: "#221f30",
@@ -1043,6 +1068,16 @@ function ResultsScreen({
           to { opacity: 1; transform: translateY(0); }
         }
       `}</style>
+
+      {/* Workplace DNA Share Modal */}
+      {showShareModal && result && (
+        <WorkplaceDNAShareCard
+          archetypeName={PERSONA_PROFILES[result.primary].name}
+          archetypeSubtitle={PERSONA_PROFILES[result.primary].subtitle}
+          signals={PERSONA_PROFILES[result.primary].signals}
+          onClose={() => setShowShareModal(false)}
+        />
+      )}
     </div>
   );
 }

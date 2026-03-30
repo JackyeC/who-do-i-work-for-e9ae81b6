@@ -1,11 +1,12 @@
-import { useMemo } from "react";
+import { useMemo, useState } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import {
-  Shield, Users, Briefcase, DollarSign, BarChart3, CheckCircle2,
+  Shield, Users, Briefcase, DollarSign, BarChart3, CheckCircle2, Share2,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { WorkforceIntelligenceBrief } from "@/components/WorkforceIntelligenceBrief";
+import { EmployerClarityShareCard } from "@/components/company/EmployerClarityShareCard";
 
 interface ClarityInputs {
   hasWarnNotices: boolean;
@@ -131,6 +132,8 @@ interface EmployerClarityScoreProps {
 }
 
 export function EmployerClarityScore(props: EmployerClarityScoreProps) {
+  const [showShareCard, setShowShareCard] = useState(false);
+
   const inputs: ClarityInputs = {
     hasWarnNotices: props.hasWarnNotices ?? false,
     hasLayoffSignals: props.hasLayoffSignals ?? false,
@@ -161,22 +164,32 @@ export function EmployerClarityScore(props: EmployerClarityScoreProps) {
   ]);
 
   return (
-    <Card className="border-primary/20">
-      <CardHeader className="pb-3">
-        <CardTitle className="flex items-center justify-between">
-          <div className="flex items-center gap-2 text-lg">
-            <Shield className="w-5 h-5 text-primary" />
-            Employer Clarity Score
-          </div>
-          <div className={cn("text-3xl font-black tabular-nums", getScoreColor(totalScore))}>
-            {totalScore}
-            <span className="text-sm font-medium text-muted-foreground">/100</span>
-          </div>
-        </CardTitle>
-        <p className="text-xs text-muted-foreground">
-          Measures how clearly you can understand this employer's signals — not a moral judgment.
-        </p>
-      </CardHeader>
+    <>
+      <Card className="border-primary/20">
+        <CardHeader className="pb-3">
+          <CardTitle className="flex items-center justify-between">
+            <div className="flex items-center gap-2 text-lg">
+              <Shield className="w-5 h-5 text-primary" />
+              Employer Clarity Score
+            </div>
+            <div className="flex items-center gap-4">
+              <button
+                onClick={() => setShowShareCard(true)}
+                className="p-2 hover:bg-muted rounded transition-colors"
+                title="Share this score"
+              >
+                <Share2 className="w-5 h-5 text-primary hover:text-amber-500" />
+              </button>
+              <div className={cn("text-3xl font-black tabular-nums", getScoreColor(totalScore))}>
+                {totalScore}
+                <span className="text-sm font-medium text-muted-foreground">/100</span>
+              </div>
+            </div>
+          </CardTitle>
+          <p className="text-xs text-muted-foreground">
+            Measures how clearly you can understand this employer's signals — not a moral judgment.
+          </p>
+        </CardHeader>
       <CardContent className="space-y-4">
         {/* Component Breakdown */}
         <div className="space-y-3">
@@ -225,5 +238,20 @@ export function EmployerClarityScore(props: EmployerClarityScoreProps) {
         />
       </CardContent>
     </Card>
+
+      {/* Share Card Modal */}
+      {showShareCard && (
+        <EmployerClarityShareCard
+          companyName="Your Company"
+          totalScore={totalScore}
+          components={components.map(c => ({
+            label: c.label,
+            score: c.score,
+            weight: c.weight,
+          }))}
+          onClose={() => setShowShareCard(false)}
+        />
+      )}
+    </>
   );
 }
