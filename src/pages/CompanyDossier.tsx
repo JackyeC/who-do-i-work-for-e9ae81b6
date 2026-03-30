@@ -370,6 +370,7 @@ export default function CompanyDossier() {
             <EEOCCaseAlert cases={eeocCases} />
           )}
         </>
+      )}
     </>
   );
 
