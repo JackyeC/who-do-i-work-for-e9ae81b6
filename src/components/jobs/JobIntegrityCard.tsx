@@ -1,18 +1,14 @@
-import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
-import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { CompanyLogo } from "@/components/CompanyLogo";
-import { MatchIndicator } from "@/components/jobs/MatchIndicator";
 import { SaveJobButton } from "@/components/jobs/SaveJobButton";
-import {
-  Shield, ShieldCheck, ExternalLink, Sparkles, Network, Eye, ChevronRight,
-} from "lucide-react";
+import { Shield, ShieldCheck, ExternalLink, Sparkles, Star } from "lucide-react";
 import { Link } from "react-router-dom";
 import { JobQualityBadge } from "@/components/jobs/JobQualityBadge";
-import { evaluateJobQuality, hasEvergreenSignals, detectRepost } from "@/lib/jobQuality";
+import { evaluateJobQuality, hasEvergreenSignals } from "@/lib/jobQuality";
 import { cn } from "@/lib/utils";
+import { formatDistanceToNow } from "date-fns";
 
 function trackApplyClick(jobId: string, companyId: string, url: string) {
   supabase.from("job_click_events").insert({
@@ -34,6 +30,9 @@ interface JobIntegrityCardProps {
     posted_at?: string | null;
     company_id: string;
     salary_range?: string | null;
+    is_featured?: boolean;
+    department?: string | null;
+    seniority_level?: string | null;
     companies?: {
       name: string;
       slug: string;
@@ -57,146 +56,123 @@ export function JobIntegrityCard({ job, matchCount = 0, matchedCategories = [], 
   const isVerified = co?.vetted_status === "verified";
   const qualitySignal = evaluateJobQuality(job as any);
   const isEvergreen = hasEvergreenSignals((job as any).description);
-
-  const { data: research } = useQuery({
-    queryKey: ["job-research-snippet", job.company_id],
-    queryFn: async () => {
-      const { data } = await (supabase as any)
-        .from("company_research")
-        .select("connection_chain, research_summary")
-        .eq("company_id", job.company_id)
-        .eq("status", "approved")
-        .order("approved_at", { ascending: false })
-        .limit(1)
-        .maybeSingle();
-      return data;
-    },
-    enabled: !!job.company_id,
-    staleTime: 5 * 60 * 1000,
-  });
+  const clarityScore = co?.employer_clarity_score || 0;
+  const postDate = job.posted_at || job.created_at;
 
   return (
-    <Card className={cn(
-      "bg-card/80 backdrop-blur-sm border-border/30 hover:border-primary/30 hover:shadow-2xl hover:shadow-primary/10 transition-all duration-300 group",
-      isCertified && "ring-1 ring-amber-500/20 border-civic-yellow/15 hover:shadow-amber-500/10"
+    <div className={cn(
+      "flex items-start gap-3 p-3 md:p-4 rounded-lg border border-border/30 hover:border-primary/30 hover:bg-muted/20 transition-all group",
+      isCertified && "border-[hsl(var(--civic-yellow))]/15",
+      job.is_featured && "ring-1 ring-primary/20 bg-primary/[0.02]"
     )}>
-      <CardContent className="p-4 md:p-5 space-y-2.5 md:space-y-3">
-        {/* Header */}
-        <div className="flex items-start gap-3">
-          <CompanyLogo companyName={co?.name || "Unknown"} logoUrl={co?.logo_url} size="sm" />
-          <div className="flex-1 min-w-0">
-            <Link to={`/job-board/${job.id}`} className="font-semibold text-foreground text-sm leading-tight hover:text-primary transition-colors">
-              {job.title}
-            </Link>
-            <div className="flex items-center gap-2 mt-1 flex-wrap">
-              <Link to={`/company/${co?.slug}`} className="text-xs text-primary hover:underline">
-                {co?.name || "Unknown Company"}
-              </Link>
-              {isVerified && (
-                <Badge variant="outline" className="text-xs gap-0.5 bg-primary/5 text-primary border-primary/20">
-                  <Shield className="w-2.5 h-2.5" /> Verified
-                </Badge>
-              )}
-              {isCertified && (
-                <Badge variant="outline" className="text-xs gap-0.5 bg-civic-yellow/10 text-civic-yellow border-civic-yellow/20">
-                  <ShieldCheck className="w-2.5 h-2.5" /> Certified
-                </Badge>
-              )}
-              <MatchIndicator matchCount={matchCount} matchedCategories={matchedCategories} />
-              {fitScore !== undefined && fitScore > 0 && (
-                <Badge variant="outline" className={cn(
-                  "text-xs gap-0.5",
-                  fitScore >= 75 ? "bg-[hsl(var(--civic-green))]/10 text-[hsl(var(--civic-green))] border-[hsl(var(--civic-green))]/20" :
-                  fitScore >= 50 ? "bg-[hsl(var(--civic-yellow))]/10 text-[hsl(var(--civic-yellow))] border-[hsl(var(--civic-yellow))]/20" :
-                  "bg-muted/50 text-muted-foreground border-border/30"
-                )}>
-                  {fitScore}% fit
-                </Badge>
-              )}
-              {leverageLevel && (
-                <Badge variant="outline" className={cn(
-                  "text-xs gap-0.5",
-                  leverageLevel === "high" ? "bg-[hsl(var(--civic-green))]/10 text-[hsl(var(--civic-green))] border-[hsl(var(--civic-green))]/20" :
-                  leverageLevel === "medium" ? "bg-[hsl(var(--civic-yellow))]/10 text-[hsl(var(--civic-yellow))] border-[hsl(var(--civic-yellow))]/20" :
-                  "bg-muted/50 text-muted-foreground border-border/30"
-                )}>
-                  {leverageLevel === "high" ? "High" : leverageLevel === "medium" ? "Med" : "Low"} Lev.
-                </Badge>
-              )}
-              {fitBadges.map((badge) => (
-                <Badge key={badge} variant="outline" className={cn(
-                  "text-xs gap-0.5",
-                  badge === "Strong Fit" && "bg-[hsl(var(--civic-green))]/10 text-[hsl(var(--civic-green))] border-[hsl(var(--civic-green))]/20",
-                  badge === "Flexible Work Fit" && "bg-primary/5 text-primary border-primary/20",
-                  (badge === "Location Mismatch" || badge === "Compensation Mismatch" || badge === "Relocation Required") && "bg-destructive/10 text-destructive border-destructive/20",
-                )}>
-                  {badge}
-                </Badge>
-              ))}
-            </div>
-            <p className="text-xs text-muted-foreground mt-0.5">
-              {job.location || "Remote"} {job.work_mode ? `· ${job.work_mode}` : ""}
-            </p>
-            {/* Quality signal */}
-            <div className="mt-1">
-              <JobQualityBadge signal={qualitySignal} isEvergreen={isEvergreen} />
-            </div>
-          </div>
+      {/* Logo */}
+      <Link to={`/company/${co?.slug}`} className="shrink-0">
+        <CompanyLogo companyName={co?.name || "Unknown"} logoUrl={co?.logo_url} size="sm" />
+      </Link>
+
+      {/* Center content */}
+      <div className="flex-1 min-w-0 space-y-1">
+        {/* Title row */}
+        <div className="flex items-start gap-2">
+          <Link to={`/job-board/${job.id}`} className="text-sm font-semibold text-foreground hover:text-primary transition-colors leading-tight">
+            {job.title}
+          </Link>
+          {job.is_featured && (
+            <Badge variant="outline" className="text-xs gap-0.5 bg-primary/10 text-primary border-primary/20 shrink-0">
+              <Star className="w-2.5 h-2.5" /> Featured
+            </Badge>
+          )}
         </div>
 
-        {/* Strategic Context */}
-        {co?.jackye_insight && (
-          <div className="p-3 bg-primary/[0.04] border border-primary/10 rounded-lg backdrop-blur-sm">
-            <p className="text-xs font-medium text-primary mb-1 flex items-center gap-1">
-              <Sparkles className="w-3 h-3" /> Strategic Context
-            </p>
-            <p className="text-xs text-muted-foreground leading-relaxed line-clamp-2">
-              {co.jackye_insight}
-            </p>
+        {/* Company + location */}
+        <div className="flex items-center gap-1.5 text-xs text-muted-foreground flex-wrap">
+          <Link to={`/company/${co?.slug}`} className="text-primary hover:underline font-medium">
+            {co?.name || "Unknown Company"}
+          </Link>
+          <span>·</span>
+          <span>{job.location || "Remote"}</span>
+          {job.work_mode && (
+            <>
+              <span>·</span>
+              <span className="capitalize">{job.work_mode}</span>
+            </>
+          )}
+          {job.salary_range && (
+            <>
+              <span>·</span>
+              <span className="text-[hsl(var(--civic-green))]">{job.salary_range}</span>
+            </>
+          )}
+        </div>
+
+        {/* Tags row */}
+        <div className="flex items-center gap-1.5 flex-wrap">
+          {isVerified && (
+            <Badge variant="outline" className="text-xs gap-0.5 bg-primary/5 text-primary border-primary/20 py-0">
+              <Shield className="w-2.5 h-2.5" /> Verified
+            </Badge>
+          )}
+          {isCertified && (
+            <Badge variant="outline" className="text-xs gap-0.5 bg-[hsl(var(--civic-yellow))]/10 text-[hsl(var(--civic-yellow))] border-[hsl(var(--civic-yellow))]/20 py-0">
+              <ShieldCheck className="w-2.5 h-2.5" /> Certified
+            </Badge>
+          )}
+          {job.department && (
+            <Badge variant="outline" className="text-xs py-0 text-muted-foreground">
+              {job.department}
+            </Badge>
+          )}
+          {job.seniority_level && (
+            <Badge variant="outline" className="text-xs py-0 text-muted-foreground">
+              {job.seniority_level}
+            </Badge>
+          )}
+          <JobQualityBadge signal={qualitySignal} isEvergreen={isEvergreen} />
+          {fitScore !== undefined && fitScore >= 70 && (
+            <Badge variant="outline" className="text-xs gap-0.5 py-0 bg-[hsl(var(--civic-green))]/10 text-[hsl(var(--civic-green))] border-[hsl(var(--civic-green))]/20">
+              {fitScore}% fit
+            </Badge>
+          )}
+          {matchCount >= 2 && (
+            <Badge variant="outline" className="text-xs gap-0.5 py-0 bg-primary/10 text-primary border-primary/20">
+              <Sparkles className="w-2.5 h-2.5" /> {matchCount >= 3 ? "Strong" : "Good"} Match
+            </Badge>
+          )}
+        </div>
+      </div>
+
+      {/* Right side: clarity score + date + actions */}
+      <div className="flex flex-col items-end gap-1.5 shrink-0">
+        {/* Clarity score */}
+        {clarityScore > 0 && (
+          <div className={cn(
+            "text-xs font-bold px-2 py-0.5 rounded",
+            clarityScore >= 70 ? "bg-[hsl(var(--civic-green))]/10 text-[hsl(var(--civic-green))]" :
+            clarityScore >= 40 ? "bg-[hsl(var(--civic-yellow))]/10 text-[hsl(var(--civic-yellow))]" :
+            "bg-muted/50 text-muted-foreground"
+          )}>
+            {clarityScore}
           </div>
         )}
 
-        {/* Connection Chain snippet */}
-        {research?.connection_chain && (
-          <div className="p-3 bg-muted/20 border border-border/30 rounded-lg backdrop-blur-sm">
-            <p className="text-xs font-medium text-foreground mb-1 flex items-center gap-1">
-              <Network className="w-3 h-3 text-muted-foreground" /> Connection Chain
-            </p>
-            <p className="text-xs text-muted-foreground leading-relaxed line-clamp-2">
-              {research.connection_chain}
-            </p>
-          </div>
-        )}
+        {/* Date */}
+        <span className="text-xs text-muted-foreground whitespace-nowrap">
+          {formatDistanceToNow(new Date(postDate), { addSuffix: false })}
+        </span>
 
         {/* Actions */}
-        <div className="flex items-center gap-2 pt-1">
-          {job.url ? (
-            <Button size="sm" asChild className="gap-1.5 flex-1"
+        <div className="flex items-center gap-1">
+          {job.url && (
+            <Button size="sm" variant="ghost" className="h-7 px-2 text-xs gap-1" asChild
               onClick={() => trackApplyClick(job.id, job.company_id, job.url!)}>
               <a href={job.url} target="_blank" rel="noopener noreferrer">
                 Apply <ExternalLink className="w-3 h-3" />
               </a>
             </Button>
-          ) : co?.slug ? (
-            <Button size="sm" variant="secondary" asChild className="gap-1.5 flex-1"
-              onClick={() => trackApplyClick(job.id, job.company_id, `/company/${co.slug}`)}>
-              <Link to={`/company/${co.slug}`}>
-                View All Roles at {co.name} <ExternalLink className="w-3 h-3" />
-              </Link>
-            </Button>
-          ) : (
-            <Button size="sm" disabled className="gap-1.5 flex-1">
-              Apply
-            </Button>
           )}
-          <SaveJobButton job={job as any} size="icon" className="h-8 w-8" />
-          <Button size="sm" variant="outline" asChild className="gap-1 shrink-0">
-            <Link to={`/job-board/${job.id}`}>
-              <ChevronRight className="w-3 h-3" /> Details
-            </Link>
-          </Button>
+          <SaveJobButton job={job as any} size="icon" className="h-7 w-7" />
         </div>
-      </CardContent>
-    </Card>
+      </div>
+    </div>
   );
 }

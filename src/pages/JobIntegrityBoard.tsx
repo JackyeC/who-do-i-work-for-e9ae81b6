@@ -6,16 +6,23 @@ import { Footer } from "@/components/Footer";
 import { JobIntegrityCard } from "@/components/jobs/JobIntegrityCard";
 import { AskJackyeWidget } from "@/components/jobs/AskJackyeWidget";
 import { PersonalizationBanner } from "@/components/jobs/PersonalizationBanner";
-import { ExternalJobFeed } from "@/components/jobs/ExternalJobFeed";
-import { JobBoardFilters, type JobBoardFilterState } from "@/components/jobs/JobBoardFilters";
+import { JobBoardSidebar, type JobBoardFilterState } from "@/components/jobs/JobBoardSidebar";
+import { ExploreCompaniesTab } from "@/components/jobs/ExploreCompaniesTab";
+import { RecommendedJobsTab } from "@/components/jobs/RecommendedJobsTab";
+import { JobAlertSubscribe } from "@/components/jobs/JobAlertSubscribe";
 import { EmptyState } from "@/components/EmptyState";
-import { Loader2, Briefcase } from "lucide-react";
+import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
+import { Input } from "@/components/ui/input";
+import { Button } from "@/components/ui/button";
+import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from "@/components/ui/sheet";
+import { Loader2, Briefcase, Search, X, SlidersHorizontal } from "lucide-react";
 import { usePageSEO } from "@/hooks/use-page-seo";
-import { computeRankingScore, evaluateJobQuality, hasEvergreenSignals } from "@/lib/jobQuality";
+import { computeRankingScore } from "@/lib/jobQuality";
 import { differenceInDays } from "date-fns";
 import { useJobPreferences } from "@/hooks/use-job-preferences";
 import { evaluateJobFit } from "@/lib/jobFitEngine";
 import { computeLeverage } from "@/components/jobs/LeverageScore";
+import { useIsMobile } from "@/hooks/use-mobile";
 
 function getUserPreferenceCategories(): Set<string> {
   try {
@@ -61,6 +68,7 @@ function parseSalaryMin(salaryRange: string | null): number {
 export default function JobIntegrityBoard() {
   const [filters, setFilters] = useState<JobBoardFilterState>(DEFAULT_FILTERS);
   const { preferences } = useJobPreferences();
+  const isMobile = useIsMobile();
 
   usePageSEO({
     title: "Job Integrity Board | Who Do I Work For?",
@@ -70,15 +78,13 @@ export default function JobIntegrityBoard() {
   const { data: jobs, isLoading } = useQuery({
     queryKey: ["job-integrity-board"],
     queryFn: async () => {
-      let query = supabase
+      const { data, error } = await supabase
         .from("company_jobs")
         .select("id, title, location, work_mode, url, created_at, posted_at, company_id, is_featured, admin_approved, salary_range, seniority_level, department, description, employment_type, source_platform, companies(name, slug, logo_url, vetted_status, jackye_insight, description, employer_clarity_score)")
         .eq("is_active", true)
         .eq("admin_approved", true)
         .order("created_at", { ascending: false })
         .limit(200);
-
-      const { data, error } = await query;
       if (error) throw error;
       return data || [];
     },
@@ -105,7 +111,6 @@ export default function JobIntegrityBoard() {
     staleTime: 5 * 60 * 1000,
   });
 
-  // Extract unique departments/seniority for filter options
   const availableDepartments = useMemo(() => {
     if (!jobs) return [];
     return [...new Set(jobs.map((j: any) => j.department).filter(Boolean))].sort();
@@ -116,12 +121,25 @@ export default function JobIntegrityBoard() {
     return [...new Set(jobs.map((j: any) => j.seniority_level).filter(Boolean))].sort();
   }, [jobs]);
 
+  // Compute counts for sidebar
+  const counts = useMemo(() => {
+    if (!jobs) return { department: {}, seniority: {}, workMode: {} };
+    const dept: Record<string, number> = {};
+    const sen: Record<string, number> = {};
+    const wm: Record<string, number> = {};
+    jobs.forEach((j: any) => {
+      if (j.department) dept[j.department] = (dept[j.department] || 0) + 1;
+      if (j.seniority_level) sen[j.seniority_level] = (sen[j.seniority_level] || 0) + 1;
+      if (j.work_mode) wm[j.work_mode] = (wm[j.work_mode] || 0) + 1;
+    });
+    return { department: dept, seniority: sen, workMode: wm };
+  }, [jobs]);
+
   const filtered = useMemo(() => {
     if (!jobs) return [];
     const prefCategories = getUserPreferenceCategories();
     let result = [...jobs];
 
-    // Text search
     if (filters.search.trim()) {
       const q = filters.search.toLowerCase();
       result = result.filter((j: any) =>
@@ -132,35 +150,29 @@ export default function JobIntegrityBoard() {
       );
     }
 
-    // Location filter
     if (filters.location.trim()) {
       const loc = filters.location.toLowerCase();
       result = result.filter((j: any) => j.location?.toLowerCase().includes(loc));
     }
 
-    // Work mode
     if (filters.workMode !== "all") {
       result = result.filter((j: any) => j.work_mode === filters.workMode);
     }
 
-    // Seniority
     if (filters.seniority !== "all") {
       result = result.filter((j: any) => j.seniority_level === filters.seniority);
     }
 
-    // Department
     if (filters.department !== "all") {
       result = result.filter((j: any) => j.department === filters.department);
     }
 
-    // Trust level
     if (filters.trustFilter === "certified") {
       result = result.filter((j: any) => (j.companies as any)?.vetted_status === "certified");
     } else if (filters.trustFilter === "verified") {
       result = result.filter((j: any) => ["verified", "certified"].includes((j.companies as any)?.vetted_status));
     }
 
-    // Intelligence chips
     if (filters.payTransparent) {
       result = result.filter((j: any) => j.salary_range);
     }
@@ -183,86 +195,158 @@ export default function JobIntegrityBoard() {
       });
     }
 
-    // Salary minimum
     if (filters.salaryMin > 0) {
       result = result.filter((j: any) => parseSalaryMin(j.salary_range) >= filters.salaryMin);
     }
 
-    // Ranking sort
     result.sort((a: any, b: any) => {
+      const prefCats = getUserPreferenceCategories();
       const aAlignment = alignmentSignals?.[a.company_id]
-        ? [...prefCategories].filter((c) => alignmentSignals[a.company_id].has(c)).length
+        ? [...prefCats].filter((c) => alignmentSignals[a.company_id].has(c)).length
         : 0;
       const bAlignment = alignmentSignals?.[b.company_id]
-        ? [...prefCategories].filter((c) => alignmentSignals[b.company_id].has(c)).length
+        ? [...prefCats].filter((c) => alignmentSignals[b.company_id].has(c)).length
         : 0;
-
-      const aScore = computeRankingScore(a, aAlignment);
-      const bScore = computeRankingScore(b, bAlignment);
-      return bScore - aScore;
+      return computeRankingScore(b, bAlignment) - computeRankingScore(a, aAlignment);
     });
 
     return result;
   }, [jobs, filters, alignmentSignals]);
 
+  const sidebarContent = (
+    <JobBoardSidebar
+      filters={filters}
+      onFiltersChange={setFilters}
+      availableDepartments={availableDepartments}
+      availableSeniority={availableSeniority}
+      jobCount={filtered.length}
+      departmentCounts={counts.department}
+      seniorityCounts={counts.seniority}
+      workModeCounts={counts.workMode}
+    />
+  );
+
   return (
     <div className="min-h-screen flex flex-col bg-background">
       <Header />
-      <main className="flex-1 container mx-auto px-4 py-8 max-w-4xl">
-        <div className="text-center mb-8">
-          <h1 className="text-3xl font-bold text-foreground tracking-tight mb-2">
+      <main className="flex-1 container mx-auto px-4 py-8 max-w-6xl">
+        {/* Page header */}
+        <div className="text-center mb-6">
+          <h1 className="text-3xl font-bold text-foreground tracking-tight mb-1">
             Job Integrity Board
           </h1>
-          <p className="text-muted-foreground max-w-xl mx-auto">
+          <p className="text-muted-foreground text-sm max-w-xl mx-auto">
             Every listing includes employer transparency signals, strategic context, and
             Connection Chain data — so you know who you're really working for.
           </p>
         </div>
 
-        <JobBoardFilters
-          filters={filters}
-          onFiltersChange={setFilters}
-          availableDepartments={availableDepartments}
-          availableSeniority={availableSeniority}
-        />
-
-        <PersonalizationBanner />
-        <ExternalJobFeed />
-
-        {/* Results */}
-        {isLoading ? (
-          <div className="flex items-center justify-center py-16">
-            <Loader2 className="w-6 h-6 animate-spin text-primary" />
+        {/* Tabs */}
+        <Tabs defaultValue="search" className="w-full">
+          <div className="flex items-center justify-between mb-4">
+            <TabsList className="bg-muted/50">
+              <TabsTrigger value="search" className="text-xs sm:text-sm">Search Jobs</TabsTrigger>
+              <TabsTrigger value="companies" className="text-xs sm:text-sm">Explore Companies</TabsTrigger>
+              <TabsTrigger value="recommended" className="text-xs sm:text-sm">Recommended</TabsTrigger>
+            </TabsList>
+            <JobAlertSubscribe />
           </div>
-        ) : filtered.length === 0 ? (
-          <EmptyState
-            icon={Briefcase}
-            title="No jobs found"
-            description={filters.search ? "Try adjusting your search or filters" : "No approved job listings yet. Check back soon!"}
-          />
-        ) : (
-          <div className="grid gap-3 md:gap-4 md:grid-cols-2">
-            {filtered.map((job: any) => {
-              const prefCategories = getUserPreferenceCategories();
-              const companyCats = alignmentSignals?.[job.company_id];
-              const matchedCats = companyCats ? [...prefCategories].filter((c) => companyCats.has(c)) : [];
-              const fit = evaluateJobFit(job, preferences);
-              const civicScore = (job.companies as any)?.employer_clarity_score || 0;
-              const leverage = computeLeverage(job, civicScore, false);
-              return (
-                <JobIntegrityCard
-                  key={job.id}
-                  job={job}
-                  matchCount={matchedCats.length}
-                  matchedCategories={matchedCats}
-                  fitBadges={fit.fitBadges}
-                  fitScore={fit.fitScore}
-                  leverageLevel={leverage.level}
+
+          {/* Search Jobs Tab */}
+          <TabsContent value="search" className="mt-0">
+            <PersonalizationBanner />
+
+            {/* Search bar */}
+            <div className="flex gap-2 mb-4">
+              <div className="relative flex-1">
+                <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
+                <Input
+                  value={filters.search}
+                  onChange={(e) => setFilters({ ...filters, search: e.target.value })}
+                  placeholder="Search jobs, companies, locations..."
+                  className="pl-9 h-10"
                 />
-              );
-            })}
-          </div>
-        )}
+                {filters.search && (
+                  <Button size="icon" variant="ghost" className="absolute right-1 top-1/2 -translate-y-1/2 h-7 w-7" onClick={() => setFilters({ ...filters, search: "" })}>
+                    <X className="w-3 h-3" />
+                  </Button>
+                )}
+              </div>
+              {isMobile && (
+                <Sheet>
+                  <SheetTrigger asChild>
+                    <Button variant="outline" size="icon" className="h-10 w-10 shrink-0">
+                      <SlidersHorizontal className="w-4 h-4" />
+                    </Button>
+                  </SheetTrigger>
+                  <SheetContent side="left" className="w-72 overflow-y-auto">
+                    <SheetHeader>
+                      <SheetTitle>Filters</SheetTitle>
+                    </SheetHeader>
+                    <div className="mt-4">{sidebarContent}</div>
+                  </SheetContent>
+                </Sheet>
+              )}
+            </div>
+
+            {/* Main layout: sidebar + results */}
+            <div className="flex gap-6">
+              {/* Desktop sidebar */}
+              {!isMobile && (
+                <div className="w-56 shrink-0 hidden md:block">
+                  {sidebarContent}
+                </div>
+              )}
+
+              {/* Results */}
+              <div className="flex-1 min-w-0">
+                {isLoading ? (
+                  <div className="flex items-center justify-center py-16">
+                    <Loader2 className="w-6 h-6 animate-spin text-primary" />
+                  </div>
+                ) : filtered.length === 0 ? (
+                  <EmptyState
+                    icon={Briefcase}
+                    title="No jobs found"
+                    description={filters.search ? "Try adjusting your search or filters" : "No approved job listings yet. Check back soon!"}
+                  />
+                ) : (
+                  <div className="space-y-2">
+                    {filtered.map((job: any) => {
+                      const prefCategories = getUserPreferenceCategories();
+                      const companyCats = alignmentSignals?.[job.company_id];
+                      const matchedCats = companyCats ? [...prefCategories].filter((c) => companyCats.has(c)) : [];
+                      const fit = evaluateJobFit(job, preferences);
+                      const civicScore = (job.companies as any)?.employer_clarity_score || 0;
+                      const leverage = computeLeverage(job, civicScore, false);
+                      return (
+                        <JobIntegrityCard
+                          key={job.id}
+                          job={job}
+                          matchCount={matchedCats.length}
+                          matchedCategories={matchedCats}
+                          fitBadges={fit.fitBadges}
+                          fitScore={fit.fitScore}
+                          leverageLevel={leverage.level}
+                        />
+                      );
+                    })}
+                  </div>
+                )}
+              </div>
+            </div>
+          </TabsContent>
+
+          {/* Explore Companies Tab */}
+          <TabsContent value="companies" className="mt-0">
+            <ExploreCompaniesTab />
+          </TabsContent>
+
+          {/* Recommended Tab */}
+          <TabsContent value="recommended" className="mt-0">
+            <RecommendedJobsTab />
+          </TabsContent>
+        </Tabs>
       </main>
       <AskJackyeWidget />
       <Footer />
