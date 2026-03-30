@@ -50,17 +50,36 @@ const SIGNAL_ICONS: Record<string, { icon: typeof Scale; color: string }> = {
 
 // Source tier badges (Ground News inspired)
 const SOURCE_TIERS: Record<string, { label: string; color: string; description: string }> = {
-  "FEC":         { label: "Gov Tier 1", color: "bg-[hsl(var(--civic-green))]/10 text-[hsl(var(--civic-green))] border-[hsl(var(--civic-green))]/30", description: "Federal Election Commission — official government records" },
-  "SEC EDGAR":   { label: "Gov Tier 1", color: "bg-[hsl(var(--civic-green))]/10 text-[hsl(var(--civic-green))] border-[hsl(var(--civic-green))]/30", description: "Securities & Exchange Commission filings" },
-  "BLS":         { label: "Gov Tier 1", color: "bg-[hsl(var(--civic-green))]/10 text-[hsl(var(--civic-green))] border-[hsl(var(--civic-green))]/30", description: "Bureau of Labor Statistics" },
-  "LDA":         { label: "Gov Tier 1", color: "bg-[hsl(var(--civic-green))]/10 text-[hsl(var(--civic-green))] border-[hsl(var(--civic-green))]/30", description: "Senate Lobbying Disclosure Act filings" },
-  "WARN":        { label: "Gov Tier 1", color: "bg-[hsl(var(--civic-green))]/10 text-[hsl(var(--civic-green))] border-[hsl(var(--civic-green))]/30", description: "Worker Adjustment and Retraining Notification Act" },
-  "USASpending": { label: "Gov Tier 1", color: "bg-[hsl(var(--civic-green))]/10 text-[hsl(var(--civic-green))] border-[hsl(var(--civic-green))]/30", description: "Federal contract awards database" },
-  "CourtListener":{ label: "Gov Tier 1", color: "bg-[hsl(var(--civic-green))]/10 text-[hsl(var(--civic-green))] border-[hsl(var(--civic-green))]/30", description: "Federal court records — PACER" },
-  "HRC":         { label: "Nonprofit", color: "bg-primary/10 text-primary border-primary/30", description: "Human Rights Campaign corporate equality index" },
-  "Company":     { label: "Self-Report", color: "bg-[hsl(var(--civic-yellow))]/10 text-[hsl(var(--civic-yellow))] border-[hsl(var(--civic-yellow))]/30", description: "Company's own disclosures and press releases" },
-  "GDELT":       { label: "Media", color: "bg-[hsl(var(--civic-blue))]/10 text-[hsl(var(--civic-blue))] border-[hsl(var(--civic-blue))]/30", description: "Global Database of Events, Language, and Tone — media monitoring" },
-  "NewsAPI":     { label: "Media", color: "bg-[hsl(var(--civic-blue))]/10 text-[hsl(var(--civic-blue))] border-[hsl(var(--civic-blue))]/30", description: "Aggregated news media sources" },
+  // Tier 1 — Government Records
+  "FEC":           { label: "Gov Tier 1", color: "bg-[hsl(var(--civic-green))]/10 text-[hsl(var(--civic-green))] border-[hsl(var(--civic-green))]/30", description: "Federal Election Commission — official government records" },
+  "SEC EDGAR":     { label: "Gov Tier 1", color: "bg-[hsl(var(--civic-green))]/10 text-[hsl(var(--civic-green))] border-[hsl(var(--civic-green))]/30", description: "Securities & Exchange Commission filings" },
+  "BLS":           { label: "Gov Tier 1", color: "bg-[hsl(var(--civic-green))]/10 text-[hsl(var(--civic-green))] border-[hsl(var(--civic-green))]/30", description: "Bureau of Labor Statistics" },
+  "LDA":           { label: "Gov Tier 1", color: "bg-[hsl(var(--civic-green))]/10 text-[hsl(var(--civic-green))] border-[hsl(var(--civic-green))]/30", description: "Senate Lobbying Disclosure Act filings" },
+  "WARN":          { label: "Gov Tier 1", color: "bg-[hsl(var(--civic-green))]/10 text-[hsl(var(--civic-green))] border-[hsl(var(--civic-green))]/30", description: "Worker Adjustment and Retraining Notification Act" },
+  "USASpending":   { label: "Gov Tier 1", color: "bg-[hsl(var(--civic-green))]/10 text-[hsl(var(--civic-green))] border-[hsl(var(--civic-green))]/30", description: "Federal contract awards database" },
+  "CourtListener": { label: "Gov Tier 1", color: "bg-[hsl(var(--civic-green))]/10 text-[hsl(var(--civic-green))] border-[hsl(var(--civic-green))]/30", description: "Federal court records — PACER" },
+  "OGE":           { label: "Gov Tier 1", color: "bg-[hsl(var(--civic-green))]/10 text-[hsl(var(--civic-green))] border-[hsl(var(--civic-green))]/30", description: "Office of Government Ethics — financial disclosure forms" },
+  "FARA":          { label: "Gov Tier 1", color: "bg-[hsl(var(--civic-green))]/10 text-[hsl(var(--civic-green))] border-[hsl(var(--civic-green))]/30", description: "Foreign Agents Registration Act filings" },
+  "IRS 990":       { label: "Gov Tier 1", color: "bg-[hsl(var(--civic-green))]/10 text-[hsl(var(--civic-green))] border-[hsl(var(--civic-green))]/30", description: "IRS Form 990 — nonprofit board and financial data" },
+
+  // Tier 3 — Watchdog & OSINT
+  "OpenSecrets":   { label: "Watchdog", color: "bg-primary/10 text-primary border-primary/30", description: "OpenSecrets — lobbying, revolving door, and campaign finance tracking" },
+  "LittleSis":     { label: "Watchdog", color: "bg-primary/10 text-primary border-primary/30", description: "LittleSis — influence mapping, interlocking directorates, power networks" },
+  "SPLC":          { label: "Watchdog", color: "bg-primary/10 text-primary border-primary/30", description: "Southern Poverty Law Center — extremist tracking, hate group mapping" },
+  "ADL":           { label: "Watchdog", color: "bg-primary/10 text-primary border-primary/30", description: "Anti-Defamation League — extremism incidents and H.E.A.T. mapping" },
+  "HRC":           { label: "Watchdog", color: "bg-primary/10 text-primary border-primary/30", description: "Human Rights Campaign — corporate equality index" },
+  "POGO":          { label: "Watchdog", color: "bg-primary/10 text-primary border-primary/30", description: "Project on Government Oversight — Brass Parachutes, contractor oversight" },
+  "PRRI":          { label: "Research", color: "bg-primary/10 text-primary border-primary/30", description: "Public Religion Research Institute — American Values Atlas" },
+  "Candid":        { label: "Watchdog", color: "bg-primary/10 text-primary border-primary/30", description: "Candid/GuideStar — nonprofit grantmaking and foundation data" },
+  "OpenCorporates":{ label: "OSINT", color: "bg-[hsl(var(--civic-blue))]/10 text-[hsl(var(--civic-blue))] border-[hsl(var(--civic-blue))]/30", description: "OpenCorporates — global corporate registry and subsidiary mapping" },
+
+  // Tier 2 — Company Self-Report
+  "Company":       { label: "Self-Report", color: "bg-[hsl(var(--civic-yellow))]/10 text-[hsl(var(--civic-yellow))] border-[hsl(var(--civic-yellow))]/30", description: "Company's own disclosures and press releases" },
+
+  // Tier 4 — Media Monitoring
+  "GDELT":         { label: "Media", color: "bg-[hsl(var(--civic-blue))]/10 text-[hsl(var(--civic-blue))] border-[hsl(var(--civic-blue))]/30", description: "Global Database of Events, Language, and Tone — media monitoring" },
+  "NewsAPI":       { label: "Media", color: "bg-[hsl(var(--civic-blue))]/10 text-[hsl(var(--civic-blue))] border-[hsl(var(--civic-blue))]/30", description: "Aggregated news media sources" },
+  "Ground News":   { label: "Media", color: "bg-[hsl(var(--civic-blue))]/10 text-[hsl(var(--civic-blue))] border-[hsl(var(--civic-blue))]/30", description: "Ground News — bias-aware news aggregation" },
 };
 
 // ─── Company Data ───
@@ -74,7 +93,7 @@ const COMPANIES: ReceiptsCompany[] = [
     spice: 5, dramaScore: 94,
     topSignal: "DEI team dissolved + massive WARN filings",
     signalIcon: "dei",
-    sources: ["FEC", "WARN", "SEC EDGAR", "Company", "GDELT"],
+    sources: ["FEC", "WARN", "SEC EDGAR", "Company", "GDELT", "OpenSecrets", "LittleSis"],
   },
   {
     slug: "google", name: "Google", sector: "Big Tech", state: "CA",
@@ -84,7 +103,7 @@ const COMPANIES: ReceiptsCompany[] = [
     spice: 4, dramaScore: 82,
     topSignal: "11-year diversity report killed",
     signalIcon: "dei",
-    sources: ["FEC", "SEC EDGAR", "Company", "GDELT", "BLS"],
+    sources: ["FEC", "SEC EDGAR", "Company", "GDELT", "BLS", "OpenSecrets", "LittleSis"],
   },
   {
     slug: "amazon", name: "Amazon", sector: "Big Tech", state: "WA",
@@ -94,7 +113,7 @@ const COMPANIES: ReceiptsCompany[] = [
     spice: 5, dramaScore: 91,
     topSignal: "14K HR staff cut + 4,085 WARN notices",
     signalIcon: "layoff",
-    sources: ["WARN", "FEC", "SEC EDGAR", "BLS", "GDELT"],
+    sources: ["WARN", "FEC", "SEC EDGAR", "BLS", "GDELT", "OpenSecrets", "POGO"],
   },
   {
     slug: "microsoft", name: "Microsoft", sector: "Big Tech", state: "WA",
@@ -104,7 +123,7 @@ const COMPANIES: ReceiptsCompany[] = [
     spice: 3, dramaScore: 68,
     topSignal: "DEI team laid off mid-year",
     signalIcon: "dei",
-    sources: ["FEC", "SEC EDGAR", "Company", "GDELT"],
+    sources: ["FEC", "SEC EDGAR", "Company", "GDELT", "OpenSecrets"],
   },
   {
     slug: "boeing", name: "Boeing", sector: "Defense", state: "VA",
@@ -114,7 +133,7 @@ const COMPANIES: ReceiptsCompany[] = [
     spice: 4, dramaScore: 85,
     topSignal: "Representation goals scrapped + safety lawsuits",
     signalIcon: "lawsuit",
-    sources: ["FEC", "USASpending", "CourtListener", "WARN", "Company"],
+    sources: ["FEC", "USASpending", "CourtListener", "WARN", "Company", "POGO", "OpenSecrets", "LittleSis"],
   },
   {
     slug: "booz-allen-hamilton", name: "Booz Allen Hamilton", sector: "Consulting", state: "VA",
@@ -124,7 +143,7 @@ const COMPANIES: ReceiptsCompany[] = [
     spice: 4, dramaScore: 79,
     topSignal: "Complete DEI shutdown as federal contractor",
     signalIcon: "contract",
-    sources: ["USASpending", "FEC", "LDA", "Company"],
+    sources: ["USASpending", "FEC", "LDA", "Company", "OpenSecrets", "POGO", "LittleSis"],
   },
   {
     slug: "accenture", name: "Accenture", sector: "Consulting", state: "Global",
@@ -134,7 +153,7 @@ const COMPANIES: ReceiptsCompany[] = [
     spice: 4, dramaScore: 83,
     topSignal: "800K employees affected by goal sunset",
     signalIcon: "dei",
-    sources: ["FEC", "SEC EDGAR", "Company", "GDELT", "LDA"],
+    sources: ["FEC", "SEC EDGAR", "Company", "GDELT", "LDA", "OpenSecrets", "OpenCorporates"],
   },
   {
     slug: "verizon", name: "Verizon", sector: "Telecom", state: "NY",
@@ -144,7 +163,7 @@ const COMPANIES: ReceiptsCompany[] = [
     spice: 3, dramaScore: 72,
     topSignal: "DEI traded away for merger approval",
     signalIcon: "lobbying",
-    sources: ["FEC", "LDA", "Company", "GDELT"],
+    sources: ["FEC", "LDA", "Company", "GDELT", "OpenSecrets"],
   },
   {
     slug: "t-mobile", name: "T-Mobile", sector: "Telecom", state: "WA",
@@ -154,7 +173,7 @@ const COMPANIES: ReceiptsCompany[] = [
     spice: 3, dramaScore: 70,
     topSignal: "DEI commitments dropped for deal",
     signalIcon: "lobbying",
-    sources: ["FEC", "LDA", "Company", "GDELT"],
+    sources: ["FEC", "LDA", "Company", "GDELT", "OpenSecrets"],
   },
   {
     slug: "att", name: "AT&T", sector: "Telecom", state: "TX",
@@ -164,7 +183,7 @@ const COMPANIES: ReceiptsCompany[] = [
     spice: 5, dramaScore: 88,
     topSignal: "Publicly declared DEI doesn't exist",
     signalIcon: "dei",
-    sources: ["FEC", "LDA", "Company", "GDELT"],
+    sources: ["FEC", "LDA", "Company", "GDELT", "OpenSecrets"],
   },
 ];
 
@@ -346,7 +365,7 @@ export default function Receipts() {
           </div>
           <div className="flex items-center gap-1.5">
             <div className="w-2 h-2 rounded-full bg-primary" />
-            <span className="text-xs text-muted-foreground">Nonprofit — Third-party indices</span>
+            <span className="text-xs text-muted-foreground">Watchdog — OSINT &amp; civil rights orgs</span>
           </div>
           <div className="flex items-center gap-1.5">
             <div className="w-2 h-2 rounded-full bg-[hsl(var(--civic-yellow))]" />
@@ -354,7 +373,7 @@ export default function Receipts() {
           </div>
           <div className="flex items-center gap-1.5">
             <div className="w-2 h-2 rounded-full bg-[hsl(var(--civic-blue))]" />
-            <span className="text-xs text-muted-foreground">Media — News monitoring</span>
+            <span className="text-xs text-muted-foreground">OSINT &amp; Media — Monitoring &amp; mapping</span>
           </div>
         </div>
 

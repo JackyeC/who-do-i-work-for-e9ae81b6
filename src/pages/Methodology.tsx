@@ -89,11 +89,11 @@ export default function Methodology() {
               </p>
               <div className="space-y-3">
                 {([
-                  { tier: 1 as SourceTier, examples: "SEC EDGAR, FEC/OpenFEC, LDA.gov, USAspending.gov, EPA ECHO, OSHA, NLRB, PACER/CourtListener, CFPB, BLS", desc: "Official government filings, regulatory databases, and court records. Highest reliability. These are the legal record." },
-                  { tier: 2 as SourceTier, examples: "Proxy statements, investor relations pages, annual reports, ESG disclosures, corporate press releases", desc: "Information published directly by the company. Reliable for stated positions; may reflect corporate framing." },
-                  { tier: 3 as SourceTier, examples: "ProPublica, Reuters, AP, investigative journalism, SPLC, ADL, HRC", desc: "High-quality secondary reporting and established watchdog organizations. Cross-checked where possible." },
-                  { tier: 4 as SourceTier, examples: "People Data Labs, OpenCorporates, commercial databases", desc: "Commercial data enrichment services. Useful for workforce signals and entity resolution but treated as supplementary." },
-                  { tier: 5 as SourceTier, examples: "Anonymous reviews, forums, social media, single-source mentions", desc: "Unverified or anonymous sources. Included for transparency only when clearly labeled. Never used for scoring." },
+                  { tier: 1 as SourceTier, examples: "SEC EDGAR, FEC/OpenFEC, LDA.gov, USAspending.gov, EPA ECHO, OSHA, NLRB, PACER/CourtListener, CFPB, BLS, WARN Act, OGE Form 278, FARA, IRS Form 990, Census.gov, FRED, Data.gov", desc: "Official government filings, regulatory databases, court records, ethics disclosures, and tax filings. Highest reliability. These are the legal record." },
+                  { tier: 2 as SourceTier, examples: "Proxy statements, investor relations pages, annual reports, ESG disclosures, corporate press releases, diversity reports", desc: "Information published directly by the company. Reliable for stated positions; may reflect corporate framing." },
+                  { tier: 3 as SourceTier, examples: "OpenSecrets, LittleSis, ProPublica, SPLC, ADL, HRC, POGO, Revolving Door Project, LegiStorm, Bellingcat, Reuters, AP, Candid/GuideStar, PRRI, Ground News", desc: "Verified watchdog organizations, OSINT databases, and high-quality investigative reporting. Cross-checked where possible." },
+                  { tier: 4 as SourceTier, examples: "OpenCorporates, People Data Labs, NNDB, Hunter.io, commercial databases, GDELT, AllSides, Media Bias/Fact Check", desc: "Commercial enrichment, media monitoring, and identity resolution services. Useful for signals and entity resolution but treated as supplementary." },
+                  { tier: 5 as SourceTier, examples: "Anonymous reviews, forums, social media, single-source mentions, unverified leaks", desc: "Unverified or anonymous sources. Included for transparency only when clearly labeled. Never used for scoring." },
                 ]).map((item) => (
                   <Card key={item.tier}>
                     <CardContent className="p-5">
@@ -109,6 +109,108 @@ export default function Methodology() {
                   </Card>
                 ))}
               </div>
+            </section>
+
+            {/* ───── Revolving Door & Influence Intelligence ───── */}
+            <section>
+              <h2 className="text-title text-foreground mb-5">Revolving Door &amp; Influence Intelligence</h2>
+              <p className="text-body text-muted-foreground mb-5 leading-relaxed">
+                We track the movement of individuals between government and the private sector — the "revolving door" —
+                and map influence networks using verified public data. Facts over feelings.
+              </p>
+              <div className="space-y-3">
+                {[
+                  {
+                    category: "Revolving Door Tracking",
+                    desc: "Flags executives hired from regulatory agencies into regulated companies within 24 months of leaving office. Cross-references against lobbying registrations.",
+                    sources: "OpenSecrets Revolving Door Database, Revolving Door Project, LegiStorm, POGO Brass Parachutes",
+                  },
+                  {
+                    category: "Influence Mapping",
+                    desc: "Maps interlocking directorates (people on multiple boards), family connections between business and government, and reciprocal oversight patterns.",
+                    sources: "LittleSis, OpenCorporates, SEC EDGAR (Forms 3/4/5), IRS Form 990",
+                  },
+                  {
+                    category: "Political Profit Profiles",
+                    desc: "Identifies when former officials' consulting firms win contracts from their former agencies. Tracks the 'own the problem, sell the solution' pattern.",
+                    sources: "USAspending.gov, LDA.gov, FARA, OGE Form 278 (financial disclosures)",
+                  },
+                  {
+                    category: "Nepotism & Affinity Signals",
+                    desc: "Flags surname clusters in leadership, shared registered agent addresses, and boards where 40%+ graduated from the same institution.",
+                    sources: "OpenCorporates, SEC EDGAR, IRS Form 990, state corporate registries",
+                  },
+                ].map((item) => (
+                  <Card key={item.category}>
+                    <CardContent className="p-5">
+                      <div className="flex items-center gap-2 mb-2">
+                        <Badge className="bg-primary/15 text-primary border-primary/30 text-xs font-mono">
+                          {item.category}
+                        </Badge>
+                      </div>
+                      <p className="text-caption text-muted-foreground leading-relaxed mb-2">{item.desc}</p>
+                      <p className="text-caption text-muted-foreground/70 font-mono text-xs">Sources: {item.sources}</p>
+                    </CardContent>
+                  </Card>
+                ))}
+              </div>
+              <p className="text-caption text-muted-foreground mt-4 leading-relaxed">
+                A "Red Flag" is an indicator, not an accusation. These are data anomalies worth investigating —
+                sometimes a fast-tracked executive is simply exceptional. WDIWF shows the pattern; you make the call.
+              </p>
+            </section>
+
+            {/* ───── Extremism & Affiliation Transparency ───── */}
+            <section>
+              <h2 className="text-title text-foreground mb-5">Extremism &amp; Affiliation Transparency</h2>
+              <p className="text-body text-muted-foreground mb-5 leading-relaxed">
+                Using only verified, publicly documented data, we surface connections to organizations flagged by
+                established civil rights watchdogs. We do not track private beliefs — only documented affiliations.
+              </p>
+              <div className="space-y-3">
+                {[
+                  {
+                    method: "SPLC Extremist Files",
+                    desc: "Searchable database of individuals and organizations identified by the Southern Poverty Law Center. Maps histories, hierarchies, and organizational connections.",
+                  },
+                  {
+                    method: "ADL H.E.A.T. Map",
+                    desc: "Tracks documented extremist incidents by location. If an executive was a featured speaker at a flagged event, that's verifiable public record.",
+                  },
+                  {
+                    method: "IRS Form 990 Cross-Reference",
+                    desc: "Many extremist or high-control groups are registered as 501(c)(3) or 501(c)(4) organizations. Board of Directors and key employees are public record.",
+                  },
+                  {
+                    method: "Grantmaking Trail (Candid/GuideStar)",
+                    desc: "Tracks which corporations and foundations fund specific ideological organizations. This is the company's financial footprint, not opinion.",
+                  },
+                  {
+                    method: "PRRI American Values Atlas",
+                    desc: "Localized data on White Christian Nationalism sentiment. Provides geographic context, not individual identification.",
+                  },
+                ].map((item) => (
+                  <div key={item.method} className="flex items-start gap-3 p-3 rounded-lg bg-muted/30 border border-border/40">
+                    <span className="text-primary font-mono text-xs mt-0.5 shrink-0">&#9654;</span>
+                    <div>
+                      <span className="font-medium text-foreground text-sm">{item.method}</span>
+                      <p className="text-caption text-muted-foreground mt-0.5">{item.desc}</p>
+                    </div>
+                  </div>
+                ))}
+              </div>
+              <Card className="mt-5 border-[hsl(var(--civic-yellow))]/30 bg-[hsl(var(--civic-yellow))]/[0.03]">
+                <CardContent className="p-5">
+                  <p className="text-body text-foreground font-medium mb-2">Three-Point Verification Standard</p>
+                  <p className="text-caption text-muted-foreground leading-relaxed">
+                    We never label someone based on a single data point. Our standard requires at least two of three:
+                    (1) Direct affiliation — name appears in a 990 filing or verified membership record,
+                    (2) Financial link — the individual or their company donated to a flagged organization,
+                    (3) Proximity — shared board, registered agent address, or event participation with verified extremist leadership.
+                    We use the term "Flagged Affiliation" rather than subjective labels. The data speaks for itself.
+                  </p>
+                </CardContent>
+              </Card>
             </section>
 
             {/* ───── Evidence Quality Scoring ───── */}

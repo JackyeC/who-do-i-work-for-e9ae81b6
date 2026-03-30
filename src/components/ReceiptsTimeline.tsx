@@ -91,18 +91,29 @@ const PATTERN_ICONS: Record<string, typeof AlertTriangle> = {
 
 // ─── Source Tier Config (Ground News inspired) ───
 
+const GOV_TIER = { tier: "Gov", color: "bg-[hsl(var(--civic-green))]/10 text-[hsl(var(--civic-green))] border-[hsl(var(--civic-green))]/30" };
+const WATCHDOG_TIER = { tier: "Watchdog", color: "bg-primary/10 text-primary border-primary/30" };
+const MEDIA_TIER = { tier: "Media", color: "bg-[hsl(var(--civic-blue))]/10 text-[hsl(var(--civic-blue))] border-[hsl(var(--civic-blue))]/30" };
+
 const SOURCE_TIER_CONFIG: Record<string, { tier: string; color: string }> = {
-  "FEC":           { tier: "Gov", color: "bg-[hsl(var(--civic-green))]/10 text-[hsl(var(--civic-green))] border-[hsl(var(--civic-green))]/30" },
-  "SEC":           { tier: "Gov", color: "bg-[hsl(var(--civic-green))]/10 text-[hsl(var(--civic-green))] border-[hsl(var(--civic-green))]/30" },
-  "SEC EDGAR":     { tier: "Gov", color: "bg-[hsl(var(--civic-green))]/10 text-[hsl(var(--civic-green))] border-[hsl(var(--civic-green))]/30" },
-  "BLS":           { tier: "Gov", color: "bg-[hsl(var(--civic-green))]/10 text-[hsl(var(--civic-green))] border-[hsl(var(--civic-green))]/30" },
-  "Senate LDA":    { tier: "Gov", color: "bg-[hsl(var(--civic-green))]/10 text-[hsl(var(--civic-green))] border-[hsl(var(--civic-green))]/30" },
-  "WARN":          { tier: "Gov", color: "bg-[hsl(var(--civic-green))]/10 text-[hsl(var(--civic-green))] border-[hsl(var(--civic-green))]/30" },
-  "USASpending":   { tier: "Gov", color: "bg-[hsl(var(--civic-green))]/10 text-[hsl(var(--civic-green))] border-[hsl(var(--civic-green))]/30" },
-  "CourtListener": { tier: "Gov", color: "bg-[hsl(var(--civic-green))]/10 text-[hsl(var(--civic-green))] border-[hsl(var(--civic-green))]/30" },
-  "PACER":         { tier: "Gov", color: "bg-[hsl(var(--civic-green))]/10 text-[hsl(var(--civic-green))] border-[hsl(var(--civic-green))]/30" },
-  "GDELT":         { tier: "Media", color: "bg-[hsl(var(--civic-blue))]/10 text-[hsl(var(--civic-blue))] border-[hsl(var(--civic-blue))]/30" },
-  "NewsAPI":       { tier: "Media", color: "bg-[hsl(var(--civic-blue))]/10 text-[hsl(var(--civic-blue))] border-[hsl(var(--civic-blue))]/30" },
+  // Government Tier 1
+  "FEC": GOV_TIER, "SEC": GOV_TIER, "SEC EDGAR": GOV_TIER, "BLS": GOV_TIER,
+  "Senate LDA": GOV_TIER, "WARN": GOV_TIER, "USASpending": GOV_TIER,
+  "CourtListener": GOV_TIER, "PACER": GOV_TIER, "OGE": GOV_TIER,
+  "FARA": GOV_TIER, "IRS": GOV_TIER, "OSHA": GOV_TIER, "NLRB": GOV_TIER,
+  "EPA": GOV_TIER, "CFPB": GOV_TIER, "Census": GOV_TIER, "FRED": GOV_TIER,
+
+  // Watchdog & OSINT
+  "OpenSecrets": WATCHDOG_TIER, "LittleSis": WATCHDOG_TIER,
+  "SPLC": WATCHDOG_TIER, "ADL": WATCHDOG_TIER, "HRC": WATCHDOG_TIER,
+  "POGO": WATCHDOG_TIER, "Revolving Door Project": WATCHDOG_TIER,
+  "LegiStorm": WATCHDOG_TIER, "Candid": WATCHDOG_TIER,
+  "GuideStar": WATCHDOG_TIER, "PRRI": WATCHDOG_TIER,
+  "ProPublica": WATCHDOG_TIER, "Bellingcat": WATCHDOG_TIER,
+
+  // Media Monitoring
+  "GDELT": MEDIA_TIER, "NewsAPI": MEDIA_TIER, "Ground News": MEDIA_TIER,
+  "OpenCorporates": MEDIA_TIER,
 };
 
 function getSourceTier(sourceName: string): { tier: string; color: string } | null {
@@ -110,13 +121,22 @@ function getSourceTier(sourceName: string): { tier: string; color: string } | nu
   if (SOURCE_TIER_CONFIG[sourceName]) return SOURCE_TIER_CONFIG[sourceName];
   // Partial match
   const lower = sourceName.toLowerCase();
-  if (lower.includes("fec") || lower.includes("election")) return SOURCE_TIER_CONFIG["FEC"];
-  if (lower.includes("sec") || lower.includes("edgar")) return SOURCE_TIER_CONFIG["SEC"];
-  if (lower.includes("court") || lower.includes("pacer")) return SOURCE_TIER_CONFIG["CourtListener"];
-  if (lower.includes("warn")) return SOURCE_TIER_CONFIG["WARN"];
-  if (lower.includes("lda") || lower.includes("lobby")) return SOURCE_TIER_CONFIG["Senate LDA"];
-  if (lower.includes("gdelt")) return SOURCE_TIER_CONFIG["GDELT"];
-  if (lower.includes("usa") || lower.includes("spending")) return SOURCE_TIER_CONFIG["USASpending"];
+  if (lower.includes("fec") || lower.includes("election")) return GOV_TIER;
+  if (lower.includes("sec") || lower.includes("edgar")) return GOV_TIER;
+  if (lower.includes("court") || lower.includes("pacer")) return GOV_TIER;
+  if (lower.includes("warn")) return GOV_TIER;
+  if (lower.includes("lda") || lower.includes("lobby")) return GOV_TIER;
+  if (lower.includes("osha") || lower.includes("nlrb")) return GOV_TIER;
+  if (lower.includes("epa") || lower.includes("cfpb")) return GOV_TIER;
+  if (lower.includes("usa") || lower.includes("spending")) return GOV_TIER;
+  if (lower.includes("oge") || lower.includes("ethics")) return GOV_TIER;
+  if (lower.includes("fara") || lower.includes("foreign agent")) return GOV_TIER;
+  if (lower.includes("irs") || lower.includes("990")) return GOV_TIER;
+  if (lower.includes("opensecrets") || lower.includes("littlesis")) return WATCHDOG_TIER;
+  if (lower.includes("splc") || lower.includes("adl")) return WATCHDOG_TIER;
+  if (lower.includes("pogo") || lower.includes("oversight")) return WATCHDOG_TIER;
+  if (lower.includes("propublica") || lower.includes("bellingcat")) return WATCHDOG_TIER;
+  if (lower.includes("gdelt") || lower.includes("news")) return MEDIA_TIER;
   return null;
 }
 

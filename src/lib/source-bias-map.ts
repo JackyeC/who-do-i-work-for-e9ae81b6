@@ -107,6 +107,78 @@ const SOURCE_BIAS_DB: Record<string, SourceProfile> = {
   "harvard school of engineering and applied sciences": { bias: "Center", factuality: "High" },
   "plos.org": { bias: "Center", factuality: "High" },
 
+  // -- Government Records & Official Databases --
+  "sec edgar": { bias: "Center", factuality: "High" },
+  "fec": { bias: "Center", factuality: "High" },
+  "openfec": { bias: "Center", factuality: "High" },
+  "usaspending": { bias: "Center", factuality: "High" },
+  "usaspending.gov": { bias: "Center", factuality: "High" },
+  "lda": { bias: "Center", factuality: "High" },
+  "lda.gov": { bias: "Center", factuality: "High" },
+  "pacer": { bias: "Center", factuality: "High" },
+  "courtlistener": { bias: "Center", factuality: "High" },
+  "osha": { bias: "Center", factuality: "High" },
+  "nlrb": { bias: "Center", factuality: "High" },
+  "epa echo": { bias: "Center", factuality: "High" },
+  "cfpb": { bias: "Center", factuality: "High" },
+  "warn act": { bias: "Center", factuality: "High" },
+  "data.gov": { bias: "Center", factuality: "High" },
+  "census.gov": { bias: "Center", factuality: "High" },
+  "fred": { bias: "Center", factuality: "High" },
+
+  // -- Government Ethics & Disclosure --
+  "oge": { bias: "Center", factuality: "High" },
+  "office of government ethics": { bias: "Center", factuality: "High" },
+  "fara": { bias: "Center", factuality: "High" },
+  "foreign agents registration act": { bias: "Center", factuality: "High" },
+  "irs form 990": { bias: "Center", factuality: "High" },
+
+  // -- OSINT & Investigation Tools --
+  "opensecrets": { bias: "Center", factuality: "High" },
+  "opensecrets.org": { bias: "Center", factuality: "High" },
+  "opencorporates": { bias: "Center", factuality: "High" },
+  "littlesis": { bias: "Center", factuality: "High" },
+  "littlesis.org": { bias: "Center", factuality: "High" },
+  "propublica": { bias: "Lean Left", factuality: "High" },
+  "propublica nonprofit explorer": { bias: "Center", factuality: "High" },
+  "bellingcat": { bias: "Center", factuality: "High" },
+  "pogo": { bias: "Center", factuality: "High" },
+  "project on government oversight": { bias: "Center", factuality: "High" },
+  "revolving door project": { bias: "Lean Left", factuality: "High" },
+  "legistorm": { bias: "Center", factuality: "High" },
+  "candid": { bias: "Center", factuality: "High" },
+  "foundation center": { bias: "Center", factuality: "High" },
+  "guidestar": { bias: "Center", factuality: "High" },
+
+  // -- Watchdog & Civil Rights Organizations --
+  "splc": { bias: "Lean Left", factuality: "High" },
+  "southern poverty law center": { bias: "Lean Left", factuality: "High" },
+  "adl": { bias: "Center", factuality: "High" },
+  "anti-defamation league": { bias: "Center", factuality: "High" },
+  "hrc": { bias: "Lean Left", factuality: "High" },
+  "human rights campaign": { bias: "Lean Left", factuality: "High" },
+  "prri": { bias: "Center", factuality: "High" },
+  "public religion research institute": { bias: "Center", factuality: "High" },
+
+  // -- Academic & International Data --
+  "world bank": { bias: "Center", factuality: "High" },
+  "imf": { bias: "Center", factuality: "High" },
+  "oecd": { bias: "Center", factuality: "High" },
+  "eurostat": { bias: "Center", factuality: "High" },
+  "who": { bias: "Center", factuality: "High" },
+  "ipums": { bias: "Center", factuality: "High" },
+  "dryad": { bias: "Center", factuality: "High" },
+  "dataone": { bias: "Center", factuality: "High" },
+  "icpsr": { bias: "Center", factuality: "High" },
+
+  // -- Media Monitoring --
+  "gdelt": { bias: "Center", factuality: "High" },
+  "newsapi": { bias: "Center", factuality: "Mixed" },
+  "ground news": { bias: "Center", factuality: "High" },
+  "allsides": { bias: "Center", factuality: "High" },
+  "media bias fact check": { bias: "Center", factuality: "High" },
+  "ad fontes media": { bias: "Center", factuality: "High" },
+
   // -- Industry / Trade --
   "globenewswire": { bias: "Center", factuality: "High" },
   "oilprice.com": { bias: "Lean Right", factuality: "Mixed" },
