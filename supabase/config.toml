@@ -151,3 +151,6 @@ verify_jwt = false
 
 [functions.linkedin-share-certificate]
 verify_jwt = false
+
+[functions.jackyefy-news]
+verify_jwt = false
