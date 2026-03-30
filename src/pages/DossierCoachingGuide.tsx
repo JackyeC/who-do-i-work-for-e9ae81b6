@@ -686,6 +686,8 @@ export default function DossierCoachingGuide() {
           <SignedIn>
             <FullDossierContent data={data} />
           </SignedIn>
+            </>
+          )}
         </div>
       </div>
     </>
