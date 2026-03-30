@@ -1,7 +1,9 @@
-import { useState, useRef } from "react";
-import { Download, Share2, Linkedin, Twitter, Link2, Check, X, Shield } from "lucide-react";
+import { useState, useRef, useEffect } from "react";
+import { Download, Linkedin, Twitter, Link2, Check } from "lucide-react";
 import { toast } from "@/hooks/use-toast";
 import html2canvas from "html2canvas";
+import logoSquare from "@/assets/wdiwf-logo-square.png";
+import logoNav from "@/assets/wdiwf-logo-nav-light.png";
 
 interface FoundingMemberBadgeProps {
   memberName?: string;
@@ -13,7 +15,7 @@ interface FoundingMemberBadgeProps {
 /**
  * Founding Member shareable badge card
  * Pre-launch signups get a numbered badge they can download & share
- * Creates urgency + social proof for wdiwf.jackyeclayton.com April 6 launch
+ * Uses the real WDIWF logo assets and brand colors
  */
 export function FoundingMemberBadge({
   memberName,
@@ -24,6 +26,7 @@ export function FoundingMemberBadge({
   const cardRef = useRef<HTMLDivElement>(null);
   const [downloading, setDownloading] = useState(false);
   const [copied, setCopied] = useState(false);
+  const [imagesLoaded, setImagesLoaded] = useState(false);
 
   const BASE_URL = "https://wdiwf.jackyeclayton.com";
   const displayNumber = memberNumber
@@ -37,15 +40,35 @@ export function FoundingMemberBadge({
       })
     : "Pre-Launch 2026";
 
+  // Pre-load logo images so html2canvas captures them correctly
+  useEffect(() => {
+    const imgs = [logoSquare, logoNav];
+    let loaded = 0;
+    imgs.forEach((src) => {
+      const img = new Image();
+      img.crossOrigin = "anonymous";
+      img.onload = () => {
+        loaded++;
+        if (loaded === imgs.length) setImagesLoaded(true);
+      };
+      img.onerror = () => {
+        loaded++;
+        if (loaded === imgs.length) setImagesLoaded(true);
+      };
+      img.src = src;
+    });
+  }, []);
+
   const handleDownload = async () => {
     if (!cardRef.current) return;
     setDownloading(true);
     try {
       const canvas = await html2canvas(cardRef.current, {
         backgroundColor: "#0a0a0e",
-        scale: 2,
+        scale: 3,
         useCORS: true,
         allowTaint: true,
+        logging: false,
       });
       const link = document.createElement("a");
       link.href = canvas.toDataURL("image/png");
@@ -95,6 +118,21 @@ export function FoundingMemberBadge({
     });
   };
 
+  /* ── Brand color tokens (from index.css dark mode) ── */
+  const BRAND = {
+    gold: "#E6A817",         // civic-gold: hsl(43, 85%, 50%)
+    goldBright: "#F0C040",   // dark mode primary: hsl(43, 85%, 59%)
+    bg: "#0a0a0e",           // dark mode background
+    fg: "#f0ebe0",           // dark mode foreground (warm off-white)
+    fgMuted: "rgba(240,235,224,0.6)",
+    fgSubtle: "rgba(240,235,224,0.45)",
+    goldAlpha20: "rgba(240,192,64,0.2)",
+    goldAlpha30: "rgba(240,192,64,0.3)",
+    goldAlpha40: "rgba(240,192,64,0.4)",
+    goldAlpha60: "rgba(240,192,64,0.6)",
+    goldAlpha80: "rgba(240,192,64,0.8)",
+  };
+
   return (
     <div className="fixed inset-0 bg-black/80 flex items-center justify-center p-4 z-50">
       <div className="w-full max-w-lg max-h-[90vh] overflow-y-auto">
@@ -103,57 +141,32 @@ export function FoundingMemberBadge({
           ref={cardRef}
           className="w-full rounded-2xl overflow-hidden"
           style={{
-            backgroundColor: "#0a0a0e",
-            border: "1px solid rgba(240,192,64,0.25)",
-            boxShadow: "0 0 60px rgba(240,192,64,0.08), inset 0 1px 0 rgba(240,192,64,0.15)",
+            backgroundColor: BRAND.bg,
+            border: `1px solid ${BRAND.goldAlpha30}`,
+            boxShadow: `0 0 60px rgba(240,192,64,0.08), inset 0 1px 0 rgba(240,192,64,0.15)`,
           }}
         >
-          <div className="p-8 pb-6">
-            {/* Top row: W? logo + FOUNDING MEMBER label */}
+          <div style={{ padding: "32px 32px 24px" }}>
+            {/* Top row: Real logo + member number */}
             <div
               style={{
                 display: "flex",
                 justifyContent: "space-between",
-                alignItems: "flex-start",
+                alignItems: "center",
                 marginBottom: 32,
               }}
             >
-              <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
-                <div
-                  style={{
-                    width: 36,
-                    height: 36,
-                    borderRadius: "50%",
-                    backgroundColor: "#f0c040",
-                    display: "flex",
-                    alignItems: "center",
-                    justifyContent: "center",
-                    fontFamily: "'DM Sans', system-ui, sans-serif",
-                    fontWeight: 800,
-                    fontSize: "16px",
-                    color: "#0a0a0e",
-                  }}
-                >
-                  W?
-                </div>
-                <span
-                  style={{
-                    fontFamily: "'DM Sans', system-ui, sans-serif",
-                    fontSize: "14px",
-                    fontWeight: 600,
-                    color: "rgba(240,235,224,0.8)",
-                  }}
-                >
-                  Who Do I Work For?
-                </span>
-              </div>
-
-              {/* Member number */}
+              <img
+                src={logoNav}
+                alt="Who Do I Work For?"
+                crossOrigin="anonymous"
+                style={{ height: 28, display: "block" }}
+              />
               <span
                 style={{
                   fontFamily: "'DM Mono', monospace",
                   fontSize: "13px",
-                  color: "#f0c040",
+                  color: BRAND.goldBright,
                   letterSpacing: "0.05em",
                   fontWeight: 500,
                 }}
@@ -162,34 +175,33 @@ export function FoundingMemberBadge({
               </span>
             </div>
 
-            {/* Shield icon + FOUNDING MEMBER */}
+            {/* Center: Square logo icon + FOUNDING MEMBER */}
             <div style={{ textAlign: "center", marginBottom: 28 }}>
               <div
                 style={{
-                  width: 64,
-                  height: 64,
+                  width: 72,
+                  height: 72,
                   margin: "0 auto 16px",
-                  borderRadius: "50%",
-                  border: "2px solid rgba(240,192,64,0.4)",
+                  borderRadius: 16,
+                  border: `2px solid ${BRAND.goldAlpha40}`,
                   display: "flex",
                   alignItems: "center",
                   justifyContent: "center",
-                  background: "radial-gradient(circle, rgba(240,192,64,0.1) 0%, transparent 70%)",
+                  background: `radial-gradient(circle, rgba(240,192,64,0.08) 0%, transparent 70%)`,
+                  overflow: "hidden",
                 }}
               >
-                <svg
-                  width="28"
-                  height="28"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="#f0c040"
-                  strokeWidth="1.5"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                >
-                  <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" />
-                  <path d="M9 12l2 2 4-4" />
-                </svg>
+                <img
+                  src={logoSquare}
+                  alt="W?"
+                  crossOrigin="anonymous"
+                  style={{
+                    width: 52,
+                    height: 52,
+                    objectFit: "contain",
+                    display: "block",
+                  }}
+                />
               </div>
 
               <p
@@ -199,7 +211,7 @@ export function FoundingMemberBadge({
                   fontWeight: 500,
                   letterSpacing: "0.2em",
                   textTransform: "uppercase",
-                  color: "#f0c040",
+                  color: BRAND.goldBright,
                   marginBottom: 8,
                 }}
               >
@@ -212,7 +224,7 @@ export function FoundingMemberBadge({
                   fontSize: "28px",
                   fontWeight: 700,
                   lineHeight: 1.2,
-                  color: "#f0ebe0",
+                  color: BRAND.fg,
                   letterSpacing: "-0.5px",
                   marginBottom: 6,
                 }}
@@ -224,7 +236,7 @@ export function FoundingMemberBadge({
                 style={{
                   fontFamily: "'DM Sans', system-ui, sans-serif",
                   fontSize: "13px",
-                  color: "rgba(240,235,224,0.5)",
+                  color: BRAND.fgSubtle,
                 }}
               >
                 Joined {displayDate}
@@ -235,8 +247,7 @@ export function FoundingMemberBadge({
             <div
               style={{
                 height: 1,
-                background:
-                  "linear-gradient(90deg, transparent 0%, rgba(240,192,64,0.4) 50%, transparent 100%)",
+                background: `linear-gradient(90deg, transparent 0%, ${BRAND.goldAlpha40} 50%, transparent 100%)`,
                 marginBottom: 20,
               }}
             />
@@ -247,7 +258,7 @@ export function FoundingMemberBadge({
                 fontFamily: "'DM Sans', system-ui, sans-serif",
                 fontSize: "14px",
                 lineHeight: 1.7,
-                color: "rgba(240,235,224,0.65)",
+                color: BRAND.fgMuted,
                 textAlign: "center",
                 marginBottom: 24,
               }}
@@ -257,7 +268,7 @@ export function FoundingMemberBadge({
               I'm here before the launch because transparency can't wait.
             </p>
 
-            {/* Footer: launch date + CTA */}
+            {/* Footer: launch date + URL */}
             <div
               style={{
                 display: "flex",
@@ -270,7 +281,7 @@ export function FoundingMemberBadge({
                   fontFamily: "'DM Mono', monospace",
                   fontSize: "11px",
                   letterSpacing: "0.1em",
-                  color: "rgba(240,192,64,0.6)",
+                  color: BRAND.goldAlpha60,
                   textTransform: "uppercase",
                 }}
               >
@@ -281,7 +292,7 @@ export function FoundingMemberBadge({
                   fontFamily: "'DM Mono', monospace",
                   fontSize: "11px",
                   letterSpacing: "0.05em",
-                  color: "rgba(240,235,224,0.4)",
+                  color: BRAND.fgSubtle,
                 }}
               >
                 wdiwf.jackyeclayton.com
@@ -292,30 +303,28 @@ export function FoundingMemberBadge({
 
         {/* ── Action Buttons (not captured in PNG) ── */}
         <div className="mt-6 flex flex-col gap-3 p-4">
-          {/* Download */}
           <button
             onClick={handleDownload}
-            disabled={downloading}
+            disabled={downloading || !imagesLoaded}
             className="w-full flex items-center justify-center gap-2 px-4 py-3 rounded-lg font-medium transition-all"
             style={{
-              background: "#f0c040",
-              color: "#0a0a0e",
+              background: BRAND.goldBright,
+              color: BRAND.bg,
               opacity: downloading ? 0.7 : 1,
               cursor: downloading ? "not-allowed" : "pointer",
             }}
           >
             <Download className="w-4 h-4" />
-            {downloading ? "Generating..." : "Download Badge"}
+            {downloading ? "Generating..." : !imagesLoaded ? "Loading..." : "Download Badge"}
           </button>
 
-          {/* Share row */}
           <div className="grid grid-cols-3 gap-2">
             <button
               onClick={handleShareLinkedIn}
               className="flex items-center justify-center gap-2 px-3 py-3 rounded-lg border transition-colors"
               style={{
-                borderColor: "rgba(240,192,64,0.3)",
-                color: "#f0c040",
+                borderColor: BRAND.goldAlpha30,
+                color: BRAND.goldBright,
                 background: "transparent",
               }}
               title="Share on LinkedIn"
@@ -328,8 +337,8 @@ export function FoundingMemberBadge({
               onClick={handleShareTwitter}
               className="flex items-center justify-center gap-2 px-3 py-3 rounded-lg border transition-colors"
               style={{
-                borderColor: "rgba(240,192,64,0.3)",
-                color: "#f0c040",
+                borderColor: BRAND.goldAlpha30,
+                color: BRAND.goldBright,
                 background: "transparent",
               }}
               title="Share on Twitter"
@@ -342,8 +351,8 @@ export function FoundingMemberBadge({
               onClick={handleCopyLink}
               className="flex items-center justify-center gap-2 px-3 py-3 rounded-lg border transition-colors"
               style={{
-                borderColor: copied ? "rgba(76,175,80,0.5)" : "rgba(240,192,64,0.3)",
-                color: copied ? "#4caf50" : "#f0c040",
+                borderColor: copied ? "rgba(76,175,80,0.5)" : BRAND.goldAlpha30,
+                color: copied ? "#4caf50" : BRAND.goldBright,
                 background: "transparent",
               }}
               title="Copy to clipboard"
@@ -355,14 +364,13 @@ export function FoundingMemberBadge({
             </button>
           </div>
 
-          {/* Close */}
           {onClose && (
             <button
               onClick={onClose}
               className="w-full px-4 py-3 rounded-lg border transition-colors"
               style={{
                 borderColor: "rgba(255,255,255,0.1)",
-                color: "rgba(240,235,224,0.6)",
+                color: BRAND.fgMuted,
                 background: "transparent",
               }}
             >
