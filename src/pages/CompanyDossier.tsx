@@ -1,4 +1,5 @@
 import { useMemo, useState } from "react";
+import { WarningLabelView } from "@/components/dossier/WarningLabelView";
 import { ContentProtector } from "@/components/ContentProtector";
 import { useParams, Link, useNavigate } from "react-router-dom";
 import { CompanyZeroState } from "@/components/CompanyZeroState";
@@ -69,6 +70,7 @@ export default function CompanyDossier() {
   const { isCompanyTracked } = useTrackedCompanies();
   const { canAccessRecruiter } = useViewMode();
   const { lens } = useDossierLens();
+  const [dossierView, setDossierView] = useState<"warning" | "layers">("warning");
 
   const { data: company, isLoading } = useQuery({
     queryKey: ["dossier-company", id],
@@ -283,64 +285,91 @@ export default function CompanyDossier() {
         <LensIcon className={`w-4 h-4 ${LensMeta.color}`} />
         <span className="text-sm font-medium text-foreground">{LensMeta.label}</span>
         <span className="text-xs text-muted-foreground ml-1">— viewing dossier through this lens. Switch via header toggle.</span>
+        <div className="ml-auto flex items-center gap-1 bg-muted/50 rounded-lg p-0.5">
+          <button
+            onClick={() => setDossierView("warning")}
+            className={`px-3 py-1 rounded-md text-xs font-mono font-semibold transition-colors ${dossierView === "warning" ? "bg-primary text-primary-foreground" : "text-muted-foreground hover:text-foreground"}`}
+          >
+            ⚠️ Warning Label
+          </button>
+          <button
+            onClick={() => setDossierView("layers")}
+            className={`px-3 py-1 rounded-md text-xs font-mono font-semibold transition-colors ${dossierView === "layers" ? "bg-primary text-primary-foreground" : "text-muted-foreground hover:text-foreground"}`}
+          >
+            📋 Deep Dive
+          </button>
+        </div>
       </div>
 
       {/* Situation-Aware Context Banner */}
       <TrustFramingLine />
       <SituationContextBanner companyName={company.name} />
 
-      {/* Score gauges */}
-      <div className="grid grid-cols-2 md:grid-cols-4 gap-6 mb-8 p-6 rounded-2xl border border-border/40 bg-card">
-        <InfluenceGauge value={influenceScore} label="Influence Score" />
-        <InfluenceGauge value={0} label="Innovation Score" />
-        <InfluenceGauge value={0} label="Stability Score" />
-        <InfluenceGauge value={0} label="Attraction Score" />
-      </div>
-
-      {/* Jackye's Insight — shared component */}
-      <JackyesInsightBlock insight={company.jackye_insight} description={(company as any)?.description} />
-
-      {/* No-data fallback */}
-      {hasNoData && (
-        <Card className="mb-6 border-dashed border-border/60 bg-muted/20">
-          <CardContent className="p-6 text-center">
-            <FileSearch className="w-10 h-10 text-muted-foreground mx-auto mb-3" />
-            <h3 className="text-base font-semibold text-foreground mb-1">We don't have receipts on this company yet.</h3>
-            <p className="text-sm text-muted-foreground mb-4 max-w-md mx-auto">
-              Our research team hasn't completed a full scan. You can request one or run an automated scan now.
-            </p>
-            <div className="flex flex-col items-center gap-4">
-              <CompanyZeroState companyName={company.name} />
-              <AuditRequestForm companyName={company.name} />
-            </div>
-          </CardContent>
-        </Card>
-      )}
-
-      {/* Layer 1: Basics — always shown */}
-      <DossierLayer title="Basics" subtitle="Products, markets, segments, and company overview" icon={Building2} layerNumber={1} defaultOpen>
-        <div className="space-y-6">
-          {company.description && (
-            <p className="text-body text-muted-foreground leading-relaxed">{company.description}</p>
-          )}
-          <ProductsPlatformsLayer products={[]} companyName={company.name} />
-          <MarketsSegmentsLayer segments={[]} companyName={company.name} />
-        </div>
-      </DossierLayer>
-
-      {/* Innovation — always visible */}
-      <DossierLayer title="Innovation & Patents" subtitle="Stock timeline, patent clusters, R&D themes" icon={Lightbulb} layerNumber={2}>
-        <div className="space-y-8">
-          <StockPatentsLayer companyId={companyId!} companyName={company.name} unlocked={hasFullAccess} />
-          <div className="border-t border-border/30 pt-6">
-            <InnovationPatentsLayer totalPatents={0} clusters={[]} companyName={company.name} companyId={companyId} unlocked={hasFullAccess} />
+      {dossierView === "warning" ? (
+        <WarningLabelView
+          company={company as any}
+          executives={executives as any}
+          contracts={contracts as any}
+          issueSignals={issueSignals as any}
+          publicStances={publicStances as any}
+          eeocCases={eeocCases as any}
+        />
+      ) : (
+        <>
+          {/* Score gauges */}
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-6 mb-8 p-6 rounded-2xl border border-border/40 bg-card">
+            <InfluenceGauge value={influenceScore} label="Influence Score" />
+            <InfluenceGauge value={0} label="Innovation Score" />
+            <InfluenceGauge value={0} label="Stability Score" />
+            <InfluenceGauge value={0} label="Attraction Score" />
           </div>
-        </div>
-      </DossierLayer>
 
-      {/* EEOC Enforcement Alert */}
-      {eeocCases && eeocCases.length > 0 && (
-        <EEOCCaseAlert cases={eeocCases} />
+          {/* Jackye's Insight — shared component */}
+          <JackyesInsightBlock insight={company.jackye_insight} description={(company as any)?.description} />
+
+          {/* No-data fallback */}
+          {hasNoData && (
+            <Card className="mb-6 border-dashed border-border/60 bg-muted/20">
+              <CardContent className="p-6 text-center">
+                <FileSearch className="w-10 h-10 text-muted-foreground mx-auto mb-3" />
+                <h3 className="text-base font-semibold text-foreground mb-1">We don't have receipts on this company yet.</h3>
+                <p className="text-sm text-muted-foreground mb-4 max-w-md mx-auto">
+                  Our research team hasn't completed a full scan. You can request one or run an automated scan now.
+                </p>
+                <div className="flex flex-col items-center gap-4">
+                  <CompanyZeroState companyName={company.name} />
+                  <AuditRequestForm companyName={company.name} />
+                </div>
+              </CardContent>
+            </Card>
+          )}
+
+          {/* Layer 1: Basics — always shown */}
+          <DossierLayer title="Basics" subtitle="Products, markets, segments, and company overview" icon={Building2} layerNumber={1} defaultOpen>
+            <div className="space-y-6">
+              {company.description && (
+                <p className="text-body text-muted-foreground leading-relaxed">{company.description}</p>
+              )}
+              <ProductsPlatformsLayer products={[]} companyName={company.name} />
+              <MarketsSegmentsLayer segments={[]} companyName={company.name} />
+            </div>
+          </DossierLayer>
+
+          {/* Innovation — always visible */}
+          <DossierLayer title="Innovation & Patents" subtitle="Stock timeline, patent clusters, R&D themes" icon={Lightbulb} layerNumber={2}>
+            <div className="space-y-8">
+              <StockPatentsLayer companyId={companyId!} companyName={company.name} unlocked={hasFullAccess} />
+              <div className="border-t border-border/30 pt-6">
+                <InnovationPatentsLayer totalPatents={0} clusters={[]} companyName={company.name} companyId={companyId} unlocked={hasFullAccess} />
+              </div>
+            </div>
+          </DossierLayer>
+
+          {/* EEOC Enforcement Alert */}
+          {eeocCases && eeocCases.length > 0 && (
+            <EEOCCaseAlert cases={eeocCases} />
+          )}
+        </>
       )}
     </>
   );
