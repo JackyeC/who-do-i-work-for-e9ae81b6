@@ -31,8 +31,9 @@ export function SignupModal({
   const { connectLinkedIn } = useLinkedIn();
 
   const handleGoogle = async () => {
-    const { error } = await supabase.auth.signInWithOAuth("google", {
-      redirectTo: window.location.origin,
+    const { error } = await supabase.auth.signInWithOAuth({
+      provider: "google",
+      options: { redirectTo: window.location.origin },
     });
     if (error) {
       toast({ title: "Google sign-in failed", description: String(error), variant: "destructive" });

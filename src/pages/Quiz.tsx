@@ -835,6 +835,7 @@ function ResultsScreen({
   onReset: () => void;
   onCopy: () => void;
 }) {
+  const [showShareModal, setShowShareModal] = useState(false);
   const profile = PERSONA_PROFILES[result.primary];
   const secondaryProfile = PERSONA_PROFILES[result.secondary];
   const showNepotism = result.meta.nepotism_concern === "high";

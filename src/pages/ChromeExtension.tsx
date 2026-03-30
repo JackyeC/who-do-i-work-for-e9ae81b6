@@ -49,7 +49,7 @@ function ProWaitlistBanner() {
     if (!email) return;
     setLoading(true);
     try {
-      const { error } = await supabase.from("pro_waitlist").insert({ email, source: "chrome-extension-page" });
+      const { error } = await (supabase as any).from("pro_waitlist").insert({ email, source: "chrome-extension-page" });
       if (error && error.code === "23505") {
         toast.success("You're already on the list!");
       } else if (error) {
