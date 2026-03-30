@@ -86,8 +86,8 @@ export function LiveIntelligenceTicker() {
     const catLabel = CATEGORY_LABELS[item.category] || "NEWS";
 
     const headlineText =
-      item.headline.length > 110
-        ? item.headline.slice(0, 110) + "\u2026"
+      item.headline.length > 70
+        ? item.headline.slice(0, 70) + "\u2026"
         : item.headline;
 
     return (

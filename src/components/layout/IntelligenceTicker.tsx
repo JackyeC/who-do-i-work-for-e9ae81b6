@@ -12,7 +12,7 @@ export function IntelligenceTicker() {
   const totalChars = hasRealItems
     ? items.reduce((sum, i) => sum + (i.company_name?.length || 0) + i.message.length + (i.source_tag?.length || 0) + 10, 0)
     : FALLBACK_MESSAGE.length;
-  const duration = Math.max(60, Math.min((totalChars * 18) / 60, 180));
+  const duration = Math.max(120, Math.min((totalChars * 18) / 40, 300));
 
   return (
     <div
