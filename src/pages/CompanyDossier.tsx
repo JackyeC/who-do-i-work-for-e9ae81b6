@@ -306,6 +306,11 @@ export default function CompanyDossier() {
       <TrustFramingLine />
       <SituationContextBanner companyName={company.name} />
 
+      {/* WDIWF Clarity Engine */}
+      <div className="mb-6">
+        <ClarityEngine companyId={companyId} companyName={company.name} />
+      </div>
+
       {dossierView === "warning" ? (
         <WarningLabelView
           company={company as any}
