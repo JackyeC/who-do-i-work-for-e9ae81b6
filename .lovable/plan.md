@@ -1,106 +1,58 @@
 
 
-# Job Board Overhaul — Inspired by 80,000 Hours
+# Candidate Prep Pack — Dossier Overhaul
 
-## What 80,000 Hours Does Well
+## The Problem
+The dossier pages show raw data layers and generic scores but don't help a candidate actually **prepare** for an interview or meeting. The Warning Label view has good bones (Verdict, Pulse, Money Trail, Influence Map, Action Items) but is missing the "here's exactly what to say/ask/avoid" prep that Gemini outlined.
 
-The 80,000 Hours job board has a clear, powerful layout:
-- **Three tabs**: Search Jobs / Explore Organisations / Recommended Jobs
-- **Rich filter sidebar**: Areas (with counts), Country/Region, Experience, Education, Skill Set, Role Type, Salary, Organisation — all with item counts
-- **Clean job cards**: Company logo, title, company name, location, category tags, experience level badges, "Highlighted role" badge, relative date
-- **Keyword search** with keyboard shortcut
-- **Job alerts** subscription
-- **782 roles** with count displayed prominently
+## What to Build
 
-## Current State of WDIWF Job Board
+### 1. New "Candidate Prep Pack" component
+A new `src/components/dossier/CandidatePrepPack.tsx` that uses the Clarity Engine edge function (already built) to generate **real, company-specific** prep content. This is NOT static/fake data — it calls AI with the company's actual receipts.
 
-You currently have **three separate job pages** that are fragmented:
-1. `/jobs` → `JobIntegrityBoard` — the real board with database jobs, filters, integrity cards
-2. `/job-board` → redirects to `/jobs`
-3. `JobBoardEmbed` — an old Cavuno iframe embed (dead)
-4. External RSS feed component (`ExternalJobFeed`) pulling from We Work Remotely, Remotive, Himalayas
+**Sections (locked labels, every company):**
+- **30-Second Reality Check** — one paragraph briefing
+- **Top 5 Receipts You Should Know** — bullet list from real data (EEOC, lobbying, WARN, fines, Say-vs-Do gaps)
+- **Say / Ask / Avoid** — 3 columns of talk tracks derived from receipts
+- **Red / Yellow / Green Flags** — quick-glance summary of integrity, labor, political, DEI signals
+- **Day 90 Reality** — what the first 90 days feel like based on patterns
 
-The existing `JobIntegrityBoard` already has good bones (search, filter chips, clarity scores, values alignment) but the layout is a basic two-column card grid without the polished structure 80K Hours has.
+### 2. Role-Aware Lens
+Add a simple role picker inside the prep pack: **General / Engineering / People & HR / Sales / Leadership**. This slightly adjusts the AI prompt to customize questions and framing per function.
 
-## Proposed Overhaul
+### 3. "Forward to Candidate" Button
+A one-click export that generates a stripped-down brief (no pricing, no product language) with: 30-second brief, top 5 receipts, 5 questions to ask. Uses the existing `ExportDossierButton` pattern but outputs a candidate-friendly version.
 
-### 1. Three-Tab Navigation (like 80K Hours)
+### 4. Integration into Dossier Page
+Add a third view toggle alongside "Warning Label" and "Deep Dive":
+- ⚠️ Warning Label
+- 📋 Deep Dive  
+- 🎯 **Interview Prep**
 
-Replace the current single-view layout with tabs:
-- **Search Jobs** — the current filtered job list, redesigned
-- **Explore Companies** — browse companies in the database, with clarity scores and dossier links
-- **Recommended** — personalized matches based on user's Work DNA quiz + job preferences (requires auth)
+When "Interview Prep" is selected, show the `CandidatePrepPack` instead of the current views.
 
-### 2. Redesigned Filter Panel
+## Technical Details
 
-Replace the current collapsible filter area with a persistent **sidebar on desktop** (sheet on mobile):
-- **Problem Areas** with counts (mapped to your data categories: Labor Policy, Climate, Equity, etc.)
-- **Location / Region** with counts
-- **Work Mode** (Remote, Hybrid, On-site)
-- **Seniority Level** with counts
-- **Department** with counts  
-- **Salary Range** slider
-- **Trust Level** (your existing vetted_status filter)
-- **Intelligence Chips** kept as quick-toggles at the top: Pay Transparent, High Clarity, Values Aligned, Fresh Only
+### New Edge Function: `candidate-prep-pack`
+Similar to the existing `clarity-engine` function but with a different prompt focused on the Gemini-defined structure (30-sec brief, Say/Ask/Avoid, role-specific questions). Aggregates same data sources: `companies`, `company_executives`, `issue_signals`, `company_public_stances`, `company_warn_notices`, `eeoc_cases`.
 
-### 3. Better Job Cards
+### Files to Create
+- `supabase/functions/candidate-prep-pack/index.ts` — AI-powered prep generation
+- `src/components/dossier/CandidatePrepPack.tsx` — main prep pack UI with streaming markdown
+- `src/components/dossier/PrepPackExport.tsx` — "Forward to Candidate" export button
 
-Redesign `JobIntegrityCard` to match the 80K Hours density:
-- Company logo (left)
-- Title + Company + Location (center)
-- Category/department tags as colored badges
-- Clarity Score badge (right, replacing "Highlighted role")
-- Relative date (right)
-- "Highlighted" or "Featured" badge for `is_featured` jobs
+### Files to Edit
+- `src/pages/CompanyDossier.tsx` — add "Interview Prep" as third view toggle, render `CandidatePrepPack` when selected
+- `src/components/dossier/WarningLabelView.tsx` — enhance the existing Action Items section with the Say/Ask/Avoid pattern (so Warning Label view also benefits)
 
-### 4. Results Header
-
-Add a results bar showing: `{count} roles · Ranked` with sort options and links to Collections/Resources/FAQ.
-
-### 5. Job Alerts
-
-Add a "Set up alerts" button that subscribes users to email notifications for new jobs matching their filters (uses existing auth + a new `job_alerts` table).
-
-### 6. Merge RSS Feed Jobs Inline
-
-Instead of the separate `ExternalJobFeed` component below the main list, merge RSS feed jobs into the main results with a subtle "External" badge, so users see one unified list.
-
-## Technical Plan
-
-### Files to modify:
-- **`src/pages/JobIntegrityBoard.tsx`** — Add tab navigation, sidebar layout, results header
-- **`src/components/jobs/JobBoardFilters.tsx`** — Rebuild as a vertical sidebar with category counts
-- **`src/components/jobs/JobIntegrityCard.tsx`** — Redesign to horizontal row format with logo
-- **New: `src/components/jobs/ExploreCompaniesTab.tsx`** — Company directory tab
-- **New: `src/components/jobs/RecommendedJobsTab.tsx`** — Personalized matches tab
-- **New: `src/components/jobs/JobAlertSubscribe.tsx`** — Alert subscription modal
-
-### Database:
-- New `job_alerts` table for email subscription preferences (filters, frequency)
-- RLS policies for authenticated users
-
-### Layout structure:
+### Data Flow
 ```text
-┌──────────────────────────────────────────────┐
-│  Job Integrity Board                         │
-│  "Know who you're really working for"        │
-├──────────────────────────────────────────────┤
-│  [Search Jobs] [Explore Companies] [Matches] │
-├──────────┬───────────────────────────────────┤
-│ FILTERS  │  Search bar          [Set alerts] │
-│          │  Intelligence chips               │
-│ Areas    │  ─────────────────────────────── │
-│  ▸ Labor │  {count} roles · Ranked           │
-│  ▸ Equity│  ┌─────────────────────────────┐ │
-│          │  │ Logo  Title        Score  2d │ │
-│ Location │  │       Company, Location      │ │
-│ Seniority│  │       [tag] [tag] [tag]      │ │
-│ Salary   │  └─────────────────────────────┘ │
-│ Trust    │  ┌─────────────────────────────┐ │
-│          │  │ ...next job...              │ │
-│          │  └─────────────────────────────┘ │
-└──────────┴───────────────────────────────────┘
+Company receipts (DB) → candidate-prep-pack edge function → Gemini AI → Streaming response → CandidatePrepPack.tsx renders sections
 ```
 
-This is a large overhaul. I recommend implementing it in phases — starting with the three-tab layout and sidebar filters, then the card redesign, then alerts.
+### Role Picker
+Simple local state toggle — changes a `role` param sent to the edge function which adjusts the AI prompt's framing. No new DB tables needed.
+
+### Forward to Candidate
+Renders the prep pack content into a clean HTML string, opens print dialog or copies to clipboard. No new DB tables needed.
 
