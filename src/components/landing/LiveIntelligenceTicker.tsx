@@ -131,39 +131,8 @@ export function LiveIntelligenceTicker() {
 
         {/* Source + bias label */}
         {item.source_name && (
-          <span className="inline-flex items-center gap-1 shrink-0">
-            <span className="font-sans text-ticker text-muted-foreground/60">
-              via
-            </span>
-            <span className="font-sans text-ticker text-muted-foreground">
-              {item.source_name}
-            </span>
-            {profile.bias !== "Unknown" && (
-              <span
-                className={`font-mono text-[9px] font-bold px-1 py-px border rounded ${biasColor}`}
-                style={{
-                  borderColor: "currentColor",
-                  opacity: 0.8,
-                  lineHeight: 1,
-                }}
-                title={`Bias: ${profile.bias} \u00B7 Factuality: ${profile.factuality}`}
-              >
-                {biasLabel}
-              </span>
-            )}
-            {profile.factuality !== "Unknown" && (
-              <span
-                className={`font-mono text-[9px] ${factColor}`}
-                style={{ opacity: 0.6 }}
-                title={`Factuality: ${profile.factuality}`}
-              >
-                {profile.factuality === "High"
-                  ? "\u2713"
-                  : profile.factuality === "Mixed"
-                  ? "~"
-                  : "\u2717"}
-              </span>
-            )}
+          <span className="font-sans text-ticker text-muted-foreground/50 shrink-0">
+            via {item.source_name}
           </span>
         )}
 
