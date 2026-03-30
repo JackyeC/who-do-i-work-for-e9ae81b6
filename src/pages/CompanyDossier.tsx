@@ -327,6 +327,8 @@ export default function CompanyDossier() {
           publicStances={publicStances as any}
           eeocCases={eeocCases as any}
         />
+      ) : dossierView === "prep" ? (
+        <CandidatePrepPack companyId={companyId} companyName={company.name} />
       ) : (
         <>
           {/* Score gauges */}
