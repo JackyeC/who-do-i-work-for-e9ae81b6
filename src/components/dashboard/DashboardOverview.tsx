@@ -6,10 +6,11 @@ import { Link, useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
 import {
   Search, ArrowRight, ExternalLink, AlertTriangle, Shield,
-  FileText, BookOpen, TrendingDown, Eye,
+  FileText, BookOpen, TrendingDown, Eye, Award,
 } from "lucide-react";
 import { useState } from "react";
 import { AlignedValuesSearch } from "./AlignedValuesSearch";
+import { FoundingMemberBadge } from "@/components/FoundingMemberBadge";
 
 interface DashboardOverviewProps {
   onNavigate: (tab: string) => void;
@@ -203,6 +204,7 @@ export function DashboardOverview({ onNavigate }: DashboardOverviewProps) {
   const { data, isLoading } = useDashboardBriefing();
   const navigate = useNavigate();
   const [searchQuery, setSearchQuery] = useState("");
+  const [showFoundingBadge, setShowFoundingBadge] = useState(false);
 
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault();
@@ -257,6 +259,53 @@ export function DashboardOverview({ onNavigate }: DashboardOverviewProps) {
           </p>
         </BriefingCard>
       </motion.div>
+
+      {/* ═══ FOUNDING MEMBER BANNER ═══ */}
+      <motion.div {...anim(0.03)}>
+        <div
+          className="rounded-2xl p-5 border cursor-pointer transition-all hover:scale-[1.005]"
+          style={{
+            background: "linear-gradient(135deg, rgba(240,192,64,0.06) 0%, rgba(240,192,64,0.02) 100%)",
+            borderColor: "rgba(240,192,64,0.2)",
+          }}
+          onClick={() => setShowFoundingBadge(true)}
+        >
+          <div className="flex items-center gap-4">
+            <div
+              className="w-12 h-12 rounded-full flex items-center justify-center shrink-0"
+              style={{
+                background: "radial-gradient(circle, rgba(240,192,64,0.15) 0%, transparent 70%)",
+                border: "1.5px solid rgba(240,192,64,0.3)",
+              }}
+            >
+              <Award className="w-5 h-5 text-primary" />
+            </div>
+            <div className="flex-1 min-w-0">
+              <div className="flex items-center gap-2 flex-wrap">
+                <h3 className="text-sm font-bold text-foreground">You're a Founding Member</h3>
+                <span className="text-xs font-bold font-mono px-2 py-0.5 rounded-full bg-primary/10 text-primary border border-primary/30">
+                  PRE-LAUNCH
+                </span>
+              </div>
+              <p className="text-xs text-muted-foreground mt-0.5">
+                You joined before April 6. Download and share your badge — let people know you were here first.
+              </p>
+            </div>
+            <span className="text-xs font-semibold text-primary whitespace-nowrap flex items-center gap-1 shrink-0">
+              Get Badge <ArrowRight className="w-3 h-3" />
+            </span>
+          </div>
+        </div>
+      </motion.div>
+
+      {/* Founding Member Badge Modal */}
+      {showFoundingBadge && (
+        <FoundingMemberBadge
+          memberName={data?.firstName || user?.email?.split("@")[0]}
+          joinedDate={user?.created_at}
+          onClose={() => setShowFoundingBadge(false)}
+        />
+      )}
 
       {/* ═══ 2 — SIGNAL CARDS (5 real company violations) ═══ */}
       <motion.div {...anim(0.06)}>
