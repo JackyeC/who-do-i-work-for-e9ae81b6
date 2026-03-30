@@ -43,7 +43,7 @@ export function useTickerItems() {
           .or("expires_at.is.null,expires_at.gt." + new Date().toISOString())
           .order("is_pinned", { ascending: false })
           .order("created_at", { ascending: false })
-          .limit(50),
+          .limit(15),
         supabase
           .from("companies")
           .select("name, slug")

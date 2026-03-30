@@ -45,7 +45,7 @@ export function LiveIntelligenceTicker() {
           "id, headline, source_name, source_url, category, is_controversy, published_at, jackye_take"
         )
         .order("published_at", { ascending: false })
-        .limit(20);
+        .limit(10);
 
       if (error) throw error;
       return (data as TickerNewsItem[]) || [];
@@ -76,7 +76,7 @@ export function LiveIntelligenceTicker() {
     (sum, i) => sum + (i.headline?.length || 0) + (i.source_name?.length || 0) + 20,
     0
   );
-  const duration = Math.max(80, Math.min((totalChars * 0.35), 200));
+  const duration = Math.max(140, Math.min((totalChars * 0.6), 360));
 
   const renderItem = (item: TickerNewsItem, key: string) => {
     const profile = getSourceProfile(item.source_name);
@@ -86,8 +86,8 @@ export function LiveIntelligenceTicker() {
     const catLabel = CATEGORY_LABELS[item.category] || "NEWS";
 
     const headlineText =
-      item.headline.length > 110
-        ? item.headline.slice(0, 110) + "\u2026"
+      item.headline.length > 70
+        ? item.headline.slice(0, 70) + "\u2026"
         : item.headline;
 
     return (
@@ -131,39 +131,8 @@ export function LiveIntelligenceTicker() {
 
         {/* Source + bias label */}
         {item.source_name && (
-          <span className="inline-flex items-center gap-1 shrink-0">
-            <span className="font-sans text-ticker text-muted-foreground/60">
-              via
-            </span>
-            <span className="font-sans text-ticker text-muted-foreground">
-              {item.source_name}
-            </span>
-            {profile.bias !== "Unknown" && (
-              <span
-                className={`font-mono text-[9px] font-bold px-1 py-px border rounded ${biasColor}`}
-                style={{
-                  borderColor: "currentColor",
-                  opacity: 0.8,
-                  lineHeight: 1,
-                }}
-                title={`Bias: ${profile.bias} \u00B7 Factuality: ${profile.factuality}`}
-              >
-                {biasLabel}
-              </span>
-            )}
-            {profile.factuality !== "Unknown" && (
-              <span
-                className={`font-mono text-[9px] ${factColor}`}
-                style={{ opacity: 0.6 }}
-                title={`Factuality: ${profile.factuality}`}
-              >
-                {profile.factuality === "High"
-                  ? "\u2713"
-                  : profile.factuality === "Mixed"
-                  ? "~"
-                  : "\u2717"}
-              </span>
-            )}
+          <span className="font-sans text-ticker text-muted-foreground/50 shrink-0">
+            via {item.source_name}
           </span>
         )}
 
