@@ -6,6 +6,11 @@ import { cn } from "@/lib/utils";
 import { HeatChip } from "./HeatChip";
 import { ReceiptPoster } from "./ReceiptPoster";
 import { formatDistanceToNow } from "date-fns";
+import {
+  getOutletProfile,
+  LEAN_LABELS,
+  type PoliticalLean,
+} from "@/lib/mediaBiasDatabase";
 import type { ReceiptArticle } from "@/hooks/use-receipts-feed";
 
 const CATEGORY_DISPLAY: Record<string, string> = {
@@ -20,26 +25,48 @@ const CATEGORY_DISPLAY: Record<string, string> = {
   general: "News",
 };
 
-function getSourceBias(source: string | null): string {
-  if (!source) return "Center";
-  const left = ["Truthout", "Democracy Now", "Jacobin", "Mother Jones"];
-  const leanLeft = ["Al Jazeera English", "The Conversation Africa", "The Guardian", "MSNBC", "CNN", "NPR", "Vox"];
-  const right = ["Freerepublic.com", "Breitbart", "Daily Wire", "Newsmax", "OAN"];
-  const leanRight = ["Reason", "New York Post", "Fox News", "Washington Examiner", "Daily Caller"];
-  const center = ["CBS News", "NBER", "CompTIA", "Gallup", "ADP Research", "BLS", "Reuters", "AP News", "BBC"];
-  if (left.includes(source)) return "Left";
-  if (leanLeft.includes(source)) return "Leaning Left";
-  if (right.includes(source)) return "Right";
-  if (leanRight.includes(source)) return "Leaning Right";
-  if (center.includes(source)) return "Center";
-  return "Center";
+/** Map source name → domain for mediaBiasDatabase lookup */
+const SOURCE_TO_DOMAIN: Record<string, string> = {
+  "Fox News": "foxnews.com",
+  "CBS News": "cbsnews.com",
+  "New York Post": "nypost.com",
+  "Reason": "reason.com",
+  "Truthout": "truthout.org",
+  "Al Jazeera English": "aljazeera.com",
+  "The Conversation Africa": "theconversation.com",
+  "Business Insider": "businessinsider.com",
+  "TechCrunch": "techcrunch.com",
+  "The Atlantic": "theatlantic.com",
+  "The Verge": "theverge.com",
+  "CNET": "cnet.com",
+  "Hollywood Reporter": "hollywoodreporter.com",
+  "Futurism": "futurism.com",
+  "Hacker News": "news.ycombinator.com",
+  "PCMag.com": "pcmag.com",
+  "TechRadar": "techradar.com",
+  "Boston Herald": "bostonherald.com",
+  "Adweek": "adweek.com",
+};
+
+function getSourceBias(sourceName: string | null, sourceUrl: string | null): { label: string; lean: PoliticalLean | null } {
+  // Try URL first
+  if (sourceUrl) {
+    const profile = getOutletProfile(sourceUrl);
+    if (profile) return { label: LEAN_LABELS[profile.lean], lean: profile.lean };
+  }
+  // Try name → domain mapping
+  if (sourceName && SOURCE_TO_DOMAIN[sourceName]) {
+    const profile = getOutletProfile("https://" + SOURCE_TO_DOMAIN[sourceName]);
+    if (profile) return { label: LEAN_LABELS[profile.lean], lean: profile.lean };
+  }
+  return { label: "Center", lean: "center" };
 }
 
 const BIAS_COLORS: Record<string, string> = {
   "Left": "bg-[hsl(210,70%,92%)] text-[hsl(210,70%,35%)] border-[hsl(210,70%,70%)]",
-  "Leaning Left": "bg-[hsl(210,50%,93%)] text-[hsl(210,50%,42%)] border-[hsl(210,50%,78%)]",
+  "Lean Left": "bg-[hsl(210,50%,93%)] text-[hsl(210,50%,42%)] border-[hsl(210,50%,78%)]",
   "Center": "bg-[hsl(145,40%,92%)] text-[hsl(145,40%,35%)] border-[hsl(145,40%,70%)]",
-  "Leaning Right": "bg-[hsl(0,50%,94%)] text-[hsl(0,50%,42%)] border-[hsl(0,50%,78%)]",
+  "Lean Right": "bg-[hsl(0,50%,94%)] text-[hsl(0,50%,42%)] border-[hsl(0,50%,78%)]",
   "Right": "bg-[hsl(0,70%,92%)] text-[hsl(0,70%,35%)] border-[hsl(0,70%,70%)]",
 };
 
