@@ -102,7 +102,7 @@ export function FlinchTest({ companyId, companyName }: FlinchTestProps) {
           <Eye className="w-8 h-8 text-civic-green mx-auto mb-3" />
           <p className="font-mono text-sm font-semibold text-civic-green uppercase tracking-wider">Signal Recorded</p>
           <p className="text-xs text-muted-foreground mt-1">
-            Your anonymized feedback strengthens the intelligence for future candidates evaluating {companyName}.
+            Your observations are now part of the pattern data for {companyName}. This helps future candidates see trajectory, not just episodes.
           </p>
         </CardContent>
       </Card>
