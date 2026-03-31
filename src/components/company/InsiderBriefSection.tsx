@@ -114,7 +114,7 @@ export function InsiderBriefSection(props: InsiderBriefProps) {
     if (props.lobbyingSpend > 0)
       items.push(`${formatMoney(props.lobbyingSpend)} in lobbying expenditures on record`);
     if (props.darkMoneyCount > 0)
-      items.push(`${props.darkMoneyCount} dark money connection(s) identified`);
+      items.push(`${props.darkMoneyCount} non-disclosed contribution channel(s) identified`);
     if (props.revolvingDoorCount > 0)
       items.push(`${props.revolvingDoorCount} revolving door link(s) flagged`);
     if (props.hasAiHrSignals)
