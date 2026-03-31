@@ -384,15 +384,17 @@ export function AdvocacyReport({ company, executives = [], contracts = [], issue
         </div>
       </section>
 
-      {/* ═══ 11. THE CALL ═══ */}
-      <RecommendationCard
-        redFlagCount={verdict.redFlagCount}
-        gapCount={gapStances.length}
-        eeocCount={eeocCases.length}
-        signalCount={issueSignals.length}
-        hasValuesConflicts={false}
-        companyName={company.name}
-      />
+      {/* ═══ 11. THE CALL (hidden during early investigation) ═══ */}
+      {!isEarlyInvestigation && (
+        <RecommendationCard
+          redFlagCount={verdict.redFlagCount}
+          gapCount={gapStances.length}
+          eeocCount={eeocCases.length}
+          signalCount={issueSignals.length}
+          hasValuesConflicts={false}
+          companyName={company.name}
+        />
+      )}
 
       {/* ═══ 12. CEO MEMO DECODER (collapsed) ═══ */}
       <div className="border border-border/30">
