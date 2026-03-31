@@ -88,9 +88,25 @@ export function EmailCapture() {
               <h2 className="text-2xl lg:text-3xl font-bold mb-3 text-foreground">
                 Get weekly intelligence drops.
               </h2>
-              <p className="text-sm lg:text-base text-muted-foreground mb-8 max-w-[460px] mx-auto leading-relaxed">
+              <p className="text-sm lg:text-base text-muted-foreground mb-5 max-w-[460px] mx-auto leading-relaxed">
                 New signals, trending companies, and career intelligence — delivered once a week. No spam. Unsubscribe anytime.
               </p>
+              <div className="flex flex-wrap justify-center gap-2 mb-6 max-w-[480px] mx-auto">
+                {TOPIC_OPTIONS.map((tag) => (
+                  <button
+                    key={tag}
+                    type="button"
+                    onClick={() => toggleTag(tag)}
+                    className={`px-3 py-1.5 rounded-full text-xs font-semibold border transition-all ${
+                      selectedTags.includes(tag)
+                        ? "bg-primary text-primary-foreground border-primary"
+                        : "bg-background/60 text-muted-foreground border-border hover:border-primary/40 hover:text-foreground"
+                    }`}
+                  >
+                    {tag}
+                  </button>
+                ))}
+              </div>
               {status === "success" ? (
                 <motion.div
                   initial={{ opacity: 0, scale: 0.95 }}
