@@ -1,3 +1,4 @@
+import { useState } from "react";
 import { cn } from "@/lib/utils";
 
 interface PosterData {
@@ -13,12 +14,13 @@ interface PosterData {
 }
 
 interface ReceiptPosterProps {
-  poster: PosterData;
-  category: string | null;
-  spiceLevel: number;
+  poster: PosterData | null | undefined;
+  category?: string | null;
+  spiceLevel?: number;
   className?: string;
   big?: boolean;
   id?: string;
+  onClickEnlarge?: () => void;
 }
 
 const WDIWF_QUOTES = [
@@ -45,83 +47,116 @@ function getTextOnAccent(accent: string): string {
   return lum > 0.55 ? "#000" : "#FFF";
 }
 
-export function ReceiptPoster({ poster, className, big = false, id = "" }: ReceiptPosterProps) {
-  if (!poster) return null;
+/* Fallback poster data for articles without poster_data */
+const FALLBACK_POSTERS: Record<string, PosterData> = {
+  ai_workplace: { bg: "#005F73", accent: "#FFE66D", dark: "#001219", emoji: "🤖", bigTxt: "AI", sub: "is watching", tag: "automation nation", copy: "Your job title has been optimized.", fine: "*by someone who doesn't do your job" },
+  future_of_work: { bg: "#5A189A", accent: "#E0AAFF", dark: "#10002B", emoji: "🔮", bigTxt: "FUTURE", sub: "of work™", tag: "disruption incoming", copy: "The future is here. Your desk isn't.", fine: "*remote means we removed your role" },
+  labor_organizing: { bg: "#1B4332", accent: "#95D5B2", dark: "#081C15", emoji: "✊", bigTxt: "UNION", sub: "busting budget: $$$", tag: "collective action", copy: "They said family. We said contract.", fine: "*family doesn't dock your PTO" },
+  worker_rights: { bg: "#6A0572", accent: "#FFD6FF", dark: "#1A001E", emoji: "⚖️", bigTxt: "EQUITY", sub: "report: missing", tag: "the culture audit", copy: "Diversity is our strength™", fine: "*our legal team's too" },
+  regulation: { bg: "#9D0208", accent: "#FFB3B3", dark: "#370617", emoji: "📋", bigTxt: "POLICY", sub: "update pending", tag: "the fine print", copy: "We updated our policy. You didn't notice.", fine: "*that was the point" },
+  layoffs: { bg: "#370617", accent: "#FF758F", dark: "#1A000A", emoji: "📦", bigTxt: "CUTS", sub: "restructuring™", tag: "involuntary flexibility", copy: "We're a family. A smaller one.", fine: "*effective immediately" },
+  pay_equity: { bg: "#0B3D0B", accent: "#34D399", dark: "#001A00", emoji: "💰", bigTxt: "MONEY", sub: "trail exposed", tag: "follow the money", copy: "Competitive salary*", fine: "*competing with poverty" },
+  legislation: { bg: "#1E3A5F", accent: "#60A5FA", dark: "#0C1B2E", emoji: "📝", bigTxt: "HIRING", sub: "or pretending to", tag: "talent acquisition", copy: "We're always hiring!", fine: "*the listing is 8 months old" },
+};
+
+const DEFAULT_FALLBACK: PosterData = { bg: "#1A1A2E", accent: "#F0C040", dark: "#0A0A1A", emoji: "🧾", bigTxt: "RECEIPT", sub: "pulled.", tag: "the receipts", copy: "They thought we wouldn't notice.", fine: "*we noticed" };
+
+function getFallbackPoster(category: string | null): PosterData {
+  return FALLBACK_POSTERS[category || ""] || DEFAULT_FALLBACK;
+}
+
+export function ReceiptPoster({ poster: rawPoster, category, className, big = false, id = "", onClickEnlarge }: ReceiptPosterProps) {
+  const [hover, setHover] = useState(false);
+  const poster = rawPoster && rawPoster.bg ? rawPoster : getFallbackPoster(category ?? null);
   const { bg: pbg, accent, emoji, bigTxt, sub, tag, copy, fine } = poster;
   const onAccent = getTextOnAccent(accent);
   const wdiwfQuote = WDIWF_QUOTES[quoteIdx(id)];
-  const W = big ? 320 : 250;
-  const H = big ? 450 : 345;
 
   return (
     <div
-      id={id || undefined}
-      className={cn("flex-shrink-0 flex flex-col overflow-hidden rounded-lg relative", className)}
-      style={{
-        width: W,
-        minHeight: H,
-        background: pbg,
-        boxShadow: "0 12px 40px rgba(0,0,0,0.55)",
-      }}
+      style={{ position: "relative", display: "inline-block", cursor: onClickEnlarge ? "pointer" : "default" }}
+      onMouseEnter={() => setHover(true)}
+      onMouseLeave={() => setHover(false)}
+      onClick={onClickEnlarge}
     >
-      {/* Double border inset */}
       <div
-        className="absolute pointer-events-none rounded-sm z-10"
-        style={{ inset: 7, border: `1.5px solid ${accent}`, opacity: 0.7 }}
-      />
-      <div
-        className="absolute pointer-events-none rounded-sm z-10"
-        style={{ inset: 11, border: `0.5px solid ${accent}`, opacity: 0.3 }}
-      />
+        id={id || undefined}
+        className={cn("flex-shrink-0 flex flex-col overflow-hidden rounded-lg relative", className)}
+        style={{
+          width: big ? 320 : 250,
+          minHeight: big ? 450 : 345,
+          background: pbg,
+          boxShadow: "0 12px 40px rgba(0,0,0,0.55)",
+        }}
+      >
+        {/* Double border inset */}
+        <div className="absolute pointer-events-none rounded-sm z-10" style={{ inset: 7, border: `1.5px solid ${accent}`, opacity: 0.7 }} />
+        <div className="absolute pointer-events-none rounded-sm z-10" style={{ inset: 11, border: `0.5px solid ${accent}`, opacity: 0.3 }} />
 
-      {/* Header banner */}
-      <div className="flex-shrink-0 text-center" style={{ background: accent, padding: big ? "9px 16px" : "7px 12px" }}>
-        <div style={{ fontSize: big ? 11 : 9, fontWeight: 900, textTransform: "uppercase", letterSpacing: "0.22em", color: onAccent, lineHeight: 1.3 }}>
-          JACKYE CLAYTON 👑 × WDIWF
-        </div>
-        <div style={{ fontSize: big ? 9 : 7.5, fontWeight: 600, textTransform: "uppercase", letterSpacing: "0.18em", color: onAccent, opacity: 0.7 }}>
-          PRESENTS
-        </div>
-      </div>
-
-      {/* Center content */}
-      <div className="flex-1 flex flex-col items-center justify-evenly" style={{ padding: big ? "16px 16px 8px" : "12px 12px 6px", gap: big ? 11 : 8 }}>
-        <div className="font-mono text-center" style={{ fontSize: big ? 10 : 8.5, fontWeight: 600, textTransform: "uppercase", letterSpacing: "0.18em", color: accent, opacity: 0.9 }}>
-          {tag}
-        </div>
-        <div className="text-center" style={{ fontSize: big ? 68 : 50, lineHeight: 1, filter: "drop-shadow(0 4px 14px rgba(0,0,0,0.45))" }}>
-          {emoji}
-        </div>
-        <div className="text-center">
-          <div style={{ fontSize: big ? 50 : 36, fontWeight: 900, color: accent, lineHeight: 0.9, letterSpacing: "-0.02em", textShadow: `0 0 28px ${accent}55`, fontFamily: "'Inter', sans-serif" }}>
-            {bigTxt}
+        {/* Header banner */}
+        <div className="flex-shrink-0 text-center" style={{ background: accent, padding: big ? "9px 16px" : "7px 12px" }}>
+          <div style={{ fontSize: big ? 11 : 9, fontWeight: 900, textTransform: "uppercase", letterSpacing: "0.22em", color: onAccent, lineHeight: 1.3 }}>
+            JACKYE CLAYTON 👑 × WDIWF
           </div>
-          <div className="font-mono" style={{ fontSize: big ? 13 : 10.5, fontWeight: 500, color: "rgba(255,255,255,0.75)", textTransform: "uppercase", letterSpacing: "0.12em", marginTop: 6 }}>
-            {sub}
+          <div style={{ fontSize: big ? 9 : 7.5, fontWeight: 600, textTransform: "uppercase", letterSpacing: "0.18em", color: onAccent, opacity: 0.7 }}>
+            PRESENTS
           </div>
         </div>
-        <div className="flex items-center gap-2" style={{ width: "76%" }}>
-          <div className="flex-1 h-px" style={{ background: accent, opacity: 0.35 }} />
-          <div className="rounded-full" style={{ width: 4, height: 4, background: accent, opacity: 0.7 }} />
-          <div className="flex-1 h-px" style={{ background: accent, opacity: 0.35 }} />
+
+        {/* Center content */}
+        <div className="flex-1 flex flex-col items-center justify-evenly" style={{ padding: big ? "16px 16px 8px" : "12px 12px 6px", gap: big ? 11 : 8 }}>
+          <div className="font-mono text-center" style={{ fontSize: big ? 10 : 8.5, fontWeight: 600, textTransform: "uppercase", letterSpacing: "0.18em", color: accent, opacity: 0.9 }}>
+            {tag}
+          </div>
+          <div className="text-center" style={{ fontSize: big ? 68 : 50, lineHeight: 1, filter: "drop-shadow(0 4px 14px rgba(0,0,0,0.45))" }}>
+            {emoji}
+          </div>
+          <div className="text-center">
+            <div style={{ fontSize: big ? 50 : 36, fontWeight: 900, color: accent, lineHeight: 0.9, letterSpacing: "-0.02em", textShadow: `0 0 28px ${accent}55`, fontFamily: "'Inter', sans-serif" }}>
+              {bigTxt}
+            </div>
+            <div className="font-mono" style={{ fontSize: big ? 13 : 10.5, fontWeight: 500, color: "rgba(255,255,255,0.75)", textTransform: "uppercase", letterSpacing: "0.12em", marginTop: 6 }}>
+              {sub}
+            </div>
+          </div>
+          <div className="flex items-center gap-2" style={{ width: "76%" }}>
+            <div className="flex-1 h-px" style={{ background: accent, opacity: 0.35 }} />
+            <div className="rounded-full" style={{ width: 4, height: 4, background: accent, opacity: 0.7 }} />
+            <div className="flex-1 h-px" style={{ background: accent, opacity: 0.35 }} />
+          </div>
+          <div className="text-center italic" style={{ fontSize: big ? 15 : 12, fontWeight: 700, color: "#FFF", lineHeight: 1.4 }}>
+            "{copy}"
+          </div>
+          <div className="text-center italic font-mono" style={{ fontSize: big ? 12 : 10, fontWeight: 500, color: "rgba(255,255,255,0.68)", lineHeight: 1.4 }}>
+            {fine}
+          </div>
         </div>
-        <div className="text-center italic" style={{ fontSize: big ? 15 : 12, fontWeight: 700, color: "#FFF", lineHeight: 1.4 }}>
-          "{copy}"
-        </div>
-        <div className="text-center italic font-mono" style={{ fontSize: big ? 12 : 10, fontWeight: 500, color: "rgba(255,255,255,0.68)", lineHeight: 1.4 }}>
-          {fine}
+
+        {/* Footer */}
+        <div className="flex-shrink-0 text-center" style={{ background: `${accent}18`, borderTop: `1px solid ${accent}35`, padding: big ? "8px 14px" : "6px 10px" }}>
+          <div className="font-mono" style={{ fontSize: big ? 11 : 9, fontWeight: 900, color: accent, textTransform: "uppercase", letterSpacing: "0.1em", lineHeight: 1.2 }}>
+            wdiwf.jackyeclayton.com
+          </div>
+          <div className="font-mono" style={{ fontSize: big ? 8 : 7, fontWeight: 500, color: accent, opacity: 0.8, textTransform: "uppercase", letterSpacing: "0.08em", lineHeight: 1.4, marginTop: 3 }}>
+            {wdiwfQuote}
+          </div>
         </div>
       </div>
 
-      {/* Footer */}
-      <div className="flex-shrink-0 text-center" style={{ background: `${accent}18`, borderTop: `1px solid ${accent}35`, padding: big ? "8px 14px" : "6px 10px" }}>
-        <div className="font-mono" style={{ fontSize: big ? 11 : 9, fontWeight: 900, color: accent, textTransform: "uppercase", letterSpacing: "0.1em", lineHeight: 1.2 }}>
-          wdiwf.jackyeclayton.com
+      {/* Hover overlay: click to enlarge */}
+      {onClickEnlarge && (
+        <div
+          className="absolute inset-0 rounded-lg flex flex-col items-center justify-center gap-2 transition-opacity duration-150"
+          style={{
+            background: "rgba(0,0,0,0.52)",
+            opacity: hover ? 1 : 0,
+            pointerEvents: hover ? "auto" : "none",
+          }}
+        >
+          <span style={{ fontSize: 26 }}>🔍</span>
+          <span className="font-bold text-white" style={{ fontSize: 13, letterSpacing: "0.05em" }}>Click to enlarge + share</span>
         </div>
-        <div className="font-mono" style={{ fontSize: big ? 8 : 7, fontWeight: 500, color: accent, opacity: 0.8, textTransform: "uppercase", letterSpacing: "0.08em", lineHeight: 1.4, marginTop: 3 }}>
-          {wdiwfQuote}
-        </div>
-      </div>
+      )}
     </div>
   );
 }

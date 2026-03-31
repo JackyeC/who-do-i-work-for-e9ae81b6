@@ -4,13 +4,14 @@ import { usePageSEO } from "@/hooks/use-page-seo";
 import { motion } from "framer-motion";
 import { ArrowRight } from "lucide-react";
 import { Skeleton } from "@/components/ui/skeleton";
-import { useReceiptsFeed } from "@/hooks/use-receipts-feed";
+import { useReceiptsFeed, type ReceiptArticle } from "@/hooks/use-receipts-feed";
 import { ReceiptsFilters } from "@/components/receipts/ReceiptsFilters";
 import { FeaturedReceipt } from "@/components/receipts/FeaturedReceipt";
 import { ReceiptCard } from "@/components/receipts/ReceiptCard";
 import { WorkNewsTicker } from "@/components/news/WorkNewsTicker";
 import { HowToRead } from "@/components/receipts/HowToRead";
 import { ReceiptsSidebar } from "@/components/receipts/ReceiptsSidebar";
+import { PosterLightbox } from "@/components/receipts/PosterLightbox";
 import type { ReceiptSortMode } from "@/components/receipts/heat-config";
 
 // ─── Static company receipts (existing investigations) ───
@@ -55,6 +56,7 @@ export default function Receipts() {
   const [category, setCategory] = useState("all");
   const [sortMode, setSortMode] = useState<ReceiptSortMode>("newest");
   const [heatFilter, setHeatFilter] = useState<number | null>(null);
+  const [lightboxArticle, setLightboxArticle] = useState<ReceiptArticle | null>(null);
 
   const filtered = useMemo(() => {
     if (!articles) return [];
@@ -170,7 +172,7 @@ export default function Receipts() {
           )}
 
           {/* Featured story */}
-          {!isLoading && featuredArticle && <FeaturedReceipt article={featuredArticle} />}
+          {!isLoading && featuredArticle && <FeaturedReceipt article={featuredArticle} onPosterClick={setLightboxArticle} />}
 
           {/* Divider */}
           {!isLoading && feedArticles.length > 0 && (
@@ -191,7 +193,7 @@ export default function Receipts() {
             >
               {feedArticles.map((article) => (
                 <motion.div key={article?.id} variants={stagger.item}>
-                  <ReceiptCard article={article} />
+                  <ReceiptCard article={article} onPosterClick={setLightboxArticle} />
                 </motion.div>
               ))}
             </motion.div>
@@ -258,6 +260,9 @@ export default function Receipts() {
           </Link>
         </div>
       </footer>
+
+      {/* Poster Lightbox */}
+      <PosterLightbox article={lightboxArticle} onClose={() => setLightboxArticle(null)} />
     </div>
   );
 }
