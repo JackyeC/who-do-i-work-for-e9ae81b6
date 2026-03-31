@@ -380,9 +380,10 @@ export default function WhoDoIWorkFor() {
                                 <span className="font-semibold text-foreground">{formatCurrency(c.amount)}</span>
                                 <p className="text-xs text-muted-foreground">aggregate est.</p>
                               </div>
+                              <ChevronRight className="w-4 h-4 text-muted-foreground/40 group-hover:text-primary transition-colors" />
                             </div>
                           </div>
-                        </div>
+                        </Link>
                       ))}
                     </div>
                   </CardContent>
