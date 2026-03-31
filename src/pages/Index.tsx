@@ -96,7 +96,7 @@ const Index = forwardRef<HTMLDivElement>((_, ref) => {
                 type="text"
                 value={heroQuery}
                 onChange={(e) => setHeroQuery(e.target.value)}
-                placeholder="Search any employer..."
+                placeholder="Search a company, offer, or workplace question"
                 className="flex-1 bg-transparent px-3 py-3.5 text-sm text-foreground placeholder:text-muted-foreground/50 focus:outline-none font-sans"
               />
               <button
