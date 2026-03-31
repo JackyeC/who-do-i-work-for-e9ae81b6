@@ -66,9 +66,9 @@ body > div:last-child > a[href*="lovable"] {
     --civic-slate: 240 10% 42%;
     --civic-surface: 40 15% 95%;
 
-    --civic-gold: 43 85% 50%;
-    --civic-gold-muted: 43 55% 40%;
-    --civic-gold-light: 43 70% 60%;
+    --civic-gold: 41 88% 41%;
+    --civic-gold-muted: 41 60% 35%;
+    --civic-gold-light: 43 70% 55%;
 
     /* ── SURFACE TOKENS ── */
     --surface-elevated: 0 0% 100%;
