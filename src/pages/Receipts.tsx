@@ -441,7 +441,7 @@ export default function Receipts() {
                     ? "bg-primary text-primary-foreground"
                     : ""
                 }`}
-                onClick={() => setSortMode(opt.value)}
+                onClick={() => setSortMode(prev => prev === opt.value ? null : opt.value)}
               >
                 {opt.value === "drama" && <Flame className="w-3 h-3 mr-1" />}
                 {opt.label}
