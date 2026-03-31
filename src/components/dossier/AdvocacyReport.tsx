@@ -372,7 +372,7 @@ export function AdvocacyReport({ company, executives = [], contracts = [], issue
       {/* ═══ 10. WHAT THIS MEANS FOR YOU ═══ */}
       <section>
         <SectionDivider number={9} icon={Shield} title="What This Means For You" subtitle="How this company lines up with what you said matters" />
-        <div className="pl-11">
+        <div className="pl-11 space-y-4">
           <ValuesAlignmentSection
             companyName={company.name}
             issueSignals={issueSignals}
@@ -381,6 +381,14 @@ export function AdvocacyReport({ company, executives = [], contracts = [], issue
             lobbyingSpend={company.lobbying_spend ?? 0}
             pacSpending={company.total_pac_spending ?? 0}
           />
+          <Link
+            to={`/alignment/${company.slug}`}
+            className="inline-flex items-center gap-2 text-sm font-semibold text-primary hover:text-primary/80 transition-colors group"
+          >
+            <ShieldAlert className="w-4 h-4" />
+            View Full Alignment Report
+            <ArrowRight className="w-3.5 h-3.5 group-hover:translate-x-0.5 transition-transform" />
+          </Link>
         </div>
       </section>
 
