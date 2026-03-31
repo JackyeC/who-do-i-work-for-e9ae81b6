@@ -261,8 +261,8 @@ export function VibeMatchQuestionnaire({ onSubmit, isSubmitting }: Props) {
               <QuestionCard
                 question="Did the interviewers clearly define what success looks like in the first 90 days?"
                 options={[
-                  { label: "Yes, they had a specific 30/60/90-day plan.", value: 90 },
-                  { label: 'It was vague (e.g., "we need a self-starter to figure it out").', value: 45 },
+                  { label: "Yes, they described a specific 30/60/90-day plan.", value: 90 },
+                  { label: "It was general. No specific milestones were described.", value: 45 },
                   { label: "No, they seemed unsure of why the role exists.", value: 15 },
                 ]}
                 value={successClarity}
