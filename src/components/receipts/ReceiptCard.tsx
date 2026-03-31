@@ -1,73 +1,34 @@
+import { useState } from "react";
 import { Link } from "react-router-dom";
-import { ExternalLink, ArrowRight } from "lucide-react";
-import { Badge } from "@/components/ui/badge";
-import { Card, CardContent } from "@/components/ui/card";
+import { ExternalLink } from "lucide-react";
 import { cn } from "@/lib/utils";
-import { HeatChip } from "./HeatChip";
 import { ReceiptPoster } from "./ReceiptPoster";
-import { formatDistanceToNow } from "date-fns";
-import {
-  getOutletProfile,
-  LEAN_LABELS,
-  type PoliticalLean,
-} from "@/lib/mediaBiasDatabase";
+import { BiasBar, getSourceBiasKey } from "./BiasBar";
+import { SpicePeppers } from "./SpicePeppers";
 import type { ReceiptArticle } from "@/hooks/use-receipts-feed";
 
 const CATEGORY_DISPLAY: Record<string, string> = {
-  ai_workplace: "AI & Work",
-  future_of_work: "Future of Work",
-  labor_organizing: "Labor",
+  ai_workplace: "AI",
+  future_of_work: "WORK",
+  labor_organizing: "LABOR",
   worker_rights: "DEI",
-  regulation: "Policy",
-  layoffs: "Layoffs",
-  pay_equity: "Money",
-  legislation: "Hiring",
-  general: "News",
+  regulation: "POLICY",
+  layoffs: "LAYOFFS",
+  pay_equity: "MONEY",
+  legislation: "HIRING",
+  general: "NEWS",
 };
 
-/** Map source name → domain for mediaBiasDatabase lookup */
-const SOURCE_TO_DOMAIN: Record<string, string> = {
-  "Fox News": "foxnews.com",
-  "CBS News": "cbsnews.com",
-  "New York Post": "nypost.com",
-  "Reason": "reason.com",
-  "Truthout": "truthout.org",
-  "Al Jazeera English": "aljazeera.com",
-  "The Conversation Africa": "theconversation.com",
-  "Business Insider": "businessinsider.com",
-  "TechCrunch": "techcrunch.com",
-  "The Atlantic": "theatlantic.com",
-  "The Verge": "theverge.com",
-  "CNET": "cnet.com",
-  "Hollywood Reporter": "hollywoodreporter.com",
-  "Futurism": "futurism.com",
-  "Hacker News": "news.ycombinator.com",
-  "PCMag.com": "pcmag.com",
-  "TechRadar": "techradar.com",
-  "Boston Herald": "bostonherald.com",
-  "Adweek": "adweek.com",
-};
-
-function getSourceBias(sourceName: string | null, sourceUrl: string | null): { label: string; lean: PoliticalLean | null } {
-  // Try URL first
-  if (sourceUrl) {
-    const profile = getOutletProfile(sourceUrl);
-    if (profile) return { label: LEAN_LABELS[profile.lean], lean: profile.lean };
-  }
-  // Try name → domain mapping
-  if (sourceName && SOURCE_TO_DOMAIN[sourceName]) {
-    const profile = getOutletProfile("https://" + SOURCE_TO_DOMAIN[sourceName]);
-    if (profile) return { label: LEAN_LABELS[profile.lean], lean: profile.lean };
-  }
-  return { label: "Center", lean: "center" };
-}
-
-const BIAS_COLORS: Record<string, string> = {
-  "Left": "bg-[hsl(210,70%,92%)] text-[hsl(210,70%,35%)] border-[hsl(210,70%,70%)]",
-  "Lean Left": "bg-[hsl(210,50%,93%)] text-[hsl(210,50%,42%)] border-[hsl(210,50%,78%)]",
-  "Center": "bg-[hsl(145,40%,92%)] text-[hsl(145,40%,35%)] border-[hsl(145,40%,70%)]",
-  "Lean Right": "bg-[hsl(0,50%,94%)] text-[hsl(0,50%,42%)] border-[hsl(0,50%,78%)]",
-  "Right": "bg-[hsl(0,70%,92%)] text-[hsl(0,70%,35%)] border-[hsl(0,70%,70%)]",
+const CAT_COLORS: Record<string, string> = {
+  AI: "#38BDF8",
+  WORK: "#F0C040",
+  POLICY: "#FB7185",
+  LABOR: "#2DD4BF",
+  DEI: "#A78BFA",
+  MONEY: "#34D399",
+  HIRING: "#60A5FA",
+  LAYOFFS: "#FB7185",
+  NEWS: "#EDE8DC",
 };
 
 interface ReceiptCardProps {
@@ -76,145 +37,133 @@ interface ReceiptCardProps {
 }
 
 export function ReceiptCard({ article, featured = false }: ReceiptCardProps) {
-  const bias = getSourceBias(article.source_name, article.source_url);
-  const timeAgo = article.published_at
-    ? formatDistanceToNow(new Date(article.published_at), { addSuffix: true })
-    : "";
+  const [showTake, setShowTake] = useState(false);
+  const catKey = CATEGORY_DISPLAY[article.category ?? ""] || "NEWS";
+  const catColor = CAT_COLORS[catKey] || "#EDE8DC";
+  const biasKey = getSourceBiasKey(article.source_name);
+  const posterId = `p-${article?.id || "x"}-${featured ? "b" : "s"}`;
 
   return (
-    <Card className={cn(
-      "border-border/40 transition-all duration-300 overflow-hidden group",
-      "hover:border-primary/30 hover:shadow-lg hover:shadow-primary/[0.04]",
-      featured && "md:col-span-2 lg:col-span-3"
-    )}>
-      <CardContent className={cn(
-        "p-0",
-        featured ? "md:grid md:grid-cols-[380px_1fr] lg:grid-cols-[440px_1fr]" : ""
-      )}>
-        {/* Poster */}
+    <article className="pb-8 mb-8 border-b border-border/30">
+      {/* Poster */}
+      <div className={cn("mb-4", featured ? "flex justify-center" : "")}>
         <ReceiptPoster
           poster={article.poster_data}
           category={article.category}
           spiceLevel={article.spice_level}
-          className={cn(
-            featured ? "md:rounded-r-none aspect-[4/5] md:aspect-auto md:min-h-[480px]" : "aspect-[4/5]"
-          )}
+          big={featured}
+          id={posterId}
         />
+      </div>
 
-        {/* Content — Locked section labels */}
-        <div className={cn(
-          "p-4 md:p-5 space-y-3",
-          featured && "md:p-6 md:space-y-4"
-        )}>
-          {/* Row 1: Heat chip — mobile-first, immediately visible */}
-          <div className="flex items-center gap-2 flex-wrap">
-            <HeatChip level={article.spice_level} />
-            {timeAgo && (
-              <span className="text-xs text-muted-foreground">{timeAgo}</span>
-            )}
-          </div>
+      {/* Meta row: Category, Source, Read the article, Bias */}
+      <div className="flex items-center gap-3 mb-3 flex-wrap">
+        <span
+          className="font-bold uppercase"
+          style={{
+            fontSize: featured ? 16 : 13,
+            letterSpacing: "0.2em",
+            color: catColor,
+          }}
+        >
+          {catKey}
+        </span>
+        <span className="w-px h-3 bg-border" />
+        <span className="text-sm font-mono text-muted-foreground">
+          {article.source_name || "Unknown"}
+        </span>
+        {article.source_url && (
+          <a
+            href={article.source_url}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="text-sm font-bold text-primary hover:underline inline-flex items-center gap-1"
+            style={{ borderBottom: "1px solid hsl(var(--primary) / 0.35)" }}
+          >
+            Read the article <ExternalLink className="w-3 h-3" />
+          </a>
+        )}
+        <span className="ml-auto">
+          <BiasBar bias={biasKey} big={featured} />
+        </span>
+      </div>
 
-          {/* Category */}
-          <div>
-            <span className="text-[10px] font-mono uppercase tracking-[0.15em] text-muted-foreground">Category</span>
-            <p className="text-sm font-medium text-foreground">
-              {CATEGORY_DISPLAY[article.category ?? ""] || "News"}
-            </p>
-          </div>
+      {/* Headline */}
+      <h2
+        className="font-bold text-foreground leading-tight mb-4"
+        style={{ fontSize: featured ? "clamp(30px, 4vw, 50px)" : "clamp(24px, 2.8vw, 34px)" }}
+      >
+        {article.headline}
+      </h2>
 
-          {/* Source */}
-          <div>
-            <span className="text-[10px] font-mono uppercase tracking-[0.15em] text-muted-foreground">Source</span>
-            <p className="text-sm text-foreground">{article.source_name || "Unknown"}</p>
-          </div>
+      {/* Spice peppers */}
+      <div className="mb-5 flex items-center gap-3">
+        <SpicePeppers level={article.spice_level} big={featured} />
+      </div>
 
-          {/* Bias */}
-          <div>
-            <span className="text-[10px] font-mono uppercase tracking-[0.15em] text-muted-foreground">Bias</span>
-            <div className="mt-0.5">
-              <Badge variant="outline" className={cn("text-xs font-semibold", BIAS_COLORS[bias.label] || BIAS_COLORS["Center"])}>
-                {bias.label}
-              </Badge>
-            </div>
-          </div>
-
-          {/* Heat Level */}
-          <div>
-            <span className="text-[10px] font-mono uppercase tracking-[0.15em] text-muted-foreground">Heat Level</span>
-            <p className="text-sm font-semibold text-foreground">
-              {article.spice_level}/5
-            </p>
-          </div>
-
-          {/* Headline */}
-          <h3 className={cn(
-            "font-bold text-foreground leading-tight group-hover:text-primary transition-colors",
-            featured ? "text-xl md:text-2xl" : "text-base"
-          )}>
-            {article.headline}
-          </h3>
-
-          {/* The Receipt */}
-          <div>
-            <span className="text-[10px] font-mono uppercase tracking-[0.15em] text-primary font-bold">The Receipt</span>
-            <p className="text-sm text-foreground/80 leading-relaxed mt-0.5">
-              {article.receipt_connection}
-            </p>
-          </div>
-
-          {/* Jackye's Take */}
-          <div className="bg-primary/[0.04] border border-primary/10 rounded-lg p-3">
-            <span className="text-[10px] font-mono uppercase tracking-[0.15em] text-primary font-bold">Jackye's Take</span>
-            <p className="text-sm text-foreground/90 leading-relaxed mt-0.5 italic" style={{ fontFamily: "'Georgia', serif" }}>
-              "{article.jackye_take}"
-            </p>
-          </div>
-
-          {/* Why It Matters */}
-          {article.debate_prompt && (
-            <div>
-              <span className="text-[10px] font-mono uppercase tracking-[0.15em] text-muted-foreground">Why It Matters</span>
-              <p className="text-sm text-foreground/80 leading-relaxed mt-0.5">
-                {article.debate_prompt}
-              </p>
-            </div>
-          )}
-
-          {/* Use This */}
-          <div>
-            <span className="text-[10px] font-mono uppercase tracking-[0.15em] text-muted-foreground">Use This</span>
-            <div className="flex flex-wrap gap-2 mt-1">
-              <Link
-                to="/search"
-                className="inline-flex items-center gap-1 text-xs text-primary hover:underline font-semibold"
-              >
-                Search employer <ArrowRight className="w-3 h-3" />
-              </Link>
-              <Link
-                to="/money-trail"
-                className="inline-flex items-center gap-1 text-xs text-primary hover:underline font-semibold"
-              >
-                Follow the money <ArrowRight className="w-3 h-3" />
-              </Link>
-            </div>
-          </div>
-
-          {/* Read the Source */}
-          {article.source_url && (
-            <div>
-              <span className="text-[10px] font-mono uppercase tracking-[0.15em] text-muted-foreground">Read the Source</span>
-              <a
-                href={article.source_url}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="flex items-center gap-1.5 text-sm text-primary hover:underline font-semibold mt-0.5"
-              >
-                {article.source_name || "Original article"} <ExternalLink className="w-3.5 h-3.5" />
-              </a>
-            </div>
-          )}
+      {/* The Receipt */}
+      {article.receipt_connection && (
+        <div className="mb-4 p-5 rounded-xl border" style={{ background: "hsl(var(--primary) / 0.04)", borderColor: "hsl(var(--primary) / 0.2)" }}>
+          <p className="text-xs font-mono font-bold uppercase tracking-[0.12em] text-primary mb-3">
+            🧾 The Receipt
+          </p>
+          <p className="text-base text-foreground/90 leading-relaxed">
+            {article.receipt_connection}
+          </p>
         </div>
-      </CardContent>
-    </Card>
+      )}
+
+      {/* Debate prompt / Why It Matters */}
+      {article.debate_prompt && (
+        <div className="mb-4 p-5 rounded-xl border border-border bg-card">
+          <p className="text-xs font-mono font-bold uppercase tracking-[0.12em] text-primary mb-3">
+            💬 Why It Matters
+          </p>
+          <p className="text-lg font-bold text-foreground leading-snug">
+            {article.debate_prompt}
+          </p>
+        </div>
+      )}
+
+      {/* Jackye's Take — expandable */}
+      {article.jackye_take && (
+        <>
+          <button
+            onClick={() => setShowTake(!showTake)}
+            className="font-bold text-primary border border-primary/30 rounded-lg px-5 py-3 hover:bg-primary/5 transition-colors mb-3"
+            style={{ fontSize: featured ? 17 : 16, letterSpacing: "0.05em" }}
+          >
+            {showTake ? "Hide take ↑" : "Jackye's take →"}
+          </button>
+          {showTake && (
+            <blockquote className="mt-4 mb-4 border-l-[3px] border-primary pl-5">
+              <p
+                className="text-foreground italic leading-[1.82]"
+                style={{ fontSize: featured ? 21 : 17 }}
+              >
+                "{article.jackye_take}"
+              </p>
+            </blockquote>
+          )}
+        </>
+      )}
+
+      {/* WDIWF Action CTA */}
+      <Link
+        to="/search"
+        className="flex items-center justify-between mt-5 p-4 rounded-lg border-[1.5px] border-primary no-underline gap-3 hover:bg-primary/5 transition-colors"
+        style={{ background: "hsl(var(--primary) / 0.06)" }}
+      >
+        <span className="flex flex-col gap-1">
+          <span className="text-xs font-mono font-bold uppercase tracking-[0.18em] text-primary">
+            W? WDIWF Intelligence
+          </span>
+          <span className="text-base font-bold text-foreground">
+            See the full receipt on WDIWF →
+          </span>
+        </span>
+        <span className="text-xl flex-shrink-0">🔍</span>
+      </Link>
+    </article>
   );
 }
