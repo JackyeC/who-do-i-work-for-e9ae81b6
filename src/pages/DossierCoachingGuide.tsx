@@ -291,7 +291,7 @@ function DossierGateOverlay({ companyName }: { companyName: string }) {
             <Lock className="w-5 h-5 text-primary" />
           </div>
           <p className="text-sm text-foreground leading-relaxed font-medium">
-            Sign up free to see Jackye's full read on {companyName} — including red flags, role trajectory, and your coaching guide.
+            Sign up free to see the full read on {companyName} — including notable signals, role trajectory, and your coaching guide.
           </p>
           <div className="flex flex-col sm:flex-row gap-2">
             <Button asChild className="flex-1 font-mono text-xs tracking-wider">

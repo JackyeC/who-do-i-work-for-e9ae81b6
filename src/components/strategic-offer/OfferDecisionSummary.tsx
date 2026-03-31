@@ -30,9 +30,9 @@ const VERDICT_CONFIG: Record<Verdict, { color: string; bg: string; border: strin
   "Proceed Carefully": { color: "text-destructive", bg: "bg-destructive/10", border: "border-destructive/30", icon: XCircle },
 };
 
-function deriveVerdict(score: number, redFlags: number, salary: number, baseline: number): Verdict {
-  if (score >= 80 && redFlags === 0) return "Strong Offer";
-  if (score >= 65 && redFlags <= 1) return "Fair Offer";
+function deriveVerdict(score: number, notableFlags: number, salary: number, baseline: number): Verdict {
+  if (score >= 80 && notableFlags === 0) return "Strong Offer";
+  if (score >= 65 && notableFlags <= 1) return "Fair Offer";
   if (score >= 45) return "Needs Review";
   return "Proceed Carefully";
 }
@@ -45,9 +45,9 @@ function deriveConfidence(report: OfferClarityReport | null, hasCompanyMatch: bo
 
 export function OfferDecisionSummary(props: Props) {
   const { companyName, roleTitle, offerStrengthScore, report, legalFlags, offerSalary, annualBaseline, hasEquity, hasBonus } = props;
-  const redFlags = legalFlags.filter(f => f.severity === "red");
+  const highSeverity = legalFlags.filter(f => f.severity === "red");
   const yellowFlags = legalFlags.filter(f => f.severity === "yellow");
-  const verdict = deriveVerdict(offerStrengthScore, redFlags.length, offerSalary, annualBaseline);
+  const verdict = deriveVerdict(offerStrengthScore, highSeverity.length, offerSalary, annualBaseline);
   const verdictStyle = VERDICT_CONFIG[verdict];
   const VerdictIcon = verdictStyle.icon;
   const confidence = deriveConfidence(report, !!report);
@@ -56,22 +56,22 @@ export function OfferDecisionSummary(props: Props) {
   if (offerSalary >= annualBaseline * 1.15) strengths.push(`Salary ${((offerSalary / annualBaseline - 1) * 100).toFixed(0)}% above your safety line`);
   if (hasEquity) strengths.push("Equity component included");
   if (hasBonus) strengths.push("Variable compensation structure");
-  if (redFlags.length === 0) strengths.push("No high-risk legal clauses");
+  if (highSeverity.length === 0) strengths.push("No high-risk legal clauses identified");
   if (report?.compensation.percentile && report.compensation.percentile >= 70) strengths.push(`${report.compensation.percentile}th percentile compensation`);
   if (report?.employeeExperience.score && report.employeeExperience.score >= 70) strengths.push("Positive employee experience signals");
 
   const risks: string[] = [];
   if (offerSalary < annualBaseline) risks.push("Salary below your calculated safety line");
-  redFlags.forEach(f => risks.push(f.title));
+  highSeverity.forEach(f => risks.push(f.title));
   yellowFlags.slice(0, 2).forEach(f => risks.push(f.title));
-  if (report?.legalRisk.score && report.legalRisk.score < 50) risks.push("Elevated legal risk environment");
+  if (report?.legalRisk.score && report.legalRisk.score < 50) risks.push("Legal risk signals present in public record");
 
   const moves: string[] = [];
-  if (redFlags.length > 0) moves.push("Explore the restrictive clauses flagged in the Legal Audit");
+  if (highSeverity.length > 0) moves.push("Review the restrictive clauses identified in the Legal Audit");
   if (offerSalary < annualBaseline * 1.1) moves.push("Consider discussing base salary or supplemental compensation");
   if (hasEquity) moves.push("Ask about equity grant type, vesting schedule, and current valuation");
   moves.push("Review the suggested questions above before making a decision");
-  if (redFlags.length >= 2) moves.push("Consider having an employment attorney review the offer");
+  if (highSeverity.length >= 2) moves.push("Consider having an employment attorney review the offer");
 
   return (
     <div id="decision-summary">
