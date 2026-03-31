@@ -110,11 +110,11 @@ function EmojiPoster({ poster, big, id, accent, onAccent, wdiwfQuote, className 
       <div className="absolute pointer-events-none rounded-sm z-10" style={{ inset: 7, border: `1.5px solid ${accent}`, opacity: 0.7 }} />
       <div className="absolute pointer-events-none rounded-sm z-10" style={{ inset: 11, border: `0.5px solid ${accent}`, opacity: 0.3 }} />
 
-      <div className="flex-shrink-0 text-center" style={{ background: accent, padding: big ? "12px 16px" : "10px 12px" }}>
-        <div style={{ fontSize: big ? 16 : 14, fontWeight: 900, textTransform: "uppercase", letterSpacing: "0.22em", color: onAccent, lineHeight: 1.3 }}>
+      <div className="flex-shrink-0 text-center" style={{ background: accent, padding: big ? "8px 12px" : "6px 8px" }}>
+        <div style={{ fontSize: big ? 12 : 10, fontWeight: 900, textTransform: "uppercase", letterSpacing: "0.22em", color: onAccent, lineHeight: 1.3 }}>
           JACKYE CLAYTON 👑 × WDIWF
         </div>
-        <div style={{ fontSize: big ? 13 : 11, fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.18em", color: onAccent, opacity: 0.8 }}>
+        <div style={{ fontSize: big ? 10 : 8, fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.18em", color: onAccent, opacity: 0.8 }}>
           PRESENTS
         </div>
       </div>
