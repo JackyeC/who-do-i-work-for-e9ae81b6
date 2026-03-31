@@ -353,6 +353,9 @@ export default function CompanyDossier() {
           📋 {showRawLayers ? "Hide" : "View"} Raw Data Layers
         </Button>
       </div>
+      </div>
+    </>
+  );
 
   /* ─── CANDIDATE LENS — values, workforce, career ─── */
   const candidateContent = (
