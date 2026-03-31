@@ -6,11 +6,28 @@ import { SectionReveal } from "./SectionReveal";
 import { useTurnstile } from "@/hooks/useTurnstile";
 import { verifyTurnstileToken } from "@/lib/verifyTurnstile";
 
+const TOPIC_OPTIONS = [
+  "AI & Automation",
+  "Layoffs & Restructuring",
+  "Pay Equity",
+  "Worker Rights",
+  "DEI & Culture",
+  "Regulation & Policy",
+  "Future of Work",
+];
+
 export function EmailCapture() {
   const [email, setEmail] = useState("");
+  const [selectedTags, setSelectedTags] = useState<string[]>([]);
   const [status, setStatus] = useState<"idle" | "loading" | "success" | "error">("idle");
   const [errorMsg, setErrorMsg] = useState("");
   const { containerRef, getToken, resetToken } = useTurnstile();
+
+  const toggleTag = (tag: string) => {
+    setSelectedTags((prev) =>
+      prev.includes(tag) ? prev.filter((t) => t !== tag) : [...prev, tag]
+    );
+  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -38,7 +55,11 @@ export function EmailCapture() {
       return;
     }
 
-    const { error } = await supabase.from("email_signups").insert({ email: trimmed });
+    const { error } = await supabase.from("email_signups").insert({
+      email: trimmed,
+      source: "landing_page",
+      tags: selectedTags.length > 0 ? selectedTags : null,
+    } as any);
     if (error) {
       if (error.code === "23505") {
         setStatus("success");
@@ -67,9 +88,25 @@ export function EmailCapture() {
               <h2 className="text-2xl lg:text-3xl font-bold mb-3 text-foreground">
                 Get weekly intelligence drops.
               </h2>
-              <p className="text-sm lg:text-base text-muted-foreground mb-8 max-w-[460px] mx-auto leading-relaxed">
+              <p className="text-sm lg:text-base text-muted-foreground mb-5 max-w-[460px] mx-auto leading-relaxed">
                 New signals, trending companies, and career intelligence — delivered once a week. No spam. Unsubscribe anytime.
               </p>
+              <div className="flex flex-wrap justify-center gap-2 mb-6 max-w-[480px] mx-auto">
+                {TOPIC_OPTIONS.map((tag) => (
+                  <button
+                    key={tag}
+                    type="button"
+                    onClick={() => toggleTag(tag)}
+                    className={`px-3 py-1.5 rounded-full text-xs font-semibold border transition-all ${
+                      selectedTags.includes(tag)
+                        ? "bg-primary text-primary-foreground border-primary"
+                        : "bg-background/60 text-muted-foreground border-border hover:border-primary/40 hover:text-foreground"
+                    }`}
+                  >
+                    {tag}
+                  </button>
+                ))}
+              </div>
               {status === "success" ? (
                 <motion.div
                   initial={{ opacity: 0, scale: 0.95 }}
