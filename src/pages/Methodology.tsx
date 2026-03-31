@@ -472,7 +472,6 @@ export default function Methodology() {
           </div>
         </div>
       </div>
-      <Footer />
     </div>
   );
 }
