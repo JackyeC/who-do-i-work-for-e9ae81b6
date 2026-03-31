@@ -77,10 +77,10 @@ const Index = forwardRef<HTMLDivElement>((_, ref) => {
           </h1>
 
           <p
-            className="text-muted-foreground max-w-[56ch] mx-auto leading-relaxed mt-6"
+            className="text-muted-foreground max-w-[48ch] mx-auto leading-relaxed mt-6"
             style={{ fontSize: "clamp(0.95rem, 1.3vw, 1.075rem)", opacity: 0, animation: "heroFadeIn 0.6s ease 0.6s forwards" }}
           >
-            Who Do I Work For helps you evaluate employers, understand what your labor supports, review offers, map your next move, and protect your career — using public records, values alignment, and plain-English guidance.
+            Check who you're really working for. Review an offer. Understand what the public record says. It takes 30 seconds.
           </p>
 
           {/* Search bar */}
