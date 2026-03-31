@@ -561,7 +561,7 @@ export default function CompanyProfile() {
           {/* ═══════════════════════════════════════════════════════
               2.5 PERCEPTION GAP™
              ═══════════════════════════════════════════════════════ */}
-          {dbCompanyId && (
+          {dbCompanyId && !isEarlyInvestigation && (
             <PerceptionGapModule
               companyId={dbCompanyId}
               companyName={name}
