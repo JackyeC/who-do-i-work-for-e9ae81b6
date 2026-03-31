@@ -6,11 +6,9 @@ import { useClerkWithFallback } from "@/hooks/use-clerk-fallback";
 import { Button } from "@/components/ui/button";
 
 const PRIMARY_LINKS = [
-  { label: "Receipts", to: "/receipts" },
-  { label: "Companies", to: "/browse" },
-  { label: "Tools", to: "/tools" },
+  { label: "Search Companies", to: "/browse" },
+  { label: "The Receipts", to: "/receipts" },
   { label: "Pricing", to: "/pricing" },
-  { label: "About", to: "/about" },
 ];
 
 const TOOLS_LINKS = [
