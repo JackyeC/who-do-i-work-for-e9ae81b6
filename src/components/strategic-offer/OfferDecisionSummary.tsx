@@ -67,11 +67,11 @@ export function OfferDecisionSummary(props: Props) {
   if (report?.legalRisk.score && report.legalRisk.score < 50) risks.push("Legal risk signals present in public record");
 
   const moves: string[] = [];
-  if (redFlags.length > 0) moves.push("Explore the restrictive clauses flagged in the Legal Audit");
+  if (highSeverity.length > 0) moves.push("Review the restrictive clauses identified in the Legal Audit");
   if (offerSalary < annualBaseline * 1.1) moves.push("Consider discussing base salary or supplemental compensation");
   if (hasEquity) moves.push("Ask about equity grant type, vesting schedule, and current valuation");
   moves.push("Review the suggested questions above before making a decision");
-  if (redFlags.length >= 2) moves.push("Consider having an employment attorney review the offer");
+  if (highSeverity.length >= 2) moves.push("Consider having an employment attorney review the offer");
 
   return (
     <div id="decision-summary">

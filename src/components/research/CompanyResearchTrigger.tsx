@@ -86,7 +86,7 @@ export function CompanyResearchTrigger({ companyName, className, onPublished }: 
             <DraftSection icon={Landmark} title="Political Activity" text={draft.political} />
           )}
           {draft.controversies && (
-            <DraftSection icon={AlertTriangle} title="Red Flags" text={draft.controversies} />
+            <DraftSection icon={AlertTriangle} title="Notable Signals" text={draft.controversies} />
           )}
 
           {draft.citations?.length > 0 && (

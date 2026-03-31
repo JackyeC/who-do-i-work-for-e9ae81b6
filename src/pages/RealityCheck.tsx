@@ -25,8 +25,8 @@ export default function RealityCheckPage() {
   const [lastInput, setLastInput] = useState<{ companyId: string; companyName: string } | null>(null);
 
   usePageSEO({
-    title: "Employer Red Flags Before Accepting a Job Offer — Reality Check",
-    description: "Caught something off in your interview? Compare your experience against SEC data, board diversity scores, and retention signals. Free post-interview audit.",
+    title: "Check Before You Commit — Interview Process Signal Check",
+    description: "Compare your interview experience against public data. Surface patterns between what a company says and what is visible. Free process signal check.",
     path: "/reality-check",
     jsonLd: {
       "@type": "HowTo",
