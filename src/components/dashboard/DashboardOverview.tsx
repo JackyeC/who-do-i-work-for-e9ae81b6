@@ -385,7 +385,13 @@ export function DashboardOverview({ onNavigate }: DashboardOverviewProps) {
             </div>
             <div className="space-y-3">
               {INTEL_BULLETS.map((b, i) => (
-                <div key={i} className="rounded-lg p-3 bg-muted/30 border border-border/30">
+                <motion.div
+                  key={i}
+                  initial={{ opacity: 0, y: 6 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: 0.08 + i * 0.06, duration: 0.35, ease: [0.22, 1, 0.36, 1] }}
+                  className="rounded-lg p-3 bg-muted/30 border border-border/30 transition-all duration-200 hover:border-border/60"
+                >
                   <div className="flex items-center gap-2 mb-1.5">
                     <span className={`rounded px-1.5 py-0.5 text-xs font-bold font-mono border ${VARIANT_CLASSES[b.variant].badge}`}>
                       {b.risk} RISK
@@ -395,7 +401,7 @@ export function DashboardOverview({ onNavigate }: DashboardOverviewProps) {
                     </span>
                   </div>
                   <p className="text-[12.5px] text-foreground leading-relaxed">{b.text}</p>
-                </div>
+                </motion.div>
               ))}
             </div>
           </BriefingCard>
