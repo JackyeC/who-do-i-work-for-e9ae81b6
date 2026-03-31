@@ -71,7 +71,15 @@ export function useReceiptsFeed() {
         .select("*")
         .order("published_at", { ascending: false });
       if (error) throw error;
-      return (data ?? []) as unknown as ReceiptArticle[];
+      // Deduplicate by headline — keep the newest entry
+      const seen = new Set<string>();
+      const unique = ((data ?? []) as unknown as ReceiptArticle[]).filter((a) => {
+        const key = a.headline?.toLowerCase().trim();
+        if (seen.has(key)) return false;
+        seen.add(key);
+        return true;
+      });
+      return unique;
     },
     staleTime: 1000 * 60 * 5,
   });
