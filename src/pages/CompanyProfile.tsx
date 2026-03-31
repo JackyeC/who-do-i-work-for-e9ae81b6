@@ -555,8 +555,8 @@ export default function CompanyProfile() {
           {/* ═══════════════════════════════════════════════════════
               2.7 RECRUITER VIEW — Integrity Check
              ═══════════════════════════════════════════════════════ */}
-          {integrityLoading && <RecruiterIntegrityCardSkeleton />}
-          {integrityResult && <RecruiterIntegrityCard result={integrityResult} />}
+          {integrityLoading && !isEarlyInvestigation && <RecruiterIntegrityCardSkeleton />}
+          {integrityResult && !isEarlyInvestigation && <RecruiterIntegrityCard result={integrityResult} />}
 
           {/* ═══════════════════════════════════════════════════════
               2.5 PERCEPTION GAP™
