@@ -228,14 +228,14 @@ export function WarningLabelView({ company, executives = [], contracts = [], iss
         </CardContent>
       </Card>
 
-      {/* ─── THE MONEY TRAIL ─── */}
+      {/* ─── WORKFORCE HEALTH ─── */}
       <Card className="rounded-none border border-border/50">
         <CardContent className="p-6">
           <div className="flex items-center gap-3 mb-4">
             <DollarSign className="w-5 h-5 text-primary" />
             <div>
-              <h3 className="text-sm font-black tracking-tight text-foreground uppercase">THE MONEY TRAIL</h3>
-              <p className="text-xs text-muted-foreground">Follow the spending — lobbying vs. what workers see</p>
+              <h3 className="text-sm font-black tracking-tight text-foreground uppercase">WORKFORCE HEALTH</h3>
+              <p className="text-xs text-muted-foreground">Follow the spending, spot the risk</p>
             </div>
           </div>
           <div className="overflow-x-auto">
