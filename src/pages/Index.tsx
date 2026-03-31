@@ -57,7 +57,7 @@ const Index = forwardRef<HTMLDivElement>((_, ref) => {
             className="font-mono text-[11px] tracking-[0.2em] uppercase text-primary mb-5"
             style={{ opacity: 0, animation: "heroFadeIn 0.5s ease 0.15s forwards" }}
           >
-            Career advocacy, not career fluff
+            Before you apply, accept, stay, or leave
           </p>
 
           <h1
