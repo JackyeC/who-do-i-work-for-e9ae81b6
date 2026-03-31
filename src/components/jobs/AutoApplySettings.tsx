@@ -114,7 +114,7 @@ export function AutoApplySettings() {
             >
               {paused ? "Paused" : enabled ? "Active" : "Off"}
             </Badge>
-            <Switch checked={enabled} onCheckedChange={setEnabled} />
+            <Switch checked={enabled} onCheckedChange={handleEnableToggle} />
           </div>
         </div>
       </CardHeader>
