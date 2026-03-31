@@ -288,27 +288,7 @@ export default function CompanyDossier() {
       <div className="flex items-center gap-2 mb-6 px-4 py-2.5 rounded-xl border border-border/40 bg-muted/30">
         <LensIcon className={`w-4 h-4 ${LensMeta.color}`} />
         <span className="text-sm font-medium text-foreground">{LensMeta.label}</span>
-        <span className="text-xs text-muted-foreground ml-1">— viewing dossier through this lens. Switch via header toggle.</span>
-        <div className="ml-auto flex items-center gap-1 bg-muted/50 rounded-lg p-0.5">
-          <button
-            onClick={() => setDossierView("warning")}
-            className={`px-3 py-1 rounded-md text-xs font-mono font-semibold transition-colors ${dossierView === "warning" ? "bg-primary text-primary-foreground" : "text-muted-foreground hover:text-foreground"}`}
-          >
-            ⚠️ Warning Label
-          </button>
-          <button
-            onClick={() => setDossierView("layers")}
-            className={`px-3 py-1 rounded-md text-xs font-mono font-semibold transition-colors ${dossierView === "layers" ? "bg-primary text-primary-foreground" : "text-muted-foreground hover:text-foreground"}`}
-          >
-            📋 Deep Dive
-          </button>
-          <button
-            onClick={() => setDossierView("prep")}
-            className={`px-3 py-1 rounded-md text-xs font-mono font-semibold transition-colors ${dossierView === "prep" ? "bg-primary text-primary-foreground" : "text-muted-foreground hover:text-foreground"}`}
-          >
-            🎯 Interview Prep
-          </button>
-        </div>
+        <span className="text-xs text-muted-foreground ml-1">— background check on the employer</span>
       </div>
 
       {/* Situation-Aware Context Banner */}
@@ -320,76 +300,59 @@ export default function CompanyDossier() {
         <ClarityEngine companyId={companyId} companyName={company.name} />
       </div>
 
-      {dossierView === "warning" ? (
-        <WarningLabelView
-          company={company as any}
-          executives={executives as any}
-          contracts={contracts as any}
-          issueSignals={issueSignals as any}
-          publicStances={publicStances as any}
-          eeocCases={eeocCases as any}
-        />
-      ) : dossierView === "prep" ? (
-        <CandidatePrepPack companyId={companyId} companyName={company.name} />
-      ) : (
-        <>
-          {/* Score gauges */}
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-6 mb-8 p-6 rounded-2xl border border-border/40 bg-card">
-            <InfluenceGauge value={influenceScore} label="Influence Score" />
-            <InfluenceGauge value={0} label="Innovation Score" />
-            <InfluenceGauge value={0} label="Stability Score" />
-            <InfluenceGauge value={0} label="Attraction Score" />
-          </div>
-
-          {/* Jackye's Insight — shared component */}
-          <JackyesInsightBlock insight={company.jackye_insight} description={(company as any)?.description} />
-
-          {/* No-data fallback */}
-          {hasNoData && (
-            <Card className="mb-6 border-dashed border-border/60 bg-muted/20">
-              <CardContent className="p-6 text-center">
-                <FileSearch className="w-10 h-10 text-muted-foreground mx-auto mb-3" />
-                <h3 className="text-base font-semibold text-foreground mb-1">We don't have receipts on this company yet.</h3>
-                <p className="text-sm text-muted-foreground mb-4 max-w-md mx-auto">
-                  Our research team hasn't completed a full scan. You can request one or run an automated scan now.
-                </p>
-                <div className="flex flex-col items-center gap-4">
-                  <CompanyZeroState companyName={company.name} />
-                  <AuditRequestForm companyName={company.name} />
-                </div>
-              </CardContent>
-            </Card>
-          )}
-
-          {/* Layer 1: Basics — always shown */}
-          <DossierLayer title="Basics" subtitle="Products, markets, segments, and company overview" icon={Building2} layerNumber={1} defaultOpen>
-            <div className="space-y-6">
-              {company.description && (
-                <p className="text-body text-muted-foreground leading-relaxed">{company.description}</p>
-              )}
-              <ProductsPlatformsLayer products={[]} companyName={company.name} />
-              <MarketsSegmentsLayer segments={[]} companyName={company.name} />
+      {/* No-data fallback */}
+      {hasNoData && (
+        <Card className="mb-6 border-dashed border-border/60 bg-muted/20">
+          <CardContent className="p-6 text-center">
+            <FileSearch className="w-10 h-10 text-muted-foreground mx-auto mb-3" />
+            <h3 className="text-base font-semibold text-foreground mb-1">We don't have receipts on this company yet.</h3>
+            <p className="text-sm text-muted-foreground mb-4 max-w-md mx-auto">
+              Our research team hasn't completed a full scan. You can request one or run an automated scan now.
+            </p>
+            <div className="flex flex-col items-center gap-4">
+              <CompanyZeroState companyName={company.name} />
+              <AuditRequestForm companyName={company.name} />
             </div>
-          </DossierLayer>
-
-          {/* Innovation — always visible */}
-          <DossierLayer title="Innovation & Patents" subtitle="Stock timeline, patent clusters, R&D themes" icon={Lightbulb} layerNumber={2}>
-            <div className="space-y-8">
-              <StockPatentsLayer companyId={companyId!} companyName={company.name} unlocked={hasFullAccess} />
-              <div className="border-t border-border/30 pt-6">
-                <InnovationPatentsLayer totalPatents={0} clusters={[]} companyName={company.name} companyId={companyId} unlocked={hasFullAccess} />
-              </div>
-            </div>
-          </DossierLayer>
-
-          {/* EEOC Enforcement Alert */}
-          {eeocCases && eeocCases.length > 0 && (
-            <EEOCCaseAlert cases={eeocCases} />
-          )}
-        </>
+          </CardContent>
+        </Card>
       )}
-    </>
-  );
+
+      {/* ─── ADVOCACY REPORT ─── */}
+      <AdvocacyReport
+        company={{ ...company, id: companyId!, slug: company.slug } as any}
+        executives={executives as any}
+        contracts={contracts as any}
+        issueSignals={issueSignals as any}
+        publicStances={publicStances as any}
+        eeocCases={eeocCases as any}
+      />
+
+      {/* Interview Prep toggle */}
+      <div className="mt-6">
+        <Button
+          variant="outline"
+          className="w-full font-mono text-xs uppercase tracking-wider"
+          onClick={() => setShowPrep(!showPrep)}
+        >
+          🎯 {showPrep ? "Hide" : "Show"} Interview Prep
+        </Button>
+        {showPrep && (
+          <div className="mt-4">
+            <CandidatePrepPack companyId={companyId} companyName={company.name} />
+          </div>
+        )}
+      </div>
+
+      {/* Raw layers toggle for power users */}
+      <div className="mt-4">
+        <Button
+          variant="ghost"
+          className="w-full font-mono text-xs uppercase tracking-wider text-muted-foreground"
+          onClick={() => setShowRawLayers(!showRawLayers)}
+        >
+          📋 {showRawLayers ? "Hide" : "View"} Raw Data Layers
+        </Button>
+      </div>
 
   /* ─── CANDIDATE LENS — values, workforce, career ─── */
   const candidateContent = (
