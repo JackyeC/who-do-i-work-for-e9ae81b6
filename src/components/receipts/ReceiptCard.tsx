@@ -13,6 +13,7 @@ interface ReceiptCardProps {
   article: ReceiptArticle;
   featured?: boolean;
   onPosterClick?: (article: ReceiptArticle) => void;
+  onRequestEmailCapture?: () => void;
 }
 
 export function ReceiptCard({ article, featured = false, onPosterClick, onRequestEmailCapture }: ReceiptCardProps) {
