@@ -361,7 +361,7 @@ export function AdvocacyReport({ company, executives = [], contracts = [], issue
 
       {/* ═══ 9. WHAT THEY FUND & SUPPORT ═══ */}
       <section>
-        <SectionDivider number={8} icon={Heart} title="What They Fund & Support" subtitle="Institutional DNA, policy scores, and network connections" />
+        <SectionDivider number={8} icon={Heart} title="Institutional Affiliations" subtitle="What they fund, support, and are connected to" />
         <div className="pl-11 space-y-4">
           <ExecutiveGivingSection companyId={company.id} companyName={company.name} companySlug={company.slug} />
           <InstitutionalDNACard companyId={company.id} companyName={company.name} />
