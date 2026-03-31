@@ -21,9 +21,11 @@ import {
   Briefcase, FileCheck, Map, FileText, BarChart3, Eye, Landmark, Network,
   Megaphone, Users, Target, CreditCard,
   LayoutDashboard, Zap, Bell, Settings, User, ClipboardCheck,
-  LogIn, LogOut, Compass, Flame, Shield,
+  LogIn, LogOut, Compass, Flame, Shield, Award,
   Bookmark, Inbox, MessageSquare, Columns3, FileEdit, Mic,
 } from "lucide-react";
+import { useState } from "react";
+import { FoundingMemberBadge } from "@/components/FoundingMemberBadge";
 import logoSquare from "@/assets/wdiwf-logo-square.png";
 import logoNav from "@/assets/wdiwf-logo-nav-light.png";
 
