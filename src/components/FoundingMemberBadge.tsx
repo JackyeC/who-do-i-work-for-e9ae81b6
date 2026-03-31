@@ -92,7 +92,7 @@ export function FoundingMemberBadge({
     }
   };
 
-  const shareText = `I'm Founding Member ${displayNumber} of Who Do I Work For? — the career intelligence platform that tells you what employers won't. Launching April 6. Get in early → ${BASE_URL}`;
+  const shareText = `I'm Founding Member ${displayNumber} of Who Do I Work For? — the career intelligence platform that tells you what employers won't. Launching April 7. Get in early → ${BASE_URL}`;
 
   const handleShareLinkedIn = () => {
     const url = `https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(BASE_URL)}`;
