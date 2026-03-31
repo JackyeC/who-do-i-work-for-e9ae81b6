@@ -581,7 +581,6 @@ export default function Check() {
             </div>
           </section>
         </main>
-        <Footer />
       </div>
     </>
   );
