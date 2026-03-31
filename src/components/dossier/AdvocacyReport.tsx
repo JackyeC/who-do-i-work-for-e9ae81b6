@@ -73,7 +73,7 @@ interface AdvocacyReportProps {
   }>;
 }
 
-/* ─── Verdict logic (same as WarningLabelView) ─── */
+/* ─── Verdict logic ─── */
 function computeVerdict(company: AdvocacyReportProps["company"], signalCount: number, eeocCount: number) {
   const lobbyingHigh = (company.lobbying_spend ?? 0) > 1_000_000;
   const pacHigh = (company.total_pac_spending ?? 0) > 500_000;
@@ -81,10 +81,10 @@ function computeVerdict(company: AdvocacyReportProps["company"], signalCount: nu
   const hasEeoc = eeocCount > 0;
   const redFlags = [lobbyingHigh, pacHigh, clarityLow, hasEeoc, signalCount > 5].filter(Boolean).length;
 
-  if (redFlags >= 4) return { text: "ENTER WITH A PARACHUTE", emoji: "🪂", color: "text-destructive", bg: "bg-destructive/10 border-destructive/30", redFlagCount: redFlags };
-  if (redFlags >= 2) return { text: "PROCEED WITH CAUTION", emoji: "⚠️", color: "text-civic-yellow", bg: "bg-civic-yellow/10 border-civic-yellow/30", redFlagCount: redFlags };
-  if (redFlags >= 1) return { text: "MIXED SIGNALS — DIG DEEPER", emoji: "🔍", color: "text-civic-blue", bg: "bg-civic-blue/10 border-civic-blue/30", redFlagCount: redFlags };
-  return { text: "RELATIVELY CLEAN RECORD", emoji: "✅", color: "text-civic-green", bg: "bg-civic-green/10 border-civic-green/30", redFlagCount: 0 };
+  if (redFlags >= 4) return { text: "ENTER WITH A PARACHUTE", color: "text-destructive", bg: "bg-destructive/10 border-destructive/30", redFlagCount: redFlags };
+  if (redFlags >= 2) return { text: "PROCEED WITH CAUTION", color: "text-civic-yellow", bg: "bg-civic-yellow/10 border-civic-yellow/30", redFlagCount: redFlags };
+  if (redFlags >= 1) return { text: "MIXED SIGNALS — DIG DEEPER", color: "text-civic-blue", bg: "bg-civic-blue/10 border-civic-blue/30", redFlagCount: redFlags };
+  return { text: "RELATIVELY CLEAN RECORD", color: "text-civic-green", bg: "bg-civic-green/10 border-civic-green/30", redFlagCount: 0 };
 }
 
 function fmtMoney(n?: number | null): string {
@@ -110,13 +110,18 @@ const DECODER_MAP: Record<string, string> = {
   "realignment": "Your team might not exist next quarter",
 };
 
-/* ─── Section header ─── */
-function SectionHeader({ icon: Icon, title, subtitle }: { icon: React.ElementType; title: string; subtitle: string }) {
+/* ─── Section divider ─── */
+function SectionDivider({ number, title, subtitle, icon: Icon }: { number: number; title: string; subtitle: string; icon: React.ElementType }) {
   return (
-    <div className="flex items-center gap-3 mb-4">
-      <Icon className="w-5 h-5 text-primary shrink-0" />
-      <div>
-        <h3 className="text-sm font-black tracking-tight text-foreground uppercase">{title}</h3>
+    <div className="flex items-start gap-4 mb-5 pt-2">
+      <div className="flex items-center justify-center w-7 h-7 rounded-full border border-primary/30 bg-primary/5 shrink-0">
+        <span className="text-[10px] font-mono font-bold text-primary">{number}</span>
+      </div>
+      <div className="flex-1 min-w-0">
+        <div className="flex items-center gap-2 mb-0.5">
+          <Icon className="w-4 h-4 text-primary shrink-0" />
+          <h3 className="text-sm font-black tracking-tight text-foreground uppercase">{title}</h3>
+        </div>
         <p className="text-xs text-muted-foreground">{subtitle}</p>
       </div>
     </div>
@@ -143,74 +148,66 @@ export function AdvocacyReport({ company, executives = [], contracts = [], issue
   }, [issueSignals]);
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-8">
 
       {/* ═══ 1. THE VERDICT ═══ */}
-      <Card className={cn("border-2 rounded-none", verdict.bg)}>
-        <CardContent className="p-6 md:p-8">
-          <div className="flex items-start gap-4">
-            <span className="text-4xl">{verdict.emoji}</span>
-            <div className="flex-1">
-              <p className="font-mono text-xs tracking-[0.3em] uppercase text-muted-foreground mb-1">WDIWF VERDICT</p>
-              <h2 className={cn("text-xl md:text-2xl font-black tracking-tight", verdict.color)}>{verdict.text}</h2>
-              {company.jackye_insight && (
-                <p className="mt-3 text-sm text-foreground/80 leading-relaxed italic">"{company.jackye_insight}"</p>
-              )}
-            </div>
-          </div>
-        </CardContent>
-      </Card>
+      <div className={cn("border-l-4 p-6 md:p-8", verdict.bg)}>
+        <p className="font-mono text-[10px] tracking-[0.35em] uppercase text-muted-foreground mb-2">WDIWF VERDICT</p>
+        <h2 className={cn("text-xl md:text-2xl font-black tracking-tight", verdict.color)}>{verdict.text}</h2>
+        {company.jackye_insight && (
+          <p className="mt-3 text-sm text-foreground/80 leading-relaxed italic">"{company.jackye_insight}"</p>
+        )}
+        <p className="mt-3 text-xs text-muted-foreground">
+          Based on {issueSignals.length} signal{issueSignals.length !== 1 ? "s" : ""}, {eeocCases.length} enforcement action{eeocCases.length !== 1 ? "s" : ""}, and public spending records.
+        </p>
+      </div>
 
       {/* ═══ 2. COMPANY SUMMARY ═══ */}
-      <Card className="rounded-none border border-border/50">
-        <CardContent className="p-6">
-          <SectionHeader icon={Building2} title="COMPANY SUMMARY" subtitle="The basics before the receipts" />
-          <div className="space-y-2">
-            <div className="flex flex-wrap gap-2">
-              <Badge variant="secondary" className="text-xs font-mono">{company.industry}</Badge>
-              <Badge variant="outline" className="text-xs font-mono">{company.state}</Badge>
-              {company.employee_count && <Badge variant="outline" className="text-xs font-mono">{company.employee_count} employees</Badge>}
-              {company.is_publicly_traded && <Badge variant="outline" className="text-xs font-mono">Publicly Traded</Badge>}
-            </div>
-            {company.description && (
-              <p className="text-sm text-muted-foreground leading-relaxed mt-3">{company.description}</p>
-            )}
+      <section>
+        <SectionDivider number={1} icon={Building2} title="Company Summary" subtitle="The basics before the receipts" />
+        <div className="pl-11">
+          <div className="flex flex-wrap gap-2 mb-3">
+            <Badge variant="secondary" className="text-xs font-mono">{company.industry}</Badge>
+            <Badge variant="outline" className="text-xs font-mono">{company.state}</Badge>
+            {company.employee_count && <Badge variant="outline" className="text-xs font-mono">{company.employee_count} employees</Badge>}
+            {company.is_publicly_traded && <Badge variant="outline" className="text-xs font-mono">Publicly Traded</Badge>}
           </div>
-        </CardContent>
-      </Card>
+          {company.description && (
+            <p className="text-sm text-muted-foreground leading-relaxed">{company.description}</p>
+          )}
+        </div>
+      </section>
 
       {/* ═══ 3. WHAT THEY SAY ═══ */}
       {publicStances.length > 0 && (
-        <Card className="rounded-none border border-border/50">
-          <CardContent className="p-6">
-            <SectionHeader icon={Megaphone} title="WHAT THEY SAY" subtitle="Their words — pulled from public filings and corporate communications" />
-            <div className="space-y-2">
-              {publicStances.slice(0, 8).map((s, i) => (
-                <div key={i} className="p-3 border-l-2 border-muted-foreground/30 bg-muted/10 rounded-none">
-                  <div className="flex items-center gap-2 mb-1">
-                    {s.issue_category && <Badge variant="outline" className="text-xs">{s.issue_category}</Badge>}
-                  </div>
-                  {s.public_position && (
-                    <p className="text-sm text-foreground italic">"{s.public_position}"</p>
-                  )}
+        <section>
+          <SectionDivider number={2} icon={Megaphone} title="What They Say" subtitle="Their words — from public filings and corporate communications" />
+          <div className="pl-11 space-y-2">
+            {publicStances.slice(0, 8).map((s, i) => (
+              <div key={i} className="p-3 border-l-2 border-muted-foreground/20 bg-muted/5">
+                <div className="flex items-center gap-2 mb-1">
+                  {s.issue_category && <Badge variant="outline" className="text-xs">{s.issue_category}</Badge>}
                 </div>
-              ))}
-            </div>
-          </CardContent>
-        </Card>
+                {s.public_position && (
+                  <p className="text-sm text-foreground italic">"{s.public_position}"</p>
+                )}
+              </div>
+            ))}
+          </div>
+        </section>
       )}
 
       {/* ═══ 4. WHAT THEY DO ═══ */}
-      <Card className="rounded-none border border-border/50">
-        <CardContent className="p-6">
-          <SectionHeader icon={DollarSign} title="WHAT THEY DO" subtitle="The record — follow the money, follow the spend" />
+      <section>
+        <SectionDivider number={3} icon={DollarSign} title="What They Do" subtitle="Follow the money, follow the spend" />
+        <div className="pl-11">
           <div className="overflow-x-auto">
             <table className="w-full text-sm">
               <thead>
                 <tr className="border-b border-border/40">
-                  <th className="text-left py-2 pr-4 font-mono text-xs text-muted-foreground uppercase tracking-wider">Metric</th>
-                  <th className="text-left py-2 pr-4 font-mono text-xs text-muted-foreground uppercase tracking-wider">Amount</th>
-                  <th className="text-left py-2 font-mono text-xs text-muted-foreground uppercase tracking-wider">So What?</th>
+                  <th className="text-left py-2 pr-4 font-mono text-[10px] text-muted-foreground uppercase tracking-wider">Metric</th>
+                  <th className="text-left py-2 pr-4 font-mono text-[10px] text-muted-foreground uppercase tracking-wider">Amount</th>
+                  <th className="text-left py-2 font-mono text-[10px] text-muted-foreground uppercase tracking-wider">So What?</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-border/20">
@@ -255,12 +252,12 @@ export function AdvocacyReport({ company, executives = [], contracts = [], issue
 
           {/* Active signals by category */}
           {Object.keys(signalsByCategory).length > 0 && (
-            <div className="mt-4 pt-4 border-t border-border/30">
-              <p className="font-mono text-xs text-primary tracking-wider uppercase mb-2">Active Signals</p>
+            <div className="mt-5 pt-5 border-t border-border/30">
+              <p className="font-mono text-[10px] text-primary tracking-[0.3em] uppercase mb-3">Active Signals</p>
               <div className="space-y-2">
                 {Object.entries(signalsByCategory).slice(0, 6).map(([cat, signals]) => (
                   <div key={cat} className={cn(
-                    "flex items-start gap-3 p-3 border-l-2 rounded-none",
+                    "flex items-start gap-3 p-3 border-l-2",
                     signals.length > 3 ? "border-destructive/50 bg-destructive/5" : "border-civic-yellow/50 bg-civic-yellow/5"
                   )}>
                     <AlertTriangle className={cn("w-4 h-4 mt-0.5 shrink-0", signals.length > 3 ? "text-destructive" : "text-civic-yellow")} />
@@ -273,103 +270,96 @@ export function AdvocacyReport({ company, executives = [], contracts = [], issue
               </div>
             </div>
           )}
-        </CardContent>
-      </Card>
+        </div>
+      </section>
 
       {/* ═══ 5. INTEGRITY GAP ═══ */}
       {gapStances.length > 0 && (
-        <Card className="rounded-none border border-border/50">
-          <CardContent className="p-6">
-            <SectionHeader icon={Eye} title="INTEGRITY GAP" subtitle="Where their words and their record don't match" />
-            <div className="space-y-3">
-              {gapStances.map((s, i) => (
-                <div key={i} className={cn(
-                  "p-3 border-l-2 rounded-none",
-                  s.gap_severity === "Large" ? "border-destructive/50 bg-destructive/5" : "border-civic-yellow/50 bg-civic-yellow/5"
-                )}>
-                  <div className="flex items-center gap-2 mb-1">
-                    <Badge variant="outline" className={cn(
-                      "text-xs font-mono",
-                      s.gap_severity === "Large" ? "border-destructive/50 text-destructive" : "border-civic-yellow/50 text-civic-yellow"
-                    )}>
-                      {s.gap_severity} Gap
-                    </Badge>
-                    <span className="text-xs text-muted-foreground">{s.issue_category}</span>
-                  </div>
-                  {s.public_position && <p className="text-sm text-foreground mb-1"><span className="font-medium">They say:</span> "{s.public_position}"</p>}
-                  {s.reality_check && <p className="text-sm text-muted-foreground"><span className="font-medium text-foreground">Records show:</span> {s.reality_check}</p>}
+        <section>
+          <SectionDivider number={4} icon={Eye} title="Integrity Gap" subtitle="Where their words and their record don't match" />
+          <div className="pl-11 space-y-3">
+            {gapStances.map((s, i) => (
+              <div key={i} className={cn(
+                "p-3 border-l-2",
+                s.gap_severity === "Large" ? "border-destructive/50 bg-destructive/5" : "border-civic-yellow/50 bg-civic-yellow/5"
+              )}>
+                <div className="flex items-center gap-2 mb-1">
+                  <Badge variant="outline" className={cn(
+                    "text-xs font-mono",
+                    s.gap_severity === "Large" ? "border-destructive/50 text-destructive" : "border-civic-yellow/50 text-civic-yellow"
+                  )}>
+                    {s.gap_severity} Gap
+                  </Badge>
+                  <span className="text-xs text-muted-foreground">{s.issue_category}</span>
                 </div>
-              ))}
-            </div>
-          </CardContent>
-        </Card>
+                {s.public_position && <p className="text-sm text-foreground mb-1"><span className="font-medium">They say:</span> "{s.public_position}"</p>}
+                {s.reality_check && <p className="text-sm text-muted-foreground"><span className="font-medium text-foreground">Records show:</span> {s.reality_check}</p>}
+              </div>
+            ))}
+          </div>
+        </section>
       )}
 
       {/* ═══ 6. LABOR IMPACT ═══ */}
       {eeocCases.length > 0 && (
-        <Card className="rounded-none border border-border/50">
-          <CardContent className="p-6">
-            <SectionHeader icon={Scale} title="LABOR IMPACT" subtitle="Enforcement actions, complaints, and workforce risk on the record" />
+        <section>
+          <SectionDivider number={5} icon={Scale} title="Labor Impact" subtitle="Enforcement actions and complaints on the record" />
+          <div className="pl-11">
             <EEOCCaseAlert cases={eeocCases as any} />
             <p className="mt-3 text-xs text-muted-foreground leading-relaxed italic">
-              EEOC enforcement actions indicate a formal complaint was investigated. This does not automatically mean wrongdoing — but patterns across multiple filings are worth noting.
+              Enforcement actions indicate a formal complaint was investigated. Patterns across multiple filings are worth noting — single filings less so.
             </p>
-          </CardContent>
-        </Card>
+          </div>
+        </section>
       )}
 
       {/* ═══ 7. SAFETY & WORKFORCE RISK ═══ */}
-      <Card className="rounded-none border border-border/50">
-        <CardContent className="p-6">
-          <SectionHeader icon={Users} title="SAFETY & WORKFORCE RISK" subtitle="Workforce demographics, stability signals, and hiring patterns" />
+      <section>
+        <SectionDivider number={6} icon={Users} title="Safety & Workforce Risk" subtitle="Demographics, stability, and hiring patterns" />
+        <div className="pl-11">
           <WorkforceDemographicsLayer companyId={company.id} companyName={company.name} />
-        </CardContent>
-      </Card>
+        </div>
+      </section>
 
       {/* ═══ 8. POLITICAL & POLICY ALIGNMENT ═══ */}
-      <Card className="rounded-none border border-border/50">
-        <CardContent className="p-6">
-          <SectionHeader icon={Megaphone} title="POLITICAL & POLICY ALIGNMENT" subtitle="PAC spending, lobbying, executive donations, government ties" />
-          <div className="space-y-4">
-            {/* Influence map — top donors */}
-            {topDonors.length > 0 && (
-              <div>
-                <p className="font-mono text-xs text-primary tracking-wider uppercase mb-2">Top Political Donors in Leadership</p>
-                <div className="space-y-2">
-                  {topDonors.map((exec, i) => (
-                    <div key={i} className="flex items-center justify-between p-3 bg-muted/20 border border-border/30 rounded-none">
-                      <div>
-                        <p className="text-sm font-semibold text-foreground">{exec.name}</p>
-                        <p className="text-xs text-muted-foreground">{exec.title}</p>
-                      </div>
-                      <Badge variant="outline" className="font-mono text-xs">{fmtMoney(exec.total_donations)} donated</Badge>
+      <section>
+        <SectionDivider number={7} icon={Megaphone} title="Political & Policy Alignment" subtitle="PAC spending, lobbying, executive donations" />
+        <div className="pl-11 space-y-4">
+          {topDonors.length > 0 && (
+            <div>
+              <p className="font-mono text-[10px] text-primary tracking-[0.3em] uppercase mb-2">Top Political Donors in Leadership</p>
+              <div className="space-y-2">
+                {topDonors.map((exec, i) => (
+                  <div key={i} className="flex items-center justify-between p-3 bg-muted/10 border border-border/20">
+                    <div>
+                      <p className="text-sm font-semibold text-foreground">{exec.name}</p>
+                      <p className="text-xs text-muted-foreground">{exec.title}</p>
                     </div>
-                  ))}
-                </div>
+                    <Badge variant="outline" className="font-mono text-xs">{fmtMoney(exec.total_donations)} donated</Badge>
+                  </div>
+                ))}
               </div>
-            )}
-            <PoliticalGivingCard companyId={company.id} companyName={company.name} companySlug={company.slug} />
-          </div>
-        </CardContent>
-      </Card>
+            </div>
+          )}
+          <PoliticalGivingCard companyId={company.id} companyName={company.name} companySlug={company.slug} />
+        </div>
+      </section>
 
       {/* ═══ 9. WHAT THEY FUND & SUPPORT ═══ */}
-      <Card className="rounded-none border border-border/50">
-        <CardContent className="p-6">
-          <SectionHeader icon={Heart} title="WHAT THEY FUND & SUPPORT" subtitle="Institutional DNA, policy scores, and network connections" />
-          <div className="space-y-4">
-            <ExecutiveGivingSection companyId={company.id} companyName={company.name} companySlug={company.slug} />
-            <InstitutionalDNACard companyId={company.id} companyName={company.name} />
-            <PolicyScoreCard companyId={company.id} companyName={company.name} />
-            <HighRiskConnectionCard companyId={company.id} companyName={company.name} />
-          </div>
-        </CardContent>
-      </Card>
+      <section>
+        <SectionDivider number={8} icon={Heart} title="What They Fund & Support" subtitle="Institutional DNA, policy scores, and network connections" />
+        <div className="pl-11 space-y-4">
+          <ExecutiveGivingSection companyId={company.id} companyName={company.name} companySlug={company.slug} />
+          <InstitutionalDNACard companyId={company.id} companyName={company.name} />
+          <PolicyScoreCard companyId={company.id} companyName={company.name} />
+          <HighRiskConnectionCard companyId={company.id} companyName={company.name} />
+        </div>
+      </section>
 
       {/* ═══ 10. WHAT THIS MEANS FOR YOU ═══ */}
-      <Card className="rounded-none border border-border/50">
-        <CardContent className="p-6">
-          <SectionHeader icon={Shield} title="WHAT THIS MEANS FOR YOU" subtitle="How this company lines up with what you said matters" />
+      <section>
+        <SectionDivider number={9} icon={Shield} title="What This Means For You" subtitle="How this company lines up with what you said matters" />
+        <div className="pl-11">
           <ValuesAlignmentSection
             companyName={company.name}
             issueSignals={issueSignals}
@@ -378,8 +368,8 @@ export function AdvocacyReport({ company, executives = [], contracts = [], issue
             lobbyingSpend={company.lobbying_spend ?? 0}
             pacSpending={company.total_pac_spending ?? 0}
           />
-        </CardContent>
-      </Card>
+        </div>
+      </section>
 
       {/* ═══ 11. THE CALL ═══ */}
       <RecommendationCard
@@ -392,25 +382,25 @@ export function AdvocacyReport({ company, executives = [], contracts = [], issue
       />
 
       {/* ═══ 12. CEO MEMO DECODER (collapsed) ═══ */}
-      <Card className="rounded-none border border-border/50">
+      <div className="border border-border/30">
         <button
           onClick={() => setDecoderOpen(!decoderOpen)}
-          className="w-full flex items-center justify-between p-6 text-left hover:bg-accent/20 transition-colors"
+          className="w-full flex items-center justify-between p-5 text-left hover:bg-muted/10 transition-colors"
         >
           <div className="flex items-center gap-3">
-            <MessageSquare className="w-5 h-5 text-primary" />
+            <MessageSquare className="w-4 h-4 text-primary" />
             <div>
-              <h3 className="text-sm font-black tracking-tight text-foreground uppercase">CEO MEMO DECODER</h3>
+              <p className="text-sm font-bold text-foreground">CEO Memo Decoder</p>
               <p className="text-xs text-muted-foreground">What corporate language actually means</p>
             </div>
           </div>
-          <ChevronDown className={cn("w-5 h-5 text-muted-foreground transition-transform", decoderOpen && "rotate-180")} />
+          <ChevronDown className={cn("w-4 h-4 text-muted-foreground transition-transform", decoderOpen && "rotate-180")} />
         </button>
         {decoderOpen && (
-          <CardContent className="p-6 pt-0">
+          <div className="px-5 pb-5">
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
               {Object.entries(DECODER_MAP).map(([phrase, meaning]) => (
-                <div key={phrase} className="flex items-start gap-2 p-2.5 bg-muted/15 border border-border/20 rounded-none">
+                <div key={phrase} className="flex items-start gap-2 p-2.5 bg-muted/10 border border-border/15">
                   <MinusCircle className="w-3.5 h-3.5 text-muted-foreground mt-0.5 shrink-0" />
                   <div>
                     <p className="text-xs font-semibold text-foreground capitalize">"{phrase}"</p>
@@ -419,36 +409,39 @@ export function AdvocacyReport({ company, executives = [], contracts = [], issue
                 </div>
               ))}
             </div>
-          </CardContent>
+          </div>
         )}
-      </Card>
+      </div>
 
       {/* ═══ 13. 3 HARD QUESTIONS ═══ */}
-      <Card className="rounded-none border-2 border-primary/30 bg-primary/5">
-        <CardContent className="p-6">
-          <SectionHeader icon={Shield} title="3 HARD QUESTIONS FOR YOUR INTERVIEW" subtitle="Ask these to force transparency from the hiring team" />
-          <div className="space-y-3">
-            <ActionItem type="ask" text={`"How does leadership communicate major organizational changes before they hit the press?"`} />
-            {(company.lobbying_spend ?? 0) > 0 ? (
-              <ActionItem type="ask" text={`"${company.name} has ${fmtMoney(company.lobbying_spend)} in lobbying spend. How does the company's policy work affect the stability of this team?"`} />
-            ) : (
-              <ActionItem type="ask" text={`"What does stability look like for this team over the next 18 to 24 months?"`} />
-            )}
-            {eeocCases.length > 0 ? (
-              <ActionItem type="ask" text={`"I noticed ${eeocCases.length > 1 ? "multiple enforcement actions" : "an enforcement action"} in your company's record. What changed internally as a result?"`} />
-            ) : (
-              <ActionItem type="ask" text={`"Can you walk me through how this role's KPIs have changed in the last 6 months?"`} />
-            )}
-          </div>
-          <div className="mt-4 pt-4 border-t border-border/30 space-y-2">
-            <p className="font-mono text-xs text-muted-foreground tracking-wider uppercase mb-2">Also on your radar</p>
-            <ActionItem type="watch" text={`Watch for leadership changes at ${company.name} — executive turnover patterns signal strategic instability.`} />
-            {(company.lobbying_spend ?? 0) > 0 && (
-              <ActionItem type="check" text={`Check which policies ${company.name} is lobbying on — ${fmtMoney(company.lobbying_spend)} in spend means they are actively shaping the rules.`} />
-            )}
-          </div>
-        </CardContent>
-      </Card>
+      <div className="border-l-4 border-primary/40 bg-primary/5 p-6">
+        <SectionDivider number={10} icon={Shield} title="3 Hard Questions for Your Interview" subtitle="Ask these to force transparency from the hiring team" />
+        <div className="pl-11 space-y-3">
+          <ActionItem type="ask" text={`"How does leadership communicate major organizational changes before they hit the press?"`} />
+          {(company.lobbying_spend ?? 0) > 0 ? (
+            <ActionItem type="ask" text={`"${company.name} has ${fmtMoney(company.lobbying_spend)} in lobbying spend. How does the company's policy work affect the stability of this team?"`} />
+          ) : (
+            <ActionItem type="ask" text={`"What does stability look like for this team over the next 18 to 24 months?"`} />
+          )}
+          {eeocCases.length > 0 ? (
+            <ActionItem type="ask" text={`"I noticed ${eeocCases.length > 1 ? "multiple enforcement actions" : "an enforcement action"} in your company's record. What changed internally as a result?"`} />
+          ) : (
+            <ActionItem type="ask" text={`"Can you walk me through how this role's KPIs have changed in the last 6 months?"`} />
+          )}
+        </div>
+        <div className="pl-11 mt-4 pt-4 border-t border-border/20 space-y-2">
+          <p className="font-mono text-[10px] text-muted-foreground tracking-[0.3em] uppercase mb-2">Also on your radar</p>
+          <ActionItem type="watch" text={`Watch for leadership changes at ${company.name} — executive turnover patterns signal strategic instability.`} />
+          {(company.lobbying_spend ?? 0) > 0 && (
+            <ActionItem type="check" text={`Check which policies ${company.name} is lobbying on — ${fmtMoney(company.lobbying_spend)} in spend means they are actively shaping the rules.`} />
+          )}
+        </div>
+      </div>
+
+      {/* ── AI ANALYSIS NOTICE ── */}
+      <p className="text-[10px] text-muted-foreground/60 text-center font-mono tracking-wider uppercase pt-4">
+        Signal-based interpretation from public records · Not legal or career advice · Review evidence and make the call that's right for you
+      </p>
     </div>
   );
 }
@@ -462,10 +455,10 @@ function ActionItem({ type, text }: { type: "watch" | "check" | "ask"; text: str
   };
   const { icon: Icon, label, color } = config[type];
   return (
-    <div className="flex items-start gap-3 p-3 bg-background/60 border border-border/30 rounded-none">
+    <div className="flex items-start gap-3 p-3 bg-background/40 border border-border/20">
       <div className="flex items-center gap-1.5 shrink-0 pt-0.5">
-        <Icon className={cn("w-4 h-4", color)} />
-        <span className={cn("font-mono text-xs font-bold tracking-wider", color)}>{label}</span>
+        <Icon className={cn("w-3.5 h-3.5", color)} />
+        <span className={cn("font-mono text-[10px] font-bold tracking-wider", color)}>{label}</span>
       </div>
       <p className="text-sm text-foreground leading-snug">{text}</p>
     </div>
