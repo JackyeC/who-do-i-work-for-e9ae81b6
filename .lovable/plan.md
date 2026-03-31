@@ -1,58 +1,74 @@
 
 
-# Candidate Prep Pack — Dossier Overhaul
+# Data Pipeline Health Check & Improvement Plan
 
-## The Problem
-The dossier pages show raw data layers and generic scores but don't help a candidate actually **prepare** for an interview or meeting. The Warning Label view has good bones (Verdict, Pulse, Money Trail, Influence Map, Action Items) but is missing the "here's exactly what to say/ask/avoid" prep that Gemini outlined.
+## Current State
 
-## What to Build
+The pipeline has three stages and two bottlenecks:
 
-### 1. New "Candidate Prep Pack" component
-A new `src/components/dossier/CandidatePrepPack.tsx` that uses the Clarity Engine edge function (already built) to generate **real, company-specific** prep content. This is NOT static/fake data — it calls AI with the company's actual receipts.
+```text
+Sources (GDELT + NewsAPI + Internal)
+  → sync-work-news (cron: every 4h)     → work_news table (521 rows, latest: Mar 24)
+  → jackyefy-news  (cron: every 2h)     → receipts_enriched (40 rows, latest: Mar 24)
+  → news-ingestion (NO cron scheduled)  → personalized_news + work_news
+```
 
-**Sections (locked labels, every company):**
-- **30-Second Reality Check** — one paragraph briefing
-- **Top 5 Receipts You Should Know** — bullet list from real data (EEOC, lobbying, WARN, fines, Say-vs-Do gaps)
-- **Say / Ask / Avoid** — 3 columns of talk tracks derived from receipts
-- **Red / Yellow / Green Flags** — quick-glance summary of integrity, labor, political, DEI signals
-- **Day 90 Reality** — what the first 90 days feel like based on patterns
+### Problems Found
 
-### 2. Role-Aware Lens
-Add a simple role picker inside the prep pack: **General / Engineering / People & HR / Sales / Leadership**. This slightly adjusts the AI prompt to customize questions and framing per function.
+1. **Data is 7 days stale.** Latest article in both `work_news` and `receipts_enriched` is March 24. Today is March 31. The cron jobs are scheduled but appear to be failing silently.
 
-### 3. "Forward to Candidate" Button
-A one-click export that generates a stripped-down brief (no pricing, no product language) with: 30-second brief, top 5 receipts, 5 questions to ask. Uses the existing `ExportDossierButton` pattern but outputs a candidate-friendly version.
+2. **481 of 521 work_news stories have no Jackye take.** `jackyefy-news` processes 10 stories per run. At every-2-hours that's 120/day max, but it's clearly not running — only 40 receipts exist total.
 
-### 4. Integration into Dossier Page
-Add a third view toggle alongside "Warning Label" and "Deep Dive":
-- ⚠️ Warning Label
-- 📋 Deep Dive  
-- 🎯 **Interview Prep**
+3. **`news-ingestion` has NO cron job.** It writes to both `personalized_news` and `work_news` but is never called automatically.
 
-When "Interview Prep" is selected, show the `CandidatePrepPack` instead of the current views.
+4. **`sync-work-news` requires service-role auth header** but the cron job sends the anon key. This means the cron call returns 401 every time.
+
+5. **Single-source fragility.** GDELT is free but unreliable (rate limits, non-JSON responses). NewsAPI free tier caps at 100 requests/day. No fallback when both fail.
+
+## Proposed Improvements (Priority Order)
+
+### Phase 1: Fix What's Broken (Immediate)
+
+**1a. Fix `sync-work-news` auth mismatch**
+The function checks `token !== SUPABASE_SERVICE_ROLE_KEY` but the cron job sends the anon key. Either remove the auth gate (it's an internal function) or update the cron job to use the service role key.
+
+**1b. Increase `jackyefy-news` batch size**
+Change `limit(10)` to `limit(25)` so it catches up faster on the 481-story backlog.
+
+**1c. Add `news-ingestion` to cron**
+Schedule it every 4 hours, offset from `sync-work-news`, so the two don't compete for rate limits.
+
+**1d. Run both pipelines once manually** to verify they work after fixes, then check data freshness.
+
+### Phase 2: Pipeline Reliability
+
+**2a. Add a `pipeline_runs` logging table**
+Track every pipeline execution (function name, timestamp, articles processed, errors). This lets you see at a glance when things last ran and why they failed.
+
+**2b. Add GDELT retry logic**
+`sync-work-news` currently gives up on the first failure. Add 1 retry with backoff.
+
+**2c. Dedup guard on `receipts_enriched`**
+Currently if `jackyefy-news` is called twice for the same story, it inserts duplicates. Add a unique constraint on `work_news_id`.
+
+### Phase 3: More Sources (Optional — Needs Discussion)
+
+- **Firecrawl** (already connected) could scrape specific labor/HR news sites
+- **Perplexity** (already connected) could generate richer summaries
+- **TheirStack / Crustdata** for hiring signal data (would need new API keys)
 
 ## Technical Details
 
-### New Edge Function: `candidate-prep-pack`
-Similar to the existing `clarity-engine` function but with a different prompt focused on the Gemini-defined structure (30-sec brief, Say/Ask/Avoid, role-specific questions). Aggregates same data sources: `companies`, `company_executives`, `issue_signals`, `company_public_stances`, `company_warn_notices`, `eeoc_cases`.
-
-### Files to Create
-- `supabase/functions/candidate-prep-pack/index.ts` — AI-powered prep generation
-- `src/components/dossier/CandidatePrepPack.tsx` — main prep pack UI with streaming markdown
-- `src/components/dossier/PrepPackExport.tsx` — "Forward to Candidate" export button
-
 ### Files to Edit
-- `src/pages/CompanyDossier.tsx` — add "Interview Prep" as third view toggle, render `CandidatePrepPack` when selected
-- `src/components/dossier/WarningLabelView.tsx` — enhance the existing Action Items section with the Say/Ask/Avoid pattern (so Warning Label view also benefits)
+- `supabase/functions/sync-work-news/index.ts` — remove service-role auth gate (lines 182-188)
+- `supabase/functions/jackyefy-news/index.ts` — change `.limit(10)` to `.limit(25)` (line 227)
 
-### Data Flow
-```text
-Company receipts (DB) → candidate-prep-pack edge function → Gemini AI → Streaming response → CandidatePrepPack.tsx renders sections
-```
+### Database Changes
+- Add cron job for `news-ingestion` (every 4h at minute 30)
+- Update cron job #11 (`sync-work-news`) to use service role key, OR remove the auth check from the function
+- Add unique constraint on `receipts_enriched.work_news_id`
+- Create `pipeline_runs` table for observability
 
-### Role Picker
-Simple local state toggle — changes a `role` param sent to the edge function which adjusts the AI prompt's framing. No new DB tables needed.
-
-### Forward to Candidate
-Renders the prep pack content into a clean HTML string, opens print dialog or copies to clipboard. No new DB tables needed.
+### No Protected Infrastructure Touched
+All changes are to edge function logic and pipeline scheduling. No scoring systems, methodology, or UI components are modified.
 
