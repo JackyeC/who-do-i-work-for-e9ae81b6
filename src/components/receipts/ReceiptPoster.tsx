@@ -101,8 +101,8 @@ function EmojiPoster({ poster, big, id, accent, onAccent, wdiwfQuote, className 
       id={id || undefined}
       className={cn("flex-shrink-0 flex flex-col overflow-hidden rounded-lg relative", className)}
       style={{
-        width: big ? 320 : 220,
-        minHeight: big ? 440 : 320,
+        width: big ? 420 : 320,
+        minHeight: big ? 560 : 440,
         background: pbg,
         boxShadow: "0 12px 40px rgba(0,0,0,0.55)",
       }}
@@ -182,7 +182,7 @@ export function ReceiptPoster({ poster: rawPoster, category, className, big = fa
         <div
           id={id || undefined}
           className={cn("flex-shrink-0 overflow-hidden rounded-lg relative", className)}
-          style={{ width: big ? 340 : 220, boxShadow: "0 12px 40px rgba(0,0,0,0.55)" }}
+          style={{ width: big ? 440 : 320, boxShadow: "0 12px 40px rgba(0,0,0,0.55)" }}
         >
           <img
             src={vintageImage}
