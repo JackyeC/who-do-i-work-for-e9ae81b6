@@ -353,7 +353,6 @@ export default function CompanyDossier() {
           📋 {showRawLayers ? "Hide" : "View"} Raw Data Layers
         </Button>
       </div>
-      </div>
     </>
   );
 
