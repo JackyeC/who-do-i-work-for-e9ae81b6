@@ -347,12 +347,16 @@ export default function WhoDoIWorkFor() {
                   <CardContent>
                     <div className="space-y-2">
                       {(candidates || []).map((c) => (
-                        <div key={c.id} className="rounded-lg border border-border overflow-hidden">
+                        <Link
+                          key={c.id}
+                          to={`/company/${employerCompany.slug}`}
+                          className="rounded-lg border border-border overflow-hidden block hover:border-primary/40 hover:bg-primary/5 transition-all duration-200 group"
+                        >
                           <div className="flex items-center justify-between p-3">
                             <div className="flex items-center gap-3">
-                              <User className="w-4 h-4 text-muted-foreground" />
+                              <User className="w-4 h-4 text-muted-foreground group-hover:text-primary transition-colors" />
                               <div>
-                                <span className="font-medium text-foreground">{c.name}</span>
+                                <span className="font-medium text-foreground group-hover:text-primary transition-colors">{c.name}</span>
                                 <div className="flex items-center gap-2 text-xs text-muted-foreground">
                                   <span>{c.state}{c.district ? `-${c.district}` : ""}</span>
                                   <span>·</span>
