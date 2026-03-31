@@ -288,7 +288,7 @@ export function DashboardOverview({ onNavigate }: DashboardOverviewProps) {
                 </span>
               </div>
               <p className="text-xs text-muted-foreground mt-0.5">
-                You joined before April 6. Download and share your badge — let people know you were here first.
+                You joined before April 7. Download and share your badge — let people know you were here first.
               </p>
             </div>
             <span className="text-xs font-semibold text-primary whitespace-nowrap flex items-center gap-1 shrink-0">

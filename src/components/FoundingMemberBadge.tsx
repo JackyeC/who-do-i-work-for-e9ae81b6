@@ -285,7 +285,7 @@ export function FoundingMemberBadge({
                   textTransform: "uppercase",
                 }}
               >
-                Launch: April 6, 2026
+                Launch: April 7, 2026
               </span>
               <span
                 style={{
