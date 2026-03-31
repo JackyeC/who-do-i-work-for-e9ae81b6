@@ -80,9 +80,9 @@ export default {
         },
       },
       fontFamily: {
-        display: ["'DM Sans'", "system-ui", "sans-serif"],
-        serif: ["'DM Sans'", "system-ui", "sans-serif"],
-        sans: ["'DM Sans'", "system-ui", "sans-serif"],
+        display: ["'Inter'", "system-ui", "sans-serif"],
+        serif: ["'Inter'", "system-ui", "sans-serif"],
+        sans: ["'Inter'", "system-ui", "sans-serif"],
         mono: ["'DM Mono'", "'Courier New'", "monospace"],
       },
       fontSize: {
