@@ -82,7 +82,7 @@ export function ExternalJobFeed() {
                 <p className="text-xs text-muted-foreground">
                   {isLoading
                     ? "Loading feeds…"
-                    : `${jobs.length} HR & Talent roles from We Work Remotely, Remotive & Himalayas`}
+                    : `${jobs.length} HR & Talent roles from We Work Remotely, Remotive, Himalayas & TheirStack`}
                 </p>
               </div>
             </div>
