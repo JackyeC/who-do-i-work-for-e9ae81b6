@@ -431,7 +431,7 @@ export default function WhoDoIWorkFor() {
                               ))}
                             </div>
                           )}
-                        </div>
+                        </Link>
                       ))}
                     </div>
                   </CardContent>
@@ -440,7 +440,7 @@ export default function WhoDoIWorkFor() {
 
               {/* Board Affiliations */}
               {(boardAffs || []).length > 0 && (
-                <Card className="mb-6">
+                <Card className="mb-6" id="board-section">
                   <CardHeader>
                     <CardTitle className="text-lg flex items-center gap-2">
                       <Scale className="w-5 h-5" />
