@@ -265,6 +265,15 @@ export function AppSidebar() {
           </p>
         )}
       </SidebarFooter>
+
+      {/* Founding Member Badge Modal */}
+      {showBadge && (
+        <FoundingMemberBadge
+          memberName={user?.email?.split("@")[0]}
+          joinedDate={user?.created_at}
+          onClose={() => setShowBadge(false)}
+        />
+      )}
     </Sidebar>
   );
 }
