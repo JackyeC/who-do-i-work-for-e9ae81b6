@@ -29,10 +29,10 @@ const NEWSAPI_QUERIES = [
 ];
 
 const GDELT_QUERIES = [
-  { q: '("labor laws" OR "NLRB" OR "Department of Labor" OR "workplace regulation")', category: "regulation" },
-  { q: '("future of work" OR "return to office" OR "AI workplace" OR "AI hiring")', category: "future_of_work" },
-  { q: '("mass layoffs" OR "WARN Act" OR "pay equity" OR "salary transparency")', category: "layoffs" },
-  { q: '("union" OR "collective bargaining" OR "employment bill" OR "minimum wage")', category: "labor_organizing" },
+  { q: '("labor laws" OR "workplace regulation" OR "Department of Labor enforcement")', category: "regulation" },
+  { q: '("future of work" OR "return to office policy" OR "AI workplace automation")', category: "future_of_work" },
+  { q: '("mass layoffs announced" OR "salary transparency law" OR "pay equity audit")', category: "layoffs" },
+  { q: '("labor union organizing" OR "collective bargaining agreement" OR "minimum wage increase")', category: "labor_organizing" },
 ];
 
 function toneLabel(tone: number): string {
