@@ -5,6 +5,10 @@ const corsHeaders = {
 
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2';
 
+// Company verdicts that should block auto-apply
+const BLOCKED_VERDICTS = ['Enter with a Parachute', 'Extreme Caution', 'Purge'];
+const MIN_CAREER_INTELLIGENCE_SCORE = 3.0; // Skip companies scoring below this
+
 Deno.serve(async (req: Request) => {
   if (req.method === 'OPTIONS') {
     return new Response(null, { headers: corsHeaders });
@@ -53,6 +57,13 @@ Deno.serve(async (req: Request) => {
       });
     }
 
+    // Require consent acceptance
+    if (!settings.consent_accepted_at) {
+      return new Response(JSON.stringify({ processed: 0, reason: 'Fairness Contract not accepted' }), {
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+      });
+    }
+
     // Count today's completed
     const todayStart = new Date();
     todayStart.setHours(0, 0, 0, 0);
@@ -87,8 +98,34 @@ Deno.serve(async (req: Request) => {
     }
 
     let processed = 0;
+    let skipped = 0;
 
     for (const item of queueItems) {
+      // ── Dossier Verdict Filter ──
+      // Look up the company's career intelligence score to determine if it's safe to apply
+      const { data: company } = await supabase
+        .from('companies')
+        .select('career_intelligence_score, name')
+        .eq('id', item.company_id)
+        .single();
+
+      const companyScore = company?.career_intelligence_score ?? null;
+
+      // Skip companies with very low career intelligence scores (indicates red-flag verdicts)
+      if (companyScore !== null && companyScore < MIN_CAREER_INTELLIGENCE_SCORE) {
+        console.log(`Skipping ${item.company_name} (score: ${companyScore}) — below safety threshold`);
+        await supabase
+          .from('apply_queue')
+          .update({
+            status: 'skipped',
+            error_message: `Company safety check: Career Intelligence Score (${companyScore}) is below the minimum threshold. Review the company dossier before applying manually.`,
+            processed_at: new Date().toISOString(),
+          })
+          .eq('id', item.id);
+        skipped++;
+        continue;
+      }
+
       // Mark as processing
       await supabase
         .from('apply_queue')
@@ -156,7 +193,7 @@ Deno.serve(async (req: Request) => {
       }
     }
 
-    return new Response(JSON.stringify({ processed, total: queueItems.length }), {
+    return new Response(JSON.stringify({ processed, skipped, total: queueItems.length }), {
       headers: { ...corsHeaders, 'Content-Type': 'application/json' },
     });
   } catch (error: any) {

@@ -92,6 +92,7 @@ export function AutoApplySettings() {
   }
 
   return (
+    <>
     <Card className="overflow-hidden">
       {/* Compact header with status */}
       <CardHeader className="pb-0">
