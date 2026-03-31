@@ -1,94 +1,84 @@
 
 
-# Employer Dossier — Candidate Advocacy Report Redesign
+# Ask Jackye — Career Advocate Rebuild
 
-## What changes
+## What exists today
 
-Replace the 3-mode toggle (Warning Label / Deep Dive / Interview Prep) in the **candidate lens** with a single, scrollable `AdvocacyReport` component. Interview Prep stays accessible as a button at the bottom. Deep Dive layers move into an expandable "Raw Layers" section at the end for power users. Sales and HR lens views remain unchanged.
+Three separate Jackye implementations with inconsistent tone and fragmented experiences:
 
-## New files (3)
+1. **`/ask-jackye` page** — Terminal-aesthetic full page with scan animations, intelligence report format, FAQ section. Uses `ask-jackye` edge function with heavy "digital twin" system prompt (~5K chars). Requires auth.
+2. **Global floating widget** (`src/components/AskJackyeWidget.tsx`) — Headshot-based chat bubble, uses same `ask-jackye` edge function. Requires auth.
+3. **Jobs floating widget** (`src/components/jobs/AskJackyeWidget.tsx`) — Lighter chat widget on job pages, uses `ask-jackye-chat` edge function with simpler prompt. No auth required.
 
-### `src/components/dossier/AdvocacyReport.tsx` (~450 lines)
+**Problems:**
+- The system prompt is over-engineered — "digital twin", "Redline Auditor", emoji-heavy report templates, AI safety career paragraphs that feel off-brand
+- The terminal scan animation is performative theater, not advocacy
+- Quick prompts are generic ("How do I negotiate salary?") instead of the 6 core questions from the prompt
+- Three widgets doing similar things with different edge functions
+- The Jackye voice sounds like a corporate AI consultant, not a warm, blunt career advocate
 
-A single linear report component that receives all the data currently passed to `WarningLabelView` plus the candidate layer data. Renders these sections top-to-bottom with no toggles or accordions:
+## What we're building
 
-1. **THE VERDICT** — Reuse `computeVerdict` logic from WarningLabelView. Bold verdict card + Jackye insight quote + employer clarity score breakdown.
+Rebuild the `/ask-jackye` page and the global widget with a unified Jackye voice focused on the 6 core career advocacy questions. Rewrite the system prompt to sound like a trusted advocate, not a corporate intelligence system.
 
-2. **COMPANY SUMMARY** — Name, industry, size, state, description. Clean header section.
+## Changes
 
-3. **WHAT THEY SAY** — Public stances from `publicStances` data, rendered as quoted corporate claims. Section header: "Their words."
+### 1. Rewrite `supabase/functions/ask-jackye/index.ts` — System prompt overhaul
 
-4. **WHAT THEY DO** — Spending reality pulled from `issueSignals`, lobbying, PAC, contracts, enforcement actions. Section header: "The record."
+Replace the ~200-line system prompt with a focused ~80-line prompt that:
+- Drops the "digital twin" framing, "Redline Auditor" title, emoji report templates, AI safety career section
+- Leads with Jackye as a **career advocate** — warm, direct, strategic, no-BS
+- Focuses on the 6 core questions: Should I apply? Take this offer? Stay or go? What to ask? How to explain my move? What to negotiate?
+- Uses plain language, not corporate jargon
+- Keeps the data-enrichment logic (company queries) intact — just changes the personality layer
+- Signature phrases: "Let's look at the receipts", "Here's what the record says", "Clarity builds trust"
+- Response style: 2-4 paragraphs, markdown, always ends with a concrete next step
+- No emoji report headers, no tables unless specifically asked
+- Acknowledge uncertainty honestly: "I don't have data on that yet" instead of generating fake confidence
 
-5. **INTEGRITY GAP** — Side-by-side Say vs Do comparison using `gapStances` logic. Severity badges (Large/Medium/Aligned). Reuses existing gap filtering.
+Keep all the existing data-fetching logic (company, signals, execs, board, EEO-1, court cases, benchmarks). Only the `SYSTEM_PROMPT` constant changes.
 
-6. **LABOR IMPACT** — EEOC cases, WARN notices, workforce signals. Reuses `TalentContextLayer` data + `eeocCases`. Plain-English interpretation.
+### 2. Rebuild `src/pages/AskJackye.tsx` — Page redesign
 
-7. **SAFETY & WORKFORCE RISK** — Workforce demographics, stability signals. Embeds `WorkforceDemographicsLayer` inline.
+Replace the terminal-aesthetic page with a clean, dark, editorial experience:
+- **Remove**: Scan animation system, ScanLogLine component, SCAN_PHASES, FAQ section, terminal header with "ENCRYPTED" badge
+- **Keep**: Streaming chat logic, auth gate, Jackye headshot
+- **New header**: Jackye headshot + "Ask Jackye" + "Your career advocate" subtitle. Clean, not terminal-themed.
+- **New quick prompts**: Replace the 5 intelligence categories with 6 advocacy-focused prompts:
+  1. "Should I apply to this company?"
+  2. "Should I take this offer?"
+  3. "Should I stay or leave my current job?"
+  4. "What should I ask in my interview?"
+  5. "How do I explain my next career move?"
+  6. "What should I negotiate?"
+- **Chat styling**: Keep the left-border message styling but soften — use primary accent for Jackye, muted for user. Remove mono/terminal typography for messages.
+- **Opening message**: "Hey — I'm Jackye. I've spent 15+ years inside hiring. Tell me what you're weighing, and I'll give you the real talk — receipts included."
+- Dark background, gold accent moments, DM Sans body text
+- Mobile-first, no sidebar clutter
 
-8. **POLITICAL & POLICY ALIGNMENT** — PAC spending, lobbying, executive donations, government contracts. Reuses `politicalGiving` + `governmentContractSignals` data. Embeds `PoliticalGivingCard`, `InstitutionalDNACard`, `PolicyScoreCard`, `HighRiskConnectionCard`.
+### 3. Update `src/components/AskJackyeWidget.tsx` — Global widget refresh
 
-9. **WHAT THEY FUND & SUPPORT** — Executive giving section + institutional DNA details.
+- Update the opening message to match the new Jackye voice
+- Update quick prompts to the 6 core questions (shorter versions for chips)
+- Keep existing streaming logic and auth gate
+- Keep headshot in header
 
-10. **WHAT THIS MEANS FOR YOU** — Values-aware section (see `ValuesAlignmentSection` below). Falls back to generic interpretation if no values profile.
+### 4. Update `supabase/functions/ask-jackye-chat/index.ts` — Align lighter prompt
 
-11. **THE CALL** — Final recommendation card (see `RecommendationCard` below).
+- Update the system prompt to match the new Jackye voice (shorter version for the jobs widget)
+- Keep the existing data-fetching logic (job count, industries)
+- Drop "WDIWF Intelligence Advisor" framing, use "career advocate" language
 
-12. **CEO MEMO DECODER** — Retained from WarningLabelView, collapsed by default.
+## Files
 
-13. **3 HARD QUESTIONS** — Retained from WarningLabelView.
+| File | Action |
+|---|---|
+| `supabase/functions/ask-jackye/index.ts` | Edit — rewrite SYSTEM_PROMPT (~200→~80 lines) |
+| `src/pages/AskJackye.tsx` | Edit — rebuild page layout, remove scan animation, new prompts |
+| `src/components/AskJackyeWidget.tsx` | Edit — update voice, prompts |
+| `supabase/functions/ask-jackye-chat/index.ts` | Edit — align system prompt |
 
-Each section uses:
-- Mono uppercase section labels with left-border accent
-- "So what?" plain-English interpretations
-- Source badges where data exists
-- Red/yellow/green left-border cards for evidence items
+## No new files, no migration needed
 
-### `src/components/dossier/RecommendationCard.tsx` (~100 lines)
-
-"THE CALL" — editorial recommendation card.
-
-Inputs: verdict severity, gap count, EEOC count, signal count, has values conflicts boolean.
-
-Logic:
-- **Walk Away**: 4+ red flags OR large integrity gaps on dealbreaker topics
-- **Watch**: 2-3 red flags OR multiple medium gaps
-- **Dig Deeper**: 1-2 flags OR mixed signals
-- **Apply**: Clean record, no major gaps
-
-Displays: bold recommendation label, color-coded card (red/yellow/blue/green), 2-3 sentence reasoning, and a "This is not legal advice" disclaimer.
-
-### `src/components/dossier/ValuesAlignmentSection.tsx` (~130 lines)
-
-Loads the authenticated user's `user_values_profile` via Supabase query. Compares high-importance columns (≥70) against company signals and stances.
-
-Shows:
-- "Aligns with your values" items (green left-border)
-- "Conflicts with your values" items (red left-border)
-- If no profile exists: "Complete your Values Profile to see personalized alignment" with CTA link to `/values`
-
-## Edited files (1)
-
-### `src/pages/CompanyDossier.tsx`
-
-- Remove the `dossierView` state and the 3-way toggle buttons from `overviewContent`
-- Replace the conditional render block (lines 321-388) with: render `AdvocacyReport` as the default candidate view
-- Add an "Interview Prep" button below the report that expands `CandidatePrepPack` inline
-- Add a "View Raw Layers" collapsible at the bottom that renders the existing `candidateContent` DossierLayer stack
-- Keep ClarityEngine and SituationContextBanner in place above the report
-- Sales and HR lens content remains completely unchanged
-- All existing data queries (executives, contracts, publicStances, issueSignals, valuesSignals, eeocCases, etc.) stay as-is — just passed into AdvocacyReport
-
-## Design system
-
-- Same dark card system already in use: `rounded-none`, `border-border/50`
-- Mono uppercase section headers with primary icons (consistent with WarningLabelView)
-- No accordions in the main report flow — everything visible and scrollable
-- Evidence items use left-border accent cards: destructive for red, civic-yellow for caution, civic-green for clean
-- Recommendation card uses bold 2-border treatment like existing Verdict card
-- Workforce Health table pattern retained for financial data
-
-## No database migration needed
-
-All data sources already exist. Values alignment reads from existing `user_values_profile` table.
+All changes are edits to existing files. The streaming infrastructure, auth gates, and data enrichment stay intact.
 
