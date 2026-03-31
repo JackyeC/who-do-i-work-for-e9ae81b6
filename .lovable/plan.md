@@ -1,74 +1,64 @@
 
 
-# Data Pipeline Health Check & Improvement Plan
+# Duplicate Audit — All Pages
 
-## Current State
+## Confirmed Duplicates
 
-The pipeline has three stages and two bottlenecks:
+### 1. CandidatePrepPack — TWO different components
+- `src/components/company/CandidatePrepPack.tsx` — static, signal-driven (30-sec brief, flags, talk tracks). Used on **CompanyProfile**.
+- `src/components/dossier/CandidatePrepPack.tsx` — AI-streaming, role-aware prep via edge function. Used on **CompanyDossier**.
 
-```text
-Sources (GDELT + NewsAPI + Internal)
-  → sync-work-news (cron: every 4h)     → work_news table (521 rows, latest: Mar 24)
-  → jackyefy-news  (cron: every 2h)     → receipts_enriched (40 rows, latest: Mar 24)
-  → news-ingestion (NO cron scheduled)  → personalized_news + work_news
-```
+These are two completely different implementations of the same concept. **Action**: Keep the dossier version (AI-powered, role-aware) as the canonical one. Remove the company/ version from CompanyProfile and replace it with a call to the dossier version.
 
-### Problems Found
+### 2. WhatToAsk — TWO different components
+- `src/components/company/WhatToAsk.tsx` — signal-driven interview questions on CompanyProfile (imported but **not rendered** — comment says "consolidated into Prep Pack").
+- `src/components/jobs/WhatToAsk.tsx` — AI-generated questions via edge function on JobDetailPage.
 
-1. **Data is 7 days stale.** Latest article in both `work_news` and `receipts_enriched` is March 24. Today is March 31. The cron jobs are scheduled but appear to be failing silently.
+**Action**: Remove the dead import of `company/WhatToAsk` from CompanyProfile. Keep `jobs/WhatToAsk` as-is (different context: job-level vs company-level).
 
-2. **481 of 521 work_news stories have no Jackye take.** `jackyefy-news` processes 10 stories per run. At every-2-hours that's 120/day max, but it's clearly not running — only 40 receipts exist total.
+### 3. WhatToWatch vs CandidatePrepPack "Signal Flags"
+- `src/components/company/WhatToWatch.tsx` — signal-driven watch items (info/caution/risk) on CompanyProfile.
+- `src/components/company/CandidatePrepPack.tsx` → `buildFlags()` — red/yellow/green flags covering the **same signals** (layoffs, PAC spending, AI hiring, revolving door, pay equity).
 
-3. **`news-ingestion` has NO cron job.** It writes to both `personalized_news` and `work_news` but is never called automatically.
+These overlap heavily. Both use the same input props and surface the same concerns in different formats. **Action**: Remove WhatToWatch from CompanyProfile. The Prep Pack flags already cover it.
 
-4. **`sync-work-news` requires service-role auth header** but the cron job sends the anon key. This means the cron call returns 401 every time.
+### 4. DecisionCheckpointBeforeSign vs CandidatePrepPack
+- `DecisionCheckpointBeforeSign` generates "aligned/misaligned/ask" insights from signals + work profile.
+- `CandidatePrepPack` generates Say/Ask/Avoid talk tracks from the same signals.
 
-5. **Single-source fragility.** GDELT is free but unreliable (rate limits, non-JSON responses). NewsAPI free tier caps at 100 requests/day. No fallback when both fail.
+Partial overlap — the "Ask" items in both components often surface identical questions. **Action**: Keep DecisionCheckpoint (it's personalized via work profile quiz), but remove any talk tracks from it that duplicate the Prep Pack's "ASK" items.
 
-## Proposed Improvements (Priority Order)
+### 5. JackyesInsightBlock — rendered on both pages
+- CompanyProfile line 438: `<JackyesInsightBlock />`
+- CompanyDossier line 343: `<JackyesInsightBlock />`
 
-### Phase 1: Fix What's Broken (Immediate)
+Not a duplicate within a single page (different pages), so this is fine.
 
-**1a. Fix `sync-work-news` auth mismatch**
-The function checks `token !== SUPABASE_SERVICE_ROLE_KEY` but the cron job sends the anon key. Either remove the auth gate (it's an internal function) or update the cron job to use the service role key.
+### 6. InterviewDossier vs CompanyDossier "Interview Prep" tab
+- `/interview` — InterviewDossier page with hardcoded Amazon/Magnolia data, full interview prep with practice Qs, org context, negotiation intel.
+- `/dossier/:id` — CompanyDossier with "Interview Prep" tab that streams AI-generated prep.
 
-**1b. Increase `jackyefy-news` batch size**
-Change `limit(10)` to `limit(25)` so it catches up faster on the 481-story backlog.
+These serve overlapping purposes. **Action**: Flag for future consolidation. InterviewDossier has much richer hardcoded content; the Dossier prep tab is dynamic but thinner. Long-term, merge the InterviewDossier format into the Dossier page's prep tab.
 
-**1c. Add `news-ingestion` to cron**
-Schedule it every 4 hours, offset from `sync-work-news`, so the two don't compete for rate limits.
+### 7. InterviewKit — used on two unrelated pages
+- `SampleDossier.tsx` — renders `<InterviewKit />`
+- `AutoApply.tsx` — renders `<InterviewKit />`
 
-**1d. Run both pipelines once manually** to verify they work after fixes, then check data freshness.
+Same component, different contexts. Not a harmful duplicate.
 
-### Phase 2: Pipeline Reliability
+---
 
-**2a. Add a `pipeline_runs` logging table**
-Track every pipeline execution (function name, timestamp, articles processed, errors). This lets you see at a glance when things last ran and why they failed.
+## Summary of Changes
 
-**2b. Add GDELT retry logic**
-`sync-work-news` currently gives up on the first failure. Add 1 retry with backoff.
+| # | What | Where | Action |
+|---|------|-------|--------|
+| 1 | Two CandidatePrepPack components | CompanyProfile, CompanyDossier | Replace company/ version with dossier/ version on CompanyProfile |
+| 2 | Dead WhatToAsk import | CompanyProfile | Remove unused import |
+| 3 | WhatToWatch overlaps Prep Pack flags | CompanyProfile | Remove WhatToWatch section |
+| 4 | DecisionCheckpoint overlaps Prep Pack asks | CompanyProfile | Deduplicate overlapping questions |
+| 5 | InterviewDossier vs Dossier prep tab | /interview vs /dossier/:id | Flag for future merge (no immediate change) |
 
-**2c. Dedup guard on `receipts_enriched`**
-Currently if `jackyefy-news` is called twice for the same story, it inserts duplicates. Add a unique constraint on `work_news_id`.
-
-### Phase 3: More Sources (Optional — Needs Discussion)
-
-- **Firecrawl** (already connected) could scrape specific labor/HR news sites
-- **Perplexity** (already connected) could generate richer summaries
-- **TheirStack / Crustdata** for hiring signal data (would need new API keys)
-
-## Technical Details
-
-### Files to Edit
-- `supabase/functions/sync-work-news/index.ts` — remove service-role auth gate (lines 182-188)
-- `supabase/functions/jackyefy-news/index.ts` — change `.limit(10)` to `.limit(25)` (line 227)
-
-### Database Changes
-- Add cron job for `news-ingestion` (every 4h at minute 30)
-- Update cron job #11 (`sync-work-news`) to use service role key, OR remove the auth check from the function
-- Add unique constraint on `receipts_enriched.work_news_id`
-- Create `pipeline_runs` table for observability
-
-### No Protected Infrastructure Touched
-All changes are to edge function logic and pipeline scheduling. No scoring systems, methodology, or UI components are modified.
+**Files to edit**:
+- `src/pages/CompanyProfile.tsx` — remove WhatToWatch, remove dead WhatToAsk import, swap CandidatePrepPack to dossier version
+- `src/components/company/DecisionCheckpointBeforeSign.tsx` — trim questions that duplicate Prep Pack ASK items
 
