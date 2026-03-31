@@ -214,7 +214,7 @@ export function WarningLabelView({ company, executives = [], contracts = [], iss
             <div className="flex items-start gap-4">
               <span className="text-4xl">{verdict.emoji}</span>
               <div className="flex-1">
-                <p className="font-mono text-xs tracking-[0.3em] uppercase text-muted-foreground mb-1">WDIWF VERDICT</p>
+                <p className="font-mono text-xs tracking-[0.3em] uppercase text-muted-foreground mb-1">SIGNAL SUMMARY</p>
                 <h2 className={cn("text-xl md:text-2xl font-black tracking-tight", verdict.color)}>
                   {verdict.text}
                 </h2>
