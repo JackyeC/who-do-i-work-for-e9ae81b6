@@ -605,23 +605,8 @@ export default function CompanyProfile() {
             darkMoneyCount={dbDarkMoney?.length || 0}
           />
 
-          {/* ═══════════════════════════════════════════════════════
-              8. WHAT TO ASK
-             ═══════════════════════════════════════════════════════ */}
-          <WhatToAsk
-            companyName={name}
-            hasLayoffSignals={false}
-            hasWarnNotices={false}
-            hasPayEquity={!!tiPayEquity}
-            hasBenefitsData={!!tiBenefits}
-            hasAiHrSignals={!!tiAiHr}
-            hasSentimentData={!!tiSentiment}
-            executiveCount={verifiedExecCount}
-            revolvingDoorCount={dbRevolvingDoor?.length || 0}
-            totalPacSpending={totalPac}
-            lobbyingSpend={lobbyingSpend}
-            darkMoneyCount={dbDarkMoney?.length || 0}
-          />
+          {/* What to Ask — consolidated into Interview Prep Pack above */}
+
 
           {/* ═══════════════════════════════════════════════════════
               DECISION CHECKPOINT — "Before You Sign"
