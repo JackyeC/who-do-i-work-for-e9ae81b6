@@ -450,7 +450,14 @@ export default function WhoDoIWorkFor() {
                   <CardContent>
                     <div className="flex flex-wrap gap-2">
                       {(boardAffs || []).map((b) => (
-                        <Badge key={b.id} variant="secondary">{b.name}</Badge>
+                        <Badge
+                          key={b.id}
+                          variant="secondary"
+                          className="cursor-pointer hover:bg-primary/10 hover:text-primary hover:border-primary/30 transition-all duration-200 text-sm py-1.5 px-3"
+                        >
+                          {b.name}
+                          <ExternalLink className="w-3 h-3 ml-1.5 opacity-50" />
+                        </Badge>
                       ))}
                     </div>
                   </CardContent>
