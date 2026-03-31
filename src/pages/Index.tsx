@@ -178,7 +178,7 @@ const Index = forwardRef<HTMLDivElement>((_, ref) => {
           </div>
 
           <div className="text-center mt-8">
-            <Link to="/receipts" className="font-sans text-sm text-primary hover:text-primary/80 transition-colors font-medium">
+            <Link to="/newsletter" className="font-sans text-sm text-primary hover:text-primary/80 transition-colors font-medium">
               View all receipts →
             </Link>
           </div>

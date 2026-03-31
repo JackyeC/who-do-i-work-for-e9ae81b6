@@ -1166,7 +1166,7 @@ function GeneralizedReport({ data }: { data: CompanyReportData }) {
   return (
     <div className="min-h-screen bg-background">
       <div className="max-w-4xl mx-auto px-4 py-8">
-        <Link to="/receipts" className="inline-flex items-center gap-1 text-sm text-muted-foreground hover:text-primary mb-8">
+        <Link to="/newsletter" className="inline-flex items-center gap-1 text-sm text-muted-foreground hover:text-primary mb-8">
           <ArrowLeft className="h-3 w-3" /> All Receipts
         </Link>
 
@@ -1499,7 +1499,7 @@ export default function ReceiptsReport() {
       <div className="min-h-screen bg-background flex flex-col items-center justify-center text-center px-4 py-24">
         <h2 className="text-3xl font-bold text-foreground mb-3">Report Coming Soon</h2>
         <p className="text-muted-foreground mb-6">We're building the full investigation for {companyName}.</p>
-        <Link to="/receipts" className="inline-flex items-center gap-1 text-primary hover:underline">
+        <Link to="/newsletter" className="inline-flex items-center gap-1 text-primary hover:underline">
           <ArrowLeft className="h-4 w-4" /> Back to all Receipts
         </Link>
       </div>
@@ -1512,7 +1512,7 @@ export default function ReceiptsReport() {
     <div className="min-h-screen bg-background">
       <div className="max-w-4xl mx-auto px-4 py-8">
         {/* Back link */}
-        <Link to="/receipts" className="inline-flex items-center gap-1 text-sm text-muted-foreground hover:text-primary mb-8">
+        <Link to="/newsletter" className="inline-flex items-center gap-1 text-sm text-muted-foreground hover:text-primary mb-8">
           <ArrowLeft className="h-3 w-3" /> All Receipts
         </Link>
 

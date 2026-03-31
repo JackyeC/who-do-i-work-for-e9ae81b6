@@ -337,7 +337,7 @@ export function TopBar() {
           </form>
 
           {/* Primary */}
-          <Link to="/receipts" className="block px-3 py-3 font-sans text-nav text-primary font-semibold hover:text-foreground transition-colors">
+          <Link to="/newsletter" className="block px-3 py-3 font-sans text-nav text-primary font-semibold hover:text-foreground transition-colors">
             Receipts
           </Link>
           <button

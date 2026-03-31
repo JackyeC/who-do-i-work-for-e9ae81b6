@@ -39,7 +39,7 @@ export function SiteFooter() {
                 Home
               </Link>
               <Link
-                to="/receipts"
+                to="/newsletter"
                 className="font-sans text-sm text-muted-foreground hover:text-foreground transition-colors"
               >
                 Receipts

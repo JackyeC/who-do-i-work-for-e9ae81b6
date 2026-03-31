@@ -191,7 +191,7 @@ export default function Newsletter() {
       <section className="max-w-4xl mx-auto px-4 pb-16">
         <div className="flex items-center justify-between mb-6">
           <h2 className="text-lg font-bold text-foreground">Recent Signal Drops</h2>
-          <Link to="/receipts" className="text-xs text-primary hover:text-primary/80 flex items-center gap-1">
+          <Link to="/newsletter" className="text-xs text-primary hover:text-primary/80 flex items-center gap-1">
             All Receipts <ExternalLink className="w-3 h-3" />
           </Link>
         </div>
