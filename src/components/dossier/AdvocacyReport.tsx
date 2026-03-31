@@ -337,7 +337,7 @@ export function AdvocacyReport({ company, executives = [], contracts = [], issue
 
       {/* ═══ 8. POLITICAL & POLICY ALIGNMENT ═══ */}
       <section>
-        <SectionDivider number={7} icon={Megaphone} title="Political & Policy Alignment" subtitle="PAC spending, lobbying, executive donations" />
+        <SectionDivider number={7} icon={Megaphone} title="Political Activity" subtitle="PAC spending, lobbying, and executive contributions" />
         <div className="pl-11 space-y-4">
           {topDonors.length > 0 && (
             <div>
