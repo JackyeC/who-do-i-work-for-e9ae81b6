@@ -295,7 +295,10 @@ export default function CompanyProfile() {
   // Recruiter integrity check
   // integrityResult & integrityLoading already declared above early returns
   const recordStatus = (dbCompany as any)?.record_status || "verified";
-  const statusInfo = STATUS_LABELS[recordStatus] || STATUS_LABELS.verified;
+  const isEarlyInvestigation = (dbIssueSignals?.length || 0) < EARLY_INVESTIGATION_THRESHOLD;
+  const statusInfo = isEarlyInvestigation && recordStatus !== "verified"
+    ? (STATUS_LABELS.research_in_progress)
+    : (STATUS_LABELS[recordStatus] || STATUS_LABELS.verified);
   const isDiscovering = isResearching;
 
   return (
