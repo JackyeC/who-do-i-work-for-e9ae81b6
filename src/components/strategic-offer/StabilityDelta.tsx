@@ -122,10 +122,10 @@ export function StabilityDelta({ companyId, companyName, interviewStartDate }: P
             </div>
             <div>
               <span className="text-foreground">
-                {hasDrift ? "Stability Delta Detected" : "No Significant Changes"}
+                {hasDrift ? "Signal Movement Detected" : "Signals Remain Consistent"}
               </span>
               <p className="text-xs text-muted-foreground font-normal mt-0.5">
-                What changed at {companyName} since you started interviewing
+                What has shifted at {companyName} since your process began
               </p>
             </div>
           </CardTitle>
