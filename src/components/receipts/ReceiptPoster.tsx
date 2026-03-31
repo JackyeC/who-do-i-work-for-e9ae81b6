@@ -181,13 +181,19 @@ const POSTER_H_BIG = 700;
 const POSTER_W_SM = 420;
 const POSTER_H_SM = 560;
 
-/* ── Emoji template renderer ── */
-function EmojiPoster({ poster, big, id, accent, onAccent, wdiwfQuote, className }: {
-  poster: PosterData; big: boolean; id: string; accent: string; onAccent: string; wdiwfQuote: string; className?: string;
+/* ── Editorial poster: strict 3-level hierarchy ── */
+function EmojiPoster({ poster, big, id, accent, onAccent, className }: {
+  poster: PosterData; big: boolean; id: string; accent: string; onAccent: string; className?: string;
 }) {
-  const { bg: pbg, emoji, bigTxt, sub, tag, copy, fine } = poster;
+  const { bg: pbg, bigTxt, copy, fine, tag } = poster;
   const w = big ? POSTER_W_BIG : POSTER_W_SM;
   const h = big ? POSTER_H_BIG : POSTER_H_SM;
+
+  // Compute high-contrast headline color — always white or accent, whichever has more contrast against bg
+  const bgHex = (pbg || "#0A0A0E").replace("#", "");
+  const bgLum = (0.299 * parseInt(bgHex.substr(0, 2), 16) + 0.587 * parseInt(bgHex.substr(2, 2), 16) + 0.114 * parseInt(bgHex.substr(4, 2), 16)) / 255;
+  const headlineColor = bgLum < 0.4 ? "#FFFFFF" : "#000000";
+
   return (
     <div
       id={id || undefined}
@@ -196,55 +202,70 @@ function EmojiPoster({ poster, big, id, accent, onAccent, wdiwfQuote, className 
         maxWidth: w,
         minHeight: h,
         background: pbg,
-        boxShadow: `0 16px 48px rgba(0,0,0,0.5), 0 0 0 1px ${accent}22`,
+        boxShadow: `0 20px 60px rgba(0,0,0,0.55), 0 0 0 1px ${accent}18`,
       }}
     >
-      <div className="absolute pointer-events-none rounded-sm z-10" style={{ inset: 8, border: `1.5px solid ${accent}`, opacity: 0.7 }} />
-      <div className="absolute pointer-events-none rounded-sm z-10" style={{ inset: 12, border: `0.5px solid ${accent}`, opacity: 0.3 }} />
+      {/* Single thin border frame */}
+      <div className="absolute pointer-events-none rounded-sm z-10" style={{ inset: 10, border: `1px solid ${accent}44` }} />
 
-      <div className="flex-shrink-0 text-center" style={{ background: accent, padding: big ? "10px 14px" : "8px 10px" }}>
-        <div style={{ fontSize: big ? 14 : 12, fontWeight: 900, textTransform: "uppercase", letterSpacing: "0.22em", color: onAccent, lineHeight: 1.3 }}>
-          JACKYE CLAYTON 👑 × WDIWF
+      {/* TERTIARY: Brand lockup — small, top-left, unmistakable */}
+      <div className="flex-shrink-0 flex items-center justify-between" style={{ padding: big ? "16px 20px 0" : "12px 16px 0" }}>
+        <div style={{ fontSize: big ? 10 : 9, fontWeight: 800, textTransform: "uppercase", letterSpacing: "0.2em", color: accent, opacity: 0.9, fontFamily: "'Inter', sans-serif" }}>
+          WDIWF
         </div>
-        <div style={{ fontSize: big ? 11 : 9, fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.18em", color: onAccent, opacity: 0.8 }}>
-          PRESENTS
-        </div>
-      </div>
-
-      <div className="flex-1 flex flex-col items-center justify-evenly" style={{ padding: big ? "18px 18px 10px" : "14px 14px 8px", gap: big ? 10 : 8 }}>
-        <div className="font-mono text-center" style={{ fontSize: big ? 14 : 12, fontWeight: 800, textTransform: "uppercase", letterSpacing: "0.18em", color: accent }}>
+        <div style={{ fontSize: big ? 10 : 9, fontWeight: 600, textTransform: "uppercase", letterSpacing: "0.15em", color: headlineColor, opacity: 0.4, fontFamily: "'Inter', sans-serif" }}>
           {tag}
         </div>
-        <div className="text-center" style={{ fontSize: big ? 64 : 48, lineHeight: 1, filter: "drop-shadow(0 4px 14px rgba(0,0,0,0.45))" }}>
-          {emoji}
+      </div>
+
+      {/* PRIMARY: One dominant headline — massive, left-aligned for editorial feel */}
+      <div className="flex-1 flex flex-col justify-center" style={{ padding: big ? "0 24px" : "0 18px" }}>
+        <div style={{
+          fontSize: big ? 72 : 54,
+          fontWeight: 900,
+          color: headlineColor,
+          lineHeight: 0.88,
+          letterSpacing: "-0.03em",
+          fontFamily: "'Inter', sans-serif",
+          textShadow: bgLum < 0.3 ? `0 0 40px ${accent}30` : "none",
+        }}>
+          {bigTxt}
+          <span style={{ color: accent }}>.</span>
         </div>
-        <div className="text-center">
-          <div style={{ fontSize: big ? 56 : 42, fontWeight: 900, color: accent, lineHeight: 0.9, letterSpacing: "-0.02em", textShadow: `0 0 28px ${accent}55, 0 2px 8px rgba(0,0,0,0.5)`, fontFamily: "'Inter', sans-serif" }}>
-            {bigTxt}
-          </div>
-          <div className="font-mono" style={{ fontSize: big ? 16 : 13, fontWeight: 700, color: "#FFFFFF", textTransform: "uppercase", letterSpacing: "0.12em", marginTop: 8, textShadow: "0 1px 4px rgba(0,0,0,0.6)" }}>
-            {sub}
-          </div>
-        </div>
-        <div className="flex items-center gap-2" style={{ width: "76%" }}>
-          <div className="flex-1 h-px" style={{ background: accent, opacity: 0.5 }} />
-          <div className="rounded-full" style={{ width: 5, height: 5, background: accent, opacity: 0.8 }} />
-          <div className="flex-1 h-px" style={{ background: accent, opacity: 0.5 }} />
-        </div>
-        <div className="text-center italic" style={{ fontSize: big ? 18 : 14, fontWeight: 800, color: "#FFFFFF", lineHeight: 1.4, textShadow: "0 1px 6px rgba(0,0,0,0.5)" }}>
-          "{copy}"
-        </div>
-        <div className="text-center italic font-mono" style={{ fontSize: big ? 13 : 11, fontWeight: 600, color: accent, lineHeight: 1.4 }}>
-          {fine}
+
+        {/* SECONDARY: One short supporting line — smaller, clear separation */}
+        <div style={{
+          fontSize: big ? 17 : 14,
+          fontWeight: 500,
+          color: headlineColor,
+          opacity: 0.75,
+          lineHeight: 1.45,
+          marginTop: big ? 16 : 12,
+          maxWidth: "85%",
+          fontFamily: "'Inter', sans-serif",
+        }}>
+          {copy}
         </div>
       </div>
 
-      <div className="flex-shrink-0 text-center" style={{ background: `${accent}22`, borderTop: `1.5px solid ${accent}55`, padding: big ? "12px 16px" : "10px 12px" }}>
-        <div className="font-mono" style={{ fontSize: big ? 16 : 14, fontWeight: 900, color: accent, textTransform: "uppercase", letterSpacing: "0.1em", lineHeight: 1.2 }}>
-          wdiwf.jackyeclayton.com
+      {/* TERTIARY: Footer — brand + fine print, subordinate */}
+      <div className="flex-shrink-0" style={{
+        padding: big ? "14px 24px 18px" : "10px 18px 14px",
+        borderTop: `1px solid ${accent}20`,
+      }}>
+        <div style={{ fontSize: big ? 10 : 9, fontWeight: 500, color: accent, opacity: 0.65, lineHeight: 1.5, fontFamily: "'Inter', sans-serif" }}>
+          {fine}
         </div>
-        <div className="font-mono" style={{ fontSize: big ? 13 : 11, fontWeight: 600, color: "#FFFFFF", textTransform: "uppercase", letterSpacing: "0.08em", lineHeight: 1.4, marginTop: 4 }}>
-          {wdiwfQuote}
+        <div style={{
+          fontSize: big ? 11 : 9,
+          fontWeight: 800,
+          color: accent,
+          textTransform: "uppercase",
+          letterSpacing: "0.18em",
+          marginTop: 6,
+          fontFamily: "'Inter', sans-serif",
+        }}>
+          JACKYE CLAYTON × WDIWF
         </div>
       </div>
     </div>
