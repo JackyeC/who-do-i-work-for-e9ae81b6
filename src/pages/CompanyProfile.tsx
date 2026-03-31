@@ -410,24 +410,11 @@ export default function CompanyProfile() {
           {dbCompany?.id && <IntegrityIndicators companyId={dbCompany.id} />}
 
           {/* ═══════════════════════════════════════════════════════
-              🎯 CANDIDATE PREP PACK
+              🎯 CANDIDATE PREP PACK (AI-powered, role-aware)
              ═══════════════════════════════════════════════════════ */}
           <CandidatePrepPack
+            companyId={dbCompanyId}
             companyName={name}
-            industry={industry}
-            employeeCount={(dbCompany as any)?.employee_count ?? null}
-            hasLayoffSignals={false}
-            hasWarnNotices={false}
-            hasPayEquity={!!tiPayEquity}
-            hasBenefitsData={!!tiBenefits}
-            hasAiHrSignals={!!tiAiHr}
-            hasSentimentData={!!tiSentiment}
-            executiveCount={verifiedExecCount}
-            revolvingDoorCount={dbRevolvingDoor?.length || 0}
-            totalPacSpending={totalPac}
-            lobbyingSpend={lobbyingSpend}
-            darkMoneyCount={dbDarkMoney?.length || 0}
-            jackye_insight={dbCompany?.jackye_insight}
           />
 
           {/* ═══════════════════════════════════════════════════════
