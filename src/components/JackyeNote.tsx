@@ -83,9 +83,9 @@ export function JackyeNote(props: JackyeNoteProps) {
 
     if (props.darkMoneyCount > 0 || props.revolvingDoorCount > 0) {
       const connParts: string[] = [];
-      if (props.darkMoneyCount > 0) connParts.push(`${props.darkMoneyCount} dark money connection(s)`);
+      if (props.darkMoneyCount > 0) connParts.push(`${props.darkMoneyCount} non-disclosed contribution channel(s)`);
       if (props.revolvingDoorCount > 0) connParts.push(`${props.revolvingDoorCount} revolving door link(s)`);
-      parts.push(`We've identified ${connParts.join(" and ")} in the public record.`);
+      parts.push(`Public records show ${connParts.join(" and ")}.`);
     }
 
     const gaps: string[] = [];
