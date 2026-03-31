@@ -226,26 +226,31 @@ export default function WouldYouWorkHere() {
   return (
     <div className="flex flex-col min-h-screen bg-background">
       {/* ── Hero ── */}
-      <section className="px-6 lg:px-16 pt-20 pb-12 lg:pt-28 lg:pb-16 text-center max-w-[800px] mx-auto">
+      <section className="px-6 lg:px-16 pt-20 pb-12 lg:pt-28 lg:pb-16 max-w-[800px] mx-auto">
         <div className="font-mono text-[0.7rem] uppercase text-primary tracking-[0.2em] mb-4">Employer Intelligence Check</div>
-        <h1 className="text-3xl lg:text-[clamp(2.4rem,5vw,3.6rem)] font-bold leading-[1.15] tracking-tight mb-4 text-foreground">
+        <h1
+          className="font-sans text-foreground leading-[1.08] mb-5"
+          style={{ fontSize: "clamp(1.75rem, 4vw, 3rem)", fontWeight: 800, letterSpacing: "-1px" }}
+        >
           Would You Work Here?
         </h1>
-        <p className="text-lg text-muted-foreground mb-2 max-w-[560px] mx-auto leading-relaxed">
-          A simple question. A much smarter answer.
+        <p className="text-sm text-muted-foreground mb-2 max-w-[520px] leading-relaxed">
+          A simple question. A much smarter answer. See what five transparency signals reveal about any employer — before you apply.
         </p>
-        <p className="text-sm text-muted-foreground mb-8 max-w-[520px] mx-auto leading-relaxed">
-          This page summarizes the most important employer signals in plain English so you can quickly understand whether a company looks stable, transparent, and worth deeper consideration.
+        <p className="text-xs text-muted-foreground/60 mb-8 max-w-[520px] leading-relaxed">
+          This is a sample report. Search a company below to run a live check, or <a href="/browse" className="text-primary hover:underline">browse the full directory</a>.
         </p>
-        <div className="flex justify-center mb-10"><ShareButtons /></div>
-        <div className="flex max-w-[500px] mx-auto border border-border bg-card">
+        <div className="flex max-w-[500px] border border-border bg-card">
           <div className="flex items-center px-4 text-muted-foreground"><Search className="w-4 h-4" /></div>
           <input value={search} onChange={(e) => setSearch(e.target.value)} onKeyDown={(e) => e.key === "Enter" && handleSearch()} placeholder="Enter a company name..." className="flex-1 bg-transparent border-none outline-none py-3.5 text-foreground font-sans text-[15px] placeholder:text-muted-foreground" />
           <button onClick={handleSearch} className="bg-primary text-primary-foreground px-5 font-mono text-[0.7rem] tracking-wider uppercase font-semibold hover:brightness-110 transition-all">Scan</button>
         </div>
       </section>
 
-      {/* ── Sample Report ── */}
+      {/* ── Share + Sample Report ── */}
+      <div className="px-6 lg:px-16 max-w-[840px] mx-auto w-full flex justify-end mb-4">
+        <ShareButtons />
+      </div>
       <section className="px-6 lg:px-16 pb-8 max-w-[840px] mx-auto w-full">
         <div className="bg-card border border-border relative">
           <div className="absolute -top-2.5 left-4 bg-background px-2 font-mono text-[0.6rem] uppercase text-primary tracking-[0.2em]">

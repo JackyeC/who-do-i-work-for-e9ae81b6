@@ -160,14 +160,17 @@ export default function Browse() {
       <Tabs defaultValue="companies" className="w-full">
       {/* Compact header */}
       <div className="border-b border-border/40 bg-card/30">
-        <div className="max-w-6xl mx-auto px-4 sm:px-6 py-8 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+        <div className="max-w-6xl mx-auto px-4 sm:px-6 py-10 flex flex-col sm:flex-row sm:items-end justify-between gap-4">
           <div>
-            <p className="font-mono text-xs tracking-[0.15em] uppercase text-primary mb-1.5">Employer Intelligence</p>
-            <h1 className="text-xl font-bold text-foreground tracking-tight">
-              Search Companies
+            <p className="font-mono text-xs tracking-[0.15em] uppercase text-primary mb-2">Employer Intelligence</p>
+            <h1
+              className="font-sans text-foreground leading-[1.08] mb-1.5"
+              style={{ fontSize: "clamp(1.5rem, 3vw, 2rem)", fontWeight: 800, letterSpacing: "-0.5px" }}
+            >
+              Company Directory
             </h1>
-            <p className="text-sm text-muted-foreground mt-1">
-              {isLoading ? "Loading…" : `${allCompanies.length} employers tracked.`} Before you apply, check the record.
+            <p className="text-sm text-muted-foreground">
+              {isLoading ? "Loading…" : `${allCompanies.length} employers tracked.`} Search, filter, and check the record.
             </p>
           </div>
           <div className="flex items-center gap-3">
