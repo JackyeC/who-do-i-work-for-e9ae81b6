@@ -296,11 +296,11 @@ export function VibeMatchQuestionnaire({ onSubmit, isSubmitting }: Props) {
                 onChange={setPanelDiversity}
               />
               <QuestionCard
-                question='How did the team react to a question about "work-life boundaries" or "burnout"?'
+                question="How did the team respond to questions about workload or boundaries?"
                 options={[
-                  { label: 'They were transparent about the "crunch" but showed support systems.', value: 85 },
-                  { label: 'They used "we wear many hats" or "we\'re a family" as a deflection.', value: 35 },
-                  { label: "They seemed surprised or bristled at the question.", value: 10 },
+                  { label: "They were direct about intensity and described support systems.", value: 85 },
+                  { label: "They used phrases like 'we wear many hats' or 'we are a family' without specifics.", value: 35 },
+                  { label: "The question seemed unexpected or unwelcome.", value: 10 },
                 ]}
                 value={boundaryReaction}
                 onChange={setBoundaryReaction}
