@@ -119,7 +119,7 @@ export function RecentSignalsFeed() {
                       <div className="flex items-center gap-2 mb-1">
                         {signal.company ? (
                           <Link
-                            to={`/company/${signal.company.slug}`}
+                            to={`/dossier/${signal.company.slug}`}
                             className="text-sm font-semibold text-foreground hover:text-primary transition-colors truncate"
                           >
                             {signal.company.name}
@@ -148,7 +148,7 @@ export function RecentSignalsFeed() {
                     </div>
                     {signal.company && (
                       <Link
-                        to={`/company/${signal.company.slug}`}
+                        to={`/dossier/${signal.company.slug}`}
                         className="opacity-0 group-hover:opacity-100 transition-opacity"
                       >
                         <ChevronRight className="w-4 h-4 text-muted-foreground" />

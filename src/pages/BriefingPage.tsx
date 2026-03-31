@@ -190,7 +190,7 @@ export default function BriefingPage() {
                               <span key={tag} className="text-xs px-1.5 py-0.5 rounded bg-muted text-muted-foreground">{tag}</span>
                             ))}
                             {(item.company_slugs || []).slice(0, 2).map((slug: string) => (
-                              <a key={slug} href={`/company/${slug}`} className="text-xs px-1.5 py-0.5 rounded bg-primary/10 text-primary hover:bg-primary/20">{slug}</a>
+                              <a key={slug} href={`/dossier/${slug}`} className="text-xs px-1.5 py-0.5 rounded bg-primary/10 text-primary hover:bg-primary/20">{slug}</a>
                             ))}
                           </div>
                           <div className="flex items-center gap-2">
@@ -228,7 +228,7 @@ export default function BriefingPage() {
               <p className="text-xs text-muted-foreground mb-4">Based on your values and interests</p>
               <div className="space-y-3">
                 {companies.map((company: any, i: number) => (
-                  <a key={company.id || i} href={`/company/${company.slug}`}
+                  <a key={company.id || i} href={`/dossier/${company.slug}`}
                     className="block p-3 bg-background border border-border/50 rounded-lg hover:border-primary/30 transition-colors group">
                     <div className="flex items-start justify-between mb-1.5">
                       <div>

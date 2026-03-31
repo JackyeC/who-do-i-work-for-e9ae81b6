@@ -128,7 +128,7 @@ export default function SignalAlerts() {
                           <Building2 className="w-4 h-4 text-muted-foreground shrink-0" />
                           <div className="min-w-0">
                             {item.company ? (
-                              <Link to={`/company/${item.company.slug}`} className="text-sm font-medium text-foreground hover:underline truncate block">
+                              <Link to={`/dossier/${item.company.slug}`} className="text-sm font-medium text-foreground hover:underline truncate block">
                                 {item.company.name}
                               </Link>
                             ) : (

@@ -58,7 +58,7 @@ function JobCard({ job, onQueue, queueing, isQueued }: {
               <ScoreBadge score={job.alignment_score} />
               {belowThreshold && <AlignmentGuardBadge />}
             </div>
-            <Link to={`/company/${job.company_slug}`} className="text-sm text-primary hover:underline flex items-center gap-1">
+            <Link to={`/dossier/${job.company_slug}`} className="text-sm text-primary hover:underline flex items-center gap-1">
               <Building2 className="w-3.5 h-3.5" />
               {job.company_name}
             </Link>

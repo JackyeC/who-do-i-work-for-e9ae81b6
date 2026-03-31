@@ -67,7 +67,7 @@ export function JobDetailDrawer({ job, companyValueSignals = [], companySignals 
         <SheetHeader className="text-left pb-0">
           <SheetTitle className="text-lg leading-snug">{job.title}</SheetTitle>
           <Link
-            to={`/company/${company?.slug}`}
+            to={`/dossier/${company?.slug}`}
             className="text-sm text-primary hover:underline flex items-center gap-1 mt-0.5"
           >
             <Building2 className="w-3.5 h-3.5" />

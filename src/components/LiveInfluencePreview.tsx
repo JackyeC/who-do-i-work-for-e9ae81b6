@@ -335,7 +335,7 @@ export function LiveInfluencePreview() {
                 variant="outline"
                 size="sm"
                 className="gap-1.5 rounded-xl"
-                onClick={() => navigate(`/company/${activeData.slug}`)}
+                onClick={() => navigate(`/dossier/${activeData.slug}`)}
               >
                 <Building2 className="w-3.5 h-3.5" />
                 {isExample ? "View Full Profile" : `View ${activeData.name}`}

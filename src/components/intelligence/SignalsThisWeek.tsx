@@ -321,7 +321,7 @@ export function SignalsThisWeek() {
           return company ? (
             <Link
               key={signal.id}
-              to={`/company/${company.slug}`}
+              to={`/dossier/${company.slug}`}
               className={cn(
                 "relative p-5 flex flex-col justify-between min-h-[180px] group cursor-pointer transition-colors hover:bg-accent/30 no-underline",
                 idx < 2 && "md:border-r border-border/30",
@@ -411,7 +411,7 @@ export function SignalsThisWeek() {
           );
 
           return company ? (
-            <Link key={signal.id} to={`/company/${company.slug}`} className="px-4 py-3 flex items-start gap-3 hover:bg-accent/20 transition-colors group no-underline">
+            <Link key={signal.id} to={`/dossier/${company.slug}`} className="px-4 py-3 flex items-start gap-3 hover:bg-accent/20 transition-colors group no-underline">
               {rowContent}
             </Link>
           ) : (

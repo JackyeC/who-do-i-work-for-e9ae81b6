@@ -46,7 +46,7 @@ export function RivalryBattleCard({ rivalry, compact }: RivalryBattleCardProps) 
       <div className="grid grid-cols-[1fr_auto_1fr] items-center">
         {/* Company A */}
         <Link
-          to={`/company/${rivalry.companyA.slug}`}
+          to={`/dossier/${rivalry.companyA.slug}`}
           className="p-4 hover:bg-primary/[0.03] transition-colors text-center"
         >
           <div className="font-bold text-foreground text-sm mb-1 group-hover:text-primary transition-colors">
@@ -76,7 +76,7 @@ export function RivalryBattleCard({ rivalry, compact }: RivalryBattleCardProps) 
 
         {/* Company B */}
         <Link
-          to={`/company/${rivalry.companyB.slug}`}
+          to={`/dossier/${rivalry.companyB.slug}`}
           className="p-4 hover:bg-primary/[0.03] transition-colors text-center"
         >
           <div className="font-bold text-foreground text-sm mb-1 group-hover:text-primary transition-colors">
@@ -131,14 +131,14 @@ export function RivalryBattleCard({ rivalry, compact }: RivalryBattleCardProps) 
       <div className="px-4 py-2.5 border-t border-border flex items-center justify-between">
         <div className="flex gap-2">
           <Link
-            to={`/company/${rivalry.companyA.slug}`}
+            to={`/dossier/${rivalry.companyA.slug}`}
             className="font-mono text-xs tracking-wider uppercase text-primary hover:underline"
           >
             {rivalry.companyA.name} Intel →
           </Link>
           <span className="text-border">|</span>
           <Link
-            to={`/company/${rivalry.companyB.slug}`}
+            to={`/dossier/${rivalry.companyB.slug}`}
             className="font-mono text-xs tracking-wider uppercase text-primary hover:underline"
           >
             {rivalry.companyB.name} Intel →

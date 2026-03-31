@@ -66,7 +66,7 @@ export function JobIntegrityCard({ job, matchCount = 0, matchedCategories = [], 
       job.is_featured && "ring-1 ring-primary/20 bg-primary/[0.02]"
     )}>
       {/* Logo */}
-      <Link to={`/company/${co?.slug}`} className="shrink-0">
+      <Link to={`/dossier/${co?.slug}`} className="shrink-0">
         <CompanyLogo companyName={co?.name || "Unknown"} logoUrl={co?.logo_url} size="sm" />
       </Link>
 
@@ -86,7 +86,7 @@ export function JobIntegrityCard({ job, matchCount = 0, matchedCategories = [], 
 
         {/* Company + location */}
         <div className="flex items-center gap-1.5 text-xs text-muted-foreground flex-wrap">
-          <Link to={`/company/${co?.slug}`} className="text-primary hover:underline font-medium">
+          <Link to={`/dossier/${co?.slug}`} className="text-primary hover:underline font-medium">
             {co?.name || "Unknown Company"}
           </Link>
           <span>·</span>

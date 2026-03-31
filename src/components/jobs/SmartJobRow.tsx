@@ -62,7 +62,7 @@ export function SmartJobRow({ job, isSelected, matchScore, matchLabel, onClick }
           <div className="flex items-center gap-2 mt-0.5">
             {company?.slug ? (
               <Link
-                to={`/company/${company.slug}`}
+                to={`/dossier/${company.slug}`}
                 className="text-xs text-foreground/70 hover:text-primary hover:underline transition-colors"
                 onClick={(e) => e.stopPropagation()}
               >

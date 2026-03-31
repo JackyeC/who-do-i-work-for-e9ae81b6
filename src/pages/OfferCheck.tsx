@@ -238,7 +238,7 @@ export default function OfferCheck() {
     <div className="min-h-screen flex flex-col bg-background">
       <Header />
       <div className="container mx-auto px-4 py-8 max-w-3xl">
-        <Link to={`/company/${company.slug}`} className="inline-flex items-center gap-1 text-sm text-muted-foreground hover:text-foreground mb-6">
+        <Link to={`/dossier/${company.slug}`} className="inline-flex items-center gap-1 text-sm text-muted-foreground hover:text-foreground mb-6">
           <ArrowLeft className="w-4 h-4" /> Back to profile
         </Link>
 
@@ -348,7 +348,7 @@ export default function OfferCheck() {
         {/* Signal Timeline Link + Watch */}
         {companyId && (
           <div className="flex items-center gap-3 mb-5">
-            <Button variant="outline" size="sm" className="gap-1.5" onClick={() => navigate(`/company/${company.slug}`)}>
+            <Button variant="outline" size="sm" className="gap-1.5" onClick={() => navigate(`/dossier/${company.slug}`)}>
               <Eye className="w-3.5 h-3.5" /> View Signal Timeline
             </Button>
             <WatchCompanyButton companyId={companyId} companyName={company.name} />

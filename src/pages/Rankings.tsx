@@ -148,7 +148,7 @@ export default function Rankings() {
                       </Badge>
                     </TableCell>
                     <TableCell>
-                      <Link to={`/company/${c.slug}`} className="font-medium text-foreground hover:text-primary transition-colors">
+                      <Link to={`/dossier/${c.slug}`} className="font-medium text-foreground hover:text-primary transition-colors">
                         {c.name}
                       </Link>
                       <div className="text-xs text-muted-foreground">{c.state}</div>

@@ -145,7 +145,7 @@ export function PoliticalGivingCard({ companyId, companyName, companySlug }: Pol
       )}
 
       <GivingShareRow
-        permalink={`https://wdiwf.jackyeclayton.com/company/${companySlug}#giving-${companySlug}`}
+        permalink={`https://wdiwf.jackyeclayton.com/dossier/${companySlug}#giving-${companySlug}`}
         plainText={plainText}
         tweetText={`${companyName} PAC spend: ${formatCurrency(totalPac)} (${Math.round(repPct)}% R · ${Math.round(demPct)}% D). Public FEC record. via @wdiwf`}
         companySlug={companySlug}

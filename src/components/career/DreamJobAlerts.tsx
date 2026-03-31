@@ -148,7 +148,7 @@ export function DreamJobAlerts() {
                   )}
                   <div className="flex items-center gap-3 text-xs text-muted-foreground mt-0.5 flex-wrap">
                     {company && (
-                      <Link to={`/company/${company.slug}`} className="hover:text-primary flex items-center gap-1">
+                      <Link to={`/dossier/${company.slug}`} className="hover:text-primary flex items-center gap-1">
                         <Building2 className="w-3 h-3" /> {company.name}
                       </Link>
                     )}

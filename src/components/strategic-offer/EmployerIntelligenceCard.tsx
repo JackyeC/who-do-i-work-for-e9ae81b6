@@ -183,7 +183,7 @@ export function EmployerIntelligenceCard({ companyId, companyName }: Props) {
               <Eye className="w-4 h-4 text-primary" />
               Who Will You Work For?
             </CardTitle>
-            <Link to={`/company/${company.slug}`}>
+            <Link to={`/dossier/${company.slug}`}>
               <Badge variant="outline" className="text-xs gap-1 cursor-pointer hover:bg-accent">
                 Full Profile <ExternalLink className="w-2.5 h-2.5" />
               </Badge>
@@ -328,7 +328,7 @@ export function EmployerIntelligenceCard({ companyId, companyName }: Props) {
             {ideologyFlags && ideologyFlags.length > 0 && (
               <li>There are {ideologyFlags.length} ideology-related signals. These aren't inherently negative, but you should know about them before committing.</li>
             )}
-            <li>This data comes from public filings (FEC, LDA, USAspending) — not opinions. <Link to={`/company/${company.slug}`} className="text-primary hover:underline">Explore the full evidence →</Link></li>
+            <li>This data comes from public filings (FEC, LDA, USAspending) — not opinions. <Link to={`/dossier/${company.slug}`} className="text-primary hover:underline">Explore the full evidence →</Link></li>
           </ul>
         </CardContent>
       </Card>

@@ -71,7 +71,7 @@ export default function CompanyDossier() {
   usePageSEO({
     title: `${seoCompanyName} — Employer Intelligence Report | WDIWF`,
     description: `Before you apply to ${seoCompanyName}, see the receipts. Leadership stability, labor record, political spending, and values alignment — all from public sources.`,
-    path: `/company/${id}`,
+    path: `/dossier/${id}`,
     image: getOGImageUrl({ type: "company", companyA: seoCompanyName }),
   });
 

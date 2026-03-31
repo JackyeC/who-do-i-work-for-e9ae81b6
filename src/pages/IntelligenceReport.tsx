@@ -507,7 +507,7 @@ export default function IntelligenceReport() {
                             <WatchCompanyButton companyId={a.entity_id} companyName={a.entity_name_snapshot || "Company"} size="sm" />
                           )}
                           {a.entity_id && (
-                            <Link to={`/company/${a.entity_name_snapshot?.toLowerCase().replace(/\s+/g, "-")}`}>
+                            <Link to={`/dossier/${a.entity_name_snapshot?.toLowerCase().replace(/\s+/g, "-")}`}>
                               <Button variant="ghost" size="sm" className="text-xs gap-1">
                                 Profile <ChevronRight className="w-3 h-3" />
                               </Button>

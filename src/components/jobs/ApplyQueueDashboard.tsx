@@ -65,7 +65,7 @@ function QueueItemCard({
               </div>
               <div className="flex items-center gap-2 text-xs">
                 <Link
-                  to={`/company/${item.company_name?.toLowerCase().replace(/\s+/g, "-")}`}
+                  to={`/dossier/${item.company_name?.toLowerCase().replace(/\s+/g, "-")}`}
                   className="text-primary hover:underline font-medium"
                 >
                   {item.company_name}

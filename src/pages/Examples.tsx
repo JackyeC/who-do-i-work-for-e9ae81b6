@@ -105,7 +105,7 @@ export default function Examples() {
               >
                 <Card
                   className="group cursor-pointer hover:shadow-elegant hover:border-civic-gold-muted/30 transition-all duration-300 h-full"
-                  onClick={() => navigate(`/company/${c.slug}`)}
+                  onClick={() => navigate(`/dossier/${c.slug}`)}
                 >
                   <CardContent className="p-6 flex flex-col h-full">
                     <div className="flex items-center gap-3 mb-4">

@@ -33,7 +33,7 @@ export function IntelligenceSnapshotCard({ companyName, overallScore, scoreLabel
   const [copied, setCopied] = useState(false);
   const band = scoreBand(overallScore);
 
-  const shareUrl = `https://wdiwf.jackyeclayton.com/company/${slug}`;
+  const shareUrl = `https://wdiwf.jackyeclayton.com/dossier/${slug}`;
   const shareText = `${companyName} scored ${overallScore}/100 on the Corporate Behavior Index™. Here's what the data says about working there:`;
 
   useEffect(() => {

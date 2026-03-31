@@ -302,7 +302,7 @@ export default function SearchYourEmployer() {
                 {trendingCompanies.map((company) => (
                   <button
                     key={company.slug}
-                    onClick={() => navigate(`/company/${company.slug}`)}
+                    onClick={() => navigate(`/dossier/${company.slug}`)}
                     className="flex items-center gap-3 p-4 rounded-xl border border-border/40 bg-card hover:border-civic-gold-muted/40 hover:shadow-sm transition-all text-left group cursor-pointer"
                   >
                     <div className="w-9 h-9 rounded-xl bg-muted/60 flex items-center justify-center shrink-0">

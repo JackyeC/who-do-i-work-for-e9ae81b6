@@ -223,7 +223,7 @@ export function ShareableScorecard({ data }: { data: ScorecardData }) {
       });
     } else {
       const text = encodeURIComponent(
-        `I ran the Offer Check on ${data.name}. Know before you go 🔍\n\nhttps://whodoiworkfor.com/company/${data.name.toLowerCase().replace(/\s+/g, "-")}`
+        `I ran the Offer Check on ${data.name}. Know before you go 🔍\n\nhttps://whodoiworkfor.com/dossier/${data.name.toLowerCase().replace(/\s+/g, "-")}`
       );
       window.open(`https://twitter.com/intent/tweet?text=${text}`, "_blank");
     }

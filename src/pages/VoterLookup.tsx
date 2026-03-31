@@ -187,7 +187,7 @@ function RepCard({ rep }: { rep: RepData }) {
                 const hasProfile = funder.companySlug;
                 const Wrapper = hasProfile ? Link : "div";
                 const wrapperProps = hasProfile
-                  ? { to: `/company/${funder.companySlug}`, className: "flex items-center justify-between p-3 rounded-lg border border-border hover:border-primary/30 hover:bg-primary/5 transition-colors group" }
+                  ? { to: `/dossier/${funder.companySlug}`, className: "flex items-center justify-between p-3 rounded-lg border border-border hover:border-primary/30 hover:bg-primary/5 transition-colors group" }
                   : { className: "flex items-center justify-between p-3 rounded-lg border border-border" };
                 return (
                   <Wrapper key={j} {...(wrapperProps as any)}>
