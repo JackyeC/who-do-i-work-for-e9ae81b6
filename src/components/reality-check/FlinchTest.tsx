@@ -87,7 +87,7 @@ export function FlinchTest({ companyId, companyName }: FlinchTestProps) {
       if (error) throw error;
 
       setSubmitted(true);
-      toast({ title: "Flinch data recorded", description: "Your signals help other candidates make informed decisions." });
+      toast({ title: "Signal recorded", description: "Your observations strengthen the pattern data for future candidates." });
     } catch (e: any) {
       toast({ title: "Error saving", description: e.message, variant: "destructive" });
     } finally {
