@@ -8,170 +8,86 @@ export function SiteFooter() {
           {/* Brand */}
           <div className="col-span-2 md:col-span-1">
             <Link to="/" className="flex items-center mb-3">
-              <span
-                style={{
-                  fontFamily: "Inter,sans-serif",
-                  fontWeight: 900,
-                  letterSpacing: "-0.03em",
-                  fontSize: "22px",
-                }}
-              >
+              <span style={{ fontFamily: "Inter,sans-serif", fontWeight: 900, letterSpacing: "-0.03em", fontSize: "22px" }}>
                 <span className="text-foreground">W</span>
                 <span style={{ color: "#F0C040" }}>?</span>
               </span>
             </Link>
             <p className="font-sans text-sm text-muted-foreground leading-relaxed max-w-[28ch]">
-              Career intelligence that closes the Integrity Gap. Know before you
-              go.
+              The trust layer for the world of work. Know before you go.
             </p>
           </div>
 
-          {/* Who Do I Work For Links */}
+          {/* Platform */}
           <div>
-            <p className="font-mono text-xs tracking-[0.15em] uppercase text-muted-foreground/50 mb-3">
-              Who Do I Work For
-            </p>
+            <p className="font-mono text-xs tracking-[0.15em] uppercase text-muted-foreground/50 mb-3">Platform</p>
             <nav className="flex flex-col gap-2">
-              <Link
-                to="/"
-                className="font-sans text-sm text-muted-foreground hover:text-foreground transition-colors"
-              >
-                Home
-              </Link>
-              <Link
-                to="/newsletter"
-                className="font-sans text-sm text-muted-foreground hover:text-foreground transition-colors"
-              >
-                Receipts
-              </Link>
-              <Link
-                to="/browse"
-                className="font-sans text-sm text-muted-foreground hover:text-foreground transition-colors"
-              >
-                Companies
-              </Link>
-              <Link
-                to="/about"
-                className="font-sans text-sm text-muted-foreground hover:text-foreground transition-colors"
-              >
-                About
-              </Link>
-              <Link
-                to="/for-employers"
-                className="font-sans text-sm text-muted-foreground hover:text-foreground transition-colors"
-              >
-                For Companies
-              </Link>
-              <Link
-                to="/pricing"
-                className="font-sans text-sm text-muted-foreground hover:text-foreground transition-colors"
-              >
-                Pricing
-              </Link>
-              <Link
-                to="/contact"
-                className="font-sans text-sm text-muted-foreground hover:text-foreground transition-colors"
-              >
-                Contact
-              </Link>
-              <Link
-                to="/submit-tip"
-                className="font-sans text-sm text-muted-foreground hover:text-foreground transition-colors"
-              >
-                Submit a Tip
-              </Link>
-              <Link
-                to="/newsletter"
-                className="font-sans text-sm text-muted-foreground hover:text-foreground transition-colors"
-              >
-                Newsletter
-              </Link>
+              {[
+                { label: "Home", to: "/" },
+                { label: "How It Works", to: "/about" },
+                { label: "Companies", to: "/browse" },
+                { label: "The Receipts", to: "/receipts" },
+                { label: "Values Alignment", to: "/alignment" },
+                { label: "Offer Review", to: "/offer-analysis" },
+                { label: "Pricing", to: "/pricing" },
+                { label: "For Companies", to: "/for-employers" },
+              ].map((link) => (
+                <Link key={link.to} to={link.to} className="font-sans text-sm text-muted-foreground hover:text-foreground transition-colors">
+                  {link.label}
+                </Link>
+              ))}
             </nav>
           </div>
 
           {/* Connect */}
           <div>
-            <p className="font-mono text-xs tracking-[0.15em] uppercase text-muted-foreground/50 mb-3">
-              Connect
-            </p>
+            <p className="font-mono text-xs tracking-[0.15em] uppercase text-muted-foreground/50 mb-3">Connect</p>
             <nav className="flex flex-col gap-2">
-              <a
-                href="https://www.linkedin.com/in/jackyeclayton/"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="font-sans text-sm text-muted-foreground hover:text-foreground transition-colors"
-              >
-                LinkedIn
-              </a>
-              <a
-                href="https://jackyeclayton.com/speaking"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="font-sans text-sm text-muted-foreground hover:text-foreground transition-colors"
-              >
-                Speaking
-              </a>
-              <a
-                href="https://www.inclusiveafpodcast.com"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="font-sans text-sm text-muted-foreground hover:text-foreground transition-colors"
-              >
-                Inclusive AF Podcast
-              </a>
-              <a
-                href="https://wrkdefined.com/podcast/but-first-coffee"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="font-sans text-sm text-muted-foreground hover:text-foreground transition-colors"
-              >
-                But First, Coffee
-              </a>
+              {[
+                { label: "LinkedIn", url: "https://www.linkedin.com/in/jackyeclayton/" },
+                { label: "Speaking", url: "https://jackyeclayton.com/speaking" },
+                { label: "Inclusive AF Podcast", url: "https://www.inclusiveafpodcast.com" },
+                { label: "But First, Coffee", url: "https://wrkdefined.com/podcast/but-first-coffee" },
+                { label: "Contact", to: "/contact" },
+                { label: "Submit a Tip", to: "/submit-tip" },
+              ].map((link) => (
+                'url' in link ? (
+                  <a key={link.label} href={link.url} target="_blank" rel="noopener noreferrer" className="font-sans text-sm text-muted-foreground hover:text-foreground transition-colors">
+                    {link.label}
+                  </a>
+                ) : (
+                  <Link key={link.label} to={link.to!} className="font-sans text-sm text-muted-foreground hover:text-foreground transition-colors">
+                    {link.label}
+                  </Link>
+                )
+              ))}
             </nav>
           </div>
 
           {/* Legal */}
           <div>
-            <p className="font-mono text-xs tracking-[0.15em] uppercase text-muted-foreground/50 mb-3">
-              Legal
-            </p>
+            <p className="font-mono text-xs tracking-[0.15em] uppercase text-muted-foreground/50 mb-3">Legal</p>
             <nav className="flex flex-col gap-2">
-              <Link
-                to="/privacy"
-                className="font-sans text-sm text-muted-foreground hover:text-foreground transition-colors"
-              >
-                Privacy Policy
-              </Link>
-              <Link
-                to="/terms"
-                className="font-sans text-sm text-muted-foreground hover:text-foreground transition-colors"
-              >
-                Terms of Service
-              </Link>
-              <Link
-                to="/methodology"
-                className="font-sans text-sm text-muted-foreground hover:text-foreground transition-colors"
-              >
-                Methodology
-              </Link>
-              <Link
-                to="/data-ethics"
-                className="font-sans text-sm text-muted-foreground hover:text-foreground transition-colors"
-              >
-                Data Ethics
-              </Link>
+              {[
+                { label: "Privacy Policy", to: "/privacy" },
+                { label: "Terms of Service", to: "/terms" },
+                { label: "Methodology", to: "/methodology" },
+                { label: "Data Ethics", to: "/data-ethics" },
+              ].map((link) => (
+                <Link key={link.to} to={link.to} className="font-sans text-sm text-muted-foreground hover:text-foreground transition-colors">
+                  {link.label}
+                </Link>
+              ))}
             </nav>
           </div>
         </div>
 
         <div className="border-t border-border pt-4 flex justify-between items-center flex-wrap gap-3">
           <p className="font-sans text-xs text-muted-foreground/50">
-            © {new Date().getFullYear()} Who Do I Work For. A People Puzzles venture. Built
-            because you deserve to know.
+            © {new Date().getFullYear()} Who Do I Work For. Created by Jackye Clayton · WDIWF
           </p>
           <p className="font-sans text-xs text-muted-foreground/50">
-            Built on public records: FEC · SEC · BLS · OSHA · NLRB · Senate
-            Lobbying
+            Built on public records: Federal Election Commission · Securities & Exchange Commission · Bureau of Labor Statistics · Occupational Safety & Health Administration · National Labor Relations Board · Senate Lobbying
           </p>
         </div>
       </div>
