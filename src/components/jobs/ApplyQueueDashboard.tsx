@@ -7,7 +7,7 @@ import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import {
   Loader2, Play, Trash2, ExternalLink, Copy, Check,
   ListTodo, CheckCircle2, AlertCircle, Clock, RotateCcw, Zap, FileDown,
-  Inbox, ArrowRight
+  Inbox, ArrowRight, Shield
 } from "lucide-react";
 import { generateCandidateAdvocacyPdf } from "@/lib/generateCandidateAdvocacyPdf";
 import { useState } from "react";

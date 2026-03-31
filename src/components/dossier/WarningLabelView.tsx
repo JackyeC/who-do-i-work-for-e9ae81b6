@@ -423,17 +423,47 @@ export function WarningLabelView({ company, executives = [], contracts = [], iss
         </CardContent>
       </Card>
 
-      {/* ─── ACTION ITEMS ─── */}
+      {/* ─── 3 HARD QUESTIONS ─── */}
       <Card className="rounded-none border-2 border-primary/30 bg-primary/5">
         <CardContent className="p-6">
           <div className="flex items-center gap-3 mb-4">
             <Shield className="w-5 h-5 text-primary" />
             <div>
-              <h3 className="text-sm font-black tracking-tight text-foreground uppercase">YOUR ACTION ITEMS</h3>
-              <p className="text-xs text-muted-foreground">What to watch, check, and ask before you commit</p>
+              <h3 className="text-sm font-black tracking-tight text-foreground uppercase">3 HARD QUESTIONS FOR YOUR INTERVIEW</h3>
+              <p className="text-xs text-muted-foreground">Ask these to force transparency from the hiring team</p>
             </div>
           </div>
           <div className="space-y-3">
+            <ActionItem
+              type="ask"
+              text={`"How does leadership communicate major organizational changes before they hit the press?"`}
+            />
+            {(company.lobbying_spend ?? 0) > 0 ? (
+              <ActionItem
+                type="ask"
+                text={`"${company.name} has ${fmtMoney(company.lobbying_spend)} in lobbying spend. How does the company's policy work affect the stability of this team?"`}
+              />
+            ) : (
+              <ActionItem
+                type="ask"
+                text={`"What does stability look like for this team over the next 18 to 24 months?"`}
+              />
+            )}
+            {eeocCases.length > 0 ? (
+              <ActionItem
+                type="ask"
+                text={`"I noticed ${eeocCases.length > 1 ? "multiple enforcement actions" : "an enforcement action"} in your company's record. What changed internally as a result?"`}
+              />
+            ) : (
+              <ActionItem
+                type="ask"
+                text={`"Can you walk me through how this role's KPIs have changed in the last 6 months?"`}
+              />
+            )}
+          </div>
+          {/* Watch / Check items */}
+          <div className="mt-4 pt-4 border-t border-border/30 space-y-2">
+            <p className="font-mono text-xs text-muted-foreground tracking-wider uppercase mb-2">Also on your radar</p>
             <ActionItem
               type="watch"
               text={`Watch for leadership changes at ${company.name} — executive turnover patterns signal strategic instability.`}
@@ -441,23 +471,9 @@ export function WarningLabelView({ company, executives = [], contracts = [], iss
             {(company.lobbying_spend ?? 0) > 0 && (
               <ActionItem
                 type="check"
-                text={`Check which policies ${company.name} is lobbying on — ${fmtMoney(company.lobbying_spend)} in spend means they're actively shaping the rules.`}
+                text={`Check which policies ${company.name} is lobbying on — ${fmtMoney(company.lobbying_spend)} in spend means they are actively shaping the rules.`}
               />
             )}
-            <ActionItem
-              type="ask"
-              text={`Ask in the interview: "How does leadership communicate major organizational changes before they hit the press?"`}
-            />
-            {eeocCases.length > 0 && (
-              <ActionItem
-                type="ask"
-                text={`Ask: "I noticed ${eeocCases.length > 1 ? "multiple enforcement actions" : "an enforcement action"} in your company's record. What changed internally as a result?"`}
-              />
-            )}
-            <ActionItem
-              type="ask"
-              text={`Ask: "What does stability look like for this team over the next 18–24 months?"`}
-            />
           </div>
         </CardContent>
       </Card>
