@@ -33,17 +33,16 @@ export function FoundingMemberBadge({
     ? `#${String(memberNumber).padStart(4, "0")}`
     : "#0001";
   const displayName = memberName || "Founding Member";
-  const displayDate = joinedDate
-    ? new Date(joinedDate).toLocaleDateString("en-US", {
-        month: "long",
-        day: "numeric",
-        year: "numeric",
-      })
-    : new Date().toLocaleDateString("en-US", {
-        month: "long",
-        day: "numeric",
-        year: "numeric",
-      });
+  // Badge date is the user's signup date and must never change.
+  // It must always be before the launch date (April 7, 2026).
+  const LAUNCH_DATE = new Date("2026-04-07T00:00:00Z");
+  const joined = joinedDate ? new Date(joinedDate) : new Date("2026-03-31T00:00:00Z");
+  const badgeDate = joined < LAUNCH_DATE ? joined : new Date("2026-04-06T00:00:00Z");
+  const displayDate = badgeDate.toLocaleDateString("en-US", {
+    month: "long",
+    day: "numeric",
+    year: "numeric",
+  });
 
   // Pre-load logo images so html2canvas captures them correctly
   useEffect(() => {
