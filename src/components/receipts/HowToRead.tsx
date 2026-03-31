@@ -10,11 +10,11 @@ const BIAS_LEGEND = [
 ];
 
 const SPICE_LEGEND = [
-  [1, "Footnote. You should know this exists."],
-  [2, "Side-eye. Something's off here."],
-  [3, "Screenshot this. Send it to your group chat."],
-  [4, "We have a problem. This affects your job."],
-  [5, "They thought we wouldn't find out. We found out."],
+  [1, "Footnote. Worth having on your radar."],
+  [2, "Side-eye. Something doesn't line up here."],
+  [3, "Screenshot this. The details matter."],
+  [4, "This affects your job. Direct workforce impact."],
+  [5, "The public record tells a different story than the press release."],
 ] as const;
 
 export function HowToRead() {
