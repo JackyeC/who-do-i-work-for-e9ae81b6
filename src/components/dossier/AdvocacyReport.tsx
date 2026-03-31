@@ -133,6 +133,7 @@ function SectionDivider({ number, title, subtitle, icon: Icon }: { number: numbe
 export function AdvocacyReport({ company, executives = [], contracts = [], issueSignals = [], publicStances = [], eeocCases = [] }: AdvocacyReportProps) {
   const [decoderOpen, setDecoderOpen] = useState(false);
 
+  const isEarlyInvestigation = issueSignals.length < EARLY_INVESTIGATION_THRESHOLD;
   const verdict = useMemo(() => computeVerdict(company, issueSignals.length, eeocCases.length), [company, issueSignals.length, eeocCases.length]);
   const totalContractValue = useMemo(() => contracts.reduce((s, c) => s + (c.contract_value ?? 0), 0), [contracts]);
   const controversialContracts = useMemo(() => contracts.filter(c => c.controversy_flag), [contracts]);
@@ -151,17 +152,28 @@ export function AdvocacyReport({ company, executives = [], contracts = [], issue
   return (
     <div className="space-y-8">
 
-      {/* ═══ 1. THE VERDICT ═══ */}
-      <div className={cn("border-l-4 p-6 md:p-8", verdict.bg)}>
-        <p className="font-mono text-[10px] tracking-[0.35em] uppercase text-muted-foreground mb-2">WDIWF VERDICT</p>
-        <h2 className={cn("text-xl md:text-2xl font-black tracking-tight", verdict.color)}>{verdict.text}</h2>
-        {company.jackye_insight && (
-          <p className="mt-3 text-sm text-foreground/80 leading-relaxed italic">"{company.jackye_insight}"</p>
-        )}
-        <p className="mt-3 text-xs text-muted-foreground">
-          Based on {issueSignals.length} signal{issueSignals.length !== 1 ? "s" : ""}, {eeocCases.length} enforcement action{eeocCases.length !== 1 ? "s" : ""}, and public spending records.
-        </p>
-      </div>
+      {/* ═══ 1. THE VERDICT (or Early Investigation) ═══ */}
+      {isEarlyInvestigation ? (
+        <EarlyInvestigationCard
+          companyName={company.name}
+          signalCount={issueSignals.length}
+          hasExecutives={executives.length > 0}
+          hasContracts={contracts.length > 0}
+          hasPublicStances={publicStances.length > 0}
+          hasEeocCases={eeocCases.length > 0}
+        />
+      ) : (
+        <div className={cn("border-l-4 p-6 md:p-8", verdict.bg)}>
+          <p className="font-mono text-[10px] tracking-[0.35em] uppercase text-muted-foreground mb-2">WDIWF VERDICT</p>
+          <h2 className={cn("text-xl md:text-2xl font-black tracking-tight", verdict.color)}>{verdict.text}</h2>
+          {company.jackye_insight && (
+            <p className="mt-3 text-sm text-foreground/80 leading-relaxed italic">"{company.jackye_insight}"</p>
+          )}
+          <p className="mt-3 text-xs text-muted-foreground">
+            Based on {issueSignals.length} signal{issueSignals.length !== 1 ? "s" : ""}, {eeocCases.length} enforcement action{eeocCases.length !== 1 ? "s" : ""}, and public spending records.
+          </p>
+        </div>
+      )}
 
       {/* ═══ 2. COMPANY SUMMARY ═══ */}
       <section>
