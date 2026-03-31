@@ -154,9 +154,8 @@ function ScrollToTop() {
 }
 
 function CompanySlugRedirect() {
-  const loc = window.location.pathname;
-  const slug = loc.replace(/^\/company\//, "").replace(/\/influence$/, "");
-  return <Navigate to={`/dossier/${slug}`} replace />;
+  const { id } = useParams();
+  return <Navigate to={`/dossier/${id}`} replace />;
 }
 
 function RouteLoader() {
