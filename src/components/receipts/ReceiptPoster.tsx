@@ -101,8 +101,8 @@ function EmojiPoster({ poster, big, id, accent, onAccent, wdiwfQuote, className 
       id={id || undefined}
       className={cn("flex-shrink-0 flex flex-col overflow-hidden rounded-lg relative", className)}
       style={{
-        width: big ? 320 : 250,
-        minHeight: big ? 450 : 345,
+        width: big ? 400 : 300,
+        minHeight: big ? 560 : 430,
         background: pbg,
         boxShadow: "0 12px 40px rgba(0,0,0,0.55)",
       }}
@@ -110,48 +110,48 @@ function EmojiPoster({ poster, big, id, accent, onAccent, wdiwfQuote, className 
       <div className="absolute pointer-events-none rounded-sm z-10" style={{ inset: 7, border: `1.5px solid ${accent}`, opacity: 0.7 }} />
       <div className="absolute pointer-events-none rounded-sm z-10" style={{ inset: 11, border: `0.5px solid ${accent}`, opacity: 0.3 }} />
 
-      <div className="flex-shrink-0 text-center" style={{ background: accent, padding: big ? "9px 16px" : "7px 12px" }}>
-        <div style={{ fontSize: big ? 11 : 9, fontWeight: 900, textTransform: "uppercase", letterSpacing: "0.22em", color: onAccent, lineHeight: 1.3 }}>
+      <div className="flex-shrink-0 text-center" style={{ background: accent, padding: big ? "12px 16px" : "10px 12px" }}>
+        <div style={{ fontSize: big ? 16 : 14, fontWeight: 900, textTransform: "uppercase", letterSpacing: "0.22em", color: onAccent, lineHeight: 1.3 }}>
           JACKYE CLAYTON 👑 × WDIWF
         </div>
-        <div style={{ fontSize: big ? 9 : 7.5, fontWeight: 600, textTransform: "uppercase", letterSpacing: "0.18em", color: onAccent, opacity: 0.7 }}>
+        <div style={{ fontSize: big ? 13 : 11, fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.18em", color: onAccent, opacity: 0.8 }}>
           PRESENTS
         </div>
       </div>
 
-      <div className="flex-1 flex flex-col items-center justify-evenly" style={{ padding: big ? "16px 16px 8px" : "12px 12px 6px", gap: big ? 11 : 8 }}>
-        <div className="font-mono text-center" style={{ fontSize: big ? 10 : 8.5, fontWeight: 600, textTransform: "uppercase", letterSpacing: "0.18em", color: accent, opacity: 0.9 }}>
+      <div className="flex-1 flex flex-col items-center justify-evenly" style={{ padding: big ? "20px 20px 10px" : "16px 14px 8px", gap: big ? 14 : 10 }}>
+        <div className="font-mono text-center" style={{ fontSize: big ? 16 : 14, fontWeight: 800, textTransform: "uppercase", letterSpacing: "0.18em", color: accent }}>
           {tag}
         </div>
-        <div className="text-center" style={{ fontSize: big ? 68 : 50, lineHeight: 1, filter: "drop-shadow(0 4px 14px rgba(0,0,0,0.45))" }}>
+        <div className="text-center" style={{ fontSize: big ? 80 : 64, lineHeight: 1, filter: "drop-shadow(0 4px 14px rgba(0,0,0,0.45))" }}>
           {emoji}
         </div>
         <div className="text-center">
-          <div style={{ fontSize: big ? 50 : 36, fontWeight: 900, color: accent, lineHeight: 0.9, letterSpacing: "-0.02em", textShadow: `0 0 28px ${accent}55`, fontFamily: "'Inter', sans-serif" }}>
+          <div style={{ fontSize: big ? 64 : 48, fontWeight: 900, color: accent, lineHeight: 0.9, letterSpacing: "-0.02em", textShadow: `0 0 28px ${accent}55, 0 2px 8px rgba(0,0,0,0.5)`, fontFamily: "'Inter', sans-serif" }}>
             {bigTxt}
           </div>
-          <div className="font-mono" style={{ fontSize: big ? 13 : 10.5, fontWeight: 500, color: "rgba(255,255,255,0.75)", textTransform: "uppercase", letterSpacing: "0.12em", marginTop: 6 }}>
+          <div className="font-mono" style={{ fontSize: big ? 20 : 16, fontWeight: 700, color: "#FFFFFF", textTransform: "uppercase", letterSpacing: "0.12em", marginTop: 8, textShadow: "0 1px 4px rgba(0,0,0,0.6)" }}>
             {sub}
           </div>
         </div>
         <div className="flex items-center gap-2" style={{ width: "76%" }}>
-          <div className="flex-1 h-px" style={{ background: accent, opacity: 0.35 }} />
-          <div className="rounded-full" style={{ width: 4, height: 4, background: accent, opacity: 0.7 }} />
-          <div className="flex-1 h-px" style={{ background: accent, opacity: 0.35 }} />
+          <div className="flex-1 h-px" style={{ background: accent, opacity: 0.5 }} />
+          <div className="rounded-full" style={{ width: 5, height: 5, background: accent, opacity: 0.8 }} />
+          <div className="flex-1 h-px" style={{ background: accent, opacity: 0.5 }} />
         </div>
-        <div className="text-center italic" style={{ fontSize: big ? 15 : 12, fontWeight: 700, color: "#FFF", lineHeight: 1.4 }}>
+        <div className="text-center italic" style={{ fontSize: big ? 22 : 18, fontWeight: 800, color: "#FFFFFF", lineHeight: 1.4, textShadow: "0 1px 6px rgba(0,0,0,0.5)" }}>
           "{copy}"
         </div>
-        <div className="text-center italic font-mono" style={{ fontSize: big ? 12 : 10, fontWeight: 500, color: "rgba(255,255,255,0.68)", lineHeight: 1.4 }}>
+        <div className="text-center italic font-mono" style={{ fontSize: big ? 16 : 14, fontWeight: 600, color: accent, lineHeight: 1.4 }}>
           {fine}
         </div>
       </div>
 
-      <div className="flex-shrink-0 text-center" style={{ background: `${accent}18`, borderTop: `1px solid ${accent}35`, padding: big ? "8px 14px" : "6px 10px" }}>
-        <div className="font-mono" style={{ fontSize: big ? 11 : 9, fontWeight: 900, color: accent, textTransform: "uppercase", letterSpacing: "0.1em", lineHeight: 1.2 }}>
+      <div className="flex-shrink-0 text-center" style={{ background: `${accent}22`, borderTop: `1.5px solid ${accent}55`, padding: big ? "10px 14px" : "8px 10px" }}>
+        <div className="font-mono" style={{ fontSize: big ? 15 : 13, fontWeight: 900, color: accent, textTransform: "uppercase", letterSpacing: "0.1em", lineHeight: 1.2 }}>
           wdiwf.jackyeclayton.com
         </div>
-        <div className="font-mono" style={{ fontSize: big ? 8 : 7, fontWeight: 500, color: accent, opacity: 0.8, textTransform: "uppercase", letterSpacing: "0.08em", lineHeight: 1.4, marginTop: 3 }}>
+        <div className="font-mono" style={{ fontSize: big ? 12 : 10, fontWeight: 600, color: "#FFFFFF", textTransform: "uppercase", letterSpacing: "0.08em", lineHeight: 1.4, marginTop: 4 }}>
           {wdiwfQuote}
         </div>
       </div>
