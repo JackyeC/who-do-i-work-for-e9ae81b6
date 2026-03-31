@@ -397,17 +397,24 @@ export function WarningLabelView({ company, executives = [], contracts = [], iss
               <p className="font-mono text-xs text-primary tracking-wider uppercase mb-2">Executive Pipeline — Where They Came From</p>
               <div className="space-y-2">
                 {crossoverExecs.map((exec, i) => (
-                  <div key={i} className="flex items-start gap-3 p-3 bg-muted/20 border border-border/30 rounded-none">
-                    <ArrowRight className="w-4 h-4 text-muted-foreground mt-0.5 shrink-0" />
-                    <div>
+                  <a
+                    key={i}
+                    href={`https://www.linkedin.com/search/results/people/?keywords=${encodeURIComponent(exec.name + " " + (exec.previous_company || ""))}`}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="flex items-start gap-3 p-3 bg-muted/20 border border-border/30 rounded-none hover:bg-muted/40 hover:border-primary/30 transition-colors group cursor-pointer"
+                  >
+                    <ArrowRight className="w-4 h-4 text-muted-foreground mt-0.5 shrink-0 group-hover:text-primary transition-colors" />
+                    <div className="flex-1">
                       <p className="text-sm text-foreground">
                         <span className="font-semibold">{exec.name}</span> ({exec.title})
+                        <ExternalLink className="w-3 h-3 inline ml-1.5 text-muted-foreground opacity-0 group-hover:opacity-100 transition-opacity" />
                       </p>
                       <p className="text-xs text-muted-foreground">
                         Previously at <span className="font-medium text-foreground">{exec.previous_company}</span>
                       </p>
                     </div>
-                  </div>
+                  </a>
                 ))}
               </div>
             </div>
