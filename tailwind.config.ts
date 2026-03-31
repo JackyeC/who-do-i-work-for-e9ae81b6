@@ -68,6 +68,14 @@ export default {
           "2": "hsl(var(--surface-2))",
           elevated: "hsl(var(--surface-elevated))",
         },
+        brand: {
+          "section-label": "hsl(var(--brand-section-label))",
+          "scale-label": "hsl(var(--brand-scale-label))",
+          "page-label": "hsl(var(--brand-page-label))",
+          divider: "hsl(var(--brand-divider))",
+          border: "hsl(var(--brand-border))",
+          subtitle: "hsl(var(--brand-subtitle))",
+        },
         sidebar: {
           DEFAULT: "hsl(var(--sidebar-background))",
           foreground: "hsl(var(--sidebar-foreground))",
@@ -80,9 +88,9 @@ export default {
         },
       },
       fontFamily: {
-        display: ["'DM Sans'", "system-ui", "sans-serif"],
-        serif: ["'DM Sans'", "system-ui", "sans-serif"],
-        sans: ["'DM Sans'", "system-ui", "sans-serif"],
+        display: ["'Inter'", "system-ui", "sans-serif"],
+        serif: ["'Inter'", "system-ui", "sans-serif"],
+        sans: ["'Inter'", "system-ui", "sans-serif"],
         mono: ["'DM Mono'", "'Courier New'", "monospace"],
       },
       fontSize: {
