@@ -8,10 +8,12 @@ export interface PaletteEntry {
   text: string;
   sub: string;
   description: string;
+  inspiration?: string;
 }
 
 export const MOOD_FILTERS = [
   { value: "all", label: "ALL" },
+  { value: "maison", label: "MAISON" },
   { value: "editorial", label: "EDITORIAL" },
   { value: "bold", label: "BOLD" },
   { value: "moody", label: "MOODY" },
@@ -21,6 +23,18 @@ export const MOOD_FILTERS = [
 ];
 
 export const PALETTES: PaletteEntry[] = [
+  {
+    id: "rosso",
+    name: "Rosso",
+    mood: "maison",
+    bg: "#1A0508",
+    accent: "#BE0B2B",
+    dark: "#0D0204",
+    text: "#FFF5F0",
+    sub: "#D4808A",
+    description: "Power red. The kind that stops rooms and starts conversations.",
+    inspiration: "The color that needs no introduction.",
+  },
   {
     id: "midnight-gold",
     name: "Midnight Gold",
@@ -33,6 +47,18 @@ export const PALETTES: PaletteEntry[] = [
     description: "The original. Dark authority with gold conviction.",
   },
   {
+    id: "ivory-noir",
+    name: "Ivory Noir",
+    mood: "maison",
+    bg: "#FAF7F2",
+    accent: "#1A1A1A",
+    dark: "#F0EDE6",
+    text: "#0A0A0A",
+    sub: "#6B6560",
+    description: "Whisper-quiet luxury. Ivory pages, black ink, nothing wasted.",
+    inspiration: "Atelier precision.",
+  },
+  {
     id: "blood-ivory",
     name: "Blood & Ivory",
     mood: "bold",
@@ -42,6 +68,18 @@ export const PALETTES: PaletteEntry[] = [
     text: "#FFF5F5",
     sub: "#FF9090",
     description: "Urgent. Unapologetic. For stories that demand attention.",
+  },
+  {
+    id: "poudre",
+    name: "Poudre",
+    mood: "maison",
+    bg: "#1C1418",
+    accent: "#D4A0B0",
+    dark: "#0E0A0C",
+    text: "#F8F0F0",
+    sub: "#B88898",
+    description: "Blush on black. Softness as a power move.",
+    inspiration: "Runway afterglow.",
   },
   {
     id: "deep-emerald",
