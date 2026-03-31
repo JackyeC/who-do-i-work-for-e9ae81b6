@@ -42,7 +42,7 @@ export function useReceiptsFeed() {
         .select("*")
         .order("published_at", { ascending: false });
       if (error) throw error;
-      return (data ?? []) as ReceiptArticle[];
+      return (data ?? []) as unknown as ReceiptArticle[];
     },
     staleTime: 1000 * 60 * 5,
   });
