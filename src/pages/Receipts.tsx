@@ -8,6 +8,9 @@ import { useReceiptsFeed, type ReceiptArticle } from "@/hooks/use-receipts-feed"
 import { ReceiptsFilters } from "@/components/receipts/ReceiptsFilters";
 import { FeaturedReceipt } from "@/components/receipts/FeaturedReceipt";
 import { ReceiptCard } from "@/components/receipts/ReceiptCard";
+import { SpecialEditionCard } from "@/components/receipts/SpecialEditionCard";
+import { FloatingBubble } from "@/components/receipts/FloatingBubble";
+import { EmailCaptureModal } from "@/components/receipts/EmailCaptureModal";
 import { WorkNewsTicker } from "@/components/news/WorkNewsTicker";
 import { HowToRead } from "@/components/receipts/HowToRead";
 import { ReceiptsSidebar } from "@/components/receipts/ReceiptsSidebar";
@@ -39,14 +42,20 @@ const stagger = {
 
 export default function Receipts() {
   usePageSEO({
-    title: "The Receipts — Live Work Intelligence Feed",
-    description: "Live editorial work-intelligence feed. Every story summarized, Jackye's take included, and a useful action attached. No spin. No rankings. Just receipts.",
+    title: "The Receipts — JRC EDIT × Live Work Intelligence Feed",
+    description: "Live editorial work-intelligence feed by Jackye Clayton. Every story analyzed, every receipt pulled, every action attached. No spin. No rankings. Just receipts.",
     path: "/newsletter",
     jsonLd: {
-      "@type": "CollectionPage",
-      name: "The Receipts",
-      description: "Live editorial work-intelligence feed by Jackye Clayton.",
+      "@type": ["CollectionPage", "Review"],
+      name: "The Receipts — JRC EDIT",
+      description: "Live editorial work-intelligence feed analyzing workplace news through public data.",
       isPartOf: { "@type": "WebApplication", name: "Who Do I Work For?" },
+      author: {
+        "@type": "Person",
+        name: "Jackye Clayton",
+        jobTitle: "Talent Acquisition Executive",
+        sameAs: ["https://www.linkedin.com/in/jackyeclayton/"],
+      },
       provider: { "@type": "Person", name: "Jackye Clayton" },
     },
   });
@@ -57,6 +66,7 @@ export default function Receipts() {
   const [sortMode, setSortMode] = useState<ReceiptSortMode>("newest");
   const [heatFilter, setHeatFilter] = useState<number | null>(null);
   const [lightboxArticle, setLightboxArticle] = useState<ReceiptArticle | null>(null);
+  const [showEmailCapture, setShowEmailCapture] = useState(false);
 
   const filtered = useMemo(() => {
     if (!articles) return [];
@@ -110,11 +120,11 @@ export default function Receipts() {
       <header className="border-b border-border py-11 px-8 text-center">
         <div className="max-w-[780px] mx-auto">
           <p className="text-sm uppercase tracking-[0.55em] text-primary mb-3.5 font-mono">
-            Jackye Clayton 👑 × WDIWF presents
+            JRC EDIT × WDIWF
           </p>
           <h1
-            className="font-black text-foreground leading-none"
-            style={{ fontSize: "clamp(48px, 6vw, 80px)", letterSpacing: "-0.025em", fontFamily: "'Inter', sans-serif" }}
+            className="font-black text-foreground leading-none uppercase"
+            style={{ fontSize: "clamp(48px, 6vw, 80px)", letterSpacing: "-0.025em", fontFamily: "Georgia, 'Times New Roman', serif" }}
           >
             The Receipts
           </h1>
@@ -183,7 +193,7 @@ export default function Receipts() {
             </div>
           )}
 
-          {/* Feed — single column */}
+          {/* Feed — single column with Special Edition interstitials */}
           {!isLoading && (
             <motion.div
               variants={stagger.container}
@@ -191,9 +201,11 @@ export default function Receipts() {
               animate="show"
               key={`${category}-${search}-${sortMode}-${heatFilter}`}
             >
-              {feedArticles.map((article) => (
+              {feedArticles.map((article, idx) => (
                 <motion.div key={article?.id} variants={stagger.item}>
                   <ReceiptCard article={article} onPosterClick={setLightboxArticle} />
+                  {/* Special Edition interstitial every 5th card */}
+                  {(idx + 1) % 5 === 0 && <SpecialEditionCard />}
                 </motion.div>
               ))}
             </motion.div>
@@ -225,7 +237,7 @@ export default function Receipts() {
             <Link
               key={inv.slug}
               to={`/receipts/${inv.slug}`}
-              className="block p-4 bg-card border border-border/40 rounded-xl hover:border-primary/40 transition-all group"
+              className="block p-4 bg-card border border-border/40 rounded-xl hover:border-primary/40 transition-all group receipt-card"
             >
               <div className="flex items-center justify-between mb-2">
                 <span className="text-xs text-muted-foreground">{inv.sector}</span>
@@ -259,7 +271,18 @@ export default function Receipts() {
             Submit a tip
           </Link>
         </div>
+        <div className="mt-4">
+          <span className="text-[10px] tracking-[0.25em] uppercase" style={{ fontFamily: "Georgia, 'Times New Roman', serif", color: "hsl(var(--muted-foreground))", fontWeight: 300, opacity: 0.5 }}>
+            JRC EDIT
+          </span>
+        </div>
       </footer>
+
+      {/* Floating Bubble */}
+      <FloatingBubble />
+
+      {/* Email Capture Modal */}
+      <EmailCaptureModal open={showEmailCapture} onClose={() => setShowEmailCapture(false)} />
 
       {/* Poster Lightbox */}
       <PosterLightbox article={lightboxArticle} onClose={() => setLightboxArticle(null)} />
