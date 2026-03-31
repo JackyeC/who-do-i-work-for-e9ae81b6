@@ -356,7 +356,7 @@ export function VibeMatchQuestionnaire({ onSubmit, isSubmitting }: Props) {
             {isSubmitting ? (
               <>
                 <Loader2 className="w-4 h-4 animate-spin" />
-                Analyzing Integrity Gap...
+                Analyzing Process Signals...
               </>
             ) : (
               <>
