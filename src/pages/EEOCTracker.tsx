@@ -18,6 +18,7 @@ interface EEOCCase {
   id: string;
   company_name: string;
   company_id: string | null;
+  company_slug?: string | null;
   case_name: string;
   case_number: string | null;
   court_name: string | null;
@@ -69,9 +70,12 @@ export default function EEOCTracker() {
     queryFn: async () => {
       const { data } = await (supabase as any)
         .from("eeoc_dropped_cases")
-        .select("*")
+        .select("*, companies(slug)")
         .order("created_at", { ascending: false });
-      return (data || []) as EEOCCase[];
+      return ((data || []) as any[]).map((c: any) => ({
+        ...c,
+        company_slug: c.companies?.slug || null,
+      })) as EEOCCase[];
     },
   });
 
@@ -223,8 +227,8 @@ export default function EEOCTracker() {
                                 <Gavel className="w-3 h-3" /> EEOC Record
                               </a>
                             )}
-                            {c.company_id && (
-                              <Link to={`/company/${c.company_id}`}
+                            {(c.company_slug || c.company_id) && (
+                              <Link to={`/company/${c.company_slug || c.company_id}`}
                                 className="text-xs text-primary hover:underline flex items-center gap-1">
                                 <Building2 className="w-3 h-3" /> Company Profile <ChevronRight className="w-3 h-3" />
                               </Link>
