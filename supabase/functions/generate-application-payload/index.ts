@@ -116,6 +116,27 @@ Deno.serve(async (req: Request) => {
       civic_footprint_score: company.civic_footprint_score,
     };
 
+    // ── Build "Inside-Track" dossier context for the cover letter ──
+    const warnContext = (warnNotices || []).length > 0
+      ? (warnNotices || []).map((w: any) => {
+          const date = w.notice_date ? new Date(w.notice_date).toLocaleDateString('en-US', { month: 'short', year: 'numeric' }) : 'undated';
+          return `${w.employees_affected || '?'} employees affected (${date}, ${w.layoff_type || 'unspecified'})`;
+        }).join('; ')
+      : 'No Worker Adjustment and Retraining Notification (WARN) Act notices on record';
+
+    const stanceGaps = (publicStances || []).filter((s: any) => s.gap && s.gap !== 'none' && s.gap !== 'low').slice(0, 3);
+    const stanceContext = stanceGaps.length > 0
+      ? stanceGaps.map((s: any) => `Topic: "${s.topic}" — Public position: "${s.public_position}" vs. spending reality: "${s.spending_reality}" (gap: ${s.gap})`).join('\n  ')
+      : 'No significant stance-spending gaps detected';
+
+    const lobbyingContext = company.lobbying_spend
+      ? `$${(company.lobbying_spend / 1000000).toFixed(1)}M in registered lobbying expenditures`
+      : 'No registered lobbying spend on file';
+
+    const sentimentContext = sentimentData?.[0]
+      ? `Worker sentiment: ${sentimentData[0].overall_rating}/5 (${sentimentData[0].sentiment}). Top praises: ${(sentimentData[0].top_praises || []).slice(0, 3).join(', ') || 'none'}. Top complaints: ${(sentimentData[0].top_complaints || []).slice(0, 3).join(', ') || 'none'}.`
+      : 'No aggregated worker sentiment data available';
+
     // Calculate alignment score
     let alignmentScore = company.civic_footprint_score || 0;
     const matchedSignals: string[] = [];
@@ -158,9 +179,14 @@ COMPANY: ${company.name} (${company.industry})
 - Worker Benefits: ${benefitNames.join(', ') || 'None detected'}
 - Pay Equity Signals: ${payNames.join(', ') || 'None detected'}
 - Bias Audit Status: ${biasAuditStatus}
-- Worker Sentiment: ${signalSummary.sentiment ? `${signalSummary.sentiment.rating}/5 (${signalSummary.sentiment.sentiment})` : 'No data'}
-- WARN Notices: ${signalSummary.warn_notices} on record
+- Worker Sentiment: ${sentimentContext}
 - Alignment: ${alignmentScore}% | Matched signals: ${matchedSignals.join(', ') || 'None'} | Missing: ${missingSignals.join(', ') || 'None'}
+
+INSIDE-TRACK DOSSIER (use this to write a letter that sounds informed, not generic):
+- Worker Adjustment and Retraining Notification (WARN) Act History: ${warnContext}
+- Lobbying Spend: ${lobbyingContext}
+- Stance-Spending Gaps:
+  ${stanceContext}
 
 VOICE RULES (follow exactly):
 - Write like an experienced professional talking to another professional. Direct, confident, warm.
@@ -170,12 +196,12 @@ VOICE RULES (follow exactly):
 - Sound like a real person who is genuinely interested, not a template.
 
 STRUCTURE (no labels, just flow naturally):
-1. Opening (1-2 sentences): Why this role or company caught their eye. Be specific to something the company actually does.
-2. Alignment (2-3 sentences): How their background connects to the company's work. Reference a real signal if available.
+1. Opening (1-2 sentences): Why this role or company caught their eye. Be specific — reference a real corporate shift, recent move, or dossier signal. Do NOT be generic.
+2. Alignment (2-3 sentences): How their background connects to the company's current direction. If there are stance-spending gaps, subtly reference the company's stated values in a way that shows awareness without being adversarial.
 3. Proof (2-3 sentences): One concrete example — a result, a project, a leadership moment.
 4. Close (1 sentence): Confident, friendly, expresses interest in a conversation.
 
-The letter must read like something a smart, busy professional would actually send. If it sounds corporate or robotic, it's wrong.`;
+The letter must read like something a smart, busy professional would actually send. If it sounds corporate or robotic, it's wrong. The candidate should sound like they've done their homework — because they have.`;
 
     const aiResponse = await fetch('https://ai.gateway.lovable.dev/v1/chat/completions', {
       method: 'POST',
