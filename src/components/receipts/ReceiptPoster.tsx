@@ -194,11 +194,10 @@ const POSTER_H_SM = 560;
 function EmojiPoster({ poster, big, id, accent, onAccent, className }: {
   poster: PosterData; big: boolean; id: string; accent: string; onAccent: string; className?: string;
 }) {
-  const { bg: pbg, bigTxt, copy, fine, tag } = poster;
+  const { bg: pbg, emoji, bigTxt, copy, fine, tag } = poster;
   const w = big ? POSTER_W_BIG : POSTER_W_SM;
   const h = big ? POSTER_H_BIG : POSTER_H_SM;
 
-  // Compute high-contrast headline color — always white or accent, whichever has more contrast against bg
   const bgHex = (pbg || "#0A0A0E").replace("#", "");
   const bgLum = (0.299 * parseInt(bgHex.substr(0, 2), 16) + 0.587 * parseInt(bgHex.substr(2, 2), 16) + 0.114 * parseInt(bgHex.substr(4, 2), 16)) / 255;
   const headlineColor = bgLum < 0.4 ? "#FFFFFF" : "#000000";
@@ -214,11 +213,10 @@ function EmojiPoster({ poster, big, id, accent, onAccent, className }: {
         boxShadow: `0 20px 60px rgba(0,0,0,0.55), 0 0 0 1px ${accent}18`,
       }}
     >
-      {/* Single thin border frame */}
       <div className="absolute pointer-events-none rounded-sm z-10" style={{ inset: 10, border: `1px solid ${accent}44` }} />
 
-      {/* TERTIARY: Brand lockup — small, top-left, unmistakable */}
-      <div className="flex-shrink-0 flex items-center justify-between" style={{ padding: big ? "16px 20px 0" : "12px 16px 0" }}>
+      {/* TERTIARY: Brand lockup — small, top, clean */}
+      <div className="flex-shrink-0 flex items-center justify-between" style={{ padding: big ? "16px 22px 0" : "12px 16px 0" }}>
         <div style={{ fontSize: big ? 10 : 9, fontWeight: 800, textTransform: "uppercase", letterSpacing: "0.2em", color: accent, opacity: 0.9, fontFamily: "'Inter', sans-serif" }}>
           WDIWF
         </div>
@@ -227,10 +225,13 @@ function EmojiPoster({ poster, big, id, accent, onAccent, className }: {
         </div>
       </div>
 
-      {/* PRIMARY: One dominant headline — massive, left-aligned for editorial feel */}
+      {/* PRIMARY: Big emoji + dominant headline */}
       <div className="flex-1 flex flex-col justify-center" style={{ padding: big ? "0 24px" : "0 18px" }}>
+        <div style={{ fontSize: big ? 72 : 56, lineHeight: 1, marginBottom: big ? 12 : 8 }}>
+          {emoji}
+        </div>
         <div style={{
-          fontSize: big ? 72 : 54,
+          fontSize: big ? 68 : 50,
           fontWeight: 900,
           color: headlineColor,
           lineHeight: 0.88,
@@ -242,27 +243,27 @@ function EmojiPoster({ poster, big, id, accent, onAccent, className }: {
           <span style={{ color: accent }}>.</span>
         </div>
 
-        {/* SECONDARY: One short supporting line — smaller, clear separation */}
+        {/* SECONDARY: One supporting line */}
         <div style={{
-          fontSize: big ? 17 : 14,
+          fontSize: big ? 16 : 13,
           fontWeight: 500,
           color: headlineColor,
-          opacity: 0.75,
+          opacity: 0.7,
           lineHeight: 1.45,
-          marginTop: big ? 16 : 12,
-          maxWidth: "85%",
+          marginTop: big ? 14 : 10,
+          maxWidth: "88%",
           fontFamily: "'Inter', sans-serif",
         }}>
           {copy}
         </div>
       </div>
 
-      {/* TERTIARY: Footer — brand + fine print, subordinate */}
+      {/* TERTIARY: Footer */}
       <div className="flex-shrink-0" style={{
-        padding: big ? "14px 24px 18px" : "10px 18px 14px",
+        padding: big ? "12px 24px 16px" : "10px 18px 14px",
         borderTop: `1px solid ${accent}20`,
       }}>
-        <div style={{ fontSize: big ? 10 : 9, fontWeight: 500, color: accent, opacity: 0.65, lineHeight: 1.5, fontFamily: "'Inter', sans-serif" }}>
+        <div style={{ fontSize: big ? 10 : 9, fontWeight: 500, color: accent, opacity: 0.6, lineHeight: 1.5, fontFamily: "'Inter', sans-serif" }}>
           {fine}
         </div>
         <div style={{
@@ -271,7 +272,7 @@ function EmojiPoster({ poster, big, id, accent, onAccent, className }: {
           color: accent,
           textTransform: "uppercase",
           letterSpacing: "0.18em",
-          marginTop: 6,
+          marginTop: 5,
           fontFamily: "'Inter', sans-serif",
         }}>
           JACKYE CLAYTON × WDIWF
