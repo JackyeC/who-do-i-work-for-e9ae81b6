@@ -133,8 +133,8 @@ function QuestionCard({
           <SentimentSlider
             value={value}
             onChange={onChange}
-            leftLabel="Toxic"
-            rightLabel="Thriving"
+            leftLabel="Concerning"
+            rightLabel="Strong"
           />
         </div>
       </CardContent>
@@ -261,8 +261,8 @@ export function VibeMatchQuestionnaire({ onSubmit, isSubmitting }: Props) {
               <QuestionCard
                 question="Did the interviewers clearly define what success looks like in the first 90 days?"
                 options={[
-                  { label: "Yes, they had a specific 30/60/90-day plan.", value: 90 },
-                  { label: 'It was vague (e.g., "we need a self-starter to figure it out").', value: 45 },
+                  { label: "Yes, they described a specific 30/60/90-day plan.", value: 90 },
+                  { label: "It was general. No specific milestones were described.", value: 45 },
                   { label: "No, they seemed unsure of why the role exists.", value: 15 },
                 ]}
                 value={successClarity}
@@ -272,8 +272,8 @@ export function VibeMatchQuestionnaire({ onSubmit, isSubmitting }: Props) {
                 question="When you asked about the team's biggest challenge, was the answer consistent across interviewers?"
                 options={[
                   { label: "Yes, they are aligned on the mission.", value: 90 },
-                  { label: "No, I got conflicting stories about the priorities.", value: 35 },
-                  { label: 'They avoided the question or "sugar-coated" it.', value: 15 },
+                  { label: "No, interviewers described different priorities.", value: 35 },
+                  { label: "They redirected the question or gave a non-answer.", value: 15 },
                 ]}
                 value={challengeConsistency}
                 onChange={setChallengeConsistency}
@@ -296,11 +296,11 @@ export function VibeMatchQuestionnaire({ onSubmit, isSubmitting }: Props) {
                 onChange={setPanelDiversity}
               />
               <QuestionCard
-                question='How did the team react to a question about "work-life boundaries" or "burnout"?'
+                question="How did the team respond to questions about workload or boundaries?"
                 options={[
-                  { label: 'They were transparent about the "crunch" but showed support systems.', value: 85 },
-                  { label: 'They used "we wear many hats" or "we\'re a family" as a deflection.', value: 35 },
-                  { label: "They seemed surprised or bristled at the question.", value: 10 },
+                  { label: "They were direct about intensity and described support systems.", value: 85 },
+                  { label: "They used phrases like 'we wear many hats' or 'we are a family' without specifics.", value: 35 },
+                  { label: "The question seemed unexpected or unwelcome.", value: 10 },
                 ]}
                 value={boundaryReaction}
                 onChange={setBoundaryReaction}
@@ -308,16 +308,16 @@ export function VibeMatchQuestionnaire({ onSubmit, isSubmitting }: Props) {
             </div>
           </div>
 
-          {/* Section 3: Red Flag Radar */}
+          {/* Section 3: Process Signals */}
           <div>
-            <SectionHeader icon={AlertTriangle} title='The "Jackye" Red Flag Radar' number={3} />
+            <SectionHeader icon={AlertTriangle} title="Process Signals" number={3} />
             <div className="space-y-4">
               <QuestionCard
-                question="Did anyone 'bad-mouth' a former employee or the person previously in this role?"
+                question="How did interviewers refer to the person previously in this role?"
                 options={[
-                  { label: "Never; they spoke with respect.", value: 90 },
-                  { label: 'There were subtle hints of "the last person couldn\'t cut it."', value: 40 },
-                  { label: "Yes, they were openly critical of the predecessor.", value: 10 },
+                  { label: "With respect. No commentary on performance.", value: 90 },
+                  { label: "Subtle suggestions the previous person did not meet expectations.", value: 40 },
+                  { label: "Openly critical of the predecessor.", value: 10 },
                 ]}
                 value={predecessorRespect}
                 onChange={setPredecessorRespect}
@@ -325,8 +325,8 @@ export function VibeMatchQuestionnaire({ onSubmit, isSubmitting }: Props) {
               <QuestionCard
                 question="Was the process organized (on time, prepared, respectful of your schedule)?"
                 options={[
-                  { label: "Professional and seamless.", value: 90 },
-                  { label: "Chaotic (last-minute reschedules, interviewers hadn't read my resume).", value: 20 },
+                  { label: "Professional and well-organized.", value: 90 },
+                  { label: "Disorganized. Last-minute changes, interviewers appeared unprepared.", value: 20 },
                 ]}
                 value={processOrganization}
                 onChange={setProcessOrganization}
@@ -340,7 +340,7 @@ export function VibeMatchQuestionnaire({ onSubmit, isSubmitting }: Props) {
             <Textarea
               value={additionalNotes}
               onChange={(e) => setAdditionalNotes(e.target.value.slice(0, 2000))}
-              placeholder="Any other observations, red flags, or positive signals from your interview..."
+              placeholder="Any other observations or patterns from your interview process..."
               className="min-h-[100px] font-mono text-sm"
               maxLength={2000}
             />
@@ -356,12 +356,12 @@ export function VibeMatchQuestionnaire({ onSubmit, isSubmitting }: Props) {
             {isSubmitting ? (
               <>
                 <Loader2 className="w-4 h-4 animate-spin" />
-                Analyzing Integrity Gap...
+                Analyzing Process Signals...
               </>
             ) : (
               <>
                 <ClipboardCheck className="w-4 h-4" />
-                Generate Reality Check Report
+                Generate Process Signal Report
               </>
             )}
           </Button>
