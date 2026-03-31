@@ -7,7 +7,7 @@ import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import {
   Loader2, Play, Trash2, ExternalLink, Copy, Check,
   ListTodo, CheckCircle2, AlertCircle, Clock, RotateCcw, Zap, FileDown,
-  Inbox, ArrowRight
+  Inbox, ArrowRight, Shield
 } from "lucide-react";
 import { generateCandidateAdvocacyPdf } from "@/lib/generateCandidateAdvocacyPdf";
 import { useState } from "react";
@@ -85,6 +85,12 @@ function QueueItemCard({
               {item.generated_payload?.matchingStatement && (
                 <div className="mt-2 bg-muted/40 border border-border/60 rounded p-2 text-xs text-foreground/70 line-clamp-2 leading-relaxed">
                   {item.generated_payload.matchingStatement}
+                </div>
+              )}
+              {item.status === "completed" && (
+                <div className="mt-1.5 flex items-center gap-1 text-[10px] text-muted-foreground/70">
+                  <Shield className="w-2.5 h-2.5" />
+                  <span>Transparency Receipt: 0% identity data (race, age, gender) used in matching. Skills and values only.</span>
                 </div>
               )}
             </div>

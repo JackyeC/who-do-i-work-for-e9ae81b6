@@ -15,18 +15,18 @@ interface AutoApplyConsentModalProps {
 const SLIDES = [
   {
     icon: Bot,
-    title: "We are your Agent",
-    description: "We find values-aligned jobs and draft tailored applications. You make the choice on every single one.",
+    title: "The Talent Agent License",
+    description: "By enabling Auto-Apply, you appoint WDIWF as your authorized Career Agent. We scan the market, tailor your experience to specific roles, and file applications on your behalf. But only after your mobile confirmation.",
   },
   {
     icon: Eye,
-    title: "We only tell the truth",
-    description: "Our AI will never fabricate skills, titles, or experience. No fake credentials, no bot-spam. We only highlight what you have already provided.",
+    title: "The No Hallucination Promise",
+    description: "We are an efficiency tool, not a creative writing tool. WDIWF will never invent skills, titles, or dates. We only highlight the truth already in your profile. No fake credentials, no bot-spam.",
   },
   {
     icon: UserCheck,
-    title: "You are the boss",
-    description: "Every application requires your explicit approval before it is submitted. Nothing goes out without your say-so.",
+    title: "Human-in-the-Loop Required",
+    description: "We will never apply to a job without your explicit approval. Every application needs your say-so. You can revoke this Agent License at any time with one tap.",
   },
 ];
 
