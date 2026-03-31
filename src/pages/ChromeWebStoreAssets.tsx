@@ -235,9 +235,9 @@ export default function ChromeWebStoreAssets() {
 WHAT IT DOES
 When you browse job listings on LinkedIn, Indeed, Greenhouse, Lever, Workday, and 6 more platforms, WDIWF automatically detects the employer and shows you:
 
-- Integrity Score (0-100) based on public records
-- Four-pillar analysis: Integrity Gap, Labor Impact, Safety Alert, Connected Dots
-- Top red flags from FEC filings, WARN Act data, SEC EDGAR, and court records
+- Signal Score (0-100) based on public records
+- Four-pillar analysis: Stance-Record Gap, Enforcement Record, Safety Signals, Connected Dots
+- Notable signals from FEC filings, WARN Act data, SEC EDGAR, and court records
 - Link to full company dossier and "The Receipts" investigative reports
 
 For any other career page, click the extension icon to scan.
