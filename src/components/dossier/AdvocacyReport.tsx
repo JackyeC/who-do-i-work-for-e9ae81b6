@@ -83,10 +83,10 @@ function computeVerdict(company: AdvocacyReportProps["company"], signalCount: nu
   const hasEeoc = eeocCount > 0;
   const redFlags = [lobbyingHigh, pacHigh, clarityLow, hasEeoc, signalCount > 5].filter(Boolean).length;
 
-  if (redFlags >= 4) return { text: "ENTER WITH A PARACHUTE", color: "text-destructive", bg: "bg-destructive/10 border-destructive/30", redFlagCount: redFlags };
-  if (redFlags >= 2) return { text: "PROCEED WITH CAUTION", color: "text-civic-yellow", bg: "bg-civic-yellow/10 border-civic-yellow/30", redFlagCount: redFlags };
-  if (redFlags >= 1) return { text: "MIXED SIGNALS — DIG DEEPER", color: "text-civic-blue", bg: "bg-civic-blue/10 border-civic-blue/30", redFlagCount: redFlags };
-  return { text: "RELATIVELY CLEAN RECORD", color: "text-civic-green", bg: "bg-civic-green/10 border-civic-green/30", redFlagCount: 0 };
+  if (redFlags >= 4) return { text: "MULTIPLE SIGNALS PRESENT", color: "text-destructive", bg: "bg-destructive/10 border-destructive/30", redFlagCount: redFlags };
+  if (redFlags >= 2) return { text: "PATTERN WORTH WATCHING", color: "text-civic-yellow", bg: "bg-civic-yellow/10 border-civic-yellow/30", redFlagCount: redFlags };
+  if (redFlags >= 1) return { text: "MIXED SIGNALS", color: "text-civic-blue", bg: "bg-civic-blue/10 border-civic-blue/30", redFlagCount: redFlags };
+  return { text: "LIMITED SIGNALS ON RECORD", color: "text-civic-green", bg: "bg-civic-green/10 border-civic-green/30", redFlagCount: 0 };
 }
 
 function fmtMoney(n?: number | null): string {
