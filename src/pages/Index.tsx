@@ -72,7 +72,7 @@ const Index = forwardRef<HTMLDivElement>((_, ref) => {
               animation: "heroFadeIn 0.7s ease 0.3s forwards",
             }}
           >
-            Stop applying.{" "}
+            Stop applying.<br />
             <span className="text-primary">Start aligning.</span>
           </h1>
 
