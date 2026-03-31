@@ -132,8 +132,8 @@ export function ReceiptCard({ article, featured = false }: ReceiptCardProps) {
           <div>
             <span className="text-[10px] font-mono uppercase tracking-[0.15em] text-muted-foreground">Bias</span>
             <div className="mt-0.5">
-              <Badge variant="outline" className={cn("text-xs font-semibold", BIAS_COLORS[bias])}>
-                {bias}
+              <Badge variant="outline" className={cn("text-xs font-semibold", BIAS_COLORS[bias.label] || BIAS_COLORS["Center"])}>
+                {bias.label}
               </Badge>
             </div>
           </div>
