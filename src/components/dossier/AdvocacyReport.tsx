@@ -372,7 +372,7 @@ export function AdvocacyReport({ company, executives = [], contracts = [], issue
 
       {/* ═══ 10. WHAT THIS MEANS FOR YOU ═══ */}
       <section>
-        <SectionDivider number={9} icon={Shield} title="What This Means For You" subtitle="How this company lines up with what you said matters" />
+        <SectionDivider number={9} icon={Shield} title="What This Means for You" subtitle="How these patterns relate to what you care about" />
         <div className="pl-11 space-y-4">
           <ValuesAlignmentSection
             companyName={company.name}
