@@ -325,8 +325,8 @@ export function VibeMatchQuestionnaire({ onSubmit, isSubmitting }: Props) {
               <QuestionCard
                 question="Was the process organized (on time, prepared, respectful of your schedule)?"
                 options={[
-                  { label: "Professional and seamless.", value: 90 },
-                  { label: "Chaotic (last-minute reschedules, interviewers hadn't read my resume).", value: 20 },
+                  { label: "Professional and well-organized.", value: 90 },
+                  { label: "Disorganized. Last-minute changes, interviewers appeared unprepared.", value: 20 },
                 ]}
                 value={processOrganization}
                 onChange={setProcessOrganization}
