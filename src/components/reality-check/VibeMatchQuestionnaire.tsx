@@ -315,9 +315,9 @@ export function VibeMatchQuestionnaire({ onSubmit, isSubmitting }: Props) {
               <QuestionCard
                 question="How did interviewers refer to the person previously in this role?"
                 options={[
-                  { label: "Never; they spoke with respect.", value: 90 },
-                  { label: 'There were subtle hints of "the last person couldn\'t cut it."', value: 40 },
-                  { label: "Yes, they were openly critical of the predecessor.", value: 10 },
+                  { label: "With respect. No commentary on performance.", value: 90 },
+                  { label: "Subtle suggestions the previous person did not meet expectations.", value: 40 },
+                  { label: "Openly critical of the predecessor.", value: 10 },
                 ]}
                 value={predecessorRespect}
                 onChange={setPredecessorRespect}
