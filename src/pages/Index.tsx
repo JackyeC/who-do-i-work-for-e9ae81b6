@@ -57,7 +57,7 @@ const Index = forwardRef<HTMLDivElement>((_, ref) => {
             className="font-mono text-[11px] tracking-[0.2em] uppercase text-primary mb-5"
             style={{ opacity: 0, animation: "heroFadeIn 0.5s ease 0.15s forwards" }}
           >
-            Career advocacy, not career fluff
+            Before you apply, accept, stay, or leave
           </p>
 
           <h1
@@ -77,10 +77,10 @@ const Index = forwardRef<HTMLDivElement>((_, ref) => {
           </h1>
 
           <p
-            className="text-muted-foreground max-w-[56ch] mx-auto leading-relaxed mt-6"
+            className="text-muted-foreground max-w-[48ch] mx-auto leading-relaxed mt-6"
             style={{ fontSize: "clamp(0.95rem, 1.3vw, 1.075rem)", opacity: 0, animation: "heroFadeIn 0.6s ease 0.6s forwards" }}
           >
-            Who Do I Work For helps you evaluate employers, understand what your labor supports, review offers, map your next move, and protect your career — using public records, values alignment, and plain-English guidance.
+            Check who you're really working for. Review an offer. Understand what the public record says. It takes 30 seconds.
           </p>
 
           {/* Search bar */}
@@ -96,7 +96,7 @@ const Index = forwardRef<HTMLDivElement>((_, ref) => {
                 type="text"
                 value={heroQuery}
                 onChange={(e) => setHeroQuery(e.target.value)}
-                placeholder="Search any employer..."
+                placeholder="Search a company, offer, or workplace question"
                 className="flex-1 bg-transparent px-3 py-3.5 text-sm text-foreground placeholder:text-muted-foreground/50 focus:outline-none font-sans"
               />
               <button
@@ -140,9 +140,9 @@ const Index = forwardRef<HTMLDivElement>((_, ref) => {
       {/* ── TRUST STRIP ── */}
       <div className="border-y border-border bg-card px-6 py-3">
         <div className="max-w-[900px] mx-auto text-center">
-          <p className="font-mono text-[10px] tracking-[0.15em] uppercase text-primary mb-0.5 font-semibold">The Trust Layer for the Modern Worker</p>
+          <p className="font-mono text-[10px] tracking-[0.15em] uppercase text-primary mb-0.5 font-semibold">Based on what is visible</p>
           <p className="font-sans text-xs text-muted-foreground">
-            Public Records. Human Language. Real Accountability. Because you shouldn't be the last to know.
+            Public records. Plain language. Patterns worth knowing about.
           </p>
         </div>
       </div>
