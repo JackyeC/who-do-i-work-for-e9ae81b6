@@ -1,79 +1,107 @@
 
 
-# What Made It from This Gemini Thread
+# The Receipts → JRC EDIT Rebrand: Audit & Gap Analysis
 
-## Already Built
+This is a massive spec. Here's what already exists, what's missing, and a phased plan to bridge the gap without breaking any protected infrastructure.
 
-| Gemini Concept | Status | Where |
-|---|---|---|
-| Career Agent Authorization (Fairness Contract) | Built | `TermsOfService.tsx` Section 9 (9a-9f) |
-| No-Hallucination Promise | Built | ToS Section 9a |
-| Human-in-the-Loop Requirement | Built | ToS Section 9b |
-| Transparency Tag on applications | Built | ToS Section 9c |
-| Audit Trail (user can view submission log) | Built | ToS Section 9d, `applications_tracker` table |
-| Biometric/Device Auth consent | Built | ToS Section 9e |
-| Revocation of Agent License | Built | ToS Section 9f |
-| AI Transparency & Compliance (TRAIGA, Colorado, NYC LL144, EU AI Act) | Built | ToS Section 10 |
-| Global Data Processing disclosure | Built | ToS Section 11 |
-| Bias Audit Commitment | Built | ToS Section 12 |
-| Auto-Apply consent modal (3-slide Fairness Contract) | Built | `AutoApplyConsentModal.tsx` |
-| Dossier Verdict Filter (skip "Purge" companies) | Built | `process-apply-queue/index.ts` (career_intelligence_score check) |
-| `consent_accepted_at` tracking | Built | `auto_apply_settings` column |
-| Quarterly Bias Audit disclosure | Built | `DataEthics.tsx` |
-| Hiring Transparency / bias audit detection | Built | `HiringTransparencyCard.tsx`, `OfferCheckSnapshot.tsx` |
-| Founder Console (analytics dashboard) | Built | `FounderConsole.tsx` with users, companies, signups, feedback, system health, WARN heatmap, search intel, conversion funnel |
+## What Already Exists (Matching the Spec)
 
-## NOT Built Yet
+| Spec Requirement | Current Status |
+|---|---|
+| Vertical scrolling feed of editorial cards | Built — `Receipts.tsx` with `ReceiptCard.tsx` |
+| Heat Level system (5 levels, labels, colors) | Built — `heat-config.ts`, `HeatChip.tsx`, `SpicePeppers.tsx` |
+| Source Bias spectrum (5-point) | Built — `BiasBar.tsx`, `ReceiptsSidebar.tsx` legend |
+| Jackye's Take (expandable) | Built — toggle in `ReceiptCard.tsx` |
+| The Receipt / receipt_connection | Built — shown inside expanded take |
+| Category filtering + sorting (Newest/Hottest/Drama) | Built — `ReceiptsFilters.tsx` |
+| Heat level filtering | Built — filter pills in `ReceiptsFilters.tsx` |
+| Share buttons (LinkedIn, X, FB) | Built — share bar in `ReceiptCard.tsx` |
+| Download as image (html2canvas) | Built — "Save Image" button |
+| JSON-LD structured data | Built — `usePageSEO` hook with jsonLd |
+| Realtime feed updates | Built — `useReceiptsFeed` with Supabase Realtime |
+| Poster system | Built — `ReceiptPoster.tsx`, `PosterLightbox.tsx` |
+| Sidebar (newsletter signup, hottest takes, bias legend) | Built — `ReceiptsSidebar.tsx` |
+| Search across receipts | Built — `ReceiptsFilters.tsx` |
 
-These pieces from the Gemini conversation are missing from the codebase:
+## What's Missing or Mismatched
 
-### 1. Founder Console: Compliance "Health Bar" Module
-Gemini described a real-time compliance dashboard with:
-- **Texas Sandbox Status** countdown timer
-- **Bias Score / Fairness Meter** showing match rates by demographic
-- **Active Consent Count** (how many users have signed the Fairness Contract)
-- **Adversarial Test Results** feed
-- **Risk Mitigation Queue**
+### 1. Categories Don't Match the Spec
+**Spec says**: The Daily Grind, The C-Suite, The Tech Stack, The Paycheck, The Fine Print (5 editorial categories)
+**Currently**: structure, money, behavior, influence, momentum, context, off_the_record (7 data categories)
 
-The current Founder Console has platform analytics (user counts, company counts, signups, feedback) but zero compliance monitoring.
+**Decision needed**: The current 7 categories map to the data ingestion framework (which is protected infrastructure). The spec's 5 categories are editorial labels. We should **map** the 7 data categories to the 5 editorial display labels rather than replacing the data model.
 
-### 2. Founder Console: "Human-in-the-Loop" Feed
-- **Verification Rate**: % of AI drafts approved vs rejected by users
-- **Override Log**: when a user changed what the AI wrote
-- **Consent Audit**: live count of active mobile licenses
+### 2. Heat Level Colors Don't Match
+**Spec**: Slate Gray → Sage → Electric Blue → Amber → Emergency Red
+**Currently**: muted-foreground → civic-gold → orange-400 → destructive → hot-pink
 
-### 3. "Why Was I Matched?" Explanation Button
-Gemini flagged this as a legal requirement. The aligned jobs list shows alignment scores and matched signals, but there is no dedicated "Why was I matched?" explainer that satisfies the TRAIGA/EU AI Act transparency requirement.
+### 3. "JRC EDIT" Branding — Not Built
+- No "JRC EDIT" watermark on cards/images
+- No Didot/Bodoni serif headlines
+- No handwritten script font for "The Take"
+- No "Magazine Gloss" hover effect (white sweep + 2° tilt)
+- No Easter Egg snarky tooltips on heat labels
 
-### 4. "Transparency Receipt" Metadata
-A hidden metadata footer on every submitted application saying: "WDIWF AI matched this candidate based on [Skill A] and [Skill B]. 0% of core identity data was used." This is referenced in the ToS (Section 9c) but not actually generated in the `process-apply-queue` or `generate-application-payload` output.
+### 4. Card Schema — Partially Built (6 of 9 fields)
+**Built**: Category, Source, Heat Level, The Receipt, The Take, Read the Source
+**Missing**: Bias (hidden on mobile, visible on expand — bias bar exists but always visible), Why It Matters, Use This (dynamic CTA)
+
+### 5. Floating Bubble — Not Built
+No persistent floating circular element with headshot, pulsing ring, snarky one-liners, or slide-in CTA menu.
+
+### 6. Conversion Engine — Not Built
+- No dynamic "Use This" CTA logic per category
+- No "Fix This" / "Is your company doing this?" secondary CTA
+- No logic-gate content (email capture for Heat 4-5 templates)
+- No "Join the Heat Map" email capture modal
+- No "Special Edition" interstitial every 5th card
+
+### 7. /llms.txt — Not Built
+
+### 8. GEO "Direct Answer" Block — Not Built
+No plain-text 2-3 sentence summary at top of each article for AI extraction.
 
 ---
 
-## Proposed Plan
+## Proposed Implementation Plan (Phased)
 
-### Step 1: Add Compliance Module to Founder Console
-Add a new `ComplianceDashboard` component to `FounderConsole.tsx` with three panels:
+### Phase 1: Visual Rebrand (Biggest Impact, Lowest Risk)
+1. **Update heat level colors** in `heat-config.ts` to match spec (Slate → Sage → Electric Blue → Amber → Red)
+2. **Map data categories to editorial labels** — update `CATEGORY_DISPLAY` in `ReceiptCard.tsx` to: structure→"THE FINE PRINT", money→"THE PAYCHECK", behavior→"THE DAILY GRIND", influence→"THE C-SUITE", momentum→"THE DAILY GRIND", context→"THE TECH STACK", off_the_record→"THE DAILY GRIND"
+3. **Add "JRC EDIT" watermark** to `ReceiptPoster.tsx` and card footer — thin serif, bottom-right, 1s fade-in
+4. **Add "Magazine Gloss" hover effect** — CSS class with white sweep gradient + subtle tilt on card hover
+5. **Easter Egg tooltips** on heat labels in `HeatChip.tsx`
 
-**Consent Tracker**: Query `auto_apply_settings` to count users with `consent_accepted_at IS NOT NULL`. Show active vs total users.
+### Phase 2: Card Schema Completion
+6. **Add "Why It Matters"** field — hidden on mobile collapsed, shown on expand (can use `receipt_connection` or add new field)
+7. **Add dynamic "Use This" CTA** at bottom of expanded card — text/link changes based on category mapping
+8. **Add "Fix This" secondary CTA** — "Is your company doing this? → Solve My Puzzle" link on every expanded card
+9. **Bias field** — already rendered, just needs mobile hide/show logic on expand
 
-**Auto-Apply Safety Stats**: Query `apply_queue` for counts by status (completed, skipped, failed). Show the "skipped due to safety" count prominently.
+### Phase 3: Floating Bubble + Conversion
+10. **Create `FloatingBubble.tsx`** — persistent bottom-right circle with headshot, pulsing heat-color ring, hover speech bubble with rotating Jackye-isms, click opens slide-in menu with 3 CTAs
+11. **"Special Edition" interstitial** — every 5th card in feed renders a consulting CTA card
+12. **Email capture modal** — triggered on Heat 4-5 "Use This" clicks and "Exposed" story clicks
 
-**Application Audit Summary**: Query `applications_tracker` for total submissions, plus recent activity feed with timestamps.
-
-### Step 2: Add "Why This Match?" to Aligned Jobs
-In the aligned job cards (`AlignedJobsList.tsx` or its child card component), add an expandable "Why this match?" section that shows: matched signals, alignment score breakdown, and a disclaimer that no identity data was used.
-
-### Step 3: Generate Transparency Receipt in Application Payload
-In `process-apply-queue`, after generating the payload, append a `transparency_receipt` field to the `generated_payload` JSON containing: matched signals, alignment score, and the standard disclosure text. Store this alongside the application in `apply_queue`.
+### Phase 4: GEO & SEO
+13. **Update JSON-LD** on Receipts to use `Review` + `Analysis` schema with full author attribution
+14. **Create `/llms.txt`** — markdown file with site authority summary
+15. **Add "Direct Answer" block** — 2-3 sentence plain-text summary at top of each article
 
 ### Technical Details
 
-**Files to create:**
-- `src/components/admin/ComplianceDashboard.tsx`
-
 **Files to edit:**
-- `src/pages/FounderConsole.tsx` (add ComplianceDashboard)
-- `src/components/jobs/AlignedJobsList.tsx` or its card component (add "Why this match?" section)
-- `supabase/functions/process-apply-queue/index.ts` (add transparency receipt to payload)
+- `src/components/receipts/heat-config.ts` — update colors
+- `src/components/receipts/HeatChip.tsx` — add tooltips
+- `src/components/receipts/ReceiptCard.tsx` — category mapping, "Use This" CTA, "Fix This" CTA, "Why It Matters", mobile bias toggle
+- `src/components/receipts/ReceiptPoster.tsx` — JRC EDIT watermark
+- `src/index.css` or `tailwind.config.ts` — Magazine Gloss hover class
+
+**Files to create:**
+- `src/components/receipts/FloatingBubble.tsx`
+- `src/components/receipts/SpecialEditionCard.tsx`
+- `src/components/receipts/EmailCaptureModal.tsx`
+- `public/llms.txt`
+
+**No database changes required** — this is all UI/presentation layer.
 
