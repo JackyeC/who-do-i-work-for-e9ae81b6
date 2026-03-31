@@ -84,6 +84,11 @@ export function ReceiptCard({ article, featured = false, onPosterClick }: Receip
         />
       </div>
 
+      {/* Heat chip — prominent, first thing after poster */}
+      <div className="mb-3">
+        <HeatChip level={article.spice_level} />
+      </div>
+
       {/* Share bar right below poster */}
       <div className="flex items-center gap-2 flex-wrap mb-4">
         <button onClick={downloadPoster} className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-md text-xs font-bold bg-primary text-primary-foreground hover:opacity-90 transition-opacity">
