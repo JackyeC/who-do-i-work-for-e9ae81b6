@@ -92,17 +92,6 @@ export function MarketingNav() {
                 {link.label}
               </Link>
             ))}
-            <p className="font-mono text-[10px] tracking-[0.15em] uppercase text-muted-foreground/50 mt-2 mb-1">Tools</p>
-            {TOOLS_LINKS.map((link) => (
-              <Link
-                key={link.to}
-                to={link.to}
-                onClick={() => setMobileMenuOpen(false)}
-                className="font-sans text-sm text-muted-foreground hover:text-foreground transition-colors py-1"
-              >
-                {link.label}
-              </Link>
-            ))}
             {user ? (
               <Button size="sm" variant="outline" onClick={() => { setMobileMenuOpen(false); navigate("/dashboard"); }} className="w-full mt-2">
                 Dashboard
