@@ -14,7 +14,7 @@ const PRIMARY_LINKS = [
 
 export function MarketingNav() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
-  const [toolsOpen, setToolsOpen] = useState(false);
+  
   const navigate = useNavigate();
   const location = useLocation();
   const { user, loading: authLoading } = useAuth();
