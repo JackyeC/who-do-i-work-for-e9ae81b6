@@ -464,20 +464,26 @@ export function DashboardOverview({ onNavigate }: DashboardOverviewProps) {
               {trackedCompanies.map((t: any, i: number) => {
                 const score = t.score ?? 0;
                 return (
-                  <Link
+                  <motion.div
                     key={i}
-                    to={`/dossier/${t.slug}`}
-                    className="flex items-center gap-3 p-2.5 rounded-lg transition-colors group bg-muted/20 hover:bg-muted/40"
+                    initial={{ opacity: 0, x: -8 }}
+                    animate={{ opacity: 1, x: 0 }}
+                    transition={{ delay: 0.05 + i * 0.04, duration: 0.35, ease: [0.22, 1, 0.36, 1] }}
                   >
-                    <span className={`shrink-0 w-2 h-2 rounded-full ${scoreDotClass(score)}`} />
-                    <span className="flex-1 min-w-0 truncate text-sm font-semibold text-foreground group-hover:text-primary transition-colors">
-                      {t.name}
-                    </span>
-                    <span className="text-xs text-muted-foreground hidden sm:block">{t.industry}</span>
-                    <span className={`text-xs font-bold shrink-0 rounded-full px-2 py-0.5 ${scoreBgClass(score)}`}>
-                      {score}
-                    </span>
-                  </Link>
+                    <Link
+                      to={`/dossier/${t.slug}`}
+                      className="flex items-center gap-3 p-2.5 rounded-lg transition-all duration-200 group bg-muted/20 hover:bg-muted/40 hover:translate-x-0.5"
+                    >
+                      <span className={`shrink-0 w-2 h-2 rounded-full ${scoreDotClass(score)}`} />
+                      <span className="flex-1 min-w-0 truncate text-sm font-semibold text-foreground group-hover:text-primary transition-colors">
+                        {t.name}
+                      </span>
+                      <span className="text-xs text-muted-foreground hidden sm:block">{t.industry}</span>
+                      <span className={`text-xs font-bold shrink-0 rounded-full px-2 py-0.5 ${scoreBgClass(score)}`}>
+                        {score}
+                      </span>
+                    </Link>
+                  </motion.div>
                 );
               })}
             </div>
