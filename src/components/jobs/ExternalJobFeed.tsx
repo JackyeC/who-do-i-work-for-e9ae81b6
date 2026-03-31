@@ -27,6 +27,7 @@ const SOURCE_COLORS: Record<string, string> = {
   "We Work Remotely": "bg-civic-yellow/10 text-civic-yellow border-civic-yellow/20",
   "Remotive": "bg-civic-green/10 text-civic-green border-civic-green/20",
   "Himalayas": "bg-sky-500/10 text-sky-700 border-sky-500/20",
+  "TheirStack": "bg-violet-500/10 text-violet-700 border-violet-500/20",
 };
 
 export function ExternalJobFeed() {
