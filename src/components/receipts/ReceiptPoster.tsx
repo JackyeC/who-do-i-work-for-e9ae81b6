@@ -182,7 +182,7 @@ export function ReceiptPoster({ poster: rawPoster, category, className, big = fa
         <div
           id={id || undefined}
           className={cn("flex-shrink-0 overflow-hidden rounded-lg relative", className)}
-          style={{ width: big ? 420 : 300, boxShadow: "0 12px 40px rgba(0,0,0,0.55)" }}
+          style={{ width: big ? 340 : 220, boxShadow: "0 12px 40px rgba(0,0,0,0.55)" }}
         >
           <img
             src={vintageImage}

@@ -34,10 +34,13 @@ export function MarketingNav() {
     <>
       <header className="sticky top-0 z-50 bg-background/95 backdrop-blur-sm border-b border-border/50 px-6 lg:px-16 py-4 w-full">
         <div className="max-w-[1100px] mx-auto flex items-center justify-between">
-          <Link to="/" className="flex items-center shrink-0">
-            <span style={{ fontFamily: "Inter,sans-serif", fontWeight: 900, letterSpacing: "-0.03em", fontSize: "26px" }}>
+          <Link to="/" className="flex items-center gap-1.5 shrink-0">
+            <span style={{ fontFamily: "Inter,sans-serif", fontWeight: 900, letterSpacing: "-0.03em", fontSize: "22px", lineHeight: 1 }}>
               <span className="text-foreground">W</span>
               <span style={{ color: "#F0C040" }}>?</span>
+            </span>
+            <span className="hidden sm:inline font-mono text-[10px] tracking-[0.12em] uppercase text-muted-foreground" style={{ fontWeight: 700, marginTop: 2 }}>
+              Who Do I Work For
             </span>
           </Link>
           <nav className="hidden md:flex items-center gap-6">
