@@ -44,6 +44,7 @@ const SignalAlerts = lazy(() => import("./pages/SignalAlerts"));
 const OfferReviewDirect = lazy(() => import("./pages/OfferReviewDirect"));
 const CareerIntelligence = lazy(() => import("./pages/CareerIntelligence"));
 const Check = lazy(() => import("./pages/Check"));
+const ValuesProfile = lazy(() => import("./pages/ValuesProfile"));
 const CareerMap = lazy(() => import("./pages/CareerMap"));
 const Dashboard = lazy(() => import("./pages/Dashboard"));
 const TermsOfService = lazy(() => import("./pages/TermsOfService"));
@@ -277,7 +278,8 @@ const App = () => (
                   <Route path="/compare" element={<CompareCompanies />} />
                   <Route path="/investigative" element={<InvestigativeExplorer />} />
                   <Route path="/auto-apply" element={<AutoApplyOnboarding />} />
-                  <Route path="/my-values" element={<Navigate to="/dashboard?tab=values" replace />} />
+                  <Route path="/values" element={<ValuesProfile />} />
+                  <Route path="/my-values" element={<Navigate to="/values" replace />} />
                   <Route path="/how-do-i-get-there" element={<Navigate to="/dashboard?tab=how" replace />} />
                   <Route path="/job-board" element={<Navigate to="/jobs" replace />} />
                   <Route path="/offer-checks" element={<Navigate to="/my-offer-checks" replace />} />
