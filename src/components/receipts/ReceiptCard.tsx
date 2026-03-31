@@ -5,6 +5,7 @@ import { cn } from "@/lib/utils";
 import { ReceiptPoster } from "./ReceiptPoster";
 import { BiasBar, getSourceBiasKey } from "./BiasBar";
 import { SpicePeppers } from "./SpicePeppers";
+import { HeatChip } from "./HeatChip";
 import type { ReceiptArticle } from "@/hooks/use-receipts-feed";
 
 const CATEGORY_DISPLAY: Record<string, string> = {
