@@ -571,26 +571,7 @@ export default function CompanyProfile() {
             />
           )}
 
-          {/* ═══════════════════════════════════════════════════════
-              7. WHAT TO WATCH
-             ═══════════════════════════════════════════════════════ */}
-          <WhatToWatch
-            companyName={name}
-            hasLayoffSignals={false}
-            hasWarnNotices={false}
-            hasPayEquity={!!tiPayEquity}
-            hasBenefitsData={!!tiBenefits}
-            hasAiHrSignals={!!tiAiHr}
-            hasSentimentData={!!tiSentiment}
-            hasJobPostings={hasJobPostings}
-            executiveCount={verifiedExecCount}
-            revolvingDoorCount={dbRevolvingDoor?.length || 0}
-            totalPacSpending={totalPac}
-            lobbyingSpend={lobbyingSpend}
-            darkMoneyCount={dbDarkMoney?.length || 0}
-          />
-
-          {/* What to Ask — consolidated into Interview Prep Pack above */}
+          {/* WhatToWatch + WhatToAsk removed — consolidated into AI Prep Pack above */}
 
 
           {/* ═══════════════════════════════════════════════════════
