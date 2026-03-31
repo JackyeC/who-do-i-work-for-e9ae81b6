@@ -185,7 +185,7 @@ export function InsiderBriefSection(props: InsiderBriefProps) {
 
       {/* What this means for you */}
       <div className="px-5 py-4">
-        <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-2">What this means for you</p>
+        <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-2">What this tends to mean</p>
         <p className="text-sm text-foreground/85 leading-relaxed">{interpretation}</p>
       </div>
     </div>
