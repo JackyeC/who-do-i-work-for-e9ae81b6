@@ -143,30 +143,20 @@ const Index = forwardRef<HTMLDivElement>((_, ref) => {
       </Suspense>
 
       {/* ═══════════════════════════════════════════
-          2 — WHAT WDIWF DOES
+          2 — THE INTELLIGENCE LAYER
       ═══════════════════════════════════════════ */}
       <section className="px-6 lg:px-16 py-20 lg:py-28 bg-background">
         <div className="max-w-[760px] mx-auto">
-          <p className="font-mono text-xs tracking-[0.15em] uppercase text-primary mb-4 text-center">What We Do</p>
-          <h2 className="text-h1 text-foreground text-center mb-10">
-            The background check your employer never expected.
+          <p className="font-mono text-xs tracking-[0.15em] uppercase text-primary mb-4 text-center">The Intelligence Layer</p>
+          <h2 className="text-h1 text-foreground text-center mb-8">
+            The State of Work, Decoded.
           </h2>
-
-          <div className="space-y-5">
-            {[
-              "We investigate employers using public records and labor signals — Federal Election Commission filings, Securities & Exchange Commission disclosures, Occupational Safety & Health Administration violations, lobbying reports, compensation data, and more.",
-              "We compare what companies say with what they actually do — matching mission statements and careers-page promises against enforcement records, political spending, and workforce signals.",
-              "We help you understand values alignment, employer risk, and career leverage — so you're never making a decision with less information than the company sitting across from you.",
-              "We help you decide whether to apply, stay, negotiate, or leave — with evidence, not guesswork.",
-            ].map((text, i) => (
-              <div key={i} className="flex gap-3 items-start">
-                <CheckCircle className="w-4 h-4 text-primary shrink-0 mt-1" strokeWidth={1.5} />
-                <p className="font-sans text-muted-foreground leading-relaxed" style={{ fontSize: "clamp(14px, 1.2vw, 16px)" }}>
-                  {text}
-                </p>
-              </div>
-            ))}
-          </div>
+          <p className="font-sans text-muted-foreground leading-relaxed text-center max-w-[54ch] mx-auto mb-6" style={{ fontSize: "clamp(15px, 1.3vw, 17px)" }}>
+            Work moves fast, and usually, the talent is the last to know. We turn fragmented labor signals, policy shifts, and market risks into plain-English guidance.
+          </p>
+          <p className="font-sans text-sm text-primary/80 text-center font-medium">
+            Don't just search for a job — understand the forces shaping your career before the market shifts.
+          </p>
         </div>
       </section>
 
