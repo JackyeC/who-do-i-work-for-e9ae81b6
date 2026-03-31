@@ -9,10 +9,11 @@ import { ReceiptsFilters } from "@/components/receipts/ReceiptsFilters";
 import { FeaturedReceipt } from "@/components/receipts/FeaturedReceipt";
 import { ReceiptCard } from "@/components/receipts/ReceiptCard";
 import { WorkNewsTicker } from "@/components/news/WorkNewsTicker";
+import { HowToRead } from "@/components/receipts/HowToRead";
+import { ReceiptsSidebar } from "@/components/receipts/ReceiptsSidebar";
 import type { ReceiptSortMode } from "@/components/receipts/heat-config";
 
 // ─── Static company receipts (existing investigations) ───
-
 interface StaticReceipt {
   slug: string;
   name: string;
@@ -57,7 +58,6 @@ export default function Receipts() {
 
   const filtered = useMemo(() => {
     if (!articles) return [];
-
     let result = articles.filter((a) => {
       const matchCategory = category === "all" || a.category === category;
       const matchHeat = heatFilter === null || a.spice_level === heatFilter;
@@ -74,9 +74,7 @@ export default function Receipts() {
 
     switch (sortMode) {
       case "newest":
-        result = [...result].sort((a, b) =>
-          new Date(b.published_at ?? 0).getTime() - new Date(a.published_at ?? 0).getTime()
-        );
+        result = [...result].sort((a, b) => new Date(b.published_at ?? 0).getTime() - new Date(a.published_at ?? 0).getTime());
         break;
       case "hottest":
         result = [...result].sort((a, b) => b.spice_level - a.spice_level);
@@ -89,17 +87,17 @@ export default function Receipts() {
         });
         break;
       default:
-        // Default: newest
-        result = [...result].sort((a, b) =>
-          new Date(b.published_at ?? 0).getTime() - new Date(a.published_at ?? 0).getTime()
-        );
+        result = [...result].sort((a, b) => new Date(b.published_at ?? 0).getTime() - new Date(a.published_at ?? 0).getTime());
     }
-
     return result;
   }, [articles, search, category, sortMode, heatFilter]);
 
   const featuredArticle = filtered[0];
   const feedArticles = filtered.slice(1);
+  const hot5 = useMemo(() => {
+    if (!articles) return [];
+    return [...articles].sort((a, b) => b.spice_level - a.spice_level).slice(0, 5);
+  }, [articles]);
 
   return (
     <div className="min-h-screen bg-background">
@@ -107,79 +105,113 @@ export default function Receipts() {
       <WorkNewsTicker />
 
       {/* Hero */}
-      <section className="text-center py-12 md:py-16 px-4 max-w-3xl mx-auto">
-        <p className="tracking-[0.2em] text-primary font-mono uppercase text-sm mb-3">
-          The Receipts
-        </p>
-        <h1 className="text-3xl md:text-5xl font-bold text-foreground mb-3">
-          No spin. No rankings.
-          <br />
-          <span className="text-primary">Just receipts.</span>
-        </h1>
-        <p className="text-muted-foreground text-base md:text-lg mb-2 max-w-2xl mx-auto">
-          Live work-intelligence feed. Every story summarized, Jackye's take included,
-          and a useful action attached. Updated every 2 hours.
-        </p>
-        <p className="font-mono text-muted-foreground text-xs">
-          {articles?.length ?? 0} stories tracked · Powered by GDELT, BLS, FEC & public records
-        </p>
-      </section>
-
-      {/* Filters */}
-      <div className="max-w-5xl mx-auto px-4 mb-8">
-        <ReceiptsFilters
-          search={search}
-          onSearchChange={setSearch}
-          category={category}
-          onCategoryChange={setCategory}
-          sortMode={sortMode}
-          onSortChange={setSortMode}
-          heatFilter={heatFilter}
-          onHeatFilterChange={setHeatFilter}
-        />
-      </div>
-
-      {/* Loading */}
-      {isLoading && (
-        <div className="max-w-5xl mx-auto px-4 space-y-4">
-          <Skeleton className="h-[400px] w-full rounded-xl" />
-          <div className="grid gap-4 md:grid-cols-2">
-            {[1, 2, 3, 4].map(i => <Skeleton key={i} className="h-[500px] w-full rounded-xl" />)}
-          </div>
-        </div>
-      )}
-
-      {/* Featured + Feed */}
-      {!isLoading && (
-        <div className="max-w-5xl mx-auto px-4">
-          {/* Featured story */}
-          {featuredArticle && <FeaturedReceipt article={featuredArticle} />}
-
-          {/* Feed grid */}
-          <motion.div
-            className="grid gap-4 md:grid-cols-2"
-            variants={stagger.container}
-            initial="hidden"
-            animate="show"
-            key={`${category}-${search}-${sortMode}-${heatFilter}`}
+      <header className="border-b border-border py-11 px-8 text-center">
+        <div className="max-w-[780px] mx-auto">
+          <p className="text-sm uppercase tracking-[0.55em] text-primary mb-3.5 font-mono">
+            Jackye Clayton 👑 × WDIWF presents
+          </p>
+          <h1
+            className="font-black text-foreground leading-none"
+            style={{ fontSize: "clamp(48px, 6vw, 80px)", letterSpacing: "-0.025em", fontFamily: "'Inter', sans-serif" }}
           >
-            {feedArticles.map((article) => (
-              <motion.div key={article.id} variants={stagger.item}>
-                <ReceiptCard article={article} />
-              </motion.div>
-            ))}
-          </motion.div>
+            The Receipts
+          </h1>
+          <p
+            className="font-light text-muted-foreground italic mt-3"
+            style={{ fontSize: "clamp(18px, 2.2vw, 26px)" }}
+          >
+            The world of work. Documented.
+          </p>
+          <p
+            className="font-medium text-foreground mt-2.5 opacity-80"
+            style={{ fontSize: "clamp(15px, 1.6vw, 19px)" }}
+          >
+            I pull the receipts so you don't have to.{" "}
+            <span className="text-primary">They always leave something out.</span>
+          </p>
+          <div className="w-[52px] h-0.5 bg-primary mx-auto my-5" />
+          <p className="text-sm text-muted-foreground tracking-[0.12em] font-mono">
+            Jackye Clayton 👑 × WDIWF
+            <span className="mx-2.5 text-border">·</span>
+            <span className="italic">"Stop applying. Start aligning."</span>
+          </p>
+        </div>
+      </header>
 
-          {filtered.length === 0 && (
+      {/* Sticky filter nav */}
+      <nav className="border-b border-border px-8 sticky top-0 bg-background z-20">
+        <div className="max-w-[1160px] mx-auto py-3">
+          <ReceiptsFilters
+            search={search}
+            onSearchChange={setSearch}
+            category={category}
+            onCategoryChange={setCategory}
+            sortMode={sortMode}
+            onSortChange={setSortMode}
+            heatFilter={heatFilter}
+            onHeatFilterChange={setHeatFilter}
+          />
+        </div>
+      </nav>
+
+      {/* How to Read */}
+      <HowToRead />
+
+      {/* Main content: single column + sidebar */}
+      <div className="max-w-[1160px] mx-auto px-8 py-12 grid grid-cols-1 lg:grid-cols-[1fr_320px] gap-12 items-start">
+        <main>
+          {/* Loading */}
+          {isLoading && (
+            <div className="space-y-4">
+              <Skeleton className="h-[400px] w-full rounded-xl" />
+              <Skeleton className="h-[300px] w-full rounded-xl" />
+              <Skeleton className="h-[300px] w-full rounded-xl" />
+            </div>
+          )}
+
+          {/* Featured story */}
+          {!isLoading && featuredArticle && <FeaturedReceipt article={featuredArticle} />}
+
+          {/* Divider */}
+          {!isLoading && feedArticles.length > 0 && (
+            <div className="flex items-center gap-4 my-9">
+              <div className="flex-1 h-px bg-border" />
+              <span className="text-[9px] uppercase tracking-[0.4em] text-muted-foreground font-mono">Latest</span>
+              <div className="flex-1 h-px bg-border" />
+            </div>
+          )}
+
+          {/* Feed — single column */}
+          {!isLoading && (
+            <motion.div
+              variants={stagger.container}
+              initial="hidden"
+              animate="show"
+              key={`${category}-${search}-${sortMode}-${heatFilter}`}
+            >
+              {feedArticles.map((article) => (
+                <motion.div key={article?.id} variants={stagger.item}>
+                  <ReceiptCard article={article} />
+                </motion.div>
+              ))}
+            </motion.div>
+          )}
+
+          {!isLoading && filtered.length === 0 && (
             <p className="text-center text-muted-foreground py-16">
               No stories match your filters.
             </p>
           )}
+        </main>
+
+        {/* Sidebar — hidden on mobile */}
+        <div className="hidden lg:block">
+          <ReceiptsSidebar hotArticles={hot5} />
         </div>
-      )}
+      </div>
 
       {/* Company investigations section */}
-      <section className="max-w-5xl mx-auto px-4 py-16">
+      <section className="max-w-[1160px] mx-auto px-8 py-16 border-t border-border">
         <div className="flex items-center gap-2 mb-6">
           <div className="w-2 h-2 rounded-full bg-primary" />
           <span className="text-xs font-mono uppercase tracking-[0.2em] text-primary">
@@ -210,16 +242,21 @@ export default function Receipts() {
       </section>
 
       {/* Footer */}
-      <footer className="max-w-3xl mx-auto px-4 pb-12 text-center space-y-3">
-        <Link
-          to="/submit-tip"
-          className="inline-flex items-center gap-1.5 text-sm text-primary hover:underline"
-        >
-          Know something? Submit a tip anonymously →
-        </Link>
-        <p className="text-xs text-muted-foreground">
-          Created by Jackye Clayton · WDIWF
+      <footer className="border-t border-border py-10 px-8 text-center">
+        <p className="text-xs text-muted-foreground tracking-[0.1em] font-mono">
+          The Receipts™ · <em>by Jackye Clayton 👑 × WDIWF</em>
         </p>
+        <p className="text-[10px] text-muted-foreground mt-1.5 italic">
+          "Every company runs a background check on you. WDIWF runs one on them."
+        </p>
+        <div className="flex justify-center gap-8 mt-4">
+          <Link to="/" className="text-[10px] text-muted-foreground tracking-[0.1em] font-mono hover:text-primary">
+            wdiwf.jackyeclayton.com
+          </Link>
+          <Link to="/submit-tip" className="text-[10px] text-muted-foreground tracking-[0.1em] font-mono hover:text-primary">
+            Submit a tip
+          </Link>
+        </div>
       </footer>
     </div>
   );
