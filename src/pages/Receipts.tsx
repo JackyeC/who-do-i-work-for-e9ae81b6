@@ -203,7 +203,7 @@ export default function Receipts() {
             >
               {feedArticles.map((article, idx) => (
                 <motion.div key={article?.id} variants={stagger.item}>
-                  <ReceiptCard article={article} onPosterClick={setLightboxArticle} />
+                  <ReceiptCard article={article} onPosterClick={setLightboxArticle} onRequestEmailCapture={() => setShowEmailCapture(true)} />
                   {/* Special Edition interstitial every 5th card */}
                   {(idx + 1) % 5 === 0 && <SpecialEditionCard />}
                 </motion.div>

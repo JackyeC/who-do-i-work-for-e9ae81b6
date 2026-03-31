@@ -21,6 +21,7 @@ export function EmailCaptureModal({ open, onClose }: EmailCaptureModalProps) {
     try {
       await supabase.from("career_waitlist").insert({ email, reason: "heat_map_signup" });
       toast.success("You're in. Welcome to the heat map.");
+      localStorage.setItem("jrc-edit-unlocked", "true");
       onClose();
     } catch {
       toast.error("Something went wrong. Try again.");
