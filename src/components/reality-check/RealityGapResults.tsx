@@ -137,7 +137,7 @@ export function RealityGapResults({ result, onReset }: Props) {
         <CardContent className="p-5 space-y-4">
           <div className="flex items-center gap-2 mb-1">
             <AlertTriangle className="w-4 h-4 text-civic-green" />
-            <h3 className="font-mono text-xs font-bold tracking-wider uppercase text-civic-green">Vibe Variance</h3>
+            <h3 className="font-mono text-xs font-bold tracking-wider uppercase text-civic-green">Experience vs. Record</h3>
             <span className="text-xs text-muted-foreground ml-auto font-mono">Public Data vs. Your Experience</span>
           </div>
           <div className="flex items-center gap-4 text-xs text-muted-foreground mb-2">
