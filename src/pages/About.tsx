@@ -128,7 +128,7 @@ const About = () => {
               Get Started Free <ArrowRight className="w-4 h-4" />
             </Link>
             <Link
-              to="/receipts"
+              to="/newsletter"
               className="inline-flex items-center justify-center gap-2 border border-border bg-card px-8 py-3.5 font-sans text-sm text-muted-foreground hover:text-foreground hover:border-primary/40 transition-all rounded-lg"
             >
               See the Receipts

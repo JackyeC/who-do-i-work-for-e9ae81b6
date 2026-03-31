@@ -603,7 +603,7 @@ export default function HRTechIntelligence() {
               asChild
               className="bg-primary text-primary-foreground hover:bg-primary/90"
             >
-              <a href="/receipts">See All Company Receipts</a>
+              <a href="/newsletter">See All Company Receipts</a>
             </Button>
             <Button
               asChild

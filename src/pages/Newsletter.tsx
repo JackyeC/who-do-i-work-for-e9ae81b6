@@ -27,7 +27,7 @@ const FEATURED_DROPS = [
     tag: "WARN Act",
     title: "WARN filings spike across fintech sector",
     description: "Three major fintech employers filed WARN notices within two weeks. We traced the connections between their boards and shared investors.",
-    link: "/receipts",
+    link: "/newsletter",
     date: "Mar 2026",
   },
   {
@@ -35,7 +35,7 @@ const FEATURED_DROPS = [
     tag: "DEI Tracker",
     title: "Which companies quietly dropped DEI commitments?",
     description: "A dozen Fortune 500 companies removed DEI language from their proxy statements. We compared 2024 vs 2025 filings line by line.",
-    link: "/receipts",
+    link: "/newsletter",
     date: "Feb 2026",
   },
   {
@@ -43,7 +43,7 @@ const FEATURED_DROPS = [
     tag: "OSHA / NLRB",
     title: "Repeat OSHA violators still winning government contracts",
     description: "Companies with 5+ OSHA violations in the past year received over $2B in new federal contracts. We mapped every dollar.",
-    link: "/receipts",
+    link: "/newsletter",
     date: "Feb 2026",
   },
   {
@@ -191,7 +191,7 @@ export default function Newsletter() {
       <section className="max-w-4xl mx-auto px-4 pb-16">
         <div className="flex items-center justify-between mb-6">
           <h2 className="text-lg font-bold text-foreground">Recent Signal Drops</h2>
-          <Link to="/receipts" className="text-xs text-primary hover:text-primary/80 flex items-center gap-1">
+          <Link to="/newsletter" className="text-xs text-primary hover:text-primary/80 flex items-center gap-1">
             All Receipts <ExternalLink className="w-3 h-3" />
           </Link>
         </div>

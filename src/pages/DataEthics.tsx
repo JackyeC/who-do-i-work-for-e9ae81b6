@@ -230,7 +230,7 @@ export default function DataEthics() {
                 Read Our Methodology
               </Link>
               <Link
-                to="/receipts"
+                to="/newsletter"
                 className="inline-flex items-center gap-2 px-5 py-2.5 border border-primary/30 text-primary font-medium rounded-xl hover:bg-primary/5 transition-colors text-sm"
               >
                 See The Receipts

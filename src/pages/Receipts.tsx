@@ -41,7 +41,7 @@ export default function Receipts() {
   usePageSEO({
     title: "The Receipts — Live Work Intelligence Feed",
     description: "Live editorial work-intelligence feed. Every story summarized, Jackye's take included, and a useful action attached. No spin. No rankings. Just receipts.",
-    path: "/receipts",
+    path: "/newsletter",
     jsonLd: {
       "@type": "CollectionPage",
       name: "The Receipts",
