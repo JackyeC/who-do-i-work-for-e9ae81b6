@@ -30,9 +30,9 @@ const VERDICT_CONFIG: Record<Verdict, { color: string; bg: string; border: strin
   "Proceed Carefully": { color: "text-destructive", bg: "bg-destructive/10", border: "border-destructive/30", icon: XCircle },
 };
 
-function deriveVerdict(score: number, redFlags: number, salary: number, baseline: number): Verdict {
-  if (score >= 80 && redFlags === 0) return "Strong Offer";
-  if (score >= 65 && redFlags <= 1) return "Fair Offer";
+function deriveVerdict(score: number, notableFlags: number, salary: number, baseline: number): Verdict {
+  if (score >= 80 && notableFlags === 0) return "Strong Offer";
+  if (score >= 65 && notableFlags <= 1) return "Fair Offer";
   if (score >= 45) return "Needs Review";
   return "Proceed Carefully";
 }
