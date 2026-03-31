@@ -69,7 +69,7 @@ const PeoplePuzzles = lazy(() => import("./pages/PeoplePuzzles"));
 const AskJackye = lazy(() => import("./pages/AskJackye"));
 const OnePager = lazy(() => import("./pages/OnePager"));
 const Demo = lazy(() => import("./pages/Demo"));
-const WouldYouWorkHere = lazy(() => import("./pages/WouldYouWorkHere"));
+// WouldYouWorkHere merged into /check — redirect below
 const WorkWithJackye = lazy(() => import("./pages/WorkWithJackye"));
 const Contact = lazy(() => import("./pages/Contact"));
 const EmployerReceipt = lazy(() => import("./pages/EmployerReceipt"));
@@ -183,7 +183,7 @@ const App = () => (
                   <Route path="/recruiter-brief" element={<RecruiterBrief />} />
                   <Route path="/ask-jackye" element={<AskJackye />} />
                   <Route path="/reality-check" element={<ProtectedRoute><RealityCheck /></ProtectedRoute>} />
-                  <Route path="/would-you-work-here" element={<WouldYouWorkHere />} />
+                  <Route path="/would-you-work-here" element={<Navigate to="/check" replace />} />
                   <Route path="/work-with-jackye" element={<WorkWithJackye />} />
                   <Route path="/contact" element={<Contact />} />
                   <Route path="/employer-receipt" element={<EmployerReceipt />} />

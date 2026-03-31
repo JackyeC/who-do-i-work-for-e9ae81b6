@@ -5,8 +5,6 @@ import { verifyTurnstileToken } from "@/lib/verifyTurnstile";
 import { AuditRequestForm } from "@/components/AuditRequestForm";
 import { useQuery } from "@tanstack/react-query";
 import { Helmet } from "react-helmet-async";
-import { Header } from "@/components/Header";
-import { Footer } from "@/components/Footer";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card, CardContent } from "@/components/ui/card";
@@ -385,7 +383,6 @@ export default function Check() {
         <meta name="description" content="Situation-aware company check — understand if a company is right for you based on what matters most." />
       </Helmet>
       <div className="min-h-screen bg-background flex flex-col">
-        <Header />
         <main className="flex-1 container mx-auto px-4 py-8 max-w-3xl space-y-8">
 
           {/* ─── SECTION 1: SITUATION SELECTOR ─── */}
@@ -582,7 +579,6 @@ export default function Check() {
             </div>
           </section>
         </main>
-        <Footer />
       </div>
     </>
   );
