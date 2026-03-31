@@ -507,7 +507,7 @@ export default function CompanyDossier() {
     </PremiumGate>
   );
 
-  const fullContent = lens === "candidate" ? candidateContent : lens === "sales" ? gatedSalesContent : gatedHrContent;
+  const fullContent = lens === "candidate" ? (showRawLayers ? candidateContent : null) : lens === "sales" ? gatedSalesContent : gatedHrContent;
 
   return (
     <ContentProtector className="min-h-screen flex flex-col bg-background">
