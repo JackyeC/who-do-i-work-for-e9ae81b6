@@ -6,15 +6,14 @@ import { useClerkWithFallback } from "@/hooks/use-clerk-fallback";
 import { Button } from "@/components/ui/button";
 
 const PRIMARY_LINKS = [
-  { label: "Search Companies", to: "/browse" },
+  { label: "How It Works", to: "/about" },
+  { label: "Companies", to: "/browse" },
   { label: "The Receipts", to: "/receipts" },
   { label: "Pricing", to: "/pricing" },
 ];
 
-
 export function MarketingNav() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
-  
   const navigate = useNavigate();
   const location = useLocation();
   const { user, loading: authLoading } = useAuth();
@@ -26,6 +25,7 @@ export function MarketingNav() {
     <>
       <header className="sticky top-0 z-50 bg-background/95 backdrop-blur-sm border-b border-border/50 px-6 lg:px-16 py-4 w-full">
         <div className="max-w-[1100px] mx-auto flex items-center justify-between">
+          {/* Logo */}
           <Link to="/" className="flex items-center gap-1.5 shrink-0">
             <span style={{ fontFamily: "Inter,sans-serif", fontWeight: 900, letterSpacing: "-0.03em", fontSize: "22px", lineHeight: 1 }}>
               <span className="text-foreground">W</span>
@@ -35,6 +35,8 @@ export function MarketingNav() {
               Who Do I Work For
             </span>
           </Link>
+
+          {/* Desktop nav */}
           <nav className="hidden md:flex items-center gap-6">
             {PRIMARY_LINKS.map((link) => (
               <Link
@@ -54,11 +56,13 @@ export function MarketingNav() {
                 Dashboard
               </Button>
             ) : (
-              <Button size="sm" onClick={() => navigate("/join")} className="font-sans text-sm rounded-full px-5">
-                Get Started Free
+              <Button size="sm" onClick={() => navigate("/join")} className="font-sans text-sm px-5">
+                Get Started
               </Button>
             )}
           </nav>
+
+          {/* Mobile toggle */}
           <button
             className="md:hidden p-1 text-muted-foreground hover:text-foreground transition-colors"
             onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
@@ -69,6 +73,7 @@ export function MarketingNav() {
         </div>
       </header>
 
+      {/* Mobile menu */}
       {mobileMenuOpen && (
         <div className="md:hidden px-6 pb-4 border-b border-border/50 bg-background">
           <nav className="flex flex-col gap-3">
@@ -90,7 +95,7 @@ export function MarketingNav() {
               </Button>
             ) : (
               <Button size="sm" onClick={() => { setMobileMenuOpen(false); navigate("/join"); }} className="w-full mt-2">
-                Get Started Free
+                Get Started
               </Button>
             )}
           </nav>
