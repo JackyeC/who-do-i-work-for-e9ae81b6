@@ -181,7 +181,7 @@ body > div:last-child > a[href*="lovable"] {
 
   body {
     @apply bg-background text-foreground antialiased;
-    font-family: 'DM Sans', system-ui, -apple-system, sans-serif;
+    font-family: 'Inter', system-ui, -apple-system, sans-serif;
     font-size: 16px;
     line-height: 1.7;
     -webkit-font-smoothing: antialiased;
@@ -189,15 +189,15 @@ body > div:last-child > a[href*="lovable"] {
   }
 
   h1, h2 {
-    font-family: 'DM Sans', system-ui, sans-serif;
-    font-weight: 700;
+    font-family: 'Inter', system-ui, sans-serif;
+    font-weight: 800;
     line-height: 1.1;
     letter-spacing: -1px;
     color: hsl(var(--foreground));
   }
 
   h3, h4, h5, h6 {
-    font-family: 'DM Sans', system-ui, sans-serif;
+    font-family: 'Inter', system-ui, sans-serif;
     font-weight: 600;
     line-height: 1.3;
   }
