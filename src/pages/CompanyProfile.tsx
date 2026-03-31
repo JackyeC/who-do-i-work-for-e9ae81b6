@@ -48,8 +48,8 @@ import { useScanTracker } from "@/hooks/use-scan-tracker";
 const STATUS_LABELS: Record<string, { label: string; color: string }> = {
   discovered: { label: "Discovered", color: "bg-[hsl(var(--civic-yellow))]/10 text-[hsl(var(--civic-yellow))] border-[hsl(var(--civic-yellow))]/30" },
   identity_matched: { label: "Identity Verified", color: "bg-[hsl(var(--civic-blue))]/10 text-[hsl(var(--civic-blue))] border-[hsl(var(--civic-blue))]/30" },
-  research_in_progress: { label: "Research In Progress", color: "bg-primary/10 text-primary border-primary/30" },
-  partially_verified: { label: "Partially Verified", color: "bg-[hsl(var(--civic-yellow))]/10 text-[hsl(var(--civic-yellow))] border-[hsl(var(--civic-yellow))]/30" },
+  research_in_progress: { label: "Early Investigation", color: "bg-[hsl(var(--civic-yellow))]/10 text-[hsl(var(--civic-yellow))] border-[hsl(var(--civic-yellow))]/30" },
+  partially_verified: { label: "Early Investigation", color: "bg-[hsl(var(--civic-yellow))]/10 text-[hsl(var(--civic-yellow))] border-[hsl(var(--civic-yellow))]/30" },
   verified: { label: "Verified", color: "bg-[hsl(var(--civic-green))]/10 text-[hsl(var(--civic-green))] border-[hsl(var(--civic-green))]/30" },
   failed_to_verify: { label: "Unverified", color: "bg-destructive/10 text-destructive border-destructive/30" },
 };
