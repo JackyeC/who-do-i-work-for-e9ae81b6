@@ -114,7 +114,7 @@ export function RealityGapResults({ result, onReset }: Props) {
         <CardContent className="p-5">
           <div className="flex items-center gap-2 mb-3">
             <BarChart3 className="w-4 h-4 text-civic-green" />
-            <h3 className="font-mono text-xs font-bold tracking-wider uppercase text-civic-green">Integrity Gap Scale</h3>
+            <h3 className="font-mono text-xs font-bold tracking-wider uppercase text-civic-green">Stance-Record Scale</h3>
           </div>
           <div className="relative h-3 bg-muted rounded-full overflow-hidden">
             <div className={cn("h-full rounded-full transition-all duration-700", style.bar)} style={{ width: `${result.integrityGapScore}%` }} />
