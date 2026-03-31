@@ -122,10 +122,10 @@ export function StabilityDelta({ companyId, companyName, interviewStartDate }: P
             </div>
             <div>
               <span className="text-foreground">
-                {hasDrift ? "Stability Delta Detected" : "No Significant Changes"}
+                {hasDrift ? "Signal Movement Detected" : "Signals Remain Consistent"}
               </span>
               <p className="text-xs text-muted-foreground font-normal mt-0.5">
-                What changed at {companyName} since you started interviewing
+                What has shifted at {companyName} since your process began
               </p>
             </div>
           </CardTitle>
@@ -162,7 +162,7 @@ export function StabilityDelta({ companyId, companyName, interviewStartDate }: P
             })
           ) : (
             <p className="text-sm text-muted-foreground text-center py-2">
-              All signals remain stable since your interview process began. No new risk factors detected.
+              All tracked signals remain consistent since your process began. No new movement detected.
             </p>
           )}
         </CardContent>
