@@ -142,6 +142,7 @@ const ReceiptsReport = lazy(() => import("./pages/ReceiptsReport"));
 const SubmitTip = lazy(() => import("./pages/SubmitTip"));
 
 const HRTechIntelligence = lazy(() => import("./pages/HRTechIntelligence"));
+const PaletteStudio = lazy(() => import("./pages/PaletteStudio"));
 const WhoDidIVoteForPage = lazy(() => import("./pages/WhoDidIVoteForPage"));
 
 const queryClient = new QueryClient();
