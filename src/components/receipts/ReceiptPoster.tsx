@@ -46,7 +46,7 @@ function matchPosterImage(headline: string | undefined): string | null {
   for (const rule of POSTER_IMAGE_RULES) {
     if (rule.keywords.some((kw) => h.includes(kw))) return rule.image;
   }
-  return null; // no match → use emoji template fallback
+  return null;
 }
 
 /* ── Emoji template fallback system ── */
@@ -91,67 +91,75 @@ function getFallbackPoster(category: string | null): PosterData {
   return FALLBACK_POSTERS[category || ""] || DEFAULT_FALLBACK;
 }
 
+/* ── Poster sizes: LARGE for readability ── */
+const POSTER_W_BIG = 540;
+const POSTER_H_BIG = 700;
+const POSTER_W_SM = 420;
+const POSTER_H_SM = 560;
+
 /* ── Emoji template renderer ── */
 function EmojiPoster({ poster, big, id, accent, onAccent, wdiwfQuote, className }: {
   poster: PosterData; big: boolean; id: string; accent: string; onAccent: string; wdiwfQuote: string; className?: string;
 }) {
   const { bg: pbg, emoji, bigTxt, sub, tag, copy, fine } = poster;
+  const w = big ? POSTER_W_BIG : POSTER_W_SM;
+  const h = big ? POSTER_H_BIG : POSTER_H_SM;
   return (
     <div
       id={id || undefined}
-      className={cn("flex-shrink-0 flex flex-col overflow-hidden rounded-lg relative", className)}
+      className={cn("flex-shrink-0 flex flex-col overflow-hidden rounded-lg relative w-full", className)}
       style={{
-        width: big ? 420 : 320,
-        minHeight: big ? 560 : 440,
+        maxWidth: w,
+        minHeight: h,
         background: pbg,
-        boxShadow: "0 12px 40px rgba(0,0,0,0.55)",
+        boxShadow: `0 16px 48px rgba(0,0,0,0.5), 0 0 0 1px ${accent}22`,
       }}
     >
-      <div className="absolute pointer-events-none rounded-sm z-10" style={{ inset: 7, border: `1.5px solid ${accent}`, opacity: 0.7 }} />
-      <div className="absolute pointer-events-none rounded-sm z-10" style={{ inset: 11, border: `0.5px solid ${accent}`, opacity: 0.3 }} />
+      <div className="absolute pointer-events-none rounded-sm z-10" style={{ inset: 8, border: `1.5px solid ${accent}`, opacity: 0.7 }} />
+      <div className="absolute pointer-events-none rounded-sm z-10" style={{ inset: 12, border: `0.5px solid ${accent}`, opacity: 0.3 }} />
 
-      <div className="flex-shrink-0 text-center" style={{ background: accent, padding: big ? "8px 12px" : "6px 8px" }}>
-        <div style={{ fontSize: big ? 12 : 10, fontWeight: 900, textTransform: "uppercase", letterSpacing: "0.22em", color: onAccent, lineHeight: 1.3 }}>
+      <div className="flex-shrink-0 text-center" style={{ background: accent, padding: big ? "10px 14px" : "8px 10px" }}>
+        <div style={{ fontSize: big ? 14 : 12, fontWeight: 900, textTransform: "uppercase", letterSpacing: "0.22em", color: onAccent, lineHeight: 1.3 }}>
           JACKYE CLAYTON 👑 × WDIWF
         </div>
-        <div style={{ fontSize: big ? 10 : 8, fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.18em", color: onAccent, opacity: 0.8 }}>
+        <div style={{ fontSize: big ? 11 : 9, fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.18em", color: onAccent, opacity: 0.8 }}>
           PRESENTS
         </div>
       </div>
 
-      <div className="flex-1 flex flex-col items-center justify-evenly" style={{ padding: big ? "14px 14px 8px" : "10px 10px 6px", gap: big ? 8 : 6 }}>
-        <div className="font-mono text-center" style={{ fontSize: big ? 12 : 10, fontWeight: 800, textTransform: "uppercase", letterSpacing: "0.18em", color: accent }}>
+      <div className="flex-1 flex flex-col items-center justify-evenly" style={{ padding: big ? "18px 18px 10px" : "14px 14px 8px", gap: big ? 10 : 8 }}>
+        <div className="font-mono text-center" style={{ fontSize: big ? 14 : 12, fontWeight: 800, textTransform: "uppercase", letterSpacing: "0.18em", color: accent }}>
           {tag}
         </div>
-        <div className="text-center" style={{ fontSize: big ? 48 : 36, lineHeight: 1, filter: "drop-shadow(0 4px 14px rgba(0,0,0,0.45))" }}>
+        <div className="text-center" style={{ fontSize: big ? 64 : 48, lineHeight: 1, filter: "drop-shadow(0 4px 14px rgba(0,0,0,0.45))" }}>
           {emoji}
         </div>
         <div className="text-center">
-          <div style={{ fontSize: big ? 42 : 32, fontWeight: 900, color: accent, lineHeight: 0.9, letterSpacing: "-0.02em", textShadow: `0 0 28px ${accent}55, 0 2px 8px rgba(0,0,0,0.5)`, fontFamily: "'Inter', sans-serif" }}>
+          <div style={{ fontSize: big ? 56 : 42, fontWeight: 900, color: accent, lineHeight: 0.9, letterSpacing: "-0.02em", textShadow: `0 0 28px ${accent}55, 0 2px 8px rgba(0,0,0,0.5)`, fontFamily: "'Inter', sans-serif" }}>
             {bigTxt}
           </div>
-          <div className="font-mono" style={{ fontSize: big ? 14 : 11, fontWeight: 700, color: "#FFFFFF", textTransform: "uppercase", letterSpacing: "0.12em", marginTop: 6, textShadow: "0 1px 4px rgba(0,0,0,0.6)" }}>
+          <div className="font-mono" style={{ fontSize: big ? 16 : 13, fontWeight: 700, color: "#FFFFFF", textTransform: "uppercase", letterSpacing: "0.12em", marginTop: 8, textShadow: "0 1px 4px rgba(0,0,0,0.6)" }}>
             {sub}
           </div>
         </div>
         <div className="flex items-center gap-2" style={{ width: "76%" }}>
           <div className="flex-1 h-px" style={{ background: accent, opacity: 0.5 }} />
-          <div className="rounded-full" style={{ width: 4, height: 4, background: accent, opacity: 0.8 }} />
+          <div className="rounded-full" style={{ width: 5, height: 5, background: accent, opacity: 0.8 }} />
           <div className="flex-1 h-px" style={{ background: accent, opacity: 0.5 }} />
         </div>
-        <div className="text-center italic" style={{ fontSize: big ? 15 : 12, fontWeight: 800, color: "#FFFFFF", lineHeight: 1.4, textShadow: "0 1px 6px rgba(0,0,0,0.5)" }}>
+        <div className="text-center italic" style={{ fontSize: big ? 18 : 14, fontWeight: 800, color: "#FFFFFF", lineHeight: 1.4, textShadow: "0 1px 6px rgba(0,0,0,0.5)" }}>
           "{copy}"
         </div>
-        <div className="text-center italic font-mono" style={{ fontSize: big ? 11 : 9, fontWeight: 600, color: accent, lineHeight: 1.4 }}>
+        <div className="text-center italic font-mono" style={{ fontSize: big ? 13 : 11, fontWeight: 600, color: accent, lineHeight: 1.4 }}>
           {fine}
         </div>
       </div>
 
-      <div className="flex-shrink-0 text-center" style={{ background: `${accent}22`, borderTop: `1.5px solid ${accent}55`, padding: big ? "10px 14px" : "8px 10px" }}>
-        <div className="font-mono" style={{ fontSize: big ? 15 : 13, fontWeight: 900, color: accent, textTransform: "uppercase", letterSpacing: "0.1em", lineHeight: 1.2 }}>
+      <div className="flex-shrink-0 text-center" style={{ background: `${accent}22`, borderTop: `1.5px solid ${accent}55`, padding: big ? "12px 16px" : "10px 12px" }}>
+        <div className="font-mono" style={{ fontSize: big ? 16 : 14, fontWeight: 900, color: accent, textTransform: "uppercase", letterSpacing: "0.1em", lineHeight: 1.2 }}>
           wdiwf.jackyeclayton.com
         </div>
-        <div className="font-mono" style={{ fontSize: big ? 12 : 10, fontWeight: 600, color: "#FFFFFF", textTransform: "uppercase", letterSpacing: "0.08em", lineHeight: 1.4, marginTop: 4 }}>
+        <div className="font-mono" style={{ fontSize: big ? 13 : 11, fontWeight: 600, color: "#FFFFFF", textTransform: "uppercase", letterSpacing: "0.08em", lineHeight: 1.4, marginTop: 4 }}>
           {wdiwfQuote}
         </div>
       </div>
@@ -159,30 +167,30 @@ function EmojiPoster({ poster, big, id, accent, onAccent, wdiwfQuote, className 
   );
 }
 
-/* ── Main component: uses vintage ad image if matched, emoji template otherwise ── */
+/* ── Main component ── */
 export function ReceiptPoster({ poster: rawPoster, category, className, big = false, id = "", headline, onClickEnlarge }: ReceiptPosterProps) {
   const [hover, setHover] = useState(false);
   const vintageImage = matchPosterImage(headline);
 
-  // For emoji fallback
   const posterData = rawPoster && rawPoster.bg ? rawPoster : getFallbackPoster(category ?? null);
   const accent = posterData.accent || "#F0C040";
   const onAccent = getTextOnAccent(accent);
   const wdiwfQuote = WDIWF_QUOTES[quoteIdx(id)];
 
+  const imgW = big ? POSTER_W_BIG : POSTER_W_SM;
+
   return (
     <div
-      style={{ position: "relative", display: "inline-block", cursor: onClickEnlarge ? "pointer" : "default" }}
+      style={{ position: "relative", display: "inline-block", cursor: onClickEnlarge ? "pointer" : "default", maxWidth: "100%" }}
       onMouseEnter={() => setHover(true)}
       onMouseLeave={() => setHover(false)}
       onClick={onClickEnlarge}
     >
       {vintageImage ? (
-        /* ── Vintage ad image poster ── */
         <div
           id={id || undefined}
-          className={cn("flex-shrink-0 overflow-hidden rounded-lg relative", className)}
-          style={{ width: big ? 440 : 320, boxShadow: "0 12px 40px rgba(0,0,0,0.55)" }}
+          className={cn("flex-shrink-0 overflow-hidden rounded-lg relative w-full", className)}
+          style={{ maxWidth: imgW, boxShadow: "0 16px 48px rgba(0,0,0,0.5)" }}
         >
           <img
             src={vintageImage}
@@ -193,26 +201,22 @@ export function ReceiptPoster({ poster: rawPoster, category, className, big = fa
           />
           <div className="absolute inset-0 pointer-events-none" style={{ background: "linear-gradient(135deg, rgba(255,248,230,0.12) 0%, rgba(0,0,0,0.08) 100%)", mixBlendMode: "multiply" }} />
           <div className="absolute inset-0 pointer-events-none" style={{ boxShadow: "inset 0 0 60px rgba(0,0,0,0.25)" }} />
-          <div className="absolute bottom-2 left-0 right-0 text-center pointer-events-none" style={{ fontSize: big ? 10 : 8, fontWeight: 900, letterSpacing: "0.2em", color: "rgba(255,255,255,0.6)", textShadow: "0 1px 4px rgba(0,0,0,0.8)", textTransform: "uppercase" }}>
+          <div className="absolute bottom-3 left-0 right-0 text-center pointer-events-none" style={{ fontSize: big ? 12 : 10, fontWeight: 900, letterSpacing: "0.2em", color: "rgba(255,255,255,0.6)", textShadow: "0 1px 4px rgba(0,0,0,0.8)", textTransform: "uppercase" }}>
             JRC EDIT × WDIWF
-          </div>
-          <div className="absolute bottom-2 right-3 pointer-events-none" style={{ fontSize: 9, fontWeight: 300, letterSpacing: "0.2em", color: "rgba(255,255,255,0.4)", fontFamily: "Georgia, 'Times New Roman', serif", textTransform: "uppercase", animation: "fadeIn 1s ease-in 0.5s forwards", opacity: 0 }}>
-            JRC EDIT
           </div>
         </div>
       ) : (
-        /* ── Emoji template poster ── */
         <EmojiPoster poster={posterData} big={big} id={id} accent={accent} onAccent={onAccent} wdiwfQuote={wdiwfQuote} className={className} />
       )}
 
       {/* Hover overlay */}
       {onClickEnlarge && (
         <div
-          className="absolute inset-0 rounded-lg flex flex-col items-center justify-center gap-2 transition-opacity duration-150"
+          className="absolute inset-0 rounded-lg flex flex-col items-center justify-center gap-2 transition-opacity duration-200"
           style={{ background: "rgba(0,0,0,0.52)", opacity: hover ? 1 : 0, pointerEvents: hover ? "auto" : "none" }}
         >
-          <span style={{ fontSize: 26 }}>🔍</span>
-          <span className="font-bold text-white" style={{ fontSize: 13, letterSpacing: "0.05em" }}>Click to enlarge + share</span>
+          <span style={{ fontSize: 32 }}>🔍</span>
+          <span className="font-bold text-white text-base" style={{ letterSpacing: "0.05em" }}>Click to enlarge + share</span>
         </div>
       )}
     </div>
