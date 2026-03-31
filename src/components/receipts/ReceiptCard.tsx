@@ -1,6 +1,5 @@
-import { useState } from "react";
 import { Link } from "react-router-dom";
-import { ExternalLink, Linkedin, Facebook, Twitter } from "lucide-react";
+import { ExternalLink, Linkedin, Facebook, Twitter, Share2 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { ReceiptPoster } from "./ReceiptPoster";
 import { BiasBar, getSourceBiasKey } from "./BiasBar";
@@ -17,7 +16,6 @@ interface ReceiptCardProps {
 }
 
 export function ReceiptCard({ article, featured = false, onPosterClick, onRequestEmailCapture }: ReceiptCardProps) {
-  const [showTake, setShowTake] = useState(false);
   const editorialCat = EDITORIAL_CATEGORIES[article.category ?? ""] || "THE DAILY GRIND";
   const isGated = article.spice_level >= 4;
   const isUnlocked = () => localStorage.getItem("jrc-edit-unlocked") === "true";
@@ -52,14 +50,14 @@ export function ReceiptCard({ article, featured = false, onPosterClick, onReques
   };
 
   return (
-    <article className={cn("receipt-card pb-8 mb-8 border-b border-border/30", featured && "pb-12 mb-12")}>
+    <article className={cn("receipt-card pb-10 mb-10 border-b border-border/30", featured && "pb-14 mb-14")}>
       {/* Direct Answer block for RAG / AI citation extraction */}
       <p className="sr-only">
         {article.headline}. {article.receipt_connection || article.jackye_take}
       </p>
 
-      {/* Poster */}
-      <div className={cn("mb-4", featured ? "flex justify-center" : "")}>
+      {/* ── 1. Poster — large and dominant ── */}
+      <div className={cn("mb-6", featured ? "flex justify-center" : "")}>
         <ReceiptPoster
           poster={article.poster_data}
           category={article.category}
@@ -70,176 +68,155 @@ export function ReceiptCard({ article, featured = false, onPosterClick, onReques
         />
       </div>
 
-      {/* Heat chip */}
-      <div className="mb-3">
-        <HeatChip level={article.spice_level} />
-      </div>
-
-      {/* Share bar */}
-      <div className="flex items-center gap-2 flex-wrap mb-4">
-        <button onClick={downloadPoster} className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-md text-xs font-bold bg-primary text-primary-foreground hover:opacity-90 transition-opacity">
-          📤 Save Image
-        </button>
-        <a href={`https://www.linkedin.com/sharing/share-offsite/?url=${shareUrl}`} target="_blank" rel="noopener noreferrer"
-          className="inline-flex items-center gap-1.5 px-2.5 py-1.5 rounded-md text-xs font-bold text-white hover:opacity-90 transition-opacity" style={{ background: "#0A66C2" }}>
-          <Linkedin className="w-3 h-3" /> LinkedIn
-        </a>
-        <a href={`https://twitter.com/intent/tweet?text=${txt}&url=${shareUrl}`} target="_blank" rel="noopener noreferrer"
-          className="inline-flex items-center gap-1.5 px-2.5 py-1.5 rounded-md text-xs font-bold text-white bg-foreground hover:opacity-90 transition-opacity">
-          <Twitter className="w-3 h-3" /> X
-        </a>
-        <a href={`https://www.facebook.com/sharer/sharer.php?u=${shareUrl}&quote=${txt}`} target="_blank" rel="noopener noreferrer"
-          className="inline-flex items-center gap-1.5 px-2.5 py-1.5 rounded-md text-xs font-bold text-white hover:opacity-90 transition-opacity" style={{ background: "#1877F2" }}>
-          <Facebook className="w-3 h-3" /> FB
-        </a>
-        <a href="https://substack.com/@jackyeclayton" target="_blank" rel="noopener noreferrer"
-          className="inline-flex items-center gap-1.5 px-2.5 py-1.5 rounded-md text-xs font-bold border border-primary/40 text-primary hover:bg-primary/5 transition-colors">
-          📬 Sub
-        </a>
-      </div>
-
-      {/* Meta row */}
+      {/* ── 2. Category ── */}
       <div className="flex items-center gap-3 mb-3 flex-wrap">
-        <span className="font-black uppercase tracking-[0.2em]" style={{ fontSize: featured ? 14 : 11, color: catColor, fontFamily: "'DM Sans', sans-serif" }}>
+        <span
+          className="font-black uppercase tracking-[0.2em]"
+          style={{ fontSize: featured ? 16 : 14, color: catColor, fontFamily: "'DM Sans', sans-serif" }}
+        >
           {editorialCat}
         </span>
         {article.spice_level >= 4 && (
-          <span className="text-[11px] font-black uppercase px-2.5 py-0.5 rounded" style={{ background: "#EF4444", color: "#fff" }}>HOT</span>
+          <span className="text-xs font-black uppercase px-2.5 py-1 rounded" style={{ background: "#EF4444", color: "#fff" }}>HOT</span>
         )}
-        <span className="w-px h-3 bg-border" />
-        <span className="text-sm font-mono text-muted-foreground">{article.source_name || "Unknown"}</span>
-        {article.source_url && (
-          <a href={article.source_url} target="_blank" rel="noopener noreferrer"
-            className="text-sm font-bold text-primary hover:underline inline-flex items-center gap-1"
-            style={{ borderBottom: "1px solid hsl(var(--primary) / 0.35)" }}>
-            Read the Source <ExternalLink className="w-3 h-3" />
-          </a>
-        )}
-        {/* Bias — hidden on mobile, visible on md+ or when expanded */}
-        <span className={cn("ml-auto", showTake ? "" : "hidden md:inline-flex")}>
-          <BiasBar bias={biasKey} big={featured} />
-        </span>
       </div>
 
-      {/* Headline */}
-      <h2 className="font-black text-foreground leading-tight mb-4 uppercase" style={{ fontSize: featured ? "clamp(30px, 4vw, 50px)" : "clamp(24px, 2.8vw, 34px)", letterSpacing: "-0.02em" }}>
+      {/* ── 3. Source + 4. Bias ── */}
+      <div className="flex items-center gap-3 mb-3 flex-wrap">
+        <span className="text-base font-mono text-muted-foreground">{article.source_name || "Unknown"}</span>
+        <span className="w-px h-4 bg-border" />
+        <BiasBar bias={biasKey} big={featured} />
+      </div>
+
+      {/* ── 5. Heat Level ── */}
+      <div className="mb-4">
+        <HeatChip level={article.spice_level} />
+      </div>
+
+      {/* ── 6. Headline ── */}
+      <h2
+        className="font-black text-foreground leading-tight mb-5 uppercase"
+        style={{
+          fontSize: featured ? "clamp(32px, 4vw, 52px)" : "clamp(26px, 2.8vw, 38px)",
+          letterSpacing: "-0.02em",
+        }}
+      >
         {article.headline}
       </h2>
 
-      {/* Spice peppers */}
-      <div className="mb-5 flex items-center gap-3">
-        <SpicePeppers level={article.spice_level} big={featured} />
-      </div>
-
-      {/* The Debate */}
-      {article.debate_prompt && article.debate_sides && article.debate_sides.length > 0 && (
-        <div className="mb-4 p-5 rounded-xl border border-border bg-card">
-          <p className="text-xs font-mono font-bold uppercase tracking-[0.18em] text-primary mb-3">💬 The Debate</p>
-          <p className="text-lg font-bold text-foreground leading-snug mb-4">{article.debate_prompt}</p>
-          {article.debate_sides.map((side, i) => (
-            <div key={i} className="mb-2">
-              <button className="w-full text-left p-3.5 rounded-lg text-base border border-border bg-card hover:border-primary/40 transition-colors text-foreground leading-snug">
-                {side}
-              </button>
-            </div>
-          ))}
+      {/* ── 7. The Receipt ── */}
+      {article.receipt_connection && (
+        <div className="p-5 rounded-xl border mb-5" style={{ background: "hsl(var(--primary) / 0.04)", borderColor: "hsl(var(--primary) / 0.2)" }}>
+          <p className="text-sm font-mono font-bold uppercase tracking-[0.12em] text-primary mb-3">🧾 The Receipt</p>
+          <p className="text-lg text-foreground/90 leading-relaxed">{article.receipt_connection}</p>
         </div>
       )}
 
-      {/* Jackye's Take — expandable (handwritten style) */}
+      {/* ── 8. Jackye's Take ── */}
       {article.jackye_take && (
-        <>
-          <button
-            onClick={() => setShowTake(!showTake)}
-            className={cn(
-              "font-bold text-primary hover:bg-primary/5 transition-colors mb-3",
-              featured ? "border border-primary/40 rounded-lg px-5 py-3" : "border-none p-0"
-            )}
-            style={{ fontSize: featured ? 17 : 16, letterSpacing: "0.04em" }}
-          >
-            {showTake ? "Hide take ↑" : "The Take →"}
-          </button>
-          {showTake && (
-            <div className="mt-4 mb-4">
-              <blockquote className="border-l-[3px] border-primary pl-5 mb-4">
-                <p className="text-foreground leading-[1.82]" style={{ fontSize: featured ? 21 : 17, fontStyle: "italic", fontFamily: "'DM Sans', cursive, sans-serif" }}>
-                  "{article.jackye_take}"
-                </p>
-              </blockquote>
-
-              {/* The Receipt */}
-              {article.receipt_connection && (
-                <div className="p-5 rounded-xl border mb-4" style={{ background: "hsl(var(--primary) / 0.04)", borderColor: "hsl(var(--primary) / 0.2)" }}>
-                  <p className="text-[13px] font-mono font-bold uppercase tracking-[0.12em] text-primary mb-3">🧾 The Receipt</p>
-                  <p className="text-base text-foreground/90 leading-relaxed">{article.receipt_connection}</p>
-                </div>
-              )}
-
-              {/* Why It Matters */}
-              <div className="p-4 rounded-lg border border-border/50 bg-card mb-4">
-                <p className="text-[11px] font-mono font-bold uppercase tracking-[0.15em] text-muted-foreground mb-2">Why It Matters</p>
-                <p className="text-sm text-foreground/80 leading-relaxed">
-                  {article.receipt_connection || article.jackye_take}
-                </p>
-              </div>
-
-              {/* Use This — dynamic CTA (gated for Heat 4-5) */}
-              {isGated && !isUnlocked() ? (
-                <button
-                  onClick={() => onRequestEmailCapture?.()}
-                  className="w-full flex items-center justify-between p-4 rounded-lg border-[1.5px] border-primary gap-3 hover:bg-primary/5 transition-colors mb-3 cursor-pointer"
-                  style={{ background: "hsl(var(--primary) / 0.06)" }}
-                >
-                  <span className="flex flex-col gap-1 text-left">
-                    <span className="text-xs font-mono font-bold uppercase tracking-[0.18em] text-primary">Use This</span>
-                    <span className="text-base font-bold text-foreground">{useCta.label}</span>
-                    <span className="text-[11px] text-muted-foreground">🔒 Unlock with your email</span>
-                  </span>
-                  <span className="text-xl flex-shrink-0">🔧</span>
-                </button>
-              ) : (
-                <Link
-                  to={useCta.link}
-                  className="flex items-center justify-between p-4 rounded-lg border-[1.5px] border-primary no-underline gap-3 hover:bg-primary/5 transition-colors mb-3"
-                  style={{ background: "hsl(var(--primary) / 0.06)" }}
-                >
-                  <span className="flex flex-col gap-1">
-                    <span className="text-xs font-mono font-bold uppercase tracking-[0.18em] text-primary">Use This</span>
-                    <span className="text-base font-bold text-foreground">{useCta.label}</span>
-                  </span>
-                  <span className="text-xl flex-shrink-0">🔧</span>
-                </Link>
-              )}
-
-              {/* Fix This — permanent secondary CTA */}
-              <Link
-                to="/search"
-                className="flex items-center gap-3 p-3 rounded-lg border border-border/40 no-underline hover:border-primary/30 hover:bg-primary/5 transition-colors"
-              >
-                <span className="text-sm text-muted-foreground">Is your company doing this?</span>
-                <span className="text-sm font-bold text-primary ml-auto">Solve My Puzzle →</span>
-              </Link>
-            </div>
-          )}
-        </>
+        <div className="mb-5">
+          <blockquote className="border-l-[3px] border-primary pl-5">
+            <p className="text-xs font-mono font-bold uppercase tracking-[0.12em] text-primary mb-2">💬 Jackye's Take</p>
+            <p
+              className="text-foreground leading-[1.82]"
+              style={{
+                fontSize: featured ? 20 : 18,
+                fontStyle: "italic",
+                fontFamily: "'DM Sans', cursive, sans-serif",
+              }}
+            >
+              "{article.jackye_take}"
+            </p>
+          </blockquote>
+        </div>
       )}
 
-      {/* WDIWF Intelligence CTA */}
+      {/* ── 9. Why It Matters ── */}
+      <div className="p-5 rounded-lg border border-border/50 bg-card mb-5">
+        <p className="text-sm font-mono font-bold uppercase tracking-[0.15em] text-muted-foreground mb-2">Why It Matters</p>
+        <p className="text-base text-foreground/80 leading-relaxed">
+          {article.receipt_connection || article.jackye_take || "This story impacts how employers treat workers and how workers navigate their careers."}
+        </p>
+      </div>
+
+      {/* ── 10. Use This ── */}
+      {isGated && !isUnlocked() ? (
+        <button
+          onClick={() => onRequestEmailCapture?.()}
+          className="w-full flex items-center justify-between p-5 rounded-lg border-2 border-primary gap-3 hover:bg-primary/10 active:scale-[0.98] transition-all mb-4 cursor-pointer"
+          style={{ background: "hsl(var(--primary) / 0.06)" }}
+        >
+          <span className="flex flex-col gap-1 text-left">
+            <span className="text-sm font-mono font-bold uppercase tracking-[0.18em] text-primary">Use This</span>
+            <span className="text-lg font-bold text-foreground">{useCta.label}</span>
+            <span className="text-sm text-muted-foreground">🔒 Unlock with your email</span>
+          </span>
+          <span className="text-2xl flex-shrink-0">🔧</span>
+        </button>
+      ) : (
+        <Link
+          to={useCta.link}
+          className="flex items-center justify-between p-5 rounded-lg border-2 border-primary no-underline gap-3 hover:bg-primary/10 active:scale-[0.98] transition-all mb-4"
+          style={{ background: "hsl(var(--primary) / 0.06)" }}
+        >
+          <span className="flex flex-col gap-1">
+            <span className="text-sm font-mono font-bold uppercase tracking-[0.18em] text-primary">Use This</span>
+            <span className="text-lg font-bold text-foreground">{useCta.label}</span>
+          </span>
+          <span className="text-2xl flex-shrink-0">🔧</span>
+        </Link>
+      )}
+
+      {/* ── 11. Read the Source ── */}
+      {article.source_url && (
+        <a
+          href={article.source_url}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="flex items-center gap-2 p-4 rounded-lg border border-border/50 text-primary font-bold text-base hover:bg-primary/5 hover:border-primary/40 active:scale-[0.98] transition-all mb-5 no-underline"
+        >
+          <ExternalLink className="w-4 h-4 shrink-0" />
+          Read the Source
+          <span className="ml-auto text-sm text-muted-foreground font-normal">{article.source_name}</span>
+        </a>
+      )}
+
+      {/* Share bar */}
+      <div className="flex items-center gap-2 flex-wrap mb-4">
+        <button onClick={downloadPoster} className="inline-flex items-center gap-1.5 px-4 py-2 rounded-md text-sm font-bold bg-primary text-primary-foreground hover:opacity-90 active:scale-95 transition-all">
+          <Share2 className="w-4 h-4" /> Save Poster
+        </button>
+        <a href={`https://www.linkedin.com/sharing/share-offsite/?url=${shareUrl}`} target="_blank" rel="noopener noreferrer"
+          className="inline-flex items-center gap-1.5 px-3 py-2 rounded-md text-sm font-bold text-white hover:opacity-90 active:scale-95 transition-all" style={{ background: "#0A66C2" }}>
+          <Linkedin className="w-4 h-4" /> LinkedIn
+        </a>
+        <a href={`https://twitter.com/intent/tweet?text=${txt}&url=${shareUrl}`} target="_blank" rel="noopener noreferrer"
+          className="inline-flex items-center gap-1.5 px-3 py-2 rounded-md text-sm font-bold text-white bg-foreground hover:opacity-90 active:scale-95 transition-all">
+          <Twitter className="w-4 h-4" /> X
+        </a>
+        <a href={`https://www.facebook.com/sharer/sharer.php?u=${shareUrl}&quote=${txt}`} target="_blank" rel="noopener noreferrer"
+          className="inline-flex items-center gap-1.5 px-3 py-2 rounded-md text-sm font-bold text-white hover:opacity-90 active:scale-95 transition-all" style={{ background: "#1877F2" }}>
+          <Facebook className="w-4 h-4" /> Facebook
+        </a>
+      </div>
+
+      {/* Spice peppers */}
+      <div className="mb-4">
+        <SpicePeppers level={article.spice_level} big={featured} />
+      </div>
+
+      {/* Fix This — permanent secondary CTA */}
       <Link
         to="/search"
-        className="flex items-center justify-between mt-5 p-4 rounded-lg border-[1.5px] border-primary no-underline gap-3 hover:bg-primary/5 transition-colors"
-        style={{ background: "hsl(var(--primary) / 0.06)" }}
+        className="flex items-center gap-3 p-4 rounded-lg border border-border/40 no-underline hover:border-primary/30 hover:bg-primary/5 active:scale-[0.98] transition-all"
       >
-        <span className="flex flex-col gap-1">
-          <span className="text-xs font-mono font-bold uppercase tracking-[0.18em] text-primary">WDIWF Intelligence</span>
-          <span className="text-base font-bold text-foreground">See the full receipt on WDIWF →</span>
-        </span>
-        <span className="text-xl flex-shrink-0">🔍</span>
+        <span className="text-base text-muted-foreground">Is your company doing this?</span>
+        <span className="text-base font-bold text-primary ml-auto">Solve My Puzzle →</span>
       </Link>
 
       {/* JRC EDIT Watermark */}
-      <div className="flex justify-end mt-4">
-        <span className="text-[10px] tracking-[0.25em] uppercase opacity-0 animate-[fadeIn_1s_ease-in_0.5s_forwards]" style={{ fontFamily: "Georgia, 'Times New Roman', serif", color: "hsl(var(--muted-foreground))", fontWeight: 300 }}>
+      <div className="flex justify-end mt-5">
+        <span className="text-xs tracking-[0.25em] uppercase opacity-40" style={{ fontFamily: "Georgia, 'Times New Roman', serif", color: "hsl(var(--muted-foreground))", fontWeight: 300 }}>
           JRC EDIT
         </span>
       </div>

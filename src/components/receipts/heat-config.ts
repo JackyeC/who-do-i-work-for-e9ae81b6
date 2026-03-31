@@ -82,12 +82,14 @@ export const USE_THIS_CTA: Record<string, { label: string; link: string }> = {
 
 export const RECEIPT_CATEGORIES = [
   { value: "all", label: "All" },
-  { value: "behavior", label: "The Daily Grind" },
-  { value: "influence", label: "The C-Suite" },
-  { value: "context", label: "The Tech Stack" },
-  { value: "money", label: "The Paycheck" },
-  { value: "structure", label: "The Fine Print" },
-  { value: "off_the_record", label: "Off the Record" },
+  { value: "ai_workplace", label: "AI" },
+  { value: "future_of_work", label: "Work" },
+  { value: "labor_organizing", label: "Labor" },
+  { value: "worker_rights", label: "DEI" },
+  { value: "pay_equity", label: "Money" },
+  { value: "regulation", label: "Policy" },
+  { value: "layoffs", label: "Layoffs" },
+  { value: "legislation", label: "Hiring" },
 ] as const;
 
-export type ReceiptSortMode = "newest" | "hottest" | "drama" | null;
+export type ReceiptSortMode = "newest" | "hottest" | "drama" | "consequential" | null;
