@@ -310,7 +310,7 @@ export function AdvocacyReport({ company, executives = [], contracts = [], issue
         <Card className="rounded-none border border-border/50">
           <CardContent className="p-6">
             <SectionHeader icon={Scale} title="LABOR IMPACT" subtitle="Enforcement actions, complaints, and workforce risk on the record" />
-            <EEOCCaseAlert cases={eeocCases} />
+            <EEOCCaseAlert cases={eeocCases as any} />
             <p className="mt-3 text-xs text-muted-foreground leading-relaxed italic">
               EEOC enforcement actions indicate a formal complaint was investigated. This does not automatically mean wrongdoing — but patterns across multiple filings are worth noting.
             </p>
