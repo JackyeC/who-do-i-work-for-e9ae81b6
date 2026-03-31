@@ -1,9 +1,11 @@
-import { useMemo } from "react";
+import { useMemo, useState } from "react";
 import { 
   AlertTriangle, TrendingDown, DollarSign, Users, 
   Eye, MessageSquare, CheckCircle2, XCircle, 
   MinusCircle, ArrowRight, Shield, Zap,
-  Building2, Scale, Megaphone
+  Building2, Scale, Megaphone, ExternalLink,
+  ChevronDown, ChevronRight, FileText, Briefcase,
+  Factory, Vote, ShieldAlert, Flame
 } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent } from "@/components/ui/card";
