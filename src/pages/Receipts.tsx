@@ -326,6 +326,16 @@ export default function Receipts() {
       case "drama":
         result = [...result].sort((a, b) => b.dramaScore - a.dramaScore);
         break;
+      case "newest":
+        result = [...result].sort((a, b) => {
+          const parseDate = (d: string) => {
+            const [month, year] = d.split(" ");
+            const months: Record<string, number> = { January: 0, February: 1, March: 2, April: 3, May: 4, June: 5, July: 6, August: 7, September: 8, October: 9, November: 10, December: 11 };
+            return new Date(Number(year), months[month] ?? 0).getTime();
+          };
+          return parseDate(b.date) - parseDate(a.date);
+        });
+        break;
       case "spice":
         result = [...result].sort((a, b) => b.spice - a.spice || b.dramaScore - a.dramaScore);
         break;
