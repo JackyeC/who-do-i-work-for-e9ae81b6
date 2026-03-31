@@ -246,7 +246,7 @@ export default function Receipts() {
       {/* Footer */}
       <footer className="border-t border-border py-10 px-8 text-center">
         <p className="text-xs text-muted-foreground tracking-[0.1em] font-mono">
-          The Receipts™ · <em>by Jackye Clayton 👑 × WDIWF</em>
+          The Receipts · <em>by Jackye Clayton 👑 × WDIWF</em>
         </p>
         <p className="text-[10px] text-muted-foreground mt-1.5 italic">
           "Every company runs a background check on you. WDIWF runs one on them."

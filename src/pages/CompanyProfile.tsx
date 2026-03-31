@@ -30,6 +30,7 @@ import { useCompanyIntegrity } from "@/hooks/use-company-integrity";
 import { LeadershipInfluenceSection } from "@/components/company/LeadershipInfluenceSection";
 import { WhatToWatch } from "@/components/company/WhatToWatch";
 import { WhatToAsk } from "@/components/company/WhatToAsk";
+import { CandidatePrepPack } from "@/components/company/CandidatePrepPack";
 import { ReportTeaserGate } from "@/components/ReportTeaserGate";
 import { PostReportNudge } from "@/components/PostReportNudge";
 import { ContentProtector } from "@/components/ContentProtector";
@@ -409,6 +410,27 @@ export default function CompanyProfile() {
           )}
 
           {dbCompany?.id && <IntegrityIndicators companyId={dbCompany.id} />}
+
+          {/* ═══════════════════════════════════════════════════════
+              🎯 CANDIDATE PREP PACK
+             ═══════════════════════════════════════════════════════ */}
+          <CandidatePrepPack
+            companyName={name}
+            industry={industry}
+            employeeCount={(dbCompany as any)?.employee_count ?? null}
+            hasLayoffSignals={false}
+            hasWarnNotices={false}
+            hasPayEquity={!!tiPayEquity}
+            hasBenefitsData={!!tiBenefits}
+            hasAiHrSignals={!!tiAiHr}
+            hasSentimentData={!!tiSentiment}
+            executiveCount={verifiedExecCount}
+            revolvingDoorCount={dbRevolvingDoor?.length || 0}
+            totalPacSpending={totalPac}
+            lobbyingSpend={lobbyingSpend}
+            darkMoneyCount={dbDarkMoney?.length || 0}
+            jackye_insight={dbCompany?.jackye_insight}
+          />
 
           {/* ═══════════════════════════════════════════════════════
               JACKYE'S INSIGHT / DESCRIPTION

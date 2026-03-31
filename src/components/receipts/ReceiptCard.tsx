@@ -5,6 +5,7 @@ import { cn } from "@/lib/utils";
 import { ReceiptPoster } from "./ReceiptPoster";
 import { BiasBar, getSourceBiasKey } from "./BiasBar";
 import { SpicePeppers } from "./SpicePeppers";
+import { HeatChip } from "./HeatChip";
 import type { ReceiptArticle } from "@/hooks/use-receipts-feed";
 
 const CATEGORY_DISPLAY: Record<string, string> = {
@@ -81,6 +82,11 @@ export function ReceiptCard({ article, featured = false, onPosterClick }: Receip
           headline={article.headline}
           onClickEnlarge={onPosterClick ? () => onPosterClick(article) : undefined}
         />
+      </div>
+
+      {/* Heat chip — prominent, first thing after poster */}
+      <div className="mb-3">
+        <HeatChip level={article.spice_level} />
       </div>
 
       {/* Share bar right below poster */}
