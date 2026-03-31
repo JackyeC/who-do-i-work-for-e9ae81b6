@@ -33,18 +33,27 @@ interface ReceiptPosterProps {
 }
 
 /* ── Vintage ad image matching ── */
+/* ── Vintage ad image matching — each headline gets AT MOST one image ── */
+const POSTER_IMAGES = [posterTrillion, posterLayoffs, posterRestructuring, posterHealthcare, posterStruggling, posterAiTrust];
+
 const POSTER_IMAGE_RULES: { keywords: string[]; image: string }[] = [
-  { keywords: ["nvidia", "trillion", "inference", "orders"], image: posterTrillion },
-  { keywords: ["layoff", "cuts", "job cuts", "workforce drop", "plans job", "workforce drops"], image: posterLayoffs },
-  { keywords: ["restructuring", "fired", "pink slip", "let go"], image: posterRestructuring },
-  { keywords: ["healthcare", "hospital", "nurse", "health sector", "job growth"], image: posterHealthcare },
-  { keywords: ["struggling", "thriving", "gallup", "miserable", "wellbeing"], image: posterStruggling },
+  { keywords: ["nvidia", "trillion", "inference"], image: posterTrillion },
+  { keywords: ["restructuring", "fired", "pink slip"], image: posterRestructuring },
+  { keywords: ["healthcare", "hospital", "nurse", "health sector"], image: posterHealthcare },
+  { keywords: ["struggling", "gallup", "miserable", "wellbeing"], image: posterStruggling },
+  { keywords: ["ai trust", "ai bias", "ai audit"], image: posterAiTrust },
 ];
+
+// Track which images have been assigned to prevent duplicates within a render
+const usedImages = new Set<string>();
 
 function matchPosterImage(headline: string | undefined): string | null {
   const h = (headline || "").toLowerCase();
   for (const rule of POSTER_IMAGE_RULES) {
-    if (rule.keywords.some((kw) => h.includes(kw))) return rule.image;
+    if (rule.keywords.some((kw) => h.includes(kw)) && !usedImages.has(rule.image)) {
+      usedImages.add(rule.image);
+      return rule.image;
+    }
   }
   return null;
 }
