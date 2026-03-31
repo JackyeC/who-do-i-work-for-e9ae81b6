@@ -4,13 +4,14 @@ import { usePageSEO } from "@/hooks/use-page-seo";
 import { motion } from "framer-motion";
 import { ArrowRight } from "lucide-react";
 import { Skeleton } from "@/components/ui/skeleton";
-import { useReceiptsFeed } from "@/hooks/use-receipts-feed";
+import { useReceiptsFeed, type ReceiptArticle } from "@/hooks/use-receipts-feed";
 import { ReceiptsFilters } from "@/components/receipts/ReceiptsFilters";
 import { FeaturedReceipt } from "@/components/receipts/FeaturedReceipt";
 import { ReceiptCard } from "@/components/receipts/ReceiptCard";
 import { WorkNewsTicker } from "@/components/news/WorkNewsTicker";
 import { HowToRead } from "@/components/receipts/HowToRead";
 import { ReceiptsSidebar } from "@/components/receipts/ReceiptsSidebar";
+import { PosterLightbox } from "@/components/receipts/PosterLightbox";
 import type { ReceiptSortMode } from "@/components/receipts/heat-config";
 
 // ─── Static company receipts (existing investigations) ───
