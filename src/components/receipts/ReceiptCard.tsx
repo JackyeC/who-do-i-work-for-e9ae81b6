@@ -183,18 +183,33 @@ export function ReceiptCard({ article, featured = false, onPosterClick, onReques
                 </p>
               </div>
 
-              {/* Use This — dynamic CTA */}
-              <Link
-                to={useCta.link}
-                className="flex items-center justify-between p-4 rounded-lg border-[1.5px] border-primary no-underline gap-3 hover:bg-primary/5 transition-colors mb-3"
-                style={{ background: "hsl(var(--primary) / 0.06)" }}
-              >
-                <span className="flex flex-col gap-1">
-                  <span className="text-xs font-mono font-bold uppercase tracking-[0.18em] text-primary">Use This</span>
-                  <span className="text-base font-bold text-foreground">{useCta.label}</span>
-                </span>
-                <span className="text-xl flex-shrink-0">🔧</span>
-              </Link>
+              {/* Use This — dynamic CTA (gated for Heat 4-5) */}
+              {isGated && !isUnlocked() ? (
+                <button
+                  onClick={() => onRequestEmailCapture?.()}
+                  className="w-full flex items-center justify-between p-4 rounded-lg border-[1.5px] border-primary gap-3 hover:bg-primary/5 transition-colors mb-3 cursor-pointer"
+                  style={{ background: "hsl(var(--primary) / 0.06)" }}
+                >
+                  <span className="flex flex-col gap-1 text-left">
+                    <span className="text-xs font-mono font-bold uppercase tracking-[0.18em] text-primary">Use This</span>
+                    <span className="text-base font-bold text-foreground">{useCta.label}</span>
+                    <span className="text-[11px] text-muted-foreground">🔒 Unlock with your email</span>
+                  </span>
+                  <span className="text-xl flex-shrink-0">🔧</span>
+                </button>
+              ) : (
+                <Link
+                  to={useCta.link}
+                  className="flex items-center justify-between p-4 rounded-lg border-[1.5px] border-primary no-underline gap-3 hover:bg-primary/5 transition-colors mb-3"
+                  style={{ background: "hsl(var(--primary) / 0.06)" }}
+                >
+                  <span className="flex flex-col gap-1">
+                    <span className="text-xs font-mono font-bold uppercase tracking-[0.18em] text-primary">Use This</span>
+                    <span className="text-base font-bold text-foreground">{useCta.label}</span>
+                  </span>
+                  <span className="text-xl flex-shrink-0">🔧</span>
+                </Link>
+              )}
 
               {/* Fix This — permanent secondary CTA */}
               <Link

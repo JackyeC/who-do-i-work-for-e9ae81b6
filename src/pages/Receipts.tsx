@@ -182,7 +182,7 @@ export default function Receipts() {
           )}
 
           {/* Featured story */}
-          {!isLoading && featuredArticle && <FeaturedReceipt article={featuredArticle} onPosterClick={setLightboxArticle} />}
+          {!isLoading && featuredArticle && <FeaturedReceipt article={featuredArticle} onPosterClick={setLightboxArticle} onRequestEmailCapture={() => setShowEmailCapture(true)} />}
 
           {/* Divider */}
           {!isLoading && feedArticles.length > 0 && (
