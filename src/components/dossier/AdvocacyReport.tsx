@@ -250,7 +250,7 @@ export function AdvocacyReport({ company, executives = [], contracts = [], issue
                   <tr>
                     <td className="py-3 pr-4 font-medium text-foreground">Subsidies</td>
                     <td className="py-3 pr-4 font-mono font-bold text-foreground">{fmtMoney(company.subsidies_received)}</td>
-                    <td className="py-3 text-muted-foreground text-xs leading-snug">Public money received — worth checking against layoff history.</td>
+                    <td className="py-3 text-muted-foreground text-xs leading-snug">Public funds received. Consider alongside workforce changes.</td>
                   </tr>
                 )}
                 {company.effective_tax_rate && (
