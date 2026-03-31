@@ -78,6 +78,7 @@ export function ReceiptCard({ article, featured = false, onPosterClick }: Receip
           category={article.category}
           big={featured}
           id={posterId}
+          headline={article.headline}
           onClickEnlarge={onPosterClick ? () => onPosterClick(article) : undefined}
         />
       </div>
