@@ -49,7 +49,9 @@ interface WarningLabelProps {
     signal_type: string;
     description: string;
     amount?: number | null;
-    confidence_score?: number;
+    confidence_score?: string;
+    source_url?: string | null;
+    transaction_date?: string | null;
   }>;
   publicStances?: Array<{
     issue_category?: string;
