@@ -137,36 +137,36 @@ const Index = forwardRef<HTMLDivElement>((_, ref) => {
 
       <style>{`@keyframes heroFadeIn { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: translateY(0); } }`}</style>
 
+      {/* ── TRUST STRIP ── */}
+      <div className="border-y border-border bg-card px-6 py-3">
+        <div className="max-w-[900px] mx-auto text-center">
+          <p className="font-mono text-[10px] tracking-[0.15em] uppercase text-primary mb-0.5 font-semibold">The Trust Layer for the Modern Worker</p>
+          <p className="font-sans text-xs text-muted-foreground">
+            Public Records. Human Language. Real Accountability. Because you shouldn't be the last to know.
+          </p>
+        </div>
+      </div>
+
       {/* ── TICKER ── */}
-      <Suspense fallback={<div className="h-[36px] bg-background border-y border-border/10" />}>
+      <Suspense fallback={<div className="h-[36px] bg-background border-b border-border/10" />}>
         <LiveIntelligenceTicker />
       </Suspense>
 
       {/* ═══════════════════════════════════════════
-          2 — WHAT WDIWF DOES
+          2 — THE INTELLIGENCE LAYER
       ═══════════════════════════════════════════ */}
       <section className="px-6 lg:px-16 py-20 lg:py-28 bg-background">
         <div className="max-w-[760px] mx-auto">
-          <p className="font-mono text-xs tracking-[0.15em] uppercase text-primary mb-4 text-center">What We Do</p>
-          <h2 className="text-h1 text-foreground text-center mb-10">
-            The background check your employer never expected.
+          <p className="font-mono text-xs tracking-[0.15em] uppercase text-primary mb-4 text-center">The Intelligence Layer</p>
+          <h2 className="text-h1 text-foreground text-center mb-8">
+            The State of Work, Decoded.
           </h2>
-
-          <div className="space-y-5">
-            {[
-              "We investigate employers using public records and labor signals — Federal Election Commission filings, Securities & Exchange Commission disclosures, Occupational Safety & Health Administration violations, lobbying reports, compensation data, and more.",
-              "We compare what companies say with what they actually do — matching mission statements and careers-page promises against enforcement records, political spending, and workforce signals.",
-              "We help you understand values alignment, employer risk, and career leverage — so you're never making a decision with less information than the company sitting across from you.",
-              "We help you decide whether to apply, stay, negotiate, or leave — with evidence, not guesswork.",
-            ].map((text, i) => (
-              <div key={i} className="flex gap-3 items-start">
-                <CheckCircle className="w-4 h-4 text-primary shrink-0 mt-1" strokeWidth={1.5} />
-                <p className="font-sans text-muted-foreground leading-relaxed" style={{ fontSize: "clamp(14px, 1.2vw, 16px)" }}>
-                  {text}
-                </p>
-              </div>
-            ))}
-          </div>
+          <p className="font-sans text-muted-foreground leading-relaxed text-center max-w-[54ch] mx-auto mb-6" style={{ fontSize: "clamp(15px, 1.3vw, 17px)" }}>
+            Work moves fast, and usually, the talent is the last to know. We turn fragmented labor signals, policy shifts, and market risks into plain-English guidance.
+          </p>
+          <p className="font-sans text-sm text-primary/80 text-center font-medium">
+            Don't just search for a job — understand the forces shaping your career before the market shifts.
+          </p>
         </div>
       </section>
 
@@ -212,29 +212,17 @@ const Index = forwardRef<HTMLDivElement>((_, ref) => {
       </section>
 
       {/* ═══════════════════════════════════════════
-          4 — WHY THIS EXISTS
+          4 — OUR "WHY"
       ═══════════════════════════════════════════ */}
       <section className="px-6 lg:px-16 py-20 lg:py-28 bg-background">
         <div className="max-w-[720px] mx-auto">
-          <p className="font-mono text-xs tracking-[0.15em] uppercase text-primary mb-4">Why This Exists</p>
+          <p className="font-mono text-xs tracking-[0.15em] uppercase text-primary mb-4">Our "Why"</p>
           <h2 className="text-h1 text-foreground mb-8">
-            You prove yourself to employers every day. When do they prove themselves to you?
+            The Reverse Background Check.
           </h2>
-
-          <div className="space-y-6">
-            <p className="font-sans text-muted-foreground leading-relaxed" style={{ fontSize: "clamp(14px, 1.3vw, 16px)" }}>
-              Too many people are asked to prove themselves to employers without ever being shown what those employers actually stand for. You tailor your resume. You prep for behavioral interviews. You write thank-you notes. And in return, you get a careers page full of stock photos and a mission statement that might not survive a single Federal Election Commission search.
-            </p>
-            <p className="font-sans text-muted-foreground leading-relaxed" style={{ fontSize: "clamp(14px, 1.3vw, 16px)" }}>
-              Who Do I Work For exists because people deserve better than mission-statement theater, ghost jobs, and getting blindsided by the market. We built the trust layer — so you can stop guessing and start knowing.
-            </p>
-          </div>
-
-          <blockquote className="border-l-2 border-primary pl-6 py-3 mt-10">
-            <p className="font-sans text-foreground italic leading-snug" style={{ fontSize: "clamp(1.1rem, 1.8vw, 1.4rem)", fontWeight: 600 }}>
-              "You wouldn't buy a house without an inspection. Why would you accept a job without one?"
-            </p>
-          </blockquote>
+          <p className="font-sans text-muted-foreground leading-relaxed" style={{ fontSize: "clamp(14px, 1.3vw, 16px)" }}>
+            Every company runs a background check on you. It's time you ran one on them. We built Who Do I Work For because you deserve to know if a company's actions align with your values before you sign the offer letter — or before you decide to stay.
+          </p>
         </div>
       </section>
 
@@ -295,16 +283,19 @@ const Index = forwardRef<HTMLDivElement>((_, ref) => {
       <div className="gold-line mx-auto w-full max-w-[200px]" />
 
       {/* ═══════════════════════════════════════════
-          7 — COMPLIANCE & PUBLIC RECORDS TRUST
+          7 — THE PAPER TRAIL
       ═══════════════════════════════════════════ */}
       <section className="bg-card border-y border-border px-6 lg:px-16 py-16 lg:py-24">
         <div className="max-w-[760px] mx-auto text-center">
-          <p className="font-mono text-xs tracking-[0.15em] uppercase text-primary mb-4">Public Records Trust</p>
+          <p className="font-mono text-xs tracking-[0.15em] uppercase text-primary mb-4">The Paper Trail</p>
           <h2 className="text-h2 text-foreground mb-4">
-            No black boxes. No opinions dressed as data.
+            Receipts over Promises.
           </h2>
-          <p className="font-sans text-sm text-muted-foreground leading-relaxed max-w-[52ch] mx-auto mb-8">
-            Every signal is traceable to a public source. Every score is explainable. We publish our methodology, run quarterly bias audits, and make our data sourcing transparent — because a trust layer only works if you can trust the layer.
+          <p className="font-sans text-sm text-muted-foreground leading-relaxed max-w-[54ch] mx-auto mb-6">
+            We use public records and transparent methodology to show you what companies actually do, not just what they post on LinkedIn. From compliance history to executive track records, we bring the receipts so you don't have to trust a black box.
+          </p>
+          <p className="font-sans text-xs text-primary/80 font-medium mb-8">
+            Total transparency. Clear user consent. No hidden agendas.
           </p>
           <div className="flex flex-wrap gap-3 justify-center">
             {[
