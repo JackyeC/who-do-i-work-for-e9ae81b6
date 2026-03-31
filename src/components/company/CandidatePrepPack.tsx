@@ -293,16 +293,6 @@ export function CandidatePrepPack(props: CandidatePrepPackProps) {
             </div>
           </div>
 
-          {/* Jackye's Insight */}
-          {props.jackye_insight && (
-            <div className="p-4 rounded-lg border border-primary/15 bg-primary/5">
-              <p className="text-xs font-mono font-bold uppercase tracking-[0.18em] text-primary mb-2">
-                👑 Jackye's Read
-              </p>
-              <p className="text-sm text-foreground leading-relaxed italic">"{props.jackye_insight}"</p>
-            </div>
-          )}
-
           {/* Disclaimer */}
           <p className="text-xs text-muted-foreground text-center pt-1 italic">
             Generated from public signals — not opinions. Use your judgment.
