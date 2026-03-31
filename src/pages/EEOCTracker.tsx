@@ -70,9 +70,12 @@ export default function EEOCTracker() {
     queryFn: async () => {
       const { data } = await (supabase as any)
         .from("eeoc_dropped_cases")
-        .select("*")
+        .select("*, companies(slug)")
         .order("created_at", { ascending: false });
-      return (data || []) as EEOCCase[];
+      return ((data || []) as any[]).map((c: any) => ({
+        ...c,
+        company_slug: c.companies?.slug || null,
+      })) as EEOCCase[];
     },
   });
 
