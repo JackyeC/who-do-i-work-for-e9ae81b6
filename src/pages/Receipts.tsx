@@ -196,10 +196,11 @@ const CATEGORIES = [
   { value: "finance", label: "Finance" },
 ];
 
-type SortMode = "drama" | "alpha" | "spice";
+type SortMode = "drama" | "alpha" | "spice" | "newest";
 
 const SORT_OPTIONS: { value: SortMode; label: string }[] = [
   { value: "drama", label: "Most Drama" },
+  { value: "newest", label: "Newest" },
   { value: "spice", label: "Spiciest" },
   { value: "alpha", label: "A–Z" },
 ];
