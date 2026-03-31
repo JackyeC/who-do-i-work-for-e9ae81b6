@@ -207,14 +207,14 @@ export function WarningLabelView({ company, executives = [], contracts = [], iss
         </CardContent>
       </Card>
 
-      {/* ─── THE PULSE ─── */}
+      {/* ─── THE STRATEGY ─── */}
       <Card className="rounded-none border border-border/50">
         <CardContent className="p-6">
           <div className="flex items-center gap-3 mb-4">
             <Zap className="w-5 h-5 text-primary" />
             <div>
-              <h3 className="text-sm font-black tracking-tight text-foreground uppercase">THE PULSE</h3>
-              <p className="text-xs text-muted-foreground">What the public record says right now</p>
+              <h3 className="text-sm font-black tracking-tight text-foreground uppercase">THE STRATEGY</h3>
+              <p className="text-xs text-muted-foreground">Where the money is going and what the public record shows</p>
             </div>
           </div>
           <div className="space-y-3">
