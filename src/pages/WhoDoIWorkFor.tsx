@@ -334,11 +334,11 @@ export default function WhoDoIWorkFor() {
 
               {/* PAC-Funded Politicians */}
               {(candidates || []).length > 0 && (
-                <Card className="mb-6">
+                <Card className="mb-6" id="pac-section">
                   <CardHeader>
                     <CardTitle className="text-lg flex items-center gap-2">
                       <Flag className="w-5 h-5" />
-                      Politicians Funded by Your Employer's PAC
+                      Politicians Funded by Your Employer's Political Action Committee
                     </CardTitle>
                     <p className="text-xs text-muted-foreground mt-1">
                       Amounts shown are aggregate totals from public filings. Individual contributions are not itemized below unless broken out by type.
