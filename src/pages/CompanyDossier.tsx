@@ -388,6 +388,14 @@ export default function CompanyDossier() {
             overviewContent={overviewContent}
             fullContent={null}
           />
+
+          {/* ── HARD INTERVIEW QUESTIONS (always free, outside paywall) ── */}
+          <HardInterviewQuestions
+            companyName={company.name}
+            lobbyingSpend={company.lobbying_spend}
+            eeocCount={eeocCases?.length || 0}
+          />
+
           <TransparencyDisclaimer />
 
           {/* ── NEXT STEPS ── */}
