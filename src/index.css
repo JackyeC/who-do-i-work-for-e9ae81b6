@@ -104,33 +104,42 @@ body > div:last-child > a[href*="lovable"] {
   .dark {
     color-scheme: dark;
 
-    --background: 240 27% 4%;           /* #0a0a0e */
-    --foreground: 40 30% 92%;           /* #f0ebe0 */
+    --background: 240 27% 4%;           /* #0A0A0E */
+    --foreground: 40 30% 92%;           /* #F0EBE0 */
 
-    --card: 252 25% 8%;                 /* #13121a */
+    --card: 252 25% 8%;                 /* #13121A */
     --card-foreground: 40 30% 92%;
 
     --popover: 252 25% 8%;
     --popover-foreground: 40 30% 92%;
 
-    --primary: 43 85% 59%;              /* #f0c040 */
-    --primary-foreground: 240 27% 4%;   /* dark text on amber */
+    /* Primary = gold #F0C040 for dark mode */
+    --primary: 43 85% 59%;
+    --primary-foreground: 240 27% 4%;
 
     --secondary: 252 20% 10%;
     --secondary-foreground: 40 30% 92%;
 
     --muted: 252 20% 10%;
-    --muted-foreground: 252 14% 52%;    /* #7a7590 */
+    --muted-foreground: 252 14% 52%;    /* #7A7590 */
 
     --accent: 43 40% 12%;
     --accent-foreground: 43 85% 59%;
 
-    --destructive: 348 90% 65%;         /* #ff4d6d */
+    --destructive: 348 90% 65%;
     --destructive-foreground: 0 0% 100%;
 
     --border: 252 18% 12%;
     --input: 252 18% 12%;
     --ring: 43 85% 59%;
+
+    /* ── BRAND UTILITY COLORS (dark) ── */
+    --brand-section-label: 0 0% 40%;     /* #666 */
+    --brand-scale-label: 0 0% 40%;       /* #666 */
+    --brand-page-label: 0 0% 33%;        /* #555 */
+    --brand-divider: 0 0% 10%;           /* #1A1A1A */
+    --brand-border: 0 0% 7%;             /* #111 */
+    --brand-subtitle: 0 0% 60%;          /* #999 */
 
     --civic-red: 348 90% 65%;
     --civic-yellow: 43 85% 59%;
