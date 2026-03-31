@@ -18,6 +18,7 @@ interface EEOCCase {
   id: string;
   company_name: string;
   company_id: string | null;
+  company_slug?: string | null;
   case_name: string;
   case_number: string | null;
   court_name: string | null;
