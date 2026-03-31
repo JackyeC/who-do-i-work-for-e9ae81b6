@@ -69,7 +69,7 @@ const PeoplePuzzles = lazy(() => import("./pages/PeoplePuzzles"));
 const AskJackye = lazy(() => import("./pages/AskJackye"));
 const OnePager = lazy(() => import("./pages/OnePager"));
 const Demo = lazy(() => import("./pages/Demo"));
-const WouldYouWorkHere = lazy(() => import("./pages/WouldYouWorkHere"));
+// WouldYouWorkHere merged into /check — redirect below
 const WorkWithJackye = lazy(() => import("./pages/WorkWithJackye"));
 const Contact = lazy(() => import("./pages/Contact"));
 const EmployerReceipt = lazy(() => import("./pages/EmployerReceipt"));
