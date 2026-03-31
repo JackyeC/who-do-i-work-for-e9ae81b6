@@ -213,7 +213,7 @@ export function AdvocacyReport({ company, executives = [], contracts = [], issue
 
       {/* ═══ 4. WHAT THEY DO ═══ */}
       <section>
-        <SectionDivider number={3} icon={DollarSign} title="What They Do" subtitle="Follow the money, follow the spend" />
+        <SectionDivider number={3} icon={DollarSign} title="Spending Record" subtitle="Where the money goes, based on public filings" />
         <div className="pl-11">
           <div className="overflow-x-auto">
             <table className="w-full text-sm">
