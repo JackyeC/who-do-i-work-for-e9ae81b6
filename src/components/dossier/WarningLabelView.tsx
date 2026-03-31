@@ -76,10 +76,10 @@ function computeVerdict(company: WarningLabelProps["company"], signalCount: numb
   const hasEeoc = eeocCount > 0;
   const redFlags = [lobbyingHigh, pacHigh, clarityLow, hasEeoc, signalCount > 5].filter(Boolean).length;
 
-  if (redFlags >= 4) return { text: "ENTER WITH A PARACHUTE", emoji: "🪂", color: "text-destructive", bg: "bg-destructive/10 border-destructive/30" };
-  if (redFlags >= 2) return { text: "PROCEED WITH CAUTION", emoji: "⚠️", color: "text-civic-yellow", bg: "bg-civic-yellow/10 border-civic-yellow/30" };
-  if (redFlags >= 1) return { text: "MIXED SIGNALS — DIG DEEPER", emoji: "🔍", color: "text-civic-blue", bg: "bg-civic-blue/10 border-civic-blue/30" };
-  return { text: "RELATIVELY CLEAN RECORD", emoji: "✅", color: "text-civic-green", bg: "bg-civic-green/10 border-civic-green/30" };
+  if (redFlags >= 4) return { text: "MULTIPLE SIGNALS PRESENT", emoji: "🪂", color: "text-destructive", bg: "bg-destructive/10 border-destructive/30" };
+  if (redFlags >= 2) return { text: "PATTERN WORTH WATCHING", emoji: "⚠️", color: "text-civic-yellow", bg: "bg-civic-yellow/10 border-civic-yellow/30" };
+  if (redFlags >= 1) return { text: "MIXED SIGNALS", emoji: "🔍", color: "text-civic-blue", bg: "bg-civic-blue/10 border-civic-blue/30" };
+  return { text: "LIMITED SIGNALS ON RECORD", emoji: "✅", color: "text-civic-green", bg: "bg-civic-green/10 border-civic-green/30" };
 }
 
 /* ─── Money formatter ─── */
@@ -93,17 +93,17 @@ function fmtMoney(n?: number | null): string {
 
 /* ─── CEO Memo Decoder ─── */
 const DECODER_MAP: Record<string, string> = {
-  "strategic reallocation": "Budget redirected — someone's team is losing headcount",
-  "modernization": "Automation replacing human roles",
-  "restructuring": "Layoffs, reorgs, or both",
-  "right-sizing": "Layoffs with better PR",
-  "operational efficiency": "Doing more with fewer people",
-  "people first": "Often said right before layoffs",
-  "organizational simplification": "Middle management purge",
-  "workforce optimization": "Headcount reduction",
-  "transformation": "Everything changes, nobody knows to what",
-  "synergies": "Post-merger job cuts",
-  "realignment": "Your team might not exist next quarter",
+  "strategic reallocation": "Budget is being redirected. Some teams will feel it.",
+  "modernization": "Often means automation is replacing certain roles.",
+  "restructuring": "Organizational changes. Could mean layoffs, reorgs, or both.",
+  "right-sizing": "Headcount reduction, described differently.",
+  "operational efficiency": "Doing more with fewer people.",
+  "people first": "Worth watching what follows this phrase.",
+  "organizational simplification": "Management layers are being removed.",
+  "workforce optimization": "Headcount reduction by another name.",
+  "transformation": "Large-scale change. Details tend to emerge slowly.",
+  "synergies": "Post-merger consolidation. Usually includes job cuts.",
+  "realignment": "Team structures may change significantly.",
 };
 
 /* ─── Component ─── */
@@ -183,7 +183,7 @@ export function WarningLabelView({ company, executives = [], contracts = [], iss
     if (items.length === 0) {
       items.push({
         icon: CheckCircle2,
-        text: "No major red flags detected in current public records.",
+        text: "No notable signals detected in current public records.",
         severity: "green",
       });
     }
@@ -214,7 +214,7 @@ export function WarningLabelView({ company, executives = [], contracts = [], iss
             <div className="flex items-start gap-4">
               <span className="text-4xl">{verdict.emoji}</span>
               <div className="flex-1">
-                <p className="font-mono text-xs tracking-[0.3em] uppercase text-muted-foreground mb-1">WDIWF VERDICT</p>
+                <p className="font-mono text-xs tracking-[0.3em] uppercase text-muted-foreground mb-1">SIGNAL SUMMARY</p>
                 <h2 className={cn("text-xl md:text-2xl font-black tracking-tight", verdict.color)}>
                   {verdict.text}
                 </h2>
@@ -236,7 +236,7 @@ export function WarningLabelView({ company, executives = [], contracts = [], iss
             <Zap className="w-5 h-5 text-primary" />
             <div>
               <h3 className="text-sm font-black tracking-tight text-foreground uppercase">THE STRATEGY</h3>
-              <p className="text-xs text-muted-foreground">Where the money is going and what the public record shows</p>
+              <p className="text-xs text-muted-foreground">What the public record shows and what it tends to mean</p>
             </div>
           </div>
           <div className="space-y-3">
@@ -288,7 +288,7 @@ export function WarningLabelView({ company, executives = [], contracts = [], iss
                 <tr className="border-b border-border/40">
                   <th className="text-left py-2 pr-4 font-mono text-xs text-muted-foreground uppercase tracking-wider">Metric</th>
                   <th className="text-left py-2 pr-4 font-mono text-xs text-muted-foreground uppercase tracking-wider">Amount</th>
-                  <th className="text-left py-2 font-mono text-xs text-muted-foreground uppercase tracking-wider">So What?</th>
+                  <th className="text-left py-2 font-mono text-xs text-muted-foreground uppercase tracking-wider">What It Tends to Mean</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-border/20">
@@ -302,11 +302,11 @@ export function WarningLabelView({ company, executives = [], contracts = [], iss
                   </td>
                   <td className="py-3 pr-4 font-mono font-bold text-foreground">{fmtMoney(company.lobbying_spend)}</td>
                   <td className="py-3 text-muted-foreground text-xs leading-snug">
-                    {(company.lobbying_spend ?? 0) > 1_000_000
-                      ? "Heavy political spend — this company invests seriously in shaping policy."
-                      : (company.lobbying_spend ?? 0) > 0
-                      ? "Moderate lobbying presence."
-                      : "No lobbying spend detected."}
+                     {(company.lobbying_spend ?? 0) > 1_000_000
+                       ? "Significant lobbying activity. This company is actively engaged in policy."
+                       : (company.lobbying_spend ?? 0) > 0
+                       ? "Some lobbying activity on record."
+                       : "No lobbying spend detected."}
                     <span className="block text-primary text-xs mt-0.5 font-medium group-hover:underline">View on OpenSecrets →</span>
                   </td>
                 </tr>
@@ -320,11 +320,11 @@ export function WarningLabelView({ company, executives = [], contracts = [], iss
                   </td>
                   <td className="py-3 pr-4 font-mono font-bold text-foreground">{fmtMoney(company.total_pac_spending)}</td>
                   <td className="py-3 text-muted-foreground text-xs leading-snug">
-                    {(company.total_pac_spending ?? 0) > 500_000
-                      ? "Significant PAC activity — check which candidates they're funding."
-                      : (company.total_pac_spending ?? 0) > 0
-                      ? "Some political giving on record."
-                      : "No PAC spending detected."}
+                     {(company.total_pac_spending ?? 0) > 500_000
+                       ? "Consistent PAC activity. Worth reviewing where contributions are directed."
+                       : (company.total_pac_spending ?? 0) > 0
+                       ? "Some political giving on record."
+                       : "No PAC spending detected."}
                     <span className="block text-primary text-xs mt-0.5 font-medium group-hover:underline">View on FEC.gov →</span>
                   </td>
                 </tr>
@@ -355,7 +355,7 @@ export function WarningLabelView({ company, executives = [], contracts = [], iss
                     </td>
                     <td className="py-3 pr-4 font-mono font-bold text-foreground">{fmtMoney(company.subsidies_received)}</td>
                     <td className="py-3 text-muted-foreground text-xs leading-snug">
-                      Public money received — worth checking against layoff history.
+                      Public funds received. Consider alongside workforce changes.
                       <span className="block text-primary text-xs mt-0.5 font-medium group-hover:underline">View on Good Jobs First →</span>
                     </td>
                   </tr>

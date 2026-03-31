@@ -114,7 +114,7 @@ export function InsiderBriefSection(props: InsiderBriefProps) {
     if (props.lobbyingSpend > 0)
       items.push(`${formatMoney(props.lobbyingSpend)} in lobbying expenditures on record`);
     if (props.darkMoneyCount > 0)
-      items.push(`${props.darkMoneyCount} dark money connection(s) identified`);
+      items.push(`${props.darkMoneyCount} non-disclosed contribution channel(s) identified`);
     if (props.revolvingDoorCount > 0)
       items.push(`${props.revolvingDoorCount} revolving door link(s) flagged`);
     if (props.hasAiHrSignals)
@@ -131,9 +131,9 @@ export function InsiderBriefSection(props: InsiderBriefProps) {
   const interpretation = useMemo(() => {
     const parts: string[] = [];
     if (props.totalPacSpending > 50_000 || props.lobbyingSpend > 50_000)
-      parts.push("This company has a measurable political spending footprint. Consider how that aligns with your values.");
+      parts.push("This company has a measurable political spending footprint. Pay attention to how that aligns with your priorities.");
     if (props.darkMoneyCount > 0)
-      parts.push("Dark money connections suggest influence channels that are harder to trace.");
+      parts.push("Non-disclosed contribution channels suggest influence that is harder to trace.");
     if (!props.hasPayEquity && !props.hasBenefitsData)
       parts.push("Limited compensation transparency may make it harder to evaluate total rewards.");
     if (props.hasAiHrSignals)
@@ -172,7 +172,7 @@ export function InsiderBriefSection(props: InsiderBriefProps) {
       {/* What's changing */}
       {changingSignals.length > 0 && (
         <div className="px-5 py-4 border-b border-border/40">
-          <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-2.5">What's changing</p>
+          <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-2.5">What is visible</p>
           <ul className="space-y-1.5">
             {changingSignals.map((s, i) => (
               <li key={i} className="text-sm text-foreground/90 leading-relaxed pl-3 relative before:content-[''] before:absolute before:left-0 before:top-[9px] before:w-1.5 before:h-1.5 before:rounded-full before:bg-primary/40">
@@ -185,7 +185,7 @@ export function InsiderBriefSection(props: InsiderBriefProps) {
 
       {/* What this means for you */}
       <div className="px-5 py-4">
-        <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-2">What this means for you</p>
+        <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-2">What this tends to mean</p>
         <p className="text-sm text-foreground/85 leading-relaxed">{interpretation}</p>
       </div>
     </div>

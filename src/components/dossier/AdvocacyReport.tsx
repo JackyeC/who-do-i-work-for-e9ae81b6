@@ -83,10 +83,10 @@ function computeVerdict(company: AdvocacyReportProps["company"], signalCount: nu
   const hasEeoc = eeocCount > 0;
   const redFlags = [lobbyingHigh, pacHigh, clarityLow, hasEeoc, signalCount > 5].filter(Boolean).length;
 
-  if (redFlags >= 4) return { text: "ENTER WITH A PARACHUTE", color: "text-destructive", bg: "bg-destructive/10 border-destructive/30", redFlagCount: redFlags };
-  if (redFlags >= 2) return { text: "PROCEED WITH CAUTION", color: "text-civic-yellow", bg: "bg-civic-yellow/10 border-civic-yellow/30", redFlagCount: redFlags };
-  if (redFlags >= 1) return { text: "MIXED SIGNALS — DIG DEEPER", color: "text-civic-blue", bg: "bg-civic-blue/10 border-civic-blue/30", redFlagCount: redFlags };
-  return { text: "RELATIVELY CLEAN RECORD", color: "text-civic-green", bg: "bg-civic-green/10 border-civic-green/30", redFlagCount: 0 };
+  if (redFlags >= 4) return { text: "MULTIPLE SIGNALS PRESENT", color: "text-destructive", bg: "bg-destructive/10 border-destructive/30", redFlagCount: redFlags };
+  if (redFlags >= 2) return { text: "PATTERN WORTH WATCHING", color: "text-civic-yellow", bg: "bg-civic-yellow/10 border-civic-yellow/30", redFlagCount: redFlags };
+  if (redFlags >= 1) return { text: "MIXED SIGNALS", color: "text-civic-blue", bg: "bg-civic-blue/10 border-civic-blue/30", redFlagCount: redFlags };
+  return { text: "LIMITED SIGNALS ON RECORD", color: "text-civic-green", bg: "bg-civic-green/10 border-civic-green/30", redFlagCount: 0 };
 }
 
 function fmtMoney(n?: number | null): string {
@@ -99,17 +99,17 @@ function fmtMoney(n?: number | null): string {
 
 /* ─── CEO Memo Decoder ─── */
 const DECODER_MAP: Record<string, string> = {
-  "strategic reallocation": "Budget redirected — someone's team is losing headcount",
-  "modernization": "Automation replacing human roles",
-  "restructuring": "Layoffs, reorgs, or both",
-  "right-sizing": "Layoffs with better PR",
-  "operational efficiency": "Doing more with fewer people",
-  "people first": "Often said right before layoffs",
-  "organizational simplification": "Middle management purge",
-  "workforce optimization": "Headcount reduction",
-  "transformation": "Everything changes, nobody knows to what",
-  "synergies": "Post-merger job cuts",
-  "realignment": "Your team might not exist next quarter",
+  "strategic reallocation": "Budget is being redirected. Some teams will feel it.",
+  "modernization": "Often means automation is replacing certain roles.",
+  "restructuring": "Organizational changes. Could mean layoffs, reorgs, or both.",
+  "right-sizing": "Headcount reduction, described differently.",
+  "operational efficiency": "Doing more with fewer people.",
+  "people first": "Worth watching what follows this phrase.",
+  "organizational simplification": "Management layers are being removed.",
+  "workforce optimization": "Headcount reduction by another name.",
+  "transformation": "Large-scale change. Details tend to emerge slowly.",
+  "synergies": "Post-merger consolidation. Usually includes job cuts.",
+  "realignment": "Team structures may change significantly.",
 };
 
 /* ─── Section divider ─── */
@@ -165,7 +165,7 @@ export function AdvocacyReport({ company, executives = [], contracts = [], issue
         />
       ) : (
         <div className={cn("border-l-4 p-6 md:p-8", verdict.bg)}>
-          <p className="font-mono text-[10px] tracking-[0.35em] uppercase text-muted-foreground mb-2">WDIWF VERDICT</p>
+          <p className="font-mono text-[10px] tracking-[0.35em] uppercase text-muted-foreground mb-2">SIGNAL SUMMARY</p>
           <h2 className={cn("text-xl md:text-2xl font-black tracking-tight", verdict.color)}>{verdict.text}</h2>
           {company.jackye_insight && (
             <p className="mt-3 text-sm text-foreground/80 leading-relaxed italic">"{company.jackye_insight}"</p>
@@ -178,7 +178,7 @@ export function AdvocacyReport({ company, executives = [], contracts = [], issue
 
       {/* ═══ 2. COMPANY SUMMARY ═══ */}
       <section>
-        <SectionDivider number={1} icon={Building2} title="Company Summary" subtitle="The basics before the receipts" />
+        <SectionDivider number={1} icon={Building2} title="Company Summary" subtitle="What is visible in the public record" />
         <div className="pl-11">
           <div className="flex flex-wrap gap-2 mb-3">
             <Badge variant="secondary" className="text-xs font-mono">{company.industry}</Badge>
@@ -195,7 +195,7 @@ export function AdvocacyReport({ company, executives = [], contracts = [], issue
       {/* ═══ 3. WHAT THEY SAY ═══ */}
       {publicStances.length > 0 && (
         <section>
-          <SectionDivider number={2} icon={Megaphone} title="What They Say" subtitle="Their words — from public filings and corporate communications" />
+          <SectionDivider number={2} icon={Megaphone} title="Public Positioning" subtitle="What they have stated publicly" />
           <div className="pl-11 space-y-2">
             {publicStances.slice(0, 8).map((s, i) => (
               <div key={i} className="p-3 border-l-2 border-muted-foreground/20 bg-muted/5">
@@ -213,7 +213,7 @@ export function AdvocacyReport({ company, executives = [], contracts = [], issue
 
       {/* ═══ 4. WHAT THEY DO ═══ */}
       <section>
-        <SectionDivider number={3} icon={DollarSign} title="What They Do" subtitle="Follow the money, follow the spend" />
+        <SectionDivider number={3} icon={DollarSign} title="Spending Record" subtitle="Where the money goes, based on public filings" />
         <div className="pl-11">
           <div className="overflow-x-auto">
             <table className="w-full text-sm">
@@ -221,7 +221,7 @@ export function AdvocacyReport({ company, executives = [], contracts = [], issue
                 <tr className="border-b border-border/40">
                   <th className="text-left py-2 pr-4 font-mono text-[10px] text-muted-foreground uppercase tracking-wider">Metric</th>
                   <th className="text-left py-2 pr-4 font-mono text-[10px] text-muted-foreground uppercase tracking-wider">Amount</th>
-                  <th className="text-left py-2 font-mono text-[10px] text-muted-foreground uppercase tracking-wider">So What?</th>
+                  <th className="text-left py-2 font-mono text-[10px] text-muted-foreground uppercase tracking-wider">What It Tends to Mean</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-border/20">
@@ -229,14 +229,14 @@ export function AdvocacyReport({ company, executives = [], contracts = [], issue
                   <td className="py-3 pr-4 font-medium text-foreground">Lobbying</td>
                   <td className="py-3 pr-4 font-mono font-bold text-foreground">{fmtMoney(company.lobbying_spend)}</td>
                   <td className="py-3 text-muted-foreground text-xs leading-snug">
-                    {(company.lobbying_spend ?? 0) > 1_000_000 ? "Heavy political spend — actively shaping policy." : (company.lobbying_spend ?? 0) > 0 ? "Moderate lobbying presence." : "No lobbying spend detected."}
+                    {(company.lobbying_spend ?? 0) > 1_000_000 ? "Significant lobbying activity. This company is actively engaged in policy." : (company.lobbying_spend ?? 0) > 0 ? "Some lobbying activity on record." : "No lobbying spend detected."}
                   </td>
                 </tr>
                 <tr>
                   <td className="py-3 pr-4 font-medium text-foreground">PAC Spending</td>
                   <td className="py-3 pr-4 font-mono font-bold text-foreground">{fmtMoney(company.total_pac_spending)}</td>
                   <td className="py-3 text-muted-foreground text-xs leading-snug">
-                    {(company.total_pac_spending ?? 0) > 500_000 ? "Significant PAC activity — check which candidates they fund." : (company.total_pac_spending ?? 0) > 0 ? "Some political giving on record." : "No PAC spending detected."}
+                    {(company.total_pac_spending ?? 0) > 500_000 ? "Consistent PAC activity. Worth reviewing where contributions are directed." : (company.total_pac_spending ?? 0) > 0 ? "Some political giving on record." : "No PAC spending detected."}
                   </td>
                 </tr>
                 <tr>
@@ -250,7 +250,7 @@ export function AdvocacyReport({ company, executives = [], contracts = [], issue
                   <tr>
                     <td className="py-3 pr-4 font-medium text-foreground">Subsidies</td>
                     <td className="py-3 pr-4 font-mono font-bold text-foreground">{fmtMoney(company.subsidies_received)}</td>
-                    <td className="py-3 text-muted-foreground text-xs leading-snug">Public money received — worth checking against layoff history.</td>
+                    <td className="py-3 text-muted-foreground text-xs leading-snug">Public funds received. Consider alongside workforce changes.</td>
                   </tr>
                 )}
                 {company.effective_tax_rate && (
@@ -290,7 +290,7 @@ export function AdvocacyReport({ company, executives = [], contracts = [], issue
       {/* ═══ 5. INTEGRITY GAP ═══ */}
       {gapStances.length > 0 && (
         <section>
-          <SectionDivider number={4} icon={Eye} title="Integrity Gap" subtitle="Where their words and their record don't match" />
+          <SectionDivider number={4} icon={Eye} title="Stance-Record Gap" subtitle="Where public positioning and documented activity diverge" />
           <div className="pl-11 space-y-3">
             {gapStances.map((s, i) => (
               <div key={i} className={cn(
@@ -317,11 +317,11 @@ export function AdvocacyReport({ company, executives = [], contracts = [], issue
       {/* ═══ 6. LABOR IMPACT ═══ */}
       {eeocCases.length > 0 && (
         <section>
-          <SectionDivider number={5} icon={Scale} title="Labor Impact" subtitle="Enforcement actions and complaints on the record" />
+          <SectionDivider number={5} icon={Scale} title="Enforcement Record" subtitle="Formal actions and complaints documented in public records" />
           <div className="pl-11">
             <EEOCCaseAlert cases={eeocCases as any} />
             <p className="mt-3 text-xs text-muted-foreground leading-relaxed italic">
-              Enforcement actions indicate a formal complaint was investigated. Patterns across multiple filings are worth noting — single filings less so.
+              An enforcement action means a formal complaint was investigated. A pattern across multiple filings is more meaningful than a single filing.
             </p>
           </div>
         </section>
@@ -329,7 +329,7 @@ export function AdvocacyReport({ company, executives = [], contracts = [], issue
 
       {/* ═══ 7. SAFETY & WORKFORCE RISK ═══ */}
       <section>
-        <SectionDivider number={6} icon={Users} title="Safety & Workforce Risk" subtitle="Demographics, stability, and hiring patterns" />
+        <SectionDivider number={6} icon={Users} title="Workforce Signals" subtitle="Demographics, stability, and hiring patterns" />
         <div className="pl-11">
           <WorkforceDemographicsLayer companyId={company.id} companyName={company.name} />
         </div>
@@ -337,7 +337,7 @@ export function AdvocacyReport({ company, executives = [], contracts = [], issue
 
       {/* ═══ 8. POLITICAL & POLICY ALIGNMENT ═══ */}
       <section>
-        <SectionDivider number={7} icon={Megaphone} title="Political & Policy Alignment" subtitle="PAC spending, lobbying, executive donations" />
+        <SectionDivider number={7} icon={Megaphone} title="Political Activity" subtitle="PAC spending, lobbying, and executive contributions" />
         <div className="pl-11 space-y-4">
           {topDonors.length > 0 && (
             <div>
@@ -361,7 +361,7 @@ export function AdvocacyReport({ company, executives = [], contracts = [], issue
 
       {/* ═══ 9. WHAT THEY FUND & SUPPORT ═══ */}
       <section>
-        <SectionDivider number={8} icon={Heart} title="What They Fund & Support" subtitle="Institutional DNA, policy scores, and network connections" />
+        <SectionDivider number={8} icon={Heart} title="Institutional Affiliations" subtitle="What they fund, support, and are connected to" />
         <div className="pl-11 space-y-4">
           <ExecutiveGivingSection companyId={company.id} companyName={company.name} companySlug={company.slug} />
           <InstitutionalDNACard companyId={company.id} companyName={company.name} />
@@ -372,7 +372,7 @@ export function AdvocacyReport({ company, executives = [], contracts = [], issue
 
       {/* ═══ 10. WHAT THIS MEANS FOR YOU ═══ */}
       <section>
-        <SectionDivider number={9} icon={Shield} title="What This Means For You" subtitle="How this company lines up with what you said matters" />
+        <SectionDivider number={9} icon={Shield} title="What This Means for You" subtitle="How these patterns relate to what you care about" />
         <div className="pl-11 space-y-4">
           <ValuesAlignmentSection
             companyName={company.name}
@@ -441,7 +441,7 @@ export function AdvocacyReport({ company, executives = [], contracts = [], issue
 
       {/* ── AI ANALYSIS NOTICE ── */}
       <p className="text-[10px] text-muted-foreground/60 text-center font-mono tracking-wider uppercase pt-4">
-        Signal-based interpretation from public records · Not legal or career advice · Review evidence and make the call that's right for you
+        Based on public records · Not legal or career advice · Review the evidence and decide what matters to you
       </p>
     </div>
   );
