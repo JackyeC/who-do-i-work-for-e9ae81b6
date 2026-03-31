@@ -191,17 +191,17 @@ const POSTER_H_BIG = 700;
 const POSTER_W_SM = 420;
 const POSTER_H_SM = 560;
 
-/* ── Editorial poster: strict 3-level hierarchy ── */
+/* ── Editorial poster: strict 5-level hierarchy ── */
 function EmojiPoster({ poster, big, id, accent, onAccent, className }: {
   poster: PosterData; big: boolean; id: string; accent: string; onAccent: string; className?: string;
 }) {
-  const { bg: pbg, emoji, bigTxt, copy, fine, tag } = poster;
+  const { bg: pbg, emoji, bigTxt, sub, copy, fine, tag } = poster;
   const w = big ? POSTER_W_BIG : POSTER_W_SM;
   const h = big ? POSTER_H_BIG : POSTER_H_SM;
 
   const bgHex = (pbg || "#0A0A0E").replace("#", "");
   const bgLum = (0.299 * parseInt(bgHex.substr(0, 2), 16) + 0.587 * parseInt(bgHex.substr(2, 2), 16) + 0.114 * parseInt(bgHex.substr(4, 2), 16)) / 255;
-  const headlineColor = bgLum < 0.4 ? "#FFFFFF" : "#000000";
+  const headlineColor = bgLum < 0.4 ? "#FFFFFF" : "#111111";
 
   return (
     <div
@@ -216,67 +216,113 @@ function EmojiPoster({ poster, big, id, accent, onAccent, className }: {
     >
       <div className="absolute pointer-events-none rounded-sm z-10" style={{ inset: 10, border: `1px solid ${accent}44` }} />
 
-      {/* TERTIARY: Brand lockup — small, top, clean */}
-      <div className="flex-shrink-0 flex items-center justify-between" style={{ padding: big ? "16px 22px 0" : "12px 16px 0" }}>
-        <div style={{ fontSize: big ? 10 : 9, fontWeight: 800, textTransform: "uppercase", letterSpacing: "0.2em", color: accent, opacity: 0.9, fontFamily: "'Inter', sans-serif" }}>
-          WDIWF
-        </div>
-        <div style={{ fontSize: big ? 10 : 9, fontWeight: 600, textTransform: "uppercase", letterSpacing: "0.15em", color: headlineColor, opacity: 0.4, fontFamily: "'Inter', sans-serif" }}>
-          {tag}
+      {/* LEVEL 0: Presenter label — small, top */}
+      <div className="flex-shrink-0 text-center" style={{ padding: big ? "16px 22px 0" : "12px 16px 0" }}>
+        <div style={{
+          fontSize: big ? 9 : 8,
+          fontWeight: 700,
+          textTransform: "uppercase",
+          letterSpacing: "0.22em",
+          color: accent,
+          opacity: 0.75,
+          fontFamily: "'DM Sans', 'Inter', sans-serif",
+        }}>
+          JACKYE CLAYTON × WDIWF PRESENTS
         </div>
       </div>
 
-      {/* PRIMARY: Big emoji + dominant headline */}
+      {/* LEVEL 1–4: Content block */}
       <div className="flex-1 flex flex-col justify-center" style={{ padding: big ? "0 24px" : "0 18px" }}>
-        <div style={{ fontSize: big ? 72 : 56, lineHeight: 1, marginBottom: big ? 12 : 8 }}>
-          {emoji}
+        {/* LEVEL 1: Emoji (small, inline) + dominant headline */}
+        <div className="flex items-end gap-2" style={{ marginBottom: big ? 4 : 2 }}>
+          <span style={{ fontSize: big ? 28 : 22, lineHeight: 1 }}>{emoji}</span>
         </div>
         <div style={{
-          fontSize: big ? 68 : 50,
+          fontSize: big ? 62 : 46,
           fontWeight: 900,
-          color: headlineColor,
-          lineHeight: 0.88,
+          color: accent,
+          lineHeight: 0.9,
           letterSpacing: "-0.03em",
-          fontFamily: "'Inter', sans-serif",
-          textShadow: bgLum < 0.3 ? `0 0 40px ${accent}30` : "none",
+          fontFamily: "'DM Sans', 'Inter', sans-serif",
+          textShadow: `0 2px 12px rgba(0,0,0,0.5), 0 0 30px ${accent}25`,
         }}>
           {bigTxt}
-          <span style={{ color: accent }}>.</span>
         </div>
 
-        {/* SECONDARY: One supporting line */}
+        {/* LEVEL 2: Subhead */}
         <div style={{
-          fontSize: big ? 16 : 13,
-          fontWeight: 500,
+          fontSize: big ? 20 : 16,
+          fontWeight: 800,
+          color: headlineColor,
+          lineHeight: 1.2,
+          marginTop: big ? 10 : 8,
+          textTransform: "uppercase",
+          letterSpacing: "0.02em",
+          fontFamily: "'DM Sans', 'Inter', sans-serif",
+        }}>
+          {sub}
+        </div>
+
+        {/* LEVEL 3: One-line explainer */}
+        <div style={{
+          fontSize: big ? 13 : 11,
+          fontWeight: 400,
           color: headlineColor,
           opacity: 0.7,
-          lineHeight: 1.45,
-          marginTop: big ? 14 : 10,
-          maxWidth: "88%",
-          fontFamily: "'Inter', sans-serif",
+          lineHeight: 1.5,
+          marginTop: big ? 12 : 8,
+          maxWidth: "92%",
+          fontFamily: "'DM Sans', 'Inter', sans-serif",
         }}>
           {copy}
         </div>
+
+        {/* LEVEL 4: Punchline quote */}
+        <div style={{
+          fontSize: big ? 14 : 12,
+          fontWeight: 600,
+          fontStyle: "italic",
+          color: accent,
+          lineHeight: 1.4,
+          marginTop: big ? 14 : 10,
+          maxWidth: "90%",
+          fontFamily: "'DM Sans', 'Inter', sans-serif",
+          borderLeft: `2px solid ${accent}55`,
+          paddingLeft: big ? 12 : 8,
+        }}>
+          "{fine}"
+        </div>
       </div>
 
-      {/* TERTIARY: Footer */}
+      {/* LEVEL 5: Fine print + footer */}
       <div className="flex-shrink-0" style={{
         padding: big ? "12px 24px 16px" : "10px 18px 14px",
         borderTop: `1px solid ${accent}20`,
       }}>
-        <div style={{ fontSize: big ? 10 : 9, fontWeight: 500, color: accent, opacity: 0.6, lineHeight: 1.5, fontFamily: "'Inter', sans-serif" }}>
-          {fine}
+        <div style={{ fontSize: big ? 9 : 8, fontWeight: 400, color: headlineColor, opacity: 0.4, lineHeight: 1.5, fontFamily: "'DM Sans', 'Inter', sans-serif" }}>
+          {tag}
         </div>
         <div style={{
-          fontSize: big ? 11 : 9,
-          fontWeight: 800,
+          fontSize: big ? 12 : 10,
+          fontWeight: 900,
           color: accent,
           textTransform: "uppercase",
-          letterSpacing: "0.18em",
-          marginTop: 5,
-          fontFamily: "'Inter', sans-serif",
+          letterSpacing: "0.12em",
+          marginTop: 4,
+          fontFamily: "'DM Sans', 'Inter', sans-serif",
         }}>
-          JACKYE CLAYTON × WDIWF
+          WDIWF.JACKYECLAYTON.COM
+        </div>
+        <div style={{
+          fontSize: big ? 8 : 7,
+          fontWeight: 500,
+          color: headlineColor,
+          opacity: 0.4,
+          marginTop: 2,
+          fontFamily: "'DM Sans', 'Inter', sans-serif",
+          letterSpacing: "0.04em",
+        }}>
+          Every company runs a check on you. WDIWF runs one on them.
         </div>
       </div>
     </div>
