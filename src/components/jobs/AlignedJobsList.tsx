@@ -90,6 +90,7 @@ function JobCard({ job, onQueue, queueing, isQueued }: {
                 )}
               </div>
             )}
+            <MatchExplainer alignmentScore={job.alignment_score} matchedSignals={job.matched_signals} />
           </div>
           <div className="flex flex-col gap-2 shrink-0">
             <EasyApplyButton

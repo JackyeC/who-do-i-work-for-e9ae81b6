@@ -336,9 +336,14 @@ export default function FounderConsole() {
           <ConversionFunnelPanel />
         </div>
 
-        {/* Compensation Health + Founder Notes */}
+        {/* Compliance Health + Compensation Health */}
         <div className="mt-6 grid grid-cols-1 lg:grid-cols-2 gap-6">
+          <ComplianceDashboard />
           <CompensationHealthPanel />
+        </div>
+
+        {/* Founder Notes */}
+        <div className="mt-6">
           <FounderNotesPanel />
         </div>
 
