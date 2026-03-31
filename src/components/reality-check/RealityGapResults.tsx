@@ -99,7 +99,7 @@ export function RealityGapResults({ result, onReset }: Props) {
         {/* Integrity Gap Score */}
         <Card className={cn("ring-1", style.bg, style.ring)}>
           <CardContent className="p-5 text-center">
-            <p className="font-mono text-xs tracking-widest uppercase text-muted-foreground mb-2">Integrity Gap</p>
+            <p className="font-mono text-xs tracking-widest uppercase text-muted-foreground mb-2">Stance-Record Gap</p>
             <p className={cn("text-4xl font-black tabular-nums", style.text)}>{result.integrityGapScore}</p>
             <Badge variant="outline" className={cn("mt-2 gap-1 text-xs", style.text)}>
               <GapIcon className="w-3 h-3" />
