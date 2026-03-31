@@ -1,272 +1,164 @@
-import { useState } from "react";
-import { useNavigate, useSearchParams } from "react-router-dom";
+import { Link } from "react-router-dom";
 import { usePageSEO } from "@/hooks/use-page-seo";
-import { motion } from "framer-motion";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import {
-  Landmark, Search, ArrowRight, Building2, Users, TrendingUp,
-  AlertTriangle, FileText, Briefcase, ChevronRight,
-} from "lucide-react";
+import { ArrowRight, Landmark, DollarSign, Users, FileText, Scale, Building2 } from "lucide-react";
 
-const fadeUp = {
-  hidden: { opacity: 0, y: 16 },
-  show: (i: number = 0) => ({
-    opacity: 1, y: 0,
-    transition: { duration: 0.4, delay: i * 0.08 },
-  }),
-};
-
-// Sample policy impacts — in production these come from the database
-const SAMPLE_BILLS = [
+const INFLUENCE_LAYERS = [
   {
-    id: "ai-hiring-regulation",
-    title: "AI Hiring Regulation Act",
-    status: "Introduced",
-    statusColor: "bg-civic-yellow/20 text-civic-yellow",
-    summary: "Regulates the use of AI systems in hiring decisions, requiring bias audits and transparency disclosures for automated employment tools.",
-    industries: ["HR Technology", "Enterprise Software", "Recruiting Platforms"],
-    companies: ["Workday", "Eightfold", "Greenhouse", "Lever", "HireVue"],
-    careerSignals: [
-      "Demand for AI compliance specialists may increase",
-      "Talent intelligence analyst roles likely to grow",
-      "HR tech product managers need regulatory expertise",
-    ],
-    workforceImpact: "High",
-    issueArea: "Labor Rights",
+    icon: DollarSign,
+    label: "PAC Spending",
+    title: "Where the money goes.",
+    desc: "Corporate PACs funnel employee and executive donations to candidates and committees. WDIWF tracks every FEC-reported dollar so you can see which politicians your employer backs — and whether those politicians vote for or against worker protections.",
   },
   {
-    id: "clean-energy-transition",
-    title: "Clean Energy Workforce Investment Act",
-    status: "In Committee",
-    statusColor: "bg-civic-blue/20 text-civic-blue",
-    summary: "Invests $50B in clean energy workforce training and incentivizes companies transitioning to renewable infrastructure.",
-    industries: ["Renewable Energy", "Manufacturing", "Construction", "Utilities"],
-    companies: ["NextEra Energy", "First Solar", "Tesla", "Vestas Wind Systems"],
-    careerSignals: [
-      "Solar installation technician demand projected to grow 27%",
-      "Energy auditor roles expanding in commercial sector",
-      "Battery storage engineers in high demand",
-    ],
-    workforceImpact: "Very High",
-    issueArea: "Climate",
+    icon: Landmark,
+    label: "Lobbying",
+    title: "What they lobby for behind closed doors.",
+    desc: "Companies spend millions lobbying Congress and state legislatures on bills that affect wages, benefits, safety standards, and hiring practices. We pull Senate Lobbying Disclosure Act filings so you can see what your employer fights for when you're not watching.",
   },
   {
-    id: "healthcare-price-transparency",
-    title: "Healthcare Price Transparency Enforcement Act",
-    status: "Passed House",
-    statusColor: "bg-civic-green/20 text-civic-green",
-    summary: "Strengthens enforcement of hospital price transparency rules and expands requirements to insurance companies and pharmacy benefit managers.",
-    industries: ["Healthcare", "Health Insurance", "Pharmacy", "Health IT"],
-    companies: ["UnitedHealth Group", "CVS Health", "Cigna", "Epic Systems"],
-    careerSignals: [
-      "Health data analysts needed for compliance reporting",
-      "Healthcare compliance officers in higher demand",
-      "Revenue cycle management roles evolving",
-    ],
-    workforceImpact: "Medium",
-    issueArea: "Healthcare",
+    icon: Users,
+    label: "Board & Executive Influence",
+    title: "Who sits at the table — and where else they sit.",
+    desc: "Board interlocks, advisory committee seats, and revolving-door connections between corporations and government agencies shape regulation. WDIWF maps these relationships so you can see the influence network around your employer.",
   },
   {
-    id: "data-privacy-act",
-    title: "American Data Privacy and Protection Act",
-    status: "In Committee",
-    statusColor: "bg-civic-blue/20 text-civic-blue",
-    summary: "Establishes comprehensive federal data privacy standards, granting consumers rights over personal data and imposing obligations on companies handling user information.",
-    industries: ["Technology", "Advertising", "E-Commerce", "Financial Services"],
-    companies: ["Meta", "Google", "Amazon", "Palantir", "Salesforce"],
-    careerSignals: [
-      "Privacy engineer roles projected to double",
-      "Data protection officer positions becoming mandatory",
-      "Compliance automation specialist demand rising",
-    ],
-    workforceImpact: "High",
-    issueArea: "Consumer Protection",
+    icon: Scale,
+    label: "Enforcement & Labor Record",
+    title: "What the regulators found.",
+    desc: "EEOC filings, OSHA citations, NLRB complaints, and Wage & Hour investigations reveal patterns that job postings never mention. We surface enforcement records so you can see whether a company's 'great place to work' claim holds up under scrutiny.",
+  },
+  {
+    icon: FileText,
+    label: "Trade Associations & Dark Money",
+    title: "The organizations they fund — and what those organizations do.",
+    desc: "Many companies fund industry groups and 501(c)(4) organizations that lobby against worker-friendly legislation while the company publicly claims to support those same issues. We track the money trail.",
   },
 ];
 
-const ISSUE_AREAS = ["All", "Labor Rights", "Climate", "Healthcare", "Consumer Protection", "Immigration", "Civil Rights"];
+const CANDIDATE_STAKES = [
+  "A company lobbying against pay transparency while advertising 'competitive compensation'",
+  "An employer's PAC funding politicians who vote against parental leave — while promoting their family-friendly culture",
+  "A firm spending millions fighting OSHA safety regulations while posting 'employee wellbeing' content on LinkedIn",
+  "A tech company lobbying against AI hiring regulation while using unaudited AI screening on candidates",
+];
 
 export default function PolicyHub() {
   usePageSEO({
-    title: "Policy Intelligence — How Legislation Shapes Careers",
-    description: "Track federal bills and regulations that affect companies, industries, and careers. See workforce impact, affected employers, and career signals.",
+    title: "Policy & Influence — How Employer Power Shapes Your Career",
+    description: "See how lobbying, PAC spending, board connections, and policy influence shape the companies you work for. Public records, not opinions.",
     path: "/policy",
-    jsonLd: {
-      "@type": "WebPage",
-      name: "Policy Intelligence Hub",
-      description: "Track federal bills and regulations affecting companies, industries, and careers. Workforce impact analysis and career signals.",
-      isPartOf: { "@type": "WebApplication", name: "Who Do I Work For?" },
-    },
-  });
-
-  const [searchParams] = useSearchParams();
-  const [query, setQuery] = useState("");
-  const [selectedIssue, setSelectedIssue] = useState("All");
-  const navigate = useNavigate();
-  const activeView = searchParams.get("view") || "impact";
-
-  const filteredBills = SAMPLE_BILLS.filter(bill => {
-    const matchesSearch = !query || bill.title.toLowerCase().includes(query.toLowerCase()) ||
-      bill.summary.toLowerCase().includes(query.toLowerCase());
-    const matchesIssue = selectedIssue === "All" || bill.issueArea === selectedIssue;
-    return matchesSearch && matchesIssue;
   });
 
   return (
-    <div className="flex flex-col">
-      {/* Hero */}
-      <section className="border-b border-border/30 bg-gradient-to-b from-primary/[0.04] to-transparent">
-        <div className="container mx-auto px-4 py-10 sm:py-14">
-          <motion.div initial="hidden" animate="show" className="max-w-3xl">
-            <motion.div variants={fadeUp} custom={0} className="flex items-center gap-2 mb-4">
-              <Landmark className="w-5 h-5 text-primary" />
-              <span className="text-sm font-semibold text-primary uppercase tracking-wider">Policy Intelligence</span>
-            </motion.div>
-            <motion.h1 variants={fadeUp} custom={1}
-              className="text-3xl sm:text-4xl font-display font-bold text-foreground mb-3 tracking-tight"
-            >
-              How legislation shapes industries, companies, and careers
-            </motion.h1>
-            <motion.p variants={fadeUp} custom={2} className="text-muted-foreground text-lg max-w-2xl">
-              Track bills and regulations. See which companies are affected, which industries are growing, and which careers are emerging.
-            </motion.p>
-          </motion.div>
-        </div>
-      </section>
+    <div className="min-h-screen flex flex-col bg-background">
+      <main className="flex-1">
 
-      {/* Controls */}
-      <div className="container mx-auto px-4 py-6">
-        <div className="flex flex-col sm:flex-row gap-4 items-start sm:items-center justify-between mb-6">
-          <div className="relative w-full sm:w-80">
-            <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
-            <Input
-              value={query}
-              onChange={(e) => setQuery(e.target.value)}
-              placeholder="Search legislation..."
-              className="pl-10"
-            />
+        {/* ═══ HERO ═══ */}
+        <section className="max-w-[900px] mx-auto px-6 lg:px-16 pt-20 pb-16 text-center">
+          <p className="font-mono text-xs tracking-[0.15em] uppercase text-primary mb-5">
+            Policy & Influence
+          </p>
+          <h1
+            className="font-sans text-foreground leading-[1.08] mb-5 mx-auto"
+            style={{ fontSize: "clamp(1.75rem, 3.5vw, 2.75rem)", fontWeight: 800, letterSpacing: "-1px", maxWidth: "20ch" }}
+          >
+            Your employer has a political footprint. You should see it.
+          </h1>
+          <p className="text-sm text-muted-foreground max-w-[52ch] mx-auto leading-relaxed">
+            Lobbying, PAC spending, board connections, and enforcement records shape the companies you work for.
+            WDIWF surfaces these signals from public filings so you can see the full picture before you sign.
+          </p>
+        </section>
+
+        <div className="gold-line mx-auto w-full max-w-[200px]" />
+
+        {/* ═══ WHY THIS MATTERS TO WORKERS ═══ */}
+        <section className="max-w-[900px] mx-auto px-6 lg:px-16 py-16">
+          <div className="max-w-[640px]">
+            <p className="font-mono text-xs tracking-[0.15em] uppercase text-primary mb-4">Why This Matters</p>
+            <h2 className="font-sans text-lg font-bold text-foreground mb-4">
+              Policy isn't abstract. It's your paycheck, your safety, and your rights.
+            </h2>
+            <div className="space-y-5 text-sm text-muted-foreground leading-relaxed">
+              <p>
+                The legislation your employer lobbies for — or against — directly affects your wages, benefits, workplace safety, and job security. When a company spends millions fighting pay transparency laws, that's not just politics. That's your offer letter.
+              </p>
+              <p>
+                Most career platforms ignore this entirely. WDIWF doesn't. We believe you have the right to know what your labor supports and whether the company's public values match their political spending.
+              </p>
+            </div>
           </div>
-          <div className="flex gap-2 flex-wrap">
-            {ISSUE_AREAS.map(area => (
-              <Button
-                key={area}
-                variant={selectedIssue === area ? "default" : "outline"}
-                size="sm"
-                onClick={() => setSelectedIssue(area)}
-                className="rounded-full text-xs"
-              >
-                {area}
-              </Button>
-            ))}
-          </div>
-        </div>
+        </section>
 
-        {/* Bill cards */}
-        <div className="space-y-4">
-          {filteredBills.map((bill, i) => (
-            <motion.div
-              key={bill.id}
-              initial={{ opacity: 0, y: 12 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: i * 0.06, duration: 0.35 }}
-            >
-              <Card className="overflow-hidden hover:shadow-md transition-shadow cursor-pointer group"
-                onClick={() => navigate(`/policy/${bill.id}`)}
-              >
-                <CardContent className="p-0">
-                  <div className="flex flex-col lg:flex-row">
-                    {/* Main info */}
-                    <div className="flex-1 p-6">
-                      <div className="flex items-start justify-between gap-4 mb-3">
-                        <div>
-                          <div className="flex items-center gap-2 mb-1.5">
-                            <Badge variant="outline" className={`${bill.statusColor} border-0 text-xs`}>
-                              {bill.status}
-                            </Badge>
-                            <Badge variant="outline" className="text-xs">
-                              {bill.issueArea}
-                            </Badge>
-                          </div>
-                          <h3 className="text-lg font-semibold text-foreground font-display group-hover:text-primary transition-colors">
-                            {bill.title}
-                          </h3>
-                        </div>
-                        <ChevronRight className="w-5 h-5 text-muted-foreground/40 shrink-0 group-hover:text-primary transition-colors mt-1" />
-                      </div>
-
-                      <p className="text-sm text-muted-foreground mb-4 leading-relaxed">
-                        {bill.summary}
-                      </p>
-
-                      {/* Impact grid */}
-                      <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
-                        <div className="flex items-start gap-2">
-                          <TrendingUp className="w-4 h-4 text-civic-blue mt-0.5 shrink-0" />
-                          <div>
-                            <p className="text-xs font-medium text-muted-foreground mb-1">Industries</p>
-                            <div className="flex flex-wrap gap-1">
-                              {bill.industries.slice(0, 3).map(ind => (
-                                <span key={ind} className="text-xs bg-muted px-2 py-0.5 rounded-full text-foreground">{ind}</span>
-                              ))}
-                              {bill.industries.length > 3 && (
-                                <span className="text-xs text-muted-foreground">+{bill.industries.length - 3}</span>
-                              )}
-                            </div>
-                          </div>
-                        </div>
-
-                        <div className="flex items-start gap-2">
-                          <Building2 className="w-4 h-4 text-civic-gold mt-0.5 shrink-0" />
-                          <div>
-                            <p className="text-xs font-medium text-muted-foreground mb-1">Companies</p>
-                            <div className="flex flex-wrap gap-1">
-                              {bill.companies.slice(0, 3).map(co => (
-                                <span key={co} className="text-xs bg-muted px-2 py-0.5 rounded-full text-foreground">{co}</span>
-                              ))}
-                              {bill.companies.length > 3 && (
-                                <span className="text-xs text-muted-foreground">+{bill.companies.length - 3}</span>
-                              )}
-                            </div>
-                          </div>
-                        </div>
-
-                        <div className="flex items-start gap-2">
-                          <Briefcase className="w-4 h-4 text-civic-green mt-0.5 shrink-0" />
-                          <div>
-                            <p className="text-xs font-medium text-muted-foreground mb-1">Career Signals</p>
-                            <p className="text-xs text-foreground">{bill.careerSignals[0]}</p>
-                          </div>
-                        </div>
-                      </div>
+        {/* ═══ WHAT WE TRACK ═══ */}
+        <section className="bg-card border-y border-border px-6 lg:px-16 py-16">
+          <div className="max-w-[900px] mx-auto">
+            <p className="font-mono text-xs tracking-[0.15em] uppercase text-primary mb-4">What We Track</p>
+            <h2 className="font-sans text-lg font-bold text-foreground mb-8">
+              Five layers of employer influence.
+            </h2>
+            <div className="space-y-8">
+              {INFLUENCE_LAYERS.map((layer, i) => {
+                const Icon = layer.icon;
+                return (
+                  <div key={i} className="flex gap-5 items-start">
+                    <div className="flex items-center justify-center w-10 h-10 border border-border bg-background shrink-0">
+                      <Icon className="w-5 h-5 text-primary" />
                     </div>
-
-                    {/* Workforce impact badge */}
-                    <div className="lg:w-32 border-t lg:border-t-0 lg:border-l border-border/30 flex items-center justify-center p-4 bg-muted/30">
-                      <div className="text-center">
-                        <p className="text-xs uppercase tracking-wider text-muted-foreground mb-1">Workforce Impact</p>
-                        <Badge variant={bill.workforceImpact === "Very High" ? "destructive" : "default"} className="text-xs">
-                          {bill.workforceImpact}
-                        </Badge>
-                      </div>
+                    <div>
+                      <p className="font-mono text-xs text-primary tracking-wide uppercase mb-1">{layer.label}</p>
+                      <h3 className="text-sm font-bold text-foreground mb-1">{layer.title}</h3>
+                      <p className="text-sm text-muted-foreground leading-relaxed">{layer.desc}</p>
                     </div>
                   </div>
-                </CardContent>
-              </Card>
-            </motion.div>
-          ))}
-        </div>
-
-        {filteredBills.length === 0 && (
-          <div className="text-center py-16">
-            <FileText className="w-10 h-10 text-muted-foreground/30 mx-auto mb-3" />
-            <p className="text-muted-foreground">No legislation found matching your criteria.</p>
+                );
+              })}
+            </div>
           </div>
-        )}
-      </div>
+        </section>
+
+        {/* ═══ REAL EXAMPLES ═══ */}
+        <section className="max-w-[900px] mx-auto px-6 lg:px-16 py-16">
+          <div className="max-w-[640px]">
+            <p className="font-mono text-xs tracking-[0.15em] uppercase text-primary mb-4">What This Looks Like</p>
+            <h2 className="font-sans text-lg font-bold text-foreground mb-6">
+              The gap between what they say and what they fund.
+            </h2>
+            <div className="space-y-4">
+              {CANDIDATE_STAKES.map((stake, i) => (
+                <div key={i} className="flex gap-3 items-start">
+                  <span className="font-mono text-xs text-primary mt-0.5 shrink-0">{String(i + 1).padStart(2, "0")}</span>
+                  <p className="text-sm text-muted-foreground leading-relaxed">{stake}</p>
+                </div>
+              ))}
+            </div>
+            <p className="text-sm text-muted-foreground leading-relaxed mt-6">
+              These aren't hypotheticals. These are patterns WDIWF detects in public filings — and surfaces in every company dossier.
+            </p>
+          </div>
+        </section>
+
+        <div className="gold-line mx-auto w-full max-w-[200px]" />
+
+        {/* ═══ CTA ═══ */}
+        <section className="max-w-[900px] mx-auto px-6 lg:px-16 py-20 text-center">
+          <p className="font-mono text-xs tracking-[0.15em] uppercase text-primary mb-4">See the Receipts</p>
+          <h2 className="font-sans text-foreground leading-[1.1] mb-4" style={{ fontSize: "clamp(1.5rem, 2.5vw, 2rem)", fontWeight: 800 }}>
+            Check your employer's political footprint.
+          </h2>
+          <p className="text-sm text-muted-foreground max-w-[46ch] mx-auto mb-8">
+            Search any company. See their PAC spending, lobbying record, enforcement history, and influence network — all from public sources.
+          </p>
+          <Link
+            to="/browse"
+            className="inline-flex items-center justify-center gap-2 bg-primary text-primary-foreground px-8 py-3.5 font-sans text-sm font-semibold hover:brightness-110 transition-all"
+          >
+            <Building2 className="w-4 h-4" />
+            See Employer Policy Influence
+            <ArrowRight className="w-4 h-4" />
+          </Link>
+        </section>
+      </main>
     </div>
   );
 }
