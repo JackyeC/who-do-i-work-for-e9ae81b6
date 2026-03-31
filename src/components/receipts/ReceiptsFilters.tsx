@@ -44,7 +44,7 @@ export function ReceiptsFilters({
         />
       </div>
 
-      {/* Category tabs */}
+      {/* Category tabs — collapsible chips on mobile */}
       <div className="flex flex-wrap gap-1.5">
         {RECEIPT_CATEGORIES.map((cat) => (
           <Button
@@ -52,10 +52,10 @@ export function ReceiptsFilters({
             size="sm"
             variant={category === cat.value ? "default" : "secondary"}
             className={cn(
-              "text-xs h-7 px-2.5 rounded-full",
+              "text-xs h-8 px-3 rounded-full font-semibold transition-all",
               category === cat.value
-                ? "bg-primary text-primary-foreground"
-                : "bg-secondary text-secondary-foreground"
+                ? "bg-primary text-primary-foreground shadow-sm"
+                : "bg-secondary text-secondary-foreground hover:bg-secondary/80"
             )}
             onClick={() => onCategoryChange(cat.value)}
           >
@@ -66,21 +66,21 @@ export function ReceiptsFilters({
 
       {/* Sort + Heat controls */}
       <div className="flex flex-wrap items-center gap-2">
-        {/* Sort */}
+        {/* Sort — toggle behavior: clicking active sort returns to default */}
         <div className="flex items-center gap-1">
-          <ArrowUpDown className="w-3.5 h-3.5 text-muted-foreground" />
+          <ArrowUpDown className="w-3.5 h-3.5 text-muted-foreground shrink-0" />
           {SORT_OPTIONS.map((opt) => (
             <Button
               key={opt.value}
               size="sm"
               variant={sortMode === opt.value ? "default" : "ghost"}
               className={cn(
-                "text-xs h-7 px-2.5",
+                "text-xs h-7 px-2.5 font-semibold",
                 sortMode === opt.value
                   ? "bg-primary text-primary-foreground"
-                  : ""
+                  : "text-muted-foreground hover:text-foreground"
               )}
-              onClick={() => onSortChange(sortMode === opt.value ? null : opt.value)}
+              onClick={() => onSortChange(sortMode === opt.value ? "drama" : opt.value)}
             >
               {opt.value === "hottest" && <Flame className="w-3 h-3 mr-1" />}
               {opt.label}
@@ -93,7 +93,7 @@ export function ReceiptsFilters({
           size="sm"
           variant={showHeatFilter ? "default" : "outline"}
           className={cn(
-            "text-xs h-7 px-2.5 gap-1",
+            "text-xs h-7 px-2.5 gap-1 font-semibold",
             showHeatFilter ? "bg-primary text-primary-foreground" : ""
           )}
           onClick={() => {
@@ -111,23 +111,26 @@ export function ReceiptsFilters({
         </Button>
       </div>
 
-      {/* Heat level filter pills */}
+      {/* Heat level filter pills — large tap targets on mobile */}
       {showHeatFilter && (
-        <div className="flex flex-wrap gap-1.5 pb-1">
+        <div className="flex flex-wrap gap-2 pb-1">
           {[1, 2, 3, 4, 5].map((level) => {
             const heat = HEAT_LABELS[level];
+            const isActive = heatFilter === level;
             return (
               <button
                 key={level}
-                onClick={() => onHeatFilterChange(heatFilter === level ? null : level)}
+                onClick={() => onHeatFilterChange(isActive ? null : level)}
                 className={cn(
-                  "inline-flex items-center gap-1.5 text-xs font-semibold border rounded-full px-3 py-1.5 transition-all",
-                  heatFilter === level
-                    ? heat.bg + " ring-2 ring-offset-1 ring-offset-background ring-current"
-                    : "border-border text-muted-foreground hover:border-border/80"
+                  "inline-flex items-center gap-1.5 font-bold border rounded-full transition-all",
+                  // Mobile-first: large tap targets
+                  "text-[13px] px-4 py-2.5 md:text-xs md:px-3 md:py-1.5",
+                  isActive
+                    ? cn(heat.bg, "ring-2 ring-offset-1 ring-offset-background ring-current shadow-sm")
+                    : "border-border text-muted-foreground hover:border-border/80 hover:bg-muted/50"
                 )}
               >
-                <Flame className="w-3 h-3" fill={heatFilter === level ? "currentColor" : "none"} />
+                <Flame className="w-4 h-4 md:w-3 md:h-3" fill={isActive ? "currentColor" : "none"} />
                 <span className="md:hidden">{heat.mobile}</span>
                 <span className="hidden md:inline">{heat.full}</span>
               </button>
