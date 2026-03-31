@@ -76,7 +76,7 @@ interface ReceiptCardProps {
 }
 
 export function ReceiptCard({ article, featured = false }: ReceiptCardProps) {
-  const bias = getSourceBias(article.source_name);
+  const bias = getSourceBias(article.source_name, article.source_url);
   const timeAgo = article.published_at
     ? formatDistanceToNow(new Date(article.published_at), { addSuffix: true })
     : "";
