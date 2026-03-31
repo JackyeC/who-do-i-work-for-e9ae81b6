@@ -36,9 +36,14 @@ export function FoundingMemberBadge({
   const displayDate = joinedDate
     ? new Date(joinedDate).toLocaleDateString("en-US", {
         month: "long",
+        day: "numeric",
         year: "numeric",
       })
-    : "Pre-Launch 2026";
+    : new Date().toLocaleDateString("en-US", {
+        month: "long",
+        day: "numeric",
+        year: "numeric",
+      });
 
   // Pre-load logo images so html2canvas captures them correctly
   useEffect(() => {
