@@ -21,42 +21,59 @@ export default function PaletteStudio() {
   const handleSelect = useCallback((p: PaletteEntry) => setSelected(p), []);
 
   return (
-    <div className="min-h-screen bg-background">
-      <PaletteHeader mood={mood} onMoodChange={setMood} />
+    <div className="min-h-screen bg-background relative">
+      {/* Ambient background glow that shifts with selected palette */}
+      <div
+        className="fixed inset-0 pointer-events-none transition-all duration-1000 ease-out"
+        style={{
+          background: `radial-gradient(ellipse 80% 50% at 70% 20%, ${selected.accent}06 0%, transparent 50%)`,
+        }}
+      />
 
-      <div className="max-w-[1400px] mx-auto px-4 md:px-8 pb-24">
-        <div className="grid lg:grid-cols-[1fr_480px] gap-8 lg:gap-12 items-start">
-          {/* Left: palette browser */}
-          <div className="order-2 lg:order-1">
-            <div className="flex items-baseline justify-between mb-6">
-              <p className="text-xs font-mono tracking-widest uppercase text-muted-foreground">
-                {filtered.length} palette{filtered.length !== 1 ? "s" : ""}
-              </p>
-              <p className="text-[10px] font-mono text-muted-foreground/50 tracking-wider">
-                SELECT TO PREVIEW
-              </p>
+      <div className="relative">
+        <PaletteHeader mood={mood} onMoodChange={setMood} />
+
+        <div className="max-w-[1400px] mx-auto px-4 md:px-8 pb-28">
+          <div className="grid lg:grid-cols-[1fr_480px] gap-8 lg:gap-16 items-start">
+            {/* Left: palette browser */}
+            <div className="order-2 lg:order-1">
+              <div className="flex items-baseline justify-between mb-5">
+                <p className="text-xs font-mono tracking-[0.15em] uppercase text-muted-foreground/60">
+                  {filtered.length} palette{filtered.length !== 1 ? "s" : ""}
+                </p>
+                <p className="text-[9px] font-mono text-muted-foreground/30 tracking-[0.2em]">
+                  TAP TO PREVIEW
+                </p>
+              </div>
+              <PaletteGrid
+                palettes={filtered}
+                selected={selected}
+                onSelect={handleSelect}
+              />
             </div>
-            <PaletteGrid
-              palettes={filtered}
-              selected={selected}
-              onSelect={handleSelect}
-            />
-          </div>
 
-          {/* Right: live poster preview — sticky */}
-          <div className="order-1 lg:order-2 lg:sticky lg:top-28">
-            <AnimatePresence mode="wait">
-              <motion.div
-                key={selected.id}
-                initial={{ opacity: 0, scale: 0.97, y: 8 }}
-                animate={{ opacity: 1, scale: 1, y: 0 }}
-                exit={{ opacity: 0, scale: 0.97, y: -8 }}
-                transition={{ duration: 0.4, ease: [0.23, 1, 0.32, 1] }}
-              >
-                <PalettePosterPreview palette={selected} />
-              </motion.div>
-            </AnimatePresence>
+            {/* Right: live poster — sticky artboard */}
+            <div className="order-1 lg:order-2 lg:sticky lg:top-28">
+              <AnimatePresence mode="wait">
+                <motion.div
+                  key={selected.id}
+                  initial={{ opacity: 0, scale: 0.96, y: 12 }}
+                  animate={{ opacity: 1, scale: 1, y: 0 }}
+                  exit={{ opacity: 0, scale: 0.96, y: -12 }}
+                  transition={{ duration: 0.5, ease: [0.23, 1, 0.32, 1] }}
+                >
+                  <PalettePosterPreview palette={selected} />
+                </motion.div>
+              </AnimatePresence>
+            </div>
           </div>
+        </div>
+
+        {/* Bottom signature */}
+        <div className="text-center pb-12">
+          <p className="text-[9px] font-mono tracking-[0.3em] uppercase text-muted-foreground/25">
+            CREATED BY JACKYE CLAYTON · WDIWF
+          </p>
         </div>
       </div>
     </div>
