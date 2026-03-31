@@ -527,7 +527,7 @@ export default function Check() {
               {/* View Full Dossier CTA */}
               {selectedCompanySlug && (
                 <div className="text-center">
-                  <Button onClick={() => navigate(`/company/${selectedCompanySlug}`)} className="gap-2">
+                  <Button onClick={() => navigate(`/dossier/${selectedCompanySlug}`)} className="gap-2">
                     View Full Dossier <ExternalLink className="w-4 h-4" />
                   </Button>
                 </div>

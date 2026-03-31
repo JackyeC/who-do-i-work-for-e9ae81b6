@@ -22,7 +22,7 @@ export function InsiderPrideBanner({ companyId, companyName, companySlug, isVeri
   const { toast } = useToast();
   const queryClient = useQueryClient();
 
-  const profileUrl = companySlug ? `${BASE_URL}/company/${companySlug}` : BASE_URL;
+  const profileUrl = companySlug ? `${BASE_URL}/dossier/${companySlug}` : BASE_URL;
   const shareText = `I'm proud to work at a company that puts its receipts where its mouth is. 🛡️ See how ${companyName} aligns with your values on Who Do I Work For?\n\n${profileUrl}`;
 
   // Fetch approved testimonials

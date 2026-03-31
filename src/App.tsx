@@ -4,7 +4,7 @@ import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { BrowserRouter, Routes, Route, Navigate, useLocation } from "react-router-dom";
+import { BrowserRouter, Routes, Route, Navigate, useLocation, useParams } from "react-router-dom";
 import { AuthProvider } from "@/contexts/AuthContext";
 import { ViewModeProvider } from "@/contexts/ViewModeContext";
 import { DossierLensProvider } from "@/contexts/DossierLensContext";
@@ -153,6 +153,11 @@ function ScrollToTop() {
   return null;
 }
 
+function CompanySlugRedirect() {
+  const { id } = useParams();
+  return <Navigate to={`/dossier/${id}`} replace />;
+}
+
 function RouteLoader() {
   return (
     <div className="min-h-screen flex items-center justify-center bg-background">
@@ -212,8 +217,8 @@ const App = () => (
                   <Route path="/newsletter" element={<Receipts />} />
                   <Route path="/hrtech" element={<HRTechIntelligence />} />
                   <Route path="/palette" element={<PaletteStudio />} />
-                  <Route path="/company/:id" element={<CompanyProfile />} />
-                  <Route path="/company/:id/influence" element={<ProtectedRoute><InfluenceGraph /></ProtectedRoute>} />
+                  <Route path="/company/:id" element={<CompanySlugRedirect />} />
+                  <Route path="/company/:id/influence" element={<CompanySlugRedirect />} />
                   <Route path="/dossier/:id" element={<CompanyDossier />} />
                   <Route path="/dossier/guide/:slug" element={<DossierCoachingGuide />} />
                   <Route path="/pricing" element={<Pricing />} />

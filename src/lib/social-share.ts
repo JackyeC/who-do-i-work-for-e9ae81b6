@@ -31,15 +31,15 @@ function getShareUrl(ctx: ShareContext): string {
         ? `${BASE_URL}/compare?a=${ctx.slugA}&b=${ctx.slugB}`
         : `${BASE_URL}/compare`;
     case "company":
-      return ctx.slugA ? `${BASE_URL}/company/${ctx.slugA}` : BASE_URL;
+      return ctx.slugA ? `${BASE_URL}/dossier/${ctx.slugA}` : BASE_URL;
     case "rivalry":
       return `${BASE_URL}/rivalries`;
     case "scorecard":
-      return ctx.slugA ? `${BASE_URL}/company/${ctx.slugA}` : BASE_URL;
+      return ctx.slugA ? `${BASE_URL}/dossier/${ctx.slugA}` : BASE_URL;
     case "receipt":
       return `${BASE_URL}/employer-receipt`;
     case "career-risk":
-      return ctx.slugA ? `${BASE_URL}/company/${ctx.slugA}` : BASE_URL;
+      return ctx.slugA ? `${BASE_URL}/dossier/${ctx.slugA}` : BASE_URL;
     default:
       return BASE_URL;
   }

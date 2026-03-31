@@ -22,7 +22,7 @@ export function ShareableScoreCard({ companyName, clarityScore, signals, slug }:
   const [copied, setCopied] = useState(false);
   const band = clarityBand(clarityScore);
 
-  const shareUrl = `https://wdiwf.jackyeclayton.com/company/${slug}`;
+  const shareUrl = `https://wdiwf.jackyeclayton.com/dossier/${slug}`;
   const shareText = `${companyName} scored ${clarityScore}/100 on employer transparency. Would you work here? Check the intelligence:`;
 
   useEffect(() => {

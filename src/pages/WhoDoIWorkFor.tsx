@@ -349,7 +349,7 @@ export default function WhoDoIWorkFor() {
                       {(candidates || []).map((c) => (
                         <Link
                           key={c.id}
-                          to={`/company/${employerCompany.slug}`}
+                          to={`/dossier/${employerCompany.slug}`}
                           className="rounded-lg border border-border overflow-hidden block hover:border-primary/40 hover:bg-primary/5 transition-all duration-200 group"
                         >
                           <div className="flex items-center justify-between p-3">
@@ -404,7 +404,7 @@ export default function WhoDoIWorkFor() {
                       {(executives || []).map((exec: any) => (
                         <Link
                           key={exec.id}
-                          to={`/company/${employerCompany.slug}`}
+                          to={`/dossier/${employerCompany.slug}`}
                           className="border border-border rounded-lg p-4 block hover:border-primary/40 hover:bg-primary/5 transition-all duration-200 group"
                         >
                           <div className="flex items-center justify-between mb-2">
@@ -505,7 +505,7 @@ export default function WhoDoIWorkFor() {
                   <CardContent className="py-12 text-center">
                     <Building2 className="w-10 h-10 mx-auto mb-3 text-muted-foreground opacity-40" />
                     <p className="text-muted-foreground mb-1">No political spending data tracked yet for {employerCompany.name}.</p>
-                    <p className="text-xs text-muted-foreground">Run scans on the <Link to={`/company/${employerCompany.slug}`} className="text-primary hover:underline">company profile</Link> to populate data.</p>
+                    <p className="text-xs text-muted-foreground">Run scans on the <Link to={`/dossier/${employerCompany.slug}`} className="text-primary hover:underline">company profile</Link> to populate data.</p>
                   </CardContent>
                 </Card>
               )}
@@ -528,7 +528,7 @@ export default function WhoDoIWorkFor() {
 
               {/* CTA to full profile */}
               <div className="text-center mt-8">
-                <Link to={`/company/${employerCompany.slug}`}>
+                <Link to={`/dossier/${employerCompany.slug}`}>
                   <Button className="gap-2 px-8 py-5 text-base font-semibold hover:shadow-lg transition-all duration-200">
                     <ExternalLink className="w-4 h-4" />
                     View Full {employerCompany.name} Dossier

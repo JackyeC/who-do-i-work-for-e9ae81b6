@@ -65,7 +65,7 @@ export default function SearchResults() {
         if (error) throw error;
 
         if (data?.success) {
-          const dest = intent === 'offer' ? `/offer-check/${data.companyId || data.slug}` : `/company/${data.slug}`;
+          const dest = intent === 'offer' ? `/offer-check/${data.companyId || data.slug}` : `/dossier/${data.slug}`;
           if (data.action === 'existing') {
             navigate(dest);
           } else if (data.action === 'created') {
@@ -110,7 +110,7 @@ export default function SearchResults() {
       });
       if (error) throw error;
       if (data?.success) {
-        const dest = intent === 'offer' ? `/offer-check/${data.companyId || data.slug}` : `/company/${data.slug}`;
+        const dest = intent === 'offer' ? `/offer-check/${data.companyId || data.slug}` : `/dossier/${data.slug}`;
         toast({
           title: data.action === 'existing' ? "Company found" : "Company discovered",
           description: data.action === 'created'
@@ -157,7 +157,7 @@ export default function SearchResults() {
               {dbResults!.map((c: any) => (
                 <a
                   key={c.id}
-                  href={intent === 'offer' ? `/offer-check/${c.id}` : `/company/${c.slug}`}
+                  href={intent === 'offer' ? `/offer-check/${c.id}` : `/dossier/${c.slug}`}
                   className="block p-4 rounded-lg border border-border bg-card hover:border-primary/50 transition-colors"
                 >
                   <div className="flex items-start justify-between gap-2">

@@ -63,7 +63,7 @@ export function ExploreCompaniesTab() {
             return (
               <Link
                 key={company.id}
-                to={`/company/${company.slug}`}
+                to={`/dossier/${company.slug}`}
                 className={cn(
                   "flex items-center gap-3 p-3 rounded-lg border border-border/30 hover:border-primary/30 hover:bg-muted/30 transition-all group",
                   isCertified && "border-[hsl(var(--civic-yellow))]/15"

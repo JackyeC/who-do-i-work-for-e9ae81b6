@@ -38,7 +38,7 @@ function LeaderboardColumn({ title, icon: Icon, entries, formatFn, iconColor }: 
           {entries.map((entry, i) => (
             <motion.li key={entry.slug} variants={stagger.item}>
               <Link
-                to={`/company/${entry.slug}`}
+                to={`/dossier/${entry.slug}`}
                 className="flex items-center gap-3 p-2.5 rounded-xl hover:bg-muted/50 transition-colors group"
               >
                 <span className={`w-6 h-6 rounded-lg flex items-center justify-center text-xs font-bold shrink-0 ${

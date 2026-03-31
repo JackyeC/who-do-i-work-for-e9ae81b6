@@ -160,7 +160,7 @@ export function BracketMatchupCard({
           )}
 
           <button
-            onClick={() => navigate(`/company/${votedBrand.slug}`)}
+            onClick={() => navigate(`/dossier/${votedBrand.slug}`)}
             className="w-full flex items-center justify-center gap-1 text-xs font-mono tracking-wider uppercase text-primary hover:text-primary/80 transition-colors pt-1"
           >
             See full company intelligence <ArrowRight className="w-3 h-3" />

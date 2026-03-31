@@ -139,7 +139,7 @@ export function AdminCompanyActions({ companyId, companyName, companySlug, onEdi
 
       toast({ title: "Companies merged", description: `Data merged into ${mergeTarget.name}. Redirecting...` });
       queryClient.invalidateQueries();
-      navigate(`/company/${mergeTarget.slug}`);
+      navigate(`/dossier/${mergeTarget.slug}`);
     } catch (e: any) {
       toast({ title: "Merge failed", description: e.message, variant: "destructive" });
     } finally {

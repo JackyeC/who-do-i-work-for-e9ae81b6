@@ -200,7 +200,7 @@ export default function JobDetailPage() {
           <div className="flex-1 min-w-0">
             <h1 className="text-2xl font-bold text-foreground leading-tight">{job.title}</h1>
             <div className="flex items-center gap-2 mt-1.5 flex-wrap">
-              <Link to={`/company/${co?.slug}`} className="text-sm text-primary hover:underline font-medium">
+              <Link to={`/dossier/${co?.slug}`} className="text-sm text-primary hover:underline font-medium">
                 {co?.name || "Unknown Company"}
               </Link>
               {isVerified && (
@@ -352,7 +352,7 @@ export default function JobDetailPage() {
             {civicScore < 40 && <li>• Limited transparency signals — do independent research</li>}
             {jobAgeDays > 30 && <li>• Listing is {jobAgeDays} days old — confirm it's still active</li>}
             {isEvergreen && <li>• This listing contains language suggesting a general talent pipeline</li>}
-            <li>• Review the <Link to={`/company/${co?.slug}`} className="text-primary hover:underline">full company profile</Link> before deciding</li>
+            <li>• Review the <Link to={`/dossier/${co?.slug}`} className="text-primary hover:underline">full company profile</Link> before deciding</li>
           </ul>
         </div>
 
@@ -367,13 +367,13 @@ export default function JobDetailPage() {
             </Button>
           ) : (
             <Button className="flex-1 gap-2" size="lg" variant="secondary" asChild>
-              <Link to={`/company/${co?.slug}`}>View All Roles</Link>
+              <Link to={`/dossier/${co?.slug}`}>View All Roles</Link>
             </Button>
           )}
           <EasyApplyButton job={job} className="flex-1" />
           <SaveJobButton job={job as any} size="sm" className="h-11" />
           <Button variant="outline" size="lg" className="gap-2" asChild>
-            <Link to={`/company/${co?.slug}`}>
+            <Link to={`/dossier/${co?.slug}`}>
               <Building2 className="w-4 h-4" /> Full Company Intelligence
             </Link>
           </Button>

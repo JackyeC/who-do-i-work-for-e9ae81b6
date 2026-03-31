@@ -28,7 +28,7 @@ export function CompanyZeroState({ companyName, onDiscovered }: CompanyZeroState
         if (onDiscovered) {
           onDiscovered(data.companyId, data.slug);
         } else {
-          navigate(`/company/${data.slug}`);
+          navigate(`/dossier/${data.slug}`);
         }
       } else {
         toast.error("Discovery completed but no matching company was found. Try a different name.");

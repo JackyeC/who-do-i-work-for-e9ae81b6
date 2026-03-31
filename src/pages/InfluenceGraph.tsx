@@ -297,7 +297,7 @@ export default function InfluenceGraph() {
       <div className="border-b border-border bg-card/80 backdrop-blur-sm px-4 py-3 shrink-0">
         <div className="max-w-[1600px] mx-auto flex items-center justify-between gap-4">
           <div className="flex items-center gap-3 min-w-0">
-            <Link to={`/company/${id}`} className="text-muted-foreground hover:text-foreground transition-colors shrink-0">
+            <Link to={`/dossier/${id}`} className="text-muted-foreground hover:text-foreground transition-colors shrink-0">
               <ArrowLeft className="w-4 h-4" />
             </Link>
             <div className="min-w-0">
@@ -425,7 +425,7 @@ export default function InfluenceGraph() {
                 <p className="text-sm text-muted-foreground mb-4">
                   Run an intelligence scan on this company to populate the influence graph.
                 </p>
-                <Link to={`/company/${id}`}><Button size="sm">Back to Company Report</Button></Link>
+                <Link to={`/dossier/${id}`}><Button size="sm">Back to Company Report</Button></Link>
               </div>
             </div>
           ) : (

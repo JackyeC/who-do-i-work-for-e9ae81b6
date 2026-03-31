@@ -266,7 +266,7 @@ export default function CorporateImpactMap() {
                 {searchResults.map(r => (
                   <button
                     key={r.id}
-                    onClick={() => { navigate(`/company/${r.slug}`); setQuery(""); setSearchResults([]); }}
+                    onClick={() => { navigate(`/dossier/${r.slug}`); setQuery(""); setSearchResults([]); }}
                     className="w-full px-4 py-2 text-left text-sm hover:bg-muted/50 flex items-center gap-2"
                   >
                     <Building2 className="w-3.5 h-3.5 text-muted-foreground" />
@@ -370,7 +370,7 @@ export default function CorporateImpactMap() {
                     <Button
                       size="sm"
                       variant="ghost"
-                      onClick={() => navigate(`/company/${company.slug}`)}
+                      onClick={() => navigate(`/dossier/${company.slug}`)}
                       className="text-xs"
                     >
                       Full Profile <ArrowRight className="w-3 h-3 ml-1" />

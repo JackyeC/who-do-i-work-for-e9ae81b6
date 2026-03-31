@@ -58,7 +58,7 @@ function ApplicationCard({ app, updateStatus, deleteApp }: {
                 <h4 className="font-medium text-foreground truncate">{app.job_title}</h4>
               </div>
               <Link
-                to={`/company/${app.company_name?.toLowerCase().replace(/\s+/g, "-")}`}
+                to={`/dossier/${app.company_name?.toLowerCase().replace(/\s+/g, "-")}`}
                 className="text-sm text-primary hover:underline"
               >
                 {app.company_name}

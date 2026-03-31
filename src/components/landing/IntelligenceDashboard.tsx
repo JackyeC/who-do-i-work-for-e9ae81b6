@@ -179,7 +179,7 @@ function IntelligencePanel({ panel }: { panel: PanelConfig }) {
           validCompanies.map((c, i) => (
             <Link
               key={c.id}
-              to={`/company/${c.slug}`}
+              to={`/dossier/${c.slug}`}
               className="px-4 py-2 flex items-center justify-between hover:bg-muted/30 transition-colors group"
             >
               <div className="flex items-center gap-2.5 min-w-0">
