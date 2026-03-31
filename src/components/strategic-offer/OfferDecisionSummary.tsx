@@ -62,9 +62,9 @@ export function OfferDecisionSummary(props: Props) {
 
   const risks: string[] = [];
   if (offerSalary < annualBaseline) risks.push("Salary below your calculated safety line");
-  redFlags.forEach(f => risks.push(f.title));
+  highSeverity.forEach(f => risks.push(f.title));
   yellowFlags.slice(0, 2).forEach(f => risks.push(f.title));
-  if (report?.legalRisk.score && report.legalRisk.score < 50) risks.push("Elevated legal risk environment");
+  if (report?.legalRisk.score && report.legalRisk.score < 50) risks.push("Legal risk signals present in public record");
 
   const moves: string[] = [];
   if (redFlags.length > 0) moves.push("Explore the restrictive clauses flagged in the Legal Audit");
