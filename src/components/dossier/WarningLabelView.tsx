@@ -93,17 +93,17 @@ function fmtMoney(n?: number | null): string {
 
 /* ─── CEO Memo Decoder ─── */
 const DECODER_MAP: Record<string, string> = {
-  "strategic reallocation": "Budget redirected — someone's team is losing headcount",
-  "modernization": "Automation replacing human roles",
-  "restructuring": "Layoffs, reorgs, or both",
-  "right-sizing": "Layoffs with better PR",
-  "operational efficiency": "Doing more with fewer people",
-  "people first": "Often said right before layoffs",
-  "organizational simplification": "Middle management purge",
-  "workforce optimization": "Headcount reduction",
-  "transformation": "Everything changes, nobody knows to what",
-  "synergies": "Post-merger job cuts",
-  "realignment": "Your team might not exist next quarter",
+  "strategic reallocation": "Budget is being redirected. Some teams will feel it.",
+  "modernization": "Often means automation is replacing certain roles.",
+  "restructuring": "Organizational changes. Could mean layoffs, reorgs, or both.",
+  "right-sizing": "Headcount reduction, described differently.",
+  "operational efficiency": "Doing more with fewer people.",
+  "people first": "Worth watching what follows this phrase.",
+  "organizational simplification": "Management layers are being removed.",
+  "workforce optimization": "Headcount reduction by another name.",
+  "transformation": "Large-scale change. Details tend to emerge slowly.",
+  "synergies": "Post-merger consolidation. Usually includes job cuts.",
+  "realignment": "Team structures may change significantly.",
 };
 
 /* ─── Component ─── */
