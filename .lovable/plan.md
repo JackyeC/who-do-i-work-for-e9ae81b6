@@ -1,128 +1,94 @@
 
 
-# Values Profile — Full Rebuild
+# Employer Dossier — Candidate Advocacy Report Redesign
 
-## Summary
+## What changes
 
-Build `/values` as a 6-step guided editorial experience. 8 new files, 3 edited files. No database migration — maps to existing `user_values_profile` columns. Salary data stored in `notes` as JSON.
+Replace the 3-mode toggle (Warning Label / Deep Dive / Interview Prep) in the **candidate lens** with a single, scrollable `AdvocacyReport` component. Interview Prep stays accessible as a button at the bottom. Deep Dive layers move into an expandable "Raw Layers" section at the end for power users. Sales and HR lens views remain unchanged.
 
-## Bug Fix
+## New files (3)
 
-Index.tsx has an early return on line 34 (`if (!isLoaded || authLoading) return null`) after `usePageSEO` (line 20) but before no other hooks. The hooks (useState, useNavigate, useAuth, useClerkWithFallback, usePageSEO) are all called before line 34, so the hook order is stable. No fix needed — will verify at runtime.
+### `src/components/dossier/AdvocacyReport.tsx` (~450 lines)
 
-## New Files
+A single linear report component that receives all the data currently passed to `WarningLabelView` plus the candidate layer data. Renders these sections top-to-bottom with no toggles or accordions:
 
-### 1. `src/pages/ValuesProfile.tsx` — Page Shell
-- Step state machine (0–5 + summary = 7 views)
-- Gold progress bar: width = `(step + 1) / 7 * 100%`
-- `AnimatePresence` + `motion.div` fade/slide transitions
-- localStorage draft: save after each step to `wdiwf-values-draft-v1`, restore on mount, clear after DB save
-- Dark branded wrapper: inline styles for `#0A0A0E` bg, `#13121A` cards, `#F0EBE0` text, `#F0C040` gold
-- Back/Next buttons, step label ("Step 2 of 6")
-- On final "Save": check auth → if none, navigate to `/join` with return URL; if authed, upsert to `user_values_profile` via `(supabase as any).from("user_values_profile").upsert(payload, { onConflict: "user_id" })`
-- Max-w-2xl centered container, mobile-first
+1. **THE VERDICT** — Reuse `computeVerdict` logic from WarningLabelView. Bold verdict card + Jackye insight quote + employer clarity score breakdown.
 
-### 2. `src/components/values/ForcedChoiceStep.tsx` — Step 1
-6 scenario cards, binary A/B choice. One skip allowed. Each choice adjusts a local state object of column-name → number mappings.
+2. **COMPANY SUMMARY** — Name, industry, size, state, description. Clean header section.
 
-Scenarios and column mappings:
-1. "Pays above market / zero transparency" vs "Posts every salary band / pays median" → `pay_transparency_importance`, `benefits_importance`
-2. "Strong DEI team / lobbies against workers" vs "No DEI program / clean labor record" → `dei_equity_importance`, `labor_rights_importance`
-3. "Fast promotion / burns people" vs "Slower growth / stable leadership" → `worker_protections_importance`, `mission_alignment_importance`
-4. "Full remote / weaker team culture" vs "In-office / strong team bonds" → `remote_flexibility_importance`, `community_investment_importance`
-5. "Political transparency even if uncomfortable" vs "Stays out of politics, focuses on mission" → `political_transparency_importance`, `mission_alignment_importance`
-6. "AI-forward / moves fast on automation" vs "Cautious on AI / prioritizes data privacy" → `ai_ethics_importance`, `data_privacy_importance`
+3. **WHAT THEY SAY** — Public stances from `publicStances` data, rendered as quoted corporate claims. Section header: "Their words."
 
-Scoring: baseline 50. Winner gets +15. Loser stays at 50 (no reduction). Skip leaves both at 50.
+4. **WHAT THEY DO** — Spending reality pulled from `issueSignals`, lobbying, PAC, contracts, enforcement actions. Section header: "The record."
 
-### 3. `src/components/values/DealbreakersStep.tsx` — Step 2
-Card grid (2-col mobile, 3-col desktop) with 10 categories. User picks up to 5, then marks top 2 as "walk-away." Each has an icon from lucide.
+5. **INTEGRITY GAP** — Side-by-side Say vs Do comparison using `gapStances` logic. Severity badges (Large/Medium/Aligned). Reuses existing gap filtering.
 
-Categories → column mapping:
-- Wage theft → `labor_rights_importance`
-- Anti-union → `union_rights_importance`
-- Environmental violations → `environment_climate_importance`
-- AI hiring without disclosure → `ai_ethics_importance`
-- Political spending opacity → `political_donations_importance`
-- Safety violations → `workplace_safety_importance`
-- Data privacy breaches → `data_privacy_importance`
-- Discrimination records → `anti_discrimination_importance`
-- Retaliation patterns → `worker_protections_importance`
-- Executive ethics → `anti_corruption_importance`
+6. **LABOR IMPACT** — EEOC cases, WARN notices, workforce signals. Reuses `TalentContextLayer` data + `eeocCases`. Plain-English interpretation.
 
-Selected dealbreakers → set column to 92. Top 2 walk-away → set column to 98.
+7. **SAFETY & WORKFORCE RISK** — Workforce demographics, stability signals. Embeds `WorkforceDemographicsLayer` inline.
 
-### 4. `src/components/values/WorkStyleStep.tsx` — Step 3
-4 segmented button groups (not sliders):
-- Growth vs Stability → `startup_vs_enterprise_preference` ("startup" | "enterprise")
-- Big vs Small → `company_size_preference` ("large" | "small")
-- Remote / Hybrid / In-person → `remote_flexibility_importance` (90 / 60 / 30)
-- Mission-driven vs Compensation-driven → `mission_alignment_importance` (85 / 40)
+8. **POLITICAL & POLICY ALIGNMENT** — PAC spending, lobbying, executive donations, government contracts. Reuses `politicalGiving` + `governmentContractSignals` data. Embeds `PoliticalGivingCard`, `InstitutionalDNACard`, `PolicyScoreCard`, `HighRiskConnectionCard`.
 
-### 5. `src/components/values/SalaryFloorStep.tsx` — Step 4
-- Number input with dollar formatting for minimum salary
-- Textarea for walk-away triggers
-- Stored in draft state as `{ salary_floor: number, walk_away: string }`
-- On final save, serialized into `notes` column as JSON string
+9. **WHAT THEY FUND & SUPPORT** — Executive giving section + institutional DNA details.
 
-### 6. `src/components/values/ValuesTopicsStep.tsx` — Step 5
-12 topics, each with 4-option segmented control: Must-have (90) / Matters (70) / Flexible (40) / Don't care (10).
+10. **WHAT THIS MEANS FOR YOU** — Values-aware section (see `ValuesAlignmentSection` below). Falls back to generic interpretation if no values profile.
 
-Topics → columns:
-- Worker Protections → `worker_protections_importance`
-- Inclusion → `dei_equity_importance`
-- Leadership Ethics → `anti_corruption_importance`
-- Compensation Fairness → `pay_equity_importance`
-- Reproductive Healthcare → `reproductive_rights_importance`
-- Education Access → `education_access_importance`
-- Environment → `environment_climate_importance`
-- Mission Alignment → `mission_alignment_importance`
-- AI Ethics → `ai_ethics_importance`
-- Pay Transparency → `pay_transparency_importance`
-- Political Spending Transparency → `political_transparency_importance`
-- Data Privacy → `data_privacy_importance`
+11. **THE CALL** — Final recommendation card (see `RecommendationCard` below).
 
-Show all 12 in a scrollable list. On mobile, compact layout with topic name left-aligned and segmented buttons right-aligned.
+12. **CEO MEMO DECODER** — Retained from WarningLabelView, collapsed by default.
 
-Note: if a column was already set higher by Steps 1-2 (e.g. dealbreaker at 92), the Step 5 value only applies if it's higher. We take `Math.max` across all steps when building the final payload.
+13. **3 HARD QUESTIONS** — Retained from WarningLabelView.
 
-### 7. `src/components/values/ValuesSummaryCard.tsx` — Step 6 (Summary)
-Computed from accumulated state:
-- **Top 5 Values**: highest-weighted columns, displayed as gold-accented tags
-- **Dealbreakers**: columns ≥ 90, with top 2 walk-away highlighted
-- **Risk Tolerance**: label derived from dealbreaker count + growth pref (Conservative / Moderate / Open)
-- **Growth vs Stability**: from Step 3
-- **Salary Floor**: from Step 4 (if set)
-- **Employer Fit Summary**: generated sentence like "You're looking for a mission-driven employer with strong pay transparency and clean labor records."
-- **Employer Warning Summary**: generated sentence like "Watch out for companies with political spending opacity, discrimination history, or AI hiring without disclosure."
+Each section uses:
+- Mono uppercase section labels with left-border accent
+- "So what?" plain-English interpretations
+- Source badges where data exists
+- Red/yellow/green left-border cards for evidence items
 
-Each section is clickable → navigates back to that step for editing. CTA: "Save My Values Profile" button. Trust line below CTA.
+### `src/components/dossier/RecommendationCard.tsx` (~100 lines)
 
-### 8. `src/components/values/useValuesFlow.ts` — Shared Hook
-Central state management hook:
-- `draft` state object with all step data
-- `loadDraft()` / `saveDraft()` for localStorage
-- `buildPayload()` merges all steps into one `user_values_profile` upsert object using `Math.max` for overlapping columns
-- `saveToDb(userId)` does the upsert and clears draft
+"THE CALL" — editorial recommendation card.
 
-## Edited Files
+Inputs: verdict severity, gap count, EEOC count, signal count, has values conflicts boolean.
 
-### `src/App.tsx`
-- Add: `const ValuesProfile = lazy(() => import("./pages/ValuesProfile"));`
-- Add route: `<Route path="/values" element={<ValuesProfile />} />`
-- Change line 280: `/my-values` redirect from `/dashboard?tab=values` to `/values`
+Logic:
+- **Walk Away**: 4+ red flags OR large integrity gaps on dealbreaker topics
+- **Watch**: 2-3 red flags OR multiple medium gaps
+- **Dig Deeper**: 1-2 flags OR mixed signals
+- **Apply**: Clean record, no major gaps
 
-### `src/components/layout/AppShell.tsx`
-- Add `"/values"` to `MARKETING_PAGES` array
+Displays: bold recommendation label, color-coded card (red/yellow/blue/green), 2-3 sentence reasoning, and a "This is not legal advice" disclaimer.
 
-### `src/components/layout/MarketingNav.tsx`
-- Add "Values Profile" link to `PRIMARY_LINKS` array pointing to `/values`
+### `src/components/dossier/ValuesAlignmentSection.tsx` (~130 lines)
 
-## Technical Details
+Loads the authenticated user's `user_values_profile` via Supabase query. Compares high-importance columns (≥70) against company signals and stances.
 
-- All DB access uses `(supabase as any).from("user_values_profile")` pattern (consistent with existing code)
-- framer-motion `AnimatePresence` + `motion.div` for step transitions
-- No new dependencies needed
-- No database migration needed
-- Mobile-first: all layouts work at 375px width minimum
+Shows:
+- "Aligns with your values" items (green left-border)
+- "Conflicts with your values" items (red left-border)
+- If no profile exists: "Complete your Values Profile to see personalized alignment" with CTA link to `/values`
+
+## Edited files (1)
+
+### `src/pages/CompanyDossier.tsx`
+
+- Remove the `dossierView` state and the 3-way toggle buttons from `overviewContent`
+- Replace the conditional render block (lines 321-388) with: render `AdvocacyReport` as the default candidate view
+- Add an "Interview Prep" button below the report that expands `CandidatePrepPack` inline
+- Add a "View Raw Layers" collapsible at the bottom that renders the existing `candidateContent` DossierLayer stack
+- Keep ClarityEngine and SituationContextBanner in place above the report
+- Sales and HR lens content remains completely unchanged
+- All existing data queries (executives, contracts, publicStances, issueSignals, valuesSignals, eeocCases, etc.) stay as-is — just passed into AdvocacyReport
+
+## Design system
+
+- Same dark card system already in use: `rounded-none`, `border-border/50`
+- Mono uppercase section headers with primary icons (consistent with WarningLabelView)
+- No accordions in the main report flow — everything visible and scrollable
+- Evidence items use left-border accent cards: destructive for red, civic-yellow for caution, civic-green for clean
+- Recommendation card uses bold 2-border treatment like existing Verdict card
+- Workforce Health table pattern retained for financial data
+
+## No database migration needed
+
+All data sources already exist. Values alignment reads from existing `user_values_profile` table.
 
