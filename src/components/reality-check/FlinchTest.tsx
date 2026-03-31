@@ -115,16 +115,16 @@ export function FlinchTest({ companyId, companyName }: FlinchTestProps) {
         <div className="flex items-center gap-2">
           <AlertTriangle className="w-4 h-4 text-civic-yellow" />
           <CardTitle className="font-mono text-sm uppercase tracking-wider">
-            The Flinch Test
+            Process Signal Check
           </CardTitle>
           {flinchCount > 0 && (
             <Badge variant="warning" className="font-mono text-xs">
-              {flinchCount} flinch{flinchCount !== 1 ? "es" : ""} detected
+              {flinchCount} pattern{flinchCount !== 1 ? "s" : ""} noted
             </Badge>
           )}
         </div>
         <CardDescription className="text-xs">
-          Did the interviewer hesitate, deflect, or dodge when you asked our tactical questions? Flag it below — your anonymized signals help other candidates.
+          These are process-level observations. None of them are conclusions on their own. When they repeat across candidates, they tend to reflect something structural. Your input builds the pattern.
         </CardDescription>
       </CardHeader>
       <CardContent className="space-y-4">
