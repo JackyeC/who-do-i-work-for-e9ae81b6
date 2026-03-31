@@ -30,13 +30,13 @@ export default function RealityCheckPage() {
     path: "/reality-check",
     jsonLd: {
       "@type": "HowTo",
-      name: "How to Check for Employer Red Flags Before Accepting a Job Offer",
-      description: "Use the Reality Check questionnaire to compare your interview experience against public intelligence data and detect Say-Do disconnects.",
+      name: "How to Check Interview Process Signals Before Accepting a Job Offer",
+      description: "Use this questionnaire to compare your interview experience against public data and surface stance-record gaps.",
       step: [
         { "@type": "HowToStep", name: "Search for the company", text: "Search for the company you interviewed with using the company search." },
         { "@type": "HowToStep", name: "Rate your interview experience", text: "Rate your interview experience across 6 dimensions: leadership transparency, message consistency, panel diversity, boundary culture, professional respect, and process quality." },
-        { "@type": "HowToStep", name: "Compare against public data", text: "The system cross-references your ratings against public SEC, FEC, and BLS data to identify gaps." },
-        { "@type": "HowToStep", name: "Review your Integrity Gap Score", text: "Review your Integrity Gap Score, Vibe Variance chart, and Jackye's AI Twin analysis to make an informed decision." },
+        { "@type": "HowToStep", name: "Compare against public data", text: "The system cross-references your ratings against public data to identify gaps between what is said and what is visible." },
+        { "@type": "HowToStep", name: "Review your results", text: "Review your Stance-Record Gap, Experience vs. Record chart, and pattern analysis to make an informed decision." },
       ],
     },
   });
