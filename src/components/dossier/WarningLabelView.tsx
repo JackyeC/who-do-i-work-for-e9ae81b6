@@ -104,6 +104,7 @@ const DECODER_MAP: Record<string, string> = {
 
 /* ─── Component ─── */
 export function WarningLabelView({ company, executives = [], contracts = [], issueSignals = [], publicStances = [], eeocCases = [] }: WarningLabelProps) {
+  const isEarlyInvestigation = issueSignals.length < EARLY_INVESTIGATION_THRESHOLD;
   const verdict = useMemo(() => computeVerdict(company, issueSignals.length, eeocCases.length), [company, issueSignals.length, eeocCases.length]);
 
   const totalContractValue = useMemo(() => contracts.reduce((s, c) => s + (c.contract_value ?? 0), 0), [contracts]);
