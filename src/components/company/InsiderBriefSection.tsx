@@ -172,7 +172,7 @@ export function InsiderBriefSection(props: InsiderBriefProps) {
       {/* What's changing */}
       {changingSignals.length > 0 && (
         <div className="px-5 py-4 border-b border-border/40">
-          <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-2.5">What's changing</p>
+          <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-2.5">What is visible</p>
           <ul className="space-y-1.5">
             {changingSignals.map((s, i) => (
               <li key={i} className="text-sm text-foreground/90 leading-relaxed pl-3 relative before:content-[''] before:absolute before:left-0 before:top-[9px] before:w-1.5 before:h-1.5 before:rounded-full before:bg-primary/40">
