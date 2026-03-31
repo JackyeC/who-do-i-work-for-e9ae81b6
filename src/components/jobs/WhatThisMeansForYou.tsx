@@ -23,25 +23,25 @@ export function WhatThisMeansForYou({ matchCount, matchedCategories, civicScore,
 
   // Values alignment
   if (matchCount >= 3) {
-    insights.push({ type: "positive", text: "Strong alignment with your stated priorities — this employer's track record matches what you care about." });
+    insights.push({ type: "positive", text: "Strong overlap with your stated priorities. This employer's documented record aligns with what you care about." });
   } else if (matchCount >= 2) {
-    insights.push({ type: "positive", text: "Good alignment with your priorities — some overlap with your values." });
+    insights.push({ type: "positive", text: "Some overlap with your priorities. Two of your focus areas are present in the public record." });
   } else if (matchCount === 1) {
-    insights.push({ type: "neutral", text: "Partial alignment — one of your priority areas overlaps with this employer." });
+    insights.push({ type: "neutral", text: "Partial overlap. One of your priority areas appears in this employer's record." });
   }
 
   // Transparency
   if (civicScore >= 70) {
-    insights.push({ type: "positive", text: "High employer transparency — governance, lobbying, and workforce data are well-documented." });
+    insights.push({ type: "positive", text: "Above-average signal coverage. Governance, lobbying, and workforce data are documented." });
   } else if (civicScore < 40) {
-    insights.push({ type: "warning", text: "Limited transparency — do independent research before committing." });
+    insights.push({ type: "warning", text: "Limited signal coverage. Independent research is worth doing before committing." });
   }
 
   // Pay transparency
   if (salaryRange) {
-    insights.push({ type: "positive", text: "Salary range is disclosed — you can assess fit before investing time." });
+    insights.push({ type: "positive", text: "Salary range is disclosed. You can assess fit before investing time." });
   } else {
-    insights.push({ type: "warning", text: "No salary posted — ask about compensation early in the process." });
+    insights.push({ type: "warning", text: "No salary posted. Worth asking about compensation early in the process." });
   }
 
   // Freshness
@@ -54,7 +54,7 @@ export function WhatThisMeansForYou({ matchCount, matchedCategories, civicScore,
   return (
     <div className="p-4 rounded-lg border border-primary/15 bg-primary/[0.03] space-y-3">
       <p className="text-xs font-semibold text-primary flex items-center gap-1.5">
-        <Sparkles className="w-3.5 h-3.5" /> What This Means for You
+        <Sparkles className="w-3.5 h-3.5" /> What This Tends to Mean
       </p>
       <div className="space-y-2">
         {insights.map((insight, i) => (
