@@ -302,11 +302,11 @@ export function WarningLabelView({ company, executives = [], contracts = [], iss
                   </td>
                   <td className="py-3 pr-4 font-mono font-bold text-foreground">{fmtMoney(company.lobbying_spend)}</td>
                   <td className="py-3 text-muted-foreground text-xs leading-snug">
-                    {(company.lobbying_spend ?? 0) > 1_000_000
-                      ? "Heavy political spend — this company invests seriously in shaping policy."
-                      : (company.lobbying_spend ?? 0) > 0
-                      ? "Moderate lobbying presence."
-                      : "No lobbying spend detected."}
+                     {(company.lobbying_spend ?? 0) > 1_000_000
+                       ? "Significant lobbying activity. This company is actively engaged in policy."
+                       : (company.lobbying_spend ?? 0) > 0
+                       ? "Some lobbying activity on record."
+                       : "No lobbying spend detected."}
                     <span className="block text-primary text-xs mt-0.5 font-medium group-hover:underline">View on OpenSecrets →</span>
                   </td>
                 </tr>
