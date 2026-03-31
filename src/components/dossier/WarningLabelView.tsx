@@ -131,13 +131,14 @@ export function WarningLabelView({ company, executives = [], contracts = [], iss
   }, [issueSignals]);
 
   const pulseItems = useMemo(() => {
-    const items: Array<{ icon: React.ElementType; text: string; severity: "red" | "yellow" | "green" }> = [];
+    const items: Array<{ icon: React.ElementType; text: string; severity: "red" | "yellow" | "green"; url?: string }> = [];
 
     if ((company.lobbying_spend ?? 0) > 0) {
       items.push({
         icon: DollarSign,
         text: `${fmtMoney(company.lobbying_spend)} in lobbying spend on record.`,
         severity: (company.lobbying_spend ?? 0) > 1_000_000 ? "red" : "yellow",
+        url: `https://www.opensecrets.org/federal-lobbying/clients/summary?name=${encodeURIComponent(company.name)}`,
       });
     }
     if ((company.total_pac_spending ?? 0) > 0) {
@@ -145,6 +146,7 @@ export function WarningLabelView({ company, executives = [], contracts = [], iss
         icon: Megaphone,
         text: `${fmtMoney(company.total_pac_spending)} in PAC political spending.`,
         severity: (company.total_pac_spending ?? 0) > 500_000 ? "red" : "yellow",
+        url: `https://www.fec.gov/data/receipts/?data_type=processed&committee_name=${encodeURIComponent(company.name)}`,
       });
     }
     if (eeocCases.length > 0) {
@@ -152,6 +154,7 @@ export function WarningLabelView({ company, executives = [], contracts = [], iss
         icon: Scale,
         text: `${eeocCases.length} EEOC enforcement action${eeocCases.length > 1 ? "s" : ""} on record.`,
         severity: "red",
+        url: "https://www.eeoc.gov/newsroom",
       });
     }
     if (totalContractValue > 0) {
@@ -159,6 +162,7 @@ export function WarningLabelView({ company, executives = [], contracts = [], iss
         icon: Building2,
         text: `${fmtMoney(totalContractValue)} in government contracts across ${contracts.length} agencies.`,
         severity: "yellow",
+        url: `https://www.usaspending.gov/search/?hash=&filters=${encodeURIComponent(JSON.stringify({ keyword: company.name }))}`,
       });
     }
     if ((company.subsidies_received ?? 0) > 0) {
@@ -166,6 +170,7 @@ export function WarningLabelView({ company, executives = [], contracts = [], iss
         icon: DollarSign,
         text: `${fmtMoney(company.subsidies_received)} in public subsidies received.`,
         severity: "yellow",
+        url: `https://subsidytracker.goodjobsfirst.org/prog.php?parent=${encodeURIComponent(company.name)}`,
       });
     }
     if (issueSignals.length > 0) {
@@ -235,12 +240,30 @@ export function WarningLabelView({ company, executives = [], contracts = [], iss
             </div>
           </div>
           <div className="space-y-3">
-            {pulseItems.map((item, i) => (
-              <div key={i} className="flex items-start gap-3 p-3 rounded-none bg-muted/20 border border-border/30">
-                <item.icon className={cn("w-4 h-4 mt-0.5 shrink-0", severityColors[item.severity])} />
-                <p className="text-sm text-foreground leading-snug">{item.text}</p>
-              </div>
-            ))}
+            {pulseItems.map((item, i) => {
+              const Wrapper = item.url ? "a" : "div";
+              const wrapperProps = item.url ? { href: item.url, target: "_blank", rel: "noopener noreferrer" } : {};
+              return (
+                <Wrapper
+                  key={i}
+                  {...wrapperProps as any}
+                  className={cn(
+                    "flex items-start gap-3 p-3 rounded-none bg-muted/20 border border-border/30",
+                    item.url && "hover:bg-muted/40 hover:border-primary/30 transition-colors cursor-pointer group"
+                  )}
+                >
+                  <item.icon className={cn("w-4 h-4 mt-0.5 shrink-0", severityColors[item.severity])} />
+                  <p className="text-sm text-foreground leading-snug flex-1">
+                    {item.text}
+                    {item.url && (
+                      <span className="inline-flex items-center gap-1 ml-1.5 text-primary text-xs font-medium opacity-70 group-hover:opacity-100">
+                        <ExternalLink className="w-3 h-3" /> Source
+                      </span>
+                    )}
+                  </p>
+                </Wrapper>
+              );
+            })}
           </div>
         </CardContent>
       </Card>
@@ -269,8 +292,14 @@ export function WarningLabelView({ company, executives = [], contracts = [], iss
                 </tr>
               </thead>
               <tbody className="divide-y divide-border/20">
-                <tr>
-                  <td className="py-3 pr-4 font-medium text-foreground">Lobbying</td>
+                <tr
+                  className="cursor-pointer hover:bg-muted/20 transition-colors group"
+                  onClick={() => window.open(`https://www.opensecrets.org/federal-lobbying/clients/summary?name=${encodeURIComponent(company.name)}`, "_blank")}
+                >
+                  <td className="py-3 pr-4 font-medium text-foreground flex items-center gap-1.5">
+                    Lobbying
+                    <ExternalLink className="w-3 h-3 text-muted-foreground opacity-0 group-hover:opacity-100 transition-opacity" />
+                  </td>
                   <td className="py-3 pr-4 font-mono font-bold text-foreground">{fmtMoney(company.lobbying_spend)}</td>
                   <td className="py-3 text-muted-foreground text-xs leading-snug">
                     {(company.lobbying_spend ?? 0) > 1_000_000
@@ -278,10 +307,17 @@ export function WarningLabelView({ company, executives = [], contracts = [], iss
                       : (company.lobbying_spend ?? 0) > 0
                       ? "Moderate lobbying presence."
                       : "No lobbying spend detected."}
+                    <span className="block text-primary text-xs mt-0.5 font-medium group-hover:underline">View on OpenSecrets →</span>
                   </td>
                 </tr>
-                <tr>
-                  <td className="py-3 pr-4 font-medium text-foreground">PAC Spending</td>
+                <tr
+                  className="cursor-pointer hover:bg-muted/20 transition-colors group"
+                  onClick={() => window.open(`https://www.fec.gov/data/receipts/?data_type=processed&committee_name=${encodeURIComponent(company.name)}`, "_blank")}
+                >
+                  <td className="py-3 pr-4 font-medium text-foreground flex items-center gap-1.5">
+                    PAC Spending
+                    <ExternalLink className="w-3 h-3 text-muted-foreground opacity-0 group-hover:opacity-100 transition-opacity" />
+                  </td>
                   <td className="py-3 pr-4 font-mono font-bold text-foreground">{fmtMoney(company.total_pac_spending)}</td>
                   <td className="py-3 text-muted-foreground text-xs leading-snug">
                     {(company.total_pac_spending ?? 0) > 500_000
@@ -289,22 +325,39 @@ export function WarningLabelView({ company, executives = [], contracts = [], iss
                       : (company.total_pac_spending ?? 0) > 0
                       ? "Some political giving on record."
                       : "No PAC spending detected."}
+                    <span className="block text-primary text-xs mt-0.5 font-medium group-hover:underline">View on FEC.gov →</span>
                   </td>
                 </tr>
-                <tr>
-                  <td className="py-3 pr-4 font-medium text-foreground">Gov Contracts</td>
+                <tr
+                  className="cursor-pointer hover:bg-muted/20 transition-colors group"
+                  onClick={() => window.open(`https://www.usaspending.gov/search/?hash=&filters=${encodeURIComponent(JSON.stringify({ keyword: company.name }))}`, "_blank")}
+                >
+                  <td className="py-3 pr-4 font-medium text-foreground flex items-center gap-1.5">
+                    Gov Contracts
+                    <ExternalLink className="w-3 h-3 text-muted-foreground opacity-0 group-hover:opacity-100 transition-opacity" />
+                  </td>
                   <td className="py-3 pr-4 font-mono font-bold text-foreground">{fmtMoney(totalContractValue)}</td>
                   <td className="py-3 text-muted-foreground text-xs leading-snug">
                     {totalContractValue > 0
                       ? `${contracts.length} contract${contracts.length > 1 ? "s" : ""} on record${controversialContracts.length > 0 ? ` — ${controversialContracts.length} flagged.` : "."}`
                       : "No federal contracts found."}
+                    <span className="block text-primary text-xs mt-0.5 font-medium group-hover:underline">View on USASpending →</span>
                   </td>
                 </tr>
                 {(company.subsidies_received ?? 0) > 0 && (
-                  <tr>
-                    <td className="py-3 pr-4 font-medium text-foreground">Subsidies</td>
+                  <tr
+                    className="cursor-pointer hover:bg-muted/20 transition-colors group"
+                    onClick={() => window.open(`https://subsidytracker.goodjobsfirst.org/prog.php?parent=${encodeURIComponent(company.name)}`, "_blank")}
+                  >
+                    <td className="py-3 pr-4 font-medium text-foreground flex items-center gap-1.5">
+                      Subsidies
+                      <ExternalLink className="w-3 h-3 text-muted-foreground opacity-0 group-hover:opacity-100 transition-opacity" />
+                    </td>
                     <td className="py-3 pr-4 font-mono font-bold text-foreground">{fmtMoney(company.subsidies_received)}</td>
-                    <td className="py-3 text-muted-foreground text-xs leading-snug">Public money received — worth checking against layoff history.</td>
+                    <td className="py-3 text-muted-foreground text-xs leading-snug">
+                      Public money received — worth checking against layoff history.
+                      <span className="block text-primary text-xs mt-0.5 font-medium group-hover:underline">View on Good Jobs First →</span>
+                    </td>
                   </tr>
                 )}
                 {company.effective_tax_rate && (
@@ -336,15 +389,27 @@ export function WarningLabelView({ company, executives = [], contracts = [], iss
               <p className="font-mono text-xs text-primary tracking-wider uppercase mb-2">Top Political Donors in Leadership</p>
               <div className="space-y-2">
                 {topDonors.map((exec, i) => (
-                  <div key={i} className="flex items-center justify-between p-3 bg-muted/20 border border-border/30 rounded-none">
+                  <a
+                    key={i}
+                    href={`https://www.fec.gov/data/receipts/individual-contributions/?contributor_name=${encodeURIComponent(exec.name)}&contributor_employer=${encodeURIComponent(company.name)}`}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="flex items-center justify-between p-3 bg-muted/20 border border-border/30 rounded-none hover:bg-muted/40 hover:border-primary/30 transition-colors group cursor-pointer"
+                  >
                     <div>
-                      <p className="text-sm font-semibold text-foreground">{exec.name}</p>
+                      <p className="text-sm font-semibold text-foreground flex items-center gap-1.5">
+                        {exec.name}
+                        <ExternalLink className="w-3 h-3 text-muted-foreground opacity-0 group-hover:opacity-100 transition-opacity" />
+                      </p>
                       <p className="text-xs text-muted-foreground">{exec.title}</p>
                     </div>
-                    <Badge variant="outline" className="font-mono text-xs">
-                      {fmtMoney(exec.total_donations)} donated
-                    </Badge>
-                  </div>
+                    <div className="text-right">
+                      <Badge variant="outline" className="font-mono text-xs">
+                        {fmtMoney(exec.total_donations)} donated
+                      </Badge>
+                      <p className="text-xs text-primary mt-0.5 font-medium opacity-0 group-hover:opacity-100 transition-opacity">View on FEC →</p>
+                    </div>
+                  </a>
                 ))}
               </div>
             </div>
@@ -355,17 +420,24 @@ export function WarningLabelView({ company, executives = [], contracts = [], iss
               <p className="font-mono text-xs text-primary tracking-wider uppercase mb-2">Executive Pipeline — Where They Came From</p>
               <div className="space-y-2">
                 {crossoverExecs.map((exec, i) => (
-                  <div key={i} className="flex items-start gap-3 p-3 bg-muted/20 border border-border/30 rounded-none">
-                    <ArrowRight className="w-4 h-4 text-muted-foreground mt-0.5 shrink-0" />
-                    <div>
+                  <a
+                    key={i}
+                    href={`https://www.linkedin.com/search/results/people/?keywords=${encodeURIComponent(exec.name + " " + (exec.previous_company || ""))}`}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="flex items-start gap-3 p-3 bg-muted/20 border border-border/30 rounded-none hover:bg-muted/40 hover:border-primary/30 transition-colors group cursor-pointer"
+                  >
+                    <ArrowRight className="w-4 h-4 text-muted-foreground mt-0.5 shrink-0 group-hover:text-primary transition-colors" />
+                    <div className="flex-1">
                       <p className="text-sm text-foreground">
                         <span className="font-semibold">{exec.name}</span> ({exec.title})
+                        <ExternalLink className="w-3 h-3 inline ml-1.5 text-muted-foreground opacity-0 group-hover:opacity-100 transition-opacity" />
                       </p>
                       <p className="text-xs text-muted-foreground">
                         Previously at <span className="font-medium text-foreground">{exec.previous_company}</span>
                       </p>
                     </div>
-                  </div>
+                  </a>
                 ))}
               </div>
             </div>
