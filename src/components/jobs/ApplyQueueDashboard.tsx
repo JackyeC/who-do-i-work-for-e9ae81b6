@@ -87,6 +87,12 @@ function QueueItemCard({
                   {item.generated_payload.matchingStatement}
                 </div>
               )}
+              {item.status === "completed" && (
+                <div className="mt-1.5 flex items-center gap-1 text-[10px] text-muted-foreground/70">
+                  <Shield className="w-2.5 h-2.5" />
+                  <span>Transparency Receipt: 0% identity data (race, age, gender) used in matching. Skills and values only.</span>
+                </div>
+              )}
             </div>
             <div className="flex items-center gap-1 shrink-0">
               {item.generated_payload?.matchingStatement && (
