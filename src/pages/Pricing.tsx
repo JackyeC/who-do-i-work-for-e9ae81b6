@@ -322,7 +322,7 @@ export default function Pricing() {
                   <p className="text-xs text-muted-foreground mt-1 mb-4">No subscription required</p>
                   <Button
                     onClick={() => {
-                      toast("The Closer launches April 6 — check back soon!");
+                      toast("The Closer launches April 7 — check back soon!");
                     }}
                     className="w-full lg:w-auto"
                   >

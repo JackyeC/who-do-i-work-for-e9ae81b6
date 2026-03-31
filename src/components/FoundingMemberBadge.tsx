@@ -92,7 +92,7 @@ export function FoundingMemberBadge({
     }
   };
 
-  const shareText = `I'm Founding Member ${displayNumber} of Who Do I Work For? — the career intelligence platform that tells you what employers won't. Launching April 6. Get in early → ${BASE_URL}`;
+  const shareText = `I'm Founding Member ${displayNumber} of Who Do I Work For? — the career intelligence platform that tells you what employers won't. Launching April 7. Get in early → ${BASE_URL}`;
 
   const handleShareLinkedIn = () => {
     const url = `https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(BASE_URL)}`;
@@ -103,7 +103,7 @@ export function FoundingMemberBadge({
   };
 
   const handleShareTwitter = () => {
-    const text = `I'm Founding Member ${displayNumber} of @WhoDoIWorkFor — career intelligence that tells you what employers won't. April 6 launch. ${BASE_URL}`;
+    const text = `I'm Founding Member ${displayNumber} of @WhoDoIWorkFor — career intelligence that tells you what employers won't. April 7 launch. ${BASE_URL}`;
     const url = `https://twitter.com/intent/tweet?text=${encodeURIComponent(text)}`;
     window.open(url, "_blank", "width=600,height=500");
   };
@@ -285,7 +285,7 @@ export function FoundingMemberBadge({
                   textTransform: "uppercase",
                 }}
               >
-                Launch: April 6, 2026
+                Launch: April 7, 2026
               </span>
               <span
                 style={{
