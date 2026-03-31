@@ -43,6 +43,7 @@ import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useCompanySEO } from "@/hooks/use-company-seo";
 import { useToast } from "@/hooks/use-toast";
 import { useScanTracker } from "@/hooks/use-scan-tracker";
+import { EARLY_INVESTIGATION_THRESHOLD } from "@/components/dossier/EarlyInvestigationCard";
 
 /* ─── Status labels ─── */
 const STATUS_LABELS: Record<string, { label: string; color: string }> = {
