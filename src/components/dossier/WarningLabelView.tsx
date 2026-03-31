@@ -183,7 +183,7 @@ export function WarningLabelView({ company, executives = [], contracts = [], iss
     if (items.length === 0) {
       items.push({
         icon: CheckCircle2,
-        text: "No major red flags detected in current public records.",
+        text: "No notable signals detected in current public records.",
         severity: "green",
       });
     }
