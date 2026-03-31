@@ -19,33 +19,33 @@ interface FlinchQuestion {
 const FLINCH_QUESTIONS: FlinchQuestion[] = [
   {
     id: "comp",
-    label: "Did they dodge the compensation structure question?",
+    label: "Was the compensation structure addressed directly?",
     signalCategory: "compensation_transparency",
-    description: "Deflected, gave vague ranges, or said 'we'll discuss that later'",
+    description: "They deferred specifics, offered broad ranges, or indicated it would be discussed later in the process.",
   },
   {
     id: "retention",
-    label: "Did they get vague about retention or layoffs?",
+    label: "Were retention or departure patterns discussed openly?",
     signalCategory: "workforce_stability",
-    description: "Avoided specifics on turnover, reorgs, or recent departures",
+    description: "Questions about turnover, team changes, or recent departures were met with generalities or redirected.",
   },
   {
     id: "leadership",
-    label: "Did they redirect when asked about leadership stability?",
+    label: "Was leadership stability addressed when asked?",
     signalCategory: "company_behavior",
-    description: "Sidestepped questions about executive changes or org restructuring",
+    description: "Questions about executive changes or organizational restructuring were sidestepped or reframed.",
   },
   {
     id: "growth",
-    label: "Did they avoid specifics on team growth?",
+    label: "Were team growth plans described with specifics?",
     signalCategory: "hiring_activity",
-    description: "Couldn't articulate hiring plans, backfill vs. new headcount, or team size trajectory",
+    description: "Hiring plans, backfill vs. new headcount, or team size direction were left vague.",
   },
   {
     id: "culture",
-    label: "Did they use buzzwords without evidence when asked about culture?",
+    label: "Was culture described with concrete examples?",
     signalCategory: "public_sentiment",
-    description: "Said 'we're like a family' or 'fast-paced' without concrete examples",
+    description: "Phrases like 'we are a family' or 'fast-paced environment' were used without specific supporting detail.",
   },
 ];
 
