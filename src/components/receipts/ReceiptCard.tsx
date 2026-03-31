@@ -21,22 +21,26 @@ const CATEGORY_DISPLAY: Record<string, string> = {
 };
 
 function getSourceBias(source: string | null): string {
-  if (!source) return "Unknown";
-  const left = ["Truthout", "Al Jazeera English", "The Conversation Africa"];
-  const right = ["Freerepublic.com", "Reason", "New York Post"];
-  const center = ["CBS News", "NBER", "CompTIA", "Gallup", "ADP Research", "BLS"];
-  if (left.includes(source)) return "Left-Lean";
-  if (right.includes(source)) return "Right-Lean";
+  if (!source) return "Center";
+  const left = ["Truthout", "Democracy Now", "Jacobin", "Mother Jones"];
+  const leanLeft = ["Al Jazeera English", "The Conversation Africa", "The Guardian", "MSNBC", "CNN", "NPR", "Vox"];
+  const right = ["Freerepublic.com", "Breitbart", "Daily Wire", "Newsmax", "OAN"];
+  const leanRight = ["Reason", "New York Post", "Fox News", "Washington Examiner", "Daily Caller"];
+  const center = ["CBS News", "NBER", "CompTIA", "Gallup", "ADP Research", "BLS", "Reuters", "AP News", "BBC"];
+  if (left.includes(source)) return "Left";
+  if (leanLeft.includes(source)) return "Leaning Left";
+  if (right.includes(source)) return "Right";
+  if (leanRight.includes(source)) return "Leaning Right";
   if (center.includes(source)) return "Center";
-  return "Mixed";
+  return "Center";
 }
 
 const BIAS_COLORS: Record<string, string> = {
-  "Left-Lean": "bg-[hsl(210,60%,92%)] text-[hsl(210,60%,40%)] border-[hsl(210,60%,75%)]",
-  "Right-Lean": "bg-destructive/10 text-destructive border-destructive/30",
+  "Left": "bg-[hsl(210,70%,92%)] text-[hsl(210,70%,35%)] border-[hsl(210,70%,70%)]",
+  "Leaning Left": "bg-[hsl(210,50%,93%)] text-[hsl(210,50%,42%)] border-[hsl(210,50%,78%)]",
   "Center": "bg-[hsl(145,40%,92%)] text-[hsl(145,40%,35%)] border-[hsl(145,40%,70%)]",
-  "Mixed": "bg-muted text-muted-foreground border-border",
-  "Unknown": "bg-muted text-muted-foreground border-border",
+  "Leaning Right": "bg-[hsl(0,50%,94%)] text-[hsl(0,50%,42%)] border-[hsl(0,50%,78%)]",
+  "Right": "bg-[hsl(0,70%,92%)] text-[hsl(0,70%,35%)] border-[hsl(0,70%,70%)]",
 };
 
 interface ReceiptCardProps {
