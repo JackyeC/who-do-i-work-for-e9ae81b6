@@ -256,7 +256,7 @@ export function ReceiptPoster({ poster: rawPoster, category, className, big = fa
   const [hover, setHover] = useState(false);
   const vintageImage = matchPosterImage(headline);
 
-  const posterData = rawPoster && rawPoster.bg ? rawPoster : getFallbackPoster(category ?? null);
+  const posterData = rawPoster && rawPoster.bg ? rawPoster : getFallbackPoster(category ?? null, headline);
   const accent = posterData.accent || "#F0C040";
   const onAccent = getTextOnAccent(accent);
   const wdiwfQuote = WDIWF_QUOTES[quoteIdx(id)];
