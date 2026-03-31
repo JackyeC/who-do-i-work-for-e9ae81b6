@@ -1,54 +1,54 @@
 
 
-# JRC EDIT Spec — Gap Analysis
+# Gemini Dossier Conversation — What's Already Built vs. What's Being Asked
 
-The previous message already implemented the vast majority of this spec. Here's what's built vs. the remaining gaps:
+## Context
 
-## Already Implemented (Previous Message)
+The Gemini conversation covers a LOT of ground. Let me separate what's **already in the platform** from what's **genuinely new**.
 
-| Spec Requirement | Status |
+## Already Built (No Changes Needed)
+
+| Gemini Concept | Existing Feature |
 |---|---|
-| Heat level colors (Slate→Sage→Blue→Amber→Red) | Done — `heat-config.ts` |
-| 5 editorial categories mapped from 7 data categories | Done — `heat-config.ts` |
-| JRC EDIT watermark on cards + posters (1s fade-in) | Done — `ReceiptCard.tsx`, `ReceiptPoster.tsx` |
-| Magazine Gloss hover (white sweep + 2° tilt) | Done — `index.css` |
-| Easter Egg snarky tooltips on heat chips | Done — `HeatChip.tsx` |
-| 9-field card schema (Category, Source, Bias, Heat, Receipt, Take, Why It Matters, Use This, Read the Source) | Done — `ReceiptCard.tsx` |
-| Bias hidden on mobile, shown on expand | Done |
-| Dynamic "Use This" CTA per category | Done |
-| "Fix This" / "Solve My Puzzle" secondary CTA | Done |
-| Special Edition interstitial every 5th card | Done — `SpecialEditionCard.tsx` |
-| Floating Bubble with Jackye-isms + 3 CTAs | Done — `FloatingBubble.tsx` |
-| Email Capture Modal ("Join the Heat Map") | Done — `EmailCaptureModal.tsx` |
-| JSON-LD with Review + Analysis schema | Done — `Receipts.tsx` |
-| llms.txt | Done — `public/llms.txt` |
-| Share bar (LinkedIn, X, FB, Save Image) | Done |
-| Category filtering + sorting (Newest/Hottest/Drama) | Done |
+| "Facts Over Feelings" Warning Label format | `WarningLabelView.tsx` — Verdict, Pulse, Money Trail, Influence Map |
+| "Clarity Engine" AI dossier generator | `ClarityEngine.tsx` — streams AI analysis via edge function |
+| "Candidate Prep Pack" with Hard Questions | `CandidatePrepPack.tsx` — role-specific, streamed via edge function |
+| "CEO Memo Decoder" | Built into Clarity Engine prompt |
+| Three dossier views (Warning Label / Deep Dive / Interview Prep) | `CompanyDossier.tsx` — tab switcher at line 291-308 |
+| Auto-Apply with consent + mobile "Yes" | `AutoApplySettings.tsx` + `AutoApplyConsentModal` + `ApplyQueueDashboard` |
+| Fairness Contract / consent modal | `AutoApplyConsentModal` — requires consent before enabling |
+| Compliance Dashboard (Founder Console) | `ComplianceDashboard.tsx` — consent rates, queue stats, audit trail |
+| Transparency Receipt / AI disclosure | Already in compliance dashboard + apply queue |
+| TRAIGA / EU AI Act compliance framing | Built into consent modal and compliance dashboard |
+| Human-in-the-Loop verification | Apply queue requires user action before processing |
+| Data Wipe / Right to be Forgotten | `DataWipeButton.tsx` on user profile |
 
-## Remaining Gaps (3 items)
+## What's Actually New (From the Gemini Conversation)
 
-### 1. Logic-Gate Content (Email wall for Heat 4-5 "Use This")
-The spec says Heat 4-5 stories should require email capture before showing "Use This" templates. Currently, the "Use This" CTA links directly without gating.
+After stripping away everything already built, the Gemini conversation surfaces **3 actionable improvements**:
 
-**Fix**: In `ReceiptCard.tsx`, when `spice_level >= 4`, clicking "Use This" triggers the `EmailCaptureModal` instead of navigating directly. Store unlock state in localStorage.
+### 1. Dossier Format Refresh — "High-Utility" Style
+The Gemini conversation refined the dossier into a tighter format: **Verdict → Strategy → Workforce Health → 3 Hard Questions**. The current `WarningLabelView` is close but could be tightened to match this "scannable" layout with clearer section headers.
 
-### 2. "Direct Answer" Block for RAG
-Each article should start with a 2-3 sentence plain-text summary block before the editorial content, optimized for AI citation extraction.
+**Change**: Update `WarningLabelView.tsx` section headers and ordering to match the refined "High-Utility" format (The Strategy, Workforce Health, 3 Hard Questions as a distinct callout).
 
-**Fix**: Add a `<p>` block at the top of each `ReceiptCard` (before the poster) with a neutral summary derived from the headline + receipt_connection. Hidden visually with `sr-only` or shown as subtle lead text.
+### 2. "Transparency Receipt" on Every Application
+The Gemini conversation specifies a metadata footer on every submitted application: *"0% of candidate identity data (race, age, gender) was used in matching."* This text exists in the admin `ComplianceDashboard` but is NOT shown to the **candidate** in their apply queue.
 
-### 3. Email Capture Modal Not Wired
-The `EmailCaptureModal` component exists but `showEmailCapture` is never set to `true` anywhere in `Receipts.tsx`.
+**Change**: Add a "Transparency Receipt" badge/footer to each item in `ApplyQueueDashboard.tsx` so candidates see it too.
 
-**Fix**: Wire the modal to trigger on "Exposed" story clicks and Heat 4-5 "Use This" gate logic.
+### 3. Compliance Terms / "Fairness Contract" Content Update
+The Gemini conversation refined the consent language into a 3-point "Fairness Contract" (Agent license, No Hallucination promise, Human-in-the-Loop). The current `AutoApplyConsentModal` has generic consent text.
+
+**Change**: Update `AutoApplyConsentModal.tsx` copy to use the refined 3-point Fairness Contract language from the Gemini conversation.
 
 ---
 
-## Implementation
+## Files to Edit
 
-### Files to edit
-- `src/components/receipts/ReceiptCard.tsx` — add logic-gate for Heat 4-5 "Use This", add Direct Answer block
-- `src/pages/Receipts.tsx` — wire EmailCaptureModal trigger via callback prop
+- `src/components/dossier/WarningLabelView.tsx` — Reorder sections, add "The Strategy" and "Workforce Health" headers, surface "3 Hard Questions" as a distinct callout box
+- `src/components/jobs/ApplyQueueDashboard.tsx` — Add Transparency Receipt footer per queue item
+- `src/components/auto-apply/AutoApplyConsentModal.tsx` — Update consent copy to 3-point Fairness Contract
 
-### No new files needed. No database changes.
+## No database changes needed.
 
