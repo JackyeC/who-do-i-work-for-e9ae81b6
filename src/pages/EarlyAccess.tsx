@@ -115,7 +115,6 @@ export default function EarlyAccess() {
               <span className="logo-bold">WORK FOR</span>
               <span className="logo-q">?</span>
             </p>
-            </p>
             <p className="text-white/40 text-xs tracking-[0.15em] uppercase mt-0.5">
               Career Intelligence
             </p>
