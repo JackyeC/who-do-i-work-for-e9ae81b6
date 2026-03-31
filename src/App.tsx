@@ -107,6 +107,7 @@ const Quiz = lazy(() => import("./pages/Quiz"));
 const EarlyAccess = lazy(() => import("./pages/EarlyAccess"));
 const AdminTicker = lazy(() => import("./pages/AdminTicker"));
 const About = lazy(() => import("./pages/About"));
+const HowItWorks = lazy(() => import("./pages/HowItWorks"));
 const ChromeExtension = lazy(() => import("./pages/ChromeExtension"));
 const DataEthics = lazy(() => import("./pages/DataEthics"));
 const ChromeWebStoreAssets = lazy(() => import("./pages/ChromeWebStoreAssets"));
