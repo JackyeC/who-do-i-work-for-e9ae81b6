@@ -1,5 +1,5 @@
 import { useState, useRef, useEffect } from "react";
-import { Send, Loader2, Sparkles } from "lucide-react";
+import { Send, Loader2 } from "lucide-react";
 import jackyeHeadshot from "@/assets/jackye-headshot.png";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
