@@ -1,5 +1,6 @@
 import { useMemo, useState } from "react";
 import { WarningLabelView } from "@/components/dossier/WarningLabelView";
+import { AdvocacyReport } from "@/components/dossier/AdvocacyReport";
 import { ClarityEngine } from "@/components/dossier/ClarityEngine";
 import { CandidatePrepPack } from "@/components/dossier/CandidatePrepPack";
 import { ContentProtector } from "@/components/ContentProtector";
