@@ -4700,18 +4700,21 @@ export type Database = {
           email: string
           id: string
           source: string | null
+          tags: string[] | null
         }
         Insert: {
           created_at?: string
           email: string
           id?: string
           source?: string | null
+          tags?: string[] | null
         }
         Update: {
           created_at?: string
           email?: string
           id?: string
           source?: string | null
+          tags?: string[] | null
         }
         Relationships: []
       }

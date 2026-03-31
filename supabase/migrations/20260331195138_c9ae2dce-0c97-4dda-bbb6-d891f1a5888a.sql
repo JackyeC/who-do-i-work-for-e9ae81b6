@@ -1,0 +1,1 @@
+ALTER TABLE public.email_signups ADD COLUMN tags text[] DEFAULT '{}';
