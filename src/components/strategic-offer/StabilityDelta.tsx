@@ -162,7 +162,7 @@ export function StabilityDelta({ companyId, companyName, interviewStartDate }: P
             })
           ) : (
             <p className="text-sm text-muted-foreground text-center py-2">
-              All signals remain stable since your interview process began. No new risk factors detected.
+              All tracked signals remain consistent since your process began. No new movement detected.
             </p>
           )}
         </CardContent>
