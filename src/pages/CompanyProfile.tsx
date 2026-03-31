@@ -28,9 +28,7 @@ import { InnovationSignals } from "@/components/company/InnovationSignals";
 import { RecruiterIntegrityCard, RecruiterIntegrityCardSkeleton } from "@/components/company/RecruiterIntegrityCard";
 import { useCompanyIntegrity } from "@/hooks/use-company-integrity";
 import { LeadershipInfluenceSection } from "@/components/company/LeadershipInfluenceSection";
-import { WhatToWatch } from "@/components/company/WhatToWatch";
-import { WhatToAsk } from "@/components/company/WhatToAsk";
-import { CandidatePrepPack } from "@/components/company/CandidatePrepPack";
+import { CandidatePrepPack } from "@/components/dossier/CandidatePrepPack";
 import { ReportTeaserGate } from "@/components/ReportTeaserGate";
 import { PostReportNudge } from "@/components/PostReportNudge";
 import { ContentProtector } from "@/components/ContentProtector";
@@ -412,24 +410,11 @@ export default function CompanyProfile() {
           {dbCompany?.id && <IntegrityIndicators companyId={dbCompany.id} />}
 
           {/* ═══════════════════════════════════════════════════════
-              🎯 CANDIDATE PREP PACK
+              🎯 CANDIDATE PREP PACK (AI-powered, role-aware)
              ═══════════════════════════════════════════════════════ */}
           <CandidatePrepPack
+            companyId={dbCompanyId}
             companyName={name}
-            industry={industry}
-            employeeCount={(dbCompany as any)?.employee_count ?? null}
-            hasLayoffSignals={false}
-            hasWarnNotices={false}
-            hasPayEquity={!!tiPayEquity}
-            hasBenefitsData={!!tiBenefits}
-            hasAiHrSignals={!!tiAiHr}
-            hasSentimentData={!!tiSentiment}
-            executiveCount={verifiedExecCount}
-            revolvingDoorCount={dbRevolvingDoor?.length || 0}
-            totalPacSpending={totalPac}
-            lobbyingSpend={lobbyingSpend}
-            darkMoneyCount={dbDarkMoney?.length || 0}
-            jackye_insight={dbCompany?.jackye_insight}
           />
 
           {/* ═══════════════════════════════════════════════════════
@@ -586,26 +571,7 @@ export default function CompanyProfile() {
             />
           )}
 
-          {/* ═══════════════════════════════════════════════════════
-              7. WHAT TO WATCH
-             ═══════════════════════════════════════════════════════ */}
-          <WhatToWatch
-            companyName={name}
-            hasLayoffSignals={false}
-            hasWarnNotices={false}
-            hasPayEquity={!!tiPayEquity}
-            hasBenefitsData={!!tiBenefits}
-            hasAiHrSignals={!!tiAiHr}
-            hasSentimentData={!!tiSentiment}
-            hasJobPostings={hasJobPostings}
-            executiveCount={verifiedExecCount}
-            revolvingDoorCount={dbRevolvingDoor?.length || 0}
-            totalPacSpending={totalPac}
-            lobbyingSpend={lobbyingSpend}
-            darkMoneyCount={dbDarkMoney?.length || 0}
-          />
-
-          {/* What to Ask — consolidated into Interview Prep Pack above */}
+          {/* WhatToWatch + WhatToAsk removed — consolidated into AI Prep Pack above */}
 
 
           {/* ═══════════════════════════════════════════════════════
