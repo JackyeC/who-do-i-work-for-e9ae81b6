@@ -182,6 +182,8 @@ export default function Newsletter() {
   const [status, setStatus] = useState<"idle" | "loading" | "success" | "error">("idle");
   const [errorMsg, setErrorMsg] = useState("");
   const [filter, setFilter] = useState("all");
+  const [showBadge, setShowBadge] = useState(false);
+  const { user } = useAuth();
   const { containerRef, getToken, resetToken } = useTurnstile();
   const { data: articles = [], isLoading } = useWorkNews(60);
 
