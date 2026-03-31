@@ -1,7 +1,8 @@
 import { useMemo, useState } from "react";
+import { Link } from "react-router-dom";
 import {
   AlertTriangle, DollarSign, Users, Eye, MessageSquare,
-  CheckCircle2, MinusCircle, ArrowRight, Shield, Zap,
+  CheckCircle2, MinusCircle, ArrowRight, Shield, ShieldAlert, Zap,
   Building2, Scale, Megaphone, FileText, Heart, ChevronDown,
 } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
