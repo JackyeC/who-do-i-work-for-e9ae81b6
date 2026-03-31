@@ -196,10 +196,11 @@ const CATEGORIES = [
   { value: "finance", label: "Finance" },
 ];
 
-type SortMode = "drama" | "alpha" | "spice";
+type SortMode = "drama" | "alpha" | "spice" | "newest";
 
 const SORT_OPTIONS: { value: SortMode; label: string }[] = [
   { value: "drama", label: "Most Drama" },
+  { value: "newest", label: "Newest" },
   { value: "spice", label: "Spiciest" },
   { value: "alpha", label: "A–Z" },
 ];
@@ -305,7 +306,7 @@ export default function Receipts() {
 
   const [search, setSearch] = useState("");
   const [category, setCategory] = useState("all");
-  const [sortMode, setSortMode] = useState<SortMode>("drama");
+  const [sortMode, setSortMode] = useState<SortMode | null>("drama");
 
   const filtered = useMemo(() => {
     let result = COMPANIES.filter((c) => {
@@ -324,6 +325,16 @@ export default function Receipts() {
     switch (sortMode) {
       case "drama":
         result = [...result].sort((a, b) => b.dramaScore - a.dramaScore);
+        break;
+      case "newest":
+        result = [...result].sort((a, b) => {
+          const parseDate = (d: string) => {
+            const [month, year] = d.split(" ");
+            const months: Record<string, number> = { January: 0, February: 1, March: 2, April: 3, May: 4, June: 5, July: 6, August: 7, September: 8, October: 9, November: 10, December: 11 };
+            return new Date(Number(year), months[month] ?? 0).getTime();
+          };
+          return parseDate(b.date) - parseDate(a.date);
+        });
         break;
       case "spice":
         result = [...result].sort((a, b) => b.spice - a.spice || b.dramaScore - a.dramaScore);
@@ -430,7 +441,7 @@ export default function Receipts() {
                     ? "bg-primary text-primary-foreground"
                     : ""
                 }`}
-                onClick={() => setSortMode(opt.value)}
+                onClick={() => setSortMode(prev => prev === opt.value ? null : opt.value)}
               >
                 {opt.value === "drama" && <Flame className="w-3 h-3 mr-1" />}
                 {opt.label}
