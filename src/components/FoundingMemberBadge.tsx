@@ -103,7 +103,7 @@ export function FoundingMemberBadge({
   };
 
   const handleShareTwitter = () => {
-    const text = `I'm Founding Member ${displayNumber} of @WhoDoIWorkFor — career intelligence that tells you what employers won't. April 6 launch. ${BASE_URL}`;
+    const text = `I'm Founding Member ${displayNumber} of @WhoDoIWorkFor — career intelligence that tells you what employers won't. April 7 launch. ${BASE_URL}`;
     const url = `https://twitter.com/intent/tweet?text=${encodeURIComponent(text)}`;
     window.open(url, "_blank", "width=600,height=500");
   };
