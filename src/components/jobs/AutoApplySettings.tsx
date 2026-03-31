@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import { useAutoApplySettings } from "@/hooks/use-auto-apply";
+import { AutoApplyConsentModal } from "@/components/auto-apply/AutoApplyConsentModal";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Switch } from "@/components/ui/switch";
