@@ -308,9 +308,9 @@ export function VibeMatchQuestionnaire({ onSubmit, isSubmitting }: Props) {
             </div>
           </div>
 
-          {/* Section 3: Red Flag Radar */}
+          {/* Section 3: Process Signals */}
           <div>
-            <SectionHeader icon={AlertTriangle} title='The "Jackye" Red Flag Radar' number={3} />
+            <SectionHeader icon={AlertTriangle} title="Process Signals" number={3} />
             <div className="space-y-4">
               <QuestionCard
                 question="Did anyone 'bad-mouth' a former employee or the person previously in this role?"
