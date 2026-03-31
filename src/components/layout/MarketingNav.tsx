@@ -11,14 +11,6 @@ const PRIMARY_LINKS = [
   { label: "Pricing", to: "/pricing" },
 ];
 
-const TOOLS_LINKS = [
-  { label: "For Companies", to: "/for-employers" },
-  { label: "Recruiter Brief", to: "/recruiter-brief" },
-  { label: "Mock Interview", to: "/mock-interview" },
-  { label: "Career Map", to: "/career-intelligence" },
-  { label: "Job Board", to: "/jobs" },
-  { label: "All Tools", to: "/tools" },
-];
 
 export function MarketingNav() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
