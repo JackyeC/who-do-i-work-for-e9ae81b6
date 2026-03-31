@@ -288,7 +288,7 @@ export function WarningLabelView({ company, executives = [], contracts = [], iss
                 <tr className="border-b border-border/40">
                   <th className="text-left py-2 pr-4 font-mono text-xs text-muted-foreground uppercase tracking-wider">Metric</th>
                   <th className="text-left py-2 pr-4 font-mono text-xs text-muted-foreground uppercase tracking-wider">Amount</th>
-                  <th className="text-left py-2 font-mono text-xs text-muted-foreground uppercase tracking-wider">So What?</th>
+                  <th className="text-left py-2 font-mono text-xs text-muted-foreground uppercase tracking-wider">What It Tends to Mean</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-border/20">
