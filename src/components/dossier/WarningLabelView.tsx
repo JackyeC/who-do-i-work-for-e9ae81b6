@@ -635,7 +635,7 @@ function ReceiptsSection({ signalsByCategory }: { signalsByCategory: Record<stri
   );
 }
 
-
+function ActionItem({ type, text }: { type: "watch" | "check" | "ask"; text: string }) {
   const config = {
     watch: { icon: Eye, label: "WATCH", color: "text-civic-yellow" },
     check: { icon: CheckCircle2, label: "CHECK", color: "text-civic-blue" },
