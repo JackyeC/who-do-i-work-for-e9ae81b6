@@ -74,21 +74,105 @@ function getTextOnAccent(accent: string): string {
   return lum > 0.55 ? "#000" : "#FFF";
 }
 
-const FALLBACK_POSTERS: Record<string, PosterData> = {
-  ai_workplace: { bg: "#005F73", accent: "#FFE66D", dark: "#001219", emoji: "🤖", bigTxt: "AI", sub: "is watching", tag: "automation nation", copy: "Your job title has been optimized.", fine: "*by someone who doesn't do your job" },
-  future_of_work: { bg: "#5A189A", accent: "#E0AAFF", dark: "#10002B", emoji: "🔮", bigTxt: "FUTURE", sub: "of work™", tag: "disruption incoming", copy: "The future is here. Your desk isn't.", fine: "*remote means we removed your role" },
-  labor_organizing: { bg: "#1B4332", accent: "#95D5B2", dark: "#081C15", emoji: "✊", bigTxt: "UNION", sub: "busting budget: $$$", tag: "collective action", copy: "They said family. We said contract.", fine: "*family doesn't dock your PTO" },
-  worker_rights: { bg: "#6A0572", accent: "#FFD6FF", dark: "#1A001E", emoji: "⚖️", bigTxt: "EQUITY", sub: "report: missing", tag: "the culture audit", copy: "Diversity is our strength™", fine: "*our legal team's too" },
-  regulation: { bg: "#9D0208", accent: "#FFB3B3", dark: "#370617", emoji: "📋", bigTxt: "POLICY", sub: "update pending", tag: "the fine print", copy: "We updated our policy. You didn't notice.", fine: "*that was the point" },
-  layoffs: { bg: "#370617", accent: "#FF758F", dark: "#1A000A", emoji: "📦", bigTxt: "CUTS", sub: "restructuring™", tag: "involuntary flexibility", copy: "We're a family. A smaller one.", fine: "*effective immediately" },
-  pay_equity: { bg: "#0B3D0B", accent: "#34D399", dark: "#001A00", emoji: "💰", bigTxt: "MONEY", sub: "trail exposed", tag: "follow the money", copy: "Competitive salary*", fine: "*competing with poverty" },
-  legislation: { bg: "#1E3A5F", accent: "#60A5FA", dark: "#0C1B2E", emoji: "📝", bigTxt: "HIRING", sub: "or pretending to", tag: "talent acquisition", copy: "We're always hiring!", fine: "*the listing is 8 months old" },
+/*
+ * ── POSTER PALETTE POOL ──
+ * 24 distinct palettes across warm, cool, jewel-tone, earthy, neon, and muted ranges.
+ * Each story gets a palette deterministically via headline hash — no two adjacent
+ * stories should look the same. Category is used as a secondary signal only.
+ */
+const PALETTE_POOL: { bg: string; accent: string; dark: string }[] = [
+  // Warm editorial
+  { bg: "#7B2D26", accent: "#F5C882", dark: "#2E0E0A" },   // Tuscan clay + gold
+  { bg: "#8B4513", accent: "#FFD700", dark: "#3A1C00" },   // Saddlebrown + bright gold
+  { bg: "#A0522D", accent: "#FAEBD7", dark: "#3B1A0A" },   // Sienna + antique white
+  { bg: "#C0392B", accent: "#FFF5E1", dark: "#5A1A12" },   // Valentino Rosso + cream
+  // Cool editorial
+  { bg: "#005F73", accent: "#FFE66D", dark: "#001219" },   // Deep teal + yellow
+  { bg: "#1E3A5F", accent: "#60A5FA", dark: "#0C1B2E" },   // Navy + sky blue
+  { bg: "#1A365D", accent: "#90CDF4", dark: "#0A1929" },   // Midnight + ice
+  { bg: "#234E70", accent: "#FBD38D", dark: "#0E2233" },   // Steel blue + warm gold
+  // Jewel tones
+  { bg: "#5A189A", accent: "#E0AAFF", dark: "#10002B" },   // Amethyst + lavender
+  { bg: "#6A0572", accent: "#FFD6FF", dark: "#1A001E" },   // Magenta + pink
+  { bg: "#1B4332", accent: "#95D5B2", dark: "#081C15" },   // Emerald + sage
+  { bg: "#0B3D0B", accent: "#34D399", dark: "#001A00" },   // Forest + mint
+  // Earth + neutrals
+  { bg: "#2C2C34", accent: "#E8D5B7", dark: "#111115" },   // Charcoal + parchment
+  { bg: "#3D3024", accent: "#D4A373", dark: "#1A1410" },   // Espresso + caramel
+  { bg: "#4A4238", accent: "#C9B99A", dark: "#201D17" },   // Taupe + sand
+  { bg: "#2D3436", accent: "#DFE6E9", dark: "#141819" },   // Graphite + silver
+  // Bold + neon
+  { bg: "#9D0208", accent: "#FFB3B3", dark: "#370617" },   // Crimson + blush
+  { bg: "#370617", accent: "#FF758F", dark: "#1A000A" },   // Oxblood + coral
+  { bg: "#0A3200", accent: "#AAFF00", dark: "#051900" },   // Dark green + chartreuse
+  { bg: "#1B1464", accent: "#00D4FF", dark: "#0A0A32" },   // Indigo + cyan
+  // Luxury muted
+  { bg: "#2C1810", accent: "#C4956A", dark: "#150C08" },   // Cocoa + bronze
+  { bg: "#1F2937", accent: "#F9FAFB", dark: "#0F1520" },   // Slate + white
+  { bg: "#312E81", accent: "#A5B4FC", dark: "#1A1850" },   // Royal purple + periwinkle
+  { bg: "#064E3B", accent: "#6EE7B7", dark: "#022C22" },   // Deep teal + seafoam
+];
+
+/* Poster copy — category-specific content with varied palettes */
+const CATEGORY_COPY: Record<string, { emoji: string; bigTxt: string; sub: string; tag: string; copy: string; fine: string }[]> = {
+  ai_workplace: [
+    { emoji: "🤖", bigTxt: "AI", sub: "is watching", tag: "automation nation", copy: "Your job title has been optimized.", fine: "*by someone who doesn't do your job" },
+    { emoji: "🧠", bigTxt: "ALGO", sub: "made the call", tag: "machine learning", copy: "The algorithm knows best.", fine: "*best for shareholders" },
+    { emoji: "⚡", bigTxt: "AUTO", sub: "pilot engaged", tag: "future shock", copy: "We automated your workflow.", fine: "*and your paycheck" },
+  ],
+  future_of_work: [
+    { emoji: "🔮", bigTxt: "FUTURE", sub: "of work™", tag: "disruption incoming", copy: "The future is here. Your desk isn't.", fine: "*remote means we removed your role" },
+    { emoji: "🏢", bigTxt: "RTO", sub: "mandatory", tag: "back to the office", copy: "Culture requires proximity.", fine: "*surveillance requires it more" },
+    { emoji: "🌐", bigTxt: "HYBRID", sub: "in theory", tag: "flexible work", copy: "Work from anywhere!", fine: "*as long as it's the office" },
+  ],
+  labor_organizing: [
+    { emoji: "✊", bigTxt: "UNION", sub: "busting budget: $$$", tag: "collective action", copy: "They said family. We said contract.", fine: "*family doesn't dock your PTO" },
+    { emoji: "📢", bigTxt: "VOICE", sub: "suppressed", tag: "worker power", copy: "We value employee feedback.", fine: "*that agrees with management" },
+  ],
+  worker_rights: [
+    { emoji: "⚖️", bigTxt: "EQUITY", sub: "report: missing", tag: "the culture audit", copy: "Diversity is our strength™", fine: "*our legal team's too" },
+    { emoji: "🛡️", bigTxt: "RIGHTS", sub: "under review", tag: "worker protections", copy: "We stand with our employees.", fine: "*in the press release" },
+  ],
+  regulation: [
+    { emoji: "📋", bigTxt: "POLICY", sub: "update pending", tag: "the fine print", copy: "We updated our policy. You didn't notice.", fine: "*that was the point" },
+    { emoji: "🔒", bigTxt: "COMPLY", sub: "or else", tag: "regulatory risk", copy: "We take compliance seriously.", fine: "*when we get caught" },
+  ],
+  layoffs: [
+    { emoji: "📦", bigTxt: "CUTS", sub: "restructuring™", tag: "involuntary flexibility", copy: "We're a family. A smaller one.", fine: "*effective immediately" },
+    { emoji: "💼", bigTxt: "EXIT", sub: "strategy: yours", tag: "workforce reduction", copy: "We're right-sizing the organization.", fine: "*left-sizing your income" },
+    { emoji: "🚪", bigTxt: "LEAN", sub: "and mean", tag: "operational efficiency", copy: "Doing more with less.", fine: "*less people, less benefits, less hope" },
+  ],
+  pay_equity: [
+    { emoji: "💰", bigTxt: "MONEY", sub: "trail exposed", tag: "follow the money", copy: "Competitive salary*", fine: "*competing with poverty" },
+    { emoji: "📊", bigTxt: "GAP", sub: "is a feature", tag: "pay transparency", copy: "We believe in fair pay.", fine: "*for executives" },
+  ],
+  legislation: [
+    { emoji: "📝", bigTxt: "HIRING", sub: "or pretending to", tag: "talent acquisition", copy: "We're always hiring!", fine: "*the listing is 8 months old" },
+    { emoji: "🏛️", bigTxt: "BILL", sub: "killed quietly", tag: "legislative watch", copy: "Bipartisan support for workers.", fine: "*support for the press release" },
+  ],
 };
 
-const DEFAULT_FALLBACK: PosterData = { bg: "#1A1A2E", accent: "#F0C040", dark: "#0A0A1A", emoji: "🧾", bigTxt: "RECEIPT", sub: "pulled.", tag: "the receipts", copy: "They thought we wouldn't notice.", fine: "*we noticed" };
+const DEFAULT_COPY = { emoji: "🧾", bigTxt: "RECEIPT", sub: "pulled.", tag: "the receipts", copy: "They thought we wouldn't notice.", fine: "*we noticed" };
 
-function getFallbackPoster(category: string | null): PosterData {
-  return FALLBACK_POSTERS[category || ""] || DEFAULT_FALLBACK;
+function hashString(s: string): number {
+  let h = 0;
+  for (let i = 0; i < s.length; i++) {
+    h = ((h << 5) - h + s.charCodeAt(i)) | 0;
+  }
+  return Math.abs(h);
+}
+
+function getFallbackPoster(category: string | null, headline?: string): PosterData {
+  const hash = hashString(headline || category || "default");
+
+  // Pick palette from pool — deterministic by headline so each story is unique
+  const palette = PALETTE_POOL[hash % PALETTE_POOL.length];
+
+  // Pick copy from category variants
+  const copies = CATEGORY_COPY[category || ""] || [DEFAULT_COPY];
+  const copyData = copies[hash % copies.length];
+
+  return { ...palette, ...copyData };
 }
 
 /* ── Poster sizes: LARGE for readability ── */
