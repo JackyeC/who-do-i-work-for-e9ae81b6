@@ -51,12 +51,12 @@ function matchPosterImage(headline: string | undefined): string | null {
 
 /* ── Emoji template fallback system ── */
 const WDIWF_QUOTES = [
-  "Stop applying. Start aligning.",
-  "We pull the receipts.",
-  "Career intelligence. Not paid reviews.",
-  "Every company runs a check on you. WDIWF runs one on them.",
-  "Intelligence meets defiance.",
-  "Know before you go.",
+  "Every company runs a background check on you. This is yours on them.",
+  "The data was always public. Nobody was reading it for you.",
+  "Career intelligence, not career advice.",
+  "What the offer letter doesn't say is usually the most important part.",
+  "Employer brand is marketing. Employer reality is data.",
+  "Know the company before the company knows you.",
 ];
 
 function quoteIdx(id: string) {
