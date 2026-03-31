@@ -1,0 +1,1 @@
+ALTER TABLE public.waitlist ADD COLUMN IF NOT EXISTS interests text[] DEFAULT '{}';

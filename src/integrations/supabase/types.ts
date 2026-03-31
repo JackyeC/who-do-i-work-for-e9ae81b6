@@ -10767,16 +10767,19 @@ export type Database = {
         Row: {
           created_at: string
           email: string
+          interests: string[] | null
           role: Database["public"]["Enums"]["waitlist_role"]
         }
         Insert: {
           created_at?: string
           email: string
+          interests?: string[] | null
           role: Database["public"]["Enums"]["waitlist_role"]
         }
         Update: {
           created_at?: string
           email?: string
+          interests?: string[] | null
           role?: Database["public"]["Enums"]["waitlist_role"]
         }
         Relationships: []

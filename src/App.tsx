@@ -101,6 +101,7 @@ const PolicyIntelligence = lazy(() => import("./pages/PolicyIntelligence"));
 const NegotiationSimulator = lazy(() => import("./pages/NegotiationSimulator"));
 const DecisionEngine = lazy(() => import("./pages/DecisionEngine"));
 const Hire = lazy(() => import("./pages/Hire"));
+const Community = lazy(() => import("./pages/Community"));
 const AutoApplyOnboarding = lazy(() => import("./pages/AutoApply"));
 const SampleDossier = lazy(() => import("./pages/SampleDossier"));
 const Welcome = lazy(() => import("./pages/Welcome"));
@@ -300,6 +301,7 @@ const App = () => (
                   <Route path="/early-access" element={<Navigate to="/join" replace />} />
                   <Route path="/decision-engine" element={<DecisionEngine />} />
                   <Route path="/hire" element={<Hire />} />
+                  <Route path="/community" element={<Community />} />
                   <Route path="/dossier" element={<SampleDossier />} />
                   <Route path="/welcome" element={<Welcome />} />
                   <Route path="/tools" element={<Tools />} />
