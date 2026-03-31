@@ -107,6 +107,7 @@ const Quiz = lazy(() => import("./pages/Quiz"));
 const EarlyAccess = lazy(() => import("./pages/EarlyAccess"));
 const AdminTicker = lazy(() => import("./pages/AdminTicker"));
 const About = lazy(() => import("./pages/About"));
+const HowItWorks = lazy(() => import("./pages/HowItWorks"));
 const ChromeExtension = lazy(() => import("./pages/ChromeExtension"));
 const DataEthics = lazy(() => import("./pages/DataEthics"));
 const ChromeWebStoreAssets = lazy(() => import("./pages/ChromeWebStoreAssets"));
@@ -221,6 +222,7 @@ const App = () => (
                   <Route path="/disclaimers" element={<Disclaimers />} />
                   <Route path="/data-ethics" element={<DataEthics />} />
                   <Route path="/about" element={<About />} />
+                  <Route path="/how-it-works" element={<HowItWorks />} />
                   <Route path="/extension" element={<ChromeExtension />} />
                   <Route path="/store-assets" element={<ChromeWebStoreAssets />} />
                   <Route path="/companies" element={<Navigate to="/browse" replace />} />

@@ -7,7 +7,7 @@ import { Button } from "@/components/ui/button";
 import { LogoMark } from "@/components/brand/LogoMark";
 
 const PRIMARY_LINKS = [
-  { label: "How It Works", to: "/about" },
+  { label: "How It Works", to: "/how-it-works" },
   { label: "Companies", to: "/browse" },
   { label: "The Receipts", to: "/receipts" },
   { label: "Pricing", to: "/pricing" },
