@@ -9,6 +9,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { cn } from "@/lib/utils";
 import { RecommendationCard } from "./RecommendationCard";
 import { ValuesAlignmentSection } from "./ValuesAlignmentSection";
+import { EarlyInvestigationCard, EARLY_INVESTIGATION_THRESHOLD } from "./EarlyInvestigationCard";
 import { PoliticalGivingCard } from "@/components/giving/PoliticalGivingCard";
 import { ExecutiveGivingSection } from "@/components/giving/ExecutiveGivingCard";
 import { InstitutionalDNACard } from "./InstitutionalDNACard";
