@@ -202,29 +202,17 @@ const Index = forwardRef<HTMLDivElement>((_, ref) => {
       </section>
 
       {/* ═══════════════════════════════════════════
-          4 — WHY THIS EXISTS
+          4 — OUR "WHY"
       ═══════════════════════════════════════════ */}
       <section className="px-6 lg:px-16 py-20 lg:py-28 bg-background">
         <div className="max-w-[720px] mx-auto">
-          <p className="font-mono text-xs tracking-[0.15em] uppercase text-primary mb-4">Why This Exists</p>
+          <p className="font-mono text-xs tracking-[0.15em] uppercase text-primary mb-4">Our "Why"</p>
           <h2 className="text-h1 text-foreground mb-8">
-            You prove yourself to employers every day. When do they prove themselves to you?
+            The Reverse Background Check.
           </h2>
-
-          <div className="space-y-6">
-            <p className="font-sans text-muted-foreground leading-relaxed" style={{ fontSize: "clamp(14px, 1.3vw, 16px)" }}>
-              Too many people are asked to prove themselves to employers without ever being shown what those employers actually stand for. You tailor your resume. You prep for behavioral interviews. You write thank-you notes. And in return, you get a careers page full of stock photos and a mission statement that might not survive a single Federal Election Commission search.
-            </p>
-            <p className="font-sans text-muted-foreground leading-relaxed" style={{ fontSize: "clamp(14px, 1.3vw, 16px)" }}>
-              Who Do I Work For exists because people deserve better than mission-statement theater, ghost jobs, and getting blindsided by the market. We built the trust layer — so you can stop guessing and start knowing.
-            </p>
-          </div>
-
-          <blockquote className="border-l-2 border-primary pl-6 py-3 mt-10">
-            <p className="font-sans text-foreground italic leading-snug" style={{ fontSize: "clamp(1.1rem, 1.8vw, 1.4rem)", fontWeight: 600 }}>
-              "You wouldn't buy a house without an inspection. Why would you accept a job without one?"
-            </p>
-          </blockquote>
+          <p className="font-sans text-muted-foreground leading-relaxed" style={{ fontSize: "clamp(14px, 1.3vw, 16px)" }}>
+            Every company runs a background check on you. It's time you ran one on them. We built Who Do I Work For because you deserve to know if a company's actions align with your values before you sign the offer letter — or before you decide to stay.
+          </p>
         </div>
       </section>
 
