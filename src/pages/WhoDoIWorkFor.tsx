@@ -283,47 +283,53 @@ export default function WhoDoIWorkFor() {
 
               {/* Summary Cards */}
               <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
-                <Card>
-                  <CardContent className="p-4">
-                    <div className="flex items-center gap-2 text-xs text-muted-foreground mb-1">
-                      <DollarSign className="w-3.5 h-3.5" />
-                      PAC → Politicians
-                    </div>
-                    <div className="text-xl font-bold text-foreground">{formatCurrency(totalPacToReps)}</div>
-                    <p className="text-xs text-muted-foreground">{(candidates || []).length} recipients</p>
-                  </CardContent>
-                </Card>
-                <Card>
-                  <CardContent className="p-4">
-                    <div className="flex items-center gap-2 text-xs text-muted-foreground mb-1">
-                      <UserCheck className="w-3.5 h-3.5" />
-                      Executive Giving
-                    </div>
-                    <div className="text-xl font-bold text-foreground">{formatCurrency(totalExecDonations)}</div>
-                    <p className="text-xs text-muted-foreground">{(executives || []).length} executives</p>
-                  </CardContent>
-                </Card>
-                <Card>
-                  <CardContent className="p-4">
-                    <div className="flex items-center gap-2 text-xs text-muted-foreground mb-1">
-                      <Megaphone className="w-3.5 h-3.5" />
-                      Lobbying
-                    </div>
-                    <div className="text-xl font-bold text-foreground">
-                      {employerCompany.lobbying_spend ? formatCurrency(employerCompany.lobbying_spend) : "—"}
-                    </div>
-                  </CardContent>
-                </Card>
-                <Card>
-                  <CardContent className="p-4">
-                    <div className="flex items-center gap-2 text-xs text-muted-foreground mb-1">
-                      <AlertTriangle className="w-3.5 h-3.5" />
-                      Flagged
-                    </div>
-                    <div className="text-xl font-bold text-foreground">{flaggedCandidates.length}</div>
-                    <p className="text-xs text-muted-foreground">flagged donations</p>
-                  </CardContent>
-                </Card>
+                {[
+                  {
+                    icon: <DollarSign className="w-3.5 h-3.5" />,
+                    label: "Political Action Committee → Politicians",
+                    value: formatCurrency(totalPacToReps),
+                    sub: `${(candidates || []).length} recipients`,
+                    targetId: "pac-section",
+                  },
+                  {
+                    icon: <UserCheck className="w-3.5 h-3.5" />,
+                    label: "Executive Giving",
+                    value: formatCurrency(totalExecDonations),
+                    sub: `${(executives || []).length} executives`,
+                    targetId: "exec-section",
+                  },
+                  {
+                    icon: <Megaphone className="w-3.5 h-3.5" />,
+                    label: "Lobbying",
+                    value: employerCompany.lobbying_spend ? formatCurrency(employerCompany.lobbying_spend) : "—",
+                    sub: undefined,
+                    targetId: "board-section",
+                  },
+                  {
+                    icon: <AlertTriangle className="w-3.5 h-3.5" />,
+                    label: "Flagged",
+                    value: String(flaggedCandidates.length),
+                    sub: "flagged donations",
+                    targetId: "pac-section",
+                  },
+                ].map((card) => (
+                  <button
+                    key={card.label}
+                    onClick={() => document.getElementById(card.targetId)?.scrollIntoView({ behavior: "smooth", block: "start" })}
+                    className="text-left"
+                  >
+                    <Card className="h-full hover:border-primary/40 hover:shadow-md transition-all duration-200 cursor-pointer group">
+                      <CardContent className="p-4">
+                        <div className="flex items-center gap-2 text-xs text-muted-foreground mb-1 group-hover:text-primary transition-colors">
+                          {card.icon}
+                          {card.label}
+                        </div>
+                        <div className="text-xl font-bold text-foreground group-hover:text-primary transition-colors">{card.value}</div>
+                        {card.sub && <p className="text-xs text-muted-foreground">{card.sub}</p>}
+                      </CardContent>
+                    </Card>
+                  </button>
+                ))}
               </div>
 
               {/* PAC-Funded Politicians */}
