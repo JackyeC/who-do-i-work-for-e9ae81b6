@@ -8,6 +8,8 @@ import { Button } from "@/components/ui/button";
 import { supabase } from "@/integrations/supabase/client";
 import { useTurnstile } from "@/hooks/useTurnstile";
 import { verifyTurnstileToken } from "@/lib/verifyTurnstile";
+import { useAuth } from "@/contexts/AuthContext";
+import { FoundingMemberBadge } from "@/components/FoundingMemberBadge";
 import {
   getSourceProfile,
   getBiasColor,
@@ -15,7 +17,7 @@ import {
 import {
   Mail, ArrowRight, Check, ExternalLink, Newspaper,
   AlertTriangle, Flame, ChevronRight, Radio,
-  Eye, MessageSquare, TrendingUp,
+  Eye, MessageSquare, TrendingUp, Award,
 } from "lucide-react";
 
 /* ── Category config ── */
