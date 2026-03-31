@@ -1,7 +1,5 @@
 import { useMemo, useState } from "react";
-import { WarningLabelView } from "@/components/dossier/WarningLabelView";
 import { AdvocacyReport } from "@/components/dossier/AdvocacyReport";
-import { ClarityEngine } from "@/components/dossier/ClarityEngine";
 import { CandidatePrepPack } from "@/components/dossier/CandidatePrepPack";
 import { ContentProtector } from "@/components/ContentProtector";
 import { useParams, Link, useNavigate } from "react-router-dom";
@@ -10,72 +8,47 @@ import { useQuery } from "@tanstack/react-query";
 import { usePageSEO } from "@/hooks/use-page-seo";
 import { getOGImageUrl } from "@/lib/social-share";
 import {
-  Building2, Lightbulb, Network, Landmark, Eye,
-  Sparkles, Users, Heart, Loader2, ShoppingCart,
-  BarChart3, TrendingUp, User, Megaphone, Target, AlertTriangle,
-  FileSearch, Scan, Search,
+  Building2, Loader2, Sparkles, Users, Heart, FileSearch,
+  BarChart3, Landmark, Eye, AlertTriangle, ChevronDown,
 } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { Header } from "@/components/Header";
 import { Footer } from "@/components/Footer";
-import { JackyesInsightBlock } from "@/components/company/JackyesInsightBlock";
 import { AuditRequestForm } from "@/components/AuditRequestForm";
 import { Skeleton } from "@/components/ui/skeleton";
 import { DossierLayer, TransparencyDisclaimer } from "@/components/dossier/DossierLayout";
 import { DossierProtector } from "@/components/dossier/DossierProtector";
-import { InfluenceGauge } from "@/components/dossier/InfluenceGauge";
 import { useTrackedCompanies } from "@/hooks/use-tracked-companies";
 import { CompanyLogo } from "@/components/CompanyLogo";
 import { Badge } from "@/components/ui/badge";
 import { ExportDossierButton } from "@/components/dossier/ExportDossierButton";
-import { useDossierLens } from "@/contexts/DossierLensContext";
+import { useEEOCByCompanyName } from "@/hooks/use-eeoc-cases";
+import { Card, CardContent } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { cn } from "@/lib/utils";
 
-// Layer components
-import { ProductsPlatformsLayer } from "@/components/dossier/ProductsPlatformsLayer";
-import { MarketsSegmentsLayer } from "@/components/dossier/MarketsSegmentsLayer";
-import { InnovationPatentsLayer } from "@/components/dossier/InnovationPatentsLayer";
-import { EcosystemSubcontractorsLayer } from "@/components/dossier/EcosystemSubcontractorsLayer";
+// Deep-dive layer components (power-user expandable)
+import { ValuesSignalsLayer } from "@/components/dossier/ValuesSignalsLayer";
+import { TalentContextLayer } from "@/components/dossier/TalentContextLayer";
+import { WorkforceDemographicsLayer } from "@/components/dossier/WorkforceDemographicsLayer";
 import { InfluencePolicyLayer } from "@/components/dossier/InfluencePolicyLayer";
 import { PoliticalGivingCard } from "@/components/giving/PoliticalGivingCard";
 import { ExecutiveGivingSection } from "@/components/giving/ExecutiveGivingCard";
 import { InstitutionalDNACard } from "@/components/dossier/InstitutionalDNACard";
 import { InsiderScoreBreakdown } from "@/components/dossier/InsiderScoreBreakdown";
 import { PatternsSynthesisLayer } from "@/components/dossier/PatternsSynthesisLayer";
-import { TalentContextLayer } from "@/components/dossier/TalentContextLayer";
-import { ValuesSignalsLayer } from "@/components/dossier/ValuesSignalsLayer";
-import { FullEvidenceLayer } from "@/components/dossier/FullEvidenceLayer";
-import { DecisionMakerLayer } from "@/components/dossier/DecisionMakerLayer";
-import { WorkforceDemographicsLayer } from "@/components/dossier/WorkforceDemographicsLayer";
-import { BuyingLogicLayer } from "@/components/dossier/BuyingLogicLayer";
-import { StockPatentsLayer } from "@/components/dossier/StockPatentsLayer";
-import { EEOCCaseAlert } from "@/components/EEOCCaseAlert";
-import { useEEOCByCompanyName } from "@/hooks/use-eeoc-cases";
-import { PremiumGate } from "@/components/PremiumGate";
-import { useViewMode } from "@/contexts/ViewModeContext";
 import { HighRiskConnectionCard } from "@/components/company/HighRiskConnectionCard";
-import { StateWomenStatusCard } from "@/components/StateWomenStatusCard";
 import { PolicyScoreCard } from "@/components/policy-intelligence/PolicyScoreCard";
-import { SituationContextBanner } from "@/components/policy-intelligence/SituationContextBanner";
-import { TrustFramingLine } from "@/components/TrustFramingLine";
-import { Card, CardContent } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
-
-/* ─── Lens config ─── */
-const LENS_META = {
-  candidate: { label: "Candidate View", icon: User, color: "text-primary" },
-  sales: { label: "Sales Intelligence", icon: TrendingUp, color: "text-civic-yellow" },
-  hr: { label: "HR Strategy", icon: Users, color: "text-civic-blue" },
-} as const;
+import { StateWomenStatusCard } from "@/components/StateWomenStatusCard";
 
 export default function CompanyDossier() {
   const { id } = useParams();
   const navigate = useNavigate();
   const { isCompanyTracked } = useTrackedCompanies();
-  const { canAccessRecruiter } = useViewMode();
-  const { lens } = useDossierLens();
   const [showPrep, setShowPrep] = useState(false);
   const [showRawLayers, setShowRawLayers] = useState(false);
 
+  /* ─── Data fetching ─── */
   const { data: company, isLoading } = useQuery({
     queryKey: ["dossier-company", id],
     queryFn: async () => {
@@ -96,8 +69,8 @@ export default function CompanyDossier() {
 
   const seoCompanyName = company?.name ?? "Company";
   usePageSEO({
-    title: `Should I Work at ${seoCompanyName}? Career Risk Report`,
-    description: `Should you work at ${seoCompanyName}? See the Career Risk Score: leadership stability, layoff history, pay vs. industry benchmarks, and political activity.`,
+    title: `${seoCompanyName} — Employer Intelligence Report | WDIWF`,
+    description: `Before you apply to ${seoCompanyName}, see the receipts. Leadership stability, labor record, political spending, and values alignment — all from public sources.`,
     path: `/company/${id}`,
     image: getOGImageUrl({ type: "company", companyA: seoCompanyName }),
   });
@@ -147,6 +120,7 @@ export default function CompanyDossier() {
     enabled: !!companyId,
   });
 
+  /* ─── Derived data ─── */
   const politicalGiving = useMemo(() => {
     if (!executives) return [];
     return executives
@@ -183,46 +157,24 @@ export default function CompanyDossier() {
     }));
   }, [valuesSignals]);
 
+  /* ─── Loading state ─── */
   if (isLoading) {
     return (
       <div className="min-h-screen flex flex-col bg-background">
         <Header />
-        <main className="flex-1 container mx-auto px-4 py-8 max-w-4xl">
-          {/* Company header skeleton */}
-          <div className="flex items-center gap-5 mb-6">
-            <Skeleton className="w-16 h-16 rounded-xl" />
+        <main className="flex-1 container mx-auto px-4 py-12 max-w-3xl">
+          <div className="flex items-center gap-5 mb-8">
+            <Skeleton className="w-14 h-14 rounded-xl" />
             <div className="flex-1 space-y-2">
               <Skeleton className="h-7 w-48" />
               <Skeleton className="h-4 w-64" />
             </div>
-            <Skeleton className="h-9 w-28 rounded-lg" />
           </div>
-
-          {/* Lens indicator skeleton */}
-          <Skeleton className="h-10 w-full rounded-xl mb-6" />
-
-          {/* Score gauges skeleton */}
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-6 mb-8 p-6 rounded-2xl border border-border/40 bg-card">
-            {[...Array(4)].map((_, i) => (
-              <div key={i} className="flex flex-col items-center gap-2">
-                <Skeleton className="w-20 h-20 rounded-full" />
-                <Skeleton className="h-3 w-24" />
-              </div>
-            ))}
-          </div>
-
-          {/* Content layers skeleton */}
-          {[...Array(3)].map((_, i) => (
-            <div key={i} className="mb-4 rounded-2xl border border-border/40 bg-card p-6">
-              <div className="flex items-center gap-3 mb-4">
-                <Skeleton className="w-5 h-5 rounded" />
-                <Skeleton className="h-5 w-40" />
-              </div>
-              <div className="space-y-2">
-                <Skeleton className="h-4 w-full" />
-                <Skeleton className="h-4 w-3/4" />
-                <Skeleton className="h-4 w-5/6" />
-              </div>
+          {[...Array(4)].map((_, i) => (
+            <div key={i} className="mb-4 border border-border/30 p-6">
+              <Skeleton className="h-5 w-40 mb-3" />
+              <Skeleton className="h-4 w-full" />
+              <Skeleton className="h-4 w-3/4 mt-2" />
             </div>
           ))}
         </main>
@@ -231,6 +183,7 @@ export default function CompanyDossier() {
     );
   }
 
+  /* ─── Not found ─── */
   if (!company) {
     const derivedName = id
       ? id.replace(/-/g, " ").replace(/\b\w/g, c => c.toUpperCase())
@@ -250,11 +203,8 @@ export default function CompanyDossier() {
   }
 
   const influenceScore = company.employer_clarity_score || 0;
-  const hasFullAccess = isTracked;
-  const LensMeta = LENS_META[lens];
-  const LensIcon = LensMeta.icon;
 
-  // No-data detection: all scores zero, no insight, no signals, no stances
+  // No-data detection
   const hasNoData =
     influenceScore === 0 &&
     !company.jackye_insight &&
@@ -264,50 +214,47 @@ export default function CompanyDossier() {
     (issueSignals?.length || 0) === 0 &&
     (publicStances?.length || 0) === 0;
 
-  /* ─── Shared overview (always visible) ─── */
+  /* ─── Report header + advocacy report ─── */
   const overviewContent = (
     <>
-      <div className="flex items-center gap-5 mb-4">
-        <CompanyLogo companyName={company.name} logoUrl={company.logo_url} size="lg" />
-        <div className="flex-1 min-w-0">
-          <div className="flex items-center gap-3 mb-1">
-            <h1 className="text-h1 truncate">{company.name}</h1>
-            {isTracked && (
-              <Badge className="bg-primary/10 text-primary text-xs">Tracked</Badge>
-            )}
+      {/* ── REPORT HEADER ── */}
+      <div className="mb-8">
+        <p className="font-mono text-[10px] tracking-[0.35em] uppercase text-primary mb-4">
+          Employer Intelligence Report
+        </p>
+
+        <div className="flex items-start gap-4 mb-4">
+          <CompanyLogo companyName={company.name} logoUrl={company.logo_url} size="lg" />
+          <div className="flex-1 min-w-0">
+            <h1 className="text-2xl md:text-3xl font-black tracking-tight text-foreground leading-tight">
+              {company.name}
+            </h1>
+            <p className="text-sm text-muted-foreground mt-1">
+              {company.industry} · {company.state}
+              {company.employee_count && ` · ${company.employee_count} employees`}
+            </p>
           </div>
-          <p className="text-body text-muted-foreground">
-            {company.industry} · {company.state}
-            {company.employee_count && ` · ${company.employee_count} employees`}
-          </p>
+          <ExportDossierButton companyId={companyId!} companyName={company.name} company={company} />
         </div>
-        <ExportDossierButton companyId={companyId!} companyName={company.name} company={company} />
-      </div>
 
-      {/* Active lens indicator */}
-      <div className="flex items-center gap-2 mb-6 px-4 py-2.5 rounded-xl border border-border/40 bg-muted/30">
-        <LensIcon className={`w-4 h-4 ${LensMeta.color}`} />
-        <span className="text-sm font-medium text-foreground">{LensMeta.label}</span>
-        <span className="text-xs text-muted-foreground ml-1">— background check on the employer</span>
-      </div>
+        {isTracked && (
+          <Badge className="bg-primary/10 text-primary text-xs mb-4">Tracked</Badge>
+        )}
 
-      {/* Situation-Aware Context Banner */}
-      <TrustFramingLine />
-      <SituationContextBanner companyName={company.name} />
-
-      {/* WDIWF Clarity Engine */}
-      <div className="mb-6">
-        <ClarityEngine companyId={companyId} companyName={company.name} />
+        <p className="text-xs text-muted-foreground leading-relaxed max-w-xl">
+          This is a background check on the employer — built from public records, not opinions.
+          Every signal traces back to a source. Use it before you apply, interview, or sign.
+        </p>
       </div>
 
       {/* No-data fallback */}
       {hasNoData && (
-        <Card className="mb-6 border-dashed border-border/60 bg-muted/20">
+        <Card className="mb-6 border-dashed border-border/60 bg-muted/20 rounded-none">
           <CardContent className="p-6 text-center">
             <FileSearch className="w-10 h-10 text-muted-foreground mx-auto mb-3" />
             <h3 className="text-base font-semibold text-foreground mb-1">We don't have receipts on this company yet.</h3>
             <p className="text-sm text-muted-foreground mb-4 max-w-md mx-auto">
-              Our research team hasn't completed a full scan. You can request one or run an automated scan now.
+              Our research team hasn't completed a full scan. You can request one below.
             </p>
             <div className="flex flex-col items-center gap-4">
               <CompanyZeroState companyName={company.name} />
@@ -317,7 +264,7 @@ export default function CompanyDossier() {
         </Card>
       )}
 
-      {/* ─── ADVOCACY REPORT ─── */}
+      {/* ── THE ADVOCACY REPORT ── */}
       <AdvocacyReport
         company={{ ...company, id: companyId!, slug: company.slug } as any}
         executives={executives as any}
@@ -327,226 +274,153 @@ export default function CompanyDossier() {
         eeocCases={eeocCases as any}
       />
 
-      {/* Interview Prep toggle */}
-      <div className="mt-6">
-        <Button
-          variant="outline"
-          className="w-full font-mono text-xs uppercase tracking-wider"
+      {/* ── INTERVIEW PREP ── */}
+      <div className="mt-8">
+        <button
           onClick={() => setShowPrep(!showPrep)}
+          className={cn(
+            "w-full flex items-center justify-between px-6 py-4 border text-left transition-colors",
+            showPrep
+              ? "border-primary/30 bg-primary/5"
+              : "border-border/40 bg-card hover:bg-muted/30"
+          )}
         >
-          🎯 {showPrep ? "Hide" : "Show"} Interview Prep
-        </Button>
+          <div className="flex items-center gap-3">
+            <Sparkles className="w-5 h-5 text-primary" />
+            <div>
+              <p className="text-sm font-bold text-foreground">Interview Prep</p>
+              <p className="text-xs text-muted-foreground">What to say, what to ask, what to avoid</p>
+            </div>
+          </div>
+          <ChevronDown className={cn("w-5 h-5 text-muted-foreground transition-transform", showPrep && "rotate-180")} />
+        </button>
         {showPrep && (
-          <div className="mt-4">
+          <div className="border border-t-0 border-border/40 p-6">
             <CandidatePrepPack companyId={companyId} companyName={company.name} />
           </div>
         )}
       </div>
 
-      {/* Raw layers toggle for power users */}
+      {/* ── RAW DATA LAYERS (power users) ── */}
       <div className="mt-4">
-        <Button
-          variant="ghost"
-          className="w-full font-mono text-xs uppercase tracking-wider text-muted-foreground"
+        <button
           onClick={() => setShowRawLayers(!showRawLayers)}
+          className="w-full flex items-center justify-between px-6 py-3 border border-border/30 bg-background hover:bg-muted/20 transition-colors text-left"
         >
-          📋 {showRawLayers ? "Hide" : "View"} Raw Data Layers
-        </Button>
+          <div className="flex items-center gap-3">
+            <BarChart3 className="w-4 h-4 text-muted-foreground" />
+            <span className="font-mono text-xs uppercase tracking-wider text-muted-foreground">
+              Raw Data Layers
+            </span>
+          </div>
+          <ChevronDown className={cn("w-4 h-4 text-muted-foreground transition-transform", showRawLayers && "rotate-180")} />
+        </button>
       </div>
-    </>
-  );
 
-  /* ─── CANDIDATE LENS — values, workforce, career ─── */
-  const candidateContent = (
-    <>
-      <DossierLayer title="Values Filter" subtitle="Evidence-based filtering across 14 issue lenses" icon={Heart} layerNumber={3} defaultOpen>
-        <ValuesSignalsLayer signals={mappedValues} companyName={company.name} />
-      </DossierLayer>
+      {showRawLayers && (
+        <div className="mt-4 space-y-4">
+          <DossierLayer title="Values Filter" subtitle="Evidence-based filtering across 14 issue lenses" icon={Heart} layerNumber={1} defaultOpen>
+            <ValuesSignalsLayer signals={mappedValues} companyName={company.name} />
+          </DossierLayer>
 
-      <DossierLayer title="Workforce Signals" subtitle="WARN notices, hiring stability, workforce signals" icon={Users} layerNumber={4} defaultOpen>
-        <TalentContextLayer signals={[]} companyName={company.name} />
-      </DossierLayer>
+          <DossierLayer title="Workforce Signals" subtitle="WARN notices, hiring stability, workforce signals" icon={Users} layerNumber={2} defaultOpen>
+            <TalentContextLayer signals={[]} companyName={company.name} />
+          </DossierLayer>
 
-      <DossierLayer title="Workforce Demographics" subtitle="Role distribution, pay equity, diversity, and promotion signals" icon={BarChart3} layerNumber={5}>
-        <WorkforceDemographicsLayer companyId={companyId!} companyName={company.name} />
-      </DossierLayer>
+          <DossierLayer title="Workforce Demographics" subtitle="Role distribution, pay equity, diversity, and promotion signals" icon={BarChart3} layerNumber={3}>
+            <WorkforceDemographicsLayer companyId={companyId!} companyName={company.name} />
+          </DossierLayer>
 
-      {/* State-level women's status context */}
-      {company.state && (
-        <StateWomenStatusCard stateCode={company.state} companyName={company.name} />
+          {company.state && (
+            <StateWomenStatusCard stateCode={company.state} companyName={company.name} />
+          )}
+
+          <DossierLayer title="Influence & Policy Signals" subtitle="PAC giving, lobbying, government contracts" icon={Landmark} layerNumber={4}>
+            <InfluencePolicyLayer
+              politicalGiving={politicalGiving}
+              lobbyingActivity={[]}
+              governmentContracts={governmentContractSignals}
+              policyLinks={[]}
+            />
+            {companyId && (
+              <div className="mt-6 space-y-6">
+                <HighRiskConnectionCard companyId={companyId} companyName={company.name} />
+                <InstitutionalDNACard companyId={companyId} companyName={company.name} />
+                <PolicyScoreCard companyId={companyId} companyName={company.name} />
+              </div>
+            )}
+          </DossierLayer>
+
+          {companyId && (
+            <DossierLayer title="Political Giving" subtitle="PAC spending, lobbying, institutional links" icon={Landmark} layerNumber={5}>
+              <PoliticalGivingCard companyId={companyId} companyName={company.name} companySlug={company.slug} />
+            </DossierLayer>
+          )}
+
+          {companyId && (
+            <DossierLayer title="Leadership Political Giving" subtitle="Individual executive donation records from FEC public filings" icon={Users} layerNumber={6}>
+              <ExecutiveGivingSection companyId={companyId} companyName={company.name} companySlug={company.slug} />
+            </DossierLayer>
+          )}
+
+          <DossierLayer title="Connected Dots" subtitle="Leadership network concentration and hiring pattern transparency" icon={Eye} layerNumber={7}>
+            <InsiderScoreBreakdown companyId={companyId!} companyName={company.name} insiderScore={(company as any).insider_score ?? null} />
+          </DossierLayer>
+
+          <DossierLayer title="Patterns & Synthesis" subtitle="Key observations and notable patterns" icon={Sparkles} layerNumber={8}>
+            <PatternsSynthesisLayer patterns={[]} companyName={company.name} />
+          </DossierLayer>
+        </div>
       )}
-
-      <DossierLayer title="Influence & Policy Signals" subtitle="PAC giving, lobbying, government contracts" icon={Landmark} layerNumber={6}>
-        <InfluencePolicyLayer
-          politicalGiving={politicalGiving}
-          lobbyingActivity={[]}
-          governmentContracts={governmentContractSignals}
-          policyLinks={[]}
-        />
-        {companyId && (
-          <div className="mt-6">
-            <HighRiskConnectionCard companyId={companyId} companyName={company.name} />
-          </div>
-        )}
-        {companyId && (
-          <div className="mt-6">
-            <InstitutionalDNACard companyId={companyId} companyName={company.name} />
-          </div>
-        )}
-        {companyId && (
-          <div className="mt-6">
-            <PolicyScoreCard companyId={companyId} companyName={company.name} />
-          </div>
-        )}
-      </DossierLayer>
-
-      {companyId && (
-        <DossierLayer title="Political Giving & Influence" subtitle="PAC spending, lobbying, institutional links — sourced from FEC & LDA" icon={Landmark} layerNumber={7}>
-          <PoliticalGivingCard companyId={companyId} companyName={company.name} companySlug={company.slug} />
-        </DossierLayer>
-      )}
-
-      {companyId && (
-        <DossierLayer title="Leadership Political Giving" subtitle="Individual executive donation records from FEC public filings" icon={Users} layerNumber={8}>
-          <ExecutiveGivingSection companyId={companyId} companyName={company.name} companySlug={company.slug} />
-        </DossierLayer>
-      )}
-
-      <DossierLayer title="Connected Dots" subtitle="Leadership network concentration and hiring pattern transparency" icon={Eye} layerNumber={9}>
-        <InsiderScoreBreakdown companyId={companyId!} companyName={company.name} insiderScore={(company as any).insider_score ?? null} />
-      </DossierLayer>
-
-      <DossierLayer title="Patterns & Synthesis" subtitle="Key observations and notable patterns" icon={Sparkles} layerNumber={10}>
-        <PatternsSynthesisLayer patterns={[]} companyName={company.name} />
-      </DossierLayer>
     </>
   );
-
-  /* ─── SALES LENS — buying logic, ecosystem, regulatory ─── */
-  const salesContent = (
-    <>
-      <DossierLayer title="Decision & Buying Logic" subtitle="Typical buying committees, approval layers, decision-maker mapping" icon={ShoppingCart} layerNumber={3} defaultOpen>
-        <BuyingLogicLayer companyId={companyId!} companyName={company.name} industry={company.industry} />
-      </DossierLayer>
-
-      <DossierLayer title="Key Decision Makers" subtitle="Executives, leadership team, and political activity" icon={Target} layerNumber={4} defaultOpen>
-        <DecisionMakerLayer decisionMakers={[]} companyName={company.name} />
-      </DossierLayer>
-
-      <DossierLayer title="Ecosystem & Subcontractors" subtitle="Supply chain, federal contracts, operational dependencies" icon={Network} layerNumber={5}>
-        <EcosystemSubcontractorsLayer entities={[]} companyName={company.name} />
-      </DossierLayer>
-
-      <DossierLayer title="Government Contracts & Regulatory Exposure" subtitle="Federal contracts and policy dependencies" icon={Landmark} layerNumber={6}>
-        <InfluencePolicyLayer
-          politicalGiving={politicalGiving}
-          lobbyingActivity={[]}
-          governmentContracts={governmentContractSignals}
-          policyLinks={[]}
-        />
-      </DossierLayer>
-
-      <DossierLayer title="Patterns & Synthesis" subtitle="Key observations and notable patterns" icon={Sparkles} layerNumber={7}>
-        <PatternsSynthesisLayer patterns={[]} companyName={company.name} />
-      </DossierLayer>
-    </>
-  );
-
-  /* ─── HR STRATEGY LENS — talent, EVP, demographics, messaging ─── */
-  const hrContent = (
-    <>
-      <DossierLayer title="Workforce Demographics" subtitle="Role distribution, pay equity, diversity, and promotion signals" icon={BarChart3} layerNumber={3} defaultOpen>
-        <WorkforceDemographicsLayer companyId={companyId!} companyName={company.name} />
-      </DossierLayer>
-
-      <DossierLayer title="Talent Supply & Demand" subtitle="WARN notices, hiring stability, market scarcity" icon={Users} layerNumber={4} defaultOpen>
-        <TalentContextLayer signals={[]} companyName={company.name} />
-      </DossierLayer>
-
-      <DossierLayer title="EVP & Values Alignment" subtitle="Employer Value Proposition signals and Say-Do gap indicators" icon={Megaphone} layerNumber={5}>
-        <ValuesSignalsLayer signals={mappedValues} companyName={company.name} />
-      </DossierLayer>
-
-      <DossierLayer title="Influence & Policy Signals" subtitle="PAC giving and lobbying that may impact employer brand" icon={Landmark} layerNumber={6}>
-        <InfluencePolicyLayer
-          politicalGiving={politicalGiving}
-          lobbyingActivity={[]}
-          governmentContracts={governmentContractSignals}
-          policyLinks={[]}
-        />
-      </DossierLayer>
-
-      <DossierLayer title="Patterns & Synthesis" subtitle="Key observations and notable patterns" icon={Sparkles} layerNumber={7}>
-        <PatternsSynthesisLayer patterns={[]} companyName={company.name} />
-      </DossierLayer>
-
-      <div className="rounded-2xl border border-border/40 bg-card p-6">
-        <FullEvidenceLayer
-          campaignFinance={[]}
-          lobbying={[]}
-          contracts={[]}
-          patents={[]}
-          subcontractors={[]}
-          websiteChanges={[]}
-          publicStatements={[]}
-          humanCapital={[]}
-        />
-      </div>
-    </>
-  );
-
-  const gatedSalesContent = canAccessRecruiter ? salesContent : (
-    <PremiumGate feature="Sales Intelligence View" description="Unlock decision-maker mapping, buying logic, ecosystem analysis, and government contract exposure for sales teams." requiredTier="candidate">
-      {salesContent}
-    </PremiumGate>
-  );
-
-  const gatedHrContent = canAccessRecruiter ? hrContent : (
-    <PremiumGate feature="HR Strategy View" description="Unlock workforce demographics, talent supply signals, EVP analysis, and employer brand intelligence." requiredTier="candidate">
-      {hrContent}
-    </PremiumGate>
-  );
-
-  const fullContent = lens === "candidate" ? (showRawLayers ? candidateContent : null) : lens === "sales" ? gatedSalesContent : gatedHrContent;
 
   return (
     <ContentProtector className="min-h-screen flex flex-col bg-background">
       <Header />
-      <main className="flex-1 container mx-auto px-4 py-8 max-w-4xl">
+      <main className="flex-1 container mx-auto px-4 py-8 max-w-3xl">
         <div className="space-y-4">
           <DossierProtector
             companyId={companyId!}
             companyName={company.name}
             influenceScore={influenceScore}
             overviewContent={overviewContent}
-            fullContent={fullContent}
+            fullContent={null}
           />
           <TransparencyDisclaimer />
 
-          {/* Cross-links to other intelligence tools */}
+          {/* ── NEXT STEPS ── */}
           <div className="mt-8 grid grid-cols-1 sm:grid-cols-2 gap-3">
             <Link
               to="/reality-check"
-              className="flex items-center gap-3 p-4 rounded-xl border border-border/40 bg-card hover:bg-muted/50 transition-colors group"
+              className="flex items-center gap-3 p-4 border border-border/40 bg-card hover:bg-muted/30 transition-colors group"
             >
-              <div className="w-8 h-8 rounded-lg bg-destructive/10 flex items-center justify-center shrink-0">
+              <div className="w-8 h-8 flex items-center justify-center shrink-0">
                 <AlertTriangle className="w-4 h-4 text-destructive" />
               </div>
               <div>
-                <p className="text-sm font-semibold text-foreground group-hover:text-primary transition-colors">Got an offer from {company.name}?</p>
-                <p className="text-xs text-muted-foreground">Check for red flags with the Reality Check →</p>
+                <p className="text-sm font-semibold text-foreground group-hover:text-primary transition-colors">
+                  Got an offer from {company.name}?
+                </p>
+                <p className="text-xs text-muted-foreground">
+                  Check for red flags before you sign →
+                </p>
               </div>
             </Link>
             <Link
               to="/ask-jackye"
-              className="flex items-center gap-3 p-4 rounded-xl border border-border/40 bg-card hover:bg-muted/50 transition-colors group"
+              className="flex items-center gap-3 p-4 border border-border/40 bg-card hover:bg-muted/30 transition-colors group"
             >
-              <div className="w-8 h-8 rounded-lg bg-primary/10 flex items-center justify-center shrink-0">
+              <div className="w-8 h-8 flex items-center justify-center shrink-0">
                 <Sparkles className="w-4 h-4 text-primary" />
               </div>
               <div>
-                <p className="text-sm font-semibold text-foreground group-hover:text-primary transition-colors">Ask the Intelligence Advisor</p>
-                <p className="text-xs text-muted-foreground">Get a deep analysis of {company.name} →</p>
+                <p className="text-sm font-semibold text-foreground group-hover:text-primary transition-colors">
+                  Ask Jackye about {company.name}
+                </p>
+                <p className="text-xs text-muted-foreground">
+                  Should I apply? What should I negotiate? →
+                </p>
               </div>
             </Link>
           </div>
