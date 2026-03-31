@@ -35,9 +35,9 @@ body > div:last-child > a[href*="lovable"] {
     --popover: 0 0% 100%;
     --popover-foreground: 240 20% 12%;
 
-    /* ── AMBER PRIMARY (shared) ── */
-    --primary: 43 85% 50%;               /* slightly deeper amber for light bg */
-    --primary-foreground: 0 0% 100%;     /* white text on amber */
+    /* ── AMBER PRIMARY — light mode uses #C9920A (41° 88% 41%) ── */
+    --primary: 41 88% 41%;               /* #C9920A — darker gold for light bg */
+    --primary-foreground: 0 0% 100%;     /* white text on gold */
 
     --secondary: 40 15% 92%;
     --secondary-foreground: 240 20% 12%;
@@ -66,9 +66,9 @@ body > div:last-child > a[href*="lovable"] {
     --civic-slate: 240 10% 42%;
     --civic-surface: 40 15% 95%;
 
-    --civic-gold: 43 85% 50%;
-    --civic-gold-muted: 43 55% 40%;
-    --civic-gold-light: 43 70% 60%;
+    --civic-gold: 41 88% 41%;
+    --civic-gold-muted: 41 60% 35%;
+    --civic-gold-light: 43 70% 55%;
 
     /* ── SURFACE TOKENS ── */
     --surface-elevated: 0 0% 100%;
@@ -495,6 +495,30 @@ body > div:last-child > a[href*="lovable"] {
     to { opacity: 0.5; }
   }
 }
+
+/* ═══════════════════════════════════════════════
+   LOGO MARK — theme-adaptive colors
+   Dark:  W=#FFF, ?=#F0C040 with glow
+   Light: W=#000, ?=#C9920A, no glow
+═══════════════════════════════════════════════ */
+.logo-w { color: #000000; }
+.logo-q { color: #C9920A; }
+.logo-prefix { color: rgba(0,0,0,0.4); }
+.logo-bold { color: #000000; }
+.logo-divider {
+  width: 1px;
+  align-self: stretch;
+  background: rgba(0,0,0,0.1);
+}
+
+.dark .logo-w { color: #FFFFFF; }
+.dark .logo-q {
+  color: #F0C040;
+  text-shadow: 0 0 12px rgba(240,192,64,0.35), 0 0 30px rgba(240,192,64,0.15);
+}
+.dark .logo-prefix { color: rgba(255,255,255,0.65); }
+.dark .logo-bold { color: #FFFFFF; }
+.dark .logo-divider { background: rgba(255,255,255,0.1); }
 
 /* Print protection */
 @media print {

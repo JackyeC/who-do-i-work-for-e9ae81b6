@@ -4,6 +4,7 @@ import { Menu, X } from "lucide-react";
 import { useAuth } from "@/contexts/AuthContext";
 import { useClerkWithFallback } from "@/hooks/use-clerk-fallback";
 import { Button } from "@/components/ui/button";
+import { LogoMark } from "@/components/brand/LogoMark";
 
 const PRIMARY_LINKS = [
   { label: "How It Works", to: "/about" },
@@ -25,15 +26,8 @@ export function MarketingNav() {
     <>
       <header className="sticky top-0 z-50 bg-background/95 backdrop-blur-sm border-b border-border/50 px-6 lg:px-16 py-4 w-full">
         <div className="max-w-[1100px] mx-auto flex items-center justify-between">
-          {/* Logo */}
-          <Link to="/" className="flex items-center gap-1.5 shrink-0">
-            <span style={{ fontFamily: "Inter,sans-serif", fontWeight: 900, letterSpacing: "-0.03em", fontSize: "22px", lineHeight: 1 }}>
-              <span className="text-foreground">W</span>
-              <span style={{ color: "#F0C040" }}>?</span>
-            </span>
-            <span className="hidden sm:inline font-mono text-[10px] tracking-[0.12em] uppercase text-muted-foreground" style={{ fontWeight: 700, marginTop: 2 }}>
-              Who Do I Work For
-            </span>
+          <Link to="/" className="flex items-center shrink-0">
+            <LogoMark showWordmark iconSize={22} />
           </Link>
 
           {/* Desktop nav */}
