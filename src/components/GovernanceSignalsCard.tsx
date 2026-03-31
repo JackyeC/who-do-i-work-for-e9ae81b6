@@ -29,15 +29,15 @@ function getJackyeTake(structures: any[]): string {
   const hasConcentrated = structures.some(s => (s.voting_power_pct || 0) > 25);
 
   if (hasDualClass && hasConcentrated) {
-    return "This company has a concentrated power structure. One person or family controls enough votes to override other shareholders. That means the board works for them, not necessarily for employees or minority investors.";
+    return "Concentrated power structure. One person or family controls enough votes to override other shareholders, which means the board is accountable to them, not necessarily to employees or minority investors. Worth understanding before you negotiate.";
   }
   if (hasDualClass) {
-    return "Dual-class stock means not all shares are equal. Some insiders hold supervoting shares, giving them outsized control. Watch for decisions that benefit controlling shareholders over workers.";
+    return "Dual-class stock structure means not all shares carry equal weight. Some insiders hold supervoting shares, giving them disproportionate control over governance decisions. Watch for patterns where that control affects workforce policy.";
   }
   if (hasConcentrated) {
-    return "Ownership is concentrated among a few holders. This can be positive (long-term thinking) or risky (less accountability). Check if the board has strong independent voices.";
+    return "Ownership is concentrated among a small number of holders. That can mean long-term strategic thinking, or it can mean limited accountability. Check whether the board has strong independent representation.";
   }
-  return "No unusual ownership signals detected. Standard governance structure.";
+  return "No unusual ownership signals detected. Standard governance structure in the public record.";
 }
 
 export function GovernanceSignalsCard({ companyId, companyName }: GovernanceSignalsCardProps) {

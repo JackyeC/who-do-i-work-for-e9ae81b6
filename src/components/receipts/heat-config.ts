@@ -6,7 +6,7 @@ export const HEAT_LABELS: Record<number, { full: string; mobile: string; color: 
     color: "text-[hsl(215,16%,47%)]",
     bg: "bg-[hsl(215,16%,47%)]/10 border-[hsl(215,16%,47%)]/30 text-[hsl(215,16%,47%)]",
     hex: "#64748B",
-    tooltip: "Filed under: things they hoped you'd skip.",
+    tooltip: "Worth knowing. File this one for later.",
   },
   2: {
     full: "Side-Eye",
@@ -14,7 +14,7 @@ export const HEAT_LABELS: Record<number, { full: string; mobile: string; color: 
     color: "text-[hsl(215,20%,65%)]",
     bg: "bg-[hsl(215,20%,65%)]/10 border-[hsl(215,20%,65%)]/30 text-[hsl(215,20%,65%)]",
     hex: "#94A3B8",
-    tooltip: "We see you, HR. We see you.",
+    tooltip: "Something here doesn't add up. Worth a closer look.",
   },
   3: {
     full: "Screenshot This",
@@ -22,7 +22,7 @@ export const HEAT_LABELS: Record<number, { full: string; mobile: string; color: 
     color: "text-[hsl(217,91%,60%)]",
     bg: "bg-[hsl(217,91%,60%)]/10 border-[hsl(217,91%,60%)]/30 text-[hsl(217,91%,60%)]",
     hex: "#3B82F6",
-    tooltip: "Save this before they delete it.",
+    tooltip: "Document this. The details matter.",
   },
   4: {
     full: "This Affects Your Job",
@@ -30,7 +30,7 @@ export const HEAT_LABELS: Record<number, { full: string; mobile: string; color: 
     color: "text-[hsl(38,92%,50%)]",
     bg: "bg-[hsl(38,92%,50%)]/10 border-[hsl(38,92%,50%)]/30 text-[hsl(38,92%,50%)]",
     hex: "#F59E0B",
-    tooltip: "Your LinkedIn is about to get busy.",
+    tooltip: "Direct workforce impact. Update your strategy.",
   },
   5: {
     full: "They Thought We Wouldn't Find Out",
@@ -38,7 +38,7 @@ export const HEAT_LABELS: Record<number, { full: string; mobile: string; color: 
     color: "text-[hsl(0,84%,60%)]",
     bg: "bg-[hsl(0,84%,60%)]/15 border-[hsl(0,84%,60%)]/40 text-[hsl(0,84%,60%)]",
     hex: "#EF4444",
-    tooltip: "Narrator: They found out.",
+    tooltip: "The public record tells a different story than the press release.",
   },
 };
 

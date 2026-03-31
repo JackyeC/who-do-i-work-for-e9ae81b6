@@ -51,12 +51,12 @@ function matchPosterImage(headline: string | undefined): string | null {
 
 /* ── Emoji template fallback system ── */
 const WDIWF_QUOTES = [
-  "Stop applying. Start aligning.",
-  "We pull the receipts.",
-  "Career intelligence. Not paid reviews.",
-  "Every company runs a check on you. WDIWF runs one on them.",
-  "Intelligence meets defiance.",
-  "Know before you go.",
+  "Every company runs a background check on you. This is yours on them.",
+  "The data was always public. Nobody was reading it for you.",
+  "Career intelligence, not career advice.",
+  "What the offer letter doesn't say is usually the most important part.",
+  "Employer brand is marketing. Employer reality is data.",
+  "Know the company before the company knows you.",
 ];
 
 function quoteIdx(id: string) {
@@ -116,43 +116,43 @@ const PALETTE_POOL: { bg: string; accent: string; dark: string }[] = [
 /* Poster copy — category-specific content with varied palettes */
 const CATEGORY_COPY: Record<string, { emoji: string; bigTxt: string; sub: string; tag: string; copy: string; fine: string }[]> = {
   ai_workplace: [
-    { emoji: "🤖", bigTxt: "AI", sub: "is watching", tag: "automation nation", copy: "Your job title has been optimized.", fine: "*by someone who doesn't do your job" },
-    { emoji: "🧠", bigTxt: "ALGO", sub: "made the call", tag: "machine learning", copy: "The algorithm knows best.", fine: "*best for shareholders" },
-    { emoji: "⚡", bigTxt: "AUTO", sub: "pilot engaged", tag: "future shock", copy: "We automated your workflow.", fine: "*and your paycheck" },
+    { emoji: "🤖", bigTxt: "AI", sub: "in the workplace", tag: "automation watch", copy: "The algorithm is making decisions about your career.", fine: "Who audits the auditor?" },
+    { emoji: "🧠", bigTxt: "ALGO", sub: "hiring now", tag: "machine decisions", copy: "Automated screening is not neutral screening.", fine: "Bias doesn't disappear because it's coded." },
+    { emoji: "⚡", bigTxt: "AUTO", sub: "mated", tag: "workforce automation", copy: "Efficiency gains. For whom, exactly?", fine: "The productivity math rarely includes the workers." },
   ],
   future_of_work: [
-    { emoji: "🔮", bigTxt: "FUTURE", sub: "of work™", tag: "disruption incoming", copy: "The future is here. Your desk isn't.", fine: "*remote means we removed your role" },
-    { emoji: "🏢", bigTxt: "RTO", sub: "mandatory", tag: "back to the office", copy: "Culture requires proximity.", fine: "*surveillance requires it more" },
-    { emoji: "🌐", bigTxt: "HYBRID", sub: "in theory", tag: "flexible work", copy: "Work from anywhere!", fine: "*as long as it's the office" },
+    { emoji: "🔮", bigTxt: "FUTURE", sub: "of work", tag: "workforce trends", copy: "The workplace is being redesigned. Were you consulted?", fine: "Policy changes deserve worker input." },
+    { emoji: "🏢", bigTxt: "RTO", sub: "mandated", tag: "return to office", copy: "Culture is not a zip code.", fine: "Track what the data says about productivity." },
+    { emoji: "🌐", bigTxt: "HYBRID", sub: "policy shift", tag: "flexible work", copy: "Flexibility without structure is just ambiguity.", fine: "Read the fine print on remote policies." },
   ],
   labor_organizing: [
-    { emoji: "✊", bigTxt: "UNION", sub: "busting budget: $$$", tag: "collective action", copy: "They said family. We said contract.", fine: "*family doesn't dock your PTO" },
-    { emoji: "📢", bigTxt: "VOICE", sub: "suppressed", tag: "worker power", copy: "We value employee feedback.", fine: "*that agrees with management" },
+    { emoji: "✊", bigTxt: "LABOR", sub: "in motion", tag: "collective action", copy: "Workers are organizing. Here's what the filings show.", fine: "Follow the NLRB docket." },
+    { emoji: "📢", bigTxt: "VOICE", sub: "on record", tag: "worker power", copy: "Employee feedback channels work both ways.", fine: "Public filings tell you which way." },
   ],
   worker_rights: [
-    { emoji: "⚖️", bigTxt: "EQUITY", sub: "report: missing", tag: "the culture audit", copy: "Diversity is our strength™", fine: "*our legal team's too" },
-    { emoji: "🛡️", bigTxt: "RIGHTS", sub: "under review", tag: "worker protections", copy: "We stand with our employees.", fine: "*in the press release" },
+    { emoji: "⚖️", bigTxt: "EQUITY", sub: "under review", tag: "workplace equity", copy: "Commitment to equity is measurable. Measure it.", fine: "EEOC data is public record." },
+    { emoji: "🛡️", bigTxt: "RIGHTS", sub: "at stake", tag: "worker protections", copy: "Workplace protections exist. Are they being enforced?", fine: "Check the enforcement record." },
   ],
   regulation: [
-    { emoji: "📋", bigTxt: "POLICY", sub: "update pending", tag: "the fine print", copy: "We updated our policy. You didn't notice.", fine: "*that was the point" },
-    { emoji: "🔒", bigTxt: "COMPLY", sub: "or else", tag: "regulatory risk", copy: "We take compliance seriously.", fine: "*when we get caught" },
+    { emoji: "📋", bigTxt: "POLICY", sub: "update", tag: "regulatory watch", copy: "New regulation, new compliance landscape.", fine: "What changes for workers on the ground?" },
+    { emoji: "🔒", bigTxt: "COMPLY", sub: "or disclose", tag: "regulatory risk", copy: "Compliance isn't optional. Transparency shouldn't be either.", fine: "Review the enforcement history." },
   ],
   layoffs: [
-    { emoji: "📦", bigTxt: "CUTS", sub: "restructuring™", tag: "involuntary flexibility", copy: "We're a family. A smaller one.", fine: "*effective immediately" },
-    { emoji: "💼", bigTxt: "EXIT", sub: "strategy: yours", tag: "workforce reduction", copy: "We're right-sizing the organization.", fine: "*left-sizing your income" },
-    { emoji: "🚪", bigTxt: "LEAN", sub: "and mean", tag: "operational efficiency", copy: "Doing more with less.", fine: "*less people, less benefits, less hope" },
+    { emoji: "📦", bigTxt: "CUTS", sub: "announced", tag: "workforce reduction", copy: "Restructuring is a strategy. So is understanding who it impacts.", fine: "WARN notices are public." },
+    { emoji: "💼", bigTxt: "EXIT", sub: "strategy", tag: "workforce planning", copy: "Right-sizing has a human cost. Here are the numbers.", fine: "Track the pattern across quarters." },
+    { emoji: "🚪", bigTxt: "LEAN", sub: "operations", tag: "headcount changes", copy: "Efficiency gains often come from the people doing the work.", fine: "What does the WARN data show?" },
   ],
   pay_equity: [
-    { emoji: "💰", bigTxt: "MONEY", sub: "trail exposed", tag: "follow the money", copy: "Competitive salary*", fine: "*competing with poverty" },
-    { emoji: "📊", bigTxt: "GAP", sub: "is a feature", tag: "pay transparency", copy: "We believe in fair pay.", fine: "*for executives" },
+    { emoji: "💰", bigTxt: "PAY", sub: "transparency", tag: "compensation data", copy: "Competitive compensation is verifiable. Verify it.", fine: "BLS benchmarks are available." },
+    { emoji: "📊", bigTxt: "GAP", sub: "analysis", tag: "pay equity", copy: "Pay gaps aren't opinions. They're data points.", fine: "Compare against industry benchmarks." },
   ],
   legislation: [
-    { emoji: "📝", bigTxt: "HIRING", sub: "or pretending to", tag: "talent acquisition", copy: "We're always hiring!", fine: "*the listing is 8 months old" },
-    { emoji: "🏛️", bigTxt: "BILL", sub: "killed quietly", tag: "legislative watch", copy: "Bipartisan support for workers.", fine: "*support for the press release" },
+    { emoji: "📝", bigTxt: "HIRING", sub: "practices", tag: "talent acquisition", copy: "Open roles tell a story. So do the ones that never close.", fine: "Ghost jobs are a pattern, not an accident." },
+    { emoji: "🏛️", bigTxt: "BILL", sub: "in committee", tag: "legislative watch", copy: "Legislation moves faster than most workers realize.", fine: "Track who's lobbying for and against." },
   ],
 };
 
-const DEFAULT_COPY = { emoji: "🧾", bigTxt: "RECEIPT", sub: "pulled.", tag: "the receipts", copy: "They thought we wouldn't notice.", fine: "*we noticed" };
+const DEFAULT_COPY = { emoji: "🧾", bigTxt: "RECEIPT", sub: "on file", tag: "the record", copy: "The public record is available. We're reading it.", fine: "Data over narrative." };
 
 function hashString(s: string): number {
   let h = 0;
