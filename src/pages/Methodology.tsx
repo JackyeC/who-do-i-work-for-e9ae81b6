@@ -19,12 +19,17 @@ export default function Methodology() {
   });
 
   return (
-    <div className="min-h-screen flex flex-col bg-background">
-      <Header />
-      <div className="container mx-auto px-4 py-16 flex-1">
+    <div className="flex-1">
+      <div className="max-w-[900px] mx-auto px-6 lg:px-16 pt-20 pb-16">
         <div className="max-w-3xl mx-auto">
-          <h1 className="text-display text-3xl md:text-4xl text-foreground mb-4">How We Verify Company Intelligence</h1>
-          <p className="text-body-lg text-muted-foreground mb-14 leading-relaxed">
+          <p className="font-mono text-xs tracking-[0.15em] uppercase text-primary mb-5">Methodology</p>
+          <h1
+            className="font-sans text-foreground leading-[1.08] mb-4"
+            style={{ fontSize: "clamp(1.75rem, 3.5vw, 2.75rem)", fontWeight: 800, letterSpacing: "-1px" }}
+          >
+            How We Verify Company Intelligence
+          </h1>
+          <p className="text-sm text-muted-foreground mb-14 leading-relaxed max-w-[54ch]">
             How we collect, classify, verify, and present data — and what our limitations are.
           </p>
 
