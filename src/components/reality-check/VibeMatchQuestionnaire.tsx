@@ -133,8 +133,8 @@ function QuestionCard({
           <SentimentSlider
             value={value}
             onChange={onChange}
-            leftLabel="Toxic"
-            rightLabel="Thriving"
+            leftLabel="Concerning"
+            rightLabel="Strong"
           />
         </div>
       </CardContent>
