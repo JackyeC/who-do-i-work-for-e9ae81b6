@@ -318,7 +318,35 @@ export default function Newsletter() {
         </p>
       </section>
 
-      {/* ── Filter bar ── */}
+      {/* ── Founding Member Badge CTA ── */}
+      {user && (
+        <section className="max-w-5xl mx-auto px-4 pb-6">
+          <button
+            onClick={() => setShowBadge(true)}
+            className="w-full rounded-xl bg-gradient-to-r from-primary/10 via-civic-gold/10 to-primary/10 border border-primary/20 hover:border-primary/40 transition-all p-4 flex items-center gap-4 group cursor-pointer"
+          >
+            <div className="shrink-0 w-10 h-10 rounded-full bg-primary/10 border border-primary/30 flex items-center justify-center">
+              <Award className="w-5 h-5 text-primary" />
+            </div>
+            <div className="text-left flex-1 min-w-0">
+              <p className="text-sm font-bold text-foreground">You're a Founding Member 🎖️</p>
+              <p className="text-xs text-muted-foreground">Download your badge and share it on LinkedIn — let people know you were here first.</p>
+            </div>
+            <ArrowRight className="w-4 h-4 text-primary shrink-0 group-hover:translate-x-1 transition-transform" />
+          </button>
+        </section>
+      )}
+
+      {/* Badge Modal */}
+      {showBadge && (
+        <FoundingMemberBadge
+          memberName={user?.email?.split("@")[0]}
+          joinedDate={user?.created_at}
+          onClose={() => setShowBadge(false)}
+        />
+      )}
+
+
       <section className="max-w-5xl mx-auto px-4 pb-4">
         <div className="flex items-center gap-2 overflow-x-auto pb-2 scrollbar-none">
           {FILTER_OPTIONS.map((opt) => (
