@@ -56,7 +56,7 @@ export function OfferDecisionSummary(props: Props) {
   if (offerSalary >= annualBaseline * 1.15) strengths.push(`Salary ${((offerSalary / annualBaseline - 1) * 100).toFixed(0)}% above your safety line`);
   if (hasEquity) strengths.push("Equity component included");
   if (hasBonus) strengths.push("Variable compensation structure");
-  if (redFlags.length === 0) strengths.push("No high-risk legal clauses");
+  if (highSeverity.length === 0) strengths.push("No high-risk legal clauses identified");
   if (report?.compensation.percentile && report.compensation.percentile >= 70) strengths.push(`${report.compensation.percentile}th percentile compensation`);
   if (report?.employeeExperience.score && report.employeeExperience.score >= 70) strengths.push("Positive employee experience signals");
 
