@@ -260,6 +260,9 @@ export default function Receipts() {
           </Link>
         </div>
       </footer>
+
+      {/* Poster Lightbox */}
+      <PosterLightbox article={lightboxArticle} onClose={() => setLightboxArticle(null)} />
     </div>
   );
 }
