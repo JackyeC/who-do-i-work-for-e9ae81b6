@@ -142,6 +142,7 @@ const ReceiptsReport = lazy(() => import("./pages/ReceiptsReport"));
 const SubmitTip = lazy(() => import("./pages/SubmitTip"));
 
 const HRTechIntelligence = lazy(() => import("./pages/HRTechIntelligence"));
+const PaletteStudio = lazy(() => import("./pages/PaletteStudio"));
 const WhoDidIVoteForPage = lazy(() => import("./pages/WhoDidIVoteForPage"));
 
 const queryClient = new QueryClient();
@@ -210,6 +211,7 @@ const App = () => (
                   <Route path="/submit-tip" element={<SubmitTip />} />
                   <Route path="/newsletter" element={<Receipts />} />
                   <Route path="/hrtech" element={<HRTechIntelligence />} />
+                  <Route path="/palette" element={<PaletteStudio />} />
                   <Route path="/company/:id" element={<CompanyProfile />} />
                   <Route path="/company/:id/influence" element={<ProtectedRoute><InfluenceGraph /></ProtectedRoute>} />
                   <Route path="/dossier/:id" element={<CompanyDossier />} />
