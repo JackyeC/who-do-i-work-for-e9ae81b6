@@ -317,7 +317,7 @@ export function AdvocacyReport({ company, executives = [], contracts = [], issue
       {/* ═══ 6. LABOR IMPACT ═══ */}
       {eeocCases.length > 0 && (
         <section>
-          <SectionDivider number={5} icon={Scale} title="Labor Impact" subtitle="Enforcement actions and complaints on the record" />
+          <SectionDivider number={5} icon={Scale} title="Enforcement Record" subtitle="Formal actions and complaints documented in public records" />
           <div className="pl-11">
             <EEOCCaseAlert cases={eeocCases as any} />
             <p className="mt-3 text-xs text-muted-foreground leading-relaxed italic">
