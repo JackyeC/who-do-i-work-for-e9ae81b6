@@ -306,7 +306,7 @@ export default function Receipts() {
 
   const [search, setSearch] = useState("");
   const [category, setCategory] = useState("all");
-  const [sortMode, setSortMode] = useState<SortMode>("drama");
+  const [sortMode, setSortMode] = useState<SortMode | null>("drama");
 
   const filtered = useMemo(() => {
     let result = COMPANIES.filter((c) => {
