@@ -116,6 +116,27 @@ Deno.serve(async (req: Request) => {
       civic_footprint_score: company.civic_footprint_score,
     };
 
+    // ── Build "Inside-Track" dossier context for the cover letter ──
+    const warnContext = (warnNotices || []).length > 0
+      ? (warnNotices || []).map((w: any) => {
+          const date = w.notice_date ? new Date(w.notice_date).toLocaleDateString('en-US', { month: 'short', year: 'numeric' }) : 'undated';
+          return `${w.employees_affected || '?'} employees affected (${date}, ${w.layoff_type || 'unspecified'})`;
+        }).join('; ')
+      : 'No Worker Adjustment and Retraining Notification (WARN) Act notices on record';
+
+    const stanceGaps = (publicStances || []).filter((s: any) => s.gap && s.gap !== 'none' && s.gap !== 'low').slice(0, 3);
+    const stanceContext = stanceGaps.length > 0
+      ? stanceGaps.map((s: any) => `Topic: "${s.topic}" — Public position: "${s.public_position}" vs. spending reality: "${s.spending_reality}" (gap: ${s.gap})`).join('\n  ')
+      : 'No significant stance-spending gaps detected';
+
+    const lobbyingContext = company.lobbying_spend
+      ? `$${(company.lobbying_spend / 1000000).toFixed(1)}M in registered lobbying expenditures`
+      : 'No registered lobbying spend on file';
+
+    const sentimentContext = sentimentData?.[0]
+      ? `Worker sentiment: ${sentimentData[0].overall_rating}/5 (${sentimentData[0].sentiment}). Top praises: ${(sentimentData[0].top_praises || []).slice(0, 3).join(', ') || 'none'}. Top complaints: ${(sentimentData[0].top_complaints || []).slice(0, 3).join(', ') || 'none'}.`
+      : 'No aggregated worker sentiment data available';
+
     // Calculate alignment score
     let alignmentScore = company.civic_footprint_score || 0;
     const matchedSignals: string[] = [];
