@@ -43,13 +43,14 @@ import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useCompanySEO } from "@/hooks/use-company-seo";
 import { useToast } from "@/hooks/use-toast";
 import { useScanTracker } from "@/hooks/use-scan-tracker";
+import { EARLY_INVESTIGATION_THRESHOLD } from "@/components/dossier/EarlyInvestigationCard";
 
 /* ─── Status labels ─── */
 const STATUS_LABELS: Record<string, { label: string; color: string }> = {
   discovered: { label: "Discovered", color: "bg-[hsl(var(--civic-yellow))]/10 text-[hsl(var(--civic-yellow))] border-[hsl(var(--civic-yellow))]/30" },
   identity_matched: { label: "Identity Verified", color: "bg-[hsl(var(--civic-blue))]/10 text-[hsl(var(--civic-blue))] border-[hsl(var(--civic-blue))]/30" },
-  research_in_progress: { label: "Research In Progress", color: "bg-primary/10 text-primary border-primary/30" },
-  partially_verified: { label: "Partially Verified", color: "bg-[hsl(var(--civic-yellow))]/10 text-[hsl(var(--civic-yellow))] border-[hsl(var(--civic-yellow))]/30" },
+  research_in_progress: { label: "Early Investigation", color: "bg-[hsl(var(--civic-yellow))]/10 text-[hsl(var(--civic-yellow))] border-[hsl(var(--civic-yellow))]/30" },
+  partially_verified: { label: "Early Investigation", color: "bg-[hsl(var(--civic-yellow))]/10 text-[hsl(var(--civic-yellow))] border-[hsl(var(--civic-yellow))]/30" },
   verified: { label: "Verified", color: "bg-[hsl(var(--civic-green))]/10 text-[hsl(var(--civic-green))] border-[hsl(var(--civic-green))]/30" },
   failed_to_verify: { label: "Unverified", color: "bg-destructive/10 text-destructive border-destructive/30" },
 };
@@ -294,7 +295,10 @@ export default function CompanyProfile() {
   // Recruiter integrity check
   // integrityResult & integrityLoading already declared above early returns
   const recordStatus = (dbCompany as any)?.record_status || "verified";
-  const statusInfo = STATUS_LABELS[recordStatus] || STATUS_LABELS.verified;
+  const isEarlyInvestigation = (dbIssueSignals?.length || 0) < EARLY_INVESTIGATION_THRESHOLD;
+  const statusInfo = isEarlyInvestigation && recordStatus !== "verified"
+    ? (STATUS_LABELS.research_in_progress)
+    : (STATUS_LABELS[recordStatus] || STATUS_LABELS.verified);
   const isDiscovering = isResearching;
 
   return (
@@ -551,13 +555,13 @@ export default function CompanyProfile() {
           {/* ═══════════════════════════════════════════════════════
               2.7 RECRUITER VIEW — Integrity Check
              ═══════════════════════════════════════════════════════ */}
-          {integrityLoading && <RecruiterIntegrityCardSkeleton />}
-          {integrityResult && <RecruiterIntegrityCard result={integrityResult} />}
+          {integrityLoading && !isEarlyInvestigation && <RecruiterIntegrityCardSkeleton />}
+          {integrityResult && !isEarlyInvestigation && <RecruiterIntegrityCard result={integrityResult} />}
 
           {/* ═══════════════════════════════════════════════════════
               2.5 PERCEPTION GAP™
              ═══════════════════════════════════════════════════════ */}
-          {dbCompanyId && (
+          {dbCompanyId && !isEarlyInvestigation && (
             <PerceptionGapModule
               companyId={dbCompanyId}
               companyName={name}
