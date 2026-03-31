@@ -45,9 +45,9 @@ function deriveConfidence(report: OfferClarityReport | null, hasCompanyMatch: bo
 
 export function OfferDecisionSummary(props: Props) {
   const { companyName, roleTitle, offerStrengthScore, report, legalFlags, offerSalary, annualBaseline, hasEquity, hasBonus } = props;
-  const redFlags = legalFlags.filter(f => f.severity === "red");
+  const highSeverity = legalFlags.filter(f => f.severity === "red");
   const yellowFlags = legalFlags.filter(f => f.severity === "yellow");
-  const verdict = deriveVerdict(offerStrengthScore, redFlags.length, offerSalary, annualBaseline);
+  const verdict = deriveVerdict(offerStrengthScore, highSeverity.length, offerSalary, annualBaseline);
   const verdictStyle = VERDICT_CONFIG[verdict];
   const VerdictIcon = verdictStyle.icon;
   const confidence = deriveConfidence(report, !!report);
