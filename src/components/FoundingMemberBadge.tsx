@@ -253,9 +253,12 @@ export function FoundingMemberBadge({
                   fontFamily: "'DM Sans', system-ui, sans-serif",
                   fontSize: "13px",
                   color: BRAND.fgSubtle,
+                  lineHeight: 1.6,
                 }}
               >
-                Joined {displayDate}
+                Joined
+                <br />
+                {displayDate}
               </p>
             </div>
 
