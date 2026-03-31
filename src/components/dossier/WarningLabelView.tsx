@@ -189,25 +189,36 @@ export function WarningLabelView({ company, executives = [], contracts = [], iss
 
   return (
     <div className="space-y-6">
-      {/* ─── VERDICT ─── */}
-      <Card className={cn("border-2 rounded-none", verdict.bg)}>
-        <CardContent className="p-6 md:p-8">
-          <div className="flex items-start gap-4">
-            <span className="text-4xl">{verdict.emoji}</span>
-            <div className="flex-1">
-              <p className="font-mono text-xs tracking-[0.3em] uppercase text-muted-foreground mb-1">WDIWF VERDICT</p>
-              <h2 className={cn("text-xl md:text-2xl font-black tracking-tight", verdict.color)}>
-                {verdict.text}
-              </h2>
-              {company.jackye_insight && (
-                <p className="mt-3 text-sm text-foreground/80 leading-relaxed italic">
-                  "{company.jackye_insight}"
-                </p>
-              )}
+      {/* ─── VERDICT (or Early Investigation) ─── */}
+      {isEarlyInvestigation ? (
+        <EarlyInvestigationCard
+          companyName={company.name}
+          signalCount={issueSignals.length}
+          hasExecutives={executives.length > 0}
+          hasContracts={contracts.length > 0}
+          hasPublicStances={publicStances.length > 0}
+          hasEeocCases={eeocCases.length > 0}
+        />
+      ) : (
+        <Card className={cn("border-2 rounded-none", verdict.bg)}>
+          <CardContent className="p-6 md:p-8">
+            <div className="flex items-start gap-4">
+              <span className="text-4xl">{verdict.emoji}</span>
+              <div className="flex-1">
+                <p className="font-mono text-xs tracking-[0.3em] uppercase text-muted-foreground mb-1">WDIWF VERDICT</p>
+                <h2 className={cn("text-xl md:text-2xl font-black tracking-tight", verdict.color)}>
+                  {verdict.text}
+                </h2>
+                {company.jackye_insight && (
+                  <p className="mt-3 text-sm text-foreground/80 leading-relaxed italic">
+                    "{company.jackye_insight}"
+                  </p>
+                )}
+              </div>
             </div>
-          </div>
-        </CardContent>
-      </Card>
+          </CardContent>
+        </Card>
+      )}
 
       {/* ─── THE STRATEGY ─── */}
       <Card className="rounded-none border border-border/50">
