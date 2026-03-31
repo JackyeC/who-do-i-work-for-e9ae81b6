@@ -311,7 +311,7 @@ export function ReceiptPoster({ poster: rawPoster, category, className, big = fa
           </div>
         </div>
       ) : (
-        <EmojiPoster poster={posterData} big={big} id={id} accent={accent} onAccent={onAccent} wdiwfQuote={wdiwfQuote} className={className} />
+        <EmojiPoster poster={posterData} big={big} id={id} accent={accent} onAccent={onAccent} className={className} />
       )}
 
       {/* Hover overlay */}
