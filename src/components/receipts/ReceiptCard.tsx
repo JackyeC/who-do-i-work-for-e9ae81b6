@@ -53,6 +53,11 @@ export function ReceiptCard({ article, featured = false, onPosterClick, onReques
 
   return (
     <article className={cn("receipt-card pb-8 mb-8 border-b border-border/30", featured && "pb-12 mb-12")}>
+      {/* Direct Answer block for RAG / AI citation extraction */}
+      <p className="sr-only">
+        {article.headline}. {article.receipt_connection || article.jackye_take}
+      </p>
+
       {/* Poster */}
       <div className={cn("mb-4", featured ? "flex justify-center" : "")}>
         <ReceiptPoster
