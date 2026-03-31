@@ -11,6 +11,7 @@ import { ResearchPublishQueue } from "@/components/admin/ResearchPublishQueue";
 import { JobApprovalQueue } from "@/components/admin/JobApprovalQueue";
 import { CertificationQueue } from "@/components/admin/CertificationQueue";
 import { CareerWaitlistQueue } from "@/components/admin/CareerWaitlistQueue";
+import { ComplianceDashboard } from "@/components/admin/ComplianceDashboard";
 import { useUserRole } from "@/hooks/use-user-role";
 import { Header } from "@/components/Header";
 import { Footer } from "@/components/Footer";
@@ -335,9 +336,14 @@ export default function FounderConsole() {
           <ConversionFunnelPanel />
         </div>
 
-        {/* Compensation Health + Founder Notes */}
+        {/* Compliance Health + Compensation Health */}
         <div className="mt-6 grid grid-cols-1 lg:grid-cols-2 gap-6">
+          <ComplianceDashboard />
           <CompensationHealthPanel />
+        </div>
+
+        {/* Founder Notes */}
+        <div className="mt-6">
           <FounderNotesPanel />
         </div>
 

@@ -15,6 +15,7 @@ import { generateCandidateAdvocacyPdf } from "@/lib/generateCandidateAdvocacyPdf
 import { Link } from "react-router-dom";
 import { cn } from "@/lib/utils";
 import { EasyApplyButton } from "./EasyApplyButton";
+import { MatchExplainer } from "./MatchExplainer";
 
 const AI_TRANSPARENCY_THRESHOLD = 70;
 
@@ -89,6 +90,7 @@ function JobCard({ job, onQueue, queueing, isQueued }: {
                 )}
               </div>
             )}
+            <MatchExplainer alignmentScore={job.alignment_score} matchedSignals={job.matched_signals} />
           </div>
           <div className="flex flex-col gap-2 shrink-0">
             <EasyApplyButton

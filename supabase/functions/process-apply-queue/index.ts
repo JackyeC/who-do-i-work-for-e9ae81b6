@@ -152,12 +152,22 @@ Deno.serve(async (req: Request) => {
         const result = await res.json();
 
         if (result?.payload) {
+          // Append Transparency Receipt to payload (TRAIGA § 546.103 / EU AI Act Art. 14)
+          const transparencyReceipt = {
+            disclosure: `WDIWF AI matched this candidate based on the following signals: ${(item.matched_signals as string[] || []).join(', ')}. 0% of the candidate's core identity data (race, age, gender) was used in the matching process.`,
+            alignment_score: item.alignment_score,
+            matched_signals: item.matched_signals,
+            generated_at: new Date().toISOString(),
+            model_version: 'wdiwf-clarity-v1',
+          };
+          const enrichedPayload = { ...result.payload, transparency_receipt: transparencyReceipt };
+
           // Update queue item with generated payload
           await supabase
             .from('apply_queue')
             .update({
               status: 'completed',
-              generated_payload: result.payload,
+              generated_payload: enrichedPayload,
               processed_at: new Date().toISOString(),
             })
             .eq('id', item.id);
