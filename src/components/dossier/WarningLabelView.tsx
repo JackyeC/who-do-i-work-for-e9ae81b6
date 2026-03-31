@@ -1,9 +1,11 @@
-import { useMemo } from "react";
+import { useMemo, useState } from "react";
 import { 
   AlertTriangle, TrendingDown, DollarSign, Users, 
   Eye, MessageSquare, CheckCircle2, XCircle, 
   MinusCircle, ArrowRight, Shield, Zap,
-  Building2, Scale, Megaphone
+  Building2, Scale, Megaphone, ExternalLink,
+  ChevronDown, ChevronRight, FileText, Briefcase,
+  Factory, Vote, ShieldAlert, Flame
 } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent } from "@/components/ui/card";
@@ -47,7 +49,9 @@ interface WarningLabelProps {
     signal_type: string;
     description: string;
     amount?: number | null;
-    confidence_score?: number;
+    confidence_score?: string;
+    source_url?: string | null;
+    transaction_date?: string | null;
   }>;
   publicStances?: Array<{
     issue_category?: string;
@@ -241,7 +245,11 @@ export function WarningLabelView({ company, executives = [], contracts = [], iss
         </CardContent>
       </Card>
 
-      {/* ─── WORKFORCE HEALTH ─── */}
+      {/* ─── THE RECEIPTS — Interactive Signal Drill-Down ─── */}
+      {issueSignals.length > 0 && (
+        <ReceiptsSection signalsByCategory={signalsByCategory} />
+      )}
+
       <Card className="rounded-none border border-border/50">
         <CardContent className="p-6">
           <div className="flex items-center gap-3 mb-4">
@@ -491,6 +499,139 @@ export function WarningLabelView({ company, executives = [], contracts = [], iss
         </CardContent>
       </Card>
     </div>
+  );
+}
+
+/* ─── Category config ─── */
+const CATEGORY_META: Record<string, { label: string; icon: React.ElementType; color: string; borderColor: string }> = {
+  lobbying: { label: "Lobbying & Influence", icon: Building2, color: "text-civic-yellow", borderColor: "border-civic-yellow/30" },
+  political_spending: { label: "Political Spending", icon: Vote, color: "text-civic-red", borderColor: "border-civic-red/30" },
+  labor: { label: "Labor & Workforce", icon: Factory, color: "text-civic-blue", borderColor: "border-civic-blue/30" },
+  dei: { label: "DEI & Civil Rights", icon: Users, color: "text-primary", borderColor: "border-primary/30" },
+  safety: { label: "Safety & Compliance", icon: ShieldAlert, color: "text-destructive", borderColor: "border-destructive/30" },
+};
+
+function getCategoryMeta(cat: string) {
+  return CATEGORY_META[cat] || { label: cat.replace(/_/g, " ").replace(/\b\w/g, c => c.toUpperCase()), icon: Flame, color: "text-muted-foreground", borderColor: "border-border/40" };
+}
+
+/* ─── Receipts Section ─── */
+function ReceiptsSection({ signalsByCategory }: { signalsByCategory: Record<string, Array<{ issue_category: string; signal_type: string; description: string; amount?: number | null; confidence_score?: string; source_url?: string | null; transaction_date?: string | null }>> }) {
+  const [expandedCats, setExpandedCats] = useState<Record<string, boolean>>(() => {
+    const initial: Record<string, boolean> = {};
+    Object.keys(signalsByCategory).forEach(cat => { initial[cat] = true; });
+    return initial;
+  });
+
+  const toggleCat = (cat: string) => setExpandedCats(prev => ({ ...prev, [cat]: !prev[cat] }));
+
+  const categoryOrder = ["lobbying", "political_spending", "labor", "dei", "safety"];
+  const sortedCategories = Object.keys(signalsByCategory).sort((a, b) => {
+    const ai = categoryOrder.indexOf(a);
+    const bi = categoryOrder.indexOf(b);
+    return (ai === -1 ? 99 : ai) - (bi === -1 ? 99 : bi);
+  });
+
+  return (
+    <Card className="rounded-none border-2 border-primary/20">
+      <CardContent className="p-6">
+        <div className="flex items-center gap-3 mb-5">
+          <FileText className="w-5 h-5 text-primary" />
+          <div>
+            <h3 className="text-sm font-black tracking-tight text-foreground uppercase">THE RECEIPTS</h3>
+            <p className="text-xs text-muted-foreground">Every signal sourced from public record — click to expand</p>
+          </div>
+          <Badge variant="outline" className="ml-auto font-mono text-xs">
+            {Object.values(signalsByCategory).flat().length} signals
+          </Badge>
+        </div>
+
+        <div className="space-y-3">
+          {sortedCategories.map(cat => {
+            const meta = getCategoryMeta(cat);
+            const signals = signalsByCategory[cat];
+            const isOpen = expandedCats[cat];
+            const CatIcon = meta.icon;
+
+            return (
+              <div key={cat} className={cn("border rounded-none", meta.borderColor)}>
+                <button
+                  onClick={() => toggleCat(cat)}
+                  className="w-full flex items-center gap-3 p-3 hover:bg-muted/30 transition-colors text-left"
+                >
+                  <CatIcon className={cn("w-4 h-4 shrink-0", meta.color)} />
+                  <span className="text-sm font-semibold text-foreground flex-1">{meta.label}</span>
+                  <Badge variant="secondary" className="text-xs font-mono">{signals.length}</Badge>
+                  {isOpen ? <ChevronDown className="w-4 h-4 text-muted-foreground" /> : <ChevronRight className="w-4 h-4 text-muted-foreground" />}
+                </button>
+
+                {isOpen && (
+                  <div className="border-t border-border/30 divide-y divide-border/20">
+                    {signals.map((signal, i) => (
+                      <div key={i} className="p-3 hover:bg-muted/10 transition-colors">
+                        <div className="flex items-start gap-3">
+                          <div className="flex-1 min-w-0">
+                            <div className="flex items-center gap-2 flex-wrap mb-1">
+                              <span className="font-mono text-xs text-muted-foreground uppercase tracking-wider">
+                                {signal.signal_type?.replace(/_/g, " ")}
+                              </span>
+                              {signal.confidence_score && (
+                                <Badge
+                                  variant="outline"
+                                  className={cn("text-xs px-1.5 py-0", 
+                                    signal.confidence_score === "high" ? "border-civic-green/40 text-civic-green" :
+                                    signal.confidence_score === "medium" ? "border-civic-yellow/40 text-civic-yellow" :
+                                    "border-muted-foreground/40 text-muted-foreground"
+                                  )}
+                                >
+                                  {signal.confidence_score}
+                                </Badge>
+                              )}
+                              {signal.transaction_date && (
+                                <span className="text-xs text-muted-foreground">
+                                  {new Date(signal.transaction_date).toLocaleDateString("en-US", { month: "short", year: "numeric" })}
+                                </span>
+                              )}
+                            </div>
+                            <p className="text-sm text-foreground leading-snug">{signal.description}</p>
+                            <div className="flex items-center gap-3 mt-2 flex-wrap">
+                              {signal.amount && signal.amount > 0 && (
+                                <span className="font-mono text-sm font-bold text-foreground">
+                                  ${signal.amount >= 1_000_000_000
+                                    ? `${(signal.amount / 1_000_000_000).toFixed(1)}B`
+                                    : signal.amount >= 1_000_000
+                                    ? `${(signal.amount / 1_000_000).toFixed(1)}M`
+                                    : signal.amount >= 1_000
+                                    ? `${(signal.amount / 1_000).toFixed(0)}K`
+                                    : signal.amount.toLocaleString()
+                                  }
+                                </span>
+                              )}
+                              {signal.source_url && (
+                                <a
+                                  href={signal.source_url}
+                                  target="_blank"
+                                  rel="noopener noreferrer"
+                                  className="inline-flex items-center gap-1 text-xs text-primary hover:underline font-medium"
+                                  onClick={(e) => e.stopPropagation()}
+                                >
+                                  <ExternalLink className="w-3 h-3" />
+                                  View Source
+                                </a>
+                              )}
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                )}
+              </div>
+            );
+          })}
+        </div>
+      </CardContent>
+    </Card>
   );
 }
 
