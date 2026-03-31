@@ -402,13 +402,20 @@ export default function WhoDoIWorkFor() {
                   <CardContent>
                     <div className="space-y-4">
                       {(executives || []).map((exec: any) => (
-                        <div key={exec.id} className="border border-border rounded-lg p-4">
+                        <Link
+                          key={exec.id}
+                          to={`/company/${employerCompany.slug}`}
+                          className="border border-border rounded-lg p-4 block hover:border-primary/40 hover:bg-primary/5 transition-all duration-200 group"
+                        >
                           <div className="flex items-center justify-between mb-2">
                             <div>
-                              <span className="font-semibold text-foreground">{exec.name}</span>
+                              <span className="font-semibold text-foreground group-hover:text-primary transition-colors">{exec.name}</span>
                               <p className="text-xs text-muted-foreground">{exec.title}</p>
                             </div>
-                            <span className="font-bold text-foreground">{formatCurrency(exec.total_donations)}</span>
+                            <div className="flex items-center gap-2">
+                              <span className="font-bold text-foreground">{formatCurrency(exec.total_donations)}</span>
+                              <ChevronRight className="w-4 h-4 text-muted-foreground/40 group-hover:text-primary transition-colors" />
+                            </div>
                           </div>
                           {exec.executive_recipients && exec.executive_recipients.length > 0 && (
                             <div className="space-y-1 mt-2">
