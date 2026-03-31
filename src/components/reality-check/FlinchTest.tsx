@@ -151,7 +151,7 @@ export function FlinchTest({ companyId, companyName }: FlinchTestProps) {
           variant="outline"
         >
           <Send className="w-3.5 h-3.5" />
-          {submitting ? "Submitting…" : "Submit Flinch Signals"}
+          {submitting ? "Submitting…" : "Submit Process Signals"}
         </Button>
       </CardContent>
     </Card>

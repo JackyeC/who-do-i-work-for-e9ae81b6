@@ -190,20 +190,20 @@ export function RealityGapResults({ result, onReset }: Props) {
         <CardContent className="p-5">
           <div className="flex items-center gap-2 mb-3">
             <Sparkles className="w-4 h-4 text-civic-green" />
-            <h3 className="font-mono text-xs font-bold tracking-wider uppercase text-civic-green">Jackye's Take</h3>
+            <h3 className="font-mono text-xs font-bold tracking-wider uppercase text-civic-green">What the Pattern Tends to Mean</h3>
           </div>
-          <blockquote className="border-l-2 border-civic-green pl-4 py-2 text-sm text-foreground italic leading-relaxed">
+          <blockquote className="border-l-2 border-civic-green pl-4 py-2 text-sm text-foreground leading-relaxed">
             {result.integrityGapScore <= 15
-              ? `"The data and your experience are telling the same story — that's rare and it's a green flag. This company appears to walk the talk. Trust your instincts on this one, but still negotiate hard. Aligned culture doesn't mean you should leave money on the table."`
+              ? "What is visible: Your experience and the public record are telling the same story. That level of consistency is uncommon and worth noting. It does not guarantee everything is perfect, but it means the signals are aligned across layers. What to pay attention to: Consistency in process does not always mean consistency in practice. If you move forward, negotiation is still separate from culture fit."
               : result.integrityGapScore <= 35
-              ? `"There's a small gap between what the data shows and what you experienced. That's normal — no company is perfectly consistent. Pay attention to the specific dimensions where the gap appeared and ask follow-up questions in your next conversation. The gap isn't a dealbreaker, but it's worth probing."`
+              ? "What is visible: There is a small gap between the public record and what you experienced. Some variance is normal. No organization presents identically at every level. What it tends to mean: The gap is narrow enough that it may reflect individual variation rather than a systemic pattern. What to pay attention to: The specific dimensions where the gap appeared. Those are the areas worth revisiting in a follow-up conversation."
               : result.integrityGapScore <= 55
-              ? `"Here's the truth: there's a noticeable disconnect between this company's public persona and what you actually experienced in the interview. That's a 'Diversity Wash' signal — the Board-level work hasn't scaled down to the hiring manager level. If you take this role, you might be expected to be the 'culture builder' rather than just a contributor. Are you ready for that work?"`
-              : `"Let me be direct: your interview experience is significantly different from what the public data suggests. That's not a data gap — that's a character gap. The company has invested in looking good on paper, but the people running the daily show haven't caught up. If you're considering this role, you need to go in with eyes wide open and a clear exit plan. Facts over Feelings."`
+              ? "What is visible: There is a noticeable distance between how this company presents publicly and what came through in your interview. What it tends to mean: When the gap sits in this range, it often reflects a disconnect between policy-level commitments and manager-level execution. The organization may have invested in positioning without fully operationalizing it. What to pay attention to: Whether the role expects you to close that gap yourself. That is a different job than the one on the posting."
+              : "What is visible: Your interview experience and the public record are telling meaningfully different stories. What it tends to mean: A gap this wide tends to reflect a structural pattern, not an off day. The public-facing narrative and the internal operating culture appear to have diverged. This pattern, when repeated, tends to create environments where expectations are unclear and accountability is inconsistent. What to pay attention to: Whether you have the information you need to make a decision you can stand behind."
             }
           </blockquote>
-          <p className="text-xs text-civic-green/60 mt-3 font-mono italic">
-            *Run the chain first. Always.*
+          <p className="text-xs text-muted-foreground mt-3 font-mono italic">
+            Pattern observed. Decision is yours.
           </p>
         </CardContent>
       </Card>
