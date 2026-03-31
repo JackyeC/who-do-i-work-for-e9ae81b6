@@ -329,7 +329,7 @@ export function AdvocacyReport({ company, executives = [], contracts = [], issue
 
       {/* ═══ 7. SAFETY & WORKFORCE RISK ═══ */}
       <section>
-        <SectionDivider number={6} icon={Users} title="Safety & Workforce Risk" subtitle="Demographics, stability, and hiring patterns" />
+        <SectionDivider number={6} icon={Users} title="Workforce Signals" subtitle="Demographics, stability, and hiring patterns" />
         <div className="pl-11">
           <WorkforceDemographicsLayer companyId={company.id} companyName={company.name} />
         </div>
