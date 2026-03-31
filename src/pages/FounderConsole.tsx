@@ -11,6 +11,7 @@ import { ResearchPublishQueue } from "@/components/admin/ResearchPublishQueue";
 import { JobApprovalQueue } from "@/components/admin/JobApprovalQueue";
 import { CertificationQueue } from "@/components/admin/CertificationQueue";
 import { CareerWaitlistQueue } from "@/components/admin/CareerWaitlistQueue";
+import { ComplianceDashboard } from "@/components/admin/ComplianceDashboard";
 import { useUserRole } from "@/hooks/use-user-role";
 import { Header } from "@/components/Header";
 import { Footer } from "@/components/Footer";
