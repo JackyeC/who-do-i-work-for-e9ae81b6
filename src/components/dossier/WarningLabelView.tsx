@@ -76,10 +76,10 @@ function computeVerdict(company: WarningLabelProps["company"], signalCount: numb
   const hasEeoc = eeocCount > 0;
   const redFlags = [lobbyingHigh, pacHigh, clarityLow, hasEeoc, signalCount > 5].filter(Boolean).length;
 
-  if (redFlags >= 4) return { text: "ENTER WITH A PARACHUTE", emoji: "🪂", color: "text-destructive", bg: "bg-destructive/10 border-destructive/30" };
-  if (redFlags >= 2) return { text: "PROCEED WITH CAUTION", emoji: "⚠️", color: "text-civic-yellow", bg: "bg-civic-yellow/10 border-civic-yellow/30" };
-  if (redFlags >= 1) return { text: "MIXED SIGNALS — DIG DEEPER", emoji: "🔍", color: "text-civic-blue", bg: "bg-civic-blue/10 border-civic-blue/30" };
-  return { text: "RELATIVELY CLEAN RECORD", emoji: "✅", color: "text-civic-green", bg: "bg-civic-green/10 border-civic-green/30" };
+  if (redFlags >= 4) return { text: "MULTIPLE SIGNALS PRESENT", emoji: "🪂", color: "text-destructive", bg: "bg-destructive/10 border-destructive/30" };
+  if (redFlags >= 2) return { text: "PATTERN WORTH WATCHING", emoji: "⚠️", color: "text-civic-yellow", bg: "bg-civic-yellow/10 border-civic-yellow/30" };
+  if (redFlags >= 1) return { text: "MIXED SIGNALS", emoji: "🔍", color: "text-civic-blue", bg: "bg-civic-blue/10 border-civic-blue/30" };
+  return { text: "LIMITED SIGNALS ON RECORD", emoji: "✅", color: "text-civic-green", bg: "bg-civic-green/10 border-civic-green/30" };
 }
 
 /* ─── Money formatter ─── */
