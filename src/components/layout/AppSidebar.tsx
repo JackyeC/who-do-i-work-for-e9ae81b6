@@ -122,7 +122,7 @@ export function AppSidebar() {
   const collapsed = state === "collapsed";
   const { user, signOut } = useAuth();
   const location = useLocation();
-  
+  const [showBadge, setShowBadge] = useState(false);
 
   return (
     <Sidebar collapsible="icon" className="border-r border-border/40">
