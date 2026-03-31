@@ -321,7 +321,7 @@ export function AdvocacyReport({ company, executives = [], contracts = [], issue
           <div className="pl-11">
             <EEOCCaseAlert cases={eeocCases as any} />
             <p className="mt-3 text-xs text-muted-foreground leading-relaxed italic">
-              Enforcement actions indicate a formal complaint was investigated. Patterns across multiple filings are worth noting — single filings less so.
+              An enforcement action means a formal complaint was investigated. A pattern across multiple filings is more meaningful than a single filing.
             </p>
           </div>
         </section>
