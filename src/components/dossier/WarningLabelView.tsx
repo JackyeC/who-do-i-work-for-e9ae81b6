@@ -245,7 +245,11 @@ export function WarningLabelView({ company, executives = [], contracts = [], iss
         </CardContent>
       </Card>
 
-      {/* ─── WORKFORCE HEALTH ─── */}
+      {/* ─── THE RECEIPTS — Interactive Signal Drill-Down ─── */}
+      {issueSignals.length > 0 && (
+        <ReceiptsSection signalsByCategory={signalsByCategory} />
+      )}
+
       <Card className="rounded-none border border-border/50">
         <CardContent className="p-6">
           <div className="flex items-center gap-3 mb-4">
