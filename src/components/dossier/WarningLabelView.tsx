@@ -269,8 +269,14 @@ export function WarningLabelView({ company, executives = [], contracts = [], iss
                 </tr>
               </thead>
               <tbody className="divide-y divide-border/20">
-                <tr>
-                  <td className="py-3 pr-4 font-medium text-foreground">Lobbying</td>
+                <tr
+                  className="cursor-pointer hover:bg-muted/20 transition-colors group"
+                  onClick={() => window.open(`https://www.opensecrets.org/federal-lobbying/clients/summary?name=${encodeURIComponent(company.name)}`, "_blank")}
+                >
+                  <td className="py-3 pr-4 font-medium text-foreground flex items-center gap-1.5">
+                    Lobbying
+                    <ExternalLink className="w-3 h-3 text-muted-foreground opacity-0 group-hover:opacity-100 transition-opacity" />
+                  </td>
                   <td className="py-3 pr-4 font-mono font-bold text-foreground">{fmtMoney(company.lobbying_spend)}</td>
                   <td className="py-3 text-muted-foreground text-xs leading-snug">
                     {(company.lobbying_spend ?? 0) > 1_000_000
@@ -278,10 +284,17 @@ export function WarningLabelView({ company, executives = [], contracts = [], iss
                       : (company.lobbying_spend ?? 0) > 0
                       ? "Moderate lobbying presence."
                       : "No lobbying spend detected."}
+                    <span className="block text-primary text-xs mt-0.5 font-medium group-hover:underline">View on OpenSecrets →</span>
                   </td>
                 </tr>
-                <tr>
-                  <td className="py-3 pr-4 font-medium text-foreground">PAC Spending</td>
+                <tr
+                  className="cursor-pointer hover:bg-muted/20 transition-colors group"
+                  onClick={() => window.open(`https://www.fec.gov/data/receipts/?data_type=processed&committee_name=${encodeURIComponent(company.name)}`, "_blank")}
+                >
+                  <td className="py-3 pr-4 font-medium text-foreground flex items-center gap-1.5">
+                    PAC Spending
+                    <ExternalLink className="w-3 h-3 text-muted-foreground opacity-0 group-hover:opacity-100 transition-opacity" />
+                  </td>
                   <td className="py-3 pr-4 font-mono font-bold text-foreground">{fmtMoney(company.total_pac_spending)}</td>
                   <td className="py-3 text-muted-foreground text-xs leading-snug">
                     {(company.total_pac_spending ?? 0) > 500_000
@@ -289,22 +302,39 @@ export function WarningLabelView({ company, executives = [], contracts = [], iss
                       : (company.total_pac_spending ?? 0) > 0
                       ? "Some political giving on record."
                       : "No PAC spending detected."}
+                    <span className="block text-primary text-xs mt-0.5 font-medium group-hover:underline">View on FEC.gov →</span>
                   </td>
                 </tr>
-                <tr>
-                  <td className="py-3 pr-4 font-medium text-foreground">Gov Contracts</td>
+                <tr
+                  className="cursor-pointer hover:bg-muted/20 transition-colors group"
+                  onClick={() => window.open(`https://www.usaspending.gov/search/?hash=&filters=${encodeURIComponent(JSON.stringify({ keyword: company.name }))}`, "_blank")}
+                >
+                  <td className="py-3 pr-4 font-medium text-foreground flex items-center gap-1.5">
+                    Gov Contracts
+                    <ExternalLink className="w-3 h-3 text-muted-foreground opacity-0 group-hover:opacity-100 transition-opacity" />
+                  </td>
                   <td className="py-3 pr-4 font-mono font-bold text-foreground">{fmtMoney(totalContractValue)}</td>
                   <td className="py-3 text-muted-foreground text-xs leading-snug">
                     {totalContractValue > 0
                       ? `${contracts.length} contract${contracts.length > 1 ? "s" : ""} on record${controversialContracts.length > 0 ? ` — ${controversialContracts.length} flagged.` : "."}`
                       : "No federal contracts found."}
+                    <span className="block text-primary text-xs mt-0.5 font-medium group-hover:underline">View on USASpending →</span>
                   </td>
                 </tr>
                 {(company.subsidies_received ?? 0) > 0 && (
-                  <tr>
-                    <td className="py-3 pr-4 font-medium text-foreground">Subsidies</td>
+                  <tr
+                    className="cursor-pointer hover:bg-muted/20 transition-colors group"
+                    onClick={() => window.open(`https://subsidytracker.goodjobsfirst.org/prog.php?parent=${encodeURIComponent(company.name)}`, "_blank")}
+                  >
+                    <td className="py-3 pr-4 font-medium text-foreground flex items-center gap-1.5">
+                      Subsidies
+                      <ExternalLink className="w-3 h-3 text-muted-foreground opacity-0 group-hover:opacity-100 transition-opacity" />
+                    </td>
                     <td className="py-3 pr-4 font-mono font-bold text-foreground">{fmtMoney(company.subsidies_received)}</td>
-                    <td className="py-3 text-muted-foreground text-xs leading-snug">Public money received — worth checking against layoff history.</td>
+                    <td className="py-3 text-muted-foreground text-xs leading-snug">
+                      Public money received — worth checking against layoff history.
+                      <span className="block text-primary text-xs mt-0.5 font-medium group-hover:underline">View on Good Jobs First →</span>
+                    </td>
                   </tr>
                 )}
                 {company.effective_tax_rate && (
