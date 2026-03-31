@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useMemo } from "react";
 import { useAuth } from "@/contexts/AuthContext";
 import { usePersona } from "@/hooks/use-persona";
 import { PersonaQuizBanner } from "@/components/PersonaQuizBanner";
