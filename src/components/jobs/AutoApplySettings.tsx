@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import { useAutoApplySettings } from "@/hooks/use-auto-apply";
+import { AutoApplyConsentModal } from "@/components/auto-apply/AutoApplyConsentModal";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Switch } from "@/components/ui/switch";
@@ -34,6 +35,9 @@ export function AutoApplySettings() {
   const [enabled, setEnabled] = useState(true);
   const [paused, setPaused] = useState(false);
   const [showDetails, setShowDetails] = useState(false);
+  const [showConsentModal, setShowConsentModal] = useState(false);
+
+  const hasConsent = !!(settings as any)?.consent_accepted_at;
 
   useEffect(() => {
     if (settings) {
@@ -43,6 +47,23 @@ export function AutoApplySettings() {
       setPaused(settings.is_paused);
     }
   }, [settings]);
+
+  const handleEnableToggle = (checked: boolean) => {
+    if (checked && !hasConsent) {
+      setShowConsentModal(true);
+      return;
+    }
+    setEnabled(checked);
+  };
+
+  const handleConsentAccept = () => {
+    setShowConsentModal(false);
+    setEnabled(true);
+    upsert.mutate({
+      is_enabled: true,
+      consent_accepted_at: new Date().toISOString(),
+    } as any);
+  };
 
   const handleSave = () => {
     upsert.mutate({
@@ -71,6 +92,7 @@ export function AutoApplySettings() {
   }
 
   return (
+    <>
     <Card className="overflow-hidden">
       {/* Compact header with status */}
       <CardHeader className="pb-0">
@@ -93,7 +115,7 @@ export function AutoApplySettings() {
             >
               {paused ? "Paused" : enabled ? "Active" : "Off"}
             </Badge>
-            <Switch checked={enabled} onCheckedChange={setEnabled} />
+            <Switch checked={enabled} onCheckedChange={handleEnableToggle} />
           </div>
         </div>
       </CardHeader>
@@ -226,5 +248,12 @@ export function AutoApplySettings() {
         </div>
       </CardContent>
     </Card>
+
+    <AutoApplyConsentModal
+      open={showConsentModal}
+      onAccept={handleConsentAccept}
+      onCancel={() => setShowConsentModal(false)}
+    />
+    </>
   );
 }

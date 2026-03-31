@@ -331,6 +331,7 @@ export type Database = {
       }
       auto_apply_settings: {
         Row: {
+          consent_accepted_at: string | null
           created_at: string
           id: string
           is_enabled: boolean
@@ -341,6 +342,7 @@ export type Database = {
           user_id: string
         }
         Insert: {
+          consent_accepted_at?: string | null
           created_at?: string
           id?: string
           is_enabled?: boolean
@@ -351,6 +353,7 @@ export type Database = {
           user_id: string
         }
         Update: {
+          consent_accepted_at?: string | null
           created_at?: string
           id?: string
           is_enabled?: boolean
