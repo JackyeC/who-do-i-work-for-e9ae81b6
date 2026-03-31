@@ -23,11 +23,11 @@ export function WhatThisMeansForYou({ matchCount, matchedCategories, civicScore,
 
   // Values alignment
   if (matchCount >= 3) {
-    insights.push({ type: "positive", text: "Strong alignment with your stated priorities — this employer's track record matches what you care about." });
+    insights.push({ type: "positive", text: "Strong overlap with your stated priorities. This employer's documented record aligns with what you care about." });
   } else if (matchCount >= 2) {
-    insights.push({ type: "positive", text: "Good alignment with your priorities — some overlap with your values." });
+    insights.push({ type: "positive", text: "Some overlap with your priorities. Two of your focus areas are present in the public record." });
   } else if (matchCount === 1) {
-    insights.push({ type: "neutral", text: "Partial alignment — one of your priority areas overlaps with this employer." });
+    insights.push({ type: "neutral", text: "Partial overlap. One of your priority areas appears in this employer's record." });
   }
 
   // Transparency
