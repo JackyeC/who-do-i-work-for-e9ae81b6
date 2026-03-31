@@ -212,8 +212,8 @@ const App = () => (
                   <Route path="/newsletter" element={<Receipts />} />
                   <Route path="/hrtech" element={<HRTechIntelligence />} />
                   <Route path="/palette" element={<PaletteStudio />} />
-                  <Route path="/company/:id" element={<CompanyProfile />} />
-                  <Route path="/company/:id/influence" element={<ProtectedRoute><InfluenceGraph /></ProtectedRoute>} />
+                  <Route path="/company/:id" element={<CompanySlugRedirect />} />
+                  <Route path="/company/:id/influence" element={<CompanySlugRedirect />} />
                   <Route path="/dossier/:id" element={<CompanyDossier />} />
                   <Route path="/dossier/guide/:slug" element={<DossierCoachingGuide />} />
                   <Route path="/pricing" element={<Pricing />} />
