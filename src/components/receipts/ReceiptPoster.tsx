@@ -38,10 +38,11 @@ const POSTER_IMAGES = [posterTrillion, posterLayoffs, posterRestructuring, poste
 
 const POSTER_IMAGE_RULES: { keywords: string[]; image: string }[] = [
   { keywords: ["nvidia", "trillion", "inference"], image: posterTrillion },
+  { keywords: ["layoff plan", "mass layoff", "workforce reduction"], image: posterLayoffs },
   { keywords: ["restructuring", "fired", "pink slip"], image: posterRestructuring },
   { keywords: ["healthcare", "hospital", "nurse", "health sector"], image: posterHealthcare },
   { keywords: ["struggling", "gallup", "miserable", "wellbeing"], image: posterStruggling },
-  { keywords: ["ai trust", "ai bias", "ai audit"], image: posterAiTrust },
+  { keywords: ["ai trust", "ai bias", "ai audit", "ai screening"], image: posterAiTrust },
 ];
 
 // Track which images have been assigned to prevent duplicates within a render
