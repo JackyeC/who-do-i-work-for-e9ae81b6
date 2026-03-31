@@ -15,9 +15,11 @@ interface ReceiptCardProps {
   onPosterClick?: (article: ReceiptArticle) => void;
 }
 
-export function ReceiptCard({ article, featured = false, onPosterClick }: ReceiptCardProps) {
+export function ReceiptCard({ article, featured = false, onPosterClick, onRequestEmailCapture }: ReceiptCardProps) {
   const [showTake, setShowTake] = useState(false);
   const editorialCat = EDITORIAL_CATEGORIES[article.category ?? ""] || "THE DAILY GRIND";
+  const isGated = article.spice_level >= 4;
+  const isUnlocked = () => localStorage.getItem("jrc-edit-unlocked") === "true";
   const catColor = EDITORIAL_CAT_COLORS[editorialCat] || "#94A3B8";
   const biasKey = getSourceBiasKey(article.source_name);
   const posterId = `p-${article?.id || "x"}-${featured ? "b" : "s"}`;
