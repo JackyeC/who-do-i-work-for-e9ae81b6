@@ -195,7 +195,7 @@ export function AdvocacyReport({ company, executives = [], contracts = [], issue
       {/* ═══ 3. WHAT THEY SAY ═══ */}
       {publicStances.length > 0 && (
         <section>
-          <SectionDivider number={2} icon={Megaphone} title="What They Say" subtitle="Their words — from public filings and corporate communications" />
+          <SectionDivider number={2} icon={Megaphone} title="Public Positioning" subtitle="What they have stated publicly" />
           <div className="pl-11 space-y-2">
             {publicStances.slice(0, 8).map((s, i) => (
               <div key={i} className="p-3 border-l-2 border-muted-foreground/20 bg-muted/5">
