@@ -15,6 +15,7 @@ import { generateCandidateAdvocacyPdf } from "@/lib/generateCandidateAdvocacyPdf
 import { Link } from "react-router-dom";
 import { cn } from "@/lib/utils";
 import { EasyApplyButton } from "./EasyApplyButton";
+import { MatchExplainer } from "./MatchExplainer";
 
 const AI_TRANSPARENCY_THRESHOLD = 70;
 
