@@ -156,12 +156,23 @@ export function FoundingMemberBadge({
                 marginBottom: 32,
               }}
             >
-              <img
-                src={logoNav}
-                alt="Who Do I Work For?"
-                crossOrigin="anonymous"
-                style={{ height: 28, display: "block" }}
-              />
+              <span
+                style={{
+                  fontFamily: "'Inter', system-ui, sans-serif",
+                  fontSize: "16px",
+                  lineHeight: 1,
+                  display: "flex",
+                  alignItems: "baseline",
+                  gap: "2px",
+                }}
+              >
+                <span style={{ fontWeight: 300, color: BRAND.fg }}>Who Do I</span>
+                {" "}
+                <span style={{ fontWeight: 800, color: BRAND.fg }}>W</span>
+                <span style={{ fontWeight: 800, color: BRAND.goldBright }}>?</span>
+                {" "}
+                <span style={{ fontWeight: 800, color: BRAND.fg }}>WORK FOR</span>
+              </span>
               <span
                 style={{
                   fontFamily: "'DM Mono', monospace",
