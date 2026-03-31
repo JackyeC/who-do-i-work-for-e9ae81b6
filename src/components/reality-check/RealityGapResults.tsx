@@ -90,7 +90,7 @@ export function RealityGapResults({ result, onReset }: Props) {
         {/* Overall Vibe Score */}
         <Card className="border-civic-green/20 bg-civic-green/[0.03]">
           <CardContent className="p-5 text-center">
-            <p className="font-mono text-xs tracking-widest uppercase text-muted-foreground mb-2">Your Interview Vibe</p>
+            <p className="font-mono text-xs tracking-widest uppercase text-muted-foreground mb-2">Your Interview Experience</p>
             <p className="text-4xl font-black tabular-nums text-civic-green">{result.overallVibeScore}</p>
             <p className="text-xs text-muted-foreground mt-1">/ 100</p>
           </CardContent>
