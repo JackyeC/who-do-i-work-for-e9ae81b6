@@ -272,8 +272,8 @@ export function VibeMatchQuestionnaire({ onSubmit, isSubmitting }: Props) {
                 question="When you asked about the team's biggest challenge, was the answer consistent across interviewers?"
                 options={[
                   { label: "Yes, they are aligned on the mission.", value: 90 },
-                  { label: "No, I got conflicting stories about the priorities.", value: 35 },
-                  { label: 'They avoided the question or "sugar-coated" it.', value: 15 },
+                  { label: "No, interviewers described different priorities.", value: 35 },
+                  { label: "They redirected the question or gave a non-answer.", value: 15 },
                 ]}
                 value={challengeConsistency}
                 onChange={setChallengeConsistency}
