@@ -54,7 +54,7 @@ export function WhatThisMeansForYou({ matchCount, matchedCategories, civicScore,
   return (
     <div className="p-4 rounded-lg border border-primary/15 bg-primary/[0.03] space-y-3">
       <p className="text-xs font-semibold text-primary flex items-center gap-1.5">
-        <Sparkles className="w-3.5 h-3.5" /> What This Means for You
+        <Sparkles className="w-3.5 h-3.5" /> What This Tends to Mean
       </p>
       <div className="space-y-2">
         {insights.map((insight, i) => (

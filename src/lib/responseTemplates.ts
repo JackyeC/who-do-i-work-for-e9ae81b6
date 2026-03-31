@@ -150,11 +150,11 @@ export const UPLOAD_TYPES: UploadTypeConfig[] = [
 
 /** Jackye's Take — rotating insight blocks */
 export const JACKYE_TAKE_HEADERS: Record<string, string> = {
-  excited: "Read This Before You Get Excited",
-  mismatch: "Here's What's Not Adding Up",
-  common: "This Is Where People Get Tripped Up",
-  decision: "If I Were You…",
-  default: "Jackye's Take",
+  excited: "What to Pay Attention to Here",
+  mismatch: "Where the Pattern Shifts",
+  common: "What This Tends to Mean",
+  decision: "What Is Visible Right Now",
+  default: "Based on What Is Visible",
 };
 
 /** Determine which header to show based on gap score */
