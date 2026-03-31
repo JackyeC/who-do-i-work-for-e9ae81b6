@@ -20,7 +20,6 @@ const CATEGORY_DISPLAY: Record<string, string> = {
   general: "News",
 };
 
-// Simple bias heuristic from source name
 function getSourceBias(source: string | null): string {
   if (!source) return "Unknown";
   const left = ["Truthout", "Al Jazeera English", "The Conversation Africa"];
@@ -33,9 +32,9 @@ function getSourceBias(source: string | null): string {
 }
 
 const BIAS_COLORS: Record<string, string> = {
-  "Left-Lean": "bg-[hsl(var(--civic-blue))]/10 text-[hsl(var(--civic-blue))] border-[hsl(var(--civic-blue))]/30",
+  "Left-Lean": "bg-[hsl(210,60%,92%)] text-[hsl(210,60%,40%)] border-[hsl(210,60%,75%)]",
   "Right-Lean": "bg-destructive/10 text-destructive border-destructive/30",
-  "Center": "bg-[hsl(var(--civic-green))]/10 text-[hsl(var(--civic-green))] border-[hsl(var(--civic-green))]/30",
+  "Center": "bg-[hsl(145,40%,92%)] text-[hsl(145,40%,35%)] border-[hsl(145,40%,70%)]",
   "Mixed": "bg-muted text-muted-foreground border-border",
   "Unknown": "bg-muted text-muted-foreground border-border",
 };
@@ -53,7 +52,8 @@ export function ReceiptCard({ article, featured = false }: ReceiptCardProps) {
 
   return (
     <Card className={cn(
-      "border-border/40 hover:border-border/80 transition-all overflow-hidden",
+      "border-border/40 transition-all duration-300 overflow-hidden group",
+      "hover:border-primary/30 hover:shadow-lg hover:shadow-primary/[0.04]",
       featured && "md:col-span-2 lg:col-span-3"
     )}>
       <CardContent className={cn(
@@ -75,7 +75,7 @@ export function ReceiptCard({ article, featured = false }: ReceiptCardProps) {
           "p-4 md:p-5 space-y-3",
           featured && "md:p-6 md:space-y-4"
         )}>
-          {/* Row 1: Heat chip (mobile-first, highly visible) */}
+          {/* Row 1: Heat chip — mobile-first, immediately visible */}
           <div className="flex items-center gap-2 flex-wrap">
             <HeatChip level={article.spice_level} />
             {timeAgo && (
@@ -101,7 +101,7 @@ export function ReceiptCard({ article, featured = false }: ReceiptCardProps) {
           <div>
             <span className="text-[10px] font-mono uppercase tracking-[0.15em] text-muted-foreground">Bias</span>
             <div className="mt-0.5">
-              <Badge variant="outline" className={cn("text-xs", BIAS_COLORS[bias])}>
+              <Badge variant="outline" className={cn("text-xs font-semibold", BIAS_COLORS[bias])}>
                 {bias}
               </Badge>
             </div>
@@ -117,7 +117,7 @@ export function ReceiptCard({ article, featured = false }: ReceiptCardProps) {
 
           {/* Headline */}
           <h3 className={cn(
-            "font-bold text-foreground leading-tight",
+            "font-bold text-foreground leading-tight group-hover:text-primary transition-colors",
             featured ? "text-xl md:text-2xl" : "text-base"
           )}>
             {article.headline}
@@ -125,16 +125,16 @@ export function ReceiptCard({ article, featured = false }: ReceiptCardProps) {
 
           {/* The Receipt */}
           <div>
-            <span className="text-[10px] font-mono uppercase tracking-[0.15em] text-primary">The Receipt</span>
+            <span className="text-[10px] font-mono uppercase tracking-[0.15em] text-primary font-bold">The Receipt</span>
             <p className="text-sm text-foreground/80 leading-relaxed mt-0.5">
               {article.receipt_connection}
             </p>
           </div>
 
           {/* Jackye's Take */}
-          <div className="bg-primary/5 border border-primary/10 rounded-lg p-3">
-            <span className="text-[10px] font-mono uppercase tracking-[0.15em] text-primary">Jackye's Take</span>
-            <p className="text-sm text-foreground/90 leading-relaxed mt-0.5 italic">
+          <div className="bg-primary/[0.04] border border-primary/10 rounded-lg p-3">
+            <span className="text-[10px] font-mono uppercase tracking-[0.15em] text-primary font-bold">Jackye's Take</span>
+            <p className="text-sm text-foreground/90 leading-relaxed mt-0.5 italic" style={{ fontFamily: "'Georgia', serif" }}>
               "{article.jackye_take}"
             </p>
           </div>
@@ -155,13 +155,13 @@ export function ReceiptCard({ article, featured = false }: ReceiptCardProps) {
             <div className="flex flex-wrap gap-2 mt-1">
               <Link
                 to="/search"
-                className="inline-flex items-center gap-1 text-xs text-primary hover:underline font-medium"
+                className="inline-flex items-center gap-1 text-xs text-primary hover:underline font-semibold"
               >
                 Search employer <ArrowRight className="w-3 h-3" />
               </Link>
               <Link
                 to="/money-trail"
-                className="inline-flex items-center gap-1 text-xs text-primary hover:underline font-medium"
+                className="inline-flex items-center gap-1 text-xs text-primary hover:underline font-semibold"
               >
                 Follow the money <ArrowRight className="w-3 h-3" />
               </Link>
@@ -176,7 +176,7 @@ export function ReceiptCard({ article, featured = false }: ReceiptCardProps) {
                 href={article.source_url}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="flex items-center gap-1.5 text-sm text-primary hover:underline font-medium mt-0.5"
+                className="flex items-center gap-1.5 text-sm text-primary hover:underline font-semibold mt-0.5"
               >
                 {article.source_name || "Original article"} <ExternalLink className="w-3.5 h-3.5" />
               </a>
