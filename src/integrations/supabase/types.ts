@@ -7440,6 +7440,42 @@ export type Database = {
           },
         ]
       }
+      pipeline_runs: {
+        Row: {
+          articles_failed: number | null
+          articles_processed: number | null
+          completed_at: string | null
+          error_message: string | null
+          function_name: string
+          id: string
+          metadata: Json | null
+          started_at: string
+          status: string
+        }
+        Insert: {
+          articles_failed?: number | null
+          articles_processed?: number | null
+          completed_at?: string | null
+          error_message?: string | null
+          function_name: string
+          id?: string
+          metadata?: Json | null
+          started_at?: string
+          status?: string
+        }
+        Update: {
+          articles_failed?: number | null
+          articles_processed?: number | null
+          completed_at?: string | null
+          error_message?: string | null
+          function_name?: string
+          id?: string
+          metadata?: Json | null
+          started_at?: string
+          status?: string
+        }
+        Relationships: []
+      }
       plans: {
         Row: {
           id: string
@@ -8053,7 +8089,7 @@ export type Database = {
           {
             foreignKeyName: "receipts_enriched_work_news_id_fkey"
             columns: ["work_news_id"]
-            isOneToOne: false
+            isOneToOne: true
             referencedRelation: "work_news"
             referencedColumns: ["id"]
           },
