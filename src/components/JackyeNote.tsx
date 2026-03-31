@@ -47,7 +47,7 @@ export function JackyeNote(props: JackyeNoteProps) {
       items.push({ text: `${props.governmentContracts} government contract(s) identified`, icon: Shield });
     }
     if (props.darkMoneyCount > 0) {
-      items.push({ text: `${props.darkMoneyCount} dark money connection(s) detected`, icon: AlertTriangle });
+      items.push({ text: `${props.darkMoneyCount} non-disclosed contribution channel(s) detected`, icon: AlertTriangle });
     }
     if (props.revolvingDoorCount > 0) {
       items.push({ text: `${props.revolvingDoorCount} revolving door connection(s) flagged`, icon: Users });
