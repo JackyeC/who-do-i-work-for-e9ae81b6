@@ -101,18 +101,20 @@ export default function EarlyAccess() {
               fontSize: "48px",
             }}
           >
-            <span style={{ color: "#ffffff" }}>W</span>
-            <span style={{ color: "#F0C040", textShadow: "0 0 20px rgba(240,192,64,0.4)" }}>?</span>
+            <span className="logo-w">W</span>
+            <span className="logo-q">?</span>
           </span>
 
           <div className="h-10 w-px bg-white/10" />
 
-          <div className="text-left">
-            <p className="text-white leading-none tracking-tight" style={{ fontSize: 16, fontWeight: 700 }}>
+          <div className="text-left" style={{ fontFamily: "Inter, sans-serif" }}>
+            <p className="logo-prefix leading-none tracking-tight" style={{ fontSize: 16, fontWeight: 300 }}>
               Who Do I
             </p>
-            <p style={{ fontSize: 16, fontWeight: 800, letterSpacing: "0.08em", color: "#F0C040", textTransform: "uppercase", lineHeight: 1.1 }}>
-              WORK FOR?
+            <p style={{ fontSize: 16, fontWeight: 800, letterSpacing: "0.08em", textTransform: "uppercase", lineHeight: 1.1, display: "flex", alignItems: "baseline", gap: "1px" }}>
+              <span className="logo-bold">WORK FOR</span>
+              <span className="logo-q">?</span>
+            </p>
             </p>
             <p className="text-white/40 text-xs tracking-[0.15em] uppercase mt-0.5">
               Career Intelligence
