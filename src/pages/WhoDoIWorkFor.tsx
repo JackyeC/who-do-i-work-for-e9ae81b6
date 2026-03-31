@@ -529,9 +529,10 @@ export default function WhoDoIWorkFor() {
               {/* CTA to full profile */}
               <div className="text-center mt-8">
                 <Link to={`/company/${employerCompany.slug}`}>
-                  <Button variant="outline" className="gap-2">
+                  <Button className="gap-2 px-8 py-5 text-base font-semibold hover:shadow-lg transition-all duration-200">
                     <ExternalLink className="w-4 h-4" />
-                    View Full {employerCompany.name} Profile
+                    View Full {employerCompany.name} Dossier
+                    <ArrowRight className="w-4 h-4" />
                   </Button>
                 </Link>
               </div>
