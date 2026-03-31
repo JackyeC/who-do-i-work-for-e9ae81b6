@@ -44,6 +44,7 @@ const SignalAlerts = lazy(() => import("./pages/SignalAlerts"));
 const OfferReviewDirect = lazy(() => import("./pages/OfferReviewDirect"));
 const CareerIntelligence = lazy(() => import("./pages/CareerIntelligence"));
 const Check = lazy(() => import("./pages/Check"));
+const ValuesProfile = lazy(() => import("./pages/ValuesProfile"));
 const CareerMap = lazy(() => import("./pages/CareerMap"));
 const Dashboard = lazy(() => import("./pages/Dashboard"));
 const TermsOfService = lazy(() => import("./pages/TermsOfService"));
