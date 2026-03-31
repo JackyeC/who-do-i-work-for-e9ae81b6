@@ -55,7 +55,11 @@ export function EmailCapture() {
       return;
     }
 
-    const { error } = await supabase.from("email_signups").insert({ email: trimmed });
+    const { error } = await supabase.from("email_signups").insert({
+      email: trimmed,
+      source: "landing_page",
+      tags: selectedTags.length > 0 ? selectedTags : null,
+    } as any);
     if (error) {
       if (error.code === "23505") {
         setStatus("success");
