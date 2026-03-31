@@ -361,7 +361,7 @@ export function VibeMatchQuestionnaire({ onSubmit, isSubmitting }: Props) {
             ) : (
               <>
                 <ClipboardCheck className="w-4 h-4" />
-                Generate Reality Check Report
+                Generate Process Signal Report
               </>
             )}
           </Button>

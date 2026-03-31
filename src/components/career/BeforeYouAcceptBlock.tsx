@@ -70,7 +70,7 @@ export function BeforeYouAcceptBlock({ company }: BeforeYouAcceptBlockProps) {
     <div className="max-w-2xl mx-auto mt-5">
       <h3 className="font-display font-bold text-foreground text-base sm:text-lg flex items-center gap-2 mb-3">
         <AlertTriangle className="w-4 h-4 text-[hsl(var(--civic-yellow))]" />
-        Before you accept:
+        What is visible before you decide:
       </h3>
       <ul className="space-y-2">
         {signals.map((s, i) => (
