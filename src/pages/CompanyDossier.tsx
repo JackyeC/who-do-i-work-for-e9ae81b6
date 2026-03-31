@@ -1,6 +1,7 @@
 import { useMemo, useState } from "react";
 import { AdvocacyReport } from "@/components/dossier/AdvocacyReport";
 import { CandidatePrepPack } from "@/components/dossier/CandidatePrepPack";
+import { HardInterviewQuestions } from "@/components/dossier/HardInterviewQuestions";
 import { ContentProtector } from "@/components/ContentProtector";
 import { useParams, Link, useNavigate } from "react-router-dom";
 import { CompanyZeroState } from "@/components/CompanyZeroState";
@@ -387,6 +388,14 @@ export default function CompanyDossier() {
             overviewContent={overviewContent}
             fullContent={null}
           />
+
+          {/* ── HARD INTERVIEW QUESTIONS (always free, outside paywall) ── */}
+          <HardInterviewQuestions
+            companyName={company.name}
+            lobbyingSpend={company.lobbying_spend}
+            eeocCount={eeocCases?.length || 0}
+          />
+
           <TransparencyDisclaimer />
 
           {/* ── NEXT STEPS ── */}
