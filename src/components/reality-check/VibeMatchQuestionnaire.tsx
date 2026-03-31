@@ -313,7 +313,7 @@ export function VibeMatchQuestionnaire({ onSubmit, isSubmitting }: Props) {
             <SectionHeader icon={AlertTriangle} title="Process Signals" number={3} />
             <div className="space-y-4">
               <QuestionCard
-                question="Did anyone 'bad-mouth' a former employee or the person previously in this role?"
+                question="How did interviewers refer to the person previously in this role?"
                 options={[
                   { label: "Never; they spoke with respect.", value: 90 },
                   { label: 'There were subtle hints of "the last person couldn\'t cut it."', value: 40 },
