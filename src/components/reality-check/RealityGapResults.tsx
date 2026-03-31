@@ -162,7 +162,7 @@ export function RealityGapResults({ result, onReset }: Props) {
         <CardContent className="p-5 space-y-4">
           <div className="flex items-center gap-2 mb-1">
             <Terminal className="w-4 h-4 text-civic-green" />
-            <h3 className="font-mono text-xs font-bold tracking-wider uppercase text-civic-green">Advisor Analysis</h3>
+            <h3 className="font-mono text-xs font-bold tracking-wider uppercase text-civic-green">Pattern Analysis</h3>
           </div>
           <div className="space-y-3">
             {result.dimensions.map((d) => {
