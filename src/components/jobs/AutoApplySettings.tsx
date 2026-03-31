@@ -35,6 +35,9 @@ export function AutoApplySettings() {
   const [enabled, setEnabled] = useState(true);
   const [paused, setPaused] = useState(false);
   const [showDetails, setShowDetails] = useState(false);
+  const [showConsentModal, setShowConsentModal] = useState(false);
+
+  const hasConsent = !!(settings as any)?.consent_accepted_at;
 
   useEffect(() => {
     if (settings) {
@@ -44,6 +47,23 @@ export function AutoApplySettings() {
       setPaused(settings.is_paused);
     }
   }, [settings]);
+
+  const handleEnableToggle = (checked: boolean) => {
+    if (checked && !hasConsent) {
+      setShowConsentModal(true);
+      return;
+    }
+    setEnabled(checked);
+  };
+
+  const handleConsentAccept = () => {
+    setShowConsentModal(false);
+    setEnabled(true);
+    upsert.mutate({
+      is_enabled: true,
+      consent_accepted_at: new Date().toISOString(),
+    } as any);
+  };
 
   const handleSave = () => {
     upsert.mutate({
