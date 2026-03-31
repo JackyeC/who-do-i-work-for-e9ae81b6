@@ -441,7 +441,7 @@ export function AdvocacyReport({ company, executives = [], contracts = [], issue
 
       {/* ── AI ANALYSIS NOTICE ── */}
       <p className="text-[10px] text-muted-foreground/60 text-center font-mono tracking-wider uppercase pt-4">
-        Signal-based interpretation from public records · Not legal or career advice · Review evidence and make the call that's right for you
+        Based on public records · Not legal or career advice · Review the evidence and decide what matters to you
       </p>
     </div>
   );
