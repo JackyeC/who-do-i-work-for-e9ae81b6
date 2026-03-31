@@ -31,7 +31,7 @@ export default function ChromeWebStoreAssets() {
             </h2>
             <p className="text-sm text-[#F0EBE0]/70 mb-4 leading-snug">
               Career intelligence at the moment of decision.<br />
-              See integrity scores, red flags, and receipts — right on the job page.
+              See signal scores, notable patterns, and receipts — right on the job page.
             </p>
             <div className="flex gap-2">
               <Badge className="bg-[#F0C040]/20 text-[#F0C040] border-[#F0C040]/30 text-xs">
