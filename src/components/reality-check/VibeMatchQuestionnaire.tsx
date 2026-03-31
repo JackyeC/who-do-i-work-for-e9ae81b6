@@ -340,7 +340,7 @@ export function VibeMatchQuestionnaire({ onSubmit, isSubmitting }: Props) {
             <Textarea
               value={additionalNotes}
               onChange={(e) => setAdditionalNotes(e.target.value.slice(0, 2000))}
-              placeholder="Any other observations, red flags, or positive signals from your interview..."
+              placeholder="Any other observations or patterns from your interview process..."
               className="min-h-[100px] font-mono text-sm"
               maxLength={2000}
             />
