@@ -186,46 +186,62 @@ export default function AskJackyePage() {
 
   return (
     <div className="flex flex-col h-[calc(100vh-78px)] bg-background">
-      {/* Header */}
-      <div className="border-b border-border bg-card shrink-0">
-        <div className="flex items-center gap-4 px-6 py-4">
-          <div className="relative">
+      {/* Hero — decision desk, not chatbot */}
+      {messages.length <= 1 && (
+        <div className="shrink-0 border-b border-border">
+          <div className="max-w-2xl mx-auto px-6 pt-16 pb-10">
+            <p className="font-mono text-xs tracking-[0.15em] uppercase text-primary mb-6">Ask Jackye</p>
+            <h1
+              className="font-sans text-foreground leading-[1.05] mb-2"
+              style={{ fontSize: "clamp(1.75rem, 3.5vw, 2.5rem)", fontWeight: 800, letterSpacing: "-0.5px" }}
+            >
+              Jackye Clayton
+            </h1>
+            <p className="text-base text-muted-foreground mb-10" style={{ letterSpacing: "-0.2px" }}>
+              Career intelligence, with receipts.
+            </p>
+
+            <div className="space-y-2 mb-10">
+              {[
+                "Should I apply?",
+                "Take this offer?",
+                "Stay or leave?",
+                "What should I ask?",
+                "What am I missing?",
+                "What do the signals say?",
+              ].map((line, i) => (
+                <button
+                  key={i}
+                  onClick={() => send(QUICK_PROMPTS[i]?.prompt || line)}
+                  className="block w-full text-left group"
+                >
+                  <span className="text-sm text-foreground/70 group-hover:text-primary transition-colors font-medium leading-relaxed">
+                    {line}
+                  </span>
+                </button>
+              ))}
+            </div>
+
+            <p className="text-sm text-muted-foreground max-w-[44ch] leading-relaxed">
+              Tell me the decision in front of you. I'll help you read it clearly.
+            </p>
+          </div>
+        </div>
+      )}
+
+      {/* Compact header — visible once conversation starts */}
+      {messages.length > 1 && (
+        <div className="border-b border-border bg-card shrink-0">
+          <div className="flex items-center gap-3 px-6 py-3">
             <img
               src={jackyeHeadshot}
               alt="Jackye Clayton"
-              className="w-12 h-12 rounded-full object-cover border-2 border-primary/30"
+              className="w-8 h-8 rounded-full object-cover border border-primary/20"
             />
-            <div className="absolute -bottom-0.5 -right-0.5 w-3 h-3 bg-civic-green rounded-full border-2 border-card" />
-          </div>
-          <div>
-            <h1 className="text-base font-bold text-foreground">Ask Jackye</h1>
-            <p className="text-xs text-muted-foreground">Your career advocate · 15+ years inside hiring</p>
-          </div>
-          <div className="ml-auto hidden sm:flex items-center gap-2">
-            <Sparkles className="w-3.5 h-3.5 text-primary" />
-            <span className="text-xs text-muted-foreground">Powered by WDIWF Intelligence</span>
-          </div>
-        </div>
-      </div>
-
-      {/* Quick Prompts — shown at start */}
-      {messages.length <= 1 && (
-        <div className="px-6 py-4 border-b border-border bg-card/50 shrink-0">
-          <p className="text-xs text-muted-foreground mb-3 font-medium">
-            What's on your mind?
-          </p>
-          <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
-            {QUICK_PROMPTS.map((p) => (
-              <button
-                key={p.label}
-                onClick={() => send(p.prompt)}
-                className="group flex items-center gap-2 p-3 border border-border/60 bg-background hover:border-primary/40 hover:bg-primary/5 transition-all text-left rounded-lg"
-              >
-                <span className="text-xs text-foreground group-hover:text-primary transition-colors font-medium">
-                  {p.label}
-                </span>
-              </button>
-            ))}
+            <div>
+              <p className="text-sm font-bold text-foreground leading-tight">Jackye Clayton</p>
+              <p className="text-xs text-muted-foreground">Career intelligence, with receipts</p>
+            </div>
           </div>
         </div>
       )}
