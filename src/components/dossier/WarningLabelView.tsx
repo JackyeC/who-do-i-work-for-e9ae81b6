@@ -236,7 +236,7 @@ export function WarningLabelView({ company, executives = [], contracts = [], iss
             <Zap className="w-5 h-5 text-primary" />
             <div>
               <h3 className="text-sm font-black tracking-tight text-foreground uppercase">THE STRATEGY</h3>
-              <p className="text-xs text-muted-foreground">Where the money is going and what the public record shows</p>
+              <p className="text-xs text-muted-foreground">What the public record shows and what it tends to mean</p>
             </div>
           </div>
           <div className="space-y-3">
