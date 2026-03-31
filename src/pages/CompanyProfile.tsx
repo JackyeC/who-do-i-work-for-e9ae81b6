@@ -23,12 +23,14 @@ import { HowToReadThis } from "@/components/company/HowToReadThis";
 import { UpgradeMoment } from "@/components/company/UpgradeMoment";
 import { ValuesSignalMatch } from "@/components/company/ValuesSignalMatch";
 import { RealityGapBlock } from "@/components/company/RealityGapBlock";
+import { PerceptionGapModule } from "@/components/company/PerceptionGapModule";
 import { DecisionCheckpointBeforeSign } from "@/components/company/DecisionCheckpointBeforeSign";
 import { InnovationSignals } from "@/components/company/InnovationSignals";
 import { RecruiterIntegrityCard, RecruiterIntegrityCardSkeleton } from "@/components/company/RecruiterIntegrityCard";
 import { useCompanyIntegrity } from "@/hooks/use-company-integrity";
 import { LeadershipInfluenceSection } from "@/components/company/LeadershipInfluenceSection";
-import { CandidatePrepPack } from "@/components/dossier/CandidatePrepPack";
+import { WhatToWatch } from "@/components/company/WhatToWatch";
+import { WhatToAsk } from "@/components/company/WhatToAsk";
 import { ReportTeaserGate } from "@/components/ReportTeaserGate";
 import { PostReportNudge } from "@/components/PostReportNudge";
 import { ContentProtector } from "@/components/ContentProtector";
@@ -410,14 +412,6 @@ export default function CompanyProfile() {
           {dbCompany?.id && <IntegrityIndicators companyId={dbCompany.id} />}
 
           {/* ═══════════════════════════════════════════════════════
-              🎯 CANDIDATE PREP PACK (AI-powered, role-aware)
-             ═══════════════════════════════════════════════════════ */}
-          <CandidatePrepPack
-            companyId={dbCompanyId}
-            companyName={name}
-          />
-
-          {/* ═══════════════════════════════════════════════════════
               JACKYE'S INSIGHT / DESCRIPTION
              ═══════════════════════════════════════════════════════ */}
           <JackyesInsightBlock insight={dbCompany?.jackye_insight} description={(dbCompany as any)?.description} />
@@ -561,18 +555,52 @@ export default function CompanyProfile() {
           {integrityResult && <RecruiterIntegrityCard result={integrityResult} />}
 
           {/* ═══════════════════════════════════════════════════════
-              2.5 REALITY GAP
+              2.5 PERCEPTION GAP™
              ═══════════════════════════════════════════════════════ */}
           {dbCompanyId && (
-            <RealityGapBlock
+            <PerceptionGapModule
               companyId={dbCompanyId}
               companyName={name}
               updatedAt={dbCompany?.updated_at}
             />
           )}
 
-          {/* WhatToWatch + WhatToAsk removed — consolidated into AI Prep Pack above */}
+          {/* ═══════════════════════════════════════════════════════
+              7. WHAT TO WATCH
+             ═══════════════════════════════════════════════════════ */}
+          <WhatToWatch
+            companyName={name}
+            hasLayoffSignals={false}
+            hasWarnNotices={false}
+            hasPayEquity={!!tiPayEquity}
+            hasBenefitsData={!!tiBenefits}
+            hasAiHrSignals={!!tiAiHr}
+            hasSentimentData={!!tiSentiment}
+            hasJobPostings={hasJobPostings}
+            executiveCount={verifiedExecCount}
+            revolvingDoorCount={dbRevolvingDoor?.length || 0}
+            totalPacSpending={totalPac}
+            lobbyingSpend={lobbyingSpend}
+            darkMoneyCount={dbDarkMoney?.length || 0}
+          />
 
+          {/* ═══════════════════════════════════════════════════════
+              8. WHAT TO ASK
+             ═══════════════════════════════════════════════════════ */}
+          <WhatToAsk
+            companyName={name}
+            hasLayoffSignals={false}
+            hasWarnNotices={false}
+            hasPayEquity={!!tiPayEquity}
+            hasBenefitsData={!!tiBenefits}
+            hasAiHrSignals={!!tiAiHr}
+            hasSentimentData={!!tiSentiment}
+            executiveCount={verifiedExecCount}
+            revolvingDoorCount={dbRevolvingDoor?.length || 0}
+            totalPacSpending={totalPac}
+            lobbyingSpend={lobbyingSpend}
+            darkMoneyCount={dbDarkMoney?.length || 0}
+          />
 
           {/* ═══════════════════════════════════════════════════════
               DECISION CHECKPOINT — "Before You Sign"
