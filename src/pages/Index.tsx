@@ -285,16 +285,19 @@ const Index = forwardRef<HTMLDivElement>((_, ref) => {
       <div className="gold-line mx-auto w-full max-w-[200px]" />
 
       {/* ═══════════════════════════════════════════
-          7 — COMPLIANCE & PUBLIC RECORDS TRUST
+          7 — THE PAPER TRAIL
       ═══════════════════════════════════════════ */}
       <section className="bg-card border-y border-border px-6 lg:px-16 py-16 lg:py-24">
         <div className="max-w-[760px] mx-auto text-center">
-          <p className="font-mono text-xs tracking-[0.15em] uppercase text-primary mb-4">Public Records Trust</p>
+          <p className="font-mono text-xs tracking-[0.15em] uppercase text-primary mb-4">The Paper Trail</p>
           <h2 className="text-h2 text-foreground mb-4">
-            No black boxes. No opinions dressed as data.
+            Receipts over Promises.
           </h2>
-          <p className="font-sans text-sm text-muted-foreground leading-relaxed max-w-[52ch] mx-auto mb-8">
-            Every signal is traceable to a public source. Every score is explainable. We publish our methodology, run quarterly bias audits, and make our data sourcing transparent — because a trust layer only works if you can trust the layer.
+          <p className="font-sans text-sm text-muted-foreground leading-relaxed max-w-[54ch] mx-auto mb-6">
+            We use public records and transparent methodology to show you what companies actually do, not just what they post on LinkedIn. From compliance history to executive track records, we bring the receipts so you don't have to trust a black box.
+          </p>
+          <p className="font-sans text-xs text-primary/80 font-medium mb-8">
+            Total transparency. Clear user consent. No hidden agendas.
           </p>
           <div className="flex flex-wrap gap-3 justify-center">
             {[
