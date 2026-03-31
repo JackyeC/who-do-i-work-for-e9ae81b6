@@ -131,13 +131,14 @@ export function WarningLabelView({ company, executives = [], contracts = [], iss
   }, [issueSignals]);
 
   const pulseItems = useMemo(() => {
-    const items: Array<{ icon: React.ElementType; text: string; severity: "red" | "yellow" | "green" }> = [];
+    const items: Array<{ icon: React.ElementType; text: string; severity: "red" | "yellow" | "green"; url?: string }> = [];
 
     if ((company.lobbying_spend ?? 0) > 0) {
       items.push({
         icon: DollarSign,
         text: `${fmtMoney(company.lobbying_spend)} in lobbying spend on record.`,
         severity: (company.lobbying_spend ?? 0) > 1_000_000 ? "red" : "yellow",
+        url: `https://www.opensecrets.org/federal-lobbying/clients/summary?name=${encodeURIComponent(company.name)}`,
       });
     }
     if ((company.total_pac_spending ?? 0) > 0) {
@@ -145,6 +146,7 @@ export function WarningLabelView({ company, executives = [], contracts = [], iss
         icon: Megaphone,
         text: `${fmtMoney(company.total_pac_spending)} in PAC political spending.`,
         severity: (company.total_pac_spending ?? 0) > 500_000 ? "red" : "yellow",
+        url: `https://www.fec.gov/data/receipts/?data_type=processed&committee_name=${encodeURIComponent(company.name)}`,
       });
     }
     if (eeocCases.length > 0) {
@@ -152,6 +154,7 @@ export function WarningLabelView({ company, executives = [], contracts = [], iss
         icon: Scale,
         text: `${eeocCases.length} EEOC enforcement action${eeocCases.length > 1 ? "s" : ""} on record.`,
         severity: "red",
+        url: "https://www.eeoc.gov/newsroom",
       });
     }
     if (totalContractValue > 0) {
@@ -159,6 +162,7 @@ export function WarningLabelView({ company, executives = [], contracts = [], iss
         icon: Building2,
         text: `${fmtMoney(totalContractValue)} in government contracts across ${contracts.length} agencies.`,
         severity: "yellow",
+        url: `https://www.usaspending.gov/search/?hash=&filters=${encodeURIComponent(JSON.stringify({ keyword: company.name }))}`,
       });
     }
     if ((company.subsidies_received ?? 0) > 0) {
@@ -166,6 +170,7 @@ export function WarningLabelView({ company, executives = [], contracts = [], iss
         icon: DollarSign,
         text: `${fmtMoney(company.subsidies_received)} in public subsidies received.`,
         severity: "yellow",
+        url: `https://subsidytracker.goodjobsfirst.org/prog.php?parent=${encodeURIComponent(company.name)}`,
       });
     }
     if (issueSignals.length > 0) {
