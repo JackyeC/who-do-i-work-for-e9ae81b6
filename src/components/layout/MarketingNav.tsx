@@ -57,26 +57,6 @@ export function MarketingNav() {
                 {link.label}
               </Link>
             ))}
-            {/* Tools dropdown */}
-            <div className="relative" onMouseEnter={() => setToolsOpen(true)} onMouseLeave={() => setToolsOpen(false)}>
-              <button className="font-sans text-sm text-muted-foreground hover:text-foreground transition-colors flex items-center gap-1">
-                Tools <ChevronDown className="w-3 h-3" />
-              </button>
-              {toolsOpen && (
-                <div className="absolute top-full right-0 mt-2 w-48 bg-card border border-border rounded-lg shadow-lg py-2 z-50">
-                  {TOOLS_LINKS.map((link) => (
-                    <Link
-                      key={link.to}
-                      to={link.to}
-                      className="block px-4 py-2 font-sans text-sm text-muted-foreground hover:text-foreground hover:bg-muted/50 transition-colors"
-                      onClick={() => setToolsOpen(false)}
-                    >
-                      {link.label}
-                    </Link>
-                  ))}
-                </div>
-              )}
-            </div>
             {user ? (
               <Button size="sm" variant="outline" onClick={() => navigate("/dashboard")} className="font-sans text-sm">
                 Dashboard
