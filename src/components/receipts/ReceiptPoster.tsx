@@ -194,7 +194,10 @@ export function ReceiptPoster({ poster: rawPoster, category, className, big = fa
           <div className="absolute inset-0 pointer-events-none" style={{ background: "linear-gradient(135deg, rgba(255,248,230,0.12) 0%, rgba(0,0,0,0.08) 100%)", mixBlendMode: "multiply" }} />
           <div className="absolute inset-0 pointer-events-none" style={{ boxShadow: "inset 0 0 60px rgba(0,0,0,0.25)" }} />
           <div className="absolute bottom-2 left-0 right-0 text-center pointer-events-none" style={{ fontSize: big ? 10 : 8, fontWeight: 900, letterSpacing: "0.2em", color: "rgba(255,255,255,0.6)", textShadow: "0 1px 4px rgba(0,0,0,0.8)", textTransform: "uppercase" }}>
-            THE RECEIPTS × WDIWF
+            JRC EDIT × WDIWF
+          </div>
+          <div className="absolute bottom-2 right-3 pointer-events-none" style={{ fontSize: 9, fontWeight: 300, letterSpacing: "0.2em", color: "rgba(255,255,255,0.4)", fontFamily: "Georgia, 'Times New Roman', serif", textTransform: "uppercase", animation: "fadeIn 1s ease-in 0.5s forwards", opacity: 0 }}>
+            JRC EDIT
           </div>
         </div>
       ) : (
