@@ -69,23 +69,18 @@ function generateAligned(signals: SignalInputs, profile: ReturnType<typeof getSt
 function generateClarifications(signals: SignalInputs): Insight[] {
   const results: Insight[] = [];
 
+  // Only surface clarifications NOT covered by Prep Pack ASK tracks
   if (!signals.hasCompensationData && !signals.hasPayEquity) {
-    results.push({ text: "Ask about compensation philosophy and how ranges are set." });
-  }
-  if (!signals.hasSentimentData) {
-    results.push({ text: "Ask current employees about day-to-day team dynamics." });
-  }
-  if (!signals.hasJobPostings) {
-    results.push({ text: "Ask about growth trajectory and open roles on this team." });
-  }
-  if (signals.executiveCount === 0) {
-    results.push({ text: "Ask who you'd report to and how leadership communicates priorities." });
+    results.push({ text: "Review the offer's compensation structure against market benchmarks before signing." });
   }
   if (!signals.hasBenefitsData) {
-    results.push({ text: "Ask about benefits structure and how it's evolved recently." });
+    results.push({ text: "Request a full benefits summary document — not just the highlights from the offer letter." });
+  }
+  if (signals.executiveCount === 0) {
+    results.push({ text: "Confirm reporting structure and who your direct leadership chain will be." });
   }
 
-  return results.slice(0, 4);
+  return results.slice(0, 3);
 }
 
 function generateConcerns(signals: SignalInputs, profile: ReturnType<typeof getStoredWorkProfile>): Insight[] {
