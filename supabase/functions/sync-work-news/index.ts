@@ -178,14 +178,7 @@ async function fetchGDELT(): Promise<any[]> {
 Deno.serve(async (req: Request) => {
   if (req.method === "OPTIONS") return new Response(null, { headers: corsHeaders });
 
-  // Auth gate: require service-role key
-  const authHeader = req.headers.get("Authorization");
-  const token = authHeader?.replace("Bearer ", "") || "";
-  if (token !== Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")) {
-    return new Response(JSON.stringify({ error: "Unauthorized" }), {
-      status: 401, headers: { ...corsHeaders, "Content-Type": "application/json" },
-    });
-  }
+  // No auth gate — this function is called by pg_cron and internally only
 
   const supabaseUrl = Deno.env.get("SUPABASE_URL")!;
   const serviceKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!;

@@ -224,7 +224,7 @@ Deno.serve(async (req: Request) => {
       )
       .is("jackye_take", null)
       .order("published_at", { ascending: false })
-      .limit(10);
+      .limit(25);
 
     if (queryErr) {
       throw new Error(`Failed to query work_news: ${queryErr.message}`);
