@@ -101,8 +101,8 @@ function EmojiPoster({ poster, big, id, accent, onAccent, wdiwfQuote, className 
       id={id || undefined}
       className={cn("flex-shrink-0 flex flex-col overflow-hidden rounded-lg relative", className)}
       style={{
-        width: big ? 400 : 300,
-        minHeight: big ? 560 : 430,
+        width: big ? 320 : 220,
+        minHeight: big ? 440 : 320,
         background: pbg,
         boxShadow: "0 12px 40px rgba(0,0,0,0.55)",
       }}
