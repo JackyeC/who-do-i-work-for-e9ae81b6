@@ -283,56 +283,62 @@ export default function WhoDoIWorkFor() {
 
               {/* Summary Cards */}
               <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
-                <Card>
-                  <CardContent className="p-4">
-                    <div className="flex items-center gap-2 text-xs text-muted-foreground mb-1">
-                      <DollarSign className="w-3.5 h-3.5" />
-                      PAC → Politicians
-                    </div>
-                    <div className="text-xl font-bold text-foreground">{formatCurrency(totalPacToReps)}</div>
-                    <p className="text-xs text-muted-foreground">{(candidates || []).length} recipients</p>
-                  </CardContent>
-                </Card>
-                <Card>
-                  <CardContent className="p-4">
-                    <div className="flex items-center gap-2 text-xs text-muted-foreground mb-1">
-                      <UserCheck className="w-3.5 h-3.5" />
-                      Executive Giving
-                    </div>
-                    <div className="text-xl font-bold text-foreground">{formatCurrency(totalExecDonations)}</div>
-                    <p className="text-xs text-muted-foreground">{(executives || []).length} executives</p>
-                  </CardContent>
-                </Card>
-                <Card>
-                  <CardContent className="p-4">
-                    <div className="flex items-center gap-2 text-xs text-muted-foreground mb-1">
-                      <Megaphone className="w-3.5 h-3.5" />
-                      Lobbying
-                    </div>
-                    <div className="text-xl font-bold text-foreground">
-                      {employerCompany.lobbying_spend ? formatCurrency(employerCompany.lobbying_spend) : "—"}
-                    </div>
-                  </CardContent>
-                </Card>
-                <Card>
-                  <CardContent className="p-4">
-                    <div className="flex items-center gap-2 text-xs text-muted-foreground mb-1">
-                      <AlertTriangle className="w-3.5 h-3.5" />
-                      Flagged
-                    </div>
-                    <div className="text-xl font-bold text-foreground">{flaggedCandidates.length}</div>
-                    <p className="text-xs text-muted-foreground">flagged donations</p>
-                  </CardContent>
-                </Card>
+                {[
+                  {
+                    icon: <DollarSign className="w-3.5 h-3.5" />,
+                    label: "Political Action Committee → Politicians",
+                    value: formatCurrency(totalPacToReps),
+                    sub: `${(candidates || []).length} recipients`,
+                    targetId: "pac-section",
+                  },
+                  {
+                    icon: <UserCheck className="w-3.5 h-3.5" />,
+                    label: "Executive Giving",
+                    value: formatCurrency(totalExecDonations),
+                    sub: `${(executives || []).length} executives`,
+                    targetId: "exec-section",
+                  },
+                  {
+                    icon: <Megaphone className="w-3.5 h-3.5" />,
+                    label: "Lobbying",
+                    value: employerCompany.lobbying_spend ? formatCurrency(employerCompany.lobbying_spend) : "—",
+                    sub: undefined,
+                    targetId: "board-section",
+                  },
+                  {
+                    icon: <AlertTriangle className="w-3.5 h-3.5" />,
+                    label: "Flagged",
+                    value: String(flaggedCandidates.length),
+                    sub: "flagged donations",
+                    targetId: "pac-section",
+                  },
+                ].map((card) => (
+                  <button
+                    key={card.label}
+                    onClick={() => document.getElementById(card.targetId)?.scrollIntoView({ behavior: "smooth", block: "start" })}
+                    className="text-left"
+                  >
+                    <Card className="h-full hover:border-primary/40 hover:shadow-md transition-all duration-200 cursor-pointer group">
+                      <CardContent className="p-4">
+                        <div className="flex items-center gap-2 text-xs text-muted-foreground mb-1 group-hover:text-primary transition-colors">
+                          {card.icon}
+                          {card.label}
+                        </div>
+                        <div className="text-xl font-bold text-foreground group-hover:text-primary transition-colors">{card.value}</div>
+                        {card.sub && <p className="text-xs text-muted-foreground">{card.sub}</p>}
+                      </CardContent>
+                    </Card>
+                  </button>
+                ))}
               </div>
 
               {/* PAC-Funded Politicians */}
               {(candidates || []).length > 0 && (
-                <Card className="mb-6">
+                <Card className="mb-6" id="pac-section">
                   <CardHeader>
                     <CardTitle className="text-lg flex items-center gap-2">
                       <Flag className="w-5 h-5" />
-                      Politicians Funded by Your Employer's PAC
+                      Politicians Funded by Your Employer's Political Action Committee
                     </CardTitle>
                     <p className="text-xs text-muted-foreground mt-1">
                       Amounts shown are aggregate totals from public filings. Individual contributions are not itemized below unless broken out by type.
@@ -341,12 +347,16 @@ export default function WhoDoIWorkFor() {
                   <CardContent>
                     <div className="space-y-2">
                       {(candidates || []).map((c) => (
-                        <div key={c.id} className="rounded-lg border border-border overflow-hidden">
+                        <Link
+                          key={c.id}
+                          to={`/company/${employerCompany.slug}`}
+                          className="rounded-lg border border-border overflow-hidden block hover:border-primary/40 hover:bg-primary/5 transition-all duration-200 group"
+                        >
                           <div className="flex items-center justify-between p-3">
                             <div className="flex items-center gap-3">
-                              <User className="w-4 h-4 text-muted-foreground" />
+                              <User className="w-4 h-4 text-muted-foreground group-hover:text-primary transition-colors" />
                               <div>
-                                <span className="font-medium text-foreground">{c.name}</span>
+                                <span className="font-medium text-foreground group-hover:text-primary transition-colors">{c.name}</span>
                                 <div className="flex items-center gap-2 text-xs text-muted-foreground">
                                   <span>{c.state}{c.district ? `-${c.district}` : ""}</span>
                                   <span>·</span>
@@ -370,9 +380,10 @@ export default function WhoDoIWorkFor() {
                                 <span className="font-semibold text-foreground">{formatCurrency(c.amount)}</span>
                                 <p className="text-xs text-muted-foreground">aggregate est.</p>
                               </div>
+                              <ChevronRight className="w-4 h-4 text-muted-foreground/40 group-hover:text-primary transition-colors" />
                             </div>
                           </div>
-                        </div>
+                        </Link>
                       ))}
                     </div>
                   </CardContent>
@@ -381,7 +392,7 @@ export default function WhoDoIWorkFor() {
 
               {/* Executive Donations */}
               {(executives || []).length > 0 && (
-                <Card className="mb-6">
+                <Card className="mb-6" id="exec-section">
                   <CardHeader>
                     <CardTitle className="text-lg flex items-center gap-2">
                       <Users className="w-5 h-5" />
@@ -391,13 +402,20 @@ export default function WhoDoIWorkFor() {
                   <CardContent>
                     <div className="space-y-4">
                       {(executives || []).map((exec: any) => (
-                        <div key={exec.id} className="border border-border rounded-lg p-4">
+                        <Link
+                          key={exec.id}
+                          to={`/company/${employerCompany.slug}`}
+                          className="border border-border rounded-lg p-4 block hover:border-primary/40 hover:bg-primary/5 transition-all duration-200 group"
+                        >
                           <div className="flex items-center justify-between mb-2">
                             <div>
-                              <span className="font-semibold text-foreground">{exec.name}</span>
+                              <span className="font-semibold text-foreground group-hover:text-primary transition-colors">{exec.name}</span>
                               <p className="text-xs text-muted-foreground">{exec.title}</p>
                             </div>
-                            <span className="font-bold text-foreground">{formatCurrency(exec.total_donations)}</span>
+                            <div className="flex items-center gap-2">
+                              <span className="font-bold text-foreground">{formatCurrency(exec.total_donations)}</span>
+                              <ChevronRight className="w-4 h-4 text-muted-foreground/40 group-hover:text-primary transition-colors" />
+                            </div>
                           </div>
                           {exec.executive_recipients && exec.executive_recipients.length > 0 && (
                             <div className="space-y-1 mt-2">
@@ -413,7 +431,7 @@ export default function WhoDoIWorkFor() {
                               ))}
                             </div>
                           )}
-                        </div>
+                        </Link>
                       ))}
                     </div>
                   </CardContent>
@@ -422,7 +440,7 @@ export default function WhoDoIWorkFor() {
 
               {/* Board Affiliations */}
               {(boardAffs || []).length > 0 && (
-                <Card className="mb-6">
+                <Card className="mb-6" id="board-section">
                   <CardHeader>
                     <CardTitle className="text-lg flex items-center gap-2">
                       <Scale className="w-5 h-5" />
@@ -432,7 +450,14 @@ export default function WhoDoIWorkFor() {
                   <CardContent>
                     <div className="flex flex-wrap gap-2">
                       {(boardAffs || []).map((b) => (
-                        <Badge key={b.id} variant="secondary">{b.name}</Badge>
+                        <Badge
+                          key={b.id}
+                          variant="secondary"
+                          className="cursor-pointer hover:bg-primary/10 hover:text-primary hover:border-primary/30 transition-all duration-200 text-sm py-1.5 px-3"
+                        >
+                          {b.name}
+                          <ExternalLink className="w-3 h-3 ml-1.5 opacity-50" />
+                        </Badge>
                       ))}
                     </div>
                   </CardContent>
@@ -504,9 +529,10 @@ export default function WhoDoIWorkFor() {
               {/* CTA to full profile */}
               <div className="text-center mt-8">
                 <Link to={`/company/${employerCompany.slug}`}>
-                  <Button variant="outline" className="gap-2">
+                  <Button className="gap-2 px-8 py-5 text-base font-semibold hover:shadow-lg transition-all duration-200">
                     <ExternalLink className="w-4 h-4" />
-                    View Full {employerCompany.name} Profile
+                    View Full {employerCompany.name} Dossier
+                    <ArrowRight className="w-4 h-4" />
                   </Button>
                 </Link>
               </div>
