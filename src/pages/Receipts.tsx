@@ -56,6 +56,7 @@ export default function Receipts() {
   const [category, setCategory] = useState("all");
   const [sortMode, setSortMode] = useState<ReceiptSortMode>("newest");
   const [heatFilter, setHeatFilter] = useState<number | null>(null);
+  const [lightboxArticle, setLightboxArticle] = useState<ReceiptArticle | null>(null);
 
   const filtered = useMemo(() => {
     if (!articles) return [];
