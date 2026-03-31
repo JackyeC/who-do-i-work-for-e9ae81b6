@@ -18,7 +18,7 @@ body > div:last-child > a[href*="lovable"] {
 
 @layer base {
   :root {
-    color-scheme: dark;  /* dark is the site default — prevents browser white flash */
+    color-scheme: dark;
 
     /* ── NAV OFFSET ── */
     --ticker-height: 36px;
@@ -26,24 +26,24 @@ body > div:last-child > a[href*="lovable"] {
     --nav-offset: 100px;
 
     /* ── LIGHT MODE ── */
-    --background: 40 20% 97%;            /* #f7f5f0 warm white */
-    --foreground: 240 20% 12%;           /* #1a1a22 near-black */
+    --background: 40 20% 97%;            /* #F7F5F0 warm white */
+    --foreground: 240 20% 12%;           /* #1A1A22 */
 
-    --card: 0 0% 100%;                   /* pure white */
+    --card: 0 0% 100%;
     --card-foreground: 240 20% 12%;
 
     --popover: 0 0% 100%;
     --popover-foreground: 240 20% 12%;
 
-    /* ── AMBER PRIMARY — light mode uses #C9920A (41° 88% 41%) ── */
-    --primary: 41 88% 41%;               /* #C9920A — darker gold for light bg */
-    --primary-foreground: 0 0% 100%;     /* white text on gold */
+    /* Primary = darker gold #C9920A for light mode */
+    --primary: 41 88% 41%;
+    --primary-foreground: 0 0% 100%;
 
     --secondary: 40 15% 92%;
     --secondary-foreground: 240 20% 12%;
 
     --muted: 40 15% 92%;
-    --muted-foreground: 240 12% 32%;     /* #494954 — WCAG AA compliant on cream */
+    --muted-foreground: 240 12% 32%;
 
     --accent: 43 30% 90%;
     --accent-foreground: 43 85% 40%;
@@ -56,6 +56,14 @@ body > div:last-child > a[href*="lovable"] {
     --ring: 43 85% 50%;
 
     --radius: 8px;
+
+    /* ── BRAND UTILITY COLORS (light) ── */
+    --brand-section-label: 0 0% 40%;     /* #666 */
+    --brand-scale-label: 0 0% 40%;       /* #666 */
+    --brand-page-label: 0 0% 33%;        /* #555 */
+    --brand-divider: 0 0% 10%;           /* #1A1A1A */
+    --brand-border: 0 0% 7%;             /* #111 */
+    --brand-subtitle: 0 0% 53%;          /* #888 */
 
     /* ── SIGNAL TOKENS ── */
     --civic-red: 348 85% 50%;
@@ -86,7 +94,7 @@ body > div:last-child > a[href*="lovable"] {
     --sidebar-border: 40 12% 86%;
     --sidebar-ring: 43 85% 50%;
 
-    /* ── NAV GLASS (themeable) ── */
+    /* ── NAV GLASS ── */
     --nav-glass-bg: 40 20% 97% / 0.92;
     --nav-glass-border: 240 20% 12% / 0.06;
     --nav-input-bg: 240 20% 12% / 0.04;
