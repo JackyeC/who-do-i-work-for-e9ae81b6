@@ -99,11 +99,9 @@ export function FoundingMemberBadge({
   const shareText = `I'm Founding Member ${displayNumber} of Who Do I Work For? — the career intelligence platform that tells you what employers won't. Launching April 7. Get in early → ${BASE_URL}`;
 
   const handleShareLinkedIn = () => {
-    const url = `https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(BASE_URL)}`;
+    const linkedInText = `I'm Founding Member ${displayNumber} of Who Do I Work For? — career intelligence that tells you what employers won't. Launching April 7. Get in early → ${BASE_URL}`;
+    const url = `https://www.linkedin.com/feed/?shareActive=true&text=${encodeURIComponent(linkedInText)}`;
     window.open(url, "_blank", "width=600,height=600");
-    navigator.clipboard.writeText(shareText);
-    setCopied(true);
-    setTimeout(() => setCopied(false), 2000);
   };
 
   const handleShareTwitter = () => {
