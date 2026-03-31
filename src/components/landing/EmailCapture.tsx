@@ -6,11 +6,28 @@ import { SectionReveal } from "./SectionReveal";
 import { useTurnstile } from "@/hooks/useTurnstile";
 import { verifyTurnstileToken } from "@/lib/verifyTurnstile";
 
+const TOPIC_OPTIONS = [
+  "AI & Automation",
+  "Layoffs & Restructuring",
+  "Pay Equity",
+  "Worker Rights",
+  "DEI & Culture",
+  "Regulation & Policy",
+  "Future of Work",
+];
+
 export function EmailCapture() {
   const [email, setEmail] = useState("");
+  const [selectedTags, setSelectedTags] = useState<string[]>([]);
   const [status, setStatus] = useState<"idle" | "loading" | "success" | "error">("idle");
   const [errorMsg, setErrorMsg] = useState("");
   const { containerRef, getToken, resetToken } = useTurnstile();
+
+  const toggleTag = (tag: string) => {
+    setSelectedTags((prev) =>
+      prev.includes(tag) ? prev.filter((t) => t !== tag) : [...prev, tag]
+    );
+  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
