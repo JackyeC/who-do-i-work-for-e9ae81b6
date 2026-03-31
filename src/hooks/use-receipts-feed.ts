@@ -1,4 +1,5 @@
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
+import { useEffect } from "react";
 import { supabase } from "@/integrations/supabase/client";
 
 export interface ReceiptArticle {
@@ -33,9 +34,37 @@ export interface ReceiptArticle {
   created_at: string | null;
 }
 
+const QUERY_KEY = ["receipts-feed"];
+
 export function useReceiptsFeed() {
+  const queryClient = useQueryClient();
+
+  // Subscribe to realtime inserts on receipts_enriched
+  useEffect(() => {
+    const channel = supabase
+      .channel("receipts-realtime")
+      .on(
+        "postgres_changes",
+        { event: "INSERT", schema: "public", table: "receipts_enriched" },
+        (payload) => {
+          // Prepend the new article to the cached list
+          queryClient.setQueryData<ReceiptArticle[]>(QUERY_KEY, (old) => {
+            if (!old) return [payload.new as unknown as ReceiptArticle];
+            // Avoid duplicates
+            if (old.some((a) => a.id === (payload.new as any).id)) return old;
+            return [payload.new as unknown as ReceiptArticle, ...old];
+          });
+        }
+      )
+      .subscribe();
+
+    return () => {
+      supabase.removeChannel(channel);
+    };
+  }, [queryClient]);
+
   return useQuery({
-    queryKey: ["receipts-feed"],
+    queryKey: QUERY_KEY,
     queryFn: async () => {
       const { data, error } = await supabase
         .from("receipts_enriched")
