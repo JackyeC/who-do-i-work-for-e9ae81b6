@@ -19,7 +19,7 @@ export function AskJackyeWidget() {
     {
       role: "assistant",
       content:
-        "Hey! I'm **Jackye**, your career intelligence advisor. Ask me anything about jobs, employer transparency, civic scores, or finding values-aligned roles. 🔍",
+        "Hey — I'm **Jackye**. Looking for a role that actually aligns with your values? Ask me anything about these jobs, what the companies are really like, or how to filter for what matters to you.",
     },
   ]);
   const [input, setInput] = useState("");
