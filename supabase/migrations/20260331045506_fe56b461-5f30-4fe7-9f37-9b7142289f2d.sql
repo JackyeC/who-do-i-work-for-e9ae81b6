@@ -1,0 +1,1 @@
+ALTER TABLE public.auto_apply_settings ADD COLUMN consent_accepted_at timestamptz DEFAULT NULL;
