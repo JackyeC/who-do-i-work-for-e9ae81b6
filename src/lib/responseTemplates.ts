@@ -39,7 +39,7 @@ export const CONVERSATION_MODES: ModeConfig[] = [
   },
 ];
 
-export const MODE_ANCHOR_LINE = "Got it. I'll meet you there — but I'm still going to be honest.";
+export const MODE_ANCHOR_LINE = "Understood. I'll adjust the approach, but I'm still going to be honest with you.";
 
 export interface ResponseTemplate {
   opening: string;
