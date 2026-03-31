@@ -355,7 +355,7 @@ export function WarningLabelView({ company, executives = [], contracts = [], iss
                     </td>
                     <td className="py-3 pr-4 font-mono font-bold text-foreground">{fmtMoney(company.subsidies_received)}</td>
                     <td className="py-3 text-muted-foreground text-xs leading-snug">
-                      Public money received — worth checking against layoff history.
+                      Public funds received. Consider alongside workforce changes.
                       <span className="block text-primary text-xs mt-0.5 font-medium group-hover:underline">View on Good Jobs First →</span>
                     </td>
                   </tr>
