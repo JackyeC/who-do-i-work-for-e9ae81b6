@@ -330,38 +330,44 @@ export function DashboardOverview({ onNavigate }: DashboardOverviewProps) {
           </div>
           <div className="space-y-2.5">
             {SIGNAL_CARDS.map((s, i) => (
-              <Link
+              <motion.div
                 key={i}
-                to={`/dossier/${s.slug}`}
-                className="block rounded-xl p-4 transition-all hover:scale-[1.005] bg-muted/30 border border-border/30"
+                initial={{ opacity: 0, x: -12 }}
+                animate={{ opacity: 1, x: 0 }}
+                transition={{ delay: 0.1 + i * 0.06, duration: 0.4, ease: [0.22, 1, 0.36, 1] }}
               >
-                <div className="flex items-start justify-between gap-3">
-                  <div className="min-w-0 flex-1">
-                    <div className="flex items-center gap-2 mb-1.5 flex-wrap">
-                      <span className="text-sm font-bold text-foreground">{s.company}</span>
-                      <span className={`rounded px-1.5 py-0.5 text-xs font-bold font-mono border ${VARIANT_CLASSES[s.badgeVariant].badge}`}>
-                        {s.badge}
-                      </span>
-                      <span className={`rounded px-1.5 py-0.5 text-xs font-bold font-mono ${VARIANT_CLASSES[s.severityVariant].badge}`}>
-                        {s.severity}
-                      </span>
+                <Link
+                  to={`/dossier/${s.slug}`}
+                  className="block rounded-xl p-4 transition-all duration-200 hover:scale-[1.008] hover:shadow-md hover:shadow-primary/[0.06] bg-muted/30 border border-border/30 hover:border-primary/20"
+                >
+                  <div className="flex items-start justify-between gap-3">
+                    <div className="min-w-0 flex-1">
+                      <div className="flex items-center gap-2 mb-1.5 flex-wrap">
+                        <span className="text-sm font-bold text-foreground">{s.company}</span>
+                        <span className={`rounded px-1.5 py-0.5 text-xs font-bold font-mono border ${VARIANT_CLASSES[s.badgeVariant].badge}`}>
+                          {s.badge}
+                        </span>
+                        <span className={`rounded px-1.5 py-0.5 text-xs font-bold font-mono ${VARIANT_CLASSES[s.severityVariant].badge}`}>
+                          {s.severity}
+                        </span>
+                      </div>
+                      <p className="text-[13px] text-muted-foreground leading-snug">{s.summary}</p>
+                      <div className="flex items-center gap-3 mt-2">
+                        <span className="text-xs font-bold text-primary font-mono">
+                          {s.amount}
+                        </span>
+                        <span className="text-xs text-muted-foreground/50">·</span>
+                        <span className="text-xs text-muted-foreground/50 font-mono">{s.date}</span>
+                        <span className="text-xs text-muted-foreground/50">·</span>
+                        <span className="text-xs text-muted-foreground/50">{s.source}</span>
+                      </div>
                     </div>
-                    <p className="text-[13px] text-muted-foreground leading-snug">{s.summary}</p>
-                    <div className="flex items-center gap-3 mt-2">
-                      <span className="text-xs font-bold text-primary font-mono">
-                        {s.amount}
-                      </span>
-                      <span className="text-xs text-muted-foreground/50">·</span>
-                      <span className="text-xs text-muted-foreground/50 font-mono">{s.date}</span>
-                      <span className="text-xs text-muted-foreground/50">·</span>
-                      <span className="text-xs text-muted-foreground/50">{s.source}</span>
-                    </div>
+                    <span className="text-xs font-semibold text-primary whitespace-nowrap mt-0.5 flex items-center gap-1 group-hover:gap-2 transition-all">
+                      View Full Audit <ArrowRight className="w-3 h-3" />
+                    </span>
                   </div>
-                  <span className="text-xs font-semibold text-primary whitespace-nowrap mt-0.5 flex items-center gap-1">
-                    View Full Audit <ArrowRight className="w-3 h-3" />
-                  </span>
-                </div>
-              </Link>
+                </Link>
+              </motion.div>
             ))}
           </div>
         </BriefingCard>
