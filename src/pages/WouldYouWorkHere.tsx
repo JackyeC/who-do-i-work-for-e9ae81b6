@@ -247,7 +247,10 @@ export default function WouldYouWorkHere() {
         </div>
       </section>
 
-      {/* ── Sample Report ── */}
+      {/* ── Share + Sample Report ── */}
+      <div className="px-6 lg:px-16 max-w-[840px] mx-auto w-full flex justify-end mb-4">
+        <ShareButtons />
+      </div>
       <section className="px-6 lg:px-16 pb-8 max-w-[840px] mx-auto w-full">
         <div className="bg-card border border-border relative">
           <div className="absolute -top-2.5 left-4 bg-background px-2 font-mono text-[0.6rem] uppercase text-primary tracking-[0.2em]">
