@@ -290,7 +290,7 @@ export function AdvocacyReport({ company, executives = [], contracts = [], issue
       {/* ═══ 5. INTEGRITY GAP ═══ */}
       {gapStances.length > 0 && (
         <section>
-          <SectionDivider number={4} icon={Eye} title="Integrity Gap" subtitle="Where their words and their record don't match" />
+          <SectionDivider number={4} icon={Eye} title="Stance-Record Gap" subtitle="Where public positioning and documented activity diverge" />
           <div className="pl-11 space-y-3">
             {gapStances.map((s, i) => (
               <div key={i} className={cn(
