@@ -25,6 +25,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { OfferClarityWizard } from "@/components/offer-clarity/OfferClarityWizard";
 import { PremiumGate } from "@/components/PremiumGate";
 import { Helmet } from "react-helmet-async";
+import { motion, AnimatePresence } from "framer-motion";
 import { JobsFeedSection } from "@/components/dashboard/JobsFeedSection";
 import { TrackerSection } from "@/components/dashboard/TrackerSection";
 import { ApplyKitSection } from "@/components/dashboard/ApplyKitSection";
