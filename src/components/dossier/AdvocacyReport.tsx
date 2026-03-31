@@ -178,7 +178,7 @@ export function AdvocacyReport({ company, executives = [], contracts = [], issue
 
       {/* ═══ 2. COMPANY SUMMARY ═══ */}
       <section>
-        <SectionDivider number={1} icon={Building2} title="Company Summary" subtitle="The basics before the receipts" />
+        <SectionDivider number={1} icon={Building2} title="Company Summary" subtitle="What is visible in the public record" />
         <div className="pl-11">
           <div className="flex flex-wrap gap-2 mb-3">
             <Badge variant="secondary" className="text-xs font-mono">{company.industry}</Badge>
