@@ -41,7 +41,7 @@ export default function Community() {
     try {
       const { error } = await supabase.from("waitlist").insert({
         email: normalizedEmail,
-        role: "community",
+        role: "candidate" as const,
         interests,
       });
       if (error && error.code !== "23505") {
