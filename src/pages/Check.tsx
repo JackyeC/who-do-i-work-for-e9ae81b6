@@ -385,7 +385,6 @@ export default function Check() {
         <meta name="description" content="Situation-aware company check — understand if a company is right for you based on what matters most." />
       </Helmet>
       <div className="min-h-screen bg-background flex flex-col">
-        <Header />
         <main className="flex-1 container mx-auto px-4 py-8 max-w-3xl space-y-8">
 
           {/* ─── SECTION 1: SITUATION SELECTOR ─── */}
