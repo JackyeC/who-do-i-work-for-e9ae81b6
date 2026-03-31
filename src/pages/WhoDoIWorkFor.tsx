@@ -392,7 +392,7 @@ export default function WhoDoIWorkFor() {
 
               {/* Executive Donations */}
               {(executives || []).length > 0 && (
-                <Card className="mb-6">
+                <Card className="mb-6" id="exec-section">
                   <CardHeader>
                     <CardTitle className="text-lg flex items-center gap-2">
                       <Users className="w-5 h-5" />
