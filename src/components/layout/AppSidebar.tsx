@@ -189,8 +189,35 @@ export function AppSidebar() {
         })}
       </SidebarContent>
 
-      {/* ── Footer: Civic Impact + Auth ── */}
+      {/* ── Footer: Founding Badge + Civic Impact + Auth ── */}
       <SidebarFooter className="p-3 space-y-2">
+        {/* Founding Member Badge CTA */}
+        {user && !collapsed && (
+          <button
+            onClick={() => setShowBadge(true)}
+            className="w-full rounded-xl bg-gradient-to-br from-primary/15 to-civic-gold/10 border border-primary/20 p-3 text-left hover:border-primary/40 transition-colors group cursor-pointer"
+          >
+            <div className="flex items-center gap-2 mb-1">
+              <Award className="w-3.5 h-3.5 text-primary" />
+              <span className="text-xs font-bold uppercase tracking-wider text-primary">
+                Founding Member
+              </span>
+            </div>
+            <p className="text-xs text-muted-foreground group-hover:text-foreground transition-colors">
+              Get your badge & share it →
+            </p>
+          </button>
+        )}
+        {user && collapsed && (
+          <button
+            onClick={() => setShowBadge(true)}
+            className="w-full flex justify-center p-2 rounded-lg hover:bg-primary/10 transition-colors"
+            title="Founding Member Badge"
+          >
+            <Award className="w-4 h-4 text-primary" />
+          </button>
+        )}
+
         {/* Civic Impact counter */}
         {user && !collapsed && (
           <div className="rounded-xl bg-gradient-to-br from-civic-gold/10 to-primary/5 border border-civic-gold/15 p-3">
