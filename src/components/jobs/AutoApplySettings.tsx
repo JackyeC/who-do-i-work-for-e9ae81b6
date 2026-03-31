@@ -247,5 +247,12 @@ export function AutoApplySettings() {
         </div>
       </CardContent>
     </Card>
+
+    <AutoApplyConsentModal
+      open={showConsentModal}
+      onAccept={handleConsentAccept}
+      onCancel={() => setShowConsentModal(false)}
+    />
+    </>
   );
 }
