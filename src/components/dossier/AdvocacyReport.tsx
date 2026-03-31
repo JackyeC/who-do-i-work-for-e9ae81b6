@@ -165,7 +165,7 @@ export function AdvocacyReport({ company, executives = [], contracts = [], issue
         />
       ) : (
         <div className={cn("border-l-4 p-6 md:p-8", verdict.bg)}>
-          <p className="font-mono text-[10px] tracking-[0.35em] uppercase text-muted-foreground mb-2">WDIWF VERDICT</p>
+          <p className="font-mono text-[10px] tracking-[0.35em] uppercase text-muted-foreground mb-2">SIGNAL SUMMARY</p>
           <h2 className={cn("text-xl md:text-2xl font-black tracking-tight", verdict.color)}>{verdict.text}</h2>
           {company.jackye_insight && (
             <p className="mt-3 text-sm text-foreground/80 leading-relaxed italic">"{company.jackye_insight}"</p>
