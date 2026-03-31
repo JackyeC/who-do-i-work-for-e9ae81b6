@@ -25,7 +25,7 @@ const QUICK_PROMPTS = [
 
 const OPENING_MESSAGE: Msg = {
   role: "assistant",
-  content: "Hey — I'm Jackye. Tell me what you're weighing, and I'll give you the real talk. Receipts included.",
+  content: "Tell me the decision in front of you. I'll help you read it clearly.",
 };
 
 const CHAT_URL = `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/ask-jackye`;
