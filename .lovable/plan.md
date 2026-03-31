@@ -1,64 +1,80 @@
 
 
-# Duplicate Audit — All Pages
+# What Made It from the Gemini Conversation — and What Didn't
 
-## Confirmed Duplicates
+## Already Built
 
-### 1. CandidatePrepPack — TWO different components
-- `src/components/company/CandidatePrepPack.tsx` — static, signal-driven (30-sec brief, flags, talk tracks). Used on **CompanyProfile**.
-- `src/components/dossier/CandidatePrepPack.tsx` — AI-streaming, role-aware prep via edge function. Used on **CompanyDossier**.
+The core architecture from that Gemini session is live:
 
-These are two completely different implementations of the same concept. **Action**: Keep the dossier version (AI-powered, role-aware) as the canonical one. Remove the company/ version from CompanyProfile and replace it with a call to the dossier version.
+| Gemini Concept | Implementation |
+|---|---|
+| "Facts Over Feelings" dossier format | `ClarityEngine` edge function + `ClarityEngine.tsx` component |
+| "Warning Label" layout (Verdict, Pulse, Money Trail, Influence Map) | `WarningLabelView.tsx` with all sections |
+| CEO Memo Decoder | Built into `WarningLabelView.tsx` with full decoder map |
+| Candidate Prep Pack (Say/Ask/Avoid) | `src/components/dossier/CandidatePrepPack.tsx` (AI-streaming) |
+| Auto-Apply queue system | `use-auto-apply.ts` hook, `process-apply-queue` edge function, DB tables |
+| Bias audit detection | `civiclens-intelligence-scan` edge function, `AIAccountabilityCard` |
+| Consent modal + legal disclaimers | `ConsentModal.tsx`, `LegalDisclaimer.tsx` |
+| Real-time news pipeline | Cron jobs: news every 4h, Jackye's takes every 2h |
 
-### 2. WhatToAsk — TWO different components
-- `src/components/company/WhatToAsk.tsx` — signal-driven interview questions on CompanyProfile (imported but **not rendered** — comment says "consolidated into Prep Pack").
-- `src/components/jobs/WhatToAsk.tsx` — AI-generated questions via edge function on JobDetailPage.
+## NOT Built Yet
 
-**Action**: Remove the dead import of `company/WhatToAsk` from CompanyProfile. Keep `jobs/WhatToAsk` as-is (different context: job-level vs company-level).
+These pieces from the Gemini conversation are missing:
 
-### 3. WhatToWatch vs CandidatePrepPack "Signal Flags"
-- `src/components/company/WhatToWatch.tsx` — signal-driven watch items (info/caution/risk) on CompanyProfile.
-- `src/components/company/CandidatePrepPack.tsx` → `buildFlags()` — red/yellow/green flags covering the **same signals** (layoffs, PAC spending, AI hiring, revolving door, pay equity).
+### 1. Terms of Service — "Fairness Contract" for Auto-Apply
+The current ToS has zero mention of auto-apply, AI agent authorization, or the "Talent Agent License" concept. It needs new sections covering:
+- **Career Agent License**: User authorizes WDIWF to scout, draft, and submit applications on their behalf (only after mobile confirmation)
+- **No-Hallucination Promise**: The AI will never invent skills, titles, or dates
+- **Human-in-the-Loop Requirement**: No application submitted without explicit user approval
+- **Transparency Tag**: Every submitted application includes disclosure that AI assisted
+- **Audit Trail**: User can view a log of every application submitted and exactly what was sent
+- **Biometric Consent**: If FaceID/fingerprint is used for mobile confirm, explicit consent for that trigger
+- **Data Minimization**: Only collect what's needed; "nuclear option" delete button
 
-These overlap heavily. Both use the same input props and surface the same concerns in different formats. **Action**: Remove WhatToWatch from CompanyProfile. The Prep Pack flags already cover it.
+### 2. Terms of Service — Global Roles & "Trust as a Service"
+The current ToS is US-only. For global roles, add:
+- **Cross-border data disclosure**: User data may be processed for roles in multiple jurisdictions
+- **AI transparency compliance**: Platform complies with applicable AI disclosure laws (TRAIGA, Colorado AI Act, NYC LL144, EU AI Act)
+- **Bias audit commitment**: Annual third-party bias audit of matching algorithms
 
-### 4. DecisionCheckpointBeforeSign vs CandidatePrepPack
-- `DecisionCheckpointBeforeSign` generates "aligned/misaligned/ask" insights from signals + work profile.
-- `CandidatePrepPack` generates Say/Ask/Avoid talk tracks from the same signals.
+### 3. Auto-Apply "Dossier Filter" Safety Check
+The Gemini conversation specified: "Only auto-apply if the company has a WDIWF Verdict of 'Safe for Growth' — skip any with a 'Purge' warning." This filter does not exist in `process-apply-queue`. The queue processes everything above the alignment score threshold with no verdict check.
 
-Partial overlap — the "Ask" items in both components often surface identical questions. **Action**: Keep DecisionCheckpoint (it's personalized via work profile quiz), but remove any talk tracks from it that duplicate the Prep Pack's "ASK" items.
-
-### 5. JackyesInsightBlock — rendered on both pages
-- CompanyProfile line 438: `<JackyesInsightBlock />`
-- CompanyDossier line 343: `<JackyesInsightBlock />`
-
-Not a duplicate within a single page (different pages), so this is fine.
-
-### 6. InterviewDossier vs CompanyDossier "Interview Prep" tab
-- `/interview` — InterviewDossier page with hardcoded Amazon/Magnolia data, full interview prep with practice Qs, org context, negotiation intel.
-- `/dossier/:id` — CompanyDossier with "Interview Prep" tab that streams AI-generated prep.
-
-These serve overlapping purposes. **Action**: Flag for future consolidation. InterviewDossier has much richer hardcoded content; the Dossier prep tab is dynamic but thinner. Long-term, merge the InterviewDossier format into the Dossier page's prep tab.
-
-### 7. InterviewKit — used on two unrelated pages
-- `SampleDossier.tsx` — renders `<InterviewKit />`
-- `AutoApply.tsx` — renders `<InterviewKit />`
-
-Same component, different contexts. Not a harmful duplicate.
+### 4. Mobile Push-to-Apply with Review Step
+The "Final Review Stop" where the user sees the tailored resume before tapping "Apply" is not built. Currently auto-apply processes the queue server-side without a per-item mobile confirmation step.
 
 ---
 
-## Summary of Changes
+## Proposed Plan
 
-| # | What | Where | Action |
-|---|------|-------|--------|
-| 1 | Two CandidatePrepPack components | CompanyProfile, CompanyDossier | Replace company/ version with dossier/ version on CompanyProfile |
-| 2 | Dead WhatToAsk import | CompanyProfile | Remove unused import |
-| 3 | WhatToWatch overlaps Prep Pack flags | CompanyProfile | Remove WhatToWatch section |
-| 4 | DecisionCheckpoint overlaps Prep Pack asks | CompanyProfile | Deduplicate overlapping questions |
-| 5 | InterviewDossier vs Dossier prep tab | /interview vs /dossier/:id | Flag for future merge (no immediate change) |
+### Step 1: Update Terms of Service
+Add four new sections to `src/pages/TermsOfService.tsx`:
+- **"Career Agent Authorization"** — the Fairness Contract language (agent license, no hallucination, human-in-the-loop, transparency tag, audit trail)
+- **"AI Transparency & Compliance"** — TRAIGA, Colorado AI Act, NYC LL144, EU AI Act disclosures
+- **"Global Data Processing"** — cross-border data handling for global job matching
+- **"Bias Audit Commitment"** — annual bias audit pledge for matching algorithms
 
-**Files to edit**:
-- `src/pages/CompanyProfile.tsx` — remove WhatToWatch, remove dead WhatToAsk import, swap CandidatePrepPack to dossier version
-- `src/components/company/DecisionCheckpointBeforeSign.tsx` — trim questions that duplicate Prep Pack ASK items
+Update the "last updated" date. Keep the existing sections intact.
+
+### Step 2: Add Auto-Apply Consent Gate
+Create a new `AutoApplyConsentModal` component (similar to `ConsentModal`) that appears when a user first enables auto-apply. It presents the 3-slide "Fairness Contract" summary:
+1. "We are your Agent. We find the jobs, you make the choice."
+2. "We only tell the truth. No fake skills, no bot-spam."
+3. "You're the boss. Every application needs your approval."
+
+User must check the box and accept before auto-apply activates. Store acceptance timestamp in `auto_apply_settings` (new column: `consent_accepted_at`).
+
+### Step 3: Add Dossier Verdict Filter to Queue Processing
+In `process-apply-queue` edge function, before processing each queue item, look up the company's latest verdict/alignment data. Skip items where the company verdict is equivalent to "Enter with a Parachute" or worse (configurable threshold). Log skipped items with reason.
+
+### Technical Details
+
+**Files to edit:**
+- `src/pages/TermsOfService.tsx` — add new sections
+- `src/components/auto-apply/AutoApplyConsentModal.tsx` — new component
+- `src/pages/AutoApply.tsx` or wherever auto-apply is enabled — gate behind consent modal
+- `supabase/functions/process-apply-queue/index.ts` — add verdict filter logic
+
+**Database migration:**
+- Add `consent_accepted_at timestamptz` column to `auto_apply_settings`
 
