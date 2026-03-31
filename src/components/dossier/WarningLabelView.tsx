@@ -240,12 +240,30 @@ export function WarningLabelView({ company, executives = [], contracts = [], iss
             </div>
           </div>
           <div className="space-y-3">
-            {pulseItems.map((item, i) => (
-              <div key={i} className="flex items-start gap-3 p-3 rounded-none bg-muted/20 border border-border/30">
-                <item.icon className={cn("w-4 h-4 mt-0.5 shrink-0", severityColors[item.severity])} />
-                <p className="text-sm text-foreground leading-snug">{item.text}</p>
-              </div>
-            ))}
+            {pulseItems.map((item, i) => {
+              const Wrapper = item.url ? "a" : "div";
+              const wrapperProps = item.url ? { href: item.url, target: "_blank", rel: "noopener noreferrer" } : {};
+              return (
+                <Wrapper
+                  key={i}
+                  {...wrapperProps as any}
+                  className={cn(
+                    "flex items-start gap-3 p-3 rounded-none bg-muted/20 border border-border/30",
+                    item.url && "hover:bg-muted/40 hover:border-primary/30 transition-colors cursor-pointer group"
+                  )}
+                >
+                  <item.icon className={cn("w-4 h-4 mt-0.5 shrink-0", severityColors[item.severity])} />
+                  <p className="text-sm text-foreground leading-snug flex-1">
+                    {item.text}
+                    {item.url && (
+                      <span className="inline-flex items-center gap-1 ml-1.5 text-primary text-xs font-medium opacity-70 group-hover:opacity-100">
+                        <ExternalLink className="w-3 h-3" /> Source
+                      </span>
+                    )}
+                  </p>
+                </Wrapper>
+              );
+            })}
           </div>
         </CardContent>
       </Card>
