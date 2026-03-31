@@ -35,9 +35,9 @@ body > div:last-child > a[href*="lovable"] {
     --popover: 0 0% 100%;
     --popover-foreground: 240 20% 12%;
 
-    /* ── AMBER PRIMARY (shared) ── */
-    --primary: 43 85% 50%;               /* slightly deeper amber for light bg */
-    --primary-foreground: 0 0% 100%;     /* white text on amber */
+    /* ── AMBER PRIMARY — light mode uses #C9920A (41° 88% 41%) ── */
+    --primary: 41 88% 41%;               /* #C9920A — darker gold for light bg */
+    --primary-foreground: 0 0% 100%;     /* white text on gold */
 
     --secondary: 40 15% 92%;
     --secondary-foreground: 240 20% 12%;
