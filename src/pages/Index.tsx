@@ -140,9 +140,9 @@ const Index = forwardRef<HTMLDivElement>((_, ref) => {
       {/* ── TRUST STRIP ── */}
       <div className="border-y border-border bg-card px-6 py-3">
         <div className="max-w-[900px] mx-auto text-center">
-          <p className="font-mono text-[10px] tracking-[0.15em] uppercase text-primary mb-0.5 font-semibold">The Trust Layer for the Modern Worker</p>
+          <p className="font-mono text-[10px] tracking-[0.15em] uppercase text-primary mb-0.5 font-semibold">Based on what is visible</p>
           <p className="font-sans text-xs text-muted-foreground">
-            Public Records. Human Language. Real Accountability. Because you shouldn't be the last to know.
+            Public records. Plain language. Patterns worth knowing about.
           </p>
         </div>
       </div>
