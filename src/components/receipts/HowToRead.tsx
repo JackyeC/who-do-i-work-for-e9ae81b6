@@ -91,12 +91,13 @@ export function HowToRead() {
               </div>
               <div className="flex flex-col gap-1.5">
                 {[
-                  ["#38BDF8", "AI & Automation"],
-                  ["#F0C040", "Work & Labor"],
-                  ["#FB7185", "Policy & Law"],
-                  ["#2DD4BF", "Labor Markets"],
-                  ["#A78BFA", "DEI & Culture"],
-                  ["#34D399", "Money & Power"],
+                  ["#38BDF8", "Structure — SEC, State Registries"],
+                  ["#F0C040", "Money — FEC, USASpending, IRS 990"],
+                  ["#FB7185", "Behavior — OSHA, EEOC, DOL WHD"],
+                  ["#A78BFA", "Influence — LDA, OpenSecrets, FACA"],
+                  ["#2DD4BF", "Momentum — WARN, Job Postings, Earnings"],
+                  ["#34D399", "Context — BLS, H1B, USPTO"],
+                  ["#F97316", "Off the Record — Reddit, Blind, Glassdoor"],
                 ].map(([c, l]) => (
                   <div key={l} className="flex items-center gap-2">
                     <div className="w-2.5 h-2.5 rounded-sm" style={{ background: c }} />

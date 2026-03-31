@@ -34,14 +34,13 @@ export const HEAT_LABELS: Record<number, { full: string; mobile: string; color: 
 
 export const RECEIPT_CATEGORIES = [
   { value: "all", label: "All" },
-  { value: "ai_workplace", label: "AI" },
-  { value: "future_of_work", label: "Work" },
-  { value: "labor_organizing", label: "Labor" },
-  { value: "worker_rights", label: "DEI" },
-  { value: "regulation", label: "Policy" },
-  { value: "layoffs", label: "Layoffs" },
-  { value: "pay_equity", label: "Money" },
-  { value: "legislation", label: "Hiring" },
+  { value: "structure", label: "Structure" },       // SEC, State Registries
+  { value: "money", label: "Money" },                // FEC, USASpending, IRS 990
+  { value: "behavior", label: "Behavior" },          // OSHA, EEOC, DOL WHD, PACER
+  { value: "influence", label: "Influence" },        // LDA, OpenSecrets, FACA
+  { value: "momentum", label: "Momentum" },          // WARN, Job Postings, Earnings
+  { value: "context", label: "Context" },            // BLS, H1B, USPTO
+  { value: "off_the_record", label: "Off the Record" }, // Reddit, Blind, Glassdoor
 ] as const;
 
 export type ReceiptSortMode = "newest" | "hottest" | "drama" | null;
