@@ -193,7 +193,7 @@ export default function Receipts() {
             >
               {feedArticles.map((article) => (
                 <motion.div key={article?.id} variants={stagger.item}>
-                  <ReceiptCard article={article} />
+                  <ReceiptCard article={article} onPosterClick={setLightboxArticle} />
                 </motion.div>
               ))}
             </motion.div>
