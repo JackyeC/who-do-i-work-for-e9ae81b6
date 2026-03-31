@@ -211,6 +211,7 @@ const App = () => (
                   <Route path="/submit-tip" element={<SubmitTip />} />
                   <Route path="/newsletter" element={<Receipts />} />
                   <Route path="/hrtech" element={<HRTechIntelligence />} />
+                  <Route path="/palette" element={<PaletteStudio />} />
                   <Route path="/company/:id" element={<CompanyProfile />} />
                   <Route path="/company/:id/influence" element={<ProtectedRoute><InfluenceGraph /></ProtectedRoute>} />
                   <Route path="/dossier/:id" element={<CompanyDossier />} />
