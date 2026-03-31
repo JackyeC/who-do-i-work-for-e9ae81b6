@@ -32,16 +32,16 @@ export function WhatThisMeansForYou({ matchCount, matchedCategories, civicScore,
 
   // Transparency
   if (civicScore >= 70) {
-    insights.push({ type: "positive", text: "High employer transparency — governance, lobbying, and workforce data are well-documented." });
+    insights.push({ type: "positive", text: "Above-average signal coverage. Governance, lobbying, and workforce data are documented." });
   } else if (civicScore < 40) {
-    insights.push({ type: "warning", text: "Limited transparency — do independent research before committing." });
+    insights.push({ type: "warning", text: "Limited signal coverage. Independent research is worth doing before committing." });
   }
 
   // Pay transparency
   if (salaryRange) {
-    insights.push({ type: "positive", text: "Salary range is disclosed — you can assess fit before investing time." });
+    insights.push({ type: "positive", text: "Salary range is disclosed. You can assess fit before investing time." });
   } else {
-    insights.push({ type: "warning", text: "No salary posted — ask about compensation early in the process." });
+    insights.push({ type: "warning", text: "No salary posted. Worth asking about compensation early in the process." });
   }
 
   // Freshness
