@@ -137,8 +137,18 @@ const Index = forwardRef<HTMLDivElement>((_, ref) => {
 
       <style>{`@keyframes heroFadeIn { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: translateY(0); } }`}</style>
 
+      {/* ── TRUST STRIP ── */}
+      <div className="border-y border-border bg-card px-6 py-3">
+        <div className="max-w-[900px] mx-auto text-center">
+          <p className="font-mono text-[10px] tracking-[0.15em] uppercase text-primary mb-0.5 font-semibold">The Trust Layer for the Modern Worker</p>
+          <p className="font-sans text-xs text-muted-foreground">
+            Public Records. Human Language. Real Accountability. Because you shouldn't be the last to know.
+          </p>
+        </div>
+      </div>
+
       {/* ── TICKER ── */}
-      <Suspense fallback={<div className="h-[36px] bg-background border-y border-border/10" />}>
+      <Suspense fallback={<div className="h-[36px] bg-background border-b border-border/10" />}>
         <LiveIntelligenceTicker />
       </Suspense>
 
