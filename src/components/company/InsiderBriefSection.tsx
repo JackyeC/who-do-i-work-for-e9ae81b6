@@ -131,9 +131,9 @@ export function InsiderBriefSection(props: InsiderBriefProps) {
   const interpretation = useMemo(() => {
     const parts: string[] = [];
     if (props.totalPacSpending > 50_000 || props.lobbyingSpend > 50_000)
-      parts.push("This company has a measurable political spending footprint. Consider how that aligns with your values.");
+      parts.push("This company has a measurable political spending footprint. Pay attention to how that aligns with your priorities.");
     if (props.darkMoneyCount > 0)
-      parts.push("Dark money connections suggest influence channels that are harder to trace.");
+      parts.push("Non-disclosed contribution channels suggest influence that is harder to trace.");
     if (!props.hasPayEquity && !props.hasBenefitsData)
       parts.push("Limited compensation transparency may make it harder to evaluate total rewards.");
     if (props.hasAiHrSignals)
