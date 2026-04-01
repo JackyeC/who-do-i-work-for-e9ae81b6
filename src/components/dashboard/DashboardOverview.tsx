@@ -496,7 +496,7 @@ export function DashboardOverview({ onNavigate }: DashboardOverviewProps) {
       </div>
 
       {/* ═══ 4 — COMPANIES YOU'RE WATCHING + DAILY BRIEFING (2 cols) ═══ */}
-      <div className="grid md:grid-cols-2 gap-5">
+      <div className="grid md:grid-cols-[1fr_320px] gap-7">
 
         {/* 4A — Watched Companies */}
         <motion.div {...anim(0.2)}>
