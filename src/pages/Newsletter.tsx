@@ -37,6 +37,54 @@ function getCategoryConfig(cat: string) {
   return CATEGORY_CONFIG[cat] || CATEGORY_CONFIG.general;
 }
 
+/* ── Why this matters (category-based) ── */
+const WHY_IT_MATTERS: Record<string, string[]> = {
+  regulation: [
+    "Regulatory shifts can change hiring practices, benefits, and workplace rights overnight.",
+    "If enforcement is increasing, employers may adjust policies — watch for changes in offer letters and handbooks.",
+  ],
+  future_of_work: [
+    "Remote, hybrid, and RTO policies directly impact your daily life, commute costs, and work-life balance.",
+    "Companies signaling flexibility changes may also be restructuring teams — worth monitoring.",
+  ],
+  ai_workplace: [
+    "AI tools in hiring and management can introduce bias, reduce transparency, and change job requirements.",
+    "Knowing which employers use automated decision-making helps you ask the right questions in interviews.",
+  ],
+  layoffs: [
+    "Mass layoffs signal financial instability and may affect remaining employees' workloads and morale.",
+    "WARN Act filings are public — you can verify claims before accepting an offer.",
+  ],
+  pay_equity: [
+    "Pay transparency laws are expanding — knowing where your offer sits relative to the range is leverage.",
+    "Companies under pay equity scrutiny may be adjusting bands. Ask about methodology.",
+  ],
+  labor_organizing: [
+    "Union activity and collective bargaining outcomes set precedents that affect non-union workers too.",
+    "Employer responses to organizing efforts reveal how leadership views worker voice.",
+  ],
+  worker_rights: [
+    "Changes to worker protections directly affect your rights on the job — from breaks to benefits.",
+    "Court rulings and policy changes can shift the balance of power between employers and workers.",
+  ],
+  legislation: [
+    "New legislation can redefine employment classifications, benefits requirements, and workplace safety standards.",
+    "Tracking bills in motion helps you anticipate changes before they hit your workplace.",
+  ],
+  general: [
+    "Workplace trends shape the environment you're applying into — context matters.",
+    "Understanding the landscape helps you ask better questions and make informed career decisions.",
+  ],
+};
+
+function getWhyItMatters(category: string, isControversy: boolean): string[] {
+  const base = WHY_IT_MATTERS[category] || WHY_IT_MATTERS.general;
+  if (isControversy) {
+    return [...base, "Controversy signals are worth verifying — check the source links below before forming conclusions."];
+  }
+  return base;
+}
+
 /* ── Time helpers ── */
 function timeAgo(dateStr: string | null) {
   if (!dateStr) return "";
