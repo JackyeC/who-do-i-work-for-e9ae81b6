@@ -588,9 +588,9 @@ function buildEcosystemSection(doc: jsPDF, y: number, data: DossierPdfData): num
    SECTION 4: WORKFORCE INTEL
    ═══════════════════════════════════════════ */
 
-function buildWorkforceIntel(doc: jsPDF, data: DossierPdfData): number {
-  doc.addPage();
-  let y = 18;
+function buildWorkforceIntel(doc: jsPDF, y: number, data: DossierPdfData): number {
+  // Phase 3: smart pagination
+  y = safeY(doc, y, 60);
   const totalData = data.warnNotices.length + data.sentiment.length + data.payEquity.length;
   y = sectionHeader(doc, y, 4, "Workforce Intel", "Role distribution, WARN notices, sentiment, and supply/demand scarcity", sectionConfidenceLevel(totalData));
 
@@ -608,7 +608,7 @@ function buildWorkforceIntel(doc: jsPDF, data: DossierPdfData): number {
         new Date(w.notice_date).toLocaleDateString("en-US", { year: "numeric", month: "short", day: "numeric" }),
         w.employees_affected.toLocaleString(),
         w.location_state || "—",
-        w.layoff_type || "Layoff",
+        sanitizeText(w.layoff_type) || "Layoff",
       ]),
       columnStyles: { 1: { halign: "right" as const, cellWidth: 30 } },
     });
@@ -625,7 +625,7 @@ function buildWorkforceIntel(doc: jsPDF, data: DossierPdfData): number {
     y += 5;
 
     doc.setFillColor(...C.fog);
-    const sentText = data.sentiment[0].ai_summary;
+    const sentText = sanitizeText(data.sentiment[0].ai_summary);
     const sentLines = doc.splitTextToSize(sentText, CW - 12);
     const boxH = sentLines.length * 4 + 8;
     doc.roundedRect(ML, y, CW, boxH, 2, 2, "F");
@@ -649,20 +649,20 @@ function buildWorkforceIntel(doc: jsPDF, data: DossierPdfData): number {
       ...tableStyle(y),
       head: [["Signal", "Evidence", "Confidence"]],
       body: data.payEquity.slice(0, 15).map(p => [
-        p.signal_type.substring(0, 50),
-        (p.evidence_text || "—").substring(0, 100),
+        truncateAtWord(p.signal_type, 60),
+        truncateAtWord(p.evidence_text || "—", 140),
         p.confidence,
       ]),
+      columnStyles: {
+        1: { cellWidth: "auto", overflow: "linebreak" as const },
+      },
     });
     y = doc.lastAutoTable.finalY + 10;
   }
 
   if (data.warnNotices.length === 0 && data.sentiment.length === 0 && data.payEquity.length === 0) {
-    doc.setFont("helvetica", "normal");
-    doc.setFontSize(8);
-    doc.setTextColor(...C.slate);
-    doc.text("No workforce stability signals on record.", ML, y);
-    y += 10;
+    // Phase 4: styled empty state
+    y = drawEmptyState(doc, y, "No workforce stability signals on record.");
   }
 
   return y;
