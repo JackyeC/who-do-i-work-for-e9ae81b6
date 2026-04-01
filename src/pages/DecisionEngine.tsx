@@ -103,7 +103,7 @@ export default function DecisionEngine() {
                 "font-mono text-xs px-3 py-1.5 rounded-full border tracking-wider transition-all",
                 isPremium
                   ? "bg-primary text-primary-foreground border-primary font-bold"
-                  : "border-[#2a2a3a] text-[#9898b0] hover:border-[#e8ff47] hover:text-[#e8ff47]"
+                  : "border-border text-muted-foreground hover:border-primary hover:text-primary"
               )}
             >
               PRO ✦
