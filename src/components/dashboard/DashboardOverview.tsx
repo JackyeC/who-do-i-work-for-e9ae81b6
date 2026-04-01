@@ -11,6 +11,7 @@ import {
 import { useState } from "react";
 import { AlignedValuesSearch } from "./AlignedValuesSearch";
 import { FoundingMemberBadge } from "@/components/FoundingMemberBadge";
+import { JackyeMessage } from "./JackyeMessage";
 
 interface DashboardOverviewProps {
   onNavigate: (tab: string) => void;
