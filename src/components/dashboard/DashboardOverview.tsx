@@ -522,7 +522,7 @@ export function DashboardOverview({ onNavigate }: DashboardOverviewProps) {
                   data-quick-audit
                   value={searchQuery}
                   onChange={e => setSearchQuery(e.target.value)}
-                  placeholder="Amazon, Goldman Sachs, your next interview..."
+                  placeholder="Look up any employer — I'll tell you what I find..."
                   className="bg-transparent border-none outline-none w-full text-sm text-foreground placeholder:text-muted-foreground/50"
                 />
               </div>
