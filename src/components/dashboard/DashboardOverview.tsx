@@ -464,7 +464,7 @@ export function DashboardOverview({ onNavigate }: DashboardOverviewProps) {
                   <Wrapper
                     key={item.number}
                     {...(linkProps as any)}
-                    className="block rounded-lg p-3.5 transition-colors bg-muted/20 border border-border/30 hover:bg-muted/40"
+                    className="block rounded-lg p-3.5 transition-all duration-200 bg-muted/20 border border-border/30 hover:bg-muted/40 hover:border-border/60"
                   >
                     <div className="flex items-start justify-between gap-2">
                       <div className="min-w-0 flex-1">
