@@ -138,12 +138,14 @@ function SectionDivider({ number, title, subtitle, icon: Icon }: { number: numbe
 /* ─── Main Component ─── */
 export function AdvocacyReport({ company, executives = [], contracts = [], issueSignals = [], publicStances = [], eeocCases = [] }: AdvocacyReportProps) {
   const [decoderOpen, setDecoderOpen] = useState(false);
+  const [selectedMetric, setSelectedMetric] = useState<SpendingMetric | null>(null);
+
+  const report = useEmployerReport(company as any, executives as any, contracts as any, issueSignals as any);
 
   const isEarlyInvestigation = issueSignals.length < EARLY_INVESTIGATION_THRESHOLD;
   const verdict = useMemo(() => computeVerdict(company, issueSignals.length, eeocCases.length), [company, issueSignals.length, eeocCases.length]);
   const totalContractValue = useMemo(() => contracts.reduce((s, c) => s + (c.contract_value ?? 0), 0), [contracts]);
   const controversialContracts = useMemo(() => contracts.filter(c => c.controversy_flag), [contracts]);
-  const topDonors = useMemo(() => executives.filter(e => e.total_donations > 0).sort((a, b) => b.total_donations - a.total_donations).slice(0, 5), [executives]);
   const gapStances = useMemo(() => publicStances.filter(s => s.gap_severity === "Large" || s.gap_severity === "Medium").slice(0, 8), [publicStances]);
   const signalsByCategory = useMemo(() => {
     const map: Record<string, typeof issueSignals> = {};
@@ -155,8 +157,21 @@ export function AdvocacyReport({ company, executives = [], contracts = [], issue
     return map;
   }, [issueSignals]);
 
+  // THE CALL banner color from integrity_score
+  const callColor = report
+    ? report.integrity_score < 40
+      ? { bg: "bg-destructive/10 border-destructive/40", text: "text-destructive", label: "CRITICAL" }
+      : report.integrity_score <= 70
+      ? { bg: "bg-civic-yellow/10 border-civic-yellow/40", text: "text-civic-yellow", label: "WATCH" }
+      : { bg: "bg-civic-green/10 border-civic-green/40", text: "text-civic-green", label: "FAIR" }
+    : null;
+
+  // Deduplicated donors from report
+  const dedupedDonors = report?.political_donors ?? [];
+
   return (
     <div className="space-y-8">
+      <SpendingDrawer metric={selectedMetric} open={!!selectedMetric} onOpenChange={(o) => !o && setSelectedMetric(null)} />
 
       {/* ═══ 1. THE VERDICT (or Early Investigation) ═══ */}
       {isEarlyInvestigation ? (
