@@ -180,7 +180,7 @@ const Index = forwardRef<HTMLDivElement>((_, ref) => {
             Facts over feelings.
           </h2>
           <p className="text-sm text-muted-foreground leading-relaxed max-w-[46ch] mx-auto mb-8">
-            You don't need more applications. You need better decisions. We built the trust layer for the world of work — now use it.
+            Every company you're considering has a public record. Now you know where to read it.
           </p>
           <div className="flex justify-center">
             <button
