@@ -4,7 +4,7 @@ import { Badge } from "@/components/ui/badge";
 import { SourceLabel, type SourceTier } from "@/components/ui/source-label";
 import {
   ChevronDown, ExternalLink, DollarSign, Calendar, ArrowRight,
-  Eye, Zap,
+  Eye, Zap, Search,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import type { EvidenceRecord } from "@/components/dossier/EmployerReportDrawer";
@@ -28,13 +28,23 @@ function formatCurrency(amount: number): string {
 function getCategoryInsight(category: string, records: EvidenceRecord[]): string {
   const total = records.reduce((s, r) => s + (r.amount ?? 0), 0);
   const count = records.length;
+  const isSummaryOnly = records.every(r =>
+    r.eventType === "PAC Total" || r.eventType === "Lobbying Total" ||
+    r.eventType === "Party Allocation"
+  );
 
   switch (category) {
     case "Political Spending":
+      if (isSummaryOnly && count <= 3) {
+        return `${formatCurrency(total)} in political spending on record. We have the party breakdown — recipient-level receipts are being indexed from FEC filings.`;
+      }
       return total > 500_000
         ? `${formatCurrency(total)} directed to political candidates and committees. That's significant influence worth understanding before you join.`
-        : `${formatCurrency(total)} in political contributions on record. See exactly where it went.`;
+        : `${formatCurrency(total)} in political contributions on record.${count > 3 ? " See exactly where it went." : ""}`;
     case "Lobbying":
+      if (isSummaryOnly) {
+        return `${formatCurrency(total)} in lobbying expenditures on record. Filing-level detail — which firms, which issues — is being pulled from Senate LDA records.`;
+      }
       return total > 1_000_000
         ? `${formatCurrency(total)} spent shaping policy. This company is actively influencing the rules you'll work under.`
         : `${formatCurrency(total)} in lobbying spend. Worth knowing what they're pushing for.`;
@@ -205,6 +215,29 @@ export function SignalRevealCard({ title, explanation, tier, records, hasEvidenc
                   </motion.div>
                 ))}
               </div>
+
+              {/* "Still indexing" notice when records are summary-only */}
+              {records.every(r =>
+                r.eventType === "PAC Total" || r.eventType === "Lobbying Total" ||
+                r.eventType === "Party Allocation"
+              ) && (
+                <motion.div
+                  initial={{ opacity: 0, y: 6 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: 0.4 + records.length * 0.08, duration: 0.3 }}
+                  className="mt-3 p-3 rounded-md bg-muted/30 border border-border/30"
+                >
+                  <div className="flex items-start gap-2">
+                    <Search className="w-3.5 h-3.5 text-muted-foreground mt-0.5 shrink-0" />
+                    <div>
+                      <p className="text-xs font-medium text-foreground">Recipient-level detail is being indexed</p>
+                      <p className="text-[11px] text-muted-foreground mt-0.5 leading-relaxed">
+                        We have the aggregate totals and party split. Individual recipients, filing dates, and committee details are being pulled from FEC and Senate LDA source records. Check back soon.
+                      </p>
+                    </div>
+                  </div>
+                </motion.div>
+              )}
 
               {/* Record count footer */}
               <motion.div
