@@ -119,14 +119,10 @@ export default function CorporateAlignment() {
 
   if (!company) {
     return (
-      <div className="min-h-screen flex flex-col bg-background">
-        <Header />
-        <main className="flex-1 container mx-auto px-4 py-16 text-center">
-          <h1 className="text-2xl font-bold text-foreground">Company not found</h1>
-          <p className="text-muted-foreground mt-2">The alignment report for this company is not available.</p>
-          <Link to="/browse"><Button variant="outline" className="mt-6">Browse Companies</Button></Link>
-        </main>
-        <Footer />
+      <div className="container mx-auto px-4 py-16 text-center">
+        <h1 className="text-2xl font-bold text-foreground">Company not found</h1>
+        <p className="text-muted-foreground mt-2">The alignment report for this company is not available.</p>
+        <Link to="/browse"><Button variant="outline" className="mt-6">Browse Companies</Button></Link>
       </div>
     );
   }
