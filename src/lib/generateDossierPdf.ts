@@ -1129,11 +1129,11 @@ export function generateDossierPdf(data: DossierPdfData): jsPDF {
 
   buildCoverPage(doc, data);
   buildExecutiveSummary(doc, data);
-  buildBusinessFoundation(doc, data);
-  buildInnovationAudit(doc, data);
-  buildEcosystemSection(doc, data);
-  buildWorkforceIntel(doc, data);
-  buildDecisionLogic(doc, data);
+  let y = buildBusinessFoundation(doc, data);
+  y = buildInnovationAudit(doc, y);
+  y = buildEcosystemSection(doc, y, data);
+  y = buildWorkforceIntel(doc, y, data);
+  y = buildDecisionLogic(doc, y, data);
   buildPoliticalReceipts(doc, data);
   buildMarch2026Alert(doc, data);
   buildDisclaimerPage(doc);
