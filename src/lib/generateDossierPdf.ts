@@ -546,18 +546,16 @@ function buildInnovationAudit(doc: jsPDF, y: number): number {
    SECTION 3: ECOSYSTEM & SUPPLY CHAIN
    ═══════════════════════════════════════════ */
 
-function buildEcosystemSection(doc: jsPDF, data: DossierPdfData): number {
-  doc.addPage();
-  let y = 18;
+function buildEcosystemSection(doc: jsPDF, y: number, data: DossierPdfData): number {
+  // Phase 3: smart pagination — only add page if needed
+  y = safeY(doc, y, 60);
   const conf = sectionConfidenceLevel(data.contracts.length);
   y = sectionHeader(doc, y, 3, "Ecosystem & Supply Chain", "Subcontractors, federal contracts, and operational dependencies", conf);
 
   if (data.contracts.length === 0) {
-    doc.setFont("helvetica", "normal");
-    doc.setFontSize(8);
-    doc.setTextColor(...C.slate);
-    doc.text("No federal contracts on record for this entity.", ML, y);
-    return y + 10;
+    // Phase 4: styled empty state
+    y = drawEmptyState(doc, y, "No federal contracts on record for this entity.");
+    return y;
   }
 
   const totalVal = data.contracts.reduce((s, c) => s + (c.contract_value || 0), 0);
@@ -569,13 +567,19 @@ function buildEcosystemSection(doc: jsPDF, data: DossierPdfData): number {
     ...tableStyle(y),
     head: [["Agency", "Value", "Description", "Year", "Confidence"]],
     body: data.contracts.slice(0, 25).map(c => [
-      c.agency_name,
+      sanitizeText(c.agency_name),
       c.contract_value ? fmt$(c.contract_value) : "—",
-      (c.contract_description || "—").substring(0, 70),
+      truncateAtWord(c.contract_description || "—", 120),  // Phase 2: word-aware truncation, longer limit
       c.fiscal_year?.toString() || "—",
       c.confidence || "—",
     ]),
-    columnStyles: { 1: { halign: "right" as const, cellWidth: 26 }, 3: { cellWidth: 14 }, 4: { cellWidth: 20 } },
+    columnStyles: {
+      0: { cellWidth: 35 },
+      1: { halign: "right" as const, cellWidth: 26 },
+      2: { cellWidth: "auto", overflow: "linebreak" as const },  // Phase 2: wrap, don't clip
+      3: { cellWidth: 14 },
+      4: { cellWidth: 20 },
+    },
   });
   return doc.lastAutoTable.finalY + 10;
 }
