@@ -1,12 +1,14 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { cn } from "@/lib/utils";
-import { CheckCircle2, AlertTriangle, Minus, ExternalLink } from "lucide-react";
+import { CheckCircle2, AlertTriangle, Minus } from "lucide-react";
+import { SourceLabel, classifyClaim } from "@/components/ui/source-label";
 
 interface Claim {
   claim_text: string;
   claim_source: string;
   claim_source_url: string | null;
+  extraction_method?: string | null;
 }
 
 interface CategoryAlignmentCardProps {
@@ -60,28 +62,24 @@ export function CategoryAlignmentCard({
           <span>{signalCount} behavior signal{signalCount !== 1 ? "s" : ""}</span>
         </div>
 
-        {/* Claims */}
+        {/* Claims — every claim carries a mandatory source label */}
         {claims.length > 0 && (
           <div className="space-y-2">
             <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">What They Say</p>
-            {claims.slice(0, 3).map((c, i) => (
-              <div key={i} className="p-2.5 bg-muted/30 rounded-lg border border-border/30">
-                <p className="text-xs text-foreground leading-relaxed">"{c.claim_text}"</p>
-                <div className="flex items-center gap-2 mt-1.5">
-                  <span className="text-xs text-muted-foreground">{c.claim_source}</span>
-                  {c.claim_source_url && (
-                    <a
-                      href={c.claim_source_url}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="text-xs text-primary hover:underline flex items-center gap-0.5"
-                    >
-                      View Source <ExternalLink className="w-2.5 h-2.5" />
-                    </a>
-                  )}
+            {claims.slice(0, 3).map((c, i) => {
+              const tier = classifyClaim(c);
+              return (
+                <div key={i} className="p-2.5 bg-muted/30 rounded-lg border border-border/30">
+                  <p className="text-xs text-foreground leading-relaxed">"{c.claim_text}"</p>
+                  <div className="flex items-center gap-2 mt-1.5 flex-wrap">
+                    <SourceLabel tier={tier} url={c.claim_source_url} />
+                    {c.claim_source && (
+                      <span className="text-[10px] text-muted-foreground">{c.claim_source}</span>
+                    )}
+                  </div>
                 </div>
-              </div>
-            ))}
+              );
+            })}
           </div>
         )}
 
