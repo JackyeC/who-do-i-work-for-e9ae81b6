@@ -672,9 +672,9 @@ function buildWorkforceIntel(doc: jsPDF, y: number, data: DossierPdfData): numbe
    SECTION 5: DECISION LOGIC
    ═══════════════════════════════════════════ */
 
-function buildDecisionLogic(doc: jsPDF, data: DossierPdfData): number {
-  doc.addPage();
-  let y = 18;
+function buildDecisionLogic(doc: jsPDF, y: number, data: DossierPdfData): number {
+  // Phase 3: smart pagination
+  y = safeY(doc, y, 60);
   y = sectionHeader(doc, y, 5, "Decision & Buying Logic", "Approval layers, buying committees, and decision-maker mapping", "low");
 
   // Executives as proxy for decision-makers
@@ -689,19 +689,16 @@ function buildDecisionLogic(doc: jsPDF, data: DossierPdfData): number {
       ...tableStyle(y),
       head: [["Name", "Title", "Political Donations"]],
       body: data.executives.slice(0, 20).map(e => [
-        e.name,
-        e.title,
+        sanitizeText(e.name),
+        sanitizeText(e.title),
         e.total_donations > 0 ? fmt$(e.total_donations) : "None recorded",
       ]),
       columnStyles: { 2: { halign: "right" as const, cellWidth: 32 } },
     });
     y = doc.lastAutoTable.finalY + 10;
   } else {
-    doc.setFont("helvetica", "normal");
-    doc.setFontSize(8);
-    doc.setTextColor(...C.slate);
-    doc.text("Executive and buying committee data enriched via SEC DEF 14A proxy filings.", ML, y);
-    y += 10;
+    // Phase 4: styled empty state
+    y = drawEmptyState(doc, y, "Executive and buying committee data enriched via SEC DEF 14A proxy filings.");
   }
 
   return y;
