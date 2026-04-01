@@ -80,51 +80,6 @@ export default function Receipts() {
   const [timeFilter, setTimeFilter] = useState("all");
   const [lightboxArticle, setLightboxArticle] = useState<ReceiptArticle | null>(null);
   const [showEmailCapture, setShowEmailCapture] = useState(false);
-  const [nlEmail, setNlEmail] = useState("");
-  const [nlStatus, setNlStatus] = useState<"idle" | "loading" | "success" | "error">("idle");
-  const [nlError, setNlError] = useState("");
-  const { containerRef: turnstileRef, getToken, resetToken } = useTurnstile();
-
-  const handleNewsletterSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    const trimmed = nlEmail.trim();
-    if (!trimmed || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(trimmed)) {
-      setNlError("Please enter a valid email.");
-      setNlStatus("error");
-      return;
-    }
-    setNlStatus("loading");
-
-    const token = await getToken();
-    if (!token) {
-      setNlError("Bot verification failed. Please try again.");
-      setNlStatus("error");
-      resetToken();
-      return;
-    }
-
-    const verified = await verifyTurnstileToken(token);
-    if (!verified) {
-      setNlError("Verification failed. Please try again.");
-      setNlStatus("error");
-      resetToken();
-      return;
-    }
-
-    const { error } = await supabase
-      .from("email_signups")
-      .insert({ email: trimmed, source: "newsletter_page" } as any);
-    if (error) {
-      if (error.code === "23505") setNlStatus("success");
-      else {
-        setNlError("Something went wrong. Try again.");
-        setNlStatus("error");
-      }
-    } else {
-      setNlStatus("success");
-    }
-    resetToken();
-  };
 
   const filtered = useMemo(() => {
     if (!articles) return [];
