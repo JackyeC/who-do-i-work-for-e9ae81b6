@@ -496,7 +496,7 @@ export default function MockInterview() {
                   className={cn(
                     "w-8 h-8 rounded-full text-xs font-mono font-bold transition-all",
                     i === currentIdx
-                      ? "bg-[hsl(var(--civic-gold))] text-black"
+                      ? "bg-[hsl(var(--civic-gold))] text-primary-foreground"
                       : q.feedback !== null
                       ? "bg-[hsl(var(--civic-gold))]/20 text-[hsl(var(--civic-gold))]"
                       : "bg-muted/40 text-muted-foreground"

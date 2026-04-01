@@ -166,7 +166,7 @@ export default function EmployerVerificationPending() {
             <ShieldCheck className="w-8 h-8 text-primary" />
           </div>
           {goldShieldActive ? (
-            <Badge className="mb-4 text-xs font-mono uppercase tracking-wider bg-[hsl(var(--civic-green))] text-white">
+            <Badge className="mb-4 text-xs font-mono uppercase tracking-wider bg-[hsl(var(--civic-green))] text-primary-foreground">
               🛡️ Gold Shield Active
             </Badge>
           ) : (

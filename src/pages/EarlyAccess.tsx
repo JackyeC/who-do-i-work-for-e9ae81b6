@@ -205,7 +205,7 @@ export default function EarlyAccess() {
             <Link to="/browse" className="inline-block px-6 py-3 rounded-full text-sm font-bold transition-all hover:brightness-110" style={{ background: "#F0C040", color: "#0a0a0e" }}>
               Start Auditing →
             </Link>
-            <p className="mt-4 text-xs text-white/20 uppercase tracking-widest">Early Access Confirmed</p>
+            <p className="mt-4 text-xs text-foreground/20 uppercase tracking-widest">Early Access Confirmed</p>
           </div>
         )}
       </div>
