@@ -6,7 +6,7 @@ import { Link, useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
 import {
   Search, ArrowRight, ExternalLink, AlertTriangle, Shield,
-  FileText, BookOpen, TrendingDown, Eye, Award,
+  FileText, BookOpen, TrendingDown, Eye, Award, Newspaper,
 } from "lucide-react";
 import { useState } from "react";
 import { AlignedValuesSearch } from "./AlignedValuesSearch";
