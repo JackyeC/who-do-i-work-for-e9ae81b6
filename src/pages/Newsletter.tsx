@@ -1,5 +1,5 @@
-import { useState, useMemo } from "react";
-import { Link } from "react-router-dom";
+import { useState, useMemo, useEffect } from "react";
+import { Link, useLocation } from "react-router-dom";
 import { usePageSEO } from "@/hooks/use-page-seo";
 import { useWorkNews, WorkNewsArticle } from "@/hooks/use-work-news";
 import { useAuth } from "@/contexts/AuthContext";
@@ -35,6 +35,54 @@ const CATEGORY_CONFIG: Record<string, { label: string; color: string }> = {
 
 function getCategoryConfig(cat: string) {
   return CATEGORY_CONFIG[cat] || CATEGORY_CONFIG.general;
+}
+
+/* ── Why this matters (category-based) ── */
+const WHY_IT_MATTERS: Record<string, string[]> = {
+  regulation: [
+    "Regulatory shifts can change hiring practices, benefits, and workplace rights overnight.",
+    "If enforcement is increasing, employers may adjust policies — watch for changes in offer letters and handbooks.",
+  ],
+  future_of_work: [
+    "Remote, hybrid, and RTO policies directly impact your daily life, commute costs, and work-life balance.",
+    "Companies signaling flexibility changes may also be restructuring teams — worth monitoring.",
+  ],
+  ai_workplace: [
+    "AI tools in hiring and management can introduce bias, reduce transparency, and change job requirements.",
+    "Knowing which employers use automated decision-making helps you ask the right questions in interviews.",
+  ],
+  layoffs: [
+    "Mass layoffs signal financial instability and may affect remaining employees' workloads and morale.",
+    "WARN Act filings are public — you can verify claims before accepting an offer.",
+  ],
+  pay_equity: [
+    "Pay transparency laws are expanding — knowing where your offer sits relative to the range is leverage.",
+    "Companies under pay equity scrutiny may be adjusting bands. Ask about methodology.",
+  ],
+  labor_organizing: [
+    "Union activity and collective bargaining outcomes set precedents that affect non-union workers too.",
+    "Employer responses to organizing efforts reveal how leadership views worker voice.",
+  ],
+  worker_rights: [
+    "Changes to worker protections directly affect your rights on the job — from breaks to benefits.",
+    "Court rulings and policy changes can shift the balance of power between employers and workers.",
+  ],
+  legislation: [
+    "New legislation can redefine employment classifications, benefits requirements, and workplace safety standards.",
+    "Tracking bills in motion helps you anticipate changes before they hit your workplace.",
+  ],
+  general: [
+    "Workplace trends shape the environment you're applying into — context matters.",
+    "Understanding the landscape helps you ask better questions and make informed career decisions.",
+  ],
+};
+
+function getWhyItMatters(category: string, isControversy: boolean): string[] {
+  const base = WHY_IT_MATTERS[category] || WHY_IT_MATTERS.general;
+  if (isControversy) {
+    return [...base, "Controversy signals are worth verifying — check the source links below before forming conclusions."];
+  }
+  return base;
 }
 
 /* ── Time helpers ── */
@@ -86,8 +134,10 @@ function LeadStory({ article }: { article: WorkNewsArticle }) {
   const sourceProfile = article.source_name ? getSourceProfile(article.source_name) : null;
   const biasColor = sourceProfile ? getBiasColor(sourceProfile.bias) : "";
 
+  const whyMatters = getWhyItMatters(article.category, article.is_controversy);
+
   return (
-    <article className="rounded-2xl border border-border/50 bg-card overflow-hidden hover:border-primary/30 transition-all group">
+    <article id={`story-${article.id}`} className="rounded-2xl border border-border/50 bg-card overflow-hidden hover:border-primary/30 transition-all group scroll-mt-24">
       {/* Top accent bar */}
       <div className="h-1 bg-gradient-to-r from-primary via-primary/60 to-transparent" />
       <div className="p-6 lg:p-8">
@@ -123,7 +173,23 @@ function LeadStory({ article }: { article: WorkNewsArticle }) {
           </div>
         )}
 
-        {/* Footer */}
+        {/* Why This Matters */}
+        <div className="rounded-lg bg-muted/30 border border-border/30 p-4 mb-4">
+          <div className="flex items-center gap-2 mb-2.5">
+            <TrendingUp className="w-3.5 h-3.5 text-primary" />
+            <span className="text-[10px] font-bold text-primary tracking-[0.15em] uppercase font-mono">Why This Matters for You</span>
+          </div>
+          <ul className="space-y-1.5">
+            {whyMatters.map((point, idx) => (
+              <li key={idx} className="flex items-start gap-2 text-sm text-muted-foreground leading-relaxed">
+                <span className="text-primary mt-1 shrink-0">·</span>
+                {point}
+              </li>
+            ))}
+          </ul>
+        </div>
+
+        {/* Footer / Source */}
         <div className="flex items-center justify-between pt-3 border-t border-border/20">
           <div className="flex items-center gap-3">
             {article.source_name && (
@@ -150,8 +216,10 @@ function StoryCard({ article }: { article: WorkNewsArticle }) {
   const sourceProfile = article.source_name ? getSourceProfile(article.source_name) : null;
   const biasColor = sourceProfile ? getBiasColor(sourceProfile.bias) : "";
 
+  const whyMatters = getWhyItMatters(article.category, article.is_controversy);
+
   return (
-    <article className="rounded-xl border border-border/40 bg-card hover:border-primary/30 transition-all group overflow-hidden">
+    <article id={`story-${article.id}`} className="rounded-xl border border-border/40 bg-card hover:border-primary/30 transition-all group overflow-hidden scroll-mt-24">
       <div className="p-5">
         <div className="flex items-center gap-2 mb-3">
           <Badge variant="outline" className={`text-[10px] font-mono tracking-wider border ${cat.color}`}>
@@ -174,6 +242,22 @@ function StoryCard({ article }: { article: WorkNewsArticle }) {
             <p className="text-sm text-foreground/85 leading-relaxed">{article.jackye_take}</p>
           </div>
         )}
+
+        {/* Why This Matters */}
+        <div className="rounded-lg bg-muted/20 border border-border/20 p-3 mb-3">
+          <div className="flex items-center gap-1.5 mb-1.5">
+            <TrendingUp className="w-3 h-3 text-primary" />
+            <span className="text-[9px] font-bold text-primary tracking-[0.15em] uppercase font-mono">Why This Matters</span>
+          </div>
+          <ul className="space-y-1">
+            {whyMatters.slice(0, 2).map((point, idx) => (
+              <li key={idx} className="flex items-start gap-1.5 text-xs text-muted-foreground leading-relaxed">
+                <span className="text-primary mt-0.5 shrink-0">·</span>
+                {point}
+              </li>
+            ))}
+          </ul>
+        </div>
 
         {article.themes && article.themes.length > 0 && (
           <div className="flex flex-wrap gap-1.5 mb-3">
@@ -207,8 +291,9 @@ function StoryCard({ article }: { article: WorkNewsArticle }) {
 /* ── Wire Item (compact) ── */
 function WireItem({ article }: { article: WorkNewsArticle }) {
   const cat = getCategoryConfig(article.category);
+  const whyMatters = getWhyItMatters(article.category, article.is_controversy);
   return (
-    <a href={article.source_url || "#"} target="_blank" rel="noopener noreferrer" className="group block">
+    <div id={`story-${article.id}`} className="group block scroll-mt-24">
       <div className="rounded-lg border border-border/30 bg-card p-4 hover:border-primary/30 transition-all h-full flex flex-col">
         <div className="flex items-center gap-2 mb-2">
           <Badge variant="outline" className={`text-[10px] font-mono tracking-wider border ${cat.color}`}>
@@ -217,15 +302,26 @@ function WireItem({ article }: { article: WorkNewsArticle }) {
           {article.is_controversy && <AlertTriangle className="w-3 h-3 text-destructive" />}
           <span className="ml-auto text-[10px] text-muted-foreground/50 font-mono">{timeAgo(article.published_at)}</span>
         </div>
-        <p className="text-sm font-medium text-foreground leading-snug flex-1 group-hover:text-primary transition-colors">
+        <p className="text-sm font-medium text-foreground leading-snug flex-1 group-hover:text-primary transition-colors mb-2">
           {article.headline}
         </p>
-        <div className="flex items-center justify-between mt-3 pt-2 border-t border-border/20">
-          <span className="text-[10px] text-muted-foreground">{article.source_name || "Source"}</span>
+        {/* Compact why it matters */}
+        <p className="text-[11px] text-muted-foreground leading-relaxed mb-2">
+          {whyMatters[0]}
+        </p>
+        <div className="flex items-center justify-between mt-auto pt-2 border-t border-border/20">
+          {article.source_url ? (
+            <a href={article.source_url} target="_blank" rel="noopener noreferrer"
+              className="text-[10px] text-primary/70 hover:text-primary font-mono flex items-center gap-1">
+              {article.source_name || "Source"} <ExternalLink className="w-2.5 h-2.5" />
+            </a>
+          ) : (
+            <span className="text-[10px] text-muted-foreground">{article.source_name || "Source"}</span>
+          )}
           <SpiceMeter level={spiceLevel(article)} />
         </div>
       </div>
-    </a>
+    </div>
   );
 }
 
@@ -241,6 +337,17 @@ export default function Newsletter() {
   const { user } = useAuth();
   const { containerRef, getToken, resetToken } = useTurnstile();
   const { data: articles = [], isLoading } = useWorkNews(60);
+  const location = useLocation();
+
+  // Scroll to story anchor on hash navigation
+  useEffect(() => {
+    if (location.hash && !isLoading) {
+      const id = location.hash.replace("#", "");
+      setTimeout(() => {
+        document.getElementById(id)?.scrollIntoView({ behavior: "smooth", block: "start" });
+      }, 300);
+    }
+  }, [location.hash, isLoading]);
 
   usePageSEO({
     title: "The Receipts — Live Work Intelligence Feed | Who Do I Work For?",
@@ -429,8 +536,9 @@ export default function Newsletter() {
             </div>
             <div className="space-y-2">
               {movingNow.map((article) => (
-                <a key={article.id} href={article.source_url || "#"} target="_blank" rel="noopener noreferrer"
-                  className="flex items-center gap-3 py-2 px-3 rounded-lg hover:bg-card/50 transition-colors group">
+                <button key={article.id}
+                  onClick={() => document.getElementById(`story-${article.id}`)?.scrollIntoView({ behavior: "smooth", block: "start" })}
+                  className="flex items-center gap-3 py-2 px-3 rounded-lg hover:bg-card/50 transition-colors group w-full text-left">
                   <Badge variant="outline" className={`text-[9px] font-mono tracking-wider border shrink-0 ${getCategoryConfig(article.category).color}`}>
                     {getCategoryConfig(article.category).label}
                   </Badge>
@@ -438,7 +546,7 @@ export default function Newsletter() {
                     {article.headline}
                   </p>
                   <span className="text-[10px] text-muted-foreground/50 font-mono shrink-0">{timeAgo(article.published_at)}</span>
-                </a>
+                </button>
               ))}
             </div>
           </div>
