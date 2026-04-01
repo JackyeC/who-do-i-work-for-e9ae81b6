@@ -16,6 +16,7 @@ export default function Login() {
     title: "Sign In — Who Do I Work For",
     description: "Sign in to access your saved employer checks, career intelligence tools, and full company reports.",
     path: "/login",
+    noIndex: true,
   });
 
   const { user, loading } = useAuth();
