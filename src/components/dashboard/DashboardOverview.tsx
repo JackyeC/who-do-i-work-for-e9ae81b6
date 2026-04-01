@@ -335,7 +335,7 @@ export function DashboardOverview({ onNavigate }: DashboardOverviewProps) {
                 Active violations, settlements, and regulatory actions we found in the public record
               </p>
             </div>
-            <span className="shrink-0 rounded-full px-2.5 py-1 text-xs font-bold bg-destructive/10 text-destructive border border-destructive/30">
+            <span className="shrink-0 rounded-full px-2.5 py-1 text-[10px] font-bold border" style={{ color: "hsl(43, 96%, 56%)", backgroundColor: "hsla(43, 96%, 56%, 0.1)", borderColor: "hsla(43, 96%, 56%, 0.3)" }}>
               {SIGNAL_CARDS.length} ACTIVE
             </span>
           </div>
