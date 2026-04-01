@@ -329,10 +329,10 @@ export function DashboardOverview({ onNavigate }: DashboardOverviewProps) {
           <div className="flex items-center justify-between mb-4">
             <div>
               <h3 className="text-base font-extrabold text-foreground tracking-tight">
-                Employer Signal Alerts
+                We're Watching Your Back
               </h3>
               <p className="text-xs text-muted-foreground mt-0.5">
-                Active violations, settlements, and regulatory actions from the public record
+                Active violations, settlements, and regulatory actions we found in the public record
               </p>
             </div>
             <span className="shrink-0 rounded-full px-2.5 py-1 text-xs font-bold bg-destructive/10 text-destructive border border-destructive/30">
