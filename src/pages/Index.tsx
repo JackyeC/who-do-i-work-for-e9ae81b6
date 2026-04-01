@@ -15,7 +15,7 @@ const Index = forwardRef<HTMLDivElement>((_, ref) => {
   const navigate = useNavigate();
   const { user, loading: authLoading } = useAuth();
   const { isLoaded } = useClerkWithFallback();
-  const [heroQuery, setHeroQuery] = useState("");
+  
 
   usePageSEO({
     title: "Who Do I Work For — Career Intelligence by Jackye Clayton",
