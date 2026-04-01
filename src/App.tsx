@@ -175,6 +175,7 @@ const App = () => (
         <DemoSafeModeProvider>
         <ViewModeProvider>
         <DossierLensProvider>
+        <SourceDrawerProvider>
         <TooltipProvider>
           <Toaster />
           <Sonner />
