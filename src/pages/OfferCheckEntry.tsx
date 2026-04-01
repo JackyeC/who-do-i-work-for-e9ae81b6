@@ -101,6 +101,7 @@ function buildSignals(company: CompanyResult, extras: {
       title: "Layoff History",
       explanation: "WARN Act notices or layoff events found in public records.",
       tier: "verified",
+      link: `/dossier/${company.slug}#workforce`,
     });
   } else {
     signals.push({
