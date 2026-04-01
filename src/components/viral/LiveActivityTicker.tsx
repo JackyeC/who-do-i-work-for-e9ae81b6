@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { motion, AnimatePresence } from "framer-motion";
 import { Eye } from "lucide-react";
+import { decodeEscapes } from "@/lib/ticker-filters";
 
 interface ScanEvent {
   id: string;
