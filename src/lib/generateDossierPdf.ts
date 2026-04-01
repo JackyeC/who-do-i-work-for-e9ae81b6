@@ -776,9 +776,9 @@ function buildPoliticalReceipts(doc: jsPDF, data: DossierPdfData): number {
       ...tableStyle(y),
       head: [["Issue Area", "Spend", "Related Bill"]],
       body: data.lobbyingIssues.slice(0, 20).map(l => [
-        l.issue_area,
+        sanitizeText(l.issue_area),
         l.amount ? fmt$(l.amount) : "—",
-        l.bill_number || "—",
+        sanitizeText(l.bill_number) || "—",
       ]),
       columnStyles: { 1: { halign: "right" as const, cellWidth: 28 } },
     });
