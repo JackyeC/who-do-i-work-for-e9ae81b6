@@ -1,6 +1,7 @@
 import { Link } from "react-router-dom";
 import { usePageSEO } from "@/hooks/use-page-seo";
 import { ArrowRight, Landmark, DollarSign, Users, FileText, Scale, Building2 } from "lucide-react";
+import { PoliticalSpectrumExplainer } from "@/components/policy/PoliticalSpectrumExplainer";
 
 const INFLUENCE_LAYERS = [
   {
@@ -29,9 +30,9 @@ const INFLUENCE_LAYERS = [
   },
   {
     icon: FileText,
-    label: "Trade Associations & Dark Money",
+    label: "Trade Associations & Non-Disclosed Channels",
     title: "The organizations they fund — and what those organizations do.",
-    desc: "Many companies fund industry groups and 501(c)(4) organizations that lobby against worker-friendly legislation while the company publicly claims to support those same issues. We track the money trail.",
+    desc: "Many companies fund industry groups and 501(c)(4) organizations that lobby against worker-friendly legislation while the company publicly claims to support those same issues. WDIWF traces the funding trail through public filings.",
   },
 ];
 
@@ -137,6 +138,11 @@ export default function PolicyHub() {
             </p>
           </div>
         </section>
+
+        <div className="gold-line mx-auto w-full max-w-[200px]" />
+
+        {/* ═══ POLITICAL SPECTRUM EXPLAINER ═══ */}
+        <PoliticalSpectrumExplainer />
 
         <div className="gold-line mx-auto w-full max-w-[200px]" />
 
