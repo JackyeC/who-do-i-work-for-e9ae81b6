@@ -720,17 +720,14 @@ function ReceiptsSection({ signalsByCategory }: { signalsByCategory: Record<stri
                                   {signal.signal_type?.replace(/_/g, " ")}
                                 </span>
                                 {sourceInfo && (
-                                  <a
-                                    href={sourceInfo.url}
-                                    target="_blank"
-                                    rel="noopener noreferrer"
-                                    onClick={(e) => e.stopPropagation()}
+                                  <button
+                                    onClick={(e) => { e.stopPropagation(); openSource(sourceInfo.url, { signalType: signal.signal_type, description: signal.description, amount: signal.amount }); }}
                                     className="inline-flex items-center gap-1 px-1.5 py-0.5 rounded-sm bg-primary/10 border border-primary/20 text-xs font-semibold text-primary hover:bg-primary/20 hover:border-primary/40 transition-colors cursor-pointer"
                                     title={`View source at ${sourceInfo.label}`}
                                   >
                                     <ExternalLink className="w-2.5 h-2.5" />
                                     {sourceInfo.label}
-                                  </a>
+                                  </button>
                                 )}
                                 {signal.confidence_score && (
                                   <Badge
