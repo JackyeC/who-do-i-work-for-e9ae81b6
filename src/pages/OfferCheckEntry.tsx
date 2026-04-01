@@ -325,7 +325,7 @@ export default function OfferCheckEntry() {
                     {role && <p className="text-xs text-muted-foreground mt-0.5">Role: {role}</p>}
                   </div>
 
-                  {/* ═══ SECTION 3: TOP SIGNALS ═══ */}
+                  {/* ═══ SECTION 3: TOP SIGNALS (free: max 3) ═══ */}
                   <div>
                     <h3 className="text-sm font-semibold text-foreground uppercase tracking-wider mb-3">
                       Top Signals
@@ -336,7 +336,7 @@ export default function OfferCheckEntry() {
                       </div>
                     ) : (
                       <div className="space-y-2">
-                        {signals.map((signal, i) => (
+                        {signals.slice(0, 3).map((signal, i) => (
                           <div key={i} className="bg-card border border-border rounded-xl p-4">
                             <div className="flex items-start justify-between gap-3">
                               <div className="min-w-0">
@@ -358,7 +358,58 @@ export default function OfferCheckEntry() {
                     </div>
                   )}
 
-                  {/* ═══ SECTION 5: TRUST LAYER ═══ */}
+                  {/* ═══ UPGRADE MOMENT ═══ */}
+                  <div className="relative">
+                    {/* Fade-out teaser of locked signals */}
+                    {signals.length > 3 && (
+                      <div className="space-y-2 mb-4">
+                        {signals.slice(3, 5).map((signal, i) => (
+                          <div key={i} className="bg-card border border-border rounded-xl p-4 opacity-40 pointer-events-none select-none blur-[2px]">
+                            <div className="flex items-start justify-between gap-3">
+                              <div className="min-w-0">
+                                <p className="text-sm font-medium text-foreground">{signal.title}</p>
+                                <p className="text-xs text-muted-foreground mt-0.5">{signal.explanation}</p>
+                              </div>
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+                    )}
+
+                    <div className="bg-card border border-border rounded-2xl p-6 text-center">
+                      <Lock className="w-6 h-6 text-primary mx-auto mb-3" />
+                      <h3 className="text-lg font-bold text-foreground mb-1">
+                        Unlock the full breakdown before you decide
+                      </h3>
+                      <p className="text-xs text-muted-foreground mb-4 max-w-sm mx-auto">
+                        The free check gives you a snapshot. The full report gives you leverage.
+                      </p>
+                      <div className="flex flex-wrap justify-center gap-2 my-4">
+                        {[
+                          "Leadership & Influence",
+                          "Layoff History",
+                          "Compensation Signals",
+                          "Worker Sentiment Patterns",
+                        ].map((item) => (
+                          <Badge key={item} variant="outline" className="text-xs text-muted-foreground border-border/50 gap-1">
+                            <Lock className="w-2.5 h-2.5" /> {item}
+                          </Badge>
+                        ))}
+                      </div>
+                      <Button
+                        size="lg"
+                        className="w-full max-w-xs h-11 text-base gap-2 bg-primary text-primary-foreground hover:bg-primary/90"
+                        onClick={() => navigate(`/dossier/${company.slug}`)}
+                      >
+                        Unlock Full Report <ArrowRight className="w-4 h-4" />
+                      </Button>
+                      <p className="text-[10px] text-muted-foreground mt-3">
+                        Full reports include verified sources, evidence chains, and decision-ready analysis.
+                      </p>
+                    </div>
+                  </div>
+
+                  {/* ═══ TRUST LAYER ═══ */}
                   <div className="bg-muted/30 border border-border rounded-xl p-4">
                     <p className="text-xs font-semibold text-foreground uppercase tracking-wider mb-2">We show our work.</p>
                     {company.website_url ? (
@@ -378,37 +429,6 @@ export default function OfferCheckEntry() {
                         Signals marked "Verified Source" are backed by public filings, government records, or official disclosures.
                       </p>
                     )}
-                  </div>
-
-                  {/* ═══ SECTION 6: PAYWALL ═══ */}
-                  <div className="bg-card border border-border rounded-2xl p-6 text-center">
-                    <Lock className="w-6 h-6 text-primary mx-auto mb-3" />
-                    <h3 className="text-lg font-bold text-foreground mb-1">
-                      Want the full breakdown before you decide?
-                    </h3>
-                    <div className="flex flex-wrap justify-center gap-2 my-4">
-                      {[
-                        "Leadership & Influence",
-                        "Layoff History",
-                        "Compensation Signals",
-                        "Worker Sentiment Patterns",
-                        "Offer Negotiation Insights",
-                      ].map((item) => (
-                        <Badge key={item} variant="outline" className="text-xs text-muted-foreground border-border/50 gap-1">
-                          <Lock className="w-2.5 h-2.5" /> {item}
-                        </Badge>
-                      ))}
-                    </div>
-                    <Button
-                      size="lg"
-                      className="w-full max-w-xs h-11 text-base gap-2 bg-primary text-primary-foreground hover:bg-primary/90"
-                      onClick={() => navigate(`/dossier/${company.slug}`)}
-                    >
-                      Unlock Full Report <ArrowRight className="w-4 h-4" />
-                    </Button>
-                    <p className="text-[10px] text-muted-foreground mt-3">
-                      Full reports include verified sources, evidence chains, and decision-ready analysis.
-                    </p>
                   </div>
                 </>
               )}
