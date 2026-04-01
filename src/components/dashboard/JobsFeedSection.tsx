@@ -95,7 +95,7 @@ const SAMPLE_JOBS: JobListing[] = [
     applicants: 41, integrityScore: 32, integrityLevel: "CRITICAL", alignmentPct: 28,
     skills: ["PMP", "DoD Clearance", "Agile", "Stakeholder Management"],
     description: "Manage classified defense projects with cross-functional teams.",
-    whyAligns: "Critical misalignment detected. Axiom's government contract history, lobbying spend, and PAC donations conflict with your stated values around transparency and social impact.",
+    whyAligns: "Low alignment. Significant lobbying spend. Contract controversies. No published diversity data. Proceed with your eyes open.",
     integritySummary: "Significant lobbying spend. Multiple government contract controversies. No published diversity data. Board lacks independence.",
     narrativeGap: "Claims 'making the world safer' while lobbying against civilian oversight provisions.",
   },
