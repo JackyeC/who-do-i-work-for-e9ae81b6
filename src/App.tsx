@@ -141,6 +141,7 @@ const BetaFeedbackWidget = lazy(() => import("./components/BetaFeedbackWidget").
 const CookieNotice = lazy(() => import("./components/CookieNotice").then(m => ({ default: m.CookieNotice })));
 const PreviewTierToolbar = lazy(() => import("./components/PreviewTierToolbar").then(m => ({ default: m.PreviewTierToolbar })));
 const Receipts = lazy(() => import("./pages/Receipts"));
+const Newsletter = lazy(() => import("./pages/Newsletter"));
 const ReceiptsReport = lazy(() => import("./pages/ReceiptsReport"));
 const SubmitTip = lazy(() => import("./pages/SubmitTip"));
 
