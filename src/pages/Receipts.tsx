@@ -214,6 +214,40 @@ export default function Receipts() {
             <span className="text-primary">They always leave something out.</span>
           </p>
           <div className="w-[52px] h-0.5 bg-primary mx-auto my-6" />
+
+          {/* Newsletter Subscribe */}
+          {nlStatus === "success" ? (
+            <div className="flex items-center justify-center gap-2.5 text-primary font-semibold text-base py-3">
+              <Check className="w-5 h-5" /> You're in. First drop lands Monday.
+            </div>
+          ) : (
+            <form onSubmit={handleNewsletterSubmit} className="max-w-md mx-auto mb-4">
+              <div ref={turnstileRef} />
+              <div className="flex items-center bg-card border-2 border-primary/20 focus-within:border-primary/50 transition-colors rounded-xl overflow-hidden">
+                <Mail className="w-4 h-4 text-muted-foreground ml-4 shrink-0" />
+                <input
+                  type="email"
+                  value={nlEmail}
+                  onChange={(e) => { setNlEmail(e.target.value); setNlStatus("idle"); }}
+                  placeholder="you@company.com"
+                  className="flex-1 bg-transparent px-3 py-3.5 text-sm text-foreground placeholder:text-muted-foreground/50 focus:outline-none"
+                  disabled={nlStatus === "loading"}
+                />
+                <button
+                  type="submit"
+                  disabled={nlStatus === "loading"}
+                  className="mr-2 px-4 py-2 bg-primary text-primary-foreground font-semibold text-sm rounded-lg hover:brightness-110 transition-all flex items-center gap-1.5 disabled:opacity-50 shrink-0"
+                >
+                  {nlStatus === "loading" ? "..." : <>Subscribe <ArrowRight className="w-3.5 h-3.5" /></>}
+                </button>
+              </div>
+              {nlStatus === "error" && (
+                <p className="text-destructive text-xs mt-2 font-mono">{nlError}</p>
+              )}
+            </form>
+          )}
+          <p className="text-xs text-muted-foreground/60 mb-2">Free forever. One email per week. No spam.</p>
+
           <p className="text-base text-muted-foreground tracking-[0.12em] font-mono">
             Jackye Clayton 👑 × WDIWF
             <span className="mx-2.5 text-border">·</span>
