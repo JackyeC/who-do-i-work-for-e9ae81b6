@@ -6,7 +6,7 @@ import { Link, useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
 import {
   Search, ArrowRight, ExternalLink, AlertTriangle, Shield,
-  FileText, BookOpen, TrendingDown, Eye, Award,
+  FileText, BookOpen, TrendingDown, Eye, Award, Newspaper,
 } from "lucide-react";
 import { useState } from "react";
 import { AlignedValuesSearch } from "./AlignedValuesSearch";
@@ -115,7 +115,7 @@ const INTEL_BULLETS = [
 const JACKYE_CONTENT = [
   {
     number: "01",
-    type: "ARTICLE",
+    type: "ARTICLE" as const,
     title: "The Interview Is a Two-Way Street — Why You Should Audit Your Interviewer",
     desc: "Jackye breaks down why candidates who research the company's public record outperform those who only rehearse answers.",
     link: "https://www.linkedin.com/pulse/interview-two-way-street-jackye-clayton/",
@@ -123,7 +123,7 @@ const JACKYE_CONTENT = [
   },
   {
     number: "02",
-    type: "TOOL TIP",
+    type: "TOOL TIP" as const,
     title: "Use the Interview Dossier Before Every Interview — Not After",
     desc: "The Dossier shows you what the company's public record says vs. what their careers page promises. Read the 'Smart Questions' tab and ask at least 2 in the room.",
     link: "/interview-dossier",
@@ -132,7 +132,7 @@ const JACKYE_CONTENT = [
   },
   {
     number: "03",
-    type: "INSIDER INTEL",
+    type: "DEEP DIVE" as const,
     title: "Read the SEC Proxy Statement Before Your Interview — Here's Why",
     desc: "The DEF 14A filing shows executive compensation, board composition, and governance risks. If you're interviewing at a public company, 10 minutes on EDGAR is worth 2 hours of Glassdoor.",
     link: "https://www.sec.gov/cgi-bin/browse-edgar?action=getcompany&type=DEF+14A",
@@ -392,7 +392,7 @@ export function DashboardOverview({ onNavigate }: DashboardOverviewProps) {
           <BriefingCard className="h-full">
             <div className="flex items-center gap-2 mb-4">
               <AlertTriangle className="w-4 h-4 text-primary" />
-              <h3 className="text-sm font-bold text-foreground">Intelligence Briefing</h3>
+              <h3 className="text-sm font-bold text-foreground">What You Should Know</h3>
             </div>
             <div className="space-y-3">
               {INTEL_BULLETS.map((b, i) => (
@@ -423,7 +423,7 @@ export function DashboardOverview({ onNavigate }: DashboardOverviewProps) {
           <BriefingCard className="h-full">
             <div className="flex items-center gap-2 mb-1">
               <BookOpen className="w-4 h-4 text-primary" />
-              <h3 className="text-sm font-bold text-foreground">From Jackye</h3>
+              <h3 className="text-sm font-bold text-foreground">Straight From Jackye</h3>
             </div>
             <p className="text-xs text-muted-foreground mb-3">Curated insider intel — not generic advice</p>
             <div className="space-y-3">
@@ -438,23 +438,27 @@ export function DashboardOverview({ onNavigate }: DashboardOverviewProps) {
                     {...(linkProps as any)}
                     className="block rounded-lg p-3.5 transition-colors bg-muted/20 border border-border/30 hover:bg-muted/40"
                   >
-                    <div className="flex items-center gap-2 mb-1">
-                      <span className="text-xs font-extrabold text-primary font-mono">
-                        {item.number}
-                      </span>
-                      <span className="rounded px-1.5 py-0.5 text-xs font-bold text-civic-blue bg-civic-blue/10 border border-civic-blue/30 font-mono">
-                        {item.type}
+                    <div className="flex items-start justify-between gap-2">
+                      <div className="min-w-0 flex-1">
+                        <div className="flex items-center gap-2 mb-1">
+                          <span className="text-xs font-extrabold text-primary font-mono">
+                            {item.number}
+                          </span>
+                          <span className="rounded px-1.5 py-0.5 text-xs font-bold font-mono border" style={{ color: "hsl(43, 96%, 56%)", backgroundColor: "hsla(43, 96%, 56%, 0.1)", borderColor: "hsla(43, 96%, 56%, 0.3)" }}>
+                            {item.type}
+                          </span>
+                        </div>
+                        <p className="text-[13px] font-semibold text-foreground leading-snug mt-1">
+                          {item.title}
+                        </p>
+                        <p className="text-xs text-muted-foreground/60 mt-1">
+                          {item.source}
+                        </p>
+                      </div>
+                      <span className="shrink-0 mt-1" style={{ color: "hsl(43, 96%, 56%)" }}>
+                        <ArrowRight className="w-4 h-4" />
                       </span>
                     </div>
-                    <p className="text-[13px] font-semibold text-foreground leading-snug mt-1">
-                      {item.title}
-                    </p>
-                    <p className="text-xs text-muted-foreground leading-snug mt-1">
-                      {item.desc}
-                    </p>
-                    <p className="text-xs text-muted-foreground/60 mt-1 flex items-center gap-1">
-                      {item.source} {!item.internal && <ExternalLink className="w-2.5 h-2.5" />}
-                    </p>
                   </Wrapper>
                 );
               })}
@@ -513,9 +517,26 @@ export function DashboardOverview({ onNavigate }: DashboardOverviewProps) {
           </BriefingCard>
         </motion.div>
 
-        {/* 4B — Daily Briefing */}
+        {/* 4B — The Tuesday Letter */}
         <motion.div {...anim(0.24)}>
-          <DailyBriefingCard />
+          <div className="rounded-xl overflow-hidden border" style={{ background: "linear-gradient(135deg, hsla(43, 96%, 56%, 0.08), hsla(35, 90%, 50%, 0.12))", borderColor: "hsla(43, 96%, 56%, 0.3)" }}>
+            <div className="p-5">
+              <div className="flex items-center gap-2 mb-2">
+                <Newspaper className="w-4 h-4" style={{ color: "hsl(43, 96%, 56%)" }} />
+                <h3 className="text-sm font-bold text-foreground font-display">The Tuesday Letter</h3>
+              </div>
+              <p className="text-[13px] text-foreground/80 leading-relaxed mb-4">
+                Every Tuesday I send out what I'm seeing — the signals, the moves, the things nobody else is saying out loud. It's free, it's unfiltered, and it's for you.
+              </p>
+              <button
+                onClick={() => navigate("/newsletter")}
+                className="w-full rounded-lg py-2.5 text-sm font-bold transition-all hover:brightness-110"
+                style={{ backgroundColor: "hsl(43, 96%, 56%)", color: "hsl(0, 0%, 10%)" }}
+              >
+                I'm In
+              </button>
+            </div>
+          </div>
         </motion.div>
       </div>
 
