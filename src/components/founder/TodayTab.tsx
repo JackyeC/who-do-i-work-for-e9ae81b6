@@ -61,14 +61,14 @@ export function TodayTab() {
         supabase.from("company_corporate_claims").select("id", { count: "exact", head: true }).is("claim_source_url", null),
         supabase.from("companies").select("id", { count: "exact", head: true }).is("website_url", null).not("description", "is", null),
       ]);
-      const items: { label: string; count: number; tab: string }[] = [];
       const reviewCount = pendingReviews.count ?? 0;
       const claimCount = missingClaims.count ?? 0;
       const linkCount = brokenLinks.count ?? 0;
+      const items: { label: string; count: number; tab: string }[] = [];
       if (reviewCount > 0) items.push({ label: `${reviewCount} ${reviewCount === 1 ? "company needs" : "companies need"} review`, count: reviewCount, tab: "queue" });
       if (claimCount > 0) items.push({ label: `${claimCount} ${claimCount === 1 ? "claim" : "claims"} missing sources`, count: claimCount, tab: "signals" });
       if (linkCount > 0) items.push({ label: `${linkCount} broken ${linkCount === 1 ? "link" : "links"} detected`, count: linkCount, tab: "signals" });
-      return items.slice(0, 3);
+      return { items: items.slice(0, 3), brokenLinkCount: linkCount };
     },
   });
 
