@@ -89,6 +89,42 @@ export default function CompanyDossier() {
     enabled: !!companyId,
   });
 
+  const { data: candidates } = useQuery({
+    queryKey: ["dossier-candidates", companyId],
+    queryFn: async () => {
+      const { data } = await supabase.from("company_candidates").select("*").eq("company_id", companyId!).order("amount", { ascending: false });
+      return data || [];
+    },
+    enabled: !!companyId,
+  });
+
+  const { data: partyBreakdown } = useQuery({
+    queryKey: ["dossier-party-breakdown", companyId],
+    queryFn: async () => {
+      const { data } = await supabase.from("company_party_breakdown").select("*").eq("company_id", companyId!);
+      return data || [];
+    },
+    enabled: !!companyId,
+  });
+
+  const { data: lobbyingLinkages } = useQuery({
+    queryKey: ["dossier-lobbying-linkages", companyId],
+    queryFn: async () => {
+      const { data } = await supabase.from("entity_linkages").select("*").eq("company_id", companyId!).in("link_type", ["trade_association_lobbying", "lobbying_on_bill"]).order("amount", { ascending: false });
+      return data || [];
+    },
+    enabled: !!companyId,
+  });
+
+  const { data: stateLobbyingData } = useQuery({
+    queryKey: ["dossier-state-lobbying", companyId],
+    queryFn: async () => {
+      const { data } = await supabase.from("company_state_lobbying").select("*").eq("company_id", companyId!).order("year", { ascending: false });
+      return data || [];
+    },
+    enabled: !!companyId,
+  });
+
   const { data: contracts } = useQuery({
     queryKey: ["dossier-contracts", companyId],
     queryFn: async () => {
@@ -167,14 +203,37 @@ export default function CompanyDossier() {
     if (!company) return [];
     const records: EvidenceRecord[] = [];
 
-    if ((company.total_pac_spending ?? 0) > 0) {
+    // --- Political Spending: prefer itemized recipients > party breakdown > aggregate total ---
+    const hasCandidates = (candidates || []).length > 0;
+    const hasPartyBreakdown = (partyBreakdown || []).length > 0;
+
+    if (hasCandidates) {
+      (candidates || []).forEach((c: any) => {
+        records.push({
+          eventType: "PAC Recipient", category: "Political Spending", date: null,
+          amount: c.amount ?? 0,
+          description: `${c.name} (${c.party}${c.state ? `, ${c.state}` : ""}) — ${c.donation_type || "PAC contribution"} of $${(c.amount ?? 0).toLocaleString()}.${c.flagged ? ` ⚠ ${c.flag_reason || "Flagged"}` : ""}`,
+          sourceUrl: `https://www.fec.gov/data/disbursements/?recipient_name=${encodeURIComponent(c.name)}`, sourceName: "FEC",
+        });
+      });
+    } else if (hasPartyBreakdown) {
+      (partyBreakdown || []).forEach((p: any) => {
+        records.push({
+          eventType: "Party Allocation", category: "Political Spending", date: null,
+          amount: p.amount ?? 0,
+          description: `$${(p.amount ?? 0).toLocaleString()} directed to ${p.party} candidates and committees. Recipient-level detail is being indexed from FEC disbursement records.`,
+          sourceUrl: "https://www.opensecrets.org/political-action-committees-pacs", sourceName: "FEC / OpenSecrets",
+        });
+      });
+    } else if ((company.total_pac_spending ?? 0) > 0) {
       records.push({
-        eventType: "PAC Contribution", category: "Political Spending", date: null,
+        eventType: "PAC Total", category: "Political Spending", date: null,
         amount: company.total_pac_spending ?? 0,
-        description: `Corporate PAC spending totaling $${(company.total_pac_spending ?? 0).toLocaleString()} on public record.`,
+        description: `Corporate PAC spending totaling $${(company.total_pac_spending ?? 0).toLocaleString()} on public record. Recipient-level receipts are still being indexed.`,
         sourceUrl: "https://www.opensecrets.org/political-action-committees-pacs", sourceName: "OpenSecrets / FEC",
       });
     }
+
     (executives || []).filter((e: any) => e.total_donations > 0).forEach((e: any) => {
       records.push({
         eventType: "Individual Donation", category: "Political Spending", date: null,
@@ -183,14 +242,44 @@ export default function CompanyDossier() {
         sourceUrl: "https://www.fec.gov/data/receipts/individual-contributions/", sourceName: "FEC",
       });
     });
-    if ((company.lobbying_spend ?? 0) > 0) {
+
+    // --- Lobbying: prefer entity_linkages > state lobbying > aggregate total ---
+    const hasLobbyingLinkages = (lobbyingLinkages || []).length > 0;
+    const hasStateLobby = (stateLobbyingData || []).length > 0;
+
+    if (hasLobbyingLinkages) {
+      (lobbyingLinkages || []).forEach((l: any) => {
+        const meta = (() => { try { return JSON.parse(l.metadata || "{}"); } catch { return {}; } })();
+        const citation = (() => { try { const c = JSON.parse(l.source_citation || "[]"); return c?.[0]?.url; } catch { return null; } })();
+        records.push({
+          eventType: "Lobbying Filing", category: "Lobbying",
+          date: meta.filing_year ? `${meta.filing_year}-01-01` : null,
+          amount: l.amount ?? 0,
+          description: l.description || `Lobbying expenditure to ${l.target_entity_name}: $${(l.amount ?? 0).toLocaleString()}.`,
+          sourceUrl: citation || "https://lda.senate.gov/filings/public/filing/search/",
+          sourceName: "Senate LDA",
+        });
+      });
+    } else if (hasStateLobby) {
+      (stateLobbyingData || []).forEach((s: any) => {
+        const issues = (s.issues || []).slice(0, 3).join(", ");
+        records.push({
+          eventType: "State Lobbying", category: "Lobbying",
+          date: `${s.year}-01-01`, amount: s.lobbying_spend ?? 0,
+          description: `State-level lobbying in ${s.state}: $${(s.lobbying_spend ?? 0).toLocaleString()}${issues ? ` on ${issues}` : ""}.`,
+          sourceUrl: s.source || "https://lda.senate.gov/filings/public/filing/search/",
+          sourceName: s.source || "State Records",
+        });
+      });
+    } else if ((company.lobbying_spend ?? 0) > 0) {
       records.push({
-        eventType: "Lobbying Expenditure", category: "Lobbying", date: null,
+        eventType: "Lobbying Total", category: "Lobbying", date: null,
         amount: company.lobbying_spend ?? 0,
-        description: `Reported lobbying spend: $${(company.lobbying_spend ?? 0).toLocaleString()}.`,
+        description: `Reported lobbying spend: $${(company.lobbying_spend ?? 0).toLocaleString()}. Filing-level detail is being indexed from Senate LDA records.`,
         sourceUrl: "https://www.opensecrets.org/federal-lobbying", sourceName: "OpenSecrets / LDA",
       });
     }
+
     (contracts || []).forEach((c: any) => {
       records.push({
         eventType: "Federal Contract", category: "Government Contracts", date: null,
@@ -216,7 +305,7 @@ export default function CompanyDossier() {
       });
     });
     return records;
-  }, [company, executives, contracts, eeocCases, issueSignals]);
+  }, [company, executives, candidates, partyBreakdown, lobbyingLinkages, stateLobbyingData, contracts, eeocCases, issueSignals]);
 
   if (isLoading) {
     return (
