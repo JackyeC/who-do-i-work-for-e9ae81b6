@@ -254,7 +254,6 @@ export default function CorporateAlignment() {
           </p>
         </div>
       </main>
-      <Footer />
     </div>
   );
 }
