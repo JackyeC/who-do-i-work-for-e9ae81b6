@@ -3,7 +3,12 @@ import { useAuth as useClerkAuth } from "@clerk/clerk-react";
 
 const FALLBACK_TIMEOUT_MS = 3000;
 
-const EMPTY_AUTH = {
+const isClerkDomain =
+  typeof window !== "undefined" &&
+  (window.location.hostname === "jackyeclayton.com" ||
+    window.location.hostname.endsWith(".jackyeclayton.com"));
+
+const FALLBACK_AUTH = {
   isLoaded: true as const,
   isSignedIn: false as const,
   userId: null,
@@ -11,31 +16,29 @@ const EMPTY_AUTH = {
   orgId: null,
   orgRole: null,
   orgSlug: null,
+  isFallback: true,
 };
 
 /**
  * Wraps Clerk's useAuth with a 3-second fallback so the UI renders
- * even when Clerk fails to initialize (e.g. preview environments
- * where ClerkProvider is not mounted).
+ * even when Clerk fails to initialize (e.g. preview environments).
+ *
+ * Returns an extra `isFallback` boolean so callers can bypass
+ * Clerk wrapper components like <SignedIn>/<SignedOut>.
  */
 export function useClerkWithFallback() {
-  const [timedOut, setTimedOut] = useState(false);
-  const [noProvider, setNoProvider] = useState(false);
-
-  // We must call hooks unconditionally, so we always call useClerkAuth
-  // but catch the error it throws when ClerkProvider is absent.
-  let clerkAuth: any = EMPTY_AUTH;
-  try {
-    clerkAuth = useClerkAuth();
-  } catch {
-    // Will be caught on first render; set flag via effect to avoid
-    // setState-during-render warnings.
-    if (!noProvider) {
-      // Use a microtask to set state outside render
-      Promise.resolve().then(() => setNoProvider(true));
-    }
-    return { ...EMPTY_AUTH, isFallback: true };
+  // When ClerkProvider is not mounted (non-production domain),
+  // skip the Clerk hook entirely to avoid the missing-provider error.
+  if (!isClerkDomain) {
+    return FALLBACK_AUTH;
   }
+
+  return useClerkWithFallbackInner();
+}
+
+function useClerkWithFallbackInner() {
+  const clerkAuth = useClerkAuth();
+  const [timedOut, setTimedOut] = useState(false);
 
   useEffect(() => {
     if (clerkAuth.isLoaded) return;
