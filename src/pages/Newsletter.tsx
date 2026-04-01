@@ -1,5 +1,5 @@
-import { useState, useMemo } from "react";
-import { Link } from "react-router-dom";
+import { useState, useMemo, useEffect } from "react";
+import { Link, useLocation } from "react-router-dom";
 import { usePageSEO } from "@/hooks/use-page-seo";
 import { useWorkNews, WorkNewsArticle } from "@/hooks/use-work-news";
 import { useAuth } from "@/contexts/AuthContext";
