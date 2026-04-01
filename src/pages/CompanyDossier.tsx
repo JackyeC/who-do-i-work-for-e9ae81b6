@@ -628,6 +628,14 @@ export default function CompanyDossier() {
           )}
         </div>
       </div>
+
+      <EmployerReportDrawer
+        open={reportOpen}
+        onOpenChange={setReportOpen}
+        companyName={company.name}
+        records={evidenceRecords}
+        initialCategory={reportCategory}
+      />
     </section>
   );
 }
