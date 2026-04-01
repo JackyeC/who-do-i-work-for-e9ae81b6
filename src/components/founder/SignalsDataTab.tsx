@@ -158,37 +158,43 @@ export function SignalsDataTab() {
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        {/* Source Status */}
+        {/* Data Coverage */}
         <div className="bg-card border border-border rounded-2xl p-5">
           <h3 className="text-sm font-semibold text-foreground mb-4 flex items-center gap-2">
-            <Shield className="w-4 h-4 text-civic-green" /> Source Status
+            <Shield className="w-4 h-4 text-civic-green" /> Data Coverage
           </h3>
           <p className="text-xs text-muted-foreground mb-3">
-            Live freshness of each data pipeline. Status based on most recent record timestamp.
+            How much public data is available for this company right now.
           </p>
           {sourcesLoading ? (
-            <div className="space-y-2">{[1, 2, 3].map(i => <Skeleton key={i} className="h-8" />)}</div>
+            <div className="space-y-2">{[1, 2, 3].map(i => <Skeleton key={i} className="h-12" />)}</div>
           ) : !sources || sources.length === 0 ? (
             <EmptyState text="No data has been indexed here yet." />
           ) : (
-            <div className="space-y-2">
-              {sources.map((s) => (
-                <div key={s.name} className="flex items-center justify-between p-2.5 bg-muted/20 rounded-lg border border-border/30">
-                  <span className="text-sm text-foreground">{s.name}</span>
-                  <div className="flex items-center gap-2">
-                    <StatusDot status={s.status} />
-                    <span className={cn(
-                      "text-xs font-mono capitalize",
-                      s.status === "healthy" ? "text-civic-green" :
-                      s.status === "delayed" || s.status === "partial" ? "text-civic-yellow" :
-                      "text-destructive"
-                    )}>
-                      {s.status}
-                    </span>
-                  </div>
-                </div>
-              ))}
-            </div>
+            <>
+              <div className="space-y-2">
+                {sources.map((s) => {
+                  const level = mapStatusToCoverage(s.status);
+                  const meta = COVERAGE_META[level];
+                  const desc = SOURCE_DESCRIPTIONS[s.name]?.[level] ?? "";
+                  return (
+                    <div key={s.name} className="p-2.5 bg-muted/20 rounded-lg border border-border/30">
+                      <div className="flex items-center justify-between">
+                        <span className="text-sm text-foreground font-medium">{s.name}</span>
+                        <div className="flex items-center gap-2">
+                          <CoverageDot level={level} />
+                          <span className={cn("text-xs font-medium", meta.color)}>{meta.label}</span>
+                        </div>
+                      </div>
+                      {desc && <p className="text-[11px] text-muted-foreground mt-1 leading-relaxed">{desc}</p>}
+                    </div>
+                  );
+                })}
+              </div>
+              <p className="text-[10px] text-muted-foreground/70 mt-3 italic">
+                More data becomes available as additional sources are indexed.
+              </p>
+            </>
           )}
         </div>
 
