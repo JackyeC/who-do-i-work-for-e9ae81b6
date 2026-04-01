@@ -147,8 +147,8 @@ export default function EarlyAccess() {
                 { n: "100%", l: "Public Data" },
               ].map(({ n, l }) => (
                 <div key={l} className="text-center">
-                  <p className="text-2xl sm:text-3xl font-extrabold text-white tracking-tight" style={{ fontFamily: "'DM Mono', monospace" }}>{n}</p>
-                  <p className="text-xs uppercase tracking-[1.5px] text-white/35 font-medium mt-0.5">{l}</p>
+                  <p className="text-2xl sm:text-3xl font-extrabold text-foreground tracking-tight" style={{ fontFamily: "'DM Mono', monospace" }}>{n}</p>
+                  <p className="text-xs uppercase tracking-[1.5px] text-foreground/35 font-medium mt-0.5">{l}</p>
                 </div>
               ))}
             </div>
