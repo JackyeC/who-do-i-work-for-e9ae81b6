@@ -1,4 +1,5 @@
 import { useWorkNewsTicker } from "@/hooks/use-work-news";
+import { useNavigate } from "react-router-dom";
 import { AlertTriangle, Newspaper, Radio } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { motion } from "framer-motion";
