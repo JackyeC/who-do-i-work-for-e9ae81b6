@@ -8,7 +8,7 @@ interface PolicySignal {
   issue_category: string;
   signal_type: string;
   description: string;
-  confidence_score: number;
+  confidence_score: string;
   amount: number | null;
 }
 
