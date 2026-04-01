@@ -420,7 +420,7 @@ export function DashboardOverview({ onNavigate }: DashboardOverviewProps) {
           <BriefingCard className="h-full">
             <div className="flex items-center gap-2 mb-4">
               <AlertTriangle className="w-4 h-4 text-primary" />
-              <h3 className="text-sm font-bold text-foreground">What You Should Know</h3>
+              <h3 className="text-[16px] font-bold text-foreground">What You Should Know</h3>
             </div>
             <div className="space-y-3">
               {INTEL_BULLETS.map((b, i) => (
