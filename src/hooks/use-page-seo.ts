@@ -36,6 +36,7 @@ export function usePageSEO({ title, description, path, type = "website", image, 
     };
 
     setMeta("name", "description", desc);
+    setMeta("name", "robots", noIndex ? "noindex, nofollow" : "index, follow");
     setMeta("property", "og:title", fullTitle);
     setMeta("property", "og:description", desc);
     setMeta("property", "og:url", url);
