@@ -798,10 +798,10 @@ function buildPoliticalReceipts(doc: jsPDF, data: DossierPdfData): number {
       ...tableStyle(y),
       head: [["Topic", "Public Position", "Spending Reality", "Gap"]],
       body: data.publicStances.slice(0, 15).map(s => [
-        s.topic,
-        s.public_position.substring(0, 50),
-        s.spending_reality.substring(0, 50),
-        s.gap,
+        sanitizeText(s.topic),
+        truncateAtWord(s.public_position, 70),
+        truncateAtWord(s.spending_reality, 70),
+        sanitizeText(s.gap),
       ]),
       didParseCell: (d: any) => {
         if (d.column.index === 3 && d.cell.raw && d.cell.raw.toLowerCase() !== "aligned" && d.cell.raw.toLowerCase() !== "none") {
