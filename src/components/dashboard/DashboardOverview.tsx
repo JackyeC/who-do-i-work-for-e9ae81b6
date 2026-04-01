@@ -328,7 +328,7 @@ export function DashboardOverview({ onNavigate }: DashboardOverviewProps) {
         <BriefingCard>
           <div className="flex items-center justify-between mb-4">
             <div>
-              <h3 className="text-base font-extrabold text-foreground tracking-tight">
+              <h3 className="text-[16px] font-bold text-foreground tracking-tight">
                 We're Watching Your Back
               </h3>
               <p className="text-xs text-muted-foreground mt-0.5">
