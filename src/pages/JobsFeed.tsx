@@ -119,7 +119,7 @@ export default function JobsFeed() {
         {/* Header */}
         <div className="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-3">
           <div>
-            <h1 className="text-2xl font-bold text-foreground font-display">Jobs Feed</h1>
+            <h1 className="text-2xl font-bold text-foreground font-display">Places That Deserve You</h1>
             <p className="text-sm text-muted-foreground mt-0.5">Roles aligned with your values. Not just your skills.</p>
           </div>
           <Tabs value={tab} onValueChange={(v) => setTab(v as any)}>

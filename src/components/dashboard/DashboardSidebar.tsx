@@ -36,7 +36,7 @@ const navGroups = [
   {
     label: "My Search",
     items: [
-      { id: "jobs", label: "Jobs Feed", icon: Briefcase },
+      { id: "jobs", label: "Places That Deserve You", icon: Briefcase },
       { id: "app-tracker", label: "Tracker", icon: LayoutDashboard },
       { id: "apply-kit", label: "Apply Kit", icon: PenTool },
       { id: "mock-interview", label: "Mock Interview", icon: Mic },
