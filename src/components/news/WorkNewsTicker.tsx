@@ -21,6 +21,7 @@ const CATEGORY_LABELS: Record<string, string> = {
 };
 
 export function WorkNewsTicker({ className }: WorkNewsTickerProps) {
+  const navigate = useNavigate();
   const { data: articles } = useWorkNewsTicker();
 
   if (!articles?.length) return null;
