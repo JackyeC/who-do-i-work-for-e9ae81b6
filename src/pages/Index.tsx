@@ -21,7 +21,6 @@ const Index = forwardRef<HTMLDivElement>((_, ref) => {
     title: "Check Any Employer Before You Apply — Career Intelligence",
     description: "Look up any company and see what the public record says about political spending, labor violations, layoffs, and leadership. 30-second employer check powered by public data.",
     path: "/",
-    path: "/",
     jsonLd: {
       "@type": "WebApplication",
       name: "Who Do I Work For",
