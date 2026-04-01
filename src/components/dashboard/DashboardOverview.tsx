@@ -248,7 +248,7 @@ export function DashboardOverview({ onNavigate }: DashboardOverviewProps) {
       {/* ═══ QUICK EMPLOYER SEARCH ═══ */}
       <motion.div {...anim(0.05)}>
         <div className="rounded-2xl p-5 bg-card border border-border/30">
-          <h3 className="text-base font-bold text-foreground mb-1">
+          <h3 className="text-[16px] font-bold text-foreground mb-1">
             Audit any employer →
           </h3>
           <p className="text-xs text-muted-foreground mb-3">
