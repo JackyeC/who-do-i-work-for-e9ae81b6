@@ -373,8 +373,8 @@ export function DashboardOverview({ onNavigate }: DashboardOverviewProps) {
                         <span className="text-xs text-muted-foreground/50">{s.source}</span>
                       </div>
                     </div>
-                    <span className="text-xs font-semibold text-primary whitespace-nowrap mt-0.5 flex items-center gap-1 group-hover:gap-2 transition-all">
-                      View Full Audit <ArrowRight className="w-3 h-3" />
+                    <span className="text-xs font-semibold whitespace-nowrap mt-0.5 flex items-center gap-1 transition-all" style={{ color: "hsl(43, 96%, 56%)" }}>
+                      Read the full story <ArrowRight className="w-3 h-3" />
                     </span>
                   </div>
                 </Link>
