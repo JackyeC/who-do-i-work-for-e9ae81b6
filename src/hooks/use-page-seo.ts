@@ -13,6 +13,7 @@ interface PageSEOProps {
   image?: string;
   twitterCard?: "summary" | "summary_large_image";
   jsonLd?: Record<string, any>;
+  noIndex?: boolean;
 }
 
 export function usePageSEO({ title, description, path, type = "website", image, twitterCard = "summary_large_image", jsonLd }: PageSEOProps) {
