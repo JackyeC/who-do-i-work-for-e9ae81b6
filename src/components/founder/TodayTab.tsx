@@ -6,7 +6,7 @@ import { Badge } from "@/components/ui/badge";
 import { Skeleton } from "@/components/ui/skeleton";
 import {
   ClipboardList, Activity, Database, AlertCircle, Zap,
-  ExternalLink, StickyNote,
+  StickyNote, AlertOctagon, ChevronRight,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 
@@ -51,6 +51,26 @@ export function TodayTab() {
   const now = new Date();
   const todayStart = new Date(now.getFullYear(), now.getMonth(), now.getDate()).toISOString();
   const weekStart = new Date(now.getTime() - 7 * 86400000).toISOString();
+
+  // ─── Priority Items ───
+  const { data: priority, isLoading: priorityLoading } = useQuery({
+    queryKey: ["founder-today-priority"],
+    queryFn: async () => {
+      const [pendingReviews, missingClaims, brokenLinks] = await Promise.all([
+        supabase.from("pending_company_reviews").select("id", { count: "exact", head: true }).in("status", ["pending", "reviewing"]),
+        supabase.from("company_corporate_claims").select("id", { count: "exact", head: true }).is("claim_source_url", null),
+        supabase.from("companies").select("id", { count: "exact", head: true }).is("website_url", null).not("description", "is", null),
+      ]);
+      const items: { label: string; count: number; tab: string }[] = [];
+      const reviewCount = pendingReviews.count ?? 0;
+      const claimCount = missingClaims.count ?? 0;
+      const linkCount = brokenLinks.count ?? 0;
+      if (reviewCount > 0) items.push({ label: `${reviewCount} ${reviewCount === 1 ? "company needs" : "companies need"} review`, count: reviewCount, tab: "queue" });
+      if (claimCount > 0) items.push({ label: `${claimCount} ${claimCount === 1 ? "claim" : "claims"} missing sources`, count: claimCount, tab: "signals" });
+      if (linkCount > 0) items.push({ label: `${linkCount} broken ${linkCount === 1 ? "link" : "links"} detected`, count: linkCount, tab: "signals" });
+      return items.slice(0, 3);
+    },
+  });
 
   // ─── Needs Review ───
   const { data: reviewCounts, isLoading: reviewLoading } = useQuery({
@@ -138,7 +158,37 @@ export function TodayTab() {
   });
 
   return (
-    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+    <div className="space-y-4">
+      {/* Priority */}
+      {priorityLoading ? (
+        <Skeleton className="h-12 rounded-2xl" />
+      ) : priority && priority.length > 0 ? (
+        <div className="bg-destructive/5 border border-destructive/20 rounded-2xl p-4">
+          <h3 className="text-xs font-semibold text-destructive uppercase tracking-wider mb-2.5 flex items-center gap-1.5">
+            <AlertOctagon className="w-3.5 h-3.5" /> Priority
+          </h3>
+          <div className="space-y-1.5">
+            {priority.map((item) => (
+              <button
+                key={item.label}
+                onClick={() => navigate(`/founder?tab=${item.tab}`)}
+                className="flex items-center justify-between w-full text-left p-2 rounded-lg hover:bg-destructive/5 transition-colors group"
+              >
+                <span className="text-sm text-foreground">{item.label}</span>
+                <ChevronRight className="w-3.5 h-3.5 text-muted-foreground group-hover:text-destructive transition-colors" />
+              </button>
+            ))}
+          </div>
+        </div>
+      ) : !priorityLoading ? (
+        <div className="bg-civic-green/5 border border-civic-green/20 rounded-2xl px-4 py-3">
+          <p className="text-xs text-civic-green flex items-center gap-1.5">
+            ✓ Nothing urgent right now. All clear.
+          </p>
+        </div>
+      ) : null}
+
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
       {/* 1. Needs Review */}
       <TriageCard title="Needs Review" icon={ClipboardList} iconColor="text-civic-yellow">
         {reviewLoading ? (
@@ -198,6 +248,7 @@ export function TodayTab() {
           <StickyNote className="w-3.5 h-3.5" /> Add founder note
         </Button>
       </TriageCard>
+      </div>
     </div>
   );
 }
