@@ -679,13 +679,7 @@ export default function DossierCoachingGuide() {
           )}
 
           {/* ─── AUTH SPLIT: gated preview vs. full content ─── */}
-          <SignedOut>
-            <DossierGateOverlay companyName={data.name} />
-          </SignedOut>
-
-          <SignedIn>
-            <FullDossierContent data={data} />
-          </SignedIn>
+          <AuthGatedDossier data={data} />
             </>
           )}
         </div>
