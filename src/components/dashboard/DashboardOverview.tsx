@@ -241,6 +241,9 @@ export function DashboardOverview({ onNavigate }: DashboardOverviewProps) {
       {/* ═══ 1 — JACKYE'S MESSAGE ═══ */}
       <JackyeMessage firstName={firstName} />
 
+      {/* ═══ AFFIRMATION BAR ═══ */}
+      <AffirmationBar />
+
       {/* ═══ FOUNDING MEMBER BANNER ═══ */}
       <motion.div {...anim(0.03)}>
         <div
