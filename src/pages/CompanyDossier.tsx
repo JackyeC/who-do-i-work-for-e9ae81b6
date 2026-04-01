@@ -8,8 +8,8 @@ import { useQuery } from "@tanstack/react-query";
 import { usePageSEO } from "@/hooks/use-page-seo";
 import { getOGImageUrl } from "@/lib/social-share";
 import {
-  Building2, Loader2, Sparkles, Users, Heart, FileSearch,
-  BarChart3, Landmark, Eye, AlertTriangle, ChevronDown,
+  Building2, Loader2, Sparkles, Users, Heart, FileSearch, FileText,
+  BarChart3, Landmark, Eye, AlertTriangle, ChevronDown, ArrowRight,
   ShieldCheck, XCircle as XCircleIcon,
 } from "lucide-react";
 import { SourceLabel, type SourceTier } from "@/components/ui/source-label";
@@ -26,6 +26,7 @@ import { useEEOCByCompanyName } from "@/hooks/use-eeoc-cases";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
+import { EmployerReportDrawer, type EvidenceRecord } from "@/components/dossier/EmployerReportDrawer";
 
 // Deep-dive layer components (power-user expandable)
 import { ValuesSignalsLayer } from "@/components/dossier/ValuesSignalsLayer";
