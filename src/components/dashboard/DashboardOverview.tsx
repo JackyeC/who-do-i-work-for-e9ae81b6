@@ -74,7 +74,7 @@ const SIGNAL_CARDS = [
     slug: "google-alphabet",
     badge: "DOJ",
     badgeVariant: "destructive" as const,
-    summary: "Antitrust ruling — illegal monopoly on search ads, remedies pending breakup risk",
+    summary: "Found guilty of maintaining an illegal monopoly on search ads. Remedies pending — this could reshape the entire company.",
     amount: "Monopoly ruling",
     severity: "CRITICAL",
     severityVariant: "destructive" as const,
