@@ -105,7 +105,7 @@ export default function EarlyAccess() {
             <span className="logo-q">?</span>
           </span>
 
-          <div className="h-10 w-px bg-white/10" />
+          <div className="h-10 w-px bg-foreground/10" />
 
           <div className="text-left" style={{ fontFamily: "Inter, sans-serif" }}>
             <p className="logo-prefix leading-none tracking-tight" style={{ fontSize: 16, fontWeight: 300 }}>
