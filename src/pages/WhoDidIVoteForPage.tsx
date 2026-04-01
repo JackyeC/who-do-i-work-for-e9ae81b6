@@ -1,12 +1,11 @@
 /**
- * Who Did I Vote For? — Public-facing congressional lookup page
+ * Who Did I Vote For? — Live congressional lookup page
  *
- * Editorial dark-mode page that lets users search by ZIP/address
- * to see their representatives' voting records, behavioral alerts,
- * campaign funding, and signal confidence methodology.
+ * Searches by address using Census geocoder → legislators JSON → Congress.gov + FEC.
+ * No mock data. Real receipts only.
  */
 
-import { useState } from "react";
+import { useState, useCallback } from "react";
 import { Link } from "react-router-dom";
 import { motion, useInView } from "framer-motion";
 import { useRef } from "react";
@@ -15,74 +14,46 @@ import { usePageSEO } from "@/hooks/use-page-seo";
 import { useToast } from "@/hooks/use-toast";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { Search, Loader2, MapPin, ArrowRight } from "lucide-react";
+import { Search, Loader2, MapPin, ArrowRight, Users, DollarSign, FileText, AlertTriangle } from "lucide-react";
 import { RepProfileCard, type RepProfileData } from "@/components/civic/RepProfileCard";
-import { VoteCard, type VoteData } from "@/components/civic/VoteCard";
-import { AlertCard, type AlertData } from "@/components/civic/AlertCard";
 import { FundingOverview, type FundingItem } from "@/components/civic/FundingOverview";
 import { SignalConfidenceLegend } from "@/components/civic/SignalConfidenceLegend";
+import ReactMarkdown from "react-markdown";
+import { cn } from "@/lib/utils";
 
-// ─── Sample data (rendered before search to demo the format) ─── //
-const SAMPLE_REP: RepProfileData = {
-  name: "Rep. Marcus J. Whitfield",
-  party: "R",
-  state: "Texas",
-  district: "24",
-  committees: ["Ways & Means", "Energy & Commerce", "Small Business"],
-  lastUpdated: "March 24, 2026",
-  sourceName: "Congress.gov",
-};
+// ─── Types ─── //
+interface RepResult {
+  name: string;
+  bioguideId: string;
+  party: string;
+  title: string;
+  level: string;
+  state: string;
+  district?: string;
+  chamber: string;
+  url?: string;
+  photoUrl?: string | null;
+  committees: string[];
+  termsServed?: number;
+  corporateFunders: { companyName: string; amount: number; donationType: string }[];
+  totalCorporateFunding: number;
+  dataSources: string[];
+  confidence: string;
+  lastUpdated: string;
+}
 
-const SAMPLE_VOTES: VoteData[] = [
-  { billTitle: "Expanding Overtime Protections for Hourly Workers", vote: "no", outcome: "failed", date: "March 18, 2026", sourceName: "Congress.gov" },
-  { billTitle: "Federal Data Privacy and Consumer Protection Act", vote: "yes", outcome: "passed", date: "March 10, 2026", sourceName: "Congress.gov" },
-  { billTitle: "Lowering Prescription Drug Costs Act", vote: "no", outcome: "passed", date: "February 28, 2026", sourceName: "Congress.gov" },
-  { billTitle: "Small Business Tax Relief Extension", vote: "yes", outcome: "passed", date: "February 14, 2026", sourceName: "Congress.gov" },
-  { billTitle: "Infrastructure and Clean Energy Investment Act", vote: "no", outcome: "failed", date: "January 30, 2026", sourceName: "Congress.gov" },
-];
-
-const SAMPLE_ALERTS: AlertData[] = [
-  {
-    type: "pattern",
-    title: "Pattern Detected",
-    summary: "Voted against expanding worker protections in 4 of last 5 relevant votes",
-    context: "These votes relate to hourly worker pay and overtime protections",
-    receipts: [
-      { billId: "H.R. 4521", vote: "no", date: "March 2026" },
-      { billId: "H.R. 4102", vote: "no", date: "January 2026" },
-      { billId: "H.R. 3887", vote: "no", date: "December 2025" },
-      { billId: "H.R. 3654", vote: "no", date: "October 2025" },
-      { billId: "H.R. 3201", vote: "yes", date: "August 2025" },
-    ],
-    source: "Congress.gov",
-    confidence: "Multi-Source Signal",
-  },
-  {
-    type: "funding_alignment",
-    title: "Funding Alignment Signal",
-    summary: "Top funding industry (Pharmaceuticals) aligns with recent voting behavior",
-    context: "Multiple votes align with priorities of this industry",
-    receipts: [
-      { billId: "H.R. 4380", vote: "no", date: "Feb 2026", note: "Feb 2026 — Drug pricing cap" },
-      { billId: "H.R. 4015", vote: "no", date: "Dec 2025", note: "Dec 2025 — Import reform" },
-      { billId: "H.R. 3790", vote: "yes", date: "Nov 2025", note: "Nov 2025 — Patent extension" },
-    ],
-    source: "OpenFEC + Congress.gov",
-    confidence: "Multi-Source Signal",
-  },
-];
-
-const SAMPLE_FUNDING: FundingItem[] = [
-  { industry: "Pharmaceuticals / Health Products", amount: 482500 },
-  { industry: "Oil & Gas", amount: 347200 },
-  { industry: "Real Estate", amount: 218900 },
-];
+interface VotingSummary {
+  summary: string;
+  data_source: string;
+  policy_areas: string[];
+  loading: boolean;
+  error?: string;
+}
 
 // ─── Reveal wrapper ─── //
 function Reveal({ children, delay = 0, className }: { children: React.ReactNode; delay?: number; className?: string }) {
   const ref = useRef(null);
   const inView = useInView(ref, { once: true, margin: "0px 0px -40px 0px" });
-
   return (
     <motion.div
       ref={ref}
@@ -96,17 +67,114 @@ function Reveal({ children, delay = 0, className }: { children: React.ReactNode;
   );
 }
 
-// ─── Section header ─── //
-function SectionHeader({ label, title }: { label: string; title: string }) {
+// ─── Rep Result Card ─── //
+function RepResultCard({ rep, votingSummary, onLoadSummary }: {
+  rep: RepResult;
+  votingSummary?: VotingSummary;
+  onLoadSummary: () => void;
+}) {
+  const repProfile: RepProfileData = {
+    name: rep.name,
+    party: rep.party,
+    state: rep.state,
+    district: rep.district,
+    committees: rep.committees,
+    photoUrl: rep.photoUrl,
+    lastUpdated: new Date(rep.lastUpdated).toLocaleDateString("en-US", { month: "long", day: "numeric", year: "numeric" }),
+    sourceName: rep.dataSources.join(" + "),
+  };
+
+  const funders: FundingItem[] = rep.corporateFunders.slice(0, 5).map(f => ({
+    industry: f.companyName,
+    amount: f.amount,
+  }));
+
   return (
-    <Reveal>
-      <p className="font-mono text-xs font-medium tracking-[0.12em] uppercase text-primary mb-3">
-        {label}
-      </p>
-      <h2 className="text-2xl sm:text-3xl font-bold text-foreground mb-8 tracking-tight">
-        {title}
-      </h2>
-    </Reveal>
+    <div className="space-y-4">
+      <RepProfileCard rep={repProfile} />
+
+      {/* Confidence badge */}
+      <div className="flex items-center gap-2 flex-wrap">
+        <Badge variant="outline" className={cn(
+          "text-xs font-mono",
+          rep.confidence === "high" ? "border-[hsl(var(--civic-green))]/30 text-[hsl(var(--civic-green))]" :
+          rep.confidence === "medium" ? "border-[hsl(var(--civic-blue))]/30 text-[hsl(var(--civic-blue))]" :
+          "border-border text-muted-foreground"
+        )}>
+          {rep.confidence === "high" ? "●" : rep.confidence === "medium" ? "●" : "○"} {rep.confidence} confidence
+        </Badge>
+        {rep.dataSources.map(src => (
+          <Badge key={src} variant="secondary" className="text-[0.625rem] font-mono">
+            {src}
+          </Badge>
+        ))}
+      </div>
+
+      {/* Top Funders */}
+      {funders.length > 0 && (
+        <div className="bg-card border border-border rounded-xl p-5">
+          <div className="flex items-center gap-2 mb-4">
+            <DollarSign className="w-4 h-4 text-primary" />
+            <h4 className="font-bold text-sm text-foreground">Top Campaign Funders</h4>
+            <span className="text-xs text-muted-foreground ml-auto font-mono">
+              ${rep.totalCorporateFunding.toLocaleString()} total
+            </span>
+          </div>
+          <FundingOverview
+            items={funders}
+            source="Source: OpenFEC · 2024 Election Cycle"
+          />
+        </div>
+      )}
+
+      {/* Voting Summary */}
+      <div className="bg-card border border-border rounded-xl p-5">
+        <div className="flex items-center gap-2 mb-3">
+          <FileText className="w-4 h-4 text-primary" />
+          <h4 className="font-bold text-sm text-foreground">Voting Record Summary</h4>
+        </div>
+
+        {!votingSummary ? (
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={onLoadSummary}
+            className="font-mono text-xs"
+          >
+            Load Voting Record
+          </Button>
+        ) : votingSummary.loading ? (
+          <div className="flex items-center gap-2 text-sm text-muted-foreground py-4">
+            <Loader2 className="w-4 h-4 animate-spin" />
+            Analyzing voting records from Congress.gov...
+          </div>
+        ) : votingSummary.error ? (
+          <p className="text-sm text-destructive">{votingSummary.error}</p>
+        ) : (
+          <div className="prose prose-sm dark:prose-invert max-w-none text-sm text-muted-foreground leading-relaxed">
+            <ReactMarkdown>{votingSummary.summary}</ReactMarkdown>
+            <div className="flex items-center gap-2 mt-3 pt-3 border-t border-border not-prose">
+              <Badge variant="secondary" className="text-[0.625rem] font-mono">
+                {votingSummary.data_source === "congress.gov" ? "Congress.gov verified" : "AI inference"}
+              </Badge>
+              {votingSummary.policy_areas.slice(0, 3).map(area => (
+                <Badge key={area} variant="outline" className="text-[0.625rem]">{area}</Badge>
+              ))}
+            </div>
+          </div>
+        )}
+      </div>
+
+      {/* Link to full profile */}
+      <div className="text-center">
+        <Link
+          to={`/representative/${encodeURIComponent(rep.name)}`}
+          className="inline-flex items-center gap-2 text-sm text-primary hover:underline font-medium"
+        >
+          View full profile & funding details <ArrowRight className="w-3.5 h-3.5" />
+        </Link>
+      </div>
+    </div>
   );
 }
 
@@ -121,64 +189,125 @@ export default function WhoDidIVoteFor() {
   const { toast } = useToast();
   const [query, setQuery] = useState("");
   const [isSearching, setIsSearching] = useState(false);
-  const [hasSearched, setHasSearched] = useState(false);
-  const [liveRep, setLiveRep] = useState<RepProfileData | null>(null);
+  const [results, setResults] = useState<RepResult[] | null>(null);
+  const [searchMeta, setSearchMeta] = useState<{ state: string; district: string; address: string } | null>(null);
+  const [votingSummaries, setVotingSummaries] = useState<Record<string, VotingSummary>>({});
 
-  const handleSearch = async (e: React.FormEvent) => {
+  const handleSearch = useCallback(async (e: React.FormEvent) => {
     e.preventDefault();
     if (!query.trim()) return;
 
     setIsSearching(true);
+    setResults(null);
+    setSearchMeta(null);
+    setVotingSummaries({});
+
     try {
       const { data, error } = await supabase.functions.invoke("voter-lookup", {
         body: { address: query.trim() },
       });
       if (error) throw error;
 
-      if (data?.success && data.data?.representatives?.length > 0) {
-        const rep = data.data.representatives[0];
-        setLiveRep({
-          name: rep.name,
-          party: rep.party,
-          state: rep.state || data.data.state,
-          district: rep.district || data.data.district,
-          committees: rep.committees,
-          photoUrl: rep.photoUrl,
-          lastUpdated: new Date().toLocaleDateString("en-US", { month: "long", day: "numeric", year: "numeric" }),
-          sourceName: "Congress.gov",
+      if (!data?.success) {
+        toast({
+          title: "Lookup failed",
+          description: data?.error || "Could not find representatives. Try adding city and state (e.g., '5000 Lake Highlands Dr, Dallas, TX 75214').",
+          variant: "destructive",
         });
-        setHasSearched(true);
-
-        // Scroll to results
-        setTimeout(() => {
-          document.getElementById("results")?.scrollIntoView({ behavior: "smooth" });
-        }, 100);
-      } else {
-        toast({ title: "No results found", description: "Try a more specific US address or ZIP code.", variant: "destructive" });
+        return;
       }
+
+      const reps = data.data?.representatives || [];
+      if (reps.length === 0) {
+        toast({
+          title: "No representatives found",
+          description: "Try a more specific US address with city, state, and ZIP code.",
+          variant: "destructive",
+        });
+        return;
+      }
+
+      setResults(reps);
+      setSearchMeta({
+        state: data.data.state,
+        district: data.data.district,
+        address: data.data.searchedAddress,
+      });
+
+      setTimeout(() => {
+        document.getElementById("results")?.scrollIntoView({ behavior: "smooth" });
+      }, 200);
     } catch (err: any) {
-      toast({ title: "Lookup failed", description: err.message || "Could not complete the search.", variant: "destructive" });
+      toast({
+        title: "Lookup failed",
+        description: err.message || "Could not complete the search.",
+        variant: "destructive",
+      });
     } finally {
       setIsSearching(false);
     }
-  };
+  }, [query, toast]);
 
-  // Use live data or sample
-  const displayRep = liveRep || SAMPLE_REP;
+  const loadVotingSummary = useCallback(async (rep: RepResult) => {
+    const key = rep.bioguideId || rep.name;
+    setVotingSummaries(prev => ({
+      ...prev,
+      [key]: { summary: "", data_source: "", policy_areas: [], loading: true },
+    }));
+
+    try {
+      const { data, error } = await supabase.functions.invoke("candidate-voting-summary", {
+        body: {
+          candidate_name: rep.name,
+          party: rep.party === "D" ? "Democrat" : rep.party === "R" ? "Republican" : "Independent",
+          state: rep.state,
+          district: rep.district,
+        },
+      });
+
+      if (error) throw error;
+
+      setVotingSummaries(prev => ({
+        ...prev,
+        [key]: {
+          summary: data.summary || "No voting data available.",
+          data_source: data.data_source || "ai_inference",
+          policy_areas: data.policy_areas || [],
+          loading: false,
+        },
+      }));
+    } catch (err: any) {
+      setVotingSummaries(prev => ({
+        ...prev,
+        [key]: {
+          summary: "",
+          data_source: "",
+          policy_areas: [],
+          loading: false,
+          error: err.message || "Failed to load voting record.",
+        },
+      }));
+    }
+  }, []);
 
   return (
     <div className="bg-background min-h-screen">
       {/* ═══ HERO ═══ */}
-      <section className="min-h-[85vh] flex items-center justify-center text-center px-6 py-24 sm:py-32">
+      <section className="min-h-[70vh] flex items-center justify-center text-center px-6 py-24 sm:py-32">
         <div className="max-w-2xl mx-auto">
           <Reveal>
-            <h1 className="text-[clamp(2.5rem,6vw,4.5rem)] font-extrabold text-foreground leading-[1.08] tracking-tight mb-6">
-              Stop applying.<br />Start aligning.
+            <p className="font-mono text-xs font-medium tracking-[0.15em] uppercase text-primary mb-4">
+              Congressional Intelligence
+            </p>
+            <h1 className="text-[clamp(2.25rem,5.5vw,4rem)] font-extrabold text-foreground leading-[1.08] tracking-tight mb-6">
+              You know who you voted for.<br />
+              <span className="text-primary">Do you know what they've done?</span>
             </h1>
           </Reveal>
           <Reveal delay={0.1}>
-            <p className="text-lg sm:text-xl text-muted-foreground max-w-lg mx-auto mb-12 leading-relaxed">
-              See what companies and decision-makers actually do — not just what they say.
+            <p className="text-base sm:text-lg text-muted-foreground max-w-lg mx-auto mb-10 leading-relaxed">
+              Enter your address. We'll show you your representatives, their voting records,
+              campaign funders, and behavioral patterns — sourced from Congress.gov and OpenFEC.
             </p>
           </Reveal>
           <Reveal delay={0.2}>
@@ -186,12 +315,15 @@ export default function WhoDidIVoteFor() {
               onSubmit={handleSearch}
               className="flex items-center max-w-lg mx-auto bg-card border border-border rounded-xl overflow-hidden focus-within:border-primary focus-within:ring-2 focus-within:ring-primary/20 transition-all"
             >
+              <div className="flex items-center pl-4">
+                <MapPin className="w-4 h-4 text-muted-foreground shrink-0" />
+              </div>
               <input
                 type="text"
                 value={query}
                 onChange={(e) => setQuery(e.target.value)}
-                placeholder="Enter your ZIP code or address"
-                className="flex-1 bg-transparent border-none outline-none px-5 py-4 text-foreground placeholder:text-muted-foreground text-base"
+                placeholder="e.g. 5000 Lake Highlands Dr, Dallas, TX 75214"
+                className="flex-1 bg-transparent border-none outline-none px-3 py-4 text-foreground placeholder:text-muted-foreground text-base"
               />
               <button
                 type="submit"
@@ -205,86 +337,80 @@ export default function WhoDidIVoteFor() {
                 )}
               </button>
             </form>
+            <p className="text-xs text-muted-foreground/60 mt-3 font-mono">
+              Include city, state, and ZIP for best results · Powered by US Census Bureau geocoder
+            </p>
           </Reveal>
         </div>
       </section>
 
-      {/* ═══ REP RESULTS ═══ */}
-      <section id="results" className="py-16 sm:py-20">
-        <div className="max-w-[840px] mx-auto px-6">
-          <SectionHeader label="Representative" title="Your Representative" />
-
-          <Reveal delay={0.1}>
-            {!hasSearched && (
-              <div className="mb-3 flex justify-center">
-                <Badge variant="outline" className="text-xs bg-muted/50 text-muted-foreground">
-                  Preview — Enter your address above to see real data
-                </Badge>
+      {/* ═══ RESULTS ═══ */}
+      {results && results.length > 0 && (
+        <section id="results" className="py-16 sm:py-20">
+          <div className="max-w-[840px] mx-auto px-6">
+            {/* Results header */}
+            <Reveal>
+              <div className="flex items-center gap-3 mb-2">
+                <Users className="w-5 h-5 text-primary" />
+                <p className="font-mono text-xs font-medium tracking-[0.12em] uppercase text-primary">
+                  Your Representatives
+                </p>
               </div>
-            )}
-            <RepProfileCard rep={displayRep} />
-          </Reveal>
+              <h2 className="text-2xl sm:text-3xl font-bold text-foreground mb-2 tracking-tight">
+                {searchMeta?.state}{searchMeta?.district ? ` — District ${searchMeta.district}` : ""}
+              </h2>
+              <p className="text-sm text-muted-foreground mb-8">
+                Showing {results.length} representative{results.length !== 1 ? "s" : ""} for{" "}
+                <span className="text-foreground font-medium">{searchMeta?.address}</span>
+              </p>
+            </Reveal>
 
-          {hasSearched && liveRep && (
-            <Reveal delay={0.2}>
-              <div className="mt-4 text-center">
-                <Link
-                  to={`/representative/${encodeURIComponent(liveRep.name)}`}
-                  className="inline-flex items-center gap-2 text-sm text-primary hover:underline font-medium"
-                >
-                  View full funding profile <ArrowRight className="w-3.5 h-3.5" />
-                </Link>
+            {/* Rep cards */}
+            <div className="space-y-10">
+              {results.map((rep, i) => (
+                <Reveal key={rep.bioguideId || rep.name} delay={i * 0.1}>
+                  <RepResultCard
+                    rep={rep}
+                    votingSummary={votingSummaries[rep.bioguideId || rep.name]}
+                    onLoadSummary={() => loadVotingSummary(rep)}
+                  />
+                </Reveal>
+              ))}
+            </div>
+          </div>
+        </section>
+      )}
+
+      {/* ═══ EMPTY STATE (before search) ═══ */}
+      {!results && !isSearching && (
+        <section className="py-16 sm:py-20">
+          <div className="max-w-[840px] mx-auto px-6">
+            <Reveal>
+              <div className="text-center py-12 px-6 border border-dashed border-border rounded-xl">
+                <Search className="w-8 h-8 text-muted-foreground/40 mx-auto mb-4" />
+                <h3 className="font-bold text-foreground mb-2">Enter your address above</h3>
+                <p className="text-sm text-muted-foreground max-w-md mx-auto">
+                  We'll use the US Census Bureau to identify your congressional district,
+                  then pull your representatives' voting records, committee assignments,
+                  and campaign funding data from Congress.gov and OpenFEC.
+                </p>
               </div>
             </Reveal>
-          )}
-        </div>
-      </section>
-
-      {/* ═══ RECENT VOTES ═══ */}
-      <section className="py-16 sm:py-20">
-        <div className="max-w-[840px] mx-auto px-6">
-          <SectionHeader label="Voting Record" title="Recent Votes" />
-          <div className="space-y-3">
-            {SAMPLE_VOTES.map((vote, i) => (
-              <Reveal key={i} delay={i * 0.1}>
-                <VoteCard vote={vote} />
-              </Reveal>
-            ))}
           </div>
-        </div>
-      </section>
-
-      {/* ═══ BEHAVIORAL ALERTS ═══ */}
-      <section className="py-16 sm:py-20">
-        <div className="max-w-[840px] mx-auto px-6">
-          <SectionHeader label="Behavioral Signals" title="Alerts" />
-          <div className="space-y-5">
-            {SAMPLE_ALERTS.map((alert, i) => (
-              <Reveal key={i} delay={i * 0.1}>
-                <AlertCard alert={alert} />
-              </Reveal>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* ═══ FUNDING OVERVIEW ═══ */}
-      <section className="py-16 sm:py-20">
-        <div className="max-w-[840px] mx-auto px-6">
-          <SectionHeader label="Campaign Finance" title="Funding Overview" />
-          <Reveal delay={0.1}>
-            <FundingOverview
-              items={SAMPLE_FUNDING}
-              source="Source: OpenFEC · 2025–2026 Election Cycle"
-            />
-          </Reveal>
-        </div>
-      </section>
+        </section>
+      )}
 
       {/* ═══ SIGNAL CONFIDENCE ═══ */}
       <section className="py-16 sm:py-20">
         <div className="max-w-[840px] mx-auto px-6">
-          <SectionHeader label="Methodology" title="Signal Confidence" />
+          <Reveal>
+            <p className="font-mono text-xs font-medium tracking-[0.12em] uppercase text-primary mb-3">
+              Methodology
+            </p>
+            <h2 className="text-2xl sm:text-3xl font-bold text-foreground mb-8 tracking-tight">
+              Signal Confidence
+            </h2>
+          </Reveal>
           <Reveal delay={0.1}>
             <SignalConfidenceLegend />
           </Reveal>
@@ -310,7 +436,7 @@ export default function WhoDidIVoteFor() {
               className="rounded-full px-8 py-6 text-base font-bold"
               onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
             >
-              Check Another Representative
+              Check Your Representatives
             </Button>
             <Button
               variant="outline"
@@ -318,7 +444,7 @@ export default function WhoDidIVoteFor() {
               className="rounded-full px-8 py-6 text-base font-bold"
               asChild
             >
-              <Link to="/offer-clarity">Analyze Your Offer</Link>
+              <Link to="/browse">Check Your Employer</Link>
             </Button>
           </div>
         </Reveal>
