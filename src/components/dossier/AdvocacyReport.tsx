@@ -294,7 +294,7 @@ export function AdvocacyReport({ company, executives = [], contracts = [], issue
               <p className="font-mono text-[10px] text-primary tracking-[0.3em] uppercase mb-3">Active Signals</p>
               <div className="space-y-2">
                 {Object.entries(signalsByCategory).slice(0, 6).map(([cat, signals]) => {
-                  const firstSourceUrl = signals.find(s => (s as any).source_url)?. (s as any).source_url ?? (signals[0] as any).source_url;
+                  const firstSourceUrl = (signals.find((sig: any) => sig.source_url) as any)?.source_url ?? (signals[0] as any).source_url;
                   return (
                     <div key={cat} className={cn(
                       "flex items-start gap-3 p-3 border-l-2",
