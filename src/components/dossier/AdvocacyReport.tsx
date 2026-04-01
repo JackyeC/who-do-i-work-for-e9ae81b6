@@ -235,72 +235,86 @@ export function AdvocacyReport({ company, executives = [], contracts = [], issue
       <section>
         <SectionDivider number={3} icon={DollarSign} title="Spending Record" subtitle="Where the money goes, based on public filings" />
         <div className="pl-11">
-          <div className="overflow-x-auto">
-            <table className="w-full text-sm">
-              <thead>
-                <tr className="border-b border-border/40">
-                  <th className="text-left py-2 pr-4 font-mono text-[10px] text-muted-foreground uppercase tracking-wider">Metric</th>
-                  <th className="text-left py-2 pr-4 font-mono text-[10px] text-muted-foreground uppercase tracking-wider">Amount</th>
-                  <th className="text-left py-2 font-mono text-[10px] text-muted-foreground uppercase tracking-wider">What It Tends to Mean</th>
-                </tr>
-              </thead>
-              <tbody className="divide-y divide-border/20">
-                <tr>
-                  <td className="py-3 pr-4 font-medium text-foreground">Lobbying</td>
-                  <td className="py-3 pr-4 font-mono font-bold text-foreground">{fmtMoney(company.lobbying_spend)}</td>
-                  <td className="py-3 text-muted-foreground text-xs leading-snug">
-                    {(company.lobbying_spend ?? 0) > 1_000_000 ? "Significant lobbying activity. This company is actively engaged in policy." : (company.lobbying_spend ?? 0) > 0 ? "Some lobbying activity on record." : "No lobbying spend detected."}
-                  </td>
-                </tr>
-                <tr>
-                  <td className="py-3 pr-4 font-medium text-foreground">PAC Spending</td>
-                  <td className="py-3 pr-4 font-mono font-bold text-foreground">{fmtMoney(company.total_pac_spending)}</td>
-                  <td className="py-3 text-muted-foreground text-xs leading-snug">
-                    {(company.total_pac_spending ?? 0) > 500_000 ? "Consistent PAC activity. Worth reviewing where contributions are directed." : (company.total_pac_spending ?? 0) > 0 ? "Some political giving on record." : "No PAC spending detected."}
-                  </td>
-                </tr>
-                <tr>
-                  <td className="py-3 pr-4 font-medium text-foreground">Gov Contracts</td>
-                  <td className="py-3 pr-4 font-mono font-bold text-foreground">{fmtMoney(totalContractValue)}</td>
-                  <td className="py-3 text-muted-foreground text-xs leading-snug">
-                    {totalContractValue > 0 ? `${contracts.length} contract${contracts.length > 1 ? "s" : ""}${controversialContracts.length > 0 ? ` — ${controversialContracts.length} flagged.` : "."}` : "No federal contracts found."}
-                  </td>
-                </tr>
-                {(company.subsidies_received ?? 0) > 0 && (
-                  <tr>
-                    <td className="py-3 pr-4 font-medium text-foreground">Subsidies</td>
-                    <td className="py-3 pr-4 font-mono font-bold text-foreground">{fmtMoney(company.subsidies_received)}</td>
-                    <td className="py-3 text-muted-foreground text-xs leading-snug">Public funds received. Consider alongside workforce changes.</td>
+          {/* Schema-driven spending table */}
+          {report && (
+            <div className="overflow-x-auto">
+              <table className="w-full text-sm">
+                <thead>
+                  <tr className="border-b border-border/40">
+                    <th className="text-left py-2 pr-4 font-mono text-[10px] text-muted-foreground uppercase tracking-wider">Metric</th>
+                    <th className="text-left py-2 pr-4 font-mono text-[10px] text-muted-foreground uppercase tracking-wider">Amount</th>
+                    <th className="text-left py-2 pr-4 font-mono text-[10px] text-muted-foreground uppercase tracking-wider">Trend</th>
+                    <th className="text-left py-2 font-mono text-[10px] text-muted-foreground uppercase tracking-wider"></th>
                   </tr>
-                )}
-                {company.effective_tax_rate && (
-                  <tr>
-                    <td className="py-3 pr-4 font-medium text-foreground">Eff. Tax Rate</td>
-                    <td className="py-3 pr-4 font-mono font-bold text-foreground">{company.effective_tax_rate}</td>
-                    <td className="py-3 text-muted-foreground text-xs leading-snug">Compare against statutory rate to assess tax strategy.</td>
-                  </tr>
-                )}
-              </tbody>
-            </table>
-          </div>
+                </thead>
+                <tbody className="divide-y divide-border/20">
+                  {report.spending_record.map((m) => {
+                    const TrendIcon = m.trend === "up" ? TrendingUp : m.trend === "down" ? TrendingDown : Minus;
+                    const trendColor = m.trend === "up" ? "text-destructive" : m.trend === "down" ? "text-civic-green" : "text-muted-foreground";
+                    return (
+                      <tr
+                        key={m.label}
+                        className="cursor-pointer hover:bg-muted/10 transition-colors"
+                        onClick={() => setSelectedMetric(m)}
+                      >
+                        <td className="py-3 pr-4 font-medium text-foreground">{m.label}</td>
+                        <td className="py-3 pr-4 font-mono font-bold text-foreground">{m.amount}</td>
+                        <td className="py-3 pr-4">
+                          <TrendIcon className={cn("w-4 h-4", trendColor)} />
+                        </td>
+                        <td className="py-3">
+                          <Button
+                            variant="ghost"
+                            size="sm"
+                            className="h-7 text-xs gap-1 text-primary"
+                            onClick={(e) => { e.stopPropagation(); setSelectedMetric(m); }}
+                          >
+                            Details <ArrowRight className="w-3 h-3" />
+                          </Button>
+                        </td>
+                      </tr>
+                    );
+                  })}
+                  {company.effective_tax_rate && (
+                    <tr>
+                      <td className="py-3 pr-4 font-medium text-foreground">Eff. Tax Rate</td>
+                      <td className="py-3 pr-4 font-mono font-bold text-foreground">{company.effective_tax_rate}</td>
+                      <td className="py-3 pr-4"><Minus className="w-4 h-4 text-muted-foreground" /></td>
+                      <td className="py-3"></td>
+                    </tr>
+                  )}
+                </tbody>
+              </table>
+            </div>
+          )}
 
-          {/* Active signals by category */}
+          {/* Active signals by category with View Receipt buttons */}
           {Object.keys(signalsByCategory).length > 0 && (
             <div className="mt-5 pt-5 border-t border-border/30">
               <p className="font-mono text-[10px] text-primary tracking-[0.3em] uppercase mb-3">Active Signals</p>
               <div className="space-y-2">
-                {Object.entries(signalsByCategory).slice(0, 6).map(([cat, signals]) => (
-                  <div key={cat} className={cn(
-                    "flex items-start gap-3 p-3 border-l-2",
-                    signals.length > 3 ? "border-destructive/50 bg-destructive/5" : "border-civic-yellow/50 bg-civic-yellow/5"
-                  )}>
-                    <AlertTriangle className={cn("w-4 h-4 mt-0.5 shrink-0", signals.length > 3 ? "text-destructive" : "text-civic-yellow")} />
-                    <div>
-                      <p className="text-sm font-semibold text-foreground">{cat}</p>
-                      <p className="text-xs text-muted-foreground">{signals.length} signal{signals.length > 1 ? "s" : ""} — {signals[0].description?.slice(0, 120)}</p>
+                {Object.entries(signalsByCategory).slice(0, 6).map(([cat, signals]) => {
+                  const firstSourceUrl = signals.find(s => (s as any).source_url)?. (s as any).source_url ?? (signals[0] as any).source_url;
+                  return (
+                    <div key={cat} className={cn(
+                      "flex items-start gap-3 p-3 border-l-2",
+                      signals.length > 3 ? "border-destructive/50 bg-destructive/5" : "border-civic-yellow/50 bg-civic-yellow/5"
+                    )}>
+                      <AlertTriangle className={cn("w-4 h-4 mt-0.5 shrink-0", signals.length > 3 ? "text-destructive" : "text-civic-yellow")} />
+                      <div className="flex-1 min-w-0">
+                        <p className="text-sm font-semibold text-foreground">{cat}</p>
+                        <p className="text-xs text-muted-foreground">{signals.length} signal{signals.length > 1 ? "s" : ""} — {signals[0].description?.slice(0, 120)}</p>
+                      </div>
+                      {firstSourceUrl && (
+                        <a href={firstSourceUrl} target="_blank" rel="noopener noreferrer" className="shrink-0">
+                          <Button variant="ghost" size="sm" className="h-7 text-xs gap-1 text-primary">
+                            <ExternalLink className="w-3 h-3" /> View Receipt
+                          </Button>
+                        </a>
+                      )}
                     </div>
-                  </div>
-                ))}
+                  );
+                })}
               </div>
             </div>
           )}
