@@ -337,6 +337,17 @@ export default function Newsletter() {
   const { user } = useAuth();
   const { containerRef, getToken, resetToken } = useTurnstile();
   const { data: articles = [], isLoading } = useWorkNews(60);
+  const location = useLocation();
+
+  // Scroll to story anchor on hash navigation
+  useEffect(() => {
+    if (location.hash && !isLoading) {
+      const id = location.hash.replace("#", "");
+      setTimeout(() => {
+        document.getElementById(id)?.scrollIntoView({ behavior: "smooth", block: "start" });
+      }, 300);
+    }
+  }, [location.hash, isLoading]);
 
   usePageSEO({
     title: "The Receipts — Live Work Intelligence Feed | Who Do I Work For?",
