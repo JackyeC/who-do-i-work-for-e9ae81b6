@@ -1,42 +1,47 @@
 import { useState, useEffect } from "react";
-
-let useClerkAuthSafe: () => any;
-try {
-  // Only import if ClerkProvider is available
-  const clerk = require("@clerk/clerk-react");
-  useClerkAuthSafe = clerk.useAuth;
-} catch {
-  useClerkAuthSafe = () => ({ isLoaded: false });
-}
+import { useAuth as useClerkAuth } from "@clerk/clerk-react";
 
 const FALLBACK_TIMEOUT_MS = 3000;
 
+const EMPTY_AUTH = {
+  isLoaded: true as const,
+  isSignedIn: false as const,
+  userId: null,
+  sessionId: null,
+  orgId: null,
+  orgRole: null,
+  orgSlug: null,
+};
+
 /**
  * Wraps Clerk's useAuth with a 3-second fallback so the UI renders
- * even when Clerk fails to initialize (e.g. preview environments).
+ * even when Clerk fails to initialize (e.g. preview environments
+ * where ClerkProvider is not mounted).
  */
 export function useClerkWithFallback() {
   const [timedOut, setTimedOut] = useState(false);
+  const [noProvider, setNoProvider] = useState(false);
 
-  // Detect if we're outside ClerkProvider
-  let clerkAuth: any;
-  let hasProvider = true;
+  // We must call hooks unconditionally, so we always call useClerkAuth
+  // but catch the error it throws when ClerkProvider is absent.
+  let clerkAuth: any = EMPTY_AUTH;
   try {
-    clerkAuth = useClerkAuthSafe();
+    clerkAuth = useClerkAuth();
   } catch {
-    hasProvider = false;
-    clerkAuth = { isLoaded: false, isSignedIn: false, userId: null };
+    // Will be caught on first render; set flag via effect to avoid
+    // setState-during-render warnings.
+    if (!noProvider) {
+      // Use a microtask to set state outside render
+      Promise.resolve().then(() => setNoProvider(true));
+    }
+    return { ...EMPTY_AUTH, isFallback: true };
   }
 
   useEffect(() => {
-    if (!hasProvider || clerkAuth.isLoaded) return;
+    if (clerkAuth.isLoaded) return;
     const id = setTimeout(() => setTimedOut(true), FALLBACK_TIMEOUT_MS);
     return () => clearTimeout(id);
-  }, [hasProvider, clerkAuth.isLoaded]);
-
-  if (!hasProvider) {
-    return { ...clerkAuth, isLoaded: true as const, isFallback: true };
-  }
+  }, [clerkAuth.isLoaded]);
 
   if (clerkAuth.isLoaded) return { ...clerkAuth, isFallback: false };
 
