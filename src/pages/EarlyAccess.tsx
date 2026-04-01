@@ -189,7 +189,7 @@ export default function EarlyAccess() {
               </button>
             </form>
 
-            <p className="mt-4 text-xs text-white/20 text-center">
+            <p className="mt-4 text-xs text-foreground/20 text-center">
               No spam. Access notification only. Built by Jackye Clayton.
             </p>
           </>
