@@ -26,7 +26,7 @@ const SIGNAL_CARDS = [
     slug: "amazon",
     badge: "OSHA",
     badgeVariant: "destructive" as const,
-    summary: "6 OSHA citations across 4 fulfillment centers — ergonomic & rate-related injuries",
+    summary: "We found 6 OSHA citations across 4 fulfillment centers — ergonomic injuries and heat exposure. If you're interviewing here, ask about warehouse safety culture.",
     amount: "$60K+ penalties",
     severity: "HIGH",
     severityVariant: "destructive" as const,
