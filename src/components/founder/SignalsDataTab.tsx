@@ -8,15 +8,56 @@ import {
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 
-function StatusDot({ status }: { status: string }) {
-  const colors: Record<string, string> = {
-    healthy: "bg-civic-green",
-    delayed: "bg-civic-yellow",
-    partial: "bg-civic-yellow",
-    offline: "bg-destructive",
-    unknown: "bg-muted-foreground",
-  };
-  return <span className={cn("w-2 h-2 rounded-full inline-block", colors[status] || colors.unknown)} />;
+/* ─── Coverage level mapping ─── */
+type CoverageLevel = "strong" | "limited" | "none";
+
+function mapStatusToCoverage(status: string): CoverageLevel {
+  if (status === "healthy") return "strong";
+  if (status === "delayed" || status === "partial") return "limited";
+  return "none";
+}
+
+const COVERAGE_META: Record<CoverageLevel, { label: string; color: string; dot: string }> = {
+  strong:  { label: "Strong Coverage",  color: "text-civic-green",        dot: "bg-civic-green" },
+  limited: { label: "Limited Coverage", color: "text-civic-yellow",       dot: "bg-civic-yellow" },
+  none:    { label: "No Recent Data",   color: "text-muted-foreground",   dot: "bg-muted-foreground" },
+};
+
+const SOURCE_DESCRIPTIONS: Record<string, Record<CoverageLevel, string>> = {
+  "SEC / Corporate": {
+    strong:  "Recent filings available and up to date.",
+    limited: "Some corporate filings found, may not reflect latest activity.",
+    none:    "No recent corporate filings found in public records.",
+  },
+  "WARN Notices": {
+    strong:  "Recent layoff data available and current.",
+    limited: "Some recent layoff data found, may not be complete.",
+    none:    "No recent layoff notices found in public records.",
+  },
+  "FEC / Political": {
+    strong:  "Public political contributions available and current.",
+    limited: "Public political contributions available, limited recent activity.",
+    none:    "No recent political contribution records found.",
+  },
+  "News / Briefings": {
+    strong:  "Recent verified news sources available.",
+    limited: "Some news coverage found, not recently updated.",
+    none:    "No recent verified news sources found.",
+  },
+  "OSHA": {
+    strong:  "Safety records available and current.",
+    limited: "Some safety records available.",
+    none:    "No recent safety records found.",
+  },
+  "Manual Research": {
+    strong:  "Verified signals added through research.",
+    limited: "Some manually verified data available.",
+    none:    "No manual research data available yet.",
+  },
+};
+
+function CoverageDot({ level }: { level: CoverageLevel }) {
+  return <span className={cn("w-2 h-2 rounded-full inline-block", COVERAGE_META[level].dot)} />;
 }
 
 function EmptyState({ text }: { text: string }) {
