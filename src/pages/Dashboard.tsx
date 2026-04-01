@@ -186,6 +186,7 @@ export default function Dashboard() {
       </div>
       <div className="flex-1 overflow-y-auto px-4 sm:px-6 py-6">
         {!hasTakenQuiz && tab === "overview" && <PersonaQuizBanner />}
+        {tab === "overview" && <TodayReflection />}
         {showUpsell && <PostPurchaseUpsell onDismiss={dismissUpsell} />}
         <AnimatePresence mode="wait">
           <motion.div
