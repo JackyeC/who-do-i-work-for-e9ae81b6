@@ -261,7 +261,8 @@ export function AlignedValuesSearch({ hasTakenQuiz }: { hasTakenQuiz: boolean })
       <Link
         to="/companies"
         className="text-xs font-medium mt-3 flex items-center gap-1 transition-colors"
-        style={{ color: "#f0c040" }}
+        className="font-mono text-sm tracking-wider uppercase hover:underline flex items-center gap-1 whitespace-nowrap"
+        style={{ color: "hsl(var(--civic-gold, 43 96% 56%))" }}
       >
         Browse all verified organizations <ArrowRight className="w-3 h-3" />
       </Link>

@@ -105,7 +105,7 @@ const SAMPLE_JOBS: JobListing[] = [
     applicants: 8, integrityScore: 85, integrityLevel: "LOW", alignmentPct: 89,
     skills: ["Operations", "Supply Chain", "Community Development", "Budget Management"],
     description: "Oversee urban farming operations across 12 sites, managing teams and ensuring food access for underserved neighborhoods.",
-    whyAligns: "Bloom's mission and operations are tightly aligned. They pay living wages, source locally, and their board includes community members from the neighborhoods they serve.",
+    whyAligns: "Living wages. Local sourcing. Community board from the neighborhoods they serve. Mission and operations match.",
     integritySummary: "Mission-driven social enterprise. Living wage certified. Community governance model. Transparent financials.",
     narrativeGap: null,
   },

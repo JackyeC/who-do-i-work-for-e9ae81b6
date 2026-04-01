@@ -47,7 +47,7 @@ const TAB_TITLES: Record<string, string> = {
   alerts: "Signal Alerts",
   preferences: "Preferences",
   profile: "My Profile",
-  jobs: "Jobs Feed",
+  jobs: "Places That Deserve You",
   "app-tracker": "Tracker",
   "apply-kit": "Apply Kit",
   "mock-interview": "Mock Interview",
