@@ -4957,6 +4957,36 @@ export type Database = {
           },
         ]
       }
+      entity_mentions: {
+        Row: {
+          context_id: string | null
+          context_type: string | null
+          created_at: string | null
+          entity_id: string | null
+          entity_type: string | null
+          id: string
+          snippet: string | null
+        }
+        Insert: {
+          context_id?: string | null
+          context_type?: string | null
+          created_at?: string | null
+          entity_id?: string | null
+          entity_type?: string | null
+          id?: string
+          snippet?: string | null
+        }
+        Update: {
+          context_id?: string | null
+          context_type?: string | null
+          created_at?: string | null
+          entity_id?: string | null
+          entity_type?: string | null
+          id?: string
+          snippet?: string | null
+        }
+        Relationships: []
+      }
       entity_relationships: {
         Row: {
           confidence_score: number
@@ -7229,6 +7259,101 @@ export type Database = {
             columns: ["published_company_id"]
             isOneToOne: false
             referencedRelation: "companies"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      people: {
+        Row: {
+          advisory_roles: Json | null
+          bio_summary: string | null
+          board_roles: Json | null
+          confidence_score: number | null
+          created_at: string | null
+          current_company: string | null
+          current_title: string | null
+          full_name: string
+          id: string
+          image_url: string | null
+          location: string | null
+          political_donation_total: number | null
+          prior_roles: Json | null
+          slug: string
+          updated_at: string | null
+        }
+        Insert: {
+          advisory_roles?: Json | null
+          bio_summary?: string | null
+          board_roles?: Json | null
+          confidence_score?: number | null
+          created_at?: string | null
+          current_company?: string | null
+          current_title?: string | null
+          full_name: string
+          id?: string
+          image_url?: string | null
+          location?: string | null
+          political_donation_total?: number | null
+          prior_roles?: Json | null
+          slug: string
+          updated_at?: string | null
+        }
+        Update: {
+          advisory_roles?: Json | null
+          bio_summary?: string | null
+          board_roles?: Json | null
+          confidence_score?: number | null
+          created_at?: string | null
+          current_company?: string | null
+          current_title?: string | null
+          full_name?: string
+          id?: string
+          image_url?: string | null
+          location?: string | null
+          political_donation_total?: number | null
+          prior_roles?: Json | null
+          slug?: string
+          updated_at?: string | null
+        }
+        Relationships: []
+      }
+      person_sources: {
+        Row: {
+          claim_key: string
+          claim_text: string | null
+          collected_at: string | null
+          confidence_label: string
+          id: string
+          person_id: string
+          source_type: string | null
+          source_url: string | null
+        }
+        Insert: {
+          claim_key: string
+          claim_text?: string | null
+          collected_at?: string | null
+          confidence_label?: string
+          id?: string
+          person_id: string
+          source_type?: string | null
+          source_url?: string | null
+        }
+        Update: {
+          claim_key?: string
+          claim_text?: string | null
+          collected_at?: string | null
+          confidence_label?: string
+          id?: string
+          person_id?: string
+          source_type?: string | null
+          source_url?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "person_sources_person_id_fkey"
+            columns: ["person_id"]
+            isOneToOne: false
+            referencedRelation: "people"
             referencedColumns: ["id"]
           },
         ]
