@@ -16,7 +16,7 @@ interface PageSEOProps {
   noIndex?: boolean;
 }
 
-export function usePageSEO({ title, description, path, type = "website", image, twitterCard = "summary_large_image", jsonLd }: PageSEOProps) {
+export function usePageSEO({ title, description, path, type = "website", image, twitterCard = "summary_large_image", jsonLd, noIndex = false }: PageSEOProps) {
   useEffect(() => {
     const fullTitle = `${title} | ${SITE_NAME}`;
     const desc = description || DEFAULT_DESC;
