@@ -387,7 +387,7 @@ export function DashboardOverview({ onNavigate }: DashboardOverviewProps) {
       {/* ═══ YOUR NEXT MOVE ═══ */}
       <motion.div {...anim(0.09)}>
         <BriefingCard>
-          <h3 className="text-base font-extrabold text-foreground tracking-tight mb-4">Your Next Move</h3>
+          <h3 className="text-[16px] font-bold text-foreground tracking-tight mb-4">Your Next Move</h3>
           <div className="space-y-2.5">
             {[
               { label: "Protect My Career", subtitle: "I'll audit any employer you're looking at", to: "/dashboard?tab=tracked" },
