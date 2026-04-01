@@ -198,8 +198,8 @@ export default function EarlyAccess() {
             <div className="w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-5 text-2xl font-extrabold" style={{ background: "rgba(240,192,64,0.15)", color: "#F0C040" }}>
               ✓
             </div>
-            <h2 className="text-3xl font-extrabold text-white tracking-tight mb-3">You're on the list.</h2>
-            <p className="text-white/50 text-sm leading-relaxed mb-6">
+            <h2 className="text-3xl font-extrabold text-foreground tracking-tight mb-3">You're on the list.</h2>
+            <p className="text-foreground/50 text-sm leading-relaxed mb-6">
               Welcome to Who Do I Work For. The public record isn't going anywhere — and neither are we.
             </p>
             <Link to="/browse" className="inline-block px-6 py-3 rounded-full text-sm font-bold transition-all hover:brightness-110" style={{ background: "#F0C040", color: "#0a0a0e" }}>
