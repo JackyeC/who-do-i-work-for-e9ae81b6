@@ -291,8 +291,9 @@ function StoryCard({ article }: { article: WorkNewsArticle }) {
 /* ── Wire Item (compact) ── */
 function WireItem({ article }: { article: WorkNewsArticle }) {
   const cat = getCategoryConfig(article.category);
+  const whyMatters = getWhyItMatters(article.category, article.is_controversy);
   return (
-    <a href={article.source_url || "#"} target="_blank" rel="noopener noreferrer" className="group block">
+    <div id={`story-${article.id}`} className="group block scroll-mt-24">
       <div className="rounded-lg border border-border/30 bg-card p-4 hover:border-primary/30 transition-all h-full flex flex-col">
         <div className="flex items-center gap-2 mb-2">
           <Badge variant="outline" className={`text-[10px] font-mono tracking-wider border ${cat.color}`}>
@@ -301,15 +302,26 @@ function WireItem({ article }: { article: WorkNewsArticle }) {
           {article.is_controversy && <AlertTriangle className="w-3 h-3 text-destructive" />}
           <span className="ml-auto text-[10px] text-muted-foreground/50 font-mono">{timeAgo(article.published_at)}</span>
         </div>
-        <p className="text-sm font-medium text-foreground leading-snug flex-1 group-hover:text-primary transition-colors">
+        <p className="text-sm font-medium text-foreground leading-snug flex-1 group-hover:text-primary transition-colors mb-2">
           {article.headline}
         </p>
-        <div className="flex items-center justify-between mt-3 pt-2 border-t border-border/20">
-          <span className="text-[10px] text-muted-foreground">{article.source_name || "Source"}</span>
+        {/* Compact why it matters */}
+        <p className="text-[11px] text-muted-foreground leading-relaxed mb-2">
+          {whyMatters[0]}
+        </p>
+        <div className="flex items-center justify-between mt-auto pt-2 border-t border-border/20">
+          {article.source_url ? (
+            <a href={article.source_url} target="_blank" rel="noopener noreferrer"
+              className="text-[10px] text-primary/70 hover:text-primary font-mono flex items-center gap-1">
+              {article.source_name || "Source"} <ExternalLink className="w-2.5 h-2.5" />
+            </a>
+          ) : (
+            <span className="text-[10px] text-muted-foreground">{article.source_name || "Source"}</span>
+          )}
           <SpiceMeter level={spiceLevel(article)} />
         </div>
       </div>
-    </a>
+    </div>
   );
 }
 
