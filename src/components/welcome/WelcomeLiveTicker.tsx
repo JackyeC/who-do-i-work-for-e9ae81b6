@@ -26,7 +26,7 @@ export function WelcomeLiveTicker() {
         .limit(1);
 
       if (companies?.[0]) {
-        return `${companies[0].name} intelligence updated in the last 24 hours`;
+        return decodeEscapes(`${companies[0].name} intelligence updated in the last 24 hours`);
       }
 
       return "Live employer intelligence scanning active";

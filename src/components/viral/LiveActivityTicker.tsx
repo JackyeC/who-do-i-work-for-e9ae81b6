@@ -39,6 +39,7 @@ export function LiveActivityTicker() {
         { event: "INSERT", schema: "public", table: "company_scan_events" },
         (payload) => {
           const newEvent = payload.new as ScanEvent;
+          newEvent.company_name = decodeEscapes(newEvent.company_name);
           setEvents((prev) => [newEvent, ...prev].slice(0, 50));
           setTotalToday((prev) => prev + 1);
         }
