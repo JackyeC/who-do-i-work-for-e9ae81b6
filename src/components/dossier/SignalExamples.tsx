@@ -12,11 +12,30 @@ interface PolicySignal {
   amount: number | null;
 }
 
-function confidenceLabel(score: string): { label: string; variant: "destructive" | "default" | "secondary" } {
-  const n = parseFloat(score) || 0;
-  if (n >= 0.75) return { label: "Strong Evidence", variant: "destructive" };
-  if (n >= 0.5) return { label: "Likely Connection", variant: "default" };
-  return { label: "Possible Connection", variant: "secondary" };
+type ConfidenceTier = { label: string; variant: "destructive" | "default" | "secondary"; numeric: number };
+
+const TEXT_CONFIDENCE_MAP: Record<string, ConfidenceTier> = {
+  high:   { label: "Strong Evidence",     variant: "destructive", numeric: 0.85 },
+  medium: { label: "Likely Connection",   variant: "default",     numeric: 0.6  },
+  low:    { label: "Possible Connection", variant: "secondary",   numeric: 0.35 },
+};
+
+/** Normalize mixed confidence_score values. Returns null if uninterpretable. */
+function normalizeConfidence(raw: string | null | undefined): ConfidenceTier | null {
+  if (!raw) return null;
+  const trimmed = raw.trim().toLowerCase();
+
+  // Text labels
+  const mapped = TEXT_CONFIDENCE_MAP[trimmed];
+  if (mapped) return mapped;
+
+  // Numeric strings
+  const n = parseFloat(trimmed);
+  if (Number.isNaN(n)) return null; // uninterpretable → exclude
+  if (n >= 0.75) return { label: "Strong Evidence",     variant: "destructive", numeric: n };
+  if (n >= 0.5)  return { label: "Likely Connection",   variant: "default",     numeric: n };
+  if (n >= 0.4)  return { label: "Possible Connection", variant: "secondary",   numeric: n };
+  return null; // below threshold → exclude
 }
 
 function isWorkRelated(category: string): boolean {
