@@ -13,6 +13,7 @@ import { cn } from "@/lib/utils";
 import {
   BarChart, Bar, XAxis, YAxis, Tooltip as RechartsTooltip, ResponsiveContainer, Cell, PieChart, Pie,
 } from "recharts";
+import { EnforcementReceiptCard } from "@/components/receipts/EnforcementReceiptCard";
 import {
   FileText, Search, Calendar, ArrowRight, Sparkles,
   Filter, Shield, Loader2, ExternalLink, DollarSign, Landmark, Building2,
@@ -23,6 +24,7 @@ const ISSUE_OPTIONS = [
   "gun_policy", "reproductive_rights", "labor_rights", "climate",
   "civil_rights", "lgbtq_rights", "voting_rights", "immigration",
   "education", "healthcare", "consumer_protection",
+  "Compliance Failure", "Restructuring", "Fraud/Fiduciary",
 ];
 
 const ISSUE_COLORS: Record<string, string> = {
@@ -343,61 +345,9 @@ export default function IntelligenceReports() {
                     </div>
                   ) : (
                     <div className="space-y-3 max-w-3xl">
-                      {filteredSignals.map((s: any) => {
-                        const sourceInfo = SOURCE_LABELS[s.source_dataset] || { label: s.source_dataset, icon: FileText };
-                        const SourceIcon = sourceInfo.icon;
-                        return (
-                          <Card key={s.id} className="hover:border-primary/20 transition-colors">
-                            <CardContent className="p-4">
-                              <div className="flex items-start gap-3">
-                                <div className="w-8 h-8 rounded-lg bg-primary/10 flex items-center justify-center shrink-0 mt-0.5">
-                                  <SourceIcon className="w-4 h-4 text-primary" />
-                                </div>
-                                <div className="flex-1 min-w-0">
-                                  <div className="flex items-center gap-2 mb-1 flex-wrap">
-                                    <Badge variant="outline" className="text-xs capitalize">{s.issue_category?.replace(/_/g, " ")}</Badge>
-                                    <Badge variant="secondary" className="text-xs">{sourceInfo.label}</Badge>
-                                    <Badge variant={s.confidence_score === "high" ? "default" : "outline"} className="text-xs">
-                                      {s.confidence_score === "high" ? "Strong Evidence" : "Some Evidence"}
-                                    </Badge>
-                                  </div>
-                                  <p className="text-sm font-medium text-foreground">
-                                    {s.entity_name_snapshot && s.entity_id ? (
-                                      <Link to={`/dossier/${s.entity_name_snapshot.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/-+$/, "")}`} className="text-primary hover:underline font-semibold" onClick={(e) => e.stopPropagation()}>
-                                        {s.entity_name_snapshot}
-                                      </Link>
-                                    ) : s.entity_name_snapshot ? (
-                                      <span className="text-primary">{s.entity_name_snapshot}</span>
-                                    ) : null}
-                                    {s.entity_name_snapshot && ": "}
-                                    {s.description}
-                                  </p>
-                                  <div className="flex items-center gap-3 mt-2 text-xs text-muted-foreground">
-                                    {s.amount && (
-                                      <span className="flex items-center gap-1">
-                                        <DollarSign className="w-3 h-3" />
-                                        ${Number(s.amount).toLocaleString()}
-                                      </span>
-                                    )}
-                                    {s.source_url && /^https?:\/\//.test(s.source_url) && (
-                                      <a href={s.source_url} target="_blank" rel="noopener noreferrer" className="flex items-center gap-1 text-primary hover:underline">
-                                        <ExternalLink className="w-3 h-3" />
-                                        View Receipt
-                                      </a>
-                                    )}
-                                    {s.created_at && (
-                                      <span className="flex items-center gap-1">
-                                        <Calendar className="w-3 h-3" />
-                                        {new Date(s.created_at).toLocaleDateString()}
-                                      </span>
-                                    )}
-                                  </div>
-                                </div>
-                              </div>
-                            </CardContent>
-                          </Card>
-                        );
-                      })}
+                      {filteredSignals.map((s: any) => (
+                        <EnforcementReceiptCard key={s.id} signal={s} />
+                      ))}
                     </div>
                   )}
                 </div>
