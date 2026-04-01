@@ -68,6 +68,7 @@ function buildSignals(company: CompanyResult, extras: {
       explanation: `This company has $${extras.pacSpending.toLocaleString()} in PAC spending on record.`,
       tier: "verified",
       sourceUrl: null,
+      link: `/dossier/${company.slug}#political-influence`,
     });
   }
 
