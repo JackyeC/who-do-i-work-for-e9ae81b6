@@ -115,7 +115,7 @@ const INTEL_BULLETS = [
 const JACKYE_CONTENT = [
   {
     number: "01",
-    type: "ARTICLE",
+    type: "ARTICLE" as const,
     title: "The Interview Is a Two-Way Street — Why You Should Audit Your Interviewer",
     desc: "Jackye breaks down why candidates who research the company's public record outperform those who only rehearse answers.",
     link: "https://www.linkedin.com/pulse/interview-two-way-street-jackye-clayton/",
