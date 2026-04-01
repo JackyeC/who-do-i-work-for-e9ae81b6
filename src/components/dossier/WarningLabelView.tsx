@@ -310,7 +310,7 @@ export function WarningLabelView({ company, executives = [], contracts = [], iss
                 </tr>
                 <tr
                   className="cursor-pointer hover:bg-muted/20 transition-colors group"
-                  onClick={() => window.open(`https://www.fec.gov/data/receipts/?data_type=processed&committee_name=${encodeURIComponent(company.name)}`, "_blank")}
+                  onClick={() => openSource(`https://www.fec.gov/data/receipts/?data_type=processed&committee_name=${encodeURIComponent(company.name)}`, { description: `PAC political spending for ${company.name}`, amount: company.total_pac_spending })}
                 >
                   <td className="py-3 pr-4 font-medium text-foreground flex items-center gap-1.5">
                     PAC Spending
