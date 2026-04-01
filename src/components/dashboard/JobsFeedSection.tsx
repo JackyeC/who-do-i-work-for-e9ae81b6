@@ -35,7 +35,7 @@ const SAMPLE_JOBS: JobListing[] = [
     applicants: 34, integrityScore: 82, integrityLevel: "LOW", alignmentPct: 91,
     skills: ["HR Strategy", "DEI Programs", "Employee Engagement", "Benefits Admin"],
     description: "Lead people operations for a healthcare company committed to transparent compensation and equitable hiring practices. You'll design programs that put employee wellbeing first.",
-    whyAligns: "Meridian publishes salary bands publicly, has an 82 integrity score, and their employee sentiment data shows strong alignment between stated and lived values.",
+    whyAligns: "Strong public commitment to worker wellbeing. Transparent pay bands. This is the real thing.",
     integritySummary: "Strong transparency practices. Published EEO-1 data. No recent EEOC complaints. Board diversity above industry average.",
     narrativeGap: null,
   },
