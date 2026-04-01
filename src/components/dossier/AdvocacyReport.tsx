@@ -373,17 +373,28 @@ export function AdvocacyReport({ company, executives = [], contracts = [], issue
       <section>
         <SectionDivider number={7} icon={Megaphone} title="Political Activity" subtitle="PAC spending, lobbying, and executive contributions" />
         <div className="pl-11 space-y-4">
-          {topDonors.length > 0 && (
+          {dedupedDonors.length > 0 && (
             <div>
               <p className="font-mono text-[10px] text-primary tracking-[0.3em] uppercase mb-2">Top Political Donors in Leadership</p>
               <div className="space-y-2">
-                {topDonors.map((exec, i) => (
+                {dedupedDonors.slice(0, 5).map((donor, i) => (
                   <div key={i} className="flex items-center justify-between p-3 bg-muted/10 border border-border/20">
                     <div>
-                      <p className="text-sm font-semibold text-foreground">{exec.name}</p>
-                      <p className="text-xs text-muted-foreground">{exec.title}</p>
+                      <p className="text-sm font-semibold text-foreground">{donor.name}</p>
+                      {donor.aliases.length > 1 && (
+                        <p className="text-[10px] text-muted-foreground/60 font-mono">
+                          aka {donor.aliases.filter(a => a !== donor.name).join(", ")}
+                        </p>
+                      )}
                     </div>
-                    <Badge variant="outline" className="font-mono text-xs">{fmtMoney(exec.total_donations)} donated</Badge>
+                    <div className="flex items-center gap-2">
+                      <Badge variant="outline" className="font-mono text-xs">{fmtMoney(donor.total_donated)} donated</Badge>
+                      <a href={donor.raw_fec_link} target="_blank" rel="noopener noreferrer">
+                        <Button variant="ghost" size="sm" className="h-7 text-xs gap-1 text-primary">
+                          <ExternalLink className="w-3 h-3" /> View Receipt
+                        </Button>
+                      </a>
+                    </div>
                   </div>
                 ))}
               </div>
