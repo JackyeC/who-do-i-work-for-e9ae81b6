@@ -35,10 +35,10 @@ export default function CareerIntelligenceSection({ companyId, companyName, role
         execTurnover,
         careerPaths,
       ] = await Promise.all([
-        supabase.from("company_warn_notices" as any).select("employees_affected").eq("company_id", companyId),
+        (supabase.from("company_warn_notices" as any) as any).select("employees_affected").eq("company_id", companyId),
         supabase.from("company_worker_sentiment").select("sentiment").eq("company_id", companyId),
         supabase.from("company_jobs").select("id, title", { count: "exact" }).eq("company_id", companyId).eq("is_active", true).limit(5),
-        supabase.from("compensation_data" as any).select("role_title, salary_range_min, salary_range_max, source_type").eq("company", companyId).limit(5),
+        (supabase.from("compensation_data" as any) as any).select("role_title, salary_range_min, salary_range_max, source_type").eq("company", companyId).limit(5),
         supabase.from("company_executives").select("id", { count: "exact", head: true }).eq("company_id", companyId).not("departed_at", "is", null),
         supabase.from("career_paths").select("role_title, next_role, success_rate_pct").eq("company_id", companyId).limit(3),
       ]);
@@ -51,7 +51,7 @@ export default function CareerIntelligenceSection({ companyId, companyName, role
         totalSentiment: sentiment.data?.length ?? 0,
         activeJobs: jobs.count ?? 0,
         jobTitles: (jobs.data ?? []).map((j: any) => j.title as string),
-        compensation: (compensation.data ?? []) as { role_title: string; salary_range_min: number; salary_range_max: number; source_type: string }[],
+        compensation: (compensation.data ?? []) as any[] as { role_title: string; salary_range_min: number; salary_range_max: number; source_type: string }[],
         execTurnover: execTurnover.count ?? 0,
         careerPaths: (careerPaths.data ?? []) as { role_title: string; next_role: string; success_rate_pct: number | null }[],
       };
