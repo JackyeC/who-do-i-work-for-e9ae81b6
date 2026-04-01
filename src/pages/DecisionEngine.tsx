@@ -91,7 +91,7 @@ export default function DecisionEngine() {
               className={cn(
                 "font-mono text-xs px-3 py-1.5 rounded-full border tracking-wider transition-all",
                 !isPremium
-                  ? "bg-[#e8ff47] text-black border-[#e8ff47] font-bold"
+                  ? "bg-primary text-primary-foreground border-primary font-bold"
                   : "border-[#2a2a3a] text-[#9898b0] hover:border-[#e8ff47] hover:text-[#e8ff47]"
               )}
             >
