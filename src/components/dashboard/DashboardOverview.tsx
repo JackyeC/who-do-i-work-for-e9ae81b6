@@ -505,7 +505,7 @@ export function DashboardOverview({ onNavigate }: DashboardOverviewProps) {
               <h3 className="text-[16px] font-bold text-foreground">
                 Companies You're Watching
               </h3>
-              <span className="text-xs text-muted-foreground font-mono">
+              <span className="text-[10px] font-bold rounded-full px-2.5 py-1 border" style={{ color: "hsl(43, 96%, 56%)", backgroundColor: "hsla(43, 96%, 56%, 0.1)", borderColor: "hsla(43, 96%, 56%, 0.3)" }}>
                 {trackedCompanies.length} tracked
               </span>
             </div>
