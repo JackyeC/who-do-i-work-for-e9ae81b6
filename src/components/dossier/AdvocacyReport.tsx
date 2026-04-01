@@ -3,10 +3,12 @@ import { Link } from "react-router-dom";
 import {
   AlertTriangle, DollarSign, Users, Eye, MessageSquare,
   CheckCircle2, MinusCircle, ArrowRight, Shield, ShieldAlert, Zap,
-  Building2, Scale, Megaphone, FileText, Heart, ChevronDown,
+  Building2, Scale, Megaphone, FileText, Heart, ChevronDown, ExternalLink,
+  TrendingUp, TrendingDown, Minus,
 } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import { RecommendationCard } from "./RecommendationCard";
 import { ValuesAlignmentSection } from "./ValuesAlignmentSection";
@@ -18,6 +20,9 @@ import { PolicyScoreCard } from "@/components/policy-intelligence/PolicyScoreCar
 import { HighRiskConnectionCard } from "@/components/company/HighRiskConnectionCard";
 import { WorkforceDemographicsLayer } from "./WorkforceDemographicsLayer";
 import { EEOCCaseAlert } from "@/components/EEOCCaseAlert";
+import { SpendingDrawer } from "./SpendingDrawer";
+import { useEmployerReport } from "@/hooks/use-employer-report";
+import type { SpendingMetric, DonorProfile } from "@/types/ReportSchema";
 
 /* ─── Types ─── */
 interface AdvocacyReportProps {
