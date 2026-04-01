@@ -4,7 +4,7 @@ import { Badge } from "@/components/ui/badge";
 import { Skeleton } from "@/components/ui/skeleton";
 import {
   Database, CheckCircle, AlertTriangle, XCircle, Clock,
-  Shield, BarChart3,
+  Shield, BarChart3, Layers, HelpCircle,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 
@@ -75,18 +75,23 @@ export function SignalsDataTab() {
     },
   });
 
-  // ─── Claim Safety Monitor ───
+  // ─── Claim Safety Monitor (with tier breakdown) ───
   const { data: claimSafety, isLoading: claimsLoading } = useQuery({
     queryKey: ["founder-signals-claims"],
     queryFn: async () => {
-      const [missingSources, totalClaims] = await Promise.all([
-        supabase.from("company_corporate_claims").select("id", { count: "exact", head: true }).or("claim_source_url.is.null"),
+      const [totalClaims, withUrl, multiSource, withSourceNoUrl, noEvidence] = await Promise.all([
         supabase.from("company_corporate_claims").select("id", { count: "exact", head: true }),
+        supabase.from("company_corporate_claims").select("id", { count: "exact", head: true }).not("claim_source_url", "is", null),
+        supabase.from("company_corporate_claims").select("id", { count: "exact", head: true }).is("claim_source_url", null).eq("extraction_method", "multi_source"),
+        supabase.from("company_corporate_claims").select("id", { count: "exact", head: true }).is("claim_source_url", null).not("claim_source", "is", null).neq("extraction_method", "multi_source"),
+        supabase.from("company_corporate_claims").select("id", { count: "exact", head: true }).is("claim_source_url", null).is("claim_source", null),
       ]);
-      return {
-        missingSources: missingSources.count ?? 0,
-        totalClaims: totalClaims.count ?? 0,
-      };
+      const total = totalClaims.count ?? 0;
+      const verified = withUrl.count ?? 0;
+      const multi = multiSource.count ?? 0;
+      const inferred = withSourceNoUrl.count ?? 0;
+      const none = noEvidence.count ?? 0;
+      return { totalClaims: total, verified, multiSource: multi, inferred, noEvidence: none, missingSources: total - verified };
     },
   });
 
@@ -146,41 +151,48 @@ export function SignalsDataTab() {
           )}
         </div>
 
-        {/* Claim Safety Monitor */}
+        {/* Claim Safety Monitor — Tier Breakdown */}
         <div className="bg-card border border-border rounded-2xl p-5">
           <h3 className="text-sm font-semibold text-foreground mb-4 flex items-center gap-2">
-            <AlertTriangle className="w-4 h-4 text-civic-yellow" /> Claim Safety Monitor
+            <AlertTriangle className="w-4 h-4 text-civic-yellow" /> Claim Attribution Monitor
           </h3>
           <p className="text-xs text-muted-foreground mb-3">
-            Claims without source URLs cannot be trusted or displayed to users.
+            Every claim must carry a source label. Claims without attribution are suppressed from display.
           </p>
           {claimsLoading ? (
             <Skeleton className="h-20" />
           ) : claimSafety!.totalClaims === 0 ? (
             <EmptyState text="No claims have been indexed yet." />
           ) : (
-            <div className="space-y-3">
+            <div className="space-y-2.5">
               <div className="flex items-center justify-between text-sm">
-                <span className="text-muted-foreground">Total claims indexed</span>
+                <span className="text-muted-foreground">Total claims</span>
                 <span className="font-mono font-medium text-foreground">{claimSafety!.totalClaims}</span>
               </div>
               <div className="flex items-center justify-between text-sm">
-                <span className="text-muted-foreground">Claims missing source links</span>
-                <span className={cn(
-                  "font-mono font-medium",
-                  claimSafety!.missingSources > 0 ? "text-civic-yellow" : "text-civic-green"
-                )}>
-                  {claimSafety!.missingSources}
-                </span>
+                <span className="flex items-center gap-1.5 text-civic-green"><CheckCircle className="w-3 h-3" /> Verified Source</span>
+                <span className="font-mono font-medium text-civic-green">{claimSafety!.verified}</span>
               </div>
-              {claimSafety!.missingSources > 0 && (
-                <p className="text-xs text-muted-foreground bg-civic-yellow/5 border border-civic-yellow/20 rounded-lg p-2">
-                  ⚠ {claimSafety!.missingSources} claim{claimSafety!.missingSources !== 1 ? "s" : ""} need source URLs before they can be surfaced to users. These are suppressed from display until verified.
+              <div className="flex items-center justify-between text-sm">
+                <span className="flex items-center gap-1.5 text-primary"><Layers className="w-3 h-3" /> Multi-Source Signal</span>
+                <span className="font-mono font-medium text-primary">{claimSafety!.multiSource}</span>
+              </div>
+              <div className="flex items-center justify-between text-sm">
+                <span className="flex items-center gap-1.5 text-amber-600"><HelpCircle className="w-3 h-3" /> Inferred</span>
+                <span className="font-mono font-medium text-amber-600">{claimSafety!.inferred}</span>
+              </div>
+              <div className="flex items-center justify-between text-sm">
+                <span className="flex items-center gap-1.5 text-muted-foreground"><XCircle className="w-3 h-3" /> No Public Evidence</span>
+                <span className={cn("font-mono font-medium", claimSafety!.noEvidence > 0 ? "text-destructive" : "text-muted-foreground")}>{claimSafety!.noEvidence}</span>
+              </div>
+              {claimSafety!.noEvidence > 0 && (
+                <p className="text-xs text-muted-foreground bg-destructive/5 border border-destructive/20 rounded-lg p-2">
+                  ⚠ {claimSafety!.noEvidence} claim{claimSafety!.noEvidence !== 1 ? "s" : ""} have no attribution and are suppressed from public display.
                 </p>
               )}
-              {claimSafety!.missingSources === 0 && claimSafety!.totalClaims > 0 && (
+              {claimSafety!.noEvidence === 0 && claimSafety!.totalClaims > 0 && (
                 <p className="text-xs text-civic-green bg-civic-green/5 border border-civic-green/20 rounded-lg p-2">
-                  ✓ All indexed claims have source URLs attached.
+                  ✓ All claims have source attribution.
                 </p>
               )}
             </div>
