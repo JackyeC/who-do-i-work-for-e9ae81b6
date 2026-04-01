@@ -170,7 +170,7 @@ async function fetchFECDonors(candidateName: string, state: string, fecApiKey: s
     const lastName = nameParts[nameParts.length - 1];
     const firstName = nameParts[0];
 
-    const searchUrl = `${FEC_API_BASE}/candidates/search/?api_key=${fecApiKey}&name=${encodeURIComponent(candidateName)}&state=${state}&sort=-election_year&per_page=5&is_active_candidate=true`;
+    const searchUrl = `${FEC_API_BASE}/candidates/search/?api_key=${fecApiKey}&name=${encodeURIComponent(candidateName)}&state=${state}&sort=-first_file_date&per_page=5&is_active_candidate=true`;
     const searchResp = await fetch(searchUrl, { headers: { 'User-Agent': 'WDIWF/1.0' } });
     if (!searchResp.ok) return [];
 
