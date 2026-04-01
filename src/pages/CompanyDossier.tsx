@@ -10,7 +10,9 @@ import { getOGImageUrl } from "@/lib/social-share";
 import {
   Building2, Loader2, Sparkles, Users, Heart, FileSearch,
   BarChart3, Landmark, Eye, AlertTriangle, ChevronDown,
+  ShieldCheck, XCircle as XCircleIcon,
 } from "lucide-react";
+import { SourceLabel, type SourceTier } from "@/components/ui/source-label";
 import { supabase } from "@/integrations/supabase/client";
 import { AuditRequestForm } from "@/components/AuditRequestForm";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -45,6 +47,7 @@ export default function CompanyDossier() {
   const { isCompanyTracked } = useTrackedCompanies();
   const [showPrep, setShowPrep] = useState(false);
   const [showRawLayers, setShowRawLayers] = useState(false);
+  const [showSecondary, setShowSecondary] = useState(false);
 
   /* ─── Data fetching ─── */
   const { data: company, isLoading } = useQuery({
@@ -194,6 +197,62 @@ export default function CompanyDossier() {
   }
 
   const influenceScore = company.employer_clarity_score || 0;
+  const civicScore = company.civic_footprint_score ?? 0;
+
+  // Verdict logic
+  const verdictScore = Math.max(civicScore, influenceScore);
+  const verdict = verdictScore >= 60
+    ? { label: "Low Risk", color: "text-civic-green", bg: "bg-civic-green/10", border: "border-civic-green/30", Icon: ShieldCheck }
+    : verdictScore >= 35
+    ? { label: "Medium Risk", color: "text-civic-yellow", bg: "bg-civic-yellow/10", border: "border-civic-yellow/30", Icon: AlertTriangle }
+    : { label: "High Risk", color: "text-destructive", bg: "bg-destructive/10", border: "border-destructive/30", Icon: XCircleIcon };
+
+  // Build top signals from real data (max 5)
+  const topSignals: { title: string; explanation: string; tier: SourceTier }[] = [];
+
+  if ((company.total_pac_spending ?? 0) > 0) {
+    topSignals.push({
+      title: "Political Spending",
+      explanation: `$${(company.total_pac_spending ?? 0).toLocaleString()} in PAC spending on public record.`,
+      tier: "verified",
+    });
+  }
+  if ((company.lobbying_spend ?? 0) > 0) {
+    topSignals.push({
+      title: "Lobbying Activity",
+      explanation: `$${(company.lobbying_spend ?? 0).toLocaleString()} in reported lobbying expenditures.`,
+      tier: "verified",
+    });
+  }
+  if ((eeocCases?.length || 0) > 0) {
+    topSignals.push({
+      title: "EEOC Filings",
+      explanation: `${eeocCases!.length} equal employment opportunity case(s) found in public records.`,
+      tier: "verified",
+    });
+  }
+  if ((issueSignals?.length || 0) > 0) {
+    topSignals.push({
+      title: "Issue Signals Detected",
+      explanation: `${issueSignals!.length} policy or issue-related signal(s) identified across sources.`,
+      tier: "multi_source",
+    });
+  }
+  if (influenceScore > 0) {
+    topSignals.push({
+      title: "Employer Transparency",
+      explanation: `Scored ${influenceScore}/100 based on available public evidence depth.`,
+      tier: "multi_source",
+    });
+  }
+  if (topSignals.length === 0) {
+    topSignals.push({
+      title: "Public Record Coverage",
+      explanation: "Limited public data available for this company. A full scan may surface additional signals.",
+      tier: "no_evidence",
+    });
+  }
+  const displaySignals = topSignals.slice(0, 5);
 
   // No-data detection
   const hasNoData =
@@ -208,13 +267,13 @@ export default function CompanyDossier() {
   /* ─── Report header + advocacy report ─── */
   const overviewContent = (
     <>
-      {/* ── REPORT HEADER ── */}
+      {/* ── ABOVE THE FOLD: Company + Verdict + Top Signals ── */}
       <div className="mb-8">
         <p className="font-mono text-[10px] tracking-[0.35em] uppercase text-primary mb-4">
           Employer Intelligence Report
         </p>
 
-        <div className="flex items-start gap-4 mb-4">
+        <div className="flex items-start gap-4 mb-5">
           <CompanyLogo companyName={company.name} logoUrl={company.logo_url} size="lg" />
           <div className="flex-1 min-w-0">
             <h1 className="text-2xl md:text-3xl font-black tracking-tight text-foreground leading-tight">
@@ -226,6 +285,37 @@ export default function CompanyDossier() {
             </p>
           </div>
           <ExportDossierButton companyId={companyId!} companyName={company.name} company={company} />
+        </div>
+
+        {/* ── VERDICT CARD ── */}
+        <div className={cn("rounded-xl border p-5 mb-5", verdict.bg, verdict.border)}>
+          <div className="flex items-center gap-2.5">
+            <verdict.Icon className={cn("w-5 h-5", verdict.color)} />
+            <Badge variant="outline" className={cn("text-sm font-semibold px-3 py-0.5", verdict.color, verdict.border)}>
+              {verdict.label}
+            </Badge>
+          </div>
+          <p className="text-xs text-muted-foreground mt-2">
+            Based on political spending, labor record, enforcement history, and transparency disclosures from public sources.
+          </p>
+        </div>
+
+        {/* ── TOP SIGNALS ── */}
+        <div className="mb-6">
+          <h2 className="text-xs font-semibold text-foreground uppercase tracking-wider mb-3">Top Signals</h2>
+          <div className="space-y-2">
+            {displaySignals.map((signal, i) => (
+              <div key={i} className="bg-card border border-border rounded-lg p-3.5">
+                <div className="flex items-start justify-between gap-3">
+                  <div className="min-w-0">
+                    <p className="text-sm font-medium text-foreground">{signal.title}</p>
+                    <p className="text-xs text-muted-foreground mt-0.5 leading-relaxed">{signal.explanation}</p>
+                  </div>
+                  <SourceLabel tier={signal.tier} className="shrink-0 mt-0.5" />
+                </div>
+              </div>
+            ))}
+          </div>
         </div>
 
         {isTracked && (
@@ -386,40 +476,43 @@ export default function CompanyDossier() {
 
         <TransparencyDisclaimer />
 
-        {/* ── NEXT STEPS ── */}
-        <div className="mt-8 grid grid-cols-1 sm:grid-cols-2 gap-3">
-          <Link
-            to="/reality-check"
-            className="flex items-center gap-3 p-4 border border-border/40 bg-card hover:bg-muted/30 transition-colors group"
+        {/* ── EXPLORE MORE (secondary tools, demoted) ── */}
+        <div className="mt-6">
+          <button
+            onClick={() => setShowSecondary(!showSecondary)}
+            className="w-full flex items-center justify-between px-5 py-3 border border-border/40 bg-card hover:bg-muted/20 transition-colors text-left"
           >
-            <div className="w-8 h-8 flex items-center justify-center shrink-0">
-              <AlertTriangle className="w-4 h-4 text-destructive" />
+            <span className="text-sm font-medium text-muted-foreground">Explore more</span>
+            <ChevronDown className={cn("w-4 h-4 text-muted-foreground transition-transform", showSecondary && "rotate-180")} />
+          </button>
+          {showSecondary && (
+            <div className="mt-3 grid grid-cols-1 sm:grid-cols-2 gap-3">
+              <Link
+                to="/offer-check"
+                className="flex items-center gap-3 p-4 border border-border/40 bg-card hover:bg-muted/30 transition-colors group"
+              >
+                <AlertTriangle className="w-4 h-4 text-destructive shrink-0" />
+                <div>
+                  <p className="text-sm font-semibold text-foreground group-hover:text-primary transition-colors">
+                    Got an offer from {company.name}?
+                  </p>
+                  <p className="text-xs text-muted-foreground">Quick risk check before you sign →</p>
+                </div>
+              </Link>
+              <Link
+                to="/ask-jackye"
+                className="flex items-center gap-3 p-4 border border-border/40 bg-card hover:bg-muted/30 transition-colors group"
+              >
+                <Sparkles className="w-4 h-4 text-primary shrink-0" />
+                <div>
+                  <p className="text-sm font-semibold text-foreground group-hover:text-primary transition-colors">
+                    Ask Jackye about {company.name}
+                  </p>
+                  <p className="text-xs text-muted-foreground">Should I apply? What should I negotiate? →</p>
+                </div>
+              </Link>
             </div>
-            <div>
-              <p className="text-sm font-semibold text-foreground group-hover:text-primary transition-colors">
-                Got an offer from {company.name}?
-              </p>
-              <p className="text-xs text-muted-foreground">
-                Check for red flags before you sign →
-              </p>
-            </div>
-          </Link>
-          <Link
-            to="/ask-jackye"
-            className="flex items-center gap-3 p-4 border border-border/40 bg-card hover:bg-muted/30 transition-colors group"
-          >
-            <div className="w-8 h-8 flex items-center justify-center shrink-0">
-              <Sparkles className="w-4 h-4 text-primary" />
-            </div>
-            <div>
-              <p className="text-sm font-semibold text-foreground group-hover:text-primary transition-colors">
-                Ask Jackye about {company.name}
-              </p>
-              <p className="text-xs text-muted-foreground">
-                Should I apply? What should I negotiate? →
-              </p>
-            </div>
-          </Link>
+          )}
         </div>
       </div>
     </section>
