@@ -476,40 +476,43 @@ export default function CompanyDossier() {
 
         <TransparencyDisclaimer />
 
-        {/* ── NEXT STEPS ── */}
-        <div className="mt-8 grid grid-cols-1 sm:grid-cols-2 gap-3">
-          <Link
-            to="/reality-check"
-            className="flex items-center gap-3 p-4 border border-border/40 bg-card hover:bg-muted/30 transition-colors group"
+        {/* ── EXPLORE MORE (secondary tools, demoted) ── */}
+        <div className="mt-6">
+          <button
+            onClick={() => setShowSecondary(!showSecondary)}
+            className="w-full flex items-center justify-between px-5 py-3 border border-border/40 bg-card hover:bg-muted/20 transition-colors text-left"
           >
-            <div className="w-8 h-8 flex items-center justify-center shrink-0">
-              <AlertTriangle className="w-4 h-4 text-destructive" />
+            <span className="text-sm font-medium text-muted-foreground">Explore more</span>
+            <ChevronDown className={cn("w-4 h-4 text-muted-foreground transition-transform", showSecondary && "rotate-180")} />
+          </button>
+          {showSecondary && (
+            <div className="mt-3 grid grid-cols-1 sm:grid-cols-2 gap-3">
+              <Link
+                to="/offer-check"
+                className="flex items-center gap-3 p-4 border border-border/40 bg-card hover:bg-muted/30 transition-colors group"
+              >
+                <AlertTriangle className="w-4 h-4 text-destructive shrink-0" />
+                <div>
+                  <p className="text-sm font-semibold text-foreground group-hover:text-primary transition-colors">
+                    Got an offer from {company.name}?
+                  </p>
+                  <p className="text-xs text-muted-foreground">Quick risk check before you sign →</p>
+                </div>
+              </Link>
+              <Link
+                to="/ask-jackye"
+                className="flex items-center gap-3 p-4 border border-border/40 bg-card hover:bg-muted/30 transition-colors group"
+              >
+                <Sparkles className="w-4 h-4 text-primary shrink-0" />
+                <div>
+                  <p className="text-sm font-semibold text-foreground group-hover:text-primary transition-colors">
+                    Ask Jackye about {company.name}
+                  </p>
+                  <p className="text-xs text-muted-foreground">Should I apply? What should I negotiate? →</p>
+                </div>
+              </Link>
             </div>
-            <div>
-              <p className="text-sm font-semibold text-foreground group-hover:text-primary transition-colors">
-                Got an offer from {company.name}?
-              </p>
-              <p className="text-xs text-muted-foreground">
-                Check for red flags before you sign →
-              </p>
-            </div>
-          </Link>
-          <Link
-            to="/ask-jackye"
-            className="flex items-center gap-3 p-4 border border-border/40 bg-card hover:bg-muted/30 transition-colors group"
-          >
-            <div className="w-8 h-8 flex items-center justify-center shrink-0">
-              <Sparkles className="w-4 h-4 text-primary" />
-            </div>
-            <div>
-              <p className="text-sm font-semibold text-foreground group-hover:text-primary transition-colors">
-                Ask Jackye about {company.name}
-              </p>
-              <p className="text-xs text-muted-foreground">
-                Should I apply? What should I negotiate? →
-              </p>
-            </div>
-          </Link>
+          )}
         </div>
       </div>
     </section>
