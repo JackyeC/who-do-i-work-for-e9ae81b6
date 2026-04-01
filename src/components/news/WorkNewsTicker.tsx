@@ -48,12 +48,15 @@ export function WorkNewsTicker({ className }: WorkNewsTickerProps) {
             }}
           >
             {doubled.map((article, i) => (
-              <a
+              <button
                 key={`${article.id}-${i}`}
-                href={article.source_url!}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="inline-flex items-center gap-2 text-xs hover:text-primary transition-colors cursor-pointer"
+                onClick={() => {
+                  navigate(`/newsletter#story-${article.id}`);
+                  setTimeout(() => {
+                    document.getElementById(`story-${article.id}`)?.scrollIntoView({ behavior: "smooth", block: "start" });
+                  }, 100);
+                }}
+                className="inline-flex items-center gap-2 text-xs hover:text-primary transition-colors cursor-pointer bg-transparent border-none p-0"
               >
                 {article.is_controversy ? (
                   <AlertTriangle className="w-3 h-3 text-destructive shrink-0" />
@@ -73,7 +76,7 @@ export function WorkNewsTicker({ className }: WorkNewsTickerProps) {
                 </span>
                 <span className="text-muted-foreground/50">·</span>
                 <span className="text-muted-foreground text-xs">{article.source_name}</span>
-              </a>
+              </button>
             ))}
           </motion.div>
         </div>
