@@ -1123,7 +1123,7 @@ export function generateDossierPdf(data: DossierPdfData): jsPDF {
   y = buildWorkforceIntel(doc, y, data);
   y = buildDecisionLogic(doc, y, data);
   buildPoliticalReceipts(doc, data);
-  buildMarch2026Alert(doc, data);
+  buildWorkPolicySignals(doc, data);
   buildDisclaimerPage(doc);
   addPageNumbers(doc);
 
