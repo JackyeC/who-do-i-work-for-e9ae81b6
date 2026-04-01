@@ -12,11 +12,30 @@ interface PolicySignal {
   amount: number | null;
 }
 
-function confidenceLabel(score: string): { label: string; variant: "destructive" | "default" | "secondary" } {
-  const n = parseFloat(score) || 0;
-  if (n >= 0.75) return { label: "Strong Evidence", variant: "destructive" };
-  if (n >= 0.5) return { label: "Likely Connection", variant: "default" };
-  return { label: "Possible Connection", variant: "secondary" };
+type ConfidenceTier = { label: string; variant: "destructive" | "default" | "secondary"; numeric: number };
+
+const TEXT_CONFIDENCE_MAP: Record<string, ConfidenceTier> = {
+  high:   { label: "Strong Evidence",     variant: "destructive", numeric: 0.85 },
+  medium: { label: "Likely Connection",   variant: "default",     numeric: 0.6  },
+  low:    { label: "Possible Connection", variant: "secondary",   numeric: 0.35 },
+};
+
+/** Normalize mixed confidence_score values. Returns null if uninterpretable. */
+function normalizeConfidence(raw: string | null | undefined): ConfidenceTier | null {
+  if (!raw) return null;
+  const trimmed = raw.trim().toLowerCase();
+
+  // Text labels
+  const mapped = TEXT_CONFIDENCE_MAP[trimmed];
+  if (mapped) return mapped;
+
+  // Numeric strings
+  const n = parseFloat(trimmed);
+  if (Number.isNaN(n)) return null; // uninterpretable → exclude
+  if (n >= 0.75) return { label: "Strong Evidence",     variant: "destructive", numeric: n };
+  if (n >= 0.5)  return { label: "Likely Connection",   variant: "default",     numeric: n };
+  if (n >= 0.4)  return { label: "Possible Connection", variant: "secondary",   numeric: n };
+  return null; // below threshold → exclude
 }
 
 function isWorkRelated(category: string): boolean {
@@ -41,11 +60,12 @@ export function SignalExamples({ companyId }: SignalExamplesProps) {
         .from("issue_signals")
         .select("id, issue_category, signal_type, description, confidence_score, amount")
         .eq("entity_id", companyId)
-        .gte("confidence_score", 0.4)
         .order("confidence_score", { ascending: false })
-        .limit(20);
-      // Filter to work-related signals only
-      return (data || []).filter((s: PolicySignal) => isWorkRelated(s.issue_category)).slice(0, 5);
+        .limit(50);
+      // Normalize confidence, exclude uninterpretable/below-threshold, keep work-related only
+      return (data || [])
+        .filter((s: PolicySignal) => isWorkRelated(s.issue_category) && normalizeConfidence(s.confidence_score) !== null)
+        .slice(0, 5);
     },
     enabled: !!companyId,
     staleTime: 5 * 60 * 1000,
@@ -86,7 +106,7 @@ export function SignalExamples({ companyId }: SignalExamplesProps) {
         </p>
       </div>
       {signals.map((signal: PolicySignal) => {
-        const conf = confidenceLabel(signal.confidence_score);
+        const conf = normalizeConfidence(signal.confidence_score)!;
         return (
           <div
             key={signal.id}
