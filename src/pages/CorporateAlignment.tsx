@@ -1,8 +1,6 @@
 import { useParams, Link } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
-import { Header } from "@/components/Header";
-import { Footer } from "@/components/Footer";
 import { HypocrisyIndexCard, type SayDoGapData } from "@/components/HypocrisyIndexCard";
 import { CategoryAlignmentCard } from "@/components/alignment/CategoryAlignmentCard";
 import { AlignmentOverviewBar } from "@/components/alignment/AlignmentOverviewBar";
@@ -121,21 +119,16 @@ export default function CorporateAlignment() {
 
   if (!company) {
     return (
-      <div className="min-h-screen flex flex-col bg-background">
-        <Header />
-        <main className="flex-1 container mx-auto px-4 py-16 text-center">
-          <h1 className="text-2xl font-bold text-foreground">Company not found</h1>
-          <p className="text-muted-foreground mt-2">The alignment report for this company is not available.</p>
-          <Link to="/browse"><Button variant="outline" className="mt-6">Browse Companies</Button></Link>
-        </main>
-        <Footer />
+      <div className="container mx-auto px-4 py-16 text-center">
+        <h1 className="text-2xl font-bold text-foreground">Company not found</h1>
+        <p className="text-muted-foreground mt-2">The alignment report for this company is not available.</p>
+        <Link to="/browse"><Button variant="outline" className="mt-6">Browse Companies</Button></Link>
       </div>
     );
   }
 
   return (
     <div className="min-h-screen flex flex-col bg-background">
-      <Header />
       <main className="flex-1 container mx-auto px-4 py-8 max-w-4xl">
         {/* Back */}
         <Link to={`/dossier/${company.slug}`} className="inline-flex items-center gap-1.5 text-sm text-muted-foreground hover:text-foreground mb-6">
@@ -261,7 +254,6 @@ export default function CorporateAlignment() {
           </p>
         </div>
       </main>
-      <Footer />
     </div>
   );
 }
