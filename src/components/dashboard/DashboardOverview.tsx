@@ -502,7 +502,7 @@ export function DashboardOverview({ onNavigate }: DashboardOverviewProps) {
         <motion.div {...anim(0.2)}>
           <BriefingCard className="h-full">
             <div className="flex items-center justify-between mb-3">
-              <h3 className="text-sm font-bold text-foreground">
+              <h3 className="text-[16px] font-bold text-foreground">
                 Companies You're Watching
               </h3>
               <span className="text-xs text-muted-foreground font-mono">
