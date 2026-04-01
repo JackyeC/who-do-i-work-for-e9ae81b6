@@ -14,7 +14,7 @@ export function WelcomeLiveTicker() {
         .limit(1);
 
       if (data?.[0]) {
-        return `${data[0].companies.name} flagged for ${data[0].institution_name} link in the last 24 hours`;
+        return decodeEscapes(`${data[0].companies.name} flagged for ${data[0].institution_name} link in the last 24 hours`);
       }
 
       // Fallback to recent company update
