@@ -423,7 +423,7 @@ export function DashboardOverview({ onNavigate }: DashboardOverviewProps) {
           <BriefingCard className="h-full">
             <div className="flex items-center gap-2 mb-1">
               <BookOpen className="w-4 h-4 text-primary" />
-              <h3 className="text-sm font-bold text-foreground">From Jackye</h3>
+              <h3 className="text-sm font-bold text-foreground">Straight From Jackye</h3>
             </div>
             <p className="text-xs text-muted-foreground mb-3">Curated insider intel — not generic advice</p>
             <div className="space-y-3">
@@ -438,23 +438,27 @@ export function DashboardOverview({ onNavigate }: DashboardOverviewProps) {
                     {...(linkProps as any)}
                     className="block rounded-lg p-3.5 transition-colors bg-muted/20 border border-border/30 hover:bg-muted/40"
                   >
-                    <div className="flex items-center gap-2 mb-1">
-                      <span className="text-xs font-extrabold text-primary font-mono">
-                        {item.number}
-                      </span>
-                      <span className="rounded px-1.5 py-0.5 text-xs font-bold text-civic-blue bg-civic-blue/10 border border-civic-blue/30 font-mono">
-                        {item.type}
+                    <div className="flex items-start justify-between gap-2">
+                      <div className="min-w-0 flex-1">
+                        <div className="flex items-center gap-2 mb-1">
+                          <span className="text-xs font-extrabold text-primary font-mono">
+                            {item.number}
+                          </span>
+                          <span className="rounded px-1.5 py-0.5 text-xs font-bold font-mono border" style={{ color: "hsl(43, 96%, 56%)", backgroundColor: "hsla(43, 96%, 56%, 0.1)", borderColor: "hsla(43, 96%, 56%, 0.3)" }}>
+                            {item.type}
+                          </span>
+                        </div>
+                        <p className="text-[13px] font-semibold text-foreground leading-snug mt-1">
+                          {item.title}
+                        </p>
+                        <p className="text-xs text-muted-foreground/60 mt-1">
+                          {item.source}
+                        </p>
+                      </div>
+                      <span className="shrink-0 mt-1" style={{ color: "hsl(43, 96%, 56%)" }}>
+                        <ArrowRight className="w-4 h-4" />
                       </span>
                     </div>
-                    <p className="text-[13px] font-semibold text-foreground leading-snug mt-1">
-                      {item.title}
-                    </p>
-                    <p className="text-xs text-muted-foreground leading-snug mt-1">
-                      {item.desc}
-                    </p>
-                    <p className="text-xs text-muted-foreground/60 mt-1 flex items-center gap-1">
-                      {item.source} {!item.internal && <ExternalLink className="w-2.5 h-2.5" />}
-                    </p>
                   </Wrapper>
                 );
               })}
