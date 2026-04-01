@@ -6,7 +6,7 @@ import { Badge } from "@/components/ui/badge";
 import { Skeleton } from "@/components/ui/skeleton";
 import {
   ClipboardList, Activity, Database, AlertCircle, Zap,
-  StickyNote, AlertOctagon, ChevronRight,
+  StickyNote, AlertOctagon, ChevronRight, Link2, CheckCircle,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 
