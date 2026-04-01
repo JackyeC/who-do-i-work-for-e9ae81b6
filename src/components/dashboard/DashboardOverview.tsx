@@ -38,7 +38,7 @@ const SIGNAL_CARDS = [
     slug: "goldman-sachs",
     badge: "DOJ",
     badgeVariant: "destructive" as const,
-    summary: "1MDB global bribery & money-laundering settlement — systemic compliance failure",
+    summary: "$6B+ in fines since 2010. Off-channel comms, 1MDB fraud, misleading investors. Their compliance record tells a story worth reading.",
     amount: "$2.9B settlement",
     severity: "CRITICAL",
     severityVariant: "destructive" as const,
