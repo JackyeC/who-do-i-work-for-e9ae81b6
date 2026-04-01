@@ -182,7 +182,7 @@ const VARIANT_CLASSES = {
 
 function BriefingCard({ children, className = "" }: { children: React.ReactNode; className?: string }) {
   return (
-    <div className={`rounded-2xl p-6 bg-card border border-border/30 transition-shadow duration-300 hover:shadow-lg hover:shadow-primary/[0.04] ${className}`}>
+    <div className={`rounded-2xl p-6 bg-card border border-border/30 transition-all duration-300 hover:shadow-lg hover:shadow-primary/[0.04] hover:bg-card/80 ${className}`}>
       {children}
     </div>
   );
@@ -248,7 +248,7 @@ export function DashboardOverview({ onNavigate }: DashboardOverviewProps) {
       {/* ═══ QUICK EMPLOYER SEARCH ═══ */}
       <motion.div {...anim(0.05)}>
         <div className="rounded-2xl p-5 bg-card border border-border/30">
-          <h3 className="text-base font-bold text-foreground mb-1">
+          <h3 className="text-[16px] font-bold text-foreground mb-1">
             Audit any employer →
           </h3>
           <p className="text-xs text-muted-foreground mb-3">
@@ -328,14 +328,14 @@ export function DashboardOverview({ onNavigate }: DashboardOverviewProps) {
         <BriefingCard>
           <div className="flex items-center justify-between mb-4">
             <div>
-              <h3 className="text-base font-extrabold text-foreground tracking-tight">
+              <h3 className="text-[16px] font-bold text-foreground tracking-tight">
                 We're Watching Your Back
               </h3>
               <p className="text-xs text-muted-foreground mt-0.5">
                 Active violations, settlements, and regulatory actions we found in the public record
               </p>
             </div>
-            <span className="shrink-0 rounded-full px-2.5 py-1 text-xs font-bold bg-destructive/10 text-destructive border border-destructive/30">
+            <span className="shrink-0 rounded-full px-2.5 py-1 text-[10px] font-bold border" style={{ color: "hsl(43, 96%, 56%)", backgroundColor: "hsla(43, 96%, 56%, 0.1)", borderColor: "hsla(43, 96%, 56%, 0.3)" }}>
               {SIGNAL_CARDS.length} ACTIVE
             </span>
           </div>
@@ -387,7 +387,7 @@ export function DashboardOverview({ onNavigate }: DashboardOverviewProps) {
       {/* ═══ YOUR NEXT MOVE ═══ */}
       <motion.div {...anim(0.09)}>
         <BriefingCard>
-          <h3 className="text-base font-extrabold text-foreground tracking-tight mb-4">Your Next Move</h3>
+          <h3 className="text-[16px] font-bold text-foreground tracking-tight mb-4">Your Next Move</h3>
           <div className="space-y-2.5">
             {[
               { label: "Protect My Career", subtitle: "I'll audit any employer you're looking at", to: "/dashboard?tab=tracked" },
@@ -413,14 +413,14 @@ export function DashboardOverview({ onNavigate }: DashboardOverviewProps) {
       </motion.div>
 
       {/* ═══ 3 — INTELLIGENCE BULLETS + FROM JACKYE (2 cols) ═══ */}
-      <div className="grid md:grid-cols-2 gap-5">
+      <div className="grid md:grid-cols-2 gap-7">
 
         {/* 3A — Intelligence Briefing */}
         <motion.div {...anim(0.12)}>
           <BriefingCard className="h-full">
             <div className="flex items-center gap-2 mb-4">
               <AlertTriangle className="w-4 h-4 text-primary" />
-              <h3 className="text-sm font-bold text-foreground">What You Should Know</h3>
+              <h3 className="text-[16px] font-bold text-foreground">What You Should Know</h3>
             </div>
             <div className="space-y-3">
               {INTEL_BULLETS.map((b, i) => (
@@ -429,7 +429,7 @@ export function DashboardOverview({ onNavigate }: DashboardOverviewProps) {
                   initial={{ opacity: 0, y: 6 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ delay: 0.08 + i * 0.06, duration: 0.35, ease: [0.22, 1, 0.36, 1] }}
-                  className="rounded-lg p-3 bg-muted/30 border border-border/30 transition-all duration-200 hover:border-border/60"
+                  className="rounded-lg p-3 bg-muted/30 border border-border/30 transition-all duration-200 hover:border-border/60 hover:bg-muted/40"
                 >
                   <div className="flex items-center gap-2 mb-1.5">
                     <span className={`rounded px-1.5 py-0.5 text-xs font-bold font-mono border ${VARIANT_CLASSES[b.variant].badge}`}>
@@ -451,7 +451,7 @@ export function DashboardOverview({ onNavigate }: DashboardOverviewProps) {
           <BriefingCard className="h-full">
             <div className="flex items-center gap-2 mb-1">
               <BookOpen className="w-4 h-4 text-primary" />
-              <h3 className="text-sm font-bold text-foreground">Straight From Jackye</h3>
+              <h3 className="text-[16px] font-bold text-foreground">Straight From Jackye</h3>
             </div>
             <p className="text-xs text-muted-foreground mb-3">Curated insider intel — not generic advice</p>
             <div className="space-y-3">
@@ -464,7 +464,7 @@ export function DashboardOverview({ onNavigate }: DashboardOverviewProps) {
                   <Wrapper
                     key={item.number}
                     {...(linkProps as any)}
-                    className="block rounded-lg p-3.5 transition-colors bg-muted/20 border border-border/30 hover:bg-muted/40"
+                    className="block rounded-lg p-3.5 transition-all duration-200 bg-muted/20 border border-border/30 hover:bg-muted/40 hover:border-border/60"
                   >
                     <div className="flex items-start justify-between gap-2">
                       <div className="min-w-0 flex-1">
@@ -496,16 +496,16 @@ export function DashboardOverview({ onNavigate }: DashboardOverviewProps) {
       </div>
 
       {/* ═══ 4 — COMPANIES YOU'RE WATCHING + DAILY BRIEFING (2 cols) ═══ */}
-      <div className="grid md:grid-cols-2 gap-5">
+      <div className="grid md:grid-cols-[1fr_320px] gap-7">
 
         {/* 4A — Watched Companies */}
         <motion.div {...anim(0.2)}>
           <BriefingCard className="h-full">
             <div className="flex items-center justify-between mb-3">
-              <h3 className="text-sm font-bold text-foreground">
+              <h3 className="text-[16px] font-bold text-foreground">
                 Companies You're Watching
               </h3>
-              <span className="text-xs text-muted-foreground font-mono">
+              <span className="text-[10px] font-bold rounded-full px-2.5 py-1 border" style={{ color: "hsl(43, 96%, 56%)", backgroundColor: "hsla(43, 96%, 56%, 0.1)", borderColor: "hsla(43, 96%, 56%, 0.3)" }}>
                 {trackedCompanies.length} tracked
               </span>
             </div>
@@ -538,7 +538,8 @@ export function DashboardOverview({ onNavigate }: DashboardOverviewProps) {
             </div>
             <button
               onClick={() => onNavigate("tracked")}
-              className="text-xs font-medium mt-3 flex items-center gap-1 transition-colors text-primary hover:text-primary/80"
+              className="text-[12px] font-semibold mt-3 flex items-center gap-1 transition-colors hover:brightness-110"
+              style={{ color: "hsl(43, 96%, 56%)" }}
             >
               Manage watchlist <ArrowRight className="w-3 h-3" />
             </button>
@@ -551,7 +552,7 @@ export function DashboardOverview({ onNavigate }: DashboardOverviewProps) {
             <div className="p-5">
               <div className="flex items-center gap-2 mb-2">
                 <Newspaper className="w-4 h-4" style={{ color: "hsl(43, 96%, 56%)" }} />
-                <h3 className="text-sm font-bold text-foreground font-display">The Tuesday Letter</h3>
+                <h3 className="text-[16px] font-bold text-foreground font-display">The Tuesday Letter</h3>
               </div>
               <p className="text-[13px] text-foreground/80 leading-relaxed mb-4">
                 Every Tuesday I send out what I'm seeing — the signals, the moves, the things nobody else is saying out loud. It's free, it's unfiltered, and it's for you.
@@ -569,12 +570,12 @@ export function DashboardOverview({ onNavigate }: DashboardOverviewProps) {
       </div>
 
       {/* ═══ 5 — VALUES ALIGNMENT + AUDIT SEARCH (2 cols) ═══ */}
-      <div className="grid md:grid-cols-2 gap-5">
+      <div className="grid md:grid-cols-[1fr_320px] gap-7">
 
         {/* 5A — Values Alignment */}
         <motion.div {...anim(0.28)}>
           <BriefingCard className="h-full">
-            <h3 className="text-sm font-bold text-foreground mb-0.5">
+            <h3 className="text-[16px] font-bold text-foreground mb-0.5">
               Aligned With Your Values
             </h3>
             <p className="text-xs text-muted-foreground mb-3">Based on your Work DNA profile</p>
