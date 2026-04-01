@@ -8,15 +8,56 @@ import {
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 
-function StatusDot({ status }: { status: string }) {
-  const colors: Record<string, string> = {
-    healthy: "bg-civic-green",
-    delayed: "bg-civic-yellow",
-    partial: "bg-civic-yellow",
-    offline: "bg-destructive",
-    unknown: "bg-muted-foreground",
-  };
-  return <span className={cn("w-2 h-2 rounded-full inline-block", colors[status] || colors.unknown)} />;
+/* ─── Coverage level mapping ─── */
+type CoverageLevel = "strong" | "limited" | "none";
+
+function mapStatusToCoverage(status: string): CoverageLevel {
+  if (status === "healthy") return "strong";
+  if (status === "delayed" || status === "partial") return "limited";
+  return "none";
+}
+
+const COVERAGE_META: Record<CoverageLevel, { label: string; color: string; dot: string }> = {
+  strong:  { label: "Strong Coverage",  color: "text-civic-green",        dot: "bg-civic-green" },
+  limited: { label: "Limited Coverage", color: "text-civic-yellow",       dot: "bg-civic-yellow" },
+  none:    { label: "No Recent Data",   color: "text-muted-foreground",   dot: "bg-muted-foreground" },
+};
+
+const SOURCE_DESCRIPTIONS: Record<string, Record<CoverageLevel, string>> = {
+  "SEC / Corporate": {
+    strong:  "Recent filings available and up to date.",
+    limited: "Some corporate filings found, may not reflect latest activity.",
+    none:    "No recent corporate filings found in public records.",
+  },
+  "WARN Notices": {
+    strong:  "Recent layoff data available and current.",
+    limited: "Some recent layoff data found, may not be complete.",
+    none:    "No recent layoff notices found in public records.",
+  },
+  "FEC / Political": {
+    strong:  "Public political contributions available and current.",
+    limited: "Public political contributions available, limited recent activity.",
+    none:    "No recent political contribution records found.",
+  },
+  "News / Briefings": {
+    strong:  "Recent verified news sources available.",
+    limited: "Some news coverage found, not recently updated.",
+    none:    "No recent verified news sources found.",
+  },
+  "OSHA": {
+    strong:  "Safety records available and current.",
+    limited: "Some safety records available.",
+    none:    "No recent safety records found.",
+  },
+  "Manual Research": {
+    strong:  "Verified signals added through research.",
+    limited: "Some manually verified data available.",
+    none:    "No manual research data available yet.",
+  },
+};
+
+function CoverageDot({ level }: { level: CoverageLevel }) {
+  return <span className={cn("w-2 h-2 rounded-full inline-block", COVERAGE_META[level].dot)} />;
 }
 
 function EmptyState({ text }: { text: string }) {
@@ -117,37 +158,43 @@ export function SignalsDataTab() {
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        {/* Source Status */}
+        {/* Data Coverage */}
         <div className="bg-card border border-border rounded-2xl p-5">
           <h3 className="text-sm font-semibold text-foreground mb-4 flex items-center gap-2">
-            <Shield className="w-4 h-4 text-civic-green" /> Source Status
+            <Shield className="w-4 h-4 text-civic-green" /> Data Coverage
           </h3>
           <p className="text-xs text-muted-foreground mb-3">
-            Live freshness of each data pipeline. Status based on most recent record timestamp.
+            How much public data is available for this company right now.
           </p>
           {sourcesLoading ? (
-            <div className="space-y-2">{[1, 2, 3].map(i => <Skeleton key={i} className="h-8" />)}</div>
+            <div className="space-y-2">{[1, 2, 3].map(i => <Skeleton key={i} className="h-12" />)}</div>
           ) : !sources || sources.length === 0 ? (
             <EmptyState text="No data has been indexed here yet." />
           ) : (
-            <div className="space-y-2">
-              {sources.map((s) => (
-                <div key={s.name} className="flex items-center justify-between p-2.5 bg-muted/20 rounded-lg border border-border/30">
-                  <span className="text-sm text-foreground">{s.name}</span>
-                  <div className="flex items-center gap-2">
-                    <StatusDot status={s.status} />
-                    <span className={cn(
-                      "text-xs font-mono capitalize",
-                      s.status === "healthy" ? "text-civic-green" :
-                      s.status === "delayed" || s.status === "partial" ? "text-civic-yellow" :
-                      "text-destructive"
-                    )}>
-                      {s.status}
-                    </span>
-                  </div>
-                </div>
-              ))}
-            </div>
+            <>
+              <div className="space-y-2">
+                {sources.map((s) => {
+                  const level = mapStatusToCoverage(s.status);
+                  const meta = COVERAGE_META[level];
+                  const desc = SOURCE_DESCRIPTIONS[s.name]?.[level] ?? "";
+                  return (
+                    <div key={s.name} className="p-2.5 bg-muted/20 rounded-lg border border-border/30">
+                      <div className="flex items-center justify-between">
+                        <span className="text-sm text-foreground font-medium">{s.name}</span>
+                        <div className="flex items-center gap-2">
+                          <CoverageDot level={level} />
+                          <span className={cn("text-xs font-medium", meta.color)}>{meta.label}</span>
+                        </div>
+                      </div>
+                      {desc && <p className="text-[11px] text-muted-foreground mt-1 leading-relaxed">{desc}</p>}
+                    </div>
+                  );
+                })}
+              </div>
+              <p className="text-[10px] text-muted-foreground/70 mt-3 italic">
+                More data becomes available as additional sources are indexed.
+              </p>
+            </>
           )}
         </div>
 
