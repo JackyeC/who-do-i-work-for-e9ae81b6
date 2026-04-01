@@ -1,6 +1,7 @@
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { Radio } from "lucide-react";
+import { decodeEscapes, isLikelyEnglish, isUSOrEmployerRelevant } from "@/lib/ticker-filters";
 import {
   getSourceProfile,
   getBiasColor,
@@ -48,7 +49,16 @@ export function LiveIntelligenceTicker() {
         .limit(10);
 
       if (error) throw error;
-      return (data as TickerNewsItem[]) || [];
+      return ((data as TickerNewsItem[]) || [])
+        .map(item => ({
+          ...item,
+          headline: decodeEscapes(item.headline || ""),
+          source_name: item.source_name ? decodeEscapes(item.source_name) : null,
+        }))
+        .filter(item =>
+          isLikelyEnglish(item.headline) &&
+          isUSOrEmployerRelevant(item.headline, item.source_name)
+        );
     },
     staleTime: 120_000,
     refetchInterval: 300_000,
