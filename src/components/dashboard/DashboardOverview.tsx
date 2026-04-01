@@ -26,7 +26,7 @@ const SIGNAL_CARDS = [
     slug: "amazon",
     badge: "OSHA",
     badgeVariant: "destructive" as const,
-    summary: "6 OSHA citations across 4 fulfillment centers — ergonomic & rate-related injuries",
+    summary: "We found 6 OSHA citations across 4 fulfillment centers — ergonomic injuries and heat exposure. If you're interviewing here, ask about warehouse safety culture.",
     amount: "$60K+ penalties",
     severity: "HIGH",
     severityVariant: "destructive" as const,
@@ -38,7 +38,7 @@ const SIGNAL_CARDS = [
     slug: "goldman-sachs",
     badge: "DOJ",
     badgeVariant: "destructive" as const,
-    summary: "1MDB global bribery & money-laundering settlement — systemic compliance failure",
+    summary: "$6B+ in fines since 2010. Off-channel comms, 1MDB fraud, misleading investors. Their compliance record tells a story worth reading.",
     amount: "$2.9B settlement",
     severity: "CRITICAL",
     severityVariant: "destructive" as const,
@@ -50,7 +50,7 @@ const SIGNAL_CARDS = [
     slug: "jpmorgan-chase",
     badge: "SEC",
     badgeVariant: "warning" as const,
-    summary: "Spoofing precious-metals & Treasury markets — traders convicted",
+    summary: "Spoofing precious-metals and Treasury markets — traders convicted. $920M in fines. Worth understanding before you walk in.",
     amount: "$920M fine",
     severity: "HIGH",
     severityVariant: "warning" as const,
@@ -62,7 +62,7 @@ const SIGNAL_CARDS = [
     slug: "starbucks",
     badge: "NLRB",
     badgeVariant: "warning" as const,
-    summary: "$1B restructuring — 500+ store closures, 2,000 layoffs, union suppression findings",
+    summary: "$1B restructuring with 500+ store closures and 2,000 layoffs. Union disputes ongoing. Know what you're walking into.",
     amount: "$1B restructuring",
     severity: "HIGH",
     severityVariant: "warning" as const,
@@ -74,7 +74,7 @@ const SIGNAL_CARDS = [
     slug: "google-alphabet",
     badge: "DOJ",
     badgeVariant: "destructive" as const,
-    summary: "Antitrust ruling — illegal monopoly on search ads, remedies pending breakup risk",
+    summary: "Found guilty of maintaining an illegal monopoly on search ads. Remedies pending — this could reshape the entire company.",
     amount: "Monopoly ruling",
     severity: "CRITICAL",
     severityVariant: "destructive" as const,
@@ -329,10 +329,10 @@ export function DashboardOverview({ onNavigate }: DashboardOverviewProps) {
           <div className="flex items-center justify-between mb-4">
             <div>
               <h3 className="text-base font-extrabold text-foreground tracking-tight">
-                Employer Signal Alerts
+                We're Watching Your Back
               </h3>
               <p className="text-xs text-muted-foreground mt-0.5">
-                Active violations, settlements, and regulatory actions from the public record
+                Active violations, settlements, and regulatory actions we found in the public record
               </p>
             </div>
             <span className="shrink-0 rounded-full px-2.5 py-1 text-xs font-bold bg-destructive/10 text-destructive border border-destructive/30">
@@ -373,8 +373,8 @@ export function DashboardOverview({ onNavigate }: DashboardOverviewProps) {
                         <span className="text-xs text-muted-foreground/50">{s.source}</span>
                       </div>
                     </div>
-                    <span className="text-xs font-semibold text-primary whitespace-nowrap mt-0.5 flex items-center gap-1 group-hover:gap-2 transition-all">
-                      View Full Audit <ArrowRight className="w-3 h-3" />
+                    <span className="text-xs font-semibold whitespace-nowrap mt-0.5 flex items-center gap-1 transition-all" style={{ color: "hsl(43, 96%, 56%)" }}>
+                      Read the full story <ArrowRight className="w-3 h-3" />
                     </span>
                   </div>
                 </Link>
