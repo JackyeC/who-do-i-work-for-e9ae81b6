@@ -20,7 +20,7 @@ import { PolicyScoreCard } from "@/components/policy-intelligence/PolicyScoreCar
 import { HighRiskConnectionCard } from "@/components/company/HighRiskConnectionCard";
 import { WorkforceDemographicsLayer } from "./WorkforceDemographicsLayer";
 import { EEOCCaseAlert } from "@/components/EEOCCaseAlert";
-import { SpendingDrawer } from "./SpendingDrawer";
+import { SpendingRecordTable } from "./SpendingRecordTable";
 import { useEmployerReport } from "@/hooks/use-employer-report";
 import type { SpendingMetric, DonorProfile } from "@/types/ReportSchema";
 
