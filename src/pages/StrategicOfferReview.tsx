@@ -1002,14 +1002,12 @@ export default function StrategicOfferReview() {
             )}
           </>
         )}
-      </main>
       <LegalDisclaimer />
       <ConsentModal
         open={showConsentModal}
         onAccept={() => { setShowConsentModal(false); setInputMode("upload"); }}
         onCancel={() => setShowConsentModal(false)}
       />
-      <Footer />
     </div>
   );
 }
