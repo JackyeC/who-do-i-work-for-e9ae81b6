@@ -138,12 +138,12 @@ export function TodayTab() {
     queryFn: async () => {
       const { data } = await supabase
         .from("beta_feedback")
-        .select("feedback_type, message")
+        .select("feedback_type, message, created_at")
         .order("created_at", { ascending: false })
         .limit(20);
-      if (!data || data.length === 0) return { themes: [], count: 0 };
+      if (!data || data.length === 0) return { themes: [] as [string, { count: number; lastSeen: string }][], count: 0 };
 
-      const themes: Record<string, number> = {};
+      const themes: Record<string, { count: number; lastSeen: string }> = {};
       for (const f of data) {
         const msg = (f.message || "").toLowerCase();
         let theme = "Other";
@@ -152,12 +152,49 @@ export function TodayTab() {
         else if (msg.includes("broken") || msg.includes("error") || msg.includes("bug") || msg.includes("crash")) theme = "Broken UX";
         else if (msg.includes("feature") || msg.includes("wish") || msg.includes("would be") || msg.includes("add")) theme = "Feature requests";
         else if (msg.includes("content") || msg.includes("info") || msg.includes("missing") || msg.includes("empty")) theme = "Content quality";
-        themes[theme] = (themes[theme] || 0) + 1;
+        if (!themes[theme]) themes[theme] = { count: 0, lastSeen: f.created_at };
+        themes[theme].count += 1;
+        if (f.created_at > themes[theme].lastSeen) themes[theme].lastSeen = f.created_at;
       }
-      const sorted = Object.entries(themes).sort((a, b) => b[1] - a[1]).slice(0, 3);
+      const sorted = Object.entries(themes).sort((a, b) => b[1].count - a[1].count).slice(0, 3) as [string, { count: number; lastSeen: string }][];
       return { themes: sorted, count: data.length };
     },
   });
+
+  // ─── Since Last Visit ───
+  const LAST_VISIT_KEY = "founder-last-visit";
+  const { data: sinceLastVisit, isLoading: sinceLoading } = useQuery({
+    queryKey: ["founder-since-last-visit"],
+    queryFn: async () => {
+      const lastVisit = localStorage.getItem(LAST_VISIT_KEY);
+      const since = lastVisit || new Date(Date.now() - 24 * 60 * 60 * 1000).toISOString();
+
+      const [newCompanies, newReviews, newFeedback] = await Promise.all([
+        supabase.from("companies").select("id", { count: "exact", head: true }).gte("created_at", since),
+        supabase.from("pending_company_reviews").select("id", { count: "exact", head: true }).gte("created_at", since),
+        supabase.from("beta_feedback").select("id", { count: "exact", head: true }).gte("created_at", since),
+      ]);
+
+      return {
+        companies: newCompanies.count ?? 0,
+        reviews: newReviews.count ?? 0,
+        issues: newFeedback.count ?? 0,
+        hasPreviousVisit: !!lastVisit,
+      };
+    },
+  });
+
+  // Save visit timestamp on mount
+  useEffect(() => {
+    localStorage.setItem(LAST_VISIT_KEY, new Date().toISOString());
+  }, []);
+
+  const timeAgo = (ts: string) => {
+    const mins = Math.floor((Date.now() - new Date(ts).getTime()) / 60000);
+    if (mins < 60) return `${mins}m ago`;
+    if (mins < 1440) return `${Math.floor(mins / 60)}h ago`;
+    return `${Math.floor(mins / 1440)}d ago`;
+  };
 
   return (
     <div className="space-y-4">
