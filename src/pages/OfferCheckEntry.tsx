@@ -151,8 +151,9 @@ export default function OfferCheckEntry() {
   const [searchTerm, setSearchTerm] = useState<string | null>(null);
 
   usePageSEO({
-    title: "Offer Check — Should You Take This Job?",
-    description: "Check who you're really working for before you say yes. Real signals. Real data. No opinions.",
+    title: "Check a Company — Should You Take This Job?",
+    description: "Enter any company name and instantly see risk signals, political spending, layoff history, and source verification. Free employer check before you apply or accept.",
+    path: "/offer-check",
   });
 
   // ─── Company lookup ───
