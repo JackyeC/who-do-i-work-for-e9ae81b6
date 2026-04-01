@@ -35,6 +35,7 @@ const JobIntegrityBoard = lazy(() => import("./pages/JobIntegrityBoard"));
 const JobBoardEmbed = lazy(() => import("./pages/JobBoardEmbed"));
 const JobDetailPage = lazy(() => import("./pages/JobDetailPage"));
 const RequestCorrection = lazy(() => import("./pages/RequestCorrection"));
+const OfferCheckEntry = lazy(() => import("./pages/OfferCheckEntry"));
 const OfferCheck = lazy(() => import("./pages/OfferCheck"));
 const MyOfferChecks = lazy(() => import("./pages/MyOfferChecks"));
 const CompareOfferChecks = lazy(() => import("./pages/CompareOfferChecks"));
