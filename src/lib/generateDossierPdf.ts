@@ -863,10 +863,13 @@ function buildPoliticalReceipts(doc: jsPDF, data: DossierPdfData): number {
       ...tableStyle(y),
       head: [["Category", "Signal Summary"]],
       body: data.valuesSignals.slice(0, 25).map(s => [
-        s.issue_category || s.signal_category || "General",
-        (s.signal_summary || s.evidence_text || "—").substring(0, 130),
+        sanitizeText(s.issue_category || s.signal_category || "General"),
+        truncateAtWord(s.signal_summary || s.evidence_text || "—", 160),
       ]),
-      columnStyles: { 0: { cellWidth: 36 } },
+      columnStyles: {
+        0: { cellWidth: 36 },
+        1: { cellWidth: "auto", overflow: "linebreak" as const },
+      },
     });
     y = doc.lastAutoTable.finalY + 10;
   }
