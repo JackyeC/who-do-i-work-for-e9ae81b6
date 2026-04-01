@@ -279,37 +279,59 @@ export function TodayTab() {
         )}
       </TriageCard>
 
-      {/* 4. User Friction — capped to 3 themes */}
+      {/* 4. User Friction — with counts and last seen */}
       <TriageCard title="User Friction" icon={AlertCircle} iconColor="text-destructive">
         {frictionLoading ? (
           <Skeleton className="h-10 w-full" />
         ) : !friction || friction.count === 0 ? (
           <EmptyLine text="No user friction captured yet." />
         ) : (
-          friction.themes.map(([theme, count]) => (
+          friction.themes.map(([theme, info]) => (
             <div key={theme} className="flex items-center justify-between text-sm">
-              <span className="text-muted-foreground">{theme}</span>
-              <Badge variant="outline" className="text-xs font-mono">{count}</Badge>
+              <div className="min-w-0">
+                <span className="text-muted-foreground">{theme}</span>
+                <span className="text-xs text-muted-foreground ml-1">({info.count})</span>
+              </div>
+              <span className="text-[10px] text-muted-foreground font-mono shrink-0">{timeAgo(info.lastSeen)}</span>
             </div>
           ))
         )}
       </TriageCard>
 
-      {/* 5. Quick Actions */}
+      {/* 5. Since Last Visit */}
+      <TriageCard title="Since Last Visit" icon={Clock} iconColor="text-primary">
+        {sinceLoading ? (
+          <Skeleton className="h-10 w-full" />
+        ) : !sinceLastVisit || (!sinceLastVisit.companies && !sinceLastVisit.reviews && !sinceLastVisit.issues) ? (
+          <EmptyLine text={sinceLastVisit?.hasPreviousVisit ? "No changes since your last visit." : "First visit — tracking starts now."} />
+        ) : (
+          <>
+            {sinceLastVisit.companies > 0 && <MetricRow label="New companies indexed" value={`+${sinceLastVisit.companies}`} />}
+            {sinceLastVisit.reviews > 0 && <MetricRow label="Reviews submitted" value={`+${sinceLastVisit.reviews}`} />}
+            {sinceLastVisit.issues > 0 && <MetricRow label="Issues detected" value={`+${sinceLastVisit.issues}`} />}
+          </>
+        )}
+      </TriageCard>
+
+      {/* 6. Quick Actions */}
       <TriageCard title="Quick Actions" icon={Zap} iconColor="text-civic-yellow">
-        {!priorityLoading && priority && priority.brokenLinkCount > 0 && (
+        <Button variant="outline" size="sm" className="w-full justify-start text-xs gap-2 h-8" onClick={() => navigate("/founder?tab=queue")}>
+          <ClipboardList className="w-3.5 h-3.5" /> Review pending companies
+        </Button>
+        <Button variant="outline" size="sm" className="w-full justify-start text-xs gap-2 h-8" onClick={() => navigate("/founder?tab=signals")}>
+          <Search className="w-3.5 h-3.5" /> Approve research
+        </Button>
+        {!priorityLoading && priority && priority.brokenLinkCount > 0 ? (
           <Button variant="destructive" size="sm" className="w-full justify-start text-xs gap-2 h-8" onClick={() => navigate("/founder?tab=signals")}>
             <Link2 className="w-3.5 h-3.5" /> Fix broken links ({priority.brokenLinkCount})
           </Button>
+        ) : (
+          <Button variant="outline" size="sm" className="w-full justify-start text-xs gap-2 h-8 text-muted-foreground" disabled>
+            <CheckCircle className="w-3.5 h-3.5 text-civic-green" /> No broken links
+          </Button>
         )}
-        <Button variant="outline" size="sm" className="w-full justify-start text-xs gap-2 h-8" onClick={() => navigate("/founder?tab=queue")}>
-          <ClipboardList className="w-3.5 h-3.5" /> Review pending items
-        </Button>
-        <Button variant="outline" size="sm" className="w-full justify-start text-xs gap-2 h-8" onClick={() => navigate("/founder?tab=signals")}>
-          <Database className="w-3.5 h-3.5" /> Check data health
-        </Button>
         <Button variant="outline" size="sm" className="w-full justify-start text-xs gap-2 h-8" onClick={() => navigate("/founder?tab=notes")}>
-          <StickyNote className="w-3.5 h-3.5" /> Add founder note
+          <StickyNote className="w-3.5 h-3.5" /> Add note
         </Button>
       </TriageCard>
       </div>
