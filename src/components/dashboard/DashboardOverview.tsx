@@ -14,6 +14,7 @@ import { AlignedValuesSearch } from "./AlignedValuesSearch";
 import { FoundingMemberBadge } from "@/components/FoundingMemberBadge";
 import { AffirmationBar } from "./AffirmationBar";
 import { YourJourney } from "./YourJourney";
+import { JackyeMessage } from "./JackyeMessage";
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
 
 interface DashboardOverviewProps {
