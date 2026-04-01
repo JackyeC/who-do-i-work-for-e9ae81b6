@@ -216,8 +216,10 @@ function StoryCard({ article }: { article: WorkNewsArticle }) {
   const sourceProfile = article.source_name ? getSourceProfile(article.source_name) : null;
   const biasColor = sourceProfile ? getBiasColor(sourceProfile.bias) : "";
 
+  const whyMatters = getWhyItMatters(article.category, article.is_controversy);
+
   return (
-    <article className="rounded-xl border border-border/40 bg-card hover:border-primary/30 transition-all group overflow-hidden">
+    <article id={`story-${article.id}`} className="rounded-xl border border-border/40 bg-card hover:border-primary/30 transition-all group overflow-hidden scroll-mt-24">
       <div className="p-5">
         <div className="flex items-center gap-2 mb-3">
           <Badge variant="outline" className={`text-[10px] font-mono tracking-wider border ${cat.color}`}>
@@ -240,6 +242,22 @@ function StoryCard({ article }: { article: WorkNewsArticle }) {
             <p className="text-sm text-foreground/85 leading-relaxed">{article.jackye_take}</p>
           </div>
         )}
+
+        {/* Why This Matters */}
+        <div className="rounded-lg bg-muted/20 border border-border/20 p-3 mb-3">
+          <div className="flex items-center gap-1.5 mb-1.5">
+            <TrendingUp className="w-3 h-3 text-primary" />
+            <span className="text-[9px] font-bold text-primary tracking-[0.15em] uppercase font-mono">Why This Matters</span>
+          </div>
+          <ul className="space-y-1">
+            {whyMatters.slice(0, 2).map((point, idx) => (
+              <li key={idx} className="flex items-start gap-1.5 text-xs text-muted-foreground leading-relaxed">
+                <span className="text-primary mt-0.5 shrink-0">·</span>
+                {point}
+              </li>
+            ))}
+          </ul>
+        </div>
 
         {article.themes && article.themes.length > 0 && (
           <div className="flex flex-wrap gap-1.5 mb-3">
