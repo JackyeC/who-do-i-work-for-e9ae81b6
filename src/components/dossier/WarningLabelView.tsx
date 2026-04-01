@@ -387,11 +387,9 @@ export function WarningLabelView({ company, executives = [], contracts = [], iss
               <p className="font-mono text-xs text-primary tracking-wider uppercase mb-2">Top Political Donors in Leadership</p>
               <div className="space-y-2">
                 {topDonors.map((exec, i) => (
-                  <a
+                  <div
                     key={i}
-                    href={`https://www.fec.gov/data/receipts/individual-contributions/?contributor_name=${encodeURIComponent(exec.name)}&contributor_employer=${encodeURIComponent(company.name)}`}
-                    target="_blank"
-                    rel="noopener noreferrer"
+                    onClick={() => openSource(`https://www.fec.gov/data/receipts/individual-contributions/?contributor_name=${encodeURIComponent(exec.name)}&contributor_employer=${encodeURIComponent(company.name)}`, { description: `Individual political contributions by ${exec.name} (${exec.title})`, amount: exec.total_donations })}
                     className="flex items-center justify-between p-3 bg-muted/20 border border-border/30 rounded-none hover:bg-muted/40 hover:border-primary/30 transition-colors group cursor-pointer"
                   >
                     <div>
@@ -405,9 +403,9 @@ export function WarningLabelView({ company, executives = [], contracts = [], iss
                       <Badge variant="outline" className="font-mono text-xs">
                         {fmtMoney(exec.total_donations)} donated
                       </Badge>
-                      <p className="text-xs text-primary mt-0.5 font-medium opacity-0 group-hover:opacity-100 transition-opacity">View on FEC →</p>
+                      <p className="text-xs text-primary mt-0.5 font-medium opacity-0 group-hover:opacity-100 transition-opacity">View Receipt →</p>
                     </div>
-                  </a>
+                  </div>
                 ))}
               </div>
             </div>
