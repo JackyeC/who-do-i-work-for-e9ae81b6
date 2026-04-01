@@ -161,7 +161,62 @@ export default function CompanyDossier() {
     }));
   }, [valuesSignals]);
 
-  /* ─── Loading state ─── */
+  /* ─── Build evidence records for the full report drawer ─── */
+  const evidenceRecords: EvidenceRecord[] = useMemo(() => {
+    if (!company) return [];
+    const records: EvidenceRecord[] = [];
+
+    if ((company.total_pac_spending ?? 0) > 0) {
+      records.push({
+        eventType: "PAC Contribution", category: "Political Spending", date: null,
+        amount: company.total_pac_spending ?? 0,
+        description: `Corporate PAC spending totaling $${(company.total_pac_spending ?? 0).toLocaleString()} on public record.`,
+        sourceUrl: "https://www.opensecrets.org/political-action-committees-pacs", sourceName: "OpenSecrets / FEC",
+      });
+    }
+    (executives || []).filter((e: any) => e.total_donations > 0).forEach((e: any) => {
+      records.push({
+        eventType: "Individual Donation", category: "Political Spending", date: null,
+        amount: e.total_donations,
+        description: `${e.name} (${e.title}) — personal political donations totaling $${e.total_donations.toLocaleString()}.`,
+        sourceUrl: "https://www.fec.gov/data/receipts/individual-contributions/", sourceName: "FEC",
+      });
+    });
+    if ((company.lobbying_spend ?? 0) > 0) {
+      records.push({
+        eventType: "Lobbying Expenditure", category: "Lobbying", date: null,
+        amount: company.lobbying_spend ?? 0,
+        description: `Reported lobbying spend: $${(company.lobbying_spend ?? 0).toLocaleString()}.`,
+        sourceUrl: "https://www.opensecrets.org/federal-lobbying", sourceName: "OpenSecrets / LDA",
+      });
+    }
+    (contracts || []).forEach((c: any) => {
+      records.push({
+        eventType: "Federal Contract", category: "Government Contracts", date: null,
+        amount: c.contract_value ?? null,
+        description: c.contract_description || `Federal contract with ${c.agency_name}`,
+        sourceUrl: c.source || "https://www.usaspending.gov/", sourceName: c.source || "USAspending",
+      });
+    });
+    (eeocCases || []).forEach((c: any) => {
+      records.push({
+        eventType: "EEOC Filing", category: "Enforcement & EEOC",
+        date: c.filing_date || c.created_at || null, amount: c.settlement_amount ?? null,
+        description: c.description || c.case_summary || `EEOC case filed against ${company.name}.`,
+        sourceUrl: c.source_url || "https://www.eeoc.gov/", sourceName: "EEOC",
+      });
+    });
+    (issueSignals || []).forEach((s: any) => {
+      records.push({
+        eventType: s.signal_type || "Signal", category: "Issue Signals",
+        date: s.transaction_date || null, amount: s.amount ?? null,
+        description: s.description || `${s.issue_category} signal detected.`,
+        sourceUrl: s.source_url || null, sourceName: s.issue_category || "Multi-source",
+      });
+    });
+    return records;
+  }, [company, executives, contracts, eeocCases, issueSignals]);
+
   if (isLoading) {
     return (
       <section className="container mx-auto px-4 py-12 max-w-3xl">
