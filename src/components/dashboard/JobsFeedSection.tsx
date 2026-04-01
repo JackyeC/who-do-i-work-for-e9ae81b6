@@ -65,7 +65,7 @@ const SAMPLE_JOBS: JobListing[] = [
     applicants: 22, integrityScore: 88, integrityLevel: "LOW", alignmentPct: 93,
     skills: ["Instructional Design", "Equity Frameworks", "EdTech", "Assessment"],
     description: "Design culturally responsive curriculum reaching 200+ schools. Deep commitment to educational equity required.",
-    whyAligns: "Lighthouse has the highest integrity score in the ed-tech sector. Their board includes community representatives and their pay equity audit is publicly available.",
+    whyAligns: "Highest integrity score in ed-tech. Community board. Published pay equity audit. This one's real.",
     integritySummary: "Top-tier transparency. Community advisory board. Published pay equity audit. B-Corp certified.",
     narrativeGap: null,
   },
