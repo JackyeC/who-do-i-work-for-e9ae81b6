@@ -46,7 +46,13 @@ export function WorkNewsTicker({ className }: WorkNewsTickerProps) {
             }}
           >
             {doubled.map((article, i) => (
-              <span key={`${article.id}-${i}`} className="inline-flex items-center gap-2 text-xs">
+              <a
+                key={`${article.id}-${i}`}
+                href={article.source_url!}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex items-center gap-2 text-xs hover:text-primary transition-colors cursor-pointer"
+              >
                 {article.is_controversy ? (
                   <AlertTriangle className="w-3 h-3 text-destructive shrink-0" />
                 ) : (
@@ -56,7 +62,7 @@ export function WorkNewsTicker({ className }: WorkNewsTickerProps) {
                   {CATEGORY_LABELS[article.category] || "NEWS"}
                 </span>
                 <span className={cn(
-                  "text-foreground/90",
+                  "text-foreground/90 hover:text-primary transition-colors",
                   article.is_controversy && "text-destructive font-medium"
                 )}>
                   {article.headline.length > 80
@@ -65,7 +71,7 @@ export function WorkNewsTicker({ className }: WorkNewsTickerProps) {
                 </span>
                 <span className="text-muted-foreground/50">·</span>
                 <span className="text-muted-foreground text-xs">{article.source_name}</span>
-              </span>
+              </a>
             ))}
           </motion.div>
         </div>
