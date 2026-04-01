@@ -47,6 +47,7 @@ export default function CompanyDossier() {
   const { isCompanyTracked } = useTrackedCompanies();
   const [showPrep, setShowPrep] = useState(false);
   const [showRawLayers, setShowRawLayers] = useState(false);
+  const [showSecondary, setShowSecondary] = useState(false);
 
   /* ─── Data fetching ─── */
   const { data: company, isLoading } = useQuery({
