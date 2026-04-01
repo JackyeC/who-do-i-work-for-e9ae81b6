@@ -536,8 +536,9 @@ export default function Newsletter() {
             </div>
             <div className="space-y-2">
               {movingNow.map((article) => (
-                <a key={article.id} href={article.source_url || "#"} target="_blank" rel="noopener noreferrer"
-                  className="flex items-center gap-3 py-2 px-3 rounded-lg hover:bg-card/50 transition-colors group">
+                <button key={article.id}
+                  onClick={() => document.getElementById(`story-${article.id}`)?.scrollIntoView({ behavior: "smooth", block: "start" })}
+                  className="flex items-center gap-3 py-2 px-3 rounded-lg hover:bg-card/50 transition-colors group w-full text-left">
                   <Badge variant="outline" className={`text-[9px] font-mono tracking-wider border shrink-0 ${getCategoryConfig(article.category).color}`}>
                     {getCategoryConfig(article.category).label}
                   </Badge>
@@ -545,7 +546,7 @@ export default function Newsletter() {
                     {article.headline}
                   </p>
                   <span className="text-[10px] text-muted-foreground/50 font-mono shrink-0">{timeAgo(article.published_at)}</span>
-                </a>
+                </button>
               ))}
             </div>
           </div>
