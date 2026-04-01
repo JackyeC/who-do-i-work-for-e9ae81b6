@@ -11,6 +11,7 @@ import { Badge } from "@/components/ui/badge";
 import { Card, CardContent } from "@/components/ui/card";
 import { cn } from "@/lib/utils";
 import { EarlyInvestigationCard, EARLY_INVESTIGATION_THRESHOLD } from "./EarlyInvestigationCard";
+import { useSourceDrawer } from "./SourcePreviewDrawer";
 
 /* ─── Types ─── */
 interface WarningLabelProps {
@@ -108,6 +109,7 @@ const DECODER_MAP: Record<string, string> = {
 
 /* ─── Component ─── */
 export function WarningLabelView({ company, executives = [], contracts = [], issueSignals = [], publicStances = [], eeocCases = [] }: WarningLabelProps) {
+  const { openSource } = useSourceDrawer();
   const isEarlyInvestigation = issueSignals.length < EARLY_INVESTIGATION_THRESHOLD;
   const verdict = useMemo(() => computeVerdict(company, issueSignals.length, eeocCases.length), [company, issueSignals.length, eeocCases.length]);
 
@@ -240,13 +242,10 @@ export function WarningLabelView({ company, executives = [], contracts = [], iss
             </div>
           </div>
           <div className="space-y-3">
-            {pulseItems.map((item, i) => {
-              const Wrapper = item.url ? "a" : "div";
-              const wrapperProps = item.url ? { href: item.url, target: "_blank", rel: "noopener noreferrer" } : {};
-              return (
-                <Wrapper
+            {pulseItems.map((item, i) => (
+                <div
                   key={i}
-                  {...wrapperProps as any}
+                  onClick={() => item.url && openSource(item.url, { description: item.text })}
                   className={cn(
                     "flex items-start gap-3 p-3 rounded-none bg-muted/20 border border-border/30",
                     item.url && "hover:bg-muted/40 hover:border-primary/30 transition-colors cursor-pointer group"
@@ -257,13 +256,12 @@ export function WarningLabelView({ company, executives = [], contracts = [], iss
                     {item.text}
                     {item.url && (
                       <span className="inline-flex items-center gap-1 ml-1.5 text-primary text-xs font-medium opacity-70 group-hover:opacity-100">
-                        <ExternalLink className="w-3 h-3" /> Source
+                        <ExternalLink className="w-3 h-3" /> View Receipt
                       </span>
                     )}
                   </p>
-                </Wrapper>
-              );
-            })}
+                </div>
+              ))}
           </div>
         </CardContent>
       </Card>
@@ -312,7 +310,7 @@ export function WarningLabelView({ company, executives = [], contracts = [], iss
                 </tr>
                 <tr
                   className="cursor-pointer hover:bg-muted/20 transition-colors group"
-                  onClick={() => window.open(`https://www.fec.gov/data/receipts/?data_type=processed&committee_name=${encodeURIComponent(company.name)}`, "_blank")}
+                  onClick={() => openSource(`https://www.fec.gov/data/receipts/?data_type=processed&committee_name=${encodeURIComponent(company.name)}`, { description: `PAC political spending for ${company.name}`, amount: company.total_pac_spending })}
                 >
                   <td className="py-3 pr-4 font-medium text-foreground flex items-center gap-1.5">
                     PAC Spending
@@ -389,11 +387,9 @@ export function WarningLabelView({ company, executives = [], contracts = [], iss
               <p className="font-mono text-xs text-primary tracking-wider uppercase mb-2">Top Political Donors in Leadership</p>
               <div className="space-y-2">
                 {topDonors.map((exec, i) => (
-                  <a
+                  <div
                     key={i}
-                    href={`https://www.fec.gov/data/receipts/individual-contributions/?contributor_name=${encodeURIComponent(exec.name)}&contributor_employer=${encodeURIComponent(company.name)}`}
-                    target="_blank"
-                    rel="noopener noreferrer"
+                    onClick={() => openSource(`https://www.fec.gov/data/receipts/individual-contributions/?contributor_name=${encodeURIComponent(exec.name)}&contributor_employer=${encodeURIComponent(company.name)}`, { description: `Individual political contributions by ${exec.name} (${exec.title})`, amount: exec.total_donations })}
                     className="flex items-center justify-between p-3 bg-muted/20 border border-border/30 rounded-none hover:bg-muted/40 hover:border-primary/30 transition-colors group cursor-pointer"
                   >
                     <div>
@@ -407,9 +403,9 @@ export function WarningLabelView({ company, executives = [], contracts = [], iss
                       <Badge variant="outline" className="font-mono text-xs">
                         {fmtMoney(exec.total_donations)} donated
                       </Badge>
-                      <p className="text-xs text-primary mt-0.5 font-medium opacity-0 group-hover:opacity-100 transition-opacity">View on FEC →</p>
+                      <p className="text-xs text-primary mt-0.5 font-medium opacity-0 group-hover:opacity-100 transition-opacity">View Receipt →</p>
                     </div>
-                  </a>
+                  </div>
                 ))}
               </div>
             </div>
@@ -660,6 +656,7 @@ function getSourceInfo(signal: { signal_type: string; source_url?: string | null
 
 /* ─── Receipts Section ─── */
 function ReceiptsSection({ signalsByCategory }: { signalsByCategory: Record<string, Array<{ issue_category: string; signal_type: string; description: string; amount?: number | null; confidence_score?: string; source_url?: string | null; transaction_date?: string | null }>> }) {
+  const { openSource } = useSourceDrawer();
   const [expandedCats, setExpandedCats] = useState<Record<string, boolean>>(() => {
     const initial: Record<string, boolean> = {};
     Object.keys(signalsByCategory).forEach(cat => { initial[cat] = true; });
@@ -721,17 +718,14 @@ function ReceiptsSection({ signalsByCategory }: { signalsByCategory: Record<stri
                                   {signal.signal_type?.replace(/_/g, " ")}
                                 </span>
                                 {sourceInfo && (
-                                  <a
-                                    href={sourceInfo.url}
-                                    target="_blank"
-                                    rel="noopener noreferrer"
-                                    onClick={(e) => e.stopPropagation()}
+                                  <button
+                                    onClick={(e) => { e.stopPropagation(); openSource(sourceInfo.url, { signalType: signal.signal_type, description: signal.description, amount: signal.amount }); }}
                                     className="inline-flex items-center gap-1 px-1.5 py-0.5 rounded-sm bg-primary/10 border border-primary/20 text-xs font-semibold text-primary hover:bg-primary/20 hover:border-primary/40 transition-colors cursor-pointer"
                                     title={`View source at ${sourceInfo.label}`}
                                   >
                                     <ExternalLink className="w-2.5 h-2.5" />
                                     {sourceInfo.label}
-                                  </a>
+                                  </button>
                                 )}
                                 {signal.confidence_score && (
                                   <Badge
@@ -766,16 +760,13 @@ function ReceiptsSection({ signalsByCategory }: { signalsByCategory: Record<stri
                                   </span>
                                 )}
                                 {signal.source_url && !sourceInfo && (
-                                  <a
-                                    href={signal.source_url}
-                                    target="_blank"
-                                    rel="noopener noreferrer"
+                                  <button
+                                    onClick={(e) => { e.stopPropagation(); openSource(signal.source_url!, { signalType: signal.signal_type, description: signal.description, amount: signal.amount }); }}
                                     className="inline-flex items-center gap-1 text-xs text-primary hover:underline font-medium"
-                                    onClick={(e) => e.stopPropagation()}
                                   >
                                     <ExternalLink className="w-3 h-3" />
                                     View Source
-                                  </a>
+                                  </button>
                                 )}
                               </div>
                             </div>
