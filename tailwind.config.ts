@@ -66,7 +66,9 @@ export default {
         },
         surface: {
           "2": "hsl(var(--surface-2))",
+          "3": "hsl(var(--surface-3, var(--surface-2)))",
           elevated: "hsl(var(--surface-elevated))",
+        },
         },
         brand: {
           "section-label": "hsl(var(--brand-section-label))",
