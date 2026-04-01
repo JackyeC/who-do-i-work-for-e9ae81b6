@@ -45,7 +45,7 @@ const SAMPLE_JOBS: JobListing[] = [
     applicants: 67, integrityScore: 74, integrityLevel: "LOW", alignmentPct: 84,
     skills: ["SQL", "Python", "Tableau", "Financial Modeling"],
     description: "Analyze lending patterns and develop models that ensure equitable access to financial products across demographics.",
-    whyAligns: "Canopy has invested in fair-lending audits and their leadership team reflects the communities they serve. Your analytical skills align with their transparency mission.",
+    whyAligns: "Fair-lending audits on file. Leadership reflects the communities they serve. Worth your attention.",
     integritySummary: "Active CDFI partnerships. Published diversity report. Moderate lobbying spend in consumer finance regulation.",
     narrativeGap: null,
   },
