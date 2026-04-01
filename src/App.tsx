@@ -141,6 +141,7 @@ const BetaFeedbackWidget = lazy(() => import("./components/BetaFeedbackWidget").
 const CookieNotice = lazy(() => import("./components/CookieNotice").then(m => ({ default: m.CookieNotice })));
 const PreviewTierToolbar = lazy(() => import("./components/PreviewTierToolbar").then(m => ({ default: m.PreviewTierToolbar })));
 const Receipts = lazy(() => import("./pages/Receipts"));
+const Newsletter = lazy(() => import("./pages/Newsletter"));
 const ReceiptsReport = lazy(() => import("./pages/ReceiptsReport"));
 const SubmitTip = lazy(() => import("./pages/SubmitTip"));
 
@@ -218,7 +219,7 @@ const App = () => (
                   <Route path="/the-receipts.html" element={<Navigate to="/newsletter" replace />} />
                   <Route path="/receipts/:slug" element={<ReceiptsReport />} />
                   <Route path="/submit-tip" element={<SubmitTip />} />
-                  <Route path="/newsletter" element={<Receipts />} />
+                  <Route path="/newsletter" element={<Newsletter />} />
                   <Route path="/hrtech" element={<HRTechIntelligence />} />
                   <Route path="/palette" element={<PaletteStudio />} />
                   <Route path="/company/:id" element={<CompanySlugRedirect />} />

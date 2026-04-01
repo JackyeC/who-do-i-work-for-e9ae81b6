@@ -1,23 +1,20 @@
-import { useState } from "react";
+import { useState, useMemo } from "react";
 import { Link } from "react-router-dom";
 import { usePageSEO } from "@/hooks/use-page-seo";
 import { useWorkNews, WorkNewsArticle } from "@/hooks/use-work-news";
-import { Card, CardContent } from "@/components/ui/card";
+import { useAuth } from "@/contexts/AuthContext";
 import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
 import { supabase } from "@/integrations/supabase/client";
 import { useTurnstile } from "@/hooks/useTurnstile";
 import { verifyTurnstileToken } from "@/lib/verifyTurnstile";
-import { useAuth } from "@/contexts/AuthContext";
 import { FoundingMemberBadge } from "@/components/FoundingMemberBadge";
-import {
-  getSourceProfile,
-  getBiasColor,
-} from "@/lib/source-bias-map";
+import { WorkNewsTicker } from "@/components/news/WorkNewsTicker";
+import { getSourceProfile, getBiasColor } from "@/lib/source-bias-map";
+import { motion } from "framer-motion";
 import {
   Mail, ArrowRight, Check, ExternalLink, Newspaper,
-  AlertTriangle, Flame, ChevronRight, Radio,
-  Eye, MessageSquare, TrendingUp, Award,
+  AlertTriangle, Flame, Radio, Eye, TrendingUp,
+  Award, Clock, Zap,
 } from "lucide-react";
 
 /* ── Category config ── */
@@ -52,7 +49,7 @@ function timeAgo(dateStr: string | null) {
   return `${days}d ago`;
 }
 
-/* ── Spice meter based on controversy + sentiment ── */
+/* ── Spice meter ── */
 function spiceLevel(article: WorkNewsArticle): number {
   let score = 1;
   if (article.is_controversy) score += 2;
@@ -65,107 +62,13 @@ function SpiceMeter({ level }: { level: number }) {
   return (
     <span className="flex items-center gap-0.5" title={`Spice level: ${level}/5`}>
       {Array.from({ length: 5 }).map((_, i) => (
-        <span key={i} className={i < level ? "opacity-100" : "opacity-20"}>
-          🌶️
-        </span>
+        <span key={i} className={i < level ? "opacity-100" : "opacity-20"}>🌶️</span>
       ))}
     </span>
   );
 }
 
-/* ── Single story card ── */
-function StoryCard({ article }: { article: WorkNewsArticle }) {
-  const cat = getCategoryConfig(article.category);
-  const spice = spiceLevel(article);
-  const sourceProfile = article.source_name
-    ? getSourceProfile(article.source_name)
-    : null;
-  const biasColor = sourceProfile ? getBiasColor(sourceProfile.bias) : "";
-
-  return (
-    <Card className="bg-card border border-border/40 hover:border-primary/30 transition-all group">
-      <CardContent className="p-0">
-        {/* Header bar */}
-        <div className="flex items-center justify-between px-5 pt-4 pb-2">
-          <div className="flex items-center gap-2">
-            <Badge
-              variant="outline"
-              className={`text-[10px] font-mono tracking-wider border ${cat.color}`}
-            >
-              {cat.label}
-            </Badge>
-            {article.is_controversy && (
-              <AlertTriangle className="w-3.5 h-3.5 text-destructive animate-pulse" />
-            )}
-          </div>
-          <span className="text-[10px] text-muted-foreground/60 font-mono">
-            {timeAgo(article.published_at)}
-          </span>
-        </div>
-
-        {/* Headline */}
-        <div className="px-5 pb-3">
-          <h3 className="text-[15px] font-semibold text-foreground leading-snug">
-            {article.headline}
-          </h3>
-        </div>
-
-        {/* The Take — ALWAYS OPEN */}
-        {article.jackye_take && (
-          <div className="mx-4 mb-3 rounded-xl bg-primary/5 border border-primary/20 p-4">
-            <div className="flex items-center gap-2 mb-2">
-              <Eye className="w-3.5 h-3.5 text-primary" />
-              <span className="text-xs font-bold text-primary tracking-wide uppercase">
-                Jackye's Take
-              </span>
-            </div>
-            <p className="text-sm text-foreground/90 leading-relaxed">
-              {article.jackye_take}
-            </p>
-          </div>
-        )}
-
-        {/* Summary teaser line */}
-        {article.themes && article.themes.length > 0 && (
-          <div className="px-5 pb-3 flex flex-wrap gap-1.5">
-            {article.themes.map((theme) => (
-              <span
-                key={theme}
-                className="inline-flex items-center px-2 py-0.5 rounded-full bg-muted/50 text-[10px] text-muted-foreground font-mono"
-              >
-                {theme}
-              </span>
-            ))}
-          </div>
-        )}
-
-        {/* Footer: source + spice + link */}
-        <div className="flex items-center justify-between px-5 py-3 border-t border-border/20 bg-muted/20">
-          <div className="flex items-center gap-3">
-            {article.source_name && (
-              <span className={`text-xs font-medium ${biasColor || "text-muted-foreground"}`}>
-                {article.source_name}
-              </span>
-            )}
-            <SpiceMeter level={spice} />
-          </div>
-          {article.source_url && (
-            <a
-              href={article.source_url}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="flex items-center gap-1 text-[10px] font-mono text-primary/70 hover:text-primary transition-colors"
-            >
-              Read Source <ExternalLink className="w-3 h-3" />
-            </a>
-          )}
-        </div>
-      </CardContent>
-    </Card>
-  );
-}
-
-/* ── Filter bar ── */
+/* ── Filter options ── */
 const FILTER_OPTIONS = [
   { value: "all", label: "All" },
   { value: "layoffs", label: "Layoffs" },
@@ -173,10 +76,162 @@ const FILTER_OPTIONS = [
   { value: "ai_workplace", label: "AI" },
   { value: "regulation", label: "Regulation" },
   { value: "pay_equity", label: "Pay" },
-  { value: "controversy", label: "Controversy" },
+  { value: "controversy", label: "🔥 Controversy" },
 ];
 
-/* ── Main page ── */
+/* ── Lead Story Card ── */
+function LeadStory({ article }: { article: WorkNewsArticle }) {
+  const cat = getCategoryConfig(article.category);
+  const spice = spiceLevel(article);
+  const sourceProfile = article.source_name ? getSourceProfile(article.source_name) : null;
+  const biasColor = sourceProfile ? getBiasColor(sourceProfile.bias) : "";
+
+  return (
+    <article className="rounded-2xl border border-border/50 bg-card overflow-hidden hover:border-primary/30 transition-all group">
+      {/* Top accent bar */}
+      <div className="h-1 bg-gradient-to-r from-primary via-primary/60 to-transparent" />
+      <div className="p-6 lg:p-8">
+        <div className="flex items-center gap-3 mb-4">
+          <Badge variant="outline" className={`text-[10px] font-mono tracking-wider border ${cat.color}`}>
+            {cat.label}
+          </Badge>
+          {article.is_controversy && (
+            <span className="flex items-center gap-1 text-[10px] font-mono text-destructive">
+              <AlertTriangle className="w-3 h-3 animate-pulse" /> CONTROVERSY
+            </span>
+          )}
+          <span className="ml-auto text-[10px] text-muted-foreground/60 font-mono">{timeAgo(article.published_at)}</span>
+        </div>
+
+        <h2
+          className="text-foreground leading-tight mb-4 group-hover:text-primary transition-colors font-bold"
+          style={{ fontSize: "clamp(22px, 2.5vw, 32px)", fontFamily: "Georgia, 'Times New Roman', serif" }}
+        >
+          {article.headline}
+        </h2>
+
+        {/* Jackye's Take */}
+        {article.jackye_take && (
+          <div className="rounded-xl bg-primary/5 border border-primary/15 p-5 mb-4">
+            <div className="flex items-center gap-2 mb-2.5">
+              <Eye className="w-3.5 h-3.5 text-primary" />
+              <span className="text-[10px] font-bold text-primary tracking-[0.15em] uppercase font-mono">Jackye's Take</span>
+            </div>
+            <p className="text-sm text-foreground/90 leading-relaxed italic" style={{ fontFamily: "Georgia, 'Times New Roman', serif" }}>
+              "{article.jackye_take}"
+            </p>
+          </div>
+        )}
+
+        {/* Footer */}
+        <div className="flex items-center justify-between pt-3 border-t border-border/20">
+          <div className="flex items-center gap-3">
+            {article.source_name && (
+              <span className={`text-xs font-medium ${biasColor || "text-muted-foreground"}`}>{article.source_name}</span>
+            )}
+            <SpiceMeter level={spice} />
+          </div>
+          {article.source_url && (
+            <a href={article.source_url} target="_blank" rel="noopener noreferrer"
+              className="flex items-center gap-1 text-[10px] font-mono text-primary/70 hover:text-primary transition-colors">
+              Read Source <ExternalLink className="w-3 h-3" />
+            </a>
+          )}
+        </div>
+      </div>
+    </article>
+  );
+}
+
+/* ── Standard Story Card ── */
+function StoryCard({ article }: { article: WorkNewsArticle }) {
+  const cat = getCategoryConfig(article.category);
+  const spice = spiceLevel(article);
+  const sourceProfile = article.source_name ? getSourceProfile(article.source_name) : null;
+  const biasColor = sourceProfile ? getBiasColor(sourceProfile.bias) : "";
+
+  return (
+    <article className="rounded-xl border border-border/40 bg-card hover:border-primary/30 transition-all group overflow-hidden">
+      <div className="p-5">
+        <div className="flex items-center gap-2 mb-3">
+          <Badge variant="outline" className={`text-[10px] font-mono tracking-wider border ${cat.color}`}>
+            {cat.label}
+          </Badge>
+          {article.is_controversy && <AlertTriangle className="w-3 h-3 text-destructive animate-pulse" />}
+          <span className="ml-auto text-[10px] text-muted-foreground/60 font-mono">{timeAgo(article.published_at)}</span>
+        </div>
+
+        <h3 className="text-[15px] font-semibold text-foreground leading-snug mb-3 group-hover:text-primary transition-colors">
+          {article.headline}
+        </h3>
+
+        {article.jackye_take && (
+          <div className="rounded-lg bg-primary/5 border border-primary/15 p-3.5 mb-3">
+            <div className="flex items-center gap-1.5 mb-1.5">
+              <Eye className="w-3 h-3 text-primary" />
+              <span className="text-[9px] font-bold text-primary tracking-[0.15em] uppercase font-mono">The Take</span>
+            </div>
+            <p className="text-sm text-foreground/85 leading-relaxed">{article.jackye_take}</p>
+          </div>
+        )}
+
+        {article.themes && article.themes.length > 0 && (
+          <div className="flex flex-wrap gap-1.5 mb-3">
+            {article.themes.map((theme) => (
+              <span key={theme} className="inline-flex items-center px-2 py-0.5 rounded-full bg-muted/50 text-[10px] text-muted-foreground font-mono">
+                {theme}
+              </span>
+            ))}
+          </div>
+        )}
+
+        <div className="flex items-center justify-between pt-3 border-t border-border/20">
+          <div className="flex items-center gap-3">
+            {article.source_name && (
+              <span className={`text-xs font-medium ${biasColor || "text-muted-foreground"}`}>{article.source_name}</span>
+            )}
+            <SpiceMeter level={spice} />
+          </div>
+          {article.source_url && (
+            <a href={article.source_url} target="_blank" rel="noopener noreferrer"
+              className="flex items-center gap-1 text-[10px] font-mono text-primary/70 hover:text-primary transition-colors">
+              Source <ExternalLink className="w-3 h-3" />
+            </a>
+          )}
+        </div>
+      </div>
+    </article>
+  );
+}
+
+/* ── Wire Item (compact) ── */
+function WireItem({ article }: { article: WorkNewsArticle }) {
+  const cat = getCategoryConfig(article.category);
+  return (
+    <a href={article.source_url || "#"} target="_blank" rel="noopener noreferrer" className="group block">
+      <div className="rounded-lg border border-border/30 bg-card p-4 hover:border-primary/30 transition-all h-full flex flex-col">
+        <div className="flex items-center gap-2 mb-2">
+          <Badge variant="outline" className={`text-[10px] font-mono tracking-wider border ${cat.color}`}>
+            {cat.label}
+          </Badge>
+          {article.is_controversy && <AlertTriangle className="w-3 h-3 text-destructive" />}
+          <span className="ml-auto text-[10px] text-muted-foreground/50 font-mono">{timeAgo(article.published_at)}</span>
+        </div>
+        <p className="text-sm font-medium text-foreground leading-snug flex-1 group-hover:text-primary transition-colors">
+          {article.headline}
+        </p>
+        <div className="flex items-center justify-between mt-3 pt-2 border-t border-border/20">
+          <span className="text-[10px] text-muted-foreground">{article.source_name || "Source"}</span>
+          <SpiceMeter level={spiceLevel(article)} />
+        </div>
+      </div>
+    </a>
+  );
+}
+
+/* ══════════════════════════════════════════
+   MAIN PAGE
+   ══════════════════════════════════════════ */
 export default function Newsletter() {
   const [email, setEmail] = useState("");
   const [status, setStatus] = useState<"idle" | "loading" | "success" | "error">("idle");
@@ -189,14 +244,12 @@ export default function Newsletter() {
 
   usePageSEO({
     title: "The Receipts — Live Work Intelligence Feed | Who Do I Work For?",
-    description:
-      "Live employer intelligence: layoffs, DEI rollbacks, AI workplace moves, pay equity, and WARN filings — with Jackye's Take on every story.",
+    description: "Live employer intelligence: layoffs, DEI rollbacks, AI workplace moves, pay equity, and WARN filings — with Jackye's Take on every story.",
     path: "/newsletter",
     jsonLd: {
       "@type": "WebPage",
       name: "The Receipts — Live Intelligence Feed",
-      description:
-        "Real-time employer intelligence feed by Who Do I Work For? Sourced from public records, GDELT, and investigative research.",
+      description: "Real-time employer intelligence feed by Who Do I Work For? Sourced from public records, GDELT, and investigative research.",
       url: "https://wdiwf.jackyeclayton.com/newsletter",
       author: { "@type": "Person", name: "Jackye Clayton" },
     },
@@ -243,240 +296,326 @@ export default function Newsletter() {
     resetToken();
   };
 
-  /* ── Filter logic ── */
-  const filtered =
-    filter === "all"
-      ? articles
-      : filter === "controversy"
-        ? articles.filter((a) => a.is_controversy)
-        : articles.filter((a) => a.category === filter);
+  /* ── Filter + segment logic ── */
+  const filtered = filter === "all"
+    ? articles
+    : filter === "controversy"
+      ? articles.filter((a) => a.is_controversy)
+      : articles.filter((a) => a.category === filter);
 
-  /* ── Separate: stories with takes, stories without ── */
+  /* Moving now: stories from last 2 hours */
+  const movingNow = useMemo(() => {
+    const twoHoursAgo = Date.now() - 2 * 60 * 60 * 1000;
+    return articles.filter((a) => a.published_at && new Date(a.published_at).getTime() >= twoHoursAgo).slice(0, 3);
+  }, [articles]);
+
+  /* Featured Jackye take (latest with take) */
+  const currentTake = useMemo(() => {
+    return articles.find((a) => a.jackye_take);
+  }, [articles]);
+
+  /* Stories with takes = featured */
   const withTakes = filtered.filter((a) => a.jackye_take);
   const withoutTakes = filtered.filter((a) => !a.jackye_take);
 
+  /* Hot stories */
+  const hotStories = useMemo(() => {
+    return [...articles]
+      .sort((a, b) => spiceLevel(b) - spiceLevel(a))
+      .slice(0, 5);
+  }, [articles]);
+
   return (
     <div className="min-h-screen bg-background">
-      {/* ── Hero ── */}
-      <section className="text-center py-12 lg:py-16 px-4 max-w-2xl mx-auto">
-        <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-destructive/10 border border-destructive/20 mb-5">
-          <Radio className="w-3.5 h-3.5 text-destructive animate-pulse" />
-          <span className="text-xs font-mono tracking-wider text-destructive uppercase">
-            Live Intelligence Feed
-          </span>
-        </div>
-        <h1 className="text-3xl md:text-4xl font-bold text-foreground mb-3">
-          The Daily Grind
-        </h1>
-        <p className="text-base text-muted-foreground mb-6 max-w-lg mx-auto leading-relaxed">
-          Every story about work that matters — with Jackye's Take on what it
-          actually means for you. No algorithm. No filter. Just receipts.
-        </p>
+      {/* ── Live Ticker ── */}
+      <WorkNewsTicker />
 
-        {/* ── Subscribe bar ── */}
-        {status === "success" ? (
-          <div className="flex items-center justify-center gap-2.5 text-primary font-semibold text-base py-3">
-            <Check className="w-5 h-5" /> You're in. First drop lands Monday.
+      {/* ── Masthead ── */}
+      <header className="border-b border-border">
+        <div className="max-w-[780px] mx-auto text-center py-12 lg:py-16 px-6">
+          <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-destructive/10 border border-destructive/20 mb-6">
+            <Radio className="w-3.5 h-3.5 text-destructive animate-pulse" />
+            <span className="text-[10px] font-mono tracking-[0.2em] text-destructive uppercase">Live Intelligence · Updated Every 2 Hours</span>
           </div>
-        ) : (
-          <form onSubmit={handleSubmit} className="max-w-md mx-auto">
-            <div ref={containerRef} />
-            <div className="flex items-center bg-card border-2 border-primary/20 focus-within:border-primary/50 transition-colors rounded-xl overflow-hidden">
-              <Mail className="w-4 h-4 text-muted-foreground ml-4 shrink-0" />
-              <input
-                type="email"
-                value={email}
-                onChange={(e) => {
-                  setEmail(e.target.value);
-                  setStatus("idle");
-                }}
-                placeholder="you@company.com"
-                className="flex-1 bg-transparent px-3 py-3.5 text-sm text-foreground placeholder:text-muted-foreground/50 focus:outline-none"
-                disabled={status === "loading"}
-              />
-              <button
-                type="submit"
-                disabled={status === "loading"}
-                className="mr-2 px-4 py-2 bg-primary text-primary-foreground font-semibold text-sm rounded-lg hover:brightness-110 transition-all flex items-center gap-1.5 disabled:opacity-50 shrink-0"
-              >
-                {status === "loading" ? (
-                  "..."
-                ) : (
-                  <>
-                    Subscribe <ArrowRight className="w-3.5 h-3.5" />
-                  </>
-                )}
-              </button>
-            </div>
-            {status === "error" && (
-              <p className="text-destructive text-xs mt-2 font-mono">{errorMsg}</p>
-            )}
-          </form>
-        )}
-        <p className="text-xs text-muted-foreground/60 mt-3">
-          Free forever. One email per week. No spam.
-        </p>
-      </section>
 
-      {/* ── Founding Member Badge CTA ── */}
-      {user && (
-        <section className="max-w-5xl mx-auto px-4 pb-6">
-          <button
-            onClick={() => setShowBadge(true)}
-            className="w-full rounded-xl bg-gradient-to-r from-primary/10 via-civic-gold/10 to-primary/10 border border-primary/20 hover:border-primary/40 transition-all p-4 flex items-center gap-4 group cursor-pointer"
+          <p className="text-[10px] uppercase tracking-[0.55em] text-primary mb-4 font-mono">JRC EDIT × WDIWF</p>
+          <h1
+            className="font-black text-foreground leading-none uppercase"
+            style={{ fontSize: "clamp(42px, 5.5vw, 72px)", letterSpacing: "-0.025em", fontFamily: "Georgia, 'Times New Roman', serif" }}
           >
+            The Receipts
+          </h1>
+          <p className="font-light text-muted-foreground italic mt-4" style={{ fontSize: "clamp(18px, 2vw, 26px)" }}>
+            The world of work. Documented.
+          </p>
+          <p className="text-sm text-foreground/80 mt-3">
+            I pull the receipts so you don't have to.{" "}
+            <span className="text-primary font-medium">They always leave something out.</span>
+          </p>
+
+          <div className="w-[52px] h-0.5 bg-primary mx-auto my-6" />
+
+          {/* ── Subscribe Bar ── */}
+          <div className="mt-6 mb-4">
+            {status === "success" ? (
+              <motion.div initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }}
+                className="flex items-center justify-center gap-2.5 text-primary font-semibold text-base py-4">
+                <Check className="w-5 h-5" /> You're in. First drop lands Monday.
+              </motion.div>
+            ) : (
+              <form onSubmit={handleSubmit} className="relative group max-w-[480px] mx-auto">
+                <div ref={containerRef} />
+                <div className="absolute -inset-1 bg-gradient-to-r from-primary/20 via-primary/5 to-primary/20 opacity-0 group-focus-within:opacity-100 transition-opacity duration-500 blur-md rounded-xl" />
+                <div className="relative flex items-center bg-card/80 backdrop-blur-sm border border-primary/20 focus-within:border-primary/50 transition-all duration-300 rounded-xl">
+                  <Mail className="w-4 h-4 text-muted-foreground ml-4 shrink-0" />
+                  <input
+                    type="email"
+                    value={email}
+                    onChange={(e) => { setEmail(e.target.value); setStatus("idle"); }}
+                    placeholder="you@company.com"
+                    className="flex-1 bg-transparent px-3 py-4 text-sm text-foreground placeholder:text-muted-foreground/50 focus:outline-none font-sans"
+                    disabled={status === "loading"}
+                  />
+                  <button type="submit" disabled={status === "loading"}
+                    className="mr-2 px-5 py-2.5 bg-primary text-primary-foreground font-semibold text-sm rounded-lg hover:brightness-110 transition-all flex items-center gap-2 disabled:opacity-50 shrink-0">
+                    {status === "loading" ? "..." : <>Subscribe <ArrowRight className="w-4 h-4" /></>}
+                  </button>
+                </div>
+                {status === "error" && (
+                  <p className="text-destructive text-xs mt-3 font-mono">{errorMsg}</p>
+                )}
+              </form>
+            )}
+            <p className="text-xs text-muted-foreground/60 mt-4">Free forever. One email per week. No spam.</p>
+          </div>
+
+          <p className="text-sm text-muted-foreground tracking-[0.12em] font-mono">
+            Jackye Clayton 👑 × WDIWF
+            <span className="mx-2.5 text-border">·</span>
+            <span className="italic">"Stop applying. Start aligning."</span>
+          </p>
+        </div>
+      </header>
+
+      {/* ── Founding Member CTA ── */}
+      {user && (
+        <section className="max-w-5xl mx-auto px-4 py-4">
+          <button onClick={() => setShowBadge(true)}
+            className="w-full rounded-xl bg-gradient-to-r from-primary/10 via-primary/5 to-primary/10 border border-primary/20 hover:border-primary/40 transition-all p-4 flex items-center gap-4 group cursor-pointer">
             <div className="shrink-0 w-10 h-10 rounded-full bg-primary/10 border border-primary/30 flex items-center justify-center">
               <Award className="w-5 h-5 text-primary" />
             </div>
             <div className="text-left flex-1 min-w-0">
               <p className="text-sm font-bold text-foreground">You're a Founding Member 🎖️</p>
-              <p className="text-xs text-muted-foreground">Download your badge and share it on LinkedIn — let people know you were here first.</p>
+              <p className="text-xs text-muted-foreground">Download your badge and share it on LinkedIn.</p>
             </div>
             <ArrowRight className="w-4 h-4 text-primary shrink-0 group-hover:translate-x-1 transition-transform" />
           </button>
         </section>
       )}
-
-      {/* Badge Modal */}
       {showBadge && (
-        <FoundingMemberBadge
-          memberName={user?.email?.split("@")[0]}
-          joinedDate={user?.created_at}
-          onClose={() => setShowBadge(false)}
-        />
+        <FoundingMemberBadge memberName={user?.email?.split("@")[0]} joinedDate={user?.created_at} onClose={() => setShowBadge(false)} />
       )}
 
+      {/* ── Moving Now ── */}
+      {movingNow.length > 0 && (
+        <section className="border-b border-border bg-destructive/[0.03]">
+          <div className="max-w-5xl mx-auto px-4 py-4">
+            <div className="flex items-center gap-2 mb-3">
+              <Zap className="w-3.5 h-3.5 text-destructive" />
+              <span className="text-[10px] font-mono tracking-[0.2em] uppercase text-destructive font-bold">Moving Now</span>
+              <Clock className="w-3 h-3 text-muted-foreground/50 ml-1" />
+              <span className="text-[10px] text-muted-foreground/50 font-mono">Last 2 hours</span>
+            </div>
+            <div className="space-y-2">
+              {movingNow.map((article) => (
+                <a key={article.id} href={article.source_url || "#"} target="_blank" rel="noopener noreferrer"
+                  className="flex items-center gap-3 py-2 px-3 rounded-lg hover:bg-card/50 transition-colors group">
+                  <Badge variant="outline" className={`text-[9px] font-mono tracking-wider border shrink-0 ${getCategoryConfig(article.category).color}`}>
+                    {getCategoryConfig(article.category).label}
+                  </Badge>
+                  <p className="text-sm font-medium text-foreground group-hover:text-primary transition-colors flex-1 truncate">
+                    {article.headline}
+                  </p>
+                  <span className="text-[10px] text-muted-foreground/50 font-mono shrink-0">{timeAgo(article.published_at)}</span>
+                </a>
+              ))}
+            </div>
+          </div>
+        </section>
+      )}
 
-      <section className="max-w-5xl mx-auto px-4 pb-4">
-        <div className="flex items-center gap-2 overflow-x-auto pb-2 scrollbar-none">
-          {FILTER_OPTIONS.map((opt) => (
-            <button
-              key={opt.value}
-              onClick={() => setFilter(opt.value)}
-              className={`px-3 py-1.5 rounded-full text-xs font-mono tracking-wider border transition-all whitespace-nowrap ${
-                filter === opt.value
-                  ? "bg-primary text-primary-foreground border-primary"
-                  : "bg-card text-muted-foreground border-border/40 hover:border-primary/40"
-              }`}
-            >
-              {opt.label}
-            </button>
-          ))}
-          <div className="ml-auto text-xs text-muted-foreground/50 font-mono whitespace-nowrap">
-            {filtered.length} stories
+      {/* ── Filter Bar ── */}
+      <nav className="border-b border-border sticky top-0 bg-background/95 backdrop-blur-sm z-20">
+        <div className="max-w-5xl mx-auto px-4 py-3">
+          <div className="flex items-center gap-2 overflow-x-auto scrollbar-none">
+            {FILTER_OPTIONS.map((opt) => (
+              <button key={opt.value} onClick={() => setFilter(opt.value)}
+                className={`px-3.5 py-1.5 rounded-full text-xs font-mono tracking-wider border transition-all whitespace-nowrap ${
+                  filter === opt.value
+                    ? "bg-primary text-primary-foreground border-primary"
+                    : "bg-card text-muted-foreground border-border/40 hover:border-primary/40 hover:text-foreground"
+                }`}>
+                {opt.label}
+              </button>
+            ))}
+            <span className="ml-auto text-[10px] text-muted-foreground/50 font-mono whitespace-nowrap">
+              {filtered.length} stories
+            </span>
           </div>
         </div>
-      </section>
+      </nav>
 
-      {/* ── Feed ── */}
-      <section className="max-w-5xl mx-auto px-4 pb-16">
-        {isLoading ? (
-          <div className="flex flex-col items-center gap-3 py-20">
-            <div className="w-6 h-6 border-2 border-primary/30 border-t-primary rounded-full animate-spin" />
-            <p className="text-sm text-muted-foreground font-mono">Loading intelligence...</p>
-          </div>
-        ) : filtered.length === 0 ? (
-          <div className="text-center py-16">
-            <Newspaper className="w-8 h-8 text-muted-foreground/30 mx-auto mb-3" />
-            <p className="text-sm text-muted-foreground">No stories in this category yet.</p>
-          </div>
-        ) : (
-          <>
-            {/* Stories with Jackye's Take — shown first as featured */}
-            {withTakes.length > 0 && (
-              <div className="mb-8">
-                <div className="flex items-center gap-2 mb-4">
-                  <Flame className="w-4 h-4 text-primary" />
-                  <h2 className="text-sm font-mono tracking-[0.15em] uppercase text-primary">
-                    Jackye's Takes
-                  </h2>
-                  <span className="text-[10px] text-muted-foreground/60 font-mono ml-1">
-                    {withTakes.length} stories with takes
-                  </span>
+      {/* ── Main Content: Feed + Sidebar ── */}
+      <div className="max-w-5xl mx-auto px-4 py-10 grid grid-cols-1 lg:grid-cols-[1fr_280px] gap-10 items-start">
+        <main>
+          {isLoading ? (
+            <div className="flex flex-col items-center gap-3 py-20">
+              <div className="w-6 h-6 border-2 border-primary/30 border-t-primary rounded-full animate-spin" />
+              <p className="text-sm text-muted-foreground font-mono">Loading intelligence...</p>
+            </div>
+          ) : filtered.length === 0 ? (
+            <div className="text-center py-16">
+              <Newspaper className="w-8 h-8 text-muted-foreground/30 mx-auto mb-3" />
+              <p className="text-sm text-muted-foreground">No stories in this category yet.</p>
+            </div>
+          ) : (
+            <>
+              {/* ── Jackye's Current Take (pull quote) ── */}
+              {currentTake && filter === "all" && (
+                <div className="mb-8 rounded-xl border border-primary/20 bg-primary/[0.04] p-6">
+                  <div className="flex items-center gap-2 mb-3">
+                    <Eye className="w-4 h-4 text-primary" />
+                    <span className="text-[10px] font-mono tracking-[0.2em] uppercase text-primary font-bold">Jackye's Current Take</span>
+                  </div>
+                  <blockquote
+                    className="text-base text-foreground leading-relaxed italic border-l-2 border-primary pl-4"
+                    style={{ fontFamily: "Georgia, 'Times New Roman', serif" }}
+                  >
+                    "{currentTake.jackye_take}"
+                  </blockquote>
+                  <p className="text-xs text-muted-foreground mt-3">
+                    Re: <span className="text-foreground/80 font-medium">{currentTake.headline}</span>
+                  </p>
                 </div>
-                <div className="grid md:grid-cols-2 gap-4">
-                  {withTakes.map((article) => (
-                    <StoryCard key={article.id} article={article} />
-                  ))}
-                </div>
-              </div>
-            )}
+              )}
 
-            {/* All other stories — summary teasers */}
-            {withoutTakes.length > 0 && (
-              <div>
-                <div className="flex items-center gap-2 mb-4">
-                  <TrendingUp className="w-4 h-4 text-muted-foreground" />
-                  <h2 className="text-sm font-mono tracking-[0.15em] uppercase text-muted-foreground">
-                    The Wire
-                  </h2>
+              {/* ── Lead Story ── */}
+              {withTakes.length > 0 && (
+                <div className="mb-8">
+                  <LeadStory article={withTakes[0]} />
                 </div>
-                <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-3">
-                  {withoutTakes.map((article) => {
-                    const cat = getCategoryConfig(article.category);
-                    return (
-                      <a
-                        key={article.id}
-                        href={article.source_url || "#"}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="group block"
-                      >
-                        <div className="rounded-xl border border-border/30 bg-card p-4 hover:border-primary/30 transition-all h-full flex flex-col">
-                          <div className="flex items-center gap-2 mb-2">
-                            <Badge
-                              variant="outline"
-                              className={`text-[10px] font-mono tracking-wider border ${cat.color}`}
-                            >
-                              {cat.label}
-                            </Badge>
-                            {article.is_controversy && (
-                              <AlertTriangle className="w-3 h-3 text-destructive" />
-                            )}
-                            <span className="ml-auto text-[10px] text-muted-foreground/50 font-mono">
-                              {timeAgo(article.published_at)}
-                            </span>
-                          </div>
-                          <p className="text-sm font-medium text-foreground leading-snug flex-1 group-hover:text-primary transition-colors">
-                            {article.headline}
-                          </p>
-                          <div className="flex items-center justify-between mt-3 pt-2 border-t border-border/20">
-                            <span className="text-[10px] text-muted-foreground">
-                              {article.source_name || "Source"}
-                            </span>
-                            <SpiceMeter level={spiceLevel(article)} />
-                          </div>
-                        </div>
-                      </a>
-                    );
-                  })}
+              )}
+
+              {/* ── Featured Takes (2-up) ── */}
+              {withTakes.length > 1 && (
+                <div className="mb-8">
+                  <div className="flex items-center gap-2 mb-4">
+                    <Flame className="w-4 h-4 text-primary" />
+                    <h2 className="text-[10px] font-mono tracking-[0.2em] uppercase text-primary font-bold">Jackye's Takes</h2>
+                    <span className="text-[10px] text-muted-foreground/50 font-mono ml-1">{withTakes.length - 1} more</span>
+                  </div>
+                  <div className="grid md:grid-cols-2 gap-4">
+                    {withTakes.slice(1).map((article) => (
+                      <StoryCard key={article.id} article={article} />
+                    ))}
+                  </div>
                 </div>
+              )}
+
+              {/* ── Divider ── */}
+              {withoutTakes.length > 0 && (
+                <div className="flex items-center gap-4 my-8">
+                  <div className="flex-1 h-px bg-border" />
+                  <span className="text-[10px] uppercase tracking-[0.3em] text-muted-foreground font-mono">The Wire</span>
+                  <div className="flex-1 h-px bg-border" />
+                </div>
+              )}
+
+              {/* ── The Wire (compact 3-col) ── */}
+              {withoutTakes.length > 0 && (
+                <div>
+                  <div className="flex items-center gap-2 mb-4">
+                    <TrendingUp className="w-4 h-4 text-muted-foreground" />
+                    <h2 className="text-[10px] font-mono tracking-[0.2em] uppercase text-muted-foreground font-bold">All Signals</h2>
+                  </div>
+                  <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-3">
+                    {withoutTakes.map((article) => (
+                      <WireItem key={article.id} article={article} />
+                    ))}
+                  </div>
+                </div>
+              )}
+            </>
+          )}
+        </main>
+
+        {/* ── Sidebar ── */}
+        <aside className="hidden lg:block sticky top-[74px] space-y-5">
+          {/* Newsletter CTA */}
+          <div className="bg-card border border-border rounded-xl p-6">
+            <p className="text-[9px] uppercase tracking-[0.55em] text-primary mb-3 font-mono">Every Friday</p>
+            <h3 className="text-xl font-black text-foreground mb-2 leading-tight">My Uncertainty Era</h3>
+            <p className="text-sm text-muted-foreground italic leading-relaxed mb-4">
+              The part where I say what everyone's thinking but nobody's saying.
+            </p>
+            <blockquote className="border-l-2 border-primary pl-3.5 mb-4">
+              <p className="text-sm text-foreground leading-relaxed italic">
+                "Every company has a 'people are our greatest asset' poster. Most hang next to a layoff plan."
+              </p>
+            </blockquote>
+            <button onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
+              className="block w-full bg-primary text-primary-foreground font-bold py-3 rounded-lg text-center text-sm tracking-[0.08em] hover:brightness-110 transition-all">
+              Subscribe → Free Forever
+            </button>
+          </div>
+
+          {/* Hottest Takes */}
+          <div className="bg-card border border-border rounded-xl p-5">
+            <p className="text-[9px] uppercase tracking-[0.55em] text-primary mb-3.5 font-mono">🔥 Hottest Right Now</p>
+            {hotStories.slice(0, 4).map((article) => (
+              <div key={article.id} className="pb-3 mb-3 border-b border-border last:border-none last:mb-0 last:pb-0">
+                <div className="flex items-center gap-2 mb-1.5">
+                  <Badge variant="outline" className={`text-[9px] font-mono tracking-wider border ${getCategoryConfig(article.category).color}`}>
+                    {getCategoryConfig(article.category).label}
+                  </Badge>
+                  <span className="text-[9px] text-muted-foreground/50 font-mono">{timeAgo(article.published_at)}</span>
+                </div>
+                <p className="text-sm font-semibold text-foreground leading-snug">{article.headline}</p>
               </div>
-            )}
-          </>
-        )}
-      </section>
+            ))}
+          </div>
+
+          {/* What to Watch */}
+          <div className="rounded-xl p-5 border" style={{ background: "hsl(var(--primary) / 0.04)", borderColor: "hsl(var(--primary) / 0.15)" }}>
+            <p className="text-[9px] uppercase tracking-[0.55em] text-primary mb-3 font-mono">👀 What to Watch</p>
+            <p className="text-xs text-muted-foreground leading-relaxed mb-3">
+              Stories still developing. Patterns forming. Receipts being pulled.
+            </p>
+            <Link to="/receipts" className="text-xs text-primary font-mono hover:underline flex items-center gap-1">
+              See all investigations <ArrowRight className="w-3 h-3" />
+            </Link>
+          </div>
+        </aside>
+      </div>
 
       {/* ── Bottom CTA ── */}
-      <section className="text-center py-10 px-4 border-t border-border/30">
-        <p className="text-muted-foreground text-sm mb-3">
-          The tea, served daily. No algorithms. No ads. Just receipts.
+      <footer className="border-t border-border py-10 px-8 text-center">
+        <p className="text-sm text-muted-foreground tracking-[0.1em] font-mono">
+          The Receipts · <em>by Jackye Clayton 👑 × WDIWF</em>
         </p>
-        <div className="flex items-center justify-center gap-4">
-          <Button
-            onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
-            variant="outline"
-            size="sm"
-          >
-            <Mail className="w-4 h-4 mr-2" /> Subscribe
-          </Button>
-          <Link to="/receipts">
-            <Button variant="ghost" size="sm">
-              All Receipts <ChevronRight className="w-4 h-4 ml-1" />
-            </Button>
+        <p className="text-sm text-muted-foreground mt-2 italic">
+          "Every company runs a background check on you. WDIWF runs one on them."
+        </p>
+        <div className="flex justify-center gap-8 mt-4">
+          <Link to="/" className="text-sm text-muted-foreground tracking-[0.1em] font-mono hover:text-primary transition-colors">
+            wdiwf.jackyeclayton.com
+          </Link>
+          <Link to="/submit-tip" className="text-sm text-muted-foreground tracking-[0.1em] font-mono hover:text-primary transition-colors">
+            Submit a tip
           </Link>
         </div>
-      </section>
+      </footer>
     </div>
   );
 }

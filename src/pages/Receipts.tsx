@@ -2,11 +2,8 @@ import { useState, useMemo } from "react";
 import { Link } from "react-router-dom";
 import { usePageSEO } from "@/hooks/use-page-seo";
 import { motion } from "framer-motion";
-import { ArrowRight, Mail, Check } from "lucide-react";
+import { ArrowRight } from "lucide-react";
 import { Skeleton } from "@/components/ui/skeleton";
-import { supabase } from "@/integrations/supabase/client";
-import { useTurnstile } from "@/hooks/useTurnstile";
-import { verifyTurnstileToken } from "@/lib/verifyTurnstile";
 import { useReceiptsFeed, type ReceiptArticle } from "@/hooks/use-receipts-feed";
 import { ReceiptsFilters } from "@/components/receipts/ReceiptsFilters";
 import { FeaturedReceipt } from "@/components/receipts/FeaturedReceipt";
@@ -58,7 +55,7 @@ export default function Receipts() {
   usePageSEO({
     title: "The Receipts — JRC EDIT × Live Work Intelligence Feed",
     description: "Live editorial work-intelligence feed by Jackye Clayton. Every story analyzed, every receipt pulled, every action attached. No spin. No rankings. Just receipts.",
-    path: "/newsletter",
+    path: "/receipts",
     jsonLd: {
       "@type": ["CollectionPage", "Review"],
       name: "The Receipts — JRC EDIT",
@@ -83,51 +80,6 @@ export default function Receipts() {
   const [timeFilter, setTimeFilter] = useState("all");
   const [lightboxArticle, setLightboxArticle] = useState<ReceiptArticle | null>(null);
   const [showEmailCapture, setShowEmailCapture] = useState(false);
-  const [nlEmail, setNlEmail] = useState("");
-  const [nlStatus, setNlStatus] = useState<"idle" | "loading" | "success" | "error">("idle");
-  const [nlError, setNlError] = useState("");
-  const { containerRef: turnstileRef, getToken, resetToken } = useTurnstile();
-
-  const handleNewsletterSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    const trimmed = nlEmail.trim();
-    if (!trimmed || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(trimmed)) {
-      setNlError("Please enter a valid email.");
-      setNlStatus("error");
-      return;
-    }
-    setNlStatus("loading");
-
-    const token = await getToken();
-    if (!token) {
-      setNlError("Bot verification failed. Please try again.");
-      setNlStatus("error");
-      resetToken();
-      return;
-    }
-
-    const verified = await verifyTurnstileToken(token);
-    if (!verified) {
-      setNlError("Verification failed. Please try again.");
-      setNlStatus("error");
-      resetToken();
-      return;
-    }
-
-    const { error } = await supabase
-      .from("email_signups")
-      .insert({ email: trimmed, source: "newsletter_page" } as any);
-    if (error) {
-      if (error.code === "23505") setNlStatus("success");
-      else {
-        setNlError("Something went wrong. Try again.");
-        setNlStatus("error");
-      }
-    } else {
-      setNlStatus("success");
-    }
-    resetToken();
-  };
 
   const filtered = useMemo(() => {
     if (!articles) return [];
@@ -214,46 +166,6 @@ export default function Receipts() {
             <span className="text-primary">They always leave something out.</span>
           </p>
           <div className="w-[52px] h-0.5 bg-primary mx-auto my-6" />
-
-          {/* Newsletter Subscribe */}
-          <div className="mt-8 mb-6">
-            {nlStatus === "success" ? (
-              <motion.div
-                initial={{ opacity: 0, scale: 0.95 }}
-                animate={{ opacity: 1, scale: 1 }}
-                className="flex items-center justify-center gap-2.5 text-primary font-semibold text-base py-4"
-              >
-                <Check className="w-5 h-5" /> You're in. First drop lands Monday.
-              </motion.div>
-            ) : (
-              <form onSubmit={handleNewsletterSubmit} className="relative group max-w-[480px] mx-auto">
-                <div ref={turnstileRef} />
-                <div className="absolute -inset-1 bg-gradient-to-r from-primary/20 via-primary/5 to-primary/20 opacity-0 group-focus-within:opacity-100 transition-opacity duration-500 blur-md rounded-xl" />
-                <div className="relative flex items-center bg-card/80 backdrop-blur-sm border border-primary/20 focus-within:border-primary/50 transition-all duration-300 rounded-xl">
-                  <Mail className="w-4.5 h-4.5 text-muted-foreground ml-4 shrink-0" />
-                  <input
-                    type="email"
-                    value={nlEmail}
-                    onChange={(e) => { setNlEmail(e.target.value); setNlStatus("idle"); }}
-                    placeholder="you@company.com"
-                    className="flex-1 bg-transparent px-3 py-4 text-sm text-foreground placeholder:text-muted-foreground/50 focus:outline-none font-sans"
-                    disabled={nlStatus === "loading"}
-                  />
-                  <button
-                    type="submit"
-                    disabled={nlStatus === "loading"}
-                    className="mr-2 px-5 py-2.5 bg-primary text-primary-foreground font-semibold text-sm rounded-lg hover:brightness-110 transition-all flex items-center gap-2 disabled:opacity-50 shrink-0"
-                  >
-                    {nlStatus === "loading" ? "..." : <>Subscribe <ArrowRight className="w-4 h-4" /></>}
-                  </button>
-                </div>
-                {nlStatus === "error" && (
-                  <p className="text-destructive text-xs mt-3 font-mono">{nlError}</p>
-                )}
-              </form>
-            )}
-            <p className="text-xs text-muted-foreground/60 mt-4">Free forever. One email per week. No spam.</p>
-          </div>
 
           <p className="text-base text-muted-foreground tracking-[0.12em] font-mono">
             Jackye Clayton 👑 × WDIWF
