@@ -587,6 +587,77 @@ function getCategoryMeta(cat: string) {
   return CATEGORY_META[cat] || { label: cat.replace(/_/g, " ").replace(/\b\w/g, c => c.toUpperCase()), icon: Flame, color: "text-muted-foreground", borderColor: "border-border/40" };
 }
 
+/* ─── Source Agency Mapping ─── */
+const AGENCY_DEFAULTS: Record<string, { label: string; url: string }> = {
+  nlrb: { label: "NLRB", url: "https://www.nlrb.gov/cases-decisions" },
+  sec: { label: "SEC", url: "https://www.sec.gov/cgi-bin/browse-edgar?action=getcompany" },
+  eeoc: { label: "EEOC", url: "https://www.eeoc.gov/newsroom" },
+  osha: { label: "OSHA", url: "https://www.osha.gov/pls/imis/establishment.html" },
+  doj: { label: "DOJ", url: "https://www.justice.gov/news" },
+  epa: { label: "EPA", url: "https://echo.epa.gov/" },
+  ftc: { label: "FTC", url: "https://www.ftc.gov/legal-library/browse/cases-proceedings" },
+  fec: { label: "FEC", url: "https://www.fec.gov/data/" },
+  bls: { label: "BLS", url: "https://www.bls.gov/" },
+  dol: { label: "DOL", url: "https://www.dol.gov/newsroom" },
+  ap_news: { label: "AP News", url: "https://apnews.com/" },
+  reuters: { label: "Reuters", url: "https://www.reuters.com/" },
+  opensecrets: { label: "OpenSecrets", url: "https://www.opensecrets.org/" },
+  usaspending: { label: "USASpending", url: "https://www.usaspending.gov/" },
+  goodjobsfirst: { label: "Good Jobs First", url: "https://subsidytracker.goodjobsfirst.org/" },
+  lobbying: { label: "Lobbying Disclosure", url: "https://lda.senate.gov/filings/public/filing/search/" },
+  political_spending: { label: "FEC", url: "https://www.fec.gov/data/" },
+  labor: { label: "DOL", url: "https://www.dol.gov/" },
+  dei: { label: "EEOC", url: "https://www.eeoc.gov/" },
+  safety: { label: "OSHA", url: "https://www.osha.gov/" },
+  discrimination: { label: "EEOC", url: "https://www.eeoc.gov/newsroom" },
+  racial_discrimination: { label: "EEOC", url: "https://www.eeoc.gov/newsroom" },
+};
+
+function getSourceInfo(signal: { signal_type: string; source_url?: string | null; issue_category?: string; description?: string }): { label: string; url: string } | null {
+  // Try to extract source from description (e.g., "Alphabet: $50M racial discrimination" → check for known keywords)
+  const desc = (signal.description || "").toLowerCase();
+  const sigType = (signal.signal_type || "").toLowerCase();
+  const category = (signal.issue_category || "").toLowerCase();
+
+  // Check signal_type first
+  for (const [key, info] of Object.entries(AGENCY_DEFAULTS)) {
+    if (sigType.includes(key) || sigType === key) {
+      return { label: info.label, url: signal.source_url || info.url };
+    }
+  }
+
+  // Check description for agency mentions
+  const descChecks: Array<[string, string]> = [
+    ["nlrb", "nlrb"], ["sec ", "sec"], ["s.e.c.", "sec"], ["securities and exchange", "sec"],
+    ["osha", "osha"], ["eeoc", "eeoc"], ["equal employment", "eeoc"],
+    ["department of justice", "doj"], ["doj ", "doj"], ["epa ", "epa"],
+    ["ftc ", "ftc"], ["federal trade", "ftc"], ["ap news", "ap_news"],
+    ["associated press", "ap_news"], ["reuters", "reuters"],
+    ["discrimination", "discrimination"], ["racial", "racial_discrimination"],
+  ];
+  for (const [keyword, key] of descChecks) {
+    if (desc.includes(keyword) && AGENCY_DEFAULTS[key]) {
+      return { label: AGENCY_DEFAULTS[key].label, url: signal.source_url || AGENCY_DEFAULTS[key].url };
+    }
+  }
+
+  // Fall back to category
+  if (AGENCY_DEFAULTS[category]) {
+    return { label: AGENCY_DEFAULTS[category].label, url: signal.source_url || AGENCY_DEFAULTS[category].url };
+  }
+
+  // If we have a source_url, extract domain as label
+  if (signal.source_url) {
+    try {
+      const domain = new URL(signal.source_url).hostname.replace("www.", "");
+      const shortDomain = domain.split(".")[0];
+      return { label: shortDomain.charAt(0).toUpperCase() + shortDomain.slice(1), url: signal.source_url };
+    } catch { /* ignore */ }
+  }
+
+  return null;
+}
+
 /* ─── Receipts Section ─── */
 function ReceiptsSection({ signalsByCategory }: { signalsByCategory: Record<string, Array<{ issue_category: string; signal_type: string; description: string; amount?: number | null; confidence_score?: string; source_url?: string | null; transaction_date?: string | null }>> }) {
   const [expandedCats, setExpandedCats] = useState<Record<string, boolean>>(() => {
@@ -611,7 +682,7 @@ function ReceiptsSection({ signalsByCategory }: { signalsByCategory: Record<stri
           <FileText className="w-5 h-5 text-primary" />
           <div>
             <h3 className="text-sm font-black tracking-tight text-foreground uppercase">THE RECEIPTS</h3>
-            <p className="text-xs text-muted-foreground">Every signal sourced from public record — click to expand</p>
+            <p className="text-xs text-muted-foreground">Every signal sourced from public record — click sources to verify</p>
           </div>
           <Badge variant="outline" className="ml-auto font-mono text-xs">
             {Object.values(signalsByCategory).flat().length} signals
@@ -639,63 +710,79 @@ function ReceiptsSection({ signalsByCategory }: { signalsByCategory: Record<stri
 
                 {isOpen && (
                   <div className="border-t border-border/30 divide-y divide-border/20">
-                    {signals.map((signal, i) => (
-                      <div key={i} className="p-3 hover:bg-muted/10 transition-colors">
-                        <div className="flex items-start gap-3">
-                          <div className="flex-1 min-w-0">
-                            <div className="flex items-center gap-2 flex-wrap mb-1">
-                              <span className="font-mono text-xs text-muted-foreground uppercase tracking-wider">
-                                {signal.signal_type?.replace(/_/g, " ")}
-                              </span>
-                              {signal.confidence_score && (
-                                <Badge
-                                  variant="outline"
-                                  className={cn("text-xs px-1.5 py-0", 
-                                    signal.confidence_score === "high" ? "border-civic-green/40 text-civic-green" :
-                                    signal.confidence_score === "medium" ? "border-civic-yellow/40 text-civic-yellow" :
-                                    "border-muted-foreground/40 text-muted-foreground"
-                                  )}
-                                >
-                                  {signal.confidence_score}
-                                </Badge>
-                              )}
-                              {signal.transaction_date && (
-                                <span className="text-xs text-muted-foreground">
-                                  {new Date(signal.transaction_date).toLocaleDateString("en-US", { month: "short", year: "numeric" })}
+                    {signals.map((signal, i) => {
+                      const sourceInfo = getSourceInfo(signal);
+                      return (
+                        <div key={i} className="p-3 hover:bg-muted/10 transition-colors">
+                          <div className="flex items-start gap-3">
+                            <div className="flex-1 min-w-0">
+                              <div className="flex items-center gap-2 flex-wrap mb-1">
+                                <span className="font-mono text-xs text-muted-foreground uppercase tracking-wider">
+                                  {signal.signal_type?.replace(/_/g, " ")}
                                 </span>
-                              )}
-                            </div>
-                            <p className="text-sm text-foreground leading-snug">{signal.description}</p>
-                            <div className="flex items-center gap-3 mt-2 flex-wrap">
-                              {signal.amount && signal.amount > 0 && (
-                                <span className="font-mono text-sm font-bold text-foreground">
-                                  ${signal.amount >= 1_000_000_000
-                                    ? `${(signal.amount / 1_000_000_000).toFixed(1)}B`
-                                    : signal.amount >= 1_000_000
-                                    ? `${(signal.amount / 1_000_000).toFixed(1)}M`
-                                    : signal.amount >= 1_000
-                                    ? `${(signal.amount / 1_000).toFixed(0)}K`
-                                    : signal.amount.toLocaleString()
-                                  }
-                                </span>
-                              )}
-                              {signal.source_url && (
-                                <a
-                                  href={signal.source_url}
-                                  target="_blank"
-                                  rel="noopener noreferrer"
-                                  className="inline-flex items-center gap-1 text-xs text-primary hover:underline font-medium"
-                                  onClick={(e) => e.stopPropagation()}
-                                >
-                                  <ExternalLink className="w-3 h-3" />
-                                  View Source
-                                </a>
-                              )}
+                                {sourceInfo && (
+                                  <a
+                                    href={sourceInfo.url}
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                    onClick={(e) => e.stopPropagation()}
+                                    className="inline-flex items-center gap-1 px-1.5 py-0.5 rounded-sm bg-primary/10 border border-primary/20 text-xs font-semibold text-primary hover:bg-primary/20 hover:border-primary/40 transition-colors cursor-pointer"
+                                    title={`View source at ${sourceInfo.label}`}
+                                  >
+                                    <ExternalLink className="w-2.5 h-2.5" />
+                                    {sourceInfo.label}
+                                  </a>
+                                )}
+                                {signal.confidence_score && (
+                                  <Badge
+                                    variant="outline"
+                                    className={cn("text-xs px-1.5 py-0", 
+                                      signal.confidence_score === "high" ? "border-civic-green/40 text-civic-green" :
+                                      signal.confidence_score === "medium" ? "border-civic-yellow/40 text-civic-yellow" :
+                                      "border-muted-foreground/40 text-muted-foreground"
+                                    )}
+                                  >
+                                    {signal.confidence_score}
+                                  </Badge>
+                                )}
+                                {signal.transaction_date && (
+                                  <span className="text-xs text-muted-foreground">
+                                    {new Date(signal.transaction_date).toLocaleDateString("en-US", { month: "short", year: "numeric" })}
+                                  </span>
+                                )}
+                              </div>
+                              <p className="text-sm text-foreground leading-snug">{signal.description}</p>
+                              <div className="flex items-center gap-3 mt-2 flex-wrap">
+                                {signal.amount && signal.amount > 0 && (
+                                  <span className="font-mono text-sm font-bold text-foreground">
+                                    ${signal.amount >= 1_000_000_000
+                                      ? `${(signal.amount / 1_000_000_000).toFixed(1)}B`
+                                      : signal.amount >= 1_000_000
+                                      ? `${(signal.amount / 1_000_000).toFixed(1)}M`
+                                      : signal.amount >= 1_000
+                                      ? `${(signal.amount / 1_000).toFixed(0)}K`
+                                      : signal.amount.toLocaleString()
+                                    }
+                                  </span>
+                                )}
+                                {signal.source_url && !sourceInfo && (
+                                  <a
+                                    href={signal.source_url}
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                    className="inline-flex items-center gap-1 text-xs text-primary hover:underline font-medium"
+                                    onClick={(e) => e.stopPropagation()}
+                                  >
+                                    <ExternalLink className="w-3 h-3" />
+                                    View Source
+                                  </a>
+                                )}
+                              </div>
                             </div>
                           </div>
                         </div>
-                      </div>
-                    ))}
+                      );
+                    })}
                   </div>
                 )}
               </div>
