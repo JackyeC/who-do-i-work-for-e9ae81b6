@@ -33,12 +33,6 @@ const Index = forwardRef<HTMLDivElement>((_, ref) => {
 
   if (!isLoaded || authLoading) return null;
 
-  const handleHeroSearch = (e: React.FormEvent) => {
-    e.preventDefault();
-    if (heroQuery.trim()) {
-      navigate(`/search?q=${encodeURIComponent(heroQuery.trim())}`);
-    }
-  };
 
   return (
     <div ref={ref} className="flex flex-col min-h-screen bg-background">
