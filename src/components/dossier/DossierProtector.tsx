@@ -55,7 +55,7 @@ export function DossierProtector({
         </div>
 
         <div className="rounded-2xl border border-border/40 bg-card p-6">
-          <SignalExamples />
+          <SignalExamples companyId={companyId} />
         </div>
 
         {/* Signup gate — convert visitors to free accounts */}
