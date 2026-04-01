@@ -85,7 +85,7 @@ export function LeadershipSnapshot({ companyId, companyName }: Props) {
               <Card key={i} className="border-border/30">
                 <CardContent className="p-3 flex items-center justify-between">
                   <div>
-                    <p className="text-sm font-medium text-foreground">{member.name}</p>
+                    <PersonEntity name={member.name} companyContext={companyName} className="text-sm font-medium text-foreground" />
                     <p className="text-xs text-muted-foreground">{member.title}</p>
                     <FreshnessLabel lastVerifiedAt={(member as any).last_verified_at} />
                   </div>
