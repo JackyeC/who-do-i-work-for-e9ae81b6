@@ -75,7 +75,7 @@ const SAMPLE_JOBS: JobListing[] = [
     applicants: 89, integrityScore: 45, integrityLevel: "HIGH", alignmentPct: 52,
     skills: ["Content Strategy", "SEO", "Team Leadership", "Analytics"],
     description: "Lead content strategy across digital platforms for a fast-growing media company.",
-    whyAligns: "Low alignment detected. Vantage's public messaging about 'employee-first culture' conflicts with recent Glassdoor sentiment and high turnover signals.",
+    whyAligns: "They market 'employee-first culture' while Glassdoor tells a different story. Proceed with your eyes open.",
     integritySummary: "Recent leadership turnover. Employee sentiment trending negative. PAC contributions to anti-worker legislation flagged.",
     narrativeGap: "Markets 'employee-first culture' while Glassdoor reviews cite burnout and management issues.",
   },
