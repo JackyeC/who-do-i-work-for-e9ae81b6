@@ -762,16 +762,13 @@ function ReceiptsSection({ signalsByCategory }: { signalsByCategory: Record<stri
                                   </span>
                                 )}
                                 {signal.source_url && !sourceInfo && (
-                                  <a
-                                    href={signal.source_url}
-                                    target="_blank"
-                                    rel="noopener noreferrer"
+                                  <button
+                                    onClick={(e) => { e.stopPropagation(); openSource(signal.source_url!, { signalType: signal.signal_type, description: signal.description, amount: signal.amount }); }}
                                     className="inline-flex items-center gap-1 text-xs text-primary hover:underline font-medium"
-                                    onClick={(e) => e.stopPropagation()}
                                   >
                                     <ExternalLink className="w-3 h-3" />
                                     View Source
-                                  </a>
+                                  </button>
                                 )}
                               </div>
                             </div>
