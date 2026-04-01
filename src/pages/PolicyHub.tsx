@@ -141,6 +141,11 @@ export default function PolicyHub() {
 
         <div className="gold-line mx-auto w-full max-w-[200px]" />
 
+        {/* ═══ POLITICAL SPECTRUM EXPLAINER ═══ */}
+        <PoliticalSpectrumExplainer />
+
+        <div className="gold-line mx-auto w-full max-w-[200px]" />
+
         {/* ═══ CTA ═══ */}
         <section className="max-w-[900px] mx-auto px-6 lg:px-16 py-20 text-center">
           <p className="font-mono text-xs tracking-[0.15em] uppercase text-primary mb-4">See the Receipts</p>
