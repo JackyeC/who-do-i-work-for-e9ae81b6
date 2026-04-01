@@ -344,16 +344,10 @@ const Index = forwardRef<HTMLDivElement>((_, ref) => {
           <p className="text-sm text-muted-foreground leading-relaxed max-w-[46ch] mx-auto mb-8">
             You don't need more applications. You need better decisions. We built the trust layer for the world of work — now use it.
           </p>
-          <div className="flex flex-col sm:flex-row gap-3 justify-center">
+          <div className="flex justify-center">
             <button
-              onClick={() => navigate(user ? "/dashboard" : "/join")}
+              onClick={() => navigate("/offer-check")}
               className="bg-primary text-primary-foreground px-8 py-3.5 font-sans text-sm font-semibold hover:brightness-110 transition-all"
-            >
-              Protect My Career
-            </button>
-            <button
-              onClick={() => navigate("/browse")}
-              className="border border-border bg-card px-8 py-3.5 font-sans text-sm text-muted-foreground hover:text-foreground hover:border-primary/40 transition-all"
             >
               Check a Company
             </button>

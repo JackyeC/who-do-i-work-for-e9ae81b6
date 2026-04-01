@@ -7,10 +7,8 @@ import { Button } from "@/components/ui/button";
 import { LogoMark } from "@/components/brand/LogoMark";
 
 const PRIMARY_LINKS = [
+  { label: "Check a Company", to: "/offer-check" },
   { label: "How It Works", to: "/how-it-works" },
-  { label: "Companies", to: "/browse" },
-  { label: "Values Profile", to: "/values" },
-  { label: "The Receipts", to: "/receipts" },
   { label: "Pricing", to: "/pricing" },
 ];
 
