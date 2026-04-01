@@ -85,7 +85,7 @@ const SAMPLE_JOBS: JobListing[] = [
     applicants: 12, integrityScore: 91, integrityLevel: "LOW", alignmentPct: 96,
     skills: ["Public Health", "Community Engagement", "Grant Writing", "Program Evaluation"],
     description: "Lead community health initiatives with a focus on underserved populations. Direct impact on health equity outcomes.",
-    whyAligns: "Evergreen scores 91 on integrity — one of the highest in healthcare. Their mission, governance, and hiring practices are deeply aligned with your values around equity and community impact.",
+    whyAligns: "91 integrity. Community governance. Published health equity data. Living wage employer. This is where values live.",
     integritySummary: "FQHC with exemplary transparency. Community board governance. Published health equity data. Living wage employer.",
     narrativeGap: null,
   },
