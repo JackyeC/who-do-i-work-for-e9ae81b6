@@ -115,6 +115,7 @@ const HowItWorks = lazy(() => import("./pages/HowItWorks"));
 const ChromeExtension = lazy(() => import("./pages/ChromeExtension"));
 const DataEthics = lazy(() => import("./pages/DataEthics"));
 const ChromeWebStoreAssets = lazy(() => import("./pages/ChromeWebStoreAssets"));
+const PersonEntityDemo = lazy(() => import("./pages/PersonEntityDemo"));
 const Companies = lazy(() => import("./pages/Companies"));
 const Talent = lazy(() => import("./pages/Talent"));
 const JobsFeed = lazy(() => import("./pages/JobsFeed"));
@@ -237,6 +238,7 @@ const App = () => (
                   <Route path="/how-it-works" element={<HowItWorks />} />
                   <Route path="/extension" element={<ChromeExtension />} />
                   <Route path="/store-assets" element={<ChromeWebStoreAssets />} />
+                  <Route path="/person-entity-demo" element={<PersonEntityDemo />} />
                   <Route path="/companies" element={<Navigate to="/browse" replace />} />
                   <Route path="/talent" element={<ProtectedRoute><Talent /></ProtectedRoute>} />
                   <Route path="/examples" element={<Examples />} />
