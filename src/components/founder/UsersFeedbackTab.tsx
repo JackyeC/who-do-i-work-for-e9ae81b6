@@ -3,9 +3,8 @@ import { supabase } from "@/integrations/supabase/client";
 import { Badge } from "@/components/ui/badge";
 import { Skeleton } from "@/components/ui/skeleton";
 import {
-  Users, TrendingDown, MessageSquare, Eye,
+  Users, TrendingDown, MessageSquare, Building2,
 } from "lucide-react";
-import { cn } from "@/lib/utils";
 
 function EmptyState({ text }: { text: string }) {
   return <p className="text-xs text-muted-foreground italic py-3">{text}</p>;
@@ -76,9 +75,9 @@ export function UsersFeedbackTab() {
     },
   });
 
-  // ─── Most Viewed Companies (capped to 5) ───
-  const { data: topSearched = [], isLoading: searchLoading } = useQuery({
-    queryKey: ["founder-users-top-searched"],
+  // ─── Recently Updated Companies (capped to 5) ───
+  const { data: recentCompanies = [], isLoading: companiesLoading } = useQuery({
+    queryKey: ["founder-users-recent-companies"],
     queryFn: async () => {
       const { data } = await supabase
         .from("companies")
@@ -192,18 +191,18 @@ export function UsersFeedbackTab() {
           )}
         </div>
 
-        {/* Most Viewed Companies */}
+        {/* Recently Updated Companies */}
         <div className="bg-card border border-border rounded-2xl p-5">
           <h3 className="text-sm font-semibold text-foreground mb-4 flex items-center gap-2">
-            <Eye className="w-4 h-4 text-primary" /> Most Viewed Companies
+            <Building2 className="w-4 h-4 text-primary" /> Recently Updated Companies
           </h3>
-          {searchLoading ? (
+          {companiesLoading ? (
             <div className="space-y-2">{[1, 2, 3].map(i => <Skeleton key={i} className="h-8" />)}</div>
-          ) : topSearched.length === 0 ? (
-            <EmptyState text="No data has been indexed here yet." />
+          ) : recentCompanies.length === 0 ? (
+            <EmptyState text="No companies indexed yet." />
           ) : (
             <div className="space-y-1.5">
-              {topSearched.map((co, i) => (
+              {recentCompanies.map((co, i) => (
                 <div key={i} className="flex items-center justify-between p-2 bg-muted/20 rounded-lg text-sm">
                   <div className="min-w-0">
                     <span className="text-foreground font-medium truncate block">{co.name}</span>

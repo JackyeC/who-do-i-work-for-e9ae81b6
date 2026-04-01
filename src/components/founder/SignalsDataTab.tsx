@@ -4,7 +4,7 @@ import { Badge } from "@/components/ui/badge";
 import { Skeleton } from "@/components/ui/skeleton";
 import {
   Database, CheckCircle, AlertTriangle, XCircle, Clock,
-  Shield, FileText, BarChart3,
+  Shield, BarChart3,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 
@@ -44,14 +44,10 @@ export function SignalsDataTab() {
     },
   });
 
-  // ─── Source Status (approximate from existing data) ───
+  // ─── Source Status ───
   const { data: sources, isLoading: sourcesLoading } = useQuery({
     queryKey: ["founder-signals-sources"],
     queryFn: async () => {
-      const oneDay = new Date(Date.now() - 86400000).toISOString();
-      const sevenDays = new Date(Date.now() - 7 * 86400000).toISOString();
-
-      // Check data freshness per source
       const [sec, warn, fec, news] = await Promise.all([
         supabase.from("company_corporate_structure").select("created_at").order("created_at", { ascending: false }).limit(1),
         supabase.from("company_warn_notices").select("created_at").order("created_at", { ascending: false }).limit(1),
@@ -121,6 +117,9 @@ export function SignalsDataTab() {
           <h3 className="text-sm font-semibold text-foreground mb-4 flex items-center gap-2">
             <Shield className="w-4 h-4 text-civic-green" /> Source Status
           </h3>
+          <p className="text-xs text-muted-foreground mb-3">
+            Live freshness of each data pipeline. Status based on most recent record timestamp.
+          </p>
           {sourcesLoading ? (
             <div className="space-y-2">{[1, 2, 3].map(i => <Skeleton key={i} className="h-8" />)}</div>
           ) : !sources || sources.length === 0 ? (
@@ -152,6 +151,9 @@ export function SignalsDataTab() {
           <h3 className="text-sm font-semibold text-foreground mb-4 flex items-center gap-2">
             <AlertTriangle className="w-4 h-4 text-civic-yellow" /> Claim Safety Monitor
           </h3>
+          <p className="text-xs text-muted-foreground mb-3">
+            Claims without source URLs cannot be trusted or displayed to users.
+          </p>
           {claimsLoading ? (
             <Skeleton className="h-20" />
           ) : claimSafety!.totalClaims === 0 ? (
@@ -173,7 +175,12 @@ export function SignalsDataTab() {
               </div>
               {claimSafety!.missingSources > 0 && (
                 <p className="text-xs text-muted-foreground bg-civic-yellow/5 border border-civic-yellow/20 rounded-lg p-2">
-                  {claimSafety!.missingSources} claim{claimSafety!.missingSources !== 1 ? "s" : ""} need source URLs before they can be trusted.
+                  ⚠ {claimSafety!.missingSources} claim{claimSafety!.missingSources !== 1 ? "s" : ""} need source URLs before they can be surfaced to users. These are suppressed from display until verified.
+                </p>
+              )}
+              {claimSafety!.missingSources === 0 && claimSafety!.totalClaims > 0 && (
+                <p className="text-xs text-civic-green bg-civic-green/5 border border-civic-green/20 rounded-lg p-2">
+                  ✓ All indexed claims have source URLs attached.
                 </p>
               )}
             </div>
