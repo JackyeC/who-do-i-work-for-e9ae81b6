@@ -1,8 +1,6 @@
 import { useParams, Link } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
-import { Header } from "@/components/Header";
-import { Footer } from "@/components/Footer";
 import { HypocrisyIndexCard, type SayDoGapData } from "@/components/HypocrisyIndexCard";
 import { CategoryAlignmentCard } from "@/components/alignment/CategoryAlignmentCard";
 import { AlignmentOverviewBar } from "@/components/alignment/AlignmentOverviewBar";
