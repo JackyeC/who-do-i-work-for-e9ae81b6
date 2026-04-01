@@ -570,7 +570,7 @@ export function DashboardOverview({ onNavigate }: DashboardOverviewProps) {
       </div>
 
       {/* ═══ 5 — VALUES ALIGNMENT + AUDIT SEARCH (2 cols) ═══ */}
-      <div className="grid md:grid-cols-2 gap-5">
+      <div className="grid md:grid-cols-[1fr_320px] gap-7">
 
         {/* 5A — Values Alignment */}
         <motion.div {...anim(0.28)}>
