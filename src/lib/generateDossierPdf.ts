@@ -878,140 +878,125 @@ function buildPoliticalReceipts(doc: jsPDF, data: DossierPdfData): number {
 }
 
 /* ═══════════════════════════════════════════
-   MARCH 2026 REGULATORY ALERT
+   WORK POLICY SIGNALS (universal gate)
    ═══════════════════════════════════════════ */
 
-function buildMarch2026Alert(doc: jsPDF, data: DossierPdfData): number {
+/** Work-related flag_reason keywords — generic political flags are excluded */
+const WORK_POLICY_FLAG_RE = /labor|wage|hiring|worker|employment|osha|safety|union|organizing|layoff|warn|workforce|discrimination|retaliation|nlrb|eeoc|dol|fair labor|prevailing wage|bacon act|davis.bacon/i;
+
+function buildWorkPolicySignals(doc: jsPDF, data: DossierPdfData): void {
+  // ── Universal detection gate ──
+  const recentWarns = data.warnNotices.filter(w => {
+    const d = new Date(w.notice_date);
+    return !isNaN(d.getTime()) && d.getFullYear() >= 2025;
+  });
+
+  const hiringLobby = data.lobbyingIssues.filter(l =>
+    /ftc|artificial intelligence|\bai\b|hiring|employment|workforce|labor/i.test(l.issue_area) ||
+    /ftc/i.test(l.bill_number || "")
+  );
+
+  const workFlaggedCandidates = data.candidates.filter(c =>
+    c.flagged && c.flag_reason && WORK_POLICY_FLAG_RE.test(c.flag_reason)
+  );
+
+  const hasWorkPolicySignal =
+    recentWarns.length > 0 ||
+    hiringLobby.length > 0 ||
+    workFlaggedCandidates.length > 0;
+
+  // If no real work-policy signal exists for this company, omit the page entirely
+  if (!hasWorkPolicySignal) return;
+
+  // ── Render page ──
   doc.addPage();
   let y = 18;
 
-  // Alert header — red accent
+  // Page header
   doc.setFillColor(...C.red);
   doc.roundedRect(ML, y, CW, 16, 2, 2, "F");
   doc.setFont("helvetica", "bold");
   doc.setFontSize(7);
   doc.setTextColor(...C.white);
-  doc.text("⚠  REGULATORY ALERT", ML + 5, y + 6);
+  doc.text("WORK POLICY SIGNALS", ML + 5, y + 6);
   doc.setFontSize(11);
-  doc.text("March 2026 Truth Briefing", ML + 42, y + 6.5);
+  doc.text("Active Alerts", ML + 46, y + 6.5);
   doc.setFont("helvetica", "normal");
   doc.setFontSize(7);
-  doc.text(`As of ${AUDIT_DATE}`, ML + 42, y + 12.5);
+  doc.text("Affecting hiring, pay, treatment, safety, or stability", ML + 46, y + 12.5);
   y += 24;
 
-  // H.R. 7567 (Bacon Act)
-  doc.setFont("helvetica", "bold");
-  doc.setFontSize(9);
-  doc.setTextColor(...C.navy);
-  doc.text("H.R. 7567 — The Bacon Act (March 5, 2026 Vote)", ML, y);
-  y += 5;
-
-  doc.setFillColor(...C.fog);
-  doc.roundedRect(ML, y, CW, 20, 2, 2, "F");
-  doc.setFont("helvetica", "normal");
-  doc.setFontSize(8);
-  doc.setTextColor(...C.navy);
-  doc.text("Animal welfare bill voted March 5, 2026. Any PAC donations to a 'YES' voter after", ML + 6, y + 7);
-  doc.text("this date trigger a 'Value Conflict' badge in the Influence pipeline.", ML + 6, y + 13);
-  y += 26;
-
-  // Check for flagged candidates (Bacon Act sponsors)
-  const baconFlagged = data.candidates.filter(c => c.flagged);
-  if (baconFlagged.length > 0) {
+  // ── Sub-section: Flagged candidates (work-related only) ──
+  if (workFlaggedCandidates.length > 0) {
     doc.setFont("helvetica", "bold");
-    doc.setFontSize(8);
-    doc.setTextColor(...C.red);
-    doc.text(`⚠ ${baconFlagged.length} FLAGGED CANDIDATE(S) DETECTED`, ML, y);
-    y += 4;
+    doc.setFontSize(9);
+    doc.setTextColor(...C.navy);
+    doc.text("Political Spending — Flagged Candidates", ML, y);
+    y += 3;
+    doc.setFont("helvetica", "normal");
+    doc.setFontSize(7);
+    doc.setTextColor(...C.slate);
+    doc.text("PAC or executive donations to candidates flagged for work-policy conflicts.", ML, y);
+    y += 5;
 
     autoTable(doc, {
       ...tableStyle(y),
       head: [["Candidate", "Party", "Amount", "Flag Reason"]],
-      body: baconFlagged.map(c => [c.name, c.party, fmt$(c.amount), c.flag_reason || "Bacon Act Sponsor"]),
+      body: workFlaggedCandidates.map(c => [
+        sanitizeText(c.name),
+        c.party,
+        fmt$(c.amount),
+        sanitizeText(c.flag_reason || "Work-policy conflict"),
+      ]),
       headStyles: { fillColor: C.red, textColor: C.white, fontStyle: "bold" as const, fontSize: 7 },
-      columnStyles: { 2: { halign: "right" as const, cellWidth: 28 } },
+      columnStyles: {
+        2: { halign: "right" as const, cellWidth: 28 },
+        3: { cellWidth: "auto", overflow: "linebreak" as const },
+      },
     });
     y = doc.lastAutoTable.finalY + 10;
-  } else {
-    doc.setFont("helvetica", "normal");
-    doc.setFontSize(8);
-    doc.setTextColor(...C.green);
-    doc.text("✓ No flagged Bacon Act sponsor donations detected.", ML, y);
-    y += 10;
   }
 
-  // Q1 WARN Notices
-  doc.setFont("helvetica", "bold");
-  doc.setFontSize(9);
-  doc.setTextColor(...C.navy);
-  doc.text("Q1 2026 WARN Notices — Workforce Stability", ML, y);
-  y += 5;
+  // ── Sub-section: Recent WARN notices ──
+  if (recentWarns.length > 0) {
+    y = safeY(doc, y, 40);
+    doc.setFont("helvetica", "bold");
+    doc.setFontSize(9);
+    doc.setTextColor(...C.navy);
+    doc.text("Workforce Stability — Recent WARN Notices", ML, y);
+    y += 6;
 
-  const q1Warns = data.warnNotices.filter(w => {
-    const d = new Date(w.notice_date);
-    return d.getFullYear() >= 2025;
-  });
-
-  if (q1Warns.length > 0) {
-    const affected = q1Warns.reduce((s, w) => s + w.employees_affected, 0);
-    drawKpiBox(doc, ML, y, 55, "Recent WARN Notices", `${q1Warns.length}`, C.red);
+    const affected = recentWarns.reduce((s, w) => s + w.employees_affected, 0);
+    drawKpiBox(doc, ML, y, 55, "Recent WARN Notices", `${recentWarns.length}`, C.red);
     drawKpiBox(doc, ML + 59, y, 55, "Workers Affected", affected.toLocaleString(), C.amber);
     y += 28;
-  } else {
-    doc.setFont("helvetica", "normal");
-    doc.setFontSize(8);
-    doc.setTextColor(...C.green);
-    doc.text("✓ No recent WARN notices filed.", ML, y);
-    y += 10;
   }
 
-  // FTC Section 5 Lobbying
-  y = safeY(doc, y, 30);
-  doc.setFont("helvetica", "bold");
-  doc.setFontSize(9);
-  doc.setTextColor(...C.navy);
-  doc.text("FTC Section 5 — AI Bias Audit Preemption", ML, y);
-  y += 5;
-
-  doc.setFillColor(...C.fog);
-  doc.roundedRect(ML, y, CW, 20, 2, 2, "F");
-  doc.setFont("helvetica", "normal");
-  doc.setFontSize(8);
-  doc.setTextColor(...C.navy);
-  doc.text("Tracking ATS providers lobbying under FTC Section 5 to block mandatory AI bias audits.", ML + 6, y + 7);
-  doc.text("Companies with active lobbying in this area are flagged as HR Tech Gatekeepers.", ML + 6, y + 13);
-  y += 26;
-
-  const ftcLobbying = data.lobbyingIssues.filter(l =>
-    l.issue_area.toLowerCase().includes("ftc") ||
-    l.issue_area.toLowerCase().includes("artificial intelligence") ||
-    l.issue_area.toLowerCase().includes("ai") ||
-    l.bill_number?.toLowerCase().includes("ftc")
-  );
-
-  if (ftcLobbying.length > 0) {
+  // ── Sub-section: Hiring & AI oversight lobbying ──
+  if (hiringLobby.length > 0) {
+    y = safeY(doc, y, 40);
     doc.setFont("helvetica", "bold");
-    doc.setFontSize(8);
-    doc.setTextColor(...C.red);
-    doc.text(`⚠ ${ftcLobbying.length} AI/FTC-related lobbying issue(s) detected`, ML, y);
-    y += 4;
+    doc.setFontSize(9);
+    doc.setTextColor(...C.navy);
+    doc.text("Hiring & AI Oversight — Related Lobbying", ML, y);
+    y += 3;
+    doc.setFont("helvetica", "normal");
+    doc.setFontSize(7);
+    doc.setTextColor(...C.slate);
+    doc.text("Lobbying activity related to AI hiring tools, bias audits, or workforce regulation.", ML, y);
+    y += 5;
 
     autoTable(doc, {
       ...tableStyle(y),
       head: [["Issue Area", "Spend", "Related Bill"]],
-      body: ftcLobbying.map(l => [l.issue_area, l.amount ? fmt$(l.amount) : "—", l.bill_number || "—"]),
+      body: hiringLobby.map(l => [
+        sanitizeText(l.issue_area),
+        l.amount ? fmt$(l.amount) : "—",
+        sanitizeText(l.bill_number) || "—",
+      ]),
       headStyles: { fillColor: C.amber, textColor: C.white, fontStyle: "bold" as const, fontSize: 7 },
     });
-    y = doc.lastAutoTable.finalY + 10;
-  } else {
-    doc.setFont("helvetica", "normal");
-    doc.setFontSize(8);
-    doc.setTextColor(...C.green);
-    doc.text("✓ No AI bias audit lobbying detected.", ML, y);
-    y += 10;
   }
-
-  return y;
 }
 
 /* ═══════════════════════════════════════════
@@ -1138,7 +1123,7 @@ export function generateDossierPdf(data: DossierPdfData): jsPDF {
   y = buildWorkforceIntel(doc, y, data);
   y = buildDecisionLogic(doc, y, data);
   buildPoliticalReceipts(doc, data);
-  buildMarch2026Alert(doc, data);
+  buildWorkPolicySignals(doc, data);
   buildDisclaimerPage(doc);
   addPageNumbers(doc);
 
