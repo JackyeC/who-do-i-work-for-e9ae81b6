@@ -6,7 +6,7 @@ import { Badge } from "@/components/ui/badge";
 import { Skeleton } from "@/components/ui/skeleton";
 import {
   ClipboardList, Activity, Database, AlertCircle, Zap,
-  StickyNote, AlertOctagon, ChevronRight,
+  StickyNote, AlertOctagon, ChevronRight, Link2, CheckCircle,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 
@@ -61,14 +61,14 @@ export function TodayTab() {
         supabase.from("company_corporate_claims").select("id", { count: "exact", head: true }).is("claim_source_url", null),
         supabase.from("companies").select("id", { count: "exact", head: true }).is("website_url", null).not("description", "is", null),
       ]);
-      const items: { label: string; count: number; tab: string }[] = [];
       const reviewCount = pendingReviews.count ?? 0;
       const claimCount = missingClaims.count ?? 0;
       const linkCount = brokenLinks.count ?? 0;
+      const items: { label: string; count: number; tab: string }[] = [];
       if (reviewCount > 0) items.push({ label: `${reviewCount} ${reviewCount === 1 ? "company needs" : "companies need"} review`, count: reviewCount, tab: "queue" });
       if (claimCount > 0) items.push({ label: `${claimCount} ${claimCount === 1 ? "claim" : "claims"} missing sources`, count: claimCount, tab: "signals" });
       if (linkCount > 0) items.push({ label: `${linkCount} broken ${linkCount === 1 ? "link" : "links"} detected`, count: linkCount, tab: "signals" });
-      return items.slice(0, 3);
+      return { items: items.slice(0, 3), brokenLinkCount: linkCount };
     },
   });
 
@@ -162,13 +162,13 @@ export function TodayTab() {
       {/* Priority */}
       {priorityLoading ? (
         <Skeleton className="h-12 rounded-2xl" />
-      ) : priority && priority.length > 0 ? (
+      ) : priority && priority.items.length > 0 ? (
         <div className="bg-destructive/5 border border-destructive/20 rounded-2xl p-4">
           <h3 className="text-xs font-semibold text-destructive uppercase tracking-wider mb-2.5 flex items-center gap-1.5">
             <AlertOctagon className="w-3.5 h-3.5" /> Priority
           </h3>
           <div className="space-y-1.5">
-            {priority.map((item) => (
+            {priority.items.map((item) => (
               <button
                 key={item.label}
                 onClick={() => navigate(`/founder?tab=${item.tab}`)}
@@ -213,11 +213,31 @@ export function TodayTab() {
         <MetricRow label="Reports generated" value={productHealth?.reports ?? "—"} loading={healthLoading} />
       </TriageCard>
 
-      {/* 3. Data Health — capped to 3 rows */}
+      {/* 3. Data Health + Broken Links */}
       <TriageCard title="Data Health" icon={Database} iconColor="text-primary">
         <MetricRow label="Companies indexed" value={dataHealth?.total ?? "—"} loading={dataLoading} />
         <MetricRow label="Strong evidence" value={dataHealth?.strong ?? "—"} loading={dataLoading} />
         <MetricRow label="No evidence yet" value={dataHealth?.none ?? "—"} loading={dataLoading} />
+        {!priorityLoading && priority && (
+          <div className={cn(
+            "mt-1 flex items-center gap-1.5 text-xs font-medium rounded-lg px-2 py-1.5",
+            priority.brokenLinkCount > 0
+              ? "bg-destructive/10 text-destructive"
+              : "bg-civic-green/10 text-civic-green"
+          )}>
+            {priority.brokenLinkCount > 0 ? (
+              <>
+                <Link2 className="w-3 h-3" />
+                {priority.brokenLinkCount} broken {priority.brokenLinkCount === 1 ? "link" : "links"}
+              </>
+            ) : (
+              <>
+                <CheckCircle className="w-3 h-3" />
+                No broken links detected
+              </>
+            )}
+          </div>
+        )}
       </TriageCard>
 
       {/* 4. User Friction — capped to 3 themes */}
@@ -236,8 +256,13 @@ export function TodayTab() {
         )}
       </TriageCard>
 
-      {/* 5. Quick Actions — 4 actions max */}
+      {/* 5. Quick Actions */}
       <TriageCard title="Quick Actions" icon={Zap} iconColor="text-civic-yellow">
+        {!priorityLoading && priority && priority.brokenLinkCount > 0 && (
+          <Button variant="destructive" size="sm" className="w-full justify-start text-xs gap-2 h-8" onClick={() => navigate("/founder?tab=signals")}>
+            <Link2 className="w-3.5 h-3.5" /> Fix broken links ({priority.brokenLinkCount})
+          </Button>
+        )}
         <Button variant="outline" size="sm" className="w-full justify-start text-xs gap-2 h-8" onClick={() => navigate("/founder?tab=queue")}>
           <ClipboardList className="w-3.5 h-3.5" /> Review pending items
         </Button>
