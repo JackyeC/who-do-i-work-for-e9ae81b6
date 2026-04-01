@@ -1,4 +1,8 @@
 import { motion } from "framer-motion";
+import { useState, useEffect } from "react";
+import { Heart, Bookmark, Loader2 } from "lucide-react";
+import { fetchDailyNote, saveNote, type DailyNoteResponse } from "@/services/JackyeNoteService";
+import { toast } from "sonner";
 
 interface JackyeMessageProps {
   firstName: string;
@@ -12,6 +16,48 @@ export function JackyeMessage({ firstName }: JackyeMessageProps) {
     day: "numeric",
   });
 
+  const [noteResponse, setNoteResponse] = useState<DailyNoteResponse | null>(null);
+  const [loading, setLoading] = useState(true);
+  const [liked, setLiked] = useState(false);
+  const [saved, setSaved] = useState(false);
+
+  useEffect(() => {
+    let cancelled = false;
+    setLoading(true);
+    fetchDailyNote().then((res) => {
+      if (!cancelled) {
+        setNoteResponse(res);
+        setLoading(false);
+      }
+    });
+    return () => { cancelled = true; };
+  }, []);
+
+  const handleLike = async () => {
+    if (!noteResponse || liked) return;
+    setLiked(true);
+    await saveNote(noteResponse.note, noteResponse.noteData, true);
+    toast.success("Note liked — saved to your intel.");
+  };
+
+  const handleSave = async () => {
+    if (!noteResponse || saved) return;
+    setSaved(true);
+    await saveNote(noteResponse.note, noteResponse.noteData, false);
+    toast.success("Note saved to My Intel.");
+  };
+
+  // Split note into paragraphs for rendering
+  const paragraphs = noteResponse?.note
+    .split("\n")
+    .map((p) => p.trim())
+    .filter(Boolean) || [];
+
+  // Separate signature from body
+  const signatureIdx = paragraphs.findIndex((p) => p.startsWith("Always in your corner"));
+  const bodyParagraphs = signatureIdx >= 0 ? paragraphs.slice(0, signatureIdx) : paragraphs;
+  const hasSignature = signatureIdx >= 0;
+
   return (
     <motion.div
       initial={{ opacity: 0, y: 12 }}
@@ -24,7 +70,7 @@ export function JackyeMessage({ firstName }: JackyeMessageProps) {
           background: "linear-gradient(135deg, hsl(var(--surface-2)) 0%, hsl(var(--card)) 100%)",
         }}
       >
-        {/* Warm gold radial glow — top-right */}
+        {/* Warm gold radial glow */}
         <div
           className="absolute top-0 right-0 w-72 h-72 pointer-events-none"
           style={{
@@ -48,25 +94,54 @@ export function JackyeMessage({ firstName }: JackyeMessageProps) {
           {/* Gold separator */}
           <div className="w-10 h-px bg-primary/40 mb-5" />
 
-          {/* Personal message */}
-          <p
-            className="text-[15px] leading-[1.75] text-[hsl(var(--text-secondary))] max-w-[640px]"
-          >
-            I saw something this morning you should know about. Google just got hit with a monopoly
-            ruling — and if you're interviewing anywhere in ad tech, that changes the conversation. I
-            pulled the details into your dossier already. Also? That role at Lighthouse Education
-            Partners — 92% alignment with your values. That's rare. I'd look twice at that one.
-            <br />
-            <br />
-            You've put yourself out there 3 times this week. That's not nothing. That takes real
-            courage, and I see you.
-          </p>
+          {/* Dynamic message */}
+          {loading ? (
+            <div className="flex items-center gap-3 py-6">
+              <Loader2 className="w-4 h-4 text-primary animate-spin" />
+              <span className="text-sm text-muted-foreground">Checking signals...</span>
+            </div>
+          ) : (
+            <>
+              <div className="space-y-4 max-w-[640px]">
+                {bodyParagraphs.map((p, i) => (
+                  <p
+                    key={i}
+                    className="text-[15px] leading-[1.75] text-[hsl(var(--text-secondary))]"
+                  >
+                    {p}
+                  </p>
+                ))}
+              </div>
 
-          {/* Signature */}
-          <p className="mt-6 text-sm font-serif italic text-[hsl(var(--text-tertiary))]">
-            Always in your corner —{" "}
-            <span className="font-bold text-primary not-italic font-brand">Jackye</span>
-          </p>
+              {/* Signature */}
+              {hasSignature && (
+                <p className="mt-6 text-sm font-serif italic text-[hsl(var(--text-tertiary))]">
+                  Always in your corner —{" "}
+                  <span className="font-bold text-primary not-italic font-brand">Jackye</span>
+                </p>
+              )}
+
+              {/* Actions */}
+              <div className="flex items-center gap-3 mt-5 pt-4 border-t border-border/20">
+                <button
+                  onClick={handleLike}
+                  disabled={liked}
+                  className="flex items-center gap-1.5 text-xs text-muted-foreground hover:text-primary transition-colors disabled:opacity-50"
+                >
+                  <Heart className={`w-3.5 h-3.5 ${liked ? "fill-primary text-primary" : ""}`} />
+                  {liked ? "Liked" : "Like"}
+                </button>
+                <button
+                  onClick={handleSave}
+                  disabled={saved}
+                  className="flex items-center gap-1.5 text-xs text-muted-foreground hover:text-primary transition-colors disabled:opacity-50"
+                >
+                  <Bookmark className={`w-3.5 h-3.5 ${saved ? "fill-primary text-primary" : ""}`} />
+                  {saved ? "Saved" : "Save to My Intel"}
+                </button>
+              </div>
+            </>
+          )}
         </div>
       </div>
     </motion.div>

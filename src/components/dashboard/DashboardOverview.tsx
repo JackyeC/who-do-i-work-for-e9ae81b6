@@ -14,6 +14,7 @@ import { AlignedValuesSearch } from "./AlignedValuesSearch";
 import { FoundingMemberBadge } from "@/components/FoundingMemberBadge";
 import { AffirmationBar } from "./AffirmationBar";
 import { YourJourney } from "./YourJourney";
+import { JackyeMessage } from "./JackyeMessage";
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
 
 interface DashboardOverviewProps {
@@ -259,24 +260,7 @@ export function DashboardOverview({ onNavigate }: DashboardOverviewProps) {
           </CollapsibleTrigger>
           <CollapsibleContent>
             <div className="mt-2 space-y-3">
-              <div
-                className="rounded-xl border p-5"
-                style={{
-                  background: "linear-gradient(135deg, hsl(var(--surface-2)) 0%, hsl(var(--card)) 100%)",
-                  borderColor: "hsla(43, 96%, 56%, 0.15)",
-                }}
-              >
-                <p className="text-[14px] leading-[1.75] text-muted-foreground max-w-[640px]">
-                  I saw something this morning you should know about. Google just got hit with a monopoly
-                  ruling — and if you're interviewing anywhere in ad tech, that changes the conversation. I
-                  pulled the details into your dossier already. That role at Lighthouse Education
-                  Partners? 92% alignment with your values. That's rare. I'd look twice.
-                </p>
-                <p className="mt-4 text-xs font-serif italic text-muted-foreground/60">
-                  Always in your corner —{" "}
-                  <span className="font-bold text-primary not-italic font-brand">Jackye</span>
-                </p>
-              </div>
+              <JackyeMessage firstName={firstName} />
               <AffirmationBar />
             </div>
           </CollapsibleContent>
