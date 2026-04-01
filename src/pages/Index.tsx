@@ -15,7 +15,7 @@ const Index = forwardRef<HTMLDivElement>((_, ref) => {
   const navigate = useNavigate();
   const { user, loading: authLoading } = useAuth();
   const { isLoaded } = useClerkWithFallback();
-  const [heroQuery, setHeroQuery] = useState("");
+  
 
   usePageSEO({
     title: "Who Do I Work For — Career Intelligence by Jackye Clayton",
@@ -33,12 +33,6 @@ const Index = forwardRef<HTMLDivElement>((_, ref) => {
 
   if (!isLoaded || authLoading) return null;
 
-  const handleHeroSearch = (e: React.FormEvent) => {
-    e.preventDefault();
-    if (heroQuery.trim()) {
-      navigate(`/search?q=${encodeURIComponent(heroQuery.trim())}`);
-    }
-  };
 
   return (
     <div ref={ref} className="flex flex-col min-h-screen bg-background">
@@ -83,49 +77,17 @@ const Index = forwardRef<HTMLDivElement>((_, ref) => {
             Check who you're really working for. Review an offer. Understand what the public record says. It takes 30 seconds.
           </p>
 
-          {/* Search bar */}
-          <form
-            onSubmit={handleHeroSearch}
-            className="mt-9 mx-auto max-w-[540px] relative group"
+          {/* Primary CTA */}
+          <div
+            className="mt-9 flex justify-center"
             style={{ opacity: 0, animation: "heroFadeIn 0.5s ease 0.9s forwards" }}
           >
-            <div className="absolute -inset-0.5 bg-gradient-to-r from-primary/20 via-primary/5 to-primary/20 opacity-0 group-focus-within:opacity-100 transition-opacity duration-500 blur-sm" />
-            <div className="relative flex items-center bg-card border border-border focus-within:border-primary/40 transition-colors">
-              <Search className="w-4 h-4 text-muted-foreground ml-4 shrink-0" />
-              <input
-                type="text"
-                value={heroQuery}
-                onChange={(e) => setHeroQuery(e.target.value)}
-                placeholder="Search a company, offer, or workplace question"
-                className="flex-1 bg-transparent px-3 py-3.5 text-sm text-foreground placeholder:text-muted-foreground/50 focus:outline-none font-sans"
-              />
-              <button
-                type="submit"
-                className="mr-2 px-5 py-2 bg-primary text-primary-foreground font-mono text-xs tracking-wider uppercase font-semibold hover:brightness-110 transition-all flex items-center gap-1.5"
-              >
-                Check <ArrowRight className="w-3 h-3" />
-              </button>
-            </div>
-          </form>
-
-          {/* CTA row */}
-          <div
-            className="flex flex-wrap gap-3 justify-center mt-6"
-            style={{ opacity: 0, animation: "heroFadeIn 0.4s ease 1.1s forwards" }}
-          >
-            {[
-              { label: "Protect My Career", to: user ? "/dashboard" : "/join" },
-              { label: "Review My Offer", to: "/offer-analysis" },
-              { label: "Build My Career Map", to: "/career-map" },
-            ].map((cta) => (
-              <button
-                key={cta.label}
-                onClick={() => navigate(cta.to)}
-                className="px-4 py-2 text-xs font-sans font-medium border border-border text-muted-foreground hover:text-foreground hover:border-primary/40 transition-all bg-card"
-              >
-                {cta.label}
-              </button>
-            ))}
+            <button
+              onClick={() => navigate("/offer-check")}
+              className="bg-primary text-primary-foreground px-10 py-4 font-sans text-base font-semibold hover:brightness-110 transition-all flex items-center gap-2"
+            >
+              Check a Company <ArrowRight className="w-4 h-4" />
+            </button>
           </div>
 
           {/* Source line */}
@@ -376,16 +338,10 @@ const Index = forwardRef<HTMLDivElement>((_, ref) => {
           <p className="text-sm text-muted-foreground leading-relaxed max-w-[46ch] mx-auto mb-8">
             You don't need more applications. You need better decisions. We built the trust layer for the world of work — now use it.
           </p>
-          <div className="flex flex-col sm:flex-row gap-3 justify-center">
+          <div className="flex justify-center">
             <button
-              onClick={() => navigate(user ? "/dashboard" : "/join")}
+              onClick={() => navigate("/offer-check")}
               className="bg-primary text-primary-foreground px-8 py-3.5 font-sans text-sm font-semibold hover:brightness-110 transition-all"
-            >
-              Protect My Career
-            </button>
-            <button
-              onClick={() => navigate("/browse")}
-              className="border border-border bg-card px-8 py-3.5 font-sans text-sm text-muted-foreground hover:text-foreground hover:border-primary/40 transition-all"
             >
               Check a Company
             </button>

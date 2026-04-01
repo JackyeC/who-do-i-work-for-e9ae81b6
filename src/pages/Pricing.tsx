@@ -165,10 +165,17 @@ export default function Pricing() {
         <h1 className="text-2xl lg:text-3xl font-black tracking-tight text-foreground mb-3">
           Don't find out the hard way.
         </h1>
-        <p className="text-base text-muted-foreground max-w-lg mx-auto leading-relaxed">
+        <p className="text-base text-muted-foreground max-w-lg mx-auto leading-relaxed mb-4">
           Every plan gives you more of the picture — the one companies don't put in the job description.
           Pick the level that matches where you are in your search.
         </p>
+        <Button
+          onClick={() => navigate("/offer-check")}
+          className="mx-auto"
+          size="lg"
+        >
+          Check a Company <ArrowRight className="w-4 h-4 ml-1" />
+        </Button>
       </section>
 
       {/* ── BILLING TOGGLE ── */}
