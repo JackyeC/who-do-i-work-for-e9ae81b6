@@ -6,91 +6,123 @@ const SPECTRUM_GROUPS = [
     title: "MAGA / white Christian nationalism",
     description:
       "This camp frames America as a nation under siege and pushes strongman politics, mass deportation, abortion bans, and attacks on LGBTQ protections.",
-    color: "bg-destructive/80",
+    barColor: "bg-destructive",
+    labelColor: "text-destructive",
   },
   {
     label: "Moderate Right",
     title: "Old GOP / Reagan conservatism",
     description:
       "This group centers tax cuts, deregulation, business power, and traditional values while still operating inside older Republican institutions.",
-    color: "bg-destructive/40",
+    barColor: "bg-[hsl(var(--civic-yellow))]",
+    labelColor: "text-[hsl(var(--civic-yellow))]",
   },
   {
     label: "Center",
     title: "Both-sides pragmatists",
     description:
       "The center is less a fixed ideology and more a posture built around compromise, disengagement, or the belief that both parties are equally extreme.",
-    color: "bg-muted-foreground/40",
+    barColor: "bg-muted-foreground/60",
+    labelColor: "text-muted-foreground",
   },
   {
     label: "Moderate Left",
     title: "Institutional Democrats",
     description:
       "This camp supports reform, civil rights, and a larger safety net, but usually stays within pro-business and incremental policy boundaries.",
-    color: "bg-primary/40",
+    barColor: "bg-[hsl(var(--civic-blue))]",
+    labelColor: "text-[hsl(var(--civic-blue))]",
   },
   {
     label: "Far Left",
     title: "Progressive / structural change",
     description:
       "The far left argues the system is functioning as designed and calls for major structural changes like Medicare for All, wealth taxes, and stronger corporate regulation.",
-    color: "bg-primary/80",
+    barColor: "bg-primary",
+    labelColor: "text-primary",
   },
 ];
 
 export function PoliticalSpectrumExplainer() {
   return (
-    <section className="max-w-[900px] mx-auto px-6 lg:px-16 py-16">
-      <p className="font-mono text-xs tracking-[0.15em] uppercase text-primary mb-4">
-        Independent media explainer
-      </p>
-      <h2 className="font-sans text-lg font-bold text-foreground mb-3">
-        The 5 political groups most Americans mix up.
-      </h2>
-      <p className="text-sm text-muted-foreground leading-relaxed max-w-[58ch] mb-8">
-        Most people hear labels like far right, moderate, or far left without
-        ever getting a clear explanation of what those groups actually believe.
-        This breaks the spectrum into five camps so the language shaping American
-        politics makes more sense.
-      </p>
-
-      {/* Spectrum bar */}
-      <div className="flex h-2 rounded-full overflow-hidden mb-8 gap-px" aria-hidden="true">
-        {SPECTRUM_GROUPS.map((g) => (
-          <div key={g.label} className={cn("flex-1", g.color)} />
-        ))}
-      </div>
-
-      {/* Cards */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4 mb-10">
-        {SPECTRUM_GROUPS.map((g) => (
-          <div
-            key={g.label}
-            className="border border-border bg-card p-4 space-y-2"
+    <section className="py-16 px-5">
+      <div className="max-w-[1100px] mx-auto">
+        {/* Intro */}
+        <div className="max-w-[760px] mb-8">
+          <p className="font-mono text-xs tracking-[0.12em] uppercase text-muted-foreground font-bold mb-3">
+            Independent media explainer
+          </p>
+          <h2
+            className="font-sans text-foreground leading-[1.05] mb-4"
+            style={{ fontSize: "clamp(2rem, 4vw, 3.5rem)", fontWeight: 800 }}
           >
-            <p className="font-mono text-[10px] tracking-[0.15em] uppercase text-primary">
-              {g.label}
-            </p>
-            <h3 className="text-sm font-bold text-foreground leading-snug">
-              {g.title}
-            </h3>
-            <p className="text-xs text-muted-foreground leading-relaxed">
-              {g.description}
-            </p>
-          </div>
-        ))}
-      </div>
+            The 5 political groups most Americans mix up.
+          </h2>
+          <p className="text-[1.05rem] leading-[1.7] text-muted-foreground">
+            Most people hear labels like far right, moderate, or far left
+            without ever getting a clear explanation of what those groups
+            actually believe. This breaks the spectrum into five camps so the
+            language shaping American politics makes more sense.
+          </p>
+        </div>
 
-      {/* Why it matters callout */}
-      <div className="border border-border bg-card p-5 max-w-[640px]">
-        <h3 className="text-sm font-bold text-foreground mb-2">
-          Why this matters
-        </h3>
-        <p className="text-sm text-muted-foreground leading-relaxed">
-          Political language gets used as a shortcut to shut conversations down.
-          A clearer spectrum helps people understand who is driving policy, who
-          is defending the status quo, and who is demanding structural change.
-        </p>
+        {/* Spectrum bar */}
+        <div
+          className="grid gap-[0.35rem] my-8"
+          style={{ gridTemplateColumns: "repeat(5, 1fr)" }}
+          aria-hidden="true"
+        >
+          {SPECTRUM_GROUPS.map((g) => (
+            <span
+              key={g.label}
+              className={cn("h-3 rounded-full block", g.barColor)}
+            />
+          ))}
+        </div>
+
+        {/* Cards grid — 12-col layout */}
+        <div className="grid grid-cols-12 gap-4">
+          {SPECTRUM_GROUPS.map((g, i) => (
+            <div
+              key={g.label}
+              className={cn(
+                "col-span-12 sm:col-span-6 rounded-2xl p-5",
+                "bg-foreground/[0.04] border border-foreground/[0.08]",
+                "backdrop-blur-sm",
+                // Last two cards on desktop: span 6 each
+                i < 3 ? "lg:col-span-4" : "lg:col-span-6"
+              )}
+            >
+              <p
+                className={cn(
+                  "font-mono text-[0.78rem] font-bold uppercase tracking-[0.08em] mb-2",
+                  g.labelColor
+                )}
+              >
+                {g.label}
+              </p>
+              <h3 className="text-[1.2rem] font-bold text-foreground leading-[1.2] mb-2.5">
+                {g.title}
+              </h3>
+              <p className="text-muted-foreground leading-[1.65] text-sm">
+                {g.description}
+              </p>
+            </div>
+          ))}
+        </div>
+
+        {/* Callout */}
+        <div className="mt-6 p-6 rounded-2xl border border-foreground/[0.08] bg-gradient-to-br from-primary/[0.08] to-[hsl(var(--civic-blue))]/[0.08]">
+          <h3 className="text-[1.15rem] font-bold text-foreground mb-3">
+            Why this matters
+          </h3>
+          <p className="text-muted-foreground leading-[1.7] text-sm">
+            Political language gets used as a shortcut to shut conversations
+            down. A clearer spectrum helps people understand who is driving
+            policy, who is defending the status quo, and who is demanding
+            structural change.
+          </p>
+        </div>
       </div>
     </section>
   );
