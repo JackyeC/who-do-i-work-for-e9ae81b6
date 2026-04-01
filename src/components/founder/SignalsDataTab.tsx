@@ -4,7 +4,7 @@ import { Badge } from "@/components/ui/badge";
 import { Skeleton } from "@/components/ui/skeleton";
 import {
   Database, CheckCircle, AlertTriangle, XCircle, Clock,
-  Shield, BarChart3,
+  Shield, BarChart3, Layers, HelpCircle,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 
