@@ -845,7 +845,7 @@ function buildPoliticalReceipts(doc: jsPDF, data: DossierPdfData): number {
     autoTable(doc, {
       ...tableStyle(y),
       head: [["Person", "Prior Government Role", "Current Corporate Role"]],
-      body: data.revolvingDoor.slice(0, 15).map(r => [r.person, r.prior_role, r.new_role]),
+      body: data.revolvingDoor.slice(0, 15).map(r => [sanitizeText(r.person), sanitizeText(r.prior_role), sanitizeText(r.new_role)]),
     });
     y = doc.lastAutoTable.finalY + 10;
   }
