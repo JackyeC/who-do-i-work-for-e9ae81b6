@@ -237,29 +237,8 @@ export function DashboardOverview({ onNavigate }: DashboardOverviewProps) {
   return (
     <div className="space-y-5 max-w-[1200px] mx-auto">
 
-      {/* ═══ 1 — MORNING GREETING ═══ */}
-      <motion.div {...anim(0)}>
-        <BriefingCard>
-          <div className="flex items-center gap-2 mb-3">
-            <span className="inline-flex items-center gap-1.5 rounded-full text-xs font-bold px-3 py-1 bg-primary/10 border border-primary/30 text-primary">
-              <Eye className="w-3 h-3" /> LIVE INTELLIGENCE
-            </span>
-            <span className="text-xs text-muted-foreground font-mono">{dateStr}</span>
-          </div>
-          <h2 className="text-2xl font-bold text-foreground tracking-tight leading-snug font-display">
-            Good morning, {firstName}.
-          </h2>
-          <p className="text-[15px] text-muted-foreground leading-relaxed mt-2">
-            {data?.alerts && data.alerts.length > 0
-              ? `${new Set(data.alerts.map((a: any) => a.company_name)).size} companies you're watching had signal updates. `
-              : ""}
-            5 employer signals require your attention today. Here's what the public record is showing.
-          </p>
-          <p className="text-sm text-foreground mt-2.5 font-semibold italic">
-            "You deserve to know exactly who you work for."
-          </p>
-        </BriefingCard>
-      </motion.div>
+      {/* ═══ 1 — JACKYE'S MESSAGE ═══ */}
+      <JackyeMessage firstName={firstName} />
 
       {/* ═══ FOUNDING MEMBER BANNER ═══ */}
       <motion.div {...anim(0.03)}>
