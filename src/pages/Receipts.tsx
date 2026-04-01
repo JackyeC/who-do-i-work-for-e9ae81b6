@@ -8,9 +8,6 @@ import { useReceiptsFeed, type ReceiptArticle } from "@/hooks/use-receipts-feed"
 import { ReceiptsFilters } from "@/components/receipts/ReceiptsFilters";
 import { FeaturedReceipt } from "@/components/receipts/FeaturedReceipt";
 import { ReceiptCard } from "@/components/receipts/ReceiptCard";
-import { ReceiptsFilters } from "@/components/receipts/ReceiptsFilters";
-import { FeaturedReceipt } from "@/components/receipts/FeaturedReceipt";
-import { ReceiptCard } from "@/components/receipts/ReceiptCard";
 import { SpecialEditionCard } from "@/components/receipts/SpecialEditionCard";
 import { FloatingBubble } from "@/components/receipts/FloatingBubble";
 import { EmailCaptureModal } from "@/components/receipts/EmailCaptureModal";
