@@ -826,7 +826,7 @@ function buildPoliticalReceipts(doc: jsPDF, data: DossierPdfData): number {
       ...tableStyle(y),
       head: [["Organization", "Type", "Relationship", "Est. Amount"]],
       body: data.darkMoney.slice(0, 15).map(d => [
-        d.name, d.org_type, d.relationship, d.estimated_amount ? fmt$(d.estimated_amount) : "—",
+        sanitizeText(d.name), sanitizeText(d.org_type), sanitizeText(d.relationship), d.estimated_amount ? fmt$(d.estimated_amount) : "—",
       ]),
       columnStyles: { 3: { halign: "right" as const, cellWidth: 28 } },
     });
