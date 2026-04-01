@@ -6603,6 +6603,24 @@ export type Database = {
           },
         ]
       }
+      nickname_mappings: {
+        Row: {
+          canonical_name: string
+          id: string
+          nickname: string
+        }
+        Insert: {
+          canonical_name: string
+          id?: string
+          nickname: string
+        }
+        Update: {
+          canonical_name?: string
+          id?: string
+          nickname?: string
+        }
+        Relationships: []
+      }
       offer_checks: {
         Row: {
           company_id: string
@@ -11114,6 +11132,18 @@ export type Database = {
         Args: { p_token: string; p_user_id: string }
         Returns: undefined
       }
+      fuzzy_person_search: {
+        Args: { _limit?: number; _search_term: string }
+        Returns: {
+          company_id: string
+          id: string
+          match_score: number
+          match_type: string
+          name: string
+          title: string
+          total_donations: number
+        }[]
+      }
       get_company_recommendations: {
         Args: { p_limit?: number; p_user_id: string }
         Returns: {
@@ -11180,6 +11210,7 @@ export type Database = {
         }
         Returns: boolean
       }
+      resolve_name_variants: { Args: { _name: string }; Returns: string[] }
       score_news_for_user: {
         Args: { p_news_id: string; p_user_id: string }
         Returns: number

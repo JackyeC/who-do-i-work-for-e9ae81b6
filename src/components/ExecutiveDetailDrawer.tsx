@@ -7,6 +7,7 @@ import { cn } from "@/lib/utils";
 import { formatCurrency } from "@/data/sampleData";
 import { supabase } from "@/integrations/supabase/client";
 import { useQuery } from "@tanstack/react-query";
+import { expandNameVariants } from "@/hooks/use-fuzzy-person-search";
 import { LoadingState } from "@/components/LoadingState";
 import { useState } from "react";
 
@@ -35,17 +36,18 @@ export function ExecutiveDetailDrawer({ open, onOpenChange, executive, companyNa
   const { data: resolvedExec } = useQuery({
     queryKey: ["resolve-executive", executive?.name, companyName],
     queryFn: async () => {
+      const nameParts = executive!.name.trim().split(" ");
+      const firstName = nameParts[0];
+      const lastName = nameParts[nameParts.length - 1];
+      const firstNameVariants = expandNameVariants(firstName);
+      const orFilter = firstNameVariants.map(v => `name.ilike.%${v}%`).join(",");
       const { data } = await supabase
         .from("company_executives")
         .select("id, name, title, total_donations, photo_url")
-        .ilike("name", `%${executive!.name.split(" ").pop()}%`)
-        .limit(5);
-      // Best match: find one whose name contains the key parts
-      const match = data?.find(e =>
-        e.name.toLowerCase().includes(executive!.name.toLowerCase()) ||
-        executive!.name.toLowerCase().includes(e.name.toLowerCase())
-      );
-      return match || null;
+        .or(orFilter)
+        .limit(10);
+      const match = data?.find(e => e.name.toLowerCase().includes(lastName.toLowerCase())) || data?.[0] || null;
+      return match;
     },
     enabled: !!executive?.name && !executive?.id && open,
   });
