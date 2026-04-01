@@ -370,6 +370,7 @@ export default function CompanyDossier() {
               <ArrowRight className="w-3 h-3" />
             </Button>
           </div>
+        </div>
 
         {/* ── VERDICT CARD ── */}
         <div className={cn("rounded-xl border p-5 mb-5", verdict.bg, verdict.border)}>
