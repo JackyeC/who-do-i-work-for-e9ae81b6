@@ -213,11 +213,31 @@ export function TodayTab() {
         <MetricRow label="Reports generated" value={productHealth?.reports ?? "—"} loading={healthLoading} />
       </TriageCard>
 
-      {/* 3. Data Health — capped to 3 rows */}
+      {/* 3. Data Health + Broken Links */}
       <TriageCard title="Data Health" icon={Database} iconColor="text-primary">
         <MetricRow label="Companies indexed" value={dataHealth?.total ?? "—"} loading={dataLoading} />
         <MetricRow label="Strong evidence" value={dataHealth?.strong ?? "—"} loading={dataLoading} />
         <MetricRow label="No evidence yet" value={dataHealth?.none ?? "—"} loading={dataLoading} />
+        {!priorityLoading && priority && (
+          <div className={cn(
+            "mt-1 flex items-center gap-1.5 text-xs font-medium rounded-lg px-2 py-1.5",
+            priority.brokenLinkCount > 0
+              ? "bg-destructive/10 text-destructive"
+              : "bg-civic-green/10 text-civic-green"
+          )}>
+            {priority.brokenLinkCount > 0 ? (
+              <>
+                <Link2 className="w-3 h-3" />
+                {priority.brokenLinkCount} broken {priority.brokenLinkCount === 1 ? "link" : "links"}
+              </>
+            ) : (
+              <>
+                <CheckCircle className="w-3 h-3" />
+                No broken links detected
+              </>
+            )}
+          </div>
+        )}
       </TriageCard>
 
       {/* 4. User Friction — capped to 3 themes */}
@@ -236,8 +256,13 @@ export function TodayTab() {
         )}
       </TriageCard>
 
-      {/* 5. Quick Actions — 4 actions max */}
+      {/* 5. Quick Actions */}
       <TriageCard title="Quick Actions" icon={Zap} iconColor="text-civic-yellow">
+        {!priorityLoading && priority && priority.brokenLinkCount > 0 && (
+          <Button variant="destructive" size="sm" className="w-full justify-start text-xs gap-2 h-8" onClick={() => navigate("/founder?tab=signals")}>
+            <Link2 className="w-3.5 h-3.5" /> Fix broken links ({priority.brokenLinkCount})
+          </Button>
+        )}
         <Button variant="outline" size="sm" className="w-full justify-start text-xs gap-2 h-8" onClick={() => navigate("/founder?tab=queue")}>
           <ClipboardList className="w-3.5 h-3.5" /> Review pending items
         </Button>
