@@ -514,7 +514,7 @@ function buildBusinessFoundation(doc: jsPDF, data: DossierPdfData): number {
     y += 5;
 
     doc.setFillColor(...C.fog);
-    const descLines = doc.splitTextToSize(company.description, CW - 12);
+    const descLines = doc.splitTextToSize(sanitizeText(company.description), CW - 12);
     const boxH = descLines.length * 4 + 8;
     doc.roundedRect(ML, y, CW, boxH, 2, 2, "F");
     doc.setFont("helvetica", "normal");
