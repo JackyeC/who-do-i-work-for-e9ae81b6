@@ -161,7 +161,7 @@ export default function EarlyAccess() {
                 placeholder="you@email.com"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
-                className="bg-white/5 border border-white/10 rounded-md px-4 py-3 text-white placeholder-white/25 text-sm focus:outline-none focus:border-[#F0C040]/60 transition-colors"
+                className="bg-foreground/5 border border-foreground/10 rounded-md px-4 py-3 text-foreground placeholder-foreground/25 text-sm focus:outline-none focus:border-primary/60 transition-colors"
               />
 
               <select
