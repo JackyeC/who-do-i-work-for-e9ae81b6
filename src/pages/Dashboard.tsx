@@ -32,6 +32,7 @@ import { ApplyKitSection } from "@/components/dashboard/ApplyKitSection";
 import { MockInterviewSection } from "@/components/dashboard/MockInterviewSection";
 import { InboxSection } from "@/components/dashboard/InboxSection";
 import { SavedSection } from "@/components/dashboard/SavedSection";
+import { TodayReflection } from "@/components/dashboard/TodayReflection";
 
 const TAB_TITLES: Record<string, string> = {
   overview: "My Intelligence",
