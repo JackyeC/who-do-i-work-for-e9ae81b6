@@ -357,8 +357,19 @@ export default function CompanyDossier() {
               {company.employee_count && ` · ${company.employee_count} employees`}
             </p>
           </div>
-          <ExportDossierButton companyId={companyId!} companyName={company.name} company={company} />
-        </div>
+          <div className="flex items-center gap-2">
+            <ExportDossierButton companyId={companyId!} companyName={company.name} company={company} />
+            <Button
+              variant="outline"
+              size="sm"
+              className="gap-1.5 text-xs font-semibold"
+              onClick={() => { setReportCategory(null); setReportOpen(true); }}
+            >
+              <FileText className="w-3.5 h-3.5" />
+              View full report
+              <ArrowRight className="w-3 h-3" />
+            </Button>
+          </div>
 
         {/* ── VERDICT CARD ── */}
         <div className={cn("rounded-xl border p-5 mb-5", verdict.bg, verdict.border)}>
