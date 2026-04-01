@@ -7,38 +7,46 @@ import { Skeleton } from "@/components/ui/skeleton";
 import {
   ClipboardList, Activity, Database, AlertCircle, Zap,
   StickyNote, AlertOctagon, ChevronRight, Link2, CheckCircle,
-  Clock, Search,
+  Clock, Search, Eye, TrendingUp, AlertTriangle,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useEffect } from "react";
 
-/* ─── Card Shell ─── */
-function TriageCard({ title, icon: Icon, children, iconColor = "text-primary" }: {
+/* ─── Shared UI ─── */
+function TriageCard({ title, icon: Icon, children, iconColor = "text-primary", badge }: {
   title: string;
   icon: typeof ClipboardList;
   children: React.ReactNode;
   iconColor?: string;
+  badge?: { label: string; variant: "warning" | "info" };
 }) {
   return (
     <div className="bg-card border border-border rounded-2xl p-5">
       <h3 className="text-sm font-semibold text-foreground mb-3 flex items-center gap-2">
         <Icon className={cn("w-4 h-4", iconColor)} /> {title}
+        {badge && (
+          <Badge variant="outline" className={cn(
+            "text-[10px] font-mono ml-auto",
+            badge.variant === "warning" && "border-amber-500/40 text-amber-600 bg-amber-500/10",
+            badge.variant === "info" && "border-primary/40 text-primary bg-primary/10",
+          )}>{badge.label}</Badge>
+        )}
       </h3>
       <div className="space-y-2">{children}</div>
     </div>
   );
 }
 
-function MetricRow({ label, value, loading }: {
-  label: string; value: string | number; loading?: boolean;
+function MetricRow({ label, value, loading, highlight }: {
+  label: string; value: string | number; loading?: boolean; highlight?: boolean;
 }) {
   return (
     <div className="flex items-center justify-between text-sm">
-      <span className="text-muted-foreground">{label}</span>
+      <span className={cn("text-muted-foreground", highlight && "text-amber-600 font-medium")}>{label}</span>
       {loading ? (
         <Skeleton className="h-4 w-10" />
       ) : (
-        <span className="font-mono font-medium tabular-nums text-foreground">{value}</span>
+        <span className={cn("font-mono font-medium tabular-nums text-foreground", highlight && "text-amber-600")}>{value}</span>
       )}
     </div>
   );
@@ -48,56 +56,98 @@ function EmptyLine({ text }: { text: string }) {
   return <p className="text-xs text-muted-foreground italic leading-relaxed">{text}</p>;
 }
 
+type AlertItem = { label: string; count: number; tab: string };
+
 export function TodayTab() {
   const navigate = useNavigate();
   const now = new Date();
   const todayStart = new Date(now.getFullYear(), now.getMonth(), now.getDate()).toISOString();
   const weekStart = new Date(now.getTime() - 7 * 86400000).toISOString();
+  const fortyEightHoursAgo = new Date(now.getTime() - 48 * 60 * 60 * 1000).toISOString();
 
-  // ─── Priority Items ───
-  const { data: priority, isLoading: priorityLoading } = useQuery({
-    queryKey: ["founder-today-priority"],
+  // ════════════════════════════════════════════
+  // LEVEL 1: CRITICAL (Interrupt)
+  // ════════════════════════════════════════════
+  const { data: critical, isLoading: criticalLoading } = useQuery({
+    queryKey: ["founder-alert-critical"],
     queryFn: async () => {
-      const [pendingReviews, missingClaims, brokenLinks] = await Promise.all([
-        supabase.from("pending_company_reviews").select("id", { count: "exact", head: true }).in("status", ["pending", "reviewing"]),
-        supabase.from("company_corporate_claims").select("id", { count: "exact", head: true }).is("claim_source_url", null),
+      const [brokenLinks, missingClaims, recentFeedback] = await Promise.all([
         supabase.from("companies").select("id", { count: "exact", head: true }).is("website_url", null).not("description", "is", null),
+        supabase.from("company_corporate_claims").select("id", { count: "exact", head: true }).is("claim_source_url", null),
+        supabase.from("beta_feedback").select("message, created_at").gte("created_at", fortyEightHoursAgo).order("created_at", { ascending: false }).limit(100),
       ]);
-      const reviewCount = pendingReviews.count ?? 0;
+
+      const brokenCount = brokenLinks.count ?? 0;
       const claimCount = missingClaims.count ?? 0;
-      const linkCount = brokenLinks.count ?? 0;
-      const items: { label: string; count: number; tab: string }[] = [];
-      if (reviewCount > 0) items.push({ label: `${reviewCount} ${reviewCount === 1 ? "company needs" : "companies need"} review`, count: reviewCount, tab: "queue" });
-      if (claimCount > 0) items.push({ label: `${claimCount} ${claimCount === 1 ? "claim" : "claims"} missing sources`, count: claimCount, tab: "signals" });
-      if (linkCount > 0) items.push({ label: `${linkCount} broken ${linkCount === 1 ? "link" : "links"} detected`, count: linkCount, tab: "signals" });
-      return { items: items.slice(0, 3), brokenLinkCount: linkCount };
+
+      // Detect recurring friction: same theme 3+ times in 48h
+      let recurringTheme: string | null = null;
+      if (recentFeedback.data && recentFeedback.data.length > 0) {
+        const themes: Record<string, number> = {};
+        for (const f of recentFeedback.data) {
+          const msg = (f.message || "").toLowerCase();
+          let theme = "other";
+          if (msg.includes("nav") || msg.includes("find") || msg.includes("where") || msg.includes("dashboard")) theme = "navigation";
+          else if (msg.includes("broken") || msg.includes("error") || msg.includes("bug") || msg.includes("crash")) theme = "broken_ux";
+          else if (msg.includes("trust") || msg.includes("source") || msg.includes("data")) theme = "trust";
+          themes[theme] = (themes[theme] || 0) + 1;
+        }
+        const top = Object.entries(themes).sort((a, b) => b[1] - a[1])[0];
+        if (top && top[1] >= 3 && top[0] !== "other") {
+          const labels: Record<string, string> = {
+            navigation: "Navigation confusion",
+            broken_ux: "Broken UX",
+            trust: "Trust & transparency",
+          };
+          recurringTheme = labels[top[0]] || top[0];
+        }
+      }
+
+      const alerts: AlertItem[] = [];
+      if (brokenCount > 0) alerts.push({ label: `${brokenCount} broken ${brokenCount === 1 ? "link" : "links"} detected`, count: brokenCount, tab: "signals" });
+      if (claimCount > 0) alerts.push({ label: `${claimCount} ${claimCount === 1 ? "claim" : "claims"} missing sources`, count: claimCount, tab: "signals" });
+      if (recurringTheme) alerts.push({ label: `Recurring issue: "${recurringTheme}" (3+ in 48h)`, count: 3, tab: "users" });
+
+      return { alerts, brokenLinkCount: brokenCount };
     },
   });
 
-  // ─── Needs Review ───
-  const { data: reviewCounts, isLoading: reviewLoading } = useQuery({
-    queryKey: ["founder-today-reviews"],
+  // ════════════════════════════════════════════
+  // LEVEL 2: WATCH (Important — inside cards)
+  // ════════════════════════════════════════════
+  const { data: watchData, isLoading: watchLoading } = useQuery({
+    queryKey: ["founder-alert-watch"],
     queryFn: async () => {
-      const [pendingReviews, draftResearch, certQueue, waitlist, pendingJobs] = await Promise.all([
+      const [pendingReviews, draftResearch, certQueue, waitlist, pendingJobs, dataGaps, signupsWeek] = await Promise.all([
         supabase.from("pending_company_reviews").select("id", { count: "exact", head: true }).eq("status", "pending"),
         supabase.from("pending_company_reviews").select("id", { count: "exact", head: true }).eq("status", "reviewing"),
         supabase.from("companies").select("id", { count: "exact", head: true }).eq("vetted_status", "unverified").not("creation_source", "is", null),
         supabase.from("career_waitlist").select("id", { count: "exact", head: true }).eq("status", "pending"),
         supabase.from("company_jobs").select("id", { count: "exact", head: true }).eq("admin_approved", false).eq("is_active", true),
+        supabase.from("companies").select("id", { count: "exact", head: true }).or("description.is.null,employer_clarity_score.eq.0"),
+        supabase.from("profiles" as any).select("id", { count: "exact", head: true }).gte("created_at", weekStart),
       ]);
-      return {
+
+      const reviews = {
         pendingReviews: pendingReviews.count ?? 0,
         draftResearch: draftResearch.count ?? 0,
         certQueue: certQueue.count ?? 0,
         waitlist: waitlist.count ?? 0,
         pendingJobs: pendingJobs.count ?? 0,
       };
+      const totalPending = reviews.pendingReviews + reviews.draftResearch + reviews.certQueue + reviews.waitlist + reviews.pendingJobs;
+
+      return {
+        reviews,
+        totalPending,
+        reviewsElevated: totalPending > 5,
+        certsElevated: (certQueue.count ?? 0) > 5,
+        dataGaps: dataGaps.count ?? 0,
+        engagementUp: (signupsWeek.count ?? 0) > 10,
+        signupsWeek: signupsWeek.count ?? 0,
+      };
     },
   });
-
-  const totalPending = reviewCounts
-    ? reviewCounts.pendingReviews + reviewCounts.draftResearch + reviewCounts.certQueue + reviewCounts.waitlist + reviewCounts.pendingJobs
-    : 0;
 
   // ─── Product Health ───
   const { data: productHealth, isLoading: healthLoading } = useQuery({
@@ -125,10 +175,7 @@ export function TodayTab() {
         supabase.from("companies").select("id", { count: "exact", head: true }).not("description", "is", null).gt("employer_clarity_score", 0),
         supabase.from("companies").select("id", { count: "exact", head: true }).or("description.is.null,employer_clarity_score.eq.0"),
       ]);
-      const totalCount = total.count ?? 0;
-      const strongCount = withEvidence.count ?? 0;
-      const noEvidenceCount = noEvidence.count ?? 0;
-      return { total: totalCount, strong: strongCount, none: noEvidenceCount };
+      return { total: total.count ?? 0, strong: withEvidence.count ?? 0, none: noEvidence.count ?? 0 };
     },
   });
 
@@ -168,13 +215,11 @@ export function TodayTab() {
     queryFn: async () => {
       const lastVisit = localStorage.getItem(LAST_VISIT_KEY);
       const since = lastVisit || new Date(Date.now() - 24 * 60 * 60 * 1000).toISOString();
-
       const [newCompanies, newReviews, newFeedback] = await Promise.all([
         supabase.from("companies").select("id", { count: "exact", head: true }).gte("created_at", since),
         supabase.from("pending_company_reviews").select("id", { count: "exact", head: true }).gte("created_at", since),
         supabase.from("beta_feedback").select("id", { count: "exact", head: true }).gte("created_at", since),
       ]);
-
       return {
         companies: newCompanies.count ?? 0,
         reviews: newReviews.count ?? 0,
@@ -184,7 +229,6 @@ export function TodayTab() {
     },
   });
 
-  // Save visit timestamp on mount
   useEffect(() => {
     localStorage.setItem(LAST_VISIT_KEY, new Date().toISOString());
   }, []);
@@ -196,144 +240,166 @@ export function TodayTab() {
     return `${Math.floor(mins / 1440)}d ago`;
   };
 
+  const criticalAlerts = critical?.alerts ?? [];
+  const brokenLinkCount = critical?.brokenLinkCount ?? 0;
+
   return (
     <div className="space-y-4">
-      {/* Priority */}
-      {priorityLoading ? (
-        <Skeleton className="h-12 rounded-2xl" />
-      ) : priority && priority.items.length > 0 ? (
-        <div className="bg-destructive/5 border border-destructive/20 rounded-2xl p-4">
+
+      {/* ════ LEVEL 1: CRITICAL ════ */}
+      {criticalLoading ? (
+        <Skeleton className="h-14 rounded-2xl" />
+      ) : criticalAlerts.length > 0 ? (
+        <div className="bg-destructive/5 border border-destructive/30 rounded-2xl p-4">
           <h3 className="text-xs font-semibold text-destructive uppercase tracking-wider mb-2.5 flex items-center gap-1.5">
-            <AlertOctagon className="w-3.5 h-3.5" /> Priority
+            <AlertOctagon className="w-3.5 h-3.5 animate-pulse" />
+            Critical — {criticalAlerts.length} {criticalAlerts.length === 1 ? "issue" : "issues"} require attention
           </h3>
-          <div className="space-y-1.5">
-            {priority.items.map((item) => (
+          <div className="space-y-1">
+            {criticalAlerts.map((alert) => (
               <button
-                key={item.label}
-                onClick={() => navigate(`/founder?tab=${item.tab}`)}
-                className="flex items-center justify-between w-full text-left p-2 rounded-lg hover:bg-destructive/5 transition-colors group"
+                key={alert.label}
+                onClick={() => navigate(`/founder?tab=${alert.tab}`)}
+                className="flex items-center justify-between w-full text-left px-2.5 py-2 rounded-lg hover:bg-destructive/10 transition-colors group"
               >
-                <span className="text-sm text-foreground">{item.label}</span>
+                <div className="flex items-center gap-2">
+                  <span className="w-1.5 h-1.5 rounded-full bg-destructive shrink-0" />
+                  <span className="text-sm text-foreground">{alert.label}</span>
+                </div>
                 <ChevronRight className="w-3.5 h-3.5 text-muted-foreground group-hover:text-destructive transition-colors" />
               </button>
             ))}
           </div>
         </div>
-      ) : !priorityLoading ? (
+      ) : (
         <div className="bg-civic-green/5 border border-civic-green/20 rounded-2xl px-4 py-3">
           <p className="text-xs text-civic-green flex items-center gap-1.5">
-            ✓ Nothing urgent right now. All clear.
+            <CheckCircle className="w-3.5 h-3.5" /> No critical issues. All clear.
           </p>
         </div>
-      ) : null}
+      )}
 
+      {/* ════ LEVEL 2: WATCH (inside cards) ════ */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-      {/* 1. Needs Review */}
-      <TriageCard title="Needs Review" icon={ClipboardList} iconColor="text-civic-yellow">
-        {reviewLoading ? (
-          <Skeleton className="h-10 w-full" />
-        ) : totalPending === 0 ? (
-          <EmptyLine text="No urgent items right now. Queues are clear." />
-        ) : (
-          <>
-            {reviewCounts!.pendingReviews > 0 && <MetricRow label="Company reviews" value={reviewCounts!.pendingReviews} />}
-            {reviewCounts!.draftResearch > 0 && <MetricRow label="Draft research" value={reviewCounts!.draftResearch} />}
-            {reviewCounts!.certQueue > 0 && <MetricRow label="Certifications" value={reviewCounts!.certQueue} />}
-            {reviewCounts!.waitlist > 0 && <MetricRow label="Waitlist" value={reviewCounts!.waitlist} />}
-            {reviewCounts!.pendingJobs > 0 && <MetricRow label="Job posts" value={reviewCounts!.pendingJobs} />}
-          </>
-        )}
-      </TriageCard>
 
-      {/* 2. Product Health — capped to 3 rows */}
-      <TriageCard title="Product Health" icon={Activity} iconColor="text-civic-green">
-        <MetricRow label="Signups today" value={productHealth?.signupsToday ?? "—"} loading={healthLoading} />
-        <MetricRow label="Signups (7d)" value={productHealth?.signupsWeek ?? "—"} loading={healthLoading} />
-        <MetricRow label="Reports generated" value={productHealth?.reports ?? "—"} loading={healthLoading} />
-      </TriageCard>
+        {/* Needs Review */}
+        <TriageCard
+          title="Needs Review"
+          icon={ClipboardList}
+          iconColor="text-civic-yellow"
+          badge={watchData?.reviewsElevated ? { label: "ELEVATED", variant: "warning" } : undefined}
+        >
+          {watchLoading ? (
+            <Skeleton className="h-10 w-full" />
+          ) : !watchData || watchData.totalPending === 0 ? (
+            <EmptyLine text="No urgent items right now. Queues are clear." />
+          ) : (
+            <>
+              {watchData.reviews.pendingReviews > 0 && <MetricRow label="Company reviews" value={watchData.reviews.pendingReviews} highlight={watchData.reviews.pendingReviews > 5} />}
+              {watchData.reviews.draftResearch > 0 && <MetricRow label="Draft research" value={watchData.reviews.draftResearch} />}
+              {watchData.reviews.certQueue > 0 && <MetricRow label="Certifications" value={watchData.reviews.certQueue} highlight={watchData.certsElevated} />}
+              {watchData.reviews.waitlist > 0 && <MetricRow label="Waitlist" value={watchData.reviews.waitlist} />}
+              {watchData.reviews.pendingJobs > 0 && <MetricRow label="Job posts" value={watchData.reviews.pendingJobs} />}
+            </>
+          )}
+        </TriageCard>
 
-      {/* 3. Data Health + Broken Links */}
-      <TriageCard title="Data Health" icon={Database} iconColor="text-primary">
-        <MetricRow label="Companies indexed" value={dataHealth?.total ?? "—"} loading={dataLoading} />
-        <MetricRow label="Strong evidence" value={dataHealth?.strong ?? "—"} loading={dataLoading} />
-        <MetricRow label="No evidence yet" value={dataHealth?.none ?? "—"} loading={dataLoading} />
-        {!priorityLoading && priority && (
-          <div className={cn(
-            "mt-1 flex items-center gap-1.5 text-xs font-medium rounded-lg px-2 py-1.5",
-            priority.brokenLinkCount > 0
-              ? "bg-destructive/10 text-destructive"
-              : "bg-civic-green/10 text-civic-green"
-          )}>
-            {priority.brokenLinkCount > 0 ? (
-              <>
-                <Link2 className="w-3 h-3" />
-                {priority.brokenLinkCount} broken {priority.brokenLinkCount === 1 ? "link" : "links"}
-              </>
-            ) : (
-              <>
-                <CheckCircle className="w-3 h-3" />
-                No broken links detected
-              </>
-            )}
-          </div>
-        )}
-      </TriageCard>
+        {/* Product Health */}
+        <TriageCard
+          title="Product Health"
+          icon={Activity}
+          iconColor="text-civic-green"
+          badge={watchData?.engagementUp ? { label: "TRENDING", variant: "info" } : undefined}
+        >
+          <MetricRow label="Signups today" value={productHealth?.signupsToday ?? "—"} loading={healthLoading} />
+          <MetricRow label="Signups (7d)" value={productHealth?.signupsWeek ?? "—"} loading={healthLoading} highlight={watchData?.engagementUp} />
+          <MetricRow label="Reports generated" value={productHealth?.reports ?? "—"} loading={healthLoading} />
+        </TriageCard>
 
-      {/* 4. User Friction — with counts and last seen */}
-      <TriageCard title="User Friction" icon={AlertCircle} iconColor="text-destructive">
-        {frictionLoading ? (
-          <Skeleton className="h-10 w-full" />
-        ) : !friction || friction.count === 0 ? (
-          <EmptyLine text="No user friction captured yet." />
-        ) : (
-          friction.themes.map(([theme, info]) => (
-            <div key={theme} className="flex items-center justify-between text-sm">
-              <div className="min-w-0">
-                <span className="text-muted-foreground">{theme}</span>
-                <span className="text-xs text-muted-foreground ml-1">({info.count})</span>
-              </div>
-              <span className="text-[10px] text-muted-foreground font-mono shrink-0">{timeAgo(info.lastSeen)}</span>
+        {/* Data Health */}
+        <TriageCard
+          title="Data Health"
+          icon={Database}
+          iconColor="text-primary"
+          badge={watchData && watchData.dataGaps > (dataHealth?.total ?? 0) * 0.3 ? { label: "GAPS", variant: "warning" } : undefined}
+        >
+          <MetricRow label="Companies indexed" value={dataHealth?.total ?? "—"} loading={dataLoading} />
+          <MetricRow label="Strong evidence" value={dataHealth?.strong ?? "—"} loading={dataLoading} />
+          <MetricRow label="No evidence yet" value={dataHealth?.none ?? "—"} loading={dataLoading} highlight={watchData ? watchData.dataGaps > (dataHealth?.total ?? 0) * 0.3 : false} />
+          {!criticalLoading && (
+            <div className={cn(
+              "mt-1 flex items-center gap-1.5 text-xs font-medium rounded-lg px-2 py-1.5",
+              brokenLinkCount > 0 ? "bg-destructive/10 text-destructive" : "bg-civic-green/10 text-civic-green"
+            )}>
+              {brokenLinkCount > 0 ? (
+                <><Link2 className="w-3 h-3" />{brokenLinkCount} broken {brokenLinkCount === 1 ? "link" : "links"}</>
+              ) : (
+                <><CheckCircle className="w-3 h-3" />No broken links detected</>
+              )}
             </div>
-          ))
-        )}
-      </TriageCard>
+          )}
+        </TriageCard>
 
-      {/* 5. Since Last Visit */}
-      <TriageCard title="Since Last Visit" icon={Clock} iconColor="text-primary">
-        {sinceLoading ? (
-          <Skeleton className="h-10 w-full" />
-        ) : !sinceLastVisit || (!sinceLastVisit.companies && !sinceLastVisit.reviews && !sinceLastVisit.issues) ? (
-          <EmptyLine text={sinceLastVisit?.hasPreviousVisit ? "No changes since your last visit." : "First visit — tracking starts now."} />
-        ) : (
-          <>
-            {sinceLastVisit.companies > 0 && <MetricRow label="New companies indexed" value={`+${sinceLastVisit.companies}`} />}
-            {sinceLastVisit.reviews > 0 && <MetricRow label="Reviews submitted" value={`+${sinceLastVisit.reviews}`} />}
-            {sinceLastVisit.issues > 0 && <MetricRow label="Issues detected" value={`+${sinceLastVisit.issues}`} />}
-          </>
-        )}
-      </TriageCard>
+        {/* User Friction */}
+        <TriageCard
+          title="User Friction"
+          icon={AlertCircle}
+          iconColor="text-destructive"
+          badge={friction && friction.themes.some(([, info]) => info.count >= 3) ? { label: "RECURRING", variant: "warning" } : undefined}
+        >
+          {frictionLoading ? (
+            <Skeleton className="h-10 w-full" />
+          ) : !friction || friction.count === 0 ? (
+            <EmptyLine text="No user friction captured yet." />
+          ) : (
+            friction.themes.map(([theme, info]) => (
+              <div key={theme} className="flex items-center justify-between text-sm">
+                <div className="min-w-0">
+                  <span className={cn("text-muted-foreground", info.count >= 3 && "text-amber-600 font-medium")}>{theme}</span>
+                  <span className="text-xs text-muted-foreground ml-1">({info.count})</span>
+                </div>
+                <span className="text-[10px] text-muted-foreground font-mono shrink-0">{timeAgo(info.lastSeen)}</span>
+              </div>
+            ))
+          )}
+        </TriageCard>
 
-      {/* 6. Quick Actions */}
-      <TriageCard title="Quick Actions" icon={Zap} iconColor="text-civic-yellow">
-        <Button variant="outline" size="sm" className="w-full justify-start text-xs gap-2 h-8" onClick={() => navigate("/founder?tab=queue")}>
-          <ClipboardList className="w-3.5 h-3.5" /> Review pending companies
-        </Button>
-        <Button variant="outline" size="sm" className="w-full justify-start text-xs gap-2 h-8" onClick={() => navigate("/founder?tab=signals")}>
-          <Search className="w-3.5 h-3.5" /> Approve research
-        </Button>
-        {!priorityLoading && priority && priority.brokenLinkCount > 0 ? (
-          <Button variant="destructive" size="sm" className="w-full justify-start text-xs gap-2 h-8" onClick={() => navigate("/founder?tab=signals")}>
-            <Link2 className="w-3.5 h-3.5" /> Fix broken links ({priority.brokenLinkCount})
+        {/* Since Last Visit */}
+        <TriageCard title="Since Last Visit" icon={Clock} iconColor="text-primary">
+          {sinceLoading ? (
+            <Skeleton className="h-10 w-full" />
+          ) : !sinceLastVisit || (!sinceLastVisit.companies && !sinceLastVisit.reviews && !sinceLastVisit.issues) ? (
+            <EmptyLine text={sinceLastVisit?.hasPreviousVisit ? "No changes since your last visit." : "First visit — tracking starts now."} />
+          ) : (
+            <>
+              {sinceLastVisit.companies > 0 && <MetricRow label="New companies indexed" value={`+${sinceLastVisit.companies}`} />}
+              {sinceLastVisit.reviews > 0 && <MetricRow label="Reviews submitted" value={`+${sinceLastVisit.reviews}`} />}
+              {sinceLastVisit.issues > 0 && <MetricRow label="Issues detected" value={`+${sinceLastVisit.issues}`} />}
+            </>
+          )}
+        </TriageCard>
+
+        {/* Quick Actions */}
+        <TriageCard title="Quick Actions" icon={Zap} iconColor="text-civic-yellow">
+          <Button variant="outline" size="sm" className="w-full justify-start text-xs gap-2 h-8" onClick={() => navigate("/founder?tab=queue")}>
+            <ClipboardList className="w-3.5 h-3.5" /> Review pending companies
           </Button>
-        ) : (
-          <Button variant="outline" size="sm" className="w-full justify-start text-xs gap-2 h-8 text-muted-foreground" disabled>
-            <CheckCircle className="w-3.5 h-3.5 text-civic-green" /> No broken links
+          <Button variant="outline" size="sm" className="w-full justify-start text-xs gap-2 h-8" onClick={() => navigate("/founder?tab=signals")}>
+            <Search className="w-3.5 h-3.5" /> Approve research
           </Button>
-        )}
-        <Button variant="outline" size="sm" className="w-full justify-start text-xs gap-2 h-8" onClick={() => navigate("/founder?tab=notes")}>
-          <StickyNote className="w-3.5 h-3.5" /> Add note
-        </Button>
-      </TriageCard>
+          {brokenLinkCount > 0 ? (
+            <Button variant="destructive" size="sm" className="w-full justify-start text-xs gap-2 h-8" onClick={() => navigate("/founder?tab=signals")}>
+              <Link2 className="w-3.5 h-3.5" /> Fix broken links ({brokenLinkCount})
+            </Button>
+          ) : (
+            <Button variant="outline" size="sm" className="w-full justify-start text-xs gap-2 h-8 text-muted-foreground" disabled>
+              <CheckCircle className="w-3.5 h-3.5 text-civic-green" /> No broken links
+            </Button>
+          )}
+          <Button variant="outline" size="sm" className="w-full justify-start text-xs gap-2 h-8" onClick={() => navigate("/founder?tab=notes")}>
+            <StickyNote className="w-3.5 h-3.5" /> Add note
+          </Button>
+        </TriageCard>
       </div>
     </div>
   );
