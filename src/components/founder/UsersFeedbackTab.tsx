@@ -56,7 +56,7 @@ export function UsersFeedbackTab() {
         .limit(50);
       if (!data || data.length === 0) return { themes: [], recent: [] };
 
-      const themes: Record<string, number> = {};
+      const themes: Record<string, { count: number; lastSeen: string }> = {};
       for (const f of data) {
         const msg = (f.message || "").toLowerCase();
         let theme = "Other";
@@ -67,10 +67,14 @@ export function UsersFeedbackTab() {
         else if (msg.includes("content") || msg.includes("info") || msg.includes("missing") || msg.includes("empty")) theme = "Content quality";
         else if (msg.includes("dark") || msg.includes("color") || msg.includes("mode") || msg.includes("theme")) theme = "Visual / theme";
         else if (msg.includes("premium") || msg.includes("price") || msg.includes("pay") || msg.includes("subscribe")) theme = "Premium & pricing";
-        themes[theme] = (themes[theme] || 0) + 1;
+        if (!themes[theme]) {
+          themes[theme] = { count: 0, lastSeen: f.created_at };
+        }
+        themes[theme].count += 1;
+        if (f.created_at > themes[theme].lastSeen) themes[theme].lastSeen = f.created_at;
       }
 
-      const sorted = Object.entries(themes).sort((a, b) => b[1] - a[1]);
+      const sorted = Object.entries(themes).sort((a, b) => b[1].count - a[1].count);
       return { themes: sorted, recent: data.slice(0, 3) };
     },
   });
@@ -168,10 +172,13 @@ export function UsersFeedbackTab() {
             <EmptyState text="No user friction captured yet." />
           ) : (
             <div className="space-y-2">
-              {feedbackData.themes.map(([theme, count]) => (
+              {feedbackData.themes.map(([theme, info]) => (
                 <div key={theme} className="flex items-center justify-between p-2 bg-muted/20 rounded-lg text-sm">
-                  <span className="text-foreground">{theme}</span>
-                  <Badge variant="outline" className="text-xs font-mono">{count}</Badge>
+                  <div className="min-w-0">
+                    <span className="text-foreground">{theme}</span>
+                    <span className="text-xs text-muted-foreground ml-1.5">({info.count})</span>
+                  </div>
+                  <span className="text-[10px] text-muted-foreground font-mono shrink-0">{timeAgo(info.lastSeen)}</span>
                 </div>
               ))}
             </div>
