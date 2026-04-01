@@ -171,6 +171,7 @@ async function fetchFECDonors(candidateName: string, state: string, fecApiKey: s
     const firstName = nameParts[0];
 
     const searchUrl = `${FEC_API_BASE}/candidates/search/?api_key=${fecApiKey}&name=${encodeURIComponent(candidateName)}&state=${state}&sort=-first_file_date&per_page=5&is_active_candidate=true`;
+    console.log(`[voter-lookup] FEC search: ${candidateName} in ${state}`);
     const searchResp = await fetch(searchUrl, { headers: { 'User-Agent': 'WDIWF/1.0' } });
     if (!searchResp.ok) return [];
 
