@@ -391,41 +391,18 @@ export default function CompanyDossier() {
           <div className="space-y-2">
             {displaySignals.map((signal, i) => {
               const reportCat = SIGNAL_CATEGORY_MAP[signal.title] || "";
-              const isClickable = !!reportCat && evidenceRecords.some(r => r.category === reportCat);
-
-              if (isClickable) {
-                return (
-                  <button
-                    key={i}
-                    onClick={() => openReportToCategory(reportCat)}
-                    className="w-full text-left bg-card border border-border rounded-lg p-3.5 cursor-pointer hover:border-primary/40 hover:bg-primary/[0.03] transition-all group"
-                  >
-                    <div className="flex items-start justify-between gap-3">
-                      <div className="min-w-0 flex-1">
-                        <p className="text-sm font-medium text-foreground group-hover:text-primary transition-colors">{signal.title}</p>
-                        <p className="text-xs text-muted-foreground mt-0.5 leading-relaxed">{signal.explanation}</p>
-                      </div>
-                      <div className="flex flex-col items-end gap-1.5 shrink-0">
-                        <SourceLabel tier={signal.tier} className="mt-0.5" />
-                        <span className="inline-flex items-center gap-1 text-xs font-medium text-primary opacity-70 group-hover:opacity-100 transition-opacity">
-                          View record <ArrowRight className="w-3 h-3" />
-                        </span>
-                      </div>
-                    </div>
-                  </button>
-                );
-              }
+              const catRecords = reportCat ? evidenceRecords.filter(r => r.category === reportCat) : [];
+              const hasEvidence = catRecords.length > 0;
 
               return (
-                <div key={i} className="bg-card border border-border/60 rounded-lg p-3.5">
-                  <div className="flex items-start justify-between gap-3">
-                    <div className="min-w-0">
-                      <p className="text-sm font-medium text-muted-foreground">{signal.title}</p>
-                      <p className="text-xs text-muted-foreground/70 mt-0.5 leading-relaxed">{signal.explanation}</p>
-                    </div>
-                    <SourceLabel tier={signal.tier} className="shrink-0 mt-0.5" />
-                  </div>
-                </div>
+                <SignalRevealCard
+                  key={i}
+                  title={signal.title}
+                  explanation={signal.explanation}
+                  tier={signal.tier}
+                  records={catRecords}
+                  hasEvidence={hasEvidence}
+                />
               );
             })}
           </div>
