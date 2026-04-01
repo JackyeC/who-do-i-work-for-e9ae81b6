@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=DM+Mono:wght@400;500&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=DM+Mono:wght@400;500&family=Playfair+Display:ital,wght@0,700;0,800;0,900;1,700;1,800&display=swap');
 
 @tailwind base;
 @tailwind components;
@@ -104,73 +104,80 @@ body > div:last-child > a[href*="lovable"] {
   .dark {
     color-scheme: dark;
 
-    --background: 240 27% 4%;           /* #0A0A0E */
-    --foreground: 40 30% 92%;           /* #F0EBE0 */
+    --background: 20 10% 4%;             /* #0c0b0a warm black */
+    --foreground: 30 30% 94%;            /* #f5f0eb warm white */
 
-    --card: 252 25% 8%;                 /* #13121A */
-    --card-foreground: 40 30% 92%;
+    --card: 20 8% 8%;                    /* #161514 warm surface */
+    --card-foreground: 30 30% 94%;
 
-    --popover: 252 25% 8%;
-    --popover-foreground: 40 30% 92%;
+    --popover: 20 8% 8%;
+    --popover-foreground: 30 30% 94%;
 
-    /* Primary = gold #F0C040 for dark mode */
-    --primary: 43 85% 59%;
-    --primary-foreground: 240 27% 4%;
+    /* Primary = warm gold #d4a843 */
+    --primary: 41 65% 54%;
+    --primary-foreground: 20 10% 4%;
 
-    --secondary: 252 20% 10%;
-    --secondary-foreground: 40 30% 92%;
+    --secondary: 20 8% 11%;              /* #1e1d1b */
+    --secondary-foreground: 30 30% 94%;
 
-    --muted: 252 20% 10%;
-    --muted-foreground: 252 14% 52%;    /* #7A7590 */
+    --muted: 20 8% 11%;
+    --muted-foreground: 30 15% 48%;      /* #8a7e70 tertiary */
 
-    --accent: 43 40% 12%;
-    --accent-foreground: 43 85% 59%;
+    --accent: 41 30% 12%;
+    --accent-foreground: 41 65% 54%;
 
     --destructive: 348 90% 65%;
     --destructive-foreground: 0 0% 100%;
 
-    --border: 252 18% 12%;
-    --input: 252 18% 12%;
-    --ring: 43 85% 59%;
+    --border: 41 20% 12%;               /* warm gold-tinted border */
+    --input: 41 20% 12%;
+    --ring: 41 65% 54%;
 
     /* ── BRAND UTILITY COLORS (dark) ── */
-    --brand-section-label: 0 0% 40%;     /* #666 */
-    --brand-scale-label: 0 0% 40%;       /* #666 */
-    --brand-page-label: 0 0% 33%;        /* #555 */
-    --brand-divider: 0 0% 10%;           /* #1A1A1A */
-    --brand-border: 0 0% 7%;             /* #111 */
-    --brand-subtitle: 0 0% 60%;          /* #999 */
+    --brand-section-label: 30 10% 33%;    /* #5c5347 muted */
+    --brand-scale-label: 30 10% 33%;
+    --brand-page-label: 30 10% 33%;
+    --brand-divider: 20 8% 8%;
+    --brand-border: 20 8% 7%;
+    --brand-subtitle: 30 15% 48%;         /* #8a7e70 */
 
     --civic-red: 348 90% 65%;
-    --civic-yellow: 43 85% 59%;
-    --civic-green: 157 100% 64%;
-    --civic-blue: 213 88% 73%;
-    --civic-navy: 252 30% 12%;
-    --civic-slate: 252 14% 52%;
-    --civic-surface: 252 25% 8%;
+    --civic-yellow: 41 65% 54%;
+    --civic-green: 142 69% 58%;           /* #4ade80 */
+    --civic-blue: 197 82% 59%;            /* #38bdf8 */
+    --civic-navy: 20 12% 12%;
+    --civic-slate: 30 10% 33%;
+    --civic-surface: 20 8% 8%;
 
-    --civic-gold: 43 85% 59%;
-    --civic-gold-muted: 43 60% 45%;
-    --civic-gold-light: 43 75% 70%;
+    --civic-gold: 41 65% 54%;
+    --civic-gold-muted: 41 45% 40%;
+    --civic-gold-light: 41 70% 65%;
 
-    --surface-elevated: 255 22% 10%;
-    --surface-sunken: 240 27% 3%;
-    --surface-2: 252 20% 10%;
-    --border-2: 252 18% 16%;
+    --surface-elevated: 20 7% 10%;        /* slightly above card */
+    --surface-sunken: 20 10% 3%;
+    --surface-2: 20 8% 11%;               /* #1e1d1b */
+    --surface-3: 20 6% 14%;               /* #262523 */
+    --border-2: 41 20% 15%;
 
-    --sidebar-background: 252 25% 6%;
-    --sidebar-foreground: 40 30% 92%;
-    --sidebar-primary: 43 85% 59%;
-    --sidebar-primary-foreground: 240 27% 4%;
-    --sidebar-accent: 43 40% 12%;
-    --sidebar-accent-foreground: 43 85% 59%;
-    --sidebar-border: 252 18% 12%;
-    --sidebar-ring: 43 85% 59%;
+    --sidebar-background: 20 8% 6%;
+    --sidebar-foreground: 30 30% 94%;
+    --sidebar-primary: 41 65% 54%;
+    --sidebar-primary-foreground: 20 10% 4%;
+    --sidebar-accent: 41 30% 12%;
+    --sidebar-accent-foreground: 41 65% 54%;
+    --sidebar-border: 41 20% 12%;
+    --sidebar-ring: 41 65% 54%;
 
-    --nav-glass-bg: 240 27% 4% / 0.92;
-    --nav-glass-border: 0 0% 100% / 0.06;
-    --nav-input-bg: 0 0% 100% / 0.04;
-    --nav-input-border: 0 0% 100% / 0.1;
+    --nav-glass-bg: 20 10% 4% / 0.92;
+    --nav-glass-border: 30 30% 94% / 0.06;
+    --nav-input-bg: 30 30% 94% / 0.04;
+    --nav-input-border: 30 30% 94% / 0.1;
+
+    /* ── WARM TEXT HIERARCHY ── */
+    --text-primary: 30 30% 94%;           /* #f5f0eb */
+    --text-secondary: 30 18% 72%;         /* #c4b8a8 */
+    --text-tertiary: 30 15% 48%;          /* #8a7e70 */
+    --text-muted: 30 10% 33%;             /* #5c5347 */
   }
 }
 
@@ -210,7 +217,7 @@ body > div:last-child > a[href*="lovable"] {
 @layer utilities {
   /* ── FONT FAMILY UTILITIES ── */
   .font-serif {
-    font-family: 'Inter', system-ui, sans-serif;
+    font-family: 'Playfair Display', Georgia, serif;
     font-weight: 700;
     letter-spacing: -0.5px;
   }
@@ -234,8 +241,13 @@ body > div:last-child > a[href*="lovable"] {
   }
 
   .font-display {
-    font-family: 'Inter', system-ui, sans-serif;
+    font-family: 'Playfair Display', Georgia, serif;
     font-weight: 800;
+  }
+
+  .font-brand {
+    font-family: 'Playfair Display', Georgia, serif;
+    font-weight: 700;
   }
 
   /* ── TYPOGRAPHY CLASSES ── */

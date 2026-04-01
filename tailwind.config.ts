@@ -66,7 +66,9 @@ export default {
         },
         surface: {
           "2": "hsl(var(--surface-2))",
+          "3": "hsl(var(--surface-3, var(--surface-2)))",
           elevated: "hsl(var(--surface-elevated))",
+        },
         },
         brand: {
           "section-label": "hsl(var(--brand-section-label))",
@@ -88,8 +90,9 @@ export default {
         },
       },
       fontFamily: {
-        display: ["'Inter'", "system-ui", "sans-serif"],
-        serif: ["'Inter'", "system-ui", "sans-serif"],
+        display: ["'Playfair Display'", "Georgia", "serif"],
+        serif: ["'Playfair Display'", "Georgia", "serif"],
+        brand: ["'Playfair Display'", "Georgia", "serif"],
         sans: ["'Inter'", "system-ui", "sans-serif"],
         mono: ["'DM Mono'", "'Courier New'", "monospace"],
       },
