@@ -8,7 +8,7 @@ import { cn } from "@/lib/utils";
 import { Search, Menu, X, Shield, ChevronDown, Lock, Compass, BarChart3, Radio, FileSearch, CreditCard } from "lucide-react";
 import { ThemeToggle } from "@/components/ThemeToggle";
 import { PersonaChip } from "@/components/PersonaChip";
-import logoNav from "@/assets/wdiwf-logo-nav-light.png";
+import { LogoMark } from "@/components/brand/LogoMark";
 import { usePersona } from "@/hooks/use-persona";
 import { SignupModal } from "@/components/SignupModal";
 import { IntelligenceTicker } from "@/components/layout/IntelligenceTicker";
