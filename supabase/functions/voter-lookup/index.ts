@@ -8,7 +8,10 @@ const corsHeaders = {
   'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type, x-supabase-client-platform, x-supabase-client-platform-version, x-supabase-client-runtime, x-supabase-client-runtime-version',
 };
 
-const LEGISLATORS_URL = 'https://theunitedstates.io/congress-legislators/legislators-current.json';
+const LEGISLATORS_URLS = [
+  'https://raw.githubusercontent.com/unitedstates/congress-legislators/main/legislators-current.json',
+  'https://theunitedstates.io/congress-legislators/legislators-current.json',
+];
 const CENSUS_GEOCODER_URL = 'https://geocoding.geo.census.gov/geocoder/geographies/onelineaddress';
 const CONGRESS_API_BASE = 'https://api.congress.gov/v3';
 const FEC_API_BASE = 'https://api.open.fec.gov/v1';
@@ -18,15 +21,35 @@ let legislatorsCache: any[] | null = null;
 let legislatorsCacheTime = 0;
 const CACHE_TTL_MS = 60 * 60 * 1000;
 
+async function fetchWithTimeout(url: string, timeoutMs = 8000): Promise<Response> {
+  const controller = new AbortController();
+  const id = setTimeout(() => controller.abort(), timeoutMs);
+  try {
+    const resp = await fetch(url, { headers: { 'User-Agent': 'WDIWF/1.0' }, signal: controller.signal });
+    return resp;
+  } finally {
+    clearTimeout(id);
+  }
+}
+
 async function getLegislators(): Promise<any[]> {
   if (legislatorsCache && Date.now() - legislatorsCacheTime < CACHE_TTL_MS) {
     return legislatorsCache;
   }
-  const resp = await fetch(LEGISLATORS_URL, { headers: { 'User-Agent': 'WDIWF/1.0' } });
-  if (!resp.ok) throw new Error(`Legislators fetch failed: ${resp.status}`);
-  legislatorsCache = await resp.json();
-  legislatorsCacheTime = Date.now();
-  return legislatorsCache!;
+  for (const url of LEGISLATORS_URLS) {
+    try {
+      console.log(`[voter-lookup] Trying legislators from: ${url}`);
+      const resp = await fetchWithTimeout(url, 8000);
+      if (!resp.ok) { console.warn(`[voter-lookup] ${url} returned ${resp.status}`); continue; }
+      legislatorsCache = await resp.json();
+      legislatorsCacheTime = Date.now();
+      console.log(`[voter-lookup] Loaded ${legislatorsCache!.length} legislators from ${url}`);
+      return legislatorsCache!;
+    } catch (err: any) {
+      console.warn(`[voter-lookup] Failed ${url}: ${err.message}`);
+    }
+  }
+  throw new Error('All legislator data sources failed. Please try again.');
 }
 
 /**
