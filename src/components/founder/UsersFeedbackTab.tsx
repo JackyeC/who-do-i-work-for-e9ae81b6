@@ -172,10 +172,13 @@ export function UsersFeedbackTab() {
             <EmptyState text="No user friction captured yet." />
           ) : (
             <div className="space-y-2">
-              {feedbackData.themes.map(([theme, count]) => (
+              {feedbackData.themes.map(([theme, info]) => (
                 <div key={theme} className="flex items-center justify-between p-2 bg-muted/20 rounded-lg text-sm">
-                  <span className="text-foreground">{theme}</span>
-                  <Badge variant="outline" className="text-xs font-mono">{count}</Badge>
+                  <div className="min-w-0">
+                    <span className="text-foreground">{theme}</span>
+                    <span className="text-xs text-muted-foreground ml-1.5">({info.count})</span>
+                  </div>
+                  <span className="text-[10px] text-muted-foreground font-mono shrink-0">{timeAgo(info.lastSeen)}</span>
                 </div>
               ))}
             </div>
