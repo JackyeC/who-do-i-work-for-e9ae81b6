@@ -8,6 +8,7 @@ import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
 import { Skeleton } from "@/components/ui/skeleton";
 import { SourceLabel, classifyClaim, type SourceTier } from "@/components/ui/source-label";
+import DiscoveryMode from "@/components/offer-check/DiscoveryMode";
 import { motion, AnimatePresence } from "framer-motion";
 import {
   Search, ShieldCheck, AlertTriangle, XCircle, Lock,
