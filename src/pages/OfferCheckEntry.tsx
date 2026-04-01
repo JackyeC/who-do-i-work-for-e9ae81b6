@@ -356,17 +356,33 @@ export default function OfferCheckEntry() {
                       </div>
                     ) : (
                       <div className="space-y-2">
-                        {signals.slice(0, 3).map((signal, i) => (
-                          <div key={i} className="bg-card border border-border rounded-xl p-4">
-                            <div className="flex items-start justify-between gap-3">
-                              <div className="min-w-0">
-                                <p className="text-sm font-medium text-foreground">{signal.title}</p>
-                                <p className="text-xs text-muted-foreground mt-0.5 leading-relaxed">{signal.explanation}</p>
+                        {signals.slice(0, 3).map((signal, i) => {
+                          const Wrapper = signal.link ? "a" : "div";
+                          const wrapperProps = signal.link
+                            ? { href: signal.link, onClick: (e: React.MouseEvent) => { e.preventDefault(); navigate(signal.link!); } }
+                            : {};
+                          return (
+                            <Wrapper
+                              key={i}
+                              {...(wrapperProps as any)}
+                              className={cn(
+                                "bg-card border border-border rounded-xl p-4 block",
+                                signal.link && "cursor-pointer hover:border-primary/40 transition-colors group"
+                              )}
+                            >
+                              <div className="flex items-start justify-between gap-3">
+                                <div className="min-w-0">
+                                  <p className={cn("text-sm font-medium text-foreground", signal.link && "group-hover:text-primary transition-colors")}>
+                                    {signal.title}
+                                    {signal.link && <ArrowRight className="inline w-3 h-3 ml-1 opacity-0 group-hover:opacity-100 transition-opacity" />}
+                                  </p>
+                                  <p className="text-xs text-muted-foreground mt-0.5 leading-relaxed">{signal.explanation}</p>
+                                </div>
+                                <SourceLabel tier={signal.tier} url={signal.sourceUrl} className="shrink-0 mt-0.5" />
                               </div>
-                              <SourceLabel tier={signal.tier} url={signal.sourceUrl} className="shrink-0 mt-0.5" />
-                            </div>
-                          </div>
-                        ))}
+                            </Wrapper>
+                          );
+                        })}
                       </div>
                     )}
                   </div>
