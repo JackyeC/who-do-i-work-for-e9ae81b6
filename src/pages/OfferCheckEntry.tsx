@@ -374,6 +374,18 @@ export default function OfferCheckEntry() {
                     </div>
                   )}
 
+                  {/* ═══ COMPANY INTELLIGENCE ═══ */}
+                  <CompanyIntelligenceSection companyId={company.id} companyName={company.name} />
+
+                  {/* ═══ CAREER INTELLIGENCE ═══ */}
+                  <CareerIntelligenceSection
+                    companyId={company.id}
+                    companyName={company.name}
+                    role={role || undefined}
+                    civicScore={company.civic_footprint_score}
+                    employerClarityScore={company.employer_clarity_score}
+                  />
+
                   {/* ═══ UPGRADE MOMENT ═══ */}
                   <div className="relative">
                     {/* Fade-out teaser of locked signals */}
