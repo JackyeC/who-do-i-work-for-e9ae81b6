@@ -18,8 +18,8 @@ const Index = forwardRef<HTMLDivElement>((_, ref) => {
   
 
   usePageSEO({
-    title: "Who Do I Work For — Career Intelligence by Jackye Clayton",
-    description: "Career advocacy built on public records. Evaluate employers, review offers, map your next move, and protect your career. Facts over feelings.",
+    title: "Check Any Employer Before You Apply — Career Intelligence",
+    description: "Look up any company and see what the public record says about political spending, labor violations, layoffs, and leadership. 30-second employer check powered by public data.",
     path: "/",
     jsonLd: {
       "@type": "WebApplication",
