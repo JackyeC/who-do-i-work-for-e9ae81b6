@@ -219,7 +219,7 @@ const App = () => (
                   <Route path="/the-receipts.html" element={<Navigate to="/newsletter" replace />} />
                   <Route path="/receipts/:slug" element={<ReceiptsReport />} />
                   <Route path="/submit-tip" element={<SubmitTip />} />
-                  <Route path="/newsletter" element={<Receipts />} />
+                  <Route path="/newsletter" element={<Newsletter />} />
                   <Route path="/hrtech" element={<HRTechIntelligence />} />
                   <Route path="/palette" element={<PaletteStudio />} />
                   <Route path="/company/:id" element={<CompanySlugRedirect />} />
