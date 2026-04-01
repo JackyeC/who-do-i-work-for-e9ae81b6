@@ -1,5 +1,12 @@
 import jsPDF from "jspdf";
-import "jspdf-autotable";
+import autoTable from "jspdf-autotable";
+
+// Ensure plugin is attached to jsPDF prototype
+if (typeof (jsPDF as any).prototype.autoTable !== "function") {
+  (jsPDF as any).prototype.autoTable = function (options: any) {
+    return autoTable(this, options);
+  };
+}
 
 declare module "jspdf" {
   interface jsPDF {
