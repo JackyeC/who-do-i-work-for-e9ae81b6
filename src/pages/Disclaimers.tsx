@@ -1,5 +1,3 @@
-import { Header } from "@/components/Header";
-import { Footer } from "@/components/Footer";
 import { usePageSEO } from "@/hooks/use-page-seo";
 import { ShieldAlert, Bot, Database, UserCheck, Scale, FileText, BarChart3 } from "lucide-react";
 import { Link } from "react-router-dom";
