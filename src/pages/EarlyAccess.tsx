@@ -168,7 +168,7 @@ export default function EarlyAccess() {
                 value={role}
                 onChange={(e) => setRole(e.target.value)}
                 required
-                className="bg-white/5 border border-white/10 rounded-md px-4 py-3 text-sm focus:outline-none focus:border-[#F0C040]/60 transition-colors appearance-none"
+                className="bg-foreground/5 border border-foreground/10 rounded-md px-4 py-3 text-sm focus:outline-none focus:border-primary/60 transition-colors appearance-none"
                 style={{ color: role ? "#fff" : "rgba(255,255,255,0.25)" }}
               >
                 <option value="" disabled>I am a...</option>
