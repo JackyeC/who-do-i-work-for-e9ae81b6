@@ -358,30 +358,47 @@ export default function OfferCheckEntry() {
                     ) : (
                       <div className="space-y-2">
                         {signals.slice(0, 3).map((signal, i) => {
-                          const Wrapper = signal.link ? "a" : "div";
-                          const wrapperProps = signal.link
-                            ? { href: signal.link, onClick: (e: React.MouseEvent) => { e.preventDefault(); navigate(signal.link!); } }
-                            : {};
+                          const isClickable = !!signal.link;
+
+                          if (isClickable) {
+                            return (
+                              <a
+                                key={i}
+                                href={signal.link!}
+                                onClick={(e) => { e.preventDefault(); navigate(signal.link!); }}
+                                className="bg-card border border-border rounded-xl p-4 block cursor-pointer hover:border-primary/40 hover:bg-primary/[0.03] transition-all group"
+                              >
+                                <div className="flex items-start justify-between gap-3">
+                                  <div className="min-w-0 flex-1">
+                                    <p className="text-sm font-medium text-foreground group-hover:text-primary transition-colors">
+                                      {signal.title}
+                                    </p>
+                                    <p className="text-xs text-muted-foreground mt-0.5 leading-relaxed">{signal.explanation}</p>
+                                  </div>
+                                  <div className="flex flex-col items-end gap-1.5 shrink-0">
+                                    <SourceLabel tier={signal.tier} url={signal.sourceUrl} className="mt-0.5" />
+                                    <span className="inline-flex items-center gap-1 text-xs font-medium text-primary opacity-70 group-hover:opacity-100 transition-opacity">
+                                      View record <ArrowRight className="w-3 h-3" />
+                                    </span>
+                                  </div>
+                                </div>
+                              </a>
+                            );
+                          }
+
                           return (
-                            <Wrapper
+                            <div
                               key={i}
-                              {...(wrapperProps as any)}
-                              className={cn(
-                                "bg-card border border-border rounded-xl p-4 block",
-                                signal.link && "cursor-pointer hover:border-primary/40 transition-colors group"
-                              )}
+                              className="bg-card border border-border/60 rounded-xl p-4"
                             >
                               <div className="flex items-start justify-between gap-3">
                                 <div className="min-w-0">
-                                  <p className={cn("text-sm font-medium text-foreground", signal.link && "group-hover:text-primary transition-colors")}>
-                                    {signal.title}
-                                    {signal.link && <ArrowRight className="inline w-3 h-3 ml-1 opacity-0 group-hover:opacity-100 transition-opacity" />}
-                                  </p>
-                                  <p className="text-xs text-muted-foreground mt-0.5 leading-relaxed">{signal.explanation}</p>
+                                  <p className="text-sm font-medium text-muted-foreground">{signal.title}</p>
+                                  <p className="text-xs text-muted-foreground/70 mt-0.5 leading-relaxed">{signal.explanation}</p>
                                 </div>
                                 <SourceLabel tier={signal.tier} url={signal.sourceUrl} className="shrink-0 mt-0.5" />
                               </div>
-                            </Wrapper>
+                            </div>
                           );
                         })}
                       </div>
