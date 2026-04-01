@@ -138,7 +138,7 @@ function SectionDivider({ number, title, subtitle, icon: Icon }: { number: numbe
 /* ─── Main Component ─── */
 export function AdvocacyReport({ company, executives = [], contracts = [], issueSignals = [], publicStances = [], eeocCases = [] }: AdvocacyReportProps) {
   const [decoderOpen, setDecoderOpen] = useState(false);
-  const [selectedMetric, setSelectedMetric] = useState<SpendingMetric | null>(null);
+  
 
   const report = useEmployerReport(company as any, executives as any, contracts as any, issueSignals as any);
 
