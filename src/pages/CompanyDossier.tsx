@@ -2,7 +2,6 @@ import { useMemo, useState } from "react";
 import { AdvocacyReport } from "@/components/dossier/AdvocacyReport";
 import { CandidatePrepPack } from "@/components/dossier/CandidatePrepPack";
 import { HardInterviewQuestions } from "@/components/dossier/HardInterviewQuestions";
-import { ContentProtector } from "@/components/ContentProtector";
 import { useParams, Link, useNavigate } from "react-router-dom";
 import { CompanyZeroState } from "@/components/CompanyZeroState";
 import { useQuery } from "@tanstack/react-query";
@@ -13,8 +12,6 @@ import {
   BarChart3, Landmark, Eye, AlertTriangle, ChevronDown,
 } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
-import { Header } from "@/components/Header";
-import { Footer } from "@/components/Footer";
 import { AuditRequestForm } from "@/components/AuditRequestForm";
 import { Skeleton } from "@/components/ui/skeleton";
 import { DossierLayer, TransparencyDisclaimer } from "@/components/dossier/DossierLayout";
@@ -161,26 +158,22 @@ export default function CompanyDossier() {
   /* ─── Loading state ─── */
   if (isLoading) {
     return (
-      <div className="min-h-screen flex flex-col bg-background">
-        <Header />
-        <main className="flex-1 container mx-auto px-4 py-12 max-w-3xl">
-          <div className="flex items-center gap-5 mb-8">
-            <Skeleton className="w-14 h-14 rounded-xl" />
-            <div className="flex-1 space-y-2">
-              <Skeleton className="h-7 w-48" />
-              <Skeleton className="h-4 w-64" />
-            </div>
+      <section className="container mx-auto px-4 py-12 max-w-3xl">
+        <div className="flex items-center gap-5 mb-8">
+          <Skeleton className="w-14 h-14 rounded-xl" />
+          <div className="flex-1 space-y-2">
+            <Skeleton className="h-7 w-48" />
+            <Skeleton className="h-4 w-64" />
           </div>
-          {[...Array(4)].map((_, i) => (
-            <div key={i} className="mb-4 border border-border/30 p-6">
-              <Skeleton className="h-5 w-40 mb-3" />
-              <Skeleton className="h-4 w-full" />
-              <Skeleton className="h-4 w-3/4 mt-2" />
-            </div>
-          ))}
-        </main>
-        <Footer />
-      </div>
+        </div>
+        {[...Array(4)].map((_, i) => (
+          <div key={i} className="mb-4 border border-border/30 p-6">
+            <Skeleton className="h-5 w-40 mb-3" />
+            <Skeleton className="h-4 w-full" />
+            <Skeleton className="h-4 w-3/4 mt-2" />
+          </div>
+        ))}
+      </section>
     );
   }
 
@@ -191,15 +184,12 @@ export default function CompanyDossier() {
       : "Unknown Company";
 
     return (
-      <div className="min-h-screen flex flex-col bg-background">
-        <Header />
-        <div className="flex-1 px-6 py-16 max-w-2xl mx-auto">
-          <CompanyZeroState
-            companyName={derivedName}
-            onDiscovered={(_, slug) => navigate(`/dossier/${slug}`)}
-          />
-        </div>
-      </div>
+      <section className="px-6 py-16 max-w-2xl mx-auto">
+        <CompanyZeroState
+          companyName={derivedName}
+          onDiscovered={(_, slug) => navigate(`/dossier/${slug}`)}
+        />
+      </section>
     );
   }
 
@@ -377,65 +367,61 @@ export default function CompanyDossier() {
   );
 
   return (
-    <ContentProtector className="min-h-screen flex flex-col bg-background">
-      <Header />
-      <main className="flex-1 container mx-auto px-4 py-8 max-w-3xl">
-        <div className="space-y-4">
-          <DossierProtector
-            companyId={companyId!}
-            companyName={company.name}
-            influenceScore={influenceScore}
-            overviewContent={overviewContent}
-            fullContent={null}
-          />
+    <section className="container mx-auto px-4 py-8 max-w-3xl">
+      <div className="space-y-4">
+        <DossierProtector
+          companyId={companyId!}
+          companyName={company.name}
+          influenceScore={influenceScore}
+          overviewContent={overviewContent}
+          fullContent={null}
+        />
 
-          {/* ── HARD INTERVIEW QUESTIONS (always free, outside paywall) ── */}
-          <HardInterviewQuestions
-            companyName={company.name}
-            lobbyingSpend={company.lobbying_spend}
-            eeocCount={eeocCases?.length || 0}
-          />
+        {/* ── HARD INTERVIEW QUESTIONS (always free, outside paywall) ── */}
+        <HardInterviewQuestions
+          companyName={company.name}
+          lobbyingSpend={company.lobbying_spend}
+          eeocCount={eeocCases?.length || 0}
+        />
 
-          <TransparencyDisclaimer />
+        <TransparencyDisclaimer />
 
-          {/* ── NEXT STEPS ── */}
-          <div className="mt-8 grid grid-cols-1 sm:grid-cols-2 gap-3">
-            <Link
-              to="/reality-check"
-              className="flex items-center gap-3 p-4 border border-border/40 bg-card hover:bg-muted/30 transition-colors group"
-            >
-              <div className="w-8 h-8 flex items-center justify-center shrink-0">
-                <AlertTriangle className="w-4 h-4 text-destructive" />
-              </div>
-              <div>
-                <p className="text-sm font-semibold text-foreground group-hover:text-primary transition-colors">
-                  Got an offer from {company.name}?
-                </p>
-                <p className="text-xs text-muted-foreground">
-                  Check for red flags before you sign →
-                </p>
-              </div>
-            </Link>
-            <Link
-              to="/ask-jackye"
-              className="flex items-center gap-3 p-4 border border-border/40 bg-card hover:bg-muted/30 transition-colors group"
-            >
-              <div className="w-8 h-8 flex items-center justify-center shrink-0">
-                <Sparkles className="w-4 h-4 text-primary" />
-              </div>
-              <div>
-                <p className="text-sm font-semibold text-foreground group-hover:text-primary transition-colors">
-                  Ask Jackye about {company.name}
-                </p>
-                <p className="text-xs text-muted-foreground">
-                  Should I apply? What should I negotiate? →
-                </p>
-              </div>
-            </Link>
-          </div>
+        {/* ── NEXT STEPS ── */}
+        <div className="mt-8 grid grid-cols-1 sm:grid-cols-2 gap-3">
+          <Link
+            to="/reality-check"
+            className="flex items-center gap-3 p-4 border border-border/40 bg-card hover:bg-muted/30 transition-colors group"
+          >
+            <div className="w-8 h-8 flex items-center justify-center shrink-0">
+              <AlertTriangle className="w-4 h-4 text-destructive" />
+            </div>
+            <div>
+              <p className="text-sm font-semibold text-foreground group-hover:text-primary transition-colors">
+                Got an offer from {company.name}?
+              </p>
+              <p className="text-xs text-muted-foreground">
+                Check for red flags before you sign →
+              </p>
+            </div>
+          </Link>
+          <Link
+            to="/ask-jackye"
+            className="flex items-center gap-3 p-4 border border-border/40 bg-card hover:bg-muted/30 transition-colors group"
+          >
+            <div className="w-8 h-8 flex items-center justify-center shrink-0">
+              <Sparkles className="w-4 h-4 text-primary" />
+            </div>
+            <div>
+              <p className="text-sm font-semibold text-foreground group-hover:text-primary transition-colors">
+                Ask Jackye about {company.name}
+              </p>
+              <p className="text-xs text-muted-foreground">
+                Should I apply? What should I negotiate? →
+              </p>
+            </div>
+          </Link>
         </div>
-      </main>
-      <Footer />
-    </ContentProtector>
+      </div>
+    </section>
   );
 }

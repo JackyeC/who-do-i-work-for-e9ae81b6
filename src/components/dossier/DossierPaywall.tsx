@@ -40,7 +40,7 @@ export function DossierPaywall({ companyId, companyName, layerIndex }: DossierPa
 
   return (
     <div className="relative rounded-2xl border-2 border-dashed border-primary/20 bg-gradient-to-b from-primary/[0.03] to-transparent p-8 text-center">
-      <div className="absolute inset-0 backdrop-blur-[2px] rounded-2xl" />
+      <div className="absolute inset-0 pointer-events-none rounded-2xl backdrop-blur-[2px]" />
       <div className="relative z-10">
         <div className="w-14 h-14 rounded-2xl bg-primary/8 flex items-center justify-center mx-auto mb-4">
           <Sparkles className="w-7 h-7 text-primary" />
