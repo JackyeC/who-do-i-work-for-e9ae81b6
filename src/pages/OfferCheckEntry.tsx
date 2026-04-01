@@ -24,6 +24,8 @@ interface Signal {
   explanation: string;
   tier: SourceTier;
   sourceUrl?: string | null;
+  /** Internal link for drill-down (e.g. dossier spending tab) */
+  link?: string | null;
 }
 
 interface CompanyResult {
