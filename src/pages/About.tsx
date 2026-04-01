@@ -22,7 +22,7 @@ const CREDENTIAL_BADGES: { label: string; url: string | null }[] = [
 
 const About = () => {
   usePageSEO({
-    title: "About Jackye Clayton — Who Do I Work For",
+    title: "About — Who Do I Work For",
     description:
       "Meet Jackye Clayton — 20-year HR technology strategist, LinkedIn Learning instructor, and founder of Who Do I Work For. She built WDIWF because workers deserve receipts before they make career decisions.",
     path: "/about",
@@ -32,47 +32,24 @@ const About = () => {
     <div className="min-h-screen flex flex-col bg-background">
       <main className="flex-1">
 
-        {/* ═══ 1 — HERO: WHO JACKYE IS ═══ */}
-        <section className="max-w-[900px] mx-auto px-6 lg:px-16 pt-20 pb-8">
+        {/* ═══ 1 — MISSION HERO ═══ */}
+        <section className="max-w-[900px] mx-auto px-6 lg:px-16 pt-20 pb-12 text-center">
           <p className="font-mono text-xs tracking-[0.15em] uppercase text-primary mb-5">
-            Meet the Founder
+            About Who Do I Work For
           </p>
-          <div className="grid grid-cols-1 lg:grid-cols-[240px_1fr] gap-10 items-start">
-            <div className="bg-card border border-border overflow-hidden max-w-[240px]">
-              <img
-                src={jackyeHeadshotSm}
-                alt="Jackye Clayton, Founder of Who Do I Work For"
-                className="w-full aspect-square object-cover object-top"
-                loading="eager"
-                decoding="async"
-              />
-            </div>
-            <div>
-              <h1
-                className="font-sans text-foreground leading-[1.08] mb-4"
-                style={{ fontSize: "clamp(1.75rem, 3.5vw, 2.75rem)", fontWeight: 800, letterSpacing: "-1px", maxWidth: "22ch" }}
-              >
-                Jackye Clayton
-              </h1>
-              <p className="font-mono text-xs text-primary tracking-wide uppercase mb-5">
-                HR Technology Strategist · Talent Acquisition Architect · Career Advocate
-              </p>
-              <p className="text-sm text-muted-foreground leading-relaxed mb-4 max-w-[54ch]">
-                Jackye Clayton has spent 20 years inside the machinery of hiring — building recruiting technology stacks, auditing talent pipelines, and advising organizations on everything from AI screening tools to structured hiring and pay transparency.
-              </p>
-              <p className="text-sm text-muted-foreground leading-relaxed max-w-[54ch]">
-                She is a{" "}
-                <a href="https://www.linkedin.com/learning/human-resources-writing-an-effective-job-description" target="_blank" rel="noopener noreferrer" className="text-primary hover:underline">LinkedIn Learning instructor</a>,
-                {" "}Associate Editor at{" "}
-                <a href="https://hr-gazette.com/category/news-reviews/events/" target="_blank" rel="noopener noreferrer" className="text-primary hover:underline">HR Gazette</a>,
-                {" "}and host of{" "}
-                <a href="https://www.inclusiveafpodcast.com" target="_blank" rel="noopener noreferrer" className="text-primary hover:underline">Inclusive AF</a>
-                {" "}and{" "}
-                <a href="https://wrkdefined.com/podcast/but-first-coffee" target="_blank" rel="noopener noreferrer" className="text-primary hover:underline">But First, Coffee</a>.
-              </p>
-            </div>
-          </div>
+          <h1
+            className="font-sans text-foreground leading-[1.08] mb-6 mx-auto"
+            style={{ fontSize: "clamp(1.75rem, 3.5vw, 2.75rem)", fontWeight: 800, letterSpacing: "-1px", maxWidth: "24ch" }}
+          >
+            The reverse background check<br />
+            <span className="text-primary">companies never expected.</span>
+          </h1>
+          <p className="text-sm text-muted-foreground leading-relaxed max-w-[54ch] mx-auto">
+            Every company runs a background check on you. We built the tool that lets you run one on them — using the same public records they hope you never read.
+          </p>
         </section>
+
+        <div className="gold-line mx-auto w-full max-w-[200px]" />
 
         {/* ═══ 2 — THE PROBLEM ═══ */}
         <section className="max-w-[900px] mx-auto px-6 lg:px-16 py-16">
@@ -118,9 +95,52 @@ const About = () => {
           </div>
         </section>
 
-        {/* ═══ 4 — WHY NOT GLASSDOOR ═══ */}
+        {/* ═══ 4 — THE METHOD (Paper Trail) ═══ */}
         <section className="bg-card border-y border-border px-6 lg:px-16 py-16">
           <div className="max-w-[640px] mx-auto">
+            <p className="font-mono text-xs tracking-[0.15em] uppercase text-primary mb-4">The Paper Trail</p>
+            <h2 className="font-sans text-lg font-bold text-foreground mb-4">
+              Public records, not opinions.
+            </h2>
+            <div className="space-y-5 text-sm text-muted-foreground leading-relaxed">
+              <p>
+                WDIWF pulls from the Federal Election Commission, SEC, Bureau of Labor Statistics, OSHA, the National Labor Relations Board, Senate lobbying disclosures, and more. Every signal is traceable. Every score is explainable. No black boxes. No opinions dressed as data.
+              </p>
+              <p>
+                We don't tell you what to think about a company. We show you what the record says — and measure the gap between what they claim and what they've done.
+              </p>
+            </div>
+            <div className="mt-8 p-4 border border-border bg-background">
+              <p className="font-mono text-xs text-primary tracking-wide uppercase mb-3">Sources include</p>
+              <div className="flex flex-wrap gap-2">
+                {["FEC", "SEC", "BLS", "OSHA", "NLRB", "USAspending", "Senate Lobbying", "WARN Act", "EEOC"].map((src) => (
+                  <span key={src} className="text-xs font-mono text-muted-foreground px-2.5 py-1 border border-border bg-card">
+                    {src}
+                  </span>
+                ))}
+              </div>
+            </div>
+            <div className="flex flex-wrap gap-3 mt-6">
+              {[
+                { label: "Methodology", to: "/methodology" },
+                { label: "Data Ethics", to: "/data-ethics" },
+                { label: "Compliance", to: "/compliance" },
+              ].map((link) => (
+                <Link
+                  key={link.label}
+                  to={link.to}
+                  className="px-4 py-2 text-xs font-sans font-medium border border-border text-muted-foreground hover:text-foreground hover:border-primary/40 transition-all"
+                >
+                  {link.label}
+                </Link>
+              ))}
+            </div>
+          </div>
+        </section>
+
+        {/* ═══ 5 — WHY NOT GLASSDOOR ═══ */}
+        <section className="max-w-[900px] mx-auto px-6 lg:px-16 py-16">
+          <div className="max-w-[640px]">
             <p className="font-mono text-xs tracking-[0.15em] uppercase text-primary mb-4">The Difference</p>
             <h2 className="font-sans text-lg font-bold text-foreground mb-6">
               Why not Glassdoor, LinkedIn, or another career site?
@@ -156,39 +176,53 @@ const About = () => {
           </div>
         </section>
 
-        {/* ═══ 5 — THE METHOD ═══ */}
+        <div className="gold-line mx-auto w-full max-w-[200px]" />
+
+        {/* ═══ 6 — FOUNDER ═══ */}
         <section className="max-w-[900px] mx-auto px-6 lg:px-16 py-16">
-          <div className="max-w-[640px]">
-            <p className="font-mono text-xs tracking-[0.15em] uppercase text-primary mb-4">The Method</p>
-            <h2 className="font-sans text-lg font-bold text-foreground mb-4">
-              Public records, not opinions.
-            </h2>
-            <div className="space-y-5 text-sm text-muted-foreground leading-relaxed">
-              <p>
-                WDIWF pulls from the Federal Election Commission, SEC, Bureau of Labor Statistics, OSHA, the National Labor Relations Board, Senate lobbying disclosures, and more. Every signal is traceable. Every score is explainable. No black boxes. No opinions dressed as data.
-              </p>
-              <p>
-                We don't tell you what to think about a company. We show you what the record says — and measure the gap between what they claim and what they've done.
-              </p>
+          <p className="font-mono text-xs tracking-[0.15em] uppercase text-primary mb-5">
+            Meet the Founder
+          </p>
+          <div className="grid grid-cols-1 lg:grid-cols-[240px_1fr] gap-10 items-start">
+            <div className="bg-card border border-border overflow-hidden max-w-[240px]">
+              <img
+                src={jackyeHeadshotSm}
+                alt="Jackye Clayton, Founder of Who Do I Work For"
+                className="w-full aspect-square object-cover object-top"
+                loading="eager"
+                decoding="async"
+              />
             </div>
-            <div className="mt-8 p-4 border border-border bg-muted/20">
-              <p className="font-mono text-xs text-primary tracking-wide uppercase mb-3">Sources include</p>
-              <div className="flex flex-wrap gap-2">
-                {["FEC", "SEC", "BLS", "OSHA", "NLRB", "USAspending", "Senate Lobbying", "WARN Act", "EEOC"].map((src) => (
-                  <span key={src} className="text-xs font-mono text-muted-foreground px-2.5 py-1 border border-border bg-card">
-                    {src}
-                  </span>
-                ))}
-              </div>
+            <div>
+              <h2
+                className="font-sans text-foreground leading-[1.08] mb-4"
+                style={{ fontSize: "clamp(1.5rem, 3vw, 2.25rem)", fontWeight: 800, letterSpacing: "-1px" }}
+              >
+                Jackye Clayton
+              </h2>
+              <p className="font-mono text-xs text-primary tracking-wide uppercase mb-5">
+                HR Technology Strategist · Talent Acquisition Architect · Career Advocate
+              </p>
+              <p className="text-sm text-muted-foreground leading-relaxed mb-4 max-w-[54ch]">
+                Jackye Clayton has spent 20 years inside the machinery of hiring — building recruiting technology stacks, auditing talent pipelines, and advising organizations on everything from AI screening tools to structured hiring and pay transparency.
+              </p>
+              <p className="text-sm text-muted-foreground leading-relaxed max-w-[54ch]">
+                She is a{" "}
+                <a href="https://www.linkedin.com/learning/human-resources-writing-an-effective-job-description" target="_blank" rel="noopener noreferrer" className="text-primary hover:underline">LinkedIn Learning instructor</a>,
+                {" "}Associate Editor at{" "}
+                <a href="https://hr-gazette.com/category/news-reviews/events/" target="_blank" rel="noopener noreferrer" className="text-primary hover:underline">HR Gazette</a>,
+                {" "}and host of{" "}
+                <a href="https://www.inclusiveafpodcast.com" target="_blank" rel="noopener noreferrer" className="text-primary hover:underline">Inclusive AF</a>
+                {" "}and{" "}
+                <a href="https://wrkdefined.com/podcast/but-first-coffee" target="_blank" rel="noopener noreferrer" className="text-primary hover:underline">But First, Coffee</a>.
+              </p>
             </div>
           </div>
         </section>
 
-        <div className="gold-line mx-auto w-full max-w-[200px]" />
-
-        {/* ═══ 6 — BELIEFS ═══ */}
-        <section className="max-w-[900px] mx-auto px-6 lg:px-16 py-16">
-          <div className="max-w-[640px]">
+        {/* ═══ 7 — BELIEFS ═══ */}
+        <section className="bg-card border-y border-border px-6 lg:px-16 py-16">
+          <div className="max-w-[640px] mx-auto">
             <p className="font-mono text-xs tracking-[0.15em] uppercase text-primary mb-4">The Principles</p>
             <h2 className="font-sans text-lg font-bold text-foreground mb-6">What I believe about work.</h2>
             <div className="space-y-4">
@@ -209,7 +243,7 @@ const About = () => {
         </section>
 
         {/* ── Credential badges ── */}
-        <section className="max-w-[900px] mx-auto px-6 lg:px-16 pb-12">
+        <section className="max-w-[900px] mx-auto px-6 lg:px-16 py-12">
           <p className="font-mono text-xs tracking-[0.15em] uppercase text-primary mb-4">Recognized By</p>
           <div className="flex items-center gap-3 flex-wrap">
             {CREDENTIAL_BADGES.map((badge) => (
@@ -238,7 +272,7 @@ const About = () => {
 
         <div className="gold-line mx-auto w-full max-w-[200px]" />
 
-        {/* ═══ 7 — CTA ═══ */}
+        {/* ═══ 8 — CTA ═══ */}
         <section className="max-w-[900px] mx-auto px-6 lg:px-16 py-20 text-center">
           <p className="font-mono text-xs tracking-[0.15em] uppercase text-primary mb-4">Ready?</p>
           <h2 className="font-sans text-foreground leading-[1.1] mb-4" style={{ fontSize: "clamp(1.5rem, 2.5vw, 2rem)", fontWeight: 800 }}>
