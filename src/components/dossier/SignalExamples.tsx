@@ -12,9 +12,10 @@ interface PolicySignal {
   amount: number | null;
 }
 
-function confidenceLabel(score: number): { label: string; variant: "destructive" | "default" | "secondary" } {
-  if (score >= 0.75) return { label: "Strong Evidence", variant: "destructive" };
-  if (score >= 0.5) return { label: "Likely Connection", variant: "default" };
+function confidenceLabel(score: string): { label: string; variant: "destructive" | "default" | "secondary" } {
+  const n = parseFloat(score) || 0;
+  if (n >= 0.75) return { label: "Strong Evidence", variant: "destructive" };
+  if (n >= 0.5) return { label: "Likely Connection", variant: "default" };
   return { label: "Possible Connection", variant: "secondary" };
 }
 
