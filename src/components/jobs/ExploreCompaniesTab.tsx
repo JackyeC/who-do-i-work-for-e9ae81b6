@@ -19,6 +19,7 @@ export function ExploreCompaniesTab() {
         .select("id, name, slug, logo_url, industry, vetted_status, employer_clarity_score, description, employee_count, jackye_insight")
         .in("record_status", ["published", "approved"])
         .order("employer_clarity_score", { ascending: false, nullsFirst: false })
+        .order("name", { ascending: true })
         .limit(200);
       if (error) throw error;
       return data || [];
