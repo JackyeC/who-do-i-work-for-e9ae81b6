@@ -1,6 +1,7 @@
 import { Link } from "react-router-dom";
 import { usePageSEO } from "@/hooks/use-page-seo";
 import { ArrowRight, Landmark, DollarSign, Users, FileText, Scale, Building2 } from "lucide-react";
+import { PoliticalSpectrumExplainer } from "@/components/policy/PoliticalSpectrumExplainer";
 
 const INFLUENCE_LAYERS = [
   {
