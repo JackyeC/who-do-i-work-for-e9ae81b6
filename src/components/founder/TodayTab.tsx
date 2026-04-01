@@ -7,8 +7,10 @@ import { Skeleton } from "@/components/ui/skeleton";
 import {
   ClipboardList, Activity, Database, AlertCircle, Zap,
   StickyNote, AlertOctagon, ChevronRight, Link2, CheckCircle,
+  Clock, Search,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { useEffect } from "react";
 
 /* ─── Card Shell ─── */
 function TriageCard({ title, icon: Icon, children, iconColor = "text-primary" }: {
