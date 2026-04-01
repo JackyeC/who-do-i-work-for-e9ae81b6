@@ -147,7 +147,7 @@ const Index = forwardRef<HTMLDivElement>((_, ref) => {
             Everything you need. Nothing you don't.
           </h2>
           <p className="text-body-lg text-center max-w-[52ch] mx-auto mb-14">
-            Six tools. All built on the same foundation: public records, not opinions.
+            Six tools. One foundation: the public record.
           </p>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
