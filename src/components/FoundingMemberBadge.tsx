@@ -168,12 +168,9 @@ export function FoundingMemberBadge({
                   gap: "2px",
                 }}
               >
-                <span style={{ fontWeight: 300, color: BRAND.fg }}>Who Do I</span>
-                {" "}
-                <span style={{ fontWeight: 800, color: BRAND.fg }}>W</span>
-                <span style={{ fontWeight: 800, color: BRAND.goldBright }}>?</span>
-                {" "}
+                <span style={{ fontWeight: 300, color: BRAND.fg }}>Who Do I </span>
                 <span style={{ fontWeight: 800, color: BRAND.fg }}>WORK FOR</span>
+                <span style={{ fontWeight: 800, color: BRAND.goldBright }}>?</span>
               </span>
               <span
                 style={{
