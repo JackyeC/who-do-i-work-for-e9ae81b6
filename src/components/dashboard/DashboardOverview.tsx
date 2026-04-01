@@ -62,7 +62,7 @@ const SIGNAL_CARDS = [
     slug: "starbucks",
     badge: "NLRB",
     badgeVariant: "warning" as const,
-    summary: "$1B restructuring — 500+ store closures, 2,000 layoffs, union suppression findings",
+    summary: "$1B restructuring with 500+ store closures and 2,000 layoffs. Union disputes ongoing. Know what you're walking into.",
     amount: "$1B restructuring",
     severity: "HIGH",
     severityVariant: "warning" as const,
