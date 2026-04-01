@@ -7,6 +7,7 @@ import { Users } from "lucide-react";
 import { Link } from "react-router-dom";
 import { processExecutives, processBoardMembers } from "@/lib/executive-utils";
 import { FreshnessLabel } from "@/components/company/FreshnessLabel";
+import { PersonEntity } from "@/components/person-entity/PersonEntity";
 
 interface Props {
   companyId: string;
