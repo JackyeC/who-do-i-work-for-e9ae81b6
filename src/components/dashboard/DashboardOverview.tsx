@@ -538,7 +538,8 @@ export function DashboardOverview({ onNavigate }: DashboardOverviewProps) {
             </div>
             <button
               onClick={() => onNavigate("tracked")}
-              className="text-xs font-medium mt-3 flex items-center gap-1 transition-colors text-primary hover:text-primary/80"
+              className="text-[12px] font-semibold mt-3 flex items-center gap-1 transition-colors hover:brightness-110"
+              style={{ color: "hsl(43, 96%, 56%)" }}
             >
               Manage watchlist <ArrowRight className="w-3 h-3" />
             </button>
