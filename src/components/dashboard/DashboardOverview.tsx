@@ -552,7 +552,7 @@ export function DashboardOverview({ onNavigate }: DashboardOverviewProps) {
             <div className="p-5">
               <div className="flex items-center gap-2 mb-2">
                 <Newspaper className="w-4 h-4" style={{ color: "hsl(43, 96%, 56%)" }} />
-                <h3 className="text-sm font-bold text-foreground font-display">The Tuesday Letter</h3>
+                <h3 className="text-[16px] font-bold text-foreground font-display">The Tuesday Letter</h3>
               </div>
               <p className="text-[13px] text-foreground/80 leading-relaxed mb-4">
                 Every Tuesday I send out what I'm seeing — the signals, the moves, the things nobody else is saying out loud. It's free, it's unfiltered, and it's for you.
