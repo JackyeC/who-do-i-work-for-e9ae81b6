@@ -134,8 +134,10 @@ function LeadStory({ article }: { article: WorkNewsArticle }) {
   const sourceProfile = article.source_name ? getSourceProfile(article.source_name) : null;
   const biasColor = sourceProfile ? getBiasColor(sourceProfile.bias) : "";
 
+  const whyMatters = getWhyItMatters(article.category, article.is_controversy);
+
   return (
-    <article className="rounded-2xl border border-border/50 bg-card overflow-hidden hover:border-primary/30 transition-all group">
+    <article id={`story-${article.id}`} className="rounded-2xl border border-border/50 bg-card overflow-hidden hover:border-primary/30 transition-all group scroll-mt-24">
       {/* Top accent bar */}
       <div className="h-1 bg-gradient-to-r from-primary via-primary/60 to-transparent" />
       <div className="p-6 lg:p-8">
@@ -171,7 +173,23 @@ function LeadStory({ article }: { article: WorkNewsArticle }) {
           </div>
         )}
 
-        {/* Footer */}
+        {/* Why This Matters */}
+        <div className="rounded-lg bg-muted/30 border border-border/30 p-4 mb-4">
+          <div className="flex items-center gap-2 mb-2.5">
+            <TrendingUp className="w-3.5 h-3.5 text-primary" />
+            <span className="text-[10px] font-bold text-primary tracking-[0.15em] uppercase font-mono">Why This Matters for You</span>
+          </div>
+          <ul className="space-y-1.5">
+            {whyMatters.map((point, idx) => (
+              <li key={idx} className="flex items-start gap-2 text-sm text-muted-foreground leading-relaxed">
+                <span className="text-primary mt-1 shrink-0">·</span>
+                {point}
+              </li>
+            ))}
+          </ul>
+        </div>
+
+        {/* Footer / Source */}
         <div className="flex items-center justify-between pt-3 border-t border-border/20">
           <div className="flex items-center gap-3">
             {article.source_name && (
