@@ -27,6 +27,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import { EmployerReportDrawer, type EvidenceRecord } from "@/components/dossier/EmployerReportDrawer";
+import { SignalRevealCard } from "@/components/dossier/SignalRevealCard";
 
 // Deep-dive layer components (power-user expandable)
 import { ValuesSignalsLayer } from "@/components/dossier/ValuesSignalsLayer";
