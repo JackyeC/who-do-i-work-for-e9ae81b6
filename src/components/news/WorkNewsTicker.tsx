@@ -22,10 +22,12 @@ const CATEGORY_LABELS: Record<string, string> = {
 export function WorkNewsTicker({ className }: WorkNewsTickerProps) {
   const { data: articles } = useWorkNewsTicker();
 
-  if (!articles?.length) return null;
+  // Only show articles that have a clickable destination
+  const clickable = (articles ?? []).filter((a) => a.source_url);
+  if (!clickable.length) return null;
 
   // Double the items for seamless loop
-  const doubled = [...articles, ...articles];
+  const doubled = [...clickable, ...clickable];
 
   return (
     <div className={cn("relative overflow-hidden bg-card/80 border-b border-border", className)}>
