@@ -262,6 +262,7 @@ const App = () => (
                   <Route path="/interview-kits" element={<ProtectedRoute><InterviewKits /></ProtectedRoute>} />
                   <Route path="/job-board/:id" element={<JobDetailPage />} />
                   <Route path="/request-correction" element={<RequestCorrection />} />
+                  <Route path="/offer-check" element={<OfferCheckEntry />} />
                   <Route path="/offer-check/:companyId" element={<ProtectedRoute><OfferCheck /></ProtectedRoute>} />
                   <Route path="/strategic-offer-review" element={<StrategicOfferReview />} />
                   <Route path="/offer-review/:companyId" element={<ProtectedRoute><OfferReview /></ProtectedRoute>} />
