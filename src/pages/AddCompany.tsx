@@ -1,7 +1,5 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { Header } from "@/components/Header";
-import { Footer } from "@/components/Footer";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
@@ -100,8 +98,7 @@ export default function AddCompany() {
 
   return (
     <div className="min-h-screen bg-background">
-      <Header />
-      <main className="max-w-2xl mx-auto px-4 py-12">
+<main className="max-w-2xl mx-auto px-4 py-12">
         <div className="text-center mb-8">
           <h1 className="text-3xl font-bold text-foreground mb-2">Add a Company</h1>
           <p className="text-muted-foreground">Search our database or add a new company. We'll research its political spending, lobbying, and transparency signals.</p>
@@ -230,7 +227,6 @@ export default function AddCompany() {
           </CardContent>
         </Card>
       </main>
-      <Footer />
-    </div>
+</div>
   );
 }

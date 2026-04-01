@@ -3,8 +3,6 @@ import { useParams, useNavigate } from "react-router-dom";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/contexts/AuthContext";
-import { Header } from "@/components/Header";
-import { Footer } from "@/components/Footer";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
@@ -176,8 +174,7 @@ export default function ReportEditor() {
 
   return (
     <div className="min-h-screen flex flex-col bg-background">
-      <Header />
-      <main className="container mx-auto px-4 py-6 flex-1 max-w-5xl">
+<main className="container mx-auto px-4 py-6 flex-1 max-w-5xl">
         <div className="flex items-center justify-between mb-6">
           <div className="flex items-center gap-3">
             <Button variant="ghost" size="sm" onClick={() => navigate("/admin/reports")}>
@@ -455,7 +452,6 @@ export default function ReportEditor() {
           </div>
         )}
       </main>
-      <Footer />
-    </div>
+</div>
   );
 }

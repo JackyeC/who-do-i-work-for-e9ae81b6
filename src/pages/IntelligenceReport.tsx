@@ -1,8 +1,6 @@
 import { useParams, Link } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
-import { Header } from "@/components/Header";
-import { Footer } from "@/components/Footer";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -171,26 +169,22 @@ export default function IntelligenceReport() {
   if (isLoading) {
     return (
       <div className="min-h-screen flex flex-col bg-background">
-        <Header />
-        <div className="flex-1 flex items-center justify-center">
+<div className="flex-1 flex items-center justify-center">
           <Loader2 className="w-8 h-8 animate-spin text-primary" />
         </div>
-        <Footer />
-      </div>
+</div>
     );
   }
 
   if (!report) {
     return (
       <div className="min-h-screen flex flex-col bg-background">
-        <Header />
-        <div className="flex-1 flex items-center justify-center flex-col gap-4">
+<div className="flex-1 flex items-center justify-center flex-col gap-4">
           <FileText className="w-10 h-10 text-muted-foreground" />
           <p className="text-muted-foreground">Report not found.</p>
           <Link to="/intelligence"><Button variant="outline">Browse Reports</Button></Link>
         </div>
-        <Footer />
-      </div>
+</div>
     );
   }
 
@@ -201,8 +195,7 @@ export default function IntelligenceReport() {
 
   return (
     <div className="min-h-screen flex flex-col bg-background">
-      <Header />
-      <main className="flex-1">
+<main className="flex-1">
         {/* A. Hero */}
         <section className="relative overflow-hidden border-b border-border/30">
           <div className="absolute inset-0 bg-gradient-to-br from-primary/5 via-transparent to-accent/3" />
@@ -609,7 +602,6 @@ export default function IntelligenceReport() {
           </Card>
         </div>
       </main>
-      <Footer />
-    </div>
+</div>
   );
 }

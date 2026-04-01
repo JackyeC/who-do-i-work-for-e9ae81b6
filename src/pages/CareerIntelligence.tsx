@@ -1,7 +1,5 @@
 import { useState, useEffect } from "react";
 import { useSearchParams } from "react-router-dom";
-import { Header } from "@/components/Header";
-import { Footer } from "@/components/Footer";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { DocumentUploader } from "@/components/career/DocumentUploader";
 import { CareerProfile } from "@/components/career/CareerProfile";
@@ -71,8 +69,7 @@ export default function CareerIntelligence() {
 
   return (
     <div className="min-h-screen bg-background flex flex-col">
-      <Header />
-      <main className="container mx-auto px-4 py-6 sm:py-8 flex-1">
+<main className="container mx-auto px-4 py-6 sm:py-8 flex-1">
         <div className="text-center mb-6 sm:mb-8">
           <h1 className="text-2xl sm:text-3xl font-bold text-foreground mb-2 font-display">
             You vetted the role. We vet the employer.
@@ -169,7 +166,6 @@ export default function CareerIntelligence() {
           <DataWipeButton />
         </div>
       </main>
-      <Footer />
-    </div>
+</div>
   );
 }

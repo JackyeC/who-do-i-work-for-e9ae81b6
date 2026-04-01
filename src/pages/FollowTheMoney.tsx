@@ -1,7 +1,6 @@
 import { usePageSEO } from "@/hooks/use-page-seo";
 import { useAuth } from "@/contexts/AuthContext";
 import { SignupGate } from "@/components/SignupGate";
-import { Header } from "@/components/Header";
 
 export default function FollowTheMoney() {
   const { user } = useAuth();
@@ -16,8 +15,7 @@ export default function FollowTheMoney() {
   if (!user) {
     return (
       <div className="min-h-screen flex flex-col bg-background">
-        <Header />
-        <main className="flex-1 container mx-auto px-4 py-12 max-w-3xl">
+<main className="flex-1 container mx-auto px-4 py-12 max-w-3xl">
           <div className="text-center mb-8">
             <h1 className="text-2xl font-bold text-foreground mb-2">Follow the Money</h1>
             <p className="text-muted-foreground text-sm">Interactive investigation board: corporate PAC donations, lobbying, dark money channels, and revolving door connections to Congress.</p>

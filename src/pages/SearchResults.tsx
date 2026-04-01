@@ -6,8 +6,6 @@ import { AuditRequestForm } from "@/components/AuditRequestForm";
 import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { Header } from "@/components/Header";
-import { Footer } from "@/components/Footer";
 import { CompanyCard } from "@/components/CompanyCard";
 import { searchCompanies } from "@/data/sampleData";
 import { supabase } from "@/integrations/supabase/client";
@@ -128,8 +126,7 @@ export default function SearchResults() {
 
   return (
     <div className="min-h-screen flex flex-col bg-background">
-      <Header />
-      <div className="container mx-auto px-4 py-8 flex-1">
+<div className="container mx-auto px-4 py-8 flex-1">
         <form onSubmit={handleSearch} className="max-w-2xl mx-auto flex gap-2 mb-8">
           <div className="relative flex-1">
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
@@ -208,7 +205,6 @@ export default function SearchResults() {
           </div>
         )}
       </div>
-      <Footer />
-    </div>
+</div>
   );
 }

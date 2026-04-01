@@ -3,8 +3,6 @@ import { useSearchParams } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import { Helmet } from "react-helmet-async";
 import { Shield, Search, Loader2, Building2 } from "lucide-react";
-import { Header } from "@/components/Header";
-import { Footer } from "@/components/Footer";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
@@ -107,8 +105,7 @@ export default function PolicyIntelligence() {
         <title>Policy Intelligence | Who Do I Work For</title>
         <meta name="description" content="Situation-aware policy intelligence and governance analysis for career decisions." />
       </Helmet>
-      <Header />
-      <main className="container max-w-4xl mx-auto px-4 py-8 space-y-8">
+<main className="container max-w-4xl mx-auto px-4 py-8 space-y-8">
         {/* Hero */}
         <div className="text-center space-y-3">
           <div className="flex items-center justify-center gap-2">
@@ -241,7 +238,6 @@ export default function PolicyIntelligence() {
           </div>
         )}
       </main>
-      <Footer />
-    </>
+</>
   );
 }

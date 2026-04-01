@@ -1,7 +1,5 @@
 import { useState } from "react";
 import { useSearchParams } from "react-router-dom";
-import { Header } from "@/components/Header";
-import { Footer } from "@/components/Footer";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useAuth } from "@/contexts/AuthContext";
 import { Navigate } from "react-router-dom";
@@ -23,8 +21,7 @@ export default function JobDashboard() {
 
   return (
     <div className="min-h-screen bg-background flex flex-col">
-      <Header />
-      <main className="flex-1 container mx-auto px-4 py-8 max-w-6xl">
+<main className="flex-1 container mx-auto px-4 py-8 max-w-6xl">
         <div className="mb-6">
           <h1 className="text-3xl font-bold text-foreground font-display">
             Values-Based Job Matching
@@ -78,7 +75,6 @@ export default function JobDashboard() {
           </TabsContent>
         </Tabs>
       </main>
-      <Footer />
-    </div>
+</div>
   );
 }

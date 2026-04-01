@@ -6,8 +6,6 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { Header } from "@/components/Header";
-import { Footer } from "@/components/Footer";
 import { supabase } from "@/integrations/supabase/client";
 import { useQuery } from "@tanstack/react-query";
 import { formatCurrency } from "@/data/sampleData";
@@ -57,9 +55,7 @@ export default function Examples() {
 
   return (
     <div className="min-h-screen flex flex-col bg-background">
-      <Header />
-
-      <section className="relative overflow-hidden">
+<section className="relative overflow-hidden">
         <div className="absolute inset-0 bg-gradient-to-b from-civic-gold-light/30 via-background to-background pointer-events-none" />
         <div className="container mx-auto px-4 pt-20 pb-12 relative">
           <motion.div initial="hidden" animate="show" className="max-w-3xl mx-auto text-center">
@@ -171,8 +167,6 @@ export default function Examples() {
           </Button>
         </div>
       </section>
-
-      <Footer />
-    </div>
+</div>
   );
 }

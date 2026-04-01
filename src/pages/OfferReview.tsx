@@ -3,8 +3,6 @@ import { useParams, useNavigate, Link } from "react-router-dom";
 import { ArrowLeft, ShieldCheck, Loader2, Crown } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { Header } from "@/components/Header";
-import { Footer } from "@/components/Footer";
 import { ErrorBoundary } from "@/components/ErrorBoundary";
 import { OfferLetterUpload } from "@/components/offer-review/OfferLetterUpload";
 import { OfferReviewResults } from "@/components/offer-review/OfferReviewResults";
@@ -86,22 +84,19 @@ export default function OfferReview() {
   if (!user) {
     return (
       <div className="min-h-screen flex flex-col bg-background">
-        <Header />
-        <div className="flex-1 flex items-center justify-center flex-col gap-4">
+<div className="flex-1 flex items-center justify-center flex-col gap-4">
           <ShieldCheck className="w-10 h-10 text-primary" />
           <p className="text-muted-foreground">Sign in to use Private Offer Review.</p>
           <Button onClick={() => navigate("/login")}>Sign In</Button>
         </div>
-        <Footer />
-      </div>
+</div>
     );
   }
 
   if (companyLoading) {
     return (
       <div className="min-h-screen flex flex-col bg-background">
-        <Header />
-        <div className="flex-1 flex items-center justify-center">
+<div className="flex-1 flex items-center justify-center">
           <Loader2 className="w-8 h-8 animate-spin text-primary" />
         </div>
       </div>
@@ -111,20 +106,17 @@ export default function OfferReview() {
   if (!company) {
     return (
       <div className="min-h-screen flex flex-col bg-background">
-        <Header />
-        <div className="flex-1 flex items-center justify-center flex-col gap-4">
+<div className="flex-1 flex items-center justify-center flex-col gap-4">
           <p className="text-muted-foreground">Company not found.</p>
           <Button variant="outline" onClick={() => navigate("/")}>Go Home</Button>
         </div>
-        <Footer />
-      </div>
+</div>
     );
   }
 
   return (
     <div className="min-h-screen flex flex-col bg-background">
-      <Header />
-      <div className="container mx-auto px-4 py-8 max-w-3xl">
+<div className="container mx-auto px-4 py-8 max-w-3xl">
         <Link to={`/offer-check/${company.id}`} className="inline-flex items-center gap-1 text-sm text-muted-foreground hover:text-foreground mb-6">
           <ArrowLeft className="w-4 h-4" /> Back to Offer Check
         </Link>
@@ -182,7 +174,6 @@ export default function OfferReview() {
           </div>
         </PremiumGate>
       </div>
-      <Footer />
-    </div>
+</div>
   );
 }

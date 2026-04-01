@@ -105,7 +105,7 @@ export default function EarlyAccess() {
             <span className="logo-q">?</span>
           </span>
 
-          <div className="h-10 w-px bg-white/10" />
+          <div className="h-10 w-px bg-foreground/10" />
 
           <div className="text-left" style={{ fontFamily: "Inter, sans-serif" }}>
             <p className="logo-prefix leading-none tracking-tight" style={{ fontSize: 16, fontWeight: 300 }}>
@@ -115,7 +115,7 @@ export default function EarlyAccess() {
               <span className="logo-bold">WORK FOR</span>
               <span className="logo-q">?</span>
             </p>
-            <p className="text-white/40 text-xs tracking-[0.15em] uppercase mt-0.5">
+            <p className="text-foreground/40 text-xs tracking-[0.15em] uppercase mt-0.5">
               Career Intelligence
             </p>
           </div>
@@ -147,8 +147,8 @@ export default function EarlyAccess() {
                 { n: "100%", l: "Public Data" },
               ].map(({ n, l }) => (
                 <div key={l} className="text-center">
-                  <p className="text-2xl sm:text-3xl font-extrabold text-white tracking-tight" style={{ fontFamily: "'DM Mono', monospace" }}>{n}</p>
-                  <p className="text-xs uppercase tracking-[1.5px] text-white/35 font-medium mt-0.5">{l}</p>
+                  <p className="text-2xl sm:text-3xl font-extrabold text-foreground tracking-tight" style={{ fontFamily: "'DM Mono', monospace" }}>{n}</p>
+                  <p className="text-xs uppercase tracking-[1.5px] text-foreground/35 font-medium mt-0.5">{l}</p>
                 </div>
               ))}
             </div>
@@ -161,14 +161,14 @@ export default function EarlyAccess() {
                 placeholder="you@email.com"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
-                className="bg-white/5 border border-white/10 rounded-md px-4 py-3 text-white placeholder-white/25 text-sm focus:outline-none focus:border-[#F0C040]/60 transition-colors"
+                className="bg-foreground/5 border border-foreground/10 rounded-md px-4 py-3 text-foreground placeholder-foreground/25 text-sm focus:outline-none focus:border-primary/60 transition-colors"
               />
 
               <select
                 value={role}
                 onChange={(e) => setRole(e.target.value)}
                 required
-                className="bg-white/5 border border-white/10 rounded-md px-4 py-3 text-sm focus:outline-none focus:border-[#F0C040]/60 transition-colors appearance-none"
+                className="bg-foreground/5 border border-foreground/10 rounded-md px-4 py-3 text-sm focus:outline-none focus:border-primary/60 transition-colors appearance-none"
                 style={{ color: role ? "#fff" : "rgba(255,255,255,0.25)" }}
               >
                 <option value="" disabled>I am a...</option>
@@ -189,7 +189,7 @@ export default function EarlyAccess() {
               </button>
             </form>
 
-            <p className="mt-4 text-xs text-white/20 text-center">
+            <p className="mt-4 text-xs text-foreground/20 text-center">
               No spam. Access notification only. Built by Jackye Clayton.
             </p>
           </>
@@ -198,14 +198,14 @@ export default function EarlyAccess() {
             <div className="w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-5 text-2xl font-extrabold" style={{ background: "rgba(240,192,64,0.15)", color: "#F0C040" }}>
               ✓
             </div>
-            <h2 className="text-3xl font-extrabold text-white tracking-tight mb-3">You're on the list.</h2>
-            <p className="text-white/50 text-sm leading-relaxed mb-6">
+            <h2 className="text-3xl font-extrabold text-foreground tracking-tight mb-3">You're on the list.</h2>
+            <p className="text-foreground/50 text-sm leading-relaxed mb-6">
               Welcome to Who Do I Work For. The public record isn't going anywhere — and neither are we.
             </p>
             <Link to="/browse" className="inline-block px-6 py-3 rounded-full text-sm font-bold transition-all hover:brightness-110" style={{ background: "#F0C040", color: "#0a0a0e" }}>
               Start Auditing →
             </Link>
-            <p className="mt-4 text-xs text-white/20 uppercase tracking-widest">Early Access Confirmed</p>
+            <p className="mt-4 text-xs text-foreground/20 uppercase tracking-widest">Early Access Confirmed</p>
           </div>
         )}
       </div>

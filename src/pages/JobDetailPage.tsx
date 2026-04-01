@@ -2,8 +2,6 @@ import { useState } from "react";
 import { useParams, Link } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
-import { Header } from "@/components/Header";
-import { Footer } from "@/components/Footer";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
@@ -158,26 +156,22 @@ export default function JobDetailPage() {
   if (isLoading) {
     return (
       <div className="min-h-screen flex flex-col bg-background">
-        <Header />
-        <main className="flex-1 flex items-center justify-center">
+<main className="flex-1 flex items-center justify-center">
           <Loader2 className="w-6 h-6 animate-spin text-primary" />
         </main>
-        <Footer />
-      </div>
+</div>
     );
   }
 
   if (!job) {
     return (
       <div className="min-h-screen flex flex-col bg-background">
-        <Header />
-        <main className="flex-1 container mx-auto px-4 py-16 text-center">
+<main className="flex-1 container mx-auto px-4 py-16 text-center">
           <h1 className="text-2xl font-bold text-foreground mb-2">Job Not Found</h1>
           <p className="text-muted-foreground mb-4">This listing may have been removed or is no longer active.</p>
           <Button asChild><Link to="/job-board">← Back to Job Board</Link></Button>
         </main>
-        <Footer />
-      </div>
+</div>
     );
   }
 
@@ -187,8 +181,7 @@ export default function JobDetailPage() {
 
   return (
     <div className="min-h-screen flex flex-col bg-background">
-      <Header />
-      {job && <JobPostingSchema job={job} />}
+{job && <JobPostingSchema job={job} />}
       <main className="flex-1 container mx-auto px-4 py-8 max-w-3xl">
         <Link to="/job-board" className="inline-flex items-center gap-1 text-sm text-muted-foreground hover:text-foreground mb-6">
           <ChevronLeft className="w-4 h-4" /> Back to Job Board
@@ -404,7 +397,6 @@ export default function JobDetailPage() {
           </CollapsibleContent>
         </Collapsible>
       </main>
-      <Footer />
-    </div>
+</div>
   );
 }

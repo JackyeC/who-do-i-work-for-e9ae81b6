@@ -7,8 +7,6 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { Textarea } from "@/components/ui/textarea";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
-import { Header } from "@/components/Header";
-import { Footer } from "@/components/Footer";
 import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/contexts/AuthContext";
@@ -36,14 +34,12 @@ export default function OfferReviewDirect() {
   if (!user) {
     return (
       <div className="min-h-screen flex flex-col bg-background">
-        <Header />
-        <div className="flex-1 flex items-center justify-center flex-col gap-4">
+<div className="flex-1 flex items-center justify-center flex-col gap-4">
           <ShieldCheck className="w-10 h-10 text-primary" />
           <p className="text-muted-foreground">Sign in to use Private Offer Review.</p>
           <Button onClick={() => navigate("/login")}>Sign In</Button>
         </div>
-        <Footer />
-      </div>
+</div>
     );
   }
 
@@ -143,8 +139,7 @@ export default function OfferReviewDirect() {
 
   return (
     <div className="min-h-screen flex flex-col bg-background">
-      <Header />
-      <div className="container mx-auto px-4 py-8 max-w-2xl">
+<div className="container mx-auto px-4 py-8 max-w-2xl">
         <button
           onClick={() => navigate("/check?tab=offer")}
           className="inline-flex items-center gap-1 text-sm text-muted-foreground hover:text-foreground mb-6"
@@ -255,7 +250,6 @@ export default function OfferReviewDirect() {
           </CardContent>
         </Card>
       </div>
-      <Footer />
-    </div>
+</div>
   );
 }

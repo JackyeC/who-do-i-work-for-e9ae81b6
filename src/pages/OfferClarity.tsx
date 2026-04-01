@@ -1,5 +1,3 @@
-import { Header } from "@/components/Header";
-import { Footer } from "@/components/Footer";
 import { usePageSEO } from "@/hooks/use-page-seo";
 import { OfferClarityWizard } from "@/components/offer-clarity/OfferClarityWizard";
 import { Badge } from "@/components/ui/badge";
@@ -15,8 +13,7 @@ export default function OfferClarity() {
 
   return (
     <div className="min-h-screen bg-background">
-      <Header />
-      <main className="container mx-auto px-4 py-10">
+<main className="container mx-auto px-4 py-10">
         <div className="text-center mb-10">
           <Badge variant="outline" className="mb-3 text-xs gap-1.5">
             <ShieldCheck className="w-3 h-3" /> Offer Check™
@@ -32,7 +29,6 @@ export default function OfferClarity() {
           <OfferClarityWizard />
         </PremiumGate>
       </main>
-      <Footer />
-    </div>
+</div>
   );
 }

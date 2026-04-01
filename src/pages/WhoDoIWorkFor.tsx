@@ -1,8 +1,6 @@
 import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { motion } from "framer-motion";
-import { Header } from "@/components/Header";
-import { Footer } from "@/components/Footer";
 import { useAuth } from "@/contexts/AuthContext";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -167,8 +165,7 @@ export default function WhoDoIWorkFor() {
   if (profileLoading) {
     return (
       <div className="min-h-screen flex flex-col bg-background">
-        <Header />
-        <div className="flex-1 flex items-center justify-center">
+<div className="flex-1 flex items-center justify-center">
           <Loader2 className="w-8 h-8 animate-spin text-primary" />
         </div>
       </div>
@@ -181,8 +178,7 @@ export default function WhoDoIWorkFor() {
 
   return (
     <div className="min-h-screen flex flex-col bg-background">
-      <Header />
-      <div className="container mx-auto px-4 py-8 flex-1">
+<div className="container mx-auto px-4 py-8 flex-1">
         {/* User bar */}
         <div className="flex items-center justify-between mb-8">
           <div />
@@ -546,7 +542,6 @@ export default function WhoDoIWorkFor() {
         open={!!selectedDarkEntity}
         onOpenChange={(open) => { if (!open) setSelectedDarkEntity(null); }}
       />
-      <Footer />
-    </div>
+</div>
   );
 }

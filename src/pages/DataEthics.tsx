@@ -1,5 +1,3 @@
-import { Header } from "@/components/Header";
-import { Footer } from "@/components/Footer";
 import { usePageSEO } from "@/hooks/use-page-seo";
 import { Shield, FileCheck, Eye, Scale, UserCheck, Lock, AlertTriangle, Database, Search, ArrowRight } from "lucide-react";
 import { Link } from "react-router-dom";
@@ -54,8 +52,7 @@ export default function DataEthics() {
 
   return (
     <div className="min-h-screen flex flex-col bg-background">
-      <Header />
-      <main className="flex-1">
+<main className="flex-1">
         {/* Hero */}
         <section className="container mx-auto px-4 pt-16 pb-10 max-w-2xl text-center">
           <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-primary/10 border border-primary/20 text-primary text-xs font-mono tracking-wider uppercase mb-6">
@@ -239,7 +236,6 @@ export default function DataEthics() {
           </div>
         </section>
       </main>
-      <Footer />
-    </div>
+</div>
   );
 }
