@@ -172,7 +172,7 @@ export function TopBar() {
       <header className="fixed top-[36px] left-0 right-0 z-50 border-b border-border h-[64px] flex items-center px-4 lg:px-6 bg-background/[0.92] backdrop-blur-[20px]">
         {/* Brand */}
         <Link to="/" className="flex items-center shrink-0 mr-4">
-          <img src={logoNav} alt="Who Do I Work For?" className="h-7" />
+          <LogoMark showWordmark iconSize={20} />
         </Link>
 
         {/* ── Audit search bar (always visible, most prominent) ── */}
