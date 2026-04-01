@@ -9,6 +9,8 @@ import { Badge } from "@/components/ui/badge";
 import { Skeleton } from "@/components/ui/skeleton";
 import { SourceLabel, classifyClaim, type SourceTier } from "@/components/ui/source-label";
 import DiscoveryMode from "@/components/offer-check/DiscoveryMode";
+import CompanyIntelligenceSection from "@/components/offer-check/CompanyIntelligenceSection";
+import CareerIntelligenceSection from "@/components/offer-check/CareerIntelligenceSection";
 import { motion, AnimatePresence } from "framer-motion";
 import {
   Search, ShieldCheck, AlertTriangle, XCircle, Lock,
