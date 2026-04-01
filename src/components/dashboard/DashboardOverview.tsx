@@ -451,7 +451,7 @@ export function DashboardOverview({ onNavigate }: DashboardOverviewProps) {
           <BriefingCard className="h-full">
             <div className="flex items-center gap-2 mb-1">
               <BookOpen className="w-4 h-4 text-primary" />
-              <h3 className="text-sm font-bold text-foreground">Straight From Jackye</h3>
+              <h3 className="text-[16px] font-bold text-foreground">Straight From Jackye</h3>
             </div>
             <p className="text-xs text-muted-foreground mb-3">Curated insider intel — not generic advice</p>
             <div className="space-y-3">
