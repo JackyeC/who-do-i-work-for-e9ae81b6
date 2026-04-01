@@ -260,7 +260,6 @@ export function AlignedValuesSearch({ hasTakenQuiz }: { hasTakenQuiz: boolean })
       {/* Browse link */}
       <Link
         to="/companies"
-        className="text-xs font-medium mt-3 flex items-center gap-1 transition-colors"
         className="font-mono text-sm tracking-wider uppercase hover:underline flex items-center gap-1 whitespace-nowrap"
         style={{ color: "hsl(var(--civic-gold, 43 96% 56%))" }}
       >
