@@ -12,7 +12,7 @@ import {
 import { useState } from "react";
 import { cn } from "@/lib/utils";
 import { motion } from "framer-motion";
-import { SignedIn, SignedOut, useAuth as useClerkAuth } from "@clerk/clerk-react";
+import { useClerkWithFallback } from "@/hooks/use-clerk-fallback";
 
 /* ── Types ── */
 
