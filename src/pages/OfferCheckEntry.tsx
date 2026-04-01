@@ -33,6 +33,7 @@ interface CompanyResult {
   civic_footprint_score: number;
   employer_clarity_score: number | null;
   website_url: string | null;
+  record_status: string | null;
 }
 
 /* ─── Verdict logic ─── */
@@ -150,6 +151,7 @@ export default function OfferCheckEntry() {
   const [companyName, setCompanyName] = useState("");
   const [role, setRole] = useState("");
   const [searchTerm, setSearchTerm] = useState<string | null>(null);
+  const [resolvedCompanyId, setResolvedCompanyId] = useState<string | null>(null);
 
   usePageSEO({
     title: "Check a Company — Should You Take This Job?",
@@ -159,14 +161,27 @@ export default function OfferCheckEntry() {
 
   // ─── Company lookup ───
   const { data: company, isLoading, isFetched } = useQuery({
-    queryKey: ["offer-check-lookup", searchTerm],
+    queryKey: ["offer-check-lookup", searchTerm, resolvedCompanyId],
     queryFn: async () => {
+      if (!searchTerm) return null;
+
+      if (resolvedCompanyId) {
+        const { data } = await supabase
+          .from("companies")
+          .select("id, name, slug, industry, description, civic_footprint_score, employer_clarity_score, website_url, record_status")
+          .eq("id", resolvedCompanyId)
+          .maybeSingle();
+
+        return (data ?? null) as CompanyResult | null;
+      }
+
       const { data } = await supabase
         .from("companies")
-        .select("id, name, slug, industry, description, civic_footprint_score, employer_clarity_score, website_url")
+        .select("id, name, slug, industry, description, civic_footprint_score, employer_clarity_score, website_url, record_status")
         .ilike("name", `%${searchTerm}%`)
         .order("civic_footprint_score", { ascending: false })
         .limit(1);
+
       return (data && data.length > 0 ? data[0] : null) as CompanyResult | null;
     },
     enabled: !!searchTerm,
@@ -186,7 +201,7 @@ export default function OfferCheckEntry() {
       ]);
       return {
         hasLobbyingData: (company!.civic_footprint_score ?? 0) > 0,
-        lobbyingSpend: 0, // from company record
+        lobbyingSpend: 0,
         hasPacData: false,
         pacSpending: 0,
         claimsCount: claims.count ?? 0,
@@ -216,6 +231,7 @@ export default function OfferCheckEntry() {
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (companyName.trim()) {
+      setResolvedCompanyId(null);
       setSearchTerm(companyName.trim());
     }
   };
@@ -235,6 +251,10 @@ export default function OfferCheckEntry() {
 
   const showResult = isFetched && searchTerm;
   const isResultLoading = isLoading || extrasLoading;
+  const showDiscoveryMode = !company || (
+    !resolvedCompanyId &&
+    (company.record_status === "discovered" || company.record_status === "research_in_progress")
+  );
 
   return (
     <div className="min-h-screen bg-background">
@@ -299,9 +319,8 @@ export default function OfferCheckEntry() {
                   <Skeleton className="h-40 rounded-2xl" />
                   <Skeleton className="h-20 rounded-2xl" />
                 </div>
-              ) : !company ? (
-                /* ── Discovery Mode: company not indexed ── */
-                <DiscoveryMode companyName={searchTerm!} />
+              ) : showDiscoveryMode ? (
+                <DiscoveryMode companyName={searchTerm!} onResolved={setResolvedCompanyId} />
               ) : (
                 <>
                   {/* ═══ SECTION 2: VERDICT ═══ */}
