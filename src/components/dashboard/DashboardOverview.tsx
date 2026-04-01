@@ -413,7 +413,7 @@ export function DashboardOverview({ onNavigate }: DashboardOverviewProps) {
       </motion.div>
 
       {/* ═══ 3 — INTELLIGENCE BULLETS + FROM JACKYE (2 cols) ═══ */}
-      <div className="grid md:grid-cols-2 gap-5">
+      <div className="grid md:grid-cols-2 gap-7">
 
         {/* 3A — Intelligence Briefing */}
         <motion.div {...anim(0.12)}>
