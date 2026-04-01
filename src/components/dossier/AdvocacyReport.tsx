@@ -245,57 +245,12 @@ export function AdvocacyReport({ company, executives = [], contracts = [], issue
       <section>
         <SectionDivider number={3} icon={DollarSign} title="Spending Record" subtitle="Where the money goes, based on public filings" />
         <div className="pl-11">
-          {/* Schema-driven spending table */}
           {report && (
-            <div className="overflow-x-auto">
-              <table className="w-full text-sm">
-                <thead>
-                  <tr className="border-b border-border/40">
-                    <th className="text-left py-2 pr-4 font-mono text-[10px] text-muted-foreground uppercase tracking-wider">Metric</th>
-                    <th className="text-left py-2 pr-4 font-mono text-[10px] text-muted-foreground uppercase tracking-wider">Amount</th>
-                    <th className="text-left py-2 pr-4 font-mono text-[10px] text-muted-foreground uppercase tracking-wider">Trend</th>
-                    <th className="text-left py-2 font-mono text-[10px] text-muted-foreground uppercase tracking-wider"></th>
-                  </tr>
-                </thead>
-                <tbody className="divide-y divide-border/20">
-                  {report.spending_record.map((m) => {
-                    const TrendIcon = m.trend === "up" ? TrendingUp : m.trend === "down" ? TrendingDown : Minus;
-                    const trendColor = m.trend === "up" ? "text-destructive" : m.trend === "down" ? "text-civic-green" : "text-muted-foreground";
-                    return (
-                      <tr
-                        key={m.label}
-                        className="cursor-pointer hover:bg-muted/10 transition-colors"
-                        onClick={() => setSelectedMetric(m)}
-                      >
-                        <td className="py-3 pr-4 font-medium text-foreground">{m.label}</td>
-                        <td className="py-3 pr-4 font-mono font-bold text-foreground">{m.amount}</td>
-                        <td className="py-3 pr-4">
-                          <TrendIcon className={cn("w-4 h-4", trendColor)} />
-                        </td>
-                        <td className="py-3">
-                          <Button
-                            variant="ghost"
-                            size="sm"
-                            className="h-7 text-xs gap-1 text-primary"
-                            onClick={(e) => { e.stopPropagation(); setSelectedMetric(m); }}
-                          >
-                            Details <ArrowRight className="w-3 h-3" />
-                          </Button>
-                        </td>
-                      </tr>
-                    );
-                  })}
-                  {company.effective_tax_rate && (
-                    <tr>
-                      <td className="py-3 pr-4 font-medium text-foreground">Eff. Tax Rate</td>
-                      <td className="py-3 pr-4 font-mono font-bold text-foreground">{company.effective_tax_rate}</td>
-                      <td className="py-3 pr-4"><Minus className="w-4 h-4 text-muted-foreground" /></td>
-                      <td className="py-3"></td>
-                    </tr>
-                  )}
-                </tbody>
-              </table>
-            </div>
+            <SpendingRecordTable
+              metrics={report.spending_record}
+              effectiveTaxRate={company.effective_tax_rate}
+              companyName={company.name}
+            />
           )}
 
           {/* Active signals by category with View Receipt buttons */}
