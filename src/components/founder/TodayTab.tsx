@@ -7,8 +7,10 @@ import { Skeleton } from "@/components/ui/skeleton";
 import {
   ClipboardList, Activity, Database, AlertCircle, Zap,
   StickyNote, AlertOctagon, ChevronRight, Link2, CheckCircle,
+  Clock, Search,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { useEffect } from "react";
 
 /* ─── Card Shell ─── */
 function TriageCard({ title, icon: Icon, children, iconColor = "text-primary" }: {
@@ -136,12 +138,12 @@ export function TodayTab() {
     queryFn: async () => {
       const { data } = await supabase
         .from("beta_feedback")
-        .select("feedback_type, message")
+        .select("feedback_type, message, created_at")
         .order("created_at", { ascending: false })
         .limit(20);
-      if (!data || data.length === 0) return { themes: [], count: 0 };
+      if (!data || data.length === 0) return { themes: [] as [string, { count: number; lastSeen: string }][], count: 0 };
 
-      const themes: Record<string, number> = {};
+      const themes: Record<string, { count: number; lastSeen: string }> = {};
       for (const f of data) {
         const msg = (f.message || "").toLowerCase();
         let theme = "Other";
@@ -150,12 +152,49 @@ export function TodayTab() {
         else if (msg.includes("broken") || msg.includes("error") || msg.includes("bug") || msg.includes("crash")) theme = "Broken UX";
         else if (msg.includes("feature") || msg.includes("wish") || msg.includes("would be") || msg.includes("add")) theme = "Feature requests";
         else if (msg.includes("content") || msg.includes("info") || msg.includes("missing") || msg.includes("empty")) theme = "Content quality";
-        themes[theme] = (themes[theme] || 0) + 1;
+        if (!themes[theme]) themes[theme] = { count: 0, lastSeen: f.created_at };
+        themes[theme].count += 1;
+        if (f.created_at > themes[theme].lastSeen) themes[theme].lastSeen = f.created_at;
       }
-      const sorted = Object.entries(themes).sort((a, b) => b[1] - a[1]).slice(0, 3);
+      const sorted = Object.entries(themes).sort((a, b) => b[1].count - a[1].count).slice(0, 3) as [string, { count: number; lastSeen: string }][];
       return { themes: sorted, count: data.length };
     },
   });
+
+  // ─── Since Last Visit ───
+  const LAST_VISIT_KEY = "founder-last-visit";
+  const { data: sinceLastVisit, isLoading: sinceLoading } = useQuery({
+    queryKey: ["founder-since-last-visit"],
+    queryFn: async () => {
+      const lastVisit = localStorage.getItem(LAST_VISIT_KEY);
+      const since = lastVisit || new Date(Date.now() - 24 * 60 * 60 * 1000).toISOString();
+
+      const [newCompanies, newReviews, newFeedback] = await Promise.all([
+        supabase.from("companies").select("id", { count: "exact", head: true }).gte("created_at", since),
+        supabase.from("pending_company_reviews").select("id", { count: "exact", head: true }).gte("created_at", since),
+        supabase.from("beta_feedback").select("id", { count: "exact", head: true }).gte("created_at", since),
+      ]);
+
+      return {
+        companies: newCompanies.count ?? 0,
+        reviews: newReviews.count ?? 0,
+        issues: newFeedback.count ?? 0,
+        hasPreviousVisit: !!lastVisit,
+      };
+    },
+  });
+
+  // Save visit timestamp on mount
+  useEffect(() => {
+    localStorage.setItem(LAST_VISIT_KEY, new Date().toISOString());
+  }, []);
+
+  const timeAgo = (ts: string) => {
+    const mins = Math.floor((Date.now() - new Date(ts).getTime()) / 60000);
+    if (mins < 60) return `${mins}m ago`;
+    if (mins < 1440) return `${Math.floor(mins / 60)}h ago`;
+    return `${Math.floor(mins / 1440)}d ago`;
+  };
 
   return (
     <div className="space-y-4">
@@ -240,37 +279,59 @@ export function TodayTab() {
         )}
       </TriageCard>
 
-      {/* 4. User Friction — capped to 3 themes */}
+      {/* 4. User Friction — with counts and last seen */}
       <TriageCard title="User Friction" icon={AlertCircle} iconColor="text-destructive">
         {frictionLoading ? (
           <Skeleton className="h-10 w-full" />
         ) : !friction || friction.count === 0 ? (
           <EmptyLine text="No user friction captured yet." />
         ) : (
-          friction.themes.map(([theme, count]) => (
+          friction.themes.map(([theme, info]) => (
             <div key={theme} className="flex items-center justify-between text-sm">
-              <span className="text-muted-foreground">{theme}</span>
-              <Badge variant="outline" className="text-xs font-mono">{count}</Badge>
+              <div className="min-w-0">
+                <span className="text-muted-foreground">{theme}</span>
+                <span className="text-xs text-muted-foreground ml-1">({info.count})</span>
+              </div>
+              <span className="text-[10px] text-muted-foreground font-mono shrink-0">{timeAgo(info.lastSeen)}</span>
             </div>
           ))
         )}
       </TriageCard>
 
-      {/* 5. Quick Actions */}
+      {/* 5. Since Last Visit */}
+      <TriageCard title="Since Last Visit" icon={Clock} iconColor="text-primary">
+        {sinceLoading ? (
+          <Skeleton className="h-10 w-full" />
+        ) : !sinceLastVisit || (!sinceLastVisit.companies && !sinceLastVisit.reviews && !sinceLastVisit.issues) ? (
+          <EmptyLine text={sinceLastVisit?.hasPreviousVisit ? "No changes since your last visit." : "First visit — tracking starts now."} />
+        ) : (
+          <>
+            {sinceLastVisit.companies > 0 && <MetricRow label="New companies indexed" value={`+${sinceLastVisit.companies}`} />}
+            {sinceLastVisit.reviews > 0 && <MetricRow label="Reviews submitted" value={`+${sinceLastVisit.reviews}`} />}
+            {sinceLastVisit.issues > 0 && <MetricRow label="Issues detected" value={`+${sinceLastVisit.issues}`} />}
+          </>
+        )}
+      </TriageCard>
+
+      {/* 6. Quick Actions */}
       <TriageCard title="Quick Actions" icon={Zap} iconColor="text-civic-yellow">
-        {!priorityLoading && priority && priority.brokenLinkCount > 0 && (
+        <Button variant="outline" size="sm" className="w-full justify-start text-xs gap-2 h-8" onClick={() => navigate("/founder?tab=queue")}>
+          <ClipboardList className="w-3.5 h-3.5" /> Review pending companies
+        </Button>
+        <Button variant="outline" size="sm" className="w-full justify-start text-xs gap-2 h-8" onClick={() => navigate("/founder?tab=signals")}>
+          <Search className="w-3.5 h-3.5" /> Approve research
+        </Button>
+        {!priorityLoading && priority && priority.brokenLinkCount > 0 ? (
           <Button variant="destructive" size="sm" className="w-full justify-start text-xs gap-2 h-8" onClick={() => navigate("/founder?tab=signals")}>
             <Link2 className="w-3.5 h-3.5" /> Fix broken links ({priority.brokenLinkCount})
           </Button>
+        ) : (
+          <Button variant="outline" size="sm" className="w-full justify-start text-xs gap-2 h-8 text-muted-foreground" disabled>
+            <CheckCircle className="w-3.5 h-3.5 text-civic-green" /> No broken links
+          </Button>
         )}
-        <Button variant="outline" size="sm" className="w-full justify-start text-xs gap-2 h-8" onClick={() => navigate("/founder?tab=queue")}>
-          <ClipboardList className="w-3.5 h-3.5" /> Review pending items
-        </Button>
-        <Button variant="outline" size="sm" className="w-full justify-start text-xs gap-2 h-8" onClick={() => navigate("/founder?tab=signals")}>
-          <Database className="w-3.5 h-3.5" /> Check data health
-        </Button>
         <Button variant="outline" size="sm" className="w-full justify-start text-xs gap-2 h-8" onClick={() => navigate("/founder?tab=notes")}>
-          <StickyNote className="w-3.5 h-3.5" /> Add founder note
+          <StickyNote className="w-3.5 h-3.5" /> Add note
         </Button>
       </TriageCard>
       </div>
