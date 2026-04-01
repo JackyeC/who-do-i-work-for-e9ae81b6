@@ -162,13 +162,13 @@ export function TodayTab() {
       {/* Priority */}
       {priorityLoading ? (
         <Skeleton className="h-12 rounded-2xl" />
-      ) : priority && priority.length > 0 ? (
+      ) : priority && priority.items.length > 0 ? (
         <div className="bg-destructive/5 border border-destructive/20 rounded-2xl p-4">
           <h3 className="text-xs font-semibold text-destructive uppercase tracking-wider mb-2.5 flex items-center gap-1.5">
             <AlertOctagon className="w-3.5 h-3.5" /> Priority
           </h3>
           <div className="space-y-1.5">
-            {priority.map((item) => (
+            {priority.items.map((item) => (
               <button
                 key={item.label}
                 onClick={() => navigate(`/founder?tab=${item.tab}`)}
