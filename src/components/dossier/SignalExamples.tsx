@@ -106,7 +106,7 @@ export function SignalExamples({ companyId }: SignalExamplesProps) {
         </p>
       </div>
       {signals.map((signal: PolicySignal) => {
-        const conf = confidenceLabel(signal.confidence_score);
+        const conf = normalizeConfidence(signal.confidence_score)!;
         return (
           <div
             key={signal.id}
