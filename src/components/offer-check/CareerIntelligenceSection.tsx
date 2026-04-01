@@ -3,9 +3,10 @@ import { supabase } from "@/integrations/supabase/client";
 import { SourceLabel, type SourceTier } from "@/components/ui/source-label";
 import {
   Briefcase, TrendingUp, DollarSign, ShieldCheck,
-  BarChart3, Target, Info, AlertTriangle,
+  BarChart3, Target, Info, AlertTriangle, Clock,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { getSignalFreshness, getLastUpdatedLabel, type FreshnessInfo } from "@/lib/signal-freshness";
 
 interface Props {
   companyId: string;
@@ -21,6 +22,7 @@ interface InsightRow {
   detail: string;
   tier: SourceTier;
   iconColor?: string;
+  freshness: FreshnessInfo;
 }
 
 export default function CareerIntelligenceSection({ companyId, companyName, role, civicScore, employerClarityScore }: Props) {
@@ -35,25 +37,28 @@ export default function CareerIntelligenceSection({ companyId, companyName, role
         execTurnover,
         careerPaths,
       ] = await Promise.all([
-        (supabase.from("company_warn_notices" as any) as any).select("employees_affected").eq("company_id", companyId),
-        supabase.from("company_worker_sentiment").select("sentiment").eq("company_id", companyId),
-        supabase.from("company_jobs").select("id, title", { count: "exact" }).eq("company_id", companyId).eq("is_active", true).limit(5),
-        (supabase.from("compensation_data" as any) as any).select("role_title, salary_range_min, salary_range_max, source_type").eq("company", companyId).limit(5),
-        supabase.from("company_executives").select("id", { count: "exact", head: true }).eq("company_id", companyId).not("departed_at", "is", null),
-        supabase.from("career_paths").select("role_title, next_role, success_rate_pct").eq("company_id", companyId).limit(3),
+        (supabase.from("company_warn_notices" as any) as any).select("employees_affected, notice_date").eq("company_id", companyId),
+        supabase.from("company_worker_sentiment").select("sentiment, created_at").eq("company_id", companyId),
+        supabase.from("company_jobs").select("id, title, created_at", { count: "exact" }).eq("company_id", companyId).eq("is_active", true).limit(5),
+        (supabase.from("compensation_data" as any) as any).select("role_title, salary_range_min, salary_range_max, source_type, created_at").eq("company", companyId).limit(5),
+        supabase.from("company_executives").select("id, created_at", { count: "exact", head: true }).eq("company_id", companyId).not("departed_at", "is", null),
+        supabase.from("career_paths").select("role_title, next_role, success_rate_pct, created_at").eq("company_id", companyId).limit(3),
       ]);
 
       return {
         warnCount: warns.data?.length ?? 0,
         totalAffected: (warns.data ?? []).reduce((s: number, w: any) => s + (w.employees_affected || 0), 0),
+        latestWarnDate: (warns.data ?? []).sort((a: any, b: any) => (b.notice_date ?? "").localeCompare(a.notice_date ?? ""))[0]?.notice_date ?? null,
         positiveSentiment: (sentiment.data ?? []).filter((s: any) => s.sentiment === "positive").length,
         negativeSentiment: (sentiment.data ?? []).filter((s: any) => s.sentiment === "negative").length,
         totalSentiment: sentiment.data?.length ?? 0,
+        latestSentimentDate: (sentiment.data ?? [])[0]?.created_at ?? null,
         activeJobs: jobs.count ?? 0,
         jobTitles: (jobs.data ?? []).map((j: any) => j.title as string),
-        compensation: (compensation.data ?? []) as any[] as { role_title: string; salary_range_min: number; salary_range_max: number; source_type: string }[],
+        latestJobDate: (jobs.data ?? [])[0]?.created_at ?? null,
+        compensation: (compensation.data ?? []) as any[] as { role_title: string; salary_range_min: number; salary_range_max: number; source_type: string; created_at: string }[],
         execTurnover: execTurnover.count ?? 0,
-        careerPaths: (careerPaths.data ?? []) as { role_title: string; next_role: string; success_rate_pct: number | null }[],
+        careerPaths: (careerPaths.data ?? []) as { role_title: string; next_role: string; success_rate_pct: number | null; created_at: string }[],
       };
     },
   });
@@ -62,8 +67,10 @@ export default function CareerIntelligenceSection({ companyId, companyName, role
   if (!data) return null;
 
   const insights: InsightRow[] = [];
+  const allDates: (string | null)[] = [];
 
   // Role stability
+  allDates.push(data.latestWarnDate);
   const stabilityRisk = data.warnCount > 2 ? "high" : data.warnCount > 0 ? "moderate" : "low";
   if (stabilityRisk === "high") {
     insights.push({
@@ -72,6 +79,7 @@ export default function CareerIntelligenceSection({ companyId, companyName, role
       detail: `${data.warnCount} layoff events affecting ${data.totalAffected.toLocaleString()} workers suggest elevated risk. Consider asking about recent restructuring.`,
       tier: "verified",
       iconColor: "text-destructive",
+      freshness: getSignalFreshness(data.latestWarnDate),
     });
   } else if (stabilityRisk === "moderate") {
     insights.push({
@@ -80,6 +88,7 @@ export default function CareerIntelligenceSection({ companyId, companyName, role
       detail: `Some workforce reductions on record (${data.totalAffected.toLocaleString()} affected). Ask about team stability and growth plans in your interview.`,
       tier: "verified",
       iconColor: "text-civic-yellow",
+      freshness: getSignalFreshness(data.latestWarnDate),
     });
   } else {
     insights.push({
@@ -87,10 +96,13 @@ export default function CareerIntelligenceSection({ companyId, companyName, role
       title: "Role Stability",
       detail: "No mass layoff events found in public records. This is a positive signal for workforce stability.",
       tier: "no_evidence",
+      freshness: getSignalFreshness(null),
     });
   }
 
   // Compensation signals
+  const compDate = data.compensation[0]?.created_at ?? null;
+  allDates.push(compDate);
   if (data.compensation.length > 0) {
     const relevant = role
       ? data.compensation.find(c => c.role_title?.toLowerCase().includes(role.toLowerCase()))
@@ -101,6 +113,7 @@ export default function CareerIntelligenceSection({ companyId, companyName, role
         title: "Compensation Signals",
         detail: `${relevant.role_title}: $${(relevant.salary_range_min ?? 0).toLocaleString()}–$${(relevant.salary_range_max ?? 0).toLocaleString()}. Source: ${relevant.source_type || "reported"}.`,
         tier: "multi_source",
+        freshness: getSignalFreshness(relevant.created_at),
       });
     } else {
       insights.push({
@@ -108,6 +121,7 @@ export default function CareerIntelligenceSection({ companyId, companyName, role
         title: "Compensation Signals",
         detail: `${data.compensation.length} salary data point(s) on file. No exact match for "${role ?? "your role"}" yet.`,
         tier: "inferred",
+        freshness: getSignalFreshness(compDate),
       });
     }
   } else {
@@ -116,10 +130,12 @@ export default function CareerIntelligenceSection({ companyId, companyName, role
       title: "Compensation Signals",
       detail: "No salary or compensation data available yet. Consider using Glassdoor or Levels.fyi for comparison.",
       tier: "no_evidence",
+      freshness: getSignalFreshness(null),
     });
   }
 
   // Negotiation signals
+  allDates.push(data.latestJobDate);
   const negotiationPower: string[] = [];
   if (data.activeJobs > 5) negotiationPower.push(`${data.activeJobs} active job listings suggest strong hiring demand`);
   if (data.execTurnover > 2) negotiationPower.push("leadership turnover may create openings for negotiation");
@@ -132,6 +148,7 @@ export default function CareerIntelligenceSection({ companyId, companyName, role
       title: "Negotiation Signals",
       detail: negotiationPower.join(". ") + ".",
       tier: data.activeJobs > 0 ? "multi_source" : "inferred",
+      freshness: getSignalFreshness(data.latestJobDate),
     });
   } else {
     insights.push({
@@ -139,10 +156,13 @@ export default function CareerIntelligenceSection({ companyId, companyName, role
       title: "Negotiation Signals",
       detail: "Not enough data to assess negotiation leverage yet. Ask about competing offers during your process.",
       tier: "no_evidence",
+      freshness: getSignalFreshness(null),
     });
   }
 
   // Career trajectory
+  const pathDate = data.careerPaths[0]?.created_at ?? null;
+  allDates.push(pathDate);
   if (data.careerPaths.length > 0) {
     const paths = data.careerPaths.map(p => `${p.role_title} → ${p.next_role}${p.success_rate_pct ? ` (${p.success_rate_pct}% success)` : ""}`).join("; ");
     insights.push({
@@ -150,6 +170,7 @@ export default function CareerIntelligenceSection({ companyId, companyName, role
       title: "Career Trajectory",
       detail: `Known progression paths: ${paths}.`,
       tier: "inferred",
+      freshness: getSignalFreshness(pathDate),
     });
   } else if (data.activeJobs > 0) {
     insights.push({
@@ -157,6 +178,7 @@ export default function CareerIntelligenceSection({ companyId, companyName, role
       title: "Career Trajectory",
       detail: `${data.activeJobs} open role(s) suggest growth. Sample titles: ${data.jobTitles.slice(0, 3).join(", ") || "various"}.`,
       tier: "inferred",
+      freshness: getSignalFreshness(data.latestJobDate),
     });
   } else {
     insights.push({
@@ -164,10 +186,12 @@ export default function CareerIntelligenceSection({ companyId, companyName, role
       title: "Career Trajectory",
       detail: "No career path data or active listings available yet.",
       tier: "no_evidence",
+      freshness: getSignalFreshness(null),
     });
   }
 
   // Worker sentiment → candidate meaning
+  allDates.push(data.latestSentimentDate);
   if (data.totalSentiment > 0) {
     const ratio = data.positiveSentiment / data.totalSentiment;
     const verdict = ratio >= 0.6 ? "Mostly positive" : ratio >= 0.4 ? "Mixed" : "Concerning";
@@ -176,10 +200,12 @@ export default function CareerIntelligenceSection({ companyId, companyName, role
       title: "What Workers Are Saying",
       detail: `${verdict} sentiment (${data.positiveSentiment}/${data.totalSentiment} positive). This reflects the experience of current and former employees.`,
       tier: "inferred",
+      freshness: getSignalFreshness(data.latestSentimentDate),
     });
   }
 
   const hasData = insights.some(r => r.tier !== "no_evidence");
+  const lastUpdated = getLastUpdatedLabel(allDates);
 
   return (
     <div className="space-y-3">
@@ -191,6 +217,12 @@ export default function CareerIntelligenceSection({ companyId, companyName, role
         {!hasData && (
           <span className="text-[10px] text-muted-foreground italic">Limited data available</span>
         )}
+      </div>
+
+      {/* Last updated header */}
+      <div className="flex items-center gap-1.5 text-xs text-muted-foreground">
+        <Clock className="w-3 h-3 shrink-0" />
+        <span>{lastUpdated}</span>
       </div>
 
       {!hasData && (
@@ -215,12 +247,27 @@ export default function CareerIntelligenceSection({ companyId, companyName, role
                     <SourceLabel tier={row.tier} className="shrink-0 mt-0.5" />
                   </div>
                   <p className="text-xs text-muted-foreground mt-0.5 leading-relaxed">{row.detail}</p>
+                  {/* Freshness label */}
+                  <div className="flex items-center gap-2 mt-1.5">
+                    <span className={cn("inline-flex items-center gap-1 text-[10px] font-medium", row.freshness.className)}>
+                      <span className={cn("w-1.5 h-1.5 rounded-full shrink-0", row.freshness.dotClassName)} />
+                      {row.freshness.label}
+                    </span>
+                    <span className="text-[10px] text-muted-foreground/50">
+                      {row.freshness.timeLabel}
+                    </span>
+                  </div>
                 </div>
               </div>
             </div>
           );
         })}
       </div>
+
+      {/* System note */}
+      <p className="text-[11px] text-muted-foreground/60 text-center pt-1">
+        Signals are continuously updated as new public data becomes available.
+      </p>
     </div>
   );
 }
