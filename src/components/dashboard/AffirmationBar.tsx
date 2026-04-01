@@ -40,6 +40,7 @@ export function AffirmationBar() {
           💪
         </span>
         <p className="text-sm text-[hsl(var(--text-secondary))] leading-relaxed">
+          <span className="font-bold text-primary">{count} applications this week.</span>{" "}
           Nothing about this phase is supposed to feel clear. You're still on track. Keep going.
         </p>
       </div>
