@@ -1,5 +1,6 @@
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
+import { decodeEscapes, isLikelyEnglish, isUSOrEmployerRelevant } from "@/lib/ticker-filters";
 
 export interface TickerItem {
   id: string;
@@ -59,8 +60,12 @@ export function useTickerItems() {
 
       return ((tickerRes.data as any[]) ?? []).map((item): TickerItem => ({
         ...item,
+        message: decodeEscapes(item.message || ""),
+        company_name: item.company_name ? decodeEscapes(item.company_name) : null,
         company_slug: item.company_name ? (slugMap.get(item.company_name) || null) : null,
-      }));
+      })).filter(item =>
+        isLikelyEnglish(item.message) && isUSOrEmployerRelevant(item.message, item.company_name)
+      );
     },
     staleTime: 60_000,
     refetchInterval: 120_000,
