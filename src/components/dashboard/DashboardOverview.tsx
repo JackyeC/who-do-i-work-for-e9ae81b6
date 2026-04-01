@@ -13,6 +13,7 @@ import { AlignedValuesSearch } from "./AlignedValuesSearch";
 import { FoundingMemberBadge } from "@/components/FoundingMemberBadge";
 import { JackyeMessage } from "./JackyeMessage";
 import { AffirmationBar } from "./AffirmationBar";
+import { YourJourney } from "./YourJourney";
 
 interface DashboardOverviewProps {
   onNavigate: (tab: string) => void;
@@ -266,6 +267,9 @@ export function DashboardOverview({ onNavigate }: DashboardOverviewProps) {
           </form>
         </div>
       </motion.div>
+
+      {/* ═══ YOUR JOURNEY ═══ */}
+      <YourJourney />
 
       {/* ═══ FOUNDING MEMBER BANNER ═══ */}
       <motion.div {...anim(0.03)}>
