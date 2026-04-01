@@ -105,7 +105,7 @@ export function SignalsDataTab() {
         return "partial";
       };
 
-      return [
+      const unsorted = [
         { name: "SEC / Corporate", status: getStatus(sec.data) },
         { name: "WARN Notices", status: getStatus(warn.data) },
         { name: "FEC / Political", status: getStatus(fec.data, "id") },
@@ -113,6 +113,8 @@ export function SignalsDataTab() {
         { name: "OSHA", status: "partial" as const },
         { name: "Manual Research", status: "healthy" as const },
       ];
+      const order: Record<CoverageLevel, number> = { strong: 0, limited: 1, none: 2 };
+      return unsorted.sort((a, b) => order[mapStatusToCoverage(a.status)] - order[mapStatusToCoverage(b.status)]);
     },
   });
 
