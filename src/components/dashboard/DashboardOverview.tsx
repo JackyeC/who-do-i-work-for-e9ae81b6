@@ -12,6 +12,7 @@ import { useState } from "react";
 import { AlignedValuesSearch } from "./AlignedValuesSearch";
 import { FoundingMemberBadge } from "@/components/FoundingMemberBadge";
 import { JackyeMessage } from "./JackyeMessage";
+import { AffirmationBar } from "./AffirmationBar";
 
 interface DashboardOverviewProps {
   onNavigate: (tab: string) => void;
@@ -239,6 +240,9 @@ export function DashboardOverview({ onNavigate }: DashboardOverviewProps) {
 
       {/* ═══ 1 — JACKYE'S MESSAGE ═══ */}
       <JackyeMessage firstName={firstName} />
+
+      {/* ═══ AFFIRMATION BAR ═══ */}
+      <AffirmationBar />
 
       {/* ═══ FOUNDING MEMBER BANNER ═══ */}
       <motion.div {...anim(0.03)}>
