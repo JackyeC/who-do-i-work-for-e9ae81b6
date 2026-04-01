@@ -79,9 +79,7 @@ const Disclaimers = () => {
           <Link to="/methodology" className="text-sm text-primary hover:underline">Methodology</Link>
         </div>
       </div>
-    </main>
-    <Footer />
-  </div>
+    </div>
   );
 };
 

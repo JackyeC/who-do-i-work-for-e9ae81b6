@@ -72,9 +72,7 @@ const PrivacyPolicy = () => {
           <p>For privacy-related questions or requests, please use the Request Correction form or contact us through the platform.</p>
         </section>
       </div>
-    </main>
-    <Footer />
-  </div>
+    </div>
   );
 };
 
