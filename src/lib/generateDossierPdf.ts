@@ -531,19 +531,13 @@ function buildBusinessFoundation(doc: jsPDF, data: DossierPdfData): number {
    SECTION 2: INNOVATION AUDIT
    ═══════════════════════════════════════════ */
 
-function buildInnovationAudit(doc: jsPDF, data: DossierPdfData): number {
-  doc.addPage();
-  let y = 18;
+function buildInnovationAudit(doc: jsPDF, y: number): number {
+  // Phase 3: No unconditional addPage — continue from previous section
+  y = safeY(doc, y, 50);
   y = sectionHeader(doc, y, 2, "Innovation Audit", "Patent counts, technology clusters, and R&D themes", "low");
 
-  doc.setFillColor(...C.fog);
-  doc.roundedRect(ML, y, CW, 18, 2, 2, "F");
-  doc.setFont("helvetica", "normal");
-  doc.setFontSize(8);
-  doc.setTextColor(...C.slate);
-  doc.text("Patent and technology cluster data is enriched via Google Patents and SEC 10-K filings.", ML + 6, y + 7);
-  doc.text("Full innovation pipeline details available upon data enrichment scan completion.", ML + 6, y + 13);
-  y += 26;
+  // Phase 4: styled empty state
+  y = drawEmptyState(doc, y, "No material findings yet — patent and technology cluster data enriched upon scan completion.");
 
   return y;
 }
