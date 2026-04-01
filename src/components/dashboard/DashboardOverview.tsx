@@ -13,6 +13,7 @@ import { AlignedValuesSearch } from "./AlignedValuesSearch";
 import { FoundingMemberBadge } from "@/components/FoundingMemberBadge";
 import { JackyeMessage } from "./JackyeMessage";
 import { AffirmationBar } from "./AffirmationBar";
+import { YourJourney } from "./YourJourney";
 
 interface DashboardOverviewProps {
   onNavigate: (tab: string) => void;
