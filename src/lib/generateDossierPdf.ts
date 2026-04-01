@@ -452,7 +452,7 @@ function buildBusinessFoundation(doc: jsPDF, data: DossierPdfData): number {
     ["Website", company.website_url || "—"],
   ];
 
-  doc.autoTable({
+  autoTable(doc, {
     ...tableStyle(y),
     head: [["Attribute", "Value"]],
     body: overviewItems,
@@ -526,7 +526,7 @@ function buildEcosystemSection(doc: jsPDF, data: DossierPdfData): number {
   drawKpiBox(doc, ML + 64, y, 50, "Active Contracts", `${data.contracts.length}`, C.indigo);
   y += 30;
 
-  doc.autoTable({
+  autoTable(doc, {
     ...tableStyle(y),
     head: [["Agency", "Value", "Description", "Year", "Confidence"]],
     body: data.contracts.slice(0, 25).map(c => [
@@ -558,7 +558,7 @@ function buildWorkforceIntel(doc: jsPDF, data: DossierPdfData): number {
     drawKpiBox(doc, ML + 64, y, 60, "Workers Affected", totalAffected.toLocaleString(), C.amber);
     y += 30;
 
-    doc.autoTable({
+    autoTable(doc, {
       ...tableStyle(y),
       head: [["Date", "Employees Affected", "State", "Type"]],
       body: data.warnNotices.slice(0, 20).map(w => [
@@ -602,7 +602,7 @@ function buildWorkforceIntel(doc: jsPDF, data: DossierPdfData): number {
     doc.text("Pay Equity & Demographics Signals", ML, y);
     y += 4;
 
-    doc.autoTable({
+    autoTable(doc, {
       ...tableStyle(y),
       head: [["Signal", "Evidence", "Confidence"]],
       body: data.payEquity.slice(0, 15).map(p => [
@@ -642,7 +642,7 @@ function buildDecisionLogic(doc: jsPDF, data: DossierPdfData): number {
     doc.text("Key Decision Makers", ML, y);
     y += 4;
 
-    doc.autoTable({
+    autoTable(doc, {
       ...tableStyle(y),
       head: [["Name", "Title", "Political Donations"]],
       body: data.executives.slice(0, 20).map(e => [
@@ -683,7 +683,7 @@ function buildPoliticalReceipts(doc: jsPDF, data: DossierPdfData): number {
     doc.text("Executive Political Donations", ML, y);
     y += 4;
 
-    doc.autoTable({
+    autoTable(doc, {
       ...tableStyle(y),
       head: [["Name", "Title", "Total Donations"]],
       body: donatingExecs.sort((a, b) => b.total_donations - a.total_donations).slice(0, 20)
@@ -702,7 +702,7 @@ function buildPoliticalReceipts(doc: jsPDF, data: DossierPdfData): number {
     doc.text("Supported Candidates — PAC & Executive Giving", ML, y);
     y += 4;
 
-    doc.autoTable({
+    autoTable(doc, {
       ...tableStyle(y),
       head: [["Candidate", "Party", "Amount", "⚠ Flag"]],
       body: data.candidates.sort((a, b) => b.amount - a.amount).slice(0, 25)
@@ -732,7 +732,7 @@ function buildPoliticalReceipts(doc: jsPDF, data: DossierPdfData): number {
     doc.text("Lobbying Activity by Issue", ML, y);
     y += 4;
 
-    doc.autoTable({
+    autoTable(doc, {
       ...tableStyle(y),
       head: [["Issue Area", "Spend", "Related Bill"]],
       body: data.lobbyingIssues.slice(0, 20).map(l => [
@@ -754,7 +754,7 @@ function buildPoliticalReceipts(doc: jsPDF, data: DossierPdfData): number {
     doc.text("Public Stance vs. Spending Reality (Say-Do Gap™)", ML, y);
     y += 4;
 
-    doc.autoTable({
+    autoTable(doc, {
       ...tableStyle(y),
       head: [["Topic", "Public Position", "Spending Reality", "Gap"]],
       body: data.publicStances.slice(0, 15).map(s => [
@@ -782,7 +782,7 @@ function buildPoliticalReceipts(doc: jsPDF, data: DossierPdfData): number {
     doc.text("Opaque Funding Channels (Dark Money)", ML, y);
     y += 4;
 
-    doc.autoTable({
+    autoTable(doc, {
       ...tableStyle(y),
       head: [["Organization", "Type", "Relationship", "Est. Amount"]],
       body: data.darkMoney.slice(0, 15).map(d => [
@@ -802,7 +802,7 @@ function buildPoliticalReceipts(doc: jsPDF, data: DossierPdfData): number {
     doc.text("Revolving Door — Government ↔ Corporate", ML, y);
     y += 4;
 
-    doc.autoTable({
+    autoTable(doc, {
       ...tableStyle(y),
       head: [["Person", "Prior Government Role", "Current Corporate Role"]],
       body: data.revolvingDoor.slice(0, 15).map(r => [r.person, r.prior_role, r.new_role]),
@@ -819,7 +819,7 @@ function buildPoliticalReceipts(doc: jsPDF, data: DossierPdfData): number {
     doc.text("Values & ESG Signals", ML, y);
     y += 4;
 
-    doc.autoTable({
+    autoTable(doc, {
       ...tableStyle(y),
       head: [["Category", "Signal Summary"]],
       body: data.valuesSignals.slice(0, 25).map(s => [
@@ -881,7 +881,7 @@ function buildMarch2026Alert(doc: jsPDF, data: DossierPdfData): number {
     doc.text(`⚠ ${baconFlagged.length} FLAGGED CANDIDATE(S) DETECTED`, ML, y);
     y += 4;
 
-    doc.autoTable({
+    autoTable(doc, {
       ...tableStyle(y),
       head: [["Candidate", "Party", "Amount", "Flag Reason"]],
       body: baconFlagged.map(c => [c.name, c.party, fmt$(c.amount), c.flag_reason || "Bacon Act Sponsor"]),
@@ -953,7 +953,7 @@ function buildMarch2026Alert(doc: jsPDF, data: DossierPdfData): number {
     doc.text(`⚠ ${ftcLobbying.length} AI/FTC-related lobbying issue(s) detected`, ML, y);
     y += 4;
 
-    doc.autoTable({
+    autoTable(doc, {
       ...tableStyle(y),
       head: [["Issue Area", "Spend", "Related Bill"]],
       body: ftcLobbying.map(l => [l.issue_area, l.amount ? fmt$(l.amount) : "—", l.bill_number || "—"]),
