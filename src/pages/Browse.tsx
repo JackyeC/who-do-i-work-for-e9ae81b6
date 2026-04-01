@@ -382,9 +382,16 @@ export default function Browse() {
                       </div>
                       <div className="mt-2.5 pt-2.5 border-t border-border/30 flex items-center justify-between">
                         <EmployerClarityBadge score={company.civicFootprintScore} size="sm" />
-                        <span className="text-xs text-muted-foreground tabular-nums">
-                          {company.totalPacSpending > 0 ? formatCurrency(company.totalPacSpending) : "No PAC"}
-                        </span>
+                        <div className="flex items-center gap-2">
+                          {sortBy === "cis" && company.careerIntelligenceScore != null && (
+                            <span className="text-xs font-semibold text-primary tabular-nums">
+                              CIS {company.careerIntelligenceScore.toFixed(1)}
+                            </span>
+                          )}
+                          <span className="text-xs text-muted-foreground tabular-nums">
+                            {company.totalPacSpending > 0 ? formatCurrency(company.totalPacSpending) : "No PAC"}
+                          </span>
+                        </div>
                       </div>
                     </CardContent>
                   </Card>
