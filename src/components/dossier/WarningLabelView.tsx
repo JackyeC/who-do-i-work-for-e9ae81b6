@@ -658,6 +658,7 @@ function getSourceInfo(signal: { signal_type: string; source_url?: string | null
 
 /* ─── Receipts Section ─── */
 function ReceiptsSection({ signalsByCategory }: { signalsByCategory: Record<string, Array<{ issue_category: string; signal_type: string; description: string; amount?: number | null; confidence_score?: string; source_url?: string | null; transaction_date?: string | null }>> }) {
+  const { openSource } = useSourceDrawer();
   const [expandedCats, setExpandedCats] = useState<Record<string, boolean>>(() => {
     const initial: Record<string, boolean> = {};
     Object.keys(signalsByCategory).forEach(cat => { initial[cat] = true; });
