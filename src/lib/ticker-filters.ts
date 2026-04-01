@@ -58,18 +58,25 @@ const RELEVANCE_KEYWORDS = [
   "furlough", "warn act", "warn notice", "severance",
   "union", "organiz", "strike", "walkout", "picket", "collective bargaining",
   "minimum wage", "overtime", "wage theft", "pay equity", "pay gap",
+  "worker", "workers", "workforce", "employee", "employees", "employer",
+  "hiring", "fired", "termination", "job cuts", "job loss",
   // Political spending & lobbying
   "pac ", "lobby", "campaign contribut", "political spending", "dark money",
   "super pac", "fec ", "disclosure",
   // Workplace
   "discriminat", "harass", "retaliat", "whistleblow", "wrongful termination",
   "class action", "dei ", "diversity", "equity", "inclusion",
+  "workplace", "labor", "labour",
   // AI & hiring
   "ai hiring", "algorithmic", "automated decision", "bias audit",
+  "ai tool", "artificial intelligence",
   // US geographic / institutional
   "congress", "senate", "white house", "federal", "state legislature",
   "supreme court", "circuit court", "district court",
   "u.s.", "united states", "american",
+  // Regulation & policy
+  "regulation", "deregulat", "executive order", "bill ", "legislation",
+  "antitrust", "merger", "acquisition",
 ];
 
 /**
