@@ -11119,7 +11119,6 @@ export type Database = {
         Args: { _company_id: string }
         Returns: number
       }
-      daitch_mokotoff: { Args: { "": string }; Returns: string[] }
       deactivate_expired_jobs: { Args: never; Returns: number }
       decrypt_linkedin_token: {
         Args: { p_user_id: string }
@@ -11129,8 +11128,6 @@ export type Database = {
           linkedin_id: string
         }[]
       }
-      dmetaphone: { Args: { "": string }; Returns: string }
-      dmetaphone_alt: { Args: { "": string }; Returns: string }
       encrypt_linkedin_token: {
         Args: { p_token: string; p_user_id: string }
         Returns: undefined
@@ -11218,8 +11215,6 @@ export type Database = {
         Args: { p_news_id: string; p_user_id: string }
         Returns: number
       }
-      soundex: { Args: { "": string }; Returns: string }
-      text_soundex: { Args: { "": string }; Returns: string }
       trace_influence_chain: {
         Args: { _company_id: string; _max_depth?: number }
         Returns: {
