@@ -83,15 +83,22 @@ const RELEVANCE_KEYWORDS = [
  * Returns true if the item is US-focused or employer-relevant.
  * Items with a company_name from our dataset pass automatically.
  */
-export function isUSOrEmployerRelevant(text: string, companyOrSource: string | null): boolean {
+export function isUSOrEmployerRelevant(
+  text: string,
+  companyOrSource: string | null,
+  /** If true, skip keyword check — item is pre-categorized as relevant */
+  preCategorized = false,
+): boolean {
   if (!text) return false;
 
-  // If it has a tracked company name, it's relevant
-  if (companyOrSource && companyOrSource.length > 2) {
-    // But reject known non-US source domains
+  // Reject known non-US source domains
+  if (companyOrSource) {
     const sourceLower = companyOrSource.toLowerCase();
     if (NON_US_SOURCES.has(sourceLower)) return false;
   }
+
+  // Pre-categorized items (e.g. work_news with category already set) pass
+  if (preCategorized) return true;
 
   const lower = text.toLowerCase();
 
@@ -101,7 +108,6 @@ export function isUSOrEmployerRelevant(text: string, companyOrSource: string | n
   }
 
   // If there's a company name attached (from our dataset), it passes
-  // The ticker_items table always has company_name from our tracked companies
   if (companyOrSource && companyOrSource.length > 2 && !NON_US_SOURCES.has(companyOrSource.toLowerCase())) {
     return true;
   }
