@@ -182,7 +182,7 @@ const VARIANT_CLASSES = {
 
 function BriefingCard({ children, className = "" }: { children: React.ReactNode; className?: string }) {
   return (
-    <div className={`rounded-2xl p-6 bg-card border border-border/30 transition-shadow duration-300 hover:shadow-lg hover:shadow-primary/[0.04] ${className}`}>
+    <div className={`rounded-2xl p-6 bg-card border border-border/30 transition-all duration-300 hover:shadow-lg hover:shadow-primary/[0.04] hover:bg-card/80 ${className}`}>
       {children}
     </div>
   );
