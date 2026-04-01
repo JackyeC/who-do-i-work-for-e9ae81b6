@@ -238,6 +238,7 @@ const App = () => (
                   <Route path="/how-it-works" element={<HowItWorks />} />
                   <Route path="/extension" element={<ChromeExtension />} />
                   <Route path="/store-assets" element={<ChromeWebStoreAssets />} />
+                  <Route path="/person-entity-demo" element={<PersonEntityDemo />} />
                   <Route path="/companies" element={<Navigate to="/browse" replace />} />
                   <Route path="/talent" element={<ProtectedRoute><Talent /></ProtectedRoute>} />
                   <Route path="/examples" element={<Examples />} />
