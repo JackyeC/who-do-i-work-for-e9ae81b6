@@ -562,6 +562,29 @@ function StaticWarningLabel({ data }: { data: CompanyDossier }) {
   );
 }
 
+/* ── Auth-gated wrapper (safe in preview without ClerkProvider) ── */
+function AuthGatedDossier({ data }: { data: typeof COMPANY_DATA[string] }) {
+  const { isFallback } = useClerkWithFallback();
+  const { user } = useAuth();
+
+  // In fallback mode (no ClerkProvider), use Supabase auth state
+  if (isFallback) {
+    return user ? <FullDossierContent data={data} /> : <DossierGateOverlay companyName={data.name} />;
+  }
+
+  // In Clerk-enabled environments, use Clerk components
+  return (
+    <>
+      <SignedOut>
+        <DossierGateOverlay companyName={data.name} />
+      </SignedOut>
+      <SignedIn>
+        <FullDossierContent data={data} />
+      </SignedIn>
+    </>
+  );
+}
+
 /* ── Page ── */
 export default function DossierCoachingGuide() {
   const { slug } = useParams<{ slug: string }>();
