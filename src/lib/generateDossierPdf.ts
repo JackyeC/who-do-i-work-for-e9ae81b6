@@ -727,7 +727,7 @@ function buildPoliticalReceipts(doc: jsPDF, data: DossierPdfData): number {
       ...tableStyle(y),
       head: [["Name", "Title", "Total Donations"]],
       body: donatingExecs.sort((a, b) => b.total_donations - a.total_donations).slice(0, 20)
-        .map(e => [e.name, e.title, fmt$(e.total_donations)]),
+        .map(e => [sanitizeText(e.name), sanitizeText(e.title), fmt$(e.total_donations)]),
       columnStyles: { 2: { halign: "right" as const, cellWidth: 32 } },
     });
     y = doc.lastAutoTable.finalY + 10;
