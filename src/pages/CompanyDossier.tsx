@@ -10,7 +10,9 @@ import { getOGImageUrl } from "@/lib/social-share";
 import {
   Building2, Loader2, Sparkles, Users, Heart, FileSearch,
   BarChart3, Landmark, Eye, AlertTriangle, ChevronDown,
+  ShieldCheck, XCircle as XCircleIcon,
 } from "lucide-react";
+import { SourceLabel, type SourceTier } from "@/components/ui/source-label";
 import { supabase } from "@/integrations/supabase/client";
 import { AuditRequestForm } from "@/components/AuditRequestForm";
 import { Skeleton } from "@/components/ui/skeleton";
