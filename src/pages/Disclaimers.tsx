@@ -1,5 +1,3 @@
-import { Header } from "@/components/Header";
-import { Footer } from "@/components/Footer";
 import { usePageSEO } from "@/hooks/use-page-seo";
 import { ShieldAlert, Bot, Database, UserCheck, Scale, FileText, BarChart3 } from "lucide-react";
 import { Link } from "react-router-dom";
@@ -50,9 +48,7 @@ const Disclaimers = () => {
   });
 
   return (
-  <div className="min-h-screen flex flex-col bg-background">
-    <Header />
-    <main className="flex-1 max-w-3xl mx-auto px-4 py-16">
+    <div className="max-w-3xl mx-auto px-4 py-16">
       <h1 className="text-3xl font-bold text-foreground mb-3 font-display">Disclaimers & Legal Notices</h1>
       <p className="text-sm text-muted-foreground mb-10">
         Last updated: March 12, 2026 · Created by Jackye Clayton
@@ -83,9 +79,7 @@ const Disclaimers = () => {
           <Link to="/methodology" className="text-sm text-primary hover:underline">Methodology</Link>
         </div>
       </div>
-    </main>
-    <Footer />
-  </div>
+    </div>
   );
 };
 
