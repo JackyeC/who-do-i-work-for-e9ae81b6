@@ -60,11 +60,12 @@ export function SignalExamples({ companyId }: SignalExamplesProps) {
         .from("issue_signals")
         .select("id, issue_category, signal_type, description, confidence_score, amount")
         .eq("entity_id", companyId)
-        .gte("confidence_score", 0.4)
         .order("confidence_score", { ascending: false })
-        .limit(20);
-      // Filter to work-related signals only
-      return (data || []).filter((s: PolicySignal) => isWorkRelated(s.issue_category)).slice(0, 5);
+        .limit(50);
+      // Normalize confidence, exclude uninterpretable/below-threshold, keep work-related only
+      return (data || [])
+        .filter((s: PolicySignal) => isWorkRelated(s.issue_category) && normalizeConfidence(s.confidence_score) !== null)
+        .slice(0, 5);
     },
     enabled: !!companyId,
     staleTime: 5 * 60 * 1000,
