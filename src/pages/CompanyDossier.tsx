@@ -8,8 +8,8 @@ import { useQuery } from "@tanstack/react-query";
 import { usePageSEO } from "@/hooks/use-page-seo";
 import { getOGImageUrl } from "@/lib/social-share";
 import {
-  Building2, Loader2, Sparkles, Users, Heart, FileSearch,
-  BarChart3, Landmark, Eye, AlertTriangle, ChevronDown,
+  Building2, Loader2, Sparkles, Users, Heart, FileSearch, FileText,
+  BarChart3, Landmark, Eye, AlertTriangle, ChevronDown, ArrowRight,
   ShieldCheck, XCircle as XCircleIcon,
 } from "lucide-react";
 import { SourceLabel, type SourceTier } from "@/components/ui/source-label";
@@ -26,6 +26,7 @@ import { useEEOCByCompanyName } from "@/hooks/use-eeoc-cases";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
+import { EmployerReportDrawer, type EvidenceRecord } from "@/components/dossier/EmployerReportDrawer";
 
 // Deep-dive layer components (power-user expandable)
 import { ValuesSignalsLayer } from "@/components/dossier/ValuesSignalsLayer";
@@ -48,6 +49,8 @@ export default function CompanyDossier() {
   const [showPrep, setShowPrep] = useState(false);
   const [showRawLayers, setShowRawLayers] = useState(false);
   const [showSecondary, setShowSecondary] = useState(false);
+  const [reportOpen, setReportOpen] = useState(false);
+  const [reportCategory, setReportCategory] = useState<string | null>(null);
 
   /* ─── Data fetching ─── */
   const { data: company, isLoading } = useQuery({
@@ -158,7 +161,62 @@ export default function CompanyDossier() {
     }));
   }, [valuesSignals]);
 
-  /* ─── Loading state ─── */
+  /* ─── Build evidence records for the full report drawer ─── */
+  const evidenceRecords: EvidenceRecord[] = useMemo(() => {
+    if (!company) return [];
+    const records: EvidenceRecord[] = [];
+
+    if ((company.total_pac_spending ?? 0) > 0) {
+      records.push({
+        eventType: "PAC Contribution", category: "Political Spending", date: null,
+        amount: company.total_pac_spending ?? 0,
+        description: `Corporate PAC spending totaling $${(company.total_pac_spending ?? 0).toLocaleString()} on public record.`,
+        sourceUrl: "https://www.opensecrets.org/political-action-committees-pacs", sourceName: "OpenSecrets / FEC",
+      });
+    }
+    (executives || []).filter((e: any) => e.total_donations > 0).forEach((e: any) => {
+      records.push({
+        eventType: "Individual Donation", category: "Political Spending", date: null,
+        amount: e.total_donations,
+        description: `${e.name} (${e.title}) — personal political donations totaling $${e.total_donations.toLocaleString()}.`,
+        sourceUrl: "https://www.fec.gov/data/receipts/individual-contributions/", sourceName: "FEC",
+      });
+    });
+    if ((company.lobbying_spend ?? 0) > 0) {
+      records.push({
+        eventType: "Lobbying Expenditure", category: "Lobbying", date: null,
+        amount: company.lobbying_spend ?? 0,
+        description: `Reported lobbying spend: $${(company.lobbying_spend ?? 0).toLocaleString()}.`,
+        sourceUrl: "https://www.opensecrets.org/federal-lobbying", sourceName: "OpenSecrets / LDA",
+      });
+    }
+    (contracts || []).forEach((c: any) => {
+      records.push({
+        eventType: "Federal Contract", category: "Government Contracts", date: null,
+        amount: c.contract_value ?? null,
+        description: c.contract_description || `Federal contract with ${c.agency_name}`,
+        sourceUrl: c.source || "https://www.usaspending.gov/", sourceName: c.source || "USAspending",
+      });
+    });
+    (eeocCases || []).forEach((c: any) => {
+      records.push({
+        eventType: "EEOC Filing", category: "Enforcement & EEOC",
+        date: c.filing_date || c.created_at || null, amount: c.settlement_amount ?? null,
+        description: c.description || c.case_summary || `EEOC case filed against ${company.name}.`,
+        sourceUrl: c.source_url || "https://www.eeoc.gov/", sourceName: "EEOC",
+      });
+    });
+    (issueSignals || []).forEach((s: any) => {
+      records.push({
+        eventType: s.signal_type || "Signal", category: "Issue Signals",
+        date: s.transaction_date || null, amount: s.amount ?? null,
+        description: s.description || `${s.issue_category} signal detected.`,
+        sourceUrl: s.source_url || null, sourceName: s.issue_category || "Multi-source",
+      });
+    });
+    return records;
+  }, [company, executives, contracts, eeocCases, issueSignals]);
+
   if (isLoading) {
     return (
       <section className="container mx-auto px-4 py-12 max-w-3xl">
@@ -264,6 +322,21 @@ export default function CompanyDossier() {
     (issueSignals?.length || 0) === 0 &&
     (publicStances?.length || 0) === 0;
 
+  /* ─── Signal → Report category mapping ─── */
+  const SIGNAL_CATEGORY_MAP: Record<string, string> = {
+    "Political Spending": "Political Spending",
+    "Lobbying Activity": "Lobbying",
+    "EEOC Filings": "Enforcement & EEOC",
+    "Issue Signals Detected": "Issue Signals",
+    "Employer Transparency": "",
+    "Public Record Coverage": "",
+  };
+
+  const openReportToCategory = (category: string) => {
+    setReportCategory(category);
+    setReportOpen(true);
+  };
+
   /* ─── Report header + advocacy report ─── */
   const overviewContent = (
     <>
@@ -284,7 +357,19 @@ export default function CompanyDossier() {
               {company.employee_count && ` · ${company.employee_count} employees`}
             </p>
           </div>
-          <ExportDossierButton companyId={companyId!} companyName={company.name} company={company} />
+          <div className="flex items-center gap-2">
+            <ExportDossierButton companyId={companyId!} companyName={company.name} company={company} />
+            <Button
+              variant="outline"
+              size="sm"
+              className="gap-1.5 text-xs font-semibold"
+              onClick={() => { setReportCategory(null); setReportOpen(true); }}
+            >
+              <FileText className="w-3.5 h-3.5" />
+              View full report
+              <ArrowRight className="w-3 h-3" />
+            </Button>
+          </div>
         </div>
 
         {/* ── VERDICT CARD ── */}
@@ -304,17 +389,45 @@ export default function CompanyDossier() {
         <div className="mb-6">
           <h2 className="text-xs font-semibold text-foreground uppercase tracking-wider mb-3">Top Signals</h2>
           <div className="space-y-2">
-            {displaySignals.map((signal, i) => (
-              <div key={i} className="bg-card border border-border rounded-lg p-3.5">
-                <div className="flex items-start justify-between gap-3">
-                  <div className="min-w-0">
-                    <p className="text-sm font-medium text-foreground">{signal.title}</p>
-                    <p className="text-xs text-muted-foreground mt-0.5 leading-relaxed">{signal.explanation}</p>
+            {displaySignals.map((signal, i) => {
+              const reportCat = SIGNAL_CATEGORY_MAP[signal.title] || "";
+              const isClickable = !!reportCat && evidenceRecords.some(r => r.category === reportCat);
+
+              if (isClickable) {
+                return (
+                  <button
+                    key={i}
+                    onClick={() => openReportToCategory(reportCat)}
+                    className="w-full text-left bg-card border border-border rounded-lg p-3.5 cursor-pointer hover:border-primary/40 hover:bg-primary/[0.03] transition-all group"
+                  >
+                    <div className="flex items-start justify-between gap-3">
+                      <div className="min-w-0 flex-1">
+                        <p className="text-sm font-medium text-foreground group-hover:text-primary transition-colors">{signal.title}</p>
+                        <p className="text-xs text-muted-foreground mt-0.5 leading-relaxed">{signal.explanation}</p>
+                      </div>
+                      <div className="flex flex-col items-end gap-1.5 shrink-0">
+                        <SourceLabel tier={signal.tier} className="mt-0.5" />
+                        <span className="inline-flex items-center gap-1 text-xs font-medium text-primary opacity-70 group-hover:opacity-100 transition-opacity">
+                          View record <ArrowRight className="w-3 h-3" />
+                        </span>
+                      </div>
+                    </div>
+                  </button>
+                );
+              }
+
+              return (
+                <div key={i} className="bg-card border border-border/60 rounded-lg p-3.5">
+                  <div className="flex items-start justify-between gap-3">
+                    <div className="min-w-0">
+                      <p className="text-sm font-medium text-muted-foreground">{signal.title}</p>
+                      <p className="text-xs text-muted-foreground/70 mt-0.5 leading-relaxed">{signal.explanation}</p>
+                    </div>
+                    <SourceLabel tier={signal.tier} className="shrink-0 mt-0.5" />
                   </div>
-                  <SourceLabel tier={signal.tier} className="shrink-0 mt-0.5" />
                 </div>
-              </div>
-            ))}
+              );
+            })}
           </div>
         </div>
 
@@ -515,6 +628,14 @@ export default function CompanyDossier() {
           )}
         </div>
       </div>
+
+      <EmployerReportDrawer
+        open={reportOpen}
+        onOpenChange={setReportOpen}
+        companyName={company.name}
+        records={evidenceRecords}
+        initialCategory={reportCategory}
+      />
     </section>
   );
 }
