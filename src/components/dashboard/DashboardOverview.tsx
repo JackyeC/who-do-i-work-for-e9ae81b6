@@ -384,6 +384,34 @@ export function DashboardOverview({ onNavigate }: DashboardOverviewProps) {
         </BriefingCard>
       </motion.div>
 
+      {/* ═══ YOUR NEXT MOVE ═══ */}
+      <motion.div {...anim(0.09)}>
+        <BriefingCard>
+          <h3 className="text-base font-extrabold text-foreground tracking-tight mb-4">Your Next Move</h3>
+          <div className="space-y-2.5">
+            {[
+              { label: "Protect My Career", subtitle: "I'll audit any employer you're looking at", to: "/dashboard?tab=tracked" },
+              { label: "Review My Offer", subtitle: "Let's make sure the numbers and culture add up", to: "/dashboard?tab=offers" },
+              { label: "Build My Career Map", subtitle: "Figure out your next move — together", to: "/dashboard?tab=how" },
+            ].map((action) => (
+              <Link
+                key={action.label}
+                to={action.to}
+                className="flex items-center justify-between gap-3 rounded-xl p-4 bg-muted/30 border border-border/30 hover:border-primary/20 hover:shadow-md transition-all duration-200"
+              >
+                <div>
+                  <p className="text-[14px] font-bold text-foreground">{action.label}</p>
+                  <p className="text-xs text-muted-foreground mt-0.5">{action.subtitle}</p>
+                </div>
+                <span className="shrink-0" style={{ color: "hsl(43, 96%, 56%)" }}>
+                  <ArrowRight className="w-4 h-4" />
+                </span>
+              </Link>
+            ))}
+          </div>
+        </BriefingCard>
+      </motion.div>
+
       {/* ═══ 3 — INTELLIGENCE BULLETS + FROM JACKYE (2 cols) ═══ */}
       <div className="grid md:grid-cols-2 gap-5">
 
