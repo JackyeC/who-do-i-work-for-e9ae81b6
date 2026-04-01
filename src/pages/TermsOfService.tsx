@@ -1,5 +1,3 @@
-import { Header } from "@/components/Header";
-import { Footer } from "@/components/Footer";
 import { usePageSEO } from "@/hooks/use-page-seo";
 
 const TermsOfService = () => {
@@ -11,8 +9,7 @@ const TermsOfService = () => {
 
   return (
   <div className="min-h-screen flex flex-col bg-background">
-    <Header />
-    <main className="flex-1 max-w-3xl mx-auto px-4 py-16">
+<main className="flex-1 max-w-3xl mx-auto px-4 py-16">
       <h1 className="text-3xl font-bold text-foreground mb-8">Terms of Service</h1>
       <div className="prose prose-sm text-muted-foreground space-y-6">
         <p className="text-sm text-muted-foreground">Last updated: March 31, 2026</p>
@@ -149,8 +146,7 @@ const TermsOfService = () => {
         </section>
       </div>
     </main>
-    <Footer />
-  </div>
+</div>
   );
 };
 

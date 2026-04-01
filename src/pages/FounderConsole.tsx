@@ -13,8 +13,6 @@ import { CertificationQueue } from "@/components/admin/CertificationQueue";
 import { CareerWaitlistQueue } from "@/components/admin/CareerWaitlistQueue";
 import { ComplianceDashboard } from "@/components/admin/ComplianceDashboard";
 import { useUserRole } from "@/hooks/use-user-role";
-import { Header } from "@/components/Header";
-import { Footer } from "@/components/Footer";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
@@ -164,8 +162,7 @@ export default function FounderConsole() {
 
   return (
     <div className="min-h-screen flex flex-col bg-background">
-      <Header />
-      <main className="flex-1 container mx-auto px-4 py-8 max-w-6xl">
+<main className="flex-1 container mx-auto px-4 py-8 max-w-6xl">
         {/* Header */}
         <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-10">
           <div>
@@ -364,7 +361,6 @@ export default function FounderConsole() {
           <PendingReviewsDashboard />
         </div>
       </main>
-      <Footer />
-    </div>
+</div>
   );
 }

@@ -2,8 +2,6 @@ import { CheckCircle2, ArrowRight, Mail } from "lucide-react";
 import { useSearchParams, useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
-import { Header } from "@/components/Header";
-import { Footer } from "@/components/Footer";
 
 export default function ReportConfirmation() {
   const [params] = useSearchParams();
@@ -12,8 +10,7 @@ export default function ReportConfirmation() {
 
   return (
     <div className="min-h-screen flex flex-col bg-background">
-      <Header />
-      <main className="flex-1 flex items-center justify-center px-4 py-16">
+<main className="flex-1 flex items-center justify-center px-4 py-16">
         <Card className="max-w-lg w-full border-primary/20">
           <CardContent className="p-8 text-center space-y-6">
             <div className="w-16 h-16 rounded-full bg-primary/10 flex items-center justify-center mx-auto">
@@ -48,7 +45,6 @@ export default function ReportConfirmation() {
           </CardContent>
         </Card>
       </main>
-      <Footer />
-    </div>
+</div>
   );
 }

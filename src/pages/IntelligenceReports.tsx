@@ -3,8 +3,6 @@ import { Link, useSearchParams } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import { SignalsThisWeek } from "@/components/intelligence/SignalsThisWeek";
 import { supabase } from "@/integrations/supabase/client";
-import { Header } from "@/components/Header";
-import { Footer } from "@/components/Footer";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
@@ -157,8 +155,7 @@ export default function IntelligenceReports() {
 
   return (
     <div className="min-h-screen flex flex-col bg-background">
-      <Header />
-      <main className="flex-1">
+<main className="flex-1">
         <section className="relative overflow-hidden border-b border-border/30">
           <div className="absolute inset-0 bg-gradient-to-br from-primary/5 via-transparent to-accent/3" />
           <div className="container mx-auto px-4 py-16 relative">
@@ -356,7 +353,6 @@ export default function IntelligenceReports() {
           </section>
         )}
       </main>
-      <Footer />
-    </div>
+</div>
   );
 }

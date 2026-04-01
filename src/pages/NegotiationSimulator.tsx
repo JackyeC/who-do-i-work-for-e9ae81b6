@@ -1,7 +1,5 @@
 import { useState } from "react";
 import { useSearchParams } from "react-router-dom";
-import { Header } from "@/components/Header";
-import { Footer } from "@/components/Footer";
 import { SimulatorSetup, type SimulatorConfig } from "@/components/negotiation/SimulatorSetup";
 import { SimulatorChat } from "@/components/negotiation/SimulatorChat";
 import { SessionSummary } from "@/components/negotiation/SessionSummary";
@@ -58,8 +56,7 @@ export default function NegotiationSimulator() {
 
   return (
     <div className="min-h-screen flex flex-col bg-background">
-      <Header />
-      <main className="flex-1 container mx-auto px-4 py-8 max-w-2xl">
+<main className="flex-1 container mx-auto px-4 py-8 max-w-2xl">
         <div className="text-center mb-6">
           <h1 className="text-2xl font-bold text-foreground tracking-tight mb-1 flex items-center justify-center gap-2">
             <MessageSquare className="w-6 h-6 text-primary" /> Negotiation Simulator
@@ -110,7 +107,6 @@ export default function NegotiationSimulator() {
           </div>
         )}
       </main>
-      <Footer />
-    </div>
+</div>
   );
 }

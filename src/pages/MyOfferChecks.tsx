@@ -3,8 +3,6 @@ import { ClipboardCheck, Building2, ArrowRight, Loader2, Trash2, GitCompareArrow
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { Header } from "@/components/Header";
-import { Footer } from "@/components/Footer";
 import { useAuth } from "@/contexts/AuthContext";
 import { usePremium } from "@/hooks/use-premium";
 import { supabase } from "@/integrations/supabase/client";
@@ -42,14 +40,12 @@ export default function MyOfferChecks() {
   if (!user) {
     return (
       <div className="min-h-screen flex flex-col bg-background">
-        <Header />
-        <div className="flex-1 flex items-center justify-center flex-col gap-4">
+<div className="flex-1 flex items-center justify-center flex-col gap-4">
           <ClipboardCheck className="w-10 h-10 text-muted-foreground" />
           <p className="text-muted-foreground">Sign in to view your saved Offer Checks.</p>
           <Button onClick={() => navigate("/login")}>Sign In</Button>
         </div>
-        <Footer />
-      </div>
+</div>
     );
   }
 
@@ -57,8 +53,7 @@ export default function MyOfferChecks() {
 
   return (
     <div className="min-h-screen flex flex-col bg-background">
-      <Header />
-      <div className="container mx-auto px-4 py-8 max-w-2xl">
+<div className="container mx-auto px-4 py-8 max-w-2xl">
         <div className="flex items-center justify-between mb-6">
           <div className="flex items-center gap-2">
             <ClipboardCheck className="w-6 h-6 text-primary" />
@@ -161,7 +156,6 @@ export default function MyOfferChecks() {
           </div>
         )}
       </div>
-      <Footer />
-    </div>
+</div>
   );
 }

@@ -2,8 +2,6 @@ import { Link, useNavigate } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/contexts/AuthContext";
-import { Header } from "@/components/Header";
-import { Footer } from "@/components/Footer";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent } from "@/components/ui/card";
@@ -32,8 +30,7 @@ export default function ReportsList() {
 
   return (
     <div className="min-h-screen flex flex-col bg-background">
-      <Header />
-      <main className="container mx-auto px-4 py-8 flex-1 max-w-4xl">
+<main className="container mx-auto px-4 py-8 flex-1 max-w-4xl">
         <div className="flex items-center justify-between mb-6">
           <h1 className="text-2xl font-display font-bold">Intelligence Reports</h1>
           <Button onClick={() => navigate("/admin/reports/new")} className="gap-1.5">
@@ -76,7 +73,6 @@ export default function ReportsList() {
           </div>
         )}
       </main>
-      <Footer />
-    </div>
+</div>
   );
 }

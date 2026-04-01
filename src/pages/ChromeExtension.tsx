@@ -1,6 +1,4 @@
 import { useState } from "react";
-import { Header } from "@/components/Header";
-import { Footer } from "@/components/Footer";
 import { usePageSEO } from "@/hooks/use-page-seo";
 import { Chrome, Download, Shield, Eye, Zap, ArrowRight, Sparkles, Bell } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -118,8 +116,7 @@ export default function ChromeExtension() {
 
   return (
     <div className="min-h-screen flex flex-col bg-background">
-      <Header />
-      <main className="flex-1">
+<main className="flex-1">
         {/* Hero */}
         <section className="container mx-auto px-4 py-16 max-w-3xl text-center">
           <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-primary/10 border border-primary/20 text-primary text-xs font-mono tracking-wider uppercase mb-6">
@@ -206,7 +203,6 @@ export default function ChromeExtension() {
         {/* Pro Waitlist */}
         <ProWaitlistBanner />
       </main>
-      <Footer />
-    </div>
+</div>
   );
 }

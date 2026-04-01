@@ -1,7 +1,5 @@
 import { useState } from "react";
 import { useSearchParams } from "react-router-dom";
-import { Header } from "@/components/Header";
-import { Footer } from "@/components/Footer";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { CandidatePersonaBuilder } from "@/components/recruiting/CandidatePersonaBuilder";
 import { EVPIntelligence } from "@/components/recruiting/EVPIntelligence";
@@ -24,8 +22,7 @@ export default function RecruitingIntelligence() {
 
   return (
     <div className="min-h-screen bg-background flex flex-col">
-      <Header />
-      <main className="flex-1 container mx-auto px-4 py-8 max-w-6xl">
+<main className="flex-1 container mx-auto px-4 py-8 max-w-6xl">
         <div className="mb-8">
           <div className="flex items-center gap-3 mb-2">
             <div className="w-10 h-10 rounded-xl bg-primary flex items-center justify-center">
@@ -107,7 +104,6 @@ export default function RecruitingIntelligence() {
           </p>
         </div>
       </main>
-      <Footer />
-    </div>
+</div>
   );
 }

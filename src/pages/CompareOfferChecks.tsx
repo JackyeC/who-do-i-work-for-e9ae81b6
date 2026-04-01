@@ -6,8 +6,6 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
-import { Header } from "@/components/Header";
-import { Footer } from "@/components/Footer";
 import { PremiumGate } from "@/components/PremiumGate";
 import { useAuth } from "@/contexts/AuthContext";
 import { useOfferCheck } from "@/hooks/use-offer-check";
@@ -157,8 +155,7 @@ export default function CompareOfferChecks() {
 
   return (
     <div className="min-h-screen flex flex-col bg-background">
-      <Header />
-      <div className="container mx-auto px-4 py-8 max-w-6xl">
+<div className="container mx-auto px-4 py-8 max-w-6xl">
         <button onClick={() => navigate(-1)} className="inline-flex items-center gap-1 text-sm text-muted-foreground hover:text-foreground mb-6">
           <ArrowLeft className="w-4 h-4" /> Back
         </button>
@@ -209,7 +206,6 @@ export default function CompareOfferChecks() {
           )}
         </PremiumGate>
       </div>
-      <Footer />
-    </div>
+</div>
   );
 }

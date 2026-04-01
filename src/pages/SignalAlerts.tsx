@@ -1,8 +1,6 @@
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/contexts/AuthContext";
-import { Header } from "@/components/Header";
-import { Footer } from "@/components/Footer";
 import { UserAlertsList } from "@/components/UserAlerts";
 import { AlertPreferencesPanel } from "@/components/AlertPreferencesPanel";
 import { EmptyState } from "@/components/EmptyState";
@@ -59,8 +57,7 @@ export default function SignalAlerts() {
   if (!user) {
     return (
       <div className="min-h-screen bg-background flex flex-col">
-        <Header />
-        <div className="flex-1 flex items-center justify-center px-4">
+<div className="flex-1 flex items-center justify-center px-4">
           <EmptyState
             icon={Bell}
             title="Signal Alerts"
@@ -68,15 +65,13 @@ export default function SignalAlerts() {
             action={{ label: "Sign In", onClick: () => navigate("/login"), variant: "default" }}
           />
         </div>
-        <Footer />
-      </div>
+</div>
     );
   }
 
   return (
     <div className="min-h-screen bg-background flex flex-col">
-      <Header />
-      <div className="container mx-auto px-4 py-6 sm:py-8 max-w-4xl flex-1">
+<div className="container mx-auto px-4 py-6 sm:py-8 max-w-4xl flex-1">
         <div className="mb-6 sm:mb-8">
           <h1 className="text-xl sm:text-2xl font-bold text-foreground flex items-center gap-2">
             <Bell className="w-5 h-5 sm:w-6 sm:h-6 text-primary" />
@@ -181,7 +176,6 @@ export default function SignalAlerts() {
           Alerts reflect signals detected from publicly available sources. No conclusions are drawn.
         </p>
       </div>
-      <Footer />
-    </div>
+</div>
   );
 }
