@@ -12,6 +12,7 @@ import { DemoSafeModeProvider } from "@/contexts/DemoSafeModeContext";
 import { ProtectedRoute } from "@/components/ProtectedRoute";
 import { AdminRoute } from "@/components/AdminRoute";
 import { ErrorBoundary } from "@/components/ErrorBoundary";
+import { SourceDrawerProvider } from "@/components/dossier/SourcePreviewDrawer";
 import { AppShell } from "@/components/layout/AppShell";
 import { Loader2 } from "lucide-react";
 
