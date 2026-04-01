@@ -242,13 +242,10 @@ export function WarningLabelView({ company, executives = [], contracts = [], iss
             </div>
           </div>
           <div className="space-y-3">
-            {pulseItems.map((item, i) => {
-              const Wrapper = item.url ? "a" : "div";
-              const wrapperProps = item.url ? { href: item.url, target: "_blank", rel: "noopener noreferrer" } : {};
-              return (
-                <Wrapper
+            {pulseItems.map((item, i) => (
+                <div
                   key={i}
-                  {...wrapperProps as any}
+                  onClick={() => item.url && openSource(item.url, { description: item.text })}
                   className={cn(
                     "flex items-start gap-3 p-3 rounded-none bg-muted/20 border border-border/30",
                     item.url && "hover:bg-muted/40 hover:border-primary/30 transition-colors cursor-pointer group"
@@ -259,13 +256,12 @@ export function WarningLabelView({ company, executives = [], contracts = [], iss
                     {item.text}
                     {item.url && (
                       <span className="inline-flex items-center gap-1 ml-1.5 text-primary text-xs font-medium opacity-70 group-hover:opacity-100">
-                        <ExternalLink className="w-3 h-3" /> Source
+                        <ExternalLink className="w-3 h-3" /> View Receipt
                       </span>
                     )}
                   </p>
-                </Wrapper>
-              );
-            })}
+                </div>
+              ))}
           </div>
         </CardContent>
       </Card>
