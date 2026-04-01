@@ -747,10 +747,10 @@ function buildPoliticalReceipts(doc: jsPDF, data: DossierPdfData): number {
       head: [["Candidate", "Party", "Amount", "⚠ Flag"]],
       body: data.candidates.sort((a, b) => b.amount - a.amount).slice(0, 25)
         .map(c => [
-          c.name,
+          sanitizeText(c.name),
           c.party,
           fmt$(c.amount),
-          c.flagged ? (c.flag_reason || "⚠ Flagged") : "—",
+          c.flagged ? sanitizeText(c.flag_reason || "Flagged") : "—",
         ]),
       columnStyles: { 2: { halign: "right" as const, cellWidth: 28 }, 3: { cellWidth: 38 } },
       didParseCell: (d: any) => {
