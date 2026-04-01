@@ -276,7 +276,7 @@ function buildCoverPage(doc: jsPDF, data: DossierPdfData) {
     doc.setFont("helvetica", "normal");
     doc.setFontSize(9.5);
     doc.setTextColor(...C.muted);
-    const descLines = doc.splitTextToSize(company.description, CW - 10);
+    const descLines = doc.splitTextToSize(sanitizeText(company.description), CW - 10);
     doc.text(descLines.slice(0, 4), ML, nameEndY + 26);
   }
 
