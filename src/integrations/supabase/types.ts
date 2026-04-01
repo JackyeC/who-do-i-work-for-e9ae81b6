@@ -8800,6 +8800,45 @@ export type Database = {
           },
         ]
       }
+      saved_notes: {
+        Row: {
+          alignment_score: number | null
+          created_at: string
+          id: string
+          industry: string | null
+          is_liked: boolean
+          news_headline: string | null
+          note_content: string
+          note_date: string
+          top_match_company: string | null
+          user_id: string
+        }
+        Insert: {
+          alignment_score?: number | null
+          created_at?: string
+          id?: string
+          industry?: string | null
+          is_liked?: boolean
+          news_headline?: string | null
+          note_content: string
+          note_date?: string
+          top_match_company?: string | null
+          user_id: string
+        }
+        Update: {
+          alignment_score?: number | null
+          created_at?: string
+          id?: string
+          industry?: string | null
+          is_liked?: boolean
+          news_headline?: string | null
+          note_content?: string
+          note_date?: string
+          top_match_company?: string | null
+          user_id?: string
+        }
+        Relationships: []
+      }
       scan_alerts: {
         Row: {
           alert_type: string
