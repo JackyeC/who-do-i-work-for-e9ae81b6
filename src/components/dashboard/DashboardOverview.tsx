@@ -244,6 +244,29 @@ export function DashboardOverview({ onNavigate }: DashboardOverviewProps) {
       {/* ═══ AFFIRMATION BAR ═══ */}
       <AffirmationBar />
 
+      {/* ═══ QUICK EMPLOYER SEARCH ═══ */}
+      <motion.div {...anim(0.05)}>
+        <div className="rounded-2xl p-5 bg-card border border-border/30">
+          <h3 className="text-base font-bold text-foreground mb-1">
+            Audit any employer →
+          </h3>
+          <p className="text-xs text-muted-foreground mb-3">
+            Search by name. We'll pull the public record, signals, and receipts.
+          </p>
+          <form onSubmit={handleSearch}>
+            <div className="flex items-center rounded-xl px-4 py-3 bg-muted/30 border border-border/30">
+              <Search className="w-4 h-4 shrink-0 mr-3 text-primary" />
+              <input
+                value={searchQuery}
+                onChange={e => setSearchQuery(e.target.value)}
+                placeholder="Look up any employer — I'll tell you what I find..."
+                className="bg-transparent border-none outline-none w-full text-sm text-foreground placeholder:text-muted-foreground/50"
+              />
+            </div>
+          </form>
+        </div>
+      </motion.div>
+
       {/* ═══ FOUNDING MEMBER BANNER ═══ */}
       <motion.div {...anim(0.03)}>
         <div
