@@ -171,7 +171,7 @@ export function AdvocacyReport({ company, executives = [], contracts = [], issue
 
   return (
     <div className="space-y-8">
-      <SpendingDrawer metric={selectedMetric} open={!!selectedMetric} onOpenChange={(o) => !o && setSelectedMetric(null)} />
+      
 
       {/* ═══ 1. THE VERDICT (or Early Investigation) ═══ */}
       {isEarlyInvestigation ? (
