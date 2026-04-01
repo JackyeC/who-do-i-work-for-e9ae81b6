@@ -300,14 +300,8 @@ export default function OfferCheckEntry() {
                   <Skeleton className="h-20 rounded-2xl" />
                 </div>
               ) : !company ? (
-                /* ── No match ── */
-                <div className="text-center py-12 bg-card border border-border rounded-2xl">
-                  <XCircle className="w-8 h-8 text-muted-foreground mx-auto mb-3" />
-                  <p className="text-foreground font-medium">No public records found for "{searchTerm}"</p>
-                  <p className="text-sm text-muted-foreground mt-1">
-                    We don't have data on this company yet. Try a different name or check spelling.
-                  </p>
-                </div>
+                /* ── Discovery Mode: company not indexed ── */
+                <DiscoveryMode companyName={searchTerm!} />
               ) : (
                 <>
                   {/* ═══ SECTION 2: VERDICT ═══ */}
