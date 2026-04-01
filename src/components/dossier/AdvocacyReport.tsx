@@ -22,7 +22,7 @@ import { WorkforceDemographicsLayer } from "./WorkforceDemographicsLayer";
 import { EEOCCaseAlert } from "@/components/EEOCCaseAlert";
 import { SpendingRecordTable } from "./SpendingRecordTable";
 import { useEmployerReport } from "@/hooks/use-employer-report";
-import type { SpendingMetric, DonorProfile } from "@/types/ReportSchema";
+import type { DonorProfile } from "@/types/ReportSchema";
 
 /* ─── Types ─── */
 interface AdvocacyReportProps {
