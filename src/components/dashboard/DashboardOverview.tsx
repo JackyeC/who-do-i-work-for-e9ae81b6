@@ -575,7 +575,7 @@ export function DashboardOverview({ onNavigate }: DashboardOverviewProps) {
         {/* 5A — Values Alignment */}
         <motion.div {...anim(0.28)}>
           <BriefingCard className="h-full">
-            <h3 className="text-sm font-bold text-foreground mb-0.5">
+            <h3 className="text-[16px] font-bold text-foreground mb-0.5">
               Aligned With Your Values
             </h3>
             <p className="text-xs text-muted-foreground mb-3">Based on your Work DNA profile</p>
