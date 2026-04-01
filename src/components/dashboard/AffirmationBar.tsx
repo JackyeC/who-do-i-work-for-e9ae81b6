@@ -41,8 +41,8 @@ export function AffirmationBar() {
         </span>
         <p className="text-sm text-[hsl(var(--text-secondary))] leading-relaxed">
           <span className="font-bold text-primary">{count} applications this week.</span>{" "}
-          You're not just looking — you're moving. Every single one of those took guts. Keep
-          going.
+          Every single one — even the auto-applies — took guts. You're not just looking, you're
+          moving. Keep going.
         </p>
       </div>
     </motion.div>
