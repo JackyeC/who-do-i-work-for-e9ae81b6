@@ -55,7 +55,7 @@ const SAMPLE_JOBS: JobListing[] = [
     applicants: 18, integrityScore: 68, integrityLevel: "MODERATE", alignmentPct: 77,
     skills: ["ESG Reporting", "Supply Chain", "Carbon Accounting", "Stakeholder Relations"],
     description: "Drive sustainability transformation across manufacturing operations with direct CEO reporting line.",
-    whyAligns: "TerraForge has set public carbon reduction targets, though their supply chain transparency is still developing. This role could shape real change.",
+    whyAligns: "Real carbon reduction targets — but Scope 3 reporting has gaps. Ask about it.",
     integritySummary: "Published first ESG report in 2024. Some gaps in Scope 3 emissions reporting. Strong union relations.",
     narrativeGap: "Claims 'industry-leading sustainability' but Scope 3 reporting is incomplete.",
   },
