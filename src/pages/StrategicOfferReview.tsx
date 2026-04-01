@@ -1,7 +1,5 @@
 import { useState, useCallback } from "react";
-import { Header } from "@/components/Header";
 import { usePageSEO } from "@/hooks/use-page-seo";
-import { Footer } from "@/components/Footer";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
