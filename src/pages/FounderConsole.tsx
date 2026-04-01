@@ -3,13 +3,14 @@ import { useSearchParams } from "react-router-dom";
 import { usePageSEO } from "@/hooks/use-page-seo";
 import { useUserRole } from "@/hooks/use-user-role";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
+import { Button } from "@/components/ui/button";
 import { TodayTab } from "@/components/founder/TodayTab";
 import { ReviewQueueTab } from "@/components/founder/ReviewQueueTab";
 import { SignalsDataTab } from "@/components/founder/SignalsDataTab";
 import { UsersFeedbackTab } from "@/components/founder/UsersFeedbackTab";
 import { NotesTab } from "@/components/founder/NotesTab";
 import {
-  LayoutDashboard, ClipboardList, Radio, Users, StickyNote,
+  LayoutDashboard, ClipboardList, Radio, Users, StickyNote, ExternalLink,
 } from "lucide-react";
 
 const TABS = [
@@ -24,10 +25,9 @@ export default function FounderConsole() {
   const [searchParams, setSearchParams] = useSearchParams();
   const initialTab = searchParams.get("tab") || "today";
   const [activeTab, setActiveTab] = useState(initialTab);
-  const { isOwner } = useUserRole();
 
   usePageSEO({
-    title: "Founder Command Center",
+    title: "Founder Console",
     description: "Internal operations console.",
   });
 
@@ -49,15 +49,20 @@ export default function FounderConsole() {
 
   return (
     <div className="min-h-screen flex flex-col bg-background">
-      <main className="flex-1 container mx-auto px-4 py-6 max-w-6xl">
+      <main className="flex-1 container mx-auto px-4 py-6 max-w-5xl">
         {/* Header */}
         <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 mb-6">
           <div>
-            <h1 className="text-xl font-bold text-foreground tracking-tight">Founder Command Center</h1>
-            <p className="text-xs text-muted-foreground font-mono">
-              Last refreshed · {lastUpdated}
+            <h1 className="text-lg font-bold text-foreground tracking-tight">Founder Console</h1>
+            <p className="text-xs text-muted-foreground">
+              Internal Operations · Updated {lastUpdated}
             </p>
           </div>
+          <a href="https://who-do-i-work-for.lovable.app" target="_blank" rel="noopener noreferrer">
+            <Button variant="outline" size="sm" className="text-xs gap-1.5">
+              <ExternalLink className="w-3.5 h-3.5" /> View Live Site
+            </Button>
+          </a>
         </div>
 
         {/* Tabs */}

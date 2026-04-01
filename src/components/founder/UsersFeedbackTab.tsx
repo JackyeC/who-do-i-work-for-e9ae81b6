@@ -3,8 +3,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { Badge } from "@/components/ui/badge";
 import { Skeleton } from "@/components/ui/skeleton";
 import {
-  Users, TrendingDown, MessageSquare, Search,
-  Eye, BarChart3,
+  Users, TrendingDown, MessageSquare, Eye,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 
@@ -13,7 +12,7 @@ function EmptyState({ text }: { text: string }) {
 }
 
 export function UsersFeedbackTab() {
-  // ─── Recent Signups ───
+  // ─── Recent Signups (capped to 5) ───
   const { data: signups = [], isLoading: signupsLoading } = useQuery({
     queryKey: ["founder-users-signups"],
     queryFn: async () => {
@@ -21,7 +20,7 @@ export function UsersFeedbackTab() {
         .from("profiles")
         .select("email, created_at")
         .order("created_at", { ascending: false })
-        .limit(10);
+        .limit(5);
       return (data || []) as { email: string; created_at: string }[];
     },
   });
@@ -73,11 +72,11 @@ export function UsersFeedbackTab() {
       }
 
       const sorted = Object.entries(themes).sort((a, b) => b[1] - a[1]);
-      return { themes: sorted, recent: data.slice(0, 5) };
+      return { themes: sorted, recent: data.slice(0, 3) };
     },
   });
 
-  // ─── Top Searched Companies ───
+  // ─── Most Viewed Companies (capped to 5) ───
   const { data: topSearched = [], isLoading: searchLoading } = useQuery({
     queryKey: ["founder-users-top-searched"],
     queryFn: async () => {
@@ -85,7 +84,7 @@ export function UsersFeedbackTab() {
         .from("companies")
         .select("name, industry, employer_clarity_score")
         .order("updated_at", { ascending: false })
-        .limit(8);
+        .limit(5);
       return data || [];
     },
   });
@@ -108,7 +107,7 @@ export function UsersFeedbackTab() {
           {signupsLoading ? (
             <div className="space-y-2">{[1, 2, 3].map(i => <Skeleton key={i} className="h-6" />)}</div>
           ) : signups.length === 0 ? (
-            <EmptyState text="No signups yet." />
+            <EmptyState text="No activity recorded yet." />
           ) : (
             <div className="space-y-1.5 font-mono text-xs">
               {signups.map((u, i) => (
@@ -129,7 +128,7 @@ export function UsersFeedbackTab() {
           {funnelLoading ? (
             <div className="space-y-2">{[1, 2, 3].map(i => <Skeleton key={i} className="h-8" />)}</div>
           ) : !funnel || funnel.length === 0 ? (
-            <EmptyState text="This module will populate once live usage increases." />
+            <EmptyState text="Data pipeline has not populated yet." />
           ) : (
             <div className="space-y-2.5">
               {funnel.map((step, i) => {
@@ -179,14 +178,14 @@ export function UsersFeedbackTab() {
             </div>
           )}
           {feedbackData && feedbackData.recent.length > 0 && (
-            <div className="mt-4 pt-4 border-t border-border/30">
-              <p className="text-xs text-muted-foreground uppercase tracking-wider mb-2">Recent raw feedback</p>
-              <div className="space-y-1.5 max-h-40 overflow-y-auto">
+            <div className="mt-4 pt-3 border-t border-border/30">
+              <p className="text-xs text-muted-foreground uppercase tracking-wider mb-2">Latest feedback</p>
+              <div className="space-y-1.5">
                 {feedbackData.recent.map((f, i) => (
-                  <div key={i} className="p-2 bg-muted/10 rounded-lg text-xs text-muted-foreground">
-                    <span className="text-civic-green mr-1">{timeAgo(f.created_at)}</span>
+                  <p key={i} className="text-xs text-muted-foreground leading-relaxed">
+                    <span className="text-civic-green font-mono mr-1">{timeAgo(f.created_at)}</span>
                     {f.message}
-                  </div>
+                  </p>
                 ))}
               </div>
             </div>
