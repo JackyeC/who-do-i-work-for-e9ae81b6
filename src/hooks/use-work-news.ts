@@ -55,11 +55,12 @@ export function useWorkNewsTicker() {
     queryFn: async () => {
       const { data, error } = await supabase
         .from("work_news")
-        .select("id, headline, source_name, category, is_controversy, published_at")
+        .select("id, headline, source_name, source_url, category, is_controversy, published_at")
+        .not("source_url", "is", null)
         .order("published_at", { ascending: false })
         .limit(40);
       if (error) throw error;
-      return ((data ?? []) as Pick<WorkNewsArticle, "id" | "headline" | "source_name" | "category" | "is_controversy" | "published_at">[])
+      return ((data ?? []) as Pick<WorkNewsArticle, "id" | "headline" | "source_name" | "source_url" | "category" | "is_controversy" | "published_at">[])
         .map(item => ({
           ...item,
           headline: decodeEscapes(item.headline),
