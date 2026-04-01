@@ -32,6 +32,7 @@ import { ApplyKitSection } from "@/components/dashboard/ApplyKitSection";
 import { MockInterviewSection } from "@/components/dashboard/MockInterviewSection";
 import { InboxSection } from "@/components/dashboard/InboxSection";
 import { SavedSection } from "@/components/dashboard/SavedSection";
+import { TodayReflection } from "@/components/dashboard/TodayReflection";
 
 const TAB_TITLES: Record<string, string> = {
   overview: "My Intelligence",
@@ -185,6 +186,7 @@ export default function Dashboard() {
       </div>
       <div className="flex-1 overflow-y-auto px-4 sm:px-6 py-6">
         {!hasTakenQuiz && tab === "overview" && <PersonaQuizBanner />}
+        {tab === "overview" && <TodayReflection />}
         {showUpsell && <PostPurchaseUpsell onDismiss={dismissUpsell} />}
         <AnimatePresence mode="wait">
           <motion.div
