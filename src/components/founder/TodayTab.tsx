@@ -248,6 +248,7 @@ export function TodayTab() {
           <StickyNote className="w-3.5 h-3.5" /> Add founder note
         </Button>
       </TriageCard>
+      </div>
     </div>
   );
 }
