@@ -13,6 +13,7 @@ import { cn } from "@/lib/utils";
 import {
   BarChart, Bar, XAxis, YAxis, Tooltip as RechartsTooltip, ResponsiveContainer, Cell, PieChart, Pie,
 } from "recharts";
+import { EnforcementReceiptCard } from "@/components/receipts/EnforcementReceiptCard";
 import {
   FileText, Search, Calendar, ArrowRight, Sparkles,
   Filter, Shield, Loader2, ExternalLink, DollarSign, Landmark, Building2,
@@ -23,6 +24,7 @@ const ISSUE_OPTIONS = [
   "gun_policy", "reproductive_rights", "labor_rights", "climate",
   "civil_rights", "lgbtq_rights", "voting_rights", "immigration",
   "education", "healthcare", "consumer_protection",
+  "Compliance Failure", "Restructuring", "Fraud/Fiduciary",
 ];
 
 const ISSUE_COLORS: Record<string, string> = {
