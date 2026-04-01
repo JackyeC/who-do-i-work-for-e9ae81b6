@@ -65,6 +65,59 @@ const CW = PW - ML - MR;
 const fmt$ = (n: number) => `$${n.toLocaleString("en-US")}`;
 const AUDIT_DATE = "March 10, 2026";
 
+/* ─── Phase 1: Text sanitation ─── */
+
+function sanitizeText(s: string | null | undefined): string {
+  if (!s) return "";
+  return s
+    // HTML entities
+    .replace(/&nbsp;/gi, " ")
+    .replace(/&amp;/gi, "&")
+    .replace(/&lt;/gi, "<")
+    .replace(/&gt;/gi, ">")
+    .replace(/&quot;/gi, '"')
+    .replace(/&#39;/gi, "'")
+    .replace(/&rsquo;/gi, "\u2019")
+    .replace(/&lsquo;/gi, "\u2018")
+    .replace(/&rdquo;/gi, "\u201D")
+    .replace(/&ldquo;/gi, "\u201C")
+    .replace(/&mdash;/gi, "\u2014")
+    .replace(/&ndash;/gi, "\u2013")
+    .replace(/&bull;/gi, "\u2022")
+    .replace(/&#\d+;/g, "") // remaining numeric entities
+    .replace(/&[a-zA-Z]+;/g, "") // remaining named entities
+    // Stray broken glyphs & artifacts
+    .replace(/[\u0000-\u0008\u000B\u000C\u000E-\u001F]/g, "")
+    .replace(/\uFFFD/g, "")
+    // Normalize whitespace
+    .replace(/\s+/g, " ")
+    .trim();
+}
+
+function truncateAtWord(s: string, max: number): string {
+  const clean = sanitizeText(s);
+  if (clean.length <= max) return clean;
+  const truncated = clean.substring(0, max);
+  const lastSpace = truncated.lastIndexOf(" ");
+  return (lastSpace > max * 0.6 ? truncated.substring(0, lastSpace) : truncated) + "…";
+}
+
+/* ─── Phase 4: Styled empty state ─── */
+
+function drawEmptyState(doc: jsPDF, y: number, message: string): number {
+  y = safeY(doc, y, 22);
+  doc.setFillColor(...C.fog);
+  doc.roundedRect(ML, y, CW, 16, 2, 2, "F");
+  doc.setDrawColor(...C.subtle);
+  doc.setLineWidth(0.3);
+  doc.roundedRect(ML, y, CW, 16, 2, 2, "S");
+  doc.setFont("helvetica", "italic");
+  doc.setFontSize(8);
+  doc.setTextColor(...C.muted);
+  doc.text(message, ML + CW / 2, y + 9, { align: "center" });
+  return y + 22;
+}
+
 /* ─── Drawing helpers ─── */
 
 function drawRule(doc: jsPDF, y: number, color = C.subtle) {
