@@ -132,7 +132,7 @@ const JACKYE_CONTENT = [
   },
   {
     number: "03",
-    type: "INSIDER INTEL",
+    type: "DEEP DIVE" as const,
     title: "Read the SEC Proxy Statement Before Your Interview — Here's Why",
     desc: "The DEF 14A filing shows executive compensation, board composition, and governance risks. If you're interviewing at a public company, 10 minutes on EDGAR is worth 2 hours of Glassdoor.",
     link: "https://www.sec.gov/cgi-bin/browse-edgar?action=getcompany&type=DEF+14A",
