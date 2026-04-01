@@ -79,6 +79,7 @@ function buildSignals(company: CompanyResult, extras: {
       explanation: `Reported lobbying spend: $${extras.lobbyingSpend.toLocaleString()}.`,
       tier: "verified",
       sourceUrl: null,
+      link: `/dossier/${company.slug}#lobbying`,
     });
   }
 
