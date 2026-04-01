@@ -517,9 +517,26 @@ export function DashboardOverview({ onNavigate }: DashboardOverviewProps) {
           </BriefingCard>
         </motion.div>
 
-        {/* 4B — Daily Briefing */}
+        {/* 4B — The Tuesday Letter */}
         <motion.div {...anim(0.24)}>
-          <DailyBriefingCard />
+          <div className="rounded-xl overflow-hidden border" style={{ background: "linear-gradient(135deg, hsla(43, 96%, 56%, 0.08), hsla(35, 90%, 50%, 0.12))", borderColor: "hsla(43, 96%, 56%, 0.3)" }}>
+            <div className="p-5">
+              <div className="flex items-center gap-2 mb-2">
+                <Newspaper className="w-4 h-4" style={{ color: "hsl(43, 96%, 56%)" }} />
+                <h3 className="text-sm font-bold text-foreground font-display">The Tuesday Letter</h3>
+              </div>
+              <p className="text-[13px] text-foreground/80 leading-relaxed mb-4">
+                Every Tuesday I send out what I'm seeing — the signals, the moves, the things nobody else is saying out loud. It's free, it's unfiltered, and it's for you.
+              </p>
+              <button
+                onClick={() => navigate("/newsletter")}
+                className="w-full rounded-lg py-2.5 text-sm font-bold transition-all hover:brightness-110"
+                style={{ backgroundColor: "hsl(43, 96%, 56%)", color: "hsl(0, 0%, 10%)" }}
+              >
+                I'm In
+              </button>
+            </div>
+          </div>
         </motion.div>
       </div>
 
