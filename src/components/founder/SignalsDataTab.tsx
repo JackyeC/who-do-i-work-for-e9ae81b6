@@ -75,18 +75,23 @@ export function SignalsDataTab() {
     },
   });
 
-  // ─── Claim Safety Monitor ───
+  // ─── Claim Safety Monitor (with tier breakdown) ───
   const { data: claimSafety, isLoading: claimsLoading } = useQuery({
     queryKey: ["founder-signals-claims"],
     queryFn: async () => {
-      const [missingSources, totalClaims] = await Promise.all([
-        supabase.from("company_corporate_claims").select("id", { count: "exact", head: true }).or("claim_source_url.is.null"),
+      const [totalClaims, withUrl, multiSource, withSourceNoUrl, noEvidence] = await Promise.all([
         supabase.from("company_corporate_claims").select("id", { count: "exact", head: true }),
+        supabase.from("company_corporate_claims").select("id", { count: "exact", head: true }).not("claim_source_url", "is", null),
+        supabase.from("company_corporate_claims").select("id", { count: "exact", head: true }).is("claim_source_url", null).eq("extraction_method", "multi_source"),
+        supabase.from("company_corporate_claims").select("id", { count: "exact", head: true }).is("claim_source_url", null).not("claim_source", "is", null).neq("extraction_method", "multi_source"),
+        supabase.from("company_corporate_claims").select("id", { count: "exact", head: true }).is("claim_source_url", null).is("claim_source", null),
       ]);
-      return {
-        missingSources: missingSources.count ?? 0,
-        totalClaims: totalClaims.count ?? 0,
-      };
+      const total = totalClaims.count ?? 0;
+      const verified = withUrl.count ?? 0;
+      const multi = multiSource.count ?? 0;
+      const inferred = withSourceNoUrl.count ?? 0;
+      const none = noEvidence.count ?? 0;
+      return { totalClaims: total, verified, multiSource: multi, inferred, noEvidence: none, missingSources: total - verified };
     },
   });
 
