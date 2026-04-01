@@ -269,7 +269,7 @@ export function DashboardOverview({ onNavigate }: DashboardOverviewProps) {
       </motion.div>
 
       {/* ═══ YOUR JOURNEY ═══ */}
-      <YourJourney />
+      <YourJourney onNavigate={onNavigate} />
 
       {/* ═══ FOUNDING MEMBER BANNER ═══ */}
       <motion.div {...anim(0.03)}>
