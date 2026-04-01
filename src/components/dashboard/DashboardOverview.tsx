@@ -50,7 +50,7 @@ const SIGNAL_CARDS = [
     slug: "jpmorgan-chase",
     badge: "SEC",
     badgeVariant: "warning" as const,
-    summary: "Spoofing precious-metals & Treasury markets — traders convicted",
+    summary: "Spoofing precious-metals and Treasury markets — traders convicted. $920M in fines. Worth understanding before you walk in.",
     amount: "$920M fine",
     severity: "HIGH",
     severityVariant: "warning" as const,
