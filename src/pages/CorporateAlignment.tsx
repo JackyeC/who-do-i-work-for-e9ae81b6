@@ -129,7 +129,6 @@ export default function CorporateAlignment() {
 
   return (
     <div className="min-h-screen flex flex-col bg-background">
-      <Header />
       <main className="flex-1 container mx-auto px-4 py-8 max-w-4xl">
         {/* Back */}
         <Link to={`/dossier/${company.slug}`} className="inline-flex items-center gap-1.5 text-sm text-muted-foreground hover:text-foreground mb-6">
