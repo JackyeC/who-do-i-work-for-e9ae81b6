@@ -208,7 +208,7 @@ async function fetchGDELT(): Promise<any[]> {
         });
       }
 
-      await new Promise(r => setTimeout(r, 6000));
+      await new Promise(r => setTimeout(r, 2000));
     } catch (e: any) {
       console.warn(`[GDELT] Error:`, e);
     }
