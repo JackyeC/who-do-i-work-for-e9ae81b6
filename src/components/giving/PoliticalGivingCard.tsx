@@ -118,32 +118,9 @@ export function PoliticalGivingCard({ companyId, companyName, companySlug }: Pol
         )}
       </div>
 
-      {/* Sub-section 3: Institutional Links */}
+      {/* Sub-section 3: Institutional Links — Interactive */}
       {institutionalLinks.length > 0 && (
-        <div className="rounded-xl border border-border/40 bg-card p-5">
-          <h4 className="text-sm font-semibold text-foreground mb-3">Institutional Links</h4>
-          <div className="space-y-3">
-            {institutionalLinks.slice(0, 6).map((link: any, i: number) => {
-              const causeLabel = INSTITUTION_CAUSES[link.institution_name];
-              return (
-                <div key={i} className="flex items-start gap-3 py-2 border-b border-border/20 last:border-0">
-                  <div className="flex-1 min-w-0">
-                    <div className="flex items-center gap-2 flex-wrap">
-                      <span className="text-sm font-medium text-foreground">{link.institution_name}</span>
-                      {causeLabel && <CauseTag {...getCauseTag(causeLabel)} />}
-                    </div>
-                    <p className="text-xs text-muted-foreground mt-0.5">
-                      {link.link_description || `Connection: ${link.link_type}`}
-                    </p>
-                  </div>
-                  <span className="text-xs text-muted-foreground shrink-0">
-                    {link.evidence_source || "Public Filing"} · {link.confidence === "high" ? "Verified ✓" : "Cross-Referenced"}
-                  </span>
-                </div>
-              );
-            })}
-          </div>
-        </div>
+        <InstitutionalLinksPanel links={institutionalLinks} causes={INSTITUTION_CAUSES} />
       )}
 
       <GivingShareRow
