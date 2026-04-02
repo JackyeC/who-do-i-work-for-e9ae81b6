@@ -198,7 +198,7 @@ function StoryCard({ article }: { article: WorkNewsArticle }) {
   const spice = spiceLevel(article);
   const sourceProfile = article.source_name ? getSourceProfile(article.source_name) : null;
   const biasColor = sourceProfile ? getBiasColor(sourceProfile.bias) : "";
-  const whyMatters = getWhyItMatters(article.category, article.is_controversy);
+  const whyMatters = getWhyItMatters(article);
 
   return (
     <article id={`story-${article.id}`} className="rounded-xl border border-border/40 bg-card hover:border-primary/30 transition-all group overflow-hidden scroll-mt-24">
