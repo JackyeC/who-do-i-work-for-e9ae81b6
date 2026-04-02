@@ -597,7 +597,15 @@ export default function CompanyProfile() {
               ACCOUNTABILITY SIGNALS (Layer 10)
              ═══════════════════════════════════════════════════════ */}
           {dbCompanyId && !isEarlyInvestigation && (
-            <AccountabilitySignalsLayer companyId={dbCompanyId} companyName={name} />
+            <>
+              <AccountabilitySignalsLayer companyId={dbCompanyId} companyName={name} />
+              <JackyeContextualTake
+                companyId={dbCompanyId}
+                companyName={name}
+                section="accountability"
+                className="mb-6"
+              />
+            </>
           )}
 
           {/* ═══════════════════════════════════════════════════════
