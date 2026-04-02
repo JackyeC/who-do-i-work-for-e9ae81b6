@@ -403,6 +403,22 @@ export function StructuredSignalsSection(props: StructuredSignalsProps) {
         <SignalCategory title="Innovation & Growth" signals={innovationSignals} />
         <SignalCategory title="Employee Experience" signals={sentimentSignals} emptyType="sentiment" companyName={props.companyName} />
       </div>
+
+      {/* Rabbit-hole footer */}
+      <div className="px-5 py-3 border-t border-border/40 flex items-center justify-between">
+        <Link
+          to={`/dossier/${slug}`}
+          className="inline-flex items-center gap-1 text-xs font-medium text-primary hover:underline transition-colors"
+        >
+          Show me the receipts <ArrowRight className="w-3 h-3" />
+        </Link>
+        <Link
+          to={`/dossier/${slug}#political-influence`}
+          className="inline-flex items-center gap-1 text-xs font-medium text-primary hover:underline transition-colors"
+        >
+          How deep does it go? <ArrowRight className="w-3 h-3" />
+        </Link>
+      </div>
     </div>
   );
 }
