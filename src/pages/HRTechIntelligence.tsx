@@ -605,17 +605,17 @@ export default function HRTechIntelligence() {
       </section>
 
       {/* ═══ CTA ═══ */}
-      <section className="py-12 px-4 border-t border-border">
+      <section className="py-10 px-4 border-t border-border">
         <div className="max-w-3xl mx-auto text-center">
-          <h2 className="text-2xl font-bold text-foreground mb-4">
-            This isn't about being anti-vendor. It's about being informed.
+          <h2 className="text-xl font-bold text-foreground mb-3">
+            Not anti-vendor. Pro-information.
           </h2>
-          <p className="text-muted-foreground leading-relaxed mb-6 max-w-2xl mx-auto">
-            When your vendor lobbies to gut AI regulation while facing a class action for AI discrimination, that's a choice. You deserve to know what those choices are.
+          <p className="text-sm text-muted-foreground leading-relaxed mb-5 max-w-2xl mx-auto">
+            When your vendor lobbies to gut AI regulation while facing a class action for AI discrimination, that's worth knowing. The receipts are public. We just read them.
           </p>
           <div className="flex flex-col sm:flex-row gap-3 justify-center">
             <Button asChild className="bg-primary text-primary-foreground hover:bg-primary/90">
-              <Link to="/receipts">See All Company Receipts</Link>
+              <Link to="/receipts">See Company Receipts</Link>
             </Button>
             <Button asChild variant="outline" className="border-primary/30 text-primary hover:bg-primary/10">
               <Link to="/methodology">Our Methodology</Link>
