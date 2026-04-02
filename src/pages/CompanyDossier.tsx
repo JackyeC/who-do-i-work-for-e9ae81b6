@@ -555,6 +555,24 @@ export default function CompanyDossier() {
         eeocCases={eeocCases as any}
       />
 
+      {/* ── WHAT THIS MEANS FOR YOU ── */}
+      <WhatThisMeansForYou
+        companyName={company.name}
+        hasLayoffs={false}
+        hasPoliticalSpending={(company.total_pac_spending ?? 0) > 0 || (company.lobbying_spend ?? 0) > 0}
+        hasEEOC={(eeocCases?.length || 0) > 0}
+        civicScore={civicScore}
+        employeeCount={company.employee_count}
+      />
+
+      {/* ── ACTION BRIDGE ── */}
+      <DossierActionBridge
+        companyId={companyId!}
+        companyName={company.name}
+        companySlug={company.slug}
+        alignmentScore={company.civic_footprint_score}
+      />
+
       {/* ── INTERVIEW PREP ── */}
       <div className="mt-8">
         <button
