@@ -156,10 +156,10 @@ function LeadStory({ article }: { article: WorkNewsArticle }) {
         {article.jackye_take && (
           <div className="rounded-xl bg-primary/5 border border-primary/15 p-6 mb-5">
             <div className="flex items-center gap-2 mb-3">
-              <Eye className="w-3.5 h-3.5 text-primary" />
-              <span className="text-[10px] font-bold text-primary tracking-[0.15em] uppercase font-mono">Jackye's Take</span>
+              <Eye className="w-4 h-4 text-primary" />
+              <span className="text-xs font-bold text-primary tracking-[0.15em] uppercase font-mono">Jackye's Take</span>
             </div>
-            <p className="text-base text-foreground/90 leading-[1.8] italic font-light">
+            <p className="text-lg text-foreground leading-[1.8] italic font-light">
               "{article.jackye_take}"
             </p>
           </div>
@@ -168,12 +168,12 @@ function LeadStory({ article }: { article: WorkNewsArticle }) {
         {/* Why This Matters */}
         <div className="rounded-lg bg-muted/30 border border-border/30 p-5 mb-5">
           <div className="flex items-center gap-2 mb-3">
-            <TrendingUp className="w-3.5 h-3.5 text-primary" />
-            <span className="text-[10px] font-bold text-primary tracking-[0.15em] uppercase font-mono">Why This Matters for You</span>
+            <TrendingUp className="w-4 h-4 text-primary" />
+            <span className="text-xs font-bold text-primary tracking-[0.15em] uppercase font-mono">Why This Matters for You</span>
           </div>
-          <ul className="space-y-2">
+          <ul className="space-y-2.5">
             {whyMatters.map((point, idx) => (
-              <li key={idx} className="flex items-start gap-2.5 text-sm text-muted-foreground leading-relaxed">
+              <li key={idx} className="flex items-start gap-2.5 text-base text-foreground/80 leading-relaxed">
                 <span className="text-primary mt-1 shrink-0">·</span>
                 {point}
               </li>
