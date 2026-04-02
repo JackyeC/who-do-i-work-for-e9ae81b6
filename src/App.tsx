@@ -118,6 +118,9 @@ const ChromeExtension = lazy(() => import("./pages/ChromeExtension"));
 const DataEthics = lazy(() => import("./pages/DataEthics"));
 const ChromeWebStoreAssets = lazy(() => import("./pages/ChromeWebStoreAssets"));
 const PersonEntityDemo = lazy(() => import("./pages/PersonEntityDemo"));
+const JrcFeed = lazy(() => import("./pages/JrcFeed"));
+const JrcCompanyFile = lazy(() => import("./pages/JrcCompanyFile"));
+const JrcPersonFile = lazy(() => import("./pages/JrcPersonFile"));
 const Companies = lazy(() => import("./pages/Companies"));
 const Talent = lazy(() => import("./pages/Talent"));
 const JobsFeed = lazy(() => import("./pages/JobsFeed"));
@@ -246,6 +249,9 @@ const App = () => (
                   <Route path="/extension" element={<ChromeExtension />} />
                   <Route path="/store-assets" element={<ChromeWebStoreAssets />} />
                   <Route path="/person-entity-demo" element={<PersonEntityDemo />} />
+                  <Route path="/jrc" element={<JrcFeed />} />
+                  <Route path="/jrc/company/:slug" element={<JrcCompanyFile />} />
+                  <Route path="/jrc/person/:slug" element={<JrcPersonFile />} />
                   <Route path="/companies" element={<Navigate to="/browse" replace />} />
                   <Route path="/talent" element={<ProtectedRoute><Talent /></ProtectedRoute>} />
                   <Route path="/examples" element={<Examples />} />
