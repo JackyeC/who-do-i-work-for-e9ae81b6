@@ -89,12 +89,26 @@ function formatDate(d: string | null) {
 }
 
 /* ── Main component ── */
+/**
+ * Feature flag: only show Accountability Signals for companies
+ * that have been manually reviewed and approved.
+ * Add company IDs here as you sign off on each company's data.
+ */
+const APPROVED_COMPANY_IDS = new Set([
+  "179c69f3-6d11-41ce-97c0-45e6f677af61", // JPMorgan Chase
+  "d4e5f6a7-b8c9-0123-defa-234567890123", // Amazon
+]);
+
 interface Props {
   companyId: string;
   companyName: string;
 }
 
 export function AccountabilitySignalsLayer({ companyId, companyName }: Props) {
+  // Feature gate: hide for unapproved companies
+  if (!APPROVED_COMPANY_IDS.has(companyId)) {
+    return null;
+  }
   const [expandedCat, setExpandedCat] = useState<string | null>(null);
 
   const { data: signals = [], isLoading } = useQuery({
