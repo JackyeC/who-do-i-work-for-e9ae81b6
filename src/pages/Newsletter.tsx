@@ -37,7 +37,8 @@ function getCategoryConfig(cat: string) {
   return CATEGORY_CONFIG[cat] || CATEGORY_CONFIG.general;
 }
 
-const WHY_IT_MATTERS: Record<string, string[]> = {
+// WHY_IT_MATTERS fallback — only used if AI-generated bullets aren't available
+const WHY_IT_MATTERS_FALLBACK: Record<string, string[]> = {
   regulation: [
     "Rules change. Job protections shift with them. If you're not watching, you're reacting.",
     "Enforcement patterns tell you more about an industry than any job listing.",
@@ -64,11 +65,14 @@ const WHY_IT_MATTERS: Record<string, string[]> = {
   ],
 };
 
-function getWhyItMatters(category: string, isControversy: boolean): string[] {
-  const base = WHY_IT_MATTERS[category] || WHY_IT_MATTERS.general;
-  if (isControversy) {
-    return [...base, "Controversy doesn't mean conviction. Check the receipts before you decide."];
+function getWhyItMatters(article: WorkNewsArticle): string[] {
+  // Prefer AI-generated, story-specific bullets
+  const aiGenerated = (article as any).why_it_matters;
+  if (Array.isArray(aiGenerated) && aiGenerated.length >= 2 && aiGenerated[0]) {
+    return aiGenerated.slice(0, 2);
   }
+  // Fallback to category-based
+  const base = WHY_IT_MATTERS_FALLBACK[article.category] || WHY_IT_MATTERS_FALLBACK.general;
   return base;
 }
 
@@ -117,7 +121,7 @@ function LeadStory({ article }: { article: WorkNewsArticle }) {
   const spice = spiceLevel(article);
   const sourceProfile = article.source_name ? getSourceProfile(article.source_name) : null;
   const biasColor = sourceProfile ? getBiasColor(sourceProfile.bias) : "";
-  const whyMatters = getWhyItMatters(article.category, article.is_controversy);
+  const whyMatters = getWhyItMatters(article);
 
   return (
     <article id={`story-${article.id}`} className="rounded-2xl border border-border/50 bg-card overflow-hidden hover:border-primary/30 transition-all group scroll-mt-24">
@@ -194,7 +198,7 @@ function StoryCard({ article }: { article: WorkNewsArticle }) {
   const spice = spiceLevel(article);
   const sourceProfile = article.source_name ? getSourceProfile(article.source_name) : null;
   const biasColor = sourceProfile ? getBiasColor(sourceProfile.bias) : "";
-  const whyMatters = getWhyItMatters(article.category, article.is_controversy);
+  const whyMatters = getWhyItMatters(article);
 
   return (
     <article id={`story-${article.id}`} className="rounded-xl border border-border/40 bg-card hover:border-primary/30 transition-all group overflow-hidden scroll-mt-24">
@@ -268,7 +272,7 @@ function StoryCard({ article }: { article: WorkNewsArticle }) {
 /* ── Wire Item (compact) ── */
 function WireItem({ article }: { article: WorkNewsArticle }) {
   const cat = getCategoryConfig(article.category);
-  const whyMatters = getWhyItMatters(article.category, article.is_controversy);
+  const whyMatters = getWhyItMatters(article);
   return (
     <div id={`story-${article.id}`} className="group block scroll-mt-24">
       <div className="rounded-lg border border-border/30 bg-card p-4 hover:border-primary/30 transition-all h-full flex flex-col">

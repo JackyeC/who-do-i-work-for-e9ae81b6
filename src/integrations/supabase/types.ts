@@ -8241,6 +8241,7 @@ export type Database = {
           themes: string[] | null
           tone_label: string | null
           updated_at: string | null
+          why_it_matters: string[] | null
           work_news_id: string
         }
         Insert: {
@@ -8263,6 +8264,7 @@ export type Database = {
           themes?: string[] | null
           tone_label?: string | null
           updated_at?: string | null
+          why_it_matters?: string[] | null
           work_news_id: string
         }
         Update: {
@@ -8285,6 +8287,7 @@ export type Database = {
           themes?: string[] | null
           tone_label?: string | null
           updated_at?: string | null
+          why_it_matters?: string[] | null
           work_news_id?: string
         }
         Relationships: [
