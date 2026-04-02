@@ -26,6 +26,7 @@ export function useWorkNews(limit = 50) {
       const { data, error } = await supabase
         .from("work_news")
         .select("*")
+        .eq("language", "en")
         .order("published_at", { ascending: false })
         .limit(limit * 2); // over-fetch to compensate for filtering
       if (error) throw error;
@@ -52,7 +53,8 @@ export function useWorkNewsCount() {
     queryFn: async () => {
       const { count, error } = await supabase
         .from("work_news")
-        .select("*", { count: "exact", head: true });
+        .select("*", { count: "exact", head: true })
+        .eq("language", "en");
       if (error) throw error;
       return count ?? 0;
     },
@@ -67,6 +69,7 @@ export function useWorkNewsTicker() {
       const { data, error } = await supabase
         .from("work_news")
         .select("id, headline, source_name, source_url, category, is_controversy, published_at")
+        .eq("language", "en")
         .not("source_url", "is", null)
         .order("published_at", { ascending: false })
         .limit(40);

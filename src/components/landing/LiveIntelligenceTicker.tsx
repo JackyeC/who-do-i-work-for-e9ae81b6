@@ -48,6 +48,7 @@ export function LiveIntelligenceTicker() {
         .select(
           "id, headline, source_name, source_url, category, is_controversy, published_at, jackye_take"
         )
+        .eq("language", "en")
         .order("published_at", { ascending: false })
         .limit(10);
 
