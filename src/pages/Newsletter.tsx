@@ -576,12 +576,12 @@ export default function Newsletter() {
                 <div className="mb-10 rounded-xl border border-primary/20 bg-primary/[0.04] p-8">
                   <div className="flex items-center gap-2 mb-4">
                     <Eye className="w-4 h-4 text-primary" />
-                    <span className="text-[10px] font-mono tracking-[0.2em] uppercase text-primary font-bold">Jackye's Current Take</span>
+                    <span className="text-xs font-mono tracking-[0.2em] uppercase text-primary font-bold">Jackye's Current Take</span>
                   </div>
-                  <blockquote className="text-lg text-foreground leading-[1.8] italic border-l-2 border-primary pl-5 font-light">
+                  <blockquote className="text-xl text-foreground leading-[1.8] italic border-l-2 border-primary pl-5 font-light">
                     "{currentTake.jackye_take}"
                   </blockquote>
-                  <p className="text-xs text-muted-foreground mt-4">
+                  <p className="text-sm text-foreground/60 mt-4">
                     Re: <span className="text-foreground/80 font-semibold">{currentTake.headline}</span>
                   </p>
                 </div>
