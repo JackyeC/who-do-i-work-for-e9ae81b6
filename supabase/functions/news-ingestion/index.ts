@@ -117,8 +117,8 @@ Deno.serve(async (req: Request) => {
     const tickerNews = await fetchTickerAsNews(supabase);
     newsItems.push(...tickerNews);
 
-    // Deduplicate by title similarity
-    const uniqueNews = deduplicateNews(newsItems);
+    // Deduplicate by title similarity + content quality gates
+    const uniqueNews = deduplicateNews(newsItems).filter((n: any) => passesContentGates(n.title, n.source));
 
     // Upsert into personalized_news (update existing rows to refresh published_at)
     if (uniqueNews.length > 0) {
