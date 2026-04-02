@@ -51,6 +51,7 @@ import { PatternsSynthesisLayer } from "@/components/dossier/PatternsSynthesisLa
 import { HighRiskConnectionCard } from "@/components/company/HighRiskConnectionCard";
 import { PolicyScoreCard } from "@/components/policy-intelligence/PolicyScoreCard";
 import { StateWomenStatusCard } from "@/components/StateWomenStatusCard";
+import { SourceDocumentsLayer } from "@/components/dossier/SourceDocumentsLayer";
 
 export default function CompanyDossier() {
   const { id } = useParams();
@@ -676,6 +677,12 @@ export default function CompanyDossier() {
           <DossierLayer title="Patterns & Synthesis" subtitle="Key observations and notable patterns" icon={Sparkles} layerNumber={8}>
             <PatternsSynthesisLayer patterns={[]} companyName={company.name} />
           </DossierLayer>
+
+          {companyId && (
+            <DossierLayer title="Source Documents" subtitle="Primary-source filings, reports, and disclosures" icon={FileSearch} layerNumber={9}>
+              <SourceDocumentsLayer companyId={companyId} companyName={company.name} />
+            </DossierLayer>
+          )}
         </div>
       )}
     </>
