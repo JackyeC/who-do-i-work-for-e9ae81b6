@@ -728,5 +728,6 @@ export default function CompanyDossier() {
         initialCategory={reportCategory}
       />
     </section>
+    </EvaluationView>
   );
 }
