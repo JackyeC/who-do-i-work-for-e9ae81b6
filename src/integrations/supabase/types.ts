@@ -2012,6 +2012,56 @@ export type Database = {
           },
         ]
       }
+      company_careers_signals: {
+        Row: {
+          active_job_count: number | null
+          benefits_mentioned: Json | null
+          company_id: string
+          created_at: string
+          dei_language_score: number | null
+          id: string
+          perks_vs_substance: number | null
+          raw_text_snippet: string | null
+          remote_policy: string | null
+          scraped_at: string
+          updated_at: string
+        }
+        Insert: {
+          active_job_count?: number | null
+          benefits_mentioned?: Json | null
+          company_id: string
+          created_at?: string
+          dei_language_score?: number | null
+          id?: string
+          perks_vs_substance?: number | null
+          raw_text_snippet?: string | null
+          remote_policy?: string | null
+          scraped_at?: string
+          updated_at?: string
+        }
+        Update: {
+          active_job_count?: number | null
+          benefits_mentioned?: Json | null
+          company_id?: string
+          created_at?: string
+          dei_language_score?: number | null
+          id?: string
+          perks_vs_substance?: number | null
+          raw_text_snippet?: string | null
+          remote_policy?: string | null
+          scraped_at?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "company_careers_signals_company_id_fkey"
+            columns: ["company_id"]
+            isOneToOne: false
+            referencedRelation: "companies"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       company_community_signals: {
         Row: {
           badge_label: string
@@ -2268,6 +2318,53 @@ export type Database = {
         Relationships: [
           {
             foreignKeyName: "company_court_cases_company_id_fkey"
+            columns: ["company_id"]
+            isOneToOne: false
+            referencedRelation: "companies"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      company_coverage_summary: {
+        Row: {
+          company_id: string
+          coverage_status: string
+          created_at: string
+          id: string
+          last_checked_at: string | null
+          last_signal_date: string | null
+          signal_count: number
+          source_family: string
+          summary_text: string | null
+          updated_at: string
+        }
+        Insert: {
+          company_id: string
+          coverage_status?: string
+          created_at?: string
+          id?: string
+          last_checked_at?: string | null
+          last_signal_date?: string | null
+          signal_count?: number
+          source_family: string
+          summary_text?: string | null
+          updated_at?: string
+        }
+        Update: {
+          company_id?: string
+          coverage_status?: string
+          created_at?: string
+          id?: string
+          last_checked_at?: string | null
+          last_signal_date?: string | null
+          signal_count?: number
+          source_family?: string
+          summary_text?: string | null
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "company_coverage_summary_company_id_fkey"
             columns: ["company_id"]
             isOneToOne: false
             referencedRelation: "companies"
@@ -2812,6 +2909,56 @@ export type Database = {
             foreignKeyName: "company_influence_roi_company_id_fkey"
             columns: ["company_id"]
             isOneToOne: true
+            referencedRelation: "companies"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      company_ingestion_queue: {
+        Row: {
+          company_id: string
+          created_at: string
+          error_count: number
+          id: string
+          last_error: string | null
+          last_run_at: string | null
+          next_run_at: string
+          priority: number
+          source_family: string
+          status: string
+          updated_at: string
+        }
+        Insert: {
+          company_id: string
+          created_at?: string
+          error_count?: number
+          id?: string
+          last_error?: string | null
+          last_run_at?: string | null
+          next_run_at?: string
+          priority?: number
+          source_family: string
+          status?: string
+          updated_at?: string
+        }
+        Update: {
+          company_id?: string
+          created_at?: string
+          error_count?: number
+          id?: string
+          last_error?: string | null
+          last_run_at?: string | null
+          next_run_at?: string
+          priority?: number
+          source_family?: string
+          status?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "company_ingestion_queue_company_id_fkey"
+            columns: ["company_id"]
+            isOneToOne: false
             referencedRelation: "companies"
             referencedColumns: ["id"]
           },
