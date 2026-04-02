@@ -688,10 +688,10 @@ export default function Newsletter() {
 
       {/* ── Bottom CTA ── */}
       <footer className="border-t border-border py-12 px-8 text-center">
-        <p className="text-sm text-muted-foreground tracking-[0.1em] font-mono">
+        <p className="text-sm text-foreground/60 tracking-[0.1em] font-mono">
           The Receipts · <em>by Jackye Clayton 👑 × WDIWF</em>
         </p>
-        <p className="text-sm text-muted-foreground mt-2 italic">
+        <p className="text-sm text-foreground/50 mt-2 italic">
           "Every company runs a background check on you. WDIWF runs one on them."
         </p>
         <div className="flex justify-center gap-8 mt-4">
