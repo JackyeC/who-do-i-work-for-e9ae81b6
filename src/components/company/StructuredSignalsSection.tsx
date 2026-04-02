@@ -35,6 +35,7 @@ interface SignalCategoryProps {
     whatTheySay?: string;
     whatWeSee?: string;
   };
+  signalKeyword?: string;
 }
 
 function SignalCategory({ title, signals, emptyType, companyName, careersUrl, scanContext }: SignalCategoryProps) {
