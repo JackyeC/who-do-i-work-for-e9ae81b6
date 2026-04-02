@@ -483,92 +483,59 @@ export default function CompanyDossier() {
   /* ─── Report header + advocacy report ─── */
   const overviewContent = (
     <>
-      {/* ── ABOVE THE FOLD: Company + Verdict + Top Signals ── */}
-      <div className="mb-8">
-        <p className="font-mono text-[10px] tracking-[0.35em] uppercase text-primary mb-4">
-          Employer Intelligence Report
-        </p>
+      {/* ── ABOVE THE FOLD: Verdict Header + Snapshot Cards ── */}
+      <DossierVerdictHeader company={company} />
+      <DossierSnapshotCards data={snapshotData} />
 
-        <div className="flex items-start gap-4 mb-5">
-          <CompanyLogo companyName={company.name} logoUrl={company.logo_url} size="lg" />
-          <div className="flex-1 min-w-0">
-            <h1 className="text-2xl md:text-3xl font-black tracking-tight text-foreground leading-tight">
-              {company.name}
-            </h1>
-            <p className="text-sm text-muted-foreground mt-1">
-              {company.industry} · {company.state}
-              {company.employee_count && ` · ${company.employee_count} employees`}
-            </p>
-          </div>
-          <div className="flex items-center gap-2">
-            <ApplyWithWDIWF
-              companyId={companyId!}
-              companyName={company.name}
-              alignmentScore={company.civic_footprint_score}
-            />
-            <ExportDossierButton companyId={companyId!} companyName={company.name} company={company} />
-            <Button
-              variant="outline"
-              size="sm"
-              className="gap-1.5 text-xs font-semibold"
-              onClick={() => { setReportCategory(null); setReportOpen(true); }}
-            >
-              <FileText className="w-3.5 h-3.5" />
-              View full report
-              <ArrowRight className="w-3 h-3" />
-            </Button>
-          </div>
-        </div>
-
-        {/* ── VERDICT CARD ── */}
-        <div className={cn("rounded-xl border p-5 mb-5", verdict.bg, verdict.border)}>
-          <div className="flex items-center gap-2.5">
-            <verdict.Icon className={cn("w-5 h-5", verdict.color)} />
-            <Badge variant="outline" className={cn("text-sm font-semibold px-3 py-0.5", verdict.color, verdict.border)}>
-              {verdict.label}
-            </Badge>
-          </div>
-          <p className="text-xs text-muted-foreground mt-2">
-            Based on political spending, labor record, enforcement history, and transparency disclosures from public sources.
-          </p>
-        </div>
-
-        {/* ── TOP SIGNALS ── */}
-        <div className="mb-6">
-          <h2 className="text-xs font-semibold text-foreground uppercase tracking-wider mb-3">Top Signals</h2>
-          <div className="space-y-2">
-            {displaySignals.map((signal, i) => {
-              const reportCat = SIGNAL_CATEGORY_MAP[signal.title] || "";
-              const catRecords = reportCat ? evidenceRecords.filter(r => r.category === reportCat) : [];
-              const hasEvidence = catRecords.length > 0;
-
-              return (
-                <SignalRevealCard
-                  key={i}
-                  title={signal.title}
-                  explanation={signal.explanation}
-                  tier={signal.tier}
-                  records={catRecords}
-                  hasEvidence={hasEvidence}
-                />
-              );
-            })}
-          </div>
-        </div>
-
+      {/* Action buttons row */}
+      <div className="flex items-center gap-2 mb-6">
+        <ExportDossierButton companyId={companyId!} companyName={company.name} company={company} />
+        <Button
+          variant="outline"
+          size="sm"
+          className="gap-1.5 text-xs font-semibold"
+          onClick={() => { setReportCategory(null); setReportOpen(true); }}
+        >
+          <FileText className="w-3.5 h-3.5" />
+          View full report
+          <ArrowRight className="w-3 h-3" />
+        </Button>
         {isTracked && (
-          <Badge className="bg-primary/10 text-primary text-xs mb-4">Tracked</Badge>
+          <Badge className="bg-primary/10 text-primary text-xs ml-auto">Tracked</Badge>
         )}
-
-        <p className="text-xs text-muted-foreground leading-relaxed max-w-xl">
-          This is a background check on the employer — built from public records, not opinions.
-          Every signal traces back to a source. Use it before you apply, interview, or sign.
-        </p>
       </div>
+
+      {/* ── TOP SIGNALS ── */}
+      <div className="mb-6">
+        <h2 className="text-xs font-semibold text-foreground uppercase tracking-wider mb-3">Top Signals</h2>
+        <div className="space-y-2">
+          {displaySignals.map((signal, i) => {
+            const reportCat = SIGNAL_CATEGORY_MAP[signal.title] || "";
+            const catRecords = reportCat ? evidenceRecords.filter(r => r.category === reportCat) : [];
+            const hasEvidence = catRecords.length > 0;
+
+            return (
+              <SignalRevealCard
+                key={i}
+                title={signal.title}
+                explanation={signal.explanation}
+                tier={signal.tier}
+                records={catRecords}
+                hasEvidence={hasEvidence}
+              />
+            );
+          })}
+        </div>
+      </div>
+
+      <p className="text-xs text-muted-foreground leading-relaxed max-w-xl mb-6">
+        This is a background check on the employer — built from public records, not opinions.
+        Every signal traces back to a source. Use it before you apply, interview, or sign.
+      </p>
 
       {/* WARN Filings — always show when data exists */}
       {companyId && (
-        <div className="mb-6">
+        <div className="mb-6" id="warn-filings">
           <WarnFilingsCard companyId={companyId} companyName={company.name} prominent />
         </div>
       )}
