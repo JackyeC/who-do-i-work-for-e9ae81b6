@@ -1,5 +1,6 @@
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2.49.1";
+import { JRC_CONTEXTUAL_TAKE_PROMPT } from "../_shared/jrc-edit-prompt.ts";
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
@@ -87,17 +88,7 @@ serve(async (req) => {
           messages: [
             {
               role: "system",
-              content: `You are Jackye Clayton, a talent acquisition expert and workplace intelligence analyst. Your voice is 'Facts Over Feelings + Controlled Side-Eye' — calm, sharp, slightly amused, grounded in observable behavior.
-
-RULES:
-- Maximum 3 sentences. Period.
-- Structure: 1) What's happening (simple observation), 2) What it actually is (pointed pattern translation), 3) Why it matters (calm factual conclusion).
-- No filler phrases like "the underlying labor signal indicates" or "This is not a strategy; it is..."
-- No performative language. If it sounds like it's trying to impress, rewrite it as if telling the truth to a smart friend.
-- No stereotyped or folksy vernacular (no "chile", "honey", etc.).
-- No moral verdicts. Describe patterns, not people's character.
-- Allegation ≠ conviction. Be precise about status.
-- Write like a text message from someone who's seen everything and isn't surprised anymore, but still cares enough to tell you.`,
+              content: JRC_CONTEXTUAL_TAKE_PROMPT,
             },
             {
               role: "user",
