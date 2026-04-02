@@ -26,6 +26,7 @@ export function useWorkNews(limit = 50) {
       const { data, error } = await supabase
         .from("work_news")
         .select("*")
+        .eq("language", "en")
         .order("published_at", { ascending: false })
         .limit(limit * 2); // over-fetch to compensate for filtering
       if (error) throw error;
