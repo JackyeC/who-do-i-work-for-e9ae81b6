@@ -156,10 +156,10 @@ function LeadStory({ article }: { article: WorkNewsArticle }) {
         {article.jackye_take && (
           <div className="rounded-xl bg-primary/5 border border-primary/15 p-6 mb-5">
             <div className="flex items-center gap-2 mb-3">
-              <Eye className="w-3.5 h-3.5 text-primary" />
-              <span className="text-[10px] font-bold text-primary tracking-[0.15em] uppercase font-mono">Jackye's Take</span>
+              <Eye className="w-4 h-4 text-primary" />
+              <span className="text-xs font-bold text-primary tracking-[0.15em] uppercase font-mono">Jackye's Take</span>
             </div>
-            <p className="text-base text-foreground/90 leading-[1.8] italic font-light">
+            <p className="text-lg text-foreground leading-[1.8] italic font-light">
               "{article.jackye_take}"
             </p>
           </div>
@@ -168,12 +168,12 @@ function LeadStory({ article }: { article: WorkNewsArticle }) {
         {/* Why This Matters */}
         <div className="rounded-lg bg-muted/30 border border-border/30 p-5 mb-5">
           <div className="flex items-center gap-2 mb-3">
-            <TrendingUp className="w-3.5 h-3.5 text-primary" />
-            <span className="text-[10px] font-bold text-primary tracking-[0.15em] uppercase font-mono">Why This Matters for You</span>
+            <TrendingUp className="w-4 h-4 text-primary" />
+            <span className="text-xs font-bold text-primary tracking-[0.15em] uppercase font-mono">Why This Matters for You</span>
           </div>
-          <ul className="space-y-2">
+          <ul className="space-y-2.5">
             {whyMatters.map((point, idx) => (
-              <li key={idx} className="flex items-start gap-2.5 text-sm text-muted-foreground leading-relaxed">
+              <li key={idx} className="flex items-start gap-2.5 text-base text-foreground/80 leading-relaxed">
                 <span className="text-primary mt-1 shrink-0">·</span>
                 {point}
               </li>
@@ -184,14 +184,14 @@ function LeadStory({ article }: { article: WorkNewsArticle }) {
         <div className="flex items-center justify-between pt-4 border-t border-border/20">
           <div className="flex items-center gap-3">
             {article.source_name && (
-              <span className={`text-xs font-medium ${biasColor || "text-muted-foreground"}`}>{article.source_name}</span>
+              <span className={`text-sm font-medium ${biasColor || "text-foreground/70"}`}>{article.source_name}</span>
             )}
             <SpiceMeter level={spice} />
           </div>
           {article.source_url && (
             <a href={article.source_url} target="_blank" rel="noopener noreferrer"
-              className="flex items-center gap-1 text-[10px] font-mono text-primary/70 hover:text-primary transition-colors">
-              Read Source <ExternalLink className="w-3 h-3" />
+              className="flex items-center gap-1 text-xs font-mono text-primary hover:text-primary/80 transition-colors">
+              Read Source <ExternalLink className="w-3.5 h-3.5" />
             </a>
           )}
         </div>
@@ -219,28 +219,28 @@ function StoryCard({ article }: { article: WorkNewsArticle }) {
           <span className="ml-auto text-[10px] text-muted-foreground/60 font-mono">{timeAgo(article.published_at)}</span>
         </div>
 
-        <h3 className="text-[15px] font-bold text-foreground leading-snug mb-3 group-hover:text-primary transition-colors">
+        <h3 className="text-lg font-bold text-foreground leading-snug mb-3 group-hover:text-primary transition-colors">
           {article.headline}
         </h3>
 
         {article.jackye_take && (
-          <div className="rounded-lg bg-primary/5 border border-primary/15 p-3.5 mb-3">
-            <div className="flex items-center gap-1.5 mb-1.5">
-              <Eye className="w-3 h-3 text-primary" />
-              <span className="text-[9px] font-bold text-primary tracking-[0.15em] uppercase font-mono">The Take</span>
+          <div className="rounded-lg bg-primary/5 border border-primary/15 p-4 mb-3">
+            <div className="flex items-center gap-1.5 mb-2">
+              <Eye className="w-3.5 h-3.5 text-primary" />
+              <span className="text-[11px] font-bold text-primary tracking-[0.15em] uppercase font-mono">The Take</span>
             </div>
-            <p className="text-sm text-foreground/85 leading-relaxed">{article.jackye_take}</p>
+            <p className="text-base text-foreground leading-relaxed">{article.jackye_take}</p>
           </div>
         )}
 
-        <div className="rounded-lg bg-muted/20 border border-border/20 p-3 mb-3">
-          <div className="flex items-center gap-1.5 mb-1.5">
-            <TrendingUp className="w-3 h-3 text-primary" />
-            <span className="text-[9px] font-bold text-primary tracking-[0.15em] uppercase font-mono">Why This Matters</span>
+        <div className="rounded-lg bg-muted/20 border border-border/20 p-4 mb-3">
+          <div className="flex items-center gap-1.5 mb-2">
+            <TrendingUp className="w-3.5 h-3.5 text-primary" />
+            <span className="text-[11px] font-bold text-primary tracking-[0.15em] uppercase font-mono">Why This Matters</span>
           </div>
-          <ul className="space-y-1">
+          <ul className="space-y-1.5">
             {whyMatters.slice(0, 2).map((point, idx) => (
-              <li key={idx} className="flex items-start gap-1.5 text-xs text-muted-foreground leading-relaxed">
+              <li key={idx} className="flex items-start gap-1.5 text-sm text-foreground/80 leading-relaxed">
                 <span className="text-primary mt-0.5 shrink-0">·</span>
                 {point}
               </li>
@@ -251,7 +251,7 @@ function StoryCard({ article }: { article: WorkNewsArticle }) {
         {article.themes && article.themes.length > 0 && (
           <div className="flex flex-wrap gap-1.5 mb-3">
             {article.themes.map((theme) => (
-              <span key={theme} className="inline-flex items-center px-2 py-0.5 rounded-full bg-muted/50 text-[10px] text-muted-foreground font-mono">
+              <span key={theme} className="inline-flex items-center px-2 py-0.5 rounded-full bg-muted/50 text-xs text-foreground/60 font-mono">
                 {theme}
               </span>
             ))}
@@ -261,14 +261,14 @@ function StoryCard({ article }: { article: WorkNewsArticle }) {
         <div className="flex items-center justify-between pt-3 border-t border-border/20">
           <div className="flex items-center gap-3">
             {article.source_name && (
-              <span className={`text-xs font-medium ${biasColor || "text-muted-foreground"}`}>{article.source_name}</span>
+              <span className={`text-sm font-medium ${biasColor || "text-foreground/70"}`}>{article.source_name}</span>
             )}
             <SpiceMeter level={spice} />
           </div>
           {article.source_url && (
             <a href={article.source_url} target="_blank" rel="noopener noreferrer"
-              className="flex items-center gap-1 text-[10px] font-mono text-primary/70 hover:text-primary transition-colors">
-              Source <ExternalLink className="w-3 h-3" />
+              className="flex items-center gap-1 text-xs font-mono text-primary hover:text-primary/80 transition-colors">
+              Source <ExternalLink className="w-3.5 h-3.5" />
             </a>
           )}
         </div>
@@ -289,12 +289,12 @@ function WireItem({ article }: { article: WorkNewsArticle }) {
             {cat.label}
           </Badge>
           {article.is_controversy && <AlertTriangle className="w-3 h-3 text-destructive" />}
-          <span className="ml-auto text-[10px] text-muted-foreground/50 font-mono">{timeAgo(article.published_at)}</span>
+          <span className="ml-auto text-xs text-foreground/50 font-mono">{timeAgo(article.published_at)}</span>
         </div>
-        <p className="text-sm font-semibold text-foreground leading-snug flex-1 group-hover:text-primary transition-colors mb-2">
+        <p className="text-base font-semibold text-foreground leading-snug flex-1 group-hover:text-primary transition-colors mb-2">
           {article.headline}
         </p>
-        <p className="text-[11px] text-muted-foreground leading-relaxed mb-2">
+        <p className="text-sm text-foreground/70 leading-relaxed mb-2">
           {whyMatters[0]}
         </p>
         <div className="flex items-center justify-between mt-auto pt-2 border-t border-border/20">
@@ -576,12 +576,12 @@ export default function Newsletter() {
                 <div className="mb-10 rounded-xl border border-primary/20 bg-primary/[0.04] p-8">
                   <div className="flex items-center gap-2 mb-4">
                     <Eye className="w-4 h-4 text-primary" />
-                    <span className="text-[10px] font-mono tracking-[0.2em] uppercase text-primary font-bold">Jackye's Current Take</span>
+                    <span className="text-xs font-mono tracking-[0.2em] uppercase text-primary font-bold">Jackye's Current Take</span>
                   </div>
-                  <blockquote className="text-lg text-foreground leading-[1.8] italic border-l-2 border-primary pl-5 font-light">
+                  <blockquote className="text-xl text-foreground leading-[1.8] italic border-l-2 border-primary pl-5 font-light">
                     "{currentTake.jackye_take}"
                   </blockquote>
-                  <p className="text-xs text-muted-foreground mt-4">
+                  <p className="text-sm text-foreground/60 mt-4">
                     Re: <span className="text-foreground/80 font-semibold">{currentTake.headline}</span>
                   </p>
                 </div>
@@ -641,13 +641,13 @@ export default function Newsletter() {
         <aside className="hidden lg:block sticky top-[74px] space-y-6">
           {/* Newsletter CTA */}
           <div className="bg-card border border-border rounded-xl p-6">
-            <p className="text-[9px] uppercase tracking-[0.55em] text-primary mb-3 font-mono">Every Friday</p>
+            <p className="text-[11px] uppercase tracking-[0.55em] text-primary mb-3 font-mono">Every Friday</p>
             <h3 className="text-xl font-black text-foreground mb-2 leading-tight tracking-tight">My Uncertainty Era</h3>
-            <p className="text-sm text-muted-foreground leading-relaxed mb-4">
+            <p className="text-sm text-foreground/70 leading-relaxed mb-4">
               The part where I say what everyone's thinking but nobody's saying.
             </p>
             <blockquote className="border-l-2 border-primary pl-3.5 mb-5">
-              <p className="text-sm text-foreground leading-relaxed italic font-light">
+              <p className="text-sm text-foreground/80 leading-relaxed italic font-light">
                 "Every company has a 'people are our greatest asset' poster. Most hang next to a layoff plan."
               </p>
             </blockquote>
@@ -659,14 +659,14 @@ export default function Newsletter() {
 
           {/* Hottest Takes */}
           <div className="bg-card border border-border rounded-xl p-5">
-            <p className="text-[9px] uppercase tracking-[0.55em] text-primary mb-3.5 font-mono">🔥 Hottest Right Now</p>
+            <p className="text-[11px] uppercase tracking-[0.55em] text-primary mb-3.5 font-mono">🔥 Hottest Right Now</p>
             {hotStories.slice(0, 4).map((article) => (
               <div key={article.id} className="pb-3 mb-3 border-b border-border last:border-none last:mb-0 last:pb-0">
                 <div className="flex items-center gap-2 mb-1.5">
-                  <Badge variant="outline" className={`text-[9px] font-mono tracking-wider border ${getCategoryConfig(article.category).color}`}>
+                  <Badge variant="outline" className={`text-[10px] font-mono tracking-wider border ${getCategoryConfig(article.category).color}`}>
                     {getCategoryConfig(article.category).label}
                   </Badge>
-                  <span className="text-[9px] text-muted-foreground/50 font-mono">{timeAgo(article.published_at)}</span>
+                  <span className="text-[10px] text-foreground/50 font-mono">{timeAgo(article.published_at)}</span>
                 </div>
                 <p className="text-sm font-semibold text-foreground leading-snug">{article.headline}</p>
               </div>
@@ -675,11 +675,11 @@ export default function Newsletter() {
 
           {/* What to Watch */}
           <div className="rounded-xl p-5 border" style={{ background: "hsl(var(--primary) / 0.04)", borderColor: "hsl(var(--primary) / 0.15)" }}>
-            <p className="text-[9px] uppercase tracking-[0.55em] text-primary mb-3 font-mono">👀 What to Watch</p>
-            <p className="text-xs text-muted-foreground leading-relaxed mb-3">
+            <p className="text-[11px] uppercase tracking-[0.55em] text-primary mb-3 font-mono">👀 What to Watch</p>
+            <p className="text-sm text-foreground/70 leading-relaxed mb-3">
               Stories still developing. Patterns forming. Receipts being pulled.
             </p>
-            <Link to="/receipts" className="text-xs text-primary font-mono hover:underline flex items-center gap-1">
+            <Link to="/receipts" className="text-sm text-primary font-mono hover:underline flex items-center gap-1">
               See all investigations <ArrowRight className="w-3 h-3" />
             </Link>
           </div>
@@ -688,10 +688,10 @@ export default function Newsletter() {
 
       {/* ── Bottom CTA ── */}
       <footer className="border-t border-border py-12 px-8 text-center">
-        <p className="text-sm text-muted-foreground tracking-[0.1em] font-mono">
+        <p className="text-sm text-foreground/60 tracking-[0.1em] font-mono">
           The Receipts · <em>by Jackye Clayton 👑 × WDIWF</em>
         </p>
-        <p className="text-sm text-muted-foreground mt-2 italic">
+        <p className="text-sm text-foreground/50 mt-2 italic">
           "Every company runs a background check on you. WDIWF runs one on them."
         </p>
         <div className="flex justify-center gap-8 mt-4">
