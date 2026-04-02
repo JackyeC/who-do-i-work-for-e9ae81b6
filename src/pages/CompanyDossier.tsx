@@ -4,6 +4,7 @@ import { CandidatePrepPack } from "@/components/dossier/CandidatePrepPack";
 import { HardInterviewQuestions } from "@/components/dossier/HardInterviewQuestions";
 import { useParams, Link, useNavigate } from "react-router-dom";
 import { CompanyZeroState } from "@/components/CompanyZeroState";
+import { OfferIntelligencePanel } from "@/components/company/OfferIntelligencePanel";
 import { useQuery } from "@tanstack/react-query";
 import { usePageSEO } from "@/hooks/use-page-seo";
 import { getOGImageUrl } from "@/lib/social-share";

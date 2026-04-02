@@ -4,6 +4,7 @@ import { useCompanyIntelligence } from "@/hooks/use-company-intelligence";
 import { motion } from "framer-motion";
 import { Building2, ArrowLeft, EyeOff, Loader2, Sparkles, Search, Scan, ExternalLink, FileSearch } from "lucide-react";
 import { AuditRequestForm } from "@/components/AuditRequestForm";
+import { OfferIntelligencePanel } from "@/components/company/OfferIntelligencePanel";
 import { IntegrityIndicators } from "@/components/company/IntegrityIndicators";
 import { CareerFitReportCTA } from "@/components/CareerFitReportCTA";
 import { JackyesInsightBlock } from "@/components/company/JackyesInsightBlock";
