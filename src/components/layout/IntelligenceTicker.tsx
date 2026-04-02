@@ -1,7 +1,16 @@
 import { useMemo } from "react";
 import { useTickerItems, getTickerItemColor } from "@/hooks/use-ticker-items";
-import { Link } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 import { differenceInHours, differenceInDays } from "date-fns";
+
+/** Routes where the intelligence ticker should render */
+const TICKER_ALLOWED_ROUTES = ["/", "/receipts", "/browse", "/search", "/newsletter", "/rankings"];
+
+function isTickerRoute(pathname: string): boolean {
+  return TICKER_ALLOWED_ROUTES.some(r =>
+    r === "/" ? pathname === "/" : pathname.startsWith(r)
+  );
+}
 
 const EMPTY_STATE = "No major new signals detected today";
 
