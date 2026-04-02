@@ -53,6 +53,16 @@ function isEnglishAndRelevant(headline: string): boolean {
   for (const p of ROMANCE_MARKERS) { const m = headline.match(p); if (m) romanceHits += m.length; }
   if (romanceHits >= 3) return false;
   if (FOREIGN_LIFESTYLE_RE.test(headline)) return false;
+  // German connective gate
+  const lower = headline.toLowerCase();
+  const germanHits = (lower.match(/\b(der|die|das|und|für|mit|auf|ist|von|nicht)\b/g) || []).length;
+  if (germanHits >= 4) return false;
+  // Italian connective gate
+  const italianHits = (lower.match(/\b(il|la|le|lo|di|del|della|dei|per|che|non|con|una|più|nel|sul)\b/g) || []).length;
+  if (italianHits >= 4) return false;
+  // Swedish/Polish/Nordic connective gate
+  const nordicHits = (lower.match(/\b(och|att|det|för|som|med|har|kan|inte|vara|eller|från|efter|denna|till)\b/g) || []).length;
+  if (nordicHits >= 3) return false;
   // Exclude irrelevant topics
   for (const p of EXCLUDE_PATTERNS) { if (p.test(headline)) return false; }
   return true;
