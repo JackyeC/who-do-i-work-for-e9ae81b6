@@ -33,6 +33,10 @@ import { SignalRevealCard } from "@/components/dossier/SignalRevealCard";
 import { ApplyWithWDIWF } from "@/components/applications/ApplyWithWDIWF";
 import { useEvaluation } from "@/contexts/EvaluationContext";
 import { EvaluationView } from "@/components/evaluation/EvaluationView";
+import { DossierVerdictHeader } from "@/components/evaluation/DossierVerdictHeader";
+import { DossierSnapshotCards } from "@/components/evaluation/DossierSnapshotCards";
+import { WhatThisMeansForYou } from "@/components/evaluation/WhatThisMeansForYou";
+import { DossierActionBridge } from "@/components/evaluation/DossierActionBridge";
 
 // Deep-dive layer components (power-user expandable)
 import { ValuesSignalsLayer } from "@/components/dossier/ValuesSignalsLayer";
@@ -435,6 +439,32 @@ export default function CompanyDossier() {
     (issueSignals?.length || 0) === 0 &&
     (publicStances?.length || 0) === 0;
 
+  // Snapshot card summaries derived from existing data
+  const snapshotData = useMemo(() => {
+    const hasEEOCData = (eeocCases?.length || 0) > 0;
+    const pacSpend = company.total_pac_spending ?? 0;
+    const lobbySpend = company.lobbying_spend ?? 0;
+    const execCount = (executives || []).length;
+    const departedExecs = (executives || []).filter((e: any) => e.departed_at).length;
+
+    return {
+      workerSummary: hasEEOCData
+        ? `${eeocCases!.length} EEOC filing(s) on record. That's worth understanding before you interview.`
+        : civicScore >= 60
+        ? "No enforcement red flags on file. Transparency score is above average."
+        : "Limited public worker data. Ask about internal complaint processes in your interview.",
+      stabilitySummary: company.employee_count
+        ? `${company.employee_count} employees. Check the WARN filings section below for layoff history.`
+        : "Employee count not publicly confirmed. WARN filing data shown below if available.",
+      moneySummary: pacSpend > 0 || lobbySpend > 0
+        ? `$${(pacSpend + lobbySpend).toLocaleString()} in political spending and lobbying on public record.`
+        : "No significant political spending found in public filings.",
+      leadershipSummary: execCount > 0
+        ? `${execCount} executive(s) tracked.${departedExecs > 0 ? ` ${departedExecs} departed — turnover worth noting.` : " Leadership appears stable on paper."}`
+        : "Executive data still being indexed. Check back or request an audit.",
+    };
+  }, [company, eeocCases, executives, civicScore]);
+
   /* ─── Signal → Report category mapping ─── */
   const SIGNAL_CATEGORY_MAP: Record<string, string> = {
     "Political Spending": "Political Spending",
@@ -453,92 +483,59 @@ export default function CompanyDossier() {
   /* ─── Report header + advocacy report ─── */
   const overviewContent = (
     <>
-      {/* ── ABOVE THE FOLD: Company + Verdict + Top Signals ── */}
-      <div className="mb-8">
-        <p className="font-mono text-[10px] tracking-[0.35em] uppercase text-primary mb-4">
-          Employer Intelligence Report
-        </p>
+      {/* ── ABOVE THE FOLD: Verdict Header + Snapshot Cards ── */}
+      <DossierVerdictHeader company={company} />
+      <DossierSnapshotCards data={snapshotData} />
 
-        <div className="flex items-start gap-4 mb-5">
-          <CompanyLogo companyName={company.name} logoUrl={company.logo_url} size="lg" />
-          <div className="flex-1 min-w-0">
-            <h1 className="text-2xl md:text-3xl font-black tracking-tight text-foreground leading-tight">
-              {company.name}
-            </h1>
-            <p className="text-sm text-muted-foreground mt-1">
-              {company.industry} · {company.state}
-              {company.employee_count && ` · ${company.employee_count} employees`}
-            </p>
-          </div>
-          <div className="flex items-center gap-2">
-            <ApplyWithWDIWF
-              companyId={companyId!}
-              companyName={company.name}
-              alignmentScore={company.civic_footprint_score}
-            />
-            <ExportDossierButton companyId={companyId!} companyName={company.name} company={company} />
-            <Button
-              variant="outline"
-              size="sm"
-              className="gap-1.5 text-xs font-semibold"
-              onClick={() => { setReportCategory(null); setReportOpen(true); }}
-            >
-              <FileText className="w-3.5 h-3.5" />
-              View full report
-              <ArrowRight className="w-3 h-3" />
-            </Button>
-          </div>
-        </div>
-
-        {/* ── VERDICT CARD ── */}
-        <div className={cn("rounded-xl border p-5 mb-5", verdict.bg, verdict.border)}>
-          <div className="flex items-center gap-2.5">
-            <verdict.Icon className={cn("w-5 h-5", verdict.color)} />
-            <Badge variant="outline" className={cn("text-sm font-semibold px-3 py-0.5", verdict.color, verdict.border)}>
-              {verdict.label}
-            </Badge>
-          </div>
-          <p className="text-xs text-muted-foreground mt-2">
-            Based on political spending, labor record, enforcement history, and transparency disclosures from public sources.
-          </p>
-        </div>
-
-        {/* ── TOP SIGNALS ── */}
-        <div className="mb-6">
-          <h2 className="text-xs font-semibold text-foreground uppercase tracking-wider mb-3">Top Signals</h2>
-          <div className="space-y-2">
-            {displaySignals.map((signal, i) => {
-              const reportCat = SIGNAL_CATEGORY_MAP[signal.title] || "";
-              const catRecords = reportCat ? evidenceRecords.filter(r => r.category === reportCat) : [];
-              const hasEvidence = catRecords.length > 0;
-
-              return (
-                <SignalRevealCard
-                  key={i}
-                  title={signal.title}
-                  explanation={signal.explanation}
-                  tier={signal.tier}
-                  records={catRecords}
-                  hasEvidence={hasEvidence}
-                />
-              );
-            })}
-          </div>
-        </div>
-
+      {/* Action buttons row */}
+      <div className="flex items-center gap-2 mb-6">
+        <ExportDossierButton companyId={companyId!} companyName={company.name} company={company} />
+        <Button
+          variant="outline"
+          size="sm"
+          className="gap-1.5 text-xs font-semibold"
+          onClick={() => { setReportCategory(null); setReportOpen(true); }}
+        >
+          <FileText className="w-3.5 h-3.5" />
+          View full report
+          <ArrowRight className="w-3 h-3" />
+        </Button>
         {isTracked && (
-          <Badge className="bg-primary/10 text-primary text-xs mb-4">Tracked</Badge>
+          <Badge className="bg-primary/10 text-primary text-xs ml-auto">Tracked</Badge>
         )}
-
-        <p className="text-xs text-muted-foreground leading-relaxed max-w-xl">
-          This is a background check on the employer — built from public records, not opinions.
-          Every signal traces back to a source. Use it before you apply, interview, or sign.
-        </p>
       </div>
+
+      {/* ── TOP SIGNALS ── */}
+      <div className="mb-6">
+        <h2 className="text-xs font-semibold text-foreground uppercase tracking-wider mb-3">Top Signals</h2>
+        <div className="space-y-2">
+          {displaySignals.map((signal, i) => {
+            const reportCat = SIGNAL_CATEGORY_MAP[signal.title] || "";
+            const catRecords = reportCat ? evidenceRecords.filter(r => r.category === reportCat) : [];
+            const hasEvidence = catRecords.length > 0;
+
+            return (
+              <SignalRevealCard
+                key={i}
+                title={signal.title}
+                explanation={signal.explanation}
+                tier={signal.tier}
+                records={catRecords}
+                hasEvidence={hasEvidence}
+              />
+            );
+          })}
+        </div>
+      </div>
+
+      <p className="text-xs text-muted-foreground leading-relaxed max-w-xl mb-6">
+        This is a background check on the employer — built from public records, not opinions.
+        Every signal traces back to a source. Use it before you apply, interview, or sign.
+      </p>
 
       {/* WARN Filings — always show when data exists */}
       {companyId && (
-        <div className="mb-6">
+        <div className="mb-6" id="warn-filings">
           <WarnFilingsCard companyId={companyId} companyName={company.name} prominent />
         </div>
       )}
@@ -556,6 +553,24 @@ export default function CompanyDossier() {
         issueSignals={issueSignals as any}
         publicStances={publicStances as any}
         eeocCases={eeocCases as any}
+      />
+
+      {/* ── WHAT THIS MEANS FOR YOU ── */}
+      <WhatThisMeansForYou
+        companyName={company.name}
+        hasLayoffs={false}
+        hasPoliticalSpending={(company.total_pac_spending ?? 0) > 0 || (company.lobbying_spend ?? 0) > 0}
+        hasEEOC={(eeocCases?.length || 0) > 0}
+        civicScore={civicScore}
+        employeeCount={company.employee_count}
+      />
+
+      {/* ── ACTION BRIDGE ── */}
+      <DossierActionBridge
+        companyId={companyId!}
+        companyName={company.name}
+        companySlug={company.slug}
+        alignmentScore={company.civic_footprint_score}
       />
 
       {/* ── INTERVIEW PREP ── */}
