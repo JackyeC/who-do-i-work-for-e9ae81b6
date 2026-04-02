@@ -145,9 +145,15 @@ export function OfferIntelligencePanel({ company, companyId }: OfferIntelligence
             </Badge>
           )}
         </div>
-        <p className="text-sm text-muted-foreground max-w-xl">
+        <p className="text-sm text-muted-foreground max-w-xl mb-2">
           We don't have a full dossier on this employer. Here's what we found, and what to watch for.
         </p>
+        <Link
+          to={`/dossier/${company.slug || company.name?.toLowerCase().replace(/[^a-z0-9]+/g, '-')}`}
+          className="inline-flex items-center gap-1 text-sm font-medium text-primary hover:underline transition-colors"
+        >
+          Open company dossier <ArrowRight className="w-3.5 h-3.5" />
+        </Link>
       </div>
 
       {/* ── Community / Secondary Signals (Indeed, BBB) — PRIMARY content on limited data pages ── */}
