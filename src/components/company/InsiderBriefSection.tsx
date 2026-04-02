@@ -197,6 +197,12 @@ export function InsiderBriefSection(props: InsiderBriefProps) {
       <div className="px-5 py-4">
         <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-2">What this tends to mean</p>
         <p className="text-sm text-foreground/85 leading-relaxed">{interpretation}</p>
+        <Link
+          to={`/dossier/${slug}`}
+          className="inline-flex items-center gap-1 mt-3 text-xs font-medium text-primary hover:underline transition-colors"
+        >
+          See the full pattern <ArrowRight className="w-3 h-3" />
+        </Link>
       </div>
     </div>
   );
