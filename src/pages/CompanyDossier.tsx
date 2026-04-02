@@ -1,4 +1,4 @@
-import { useMemo, useState } from "react";
+import { useMemo, useState, useEffect } from "react";
 import { AdvocacyReport } from "@/components/dossier/AdvocacyReport";
 import { CandidatePrepPack } from "@/components/dossier/CandidatePrepPack";
 import { HardInterviewQuestions } from "@/components/dossier/HardInterviewQuestions";
