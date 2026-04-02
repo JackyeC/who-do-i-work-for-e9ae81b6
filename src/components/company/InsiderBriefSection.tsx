@@ -1,6 +1,8 @@
 import { useMemo } from "react";
+import { Link } from "react-router-dom";
 import { Badge } from "@/components/ui/badge";
 import { cn } from "@/lib/utils";
+import { ArrowRight } from "lucide-react";
 
 interface InsiderBriefProps {
   companyName: string;
