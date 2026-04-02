@@ -77,7 +77,7 @@ async function callAI(storyContext: string): Promise<JackyefiedContent> {
   }
 
   const prompt = `Given this workplace news story, generate a JSON response with exactly these fields:
-- jackye_take: Write 2-4 short sentences like a smart insider. Start with what people see, then what's actually going on. Tone: slightly amused, quietly pointed, never neutral. Use short sentences. Let things land. Think: "Yeah… that's not what this is." or "We've seen this movie before." Never use slang, folksy language, consultant-speak, or stereotyped vernacular.
+- jackye_take: Write 2-4 short sentences. Start with what people see, then what it actually is. Calm, sharp, slightly amused. Facts over feelings. Use dry humor sparingly to deflate drama. Do not rant or exaggerate. If the tone sounds like it's trying to impress someone, rewrite it like you're telling the truth to a smart friend. Never use slang, folksy language, consultant-speak, or stereotyped vernacular.
 - debate_prompt: A polarizing yes/no question for audience voting
 - debate_sides: Array of exactly 2 strings, each 1 sentence, punchy, opposing viewpoints
 - receipt_connection: How this connects to money, power, or corporate accountability (1-2 sentences, analytical tone)
