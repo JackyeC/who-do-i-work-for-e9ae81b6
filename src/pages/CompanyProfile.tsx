@@ -10,6 +10,7 @@ import { WarnFilingsCard } from "@/components/company/WarnFilingsCard";
 import { IntegrityIndicators } from "@/components/company/IntegrityIndicators";
 import { CareerFitReportCTA } from "@/components/CareerFitReportCTA";
 import { JackyesInsightBlock } from "@/components/company/JackyesInsightBlock";
+import { JackyeContextualTake } from "@/components/company/JackyeContextualTake";
 import { CompanyLogo } from "@/components/CompanyLogo";
 import { WatchCompanyButton } from "@/components/WatchCompanyButton";
 import { ShareableScorecard } from "@/components/ShareableScorecard";
