@@ -423,6 +423,15 @@ export default function CompanyProfile() {
           <JackyesInsightBlock insight={dbCompany?.jackye_insight} description={(dbCompany as any)?.description} />
 
           {/* ═══════════════════════════════════════════════════════
+              WARN FILINGS — always show when data exists
+             ═══════════════════════════════════════════════════════ */}
+          {dbCompany?.id && (
+            <div className="mb-6">
+              <WarnFilingsCard companyId={dbCompany.id} companyName={dbCompany.name} prominent />
+            </div>
+          )}
+
+          {/* ═══════════════════════════════════════════════════════
               NO-DATA FALLBACK
              ═══════════════════════════════════════════════════════ */}
           {dbCompany && !dbCompany.jackye_insight && totalPac === 0 && lobbyingSpend === 0 && civicScore === 0 && (dbIssueSignals?.length || 0) === 0 && (dbPublicStances?.length || 0) === 0 && (

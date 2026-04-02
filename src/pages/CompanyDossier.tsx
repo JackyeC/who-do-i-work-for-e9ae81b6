@@ -510,6 +510,13 @@ export default function CompanyDossier() {
         </p>
       </div>
 
+      {/* WARN Filings — always show when data exists */}
+      {companyId && (
+        <div className="mb-6">
+          <WarnFilingsCard companyId={companyId} companyName={company.name} prominent />
+        </div>
+      )}
+
       {/* No-data fallback */}
       {hasNoData && (
         <OfferIntelligencePanel company={company} companyId={companyId!} />

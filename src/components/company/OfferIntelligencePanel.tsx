@@ -147,6 +147,9 @@ export function OfferIntelligencePanel({ company, companyId }: OfferIntelligence
         </div>
       )}
 
+      {/* ── WARN Filings — top signal on limited data pages ── */}
+      <WarnFilingsCard companyId={companyId} companyName={company.name} prominent />
+
       {/* ── Community / Secondary Signals (Indeed, BBB, Glassdoor) ── */}
       <CommunitySignals companyId={companyId} />
 
