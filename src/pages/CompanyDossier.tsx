@@ -574,6 +574,10 @@ export default function CompanyDossier() {
         companyName={company.name}
         companySlug={company.slug}
         alignmentScore={company.civic_footprint_score}
+        civicScore={civicScore}
+        hasLayoffs={false}
+        hasEEOC={(eeocCases?.length || 0) > 0}
+        hasPoliticalSpending={(company.total_pac_spending ?? 0) > 0 || (company.lobbying_spend ?? 0) > 0}
       />
 
       {/* ── INTERVIEW PREP ── */}
