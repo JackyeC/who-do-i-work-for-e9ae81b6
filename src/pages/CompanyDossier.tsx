@@ -5,6 +5,7 @@ import { HardInterviewQuestions } from "@/components/dossier/HardInterviewQuesti
 import { useParams, Link, useNavigate } from "react-router-dom";
 import { CompanyZeroState } from "@/components/CompanyZeroState";
 import { OfferIntelligencePanel } from "@/components/company/OfferIntelligencePanel";
+import { WarnFilingsCard } from "@/components/company/WarnFilingsCard";
 import { useQuery } from "@tanstack/react-query";
 import { usePageSEO } from "@/hooks/use-page-seo";
 import { getOGImageUrl } from "@/lib/social-share";
@@ -508,6 +509,13 @@ export default function CompanyDossier() {
           Every signal traces back to a source. Use it before you apply, interview, or sign.
         </p>
       </div>
+
+      {/* WARN Filings — always show when data exists */}
+      {companyId && (
+        <div className="mb-6">
+          <WarnFilingsCard companyId={companyId} companyName={company.name} prominent />
+        </div>
+      )}
 
       {/* No-data fallback */}
       {hasNoData && (

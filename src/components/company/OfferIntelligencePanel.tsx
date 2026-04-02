@@ -13,6 +13,7 @@ import { useAuth } from "@/contexts/AuthContext";
 import { getSectorRisk } from "./offer-intelligence/sectorRisks";
 import { getAskBeforeYouSign } from "./offer-intelligence/askBeforeYouSign";
 import { CommunitySignals } from "./offer-intelligence/CommunitySignals";
+import { WarnFilingsCard } from "./WarnFilingsCard";
 
 /* ── Public signal cards from company record ── */
 interface PublicSignal {
@@ -145,6 +146,9 @@ export function OfferIntelligencePanel({ company, companyId }: OfferIntelligence
           </div>
         </div>
       )}
+
+      {/* ── WARN Filings — top signal on limited data pages ── */}
+      <WarnFilingsCard companyId={companyId} companyName={company.name} prominent />
 
       {/* ── Community / Secondary Signals (Indeed, BBB, Glassdoor) ── */}
       <CommunitySignals companyId={companyId} />
