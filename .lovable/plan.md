@@ -1,62 +1,89 @@
 
+# Data Pipeline Expansion Plan
 
-# Fix Non-English Leaks — Surgical Plan
+## Phase 1: Background Ingestion Queue (Infrastructure)
 
-## Problem
+### 1A. Database: `company_ingestion_queue` table
+- Fields: `company_id`, `source_family` (sec, fec, osha, warn, news), `priority` (user-requested > large employer > default), `last_run_at`, `next_run_at`, `status`, `error_count`
+- Auto-populated from: user watchlist companies, high-traffic companies, companies with active subscriptions
+- RLS: service_role only
 
-Every client-side `work_news` query runs without `.eq('language', 'en')`. The `language` column exists and is populated, but no reader uses it. JS-side `isLikelyEnglish()` is the only defense — and it misses edge cases. The `jackyefy-news` enrichment function also has no language filter on its select query.
+### 1B. Edge Function: `background-ingest`
+- Triggered by pg_cron every 2 hours
+- Pulls top N companies from queue (ordered by priority + staleness)
+- For each company, fans out to existing source adapters:
+  - **SEC EDGAR** — pull latest filings via CIK/ticker (already have `sec_cik` on companies table)
+  - **OpenFEC** — contributions by employer name (already have `OPENFEC_API_KEY`)
+  - **OSHA** — establishment search by company name + state
+  - **WARN** — layoff notices (already ingesting via `company_warn_notices`)
+  - **News** — company-specific news pull (already have `NEWS_API_KEY` + GDELT)
+- Updates `last_run_at` and `next_run_at` based on source family cadence (24h for news, 72h for SEC/FEC)
+- Stores raw JSON in `accountability_ingestion_log`
 
-## Changes
+### 1C. Auto-populate queue
+- Trigger: when a company is added to `user_company_watchlist`, upsert into queue with high priority
+- Seed: insert top 100 companies by watchlist count + traffic
 
-### 1. `src/hooks/use-work-news.ts`
+## Phase 2: Nuanced Empty States + Opacity Score
 
-Add `.eq('language', 'en')` to all three query functions:
+### 2A. Database: `company_coverage_summary` table
+- Fields: `company_id`, `source_family`, `last_signal_date`, `signal_count`, `last_checked_at`, `coverage_status` (rich | limited | no_trail | never_checked)
+- Populated/updated by background-ingest after each run
 
-- **`useWorkNews`** (line 29): insert `.eq('language', 'en')` before `.order()`
-- **`useWorkNewsCount`** (line 54): insert `.eq('language', 'en')` before the count select
-- **`useWorkNewsTicker`** (line 69): insert `.eq('language', 'en')` before `.not()`
+### 2B. UI: Replace "No Recent Data" everywhere
+- Map coverage_status to nuanced copy:
+  - `rich` → "3 OSHA inspections since 2019, last in 2023"
+  - `limited` → "Limited regulatory trail — only 1 public filing found"
+  - `no_trail` → "No regulatory actions reported in 5+ years; limited public oversight record"
+  - `never_checked` → "We haven't scanned this employer yet — request a scan"
+- Add per-source-family mini-badges on dossier pages showing last checked date + count
 
-Keep existing JS `isLikelyEnglish()` filters as secondary guards.
+### 2C. Opacity Score
+- Composite metric: count of source families with `no_trail` or `never_checked` status
+- Display as "Transparency Index" on company profiles (0-100, higher = more transparent)
+- Factor into `employer_clarity_score`
 
-### 2. `src/components/landing/LiveIntelligenceTicker.tsx`
+## Phase 3: Careers Page Scraping as Signal
 
-Add `.eq('language', 'en')` to the query (line 51, before `.order()`). Keep existing JS filters.
+### 3A. Edge Function: `scrape-careers-page`
+- Uses existing `FIRECRAWL_API_KEY` connector to scrape company `careers_url`
+- Extracts: job count, benefits language, DEI language, remote/hybrid signals, "perks vs substance" ratio
+- Stores in new `company_careers_signals` table
 
-### 3. `src/hooks/use-dashboard-briefing.ts`
+### 3B. Database: `company_careers_signals`
+- Fields: `company_id`, `scraped_at`, `active_job_count`, `benefits_mentioned`, `dei_language_score`, `remote_policy`, `perks_vs_substance`, `raw_text_snippet`
 
-Add `.eq('language', 'en')` to the `work_news` query (line 48, before `.order()`).
+### 3C. Integration
+- Surface in dossier as "Corporate Footprint" section
+- Feed into Trail game as evidence cards
 
-### 4. `src/components/company/MediaNarrativeCard.tsx`
+## Phase 4: Enriched Signal Display
 
-Add `.eq('language', 'en')` to the query (line 27, before `.order()`).
+### 4A. Signal Timeline
+- Add `signal_timeline` component showing counts + dates + trends per source family
+- "3 OSHA inspections since 2019, last in 2023, 1 violation"
+- Visual sparkline per source family
 
-### 5. `supabase/functions/jackyefy-news/index.ts`
+### 4B. Subscribe to Company
+- Add "Watch this employer" CTA on dossier pages (already have `user_company_watchlist`)
+- When subscribed: bump company to high priority in ingestion queue
+- Send user_alerts when new signals detected (already have `notify_watchers_on_signal_change` trigger)
 
-Add `.eq('language', 'en')` to the select query that fetches unenriched `work_news` rows for processing. This ensures enrichment never touches non-English rows even if one leaks past ingest.
+### 4C. "Market Pulse" Dashboard
+- Aggregate view: total WARN notices this month, OSHA inspection trends, FEC spending cycles
+- Available on Founder Console + public Work Signal page
 
-### 6. `supabase/functions/sync-work-news/index.ts`
+---
 
-Already sets `language: "en"` on upsert rows. No structural change needed — the ingest side is already correct. The gap was always downstream reads.
+## Existing Infrastructure Leveraged
+- ✅ `OPENFEC_API_KEY`, `NEWS_API_KEY`, `CONGRESS_GOV_API_KEY`, `APIFY_API_KEY`, `FIRECRAWL_API_KEY`
+- ✅ `accountability_ingestion_log` table
+- ✅ `user_company_watchlist` + `notify_watchers_on_signal_change` trigger
+- ✅ `sync-work-news` edge function pattern (2h cron)
+- ✅ `company_warn_notices`, `accountability_signals`, existing adapters
 
-## Files changed
-
-| File | Change |
-|------|--------|
-| `src/hooks/use-work-news.ts` | Add `.eq('language', 'en')` to 3 queries |
-| `src/components/landing/LiveIntelligenceTicker.tsx` | Add `.eq('language', 'en')` to 1 query |
-| `src/hooks/use-dashboard-briefing.ts` | Add `.eq('language', 'en')` to 1 query |
-| `src/components/company/MediaNarrativeCard.tsx` | Add `.eq('language', 'en')` to 1 query |
-| `supabase/functions/jackyefy-news/index.ts` | Add `.eq('language', 'en')` to enrichment select |
-
-## What does NOT change
-
-- No new tables, columns, or migrations
-- No redesign or new surfaces
-- No changes to `sync-work-news` (already correct)
-- No changes to `jrc-edit-prompt.ts` (already has English mandate)
-- JS-side filters stay as secondary guards — not removed
-
-## Verification
-
-After implementation, a repo-wide grep for `from("work_news")` will confirm zero unfiltered reads remain.
-
+## Implementation Order
+1. Phase 1A (migration) → 1B (edge function) → 1C (seed)
+2. Phase 2A (migration) → 2B (UI) → 2C (score)
+3. Phase 3A-3C (parallel with Phase 2)
+4. Phase 4A-4C (after data starts flowing)
