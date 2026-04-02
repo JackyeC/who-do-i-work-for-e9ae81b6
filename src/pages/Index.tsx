@@ -115,23 +115,29 @@ const Index = forwardRef<HTMLDivElement>((_, ref) => {
                 step: "01",
                 title: "Search or upload",
                 body: "Enter a company name or upload a job offer. We pull the records.",
+                link: "/offer-check",
               },
               {
                 step: "02",
                 title: "Read the receipts",
                 body: "See the full employer dossier — political giving, enforcement history, lobbying activity, leadership signals, workforce data, and values alignment.",
+                link: "/browse",
               },
               {
                 step: "03",
                 title: "Make your move",
                 body: "Apply, negotiate, stay, or leave — with evidence, leverage, and confidence. Not hope.",
+                link: "/receipts",
               },
             ].map((item) => (
-              <div key={item.step} className="flex flex-col">
+              <Link key={item.step} to={item.link} className="flex flex-col no-underline group/step hover:bg-primary/[0.03] rounded-lg p-4 -m-4 transition-colors">
                 <span className="font-mono text-primary text-xs tracking-wider mb-3">{item.step}</span>
-                <h3 className="font-sans font-bold text-foreground text-base mb-2">{item.title}</h3>
+                <h3 className="font-sans font-bold text-foreground text-base mb-2 group-hover/step:text-primary transition-colors">{item.title}</h3>
                 <p className="font-sans text-sm text-muted-foreground leading-relaxed">{item.body}</p>
-              </div>
+                <span className="text-xs text-primary mt-2 opacity-0 group-hover/step:opacity-100 transition-opacity flex items-center gap-1">
+                  Try it <ArrowRight className="w-3 h-3" />
+                </span>
+              </Link>
             ))}
           </div>
         </div>

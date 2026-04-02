@@ -7,7 +7,7 @@ import { Badge } from "@/components/ui/badge";
 import { Checkbox } from "@/components/ui/checkbox";
 import {
   Eye, ShieldAlert, Bell, CheckCircle2,
-  Building2, HelpCircle, AlertTriangle, ChevronDown, ArrowRight,
+  Building2, HelpCircle, AlertTriangle, ChevronDown, ArrowRight as ArrowRight2,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { supabase } from "@/integrations/supabase/client";

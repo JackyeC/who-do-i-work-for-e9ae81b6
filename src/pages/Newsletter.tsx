@@ -277,7 +277,12 @@ function WireItem({ article }: { article: WorkNewsArticle }) {
   const whyMatters = getWhyItMatters(article);
   return (
     <div id={`story-${article.id}`} className="group block scroll-mt-24">
-      <div className="rounded-lg border border-border/30 bg-card p-4 hover:border-primary/30 transition-all h-full flex flex-col">
+      <a
+        href={article.source_url || "#"}
+        target={article.source_url ? "_blank" : undefined}
+        rel="noopener noreferrer"
+        className="rounded-lg border border-border/30 bg-card p-4 hover:border-primary/30 hover:shadow-sm transition-all h-full flex flex-col no-underline cursor-pointer active:scale-[0.98]"
+      >
         <div className="flex items-center gap-2 mb-2">
           <Badge variant="outline" className={`text-[10px] font-mono tracking-wider border ${cat.color}`}>
             {cat.label}
@@ -292,17 +297,12 @@ function WireItem({ article }: { article: WorkNewsArticle }) {
           {whyMatters[0]}
         </p>
         <div className="flex items-center justify-between mt-auto pt-2 border-t border-border/20">
-          {article.source_url ? (
-            <a href={article.source_url} target="_blank" rel="noopener noreferrer"
-              className="text-[10px] text-primary/70 hover:text-primary font-mono flex items-center gap-1">
-              {article.source_name || "Source"} <ExternalLink className="w-2.5 h-2.5" />
-            </a>
-          ) : (
-            <span className="text-[10px] text-muted-foreground">{article.source_name || "Source"}</span>
-          )}
+          <span className="text-[10px] text-primary/70 font-mono flex items-center gap-1">
+            {article.source_name || "Source"} <ExternalLink className="w-2.5 h-2.5" />
+          </span>
           <SpiceMeter level={spiceLevel(article)} />
         </div>
-      </div>
+      </a>
     </div>
   );
 }
