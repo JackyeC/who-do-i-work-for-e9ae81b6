@@ -32,7 +32,7 @@ export function ReceiptsSidebar({ hotArticles }: ReceiptsSidebarProps) {
       {/* Newsletter */}
       <div className="bg-card border border-border rounded-xl p-6">
         <p className="text-[9px] uppercase tracking-[0.55em] text-primary mb-3 font-mono">
-          Every Friday
+          Every Morning
         </p>
         <h3 className="text-2xl font-black text-foreground mb-2 leading-tight">
           My Uncertainty Era
