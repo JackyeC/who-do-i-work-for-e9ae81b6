@@ -76,6 +76,23 @@ export default function CompanyDossier() {
 
   const companyId = company?.id;
   const isTracked = companyId ? isCompanyTracked(companyId) : false;
+
+  // Set evaluation context when company loads
+  useEffect(() => {
+    if (company) {
+      setActiveCompany({
+        id: company.id,
+        name: company.name,
+        slug: company.slug,
+        industry: company.industry,
+        state: company.state,
+        civic_footprint_score: company.civic_footprint_score,
+        employer_clarity_score: company.employer_clarity_score ?? undefined,
+        career_intelligence_score: company.career_intelligence_score ?? undefined,
+        employee_count: company.employee_count ?? undefined,
+      });
+    }
+  }, [company, setActiveCompany]);
   const { data: eeocCases } = useEEOCByCompanyName(company?.name);
 
   const seoCompanyName = company?.name ?? "Company";
