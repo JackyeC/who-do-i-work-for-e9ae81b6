@@ -1,10 +1,19 @@
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
-import { Search, ArrowUpDown, Flame, Filter, Clock } from "lucide-react";
-import { HEAT_LABELS, type ReceiptSortMode } from "./heat-config";
+import { Search, ArrowUpDown, Star, Filter, Clock } from "lucide-react";
+import type { ReceiptSortMode } from "./heat-config";
 import { cn } from "@/lib/utils";
 import { useState } from "react";
+
+// Stargaze labels for filter pills
+const STARGAZE_FILTER_LABELS: Record<number, string> = {
+  1: "Worth a glance",
+  2: "Mild drama",
+  3: "Screenshot this",
+  4: "Group chat material",
+  5: "Career-defining receipt",
+};
 
 // ─── Required category filters ───
 const CATEGORY_FILTERS = [
@@ -54,7 +63,7 @@ interface ReceiptsFiltersProps {
 
 const SORT_OPTIONS: { value: NonNullable<ReceiptSortMode>; label: string }[] = [
   { value: "newest", label: "Newest" },
-  { value: "hottest", label: "Hottest" },
+  { value: "hottest", label: "⭐ Hottest" },
   { value: "consequential", label: "Consequential" },
   { value: "drama", label: "Drama" },
 ];
@@ -67,7 +76,7 @@ export function ReceiptsFilters({
   biasFilter = "all", onBiasFilterChange,
   timeFilter = "all", onTimeFilterChange,
 }: ReceiptsFiltersProps) {
-  const [showHeatFilter, setShowHeatFilter] = useState(false);
+  const [showStarFilter, setShowStarFilter] = useState(false);
 
   return (
     <div className="space-y-3">
@@ -102,7 +111,7 @@ export function ReceiptsFilters({
         ))}
       </div>
 
-      {/* Sort + Bias + Time + Heat controls */}
+      {/* Sort + Bias + Time + Stargaze controls */}
       <div className="flex flex-wrap items-center gap-2">
         {/* Sort */}
         <div className="flex items-center gap-1">
@@ -120,7 +129,6 @@ export function ReceiptsFilters({
               )}
               onClick={() => onSortChange(opt.value)}
             >
-              {opt.value === "hottest" && <Flame className="w-3.5 h-3.5 mr-1" />}
               {opt.label}
             </Button>
           ))}
@@ -165,35 +173,39 @@ export function ReceiptsFilters({
           </div>
         )}
 
-        {/* Heat filter toggle */}
+        {/* Stargaze filter toggle */}
         <Button
           size="sm"
-          variant={showHeatFilter ? "default" : "outline"}
+          variant={showStarFilter ? "default" : "outline"}
           className={cn(
             "text-sm h-8 px-3 gap-1 font-semibold",
-            showHeatFilter ? "bg-primary text-primary-foreground" : ""
+            showStarFilter ? "bg-primary text-primary-foreground" : ""
           )}
           onClick={() => {
-            setShowHeatFilter(!showHeatFilter);
-            if (showHeatFilter) onHeatFilterChange(null);
+            setShowStarFilter(!showStarFilter);
+            if (showStarFilter) onHeatFilterChange(null);
           }}
         >
-          <Filter className="w-3.5 h-3.5" />
-          Heat
+          <Star className="w-3.5 h-3.5" />
+          Stargaze
           {heatFilter && (
             <Badge variant="secondary" className="text-xs px-1.5 py-0 ml-1 h-5">
-              {heatFilter}
+              {heatFilter}⭐
             </Badge>
           )}
         </Button>
       </div>
 
-      {/* Heat level filter pills */}
-      {showHeatFilter && (
+      {/* Stargaze level filter pills */}
+      {showStarFilter && (
         <div className="flex flex-wrap gap-2 pb-1">
           {[1, 2, 3, 4, 5].map((level) => {
-            const heat = HEAT_LABELS[level];
             const isActive = heatFilter === level;
+            const starColor =
+              level >= 5 ? "hsl(var(--primary))" :
+              level >= 4 ? "#F59E0B" :
+              level >= 3 ? "#3B82F6" :
+              "hsl(var(--muted-foreground))";
             return (
               <button
                 key={level}
@@ -202,13 +214,18 @@ export function ReceiptsFilters({
                   "inline-flex items-center gap-1.5 font-bold border rounded-full transition-all",
                   "text-sm px-4 py-2.5 md:text-sm md:px-3 md:py-2",
                   isActive
-                    ? cn(heat.bg, "ring-2 ring-offset-1 ring-offset-background ring-current shadow-sm")
+                    ? "bg-primary/10 border-primary/40 text-primary ring-2 ring-offset-1 ring-offset-background ring-primary/30 shadow-sm"
                     : "border-border text-muted-foreground hover:border-border/80 hover:bg-muted/50"
                 )}
               >
-                <Flame className="w-4 h-4" fill={isActive ? "currentColor" : "none"} />
-                <span className="md:hidden">{heat.mobile}</span>
-                <span className="hidden md:inline">{heat.full}</span>
+                <span className="flex items-center gap-px">
+                  {Array.from({ length: level }).map((_, i) => (
+                    <span key={i} style={{ fontSize: 12 }}>⭐</span>
+                  ))}
+                </span>
+                <span className="font-mono text-xs uppercase tracking-wider" style={{ color: isActive ? starColor : undefined }}>
+                  {STARGAZE_FILTER_LABELS[level]}
+                </span>
               </button>
             );
           })}
