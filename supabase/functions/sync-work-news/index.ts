@@ -149,7 +149,7 @@ async function fetchNewsAPI(apiKey: string): Promise<any[]> {
       }
 
       // Small delay between queries
-      await new Promise(r => setTimeout(r, 500));
+      await new Promise(r => setTimeout(r, 300));
     } catch (e: any) {
       console.warn(`[NewsAPI] Error for "${q.slice(0, 30)}...":`, e);
     }
@@ -172,14 +172,14 @@ async function fetchGDELT(): Promise<any[]> {
       const res = await fetch(url);
       if (!res.ok) {
         console.warn(`[GDELT] Query failed: ${res.status}`);
-        await new Promise(r => setTimeout(r, 6000));
+        await new Promise(r => setTimeout(r, 2000));
         continue;
       }
 
       const text = await res.text();
       if (!text.startsWith("{") && !text.startsWith("[")) {
         console.warn(`[GDELT] Non-JSON response: ${text.slice(0, 80)}`);
-        await new Promise(r => setTimeout(r, 6000));
+        await new Promise(r => setTimeout(r, 2000));
         continue;
       }
 
@@ -208,7 +208,7 @@ async function fetchGDELT(): Promise<any[]> {
         });
       }
 
-      await new Promise(r => setTimeout(r, 6000));
+      await new Promise(r => setTimeout(r, 2000));
     } catch (e: any) {
       console.warn(`[GDELT] Error:`, e);
     }
@@ -231,47 +231,54 @@ Deno.serve(async (req: Request) => {
   const supabase = createClient(supabaseUrl, serviceKey);
 
   try {
-    // Fetch from both sources in parallel
-    const [newsApiRows, gdeltRows] = await Promise.allSettled([
-      newsApiKey ? fetchNewsAPI(newsApiKey) : Promise.resolve([]),
-      fetchGDELT(),
-    ]);
-
-    const allRows = [
-      ...(newsApiRows.status === "fulfilled" ? newsApiRows.value : []),
-      ...(gdeltRows.status === "fulfilled" ? gdeltRows.value : []),
-    ];
-
-    // Deduplicate by URL hash + content quality gates
     const seen = new Set<string>();
-    const unique = allRows.filter(r => {
-      if (seen.has(r.gdelt_url_hash)) return false;
-      if (!passesContentGates(r.headline, r.source_name)) return false;
-      seen.add(r.gdelt_url_hash);
-      return true;
-    });
+    let totalInserted = 0;
 
-    if (unique.length > 0) {
-      const { error } = await supabase.from("work_news").upsert(unique, {
-        onConflict: "gdelt_url_hash",
-        ignoreDuplicates: true,
+    // Helper: deduplicate, filter, upsert a batch immediately
+    async function upsertBatch(rows: any[], label: string) {
+      const unique = rows.filter(r => {
+        if (seen.has(r.gdelt_url_hash)) return false;
+        if (!passesContentGates(r.headline, r.source_name)) return false;
+        seen.add(r.gdelt_url_hash);
+        return true;
       });
-      if (error) console.error("work_news upsert error:", error);
+      if (unique.length > 0) {
+        const { error } = await supabase.from("work_news").upsert(unique, {
+          onConflict: "gdelt_url_hash",
+          ignoreDuplicates: true,
+        });
+        if (error) console.error(`[${label}] upsert error:`, error);
+        else console.log(`[${label}] Upserted ${unique.length} articles`);
+        totalInserted += unique.length;
+      }
+    }
+
+    // 1. NewsAPI first (fast, reliable)
+    if (newsApiKey) {
+      try {
+        const newsRows = await fetchNewsAPI(newsApiKey);
+        await upsertBatch(newsRows, "NewsAPI");
+      } catch (e) {
+        console.warn("[NewsAPI] Failed:", e);
+      }
+    }
+
+    // 2. GDELT second (slower, may timeout — but NewsAPI data is already saved)
+    try {
+      const gdeltRows = await fetchGDELT();
+      await upsertBatch(gdeltRows, "GDELT");
+    } catch (e) {
+      console.warn("[GDELT] Failed:", e);
     }
 
     const { count } = await supabase
       .from("work_news")
       .select("*", { count: "exact", head: true });
 
-    const sources = {
-      newsapi: newsApiRows.status === "fulfilled" ? newsApiRows.value.length : 0,
-      gdelt: gdeltRows.status === "fulfilled" ? gdeltRows.value.length : 0,
-    };
-
-    console.log(`[sync-work-news] Synced ${unique.length} unique articles (NewsAPI: ${sources.newsapi}, GDELT: ${sources.gdelt}). Total: ${count}`);
+    console.log(`[sync-work-news] Synced ${totalInserted} articles. Total in DB: ${count}`);
 
     return new Response(
-      JSON.stringify({ success: true, newArticles: unique.length, totalArticles: count, sources }),
+      JSON.stringify({ success: true, newArticles: totalInserted, totalArticles: count }),
       { headers: { ...corsHeaders, "Content-Type": "application/json" } }
     );
   } catch (error: any) {

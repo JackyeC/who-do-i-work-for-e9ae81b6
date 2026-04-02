@@ -1,0 +1,1 @@
+ALTER TABLE public.work_news DROP CONSTRAINT IF EXISTS work_news_headline_unique;
