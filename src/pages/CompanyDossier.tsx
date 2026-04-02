@@ -31,6 +31,8 @@ import { cn } from "@/lib/utils";
 import { EmployerReportDrawer, type EvidenceRecord } from "@/components/dossier/EmployerReportDrawer";
 import { SignalRevealCard } from "@/components/dossier/SignalRevealCard";
 import { ApplyWithWDIWF } from "@/components/applications/ApplyWithWDIWF";
+import { useEvaluation } from "@/contexts/EvaluationContext";
+import { EvaluationView } from "@/components/evaluation/EvaluationView";
 
 // Deep-dive layer components (power-user expandable)
 import { ValuesSignalsLayer } from "@/components/dossier/ValuesSignalsLayer";
