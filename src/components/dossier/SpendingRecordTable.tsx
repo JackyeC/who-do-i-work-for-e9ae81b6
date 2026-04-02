@@ -69,8 +69,8 @@ export function SpendingRecordTable({
                   className={cn(
                     "transition-colors",
                     clickable
-                      ? "cursor-pointer hover:bg-primary/5 group"
-                      : "opacity-70"
+                      ? "cursor-pointer hover:bg-primary/10 group border-l-2 border-l-transparent hover:border-l-primary"
+                      : "opacity-60 cursor-default"
                   )}
                   onClick={() => clickable && setSelectedMetric(m)}
                 >
@@ -79,12 +79,12 @@ export function SpendingRecordTable({
                       {m.label}
                     </span>
                     {!clickable && (
-                      <span className="ml-2 inline-flex items-center gap-1 text-[10px] text-muted-foreground/60">
+                      <span className="ml-2 inline-flex items-center gap-1 text-[10px] text-muted-foreground/50">
                         <Search className="w-2.5 h-2.5" /> Summary only
                       </span>
                     )}
                   </td>
-                  <td className={cn("py-3 pr-4 font-mono font-bold", clickable ? "text-foreground" : "text-muted-foreground")}>
+                  <td className={cn("py-3 pr-4 font-mono font-bold", clickable ? "text-foreground" : "text-muted-foreground/70")}>
                     {m.amount}
                   </td>
                   <td className="py-3 pr-4">
@@ -95,13 +95,13 @@ export function SpendingRecordTable({
                       <Button
                         variant="ghost"
                         size="sm"
-                        className="h-7 text-xs gap-1 text-primary opacity-60 group-hover:opacity-100 transition-opacity"
+                        className="h-7 text-xs gap-1 text-primary opacity-80 group-hover:opacity-100 transition-opacity"
                         onClick={(e) => { e.stopPropagation(); setSelectedMetric(m); }}
                       >
                         View record <ArrowRight className="w-3 h-3" />
                       </Button>
                     ) : (
-                      <span className="text-[10px] text-muted-foreground/40 font-mono">NO DETAIL</span>
+                      <span className="text-[10px] text-muted-foreground/30 font-mono tracking-wider">NO DETAIL</span>
                     )}
                   </td>
                 </tr>
