@@ -253,35 +253,9 @@ export function AdvocacyReport({ company, executives = [], contracts = [], issue
             />
           )}
 
-          {/* Active signals by category with View Receipt buttons */}
+          {/* Active signals by category — interactive expandable list */}
           {Object.keys(signalsByCategory).length > 0 && (
-            <div className="mt-5 pt-5 border-t border-border/30">
-              <p className="font-mono text-[10px] text-primary tracking-[0.3em] uppercase mb-3">Active Signals</p>
-              <div className="space-y-2">
-                {Object.entries(signalsByCategory).slice(0, 6).map(([cat, signals]) => {
-                  const firstSourceUrl = (signals.find((sig: any) => sig.source_url) as any)?.source_url ?? (signals[0] as any).source_url;
-                  return (
-                    <div key={cat} className={cn(
-                      "flex items-start gap-3 p-3 border-l-2",
-                      signals.length > 3 ? "border-destructive/50 bg-destructive/5" : "border-civic-yellow/50 bg-civic-yellow/5"
-                    )}>
-                      <AlertTriangle className={cn("w-4 h-4 mt-0.5 shrink-0", signals.length > 3 ? "text-destructive" : "text-civic-yellow")} />
-                      <div className="flex-1 min-w-0">
-                        <p className="text-sm font-semibold text-foreground">{cat}</p>
-                        <p className="text-xs text-muted-foreground">{signals.length} signal{signals.length > 1 ? "s" : ""} — {signals[0].description?.slice(0, 120)}</p>
-                      </div>
-                      {firstSourceUrl && (
-                        <a href={firstSourceUrl} target="_blank" rel="noopener noreferrer" className="shrink-0">
-                          <Button variant="ghost" size="sm" className="h-7 text-xs gap-1 text-primary">
-                            <ExternalLink className="w-3 h-3" /> View Receipt
-                          </Button>
-                        </a>
-                      )}
-                    </div>
-                  );
-                })}
-              </div>
-            </div>
+            <ActiveSignalsPanel signalsByCategory={signalsByCategory} />
           )}
         </div>
       </section>
