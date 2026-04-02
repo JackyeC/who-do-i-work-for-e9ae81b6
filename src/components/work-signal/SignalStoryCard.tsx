@@ -7,7 +7,22 @@ import {
   SIGNAL_TYPE_DISPLAY,
   HEAT_DISPLAY,
 } from "@/lib/work-signal-schema";
+import type { SignalCategory } from "@/lib/work-signal-schema";
 import { formatDistanceToNow } from "date-fns";
+
+import categoryCsuite from "@/assets/category-c-suite.png";
+import categoryTechStack from "@/assets/category-tech-stack.png";
+import categoryPaycheck from "@/assets/category-paycheck.png";
+import categoryFinePrint from "@/assets/category-fine-print.png";
+import categoryDailyGrind from "@/assets/category-daily-grind.png";
+
+const CATEGORY_ICONS: Record<SignalCategory, string> = {
+  c_suite: categoryCsuite,
+  tech_stack: categoryTechStack,
+  paycheck: categoryPaycheck,
+  fine_print: categoryFinePrint,
+  daily_grind: categoryDailyGrind,
+};
 
 interface Props {
   story: SignalStory;
@@ -20,6 +35,7 @@ export function SignalStoryCard({ story }: Props) {
   const heat = HEAT_DISPLAY[story.heat_level];
   const category = CATEGORY_DISPLAY[story.category];
   const categoryColor = CATEGORY_COLORS[story.category];
+  const categoryIcon = CATEGORY_ICONS[story.category];
   const timeAgo = formatDistanceToNow(new Date(story.published_at), { addSuffix: true });
 
   const hasExpandable =
@@ -46,8 +62,16 @@ export function SignalStoryCard({ story }: Props) {
 
       {/* Main content */}
       <div className="px-5 pt-4 pb-3">
-        {/* Company + Category + Heat */}
+        {/* Company + Category icon + Heat */}
         <div className="flex items-center gap-2 mb-2 flex-wrap">
+          <img
+            src={categoryIcon}
+            alt={category}
+            width={20}
+            height={20}
+            loading="lazy"
+            className="shrink-0"
+          />
           {story.company_name && (
             <span className="text-label font-semibold text-foreground">{story.company_name}</span>
           )}

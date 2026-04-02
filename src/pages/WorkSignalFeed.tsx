@@ -2,6 +2,7 @@ import { useSignalStories, useDailyWrap } from "@/hooks/use-signal-stories";
 import { SignalStoryCard } from "@/components/work-signal/SignalStoryCard";
 import { Skeleton } from "@/components/ui/skeleton";
 import { format } from "date-fns";
+import workSignalLogo from "@/assets/work-signal-logo.png";
 
 export default function WorkSignalFeed() {
   const { data: stories, isLoading } = useSignalStories(30);
@@ -12,6 +13,13 @@ export default function WorkSignalFeed() {
       {/* Masthead — editorial magazine feel */}
       <header className="border-b border-border bg-card">
         <div className="max-w-2xl mx-auto px-4 py-10 text-center">
+          <img
+            src={workSignalLogo}
+            alt="The Work Signal"
+            width={64}
+            height={64}
+            className="mx-auto mb-4"
+          />
           <p className="font-mono text-micro uppercase tracking-[0.3em] text-muted-foreground mb-3">
             Live Employer Intelligence
           </p>
