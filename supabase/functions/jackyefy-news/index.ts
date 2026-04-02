@@ -295,7 +295,18 @@ Deno.serve(async (req: Request) => {
       );
     }
 
-    await processStories(supabase, stories as WorkNewsStory[]);
+    // Filter to English-only, US/AI-relevant stories before AI processing
+    const filteredStories = (stories as WorkNewsStory[]).filter(s => isEnglishAndRelevant(s.headline));
+    console.log(`Filtered ${stories.length} → ${filteredStories.length} stories (English + relevant)`);
+
+    if (filteredStories.length === 0) {
+      return new Response(
+        JSON.stringify({ success: true, processed: 0, message: "No English/relevant stories to process" }),
+        { status: 200, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+      );
+    }
+
+    await processStories(supabase, filteredStories);
 
     return new Response(
       JSON.stringify({
