@@ -451,6 +451,11 @@ export default function CompanyDossier() {
             </p>
           </div>
           <div className="flex items-center gap-2">
+            <ApplyWithWDIWF
+              companyId={companyId!}
+              companyName={company.name}
+              alignmentScore={company.civic_footprint_score}
+            />
             <ExportDossierButton companyId={companyId!} companyName={company.name} company={company} />
             <Button
               variant="outline"
