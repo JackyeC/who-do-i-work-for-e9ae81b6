@@ -258,6 +258,7 @@ const App = () => (
                   <Route path="/examples" element={<Examples />} />
                   <Route path="/signals" element={<Navigate to="/signal-alerts" replace />} />
                   <Route path="/workforce-brief" element={<WorkforceBrief />} />
+                  <Route path="/work-signal" element={<WorkSignalFeed />} />
                   <Route path="/eeoc-tracker" element={<EEOCTracker />} />
                   <Route path="/search-your-employer" element={<SearchYourEmployer />} />
                   <Route path="/values-search" element={<ValuesSearch />} />
