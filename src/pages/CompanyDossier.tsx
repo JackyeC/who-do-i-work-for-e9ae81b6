@@ -57,6 +57,7 @@ export default function CompanyDossier() {
   const [showSecondary, setShowSecondary] = useState(false);
   const [reportOpen, setReportOpen] = useState(false);
   const [reportCategory, setReportCategory] = useState<string | null>(null);
+  const { setActiveCompany } = useEvaluation();
 
   /* ─── Data fetching ─── */
   const { data: company, isLoading } = useQuery({
