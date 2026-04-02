@@ -42,9 +42,15 @@ function sortTickerItems(items: ReturnType<typeof useTickerItems>["data"]) {
 
 export function IntelligenceTicker() {
   const { data: items } = useTickerItems();
+  const location = useLocation();
 
   const sorted = useMemo(() => sortTickerItems(items), [items]);
   const hasRealItems = sorted.length > 0;
+
+  // Only render on allowed routes — prevents duplication on company dossier/profile pages
+  if (!isTickerRoute(location.pathname)) {
+    return null;
+  }
 
   const totalChars = hasRealItems
     ? sorted.reduce(
