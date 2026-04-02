@@ -219,20 +219,20 @@ function generateJackyeTake(
   // High influence + weak benefits/hiring = the signature callout
   if (influence && influence.subscore >= 60 && weakSignals.filter(s => s.key !== "influence").length >= 2) {
     const weakLabels = weakSignals.filter(s => s.key !== "influence").map(s => s.label.toLowerCase());
-    parts.push(`Dirty Receipt #1: They've got a ${influence.subscore}/100 on Influence Exposure. They know how to write checks in DC, but when it comes to ${weakLabels.join(" and ")}? Silence. That's a massive character gap. They're obsessed with automation but ghosting on humanization.`);
+    parts.push(`They score ${influence.subscore}/100 on Influence Exposure — they know exactly how to move money in Washington. But on ${weakLabels.join(" and ")}? Silence. That gap between political investment and workforce investment is not accidental. It is a priority statement.`);
   } else if (influence && influence.subscore >= 60 && hiring && hiring.subscore < 50) {
-    parts.push(`Dirty Receipt: They're spending money to shape policy in Washington but haven't published a Bias Audit for their own AI hiring tools. They'll lobby Congress about workforce issues but won't tell you how their algorithm screens you out. That's not oversight — that's an obsession with automation, not people.`);
+    parts.push(`They are spending to shape policy in Washington but have not published a Bias Audit for their own AI hiring tools. They will lobby Congress on workforce issues but will not disclose how their algorithm evaluates you. That is not an oversight. That is a choice.`);
   } else if (strongSignals.length > 0) {
     const strongLabels = strongSignals.map(s => `${s.label.toLowerCase()} (${s.subscore}/100)`);
-    parts.push(`Where they show up: ${strongLabels.join(", ")}. That's actual character, not a press release. Credit where it's earned.`);
+    parts.push(`Where they show up: ${strongLabels.join(", ")}. That is documented character, not a press release. Credit where it is earned.`);
   }
 
-  // Specific HR tech / Bias Audit callout — the Redline Auditor lens
+  // Specific HR tech / Bias Audit callout
   if (flags.opaqueHiringTechnology || (hiring && hiring.subscore < 50)) {
     const lobbyingContext = (influence && influence.subscore >= 50)
-      ? `They're spending on lobbyists but $0 on a published Bias Audit. That tells you everything about priorities.`
-      : `No published bias audits, no transparency on how their AI screens you. In 2026, that's not a gap — it's a choice.`;
-    parts.push(`The hiring tech is a black box. ${lobbyingContext} You deserve to know how you're being evaluated before a human ever sees your résumé. That's not entitlement — that's psychological safety.`);
+      ? `They are investing in lobbyists but not in a published Bias Audit. That tells you where the priorities actually sit.`
+      : `No published bias audits, no transparency on how their AI evaluates candidates. In 2026, that is not a gap — it is a decision.`;
+    parts.push(`The hiring technology is opaque. ${lobbyingContext} You are entitled to know how you are being evaluated before a human ever reviews your application.`);
   }
 
   // Compensation gaps — the "show the work" lens
