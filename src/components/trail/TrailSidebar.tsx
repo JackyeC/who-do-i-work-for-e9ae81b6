@@ -276,7 +276,7 @@ export function TrailSidebar() {
                   style={{ background: "linear-gradient(135deg, #FFD666 0%, #F2C14E 100%)" }} />
                 <span className="relative flex items-center justify-center gap-2">
                   <Sparkles className="w-4 h-4" />
-                  Reveal the Verdict
+                  See the Full Picture
                   <ArrowRight className="w-4 h-4" />
                 </span>
               </button>
