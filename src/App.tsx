@@ -189,6 +189,7 @@ const App = () => (
           <BrowserRouter>
             <ScrollToTop />
             <AppShell>
+              <EvaluationBar />
               <Suspense fallback={<RouteLoader />}>
                 <Routes>
                   <Route path="/" element={<Index />} />
