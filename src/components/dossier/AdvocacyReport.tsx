@@ -1,4 +1,4 @@
-import { useMemo, useState } from "react";
+import { useMemo, useState, useCallback } from "react";
 import { Link } from "react-router-dom";
 import {
   AlertTriangle, DollarSign, Users, Eye, MessageSquare,
@@ -135,6 +135,80 @@ function SectionDivider({ number, title, subtitle, icon: Icon }: { number: numbe
   );
 }
 
+/* ─── Active Signals Panel ─── */
+function ActiveSignalsPanel({ signalsByCategory }: { signalsByCategory: Record<string, Array<{ issue_category: string; signal_type: string; description: string; amount?: number | null; confidence_score?: number; source_url?: string }>> }) {
+  const [expandedCat, setExpandedCat] = useState<string | null>(null);
+
+  return (
+    <div className="mt-5 pt-5 border-t border-border/30">
+      <p className="font-mono text-[10px] text-primary tracking-[0.3em] uppercase mb-3">Active Signals</p>
+      <div className="space-y-2">
+        {Object.entries(signalsByCategory).slice(0, 8).map(([cat, signals]) => {
+          const isExpanded = expandedCat === cat;
+          const isHot = signals.length > 3;
+          const _firstSource = signals.find(s => (s as any).source_url);
+          const firstSourceUrl = _firstSource ? (_firstSource as any).source_url : undefined;
+
+          return (
+            <div key={cat}>
+              <button
+                onClick={() => setExpandedCat(isExpanded ? null : cat)}
+                className={cn(
+                  "w-full flex items-start gap-3 p-3 border-l-2 rounded-r-lg text-left transition-colors cursor-pointer",
+                  isHot ? "border-destructive/50" : "border-[hsl(var(--civic-yellow))]/50",
+                  isExpanded
+                    ? (isHot ? "bg-destructive/10" : "bg-[hsl(var(--civic-yellow))]/10")
+                    : (isHot ? "bg-destructive/5 hover:bg-destructive/10" : "bg-[hsl(var(--civic-yellow))]/5 hover:bg-[hsl(var(--civic-yellow))]/10"),
+                )}
+              >
+                <AlertTriangle className={cn("w-4 h-4 mt-0.5 shrink-0", isHot ? "text-destructive" : "text-[hsl(var(--civic-yellow))]")} />
+                <div className="flex-1 min-w-0">
+                  <p className="text-sm font-semibold text-foreground">{cat}</p>
+                  <p className="text-xs text-muted-foreground">{signals.length} signal{signals.length > 1 ? "s" : ""} — {signals[0].description?.slice(0, 100)}</p>
+                </div>
+                <div className="flex items-center gap-2 shrink-0">
+                  <span className="text-[10px] font-mono text-primary">{isExpanded ? "Hide" : "See signals"}</span>
+                  <ChevronDown className={cn("w-4 h-4 text-primary transition-transform", isExpanded && "rotate-180")} />
+                </div>
+              </button>
+
+              {isExpanded && (
+                <div className="ml-5 border-l border-border/30 pl-4 py-2 space-y-2 animate-in slide-in-from-top-2 duration-200">
+                  {signals.map((sig, i) => (
+                    <div key={i} className="flex items-start gap-2 p-2.5 rounded bg-muted/30 border border-border/20">
+                      <Zap className="w-3 h-3 mt-0.5 text-primary shrink-0" />
+                      <div className="flex-1 min-w-0">
+                        <p className="text-xs font-medium text-foreground">{sig.signal_type?.replace(/_/g, " ")}</p>
+                        <p className="text-xs text-muted-foreground leading-relaxed">{sig.description}</p>
+                        {sig.amount != null && sig.amount > 0 && (
+                          <Badge variant="outline" className="mt-1 text-[10px]">{fmtMoney(sig.amount)}</Badge>
+                        )}
+                      </div>
+                      {(sig as any).source_url && (
+                        <a
+                          href={(sig as any).source_url}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="shrink-0"
+                          onClick={(e) => e.stopPropagation()}
+                        >
+                          <span className="text-[10px] text-primary hover:underline flex items-center gap-1">
+                            Receipt <ExternalLink className="w-3 h-3" />
+                          </span>
+                        </a>
+                      )}
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
+          );
+        })}
+      </div>
+    </div>
+  );
+}
+
 /* ─── Main Component ─── */
 export function AdvocacyReport({ company, executives = [], contracts = [], issueSignals = [], publicStances = [], eeocCases = [] }: AdvocacyReportProps) {
   const [decoderOpen, setDecoderOpen] = useState(false);
@@ -253,35 +327,9 @@ export function AdvocacyReport({ company, executives = [], contracts = [], issue
             />
           )}
 
-          {/* Active signals by category with View Receipt buttons */}
+          {/* Active signals by category — interactive expandable list */}
           {Object.keys(signalsByCategory).length > 0 && (
-            <div className="mt-5 pt-5 border-t border-border/30">
-              <p className="font-mono text-[10px] text-primary tracking-[0.3em] uppercase mb-3">Active Signals</p>
-              <div className="space-y-2">
-                {Object.entries(signalsByCategory).slice(0, 6).map(([cat, signals]) => {
-                  const firstSourceUrl = (signals.find((sig: any) => sig.source_url) as any)?.source_url ?? (signals[0] as any).source_url;
-                  return (
-                    <div key={cat} className={cn(
-                      "flex items-start gap-3 p-3 border-l-2",
-                      signals.length > 3 ? "border-destructive/50 bg-destructive/5" : "border-civic-yellow/50 bg-civic-yellow/5"
-                    )}>
-                      <AlertTriangle className={cn("w-4 h-4 mt-0.5 shrink-0", signals.length > 3 ? "text-destructive" : "text-civic-yellow")} />
-                      <div className="flex-1 min-w-0">
-                        <p className="text-sm font-semibold text-foreground">{cat}</p>
-                        <p className="text-xs text-muted-foreground">{signals.length} signal{signals.length > 1 ? "s" : ""} — {signals[0].description?.slice(0, 120)}</p>
-                      </div>
-                      {firstSourceUrl && (
-                        <a href={firstSourceUrl} target="_blank" rel="noopener noreferrer" className="shrink-0">
-                          <Button variant="ghost" size="sm" className="h-7 text-xs gap-1 text-primary">
-                            <ExternalLink className="w-3 h-3" /> View Receipt
-                          </Button>
-                        </a>
-                      )}
-                    </div>
-                  );
-                })}
-              </div>
-            </div>
+            <ActiveSignalsPanel signalsByCategory={signalsByCategory} />
           )}
         </div>
       </section>
