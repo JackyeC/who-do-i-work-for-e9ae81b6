@@ -134,6 +134,7 @@ const BriefingPage = lazy(() => import("./pages/BriefingPage"));
 const Tools = lazy(() => import("./pages/Tools"));
 const NewsOnboarding = lazy(() => import("./components/NewsOnboarding"));
 const ReportConfirmation = lazy(() => import("./pages/ReportConfirmation"));
+const ApplicationDetail = lazy(() => import("./pages/ApplicationDetail"));
 
 // Lazy-load floating widgets — not needed on first paint
 const AskJackyeWidget = lazy(() => import("./components/AskJackyeWidget").then(m => ({ default: m.AskJackyeWidget })));
