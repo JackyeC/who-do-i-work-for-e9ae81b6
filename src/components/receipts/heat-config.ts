@@ -38,7 +38,7 @@ export const HEAT_LABELS: Record<number, { full: string; mobile: string; color: 
     color: "text-[hsl(0,84%,60%)]",
     bg: "bg-[hsl(0,84%,60%)]/15 border-[hsl(0,84%,60%)]/40 text-[hsl(0,84%,60%)]",
     hex: "#EF4444",
-    tooltip: "The public record tells a different story than the press release.",
+    tooltip: "The public record tells a different story. Facts over feelings.",
   },
 };
 
