@@ -203,15 +203,15 @@ function generateJackyeTake(
 
   // ── 1. The Call-Out — direct observation, never generic ──
   if (coverage === "Low") {
-    parts.push("Look, we've got an Ugly Baby situation here. The marketing is pretty, but the receipts? Dusty. When a company makes it this hard to find public data, that's not an accident — that's a strategy.");
+    parts.push("Let's be serious. The public record is nearly empty. When a company makes it this difficult to verify basic data, that is not an oversight — that is architecture. The marketing may be polished, but the receipts are absent.");
   } else if (weakSignals.length >= 3) {
-    parts.push("Facts over Feelings: the receipts are messy. I count at least three areas where this company is giving us silence instead of substance. Human frailty is real — but so is corporate negligence.");
+    parts.push("Three or more signal categories are showing gaps. That is not noise — that is a pattern. Where there should be substance, there is silence. The question is whether that silence is strategic.");
   } else if (weakSignals.length > 0 && strongSignals.length > 0) {
-    parts.push("This is a split-personality profile. Some signals show real character; others show a company that's hoping you won't look too hard. I always look too hard.");
+    parts.push("This is a contradictory profile. Some signals show genuine institutional character; others show a company that is counting on you not looking past the careers page. The inconsistency itself is the signal.");
   } else if (weakSignals.length > 0) {
-    parts.push("AI can simulate competence all day long, but these signals? They reveal character. And right now, the character sheet has some blank spots that should worry you.");
+    parts.push("The data reveals gaps that no amount of employer branding can paper over. These are not edge cases — they are the areas where accountability should be most visible and is not.");
   } else {
-    parts.push("I don't hand out gold stars easily, but this one earned it. The receipts match the rhetoric — and in this market, that's not just rare, it's remarkable.");
+    parts.push("The receipts align with the rhetoric. In a market where that is the exception rather than the rule, this profile is worth noting. Credit where it is earned.");
   }
 
   // ── 2. The 'Dirty Receipt' — connect contradictions with specifics ──
