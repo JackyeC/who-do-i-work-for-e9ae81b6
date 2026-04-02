@@ -77,6 +77,7 @@ interface Props {
 }
 
 export function AccountabilitySignalsLayer({ companyId, companyName }: Props) {
+  const { checkSignalRelevance, hasProfile } = usePersonalizedSignals();
   const [expandedCat, setExpandedCat] = useState<string | null>(null);
   const { signals, grouped: hookGrouped, isEnabled, isLoading } = useAccountabilitySignals(companyId);
 
