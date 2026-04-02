@@ -95,9 +95,20 @@ export function MarketingNav() {
               </Link>
             ))}
             {user ? (
-              <Button size="sm" variant="outline" onClick={() => { setMobileMenuOpen(false); navigate("/dashboard"); }} className="w-full mt-2">
-                Dashboard
-              </Button>
+              <>
+                <Link
+                  to="/applications"
+                  onClick={() => setMobileMenuOpen(false)}
+                  className={`font-sans text-sm py-2 transition-colors ${
+                    location.pathname === "/applications" ? "text-foreground font-medium" : "text-muted-foreground hover:text-foreground"
+                  }`}
+                >
+                  Applications
+                </Link>
+                <Button size="sm" variant="outline" onClick={() => { setMobileMenuOpen(false); navigate("/dashboard"); }} className="w-full mt-2">
+                  Dashboard
+                </Button>
+              </>
             ) : (
               <Button size="sm" onClick={() => { setMobileMenuOpen(false); navigate("/join"); }} className="w-full mt-2">
                 Get Started
