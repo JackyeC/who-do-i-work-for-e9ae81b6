@@ -3,6 +3,8 @@ import { Badge } from "@/components/ui/badge";
 import { ExternalLink, ChevronDown, ShieldAlert, Users, Eye, AlertTriangle } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useAccountabilitySignals, type AccountabilitySignal } from "@/hooks/use-accountability-signals";
+import { PersonalizedSignalTag } from "@/components/company/PersonalizedSignalTag";
+import { usePersonalizedSignals } from "@/hooks/use-personalized-signals";
 
 /* ── Category config ── */
 const CATEGORIES = [

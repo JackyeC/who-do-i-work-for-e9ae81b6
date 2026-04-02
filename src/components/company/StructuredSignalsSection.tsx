@@ -3,12 +3,14 @@ import { Link } from "react-router-dom";
 import { EmptyStateExplainer } from "@/components/company/EmptyStateExplainer";
 import { OffTheRecordSignals } from "@/components/company/OffTheRecordSignals";
 import { ExpandableSignalItem } from "@/components/company/ExpandableSignalItem";
+import { PersonalizedSignalTag } from "@/components/company/PersonalizedSignalTag";
 import { cn } from "@/lib/utils";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { getUiStatement } from "@/lib/signalPersonalization";
 import { AlertTriangle, ArrowRight } from "lucide-react";
 import { safeSignalSummary, mapToCategory, TAXONOMY_MAP } from "@/utils/signalTextSanitizer";
+import { usePersonalizedSignals } from "@/hooks/use-personalized-signals";
 
 interface Signal {
   summary: string;
