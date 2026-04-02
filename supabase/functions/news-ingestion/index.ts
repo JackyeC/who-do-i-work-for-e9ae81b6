@@ -133,6 +133,26 @@ function passesContentGates(title: string, source?: string | null): boolean {
   return true;
 }
 
+function toValidatedWorkNewsRow(n: any) {
+  if (!passesContentGates(n.title, n.source)) return null;
+
+  return {
+    headline: n.title,
+    source_name: n.source,
+    source_url: n.source_url,
+    published_at: n.published_at,
+    category: n.category || "general",
+    themes: [...(n.value_tags || []), ...(n.industry_tags || [])],
+    is_controversy: (n.tags || []).some((t: string) =>
+      ["lawsuit", "whistleblower", "osha", "nlrb", "eeoc", "strike"].includes(t)
+    ),
+    controversy_type: null,
+    sentiment_score: n.importance_score > 0.7 ? 0.3 : 0.5,
+    tone_label: n.importance_score > 0.7 ? "Alert" : "Neutral",
+    language: "en",
+  };
+}
+
 Deno.serve(async (req: Request) => {
   try {
     const supabase = createClient(SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY);
@@ -171,30 +191,27 @@ Deno.serve(async (req: Request) => {
       }
 
       // === ALSO write to work_news (what the live ticker actually reads) ===
-      const workNewsRows = uniqueNews.map((n: any) => ({
-        headline: n.title,
-        source_name: n.source,
-        source_url: n.source_url,
-        published_at: n.published_at,
-        category: n.category || "general",
-        themes: [...(n.value_tags || []), ...(n.industry_tags || [])],
-        is_controversy: (n.tags || []).some((t: string) =>
-          ["lawsuit", "whistleblower", "osha", "nlrb", "eeoc", "strike"].includes(t)
-        ),
-        controversy_type: null,
-        sentiment_score: n.importance_score > 0.7 ? 0.3 : 0.5,
-        tone_label: n.importance_score > 0.7 ? "Alert" : "Neutral",
-      }));
+      const workNewsRows = uniqueNews.flatMap((n: any) => {
+        const validatedRow = toValidatedWorkNewsRow(n);
+        if (!validatedRow) {
+          console.log(`[news-ingestion] Rejected work_news row: "${n.title?.slice(0, 60)}" from ${n.source}`);
+          return [];
+        }
 
-      const { error: wnError } = await supabase
-        .from("work_news")
-        .upsert(workNewsRows, {
-          onConflict: "headline",
-          ignoreDuplicates: true,
-        });
+        return [validatedRow];
+      });
 
-      if (wnError) {
-        console.error("Insert work_news error:", wnError);
+      if (workNewsRows.length > 0) {
+        const { error: wnError } = await supabase
+          .from("work_news")
+          .upsert(workNewsRows, {
+            onConflict: "headline",
+            ignoreDuplicates: true,
+          });
+
+        if (wnError) {
+          console.error("Insert work_news error:", wnError);
+        }
       }
     }
 

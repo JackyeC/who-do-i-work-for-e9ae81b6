@@ -160,6 +160,17 @@ function passesContentGates(headline: string, source?: string | null): boolean {
   return isServerEnglish(headline) && isServerRelevant(headline, source);
 }
 
+function buildValidatedWorkNewsRow(row: any) {
+  if (!passesContentGates(row.headline, row.source_name)) {
+    return null;
+  }
+
+  return {
+    ...row,
+    language: "en",
+  };
+}
+
 // ─── NewsAPI fetcher ───
 
 async function fetchNewsAPI(apiKey: string): Promise<any[]> {
@@ -206,7 +217,6 @@ async function fetchNewsAPI(apiKey: string): Promise<any[]> {
           is_controversy: isControversy,
           controversy_type: isControversy ? detectControversyType(title) : null,
           gdelt_url_hash: hashUrl(article.url),
-          language: "en",
         });
       }
 
@@ -272,7 +282,6 @@ async function fetchGDELT(): Promise<any[]> {
           is_controversy: isControversy,
           controversy_type: isControversy ? detectControversyType(title) : null,
           gdelt_url_hash: hashUrl(a.url),
-          language: "en",
         });
       }
 
@@ -301,14 +310,15 @@ Deno.serve(async (req: Request) => {
     let totalInserted = 0;
 
     async function upsertBatch(rows: any[], label: string) {
-      const unique = rows.filter(r => {
-        if (seen.has(r.gdelt_url_hash)) return false;
-        if (!passesContentGates(r.headline, r.source_name)) {
+      const unique = rows.flatMap(r => {
+        if (seen.has(r.gdelt_url_hash)) return [];
+        const validatedRow = buildValidatedWorkNewsRow(r);
+        if (!validatedRow) {
           console.log(`[${label}] Content gate rejected: "${r.headline?.slice(0, 50)}" from ${r.source_name}`);
-          return false;
+          return [];
         }
         seen.add(r.gdelt_url_hash);
-        return true;
+        return [validatedRow];
       });
       if (unique.length > 0) {
         const { error } = await supabase.from("work_news").upsert(unique, {
