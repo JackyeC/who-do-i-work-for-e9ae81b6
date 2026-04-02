@@ -172,7 +172,7 @@ async function fetchGDELT(): Promise<any[]> {
       const res = await fetch(url);
       if (!res.ok) {
         console.warn(`[GDELT] Query failed: ${res.status}`);
-        await new Promise(r => setTimeout(r, 6000));
+        await new Promise(r => setTimeout(r, 2000));
         continue;
       }
 
