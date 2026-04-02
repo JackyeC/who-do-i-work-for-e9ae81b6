@@ -25,6 +25,7 @@ export function MediaNarrativeCard({ companyId, companyName }: MediaNarrativeCar
       const { data, error } = await supabase
         .from("work_news")
         .select("headline, sentiment_score, tone_label, is_controversy, controversy_type, published_at")
+        .eq("language", "en")
         .order("published_at", { ascending: false })
         .limit(20);
       if (error) throw error;

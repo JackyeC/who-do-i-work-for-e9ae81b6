@@ -360,6 +360,7 @@ Deno.serve(async (req: Request) => {
       .select(
         "id, headline, source_name, source_url, published_at, sentiment_score, tone_label, themes, category, is_controversy, controversy_type"
       )
+      .eq("language", "en")
       .is("jackye_take", null)
       .order("published_at", { ascending: false })
       .limit(25);

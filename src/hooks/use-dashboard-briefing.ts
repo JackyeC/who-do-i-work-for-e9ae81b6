@@ -46,6 +46,7 @@ export function useDashboardBriefing() {
         supabase
           .from("work_news")
           .select("id, headline, source_name, category, is_controversy, published_at")
+          .eq("language", "en")
           .order("published_at", { ascending: false })
           .limit(5),
         // User profile for name
