@@ -15,6 +15,7 @@ import { AdminRoute } from "@/components/AdminRoute";
 import { ErrorBoundary } from "@/components/ErrorBoundary";
 import { SourceDrawerProvider } from "@/components/dossier/SourcePreviewDrawer";
 import { AppShell } from "@/components/layout/AppShell";
+import { EvaluationBar } from "@/components/evaluation/EvaluationBar";
 import { Loader2 } from "lucide-react";
 
 // Only the landing page is eagerly loaded
