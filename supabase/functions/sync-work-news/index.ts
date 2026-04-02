@@ -179,7 +179,7 @@ async function fetchGDELT(): Promise<any[]> {
       const text = await res.text();
       if (!text.startsWith("{") && !text.startsWith("[")) {
         console.warn(`[GDELT] Non-JSON response: ${text.slice(0, 80)}`);
-        await new Promise(r => setTimeout(r, 6000));
+        await new Promise(r => setTimeout(r, 2000));
         continue;
       }
 
