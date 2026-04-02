@@ -52,6 +52,7 @@ import { HighRiskConnectionCard } from "@/components/company/HighRiskConnectionC
 import { PolicyScoreCard } from "@/components/policy-intelligence/PolicyScoreCard";
 import { StateWomenStatusCard } from "@/components/StateWomenStatusCard";
 import { SourceDocumentsLayer } from "@/components/dossier/SourceDocumentsLayer";
+import { AccountabilitySignalsLayer } from "@/components/dossier/AccountabilitySignalsLayer";
 
 export default function CompanyDossier() {
   const { id } = useParams();
@@ -681,6 +682,12 @@ export default function CompanyDossier() {
           {companyId && (
             <DossierLayer title="Source Documents" subtitle="Primary-source filings, reports, and disclosures" icon={FileSearch} layerNumber={9}>
               <SourceDocumentsLayer companyId={companyId} companyName={company.name} />
+            </DossierLayer>
+          )}
+
+          {companyId && (
+            <DossierLayer title="Accountability Signals" subtitle="Power, conduct, governance, and narrative gap patterns from public records" icon={ShieldCheck} layerNumber={10}>
+              <AccountabilitySignalsLayer companyId={companyId} companyName={company.name} />
             </DossierLayer>
           )}
         </div>
