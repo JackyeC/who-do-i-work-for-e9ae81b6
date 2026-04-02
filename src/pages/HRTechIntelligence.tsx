@@ -482,19 +482,19 @@ export default function HRTechIntelligence() {
       </section>
 
       {/* ═══ SECTION 3: Companies to Watch ═══ */}
-      <section className="py-12 px-4 border-t border-border">
+      <section className="py-10 px-4 border-t border-border">
         <div className="max-w-5xl mx-auto">
-          <div className="flex items-center gap-2 mb-2">
+          <div className="flex items-center gap-2 mb-1">
             <Building2 className="w-4 h-4 text-primary" />
-            <p className="tracking-[0.2em] text-primary font-mono uppercase text-sm">
-              Companies to Watch
+            <p className="tracking-[0.2em] text-primary font-mono uppercase text-[11px]">
+              On the Radar
             </p>
           </div>
-          <h2 className="text-2xl font-bold text-foreground mb-2">
-            HR tech vendors flagged by our analysis
+          <h2 className="text-xl font-bold text-foreground mb-2">
+            Companies worth a closer look
           </h2>
-          <p className="text-sm text-muted-foreground mb-6">
-            These companies have significant political spending, documented labor issues, or active enforcement contracts.
+          <p className="text-sm text-muted-foreground mb-5">
+            Significant political spending, active enforcement contracts, or documented labor issues.
           </p>
 
           <motion.div
