@@ -87,7 +87,7 @@ export function TrailRevealRail() {
       {/* Archetype progress */}
       <div className="shrink-0 flex-1 min-w-0">
         <p className="text-[8px] font-mono uppercase tracking-[0.2em] mb-2" style={{ color: "#B9C0CC" }}>
-          🔮 Emerging Identity
+          🔮 What Kind of Employer Is This?
         </p>
         <div className="flex items-center gap-4">
           {archetypeGroups.map(g => {
