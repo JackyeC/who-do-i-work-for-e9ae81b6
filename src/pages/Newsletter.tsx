@@ -219,28 +219,28 @@ function StoryCard({ article }: { article: WorkNewsArticle }) {
           <span className="ml-auto text-[10px] text-muted-foreground/60 font-mono">{timeAgo(article.published_at)}</span>
         </div>
 
-        <h3 className="text-[15px] font-bold text-foreground leading-snug mb-3 group-hover:text-primary transition-colors">
+        <h3 className="text-lg font-bold text-foreground leading-snug mb-3 group-hover:text-primary transition-colors">
           {article.headline}
         </h3>
 
         {article.jackye_take && (
-          <div className="rounded-lg bg-primary/5 border border-primary/15 p-3.5 mb-3">
-            <div className="flex items-center gap-1.5 mb-1.5">
-              <Eye className="w-3 h-3 text-primary" />
-              <span className="text-[9px] font-bold text-primary tracking-[0.15em] uppercase font-mono">The Take</span>
+          <div className="rounded-lg bg-primary/5 border border-primary/15 p-4 mb-3">
+            <div className="flex items-center gap-1.5 mb-2">
+              <Eye className="w-3.5 h-3.5 text-primary" />
+              <span className="text-[11px] font-bold text-primary tracking-[0.15em] uppercase font-mono">The Take</span>
             </div>
-            <p className="text-sm text-foreground/85 leading-relaxed">{article.jackye_take}</p>
+            <p className="text-base text-foreground leading-relaxed">{article.jackye_take}</p>
           </div>
         )}
 
-        <div className="rounded-lg bg-muted/20 border border-border/20 p-3 mb-3">
-          <div className="flex items-center gap-1.5 mb-1.5">
-            <TrendingUp className="w-3 h-3 text-primary" />
-            <span className="text-[9px] font-bold text-primary tracking-[0.15em] uppercase font-mono">Why This Matters</span>
+        <div className="rounded-lg bg-muted/20 border border-border/20 p-4 mb-3">
+          <div className="flex items-center gap-1.5 mb-2">
+            <TrendingUp className="w-3.5 h-3.5 text-primary" />
+            <span className="text-[11px] font-bold text-primary tracking-[0.15em] uppercase font-mono">Why This Matters</span>
           </div>
-          <ul className="space-y-1">
+          <ul className="space-y-1.5">
             {whyMatters.slice(0, 2).map((point, idx) => (
-              <li key={idx} className="flex items-start gap-1.5 text-xs text-muted-foreground leading-relaxed">
+              <li key={idx} className="flex items-start gap-1.5 text-sm text-foreground/80 leading-relaxed">
                 <span className="text-primary mt-0.5 shrink-0">·</span>
                 {point}
               </li>
