@@ -359,16 +359,16 @@ export default function HRTechIntelligence() {
       </section>
 
       {/* ═══ SECTION 1: What's Happening in HR Tech ═══ */}
-      <section className="py-12 px-4 border-t border-border">
+      <section className="py-10 px-4">
         <div className="max-w-5xl mx-auto">
-          <div className="flex items-center gap-2 mb-2">
+          <div className="flex items-center gap-2 mb-1">
             <Zap className="w-4 h-4 text-primary" />
-            <p className="tracking-[0.2em] text-primary font-mono uppercase text-sm">
-              What's Happening in HR Tech
+            <p className="tracking-[0.2em] text-primary font-mono uppercase text-[11px]">
+              Recent Signals
             </p>
           </div>
-          <h2 className="text-2xl font-bold text-foreground mb-6">
-            High-impact signals from the last 12 months
+          <h2 className="text-xl font-bold text-foreground mb-5">
+            What happened. Why it matters.
           </h2>
 
           <div className="space-y-3">
