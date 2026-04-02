@@ -71,6 +71,7 @@ const EconomyDashboard = lazy(() => import("./pages/EconomyDashboard"));
 const FollowTheMoney = lazy(() => import("./pages/FollowTheMoney"));
 const PeoplePuzzles = lazy(() => import("./pages/PeoplePuzzles"));
 const PeoplePuzzlesEmbed = lazy(() => import("./pages/PeoplePuzzlesEmbed"));
+const Trail = lazy(() => import("./pages/Trail"));
 const AskJackye = lazy(() => import("./pages/AskJackye"));
 const OnePager = lazy(() => import("./pages/OnePager"));
 const Demo = lazy(() => import("./pages/Demo"));
