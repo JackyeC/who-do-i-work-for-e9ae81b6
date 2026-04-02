@@ -156,7 +156,7 @@ export default function Receipts() {
             className="font-light text-muted-foreground italic mt-4"
             style={{ fontSize: "clamp(20px, 2.2vw, 28px)" }}
           >
-            The world of work. Documented.
+            Follow the story until you know what to do.
           </p>
           <p
             className="font-medium text-foreground mt-3 opacity-80"
