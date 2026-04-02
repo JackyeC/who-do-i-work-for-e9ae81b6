@@ -24,6 +24,20 @@ const EXCLUDE_PATTERNS = [
 const EXCLUDE_DOMAINS = [
   "psychologytoday.com", "kotaku.com", "ign.com", "gamespot.com",
   "polygon.com", "pcgamer.com", "eurogamer.net",
+  // Foreign-language domains — block at enrichment layer
+  "watoday.com.au", "ibtimes.co.uk", "hcamag.com", "colombogazette.com",
+  "demokraatti.fi", "di.se", "etnews.com", "sunstar.com.ph",
+  "terra.com.br", "channelnewsasia.com",
+  "g1.globo.com", "globo.com", "uol.com.br", "folha.uol.com.br",
+  "lemonde.fr", "elpais.com", "spiegel.de", "corriere.it",
+  "ideawebtv.it", "repubblica.it", "ilsole24ore.com",
+  "lefigaro.fr", "welt.de", "bild.de", "nrc.nl", "dn.se",
+  "dagensjuridik.se", "aftonbladet.se", "expressen.se",
+  "tvn24.pl", "wp.pl", "onet.pl", "gazeta.pl",
+  "ilfattoquotidiano.it", "ansa.it", "rainews.it",
+  "rtve.es", "elmundo.es", "abc.es", "lavanguardia.com",
+  "liberation.fr", "20minutes.fr", "francetvinfo.fr",
+  "handelsblatt.com", "faz.net", "sueddeutsche.de", "zeit.de",
 ];
 
 function isEnglishAndRelevant(headline: string): boolean {

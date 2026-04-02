@@ -75,6 +75,14 @@ const NON_US_DOMAINS = new Set([
   "terra.com.br", "channelnewsasia.com", "bbc.co.uk", "theguardian.com",
   "g1.globo.com", "globo.com", "uol.com.br", "folha.uol.com.br",
   "lemonde.fr", "elpais.com", "spiegel.de", "corriere.it",
+  "ideawebtv.it", "repubblica.it", "ilsole24ore.com",
+  "lefigaro.fr", "welt.de", "bild.de", "nrc.nl", "dn.se",
+  "dagensjuridik.se", "aftonbladet.se", "expressen.se",
+  "tvn24.pl", "wp.pl", "onet.pl", "gazeta.pl",
+  "ilfattoquotidiano.it", "ansa.it", "rainews.it",
+  "rtve.es", "elmundo.es", "abc.es", "lavanguardia.com",
+  "liberation.fr", "20minutes.fr", "francetvinfo.fr",
+  "handelsblatt.com", "faz.net", "sueddeutsche.de", "zeit.de",
 ]);
 
 function isServerEnglish(text: string): boolean {
