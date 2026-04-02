@@ -64,6 +64,28 @@ export function TrailRevealScreen() {
         </div>
 
         <div className="px-6 pb-6 space-y-4">
+
+          {/* Decision Scorecard — the 4 questions */}
+          <div className="p-4 rounded-xl space-y-3" style={{ background: "#1E222C" }}>
+            <p className="text-[9px] font-mono uppercase tracking-[0.2em] mb-1 flex items-center gap-1.5" style={{ color: "#F2C14E" }}>
+              <Star className="w-3 h-3" /> Your Decision Scorecard
+            </p>
+            {[
+              { q: "Can I trust this company?", icon: "🔍", answer: finalArchetype.id === "arch-snack" ? "Their marketing is louder than their investment in workers. Trust the pattern, not the slogan." : finalArchetype.id === "arch-country" ? "Trust runs on access here — and you're not in the inner circle." : finalArchetype.id === "arch-mission" ? "They believe in the mission. They just don't fund the people doing it." : "Transparency is structurally absent. You can't trust what you can't see.", color: "#FF6B6B" },
+              { q: "Does behavior match messaging?", icon: "🎭", answer: finalArchetype.id === "arch-snack" ? "The careers page and the lobbying record tell different stories." : finalArchetype.id === "arch-country" ? "The meritocracy pitch doesn't match the revolving-door reality." : finalArchetype.id === "arch-mission" ? "The DEI report looks great. The DEI team no longer exists." : "The ethics board was announced. It hasn't done anything.", color: "#FF9F43" },
+              { q: "Would I feel safe and valued?", icon: "🛡️", answer: finalArchetype.id === "arch-snack" ? "Until restructuring hits — then headcount is a line item." : finalArchetype.id === "arch-country" ? "If you're in the right network, maybe. Otherwise, you're labor." : finalArchetype.id === "arch-mission" ? "The mission makes you feel needed. The burnout makes you feel used." : "Workers who raised concerns faced retaliation. That's the answer.", color: "#39C0BA" },
+              { q: "Is pay fair and belonging real?", icon: "💰", answer: finalArchetype.id === "arch-snack" ? "Comp looks fine — until you see the 758:1 CEO ratio." : finalArchetype.id === "arch-country" ? "Pay is competitive if you have leverage. Most workers don't." : finalArchetype.id === "arch-mission" ? "You'll accept less because you believe. They're counting on that." : "Pay equity data is missing by design, not by accident.", color: "#9B7BFF" },
+            ].map((item, i) => (
+              <div key={i} className="flex items-start gap-3 p-3 rounded-lg" style={{ background: "#151820" }}>
+                <span className="text-lg mt-0.5 shrink-0">{item.icon}</span>
+                <div>
+                  <p className="text-[11px] font-bold mb-0.5" style={{ color: item.color }}>{item.q}</p>
+                  <p className="text-[10px] leading-relaxed" style={{ color: "#D4CFC5" }}>{item.answer}</p>
+                </div>
+              </div>
+            ))}
+          </div>
+
           {/* Traits */}
           <div className="p-3.5 rounded-xl" style={{ background: "#1E222C" }}>
             <p className="text-[9px] font-mono uppercase tracking-[0.2em] mb-2.5 flex items-center gap-1.5" style={{ color: "#B9C0CC" }}>
@@ -83,7 +105,7 @@ export function TrailRevealScreen() {
           <div className="p-4 rounded-xl relative overflow-hidden" style={{ background: "#1E222C" }}>
             <div className="absolute top-0 left-0 w-1 h-full" style={{ background: "#F2C14E" }} />
             <p className="text-[9px] font-mono uppercase tracking-[0.2em] mb-2" style={{ color: "#F2C14E" }}>
-              💡 What This Means for You
+              💡 What This Means for Your Career Decision
             </p>
             <p className="text-[12px] leading-relaxed" style={{ color: "#D4CFC5" }}>
               {finalArchetype.workerImpact}

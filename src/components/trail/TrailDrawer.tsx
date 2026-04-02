@@ -192,7 +192,7 @@ export function TrailDrawer() {
         <div className="p-4 rounded-xl relative overflow-hidden" style={{ background: "#171B25" }}>
           <div className="absolute top-0 left-0 w-1 h-full" style={{ background: "#F2C14E" }} />
           <h4 className="text-[9px] font-mono uppercase tracking-[0.2em] mb-2" style={{ color: "#F2C14E" }}>
-            💡 Why It Matters
+            💡 Why This Matters for Your Decision
           </h4>
           <p className="text-[12px] leading-relaxed" style={{ color: "#D4CFC5" }}>{card.whyItMatters}</p>
         </div>
