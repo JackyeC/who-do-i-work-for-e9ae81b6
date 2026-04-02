@@ -51,6 +51,7 @@ import { PatternsSynthesisLayer } from "@/components/dossier/PatternsSynthesisLa
 import { HighRiskConnectionCard } from "@/components/company/HighRiskConnectionCard";
 import { PolicyScoreCard } from "@/components/policy-intelligence/PolicyScoreCard";
 import { StateWomenStatusCard } from "@/components/StateWomenStatusCard";
+import { SourceDocumentsLayer } from "@/components/dossier/SourceDocumentsLayer";
 
 export default function CompanyDossier() {
   const { id } = useParams();
