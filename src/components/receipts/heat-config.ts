@@ -6,7 +6,7 @@ export const HEAT_LABELS: Record<number, { full: string; mobile: string; color: 
     color: "text-[hsl(215,16%,47%)]",
     bg: "bg-[hsl(215,16%,47%)]/10 border-[hsl(215,16%,47%)]/30 text-[hsl(215,16%,47%)]",
     hex: "#64748B",
-    tooltip: "On the radar. File this for context.",
+    tooltip: "On the radar. Context worth filing.",
   },
   2: {
     full: "Worth Watching",
@@ -14,7 +14,7 @@ export const HEAT_LABELS: Record<number, { full: string; mobile: string; color: 
     color: "text-[hsl(215,20%,65%)]",
     bg: "bg-[hsl(215,20%,65%)]/10 border-[hsl(215,20%,65%)]/30 text-[hsl(215,20%,65%)]",
     hex: "#94A3B8",
-    tooltip: "Something here does not align. Worth a closer look.",
+    tooltip: "Something here doesn't align. Worth a closer look.",
   },
   3: {
     full: "Worth Documenting",
@@ -38,7 +38,7 @@ export const HEAT_LABELS: Record<number, { full: string; mobile: string; color: 
     color: "text-[hsl(0,84%,60%)]",
     bg: "bg-[hsl(0,84%,60%)]/15 border-[hsl(0,84%,60%)]/40 text-[hsl(0,84%,60%)]",
     hex: "#EF4444",
-    tooltip: "The public record tells a different story than the press release.",
+    tooltip: "The public record tells a different story. Facts over feelings.",
   },
 };
 

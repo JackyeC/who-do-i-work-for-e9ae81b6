@@ -201,70 +201,69 @@ function generateJackyeTake(
   const workforce = signals.find(s => s.key === "workforce");
   const leadership = signals.find(s => s.key === "leadership");
 
-  // ── 1. The Call-Out — direct observation, never generic ──
+  // ── 1. The Call-Out — what you see vs what it is ──
   if (coverage === "Low") {
-    parts.push("Let's be serious. The public record is nearly empty. When a company makes it this difficult to verify basic data, that is not an oversight — that is architecture. The marketing may be polished, but the receipts are absent.");
+    parts.push("The public record is nearly empty. That's not an oversight. When a company makes it this hard to verify basic data, they've made a choice. The marketing is polished. The receipts are absent.");
   } else if (weakSignals.length >= 3) {
-    parts.push("Three or more signal categories are showing gaps. That is not noise — that is a pattern. Where there should be substance, there is silence. The question is whether that silence is strategic.");
+    parts.push("Three or more signal categories are showing gaps. That's not noise — that's a pattern. Where there should be substance, there's silence. The question is whether that silence is strategic.");
   } else if (weakSignals.length > 0 && strongSignals.length > 0) {
-    parts.push("This is a contradictory profile. Some signals show genuine institutional character; others show a company that is counting on you not looking past the careers page. The inconsistency itself is the signal.");
+    parts.push("This is a contradictory profile. Some signals show real institutional character. Others show a company counting on you not looking past the careers page. The inconsistency is the signal.");
   } else if (weakSignals.length > 0) {
-    parts.push("The data reveals gaps that no amount of employer branding can paper over. These are not edge cases — they are the areas where accountability should be most visible and is not.");
+    parts.push("There are gaps here that no amount of employer branding covers. These aren't edge cases — they're the areas where accountability should be most visible. And it isn't.");
   } else {
-    parts.push("The receipts align with the rhetoric. In a market where that is the exception rather than the rule, this profile is worth noting. Credit where it is earned.");
+    parts.push("The receipts match the rhetoric. In a market where that's the exception, this profile is worth noting. Credit where it's earned.");
   }
 
-  // ── 2. The 'Dirty Receipt' — connect contradictions with specifics ──
+  // ── 2. The Receipt — connect contradictions with specifics ──
 
-  // High influence + weak benefits/hiring = the signature callout
   if (influence && influence.subscore >= 60 && weakSignals.filter(s => s.key !== "influence").length >= 2) {
     const weakLabels = weakSignals.filter(s => s.key !== "influence").map(s => s.label.toLowerCase());
-    parts.push(`They score ${influence.subscore}/100 on Influence Exposure — they know exactly how to move money in Washington. But on ${weakLabels.join(" and ")}? Silence. That gap between political investment and workforce investment is not accidental. It is a priority statement.`);
+    parts.push(`They score ${influence.subscore}/100 on Influence Exposure — they know how to move money in Washington. But on ${weakLabels.join(" and ")}? Silence. That gap between political investment and workforce investment isn't accidental.`);
   } else if (influence && influence.subscore >= 60 && hiring && hiring.subscore < 50) {
-    parts.push(`They are spending to shape policy in Washington but have not published a Bias Audit for their own AI hiring tools. They will lobby Congress on workforce issues but will not disclose how their algorithm evaluates you. That is not an oversight. That is a choice.`);
+    parts.push("They're spending to shape policy in Washington but haven't published a Bias Audit for their own AI hiring tools. They'll lobby Congress on workforce issues but won't disclose how their algorithm evaluates you. Yeah… that's not what this is.");
   } else if (strongSignals.length > 0) {
     const strongLabels = strongSignals.map(s => `${s.label.toLowerCase()} (${s.subscore}/100)`);
-    parts.push(`Where they show up: ${strongLabels.join(", ")}. That is documented character, not a press release. Credit where it is earned.`);
+    parts.push(`Where they show up: ${strongLabels.join(", ")}. That's documented character, not a press release.`);
   }
 
-  // Specific HR tech / Bias Audit callout
+  // Hiring tech opacity
   if (flags.opaqueHiringTechnology || (hiring && hiring.subscore < 50)) {
     const lobbyingContext = (influence && influence.subscore >= 50)
-      ? `They are investing in lobbyists but not in a published Bias Audit. That tells you where the priorities actually sit.`
-      : `No published bias audits, no transparency on how their AI evaluates candidates. In 2026, that is not a gap — it is a decision.`;
-    parts.push(`The hiring technology is opaque. ${lobbyingContext} You are entitled to know how you are being evaluated before a human ever reviews your application.`);
+      ? "They're investing in lobbyists but not in a published Bias Audit. That tells you where the priorities actually sit."
+      : "No published bias audits, no transparency on how their AI evaluates candidates. In 2026, that's not a gap — it's a decision.";
+    parts.push(`The hiring technology is opaque. ${lobbyingContext} You're entitled to know how you're being evaluated before a human ever sees your application.`);
   }
 
-  // Compensation gaps — the "show the work" lens
+  // Compensation gaps
   if (flags.compensationTransparencyGaps || (comp && comp.subscore < 50)) {
-    parts.push("Pay transparency is weak. If they cannot show you the band, the benchmark, or the equity audit — that is not complexity, that is concealment. Companies that pay fairly are not afraid to prove it.");
+    parts.push("Pay transparency is weak. If they can't show you the band, the benchmark, or the equity audit — that's not complexity. That's concealment. Companies that pay fairly aren't afraid to prove it.");
   }
 
-  // Leadership instability — the human element
+  // Leadership instability
   if (flags.leadershipInstability || (leadership && leadership.subscore < 40)) {
-    parts.push("Leadership is unstable. When the people at the top keep changing, the people in the middle absorb the disruption. That is not just organizational risk — it is an environment where priorities, expectations, and reporting lines shift without warning.");
+    parts.push("Leadership is unstable. When the people at the top keep changing, the people in the middle absorb it. Priorities shift, reporting lines move, expectations reset. That's not just org risk — it's your daily reality.");
   }
 
-  // ── Layoff timing — direct, human-centered ──
+  // ── Layoff timing ──
   if (layoff.daysSinceLastLayoff !== null && layoff.daysSinceLastLayoff <= 90) {
-    parts.push(`They reduced headcount ${layoff.daysSinceLastLayoff} days ago. The team you would be joining has not finished processing that. Ask about it directly and observe how they respond — not the talking points, the body language.`);
+    parts.push(`They reduced headcount ${layoff.daysSinceLastLayoff} days ago. The team you'd be joining hasn't finished processing that. Ask about it directly and watch how they respond — not the talking points. The body language.`);
   } else if (layoff.daysSinceLastLayoff !== null && layoff.daysSinceLastLayoff <= 180) {
-    parts.push("Reductions within six months. The org chart may have stabilized, but institutional trust has not. Ask whether your role existed before the cuts, and whether the person who held it received a genuine transition.");
+    parts.push("Reductions within six months. The org chart may have stabilized, but trust hasn't. Ask whether your role existed before the cuts. That answer tells you more than the job description.");
   }
 
-  // ── 3. The 'Jackye' Closing — punchy, specific, never "do more research" ──
+  // ── 3. The Closing — calm, factual, no theatrics ──
   switch (verdict) {
     case "Yes":
-      parts.push("The data supports moving forward. Ask the questions below regardless — not because the profile raises doubt, but because strong institutional character holds up under scrutiny. That is how trust is verified.");
+      parts.push("The data supports moving forward. Ask the questions below anyway — not because the profile raises doubt, but because strong character holds up under scrutiny. That's how trust is verified.");
       break;
     case "Proceed with caution":
-      parts.push("Do not sign without asking why their political spending contradicts their public positioning. Trace the flow of funds against the marketing. If the record does not match the pitch, your leverage is knowing that before they do.");
+      parts.push("Don't sign without asking why their political spending contradicts their public positioning. If the record doesn't match the pitch, your leverage is knowing that before they do.");
       break;
     case "Not without more answers":
-      parts.push("Do not proceed until they answer the questions below — in writing. Not a phone call, not a promise to follow up. In writing. If they decline, that is the answer.");
+      parts.push("Don't proceed until they answer the questions below — in writing. Not a phone call. Not a promise to follow up. In writing. If they decline, that's the answer.");
       break;
     case "I would pause":
-      parts.push("The signals are telling a story the careers page will not. No offer is worth accepting when the institutional character does not match the positioning. Verify the record first. Always.");
+      parts.push("The signals are telling a story the careers page won't. No offer is worth accepting when the institutional character doesn't match the positioning. Facts over feelings.");
       break;
   }
 
