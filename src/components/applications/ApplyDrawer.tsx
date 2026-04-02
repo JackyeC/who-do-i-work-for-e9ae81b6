@@ -81,7 +81,7 @@ export function ApplyDrawer({
     queryFn: async () => {
       const { data, error } = await supabase
         .from("company_jobs")
-        .select("id, title, location, salary_range, employment_type, posted_at, external_url")
+        .select("id, title, location, salary_range, employment_type, posted_at, url")
         .eq("company_id", companyId)
         .eq("is_active", true)
         .order("posted_at", { ascending: false })
