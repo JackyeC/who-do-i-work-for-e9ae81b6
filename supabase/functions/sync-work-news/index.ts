@@ -149,7 +149,7 @@ async function fetchNewsAPI(apiKey: string): Promise<any[]> {
       }
 
       // Small delay between queries
-      await new Promise(r => setTimeout(r, 500));
+      await new Promise(r => setTimeout(r, 300));
     } catch (e: any) {
       console.warn(`[NewsAPI] Error for "${q.slice(0, 30)}...":`, e);
     }
