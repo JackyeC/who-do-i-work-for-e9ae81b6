@@ -1,4 +1,5 @@
 import { Badge } from "@/components/ui/badge";
+import { Link } from "react-router-dom";
 import { EmptyStateExplainer } from "@/components/company/EmptyStateExplainer";
 import { OffTheRecordSignals } from "@/components/company/OffTheRecordSignals";
 import { ExpandableSignalItem } from "@/components/company/ExpandableSignalItem";
@@ -6,7 +7,7 @@ import { cn } from "@/lib/utils";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { getUiStatement } from "@/lib/signalPersonalization";
-import { AlertTriangle } from "lucide-react";
+import { AlertTriangle, ArrowRight } from "lucide-react";
 import { safeSignalSummary, mapToCategory, TAXONOMY_MAP } from "@/utils/signalTextSanitizer";
 
 interface Signal {
@@ -401,6 +402,22 @@ export function StructuredSignalsSection(props: StructuredSignalsProps) {
         <SignalCategory title="Leadership & Influence" signals={leadershipSignals} />
         <SignalCategory title="Innovation & Growth" signals={innovationSignals} />
         <SignalCategory title="Employee Experience" signals={sentimentSignals} emptyType="sentiment" companyName={props.companyName} />
+      </div>
+
+      {/* Rabbit-hole footer */}
+      <div className="px-5 py-3 border-t border-border/40 flex items-center justify-between">
+        <Link
+          to={`/dossier/${slug}`}
+          className="inline-flex items-center gap-1 text-xs font-medium text-primary hover:underline transition-colors"
+        >
+          Show me the receipts <ArrowRight className="w-3 h-3" />
+        </Link>
+        <Link
+          to={`/dossier/${slug}#political-influence`}
+          className="inline-flex items-center gap-1 text-xs font-medium text-primary hover:underline transition-colors"
+        >
+          How deep does it go? <ArrowRight className="w-3 h-3" />
+        </Link>
       </div>
     </div>
   );
