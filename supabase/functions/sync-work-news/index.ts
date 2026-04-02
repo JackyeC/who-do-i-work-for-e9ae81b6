@@ -60,6 +60,49 @@ function hashUrl(url: string): string {
   return url.slice(-100).replace(/[^a-zA-Z0-9]/g, "");
 }
 
+// ─── Content quality gates (English-only, US/AI/world-scale focus) ───
+
+const NON_LATIN_RE = /[\u0400-\u04FF\u0500-\u052F\u0600-\u06FF\u0750-\u077F\u0590-\u05FF\u0900-\u097F\u0980-\u09FF\u0E00-\u0E7F\u1100-\u11FF\u3000-\u9FFF\uAC00-\uD7AF\uF900-\uFAFF\u10A0-\u10FF\u0530-\u058F]/;
+const ROMANCE_MARKERS = [
+  /\b(país|empregos?|brasileiros?|trabalho|governo|milhares|milhões|promete|saem|vistos?|semanas?)\b/i,
+  /\b(según|también|durante|gobierno|trabajo|empleos?|millones|pueden|después|mientras)\b/i,
+  /\b(aussi|gouvernement|travail|emplois?|nouveau|peuvent|après|pendant|depuis|cette)\b/i,
+];
+const FOREIGN_LIFESTYLE_RE = /\b(visa[s]?\s+(that|which|para|pour)|jobs?\s+abroad|work\s+abroad|move\s+to\s+(europe|portugal|spain|bali|dubai)|digital\s+nomad|expat\s+(life|jobs))\b/i;
+const NON_US_DOMAINS = new Set([
+  "watoday.com.au", "ibtimes.co.uk", "hcamag.com", "colombogazette.com",
+  "demokraatti.fi", "di.se", "etnews.com", "sunstar.com.ph",
+  "terra.com.br", "channelnewsasia.com", "bbc.co.uk", "theguardian.com",
+]);
+
+function isServerEnglish(text: string): boolean {
+  if (!text || text.length < 3) return false;
+  if (NON_LATIN_RE.test(text)) return false;
+  const slavic = text.match(/[łąęśźżćńřůțșđ]/gi);
+  if (slavic && slavic.length >= 2) return false;
+  const ext = text.match(/[\u00C0-\u024F]/g);
+  if (ext && ext.length / text.length > 0.06) return false;
+  const ascii = text.match(/[\x20-\x7E]/g);
+  if (!ascii || ascii.length / text.length < 0.75) return false;
+  let romanceHits = 0;
+  for (const p of ROMANCE_MARKERS) {
+    const m = text.match(p);
+    if (m) romanceHits += m.length;
+  }
+  if (romanceHits >= 3) return false;
+  return true;
+}
+
+function isServerRelevant(headline: string, source?: string | null): boolean {
+  if (FOREIGN_LIFESTYLE_RE.test(headline)) return false;
+  if (source && NON_US_DOMAINS.has(source.toLowerCase())) return false;
+  return true;
+}
+
+function passesContentGates(headline: string, source?: string | null): boolean {
+  return isServerEnglish(headline) && isServerRelevant(headline, source);
+}
+
 // ─── NewsAPI fetcher ───
 
 async function fetchNewsAPI(apiKey: string): Promise<any[]> {
