@@ -45,10 +45,10 @@ const navGroups = [
     ],
   },
   {
-    label: "Apply",
+    label: "Applications",
     items: [
+      { id: "tracker", label: "My Applications", icon: ClipboardCheck },
       { id: "auto-apply", label: "Apply When It Counts™", icon: Zap },
-      { id: "tracker", label: "Application Tracker", icon: ClipboardCheck },
       { id: "matches", label: "Interview Kits", icon: Network },
     ],
   },
