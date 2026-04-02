@@ -211,23 +211,31 @@ export function PoliticalGivingCard({ companyId, companyName, companySlug }: Pol
       </a>
 
       {/* Sub-section 2: Lobbying */}
-      <div className="rounded-xl border border-border/40 bg-card p-5">
-        <h4 className="text-sm font-semibold text-foreground mb-3">Lobbying Spend</h4>
+      <a
+        href={`https://lda.senate.gov/filings/public/filing/search/?registrant=${encodeURIComponent(companyName)}`}
+        target="_blank"
+        rel="noopener noreferrer"
+        className="block rounded-xl border border-border/40 bg-card p-5 hover:border-primary/30 hover:bg-primary/[0.03] transition-all cursor-pointer group"
+      >
+        <div className="flex items-center justify-between mb-3">
+          <h4 className="text-sm font-semibold text-foreground">Lobbying Spend</h4>
+          <span className="text-[10px] text-primary opacity-0 group-hover:opacity-100 transition-opacity flex items-center gap-1">
+            View on LDA.gov <ExternalLink className="w-3 h-3" />
+          </span>
+        </div>
         {lobbyingSpend > 0 ? (
           <>
             <p className="text-xs text-muted-foreground mb-1">
               Annual lobbying: <span className="text-foreground font-medium">{formatCurrency(lobbyingSpend)}</span>
             </p>
-            <div className="flex items-center gap-2 mt-2">
-              <span className="inline-flex items-center gap-1 text-xs text-muted-foreground border border-border/40 rounded px-2 py-0.5">
-                <ExternalLink className="w-2.5 h-2.5" /> LDA.gov · Senate Lobbying Disclosure
-              </span>
-            </div>
+            <p className="text-[10px] text-primary mt-3 flex items-center gap-1 font-medium group-hover:underline">
+              See the full pattern <ArrowRight className="w-3 h-3" />
+            </p>
           </>
         ) : (
           <p className="text-xs text-muted-foreground">No lobbying spend on record.</p>
         )}
-      </div>
+      </a>
 
       {/* Sub-section 3: Institutional Links — Interactive */}
       {institutionalLinks.length > 0 && (
