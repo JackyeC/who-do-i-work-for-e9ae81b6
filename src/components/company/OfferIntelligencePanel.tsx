@@ -87,6 +87,15 @@ export function OfferIntelligencePanel({ company, companyId }: OfferIntelligence
   const { user } = useAuth();
   const [flagging, setFlagging] = useState(false);
   const [flagged, setFlagged] = useState(false);
+  const [expandedSections, setExpandedSections] = useState<Record<string, boolean>>({
+    signals: true,
+    sectorRisk: false,
+    askBeforeYouSign: false,
+  });
+
+  const toggleSection = (key: string) => {
+    setExpandedSections(prev => ({ ...prev, [key]: !prev[key] }));
+  };
 
   const signals = derivePublicSignals(company);
   const sectorRisk = getSectorRisk(company.industry || "");
