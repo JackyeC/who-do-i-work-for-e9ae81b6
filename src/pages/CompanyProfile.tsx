@@ -551,7 +551,24 @@ export default function CompanyProfile() {
           </ReportTeaserGate>
 
           {/* ═══════════════════════════════════════════════════════
-              2.3 LEADERSHIP & INFLUENCE (Detail)
+              JACKYE'S EXPLORATION TRAILS (Layer 3)
+             ═══════════════════════════════════════════════════════ */}
+          <JackyeExplorationTrails
+            companySlug={id || ""}
+            companyName={name}
+            availableSignals={[
+              ...(totalPac > 0 ? ["pac"] : []),
+              ...(lobbyingSpend > 0 ? ["lobbying"] : []),
+              ...((dbDarkMoney?.length || 0) > 0 ? ["dark_money"] : []),
+              ...((dbRevolvingDoor?.length || 0) > 0 ? ["revolving_door"] : []),
+              ...(govContracts > 0 ? ["government_contract"] : []),
+              ...(!!tiSentiment ? ["sentiment"] : []),
+              ...(!!tiPayEquity ? ["pay_equity"] : []),
+              ...(!!tiAiHr ? ["ai_hiring"] : []),
+              ...(!!tiBenefits ? ["benefits"] : []),
+              ...(hasJobPostings ? ["layoff", "warn"] : []),
+            ]}
+          />
              ═══════════════════════════════════════════════════════ */}
           <LeadershipInfluenceSection
             executives={dbExecutives || []}
