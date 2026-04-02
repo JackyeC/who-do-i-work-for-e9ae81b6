@@ -1839,12 +1839,15 @@ export type Database = {
         Row: {
           badge_label: string
           company_id: string
+          company_match_method: string | null
+          confidence_score: number | null
           created_at: string
           detail: string | null
           fetched_at: string
           id: string
           label: string
           numeric_value: number | null
+          raw_company_name: string | null
           signal_type: string
           source: string
           source_url: string | null
@@ -1853,12 +1856,15 @@ export type Database = {
         Insert: {
           badge_label?: string
           company_id: string
+          company_match_method?: string | null
+          confidence_score?: number | null
           created_at?: string
           detail?: string | null
           fetched_at?: string
           id?: string
           label: string
           numeric_value?: number | null
+          raw_company_name?: string | null
           signal_type: string
           source: string
           source_url?: string | null
@@ -1867,12 +1873,15 @@ export type Database = {
         Update: {
           badge_label?: string
           company_id?: string
+          company_match_method?: string | null
+          confidence_score?: number | null
           created_at?: string
           detail?: string | null
           fetched_at?: string
           id?: string
           label?: string
           numeric_value?: number | null
+          raw_company_name?: string | null
           signal_type?: string
           source?: string
           source_url?: string | null
