@@ -1,6 +1,5 @@
 /**
- * WhoDoI Trail — Premium evidence cards with strong category distinctions.
- * Each category has a unique visual treatment, not just color swaps.
+ * WhoDoI Trail — Evidence card with worker-centered confidence labels.
  */
 import { useTrail } from "./TrailContext";
 import type { EvidenceCard as EvidenceCardType, CardCategory, ConfidenceState, BarDatum } from "./types";
@@ -9,19 +8,19 @@ import { Shield, ShieldCheck, ShieldAlert, ShieldQuestion, Link2, Sparkles } fro
 const CATEGORY_STYLES: Record<CardCategory, {
   accent: string; label: string; pattern: string; bgGradient: string; flavorLabel: string;
 }> = {
-  receipt:  { accent: "#F2C14E", label: "RECEIPT", pattern: "◈", bgGradient: "linear-gradient(135deg, #272218 0%, #1E2129 60%)", flavorLabel: "Follow the money" },
+  receipt:  { accent: "#F2C14E", label: "RECEIPT", pattern: "◈", bgGradient: "linear-gradient(135deg, #272218 0%, #1E2129 60%)", flavorLabel: "Where the money goes" },
   person:   { accent: "#9B7BFF", label: "PERSON", pattern: "◉", bgGradient: "linear-gradient(135deg, #211E2D 0%, #1E2129 60%)", flavorLabel: "Who's behind this?" },
-  claim:    { accent: "#39C0BA", label: "CLAIM", pattern: "◆", bgGradient: "linear-gradient(135deg, #1A2524 0%, #1E2129 60%)", flavorLabel: "Says who?" },
+  claim:    { accent: "#39C0BA", label: "CLAIM", pattern: "◆", bgGradient: "linear-gradient(135deg, #1A2524 0%, #1E2129 60%)", flavorLabel: "Check the record" },
   signal:   { accent: "#FF6B6B", label: "SIGNAL", pattern: "▲", bgGradient: "linear-gradient(135deg, #271E1E 0%, #1E2129 60%)", flavorLabel: "Worker intel" },
-  network:  { accent: "#FF9F43", label: "NETWORK", pattern: "⬡", bgGradient: "linear-gradient(135deg, #272019 0%, #1E2129 60%)", flavorLabel: "Hidden thread" },
-  reveal:   { accent: "#63D471", label: "REVEAL", pattern: "★", bgGradient: "linear-gradient(135deg, #1A2518 0%, #1E2129 60%)", flavorLabel: "Case break" },
+  network:  { accent: "#FF9F43", label: "NETWORK", pattern: "⬡", bgGradient: "linear-gradient(135deg, #272019 0%, #1E2129 60%)", flavorLabel: "Hidden connections" },
+  reveal:   { accent: "#63D471", label: "REVEAL", pattern: "★", bgGradient: "linear-gradient(135deg, #1A2518 0%, #1E2129 60%)", flavorLabel: "The picture emerges" },
 };
 
 const CONFIDENCE_ICONS: Record<ConfidenceState, { icon: typeof Shield; label: string; color: string; micro: string }> = {
-  verified:  { icon: ShieldCheck, label: "Verified", color: "#63D471", micro: "On the record" },
-  partial:   { icon: Shield, label: "Partial", color: "#FF9F43", micro: "Needs corroboration" },
+  verified:  { icon: ShieldCheck, label: "Verified", color: "#63D471", micro: "Public record" },
+  partial:   { icon: Shield, label: "Partial", color: "#FF9F43", micro: "Strong signal" },
   emerging:  { icon: ShieldAlert, label: "Emerging", color: "#F2C14E", micro: "Pattern forming" },
-  unverified: { icon: ShieldQuestion, label: "Unverified", color: "#B9C0CC", micro: "Tip only" },
+  unverified: { icon: ShieldQuestion, label: "Unverified", color: "#B9C0CC", micro: "Investigating" },
 };
 
 function formatCompact(n: number): string {
@@ -110,14 +109,13 @@ export function TrailEvidenceCard({ card, isSelected, isRevealed, hasConnections
   const conf = CONFIDENCE_ICONS[card.confidence];
   const ConfIcon = conf.icon;
 
-  // Hidden clue — mystery card
   if (!isRevealed) {
     return (
       <button
         onClick={() => revealCard(card.id)}
         className="w-full rounded-2xl border-2 border-dashed transition-all hover:scale-[1.02] active:scale-[0.98] cursor-pointer group overflow-hidden relative"
         style={{ background: "#151720", borderColor: "rgba(245,241,232,0.06)" }}
-        aria-label="Reveal hidden clue"
+        aria-label="Reveal hidden evidence"
       >
         <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500"
           style={{ background: `radial-gradient(circle at 50% 50%, ${style.accent}08 0%, transparent 70%)` }} />
@@ -130,9 +128,9 @@ export function TrailEvidenceCard({ card, isSelected, isRevealed, hasConnections
             <span className="text-[10px] font-mono uppercase tracking-[0.2em] block" style={{ color: style.accent, opacity: 0.6 }}>
               {style.flavorLabel}
             </span>
-            <span className="text-[11px] font-medium mt-1 block group-hover:translate-y-0 transition-transform"
+            <span className="text-[11px] font-medium mt-1 block"
               style={{ color: "#B9C0CC" }}>
-              Tap to investigate →
+              Tap to uncover →
             </span>
           </div>
         </div>
@@ -157,13 +155,11 @@ export function TrailEvidenceCard({ card, isSelected, isRevealed, hasConnections
       aria-label={`${card.title} — ${style.label}`}
       aria-pressed={isSelected}
     >
-      {/* Glow on selection */}
       {isSelected && (
         <div className="absolute inset-0 pointer-events-none"
           style={{ background: `radial-gradient(ellipse at top, ${style.accent}08 0%, transparent 60%)` }} />
       )}
 
-      {/* Category strip — bolder with pattern */}
       <div className="flex items-center justify-between px-3.5 py-2 relative"
         style={{ borderBottom: `1px solid ${style.accent}18` }}>
         <div className="flex items-center gap-2">
@@ -180,7 +176,6 @@ export function TrailEvidenceCard({ card, isSelected, isRevealed, hasConnections
       </div>
 
       <div className="p-3.5 space-y-3 relative">
-        {/* ─── PERSON CARD ─── */}
         {isPerson && card.personMeta && (
           <>
             <div className="flex items-center gap-3">
@@ -209,7 +204,6 @@ export function TrailEvidenceCard({ card, isSelected, isRevealed, hasConnections
           </>
         )}
 
-        {/* ─── DATA VIZ CARD (receipts, signals, etc.) ─── */}
         {!isPerson && (
           <>
             <div className="flex items-start gap-3">
@@ -236,7 +230,6 @@ export function TrailEvidenceCard({ card, isSelected, isRevealed, hasConnections
               </div>
             </div>
 
-            {/* Takeaway as a pull-quote */}
             <p className="text-[11px] leading-relaxed pl-1"
               style={{ color: "#D4CFC5", borderLeft: `2px solid ${style.accent}30`, paddingLeft: "10px" }}>
               {card.takeaway}
@@ -268,12 +261,11 @@ export function TrailEvidenceCard({ card, isSelected, isRevealed, hasConnections
           </p>
         )}
 
-        {/* Connection badge */}
         {hasConnections && (
           <div className="flex items-center gap-1.5 pt-1">
             <Link2 className="w-3 h-3" style={{ color: style.accent }} />
             <span className="text-[10px] font-mono font-semibold" style={{ color: style.accent }}>
-              Linked to other evidence
+              Connected to other evidence
             </span>
             <Sparkles className="w-2.5 h-2.5 ml-auto" style={{ color: style.accent, opacity: 0.5 }} />
           </div>

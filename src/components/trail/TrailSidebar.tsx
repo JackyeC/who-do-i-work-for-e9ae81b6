@@ -1,32 +1,32 @@
 /**
  * WhoDoI Trail — Left sidebar: branching choices + case notebook.
- * Game-like with personality in microcopy.
+ * Framed for job seekers making real career decisions.
  */
 import { useTrail } from "./TrailContext";
 import type { InvestigationPath, TheoryChoice, PriorityChoice } from "./types";
 import { BookOpen, Fingerprint, ArrowRight, Sparkles } from "lucide-react";
 
 const PATH_OPTIONS: { id: InvestigationPath; label: string; emoji: string; desc: string; color: string; stat: string; hook: string }[] = [
-  { id: "money", label: "Follow the Money", emoji: "💰", desc: "PACs, lobbying, contracts, tax behavior", color: "#F2C14E", stat: "4 receipts", hook: "The dollars never lie." },
-  { id: "workers", label: "Follow the Workers", emoji: "🥾", desc: "Labor signals, layoffs, complaints, culture", color: "#39C0BA", stat: "3 signals", hook: "Listen to what they're not saying." },
-  { id: "executives", label: "Follow the Executives", emoji: "👔", desc: "Board networks, revolving doors, compensation", color: "#9B7BFF", stat: "3 profiles", hook: "Check the corner offices." },
-  { id: "image", label: "Follow the Image", emoji: "✨", desc: "Claims vs. evidence, branding, DEI", color: "#FF6B6B", stat: "3 claims", hook: "Pretty words. But are they true?" },
+  { id: "money", label: "Follow the Money", emoji: "💰", desc: "PAC spending, lobbying, contracts, tax behavior", color: "#F2C14E", stat: "4 receipts", hook: "See where the company puts its money — not its mouth." },
+  { id: "workers", label: "Follow the Workers", emoji: "🥾", desc: "Layoffs, complaints, culture ratings, retention", color: "#39C0BA", stat: "3 signals", hook: "What do current and former employees actually say?" },
+  { id: "executives", label: "Follow the Executives", emoji: "👔", desc: "Leadership networks, pay ratios, revolving doors", color: "#9B7BFF", stat: "3 profiles", hook: "Who runs this place — and who did they used to work for?" },
+  { id: "image", label: "Follow the Image", emoji: "✨", desc: "Branding claims vs. evidence, DEI actions, awards", color: "#FF6B6B", stat: "3 claims", hook: "The careers page is marketing. Let's check the record." },
 ];
 
 const THEORY_OPTIONS: { id: TheoryChoice; label: string; emoji: string; color: string; hook: string }[] = [
-  { id: "hypocrisy", label: "Hypocrisy", emoji: "🎭", color: "#FF6B6B", hook: "They say one thing, fund the opposite" },
-  { id: "elite_access", label: "Elite Access", emoji: "🔑", color: "#9B7BFF", hook: "The real product is proximity to power" },
-  { id: "labor_extraction", label: "Labor Extraction", emoji: "⛏️", color: "#FF9F43", hook: "Workers generate value they'll never see" },
-  { id: "image_management", label: "Image Management", emoji: "🪞", color: "#39C0BA", hook: "The brand is the mask" },
-  { id: "quiet_influence", label: "Quiet Influence", emoji: "🌑", color: "#F2C14E", hook: "Power moves in the dark" },
+  { id: "hypocrisy", label: "Hypocrisy", emoji: "🎭", color: "#FF6B6B", hook: "They say one thing publicly and fund the opposite" },
+  { id: "elite_access", label: "Elite Access", emoji: "🔑", color: "#9B7BFF", hook: "The real business is who they know, not what they build" },
+  { id: "labor_extraction", label: "Labor Extraction", emoji: "⛏️", color: "#FF9F43", hook: "Workers create the value but don't share in it" },
+  { id: "image_management", label: "Image Management", emoji: "🪞", color: "#39C0BA", hook: "The brand is polished. The reality isn't." },
+  { id: "quiet_influence", label: "Quiet Influence", emoji: "🌑", color: "#F2C14E", hook: "Power moves through channels designed to stay invisible" },
 ];
 
 const PRIORITY_OPTIONS: { id: PriorityChoice; label: string; emoji: string; color: string; hook: string }[] = [
-  { id: "stability", label: "Stability", emoji: "🛡️", color: "#63D471", hook: "Will this job still exist in 2 years?" },
-  { id: "ethics", label: "Ethics", emoji: "💚", color: "#39C0BA", hook: "Can I sleep at night working here?" },
-  { id: "prestige", label: "Prestige", emoji: "⭐", color: "#F2C14E", hook: "Does this name open doors?" },
-  { id: "pay", label: "Pay", emoji: "💵", color: "#FF9F43", hook: "Show me the money — and the ratio." },
-  { id: "belonging", label: "Belonging", emoji: "🤝", color: "#9B7BFF", hook: "Will I be seen here, or just counted?" },
+  { id: "stability", label: "Job Stability", emoji: "🛡️", color: "#63D471", hook: "Will this job still exist after the next earnings call?" },
+  { id: "ethics", label: "Ethics & Values", emoji: "💚", color: "#39C0BA", hook: "Can I feel good about what this company actually does?" },
+  { id: "prestige", label: "Career Growth", emoji: "⭐", color: "#F2C14E", hook: "Will this name on my resume actually open doors?" },
+  { id: "pay", label: "Pay & Equity", emoji: "💵", color: "#FF9F43", hook: "Show me the money — and who else is getting it." },
+  { id: "belonging", label: "Belonging", emoji: "🤝", color: "#9B7BFF", hook: "Will I be seen and valued here, or just counted?" },
 ];
 
 export function TrailSidebar() {
@@ -49,7 +49,7 @@ export function TrailSidebar() {
           </div>
           <div>
             <span className="text-[9px] font-mono uppercase tracking-[0.2em] font-bold" style={{ color: "#F2C14E" }}>
-              Case File Open
+              Employer Investigation
             </span>
           </div>
         </div>
@@ -75,7 +75,7 @@ export function TrailSidebar() {
                   Choose Your Trail
                 </h3>
               </div>
-              <p className="text-[10px] italic pl-7" style={{ color: "#B9C0CC" }}>Every investigation starts with a hunch.</p>
+              <p className="text-[10px] italic pl-7" style={{ color: "#B9C0CC" }}>Where do you want to look first?</p>
             </div>
             {PATH_OPTIONS.map(opt => (
               <button
@@ -105,7 +105,7 @@ export function TrailSidebar() {
                     <ArrowRight className="w-3.5 h-3.5 opacity-0 group-hover:opacity-100 transition-all group-hover:translate-x-0.5"
                       style={{ color: opt.color }} />
                   </div>
-                  <p className="text-[10px] pl-8 italic" style={{ color: "#B9C0CC" }}>{opt.hook}</p>
+                  <p className="text-[10px] pl-8 italic leading-relaxed" style={{ color: "#B9C0CC" }}>{opt.hook}</p>
                   <div className="flex items-center gap-2 mt-2 pl-8">
                     <span className="text-[9px] font-mono px-1.5 py-0.5 rounded-full"
                       style={{ background: `${opt.color}12`, color: opt.color, border: `1px solid ${opt.color}18` }}>
@@ -125,10 +125,10 @@ export function TrailSidebar() {
               <div className="flex items-center gap-2 mb-1">
                 <span className="text-xs font-mono px-2 py-0.5 rounded-full" style={{ background: "#FF6B6B", color: "#17181D", fontWeight: 800 }}>2</span>
                 <h3 className="text-[12px] font-bold uppercase tracking-wider" style={{ color: "#F5F1E8" }}>
-                  Form a Theory
+                  What's Your Theory?
                 </h3>
               </div>
-              <p className="text-[10px] italic pl-7" style={{ color: "#B9C0CC" }}>What pattern are you seeing?</p>
+              <p className="text-[10px] italic pl-7" style={{ color: "#B9C0CC" }}>Based on what you've seen — what pattern is emerging?</p>
             </div>
             {THEORY_OPTIONS.map(opt => (
               <button
@@ -145,7 +145,7 @@ export function TrailSidebar() {
                   <ArrowRight className="w-3.5 h-3.5 ml-auto opacity-0 group-hover:opacity-100 transition-all"
                     style={{ color: opt.color }} />
                 </div>
-                <p className="text-[10px] italic pl-8" style={{ color: "#B9C0CC" }}>{opt.hook}</p>
+                <p className="text-[10px] italic pl-8 leading-relaxed" style={{ color: "#B9C0CC" }}>{opt.hook}</p>
               </button>
             ))}
           </>
@@ -158,10 +158,10 @@ export function TrailSidebar() {
               <div className="flex items-center gap-2 mb-1">
                 <span className="text-xs font-mono px-2 py-0.5 rounded-full" style={{ background: "#9B7BFF", color: "#17181D", fontWeight: 800 }}>3</span>
                 <h3 className="text-[12px] font-bold uppercase tracking-wider" style={{ color: "#F5F1E8" }}>
-                  What Matters Most?
+                  What Matters Most to You?
                 </h3>
               </div>
-              <p className="text-[10px] italic pl-7" style={{ color: "#B9C0CC" }}>As a worker — what's non-negotiable?</p>
+              <p className="text-[10px] italic pl-7" style={{ color: "#B9C0CC" }}>This shapes your final verdict. There's no wrong answer.</p>
             </div>
             {PRIORITY_OPTIONS.map(opt => (
               <button
@@ -178,7 +178,7 @@ export function TrailSidebar() {
                   <ArrowRight className="w-3.5 h-3.5 ml-auto opacity-0 group-hover:opacity-100 transition-all"
                     style={{ color: opt.color }} />
                 </div>
-                <p className="text-[10px] italic pl-8" style={{ color: "#B9C0CC" }}>{opt.hook}</p>
+                <p className="text-[10px] italic pl-8 leading-relaxed" style={{ color: "#B9C0CC" }}>{opt.hook}</p>
               </button>
             ))}
           </>
@@ -238,9 +238,9 @@ export function TrailSidebar() {
               </h3>
               <div className="space-y-2.5">
                 {[
-                  { label: "Clues uncovered", val: `${revealedCards.size}/${caseFile.cards.length}`, pct: (revealedCards.size / caseFile.cards.length) * 100, color: "#F2C14E" },
-                  { label: "Evidence linked", val: `${revealedConnections.size}/${caseFile.connections.length}`, pct: (revealedConnections.size / caseFile.connections.length) * 100, color: "#9B7BFF" },
-                  { label: "Fragments found", val: `${collectedFragments.size}/${caseFile.fragments.length}`, pct: (collectedFragments.size / caseFile.fragments.length) * 100, color: "#39C0BA" },
+                  { label: "Evidence uncovered", val: `${revealedCards.size}/${caseFile.cards.length}`, pct: (revealedCards.size / caseFile.cards.length) * 100, color: "#F2C14E" },
+                  { label: "Connections made", val: `${revealedConnections.size}/${caseFile.connections.length}`, pct: (revealedConnections.size / caseFile.connections.length) * 100, color: "#9B7BFF" },
+                  { label: "Patterns found", val: `${collectedFragments.size}/${caseFile.fragments.length}`, pct: (collectedFragments.size / caseFile.fragments.length) * 100, color: "#39C0BA" },
                 ].map(item => (
                   <div key={item.label}>
                     <div className="flex justify-between text-[10px] mb-1">
@@ -276,7 +276,7 @@ export function TrailSidebar() {
                   style={{ background: "linear-gradient(135deg, #FFD666 0%, #F2C14E 100%)" }} />
                 <span className="relative flex items-center justify-center gap-2">
                   <Sparkles className="w-4 h-4" />
-                  Close the Case
+                  Reveal the Verdict
                   <ArrowRight className="w-4 h-4" />
                 </span>
               </button>
@@ -288,7 +288,7 @@ export function TrailSidebar() {
       {/* Footer */}
       <div className="p-3 text-center" style={{ borderTop: "1px solid rgba(242,193,78,0.04)" }}>
         <span className="text-[8px] font-mono uppercase tracking-[0.25em]" style={{ color: "rgba(185,192,204,0.4)" }}>
-          WDIWF × WhoDoI Trail
+          No spin. No rankings. Just receipts.
         </span>
       </div>
     </aside>
