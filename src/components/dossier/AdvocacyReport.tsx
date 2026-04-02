@@ -146,7 +146,8 @@ function ActiveSignalsPanel({ signalsByCategory }: { signalsByCategory: Record<s
         {Object.entries(signalsByCategory).slice(0, 8).map(([cat, signals]) => {
           const isExpanded = expandedCat === cat;
           const isHot = signals.length > 3;
-          const firstSourceUrl = signals.find(s => (s as any).source_url)?. (s as any).source_url;
+          const _firstSource = signals.find(s => (s as any).source_url);
+          const firstSourceUrl = _firstSource ? (_firstSource as any).source_url : undefined;
 
           return (
             <div key={cat}>
