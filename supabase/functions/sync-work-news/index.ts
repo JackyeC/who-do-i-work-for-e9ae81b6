@@ -240,10 +240,11 @@ Deno.serve(async (req: Request) => {
       ...(gdeltRows.status === "fulfilled" ? gdeltRows.value : []),
     ];
 
-    // Deduplicate by URL hash
+    // Deduplicate by URL hash + content quality gates
     const seen = new Set<string>();
     const unique = allRows.filter(r => {
       if (seen.has(r.gdelt_url_hash)) return false;
+      if (!passesContentGates(r.headline, r.source_name)) return false;
       seen.add(r.gdelt_url_hash);
       return true;
     });
