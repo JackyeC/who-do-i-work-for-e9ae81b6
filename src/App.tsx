@@ -8,12 +8,14 @@ import { BrowserRouter, Routes, Route, Navigate, useLocation, useParams } from "
 import { AuthProvider } from "@/contexts/AuthContext";
 import { ViewModeProvider } from "@/contexts/ViewModeContext";
 import { DossierLensProvider } from "@/contexts/DossierLensContext";
+import { EvaluationProvider } from "@/contexts/EvaluationContext";
 import { DemoSafeModeProvider } from "@/contexts/DemoSafeModeContext";
 import { ProtectedRoute } from "@/components/ProtectedRoute";
 import { AdminRoute } from "@/components/AdminRoute";
 import { ErrorBoundary } from "@/components/ErrorBoundary";
 import { SourceDrawerProvider } from "@/components/dossier/SourcePreviewDrawer";
 import { AppShell } from "@/components/layout/AppShell";
+import { EvaluationBar } from "@/components/evaluation/EvaluationBar";
 import { Loader2 } from "lucide-react";
 
 // Only the landing page is eagerly loaded
@@ -179,6 +181,7 @@ const App = () => (
         <DemoSafeModeProvider>
         <ViewModeProvider>
         <DossierLensProvider>
+        <EvaluationProvider>
         <SourceDrawerProvider>
         <TooltipProvider>
           <Toaster />
@@ -186,6 +189,7 @@ const App = () => (
           <BrowserRouter>
             <ScrollToTop />
             <AppShell>
+              <EvaluationBar />
               <Suspense fallback={<RouteLoader />}>
                 <Routes>
                   <Route path="/" element={<Index />} />
@@ -336,6 +340,7 @@ const App = () => (
           </BrowserRouter>
         </TooltipProvider>
         </SourceDrawerProvider>
+        </EvaluationProvider>
         </DossierLensProvider>
         </ViewModeProvider>
         </DemoSafeModeProvider>

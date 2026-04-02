@@ -1,4 +1,4 @@
-import { useMemo, useState } from "react";
+import { useMemo, useState, useEffect } from "react";
 import { AdvocacyReport } from "@/components/dossier/AdvocacyReport";
 import { CandidatePrepPack } from "@/components/dossier/CandidatePrepPack";
 import { HardInterviewQuestions } from "@/components/dossier/HardInterviewQuestions";
@@ -31,6 +31,8 @@ import { cn } from "@/lib/utils";
 import { EmployerReportDrawer, type EvidenceRecord } from "@/components/dossier/EmployerReportDrawer";
 import { SignalRevealCard } from "@/components/dossier/SignalRevealCard";
 import { ApplyWithWDIWF } from "@/components/applications/ApplyWithWDIWF";
+import { useEvaluation } from "@/contexts/EvaluationContext";
+import { EvaluationView } from "@/components/evaluation/EvaluationView";
 
 // Deep-dive layer components (power-user expandable)
 import { ValuesSignalsLayer } from "@/components/dossier/ValuesSignalsLayer";
@@ -55,6 +57,7 @@ export default function CompanyDossier() {
   const [showSecondary, setShowSecondary] = useState(false);
   const [reportOpen, setReportOpen] = useState(false);
   const [reportCategory, setReportCategory] = useState<string | null>(null);
+  const { setActiveCompany } = useEvaluation();
 
   /* ─── Data fetching ─── */
   const { data: company, isLoading } = useQuery({
@@ -73,6 +76,23 @@ export default function CompanyDossier() {
 
   const companyId = company?.id;
   const isTracked = companyId ? isCompanyTracked(companyId) : false;
+
+  // Set evaluation context when company loads
+  useEffect(() => {
+    if (company) {
+      setActiveCompany({
+        id: company.id,
+        name: company.name,
+        slug: company.slug,
+        industry: company.industry,
+        state: company.state,
+        civic_footprint_score: company.civic_footprint_score,
+        employer_clarity_score: company.employer_clarity_score ?? undefined,
+        career_intelligence_score: company.career_intelligence_score ?? undefined,
+        employee_count: company.employee_count ?? undefined,
+      });
+    }
+  }, [company, setActiveCompany]);
   const { data: eeocCases } = useEEOCByCompanyName(company?.name);
 
   const seoCompanyName = company?.name ?? "Company";
@@ -640,6 +660,7 @@ export default function CompanyDossier() {
   );
 
   return (
+    <EvaluationView hideVerdict>
     <section className="container mx-auto px-4 py-8 max-w-3xl">
       <div className="space-y-4">
         <DossierProtector
@@ -707,5 +728,6 @@ export default function CompanyDossier() {
         initialCategory={reportCategory}
       />
     </section>
+    </EvaluationView>
   );
 }
