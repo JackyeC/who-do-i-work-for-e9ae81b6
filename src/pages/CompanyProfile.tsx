@@ -11,6 +11,7 @@ import { IntegrityIndicators } from "@/components/company/IntegrityIndicators";
 import { CareerFitReportCTA } from "@/components/CareerFitReportCTA";
 import { JackyesInsightBlock } from "@/components/company/JackyesInsightBlock";
 import { JackyeContextualTake } from "@/components/company/JackyeContextualTake";
+import { JackyeExplorationTrails } from "@/components/company/JackyeExplorationTrails";
 import { CompanyLogo } from "@/components/CompanyLogo";
 import { WatchCompanyButton } from "@/components/WatchCompanyButton";
 import { ShareableScorecard } from "@/components/ShareableScorecard";
@@ -548,6 +549,26 @@ export default function CompanyProfile() {
               />
             )}
           </ReportTeaserGate>
+
+          {/* ═══════════════════════════════════════════════════════
+              JACKYE'S EXPLORATION TRAILS (Layer 3)
+             ═══════════════════════════════════════════════════════ */}
+          <JackyeExplorationTrails
+            companySlug={id || ""}
+            companyName={name}
+            availableSignals={[
+              ...(totalPac > 0 ? ["pac"] : []),
+              ...(lobbyingSpend > 0 ? ["lobbying"] : []),
+              ...((dbDarkMoney?.length || 0) > 0 ? ["dark_money"] : []),
+              ...((dbRevolvingDoor?.length || 0) > 0 ? ["revolving_door"] : []),
+              ...(govContracts > 0 ? ["government_contract"] : []),
+              ...(!!tiSentiment ? ["sentiment"] : []),
+              ...(!!tiPayEquity ? ["pay_equity"] : []),
+              ...(!!tiAiHr ? ["ai_hiring"] : []),
+              ...(!!tiBenefits ? ["benefits"] : []),
+              ...(hasJobPostings ? ["layoff", "warn"] : []),
+            ]}
+          />
 
           {/* ═══════════════════════════════════════════════════════
               2.3 LEADERSHIP & INFLUENCE (Detail)
