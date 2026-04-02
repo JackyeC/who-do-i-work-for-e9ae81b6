@@ -52,6 +52,7 @@ import { HighRiskConnectionCard } from "@/components/company/HighRiskConnectionC
 import { PolicyScoreCard } from "@/components/policy-intelligence/PolicyScoreCard";
 import { StateWomenStatusCard } from "@/components/StateWomenStatusCard";
 import { SourceDocumentsLayer } from "@/components/dossier/SourceDocumentsLayer";
+import { AccountabilitySignalsLayer } from "@/components/dossier/AccountabilitySignalsLayer";
 
 export default function CompanyDossier() {
   const { id } = useParams();
