@@ -167,7 +167,7 @@ async function fetchGDELT(): Promise<any[]> {
   for (const { q, category } of GDELT_QUERIES) {
     try {
       const encoded = encodeURIComponent(q);
-      const url = `${GDELT_DOC_API}?query=${encoded}&mode=ArtList&maxrecords=15&format=json&timespan=48h&sort=DateDesc`;
+      const url = `${GDELT_DOC_API}?query=${encoded} sourcelang:english&mode=ArtList&maxrecords=15&format=json&timespan=48h&sort=DateDesc`;
 
       const res = await fetch(url);
       if (!res.ok) {
