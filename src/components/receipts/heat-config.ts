@@ -14,7 +14,7 @@ export const HEAT_LABELS: Record<number, { full: string; mobile: string; color: 
     color: "text-[hsl(215,20%,65%)]",
     bg: "bg-[hsl(215,20%,65%)]/10 border-[hsl(215,20%,65%)]/30 text-[hsl(215,20%,65%)]",
     hex: "#94A3B8",
-    tooltip: "Something here does not align. Worth a closer look.",
+    tooltip: "Something here doesn't align. Worth a closer look.",
   },
   3: {
     full: "Worth Documenting",
