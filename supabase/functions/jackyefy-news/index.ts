@@ -4,6 +4,30 @@ const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
   "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type",
 };
+// ─── Content quality gates ───
+const NON_LATIN_RE = /[\u0400-\u04FF\u0500-\u052F\u0600-\u06FF\u0750-\u077F\u0590-\u05FF\u0900-\u097F\u0980-\u09FF\u0E00-\u0E7F\u1100-\u11FF\u3000-\u9FFF\uAC00-\uD7AF\uF900-\uFAFF\u10A0-\u10FF\u0530-\u058F]/;
+const ROMANCE_MARKERS = [
+  /\b(país|empregos?|brasileiros?|trabalho|governo|milhares|milhões|promete|saem|vistos?|semanas?)\b/i,
+  /\b(según|también|durante|gobierno|trabajo|empleos?|millones|pueden|después|mientras)\b/i,
+  /\b(aussi|gouvernement|travail|emplois?|nouveau|peuvent|après|pendant|depuis|cette)\b/i,
+];
+const FOREIGN_LIFESTYLE_RE = /\b(visa[s]?\s+(that|which|para|pour)|jobs?\s+abroad|work\s+abroad|move\s+to\s+(europe|portugal|spain|bali|dubai)|digital\s+nomad|expat\s+(life|jobs))\b/i;
+
+function isEnglishAndRelevant(headline: string): boolean {
+  if (!headline || headline.length < 3) return false;
+  if (NON_LATIN_RE.test(headline)) return false;
+  const slavic = headline.match(/[łąęśźżćńřůțșđ]/gi);
+  if (slavic && slavic.length >= 2) return false;
+  const ext = headline.match(/[\u00C0-\u024F]/g);
+  if (ext && ext.length / headline.length > 0.06) return false;
+  const ascii = headline.match(/[\x20-\x7E]/g);
+  if (!ascii || ascii.length / headline.length < 0.75) return false;
+  let romanceHits = 0;
+  for (const p of ROMANCE_MARKERS) { const m = headline.match(p); if (m) romanceHits += m.length; }
+  if (romanceHits >= 3) return false;
+  if (FOREIGN_LIFESTYLE_RE.test(headline)) return false;
+  return true;
+}
 
 interface WorkNewsStory {
   id: string;
