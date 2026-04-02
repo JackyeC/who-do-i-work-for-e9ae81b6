@@ -105,11 +105,8 @@ interface Props {
 }
 
 export function AccountabilitySignalsLayer({ companyId, companyName }: Props) {
-  // Feature gate: hide for unapproved companies
-  if (!APPROVED_COMPANY_IDS.has(companyId)) {
-    return null;
-  }
   const [expandedCat, setExpandedCat] = useState<string | null>(null);
+  const isApproved = APPROVED_COMPANY_IDS.has(companyId);
 
   const { data: signals = [], isLoading } = useQuery({
     queryKey: ["accountability-signals", companyId],
@@ -123,7 +120,13 @@ export function AccountabilitySignalsLayer({ companyId, companyName }: Props) {
       if (error) throw error;
       return (data || []) as AccountabilitySignal[];
     },
+    enabled: isApproved,
   });
+
+  // Feature gate: hide for unapproved companies
+  if (!isApproved) {
+    return null;
+  }
 
   if (isLoading) {
     return (
