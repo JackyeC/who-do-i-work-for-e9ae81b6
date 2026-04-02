@@ -160,12 +160,37 @@ export function TrailRevealScreen() {
             </p>
           </div>
 
+          {/* Career Action Bridge */}
+          <div className="p-4 rounded-xl space-y-2.5" style={{ background: "#1E222C" }}>
+            <p className="text-[9px] font-mono uppercase tracking-[0.2em] flex items-center gap-1.5" style={{ color: "#F2C14E" }}>
+              <ArrowRight className="w-3 h-3" /> What You Can Do Now
+            </p>
+            <div className="space-y-2">
+              {[
+                { label: "Ask smarter interview questions", desc: "Use what you found to probe culture, stability, and values alignment.", icon: "💬" },
+                { label: "Compare with another employer", desc: "Run a second investigation and see which company holds up better.", icon: "⚖️" },
+                { label: "Save this to your career file", desc: "Keep this verdict on record for when you need to decide.", icon: "📁" },
+              ].map((action, i) => (
+                <button key={i}
+                  className="w-full text-left p-3 rounded-xl transition-all hover:translate-y-[-1px] active:translate-y-[0px] group flex items-start gap-3"
+                  style={{ background: "#151820", border: "1px solid rgba(245,241,232,0.04)" }}>
+                  <span className="text-base mt-0.5 shrink-0">{action.icon}</span>
+                  <div>
+                    <p className="text-[11px] font-bold group-hover:text-[#F2C14E] transition-colors" style={{ color: "#F5F1E8" }}>{action.label}</p>
+                    <p className="text-[10px]" style={{ color: "#B9C0CC" }}>{action.desc}</p>
+                  </div>
+                  <ArrowRight className="w-3.5 h-3.5 mt-1 ml-auto shrink-0 opacity-0 group-hover:opacity-100 transition-all" style={{ color: "#F2C14E" }} />
+                </button>
+              ))}
+            </div>
+          </div>
+
           {/* CTAs */}
           <div className="flex gap-2 pt-1">
             <button onClick={resetGame}
               className="flex-1 flex items-center justify-center gap-2 p-3.5 rounded-xl text-sm font-bold transition-all hover:translate-y-[-1px] active:translate-y-[0px]"
               style={{ background: "#1E222C", color: "#F5F1E8", border: "1px solid rgba(245,241,232,0.06)" }}>
-              <RotateCcw className="w-4 h-4" /> Investigate Again
+              <RotateCcw className="w-4 h-4" /> Investigate Another
             </button>
             <button className="flex-1 flex items-center justify-center gap-2 p-3.5 rounded-xl text-sm font-bold transition-all hover:translate-y-[-1px] active:translate-y-[0px]"
               style={{
@@ -173,17 +198,7 @@ export function TrailRevealScreen() {
                 color: "#17181D",
                 boxShadow: "0 4px 16px rgba(242,193,78,0.3)",
               }}>
-              <Share2 className="w-4 h-4" /> Share This
-            </button>
-          </div>
-          <div className="flex gap-2">
-            <button className="flex-1 flex items-center justify-center gap-2 p-2.5 rounded-xl text-[11px] font-semibold transition-all hover:translate-y-[-1px]"
-              style={{ background: "#1E222C", color: "#B9C0CC", border: "1px solid rgba(245,241,232,0.04)" }}>
-              <BookmarkPlus className="w-3.5 h-3.5" /> Save to My File
-            </button>
-            <button className="flex-1 flex items-center justify-center gap-2 p-2.5 rounded-xl text-[11px] font-semibold transition-all hover:translate-y-[-1px]"
-              style={{ background: "#1E222C", color: "#B9C0CC", border: "1px solid rgba(245,241,232,0.04)" }}>
-              <Trophy className="w-3.5 h-3.5" /> Leaderboard
+              <Share2 className="w-4 h-4" /> Share This Report
             </button>
           </div>
         </div>

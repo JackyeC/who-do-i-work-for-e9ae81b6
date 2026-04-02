@@ -137,13 +137,13 @@ export const SCORE_VALUES: Record<ScoreEvent["type"], number> = {
 };
 
 export const RANK_THRESHOLDS = [
-  { score: 0, title: "Curious Bystander", badge: "👀" },
-  { score: 100, title: "Paper Chaser", badge: "📄" },
-  { score: 300, title: "Receipt Collector", badge: "🧾" },
-  { score: 600, title: "Trail Finder", badge: "🔍" },
-  { score: 1000, title: "Deep Diver", badge: "🤿" },
-  { score: 1500, title: "Pattern Spotter", badge: "🧩" },
-  { score: 2500, title: "Chief Investigator", badge: "🕵️" },
+  { score: 0, title: "New to This", badge: "👋" },
+  { score: 100, title: "Asking Questions", badge: "❓" },
+  { score: 300, title: "Reading the Room", badge: "👁️" },
+  { score: 600, title: "Seeing Patterns", badge: "🧩" },
+  { score: 1000, title: "Knows What to Look For", badge: "🔍" },
+  { score: 1500, title: "Can't Be Fooled", badge: "🛡️" },
+  { score: 2500, title: "Career Intelligence Pro", badge: "⭐" },
 ];
 
 export function getRank(score: number) {

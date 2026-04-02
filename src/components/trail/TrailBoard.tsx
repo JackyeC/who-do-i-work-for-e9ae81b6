@@ -54,22 +54,22 @@ export function TrailBoard() {
             </p>
             <h2 className="text-2xl font-bold mb-3" style={{ color: "#F5F1E8" }}>
               {state.phase === "intro" ? "See What They Don't Put on the Careers Page" :
-               state.phase === "act1" ? "You're Not Imagining It — Name the Pattern" :
-               "What's Non-Negotiable for You?"}
+               state.phase === "act1" ? "You Noticed Something — Let's Name It" :
+               "What Do You Need Most from Your Next Job?"}
             </h2>
             <p className="text-sm leading-relaxed max-w-sm mx-auto" style={{ color: "#B9C0CC" }}>
               {state.phase === "intro"
-                ? "Every employer you're considering has a public record — PAC spending, lawsuits, layoff history, culture ratings. Most applicants never look. You're about to."
+                ? "Every employer has a public record — spending, lawsuits, layoff history, culture ratings, leadership networks. Most applicants never check. You're about to."
                 : state.phase === "act1"
-                ? "That gut feeling you had about this company? Let's put a name on it. Pick the pattern that matches what you're seeing — your theory shapes what evidence surfaces next."
-                : "Stability? Ethics? Pay equity? Belonging? There's no wrong answer — but your answer changes the lens. This is about what YOU need, not what they're selling."
+                ? "That feeling you get when something doesn't add up about a company? That's pattern recognition. Pick the one that matches what the evidence is showing you."
+                : "Stability? Ethics? Pay? Belonging? Career growth? There's no wrong answer — but your answer shapes how we evaluate what you've found. This is about what matters to YOU."
               }
             </p>
             <p className="text-[11px] italic mt-3 max-w-xs mx-auto" style={{ color: "#9A93A0" }}>
               {state.phase === "intro"
-                ? "You deserve to know before you sign."
+                ? "You deserve to know before you apply, interview, or sign."
                 : state.phase === "act1"
-                ? "Trust your instincts. The data is here to back you up."
+                ? "Trust your gut. The receipts are here to back you up."
                 : "You're not asking for too much. You're asking the right questions."
               }
             </p>

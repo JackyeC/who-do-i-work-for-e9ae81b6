@@ -14,11 +14,11 @@ const PATH_OPTIONS: { id: InvestigationPath; label: string; emoji: string; desc:
 ];
 
 const THEORY_OPTIONS: { id: TheoryChoice; label: string; emoji: string; color: string; hook: string }[] = [
-  { id: "hypocrisy", label: "Hypocrisy", emoji: "🎭", color: "#FF6B6B", hook: "They say one thing publicly and fund the opposite" },
-  { id: "elite_access", label: "Elite Access", emoji: "🔑", color: "#9B7BFF", hook: "The real business is who they know, not what they build" },
-  { id: "labor_extraction", label: "Labor Extraction", emoji: "⛏️", color: "#FF9F43", hook: "Workers create the value but don't share in it" },
-  { id: "image_management", label: "Image Management", emoji: "🪞", color: "#39C0BA", hook: "The brand is polished. The reality isn't." },
-  { id: "quiet_influence", label: "Quiet Influence", emoji: "🌑", color: "#F2C14E", hook: "Power moves through channels designed to stay invisible" },
+  { id: "hypocrisy", label: "Say-Do Gap", emoji: "🎭", color: "#FF6B6B", hook: "Their public values and their actual spending tell two different stories" },
+  { id: "elite_access", label: "Insider's Club", emoji: "🔑", color: "#9B7BFF", hook: "Success here depends on who you know — not what you build" },
+  { id: "labor_extraction", label: "Worker Squeeze", emoji: "⛏️", color: "#FF9F43", hook: "Workers create the value. Leadership captures it." },
+  { id: "image_management", label: "Brand Over Substance", emoji: "🪞", color: "#39C0BA", hook: "The employer brand is polished. The employee experience isn't." },
+  { id: "quiet_influence", label: "Hidden Playbook", emoji: "🌑", color: "#F2C14E", hook: "Key decisions happen in rooms you'll never be invited to" },
 ];
 
 const PRIORITY_OPTIONS: { id: PriorityChoice; label: string; emoji: string; color: string; hook: string }[] = [
@@ -125,10 +125,10 @@ export function TrailSidebar() {
               <div className="flex items-center gap-2 mb-1">
                 <span className="text-xs font-mono px-2 py-0.5 rounded-full" style={{ background: "#FF6B6B", color: "#17181D", fontWeight: 800 }}>2</span>
                 <h3 className="text-[12px] font-bold uppercase tracking-wider" style={{ color: "#F5F1E8" }}>
-                  What's Your Theory?
+                  What Pattern Are You Seeing?
                 </h3>
               </div>
-              <p className="text-[10px] italic pl-7" style={{ color: "#B9C0CC" }}>Based on what you've seen — what pattern is emerging?</p>
+              <p className="text-[10px] italic pl-7" style={{ color: "#B9C0CC" }}>You noticed something. Trust that. Name the pattern that best matches what you're uncovering.</p>
             </div>
             {THEORY_OPTIONS.map(opt => (
               <button
@@ -158,10 +158,10 @@ export function TrailSidebar() {
               <div className="flex items-center gap-2 mb-1">
                 <span className="text-xs font-mono px-2 py-0.5 rounded-full" style={{ background: "#9B7BFF", color: "#17181D", fontWeight: 800 }}>3</span>
                 <h3 className="text-[12px] font-bold uppercase tracking-wider" style={{ color: "#F5F1E8" }}>
-                  What Matters Most to You?
+                  What Do You Need Most?
                 </h3>
               </div>
-              <p className="text-[10px] italic pl-7" style={{ color: "#B9C0CC" }}>This shapes your final verdict. There's no wrong answer.</p>
+              <p className="text-[10px] italic pl-7" style={{ color: "#B9C0CC" }}>This shapes your final report. Pick what matters most in your next role.</p>
             </div>
             {PRIORITY_OPTIONS.map(opt => (
               <button
@@ -276,7 +276,7 @@ export function TrailSidebar() {
                   style={{ background: "linear-gradient(135deg, #FFD666 0%, #F2C14E 100%)" }} />
                 <span className="relative flex items-center justify-center gap-2">
                   <Sparkles className="w-4 h-4" />
-                  Reveal the Verdict
+                  See the Full Picture
                   <ArrowRight className="w-4 h-4" />
                 </span>
               </button>
