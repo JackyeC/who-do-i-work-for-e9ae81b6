@@ -58,7 +58,12 @@ export function DossierActionBridge({ companyId, companyName, companySlug, align
               <ApplyWithWDIWF
                 companyId={companyId}
                 companyName={companyName}
+                companySlug={companySlug}
                 alignmentScore={alignmentScore}
+                civicScore={civicScore}
+                hasLayoffs={hasLayoffs}
+                hasEEOC={hasEEOC}
+                hasPoliticalSpending={hasPoliticalSpending}
               />
             </div>
           </CardContent>
