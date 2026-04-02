@@ -53,16 +53,24 @@ export function TrailBoard() {
               {state.phase === "intro" ? "Step 1 of 3" : state.phase === "act1" ? "Step 2 of 3" : "Step 3 of 3"}
             </p>
             <h2 className="text-2xl font-bold mb-3" style={{ color: "#F5F1E8" }}>
-              {state.phase === "intro" ? "Before You Apply, Investigate" :
-               state.phase === "act1" ? "What Pattern Are You Seeing?" :
-               "What Matters Most to You as a Worker?"}
+              {state.phase === "intro" ? "See What They Don't Put on the Careers Page" :
+               state.phase === "act1" ? "You're Not Imagining It — Name the Pattern" :
+               "What's Non-Negotiable for You?"}
             </h2>
             <p className="text-sm leading-relaxed max-w-sm mx-auto" style={{ color: "#B9C0CC" }}>
               {state.phase === "intro"
-                ? "Every company you're considering has a public record — spending, lobbying, lawsuits, culture ratings. This game helps you read it before you sign anything."
+                ? "Every employer you're considering has a public record — PAC spending, lawsuits, layoff history, culture ratings. Most applicants never look. You're about to."
                 : state.phase === "act1"
-                ? "You've uncovered the first evidence. Now form a theory about what kind of employer this really is. Your theory shapes what you'll find next."
-                : "Last step. What's non-negotiable for you — stability, ethics, pay, belonging, growth? This shapes your final verdict and tells you what to watch for."
+                ? "That gut feeling you had about this company? Let's put a name on it. Pick the pattern that matches what you're seeing — your theory shapes what evidence surfaces next."
+                : "Stability? Ethics? Pay equity? Belonging? There's no wrong answer — but your answer changes the lens. This is about what YOU need, not what they're selling."
+              }
+            </p>
+            <p className="text-[11px] italic mt-3 max-w-xs mx-auto" style={{ color: "#9A93A0" }}>
+              {state.phase === "intro"
+                ? "You deserve to know before you sign."
+                : state.phase === "act1"
+                ? "Trust your instincts. The data is here to back you up."
+                : "You're not asking for too much. You're asking the right questions."
               }
             </p>
           </div>
