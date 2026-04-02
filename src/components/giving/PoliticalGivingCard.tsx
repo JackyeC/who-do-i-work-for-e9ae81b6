@@ -3,8 +3,9 @@ import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { CauseTag, getCauseTag } from "./CauseTag";
 import { GivingShareRow } from "./GivingShareRow";
-import { ExternalLink, ChevronDown, Building2, Link2, ShieldAlert } from "lucide-react";
+import { ExternalLink, ChevronDown, Building2, Link2, ShieldAlert, ArrowRight } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { Link } from "react-router-dom";
 
 interface PoliticalGivingCardProps {
   companyId: string;
