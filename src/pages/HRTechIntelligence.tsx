@@ -343,32 +343,32 @@ export default function HRTechIntelligence() {
 
   return (
     <div className="min-h-screen bg-background">
-      {/* ═══ HERO — tight, purposeful ═══ */}
-      <section className="pt-24 pb-12 px-4">
-        <div className="max-w-4xl mx-auto text-center">
-          <p className="tracking-[0.2em] text-primary font-mono uppercase text-sm mb-4">
-            HR Tech Intelligence
+      {/* ═══ HERO — briefing-style, not marketing ═══ */}
+      <section className="pt-20 pb-8 px-4 border-b border-border">
+        <div className="max-w-4xl mx-auto">
+          <p className="tracking-[0.25em] text-primary font-mono uppercase text-[11px] mb-3">
+            Intelligence Briefing
           </p>
-          <h1 className="text-4xl md:text-5xl font-bold text-foreground mb-5 leading-tight">
-            Know What Your <span className="text-primary">Tech Stack Supports</span>
+          <h1 className="text-3xl md:text-4xl font-black text-foreground mb-3 leading-tight">
+            Your HR tech stack has a political record.
           </h1>
-          <p className="text-lg text-muted-foreground max-w-2xl mx-auto leading-relaxed">
-            Political donations, AI bias lawsuits, ICE contracts, child labor — traced back to the HR tools your company already uses.
+          <p className="text-base text-muted-foreground max-w-2xl leading-relaxed">
+            AI bias lawsuits. ICE contracts. Child labor in portfolio companies. Lobbying against the regulations meant to protect your employees. All traced to the tools your company already pays for.
           </p>
         </div>
       </section>
 
       {/* ═══ SECTION 1: What's Happening in HR Tech ═══ */}
-      <section className="py-12 px-4 border-t border-border">
+      <section className="py-10 px-4">
         <div className="max-w-5xl mx-auto">
-          <div className="flex items-center gap-2 mb-2">
+          <div className="flex items-center gap-2 mb-1">
             <Zap className="w-4 h-4 text-primary" />
-            <p className="tracking-[0.2em] text-primary font-mono uppercase text-sm">
-              What's Happening in HR Tech
+            <p className="tracking-[0.2em] text-primary font-mono uppercase text-[11px]">
+              Recent Signals
             </p>
           </div>
-          <h2 className="text-2xl font-bold text-foreground mb-6">
-            High-impact signals from the last 12 months
+          <h2 className="text-xl font-bold text-foreground mb-5">
+            What happened. Why it matters.
           </h2>
 
           <div className="space-y-3">
@@ -430,16 +430,16 @@ export default function HRTechIntelligence() {
       </section>
 
       {/* ═══ SECTION 2: Patterns We're Seeing ═══ */}
-      <section className="py-12 px-4 border-t border-border bg-card/50">
+      <section className="py-10 px-4 border-t border-border bg-card/30">
         <div className="max-w-5xl mx-auto">
-          <div className="flex items-center gap-2 mb-2">
+          <div className="flex items-center gap-2 mb-1">
             <Eye className="w-4 h-4 text-primary" />
-            <p className="tracking-[0.2em] text-primary font-mono uppercase text-sm">
-              Patterns We're Seeing
+            <p className="tracking-[0.2em] text-primary font-mono uppercase text-[11px]">
+              Pattern Recognition
             </p>
           </div>
-          <h2 className="text-2xl font-bold text-foreground mb-6">
-            Four themes across the HR tech landscape
+          <h2 className="text-xl font-bold text-foreground mb-5">
+            It's not one company. It's the whole landscape.
           </h2>
 
           <motion.div
@@ -482,19 +482,19 @@ export default function HRTechIntelligence() {
       </section>
 
       {/* ═══ SECTION 3: Companies to Watch ═══ */}
-      <section className="py-12 px-4 border-t border-border">
+      <section className="py-10 px-4 border-t border-border">
         <div className="max-w-5xl mx-auto">
-          <div className="flex items-center gap-2 mb-2">
+          <div className="flex items-center gap-2 mb-1">
             <Building2 className="w-4 h-4 text-primary" />
-            <p className="tracking-[0.2em] text-primary font-mono uppercase text-sm">
-              Companies to Watch
+            <p className="tracking-[0.2em] text-primary font-mono uppercase text-[11px]">
+              On the Radar
             </p>
           </div>
-          <h2 className="text-2xl font-bold text-foreground mb-2">
-            HR tech vendors flagged by our analysis
+          <h2 className="text-xl font-bold text-foreground mb-2">
+            Companies worth a closer look
           </h2>
-          <p className="text-sm text-muted-foreground mb-6">
-            These companies have significant political spending, documented labor issues, or active enforcement contracts.
+          <p className="text-sm text-muted-foreground mb-5">
+            Significant political spending, active enforcement contracts, or documented labor issues.
           </p>
 
           <motion.div
@@ -605,17 +605,17 @@ export default function HRTechIntelligence() {
       </section>
 
       {/* ═══ CTA ═══ */}
-      <section className="py-12 px-4 border-t border-border">
+      <section className="py-10 px-4 border-t border-border">
         <div className="max-w-3xl mx-auto text-center">
-          <h2 className="text-2xl font-bold text-foreground mb-4">
-            This isn't about being anti-vendor. It's about being informed.
+          <h2 className="text-xl font-bold text-foreground mb-3">
+            Not anti-vendor. Pro-information.
           </h2>
-          <p className="text-muted-foreground leading-relaxed mb-6 max-w-2xl mx-auto">
-            When your vendor lobbies to gut AI regulation while facing a class action for AI discrimination, that's a choice. You deserve to know what those choices are.
+          <p className="text-sm text-muted-foreground leading-relaxed mb-5 max-w-2xl mx-auto">
+            When your vendor lobbies to gut AI regulation while facing a class action for AI discrimination, that's worth knowing. The receipts are public. We just read them.
           </p>
           <div className="flex flex-col sm:flex-row gap-3 justify-center">
             <Button asChild className="bg-primary text-primary-foreground hover:bg-primary/90">
-              <Link to="/receipts">See All Company Receipts</Link>
+              <Link to="/receipts">See Company Receipts</Link>
             </Button>
             <Button asChild variant="outline" className="border-primary/30 text-primary hover:bg-primary/10">
               <Link to="/methodology">Our Methodology</Link>
