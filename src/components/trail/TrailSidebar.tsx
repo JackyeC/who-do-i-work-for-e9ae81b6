@@ -125,10 +125,10 @@ export function TrailSidebar() {
               <div className="flex items-center gap-2 mb-1">
                 <span className="text-xs font-mono px-2 py-0.5 rounded-full" style={{ background: "#FF6B6B", color: "#17181D", fontWeight: 800 }}>2</span>
                 <h3 className="text-[12px] font-bold uppercase tracking-wider" style={{ color: "#F5F1E8" }}>
-                  What's Your Theory?
+                  What Pattern Are You Seeing?
                 </h3>
               </div>
-              <p className="text-[10px] italic pl-7" style={{ color: "#B9C0CC" }}>Based on what you've seen — what pattern is emerging?</p>
+              <p className="text-[10px] italic pl-7" style={{ color: "#B9C0CC" }}>You noticed something. Trust that. Name the pattern that best matches what you're uncovering.</p>
             </div>
             {THEORY_OPTIONS.map(opt => (
               <button
