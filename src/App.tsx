@@ -137,6 +137,7 @@ const Tools = lazy(() => import("./pages/Tools"));
 const NewsOnboarding = lazy(() => import("./components/NewsOnboarding"));
 const ReportConfirmation = lazy(() => import("./pages/ReportConfirmation"));
 const ApplicationDetail = lazy(() => import("./pages/ApplicationDetail"));
+const Applications = lazy(() => import("./pages/Applications"));
 
 // Lazy-load floating widgets — not needed on first paint
 const AskJackyeWidget = lazy(() => import("./components/AskJackyeWidget").then(m => ({ default: m.AskJackyeWidget })));
@@ -258,6 +259,7 @@ const App = () => (
                   <Route path="/voter-lookup" element={<ProtectedRoute><VoterLookup /></ProtectedRoute>} />
                   <Route path="/representative/:name" element={<ProtectedRoute><RepresentativeProfile /></ProtectedRoute>} />
                   <Route path="/add-company" element={<AddCompany />} />
+                  <Route path="/applications" element={<ProtectedRoute><Applications /></ProtectedRoute>} />
                   <Route path="/applications/:id" element={<ProtectedRoute><ApplicationDetail /></ProtectedRoute>} />
                   <Route path="/jobs" element={<Jobs />} />
                   <Route path="/jobs-feed" element={<ProtectedRoute><JobsFeed /></ProtectedRoute>} />

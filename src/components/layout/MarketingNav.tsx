@@ -45,9 +45,21 @@ export function MarketingNav() {
               </Link>
             ))}
             {user ? (
-              <Button size="sm" variant="outline" onClick={() => navigate("/dashboard")} className="font-sans text-sm">
-                Dashboard
-              </Button>
+              <>
+                <Link
+                  to="/applications"
+                  className={`font-sans text-sm transition-colors ${
+                    location.pathname === "/applications"
+                      ? "text-foreground font-medium"
+                      : "text-muted-foreground hover:text-foreground"
+                  }`}
+                >
+                  Applications
+                </Link>
+                <Button size="sm" variant="outline" onClick={() => navigate("/dashboard")} className="font-sans text-sm">
+                  Dashboard
+                </Button>
+              </>
             ) : (
               <Button size="sm" onClick={() => navigate("/join")} className="font-sans text-sm px-5">
                 Get Started
@@ -83,9 +95,20 @@ export function MarketingNav() {
               </Link>
             ))}
             {user ? (
-              <Button size="sm" variant="outline" onClick={() => { setMobileMenuOpen(false); navigate("/dashboard"); }} className="w-full mt-2">
-                Dashboard
-              </Button>
+              <>
+                <Link
+                  to="/applications"
+                  onClick={() => setMobileMenuOpen(false)}
+                  className={`font-sans text-sm py-2 transition-colors ${
+                    location.pathname === "/applications" ? "text-foreground font-medium" : "text-muted-foreground hover:text-foreground"
+                  }`}
+                >
+                  Applications
+                </Link>
+                <Button size="sm" variant="outline" onClick={() => { setMobileMenuOpen(false); navigate("/dashboard"); }} className="w-full mt-2">
+                  Dashboard
+                </Button>
+              </>
             ) : (
               <Button size="sm" onClick={() => { setMobileMenuOpen(false); navigate("/join"); }} className="w-full mt-2">
                 Get Started
