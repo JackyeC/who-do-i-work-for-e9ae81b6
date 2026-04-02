@@ -47,7 +47,7 @@ async function callAI(storyContext: string): Promise<JackyefiedContent> {
   }
 
   const prompt = `Given this workplace news story, generate a JSON response with exactly these fields:
-- jackye_take: Jackye's unfiltered hot take (2-3 sentences, her voice: witty, sharp, uses analogies, calls out corporate BS)
+- jackye_take: A precise, editorially sharp analysis (2-3 sentences). Tone: sophisticated, direct, dryly cutting. Identify the gap between the headline and the labor signal. Never use slang, folksy language, or stereotyped vernacular. Think: "Polished on the surface, concerning underneath." or "That is not a strategy. That is a press release."
 - debate_prompt: A polarizing yes/no question for audience voting
 - debate_sides: Array of exactly 2 strings, each 1 sentence, punchy, opposing viewpoints
 - receipt_connection: How this connects to money/power/corporate accountability (1-2 sentences)
