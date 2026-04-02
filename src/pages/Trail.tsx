@@ -13,7 +13,7 @@ import { TrailRevealScreen } from "@/components/trail/TrailRevealScreen";
 
 function TrailGame() {
   return (
-    <div className="h-screen flex flex-col overflow-hidden" style={{ background: "#17181D" }}>
+    <div className="h-screen flex flex-col overflow-hidden" style={{ background: "#0F1118" }}>
       <TrailTopBar />
       <div className="flex flex-1 min-h-0">
         <TrailSidebar />
