@@ -19,7 +19,7 @@ interface Props {
  * Bridge panel connecting company evaluation to next actions:
  * open roles, apply, compare.
  */
-export function DossierActionBridge({ companyId, companyName, companySlug, alignmentScore }: Props) {
+export function DossierActionBridge({ companyId, companyName, companySlug, alignmentScore, civicScore, hasLayoffs, hasEEOC, hasPoliticalSpending }: Props) {
   return (
     <div className="mt-8 mb-6">
       <h2 className="text-xs font-bold text-foreground uppercase tracking-wider mb-3">
