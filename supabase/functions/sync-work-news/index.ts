@@ -73,6 +73,8 @@ const NON_US_DOMAINS = new Set([
   "watoday.com.au", "ibtimes.co.uk", "hcamag.com", "colombogazette.com",
   "demokraatti.fi", "di.se", "etnews.com", "sunstar.com.ph",
   "terra.com.br", "channelnewsasia.com", "bbc.co.uk", "theguardian.com",
+  "g1.globo.com", "globo.com", "uol.com.br", "folha.uol.com.br",
+  "lemonde.fr", "elpais.com", "spiegel.de", "corriere.it",
 ]);
 
 function isServerEnglish(text: string): boolean {
