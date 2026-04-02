@@ -157,9 +157,9 @@ export function ApplicationDocumentVault({ applicationId }: DocumentVaultProps) 
         ) : documents.length === 0 ? (
           <div className="text-center py-6">
             <FileText className="w-8 h-8 text-muted-foreground/30 mx-auto mb-2" />
-            <p className="text-sm text-muted-foreground">No documents yet</p>
+            <p className="text-sm text-muted-foreground">Nothing here yet</p>
             <p className="text-xs text-muted-foreground/70 mt-1">
-              Save your tailored resume, cover letter, or dossier notes for this application.
+              Drop your resume, cover letter, or notes. One place for everything you sent them.
             </p>
           </div>
         ) : (

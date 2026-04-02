@@ -97,8 +97,8 @@ export function WhatToExpect({ status, appliedAt }: WhatToExpectProps) {
       <CardContent className="space-y-3">
         {daysSinceApplied !== null && daysSinceApplied > 0 && status === "Submitted" && (
           <p className="text-xs font-mono text-muted-foreground bg-muted/30 rounded-md px-3 py-2">
-            {daysSinceApplied} {daysSinceApplied === 1 ? "day" : "days"} since you applied
-            {daysSinceApplied > 14 && " — consider following up or moving on"}
+            {daysSinceApplied} {daysSinceApplied === 1 ? "day" : "days"} in.
+            {daysSinceApplied > 14 && " That's long enough. Follow up or move on."}
           </p>
         )}
 

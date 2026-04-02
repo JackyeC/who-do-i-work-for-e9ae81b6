@@ -74,7 +74,7 @@ export function ApplicationIntelligencePanel({ companyId, companyName }: Intelli
           <div className="flex items-start gap-2 p-2.5 rounded-md bg-destructive/10 border border-destructive/20">
             <AlertTriangle className="w-4 h-4 text-destructive shrink-0 mt-0.5" />
             <p className="text-xs text-destructive leading-relaxed">
-              This employer has signals that warrant caution. Review the full dossier before proceeding.
+              Signals worth reading before you go any further. Open the dossier.
             </p>
           </div>
         )}
