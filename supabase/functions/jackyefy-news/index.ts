@@ -59,8 +59,8 @@ async function callAI(storyContext: string): Promise<JackyefiedContent> {
   - emoji: single relevant emoji
   - bigTxt: 1-2 word punchy headline
   - sub: short subheader (3-5 words)
-  - tag: ironic corporate-speak tag (3-4 words)
-  - copy: sarcastic tagline (5-10 words)
+  - tag: concise analytical label (3-4 words)
+  - copy: sharp editorial tagline (5-10 words, no slang)
   - fine: asterisk disclaimer (5-10 words starting with *)
 
 Story: ${storyContext}

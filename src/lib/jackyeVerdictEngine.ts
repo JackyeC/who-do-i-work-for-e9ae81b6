@@ -255,16 +255,16 @@ function generateJackyeTake(
   // ── 3. The 'Jackye' Closing — punchy, specific, never "do more research" ──
   switch (verdict) {
     case "Yes":
-      parts.push("Facts over Feelings: this one checks out. Go in strong, ask the questions below anyway — not because you doubt them, but because good character holds up under scrutiny. That's how trust gets built.");
+      parts.push("The data supports moving forward. Ask the questions below regardless — not because the profile raises doubt, but because strong institutional character holds up under scrutiny. That is how trust is verified.");
       break;
     case "Proceed with caution":
-      parts.push("Don't just sign the offer — ask them why their PAC spending doesn't match their Pride month logo. Look at the flow of funds vs. the marketing fluff. If the character doesn't match the pitch, your talent deserves better. Trust is the currency here; don't spend yours blindly.");
+      parts.push("Do not sign without asking why their political spending contradicts their public positioning. Trace the flow of funds against the marketing. If the record does not match the pitch, your leverage is knowing that before they do.");
       break;
     case "Not without more answers":
-      parts.push("I wouldn't move until they answer the questions below — in writing. Not a phone call, not a 'we'll get back to you.' In writing. If they dodge, that's your Dirty Receipt. Silence on accountability isn't an oversight; it's a confession.");
+      parts.push("Do not proceed until they answer the questions below — in writing. Not a phone call, not a promise to follow up. In writing. If they decline, that is the answer.");
       break;
     case "I would pause":
-      parts.push("Pump the brakes. The signals are telling a story the careers page won't. Facts over Feelings: no offer is worth walking into an Ugly Baby situation where the character doesn't match the pitch. Run the chain first. Always.");
+      parts.push("The signals are telling a story the careers page will not. No offer is worth accepting when the institutional character does not match the positioning. Verify the record first. Always.");
       break;
   }
 
