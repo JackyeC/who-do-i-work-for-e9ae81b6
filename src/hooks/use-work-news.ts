@@ -27,9 +27,19 @@ export function useWorkNews(limit = 50) {
         .from("work_news")
         .select("*")
         .order("published_at", { ascending: false })
-        .limit(limit);
+        .limit(limit * 2); // over-fetch to compensate for filtering
       if (error) throw error;
-      return (data as WorkNewsArticle[]) ?? [];
+      return ((data as WorkNewsArticle[]) ?? [])
+        .map(item => ({
+          ...item,
+          headline: decodeEscapes(item.headline),
+          source_name: item.source_name ? decodeEscapes(item.source_name) : null,
+        }))
+        .filter(item =>
+          isLikelyEnglish(item.headline) &&
+          isUSOrEmployerRelevant(item.headline, item.source_name, true)
+        )
+        .slice(0, limit);
     },
     staleTime: 1000 * 60 * 15, // 15 min
   });

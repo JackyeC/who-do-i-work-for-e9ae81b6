@@ -22,19 +22,23 @@ export function decodeEscapes(text: string): string {
  * (CJK, Cyrillic, Arabic, Devanagari, Thai, Finnish/Swedish diacritics in bulk, etc.)
  */
 export function isLikelyEnglish(text: string): boolean {
-  if (!text) return false;
+  if (!text || text.trim().length < 3) return false;
 
-  // Reject if it contains CJK, Hangul, Arabic, Devanagari, Thai, etc.
-  const nonLatinBlock = /[\u0600-\u06FF\u0900-\u097F\u0E00-\u0E7F\u1100-\u11FF\u3000-\u9FFF\uAC00-\uD7AF\uF900-\uFAFF]/;
+  // Reject if it contains CJK, Hangul, Arabic, Devanagari, Thai, Cyrillic, Georgian, Armenian, Hebrew, etc.
+  const nonLatinBlock = /[\u0400-\u04FF\u0500-\u052F\u0600-\u06FF\u0750-\u077F\u0590-\u05FF\u0900-\u097F\u0980-\u09FF\u0E00-\u0E7F\u1100-\u11FF\u3000-\u9FFF\uAC00-\uD7AF\uF900-\uFAFF\u10A0-\u10FF\u0530-\u058F\u1200-\u137F]/;
   if (nonLatinBlock.test(text)) return false;
 
-  // Count extended-Latin characters (ä, ö, ü, å, ø, etc.) — if >15% of text, likely not English
-  const extendedLatin = text.match(/[\u00C0-\u024F]/g);
-  if (extendedLatin && extendedLatin.length / text.length > 0.08) return false;
+  // Reject Polish/Czech/Romanian heavy diacritics: ł, ą, ę, ś, ź, ż, ć, ń, ř, ů, ț, ș
+  const slavicDiacritics = text.match(/[łąęśźżćńřůțșđ]/gi);
+  if (slavicDiacritics && slavicDiacritics.length >= 2) return false;
 
-  // Basic ASCII ratio: if less than 70% of chars are basic ASCII letters/digits/punctuation, reject
+  // Count extended-Latin characters (ä, ö, ü, å, ø, etc.) — if >6% of text, likely not English
+  const extendedLatin = text.match(/[\u00C0-\u024F]/g);
+  if (extendedLatin && extendedLatin.length / text.length > 0.06) return false;
+
+  // Basic ASCII ratio: if less than 75% of chars are basic ASCII letters/digits/punctuation, reject (fail closed)
   const asciiChars = text.match(/[\x20-\x7E]/g);
-  if (!asciiChars || asciiChars.length / text.length < 0.7) return false;
+  if (!asciiChars || asciiChars.length / text.length < 0.75) return false;
 
   return true;
 }
