@@ -569,6 +569,9 @@ export default function CompanyProfile() {
               ...(hasJobPostings ? ["layoff", "warn"] : []),
             ]}
           />
+
+          {/* ═══════════════════════════════════════════════════════
+              2.3 LEADERSHIP & INFLUENCE (Detail)
              ═══════════════════════════════════════════════════════ */}
           <LeadershipInfluenceSection
             executives={dbExecutives || []}
