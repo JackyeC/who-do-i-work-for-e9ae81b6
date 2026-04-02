@@ -179,7 +179,12 @@ export function InsiderBriefSection(props: InsiderBriefProps) {
           <ul className="space-y-1.5">
             {changingSignals.map((s, i) => (
               <li key={i} className="text-sm text-foreground/90 leading-relaxed pl-3 relative before:content-[''] before:absolute before:left-0 before:top-[9px] before:w-1.5 before:h-1.5 before:rounded-full before:bg-primary/40">
-                {s}
+                {s.text}
+                {s.link && (
+                  <Link to={s.link} className="inline-flex items-center gap-0.5 ml-1.5 text-xs font-medium text-primary hover:underline transition-colors">
+                    See the receipts <ArrowRight className="w-3 h-3" />
+                  </Link>
+                )}
               </li>
             ))}
           </ul>
