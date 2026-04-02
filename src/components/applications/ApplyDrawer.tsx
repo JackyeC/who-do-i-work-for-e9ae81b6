@@ -255,12 +255,12 @@ export function ApplyDrawer({
                           Track Application
                         </Button>
                       )}
-                      {job.external_url && (
+                      {job.url && (
                         <Button
                           size="sm"
                           variant="ghost"
                           className="text-xs gap-1 h-7"
-                          onClick={() => window.open(job.external_url, "_blank")}
+                          onClick={() => window.open(job.url, "_blank")}
                         >
                           <Eye className="w-3 h-3" />
                           View
