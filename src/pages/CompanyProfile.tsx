@@ -521,6 +521,18 @@ export default function CompanyProfile() {
               lastReviewed={dbCompany?.last_reviewed}
               updatedAt={dbCompany?.updated_at}
             />
+            {dbCompanyId && (
+              <JackyeContextualTake
+                companyId={dbCompanyId}
+                companyName={name}
+                section="structured_signals"
+                signalSummaries={[
+                  hasJobPostings ? `${activeJobCount} active jobs` : "No active job postings",
+                  !!tiAiHr ? "AI hiring tools detected" : "",
+                  !!tiPayEquity ? "Pay equity data available" : "No pay equity data",
+                ].filter(Boolean)}
+              />
+            )}
           </ReportTeaserGate>
 
           {/* ═══════════════════════════════════════════════════════
