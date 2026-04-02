@@ -446,6 +446,7 @@ export default function CompanyProfile() {
              ═══════════════════════════════════════════════════════ */}
           <InsiderBriefSection
             companyName={name}
+            companySlug={id}
             industry={industry}
             isPubliclyTraded={!!dbCompany?.is_publicly_traded}
             totalPacSpending={totalPac}
