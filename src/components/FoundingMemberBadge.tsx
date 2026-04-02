@@ -278,12 +278,42 @@ export function FoundingMemberBadge({
                 lineHeight: 1.7,
                 color: BRAND.fgMuted,
                 textAlign: "center",
-                marginBottom: 24,
+                marginBottom: 12,
               }}
             >
               I believe workers deserve the truth about who they work for.
               <br />
               I'm here before the launch because transparency can't wait.
+            </p>
+
+            {/* Jackye Clayton signature */}
+            <p
+              style={{
+                fontFamily: "'Inter', system-ui, sans-serif",
+                fontSize: "20px",
+                fontWeight: 300,
+                fontStyle: "italic",
+                color: BRAND.goldBright,
+                textAlign: "center",
+                marginBottom: 20,
+                letterSpacing: "0.02em",
+                lineHeight: 1.2,
+              }}
+            >
+              Jackye Clayton
+            </p>
+            <p
+              style={{
+                fontFamily: "'DM Mono', monospace",
+                fontSize: "9px",
+                letterSpacing: "0.15em",
+                textTransform: "uppercase",
+                color: BRAND.fgSubtle,
+                textAlign: "center",
+                marginBottom: 24,
+              }}
+            >
+              Founder · Who Do I Work For?
             </p>
 
             {/* Footer: launch date + URL */}
