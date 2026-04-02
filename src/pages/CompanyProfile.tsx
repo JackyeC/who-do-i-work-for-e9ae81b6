@@ -4,6 +4,7 @@ import { useCompanyIntelligence } from "@/hooks/use-company-intelligence";
 import { motion } from "framer-motion";
 import { Building2, ArrowLeft, EyeOff, Loader2, Sparkles, Search, Scan, ExternalLink, FileSearch } from "lucide-react";
 import { AuditRequestForm } from "@/components/AuditRequestForm";
+import { OfferIntelligencePanel } from "@/components/company/OfferIntelligencePanel";
 import { IntegrityIndicators } from "@/components/company/IntegrityIndicators";
 import { CareerFitReportCTA } from "@/components/CareerFitReportCTA";
 import { JackyesInsightBlock } from "@/components/company/JackyesInsightBlock";
@@ -424,25 +425,9 @@ export default function CompanyProfile() {
               NO-DATA FALLBACK
              ═══════════════════════════════════════════════════════ */}
           {dbCompany && !dbCompany.jackye_insight && totalPac === 0 && lobbyingSpend === 0 && civicScore === 0 && (dbIssueSignals?.length || 0) === 0 && (dbPublicStances?.length || 0) === 0 && (
-            <Card className="mb-6 border-dashed border-border/60 bg-muted/20">
-              <CardContent className="p-6 text-center">
-                <FileSearch className="w-10 h-10 text-muted-foreground mx-auto mb-3" />
-                <h3 className="text-base font-semibold text-foreground mb-1">We don't have receipts on this company yet.</h3>
-                <p className="text-sm text-muted-foreground mb-4 max-w-md mx-auto">
-                  Our research team hasn't completed a full scan. You can request one or run an automated scan now.
-                </p>
-                <div className="flex items-center justify-center gap-3 flex-wrap">
-                  <Button onClick={handleFullScan} disabled={isScanning || !!isDiscovering} className="gap-2">
-                    {isScanning ? <Loader2 className="w-4 h-4 animate-spin" /> : <Scan className="w-4 h-4" />}
-                    {isScanning ? "Scanning…" : "Run Full Company Scan"}
-                  </Button>
-                  <Button variant="outline" onClick={() => navigate("/check")} className="gap-2">
-                    <Search className="w-4 h-4" />
-                    Request Company Scan
-                  </Button>
-                </div>
-              </CardContent>
-            </Card>
+            <div className="mb-6">
+              <OfferIntelligencePanel company={dbCompany} companyId={dbCompany.id} />
+            </div>
           )}
 
           {/* ═══════════════════════════════════════════════════════

@@ -1,7 +1,16 @@
 import { useMemo } from "react";
 import { useTickerItems, getTickerItemColor } from "@/hooks/use-ticker-items";
-import { Link } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 import { differenceInHours, differenceInDays } from "date-fns";
+
+/** Routes where the intelligence ticker should render */
+const TICKER_ALLOWED_ROUTES = ["/", "/receipts", "/browse", "/search", "/newsletter", "/rankings"];
+
+function isTickerRoute(pathname: string): boolean {
+  return TICKER_ALLOWED_ROUTES.some(r =>
+    r === "/" ? pathname === "/" : pathname.startsWith(r)
+  );
+}
 
 const EMPTY_STATE = "No major new signals detected today";
 
@@ -33,9 +42,15 @@ function sortTickerItems(items: ReturnType<typeof useTickerItems>["data"]) {
 
 export function IntelligenceTicker() {
   const { data: items } = useTickerItems();
+  const location = useLocation();
 
   const sorted = useMemo(() => sortTickerItems(items), [items]);
   const hasRealItems = sorted.length > 0;
+
+  // Only render on allowed routes — prevents duplication on company dossier/profile pages
+  if (!isTickerRoute(location.pathname)) {
+    return null;
+  }
 
   const totalChars = hasRealItems
     ? sorted.reduce(
