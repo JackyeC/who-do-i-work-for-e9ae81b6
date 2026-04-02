@@ -158,10 +158,10 @@ export function TrailSidebar() {
               <div className="flex items-center gap-2 mb-1">
                 <span className="text-xs font-mono px-2 py-0.5 rounded-full" style={{ background: "#9B7BFF", color: "#17181D", fontWeight: 800 }}>3</span>
                 <h3 className="text-[12px] font-bold uppercase tracking-wider" style={{ color: "#F5F1E8" }}>
-                  What Matters Most to You?
+                  What Do You Need Most?
                 </h3>
               </div>
-              <p className="text-[10px] italic pl-7" style={{ color: "#B9C0CC" }}>This shapes your final verdict. There's no wrong answer.</p>
+              <p className="text-[10px] italic pl-7" style={{ color: "#B9C0CC" }}>This shapes your final report. Pick what matters most in your next role.</p>
             </div>
             {PRIORITY_OPTIONS.map(opt => (
               <button
