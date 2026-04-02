@@ -399,6 +399,7 @@ export function AdvocacyReport({ company, executives = [], contracts = [], issue
               metrics={report.spending_record}
               effectiveTaxRate={company.effective_tax_rate}
               companyName={company.name}
+              companySlug={company.slug}
             />
           )}
 
