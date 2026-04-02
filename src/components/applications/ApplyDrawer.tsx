@@ -105,7 +105,7 @@ export function ApplyDrawer({
         job_id: job.id,
         job_title: job.title,
         company_name: companyName,
-        application_link: job.external_url || undefined,
+        application_link: job.url || undefined,
         alignment_score: alignmentScore,
         status: "Considering",
       },
