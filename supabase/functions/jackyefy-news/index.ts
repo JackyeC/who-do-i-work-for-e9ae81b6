@@ -50,8 +50,8 @@ async function callAI(storyContext: string): Promise<JackyefiedContent> {
 - jackye_take: A precise, editorially sharp analysis (2-3 sentences). Tone: sophisticated, direct, dryly cutting. Identify the gap between the headline and the labor signal. Never use slang, folksy language, or stereotyped vernacular. Think: "Polished on the surface, concerning underneath." or "That is not a strategy. That is a press release."
 - debate_prompt: A polarizing yes/no question for audience voting
 - debate_sides: Array of exactly 2 strings, each 1 sentence, punchy, opposing viewpoints
-- receipt_connection: How this connects to money/power/corporate accountability (1-2 sentences)
-- spice_level: Integer 1-5 (1=footnote, 2=side-eye, 3=screenshot this, 4=this affects your job, 5=they thought we wouldn't find out)
+- receipt_connection: How this connects to money, power, or corporate accountability (1-2 sentences, analytical tone)
+- spice_level: Integer 1-5 (1=worth noting, 2=worth watching, 3=worth documenting, 4=directly affects employment, 5=structured so you wouldn't find it)
 - poster_data: Object with these exact fields:
   - bg: hex color for background (e.g. "#FF6B6B")
   - accent: hex color for accent (e.g. "#4ECDC4")
