@@ -6,6 +6,7 @@ import { ArrowRight } from "lucide-react";
 
 interface InsiderBriefProps {
   companyName: string;
+  companySlug?: string;
   industry: string;
   isPubliclyTraded: boolean;
   totalPacSpending: number;
