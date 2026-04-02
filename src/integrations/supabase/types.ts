@@ -165,6 +165,53 @@ export type Database = {
           },
         ]
       }
+      application_documents: {
+        Row: {
+          application_id: string
+          content_text: string | null
+          created_at: string
+          document_type: string
+          file_name: string
+          file_url: string | null
+          id: string
+          updated_at: string
+          user_id: string
+          version: number
+        }
+        Insert: {
+          application_id: string
+          content_text?: string | null
+          created_at?: string
+          document_type?: string
+          file_name?: string
+          file_url?: string | null
+          id?: string
+          updated_at?: string
+          user_id: string
+          version?: number
+        }
+        Update: {
+          application_id?: string
+          content_text?: string | null
+          created_at?: string
+          document_type?: string
+          file_name?: string
+          file_url?: string | null
+          id?: string
+          updated_at?: string
+          user_id?: string
+          version?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "application_documents_application_id_fkey"
+            columns: ["application_id"]
+            isOneToOne: false
+            referencedRelation: "applications_tracker"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       applications_tracker: {
         Row: {
           alignment_score: number | null

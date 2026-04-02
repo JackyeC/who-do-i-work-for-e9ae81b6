@@ -30,6 +30,7 @@ import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import { EmployerReportDrawer, type EvidenceRecord } from "@/components/dossier/EmployerReportDrawer";
 import { SignalRevealCard } from "@/components/dossier/SignalRevealCard";
+import { ApplyWithWDIWF } from "@/components/applications/ApplyWithWDIWF";
 
 // Deep-dive layer components (power-user expandable)
 import { ValuesSignalsLayer } from "@/components/dossier/ValuesSignalsLayer";
@@ -450,6 +451,11 @@ export default function CompanyDossier() {
             </p>
           </div>
           <div className="flex items-center gap-2">
+            <ApplyWithWDIWF
+              companyId={companyId!}
+              companyName={company.name}
+              alignmentScore={company.civic_footprint_score}
+            />
             <ExportDossierButton companyId={companyId!} companyName={company.name} company={company} />
             <Button
               variant="outline"
