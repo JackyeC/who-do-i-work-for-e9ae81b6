@@ -343,17 +343,17 @@ export default function HRTechIntelligence() {
 
   return (
     <div className="min-h-screen bg-background">
-      {/* ═══ HERO — tight, purposeful ═══ */}
-      <section className="pt-24 pb-12 px-4">
-        <div className="max-w-4xl mx-auto text-center">
-          <p className="tracking-[0.2em] text-primary font-mono uppercase text-sm mb-4">
-            HR Tech Intelligence
+      {/* ═══ HERO — briefing-style, not marketing ═══ */}
+      <section className="pt-20 pb-8 px-4 border-b border-border">
+        <div className="max-w-4xl mx-auto">
+          <p className="tracking-[0.25em] text-primary font-mono uppercase text-[11px] mb-3">
+            Intelligence Briefing
           </p>
-          <h1 className="text-4xl md:text-5xl font-bold text-foreground mb-5 leading-tight">
-            Know What Your <span className="text-primary">Tech Stack Supports</span>
+          <h1 className="text-3xl md:text-4xl font-black text-foreground mb-3 leading-tight">
+            Your HR tech stack has a political record.
           </h1>
-          <p className="text-lg text-muted-foreground max-w-2xl mx-auto leading-relaxed">
-            Political donations, AI bias lawsuits, ICE contracts, child labor — traced back to the HR tools your company already uses.
+          <p className="text-base text-muted-foreground max-w-2xl leading-relaxed">
+            AI bias lawsuits. ICE contracts. Child labor in portfolio companies. Lobbying against the regulations meant to protect your employees. All traced to the tools your company already pays for.
           </p>
         </div>
       </section>
