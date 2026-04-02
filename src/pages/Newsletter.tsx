@@ -575,9 +575,13 @@ export default function Newsletter() {
                   <blockquote className="text-xl text-foreground leading-[1.8] italic border-l-2 border-primary pl-5 font-light">
                     "{currentTake.jackye_take}"
                   </blockquote>
-                  <p className="text-sm text-foreground/60 mt-4">
-                    Re: <span className="text-foreground/80 font-semibold">{currentTake.headline}</span>
-                  </p>
+                  <button
+                    onClick={() => document.getElementById(`story-${currentTake.id}`)?.scrollIntoView({ behavior: "smooth", block: "start" })}
+                    className="text-sm text-foreground/60 mt-4 cursor-pointer hover:text-primary transition-colors group/take flex items-center gap-1"
+                  >
+                    Re: <span className="text-foreground/80 font-semibold group-hover/take:text-primary transition-colors">{currentTake.headline}</span>
+                    <ArrowRight className="w-3 h-3 opacity-0 group-hover/take:opacity-100 transition-opacity" />
+                  </button>
                 </div>
               )}
 
