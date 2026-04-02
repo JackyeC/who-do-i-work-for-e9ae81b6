@@ -9,6 +9,7 @@ interface SpendingRecordTableProps {
   metrics: SpendingMetric[];
   effectiveTaxRate?: string | null;
   companyName?: string;
+  companySlug?: string;
   className?: string;
 }
 
@@ -34,17 +35,31 @@ export function SpendingRecordTable({
   metrics,
   effectiveTaxRate,
   companyName,
+  companySlug,
   className,
 }: SpendingRecordTableProps) {
   const [selectedMetric, setSelectedMetric] = useState<SpendingMetric | null>(null);
+  const [showTaxPanel, setShowTaxPanel] = useState(false);
 
   return (
     <>
+      {/* Metric drawer */}
       <SpendingDrawer
         metric={selectedMetric}
         open={!!selectedMetric}
         onOpenChange={(o) => !o && setSelectedMetric(null)}
         companyName={companyName}
+        companySlug={companySlug}
+      />
+
+      {/* Tax rate drawer */}
+      <SpendingDrawer
+        metric={null}
+        open={showTaxPanel}
+        onOpenChange={(o) => !o && setShowTaxPanel(false)}
+        companyName={companyName}
+        companySlug={companySlug}
+        taxRate={effectiveTaxRate}
       />
 
       <div className={cn("overflow-x-auto", className)}>
@@ -78,6 +93,11 @@ export function SpendingRecordTable({
                     <span className={cn("font-medium", clickable ? "text-foreground" : "text-muted-foreground")}>
                       {m.label}
                     </span>
+                    {clickable && (
+                      <span className="ml-2 inline-flex items-center gap-1 text-[10px] text-primary/60">
+                        🧾
+                      </span>
+                    )}
                     {!clickable && (
                       <span className="ml-2 inline-flex items-center gap-1 text-[10px] text-muted-foreground/50">
                         <Search className="w-2.5 h-2.5" /> Summary only
@@ -108,19 +128,29 @@ export function SpendingRecordTable({
               );
             })}
 
-            {/* Effective Tax Rate — always summary-only */}
+            {/* Effective Tax Rate — now clickable */}
             {effectiveTaxRate && (
-              <tr className="opacity-70">
+              <tr
+                className="cursor-pointer hover:bg-primary/10 group border-l-2 border-l-transparent hover:border-l-primary transition-colors"
+                onClick={() => setShowTaxPanel(true)}
+              >
                 <td className="py-3 pr-4">
-                  <span className="font-medium text-muted-foreground">Eff. Tax Rate</span>
-                  <span className="ml-2 inline-flex items-center gap-1 text-[10px] text-muted-foreground/60">
-                    <Search className="w-2.5 h-2.5" /> Summary only
+                  <span className="font-medium text-foreground">Eff. Tax Rate</span>
+                  <span className="ml-2 inline-flex items-center gap-1 text-[10px] text-primary/60">
+                    🧾
                   </span>
                 </td>
-                <td className="py-3 pr-4 font-mono font-bold text-muted-foreground">{effectiveTaxRate}</td>
+                <td className="py-3 pr-4 font-mono font-bold text-foreground">{effectiveTaxRate}</td>
                 <td className="py-3 pr-4"><Minus className="w-4 h-4 text-muted-foreground" /></td>
                 <td className="py-3">
-                  <span className="text-[10px] text-muted-foreground/40 font-mono">NO DETAIL</span>
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    className="h-7 text-xs gap-1 text-primary opacity-80 group-hover:opacity-100 transition-opacity"
+                    onClick={(e) => { e.stopPropagation(); setShowTaxPanel(true); }}
+                  >
+                    View record <ArrowRight className="w-3 h-3" />
+                  </Button>
                 </td>
               </tr>
             )}
