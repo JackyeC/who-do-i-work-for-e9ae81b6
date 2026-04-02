@@ -24,6 +24,20 @@ const EXCLUDE_PATTERNS = [
 const EXCLUDE_DOMAINS = [
   "psychologytoday.com", "kotaku.com", "ign.com", "gamespot.com",
   "polygon.com", "pcgamer.com", "eurogamer.net",
+  // Foreign-language domains — block at enrichment layer
+  "watoday.com.au", "ibtimes.co.uk", "hcamag.com", "colombogazette.com",
+  "demokraatti.fi", "di.se", "etnews.com", "sunstar.com.ph",
+  "terra.com.br", "channelnewsasia.com",
+  "g1.globo.com", "globo.com", "uol.com.br", "folha.uol.com.br",
+  "lemonde.fr", "elpais.com", "spiegel.de", "corriere.it",
+  "ideawebtv.it", "repubblica.it", "ilsole24ore.com",
+  "lefigaro.fr", "welt.de", "bild.de", "nrc.nl", "dn.se",
+  "dagensjuridik.se", "aftonbladet.se", "expressen.se",
+  "tvn24.pl", "wp.pl", "onet.pl", "gazeta.pl",
+  "ilfattoquotidiano.it", "ansa.it", "rainews.it",
+  "rtve.es", "elmundo.es", "abc.es", "lavanguardia.com",
+  "liberation.fr", "20minutes.fr", "francetvinfo.fr",
+  "handelsblatt.com", "faz.net", "sueddeutsche.de", "zeit.de",
 ];
 
 function isEnglishAndRelevant(headline: string): boolean {
@@ -39,6 +53,16 @@ function isEnglishAndRelevant(headline: string): boolean {
   for (const p of ROMANCE_MARKERS) { const m = headline.match(p); if (m) romanceHits += m.length; }
   if (romanceHits >= 3) return false;
   if (FOREIGN_LIFESTYLE_RE.test(headline)) return false;
+  // German connective gate
+  const lower = headline.toLowerCase();
+  const germanHits = (lower.match(/\b(der|die|das|und|für|mit|auf|ist|von|nicht)\b/g) || []).length;
+  if (germanHits >= 4) return false;
+  // Italian connective gate
+  const italianHits = (lower.match(/\b(il|la|le|lo|di|del|della|dei|per|che|non|con|una|più|nel|sul)\b/g) || []).length;
+  if (italianHits >= 4) return false;
+  // Swedish/Polish/Nordic connective gate
+  const nordicHits = (lower.match(/\b(och|att|det|för|som|med|har|kan|inte|vara|eller|från|efter|denna|till)\b/g) || []).length;
+  if (nordicHits >= 3) return false;
   // Exclude irrelevant topics
   for (const p of EXCLUDE_PATTERNS) { if (p.test(headline)) return false; }
   return true;
@@ -85,6 +109,8 @@ interface JackyefiedContent {
 }
 
 const JACKYE_SYSTEM_PROMPT = `You are ghostwriting as Jackye Clayton. She just got a text from a friend: "Did you see this?" Your job is to text back — sharp, specific, and real.
+
+CRITICAL LANGUAGE RULE: ALL output MUST be in English. If the headline or source is in another language, translate and reframe it into English editorial copy. Never output Polish, Swedish, Italian, German, Spanish, French, Portuguese, or any other non-English text. The reader is American. Write for them.
 
 VOICE RULES:
 - Write like you're texting one smart person. Not performing for an audience.

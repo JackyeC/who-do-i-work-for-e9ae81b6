@@ -107,6 +107,10 @@ export function isLikelyEnglish(text: string): boolean {
   const italianConnectives = (lower.match(/\b(il|la|le|lo|di|del|della|dei|per|che|non|con|una|più|nel|sul)\b/g) || []).length;
   if (italianConnectives >= 4) return false;
 
+  // Catch Swedish/Nordic connective-heavy text
+  const nordicConnectives = (lower.match(/\b(och|att|det|för|som|med|har|kan|inte|vara|eller|från|efter|denna|till)\b/g) || []).length;
+  if (nordicConnectives >= 3) return false;
+
   return true;
 }
 
@@ -120,6 +124,12 @@ const NON_US_SOURCES = new Set([
   "lemonde.fr", "elpais.com", "spiegel.de", "corriere.it",
   "ideawebtv.it", "repubblica.it", "ilsole24ore.com",
   "lefigaro.fr", "welt.de", "bild.de", "nrc.nl", "dn.se",
+  "dagensjuridik.se", "aftonbladet.se", "expressen.se",
+  "tvn24.pl", "wp.pl", "onet.pl", "gazeta.pl",
+  "ilfattoquotidiano.it", "ansa.it", "rainews.it",
+  "rtve.es", "elmundo.es", "abc.es", "lavanguardia.com",
+  "liberation.fr", "20minutes.fr", "francetvinfo.fr",
+  "handelsblatt.com", "faz.net", "sueddeutsche.de", "zeit.de",
 ]);
 
 // Keywords that indicate US or employer relevance
