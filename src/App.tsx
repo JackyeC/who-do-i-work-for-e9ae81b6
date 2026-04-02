@@ -226,6 +226,7 @@ const App = () => (
                   <Route path="/peoplepuzzles" element={<PeoplePuzzles />} />
                   <Route path="/peoplepuzzles/embed" element={<PeoplePuzzlesEmbed />} />
                   <Route path="/play" element={<PeoplePuzzles />} />
+                  <Route path="/trail" element={<Trail />} />
                   <Route path="/receipts" element={<Receipts />} />
                   <Route path="/the-receipts" element={<Navigate to="/receipts" replace />} />
                   <Route path="/thereceipts" element={<Navigate to="/receipts" replace />} />
