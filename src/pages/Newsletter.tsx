@@ -124,7 +124,8 @@ function LeadStory({ article }: { article: WorkNewsArticle }) {
   const whyMatters = getWhyItMatters(article);
 
   return (
-    <article id={`story-${article.id}`} className="rounded-2xl border border-border/50 bg-card overflow-hidden hover:border-primary/30 transition-all group scroll-mt-24">
+    <article id={`story-${article.id}`} className="rounded-2xl border border-border/50 bg-card overflow-hidden hover:border-primary/30 transition-all group scroll-mt-24 cursor-pointer"
+      onClick={() => article.source_url && window.open(article.source_url, '_blank', 'noopener,noreferrer')}>
       <div className="h-1 bg-gradient-to-r from-primary via-primary/60 to-transparent" />
       <div className="p-8 lg:p-10">
         <div className="flex items-center gap-3 mb-5">
