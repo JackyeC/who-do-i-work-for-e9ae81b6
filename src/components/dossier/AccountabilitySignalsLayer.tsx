@@ -4,25 +4,6 @@ import { ExternalLink, ChevronDown, ShieldAlert, Users, Eye, AlertTriangle } fro
 import { cn } from "@/lib/utils";
 import { useAccountabilitySignals, type AccountabilitySignal } from "@/hooks/use-accountability-signals";
 
-/* ── Types ── */
-interface AccountabilitySignal {
-  id: string;
-  signal_category: string;
-  signal_type: string;
-  status_label: string;
-  headline: string;
-  description: string | null;
-  why_it_matters: string | null;
-  subject_name: string | null;
-  subject_role: string | null;
-  source_type: string;
-  source_url: string | null;
-  source_name: string | null;
-  event_date: string | null;
-  severity: string;
-  is_verified: boolean;
-}
-
 /* ── Category config ── */
 const CATEGORIES = [
   {
