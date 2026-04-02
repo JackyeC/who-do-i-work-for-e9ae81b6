@@ -32,7 +32,12 @@ export function FoundingMemberBadge({
   const displayNumber = memberNumber
     ? `#${String(memberNumber).padStart(4, "0")}`
     : "#0001";
-  const displayName = memberName || "Founding Member";
+  const displayName = memberName
+    ? memberName
+        .split(/[\s]+/)
+        .map(w => w.charAt(0).toUpperCase() + w.slice(1).toLowerCase())
+        .join(" ")
+    : "Founding Member";
   // Badge date is the user's signup date and must never change.
   // It must always be before the launch date (April 7, 2026).
   const LAUNCH_DATE = new Date("2026-04-07T00:00:00Z");
