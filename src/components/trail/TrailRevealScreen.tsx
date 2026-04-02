@@ -129,9 +129,12 @@ export function TrailRevealScreen() {
           </div>
 
           {/* Empowerment message */}
-          <div className="p-3 rounded-xl text-center" style={{ background: "rgba(99,212,113,0.05)", border: "1px solid rgba(99,212,113,0.1)" }}>
-            <p className="text-[11px] leading-relaxed" style={{ color: "#63D471" }}>
-              You just read what most applicants never see. Whatever you decide — you're deciding with clarity, not hope.
+          <div className="p-4 rounded-xl text-center space-y-2" style={{ background: "rgba(99,212,113,0.05)", border: "1px solid rgba(99,212,113,0.1)" }}>
+            <p className="text-[12px] font-semibold leading-relaxed" style={{ color: "#63D471" }}>
+              You just saw what most applicants never look for.
+            </p>
+            <p className="text-[11px] leading-relaxed" style={{ color: "#B9C0CC" }}>
+              You're not crazy for noticing red flags. You're not asking too much. You now have a smarter way to evaluate employers — and whatever you decide next, you're deciding with clarity, not hope.
             </p>
           </div>
 
