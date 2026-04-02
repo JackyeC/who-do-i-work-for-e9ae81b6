@@ -54,8 +54,8 @@ export function TrailBoard() {
             </p>
             <h2 className="text-2xl font-bold mb-3" style={{ color: "#F5F1E8" }}>
               {state.phase === "intro" ? "See What They Don't Put on the Careers Page" :
-               state.phase === "act1" ? "You're Not Imagining It — Name the Pattern" :
-               "What's Non-Negotiable for You?"}
+               state.phase === "act1" ? "You Noticed Something — Let's Name It" :
+               "What Do You Need Most from Your Next Job?"}
             </h2>
             <p className="text-sm leading-relaxed max-w-sm mx-auto" style={{ color: "#B9C0CC" }}>
               {state.phase === "intro"
