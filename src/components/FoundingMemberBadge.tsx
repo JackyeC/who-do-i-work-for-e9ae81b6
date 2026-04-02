@@ -32,7 +32,12 @@ export function FoundingMemberBadge({
   const displayNumber = memberNumber
     ? `#${String(memberNumber).padStart(4, "0")}`
     : "#0001";
-  const displayName = memberName || "Founding Member";
+  const displayName = memberName
+    ? memberName
+        .split(/[\s]+/)
+        .map(w => w.charAt(0).toUpperCase() + w.slice(1).toLowerCase())
+        .join(" ")
+    : "Founding Member";
   // Badge date is the user's signup date and must never change.
   // It must always be before the launch date (April 7, 2026).
   const LAUNCH_DATE = new Date("2026-04-07T00:00:00Z");
@@ -273,12 +278,42 @@ export function FoundingMemberBadge({
                 lineHeight: 1.7,
                 color: BRAND.fgMuted,
                 textAlign: "center",
-                marginBottom: 24,
+                marginBottom: 12,
               }}
             >
               I believe workers deserve the truth about who they work for.
               <br />
               I'm here before the launch because transparency can't wait.
+            </p>
+
+            {/* Jackye Clayton signature */}
+            <p
+              style={{
+                fontFamily: "'Inter', system-ui, sans-serif",
+                fontSize: "20px",
+                fontWeight: 300,
+                fontStyle: "italic",
+                color: BRAND.goldBright,
+                textAlign: "center",
+                marginBottom: 20,
+                letterSpacing: "0.02em",
+                lineHeight: 1.2,
+              }}
+            >
+              Jackye Clayton
+            </p>
+            <p
+              style={{
+                fontFamily: "'DM Mono', monospace",
+                fontSize: "9px",
+                letterSpacing: "0.15em",
+                textTransform: "uppercase",
+                color: BRAND.fgSubtle,
+                textAlign: "center",
+                marginBottom: 24,
+              }}
+            >
+              Founder · Who Do I Work For?
             </p>
 
             {/* Footer: launch date + URL */}
