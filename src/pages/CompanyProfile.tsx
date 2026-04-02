@@ -566,6 +566,13 @@ export default function CompanyProfile() {
           )}
 
           {/* ═══════════════════════════════════════════════════════
+              ACCOUNTABILITY SIGNALS (Layer 10)
+             ═══════════════════════════════════════════════════════ */}
+          {dbCompanyId && !isEarlyInvestigation && (
+            <AccountabilitySignalsLayer companyId={dbCompanyId} companyName={name} />
+          )}
+
+          {/* ═══════════════════════════════════════════════════════
               7. WHAT TO WATCH
              ═══════════════════════════════════════════════════════ */}
           <WhatToWatch
