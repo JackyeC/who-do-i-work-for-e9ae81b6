@@ -1,4 +1,5 @@
 import { Badge } from "@/components/ui/badge";
+import { Link } from "react-router-dom";
 import { EmptyStateExplainer } from "@/components/company/EmptyStateExplainer";
 import { OffTheRecordSignals } from "@/components/company/OffTheRecordSignals";
 import { ExpandableSignalItem } from "@/components/company/ExpandableSignalItem";
