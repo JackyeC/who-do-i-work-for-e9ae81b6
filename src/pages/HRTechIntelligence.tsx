@@ -430,16 +430,16 @@ export default function HRTechIntelligence() {
       </section>
 
       {/* ═══ SECTION 2: Patterns We're Seeing ═══ */}
-      <section className="py-12 px-4 border-t border-border bg-card/50">
+      <section className="py-10 px-4 border-t border-border bg-card/30">
         <div className="max-w-5xl mx-auto">
-          <div className="flex items-center gap-2 mb-2">
+          <div className="flex items-center gap-2 mb-1">
             <Eye className="w-4 h-4 text-primary" />
-            <p className="tracking-[0.2em] text-primary font-mono uppercase text-sm">
-              Patterns We're Seeing
+            <p className="tracking-[0.2em] text-primary font-mono uppercase text-[11px]">
+              Pattern Recognition
             </p>
           </div>
-          <h2 className="text-2xl font-bold text-foreground mb-6">
-            Four themes across the HR tech landscape
+          <h2 className="text-xl font-bold text-foreground mb-5">
+            It's not one company. It's the whole landscape.
           </h2>
 
           <motion.div
