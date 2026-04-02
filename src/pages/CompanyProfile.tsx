@@ -474,9 +474,22 @@ export default function CompanyProfile() {
             lastReviewed={dbCompany?.last_reviewed}
             updatedAt={dbCompany?.updated_at}
           />
+          {dbCompanyId && (
+            <JackyeContextualTake
+              companyId={dbCompanyId}
+              companyName={name}
+              section="insider_brief"
+              signalSummaries={[
+                totalPac > 0 ? `$${totalPac.toLocaleString()} PAC spending` : "",
+                lobbyingSpend > 0 ? `$${lobbyingSpend.toLocaleString()} lobbying` : "",
+                (dbDarkMoney?.length || 0) > 0 ? `${dbDarkMoney?.length} dark money channels` : "",
+                (dbRevolvingDoor?.length || 0) > 0 ? `${dbRevolvingDoor?.length} revolving door connections` : "",
+              ].filter(Boolean)}
+              className="mb-6"
+            />
+          )}
 
-          {/* ═══════════════════════════════════════════════════════
-              1.5 VALUES-SIGNAL MATCH (personalized)
+
              ═══════════════════════════════════════════════════════ */}
           <ValuesSignalMatch
             hasLayoffSignals={false}
