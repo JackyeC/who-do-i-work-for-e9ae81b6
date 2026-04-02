@@ -21,6 +21,7 @@ export interface ReceiptArticle {
   debate_sides: string[];
   receipt_connection: string;
   spice_level: number;
+  why_it_matters: string[] | null;
   poster_data: {
     bg: string;
     accent: string;
