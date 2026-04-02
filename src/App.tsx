@@ -93,6 +93,7 @@ const SignalFeed = lazy(() => import("./pages/SignalFeed"));
 const EEOCTracker = lazy(() => import("./pages/EEOCTracker"));
 const WorkIndex = lazy(() => import("./pages/WorkIndex"));
 const WorkforceBrief = lazy(() => import("./pages/WorkforceBrief"));
+const WorkSignalFeed = lazy(() => import("./pages/WorkSignalFeed"));
 const Rankings = lazy(() => import("./pages/Rankings"));
 const RealityCheck = lazy(() => import("./pages/RealityCheck"));
 const FounderConsole = lazy(() => import("./pages/FounderConsole"));
