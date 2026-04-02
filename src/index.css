@@ -217,8 +217,8 @@ body > div:last-child > a[href*="lovable"] {
 @layer utilities {
   /* ── FONT FAMILY UTILITIES ── */
   .font-serif {
-    font-family: 'Playfair Display', Georgia, serif;
-    font-weight: 700;
+    font-family: 'Inter', system-ui, sans-serif;
+    font-weight: 800;
     letter-spacing: -0.5px;
   }
 
