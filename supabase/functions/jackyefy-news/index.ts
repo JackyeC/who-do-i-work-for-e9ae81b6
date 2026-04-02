@@ -275,6 +275,7 @@ Sentiment Score: ${story.sentiment_score}
         await supabase
           .from("work_news")
           .update({
+            language: "quarantined_non_en",
             jackye_take: "[FILTERED]",
             jackye_take_approved: false,
             updated_at: new Date().toISOString(),
@@ -389,7 +390,12 @@ Deno.serve(async (req: Request) => {
     if (rejectedIds.length > 0) {
       await supabase
         .from("work_news")
-        .update({ jackye_take: "[FILTERED]", updated_at: new Date().toISOString() })
+        .update({
+          language: "quarantined_non_en",
+          jackye_take: "[FILTERED]",
+          jackye_take_approved: false,
+          updated_at: new Date().toISOString(),
+        })
         .in("id", rejectedIds);
       console.log(`Marked ${rejectedIds.length} stories as [FILTERED]`);
     }

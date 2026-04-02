@@ -311,7 +311,7 @@ Deno.serve(async (req: Request) => {
 
     async function upsertBatch(rows: any[], label: string) {
       const unique = rows.flatMap(r => {
-        if (seen.has(r.gdelt_url_hash)) return false;
+        if (seen.has(r.gdelt_url_hash)) return [];
         const validatedRow = buildValidatedWorkNewsRow(r);
         if (!validatedRow) {
           console.log(`[${label}] Content gate rejected: "${r.headline?.slice(0, 50)}" from ${r.source_name}`);
