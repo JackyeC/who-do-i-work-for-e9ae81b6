@@ -242,7 +242,7 @@ function generateJackyeTake(
 
   // Leadership instability — the human element
   if (flags.leadershipInstability || (leadership && leadership.subscore < 40)) {
-    parts.push("Leadership is unstable. When the people at the top keep changing, the people in the middle absorb the chaos. That's not just organizational risk — it's a psychological safety issue for everyone who reports to someone who might not be there next quarter.");
+    parts.push("Leadership is unstable. When the people at the top keep changing, the people in the middle absorb the disruption. That is not just organizational risk — it is an environment where priorities, expectations, and reporting lines shift without warning.");
   }
 
   // ── Layoff timing — direct, human-centered ──
