@@ -4,14 +4,34 @@
  * and all Unicode escape sequences are properly decoded.
  */
 
+export const TICKER_SEPARATOR = " · ";
+
+/** Normalize any escaped middle-dot variants to one plain Unicode separator */
+export function normalizeTickerSeparator(text: string): string {
+  if (!text) return text;
+
+  let normalized = text;
+
+  for (let i = 0; i < 3; i += 1) {
+    normalized = normalized
+      .replace(/&amp;/gi, "&")
+      .replace(/\\u00b7/gi, "·")
+      .replace(/&#183;/gi, "·")
+      .replace(/&#x0*b7;/gi, "·")
+      .replace(/&middot;/gi, "·");
+  }
+
+  return normalized.replace(/\s*·\s*/g, TICKER_SEPARATOR);
+}
+
 /** Decode \uXXXX escape sequences that survive JSON parsing */
 export function decodeEscapes(text: string): string {
   if (!text) return text;
-  return text
+  return normalizeTickerSeparator(
+    text
     .replace(/\\u([\da-fA-F]{4})/g, (_match, hex) =>
       String.fromCharCode(parseInt(hex, 16))
     )
-    .replace(/&middot;/gi, "·")
     .replace(/&bull;/gi, "•")
     .replace(/&mdash;/gi, "—")
     .replace(/&ndash;/gi, "–")
@@ -26,7 +46,8 @@ export function decodeEscapes(text: string): string {
     .replace(/\\n/g, " ")
     .replace(/\\t/g, " ")
     .replace(/\s{2,}/g, " ")
-    .trim();
+    .trim()
+  );
 }
 
 /**

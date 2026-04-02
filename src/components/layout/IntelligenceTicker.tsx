@@ -2,6 +2,7 @@ import { useMemo } from "react";
 import { useTickerItems, getTickerItemColor } from "@/hooks/use-ticker-items";
 import { Link, useLocation } from "react-router-dom";
 import { differenceInHours, differenceInDays } from "date-fns";
+import { TICKER_SEPARATOR } from "@/lib/ticker-filters";
 
 /** Routes where the intelligence ticker should render */
 const TICKER_ALLOWED_ROUTES = ["/", "/receipts", "/browse", "/search", "/newsletter", "/rankings"];
@@ -137,7 +138,7 @@ export function IntelligenceTicker() {
                 )}
 
                 {/* Separator */}
-                <span className="text-border mx-5 text-ticker select-none">◆</span>
+                <span className="text-border mx-5 text-ticker select-none">{TICKER_SEPARATOR}</span>
               </span>
             );
           })}

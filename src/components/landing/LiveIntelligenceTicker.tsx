@@ -1,7 +1,7 @@
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { Radio } from "lucide-react";
-import { decodeEscapes, isLikelyEnglish, isUSOrEmployerRelevant } from "@/lib/ticker-filters";
+import { decodeEscapes, isLikelyEnglish, isUSOrEmployerRelevant, TICKER_SEPARATOR } from "@/lib/ticker-filters";
 import { useLocation, useNavigate } from "react-router-dom";
 import {
   getSourceProfile,
@@ -146,7 +146,7 @@ export function LiveIntelligenceTicker() {
         )}
 
         <span className="px-2" style={{ color: "hsl(43 85% 59% / 0.5)" }}>
-          ·
+          {TICKER_SEPARATOR.trim()}
         </span>
       </button>
     );
