@@ -57,7 +57,7 @@ export function ReceiptsSidebar({ hotArticles }: ReceiptsSidebarProps) {
       {/* Hottest Takes */}
       <div className="bg-card border border-border rounded-xl p-5">
         <p className="text-[9px] uppercase tracking-[0.55em] text-primary mb-3.5 font-mono">
-          🔥 Hottest Takes
+          ⭐ Highest Stargaze
         </p>
         {hotArticles.slice(0, 4).map((article) => (
           <button
