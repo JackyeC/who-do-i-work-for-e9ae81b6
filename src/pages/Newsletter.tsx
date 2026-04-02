@@ -289,12 +289,12 @@ function WireItem({ article }: { article: WorkNewsArticle }) {
             {cat.label}
           </Badge>
           {article.is_controversy && <AlertTriangle className="w-3 h-3 text-destructive" />}
-          <span className="ml-auto text-[10px] text-muted-foreground/50 font-mono">{timeAgo(article.published_at)}</span>
+          <span className="ml-auto text-xs text-foreground/50 font-mono">{timeAgo(article.published_at)}</span>
         </div>
-        <p className="text-sm font-semibold text-foreground leading-snug flex-1 group-hover:text-primary transition-colors mb-2">
+        <p className="text-base font-semibold text-foreground leading-snug flex-1 group-hover:text-primary transition-colors mb-2">
           {article.headline}
         </p>
-        <p className="text-[11px] text-muted-foreground leading-relaxed mb-2">
+        <p className="text-sm text-foreground/70 leading-relaxed mb-2">
           {whyMatters[0]}
         </p>
         <div className="flex items-center justify-between mt-auto pt-2 border-t border-border/20">
