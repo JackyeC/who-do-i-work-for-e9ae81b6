@@ -38,7 +38,10 @@ interface SignalCategoryProps {
   signalKeyword?: string;
 }
 
-function SignalCategory({ title, signals, emptyType, companyName, careersUrl, scanContext }: SignalCategoryProps) {
+function SignalCategory({ title, signals, emptyType, companyName, careersUrl, scanContext, signalKeyword }: SignalCategoryProps) {
+  const { checkSignalRelevance, hasProfile } = usePersonalizedSignals();
+  const match = signalKeyword ? checkSignalRelevance(signalKeyword) : null;
+
   if (signals.length === 0 && emptyType) {
     return (
       <div className="py-4 border-b border-border/30 last:border-b-0">
@@ -52,7 +55,10 @@ function SignalCategory({ title, signals, emptyType, companyName, careersUrl, sc
 
   return (
     <div className="py-4 border-b border-border/30 last:border-b-0">
-      <p className="text-sm font-semibold text-foreground mb-3">{title}</p>
+      <div className="flex items-center gap-2 mb-3">
+        <p className="text-sm font-semibold text-foreground">{title}</p>
+        {hasProfile && match && <PersonalizedSignalTag match={match} compact />}
+      </div>
       <div className="space-y-2.5">
         {signals.map((s, i) => (
           <ExpandableSignalItem key={i} signal={s} />
