@@ -202,7 +202,8 @@ function StoryCard({ article }: { article: WorkNewsArticle }) {
   const whyMatters = getWhyItMatters(article);
 
   return (
-    <article id={`story-${article.id}`} className="rounded-xl border border-border/40 bg-card hover:border-primary/30 transition-all group overflow-hidden scroll-mt-24">
+    <article id={`story-${article.id}`} className="rounded-xl border border-border/40 bg-card hover:border-primary/30 transition-all group overflow-hidden scroll-mt-24 cursor-pointer"
+      onClick={() => article.source_url && window.open(article.source_url, '_blank', 'noopener,noreferrer')}>
       <div className="p-5">
         <div className="flex items-center gap-2 mb-3">
           <Badge variant="outline" className={`text-[10px] font-mono tracking-wider border ${cat.color}`}>
