@@ -223,6 +223,7 @@ const App = () => (
                   <Route path="/economy" element={<EconomyDashboard />} />
                   <Route path="/follow-the-money" element={<FollowTheMoney />} />
                   <Route path="/peoplepuzzles" element={<PeoplePuzzles />} />
+                  <Route path="/peoplepuzzles/embed" element={<PeoplePuzzlesEmbed />} />
                   <Route path="/play" element={<PeoplePuzzles />} />
                   <Route path="/receipts" element={<Receipts />} />
                   <Route path="/the-receipts" element={<Navigate to="/receipts" replace />} />
