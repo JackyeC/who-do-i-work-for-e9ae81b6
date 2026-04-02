@@ -1,12 +1,11 @@
 import { useState, useMemo } from "react";
+import { Link } from "react-router-dom";
 import { motion } from "framer-motion";
 import { usePageSEO } from "@/hooks/use-page-seo";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import {
-  Search,
   AlertTriangle,
   Shield,
   ShieldAlert,
@@ -17,18 +16,17 @@ import {
   ExternalLink,
   ChevronDown,
   ChevronUp,
-  Building2,
   Landmark,
-  DollarSign,
-  Users,
-  BriefcaseBusiness,
   Scale,
   Eye,
-  Handshake,
-  CircleAlert,
+  Users,
   HeartPulse,
   Cpu,
-  Factory,
+  Search,
+  ArrowRight,
+  Zap,
+  Building2,
+  CircleAlert,
 } from "lucide-react";
 import HRTechVendorDirectory from "@/components/TransformSponsorsSection";
 import {
@@ -41,7 +39,7 @@ import {
   type LaborDataPoint,
 } from "@/data/hrtechData";
 
-/* ─── animation variants ─── */
+/* ─── animation ─── */
 const stagger = {
   container: { hidden: {}, show: { transition: { staggerChildren: 0.04 } } },
   item: {
@@ -91,13 +89,163 @@ const trendIcon = (trend: LaborDataPoint["trend"]) => {
   }
 };
 
+/* ═══════════════════════════════════════════════════════
+   SECTION 1: "What's Happening in HR Tech" — top signals
+   ═══════════════════════════════════════════════════════ */
+interface TopSignal {
+  headline: string;
+  detail: string;
+  source: string;
+  sourceUrl: string;
+  severity: "critical" | "warning" | "watch";
+  company?: string;
+  companySlug?: string;
+}
 
+const TOP_SIGNALS: TopSignal[] = (() => {
+  // Pull the most impactful findings from vendor data
+  const signals: TopSignal[] = [];
 
-/* ─── PE OWNER CARD ─── */
+  // Workday AI class action
+  const workday = HR_TECH_VENDORS.find(v => v.slug === "workday");
+  if (workday) {
+    signals.push({
+      headline: "Workday faces class action alleging AI discrimination against millions of applicants",
+      detail: workday.keyFinding.split(".").slice(0, 2).join(".") + ".",
+      source: "PACER / Court Filing",
+      sourceUrl: workday.sources[0]?.url || "#",
+      severity: "critical",
+      company: "Workday",
+      companySlug: "workday",
+    });
+  }
+
+  // HireVue
+  const hirevue = HR_TECH_VENDORS.find(v => v.slug === "hirevue");
+  if (hirevue) {
+    signals.push({
+      headline: "HireVue dropped facial analysis after FTC complaint — still uses AI video scoring",
+      detail: hirevue.keyFinding.split(".").slice(0, 2).join(".") + ".",
+      source: "FTC / EPIC",
+      sourceUrl: hirevue.sources[0]?.url || "#",
+      severity: "warning",
+      company: "HireVue",
+      companySlug: "hirevue",
+    });
+  }
+
+  // Oracle ICE
+  const oracle = HR_TECH_VENDORS.find(v => v.slug === "oracle-hcm");
+  if (oracle) {
+    signals.push({
+      headline: "Oracle spends $11.8M/year lobbying with 54 former government officials as lobbyists",
+      detail: `Larry Ellison gave $1M to Trump-aligned PAC. Oracle is an authorized DHS/ICE cloud provider and Pentagon JWCC partner.`,
+      source: "OpenSecrets",
+      sourceUrl: oracle.sources[0]?.url || "#",
+      severity: "critical",
+      company: "Oracle",
+      companySlug: "oracle",
+    });
+  }
+
+  // Salesforce ICE
+  const salesforce = HR_TECH_VENDORS.find(v => v.slug === "salesforce");
+  if (salesforce) {
+    signals.push({
+      headline: "1,400+ Salesforce employees signed letter opposing company's ICE AI pitch",
+      detail: salesforce.keyFinding.split(".").slice(0, 2).join(".") + ".",
+      source: "CNBC / Wired",
+      sourceUrl: salesforce.sources[0]?.url || "#",
+      severity: "warning",
+      company: "Salesforce",
+      companySlug: "salesforce",
+    });
+  }
+
+  // Kronos child labor
+  const pe = PE_OWNERS.find(p => p.slug === "blackstone");
+  if (pe) {
+    signals.push({
+      headline: "Blackstone-owned portfolio company found guilty of systemic child labor violations",
+      detail: `Blackstone gave $48M in political contributions while owning UKG and companies with documented labor violations.`,
+      source: "DOL / Court Records",
+      sourceUrl: pe.sources[0]?.url || "#",
+      severity: "critical",
+    });
+  }
+
+  return signals.slice(0, 5);
+})();
+
+const SEVERITY_STYLES = {
+  critical: "border-red-500/30 bg-red-500/5",
+  warning: "border-[hsl(var(--civic-yellow))]/30 bg-[hsl(var(--civic-yellow))]/5",
+  watch: "border-border/40 bg-muted/10",
+};
+const SEVERITY_BADGE = {
+  critical: { label: "HIGH IMPACT", variant: "destructive" as const },
+  warning: { label: "WATCH", variant: "warning" as const },
+  watch: { label: "CONTEXT", variant: "secondary" as const },
+};
+
+/* ═══════════════════════════════════════════════════════
+   SECTION 2: "Patterns We're Seeing" — thematic groups
+   ═══════════════════════════════════════════════════════ */
+interface Pattern {
+  icon: typeof Shield;
+  theme: string;
+  signal: string;
+  companies: string[];
+}
+
+const PATTERNS: Pattern[] = [
+  {
+    icon: Cpu,
+    theme: "AI Bias & Accountability",
+    signal: "Workday is lobbying state-by-state to weaken AI hiring regulation while facing a class action for algorithmic discrimination. HireVue dropped facial analysis after FTC pressure but still scores candidates via AI video.",
+    companies: ["Workday", "HireVue", "Paradox"],
+  },
+  {
+    icon: Users,
+    theme: "DEI Rollbacks Under Pressure",
+    signal: "IBM removed race/gender supplier diversity targets in 2025. Companies with federal contracts are quietly stripping DEI language from postings and annual reports.",
+    companies: ["IBM", "Oracle", "Salesforce"],
+  },
+  {
+    icon: Scale,
+    theme: "Government Enforcement Contracts",
+    signal: "Oracle, Salesforce, and Microsoft provide technology to ICE and CBP. Employee protests are documented but haven't changed contract decisions.",
+    companies: ["Oracle", "Salesforce", "Microsoft"],
+  },
+  {
+    icon: Landmark,
+    theme: "Private Equity Extraction",
+    signal: "PE firms like Blackstone, Vista, and Thoma Bravo own major HR platforms (UKG, Ping Identity, Cornerstone). Their political spending and portfolio labor records tell a different story than the vendor's marketing.",
+    companies: ["UKG", "Cornerstone", "Ping Identity"],
+  },
+];
+
+/* ═══════════════════════════════════════════════════════
+   SECTION 3: "Companies to Watch" — actionable list
+   ═══════════════════════════════════════════════════════ */
+const COMPANIES_TO_WATCH = HR_TECH_VENDORS
+  .filter(v => v.rating === "follow-the-money")
+  .slice(0, 6)
+  .map(v => ({
+    name: v.name,
+    slug: v.slug,
+    category: v.category,
+    finding: v.keyFinding.split(".")[0] + ".",
+    rating: v.rating,
+    sources: v.sources,
+  }));
+
+/* ═══════════════════════════════════════════════════════
+   SUBCOMPONENTS
+   ═══════════════════════════════════════════════════════ */
 function PECard({ pe }: { pe: PEOwner }) {
   const [expanded, setExpanded] = useState(false);
   const cfg = ratingConfig[pe.rating];
-  const Icon = cfg.icon;
 
   return (
     <motion.div variants={stagger.item}>
@@ -110,84 +258,45 @@ function PECard({ pe }: { pe: PEOwner }) {
             <div className="flex-1 min-w-0">
               <div className="flex items-center gap-2 mb-1">
                 <Landmark className={`w-4 h-4 flex-shrink-0 ${cfg.color}`} />
-                <h3 className="font-semibold text-foreground text-base truncate">
-                  {pe.name}
-                </h3>
+                <h3 className="font-semibold text-foreground text-base truncate">{pe.name}</h3>
               </div>
               <p className="text-xs font-mono text-muted-foreground tracking-wide uppercase">
                 Private Equity
                 {pe.aum && <span className="ml-2 text-primary/60">AUM: {pe.aum}</span>}
               </p>
             </div>
-            <Badge className={`${cfg.bg} ${cfg.color} border-0 text-xs font-mono shrink-0`}>
-              {cfg.label}
-            </Badge>
+            <Badge className={`${cfg.bg} ${cfg.color} border-0 text-xs font-mono shrink-0`}>{cfg.label}</Badge>
           </div>
-
-          <p className="text-sm text-muted-foreground leading-relaxed mb-2">
-            {pe.keyFinding}
-          </p>
-
+          <p className="text-sm text-muted-foreground leading-relaxed mb-2">{pe.keyFinding}</p>
           <div className="flex flex-wrap gap-1.5 mb-3">
             {pe.portfolioHRTech.map((name) => (
-              <Badge
-                key={name}
-                variant="outline"
-                className="text-xs border-primary/30 text-primary/80"
-              >
+              <Badge key={name} variant="outline" className="text-xs border-primary/30 text-primary/80">
                 Owns: {name}
               </Badge>
             ))}
           </div>
-
           <button
             className="flex items-center gap-1 text-xs text-primary hover:text-primary/80 transition-colors"
-            onClick={(e) => {
-              e.stopPropagation();
-              setExpanded(!expanded);
-            }}
+            onClick={(e) => { e.stopPropagation(); setExpanded(!expanded); }}
           >
-            {expanded ? (
-              <>
-                <ChevronUp className="w-3 h-3" /> Less
-              </>
-            ) : (
-              <>
-                <ChevronDown className="w-3 h-3" /> Full intel
-              </>
-            )}
+            {expanded ? <><ChevronUp className="w-3 h-3" /> Less</> : <><ChevronDown className="w-3 h-3" /> Full intel</>}
           </button>
-
           {expanded && (
-            <motion.div
-              initial={{ opacity: 0, height: 0 }}
-              animate={{ opacity: 1, height: "auto" }}
-              className="mt-4 pt-4 border-t border-border space-y-3"
-            >
+            <motion.div initial={{ opacity: 0, height: 0 }} animate={{ opacity: 1, height: "auto" }} className="mt-4 pt-4 border-t border-border space-y-3">
               {pe.politicalSpend && (
                 <div>
-                  <p className="text-xs font-mono text-primary/70 uppercase tracking-wider mb-1">
-                    Political Spending
-                  </p>
+                  <p className="text-xs font-mono text-primary/70 uppercase tracking-wider mb-1">Political Spending</p>
                   <p className="text-sm text-muted-foreground">{pe.politicalSpend}</p>
                 </div>
               )}
               <div className="pt-2">
-                <p className="text-xs font-mono text-primary/70 uppercase tracking-wider mb-2">
-                  Sources
-                </p>
+                <p className="text-xs font-mono text-primary/70 uppercase tracking-wider mb-2">Sources</p>
                 <div className="flex flex-wrap gap-2">
                   {pe.sources.map((s, i) => (
-                    <a
-                      key={i}
-                      href={s.url}
-                      target="_blank"
-                      rel="noopener noreferrer"
+                    <a key={i} href={s.url} target="_blank" rel="noopener noreferrer"
                       className="inline-flex items-center gap-1 text-xs text-primary/80 hover:text-primary underline-offset-2 hover:underline"
-                      onClick={(e) => e.stopPropagation()}
-                    >
-                      <ExternalLink className="w-3 h-3" />
-                      {s.label}
+                      onClick={(e) => e.stopPropagation()}>
+                      <ExternalLink className="w-3 h-3" />{s.label}
                     </a>
                   ))}
                 </div>
@@ -200,30 +309,20 @@ function PECard({ pe }: { pe: PEOwner }) {
   );
 }
 
-/* ─── LABOR DATA CARD ─── */
 function LaborCard({ dp }: { dp: LaborDataPoint }) {
   return (
     <motion.div variants={stagger.item}>
       <Card className="bg-card border border-border hover:border-primary/30 transition-colors">
         <CardContent className="p-4">
           <div className="flex items-center justify-between mb-2">
-            <p className="text-xs font-mono text-primary/70 uppercase tracking-wider">
-              {dp.label}
-            </p>
+            <p className="text-xs font-mono text-primary/70 uppercase tracking-wider">{dp.label}</p>
             {trendIcon(dp.trend)}
           </div>
-          <p className="text-2xl font-bold font-mono text-foreground mb-1 tabular-nums">
-            {dp.value}
-          </p>
+          <p className="text-2xl font-bold font-mono text-foreground mb-1 tabular-nums">{dp.value}</p>
           <p className="text-xs text-muted-foreground leading-relaxed mb-2">{dp.context}</p>
-          <a
-            href={dp.sourceUrl}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="inline-flex items-center gap-1 text-[11px] text-primary/60 hover:text-primary"
-          >
-            <ExternalLink className="w-3 h-3" />
-            {dp.source}
+          <a href={dp.sourceUrl} target="_blank" rel="noopener noreferrer"
+            className="inline-flex items-center gap-1 text-[11px] text-primary/60 hover:text-primary">
+            <ExternalLink className="w-3 h-3" />{dp.source}
           </a>
         </CardContent>
       </Card>
@@ -231,287 +330,148 @@ function LaborCard({ dp }: { dp: LaborDataPoint }) {
   );
 }
 
-/* ─── THEME CARD (5 key themes) ─── */
-interface ThemeItem {
-  icon: typeof Shield;
-  title: string;
-  body: string;
-}
-
-const KEY_THEMES: ThemeItem[] = [
-  {
-    icon: Landmark,
-    title: "The PE Overlay",
-    body: "Many HR tech companies are owned by private equity firms whose political activity, labor records, and extraction models are the real story. When your employer uses UKG, the money flows to Blackstone — which gave $48M in political contributions, lobbied to access your 401(k), and owned a company found guilty of systemic child labor violations.",
-  },
-  {
-    icon: Scale,
-    title: "The AI Regulation Gap",
-    body: "Workday is lobbying state-by-state to shape AI regulation that protects employers from accountability while leaving workers unprotected — removing workers' right to sue and allowing self-auditing. Meanwhile, it faces a class action alleging its AI discriminated against millions of Black, disabled, and older applicants.",
-  },
-  {
-    icon: Eye,
-    title: "The ICE/CBP Connection",
-    body: "Oracle, Salesforce, and Microsoft are all entangled in providing technology to immigration enforcement. Government contracts are profitable. Employee protests are manageable. Values statements are marketing.",
-  },
-  {
-    icon: Users,
-    title: "The DEI Rollback",
-    body: "IBM rolled back race/gender supplier diversity targets in 2025. Companies under federal contracting pressure are quietly removing DEI language from job postings, annual reports, and performance metrics. The companies that maintained DEI commitments tend to be smaller and less exposed to government pressure.",
-  },
-  {
-    icon: HeartPulse,
-    title: "One Industry Carrying Everything",
-    body: "Healthcare accounts for 109% of all private-sector job gains. 10,000 Americans turn 65 daily. The rest of the economy is contracting on a net basis. Your HR tech vendor's choices matter more when there's less room to move.",
-  },
-];
-
 /* ═══════════════════════════════════════════════════════
-   MAIN PAGE COMPONENT
+   MAIN PAGE
    ═══════════════════════════════════════════════════════ */
 export default function HRTechIntelligence() {
   usePageSEO({
-    title: "HR Tech Intelligence",
+    title: "HR Tech Intelligence — What Your Tech Stack Actually Supports",
     description:
-      "Know what your HR tech stack supports. Follow the money behind 25+ HR technology vendors — political donations, lobbying, labor practices, and ownership.",
+      "Follow the money behind HR technology vendors — political donations, lobbying, AI bias lawsuits, and ownership. Know what your tech stack supports.",
     path: "/hrtech",
   });
 
-
-
   return (
     <div className="min-h-screen bg-background">
-      {/* ═══ HERO ═══ */}
-      <section className="pt-24 pb-16 px-4">
+      {/* ═══ HERO — tight, purposeful ═══ */}
+      <section className="pt-24 pb-12 px-4">
         <div className="max-w-4xl mx-auto text-center">
           <p className="tracking-[0.2em] text-primary font-mono uppercase text-sm mb-4">
             HR Tech Intelligence
           </p>
-          <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold text-foreground mb-6 leading-tight">
-            Know What Your
-            <br />
-            <span className="text-primary">Tech Stack Supports</span>
+          <h1 className="text-4xl md:text-5xl font-bold text-foreground mb-5 leading-tight">
+            Know What Your <span className="text-primary">Tech Stack Supports</span>
           </h1>
-          <p className="text-lg text-muted-foreground max-w-2xl mx-auto leading-relaxed mb-4">
-            Every dollar your company spends on HR technology flows somewhere.
-            Some of it funds tools that protect workers. Some of it funds
-            lobbying that strips away your rights. This page follows the money.
-          </p>
-          <p className="text-sm text-muted-foreground/70 max-w-xl mx-auto">
-            25 HR tech vendors. 5 private equity owners. Political donations,
-            lobbying records, labor practices, and ownership traced to the source.
+          <p className="text-lg text-muted-foreground max-w-2xl mx-auto leading-relaxed">
+            Political donations, AI bias lawsuits, ICE contracts, child labor — traced back to the HR tools your company already uses.
           </p>
         </div>
       </section>
 
-      {/* ═══ STATE OF WORK — THE ECONOMY ═══ */}
-      <section className="py-16 px-4 border-t border-border">
-        <div className="max-w-6xl mx-auto">
-          <div className="mb-10">
-            <p className="tracking-[0.2em] text-primary font-mono uppercase text-sm mb-3">
-              The State of Work — March 2026
-            </p>
-            <h2 className="text-2xl md:text-3xl font-bold text-foreground mb-4">
-              Why This Matters Right Now
-            </h2>
-            <p className="text-muted-foreground max-w-3xl leading-relaxed">
-              The US economy lost 92,000 jobs in February — the worst miss
-              in years. More workers are struggling than thriving for the first
-              time ever recorded. One single sector is carrying the entire
-              economy. And the tools your HR team uses? They're connected to all
-              of it.
+      {/* ═══ SECTION 1: What's Happening in HR Tech ═══ */}
+      <section className="py-12 px-4 border-t border-border">
+        <div className="max-w-5xl mx-auto">
+          <div className="flex items-center gap-2 mb-2">
+            <Zap className="w-4 h-4 text-primary" />
+            <p className="tracking-[0.2em] text-primary font-mono uppercase text-sm">
+              What's Happening in HR Tech
             </p>
           </div>
-
-          {/* Labor Market Data Grid */}
-          <motion.div
-            variants={stagger.container}
-            initial="hidden"
-            whileInView="show"
-            viewport={{ once: true, margin: "-50px" }}
-            className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4 mb-10"
-          >
-            {LABOR_MARKET_DATA.map((dp) => (
-              <LaborCard key={dp.label} dp={dp} />
-            ))}
-          </motion.div>
-
-          {/* Narrative Block */}
-          <Card className="bg-card border border-primary/20">
-            <CardContent className="p-6 md:p-8">
-              <div className="flex items-start gap-3 mb-4">
-                <CircleAlert className="w-5 h-5 text-primary flex-shrink-0 mt-0.5" />
-                <div>
-                  <h3 className="font-semibold text-foreground mb-1">The Numbers Behind the Headlines</h3>
-                  <p className="text-xs font-mono text-primary/70 uppercase tracking-wider">
-                    Sources: BLS, Gallup, ADP Research, NBER, CompTIA, Bankrate
-                  </p>
-                </div>
-              </div>
-              <div className="space-y-4 text-sm text-muted-foreground leading-relaxed">
-                <p>
-                  <strong className="text-foreground">The economy lost 92,000 jobs in February</strong> — far below
-                  the gain of 50,000 experts predicted. With downward revisions, average monthly job creation in 2025
-                  fell to fewer than 10,000 jobs a month. Bankrate's Mark Hamrick called it{" "}
-                  <em>"ugly across the board."</em> This isn't a one-month anomaly — since June 2025,
-                  the pattern has been one month of job creation followed by a month of contraction.
-                </p>
-                <p>
-                  <strong className="text-foreground">For the first time in recorded history</strong>, more
-                  American workers are struggling (49%) than thriving (46%), according to Gallup's survey of 22,000+
-                  employed adults. Only 28% say now is a good time to find quality employment — a 42-point
-                  collapse from 2022. Employee engagement is at a decade low: 31%, representing 3.2 million
-                  fewer engaged workers. Gallup calls it <em>the Great Detachment</em> — workers are
-                  restless but stuck. 69% can't afford to lose their current pay and benefits.
-                </p>
-                <p>
-                  <strong className="text-foreground">One industry is carrying everything.</strong> Education
-                  and health services generated 109% of all private sector job gains through January 2025,
-                  according to ADP Research. Healthcare alone accounts for 88% of that supersector. The driver:
-                  approximately 10,000 Americans turn 65 every single day. As ADP's Nela Richardson wrote,{" "}
-                  <em>
-                    "Unlike past labor market upheavals, this one isn't being driven by technology. People,
-                    older people in particular, are having a profound effect on labor supply and demand."
-                  </em>
-                </p>
-                <p>
-                  <strong className="text-foreground">AI isn't the job killer headlines suggest — yet.</strong>{" "}
-                  A National Bureau of Economic Research survey of nearly 750 CFOs found that 50% of companies
-                  expect AI to replace zero roles this year. The projected total employment impact: less than
-                  0.4% in 2026. But there's a productivity paradox — executives <em>feel</em> more productive,
-                  while revenue data hasn't caught up. Tech employment actually declined in 2025 (-33,624 jobs),
-                  but CompTIA projects a rebound of 185,000+ jobs in 2026, with AI-skilled roles leading the way.
-                </p>
-                <p>
-                  <strong className="text-foreground">Meanwhile, the macro picture is volatile.</strong>{" "}
-                  Gas prices jumped $0.34 in a week after the Iran conflict. The Kansas City Fed estimates
-                  tariffs cost ~19,000 jobs per month. Manufacturing has lost 100,000 jobs since Trump
-                  took office. Professor Lonnie Golden of Penn State Abington said it plainly:{" "}
-                  <em>
-                    "Somehow this is not yet translating into the overall level of unemployment...
-                    but the job market is really weak right now in terms of job creation."
-                  </em>
-                </p>
-              </div>
-
-              {/* Attribution */}
-              <div className="mt-6 pt-4 border-t border-border">
-                <p className="text-xs text-muted-foreground">
-                  Analysis informed by{" "}
-                  <a
-                    href="https://youtu.be/h-zmyIy92oA"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="text-primary/80 hover:text-primary underline-offset-2 hover:underline"
-                  >
-                    Cornering The Job Market
-                  </a>{" "}
-                  (Pete Newsome, March 24, 2026),{" "}
-                  <a
-                    href="https://www.bls.gov/news.release/empsit.nr0.htm"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="text-primary/80 hover:text-primary underline-offset-2 hover:underline"
-                  >
-                    Bureau of Labor Statistics
-                  </a>
-                  ,{" "}
-                  <a
-                    href="https://www.gallup.com/workplace/703280/worker-thriving-declines-job-market-pessimism-grows.aspx"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="text-primary/80 hover:text-primary underline-offset-2 hover:underline"
-                  >
-                    Gallup Workforce Wellbeing Report
-                  </a>
-                  ,{" "}
-                  <a
-                    href="https://www.adpresearch.com/health-care-is-reshaping-the-labor-market/"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="text-primary/80 hover:text-primary underline-offset-2 hover:underline"
-                  >
-                    ADP Research
-                  </a>
-                  ,{" "}
-                  <a
-                    href="https://www.nber.org/papers/w34984"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="text-primary/80 hover:text-primary underline-offset-2 hover:underline"
-                  >
-                    NBER Working Paper
-                  </a>
-                  , and{" "}
-                  <a
-                    href="https://www.comptia.org/en-us/resources/research/state-of-the-tech-workforce-2026/"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="text-primary/80 hover:text-primary underline-offset-2 hover:underline"
-                  >
-                    CompTIA State of the Tech Workforce 2026
-                  </a>
-                  .
-                </p>
-              </div>
-            </CardContent>
-          </Card>
-        </div>
-      </section>
-
-      {/* ═══ THE QUESTION ═══ */}
-      <section className="py-16 px-4 border-t border-border bg-card/50">
-        <div className="max-w-4xl mx-auto text-center">
-          <p className="tracking-[0.2em] text-primary font-mono uppercase text-sm mb-4">
-            The Question No One Is Asking
-          </p>
-          <h2 className="text-2xl md:text-3xl font-bold text-foreground mb-6">
-            What Does Your HR Tech Stack Actually Support?
+          <h2 className="text-2xl font-bold text-foreground mb-6">
+            High-impact signals from the last 12 months
           </h2>
-          <p className="text-muted-foreground max-w-2xl mx-auto leading-relaxed mb-8">
-            Your company chose an HRIS. A payroll provider. An ATS. A learning platform.
-            Every one of those vendors has a political profile — lobbying activity,
-            campaign contributions, government contracts, and labor practices that either
-            align with the needs of employees or work against them.
-          </p>
-          <p className="text-muted-foreground max-w-2xl mx-auto leading-relaxed">
-            This isn't about being anti-vendor. It's about being informed. When
-            30% of workers feel stuck, when engagement is at a decade low, and
-            when the economy is losing jobs — the companies that manage your
-            people data, process your payroll, and screen your candidates are
-            making political choices with your money.
-          </p>
+
+          <div className="space-y-3">
+            {TOP_SIGNALS.map((sig, i) => {
+              const badge = SEVERITY_BADGE[sig.severity];
+              return (
+                <motion.div
+                  key={i}
+                  initial={{ opacity: 0, y: 10 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true }}
+                  transition={{ delay: i * 0.05 }}
+                >
+                  <Card className={`border ${SEVERITY_STYLES[sig.severity]}`}>
+                    <CardContent className="p-5">
+                      <div className="flex items-start gap-4">
+                        <div className="flex-1 min-w-0">
+                          <div className="flex items-center gap-2 flex-wrap mb-2">
+                            <Badge variant={badge.variant} className="text-[10px] font-mono">
+                              {badge.label}
+                            </Badge>
+                            {sig.company && (
+                              <span className="text-xs font-mono text-muted-foreground">{sig.company}</span>
+                            )}
+                          </div>
+                          <h3 className="text-sm font-bold text-foreground leading-snug mb-1.5">
+                            {sig.headline}
+                          </h3>
+                          <p className="text-sm text-muted-foreground leading-relaxed">
+                            {sig.detail}
+                          </p>
+                          <a
+                            href={sig.sourceUrl}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="inline-flex items-center gap-1 text-[11px] text-primary/70 hover:text-primary mt-2"
+                          >
+                            <ExternalLink className="w-3 h-3" />
+                            {sig.source}
+                          </a>
+                        </div>
+                        {sig.companySlug && (
+                          <Link
+                            to={`/search?q=${encodeURIComponent(sig.company || "")}`}
+                            className="shrink-0 hidden sm:flex items-center gap-1 text-xs text-primary hover:text-primary/80 border border-primary/20 rounded-md px-3 py-1.5 hover:bg-primary/5 transition-colors"
+                          >
+                            <Search className="w-3 h-3" />
+                            Check dossier
+                          </Link>
+                        )}
+                      </div>
+                    </CardContent>
+                  </Card>
+                </motion.div>
+              );
+            })}
+          </div>
         </div>
       </section>
 
-      {/* ═══ KEY THEMES ═══ */}
-      <section className="py-16 px-4 border-t border-border">
-        <div className="max-w-6xl mx-auto">
-          <div className="mb-10">
-            <p className="tracking-[0.2em] text-primary font-mono uppercase text-sm mb-3">
-              What We Found
+      {/* ═══ SECTION 2: Patterns We're Seeing ═══ */}
+      <section className="py-12 px-4 border-t border-border bg-card/50">
+        <div className="max-w-5xl mx-auto">
+          <div className="flex items-center gap-2 mb-2">
+            <Eye className="w-4 h-4 text-primary" />
+            <p className="tracking-[0.2em] text-primary font-mono uppercase text-sm">
+              Patterns We're Seeing
             </p>
-            <h2 className="text-2xl md:text-3xl font-bold text-foreground mb-2">
-              Five Patterns You Should Know
-            </h2>
           </div>
+          <h2 className="text-2xl font-bold text-foreground mb-6">
+            Four themes across the HR tech landscape
+          </h2>
 
           <motion.div
             variants={stagger.container}
             initial="hidden"
             whileInView="show"
             viewport={{ once: true, margin: "-50px" }}
-            className="grid gap-4 md:grid-cols-2 lg:grid-cols-3"
+            className="grid gap-4 md:grid-cols-2"
           >
-            {KEY_THEMES.map((theme) => {
-              const TIcon = theme.icon;
+            {PATTERNS.map((p) => {
+              const Icon = p.icon;
               return (
-                <motion.div key={theme.title} variants={stagger.item}>
+                <motion.div key={p.theme} variants={stagger.item}>
                   <Card className="bg-card border border-border hover:border-primary/30 transition-colors h-full">
                     <CardContent className="p-5">
-                      <TIcon className="w-5 h-5 text-primary mb-3" />
-                      <h3 className="font-semibold text-foreground text-sm mb-2">{theme.title}</h3>
-                      <p className="text-xs text-muted-foreground leading-relaxed">{theme.body}</p>
+                      <div className="flex items-center gap-2 mb-3">
+                        <Icon className="w-4 h-4 text-primary" />
+                        <h3 className="text-sm font-bold text-foreground uppercase tracking-wider">{p.theme}</h3>
+                      </div>
+                      <p className="text-sm text-muted-foreground leading-relaxed mb-3">{p.signal}</p>
+                      <div className="flex flex-wrap gap-1.5">
+                        {p.companies.map(c => (
+                          <Link
+                            key={c}
+                            to={`/search?q=${encodeURIComponent(c)}`}
+                            className="inline-flex items-center gap-1 text-[11px] font-mono text-primary/80 hover:text-primary border border-primary/20 rounded px-2 py-0.5 hover:bg-primary/5 transition-colors"
+                          >
+                            {c}
+                            <ArrowRight className="w-2.5 h-2.5" />
+                          </Link>
+                        ))}
+                      </div>
                     </CardContent>
                   </Card>
                 </motion.div>
@@ -521,139 +481,162 @@ export default function HRTechIntelligence() {
         </div>
       </section>
 
-      {/* ═══ VENDOR DIRECTORY ═══ */}
-      <section className="py-16 px-4 border-t border-border" id="vendors">
-        <div className="max-w-6xl mx-auto">
-          <div className="mb-8">
-            <p className="tracking-[0.2em] text-primary font-mono uppercase text-sm mb-3">
-              The Directory
-            </p>
-            <h2 className="text-2xl md:text-3xl font-bold text-foreground mb-2">
-              HR Tech Vendor Intelligence
-            </h2>
-            <p className="text-muted-foreground">
-              342 companies across 20 HR categories — founders, funding, political money, and red flags.
+      {/* ═══ SECTION 3: Companies to Watch ═══ */}
+      <section className="py-12 px-4 border-t border-border">
+        <div className="max-w-5xl mx-auto">
+          <div className="flex items-center gap-2 mb-2">
+            <Building2 className="w-4 h-4 text-primary" />
+            <p className="tracking-[0.2em] text-primary font-mono uppercase text-sm">
+              Companies to Watch
             </p>
           </div>
-
-          <HRTechVendorDirectory />
-        </div>
-      </section>
-
-      {/* ═══ PE OWNERS ═══ */}
-      <section className="py-16 px-4 border-t border-border bg-card/50" id="pe-owners">
-        <div className="max-w-6xl mx-auto">
-          <div className="mb-8">
-            <p className="tracking-[0.2em] text-primary font-mono uppercase text-sm mb-3">
-              Who Owns the Stack
-            </p>
-            <h2 className="text-2xl md:text-3xl font-bold text-foreground mb-2">
-              The Private Equity Owners Behind HR Tech
-            </h2>
-            <p className="text-muted-foreground max-w-2xl">
-              Many HR tech companies are privately held by PE firms whose political
-              spending, labor records, and portfolio decisions are the real story.
-              The vendor and the PE firm behind it are inseparable.
-            </p>
-          </div>
+          <h2 className="text-2xl font-bold text-foreground mb-2">
+            HR tech vendors flagged by our analysis
+          </h2>
+          <p className="text-sm text-muted-foreground mb-6">
+            These companies have significant political spending, documented labor issues, or active enforcement contracts.
+          </p>
 
           <motion.div
             variants={stagger.container}
             initial="hidden"
             whileInView="show"
             viewport={{ once: true, margin: "-50px" }}
-            className="grid gap-4 sm:grid-cols-2"
+            className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3"
           >
-            {PE_OWNERS.map((pe) => (
-              <PECard key={pe.slug} pe={pe} />
-            ))}
+            {COMPANIES_TO_WATCH.map((c) => {
+              const cfg = ratingConfig[c.rating];
+              const Icon = cfg.icon;
+              return (
+                <motion.div key={c.slug} variants={stagger.item}>
+                  <Card className={`border ${cfg.border} hover:border-primary/40 transition-colors h-full`}>
+                    <CardContent className="p-4 flex flex-col h-full">
+                      <div className="flex items-center gap-2 mb-2">
+                        <Icon className={`w-4 h-4 ${cfg.color}`} />
+                        <h3 className="font-semibold text-foreground text-sm">{c.name}</h3>
+                      </div>
+                      <p className="text-[11px] font-mono text-muted-foreground uppercase tracking-wider mb-2">{c.category}</p>
+                      <p className="text-xs text-muted-foreground leading-relaxed mb-3 flex-1">{c.finding}</p>
+                      <Link
+                        to={`/search?q=${encodeURIComponent(c.name.split(" ")[0])}`}
+                        className="inline-flex items-center gap-1.5 text-xs font-medium text-primary hover:text-primary/80 transition-colors"
+                      >
+                        <Search className="w-3 h-3" />
+                        Check this company
+                        <ArrowRight className="w-3 h-3" />
+                      </Link>
+                    </CardContent>
+                  </Card>
+                </motion.div>
+              );
+            })}
           </motion.div>
         </div>
       </section>
 
-      {/* ═══ CTA / METHODOLOGY ═══ */}
-      <section className="py-16 px-4 border-t border-border">
-        <div className="max-w-3xl mx-auto text-center">
-          <p className="tracking-[0.2em] text-primary font-mono uppercase text-sm mb-3">
-            From Jackye Clayton
-          </p>
-          <h2 className="text-2xl md:text-3xl font-bold text-foreground mb-6">
-            This Isn't About Being Anti-Vendor
+      {/* ═══ LABOR MARKET CONTEXT ═══ */}
+      <section className="py-12 px-4 border-t border-border bg-card/50">
+        <div className="max-w-5xl mx-auto">
+          <div className="flex items-center gap-2 mb-2">
+            <CircleAlert className="w-4 h-4 text-primary" />
+            <p className="tracking-[0.2em] text-primary font-mono uppercase text-sm">
+              The Economic Context
+            </p>
+          </div>
+          <h2 className="text-2xl font-bold text-foreground mb-6">
+            Why this matters right now
           </h2>
-          <p className="text-muted-foreground leading-relaxed mb-6">
-            I've spent my career in HR technology. I've used most of these tools.
-            I've recommended them. Some of them are genuinely good products. But
-            being good at processing payroll doesn't mean your political lobbying
-            aligns with the people whose paychecks you process.
+          <motion.div
+            variants={stagger.container}
+            initial="hidden"
+            whileInView="show"
+            viewport={{ once: true, margin: "-50px" }}
+            className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4 mb-6"
+          >
+            {LABOR_MARKET_DATA.map((dp) => (
+              <LaborCard key={dp.label} dp={dp} />
+            ))}
+          </motion.div>
+          <p className="text-sm text-muted-foreground leading-relaxed max-w-3xl">
+            The US economy lost 92,000 jobs in February — the worst miss in years. For the first time ever recorded, more workers are struggling than thriving. One sector (healthcare) is carrying the entire economy. The tools your HR team uses are connected to all of it.
           </p>
-          <p className="text-muted-foreground leading-relaxed mb-6">
-            The question isn't whether to use HR technology — it's whether
-            you know what you're supporting when you do. When your vendor
-            lobbies to gut AI regulation while facing a class action for AI
-            discrimination, that's a choice. When your vendor's PE owner
-            spends $48 million on political campaigns while its portfolio
-            company employs children in meatpacking plants, that's a choice.
-          </p>
-          <p className="text-foreground font-semibold leading-relaxed mb-8">
-            You deserve to know what those choices are.
-          </p>
+        </div>
+      </section>
 
+      {/* ═══ PE OWNERS ═══ */}
+      <section className="py-12 px-4 border-t border-border" id="pe-owners">
+        <div className="max-w-5xl mx-auto">
+          <div className="mb-6">
+            <p className="tracking-[0.2em] text-primary font-mono uppercase text-sm mb-2">
+              Who Owns the Stack
+            </p>
+            <h2 className="text-2xl font-bold text-foreground mb-2">
+              Private equity behind your HR tools
+            </h2>
+            <p className="text-sm text-muted-foreground max-w-2xl">
+              The vendor and the PE firm behind it are inseparable. Their political spending and labor records are the real story.
+            </p>
+          </div>
+          <motion.div
+            variants={stagger.container} initial="hidden" whileInView="show"
+            viewport={{ once: true, margin: "-50px" }} className="grid gap-4 sm:grid-cols-2"
+          >
+            {PE_OWNERS.map((pe) => <PECard key={pe.slug} pe={pe} />)}
+          </motion.div>
+        </div>
+      </section>
+
+      {/* ═══ VENDOR DIRECTORY ═══ */}
+      <section className="py-12 px-4 border-t border-border bg-card/50" id="vendors">
+        <div className="max-w-5xl mx-auto">
+          <div className="mb-6">
+            <p className="tracking-[0.2em] text-primary font-mono uppercase text-sm mb-2">
+              Full Directory
+            </p>
+            <h2 className="text-2xl font-bold text-foreground mb-2">
+              HR Tech Vendor Intelligence
+            </h2>
+            <p className="text-sm text-muted-foreground">
+              342 companies across 20 HR categories — founders, funding, political money, and red flags.
+            </p>
+          </div>
+          <HRTechVendorDirectory />
+        </div>
+      </section>
+
+      {/* ═══ CTA ═══ */}
+      <section className="py-12 px-4 border-t border-border">
+        <div className="max-w-3xl mx-auto text-center">
+          <h2 className="text-2xl font-bold text-foreground mb-4">
+            This isn't about being anti-vendor. It's about being informed.
+          </h2>
+          <p className="text-muted-foreground leading-relaxed mb-6 max-w-2xl mx-auto">
+            When your vendor lobbies to gut AI regulation while facing a class action for AI discrimination, that's a choice. You deserve to know what those choices are.
+          </p>
           <div className="flex flex-col sm:flex-row gap-3 justify-center">
-            <Button
-              asChild
-              className="bg-primary text-primary-foreground hover:bg-primary/90"
-            >
-              <a href="/newsletter">See All Company Receipts</a>
+            <Button asChild className="bg-primary text-primary-foreground hover:bg-primary/90">
+              <Link to="/receipts">See All Company Receipts</Link>
             </Button>
-            <Button
-              asChild
-              variant="outline"
-              className="border-primary/30 text-primary hover:bg-primary/10"
-            >
-              <a href="/methodology">Our Methodology</a>
+            <Button asChild variant="outline" className="border-primary/30 text-primary hover:bg-primary/10">
+              <Link to="/methodology">Our Methodology</Link>
             </Button>
           </div>
         </div>
       </section>
 
       {/* ═══ METHODOLOGY NOTE ═══ */}
-      <section className="py-12 px-4 border-t border-border bg-card/30">
+      <section className="py-8 px-4 border-t border-border bg-card/30">
         <div className="max-w-4xl mx-auto">
-          <h3 className="text-sm font-semibold text-foreground mb-3">Methodology & Sources</h3>
-          <p className="text-xs text-muted-foreground leading-relaxed mb-4">
-            Vendor intelligence is compiled from public filings, OpenSecrets.org (Federal Election
-            Commission data and lobbying disclosures), NLRB case records, SEC filings, federal
-            government contract databases, and investigative reporting. Political contribution data
-            is primarily from the 2024 election cycle. Lobbying data is from Senate Office of
-            Public Records via OpenSecrets. This page is maintained by Jackye Clayton — a career
-            intelligence analyst, not a vendor.
+          <h3 className="text-sm font-semibold text-foreground mb-2">Methodology & Sources</h3>
+          <p className="text-xs text-muted-foreground leading-relaxed mb-3">
+            Vendor intelligence compiled from OpenSecrets.org, FEC data, NLRB case records, SEC filings, federal contract databases, and investigative reporting. Political contribution data primarily from the 2024 election cycle. Lobbying data from Senate Office of Public Records via OpenSecrets.
           </p>
-          <p className="text-xs text-muted-foreground leading-relaxed mb-4">
-            Labor market data from the Bureau of Labor Statistics (BLS Employment Situation Summary,
-            March 2026), Gallup Workforce Wellbeing Report (March 2026, n=22,368), ADP Research
-            Institute (March 2026), National Bureau of Economic Research Working Paper (survey of
-            ~750 CFOs), CompTIA State of the Tech Workforce 2026, and Bankrate economic analysis.
+          <p className="text-xs text-muted-foreground">
+            Last updated: March 25, 2026 · A{" "}
+            <Link to="/" className="text-primary/80 hover:text-primary">Who Do I Work For</Link>{" "}
+            investigation · by{" "}
+            <Link to="/about" className="text-primary/80 hover:text-primary">Jackye Clayton</Link>
           </p>
-          <p className="text-xs text-muted-foreground leading-relaxed">
-            Ratings are editorial assessments based on publicly available evidence. Companies
-            rated "Follow the Money" have significant political spending against worker interests,
-            anti-labor lobbying, or controversial government contracts. "Mixed/Neutral" indicates
-            typical corporate behavior. "Aligns with Workers" indicates demonstrably worker-friendly
-            practices and minimal anti-worker political activity. All sources are cited
-            and linked for independent verification.
-          </p>
-          <div className="mt-4 pt-4 border-t border-border">
-            <p className="text-xs text-muted-foreground">
-              Last updated: March 25, 2026 · A{" "}
-              <a href="/" className="text-primary/80 hover:text-primary">
-                Who Do I Work For
-              </a>{" "}
-              investigation · by{" "}
-              <a href="/about" className="text-primary/80 hover:text-primary">
-                Jackye Clayton
-              </a>
-            </p>
-          </div>
         </div>
       </section>
     </div>
