@@ -76,8 +76,7 @@ export function ApplyWithWDIWF({
           </DialogHeader>
           <div className="space-y-4 pt-2">
             <p className="text-sm text-muted-foreground leading-relaxed">
-              This creates a tracked application with employer intelligence attached.
-              You'll get a document vault for your tailored materials and ongoing status tracking.
+              Every application gets a paper trail: your documents, their record, and a timeline you control.
             </p>
 
             <div>
