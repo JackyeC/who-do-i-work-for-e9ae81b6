@@ -1,13 +1,112 @@
+import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { CauseTag, getCauseTag } from "./CauseTag";
 import { GivingShareRow } from "./GivingShareRow";
-import { ExternalLink } from "lucide-react";
+import { ExternalLink, ChevronDown, Building2, Link2, ShieldAlert } from "lucide-react";
+import { cn } from "@/lib/utils";
 
 interface PoliticalGivingCardProps {
   companyId: string;
   companyName: string;
   companySlug: string;
+}
+
+/* ─── Institutional Links Panel ─── */
+function InstitutionalLinksPanel({ links, causes }: { links: any[]; causes: Record<string, string> }) {
+  const [expandedIdx, setExpandedIdx] = useState<number | null>(null);
+
+  return (
+    <div className="rounded-xl border border-border/40 bg-card p-5">
+      <h4 className="text-sm font-semibold text-foreground mb-3">Institutional Links</h4>
+      <div className="space-y-2">
+        {links.slice(0, 6).map((link: any, i: number) => {
+          const causeLabel = causes[link.institution_name];
+          const isExpanded = expandedIdx === i;
+          const hasDetail = link.link_description || link.evidence_url || causeLabel;
+
+          return (
+            <div key={i}>
+              {hasDetail ? (
+                <button
+                  onClick={() => setExpandedIdx(isExpanded ? null : i)}
+                  className={cn(
+                    "w-full flex items-start gap-3 py-2.5 px-3 rounded-lg text-left transition-colors cursor-pointer border",
+                    isExpanded
+                      ? "bg-primary/10 border-primary/20"
+                      : "bg-transparent border-border/20 hover:bg-primary/5 hover:border-primary/15"
+                  )}
+                >
+                  <Building2 className="w-4 h-4 mt-0.5 text-primary shrink-0" />
+                  <div className="flex-1 min-w-0">
+                    <div className="flex items-center gap-2 flex-wrap">
+                      <span className="text-sm font-medium text-foreground">{link.institution_name}</span>
+                      {causeLabel && <CauseTag {...getCauseTag(causeLabel)} />}
+                    </div>
+                    <p className="text-xs text-muted-foreground mt-0.5">
+                      {link.institution_category || link.link_type || "Affiliated organization"}
+                    </p>
+                  </div>
+                  <div className="flex items-center gap-1.5 shrink-0">
+                    <span className="text-[10px] font-mono text-primary">{isExpanded ? "Hide" : "Details"}</span>
+                    <ChevronDown className={cn("w-3.5 h-3.5 text-primary transition-transform", isExpanded && "rotate-180")} />
+                  </div>
+                </button>
+              ) : (
+                <div className="flex items-start gap-3 py-2.5 px-3 border-b border-border/10 last:border-0">
+                  <Building2 className="w-4 h-4 mt-0.5 text-muted-foreground shrink-0" />
+                  <div className="flex-1 min-w-0">
+                    <span className="text-sm font-medium text-foreground">{link.institution_name}</span>
+                    <p className="text-xs text-muted-foreground mt-0.5">{link.institution_category || "Affiliated"}</p>
+                  </div>
+                  <span className="text-[10px] text-muted-foreground/60 shrink-0">Summary only</span>
+                </div>
+              )}
+
+              {isExpanded && hasDetail && (
+                <div className="ml-5 border-l border-border/30 pl-4 py-2 space-y-2 animate-in slide-in-from-top-2 duration-200">
+                  {link.link_description && (
+                    <div className="flex items-start gap-2 p-2.5 rounded bg-muted/30 border border-border/20">
+                      <Link2 className="w-3 h-3 mt-0.5 text-primary shrink-0" />
+                      <div>
+                        <p className="text-xs font-medium text-foreground">Relationship</p>
+                        <p className="text-xs text-muted-foreground">{link.link_description}</p>
+                      </div>
+                    </div>
+                  )}
+                  {causeLabel && (
+                    <div className="flex items-start gap-2 p-2.5 rounded bg-muted/30 border border-border/20">
+                      <ShieldAlert className="w-3 h-3 mt-0.5 text-primary shrink-0" />
+                      <div>
+                        <p className="text-xs font-medium text-foreground">Associated Cause</p>
+                        <p className="text-xs text-muted-foreground">{causeLabel}</p>
+                      </div>
+                    </div>
+                  )}
+                  <div className="flex items-center gap-3 pt-1">
+                    <span className="text-[10px] text-muted-foreground">
+                      {link.evidence_source || "Public Filing"} · {link.confidence === "high" ? "Verified ✓" : "Cross-Referenced"}
+                    </span>
+                    {link.evidence_url && (
+                      <a
+                        href={link.evidence_url}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        onClick={(e) => e.stopPropagation()}
+                        className="text-[10px] text-primary hover:underline flex items-center gap-1"
+                      >
+                        Source <ExternalLink className="w-3 h-3" />
+                      </a>
+                    )}
+                  </div>
+                </div>
+              )}
+            </div>
+          );
+        })}
+      </div>
+    </div>
+  );
 }
 
 export function PoliticalGivingCard({ companyId, companyName, companySlug }: PoliticalGivingCardProps) {
@@ -116,32 +215,9 @@ export function PoliticalGivingCard({ companyId, companyName, companySlug }: Pol
         )}
       </div>
 
-      {/* Sub-section 3: Institutional Links */}
+      {/* Sub-section 3: Institutional Links — Interactive */}
       {institutionalLinks.length > 0 && (
-        <div className="rounded-xl border border-border/40 bg-card p-5">
-          <h4 className="text-sm font-semibold text-foreground mb-3">Institutional Links</h4>
-          <div className="space-y-3">
-            {institutionalLinks.slice(0, 6).map((link: any, i: number) => {
-              const causeLabel = INSTITUTION_CAUSES[link.institution_name];
-              return (
-                <div key={i} className="flex items-start gap-3 py-2 border-b border-border/20 last:border-0">
-                  <div className="flex-1 min-w-0">
-                    <div className="flex items-center gap-2 flex-wrap">
-                      <span className="text-sm font-medium text-foreground">{link.institution_name}</span>
-                      {causeLabel && <CauseTag {...getCauseTag(causeLabel)} />}
-                    </div>
-                    <p className="text-xs text-muted-foreground mt-0.5">
-                      {link.link_description || `Connection: ${link.link_type}`}
-                    </p>
-                  </div>
-                  <span className="text-xs text-muted-foreground shrink-0">
-                    {link.evidence_source || "Public Filing"} · {link.confidence === "high" ? "Verified ✓" : "Cross-Referenced"}
-                  </span>
-                </div>
-              );
-            })}
-          </div>
-        </div>
+        <InstitutionalLinksPanel links={institutionalLinks} causes={INSTITUTION_CAUSES} />
       )}
 
       <GivingShareRow

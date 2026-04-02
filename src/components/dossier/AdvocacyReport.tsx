@@ -209,6 +209,81 @@ function ActiveSignalsPanel({ signalsByCategory }: { signalsByCategory: Record<s
   );
 }
 
+/* ─── Donor Signals Panel ─── */
+function DonorSignalsPanel({ donors }: { donors: DonorProfile[] }) {
+  const [expandedIdx, setExpandedIdx] = useState<number | null>(null);
+
+  return (
+    <div>
+      <p className="font-mono text-[10px] text-primary tracking-[0.3em] uppercase mb-2">Top Political Donors in Leadership</p>
+      <div className="space-y-2">
+        {donors.slice(0, 5).map((donor, i) => {
+          const isExpanded = expandedIdx === i;
+          return (
+            <div key={i}>
+              <button
+                onClick={() => setExpandedIdx(isExpanded ? null : i)}
+                className={cn(
+                  "w-full flex items-center justify-between p-3 rounded-lg text-left transition-colors cursor-pointer border",
+                  isExpanded
+                    ? "bg-primary/10 border-primary/20"
+                    : "bg-muted/10 border-border/20 hover:bg-primary/5 hover:border-primary/15"
+                )}
+              >
+                <div>
+                  <p className="text-sm font-semibold text-foreground">{donor.name}</p>
+                  {donor.aliases.length > 1 && (
+                    <p className="text-[10px] text-muted-foreground/60 font-mono">
+                      aka {donor.aliases.filter(a => a !== donor.name).join(", ")}
+                    </p>
+                  )}
+                </div>
+                <div className="flex items-center gap-2">
+                  <Badge variant="outline" className="font-mono text-xs">{fmtMoney(donor.total_donated)} donated</Badge>
+                  <span className="text-[10px] font-mono text-primary">{isExpanded ? "Hide" : "Details"}</span>
+                  <ChevronDown className={cn("w-4 h-4 text-primary transition-transform", isExpanded && "rotate-180")} />
+                </div>
+              </button>
+
+              {isExpanded && (
+                <div className="ml-4 border-l border-border/30 pl-4 py-3 space-y-2 animate-in slide-in-from-top-2 duration-200">
+                  <div className="flex items-start gap-2 p-2.5 rounded bg-muted/30 border border-border/20">
+                    <DollarSign className="w-3.5 h-3.5 mt-0.5 text-primary shrink-0" />
+                    <div className="flex-1 min-w-0">
+                      <p className="text-xs font-medium text-foreground">Total Disclosed Giving</p>
+                      <p className="text-xs text-muted-foreground">{fmtMoney(donor.total_donated)} in FEC-reported individual contributions</p>
+                    </div>
+                  </div>
+                  {donor.top_recipient && (
+                    <div className="flex items-start gap-2 p-2.5 rounded bg-muted/30 border border-border/20">
+                      <Users className="w-3.5 h-3.5 mt-0.5 text-primary shrink-0" />
+                      <div className="flex-1 min-w-0">
+                        <p className="text-xs font-medium text-foreground">Top Recipient</p>
+                        <p className="text-xs text-muted-foreground">{donor.top_recipient}</p>
+                      </div>
+                    </div>
+                  )}
+                  <div className="flex items-center gap-2 pt-1">
+                    <a
+                      href={donor.raw_fec_link}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      onClick={(e) => e.stopPropagation()}
+                      className="text-[10px] text-primary hover:underline flex items-center gap-1"
+                    >
+                      Full FEC record <ExternalLink className="w-3 h-3" />
+                    </a>
+                  </div>
+                </div>
+              )}
+            </div>
+          );
+        })}
+      </div>
+    </div>
+  );
+}
+
 /* ─── Main Component ─── */
 export function AdvocacyReport({ company, executives = [], contracts = [], issueSignals = [], publicStances = [], eeocCases = [] }: AdvocacyReportProps) {
   const [decoderOpen, setDecoderOpen] = useState(false);
@@ -387,31 +462,7 @@ export function AdvocacyReport({ company, executives = [], contracts = [], issue
         <SectionDivider number={7} icon={Megaphone} title="Political Activity" subtitle="PAC spending, lobbying, and executive contributions" />
         <div className="pl-11 space-y-4">
           {dedupedDonors.length > 0 && (
-            <div>
-              <p className="font-mono text-[10px] text-primary tracking-[0.3em] uppercase mb-2">Top Political Donors in Leadership</p>
-              <div className="space-y-2">
-                {dedupedDonors.slice(0, 5).map((donor, i) => (
-                  <div key={i} className="flex items-center justify-between p-3 bg-muted/10 border border-border/20">
-                    <div>
-                      <p className="text-sm font-semibold text-foreground">{donor.name}</p>
-                      {donor.aliases.length > 1 && (
-                        <p className="text-[10px] text-muted-foreground/60 font-mono">
-                          aka {donor.aliases.filter(a => a !== donor.name).join(", ")}
-                        </p>
-                      )}
-                    </div>
-                    <div className="flex items-center gap-2">
-                      <Badge variant="outline" className="font-mono text-xs">{fmtMoney(donor.total_donated)} donated</Badge>
-                      <a href={donor.raw_fec_link} target="_blank" rel="noopener noreferrer">
-                        <Button variant="ghost" size="sm" className="h-7 text-xs gap-1 text-primary">
-                          <ExternalLink className="w-3 h-3" /> View Receipt
-                        </Button>
-                      </a>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            </div>
+            <DonorSignalsPanel donors={dedupedDonors} />
           )}
           <PoliticalGivingCard companyId={company.id} companyName={company.name} companySlug={company.slug} />
         </div>
