@@ -489,7 +489,8 @@ export default function CompanyProfile() {
             />
           )}
 
-
+          {/* ═══════════════════════════════════════════════════════
+              1.5 VALUES-SIGNAL MATCH (personalized)
              ═══════════════════════════════════════════════════════ */}
           <ValuesSignalMatch
             hasLayoffSignals={false}
