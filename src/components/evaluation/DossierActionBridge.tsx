@@ -9,6 +9,10 @@ interface Props {
   companyName: string;
   companySlug: string;
   alignmentScore: number;
+  civicScore?: number;
+  hasLayoffs?: boolean;
+  hasEEOC?: boolean;
+  hasPoliticalSpending?: boolean;
 }
 
 /**
