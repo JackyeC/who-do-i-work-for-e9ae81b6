@@ -1,5 +1,6 @@
 import { useSignalStories, useDailyWrap } from "@/hooks/use-signal-stories";
 import { SignalStoryCard } from "@/components/work-signal/SignalStoryCard";
+import { EnforcementReceiptsTicker } from "@/components/work-signal/EnforcementReceiptsTicker";
 import { Skeleton } from "@/components/ui/skeleton";
 import { format } from "date-fns";
 import workSignalLogo from "@/assets/work-signal-logo.png";
@@ -10,6 +11,8 @@ export default function WorkSignalFeed() {
 
   return (
     <div className="min-h-screen bg-background">
+      {/* Enforcement Receipts Ticker */}
+      <EnforcementReceiptsTicker />
       {/* Masthead — editorial magazine feel */}
       <header className="border-b border-border bg-card">
         <div className="max-w-2xl mx-auto px-4 py-10 text-center">
