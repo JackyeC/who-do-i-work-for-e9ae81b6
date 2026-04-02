@@ -66,7 +66,7 @@ export function isLikelyEnglish(text: string): boolean {
     // German
     /\b(und|der|die|das|ein|eine|für|mit|auf|ist|von|nicht|sich|werden|haben|über|oder|aber)\b/gi,
     // Italian
-    /\b(anche|perché|governo|lavoro|nuovo|possono|dopo|durante|questa|hanno|sono|fare|come|molto)\b/gi,
+    /\b(anche|perché|governo|lavoro|nuovo|possono|dopo|durante|questa|hanno|sono|fare|come|molto|strumento|sviluppare|sempre|nostro|talento|provincia|quotidiano)\b/gi,
   ];
 
   // Count how many romance-language marker patterns match
@@ -82,6 +82,10 @@ export function isLikelyEnglish(text: string): boolean {
   const germanConnectives = (lower.match(/\b(der|die|das|und|für|mit|auf|ist|von|nicht)\b/g) || []).length;
   if (germanConnectives >= 4) return false;
 
+  // Catch Italian connective-heavy text
+  const italianConnectives = (lower.match(/\b(il|la|le|lo|di|del|della|dei|per|che|non|con|una|più|nel|sul)\b/g) || []).length;
+  if (italianConnectives >= 4) return false;
+
   return true;
 }
 
@@ -93,6 +97,8 @@ const NON_US_SOURCES = new Set([
   "itnewsonline.com", "bbc.co.uk", "theguardian.com",
   "g1.globo.com", "globo.com", "uol.com.br", "folha.uol.com.br",
   "lemonde.fr", "elpais.com", "spiegel.de", "corriere.it",
+  "ideawebtv.it", "repubblica.it", "ilsole24ore.com",
+  "lefigaro.fr", "welt.de", "bild.de", "nrc.nl", "dn.se",
 ]);
 
 // Keywords that indicate US or employer relevance
