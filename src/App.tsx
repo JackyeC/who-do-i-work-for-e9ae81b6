@@ -340,6 +340,7 @@ const App = () => (
           </BrowserRouter>
         </TooltipProvider>
         </SourceDrawerProvider>
+        </EvaluationProvider>
         </DossierLensProvider>
         </ViewModeProvider>
         </DemoSafeModeProvider>
