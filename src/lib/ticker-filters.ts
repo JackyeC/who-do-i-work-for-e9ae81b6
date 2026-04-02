@@ -79,6 +79,8 @@ const NON_US_SOURCES = new Set([
   "demokraatti.fi", "di.se", "etnews.com", "sunstar.com.ph",
   "ilonggotechblog.com", "terra.com.br", "channelnewsasia.com",
   "itnewsonline.com", "bbc.co.uk", "theguardian.com",
+  "g1.globo.com", "globo.com", "uol.com.br", "folha.uol.com.br",
+  "lemonde.fr", "elpais.com", "spiegel.de", "corriere.it",
 ]);
 
 // Keywords that indicate US or employer relevance

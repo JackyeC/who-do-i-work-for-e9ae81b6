@@ -1,0 +1,2 @@
+DELETE FROM receipts_enriched WHERE work_news_id IN ('0bc6bc57-af7c-4dc6-b8e8-2329a359e2f0', '28f73532-3a92-453c-a12a-375fcf4534d2');
+DELETE FROM work_news WHERE id IN ('0bc6bc57-af7c-4dc6-b8e8-2329a359e2f0', '28f73532-3a92-453c-a12a-375fcf4534d2');
