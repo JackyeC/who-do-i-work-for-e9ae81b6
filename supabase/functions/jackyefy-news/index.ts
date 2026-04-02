@@ -94,7 +94,24 @@ function isEnglishAndRelevant(headline: string): boolean {
 function isExcludedSource(sourceUrl: string | null, sourceName: string | null): boolean {
   if (!sourceUrl && !sourceName) return false;
   const combined = `${sourceUrl ?? ""} ${sourceName ?? ""}`.toLowerCase();
-  return EXCLUDE_DOMAINS.some(d => combined.includes(d));
+  // Exact domain match
+  for (const d of EXCLUDE_DOMAINS) {
+    if (combined.includes(d)) return true;
+  }
+  // TLD-based blocking
+  const domain = (sourceName || "").toLowerCase().trim();
+  for (const tld of BLOCKED_TLDS) {
+    if (domain.endsWith(tld)) return true;
+  }
+  if (sourceUrl) {
+    try {
+      const urlDomain = new URL(sourceUrl).hostname.replace("www.", "");
+      for (const tld of BLOCKED_TLDS) {
+        if (urlDomain.endsWith(tld)) return true;
+      }
+    } catch { /* ignore */ }
+  }
+  return false;
 }
 
 interface WorkNewsStory {
