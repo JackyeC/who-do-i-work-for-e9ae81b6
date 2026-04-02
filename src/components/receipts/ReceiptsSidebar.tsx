@@ -47,10 +47,10 @@ export function ReceiptsSidebar({ hotArticles }: ReceiptsSidebarProps) {
           </p>
         </blockquote>
         <Link
-          to="/join"
+          to="/newsletter"
           className="block bg-primary text-primary-foreground font-extrabold py-3.5 rounded-lg text-center text-base tracking-[0.08em] no-underline hover:opacity-90 transition-opacity"
         >
-          Subscribe → WDIWF
+          Subscribe → Daily Briefing
         </Link>
       </div>
 
