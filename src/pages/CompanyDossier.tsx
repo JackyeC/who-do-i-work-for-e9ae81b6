@@ -5,6 +5,7 @@ import { HardInterviewQuestions } from "@/components/dossier/HardInterviewQuesti
 import { useParams, Link, useNavigate } from "react-router-dom";
 import { CompanyZeroState } from "@/components/CompanyZeroState";
 import { OfferIntelligencePanel } from "@/components/company/OfferIntelligencePanel";
+import { WarnFilingsCard } from "@/components/company/WarnFilingsCard";
 import { useQuery } from "@tanstack/react-query";
 import { usePageSEO } from "@/hooks/use-page-seo";
 import { getOGImageUrl } from "@/lib/social-share";
