@@ -81,7 +81,7 @@ export function ApplyDrawer({
     queryFn: async () => {
       const { data, error } = await supabase
         .from("company_jobs")
-        .select("id, title, location, salary_range, employment_type, posted_at, external_url")
+        .select("id, title, location, salary_range, employment_type, posted_at, url")
         .eq("company_id", companyId)
         .eq("is_active", true)
         .order("posted_at", { ascending: false })
@@ -105,7 +105,7 @@ export function ApplyDrawer({
         job_id: job.id,
         job_title: job.title,
         company_name: companyName,
-        application_link: job.external_url || undefined,
+        application_link: job.url || undefined,
         alignment_score: alignmentScore,
         status: "Considering",
       },
@@ -255,12 +255,12 @@ export function ApplyDrawer({
                           Track Application
                         </Button>
                       )}
-                      {job.external_url && (
+                      {job.url && (
                         <Button
                           size="sm"
                           variant="ghost"
                           className="text-xs gap-1 h-7"
-                          onClick={() => window.open(job.external_url, "_blank")}
+                          onClick={() => window.open(job.url, "_blank")}
                         >
                           <Eye className="w-3 h-3" />
                           View
