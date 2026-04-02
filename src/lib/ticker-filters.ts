@@ -19,7 +19,8 @@ export function decodeEscapes(text: string): string {
 
 /**
  * Heuristic: reject text that contains significant non-ASCII-Latin characters
- * (CJK, Cyrillic, Arabic, Devanagari, Thai, Finnish/Swedish diacritics in bulk, etc.)
+ * or is in a non-English romance/European language.
+ * Fails closed: if uncertain, returns false.
  */
 export function isLikelyEnglish(text: string): boolean {
   if (!text || text.trim().length < 3) return false;
@@ -39,6 +40,35 @@ export function isLikelyEnglish(text: string): boolean {
   // Basic ASCII ratio: if less than 75% of chars are basic ASCII letters/digits/punctuation, reject (fail closed)
   const asciiChars = text.match(/[\x20-\x7E]/g);
   if (!asciiChars || asciiChars.length / text.length < 0.75) return false;
+
+  // Detect common Portuguese, Spanish, French, German, Italian words
+  // These catch headlines like "O país da Europa que promete milhares de empregos"
+  const lower = text.toLowerCase();
+  const ROMANCE_MARKERS = [
+    // Portuguese
+    /\b(país|empregos?|brasileiros?|trabalho|governo|milhares|milhões|sobre|também|ainda|porque|segundo|durante|vistos?|semanas?|promete|saem)\b/,
+    // Spanish
+    /\b(según|porque|también|durante|gobierno|trabajo|empleos?|millones|sobre|nuevo|puede|después|mientras|están|tienen|desde)\b/,
+    // French
+    /\b(aussi|parce que|gouvernement|travail|emplois?|nouveau|peuvent|après|pendant|depuis|cette|avoir|sont|faire|comme)\b/,
+    // German
+    /\b(und|der|die|das|ein|eine|für|mit|auf|ist|von|nicht|sich|werden|haben|über|oder|aber)\b/,
+    // Italian
+    /\b(anche|perché|governo|lavoro|nuovo|possono|dopo|durante|questa|hanno|sono|fare|come|molto)\b/,
+  ];
+
+  // Count how many romance-language marker patterns match
+  let romanceHits = 0;
+  for (const pattern of ROMANCE_MARKERS) {
+    const matches = lower.match(pattern);
+    if (matches) romanceHits += matches.length;
+  }
+  // If 3+ romance-language words found, likely not English
+  if (romanceHits >= 3) return false;
+
+  // Also catch German connective-heavy text (der/die/das/und pattern)
+  const germanConnectives = (lower.match(/\b(der|die|das|und|für|mit|auf|ist|von|nicht)\b/g) || []).length;
+  if (germanConnectives >= 4) return false;
 
   return true;
 }
