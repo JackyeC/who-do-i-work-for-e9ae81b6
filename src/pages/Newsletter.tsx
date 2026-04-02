@@ -641,13 +641,13 @@ export default function Newsletter() {
         <aside className="hidden lg:block sticky top-[74px] space-y-6">
           {/* Newsletter CTA */}
           <div className="bg-card border border-border rounded-xl p-6">
-            <p className="text-[9px] uppercase tracking-[0.55em] text-primary mb-3 font-mono">Every Friday</p>
+            <p className="text-[11px] uppercase tracking-[0.55em] text-primary mb-3 font-mono">Every Friday</p>
             <h3 className="text-xl font-black text-foreground mb-2 leading-tight tracking-tight">My Uncertainty Era</h3>
-            <p className="text-sm text-muted-foreground leading-relaxed mb-4">
+            <p className="text-sm text-foreground/70 leading-relaxed mb-4">
               The part where I say what everyone's thinking but nobody's saying.
             </p>
             <blockquote className="border-l-2 border-primary pl-3.5 mb-5">
-              <p className="text-sm text-foreground leading-relaxed italic font-light">
+              <p className="text-sm text-foreground/80 leading-relaxed italic font-light">
                 "Every company has a 'people are our greatest asset' poster. Most hang next to a layoff plan."
               </p>
             </blockquote>
@@ -659,14 +659,14 @@ export default function Newsletter() {
 
           {/* Hottest Takes */}
           <div className="bg-card border border-border rounded-xl p-5">
-            <p className="text-[9px] uppercase tracking-[0.55em] text-primary mb-3.5 font-mono">🔥 Hottest Right Now</p>
+            <p className="text-[11px] uppercase tracking-[0.55em] text-primary mb-3.5 font-mono">🔥 Hottest Right Now</p>
             {hotStories.slice(0, 4).map((article) => (
               <div key={article.id} className="pb-3 mb-3 border-b border-border last:border-none last:mb-0 last:pb-0">
                 <div className="flex items-center gap-2 mb-1.5">
-                  <Badge variant="outline" className={`text-[9px] font-mono tracking-wider border ${getCategoryConfig(article.category).color}`}>
+                  <Badge variant="outline" className={`text-[10px] font-mono tracking-wider border ${getCategoryConfig(article.category).color}`}>
                     {getCategoryConfig(article.category).label}
                   </Badge>
-                  <span className="text-[9px] text-muted-foreground/50 font-mono">{timeAgo(article.published_at)}</span>
+                  <span className="text-[10px] text-foreground/50 font-mono">{timeAgo(article.published_at)}</span>
                 </div>
                 <p className="text-sm font-semibold text-foreground leading-snug">{article.headline}</p>
               </div>
@@ -675,11 +675,11 @@ export default function Newsletter() {
 
           {/* What to Watch */}
           <div className="rounded-xl p-5 border" style={{ background: "hsl(var(--primary) / 0.04)", borderColor: "hsl(var(--primary) / 0.15)" }}>
-            <p className="text-[9px] uppercase tracking-[0.55em] text-primary mb-3 font-mono">👀 What to Watch</p>
-            <p className="text-xs text-muted-foreground leading-relaxed mb-3">
+            <p className="text-[11px] uppercase tracking-[0.55em] text-primary mb-3 font-mono">👀 What to Watch</p>
+            <p className="text-sm text-foreground/70 leading-relaxed mb-3">
               Stories still developing. Patterns forming. Receipts being pulled.
             </p>
-            <Link to="/receipts" className="text-xs text-primary font-mono hover:underline flex items-center gap-1">
+            <Link to="/receipts" className="text-sm text-primary font-mono hover:underline flex items-center gap-1">
               See all investigations <ArrowRight className="w-3 h-3" />
             </Link>
           </div>
