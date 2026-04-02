@@ -11,6 +11,40 @@ export type CardCategory = "receipt" | "person" | "claim" | "signal" | "network"
 export type ConnectorType = "solid" | "dashed" | "dotted" | "double" | "wavy";
 export type ConfidenceState = "verified" | "partial" | "emerging" | "unverified";
 
+/** Bar chart data for receipt/signal cards */
+export interface BarDatum {
+  label: string;
+  value: number;
+  color?: string;
+}
+
+/** Stats badges like CongressWatch's "$36.2M  258  271" row */
+export interface StatBadge {
+  label: string;
+  value: string;
+  color?: string;
+}
+
+/** Person-specific metadata for profile-style cards */
+export interface PersonMeta {
+  role: string;
+  org: string;
+  photoInitials: string;     // Fallback initials for avatar
+  compensation?: string;
+  priorRole?: string;
+  stats: StatBadge[];
+  barData?: BarDatum[];
+}
+
+/** Receipt/signal enrichment data */
+export interface DataViz {
+  headline?: string;         // Big dollar or stat number
+  headlineLabel?: string;
+  stats?: StatBadge[];
+  bars?: BarDatum[];
+  breakdown?: { label: string; value: string; highlight?: boolean }[];
+}
+
 export interface EvidenceCard {
   id: string;
   category: CardCategory;
@@ -19,12 +53,15 @@ export interface EvidenceCard {
   whyItMatters: string;
   icon: string;
   confidence: ConfidenceState;
-  paths: InvestigationPath[];     // Which paths unlock this card
+  paths: InvestigationPath[];
   act: 1 | 2 | 3;
   position?: { x: number; y: number };
-  connectedTo?: string[];         // IDs of connected cards
+  connectedTo?: string[];
   isRevealed: boolean;
-  revealFragmentId?: string;      // Links to archetype fragment
+  revealFragmentId?: string;
+  // Enrichment
+  personMeta?: PersonMeta;
+  dataViz?: DataViz;
 }
 
 export interface CardConnection {
