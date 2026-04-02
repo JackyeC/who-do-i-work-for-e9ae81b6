@@ -3,6 +3,7 @@ import { useParams, Link, useNavigate } from "react-router-dom";
 import { useCompanyIntelligence } from "@/hooks/use-company-intelligence";
 import { motion } from "framer-motion";
 import { Building2, ArrowLeft, EyeOff, Loader2, Sparkles, Search, Scan, ExternalLink, FileSearch } from "lucide-react";
+import { AccountabilitySignalsLayer } from "@/components/dossier/AccountabilitySignalsLayer";
 import { AuditRequestForm } from "@/components/AuditRequestForm";
 import { OfferIntelligencePanel } from "@/components/company/OfferIntelligencePanel";
 import { WarnFilingsCard } from "@/components/company/WarnFilingsCard";
