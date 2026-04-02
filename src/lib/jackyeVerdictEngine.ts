@@ -247,9 +247,9 @@ function generateJackyeTake(
 
   // ── Layoff timing — direct, human-centered ──
   if (layoff.daysSinceLastLayoff !== null && layoff.daysSinceLastLayoff <= 90) {
-    parts.push(`They cut people ${layoff.daysSinceLastLayoff} days ago. That wound is still open. The team you'd join hasn't finished grieving the colleagues they lost. Ask about it directly and watch their body language — not their talking points.`);
+    parts.push(`They reduced headcount ${layoff.daysSinceLastLayoff} days ago. The team you would be joining has not finished processing that. Ask about it directly and observe how they respond — not the talking points, the body language.`);
   } else if (layoff.daysSinceLastLayoff !== null && layoff.daysSinceLastLayoff <= 180) {
-    parts.push("Cuts within six months. The org chart may have stabilized, but the trust hasn't. Ask whether your role existed before the layoffs, and whether the person who had it got a real transition — or a calendar invite.");
+    parts.push("Reductions within six months. The org chart may have stabilized, but institutional trust has not. Ask whether your role existed before the cuts, and whether the person who held it received a genuine transition.");
   }
 
   // ── 3. The 'Jackye' Closing — punchy, specific, never "do more research" ──
