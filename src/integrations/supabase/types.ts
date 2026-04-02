@@ -1835,6 +1835,59 @@ export type Database = {
           },
         ]
       }
+      company_community_signals: {
+        Row: {
+          badge_label: string
+          company_id: string
+          created_at: string
+          detail: string | null
+          fetched_at: string
+          id: string
+          label: string
+          numeric_value: number | null
+          signal_type: string
+          source: string
+          source_url: string | null
+          value: string | null
+        }
+        Insert: {
+          badge_label?: string
+          company_id: string
+          created_at?: string
+          detail?: string | null
+          fetched_at?: string
+          id?: string
+          label: string
+          numeric_value?: number | null
+          signal_type: string
+          source: string
+          source_url?: string | null
+          value?: string | null
+        }
+        Update: {
+          badge_label?: string
+          company_id?: string
+          created_at?: string
+          detail?: string | null
+          fetched_at?: string
+          id?: string
+          label?: string
+          numeric_value?: number | null
+          signal_type?: string
+          source?: string
+          source_url?: string | null
+          value?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "company_community_signals_company_id_fkey"
+            columns: ["company_id"]
+            isOneToOne: false
+            referencedRelation: "companies"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       company_corporate_claims: {
         Row: {
           approved_at: string | null
