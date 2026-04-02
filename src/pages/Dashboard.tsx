@@ -41,7 +41,7 @@ const TAB_TITLES: Record<string, string> = {
   values: "My Values Profile",
   how: "How Do I Get There?",
   outreach: "Outreach Intelligence",
-  tracker: "Application Tracker",
+  tracker: "My Applications",
   "auto-apply": "Auto-Apply",
   relationships: "Relationship Intelligence",
   offers: "My Offer Checks",
