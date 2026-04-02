@@ -107,6 +107,10 @@ export function isLikelyEnglish(text: string): boolean {
   const italianConnectives = (lower.match(/\b(il|la|le|lo|di|del|della|dei|per|che|non|con|una|più|nel|sul)\b/g) || []).length;
   if (italianConnectives >= 4) return false;
 
+  // Catch Swedish/Nordic connective-heavy text
+  const nordicConnectives = (lower.match(/\b(och|att|det|för|som|med|har|kan|inte|vara|eller|från|efter|denna|till)\b/g) || []).length;
+  if (nordicConnectives >= 3) return false;
+
   return true;
 }
 
