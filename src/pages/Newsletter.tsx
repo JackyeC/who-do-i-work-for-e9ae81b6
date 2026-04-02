@@ -37,7 +37,6 @@ function getCategoryConfig(cat: string) {
   return CATEGORY_CONFIG[cat] || CATEGORY_CONFIG.general;
 }
 
-/* ── Why this matters (category-based) ── */
 const WHY_IT_MATTERS: Record<string, string[]> = {
   regulation: [
     "Regulatory shifts can change hiring practices, benefits, and workplace rights overnight.",
@@ -85,7 +84,6 @@ function getWhyItMatters(category: string, isControversy: boolean): string[] {
   return base;
 }
 
-/* ── Time helpers ── */
 function timeAgo(dateStr: string | null) {
   if (!dateStr) return "";
   const diff = Date.now() - new Date(dateStr).getTime();
@@ -97,7 +95,6 @@ function timeAgo(dateStr: string | null) {
   return `${days}d ago`;
 }
 
-/* ── Spice meter ── */
 function spiceLevel(article: WorkNewsArticle): number {
   let score = 1;
   if (article.is_controversy) score += 2;
@@ -116,7 +113,6 @@ function SpiceMeter({ level }: { level: number }) {
   );
 }
 
-/* ── Filter options ── */
 const FILTER_OPTIONS = [
   { value: "all", label: "All" },
   { value: "layoffs", label: "Layoffs" },
@@ -133,15 +129,13 @@ function LeadStory({ article }: { article: WorkNewsArticle }) {
   const spice = spiceLevel(article);
   const sourceProfile = article.source_name ? getSourceProfile(article.source_name) : null;
   const biasColor = sourceProfile ? getBiasColor(sourceProfile.bias) : "";
-
   const whyMatters = getWhyItMatters(article.category, article.is_controversy);
 
   return (
     <article id={`story-${article.id}`} className="rounded-2xl border border-border/50 bg-card overflow-hidden hover:border-primary/30 transition-all group scroll-mt-24">
-      {/* Top accent bar */}
       <div className="h-1 bg-gradient-to-r from-primary via-primary/60 to-transparent" />
-      <div className="p-6 lg:p-8">
-        <div className="flex items-center gap-3 mb-4">
+      <div className="p-8 lg:p-10">
+        <div className="flex items-center gap-3 mb-5">
           <Badge variant="outline" className={`text-[10px] font-mono tracking-wider border ${cat.color}`}>
             {cat.label}
           </Badge>
@@ -153,35 +147,33 @@ function LeadStory({ article }: { article: WorkNewsArticle }) {
           <span className="ml-auto text-[10px] text-muted-foreground/60 font-mono">{timeAgo(article.published_at)}</span>
         </div>
 
-        <h2
-          className="text-foreground leading-tight mb-4 group-hover:text-primary transition-colors font-bold"
-          style={{ fontSize: "clamp(22px, 2.5vw, 32px)", fontFamily: "Georgia, 'Times New Roman', serif" }}
-        >
+        <h2 className="text-foreground leading-[1.08] mb-6 group-hover:text-primary transition-colors font-black uppercase tracking-[-0.03em]"
+          style={{ fontSize: "clamp(26px, 3vw, 42px)" }}>
           {article.headline}
         </h2>
 
         {/* Jackye's Take */}
         {article.jackye_take && (
-          <div className="rounded-xl bg-primary/5 border border-primary/15 p-5 mb-4">
-            <div className="flex items-center gap-2 mb-2.5">
+          <div className="rounded-xl bg-primary/5 border border-primary/15 p-6 mb-5">
+            <div className="flex items-center gap-2 mb-3">
               <Eye className="w-3.5 h-3.5 text-primary" />
               <span className="text-[10px] font-bold text-primary tracking-[0.15em] uppercase font-mono">Jackye's Take</span>
             </div>
-            <p className="text-sm text-foreground/90 leading-relaxed italic" style={{ fontFamily: "Georgia, 'Times New Roman', serif" }}>
+            <p className="text-base text-foreground/90 leading-[1.8] italic font-light">
               "{article.jackye_take}"
             </p>
           </div>
         )}
 
         {/* Why This Matters */}
-        <div className="rounded-lg bg-muted/30 border border-border/30 p-4 mb-4">
-          <div className="flex items-center gap-2 mb-2.5">
+        <div className="rounded-lg bg-muted/30 border border-border/30 p-5 mb-5">
+          <div className="flex items-center gap-2 mb-3">
             <TrendingUp className="w-3.5 h-3.5 text-primary" />
             <span className="text-[10px] font-bold text-primary tracking-[0.15em] uppercase font-mono">Why This Matters for You</span>
           </div>
-          <ul className="space-y-1.5">
+          <ul className="space-y-2">
             {whyMatters.map((point, idx) => (
-              <li key={idx} className="flex items-start gap-2 text-sm text-muted-foreground leading-relaxed">
+              <li key={idx} className="flex items-start gap-2.5 text-sm text-muted-foreground leading-relaxed">
                 <span className="text-primary mt-1 shrink-0">·</span>
                 {point}
               </li>
@@ -189,8 +181,7 @@ function LeadStory({ article }: { article: WorkNewsArticle }) {
           </ul>
         </div>
 
-        {/* Footer / Source */}
-        <div className="flex items-center justify-between pt-3 border-t border-border/20">
+        <div className="flex items-center justify-between pt-4 border-t border-border/20">
           <div className="flex items-center gap-3">
             {article.source_name && (
               <span className={`text-xs font-medium ${biasColor || "text-muted-foreground"}`}>{article.source_name}</span>
@@ -215,7 +206,6 @@ function StoryCard({ article }: { article: WorkNewsArticle }) {
   const spice = spiceLevel(article);
   const sourceProfile = article.source_name ? getSourceProfile(article.source_name) : null;
   const biasColor = sourceProfile ? getBiasColor(sourceProfile.bias) : "";
-
   const whyMatters = getWhyItMatters(article.category, article.is_controversy);
 
   return (
@@ -229,7 +219,7 @@ function StoryCard({ article }: { article: WorkNewsArticle }) {
           <span className="ml-auto text-[10px] text-muted-foreground/60 font-mono">{timeAgo(article.published_at)}</span>
         </div>
 
-        <h3 className="text-[15px] font-semibold text-foreground leading-snug mb-3 group-hover:text-primary transition-colors">
+        <h3 className="text-[15px] font-bold text-foreground leading-snug mb-3 group-hover:text-primary transition-colors">
           {article.headline}
         </h3>
 
@@ -243,7 +233,6 @@ function StoryCard({ article }: { article: WorkNewsArticle }) {
           </div>
         )}
 
-        {/* Why This Matters */}
         <div className="rounded-lg bg-muted/20 border border-border/20 p-3 mb-3">
           <div className="flex items-center gap-1.5 mb-1.5">
             <TrendingUp className="w-3 h-3 text-primary" />
@@ -302,10 +291,9 @@ function WireItem({ article }: { article: WorkNewsArticle }) {
           {article.is_controversy && <AlertTriangle className="w-3 h-3 text-destructive" />}
           <span className="ml-auto text-[10px] text-muted-foreground/50 font-mono">{timeAgo(article.published_at)}</span>
         </div>
-        <p className="text-sm font-medium text-foreground leading-snug flex-1 group-hover:text-primary transition-colors mb-2">
+        <p className="text-sm font-semibold text-foreground leading-snug flex-1 group-hover:text-primary transition-colors mb-2">
           {article.headline}
         </p>
-        {/* Compact why it matters */}
         <p className="text-[11px] text-muted-foreground leading-relaxed mb-2">
           {whyMatters[0]}
         </p>
@@ -339,7 +327,6 @@ export default function Newsletter() {
   const { data: articles = [], isLoading } = useWorkNews(60);
   const location = useLocation();
 
-  // Scroll to story anchor on hash navigation
   useEffect(() => {
     if (location.hash && !isLoading) {
       const id = location.hash.replace("#", "");
@@ -403,29 +390,24 @@ export default function Newsletter() {
     resetToken();
   };
 
-  /* ── Filter + segment logic ── */
   const filtered = filter === "all"
     ? articles
     : filter === "controversy"
       ? articles.filter((a) => a.is_controversy)
       : articles.filter((a) => a.category === filter);
 
-  /* Moving now: stories from last 2 hours */
   const movingNow = useMemo(() => {
     const twoHoursAgo = Date.now() - 2 * 60 * 60 * 1000;
     return articles.filter((a) => a.published_at && new Date(a.published_at).getTime() >= twoHoursAgo).slice(0, 3);
   }, [articles]);
 
-  /* Featured Jackye take (latest with take) */
   const currentTake = useMemo(() => {
     return articles.find((a) => a.jackye_take);
   }, [articles]);
 
-  /* Stories with takes = featured */
   const withTakes = filtered.filter((a) => a.jackye_take);
   const withoutTakes = filtered.filter((a) => !a.jackye_take);
 
-  /* Hot stories */
   const hotStories = useMemo(() => {
     return [...articles]
       .sort((a, b) => spiceLevel(b) - spiceLevel(a))
@@ -439,31 +421,31 @@ export default function Newsletter() {
 
       {/* ── Masthead ── */}
       <header className="border-b border-border">
-        <div className="max-w-[780px] mx-auto text-center py-12 lg:py-16 px-6">
-          <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-destructive/10 border border-destructive/20 mb-6">
+        <div className="max-w-[820px] mx-auto text-center py-14 lg:py-20 px-6">
+          <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-destructive/10 border border-destructive/20 mb-8">
             <Radio className="w-3.5 h-3.5 text-destructive animate-pulse" />
             <span className="text-[10px] font-mono tracking-[0.2em] text-destructive uppercase">Live Intelligence · Updated Every 2 Hours</span>
           </div>
 
-          <p className="text-[10px] uppercase tracking-[0.55em] text-primary mb-4 font-mono">JRC EDIT × WDIWF</p>
-          <h1
-            className="font-black text-foreground leading-none uppercase"
-            style={{ fontSize: "clamp(42px, 5.5vw, 72px)", letterSpacing: "-0.025em", fontFamily: "Georgia, 'Times New Roman', serif" }}
-          >
+          <p className="text-[10px] uppercase tracking-[0.55em] text-primary mb-5 font-mono">JRC EDIT × WDIWF</p>
+          
+          <h1 className="font-black text-foreground leading-none uppercase tracking-[-0.04em]"
+            style={{ fontSize: "clamp(48px, 7vw, 88px)" }}>
             The Receipts
           </h1>
-          <p className="font-light text-muted-foreground italic mt-4" style={{ fontSize: "clamp(18px, 2vw, 26px)" }}>
+          
+          <p className="font-light text-muted-foreground mt-5 tracking-wide" style={{ fontSize: "clamp(18px, 2vw, 26px)" }}>
             The world of work. Documented.
           </p>
-          <p className="text-sm text-foreground/80 mt-3">
+          <p className="text-sm text-foreground/80 mt-4 max-w-md mx-auto leading-relaxed">
             I pull the receipts so you don't have to.{" "}
-            <span className="text-primary font-medium">They always leave something out.</span>
+            <span className="text-primary font-semibold">They always leave something out.</span>
           </p>
 
-          <div className="w-[52px] h-0.5 bg-primary mx-auto my-6" />
+          <div className="w-16 h-[2px] bg-primary mx-auto my-8" />
 
           {/* ── Subscribe Bar ── */}
-          <div className="mt-6 mb-4">
+          <div className="mt-8 mb-4">
             {status === "success" ? (
               <motion.div initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }}
                 className="flex items-center justify-center gap-2.5 text-primary font-semibold text-base py-4">
@@ -480,7 +462,7 @@ export default function Newsletter() {
                     value={email}
                     onChange={(e) => { setEmail(e.target.value); setStatus("idle"); }}
                     placeholder="you@company.com"
-                    className="flex-1 bg-transparent px-3 py-4 text-sm text-foreground placeholder:text-muted-foreground/50 focus:outline-none font-sans"
+                    className="flex-1 bg-transparent px-3 py-4 text-sm text-foreground placeholder:text-muted-foreground/50 focus:outline-none"
                     disabled={status === "loading"}
                   />
                   <button type="submit" disabled={status === "loading"}
@@ -575,8 +557,8 @@ export default function Newsletter() {
       </nav>
 
       {/* ── Main Content: Feed + Sidebar ── */}
-      <div className="max-w-5xl mx-auto px-4 py-10 grid grid-cols-1 lg:grid-cols-[1fr_280px] gap-10 items-start">
-        <main>
+      <div className="max-w-5xl mx-auto px-4 py-12 grid grid-cols-1 lg:grid-cols-[1fr_300px] gap-12 items-start">
+        <main className="space-y-0">
           {isLoading ? (
             <div className="flex flex-col items-center gap-3 py-20">
               <div className="w-6 h-6 border-2 border-primary/30 border-t-primary rounded-full animate-spin" />
@@ -591,39 +573,37 @@ export default function Newsletter() {
             <>
               {/* ── Jackye's Current Take (pull quote) ── */}
               {currentTake && filter === "all" && (
-                <div className="mb-8 rounded-xl border border-primary/20 bg-primary/[0.04] p-6">
-                  <div className="flex items-center gap-2 mb-3">
+                <div className="mb-10 rounded-xl border border-primary/20 bg-primary/[0.04] p-8">
+                  <div className="flex items-center gap-2 mb-4">
                     <Eye className="w-4 h-4 text-primary" />
                     <span className="text-[10px] font-mono tracking-[0.2em] uppercase text-primary font-bold">Jackye's Current Take</span>
                   </div>
-                  <blockquote
-                    className="text-base text-foreground leading-relaxed italic border-l-2 border-primary pl-4"
-                    style={{ fontFamily: "Georgia, 'Times New Roman', serif" }}
-                  >
+                  <blockquote className="text-lg text-foreground leading-[1.8] italic border-l-2 border-primary pl-5 font-light">
                     "{currentTake.jackye_take}"
                   </blockquote>
-                  <p className="text-xs text-muted-foreground mt-3">
-                    Re: <span className="text-foreground/80 font-medium">{currentTake.headline}</span>
+                  <p className="text-xs text-muted-foreground mt-4">
+                    Re: <span className="text-foreground/80 font-semibold">{currentTake.headline}</span>
                   </p>
                 </div>
               )}
 
               {/* ── Lead Story ── */}
               {withTakes.length > 0 && (
-                <div className="mb-8">
+                <div className="mb-10">
                   <LeadStory article={withTakes[0]} />
                 </div>
               )}
 
-              {/* ── Featured Takes (2-up) ── */}
+              {/* ── Section Label: Jackye's Takes ── */}
               {withTakes.length > 1 && (
-                <div className="mb-8">
-                  <div className="flex items-center gap-2 mb-4">
+                <div className="mb-10">
+                  <div className="flex items-center gap-3 mb-6">
                     <Flame className="w-4 h-4 text-primary" />
-                    <h2 className="text-[10px] font-mono tracking-[0.2em] uppercase text-primary font-bold">Jackye's Takes</h2>
-                    <span className="text-[10px] text-muted-foreground/50 font-mono ml-1">{withTakes.length - 1} more</span>
+                    <h2 className="text-xs font-mono tracking-[0.2em] uppercase text-primary font-bold">Jackye's Takes</h2>
+                    <div className="flex-1 h-px bg-border" />
+                    <span className="text-[10px] text-muted-foreground/50 font-mono">{withTakes.length - 1} more</span>
                   </div>
-                  <div className="grid md:grid-cols-2 gap-4">
+                  <div className="grid md:grid-cols-2 gap-5">
                     {withTakes.slice(1).map((article) => (
                       <StoryCard key={article.id} article={article} />
                     ))}
@@ -631,23 +611,22 @@ export default function Newsletter() {
                 </div>
               )}
 
-              {/* ── Divider ── */}
+              {/* ── Section Label: Quick Receipts / The Wire ── */}
               {withoutTakes.length > 0 && (
-                <div className="flex items-center gap-4 my-8">
+                <div className="flex items-center gap-4 my-10">
                   <div className="flex-1 h-px bg-border" />
-                  <span className="text-[10px] uppercase tracking-[0.3em] text-muted-foreground font-mono">The Wire</span>
+                  <span className="text-xs uppercase tracking-[0.3em] text-muted-foreground font-mono font-bold">Quick Receipts</span>
                   <div className="flex-1 h-px bg-border" />
                 </div>
               )}
 
-              {/* ── The Wire (compact 3-col) ── */}
               {withoutTakes.length > 0 && (
                 <div>
-                  <div className="flex items-center gap-2 mb-4">
+                  <div className="flex items-center gap-2 mb-5">
                     <TrendingUp className="w-4 h-4 text-muted-foreground" />
                     <h2 className="text-[10px] font-mono tracking-[0.2em] uppercase text-muted-foreground font-bold">All Signals</h2>
                   </div>
-                  <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-3">
+                  <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
                     {withoutTakes.map((article) => (
                       <WireItem key={article.id} article={article} />
                     ))}
@@ -659,16 +638,16 @@ export default function Newsletter() {
         </main>
 
         {/* ── Sidebar ── */}
-        <aside className="hidden lg:block sticky top-[74px] space-y-5">
+        <aside className="hidden lg:block sticky top-[74px] space-y-6">
           {/* Newsletter CTA */}
           <div className="bg-card border border-border rounded-xl p-6">
             <p className="text-[9px] uppercase tracking-[0.55em] text-primary mb-3 font-mono">Every Friday</p>
-            <h3 className="text-xl font-black text-foreground mb-2 leading-tight">My Uncertainty Era</h3>
-            <p className="text-sm text-muted-foreground italic leading-relaxed mb-4">
+            <h3 className="text-xl font-black text-foreground mb-2 leading-tight tracking-tight">My Uncertainty Era</h3>
+            <p className="text-sm text-muted-foreground leading-relaxed mb-4">
               The part where I say what everyone's thinking but nobody's saying.
             </p>
-            <blockquote className="border-l-2 border-primary pl-3.5 mb-4">
-              <p className="text-sm text-foreground leading-relaxed italic">
+            <blockquote className="border-l-2 border-primary pl-3.5 mb-5">
+              <p className="text-sm text-foreground leading-relaxed italic font-light">
                 "Every company has a 'people are our greatest asset' poster. Most hang next to a layoff plan."
               </p>
             </blockquote>
@@ -708,7 +687,7 @@ export default function Newsletter() {
       </div>
 
       {/* ── Bottom CTA ── */}
-      <footer className="border-t border-border py-10 px-8 text-center">
+      <footer className="border-t border-border py-12 px-8 text-center">
         <p className="text-sm text-muted-foreground tracking-[0.1em] font-mono">
           The Receipts · <em>by Jackye Clayton 👑 × WDIWF</em>
         </p>
