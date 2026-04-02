@@ -53,7 +53,8 @@ export function useWorkNewsCount() {
     queryFn: async () => {
       const { count, error } = await supabase
         .from("work_news")
-        .select("*", { count: "exact", head: true });
+        .select("*", { count: "exact", head: true })
+        .eq("language", "en");
       if (error) throw error;
       return count ?? 0;
     },
