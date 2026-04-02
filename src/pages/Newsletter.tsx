@@ -121,7 +121,7 @@ function LeadStory({ article }: { article: WorkNewsArticle }) {
   const spice = spiceLevel(article);
   const sourceProfile = article.source_name ? getSourceProfile(article.source_name) : null;
   const biasColor = sourceProfile ? getBiasColor(sourceProfile.bias) : "";
-  const whyMatters = getWhyItMatters(article.category, article.is_controversy);
+  const whyMatters = getWhyItMatters(article);
 
   return (
     <article id={`story-${article.id}`} className="rounded-2xl border border-border/50 bg-card overflow-hidden hover:border-primary/30 transition-all group scroll-mt-24">
