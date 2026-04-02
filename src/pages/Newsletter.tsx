@@ -662,8 +662,8 @@ export default function Newsletter() {
             <p className="text-sm text-foreground/70 leading-relaxed mb-3">
               Stories still developing. Patterns forming. Receipts being pulled.
             </p>
-            <Link to="/intelligence" className="text-sm text-primary font-mono hover:underline flex items-center gap-1 no-underline">
-              See all investigations <ArrowRight className="w-3 h-3" />
+            <Link to="/receipts" className="text-sm text-primary font-mono hover:underline flex items-center gap-1 no-underline">
+              See full receipts <ArrowRight className="w-3 h-3" />
             </Link>
           </div>
         </aside>

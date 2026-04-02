@@ -32,7 +32,7 @@ export function ReceiptsSidebar({ hotArticles }: ReceiptsSidebarProps) {
       {/* Newsletter */}
       <div className="bg-card border border-border rounded-xl p-6">
         <p className="text-[9px] uppercase tracking-[0.55em] text-primary mb-3 font-mono">
-          Every Friday
+          Every Morning
         </p>
         <h3 className="text-2xl font-black text-foreground mb-2 leading-tight">
           My Uncertainty Era
@@ -47,17 +47,17 @@ export function ReceiptsSidebar({ hotArticles }: ReceiptsSidebarProps) {
           </p>
         </blockquote>
         <Link
-          to="/join"
+          to="/newsletter"
           className="block bg-primary text-primary-foreground font-extrabold py-3.5 rounded-lg text-center text-base tracking-[0.08em] no-underline hover:opacity-90 transition-opacity"
         >
-          Subscribe → WDIWF
+          Subscribe → Daily Briefing
         </Link>
       </div>
 
       {/* Hottest Takes */}
       <div className="bg-card border border-border rounded-xl p-5">
         <p className="text-[9px] uppercase tracking-[0.55em] text-primary mb-3.5 font-mono">
-          🔥 Hottest Takes
+          ⭐ Highest Stargaze
         </p>
         {hotArticles.slice(0, 4).map((article) => (
           <button

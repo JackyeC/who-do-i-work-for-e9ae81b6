@@ -9,12 +9,12 @@ const BIAS_LEGEND = [
   { color: "#EF4444", label: "Right" },
 ];
 
-const SPICE_LEGEND = [
-  [1, "Worth noting. On the radar for context."],
-  [2, "Worth watching. Something here does not align."],
-  [3, "Worth documenting. The details matter."],
-  [4, "Direct employment impact. Update your strategy."],
-  [5, "The public record tells a different story than the press release."],
+const STARGAZE_LEGEND = [
+  [1, "Worth a glance — on the radar for context."],
+  [2, "Mild drama — something here doesn't align."],
+  [3, "Screenshot this — the details matter."],
+  [4, "Group chat material — direct employment impact."],
+  [5, "Career-defining receipt — the public record tells a different story."],
 ] as const;
 
 export function HowToRead() {
@@ -31,18 +31,18 @@ export function HowToRead() {
         </button>
         {open && (
           <div className="pb-5 flex flex-wrap gap-7">
-            {/* Spice Level */}
+            {/* Stargaze Score */}
             <div>
               <div className="text-[11px] font-bold text-muted-foreground uppercase tracking-[0.12em] mb-2 font-mono">
-                Spice Level
+                Stargaze Score
               </div>
               <div className="flex flex-col gap-1">
-                {SPICE_LEGEND.map(([n, label]) => (
+                {STARGAZE_LEGEND.map(([n, label]) => (
                   <div key={n} className="flex items-center gap-2.5">
                     <span className="min-w-[80px]">
                       {[1, 2, 3, 4, 5].map((i) => (
                         <span key={i} style={{ fontSize: 12, opacity: i <= n ? 1 : 0.18 }}>
-                          🌶️
+                          ⭐
                         </span>
                       ))}
                     </span>

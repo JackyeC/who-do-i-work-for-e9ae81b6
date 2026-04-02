@@ -3,8 +3,7 @@ import { ExternalLink, Linkedin, Facebook, Twitter, Share2 } from "lucide-react"
 import { cn } from "@/lib/utils";
 import { ReceiptPoster } from "./ReceiptPoster";
 import { BiasBar, getSourceBiasKey } from "./BiasBar";
-import { SpicePeppers } from "./SpicePeppers";
-import { HeatChip } from "./HeatChip";
+import { StargazeChip } from "./StargazeChip";
 import { EDITORIAL_CATEGORIES, EDITORIAL_CAT_COLORS, USE_THIS_CTA } from "./heat-config";
 import type { ReceiptArticle } from "@/hooks/use-receipts-feed";
 
@@ -68,7 +67,7 @@ export function ReceiptCard({ article, featured = false, onPosterClick, onReques
         />
       </div>
 
-      {/* ── 2. Category ── */}
+      {/* ── 2. Category + Stargaze Score ── */}
       <div className="flex items-center gap-3 mb-3 flex-wrap">
         <span
           className="font-black uppercase tracking-[0.2em]"
@@ -76,6 +75,7 @@ export function ReceiptCard({ article, featured = false, onPosterClick, onReques
         >
           {editorialCat}
         </span>
+        <StargazeChip score={article.spice_level} big={featured} />
         {article.spice_level >= 4 && (
           <span className="text-xs font-black uppercase px-2.5 py-1 rounded" style={{ background: "#EF4444", color: "#fff" }}>HOT</span>
         )}
@@ -88,12 +88,7 @@ export function ReceiptCard({ article, featured = false, onPosterClick, onReques
         <BiasBar bias={biasKey} big={featured} />
       </div>
 
-      {/* ── 5. Heat Level ── */}
-      <div className="mb-4">
-        <HeatChip level={article.spice_level} />
-      </div>
-
-      {/* ── 6. Headline ── */}
+      {/* ── 5. Headline ── */}
       {article.source_url ? (
         <a
           href={article.source_url}
@@ -122,7 +117,7 @@ export function ReceiptCard({ article, featured = false, onPosterClick, onReques
         </h2>
       )}
 
-      {/* ── 7. The Receipt ── */}
+      {/* ── 6. The Receipt ── */}
       {article.receipt_connection && (
         <div className="p-5 rounded-xl border mb-5" style={{ background: "hsl(var(--primary) / 0.04)", borderColor: "hsl(var(--primary) / 0.2)" }}>
           <p className="text-sm font-mono font-bold uppercase tracking-[0.12em] text-primary mb-3">🧾 The Receipt</p>
@@ -130,7 +125,7 @@ export function ReceiptCard({ article, featured = false, onPosterClick, onReques
         </div>
       )}
 
-      {/* ── 8. Jackye's Take ── */}
+      {/* ── 7. Jackye's Take ── */}
       {article.jackye_take && (
         <div className="mb-5">
           <blockquote className="border-l-[3px] border-primary pl-5">
@@ -149,7 +144,7 @@ export function ReceiptCard({ article, featured = false, onPosterClick, onReques
         </div>
       )}
 
-      {/* ── 9. Why It Matters ── */}
+      {/* ── 8. Why It Matters ── */}
       <div className="p-5 rounded-lg border border-border/50 bg-card mb-5">
         <p className="text-sm font-mono font-bold uppercase tracking-[0.15em] text-muted-foreground mb-2">Why It Matters</p>
         {article.why_it_matters && article.why_it_matters.length > 0 ? (
@@ -165,7 +160,7 @@ export function ReceiptCard({ article, featured = false, onPosterClick, onReques
         )}
       </div>
 
-      {/* ── 10. Use This ── */}
+      {/* ── 9. Use This ── */}
       {isGated && !isUnlocked() ? (
         <button
           onClick={() => onRequestEmailCapture?.()}
@@ -193,7 +188,7 @@ export function ReceiptCard({ article, featured = false, onPosterClick, onReques
         </Link>
       )}
 
-      {/* ── 11. Read the Source ── */}
+      {/* ── 10. Read the Source ── */}
       {article.source_url && (
         <a
           href={article.source_url}
@@ -202,7 +197,7 @@ export function ReceiptCard({ article, featured = false, onPosterClick, onReques
           className="flex items-center gap-2 p-4 rounded-lg border border-border/50 text-primary font-bold text-base hover:bg-primary/5 hover:border-primary/40 active:scale-[0.98] transition-all mb-5 no-underline"
         >
           <ExternalLink className="w-4 h-4 shrink-0" />
-          Read the Source
+          See the receipts →
           <span className="ml-auto text-sm text-muted-foreground font-normal">{article.source_name}</span>
         </a>
       )}
@@ -226,19 +221,23 @@ export function ReceiptCard({ article, featured = false, onPosterClick, onReques
         </a>
       </div>
 
-      {/* Spice peppers */}
-      <div className="mb-4">
-        <SpicePeppers level={article.spice_level} big={featured} />
+      {/* ── 11. Go Deeper — navigation chain ── */}
+      <div className="flex flex-col gap-2 mb-4">
+        <Link
+          to="/search"
+          className="flex items-center gap-3 p-4 rounded-lg border border-border/40 no-underline hover:border-primary/30 hover:bg-primary/5 active:scale-[0.98] transition-all"
+        >
+          <span className="text-base text-muted-foreground">Is your company doing this?</span>
+          <span className="text-base font-bold text-primary ml-auto">Look up employer →</span>
+        </Link>
+        <Link
+          to="/newsletter"
+          className="flex items-center gap-3 p-3 rounded-lg border border-border/30 no-underline hover:border-primary/30 hover:bg-primary/5 active:scale-[0.98] transition-all"
+        >
+          <span className="text-sm text-muted-foreground">Want the daily briefing?</span>
+          <span className="text-sm font-bold text-primary ml-auto">The Newsletter →</span>
+        </Link>
       </div>
-
-      {/* Fix This — permanent secondary CTA */}
-      <Link
-        to="/search"
-        className="flex items-center gap-3 p-4 rounded-lg border border-border/40 no-underline hover:border-primary/30 hover:bg-primary/5 active:scale-[0.98] transition-all"
-      >
-        <span className="text-base text-muted-foreground">Is your company doing this?</span>
-        <span className="text-base font-bold text-primary ml-auto">Solve My Puzzle →</span>
-      </Link>
 
       {/* JRC EDIT Watermark */}
       <div className="flex justify-end mt-5">
