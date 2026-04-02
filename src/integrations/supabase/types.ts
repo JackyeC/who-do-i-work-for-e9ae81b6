@@ -3717,6 +3717,56 @@ export type Database = {
           },
         ]
       }
+      company_source_documents: {
+        Row: {
+          company_id: string
+          created_at: string
+          document_type: string
+          id: string
+          is_primary_source: boolean
+          published_date: string | null
+          source_domain: string | null
+          source_url: string
+          summary: string | null
+          title: string
+          why_it_matters: string | null
+        }
+        Insert: {
+          company_id: string
+          created_at?: string
+          document_type?: string
+          id?: string
+          is_primary_source?: boolean
+          published_date?: string | null
+          source_domain?: string | null
+          source_url: string
+          summary?: string | null
+          title: string
+          why_it_matters?: string | null
+        }
+        Update: {
+          company_id?: string
+          created_at?: string
+          document_type?: string
+          id?: string
+          is_primary_source?: boolean
+          published_date?: string | null
+          source_domain?: string | null
+          source_url?: string
+          summary?: string | null
+          title?: string
+          why_it_matters?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "company_source_documents_company_id_fkey"
+            columns: ["company_id"]
+            isOneToOne: false
+            referencedRelation: "companies"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       company_spending_history: {
         Row: {
           company_id: string
