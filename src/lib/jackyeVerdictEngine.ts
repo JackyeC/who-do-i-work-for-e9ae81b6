@@ -172,7 +172,7 @@ function generateQuestions(signals: SignalInput[], flags: RedFlags, layoff: Layo
     questions.push({ text: "What transition support did affected employees actually receive? Severance, outplacement, or just a calendar invite?", triggeredBy: "WARN Notices" });
   }
   if (flags.opaqueHiringTechnology && flags.highInfluenceExposure) {
-    questions.push({ text: "You're spending on lobbying but haven't published a Bias Audit. Why should I trust that your hiring process is fair?", triggeredBy: "Dirty Receipt: Influence vs. Transparency" });
+    questions.push({ text: "You invest in lobbying but have not published a Bias Audit. How should I evaluate the fairness of your hiring process?", triggeredBy: "Influence vs. Transparency Gap" });
   }
 
   return questions.slice(0, 7);
@@ -203,15 +203,15 @@ function generateJackyeTake(
 
   // ── 1. The Call-Out — direct observation, never generic ──
   if (coverage === "Low") {
-    parts.push("Look, we've got an Ugly Baby situation here. The marketing is pretty, but the receipts? Dusty. When a company makes it this hard to find public data, that's not an accident — that's a strategy.");
+    parts.push("Let's be serious. The public record is nearly empty. When a company makes it this difficult to verify basic data, that is not an oversight — that is architecture. The marketing may be polished, but the receipts are absent.");
   } else if (weakSignals.length >= 3) {
-    parts.push("Facts over Feelings: the receipts are messy. I count at least three areas where this company is giving us silence instead of substance. Human frailty is real — but so is corporate negligence.");
+    parts.push("Three or more signal categories are showing gaps. That is not noise — that is a pattern. Where there should be substance, there is silence. The question is whether that silence is strategic.");
   } else if (weakSignals.length > 0 && strongSignals.length > 0) {
-    parts.push("This is a split-personality profile. Some signals show real character; others show a company that's hoping you won't look too hard. I always look too hard.");
+    parts.push("This is a contradictory profile. Some signals show genuine institutional character; others show a company that is counting on you not looking past the careers page. The inconsistency itself is the signal.");
   } else if (weakSignals.length > 0) {
-    parts.push("AI can simulate competence all day long, but these signals? They reveal character. And right now, the character sheet has some blank spots that should worry you.");
+    parts.push("The data reveals gaps that no amount of employer branding can paper over. These are not edge cases — they are the areas where accountability should be most visible and is not.");
   } else {
-    parts.push("I don't hand out gold stars easily, but this one earned it. The receipts match the rhetoric — and in this market, that's not just rare, it's remarkable.");
+    parts.push("The receipts align with the rhetoric. In a market where that is the exception rather than the rule, this profile is worth noting. Credit where it is earned.");
   }
 
   // ── 2. The 'Dirty Receipt' — connect contradictions with specifics ──
@@ -219,52 +219,52 @@ function generateJackyeTake(
   // High influence + weak benefits/hiring = the signature callout
   if (influence && influence.subscore >= 60 && weakSignals.filter(s => s.key !== "influence").length >= 2) {
     const weakLabels = weakSignals.filter(s => s.key !== "influence").map(s => s.label.toLowerCase());
-    parts.push(`Dirty Receipt #1: They've got a ${influence.subscore}/100 on Influence Exposure. They know how to write checks in DC, but when it comes to ${weakLabels.join(" and ")}? Silence. That's a massive character gap. They're obsessed with automation but ghosting on humanization.`);
+    parts.push(`They score ${influence.subscore}/100 on Influence Exposure — they know exactly how to move money in Washington. But on ${weakLabels.join(" and ")}? Silence. That gap between political investment and workforce investment is not accidental. It is a priority statement.`);
   } else if (influence && influence.subscore >= 60 && hiring && hiring.subscore < 50) {
-    parts.push(`Dirty Receipt: They're spending money to shape policy in Washington but haven't published a Bias Audit for their own AI hiring tools. They'll lobby Congress about workforce issues but won't tell you how their algorithm screens you out. That's not oversight — that's an obsession with automation, not people.`);
+    parts.push(`They are spending to shape policy in Washington but have not published a Bias Audit for their own AI hiring tools. They will lobby Congress on workforce issues but will not disclose how their algorithm evaluates you. That is not an oversight. That is a choice.`);
   } else if (strongSignals.length > 0) {
     const strongLabels = strongSignals.map(s => `${s.label.toLowerCase()} (${s.subscore}/100)`);
-    parts.push(`Where they show up: ${strongLabels.join(", ")}. That's actual character, not a press release. Credit where it's earned.`);
+    parts.push(`Where they show up: ${strongLabels.join(", ")}. That is documented character, not a press release. Credit where it is earned.`);
   }
 
-  // Specific HR tech / Bias Audit callout — the Redline Auditor lens
+  // Specific HR tech / Bias Audit callout
   if (flags.opaqueHiringTechnology || (hiring && hiring.subscore < 50)) {
     const lobbyingContext = (influence && influence.subscore >= 50)
-      ? `They're spending on lobbyists but $0 on a published Bias Audit. That tells you everything about priorities.`
-      : `No published bias audits, no transparency on how their AI screens you. In 2026, that's not a gap — it's a choice.`;
-    parts.push(`The hiring tech is a black box. ${lobbyingContext} You deserve to know how you're being evaluated before a human ever sees your résumé. That's not entitlement — that's psychological safety.`);
+      ? `They are investing in lobbyists but not in a published Bias Audit. That tells you where the priorities actually sit.`
+      : `No published bias audits, no transparency on how their AI evaluates candidates. In 2026, that is not a gap — it is a decision.`;
+    parts.push(`The hiring technology is opaque. ${lobbyingContext} You are entitled to know how you are being evaluated before a human ever reviews your application.`);
   }
 
   // Compensation gaps — the "show the work" lens
   if (flags.compensationTransparencyGaps || (comp && comp.subscore < 50)) {
-    parts.push("Pay transparency is weak. If they can't show you the band, the benchmark, or the equity audit — that's not complexity, that's concealment. Companies that pay fairly aren't afraid to prove it. Period.");
+    parts.push("Pay transparency is weak. If they cannot show you the band, the benchmark, or the equity audit — that is not complexity, that is concealment. Companies that pay fairly are not afraid to prove it.");
   }
 
   // Leadership instability — the human element
   if (flags.leadershipInstability || (leadership && leadership.subscore < 40)) {
-    parts.push("Leadership is unstable. When the people at the top keep changing, the people in the middle absorb the chaos. That's not just organizational risk — it's a psychological safety issue for everyone who reports to someone who might not be there next quarter.");
+    parts.push("Leadership is unstable. When the people at the top keep changing, the people in the middle absorb the disruption. That is not just organizational risk — it is an environment where priorities, expectations, and reporting lines shift without warning.");
   }
 
   // ── Layoff timing — direct, human-centered ──
   if (layoff.daysSinceLastLayoff !== null && layoff.daysSinceLastLayoff <= 90) {
-    parts.push(`They cut people ${layoff.daysSinceLastLayoff} days ago. That wound is still open. The team you'd join hasn't finished grieving the colleagues they lost. Ask about it directly and watch their body language — not their talking points.`);
+    parts.push(`They reduced headcount ${layoff.daysSinceLastLayoff} days ago. The team you would be joining has not finished processing that. Ask about it directly and observe how they respond — not the talking points, the body language.`);
   } else if (layoff.daysSinceLastLayoff !== null && layoff.daysSinceLastLayoff <= 180) {
-    parts.push("Cuts within six months. The org chart may have stabilized, but the trust hasn't. Ask whether your role existed before the layoffs, and whether the person who had it got a real transition — or a calendar invite.");
+    parts.push("Reductions within six months. The org chart may have stabilized, but institutional trust has not. Ask whether your role existed before the cuts, and whether the person who held it received a genuine transition.");
   }
 
   // ── 3. The 'Jackye' Closing — punchy, specific, never "do more research" ──
   switch (verdict) {
     case "Yes":
-      parts.push("Facts over Feelings: this one checks out. Go in strong, ask the questions below anyway — not because you doubt them, but because good character holds up under scrutiny. That's how trust gets built.");
+      parts.push("The data supports moving forward. Ask the questions below regardless — not because the profile raises doubt, but because strong institutional character holds up under scrutiny. That is how trust is verified.");
       break;
     case "Proceed with caution":
-      parts.push("Don't just sign the offer — ask them why their PAC spending doesn't match their Pride month logo. Look at the flow of funds vs. the marketing fluff. If the character doesn't match the pitch, your talent deserves better. Trust is the currency here; don't spend yours blindly.");
+      parts.push("Do not sign without asking why their political spending contradicts their public positioning. Trace the flow of funds against the marketing. If the record does not match the pitch, your leverage is knowing that before they do.");
       break;
     case "Not without more answers":
-      parts.push("I wouldn't move until they answer the questions below — in writing. Not a phone call, not a 'we'll get back to you.' In writing. If they dodge, that's your Dirty Receipt. Silence on accountability isn't an oversight; it's a confession.");
+      parts.push("Do not proceed until they answer the questions below — in writing. Not a phone call, not a promise to follow up. In writing. If they decline, that is the answer.");
       break;
     case "I would pause":
-      parts.push("Pump the brakes. The signals are telling a story the careers page won't. Facts over Feelings: no offer is worth walking into an Ugly Baby situation where the character doesn't match the pitch. Run the chain first. Always.");
+      parts.push("The signals are telling a story the careers page will not. No offer is worth accepting when the institutional character does not match the positioning. Verify the record first. Always.");
       break;
   }
 

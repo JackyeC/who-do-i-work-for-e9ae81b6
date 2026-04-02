@@ -8,11 +8,11 @@ interface SpicePeppersProps {
 }
 
 const HEAT_TEXT: Record<number, string> = {
-  5: "THEY THOUGHT WE WOULDN'T FIND OUT.",
-  4: "THIS AFFECTS YOUR JOB.",
-  3: "SCREENSHOT THIS.",
-  2: "SIDE-EYE.",
-  1: "FOOTNOTE.",
+  5: "STRUCTURED SO YOU WOULDN'T FIND IT.",
+  4: "DIRECT EMPLOYMENT IMPACT.",
+  3: "WORTH DOCUMENTING.",
+  2: "WORTH WATCHING.",
+  1: "WORTH NOTING.",
 };
 
 export function SpicePeppers({ level, big = false }: SpicePeppersProps) {

@@ -438,8 +438,8 @@ export default function Newsletter() {
             The world of work. Documented.
           </p>
           <p className="text-sm text-foreground/80 mt-4 max-w-md mx-auto leading-relaxed">
-            I pull the receipts so you don't have to.{" "}
-            <span className="text-primary font-semibold">They always leave something out.</span>
+            Every satisfactory headline has a labor signal underneath it.{" "}
+            <span className="text-primary font-semibold">This is the part they hoped you wouldn't read.</span>
           </p>
 
           <div className="w-16 h-[2px] bg-primary mx-auto my-8" />

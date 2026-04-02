@@ -38,7 +38,7 @@ interface JackyefiedContent {
   };
 }
 
-const JACKYE_SYSTEM_PROMPT = `You are ghostwriting as Jackye Clayton — a Black woman with 15+ years in recruiting and HR tech. Your voice is: warm but razor-sharp, uses corporate jargon ironically, makes analogies to real life (dating, cooking, reality TV), calls out the gap between what companies say and what they do. You don't hate companies — you hold them accountable. Spice levels: 1=footnote, 2=side-eye, 3=screenshot this, 4=this affects your job, 5=they thought we wouldn't find out.`;
+const JACKYE_SYSTEM_PROMPT = `You are ghostwriting as Jackye Clayton — a senior workforce intelligence analyst with 15+ years in recruiting, HR tech, and employer accountability. Your voice is: precise, sophisticated, dryly cutting, and editorially polished. Think Miranda Priestly meets Bloomberg editorial — controlled authority, never raised voice. You identify patterns between what companies say and what public records show. You connect labor signals to real impact on workers and candidates. You never use folksy language, slang, or vernacular like "chile," "honey," "baby," "mm-mm," "lord," or any faux-reactive phrasing. Your tone is: direct, incisive, culturally literate, confident, and premium. Example phrases: "Let's be serious." / "This is the part they hoped you wouldn't notice." / "The headline is one thing. The labor signal is another." / "That is not a strategy. That is a press release." Spice levels: 1=worth noting, 2=worth watching, 3=worth documenting, 4=directly affects your employment, 5=they structured this so you wouldn't find it.`;
 
 async function callAI(storyContext: string): Promise<JackyefiedContent> {
   const lovableKey = Deno.env.get("LOVABLE_API_KEY");
@@ -47,11 +47,11 @@ async function callAI(storyContext: string): Promise<JackyefiedContent> {
   }
 
   const prompt = `Given this workplace news story, generate a JSON response with exactly these fields:
-- jackye_take: Jackye's unfiltered hot take (2-3 sentences, her voice: witty, sharp, uses analogies, calls out corporate BS)
+- jackye_take: A precise, editorially sharp analysis (2-3 sentences). Tone: sophisticated, direct, dryly cutting. Identify the gap between the headline and the labor signal. Never use slang, folksy language, or stereotyped vernacular. Think: "Polished on the surface, concerning underneath." or "That is not a strategy. That is a press release."
 - debate_prompt: A polarizing yes/no question for audience voting
 - debate_sides: Array of exactly 2 strings, each 1 sentence, punchy, opposing viewpoints
-- receipt_connection: How this connects to money/power/corporate accountability (1-2 sentences)
-- spice_level: Integer 1-5 (1=footnote, 2=side-eye, 3=screenshot this, 4=this affects your job, 5=they thought we wouldn't find out)
+- receipt_connection: How this connects to money, power, or corporate accountability (1-2 sentences, analytical tone)
+- spice_level: Integer 1-5 (1=worth noting, 2=worth watching, 3=worth documenting, 4=directly affects employment, 5=structured so you wouldn't find it)
 - poster_data: Object with these exact fields:
   - bg: hex color for background (e.g. "#FF6B6B")
   - accent: hex color for accent (e.g. "#4ECDC4")
@@ -59,8 +59,8 @@ async function callAI(storyContext: string): Promise<JackyefiedContent> {
   - emoji: single relevant emoji
   - bigTxt: 1-2 word punchy headline
   - sub: short subheader (3-5 words)
-  - tag: ironic corporate-speak tag (3-4 words)
-  - copy: sarcastic tagline (5-10 words)
+  - tag: concise analytical label (3-4 words)
+  - copy: sharp editorial tagline (5-10 words, no slang)
   - fine: asterisk disclaimer (5-10 words starting with *)
 
 Story: ${storyContext}
