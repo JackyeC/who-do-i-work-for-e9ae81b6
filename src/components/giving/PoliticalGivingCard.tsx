@@ -173,8 +173,18 @@ export function PoliticalGivingCard({ companyId, companyName, companySlug }: Pol
       </div>
 
       {/* Sub-section 1: PAC Spending */}
-      <div className="rounded-xl border border-border/40 bg-card p-5">
-        <h4 className="text-sm font-semibold text-foreground mb-3">PAC Spending</h4>
+      <a
+        href={`https://www.fec.gov/data/receipts/?data_type=processed&committee_name=${encodeURIComponent(companyName)}`}
+        target="_blank"
+        rel="noopener noreferrer"
+        className="block rounded-xl border border-border/40 bg-card p-5 hover:border-primary/30 hover:bg-primary/[0.03] transition-all cursor-pointer group"
+      >
+        <div className="flex items-center justify-between mb-3">
+          <h4 className="text-sm font-semibold text-foreground">PAC Spending</h4>
+          <span className="text-[10px] text-primary opacity-0 group-hover:opacity-100 transition-opacity flex items-center gap-1">
+            View on FEC.gov <ExternalLink className="w-3 h-3" />
+          </span>
+        </div>
         {totalPac > 0 ? (
           <>
             <p className="text-xs text-muted-foreground mb-2">
@@ -191,11 +201,14 @@ export function PoliticalGivingCard({ companyId, companyName, companySlug }: Pol
               {repAmount > 0 && <span style={{ color: "#E24B4A" }}>Republican: {formatCurrency(repAmount)}</span>}
               {otherAmount > 0 && <span style={{ color: "#888780" }}>Non-partisan: {formatCurrency(otherAmount)}</span>}
             </div>
+            <p className="text-[10px] text-primary mt-3 flex items-center gap-1 font-medium group-hover:underline">
+              Show me the receipts <ArrowRight className="w-3 h-3" />
+            </p>
           </>
         ) : (
           <p className="text-xs text-muted-foreground">No PAC spending on record.</p>
         )}
-      </div>
+      </a>
 
       {/* Sub-section 2: Lobbying */}
       <div className="rounded-xl border border-border/40 bg-card p-5">
