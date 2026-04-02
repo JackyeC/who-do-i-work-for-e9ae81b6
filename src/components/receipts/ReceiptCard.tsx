@@ -152,9 +152,17 @@ export function ReceiptCard({ article, featured = false, onPosterClick, onReques
       {/* ── 9. Why It Matters ── */}
       <div className="p-5 rounded-lg border border-border/50 bg-card mb-5">
         <p className="text-sm font-mono font-bold uppercase tracking-[0.15em] text-muted-foreground mb-2">Why It Matters</p>
-        <p className="text-base text-foreground/80 leading-relaxed">
-          {article.receipt_connection || article.jackye_take || "This story impacts how employers treat workers and how workers navigate their careers."}
-        </p>
+        {article.why_it_matters && article.why_it_matters.length > 0 ? (
+          <ul className="list-disc list-inside space-y-1.5">
+            {article.why_it_matters.map((point, i) => (
+              <li key={i} className="text-base text-foreground/80 leading-relaxed">{point}</li>
+            ))}
+          </ul>
+        ) : (
+          <p className="text-base text-foreground/80 leading-relaxed">
+            {article.receipt_connection || article.jackye_take || "This story impacts how employers treat workers and how workers navigate their careers."}
+          </p>
+        )}
       </div>
 
       {/* ── 10. Use This ── */}

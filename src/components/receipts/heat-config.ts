@@ -93,3 +93,13 @@ export const RECEIPT_CATEGORIES = [
 ] as const;
 
 export type ReceiptSortMode = "newest" | "hottest" | "drama" | "consequential" | null;
+
+// Poster archetype families (metadata only — no rendering changes yet)
+export const POSTER_ARCHETYPES = [
+  "Happy Corporate Lie",
+  "Miracle Product Pitch",
+  "Family Values Office Ad",
+  "Scientific Progress Ad",
+] as const;
+
+export type PosterArchetype = (typeof POSTER_ARCHETYPES)[number];
