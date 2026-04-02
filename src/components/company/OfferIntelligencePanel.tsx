@@ -145,9 +145,15 @@ export function OfferIntelligencePanel({ company, companyId }: OfferIntelligence
             </Badge>
           )}
         </div>
-        <p className="text-sm text-muted-foreground max-w-xl">
+        <p className="text-sm text-muted-foreground max-w-xl mb-2">
           We don't have a full dossier on this employer. Here's what we found, and what to watch for.
         </p>
+        <Link
+          to={`/dossier/${company.slug || company.name?.toLowerCase().replace(/[^a-z0-9]+/g, '-')}`}
+          className="inline-flex items-center gap-1 text-sm font-medium text-primary hover:underline transition-colors"
+        >
+          Open company dossier <ArrowRight className="w-3.5 h-3.5" />
+        </Link>
       </div>
 
       {/* ── Community / Secondary Signals (Indeed, BBB) — PRIMARY content on limited data pages ── */}
@@ -175,13 +181,24 @@ export function OfferIntelligencePanel({ company, companyId }: OfferIntelligence
           {expandedSections.signals && (
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
               {signals.map((s) => (
-                <Card key={s.label} className={`border ${SIGNAL_LEVEL_STYLES[s.level]}`}>
-                  <CardContent className="p-4">
-                    <p className="text-xs font-mono uppercase tracking-wider text-muted-foreground mb-1">{s.label}</p>
-                    <p className="text-base font-bold text-foreground">{s.value}</p>
-                    <p className="text-[11px] text-muted-foreground mt-1">{s.source}</p>
-                  </CardContent>
-                </Card>
+                <Link
+                  key={s.label}
+                  to={`/dossier/${company.slug || company.name?.toLowerCase().replace(/[^a-z0-9]+/g, '-')}`}
+                  className="no-underline group/sig"
+                >
+                  <Card className={`border ${SIGNAL_LEVEL_STYLES[s.level]} hover:border-primary/40 transition-colors cursor-pointer`}>
+                    <CardContent className="p-4">
+                      <p className="text-xs font-mono uppercase tracking-wider text-muted-foreground mb-1">{s.label}</p>
+                      <p className="text-base font-bold text-foreground">{s.value}</p>
+                      <div className="flex items-center justify-between mt-1">
+                        <p className="text-[11px] text-muted-foreground">{s.source}</p>
+                        <span className="text-xs text-primary opacity-0 group-hover/sig:opacity-100 transition-opacity flex items-center gap-0.5">
+                          See more <ArrowRight className="w-3 h-3" />
+                        </span>
+                      </div>
+                    </CardContent>
+                  </Card>
+                </Link>
               ))}
             </div>
           )}

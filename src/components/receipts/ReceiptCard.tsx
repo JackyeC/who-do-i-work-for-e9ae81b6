@@ -94,15 +94,33 @@ export function ReceiptCard({ article, featured = false, onPosterClick, onReques
       </div>
 
       {/* ── 6. Headline ── */}
-      <h2
-        className="font-black text-foreground leading-tight mb-5 uppercase"
-        style={{
-          fontSize: featured ? "clamp(32px, 4vw, 52px)" : "clamp(26px, 2.8vw, 38px)",
-          letterSpacing: "-0.02em",
-        }}
-      >
-        {article.headline}
-      </h2>
+      {article.source_url ? (
+        <a
+          href={article.source_url}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="block font-black text-foreground leading-tight mb-5 uppercase hover:text-primary transition-colors no-underline group/hl"
+          style={{
+            fontSize: featured ? "clamp(32px, 4vw, 52px)" : "clamp(26px, 2.8vw, 38px)",
+            letterSpacing: "-0.02em",
+          }}
+        >
+          {article.headline}
+          <span className="inline-flex items-center gap-1 text-sm font-normal text-primary opacity-0 group-hover/hl:opacity-100 transition-opacity ml-2 align-middle">
+            <ExternalLink className="w-3.5 h-3.5" />
+          </span>
+        </a>
+      ) : (
+        <h2
+          className="font-black text-foreground leading-tight mb-5 uppercase"
+          style={{
+            fontSize: featured ? "clamp(32px, 4vw, 52px)" : "clamp(26px, 2.8vw, 38px)",
+            letterSpacing: "-0.02em",
+          }}
+        >
+          {article.headline}
+        </h2>
+      )}
 
       {/* ── 7. The Receipt ── */}
       {article.receipt_connection && (

@@ -124,7 +124,8 @@ function LeadStory({ article }: { article: WorkNewsArticle }) {
   const whyMatters = getWhyItMatters(article);
 
   return (
-    <article id={`story-${article.id}`} className="rounded-2xl border border-border/50 bg-card overflow-hidden hover:border-primary/30 transition-all group scroll-mt-24">
+    <article id={`story-${article.id}`} className="rounded-2xl border border-border/50 bg-card overflow-hidden hover:border-primary/30 transition-all group scroll-mt-24 cursor-pointer"
+      onClick={() => article.source_url && window.open(article.source_url, '_blank', 'noopener,noreferrer')}>
       <div className="h-1 bg-gradient-to-r from-primary via-primary/60 to-transparent" />
       <div className="p-8 lg:p-10">
         <div className="flex items-center gap-3 mb-5">
@@ -201,7 +202,8 @@ function StoryCard({ article }: { article: WorkNewsArticle }) {
   const whyMatters = getWhyItMatters(article);
 
   return (
-    <article id={`story-${article.id}`} className="rounded-xl border border-border/40 bg-card hover:border-primary/30 transition-all group overflow-hidden scroll-mt-24">
+    <article id={`story-${article.id}`} className="rounded-xl border border-border/40 bg-card hover:border-primary/30 transition-all group overflow-hidden scroll-mt-24 cursor-pointer"
+      onClick={() => article.source_url && window.open(article.source_url, '_blank', 'noopener,noreferrer')}>
       <div className="p-5">
         <div className="flex items-center gap-2 mb-3">
           <Badge variant="outline" className={`text-[10px] font-mono tracking-wider border ${cat.color}`}>
@@ -275,7 +277,12 @@ function WireItem({ article }: { article: WorkNewsArticle }) {
   const whyMatters = getWhyItMatters(article);
   return (
     <div id={`story-${article.id}`} className="group block scroll-mt-24">
-      <div className="rounded-lg border border-border/30 bg-card p-4 hover:border-primary/30 transition-all h-full flex flex-col">
+      <a
+        href={article.source_url || "#"}
+        target={article.source_url ? "_blank" : undefined}
+        rel="noopener noreferrer"
+        className="rounded-lg border border-border/30 bg-card p-4 hover:border-primary/30 hover:shadow-sm transition-all h-full flex flex-col no-underline cursor-pointer active:scale-[0.98]"
+      >
         <div className="flex items-center gap-2 mb-2">
           <Badge variant="outline" className={`text-[10px] font-mono tracking-wider border ${cat.color}`}>
             {cat.label}
@@ -290,17 +297,12 @@ function WireItem({ article }: { article: WorkNewsArticle }) {
           {whyMatters[0]}
         </p>
         <div className="flex items-center justify-between mt-auto pt-2 border-t border-border/20">
-          {article.source_url ? (
-            <a href={article.source_url} target="_blank" rel="noopener noreferrer"
-              className="text-[10px] text-primary/70 hover:text-primary font-mono flex items-center gap-1">
-              {article.source_name || "Source"} <ExternalLink className="w-2.5 h-2.5" />
-            </a>
-          ) : (
-            <span className="text-[10px] text-muted-foreground">{article.source_name || "Source"}</span>
-          )}
+          <span className="text-[10px] text-primary/70 font-mono flex items-center gap-1">
+            {article.source_name || "Source"} <ExternalLink className="w-2.5 h-2.5" />
+          </span>
           <SpiceMeter level={spiceLevel(article)} />
         </div>
-      </div>
+      </a>
     </div>
   );
 }
@@ -573,9 +575,13 @@ export default function Newsletter() {
                   <blockquote className="text-xl text-foreground leading-[1.8] italic border-l-2 border-primary pl-5 font-light">
                     "{currentTake.jackye_take}"
                   </blockquote>
-                  <p className="text-sm text-foreground/60 mt-4">
-                    Re: <span className="text-foreground/80 font-semibold">{currentTake.headline}</span>
-                  </p>
+                  <button
+                    onClick={() => document.getElementById(`story-${currentTake.id}`)?.scrollIntoView({ behavior: "smooth", block: "start" })}
+                    className="text-sm text-foreground/60 mt-4 cursor-pointer hover:text-primary transition-colors group/take flex items-center gap-1"
+                  >
+                    Re: <span className="text-foreground/80 font-semibold group-hover/take:text-primary transition-colors">{currentTake.headline}</span>
+                    <ArrowRight className="w-3 h-3 opacity-0 group-hover/take:opacity-100 transition-opacity" />
+                  </button>
                 </div>
               )}
 
@@ -653,15 +659,22 @@ export default function Newsletter() {
           <div className="bg-card border border-border rounded-xl p-5">
             <p className="text-[11px] uppercase tracking-[0.55em] text-primary mb-3.5 font-mono">🔥 Hottest Right Now</p>
             {hotStories.slice(0, 4).map((article) => (
-              <div key={article.id} className="pb-3 mb-3 border-b border-border last:border-none last:mb-0 last:pb-0">
+              <button
+                key={article.id}
+                onClick={() => document.getElementById(`story-${article.id}`)?.scrollIntoView({ behavior: "smooth", block: "start" })}
+                className="block w-full text-left pb-3 mb-3 border-b border-border last:border-none last:mb-0 last:pb-0 group/hot cursor-pointer hover:bg-muted/20 rounded-md px-1 -mx-1 transition-colors"
+              >
                 <div className="flex items-center gap-2 mb-1.5">
                   <Badge variant="outline" className={`text-[10px] font-mono tracking-wider border ${getCategoryConfig(article.category).color}`}>
                     {getCategoryConfig(article.category).label}
                   </Badge>
                   <span className="text-[10px] text-foreground/50 font-mono">{timeAgo(article.published_at)}</span>
                 </div>
-                <p className="text-sm font-semibold text-foreground leading-snug">{article.headline}</p>
-              </div>
+                <p className="text-sm font-semibold text-foreground leading-snug group-hover/hot:text-primary transition-colors">{article.headline}</p>
+                <span className="text-xs text-primary opacity-0 group-hover/hot:opacity-100 transition-opacity flex items-center gap-1 mt-1">
+                  Read this story <ArrowRight className="w-3 h-3" />
+                </span>
+              </button>
             ))}
           </div>
 
