@@ -684,6 +684,12 @@ export default function CompanyDossier() {
               <SourceDocumentsLayer companyId={companyId} companyName={company.name} />
             </DossierLayer>
           )}
+
+          {companyId && (
+            <DossierLayer title="Accountability Signals" subtitle="Power, conduct, governance, and narrative gap patterns from public records" icon={ShieldCheck} layerNumber={10}>
+              <AccountabilitySignalsLayer companyId={companyId} companyName={company.name} />
+            </DossierLayer>
+          )}
         </div>
       )}
     </>
