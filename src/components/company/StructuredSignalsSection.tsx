@@ -400,17 +400,18 @@ export function StructuredSignalsSection(props: StructuredSignalsProps) {
           companyName={props.companyName}
           careersUrl={props.careersUrl}
           scanContext={props.scanContext}
+          signalKeyword="ai_hiring"
         />
-        <SignalCategory title="Workforce Stability" signals={stabilitySignals} />
-        <SignalCategory title="Compensation & Market Position" signals={compSignals} emptyType="compensation" companyName={props.companyName} />
+        <SignalCategory title="Workforce Stability" signals={stabilitySignals} signalKeyword="layoff" />
+        <SignalCategory title="Compensation & Market Position" signals={compSignals} emptyType="compensation" companyName={props.companyName} signalKeyword="pay_equity" />
 
         <div className="py-4 border-b border-border/30">
           <OffTheRecordSignals companyId={props.companyId} companyName={props.companyName} />
         </div>
 
-        <SignalCategory title="Leadership & Influence" signals={leadershipSignals} />
+        <SignalCategory title="Leadership & Influence" signals={leadershipSignals} signalKeyword="lobbying" />
         <SignalCategory title="Innovation & Growth" signals={innovationSignals} />
-        <SignalCategory title="Employee Experience" signals={sentimentSignals} emptyType="sentiment" companyName={props.companyName} />
+        <SignalCategory title="Employee Experience" signals={sentimentSignals} emptyType="sentiment" companyName={props.companyName} signalKeyword="sentiment" />
       </div>
 
       {/* Rabbit-hole footer */}
