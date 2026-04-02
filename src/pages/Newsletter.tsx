@@ -272,7 +272,7 @@ function StoryCard({ article }: { article: WorkNewsArticle }) {
 /* ── Wire Item (compact) ── */
 function WireItem({ article }: { article: WorkNewsArticle }) {
   const cat = getCategoryConfig(article.category);
-  const whyMatters = getWhyItMatters(article.category, article.is_controversy);
+  const whyMatters = getWhyItMatters(article);
   return (
     <div id={`story-${article.id}`} className="group block scroll-mt-24">
       <div className="rounded-lg border border-border/30 bg-card p-4 hover:border-primary/30 transition-all h-full flex flex-col">
