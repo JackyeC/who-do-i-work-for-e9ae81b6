@@ -37,7 +37,8 @@ export function useWorkNews(limit = 50) {
         }))
         .filter(item =>
           isLikelyEnglish(item.headline) &&
-          isUSOrEmployerRelevant(item.headline, item.source_name, true)
+          isUSOrEmployerRelevant(item.headline, item.source_name, true) &&
+          item.jackye_take !== "[FILTERED]"
         )
         .slice(0, limit);
     },
