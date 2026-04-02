@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=DM+Mono:wght@400;500&family=Playfair+Display:ital,wght@0,700;0,800;0,900;1,700;1,800&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=DM+Mono:wght@400;500&display=swap');
 
 @tailwind base;
 @tailwind components;
@@ -217,8 +217,8 @@ body > div:last-child > a[href*="lovable"] {
 @layer utilities {
   /* ── FONT FAMILY UTILITIES ── */
   .font-serif {
-    font-family: 'Playfair Display', Georgia, serif;
-    font-weight: 700;
+    font-family: 'Inter', system-ui, sans-serif;
+    font-weight: 800;
     letter-spacing: -0.5px;
   }
 
@@ -241,13 +241,15 @@ body > div:last-child > a[href*="lovable"] {
   }
 
   .font-display {
-    font-family: 'Playfair Display', Georgia, serif;
+    font-family: 'Inter', system-ui, sans-serif;
     font-weight: 800;
+    letter-spacing: -0.02em;
   }
 
   .font-brand {
-    font-family: 'Playfair Display', Georgia, serif;
-    font-weight: 700;
+    font-family: 'Inter', system-ui, sans-serif;
+    font-weight: 800;
+    letter-spacing: -0.02em;
   }
 
   /* ── TYPOGRAPHY CLASSES ── */

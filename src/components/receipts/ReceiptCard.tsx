@@ -216,7 +216,7 @@ export function ReceiptCard({ article, featured = false, onPosterClick, onReques
 
       {/* JRC EDIT Watermark */}
       <div className="flex justify-end mt-5">
-        <span className="text-xs tracking-[0.25em] uppercase opacity-40" style={{ fontFamily: "Georgia, 'Times New Roman', serif", color: "hsl(var(--muted-foreground))", fontWeight: 300 }}>
+        <span className="text-xs tracking-[0.25em] uppercase opacity-40 text-muted-foreground font-mono" style={{ fontWeight: 300 }}>
           JRC EDIT
         </span>
       </div>
