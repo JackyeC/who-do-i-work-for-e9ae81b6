@@ -93,6 +93,7 @@ const SignalFeed = lazy(() => import("./pages/SignalFeed"));
 const EEOCTracker = lazy(() => import("./pages/EEOCTracker"));
 const WorkIndex = lazy(() => import("./pages/WorkIndex"));
 const WorkforceBrief = lazy(() => import("./pages/WorkforceBrief"));
+const WorkSignalFeed = lazy(() => import("./pages/WorkSignalFeed"));
 const Rankings = lazy(() => import("./pages/Rankings"));
 const RealityCheck = lazy(() => import("./pages/RealityCheck"));
 const FounderConsole = lazy(() => import("./pages/FounderConsole"));
@@ -257,6 +258,7 @@ const App = () => (
                   <Route path="/examples" element={<Examples />} />
                   <Route path="/signals" element={<Navigate to="/signal-alerts" replace />} />
                   <Route path="/workforce-brief" element={<WorkforceBrief />} />
+                  <Route path="/work-signal" element={<WorkSignalFeed />} />
                   <Route path="/eeoc-tracker" element={<EEOCTracker />} />
                   <Route path="/search-your-employer" element={<SearchYourEmployer />} />
                   <Route path="/values-search" element={<ValuesSearch />} />

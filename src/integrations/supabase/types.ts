@@ -4832,6 +4832,45 @@ export type Database = {
         }
         Relationships: []
       }
+      daily_wraps: {
+        Row: {
+          created_at: string
+          id: string
+          intro: string | null
+          published_at: string | null
+          status: string
+          summary_take: string | null
+          title: string
+          top_signal_story_ids: string[] | null
+          updated_at: string
+          wrap_date: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          intro?: string | null
+          published_at?: string | null
+          status?: string
+          summary_take?: string | null
+          title?: string
+          top_signal_story_ids?: string[] | null
+          updated_at?: string
+          wrap_date: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          intro?: string | null
+          published_at?: string | null
+          status?: string
+          summary_take?: string | null
+          title?: string
+          top_signal_story_ids?: string[] | null
+          updated_at?: string
+          wrap_date?: string
+        }
+        Relationships: []
+      }
       dream_job_requests: {
         Row: {
           created_at: string
@@ -8565,6 +8604,39 @@ export type Database = {
           },
         ]
       }
+      promo_snippets: {
+        Row: {
+          created_at: string
+          id: string
+          push_lines: string[] | null
+          social_hooks: string[] | null
+          subject_lines: string[] | null
+          target_id: string
+          target_type: string
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          push_lines?: string[] | null
+          social_hooks?: string[] | null
+          subject_lines?: string[] | null
+          target_id: string
+          target_type: string
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          push_lines?: string[] | null
+          social_hooks?: string[] | null
+          subject_lines?: string[] | null
+          target_id?: string
+          target_type?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
       receipts_enriched: {
         Row: {
           category: string | null
@@ -10002,6 +10074,69 @@ export type Database = {
           },
         ]
       }
+      signal_stories: {
+        Row: {
+          before_you_say_yes: string | null
+          category: string
+          company_name: string | null
+          created_at: string
+          headline: string
+          heat_level: string
+          id: string
+          jrc_take: string | null
+          published_at: string | null
+          receipt: string | null
+          signal_type: string
+          source_name: string | null
+          source_url: string | null
+          status: string
+          updated_at: string
+          why_it_matters_applicants: string | null
+          why_it_matters_employees: string | null
+          why_it_matters_execs: string | null
+        }
+        Insert: {
+          before_you_say_yes?: string | null
+          category?: string
+          company_name?: string | null
+          created_at?: string
+          headline: string
+          heat_level?: string
+          id?: string
+          jrc_take?: string | null
+          published_at?: string | null
+          receipt?: string | null
+          signal_type?: string
+          source_name?: string | null
+          source_url?: string | null
+          status?: string
+          updated_at?: string
+          why_it_matters_applicants?: string | null
+          why_it_matters_employees?: string | null
+          why_it_matters_execs?: string | null
+        }
+        Update: {
+          before_you_say_yes?: string | null
+          category?: string
+          company_name?: string | null
+          created_at?: string
+          headline?: string
+          heat_level?: string
+          id?: string
+          jrc_take?: string | null
+          published_at?: string | null
+          receipt?: string | null
+          signal_type?: string
+          source_name?: string | null
+          source_url?: string | null
+          status?: string
+          updated_at?: string
+          why_it_matters_applicants?: string | null
+          why_it_matters_employees?: string | null
+          why_it_matters_execs?: string | null
+        }
+        Relationships: []
+      }
       signal_verifications: {
         Row: {
           claim_evidence_urls: string[] | null
@@ -11412,6 +11547,57 @@ export type Database = {
           source_url?: string | null
           state?: string | null
           status?: string
+        }
+        Relationships: []
+      }
+      weekly_issues: {
+        Row: {
+          created_at: string
+          id: string
+          intro: string | null
+          issue_date: string
+          lead_circle_cta_body: string | null
+          lead_circle_cta_title: string | null
+          pattern_of_week: string | null
+          published_at: string | null
+          signal_story_ids: string[] | null
+          signoff: string | null
+          status: string
+          subject_line_alternates: string[] | null
+          subject_line_primary: string
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          intro?: string | null
+          issue_date: string
+          lead_circle_cta_body?: string | null
+          lead_circle_cta_title?: string | null
+          pattern_of_week?: string | null
+          published_at?: string | null
+          signal_story_ids?: string[] | null
+          signoff?: string | null
+          status?: string
+          subject_line_alternates?: string[] | null
+          subject_line_primary: string
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          intro?: string | null
+          issue_date?: string
+          lead_circle_cta_body?: string | null
+          lead_circle_cta_title?: string | null
+          pattern_of_week?: string | null
+          published_at?: string | null
+          signal_story_ids?: string[] | null
+          signoff?: string | null
+          status?: string
+          subject_line_alternates?: string[] | null
+          subject_line_primary?: string
+          updated_at?: string
         }
         Relationships: []
       }
