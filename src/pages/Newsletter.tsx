@@ -251,7 +251,7 @@ function StoryCard({ article }: { article: WorkNewsArticle }) {
         {article.themes && article.themes.length > 0 && (
           <div className="flex flex-wrap gap-1.5 mb-3">
             {article.themes.map((theme) => (
-              <span key={theme} className="inline-flex items-center px-2 py-0.5 rounded-full bg-muted/50 text-[10px] text-muted-foreground font-mono">
+              <span key={theme} className="inline-flex items-center px-2 py-0.5 rounded-full bg-muted/50 text-xs text-foreground/60 font-mono">
                 {theme}
               </span>
             ))}
