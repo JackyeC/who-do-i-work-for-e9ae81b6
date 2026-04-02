@@ -14,6 +14,56 @@ export type Database = {
   }
   public: {
     Tables: {
+      accountability_ingestion_log: {
+        Row: {
+          company_id: string
+          created_at: string
+          error_message: string | null
+          id: string
+          ingested_by: string | null
+          raw_payload: Json | null
+          signals_found: number
+          signals_inserted: number
+          source_key: string
+          source_tier: number
+          status: string
+        }
+        Insert: {
+          company_id: string
+          created_at?: string
+          error_message?: string | null
+          id?: string
+          ingested_by?: string | null
+          raw_payload?: Json | null
+          signals_found?: number
+          signals_inserted?: number
+          source_key: string
+          source_tier?: number
+          status?: string
+        }
+        Update: {
+          company_id?: string
+          created_at?: string
+          error_message?: string | null
+          id?: string
+          ingested_by?: string | null
+          raw_payload?: Json | null
+          signals_found?: number
+          signals_inserted?: number
+          source_key?: string
+          source_tier?: number
+          status?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "accountability_ingestion_log_company_id_fkey"
+            columns: ["company_id"]
+            isOneToOne: false
+            referencedRelation: "companies"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       accountability_signals: {
         Row: {
           company_id: string
@@ -22,11 +72,13 @@ export type Database = {
           event_date: string | null
           headline: string
           id: string
+          ingestion_source_key: string | null
           is_verified: boolean
           related_signal_ids: string[] | null
           severity: string
           signal_category: string
           signal_type: string
+          source_hash: string | null
           source_name: string | null
           source_type: string
           source_url: string | null
@@ -43,11 +95,13 @@ export type Database = {
           event_date?: string | null
           headline: string
           id?: string
+          ingestion_source_key?: string | null
           is_verified?: boolean
           related_signal_ids?: string[] | null
           severity?: string
           signal_category: string
           signal_type: string
+          source_hash?: string | null
           source_name?: string | null
           source_type?: string
           source_url?: string | null
@@ -64,11 +118,13 @@ export type Database = {
           event_date?: string | null
           headline?: string
           id?: string
+          ingestion_source_key?: string | null
           is_verified?: boolean
           related_signal_ids?: string[] | null
           severity?: string
           signal_category?: string
           signal_type?: string
+          source_hash?: string | null
           source_name?: string | null
           source_type?: string
           source_url?: string | null
