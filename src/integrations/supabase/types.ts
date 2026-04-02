@@ -6536,6 +6536,83 @@ export type Database = {
         }
         Relationships: []
       }
+      jrc_stories: {
+        Row: {
+          bias_confidence: string
+          bias_jrc: string
+          bias_source: string
+          category: string
+          companies: Json
+          created_at: string
+          headline_deck: string | null
+          headline_poster: string
+          heat_level: string
+          id: string
+          language: string
+          people: Json
+          primary_source_url: string
+          published_at: string
+          receipt_items: Json
+          slug: string
+          source_label: string
+          summary_rich: string
+          updated_at: string
+          work_news_id: string | null
+        }
+        Insert: {
+          bias_confidence?: string
+          bias_jrc?: string
+          bias_source?: string
+          category?: string
+          companies?: Json
+          created_at?: string
+          headline_deck?: string | null
+          headline_poster: string
+          heat_level?: string
+          id?: string
+          language?: string
+          people?: Json
+          primary_source_url: string
+          published_at?: string
+          receipt_items?: Json
+          slug: string
+          source_label: string
+          summary_rich: string
+          updated_at?: string
+          work_news_id?: string | null
+        }
+        Update: {
+          bias_confidence?: string
+          bias_jrc?: string
+          bias_source?: string
+          category?: string
+          companies?: Json
+          created_at?: string
+          headline_deck?: string | null
+          headline_poster?: string
+          heat_level?: string
+          id?: string
+          language?: string
+          people?: Json
+          primary_source_url?: string
+          published_at?: string
+          receipt_items?: Json
+          slug?: string
+          source_label?: string
+          summary_rich?: string
+          updated_at?: string
+          work_news_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "jrc_stories_work_news_id_fkey"
+            columns: ["work_news_id"]
+            isOneToOne: false
+            referencedRelation: "work_news"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       labor_rights_signals: {
         Row: {
           case_number: string | null
