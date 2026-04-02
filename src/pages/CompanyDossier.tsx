@@ -660,6 +660,7 @@ export default function CompanyDossier() {
   );
 
   return (
+    <EvaluationView hideVerdict>
     <section className="container mx-auto px-4 py-8 max-w-3xl">
       <div className="space-y-4">
         <DossierProtector
