@@ -5,7 +5,7 @@ import { Badge } from "@/components/ui/badge";
 import { Checkbox } from "@/components/ui/checkbox";
 import {
   Eye, ShieldAlert, Bell, CheckCircle2,
-  Building2, HelpCircle,
+  Building2, HelpCircle, AlertTriangle,
 } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
@@ -14,6 +14,7 @@ import { getSectorRisk } from "./offer-intelligence/sectorRisks";
 import { getAskBeforeYouSign } from "./offer-intelligence/askBeforeYouSign";
 import { CommunitySignals } from "./offer-intelligence/CommunitySignals";
 import { WarnFilingsCard } from "./WarnFilingsCard";
+import { useCompanyReviews } from "@/hooks/use-company-reviews";
 
 /* ── Public signal cards from company record ── */
 interface PublicSignal {
@@ -92,6 +93,13 @@ export function OfferIntelligencePanel({ company, companyId }: OfferIntelligence
     company.employee_count,
   );
 
+  // Check review flag from Apify data
+  const { data: reviewData } = useCompanyReviews(
+    companyId,
+    company.name || "",
+    company.state || ""
+  );
+
   const handleFlag = async () => {
     setFlagging(true);
     try {
@@ -119,11 +127,27 @@ export function OfferIntelligencePanel({ company, companyId }: OfferIntelligence
           <h2 className="text-lg font-bold text-foreground">
             What they're not telling you — yet.
           </h2>
+          {reviewData?.reviewCarefully && (
+            <Badge variant="destructive" className="text-xs gap-1 ml-auto">
+              <AlertTriangle className="w-3 h-3" />
+              Review carefully
+            </Badge>
+          )}
         </div>
         <p className="text-sm text-muted-foreground max-w-xl">
           We don't have a full dossier on this employer. Here's what we found, and what to watch for.
         </p>
       </div>
+
+      {/* ── Community / Secondary Signals (Indeed, BBB) — PRIMARY content on limited data pages ── */}
+      <CommunitySignals
+        companyId={companyId}
+        companyName={company.name}
+        companyState={company.state}
+      />
+
+      {/* ── WARN Filings ── */}
+      <WarnFilingsCard companyId={companyId} companyName={company.name} prominent />
 
       {/* ── Verified Signals ── */}
       {signals.length > 0 && (
@@ -146,12 +170,6 @@ export function OfferIntelligencePanel({ company, companyId }: OfferIntelligence
           </div>
         </div>
       )}
-
-      {/* ── WARN Filings — top signal on limited data pages ── */}
-      <WarnFilingsCard companyId={companyId} companyName={company.name} prominent />
-
-      {/* ── Community / Secondary Signals (Indeed, BBB, Glassdoor) ── */}
-      <CommunitySignals companyId={companyId} />
 
       {/* ── Sector Risk Context ── */}
       {sectorRisk && (
