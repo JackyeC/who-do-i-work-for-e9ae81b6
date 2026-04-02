@@ -13,6 +13,7 @@ import { useAuth } from "@/contexts/AuthContext";
 import { getSectorRisk } from "./offer-intelligence/sectorRisks";
 import { getAskBeforeYouSign } from "./offer-intelligence/askBeforeYouSign";
 import { CommunitySignals } from "./offer-intelligence/CommunitySignals";
+import { WarnFilingsCard } from "./WarnFilingsCard";
 
 /* ── Public signal cards from company record ── */
 interface PublicSignal {
