@@ -11349,6 +11349,7 @@ export type Database = {
           is_controversy: boolean | null
           jackye_take: string | null
           jackye_take_approved: boolean | null
+          language: string | null
           published_at: string | null
           sentiment_score: number | null
           source_name: string | null
@@ -11367,6 +11368,7 @@ export type Database = {
           is_controversy?: boolean | null
           jackye_take?: string | null
           jackye_take_approved?: boolean | null
+          language?: string | null
           published_at?: string | null
           sentiment_score?: number | null
           source_name?: string | null
@@ -11385,6 +11387,7 @@ export type Database = {
           is_controversy?: boolean | null
           jackye_take?: string | null
           jackye_take_approved?: boolean | null
+          language?: string | null
           published_at?: string | null
           sentiment_score?: number | null
           source_name?: string | null

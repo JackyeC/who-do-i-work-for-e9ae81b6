@@ -53,7 +53,7 @@ const FILTER_OPTIONS = [
   { value: "ai_workplace", label: "AI" },
   { value: "regulation", label: "Regulation" },
   { value: "pay_equity", label: "Pay" },
-  { value: "hot", label: "🔥 Hottest" },
+  { value: "hot", label: "⭐ Top Rated" },
 ];
 
 /* ══════════════════════════════════════════

@@ -21,24 +21,47 @@ const EXCLUDE_PATTERNS = [
   /\b(Psychology\s+Today)\b/i,
   /\b(horoscope|zodiac|astrology)\b/i,
 ];
-const EXCLUDE_DOMAINS = [
+const EXCLUDE_DOMAINS = new Set([
+  // Gaming / lifestyle
   "psychologytoday.com", "kotaku.com", "ign.com", "gamespot.com",
   "polygon.com", "pcgamer.com", "eurogamer.net",
-  // Foreign-language domains — block at enrichment layer
-  "watoday.com.au", "ibtimes.co.uk", "hcamag.com", "colombogazette.com",
-  "demokraatti.fi", "di.se", "etnews.com", "sunstar.com.ph",
-  "terra.com.br", "channelnewsasia.com",
-  "g1.globo.com", "globo.com", "uol.com.br", "folha.uol.com.br",
-  "lemonde.fr", "elpais.com", "spiegel.de", "corriere.it",
-  "ideawebtv.it", "repubblica.it", "ilsole24ore.com",
-  "lefigaro.fr", "welt.de", "bild.de", "nrc.nl", "dn.se",
-  "dagensjuridik.se", "aftonbladet.se", "expressen.se",
+  // Australia / NZ / UK
+  "watoday.com.au", "ibtimes.co.uk", "hcamag.com", "ibtimes.com.au",
+  "starcommunity.com.au", "abc.net.au",
+  // Asia / Pacific
+  "colombogazette.com", "etnews.com", "sunstar.com.ph",
+  "channelnewsasia.com",
+  // Latin America / Brazil
+  "terra.com.br", "g1.globo.com", "globo.com", "uol.com.br",
+  "folha.uol.com.br", "senado.leg.br", "sonoticias.com.br",
+  // France
+  "lemonde.fr", "lefigaro.fr", "liberation.fr", "20minutes.fr", "francetvinfo.fr",
+  // Spain
+  "elpais.com", "rtve.es", "elmundo.es", "abc.es", "lavanguardia.com",
+  // Germany
+  "spiegel.de", "welt.de", "bild.de", "handelsblatt.com", "faz.net",
+  "sueddeutsche.de", "zeit.de", "hna.de", "op-marburg.de",
+  "merkur.de", "finanznachrichten.de",
+  // Italy
+  "corriere.it", "ideawebtv.it", "repubblica.it", "ilsole24ore.com",
+  "ilfattoquotidiano.it", "ansa.it", "rainews.it", "spotandweb.it",
+  // Scandinavia
+  "di.se", "dn.se", "dagensjuridik.se", "aftonbladet.se", "expressen.se",
+  "nyteknik.se", "arbetet.se", "svensktnaringsliv.se",
+  "demokraatti.fi",
+  // Netherlands
+  "nrc.nl",
+  // Poland
   "tvn24.pl", "wp.pl", "onet.pl", "gazeta.pl",
-  "ilfattoquotidiano.it", "ansa.it", "rainews.it",
-  "rtve.es", "elmundo.es", "abc.es", "lavanguardia.com",
-  "liberation.fr", "20minutes.fr", "francetvinfo.fr",
-  "handelsblatt.com", "faz.net", "sueddeutsche.de", "zeit.de",
-];
+]);
+
+const BLOCKED_TLDS = new Set([
+  ".se", ".fi", ".pl", ".it", ".de", ".fr", ".es", ".br",
+  ".nl", ".ph", ".au", ".kr", ".jp", ".cn", ".tw", ".ru",
+  ".ua", ".cz", ".sk", ".hu", ".ro", ".bg", ".hr", ".rs",
+  ".no", ".dk", ".pt", ".gr", ".tr", ".in", ".pk", ".bd",
+  ".lk", ".th", ".vn", ".id", ".my", ".sg",
+]);
 
 function isEnglishAndRelevant(headline: string): boolean {
   if (!headline || headline.length < 3) return false;
@@ -71,7 +94,24 @@ function isEnglishAndRelevant(headline: string): boolean {
 function isExcludedSource(sourceUrl: string | null, sourceName: string | null): boolean {
   if (!sourceUrl && !sourceName) return false;
   const combined = `${sourceUrl ?? ""} ${sourceName ?? ""}`.toLowerCase();
-  return EXCLUDE_DOMAINS.some(d => combined.includes(d));
+  // Exact domain match
+  for (const d of EXCLUDE_DOMAINS) {
+    if (combined.includes(d)) return true;
+  }
+  // TLD-based blocking
+  const domain = (sourceName || "").toLowerCase().trim();
+  for (const tld of BLOCKED_TLDS) {
+    if (domain.endsWith(tld)) return true;
+  }
+  if (sourceUrl) {
+    try {
+      const urlDomain = new URL(sourceUrl).hostname.replace("www.", "");
+      for (const tld of BLOCKED_TLDS) {
+        if (urlDomain.endsWith(tld)) return true;
+      }
+    } catch { /* ignore */ }
+  }
+  return false;
 }
 
 interface WorkNewsStory {
