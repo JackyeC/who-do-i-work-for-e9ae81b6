@@ -237,7 +237,7 @@ function generateJackyeTake(
 
   // Compensation gaps — the "show the work" lens
   if (flags.compensationTransparencyGaps || (comp && comp.subscore < 50)) {
-    parts.push("Pay transparency is weak. If they can't show you the band, the benchmark, or the equity audit — that's not complexity, that's concealment. Companies that pay fairly aren't afraid to prove it. Period.");
+    parts.push("Pay transparency is weak. If they cannot show you the band, the benchmark, or the equity audit — that is not complexity, that is concealment. Companies that pay fairly are not afraid to prove it.");
   }
 
   // Leadership instability — the human element
