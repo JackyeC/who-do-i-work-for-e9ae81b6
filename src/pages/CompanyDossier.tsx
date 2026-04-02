@@ -33,6 +33,10 @@ import { SignalRevealCard } from "@/components/dossier/SignalRevealCard";
 import { ApplyWithWDIWF } from "@/components/applications/ApplyWithWDIWF";
 import { useEvaluation } from "@/contexts/EvaluationContext";
 import { EvaluationView } from "@/components/evaluation/EvaluationView";
+import { DossierVerdictHeader } from "@/components/evaluation/DossierVerdictHeader";
+import { DossierSnapshotCards } from "@/components/evaluation/DossierSnapshotCards";
+import { WhatThisMeansForYou } from "@/components/evaluation/WhatThisMeansForYou";
+import { DossierActionBridge } from "@/components/evaluation/DossierActionBridge";
 
 // Deep-dive layer components (power-user expandable)
 import { ValuesSignalsLayer } from "@/components/dossier/ValuesSignalsLayer";
