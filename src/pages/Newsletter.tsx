@@ -261,14 +261,14 @@ function StoryCard({ article }: { article: WorkNewsArticle }) {
         <div className="flex items-center justify-between pt-3 border-t border-border/20">
           <div className="flex items-center gap-3">
             {article.source_name && (
-              <span className={`text-xs font-medium ${biasColor || "text-muted-foreground"}`}>{article.source_name}</span>
+              <span className={`text-sm font-medium ${biasColor || "text-foreground/70"}`}>{article.source_name}</span>
             )}
             <SpiceMeter level={spice} />
           </div>
           {article.source_url && (
             <a href={article.source_url} target="_blank" rel="noopener noreferrer"
-              className="flex items-center gap-1 text-[10px] font-mono text-primary/70 hover:text-primary transition-colors">
-              Source <ExternalLink className="w-3 h-3" />
+              className="flex items-center gap-1 text-xs font-mono text-primary hover:text-primary/80 transition-colors">
+              Source <ExternalLink className="w-3.5 h-3.5" />
             </a>
           )}
         </div>
