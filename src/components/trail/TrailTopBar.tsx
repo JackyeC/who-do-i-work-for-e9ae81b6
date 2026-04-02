@@ -1,5 +1,5 @@
 /**
- * WhoDoI Trail — Top bar: premium, game-like.
+ * WhoDoI Trail — Top bar reframed for job seekers.
  */
 import { Settings, User, Zap, Fingerprint } from "lucide-react";
 import { useTrail } from "./TrailContext";
@@ -22,7 +22,6 @@ export function TrailTopBar() {
         background: "linear-gradient(180deg, #131620 0%, #111419 100%)",
         borderBottom: "1px solid rgba(242,193,78,0.08)",
       }}>
-      {/* Left: Branding */}
       <div className="flex items-center gap-4">
         <div className="flex items-center gap-1.5">
           <Fingerprint className="w-4.5 h-4.5" style={{ color: "#F2C14E" }} />
@@ -38,9 +37,11 @@ export function TrailTopBar() {
         )}
       </div>
 
-      {/* Center: Progress */}
       {state.phase !== "intro" && (
         <div className="hidden md:flex items-center gap-3 flex-1 max-w-xs mx-6">
+          <span className="text-[9px] font-mono uppercase tracking-wider whitespace-nowrap" style={{ color: "#B9C0CC" }}>
+            Evidence
+          </span>
           <div className="flex-1 h-2.5 rounded-full overflow-hidden" style={{ background: "#1E222C" }}>
             <div className="h-full rounded-full"
               style={{
@@ -56,7 +57,6 @@ export function TrailTopBar() {
         </div>
       )}
 
-      {/* Right: Score + Rank */}
       <div className="flex items-center gap-2.5">
         <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-full"
           style={{ background: "rgba(242,193,78,0.08)", border: "1px solid rgba(242,193,78,0.15)" }}>
