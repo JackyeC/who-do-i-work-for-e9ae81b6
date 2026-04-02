@@ -1,28 +1,8 @@
 import { useState } from "react";
-import { useQuery } from "@tanstack/react-query";
-import { supabase } from "@/integrations/supabase/client";
 import { Badge } from "@/components/ui/badge";
 import { ExternalLink, ChevronDown, ShieldAlert, Users, Eye, AlertTriangle } from "lucide-react";
 import { cn } from "@/lib/utils";
-
-/* ── Types ── */
-interface AccountabilitySignal {
-  id: string;
-  signal_category: string;
-  signal_type: string;
-  status_label: string;
-  headline: string;
-  description: string | null;
-  why_it_matters: string | null;
-  subject_name: string | null;
-  subject_role: string | null;
-  source_type: string;
-  source_url: string | null;
-  source_name: string | null;
-  event_date: string | null;
-  severity: string;
-  is_verified: boolean;
-}
+import { useAccountabilitySignals, type AccountabilitySignal } from "@/hooks/use-accountability-signals";
 
 /* ── Category config ── */
 const CATEGORIES = [
@@ -89,16 +69,6 @@ function formatDate(d: string | null) {
 }
 
 /* ── Main component ── */
-/**
- * Feature flag: only show Accountability Signals for companies
- * that have been manually reviewed and approved.
- * Add company IDs here as you sign off on each company's data.
- */
-const APPROVED_COMPANY_IDS = new Set([
-  "179c69f3-6d11-41ce-97c0-45e6f677af61", // JPMorgan Chase
-  "d4e5f6a7-b8c9-0123-defa-234567890123", // Amazon
-]);
-
 interface Props {
   companyId: string;
   companyName: string;
@@ -106,25 +76,10 @@ interface Props {
 
 export function AccountabilitySignalsLayer({ companyId, companyName }: Props) {
   const [expandedCat, setExpandedCat] = useState<string | null>(null);
-  const isApproved = APPROVED_COMPANY_IDS.has(companyId);
-
-  const { data: signals = [], isLoading } = useQuery({
-    queryKey: ["accountability-signals", companyId],
-    queryFn: async () => {
-      const { data, error } = await supabase
-        .from("accountability_signals")
-        .select("*")
-        .eq("company_id", companyId)
-        .order("severity", { ascending: true })
-        .order("event_date", { ascending: false });
-      if (error) throw error;
-      return (data || []) as AccountabilitySignal[];
-    },
-    enabled: isApproved,
-  });
+  const { signals, grouped: hookGrouped, isEnabled, isLoading } = useAccountabilitySignals(companyId);
 
   // Feature gate: hide for unapproved companies
-  if (!isApproved) {
+  if (!isEnabled) {
     return null;
   }
 
@@ -152,10 +107,14 @@ export function AccountabilitySignalsLayer({ companyId, companyName }: Props) {
     );
   }
 
-  const grouped = CATEGORIES.map(cat => ({
-    ...cat,
-    signals: signals.filter(s => s.signal_category === cat.key),
-  })).filter(g => g.signals.length > 0);
+  // Merge hook grouping with UI config (icons, colors)
+  const grouped = CATEGORIES
+    .map(cat => {
+      const match = hookGrouped.find(g => g.category === cat.key);
+      if (!match || match.signals.length === 0) return null;
+      return { ...cat, signals: match.signals, highSeverityCount: match.highSeverityCount };
+    })
+    .filter(Boolean) as (typeof CATEGORIES[number] & { signals: AccountabilitySignal[]; highSeverityCount: number })[];
 
   return (
     <div className="space-y-3">
@@ -166,7 +125,7 @@ export function AccountabilitySignalsLayer({ companyId, companyName }: Props) {
       {grouped.map(group => {
         const isExpanded = expandedCat === group.key;
         const Icon = group.icon;
-        const criticalCount = group.signals.filter(s => s.severity === "critical" || s.severity === "high").length;
+        const criticalCount = group.highSeverityCount;
 
         return (
           <div key={group.key} className={cn("border rounded-lg overflow-hidden transition-colors", group.border, isExpanded && group.bg)}>
