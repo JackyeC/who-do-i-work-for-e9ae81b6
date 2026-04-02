@@ -655,15 +655,22 @@ export default function Newsletter() {
           <div className="bg-card border border-border rounded-xl p-5">
             <p className="text-[11px] uppercase tracking-[0.55em] text-primary mb-3.5 font-mono">🔥 Hottest Right Now</p>
             {hotStories.slice(0, 4).map((article) => (
-              <div key={article.id} className="pb-3 mb-3 border-b border-border last:border-none last:mb-0 last:pb-0">
+              <button
+                key={article.id}
+                onClick={() => document.getElementById(`story-${article.id}`)?.scrollIntoView({ behavior: "smooth", block: "start" })}
+                className="block w-full text-left pb-3 mb-3 border-b border-border last:border-none last:mb-0 last:pb-0 group/hot cursor-pointer hover:bg-muted/20 rounded-md px-1 -mx-1 transition-colors"
+              >
                 <div className="flex items-center gap-2 mb-1.5">
                   <Badge variant="outline" className={`text-[10px] font-mono tracking-wider border ${getCategoryConfig(article.category).color}`}>
                     {getCategoryConfig(article.category).label}
                   </Badge>
                   <span className="text-[10px] text-foreground/50 font-mono">{timeAgo(article.published_at)}</span>
                 </div>
-                <p className="text-sm font-semibold text-foreground leading-snug">{article.headline}</p>
-              </div>
+                <p className="text-sm font-semibold text-foreground leading-snug group-hover/hot:text-primary transition-colors">{article.headline}</p>
+                <span className="text-xs text-primary opacity-0 group-hover/hot:opacity-100 transition-opacity flex items-center gap-1 mt-1">
+                  Read this story <ArrowRight className="w-3 h-3" />
+                </span>
+              </button>
             ))}
           </div>
 
