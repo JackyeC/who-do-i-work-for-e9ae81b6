@@ -14,6 +14,80 @@ export type Database = {
   }
   public: {
     Tables: {
+      accountability_signals: {
+        Row: {
+          company_id: string
+          created_at: string
+          description: string | null
+          event_date: string | null
+          headline: string
+          id: string
+          is_verified: boolean
+          related_signal_ids: string[] | null
+          severity: string
+          signal_category: string
+          signal_type: string
+          source_name: string | null
+          source_type: string
+          source_url: string | null
+          status_label: string
+          subject_name: string | null
+          subject_role: string | null
+          updated_at: string
+          why_it_matters: string | null
+        }
+        Insert: {
+          company_id: string
+          created_at?: string
+          description?: string | null
+          event_date?: string | null
+          headline: string
+          id?: string
+          is_verified?: boolean
+          related_signal_ids?: string[] | null
+          severity?: string
+          signal_category: string
+          signal_type: string
+          source_name?: string | null
+          source_type?: string
+          source_url?: string | null
+          status_label?: string
+          subject_name?: string | null
+          subject_role?: string | null
+          updated_at?: string
+          why_it_matters?: string | null
+        }
+        Update: {
+          company_id?: string
+          created_at?: string
+          description?: string | null
+          event_date?: string | null
+          headline?: string
+          id?: string
+          is_verified?: boolean
+          related_signal_ids?: string[] | null
+          severity?: string
+          signal_category?: string
+          signal_type?: string
+          source_name?: string | null
+          source_type?: string
+          source_url?: string | null
+          status_label?: string
+          subject_name?: string | null
+          subject_role?: string | null
+          updated_at?: string
+          why_it_matters?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "accountability_signals_company_id_fkey"
+            columns: ["company_id"]
+            isOneToOne: false
+            referencedRelation: "companies"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       advisory_interest: {
         Row: {
           created_at: string
