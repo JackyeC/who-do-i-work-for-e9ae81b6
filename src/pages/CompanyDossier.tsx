@@ -213,6 +213,33 @@ export default function CompanyDossier() {
     }));
   }, [contracts]);
 
+  // Snapshot card summaries — must be before early returns to preserve hook order
+  const civicScoreEarly = company?.civic_footprint_score ?? 0;
+  const snapshotData = useMemo(() => {
+    if (!company) return { workerSummary: "", stabilitySummary: "", moneySummary: "", leadershipSummary: "" };
+    const hasEEOCData = (eeocCases?.length || 0) > 0;
+    const pacSpend = company.total_pac_spending ?? 0;
+    const lobbySpend = company.lobbying_spend ?? 0;
+    const execCount = (executives || []).length;
+    const departedExecs = (executives || []).filter((e: any) => e.departed_at).length;
+
+    return {
+      workerSummary: hasEEOCData
+        ? `${eeocCases!.length} EEOC filing(s) on record. That's worth understanding before you interview.`
+        : civicScoreEarly >= 60
+        ? "No enforcement red flags on file. Transparency score is above average."
+        : "Limited public worker data. Ask about internal complaint processes in your interview.",
+      stabilitySummary: company.employee_count
+        ? `${company.employee_count} employees. Check the WARN filings section below for layoff history.`
+        : "Employee count not publicly confirmed. WARN filing data shown below if available.",
+      moneySummary: pacSpend > 0 || lobbySpend > 0
+        ? `$${(pacSpend + lobbySpend).toLocaleString()} in political spending and lobbying on public record.`
+        : "No significant political spending found in public filings.",
+      leadershipSummary: execCount > 0
+        ? `${execCount} executive(s) tracked.${departedExecs > 0 ? ` ${departedExecs} departed — turnover worth noting.` : " Leadership appears stable on paper."}`
+        : "Executive data still being indexed. Check back or request an audit.",
+    };
+  }, [company, eeocCases, executives, civicScoreEarly]);
   const mappedValues = useMemo(() => {
     if (!valuesSignals) return [];
     return valuesSignals.map((s: any) => ({
