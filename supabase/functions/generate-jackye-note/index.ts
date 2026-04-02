@@ -96,7 +96,7 @@ Deno.serve(async (req) => {
     }
 
     // Call AI to generate note in Jackye's voice
-    const aiResponse = await fetch('https://ai.lovable.dev/api/chat', {
+    const aiResponse = await fetch('https://ai.gateway.lovable.dev/v1/chat/completions', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
