@@ -46,15 +46,15 @@ export function isLikelyEnglish(text: string): boolean {
   const lower = text.toLowerCase();
   const ROMANCE_MARKERS = [
     // Portuguese
-    /\b(país|empregos?|brasileiros?|trabalho|governo|milhares|milhões|sobre|também|ainda|porque|segundo|durante|vistos?|semanas?|promete|saem)\b/,
+    /\b(país|empregos?|brasileiros?|trabalho|governo|milhares|milhões|sobre|também|ainda|porque|segundo|durante|vistos?|semanas?|promete|saem)\b/gi,
     // Spanish
-    /\b(según|porque|también|durante|gobierno|trabajo|empleos?|millones|sobre|nuevo|puede|después|mientras|están|tienen|desde)\b/,
+    /\b(según|porque|también|durante|gobierno|trabajo|empleos?|millones|sobre|nuevo|puede|después|mientras|están|tienen|desde)\b/gi,
     // French
-    /\b(aussi|parce que|gouvernement|travail|emplois?|nouveau|peuvent|après|pendant|depuis|cette|avoir|sont|faire|comme)\b/,
+    /\b(aussi|parce que|gouvernement|travail|emplois?|nouveau|peuvent|après|pendant|depuis|cette|avoir|sont|faire|comme)\b/gi,
     // German
-    /\b(und|der|die|das|ein|eine|für|mit|auf|ist|von|nicht|sich|werden|haben|über|oder|aber)\b/,
+    /\b(und|der|die|das|ein|eine|für|mit|auf|ist|von|nicht|sich|werden|haben|über|oder|aber)\b/gi,
     // Italian
-    /\b(anche|perché|governo|lavoro|nuovo|possono|dopo|durante|questa|hanno|sono|fare|come|molto)\b/,
+    /\b(anche|perché|governo|lavoro|nuovo|possono|dopo|durante|questa|hanno|sono|fare|come|molto)\b/gi,
   ];
 
   // Count how many romance-language marker patterns match
