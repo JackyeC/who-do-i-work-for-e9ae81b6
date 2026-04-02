@@ -1,106 +1,62 @@
 
 
-# Plan: Fix Upstream Content Leak + Restore Newsletter & Chain
+# Fix Non-English Leaks — Surgical Plan
 
-## Current State (from audit)
+## Problem
 
-**Ingestion pipeline**: `sync-work-news` → `work_news` → `jackyefy-news` → `receipts_enriched`
+Every client-side `work_news` query runs without `.eq('language', 'en')`. The `language` column exists and is populated, but no reader uses it. JS-side `isLikelyEnglish()` is the only defense — and it misses edge cases. The `jackyefy-news` enrichment function also has no language filter on its select query.
 
-**What's already working**:
-- NewsAPI: `language: "en"` ✅ already set
-- GDELT: `sourcelang:english` ✅ already in query string
-- Content gates (`passesContentGates`) exist at ingest time ✅
-- `jackyefy-news` has English+relevance pre-filter ✅
-- Client-side filters in `useReceiptsFeed` ✅
-- `/receipts` is a real route (not a redirect) ✅
-- `/newsletter` reads from `receipts_enriched` via `useReceiptsFeed` ✅
-- Stargaze Score chip exists and is rendered ✅
-- Spice distribution is healthy: 6×1, 18×2, 64×3, 13×4+ across 101 enriched records ✅
+## Changes
 
-**What's still broken**:
-- 14 non-English rows remain in `work_news` (Italian, Swedish, Finnish) from blocked domains — these leaked before filters were added
-- No `language` column on `work_news` for explicit tracking
-- GDELT domain filter at ingest doesn't cover all blocked domains (only the `NON_US_DOMAINS` set in `sync-work-news` has ~30 entries; the `jackyefy-news` EXCLUDE_DOMAINS list has ~40 — they're not in sync)
-- No explicit TLD-based blocking (`.se`, `.fi`, `.pl`, `.it` etc.) — only exact domain matches, so new foreign domains slip through
+### 1. `src/hooks/use-work-news.ts`
 
----
+Add `.eq('language', 'en')` to all three query functions:
 
-## Priority 1 — Fix Ingestion + Clean Data
+- **`useWorkNews`** (line 29): insert `.eq('language', 'en')` before `.order()`
+- **`useWorkNewsCount`** (line 54): insert `.eq('language', 'en')` before the count select
+- **`useWorkNewsTicker`** (line 69): insert `.eq('language', 'en')` before `.not()`
 
-### Step 1: Add `language` column to `work_news`
-- Migration: `ALTER TABLE work_news ADD COLUMN language text DEFAULT 'en';`
-- Set existing blocked-source rows to `language = 'unknown'`
+Keep existing JS `isLikelyEnglish()` filters as secondary guards.
 
-### Step 2: Clean existing bad rows
-- SQL cleanup: DELETE or UPDATE rows from `work_news` where `source_name` matches any blocked domain (the 14 identified rows + any in `receipts_enriched` that reference them)
-- Delete corresponding `receipts_enriched` rows if any leaked through
+### 2. `src/components/landing/LiveIntelligenceTicker.tsx`
 
-### Step 3: Harden `sync-work-news` ingestion
-- Unify the domain blocklist: merge the ~40 domains from `jackyefy-news` into `sync-work-news` so both use the same list
-- Add TLD-based blocking: reject any `source_name` or domain ending in `.se`, `.fi`, `.pl`, `.it`, `.de`, `.fr`, `.es`, `.br`, `.nl`, `.ph`, `.au` (unless explicitly whitelisted)
-- Set `language` field on insert (default `'en'` for NewsAPI since we request `language=en`; for GDELT, set `'en'` since we use `sourcelang:english`)
-- Add a `sourcecountry:us` parameter to GDELT queries as additional geographic constraint
+Add `.eq('language', 'en')` to the query (line 51, before `.order()`). Keep existing JS filters.
 
-### Step 4: Harden `jackyefy-news` enrichment
-- Sync the EXCLUDE_DOMAINS list with `sync-work-news`
-- Add the same TLD-based blocking
-- Skip any `work_news` row where `language != 'en'`
+### 3. `src/hooks/use-dashboard-briefing.ts`
 
-### Step 5: Trigger a fresh sync + enrichment
-- Call `sync-work-news` then `jackyefy-news` to pull a clean batch and verify
+Add `.eq('language', 'en')` to the `work_news` query (line 48, before `.order()`).
 
----
+### 4. `src/components/company/MediaNarrativeCard.tsx`
 
-## Priority 1b — Newsletter Wiring Confirmation & Polish
+Add `.eq('language', 'en')` to the query (line 27, before `.order()`).
 
-The newsletter is already correctly wired: `receipts_enriched` → `useReceiptsFeed` → `Newsletter.tsx`. Stargaze Score chips are rendering. Jackye voice is embedded. No raw `work_news` reads remain on `/newsletter`.
+### 5. `supabase/functions/jackyefy-news/index.ts`
 
-**Minor fixes needed**:
-- Remove the `🔥 Hottest` filter option (line 56) — peppers/fire are retired; replace with `⭐ Top Rated`
-- Ensure the "go deeper" links on each card point to `/receipts` and company dossier pages (already partially done with "See the receipts" links; add company lookup link where company data exists)
+Add `.eq('language', 'en')` to the select query that fetches unenriched `work_news` rows for processing. This ensures enrichment never touches non-English rows even if one leaks past ingest.
 
----
+### 6. `supabase/functions/sync-work-news/index.ts`
 
-## Priority 2 — Connect the Chain
+Already sets `language: "en"` on upsert rows. No structural change needed — the ingest side is already correct. The gap was always downstream reads.
 
-### Newsletter → Receipts
-- Already linked via sidebar "See full receipts →" and "What to Watch" section
-- Add a more prominent "Explore All Receipts →" link after the main feed section
-
-### Receipts → Company / Dossier
-- `ReceiptCard` already has "Look up employer →" links
-- Verify these resolve correctly to `/dossier/:slug` or `/company/:slug`
-
-### Company → Prep Tools
-- Already wired in dossier pages (PoliticalGivingCard, HardInterviewQuestions, etc.)
-- No new surfaces needed — just confirm links are functional
-
----
-
-## Priority 3 — No-ops (already done)
-
-These are confirmed working and need no changes:
-- Stargaze Score labels (Set A) ✅
-- Jackye voice in system prompt ✅
-- Spice scoring distribution is healthy (not all 1s) ✅
-- `/receipts` is a real destination ✅
-- BiasBar renders on cards ✅
-
----
-
-## Files Changed
+## Files changed
 
 | File | Change |
-|---|---|
-| `supabase/functions/sync-work-news/index.ts` | Unify blocklist, add TLD blocking, set `language` column, add `sourcecountry:us` to GDELT |
-| `supabase/functions/jackyefy-news/index.ts` | Sync blocklist, add TLD blocking, skip non-`en` rows |
-| `src/pages/Newsletter.tsx` | Replace "🔥 Hottest" filter with "⭐ Top Rated", add "Explore All Receipts" link |
-| Migration | Add `language` column to `work_news`, clean 14 bad rows + any leaked enriched rows |
+|------|--------|
+| `src/hooks/use-work-news.ts` | Add `.eq('language', 'en')` to 3 queries |
+| `src/components/landing/LiveIntelligenceTicker.tsx` | Add `.eq('language', 'en')` to 1 query |
+| `src/hooks/use-dashboard-briefing.ts` | Add `.eq('language', 'en')` to 1 query |
+| `src/components/company/MediaNarrativeCard.tsx` | Add `.eq('language', 'en')` to 1 query |
+| `supabase/functions/jackyefy-news/index.ts` | Add `.eq('language', 'en')` to enrichment select |
 
-## What You'll Get Back
+## What does NOT change
 
-1. Updated ingestion code with unified blocklist + TLD blocking + language column
-2. Count of cleaned rows
-3. Screenshot of `/newsletter` showing English-only content
-4. Confirmation of the full chain: Newsletter → Receipts → Company → Dossier → Tools
+- No new tables, columns, or migrations
+- No redesign or new surfaces
+- No changes to `sync-work-news` (already correct)
+- No changes to `jrc-edit-prompt.ts` (already has English mandate)
+- JS-side filters stay as secondary guards — not removed
+
+## Verification
+
+After implementation, a repo-wide grep for `from("work_news")` will confirm zero unfiltered reads remain.
 
