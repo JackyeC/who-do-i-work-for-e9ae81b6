@@ -241,13 +241,15 @@ body > div:last-child > a[href*="lovable"] {
   }
 
   .font-display {
-    font-family: 'Playfair Display', Georgia, serif;
+    font-family: 'Inter', system-ui, sans-serif;
     font-weight: 800;
+    letter-spacing: -0.02em;
   }
 
   .font-brand {
-    font-family: 'Playfair Display', Georgia, serif;
-    font-weight: 700;
+    font-family: 'Inter', system-ui, sans-serif;
+    font-weight: 800;
+    letter-spacing: -0.02em;
   }
 
   /* ── TYPOGRAPHY CLASSES ── */

@@ -89,9 +89,9 @@ export default {
         },
       },
       fontFamily: {
-        display: ["'Playfair Display'", "Georgia", "serif"],
-        serif: ["'Playfair Display'", "Georgia", "serif"],
-        brand: ["'Playfair Display'", "Georgia", "serif"],
+        display: ["'Inter'", "system-ui", "sans-serif"],
+        serif: ["'Inter'", "system-ui", "sans-serif"],
+        brand: ["'Inter'", "system-ui", "sans-serif"],
         sans: ["'Inter'", "system-ui", "sans-serif"],
         mono: ["'DM Mono'", "'Courier New'", "monospace"],
       },
