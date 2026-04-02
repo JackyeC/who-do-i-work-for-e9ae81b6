@@ -159,8 +159,8 @@ export function AccountabilitySignalsLayer({ companyId, companyName }: Props) {
 
   return (
     <div className="space-y-3">
-      <p className="text-xs text-muted-foreground leading-relaxed px-1">
-        Documented patterns from public records. Not gossip — receipts. Every signal links to a primary source.
+      <p className="text-xs text-muted-foreground leading-relaxed px-1 italic">
+        This section summarizes public records and reputable reporting. Inclusion does not by itself imply endorsement, guilt, or innocence. It is here so workers can see how power, money, and decisions may affect their jobs.
       </p>
 
       {grouped.map(group => {
