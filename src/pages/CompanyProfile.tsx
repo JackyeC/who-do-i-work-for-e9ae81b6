@@ -363,7 +363,9 @@ export default function CompanyProfile() {
 
                   {/* Meta badges */}
                   <div className="flex flex-wrap items-center gap-1.5 mt-2">
-                    <Badge variant="secondary" className="text-xs">{industry}</Badge>
+                    <Link to={`/browse?industry=${encodeURIComponent(industry)}`}>
+                      <Badge variant="secondary" className="text-xs cursor-pointer hover:bg-primary/10 hover:text-primary transition-colors">{industry}</Badge>
+                    </Link>
                     <Badge variant="secondary" className="text-xs">{state}</Badge>
                     {(dbCompany as any)?.employee_count && <Badge variant="secondary" className="text-xs">{(dbCompany as any).employee_count} employees</Badge>}
                     {(dbCompany as any)?.ticker && <Badge variant="outline" className="font-mono text-xs">{(dbCompany as any).ticker}</Badge>}
