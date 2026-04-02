@@ -3,12 +3,14 @@ import { Link } from "react-router-dom";
 import { EmptyStateExplainer } from "@/components/company/EmptyStateExplainer";
 import { OffTheRecordSignals } from "@/components/company/OffTheRecordSignals";
 import { ExpandableSignalItem } from "@/components/company/ExpandableSignalItem";
+import { PersonalizedSignalTag } from "@/components/company/PersonalizedSignalTag";
 import { cn } from "@/lib/utils";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { getUiStatement } from "@/lib/signalPersonalization";
 import { AlertTriangle, ArrowRight } from "lucide-react";
 import { safeSignalSummary, mapToCategory, TAXONOMY_MAP } from "@/utils/signalTextSanitizer";
+import { usePersonalizedSignals } from "@/hooks/use-personalized-signals";
 
 interface Signal {
   summary: string;
@@ -33,9 +35,13 @@ interface SignalCategoryProps {
     whatTheySay?: string;
     whatWeSee?: string;
   };
+  signalKeyword?: string;
 }
 
-function SignalCategory({ title, signals, emptyType, companyName, careersUrl, scanContext }: SignalCategoryProps) {
+function SignalCategory({ title, signals, emptyType, companyName, careersUrl, scanContext, signalKeyword }: SignalCategoryProps) {
+  const { checkSignalRelevance, hasProfile } = usePersonalizedSignals();
+  const match = signalKeyword ? checkSignalRelevance(signalKeyword) : null;
+
   if (signals.length === 0 && emptyType) {
     return (
       <div className="py-4 border-b border-border/30 last:border-b-0">
@@ -49,7 +55,10 @@ function SignalCategory({ title, signals, emptyType, companyName, careersUrl, sc
 
   return (
     <div className="py-4 border-b border-border/30 last:border-b-0">
-      <p className="text-sm font-semibold text-foreground mb-3">{title}</p>
+      <div className="flex items-center gap-2 mb-3">
+        <p className="text-sm font-semibold text-foreground">{title}</p>
+        {hasProfile && match && <PersonalizedSignalTag match={match} compact />}
+      </div>
       <div className="space-y-2.5">
         {signals.map((s, i) => (
           <ExpandableSignalItem key={i} signal={s} />
@@ -391,17 +400,18 @@ export function StructuredSignalsSection(props: StructuredSignalsProps) {
           companyName={props.companyName}
           careersUrl={props.careersUrl}
           scanContext={props.scanContext}
+          signalKeyword="ai_hiring"
         />
-        <SignalCategory title="Workforce Stability" signals={stabilitySignals} />
-        <SignalCategory title="Compensation & Market Position" signals={compSignals} emptyType="compensation" companyName={props.companyName} />
+        <SignalCategory title="Workforce Stability" signals={stabilitySignals} signalKeyword="layoff" />
+        <SignalCategory title="Compensation & Market Position" signals={compSignals} emptyType="compensation" companyName={props.companyName} signalKeyword="pay_equity" />
 
         <div className="py-4 border-b border-border/30">
           <OffTheRecordSignals companyId={props.companyId} companyName={props.companyName} />
         </div>
 
-        <SignalCategory title="Leadership & Influence" signals={leadershipSignals} />
+        <SignalCategory title="Leadership & Influence" signals={leadershipSignals} signalKeyword="lobbying" />
         <SignalCategory title="Innovation & Growth" signals={innovationSignals} />
-        <SignalCategory title="Employee Experience" signals={sentimentSignals} emptyType="sentiment" companyName={props.companyName} />
+        <SignalCategory title="Employee Experience" signals={sentimentSignals} emptyType="sentiment" companyName={props.companyName} signalKeyword="sentiment" />
       </div>
 
       {/* Rabbit-hole footer */}

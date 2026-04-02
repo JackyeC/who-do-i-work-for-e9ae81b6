@@ -3,6 +3,8 @@ import { Badge } from "@/components/ui/badge";
 import { ExternalLink, ChevronDown, ShieldAlert, Users, Eye, AlertTriangle } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useAccountabilitySignals, type AccountabilitySignal } from "@/hooks/use-accountability-signals";
+import { PersonalizedSignalTag } from "@/components/company/PersonalizedSignalTag";
+import { usePersonalizedSignals } from "@/hooks/use-personalized-signals";
 
 /* ── Category config ── */
 const CATEGORIES = [
@@ -75,6 +77,7 @@ interface Props {
 }
 
 export function AccountabilitySignalsLayer({ companyId, companyName }: Props) {
+  const { checkSignalRelevance, hasProfile } = usePersonalizedSignals();
   const [expandedCat, setExpandedCat] = useState<string | null>(null);
   const { signals, grouped: hookGrouped, isEnabled, isLoading } = useAccountabilitySignals(companyId);
 
@@ -135,7 +138,7 @@ export function AccountabilitySignalsLayer({ companyId, companyName }: Props) {
             >
               <Icon className={cn("w-4 h-4 shrink-0", group.color)} />
               <div className="flex-1 min-w-0">
-                <div className="flex items-center gap-2">
+                <div className="flex items-center gap-2 flex-wrap">
                   <span className="text-sm font-semibold text-foreground">{group.label}</span>
                   <Badge variant="outline" className="text-[10px] font-mono">{group.signals.length}</Badge>
                   {criticalCount > 0 && (
@@ -144,6 +147,7 @@ export function AccountabilitySignalsLayer({ companyId, companyName }: Props) {
                       {criticalCount} high severity
                     </Badge>
                   )}
+                  {hasProfile && <PersonalizedSignalTag match={checkSignalRelevance(group.key)} compact />}
                 </div>
                 <span className="text-xs text-muted-foreground">{group.tag}</span>
               </div>
