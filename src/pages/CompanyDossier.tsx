@@ -511,19 +511,7 @@ export default function CompanyDossier() {
 
       {/* No-data fallback */}
       {hasNoData && (
-        <Card className="mb-6 border-dashed border-border/60 bg-muted/20 rounded-none">
-          <CardContent className="p-6 text-center">
-            <FileSearch className="w-10 h-10 text-muted-foreground mx-auto mb-3" />
-            <h3 className="text-base font-semibold text-foreground mb-1">We don't have receipts on this company yet.</h3>
-            <p className="text-sm text-muted-foreground mb-4 max-w-md mx-auto">
-              Our research team hasn't completed a full scan. You can request one below.
-            </p>
-            <div className="flex flex-col items-center gap-4">
-              <CompanyZeroState companyName={company.name} />
-              <AuditRequestForm companyName={company.name} />
-            </div>
-          </CardContent>
-        </Card>
+        <OfferIntelligencePanel company={company} companyId={companyId!} />
       )}
 
       {/* ── THE ADVOCACY REPORT ── */}
