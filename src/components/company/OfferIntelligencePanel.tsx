@@ -163,22 +163,28 @@ export function OfferIntelligencePanel({ company, companyId }: OfferIntelligence
       {/* ── Verified Signals ── */}
       {signals.length > 0 && (
         <div>
-          <div className="flex items-center gap-2 mb-3">
+          <button
+            onClick={() => toggleSection('signals')}
+            className="w-full flex items-center gap-2 mb-3 group cursor-pointer"
+          >
             <Building2 className="w-4 h-4 text-muted-foreground" />
-            <h3 className="text-sm font-semibold text-foreground uppercase tracking-wider">Available Signals</h3>
+            <h3 className="text-sm font-semibold text-foreground uppercase tracking-wider group-hover:text-primary transition-colors">Available Signals</h3>
             <Badge variant="outline" className="text-[10px] font-mono">From public records</Badge>
-          </div>
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-            {signals.map((s) => (
-              <Card key={s.label} className={`border ${SIGNAL_LEVEL_STYLES[s.level]}`}>
-                <CardContent className="p-4">
-                  <p className="text-xs font-mono uppercase tracking-wider text-muted-foreground mb-1">{s.label}</p>
-                  <p className="text-base font-bold text-foreground">{s.value}</p>
-                  <p className="text-[11px] text-muted-foreground mt-1">{s.source}</p>
-                </CardContent>
-              </Card>
-            ))}
-          </div>
+            <ChevronDown className={cn("w-3.5 h-3.5 text-muted-foreground ml-auto transition-transform", expandedSections.signals && "rotate-180")} />
+          </button>
+          {expandedSections.signals && (
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+              {signals.map((s) => (
+                <Card key={s.label} className={`border ${SIGNAL_LEVEL_STYLES[s.level]}`}>
+                  <CardContent className="p-4">
+                    <p className="text-xs font-mono uppercase tracking-wider text-muted-foreground mb-1">{s.label}</p>
+                    <p className="text-base font-bold text-foreground">{s.value}</p>
+                    <p className="text-[11px] text-muted-foreground mt-1">{s.source}</p>
+                  </CardContent>
+                </Card>
+              ))}
+            </div>
+          )}
         </div>
       )}
 
@@ -186,21 +192,35 @@ export function OfferIntelligencePanel({ company, companyId }: OfferIntelligence
       {sectorRisk && (
         <Card className="border-[hsl(var(--civic-yellow))]/30 bg-[hsl(var(--civic-yellow))]/5">
           <CardContent className="p-5">
-            <div className="flex items-start gap-3">
+            <button
+              onClick={() => toggleSection('sectorRisk')}
+              className="w-full flex items-start gap-3 cursor-pointer group"
+            >
               <ShieldAlert className="w-5 h-5 text-[hsl(var(--civic-yellow))] shrink-0 mt-0.5" />
-              <div>
+              <div className="flex-1 text-left">
                 <div className="flex items-center gap-2 mb-1">
-                  <h3 className="text-sm font-bold text-foreground">Sector Risk Context</h3>
+                  <h3 className="text-sm font-bold text-foreground group-hover:text-primary transition-colors">Sector Risk Context</h3>
                   <Badge variant="warning" className="text-[10px] font-mono">Industry Alert</Badge>
+                  <ChevronDown className={cn("w-3.5 h-3.5 text-muted-foreground ml-auto transition-transform", expandedSections.sectorRisk && "rotate-180")} />
                 </div>
                 <p className="text-sm text-foreground font-medium leading-relaxed mb-1">
                   {sectorRisk.summary}
                 </p>
+              </div>
+            </button>
+            {expandedSections.sectorRisk && (
+              <div className="pl-8 mt-2">
                 <p className="text-sm text-muted-foreground leading-relaxed">
                   {sectorRisk.detail}
                 </p>
+                <Link
+                  to={`/dossier/${company.slug || company.name?.toLowerCase().replace(/[^a-z0-9]+/g, '-')}`}
+                  className="inline-flex items-center gap-1 mt-2 text-xs font-medium text-primary hover:underline transition-colors"
+                >
+                  How bad is it really? <ArrowRight className="w-3 h-3" />
+                </Link>
               </div>
-            </div>
+            )}
           </CardContent>
         </Card>
       )}
@@ -208,21 +228,27 @@ export function OfferIntelligencePanel({ company, companyId }: OfferIntelligence
       {/* ── Ask Before You Sign ── */}
       <Card className="border-border/40">
         <CardContent className="p-5">
-          <div className="flex items-center gap-2 mb-4">
+          <button
+            onClick={() => toggleSection('askBeforeYouSign')}
+            className="w-full flex items-center gap-2 mb-0 cursor-pointer group"
+          >
             <HelpCircle className="w-4 h-4 text-primary" />
-            <h3 className="text-sm font-bold text-foreground uppercase tracking-wider">Ask Before You Sign</h3>
+            <h3 className="text-sm font-bold text-foreground uppercase tracking-wider group-hover:text-primary transition-colors">Ask Before You Sign</h3>
             <Badge variant="secondary" className="text-[10px]">{questions.length} questions</Badge>
-          </div>
-          <div className="space-y-3">
-            {questions.map((q, i) => (
-              <label key={i} className="flex items-start gap-3 cursor-pointer group">
-                <Checkbox className="mt-0.5 shrink-0" />
-                <span className="text-sm text-muted-foreground group-hover:text-foreground transition-colors leading-snug">
-                  {q}
-                </span>
-              </label>
-            ))}
-          </div>
+            <ChevronDown className={cn("w-3.5 h-3.5 text-muted-foreground ml-auto transition-transform", expandedSections.askBeforeYouSign && "rotate-180")} />
+          </button>
+          {expandedSections.askBeforeYouSign && (
+            <div className="space-y-3 mt-4">
+              {questions.map((q, i) => (
+                <label key={i} className="flex items-start gap-3 cursor-pointer group">
+                  <Checkbox className="mt-0.5 shrink-0" />
+                  <span className="text-sm text-muted-foreground group-hover:text-foreground transition-colors leading-snug">
+                    {q}
+                  </span>
+                </label>
+              ))}
+            </div>
+          )}
         </CardContent>
       </Card>
 
