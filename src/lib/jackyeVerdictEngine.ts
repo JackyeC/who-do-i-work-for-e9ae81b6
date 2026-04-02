@@ -172,7 +172,7 @@ function generateQuestions(signals: SignalInput[], flags: RedFlags, layoff: Layo
     questions.push({ text: "What transition support did affected employees actually receive? Severance, outplacement, or just a calendar invite?", triggeredBy: "WARN Notices" });
   }
   if (flags.opaqueHiringTechnology && flags.highInfluenceExposure) {
-    questions.push({ text: "You're spending on lobbying but haven't published a Bias Audit. Why should I trust that your hiring process is fair?", triggeredBy: "Dirty Receipt: Influence vs. Transparency" });
+    questions.push({ text: "You invest in lobbying but have not published a Bias Audit. How should I evaluate the fairness of your hiring process?", triggeredBy: "Influence vs. Transparency Gap" });
   }
 
   return questions.slice(0, 7);

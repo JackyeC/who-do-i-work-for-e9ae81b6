@@ -10,10 +10,10 @@ const BIAS_LEGEND = [
 ];
 
 const SPICE_LEGEND = [
-  [1, "Footnote. Worth having on your radar."],
-  [2, "Side-eye. Something doesn't line up here."],
-  [3, "Screenshot this. The details matter."],
-  [4, "This affects your job. Direct workforce impact."],
+  [1, "Worth noting. On the radar for context."],
+  [2, "Worth watching. Something here does not align."],
+  [3, "Worth documenting. The details matter."],
+  [4, "Direct employment impact. Update your strategy."],
   [5, "The public record tells a different story than the press release."],
 ] as const;
 
