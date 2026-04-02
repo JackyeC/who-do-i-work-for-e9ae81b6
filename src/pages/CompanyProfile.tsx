@@ -10,6 +10,7 @@ import { WarnFilingsCard } from "@/components/company/WarnFilingsCard";
 import { IntegrityIndicators } from "@/components/company/IntegrityIndicators";
 import { CareerFitReportCTA } from "@/components/CareerFitReportCTA";
 import { JackyesInsightBlock } from "@/components/company/JackyesInsightBlock";
+import { JackyeContextualTake } from "@/components/company/JackyeContextualTake";
 import { CompanyLogo } from "@/components/CompanyLogo";
 import { WatchCompanyButton } from "@/components/WatchCompanyButton";
 import { ShareableScorecard } from "@/components/ShareableScorecard";
@@ -473,6 +474,20 @@ export default function CompanyProfile() {
             lastReviewed={dbCompany?.last_reviewed}
             updatedAt={dbCompany?.updated_at}
           />
+          {dbCompanyId && (
+            <JackyeContextualTake
+              companyId={dbCompanyId}
+              companyName={name}
+              section="insider_brief"
+              signalSummaries={[
+                totalPac > 0 ? `$${totalPac.toLocaleString()} PAC spending` : "",
+                lobbyingSpend > 0 ? `$${lobbyingSpend.toLocaleString()} lobbying` : "",
+                (dbDarkMoney?.length || 0) > 0 ? `${dbDarkMoney?.length} dark money channels` : "",
+                (dbRevolvingDoor?.length || 0) > 0 ? `${dbRevolvingDoor?.length} revolving door connections` : "",
+              ].filter(Boolean)}
+              className="mb-6"
+            />
+          )}
 
           {/* ═══════════════════════════════════════════════════════
               1.5 VALUES-SIGNAL MATCH (personalized)
@@ -520,6 +535,18 @@ export default function CompanyProfile() {
               lastReviewed={dbCompany?.last_reviewed}
               updatedAt={dbCompany?.updated_at}
             />
+            {dbCompanyId && (
+              <JackyeContextualTake
+                companyId={dbCompanyId}
+                companyName={name}
+                section="structured_signals"
+                signalSummaries={[
+                  hasJobPostings ? `${activeJobCount} active jobs` : "No active job postings",
+                  !!tiAiHr ? "AI hiring tools detected" : "",
+                  !!tiPayEquity ? "Pay equity data available" : "No pay equity data",
+                ].filter(Boolean)}
+              />
+            )}
           </ReportTeaserGate>
 
           {/* ═══════════════════════════════════════════════════════
@@ -570,7 +597,15 @@ export default function CompanyProfile() {
               ACCOUNTABILITY SIGNALS (Layer 10)
              ═══════════════════════════════════════════════════════ */}
           {dbCompanyId && !isEarlyInvestigation && (
-            <AccountabilitySignalsLayer companyId={dbCompanyId} companyName={name} />
+            <>
+              <AccountabilitySignalsLayer companyId={dbCompanyId} companyName={name} />
+              <JackyeContextualTake
+                companyId={dbCompanyId}
+                companyName={name}
+                section="accountability"
+                className="mb-6"
+              />
+            </>
           )}
 
           {/* ═══════════════════════════════════════════════════════

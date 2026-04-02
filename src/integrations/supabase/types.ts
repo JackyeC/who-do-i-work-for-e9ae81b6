@@ -6258,6 +6258,38 @@ export type Database = {
           },
         ]
       }
+      jackye_contextual_takes: {
+        Row: {
+          company_id: string
+          created_at: string
+          id: string
+          section_key: string
+          take_text: string
+        }
+        Insert: {
+          company_id: string
+          created_at?: string
+          id?: string
+          section_key: string
+          take_text: string
+        }
+        Update: {
+          company_id?: string
+          created_at?: string
+          id?: string
+          section_key?: string
+          take_text?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "jackye_contextual_takes_company_id_fkey"
+            columns: ["company_id"]
+            isOneToOne: false
+            referencedRelation: "companies"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       job_alert_preferences: {
         Row: {
           created_at: string | null
