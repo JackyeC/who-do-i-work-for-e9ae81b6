@@ -125,7 +125,7 @@ export function AccountabilitySignalsLayer({ companyId, companyName }: Props) {
       {grouped.map(group => {
         const isExpanded = expandedCat === group.key;
         const Icon = group.icon;
-        const criticalCount = group.signals.filter(s => s.severity === "critical" || s.severity === "high").length;
+        const criticalCount = group.highSeverityCount;
 
         return (
           <div key={group.key} className={cn("border rounded-lg overflow-hidden transition-colors", group.border, isExpanded && group.bg)}>
