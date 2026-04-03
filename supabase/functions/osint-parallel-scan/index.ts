@@ -24,6 +24,12 @@ const SOURCE_FAMILY_TO_FUNCTIONS: Record<string, string[]> = {
   bls: ['sync-bls-data'],
 };
 
+interface ScanRequestBody {
+  companyId?: string;
+  companyName?: string;
+  sources?: string[];
+}
+
 Deno.serve(async (req: Request) => {
   if (req.method === 'OPTIONS') {
     return new Response(null, { headers: corsHeaders });
@@ -54,7 +60,8 @@ Deno.serve(async (req: Request) => {
   const supabase = createClient(supabaseUrl, supabaseKey);
 
   try {
-    const { companyId, companyName, sources } = await req.json();
+    const body = await req.json() as ScanRequestBody;
+    const { companyId, companyName, sources } = body;
     if (!companyId || !companyName) {
       return new Response(JSON.stringify({ success: false, error: 'companyId and companyName required' }), {
         status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' },
@@ -105,7 +112,7 @@ Deno.serve(async (req: Request) => {
     // Route to the appropriate source list
     const allSources = isPrivate ? privateSources : publicSources;
 
-    const requestedSources = sources?.length ? sources : allSources;
+    const requestedSources: string[] = Array.isArray(sources) && sources.length > 0 ? sources : allSources;
     const sourcesToRun = [...new Set(
       requestedSources.flatMap((source: string) => SOURCE_FAMILY_TO_FUNCTIONS[source] ?? [source])
     )];
@@ -175,8 +182,6 @@ Deno.serve(async (req: Request) => {
     // Fire all stale sources IN PARALLEL using direct fetch (not supabase.functions.invoke)
     // to ensure proper auth header propagation
     const functionsBaseUrl = `${supabaseUrl}/functions/v1`;
-    const authHeader = req.headers.get('Authorization');
-
     const results = await Promise.allSettled(
       staleSources.map(async (functionName) => {
         const fnStart = Date.now();
