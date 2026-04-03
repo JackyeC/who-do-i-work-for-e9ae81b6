@@ -8,6 +8,7 @@ import {
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import type { EvidenceRecord } from "@/components/dossier/EmployerReportDrawer";
+import { ShareReceiptButton } from "@/components/dossier/ShareReceiptButton";
 
 interface SignalRevealCardProps {
   title: string;
