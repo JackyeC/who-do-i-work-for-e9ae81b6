@@ -7,6 +7,7 @@ export interface PlayerStats {
 
 export type PlayerArchetype = "stability-first" | "pause-and-reassess" | "overstay-and-hope";
 export type CompanyArchetype = "safe-pay-shaky-ethics" | "mission-driven-unstable" | "prestige-burnout";
+export type ConsequenceLabel = "moral-injury" | "mission-collapse" | "burnout-spiral";
 
 export interface ReceiptHint {
   emoji: string;
