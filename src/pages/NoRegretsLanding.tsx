@@ -172,7 +172,16 @@ export default function NoRegretsLanding() {
                     Powered by Follow The Money
                   </p>
                 </div>
-                <div className="p-5 md:p-7 space-y-4">
+                <div className="p-5 md:p-7 space-y-4 md:flex md:gap-6 md:items-start">
+                  <img
+                    src={receiptsImage}
+                    alt="Stack of dossier files on a dark desk"
+                    loading="lazy"
+                    width={800}
+                    height={512}
+                    className="hidden md:block w-36 h-auto rounded-lg border border-border/20 opacity-80 shrink-0"
+                  />
+                  <div className="space-y-4">
                   <h2 className="text-lg md:text-xl font-display font-bold text-foreground">
                     Fiction built on public records.
                   </h2>

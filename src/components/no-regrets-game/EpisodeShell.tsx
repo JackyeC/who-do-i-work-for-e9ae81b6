@@ -5,18 +5,20 @@ interface EpisodeShellProps {
   children: ReactNode;
 }
 
+const easeOut: [number, number, number, number] = [0.25, 0.1, 0.25, 1];
+
 const shellVariants = {
   hidden: { opacity: 0, y: 16 },
   visible: {
     opacity: 1,
     y: 0,
-    transition: { duration: 0.5, ease: [0.25, 0.1, 0.25, 1], staggerChildren: 0.08 },
+    transition: { duration: 0.5, ease: easeOut, staggerChildren: 0.08 },
   },
 };
 
 const childVariant = {
   hidden: { opacity: 0, y: 12 },
-  visible: { opacity: 1, y: 0, transition: { duration: 0.4, ease: [0.25, 0.1, 0.25, 1] } },
+  visible: { opacity: 1, y: 0, transition: { duration: 0.4, ease: easeOut } },
 };
 
 export function EpisodeShell({ children }: EpisodeShellProps) {
