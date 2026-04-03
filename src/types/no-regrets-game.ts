@@ -20,7 +20,7 @@ export interface Choice {
   label: string;
   statChanges: Partial<PlayerStats>;
   recapText: string;
-  archetype: PlayerArchetype | CompanyArchetype;
+  archetype: PlayerArchetype | CompanyArchetype | ConsequenceLabel;
   receiptHints?: ReceiptHint[];
 }
 
