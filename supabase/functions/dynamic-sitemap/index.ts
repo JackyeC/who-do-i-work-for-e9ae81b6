@@ -1,6 +1,9 @@
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 
-const BASE_URL = "https://wdiwf.jackyeclayton.com";
+function getPublicSiteUrl(): string {
+  const raw = Deno.env.get("PUBLIC_SITE_URL") || "https://wdiwf.jackyeclayton.com";
+  return raw.replace(/\/+$/, "");
+}
 const corsHeaders = {
   "Content-Type": "application/xml; charset=utf-8",
   "Cache-Control": "public, max-age=3600, s-maxage=7200",
@@ -62,8 +65,9 @@ function escapeXml(str: string): string {
 }
 
 function toUrlEntry(path: string, lastmod: string, freq: string, priority: string): string {
+  const baseUrl = getPublicSiteUrl();
   return `  <url>
-    <loc>${escapeXml(BASE_URL + path)}</loc>
+    <loc>${escapeXml(baseUrl + path)}</loc>
     <lastmod>${lastmod}</lastmod>
     <changefreq>${freq}</changefreq>
     <priority>${priority}</priority>
@@ -72,19 +76,7 @@ function toUrlEntry(path: string, lastmod: string, freq: string, priority: strin
 
 Deno.serve(async () => {
   try {
-    const supabaseUrl = Deno.env.get("SUPABASE_URL")!;
-    const supabaseKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!;
-    const supabase = createClient(supabaseUrl, supabaseKey);
-
     const today = new Date().toISOString().split("T")[0];
-
-    // Fetch all companies with their slugs and update dates
-    const { data: companies, error } = await supabase
-      .from("companies")
-      .select("slug, updated_at, name")
-      .order("name");
-
-    if (error) throw error;
 
     // Build XML
     const entries: string[] = [];
@@ -94,14 +86,32 @@ Deno.serve(async () => {
       entries.push(toUrlEntry(page.path, today, page.freq, page.priority));
     }
 
-    // Dynamic company pages
-    if (companies) {
-      for (const company of companies) {
-        const lastmod = company.updated_at
-          ? company.updated_at.split("T")[0]
-          : today;
-        entries.push(toUrlEntry(`/company/${company.slug}`, lastmod, "weekly", "0.7"));
+    const supabaseUrl = Deno.env.get("SUPABASE_URL");
+    const supabaseKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY");
+
+    // Dynamic company pages (best-effort). If env vars are missing or the query fails,
+    // we still return a valid sitemap containing at least the static routes.
+    if (supabaseUrl && supabaseKey) {
+      const supabase = createClient(supabaseUrl, supabaseKey);
+      const { data: companies, error } = await supabase
+        .from("companies")
+        .select("slug, updated_at, name")
+        .order("name");
+
+      if (error) {
+        console.error("Sitemap company fetch error:", error);
+      } else if (companies) {
+        for (const company of companies) {
+          const lastmod = company.updated_at
+            ? company.updated_at.split("T")[0]
+            : today;
+          entries.push(toUrlEntry(`/company/${company.slug}`, lastmod, "weekly", "0.7"));
+        }
       }
+    } else {
+      console.warn(
+        "Sitemap dynamic company URLs skipped: missing SUPABASE_URL or SUPABASE_SERVICE_ROLE_KEY",
+      );
     }
 
     const xml = `<?xml version="1.0" encoding="UTF-8"?>
