@@ -237,6 +237,8 @@ const App = () => (
                   <Route path="/no-regrets-game/episode-1-recap" element={<NoRegretsRecap />} />
                   <Route path="/no-regrets-game/episode-2" element={<NoRegretsEpisode2 />} />
                   <Route path="/no-regrets-game/episode-2-recap" element={<NoRegretsEpisode2Recap />} />
+                  <Route path="/no-regrets-game/episode-3" element={<NoRegretsEpisode3 />} />
+                  <Route path="/no-regrets-game/episode-3-recap" element={<NoRegretsEpisode3Recap />} />
                   <Route path="/receipts" element={<Receipts />} />
                   <Route path="/the-receipts" element={<Navigate to="/receipts" replace />} />
                   <Route path="/thereceipts" element={<Navigate to="/receipts" replace />} />
