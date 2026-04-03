@@ -246,40 +246,36 @@ async function refreshCoverageSummary(supabase: any, companyId: string) {
     let totalCount = 0;
     let latestDate: string | null = null;
 
-    for (const { table, dateCol } of tables) {
+    for (const src of tables) {
       try {
-        // For tables that store multiple signal categories, filter
-        let query = supabase.from(table).select('*', { count: 'exact', head: true });
+        let query = supabase.from(src.table).select('*', { count: 'exact', head: true });
 
-        if (table === 'bls_wage_benchmarks') {
-          // BLS is not per-company, skip company_id filter
-        } else {
+        if (!src.skipCompanyId) {
           query = query.eq('company_id', companyId);
         }
 
-        // For signal_scans, filter by category
-        if (table === 'company_signal_scans' && family === 'osha') {
-          query = query.eq('signal_category', 'workplace_safety');
-        } else if (table === 'company_signal_scans' && family === 'nlrb') {
-          query = query.eq('signal_category', 'labor_relations');
+        if (src.filter) {
+          for (const [key, val] of Object.entries(src.filter)) {
+            query = query.eq(key, val);
+          }
         }
 
         const { count, error } = await query;
         if (!error && count) totalCount += count;
 
         // Try to get latest date
-        if (dateCol && !latestDate) {
-          const { data: latest } = await supabase
-            .from(table)
-            .select(dateCol)
-            .eq('company_id', companyId)
-            .order(dateCol, { ascending: false })
-            .limit(1)
-            .maybeSingle();
-          if (latest?.[dateCol]) latestDate = latest[dateCol];
+        if (src.dateCol && !latestDate) {
+          const dateQuery = supabase
+            .from(src.table)
+            .select(src.dateCol)
+            .order(src.dateCol, { ascending: false })
+            .limit(1);
+          if (!src.skipCompanyId) dateQuery.eq('company_id', companyId);
+          const { data: latest } = await dateQuery.maybeSingle();
+          if (latest?.[src.dateCol]) latestDate = latest[src.dateCol];
         }
-      } catch (e) {
-        // Table might not exist for this company, skip
+      } catch (_e) {
+        // Table might not exist, skip
       }
     }
 
