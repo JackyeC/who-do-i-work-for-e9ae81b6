@@ -5,6 +5,8 @@ import { Button } from "@/components/ui/button";
 import { SectionReveal } from "@/components/landing/SectionReveal";
 import { ArrowRight, Play } from "lucide-react";
 import { trackNoRegrets } from "@/lib/noRegretsAnalytics";
+import heroImage from "@/assets/no-regrets-hero.jpg";
+import receiptsImage from "@/assets/no-regrets-receipts.jpg";
 
 const EPISODES = [
   {
@@ -53,7 +55,14 @@ export default function NoRegretsLanding() {
       <div className="min-h-screen bg-background">
         {/* ── Hero ── */}
         <section className="relative overflow-hidden border-b border-border/20">
-          <div className="absolute inset-0 bg-gradient-to-b from-primary/[0.04] to-transparent pointer-events-none" />
+          <img
+            src={heroImage}
+            alt="Empty office at night, a single desk lamp glowing against a city skyline"
+            width={1920}
+            height={800}
+            className="absolute inset-0 w-full h-full object-cover opacity-30 pointer-events-none"
+          />
+          <div className="absolute inset-0 bg-gradient-to-b from-background/60 via-background/80 to-background pointer-events-none" />
           <div className="max-w-3xl mx-auto px-5 pt-24 pb-20 md:pt-32 md:pb-28 text-center relative z-10">
             <SectionReveal>
               <p className="text-[10px] font-mono uppercase tracking-[0.35em] text-primary/70 mb-5">
@@ -163,7 +172,16 @@ export default function NoRegretsLanding() {
                     Powered by Follow The Money
                   </p>
                 </div>
-                <div className="p-5 md:p-7 space-y-4">
+                <div className="p-5 md:p-7 space-y-4 md:flex md:gap-6 md:items-start">
+                  <img
+                    src={receiptsImage}
+                    alt="Stack of dossier files on a dark desk"
+                    loading="lazy"
+                    width={800}
+                    height={512}
+                    className="hidden md:block w-36 h-auto rounded-lg border border-border/20 opacity-80 shrink-0"
+                  />
+                  <div className="space-y-4">
                   <h2 className="text-lg md:text-xl font-display font-bold text-foreground">
                     Fiction built on public records.
                   </h2>
@@ -182,6 +200,7 @@ export default function NoRegretsLanding() {
                   <p className="text-[11px] text-muted-foreground/50 italic border-l-2 border-primary/20 pl-3">
                     The story is made up. The pattern recognition is real. The receipts are waiting.
                   </p>
+                  </div>
                 </div>
               </div>
             </SectionReveal>
