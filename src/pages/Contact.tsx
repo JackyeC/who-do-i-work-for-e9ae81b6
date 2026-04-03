@@ -1,9 +1,8 @@
 import { useState } from "react";
-import { Link } from "react-router-dom";
 import { usePageSEO } from "@/hooks/use-page-seo";
 import { Mail, Linkedin, Mic, ArrowRight, CheckCircle2 } from "lucide-react";
 import { useTurnstile } from "@/hooks/useTurnstile";
-import { verifyTurnstileToken } from "@/lib/verifyTurnstile";
+import { supabase } from "@/integrations/supabase/client";
 
 export default function Contact() {
   const [submitted, setSubmitted] = useState(false);
@@ -19,11 +18,14 @@ export default function Contact() {
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+    setError("");
+
     const form = e.currentTarget;
     const data = new FormData(form);
     const name = (data.get("name") as string || "").trim();
     const email = (data.get("email") as string || "").trim();
     const message = (data.get("message") as string || "").trim();
+    const reason = (data.get("reason") as string || "General").trim() || "General";
 
     if (!name || !email || !message) {
       setError("Please fill out all required fields.");
@@ -31,20 +33,36 @@ export default function Contact() {
     }
 
     setVerifying(true);
-    const token = await getToken();
-    const verified = token ? await verifyTurnstileToken(token) : false;
-    setVerifying(false);
-    resetToken();
 
-    if (!verified) {
-      setError("Verification failed. Please try again.");
-      return;
+    try {
+      const token = await getToken();
+
+      if (!token) {
+        throw new Error("Verification failed. Please try again.");
+      }
+
+      const { data: response, error: submitError } = await supabase.functions.invoke("submit-contact-form", {
+        body: {
+          name,
+          email,
+          reason,
+          message,
+          token,
+        },
+      });
+
+      if (submitError || !response?.success) {
+        throw new Error(response?.error || submitError?.message || "Unable to send your message right now.");
+      }
+
+      form.reset();
+      setSubmitted(true);
+    } catch (err: any) {
+      setError(err?.message || "Unable to send your message right now.");
+    } finally {
+      setVerifying(false);
+      resetToken();
     }
-
-    const subject = `Who Do I Work For Contact: ${data.get("reason") || "General"}`;
-    const body = `From: ${name} (${email})\nReason: ${data.get("reason")}\n\n${message}`;
-    window.open(`mailto:jackye@jackyeclayton.com?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`, "_blank");
-    setSubmitted(true);
   };
 
   return (
@@ -94,7 +112,7 @@ export default function Contact() {
                 <CheckCircle2 className="w-10 h-10 text-primary mx-auto mb-4" />
                 <h3 className="font-sans text-lg font-bold text-foreground mb-2">Message sent.</h3>
                 <p className="text-sm text-muted-foreground">
-                  Your email client opened with the message. If it didn't, email us directly at{" "}
+                  Your message was sent to{" "}
                    <a href="mailto:jackye@jackyeclayton.com" className="text-primary hover:underline">
                     jackye@jackyeclayton.com
                   </a>
@@ -127,7 +145,7 @@ export default function Contact() {
                 </div>
                 {error && <p className="text-sm text-destructive">{error}</p>}
                 <button type="submit" disabled={verifying} className="inline-flex items-center gap-2 bg-primary text-primary-foreground px-6 py-3 rounded-lg text-sm font-semibold hover:brightness-110 transition-all disabled:opacity-50">
-                  {verifying ? "Verifying..." : <>Send Message <ArrowRight className="w-4 h-4" /></>}
+                  {verifying ? "Sending..." : <>Send Message <ArrowRight className="w-4 h-4" /></>}
                 </button>
               </form>
             )}
