@@ -1,11 +1,13 @@
 import { lazy, Suspense, forwardRef } from "react";
 import { useNavigate, Link } from "react-router-dom";
-import { ArrowRight, Search, FileSearch, Shield, TrendingUp, Bell, BookOpen, MessageCircle } from "lucide-react";
+import { ArrowRight, FileSearch, Shield, TrendingUp, Bell, BookOpen, MessageCircle } from "lucide-react";
 import { useAuth } from "@/contexts/AuthContext";
 import { useClerkWithFallback } from "@/hooks/use-clerk-fallback";
 import { usePageSEO } from "@/hooks/use-page-seo";
 import { MarketingNav } from "@/components/layout/MarketingNav";
 import { SiteFooter } from "@/components/layout/SiteFooter";
+import { HeroScanInput } from "@/components/landing/HeroScanInput";
+import { LiveDataFeed } from "@/components/landing/LiveDataFeed";
 
 const LiveIntelligenceTicker = lazy(() => import("@/components/landing/LiveIntelligenceTicker").then(m => ({ default: m.LiveIntelligenceTicker })));
 const ExitIntentCapture = lazy(() => import("@/components/ExitIntentCapture").then(m => ({ default: m.ExitIntentCapture })));
@@ -16,13 +18,13 @@ const Index = forwardRef<HTMLDivElement>((_, ref) => {
   const { isLoaded } = useClerkWithFallback();
 
   usePageSEO({
-    title: "Check Any Employer Before You Apply — Career Intelligence",
+    title: "Check Any Employer Before You Apply \u2014 Career Intelligence",
     description: "Look up any company and see what the public record says about political spending, labor violations, layoffs, and leadership. 30-second employer check powered by public data.",
     path: "/",
     jsonLd: {
       "@type": "WebApplication",
       name: "Who Do I Work For",
-      description: "Career advocacy platform by Jackye Clayton. Evaluate employers using public records — political spending, enforcement history, lobbying, compensation data.",
+      description: "Career advocacy platform by Jackye Clayton. Evaluate employers using public records \u2014 political spending, enforcement history, lobbying, compensation data.",
       applicationCategory: "BusinessApplication",
       creator: { "@type": "Person", name: "Jackye Clayton" },
       url: "https://whodoiworkfor.com",
@@ -36,14 +38,12 @@ const Index = forwardRef<HTMLDivElement>((_, ref) => {
       <MarketingNav />
       <Suspense fallback={null}><ExitIntentCapture /></Suspense>
 
-      {/* ═══════════════════════════════════════════
-          1 — HERO
-      ═══════════════════════════════════════════ */}
-      <section className="relative flex flex-col justify-center px-6 lg:px-16 pt-20 pb-16 lg:pt-32 lg:pb-24 bg-background overflow-hidden">
+      {/* 1 - HERO */}
+      <section className="relative flex flex-col justify-center px-6 lg:px-16 pt-20 pb-12 lg:pt-32 lg:pb-20 bg-background overflow-hidden">
         <div className="absolute top-[-20%] right-[-10%] w-[60%] h-[80%] pointer-events-none" style={{ background: "radial-gradient(ellipse, hsl(var(--primary) / 0.05) 0%, transparent 65%)" }} />
         <div className="absolute bottom-[-30%] left-[-10%] w-[40%] h-[60%] pointer-events-none" style={{ background: "radial-gradient(ellipse, hsl(var(--primary) / 0.03) 0%, transparent 70%)" }} />
 
-        <div className="relative z-[1] max-w-[780px] mx-auto text-center">
+        <div className="relative z-[1] max-w-[780px] mx-auto flex flex-col items-center text-center">
           <p
             className="font-mono text-[11px] tracking-[0.2em] uppercase text-primary mb-5"
             style={{ opacity: 0, animation: "heroFadeIn 0.5s ease 0.15s forwards" }}
@@ -74,34 +74,40 @@ const Index = forwardRef<HTMLDivElement>((_, ref) => {
             Check who you're really working for. Review an offer. Understand what the public record says. It takes 30 seconds.
           </p>
 
+          {/* Hybrid Search / Upload */}
           <div
-            className="mt-9 flex justify-center"
+            className="mt-9 w-full flex justify-center"
             style={{ opacity: 0, animation: "heroFadeIn 0.5s ease 0.9s forwards" }}
           >
-            <button
-              onClick={() => navigate("/offer-check")}
-              className="bg-primary text-primary-foreground px-10 py-4 font-sans text-base font-semibold hover:brightness-110 transition-all flex items-center gap-2"
-            >
-              Check a Company <ArrowRight className="w-4 h-4" />
-            </button>
+            <HeroScanInput />
           </div>
 
-          <p className="font-mono text-[9px] text-muted-foreground/30 mt-6 tracking-wide" style={{ opacity: 0, animation: "heroFadeIn 0.4s ease 1.3s forwards" }}>
-            Federal Election Commission · Securities & Exchange Commission · Bureau of Labor Statistics · Occupational Safety & Health Administration · National Labor Relations Board · Senate Lobbying Disclosures
+          {/* Live Data Feed */}
+          <div
+            className="mt-6 w-full max-w-[560px]"
+            style={{ opacity: 0, animation: "heroFadeIn 0.4s ease 1.2s forwards" }}
+          >
+            <LiveDataFeed />
+          </div>
+
+          <p className="font-mono text-[9px] text-muted-foreground/30 mt-6 tracking-wide" style={{ opacity: 0, animation: "heroFadeIn 0.4s ease 1.4s forwards" }}>
+            Federal Election Commission &middot; Securities & Exchange Commission &middot; Bureau of Labor Statistics &middot; Occupational Safety & Health Administration &middot; National Labor Relations Board &middot; Senate Lobbying Disclosures
           </p>
         </div>
       </section>
 
-      <style>{`@keyframes heroFadeIn { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: translateY(0); } }`}</style>
+      <style>{`
+        @keyframes heroFadeIn { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: translateY(0); } }
+        @keyframes scroll-left { from { transform: translateX(0); } to { transform: translateX(-50%); } }
+        .animate-scroll-left { animation: scroll-left 40s linear infinite; }
+      `}</style>
 
-      {/* ── TICKER ── */}
+      {/* TICKER */}
       <Suspense fallback={<div className="h-[36px] bg-background border-b border-border/10" />}>
         <LiveIntelligenceTicker />
       </Suspense>
 
-      {/* ═══════════════════════════════════════════
-          2 — HOW IT WORKS
-      ═══════════════════════════════════════════ */}
+      {/* 2 - HOW IT WORKS */}
       <section className="bg-card border-y border-border px-6 lg:px-16 py-20 lg:py-28">
         <div className="max-w-[900px] mx-auto">
           <p className="font-mono text-xs tracking-[0.15em] uppercase text-primary mb-4 text-center">How It Works</p>
@@ -120,13 +126,13 @@ const Index = forwardRef<HTMLDivElement>((_, ref) => {
               {
                 step: "02",
                 title: "Read the receipts",
-                body: "See the full employer dossier — political giving, enforcement history, lobbying activity, leadership signals, workforce data, and values alignment.",
+                body: "See the full employer dossier: political giving, enforcement records, lobbying data, leadership behavior, workforce signals, and values alignment.",
                 link: "/browse",
               },
               {
                 step: "03",
                 title: "Make your move",
-                body: "Apply, negotiate, stay, or leave — with evidence, leverage, and confidence. Not hope.",
+                body: "Apply, negotiate, stay, or leave with evidence, leverage, and confidence. Not hope.",
                 link: "/receipts",
               },
             ].map((item) => (
@@ -143,9 +149,7 @@ const Index = forwardRef<HTMLDivElement>((_, ref) => {
         </div>
       </section>
 
-      {/* ═══════════════════════════════════════════
-          3 — PRODUCT MODULES
-      ═══════════════════════════════════════════ */}
+      {/* 3 - PRODUCT MODULES */}
       <section className="px-6 lg:px-16 py-20 lg:py-28 bg-background">
         <div className="max-w-[1100px] mx-auto">
           <p className="font-mono text-xs tracking-[0.15em] uppercase text-primary mb-3 text-center">The Platform</p>
@@ -158,12 +162,12 @@ const Index = forwardRef<HTMLDivElement>((_, ref) => {
 
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
             {[
-              { icon: <FileSearch className="w-6 h-6" strokeWidth={1.5} />, title: "Employer Dossiers", desc: "Forensic employer profiles — political giving, enforcement records, lobbying data, leadership behavior, workforce signals, and values alignment. All sourced. All traceable.", link: "/browse" },
-              { icon: <Shield className="w-6 h-6" strokeWidth={1.5} />, title: "Offer Review", desc: "Upload an offer. Get an analysis of compensation, red flags, and leverage points — grounded in Bureau of Labor Statistics benchmarks and real company data.", link: "/offer-analysis" },
-              { icon: <TrendingUp className="w-6 h-6" strokeWidth={1.5} />, title: "Career Map", desc: "Track your trajectory. Understand role mobility, industry shifts, and where your skills carry the most weight — with data, not vibes.", link: "/career-map" },
-              { icon: <Bell className="w-6 h-6" strokeWidth={1.5} />, title: "Watchlist & Alerts", desc: "Track companies you care about. Get notified when new signals surface — layoffs, lobbying shifts, enforcement actions, leadership changes.", link: "/dashboard" },
-              { icon: <MessageCircle className="w-6 h-6" strokeWidth={1.5} />, title: "Ask Jackye", desc: "Career guidance in Jackye's voice — strategic, direct, grounded in 20 years inside talent acquisition. Not a chatbot. A career advocate.", link: "/ask-jackye" },
-              { icon: <BookOpen className="w-6 h-6" strokeWidth={1.5} />, title: "State of Work", desc: "Weekly intelligence on what's happening in the world of work — policy changes, labor market shifts, and what they actually mean for your career.", link: "/receipts" },
+              { icon: <FileSearch className="w-6 h-6" strokeWidth={1.5} />, title: "Employer Dossiers", desc: "Forensic employer profiles: political giving, enforcement records, lobbying data, leadership behavior, workforce signals, and values alignment. All sourced. All traceable.", link: "/browse" },
+              { icon: <Shield className="w-6 h-6" strokeWidth={1.5} />, title: "Offer Review", desc: "Upload an offer. Get an analysis of compensation, red flags, and leverage points, grounded in Bureau of Labor Statistics benchmarks and real company data.", link: "/offer-analysis" },
+              { icon: <TrendingUp className="w-6 h-6" strokeWidth={1.5} />, title: "Career Map", desc: "Track your trajectory. Understand role mobility, industry shifts, and where your skills carry the most weight, with data, not vibes.", link: "/career-map" },
+              { icon: <Bell className="w-6 h-6" strokeWidth={1.5} />, title: "Watchlist & Alerts", desc: "Track companies you care about. Get notified when new signals surface: layoffs, lobbying shifts, enforcement actions, leadership changes.", link: "/dashboard" },
+              { icon: <MessageCircle className="w-6 h-6" strokeWidth={1.5} />, title: "Ask Jackye", desc: "Career guidance in Jackye's voice: strategic, direct, grounded in 20 years inside talent acquisition. Not a chatbot. A career advocate.", link: "/ask-jackye" },
+              { icon: <BookOpen className="w-6 h-6" strokeWidth={1.5} />, title: "State of Work", desc: "Weekly intelligence on what's happening in the world of work: policy changes, labor market shifts, and what they actually mean for your career.", link: "/receipts" },
             ].map((item) => (
               <Link key={item.title} to={item.link} className="group p-6 border border-border bg-card hover:border-primary/30 transition-all">
                 <div className="text-primary mb-4 group-hover:scale-105 transition-transform">{item.icon}</div>
@@ -175,9 +179,7 @@ const Index = forwardRef<HTMLDivElement>((_, ref) => {
         </div>
       </section>
 
-      {/* ═══════════════════════════════════════════
-          4 — FINAL CTA
-      ═══════════════════════════════════════════ */}
+      {/* 4 - FINAL CTA */}
       <section className="px-6 lg:px-16 py-24 lg:py-32 text-center relative overflow-hidden border-t border-border">
         <div className="absolute bottom-[-20%] left-[-5%] w-[40%] h-[60%] pointer-events-none" style={{ background: "radial-gradient(ellipse, hsl(var(--primary) / 0.04) 0%, transparent 70%)" }} />
         <div className="relative z-[1] max-w-[600px] mx-auto">
@@ -193,7 +195,7 @@ const Index = forwardRef<HTMLDivElement>((_, ref) => {
               onClick={() => navigate("/offer-check")}
               className="bg-primary text-primary-foreground px-8 py-3.5 font-sans text-sm font-semibold hover:brightness-110 transition-all"
             >
-              Check a Company
+              Run My Free Scan
             </button>
           </div>
           <p className="font-sans text-xs text-muted-foreground/40 mt-5">
