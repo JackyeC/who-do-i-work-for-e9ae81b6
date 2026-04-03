@@ -15,7 +15,8 @@ export type NoRegretsEvent =
   | "episode_2_completed"
   | "episode_3_started"
   | "episode_3_completed"
-  | "recap_cta_clicked";
+  | "recap_cta_clicked"
+  | "result_copied";
 
 export interface NoRegretsEventProps {
   player_archetype?: string;
