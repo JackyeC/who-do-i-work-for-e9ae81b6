@@ -4,13 +4,15 @@
  */
 import { useCompanyCoverage, getSourceLabel, getCoverageMessage, type CoverageEntry } from "@/hooks/useCompanyCoverage";
 import { useOsintParallelScan } from "@/hooks/use-osint-parallel-scan";
+import { usePremium } from "@/hooks/use-premium";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
-import { Shield, FileText, DollarSign, HardHat, AlertTriangle, Newspaper, Briefcase, Scale, BarChart3, Search, RefreshCw, Loader2, Scan } from "lucide-react";
+import { Shield, FileText, DollarSign, HardHat, AlertTriangle, Newspaper, Briefcase, Scale, BarChart3, Search, RefreshCw, Loader2, Scan, Lock } from "lucide-react";
 import { formatDistanceToNow } from "date-fns";
 import { useQueryClient } from "@tanstack/react-query";
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 
 const SOURCE_ICONS: Record<string, any> = {
   sec: FileText,
@@ -39,11 +41,13 @@ interface Props {
 export function CompanyCoverageSummary({ companyId, companyName, compact = false }: Props) {
   const { data: coverage, isLoading } = useCompanyCoverage(companyId);
   const { scanning, runParallelScan } = useOsintParallelScan();
+  const { canScanSingle, canScanAll, tier } = usePremium();
   const [scanningSource, setScanningSource] = useState<string | null>(null);
   const queryClient = useQueryClient();
+  const navigate = useNavigate();
 
   const handleScanSource = async (sourceFamily: string) => {
-    if (scanning) return;
+    if (scanning || !canScanSingle) return;
     setScanningSource(sourceFamily);
     await runParallelScan(companyId, companyName || "", [sourceFamily]);
     setScanningSource(null);
@@ -51,7 +55,7 @@ export function CompanyCoverageSummary({ companyId, companyName, compact = false
   };
 
   const handleScanAll = async () => {
-    if (scanning) return;
+    if (scanning || !canScanAll) return;
     const unscanned = coverage?.entries
       .filter(e => e.coverage_status === "never_checked" || e.coverage_status === "no_trail")
       .map(e => e.source_family) || [];
@@ -61,6 +65,8 @@ export function CompanyCoverageSummary({ companyId, companyName, compact = false
     setScanningSource(null);
     queryClient.invalidateQueries({ queryKey: ["company-coverage", companyId] });
   };
+
+  const handleUpgrade = () => navigate("/pricing");
 
   if (isLoading) {
     return (
@@ -102,7 +108,7 @@ export function CompanyCoverageSummary({ companyId, companyName, compact = false
             <h3 className="text-sm font-semibold text-foreground">Data Coverage</h3>
           </div>
           <div className="flex items-center gap-2">
-            {hasUnscanned && (
+            {hasUnscanned && canScanAll && (
               <Button
                 variant="outline"
                 size="sm"
@@ -118,6 +124,17 @@ export function CompanyCoverageSummary({ companyId, companyName, compact = false
                 {scanning && scanningSource === "all" ? "Scanning..." : "Scan All Sources"}
               </Button>
             )}
+            {hasUnscanned && !canScanAll && (
+              <Button
+                variant="outline"
+                size="sm"
+                className="h-7 text-xs gap-1.5 border-primary/30 text-primary hover:bg-primary/10"
+                onClick={handleUpgrade}
+              >
+                <Lock className="w-3 h-3" />
+                {tier === "free" ? "Upgrade to Scan" : "Upgrade for Full Scan"}
+              </Button>
+            )}
             <TransparencyBadge index={coverage.transparencyIndex} />
           </div>
         </div>
@@ -128,7 +145,8 @@ export function CompanyCoverageSummary({ companyId, companyName, compact = false
               key={entry.source_family}
               entry={entry}
               isScanning={scanning && (scanningSource === entry.source_family || scanningSource === "all")}
-              onScan={() => handleScanSource(entry.source_family)}
+              onScan={canScanSingle ? () => handleScanSource(entry.source_family) : handleUpgrade}
+              isLocked={!canScanSingle}
             />
           ))}
         </div>
@@ -163,9 +181,10 @@ interface CoverageCardProps {
   entry: CoverageEntry;
   isScanning?: boolean;
   onScan?: () => void;
+  isLocked?: boolean;
 }
 
-function CoverageCard({ entry, isScanning, onScan }: CoverageCardProps) {
+function CoverageCard({ entry, isScanning, onScan, isLocked }: CoverageCardProps) {
   const Icon = SOURCE_ICONS[entry.source_family] || Search;
   const statusClass = STATUS_COLORS[entry.coverage_status];
   const isScannable = entry.coverage_status === "never_checked" || entry.coverage_status === "no_trail";
@@ -204,7 +223,9 @@ function CoverageCard({ entry, isScanning, onScan }: CoverageCardProps) {
               <span className="group-hover:hidden">Not scanned</span>
             )}
             {!isScanning && entry.coverage_status === "never_checked" && (
-              <span className="hidden group-hover:inline text-primary">Click to scan</span>
+              <span className="hidden group-hover:inline text-primary">
+                {isLocked ? "Upgrade to scan" : "Click to scan"}
+              </span>
             )}
           </div>
         </div>
@@ -212,7 +233,9 @@ function CoverageCard({ entry, isScanning, onScan }: CoverageCardProps) {
       <TooltipContent side="top" className="max-w-xs">
         <p className="text-xs">{isScanning ? "Scanning public records..." : getCoverageMessage(entry)}</p>
         {!isScanning && isScannable && (
-          <p className="text-[10px] text-primary mt-1">Click to scan this source</p>
+          <p className="text-[10px] text-primary mt-1">
+            {isLocked ? "Upgrade your plan to scan" : "Click to scan this source"}
+          </p>
         )}
         {entry.last_checked_at && (
           <p className="text-[10px] text-muted-foreground mt-1">
