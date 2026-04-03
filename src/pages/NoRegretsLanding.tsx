@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button";
 import { SectionReveal } from "@/components/landing/SectionReveal";
 import { ArrowRight, Play } from "lucide-react";
 import { trackNoRegrets } from "@/lib/noRegretsAnalytics";
+import { ColdOpenPreview } from "@/components/no-regrets-game/ColdOpenPreview";
 import heroImage from "@/assets/no-regrets-hero.jpg";
 import receiptsImage from "@/assets/no-regrets-receipts.jpg";
 
@@ -93,6 +94,15 @@ export default function NoRegretsLanding() {
                   <Link to="/how-it-works">Explore WDIWF</Link>
                 </Button>
               </div>
+            </SectionReveal>
+          </div>
+        </section>
+
+        {/* ── Cold Open Preview ── */}
+        <section className="border-b border-border/20">
+          <div className="max-w-3xl mx-auto px-5 py-16 md:py-20">
+            <SectionReveal>
+              <ColdOpenPreview />
             </SectionReveal>
           </div>
         </section>
