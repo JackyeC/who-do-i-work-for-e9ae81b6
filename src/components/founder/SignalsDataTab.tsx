@@ -290,9 +290,21 @@ export function SignalsDataTab() {
         </h3>
         <p className="text-xs text-muted-foreground mb-4 leading-relaxed">
           These companies have a written dossier but no <span className="font-mono text-[11px]">website_url</span> in the database.
-          This is a <strong className="font-medium text-foreground">data backfill</strong> task, not a crawl of broken hyperlinks on the live site.
-          Open a profile (as admin) to add the official site.
+          Use the <strong className="font-medium text-foreground">AI Backfill</strong> button to auto-discover domains.
+          High-confidence results are applied automatically; others go to review.
         </p>
+        <div className="flex items-center gap-2 mb-4">
+          <Button
+            variant="outline"
+            size="sm"
+            className="text-xs gap-2"
+            disabled={backfillRunning || (websiteGaps?.total ?? 0) === 0}
+            onClick={runBackfill}
+          >
+            <Wand2 className={cn("w-3.5 h-3.5", backfillRunning && "animate-spin")} />
+            {backfillRunning ? "Running AI Backfill…" : `AI Backfill (${websiteGaps?.total ?? 0} missing)`}
+          </Button>
+        </div>
         {websiteGapsLoading ? (
           <Skeleton className="h-24" />
         ) : websiteGaps!.listError ? (
@@ -310,14 +322,19 @@ export function SignalsDataTab() {
               </Badge>
             </div>
             <ul className="max-h-64 overflow-y-auto space-y-1 pr-1 border border-border/40 rounded-lg p-2 bg-muted/10">
-              {websiteGaps!.rows.map((row) => (
+              {websiteGaps!.rows.map((row: any) => (
                 <li key={row.id}>
                   <Link
                     to={`/company/${row.slug}`}
                     className="flex items-center justify-between gap-2 text-xs py-1.5 px-2 rounded-md hover:bg-muted/50 text-foreground group"
                   >
                     <span className="truncate font-medium">{row.name}</span>
-                    <ExternalLink className="w-3 h-3 shrink-0 text-muted-foreground group-hover:text-primary" />
+                    <div className="flex items-center gap-1.5 shrink-0">
+                      {row.domain_auto_filled && (
+                        <Badge variant="outline" className="text-[9px] px-1 py-0 text-primary border-primary/30">Auto-Filled</Badge>
+                      )}
+                      <ExternalLink className="w-3 h-3 text-muted-foreground group-hover:text-primary" />
+                    </div>
                   </Link>
                 </li>
               ))}
@@ -328,6 +345,74 @@ export function SignalsDataTab() {
               </p>
             )}
           </>
+        )}
+      </div>
+
+      {/* Domain Review Queue */}
+      <div className="bg-card border border-border rounded-2xl p-5">
+        <h3 className="text-sm font-semibold text-foreground mb-2 flex items-center gap-2">
+          <Eye className="w-4 h-4 text-[hsl(var(--civic-yellow))]" /> Needs Website Review
+          {(domainReview?.length ?? 0) > 0 && (
+            <Badge variant="outline" className="font-mono text-xs border-[hsl(var(--civic-yellow))]/40 text-[hsl(var(--civic-yellow))] bg-[hsl(var(--civic-yellow))]/10">
+              {domainReview!.length}
+            </Badge>
+          )}
+        </h3>
+        <p className="text-xs text-muted-foreground mb-4 leading-relaxed">
+          These domains were discovered by AI with medium or low confidence. Review and approve or reject.
+        </p>
+        {domainReviewLoading ? (
+          <Skeleton className="h-24" />
+        ) : !domainReview || domainReview.length === 0 ? (
+          <p className="text-xs text-muted-foreground italic flex items-center gap-1.5">
+            <CheckCircle className="w-3.5 h-3.5 text-[hsl(var(--civic-green))]" /> No domains pending review.
+          </p>
+        ) : (
+          <div className="space-y-2 max-h-80 overflow-y-auto">
+            {domainReview.map((item: any) => (
+              <div key={item.id} className="flex items-center justify-between gap-3 p-2.5 bg-muted/20 rounded-lg border border-border/30">
+                <div className="min-w-0 flex-1">
+                  <div className="flex items-center gap-2">
+                    <span className="text-xs font-medium text-foreground truncate">
+                      {item.companies?.name || "Unknown"}
+                    </span>
+                    <Badge variant="outline" className={cn("text-[9px] px-1 py-0",
+                      item.confidence === "medium" ? "text-[hsl(var(--civic-yellow))] border-[hsl(var(--civic-yellow))]/30" : "text-destructive border-destructive/30"
+                    )}>
+                      {item.confidence}
+                    </Badge>
+                  </div>
+                  <a href={item.discovered_url} target="_blank" rel="noopener noreferrer" className="text-[11px] text-primary hover:underline font-mono truncate block">
+                    {item.discovered_url}
+                  </a>
+                  {item.source_detail && (
+                    <p className="text-[10px] text-muted-foreground mt-0.5 truncate">{item.source_detail}</p>
+                  )}
+                  <span className="text-[10px] text-muted-foreground">via {item.source_method}</span>
+                </div>
+                <div className="flex items-center gap-1 shrink-0">
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    className="h-7 w-7 p-0 text-[hsl(var(--civic-green))] hover:bg-[hsl(var(--civic-green))]/10"
+                    onClick={() => handleReviewAction(item.id, "approved", item.company_id, item.discovered_url, item.discovered_domain)}
+                    title="Approve"
+                  >
+                    <CheckCircle2 className="w-4 h-4" />
+                  </Button>
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    className="h-7 w-7 p-0 text-destructive hover:bg-destructive/10"
+                    onClick={() => handleReviewAction(item.id, "rejected", item.company_id, item.discovered_url, item.discovered_domain)}
+                    title="Reject"
+                  >
+                    <XIcon className="w-4 h-4" />
+                  </Button>
+                </div>
+              </div>
+            ))}
+          </div>
         )}
       </div>
 
