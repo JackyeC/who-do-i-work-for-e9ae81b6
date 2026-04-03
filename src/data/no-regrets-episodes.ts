@@ -82,3 +82,117 @@ export const EPISODE_2: Episode = {
     },
   ],
 };
+
+export const EPISODE_3: Episode = {
+  id: "episode-3",
+  title: "Episode 3: The Cost",
+  narrative: [
+    "Six months in. The adrenaline is gone. The \"new job energy\" wore off around month three. Now it's just... the job. And the job is telling you things you didn't want to hear.",
+  ],
+  initialStats: { money: 50, safety: 35, sanity: 40, power: 35 },
+  choices: [], // overridden by branches
+  branches: [
+    {
+      forArchetype: "safe-pay-shaky-ethics",
+      narrative: [
+        "NovaCorp is exactly what they promised: stable, well-paying, and allergic to disruption. Your paycheck clears like clockwork. Your benefits are excellent. Your 401(k) match is the best you've ever had. And you haven't said anything honest in a meeting in four months.",
+        "Last week, a colleague was put on a PIP for raising concerns about a vendor contract that had obvious conflicts of interest. Nobody said a word. You didn't say a word. The silence wasn't awkward — it was practiced. Everyone here knows the rules: the money is good because the questions are bad.",
+        "You've started checking your bank account before bed. Not because you're broke — because the balance is the only thing that still feels like proof you made the right call.",
+      ],
+      warningSign: {
+        emoji: "🚩",
+        title: "Warning sign you noticed",
+        detail: "A senior director told you over coffee: \"The trick here is to care about the work, not about what the work does.\" She wasn't joking. She's been here eleven years.",
+      },
+      selfJustification: {
+        emoji: "🧠",
+        title: "What you tell yourself",
+        detail: "\"Every company has problems. At least here, the problems come with dental insurance and a vesting schedule. I'll leave when I have enough saved. I'll leave next year.\"",
+      },
+      choices: [
+        {
+          id: "moral-injury-accept",
+          label: "Keep cashing the checks. You can live with the silence.",
+          archetype: "moral-injury",
+          statChanges: { money: 15, safety: 5, sanity: -25, power: -20 },
+          recapText: "You stayed quiet. The money kept coming. But something shifted — you stopped reading the news about your industry, stopped answering when friends asked how work was going, stopped thinking of yourself as someone who would speak up. The golden handcuffs didn't snap shut all at once. They closed one comfortable paycheck at a time. You're safe. You're solvent. And you're not sure you'd recognize the person who walked in here six months ago.",
+        },
+        {
+          id: "moral-injury-exit",
+          label: "Start planning your exit before this place hollows you out.",
+          archetype: "moral-injury",
+          statChanges: { money: -20, safety: -15, sanity: 20, power: 10 },
+          recapText: "You opened a private browser tab at lunch and started building a spreadsheet: savings runway, monthly burn rate, three companies you actually respect. You haven't quit yet — you're not reckless. But you've stopped pretending this is temporary discomfort. It's moral corrosion, and you can feel it in how you talk about your job at dinner. The exit plan isn't ready, but the decision is. You're leaving. The only question is whether you leave on your terms or theirs.",
+        },
+      ],
+    },
+    {
+      forArchetype: "mission-driven-unstable",
+      narrative: [
+        "Clearpath Labs is running on fumes and conviction. The mission is still real — you believe that. But the Slack channels have a different energy now. The \"all-hands\" meetings happen weekly instead of monthly. The founder's eyes look tired. The phrases are getting familiar: \"we're being scrappy,\" \"this is what startups do,\" \"the next round will change everything.\"",
+        "Your title has changed twice in six months. Not promotions — absorptions. You're doing the work of three people because the other two left and weren't replaced. The equity you were promised is technically worth something, but only if the company survives long enough to vest it. You checked the cap table last week. You wish you hadn't.",
+        "Your partner asked if you were okay. You said yes. You're not sure that was true.",
+      ],
+      warningSign: {
+        emoji: "🚩",
+        title: "Warning sign you noticed",
+        detail: "The Head of People quietly updated her LinkedIn headline to \"Exploring Opportunities\" last Tuesday. She hasn't told anyone. You only noticed because you've been checking.",
+      },
+      selfJustification: {
+        emoji: "🧠",
+        title: "What you tell yourself",
+        detail: "\"If I leave now, I'm just another person who gave up on something that mattered. The people who stay through the hard parts are the ones who get to say they built it. I just need to hold on until the next round.\"",
+      },
+      choices: [
+        {
+          id: "mission-collapse-stay",
+          label: "Ride it out. If the ship sinks, at least you went down believing in something.",
+          archetype: "mission-collapse",
+          statChanges: { money: -25, safety: -25, sanity: -15, power: 5 },
+          recapText: "You stayed. Not because the math made sense, but because leaving felt like betrayal. The next round didn't come. The runway shrank to four months, then two. The all-hands meetings got shorter and the silences got longer. You're still here, still working weekends, still believing — but your savings are nearly gone and the equity is worth exactly what the market says a pre-revenue company with no bridge round is worth: nothing, probably. You believed in the mission. The mission didn't believe in your rent.",
+        },
+        {
+          id: "mission-collapse-leave",
+          label: "Start interviewing before the runway disappears — and your savings with it.",
+          archetype: "mission-collapse",
+          statChanges: { money: -10, safety: 10, sanity: 15, power: 5 },
+          recapText: "You made the call. Not angrily, not dramatically — you just opened your laptop one Sunday night and started applying. It felt like giving up on something sacred. But sacred doesn't cover COBRA premiums. You gave Clearpath your best six months. The work was real. The mission was real. The money wasn't. You're not leaving because you stopped believing. You're leaving because you finally looked at the cap table, the burn rate, and your bank balance in the same browser window — and couldn't pretend they were unrelated.",
+        },
+      ],
+    },
+    {
+      forArchetype: "prestige-burnout",
+      narrative: [
+        "Meridian Group is everything your résumé needed it to be. The brand opens doors. The work is high-profile. Your LinkedIn connections have tripled. Your parents finally understand what you do. And you haven't slept more than five hours a night in three months.",
+        "The performance reviews here aren't reviews — they're rankings. Every quarter, every team, stack-ranked. The bottom 10% gets \"managed out\" with surgical politeness. Nobody calls it a PIP. They call it a \"development conversation.\" Everyone knows what it means. You're not in the bottom 10% — yet. But staying out of it requires a kind of performance that has nothing to do with your actual skills. It's about visibility, face time, and never, ever saying \"I don't have capacity.\"",
+        "You canceled plans with your best friend for the third time last month. You told yourself it was temporary. You're starting to realize that \"temporary\" is just what burnout calls itself before it becomes permanent.",
+      ],
+      warningSign: {
+        emoji: "🚩",
+        title: "Warning sign you noticed",
+        detail: "Your manager sent you a Slack message at 11:47 PM on a Saturday that just said \"Quick thought —\" followed by a task that took four hours. When you delivered it Sunday morning, she responded with a thumbs-up emoji. No thank you. No acknowledgment that it was the weekend.",
+      },
+      selfJustification: {
+        emoji: "🧠",
+        title: "What you tell yourself",
+        detail: "\"Two years here and I can write my own ticket. Everyone knows Meridian on a résumé is a cheat code. I just need to survive long enough to collect the brand equity. Then I'll rest.\"",
+      },
+      choices: [
+        {
+          id: "burnout-spiral-grind",
+          label: "Keep grinding. The résumé line is almost worth it. Almost.",
+          archetype: "burnout-spiral",
+          statChanges: { money: 20, safety: 0, sanity: -30, power: 10 },
+          recapText: "You stayed on the treadmill. The money went up. The title got shinier. And something inside you went quiet — not calm, just... numb. You stopped noticing the late-night Slacks because they stopped feeling unusual. You stopped canceling plans because you stopped making them. Your therapist used the word \"depersonalization\" last week. You Googled it in the parking garage and sat there for twenty minutes before driving home. Meridian didn't break you. It replaced you — with a version of yourself that performs well and feels nothing.",
+        },
+        {
+          id: "burnout-spiral-reclaim",
+          label: "Set a hard boundary before this place takes the last thing you have left.",
+          archetype: "burnout-spiral",
+          statChanges: { money: -10, safety: -10, sanity: 25, power: -15 },
+          recapText: "You drew the line. Not loudly — you just stopped answering Slack after 8 PM. You took a Saturday off and didn't apologize for it. You told your manager you wouldn't be available for the Sunday sprint. She looked at you like you'd spoken a foreign language. Your ranking slipped. Your visibility dropped. And for the first time in months, you ate dinner without your laptop open. The math is simple: Meridian will replace you in two weeks if you leave. Your nervous system will take two years to recover if you don't.",
+        },
+      ],
+    },
+  ],
+};
