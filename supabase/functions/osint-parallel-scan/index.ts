@@ -231,15 +231,15 @@ async function refreshCoverageSummary(supabase: any, companyId: string) {
   const now = new Date().toISOString();
 
   // Map source_family → table(s) to count
-  const sourceTables: Record<string, { table: string; dateCol?: string }[]> = {
+  const sourceTables: Record<string, { table: string; dateCol?: string; filter?: Record<string, string>; skipCompanyId?: boolean }[]> = {
     news: [{ table: 'company_news_signals', dateCol: 'published_at' }],
-    fec: [{ table: 'company_fec_donations' }, { table: 'company_party_breakdown' }],
-    sec: [{ table: 'company_sec_filings' }],
-    osha: [{ table: 'company_signal_scans' }], // OSHA signals stored here
+    fec: [{ table: 'company_party_breakdown' }, { table: 'company_spending_history' }, { table: 'company_super_pacs' }],
+    sec: [{ table: 'company_report_sections', filter: { section_type: 'sec_filings' } }],
+    osha: [{ table: 'workplace_enforcement_signals' }],
     warn: [{ table: 'company_warn_notices' }],
     careers: [{ table: 'company_careers_signals' }, { table: 'company_jobs' }],
-    nlrb: [{ table: 'company_signal_scans' }], // filtered below
-    bls: [{ table: 'bls_wage_benchmarks' }],
+    nlrb: [{ table: 'labor_rights_signals' }],
+    bls: [{ table: 'bls_wage_benchmarks', skipCompanyId: true }],
   };
 
   for (const [family, tables] of Object.entries(sourceTables)) {
