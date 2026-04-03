@@ -7,6 +7,7 @@ import { SignupGate } from "@/components/SignupGate";
 import { EPISODE_2 } from "@/data/no-regrets-episodes";
 import { trackNoRegrets } from "@/lib/noRegretsAnalytics";
 import type { Choice, PlayerStats } from "@/types/no-regrets-game";
+import { motion, AnimatePresence } from "framer-motion";
 
 function applyChanges(base: PlayerStats, changes: Partial<PlayerStats>): PlayerStats {
   return {
@@ -17,8 +18,17 @@ function applyChanges(base: PlayerStats, changes: Partial<PlayerStats>): PlayerS
   };
 }
 
+const SPICY_LINES: Record<string, string> = {
+  "safe-pay-shaky-ethics": "Glassdoor review: \"Great pay. Don't ask where it goes.\"",
+  "mission-driven-unstable": "Anonymous tip: \"The founder cried during the last all-hands. Not inspiring crying.\"",
+  "prestige-burnout": "Glassdoor review, 3 stars: \"Run.\"",
+};
+
 function ReceiptPanel({ choice }: { choice: Choice }) {
+  const [peeked, setPeeked] = useState(false);
   if (!choice.receiptHints?.length) return null;
+  const spicyLine = SPICY_LINES[choice.id];
+
   return (
     <div className="mt-2 ml-11 rounded-lg border border-border/20 bg-card/30 p-3 space-y-2">
       <p className="text-[9px] font-mono uppercase tracking-[0.2em] text-muted-foreground/50">Signals detected</p>
@@ -30,6 +40,38 @@ function ReceiptPanel({ choice }: { choice: Choice }) {
           </p>
         </div>
       ))}
+      {/* Spicy peek-behind-the-curtain line */}
+      {spicyLine && (
+        <div
+          className="relative cursor-pointer group mt-1"
+          onMouseEnter={() => setPeeked(true)}
+          onTouchStart={() => setPeeked(true)}
+        >
+          <AnimatePresence mode="wait">
+            {!peeked ? (
+              <motion.p
+                key="hint"
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                exit={{ opacity: 0 }}
+                className="text-[10px] font-mono text-primary/40 uppercase tracking-wider group-hover:text-primary/60 transition-colors"
+              >
+                ▸ Hover for one more signal…
+              </motion.p>
+            ) : (
+              <motion.p
+                key="spicy"
+                initial={{ opacity: 0, y: 4, filter: "blur(4px)" }}
+                animate={{ opacity: 1, y: 0, filter: "blur(0px)" }}
+                transition={{ duration: 0.4 }}
+                className="text-[11px] text-[hsl(var(--destructive))]/80 italic leading-snug motion-reduce:transition-none"
+              >
+                {spicyLine}
+              </motion.p>
+            )}
+          </AnimatePresence>
+        </div>
+      )}
     </div>
   );
 }
@@ -93,10 +135,15 @@ export default function NoRegretsEpisode2() {
           </p>
           {episode.choices.map((choice, idx) => (
             <div key={choice.id}>
-              <button
+              <motion.button
                 onClick={() => handleChoose(choice)}
                 disabled={choosing}
-                className="group w-full text-left rounded-xl border border-border/40 bg-card/60 hover:bg-card hover:border-primary/30 active:scale-[0.99] transition-all duration-200 disabled:opacity-40 disabled:pointer-events-none focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/50 focus-visible:ring-offset-2 focus-visible:ring-offset-background"
+                initial={{ opacity: 0, y: 8 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.15 * idx, duration: 0.35, ease: [0.25, 0.1, 0.25, 1] }}
+                whileHover={{ scale: 1.01, boxShadow: "0 4px 24px -4px hsl(var(--primary) / 0.18)" }}
+                whileTap={{ scale: 0.985 }}
+                className="group w-full text-left rounded-xl border border-border/40 bg-card/60 hover:bg-card hover:border-primary/30 transition-all duration-200 disabled:opacity-40 disabled:pointer-events-none focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/50 focus-visible:ring-offset-2 focus-visible:ring-offset-background motion-reduce:transition-none"
               >
                 <div className="flex items-start gap-4 p-4 md:p-5">
                   <span className="shrink-0 w-7 h-7 rounded-lg bg-muted/40 border border-border/30 flex items-center justify-center text-xs font-mono font-bold text-muted-foreground group-hover:text-primary group-hover:border-primary/30 transition-colors">
@@ -106,7 +153,7 @@ export default function NoRegretsEpisode2() {
                     {choice.label}
                   </span>
                 </div>
-              </button>
+              </motion.button>
               <ReceiptPanel choice={choice} />
             </div>
           ))}
