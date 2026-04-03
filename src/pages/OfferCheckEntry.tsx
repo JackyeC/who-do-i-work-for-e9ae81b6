@@ -476,6 +476,13 @@ export default function OfferCheckEntry() {
                     </div>
                   </div>
 
+                  {/* ═══ OFFER CHECKLIST — Phase 1 ═══ */}
+                  <OfferChecklist
+                    companyName={company.name}
+                    companyId={company.id}
+                    industry={company.industry}
+                  />
+
                   {/* ═══ TRUST LAYER ═══ */}
                   <div className="bg-muted/30 border border-border rounded-xl p-4">
                     <p className="text-xs font-semibold text-foreground uppercase tracking-wider mb-2">We show our work.</p>
