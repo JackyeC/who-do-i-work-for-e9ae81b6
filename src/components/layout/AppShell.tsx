@@ -15,7 +15,7 @@ interface AppShellProps {
  * Pricing previously had its own nav — now uses MarketingNav via this shell.
  */
 const MARKETING_PAGES = ["/about", "/how-it-works", "/for-employers", "/contact", "/pricing", "/submit-tip", "/newsletter", "/methodology", "/data-ethics", "/privacy", "/terms", "/values", "/community", "/would-you-work-here", "/policy", "/ask-jackye", "/check", "/palette"];
-const NO_SHELL_ROUTES = ["/interview", "/recruiter", "/peoplepuzzles/embed", "/trail"];
+const NO_SHELL_ROUTES = ["/interview", "/recruiter", "/peoplepuzzles/embed", "/trail", "/no-regrets-game"];
 
 export function AppShell({ children }: AppShellProps) {
   const location = useLocation();
