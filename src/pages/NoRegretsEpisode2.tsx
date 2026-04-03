@@ -42,6 +42,7 @@ export default function NoRegretsEpisode2() {
   const [baseStats, setBaseStats] = useState(episode.initialStats);
 
   useEffect(() => {
+    trackNoRegrets("episode_2_started");
     const raw = sessionStorage.getItem("noRegrets_ep1");
     if (raw) {
       try {
