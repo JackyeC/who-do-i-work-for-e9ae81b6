@@ -1,13 +1,18 @@
-import { useQuery } from "@tanstack/react-query";
+import { useState } from "react";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { Link } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
 import {
   Database, CheckCircle, AlertTriangle, XCircle, Clock,
   Shield, BarChart3, Layers, HelpCircle, Link2, ExternalLink,
+  Wand2, Globe, Eye, CheckCircle2, X as XIcon,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { IdentityStatusBadge, deriveIdentityStatus } from "@/components/IdentityStatusBadge";
+import { toast } from "sonner";
 
 /* ─── Coverage level mapping ─── */
 type CoverageLevel = "strong" | "limited" | "none";
