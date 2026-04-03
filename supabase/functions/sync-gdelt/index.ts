@@ -1,4 +1,5 @@
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
+import { syncCompanyNews } from "../_shared/company-news-sync.ts";
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
@@ -19,77 +20,10 @@ Deno.serve(async (req: Request) => {
       Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!
     );
 
-    // Query GDELT DOC API for recent news about this company
-    const query = encodeURIComponent(`"${companyName}"`);
-    const gdeltUrl = `https://api.gdeltproject.org/api/v2/doc/doc?query=${query}&mode=ArtList&maxrecords=25&format=json&timespan=90d&sort=DateDesc`;
-
-    console.log("Querying GDELT for:", companyName);
-    const gdeltRes = await fetch(gdeltUrl);
-
-    if (!gdeltRes.ok) {
-      console.error("GDELT API error:", gdeltRes.status);
-      return new Response(JSON.stringify({ success: true, count: 0, message: "GDELT API unavailable" }), { headers: { ...corsHeaders, "Content-Type": "application/json" } });
-    }
-
-    const gdeltData = await gdeltRes.json();
-    const articles = gdeltData?.articles || [];
-
-    if (articles.length === 0) {
-      return new Response(JSON.stringify({ success: true, count: 0 }), { headers: { ...corsHeaders, "Content-Type": "application/json" } });
-    }
-
-    // Map GDELT tone to labels
-    function toneLabel(tone: number): string {
-      if (tone >= 5) return "Very Positive";
-      if (tone >= 1.5) return "Positive";
-      if (tone >= -1.5) return "Neutral";
-      if (tone >= -5) return "Negative";
-      return "Very Negative";
-    }
-
-    // Controversy detection keywords
-    const controversyPatterns = /lawsuit|sued|scandal|investigation|fraud|violation|fine|penalty|discrimination|harassment|layoff|recall|breach|whistleblow/i;
-
-    function detectControversyType(title: string): string | null {
-      if (/lawsuit|sued|litigation/i.test(title)) return "litigation";
-      if (/scandal|fraud/i.test(title)) return "scandal";
-      if (/investigation|probe/i.test(title)) return "investigation";
-      if (/discrimination|harassment/i.test(title)) return "workplace";
-      if (/layoff|restructur/i.test(title)) return "workforce";
-      if (/breach|hack|leak/i.test(title)) return "data_breach";
-      if (/fine|penalty|violation/i.test(title)) return "regulatory";
-      return null;
-    }
-
-    const rows = articles.slice(0, 25).map((a: any) => {
-      const tone = a.tone ? parseFloat(String(a.tone).split(",")[0]) : 0;
-      const title = a.title || "Untitled";
-      const isControversy = controversyPatterns.test(title);
-
-      return {
-        company_id: companyId,
-        headline: title.slice(0, 500),
-        source_name: a.domain || a.sourcecountry || null,
-        source_url: a.url || null,
-        published_at: a.seendate ? new Date(
-          a.seendate.slice(0, 4) + "-" + a.seendate.slice(4, 6) + "-" + a.seendate.slice(6, 8)
-        ).toISOString() : null,
-        sentiment_score: tone,
-        tone_label: toneLabel(tone),
-        themes: a.themes ? String(a.themes).split(";").slice(0, 10) : [],
-        is_controversy: isControversy,
-        controversy_type: isControversy ? detectControversyType(title) : null,
-        gdelt_doc_id: a.url ? String(a.url).slice(-80) : null,
-      };
-    });
-
-    // Upsert — avoid duplicates by deleting old data first (simple approach)
-    await supabase.from("company_news_signals").delete().eq("company_id", companyId);
-    const { error: insertErr } = await supabase.from("company_news_signals").insert(rows);
-    if (insertErr) console.error("Insert error:", insertErr);
+    const result = await syncCompanyNews(supabase, companyId, companyName);
 
     return new Response(
-      JSON.stringify({ success: true, count: rows.length, controversies: rows.filter((r: any) => r.is_controversy).length }),
+      JSON.stringify(result),
       { headers: { ...corsHeaders, "Content-Type": "application/json" } }
     );
   } catch (err: any) {
