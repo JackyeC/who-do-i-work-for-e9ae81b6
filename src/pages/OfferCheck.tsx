@@ -1,4 +1,5 @@
 import { useState, useMemo } from "react";
+import { DontSignBlindBanner } from "@/components/offer/DontSignBlindBanner";
 import { useParams, useNavigate, Link } from "react-router-dom";
 import { usePageSEO } from "@/hooks/use-page-seo";
 import { motion } from "framer-motion";
