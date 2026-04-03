@@ -3,10 +3,17 @@ import { useNavigate, Navigate } from "react-router-dom";
 import { useAuth } from "@/contexts/AuthContext";
 import { EpisodeShell } from "@/components/no-regrets-game/EpisodeShell";
 import { StatsBar } from "@/components/no-regrets-game/StatsBar";
+import { PatternBreakToast } from "@/components/no-regrets-game/PatternBreakToast";
 import { SignupGate } from "@/components/SignupGate";
 import { EPISODE_3 } from "@/data/no-regrets-episodes";
 import { trackNoRegrets } from "@/lib/noRegretsAnalytics";
 import type { Choice, PlayerStats, CompanyArchetype, EpisodeBranch } from "@/types/no-regrets-game";
+
+const HEALTHY_CHOICES: Record<string, string> = {
+  "moral-injury-exit": "You broke the pattern. Future you just exhaled.",
+  "mission-collapse-leave": "You chose clarity over loyalty. That takes nerve.",
+  "burnout-spiral-reclaim": "You chose yourself over the brand. That's not quitting — it's strategy.",
+};
 
 function applyChanges(base: PlayerStats, changes: Partial<PlayerStats>): PlayerStats {
   return {
