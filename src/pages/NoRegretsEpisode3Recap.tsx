@@ -5,6 +5,7 @@ import { StatsBar } from "@/components/no-regrets-game/StatsBar";
 import { FollowTheMoneyTeaser } from "@/components/no-regrets-game/FollowTheMoneyTeaser";
 import { Button } from "@/components/ui/button";
 import { ArrowRight } from "lucide-react";
+import { trackNoRegrets } from "@/lib/noRegretsAnalytics";
 import type { PlayerStats, ConsequenceLabel } from "@/types/no-regrets-game";
 
 const CONSEQUENCE_LABELS: Record<ConsequenceLabel, string> = {

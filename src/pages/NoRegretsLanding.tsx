@@ -75,12 +75,12 @@ export default function NoRegretsLanding() {
             </SectionReveal>
             <SectionReveal delay={0.3}>
               <div className="flex flex-col sm:flex-row items-center justify-center gap-3">
-                <Button asChild variant="premium" size="lg">
+                <Button asChild variant="premium" size="lg" onClick={() => trackNoRegrets("landing_primary_cta_click", { cta_destination: "/no-regrets-game" })}>
                   <Link to="/no-regrets-game" className="gap-2">
                     <Play className="w-4 h-4" /> Start Season 1
                   </Link>
                 </Button>
-                <Button asChild variant="outline" size="lg">
+                <Button asChild variant="outline" size="lg" onClick={() => trackNoRegrets("landing_secondary_cta_click", { cta_destination: "/how-it-works" })}>
                   <Link to="/how-it-works">Explore WDIWF</Link>
                 </Button>
               </div>

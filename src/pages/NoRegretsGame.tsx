@@ -24,8 +24,11 @@ export default function NoRegretsGame() {
   const episode = EPISODE_1;
   const [choosing, setChoosing] = useState(false);
 
+  useEffect(() => { trackNoRegrets("episode_1_started"); }, []);
+
   const handleChoose = useCallback((choice: Choice) => {
     setChoosing(true);
+    trackNoRegrets("episode_1_completed", { player_archetype: choice.archetype });
     const newStats = applyChanges(episode.initialStats, choice.statChanges);
     sessionStorage.setItem(
       "noRegrets_ep1",

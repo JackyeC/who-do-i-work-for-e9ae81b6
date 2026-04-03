@@ -57,6 +57,7 @@ export default function NoRegretsEpisode3() {
 
   const handleChoose = useCallback((choice: Choice) => {
     setChoosing(true);
+    trackNoRegrets("episode_3_completed", { consequence_label: choice.archetype });
     const newStats = applyChanges(baseStats, choice.statChanges);
     sessionStorage.setItem(
       "noRegrets_ep3",
