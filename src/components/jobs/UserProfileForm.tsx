@@ -1,7 +1,9 @@
 import { useState, useEffect } from "react";
 import { useAuth } from "@/contexts/AuthContext";
 import { supabase } from "@/integrations/supabase/client";
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
+import { syncDreamJobProfileRemote } from "@/domain/career/sync-dream-job-profile";
+import { friendlyErrorMessage } from "@/lib/user-friendly-error";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
@@ -14,6 +16,7 @@ import { User, Save, Loader2, Plus, X, Upload, FileText } from "lucide-react";
 export function UserProfileForm() {
   const { user } = useAuth();
   const { toast } = useToast();
+  const queryClient = useQueryClient();
   const { data: latestResume, refetch: refetchResume } = useQuery({
     queryKey: ["latest-resume-profile", user?.id],
     queryFn: async () => {
@@ -135,7 +138,7 @@ export function UserProfileForm() {
       toast({ title: "Resume parsed successfully", description: "Profile fields have been auto-filled" });
     } catch (error: any) {
       console.error("Upload error:", error);
-      toast({ title: "Upload failed", description: error.message, variant: "destructive" });
+      toast({ title: "Upload failed", description: friendlyErrorMessage(error), variant: "destructive" });
     } finally {
       setUploading(false);
     }
@@ -164,8 +167,16 @@ export function UserProfileForm() {
 
     setSaving(false);
     if (error) {
-      toast({ title: "Error saving profile", description: error.message, variant: "destructive" });
+      toast({ title: "Error saving profile", description: friendlyErrorMessage(error), variant: "destructive" });
     } else {
+      if (user?.id) {
+        try {
+          await syncDreamJobProfileRemote(supabase, user.id);
+          queryClient.invalidateQueries({ queryKey: ["dream-job-profile"] });
+        } catch {
+          /* non-fatal */
+        }
+      }
       toast({ title: "Profile saved" });
     }
   };

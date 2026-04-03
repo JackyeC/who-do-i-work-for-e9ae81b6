@@ -16,6 +16,7 @@ import { AffirmationBar } from "./AffirmationBar";
 import { YourJourney } from "./YourJourney";
 import { JackyeMessage } from "./JackyeMessage";
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
+import { HireToRetireCommandCenter } from "@/components/dashboard/HireToRetireCommandCenter";
 
 interface DashboardOverviewProps {
   onNavigate: (tab: string) => void;
@@ -212,6 +213,8 @@ export function DashboardOverview({ onNavigate }: DashboardOverviewProps) {
 
   return (
     <div className="space-y-5 max-w-[1200px] mx-auto">
+
+      <HireToRetireCommandCenter onNavigate={onNavigate} />
 
       {/* ═══ QUICK ACTIONS BAR ═══ */}
       <motion.div {...anim(0)}>

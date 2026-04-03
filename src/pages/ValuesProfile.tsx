@@ -1,5 +1,8 @@
 import { useState, useCallback } from "react";
 import { useNavigate } from "react-router-dom";
+import { useQueryClient } from "@tanstack/react-query";
+import { supabase } from "@/integrations/supabase/client";
+import { syncDreamJobProfileRemote } from "@/domain/career/sync-dream-job-profile";
 import { motion, AnimatePresence } from "framer-motion";
 import { ArrowLeft, ArrowRight } from "lucide-react";
 import { useAuth } from "@/contexts/AuthContext";
@@ -26,6 +29,7 @@ export default function ValuesProfile() {
   const [step, setStep] = useState(0);
   const { user } = useAuth();
   const navigate = useNavigate();
+  const queryClient = useQueryClient();
   const flow = useValuesFlow();
 
   const goNext = useCallback(() => {
@@ -44,9 +48,15 @@ export default function ValuesProfile() {
     }
     const success = await flow.saveToDb(user.id);
     if (success) {
+      try {
+        await syncDreamJobProfileRemote(supabase, user.id);
+        queryClient.invalidateQueries({ queryKey: ["dream-job-profile"] });
+      } catch {
+        /* non-fatal */
+      }
       navigate("/dashboard");
     }
-  }, [user, flow, navigate]);
+  }, [user, flow, navigate, queryClient]);
 
   const progressPct = ((step + 1) / TOTAL_STEPS) * 100;
 

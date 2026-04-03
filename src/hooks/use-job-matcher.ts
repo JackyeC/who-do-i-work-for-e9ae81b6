@@ -2,6 +2,7 @@ import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/contexts/AuthContext";
 import { useToast } from "@/hooks/use-toast";
+import { syncDreamJobProfileRemote } from "@/domain/career/sync-dream-job-profile";
 
 export interface MatchedJob {
   job_id: string;
@@ -82,9 +83,17 @@ export function useJobPreferences() {
         }, { onConflict: "user_id,signal_key" });
       if (error) throw error;
     },
-    onSuccess: () => {
+    onSuccess: async () => {
       queryClient.invalidateQueries({ queryKey: ["job-match-preferences"] });
       queryClient.invalidateQueries({ queryKey: ["values-job-matches"] });
+      if (user?.id) {
+        try {
+          await syncDreamJobProfileRemote(supabase, user.id);
+          queryClient.invalidateQueries({ queryKey: ["dream-job-profile"] });
+        } catch {
+          /* non-fatal */
+        }
+      }
     },
   });
 
@@ -97,9 +106,17 @@ export function useJobPreferences() {
         .eq("signal_key", signalKey);
       if (error) throw error;
     },
-    onSuccess: () => {
+    onSuccess: async () => {
       queryClient.invalidateQueries({ queryKey: ["job-match-preferences"] });
       queryClient.invalidateQueries({ queryKey: ["values-job-matches"] });
+      if (user?.id) {
+        try {
+          await syncDreamJobProfileRemote(supabase, user.id);
+          queryClient.invalidateQueries({ queryKey: ["dream-job-profile"] });
+        } catch {
+          /* non-fatal */
+        }
+      }
     },
   });
 
@@ -158,7 +175,7 @@ export function useApplicationsTracker() {
 
   const updateStatus = useMutation({
     mutationFn: async ({ id, status }: { id: string; status: string }) => {
-      const updates: any = { status };
+      const updates: Record<string, unknown> = { status };
       if (status === "Submitted") updates.applied_at = new Date().toISOString();
       const { error } = await supabase
         .from("applications_tracker")
@@ -166,9 +183,28 @@ export function useApplicationsTracker() {
         .eq("id", id)
         .eq("user_id", user!.id);
       if (error) throw error;
+      if (status === "Submitted") {
+        const { error: fnErr } = await supabase.functions.invoke("generate-application-dossier", {
+          body: { application_id: id },
+        });
+        if (fnErr) {
+          console.warn("generate-application-dossier:", fnErr.message);
+          return { dossierError: true as const };
+        }
+      }
+      return { dossierError: false as const };
     },
-    onSuccess: () => {
+    onSuccess: (result) => {
       queryClient.invalidateQueries({ queryKey: ["applications-tracker"] });
+      queryClient.invalidateQueries({ queryKey: ["application-email-dossiers"] });
+      if (result?.dossierError) {
+        toast({
+          title: "Status saved",
+          description:
+            "We could not generate your application dossier in the dashboard. Deploy generate-application-dossier and the application_email_dossiers migration, then open this application and use “Generate dossier”.",
+          variant: "destructive",
+        });
+      }
     },
   });
 

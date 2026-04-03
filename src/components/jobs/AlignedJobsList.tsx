@@ -16,6 +16,9 @@ import { Link } from "react-router-dom";
 import { cn } from "@/lib/utils";
 import { EasyApplyButton } from "./EasyApplyButton";
 import { MatchExplainer } from "./MatchExplainer";
+import { DreamJobProfileSummaryCard } from "@/components/career/DreamJobProfileSummaryCard";
+import { useDreamJobProfile } from "@/hooks/use-dream-job-profile";
+import { friendlyErrorMessage } from "@/lib/user-friendly-error";
 
 const AI_TRANSPARENCY_THRESHOLD = 70;
 
@@ -90,7 +93,14 @@ function JobCard({ job, onQueue, queueing, isQueued }: {
                 )}
               </div>
             )}
-            <MatchExplainer alignmentScore={job.alignment_score} matchedSignals={job.matched_signals} />
+            <MatchExplainer
+              alignmentScore={job.alignment_score}
+              matchedSignals={job.matched_signals}
+              jobTitle={job.title}
+              department={job.department}
+              industry={job.industry}
+              employerClarityScore={job.employer_clarity_score}
+            />
           </div>
           <div className="flex flex-col gap-2 shrink-0">
             <EasyApplyButton
@@ -231,7 +241,8 @@ function ClipboardBanner({ payload, onDismiss }: {
 }
 
 export function AlignedJobsList() {
-  const { data, isLoading, error } = useJobMatcher();
+  const { data, isLoading, error, refetch } = useJobMatcher();
+  const { profile } = useDreamJobProfile();
   const { queue, addToQueue } = useApplyQueue();
   const { toast } = useToast();
   const [activePayload, setActivePayload] = useState<any>(null);
@@ -261,9 +272,20 @@ export function AlignedJobsList() {
 
   if (error) {
     return (
-      <Card><CardContent className="p-6 text-center text-destructive">
-        Failed to load matched jobs. Please try again.
-      </CardContent></Card>
+      <div className="space-y-4">
+        <DreamJobProfileSummaryCard compact showSync />
+        <Card className="border-dashed border-border/80 bg-muted/10">
+          <CardContent className="p-8 text-center space-y-4 max-w-md mx-auto">
+            <p className="text-sm text-muted-foreground leading-relaxed">{friendlyErrorMessage(error)}</p>
+            <p className="text-xs text-muted-foreground">
+              Confirm the <span className="font-mono text-[10px]">values-job-matcher</span> function is deployed in Supabase.
+            </p>
+            <Button type="button" variant="outline" size="sm" onClick={() => refetch()}>
+              Try again
+            </Button>
+          </CardContent>
+        </Card>
+      </div>
     );
   }
 
@@ -278,20 +300,27 @@ export function AlignedJobsList() {
 
   if (matches.length === 0) {
     return (
-      <Card>
-        <CardContent className="p-10 text-center">
-          <Briefcase className="w-12 h-12 text-muted-foreground mx-auto mb-4" />
-          <h3 className="text-lg font-semibold text-foreground mb-2">No matched jobs yet</h3>
-          <p className="text-muted-foreground text-sm max-w-md mx-auto">
-            Set your signal preferences in the "Signal Preferences" tab, or check back as companies add job listings.
-          </p>
-        </CardContent>
-      </Card>
+      <div className="space-y-4">
+        <DreamJobProfileSummaryCard compact showSync />
+        <Card>
+          <CardContent className="p-10 text-center">
+            <Briefcase className="w-12 h-12 text-muted-foreground mx-auto mb-4" />
+            <h3 className="text-lg font-semibold text-foreground mb-2">No matched jobs yet</h3>
+            <p className="text-muted-foreground text-sm max-w-md mx-auto">
+              Matching uses your <strong className="text-foreground">Dream Job Profile</strong> plus signal requirements.
+              {!profile?.facets?.skills?.length && " Add skills or a resume. "}
+              {!profile?.facets?.valuesTags?.length && " Complete Values & signal prefs. "}
+              Or check back as companies post new roles.
+            </p>
+          </CardContent>
+        </Card>
+      </div>
     );
   }
 
   return (
     <div className="space-y-3">
+      <DreamJobProfileSummaryCard compact showSync />
       {activePayload && (
         <ClipboardBanner payload={activePayload} onDismiss={() => setActivePayload(null)} />
       )}

@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { useSearchParams } from "react-router-dom";
+import { Link, useSearchParams } from "react-router-dom";
 import { usePageSEO } from "@/hooks/use-page-seo";
 import { useUserRole } from "@/hooks/use-user-role";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
@@ -58,11 +58,16 @@ export default function FounderConsole() {
               Internal Operations · Updated {lastUpdated}
             </p>
           </div>
-          <a href="https://who-do-i-work-for.lovable.app" target="_blank" rel="noopener noreferrer">
-            <Button variant="outline" size="sm" className="text-xs gap-1.5">
-              <ExternalLink className="w-3.5 h-3.5" /> View Live Site
+          <div className="flex flex-wrap gap-2">
+            <Button variant="outline" size="sm" className="text-xs gap-1.5" asChild>
+              <Link to="/admin/launch-health">Launch health</Link>
             </Button>
-          </a>
+            <a href="https://who-do-i-work-for.lovable.app" target="_blank" rel="noopener noreferrer">
+              <Button variant="outline" size="sm" className="text-xs gap-1.5">
+                <ExternalLink className="w-3.5 h-3.5" /> View Live Site
+              </Button>
+            </a>
+          </div>
         </div>
 
         {/* Tabs */}

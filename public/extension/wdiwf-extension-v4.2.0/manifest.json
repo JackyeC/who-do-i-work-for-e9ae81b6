@@ -4,7 +4,7 @@
   "version": "4.2.0",
   "description": "Career intelligence when you need it. See integrity scores, red flags, and receipts for any employer on the job page.",
   "permissions": ["sidePanel", "storage", "activeTab", "scripting"],
-  "host_permissions": ["https://tdetybqdxadmowjivtjy.supabase.co/*"],
+  "host_permissions": ["https://aeulesuqxcnaonlxcjcm.supabase.co/*"],
   "side_panel": {
     "default_path": "sidepanel.html"
   },

@@ -1,6 +1,14 @@
 import { lazy, Suspense, forwardRef } from "react";
 import { useNavigate, Link } from "react-router-dom";
-import { ArrowRight, Search, FileSearch, Shield, TrendingUp, Bell, BookOpen, MessageCircle } from "lucide-react";
+import {
+  ArrowRight,
+  FileSearch,
+  Shield,
+  Target,
+  Briefcase,
+  FileText,
+  LayoutDashboard,
+} from "lucide-react";
 import { useAuth } from "@/contexts/AuthContext";
 import { useClerkWithFallback } from "@/hooks/use-clerk-fallback";
 import { usePageSEO } from "@/hooks/use-page-seo";
@@ -17,7 +25,8 @@ const Index = forwardRef<HTMLDivElement>((_, ref) => {
 
   usePageSEO({
     title: "Check Any Employer Before You Apply — Career Intelligence",
-    description: "Look up any company and see what the public record says about political spending, labor violations, layoffs, and leadership. 30-second employer check powered by public data.",
+    description:
+      "Look up any company, build your Dream Job Profile, see aligned roles, and track applications with post-apply dossiers — grounded in public records and your stated priorities.",
     path: "/",
     jsonLd: {
       "@type": "WebApplication",
@@ -72,18 +81,54 @@ const Index = forwardRef<HTMLDivElement>((_, ref) => {
             style={{ fontSize: "clamp(0.95rem, 1.3vw, 1.075rem)", opacity: 0, animation: "heroFadeIn 0.6s ease 0.6s forwards" }}
           >
             Check who you're really working for. Review an offer. Understand what the public record says. It takes 30 seconds.
+            {user && (
+              <span className="block mt-4 text-foreground/85 text-[0.95rem]">
+                Signed in, your{" "}
+                <Link to="/dashboard?tab=overview" className="text-primary underline-offset-4 hover:underline font-medium">
+                  dashboard overview
+                </Link>{" "}
+                pulls it together: Dream Job Profile, today’s matches, applications in motion, and signals — with Jackye as your visible guide. Use the{" "}
+                <Link to="/jobs-feed" className="text-primary underline-offset-4 hover:underline font-medium">
+                  jobs feed
+                </Link>{" "}
+                for role and adjacent-role discovery; configure{" "}
+                <Link to="/auto-apply" className="text-primary underline-offset-4 hover:underline font-medium">
+                  auto-apply
+                </Link>{" "}
+                when you’re ready (review-first or trusted queue).
+              </span>
+            )}
           </p>
 
           <div
-            className="mt-9 flex justify-center"
+            className="mt-9 flex flex-col sm:flex-row justify-center items-stretch sm:items-center gap-3 px-2"
             style={{ opacity: 0, animation: "heroFadeIn 0.5s ease 0.9s forwards" }}
           >
-            <button
-              onClick={() => navigate("/offer-check")}
-              className="bg-primary text-primary-foreground px-10 py-4 font-sans text-base font-semibold hover:brightness-110 transition-all flex items-center gap-2"
-            >
-              Check a Company <ArrowRight className="w-4 h-4" />
-            </button>
+            {user ? (
+              <>
+                <Link
+                  to="/dashboard?tab=overview"
+                  className="bg-primary text-primary-foreground px-10 py-4 font-sans text-base font-semibold hover:brightness-110 transition-all flex items-center justify-center gap-2 text-center"
+                >
+                  Open command center <ArrowRight className="w-4 h-4" />
+                </Link>
+                <button
+                  type="button"
+                  onClick={() => navigate("/offer-check")}
+                  className="border border-border bg-card text-foreground px-10 py-4 font-sans text-base font-semibold hover:bg-muted/60 transition-all flex items-center justify-center gap-2"
+                >
+                  Check a company
+                </button>
+              </>
+            ) : (
+              <button
+                type="button"
+                onClick={() => navigate("/offer-check")}
+                className="bg-primary text-primary-foreground px-10 py-4 font-sans text-base font-semibold hover:brightness-110 transition-all flex items-center justify-center gap-2 mx-auto"
+              >
+                Check a Company <ArrowRight className="w-4 h-4" />
+              </button>
+            )}
           </div>
 
           <p className="font-mono text-[9px] text-muted-foreground/30 mt-6 tracking-wide" style={{ opacity: 0, animation: "heroFadeIn 0.4s ease 1.3s forwards" }}>
@@ -106,28 +151,28 @@ const Index = forwardRef<HTMLDivElement>((_, ref) => {
         <div className="max-w-[900px] mx-auto">
           <p className="font-mono text-xs tracking-[0.15em] uppercase text-primary mb-4 text-center">How It Works</p>
           <h2 className="text-h1 text-foreground text-center mb-14">
-            Three steps. No ambiguity.
+            Three moves. One spine.
           </h2>
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
             {[
               {
                 step: "01",
-                title: "Search or upload",
-                body: "Enter a company name or upload a job offer. We pull the records.",
-                link: "/offer-check",
+                title: "Define what “good” means",
+                body: "Values profile, quiz, and professional fields roll into your Dream Job Profile — the canonical lens for matching and optional auto-apply.",
+                link: "/dashboard?tab=profile",
               },
               {
                 step: "02",
-                title: "Read the receipts",
-                body: "See the full employer dossier — political giving, enforcement history, lobbying activity, leadership signals, workforce data, and values alignment.",
+                title: "Investigate & match",
+                body: "Open employer dossiers from the public record. See why roles fit in the jobs feed — role family, values, and mission alignment with clear risk notes when data is thin.",
                 link: "/browse",
               },
               {
                 step: "03",
-                title: "Make your move",
-                body: "Apply, negotiate, stay, or leave — with evidence, leverage, and confidence. Not hope.",
-                link: "/receipts",
+                title: "Apply with receipts",
+                body: "Track applications and post-apply dossiers from the dashboard. Review-first auto-apply stays in your control until you promote to a trusted queue.",
+                link: "/dashboard?tab=tracker",
               },
             ].map((item) => (
               <Link key={item.step} to={item.link} className="flex flex-col no-underline group/step hover:bg-primary/[0.03] rounded-lg p-4 -m-4 transition-colors">
@@ -153,17 +198,17 @@ const Index = forwardRef<HTMLDivElement>((_, ref) => {
             Everything you need. Nothing you don't.
           </h2>
           <p className="text-body-lg text-center max-w-[52ch] mx-auto mb-14">
-            Six tools. One foundation: the public record.
+            Six entry points. One foundation: the public record — plus your stated priorities when you’re signed in.
           </p>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
             {[
-              { icon: <FileSearch className="w-6 h-6" strokeWidth={1.5} />, title: "Employer Dossiers", desc: "Forensic employer profiles — political giving, enforcement records, lobbying data, leadership behavior, workforce signals, and values alignment. All sourced. All traceable.", link: "/browse" },
-              { icon: <Shield className="w-6 h-6" strokeWidth={1.5} />, title: "Offer Review", desc: "Upload an offer. Get an analysis of compensation, red flags, and leverage points — grounded in Bureau of Labor Statistics benchmarks and real company data.", link: "/offer-analysis" },
-              { icon: <TrendingUp className="w-6 h-6" strokeWidth={1.5} />, title: "Career Map", desc: "Track your trajectory. Understand role mobility, industry shifts, and where your skills carry the most weight — with data, not vibes.", link: "/career-map" },
-              { icon: <Bell className="w-6 h-6" strokeWidth={1.5} />, title: "Watchlist & Alerts", desc: "Track companies you care about. Get notified when new signals surface — layoffs, lobbying shifts, enforcement actions, leadership changes.", link: "/dashboard" },
-              { icon: <MessageCircle className="w-6 h-6" strokeWidth={1.5} />, title: "Ask Jackye", desc: "Career guidance in Jackye's voice — strategic, direct, grounded in 20 years inside talent acquisition. Not a chatbot. A career advocate.", link: "/ask-jackye" },
-              { icon: <BookOpen className="w-6 h-6" strokeWidth={1.5} />, title: "State of Work", desc: "Weekly intelligence on what's happening in the world of work — policy changes, labor market shifts, and what they actually mean for your career.", link: "/receipts" },
+              { icon: <FileSearch className="w-6 h-6" strokeWidth={1.5} />, title: "Employer Dossiers", desc: "Forensic employer profiles from FEC, SEC, OSHA, NLRB, lobbying disclosures, and more — political giving, enforcement, leadership signals, and values alignment. Sourced and traceable.", link: "/browse" },
+              { icon: <Target className="w-6 h-6" strokeWidth={1.5} />, title: "Dream Job Profile", desc: "Your targets, values sliders, quiz, and preferences merge into one profile that powers matching and optional auto-apply — without weak data overwriting what you typed.", link: "/dashboard?tab=profile" },
+              { icon: <Briefcase className="w-6 h-6" strokeWidth={1.5} />, title: "Jobs Feed & Matching", desc: "See aligned and adjacent roles with “why this matches you” — role family, values fit, mission alignment, and risk notes when employer clarity is low.", link: "/jobs-feed" },
+              { icon: <Shield className="w-6 h-6" strokeWidth={1.5} />, title: "Auto-Apply", desc: "Set integrity thresholds and daily caps. Stay on review-before-apply or move to a trusted queue when you’re ready — with clear visibility into what the profile is driving.", link: "/auto-apply" },
+              { icon: <FileText className="w-6 h-6" strokeWidth={1.5} />, title: "Applications & Dossiers", desc: "Track applications in motion and open post-apply dossiers generated for your materials — your receipts for what you sent and why.", link: "/dashboard?tab=tracker" },
+              { icon: <LayoutDashboard className="w-6 h-6" strokeWidth={1.5} />, title: "Command Center", desc: "Dashboard overview: today’s snapshot, Dream Job Profile, matches, applications, signals, and one suggested move — editorial, daily-use layout. Ask Jackye stays one click away in the product.", link: "/dashboard?tab=overview" },
             ].map((item) => (
               <Link key={item.title} to={item.link} className="group p-6 border border-border bg-card hover:border-primary/30 transition-all">
                 <div className="text-primary mb-4 group-hover:scale-105 transition-transform">{item.icon}</div>

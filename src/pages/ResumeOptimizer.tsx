@@ -16,8 +16,11 @@ import { cn } from "@/lib/utils";
 import { motion } from "framer-motion";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/contexts/AuthContext";
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
+import { createResumeParser } from "@/lib/resume-parser";
+import { applyResumeParsedToDreamJobProfile } from "@/domain/career/sync-dream-job-profile";
+import { isLikelyMissingSchemaObject } from "@/lib/supabase-errors";
 
 interface AnalysisResult {
   atsScore: number;
@@ -31,6 +34,7 @@ interface AnalysisResult {
 export default function ResumeOptimizer() {
   usePageSEO({ title: "Resume Optimizer — Who Do I Work For?" });
   const { user } = useAuth();
+  const queryClient = useQueryClient();
   const [file, setFile] = useState<File | null>(null);
   const [uploading, setUploading] = useState(false);
   const [jobUrl, setJobUrl] = useState("");
@@ -77,6 +81,23 @@ export default function ResumeOptimizer() {
           original_filename: selectedFile.name,
         });
       if (dbError) throw dbError;
+
+      const isPlainText =
+        selectedFile.type === "text/plain" ||
+        /\.(txt|md)$/i.test(selectedFile.name);
+      if (isPlainText) {
+        try {
+          const text = await selectedFile.text();
+          const parsed = createResumeParser().parsePlainText(text);
+          await applyResumeParsedToDreamJobProfile(supabase, user.id, parsed);
+          queryClient.invalidateQueries({ queryKey: ["dream-job-profile"] });
+        } catch (parseErr) {
+          console.warn("Resume text parse skipped", parseErr);
+          if (isLikelyMissingSchemaObject(parseErr)) {
+            toast.error("Dream Job Profile columns are missing on this project. Deploy the latest Supabase migration, then re-upload.");
+          }
+        }
+      }
 
       await refetchResume();
       toast.success("Resume uploaded successfully!");

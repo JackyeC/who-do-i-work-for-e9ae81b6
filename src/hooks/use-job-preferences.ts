@@ -2,6 +2,7 @@ import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/contexts/AuthContext";
 import { useToast } from "@/hooks/use-toast";
+import { syncDreamJobProfileRemote } from "@/domain/career/sync-dream-job-profile";
 
 export interface JobPreferences {
   id?: string;
@@ -73,9 +74,17 @@ export function useJobPreferences() {
         .upsert(payload, { onConflict: "user_id" });
       if (error) throw error;
     },
-    onSuccess: () => {
+    onSuccess: async () => {
       qc.invalidateQueries({ queryKey: ["job-preferences"] });
       toast({ title: "Preferences saved" });
+      if (user?.id) {
+        try {
+          await syncDreamJobProfileRemote(supabase, user.id);
+          qc.invalidateQueries({ queryKey: ["dream-job-profile"] });
+        } catch {
+          /* non-fatal */
+        }
+      }
     },
     onError: () => {
       toast({ title: "Failed to save preferences", variant: "destructive" });

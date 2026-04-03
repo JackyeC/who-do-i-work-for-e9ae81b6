@@ -9,8 +9,9 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import {
   LayoutDashboard, Trash2, ExternalLink, Shield, Calendar,
-  Search, StickyNote, ChevronDown, ChevronUp, FileText, BarChart3,
+  Search, StickyNote, ChevronDown, ChevronUp, FileText, BarChart3, Mail,
 } from "lucide-react";
+import { useApplicationDossiers, dossierForApplication } from "@/hooks/use-application-dossiers";
 import { Link } from "react-router-dom";
 import { cn } from "@/lib/utils";
 import { format } from "date-fns";
@@ -19,13 +20,15 @@ import { useAuth } from "@/contexts/AuthContext";
 import { useQueryClient } from "@tanstack/react-query";
 import { ApplicationStepper } from "./ApplicationStepper";
 import { ApplicationAnalytics } from "./ApplicationAnalytics";
+import { DossierStatusBadge } from "@/components/applications/DossierStatusBadge";
 
 const STATUSES = ["Draft", "Submitted", "Interviewing", "Offered", "Rejected", "Withdrawn"] as const;
 
-function ApplicationCard({ app, updateStatus, deleteApp }: {
+function ApplicationCard({ app, updateStatus, deleteApp, dossier }: {
   app: any;
   updateStatus: any;
   deleteApp: any;
+  dossier?: { email_status: string } | null;
 }) {
   const [expanded, setExpanded] = useState(false);
   const [notes, setNotes] = useState(app.notes || "");
@@ -91,6 +94,12 @@ function ApplicationCard({ app, updateStatus, deleteApp }: {
                   <span className="flex items-center gap-1 text-primary">
                     <FileText className="w-3 h-3" />
                     Cover letter
+                  </span>
+                )}
+                {dossier && (
+                  <span className="inline-flex items-center gap-1">
+                    <Mail className="w-3 h-3 text-muted-foreground" />
+                    <DossierStatusBadge emailStatus={dossier.email_status} />
                   </span>
                 )}
               </div>
@@ -178,6 +187,7 @@ type StatusTab = "all" | typeof STATUSES[number];
 
 export function TrackingDashboard() {
   const { applications, isLoading, updateStatus, deleteApp } = useApplicationsTracker();
+  const { data: dossiers } = useApplicationDossiers();
   const [statusFilter, setStatusFilter] = useState<StatusTab>("all");
   const [searchQuery, setSearchQuery] = useState("");
   const [view, setView] = useState<"pipeline" | "analytics">("pipeline");
@@ -203,13 +213,21 @@ export function TrackingDashboard() {
 
   if (applications.length === 0) {
     return (
-      <Card>
-        <CardContent className="p-10 text-center">
-          <LayoutDashboard className="w-12 h-12 text-muted-foreground mx-auto mb-4" />
-          <h3 className="text-lg font-semibold text-foreground mb-2">No applications tracked</h3>
-          <p className="text-muted-foreground text-sm">
-            Apply to jobs from the "Matched Jobs" tab to start tracking your pipeline.
+      <Card className="border-dashed border-border/80 bg-muted/10">
+        <CardContent className="p-10 text-center max-w-md mx-auto">
+          <LayoutDashboard className="w-12 h-12 text-muted-foreground mx-auto mb-4 opacity-80" />
+          <h3 className="text-lg font-semibold text-foreground mb-2">No applications in motion yet</h3>
+          <p className="text-muted-foreground text-sm leading-relaxed mb-6">
+            When you apply from matched jobs or log an application, it lands here. Mark one as submitted to generate an in-dashboard dossier receipt (email is optional).
           </p>
+          <div className="flex flex-col sm:flex-row gap-2 justify-center">
+            <Button variant="default" size="sm" asChild>
+              <Link to="/dashboard?tab=matches">Matched jobs</Link>
+            </Button>
+            <Button variant="outline" size="sm" asChild>
+              <Link to="/jobs-feed">Jobs feed</Link>
+            </Button>
+          </div>
         </CardContent>
       </Card>
     );
@@ -302,6 +320,7 @@ export function TrackingDashboard() {
                   app={app}
                   updateStatus={updateStatus}
                   deleteApp={deleteApp}
+                  dossier={dossierForApplication(dossiers, app.id)}
                 />
               ))}
             </div>

@@ -106,6 +106,7 @@ const WorkSignalFeed = lazy(() => import("./pages/WorkSignalFeed"));
 const Rankings = lazy(() => import("./pages/Rankings"));
 const RealityCheck = lazy(() => import("./pages/RealityCheck"));
 const FounderConsole = lazy(() => import("./pages/FounderConsole"));
+const LaunchHealthPage = lazy(() => import("./pages/LaunchHealthPage"));
 const EmployerVerificationPending = lazy(() => import("./pages/EmployerVerificationPending"));
 const ForEmployers = lazy(() => import("./pages/ForEmployers"));
 const CorporateImpactMap = lazy(() => import("./pages/CorporateImpactMap"));
@@ -321,6 +322,7 @@ const App = () => (
                   <Route path="/founder-console" element={<AdminRoute><FounderConsole /></AdminRoute>} />
                   <Route path="/founder" element={<AdminRoute><FounderConsole /></AdminRoute>} />
                   <Route path="/admin/ticker" element={<AdminRoute><AdminTicker /></AdminRoute>} />
+                  <Route path="/admin/launch-health" element={<AdminRoute><LaunchHealthPage /></AdminRoute>} />
                   <Route path="/recruiting" element={<RecruitingIntelligence />} />
                   <Route path="/employer/verification-pending" element={<ProtectedRoute><EmployerVerificationPending /></ProtectedRoute>} />
                   <Route path="/for-employers" element={<ForEmployers />} />
