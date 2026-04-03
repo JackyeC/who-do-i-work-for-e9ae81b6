@@ -42,6 +42,7 @@ export default function NoRegretsEpisode3() {
   const [branch, setBranch] = useState<EpisodeBranch | null>(null);
 
   useEffect(() => {
+    trackNoRegrets("episode_3_started");
     const raw = sessionStorage.getItem("noRegrets_ep2");
     if (raw) {
       try {
