@@ -77,27 +77,10 @@ const Index = forwardRef<HTMLDivElement>((_, ref) => {
           </h1>
 
           <p
-            className="text-muted-foreground max-w-[48ch] mx-auto leading-relaxed mt-6"
+            className="text-muted-foreground max-w-[52ch] mx-auto leading-relaxed mt-6"
             style={{ fontSize: "clamp(0.95rem, 1.3vw, 1.075rem)", opacity: 0, animation: "heroFadeIn 0.6s ease 0.6s forwards" }}
           >
-            Check who you're really working for. Review an offer. Understand what the public record says. It takes 30 seconds.
-            {user && (
-              <span className="block mt-4 text-foreground/85 text-[0.95rem]">
-                Signed in, your{" "}
-                <Link to="/dashboard?tab=overview" className="text-primary underline-offset-4 hover:underline font-medium">
-                  dashboard overview
-                </Link>{" "}
-                pulls it together: Dream Job Profile, today’s matches, applications in motion, and signals — with Jackye as your visible guide. Use the{" "}
-                <Link to="/jobs-feed" className="text-primary underline-offset-4 hover:underline font-medium">
-                  jobs feed
-                </Link>{" "}
-                for role and adjacent-role discovery; configure{" "}
-                <Link to="/auto-apply" className="text-primary underline-offset-4 hover:underline font-medium">
-                  auto-apply
-                </Link>{" "}
-                when you’re ready (review-first or trusted queue).
-              </span>
-            )}
+            Check who you&apos;re really working for in 30 seconds &mdash; the receipts on politics, enforcement, layoffs, and values, pulled from the public record so you&apos;re not guessing about your next move.
           </p>
 
           {/* Hybrid Search / Upload */}
