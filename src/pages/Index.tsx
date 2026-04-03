@@ -22,7 +22,7 @@ const ExitIntentCapture = lazy(() => import("@/components/ExitIntentCapture").th
 
 const Index = forwardRef<HTMLDivElement>((_, ref) => {
   const navigate = useNavigate();
-  const { user, loading: authLoading } = useAuth();
+  const { loading: authLoading } = useAuth();
   const { isLoaded } = useClerkWithFallback();
 
   usePageSEO({
