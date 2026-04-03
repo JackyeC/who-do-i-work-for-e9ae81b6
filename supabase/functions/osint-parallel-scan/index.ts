@@ -155,20 +155,32 @@ Deno.serve(async (req: Request) => {
       }), { headers: { ...corsHeaders, 'Content-Type': 'application/json' } });
     }
 
-    // Fire all stale sources IN PARALLEL
+    // Fire all stale sources IN PARALLEL using direct fetch (not supabase.functions.invoke)
+    // to ensure proper auth header propagation
+    const functionsBaseUrl = `${supabaseUrl}/functions/v1`;
+    const authHeader = req.headers.get('Authorization');
+
     const results = await Promise.allSettled(
       staleSources.map(async (functionName) => {
         const fnStart = Date.now();
         try {
-          const { data, error } = await supabase.functions.invoke(functionName, {
-            body: { companyId, companyName },
+          const response = await fetch(`${functionsBaseUrl}/${functionName}`, {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+              'Authorization': `Bearer ${supabaseKey}`,
+              'apikey': anonKey,
+            },
+            body: JSON.stringify({ companyId, companyName }),
           });
+
+          const data = await response.json().catch(() => ({}));
           return {
             source: functionName,
-            success: !error && data?.success !== false,
+            success: response.ok && data?.success !== false,
             duration: Date.now() - fnStart,
-            data: data,
-            error: error?.message || data?.error,
+            data,
+            error: !response.ok ? `HTTP ${response.status}` : data?.error,
           };
         } catch (e: any) {
           return {
