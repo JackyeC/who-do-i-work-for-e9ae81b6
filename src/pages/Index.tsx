@@ -22,7 +22,7 @@ const ExitIntentCapture = lazy(() => import("@/components/ExitIntentCapture").th
 
 const Index = forwardRef<HTMLDivElement>((_, ref) => {
   const navigate = useNavigate();
-  const { user, loading: authLoading } = useAuth();
+  const { loading: authLoading } = useAuth();
   const { isLoaded } = useClerkWithFallback();
 
   usePageSEO({
@@ -77,27 +77,10 @@ const Index = forwardRef<HTMLDivElement>((_, ref) => {
           </h1>
 
           <p
-            className="text-muted-foreground max-w-[48ch] mx-auto leading-relaxed mt-6"
+            className="text-muted-foreground max-w-[52ch] mx-auto leading-relaxed mt-6"
             style={{ fontSize: "clamp(0.95rem, 1.3vw, 1.075rem)", opacity: 0, animation: "heroFadeIn 0.6s ease 0.6s forwards" }}
           >
-            Check who you're really working for. Review an offer. Understand what the public record says. It takes 30 seconds.
-            {user && (
-              <span className="block mt-4 text-foreground/85 text-[0.95rem]">
-                Signed in, your{" "}
-                <Link to="/dashboard?tab=overview" className="text-primary underline-offset-4 hover:underline font-medium">
-                  dashboard overview
-                </Link>{" "}
-                pulls it together: Dream Job Profile, today’s matches, applications in motion, and signals — with Jackye as your visible guide. Use the{" "}
-                <Link to="/jobs-feed" className="text-primary underline-offset-4 hover:underline font-medium">
-                  jobs feed
-                </Link>{" "}
-                for role and adjacent-role discovery; configure{" "}
-                <Link to="/auto-apply" className="text-primary underline-offset-4 hover:underline font-medium">
-                  auto-apply
-                </Link>{" "}
-                when you’re ready (review-first or trusted queue).
-              </span>
-            )}
+            Check who you&apos;re really working for in 30 seconds &mdash; the receipts on politics, enforcement, layoffs, and values, pulled from the public record so you&apos;re not guessing about your next move.
           </p>
 
           {/* Hybrid Search / Upload */}
@@ -116,8 +99,8 @@ const Index = forwardRef<HTMLDivElement>((_, ref) => {
             <LiveDataFeed />
           </div>
 
-          <p className="font-mono text-[9px] text-muted-foreground/30 mt-6 tracking-wide" style={{ opacity: 0, animation: "heroFadeIn 0.4s ease 1.4s forwards" }}>
-            Federal Election Commission &middot; Securities & Exchange Commission &middot; Bureau of Labor Statistics &middot; Occupational Safety & Health Administration &middot; National Labor Relations Board &middot; Senate Lobbying Disclosures
+          <p className="font-mono text-[10px] text-muted-foreground/50 mt-5 tracking-wide max-w-[52ch] mx-auto text-center leading-relaxed" style={{ opacity: 0, animation: "heroFadeIn 0.4s ease 1.4s forwards" }}>
+            Facts over feelings, built on FEC, SEC, OSHA, NLRB, BLS, and more — the public record, not the press release.
           </p>
         </div>
       </section>
