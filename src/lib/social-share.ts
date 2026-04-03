@@ -8,10 +8,7 @@
  */
 
 import { getPublicSiteUrl } from "@/lib/public-site-url";
-<<<<<<< HEAD
-=======
 import { getViteSupabaseUrl } from "@/lib/supabase-vite-env";
->>>>>>> cursor/fix-dynamic-sitemap
 
 export type SharePlatform = "linkedin" | "twitter" | "facebook" | "copy";
 
@@ -160,13 +157,8 @@ export function openShareWindow(platform: SharePlatform, ctx: ShareContext): voi
 /** Generate OG image URL for dynamic pages (PNG format for LinkedIn/social) */
 export function getOGImageUrl(ctx: ShareContext): string {
   const BASE_URL = getPublicSiteUrl();
-<<<<<<< HEAD
-  const projectId = import.meta.env.VITE_SUPABASE_PROJECT_ID || 'tdetybqdxadmowjivtjy';
-  const bucketBase = `https://${projectId}.supabase.co/storage/v1/object/public/battle-images`;
-=======
   const apiBase = getViteSupabaseUrl().replace(/\/$/, "");
   const bucketBase = `${apiBase}/storage/v1/object/public/battle-images`;
->>>>>>> cursor/fix-dynamic-sitemap
   
   switch (ctx.type) {
     case "battle": {

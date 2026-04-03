@@ -1,8 +1,5 @@
 import { lazy, Suspense, forwardRef } from "react";
 import { useNavigate, Link } from "react-router-dom";
-<<<<<<< HEAD
-import { ArrowRight, FileSearch, Shield, TrendingUp, Bell, BookOpen, MessageCircle } from "lucide-react";
-=======
 import {
   ArrowRight,
   FileSearch,
@@ -12,7 +9,6 @@ import {
   FileText,
   LayoutDashboard,
 } from "lucide-react";
->>>>>>> cursor/fix-dynamic-sitemap
 import { useAuth } from "@/contexts/AuthContext";
 import { useClerkWithFallback } from "@/hooks/use-clerk-fallback";
 import { usePageSEO } from "@/hooks/use-page-seo";
@@ -30,14 +26,9 @@ const Index = forwardRef<HTMLDivElement>((_, ref) => {
   const { isLoaded } = useClerkWithFallback();
 
   usePageSEO({
-<<<<<<< HEAD
-    title: "Check Any Employer Before You Apply \u2014 Career Intelligence",
-    description: "Look up any company and see what the public record says about political spending, labor violations, layoffs, and leadership. 30-second employer check powered by public data.",
-=======
     title: "Check Any Employer Before You Apply — Career Intelligence",
     description:
       "Look up any company, build your Dream Job Profile, see aligned roles, and track applications with post-apply dossiers — grounded in public records and your stated priorities.",
->>>>>>> cursor/fix-dynamic-sitemap
     path: "/",
     jsonLd: {
       "@type": "WebApplication",
@@ -111,41 +102,10 @@ const Index = forwardRef<HTMLDivElement>((_, ref) => {
 
           {/* Hybrid Search / Upload */}
           <div
-<<<<<<< HEAD
             className="mt-9 w-full flex justify-center"
             style={{ opacity: 0, animation: "heroFadeIn 0.5s ease 0.9s forwards" }}
           >
             <HeroScanInput />
-=======
-            className="mt-9 flex flex-col sm:flex-row justify-center items-stretch sm:items-center gap-3 px-2"
-            style={{ opacity: 0, animation: "heroFadeIn 0.5s ease 0.9s forwards" }}
-          >
-            {user ? (
-              <>
-                <Link
-                  to="/dashboard?tab=overview"
-                  className="bg-primary text-primary-foreground px-10 py-4 font-sans text-base font-semibold hover:brightness-110 transition-all flex items-center justify-center gap-2 text-center"
-                >
-                  Open command center <ArrowRight className="w-4 h-4" />
-                </Link>
-                <button
-                  type="button"
-                  onClick={() => navigate("/offer-check")}
-                  className="border border-border bg-card text-foreground px-10 py-4 font-sans text-base font-semibold hover:bg-muted/60 transition-all flex items-center justify-center gap-2"
-                >
-                  Check a company
-                </button>
-              </>
-            ) : (
-              <button
-                type="button"
-                onClick={() => navigate("/offer-check")}
-                className="bg-primary text-primary-foreground px-10 py-4 font-sans text-base font-semibold hover:brightness-110 transition-all flex items-center justify-center gap-2 mx-auto"
-              >
-                Check a Company <ArrowRight className="w-4 h-4" />
-              </button>
-            )}
->>>>>>> cursor/fix-dynamic-sitemap
           </div>
 
           {/* Live Data Feed */}
@@ -191,26 +151,15 @@ const Index = forwardRef<HTMLDivElement>((_, ref) => {
               },
               {
                 step: "02",
-<<<<<<< HEAD
-                title: "Read the receipts",
-                body: "See the full employer dossier: political giving, enforcement records, lobbying data, leadership behavior, workforce signals, and values alignment.",
-=======
                 title: "Investigate & match",
                 body: "Open employer dossiers from the public record. See why roles fit in the jobs feed — role family, values, and mission alignment with clear risk notes when data is thin.",
->>>>>>> cursor/fix-dynamic-sitemap
                 link: "/browse",
               },
               {
                 step: "03",
-<<<<<<< HEAD
-                title: "Make your move",
-                body: "Apply, negotiate, stay, or leave with evidence, leverage, and confidence. Not hope.",
-                link: "/receipts",
-=======
                 title: "Apply with receipts",
                 body: "Track applications and post-apply dossiers from the dashboard. Review-first auto-apply stays in your control until you promote to a trusted queue.",
                 link: "/dashboard?tab=tracker",
->>>>>>> cursor/fix-dynamic-sitemap
               },
             ].map((item) => (
               <Link key={item.step} to={item.link} className="flex flex-col no-underline group/step hover:bg-primary/[0.03] rounded-lg p-4 -m-4 transition-colors">
@@ -239,21 +188,12 @@ const Index = forwardRef<HTMLDivElement>((_, ref) => {
 
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
             {[
-<<<<<<< HEAD
-              { icon: <FileSearch className="w-6 h-6" strokeWidth={1.5} />, title: "Employer Dossiers", desc: "Forensic employer profiles: political giving, enforcement records, lobbying data, leadership behavior, workforce signals, and values alignment. All sourced. All traceable.", link: "/browse" },
-              { icon: <Shield className="w-6 h-6" strokeWidth={1.5} />, title: "Offer Review", desc: "Upload an offer. Get an analysis of compensation, red flags, and leverage points, grounded in Bureau of Labor Statistics benchmarks and real company data.", link: "/offer-analysis" },
-              { icon: <TrendingUp className="w-6 h-6" strokeWidth={1.5} />, title: "Career Map", desc: "Track your trajectory. Understand role mobility, industry shifts, and where your skills carry the most weight, with data, not vibes.", link: "/career-map" },
-              { icon: <Bell className="w-6 h-6" strokeWidth={1.5} />, title: "Watchlist & Alerts", desc: "Track companies you care about. Get notified when new signals surface: layoffs, lobbying shifts, enforcement actions, leadership changes.", link: "/dashboard" },
-              { icon: <MessageCircle className="w-6 h-6" strokeWidth={1.5} />, title: "Ask Jackye", desc: "Career guidance in Jackye's voice: strategic, direct, grounded in 20 years inside talent acquisition. Not a chatbot. A career advocate.", link: "/ask-jackye" },
-              { icon: <BookOpen className="w-6 h-6" strokeWidth={1.5} />, title: "State of Work", desc: "Weekly intelligence on what's happening in the world of work: policy changes, labor market shifts, and what they actually mean for your career.", link: "/receipts" },
-=======
               { icon: <FileSearch className="w-6 h-6" strokeWidth={1.5} />, title: "Employer Dossiers", desc: "Forensic employer profiles from FEC, SEC, OSHA, NLRB, lobbying disclosures, and more — political giving, enforcement, leadership signals, and values alignment. Sourced and traceable.", link: "/browse" },
               { icon: <Target className="w-6 h-6" strokeWidth={1.5} />, title: "Dream Job Profile", desc: "Your targets, values sliders, quiz, and preferences merge into one profile that powers matching and optional auto-apply — without weak data overwriting what you typed.", link: "/dashboard?tab=profile" },
               { icon: <Briefcase className="w-6 h-6" strokeWidth={1.5} />, title: "Jobs Feed & Matching", desc: "See aligned and adjacent roles with “why this matches you” — role family, values fit, mission alignment, and risk notes when employer clarity is low.", link: "/jobs-feed" },
               { icon: <Shield className="w-6 h-6" strokeWidth={1.5} />, title: "Auto-Apply", desc: "Set integrity thresholds and daily caps. Stay on review-before-apply or move to a trusted queue when you’re ready — with clear visibility into what the profile is driving.", link: "/auto-apply" },
               { icon: <FileText className="w-6 h-6" strokeWidth={1.5} />, title: "Applications & Dossiers", desc: "Track applications in motion and open post-apply dossiers generated for your materials — your receipts for what you sent and why.", link: "/dashboard?tab=tracker" },
               { icon: <LayoutDashboard className="w-6 h-6" strokeWidth={1.5} />, title: "Command Center", desc: "Dashboard overview: today’s snapshot, Dream Job Profile, matches, applications, signals, and one suggested move — editorial, daily-use layout. Ask Jackye stays one click away in the product.", link: "/dashboard?tab=overview" },
->>>>>>> cursor/fix-dynamic-sitemap
             ].map((item) => (
               <Link key={item.title} to={item.link} className="group p-6 border border-border bg-card hover:border-primary/30 transition-all">
                 <div className="text-primary mb-4 group-hover:scale-105 transition-transform">{item.icon}</div>

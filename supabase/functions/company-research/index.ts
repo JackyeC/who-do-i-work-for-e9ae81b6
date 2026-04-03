@@ -219,16 +219,16 @@ Return ONLY valid JSON. No markdown, no explanation.`;
       const { count: partyCount } = await supabase.from('company_party_breakdown').select('id', { count: 'exact', head: true }).eq('company_id', companyId);
 
       // Only delete tables that are empty (no real data from API syncs)
-      const deletions: Promise<any>[] = [];
-      if (!execCount || execCount === 0) deletions.push(supabase.from('company_executives').delete().eq('company_id', companyId).then());
-      if (!candidateCount || candidateCount === 0) deletions.push(supabase.from('company_candidates').delete().eq('company_id', companyId).then());
-      if (!partyCount || partyCount === 0) deletions.push(supabase.from('company_party_breakdown').delete().eq('company_id', companyId).then());
+      const deletions: PromiseLike<unknown>[] = [];
+      if (!execCount || execCount === 0) deletions.push(supabase.from('company_executives').delete().eq('company_id', companyId));
+      if (!candidateCount || candidateCount === 0) deletions.push(supabase.from('company_candidates').delete().eq('company_id', companyId));
+      if (!partyCount || partyCount === 0) deletions.push(supabase.from('company_party_breakdown').delete().eq('company_id', companyId));
       // These are always safe to refresh from AI since no real API populates them:
-      deletions.push(supabase.from('company_public_stances').delete().eq('company_id', companyId).then());
-      deletions.push(supabase.from('company_dark_money').delete().eq('company_id', companyId).then());
-      deletions.push(supabase.from('company_board_affiliations').delete().eq('company_id', companyId).then());
-      deletions.push(supabase.from('company_revolving_door').delete().eq('company_id', companyId).then());
-      deletions.push(supabase.from('company_spending_history').delete().eq('company_id', companyId).then());
+      deletions.push(supabase.from('company_public_stances').delete().eq('company_id', companyId));
+      deletions.push(supabase.from('company_dark_money').delete().eq('company_id', companyId));
+      deletions.push(supabase.from('company_board_affiliations').delete().eq('company_id', companyId));
+      deletions.push(supabase.from('company_revolving_door').delete().eq('company_id', companyId));
+      deletions.push(supabase.from('company_spending_history').delete().eq('company_id', companyId));
       await Promise.all(deletions);
 
       // Skip inserting AI data for tables that already have real API data

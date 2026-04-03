@@ -342,56 +342,6 @@ export type Database = {
           },
         ]
       }
-      application_email_dossiers: {
-        Row: {
-          application_id: string
-          body_markdown: string
-          created_at: string
-          email_status: string
-          error_message: string | null
-          id: string
-          provider_message_id: string | null
-          sent_at: string | null
-          title: string
-          updated_at: string
-          user_id: string
-        }
-        Insert: {
-          application_id: string
-          body_markdown?: string
-          created_at?: string
-          email_status?: string
-          error_message?: string | null
-          id?: string
-          provider_message_id?: string | null
-          sent_at?: string | null
-          title?: string
-          updated_at?: string
-          user_id: string
-        }
-        Update: {
-          application_id?: string
-          body_markdown?: string
-          created_at?: string
-          email_status?: string
-          error_message?: string | null
-          id?: string
-          provider_message_id?: string | null
-          sent_at?: string | null
-          title?: string
-          updated_at?: string
-          user_id?: string
-        }
-        Relationships: [
-          {
-            foreignKeyName: "application_email_dossiers_application_id_fkey"
-            columns: ["application_id"]
-            isOneToOne: false
-            referencedRelation: "applications_tracker"
-            referencedColumns: ["id"]
-          },
-        ]
-      }
       applications_tracker: {
         Row: {
           alignment_score: number | null
@@ -8663,8 +8613,6 @@ export type Database = {
           bio: string | null
           briefing_timezone: string | null
           created_at: string
-          dream_job_profile: Json
-          dream_job_profile_version: number
           email: string | null
           employer_company_id: string | null
           full_name: string | null
@@ -8695,8 +8643,6 @@ export type Database = {
           bio?: string | null
           briefing_timezone?: string | null
           created_at?: string
-          dream_job_profile?: Json
-          dream_job_profile_version?: number
           email?: string | null
           employer_company_id?: string | null
           full_name?: string | null
@@ -8727,8 +8673,6 @@ export type Database = {
           bio?: string | null
           briefing_timezone?: string | null
           created_at?: string
-          dream_job_profile?: Json
-          dream_job_profile_version?: number
           email?: string | null
           employer_company_id?: string | null
           full_name?: string | null

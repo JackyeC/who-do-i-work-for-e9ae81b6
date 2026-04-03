@@ -77,7 +77,7 @@ export default function LaunchHealthPage() {
       detail: envKey ? `Set (${envKey.length} chars)` : "Missing — sign-in and API calls will fail.",
     });
 
-    const { error: profileErr } = await supabase
+    const { error: profileErr } = await (supabase as any)
       .from("profiles")
       .select("dream_job_profile")
       .eq("id", user.id)
@@ -106,7 +106,7 @@ export default function LaunchHealthPage() {
       });
     }
 
-    const { error: dossierTableErr } = await supabase
+    const { error: dossierTableErr } = await (supabase as any)
       .from("application_email_dossiers")
       .select("id")
       .eq("user_id", user.id)
