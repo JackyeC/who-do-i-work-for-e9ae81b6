@@ -32,13 +32,22 @@ export function FoundingMemberBadge({
   const displayNumber = memberNumber
     ? `#${String(memberNumber).padStart(4, "0")}`
     : "#0001";
-  const displayName = memberName || "Founding Member";
-  const displayDate = joinedDate
-    ? new Date(joinedDate).toLocaleDateString("en-US", {
-        month: "long",
-        year: "numeric",
-      })
-    : "Pre-Launch 2026";
+  const displayName = memberName
+    ? memberName
+        .split(/[\s]+/)
+        .map(w => w.charAt(0).toUpperCase() + w.slice(1).toLowerCase())
+        .join(" ")
+    : "Founding Member";
+  // Badge date is the user's signup date and must never change.
+  // It must always be before the launch date (April 7, 2026).
+  const LAUNCH_DATE = new Date("2026-04-07T00:00:00Z");
+  const joined = joinedDate ? new Date(joinedDate) : new Date("2026-03-31T00:00:00Z");
+  const badgeDate = joined < LAUNCH_DATE ? joined : new Date("2026-04-06T00:00:00Z");
+  const displayDate = badgeDate.toLocaleDateString("en-US", {
+    month: "long",
+    day: "numeric",
+    year: "numeric",
+  });
 
   // Pre-load logo images so html2canvas captures them correctly
   useEffect(() => {
@@ -95,11 +104,9 @@ export function FoundingMemberBadge({
   const shareText = `I'm Founding Member ${displayNumber} of Who Do I Work For? — the career intelligence platform that tells you what employers won't. Launching April 7. Get in early → ${BASE_URL}`;
 
   const handleShareLinkedIn = () => {
-    const url = `https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(BASE_URL)}`;
+    const linkedInText = `I'm Founding Member ${displayNumber} of Who Do I Work For? — career intelligence that tells you what employers won't. Launching April 7. Get in early → ${BASE_URL}`;
+    const url = `https://www.linkedin.com/feed/?shareActive=true&text=${encodeURIComponent(linkedInText)}`;
     window.open(url, "_blank", "width=600,height=600");
-    navigator.clipboard.writeText(shareText);
-    setCopied(true);
-    setTimeout(() => setCopied(false), 2000);
   };
 
   const handleShareTwitter = () => {
@@ -166,12 +173,9 @@ export function FoundingMemberBadge({
                   gap: "2px",
                 }}
               >
-                <span style={{ fontWeight: 300, color: BRAND.fg }}>Who Do I</span>
-                {" "}
-                <span style={{ fontWeight: 800, color: BRAND.fg }}>W</span>
-                <span style={{ fontWeight: 800, color: BRAND.goldBright }}>?</span>
-                {" "}
+                <span style={{ fontWeight: 300, color: BRAND.fg }}>Who Do I </span>
                 <span style={{ fontWeight: 800, color: BRAND.fg }}>WORK FOR</span>
+                <span style={{ fontWeight: 800, color: BRAND.goldBright }}>?</span>
               </span>
               <span
                 style={{
@@ -248,9 +252,12 @@ export function FoundingMemberBadge({
                   fontFamily: "'DM Sans', system-ui, sans-serif",
                   fontSize: "13px",
                   color: BRAND.fgSubtle,
+                  lineHeight: 1.6,
                 }}
               >
-                Joined {displayDate}
+                Joined
+                <br />
+                {displayDate}
               </p>
             </div>
 
@@ -271,12 +278,42 @@ export function FoundingMemberBadge({
                 lineHeight: 1.7,
                 color: BRAND.fgMuted,
                 textAlign: "center",
-                marginBottom: 24,
+                marginBottom: 12,
               }}
             >
               I believe workers deserve the truth about who they work for.
               <br />
               I'm here before the launch because transparency can't wait.
+            </p>
+
+            {/* Jackye Clayton signature */}
+            <p
+              style={{
+                fontFamily: "'Inter', system-ui, sans-serif",
+                fontSize: "20px",
+                fontWeight: 300,
+                fontStyle: "italic",
+                color: BRAND.goldBright,
+                textAlign: "center",
+                marginBottom: 20,
+                letterSpacing: "0.02em",
+                lineHeight: 1.2,
+              }}
+            >
+              Jackye Clayton
+            </p>
+            <p
+              style={{
+                fontFamily: "'DM Mono', monospace",
+                fontSize: "9px",
+                letterSpacing: "0.15em",
+                textTransform: "uppercase",
+                color: BRAND.fgSubtle,
+                textAlign: "center",
+                marginBottom: 24,
+              }}
+            >
+              Founder · Who Do I Work For?
             </p>
 
             {/* Footer: launch date + URL */}

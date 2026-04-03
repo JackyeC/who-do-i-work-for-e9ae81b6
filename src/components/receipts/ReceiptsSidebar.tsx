@@ -32,7 +32,7 @@ export function ReceiptsSidebar({ hotArticles }: ReceiptsSidebarProps) {
       {/* Newsletter */}
       <div className="bg-card border border-border rounded-xl p-6">
         <p className="text-[9px] uppercase tracking-[0.55em] text-primary mb-3 font-mono">
-          Every Friday
+          Every Morning
         </p>
         <h3 className="text-2xl font-black text-foreground mb-2 leading-tight">
           My Uncertainty Era
@@ -47,20 +47,24 @@ export function ReceiptsSidebar({ hotArticles }: ReceiptsSidebarProps) {
           </p>
         </blockquote>
         <Link
-          to="/join"
+          to="/newsletter"
           className="block bg-primary text-primary-foreground font-extrabold py-3.5 rounded-lg text-center text-base tracking-[0.08em] no-underline hover:opacity-90 transition-opacity"
         >
-          Subscribe → WDIWF
+          Subscribe → Daily Briefing
         </Link>
       </div>
 
       {/* Hottest Takes */}
       <div className="bg-card border border-border rounded-xl p-5">
         <p className="text-[9px] uppercase tracking-[0.55em] text-primary mb-3.5 font-mono">
-          🔥 Hottest Takes
+          ⭐ Highest Stargaze
         </p>
         {hotArticles.slice(0, 4).map((article) => (
-          <div key={article?.id} className="pb-3 mb-3 border-b border-border last:border-none last:mb-0 last:pb-0">
+          <button
+            key={article?.id}
+            onClick={() => document.getElementById(`p-${article?.id}-s`)?.scrollIntoView({ behavior: "smooth", block: "center" })}
+            className="block w-full text-left pb-3 mb-3 border-b border-border last:border-none last:mb-0 last:pb-0 group/hot cursor-pointer hover:bg-muted/20 rounded-md px-1 -mx-1 transition-colors"
+          >
             <div className="flex items-center gap-2 mb-1.5">
               <span
                 className="text-[9px] font-bold uppercase tracking-[0.1em]"
@@ -70,10 +74,13 @@ export function ReceiptsSidebar({ hotArticles }: ReceiptsSidebarProps) {
               </span>
               <BiasBar bias="center" />
             </div>
-            <p className="text-base font-bold text-foreground leading-snug">
+            <p className="text-base font-bold text-foreground leading-snug group-hover/hot:text-primary transition-colors">
               {article.headline}
             </p>
-          </div>
+            <span className="text-xs text-primary opacity-0 group-hover/hot:opacity-100 transition-opacity flex items-center gap-1 mt-1">
+              Jump to story →
+            </span>
+          </button>
         ))}
       </div>
 

@@ -14,6 +14,136 @@ export type Database = {
   }
   public: {
     Tables: {
+      accountability_ingestion_log: {
+        Row: {
+          company_id: string
+          created_at: string
+          error_message: string | null
+          id: string
+          ingested_by: string | null
+          raw_payload: Json | null
+          signals_found: number
+          signals_inserted: number
+          source_key: string
+          source_tier: number
+          status: string
+        }
+        Insert: {
+          company_id: string
+          created_at?: string
+          error_message?: string | null
+          id?: string
+          ingested_by?: string | null
+          raw_payload?: Json | null
+          signals_found?: number
+          signals_inserted?: number
+          source_key: string
+          source_tier?: number
+          status?: string
+        }
+        Update: {
+          company_id?: string
+          created_at?: string
+          error_message?: string | null
+          id?: string
+          ingested_by?: string | null
+          raw_payload?: Json | null
+          signals_found?: number
+          signals_inserted?: number
+          source_key?: string
+          source_tier?: number
+          status?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "accountability_ingestion_log_company_id_fkey"
+            columns: ["company_id"]
+            isOneToOne: false
+            referencedRelation: "companies"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      accountability_signals: {
+        Row: {
+          company_id: string
+          created_at: string
+          description: string | null
+          event_date: string | null
+          headline: string
+          id: string
+          ingestion_source_key: string | null
+          is_verified: boolean
+          related_signal_ids: string[] | null
+          severity: string
+          signal_category: string
+          signal_type: string
+          source_hash: string | null
+          source_name: string | null
+          source_type: string
+          source_url: string | null
+          status_label: string
+          subject_name: string | null
+          subject_role: string | null
+          updated_at: string
+          why_it_matters: string | null
+        }
+        Insert: {
+          company_id: string
+          created_at?: string
+          description?: string | null
+          event_date?: string | null
+          headline: string
+          id?: string
+          ingestion_source_key?: string | null
+          is_verified?: boolean
+          related_signal_ids?: string[] | null
+          severity?: string
+          signal_category: string
+          signal_type: string
+          source_hash?: string | null
+          source_name?: string | null
+          source_type?: string
+          source_url?: string | null
+          status_label?: string
+          subject_name?: string | null
+          subject_role?: string | null
+          updated_at?: string
+          why_it_matters?: string | null
+        }
+        Update: {
+          company_id?: string
+          created_at?: string
+          description?: string | null
+          event_date?: string | null
+          headline?: string
+          id?: string
+          ingestion_source_key?: string | null
+          is_verified?: boolean
+          related_signal_ids?: string[] | null
+          severity?: string
+          signal_category?: string
+          signal_type?: string
+          source_hash?: string | null
+          source_name?: string | null
+          source_type?: string
+          source_url?: string | null
+          status_label?: string
+          subject_name?: string | null
+          subject_role?: string | null
+          updated_at?: string
+          why_it_matters?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "accountability_signals_company_id_fkey"
+            columns: ["company_id"]
+            isOneToOne: false
+            referencedRelation: "companies"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       advisory_interest: {
         Row: {
           created_at: string
@@ -161,6 +291,53 @@ export type Database = {
             columns: ["company_id"]
             isOneToOne: false
             referencedRelation: "companies"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      application_documents: {
+        Row: {
+          application_id: string
+          content_text: string | null
+          created_at: string
+          document_type: string
+          file_name: string
+          file_url: string | null
+          id: string
+          updated_at: string
+          user_id: string
+          version: number
+        }
+        Insert: {
+          application_id: string
+          content_text?: string | null
+          created_at?: string
+          document_type?: string
+          file_name?: string
+          file_url?: string | null
+          id?: string
+          updated_at?: string
+          user_id: string
+          version?: number
+        }
+        Update: {
+          application_id?: string
+          content_text?: string | null
+          created_at?: string
+          document_type?: string
+          file_name?: string
+          file_url?: string | null
+          id?: string
+          updated_at?: string
+          user_id?: string
+          version?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "application_documents_application_id_fkey"
+            columns: ["application_id"]
+            isOneToOne: false
+            referencedRelation: "applications_tracker"
             referencedColumns: ["id"]
           },
         ]
@@ -1835,6 +2012,118 @@ export type Database = {
           },
         ]
       }
+      company_careers_signals: {
+        Row: {
+          active_job_count: number | null
+          benefits_mentioned: Json | null
+          company_id: string
+          created_at: string
+          dei_language_score: number | null
+          id: string
+          perks_vs_substance: number | null
+          raw_text_snippet: string | null
+          remote_policy: string | null
+          scraped_at: string
+          updated_at: string
+        }
+        Insert: {
+          active_job_count?: number | null
+          benefits_mentioned?: Json | null
+          company_id: string
+          created_at?: string
+          dei_language_score?: number | null
+          id?: string
+          perks_vs_substance?: number | null
+          raw_text_snippet?: string | null
+          remote_policy?: string | null
+          scraped_at?: string
+          updated_at?: string
+        }
+        Update: {
+          active_job_count?: number | null
+          benefits_mentioned?: Json | null
+          company_id?: string
+          created_at?: string
+          dei_language_score?: number | null
+          id?: string
+          perks_vs_substance?: number | null
+          raw_text_snippet?: string | null
+          remote_policy?: string | null
+          scraped_at?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "company_careers_signals_company_id_fkey"
+            columns: ["company_id"]
+            isOneToOne: false
+            referencedRelation: "companies"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      company_community_signals: {
+        Row: {
+          badge_label: string
+          company_id: string
+          company_match_method: string | null
+          confidence_score: number | null
+          created_at: string
+          detail: string | null
+          fetched_at: string
+          id: string
+          label: string
+          numeric_value: number | null
+          raw_company_name: string | null
+          signal_type: string
+          source: string
+          source_url: string | null
+          value: string | null
+        }
+        Insert: {
+          badge_label?: string
+          company_id: string
+          company_match_method?: string | null
+          confidence_score?: number | null
+          created_at?: string
+          detail?: string | null
+          fetched_at?: string
+          id?: string
+          label: string
+          numeric_value?: number | null
+          raw_company_name?: string | null
+          signal_type: string
+          source: string
+          source_url?: string | null
+          value?: string | null
+        }
+        Update: {
+          badge_label?: string
+          company_id?: string
+          company_match_method?: string | null
+          confidence_score?: number | null
+          created_at?: string
+          detail?: string | null
+          fetched_at?: string
+          id?: string
+          label?: string
+          numeric_value?: number | null
+          raw_company_name?: string | null
+          signal_type?: string
+          source?: string
+          source_url?: string | null
+          value?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "company_community_signals_company_id_fkey"
+            columns: ["company_id"]
+            isOneToOne: false
+            referencedRelation: "companies"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       company_corporate_claims: {
         Row: {
           approved_at: string | null
@@ -2029,6 +2318,53 @@ export type Database = {
         Relationships: [
           {
             foreignKeyName: "company_court_cases_company_id_fkey"
+            columns: ["company_id"]
+            isOneToOne: false
+            referencedRelation: "companies"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      company_coverage_summary: {
+        Row: {
+          company_id: string
+          coverage_status: string
+          created_at: string
+          id: string
+          last_checked_at: string | null
+          last_signal_date: string | null
+          signal_count: number
+          source_family: string
+          summary_text: string | null
+          updated_at: string
+        }
+        Insert: {
+          company_id: string
+          coverage_status?: string
+          created_at?: string
+          id?: string
+          last_checked_at?: string | null
+          last_signal_date?: string | null
+          signal_count?: number
+          source_family: string
+          summary_text?: string | null
+          updated_at?: string
+        }
+        Update: {
+          company_id?: string
+          coverage_status?: string
+          created_at?: string
+          id?: string
+          last_checked_at?: string | null
+          last_signal_date?: string | null
+          signal_count?: number
+          source_family?: string
+          summary_text?: string | null
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "company_coverage_summary_company_id_fkey"
             columns: ["company_id"]
             isOneToOne: false
             referencedRelation: "companies"
@@ -2573,6 +2909,56 @@ export type Database = {
             foreignKeyName: "company_influence_roi_company_id_fkey"
             columns: ["company_id"]
             isOneToOne: true
+            referencedRelation: "companies"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      company_ingestion_queue: {
+        Row: {
+          company_id: string
+          created_at: string
+          error_count: number
+          id: string
+          last_error: string | null
+          last_run_at: string | null
+          next_run_at: string
+          priority: number
+          source_family: string
+          status: string
+          updated_at: string
+        }
+        Insert: {
+          company_id: string
+          created_at?: string
+          error_count?: number
+          id?: string
+          last_error?: string | null
+          last_run_at?: string | null
+          next_run_at?: string
+          priority?: number
+          source_family: string
+          status?: string
+          updated_at?: string
+        }
+        Update: {
+          company_id?: string
+          created_at?: string
+          error_count?: number
+          id?: string
+          last_error?: string | null
+          last_run_at?: string | null
+          next_run_at?: string
+          priority?: number
+          source_family?: string
+          status?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "company_ingestion_queue_company_id_fkey"
+            columns: ["company_id"]
+            isOneToOne: false
             referencedRelation: "companies"
             referencedColumns: ["id"]
           },
@@ -3608,6 +3994,56 @@ export type Database = {
           },
         ]
       }
+      company_source_documents: {
+        Row: {
+          company_id: string
+          created_at: string
+          document_type: string
+          id: string
+          is_primary_source: boolean
+          published_date: string | null
+          source_domain: string | null
+          source_url: string
+          summary: string | null
+          title: string
+          why_it_matters: string | null
+        }
+        Insert: {
+          company_id: string
+          created_at?: string
+          document_type?: string
+          id?: string
+          is_primary_source?: boolean
+          published_date?: string | null
+          source_domain?: string | null
+          source_url: string
+          summary?: string | null
+          title: string
+          why_it_matters?: string | null
+        }
+        Update: {
+          company_id?: string
+          created_at?: string
+          document_type?: string
+          id?: string
+          is_primary_source?: boolean
+          published_date?: string | null
+          source_domain?: string | null
+          source_url?: string
+          summary?: string | null
+          title?: string
+          why_it_matters?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "company_source_documents_company_id_fkey"
+            columns: ["company_id"]
+            isOneToOne: false
+            referencedRelation: "companies"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       company_spending_history: {
         Row: {
           company_id: string
@@ -4543,6 +4979,45 @@ export type Database = {
         }
         Relationships: []
       }
+      daily_wraps: {
+        Row: {
+          created_at: string
+          id: string
+          intro: string | null
+          published_at: string | null
+          status: string
+          summary_take: string | null
+          title: string
+          top_signal_story_ids: string[] | null
+          updated_at: string
+          wrap_date: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          intro?: string | null
+          published_at?: string | null
+          status?: string
+          summary_take?: string | null
+          title?: string
+          top_signal_story_ids?: string[] | null
+          updated_at?: string
+          wrap_date: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          intro?: string | null
+          published_at?: string | null
+          status?: string
+          summary_take?: string | null
+          title?: string
+          top_signal_story_ids?: string[] | null
+          updated_at?: string
+          wrap_date?: string
+        }
+        Relationships: []
+      }
       dream_job_requests: {
         Row: {
           created_at: string
@@ -4700,18 +5175,21 @@ export type Database = {
           email: string
           id: string
           source: string | null
+          tags: string[] | null
         }
         Insert: {
           created_at?: string
           email: string
           id?: string
           source?: string | null
+          tags?: string[] | null
         }
         Update: {
           created_at?: string
           email?: string
           id?: string
           source?: string | null
+          tags?: string[] | null
         }
         Relationships: []
       }
@@ -4953,6 +5431,36 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
+      }
+      entity_mentions: {
+        Row: {
+          context_id: string | null
+          context_type: string | null
+          created_at: string | null
+          entity_id: string | null
+          entity_type: string | null
+          id: string
+          snippet: string | null
+        }
+        Insert: {
+          context_id?: string | null
+          context_type?: string | null
+          created_at?: string | null
+          entity_id?: string | null
+          entity_type?: string | null
+          id?: string
+          snippet?: string | null
+        }
+        Update: {
+          context_id?: string | null
+          context_type?: string | null
+          created_at?: string | null
+          entity_id?: string | null
+          entity_type?: string | null
+          id?: string
+          snippet?: string | null
+        }
+        Relationships: []
       }
       entity_relationships: {
         Row: {
@@ -5936,6 +6444,38 @@ export type Database = {
           },
         ]
       }
+      jackye_contextual_takes: {
+        Row: {
+          company_id: string
+          created_at: string
+          id: string
+          section_key: string
+          take_text: string
+        }
+        Insert: {
+          company_id: string
+          created_at?: string
+          id?: string
+          section_key: string
+          take_text: string
+        }
+        Update: {
+          company_id?: string
+          created_at?: string
+          id?: string
+          section_key?: string
+          take_text?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "jackye_contextual_takes_company_id_fkey"
+            columns: ["company_id"]
+            isOneToOne: false
+            referencedRelation: "companies"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       job_alert_preferences: {
         Row: {
           created_at: string | null
@@ -6181,6 +6721,83 @@ export type Database = {
           willing_to_relocate?: boolean | null
         }
         Relationships: []
+      }
+      jrc_stories: {
+        Row: {
+          bias_confidence: string
+          bias_jrc: string
+          bias_source: string
+          category: string
+          companies: Json
+          created_at: string
+          headline_deck: string | null
+          headline_poster: string
+          heat_level: string
+          id: string
+          language: string
+          people: Json
+          primary_source_url: string
+          published_at: string
+          receipt_items: Json
+          slug: string
+          source_label: string
+          summary_rich: string
+          updated_at: string
+          work_news_id: string | null
+        }
+        Insert: {
+          bias_confidence?: string
+          bias_jrc?: string
+          bias_source?: string
+          category?: string
+          companies?: Json
+          created_at?: string
+          headline_deck?: string | null
+          headline_poster: string
+          heat_level?: string
+          id?: string
+          language?: string
+          people?: Json
+          primary_source_url: string
+          published_at?: string
+          receipt_items?: Json
+          slug: string
+          source_label: string
+          summary_rich: string
+          updated_at?: string
+          work_news_id?: string | null
+        }
+        Update: {
+          bias_confidence?: string
+          bias_jrc?: string
+          bias_source?: string
+          category?: string
+          companies?: Json
+          created_at?: string
+          headline_deck?: string | null
+          headline_poster?: string
+          heat_level?: string
+          id?: string
+          language?: string
+          people?: Json
+          primary_source_url?: string
+          published_at?: string
+          receipt_items?: Json
+          slug?: string
+          source_label?: string
+          summary_rich?: string
+          updated_at?: string
+          work_news_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "jrc_stories_work_news_id_fkey"
+            columns: ["work_news_id"]
+            isOneToOne: false
+            referencedRelation: "work_news"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       labor_rights_signals: {
         Row: {
@@ -6599,6 +7216,24 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
+      }
+      nickname_mappings: {
+        Row: {
+          canonical_name: string
+          id: string
+          nickname: string
+        }
+        Insert: {
+          canonical_name: string
+          id?: string
+          nickname: string
+        }
+        Update: {
+          canonical_name?: string
+          id?: string
+          nickname?: string
+        }
+        Relationships: []
       }
       offer_checks: {
         Row: {
@@ -7208,6 +7843,101 @@ export type Database = {
             columns: ["published_company_id"]
             isOneToOne: false
             referencedRelation: "companies"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      people: {
+        Row: {
+          advisory_roles: Json | null
+          bio_summary: string | null
+          board_roles: Json | null
+          confidence_score: number | null
+          created_at: string | null
+          current_company: string | null
+          current_title: string | null
+          full_name: string
+          id: string
+          image_url: string | null
+          location: string | null
+          political_donation_total: number | null
+          prior_roles: Json | null
+          slug: string
+          updated_at: string | null
+        }
+        Insert: {
+          advisory_roles?: Json | null
+          bio_summary?: string | null
+          board_roles?: Json | null
+          confidence_score?: number | null
+          created_at?: string | null
+          current_company?: string | null
+          current_title?: string | null
+          full_name: string
+          id?: string
+          image_url?: string | null
+          location?: string | null
+          political_donation_total?: number | null
+          prior_roles?: Json | null
+          slug: string
+          updated_at?: string | null
+        }
+        Update: {
+          advisory_roles?: Json | null
+          bio_summary?: string | null
+          board_roles?: Json | null
+          confidence_score?: number | null
+          created_at?: string | null
+          current_company?: string | null
+          current_title?: string | null
+          full_name?: string
+          id?: string
+          image_url?: string | null
+          location?: string | null
+          political_donation_total?: number | null
+          prior_roles?: Json | null
+          slug?: string
+          updated_at?: string | null
+        }
+        Relationships: []
+      }
+      person_sources: {
+        Row: {
+          claim_key: string
+          claim_text: string | null
+          collected_at: string | null
+          confidence_label: string
+          id: string
+          person_id: string
+          source_type: string | null
+          source_url: string | null
+        }
+        Insert: {
+          claim_key: string
+          claim_text?: string | null
+          collected_at?: string | null
+          confidence_label?: string
+          id?: string
+          person_id: string
+          source_type?: string | null
+          source_url?: string | null
+        }
+        Update: {
+          claim_key?: string
+          claim_text?: string | null
+          collected_at?: string | null
+          confidence_label?: string
+          id?: string
+          person_id?: string
+          source_type?: string | null
+          source_url?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "person_sources_person_id_fkey"
+            columns: ["person_id"]
+            isOneToOne: false
+            referencedRelation: "people"
             referencedColumns: ["id"]
           },
         ]
@@ -8021,6 +8751,39 @@ export type Database = {
           },
         ]
       }
+      promo_snippets: {
+        Row: {
+          created_at: string
+          id: string
+          push_lines: string[] | null
+          social_hooks: string[] | null
+          subject_lines: string[] | null
+          target_id: string
+          target_type: string
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          push_lines?: string[] | null
+          social_hooks?: string[] | null
+          subject_lines?: string[] | null
+          target_id: string
+          target_type: string
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          push_lines?: string[] | null
+          social_hooks?: string[] | null
+          subject_lines?: string[] | null
+          target_id?: string
+          target_type?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
       receipts_enriched: {
         Row: {
           category: string | null
@@ -8042,6 +8805,7 @@ export type Database = {
           themes: string[] | null
           tone_label: string | null
           updated_at: string | null
+          why_it_matters: string[] | null
           work_news_id: string
         }
         Insert: {
@@ -8064,6 +8828,7 @@ export type Database = {
           themes?: string[] | null
           tone_label?: string | null
           updated_at?: string | null
+          why_it_matters?: string[] | null
           work_news_id: string
         }
         Update: {
@@ -8086,6 +8851,7 @@ export type Database = {
           themes?: string[] | null
           tone_label?: string | null
           updated_at?: string | null
+          why_it_matters?: string[] | null
           work_news_id?: string
         }
         Relationships: [
@@ -8779,6 +9545,45 @@ export type Database = {
           },
         ]
       }
+      saved_notes: {
+        Row: {
+          alignment_score: number | null
+          created_at: string
+          id: string
+          industry: string | null
+          is_liked: boolean
+          news_headline: string | null
+          note_content: string
+          note_date: string
+          top_match_company: string | null
+          user_id: string
+        }
+        Insert: {
+          alignment_score?: number | null
+          created_at?: string
+          id?: string
+          industry?: string | null
+          is_liked?: boolean
+          news_headline?: string | null
+          note_content: string
+          note_date?: string
+          top_match_company?: string | null
+          user_id: string
+        }
+        Update: {
+          alignment_score?: number | null
+          created_at?: string
+          id?: string
+          industry?: string | null
+          is_liked?: boolean
+          news_headline?: string | null
+          note_content?: string
+          note_date?: string
+          top_match_company?: string | null
+          user_id?: string
+        }
+        Relationships: []
+      }
       scan_alerts: {
         Row: {
           alert_type: string
@@ -8875,6 +9680,44 @@ export type Database = {
         Relationships: [
           {
             foreignKeyName: "scan_jobs_company_id_fkey"
+            columns: ["company_id"]
+            isOneToOne: false
+            referencedRelation: "companies"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      scan_notify_requests: {
+        Row: {
+          company_id: string | null
+          company_name: string
+          created_at: string
+          email: string
+          id: string
+          notified_at: string | null
+          status: string
+        }
+        Insert: {
+          company_id?: string | null
+          company_name: string
+          created_at?: string
+          email: string
+          id?: string
+          notified_at?: string | null
+          status?: string
+        }
+        Update: {
+          company_id?: string | null
+          company_name?: string
+          created_at?: string
+          email?: string
+          id?: string
+          notified_at?: string | null
+          status?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "scan_notify_requests_company_id_fkey"
             columns: ["company_id"]
             isOneToOne: false
             referencedRelation: "companies"
@@ -9415,6 +10258,69 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
+      }
+      signal_stories: {
+        Row: {
+          before_you_say_yes: string | null
+          category: string
+          company_name: string | null
+          created_at: string
+          headline: string
+          heat_level: string
+          id: string
+          jrc_take: string | null
+          published_at: string | null
+          receipt: string | null
+          signal_type: string
+          source_name: string | null
+          source_url: string | null
+          status: string
+          updated_at: string
+          why_it_matters_applicants: string | null
+          why_it_matters_employees: string | null
+          why_it_matters_execs: string | null
+        }
+        Insert: {
+          before_you_say_yes?: string | null
+          category?: string
+          company_name?: string | null
+          created_at?: string
+          headline: string
+          heat_level?: string
+          id?: string
+          jrc_take?: string | null
+          published_at?: string | null
+          receipt?: string | null
+          signal_type?: string
+          source_name?: string | null
+          source_url?: string | null
+          status?: string
+          updated_at?: string
+          why_it_matters_applicants?: string | null
+          why_it_matters_employees?: string | null
+          why_it_matters_execs?: string | null
+        }
+        Update: {
+          before_you_say_yes?: string | null
+          category?: string
+          company_name?: string | null
+          created_at?: string
+          headline?: string
+          heat_level?: string
+          id?: string
+          jrc_take?: string | null
+          published_at?: string | null
+          receipt?: string | null
+          signal_type?: string
+          source_name?: string | null
+          source_url?: string | null
+          status?: string
+          updated_at?: string
+          why_it_matters_applicants?: string | null
+          why_it_matters_employees?: string | null
+          why_it_matters_execs?: string | null
+        }
+        Relationships: []
       }
       signal_verifications: {
         Row: {
@@ -10829,6 +11735,57 @@ export type Database = {
         }
         Relationships: []
       }
+      weekly_issues: {
+        Row: {
+          created_at: string
+          id: string
+          intro: string | null
+          issue_date: string
+          lead_circle_cta_body: string | null
+          lead_circle_cta_title: string | null
+          pattern_of_week: string | null
+          published_at: string | null
+          signal_story_ids: string[] | null
+          signoff: string | null
+          status: string
+          subject_line_alternates: string[] | null
+          subject_line_primary: string
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          intro?: string | null
+          issue_date: string
+          lead_circle_cta_body?: string | null
+          lead_circle_cta_title?: string | null
+          pattern_of_week?: string | null
+          published_at?: string | null
+          signal_story_ids?: string[] | null
+          signoff?: string | null
+          status?: string
+          subject_line_alternates?: string[] | null
+          subject_line_primary: string
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          intro?: string | null
+          issue_date?: string
+          lead_circle_cta_body?: string | null
+          lead_circle_cta_title?: string | null
+          pattern_of_week?: string | null
+          published_at?: string | null
+          signal_story_ids?: string[] | null
+          signoff?: string | null
+          status?: string
+          subject_line_alternates?: string[] | null
+          subject_line_primary?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
       work_news: {
         Row: {
           category: string | null
@@ -10840,6 +11797,7 @@ export type Database = {
           is_controversy: boolean | null
           jackye_take: string | null
           jackye_take_approved: boolean | null
+          language: string | null
           published_at: string | null
           sentiment_score: number | null
           source_name: string | null
@@ -10858,6 +11816,7 @@ export type Database = {
           is_controversy?: boolean | null
           jackye_take?: string | null
           jackye_take_approved?: boolean | null
+          language?: string | null
           published_at?: string | null
           sentiment_score?: number | null
           source_name?: string | null
@@ -10876,6 +11835,7 @@ export type Database = {
           is_controversy?: boolean | null
           jackye_take?: string | null
           jackye_take_approved?: boolean | null
+          language?: string | null
           published_at?: string | null
           sentiment_score?: number | null
           source_name?: string | null
@@ -11111,6 +12071,18 @@ export type Database = {
         Args: { p_token: string; p_user_id: string }
         Returns: undefined
       }
+      fuzzy_person_search: {
+        Args: { _limit?: number; _search_term: string }
+        Returns: {
+          company_id: string
+          id: string
+          match_score: number
+          match_type: string
+          name: string
+          title: string
+          total_donations: number
+        }[]
+      }
       get_company_recommendations: {
         Args: { p_limit?: number; p_user_id: string }
         Returns: {
@@ -11177,6 +12149,7 @@ export type Database = {
         }
         Returns: boolean
       }
+      resolve_name_variants: { Args: { _name: string }; Returns: string[] }
       score_news_for_user: {
         Args: { p_news_id: string; p_user_id: string }
         Returns: number

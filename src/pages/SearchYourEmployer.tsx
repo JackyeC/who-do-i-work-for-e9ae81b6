@@ -11,8 +11,6 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { Header } from "@/components/Header";
-import { Footer } from "@/components/Footer";
 import { InfluencePipelineVisual } from "@/components/InfluencePipelineVisual";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
@@ -96,9 +94,7 @@ export default function SearchYourEmployer() {
 
   return (
     <div className="min-h-screen flex flex-col bg-background">
-      <Header />
-
-      {/* ─── HERO ─── */}
+{/* ─── HERO ─── */}
       <section className="relative overflow-hidden">
         <div className="absolute inset-0 bg-gradient-to-b from-civic-gold-light/50 via-background to-background pointer-events-none" />
         <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[900px] h-[450px] bg-gradient-radial from-civic-gold/[0.06] to-transparent rounded-full blur-3xl pointer-events-none" />
@@ -302,7 +298,7 @@ export default function SearchYourEmployer() {
                 {trendingCompanies.map((company) => (
                   <button
                     key={company.slug}
-                    onClick={() => navigate(`/company/${company.slug}`)}
+                    onClick={() => navigate(`/dossier/${company.slug}`)}
                     className="flex items-center gap-3 p-4 rounded-xl border border-border/40 bg-card hover:border-civic-gold-muted/40 hover:shadow-sm transition-all text-left group cursor-pointer"
                   >
                     <div className="w-9 h-9 rounded-xl bg-muted/60 flex items-center justify-center shrink-0">
@@ -354,8 +350,6 @@ export default function SearchYourEmployer() {
           </motion.div>
         </div>
       </section>
-
-      <Footer />
-    </div>
+</div>
   );
 }

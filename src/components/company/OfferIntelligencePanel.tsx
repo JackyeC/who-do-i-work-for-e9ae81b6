@@ -1,0 +1,301 @@
+import { useState } from "react";
+import { Link } from "react-router-dom";
+import { Card, CardContent } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
+import { Checkbox } from "@/components/ui/checkbox";
+import {
+  Eye, ShieldAlert, Bell, CheckCircle2,
+  Building2, HelpCircle, AlertTriangle, ChevronDown, ArrowRight,
+} from "lucide-react";
+import { cn } from "@/lib/utils";
+import { supabase } from "@/integrations/supabase/client";
+import { toast } from "sonner";
+import { useAuth } from "@/contexts/AuthContext";
+import { getSectorRisk } from "./offer-intelligence/sectorRisks";
+import { getAskBeforeYouSign } from "./offer-intelligence/askBeforeYouSign";
+import { CommunitySignals } from "./offer-intelligence/CommunitySignals";
+import { WarnFilingsCard } from "./WarnFilingsCard";
+import { useCompanyReviews } from "@/hooks/use-company-reviews";
+
+/* ── Public signal cards from company record ── */
+interface PublicSignal {
+  label: string;
+  value: string;
+  source: string;
+  level: "neutral" | "positive" | "caution";
+}
+
+function derivePublicSignals(company: any): PublicSignal[] {
+  const signals: PublicSignal[] = [];
+  if (company.employer_clarity_score != null && company.employer_clarity_score > 0) {
+    signals.push({
+      label: "Employer Transparency Score",
+      value: `${company.employer_clarity_score}/100`,
+      source: "WDIWF analysis",
+      level: company.employer_clarity_score >= 50 ? "positive" : "caution",
+    });
+  }
+  if (company.civic_footprint_score != null && company.civic_footprint_score > 0) {
+    signals.push({
+      label: "Civic Footprint Score",
+      value: `${company.civic_footprint_score}/100`,
+      source: "Public records composite",
+      level: company.civic_footprint_score >= 50 ? "positive" : "caution",
+    });
+  }
+  if ((company.total_pac_spending ?? 0) > 0) {
+    signals.push({
+      label: "Political Spending",
+      value: `$${(company.total_pac_spending).toLocaleString()}`,
+      source: "FEC / OpenSecrets",
+      level: "caution",
+    });
+  }
+  if ((company.lobbying_spend ?? 0) > 0) {
+    signals.push({
+      label: "Lobbying Expenditures",
+      value: `$${(company.lobbying_spend).toLocaleString()}`,
+      source: "Senate lobbying disclosures",
+      level: "caution",
+    });
+  }
+  if (company.confidence_rating) {
+    signals.push({
+      label: "Data Confidence",
+      value: company.confidence_rating.replace(/_/g, " "),
+      source: "WDIWF coverage assessment",
+      level: "neutral",
+    });
+  }
+  return signals;
+}
+
+const SIGNAL_LEVEL_STYLES = {
+  positive: "border-[hsl(var(--civic-green))]/30 bg-[hsl(var(--civic-green))]/5",
+  caution: "border-[hsl(var(--civic-yellow))]/30 bg-[hsl(var(--civic-yellow))]/5",
+  neutral: "border-border/40 bg-muted/10",
+};
+
+/* ── Main component ── */
+interface OfferIntelligencePanelProps {
+  company: any;
+  companyId: string;
+}
+
+export function OfferIntelligencePanel({ company, companyId }: OfferIntelligencePanelProps) {
+  const { user } = useAuth();
+  const [flagging, setFlagging] = useState(false);
+  const [flagged, setFlagged] = useState(false);
+  const [expandedSections, setExpandedSections] = useState<Record<string, boolean>>({
+    signals: true,
+    sectorRisk: false,
+    askBeforeYouSign: false,
+  });
+
+  const toggleSection = (key: string) => {
+    setExpandedSections(prev => ({ ...prev, [key]: !prev[key] }));
+  };
+
+  const signals = derivePublicSignals(company);
+  const sectorRisk = getSectorRisk(company.industry || "");
+  const questions = getAskBeforeYouSign(
+    company.industry || "",
+    company.employee_count,
+  );
+
+  // Check review flag from Apify data
+  const { data: reviewData } = useCompanyReviews(
+    companyId,
+    company.name || "",
+    company.state || ""
+  );
+
+  const handleFlag = async () => {
+    setFlagging(true);
+    try {
+      const { error } = await supabase.from("audit_requests").insert({
+        company_name: company.name,
+        email: user?.email || "anonymous@wdiwf.com",
+        status: "flagged_for_monitoring",
+      });
+      if (error) throw error;
+      setFlagged(true);
+      toast.success("We'll notify you when new public records appear for this company.");
+    } catch {
+      toast.error("Could not flag this employer. Please try again.");
+    } finally {
+      setFlagging(false);
+    }
+  };
+
+  return (
+    <div className="space-y-6">
+      {/* ── Header ── */}
+      <div>
+        <div className="flex items-center gap-2 mb-2">
+          <Eye className="w-5 h-5 text-primary" />
+          <h2 className="text-lg font-bold text-foreground">
+            What they're not telling you — yet.
+          </h2>
+          {reviewData?.reviewCarefully && (
+            <Badge variant="destructive" className="text-xs gap-1 ml-auto">
+              <AlertTriangle className="w-3 h-3" />
+              Review carefully
+            </Badge>
+          )}
+        </div>
+        <p className="text-sm text-muted-foreground max-w-xl mb-2">
+          We don't have a full dossier on this employer. Here's what we found, and what to watch for.
+        </p>
+        <Link
+          to={`/dossier/${company.slug || company.name?.toLowerCase().replace(/[^a-z0-9]+/g, '-')}`}
+          className="inline-flex items-center gap-1 text-sm font-medium text-primary hover:underline transition-colors"
+        >
+          Open company dossier <ArrowRight className="w-3.5 h-3.5" />
+        </Link>
+      </div>
+
+      {/* ── Community / Secondary Signals (Indeed, BBB) — PRIMARY content on limited data pages ── */}
+      <CommunitySignals
+        companyId={companyId}
+        companyName={company.name}
+        companyState={company.state}
+      />
+
+      {/* ── WARN Filings ── */}
+      <WarnFilingsCard companyId={companyId} companyName={company.name} prominent />
+
+      {/* ── Verified Signals ── */}
+      {signals.length > 0 && (
+        <div>
+          <button
+            onClick={() => toggleSection('signals')}
+            className="w-full flex items-center gap-2 mb-3 group cursor-pointer"
+          >
+            <Building2 className="w-4 h-4 text-muted-foreground" />
+            <h3 className="text-sm font-semibold text-foreground uppercase tracking-wider group-hover:text-primary transition-colors">Available Signals</h3>
+            <Badge variant="outline" className="text-[10px] font-mono">From public records</Badge>
+            <ChevronDown className={cn("w-3.5 h-3.5 text-muted-foreground ml-auto transition-transform", expandedSections.signals && "rotate-180")} />
+          </button>
+          {expandedSections.signals && (
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+              {signals.map((s) => (
+                <Link
+                  key={s.label}
+                  to={`/dossier/${company.slug || company.name?.toLowerCase().replace(/[^a-z0-9]+/g, '-')}`}
+                  className="no-underline group/sig"
+                >
+                  <Card className={`border ${SIGNAL_LEVEL_STYLES[s.level]} hover:border-primary/40 transition-colors cursor-pointer`}>
+                    <CardContent className="p-4">
+                      <p className="text-xs font-mono uppercase tracking-wider text-muted-foreground mb-1">{s.label}</p>
+                      <p className="text-base font-bold text-foreground">{s.value}</p>
+                      <div className="flex items-center justify-between mt-1">
+                        <p className="text-[11px] text-muted-foreground">{s.source}</p>
+                        <span className="text-xs text-primary opacity-0 group-hover/sig:opacity-100 transition-opacity flex items-center gap-0.5">
+                          See more <ArrowRight className="w-3 h-3" />
+                        </span>
+                      </div>
+                    </CardContent>
+                  </Card>
+                </Link>
+              ))}
+            </div>
+          )}
+        </div>
+      )}
+
+      {/* ── Sector Risk Context ── */}
+      {sectorRisk && (
+        <Card className="border-[hsl(var(--civic-yellow))]/30 bg-[hsl(var(--civic-yellow))]/5">
+          <CardContent className="p-5">
+            <button
+              onClick={() => toggleSection('sectorRisk')}
+              className="w-full flex items-start gap-3 cursor-pointer group"
+            >
+              <ShieldAlert className="w-5 h-5 text-[hsl(var(--civic-yellow))] shrink-0 mt-0.5" />
+              <div className="flex-1 text-left">
+                <div className="flex items-center gap-2 mb-1">
+                  <h3 className="text-sm font-bold text-foreground group-hover:text-primary transition-colors">Sector Risk Context</h3>
+                  <Badge variant="warning" className="text-[10px] font-mono">Industry Alert</Badge>
+                  <ChevronDown className={cn("w-3.5 h-3.5 text-muted-foreground ml-auto transition-transform", expandedSections.sectorRisk && "rotate-180")} />
+                </div>
+                <p className="text-sm text-foreground font-medium leading-relaxed mb-1">
+                  {sectorRisk.summary}
+                </p>
+              </div>
+            </button>
+            {expandedSections.sectorRisk && (
+              <div className="pl-8 mt-2">
+                <p className="text-sm text-muted-foreground leading-relaxed">
+                  {sectorRisk.detail}
+                </p>
+                <Link
+                  to={`/dossier/${company.slug || company.name?.toLowerCase().replace(/[^a-z0-9]+/g, '-')}`}
+                  className="inline-flex items-center gap-1 mt-2 text-xs font-medium text-primary hover:underline transition-colors"
+                >
+                  How bad is it really? <ArrowRight className="w-3 h-3" />
+                </Link>
+              </div>
+            )}
+          </CardContent>
+        </Card>
+      )}
+
+      {/* ── Ask Before You Sign ── */}
+      <Card className="border-border/40">
+        <CardContent className="p-5">
+          <button
+            onClick={() => toggleSection('askBeforeYouSign')}
+            className="w-full flex items-center gap-2 mb-0 cursor-pointer group"
+          >
+            <HelpCircle className="w-4 h-4 text-primary" />
+            <h3 className="text-sm font-bold text-foreground uppercase tracking-wider group-hover:text-primary transition-colors">Ask Before You Sign</h3>
+            <Badge variant="secondary" className="text-[10px]">{questions.length} questions</Badge>
+            <ChevronDown className={cn("w-3.5 h-3.5 text-muted-foreground ml-auto transition-transform", expandedSections.askBeforeYouSign && "rotate-180")} />
+          </button>
+          {expandedSections.askBeforeYouSign && (
+            <div className="space-y-3 mt-4">
+              {questions.map((q, i) => (
+                <label key={i} className="flex items-start gap-3 cursor-pointer group">
+                  <Checkbox className="mt-0.5 shrink-0" />
+                  <span className="text-sm text-muted-foreground group-hover:text-foreground transition-colors leading-snug">
+                    {q}
+                  </span>
+                </label>
+              ))}
+            </div>
+          )}
+        </CardContent>
+      </Card>
+
+      {/* ── Flag CTA ── */}
+      <Card className="border-primary/20 bg-primary/5">
+        <CardContent className="p-5">
+          <div className="flex items-start gap-3">
+            <Bell className="w-5 h-5 text-primary shrink-0 mt-0.5" />
+            <div className="flex-1">
+              <h3 className="text-sm font-bold text-foreground mb-1">
+                Flag this employer
+              </h3>
+              <p className="text-xs text-muted-foreground mb-3">
+                We'll monitor public filings and notify you if new records surface — WARN notices, EEOC filings, PAC activity, or leadership changes.
+              </p>
+              {flagged ? (
+                <div className="flex items-center gap-2 text-sm text-primary font-medium">
+                  <CheckCircle2 className="w-4 h-4" />
+                  Monitoring active — we'll reach out when something surfaces.
+                </div>
+              ) : (
+                <Button size="sm" onClick={handleFlag} disabled={flagging} className="gap-2">
+                  <Bell className="w-3.5 h-3.5" />
+                  {flagging ? "Flagging..." : "Flag this employer — notify me when records appear"}
+                </Button>
+              )}
+            </div>
+          </div>
+        </CardContent>
+      </Card>
+    </div>
+  );
+}

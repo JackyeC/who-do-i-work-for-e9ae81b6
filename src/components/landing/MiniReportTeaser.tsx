@@ -145,7 +145,7 @@ export function MiniReportTeaser() {
                       <Button
                         size="sm"
                         variant="outline"
-                        onClick={() => navigate(`/company/${report.slug}`)}
+                        onClick={() => navigate(`/dossier/${report.slug}`)}
                         className="font-mono text-xs tracking-wider uppercase"
                       >
                         View Profile

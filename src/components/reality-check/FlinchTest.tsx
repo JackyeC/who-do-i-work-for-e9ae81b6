@@ -19,33 +19,33 @@ interface FlinchQuestion {
 const FLINCH_QUESTIONS: FlinchQuestion[] = [
   {
     id: "comp",
-    label: "Did they dodge the compensation structure question?",
+    label: "Was the compensation structure addressed directly?",
     signalCategory: "compensation_transparency",
-    description: "Deflected, gave vague ranges, or said 'we'll discuss that later'",
+    description: "They deferred specifics, offered broad ranges, or indicated it would be discussed later in the process.",
   },
   {
     id: "retention",
-    label: "Did they get vague about retention or layoffs?",
+    label: "Were retention or departure patterns discussed openly?",
     signalCategory: "workforce_stability",
-    description: "Avoided specifics on turnover, reorgs, or recent departures",
+    description: "Questions about turnover, team changes, or recent departures were met with generalities or redirected.",
   },
   {
     id: "leadership",
-    label: "Did they redirect when asked about leadership stability?",
+    label: "Was leadership stability addressed when asked?",
     signalCategory: "company_behavior",
-    description: "Sidestepped questions about executive changes or org restructuring",
+    description: "Questions about executive changes or organizational restructuring were sidestepped or reframed.",
   },
   {
     id: "growth",
-    label: "Did they avoid specifics on team growth?",
+    label: "Were team growth plans described with specifics?",
     signalCategory: "hiring_activity",
-    description: "Couldn't articulate hiring plans, backfill vs. new headcount, or team size trajectory",
+    description: "Hiring plans, backfill vs. new headcount, or team size direction were left vague.",
   },
   {
     id: "culture",
-    label: "Did they use buzzwords without evidence when asked about culture?",
+    label: "Was culture described with concrete examples?",
     signalCategory: "public_sentiment",
-    description: "Said 'we're like a family' or 'fast-paced' without concrete examples",
+    description: "Phrases like 'we are a family' or 'fast-paced environment' were used without specific supporting detail.",
   },
 ];
 
@@ -87,7 +87,7 @@ export function FlinchTest({ companyId, companyName }: FlinchTestProps) {
       if (error) throw error;
 
       setSubmitted(true);
-      toast({ title: "Flinch data recorded", description: "Your signals help other candidates make informed decisions." });
+      toast({ title: "Signal recorded", description: "Your observations strengthen the pattern data for future candidates." });
     } catch (e: any) {
       toast({ title: "Error saving", description: e.message, variant: "destructive" });
     } finally {
@@ -102,7 +102,7 @@ export function FlinchTest({ companyId, companyName }: FlinchTestProps) {
           <Eye className="w-8 h-8 text-civic-green mx-auto mb-3" />
           <p className="font-mono text-sm font-semibold text-civic-green uppercase tracking-wider">Signal Recorded</p>
           <p className="text-xs text-muted-foreground mt-1">
-            Your anonymized feedback strengthens the intelligence for future candidates evaluating {companyName}.
+            Your observations are now part of the pattern data for {companyName}. This helps future candidates see trajectory, not just episodes.
           </p>
         </CardContent>
       </Card>
@@ -115,16 +115,16 @@ export function FlinchTest({ companyId, companyName }: FlinchTestProps) {
         <div className="flex items-center gap-2">
           <AlertTriangle className="w-4 h-4 text-civic-yellow" />
           <CardTitle className="font-mono text-sm uppercase tracking-wider">
-            The Flinch Test
+            Process Signal Check
           </CardTitle>
           {flinchCount > 0 && (
             <Badge variant="warning" className="font-mono text-xs">
-              {flinchCount} flinch{flinchCount !== 1 ? "es" : ""} detected
+              {flinchCount} pattern{flinchCount !== 1 ? "s" : ""} noted
             </Badge>
           )}
         </div>
         <CardDescription className="text-xs">
-          Did the interviewer hesitate, deflect, or dodge when you asked our tactical questions? Flag it below — your anonymized signals help other candidates.
+          These are process-level observations. None of them are conclusions on their own. When they repeat across candidates, they tend to reflect something structural. Your input builds the pattern.
         </CardDescription>
       </CardHeader>
       <CardContent className="space-y-4">
@@ -151,7 +151,7 @@ export function FlinchTest({ companyId, companyName }: FlinchTestProps) {
           variant="outline"
         >
           <Send className="w-3.5 h-3.5" />
-          {submitting ? "Submitting…" : "Submit Flinch Signals"}
+          {submitting ? "Submitting…" : "Submit Process Signals"}
         </Button>
       </CardContent>
     </Card>

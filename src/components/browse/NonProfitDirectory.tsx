@@ -64,7 +64,7 @@ export function NonProfitDirectory() {
             ? `Building intelligence profile for ${data.identity?.name || searchQuery}...`
             : "Opening existing profile...",
         });
-        navigate(`/company/${data.slug}`);
+        navigate(`/dossier/${data.slug}`);
       } else {
         throw new Error(data?.error || "Discovery failed");
       }

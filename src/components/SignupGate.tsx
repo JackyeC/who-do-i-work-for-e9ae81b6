@@ -32,8 +32,8 @@ export function SignupGate({ feature, children, blurPreview = true }: SignupGate
       )}
 
       {/* Gate overlay */}
-      <div className={`${children && blurPreview ? "absolute inset-0" : ""} flex items-center justify-center`}>
-        <div className="bg-card border border-border/40 rounded-2xl p-8 max-w-md mx-auto text-center shadow-lg">
+      <div className={`${children && blurPreview ? "absolute inset-0" : ""} pointer-events-none flex items-center justify-center`}>
+        <div className="pointer-events-auto bg-card border border-border/40 rounded-2xl p-8 max-w-md mx-auto text-center shadow-lg">
           <div className="w-12 h-12 rounded-full bg-primary/10 border border-primary/30 flex items-center justify-center mx-auto mb-4">
             <Lock className="w-5 h-5 text-primary" />
           </div>

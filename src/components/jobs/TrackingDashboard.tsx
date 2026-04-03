@@ -53,12 +53,14 @@ function ApplicationCard({ app, updateStatus, deleteApp }: {
       <CardContent className="p-4">
         <div className="flex flex-col gap-3">
           <div className="flex items-start justify-between gap-4">
-            <div className="flex-1 min-w-0">
+              <div className="flex-1 min-w-0">
               <div className="flex items-center gap-2 mb-0.5">
-                <h4 className="font-medium text-foreground truncate">{app.job_title}</h4>
+                <Link to={`/applications/${app.id}`} className="font-medium text-foreground truncate hover:text-primary transition-colors">
+                  {app.job_title}
+                </Link>
               </div>
               <Link
-                to={`/company/${app.company_name?.toLowerCase().replace(/\s+/g, "-")}`}
+                to={`/dossier/${app.company_name?.toLowerCase().replace(/\s+/g, "-")}`}
                 className="text-sm text-primary hover:underline"
               >
                 {app.company_name}

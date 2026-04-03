@@ -4,15 +4,18 @@ import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { BrowserRouter, Routes, Route, Navigate, useLocation } from "react-router-dom";
+import { BrowserRouter, Routes, Route, Navigate, useLocation, useParams } from "react-router-dom";
 import { AuthProvider } from "@/contexts/AuthContext";
 import { ViewModeProvider } from "@/contexts/ViewModeContext";
 import { DossierLensProvider } from "@/contexts/DossierLensContext";
+import { EvaluationProvider } from "@/contexts/EvaluationContext";
 import { DemoSafeModeProvider } from "@/contexts/DemoSafeModeContext";
 import { ProtectedRoute } from "@/components/ProtectedRoute";
 import { AdminRoute } from "@/components/AdminRoute";
 import { ErrorBoundary } from "@/components/ErrorBoundary";
+import { SourceDrawerProvider } from "@/components/dossier/SourcePreviewDrawer";
 import { AppShell } from "@/components/layout/AppShell";
+import { EvaluationBar } from "@/components/evaluation/EvaluationBar";
 import { Loader2 } from "lucide-react";
 
 // Only the landing page is eagerly loaded
@@ -34,6 +37,7 @@ const JobIntegrityBoard = lazy(() => import("./pages/JobIntegrityBoard"));
 const JobBoardEmbed = lazy(() => import("./pages/JobBoardEmbed"));
 const JobDetailPage = lazy(() => import("./pages/JobDetailPage"));
 const RequestCorrection = lazy(() => import("./pages/RequestCorrection"));
+const OfferCheckEntry = lazy(() => import("./pages/OfferCheckEntry"));
 const OfferCheck = lazy(() => import("./pages/OfferCheck"));
 const MyOfferChecks = lazy(() => import("./pages/MyOfferChecks"));
 const CompareOfferChecks = lazy(() => import("./pages/CompareOfferChecks"));
@@ -66,6 +70,15 @@ const PolicyDetail = lazy(() => import("./pages/PolicyDetail"));
 const EconomyDashboard = lazy(() => import("./pages/EconomyDashboard"));
 const FollowTheMoney = lazy(() => import("./pages/FollowTheMoney"));
 const PeoplePuzzles = lazy(() => import("./pages/PeoplePuzzles"));
+const PeoplePuzzlesEmbed = lazy(() => import("./pages/PeoplePuzzlesEmbed"));
+const Trail = lazy(() => import("./pages/Trail"));
+const NoRegretsGame = lazy(() => import("./pages/NoRegretsGame"));
+const NoRegretsRecap = lazy(() => import("./pages/NoRegretsRecap"));
+const NoRegretsEpisode2 = lazy(() => import("./pages/NoRegretsEpisode2"));
+const NoRegretsEpisode2Recap = lazy(() => import("./pages/NoRegretsEpisode2Recap"));
+const NoRegretsEpisode3 = lazy(() => import("./pages/NoRegretsEpisode3"));
+const NoRegretsEpisode3Recap = lazy(() => import("./pages/NoRegretsEpisode3Recap"));
+const NoRegretsLanding = lazy(() => import("./pages/NoRegretsLanding"));
 const AskJackye = lazy(() => import("./pages/AskJackye"));
 const OnePager = lazy(() => import("./pages/OnePager"));
 const Demo = lazy(() => import("./pages/Demo"));
@@ -89,6 +102,7 @@ const SignalFeed = lazy(() => import("./pages/SignalFeed"));
 const EEOCTracker = lazy(() => import("./pages/EEOCTracker"));
 const WorkIndex = lazy(() => import("./pages/WorkIndex"));
 const WorkforceBrief = lazy(() => import("./pages/WorkforceBrief"));
+const WorkSignalFeed = lazy(() => import("./pages/WorkSignalFeed"));
 const Rankings = lazy(() => import("./pages/Rankings"));
 const RealityCheck = lazy(() => import("./pages/RealityCheck"));
 const FounderConsole = lazy(() => import("./pages/FounderConsole"));
@@ -113,6 +127,10 @@ const HowItWorks = lazy(() => import("./pages/HowItWorks"));
 const ChromeExtension = lazy(() => import("./pages/ChromeExtension"));
 const DataEthics = lazy(() => import("./pages/DataEthics"));
 const ChromeWebStoreAssets = lazy(() => import("./pages/ChromeWebStoreAssets"));
+const PersonEntityDemo = lazy(() => import("./pages/PersonEntityDemo"));
+const JrcFeed = lazy(() => import("./pages/JrcFeed"));
+const JrcCompanyFile = lazy(() => import("./pages/JrcCompanyFile"));
+const JrcPersonFile = lazy(() => import("./pages/JrcPersonFile"));
 const Companies = lazy(() => import("./pages/Companies"));
 const Talent = lazy(() => import("./pages/Talent"));
 const JobsFeed = lazy(() => import("./pages/JobsFeed"));
@@ -131,6 +149,8 @@ const BriefingPage = lazy(() => import("./pages/BriefingPage"));
 const Tools = lazy(() => import("./pages/Tools"));
 const NewsOnboarding = lazy(() => import("./components/NewsOnboarding"));
 const ReportConfirmation = lazy(() => import("./pages/ReportConfirmation"));
+const ApplicationDetail = lazy(() => import("./pages/ApplicationDetail"));
+const Applications = lazy(() => import("./pages/Applications"));
 
 // Lazy-load floating widgets — not needed on first paint
 const AskJackyeWidget = lazy(() => import("./components/AskJackyeWidget").then(m => ({ default: m.AskJackyeWidget })));
@@ -138,10 +158,12 @@ const BetaFeedbackWidget = lazy(() => import("./components/BetaFeedbackWidget").
 const CookieNotice = lazy(() => import("./components/CookieNotice").then(m => ({ default: m.CookieNotice })));
 const PreviewTierToolbar = lazy(() => import("./components/PreviewTierToolbar").then(m => ({ default: m.PreviewTierToolbar })));
 const Receipts = lazy(() => import("./pages/Receipts"));
+const Newsletter = lazy(() => import("./pages/Newsletter"));
 const ReceiptsReport = lazy(() => import("./pages/ReceiptsReport"));
 const SubmitTip = lazy(() => import("./pages/SubmitTip"));
 
 const HRTechIntelligence = lazy(() => import("./pages/HRTechIntelligence"));
+const PaletteStudio = lazy(() => import("./pages/PaletteStudio"));
 const WhoDidIVoteForPage = lazy(() => import("./pages/WhoDidIVoteForPage"));
 
 const queryClient = new QueryClient();
@@ -150,6 +172,11 @@ function ScrollToTop() {
   const { pathname } = useLocation();
   useEffect(() => { window.scrollTo(0, 0); }, [pathname]);
   return null;
+}
+
+function CompanySlugRedirect() {
+  const { id } = useParams();
+  return <Navigate to={`/dossier/${id}`} replace />;
 }
 
 function RouteLoader() {
@@ -168,12 +195,15 @@ const App = () => (
         <DemoSafeModeProvider>
         <ViewModeProvider>
         <DossierLensProvider>
+        <EvaluationProvider>
+        <SourceDrawerProvider>
         <TooltipProvider>
           <Toaster />
           <Sonner />
           <BrowserRouter>
             <ScrollToTop />
             <AppShell>
+              <EvaluationBar />
               <Suspense fallback={<RouteLoader />}>
                 <Routes>
                   <Route path="/" element={<Index />} />
@@ -183,7 +213,7 @@ const App = () => (
                   <Route path="/recruiter-brief" element={<RecruiterBrief />} />
                   <Route path="/ask-jackye" element={<AskJackye />} />
                   <Route path="/reality-check" element={<ProtectedRoute><RealityCheck /></ProtectedRoute>} />
-                  <Route path="/would-you-work-here" element={<Navigate to="/check" replace />} />
+                  <Route path="/would-you-work-here" element={<Navigate to="/offer-check" replace />} />
                   <Route path="/work-with-jackye" element={<WorkWithJackye />} />
                   <Route path="/contact" element={<Contact />} />
                   <Route path="/employer-receipt" element={<EmployerReceipt />} />
@@ -201,17 +231,27 @@ const App = () => (
                   <Route path="/economy" element={<EconomyDashboard />} />
                   <Route path="/follow-the-money" element={<FollowTheMoney />} />
                   <Route path="/peoplepuzzles" element={<PeoplePuzzles />} />
+                  <Route path="/peoplepuzzles/embed" element={<PeoplePuzzlesEmbed />} />
                   <Route path="/play" element={<PeoplePuzzles />} />
-                  <Route path="/receipts" element={<Navigate to="/newsletter" replace />} />
-                  <Route path="/the-receipts" element={<Navigate to="/newsletter" replace />} />
-                  <Route path="/thereceipts" element={<Navigate to="/newsletter" replace />} />
-                  <Route path="/the-receipts.html" element={<Navigate to="/newsletter" replace />} />
+                  <Route path="/trail" element={<Trail />} />
+                  <Route path="/no-regrets" element={<NoRegretsLanding />} />
+                  <Route path="/no-regrets-game" element={<NoRegretsGame />} />
+                  <Route path="/no-regrets-game/episode-1-recap" element={<NoRegretsRecap />} />
+                  <Route path="/no-regrets-game/episode-2" element={<NoRegretsEpisode2 />} />
+                  <Route path="/no-regrets-game/episode-2-recap" element={<NoRegretsEpisode2Recap />} />
+                  <Route path="/no-regrets-game/episode-3" element={<NoRegretsEpisode3 />} />
+                  <Route path="/no-regrets-game/episode-3-recap" element={<NoRegretsEpisode3Recap />} />
+                  <Route path="/receipts" element={<Receipts />} />
+                  <Route path="/the-receipts" element={<Navigate to="/receipts" replace />} />
+                  <Route path="/thereceipts" element={<Navigate to="/receipts" replace />} />
+                  <Route path="/the-receipts.html" element={<Navigate to="/receipts" replace />} />
                   <Route path="/receipts/:slug" element={<ReceiptsReport />} />
                   <Route path="/submit-tip" element={<SubmitTip />} />
-                  <Route path="/newsletter" element={<Receipts />} />
+                  <Route path="/newsletter" element={<Newsletter />} />
                   <Route path="/hrtech" element={<HRTechIntelligence />} />
-                  <Route path="/company/:id" element={<CompanyProfile />} />
-                  <Route path="/company/:id/influence" element={<ProtectedRoute><InfluenceGraph /></ProtectedRoute>} />
+                  <Route path="/palette" element={<PaletteStudio />} />
+                  <Route path="/company/:id" element={<CompanySlugRedirect />} />
+                  <Route path="/company/:id/influence" element={<CompanySlugRedirect />} />
                   <Route path="/dossier/:id" element={<CompanyDossier />} />
                   <Route path="/dossier/guide/:slug" element={<DossierCoachingGuide />} />
                   <Route path="/pricing" element={<Pricing />} />
@@ -227,11 +267,16 @@ const App = () => (
                   <Route path="/how-it-works" element={<HowItWorks />} />
                   <Route path="/extension" element={<ChromeExtension />} />
                   <Route path="/store-assets" element={<ChromeWebStoreAssets />} />
+                  <Route path="/person-entity-demo" element={<PersonEntityDemo />} />
+                  <Route path="/jrc" element={<JrcFeed />} />
+                  <Route path="/jrc/company/:slug" element={<JrcCompanyFile />} />
+                  <Route path="/jrc/person/:slug" element={<JrcPersonFile />} />
                   <Route path="/companies" element={<Navigate to="/browse" replace />} />
                   <Route path="/talent" element={<ProtectedRoute><Talent /></ProtectedRoute>} />
                   <Route path="/examples" element={<Examples />} />
                   <Route path="/signals" element={<Navigate to="/signal-alerts" replace />} />
                   <Route path="/workforce-brief" element={<WorkforceBrief />} />
+                  <Route path="/work-signal" element={<WorkSignalFeed />} />
                   <Route path="/eeoc-tracker" element={<EEOCTracker />} />
                   <Route path="/search-your-employer" element={<SearchYourEmployer />} />
                   <Route path="/values-search" element={<ValuesSearch />} />
@@ -240,6 +285,8 @@ const App = () => (
                   <Route path="/voter-lookup" element={<ProtectedRoute><VoterLookup /></ProtectedRoute>} />
                   <Route path="/representative/:name" element={<ProtectedRoute><RepresentativeProfile /></ProtectedRoute>} />
                   <Route path="/add-company" element={<AddCompany />} />
+                  <Route path="/applications" element={<ProtectedRoute><Applications /></ProtectedRoute>} />
+                  <Route path="/applications/:id" element={<ProtectedRoute><ApplicationDetail /></ProtectedRoute>} />
                   <Route path="/jobs" element={<Jobs />} />
                   <Route path="/jobs-feed" element={<ProtectedRoute><JobsFeed /></ProtectedRoute>} />
                   <Route path="/resume" element={<ProtectedRoute><ResumeOptimizer /></ProtectedRoute>} />
@@ -252,6 +299,7 @@ const App = () => (
                   <Route path="/interview-kits" element={<ProtectedRoute><InterviewKits /></ProtectedRoute>} />
                   <Route path="/job-board/:id" element={<JobDetailPage />} />
                   <Route path="/request-correction" element={<RequestCorrection />} />
+                  <Route path="/offer-check" element={<OfferCheckEntry />} />
                   <Route path="/offer-check/:companyId" element={<ProtectedRoute><OfferCheck /></ProtectedRoute>} />
                   <Route path="/strategic-offer-review" element={<StrategicOfferReview />} />
                   <Route path="/offer-review/:companyId" element={<ProtectedRoute><OfferReview /></ProtectedRoute>} />
@@ -271,6 +319,7 @@ const App = () => (
                   <Route path="/admin/reports" element={<AdminRoute><ReportsList /></AdminRoute>} />
                   <Route path="/admin/reports/:id" element={<AdminRoute><ReportEditor /></AdminRoute>} />
                   <Route path="/founder-console" element={<AdminRoute><FounderConsole /></AdminRoute>} />
+                  <Route path="/founder" element={<AdminRoute><FounderConsole /></AdminRoute>} />
                   <Route path="/admin/ticker" element={<AdminRoute><AdminTicker /></AdminRoute>} />
                   <Route path="/recruiting" element={<RecruitingIntelligence />} />
                   <Route path="/employer/verification-pending" element={<ProtectedRoute><EmployerVerificationPending /></ProtectedRoute>} />
@@ -318,6 +367,8 @@ const App = () => (
             </AppShell>
           </BrowserRouter>
         </TooltipProvider>
+        </SourceDrawerProvider>
+        </EvaluationProvider>
         </DossierLensProvider>
         </ViewModeProvider>
         </DemoSafeModeProvider>

@@ -174,8 +174,8 @@ export function CompanyRiskRadar({ companyId, companyName, slug, lobbyingSpend, 
     const activeSignals = signals.filter((s) => s.severity !== "clear");
     const details = activeSignals.map((s) => s.label).join(", ");
     const text = activeCount > 0
-      ? `📊 ${companyName} Signal Radar: ${activeCount} of 4 signals noted — ${details}. See the data → https://wdiwf.jackyeclayton.com/company/${slug}`
-      : `✅ ${companyName} Signal Radar: All clear — 0 of 4 signals noted. → https://wdiwf.jackyeclayton.com/company/${slug}`;
+      ? `📊 ${companyName} Signal Radar: ${activeCount} of 4 signals noted — ${details}. See the data → https://wdiwf.jackyeclayton.com/dossier/${slug}`
+      : `✅ ${companyName} Signal Radar: All clear — 0 of 4 signals noted. → https://wdiwf.jackyeclayton.com/dossier/${slug}`;
     navigator.clipboard.writeText(text);
     toast({ title: "Copied to clipboard", description: "Signal radar summary ready to share." });
   };

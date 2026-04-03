@@ -1,44 +1,44 @@
 // Locked heat label system — JRC EDIT spec colors
 export const HEAT_LABELS: Record<number, { full: string; mobile: string; color: string; bg: string; hex: string; tooltip: string }> = {
   1: {
-    full: "Footnote",
-    mobile: "Footnote",
+    full: "Worth Noting",
+    mobile: "Noted",
     color: "text-[hsl(215,16%,47%)]",
     bg: "bg-[hsl(215,16%,47%)]/10 border-[hsl(215,16%,47%)]/30 text-[hsl(215,16%,47%)]",
     hex: "#64748B",
-    tooltip: "Filed under: things they hoped you'd skip.",
+    tooltip: "On the radar. Context worth filing.",
   },
   2: {
-    full: "Side-Eye",
-    mobile: "Side-Eye",
+    full: "Worth Watching",
+    mobile: "Watching",
     color: "text-[hsl(215,20%,65%)]",
     bg: "bg-[hsl(215,20%,65%)]/10 border-[hsl(215,20%,65%)]/30 text-[hsl(215,20%,65%)]",
     hex: "#94A3B8",
-    tooltip: "We see you, HR. We see you.",
+    tooltip: "Something here doesn't align. Worth a closer look.",
   },
   3: {
-    full: "Screenshot This",
-    mobile: "Screenshot",
+    full: "Worth Documenting",
+    mobile: "Document",
     color: "text-[hsl(217,91%,60%)]",
     bg: "bg-[hsl(217,91%,60%)]/10 border-[hsl(217,91%,60%)]/30 text-[hsl(217,91%,60%)]",
     hex: "#3B82F6",
-    tooltip: "Save this before they delete it.",
+    tooltip: "The details matter. Preserve this.",
   },
   4: {
-    full: "This Affects Your Job",
-    mobile: "Job Risk",
+    full: "Direct Employment Impact",
+    mobile: "Impact",
     color: "text-[hsl(38,92%,50%)]",
     bg: "bg-[hsl(38,92%,50%)]/10 border-[hsl(38,92%,50%)]/30 text-[hsl(38,92%,50%)]",
     hex: "#F59E0B",
-    tooltip: "Your LinkedIn is about to get busy.",
+    tooltip: "Direct workforce impact. Update your strategy.",
   },
   5: {
-    full: "They Thought We Wouldn't Find Out",
-    mobile: "Exposed",
+    full: "Structured to Obscure",
+    mobile: "Obscured",
     color: "text-[hsl(0,84%,60%)]",
     bg: "bg-[hsl(0,84%,60%)]/15 border-[hsl(0,84%,60%)]/40 text-[hsl(0,84%,60%)]",
     hex: "#EF4444",
-    tooltip: "Narrator: They found out.",
+    tooltip: "The public record tells a different story. Facts over feelings.",
   },
 };
 
@@ -82,12 +82,24 @@ export const USE_THIS_CTA: Record<string, { label: string; link: string }> = {
 
 export const RECEIPT_CATEGORIES = [
   { value: "all", label: "All" },
-  { value: "behavior", label: "The Daily Grind" },
-  { value: "influence", label: "The C-Suite" },
-  { value: "context", label: "The Tech Stack" },
-  { value: "money", label: "The Paycheck" },
-  { value: "structure", label: "The Fine Print" },
-  { value: "off_the_record", label: "Off the Record" },
+  { value: "ai_workplace", label: "AI" },
+  { value: "future_of_work", label: "Work" },
+  { value: "labor_organizing", label: "Labor" },
+  { value: "worker_rights", label: "DEI" },
+  { value: "pay_equity", label: "Money" },
+  { value: "regulation", label: "Policy" },
+  { value: "layoffs", label: "Layoffs" },
+  { value: "legislation", label: "Hiring" },
 ] as const;
 
-export type ReceiptSortMode = "newest" | "hottest" | "drama" | null;
+export type ReceiptSortMode = "newest" | "hottest" | "drama" | "consequential" | null;
+
+// Poster archetype families (metadata only — no rendering changes yet)
+export const POSTER_ARCHETYPES = [
+  "Happy Corporate Lie",
+  "Miracle Product Pitch",
+  "Family Values Office Ad",
+  "Scientific Progress Ad",
+] as const;
+
+export type PosterArchetype = (typeof POSTER_ARCHETYPES)[number];

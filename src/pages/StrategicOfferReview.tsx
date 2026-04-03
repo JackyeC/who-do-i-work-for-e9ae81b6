@@ -1,7 +1,5 @@
 import { useState, useCallback } from "react";
-import { Header } from "@/components/Header";
 import { usePageSEO } from "@/hooks/use-page-seo";
-import { Footer } from "@/components/Footer";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -357,9 +355,7 @@ export default function StrategicOfferReview() {
   const canAdvanceOffer = offer.companyName.length >= 2 && offer.roleTitle.length >= 2 && offer.baseSalary.length >= 1;
 
   return (
-    <div className="min-h-screen bg-background">
-      <Header />
-      <main className="container mx-auto px-4 py-10 max-w-3xl">
+    <div className="container mx-auto px-4 py-10 max-w-3xl">
         {/* Privacy Banner */}
         <div className="flex items-center gap-2 p-3 mb-6 bg-muted/50 border border-border/40 rounded-xl">
           <Lock className="w-4 h-4 text-primary shrink-0" />
@@ -1004,14 +1000,12 @@ export default function StrategicOfferReview() {
             )}
           </>
         )}
-      </main>
       <LegalDisclaimer />
       <ConsentModal
         open={showConsentModal}
         onAccept={() => { setShowConsentModal(false); setInputMode("upload"); }}
         onCancel={() => setShowConsentModal(false)}
       />
-      <Footer />
     </div>
   );
 }

@@ -87,7 +87,7 @@ function SignalCard({ signal, index }: { signal: Signal; index: number }) {
             </div>
             <div className="min-w-0">
               <Link
-                to={`/company/${signal.company_slug}`}
+                to={`/dossier/${signal.company_slug}`}
                 className="font-display font-bold text-foreground hover:text-primary transition-colors text-sm block truncate"
               >
                 {signal.company_name}
@@ -136,7 +136,7 @@ function SignalCard({ signal, index }: { signal: Signal; index: number }) {
             )}
           </div>
           <Link
-            to={`/company/${signal.company_slug}`}
+            to={`/dossier/${signal.company_slug}`}
             className="inline-flex items-center gap-1 text-xs font-mono text-muted-foreground hover:text-foreground transition-colors opacity-0 group-hover:opacity-100"
           >
             FULL REPORT <ChevronRight className="w-2.5 h-2.5" />

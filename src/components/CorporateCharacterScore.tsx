@@ -372,7 +372,7 @@ export function CorporateCharacterScore(props: CorporateCharacterScoreProps) {
                 className={getScoreColor(totalScore)}
                 initial={{ strokeDashoffset: circumference }}
                 animate={{ strokeDashoffset }}
-                transition={{ duration: 1.2, ease: "easeOut", delay: 0.2 }}
+                transition={{ duration: 0.6, ease: "easeOut", delay: 0.2 }}
                 style={{ strokeDasharray: circumference }}
               />
             </svg>

@@ -177,7 +177,7 @@ export default function CompareCompanies() {
               {[companyA, companyB].map((c) => (
                 <button
                   key={c.id}
-                  onClick={() => navigate(`/company/${c.slug}`)}
+                  onClick={() => navigate(`/dossier/${c.slug}`)}
                   className="bg-card border border-border p-5 text-left hover:border-primary/30 transition-all group"
                 >
                   <div className="font-bold text-sm text-foreground group-hover:text-primary transition-colors">{c.name}</div>

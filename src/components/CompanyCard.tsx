@@ -13,7 +13,7 @@ interface CompanyCardProps {
 export function CompanyCard({ company }: CompanyCardProps) {
   const { ctaCopy } = usePersona();
   return (
-    <Link to={`/company/${company.id}`}>
+    <Link to={`/dossier/${company.id}`}>
       <Card className="group hover:border-primary/30 transition-all duration-200 cursor-pointer h-full hover-lift" style={{ borderRadius: '16px', padding: 0 }}>
         <CardContent className="p-6">
           <div className="flex items-start justify-between gap-3">

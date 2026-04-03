@@ -15,6 +15,7 @@ import { WorkNewsTicker } from "@/components/news/WorkNewsTicker";
 import { HowToRead } from "@/components/receipts/HowToRead";
 import { ReceiptsSidebar } from "@/components/receipts/ReceiptsSidebar";
 import { PosterLightbox } from "@/components/receipts/PosterLightbox";
+import { getSourceBiasKey } from "@/components/receipts/BiasBar";
 import type { ReceiptSortMode } from "@/components/receipts/heat-config";
 
 // ─── Static company receipts (existing investigations) ───
@@ -40,11 +41,21 @@ const stagger = {
   item: { hidden: { opacity: 0, y: 16 }, show: { opacity: 1, y: 0, transition: { duration: 0.35, ease: "easeOut" as const } } },
 };
 
+function getTimeThreshold(filter: string): number {
+  const now = Date.now();
+  switch (filter) {
+    case "24h": return now - 24 * 60 * 60 * 1000;
+    case "7d": return now - 7 * 24 * 60 * 60 * 1000;
+    case "30d": return now - 30 * 24 * 60 * 60 * 1000;
+    default: return 0;
+  }
+}
+
 export default function Receipts() {
   usePageSEO({
     title: "The Receipts — JRC EDIT × Live Work Intelligence Feed",
     description: "Live editorial work-intelligence feed by Jackye Clayton. Every story analyzed, every receipt pulled, every action attached. No spin. No rankings. Just receipts.",
-    path: "/newsletter",
+    path: "/receipts",
     jsonLd: {
       "@type": ["CollectionPage", "Review"],
       name: "The Receipts — JRC EDIT",
@@ -65,14 +76,20 @@ export default function Receipts() {
   const [category, setCategory] = useState("all");
   const [sortMode, setSortMode] = useState<ReceiptSortMode>("newest");
   const [heatFilter, setHeatFilter] = useState<number | null>(null);
+  const [biasFilter, setBiasFilter] = useState("all");
+  const [timeFilter, setTimeFilter] = useState("all");
   const [lightboxArticle, setLightboxArticle] = useState<ReceiptArticle | null>(null);
   const [showEmailCapture, setShowEmailCapture] = useState(false);
 
   const filtered = useMemo(() => {
     if (!articles) return [];
+    const timeThreshold = getTimeThreshold(timeFilter);
+
     let result = articles.filter((a) => {
       const matchCategory = category === "all" || a.category === category;
       const matchHeat = heatFilter === null || a.spice_level === heatFilter;
+      const matchBias = biasFilter === "all" || getSourceBiasKey(a.source_name) === biasFilter;
+      const matchTime = timeFilter === "all" || new Date(a.published_at ?? 0).getTime() >= timeThreshold;
       const q = search.toLowerCase();
       const matchSearch =
         !q ||
@@ -81,7 +98,7 @@ export default function Receipts() {
         (a.category?.toLowerCase().includes(q) ?? false) ||
         a.jackye_take.toLowerCase().includes(q) ||
         a.receipt_connection.toLowerCase().includes(q);
-      return matchCategory && matchHeat && matchSearch;
+      return matchCategory && matchHeat && matchBias && matchTime && matchSearch;
     });
 
     switch (sortMode) {
@@ -90,6 +107,13 @@ export default function Receipts() {
         break;
       case "hottest":
         result = [...result].sort((a, b) => b.spice_level - a.spice_level);
+        break;
+      case "consequential":
+        result = [...result].sort((a, b) => {
+          const aScore = b.spice_level * 10 + (b.is_controversy ? 20 : 0) + (b.receipt_connection ? 5 : 0);
+          const bScore = a.spice_level * 10 + (a.is_controversy ? 20 : 0) + (a.receipt_connection ? 5 : 0);
+          return aScore - bScore;
+        });
         break;
       case "drama":
         result = [...result].sort((a, b) => {
@@ -102,7 +126,7 @@ export default function Receipts() {
         result = [...result].sort((a, b) => new Date(b.published_at ?? 0).getTime() - new Date(a.published_at ?? 0).getTime());
     }
     return result;
-  }, [articles, search, category, sortMode, heatFilter]);
+  }, [articles, search, category, sortMode, heatFilter, biasFilter, timeFilter]);
 
   const featuredArticle = filtered[0];
   const feedArticles = filtered.slice(1);
@@ -117,9 +141,9 @@ export default function Receipts() {
       <WorkNewsTicker />
 
       {/* Hero */}
-      <header className="border-b border-border py-11 px-8 text-center">
+      <header className="border-b border-border py-12 px-8 text-center">
         <div className="max-w-[780px] mx-auto">
-          <p className="text-sm uppercase tracking-[0.55em] text-primary mb-3.5 font-mono">
+          <p className="text-base uppercase tracking-[0.55em] text-primary mb-4 font-mono">
             JRC EDIT × WDIWF
           </p>
           <h1
@@ -129,20 +153,21 @@ export default function Receipts() {
             The Receipts
           </h1>
           <p
-            className="font-light text-muted-foreground italic mt-3"
-            style={{ fontSize: "clamp(18px, 2.2vw, 26px)" }}
+            className="font-light text-muted-foreground italic mt-4"
+            style={{ fontSize: "clamp(20px, 2.2vw, 28px)" }}
           >
-            The world of work. Documented.
+            Follow the story until you know what to do.
           </p>
           <p
-            className="font-medium text-foreground mt-2.5 opacity-80"
-            style={{ fontSize: "clamp(15px, 1.6vw, 19px)" }}
+            className="font-medium text-foreground mt-3 opacity-80"
+            style={{ fontSize: "clamp(16px, 1.6vw, 20px)" }}
           >
             I pull the receipts so you don't have to.{" "}
             <span className="text-primary">They always leave something out.</span>
           </p>
-          <div className="w-[52px] h-0.5 bg-primary mx-auto my-5" />
-          <p className="text-sm text-muted-foreground tracking-[0.12em] font-mono">
+          <div className="w-[52px] h-0.5 bg-primary mx-auto my-6" />
+
+          <p className="text-base text-muted-foreground tracking-[0.12em] font-mono">
             Jackye Clayton 👑 × WDIWF
             <span className="mx-2.5 text-border">·</span>
             <span className="italic">"Stop applying. Start aligning."</span>
@@ -151,7 +176,7 @@ export default function Receipts() {
       </header>
 
       {/* Sticky filter nav */}
-      <nav className="border-b border-border px-8 sticky top-0 bg-background z-20">
+      <nav className="border-b border-border px-8 sticky top-0 bg-background/95 backdrop-blur-sm z-20">
         <div className="max-w-[1160px] mx-auto py-3">
           <ReceiptsFilters
             search={search}
@@ -162,6 +187,10 @@ export default function Receipts() {
             onSortChange={setSortMode}
             heatFilter={heatFilter}
             onHeatFilterChange={setHeatFilter}
+            biasFilter={biasFilter}
+            onBiasFilterChange={setBiasFilter}
+            timeFilter={timeFilter}
+            onTimeFilterChange={setTimeFilter}
           />
         </div>
       </nav>
@@ -170,14 +199,14 @@ export default function Receipts() {
       <HowToRead />
 
       {/* Main content: single column + sidebar */}
-      <div className="max-w-[1160px] mx-auto px-8 py-12 grid grid-cols-1 lg:grid-cols-[1fr_320px] gap-12 items-start">
+      <div className="max-w-[1160px] mx-auto px-4 md:px-8 py-12 grid grid-cols-1 lg:grid-cols-[1fr_320px] gap-12 items-start">
         <main>
           {/* Loading */}
           {isLoading && (
             <div className="space-y-4">
+              <Skeleton className="h-[500px] w-full rounded-xl" />
               <Skeleton className="h-[400px] w-full rounded-xl" />
-              <Skeleton className="h-[300px] w-full rounded-xl" />
-              <Skeleton className="h-[300px] w-full rounded-xl" />
+              <Skeleton className="h-[400px] w-full rounded-xl" />
             </div>
           )}
 
@@ -186,25 +215,24 @@ export default function Receipts() {
 
           {/* Divider */}
           {!isLoading && feedArticles.length > 0 && (
-            <div className="flex items-center gap-4 my-9">
+            <div className="flex items-center gap-4 my-10">
               <div className="flex-1 h-px bg-border" />
-              <span className="text-[9px] uppercase tracking-[0.4em] text-muted-foreground font-mono">Latest</span>
+              <span className="text-xs uppercase tracking-[0.4em] text-muted-foreground font-mono">Latest</span>
               <div className="flex-1 h-px bg-border" />
             </div>
           )}
 
-          {/* Feed — single column with Special Edition interstitials */}
+          {/* Feed */}
           {!isLoading && (
             <motion.div
               variants={stagger.container}
               initial="hidden"
               animate="show"
-              key={`${category}-${search}-${sortMode}-${heatFilter}`}
+              key={`${category}-${search}-${sortMode}-${heatFilter}-${biasFilter}-${timeFilter}`}
             >
               {feedArticles.map((article, idx) => (
                 <motion.div key={article?.id} variants={stagger.item}>
                   <ReceiptCard article={article} onPosterClick={setLightboxArticle} onRequestEmailCapture={() => setShowEmailCapture(true)} />
-                  {/* Special Edition interstitial every 5th card */}
                   {(idx + 1) % 5 === 0 && <SpecialEditionCard />}
                 </motion.div>
               ))}
@@ -212,23 +240,23 @@ export default function Receipts() {
           )}
 
           {!isLoading && filtered.length === 0 && (
-            <p className="text-center text-muted-foreground py-16">
+            <p className="text-center text-muted-foreground text-lg py-16">
               No stories match your filters.
             </p>
           )}
         </main>
 
-        {/* Sidebar — hidden on mobile */}
+        {/* Sidebar */}
         <div className="hidden lg:block">
           <ReceiptsSidebar hotArticles={hot5} />
         </div>
       </div>
 
-      {/* Company investigations section */}
-      <section className="max-w-[1160px] mx-auto px-8 py-16 border-t border-border">
+      {/* Company investigations */}
+      <section className="max-w-[1160px] mx-auto px-4 md:px-8 py-16 border-t border-border">
         <div className="flex items-center gap-2 mb-6">
           <div className="w-2 h-2 rounded-full bg-primary" />
-          <span className="text-xs font-mono uppercase tracking-[0.2em] text-primary">
+          <span className="text-sm font-mono uppercase tracking-[0.2em] text-primary">
             Deep Investigations
           </span>
         </div>
@@ -237,18 +265,18 @@ export default function Receipts() {
             <Link
               key={inv.slug}
               to={`/receipts/${inv.slug}`}
-              className="block p-4 bg-card border border-border/40 rounded-xl hover:border-primary/40 transition-all group receipt-card"
+              className="block p-5 bg-card border border-border/40 rounded-xl hover:border-primary/40 hover:shadow-lg active:scale-[0.98] transition-all group receipt-card"
             >
               <div className="flex items-center justify-between mb-2">
-                <span className="text-xs text-muted-foreground">{inv.sector}</span>
-                <span className="text-xs text-muted-foreground">{inv.date}</span>
+                <span className="text-sm text-muted-foreground">{inv.sector}</span>
+                <span className="text-sm text-muted-foreground">{inv.date}</span>
               </div>
-              <h3 className="font-semibold text-foreground group-hover:text-primary transition-colors">
+              <h3 className="font-semibold text-lg text-foreground group-hover:text-primary transition-colors">
                 {inv.name}
               </h3>
-              <p className="text-sm text-muted-foreground mt-1">{inv.headline}</p>
-              <div className="flex items-center gap-1 mt-2 text-xs text-primary">
-                Read full report <ArrowRight className="w-3 h-3" />
+              <p className="text-base text-muted-foreground mt-1">{inv.headline}</p>
+              <div className="flex items-center gap-1 mt-3 text-sm font-bold text-primary">
+                Read full report <ArrowRight className="w-4 h-4" />
               </div>
             </Link>
           ))}
@@ -257,24 +285,19 @@ export default function Receipts() {
 
       {/* Footer */}
       <footer className="border-t border-border py-10 px-8 text-center">
-        <p className="text-xs text-muted-foreground tracking-[0.1em] font-mono">
+        <p className="text-sm text-muted-foreground tracking-[0.1em] font-mono">
           The Receipts · <em>by Jackye Clayton 👑 × WDIWF</em>
         </p>
-        <p className="text-[10px] text-muted-foreground mt-1.5 italic">
+        <p className="text-sm text-muted-foreground mt-2 italic">
           "Every company runs a background check on you. WDIWF runs one on them."
         </p>
         <div className="flex justify-center gap-8 mt-4">
-          <Link to="/" className="text-[10px] text-muted-foreground tracking-[0.1em] font-mono hover:text-primary">
+          <Link to="/" className="text-sm text-muted-foreground tracking-[0.1em] font-mono hover:text-primary transition-colors">
             wdiwf.jackyeclayton.com
           </Link>
-          <Link to="/submit-tip" className="text-[10px] text-muted-foreground tracking-[0.1em] font-mono hover:text-primary">
+          <Link to="/submit-tip" className="text-sm text-muted-foreground tracking-[0.1em] font-mono hover:text-primary transition-colors">
             Submit a tip
           </Link>
-        </div>
-        <div className="mt-4">
-          <span className="text-[10px] tracking-[0.25em] uppercase" style={{ fontFamily: "Georgia, 'Times New Roman', serif", color: "hsl(var(--muted-foreground))", fontWeight: 300, opacity: 0.5 }}>
-            JRC EDIT
-          </span>
         </div>
       </footer>
 

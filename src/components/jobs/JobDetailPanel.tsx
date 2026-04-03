@@ -83,7 +83,7 @@ export function JobDetailPanel({ job, matchCount = 0, matchedCategories = [], on
         <div className="flex-1 min-w-0">
           <h2 className="font-bold text-foreground text-base leading-tight">{job.title}</h2>
           <div className="flex items-center gap-2 mt-1">
-            <Link to={`/company/${co?.slug}`} className="text-sm text-primary hover:underline font-medium">
+            <Link to={`/dossier/${co?.slug}`} className="text-sm text-primary hover:underline font-medium">
               {co?.name || "Unknown Company"}
             </Link>
             {isVerified && (
@@ -218,7 +218,7 @@ export function JobDetailPanel({ job, matchCount = 0, matchedCategories = [], on
             {differenceInDays(new Date(), new Date(job.posted_at || job.created_at)) > 30 && (
               <li>• Listing is {differenceInDays(new Date(), new Date(job.posted_at || job.created_at))} days old — confirm it's still active</li>
             )}
-            <li>• Review the <Link to={`/company/${co?.slug}`} className="text-primary hover:underline">full company profile</Link> before deciding</li>
+            <li>• Review the <Link to={`/dossier/${co?.slug}`} className="text-primary hover:underline">full company profile</Link> before deciding</li>
           </ul>
         </div>
       </div>
@@ -234,13 +234,13 @@ export function JobDetailPanel({ job, matchCount = 0, matchedCategories = [], on
           </Button>
         ) : (
           <Button className="w-full gap-2" variant="secondary" asChild>
-            <Link to={`/company/${co?.slug}`}>
+            <Link to={`/dossier/${co?.slug}`}>
               View All Roles <ChevronRight className="w-3.5 h-3.5" />
             </Link>
           </Button>
         )}
         <Button variant="outline" className="w-full gap-2 text-xs" asChild>
-          <Link to={`/company/${co?.slug}`}>
+          <Link to={`/dossier/${co?.slug}`}>
             <Building2 className="w-3 h-3" /> Full Company Intelligence
           </Link>
         </Button>

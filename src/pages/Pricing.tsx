@@ -88,6 +88,22 @@ const TIERS = [
   },
 ];
 
+/* ─── User moment framing ─── */
+const MOMENTS = [
+  {
+    moment: "You're interviewing next week.",
+    need: "You need to know what the public record says about the company before you walk in. The Signal gives you the full dossier.",
+  },
+  {
+    moment: "You just got an offer.",
+    need: "You need compensation benchmarks, enforcement history, and leverage points. The Closer gives you a one-time deep-dive.",
+  },
+  {
+    moment: "You're deciding whether to stay or leave.",
+    need: "You need to compare your current employer against the market. The Match tracks the landscape for you.",
+  },
+];
+
 export default function Pricing() {
   const navigate = useNavigate();
   const { user, loading: authLoading } = useAuth();
@@ -163,11 +179,10 @@ export default function Pricing() {
           Pricing
         </p>
         <h1 className="text-2xl lg:text-3xl font-black tracking-tight text-foreground mb-3">
-          Don't find out the hard way.
+          Pick the plan that matches your moment.
         </h1>
         <p className="text-base text-muted-foreground max-w-lg mx-auto leading-relaxed">
-          Every plan gives you more of the picture — the one companies don't put in the job description.
-          Pick the level that matches where you are in your search.
+          Browsing? Interviewing? Deciding? Every level gives you more of the picture — the one companies don't put in the job description.
         </p>
       </section>
 
@@ -338,26 +353,25 @@ export default function Pricing() {
         </div>
       </section>
 
-      {/* ── WHY PAY ── */}
+      {/* ── WHY THIS PLAN — user moments ── */}
       <section className="px-6 lg:px-16 pb-16">
         <div className="max-w-[640px] mx-auto">
           <h2
-            className="text-[10px] uppercase tracking-[0.35em] font-semibold mb-6 text-center"
+            className="text-[10px] uppercase tracking-[0.35em] font-semibold mb-8 text-center"
             style={{ color: "hsl(var(--primary))", fontFamily: "'DM Mono', monospace" }}
           >
-            Why This Matters
+            Which moment are you in?
           </h2>
-          <div className="space-y-4 text-sm text-muted-foreground leading-relaxed">
-            <p>
-              Most people spend more time researching a restaurant than the company that will control their income, benefits, and daily life. WDIWF changes that.
-            </p>
-            <p>
-              Free gets you the basics — enough to know if something smells off. Paid gets you the full record:
-              who runs the company, where the money goes, what enforcement actions exist, and whether the employer matches what you said matters.
-            </p>
-            <p className="text-foreground font-medium">
-              Good money can still be a bad deal. See the receipts before you sign.
-            </p>
+          <div className="space-y-6">
+            {MOMENTS.map((m, i) => (
+              <div key={i} className="flex gap-4 items-start">
+                <span className="font-mono text-xs text-primary mt-0.5 shrink-0">{String(i + 1).padStart(2, "0")}</span>
+                <div>
+                  <p className="text-sm text-foreground font-semibold mb-1">{m.moment}</p>
+                  <p className="text-sm text-muted-foreground leading-relaxed">{m.need}</p>
+                </div>
+              </div>
+            ))}
           </div>
         </div>
       </section>

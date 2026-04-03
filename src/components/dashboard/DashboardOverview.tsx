@@ -6,11 +6,16 @@ import { Link, useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
 import {
   Search, ArrowRight, ExternalLink, AlertTriangle, Shield,
-  FileText, BookOpen, TrendingDown, Eye, Award,
+  FileText, BookOpen, TrendingDown, Eye, Award, Newspaper,
+  ChevronDown, Zap, FileCheck, Scale, BarChart3,
 } from "lucide-react";
 import { useState } from "react";
 import { AlignedValuesSearch } from "./AlignedValuesSearch";
 import { FoundingMemberBadge } from "@/components/FoundingMemberBadge";
+import { AffirmationBar } from "./AffirmationBar";
+import { YourJourney } from "./YourJourney";
+import { JackyeMessage } from "./JackyeMessage";
+import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
 
 interface DashboardOverviewProps {
   onNavigate: (tab: string) => void;
@@ -22,11 +27,9 @@ const SIGNAL_CARDS = [
     company: "Amazon",
     slug: "amazon",
     badge: "OSHA",
-    badgeVariant: "destructive" as const,
-    summary: "6 OSHA citations across 4 fulfillment centers — ergonomic & rate-related injuries",
+    summary: "We found 6 OSHA citations across 4 fulfillment centers — ergonomic injuries and heat exposure. If you're interviewing here, ask about warehouse safety culture.",
     amount: "$60K+ penalties",
-    severity: "HIGH",
-    severityVariant: "destructive" as const,
+    severity: "HIGH" as const,
     date: "Jan 2025",
     source: "OSHA",
   },
@@ -34,11 +37,9 @@ const SIGNAL_CARDS = [
     company: "Goldman Sachs",
     slug: "goldman-sachs",
     badge: "DOJ",
-    badgeVariant: "destructive" as const,
-    summary: "1MDB global bribery & money-laundering settlement — systemic compliance failure",
+    summary: "$6B+ in fines since 2010. Off-channel comms, 1MDB fraud, misleading investors. Their compliance record tells a story worth reading.",
     amount: "$2.9B settlement",
-    severity: "CRITICAL",
-    severityVariant: "destructive" as const,
+    severity: "CRITICAL" as const,
     date: "2020",
     source: "DOJ",
   },
@@ -46,11 +47,9 @@ const SIGNAL_CARDS = [
     company: "JPMorgan Chase",
     slug: "jpmorgan-chase",
     badge: "SEC",
-    badgeVariant: "warning" as const,
-    summary: "Spoofing precious-metals & Treasury markets — traders convicted",
+    summary: "Spoofing precious-metals and Treasury markets — traders convicted. $920M in fines. Worth understanding before you walk in.",
     amount: "$920M fine",
-    severity: "HIGH",
-    severityVariant: "warning" as const,
+    severity: "HIGH" as const,
     date: "2020",
     source: "SEC / CFTC",
   },
@@ -58,11 +57,9 @@ const SIGNAL_CARDS = [
     company: "Starbucks",
     slug: "starbucks",
     badge: "NLRB",
-    badgeVariant: "warning" as const,
-    summary: "$1B restructuring — 500+ store closures, 2,000 layoffs, union suppression findings",
+    summary: "$1B restructuring with 500+ store closures and 2,000 layoffs. Union disputes ongoing. Know what you're walking into.",
     amount: "$1B restructuring",
-    severity: "HIGH",
-    severityVariant: "warning" as const,
+    severity: "MEDIUM" as const,
     date: "2025",
     source: "NLRB / Reuters",
   },
@@ -70,41 +67,11 @@ const SIGNAL_CARDS = [
     company: "Google / Alphabet",
     slug: "google-alphabet",
     badge: "DOJ",
-    badgeVariant: "destructive" as const,
-    summary: "Antitrust ruling — illegal monopoly on search ads, remedies pending breakup risk",
+    summary: "Found guilty of maintaining an illegal monopoly on search ads. Remedies pending — this could reshape the entire company.",
     amount: "Monopoly ruling",
-    severity: "CRITICAL",
-    severityVariant: "destructive" as const,
+    severity: "CRITICAL" as const,
     date: "2024",
     source: "DOJ Antitrust",
-  },
-];
-
-/* ── Intel bullets ── */
-const INTEL_BULLETS = [
-  {
-    text: "Amazon is under active wage/hour scrutiny exceeding $100M in violations — verify comp equity before accepting any offer.",
-    source: "DOJ / OSHA",
-    risk: "HIGH",
-    variant: "destructive" as const,
-  },
-  {
-    text: "Goldman Sachs' 1MDB settlement revealed systemic compliance gaps at the leadership level — ask about post-settlement governance reforms in any interview.",
-    source: "DOJ / SEC",
-    risk: "HIGH",
-    variant: "destructive" as const,
-  },
-  {
-    text: "Starbucks has closed 500+ stores and laid off 2,000 employees while fighting NLRB union complaints in 30+ states — workforce stability is a live concern.",
-    source: "Reuters / NLRB",
-    risk: "MEDIUM",
-    variant: "warning" as const,
-  },
-  {
-    text: "Google's antitrust ruling could force structural changes to Search — any role tied to ad revenue should be evaluated for 12-month exposure.",
-    source: "DOJ Antitrust",
-    risk: "MEDIUM",
-    variant: "warning" as const,
   },
 ];
 
@@ -112,7 +79,7 @@ const INTEL_BULLETS = [
 const JACKYE_CONTENT = [
   {
     number: "01",
-    type: "ARTICLE",
+    type: "ARTICLE" as const,
     title: "The Interview Is a Two-Way Street — Why You Should Audit Your Interviewer",
     desc: "Jackye breaks down why candidates who research the company's public record outperform those who only rehearse answers.",
     link: "https://www.linkedin.com/pulse/interview-two-way-street-jackye-clayton/",
@@ -120,7 +87,7 @@ const JACKYE_CONTENT = [
   },
   {
     number: "02",
-    type: "TOOL TIP",
+    type: "TOOL TIP" as const,
     title: "Use the Interview Dossier Before Every Interview — Not After",
     desc: "The Dossier shows you what the company's public record says vs. what their careers page promises. Read the 'Smart Questions' tab and ask at least 2 in the room.",
     link: "/interview-dossier",
@@ -129,7 +96,7 @@ const JACKYE_CONTENT = [
   },
   {
     number: "03",
-    type: "INSIDER INTEL",
+    type: "DEEP DIVE" as const,
     title: "Read the SEC Proxy Statement Before Your Interview — Here's Why",
     desc: "The DEF 14A filing shows executive compensation, board composition, and governance risks. If you're interviewing at a public company, 10 minutes on EDGAR is worth 2 hours of Glassdoor.",
     link: "https://www.sec.gov/cgi-bin/browse-edgar?action=getcompany&type=DEF+14A",
@@ -146,40 +113,52 @@ const DEMO_WATCHED = [
   { name: "JPMorgan Chase", slug: "jpmorgan-chase", industry: "Financial Services", score: 55 },
 ];
 
+/* ── Severity → RAG color mapping ── */
+const SEVERITY_STYLES: Record<string, { dot: string; badge: string; border: string }> = {
+  CRITICAL: {
+    dot: "bg-destructive",
+    badge: "bg-destructive/15 text-destructive border-destructive/30",
+    border: "border-l-destructive",
+  },
+  HIGH: {
+    dot: "bg-[hsl(35,100%,50%)]",
+    badge: "bg-[hsla(35,100%,50%,0.15)] text-[hsl(35,100%,50%)] border-[hsla(35,100%,50%,0.3)]",
+    border: "border-l-[hsl(35,100%,50%)]",
+  },
+  MEDIUM: {
+    dot: "bg-[hsl(45,100%,50%)]",
+    badge: "bg-[hsla(45,100%,50%,0.15)] text-[hsl(45,100%,50%)] border-[hsla(45,100%,50%,0.3)]",
+    border: "border-l-[hsl(45,100%,50%)]",
+  },
+  LOW: {
+    dot: "bg-[hsl(142,70%,45%)]",
+    badge: "bg-[hsla(142,70%,45%,0.15)] text-[hsl(142,70%,45%)] border-[hsla(142,70%,45%,0.3)]",
+    border: "border-l-[hsl(142,70%,45%)]",
+  },
+};
+
 /* ── Helpers ── */
 function scoreColorClass(score: number): string {
-  if (score >= 70) return "text-civic-green";
-  if (score >= 40) return "text-primary";
+  if (score >= 70) return "text-[hsl(142,70%,45%)]";
+  if (score >= 40) return "text-[hsl(45,100%,50%)]";
   return "text-destructive";
 }
 
 function scoreBgClass(score: number): string {
-  if (score >= 70) return "bg-civic-green/10 text-civic-green";
-  if (score >= 40) return "bg-primary/10 text-primary";
-  return "bg-destructive/10 text-destructive";
+  if (score >= 70) return "bg-[hsla(142,70%,45%,0.15)] text-[hsl(142,70%,45%)]";
+  if (score >= 40) return "bg-[hsla(45,100%,50%,0.15)] text-[hsl(45,100%,50%)]";
+  return "bg-destructive/15 text-destructive";
 }
 
 function scoreDotClass(score: number): string {
-  if (score >= 70) return "bg-civic-green";
-  if (score >= 40) return "bg-primary";
+  if (score >= 70) return "bg-[hsl(142,70%,45%)]";
+  if (score >= 40) return "bg-[hsl(45,100%,50%)]";
   return "bg-destructive";
 }
 
-const VARIANT_CLASSES = {
-  destructive: {
-    badge: "bg-destructive/10 text-destructive border-destructive/30",
-  },
-  warning: {
-    badge: "bg-civic-yellow/10 text-civic-yellow border-civic-yellow/30",
-  },
-  info: {
-    badge: "bg-civic-blue/10 text-civic-blue border-civic-blue/30",
-  },
-};
-
 function BriefingCard({ children, className = "" }: { children: React.ReactNode; className?: string }) {
   return (
-    <div className={`rounded-2xl p-6 bg-card border border-border/30 transition-shadow duration-300 hover:shadow-lg hover:shadow-primary/[0.04] ${className}`}>
+    <div className={`rounded-2xl p-5 bg-card border border-border/30 transition-all duration-300 hover:shadow-lg hover:shadow-primary/[0.04] ${className}`}>
       {children}
     </div>
   );
@@ -196,7 +175,7 @@ const anim = (delay: number) => ({
 });
 
 /* ════════════════════════════════════════════════════════════
-   DASHBOARD OVERVIEW
+   DASHBOARD OVERVIEW — Decision Engine Layout
    ════════════════════════════════════════════════════════════ */
 export function DashboardOverview({ onNavigate }: DashboardOverviewProps) {
   const { user } = useAuth();
@@ -205,14 +184,12 @@ export function DashboardOverview({ onNavigate }: DashboardOverviewProps) {
   const navigate = useNavigate();
   const [searchQuery, setSearchQuery] = useState("");
   const [showFoundingBadge, setShowFoundingBadge] = useState(false);
+  const [dailyNoteOpen, setDailyNoteOpen] = useState(false);
 
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault();
     if (searchQuery.trim()) navigate(`/search?q=${encodeURIComponent(searchQuery.trim())}`);
   };
-
-  const today = new Date();
-  const dateStr = today.toLocaleDateString("en-US", { weekday: "long", month: "long", day: "numeric" });
 
   if (isLoading) {
     return (
@@ -236,73 +213,314 @@ export function DashboardOverview({ onNavigate }: DashboardOverviewProps) {
   return (
     <div className="space-y-5 max-w-[1200px] mx-auto">
 
-      {/* ═══ 1 — MORNING GREETING ═══ */}
+      {/* ═══ QUICK ACTIONS BAR ═══ */}
       <motion.div {...anim(0)}>
-        <BriefingCard>
-          <div className="flex items-center gap-2 mb-3">
-            <span className="inline-flex items-center gap-1.5 rounded-full text-xs font-bold px-3 py-1 bg-primary/10 border border-primary/30 text-primary">
-              <Eye className="w-3 h-3" /> LIVE INTELLIGENCE
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+          {[
+            { icon: Shield, label: "Check an Offer", desc: "Numbers + culture", to: "/dashboard?tab=offers" },
+            { icon: Search, label: "Audit a Company", desc: "Pull the receipts", to: "/dashboard?tab=tracked" },
+            { icon: Scale, label: "Compare Benefits", desc: "Side by side", to: "/dashboard?tab=values" },
+          ].map((a) => (
+            <Link
+              key={a.label}
+              to={a.to}
+              className="flex items-center gap-3 rounded-xl p-4 bg-card border border-border/30 hover:border-primary/30 hover:bg-card/80 transition-all duration-200 group"
+            >
+              <div className="w-9 h-9 rounded-lg flex items-center justify-center shrink-0" style={{ background: "hsla(43, 96%, 56%, 0.1)" }}>
+                <a.icon className="w-4 h-4" style={{ color: "hsl(43, 96%, 56%)" }} />
+              </div>
+              <div className="flex-1 min-w-0">
+                <p className="text-[13px] font-bold text-foreground">{a.label}</p>
+                <p className="text-[11px] text-muted-foreground">{a.desc}</p>
+              </div>
+              <ArrowRight className="w-3.5 h-3.5 text-muted-foreground/40 group-hover:text-primary transition-colors shrink-0" />
+            </Link>
+          ))}
+        </div>
+      </motion.div>
+
+      {/* ═══ DAILY NOTE (collapsible Jackye + Affirmation) ═══ */}
+      <motion.div {...anim(0.03)}>
+        <Collapsible open={dailyNoteOpen} onOpenChange={setDailyNoteOpen}>
+          <CollapsibleTrigger className="w-full">
+            <div
+              className="flex items-center justify-between rounded-xl px-5 py-3 border cursor-pointer transition-all hover:bg-card/80"
+              style={{
+                background: "linear-gradient(135deg, hsla(43, 96%, 56%, 0.04) 0%, transparent 100%)",
+                borderColor: "hsla(43, 96%, 56%, 0.15)",
+              }}
+            >
+              <div className="flex items-center gap-3">
+                <span className="text-sm">✉️</span>
+                <span className="text-[13px] font-semibold text-foreground">Daily Note from Jackye</span>
+                <span className="text-xs text-muted-foreground">— tap to read</span>
+              </div>
+              <ChevronDown className={`w-4 h-4 text-muted-foreground transition-transform duration-200 ${dailyNoteOpen ? "rotate-180" : ""}`} />
+            </div>
+          </CollapsibleTrigger>
+          <CollapsibleContent>
+            <div className="mt-2 space-y-3">
+              <JackyeMessage firstName={firstName} />
+              <AffirmationBar />
+            </div>
+          </CollapsibleContent>
+        </Collapsible>
+      </motion.div>
+
+      {/* ═══ URGENT SIGNALS — top priority, RAG colored ═══ */}
+      <motion.div {...anim(0.05)}>
+        <BriefingCard className="border-l-0">
+          <div className="flex items-center justify-between mb-4">
+            <div className="flex items-center gap-2.5">
+              <div className="w-2 h-2 rounded-full bg-destructive animate-pulse" />
+              <h3 className="text-[16px] font-bold text-foreground tracking-tight">
+                Urgent Signals
+              </h3>
+            </div>
+            <span className="shrink-0 rounded-full px-2.5 py-1 text-[10px] font-bold border" style={{ color: "hsl(43, 96%, 56%)", backgroundColor: "hsla(43, 96%, 56%, 0.1)", borderColor: "hsla(43, 96%, 56%, 0.3)" }}>
+              {SIGNAL_CARDS.length} ACTIVE
             </span>
-            <span className="text-xs text-muted-foreground font-mono">{dateStr}</span>
           </div>
-          <h2 className="text-2xl font-bold text-foreground tracking-tight leading-snug font-display">
-            Good morning, {firstName}.
-          </h2>
-          <p className="text-[15px] text-muted-foreground leading-relaxed mt-2">
-            {data?.alerts && data.alerts.length > 0
-              ? `${new Set(data.alerts.map((a: any) => a.company_name)).size} companies you're watching had signal updates. `
-              : ""}
-            5 employer signals require your attention today. Here's what the public record is showing.
+          <p className="text-xs text-muted-foreground mb-4">
+            Signals from your watched companies — violations, settlements, and regulatory actions
           </p>
-          <p className="text-sm text-foreground mt-2.5 font-semibold italic">
-            "You deserve to know exactly who you work for."
-          </p>
+          <div className="space-y-2">
+            {SIGNAL_CARDS.map((s, i) => {
+              const style = SEVERITY_STYLES[s.severity] || SEVERITY_STYLES.MEDIUM;
+              return (
+                <motion.div
+                  key={i}
+                  initial={{ opacity: 0, x: -12 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  transition={{ delay: 0.08 + i * 0.05, duration: 0.4, ease: [0.22, 1, 0.36, 1] }}
+                >
+                  <Link
+                    to={`/dossier/${s.slug}`}
+                    className={`block rounded-xl p-4 border-l-[3px] transition-all duration-200 hover:scale-[1.005] hover:shadow-md bg-muted/30 border border-border/30 hover:border-border/60 ${style.border}`}
+                  >
+                    <div className="flex items-start justify-between gap-3">
+                      <div className="min-w-0 flex-1">
+                        <div className="flex items-center gap-2 mb-1.5 flex-wrap">
+                          <span className={`w-2 h-2 rounded-full shrink-0 ${style.dot}`} />
+                          <span className="text-sm font-bold text-foreground">{s.company}</span>
+                          <span className={`rounded px-1.5 py-0.5 text-[10px] font-bold font-mono border ${style.badge}`}>
+                            {s.severity}
+                          </span>
+                          <span className="rounded px-1.5 py-0.5 text-[10px] font-mono text-muted-foreground bg-muted/50">
+                            {s.badge}
+                          </span>
+                        </div>
+                        <p className="text-[13px] text-muted-foreground leading-snug">{s.summary}</p>
+                        <div className="flex items-center gap-3 mt-2">
+                          <span className="text-xs font-bold font-mono" style={{ color: "hsl(43, 96%, 56%)" }}>
+                            {s.amount}
+                          </span>
+                          <span className="text-xs text-muted-foreground/40">·</span>
+                          <span className="text-xs text-muted-foreground/50 font-mono">{s.date}</span>
+                          <span className="text-xs text-muted-foreground/40">·</span>
+                          <span className="text-xs text-muted-foreground/50">{s.source}</span>
+                        </div>
+                      </div>
+                      <span className="text-xs font-semibold whitespace-nowrap mt-0.5 flex items-center gap-1 shrink-0" style={{ color: "hsl(43, 96%, 56%)" }}>
+                        Full story <ArrowRight className="w-3 h-3" />
+                      </span>
+                    </div>
+                  </Link>
+                </motion.div>
+              );
+            })}
+          </div>
         </BriefingCard>
       </motion.div>
 
-      {/* ═══ FOUNDING MEMBER BANNER ═══ */}
-      <motion.div {...anim(0.03)}>
-        <div
-          className="rounded-2xl p-5 border cursor-pointer transition-all hover:scale-[1.005]"
-          style={{
-            background: "linear-gradient(135deg, rgba(240,192,64,0.06) 0%, rgba(240,192,64,0.02) 100%)",
-            borderColor: "rgba(240,192,64,0.2)",
-          }}
-          onClick={() => setShowFoundingBadge(true)}
-        >
-          <div className="flex items-center gap-4">
-            <div
-              className="w-12 h-12 rounded-full flex items-center justify-center shrink-0"
-              style={{
-                background: "radial-gradient(circle, rgba(240,192,64,0.15) 0%, transparent 70%)",
-                border: "1.5px solid rgba(240,192,64,0.3)",
-              }}
-            >
-              <Award className="w-5 h-5 text-primary" />
-            </div>
-            <div className="flex-1 min-w-0">
-              <div className="flex items-center gap-2 flex-wrap">
-                <h3 className="text-sm font-bold text-foreground">You're a Founding Member</h3>
-                <span className="text-xs font-bold font-mono px-2 py-0.5 rounded-full bg-primary/10 text-primary border border-primary/30">
-                  PRE-LAUNCH
+      {/* ═══ EMPLOYER SEARCH (inline) ═══ */}
+      <motion.div {...anim(0.08)}>
+        <form onSubmit={handleSearch}>
+          <div className="flex items-center rounded-xl px-4 py-3 bg-card border border-border/30 hover:border-border/60 transition-colors">
+            <Search className="w-4 h-4 shrink-0 mr-3 text-primary" />
+            <input
+              value={searchQuery}
+              onChange={e => setSearchQuery(e.target.value)}
+              placeholder="Look up any employer — I'll tell you what I find..."
+              className="bg-transparent border-none outline-none w-full text-sm text-foreground placeholder:text-muted-foreground/50"
+            />
+          </div>
+        </form>
+      </motion.div>
+
+      {/* ═══ TWO-COLUMN: WORK STREAM (left) + RESOURCES (right) ═══ */}
+      <div className="grid md:grid-cols-[1fr_320px] gap-7">
+
+        {/* ──── LEFT: WORK STREAM ──── */}
+        <div className="space-y-5">
+
+          {/* YOUR JOURNEY */}
+          <YourJourney onNavigate={onNavigate} />
+
+          {/* COMPANIES YOU'RE WATCHING */}
+          <motion.div {...anim(0.12)}>
+            <BriefingCard>
+              <div className="flex items-center justify-between mb-3">
+                <h3 className="text-[16px] font-bold text-foreground">
+                  Companies You're Watching
+                </h3>
+                <span className="text-[10px] font-bold rounded-full px-2.5 py-1 border" style={{ color: "hsl(43, 96%, 56%)", backgroundColor: "hsla(43, 96%, 56%, 0.1)", borderColor: "hsla(43, 96%, 56%, 0.3)" }}>
+                  {trackedCompanies.length} tracked
                 </span>
               </div>
-              <p className="text-xs text-muted-foreground mt-0.5">
-                You joined before April 7. Download and share your badge — let people know you were here first.
-              </p>
-            </div>
-            <span className="text-xs font-semibold text-primary whitespace-nowrap flex items-center gap-1 shrink-0">
-              Get Badge <ArrowRight className="w-3 h-3" />
-            </span>
-          </div>
+              <div className="space-y-1">
+                {trackedCompanies.map((t: any, i: number) => {
+                  const score = t.score ?? 0;
+                  return (
+                    <motion.div
+                      key={i}
+                      initial={{ opacity: 0, x: -8 }}
+                      animate={{ opacity: 1, x: 0 }}
+                      transition={{ delay: 0.05 + i * 0.04, duration: 0.35, ease: [0.22, 1, 0.36, 1] }}
+                    >
+                      <Link
+                        to={`/dossier/${t.slug}`}
+                        className="flex items-center gap-3 p-2.5 rounded-lg transition-all duration-200 group bg-muted/20 hover:bg-muted/40 hover:translate-x-0.5"
+                      >
+                        <span className={`shrink-0 w-2 h-2 rounded-full ${scoreDotClass(score)}`} />
+                        <span className="flex-1 min-w-0 truncate text-sm font-semibold text-foreground group-hover:text-primary transition-colors">
+                          {t.name}
+                        </span>
+                        <span className="text-xs text-muted-foreground hidden sm:block">{t.industry}</span>
+                        <span className={`text-xs font-bold shrink-0 rounded-full px-2 py-0.5 ${scoreBgClass(score)}`}>
+                          {score}
+                        </span>
+                      </Link>
+                    </motion.div>
+                  );
+                })}
+              </div>
+              <button
+                onClick={() => onNavigate("tracked")}
+                className="text-[12px] font-semibold mt-3 flex items-center gap-1 transition-colors hover:brightness-110"
+                style={{ color: "hsl(43, 96%, 56%)" }}
+              >
+                Manage watchlist <ArrowRight className="w-3 h-3" />
+              </button>
+            </BriefingCard>
+          </motion.div>
+
+          {/* VALUES ALIGNMENT */}
+          <motion.div {...anim(0.16)}>
+            <BriefingCard>
+              <h3 className="text-[16px] font-bold text-foreground mb-0.5">
+                Aligned With Your Values
+              </h3>
+              <p className="text-xs text-muted-foreground mb-3">Based on your Work DNA profile</p>
+              <AlignedValuesSearch hasTakenQuiz={hasTakenQuiz} />
+            </BriefingCard>
+          </motion.div>
         </div>
-      </motion.div>
+
+        {/* ──── RIGHT: RESOURCES ──── */}
+        <div className="space-y-5">
+
+          {/* STRAIGHT FROM JACKYE */}
+          <motion.div {...anim(0.14)}>
+            <BriefingCard>
+              <div className="flex items-center gap-2 mb-1">
+                <BookOpen className="w-4 h-4 text-primary" />
+                <h3 className="text-[16px] font-bold text-foreground">Straight From Jackye</h3>
+              </div>
+              <p className="text-xs text-muted-foreground mb-3">Curated insider intel — not generic advice</p>
+              <div className="space-y-2.5">
+                {JACKYE_CONTENT.map((item) => {
+                  const Wrapper = item.internal ? Link : "a";
+                  const linkProps = item.internal
+                    ? { to: item.link }
+                    : { href: item.link, target: "_blank", rel: "noopener noreferrer" };
+                  return (
+                    <Wrapper
+                      key={item.number}
+                      {...(linkProps as any)}
+                      className="block rounded-lg p-3 transition-all duration-200 bg-muted/20 border border-border/30 hover:bg-muted/40 hover:border-border/60"
+                    >
+                      <div className="flex items-start justify-between gap-2">
+                        <div className="min-w-0 flex-1">
+                          <div className="flex items-center gap-2 mb-1">
+                            <span className="text-xs font-extrabold text-primary font-mono">
+                              {item.number}
+                            </span>
+                            <span className="rounded px-1.5 py-0.5 text-[10px] font-bold font-mono border" style={{ color: "hsl(43, 96%, 56%)", backgroundColor: "hsla(43, 96%, 56%, 0.1)", borderColor: "hsla(43, 96%, 56%, 0.3)" }}>
+                              {item.type}
+                            </span>
+                          </div>
+                          <p className="text-[12px] font-semibold text-foreground leading-snug mt-1">
+                            {item.title}
+                          </p>
+                          <p className="text-[11px] text-muted-foreground/60 mt-1">
+                            {item.source}
+                          </p>
+                        </div>
+                        <span className="shrink-0 mt-1" style={{ color: "hsl(43, 96%, 56%)" }}>
+                          <ArrowRight className="w-3.5 h-3.5" />
+                        </span>
+                      </div>
+                    </Wrapper>
+                  );
+                })}
+              </div>
+            </BriefingCard>
+          </motion.div>
+
+          {/* THE TUESDAY LETTER */}
+          <motion.div {...anim(0.18)}>
+            <div className="rounded-xl overflow-hidden border" style={{ background: "linear-gradient(135deg, hsla(43, 96%, 56%, 0.08), hsla(35, 90%, 50%, 0.12))", borderColor: "hsla(43, 96%, 56%, 0.3)" }}>
+              <div className="p-5">
+                <div className="flex items-center gap-2 mb-2">
+                  <Newspaper className="w-4 h-4" style={{ color: "hsl(43, 96%, 56%)" }} />
+                  <h3 className="text-[16px] font-bold text-foreground font-display">The Tuesday Letter</h3>
+                </div>
+                <p className="text-[12px] text-foreground/80 leading-relaxed mb-4">
+                  Every Tuesday I send out what I'm seeing — the signals, the moves, the things nobody else is saying out loud. It's free, it's unfiltered, and it's for you.
+                </p>
+                <button
+                  onClick={() => navigate("/newsletter")}
+                  className="w-full rounded-lg py-2.5 text-sm font-bold transition-all hover:brightness-110"
+                  style={{ backgroundColor: "hsl(43, 96%, 56%)", color: "hsl(0, 0%, 10%)" }}
+                >
+                  I'm In
+                </button>
+              </div>
+            </div>
+          </motion.div>
+
+          {/* FOUNDING MEMBER */}
+          <motion.div {...anim(0.2)}>
+            <div
+              className="rounded-xl p-4 border cursor-pointer transition-all hover:bg-card/80"
+              style={{
+                background: "linear-gradient(135deg, rgba(240,192,64,0.06) 0%, rgba(240,192,64,0.02) 100%)",
+                borderColor: "rgba(240,192,64,0.2)",
+              }}
+              onClick={() => setShowFoundingBadge(true)}
+            >
+              <div className="flex items-center gap-3">
+                <Award className="w-5 h-5 text-primary shrink-0" />
+                <div className="flex-1 min-w-0">
+                  <p className="text-[12px] font-bold text-foreground">Founding Member</p>
+                  <p className="text-[11px] text-muted-foreground mt-0.5">
+                    You were here before day one.
+                  </p>
+                </div>
+                <span className="text-[11px] font-semibold flex items-center gap-1 shrink-0" style={{ color: "hsl(43, 96%, 56%)" }}>
+                  Badge <ArrowRight className="w-3 h-3" />
+                </span>
+              </div>
+            </div>
+          </motion.div>
+        </div>
+      </div>
 
       {/* Founding Member Badge Modal */}
       {showFoundingBadge && (
         <FoundingMemberBadge
           memberName={
-            // Prefer email-derived name for known accounts; full_name may be legal name from OAuth
             user?.email === "jackyeclayton@gmail.com"
               ? "Jackye Clayton"
               : data?.firstName || user?.email?.split("@")[0]
@@ -311,241 +529,6 @@ export function DashboardOverview({ onNavigate }: DashboardOverviewProps) {
           onClose={() => setShowFoundingBadge(false)}
         />
       )}
-
-      {/* ═══ 2 — SIGNAL CARDS (5 real company violations) ═══ */}
-      <motion.div {...anim(0.06)}>
-        <BriefingCard>
-          <div className="flex items-center justify-between mb-4">
-            <div>
-              <h3 className="text-base font-extrabold text-foreground tracking-tight">
-                Employer Signal Alerts
-              </h3>
-              <p className="text-xs text-muted-foreground mt-0.5">
-                Active violations, settlements, and regulatory actions from the public record
-              </p>
-            </div>
-            <span className="shrink-0 rounded-full px-2.5 py-1 text-xs font-bold bg-destructive/10 text-destructive border border-destructive/30">
-              {SIGNAL_CARDS.length} ACTIVE
-            </span>
-          </div>
-          <div className="space-y-2.5">
-            {SIGNAL_CARDS.map((s, i) => (
-              <motion.div
-                key={i}
-                initial={{ opacity: 0, x: -12 }}
-                animate={{ opacity: 1, x: 0 }}
-                transition={{ delay: 0.1 + i * 0.06, duration: 0.4, ease: [0.22, 1, 0.36, 1] }}
-              >
-                <Link
-                  to={`/dossier/${s.slug}`}
-                  className="block rounded-xl p-4 transition-all duration-200 hover:scale-[1.008] hover:shadow-md hover:shadow-primary/[0.06] bg-muted/30 border border-border/30 hover:border-primary/20"
-                >
-                  <div className="flex items-start justify-between gap-3">
-                    <div className="min-w-0 flex-1">
-                      <div className="flex items-center gap-2 mb-1.5 flex-wrap">
-                        <span className="text-sm font-bold text-foreground">{s.company}</span>
-                        <span className={`rounded px-1.5 py-0.5 text-xs font-bold font-mono border ${VARIANT_CLASSES[s.badgeVariant].badge}`}>
-                          {s.badge}
-                        </span>
-                        <span className={`rounded px-1.5 py-0.5 text-xs font-bold font-mono ${VARIANT_CLASSES[s.severityVariant].badge}`}>
-                          {s.severity}
-                        </span>
-                      </div>
-                      <p className="text-[13px] text-muted-foreground leading-snug">{s.summary}</p>
-                      <div className="flex items-center gap-3 mt-2">
-                        <span className="text-xs font-bold text-primary font-mono">
-                          {s.amount}
-                        </span>
-                        <span className="text-xs text-muted-foreground/50">·</span>
-                        <span className="text-xs text-muted-foreground/50 font-mono">{s.date}</span>
-                        <span className="text-xs text-muted-foreground/50">·</span>
-                        <span className="text-xs text-muted-foreground/50">{s.source}</span>
-                      </div>
-                    </div>
-                    <span className="text-xs font-semibold text-primary whitespace-nowrap mt-0.5 flex items-center gap-1 group-hover:gap-2 transition-all">
-                      View Full Audit <ArrowRight className="w-3 h-3" />
-                    </span>
-                  </div>
-                </Link>
-              </motion.div>
-            ))}
-          </div>
-        </BriefingCard>
-      </motion.div>
-
-      {/* ═══ 3 — INTELLIGENCE BULLETS + FROM JACKYE (2 cols) ═══ */}
-      <div className="grid md:grid-cols-2 gap-5">
-
-        {/* 3A — Intelligence Briefing */}
-        <motion.div {...anim(0.12)}>
-          <BriefingCard className="h-full">
-            <div className="flex items-center gap-2 mb-4">
-              <AlertTriangle className="w-4 h-4 text-primary" />
-              <h3 className="text-sm font-bold text-foreground">Intelligence Briefing</h3>
-            </div>
-            <div className="space-y-3">
-              {INTEL_BULLETS.map((b, i) => (
-                <motion.div
-                  key={i}
-                  initial={{ opacity: 0, y: 6 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ delay: 0.08 + i * 0.06, duration: 0.35, ease: [0.22, 1, 0.36, 1] }}
-                  className="rounded-lg p-3 bg-muted/30 border border-border/30 transition-all duration-200 hover:border-border/60"
-                >
-                  <div className="flex items-center gap-2 mb-1.5">
-                    <span className={`rounded px-1.5 py-0.5 text-xs font-bold font-mono border ${VARIANT_CLASSES[b.variant].badge}`}>
-                      {b.risk} RISK
-                    </span>
-                    <span className="text-xs text-muted-foreground font-mono">
-                      Source: {b.source}
-                    </span>
-                  </div>
-                  <p className="text-[12.5px] text-foreground leading-relaxed">{b.text}</p>
-                </motion.div>
-              ))}
-            </div>
-          </BriefingCard>
-        </motion.div>
-
-        {/* 3B — From Jackye */}
-        <motion.div {...anim(0.16)}>
-          <BriefingCard className="h-full">
-            <div className="flex items-center gap-2 mb-1">
-              <BookOpen className="w-4 h-4 text-primary" />
-              <h3 className="text-sm font-bold text-foreground">From Jackye</h3>
-            </div>
-            <p className="text-xs text-muted-foreground mb-3">Curated insider intel — not generic advice</p>
-            <div className="space-y-3">
-              {JACKYE_CONTENT.map((item) => {
-                const Wrapper = item.internal ? Link : "a";
-                const linkProps = item.internal
-                  ? { to: item.link }
-                  : { href: item.link, target: "_blank", rel: "noopener noreferrer" };
-                return (
-                  <Wrapper
-                    key={item.number}
-                    {...(linkProps as any)}
-                    className="block rounded-lg p-3.5 transition-colors bg-muted/20 border border-border/30 hover:bg-muted/40"
-                  >
-                    <div className="flex items-center gap-2 mb-1">
-                      <span className="text-xs font-extrabold text-primary font-mono">
-                        {item.number}
-                      </span>
-                      <span className="rounded px-1.5 py-0.5 text-xs font-bold text-civic-blue bg-civic-blue/10 border border-civic-blue/30 font-mono">
-                        {item.type}
-                      </span>
-                    </div>
-                    <p className="text-[13px] font-semibold text-foreground leading-snug mt-1">
-                      {item.title}
-                    </p>
-                    <p className="text-xs text-muted-foreground leading-snug mt-1">
-                      {item.desc}
-                    </p>
-                    <p className="text-xs text-muted-foreground/60 mt-1 flex items-center gap-1">
-                      {item.source} {!item.internal && <ExternalLink className="w-2.5 h-2.5" />}
-                    </p>
-                  </Wrapper>
-                );
-              })}
-            </div>
-          </BriefingCard>
-        </motion.div>
-      </div>
-
-      {/* ═══ 4 — COMPANIES YOU'RE WATCHING + DAILY BRIEFING (2 cols) ═══ */}
-      <div className="grid md:grid-cols-2 gap-5">
-
-        {/* 4A — Watched Companies */}
-        <motion.div {...anim(0.2)}>
-          <BriefingCard className="h-full">
-            <div className="flex items-center justify-between mb-3">
-              <h3 className="text-sm font-bold text-foreground">
-                Companies You're Watching
-              </h3>
-              <span className="text-xs text-muted-foreground font-mono">
-                {trackedCompanies.length} tracked
-              </span>
-            </div>
-            <div className="space-y-1">
-              {trackedCompanies.map((t: any, i: number) => {
-                const score = t.score ?? 0;
-                return (
-                  <motion.div
-                    key={i}
-                    initial={{ opacity: 0, x: -8 }}
-                    animate={{ opacity: 1, x: 0 }}
-                    transition={{ delay: 0.05 + i * 0.04, duration: 0.35, ease: [0.22, 1, 0.36, 1] }}
-                  >
-                    <Link
-                      to={`/dossier/${t.slug}`}
-                      className="flex items-center gap-3 p-2.5 rounded-lg transition-all duration-200 group bg-muted/20 hover:bg-muted/40 hover:translate-x-0.5"
-                    >
-                      <span className={`shrink-0 w-2 h-2 rounded-full ${scoreDotClass(score)}`} />
-                      <span className="flex-1 min-w-0 truncate text-sm font-semibold text-foreground group-hover:text-primary transition-colors">
-                        {t.name}
-                      </span>
-                      <span className="text-xs text-muted-foreground hidden sm:block">{t.industry}</span>
-                      <span className={`text-xs font-bold shrink-0 rounded-full px-2 py-0.5 ${scoreBgClass(score)}`}>
-                        {score}
-                      </span>
-                    </Link>
-                  </motion.div>
-                );
-              })}
-            </div>
-            <button
-              onClick={() => onNavigate("tracked")}
-              className="text-xs font-medium mt-3 flex items-center gap-1 transition-colors text-primary hover:text-primary/80"
-            >
-              Manage watchlist <ArrowRight className="w-3 h-3" />
-            </button>
-          </BriefingCard>
-        </motion.div>
-
-        {/* 4B — Daily Briefing */}
-        <motion.div {...anim(0.24)}>
-          <DailyBriefingCard />
-        </motion.div>
-      </div>
-
-      {/* ═══ 5 — VALUES ALIGNMENT + AUDIT SEARCH (2 cols) ═══ */}
-      <div className="grid md:grid-cols-2 gap-5">
-
-        {/* 5A — Values Alignment */}
-        <motion.div {...anim(0.28)}>
-          <BriefingCard className="h-full">
-            <h3 className="text-sm font-bold text-foreground mb-0.5">
-              Aligned With Your Values
-            </h3>
-            <p className="text-xs text-muted-foreground mb-3">Based on your Work DNA profile</p>
-            <AlignedValuesSearch hasTakenQuiz={hasTakenQuiz} />
-          </BriefingCard>
-        </motion.div>
-
-        {/* 5B — Quick Audit */}
-        <motion.div {...anim(0.32)}>
-          <BriefingCard className="h-full flex flex-col justify-center">
-            <h3 className="text-base font-bold text-foreground mb-1">
-              Audit any employer →
-            </h3>
-            <p className="text-xs text-muted-foreground mb-3">
-              Search by name. We'll pull the public record, signals, and receipts.
-            </p>
-            <form onSubmit={handleSearch}>
-              <div className="flex items-center rounded-xl px-4 py-3 bg-muted/30 border border-border/30">
-                <Search className="w-4 h-4 shrink-0 mr-3 text-primary" />
-                <input
-                  data-quick-audit
-                  value={searchQuery}
-                  onChange={e => setSearchQuery(e.target.value)}
-                  placeholder="Amazon, Goldman Sachs, your next interview..."
-                  className="bg-transparent border-none outline-none w-full text-sm text-foreground placeholder:text-muted-foreground/50"
-                />
-              </div>
-            </form>
-          </BriefingCard>
-        </motion.div>
-      </div>
     </div>
   );
 }

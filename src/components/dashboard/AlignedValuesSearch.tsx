@@ -183,7 +183,7 @@ export function AlignedValuesSearch({ hasTakenQuiz }: { hasTakenQuiz: boolean })
               >
                 <div className="flex items-start justify-between gap-2 mb-1.5">
                   <Link
-                    to={`/company/${company.slug}`}
+                    to={`/dossier/${company.slug}`}
                     className="text-sm font-semibold hover:text-primary transition-colors truncate"
                     style={{ fontFamily: "'DM Sans', sans-serif", color: "#f0ebe0" }}
                   >
@@ -224,7 +224,7 @@ export function AlignedValuesSearch({ hasTakenQuiz }: { hasTakenQuiz: boolean })
 
                 {/* Action buttons */}
                 <div className="flex items-center gap-2">
-                  <Link to={`/company/${company.slug}`}>
+                  <Link to={`/dossier/${company.slug}`}>
                     <Button variant="outline" size="sm" className="h-7 text-xs gap-1 px-2.5">
                       <Eye className="w-3 h-3" />
                       View Open Roles
@@ -260,8 +260,8 @@ export function AlignedValuesSearch({ hasTakenQuiz }: { hasTakenQuiz: boolean })
       {/* Browse link */}
       <Link
         to="/companies"
-        className="text-xs font-medium mt-3 flex items-center gap-1 transition-colors"
-        style={{ color: "#f0c040" }}
+        className="font-mono text-sm tracking-wider uppercase hover:underline flex items-center gap-1 whitespace-nowrap"
+        style={{ color: "hsl(var(--civic-gold, 43 96% 56%))" }}
       >
         Browse all verified organizations <ArrowRight className="w-3 h-3" />
       </Link>

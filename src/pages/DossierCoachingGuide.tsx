@@ -12,7 +12,9 @@ import {
 import { useState } from "react";
 import { cn } from "@/lib/utils";
 import { motion } from "framer-motion";
-import { SignedIn, SignedOut, useAuth as useClerkAuth } from "@clerk/clerk-react";
+import { useClerkWithFallback } from "@/hooks/use-clerk-fallback";
+import { SignedIn, SignedOut } from "@clerk/clerk-react";
+import { useAuth } from "@/contexts/AuthContext";
 
 /* ── Types ── */
 
@@ -291,7 +293,7 @@ function DossierGateOverlay({ companyName }: { companyName: string }) {
             <Lock className="w-5 h-5 text-primary" />
           </div>
           <p className="text-sm text-foreground leading-relaxed font-medium">
-            Sign up free to see Jackye's full read on {companyName} — including red flags, role trajectory, and your coaching guide.
+            Sign up free to see the full read on {companyName} — including notable signals, role trajectory, and your coaching guide.
           </p>
           <div className="flex flex-col sm:flex-row gap-2">
             <Button asChild className="flex-1 font-mono text-xs tracking-wider">
@@ -560,6 +562,29 @@ function StaticWarningLabel({ data }: { data: CompanyDossier }) {
   );
 }
 
+/* ── Auth-gated wrapper (safe in preview without ClerkProvider) ── */
+function AuthGatedDossier({ data }: { data: typeof COMPANY_DATA[string] }) {
+  const { isFallback } = useClerkWithFallback();
+  const { user } = useAuth();
+
+  // In fallback mode (no ClerkProvider), use Supabase auth state
+  if (isFallback) {
+    return user ? <FullDossierContent data={data} /> : <DossierGateOverlay companyName={data.name} />;
+  }
+
+  // In Clerk-enabled environments, use Clerk components
+  return (
+    <>
+      <SignedOut>
+        <DossierGateOverlay companyName={data.name} />
+      </SignedOut>
+      <SignedIn>
+        <FullDossierContent data={data} />
+      </SignedIn>
+    </>
+  );
+}
+
 /* ── Page ── */
 export default function DossierCoachingGuide() {
   const { slug } = useParams<{ slug: string }>();
@@ -679,13 +704,7 @@ export default function DossierCoachingGuide() {
           )}
 
           {/* ─── AUTH SPLIT: gated preview vs. full content ─── */}
-          <SignedOut>
-            <DossierGateOverlay companyName={data.name} />
-          </SignedOut>
-
-          <SignedIn>
-            <FullDossierContent data={data} />
-          </SignedIn>
+          <AuthGatedDossier data={data} />
             </>
           )}
         </div>

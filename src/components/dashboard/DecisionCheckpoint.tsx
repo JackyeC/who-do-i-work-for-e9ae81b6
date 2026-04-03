@@ -88,7 +88,7 @@ export function DecisionCheckpoint() {
           <div className="space-y-2 mb-6">
             {alerts.map((alert: any, i: number) => {
               const slug = alert.companies?.slug;
-              const companyLink = slug ? `/company/${slug}` : "#";
+              const companyLink = slug ? `/dossier/${slug}` : "#";
 
               return (
                 <motion.div

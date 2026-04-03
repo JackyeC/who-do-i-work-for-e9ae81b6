@@ -1,5 +1,4 @@
 import { useEffect, useRef } from "react";
-import { Header } from "@/components/Header";
 import { usePageSEO } from "@/hooks/use-page-seo";
 
 export default function JobBoardEmbed() {
@@ -34,8 +33,7 @@ export default function JobBoardEmbed() {
 
   return (
     <div className="min-h-screen flex flex-col bg-background">
-      <Header />
-      <div className="w-full max-w-5xl mx-auto px-4 pt-24 pb-6 text-center">
+<div className="w-full max-w-5xl mx-auto px-4 pt-24 pb-6 text-center">
         <h1 className="text-3xl font-bold text-foreground mb-2">Job Board</h1>
         <p className="text-muted-foreground max-w-2xl mx-auto">
           Every company has values. Find one that shares yours. Each listing connects to employer intelligence — lobbying records, labor data, and funding trails.

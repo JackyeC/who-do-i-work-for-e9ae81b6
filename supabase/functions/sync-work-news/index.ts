@@ -1,10 +1,6 @@
 /**
  * Sync Work News — Dual-source workforce intelligence feed.
- * 
- * Sources:
- *   1. NewsAPI.org (keyword search, structured, fast)
- *   2. GDELT DOC API (global, free, sentiment-scored)
- * 
+ * Sources: NewsAPI.org + GDELT DOC API
  * Runs every 4 hours via pg_cron.
  */
 
@@ -17,6 +13,62 @@ const corsHeaders = {
 
 const GDELT_DOC_API = "https://api.gdeltproject.org/api/v2/doc/doc";
 const NEWSAPI_BASE = "https://newsapi.org/v2/everything";
+
+// ─── Unified domain blocklist (synced with jackyefy-news) ───
+
+const BLOCKED_DOMAINS = new Set([
+  // Gaming / lifestyle
+  "psychologytoday.com", "kotaku.com", "ign.com", "gamespot.com",
+  "polygon.com", "pcgamer.com", "eurogamer.net",
+  // Australia / NZ / UK
+  "watoday.com.au", "ibtimes.co.uk", "hcamag.com", "ibtimes.com.au",
+  "starcommunity.com.au", "abc.net.au",
+  // Asia / Pacific
+  "colombogazette.com", "etnews.com", "sunstar.com.ph",
+  "channelnewsasia.com",
+  // Latin America / Brazil
+  "terra.com.br", "g1.globo.com", "globo.com", "uol.com.br",
+  "folha.uol.com.br", "senado.leg.br", "sonoticias.com.br",
+  // France
+  "lemonde.fr", "lefigaro.fr", "liberation.fr", "20minutes.fr", "francetvinfo.fr",
+  // Spain
+  "elpais.com", "rtve.es", "elmundo.es", "abc.es", "lavanguardia.com",
+  // Germany
+  "spiegel.de", "welt.de", "bild.de", "handelsblatt.com", "faz.net",
+  "sueddeutsche.de", "zeit.de", "hna.de", "op-marburg.de",
+  "merkur.de", "finanznachrichten.de",
+  // Italy
+  "corriere.it", "ideawebtv.it", "repubblica.it", "ilsole24ore.com",
+  "ilfattoquotidiano.it", "ansa.it", "rainews.it", "spotandweb.it",
+  // Scandinavia
+  "di.se", "dn.se", "dagensjuridik.se", "aftonbladet.se", "expressen.se",
+  "nyteknik.se", "arbetet.se", "svensktnaringsliv.se",
+  "demokraatti.fi",
+  // Netherlands
+  "nrc.nl",
+  // Poland
+  "tvn24.pl", "wp.pl", "onet.pl", "gazeta.pl",
+]);
+
+// TLD-based blocking for domains not in the exact list
+const BLOCKED_TLDS = new Set([
+  ".se", ".fi", ".pl", ".it", ".de", ".fr", ".es", ".br",
+  ".nl", ".ph", ".au", ".kr", ".jp", ".cn", ".tw", ".ru",
+  ".ua", ".cz", ".sk", ".hu", ".ro", ".bg", ".hr", ".rs",
+  ".no", ".dk", ".pt", ".gr", ".tr", ".in", ".pk", ".bd",
+  ".lk", ".th", ".vn", ".id", ".my", ".sg",
+]);
+
+function isBlockedSource(domain: string | null): boolean {
+  if (!domain) return false;
+  const d = domain.toLowerCase().trim();
+  if (BLOCKED_DOMAINS.has(d)) return true;
+  // TLD check
+  for (const tld of BLOCKED_TLDS) {
+    if (d.endsWith(tld)) return true;
+  }
+  return false;
+}
 
 // ─── Shared config ───
 
@@ -60,6 +112,65 @@ function hashUrl(url: string): string {
   return url.slice(-100).replace(/[^a-zA-Z0-9]/g, "");
 }
 
+// ─── Content quality gates (English-only, US/AI/world-scale focus) ───
+
+const NON_LATIN_RE = /[\u0400-\u04FF\u0500-\u052F\u0600-\u06FF\u0750-\u077F\u0590-\u05FF\u0900-\u097F\u0980-\u09FF\u0E00-\u0E7F\u1100-\u11FF\u3000-\u9FFF\uAC00-\uD7AF\uF900-\uFAFF\u10A0-\u10FF\u0530-\u058F]/;
+const ROMANCE_MARKERS = [
+  /\b(país|empregos?|brasileiros?|trabalho|governo|milhares|milhões|promete|saem|vistos?|semanas?)\b/gi,
+  /\b(según|también|durante|gobierno|trabajo|empleos?|millones|pueden|después|mientras)\b/gi,
+  /\b(aussi|gouvernement|travail|emplois?|nouveau|peuvent|après|pendant|depuis|cette)\b/gi,
+];
+const FOREIGN_LIFESTYLE_RE = /\b(visa[s]?\s+(that|which|para|pour)|jobs?\s+abroad|work\s+abroad|move\s+to\s+(europe|portugal|spain|bali|dubai)|digital\s+nomad|expat\s+(life|jobs))\b/i;
+
+function isServerEnglish(text: string): boolean {
+  if (!text || text.length < 3) return false;
+  if (NON_LATIN_RE.test(text)) return false;
+  const slavic = text.match(/[łąęśźżćńřůțșđ]/gi);
+  if (slavic && slavic.length >= 2) return false;
+  const ext = text.match(/[\u00C0-\u024F]/g);
+  if (ext && ext.length / text.length > 0.06) return false;
+  const ascii = text.match(/[\x20-\x7E]/g);
+  if (!ascii || ascii.length / text.length < 0.75) return false;
+  let romanceHits = 0;
+  for (const p of ROMANCE_MARKERS) {
+    const m = text.match(p);
+    if (m) romanceHits += m.length;
+  }
+  if (romanceHits >= 3) return false;
+  // German connective gate
+  const lower = text.toLowerCase();
+  const germanHits = (lower.match(/\b(der|die|das|und|für|mit|auf|ist|von|nicht)\b/g) || []).length;
+  if (germanHits >= 4) return false;
+  // Italian connective gate
+  const italianHits = (lower.match(/\b(il|la|le|lo|di|del|della|dei|per|che|non|con|una|più|nel|sul)\b/g) || []).length;
+  if (italianHits >= 4) return false;
+  // Nordic connective gate
+  const nordicHits = (lower.match(/\b(och|att|det|för|som|med|har|kan|inte|vara|eller|från|efter|denna|till)\b/g) || []).length;
+  if (nordicHits >= 3) return false;
+  return true;
+}
+
+function isServerRelevant(headline: string, source?: string | null): boolean {
+  if (FOREIGN_LIFESTYLE_RE.test(headline)) return false;
+  if (source && isBlockedSource(source)) return false;
+  return true;
+}
+
+function passesContentGates(headline: string, source?: string | null): boolean {
+  return isServerEnglish(headline) && isServerRelevant(headline, source);
+}
+
+function buildValidatedWorkNewsRow(row: any) {
+  if (!passesContentGates(row.headline, row.source_name)) {
+    return null;
+  }
+
+  return {
+    ...row,
+    language: "en",
+  };
+}
+
 // ─── NewsAPI fetcher ───
 
 async function fetchNewsAPI(apiKey: string): Promise<any[]> {
@@ -84,6 +195,12 @@ async function fetchNewsAPI(apiKey: string): Promise<any[]> {
       const data = await res.json();
       for (const article of data.articles || []) {
         if (!article.url || !article.title || article.title === "[Removed]") continue;
+        // Domain block at fetch level
+        if (isBlockedSource(article.source?.name)) continue;
+        try {
+          const urlDomain = new URL(article.url).hostname.replace("www.", "");
+          if (isBlockedSource(urlDomain)) continue;
+        } catch { /* skip URL parse errors */ }
 
         const title = article.title;
         const isControversy = controversyPatterns.test(title);
@@ -93,7 +210,7 @@ async function fetchNewsAPI(apiKey: string): Promise<any[]> {
           source_name: article.source?.name || null,
           source_url: article.url,
           published_at: article.publishedAt || new Date().toISOString(),
-          sentiment_score: null, // NewsAPI doesn't provide tone
+          sentiment_score: null,
           tone_label: null,
           themes: [],
           category,
@@ -103,8 +220,7 @@ async function fetchNewsAPI(apiKey: string): Promise<any[]> {
         });
       }
 
-      // Small delay between queries
-      await new Promise(r => setTimeout(r, 500));
+      await new Promise(r => setTimeout(r, 300));
     } catch (e: any) {
       console.warn(`[NewsAPI] Error for "${q.slice(0, 30)}...":`, e);
     }
@@ -122,25 +238,31 @@ async function fetchGDELT(): Promise<any[]> {
   for (const { q, category } of GDELT_QUERIES) {
     try {
       const encoded = encodeURIComponent(q);
-      const url = `${GDELT_DOC_API}?query=${encoded}&mode=ArtList&maxrecords=15&format=json&timespan=48h&sort=DateDesc`;
+      const url = `${GDELT_DOC_API}?query=${encoded} sourcelang:english sourcecountry:us&mode=ArtList&maxrecords=15&format=json&timespan=48h&sort=DateDesc`;
 
       const res = await fetch(url);
       if (!res.ok) {
         console.warn(`[GDELT] Query failed: ${res.status}`);
-        await new Promise(r => setTimeout(r, 6000));
+        await new Promise(r => setTimeout(r, 2000));
         continue;
       }
 
       const text = await res.text();
       if (!text.startsWith("{") && !text.startsWith("[")) {
         console.warn(`[GDELT] Non-JSON response: ${text.slice(0, 80)}`);
-        await new Promise(r => setTimeout(r, 6000));
+        await new Promise(r => setTimeout(r, 2000));
         continue;
       }
 
       const data = JSON.parse(text);
       for (const a of data?.articles || []) {
         if (!a.url || !a.title) continue;
+        // Domain block at fetch level
+        const domain = a.domain || "";
+        if (isBlockedSource(domain)) {
+          console.log(`[GDELT] Blocked domain: ${domain}`);
+          continue;
+        }
 
         const tone = a.tone ? parseFloat(String(a.tone).split(",")[0]) : 0;
         const title = a.title;
@@ -148,7 +270,7 @@ async function fetchGDELT(): Promise<any[]> {
 
         rows.push({
           headline: title.slice(0, 500),
-          source_name: a.domain || null,
+          source_name: domain || null,
           source_url: a.url,
           published_at: a.seendate
             ? new Date(a.seendate.slice(0, 4) + "-" + a.seendate.slice(4, 6) + "-" + a.seendate.slice(6, 8)).toISOString()
@@ -163,7 +285,7 @@ async function fetchGDELT(): Promise<any[]> {
         });
       }
 
-      await new Promise(r => setTimeout(r, 6000));
+      await new Promise(r => setTimeout(r, 2000));
     } catch (e: any) {
       console.warn(`[GDELT] Error:`, e);
     }
@@ -178,54 +300,63 @@ async function fetchGDELT(): Promise<any[]> {
 Deno.serve(async (req: Request) => {
   if (req.method === "OPTIONS") return new Response(null, { headers: corsHeaders });
 
-  // No auth gate — this function is called by pg_cron and internally only
-
   const supabaseUrl = Deno.env.get("SUPABASE_URL")!;
   const serviceKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!;
   const newsApiKey = Deno.env.get("NEWS_API_KEY");
   const supabase = createClient(supabaseUrl, serviceKey);
 
   try {
-    // Fetch from both sources in parallel
-    const [newsApiRows, gdeltRows] = await Promise.allSettled([
-      newsApiKey ? fetchNewsAPI(newsApiKey) : Promise.resolve([]),
-      fetchGDELT(),
-    ]);
-
-    const allRows = [
-      ...(newsApiRows.status === "fulfilled" ? newsApiRows.value : []),
-      ...(gdeltRows.status === "fulfilled" ? gdeltRows.value : []),
-    ];
-
-    // Deduplicate by URL hash
     const seen = new Set<string>();
-    const unique = allRows.filter(r => {
-      if (seen.has(r.gdelt_url_hash)) return false;
-      seen.add(r.gdelt_url_hash);
-      return true;
-    });
+    let totalInserted = 0;
 
-    if (unique.length > 0) {
-      const { error } = await supabase.from("work_news").upsert(unique, {
-        onConflict: "gdelt_url_hash",
-        ignoreDuplicates: true,
+    async function upsertBatch(rows: any[], label: string) {
+      const unique = rows.flatMap(r => {
+        if (seen.has(r.gdelt_url_hash)) return [];
+        const validatedRow = buildValidatedWorkNewsRow(r);
+        if (!validatedRow) {
+          console.log(`[${label}] Content gate rejected: "${r.headline?.slice(0, 50)}" from ${r.source_name}`);
+          return [];
+        }
+        seen.add(r.gdelt_url_hash);
+        return [validatedRow];
       });
-      if (error) console.error("work_news upsert error:", error);
+      if (unique.length > 0) {
+        const { error } = await supabase.from("work_news").upsert(unique, {
+          onConflict: "gdelt_url_hash",
+          ignoreDuplicates: true,
+        });
+        if (error) console.error(`[${label}] upsert error:`, error);
+        else console.log(`[${label}] Upserted ${unique.length} articles`);
+        totalInserted += unique.length;
+      }
+    }
+
+    // 1. NewsAPI first (fast, reliable)
+    if (newsApiKey) {
+      try {
+        const newsRows = await fetchNewsAPI(newsApiKey);
+        await upsertBatch(newsRows, "NewsAPI");
+      } catch (e) {
+        console.warn("[NewsAPI] Failed:", e);
+      }
+    }
+
+    // 2. GDELT second (slower, may timeout)
+    try {
+      const gdeltRows = await fetchGDELT();
+      await upsertBatch(gdeltRows, "GDELT");
+    } catch (e) {
+      console.warn("[GDELT] Failed:", e);
     }
 
     const { count } = await supabase
       .from("work_news")
       .select("*", { count: "exact", head: true });
 
-    const sources = {
-      newsapi: newsApiRows.status === "fulfilled" ? newsApiRows.value.length : 0,
-      gdelt: gdeltRows.status === "fulfilled" ? gdeltRows.value.length : 0,
-    };
-
-    console.log(`[sync-work-news] Synced ${unique.length} unique articles (NewsAPI: ${sources.newsapi}, GDELT: ${sources.gdelt}). Total: ${count}`);
+    console.log(`[sync-work-news] Synced ${totalInserted} articles. Total in DB: ${count}`);
 
     return new Response(
-      JSON.stringify({ success: true, newArticles: unique.length, totalArticles: count, sources }),
+      JSON.stringify({ success: true, newArticles: totalInserted, totalArticles: count }),
       { headers: { ...corsHeaders, "Content-Type": "application/json" } }
     );
   } catch (error: any) {

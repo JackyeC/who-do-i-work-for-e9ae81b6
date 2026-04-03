@@ -16,7 +16,7 @@ export function JackyesInsightBlock({ insight, description }: JackyesInsightBloc
         <div className="flex items-start gap-3">
           <MessageSquareWarning className="w-5 h-5 text-primary mt-0.5 shrink-0" />
           <div>
-            <h3 className="text-sm font-bold text-foreground mb-1.5">Jackye's Read</h3>
+            <h3 className="text-sm font-bold text-foreground mb-1.5">Based on What Is Visible</h3>
             <p className="text-sm text-foreground/85 leading-relaxed">{text}</p>
           </div>
         </div>

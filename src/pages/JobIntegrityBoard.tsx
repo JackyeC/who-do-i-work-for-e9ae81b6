@@ -1,8 +1,6 @@
 import { useState, useMemo } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
-import { Header } from "@/components/Header";
-import { Footer } from "@/components/Footer";
 import { JobIntegrityCard } from "@/components/jobs/JobIntegrityCard";
 import { AskJackyeWidget } from "@/components/jobs/AskJackyeWidget";
 import { PersonalizationBanner } from "@/components/jobs/PersonalizationBanner";
@@ -228,8 +226,7 @@ export default function JobIntegrityBoard() {
 
   return (
     <div className="min-h-screen flex flex-col bg-background">
-      <Header />
-      <main className="flex-1 container mx-auto px-4 py-8 max-w-6xl">
+<main className="flex-1 container mx-auto px-4 py-8 max-w-6xl">
         {/* Page header */}
         <div className="text-center mb-6">
           <h1 className="text-3xl font-bold text-foreground tracking-tight mb-1">
@@ -349,7 +346,6 @@ export default function JobIntegrityBoard() {
         </Tabs>
       </main>
       <AskJackyeWidget />
-      <Footer />
-    </div>
+</div>
   );
 }

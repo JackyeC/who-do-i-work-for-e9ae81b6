@@ -1,5 +1,6 @@
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
+import { decodeEscapes } from "@/lib/ticker-filters";
 
 export function WelcomeLiveTicker() {
   const { data: tickerText } = useQuery({
@@ -13,7 +14,7 @@ export function WelcomeLiveTicker() {
         .limit(1);
 
       if (data?.[0]) {
-        return `${data[0].companies.name} flagged for ${data[0].institution_name} link in the last 24 hours`;
+        return decodeEscapes(`${data[0].companies.name} flagged for ${data[0].institution_name} link in the last 24 hours`);
       }
 
       // Fallback to recent company update
@@ -25,7 +26,7 @@ export function WelcomeLiveTicker() {
         .limit(1);
 
       if (companies?.[0]) {
-        return `${companies[0].name} intelligence updated in the last 24 hours`;
+        return decodeEscapes(`${companies[0].name} intelligence updated in the last 24 hours`);
       }
 
       return "Live employer intelligence scanning active";

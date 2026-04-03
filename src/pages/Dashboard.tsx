@@ -32,6 +32,7 @@ import { ApplyKitSection } from "@/components/dashboard/ApplyKitSection";
 import { MockInterviewSection } from "@/components/dashboard/MockInterviewSection";
 import { InboxSection } from "@/components/dashboard/InboxSection";
 import { SavedSection } from "@/components/dashboard/SavedSection";
+import { TodayReflection } from "@/components/dashboard/TodayReflection";
 
 const TAB_TITLES: Record<string, string> = {
   overview: "My Intelligence",
@@ -40,14 +41,14 @@ const TAB_TITLES: Record<string, string> = {
   values: "My Values Profile",
   how: "How Do I Get There?",
   outreach: "Outreach Intelligence",
-  tracker: "Application Tracker",
+  tracker: "My Applications",
   "auto-apply": "Auto-Apply",
   relationships: "Relationship Intelligence",
   offers: "My Offer Checks",
   alerts: "Signal Alerts",
   preferences: "Preferences",
   profile: "My Profile",
-  jobs: "Jobs Feed",
+  jobs: "Places That Deserve You",
   "app-tracker": "Tracker",
   "apply-kit": "Apply Kit",
   "mock-interview": "Mock Interview",
@@ -185,6 +186,7 @@ export default function Dashboard() {
       </div>
       <div className="flex-1 overflow-y-auto px-4 sm:px-6 py-6">
         {!hasTakenQuiz && tab === "overview" && <PersonaQuizBanner />}
+        {tab === "overview" && <TodayReflection />}
         {showUpsell && <PostPurchaseUpsell onDismiss={dismissUpsell} />}
         <AnimatePresence mode="wait">
           <motion.div

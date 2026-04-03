@@ -122,7 +122,7 @@ export function CorporateOwnershipCard({ companyId, companyName, parentCompany }
               </div>
               {parentRecord ? (
                 <Link
-                  to={`/company/${parentRecord.slug}`}
+                  to={`/dossier/${parentRecord.slug}`}
                   className="inline-flex items-center gap-1.5 px-3 py-1.5 border border-primary/30 bg-primary/5 hover:bg-primary/10 text-primary font-mono text-xs tracking-wider uppercase transition-colors rounded-md"
                 >
                   View Report <ArrowRight className="w-3 h-3" />
@@ -153,7 +153,7 @@ export function CorporateOwnershipCard({ companyId, companyName, parentCompany }
               {sisterCompanies.map((sister: any) => (
                 <Link
                   key={sister.id}
-                  to={`/company/${sister.slug}`}
+                  to={`/dossier/${sister.slug}`}
                   className="flex items-center justify-between p-3 rounded-lg border border-border hover:border-primary/30 hover:bg-primary/5 transition-colors group"
                 >
                   <div className="flex items-center gap-2.5 min-w-0">

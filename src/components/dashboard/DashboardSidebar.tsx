@@ -36,7 +36,7 @@ const navGroups = [
   {
     label: "My Search",
     items: [
-      { id: "jobs", label: "Jobs Feed", icon: Briefcase },
+      { id: "jobs", label: "Places That Deserve You", icon: Briefcase },
       { id: "app-tracker", label: "Tracker", icon: LayoutDashboard },
       { id: "apply-kit", label: "Apply Kit", icon: PenTool },
       { id: "mock-interview", label: "Mock Interview", icon: Mic },
@@ -45,10 +45,10 @@ const navGroups = [
     ],
   },
   {
-    label: "Apply",
+    label: "Applications",
     items: [
+      { id: "tracker", label: "My Applications", icon: ClipboardCheck },
       { id: "auto-apply", label: "Apply When It Counts™", icon: Zap },
-      { id: "tracker", label: "Application Tracker", icon: ClipboardCheck },
       { id: "matches", label: "Interview Kits", icon: Network },
     ],
   },

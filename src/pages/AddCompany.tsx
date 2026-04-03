@@ -1,7 +1,5 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { Header } from "@/components/Header";
-import { Footer } from "@/components/Footer";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
@@ -100,8 +98,7 @@ export default function AddCompany() {
 
   return (
     <div className="min-h-screen bg-background">
-      <Header />
-      <main className="max-w-2xl mx-auto px-4 py-12">
+<main className="max-w-2xl mx-auto px-4 py-12">
         <div className="text-center mb-8">
           <h1 className="text-3xl font-bold text-foreground mb-2">Add a Company</h1>
           <p className="text-muted-foreground">Search our database or add a new company. We'll research its political spending, lobbying, and transparency signals.</p>
@@ -149,7 +146,7 @@ export default function AddCompany() {
                 {searchResults.map((co) => (
                   <button
                     key={co.id}
-                    onClick={() => navigate(`/company/${co.slug}`)}
+                    onClick={() => navigate(`/dossier/${co.slug}`)}
                     className="w-full flex items-center justify-between p-3 rounded-lg border border-border bg-card hover:bg-accent/50 transition-colors text-left"
                   >
                     <div className="flex items-center gap-3">
@@ -190,7 +187,7 @@ export default function AddCompany() {
                     <AlertTriangle className="w-5 h-5 text-accent-foreground shrink-0 mt-0.5" />
                     <div>
                       <p className="font-medium text-foreground">{result.company.name} already exists</p>
-                      <Button variant="link" className="p-0 h-auto text-primary" onClick={() => navigate(`/company/${result.company.slug}`)}>
+                      <Button variant="link" className="p-0 h-auto text-primary" onClick={() => navigate(`/dossier/${result.company.slug}`)}>
                         View company profile →
                       </Button>
                     </div>
@@ -219,7 +216,7 @@ export default function AddCompany() {
                       <p className="text-xs text-destructive">Some data couldn't be saved: {result.warnings.join(', ')}</p>
                     )}
 
-                    <Button onClick={() => navigate(`/company/${result.company.slug}`)} className="w-full gap-2">
+                    <Button onClick={() => navigate(`/dossier/${result.company.slug}`)} className="w-full gap-2">
                       <ArrowRight className="w-4 h-4" />
                       View {result.company.name} Profile
                     </Button>
@@ -230,7 +227,6 @@ export default function AddCompany() {
           </CardContent>
         </Card>
       </main>
-      <Footer />
-    </div>
+</div>
   );
 }

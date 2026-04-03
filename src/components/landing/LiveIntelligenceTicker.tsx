@@ -1,6 +1,8 @@
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { Radio } from "lucide-react";
+import { decodeEscapes, isLikelyEnglish, isUSOrEmployerRelevant, TICKER_SEPARATOR } from "@/lib/ticker-filters";
+import { useLocation, useNavigate } from "react-router-dom";
 import {
   getSourceProfile,
   getBiasColor,
@@ -36,6 +38,8 @@ const CATEGORY_LABELS: Record<string, string> = {
 };
 
 export function LiveIntelligenceTicker() {
+  const navigate = useNavigate();
+  const location = useLocation();
   const { data: articles } = useQuery({
     queryKey: ["homepage-live-ticker"],
     queryFn: async () => {
@@ -44,11 +48,21 @@ export function LiveIntelligenceTicker() {
         .select(
           "id, headline, source_name, source_url, category, is_controversy, published_at, jackye_take"
         )
+        .eq("language", "en")
         .order("published_at", { ascending: false })
         .limit(10);
 
       if (error) throw error;
-      return (data as TickerNewsItem[]) || [];
+      return ((data as TickerNewsItem[]) || [])
+        .map(item => ({
+          ...item,
+          headline: decodeEscapes(item.headline || ""),
+          source_name: item.source_name ? decodeEscapes(item.source_name) : null,
+        }))
+        .filter(item =>
+          isLikelyEnglish(item.headline) &&
+          isUSOrEmployerRelevant(item.headline, item.source_name)
+        );
     },
     staleTime: 120_000,
     refetchInterval: 300_000,
@@ -78,11 +92,24 @@ export function LiveIntelligenceTicker() {
   );
   const duration = Math.max(140, Math.min((totalChars * 0.6), 360));
 
+  const handleStoryClick = (storyId: string) => {
+    navigate(`/newsletter#story-${storyId}`);
+
+    if (location.pathname === "/newsletter") {
+      setTimeout(() => {
+        document.getElementById(`story-${storyId}`)?.scrollIntoView({
+          behavior: "smooth",
+          block: "start",
+        });
+      }, 100);
+    }
+  };
+
   const renderItem = (item: TickerNewsItem, key: string) => {
     const profile = getSourceProfile(item.source_name);
-    const biasColor = getBiasColor(profile.bias);
-    const biasLabel = getBiasShortLabel(profile.bias);
-    const factColor = getFactualityColor(profile.factuality);
+    getBiasColor(profile.bias);
+    getBiasShortLabel(profile.bias);
+    getFactualityColor(profile.factuality);
     const catLabel = CATEGORY_LABELS[item.category] || "NEWS";
 
     const headlineText =
@@ -91,7 +118,12 @@ export function LiveIntelligenceTicker() {
         : item.headline;
 
     return (
-      <span key={key} className="px-6 inline-flex items-center gap-2">
+      <button
+        key={key}
+        type="button"
+        onClick={() => handleStoryClick(item.id)}
+        className="px-6 inline-flex items-center gap-2 bg-transparent border-none p-0 font-inherit text-left cursor-pointer hover:text-primary transition-colors"
+      >
         {/* Category tag */}
         <span
           className="font-mono text-[10px] tracking-wider uppercase shrink-0"
@@ -101,27 +133,11 @@ export function LiveIntelligenceTicker() {
               : "hsl(43 85% 59% / 0.7)",
           }}
         >
-          {item.is_controversy ? "\u26A0 " : ""}
+          {item.is_controversy ? "⚠ " : ""}
           {catLabel}
         </span>
 
-        {/* Clickable headline */}
-        {item.source_url ? (
-          <a
-            href={item.source_url}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="font-sans text-ticker text-foreground/90 hover:text-primary transition-colors cursor-pointer"
-            onClick={(e) => e.stopPropagation()}
-          >
-            {headlineText}
-          </a>
-        ) : (
-          <span className="font-sans text-ticker text-foreground/90">
-            {headlineText}
-          </span>
-        )}
-
+        <span className="font-sans text-ticker text-foreground/90">{headlineText}</span>
 
         {/* Source + bias label */}
         {item.source_name && (
@@ -131,9 +147,9 @@ export function LiveIntelligenceTicker() {
         )}
 
         <span className="px-2" style={{ color: "hsl(43 85% 59% / 0.5)" }}>
-          \u00B7
+          {TICKER_SEPARATOR.trim()}
         </span>
-      </span>
+      </button>
     );
   };
 

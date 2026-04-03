@@ -293,7 +293,7 @@ export default function RepresentativeProfile() {
                   {profile.companies.map((company) => (
                     <Link
                       key={company.id}
-                      to={`/company/${company.slug}`}
+                      to={`/dossier/${company.slug}`}
                       className="flex items-center justify-between p-3 rounded-lg border border-border hover:border-primary/30 hover:bg-primary/5 transition-colors group"
                     >
                       <div className="flex items-center gap-3">

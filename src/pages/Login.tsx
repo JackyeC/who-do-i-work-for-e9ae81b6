@@ -7,17 +7,16 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Header } from "@/components/Header";
-import { Footer } from "@/components/Footer";
 import { useToast } from "@/hooks/use-toast";
 import { useEffect, useState } from "react";
 import { Shield, ArrowRight, Mail, Loader2, Sparkles } from "lucide-react";
 
 export default function Login() {
   usePageSEO({
-    title: "Get Started — Who Do I Work For Career Intelligence",
-    description: "Join Who Do I Work For to forensically evaluate any employer. Access company intelligence, offer reviews, and career strategy tools.",
+    title: "Sign In — Who Do I Work For",
+    description: "Sign in to access your saved employer checks, career intelligence tools, and full company reports.",
     path: "/login",
+    noIndex: true,
   });
 
   const { user, loading } = useAuth();
@@ -137,8 +136,7 @@ export default function Login() {
   if (user && isBeta) {
     return (
       <div className="min-h-screen flex flex-col bg-background">
-        <Header />
-        <div className="flex-1 flex items-center justify-center px-4 py-20">
+<div className="flex-1 flex items-center justify-center px-4 py-20">
           <Card className="w-full max-w-md shadow-elevated">
             <CardHeader className="text-center space-y-3 pb-6">
               <div className="w-16 h-16 mx-auto rounded-2xl bg-primary/8 flex items-center justify-center mb-2 border border-primary/10">
@@ -167,15 +165,13 @@ export default function Login() {
             </CardContent>
           </Card>
         </div>
-        <Footer />
-      </div>
+</div>
     );
   }
 
   return (
     <div className="min-h-screen flex flex-col bg-background">
-      <Header />
-      <div className="flex-1 flex items-center justify-center px-4 py-20">
+<div className="flex-1 flex items-center justify-center px-4 py-20">
         <Card className="w-full max-w-md shadow-elevated">
           <CardHeader className="text-center space-y-3 pb-6">
             <div className="w-16 h-16 mx-auto rounded-2xl bg-primary/8 flex items-center justify-center mb-2 border border-primary/10">
@@ -300,7 +296,6 @@ export default function Login() {
           </CardContent>
         </Card>
       </div>
-      <Footer />
-    </div>
+</div>
   );
 }

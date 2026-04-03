@@ -3,10 +3,15 @@ import { useParams, Link, useNavigate } from "react-router-dom";
 import { useCompanyIntelligence } from "@/hooks/use-company-intelligence";
 import { motion } from "framer-motion";
 import { Building2, ArrowLeft, EyeOff, Loader2, Sparkles, Search, Scan, ExternalLink, FileSearch } from "lucide-react";
+import { AccountabilitySignalsLayer } from "@/components/dossier/AccountabilitySignalsLayer";
 import { AuditRequestForm } from "@/components/AuditRequestForm";
+import { OfferIntelligencePanel } from "@/components/company/OfferIntelligencePanel";
+import { WarnFilingsCard } from "@/components/company/WarnFilingsCard";
 import { IntegrityIndicators } from "@/components/company/IntegrityIndicators";
 import { CareerFitReportCTA } from "@/components/CareerFitReportCTA";
 import { JackyesInsightBlock } from "@/components/company/JackyesInsightBlock";
+import { JackyeContextualTake } from "@/components/company/JackyeContextualTake";
+import { JackyeExplorationTrails } from "@/components/company/JackyeExplorationTrails";
 import { CompanyLogo } from "@/components/CompanyLogo";
 import { WatchCompanyButton } from "@/components/WatchCompanyButton";
 import { ShareableScorecard } from "@/components/ShareableScorecard";
@@ -43,13 +48,14 @@ import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useCompanySEO } from "@/hooks/use-company-seo";
 import { useToast } from "@/hooks/use-toast";
 import { useScanTracker } from "@/hooks/use-scan-tracker";
+import { EARLY_INVESTIGATION_THRESHOLD } from "@/components/dossier/EarlyInvestigationCard";
 
 /* ─── Status labels ─── */
 const STATUS_LABELS: Record<string, { label: string; color: string }> = {
   discovered: { label: "Discovered", color: "bg-[hsl(var(--civic-yellow))]/10 text-[hsl(var(--civic-yellow))] border-[hsl(var(--civic-yellow))]/30" },
   identity_matched: { label: "Identity Verified", color: "bg-[hsl(var(--civic-blue))]/10 text-[hsl(var(--civic-blue))] border-[hsl(var(--civic-blue))]/30" },
-  research_in_progress: { label: "Research In Progress", color: "bg-primary/10 text-primary border-primary/30" },
-  partially_verified: { label: "Partially Verified", color: "bg-[hsl(var(--civic-yellow))]/10 text-[hsl(var(--civic-yellow))] border-[hsl(var(--civic-yellow))]/30" },
+  research_in_progress: { label: "Early Investigation", color: "bg-[hsl(var(--civic-yellow))]/10 text-[hsl(var(--civic-yellow))] border-[hsl(var(--civic-yellow))]/30" },
+  partially_verified: { label: "Early Investigation", color: "bg-[hsl(var(--civic-yellow))]/10 text-[hsl(var(--civic-yellow))] border-[hsl(var(--civic-yellow))]/30" },
   verified: { label: "Verified", color: "bg-[hsl(var(--civic-green))]/10 text-[hsl(var(--civic-green))] border-[hsl(var(--civic-green))]/30" },
   failed_to_verify: { label: "Unverified", color: "bg-destructive/10 text-destructive border-destructive/30" },
 };
@@ -294,7 +300,10 @@ export default function CompanyProfile() {
   // Recruiter integrity check
   // integrityResult & integrityLoading already declared above early returns
   const recordStatus = (dbCompany as any)?.record_status || "verified";
-  const statusInfo = STATUS_LABELS[recordStatus] || STATUS_LABELS.verified;
+  const isEarlyInvestigation = (dbIssueSignals?.length || 0) < EARLY_INVESTIGATION_THRESHOLD;
+  const statusInfo = isEarlyInvestigation && recordStatus !== "verified"
+    ? (STATUS_LABELS.research_in_progress)
+    : (STATUS_LABELS[recordStatus] || STATUS_LABELS.verified);
   const isDiscovering = isResearching;
 
   return (
@@ -354,7 +363,9 @@ export default function CompanyProfile() {
 
                   {/* Meta badges */}
                   <div className="flex flex-wrap items-center gap-1.5 mt-2">
-                    <Badge variant="secondary" className="text-xs">{industry}</Badge>
+                    <Link to={`/browse?industry=${encodeURIComponent(industry)}`}>
+                      <Badge variant="secondary" className="text-xs cursor-pointer hover:bg-primary/10 hover:text-primary transition-colors">{industry}</Badge>
+                    </Link>
                     <Badge variant="secondary" className="text-xs">{state}</Badge>
                     {(dbCompany as any)?.employee_count && <Badge variant="secondary" className="text-xs">{(dbCompany as any).employee_count} employees</Badge>}
                     {(dbCompany as any)?.ticker && <Badge variant="outline" className="font-mono text-xs">{(dbCompany as any).ticker}</Badge>}
@@ -417,28 +428,21 @@ export default function CompanyProfile() {
           <JackyesInsightBlock insight={dbCompany?.jackye_insight} description={(dbCompany as any)?.description} />
 
           {/* ═══════════════════════════════════════════════════════
+              WARN FILINGS — always show when data exists
+             ═══════════════════════════════════════════════════════ */}
+          {dbCompany?.id && (
+            <div className="mb-6">
+              <WarnFilingsCard companyId={dbCompany.id} companyName={dbCompany.name} prominent />
+            </div>
+          )}
+
+          {/* ═══════════════════════════════════════════════════════
               NO-DATA FALLBACK
              ═══════════════════════════════════════════════════════ */}
           {dbCompany && !dbCompany.jackye_insight && totalPac === 0 && lobbyingSpend === 0 && civicScore === 0 && (dbIssueSignals?.length || 0) === 0 && (dbPublicStances?.length || 0) === 0 && (
-            <Card className="mb-6 border-dashed border-border/60 bg-muted/20">
-              <CardContent className="p-6 text-center">
-                <FileSearch className="w-10 h-10 text-muted-foreground mx-auto mb-3" />
-                <h3 className="text-base font-semibold text-foreground mb-1">We don't have receipts on this company yet.</h3>
-                <p className="text-sm text-muted-foreground mb-4 max-w-md mx-auto">
-                  Our research team hasn't completed a full scan. You can request one or run an automated scan now.
-                </p>
-                <div className="flex items-center justify-center gap-3 flex-wrap">
-                  <Button onClick={handleFullScan} disabled={isScanning || !!isDiscovering} className="gap-2">
-                    {isScanning ? <Loader2 className="w-4 h-4 animate-spin" /> : <Scan className="w-4 h-4" />}
-                    {isScanning ? "Scanning…" : "Run Full Company Scan"}
-                  </Button>
-                  <Button variant="outline" onClick={() => navigate("/check")} className="gap-2">
-                    <Search className="w-4 h-4" />
-                    Request Company Scan
-                  </Button>
-                </div>
-              </CardContent>
-            </Card>
+            <div className="mb-6">
+              <OfferIntelligencePanel company={dbCompany} companyId={dbCompany.id} />
+            </div>
           )}
 
           {/* ═══════════════════════════════════════════════════════
@@ -446,6 +450,7 @@ export default function CompanyProfile() {
              ═══════════════════════════════════════════════════════ */}
           <InsiderBriefSection
             companyName={name}
+            companySlug={id}
             industry={industry}
             isPubliclyTraded={!!dbCompany?.is_publicly_traded}
             totalPacSpending={totalPac}
@@ -472,6 +477,20 @@ export default function CompanyProfile() {
             lastReviewed={dbCompany?.last_reviewed}
             updatedAt={dbCompany?.updated_at}
           />
+          {dbCompanyId && (
+            <JackyeContextualTake
+              companyId={dbCompanyId}
+              companyName={name}
+              section="insider_brief"
+              signalSummaries={[
+                totalPac > 0 ? `$${totalPac.toLocaleString()} PAC spending` : "",
+                lobbyingSpend > 0 ? `$${lobbyingSpend.toLocaleString()} lobbying` : "",
+                (dbDarkMoney?.length || 0) > 0 ? `${dbDarkMoney?.length} dark money channels` : "",
+                (dbRevolvingDoor?.length || 0) > 0 ? `${dbRevolvingDoor?.length} revolving door connections` : "",
+              ].filter(Boolean)}
+              className="mb-6"
+            />
+          )}
 
           {/* ═══════════════════════════════════════════════════════
               1.5 VALUES-SIGNAL MATCH (personalized)
@@ -519,7 +538,39 @@ export default function CompanyProfile() {
               lastReviewed={dbCompany?.last_reviewed}
               updatedAt={dbCompany?.updated_at}
             />
+            {dbCompanyId && (
+              <JackyeContextualTake
+                companyId={dbCompanyId}
+                companyName={name}
+                section="structured_signals"
+                signalSummaries={[
+                  hasJobPostings ? `${activeJobCount} active jobs` : "No active job postings",
+                  !!tiAiHr ? "AI hiring tools detected" : "",
+                  !!tiPayEquity ? "Pay equity data available" : "No pay equity data",
+                ].filter(Boolean)}
+              />
+            )}
           </ReportTeaserGate>
+
+          {/* ═══════════════════════════════════════════════════════
+              JACKYE'S EXPLORATION TRAILS (Layer 3)
+             ═══════════════════════════════════════════════════════ */}
+          <JackyeExplorationTrails
+            companySlug={id || ""}
+            companyName={name}
+            availableSignals={[
+              ...(totalPac > 0 ? ["pac"] : []),
+              ...(lobbyingSpend > 0 ? ["lobbying"] : []),
+              ...((dbDarkMoney?.length || 0) > 0 ? ["dark_money"] : []),
+              ...((dbRevolvingDoor?.length || 0) > 0 ? ["revolving_door"] : []),
+              ...(govContracts > 0 ? ["government_contract"] : []),
+              ...(!!tiSentiment ? ["sentiment"] : []),
+              ...(!!tiPayEquity ? ["pay_equity"] : []),
+              ...(!!tiAiHr ? ["ai_hiring"] : []),
+              ...(!!tiBenefits ? ["benefits"] : []),
+              ...(hasJobPostings ? ["layoff", "warn"] : []),
+            ]}
+          />
 
           {/* ═══════════════════════════════════════════════════════
               2.3 LEADERSHIP & INFLUENCE (Detail)
@@ -551,18 +602,33 @@ export default function CompanyProfile() {
           {/* ═══════════════════════════════════════════════════════
               2.7 RECRUITER VIEW — Integrity Check
              ═══════════════════════════════════════════════════════ */}
-          {integrityLoading && <RecruiterIntegrityCardSkeleton />}
-          {integrityResult && <RecruiterIntegrityCard result={integrityResult} />}
+          {integrityLoading && !isEarlyInvestigation && <RecruiterIntegrityCardSkeleton />}
+          {integrityResult && !isEarlyInvestigation && <RecruiterIntegrityCard result={integrityResult} />}
 
           {/* ═══════════════════════════════════════════════════════
               2.5 PERCEPTION GAP™
              ═══════════════════════════════════════════════════════ */}
-          {dbCompanyId && (
+          {dbCompanyId && !isEarlyInvestigation && (
             <PerceptionGapModule
               companyId={dbCompanyId}
               companyName={name}
               updatedAt={dbCompany?.updated_at}
             />
+          )}
+
+          {/* ═══════════════════════════════════════════════════════
+              ACCOUNTABILITY SIGNALS (Layer 10)
+             ═══════════════════════════════════════════════════════ */}
+          {dbCompanyId && !isEarlyInvestigation && (
+            <>
+              <AccountabilitySignalsLayer companyId={dbCompanyId} companyName={name} />
+              <JackyeContextualTake
+                companyId={dbCompanyId}
+                companyName={name}
+                section="accountability"
+                className="mb-6"
+              />
+            </>
           )}
 
           {/* ═══════════════════════════════════════════════════════

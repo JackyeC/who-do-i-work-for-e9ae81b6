@@ -1,9 +1,12 @@
 import { useMemo } from "react";
+import { Link } from "react-router-dom";
 import { Badge } from "@/components/ui/badge";
 import { cn } from "@/lib/utils";
+import { ArrowRight } from "lucide-react";
 
 interface InsiderBriefProps {
   companyName: string;
+  companySlug?: string;
   industry: string;
   isPubliclyTraded: boolean;
   totalPacSpending: number;
@@ -107,33 +110,35 @@ export function InsiderBriefSection(props: InsiderBriefProps) {
   const confidence = getConfidenceLevel(props);
   const recency = getDataRecency(props.lastReviewed, props.updatedAt);
 
+  const slug = props.companySlug || props.companyName.toLowerCase().replace(/[^a-z0-9]+/g, '-');
+
   const changingSignals = useMemo(() => {
-    const items: string[] = [];
+    const items: { text: string; link?: string }[] = [];
     if (props.totalPacSpending > 0)
-      items.push(`${formatMoney(props.totalPacSpending)} in PAC spending documented in public filings`);
+      items.push({ text: `${formatMoney(props.totalPacSpending)} in PAC spending documented in public filings`, link: `/dossier/${slug}#political-influence` });
     if (props.lobbyingSpend > 0)
-      items.push(`${formatMoney(props.lobbyingSpend)} in lobbying expenditures on record`);
+      items.push({ text: `${formatMoney(props.lobbyingSpend)} in lobbying expenditures on record`, link: `/dossier/${slug}#political-influence` });
     if (props.darkMoneyCount > 0)
-      items.push(`${props.darkMoneyCount} dark money connection(s) identified`);
+      items.push({ text: `${props.darkMoneyCount} non-disclosed contribution channel(s) identified`, link: `/dossier/${slug}#political-influence` });
     if (props.revolvingDoorCount > 0)
-      items.push(`${props.revolvingDoorCount} revolving door link(s) flagged`);
+      items.push({ text: `${props.revolvingDoorCount} revolving door link(s) flagged`, link: `/dossier/${slug}#political-influence` });
     if (props.hasAiHrSignals)
-      items.push("AI hiring tools detected — audit status pending");
+      items.push({ text: "AI hiring tools detected — audit status pending" });
     if (props.hasLayoffSignals)
-      items.push("Active layoff or workforce reduction signals detected");
+      items.push({ text: "Active layoff or workforce reduction signals detected" });
     if (!props.hasPayEquity)
-      items.push("Pay equity data not disclosed");
+      items.push({ text: "Pay equity data not disclosed" });
     if (!props.hasBenefitsData)
-      items.push("Benefits data not publicly indexed");
+      items.push({ text: "Benefits data not publicly indexed" });
     return items.slice(0, 3);
-  }, [props]);
+  }, [props, slug]);
 
   const interpretation = useMemo(() => {
     const parts: string[] = [];
     if (props.totalPacSpending > 50_000 || props.lobbyingSpend > 50_000)
-      parts.push("This company has a measurable political spending footprint. Consider how that aligns with your values.");
+      parts.push("This company has a measurable political spending footprint. Pay attention to how that aligns with your priorities.");
     if (props.darkMoneyCount > 0)
-      parts.push("Dark money connections suggest influence channels that are harder to trace.");
+      parts.push("Non-disclosed contribution channels suggest influence that is harder to trace.");
     if (!props.hasPayEquity && !props.hasBenefitsData)
       parts.push("Limited compensation transparency may make it harder to evaluate total rewards.");
     if (props.hasAiHrSignals)
@@ -172,11 +177,16 @@ export function InsiderBriefSection(props: InsiderBriefProps) {
       {/* What's changing */}
       {changingSignals.length > 0 && (
         <div className="px-5 py-4 border-b border-border/40">
-          <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-2.5">What's changing</p>
+          <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-2.5">What is visible</p>
           <ul className="space-y-1.5">
             {changingSignals.map((s, i) => (
               <li key={i} className="text-sm text-foreground/90 leading-relaxed pl-3 relative before:content-[''] before:absolute before:left-0 before:top-[9px] before:w-1.5 before:h-1.5 before:rounded-full before:bg-primary/40">
-                {s}
+                {s.text}
+                {s.link && (
+                  <Link to={s.link} className="inline-flex items-center gap-0.5 ml-1.5 text-xs font-medium text-primary hover:underline transition-colors">
+                    See the receipts <ArrowRight className="w-3 h-3" />
+                  </Link>
+                )}
               </li>
             ))}
           </ul>
@@ -185,8 +195,14 @@ export function InsiderBriefSection(props: InsiderBriefProps) {
 
       {/* What this means for you */}
       <div className="px-5 py-4">
-        <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-2">What this means for you</p>
+        <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-2">What this tends to mean</p>
         <p className="text-sm text-foreground/85 leading-relaxed">{interpretation}</p>
+        <Link
+          to={`/dossier/${slug}`}
+          className="inline-flex items-center gap-1 mt-3 text-xs font-medium text-primary hover:underline transition-colors"
+        >
+          See the full pattern <ArrowRight className="w-3 h-3" />
+        </Link>
       </div>
     </div>
   );

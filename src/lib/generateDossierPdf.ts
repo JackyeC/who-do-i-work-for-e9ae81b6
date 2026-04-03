@@ -1,9 +1,8 @@
 import jsPDF from "jspdf";
-import "jspdf-autotable";
+import autoTable from "jspdf-autotable";
 
 declare module "jspdf" {
   interface jsPDF {
-    autoTable: (options: any) => jsPDF;
     lastAutoTable: { finalY: number };
   }
 }
@@ -65,6 +64,59 @@ const CW = PW - ML - MR;
 
 const fmt$ = (n: number) => `$${n.toLocaleString("en-US")}`;
 const AUDIT_DATE = "March 10, 2026";
+
+/* ─── Phase 1: Text sanitation ─── */
+
+function sanitizeText(s: string | null | undefined): string {
+  if (!s) return "";
+  return s
+    // HTML entities
+    .replace(/&nbsp;/gi, " ")
+    .replace(/&amp;/gi, "&")
+    .replace(/&lt;/gi, "<")
+    .replace(/&gt;/gi, ">")
+    .replace(/&quot;/gi, '"')
+    .replace(/&#39;/gi, "'")
+    .replace(/&rsquo;/gi, "\u2019")
+    .replace(/&lsquo;/gi, "\u2018")
+    .replace(/&rdquo;/gi, "\u201D")
+    .replace(/&ldquo;/gi, "\u201C")
+    .replace(/&mdash;/gi, "\u2014")
+    .replace(/&ndash;/gi, "\u2013")
+    .replace(/&bull;/gi, "\u2022")
+    .replace(/&#\d+;/g, "") // remaining numeric entities
+    .replace(/&[a-zA-Z]+;/g, "") // remaining named entities
+    // Stray broken glyphs & artifacts
+    .replace(/[\u0000-\u0008\u000B\u000C\u000E-\u001F]/g, "")
+    .replace(/\uFFFD/g, "")
+    // Normalize whitespace
+    .replace(/\s+/g, " ")
+    .trim();
+}
+
+function truncateAtWord(s: string, max: number): string {
+  const clean = sanitizeText(s);
+  if (clean.length <= max) return clean;
+  const truncated = clean.substring(0, max);
+  const lastSpace = truncated.lastIndexOf(" ");
+  return (lastSpace > max * 0.6 ? truncated.substring(0, lastSpace) : truncated) + "…";
+}
+
+/* ─── Phase 4: Styled empty state ─── */
+
+function drawEmptyState(doc: jsPDF, y: number, message: string): number {
+  y = safeY(doc, y, 22);
+  doc.setFillColor(...C.fog);
+  doc.roundedRect(ML, y, CW, 16, 2, 2, "F");
+  doc.setDrawColor(...C.subtle);
+  doc.setLineWidth(0.3);
+  doc.roundedRect(ML, y, CW, 16, 2, 2, "S");
+  doc.setFont("helvetica", "italic");
+  doc.setFontSize(8);
+  doc.setTextColor(...C.muted);
+  doc.text(message, ML + CW / 2, y + 9, { align: "center" });
+  return y + 22;
+}
 
 /* ─── Drawing helpers ─── */
 
@@ -224,7 +276,7 @@ function buildCoverPage(doc: jsPDF, data: DossierPdfData) {
     doc.setFont("helvetica", "normal");
     doc.setFontSize(9.5);
     doc.setTextColor(...C.muted);
-    const descLines = doc.splitTextToSize(company.description, CW - 10);
+    const descLines = doc.splitTextToSize(sanitizeText(company.description), CW - 10);
     doc.text(descLines.slice(0, 4), ML, nameEndY + 26);
   }
 
@@ -445,7 +497,7 @@ function buildBusinessFoundation(doc: jsPDF, data: DossierPdfData): number {
     ["Website", company.website_url || "—"],
   ];
 
-  doc.autoTable({
+  autoTable(doc, {
     ...tableStyle(y),
     head: [["Attribute", "Value"]],
     body: overviewItems,
@@ -462,7 +514,7 @@ function buildBusinessFoundation(doc: jsPDF, data: DossierPdfData): number {
     y += 5;
 
     doc.setFillColor(...C.fog);
-    const descLines = doc.splitTextToSize(company.description, CW - 12);
+    const descLines = doc.splitTextToSize(sanitizeText(company.description), CW - 12);
     const boxH = descLines.length * 4 + 8;
     doc.roundedRect(ML, y, CW, boxH, 2, 2, "F");
     doc.setFont("helvetica", "normal");
@@ -479,19 +531,13 @@ function buildBusinessFoundation(doc: jsPDF, data: DossierPdfData): number {
    SECTION 2: INNOVATION AUDIT
    ═══════════════════════════════════════════ */
 
-function buildInnovationAudit(doc: jsPDF, data: DossierPdfData): number {
-  doc.addPage();
-  let y = 18;
+function buildInnovationAudit(doc: jsPDF, y: number): number {
+  // Phase 3: No unconditional addPage — continue from previous section
+  y = safeY(doc, y, 50);
   y = sectionHeader(doc, y, 2, "Innovation Audit", "Patent counts, technology clusters, and R&D themes", "low");
 
-  doc.setFillColor(...C.fog);
-  doc.roundedRect(ML, y, CW, 18, 2, 2, "F");
-  doc.setFont("helvetica", "normal");
-  doc.setFontSize(8);
-  doc.setTextColor(...C.slate);
-  doc.text("Patent and technology cluster data is enriched via Google Patents and SEC 10-K filings.", ML + 6, y + 7);
-  doc.text("Full innovation pipeline details available upon data enrichment scan completion.", ML + 6, y + 13);
-  y += 26;
+  // Phase 4: styled empty state
+  y = drawEmptyState(doc, y, "No material findings yet — patent and technology cluster data enriched upon scan completion.");
 
   return y;
 }
@@ -500,18 +546,16 @@ function buildInnovationAudit(doc: jsPDF, data: DossierPdfData): number {
    SECTION 3: ECOSYSTEM & SUPPLY CHAIN
    ═══════════════════════════════════════════ */
 
-function buildEcosystemSection(doc: jsPDF, data: DossierPdfData): number {
-  doc.addPage();
-  let y = 18;
+function buildEcosystemSection(doc: jsPDF, y: number, data: DossierPdfData): number {
+  // Phase 3: smart pagination — only add page if needed
+  y = safeY(doc, y, 60);
   const conf = sectionConfidenceLevel(data.contracts.length);
   y = sectionHeader(doc, y, 3, "Ecosystem & Supply Chain", "Subcontractors, federal contracts, and operational dependencies", conf);
 
   if (data.contracts.length === 0) {
-    doc.setFont("helvetica", "normal");
-    doc.setFontSize(8);
-    doc.setTextColor(...C.slate);
-    doc.text("No federal contracts on record for this entity.", ML, y);
-    return y + 10;
+    // Phase 4: styled empty state
+    y = drawEmptyState(doc, y, "No federal contracts on record for this entity.");
+    return y;
   }
 
   const totalVal = data.contracts.reduce((s, c) => s + (c.contract_value || 0), 0);
@@ -519,17 +563,23 @@ function buildEcosystemSection(doc: jsPDF, data: DossierPdfData): number {
   drawKpiBox(doc, ML + 64, y, 50, "Active Contracts", `${data.contracts.length}`, C.indigo);
   y += 30;
 
-  doc.autoTable({
+  autoTable(doc, {
     ...tableStyle(y),
     head: [["Agency", "Value", "Description", "Year", "Confidence"]],
     body: data.contracts.slice(0, 25).map(c => [
-      c.agency_name,
+      sanitizeText(c.agency_name),
       c.contract_value ? fmt$(c.contract_value) : "—",
-      (c.contract_description || "—").substring(0, 70),
+      truncateAtWord(c.contract_description || "—", 120),  // Phase 2: word-aware truncation, longer limit
       c.fiscal_year?.toString() || "—",
       c.confidence || "—",
     ]),
-    columnStyles: { 1: { halign: "right" as const, cellWidth: 26 }, 3: { cellWidth: 14 }, 4: { cellWidth: 20 } },
+    columnStyles: {
+      0: { cellWidth: 35 },
+      1: { halign: "right" as const, cellWidth: 26 },
+      2: { cellWidth: "auto", overflow: "linebreak" as const },  // Phase 2: wrap, don't clip
+      3: { cellWidth: 14 },
+      4: { cellWidth: 20 },
+    },
   });
   return doc.lastAutoTable.finalY + 10;
 }
@@ -538,9 +588,9 @@ function buildEcosystemSection(doc: jsPDF, data: DossierPdfData): number {
    SECTION 4: WORKFORCE INTEL
    ═══════════════════════════════════════════ */
 
-function buildWorkforceIntel(doc: jsPDF, data: DossierPdfData): number {
-  doc.addPage();
-  let y = 18;
+function buildWorkforceIntel(doc: jsPDF, y: number, data: DossierPdfData): number {
+  // Phase 3: smart pagination
+  y = safeY(doc, y, 60);
   const totalData = data.warnNotices.length + data.sentiment.length + data.payEquity.length;
   y = sectionHeader(doc, y, 4, "Workforce Intel", "Role distribution, WARN notices, sentiment, and supply/demand scarcity", sectionConfidenceLevel(totalData));
 
@@ -551,14 +601,14 @@ function buildWorkforceIntel(doc: jsPDF, data: DossierPdfData): number {
     drawKpiBox(doc, ML + 64, y, 60, "Workers Affected", totalAffected.toLocaleString(), C.amber);
     y += 30;
 
-    doc.autoTable({
+    autoTable(doc, {
       ...tableStyle(y),
       head: [["Date", "Employees Affected", "State", "Type"]],
       body: data.warnNotices.slice(0, 20).map(w => [
         new Date(w.notice_date).toLocaleDateString("en-US", { year: "numeric", month: "short", day: "numeric" }),
         w.employees_affected.toLocaleString(),
         w.location_state || "—",
-        w.layoff_type || "Layoff",
+        sanitizeText(w.layoff_type) || "Layoff",
       ]),
       columnStyles: { 1: { halign: "right" as const, cellWidth: 30 } },
     });
@@ -575,7 +625,7 @@ function buildWorkforceIntel(doc: jsPDF, data: DossierPdfData): number {
     y += 5;
 
     doc.setFillColor(...C.fog);
-    const sentText = data.sentiment[0].ai_summary;
+    const sentText = sanitizeText(data.sentiment[0].ai_summary);
     const sentLines = doc.splitTextToSize(sentText, CW - 12);
     const boxH = sentLines.length * 4 + 8;
     doc.roundedRect(ML, y, CW, boxH, 2, 2, "F");
@@ -595,24 +645,24 @@ function buildWorkforceIntel(doc: jsPDF, data: DossierPdfData): number {
     doc.text("Pay Equity & Demographics Signals", ML, y);
     y += 4;
 
-    doc.autoTable({
+    autoTable(doc, {
       ...tableStyle(y),
       head: [["Signal", "Evidence", "Confidence"]],
       body: data.payEquity.slice(0, 15).map(p => [
-        p.signal_type.substring(0, 50),
-        (p.evidence_text || "—").substring(0, 100),
+        truncateAtWord(p.signal_type, 60),
+        truncateAtWord(p.evidence_text || "—", 140),
         p.confidence,
       ]),
+      columnStyles: {
+        1: { cellWidth: "auto", overflow: "linebreak" as const },
+      },
     });
     y = doc.lastAutoTable.finalY + 10;
   }
 
   if (data.warnNotices.length === 0 && data.sentiment.length === 0 && data.payEquity.length === 0) {
-    doc.setFont("helvetica", "normal");
-    doc.setFontSize(8);
-    doc.setTextColor(...C.slate);
-    doc.text("No workforce stability signals on record.", ML, y);
-    y += 10;
+    // Phase 4: styled empty state
+    y = drawEmptyState(doc, y, "No workforce stability signals on record.");
   }
 
   return y;
@@ -622,9 +672,9 @@ function buildWorkforceIntel(doc: jsPDF, data: DossierPdfData): number {
    SECTION 5: DECISION LOGIC
    ═══════════════════════════════════════════ */
 
-function buildDecisionLogic(doc: jsPDF, data: DossierPdfData): number {
-  doc.addPage();
-  let y = 18;
+function buildDecisionLogic(doc: jsPDF, y: number, data: DossierPdfData): number {
+  // Phase 3: smart pagination
+  y = safeY(doc, y, 60);
   y = sectionHeader(doc, y, 5, "Decision & Buying Logic", "Approval layers, buying committees, and decision-maker mapping", "low");
 
   // Executives as proxy for decision-makers
@@ -635,23 +685,20 @@ function buildDecisionLogic(doc: jsPDF, data: DossierPdfData): number {
     doc.text("Key Decision Makers", ML, y);
     y += 4;
 
-    doc.autoTable({
+    autoTable(doc, {
       ...tableStyle(y),
       head: [["Name", "Title", "Political Donations"]],
       body: data.executives.slice(0, 20).map(e => [
-        e.name,
-        e.title,
+        sanitizeText(e.name),
+        sanitizeText(e.title),
         e.total_donations > 0 ? fmt$(e.total_donations) : "None recorded",
       ]),
       columnStyles: { 2: { halign: "right" as const, cellWidth: 32 } },
     });
     y = doc.lastAutoTable.finalY + 10;
   } else {
-    doc.setFont("helvetica", "normal");
-    doc.setFontSize(8);
-    doc.setTextColor(...C.slate);
-    doc.text("Executive and buying committee data enriched via SEC DEF 14A proxy filings.", ML, y);
-    y += 10;
+    // Phase 4: styled empty state
+    y = drawEmptyState(doc, y, "Executive and buying committee data enriched via SEC DEF 14A proxy filings.");
   }
 
   return y;
@@ -676,11 +723,11 @@ function buildPoliticalReceipts(doc: jsPDF, data: DossierPdfData): number {
     doc.text("Executive Political Donations", ML, y);
     y += 4;
 
-    doc.autoTable({
+    autoTable(doc, {
       ...tableStyle(y),
       head: [["Name", "Title", "Total Donations"]],
       body: donatingExecs.sort((a, b) => b.total_donations - a.total_donations).slice(0, 20)
-        .map(e => [e.name, e.title, fmt$(e.total_donations)]),
+        .map(e => [sanitizeText(e.name), sanitizeText(e.title), fmt$(e.total_donations)]),
       columnStyles: { 2: { halign: "right" as const, cellWidth: 32 } },
     });
     y = doc.lastAutoTable.finalY + 10;
@@ -695,15 +742,15 @@ function buildPoliticalReceipts(doc: jsPDF, data: DossierPdfData): number {
     doc.text("Supported Candidates — PAC & Executive Giving", ML, y);
     y += 4;
 
-    doc.autoTable({
+    autoTable(doc, {
       ...tableStyle(y),
       head: [["Candidate", "Party", "Amount", "⚠ Flag"]],
       body: data.candidates.sort((a, b) => b.amount - a.amount).slice(0, 25)
         .map(c => [
-          c.name,
+          sanitizeText(c.name),
           c.party,
           fmt$(c.amount),
-          c.flagged ? (c.flag_reason || "⚠ Flagged") : "—",
+          c.flagged ? sanitizeText(c.flag_reason || "Flagged") : "—",
         ]),
       columnStyles: { 2: { halign: "right" as const, cellWidth: 28 }, 3: { cellWidth: 38 } },
       didParseCell: (d: any) => {
@@ -725,13 +772,13 @@ function buildPoliticalReceipts(doc: jsPDF, data: DossierPdfData): number {
     doc.text("Lobbying Activity by Issue", ML, y);
     y += 4;
 
-    doc.autoTable({
+    autoTable(doc, {
       ...tableStyle(y),
       head: [["Issue Area", "Spend", "Related Bill"]],
       body: data.lobbyingIssues.slice(0, 20).map(l => [
-        l.issue_area,
+        sanitizeText(l.issue_area),
         l.amount ? fmt$(l.amount) : "—",
-        l.bill_number || "—",
+        sanitizeText(l.bill_number) || "—",
       ]),
       columnStyles: { 1: { halign: "right" as const, cellWidth: 28 } },
     });
@@ -747,14 +794,14 @@ function buildPoliticalReceipts(doc: jsPDF, data: DossierPdfData): number {
     doc.text("Public Stance vs. Spending Reality (Say-Do Gap™)", ML, y);
     y += 4;
 
-    doc.autoTable({
+    autoTable(doc, {
       ...tableStyle(y),
       head: [["Topic", "Public Position", "Spending Reality", "Gap"]],
       body: data.publicStances.slice(0, 15).map(s => [
-        s.topic,
-        s.public_position.substring(0, 50),
-        s.spending_reality.substring(0, 50),
-        s.gap,
+        sanitizeText(s.topic),
+        truncateAtWord(s.public_position, 70),
+        truncateAtWord(s.spending_reality, 70),
+        sanitizeText(s.gap),
       ]),
       didParseCell: (d: any) => {
         if (d.column.index === 3 && d.cell.raw && d.cell.raw.toLowerCase() !== "aligned" && d.cell.raw.toLowerCase() !== "none") {
@@ -775,11 +822,11 @@ function buildPoliticalReceipts(doc: jsPDF, data: DossierPdfData): number {
     doc.text("Opaque Funding Channels (Dark Money)", ML, y);
     y += 4;
 
-    doc.autoTable({
+    autoTable(doc, {
       ...tableStyle(y),
       head: [["Organization", "Type", "Relationship", "Est. Amount"]],
       body: data.darkMoney.slice(0, 15).map(d => [
-        d.name, d.org_type, d.relationship, d.estimated_amount ? fmt$(d.estimated_amount) : "—",
+        sanitizeText(d.name), sanitizeText(d.org_type), sanitizeText(d.relationship), d.estimated_amount ? fmt$(d.estimated_amount) : "—",
       ]),
       columnStyles: { 3: { halign: "right" as const, cellWidth: 28 } },
     });
@@ -795,10 +842,10 @@ function buildPoliticalReceipts(doc: jsPDF, data: DossierPdfData): number {
     doc.text("Revolving Door — Government ↔ Corporate", ML, y);
     y += 4;
 
-    doc.autoTable({
+    autoTable(doc, {
       ...tableStyle(y),
       head: [["Person", "Prior Government Role", "Current Corporate Role"]],
-      body: data.revolvingDoor.slice(0, 15).map(r => [r.person, r.prior_role, r.new_role]),
+      body: data.revolvingDoor.slice(0, 15).map(r => [sanitizeText(r.person), sanitizeText(r.prior_role), sanitizeText(r.new_role)]),
     });
     y = doc.lastAutoTable.finalY + 10;
   }
@@ -812,14 +859,17 @@ function buildPoliticalReceipts(doc: jsPDF, data: DossierPdfData): number {
     doc.text("Values & ESG Signals", ML, y);
     y += 4;
 
-    doc.autoTable({
+    autoTable(doc, {
       ...tableStyle(y),
       head: [["Category", "Signal Summary"]],
       body: data.valuesSignals.slice(0, 25).map(s => [
-        s.issue_category || s.signal_category || "General",
-        (s.signal_summary || s.evidence_text || "—").substring(0, 130),
+        sanitizeText(s.issue_category || s.signal_category || "General"),
+        truncateAtWord(s.signal_summary || s.evidence_text || "—", 160),
       ]),
-      columnStyles: { 0: { cellWidth: 36 } },
+      columnStyles: {
+        0: { cellWidth: 36 },
+        1: { cellWidth: "auto", overflow: "linebreak" as const },
+      },
     });
     y = doc.lastAutoTable.finalY + 10;
   }
@@ -828,140 +878,125 @@ function buildPoliticalReceipts(doc: jsPDF, data: DossierPdfData): number {
 }
 
 /* ═══════════════════════════════════════════
-   MARCH 2026 REGULATORY ALERT
+   WORK POLICY SIGNALS (universal gate)
    ═══════════════════════════════════════════ */
 
-function buildMarch2026Alert(doc: jsPDF, data: DossierPdfData): number {
+/** Work-related flag_reason keywords — generic political flags are excluded */
+const WORK_POLICY_FLAG_RE = /labor|wage|hiring|worker|employment|osha|safety|union|organizing|layoff|warn|workforce|discrimination|retaliation|nlrb|eeoc|dol|fair labor|prevailing wage|bacon act|davis.bacon/i;
+
+function buildWorkPolicySignals(doc: jsPDF, data: DossierPdfData): void {
+  // ── Universal detection gate ──
+  const recentWarns = data.warnNotices.filter(w => {
+    const d = new Date(w.notice_date);
+    return !isNaN(d.getTime()) && d.getFullYear() >= 2025;
+  });
+
+  const hiringLobby = data.lobbyingIssues.filter(l =>
+    /ftc|artificial intelligence|\bai\b|hiring|employment|workforce|labor/i.test(l.issue_area) ||
+    /ftc/i.test(l.bill_number || "")
+  );
+
+  const workFlaggedCandidates = data.candidates.filter(c =>
+    c.flagged && c.flag_reason && WORK_POLICY_FLAG_RE.test(c.flag_reason)
+  );
+
+  const hasWorkPolicySignal =
+    recentWarns.length > 0 ||
+    hiringLobby.length > 0 ||
+    workFlaggedCandidates.length > 0;
+
+  // If no real work-policy signal exists for this company, omit the page entirely
+  if (!hasWorkPolicySignal) return;
+
+  // ── Render page ──
   doc.addPage();
   let y = 18;
 
-  // Alert header — red accent
+  // Page header
   doc.setFillColor(...C.red);
   doc.roundedRect(ML, y, CW, 16, 2, 2, "F");
   doc.setFont("helvetica", "bold");
   doc.setFontSize(7);
   doc.setTextColor(...C.white);
-  doc.text("⚠  REGULATORY ALERT", ML + 5, y + 6);
+  doc.text("WORK POLICY SIGNALS", ML + 5, y + 6);
   doc.setFontSize(11);
-  doc.text("March 2026 Truth Briefing", ML + 42, y + 6.5);
+  doc.text("Active Alerts", ML + 46, y + 6.5);
   doc.setFont("helvetica", "normal");
   doc.setFontSize(7);
-  doc.text(`As of ${AUDIT_DATE}`, ML + 42, y + 12.5);
+  doc.text("Affecting hiring, pay, treatment, safety, or stability", ML + 46, y + 12.5);
   y += 24;
 
-  // H.R. 7567 (Bacon Act)
-  doc.setFont("helvetica", "bold");
-  doc.setFontSize(9);
-  doc.setTextColor(...C.navy);
-  doc.text("H.R. 7567 — The Bacon Act (March 5, 2026 Vote)", ML, y);
-  y += 5;
-
-  doc.setFillColor(...C.fog);
-  doc.roundedRect(ML, y, CW, 20, 2, 2, "F");
-  doc.setFont("helvetica", "normal");
-  doc.setFontSize(8);
-  doc.setTextColor(...C.navy);
-  doc.text("Animal welfare bill voted March 5, 2026. Any PAC donations to a 'YES' voter after", ML + 6, y + 7);
-  doc.text("this date trigger a 'Value Conflict' badge in the Influence pipeline.", ML + 6, y + 13);
-  y += 26;
-
-  // Check for flagged candidates (Bacon Act sponsors)
-  const baconFlagged = data.candidates.filter(c => c.flagged);
-  if (baconFlagged.length > 0) {
+  // ── Sub-section: Flagged candidates (work-related only) ──
+  if (workFlaggedCandidates.length > 0) {
     doc.setFont("helvetica", "bold");
-    doc.setFontSize(8);
-    doc.setTextColor(...C.red);
-    doc.text(`⚠ ${baconFlagged.length} FLAGGED CANDIDATE(S) DETECTED`, ML, y);
-    y += 4;
+    doc.setFontSize(9);
+    doc.setTextColor(...C.navy);
+    doc.text("Political Spending — Flagged Candidates", ML, y);
+    y += 3;
+    doc.setFont("helvetica", "normal");
+    doc.setFontSize(7);
+    doc.setTextColor(...C.slate);
+    doc.text("PAC or executive donations to candidates flagged for work-policy conflicts.", ML, y);
+    y += 5;
 
-    doc.autoTable({
+    autoTable(doc, {
       ...tableStyle(y),
       head: [["Candidate", "Party", "Amount", "Flag Reason"]],
-      body: baconFlagged.map(c => [c.name, c.party, fmt$(c.amount), c.flag_reason || "Bacon Act Sponsor"]),
+      body: workFlaggedCandidates.map(c => [
+        sanitizeText(c.name),
+        c.party,
+        fmt$(c.amount),
+        sanitizeText(c.flag_reason || "Work-policy conflict"),
+      ]),
       headStyles: { fillColor: C.red, textColor: C.white, fontStyle: "bold" as const, fontSize: 7 },
-      columnStyles: { 2: { halign: "right" as const, cellWidth: 28 } },
+      columnStyles: {
+        2: { halign: "right" as const, cellWidth: 28 },
+        3: { cellWidth: "auto", overflow: "linebreak" as const },
+      },
     });
     y = doc.lastAutoTable.finalY + 10;
-  } else {
-    doc.setFont("helvetica", "normal");
-    doc.setFontSize(8);
-    doc.setTextColor(...C.green);
-    doc.text("✓ No flagged Bacon Act sponsor donations detected.", ML, y);
-    y += 10;
   }
 
-  // Q1 WARN Notices
-  doc.setFont("helvetica", "bold");
-  doc.setFontSize(9);
-  doc.setTextColor(...C.navy);
-  doc.text("Q1 2026 WARN Notices — Workforce Stability", ML, y);
-  y += 5;
+  // ── Sub-section: Recent WARN notices ──
+  if (recentWarns.length > 0) {
+    y = safeY(doc, y, 40);
+    doc.setFont("helvetica", "bold");
+    doc.setFontSize(9);
+    doc.setTextColor(...C.navy);
+    doc.text("Workforce Stability — Recent WARN Notices", ML, y);
+    y += 6;
 
-  const q1Warns = data.warnNotices.filter(w => {
-    const d = new Date(w.notice_date);
-    return d.getFullYear() >= 2025;
-  });
-
-  if (q1Warns.length > 0) {
-    const affected = q1Warns.reduce((s, w) => s + w.employees_affected, 0);
-    drawKpiBox(doc, ML, y, 55, "Recent WARN Notices", `${q1Warns.length}`, C.red);
+    const affected = recentWarns.reduce((s, w) => s + w.employees_affected, 0);
+    drawKpiBox(doc, ML, y, 55, "Recent WARN Notices", `${recentWarns.length}`, C.red);
     drawKpiBox(doc, ML + 59, y, 55, "Workers Affected", affected.toLocaleString(), C.amber);
     y += 28;
-  } else {
-    doc.setFont("helvetica", "normal");
-    doc.setFontSize(8);
-    doc.setTextColor(...C.green);
-    doc.text("✓ No recent WARN notices filed.", ML, y);
-    y += 10;
   }
 
-  // FTC Section 5 Lobbying
-  y = safeY(doc, y, 30);
-  doc.setFont("helvetica", "bold");
-  doc.setFontSize(9);
-  doc.setTextColor(...C.navy);
-  doc.text("FTC Section 5 — AI Bias Audit Preemption", ML, y);
-  y += 5;
-
-  doc.setFillColor(...C.fog);
-  doc.roundedRect(ML, y, CW, 20, 2, 2, "F");
-  doc.setFont("helvetica", "normal");
-  doc.setFontSize(8);
-  doc.setTextColor(...C.navy);
-  doc.text("Tracking ATS providers lobbying under FTC Section 5 to block mandatory AI bias audits.", ML + 6, y + 7);
-  doc.text("Companies with active lobbying in this area are flagged as HR Tech Gatekeepers.", ML + 6, y + 13);
-  y += 26;
-
-  const ftcLobbying = data.lobbyingIssues.filter(l =>
-    l.issue_area.toLowerCase().includes("ftc") ||
-    l.issue_area.toLowerCase().includes("artificial intelligence") ||
-    l.issue_area.toLowerCase().includes("ai") ||
-    l.bill_number?.toLowerCase().includes("ftc")
-  );
-
-  if (ftcLobbying.length > 0) {
+  // ── Sub-section: Hiring & AI oversight lobbying ──
+  if (hiringLobby.length > 0) {
+    y = safeY(doc, y, 40);
     doc.setFont("helvetica", "bold");
-    doc.setFontSize(8);
-    doc.setTextColor(...C.red);
-    doc.text(`⚠ ${ftcLobbying.length} AI/FTC-related lobbying issue(s) detected`, ML, y);
-    y += 4;
+    doc.setFontSize(9);
+    doc.setTextColor(...C.navy);
+    doc.text("Hiring & AI Oversight — Related Lobbying", ML, y);
+    y += 3;
+    doc.setFont("helvetica", "normal");
+    doc.setFontSize(7);
+    doc.setTextColor(...C.slate);
+    doc.text("Lobbying activity related to AI hiring tools, bias audits, or workforce regulation.", ML, y);
+    y += 5;
 
-    doc.autoTable({
+    autoTable(doc, {
       ...tableStyle(y),
       head: [["Issue Area", "Spend", "Related Bill"]],
-      body: ftcLobbying.map(l => [l.issue_area, l.amount ? fmt$(l.amount) : "—", l.bill_number || "—"]),
+      body: hiringLobby.map(l => [
+        sanitizeText(l.issue_area),
+        l.amount ? fmt$(l.amount) : "—",
+        sanitizeText(l.bill_number) || "—",
+      ]),
       headStyles: { fillColor: C.amber, textColor: C.white, fontStyle: "bold" as const, fontSize: 7 },
     });
-    y = doc.lastAutoTable.finalY + 10;
-  } else {
-    doc.setFont("helvetica", "normal");
-    doc.setFontSize(8);
-    doc.setTextColor(...C.green);
-    doc.text("✓ No AI bias audit lobbying detected.", ML, y);
-    y += 10;
   }
-
-  return y;
 }
 
 /* ═══════════════════════════════════════════
@@ -1082,13 +1117,13 @@ export function generateDossierPdf(data: DossierPdfData): jsPDF {
 
   buildCoverPage(doc, data);
   buildExecutiveSummary(doc, data);
-  buildBusinessFoundation(doc, data);
-  buildInnovationAudit(doc, data);
-  buildEcosystemSection(doc, data);
-  buildWorkforceIntel(doc, data);
-  buildDecisionLogic(doc, data);
+  let y = buildBusinessFoundation(doc, data);
+  y = buildInnovationAudit(doc, y);
+  y = buildEcosystemSection(doc, y, data);
+  y = buildWorkforceIntel(doc, y, data);
+  y = buildDecisionLogic(doc, y, data);
   buildPoliticalReceipts(doc, data);
-  buildMarch2026Alert(doc, data);
+  buildWorkPolicySignals(doc, data);
   buildDisclaimerPage(doc);
   addPageNumbers(doc);
 

@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
+import { useFuzzyPersonSearch } from "@/hooks/use-fuzzy-person-search";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
@@ -17,7 +18,11 @@ export function PeopleTab({ searchQuery }: Props) {
   const [localSearch, setLocalSearch] = useState("");
   const effectiveSearch = searchQuery || localSearch;
 
-  const { data: people, isLoading } = useQuery({
+  // Use fuzzy search for person names when searching executives
+  const { data: fuzzyResults, isLoading: fuzzyLoading } = useFuzzyPersonSearch(effectiveSearch);
+
+  // Fall back to power_network_entities for general people browsing
+  const { data: people, isLoading: peopleLoading } = useQuery({
     queryKey: ["pn-people", effectiveSearch],
     queryFn: async () => {
       let query = (supabase as any)
@@ -28,14 +33,61 @@ export function PeopleTab({ searchQuery }: Props) {
         .limit(100);
 
       if (effectiveSearch) {
-        query = query.ilike("name", `%${effectiveSearch}%`);
+        // Use OR to also match by nickname-expanded variants
+        const variants = await supabase.rpc("resolve_name_variants", { _name: effectiveSearch.split(" ")[0] });
+        const nameVariants = (variants.data || []) as string[];
+        if (nameVariants.length > 1) {
+          // Build an OR filter for all variant first names
+          const orFilter = nameVariants.map(v => `name.ilike.%${v}%`).join(",");
+          query = query.or(orFilter);
+        } else {
+          query = query.ilike("name", `%${effectiveSearch}%`);
+        }
       }
 
       const { data, error } = await query;
       if (error) throw error;
       return data || [];
     },
+    enabled: !effectiveSearch || effectiveSearch.trim().length >= 2,
   });
+
+  const isLoading = fuzzyLoading || peopleLoading;
+
+  // Merge fuzzy executive results with power_network results, deduped
+  const mergedPeople = (() => {
+    const seen = new Set<string>();
+    const results: any[] = [];
+
+    // Fuzzy executive matches first (higher relevance)
+    (fuzzyResults || []).forEach((r) => {
+      const key = r.name.toLowerCase();
+      if (!seen.has(key)) {
+        seen.add(key);
+        results.push({
+          id: r.id,
+          name: r.name,
+          description: r.title,
+          document_count: 0,
+          relationship_count: 0,
+          company_id: r.company_id,
+          match_type: r.match_type,
+          total_donations: r.total_donations,
+        });
+      }
+    });
+
+    // Then network entities
+    (people || []).forEach((p: any) => {
+      const key = p.name?.toLowerCase();
+      if (key && !seen.has(key)) {
+        seen.add(key);
+        results.push(p);
+      }
+    });
+
+    return results;
+  })();
 
   return (
     <div className="space-y-4">
@@ -51,11 +103,19 @@ export function PeopleTab({ searchQuery }: Props) {
         </div>
       )}
 
+      {effectiveSearch && fuzzyResults && fuzzyResults.length > 0 && (
+        <div className="flex items-center gap-2 text-xs text-muted-foreground">
+          <Badge variant="outline" className="text-xs font-mono">Fuzzy</Badge>
+          Found {fuzzyResults.length} name variant match{fuzzyResults.length !== 1 ? "es" : ""}
+          {fuzzyResults.some(r => r.match_type === "nickname_match") && " (including nickname matches)"}
+        </div>
+      )}
+
       {isLoading ? (
         <div className="flex items-center justify-center py-12">
           <Loader2 className="h-6 w-6 animate-spin text-primary" />
         </div>
-      ) : people?.length === 0 ? (
+      ) : mergedPeople.length === 0 ? (
         <Card className="border-border/40">
           <CardContent className="py-12 text-center">
             <Users className="h-10 w-10 text-muted-foreground/40 mx-auto mb-3" />
@@ -66,7 +126,7 @@ export function PeopleTab({ searchQuery }: Props) {
         </Card>
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
-          {people?.map((person: any) => (
+          {mergedPeople.map((person: any) => (
             <Card key={person.id} className="border-border/30 hover:border-primary/30 transition-colors">
               <CardContent className="p-4">
                 <div className="flex items-start justify-between">
@@ -82,6 +142,16 @@ export function PeopleTab({ searchQuery }: Props) {
                     {person.aliases?.length > 0 && (
                       <p className="text-muted-foreground text-xs mt-1 font-mono">
                         aka: {person.aliases.join(", ")}
+                      </p>
+                    )}
+                    {person.match_type && (
+                      <Badge variant="secondary" className="text-[10px] mt-1">
+                        {person.match_type === "nickname_match" ? "Nickname match" : "Fuzzy match"}
+                      </Badge>
+                    )}
+                    {person.total_donations > 0 && (
+                      <p className="text-xs text-muted-foreground mt-1 font-mono">
+                        ${person.total_donations.toLocaleString()} in donations
                       </p>
                     )}
                   </div>

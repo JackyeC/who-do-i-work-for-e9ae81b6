@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { motion, AnimatePresence } from "framer-motion";
 import { Eye } from "lucide-react";
+import { decodeEscapes } from "@/lib/ticker-filters";
 
 interface ScanEvent {
   id: string;
@@ -38,6 +39,7 @@ export function LiveActivityTicker() {
         { event: "INSERT", schema: "public", table: "company_scan_events" },
         (payload) => {
           const newEvent = payload.new as ScanEvent;
+          newEvent.company_name = decodeEscapes(newEvent.company_name);
           setEvents((prev) => [newEvent, ...prev].slice(0, 50));
           setTotalToday((prev) => prev + 1);
         }

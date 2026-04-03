@@ -93,7 +93,7 @@ export function ValuesCompanyCard({ company, signals, evidence, lensLabel, hasCo
           <div className="flex items-start justify-between gap-4 mb-3">
             <div>
               <Link
-                to={`/company/${company.slug}`}
+                to={`/dossier/${company.slug}`}
                 className="text-base font-semibold text-foreground hover:text-primary transition-colors font-display"
               >
                 {company.name}
@@ -193,7 +193,7 @@ export function ValuesCompanyCard({ company, signals, evidence, lensLabel, hasCo
                 {expanded ? "Show less" : `See the sources (${evidence.length})`}
               </Button>
             )}
-            <Link to={`/company/${company.slug}`}>
+            <Link to={`/dossier/${company.slug}`}>
               <Button variant="ghost" size="sm" className="gap-1 text-xs">
                 {ctaCopy} <ExternalLink className="w-3 h-3" />
               </Button>

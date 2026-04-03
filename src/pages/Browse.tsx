@@ -338,7 +338,7 @@ export default function Browse() {
                             ? `Building intelligence profile for ${data.identity?.name || searchQuery}...`
                             : "Opening existing profile...",
                         });
-                        navigate(`/company/${data.slug}`);
+                        navigate(`/dossier/${data.slug}`);
                       } else {
                         throw new Error(data?.error || "Discovery failed");
                       }
@@ -366,7 +366,7 @@ export default function Browse() {
           >
             {visibleCompanies.map((company) => (
               <motion.div key={company.slug} variants={stagger.item}>
-                <Link to={`/company/${company.slug}`}>
+                <Link to={`/dossier/${company.slug}`}>
                   <Card className="group hover:shadow-md transition-all duration-150 hover:border-primary/20 cursor-pointer h-full border-border/40">
                     <CardContent className="p-3.5">
                       <div className="flex items-center justify-between gap-2">
@@ -382,9 +382,16 @@ export default function Browse() {
                       </div>
                       <div className="mt-2.5 pt-2.5 border-t border-border/30 flex items-center justify-between">
                         <EmployerClarityBadge score={company.civicFootprintScore} size="sm" />
-                        <span className="text-xs text-muted-foreground tabular-nums">
-                          {company.totalPacSpending > 0 ? formatCurrency(company.totalPacSpending) : "No PAC"}
-                        </span>
+                        <div className="flex items-center gap-2">
+                          {sortBy === "cis" && company.careerIntelligenceScore != null && (
+                            <span className="text-xs font-semibold text-primary tabular-nums">
+                              CIS {company.careerIntelligenceScore.toFixed(1)}
+                            </span>
+                          )}
+                          <span className="text-xs text-muted-foreground tabular-nums">
+                            {company.totalPacSpending > 0 ? formatCurrency(company.totalPacSpending) : "No PAC"}
+                          </span>
+                        </div>
                       </div>
                     </CardContent>
                   </Card>

@@ -1,5 +1,6 @@
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
+import { decodeEscapes, isLikelyEnglish, isUSOrEmployerRelevant } from "@/lib/ticker-filters";
 
 export interface WorkNewsArticle {
   id: string;
@@ -25,10 +26,22 @@ export function useWorkNews(limit = 50) {
       const { data, error } = await supabase
         .from("work_news")
         .select("*")
+        .eq("language", "en")
         .order("published_at", { ascending: false })
-        .limit(limit);
+        .limit(limit * 2); // over-fetch to compensate for filtering
       if (error) throw error;
-      return (data as WorkNewsArticle[]) ?? [];
+      return ((data as WorkNewsArticle[]) ?? [])
+        .map(item => ({
+          ...item,
+          headline: decodeEscapes(item.headline),
+          source_name: item.source_name ? decodeEscapes(item.source_name) : null,
+        }))
+        .filter(item =>
+          isLikelyEnglish(item.headline) &&
+          isUSOrEmployerRelevant(item.headline, item.source_name, true) &&
+          item.jackye_take !== "[FILTERED]"
+        )
+        .slice(0, limit);
     },
     staleTime: 1000 * 60 * 15, // 15 min
   });
@@ -40,7 +53,8 @@ export function useWorkNewsCount() {
     queryFn: async () => {
       const { count, error } = await supabase
         .from("work_news")
-        .select("*", { count: "exact", head: true });
+        .select("*", { count: "exact", head: true })
+        .eq("language", "en");
       if (error) throw error;
       return count ?? 0;
     },
@@ -54,11 +68,23 @@ export function useWorkNewsTicker() {
     queryFn: async () => {
       const { data, error } = await supabase
         .from("work_news")
-        .select("id, headline, source_name, category, is_controversy, published_at")
+        .select("id, headline, source_name, source_url, category, is_controversy, published_at")
+        .eq("language", "en")
+        .not("source_url", "is", null)
         .order("published_at", { ascending: false })
-        .limit(20);
+        .limit(40);
       if (error) throw error;
-      return (data as Pick<WorkNewsArticle, "id" | "headline" | "source_name" | "category" | "is_controversy" | "published_at">[]) ?? [];
+      return ((data ?? []) as Pick<WorkNewsArticle, "id" | "headline" | "source_name" | "source_url" | "category" | "is_controversy" | "published_at">[])
+        .map(item => ({
+          ...item,
+          headline: decodeEscapes(item.headline),
+          source_name: item.source_name ? decodeEscapes(item.source_name) : null,
+        }))
+        .filter(item =>
+          isLikelyEnglish(item.headline) &&
+          isUSOrEmployerRelevant(item.headline, item.source_name, true)
+        )
+        .slice(0, 20);
     },
     staleTime: 1000 * 60 * 10,
   });

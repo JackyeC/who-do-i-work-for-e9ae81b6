@@ -96,6 +96,63 @@ const COMPANY_SLUG_MAP: Record<string, string> = {
   // Add more as your companies table grows
 };
 
+// ─── Content quality gates (English-only, US/AI/world-scale focus) ───
+
+const NON_LATIN_RE = /[\u0400-\u04FF\u0500-\u052F\u0600-\u06FF\u0750-\u077F\u0590-\u05FF\u0900-\u097F\u0980-\u09FF\u0E00-\u0E7F\u1100-\u11FF\u3000-\u9FFF\uAC00-\uD7AF\uF900-\uFAFF\u10A0-\u10FF\u0530-\u058F]/;
+const ROMANCE_MARKERS_SERVER = [
+  /\b(país|empregos?|brasileiros?|trabalho|governo|milhares|milhões|promete|saem|vistos?|semanas?)\b/gi,
+  /\b(según|también|durante|gobierno|trabajo|empleos?|millones|pueden|después|mientras)\b/gi,
+  /\b(aussi|gouvernement|travail|emplois?|nouveau|peuvent|après|pendant|depuis|cette)\b/gi,
+];
+const FOREIGN_LIFESTYLE_RE = /\b(visa[s]?\s+(that|which|para|pour)|jobs?\s+abroad|work\s+abroad|move\s+to\s+(europe|portugal|spain|bali|dubai)|digital\s+nomad|expat\s+(life|jobs))\b/i;
+const NON_US_DOMAINS_SET = new Set([
+  "watoday.com.au", "ibtimes.co.uk", "hcamag.com", "colombogazette.com",
+  "demokraatti.fi", "di.se", "etnews.com", "sunstar.com.ph",
+  "terra.com.br", "channelnewsasia.com", "bbc.co.uk", "theguardian.com",
+  "g1.globo.com", "globo.com", "uol.com.br", "folha.uol.com.br",
+  "lemonde.fr", "elpais.com", "spiegel.de", "corriere.it",
+]);
+
+function passesContentGates(title: string, source?: string | null): boolean {
+  if (!title || title.length < 3) return false;
+  if (NON_LATIN_RE.test(title)) return false;
+  const slavic = title.match(/[łąęśźżćńřůțșđ]/gi);
+  if (slavic && slavic.length >= 2) return false;
+  const ext = title.match(/[\u00C0-\u024F]/g);
+  if (ext && ext.length / title.length > 0.06) return false;
+  const ascii = title.match(/[\x20-\x7E]/g);
+  if (!ascii || ascii.length / title.length < 0.75) return false;
+  let romanceHits = 0;
+  for (const p of ROMANCE_MARKERS_SERVER) {
+    const m = title.match(p);
+    if (m) romanceHits += m.length;
+  }
+  if (romanceHits >= 3) return false;
+  if (FOREIGN_LIFESTYLE_RE.test(title)) return false;
+  if (source && NON_US_DOMAINS_SET.has(source.toLowerCase())) return false;
+  return true;
+}
+
+function toValidatedWorkNewsRow(n: any) {
+  if (!passesContentGates(n.title, n.source)) return null;
+
+  return {
+    headline: n.title,
+    source_name: n.source,
+    source_url: n.source_url,
+    published_at: n.published_at,
+    category: n.category || "general",
+    themes: [...(n.value_tags || []), ...(n.industry_tags || [])],
+    is_controversy: (n.tags || []).some((t: string) =>
+      ["lawsuit", "whistleblower", "osha", "nlrb", "eeoc", "strike"].includes(t)
+    ),
+    controversy_type: null,
+    sentiment_score: n.importance_score > 0.7 ? 0.3 : 0.5,
+    tone_label: n.importance_score > 0.7 ? "Alert" : "Neutral",
+    language: "en",
+  };
+}
+
 Deno.serve(async (req: Request) => {
   try {
     const supabase = createClient(SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY);
@@ -117,8 +174,8 @@ Deno.serve(async (req: Request) => {
     const tickerNews = await fetchTickerAsNews(supabase);
     newsItems.push(...tickerNews);
 
-    // Deduplicate by title similarity
-    const uniqueNews = deduplicateNews(newsItems);
+    // Deduplicate by title similarity + content quality gates
+    const uniqueNews = deduplicateNews(newsItems).filter((n: any) => passesContentGates(n.title, n.source));
 
     // Upsert into personalized_news (update existing rows to refresh published_at)
     if (uniqueNews.length > 0) {
@@ -134,30 +191,27 @@ Deno.serve(async (req: Request) => {
       }
 
       // === ALSO write to work_news (what the live ticker actually reads) ===
-      const workNewsRows = uniqueNews.map((n: any) => ({
-        headline: n.title,
-        source_name: n.source,
-        source_url: n.source_url,
-        published_at: n.published_at,
-        category: n.category || "general",
-        themes: [...(n.value_tags || []), ...(n.industry_tags || [])],
-        is_controversy: (n.tags || []).some((t: string) =>
-          ["lawsuit", "whistleblower", "osha", "nlrb", "eeoc", "strike"].includes(t)
-        ),
-        controversy_type: null,
-        sentiment_score: n.importance_score > 0.7 ? 0.3 : 0.5,
-        tone_label: n.importance_score > 0.7 ? "Alert" : "Neutral",
-      }));
+      const workNewsRows = uniqueNews.flatMap((n: any) => {
+        const validatedRow = toValidatedWorkNewsRow(n);
+        if (!validatedRow) {
+          console.log(`[news-ingestion] Rejected work_news row: "${n.title?.slice(0, 60)}" from ${n.source}`);
+          return [];
+        }
 
-      const { error: wnError } = await supabase
-        .from("work_news")
-        .upsert(workNewsRows, {
-          onConflict: "headline",
-          ignoreDuplicates: true,
-        });
+        return [validatedRow];
+      });
 
-      if (wnError) {
-        console.error("Insert work_news error:", wnError);
+      if (workNewsRows.length > 0) {
+        const { error: wnError } = await supabase
+          .from("work_news")
+          .upsert(workNewsRows, {
+            onConflict: "headline",
+            ignoreDuplicates: true,
+          });
+
+        if (wnError) {
+          console.error("Insert work_news error:", wnError);
+        }
       }
     }
 

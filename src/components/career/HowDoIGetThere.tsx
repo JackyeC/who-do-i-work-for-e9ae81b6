@@ -311,7 +311,7 @@ export function HowDoIGetThere() {
               {suggestedCompanies.map((match: any) => (
                 <a
                   key={match.companies.id}
-                  href={`/company/${match.companies.slug}`}
+                  href={`/dossier/${match.companies.slug}`}
                   className="flex items-center gap-3 p-3 rounded-lg bg-muted/30 hover:bg-muted/50 transition-colors"
                 >
                   <Building2 className="w-5 h-5 text-primary shrink-0" />

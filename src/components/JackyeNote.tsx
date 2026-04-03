@@ -47,7 +47,7 @@ export function JackyeNote(props: JackyeNoteProps) {
       items.push({ text: `${props.governmentContracts} government contract(s) identified`, icon: Shield });
     }
     if (props.darkMoneyCount > 0) {
-      items.push({ text: `${props.darkMoneyCount} dark money connection(s) detected`, icon: AlertTriangle });
+      items.push({ text: `${props.darkMoneyCount} non-disclosed contribution channel(s) detected`, icon: AlertTriangle });
     }
     if (props.revolvingDoorCount > 0) {
       items.push({ text: `${props.revolvingDoorCount} revolving door connection(s) flagged`, icon: Users });
@@ -83,9 +83,9 @@ export function JackyeNote(props: JackyeNoteProps) {
 
     if (props.darkMoneyCount > 0 || props.revolvingDoorCount > 0) {
       const connParts: string[] = [];
-      if (props.darkMoneyCount > 0) connParts.push(`${props.darkMoneyCount} dark money connection(s)`);
+      if (props.darkMoneyCount > 0) connParts.push(`${props.darkMoneyCount} non-disclosed contribution channel(s)`);
       if (props.revolvingDoorCount > 0) connParts.push(`${props.revolvingDoorCount} revolving door link(s)`);
-      parts.push(`We've identified ${connParts.join(" and ")} in the public record.`);
+      parts.push(`Public records show ${connParts.join(" and ")}.`);
     }
 
     const gaps: string[] = [];

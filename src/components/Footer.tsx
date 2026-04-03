@@ -1,6 +1,6 @@
 import { forwardRef } from "react";
 import { Link } from "react-router-dom";
-import logoNav from "@/assets/wdiwf-logo-nav-light.png";
+import { LogoMark } from "@/components/brand/LogoMark";
 
 export const Footer = forwardRef<HTMLElement>((_, ref) => {
   return (
@@ -19,7 +19,7 @@ export const Footer = forwardRef<HTMLElement>((_, ref) => {
       {/* Row 1 — Brand + Links */}
       <div className="flex items-center justify-between flex-wrap gap-3 sm:flex-row flex-col sm:items-center items-start">
         <div className="flex items-center gap-2">
-          <img src={logoNav} alt="Who Do I Work For?" className="h-6" />
+          <LogoMark showWordmark iconSize={18} />
           <span style={{ color: 'hsl(var(--muted-foreground))', fontWeight: 400, fontSize: '0.85rem' }}> · by Jackye Clayton</span>
         </div>
         <nav className="flex items-center flex-wrap gap-5 sm:gap-5" style={{ gap: undefined }}>

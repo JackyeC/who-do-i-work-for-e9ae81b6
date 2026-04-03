@@ -1,4 +1,5 @@
 import { useWorkNewsTicker } from "@/hooks/use-work-news";
+import { useNavigate } from "react-router-dom";
 import { AlertTriangle, Newspaper, Radio } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { motion } from "framer-motion";
@@ -20,6 +21,7 @@ const CATEGORY_LABELS: Record<string, string> = {
 };
 
 export function WorkNewsTicker({ className }: WorkNewsTickerProps) {
+  const navigate = useNavigate();
   const { data: articles } = useWorkNewsTicker();
 
   if (!articles?.length) return null;
@@ -46,7 +48,16 @@ export function WorkNewsTicker({ className }: WorkNewsTickerProps) {
             }}
           >
             {doubled.map((article, i) => (
-              <span key={`${article.id}-${i}`} className="inline-flex items-center gap-2 text-xs">
+              <button
+                key={`${article.id}-${i}`}
+                onClick={() => {
+                  navigate(`/newsletter#story-${article.id}`);
+                  setTimeout(() => {
+                    document.getElementById(`story-${article.id}`)?.scrollIntoView({ behavior: "smooth", block: "start" });
+                  }, 100);
+                }}
+                className="inline-flex items-center gap-2 text-xs hover:text-primary transition-colors cursor-pointer bg-transparent border-none p-0"
+              >
                 {article.is_controversy ? (
                   <AlertTriangle className="w-3 h-3 text-destructive shrink-0" />
                 ) : (
@@ -56,7 +67,7 @@ export function WorkNewsTicker({ className }: WorkNewsTickerProps) {
                   {CATEGORY_LABELS[article.category] || "NEWS"}
                 </span>
                 <span className={cn(
-                  "text-foreground/90",
+                  "text-foreground/90 hover:text-primary transition-colors",
                   article.is_controversy && "text-destructive font-medium"
                 )}>
                   {article.headline.length > 80
@@ -65,7 +76,7 @@ export function WorkNewsTicker({ className }: WorkNewsTickerProps) {
                 </span>
                 <span className="text-muted-foreground/50">·</span>
                 <span className="text-muted-foreground text-xs">{article.source_name}</span>
-              </span>
+              </button>
             ))}
           </motion.div>
         </div>

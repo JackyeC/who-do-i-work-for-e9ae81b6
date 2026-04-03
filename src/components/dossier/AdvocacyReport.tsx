@@ -1,14 +1,18 @@
-import { useMemo, useState } from "react";
+import { useMemo, useState, useCallback } from "react";
+import { Link } from "react-router-dom";
 import {
   AlertTriangle, DollarSign, Users, Eye, MessageSquare,
-  CheckCircle2, MinusCircle, ArrowRight, Shield, Zap,
-  Building2, Scale, Megaphone, FileText, Heart, ChevronDown,
+  CheckCircle2, MinusCircle, ArrowRight, Shield, ShieldAlert, Zap,
+  Building2, Scale, Megaphone, FileText, Heart, ChevronDown, ExternalLink,
+  TrendingUp, TrendingDown, Minus,
 } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import { RecommendationCard } from "./RecommendationCard";
 import { ValuesAlignmentSection } from "./ValuesAlignmentSection";
+import { EarlyInvestigationCard, EARLY_INVESTIGATION_THRESHOLD } from "./EarlyInvestigationCard";
 import { PoliticalGivingCard } from "@/components/giving/PoliticalGivingCard";
 import { ExecutiveGivingSection } from "@/components/giving/ExecutiveGivingCard";
 import { InstitutionalDNACard } from "./InstitutionalDNACard";
@@ -16,6 +20,9 @@ import { PolicyScoreCard } from "@/components/policy-intelligence/PolicyScoreCar
 import { HighRiskConnectionCard } from "@/components/company/HighRiskConnectionCard";
 import { WorkforceDemographicsLayer } from "./WorkforceDemographicsLayer";
 import { EEOCCaseAlert } from "@/components/EEOCCaseAlert";
+import { SpendingRecordTable } from "./SpendingRecordTable";
+import { useEmployerReport } from "@/hooks/use-employer-report";
+import type { DonorProfile } from "@/types/ReportSchema";
 
 /* ─── Types ─── */
 interface AdvocacyReportProps {
@@ -81,10 +88,10 @@ function computeVerdict(company: AdvocacyReportProps["company"], signalCount: nu
   const hasEeoc = eeocCount > 0;
   const redFlags = [lobbyingHigh, pacHigh, clarityLow, hasEeoc, signalCount > 5].filter(Boolean).length;
 
-  if (redFlags >= 4) return { text: "ENTER WITH A PARACHUTE", color: "text-destructive", bg: "bg-destructive/10 border-destructive/30", redFlagCount: redFlags };
-  if (redFlags >= 2) return { text: "PROCEED WITH CAUTION", color: "text-civic-yellow", bg: "bg-civic-yellow/10 border-civic-yellow/30", redFlagCount: redFlags };
-  if (redFlags >= 1) return { text: "MIXED SIGNALS — DIG DEEPER", color: "text-civic-blue", bg: "bg-civic-blue/10 border-civic-blue/30", redFlagCount: redFlags };
-  return { text: "RELATIVELY CLEAN RECORD", color: "text-civic-green", bg: "bg-civic-green/10 border-civic-green/30", redFlagCount: 0 };
+  if (redFlags >= 4) return { text: "MULTIPLE SIGNALS PRESENT", color: "text-destructive", bg: "bg-destructive/10 border-destructive/30", redFlagCount: redFlags };
+  if (redFlags >= 2) return { text: "PATTERN WORTH WATCHING", color: "text-civic-yellow", bg: "bg-civic-yellow/10 border-civic-yellow/30", redFlagCount: redFlags };
+  if (redFlags >= 1) return { text: "MIXED SIGNALS", color: "text-civic-blue", bg: "bg-civic-blue/10 border-civic-blue/30", redFlagCount: redFlags };
+  return { text: "LIMITED SIGNALS ON RECORD", color: "text-civic-green", bg: "bg-civic-green/10 border-civic-green/30", redFlagCount: 0 };
 }
 
 function fmtMoney(n?: number | null): string {
@@ -97,17 +104,17 @@ function fmtMoney(n?: number | null): string {
 
 /* ─── CEO Memo Decoder ─── */
 const DECODER_MAP: Record<string, string> = {
-  "strategic reallocation": "Budget redirected — someone's team is losing headcount",
-  "modernization": "Automation replacing human roles",
-  "restructuring": "Layoffs, reorgs, or both",
-  "right-sizing": "Layoffs with better PR",
-  "operational efficiency": "Doing more with fewer people",
-  "people first": "Often said right before layoffs",
-  "organizational simplification": "Middle management purge",
-  "workforce optimization": "Headcount reduction",
-  "transformation": "Everything changes, nobody knows to what",
-  "synergies": "Post-merger job cuts",
-  "realignment": "Your team might not exist next quarter",
+  "strategic reallocation": "Budget is being redirected. Some teams will feel it.",
+  "modernization": "Often means automation is replacing certain roles.",
+  "restructuring": "Organizational changes. Could mean layoffs, reorgs, or both.",
+  "right-sizing": "Headcount reduction, described differently.",
+  "operational efficiency": "Doing more with fewer people.",
+  "people first": "Worth watching what follows this phrase.",
+  "organizational simplification": "Management layers are being removed.",
+  "workforce optimization": "Headcount reduction by another name.",
+  "transformation": "Large-scale change. Details tend to emerge slowly.",
+  "synergies": "Post-merger consolidation. Usually includes job cuts.",
+  "realignment": "Team structures may change significantly.",
 };
 
 /* ─── Section divider ─── */
@@ -128,14 +135,166 @@ function SectionDivider({ number, title, subtitle, icon: Icon }: { number: numbe
   );
 }
 
+/* ─── Active Signals Panel ─── */
+function ActiveSignalsPanel({ signalsByCategory }: { signalsByCategory: Record<string, Array<{ issue_category: string; signal_type: string; description: string; amount?: number | null; confidence_score?: number; source_url?: string }>> }) {
+  const [expandedCat, setExpandedCat] = useState<string | null>(null);
+
+  return (
+    <div className="mt-5 pt-5 border-t border-border/30">
+      <p className="font-mono text-[10px] text-primary tracking-[0.3em] uppercase mb-3">Active Signals</p>
+      <div className="space-y-2">
+        {Object.entries(signalsByCategory).slice(0, 8).map(([cat, signals]) => {
+          const isExpanded = expandedCat === cat;
+          const isHot = signals.length > 3;
+          const _firstSource = signals.find(s => (s as any).source_url);
+          const firstSourceUrl = _firstSource ? (_firstSource as any).source_url : undefined;
+
+          return (
+            <div key={cat}>
+              <button
+                onClick={() => setExpandedCat(isExpanded ? null : cat)}
+                className={cn(
+                  "w-full flex items-start gap-3 p-3 border-l-2 rounded-r-lg text-left transition-colors cursor-pointer",
+                  isHot ? "border-destructive/50" : "border-[hsl(var(--civic-yellow))]/50",
+                  isExpanded
+                    ? (isHot ? "bg-destructive/10" : "bg-[hsl(var(--civic-yellow))]/10")
+                    : (isHot ? "bg-destructive/5 hover:bg-destructive/10" : "bg-[hsl(var(--civic-yellow))]/5 hover:bg-[hsl(var(--civic-yellow))]/10"),
+                )}
+              >
+                <AlertTriangle className={cn("w-4 h-4 mt-0.5 shrink-0", isHot ? "text-destructive" : "text-[hsl(var(--civic-yellow))]")} />
+                <div className="flex-1 min-w-0">
+                  <p className="text-sm font-semibold text-foreground">{cat}</p>
+                  <p className="text-xs text-muted-foreground">{signals.length} signal{signals.length > 1 ? "s" : ""} — {signals[0].description?.slice(0, 100)}</p>
+                </div>
+                <div className="flex items-center gap-2 shrink-0">
+                  <span className="text-[10px] font-mono text-primary">{isExpanded ? "Hide" : "See signals"}</span>
+                  <ChevronDown className={cn("w-4 h-4 text-primary transition-transform", isExpanded && "rotate-180")} />
+                </div>
+              </button>
+
+              {isExpanded && (
+                <div className="ml-5 border-l border-border/30 pl-4 py-2 space-y-2 animate-in slide-in-from-top-2 duration-200">
+                  {signals.map((sig, i) => (
+                    <div key={i} className="flex items-start gap-2 p-2.5 rounded bg-muted/30 border border-border/20">
+                      <Zap className="w-3 h-3 mt-0.5 text-primary shrink-0" />
+                      <div className="flex-1 min-w-0">
+                        <p className="text-xs font-medium text-foreground">{sig.signal_type?.replace(/_/g, " ")}</p>
+                        <p className="text-xs text-muted-foreground leading-relaxed">{sig.description}</p>
+                        {sig.amount != null && sig.amount > 0 && (
+                          <Badge variant="outline" className="mt-1 text-[10px]">{fmtMoney(sig.amount)}</Badge>
+                        )}
+                      </div>
+                      {(sig as any).source_url && (
+                        <a
+                          href={(sig as any).source_url}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="shrink-0"
+                          onClick={(e) => e.stopPropagation()}
+                        >
+                          <span className="text-[10px] text-primary hover:underline flex items-center gap-1">
+                            Receipt <ExternalLink className="w-3 h-3" />
+                          </span>
+                        </a>
+                      )}
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
+          );
+        })}
+      </div>
+    </div>
+  );
+}
+
+/* ─── Donor Signals Panel ─── */
+function DonorSignalsPanel({ donors }: { donors: DonorProfile[] }) {
+  const [expandedIdx, setExpandedIdx] = useState<number | null>(null);
+
+  return (
+    <div>
+      <p className="font-mono text-[10px] text-primary tracking-[0.3em] uppercase mb-2">Top Political Donors in Leadership</p>
+      <div className="space-y-2">
+        {donors.slice(0, 5).map((donor, i) => {
+          const isExpanded = expandedIdx === i;
+          return (
+            <div key={i}>
+              <button
+                onClick={() => setExpandedIdx(isExpanded ? null : i)}
+                className={cn(
+                  "w-full flex items-center justify-between p-3 rounded-lg text-left transition-colors cursor-pointer border",
+                  isExpanded
+                    ? "bg-primary/10 border-primary/20"
+                    : "bg-muted/10 border-border/20 hover:bg-primary/5 hover:border-primary/15"
+                )}
+              >
+                <div>
+                  <p className="text-sm font-semibold text-foreground">{donor.name}</p>
+                  {donor.aliases.length > 1 && (
+                    <p className="text-[10px] text-muted-foreground/60 font-mono">
+                      aka {donor.aliases.filter(a => a !== donor.name).join(", ")}
+                    </p>
+                  )}
+                </div>
+                <div className="flex items-center gap-2">
+                  <Badge variant="outline" className="font-mono text-xs">{fmtMoney(donor.total_donated)} donated</Badge>
+                  <span className="text-[10px] font-mono text-primary">{isExpanded ? "Hide" : "Details"}</span>
+                  <ChevronDown className={cn("w-4 h-4 text-primary transition-transform", isExpanded && "rotate-180")} />
+                </div>
+              </button>
+
+              {isExpanded && (
+                <div className="ml-4 border-l border-border/30 pl-4 py-3 space-y-2 animate-in slide-in-from-top-2 duration-200">
+                  <div className="flex items-start gap-2 p-2.5 rounded bg-muted/30 border border-border/20">
+                    <DollarSign className="w-3.5 h-3.5 mt-0.5 text-primary shrink-0" />
+                    <div className="flex-1 min-w-0">
+                      <p className="text-xs font-medium text-foreground">Total Disclosed Giving</p>
+                      <p className="text-xs text-muted-foreground">{fmtMoney(donor.total_donated)} in FEC-reported individual contributions</p>
+                    </div>
+                  </div>
+                  {donor.top_recipient && (
+                    <div className="flex items-start gap-2 p-2.5 rounded bg-muted/30 border border-border/20">
+                      <Users className="w-3.5 h-3.5 mt-0.5 text-primary shrink-0" />
+                      <div className="flex-1 min-w-0">
+                        <p className="text-xs font-medium text-foreground">Top Recipient</p>
+                        <p className="text-xs text-muted-foreground">{donor.top_recipient}</p>
+                      </div>
+                    </div>
+                  )}
+                  <div className="flex items-center gap-2 pt-1">
+                    <a
+                      href={donor.raw_fec_link}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      onClick={(e) => e.stopPropagation()}
+                      className="text-[10px] text-primary hover:underline flex items-center gap-1"
+                    >
+                      Full FEC record <ExternalLink className="w-3 h-3" />
+                    </a>
+                  </div>
+                </div>
+              )}
+            </div>
+          );
+        })}
+      </div>
+    </div>
+  );
+}
+
 /* ─── Main Component ─── */
 export function AdvocacyReport({ company, executives = [], contracts = [], issueSignals = [], publicStances = [], eeocCases = [] }: AdvocacyReportProps) {
   const [decoderOpen, setDecoderOpen] = useState(false);
+  
 
+  const report = useEmployerReport(company as any, executives as any, contracts as any, issueSignals as any);
+
+  const isEarlyInvestigation = issueSignals.length < EARLY_INVESTIGATION_THRESHOLD;
   const verdict = useMemo(() => computeVerdict(company, issueSignals.length, eeocCases.length), [company, issueSignals.length, eeocCases.length]);
   const totalContractValue = useMemo(() => contracts.reduce((s, c) => s + (c.contract_value ?? 0), 0), [contracts]);
   const controversialContracts = useMemo(() => contracts.filter(c => c.controversy_flag), [contracts]);
-  const topDonors = useMemo(() => executives.filter(e => e.total_donations > 0).sort((a, b) => b.total_donations - a.total_donations).slice(0, 5), [executives]);
   const gapStances = useMemo(() => publicStances.filter(s => s.gap_severity === "Large" || s.gap_severity === "Medium").slice(0, 8), [publicStances]);
   const signalsByCategory = useMemo(() => {
     const map: Record<string, typeof issueSignals> = {};
@@ -147,24 +306,58 @@ export function AdvocacyReport({ company, executives = [], contracts = [], issue
     return map;
   }, [issueSignals]);
 
+  // THE CALL banner color from integrity_score
+  const callColor = report
+    ? report.integrity_score < 40
+      ? { bg: "bg-destructive/10 border-destructive/40", text: "text-destructive", label: "CRITICAL" }
+      : report.integrity_score <= 70
+      ? { bg: "bg-civic-yellow/10 border-civic-yellow/40", text: "text-civic-yellow", label: "WATCH" }
+      : { bg: "bg-civic-green/10 border-civic-green/40", text: "text-civic-green", label: "FAIR" }
+    : null;
+
+  // Deduplicated donors from report
+  const dedupedDonors = report?.political_donors ?? [];
+
   return (
     <div className="space-y-8">
+      
 
-      {/* ═══ 1. THE VERDICT ═══ */}
-      <div className={cn("border-l-4 p-6 md:p-8", verdict.bg)}>
-        <p className="font-mono text-[10px] tracking-[0.35em] uppercase text-muted-foreground mb-2">WDIWF VERDICT</p>
-        <h2 className={cn("text-xl md:text-2xl font-black tracking-tight", verdict.color)}>{verdict.text}</h2>
-        {company.jackye_insight && (
-          <p className="mt-3 text-sm text-foreground/80 leading-relaxed italic">"{company.jackye_insight}"</p>
-        )}
-        <p className="mt-3 text-xs text-muted-foreground">
-          Based on {issueSignals.length} signal{issueSignals.length !== 1 ? "s" : ""}, {eeocCases.length} enforcement action{eeocCases.length !== 1 ? "s" : ""}, and public spending records.
-        </p>
-      </div>
+      {/* ═══ 1. THE VERDICT (or Early Investigation) ═══ */}
+      {isEarlyInvestigation ? (
+        <EarlyInvestigationCard
+          companyName={company.name}
+          signalCount={issueSignals.length}
+          hasExecutives={executives.length > 0}
+          hasContracts={contracts.length > 0}
+          hasPublicStances={publicStances.length > 0}
+          hasEeocCases={eeocCases.length > 0}
+        />
+      ) : callColor && (
+        <div className={cn("border-l-4 p-6 md:p-8", callColor.bg)}>
+          <div className="flex items-center justify-between mb-2">
+            <p className="font-mono text-[10px] tracking-[0.35em] uppercase text-muted-foreground">THE CALL</p>
+            <Badge className={cn("font-mono text-xs font-black tracking-wider", callColor.text, callColor.bg)}>
+              {callColor.label}
+            </Badge>
+          </div>
+          <h2 className={cn("text-xl md:text-2xl font-black tracking-tight", callColor.text)}>{verdict.text}</h2>
+          {report && (
+            <p className="mt-2 text-xs text-muted-foreground font-mono">
+              Integrity Score: {report.integrity_score}/100
+            </p>
+          )}
+          {company.jackye_insight && (
+            <p className="mt-3 text-sm text-foreground/80 leading-relaxed italic">"{company.jackye_insight}"</p>
+          )}
+          <p className="mt-3 text-xs text-muted-foreground">
+            Based on {issueSignals.length} signal{issueSignals.length !== 1 ? "s" : ""}, {eeocCases.length} enforcement action{eeocCases.length !== 1 ? "s" : ""}, and public spending records.
+          </p>
+        </div>
+      )}
 
       {/* ═══ 2. COMPANY SUMMARY ═══ */}
       <section>
-        <SectionDivider number={1} icon={Building2} title="Company Summary" subtitle="The basics before the receipts" />
+        <SectionDivider number={1} icon={Building2} title="Company Summary" subtitle="What is visible in the public record" />
         <div className="pl-11">
           <div className="flex flex-wrap gap-2 mb-3">
             <Badge variant="secondary" className="text-xs font-mono">{company.industry}</Badge>
@@ -181,7 +374,7 @@ export function AdvocacyReport({ company, executives = [], contracts = [], issue
       {/* ═══ 3. WHAT THEY SAY ═══ */}
       {publicStances.length > 0 && (
         <section>
-          <SectionDivider number={2} icon={Megaphone} title="What They Say" subtitle="Their words — from public filings and corporate communications" />
+          <SectionDivider number={2} icon={Megaphone} title="Public Positioning" subtitle="What they have stated publicly" />
           <div className="pl-11 space-y-2">
             {publicStances.slice(0, 8).map((s, i) => (
               <div key={i} className="p-3 border-l-2 border-muted-foreground/20 bg-muted/5">
@@ -199,76 +392,20 @@ export function AdvocacyReport({ company, executives = [], contracts = [], issue
 
       {/* ═══ 4. WHAT THEY DO ═══ */}
       <section>
-        <SectionDivider number={3} icon={DollarSign} title="What They Do" subtitle="Follow the money, follow the spend" />
+        <SectionDivider number={3} icon={DollarSign} title="Spending Record" subtitle="Where the money goes, based on public filings" />
         <div className="pl-11">
-          <div className="overflow-x-auto">
-            <table className="w-full text-sm">
-              <thead>
-                <tr className="border-b border-border/40">
-                  <th className="text-left py-2 pr-4 font-mono text-[10px] text-muted-foreground uppercase tracking-wider">Metric</th>
-                  <th className="text-left py-2 pr-4 font-mono text-[10px] text-muted-foreground uppercase tracking-wider">Amount</th>
-                  <th className="text-left py-2 font-mono text-[10px] text-muted-foreground uppercase tracking-wider">So What?</th>
-                </tr>
-              </thead>
-              <tbody className="divide-y divide-border/20">
-                <tr>
-                  <td className="py-3 pr-4 font-medium text-foreground">Lobbying</td>
-                  <td className="py-3 pr-4 font-mono font-bold text-foreground">{fmtMoney(company.lobbying_spend)}</td>
-                  <td className="py-3 text-muted-foreground text-xs leading-snug">
-                    {(company.lobbying_spend ?? 0) > 1_000_000 ? "Heavy political spend — actively shaping policy." : (company.lobbying_spend ?? 0) > 0 ? "Moderate lobbying presence." : "No lobbying spend detected."}
-                  </td>
-                </tr>
-                <tr>
-                  <td className="py-3 pr-4 font-medium text-foreground">PAC Spending</td>
-                  <td className="py-3 pr-4 font-mono font-bold text-foreground">{fmtMoney(company.total_pac_spending)}</td>
-                  <td className="py-3 text-muted-foreground text-xs leading-snug">
-                    {(company.total_pac_spending ?? 0) > 500_000 ? "Significant PAC activity — check which candidates they fund." : (company.total_pac_spending ?? 0) > 0 ? "Some political giving on record." : "No PAC spending detected."}
-                  </td>
-                </tr>
-                <tr>
-                  <td className="py-3 pr-4 font-medium text-foreground">Gov Contracts</td>
-                  <td className="py-3 pr-4 font-mono font-bold text-foreground">{fmtMoney(totalContractValue)}</td>
-                  <td className="py-3 text-muted-foreground text-xs leading-snug">
-                    {totalContractValue > 0 ? `${contracts.length} contract${contracts.length > 1 ? "s" : ""}${controversialContracts.length > 0 ? ` — ${controversialContracts.length} flagged.` : "."}` : "No federal contracts found."}
-                  </td>
-                </tr>
-                {(company.subsidies_received ?? 0) > 0 && (
-                  <tr>
-                    <td className="py-3 pr-4 font-medium text-foreground">Subsidies</td>
-                    <td className="py-3 pr-4 font-mono font-bold text-foreground">{fmtMoney(company.subsidies_received)}</td>
-                    <td className="py-3 text-muted-foreground text-xs leading-snug">Public money received — worth checking against layoff history.</td>
-                  </tr>
-                )}
-                {company.effective_tax_rate && (
-                  <tr>
-                    <td className="py-3 pr-4 font-medium text-foreground">Eff. Tax Rate</td>
-                    <td className="py-3 pr-4 font-mono font-bold text-foreground">{company.effective_tax_rate}</td>
-                    <td className="py-3 text-muted-foreground text-xs leading-snug">Compare against statutory rate to assess tax strategy.</td>
-                  </tr>
-                )}
-              </tbody>
-            </table>
-          </div>
+          {report && (
+            <SpendingRecordTable
+              metrics={report.spending_record}
+              effectiveTaxRate={company.effective_tax_rate}
+              companyName={company.name}
+              companySlug={company.slug}
+            />
+          )}
 
-          {/* Active signals by category */}
+          {/* Active signals by category — interactive expandable list */}
           {Object.keys(signalsByCategory).length > 0 && (
-            <div className="mt-5 pt-5 border-t border-border/30">
-              <p className="font-mono text-[10px] text-primary tracking-[0.3em] uppercase mb-3">Active Signals</p>
-              <div className="space-y-2">
-                {Object.entries(signalsByCategory).slice(0, 6).map(([cat, signals]) => (
-                  <div key={cat} className={cn(
-                    "flex items-start gap-3 p-3 border-l-2",
-                    signals.length > 3 ? "border-destructive/50 bg-destructive/5" : "border-civic-yellow/50 bg-civic-yellow/5"
-                  )}>
-                    <AlertTriangle className={cn("w-4 h-4 mt-0.5 shrink-0", signals.length > 3 ? "text-destructive" : "text-civic-yellow")} />
-                    <div>
-                      <p className="text-sm font-semibold text-foreground">{cat}</p>
-                      <p className="text-xs text-muted-foreground">{signals.length} signal{signals.length > 1 ? "s" : ""} — {signals[0].description?.slice(0, 120)}</p>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            </div>
+            <ActiveSignalsPanel signalsByCategory={signalsByCategory} />
           )}
         </div>
       </section>
@@ -276,7 +413,7 @@ export function AdvocacyReport({ company, executives = [], contracts = [], issue
       {/* ═══ 5. INTEGRITY GAP ═══ */}
       {gapStances.length > 0 && (
         <section>
-          <SectionDivider number={4} icon={Eye} title="Integrity Gap" subtitle="Where their words and their record don't match" />
+          <SectionDivider number={4} icon={Eye} title="Stance-Record Gap" subtitle="Where public positioning and documented activity diverge" />
           <div className="pl-11 space-y-3">
             {gapStances.map((s, i) => (
               <div key={i} className={cn(
@@ -303,11 +440,11 @@ export function AdvocacyReport({ company, executives = [], contracts = [], issue
       {/* ═══ 6. LABOR IMPACT ═══ */}
       {eeocCases.length > 0 && (
         <section>
-          <SectionDivider number={5} icon={Scale} title="Labor Impact" subtitle="Enforcement actions and complaints on the record" />
+          <SectionDivider number={5} icon={Scale} title="Enforcement Record" subtitle="Formal actions and complaints documented in public records" />
           <div className="pl-11">
             <EEOCCaseAlert cases={eeocCases as any} />
             <p className="mt-3 text-xs text-muted-foreground leading-relaxed italic">
-              Enforcement actions indicate a formal complaint was investigated. Patterns across multiple filings are worth noting — single filings less so.
+              An enforcement action means a formal complaint was investigated. A pattern across multiple filings is more meaningful than a single filing.
             </p>
           </div>
         </section>
@@ -315,7 +452,7 @@ export function AdvocacyReport({ company, executives = [], contracts = [], issue
 
       {/* ═══ 7. SAFETY & WORKFORCE RISK ═══ */}
       <section>
-        <SectionDivider number={6} icon={Users} title="Safety & Workforce Risk" subtitle="Demographics, stability, and hiring patterns" />
+        <SectionDivider number={6} icon={Users} title="Workforce Signals" subtitle="Demographics, stability, and hiring patterns" />
         <div className="pl-11">
           <WorkforceDemographicsLayer companyId={company.id} companyName={company.name} />
         </div>
@@ -323,23 +460,10 @@ export function AdvocacyReport({ company, executives = [], contracts = [], issue
 
       {/* ═══ 8. POLITICAL & POLICY ALIGNMENT ═══ */}
       <section>
-        <SectionDivider number={7} icon={Megaphone} title="Political & Policy Alignment" subtitle="PAC spending, lobbying, executive donations" />
+        <SectionDivider number={7} icon={Megaphone} title="Political Activity" subtitle="PAC spending, lobbying, and executive contributions" />
         <div className="pl-11 space-y-4">
-          {topDonors.length > 0 && (
-            <div>
-              <p className="font-mono text-[10px] text-primary tracking-[0.3em] uppercase mb-2">Top Political Donors in Leadership</p>
-              <div className="space-y-2">
-                {topDonors.map((exec, i) => (
-                  <div key={i} className="flex items-center justify-between p-3 bg-muted/10 border border-border/20">
-                    <div>
-                      <p className="text-sm font-semibold text-foreground">{exec.name}</p>
-                      <p className="text-xs text-muted-foreground">{exec.title}</p>
-                    </div>
-                    <Badge variant="outline" className="font-mono text-xs">{fmtMoney(exec.total_donations)} donated</Badge>
-                  </div>
-                ))}
-              </div>
-            </div>
+          {dedupedDonors.length > 0 && (
+            <DonorSignalsPanel donors={dedupedDonors} />
           )}
           <PoliticalGivingCard companyId={company.id} companyName={company.name} companySlug={company.slug} />
         </div>
@@ -347,7 +471,7 @@ export function AdvocacyReport({ company, executives = [], contracts = [], issue
 
       {/* ═══ 9. WHAT THEY FUND & SUPPORT ═══ */}
       <section>
-        <SectionDivider number={8} icon={Heart} title="What They Fund & Support" subtitle="Institutional DNA, policy scores, and network connections" />
+        <SectionDivider number={8} icon={Heart} title="Institutional Affiliations" subtitle="What they fund, support, and are connected to" />
         <div className="pl-11 space-y-4">
           <ExecutiveGivingSection companyId={company.id} companyName={company.name} companySlug={company.slug} />
           <InstitutionalDNACard companyId={company.id} companyName={company.name} />
@@ -358,8 +482,8 @@ export function AdvocacyReport({ company, executives = [], contracts = [], issue
 
       {/* ═══ 10. WHAT THIS MEANS FOR YOU ═══ */}
       <section>
-        <SectionDivider number={9} icon={Shield} title="What This Means For You" subtitle="How this company lines up with what you said matters" />
-        <div className="pl-11">
+        <SectionDivider number={9} icon={Shield} title="What This Means for You" subtitle="How these patterns relate to what you care about" />
+        <div className="pl-11 space-y-4">
           <ValuesAlignmentSection
             companyName={company.name}
             issueSignals={issueSignals}
@@ -368,18 +492,28 @@ export function AdvocacyReport({ company, executives = [], contracts = [], issue
             lobbyingSpend={company.lobbying_spend ?? 0}
             pacSpending={company.total_pac_spending ?? 0}
           />
+          <Link
+            to={`/alignment/${company.slug}`}
+            className="inline-flex items-center gap-2 text-sm font-semibold text-primary hover:text-primary/80 transition-colors group"
+          >
+            <ShieldAlert className="w-4 h-4" />
+            View Full Alignment Report
+            <ArrowRight className="w-3.5 h-3.5 group-hover:translate-x-0.5 transition-transform" />
+          </Link>
         </div>
       </section>
 
-      {/* ═══ 11. THE CALL ═══ */}
-      <RecommendationCard
-        redFlagCount={verdict.redFlagCount}
-        gapCount={gapStances.length}
-        eeocCount={eeocCases.length}
-        signalCount={issueSignals.length}
-        hasValuesConflicts={false}
-        companyName={company.name}
-      />
+      {/* ═══ 11. THE CALL (hidden during early investigation) ═══ */}
+      {!isEarlyInvestigation && (
+        <RecommendationCard
+          redFlagCount={verdict.redFlagCount}
+          gapCount={gapStances.length}
+          eeocCount={eeocCases.length}
+          signalCount={issueSignals.length}
+          hasValuesConflicts={false}
+          companyName={company.name}
+        />
+      )}
 
       {/* ═══ 12. CEO MEMO DECODER (collapsed) ═══ */}
       <div className="border border-border/30">
@@ -413,34 +547,11 @@ export function AdvocacyReport({ company, executives = [], contracts = [], issue
         )}
       </div>
 
-      {/* ═══ 13. 3 HARD QUESTIONS ═══ */}
-      <div className="border-l-4 border-primary/40 bg-primary/5 p-6">
-        <SectionDivider number={10} icon={Shield} title="3 Hard Questions for Your Interview" subtitle="Ask these to force transparency from the hiring team" />
-        <div className="pl-11 space-y-3">
-          <ActionItem type="ask" text={`"How does leadership communicate major organizational changes before they hit the press?"`} />
-          {(company.lobbying_spend ?? 0) > 0 ? (
-            <ActionItem type="ask" text={`"${company.name} has ${fmtMoney(company.lobbying_spend)} in lobbying spend. How does the company's policy work affect the stability of this team?"`} />
-          ) : (
-            <ActionItem type="ask" text={`"What does stability look like for this team over the next 18 to 24 months?"`} />
-          )}
-          {eeocCases.length > 0 ? (
-            <ActionItem type="ask" text={`"I noticed ${eeocCases.length > 1 ? "multiple enforcement actions" : "an enforcement action"} in your company's record. What changed internally as a result?"`} />
-          ) : (
-            <ActionItem type="ask" text={`"Can you walk me through how this role's KPIs have changed in the last 6 months?"`} />
-          )}
-        </div>
-        <div className="pl-11 mt-4 pt-4 border-t border-border/20 space-y-2">
-          <p className="font-mono text-[10px] text-muted-foreground tracking-[0.3em] uppercase mb-2">Also on your radar</p>
-          <ActionItem type="watch" text={`Watch for leadership changes at ${company.name} — executive turnover patterns signal strategic instability.`} />
-          {(company.lobbying_spend ?? 0) > 0 && (
-            <ActionItem type="check" text={`Check which policies ${company.name} is lobbying on — ${fmtMoney(company.lobbying_spend)} in spend means they are actively shaping the rules.`} />
-          )}
-        </div>
-      </div>
+      {/* Interview questions moved to HardInterviewQuestions — rendered outside paywall */}
 
       {/* ── AI ANALYSIS NOTICE ── */}
       <p className="text-[10px] text-muted-foreground/60 text-center font-mono tracking-wider uppercase pt-4">
-        Signal-based interpretation from public records · Not legal or career advice · Review evidence and make the call that's right for you
+        Based on public records · Not legal or career advice · Review the evidence and decide what matters to you
       </p>
     </div>
   );

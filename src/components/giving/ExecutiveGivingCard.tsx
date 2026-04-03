@@ -161,7 +161,7 @@ function ExecCard({ exec, recipients, companyName, companySlug, locked }: {
       {!locked && (
         <div className="px-4 pb-3">
           <GivingShareRow
-            permalink={`https://wdiwf.jackyeclayton.com/company/${companySlug}#giving-${execSlug}`}
+            permalink={`https://wdiwf.jackyeclayton.com/dossier/${companySlug}#giving-${execSlug}`}
             plainText={plainText}
             tweetText={`${exec.name} at ${companyName} gave $${total.toLocaleString()} in disclosed political donations. Public FEC record. via @wdiwf`}
             companySlug={companySlug}

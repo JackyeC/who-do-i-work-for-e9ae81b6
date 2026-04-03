@@ -287,7 +287,7 @@ export default function Talent() {
                   <div className="flex items-start justify-between mb-4">
                     <Avatar className="w-12 h-12">
                       <AvatarFallback
-                        className="text-sm font-bold text-white"
+                        className="text-sm font-bold text-primary-foreground"
                         style={{ backgroundColor: c.color }}
                       >
                         {c.initials}

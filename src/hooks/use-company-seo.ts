@@ -19,7 +19,7 @@ export function useCompanySEO({ name, industry, state, description, slug, score 
     const desc = description
       ? `${description.slice(0, 120)}… Review political spending, lobbying, and influence signals.`
       : `Review ${name}'s political spending, lobbying activity, executive donations, and influence network. ${industry} company based in ${state}.`;
-    const url = `${BASE_URL}/company/${slug}`;
+    const url = `${BASE_URL}/dossier/${slug}`;
 
     const ogImage = getOGImageUrl({
       type: "company",

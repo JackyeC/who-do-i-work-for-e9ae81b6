@@ -1,6 +1,7 @@
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useEffect } from "react";
 import { supabase } from "@/integrations/supabase/client";
+import { decodeEscapes, isLikelyEnglish, isUSOrEmployerRelevant } from "@/lib/ticker-filters";
 
 export interface ReceiptArticle {
   id: string;
@@ -20,6 +21,7 @@ export interface ReceiptArticle {
   debate_sides: string[];
   receipt_connection: string;
   spice_level: number;
+  why_it_matters: string[] | null;
   poster_data: {
     bg: string;
     accent: string;
@@ -73,12 +75,21 @@ export function useReceiptsFeed() {
       if (error) throw error;
       // Deduplicate by headline — keep the newest entry
       const seen = new Set<string>();
-      const unique = ((data ?? []) as unknown as ReceiptArticle[]).filter((a) => {
-        const key = a.headline?.toLowerCase().trim();
-        if (seen.has(key)) return false;
-        seen.add(key);
-        return true;
-      });
+      const unique = ((data ?? []) as unknown as ReceiptArticle[])
+        .map(a => ({
+          ...a,
+          headline: a.headline ? decodeEscapes(a.headline) : a.headline,
+          source_name: a.source_name ? decodeEscapes(a.source_name) : a.source_name,
+        }))
+        .filter((a) => {
+          const key = a.headline?.toLowerCase().trim();
+          if (!key || seen.has(key)) return false;
+          seen.add(key);
+          // English-only + US/AI/world-scale relevance gate
+          if (!isLikelyEnglish(a.headline)) return false;
+          if (!isUSOrEmployerRelevant(a.headline, a.source_name, true)) return false;
+          return true;
+        });
       return unique;
     },
     staleTime: 1000 * 60 * 5,

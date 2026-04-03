@@ -272,24 +272,24 @@ export function generateSnapshotJackyeTake(
   const hiringWarning = warnings.find(w => w.key === "hiring_transparency");
 
   if (verdict === "Strong Fit") {
-    return "The receipts match the rhetoric — and in this market, that's remarkable. The transparency signals are strong across categories. Still, ask the questions below. Good character holds up under scrutiny. Facts over Feelings.";
+    return "The record aligns with the positioning — and in this market, that is notable. Transparency signals are strong across categories. Ask the questions below regardless. Institutional character holds up under scrutiny.";
   }
 
   if (verdict === "Needs Deeper Review") {
     const warningLabels = warnings.map(w => w.label.toLowerCase()).join(", ");
     if (influenceWarning && warnings.length >= 2) {
-      return `This employer knows how to write checks in DC, but when it comes to workforce transparency? Silence. That gap between spending and disclosure is a character issue. Don't let a strong offer distract from the Dirty Receipts. Run the chain first.`;
+      return `This employer invests in political access but shows gaps in workforce transparency. That disparity between influence spending and disclosure is not incidental — it is a priority statement. Verify the record before proceeding.`;
     }
-    return `The marketing is polished, but the receipts are messy — red flags in ${warningLabels}. Before you sign anything, look at the evidence trail. Human frailty is real, but so is corporate negligence. Don't commit your talent until they show the work.`;
+    return `Polished on the surface, but the record shows gaps in ${warningLabels}. Before signing, trace the evidence. Missing disclosures are not complexity — they are choices.`;
   }
 
   if (influenceWarning && hiringWarning) {
-    return "This employer spends money to shape policy but hasn't published a Bias Audit for their AI hiring tools. They'll lobby Congress about workforce issues but won't tell you how their algorithm screens you out. That's a character issue. Ask about the audit before committing.";
+    return "This employer spends to shape policy but has not published a Bias Audit for their AI hiring tools. They will lobby on workforce issues but will not disclose how their algorithm evaluates you. That is a transparency gap worth addressing before committing.";
   }
   if (missing.length >= 2) {
-    return "The receipts are incomplete, and silence is a strategy, not an accident. Missing signals don't mean bad signals — but they mean you need to ask the hard questions before signing. Facts over Feelings.";
+    return "The record is incomplete, and silence on accountability is a strategy, not an oversight. Missing signals do not confirm problems — but they confirm the need for direct questions before signing.";
   }
-  return "This offer may look strong on paper, but the bigger question is whether the company behind it aligns with your goals, values, and risk tolerance. Look at the evidence trail before you commit.";
+  return "This offer may appear strong on paper, but the relevant question is whether the institution behind it aligns with your trajectory, values, and risk tolerance. Review the evidence trail before committing.";
 }
 
 /* ── Component ── */

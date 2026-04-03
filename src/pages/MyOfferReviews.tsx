@@ -3,8 +3,6 @@ import { ShieldCheck, Loader2, Trash2, Building2, FileText } from "lucide-react"
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { Header } from "@/components/Header";
-import { Footer } from "@/components/Footer";
 import { useAuth } from "@/contexts/AuthContext";
 import { supabase } from "@/integrations/supabase/client";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
@@ -44,8 +42,7 @@ export default function MyOfferReviews() {
 
   return (
     <div className="min-h-screen flex flex-col bg-background">
-      <Header />
-      <div className="container mx-auto px-4 py-8 max-w-3xl">
+<div className="container mx-auto px-4 py-8 max-w-3xl">
         <div className="flex items-center gap-2 mb-6">
           <ShieldCheck className="w-6 h-6 text-primary" />
           <h1 className="text-2xl font-bold text-foreground">My Offer Reviews</h1>
@@ -116,7 +113,6 @@ export default function MyOfferReviews() {
           </div>
         )}
       </div>
-      <Footer />
-    </div>
+</div>
   );
 }

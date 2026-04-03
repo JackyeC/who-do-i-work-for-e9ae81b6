@@ -12,9 +12,10 @@ interface PageSEOProps {
   image?: string;
   twitterCard?: "summary" | "summary_large_image";
   jsonLd?: Record<string, any>;
+  noIndex?: boolean;
 }
 
-export function usePageSEO({ title, description, path, type = "website", image, twitterCard = "summary_large_image", jsonLd }: PageSEOProps) {
+export function usePageSEO({ title, description, path, type = "website", image, twitterCard = "summary_large_image", jsonLd, noIndex = false }: PageSEOProps) {
   useEffect(() => {
     const BASE_URL = getPublicSiteUrl();
     const DEFAULT_IMAGE = `${BASE_URL}/og-image.png`;
@@ -36,6 +37,7 @@ export function usePageSEO({ title, description, path, type = "website", image, 
     };
 
     setMeta("name", "description", desc);
+    setMeta("name", "robots", noIndex ? "noindex, nofollow" : "index, follow");
     setMeta("property", "og:title", fullTitle);
     setMeta("property", "og:description", desc);
     setMeta("property", "og:url", url);

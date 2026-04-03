@@ -1,7 +1,5 @@
 import { useState } from "react";
 import { useSearchParams } from "react-router-dom";
-import { Header } from "@/components/Header";
-import { Footer } from "@/components/Footer";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
@@ -101,8 +99,7 @@ export default function RequestCorrection() {
   if (submitted) {
     return (
       <div className="min-h-screen bg-background flex flex-col">
-        <Header />
-        <main className="flex-1 container mx-auto px-4 py-16 flex items-center justify-center">
+<main className="flex-1 container mx-auto px-4 py-16 flex items-center justify-center">
           <Card className="max-w-lg w-full text-center">
             <CardHeader>
               <div className="mx-auto w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center mb-4">
@@ -115,15 +112,13 @@ export default function RequestCorrection() {
             </CardHeader>
           </Card>
         </main>
-        <Footer />
-      </div>
+</div>
     );
   }
 
   return (
     <div className="min-h-screen bg-background flex flex-col">
-      <Header />
-      <main className="flex-1 container mx-auto px-4 py-12 max-w-2xl">
+<main className="flex-1 container mx-auto px-4 py-12 max-w-2xl">
         <h1 className="text-3xl font-bold text-foreground mb-2 font-display">
           Request a Correction
         </h1>
@@ -229,7 +224,6 @@ export default function RequestCorrection() {
           </Button>
         </form>
       </main>
-      <Footer />
-    </div>
+</div>
   );
 }

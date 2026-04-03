@@ -4,8 +4,6 @@ import { usePageSEO } from "@/hooks/use-page-seo";
 import { Search, Sparkles, Info, HelpCircle } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Header } from "@/components/Header";
-import { Footer } from "@/components/Footer";
 import { IssueRelatedReports } from "@/components/IssueRelatedReports";
 import { supabase } from "@/integrations/supabase/client";
 import { useQuery } from "@tanstack/react-query";
@@ -79,9 +77,7 @@ export default function ValuesSearch() {
 
   return (
     <div className="min-h-screen flex flex-col bg-background">
-      <Header />
-
-      <main className="flex-1">
+<main className="flex-1">
         {/* Hero */}
         <section className="relative overflow-hidden border-b border-border/30">
           <div className="absolute inset-0 bg-gradient-to-br from-primary/3 via-transparent to-accent/3" />
@@ -163,8 +159,6 @@ export default function ValuesSearch() {
           </div>
         </section>
       </main>
-
-      <Footer />
-    </div>
+</div>
   );
 }

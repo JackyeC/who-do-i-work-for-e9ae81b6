@@ -100,7 +100,7 @@ const steps = [
           ))}
         </div>
         <div className="text-xs text-muted-foreground/60 font-mono">
-          3 red flags · 2 caution signals · 1 positive signal
+          3 notable signals · 2 caution signals · 1 positive signal
         </div>
       </div>
     ),

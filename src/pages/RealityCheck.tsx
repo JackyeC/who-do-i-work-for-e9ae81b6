@@ -25,18 +25,18 @@ export default function RealityCheckPage() {
   const [lastInput, setLastInput] = useState<{ companyId: string; companyName: string } | null>(null);
 
   usePageSEO({
-    title: "Employer Red Flags Before Accepting a Job Offer — Reality Check",
-    description: "Caught something off in your interview? Compare your experience against SEC data, board diversity scores, and retention signals. Free post-interview audit.",
+    title: "Check Before You Commit — Interview Process Signal Check",
+    description: "Compare your interview experience against public data. Surface patterns between what a company says and what is visible. Free process signal check.",
     path: "/reality-check",
     jsonLd: {
       "@type": "HowTo",
-      name: "How to Check for Employer Red Flags Before Accepting a Job Offer",
-      description: "Use the Reality Check questionnaire to compare your interview experience against public intelligence data and detect Say-Do disconnects.",
+      name: "How to Check Interview Process Signals Before Accepting a Job Offer",
+      description: "Use this questionnaire to compare your interview experience against public data and surface stance-record gaps.",
       step: [
         { "@type": "HowToStep", name: "Search for the company", text: "Search for the company you interviewed with using the company search." },
         { "@type": "HowToStep", name: "Rate your interview experience", text: "Rate your interview experience across 6 dimensions: leadership transparency, message consistency, panel diversity, boundary culture, professional respect, and process quality." },
-        { "@type": "HowToStep", name: "Compare against public data", text: "The system cross-references your ratings against public SEC, FEC, and BLS data to identify gaps." },
-        { "@type": "HowToStep", name: "Review your Integrity Gap Score", text: "Review your Integrity Gap Score, Vibe Variance chart, and Jackye's AI Twin analysis to make an informed decision." },
+        { "@type": "HowToStep", name: "Compare against public data", text: "The system cross-references your ratings against public data to identify gaps between what is said and what is visible." },
+        { "@type": "HowToStep", name: "Review your results", text: "Review your Stance-Record Gap, Experience vs. Record chart, and pattern analysis to make an informed decision." },
       ],
     },
   });
@@ -152,10 +152,10 @@ export default function RealityCheckPage() {
             <div>
               <h1 className="font-mono text-sm font-bold tracking-wider uppercase text-civic-green flex items-center gap-2">
                 <Terminal className="w-4 h-4" />
-                Spot Employer Red Flags Before You Accept
+                Check Before You Commit
               </h1>
               <p className="text-xs text-muted-foreground mt-0.5">
-                Before you accept that offer, run the data. This questionnaire cross-references your interview experience against public SEC, FEC, and BLS intelligence to detect "Diversity Wash" signals and Say-Do disconnects.
+                This questionnaire cross-references your interview experience against public data to surface patterns between what is said and what is visible.
               </p>
             </div>
           </div>

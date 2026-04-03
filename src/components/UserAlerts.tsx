@@ -208,7 +208,7 @@ export function UserAlertsList() {
                         <div className="flex-1 min-w-0">
                           <div className="flex items-center gap-2 mb-1 flex-wrap">
                             <Link
-                              to={`/company/${alert.company_name.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/-+$/, "")}`}
+                              to={`/dossier/${alert.company_name.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/-+$/, "")}`}
                               className="text-sm font-medium text-foreground hover:underline"
                             >
                               {alert.company_name}

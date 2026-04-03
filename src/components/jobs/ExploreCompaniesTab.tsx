@@ -19,6 +19,7 @@ export function ExploreCompaniesTab() {
         .select("id, name, slug, logo_url, industry, vetted_status, employer_clarity_score, description, employee_count, jackye_insight")
         .in("record_status", ["published", "approved"])
         .order("employer_clarity_score", { ascending: false, nullsFirst: false })
+        .order("name", { ascending: true })
         .limit(200);
       if (error) throw error;
       return data || [];
@@ -63,7 +64,7 @@ export function ExploreCompaniesTab() {
             return (
               <Link
                 key={company.id}
-                to={`/company/${company.slug}`}
+                to={`/dossier/${company.slug}`}
                 className={cn(
                   "flex items-center gap-3 p-3 rounded-lg border border-border/30 hover:border-primary/30 hover:bg-muted/30 transition-all group",
                   isCertified && "border-[hsl(var(--civic-yellow))]/15"

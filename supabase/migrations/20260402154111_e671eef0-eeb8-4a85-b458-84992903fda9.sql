@@ -1,0 +1,1 @@
+ALTER TABLE public.work_news ADD COLUMN IF NOT EXISTS language text DEFAULT 'en';

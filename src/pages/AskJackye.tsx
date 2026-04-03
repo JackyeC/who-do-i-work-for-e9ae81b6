@@ -19,11 +19,11 @@ interface QuickPrompt {
 
 const QUICK_PROMPTS: QuickPrompt[] = [
   { label: "Should I apply?", prompt: "Should I apply to this company? What should I look at before deciding?" },
-  { label: "Take this offer?", prompt: "I got a job offer. How do I evaluate whether I should take it?" },
-  { label: "Stay or leave?", prompt: "I'm thinking about leaving my current job. How do I decide if it's time to go?" },
-  { label: "Interview questions", prompt: "What should I ask in my interview to find out what this company is really like?" },
-  { label: "Explain my move", prompt: "How do I explain my next career move without it sounding like I'm running away?" },
-  { label: "What to negotiate", prompt: "What should I negotiate beyond salary? What do most people miss?" },
+  { label: "Take this offer?", prompt: "I received a job offer. Help me evaluate what is clear, what is missing, and what the patterns suggest." },
+  { label: "Stay or leave?", prompt: "I am weighing whether to stay at my current job or move on. Help me see the pattern, not just the moment." },
+  { label: "Interview questions", prompt: "What should I ask in my interview to understand how this company actually operates?" },
+  { label: "Explain my move", prompt: "How do I frame my next career move so it reflects intention, not reaction?" },
+  { label: "What to negotiate", prompt: "What should I negotiate beyond salary? What do most people overlook?" },
 ];
 
 const OPENING_MESSAGE: Msg = {

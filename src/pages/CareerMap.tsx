@@ -1,6 +1,4 @@
 import { useState, useEffect } from "react";
-import { Header } from "@/components/Header";
-import { Footer } from "@/components/Footer";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { ProfileInputStep } from "@/components/career-discovery/ProfileInputStep";
@@ -148,8 +146,7 @@ export default function CareerMap() {
 
   return (
     <div className="min-h-screen bg-background flex flex-col">
-      <Header />
-      <main className="container mx-auto px-4 py-6 sm:py-10 flex-1">
+<main className="container mx-auto px-4 py-6 sm:py-10 flex-1">
         <div className="text-center mb-8">
           <h1 className="text-2xl sm:text-3xl font-bold text-foreground mb-2 font-display">
             Career Discovery & Path Mapping
@@ -218,7 +215,6 @@ export default function CareerMap() {
           </div>
         </div>
       </main>
-      <Footer />
-    </div>
+</div>
   );
 }

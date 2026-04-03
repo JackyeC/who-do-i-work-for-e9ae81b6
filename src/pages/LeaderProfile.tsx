@@ -148,7 +148,7 @@ export default function LeaderProfile() {
       {/* Breadcrumb */}
       <div className="flex items-center gap-2 text-sm text-muted-foreground">
         {company && (
-          <Link to={`/company/${company.slug}`} className="hover:text-foreground transition-colors flex items-center gap-1">
+          <Link to={`/dossier/${company.slug}`} className="hover:text-foreground transition-colors flex items-center gap-1">
             <ArrowLeft className="w-3.5 h-3.5" /> {cleanCompany}
           </Link>
         )}
@@ -437,7 +437,7 @@ export default function LeaderProfile() {
                       </div>
                       {co?.slug && (
                         <Button variant="outline" size="sm" className="h-7 text-xs" asChild>
-                          <Link to={`/company/${co.slug}`}>View</Link>
+                          <Link to={`/dossier/${co.slug}`}>View</Link>
                         </Button>
                       )}
                     </div>

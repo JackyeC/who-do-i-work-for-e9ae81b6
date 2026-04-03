@@ -83,7 +83,7 @@ export function JobListRow({ job, companyValueSignals = [], companySignalFlags =
           <div className="flex flex-wrap items-center gap-x-3 gap-y-0.5 text-xs text-muted-foreground">
             {company?.slug ? (
               <Link
-                to={`/company/${company.slug}`}
+                to={`/dossier/${company.slug}`}
                 className="font-medium text-foreground/80 flex items-center gap-1 hover:text-primary hover:underline transition-colors"
                 onClick={(e) => e.stopPropagation()}
               >
@@ -185,7 +185,7 @@ export function JobListRow({ job, companyValueSignals = [], companySignalFlags =
           <Tooltip>
             <TooltipTrigger asChild>
               <Link
-                to={company?.slug ? `/company/${company.slug}` : "#"}
+                to={company?.slug ? `/dossier/${company.slug}` : "#"}
                 className="shrink-0 flex flex-col items-center gap-0.5 hover:scale-105 transition-transform"
                 onClick={(e) => e.stopPropagation()}
               >

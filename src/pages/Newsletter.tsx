@@ -1,41 +1,36 @@
-import { useState } from "react";
-import { Link } from "react-router-dom";
+import { useState, useMemo, useEffect } from "react";
+import { Link, useLocation } from "react-router-dom";
 import { usePageSEO } from "@/hooks/use-page-seo";
-import { useWorkNews, WorkNewsArticle } from "@/hooks/use-work-news";
-import { Card, CardContent } from "@/components/ui/card";
+import { useReceiptsFeed, ReceiptArticle } from "@/hooks/use-receipts-feed";
+import { useAuth } from "@/contexts/AuthContext";
 import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
 import { supabase } from "@/integrations/supabase/client";
 import { useTurnstile } from "@/hooks/useTurnstile";
 import { verifyTurnstileToken } from "@/lib/verifyTurnstile";
-import {
-  getSourceProfile,
-  getBiasColor,
-} from "@/lib/source-bias-map";
+import { FoundingMemberBadge } from "@/components/FoundingMemberBadge";
+import { WorkNewsTicker } from "@/components/news/WorkNewsTicker";
+import { ReceiptPoster } from "@/components/receipts/ReceiptPoster";
+import { StargazeChip } from "@/components/receipts/StargazeChip";
+import { BiasBar, getSourceBiasKey } from "@/components/receipts/BiasBar";
+import { EDITORIAL_CATEGORIES, EDITORIAL_CAT_COLORS } from "@/components/receipts/heat-config";
+import { motion } from "framer-motion";
 import {
   Mail, ArrowRight, Check, ExternalLink, Newspaper,
-  AlertTriangle, Flame, ChevronRight, Radio,
-  Eye, MessageSquare, TrendingUp,
+  Radio, Eye, TrendingUp, Award, Clock, Zap, Star,
 } from "lucide-react";
 
-/* ── Category config ── */
-const CATEGORY_CONFIG: Record<string, { label: string; color: string }> = {
-  regulation: { label: "REG", color: "bg-civic-blue/10 text-[hsl(var(--civic-blue))] border-[hsl(var(--civic-blue))]/30" },
-  future_of_work: { label: "WORK", color: "bg-primary/10 text-primary border-primary/30" },
-  worker_rights: { label: "RIGHTS", color: "bg-civic-green/10 text-[hsl(var(--civic-green))] border-[hsl(var(--civic-green))]/30" },
-  ai_workplace: { label: "AI", color: "bg-purple-500/10 text-purple-400 border-purple-400/30" },
-  legislation: { label: "LAW", color: "bg-civic-blue/10 text-[hsl(var(--civic-blue))] border-[hsl(var(--civic-blue))]/30" },
-  layoffs: { label: "LAYOFFS", color: "bg-destructive/10 text-destructive border-destructive/30" },
-  pay_equity: { label: "PAY", color: "bg-civic-yellow/10 text-[hsl(var(--civic-yellow))] border-[hsl(var(--civic-yellow))]/30" },
-  labor_organizing: { label: "LABOR", color: "bg-civic-green/10 text-[hsl(var(--civic-green))] border-[hsl(var(--civic-green))]/30" },
-  dei: { label: "DEI", color: "bg-primary/10 text-primary border-primary/30" },
-  workplace: { label: "WORK", color: "bg-primary/10 text-primary border-primary/30" },
-  policy: { label: "POLICY", color: "bg-civic-blue/10 text-[hsl(var(--civic-blue))] border-[hsl(var(--civic-blue))]/30" },
-  general: { label: "NEWS", color: "bg-muted text-muted-foreground border-border/50" },
-};
-
-function getCategoryConfig(cat: string) {
-  return CATEGORY_CONFIG[cat] || CATEGORY_CONFIG.general;
+/* ── Category badge ── */
+function CategoryBadge({ category }: { category: string | null }) {
+  const editorialCat = EDITORIAL_CATEGORIES[category ?? ""] || "THE DAILY GRIND";
+  const color = EDITORIAL_CAT_COLORS[editorialCat] || "#94A3B8";
+  return (
+    <span
+      className="text-[10px] font-black uppercase tracking-[0.18em] font-mono"
+      style={{ color }}
+    >
+      {editorialCat}
+    </span>
+  );
 }
 
 /* ── Time helpers ── */
@@ -50,149 +45,283 @@ function timeAgo(dateStr: string | null) {
   return `${days}d ago`;
 }
 
-/* ── Spice meter based on controversy + sentiment ── */
-function spiceLevel(article: WorkNewsArticle): number {
-  let score = 1;
-  if (article.is_controversy) score += 2;
-  if (article.sentiment_score !== null && article.sentiment_score < -0.3) score += 1;
-  if (article.controversy_type) score += 1;
-  return Math.min(score, 5);
-}
+/* ── Filter options ── */
+const FILTER_OPTIONS = [
+  { value: "all", label: "All" },
+  { value: "layoffs", label: "Layoffs" },
+  { value: "worker_rights", label: "DEI" },
+  { value: "ai_workplace", label: "AI" },
+  { value: "regulation", label: "Regulation" },
+  { value: "pay_equity", label: "Pay" },
+  { value: "hot", label: "⭐ Top Rated" },
+];
 
-function SpiceMeter({ level }: { level: number }) {
-  return (
-    <span className="flex items-center gap-0.5" title={`Spice level: ${level}/5`}>
-      {Array.from({ length: 5 }).map((_, i) => (
-        <span key={i} className={i < level ? "opacity-100" : "opacity-20"}>
-          🌶️
-        </span>
-      ))}
-    </span>
-  );
-}
-
-/* ── Single story card ── */
-function StoryCard({ article }: { article: WorkNewsArticle }) {
-  const cat = getCategoryConfig(article.category);
-  const spice = spiceLevel(article);
-  const sourceProfile = article.source_name
-    ? getSourceProfile(article.source_name)
-    : null;
-  const biasColor = sourceProfile ? getBiasColor(sourceProfile.bias) : "";
+/* ══════════════════════════════════════════
+   LEAD STORY CARD — full editorial treatment
+   ══════════════════════════════════════════ */
+function LeadStoryCard({ article }: { article: ReceiptArticle }) {
+  const biasKey = getSourceBiasKey(article.source_name);
 
   return (
-    <Card className="bg-card border border-border/40 hover:border-primary/30 transition-all group">
-      <CardContent className="p-0">
-        {/* Header bar */}
-        <div className="flex items-center justify-between px-5 pt-4 pb-2">
-          <div className="flex items-center gap-2">
-            <Badge
-              variant="outline"
-              className={`text-[10px] font-mono tracking-wider border ${cat.color}`}
-            >
-              {cat.label}
-            </Badge>
-            {article.is_controversy && (
-              <AlertTriangle className="w-3.5 h-3.5 text-destructive animate-pulse" />
-            )}
-          </div>
-          <span className="text-[10px] text-muted-foreground/60 font-mono">
-            {timeAgo(article.published_at)}
-          </span>
+    <article id={`story-${article.id}`} className="rounded-2xl border border-border/50 bg-card overflow-hidden hover:border-primary/30 transition-all group scroll-mt-24">
+      <div className="h-1 bg-gradient-to-r from-primary via-primary/60 to-transparent" />
+
+      <div className="p-8 lg:p-10">
+        {/* Meta row */}
+        <div className="flex items-center gap-3 mb-5 flex-wrap">
+          <CategoryBadge category={article.category} />
+          <span className="w-px h-4 bg-border" />
+          <StargazeChip score={article.spice_level} big />
+          {article.spice_level >= 4 && (
+            <span className="text-xs font-black uppercase px-2.5 py-1 rounded" style={{ background: "#EF4444", color: "#fff" }}>HOT</span>
+          )}
+          <span className="ml-auto text-[10px] text-muted-foreground/60 font-mono">{timeAgo(article.published_at)}</span>
+        </div>
+
+        {/* Poster */}
+        <div className="mb-6 flex justify-center">
+          <ReceiptPoster
+            poster={article.poster_data}
+            category={article.category}
+            big
+            headline={article.headline}
+            id={`poster-lead-${article.id}`}
+          />
         </div>
 
         {/* Headline */}
-        <div className="px-5 pb-3">
-          <h3 className="text-[15px] font-semibold text-foreground leading-snug">
-            {article.headline}
-          </h3>
-        </div>
+        <h2
+          className="text-foreground leading-[1.08] mb-6 font-black uppercase tracking-[-0.03em]"
+          style={{ fontSize: "clamp(26px, 3vw, 42px)" }}
+        >
+          {article.source_url ? (
+            <a href={article.source_url} target="_blank" rel="noopener noreferrer"
+              className="hover:text-primary transition-colors no-underline text-foreground group-hover:text-primary">
+              {article.headline}
+              <ExternalLink className="w-4 h-4 inline-block ml-2 opacity-0 group-hover:opacity-100 transition-opacity align-middle" />
+            </a>
+          ) : article.headline}
+        </h2>
 
-        {/* The Take — ALWAYS OPEN */}
+        {/* Jackye's Take */}
         {article.jackye_take && (
-          <div className="mx-4 mb-3 rounded-xl bg-primary/5 border border-primary/20 p-4">
-            <div className="flex items-center gap-2 mb-2">
-              <Eye className="w-3.5 h-3.5 text-primary" />
-              <span className="text-xs font-bold text-primary tracking-wide uppercase">
-                Jackye's Take
-              </span>
+          <div className="rounded-xl border p-6 mb-5" style={{ background: "hsl(var(--primary) / 0.04)", borderColor: "hsl(var(--primary) / 0.15)" }}>
+            <div className="flex items-center gap-2 mb-3">
+              <Eye className="w-4 h-4 text-primary" />
+              <span className="text-xs font-bold text-primary tracking-[0.15em] uppercase font-mono">Jackye's Take</span>
             </div>
-            <p className="text-sm text-foreground/90 leading-relaxed">
-              {article.jackye_take}
+            <p className="text-lg text-foreground leading-[1.8] italic font-light" style={{ fontFamily: "'DM Sans', cursive, sans-serif" }}>
+              "{article.jackye_take}"
             </p>
           </div>
         )}
 
-        {/* Summary teaser line */}
-        {article.themes && article.themes.length > 0 && (
-          <div className="px-5 pb-3 flex flex-wrap gap-1.5">
-            {article.themes.map((theme) => (
-              <span
-                key={theme}
-                className="inline-flex items-center px-2 py-0.5 rounded-full bg-muted/50 text-[10px] text-muted-foreground font-mono"
-              >
-                {theme}
-              </span>
-            ))}
+        {/* The Receipt */}
+        {article.receipt_connection && (
+          <div className="p-5 rounded-xl border mb-5" style={{ background: "hsl(var(--primary) / 0.04)", borderColor: "hsl(var(--primary) / 0.2)" }}>
+            <p className="text-sm font-mono font-bold uppercase tracking-[0.12em] text-primary mb-3">🧾 The Receipt</p>
+            <p className="text-base text-foreground/90 leading-relaxed">{article.receipt_connection}</p>
           </div>
         )}
 
-        {/* Footer: source + spice + link */}
-        <div className="flex items-center justify-between px-5 py-3 border-t border-border/20 bg-muted/20">
+        {/* Why It Matters */}
+        <div className="rounded-lg bg-muted/30 border border-border/30 p-5 mb-5">
+          <div className="flex items-center gap-2 mb-3">
+            <TrendingUp className="w-4 h-4 text-primary" />
+            <span className="text-xs font-bold text-primary tracking-[0.15em] uppercase font-mono">Why This Matters</span>
+          </div>
+          {article.why_it_matters && article.why_it_matters.length > 0 ? (
+            <ul className="space-y-2">
+              {article.why_it_matters.map((point, idx) => (
+                <li key={idx} className="flex items-start gap-2.5 text-base text-foreground/80 leading-relaxed">
+                  <span className="text-primary mt-1 shrink-0">·</span>
+                  {point}
+                </li>
+              ))}
+            </ul>
+          ) : (
+            <p className="text-base text-foreground/80 leading-relaxed">
+              {article.receipt_connection || article.jackye_take || "This story impacts how employers treat workers and how workers navigate their careers."}
+            </p>
+          )}
+        </div>
+
+        {/* Source + Bias footer */}
+        <div className="flex items-center justify-between pt-4 border-t border-border/20">
           <div className="flex items-center gap-3">
             {article.source_name && (
-              <span className={`text-xs font-medium ${biasColor || "text-muted-foreground"}`}>
-                {article.source_name}
-              </span>
+              <span className="text-sm font-medium text-foreground/70 font-mono">{article.source_name}</span>
             )}
-            <SpiceMeter level={spice} />
+            <BiasBar bias={biasKey} />
           </div>
           {article.source_url && (
-            <a
-              href={article.source_url}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="flex items-center gap-1 text-[10px] font-mono text-primary/70 hover:text-primary transition-colors"
-            >
-              Read Source <ExternalLink className="w-3 h-3" />
+            <a href={article.source_url} target="_blank" rel="noopener noreferrer"
+              className="flex items-center gap-1 text-xs font-mono text-primary hover:text-primary/80 transition-colors no-underline">
+              See the receipts <ExternalLink className="w-3.5 h-3.5" />
             </a>
           )}
         </div>
-      </CardContent>
-    </Card>
+      </div>
+    </article>
   );
 }
 
-/* ── Filter bar ── */
-const FILTER_OPTIONS = [
-  { value: "all", label: "All" },
-  { value: "layoffs", label: "Layoffs" },
-  { value: "dei", label: "DEI" },
-  { value: "ai_workplace", label: "AI" },
-  { value: "regulation", label: "Regulation" },
-  { value: "pay_equity", label: "Pay" },
-  { value: "controversy", label: "Controversy" },
-];
+/* ══════════════════════════════════════════
+   STORY CARD — standard editorial card
+   ══════════════════════════════════════════ */
+function StoryCard({ article }: { article: ReceiptArticle }) {
+  const biasKey = getSourceBiasKey(article.source_name);
 
-/* ── Main page ── */
+  return (
+    <article id={`story-${article.id}`} className="rounded-xl border border-border/40 bg-card hover:border-primary/30 transition-all group overflow-hidden scroll-mt-24">
+      {/* Poster — compact */}
+      <div className="flex justify-center pt-4 px-4">
+        <ReceiptPoster
+          poster={article.poster_data}
+          category={article.category}
+          headline={article.headline}
+          id={`poster-card-${article.id}`}
+        />
+      </div>
+
+      <div className="p-5">
+        {/* Meta */}
+        <div className="flex items-center gap-2 mb-3 flex-wrap">
+          <CategoryBadge category={article.category} />
+          <span className="w-px h-3 bg-border" />
+          <StargazeChip score={article.spice_level} />
+          <span className="ml-auto text-[10px] text-muted-foreground/60 font-mono">{timeAgo(article.published_at)}</span>
+        </div>
+
+        {/* Headline */}
+        <h3 className="text-lg font-bold text-foreground leading-snug mb-3 group-hover:text-primary transition-colors">
+          {article.source_url ? (
+            <a href={article.source_url} target="_blank" rel="noopener noreferrer"
+              className="no-underline text-foreground group-hover:text-primary">
+              {article.headline}
+            </a>
+          ) : article.headline}
+        </h3>
+
+        {/* Jackye's Take */}
+        {article.jackye_take && (
+          <div className="rounded-lg border p-4 mb-3" style={{ background: "hsl(var(--primary) / 0.04)", borderColor: "hsl(var(--primary) / 0.15)" }}>
+            <div className="flex items-center gap-1.5 mb-2">
+              <Eye className="w-3.5 h-3.5 text-primary" />
+              <span className="text-[11px] font-bold text-primary tracking-[0.15em] uppercase font-mono">The Take</span>
+            </div>
+            <p className="text-base text-foreground leading-relaxed italic" style={{ fontFamily: "'DM Sans', cursive, sans-serif" }}>
+              "{article.jackye_take}"
+            </p>
+          </div>
+        )}
+
+        {/* Why It Matters */}
+        <div className="rounded-lg bg-muted/20 border border-border/20 p-4 mb-3">
+          <div className="flex items-center gap-1.5 mb-2">
+            <TrendingUp className="w-3.5 h-3.5 text-primary" />
+            <span className="text-[11px] font-bold text-primary tracking-[0.15em] uppercase font-mono">Why This Matters</span>
+          </div>
+          {article.why_it_matters && article.why_it_matters.length > 0 ? (
+            <ul className="space-y-1.5">
+              {article.why_it_matters.slice(0, 2).map((point, idx) => (
+                <li key={idx} className="flex items-start gap-1.5 text-sm text-foreground/80 leading-relaxed">
+                  <span className="text-primary mt-0.5 shrink-0">·</span>
+                  {point}
+                </li>
+              ))}
+            </ul>
+          ) : article.receipt_connection ? (
+            <p className="text-sm text-foreground/80 leading-relaxed">{article.receipt_connection}</p>
+          ) : null}
+        </div>
+
+        {/* Source + Bias footer */}
+        <div className="flex items-center justify-between pt-3 border-t border-border/20">
+          <div className="flex items-center gap-2">
+            {article.source_name && (
+              <span className="text-sm font-medium text-foreground/70 font-mono">{article.source_name}</span>
+            )}
+            <BiasBar bias={biasKey} />
+          </div>
+          {article.source_url && (
+            <a href={article.source_url} target="_blank" rel="noopener noreferrer"
+              className="flex items-center gap-1 text-xs font-mono text-primary hover:text-primary/80 transition-colors no-underline">
+              Receipts <ExternalLink className="w-3.5 h-3.5" />
+            </a>
+          )}
+        </div>
+      </div>
+    </article>
+  );
+}
+
+/* ══════════════════════════════════════════
+   WIRE ITEM — compact card for dense grid
+   ══════════════════════════════════════════ */
+function WireItem({ article }: { article: ReceiptArticle }) {
+  return (
+    <div id={`story-${article.id}`} className="group block scroll-mt-24">
+      <a
+        href={article.source_url || "#"}
+        target={article.source_url ? "_blank" : undefined}
+        rel="noopener noreferrer"
+        className="rounded-lg border border-border/30 bg-card p-4 hover:border-primary/30 hover:shadow-sm transition-all h-full flex flex-col no-underline cursor-pointer active:scale-[0.98]"
+      >
+        <div className="flex items-center gap-2 mb-2 flex-wrap">
+          <CategoryBadge category={article.category} />
+          <StargazeChip score={article.spice_level} />
+          <span className="ml-auto text-xs text-foreground/50 font-mono">{timeAgo(article.published_at)}</span>
+        </div>
+        <p className="text-base font-semibold text-foreground leading-snug flex-1 group-hover:text-primary transition-colors mb-2">
+          {article.headline}
+        </p>
+        {article.jackye_take && (
+          <p className="text-sm text-foreground/70 leading-relaxed mb-2 italic line-clamp-2">
+            "{article.jackye_take}"
+          </p>
+        )}
+        <div className="flex items-center justify-between mt-auto pt-2 border-t border-border/20">
+          <span className="text-[10px] text-primary/70 font-mono flex items-center gap-1">
+            {article.source_name || "Source"} <ExternalLink className="w-2.5 h-2.5" />
+          </span>
+        </div>
+      </a>
+    </div>
+  );
+}
+
+/* ══════════════════════════════════════════
+   MAIN PAGE
+   ══════════════════════════════════════════ */
 export default function Newsletter() {
   const [email, setEmail] = useState("");
   const [status, setStatus] = useState<"idle" | "loading" | "success" | "error">("idle");
   const [errorMsg, setErrorMsg] = useState("");
   const [filter, setFilter] = useState("all");
+  const [showBadge, setShowBadge] = useState(false);
+  const { user } = useAuth();
   const { containerRef, getToken, resetToken } = useTurnstile();
-  const { data: articles = [], isLoading } = useWorkNews(60);
+  const { data: articles = [], isLoading } = useReceiptsFeed();
+  const location = useLocation();
+
+  useEffect(() => {
+    if (location.hash && !isLoading) {
+      const id = location.hash.replace("#", "");
+      setTimeout(() => {
+        document.getElementById(id)?.scrollIntoView({ behavior: "smooth", block: "start" });
+      }, 300);
+    }
+  }, [location.hash, isLoading]);
 
   usePageSEO({
     title: "The Receipts — Live Work Intelligence Feed | Who Do I Work For?",
-    description:
-      "Live employer intelligence: layoffs, DEI rollbacks, AI workplace moves, pay equity, and WARN filings — with Jackye's Take on every story.",
+    description: "Live employer intelligence: layoffs, DEI rollbacks, AI workplace moves, pay equity, and WARN filings — with Jackye's Take on every story.",
     path: "/newsletter",
     jsonLd: {
       "@type": "WebPage",
       name: "The Receipts — Live Intelligence Feed",
-      description:
-        "Real-time employer intelligence feed by Who Do I Work For? Sourced from public records, GDELT, and investigative research.",
+      description: "Real-time employer intelligence feed by Who Do I Work For? Sourced from public records, GDELT, and investigative research.",
       url: "https://wdiwf.jackyeclayton.com/newsletter",
       author: { "@type": "Person", name: "Jackye Clayton" },
     },
@@ -239,212 +368,324 @@ export default function Newsletter() {
     resetToken();
   };
 
-  /* ── Filter logic ── */
-  const filtered =
-    filter === "all"
-      ? articles
-      : filter === "controversy"
-        ? articles.filter((a) => a.is_controversy)
-        : articles.filter((a) => a.category === filter);
+  /* ── Filtering ── */
+  const filtered = useMemo(() => {
+    if (filter === "all") return articles;
+    if (filter === "hot") return [...articles].sort((a, b) => b.spice_level - a.spice_level);
+    return articles.filter((a) => a.category === filter);
+  }, [articles, filter]);
 
-  /* ── Separate: stories with takes, stories without ── */
+  const movingNow = useMemo(() => {
+    const twoHoursAgo = Date.now() - 2 * 60 * 60 * 1000;
+    return articles.filter((a) => a.published_at && new Date(a.published_at).getTime() >= twoHoursAgo).slice(0, 3);
+  }, [articles]);
+
+  const currentTake = useMemo(() => articles.find((a) => a.jackye_take), [articles]);
+
   const withTakes = filtered.filter((a) => a.jackye_take);
   const withoutTakes = filtered.filter((a) => !a.jackye_take);
 
+  const hotStories = useMemo(() => {
+    return [...articles].sort((a, b) => b.spice_level - a.spice_level).slice(0, 5);
+  }, [articles]);
+
   return (
     <div className="min-h-screen bg-background">
-      {/* ── Hero ── */}
-      <section className="text-center py-12 lg:py-16 px-4 max-w-2xl mx-auto">
-        <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-destructive/10 border border-destructive/20 mb-5">
-          <Radio className="w-3.5 h-3.5 text-destructive animate-pulse" />
-          <span className="text-xs font-mono tracking-wider text-destructive uppercase">
-            Live Intelligence Feed
-          </span>
-        </div>
-        <h1 className="text-3xl md:text-4xl font-bold text-foreground mb-3">
-          The Daily Grind
-        </h1>
-        <p className="text-base text-muted-foreground mb-6 max-w-lg mx-auto leading-relaxed">
-          Every story about work that matters — with Jackye's Take on what it
-          actually means for you. No algorithm. No filter. Just receipts.
-        </p>
+      {/* ── Live Ticker ── */}
+      <WorkNewsTicker />
 
-        {/* ── Subscribe bar ── */}
-        {status === "success" ? (
-          <div className="flex items-center justify-center gap-2.5 text-primary font-semibold text-base py-3">
-            <Check className="w-5 h-5" /> You're in. First drop lands Monday.
+      {/* ── Masthead ── */}
+      <header className="border-b border-border">
+        <div className="max-w-[820px] mx-auto text-center py-14 lg:py-20 px-6">
+          <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-destructive/10 border border-destructive/20 mb-8">
+            <Radio className="w-3.5 h-3.5 text-destructive animate-pulse" />
+            <span className="text-[10px] font-mono tracking-[0.2em] text-destructive uppercase">Live Intelligence · Updated Every 2 Hours</span>
           </div>
-        ) : (
-          <form onSubmit={handleSubmit} className="max-w-md mx-auto">
-            <div ref={containerRef} />
-            <div className="flex items-center bg-card border-2 border-primary/20 focus-within:border-primary/50 transition-colors rounded-xl overflow-hidden">
-              <Mail className="w-4 h-4 text-muted-foreground ml-4 shrink-0" />
-              <input
-                type="email"
-                value={email}
-                onChange={(e) => {
-                  setEmail(e.target.value);
-                  setStatus("idle");
-                }}
-                placeholder="you@company.com"
-                className="flex-1 bg-transparent px-3 py-3.5 text-sm text-foreground placeholder:text-muted-foreground/50 focus:outline-none"
-                disabled={status === "loading"}
-              />
-              <button
-                type="submit"
-                disabled={status === "loading"}
-                className="mr-2 px-4 py-2 bg-primary text-primary-foreground font-semibold text-sm rounded-lg hover:brightness-110 transition-all flex items-center gap-1.5 disabled:opacity-50 shrink-0"
-              >
-                {status === "loading" ? (
-                  "..."
-                ) : (
-                  <>
-                    Subscribe <ArrowRight className="w-3.5 h-3.5" />
-                  </>
+
+          <p className="text-[10px] uppercase tracking-[0.55em] text-primary mb-5 font-mono">JRC EDIT × WDIWF</p>
+
+          <h1 className="font-black text-foreground leading-none uppercase tracking-[-0.04em]"
+            style={{ fontSize: "clamp(48px, 7vw, 88px)" }}>
+            The Receipts
+          </h1>
+
+          <p className="font-light text-muted-foreground mt-5 tracking-wide" style={{ fontSize: "clamp(18px, 2vw, 26px)" }}>
+            Follow the story until you know what to do.
+          </p>
+          <p className="text-sm text-foreground/80 mt-4 max-w-md mx-auto leading-relaxed">
+            Every satisfactory headline has a labor signal underneath it.{" "}
+            <span className="text-primary font-semibold">This is the part they hoped you wouldn't read.</span>
+          </p>
+
+          <div className="w-16 h-[2px] bg-primary mx-auto my-8" />
+
+          {/* ── Subscribe Bar ── */}
+          <div className="mt-8 mb-4">
+            {status === "success" ? (
+              <motion.div initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }}
+                className="flex items-center justify-center gap-2.5 text-primary font-semibold text-base py-4">
+                <Check className="w-5 h-5" /> You're in. Morning edition drops daily.
+              </motion.div>
+            ) : (
+              <form onSubmit={handleSubmit} className="relative group max-w-[480px] mx-auto">
+                <div ref={containerRef} />
+                <div className="absolute -inset-1 bg-gradient-to-r from-primary/20 via-primary/5 to-primary/20 opacity-0 group-focus-within:opacity-100 transition-opacity duration-500 blur-md rounded-xl" />
+                <div className="relative flex items-center bg-card/80 backdrop-blur-sm border border-primary/20 focus-within:border-primary/50 transition-all duration-300 rounded-xl">
+                  <Mail className="w-4 h-4 text-muted-foreground ml-4 shrink-0" />
+                  <input
+                    type="email"
+                    value={email}
+                    onChange={(e) => { setEmail(e.target.value); setStatus("idle"); }}
+                    placeholder="you@company.com"
+                    className="flex-1 bg-transparent px-3 py-4 text-sm text-foreground placeholder:text-muted-foreground/50 focus:outline-none"
+                    disabled={status === "loading"}
+                  />
+                  <button type="submit" disabled={status === "loading"}
+                    className="mr-2 px-5 py-2.5 bg-primary text-primary-foreground font-semibold text-sm rounded-lg hover:brightness-110 transition-all flex items-center gap-2 disabled:opacity-50 shrink-0">
+                    {status === "loading" ? "..." : <>Subscribe <ArrowRight className="w-4 h-4" /></>}
+                  </button>
+                </div>
+                {status === "error" && (
+                  <p className="text-destructive text-xs mt-3 font-mono">{errorMsg}</p>
                 )}
-              </button>
-            </div>
-            {status === "error" && (
-              <p className="text-destructive text-xs mt-2 font-mono">{errorMsg}</p>
+              </form>
             )}
-          </form>
-        )}
-        <p className="text-xs text-muted-foreground/60 mt-3">
-          Free forever. One email per week. No spam.
-        </p>
-      </section>
+            <p className="text-xs text-muted-foreground/60 mt-4">Free forever. Daily morning edition. No spam.</p>
+          </div>
 
-      {/* ── Filter bar ── */}
-      <section className="max-w-5xl mx-auto px-4 pb-4">
-        <div className="flex items-center gap-2 overflow-x-auto pb-2 scrollbar-none">
-          {FILTER_OPTIONS.map((opt) => (
-            <button
-              key={opt.value}
-              onClick={() => setFilter(opt.value)}
-              className={`px-3 py-1.5 rounded-full text-xs font-mono tracking-wider border transition-all whitespace-nowrap ${
-                filter === opt.value
-                  ? "bg-primary text-primary-foreground border-primary"
-                  : "bg-card text-muted-foreground border-border/40 hover:border-primary/40"
-              }`}
-            >
-              {opt.label}
-            </button>
-          ))}
-          <div className="ml-auto text-xs text-muted-foreground/50 font-mono whitespace-nowrap">
-            {filtered.length} stories
+          <p className="text-sm text-muted-foreground tracking-[0.12em] font-mono">
+            Jackye Clayton 👑 × WDIWF
+            <span className="mx-2.5 text-border">·</span>
+            <span className="italic">"Stop applying. Start aligning."</span>
+          </p>
+        </div>
+      </header>
+
+      {/* ── Founding Member CTA ── */}
+      {user && (
+        <section className="max-w-5xl mx-auto px-4 py-4">
+          <button onClick={() => setShowBadge(true)}
+            className="w-full rounded-xl bg-gradient-to-r from-primary/10 via-primary/5 to-primary/10 border border-primary/20 hover:border-primary/40 transition-all p-4 flex items-center gap-4 group cursor-pointer">
+            <div className="shrink-0 w-10 h-10 rounded-full bg-primary/10 border border-primary/30 flex items-center justify-center">
+              <Award className="w-5 h-5 text-primary" />
+            </div>
+            <div className="text-left flex-1 min-w-0">
+              <p className="text-sm font-bold text-foreground">You're a Founding Member 🎖️</p>
+              <p className="text-xs text-muted-foreground">Download your badge and share it on LinkedIn.</p>
+            </div>
+            <ArrowRight className="w-4 h-4 text-primary shrink-0 group-hover:translate-x-1 transition-transform" />
+          </button>
+        </section>
+      )}
+      {showBadge && (
+        <FoundingMemberBadge memberName={user?.email?.split("@")[0]} joinedDate={user?.created_at} onClose={() => setShowBadge(false)} />
+      )}
+
+      {/* ── Moving Now ── */}
+      {movingNow.length > 0 && (
+        <section className="border-b border-border bg-destructive/[0.03]">
+          <div className="max-w-5xl mx-auto px-4 py-4">
+            <div className="flex items-center gap-2 mb-3">
+              <Zap className="w-3.5 h-3.5 text-destructive" />
+              <span className="text-[10px] font-mono tracking-[0.2em] uppercase text-destructive font-bold">Moving Now</span>
+              <Clock className="w-3 h-3 text-muted-foreground/50 ml-1" />
+              <span className="text-[10px] text-muted-foreground/50 font-mono">Last 2 hours</span>
+            </div>
+            <div className="space-y-2">
+              {movingNow.map((article) => (
+                <button key={article.id}
+                  onClick={() => document.getElementById(`story-${article.id}`)?.scrollIntoView({ behavior: "smooth", block: "start" })}
+                  className="flex items-center gap-3 py-2 px-3 rounded-lg hover:bg-card/50 transition-colors group w-full text-left">
+                  <CategoryBadge category={article.category} />
+                  <p className="text-sm font-medium text-foreground group-hover:text-primary transition-colors flex-1 truncate">
+                    {article.headline}
+                  </p>
+                  <StargazeChip score={article.spice_level} />
+                  <span className="text-[10px] text-muted-foreground/50 font-mono shrink-0">{timeAgo(article.published_at)}</span>
+                </button>
+              ))}
+            </div>
+          </div>
+        </section>
+      )}
+
+      {/* ── Filter Bar ── */}
+      <nav className="border-b border-border sticky top-0 bg-background/95 backdrop-blur-sm z-20">
+        <div className="max-w-5xl mx-auto px-4 py-3">
+          <div className="flex items-center gap-2 overflow-x-auto scrollbar-none">
+            {FILTER_OPTIONS.map((opt) => (
+              <button key={opt.value} onClick={() => setFilter(opt.value)}
+                className={`px-3.5 py-1.5 rounded-full text-xs font-mono tracking-wider border transition-all whitespace-nowrap ${
+                  filter === opt.value
+                    ? "bg-primary text-primary-foreground border-primary"
+                    : "bg-card text-muted-foreground border-border/40 hover:border-primary/40 hover:text-foreground"
+                }`}>
+                {opt.label}
+              </button>
+            ))}
+            <span className="ml-auto text-[10px] text-muted-foreground/50 font-mono whitespace-nowrap">
+              {filtered.length} stories
+            </span>
           </div>
         </div>
-      </section>
+      </nav>
 
-      {/* ── Feed ── */}
-      <section className="max-w-5xl mx-auto px-4 pb-16">
-        {isLoading ? (
-          <div className="flex flex-col items-center gap-3 py-20">
-            <div className="w-6 h-6 border-2 border-primary/30 border-t-primary rounded-full animate-spin" />
-            <p className="text-sm text-muted-foreground font-mono">Loading intelligence...</p>
-          </div>
-        ) : filtered.length === 0 ? (
-          <div className="text-center py-16">
-            <Newspaper className="w-8 h-8 text-muted-foreground/30 mx-auto mb-3" />
-            <p className="text-sm text-muted-foreground">No stories in this category yet.</p>
-          </div>
-        ) : (
-          <>
-            {/* Stories with Jackye's Take — shown first as featured */}
-            {withTakes.length > 0 && (
-              <div className="mb-8">
-                <div className="flex items-center gap-2 mb-4">
-                  <Flame className="w-4 h-4 text-primary" />
-                  <h2 className="text-sm font-mono tracking-[0.15em] uppercase text-primary">
-                    Jackye's Takes
-                  </h2>
-                  <span className="text-[10px] text-muted-foreground/60 font-mono ml-1">
-                    {withTakes.length} stories with takes
-                  </span>
+      {/* ── Main Content: Feed + Sidebar ── */}
+      <div className="max-w-5xl mx-auto px-4 py-12 grid grid-cols-1 lg:grid-cols-[1fr_300px] gap-12 items-start">
+        <main className="space-y-0">
+          {isLoading ? (
+            <div className="flex flex-col items-center gap-3 py-20">
+              <div className="w-6 h-6 border-2 border-primary/30 border-t-primary rounded-full animate-spin" />
+              <p className="text-sm text-muted-foreground font-mono">Loading intelligence...</p>
+            </div>
+          ) : filtered.length === 0 ? (
+            <div className="text-center py-16">
+              <Newspaper className="w-8 h-8 text-muted-foreground/30 mx-auto mb-3" />
+              <p className="text-sm text-muted-foreground">No stories in this category yet.</p>
+            </div>
+          ) : (
+            <>
+              {/* ── Jackye's Current Take (pull quote) ── */}
+              {currentTake && filter === "all" && (
+                <div className="mb-10 rounded-xl border border-primary/20 bg-primary/[0.04] p-8">
+                  <div className="flex items-center gap-2 mb-4">
+                    <Eye className="w-4 h-4 text-primary" />
+                    <span className="text-xs font-mono tracking-[0.2em] uppercase text-primary font-bold">Jackye's Current Take</span>
+                  </div>
+                  <blockquote className="text-xl text-foreground leading-[1.8] italic border-l-2 border-primary pl-5 font-light" style={{ fontFamily: "'DM Sans', cursive, sans-serif" }}>
+                    "{currentTake.jackye_take}"
+                  </blockquote>
+                  <button
+                    onClick={() => document.getElementById(`story-${currentTake.id}`)?.scrollIntoView({ behavior: "smooth", block: "start" })}
+                    className="text-sm text-foreground/60 mt-4 cursor-pointer hover:text-primary transition-colors group/take flex items-center gap-1"
+                  >
+                    Re: <span className="text-foreground/80 font-semibold group-hover/take:text-primary transition-colors">{currentTake.headline}</span>
+                    <ArrowRight className="w-3 h-3 opacity-0 group-hover/take:opacity-100 transition-opacity" />
+                  </button>
                 </div>
-                <div className="grid md:grid-cols-2 gap-4">
-                  {withTakes.map((article) => (
-                    <StoryCard key={article.id} article={article} />
-                  ))}
-                </div>
-              </div>
-            )}
+              )}
 
-            {/* All other stories — summary teasers */}
-            {withoutTakes.length > 0 && (
-              <div>
-                <div className="flex items-center gap-2 mb-4">
-                  <TrendingUp className="w-4 h-4 text-muted-foreground" />
-                  <h2 className="text-sm font-mono tracking-[0.15em] uppercase text-muted-foreground">
-                    The Wire
-                  </h2>
+              {/* ── Lead Story ── */}
+              {withTakes.length > 0 && (
+                <div className="mb-10">
+                  <LeadStoryCard article={withTakes[0]} />
                 </div>
-                <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-3">
-                  {withoutTakes.map((article) => {
-                    const cat = getCategoryConfig(article.category);
-                    return (
-                      <a
-                        key={article.id}
-                        href={article.source_url || "#"}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="group block"
-                      >
-                        <div className="rounded-xl border border-border/30 bg-card p-4 hover:border-primary/30 transition-all h-full flex flex-col">
-                          <div className="flex items-center gap-2 mb-2">
-                            <Badge
-                              variant="outline"
-                              className={`text-[10px] font-mono tracking-wider border ${cat.color}`}
-                            >
-                              {cat.label}
-                            </Badge>
-                            {article.is_controversy && (
-                              <AlertTriangle className="w-3 h-3 text-destructive" />
-                            )}
-                            <span className="ml-auto text-[10px] text-muted-foreground/50 font-mono">
-                              {timeAgo(article.published_at)}
-                            </span>
-                          </div>
-                          <p className="text-sm font-medium text-foreground leading-snug flex-1 group-hover:text-primary transition-colors">
-                            {article.headline}
-                          </p>
-                          <div className="flex items-center justify-between mt-3 pt-2 border-t border-border/20">
-                            <span className="text-[10px] text-muted-foreground">
-                              {article.source_name || "Source"}
-                            </span>
-                            <SpiceMeter level={spiceLevel(article)} />
-                          </div>
-                        </div>
-                      </a>
-                    );
-                  })}
+              )}
+
+              {/* ── Jackye's Takes — editorial cards ── */}
+              {withTakes.length > 1 && (
+                <div className="mb-10">
+                  <div className="flex items-center gap-3 mb-6">
+                    <Star className="w-4 h-4 text-primary" />
+                    <h2 className="text-xs font-mono tracking-[0.2em] uppercase text-primary font-bold">Jackye's Takes</h2>
+                    <div className="flex-1 h-px bg-border" />
+                    <span className="text-[10px] text-muted-foreground/50 font-mono">{withTakes.length - 1} more</span>
+                  </div>
+                  <div className="grid md:grid-cols-2 gap-5">
+                    {withTakes.slice(1).map((article) => (
+                      <StoryCard key={article.id} article={article} />
+                    ))}
+                  </div>
                 </div>
-              </div>
-            )}
-          </>
-        )}
-      </section>
+              )}
+
+              {/* ── Quick Receipts / The Wire ── */}
+              {withoutTakes.length > 0 && (
+                <div className="flex items-center gap-4 my-10">
+                  <div className="flex-1 h-px bg-border" />
+                  <span className="text-xs uppercase tracking-[0.3em] text-muted-foreground font-mono font-bold">Quick Receipts</span>
+                  <div className="flex-1 h-px bg-border" />
+                </div>
+              )}
+
+              {withoutTakes.length > 0 && (
+                <div>
+                  <div className="flex items-center gap-2 mb-5">
+                    <TrendingUp className="w-4 h-4 text-muted-foreground" />
+                    <h2 className="text-[10px] font-mono tracking-[0.2em] uppercase text-muted-foreground font-bold">All Signals</h2>
+                  </div>
+                  <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
+                    {withoutTakes.map((article) => (
+                      <WireItem key={article.id} article={article} />
+                    ))}
+                  </div>
+                </div>
+              )}
+            </>
+          )}
+        </main>
+
+        {/* ── Sidebar ── */}
+        <aside className="hidden lg:block sticky top-[74px] space-y-6">
+          {/* Newsletter CTA */}
+          <div className="bg-card border border-border rounded-xl p-6">
+            <p className="text-[11px] uppercase tracking-[0.55em] text-primary mb-3 font-mono">Every Morning</p>
+            <h3 className="text-xl font-black text-foreground mb-2 leading-tight tracking-tight">My Uncertainty Era</h3>
+            <p className="text-sm text-foreground/70 leading-relaxed mb-4">
+              The part where I say what everyone's thinking but nobody's saying.
+            </p>
+            <blockquote className="border-l-2 border-primary pl-3.5 mb-5">
+              <p className="text-sm text-foreground/80 leading-relaxed italic font-light" style={{ fontFamily: "'DM Sans', cursive, sans-serif" }}>
+                "Every company has a 'people are our greatest asset' poster. Most hang next to a layoff plan."
+              </p>
+            </blockquote>
+            <button onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
+              className="block w-full bg-primary text-primary-foreground font-bold py-3 rounded-lg text-center text-sm tracking-[0.08em] hover:brightness-110 transition-all">
+              Subscribe → Free Forever
+            </button>
+          </div>
+
+          {/* Hottest Takes */}
+          <div className="bg-card border border-border rounded-xl p-5">
+            <p className="text-[11px] uppercase tracking-[0.55em] text-primary mb-3.5 font-mono">⭐ Highest Stargaze</p>
+            {hotStories.slice(0, 4).map((article) => (
+              <button
+                key={article.id}
+                onClick={() => document.getElementById(`story-${article.id}`)?.scrollIntoView({ behavior: "smooth", block: "start" })}
+                className="block w-full text-left pb-3 mb-3 border-b border-border last:border-none last:mb-0 last:pb-0 group/hot cursor-pointer hover:bg-muted/20 rounded-md px-1 -mx-1 transition-colors"
+              >
+                <div className="flex items-center gap-2 mb-1.5">
+                  <CategoryBadge category={article.category} />
+                  <span className="text-[10px] text-foreground/50 font-mono">{timeAgo(article.published_at)}</span>
+                </div>
+                <p className="text-sm font-semibold text-foreground leading-snug group-hover/hot:text-primary transition-colors">{article.headline}</p>
+                <div className="mt-1">
+                  <StargazeChip score={article.spice_level} />
+                </div>
+              </button>
+            ))}
+          </div>
+
+          {/* What to Watch */}
+          <div className="rounded-xl p-5 border" style={{ background: "hsl(var(--primary) / 0.04)", borderColor: "hsl(var(--primary) / 0.15)" }}>
+            <p className="text-[11px] uppercase tracking-[0.55em] text-primary mb-3 font-mono">👀 What to Watch</p>
+            <p className="text-sm text-foreground/70 leading-relaxed mb-3">
+              Stories still developing. Patterns forming. Receipts being pulled.
+            </p>
+            <Link to="/receipts" className="text-sm text-primary font-mono hover:underline flex items-center gap-1 no-underline">
+              See full receipts <ArrowRight className="w-3 h-3" />
+            </Link>
+          </div>
+        </aside>
+      </div>
 
       {/* ── Bottom CTA ── */}
-      <section className="text-center py-10 px-4 border-t border-border/30">
-        <p className="text-muted-foreground text-sm mb-3">
-          The tea, served daily. No algorithms. No ads. Just receipts.
+      <footer className="border-t border-border py-12 px-8 text-center">
+        <p className="text-sm text-foreground/60 tracking-[0.1em] font-mono">
+          The Receipts · <em>by Jackye Clayton 👑 × WDIWF</em>
         </p>
-        <div className="flex items-center justify-center gap-4">
-          <Button
-            onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
-            variant="outline"
-            size="sm"
-          >
-            <Mail className="w-4 h-4 mr-2" /> Subscribe
-          </Button>
-          <Link to="/receipts">
-            <Button variant="ghost" size="sm">
-              All Receipts <ChevronRight className="w-4 h-4 ml-1" />
-            </Button>
+        <p className="text-sm text-foreground/50 mt-2 italic" style={{ fontFamily: "'DM Sans', cursive, sans-serif" }}>
+          "Every company runs a background check on you. WDIWF runs one on them."
+        </p>
+        <div className="flex justify-center gap-8 mt-4">
+          <Link to="/" className="text-sm text-muted-foreground tracking-[0.1em] font-mono hover:text-primary transition-colors no-underline">
+            wdiwf.jackyeclayton.com
+          </Link>
+          <Link to="/submit-tip" className="text-sm text-muted-foreground tracking-[0.1em] font-mono hover:text-primary transition-colors no-underline">
+            Submit a tip
           </Link>
         </div>
-      </section>
+      </footer>
     </div>
   );
 }

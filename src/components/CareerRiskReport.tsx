@@ -266,7 +266,7 @@ export function CareerRiskReport(props: CareerRiskReportProps) {
   const overallScore = computeOverallScore(dimensions);
   const overall = overallLabel(overallScore);
 
-  const shareUrl = `https://wdiwf.jackyeclayton.com/company/${props.slug}`;
+  const shareUrl = `https://wdiwf.jackyeclayton.com/dossier/${props.slug}`;
   const shareText = `${props.companyName} has a Career Risk Score of ${overallScore}/100. Check your employer before you say yes:`;
 
   // Pre-generate OG card for social sharing
