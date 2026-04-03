@@ -90,7 +90,7 @@ export default function NoRegretsEpisode2Recap() {
         </div>
 
         <Button asChild variant="outline" size="lg" className="w-full">
-          <Link to="/no-regrets-game">Episode 3 (coming soon)</Link>
+          <Link to="/no-regrets-game/episode-3">Continue to Episode 3</Link>
         </Button>
       </div>
     </EpisodeShell>

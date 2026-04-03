@@ -24,12 +24,21 @@ export interface Choice {
   receiptHints?: ReceiptHint[];
 }
 
+export interface EpisodeBranch {
+  forArchetype: CompanyArchetype;
+  narrative: string[];
+  warningSign: { emoji: string; title: string; detail: string };
+  selfJustification: { emoji: string; title: string; detail: string };
+  choices: Choice[];
+}
+
 export interface Episode {
   id: string;
   title: string;
   narrative: string[];
   choices: Choice[];
   initialStats: PlayerStats;
+  branches?: EpisodeBranch[];
 }
 
 export interface GameState {
