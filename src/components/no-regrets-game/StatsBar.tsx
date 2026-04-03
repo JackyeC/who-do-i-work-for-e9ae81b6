@@ -1,4 +1,5 @@
 import { cn } from "@/lib/utils";
+import { motion } from "framer-motion";
 import type { PlayerStats } from "@/types/no-regrets-game";
 
 const STAT_CONFIG: { key: keyof PlayerStats; label: string; emoji: string }[] = [
@@ -29,22 +30,28 @@ export function StatsBar({ stats, previousStats }: StatsBarProps) {
           return (
             <div key={key} className="flex flex-col items-center gap-2">
               <span className="text-base md:text-lg">{emoji}</span>
-              {/* Vertical bar concept */}
               <div className="w-full h-1.5 rounded-full bg-muted/40 overflow-hidden">
-                <div
-                  className={cn("h-full rounded-full transition-all duration-1000 ease-out", barColor)}
-                  style={{ width: `${pct}%` }}
+                <motion.div
+                  className={cn("h-full rounded-full", barColor)}
+                  initial={{ width: 0 }}
+                  animate={{ width: `${pct}%` }}
+                  transition={{ duration: 0.9, ease: [0.25, 0.1, 0.25, 1], delay: 0.3 }}
                 />
               </div>
               <div className="text-center">
                 <span className="text-sm md:text-base font-mono font-bold text-foreground">{value}</span>
                 {diff !== 0 && (
-                  <span className={cn(
-                    "ml-1 text-[10px] font-mono font-semibold",
-                    diff > 0 ? "text-[hsl(var(--civic-green))]" : "text-[hsl(var(--destructive))]"
-                  )}>
+                  <motion.span
+                    initial={{ opacity: 0, y: -4 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ delay: 0.8, duration: 0.3 }}
+                    className={cn(
+                      "ml-1 text-[10px] font-mono font-semibold",
+                      diff > 0 ? "text-[hsl(var(--civic-green))]" : "text-[hsl(var(--destructive))]"
+                    )}
+                  >
                     {diff > 0 ? `+${diff}` : diff}
-                  </span>
+                  </motion.span>
                 )}
               </div>
               <span className="text-[9px] md:text-[10px] text-muted-foreground/70 uppercase tracking-widest font-mono">{label}</span>

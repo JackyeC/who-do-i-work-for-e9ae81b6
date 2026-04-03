@@ -1,8 +1,23 @@
 import type { ReactNode } from "react";
+import { motion } from "framer-motion";
 
 interface EpisodeShellProps {
   children: ReactNode;
 }
+
+const shellVariants = {
+  hidden: { opacity: 0, y: 16 },
+  visible: {
+    opacity: 1,
+    y: 0,
+    transition: { duration: 0.5, ease: [0.25, 0.1, 0.25, 1], staggerChildren: 0.08 },
+  },
+};
+
+const childVariant = {
+  hidden: { opacity: 0, y: 12 },
+  visible: { opacity: 1, y: 0, transition: { duration: 0.4, ease: [0.25, 0.1, 0.25, 1] } },
+};
 
 export function EpisodeShell({ children }: EpisodeShellProps) {
   return (
@@ -26,10 +41,22 @@ export function EpisodeShell({ children }: EpisodeShellProps) {
         </div>
       </header>
 
-      {/* Main */}
-      <main className="max-w-2xl mx-auto px-5 py-10 space-y-10">
-        {children}
-      </main>
+      {/* Main — staggered reveal */}
+      <motion.main
+        className="max-w-2xl mx-auto px-5 py-10 space-y-10"
+        variants={shellVariants}
+        initial="hidden"
+        animate="visible"
+      >
+        {Array.isArray(children)
+          ? children.map((child, i) => (
+              <motion.div key={i} variants={childVariant}>
+                {child}
+              </motion.div>
+            ))
+          : <motion.div variants={childVariant}>{children}</motion.div>
+        }
+      </motion.main>
 
       {/* Footer line */}
       <footer className="border-t border-border/20 py-6">
