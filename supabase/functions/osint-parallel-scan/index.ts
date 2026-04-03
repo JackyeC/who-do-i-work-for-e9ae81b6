@@ -12,6 +12,7 @@ const corsHeaders = {
 };
 
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2';
+import { syncCompanyNews } from '../_shared/company-news-sync.ts';
 
 const SOURCE_FAMILY_TO_FUNCTIONS: Record<string, string[]> = {
   news: ['sync-gdelt'],
@@ -186,6 +187,17 @@ Deno.serve(async (req: Request) => {
       staleSources.map(async (functionName) => {
         const fnStart = Date.now();
         try {
+          if (functionName === 'sync-gdelt') {
+            const data = await syncCompanyNews(supabase, companyId, companyName);
+            return {
+              source: functionName,
+              success: data?.success !== false,
+              duration: Date.now() - fnStart,
+              data,
+              error: data?.error,
+            };
+          }
+
           const payload = buildFunctionPayload(functionName, companyId, companyName);
           const response = await fetch(`${functionsBaseUrl}/${functionName}`, {
             method: 'POST',
