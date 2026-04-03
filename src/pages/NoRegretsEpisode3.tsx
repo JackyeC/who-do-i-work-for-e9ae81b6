@@ -130,6 +130,9 @@ export default function NoRegretsEpisode3() {
 
       <StatsBar stats={baseStats} />
 
+      {/* Pattern break toast (shown after healthy choice) */}
+      {patternBreakMsg && <PatternBreakToast message={patternBreakMsg} />}
+
       {user ? (
         <div className="space-y-2">
           <p className="text-[10px] font-mono uppercase tracking-[0.25em] text-muted-foreground/60 mb-2">What now?</p>
