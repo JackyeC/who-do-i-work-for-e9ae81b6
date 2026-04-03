@@ -152,23 +152,51 @@ export function SignalsDataTab() {
     },
   });
 
-  // ─── Claim Safety Monitor (with tier breakdown) ───
+  // ─── Claim Attribution Monitor (company_claims + company_corporate_claims) ───
   const { data: claimSafety, isLoading: claimsLoading } = useQuery({
     queryKey: ["founder-signals-claims"],
     queryFn: async () => {
-      const [totalClaims, withUrl, multiSource, withSourceNoUrl, noEvidence] = await Promise.all([
+      // Legacy corporate claims
+      const [totalCorporate, corpWithUrl, corpMulti, corpInferred, corpNone] = await Promise.all([
         supabase.from("company_corporate_claims").select("id", { count: "exact", head: true }),
         supabase.from("company_corporate_claims").select("id", { count: "exact", head: true }).not("claim_source_url", "is", null),
         supabase.from("company_corporate_claims").select("id", { count: "exact", head: true }).is("claim_source_url", null).eq("extraction_method", "multi_source"),
         supabase.from("company_corporate_claims").select("id", { count: "exact", head: true }).is("claim_source_url", null).not("claim_source", "is", null).neq("extraction_method", "multi_source"),
         supabase.from("company_corporate_claims").select("id", { count: "exact", head: true }).is("claim_source_url", null).is("claim_source", null),
       ]);
-      const total = totalClaims.count ?? 0;
-      const verified = withUrl.count ?? 0;
-      const multi = multiSource.count ?? 0;
-      const inferred = withSourceNoUrl.count ?? 0;
-      const none = noEvidence.count ?? 0;
-      return { totalClaims: total, verified, multiSource: multi, inferred, noEvidence: none, missingSources: total - verified };
+
+      // New structured claims — attribution enforcement
+      const [totalNew, newAttributed, newUnattributed] = await Promise.all([
+        (supabase as any).from("company_claims").select("id", { count: "exact", head: true }).eq("is_active", true),
+        (supabase as any).from("company_claims").select("id", { count: "exact", head: true }).eq("is_active", true).not("source_url", "is", null).not("source_label", "is", null),
+        (supabase as any).from("company_claims").select("id, company_id, claim_text, source_label, claim_type", { count: "exact" }).eq("is_active", true).or("source_url.is.null,source_label.is.null"),
+      ]);
+
+      // Per-company breakdown of unattributed claims
+      const unattributedList = (newUnattributed.data ?? []) as any[];
+      const perCompany: Record<string, { count: number; claims: string[] }> = {};
+      for (const c of unattributedList) {
+        const cid = c.company_id;
+        if (!perCompany[cid]) perCompany[cid] = { count: 0, claims: [] };
+        perCompany[cid].count++;
+        if (perCompany[cid].claims.length < 3) perCompany[cid].claims.push(c.claim_text?.slice(0, 80) || "Untitled");
+      }
+
+      const total = (totalCorporate.count ?? 0) + (totalNew.count ?? 0);
+      const verified = (corpWithUrl.count ?? 0) + (newAttributed.count ?? 0);
+      const multi = corpMulti.count ?? 0;
+      const inferred = corpInferred.count ?? 0;
+      const none = (corpNone.count ?? 0) + (newUnattributed.count ?? 0);
+      return {
+        totalClaims: total,
+        verified,
+        multiSource: multi,
+        inferred,
+        noEvidence: none,
+        missingSources: total - verified,
+        unattributedPerCompany: perCompany,
+        unattributedCount: newUnattributed.count ?? 0,
+      };
     },
   });
 
