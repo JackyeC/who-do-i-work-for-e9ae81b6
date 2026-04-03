@@ -492,6 +492,13 @@ export default function CompanyDossier() {
     <>
       {/* ── ABOVE THE FOLD: Verdict Header + Snapshot Cards ── */}
       <DossierVerdictHeader company={company} />
+
+      {/* ── Data Coverage + Signal Timeline ── */}
+      <div className="mb-6 space-y-4">
+        <CompanyCoverageSummary companyId={companyId!} />
+        <SignalTimeline companyId={companyId!} />
+      </div>
+
       <DossierSnapshotCards data={snapshotData} />
 
       {/* Action buttons row */}
