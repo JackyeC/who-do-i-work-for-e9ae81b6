@@ -5,6 +5,7 @@ import { useAuth } from "@/contexts/AuthContext";
 import { useClerkWithFallback } from "@/hooks/use-clerk-fallback";
 import { Button } from "@/components/ui/button";
 import { LogoMark } from "@/components/brand/LogoMark";
+import { ScanCounter } from "@/components/landing/ScanCounter";
 
 const PRIMARY_LINKS = [
   { label: "Check a Company", to: "/offer-check" },
@@ -28,6 +29,7 @@ export function MarketingNav() {
           <Link to="/" className="flex items-center shrink-0">
             <LogoMark showWordmark iconSize={22} />
           </Link>
+          <ScanCounter />
 
           {/* Desktop nav */}
           <nav className="hidden md:flex items-center gap-6">

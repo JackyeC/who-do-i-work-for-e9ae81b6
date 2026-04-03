@@ -9843,6 +9843,33 @@ export type Database = {
           },
         ]
       }
+      scan_usage: {
+        Row: {
+          company_name: string | null
+          created_at: string
+          id: string
+          scan_type: string
+          session_id: string
+          user_id: string | null
+        }
+        Insert: {
+          company_name?: string | null
+          created_at?: string
+          id?: string
+          scan_type?: string
+          session_id: string
+          user_id?: string | null
+        }
+        Update: {
+          company_name?: string | null
+          created_at?: string
+          id?: string
+          scan_type?: string
+          session_id?: string
+          user_id?: string | null
+        }
+        Relationships: []
+      }
       security_anomalies: {
         Row: {
           anomaly_type: string
