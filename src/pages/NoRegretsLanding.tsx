@@ -38,6 +38,8 @@ const FORCES = [
 ];
 
 export default function NoRegretsLanding() {
+  useEffect(() => { trackNoRegrets("landing_page_view"); }, []);
+
   return (
     <>
       <Helmet>
