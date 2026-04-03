@@ -5,6 +5,7 @@ import { useAuth } from "@/contexts/AuthContext";
 import { useClerkWithFallback } from "@/hooks/use-clerk-fallback";
 import { Button } from "@/components/ui/button";
 import { LogoMark } from "@/components/brand/LogoMark";
+import { ScanCounter } from "@/components/landing/ScanCounter";
 
 const PRIMARY_LINKS = [
   { label: "Check a Company", to: "/offer-check" },
