@@ -512,7 +512,7 @@ export function SignalsDataTab() {
           <p className="text-xs text-muted-foreground mb-3">
             Every claim must carry a source label. Claims without attribution are suppressed from display.
           </p>
-          {claimsLoading ? (
+        {claimsLoading ? (
             <Skeleton className="h-20" />
           ) : claimSafety!.totalClaims === 0 ? (
             <EmptyState text="No claims have been indexed yet." />
@@ -531,21 +531,44 @@ export function SignalsDataTab() {
                 <span className="font-mono font-medium text-primary">{claimSafety!.multiSource}</span>
               </div>
               <div className="flex items-center justify-between text-sm">
-                <span className="flex items-center gap-1.5 text-amber-600"><HelpCircle className="w-3 h-3" /> Inferred</span>
-                <span className="font-mono font-medium text-amber-600">{claimSafety!.inferred}</span>
+                <span className="flex items-center gap-1.5" style={{ color: "hsl(var(--civic-yellow))" }}><HelpCircle className="w-3 h-3" /> Inferred</span>
+                <span className="font-mono font-medium" style={{ color: "hsl(var(--civic-yellow))" }}>{claimSafety!.inferred}</span>
               </div>
               <div className="flex items-center justify-between text-sm">
-                <span className="flex items-center gap-1.5 text-muted-foreground"><XCircle className="w-3 h-3" /> No Public Evidence</span>
+                <span className="flex items-center gap-1.5 text-muted-foreground"><XCircle className="w-3 h-3" /> Unattributed (suppressed)</span>
                 <span className={cn("font-mono font-medium", claimSafety!.noEvidence > 0 ? "text-destructive" : "text-muted-foreground")}>{claimSafety!.noEvidence}</span>
               </div>
-              {claimSafety!.noEvidence > 0 && (
-                <p className="text-xs text-muted-foreground bg-destructive/5 border border-destructive/20 rounded-lg p-2">
-                  ⚠ {claimSafety!.noEvidence} claim{claimSafety!.noEvidence !== 1 ? "s" : ""} have no attribution and are suppressed from public display.
-                </p>
+
+              {/* Unattributed per-company breakdown */}
+              {claimSafety!.unattributedCount > 0 && (
+                <div className="bg-destructive/5 border border-destructive/20 rounded-lg p-3 space-y-2">
+                  <p className="text-xs font-semibold text-destructive flex items-center gap-1.5">
+                    <AlertTriangle className="w-3.5 h-3.5" />
+                    {claimSafety!.unattributedCount} unattributed claim{claimSafety!.unattributedCount !== 1 ? "s" : ""} hidden from public display
+                  </p>
+                  <div className="space-y-1.5 max-h-40 overflow-y-auto">
+                    {Object.entries(claimSafety!.unattributedPerCompany).map(([companyId, info]: [string, any]) => (
+                      <div key={companyId} className="text-xs bg-background/50 rounded-md p-2 border border-border/30">
+                        <div className="flex items-center justify-between">
+                          <span className="font-mono text-muted-foreground truncate">{companyId.slice(0, 8)}…</span>
+                          <Badge variant="outline" className="text-[9px] text-destructive border-destructive/30">{info.count} missing</Badge>
+                        </div>
+                        <ul className="mt-1 space-y-0.5">
+                          {info.claims.map((text: string, i: number) => (
+                            <li key={i} className="text-[10px] text-muted-foreground truncate">• {text}</li>
+                          ))}
+                        </ul>
+                      </div>
+                    ))}
+                  </div>
+                </div>
               )}
+
               {claimSafety!.noEvidence === 0 && claimSafety!.totalClaims > 0 && (
                 <p className="text-xs text-civic-green bg-civic-green/5 border border-civic-green/20 rounded-lg p-2">
-                  ✓ All claims have source attribution.
+                  ✓ All claims have source attribution. Nothing is suppressed.
+                </p>
+              )}
                 </p>
               )}
             </div>
