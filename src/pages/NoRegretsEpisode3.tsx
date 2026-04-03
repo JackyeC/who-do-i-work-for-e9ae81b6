@@ -5,6 +5,7 @@ import { EpisodeShell } from "@/components/no-regrets-game/EpisodeShell";
 import { StatsBar } from "@/components/no-regrets-game/StatsBar";
 import { SignupGate } from "@/components/SignupGate";
 import { EPISODE_3 } from "@/data/no-regrets-episodes";
+import { trackNoRegrets } from "@/lib/noRegretsAnalytics";
 import type { Choice, PlayerStats, CompanyArchetype, EpisodeBranch } from "@/types/no-regrets-game";
 
 function applyChanges(base: PlayerStats, changes: Partial<PlayerStats>): PlayerStats {
@@ -41,6 +42,7 @@ export default function NoRegretsEpisode3() {
   const [branch, setBranch] = useState<EpisodeBranch | null>(null);
 
   useEffect(() => {
+    trackNoRegrets("episode_3_started");
     const raw = sessionStorage.getItem("noRegrets_ep2");
     if (raw) {
       try {
@@ -55,6 +57,7 @@ export default function NoRegretsEpisode3() {
 
   const handleChoose = useCallback((choice: Choice) => {
     setChoosing(true);
+    trackNoRegrets("episode_3_completed", { consequence_label: choice.archetype });
     const newStats = applyChanges(baseStats, choice.statChanges);
     sessionStorage.setItem(
       "noRegrets_ep3",

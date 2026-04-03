@@ -6,6 +6,7 @@ import { FollowTheMoneyTeaser } from "@/components/no-regrets-game/FollowTheMone
 import { ConversionModule } from "@/components/no-regrets-game/ConversionModule";
 import { Button } from "@/components/ui/button";
 import { ArrowRight } from "lucide-react";
+import { trackNoRegrets } from "@/lib/noRegretsAnalytics";
 import type { PlayerStats, PlayerArchetype } from "@/types/no-regrets-game";
 
 const ARCHETYPE_LABELS: Record<string, string> = {

@@ -5,6 +5,7 @@ import { StatsBar } from "@/components/no-regrets-game/StatsBar";
 import { FollowTheMoneyTeaser } from "@/components/no-regrets-game/FollowTheMoneyTeaser";
 import { Button } from "@/components/ui/button";
 import { ArrowRight } from "lucide-react";
+import { trackNoRegrets } from "@/lib/noRegretsAnalytics";
 import type { PlayerStats, CompanyArchetype } from "@/types/no-regrets-game";
 
 const ARCHETYPE_LABELS: Record<CompanyArchetype, string> = {
@@ -94,12 +95,12 @@ export default function NoRegretsEpisode2Recap() {
           <h3 className="text-lg md:text-xl font-display font-bold text-foreground">{cta.headline}</h3>
           <p className="text-sm text-muted-foreground leading-relaxed">{cta.body}</p>
           <div className="flex flex-col sm:flex-row gap-3 pt-1">
-            <Button asChild variant="premium" size="lg" className="flex-1">
+            <Button asChild variant="premium" size="lg" className="flex-1" onClick={() => trackNoRegrets("recap_cta_clicked", { episode: 2, company_archetype: data.companyArchetype, cta_destination: cta.link })}>
               <Link to={cta.link} className="gap-2">
                 {cta.cta} <ArrowRight className="w-4 h-4" />
               </Link>
             </Button>
-            <Button asChild variant="outline" size="lg" className="flex-1">
+            <Button asChild variant="outline" size="lg" className="flex-1" onClick={() => trackNoRegrets("recap_cta_clicked", { episode: 2, company_archetype: data.companyArchetype, cta_destination: cta.secondaryLink })}>
               <Link to={cta.secondaryLink}>{cta.secondary}</Link>
             </Button>
           </div>

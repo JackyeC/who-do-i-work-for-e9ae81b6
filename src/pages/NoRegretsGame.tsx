@@ -1,4 +1,4 @@
-import { useState, useCallback } from "react";
+import { useState, useCallback, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "@/contexts/AuthContext";
 import { EpisodeShell } from "@/components/no-regrets-game/EpisodeShell";
@@ -6,6 +6,7 @@ import { StatsBar } from "@/components/no-regrets-game/StatsBar";
 import { ChoiceButtons } from "@/components/no-regrets-game/ChoiceButtons";
 import { SignupGate } from "@/components/SignupGate";
 import { EPISODE_1 } from "@/data/no-regrets-episodes";
+import { trackNoRegrets } from "@/lib/noRegretsAnalytics";
 import type { Choice, PlayerStats } from "@/types/no-regrets-game";
 
 function applyChanges(base: PlayerStats, changes: Partial<PlayerStats>): PlayerStats {
@@ -23,8 +24,11 @@ export default function NoRegretsGame() {
   const episode = EPISODE_1;
   const [choosing, setChoosing] = useState(false);
 
+  useEffect(() => { trackNoRegrets("episode_1_started"); }, []);
+
   const handleChoose = useCallback((choice: Choice) => {
     setChoosing(true);
+    trackNoRegrets("episode_1_completed", { player_archetype: choice.archetype });
     const newStats = applyChanges(episode.initialStats, choice.statChanges);
     sessionStorage.setItem(
       "noRegrets_ep1",
