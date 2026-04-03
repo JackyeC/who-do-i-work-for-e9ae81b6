@@ -8,6 +8,7 @@ export type ApplicationEmailDossierRow = {
   application_id: string;
   user_id: string;
   email_status: string | null;
+  body_markdown?: string | null;
   created_at: string | null;
   updated_at?: string | null;
   email_subject?: string | null;
