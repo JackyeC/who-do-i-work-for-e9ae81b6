@@ -548,6 +548,9 @@ export default function CompanyDossier() {
         Every signal traces back to a source. Use it before you apply, interview, or sign.
       </p>
 
+      {/* ── VERIFIED CLAIMS ── */}
+      <CompanyClaimsSection companyId={companyId!} companyName={company.name} />
+
       {/* WARN Filings — always show when data exists */}
       {companyId && (
         <div className="mb-6" id="warn-filings">
