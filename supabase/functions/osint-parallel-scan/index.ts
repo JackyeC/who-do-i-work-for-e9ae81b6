@@ -195,6 +195,9 @@ Deno.serve(async (req: Request) => {
       last_scan_attempted: new Date().toISOString(),
     }).eq('id', companyId);
 
+    // Refresh company_coverage_summary from actual signal tables
+    await refreshCoverageSummary(supabase, companyId);
+
     // Trigger signal engine after scan completes (fire-and-forget)
     supabase.functions.invoke('generate-company-signals', {
       body: { companyId },
