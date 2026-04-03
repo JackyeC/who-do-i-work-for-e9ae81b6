@@ -172,8 +172,117 @@ export function SignalsDataTab() {
     },
   });
 
+  // ─── Domain Review Queue ───
+  const { data: domainReview, isLoading: domainReviewLoading } = useQuery({
+    queryKey: ["founder-domain-review-queue"],
+    queryFn: async () => {
+      const { data, error } = await (supabase as any)
+        .from("domain_review_queue")
+        .select("id, company_id, discovered_url, discovered_domain, confidence, source_method, source_detail, status, created_at, companies!domain_review_queue_company_id_fkey(name, slug)")
+        .eq("status", "pending")
+        .order("created_at", { ascending: false })
+        .limit(30);
+      if (error) console.error("domain review query error:", error);
+      return data ?? [];
+    },
+  });
+
+  // ─── Identity Status Counts ───
+  const { data: identityStats, isLoading: identityStatsLoading } = useQuery({
+    queryKey: ["founder-identity-stats"],
+    queryFn: async () => {
+      const [complete, partial, missing, autoFilled] = await Promise.all([
+        supabase.from("companies").select("id", { count: "exact", head: true }).eq("identity_status" as any, "complete"),
+        supabase.from("companies").select("id", { count: "exact", head: true }).eq("identity_status" as any, "partial"),
+        supabase.from("companies").select("id", { count: "exact", head: true }).eq("identity_status" as any, "missing"),
+        supabase.from("companies").select("id", { count: "exact", head: true }).eq("domain_auto_filled" as any, true),
+      ]);
+      return {
+        complete: complete.count ?? 0,
+        partial: partial.count ?? 0,
+        missing: missing.count ?? 0,
+        autoFilled: autoFilled.count ?? 0,
+      };
+    },
+  });
+
+  const runBackfill = async () => {
+    setBackfillRunning(true);
+    try {
+      const { data, error } = await supabase.functions.invoke("backfill-website-urls", {
+        body: { batchSize: 20 },
+      });
+      if (error) throw error;
+      toast.success(`Backfill complete: ${data.autoFilled} auto-filled, ${data.queuedForReview} queued for review`);
+      queryClient.invalidateQueries({ queryKey: ["founder-signals-website-gaps"] });
+      queryClient.invalidateQueries({ queryKey: ["founder-domain-review-queue"] });
+      queryClient.invalidateQueries({ queryKey: ["founder-identity-stats"] });
+    } catch (err: any) {
+      toast.error("Backfill failed: " + (err.message || "Unknown error"));
+    } finally {
+      setBackfillRunning(false);
+    }
+  };
+
+  const handleReviewAction = async (reviewId: string, action: "approved" | "rejected", companyId: string, url: string, domain: string) => {
+    try {
+      if (action === "approved") {
+        await supabase.from("companies").update({
+          website_url: url,
+          domain,
+          domain_source: "admin_review",
+          domain_auto_filled: false,
+          domain_confidence: "high",
+        } as any).eq("id", companyId);
+      }
+      await (supabase as any).from("domain_review_queue").update({
+        status: action,
+        reviewed_at: new Date().toISOString(),
+      }).eq("id", reviewId);
+      toast.success(action === "approved" ? "Domain approved and applied" : "Domain rejected");
+      queryClient.invalidateQueries({ queryKey: ["founder-domain-review-queue"] });
+      queryClient.invalidateQueries({ queryKey: ["founder-signals-website-gaps"] });
+      queryClient.invalidateQueries({ queryKey: ["founder-identity-stats"] });
+    } catch (err: any) {
+      toast.error("Action failed: " + (err.message || "Unknown error"));
+    }
+  };
+
   return (
     <div className="space-y-6">
+      {/* Identity Status Overview */}
+      <div className="bg-card border border-border rounded-2xl p-5">
+        <h3 className="text-sm font-semibold text-foreground mb-4 flex items-center gap-2">
+          <Globe className="w-4 h-4 text-primary" /> Identity Resolution Status
+        </h3>
+        {identityStatsLoading ? (
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+            {[1, 2, 3, 4].map(i => <Skeleton key={i} className="h-16" />)}
+          </div>
+        ) : (
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+            <div className="bg-muted/20 rounded-xl p-3 border border-border/30 text-center">
+              <IdentityStatusBadge status="complete" className="mx-auto mb-1" />
+              <p className="text-lg font-bold tabular-nums text-foreground">{identityStats?.complete ?? 0}</p>
+            </div>
+            <div className="bg-muted/20 rounded-xl p-3 border border-border/30 text-center">
+              <IdentityStatusBadge status="partial" className="mx-auto mb-1" />
+              <p className="text-lg font-bold tabular-nums text-foreground">{identityStats?.partial ?? 0}</p>
+            </div>
+            <div className="bg-muted/20 rounded-xl p-3 border border-border/30 text-center">
+              <IdentityStatusBadge status="missing" className="mx-auto mb-1" />
+              <p className="text-lg font-bold tabular-nums text-foreground">{identityStats?.missing ?? 0}</p>
+            </div>
+            <div className="bg-muted/20 rounded-xl p-3 border border-border/30 text-center">
+              <Badge variant="outline" className="text-xs gap-1 mx-auto mb-1 text-primary border-primary/30 bg-primary/8">
+                <Wand2 className="w-3 h-3" /> Auto-Filled
+              </Badge>
+              <p className="text-lg font-bold tabular-nums text-foreground">{identityStats?.autoFilled ?? 0}</p>
+            </div>
+          </div>
+        )}
+      </div>
+
       {/* Website URL backfill — matches founder "missing website URL" metric (not live HTTP checks) */}
       <div className="bg-card border border-border rounded-2xl p-5">
         <h3 className="text-sm font-semibold text-foreground mb-2 flex items-center gap-2">
