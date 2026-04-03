@@ -1,13 +1,18 @@
-import { useQuery } from "@tanstack/react-query";
+import { useState } from "react";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { Link } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
 import {
   Database, CheckCircle, AlertTriangle, XCircle, Clock,
   Shield, BarChart3, Layers, HelpCircle, Link2, ExternalLink,
+  Wand2, Globe, Eye, CheckCircle2, X as XIcon,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { IdentityStatusBadge, deriveIdentityStatus } from "@/components/IdentityStatusBadge";
+import { toast } from "sonner";
 
 /* ─── Coverage level mapping ─── */
 type CoverageLevel = "strong" | "limited" | "none";
@@ -66,6 +71,8 @@ function EmptyState({ text }: { text: string }) {
 }
 
 export function SignalsDataTab() {
+  const [backfillRunning, setBackfillRunning] = useState(false);
+  const queryClient = useQueryClient();
   // ─── Companies with dossier text but no website_url (same definition as Today tab) ───
   const { data: websiteGaps, isLoading: websiteGapsLoading } = useQuery({
     queryKey: ["founder-signals-website-gaps"],
@@ -165,8 +172,117 @@ export function SignalsDataTab() {
     },
   });
 
+  // ─── Domain Review Queue ───
+  const { data: domainReview, isLoading: domainReviewLoading } = useQuery({
+    queryKey: ["founder-domain-review-queue"],
+    queryFn: async () => {
+      const { data, error } = await (supabase as any)
+        .from("domain_review_queue")
+        .select("id, company_id, discovered_url, discovered_domain, confidence, source_method, source_detail, status, created_at, companies!domain_review_queue_company_id_fkey(name, slug)")
+        .eq("status", "pending")
+        .order("created_at", { ascending: false })
+        .limit(30);
+      if (error) console.error("domain review query error:", error);
+      return data ?? [];
+    },
+  });
+
+  // ─── Identity Status Counts ───
+  const { data: identityStats, isLoading: identityStatsLoading } = useQuery({
+    queryKey: ["founder-identity-stats"],
+    queryFn: async () => {
+      const [complete, partial, missing, autoFilled] = await Promise.all([
+        (supabase as any).from("companies").select("id", { count: "exact", head: true }).eq("identity_status", "complete"),
+        (supabase as any).from("companies").select("id", { count: "exact", head: true }).eq("identity_status", "partial"),
+        (supabase as any).from("companies").select("id", { count: "exact", head: true }).eq("identity_status", "missing"),
+        (supabase as any).from("companies").select("id", { count: "exact", head: true }).eq("domain_auto_filled", true),
+      ]);
+      return {
+        complete: complete.count ?? 0,
+        partial: partial.count ?? 0,
+        missing: missing.count ?? 0,
+        autoFilled: autoFilled.count ?? 0,
+      };
+    },
+  });
+
+  const runBackfill = async () => {
+    setBackfillRunning(true);
+    try {
+      const { data, error } = await supabase.functions.invoke("backfill-website-urls", {
+        body: { batchSize: 20 },
+      });
+      if (error) throw error;
+      toast.success(`Backfill complete: ${data.autoFilled} auto-filled, ${data.queuedForReview} queued for review`);
+      queryClient.invalidateQueries({ queryKey: ["founder-signals-website-gaps"] });
+      queryClient.invalidateQueries({ queryKey: ["founder-domain-review-queue"] });
+      queryClient.invalidateQueries({ queryKey: ["founder-identity-stats"] });
+    } catch (err: any) {
+      toast.error("Backfill failed: " + (err.message || "Unknown error"));
+    } finally {
+      setBackfillRunning(false);
+    }
+  };
+
+  const handleReviewAction = async (reviewId: string, action: "approved" | "rejected", companyId: string, url: string, domain: string) => {
+    try {
+      if (action === "approved") {
+        await supabase.from("companies").update({
+          website_url: url,
+          domain,
+          domain_source: "admin_review",
+          domain_auto_filled: false,
+          domain_confidence: "high",
+        } as any).eq("id", companyId);
+      }
+      await (supabase as any).from("domain_review_queue").update({
+        status: action,
+        reviewed_at: new Date().toISOString(),
+      }).eq("id", reviewId);
+      toast.success(action === "approved" ? "Domain approved and applied" : "Domain rejected");
+      queryClient.invalidateQueries({ queryKey: ["founder-domain-review-queue"] });
+      queryClient.invalidateQueries({ queryKey: ["founder-signals-website-gaps"] });
+      queryClient.invalidateQueries({ queryKey: ["founder-identity-stats"] });
+    } catch (err: any) {
+      toast.error("Action failed: " + (err.message || "Unknown error"));
+    }
+  };
+
   return (
     <div className="space-y-6">
+      {/* Identity Status Overview */}
+      <div className="bg-card border border-border rounded-2xl p-5">
+        <h3 className="text-sm font-semibold text-foreground mb-4 flex items-center gap-2">
+          <Globe className="w-4 h-4 text-primary" /> Identity Resolution Status
+        </h3>
+        {identityStatsLoading ? (
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+            {[1, 2, 3, 4].map(i => <Skeleton key={i} className="h-16" />)}
+          </div>
+        ) : (
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+            <div className="bg-muted/20 rounded-xl p-3 border border-border/30 text-center">
+              <IdentityStatusBadge status="complete" className="mx-auto mb-1" />
+              <p className="text-lg font-bold tabular-nums text-foreground">{identityStats?.complete ?? 0}</p>
+            </div>
+            <div className="bg-muted/20 rounded-xl p-3 border border-border/30 text-center">
+              <IdentityStatusBadge status="partial" className="mx-auto mb-1" />
+              <p className="text-lg font-bold tabular-nums text-foreground">{identityStats?.partial ?? 0}</p>
+            </div>
+            <div className="bg-muted/20 rounded-xl p-3 border border-border/30 text-center">
+              <IdentityStatusBadge status="missing" className="mx-auto mb-1" />
+              <p className="text-lg font-bold tabular-nums text-foreground">{identityStats?.missing ?? 0}</p>
+            </div>
+            <div className="bg-muted/20 rounded-xl p-3 border border-border/30 text-center">
+              <Badge variant="outline" className="text-xs gap-1 mx-auto mb-1 text-primary border-primary/30 bg-primary/8">
+                <Wand2 className="w-3 h-3" /> Auto-Filled
+              </Badge>
+              <p className="text-lg font-bold tabular-nums text-foreground">{identityStats?.autoFilled ?? 0}</p>
+            </div>
+          </div>
+        )}
+      </div>
+
       {/* Website URL backfill — matches founder "missing website URL" metric (not live HTTP checks) */}
       <div className="bg-card border border-border rounded-2xl p-5">
         <h3 className="text-sm font-semibold text-foreground mb-2 flex items-center gap-2">
@@ -174,9 +290,21 @@ export function SignalsDataTab() {
         </h3>
         <p className="text-xs text-muted-foreground mb-4 leading-relaxed">
           These companies have a written dossier but no <span className="font-mono text-[11px]">website_url</span> in the database.
-          This is a <strong className="font-medium text-foreground">data backfill</strong> task, not a crawl of broken hyperlinks on the live site.
-          Open a profile (as admin) to add the official site.
+          Use the <strong className="font-medium text-foreground">AI Backfill</strong> button to auto-discover domains.
+          High-confidence results are applied automatically; others go to review.
         </p>
+        <div className="flex items-center gap-2 mb-4">
+          <Button
+            variant="outline"
+            size="sm"
+            className="text-xs gap-2"
+            disabled={backfillRunning || (websiteGaps?.total ?? 0) === 0}
+            onClick={runBackfill}
+          >
+            <Wand2 className={cn("w-3.5 h-3.5", backfillRunning && "animate-spin")} />
+            {backfillRunning ? "Running AI Backfill…" : `AI Backfill (${websiteGaps?.total ?? 0} missing)`}
+          </Button>
+        </div>
         {websiteGapsLoading ? (
           <Skeleton className="h-24" />
         ) : websiteGaps!.listError ? (
@@ -194,14 +322,19 @@ export function SignalsDataTab() {
               </Badge>
             </div>
             <ul className="max-h-64 overflow-y-auto space-y-1 pr-1 border border-border/40 rounded-lg p-2 bg-muted/10">
-              {websiteGaps!.rows.map((row) => (
+              {websiteGaps!.rows.map((row: any) => (
                 <li key={row.id}>
                   <Link
                     to={`/company/${row.slug}`}
                     className="flex items-center justify-between gap-2 text-xs py-1.5 px-2 rounded-md hover:bg-muted/50 text-foreground group"
                   >
                     <span className="truncate font-medium">{row.name}</span>
-                    <ExternalLink className="w-3 h-3 shrink-0 text-muted-foreground group-hover:text-primary" />
+                    <div className="flex items-center gap-1.5 shrink-0">
+                      {row.domain_auto_filled && (
+                        <Badge variant="outline" className="text-[9px] px-1 py-0 text-primary border-primary/30">Auto-Filled</Badge>
+                      )}
+                      <ExternalLink className="w-3 h-3 text-muted-foreground group-hover:text-primary" />
+                    </div>
                   </Link>
                 </li>
               ))}
@@ -212,6 +345,74 @@ export function SignalsDataTab() {
               </p>
             )}
           </>
+        )}
+      </div>
+
+      {/* Domain Review Queue */}
+      <div className="bg-card border border-border rounded-2xl p-5">
+        <h3 className="text-sm font-semibold text-foreground mb-2 flex items-center gap-2">
+          <Eye className="w-4 h-4 text-[hsl(var(--civic-yellow))]" /> Needs Website Review
+          {(domainReview?.length ?? 0) > 0 && (
+            <Badge variant="outline" className="font-mono text-xs border-[hsl(var(--civic-yellow))]/40 text-[hsl(var(--civic-yellow))] bg-[hsl(var(--civic-yellow))]/10">
+              {domainReview!.length}
+            </Badge>
+          )}
+        </h3>
+        <p className="text-xs text-muted-foreground mb-4 leading-relaxed">
+          These domains were discovered by AI with medium or low confidence. Review and approve or reject.
+        </p>
+        {domainReviewLoading ? (
+          <Skeleton className="h-24" />
+        ) : !domainReview || domainReview.length === 0 ? (
+          <p className="text-xs text-muted-foreground italic flex items-center gap-1.5">
+            <CheckCircle className="w-3.5 h-3.5 text-[hsl(var(--civic-green))]" /> No domains pending review.
+          </p>
+        ) : (
+          <div className="space-y-2 max-h-80 overflow-y-auto">
+            {domainReview.map((item: any) => (
+              <div key={item.id} className="flex items-center justify-between gap-3 p-2.5 bg-muted/20 rounded-lg border border-border/30">
+                <div className="min-w-0 flex-1">
+                  <div className="flex items-center gap-2">
+                    <span className="text-xs font-medium text-foreground truncate">
+                      {item.companies?.name || "Unknown"}
+                    </span>
+                    <Badge variant="outline" className={cn("text-[9px] px-1 py-0",
+                      item.confidence === "medium" ? "text-[hsl(var(--civic-yellow))] border-[hsl(var(--civic-yellow))]/30" : "text-destructive border-destructive/30"
+                    )}>
+                      {item.confidence}
+                    </Badge>
+                  </div>
+                  <a href={item.discovered_url} target="_blank" rel="noopener noreferrer" className="text-[11px] text-primary hover:underline font-mono truncate block">
+                    {item.discovered_url}
+                  </a>
+                  {item.source_detail && (
+                    <p className="text-[10px] text-muted-foreground mt-0.5 truncate">{item.source_detail}</p>
+                  )}
+                  <span className="text-[10px] text-muted-foreground">via {item.source_method}</span>
+                </div>
+                <div className="flex items-center gap-1 shrink-0">
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    className="h-7 w-7 p-0 text-[hsl(var(--civic-green))] hover:bg-[hsl(var(--civic-green))]/10"
+                    onClick={() => handleReviewAction(item.id, "approved", item.company_id, item.discovered_url, item.discovered_domain)}
+                    title="Approve"
+                  >
+                    <CheckCircle2 className="w-4 h-4" />
+                  </Button>
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    className="h-7 w-7 p-0 text-destructive hover:bg-destructive/10"
+                    onClick={() => handleReviewAction(item.id, "rejected", item.company_id, item.discovered_url, item.discovered_domain)}
+                    title="Reject"
+                  >
+                    <XIcon className="w-4 h-4" />
+                  </Button>
+                </div>
+              </div>
+            ))}
+          </div>
         )}
       </div>
 
