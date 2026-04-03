@@ -495,7 +495,7 @@ export default function CompanyDossier() {
 
       {/* ── Data Coverage + Signal Timeline ── */}
       <div className="mb-6 space-y-4">
-        <CompanyCoverageSummary companyId={companyId!} />
+        <CompanyCoverageSummary companyId={companyId!} companyName={company?.name} />
         <SignalTimeline companyId={companyId!} />
       </div>
 
