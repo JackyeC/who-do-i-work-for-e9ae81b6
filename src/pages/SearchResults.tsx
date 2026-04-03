@@ -3,6 +3,7 @@ import { useSearchParams, useNavigate } from "react-router-dom";
 import { usePageSEO } from "@/hooks/use-page-seo";
 import { Search, Loader2, Sparkles, AlertTriangle } from "lucide-react";
 import { AuditRequestForm } from "@/components/AuditRequestForm";
+import { IntelligenceRequestCard } from "@/components/IntelligenceRequestCard";
 import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
