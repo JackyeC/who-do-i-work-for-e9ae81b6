@@ -250,6 +250,13 @@ export function SignalRevealCard({ title, explanation, tier, records, hasEvidenc
                 <span className="text-[10px] text-muted-foreground/50 font-mono uppercase tracking-wider">
                   {records.length} public record{records.length !== 1 ? "s" : ""} · Verify at source
                 </span>
+                <ShareReceiptButton
+                  title={title}
+                  description={getCategoryInsight(category, records)}
+                  source={records[0]?.sourceName || category}
+                  amount={records.reduce((s, r) => s + (r.amount ?? 0), 0) || null}
+                  date={records[0]?.date}
+                />
               </motion.div>
             </div>
           </motion.div>
