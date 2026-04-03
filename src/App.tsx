@@ -74,6 +74,8 @@ const PeoplePuzzlesEmbed = lazy(() => import("./pages/PeoplePuzzlesEmbed"));
 const Trail = lazy(() => import("./pages/Trail"));
 const NoRegretsGame = lazy(() => import("./pages/NoRegretsGame"));
 const NoRegretsRecap = lazy(() => import("./pages/NoRegretsRecap"));
+const NoRegretsEpisode2 = lazy(() => import("./pages/NoRegretsEpisode2"));
+const NoRegretsEpisode2Recap = lazy(() => import("./pages/NoRegretsEpisode2Recap"));
 const AskJackye = lazy(() => import("./pages/AskJackye"));
 const OnePager = lazy(() => import("./pages/OnePager"));
 const Demo = lazy(() => import("./pages/Demo"));
