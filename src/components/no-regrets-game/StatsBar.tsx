@@ -35,7 +35,7 @@ export function StatsBar({ stats, previousStats }: StatsBarProps) {
                   className={cn("h-full rounded-full", barColor)}
                   initial={{ width: 0 }}
                   animate={{ width: `${pct}%` }}
-                  transition={{ duration: 0.9, ease: [0.25, 0.1, 0.25, 1], delay: 0.3 }}
+                  transition={{ duration: 0.9, ease: [0.25, 0.1, 0.25, 1] as [number, number, number, number], delay: 0.3 }}
                 />
               </div>
               <div className="text-center">

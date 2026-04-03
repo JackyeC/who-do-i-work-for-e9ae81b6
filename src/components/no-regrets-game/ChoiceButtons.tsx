@@ -20,7 +20,7 @@ export function ChoiceButtons({ choices, onChoose, disabled }: ChoiceButtonsProp
           disabled={disabled}
           initial={{ opacity: 0, y: 8 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.15 * idx, duration: 0.35, ease: [0.25, 0.1, 0.25, 1] }}
+          transition={{ delay: 0.15 * idx, duration: 0.35, ease: [0.25, 0.1, 0.25, 1] as [number, number, number, number] }}
           whileHover={{ scale: 1.01, boxShadow: "0 4px 20px -4px hsl(var(--primary) / 0.15)" }}
           whileTap={{ scale: 0.99 }}
           className="group w-full text-left rounded-xl border border-border/40 bg-card/60 hover:bg-card hover:border-primary/30 transition-colors duration-200 disabled:opacity-40 disabled:pointer-events-none focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/50 focus-visible:ring-offset-2 focus-visible:ring-offset-background"
