@@ -197,9 +197,12 @@ export default function SearchResults() {
               </>
             ) : (
               <div className="max-w-md mx-auto">
-                <AuditRequestForm
+                <IntelligenceRequestCard
                   companyName={initialQuery}
-                  onClose={() => setSearchParams({})}
+                  onDiscovered={(_, slug) => {
+                    const dest = intent === 'offer' ? `/offer-check/${slug}` : `/dossier/${slug}`;
+                    navigate(dest);
+                  }}
                 />
               </div>
             )}
