@@ -30,7 +30,7 @@ export default function NoRegretsGame() {
     // Persist choice to sessionStorage for recap screen (v1 simple approach)
     sessionStorage.setItem(
       "noRegrets_ep1",
-      JSON.stringify({ choiceId: choice.id, stats: newStats, previousStats: episode.initialStats, recapText: choice.recapText })
+      JSON.stringify({ choiceId: choice.id, stats: newStats, previousStats: episode.initialStats, recapText: choice.recapText, archetype: choice.archetype })
     );
 
     setTimeout(() => navigate("/no-regrets-game/episode-1-recap"), 400);

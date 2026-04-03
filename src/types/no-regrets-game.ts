@@ -5,11 +5,14 @@ export interface PlayerStats {
   power: number;
 }
 
+export type PlayerArchetype = "stability-first" | "pause-and-reassess" | "overstay-and-hope";
+
 export interface Choice {
   id: string;
   label: string;
   statChanges: Partial<PlayerStats>;
   recapText: string;
+  archetype: PlayerArchetype;
 }
 
 export interface Episode {

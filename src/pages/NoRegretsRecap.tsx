@@ -3,14 +3,16 @@ import { Link, Navigate } from "react-router-dom";
 import { EpisodeShell } from "@/components/no-regrets-game/EpisodeShell";
 import { StatsBar } from "@/components/no-regrets-game/StatsBar";
 import { FollowTheMoneyTeaser } from "@/components/no-regrets-game/FollowTheMoneyTeaser";
+import { ConversionModule } from "@/components/no-regrets-game/ConversionModule";
 import { Button } from "@/components/ui/button";
-import type { PlayerStats } from "@/types/no-regrets-game";
+import type { PlayerStats, PlayerArchetype } from "@/types/no-regrets-game";
 
 interface RecapData {
   choiceId: string;
   stats: PlayerStats;
   previousStats: PlayerStats;
   recapText: string;
+  archetype: PlayerArchetype;
 }
 
 export default function NoRegretsRecap() {
@@ -22,7 +24,6 @@ export default function NoRegretsRecap() {
   }, []);
 
   if (data === null) {
-    // Check if sessionStorage just hasn't loaded yet
     const raw = sessionStorage.getItem("noRegrets_ep1");
     if (!raw) return <Navigate to="/no-regrets-game" replace />;
   }
@@ -43,7 +44,9 @@ export default function NoRegretsRecap() {
 
         <FollowTheMoneyTeaser />
 
-        <Button asChild variant="premium" size="lg" className="w-full">
+        <ConversionModule />
+
+        <Button asChild variant="outline" size="lg" className="w-full">
           <Link to="/no-regrets-game">Continue to Episode 2 (coming soon)</Link>
         </Button>
       </div>
