@@ -1,8 +1,10 @@
+import { useEffect } from "react";
 import { Link } from "react-router-dom";
 import { Helmet } from "react-helmet-async";
 import { Button } from "@/components/ui/button";
 import { SectionReveal } from "@/components/landing/SectionReveal";
 import { ArrowRight, Play } from "lucide-react";
+import { trackNoRegrets } from "@/lib/noRegretsAnalytics";
 
 const EPISODES = [
   {
