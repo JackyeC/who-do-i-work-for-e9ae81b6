@@ -9,6 +9,7 @@ import { ArrowRight, Copy, Check } from "lucide-react";
 import { trackNoRegrets } from "@/lib/noRegretsAnalytics";
 import { cn } from "@/lib/utils";
 import type { PlayerStats, ConsequenceLabel, PlayerArchetype, CompanyArchetype } from "@/types/no-regrets-game";
+import ep3Finale from "@/assets/no-regrets-ep3-finale.jpg";
 
 /* ── Label maps ── */
 
@@ -142,6 +143,7 @@ function ResultCard({
 }) {
   const [copied, setCopied] = useState(false);
   const [activeTemplate, setActiveTemplate] = useState<string | null>(null);
+  const [showPicker, setShowPicker] = useState(false);
 
   const playerLabel = PLAYER_LABELS[playerArchetype] || "The Player";
   const companyLabel = COMPANY_LABELS[companyArchetype] || "a Broken System";
@@ -150,6 +152,12 @@ function ResultCard({
   const hopeLine = RESULT_HOPE[consequenceLabel];
 
   const resultText = `My No-Regrets Career Story result:\n\n"${headline}"\nOutcome: ${CONSEQUENCE_LABELS[consequenceLabel]}\n\n${costLine}\n\n${hopeLine}\n\nPlay it yourself → wdiwf.com/no-regrets`;
+
+  // Pulse the share picker into view after a delay
+  useEffect(() => {
+    const t = setTimeout(() => setShowPicker(true), 1200);
+    return () => clearTimeout(t);
+  }, []);
 
   const handleCopy = async (text: string, templateId?: string) => {
     try {
@@ -169,10 +177,10 @@ function ResultCard({
 
   return (
     <motion.div
-      initial={{ opacity: 0, y: 10 }}
+      initial={{ opacity: 0, y: 16 }}
       animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.45, delay: 0.2, ease: [0.25, 0.1, 0.25, 1] }}
-      className="rounded-xl border-2 border-primary/25 bg-card/60 overflow-hidden"
+      transition={{ duration: 0.55, delay: 0.3, ease: [0.25, 0.1, 0.25, 1] }}
+      className="rounded-xl border-2 border-primary/25 bg-card/60 overflow-hidden motion-reduce:transition-none"
     >
       <div className="px-5 py-3 border-b border-primary/15 bg-primary/5 flex items-center justify-between">
         <div className="flex items-center gap-2">
@@ -195,9 +203,15 @@ function ResultCard({
         </Button>
       </div>
       <div className="p-5 md:p-7 space-y-4">
-        <h3 className="text-lg md:text-xl font-display font-bold text-foreground tracking-tight leading-snug">
+        {/* Animated archetype title card */}
+        <motion.h3
+          initial={{ opacity: 0, letterSpacing: "0.15em" }}
+          animate={{ opacity: 1, letterSpacing: "-0.01em" }}
+          transition={{ duration: 0.8, delay: 0.6, ease: [0.25, 0.1, 0.25, 1] }}
+          className="text-lg md:text-xl font-display font-bold text-foreground leading-snug motion-reduce:transition-none"
+        >
           "{headline}"
-        </h3>
+        </motion.h3>
         <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-lg border border-[hsl(var(--destructive))]/20 bg-[hsl(var(--destructive))]/5">
           <div className="w-1.5 h-1.5 rounded-full bg-[hsl(var(--destructive))]" />
           <span className="text-[10px] font-mono text-[hsl(var(--destructive))] font-semibold uppercase tracking-wider">
@@ -210,18 +224,31 @@ function ResultCard({
         </p>
       </div>
 
-      {/* Share template picker */}
-      <div className="border-t border-primary/10 px-5 py-4 space-y-3">
-        <p className="text-[9px] font-mono uppercase tracking-[0.25em] text-muted-foreground/60">
+      {/* Share template picker with attention pulse */}
+      <motion.div
+        initial={{ opacity: 0 }}
+        animate={showPicker ? { opacity: 1 } : { opacity: 0 }}
+        transition={{ duration: 0.4 }}
+        className="border-t border-primary/10 px-5 py-4 space-y-3"
+      >
+        <motion.p
+          animate={showPicker ? {
+            textShadow: ["0 0 0 transparent", "0 0 8px hsl(var(--primary) / 0.3)", "0 0 0 transparent"],
+          } : {}}
+          transition={{ duration: 2, delay: 0.5, repeat: 1 }}
+          className="text-[9px] font-mono uppercase tracking-[0.25em] text-muted-foreground/60 motion-reduce:animate-none"
+        >
           Share this — pick a tone
-        </p>
+        </motion.p>
         <div className="grid gap-2">
           {SHARE_TEMPLATES.map((t) => (
-            <button
+            <motion.button
               key={t.id}
               onClick={() => handleCopy(t.template(headline), t.id)}
+              whileHover={{ scale: 1.01 }}
+              whileTap={{ scale: 0.99 }}
               className={cn(
-                "group flex items-center justify-between gap-3 px-3.5 py-2.5 rounded-lg border text-left transition-all",
+                "group flex items-center justify-between gap-3 px-3.5 py-2.5 rounded-lg border text-left transition-all motion-reduce:transition-none",
                 activeTemplate === t.id
                   ? "border-[hsl(var(--civic-green))]/40 bg-[hsl(var(--civic-green))]/5"
                   : "border-border/30 bg-card/30 hover:border-primary/20 hover:bg-card/50"
@@ -238,10 +265,10 @@ function ResultCard({
               ) : (
                 <Copy className="w-3.5 h-3.5 text-muted-foreground/40 group-hover:text-muted-foreground shrink-0" />
               )}
-            </button>
+            </motion.button>
           ))}
         </div>
-      </div>
+      </motion.div>
     </motion.div>
   );
 }
@@ -320,6 +347,23 @@ export default function NoRegretsEpisode3Recap() {
 
   return (
     <EpisodeShell>
+      {/* Season finale visual treatment */}
+      <div className="relative -mx-5 -mt-10 mb-6 overflow-hidden rounded-b-2xl">
+        <img
+          src={ep3Finale}
+          alt=""
+          width={1280}
+          height={512}
+          loading="lazy"
+          className="w-full h-32 md:h-44 object-cover object-center opacity-60"
+          aria-hidden="true"
+        />
+        <div className="absolute inset-0 bg-gradient-to-b from-background/20 via-background/70 to-background" />
+        <div className="absolute bottom-4 left-5">
+          <p className="text-[9px] font-mono uppercase tracking-[0.3em] text-primary/50">Season 1 Finale</p>
+        </div>
+      </div>
+
       {/* Verdict header */}
       <div className="space-y-3">
         <p className="text-[10px] font-mono uppercase tracking-[0.25em] text-primary/60">Episode 3 — Final Verdict</p>

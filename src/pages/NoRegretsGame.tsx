@@ -8,6 +8,7 @@ import { SignupGate } from "@/components/SignupGate";
 import { EPISODE_1 } from "@/data/no-regrets-episodes";
 import { trackNoRegrets } from "@/lib/noRegretsAnalytics";
 import type { Choice, PlayerStats } from "@/types/no-regrets-game";
+import ep1Hero from "@/assets/no-regrets-ep1-hero.jpg";
 
 function applyChanges(base: PlayerStats, changes: Partial<PlayerStats>): PlayerStats {
   return {
@@ -34,11 +35,24 @@ export default function NoRegretsGame() {
       "noRegrets_ep1",
       JSON.stringify({ choiceId: choice.id, stats: newStats, previousStats: episode.initialStats, recapText: choice.recapText, archetype: choice.archetype })
     );
-    setTimeout(() => navigate("/no-regrets-game/episode-1-recap"), 400);
+    navigate("/no-regrets-game/episode-1-recap");
   }, [episode, navigate]);
 
   return (
     <EpisodeShell>
+      {/* Atmospheric hero image */}
+      <div className="relative -mx-5 -mt-10 mb-6 overflow-hidden rounded-b-2xl">
+        <img
+          src={ep1Hero}
+          alt=""
+          width={1280}
+          height={512}
+          className="w-full h-40 md:h-56 object-cover object-center"
+          aria-hidden="true"
+        />
+        <div className="absolute inset-0 bg-gradient-to-b from-background/30 via-background/60 to-background" />
+      </div>
+
       {/* Episode title block */}
       <div className="space-y-2">
         <p className="text-[10px] font-mono uppercase tracking-[0.25em] text-primary/60">Season 1</p>
@@ -59,7 +73,12 @@ export default function NoRegretsGame() {
 
       {/* Choices */}
       {user ? (
-        <ChoiceButtons choices={episode.choices} onChoose={handleChoose} disabled={choosing} />
+        <ChoiceButtons
+          choices={episode.choices}
+          onChoose={handleChoose}
+          disabled={choosing}
+          postChoiceOverlay="Most people in panic mode choose something like this. Let's see what it costs."
+        />
       ) : (
         <SignupGate feature="story choices">
           <ChoiceButtons choices={episode.choices} onChoose={() => {}} disabled />
