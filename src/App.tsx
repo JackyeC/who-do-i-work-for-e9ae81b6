@@ -74,6 +74,8 @@ const PeoplePuzzlesEmbed = lazy(() => import("./pages/PeoplePuzzlesEmbed"));
 const Trail = lazy(() => import("./pages/Trail"));
 const NoRegretsGame = lazy(() => import("./pages/NoRegretsGame"));
 const NoRegretsRecap = lazy(() => import("./pages/NoRegretsRecap"));
+const NoRegretsEpisode2 = lazy(() => import("./pages/NoRegretsEpisode2"));
+const NoRegretsEpisode2Recap = lazy(() => import("./pages/NoRegretsEpisode2Recap"));
 const AskJackye = lazy(() => import("./pages/AskJackye"));
 const OnePager = lazy(() => import("./pages/OnePager"));
 const Demo = lazy(() => import("./pages/Demo"));
@@ -231,6 +233,8 @@ const App = () => (
                   <Route path="/trail" element={<Trail />} />
                   <Route path="/no-regrets-game" element={<NoRegretsGame />} />
                   <Route path="/no-regrets-game/episode-1-recap" element={<NoRegretsRecap />} />
+                  <Route path="/no-regrets-game/episode-2" element={<NoRegretsEpisode2 />} />
+                  <Route path="/no-regrets-game/episode-2-recap" element={<NoRegretsEpisode2Recap />} />
                   <Route path="/receipts" element={<Receipts />} />
                   <Route path="/the-receipts" element={<Navigate to="/receipts" replace />} />
                   <Route path="/thereceipts" element={<Navigate to="/receipts" replace />} />
