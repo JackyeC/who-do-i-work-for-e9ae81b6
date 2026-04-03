@@ -3,6 +3,7 @@ import { useSearchParams, useNavigate } from "react-router-dom";
 import { usePageSEO } from "@/hooks/use-page-seo";
 import { Search, Loader2, Sparkles, AlertTriangle } from "lucide-react";
 import { AuditRequestForm } from "@/components/AuditRequestForm";
+import { IntelligenceRequestCard } from "@/components/IntelligenceRequestCard";
 import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
@@ -196,9 +197,12 @@ export default function SearchResults() {
               </>
             ) : (
               <div className="max-w-md mx-auto">
-                <AuditRequestForm
+                <IntelligenceRequestCard
                   companyName={initialQuery}
-                  onClose={() => setSearchParams({})}
+                  onDiscovered={(_, slug) => {
+                    const dest = intent === 'offer' ? `/offer-check/${slug}` : `/dossier/${slug}`;
+                    navigate(dest);
+                  }}
                 />
               </div>
             )}

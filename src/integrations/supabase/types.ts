@@ -9687,6 +9687,44 @@ export type Database = {
           },
         ]
       }
+      scan_notify_requests: {
+        Row: {
+          company_id: string | null
+          company_name: string
+          created_at: string
+          email: string
+          id: string
+          notified_at: string | null
+          status: string
+        }
+        Insert: {
+          company_id?: string | null
+          company_name: string
+          created_at?: string
+          email: string
+          id?: string
+          notified_at?: string | null
+          status?: string
+        }
+        Update: {
+          company_id?: string | null
+          company_name?: string
+          created_at?: string
+          email?: string
+          id?: string
+          notified_at?: string | null
+          status?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "scan_notify_requests_company_id_fkey"
+            columns: ["company_id"]
+            isOneToOne: false
+            referencedRelation: "companies"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       scan_runs: {
         Row: {
           company_id: string
