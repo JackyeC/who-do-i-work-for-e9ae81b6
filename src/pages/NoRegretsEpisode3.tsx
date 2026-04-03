@@ -62,10 +62,24 @@ export default function NoRegretsEpisode3() {
     }
   }, []);
 
+  const [patternBreakMsg, setPatternBreakMsg] = useState<string | null>(null);
+
   const handleChoose = useCallback((choice: Choice) => {
     setChoosing(true);
     trackNoRegrets("episode_3_completed", { consequence_label: choice.archetype });
-    const newStats = applyChanges(baseStats, choice.statChanges);
+
+    // Healthy choice → apply a bonus sanity/power bump and show hope toast
+    const isHealthy = choice.id in HEALTHY_CHOICES;
+    const bonusChanges = isHealthy ? { sanity: 10, power: 5 } : {};
+    const merged = { ...choice.statChanges, ...Object.fromEntries(
+      Object.entries(bonusChanges).map(([k, v]) => [k, (choice.statChanges[k as keyof PlayerStats] ?? 0) + v])
+    )};
+    const newStats = applyChanges(baseStats, merged);
+
+    if (isHealthy) {
+      setPatternBreakMsg(HEALTHY_CHOICES[choice.id]);
+    }
+
     sessionStorage.setItem(
       "noRegrets_ep3",
       JSON.stringify({
@@ -76,7 +90,7 @@ export default function NoRegretsEpisode3() {
         consequenceLabel: choice.archetype,
       })
     );
-    setTimeout(() => navigate("/no-regrets-game/episode-3-recap"), 400);
+    setTimeout(() => navigate("/no-regrets-game/episode-3-recap"), isHealthy ? 1800 : 400);
   }, [baseStats, navigate]);
 
   if (!branch) {
