@@ -3,10 +3,17 @@ import { useNavigate, Navigate } from "react-router-dom";
 import { useAuth } from "@/contexts/AuthContext";
 import { EpisodeShell } from "@/components/no-regrets-game/EpisodeShell";
 import { StatsBar } from "@/components/no-regrets-game/StatsBar";
+import { PatternBreakToast } from "@/components/no-regrets-game/PatternBreakToast";
 import { SignupGate } from "@/components/SignupGate";
 import { EPISODE_3 } from "@/data/no-regrets-episodes";
 import { trackNoRegrets } from "@/lib/noRegretsAnalytics";
 import type { Choice, PlayerStats, CompanyArchetype, EpisodeBranch } from "@/types/no-regrets-game";
+
+const HEALTHY_CHOICES: Record<string, string> = {
+  "moral-injury-exit": "You broke the pattern. Future you just exhaled.",
+  "mission-collapse-leave": "You chose clarity over loyalty. That takes nerve.",
+  "burnout-spiral-reclaim": "You chose yourself over the brand. That's not quitting — it's strategy.",
+};
 
 function applyChanges(base: PlayerStats, changes: Partial<PlayerStats>): PlayerStats {
   return {
@@ -55,10 +62,24 @@ export default function NoRegretsEpisode3() {
     }
   }, []);
 
+  const [patternBreakMsg, setPatternBreakMsg] = useState<string | null>(null);
+
   const handleChoose = useCallback((choice: Choice) => {
     setChoosing(true);
     trackNoRegrets("episode_3_completed", { consequence_label: choice.archetype });
-    const newStats = applyChanges(baseStats, choice.statChanges);
+
+    // Healthy choice → apply a bonus sanity/power bump and show hope toast
+    const isHealthy = choice.id in HEALTHY_CHOICES;
+    const bonusChanges = isHealthy ? { sanity: 10, power: 5 } : {};
+    const merged = { ...choice.statChanges, ...Object.fromEntries(
+      Object.entries(bonusChanges).map(([k, v]) => [k, (choice.statChanges[k as keyof PlayerStats] ?? 0) + v])
+    )};
+    const newStats = applyChanges(baseStats, merged);
+
+    if (isHealthy) {
+      setPatternBreakMsg(HEALTHY_CHOICES[choice.id]);
+    }
+
     sessionStorage.setItem(
       "noRegrets_ep3",
       JSON.stringify({
@@ -69,7 +90,7 @@ export default function NoRegretsEpisode3() {
         consequenceLabel: choice.archetype,
       })
     );
-    setTimeout(() => navigate("/no-regrets-game/episode-3-recap"), 400);
+    setTimeout(() => navigate("/no-regrets-game/episode-3-recap"), isHealthy ? 1800 : 400);
   }, [baseStats, navigate]);
 
   if (!branch) {
@@ -108,6 +129,9 @@ export default function NoRegretsEpisode3() {
       </div>
 
       <StatsBar stats={baseStats} />
+
+      {/* Pattern break toast (shown after healthy choice) */}
+      {patternBreakMsg && <PatternBreakToast message={patternBreakMsg} />}
 
       {user ? (
         <div className="space-y-2">
