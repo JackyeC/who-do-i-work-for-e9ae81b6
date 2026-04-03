@@ -1,6 +1,7 @@
 import { useEffect } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { getOGImageUrl } from "@/lib/social-share";
+import { getPublicSiteUrl } from "@/lib/public-site-url";
 
 interface CompanySEOProps {
   name: string;
@@ -13,11 +14,12 @@ interface CompanySEOProps {
 
 export function useCompanySEO({ name, industry, state, description, slug, score }: CompanySEOProps) {
   useEffect(() => {
+    const BASE_URL = getPublicSiteUrl();
     const title = `Company Influence Profile: ${name} | Who Do I Work For?`;
     const desc = description
       ? `${description.slice(0, 120)}… Review political spending, lobbying, and influence signals.`
       : `Review ${name}'s political spending, lobbying activity, executive donations, and influence network. ${industry} company based in ${state}.`;
-    const url = `https://wdiwf.jackyeclayton.com/dossier/${slug}`;
+    const url = `${BASE_URL}/dossier/${slug}`;
 
     const ogImage = getOGImageUrl({
       type: "company",
