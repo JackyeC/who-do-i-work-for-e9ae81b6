@@ -199,7 +199,7 @@ export default function NoRegretsLanding() {
                   </p>
                   <p className="text-[11px] text-muted-foreground/50 italic border-l-2 border-primary/20 pl-3">
                     The story is made up. The pattern recognition is real. The receipts are waiting.
-                   </div>
+                  </p>
                   </div>
                 </div>
               </div>
