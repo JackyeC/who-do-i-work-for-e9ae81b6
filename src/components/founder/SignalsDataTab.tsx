@@ -192,10 +192,10 @@ export function SignalsDataTab() {
     queryKey: ["founder-identity-stats"],
     queryFn: async () => {
       const [complete, partial, missing, autoFilled] = await Promise.all([
-        supabase.from("companies").select("id", { count: "exact", head: true }).eq("identity_status" as any, "complete"),
-        supabase.from("companies").select("id", { count: "exact", head: true }).eq("identity_status" as any, "partial"),
-        supabase.from("companies").select("id", { count: "exact", head: true }).eq("identity_status" as any, "missing"),
-        supabase.from("companies").select("id", { count: "exact", head: true }).eq("domain_auto_filled" as any, true),
+        (supabase as any).from("companies").select("id", { count: "exact", head: true }).eq("identity_status", "complete"),
+        (supabase as any).from("companies").select("id", { count: "exact", head: true }).eq("identity_status", "partial"),
+        (supabase as any).from("companies").select("id", { count: "exact", head: true }).eq("identity_status", "missing"),
+        (supabase as any).from("companies").select("id", { count: "exact", head: true }).eq("domain_auto_filled", true),
       ]);
       return {
         complete: complete.count ?? 0,
