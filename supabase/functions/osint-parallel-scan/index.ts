@@ -13,6 +13,23 @@ const corsHeaders = {
 
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2';
 
+const SOURCE_FAMILY_TO_FUNCTIONS: Record<string, string[]> = {
+  news: ['sync-gdelt'],
+  fec: ['sync-openfec'],
+  sec: ['sync-sec-edgar'],
+  osha: ['sync-workplace-enforcement'],
+  warn: ['warn-scan'],
+  careers: ['scrape-careers-page'],
+  nlrb: ['sync-labor-rights'],
+  bls: ['sync-bls-data'],
+};
+
+interface ScanRequestBody {
+  companyId?: string;
+  companyName?: string;
+  sources?: string[];
+}
+
 Deno.serve(async (req: Request) => {
   if (req.method === 'OPTIONS') {
     return new Response(null, { headers: corsHeaders });
@@ -43,7 +60,8 @@ Deno.serve(async (req: Request) => {
   const supabase = createClient(supabaseUrl, supabaseKey);
 
   try {
-    const { companyId, companyName, sources } = await req.json();
+    const body = await req.json() as ScanRequestBody;
+    const { companyId, companyName, sources } = body;
     if (!companyId || !companyName) {
       return new Response(JSON.stringify({ success: false, error: 'companyId and companyName required' }), {
         status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' },
@@ -94,7 +112,10 @@ Deno.serve(async (req: Request) => {
     // Route to the appropriate source list
     const allSources = isPrivate ? privateSources : publicSources;
 
-    const sourcesToRun = sources?.length ? sources : allSources;
+    const requestedSources: string[] = Array.isArray(sources) && sources.length > 0 ? sources : allSources;
+    const sourcesToRun = [...new Set(
+      requestedSources.flatMap((source: string) => SOURCE_FAMILY_TO_FUNCTIONS[source] ?? [source])
+    )];
 
     // Check freshness first — skip sources that are still current
     const { data: existingSections } = await supabase
@@ -118,9 +139,12 @@ Deno.serve(async (req: Request) => {
       'sync-federal-contracts': 'government_contracts',
       'sync-insider-trades': 'insider_trading',
       'sync-sec-edgar': 'sec_filings',
+      'warn-scan': 'warn',
+      'scrape-careers-page': 'careers',
       'sync-civil-rights-signals': 'civil_rights',
       'sync-labor-rights': 'labor_rights',
       'sync-workplace-enforcement': 'workplace_enforcement',
+      'sync-bls-data': 'bls',
       'enrich-private-company': 'private_enrichment',
       'detect-contradictions': 'contradiction_detection',
     };
@@ -158,12 +182,11 @@ Deno.serve(async (req: Request) => {
     // Fire all stale sources IN PARALLEL using direct fetch (not supabase.functions.invoke)
     // to ensure proper auth header propagation
     const functionsBaseUrl = `${supabaseUrl}/functions/v1`;
-    const authHeader = req.headers.get('Authorization');
-
     const results = await Promise.allSettled(
       staleSources.map(async (functionName) => {
         const fnStart = Date.now();
         try {
+          const payload = buildFunctionPayload(functionName, companyId, companyName);
           const response = await fetch(`${functionsBaseUrl}/${functionName}`, {
             method: 'POST',
             headers: {
@@ -171,7 +194,7 @@ Deno.serve(async (req: Request) => {
               'Authorization': `Bearer ${supabaseKey}`,
               'apikey': anonKey,
             },
-            body: JSON.stringify({ companyId, companyName }),
+            body: JSON.stringify(payload),
           });
 
           const data = await response.json().catch(() => ({}));
@@ -312,4 +335,22 @@ async function refreshCoverageSummary(supabase: any, companyId: string) {
   }
 
   console.log(`[osint-parallel-scan] Coverage summary refreshed for ${companyId}`);
+}
+
+function buildFunctionPayload(functionName: string, companyId: string, companyName: string) {
+  switch (functionName) {
+    case 'warn-scan':
+      return {
+        company_id: companyId,
+        company_name: companyName,
+        national: true,
+      };
+    case 'scrape-careers-page':
+      return {
+        company_id: companyId,
+        company_name: companyName,
+      };
+    default:
+      return { companyId, companyName };
+  }
 }
