@@ -1541,6 +1541,7 @@ export type Database = {
       }
       companies: {
         Row: {
+          canonical_name: string | null
           career_intelligence_score: number | null
           careers_url: string | null
           category_tags: string[] | null
@@ -1552,6 +1553,7 @@ export type Database = {
           creation_source: string | null
           description: string | null
           domain: string | null
+          domain_confidence: string | null
           effective_tax_rate: string | null
           employee_count: string | null
           employer_clarity_score: number | null
@@ -1562,6 +1564,7 @@ export type Database = {
           government_contracts: number | null
           id: string
           identity_matched: boolean | null
+          identity_status: string
           industry: string
           insider_score: number | null
           is_publicly_traded: boolean | null
@@ -1594,6 +1597,7 @@ export type Database = {
           worker_relevance: string | null
         }
         Insert: {
+          canonical_name?: string | null
           career_intelligence_score?: number | null
           careers_url?: string | null
           category_tags?: string[] | null
@@ -1605,6 +1609,7 @@ export type Database = {
           creation_source?: string | null
           description?: string | null
           domain?: string | null
+          domain_confidence?: string | null
           effective_tax_rate?: string | null
           employee_count?: string | null
           employer_clarity_score?: number | null
@@ -1615,6 +1620,7 @@ export type Database = {
           government_contracts?: number | null
           id?: string
           identity_matched?: boolean | null
+          identity_status?: string
           industry: string
           insider_score?: number | null
           is_publicly_traded?: boolean | null
@@ -1647,6 +1653,7 @@ export type Database = {
           worker_relevance?: string | null
         }
         Update: {
+          canonical_name?: string | null
           career_intelligence_score?: number | null
           careers_url?: string | null
           category_tags?: string[] | null
@@ -1658,6 +1665,7 @@ export type Database = {
           creation_source?: string | null
           description?: string | null
           domain?: string | null
+          domain_confidence?: string | null
           effective_tax_rate?: string | null
           employee_count?: string | null
           employer_clarity_score?: number | null
@@ -1668,6 +1676,7 @@ export type Database = {
           government_contracts?: number | null
           id?: string
           identity_matched?: boolean | null
+          identity_status?: string
           industry?: string
           insider_score?: number | null
           is_publicly_traded?: boolean | null
@@ -8295,6 +8304,57 @@ export type Database = {
           verification_status?: string | null
         }
         Relationships: []
+      }
+      potential_duplicates: {
+        Row: {
+          company_a_id: string
+          company_b_id: string
+          created_at: string
+          id: string
+          match_reason: string | null
+          reviewed_at: string | null
+          reviewed_by: string | null
+          similarity_score: number
+          status: string
+        }
+        Insert: {
+          company_a_id: string
+          company_b_id: string
+          created_at?: string
+          id?: string
+          match_reason?: string | null
+          reviewed_at?: string | null
+          reviewed_by?: string | null
+          similarity_score?: number
+          status?: string
+        }
+        Update: {
+          company_a_id?: string
+          company_b_id?: string
+          created_at?: string
+          id?: string
+          match_reason?: string | null
+          reviewed_at?: string | null
+          reviewed_by?: string | null
+          similarity_score?: number
+          status?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "potential_duplicates_company_a_id_fkey"
+            columns: ["company_a_id"]
+            isOneToOne: false
+            referencedRelation: "companies"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "potential_duplicates_company_b_id_fkey"
+            columns: ["company_b_id"]
+            isOneToOne: false
+            referencedRelation: "companies"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       power_network_datasets: {
         Row: {
