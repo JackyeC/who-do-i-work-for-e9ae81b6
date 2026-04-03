@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button";
 import { SectionReveal } from "@/components/landing/SectionReveal";
 import { ArrowRight, Play } from "lucide-react";
 import { trackNoRegrets } from "@/lib/noRegretsAnalytics";
+import { ColdOpenPreview } from "@/components/no-regrets-game/ColdOpenPreview";
 import heroImage from "@/assets/no-regrets-hero.jpg";
 import receiptsImage from "@/assets/no-regrets-receipts.jpg";
 
