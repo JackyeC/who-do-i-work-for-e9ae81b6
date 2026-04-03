@@ -9,6 +9,17 @@ import { topValuesLensLabelsFromUvp } from "@/lib/valueLensFromUvp";
 
 type Db = SupabaseClient<Database>;
 
+type DreamJobProfileProfileRow = {
+  dream_job_profile?: Json | null;
+  dream_job_profile_version?: number | null;
+  target_job_titles?: string[] | null;
+  skills?: string[] | null;
+  user_values?: string[] | null;
+  resume_keywords?: string[] | null;
+  min_salary?: number | null;
+  persona_type?: string | null;
+};
+
 function mapRemotePref(
   p: JobPreferences["remote_preference"] | undefined
 ): DreamJobProfileV1["facets"]["remotePreference"] {
@@ -109,9 +120,9 @@ export function buildDreamJobProfilePatch(input: {
 
 /** Full server + local merge; increments dream_job_profile_version. */
 export async function syncDreamJobProfileRemote(supabase: Db, userId: string): Promise<DreamJobProfileV1> {
-  const [{ data: profileRow, error: pErr }, { data: jobPrefs }, { data: matchPrefs }, { data: uvp }] =
+  const [{ data: profileRowRaw, error: pErr }, { data: jobPrefs }, { data: matchPrefs }, { data: uvp }] =
     await Promise.all([
-      supabase
+      (supabase as any)
         .from("profiles")
         .select(
           "dream_job_profile, dream_job_profile_version, target_job_titles, skills, user_values, resume_keywords, min_salary, persona_type"
@@ -124,6 +135,8 @@ export async function syncDreamJobProfileRemote(supabase: Db, userId: string): P
     ]);
 
   if (pErr) throw pErr;
+
+  const profileRow = (profileRowRaw ?? null) as DreamJobProfileProfileRow | null;
 
   const personaState = getPersonaState();
   const lensLabels = topValuesLensLabelsFromUvp(uvp as Record<string, unknown> | null);
@@ -153,7 +166,7 @@ export async function syncDreamJobProfileRemote(supabase: Db, userId: string): P
 
   const nextVersion = (profileRow?.dream_job_profile_version ?? 0) + 1;
 
-  const { error: upErr } = await supabase
+  const { error: upErr } = await (supabase as any)
     .from("profiles")
     .update({
       dream_job_profile: merged as unknown as Json,
@@ -172,13 +185,15 @@ export async function applyResumeParsedToDreamJobProfile(
   userId: string,
   parsed: ParsedResume
 ): Promise<DreamJobProfileV1> {
-  const { data: profileRow } = await supabase
+  const { data: profileRowRaw } = await (supabase as any)
     .from("profiles")
     .select(
       "dream_job_profile, dream_job_profile_version, target_job_titles, skills, user_values, resume_keywords, min_salary, persona_type"
     )
     .eq("id", userId)
     .maybeSingle();
+
+  const profileRow = (profileRowRaw ?? null) as DreamJobProfileProfileRow | null;
 
   const merged = buildDreamJobProfilePatch({
     existing: profileRow?.dream_job_profile ?? null,
@@ -197,7 +212,7 @@ export async function applyResumeParsedToDreamJobProfile(
 
   const nextVersion = (profileRow?.dream_job_profile_version ?? 0) + 1;
 
-  const { error } = await supabase
+  const { error } = await (supabase as any)
     .from("profiles")
     .update({
       dream_job_profile: merged as unknown as Json,

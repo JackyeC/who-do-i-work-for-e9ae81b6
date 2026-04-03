@@ -7,6 +7,12 @@ import { isLikelyMissingSchemaObject } from "@/lib/supabase-errors";
 import { friendlyErrorMessage } from "@/lib/user-friendly-error";
 import { useToast } from "@/hooks/use-toast";
 
+type DreamJobProfileQueryRow = {
+  dream_job_profile: unknown | null;
+  dream_job_profile_version: number;
+  __schemaFallback: boolean;
+};
+
 export function useDreamJobProfile() {
   const { user } = useAuth();
   const queryClient = useQueryClient();
@@ -15,7 +21,7 @@ export function useDreamJobProfile() {
   const query = useQuery({
     queryKey: ["dream-job-profile", user?.id],
     queryFn: async () => {
-      const { data, error } = await supabase
+      const { data, error } = await (supabase as any)
         .from("profiles")
         .select("dream_job_profile, dream_job_profile_version")
         .eq("id", user!.id)
@@ -26,12 +32,16 @@ export function useDreamJobProfile() {
           return {
             dream_job_profile: null,
             dream_job_profile_version: 0,
-            __schemaFallback: true as const,
-          };
+            __schemaFallback: true,
+          } satisfies DreamJobProfileQueryRow;
         }
         throw error;
       }
-      return { ...data, __schemaFallback: false as const };
+      return {
+        dream_job_profile: data?.dream_job_profile ?? null,
+        dream_job_profile_version: data?.dream_job_profile_version ?? 0,
+        __schemaFallback: false,
+      } satisfies DreamJobProfileQueryRow;
     },
     enabled: !!user,
     staleTime: 30_000,

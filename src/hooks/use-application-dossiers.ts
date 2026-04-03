@@ -1,10 +1,18 @@
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/contexts/AuthContext";
-import type { Tables } from "@/integrations/supabase/types";
 import { isLikelyMissingSchemaObject } from "@/lib/supabase-errors";
 
-export type ApplicationEmailDossierRow = Tables<"application_email_dossiers">;
+export type ApplicationEmailDossierRow = {
+  id: string;
+  application_id: string;
+  user_id: string;
+  email_status: string | null;
+  created_at: string | null;
+  updated_at?: string | null;
+  email_subject?: string | null;
+  email_body?: string | null;
+};
 
 export function useApplicationDossiers() {
   const { user } = useAuth();
@@ -12,7 +20,7 @@ export function useApplicationDossiers() {
   return useQuery({
     queryKey: ["application-email-dossiers", user?.id],
     queryFn: async () => {
-      const { data, error } = await supabase
+      const { data, error } = await (supabase as any)
         .from("application_email_dossiers")
         .select("*")
         .eq("user_id", user!.id)
