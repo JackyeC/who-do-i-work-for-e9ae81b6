@@ -6,6 +6,8 @@ import { useParams, Link, useNavigate } from "react-router-dom";
 import { CompanyZeroState } from "@/components/CompanyZeroState";
 import { OfferIntelligencePanel } from "@/components/company/OfferIntelligencePanel";
 import { WarnFilingsCard } from "@/components/company/WarnFilingsCard";
+import { CompanyCoverageSummary } from "@/components/company/CompanyCoverageSummary";
+import { SignalTimeline } from "@/components/company/SignalTimeline";
 import { useQuery } from "@tanstack/react-query";
 import { usePageSEO } from "@/hooks/use-page-seo";
 import { getOGImageUrl } from "@/lib/social-share";
