@@ -21,7 +21,7 @@ export function AppShell({ children }: AppShellProps) {
   const location = useLocation();
   const isHomepage = location.pathname === "/";
   const isMarketingPage = MARKETING_PAGES.some(p => location.pathname === p || location.pathname.startsWith(p + "/"));
-  const hideShell = NO_SHELL_ROUTES.includes(location.pathname);
+  const hideShell = NO_SHELL_ROUTES.some(p => location.pathname === p || location.pathname.startsWith(p + "/"));
 
   // Pages that completely manage their own chrome
   if (hideShell) {
