@@ -5,6 +5,7 @@ import { EpisodeShell } from "@/components/no-regrets-game/EpisodeShell";
 import { StatsBar } from "@/components/no-regrets-game/StatsBar";
 import { SignupGate } from "@/components/SignupGate";
 import { EPISODE_3 } from "@/data/no-regrets-episodes";
+import { trackNoRegrets } from "@/lib/noRegretsAnalytics";
 import type { Choice, PlayerStats, CompanyArchetype, EpisodeBranch } from "@/types/no-regrets-game";
 
 function applyChanges(base: PlayerStats, changes: Partial<PlayerStats>): PlayerStats {
