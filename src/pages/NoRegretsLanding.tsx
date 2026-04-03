@@ -97,6 +97,15 @@ export default function NoRegretsLanding() {
           </div>
         </section>
 
+        {/* ── Cold Open Preview ── */}
+        <section className="border-b border-border/20">
+          <div className="max-w-3xl mx-auto px-5 py-16 md:py-20">
+            <SectionReveal>
+              <ColdOpenPreview />
+            </SectionReveal>
+          </div>
+        </section>
+
         {/* ── Season structure ── */}
         <section className="border-b border-border/20">
           <div className="max-w-3xl mx-auto px-5 py-20 md:py-28">
