@@ -29,6 +29,7 @@ export function MarketingNav() {
           <Link to="/" className="flex items-center shrink-0">
             <LogoMark showWordmark iconSize={22} />
           </Link>
+          <ScanCounter />
 
           {/* Desktop nav */}
           <nav className="hidden md:flex items-center gap-6">
