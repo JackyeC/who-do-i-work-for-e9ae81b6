@@ -43,7 +43,7 @@ export default function Contact() {
 
     const subject = `Who Do I Work For Contact: ${data.get("reason") || "General"}`;
     const body = `From: ${name} (${email})\nReason: ${data.get("reason")}\n\n${message}`;
-    window.open(`mailto:hello@wdiwf.jackyeclayton.com?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`, "_blank");
+    window.open(`mailto:jackye@jackyeclayton.com?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`, "_blank");
     setSubmitted(true);
   };
 
@@ -74,9 +74,9 @@ export default function Contact() {
               </p>
 
               <div className="space-y-4">
-                <a href="mailto:hello@wdiwf.jackyeclayton.com" className="flex items-center gap-3 text-sm text-muted-foreground hover:text-primary transition-colors">
+              <a href="mailto:jackye@jackyeclayton.com" className="flex items-center gap-3 text-sm text-muted-foreground hover:text-primary transition-colors">
                   <Mail className="w-5 h-5 shrink-0" />
-                  hello@wdiwf.jackyeclayton.com
+                  jackye@jackyeclayton.com
                 </a>
                 <a href="https://www.linkedin.com/in/jackyeclayton/" target="_blank" rel="noopener noreferrer" className="flex items-center gap-3 text-sm text-muted-foreground hover:text-primary transition-colors">
                   <Linkedin className="w-5 h-5 shrink-0" />
@@ -95,8 +95,8 @@ export default function Contact() {
                 <h3 className="font-sans text-lg font-bold text-foreground mb-2">Message sent.</h3>
                 <p className="text-sm text-muted-foreground">
                   Your email client opened with the message. If it didn't, email us directly at{" "}
-                  <a href="mailto:hello@wdiwf.jackyeclayton.com" className="text-primary hover:underline">
-                    hello@wdiwf.jackyeclayton.com
+                   <a href="mailto:jackye@jackyeclayton.com" className="text-primary hover:underline">
+                    jackye@jackyeclayton.com
                   </a>
                 </p>
               </div>
