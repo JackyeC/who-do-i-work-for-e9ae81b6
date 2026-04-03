@@ -55,7 +55,14 @@ export default function NoRegretsLanding() {
       <div className="min-h-screen bg-background">
         {/* ── Hero ── */}
         <section className="relative overflow-hidden border-b border-border/20">
-          <div className="absolute inset-0 bg-gradient-to-b from-primary/[0.04] to-transparent pointer-events-none" />
+          <img
+            src={heroImage}
+            alt="Empty office at night, a single desk lamp glowing against a city skyline"
+            width={1920}
+            height={800}
+            className="absolute inset-0 w-full h-full object-cover opacity-30 pointer-events-none"
+          />
+          <div className="absolute inset-0 bg-gradient-to-b from-background/60 via-background/80 to-background pointer-events-none" />
           <div className="max-w-3xl mx-auto px-5 pt-24 pb-20 md:pt-32 md:pb-28 text-center relative z-10">
             <SectionReveal>
               <p className="text-[10px] font-mono uppercase tracking-[0.35em] text-primary/70 mb-5">
