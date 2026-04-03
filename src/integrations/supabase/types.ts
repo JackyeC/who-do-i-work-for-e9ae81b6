@@ -2077,6 +2077,68 @@ export type Database = {
           },
         ]
       }
+      company_claims: {
+        Row: {
+          claim_text: string
+          claim_type: string
+          company_id: string
+          confidence_score: number
+          created_at: string
+          event_date: string | null
+          evidence_type: Database["public"]["Enums"]["evidence_type"]
+          generated_by: string
+          id: string
+          is_active: boolean
+          signal_id: string | null
+          signal_table: string | null
+          source_label: string
+          source_url: string | null
+          updated_at: string
+        }
+        Insert: {
+          claim_text: string
+          claim_type: string
+          company_id: string
+          confidence_score?: number
+          created_at?: string
+          event_date?: string | null
+          evidence_type?: Database["public"]["Enums"]["evidence_type"]
+          generated_by?: string
+          id?: string
+          is_active?: boolean
+          signal_id?: string | null
+          signal_table?: string | null
+          source_label: string
+          source_url?: string | null
+          updated_at?: string
+        }
+        Update: {
+          claim_text?: string
+          claim_type?: string
+          company_id?: string
+          confidence_score?: number
+          created_at?: string
+          event_date?: string | null
+          evidence_type?: Database["public"]["Enums"]["evidence_type"]
+          generated_by?: string
+          id?: string
+          is_active?: boolean
+          signal_id?: string | null
+          signal_table?: string | null
+          source_label?: string
+          source_url?: string | null
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "company_claims_company_id_fkey"
+            columns: ["company_id"]
+            isOneToOne: false
+            referencedRelation: "companies"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       company_community_signals: {
         Row: {
           badge_label: string
@@ -12325,6 +12387,7 @@ export type Database = {
       document_status: "pending" | "parsing" | "parsed" | "error" | "deleted"
       document_type: "offer_letter" | "resume" | "job_description"
       documentation_strength: "high" | "medium" | "low"
+      evidence_type: "direct_source" | "multi_source" | "inferred"
       family_model_type: "traditional" | "progressive"
       link_type:
         | "donation_to_member"
@@ -12508,6 +12571,7 @@ export const Constants = {
       document_status: ["pending", "parsing", "parsed", "error", "deleted"],
       document_type: ["offer_letter", "resume", "job_description"],
       documentation_strength: ["high", "medium", "low"],
+      evidence_type: ["direct_source", "multi_source", "inferred"],
       family_model_type: ["traditional", "progressive"],
       link_type: [
         "donation_to_member",

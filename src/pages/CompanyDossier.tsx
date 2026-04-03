@@ -55,6 +55,7 @@ import { PolicyScoreCard } from "@/components/policy-intelligence/PolicyScoreCar
 import { StateWomenStatusCard } from "@/components/StateWomenStatusCard";
 import { SourceDocumentsLayer } from "@/components/dossier/SourceDocumentsLayer";
 import { AccountabilitySignalsLayer } from "@/components/dossier/AccountabilitySignalsLayer";
+import { CompanyClaimsSection } from "@/components/dossier/CompanyClaimsSection";
 
 export default function CompanyDossier() {
   const { id } = useParams();
@@ -546,6 +547,9 @@ export default function CompanyDossier() {
         This is a background check on the employer — built from public records, not opinions.
         Every signal traces back to a source. Use it before you apply, interview, or sign.
       </p>
+
+      {/* ── VERIFIED CLAIMS ── */}
+      <CompanyClaimsSection companyId={companyId!} companyName={company.name} />
 
       {/* WARN Filings — always show when data exists */}
       {companyId && (
