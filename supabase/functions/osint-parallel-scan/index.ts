@@ -223,3 +223,79 @@ Deno.serve(async (req: Request) => {
     }), { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } });
   }
 });
+
+/**
+ * Refresh company_coverage_summary by counting actual signal rows per source family.
+ */
+async function refreshCoverageSummary(supabase: any, companyId: string) {
+  const now = new Date().toISOString();
+
+  // Map source_family → table(s) to count
+  const sourceTables: Record<string, { table: string; dateCol?: string }[]> = {
+    news: [{ table: 'company_news_signals', dateCol: 'published_at' }],
+    fec: [{ table: 'company_fec_donations' }, { table: 'company_party_breakdown' }],
+    sec: [{ table: 'company_sec_filings' }],
+    osha: [{ table: 'company_signal_scans' }], // OSHA signals stored here
+    warn: [{ table: 'company_warn_notices' }],
+    careers: [{ table: 'company_careers_signals' }, { table: 'company_jobs' }],
+    nlrb: [{ table: 'company_signal_scans' }], // filtered below
+    bls: [{ table: 'bls_wage_benchmarks' }],
+  };
+
+  for (const [family, tables] of Object.entries(sourceTables)) {
+    let totalCount = 0;
+    let latestDate: string | null = null;
+
+    for (const { table, dateCol } of tables) {
+      try {
+        // For tables that store multiple signal categories, filter
+        let query = supabase.from(table).select('*', { count: 'exact', head: true });
+
+        if (table === 'bls_wage_benchmarks') {
+          // BLS is not per-company, skip company_id filter
+        } else {
+          query = query.eq('company_id', companyId);
+        }
+
+        // For signal_scans, filter by category
+        if (table === 'company_signal_scans' && family === 'osha') {
+          query = query.eq('signal_category', 'workplace_safety');
+        } else if (table === 'company_signal_scans' && family === 'nlrb') {
+          query = query.eq('signal_category', 'labor_relations');
+        }
+
+        const { count, error } = await query;
+        if (!error && count) totalCount += count;
+
+        // Try to get latest date
+        if (dateCol && !latestDate) {
+          const { data: latest } = await supabase
+            .from(table)
+            .select(dateCol)
+            .eq('company_id', companyId)
+            .order(dateCol, { ascending: false })
+            .limit(1)
+            .maybeSingle();
+          if (latest?.[dateCol]) latestDate = latest[dateCol];
+        }
+      } catch (e) {
+        // Table might not exist for this company, skip
+      }
+    }
+
+    const status = totalCount >= 5 ? 'rich' : totalCount > 0 ? 'limited' : 'no_trail';
+
+    await supabase.from('company_coverage_summary').upsert({
+      company_id: companyId,
+      source_family: family,
+      signal_count: totalCount,
+      last_signal_date: latestDate,
+      last_checked_at: now,
+      coverage_status: status,
+      summary_text: null,
+      updated_at: now,
+    }, { onConflict: 'company_id,source_family' });
+  }
+
+  console.log(`[osint-parallel-scan] Coverage summary refreshed for ${companyId}`);
+}
