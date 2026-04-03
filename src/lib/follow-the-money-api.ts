@@ -39,7 +39,7 @@ export async function fetchFollowTheMoney(
     "trade_association_lobbying",
     "dark_money_channel",
     "lobbying_on_bill",
-  ];
+  ] as const;
 
   const { data: linkages, error: linkError } = await supabase
     .from("entity_linkages")
