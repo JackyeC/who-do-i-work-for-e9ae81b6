@@ -88,26 +88,33 @@ const CHECKLIST_ITEMS = [
   },
 ];
 
-const RED_FLAG_TEMPLATES: Record<string, { flag: string; source: string; advice: string }[]> = {
+interface RedFlag {
+  flag: string;
+  source: string;
+  sourceUrl: string;
+  advice: string;
+}
+
+const RED_FLAG_TEMPLATES: Record<string, RedFlag[]> = {
   default: [
-    { flag: "Mandatory arbitration clause detected in similar industry offers", source: "NLRB pattern analysis", advice: "Ask for a carve-out for harassment and discrimination claims." },
-    { flag: "Non-compete may be unenforceable in your state", source: "FTC proposed rule · State labor law", advice: "Request removal or narrowing. Most companies will comply if asked." },
-    { flag: "No severance terms in the offer letter", source: "Industry benchmark", advice: "Negotiate 2-4 weeks per year of service before signing." },
+    { flag: "Mandatory arbitration clause detected in similar industry offers", source: "NLRB pattern analysis", sourceUrl: "https://www.nlrb.gov/about-nlrb/rights-we-protect/the-law/interfering-with-employee-rights-section-7-8a1", advice: "Ask for a carve-out for harassment and discrimination claims." },
+    { flag: "Non-compete may be unenforceable in your state", source: "FTC proposed rule · State labor law", sourceUrl: "https://www.ftc.gov/legal-library/browse/rules/noncompete-rule", advice: "Request removal or narrowing. Most companies will comply if asked." },
+    { flag: "No severance terms in the offer letter", source: "DOL severance guidance", sourceUrl: "https://www.dol.gov/general/topic/wages/severancepay", advice: "Negotiate 2-4 weeks per year of service before signing." },
   ],
   tech: [
-    { flag: "Equity cliff vesting (1 year) with no acceleration on termination", source: "SEC filing patterns", advice: "Ask for double-trigger acceleration if the company is acquired." },
-    { flag: "IP assignment clause covers personal projects", source: "Common in tech offers", advice: "Request a carve-out for personal work done outside business hours." },
-    { flag: "Recent RIF (Reduction in Force) while posting same role", source: "WARN Act · Job board analysis", advice: "Ask directly: 'Was this role previously held by someone affected by layoffs?'" },
+    { flag: "Equity cliff vesting (1 year) with no acceleration on termination", source: "SEC compensation filing patterns", sourceUrl: "https://www.sec.gov/cgi-bin/browse-edgar?action=getcompany&type=DEF+14A&dateb=&owner=include&count=40", advice: "Ask for double-trigger acceleration if the company is acquired." },
+    { flag: "IP assignment clause covers personal projects", source: "State IP assignment laws", sourceUrl: "https://www.law.cornell.edu/wex/intellectual_property", advice: "Request a carve-out for personal work done outside business hours." },
+    { flag: "Recent RIF (Reduction in Force) while posting same role", source: "WARN Act filings", sourceUrl: "https://www.dol.gov/agencies/eta/layoffs/warn", advice: "Ask directly: 'Was this role previously held by someone affected by layoffs?'" },
   ],
   finance: [
-    { flag: "Clawback provisions on bonus without clear triggers", source: "SEC compensation disclosures", advice: "Ask for specific, measurable clawback conditions in writing." },
-    { flag: "Garden leave clause without full compensation guarantee", source: "Industry legal review", advice: "Ensure garden leave pays 100% of base + benefits." },
-    { flag: "Non-solicitation extends to clients you brought in", source: "Common in financial services", advice: "Negotiate to exclude pre-existing relationships." },
+    { flag: "Clawback provisions on bonus without clear triggers", source: "SEC Dodd-Frank clawback rules", sourceUrl: "https://www.sec.gov/rules/final/2022/33-11126.pdf", advice: "Ask for specific, measurable clawback conditions in writing." },
+    { flag: "Garden leave clause without full compensation guarantee", source: "DOL wage & hour guidance", sourceUrl: "https://www.dol.gov/agencies/whd", advice: "Ensure garden leave pays 100% of base + benefits." },
+    { flag: "Non-solicitation extends to clients you brought in", source: "FTC non-compete analysis", sourceUrl: "https://www.ftc.gov/legal-library/browse/rules/noncompete-rule", advice: "Negotiate to exclude pre-existing relationships." },
   ],
   healthcare: [
-    { flag: "Restrictive covenant covers broad geographic area", source: "State healthcare labor law", advice: "Many states limit non-competes for healthcare workers. Check yours." },
-    { flag: "On-call expectations not reflected in compensation", source: "FLSA analysis", advice: "Clarify on-call pay rate and frequency expectations in writing." },
-    { flag: "Recent Medicaid/Medicare reimbursement cuts affecting employer", source: "CMS data · Industry reports", advice: "Ask about revenue diversification and budget stability for your department." },
+    { flag: "Restrictive covenant covers broad geographic area", source: "State healthcare labor law", sourceUrl: "https://www.ftc.gov/legal-library/browse/rules/noncompete-rule", advice: "Many states limit non-competes for healthcare workers. Check yours." },
+    { flag: "On-call expectations not reflected in compensation", source: "FLSA on-call rules", sourceUrl: "https://www.dol.gov/agencies/whd/fact-sheets/22-flsa-hours-worked", advice: "Clarify on-call pay rate and frequency expectations in writing." },
+    { flag: "Recent Medicaid/Medicare reimbursement cuts affecting employer", source: "CMS reimbursement data", sourceUrl: "https://www.cms.gov/medicare/payment", advice: "Ask about revenue diversification and budget stability for your department." },
   ],
 };
 
@@ -227,9 +234,16 @@ export function OfferChecklist({ companyName, companyId, industry, signals }: Of
                   <FileText className="w-3.5 h-3.5 text-destructive mt-0.5 shrink-0" />
                   <div>
                     <p className="text-sm font-medium text-foreground">{rf.flag}</p>
-                    <p className="text-[10px] text-muted-foreground mt-0.5 font-mono uppercase tracking-wider">
-                      📎 {rf.source}
-                    </p>
+                    <p className="text-[10px] mt-0.5 font-mono uppercase tracking-wider">
+                       <a
+                         href={rf.sourceUrl}
+                         target="_blank"
+                         rel="noopener noreferrer"
+                         className="text-primary hover:text-primary/80 underline underline-offset-2 transition-colors"
+                       >
+                         📎 {rf.source}
+                       </a>
+                     </p>
                     <p className="text-xs text-foreground mt-1.5 flex items-start gap-1">
                       <ArrowRight className="w-3 h-3 text-primary mt-0.5 shrink-0" />
                       <span>{rf.advice}</span>
