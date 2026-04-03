@@ -104,6 +104,29 @@ interface RecapData {
   consequenceLabel: ConsequenceLabel;
 }
 
+/* ── Share templates ── */
+
+const SHARE_TEMPLATES = [
+  {
+    id: "serious",
+    label: "LinkedIn / Repost",
+    template: (headline: string) =>
+      `I just played No-Regrets Career Story from WDIWF and it called out exactly how I make decisions when I'm scared about work. If you're job searching or quietly wondering "is it me or this company?", play this before your next offer: https://wdiwf.jackyeclayton.com/no-regrets`,
+  },
+  {
+    id: "personal",
+    label: "DM / Email",
+    template: (headline: string) =>
+      `Just finished a 3-episode career story game called No-Regrets Career Story from WDIWF. It showed me I'm the "${headline}" type. If you're in interview mode or thinking about leaving, it's worth 15–20 minutes: https://wdiwf.jackyeclayton.com/no-regrets`,
+  },
+  {
+    id: "blunt",
+    label: "Friend-forward",
+    template: (_headline: string) =>
+      `Sending you this because I love you:\nNo-Regrets Career Story is a short interactive thing from WDIWF about choosing (or staying in) the wrong job. It feels uncomfortably accurate in a good way. Play it before you say yes to the next offer: https://wdiwf.jackyeclayton.com/no-regrets`,
+  },
+] as const;
+
 /* ── Result Card Component ── */
 
 function ResultCard({
@@ -118,6 +141,7 @@ function ResultCard({
   choiceId: string;
 }) {
   const [copied, setCopied] = useState(false);
+  const [activeTemplate, setActiveTemplate] = useState<string | null>(null);
 
   const playerLabel = PLAYER_LABELS[playerArchetype] || "The Player";
   const companyLabel = COMPANY_LABELS[companyArchetype] || "a Broken System";
@@ -125,15 +149,21 @@ function ResultCard({
   const costLine = RESULT_COST[consequenceLabel];
   const hopeLine = RESULT_HOPE[consequenceLabel];
 
-  const shareText = `My No-Regrets Career Story result:\n\n"${headline}"\nOutcome: ${CONSEQUENCE_LABELS[consequenceLabel]}\n\n${costLine}\n\n${hopeLine}\n\nPlay it yourself → wdiwf.com/no-regrets`;
+  const resultText = `My No-Regrets Career Story result:\n\n"${headline}"\nOutcome: ${CONSEQUENCE_LABELS[consequenceLabel]}\n\n${costLine}\n\n${hopeLine}\n\nPlay it yourself → wdiwf.com/no-regrets`;
 
-  const handleCopy = async () => {
+  const handleCopy = async (text: string, templateId?: string) => {
     try {
-      await navigator.clipboard.writeText(shareText);
+      await navigator.clipboard.writeText(text);
       setCopied(true);
-      setTimeout(() => setCopied(false), 2500);
+      setActiveTemplate(templateId || null);
+      trackNoRegrets("result_copied", {
+        template: templateId || "result_card",
+        consequence_label: consequenceLabel,
+        player_archetype: playerArchetype,
+      });
+      setTimeout(() => { setCopied(false); setActiveTemplate(null); }, 2500);
     } catch {
-      /* fallback: select-all not critical */
+      /* clipboard not available */
     }
   };
 
@@ -154,14 +184,14 @@ function ResultCard({
         <Button
           variant="ghost"
           size="sm"
-          onClick={handleCopy}
+          onClick={() => handleCopy(resultText)}
           className={cn(
             "h-7 gap-1.5 text-[10px] font-mono uppercase tracking-wider transition-colors",
-            copied ? "text-[hsl(var(--civic-green))]" : "text-muted-foreground hover:text-foreground"
+            copied && !activeTemplate ? "text-[hsl(var(--civic-green))]" : "text-muted-foreground hover:text-foreground"
           )}
         >
-          {copied ? <Check className="w-3 h-3" /> : <Copy className="w-3 h-3" />}
-          {copied ? "Copied" : "Copy result"}
+          {copied && !activeTemplate ? <Check className="w-3 h-3" /> : <Copy className="w-3 h-3" />}
+          {copied && !activeTemplate ? "Copied" : "Copy result"}
         </Button>
       </div>
       <div className="p-5 md:p-7 space-y-4">
@@ -178,6 +208,39 @@ function ResultCard({
         <p className="text-sm text-primary/80 font-medium leading-relaxed border-l-2 border-primary/30 pl-3">
           {hopeLine}
         </p>
+      </div>
+
+      {/* Share template picker */}
+      <div className="border-t border-primary/10 px-5 py-4 space-y-3">
+        <p className="text-[9px] font-mono uppercase tracking-[0.25em] text-muted-foreground/60">
+          Share this — pick a tone
+        </p>
+        <div className="grid gap-2">
+          {SHARE_TEMPLATES.map((t) => (
+            <button
+              key={t.id}
+              onClick={() => handleCopy(t.template(headline), t.id)}
+              className={cn(
+                "group flex items-center justify-between gap-3 px-3.5 py-2.5 rounded-lg border text-left transition-all",
+                activeTemplate === t.id
+                  ? "border-[hsl(var(--civic-green))]/40 bg-[hsl(var(--civic-green))]/5"
+                  : "border-border/30 bg-card/30 hover:border-primary/20 hover:bg-card/50"
+              )}
+            >
+              <span className={cn(
+                "text-xs font-medium transition-colors",
+                activeTemplate === t.id ? "text-[hsl(var(--civic-green))]" : "text-muted-foreground group-hover:text-foreground"
+              )}>
+                {t.label}
+              </span>
+              {activeTemplate === t.id ? (
+                <Check className="w-3.5 h-3.5 text-[hsl(var(--civic-green))] shrink-0" />
+              ) : (
+                <Copy className="w-3.5 h-3.5 text-muted-foreground/40 group-hover:text-muted-foreground shrink-0" />
+              )}
+            </button>
+          ))}
+        </div>
       </div>
     </motion.div>
   );
