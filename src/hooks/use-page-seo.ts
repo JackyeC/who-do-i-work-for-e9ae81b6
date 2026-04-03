@@ -1,9 +1,8 @@
 import { useEffect } from "react";
+import { getPublicSiteUrl } from "@/lib/public-site-url";
 
-const BASE_URL = "https://wdiwf.jackyeclayton.com";
 const SITE_NAME = "Who Do I Work For?";
 const DEFAULT_DESC = "You deserve to know exactly who you work for. Employer intelligence, career strategy, and values-aligned hiring by Jackye Clayton.";
-const DEFAULT_IMAGE = "https://wdiwf.jackyeclayton.com/og-image.png";
 
 interface PageSEOProps {
   title: string;
@@ -17,6 +16,8 @@ interface PageSEOProps {
 
 export function usePageSEO({ title, description, path, type = "website", image, twitterCard = "summary_large_image", jsonLd }: PageSEOProps) {
   useEffect(() => {
+    const BASE_URL = getPublicSiteUrl();
+    const DEFAULT_IMAGE = `${BASE_URL}/og-image.png`;
     const fullTitle = `${title} | ${SITE_NAME}`;
     const desc = description || DEFAULT_DESC;
     const url = path ? `${BASE_URL}${path}` : BASE_URL;

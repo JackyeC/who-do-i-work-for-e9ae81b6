@@ -81,4 +81,4 @@ Disallow: /
 User-agent: *
 Allow: /
 
-Sitemap: https://wdiwf.jackyeclayton.com/sitemap.xml
+Sitemap: https://whodoiworkfor.com/sitemap.xml

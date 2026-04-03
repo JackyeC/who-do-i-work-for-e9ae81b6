@@ -7,7 +7,7 @@
  * - Facebook: URL-focused (OG tags drive everything)
  */
 
-const BASE_URL = "https://wdiwf.jackyeclayton.com";
+import { getPublicSiteUrl } from "@/lib/public-site-url";
 
 export type SharePlatform = "linkedin" | "twitter" | "facebook" | "copy";
 
@@ -25,6 +25,7 @@ export interface ShareContext {
 }
 
 function getShareUrl(ctx: ShareContext): string {
+  const BASE_URL = getPublicSiteUrl();
   switch (ctx.type) {
     case "battle":
       return ctx.slugA && ctx.slugB
@@ -154,6 +155,7 @@ export function openShareWindow(platform: SharePlatform, ctx: ShareContext): voi
 
 /** Generate OG image URL for dynamic pages (PNG format for LinkedIn/social) */
 export function getOGImageUrl(ctx: ShareContext): string {
+  const BASE_URL = getPublicSiteUrl();
   const projectId = import.meta.env.VITE_SUPABASE_PROJECT_ID || 'tdetybqdxadmowjivtjy';
   const bucketBase = `https://${projectId}.supabase.co/storage/v1/object/public/battle-images`;
   
