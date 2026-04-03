@@ -86,7 +86,7 @@ export async function uploadImage(uploadUrl: string, imageBytes: Uint8Array): Pr
     headers: {
       'Content-Type': 'image/png',
     },
-    body: new Blob([imageBytes], { type: 'image/png' }),
+    body: imageBytes,
   });
   if (!res.ok) throw new Error(`LinkedIn image upload failed: ${res.status}`);
 }
