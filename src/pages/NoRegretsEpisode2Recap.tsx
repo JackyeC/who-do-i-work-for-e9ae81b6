@@ -7,6 +7,12 @@ import { Button } from "@/components/ui/button";
 import { ArrowRight } from "lucide-react";
 import type { PlayerStats, CompanyArchetype } from "@/types/no-regrets-game";
 
+const ARCHETYPE_LABELS: Record<CompanyArchetype, string> = {
+  "safe-pay-shaky-ethics": "The Golden Cage",
+  "mission-driven-unstable": "The True Believer",
+  "prestige-burnout": "The Brand Sacrifice",
+};
+
 interface RecapData {
   choiceId: string;
   stats: PlayerStats;
@@ -58,26 +64,36 @@ export default function NoRegretsEpisode2Recap() {
   if (!data) return null;
 
   const cta = ARCHETYPE_CTA[data.companyArchetype];
+  const archetypeLabel = ARCHETYPE_LABELS[data.companyArchetype];
 
   return (
     <EpisodeShell>
-      <div className="space-y-6">
-        <div>
-          <h2 className="text-xl md:text-2xl font-display font-bold text-foreground">Episode 2: The Offer — Recap</h2>
-          <div className="h-0.5 w-16 bg-primary/40 mt-2 rounded-full" />
+      <div className="space-y-3">
+        <p className="text-[10px] font-mono uppercase tracking-[0.25em] text-primary/60">Episode 2 — Verdict</p>
+        <h2 className="text-xl md:text-2xl font-display font-bold text-foreground">The Offer — Recap</h2>
+        <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-lg border border-primary/20 bg-primary/5">
+          <div className="w-1.5 h-1.5 rounded-full bg-primary" />
+          <span className="text-xs font-mono text-primary font-semibold">{archetypeLabel}</span>
         </div>
+      </div>
 
-        <p className="text-sm md:text-base text-muted-foreground leading-relaxed">{data.recapText}</p>
+      <div className="rounded-xl border border-border/20 bg-card/30 p-5 md:p-6">
+        <p className="text-sm md:text-[15px] text-muted-foreground leading-[1.8]">{data.recapText}</p>
+      </div>
 
-        <StatsBar stats={data.stats} previousStats={data.previousStats} />
+      <StatsBar stats={data.stats} previousStats={data.previousStats} />
 
-        <FollowTheMoneyTeaser />
+      <FollowTheMoneyTeaser />
 
-        {/* Archetype-specific conversion */}
-        <div className="rounded-xl border border-primary/30 bg-primary/5 p-6 space-y-4">
+      {/* Archetype-specific conversion */}
+      <div className="rounded-xl border border-primary/25 bg-card/60 overflow-hidden">
+        <div className="px-5 py-3 border-b border-primary/15 bg-primary/5">
+          <p className="text-[10px] font-mono uppercase tracking-[0.25em] text-primary">Next Action</p>
+        </div>
+        <div className="p-5 md:p-6 space-y-4">
           <h3 className="text-lg md:text-xl font-display font-bold text-foreground">{cta.headline}</h3>
           <p className="text-sm text-muted-foreground leading-relaxed">{cta.body}</p>
-          <div className="flex flex-col sm:flex-row gap-3">
+          <div className="flex flex-col sm:flex-row gap-3 pt-1">
             <Button asChild variant="premium" size="lg" className="flex-1">
               <Link to={cta.link} className="gap-2">
                 {cta.cta} <ArrowRight className="w-4 h-4" />
@@ -88,11 +104,13 @@ export default function NoRegretsEpisode2Recap() {
             </Button>
           </div>
         </div>
-
-        <Button asChild variant="outline" size="lg" className="w-full">
-          <Link to="/no-regrets-game/episode-3">Continue to Episode 3</Link>
-        </Button>
       </div>
+
+      <Button asChild variant="outline" size="lg" className="w-full">
+        <Link to="/no-regrets-game/episode-3" className="gap-2">
+          Continue to Episode 3 <ArrowRight className="w-4 h-4" />
+        </Link>
+      </Button>
     </EpisodeShell>
   );
 }
