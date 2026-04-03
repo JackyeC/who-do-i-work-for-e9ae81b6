@@ -20,7 +20,7 @@ export function CycleTotalsCard({ cycles }: Props) {
     <Card className="border-border/50">
       <CardHeader className="pb-3">
         <CardTitle className="text-sm font-semibold text-foreground">
-          Spending by Election Cycle
+          Most Active Election Cycles
         </CardTitle>
       </CardHeader>
       <CardContent className="space-y-4">

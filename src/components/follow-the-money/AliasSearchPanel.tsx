@@ -13,10 +13,10 @@ export function AliasSearchPanel({ aliases }: Props) {
       <div className="flex items-center gap-1.5">
         <Search className="w-3.5 h-3.5 text-muted-foreground" />
         <span className="text-xs font-medium text-muted-foreground uppercase tracking-wider">
-          Names Searched
+          Employer Aliases Searched
         </span>
       </div>
-      <div className="flex flex-wrap gap-1.5" aria-label="Company name variants searched in FEC records">
+      <div className="flex flex-wrap gap-1.5" aria-label="Employer name variants searched in FEC records">
         {aliases.map((alias) => (
           <Badge
             key={alias}

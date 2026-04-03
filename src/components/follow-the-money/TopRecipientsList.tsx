@@ -9,17 +9,16 @@ function formatCurrency(amount: number): string {
 
 interface Props {
   recipients: TopRecipient[];
-  cycleLabel?: string;
 }
 
-export function TopRecipientsList({ recipients, cycleLabel }: Props) {
+export function TopRecipientsList({ recipients }: Props) {
   if (recipients.length === 0) return null;
 
   return (
     <Card className="border-border/50">
       <CardHeader className="pb-3">
         <CardTitle className="text-sm font-semibold text-foreground">
-          Top Recipients{cycleLabel ? ` — ${cycleLabel}` : ""}
+          Top Recipients
         </CardTitle>
       </CardHeader>
       <CardContent>

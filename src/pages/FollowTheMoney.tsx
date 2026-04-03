@@ -1,4 +1,3 @@
-import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { useSearchParams } from "react-router-dom";
 import { usePageSEO } from "@/hooks/use-page-seo";
@@ -31,9 +30,9 @@ export default function FollowTheMoney() {
   const companyParam = searchParams.get("company");
 
   usePageSEO({
-    title: "Follow the Money — Corporate Political Influence",
+    title: "Follow the Money — Federal Political Contributions",
     description:
-      "Trace corporate political spending from PAC contributions to Congress. Built from FEC filings, Senate LDA disclosures, and verified public records.",
+      "See the federal political contribution footprint connected to employer names across recent election cycles. Built from FEC filings and verified public records.",
     path: "/follow-the-money",
   });
 
@@ -44,7 +43,7 @@ export default function FollowTheMoney() {
           <div className="text-center mb-8">
             <h1 className="text-2xl font-bold text-foreground mb-2">Follow the Money</h1>
             <p className="text-muted-foreground text-sm">
-              Trace corporate political spending from PAC contributions to Congress.
+              See the federal political contribution footprint connected to employer names across recent election cycles.
             </p>
           </div>
           <SignupGate feature="the Follow the Money investigation board" blurPreview={false} />
@@ -99,7 +98,7 @@ function CompanyMoneyTrail({ companyId }: { companyId: string }) {
             {data.summary.lastRefreshedAt && (
               <span className="text-xs text-muted-foreground font-mono flex items-center gap-1">
                 <Clock className="w-3 h-3" />
-                Updated{" "}
+                Last refreshed{" "}
                 {formatDistanceToNow(new Date(data.summary.lastRefreshedAt), {
                   addSuffix: true,
                 })}
@@ -123,7 +122,7 @@ function CompanyMoneyTrail({ companyId }: { companyId: string }) {
                       <DollarSign className="w-5 h-5 text-primary" />
                     </div>
                     <div>
-                      <p className="text-xs text-muted-foreground">Total Linked</p>
+                      <p className="text-xs text-muted-foreground">Total Linked Contributions</p>
                       <p className="text-lg font-bold font-mono text-foreground">
                         {formatCurrency(data.summary.totalLinkedContributions)}
                       </p>
@@ -149,13 +148,13 @@ function CompanyMoneyTrail({ companyId }: { companyId: string }) {
               <CycleTotalsCard cycles={data.cycles} />
 
               {/* Top recipients */}
-              <TopRecipientsList recipients={topRecipients} cycleLabel="All Cycles" />
+              <TopRecipientsList recipients={topRecipients} />
 
               {/* Aliases */}
               <AliasSearchPanel aliases={data.aliasesSearched} />
 
               {/* Disclaimer */}
-              <DisclaimerBlock text={data.disclaimer} />
+              <DisclaimerBlock />
             </div>
           )}
         </DataStatePanel>
@@ -175,10 +174,7 @@ function CompanySelector() {
     <div className="min-h-screen bg-background">
       <main className="container mx-auto px-4 py-8 max-w-4xl space-y-6">
         <FollowTheMoneyHeader />
-
-        <DisclaimerBlock
-          text="This data is compiled from FEC filings, Senate LDA disclosures, and public corporate records. Contributions shown are from individuals employed by or affiliated with these companies."
-        />
+        <DisclaimerBlock />
 
         {isLoading ? (
           <div className="space-y-3" aria-busy="true">
@@ -189,13 +185,13 @@ function CompanySelector() {
         ) : !companies || companies.length === 0 ? (
           <div className="rounded-xl border border-border/40 bg-muted/10 p-6 text-center">
             <p className="text-sm text-muted-foreground">
-              No companies with political spending data imported yet.
+              No verified federal contribution activity imported yet for this employer name.
             </p>
           </div>
         ) : (
           <div className="space-y-2">
             <h2 className="text-sm font-semibold text-muted-foreground uppercase tracking-wider">
-              Companies with Political Spending Records
+              Employers with Federal Contribution Records
             </h2>
             <div className="divide-y divide-border/30 rounded-lg border border-border/40 overflow-hidden">
               {companies.map((c) => (
