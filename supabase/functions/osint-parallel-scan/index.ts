@@ -28,13 +28,14 @@ Deno.serve(async (req: Request) => {
   const isServiceRole = token === supabaseKey;
 
   // If an auth header is provided but it's not service-role, validate the JWT
+  // with getClaims so preview/session tokens do not trigger an upstream 401.
   if (authHeader?.startsWith('Bearer ') && !isServiceRole && token) {
     const authClient = createClient(supabaseUrl, anonKey, {
       global: { headers: { Authorization: authHeader } },
     });
-    const { data: claimsData, error: claimsError } = await authClient.auth.getUser();
+    const { data: claimsData, error: claimsError } = await authClient.auth.getClaims(token);
     // If token is invalid, log but still allow (scan data is public)
-    if (claimsError) {
+    if (claimsError || !claimsData?.claims?.sub) {
       console.warn('[osint-parallel-scan] Invalid JWT provided, proceeding as anonymous');
     }
   }
