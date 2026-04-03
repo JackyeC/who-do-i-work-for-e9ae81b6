@@ -8,6 +8,20 @@ interface JackyeMessageProps {
   firstName: string;
 }
 
+const ARTIFACT_PATTERNS = [
+  '<think>', '</think>', 'JRC EDIT', 'Here is your note',
+  'Here is the note', 'DRAFT:', 'draft:', '## ',
+];
+
+const FALLBACK_TEXT = "Still reviewing today's signal. Check back shortly.";
+
+function sanitizeForRender(note: string): string | null {
+  if (!note) return null;
+  const hasArtifact = ARTIFACT_PATTERNS.some(p => note.includes(p));
+  if (hasArtifact) return null;
+  return note.trim();
+}
+
 export function JackyeMessage({ firstName }: JackyeMessageProps) {
   const today = new Date();
   const dateStr = today.toLocaleDateString("en-US", {
@@ -47,16 +61,15 @@ export function JackyeMessage({ firstName }: JackyeMessageProps) {
     toast.success("Note saved to My Intel.");
   };
 
+  // Sanitize note — if contaminated, show fallback
+  const cleanNote = noteResponse ? sanitizeForRender(noteResponse.note) : null;
+  const displayText = cleanNote || (noteResponse ? FALLBACK_TEXT : "");
+
   // Split note into paragraphs for rendering
-  const paragraphs = noteResponse?.note
+  const paragraphs = displayText
     .split("\n")
     .map((p) => p.trim())
-    .filter(Boolean) || [];
-
-  // Separate signature from body
-  const signatureIdx = paragraphs.findIndex((p) => p.startsWith("Always in your corner"));
-  const bodyParagraphs = signatureIdx >= 0 ? paragraphs.slice(0, signatureIdx) : paragraphs;
-  const hasSignature = signatureIdx >= 0;
+    .filter(Boolean);
 
   return (
     <motion.div
@@ -103,7 +116,7 @@ export function JackyeMessage({ firstName }: JackyeMessageProps) {
           ) : (
             <>
               <div className="space-y-4 max-w-[640px]">
-                {bodyParagraphs.map((p, i) => (
+                {paragraphs.map((p, i) => (
                   <p
                     key={i}
                     className="text-[15px] leading-[1.75] text-[hsl(var(--text-secondary))]"
@@ -113,13 +126,11 @@ export function JackyeMessage({ firstName }: JackyeMessageProps) {
                 ))}
               </div>
 
-              {/* Signature */}
-              {hasSignature && (
-                <p className="mt-6 text-sm font-serif italic text-[hsl(var(--text-tertiary))]">
-                  Always in your corner —{" "}
-                  <span className="font-bold text-primary not-italic font-brand">Jackye</span>
-                </p>
-              )}
+              {/* Static signature — always rendered, never part of AI output */}
+              <p className="mt-6 text-sm font-serif italic text-[hsl(var(--text-tertiary))]">
+                Always in your corner —{" "}
+                <span className="font-bold text-primary not-italic font-brand">Jackye</span>
+              </p>
 
               {/* Actions */}
               <div className="flex items-center gap-3 mt-5 pt-4 border-t border-border/20">
