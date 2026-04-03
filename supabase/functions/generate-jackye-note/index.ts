@@ -7,6 +7,37 @@ import { createClient } from 'https://esm.sh/@supabase/supabase-js@2'
 import { JRC_DAILY_NOTE_PROMPT } from "../_shared/jrc-edit-prompt.ts";
 const JACKYE_SYSTEM_PROMPT = JRC_DAILY_NOTE_PROMPT;
 
+// ── Banned phrases & artifact patterns ──────────────────
+const BANNED_PHRASES = [
+  'arguably', 'signals that', 'in this context',
+  'moreover', 'notably', 'competitive advantage',
+];
+const ARTIFACT_PATTERNS = [
+  '<think>', '</think>', 'JRC EDIT', 'Here is your note',
+  'Here is the note', 'draft:', 'DRAFT:', '## ', '- ',
+];
+
+function sanitizeNote(raw: string): string {
+  return raw
+    .split('\n')
+    .filter(line => !ARTIFACT_PATTERNS.some(p => line.includes(p)))
+    .join('\n')
+    .replace(/<think>[\s\S]*?<\/think>/gi, '')
+    .trim();
+}
+
+function validateNote(note: string): boolean {
+  if (!note || note.length < 20) return false;
+  const words = note.split(/\s+/).filter(Boolean);
+  if (words.length > 140) return false; // small buffer over 120
+  const lower = note.toLowerCase();
+  if (BANNED_PHRASES.some(p => lower.includes(p))) return false;
+  const trimmed = note.trim();
+  if (!trimmed.endsWith('?')) return false;
+  if (ARTIFACT_PATTERNS.some(p => trimmed.includes(p))) return false;
+  return true;
+}
+
 Deno.serve(async (req) => {
   if (req.method === 'OPTIONS') {
     return new Response('ok', { headers: corsHeaders })
@@ -108,15 +139,7 @@ Deno.serve(async (req) => {
           { role: 'system', content: JACKYE_SYSTEM_PROMPT },
           {
             role: 'user',
-            content: `Write today's Daily Note from Jackye. Here's the context:
-
-News headline: ${noteData.newsHeadline}
-News summary: ${noteData.newsSummary}
-Industry: ${noteData.industry}
-${noteData.topMatchCompany ? `Top matching company: ${noteData.topMatchCompany} (${noteData.alignmentScore}% alignment)` : 'No specific company match today.'}
-User cares about: ${noteData.userValues.join(', ') || 'not specified yet'}
-
-Write 2-3 short paragraphs. No markdown. No bullet points. Just natural text like a text message from a mentor. End with "Always in your corner — Jackye"`
+            content: `Today's context:\n\nHeadline: ${noteData.newsHeadline}\nSummary: ${noteData.newsSummary}\nIndustry: ${noteData.industry}\n${noteData.topMatchCompany ? `Top company match: ${noteData.topMatchCompany} (${noteData.alignmentScore}% alignment)` : 'No specific company match today.'}\nUser values: ${noteData.userValues.join(', ') || 'not specified yet'}`
           },
         ],
       }),
@@ -130,9 +153,13 @@ Write 2-3 short paragraphs. No markdown. No bullet points. Just natural text lik
     }
 
     const aiData = await aiResponse.json()
-    const generatedNote = aiData.choices?.[0]?.message?.content || generateTemplateNote(noteData)
+    const rawNote = aiData.choices?.[0]?.message?.content || ''
 
-    return new Response(JSON.stringify({ note: generatedNote, noteData }), {
+    // Sanitize and validate
+    const sanitized = sanitizeNote(rawNote)
+    const note = validateNote(sanitized) ? sanitized : generateTemplateNote(noteData)
+
+    return new Response(JSON.stringify({ note, noteData }), {
       headers: { ...corsHeaders, 'Content-Type': 'application/json' },
     })
   } catch (err) {
@@ -144,18 +171,13 @@ Write 2-3 short paragraphs. No markdown. No bullet points. Just natural text lik
 })
 
 function generateTemplateNote(data: any): string {
-  const intros = [
-    "I saw something this morning you should know about.",
-    "Heads up — I just caught a signal that might change your strategy.",
-    "Before you send that next application, look at this.",
-  ]
-  const intro = intros[Math.floor(Math.random() * intros.length)]
+  const templates = [
+    `${data.newsHeadline} If you're watching ${data.industry}, this changes who has leverage and who just lost it.\n\nMost people will read the headline and move on. The ones paying attention will notice which roles got cut and which got protected.\n\nWhat does that pattern tell you about where this company is actually headed?`,
 
-  const valueCommentary = data.topMatchCompany
-    ? data.alignmentScore > 90
-      ? `That role at ${data.topMatchCompany}? ${data.alignmentScore}% alignment with your values. That's rare. I'd look twice.`
-      : `That role at ${data.topMatchCompany}? It's a ${data.alignmentScore}% match. Solid, but let's keep digging into the receipts.`
-    : ''
+    `A company in ${data.industry} just restructured its leadership team without a press release. That's not discretion. That's strategy.\n\nThe people who got moved weren't underperforming. They were misaligned with a new direction nobody announced yet.\n\nIf your role disappeared tomorrow, would anyone fight to keep it?`,
 
-  return `${intro} ${data.newsHeadline}. If you're looking at roles in ${data.industry}, that changes the conversation. I pulled the details into your dossier already.${valueCommentary ? '\n\n' + valueCommentary : ''}\n\nAlways in your corner — Jackye`
+    `Hiring in ${data.industry} slowed this quarter while contractor spend went up. That's not a freeze. That's a replacement strategy.\n\nThe roles still getting filled are the ones leadership can't automate or outsource yet. Everything else is on borrowed time.\n\nDo you know which category your role falls into?`,
+  ];
+
+  return templates[Math.floor(Math.random() * templates.length)];
 }

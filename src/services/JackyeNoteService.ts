@@ -84,17 +84,20 @@ export async function saveNote(note: string, noteData: DailyNoteData, isLiked = 
   });
 }
 
-/** Template fallback if edge function unavailable */
+/** Spec-compliant fallback notes — 4-beat structure, ≤120 words, sharp closing question */
 function fallbackNote(): DailyNoteResponse {
-  const intros = [
-    "I saw something this morning you should know about.",
-    "Heads up — I just caught a signal that might change your strategy.",
-    "Before you send that next application, look at this.",
+  const notes = [
+    `The market is shifting and the companies hiring aggressively last quarter are starting to restructure. That's not caution. That's a signal about where leadership lost confidence.\n\nMost people wait for the announcement. The smarter move is watching which teams are still growing and which ones went quiet.\n\nIf your target company went silent on hiring, what does that tell you about the role you're chasing?`,
+
+    `A wave of return-to-office mandates hit this week, framed as culture initiatives. That framing is strategic. It shifts the conversation away from control and toward belonging.\n\nThe risk isn't the policy itself. It's how selectively it gets enforced.\n\nWho in your company gets flexibility without asking for it?`,
+
+    `Several companies posted record profits while announcing layoffs in the same quarter. That's not contradiction. That's prioritization made visible.\n\nWhen a company cuts people during growth, it tells you exactly what leadership values. Headcount is a cost line, not a commitment.\n\nDoes your company treat your role as an investment or an expense?`,
   ];
-  const intro = intros[Math.floor(Math.random() * intros.length)];
+
+  const idx = Math.floor(Math.random() * notes.length);
 
   return {
-    note: `${intro} The market is shifting — and the companies that were hiring aggressively last quarter are starting to restructure. If you're in the middle of a process, pay attention to how they communicate changes. That tells you more than the job description ever will.\n\nAlways in your corner — Jackye`,
+    note: notes[idx],
     noteData: {
       newsHeadline: "Market signals shifting",
       industry: "general",
