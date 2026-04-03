@@ -116,8 +116,8 @@ const Index = forwardRef<HTMLDivElement>((_, ref) => {
             <LiveDataFeed />
           </div>
 
-          <p className="font-mono text-[9px] text-muted-foreground/30 mt-6 tracking-wide" style={{ opacity: 0, animation: "heroFadeIn 0.4s ease 1.4s forwards" }}>
-            Federal Election Commission &middot; Securities & Exchange Commission &middot; Bureau of Labor Statistics &middot; Occupational Safety & Health Administration &middot; National Labor Relations Board &middot; Senate Lobbying Disclosures
+          <p className="font-mono text-[10px] text-muted-foreground/50 mt-5 tracking-wide max-w-[52ch] mx-auto text-center leading-relaxed" style={{ opacity: 0, animation: "heroFadeIn 0.4s ease 1.4s forwards" }}>
+            Facts over feelings, built on FEC, SEC, OSHA, NLRB, BLS, and more — the public record, not the press release.
           </p>
         </div>
       </section>
