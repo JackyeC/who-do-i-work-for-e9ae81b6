@@ -71,6 +71,8 @@ function EmptyState({ text }: { text: string }) {
 }
 
 export function SignalsDataTab() {
+  const [backfillRunning, setBackfillRunning] = useState(false);
+  const queryClient = useQueryClient();
   // ─── Companies with dossier text but no website_url (same definition as Today tab) ───
   const { data: websiteGaps, isLoading: websiteGapsLoading } = useQuery({
     queryKey: ["founder-signals-website-gaps"],
