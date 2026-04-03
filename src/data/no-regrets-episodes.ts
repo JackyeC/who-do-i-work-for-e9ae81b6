@@ -33,3 +33,52 @@ export const EPISODE_1: Episode = {
     },
   ],
 };
+
+export const EPISODE_2: Episode = {
+  id: "episode-2",
+  title: "Episode 2: The Offer",
+  narrative: [
+    "Three weeks after The Shock, your inbox has three real offers. Not dream jobs — real jobs, with start dates and salary numbers and health insurance PDFs attached. You should feel relieved. Instead, you feel like you're reading three different versions of the same lie.",
+    "Because here's what nobody told you when you started job hunting: every company looks good from the outside. The careers page is always inspiring. The Glassdoor reviews are always \"mixed.\" The recruiter always says \"we're like a family here.\" But you've been through a reorg now. You know what \"family\" means when headcount gets cut.",
+    "So you do something most candidates never do. You look past the offer letter. You pull the receipts.",
+  ],
+  initialStats: { money: 50, safety: 35, sanity: 55, power: 35 },
+  choices: [
+    {
+      id: "safe-pay-shaky-ethics",
+      label: "NovaCorp — $112K, full benefits, 401(k) match. Stable. Quiet. Suspiciously quiet.",
+      archetype: "safe-pay-shaky-ethics",
+      statChanges: { money: 20, safety: 10, sanity: -10, power: -15 },
+      receiptHints: [
+        { emoji: "🧾", label: "FEC filings", detail: "PAC donated $340K to candidates opposing worker protection bills in 2022–2024" },
+        { emoji: "⚖️", label: "EEOC record", detail: "Three settled discrimination complaints in the last 18 months — all under NDA" },
+        { emoji: "📉", label: "Glassdoor pattern", detail: "Reviews mention \"golden handcuffs\" and \"don't ask questions\" culture across 40+ entries" },
+      ],
+      recapText: "You took the money. NovaCorp's offer was clean — good salary, strong benefits, no surprises in the paperwork. But the paperwork isn't where the surprises live. The company's PAC has been funding candidates who vote against the labor protections you'd need if things went sideways. Three EEOC complaints were settled quietly in the last year and a half. The Glassdoor reviews don't say \"toxic\" — they say \"stable, as long as you don't make waves.\" You traded your voice for a 401(k) match. The question is whether you'll notice before it costs you something you can't get back.",
+    },
+    {
+      id: "mission-driven-unstable",
+      label: "Clearpath Labs — $88K, equity, mission you believe in. Funding runway: 11 months.",
+      archetype: "mission-driven-unstable",
+      statChanges: { money: -20, safety: -20, sanity: 15, power: 10 },
+      receiptHints: [
+        { emoji: "💸", label: "SEC filings", detail: "Burned through 60% of Series B in 14 months — no bridge round announced" },
+        { emoji: "🚪", label: "LinkedIn signal", detail: "VP of Engineering and Head of Product both departed in the last 90 days" },
+        { emoji: "✊", label: "Mission check", detail: "Founder quoted in TechCrunch: \"We'd rather shut down than compromise on values\"" },
+      ],
+      recapText: "You chose the mission. Clearpath Labs is doing real work — the kind that makes you feel like your career has a point. But the financials don't lie. They burned through most of their Series B in just over a year. Two senior leaders left in the last quarter. The founder's conviction is genuine, but conviction doesn't make payroll. You're betting your rent on a company that might not exist in eleven months. If it works, you'll have been part of something that mattered. If it doesn't, you'll have a gap on your resume and a story about how you believed in something that ran out of runway.",
+    },
+    {
+      id: "prestige-burnout",
+      label: "Meridian Group — $135K, brand-name résumé line. Average tenure: 14 months.",
+      archetype: "prestige-burnout",
+      statChanges: { money: 15, safety: 5, sanity: -25, power: 20 },
+      receiptHints: [
+        { emoji: "🔥", label: "Turnover data", detail: "Average employee tenure is 14 months — drops to 9 months for non-managers" },
+        { emoji: "🏛️", label: "Lobbying spend", detail: "$2.1M in federal lobbying last year — primarily on labor classification and contractor rules" },
+        { emoji: "🏆", label: "Brand signal", detail: "Named to \"Best Places to Work\" list by a publication they spend $400K/year advertising with" },
+      ],
+      recapText: "You chose the name. Meridian Group looks incredible on paper — and they know it. The salary is strong, the brand opens doors, and the recruiter made you feel like you'd been selected for something elite. But the average tenure tells a different story: 14 months company-wide, 9 months for non-managers. They spent $2.1M lobbying on labor classification rules last year. And that \"Best Places to Work\" award? It came from a publication where Meridian is a six-figure advertiser. You're not joining a company. You're joining a machine that converts ambition into burnout and calls it a résumé upgrade.",
+    },
+  ],
+};

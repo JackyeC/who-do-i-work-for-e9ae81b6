@@ -6,13 +6,21 @@ export interface PlayerStats {
 }
 
 export type PlayerArchetype = "stability-first" | "pause-and-reassess" | "overstay-and-hope";
+export type CompanyArchetype = "safe-pay-shaky-ethics" | "mission-driven-unstable" | "prestige-burnout";
+
+export interface ReceiptHint {
+  emoji: string;
+  label: string;
+  detail: string;
+}
 
 export interface Choice {
   id: string;
   label: string;
   statChanges: Partial<PlayerStats>;
   recapText: string;
-  archetype: PlayerArchetype;
+  archetype: PlayerArchetype | CompanyArchetype;
+  receiptHints?: ReceiptHint[];
 }
 
 export interface Episode {

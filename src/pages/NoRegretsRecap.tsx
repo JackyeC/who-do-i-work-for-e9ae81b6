@@ -47,7 +47,7 @@ export default function NoRegretsRecap() {
         <ConversionModule />
 
         <Button asChild variant="outline" size="lg" className="w-full">
-          <Link to="/no-regrets-game">Continue to Episode 2 (coming soon)</Link>
+          <Link to="/no-regrets-game/episode-2">Continue to Episode 2</Link>
         </Button>
       </div>
     </EpisodeShell>
