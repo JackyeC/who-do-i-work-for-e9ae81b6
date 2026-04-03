@@ -234,9 +234,16 @@ export function OfferChecklist({ companyName, companyId, industry, signals }: Of
                   <FileText className="w-3.5 h-3.5 text-destructive mt-0.5 shrink-0" />
                   <div>
                     <p className="text-sm font-medium text-foreground">{rf.flag}</p>
-                    <p className="text-[10px] text-muted-foreground mt-0.5 font-mono uppercase tracking-wider">
-                      📎 {rf.source}
-                    </p>
+                    <p className="text-[10px] mt-0.5 font-mono uppercase tracking-wider">
+                       <a
+                         href={rf.sourceUrl}
+                         target="_blank"
+                         rel="noopener noreferrer"
+                         className="text-primary hover:text-primary/80 underline underline-offset-2 transition-colors"
+                       >
+                         📎 {rf.source}
+                       </a>
+                     </p>
                     <p className="text-xs text-foreground mt-1.5 flex items-start gap-1">
                       <ArrowRight className="w-3 h-3 text-primary mt-0.5 shrink-0" />
                       <span>{rf.advice}</span>
