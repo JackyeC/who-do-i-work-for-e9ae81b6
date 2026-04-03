@@ -234,6 +234,7 @@ const App = () => (
                   <Route path="/peoplepuzzles/embed" element={<PeoplePuzzlesEmbed />} />
                   <Route path="/play" element={<PeoplePuzzles />} />
                   <Route path="/trail" element={<Trail />} />
+                  <Route path="/no-regrets" element={<NoRegretsLanding />} />
                   <Route path="/no-regrets-game" element={<NoRegretsGame />} />
                   <Route path="/no-regrets-game/episode-1-recap" element={<NoRegretsRecap />} />
                   <Route path="/no-regrets-game/episode-2" element={<NoRegretsEpisode2 />} />
