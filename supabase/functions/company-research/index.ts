@@ -34,7 +34,7 @@ Deno.serve(async (req: Request) => {
     const supabaseKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!;
     const supabase = createClient(supabaseUrl, supabaseKey);
 
-    // Check if company already exists â prefer companyId if provided
+    // Check if company already exists - prefer companyId if provided
     let existing: any = null;
     if (inputCompanyId) {
       const { data } = await supabase
@@ -195,20 +195,17 @@ Return ONLY valid JSON. No markdown, no explanation.`;
     let companyRecord: any;
 
     if (existing) {
-      // Enrich existing company â ONLY update fields that are currently empty.
+      // Enrich existing company - ONLY update fields that are currently empty.
       // NEVER overwrite real data from sync-openfec, sync-lobbying, etc. with AI guesses.
       companyId = existing.id;
       companyRecord = existing;
 
       const safeUpdate: Record<string, any> = {};
-      // Only fill in gaps â don't overwrite existing real data
+      // Only fill in gaps - don't overwrite existing real data
       if (!existing.description && co.description) safeUpdate.description = co.description;
       if (!existing.effective_tax_rate && co.effective_tax_rate) safeUpdate.effective_tax_rate = co.effective_tax_rate;
       if (existing.corporate_pac_exists === null && co.corporate_pac_exists != null) safeUpdate.corporate_pac_exists = co.corporate_pac_exists;
-      // NEVER overwrite these with AI data â they come from real APIs (sync-openfec, sync-lobbying, sync-federal-contracts)
-      // if (!existing.total_pac_spending && co.total_pac_spending) safeUpdate.total_pac_spending = co.total_pac_spending;
-      // if (!existing.lobbying_spend && co.lobbying_spend) safeUpdate.lobbying_spend = co.lobbying_spend;
-      // if (!existing.government_contracts && co.government_contracts) safeUpdate.government_contracts = co.government_contracts;
+      // NEVER overwrite these with AI data - they come from real APIs (sync-openfec, sync-lobbying, sync-federal-contracts)
       if (!existing.subsidies_received && co.subsidies_received) safeUpdate.subsidies_received = co.subsidies_received;
 
       if (Object.keys(safeUpdate).length > 0) {
@@ -217,7 +214,6 @@ Return ONLY valid JSON. No markdown, no explanation.`;
       }
 
       // Only delete+repopulate tables that DON'T have real API-sourced data.
-      // company_executives and company_candidates come from sync-openfec â check if they have real data first.
       const { count: execCount } = await supabase.from('company_executives').select('id', { count: 'exact', head: true }).eq('company_id', companyId);
       const { count: candidateCount } = await supabase.from('company_candidates').select('id', { count: 'exact', head: true }).eq('company_id', companyId);
       const { count: partyCount } = await supabase.from('company_party_breakdown').select('id', { count: 'exact', head: true }).eq('company_id', companyId);
@@ -243,21 +239,35 @@ Return ONLY valid JSON. No markdown, no explanation.`;
       if (skipCandidates) console.log(`[company-research] Preserving ${candidateCount} real candidates from API sync`);
       if (skipParty) console.log(`[company-research] Preserving ${partyCount} real party breakdown records from API sync`);
     } else {
-      // Insert new company â but first do an exact slug check to avoid duplicates
+      // Insert new company - check slug AND name (case-insensitive) to avoid unique constraint violations
       const finalSlug = co.name.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '');
       
+      // Check by slug first
+      let dupMatch: any = null;
       const { data: slugMatch } = await supabase
         .from('companies')
         .select('id, name, slug')
         .eq('slug', finalSlug)
         .maybeSingle();
+      dupMatch = slugMatch;
 
-      if (slugMatch) {
-        // Company exists by slug â treat as existing
-        console.log(`[company-research] Found existing company by exact slug: ${finalSlug}`);
-        companyId = slugMatch.id;
-        companyRecord = slugMatch;
-        existing = slugMatch;
+      // If no slug match, also check by exact name (case-insensitive) to catch idx_companies_name_unique
+      if (!dupMatch) {
+        const { data: nameMatch } = await supabase
+          .from('companies')
+          .select('id, name, slug')
+          .ilike('name', co.name)
+          .limit(1)
+          .maybeSingle();
+        dupMatch = nameMatch;
+      }
+
+      if (dupMatch) {
+        // Company exists by slug or name - treat as existing and enrich
+        console.log(`[company-research] Found existing company by slug/name: ${dupMatch.name}`);
+        companyId = dupMatch.id;
+        companyRecord = dupMatch;
+        existing = dupMatch;
       } else {
         const { data: newCompany, error: companyError } = await supabase.from('companies').insert({
           name: co.name,
@@ -291,7 +301,7 @@ Return ONLY valid JSON. No markdown, no explanation.`;
 
     const insertErrors: string[] = [];
 
-    // Insert executives â SKIP if real API data already exists (from sync-openfec)
+    // Insert executives - SKIP if real API data already exists (from sync-openfec)
     if (research.executives?.length && !(existing && (await supabase.from('company_executives').select('id', { count: 'exact', head: true }).eq('company_id', companyId)).count)) {
       const EXEC_TITLE_RE = /\b(CEO|CFO|COO|CTO|CIO|CISO|CMO|CPO|CLO|CDO|CSO|CHRO|CAO|CRO|CCO|CHAIRMAN|CHAIRWOMAN|CHAIR|PRESIDENT|VICE\s*PRESIDENT|SVP|EVP|MANAGING\s*DIRECTOR|GENERAL\s*COUNSEL|PARTNER|FOUNDER|CO-?FOUNDER|OWNER|CHIEF)\b/i;
       const { error } = await supabase.from('company_executives').insert(
@@ -305,10 +315,10 @@ Return ONLY valid JSON. No markdown, no explanation.`;
       );
       if (error) insertErrors.push(`executives: ${error.message}`);
     } else if (existing) {
-      console.log('[company-research] Skipping AI executives â real API data preserved');
+      console.log('[company-research] Skipping AI executives - real API data preserved');
     }
 
-    // Insert party breakdown â SKIP if real API data already exists
+    // Insert party breakdown - SKIP if real API data already exists
     if (research.party_breakdown?.length && !(existing && (await supabase.from('company_party_breakdown').select('id', { count: 'exact', head: true }).eq('company_id', companyId)).count)) {
       const { error } = await supabase.from('company_party_breakdown').insert(
         research.party_breakdown.map((p: any) => ({
@@ -320,10 +330,10 @@ Return ONLY valid JSON. No markdown, no explanation.`;
       );
       if (error) insertErrors.push(`party_breakdown: ${error.message}`);
     } else if (existing) {
-      console.log('[company-research] Skipping AI party breakdown â real API data preserved');
+      console.log('[company-research] Skipping AI party breakdown - real API data preserved');
     }
 
-    // Insert candidates â SKIP if real API data already exists (from sync-openfec)
+    // Insert candidates - SKIP if real API data already exists (from sync-openfec)
     if (research.candidates?.length && !(existing && (await supabase.from('company_candidates').select('id', { count: 'exact', head: true }).eq('company_id', companyId)).count)) {
       const { error } = await supabase.from('company_candidates').insert(
         research.candidates.slice(0, 30).map((c: any) => ({
@@ -339,7 +349,7 @@ Return ONLY valid JSON. No markdown, no explanation.`;
       );
       if (error) insertErrors.push(`candidates: ${error.message}`);
     } else if (existing) {
-      console.log('[company-research] Skipping AI candidates â real API data preserved');
+      console.log('[company-research] Skipping AI candidates - real API data preserved');
     }
 
     // Insert public stances
