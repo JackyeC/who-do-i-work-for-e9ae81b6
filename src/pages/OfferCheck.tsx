@@ -430,6 +430,7 @@ export default function OfferCheck() {
           </Card>
         )}
       </div>
+      <DontSignBlindBanner lingerMs={15000} />
 </div>
   );
 }
