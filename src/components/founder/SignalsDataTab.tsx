@@ -568,9 +568,8 @@ export function SignalsDataTab() {
                 <p className="text-xs text-civic-green bg-civic-green/5 border border-civic-green/20 rounded-lg p-2">
                   ✓ All claims have source attribution. Nothing is suppressed.
                 </p>
-              )}
-                </p>
-              )}
+            </div>
+          )}
             </div>
           )}
         </div>
