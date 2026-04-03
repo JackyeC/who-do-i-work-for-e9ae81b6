@@ -11,7 +11,9 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { Briefcase, Loader2, ArrowRight } from "lucide-react";
+import { Briefcase, Loader2, ArrowRight, Mail } from "lucide-react";
+import { dossierCompactBadgeText } from "@/domain/career/dossier-ui-labels";
+import { useApplicationDossiers, dossierForApplication } from "@/hooks/use-application-dossiers";
 import { format } from "date-fns";
 
 const STATUSES = ["Considering", "Draft", "Submitted", "Interview", "Offer", "Rejected", "Ghosted"];
@@ -30,6 +32,7 @@ export default function Applications() {
   const { user } = useAuth();
   const navigate = useNavigate();
   const { applications, isLoading, updateStatus } = useApplicationsTracker();
+  const { data: dossiers } = useApplicationDossiers();
 
   if (!user) return null;
 
@@ -45,19 +48,26 @@ export default function Applications() {
           <Loader2 className="w-5 h-5 animate-spin text-muted-foreground" />
         </div>
       ) : applications.length === 0 ? (
-        <Card>
-          <CardContent className="py-12 text-center">
-            <p className="text-sm text-muted-foreground mb-4">
-              No applications tracked yet. Start from any company dossier.
+        <Card className="border-dashed border-border/80 bg-muted/10">
+          <CardContent className="py-12 text-center max-w-md mx-auto">
+            <p className="text-sm text-muted-foreground mb-2 leading-relaxed">
+              Nothing in your pipeline yet. Track roles from matched jobs or add applications manually — submitted roles get an in-dashboard dossier receipt.
             </p>
-            <Button size="sm" onClick={() => navigate("/offer-check")}>
-              Check a Company
-            </Button>
+            <div className="flex flex-col sm:flex-row gap-2 justify-center mt-6">
+              <Button size="sm" variant="default" onClick={() => navigate("/dashboard?tab=matches")}>
+                Matched jobs
+              </Button>
+              <Button size="sm" variant="outline" onClick={() => navigate("/jobs-feed")}>
+                Jobs feed
+              </Button>
+            </div>
           </CardContent>
         </Card>
       ) : (
         <div className="space-y-2">
-          {applications.map((app: any) => (
+          {applications.map((app: any) => {
+            const dossier = dossierForApplication(dossiers, app.id);
+            return (
             <Card
               key={app.id}
               className="hover:border-primary/20 transition-colors cursor-pointer"
@@ -74,6 +84,12 @@ export default function Applications() {
                   {app.updated_at && (
                     <p className="text-[10px] text-muted-foreground mt-0.5">
                       Updated {format(new Date(app.updated_at), "MMM d, yyyy")}
+                    </p>
+                  )}
+                  {dossier && (
+                    <p className="text-[10px] text-muted-foreground mt-1 flex items-center gap-1">
+                      <Mail className="w-3 h-3 shrink-0" />
+                      {dossierCompactBadgeText(dossier.email_status)}
                     </p>
                   )}
                 </div>
@@ -97,7 +113,8 @@ export default function Applications() {
                 </div>
               </CardContent>
             </Card>
-          ))}
+          );
+          })}
         </div>
       )}
     </div>

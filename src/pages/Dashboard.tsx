@@ -33,6 +33,7 @@ import { MockInterviewSection } from "@/components/dashboard/MockInterviewSectio
 import { InboxSection } from "@/components/dashboard/InboxSection";
 import { SavedSection } from "@/components/dashboard/SavedSection";
 import { TodayReflection } from "@/components/dashboard/TodayReflection";
+import { DreamJobProfileSummaryCard } from "@/components/career/DreamJobProfileSummaryCard";
 
 const TAB_TITLES: Record<string, string> = {
   overview: "My Intelligence",
@@ -103,7 +104,12 @@ export default function Dashboard() {
       case "matches":
         return <AlignedJobsList />;
       case "values":
-        return <MyValuesProfile />;
+        return (
+          <div className="space-y-6">
+            <DreamJobProfileSummaryCard compact showSync />
+            <MyValuesProfile />
+          </div>
+        );
       case "how":
         return <HowDoIGetThere />;
       case "outreach":
@@ -119,6 +125,7 @@ export default function Dashboard() {
         }
         return (
           <div className="space-y-6">
+            <DreamJobProfileSummaryCard showSync />
             <AutoApplySettings />
             <ApplyQueueDashboard />
           </div>
@@ -144,6 +151,7 @@ export default function Dashboard() {
       case "profile":
         return (
           <div className="space-y-6">
+            <DreamJobProfileSummaryCard showSync />
             <UserProfileForm />
             <DataWipeButton />
           </div>

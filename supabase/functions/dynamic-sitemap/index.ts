@@ -105,7 +105,11 @@ Deno.serve(async () => {
           const lastmod = company.updated_at
             ? company.updated_at.split("T")[0]
             : today;
+<<<<<<< HEAD
           entries.push(toUrlEntry(`/company/${company.slug}`, lastmod, "weekly", "0.7"));
+=======
+          entries.push(toUrlEntry(`/dossier/${company.slug}`, lastmod, "weekly", "0.7"));
+>>>>>>> cursor/fix-dynamic-sitemap
         }
       }
     } else {

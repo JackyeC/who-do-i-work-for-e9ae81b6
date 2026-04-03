@@ -1,8 +1,8 @@
 import { useParams, Link, Navigate } from "react-router-dom";
 import { useAuth } from "@/contexts/AuthContext";
-import { useQuery } from "@tanstack/react-query";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -13,18 +13,51 @@ import { ApplicationIntelligencePanel } from "@/components/applications/Intellig
 import { ApplicationTimeline } from "@/components/applications/Timeline";
 import { Helmet } from "react-helmet-async";
 import {
-  ArrowLeft, Shield, Calendar, ExternalLink, Building2, FileText,
+  ArrowLeft, Shield, Calendar, ExternalLink, Building2, FileText, Mail, Loader2,
 } from "lucide-react";
+import ReactMarkdown from "react-markdown";
+import { useApplicationDossiers, dossierForApplication } from "@/hooks/use-application-dossiers";
 import { format } from "date-fns";
 import { useApplicationsTracker } from "@/hooks/use-job-matcher";
 import { cn } from "@/lib/utils";
+import { dossierPrimaryLabel, dossierEmailSubtitle } from "@/domain/career/dossier-ui-labels";
+import { useToast } from "@/hooks/use-toast";
+import { friendlyErrorMessage } from "@/lib/user-friendly-error";
 
 export default function ApplicationDetail() {
   const { id } = useParams<{ id: string }>();
   const { user, loading: authLoading } = useAuth();
+  const queryClient = useQueryClient();
+  const { toast } = useToast();
 
   const { applications, isLoading, updateStatus } = useApplicationsTracker();
+  const { data: dossiers, isLoading: dossiersLoading } = useApplicationDossiers();
   const app = applications.find((a: any) => a.id === id);
+  const dossier = app ? dossierForApplication(dossiers, app.id) : undefined;
+
+  const generateDossier = useMutation({
+    mutationFn: async () => {
+      if (!app) throw new Error("Missing application");
+      const { error } = await supabase.functions.invoke("generate-application-dossier", {
+        body: { application_id: app.id },
+      });
+      if (error) throw error;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["application-email-dossiers"] });
+      toast({
+        title: "Dossier ready",
+        description: "Your application receipt is saved below. Email delivery is separate and may still be pending.",
+      });
+    },
+    onError: (e: unknown) => {
+      toast({
+        title: "Could not generate dossier",
+        description: friendlyErrorMessage(e),
+        variant: "destructive",
+      });
+    },
+  });
 
   if (authLoading || isLoading) {
     return (
@@ -156,6 +189,70 @@ export default function ApplicationDetail() {
 
           {/* Document vault */}
           <ApplicationDocumentVault applicationId={app.id} />
+
+          {dossier && (
+            <Card className="border-primary/20">
+              <CardHeader className="pb-3">
+                <CardTitle className="text-sm flex items-center gap-2 flex-wrap">
+                  <Mail className="w-4 h-4 text-primary" />
+                  {dossierPrimaryLabel(dossier.email_status)}
+                  <Badge variant="outline" className="text-[10px] font-normal">
+                    In-dashboard receipt
+                  </Badge>
+                </CardTitle>
+                <CardDescription className="text-xs leading-relaxed">
+                  {dossierEmailSubtitle(dossier.email_status)}
+                </CardDescription>
+              </CardHeader>
+              <CardContent className="text-sm text-muted-foreground prose prose-sm dark:prose-invert max-w-none">
+                <ReactMarkdown>{dossier.body_markdown}</ReactMarkdown>
+              </CardContent>
+            </Card>
+          )}
+
+          {!dossier && dossiersLoading && app.status === "Submitted" && (
+            <Card className="border-border/50">
+              <CardContent className="p-6 flex items-center gap-3 text-sm text-muted-foreground">
+                <Loader2 className="w-4 h-4 animate-spin shrink-0" />
+                Loading application dossier…
+              </CardContent>
+            </Card>
+          )}
+
+          {!dossier && !dossiersLoading && app.status === "Submitted" && (
+            <Card className="border-dashed border-border">
+              <CardHeader className="pb-2">
+                <CardTitle className="text-sm flex items-center gap-2">
+                  <FileText className="w-4 h-4 text-muted-foreground" />
+                  Application dossier not created yet
+                </CardTitle>
+                <CardDescription className="text-xs leading-relaxed">
+                  We generate an in-dashboard receipt when you mark this application as submitted. Email delivery is not required to view it.
+                </CardDescription>
+              </CardHeader>
+              <CardContent className="space-y-3">
+                <Button
+                  type="button"
+                  size="sm"
+                  disabled={generateDossier.isPending}
+                  onClick={() => generateDossier.mutate()}
+                  className="gap-2"
+                >
+                  {generateDossier.isPending ? (
+                    <>
+                      <Loader2 className="w-3.5 h-3.5 animate-spin" />
+                      Generating…
+                    </>
+                  ) : (
+                    "Generate dossier"
+                  )}
+                </Button>
+                <p className="text-[11px] text-muted-foreground leading-relaxed">
+                  If this keeps failing, confirm the Supabase migration and <span className="font-mono">generate-application-dossier</span> function are deployed.
+                </p>
+              </CardContent>
+            </Card>
+          )}
 
           {/* Notes */}
           {app.notes && (

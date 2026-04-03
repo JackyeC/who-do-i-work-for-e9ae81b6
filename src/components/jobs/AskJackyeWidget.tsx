@@ -8,10 +8,11 @@ import {
   MessageCircle, X, Send, Loader2, Sparkles, Minimize2,
 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
+import { getViteSupabasePublishableKey, getViteSupabaseUrl } from "@/lib/supabase-vite-env";
 
 type Msg = { role: "user" | "assistant"; content: string };
 
-const CHAT_URL = `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/ask-jackye-chat`;
+const CHAT_URL = `${getViteSupabaseUrl()}/functions/v1/ask-jackye-chat`;
 
 export function AskJackyeWidget() {
   const [open, setOpen] = useState(false);
@@ -47,7 +48,7 @@ export function AskJackyeWidget() {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
-          Authorization: `Bearer ${import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY}`,
+          Authorization: `Bearer ${getViteSupabasePublishableKey()}`,
         },
         body: JSON.stringify({
           messages: allMessages.map((m) => ({ role: m.role, content: m.content })),

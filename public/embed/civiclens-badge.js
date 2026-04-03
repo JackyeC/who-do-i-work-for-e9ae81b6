@@ -1,7 +1,7 @@
 (function() {
   'use strict';
   var BADGE_BASE = 'https://wdiwf.jackyeclayton.com';
-  var API_BASE = 'https://tdetybqdxadmowjivtjy.supabase.co/rest/v1';
+  var API_BASE = 'https://aeulesuqxcnaonlxcjcm.supabase.co/rest/v1';
   var ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InRkZXR5YnFkeGFkbW93aml2dGp5Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzI4MjU0MTcsImV4cCI6MjA4ODQwMTQxN30.gM_5tF5Qs8f0LUfE9ZB5PM-TeHhDVe4KZF6_p60A3Lc';
 
   function getFootprintLabel(score) {

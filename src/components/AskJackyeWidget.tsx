@@ -4,6 +4,7 @@ import { MessageCircle, X, Send, ChevronDown } from "lucide-react";
 import { useAuth } from "@/contexts/AuthContext";
 import { useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
+import { getViteSupabaseUrl } from "@/lib/supabase-vite-env";
 import ReactMarkdown from "react-markdown";
 import { ConversationModeSelector } from "./ConversationModeSelector";
 import { SendItToJackye } from "./SendItToJackye";
@@ -33,7 +34,7 @@ const QUICK_PROMPTS = [
   "What does this signal mean for my career?",
 ];
 
-const CHAT_URL = `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/ask-jackye`;
+const CHAT_URL = `${getViteSupabaseUrl()}/functions/v1/ask-jackye`;
 
 export function AskJackyeWidget() {
   const { user } = useAuth();

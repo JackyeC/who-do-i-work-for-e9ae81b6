@@ -1,5 +1,6 @@
 import { useState, useEffect, useCallback } from "react";
 import { supabase } from "@/integrations/supabase/client";
+import { getViteSupabaseUrl } from "@/lib/supabase-vite-env";
 
 interface LinkedInProfile {
   linkedin_id: string;
@@ -49,7 +50,7 @@ export function useLinkedIn() {
 
   // Initiate LinkedIn OAuth
   const connectLinkedIn = useCallback((returnTo?: string) => {
-    const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
+    const supabaseUrl = getViteSupabaseUrl();
     const path = returnTo || window.location.pathname;
     window.location.href = `${supabaseUrl}/functions/v1/linkedin-auth?return_to=${encodeURIComponent(path)}`;
   }, []);
@@ -66,7 +67,7 @@ export function useLinkedIn() {
     const { data: { session } } = await supabase.auth.getSession();
     if (!session) throw new Error("Not logged in");
 
-    const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
+    const supabaseUrl = getViteSupabaseUrl();
     const res = await fetch(`${supabaseUrl}/functions/v1/linkedin-share-certificate`, {
       method: "POST",
       headers: {

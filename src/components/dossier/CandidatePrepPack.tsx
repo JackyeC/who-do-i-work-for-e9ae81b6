@@ -7,8 +7,9 @@ import { cn } from "@/lib/utils";
 import { Target, Loader2, RefreshCw, AlertTriangle, Briefcase, Code, Users, TrendingUp, Crown } from "lucide-react";
 import { toast } from "sonner";
 import { PrepPackExport } from "./PrepPackExport";
+import { getViteSupabasePublishableKey, getViteSupabaseUrl } from "@/lib/supabase-vite-env";
 
-const ENGINE_URL = `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/candidate-prep-pack`;
+const ENGINE_URL = `${getViteSupabaseUrl()}/functions/v1/candidate-prep-pack`;
 
 const ROLES = [
   { id: "general", label: "General", icon: Target },
@@ -46,7 +47,7 @@ export function CandidatePrepPack({ companyId, companyName }: CandidatePrepPackP
         method: "POST",
         headers: {
           "Content-Type": "application/json",
-          Authorization: `Bearer ${import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY}`,
+          Authorization: `Bearer ${getViteSupabasePublishableKey()}`,
         },
         body: JSON.stringify({ companyId, companyName, role: selectedRole }),
       });

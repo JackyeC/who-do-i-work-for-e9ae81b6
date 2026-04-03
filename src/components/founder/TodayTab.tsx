@@ -7,7 +7,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 import {
   ClipboardList, Activity, Database, AlertCircle, Zap,
   StickyNote, AlertOctagon, ChevronRight, Link2, CheckCircle,
-  Clock, Search, Eye, TrendingUp, AlertTriangle,
+  Clock, Search, AlertTriangle,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useEffect } from "react";
@@ -56,7 +56,7 @@ function EmptyLine({ text }: { text: string }) {
   return <p className="text-xs text-muted-foreground italic leading-relaxed">{text}</p>;
 }
 
-type AlertItem = { label: string; count: number; tab: string };
+type AlertItem = { label: string; count: number; tab: string; severity: "critical" | "data_gap" };
 
 export function TodayTab() {
   const navigate = useNavigate();
@@ -71,13 +71,14 @@ export function TodayTab() {
   const { data: critical, isLoading: criticalLoading } = useQuery({
     queryKey: ["founder-alert-critical"],
     queryFn: async () => {
-      const [brokenLinks, missingClaims, recentFeedback] = await Promise.all([
+      const [missingWebsite, missingClaims, recentFeedback] = await Promise.all([
+        /* Not HTTP link-checking — companies with dossier copy but no website_url on file */
         supabase.from("companies").select("id", { count: "exact", head: true }).is("website_url", null).not("description", "is", null),
         supabase.from("company_corporate_claims").select("id", { count: "exact", head: true }).is("claim_source_url", null),
         supabase.from("beta_feedback").select("message, created_at").gte("created_at", fortyEightHoursAgo).order("created_at", { ascending: false }).limit(100),
       ]);
 
-      const brokenCount = brokenLinks.count ?? 0;
+      const missingWebsiteCount = missingWebsite.count ?? 0;
       const claimCount = missingClaims.count ?? 0;
 
       // Detect recurring friction: same theme 3+ times in 48h
@@ -104,11 +105,35 @@ export function TodayTab() {
       }
 
       const alerts: AlertItem[] = [];
-      if (brokenCount > 0) alerts.push({ label: `${brokenCount} broken ${brokenCount === 1 ? "link" : "links"} detected`, count: brokenCount, tab: "signals" });
-      if (claimCount > 0) alerts.push({ label: `${claimCount} ${claimCount === 1 ? "claim" : "claims"} missing sources`, count: claimCount, tab: "signals" });
-      if (recurringTheme) alerts.push({ label: `Recurring issue: "${recurringTheme}" (3+ in 48h)`, count: 3, tab: "users" });
+      if (missingWebsiteCount > 0) {
+        alerts.push({
+          label:
+            missingWebsiteCount === 1
+              ? "1 company is missing a website URL"
+              : `${missingWebsiteCount.toLocaleString()} companies are missing a website URL`,
+          count: missingWebsiteCount,
+          tab: "signals",
+          severity: "data_gap",
+        });
+      }
+      if (claimCount > 0) {
+        alerts.push({
+          label: `${claimCount} ${claimCount === 1 ? "claim" : "claims"} missing sources`,
+          count: claimCount,
+          tab: "signals",
+          severity: "critical",
+        });
+      }
+      if (recurringTheme) {
+        alerts.push({
+          label: `Recurring issue: "${recurringTheme}" (3+ in 48h)`,
+          count: 3,
+          tab: "users",
+          severity: "critical",
+        });
+      }
 
-      return { alerts, brokenLinkCount: brokenCount };
+      return { alerts, missingWebsiteCount };
     },
   });
 
@@ -240,33 +265,65 @@ export function TodayTab() {
     return `${Math.floor(mins / 1440)}d ago`;
   };
 
-  const criticalAlerts = critical?.alerts ?? [];
-  const brokenLinkCount = critical?.brokenLinkCount ?? 0;
+  const topAlerts = critical?.alerts ?? [];
+  const missingWebsiteCount = critical?.missingWebsiteCount ?? 0;
+  const topAlertTone = topAlerts.some((a) => a.severity === "critical") ? "critical" : "data_gap";
 
   return (
     <div className="space-y-4">
 
-      {/* ════ LEVEL 1: CRITICAL ════ */}
+      {/* ════ LEVEL 1: Top alerts (critical vs data backfill) ════ */}
       {criticalLoading ? (
         <Skeleton className="h-14 rounded-2xl" />
-      ) : criticalAlerts.length > 0 ? (
-        <div className="bg-destructive/5 border border-destructive/30 rounded-2xl p-4">
-          <h3 className="text-xs font-semibold text-destructive uppercase tracking-wider mb-2.5 flex items-center gap-1.5">
-            <AlertOctagon className="w-3.5 h-3.5 animate-pulse" />
-            Critical — {criticalAlerts.length} {criticalAlerts.length === 1 ? "issue" : "issues"} require attention
+      ) : topAlerts.length > 0 ? (
+        <div
+          className={cn(
+            "rounded-2xl p-4 border",
+            topAlertTone === "critical"
+              ? "bg-destructive/5 border-destructive/30"
+              : "bg-amber-500/5 border-amber-500/25",
+          )}
+        >
+          <h3
+            className={cn(
+              "text-xs font-semibold uppercase tracking-wider mb-2.5 flex items-center gap-1.5",
+              topAlertTone === "critical" ? "text-destructive" : "text-amber-800 dark:text-amber-200",
+            )}
+          >
+            {topAlertTone === "critical" ? (
+              <AlertOctagon className="w-3.5 h-3.5 animate-pulse" />
+            ) : (
+              <AlertTriangle className="w-3.5 h-3.5" />
+            )}
+            {topAlertTone === "critical"
+              ? `Critical — ${topAlerts.length} ${topAlerts.length === 1 ? "issue" : "issues"} require attention`
+              : `Data quality — ${topAlerts.length} ${topAlerts.length === 1 ? "item" : "items"} to improve`}
           </h3>
           <div className="space-y-1">
-            {criticalAlerts.map((alert) => (
+            {topAlerts.map((alert) => (
               <button
                 key={alert.label}
                 onClick={() => navigate(`/founder?tab=${alert.tab}`)}
-                className="flex items-center justify-between w-full text-left px-2.5 py-2 rounded-lg hover:bg-destructive/10 transition-colors group"
+                className={cn(
+                  "flex items-center justify-between w-full text-left px-2.5 py-2 rounded-lg transition-colors group",
+                  topAlertTone === "critical" ? "hover:bg-destructive/10" : "hover:bg-amber-500/10",
+                )}
               >
                 <div className="flex items-center gap-2">
-                  <span className="w-1.5 h-1.5 rounded-full bg-destructive shrink-0" />
+                  <span
+                    className={cn(
+                      "w-1.5 h-1.5 rounded-full shrink-0",
+                      alert.severity === "critical" ? "bg-destructive" : "bg-amber-500",
+                    )}
+                  />
                   <span className="text-sm text-foreground">{alert.label}</span>
                 </div>
-                <ChevronRight className="w-3.5 h-3.5 text-muted-foreground group-hover:text-destructive transition-colors" />
+                <ChevronRight
+                  className={cn(
+                    "w-3.5 h-3.5 text-muted-foreground transition-colors",
+                    topAlertTone === "critical" ? "group-hover:text-destructive" : "group-hover:text-amber-700 dark:group-hover:text-amber-300",
+                  )}
+                />
               </button>
             ))}
           </div>
@@ -329,12 +386,12 @@ export function TodayTab() {
           {!criticalLoading && (
             <div className={cn(
               "mt-1 flex items-center gap-1.5 text-xs font-medium rounded-lg px-2 py-1.5",
-              brokenLinkCount > 0 ? "bg-destructive/10 text-destructive" : "bg-civic-green/10 text-civic-green"
+              missingWebsiteCount > 0 ? "bg-amber-500/10 text-amber-800 dark:text-amber-200" : "bg-civic-green/10 text-civic-green"
             )}>
-              {brokenLinkCount > 0 ? (
-                <><Link2 className="w-3 h-3" />{brokenLinkCount} broken {brokenLinkCount === 1 ? "link" : "links"}</>
+              {missingWebsiteCount > 0 ? (
+                <><Link2 className="w-3 h-3" />{missingWebsiteCount.toLocaleString()} missing website {missingWebsiteCount === 1 ? "URL" : "URLs"}</>
               ) : (
-                <><CheckCircle className="w-3 h-3" />No broken links detected</>
+                <><CheckCircle className="w-3 h-3" />All indexed companies have a website URL</>
               )}
             </div>
           )}
@@ -387,13 +444,13 @@ export function TodayTab() {
           <Button variant="outline" size="sm" className="w-full justify-start text-xs gap-2 h-8" onClick={() => navigate("/founder?tab=signals")}>
             <Search className="w-3.5 h-3.5" /> Approve research
           </Button>
-          {brokenLinkCount > 0 ? (
-            <Button variant="destructive" size="sm" className="w-full justify-start text-xs gap-2 h-8" onClick={() => navigate("/founder?tab=signals")}>
-              <Link2 className="w-3.5 h-3.5" /> Fix broken links ({brokenLinkCount})
+          {missingWebsiteCount > 0 ? (
+            <Button variant="outline" size="sm" className="w-full justify-start text-xs gap-2 h-8 border-amber-500/40 text-amber-900 dark:text-amber-100 hover:bg-amber-500/10" onClick={() => navigate("/founder?tab=signals")}>
+              <Link2 className="w-3.5 h-3.5" /> Backfill website URLs ({missingWebsiteCount.toLocaleString()})
             </Button>
           ) : (
             <Button variant="outline" size="sm" className="w-full justify-start text-xs gap-2 h-8 text-muted-foreground" disabled>
-              <CheckCircle className="w-3.5 h-3.5 text-civic-green" /> No broken links
+              <CheckCircle className="w-3.5 h-3.5 text-civic-green" /> Website URLs complete
             </Button>
           )}
           <Button variant="outline" size="sm" className="w-full justify-start text-xs gap-2 h-8" onClick={() => navigate("/founder?tab=notes")}>

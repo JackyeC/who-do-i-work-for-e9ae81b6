@@ -3,6 +3,7 @@ import { Navigate, useNavigate } from "react-router-dom";
 import { useClerkWithFallback } from "@/hooks/use-clerk-fallback";
 import { useAuth } from "@/contexts/AuthContext";
 import { supabase } from "@/integrations/supabase/client";
+import { syncDreamJobProfileRemote } from "@/domain/career/sync-dream-job-profile";
 import { InterviewKit } from "@/components/interview/InterviewKit";
 import { Helmet } from "react-helmet-async";
 import { usePageSEO } from "@/hooks/use-page-seo";
@@ -429,7 +430,14 @@ export default function AutoApply() {
         if (resumeUpdateErr) throw resumeUpdateErr;
       }
 
-      // e) All saves succeeded
+      // e) Merge into Dream Job Profile (canonical for matching)
+      try {
+        await syncDreamJobProfileRemote(supabase, user.id);
+      } catch {
+        /* non-fatal */
+      }
+
+      // f) All saves succeeded
       setDone(true);
     } catch (err: any) {
       // f) Show error
@@ -609,10 +617,10 @@ export default function AutoApply() {
             className="font-sans mb-3"
             style={{ fontSize: "clamp(24px, 4vw, 36px)", fontWeight: 800, letterSpacing: "-2px", color: "#f0ebe0" }}
           >
-            Your agent applied. Here's your Interview Kit.
+            Preferences saved. You're ready to run matches.
           </h1>
           <p className="text-base mb-8" style={{ color: "hsl(var(--muted-foreground))", lineHeight: 1.7 }}>
-            We'll send your first dossier within 24 hours.
+            Your Dream Job Profile and auto-apply settings are stored. Open the dashboard for matched jobs, the jobs feed, and application tracking — in-dashboard dossier receipts appear when you mark applications as submitted (email delivery is separate).
           </p>
 
           {/* Summary */}

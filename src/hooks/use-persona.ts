@@ -73,8 +73,8 @@ export const SIGNAL_PRIORITY: Record<PersonaId, string[]> = {
   career_changer: ["Integrity Gap", "Culture vs. Claims", "Industry Stability"],
 };
 
-/* ── Read from localStorage ── */
-function getPersonaState(): PersonaState {
+/* ── Read from localStorage (exported for Dream Job Profile sync) ── */
+export function getPersonaState(): PersonaState {
   try {
     const persona = localStorage.getItem("wdiwf_persona") as PersonaId | null;
     const nepotismFlag = localStorage.getItem("wdiwf_nepotism_flag") as NepotismFlag | null;

@@ -9,6 +9,7 @@ import { useNavigate } from "react-router-dom";
 import { SignupGate } from "@/components/SignupGate";
 import { supabase } from "@/integrations/supabase/client";
 import { cn } from "@/lib/utils";
+import { getViteSupabaseUrl } from "@/lib/supabase-vite-env";
 
 type Msg = { role: "user" | "assistant"; content: string };
 
@@ -31,7 +32,7 @@ const OPENING_MESSAGE: Msg = {
   content: `Tell me the decision in front of you. I'll help you read it clearly.`,
 };
 
-const CHAT_URL = `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/ask-jackye`;
+const CHAT_URL = `${getViteSupabaseUrl()}/functions/v1/ask-jackye`;
 
 export default function AskJackyePage() {
   const { user, loading } = useAuth();

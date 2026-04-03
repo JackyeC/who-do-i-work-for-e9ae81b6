@@ -4,7 +4,7 @@
  * v4.2.0: Removed <all_urls> — generic career detection now triggered by icon click.
  */
 
-const SUPABASE_URL = 'https://tdetybqdxadmowjivtjy.supabase.co';
+const SUPABASE_URL = 'https://aeulesuqxcnaonlxcjcm.supabase.co';
 const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InRkZXR5YnFkeGFkbW93aml2dGp5Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzI4MjU0MTcsImV4cCI6MjA4ODQwMTQxN30.gM_5tF5Qs8f0LUfE9ZB5PM-TeHhDVe4KZF6_p60A3Lc';
 const CACHE_TTL = 30 * 60 * 1000; // 30 minutes
 const cache = new Map();

@@ -1,10 +1,11 @@
 import { useQuery } from "@tanstack/react-query";
+import { Link } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { Badge } from "@/components/ui/badge";
 import { Skeleton } from "@/components/ui/skeleton";
 import {
   Database, CheckCircle, AlertTriangle, XCircle, Clock,
-  Shield, BarChart3, Layers, HelpCircle,
+  Shield, BarChart3, Layers, HelpCircle, Link2, ExternalLink,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 
@@ -65,6 +66,32 @@ function EmptyState({ text }: { text: string }) {
 }
 
 export function SignalsDataTab() {
+  // ─── Companies with dossier text but no website_url (same definition as Today tab) ───
+  const { data: websiteGaps, isLoading: websiteGapsLoading } = useQuery({
+    queryKey: ["founder-signals-website-gaps"],
+    queryFn: async () => {
+      const [countRes, listRes] = await Promise.all([
+        supabase
+          .from("companies")
+          .select("id", { count: "exact", head: true })
+          .is("website_url", null)
+          .not("description", "is", null),
+        supabase
+          .from("companies")
+          .select("id, name, slug")
+          .is("website_url", null)
+          .not("description", "is", null)
+          .order("name", { ascending: true })
+          .limit(40),
+      ]);
+      return {
+        total: countRes.count ?? 0,
+        rows: listRes.data ?? [],
+        listError: listRes.error,
+      };
+    },
+  });
+
   // ─── Coverage Snapshot ───
   const { data: coverage, isLoading: coverageLoading } = useQuery({
     queryKey: ["founder-signals-coverage"],
@@ -140,6 +167,54 @@ export function SignalsDataTab() {
 
   return (
     <div className="space-y-6">
+      {/* Website URL backfill — matches founder "missing website URL" metric (not live HTTP checks) */}
+      <div className="bg-card border border-border rounded-2xl p-5">
+        <h3 className="text-sm font-semibold text-foreground mb-2 flex items-center gap-2">
+          <Link2 className="w-4 h-4 text-amber-600" /> Company website URLs
+        </h3>
+        <p className="text-xs text-muted-foreground mb-4 leading-relaxed">
+          These companies have a written dossier but no <span className="font-mono text-[11px]">website_url</span> in the database.
+          This is a <strong className="font-medium text-foreground">data backfill</strong> task, not a crawl of broken hyperlinks on the live site.
+          Open a profile (as admin) to add the official site.
+        </p>
+        {websiteGapsLoading ? (
+          <Skeleton className="h-24" />
+        ) : websiteGaps!.listError ? (
+          <EmptyState text="Could not load the list (check permissions)." />
+        ) : websiteGaps!.total === 0 ? (
+          <p className="text-xs text-civic-green flex items-center gap-1.5">
+            <CheckCircle className="w-3.5 h-3.5" /> Every company with a dossier has a website URL on file.
+          </p>
+        ) : (
+          <>
+            <div className="flex items-center justify-between text-sm mb-3">
+              <span className="text-muted-foreground">Missing URL</span>
+              <Badge variant="outline" className="font-mono text-amber-800 dark:text-amber-200 border-amber-500/40 bg-amber-500/10">
+                {websiteGaps!.total.toLocaleString()} total
+              </Badge>
+            </div>
+            <ul className="max-h-64 overflow-y-auto space-y-1 pr-1 border border-border/40 rounded-lg p-2 bg-muted/10">
+              {websiteGaps!.rows.map((row) => (
+                <li key={row.id}>
+                  <Link
+                    to={`/company/${row.slug}`}
+                    className="flex items-center justify-between gap-2 text-xs py-1.5 px-2 rounded-md hover:bg-muted/50 text-foreground group"
+                  >
+                    <span className="truncate font-medium">{row.name}</span>
+                    <ExternalLink className="w-3 h-3 shrink-0 text-muted-foreground group-hover:text-primary" />
+                  </Link>
+                </li>
+              ))}
+            </ul>
+            {websiteGaps!.total > websiteGaps!.rows.length && (
+              <p className="text-[10px] text-muted-foreground mt-2 italic">
+                Showing first {websiteGaps!.rows.length} of {websiteGaps!.total.toLocaleString()}. Sort is A–Z by company name.
+              </p>
+            )}
+          </>
+        )}
+      </div>
+
       {/* Coverage Snapshot */}
       <div className="bg-card border border-border rounded-2xl p-5">
         <h3 className="text-sm font-semibold text-foreground mb-4 flex items-center gap-2">

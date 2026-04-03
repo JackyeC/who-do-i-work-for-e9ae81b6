@@ -6,6 +6,7 @@ import { Send, Loader2, StopCircle, Mic, MicOff } from "lucide-react";
 import ReactMarkdown from "react-markdown";
 import { RoundFeedback, type FeedbackData } from "./RoundFeedback";
 import type { SimulatorConfig } from "./SimulatorSetup";
+import { getViteSupabasePublishableKey, getViteSupabaseUrl } from "@/lib/supabase-vite-env";
 
 type Msg = { role: "user" | "assistant"; content: string };
 
@@ -19,7 +20,7 @@ interface Props {
 }
 
 const MAX_ROUNDS = 5;
-const CHAT_URL = `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/negotiation-simulator`;
+const CHAT_URL = `${getViteSupabaseUrl()}/functions/v1/negotiation-simulator`;
 
 const SpeechRecognitionAPI =
   typeof window !== "undefined"
@@ -92,7 +93,7 @@ export function SimulatorChat({ config, messages, setMessages, feedbacks, setFee
         method: "POST",
         headers: {
           "Content-Type": "application/json",
-          Authorization: `Bearer ${import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY}`,
+          Authorization: `Bearer ${getViteSupabasePublishableKey()}`,
         },
         body: JSON.stringify({ messages: history, config }),
       });

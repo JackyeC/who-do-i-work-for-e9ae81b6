@@ -15,6 +15,8 @@ import {
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { motion, AnimatePresence } from "framer-motion";
+import { DreamJobProfileSummaryCard } from "@/components/career/DreamJobProfileSummaryCard";
+import { useDreamJobProfile } from "@/hooks/use-dream-job-profile";
 
 const SCORE_TIERS = [
   { min: 40, max: 54, label: "Wide net", color: "text-civic-yellow", bg: "bg-civic-yellow/10 border-civic-yellow/20", bar: "bg-civic-yellow" },
@@ -30,6 +32,7 @@ function getTier(threshold: number) {
 
 export function AutoApplySettings() {
   const { settings, isLoading, upsert } = useAutoApplySettings();
+  const { profile } = useDreamJobProfile();
   const [threshold, setThreshold] = useState(70);
   const [dailyLimit, setDailyLimit] = useState(5);
   const [enabled, setEnabled] = useState(true);
@@ -91,8 +94,51 @@ export function AutoApplySettings() {
     return <Skeleton className="h-48 w-full rounded-lg" />;
   }
 
+  const reviewMode = !hasConsent || !enabled;
+  const trustedQueue = hasConsent && enabled && !paused;
+
   return (
     <>
+    <DreamJobProfileSummaryCard compact showSync className="mb-4" />
+
+    <Card className="overflow-hidden border-amber-500/10 bg-muted/10 mb-4">
+      <CardHeader className="pb-2">
+        <CardTitle className="text-sm">How applications are sent</CardTitle>
+        <CardDescription className="text-xs leading-relaxed">
+          {reviewMode && (
+            <>
+              <strong className="text-foreground">Review-first mode.</strong>{" "}
+              Auto-apply is off or unsigned — you confirm each application before it leaves your queue.
+            </>
+          )}
+          {trustedQueue && (
+            <>
+              <strong className="text-foreground">Trusted queue.</strong>{" "}
+              Roles at or above your alignment threshold can be queued for generation — still subject to daily limits and your Dream Job Profile inputs.
+            </>
+          )}
+          {paused && enabled && hasConsent && (
+            <span className="block mt-2 text-amber-200/90">Queue is paused — nothing will send until you resume.</span>
+          )}
+        </CardDescription>
+      </CardHeader>
+      <CardContent className="text-xs text-muted-foreground space-y-2 pb-4">
+        <p>
+          <span className="text-foreground font-medium">Threshold:</span> {settings?.min_alignment_threshold ?? threshold}% alignment minimum ·{" "}
+          <span className="text-foreground font-medium">Daily cap:</span> {settings?.max_daily_applications ?? dailyLimit} applications
+        </p>
+        <p>
+          <span className="text-foreground font-medium">Profile driving matches:</span>{" "}
+          {profile?.targetTitles?.length ? `${profile.targetTitles.length} target titles` : "Add titles in Profile"}
+          {profile?.facets?.skills?.length ? ` · ${profile.facets.skills.length} skills` : ""}
+          {profile?.facets?.valuesTags?.length ? ` · ${profile.facets.valuesTags.length} values/signal tags` : ""}
+        </p>
+        <p className="text-[11px] opacity-80">
+          Jobs below the threshold or missing required employer signals will not auto-queue — even if the title looks right.
+        </p>
+      </CardContent>
+    </Card>
+
     <Card className="overflow-hidden">
       {/* Compact header with status */}
       <CardHeader className="pb-0">

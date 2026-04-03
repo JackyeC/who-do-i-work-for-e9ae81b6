@@ -1,4 +1,5 @@
 import { useState, useMemo } from "react";
+import { Link } from "react-router-dom";
 import { useAuth } from "@/contexts/AuthContext";
 import { usePageSEO } from "@/hooks/use-page-seo";
 import { Helmet } from "react-helmet-async";
@@ -15,13 +16,18 @@ import {
   Loader2,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { friendlyErrorMessage } from "@/lib/user-friendly-error";
 import { motion } from "framer-motion";
 import { supabase } from "@/integrations/supabase/client";
 import { useQuery } from "@tanstack/react-query";
+import { DreamJobProfileSummaryCard } from "@/components/career/DreamJobProfileSummaryCard";
+import { MatchExplainer } from "@/components/jobs/MatchExplainer";
 
 interface MatchedJob {
   id: string;
+  job_id?: string;
   title: string;
+  department?: string | null;
   company: {
     name: string;
     slug: string;
@@ -56,14 +62,18 @@ export default function JobsFeed() {
   const [savedJobs, setSavedJobs] = useState<Set<string>>(new Set());
   const [passedJobs, setPassedJobs] = useState<Set<string>>(new Set());
 
-  const { data: matchedJobs, isLoading } = useQuery({
+  const { data: matchedJobs, isLoading, isError, error, refetch } = useQuery({
     queryKey: ["values-job-matches", user?.id],
     queryFn: async () => {
       const { data, error } = await supabase.functions.invoke("values-job-matcher", {
         body: { limit: 50 },
       });
       if (error) throw error;
-      return (data?.matches || []) as MatchedJob[];
+      const raw = (data?.matches || []) as Record<string, unknown>[];
+      return raw.map((m) => ({
+        ...m,
+        id: String(m.job_id ?? m.id ?? ""),
+      })) as MatchedJob[];
     },
     enabled: !!user,
     staleTime: 5 * 60 * 1000,
@@ -117,10 +127,16 @@ export default function JobsFeed() {
 
       <div className="max-w-5xl mx-auto px-4 sm:px-6 py-6 space-y-5">
         {/* Header */}
+        {user && (
+          <DreamJobProfileSummaryCard compact showSync className="mb-2" />
+        )}
+
         <div className="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-3">
           <div>
             <h1 className="text-2xl font-bold text-foreground font-display">Places That Deserve You</h1>
-            <p className="text-sm text-muted-foreground mt-0.5">Roles aligned with your values. Not just your skills.</p>
+            <p className="text-sm text-muted-foreground mt-0.5">
+              Roles scored against your Dream Job Profile and required employer signals — not keyword stuffing.
+            </p>
           </div>
           <Tabs value={tab} onValueChange={(v) => setTab(v as any)}>
             <TabsList>
@@ -159,6 +175,20 @@ export default function JobsFeed() {
               <Loader2 className="w-8 h-8 animate-spin text-primary mx-auto mb-3" />
               <p className="text-sm text-muted-foreground">Finding roles that match your values...</p>
             </div>
+          ) : isError ? (
+            <Card className="border-dashed border-border/80 bg-muted/10">
+              <div className="p-8 text-center space-y-4 max-w-md mx-auto">
+                <p className="text-sm text-muted-foreground leading-relaxed">{friendlyErrorMessage(error)}</p>
+                <div className="flex flex-col sm:flex-row gap-2 justify-center">
+                  <Button type="button" variant="default" size="sm" onClick={() => refetch()}>
+                    Try again
+                  </Button>
+                  <Button type="button" variant="outline" size="sm" asChild>
+                    <Link to="/dashboard?tab=profile">Review profile</Link>
+                  </Button>
+                </div>
+              </div>
+            </Card>
           ) : filteredJobs.length === 0 ? (
             <div className="text-center py-16">
               <p className="text-muted-foreground">No roles match your current filters.</p>
@@ -280,6 +310,15 @@ export default function JobsFeed() {
                     </div>
                   </div>
                 )}
+
+                <MatchExplainer
+                  alignmentScore={selectedJob.alignment_score}
+                  matchedSignals={selectedJob.matched_signals || []}
+                  jobTitle={selectedJob.title}
+                  department={selectedJob.department}
+                  industry={selectedJob.company.industry}
+                  employerClarityScore={selectedJob.company.employer_clarity_score}
+                />
 
                 {/* Actions */}
                 <div className="flex gap-3 pt-2">

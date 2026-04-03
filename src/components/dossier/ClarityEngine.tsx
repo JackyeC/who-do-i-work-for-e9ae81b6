@@ -6,8 +6,9 @@ import { Badge } from "@/components/ui/badge";
 import { cn } from "@/lib/utils";
 import { Zap, Loader2, RefreshCw, AlertTriangle } from "lucide-react";
 import { toast } from "sonner";
+import { getViteSupabasePublishableKey, getViteSupabaseUrl } from "@/lib/supabase-vite-env";
 
-const ENGINE_URL = `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/clarity-engine`;
+const ENGINE_URL = `${getViteSupabaseUrl()}/functions/v1/clarity-engine`;
 
 interface ClarityEngineProps {
   companyId?: string;
@@ -35,7 +36,7 @@ export function ClarityEngine({ companyId, companyName, autoRun = false }: Clari
         method: "POST",
         headers: {
           "Content-Type": "application/json",
-          Authorization: `Bearer ${import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY}`,
+          Authorization: `Bearer ${getViteSupabasePublishableKey()}`,
         },
         body: JSON.stringify({ companyId, companyName }),
       });

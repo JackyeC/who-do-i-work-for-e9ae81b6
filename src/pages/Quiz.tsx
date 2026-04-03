@@ -1,5 +1,7 @@
 import { useState, useCallback, useMemo, useEffect } from "react";
 import { WorkplaceDNAShareCard } from "@/components/quiz/WorkplaceDNAShareCard";
+import { supabase } from "@/integrations/supabase/client";
+import { syncDreamJobProfileRemote } from "@/domain/career/sync-dream-job-profile";
 
 // ─── TYPES ───────────────────────────────────────────────
 type PersonaKey =
@@ -456,6 +458,16 @@ export default function Quiz() {
     localStorage.setItem("wdiwf_trust", m.trust_level);
 
     setResult({ primary, secondary, meta: m });
+
+    void (async () => {
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) return;
+      try {
+        await syncDreamJobProfileRemote(supabase, user.id);
+      } catch (e) {
+        console.warn("Dream job profile sync failed", e);
+      }
+    })();
   }, [answers, sliderVal]);
 
   const advance = useCallback(() => {

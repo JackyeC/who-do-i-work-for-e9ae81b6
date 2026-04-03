@@ -10,6 +10,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/contexts/AuthContext";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
+import { syncDreamJobProfileRemote } from "@/domain/career/sync-dream-job-profile";
 import {
   Heart, Shield, DollarSign, Bot, Building2, Landmark,
   Scale, Monitor, Sparkles, Users, FileText, Save, Info,
@@ -103,9 +104,17 @@ export function MyValuesProfile() {
         .upsert(payload, { onConflict: "user_id" });
       if (error) throw error;
     },
-    onSuccess: () => {
+    onSuccess: async () => {
       queryClient.invalidateQueries({ queryKey: ["user-values-profile"] });
       queryClient.invalidateQueries({ queryKey: ["user-alignment-values"] });
+      if (user?.id) {
+        try {
+          await syncDreamJobProfileRemote(supabase, user.id);
+          queryClient.invalidateQueries({ queryKey: ["dream-job-profile"] });
+        } catch {
+          /* non-fatal */
+        }
+      }
       toast.success("Values profile saved!");
     },
     onError: () => toast.error("Failed to save values profile"),
