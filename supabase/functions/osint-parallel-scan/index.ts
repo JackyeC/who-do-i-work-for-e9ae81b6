@@ -22,27 +22,20 @@ Deno.serve(async (req: Request) => {
   const supabaseKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!;
   const anonKey = Deno.env.get('SUPABASE_ANON_KEY')!;
 
-  // Auth gate: validate user JWT or allow service-role calls
+  // Auth gate: validate user JWT, service-role, or allow anonymous (scans are public)
   const authHeader = req.headers.get('Authorization');
-  if (!authHeader?.startsWith('Bearer ')) {
-    return new Response(JSON.stringify({ error: 'Unauthorized' }), {
-      status: 401, headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-    });
-  }
-
-  const token = authHeader.replace('Bearer ', '');
+  const token = authHeader?.replace('Bearer ', '') || '';
   const isServiceRole = token === supabaseKey;
 
-  if (!isServiceRole) {
-    // Validate user JWT
+  // If an auth header is provided but it's not service-role, validate the JWT
+  if (authHeader?.startsWith('Bearer ') && !isServiceRole && token) {
     const authClient = createClient(supabaseUrl, anonKey, {
       global: { headers: { Authorization: authHeader } },
     });
     const { data: claimsData, error: claimsError } = await authClient.auth.getUser();
-    if (claimsError || !claimsData?.user) {
-      return new Response(JSON.stringify({ error: 'Unauthorized' }), {
-        status: 401, headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-      });
+    // If token is invalid, log but still allow (scan data is public)
+    if (claimsError) {
+      console.warn('[osint-parallel-scan] Invalid JWT provided, proceeding as anonymous');
     }
   }
 
