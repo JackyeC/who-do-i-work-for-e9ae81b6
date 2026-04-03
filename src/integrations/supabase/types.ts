@@ -1553,7 +1553,9 @@ export type Database = {
           creation_source: string | null
           description: string | null
           domain: string | null
+          domain_auto_filled: boolean
           domain_confidence: string | null
+          domain_source: string | null
           effective_tax_rate: string | null
           employee_count: string | null
           employer_clarity_score: number | null
@@ -1609,7 +1611,9 @@ export type Database = {
           creation_source?: string | null
           description?: string | null
           domain?: string | null
+          domain_auto_filled?: boolean
           domain_confidence?: string | null
+          domain_source?: string | null
           effective_tax_rate?: string | null
           employee_count?: string | null
           employer_clarity_score?: number | null
@@ -1665,7 +1669,9 @@ export type Database = {
           creation_source?: string | null
           description?: string | null
           domain?: string | null
+          domain_auto_filled?: boolean
           domain_confidence?: string | null
+          domain_source?: string | null
           effective_tax_rate?: string | null
           employee_count?: string | null
           employer_clarity_score?: number | null
@@ -5026,6 +5032,56 @@ export type Database = {
           wrap_date?: string
         }
         Relationships: []
+      }
+      domain_review_queue: {
+        Row: {
+          company_id: string
+          confidence: string
+          created_at: string
+          discovered_domain: string | null
+          discovered_url: string
+          id: string
+          reviewed_at: string | null
+          reviewed_by: string | null
+          source_detail: string | null
+          source_method: string
+          status: string
+        }
+        Insert: {
+          company_id: string
+          confidence?: string
+          created_at?: string
+          discovered_domain?: string | null
+          discovered_url: string
+          id?: string
+          reviewed_at?: string | null
+          reviewed_by?: string | null
+          source_detail?: string | null
+          source_method: string
+          status?: string
+        }
+        Update: {
+          company_id?: string
+          confidence?: string
+          created_at?: string
+          discovered_domain?: string | null
+          discovered_url?: string
+          id?: string
+          reviewed_at?: string | null
+          reviewed_by?: string | null
+          source_detail?: string | null
+          source_method?: string
+          status?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "domain_review_queue_company_id_fkey"
+            columns: ["company_id"]
+            isOneToOne: false
+            referencedRelation: "companies"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       dream_job_requests: {
         Row: {
