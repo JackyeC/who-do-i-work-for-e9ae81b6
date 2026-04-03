@@ -26,44 +26,41 @@ export default function NoRegretsGame() {
   const handleChoose = useCallback((choice: Choice) => {
     setChoosing(true);
     const newStats = applyChanges(episode.initialStats, choice.statChanges);
-
-    // Persist choice to sessionStorage for recap screen (v1 simple approach)
     sessionStorage.setItem(
       "noRegrets_ep1",
       JSON.stringify({ choiceId: choice.id, stats: newStats, previousStats: episode.initialStats, recapText: choice.recapText, archetype: choice.archetype })
     );
-
     setTimeout(() => navigate("/no-regrets-game/episode-1-recap"), 400);
   }, [episode, navigate]);
 
   return (
     <EpisodeShell>
-      <div className="space-y-6">
-        {/* Episode title */}
-        <div>
-          <h2 className="text-xl md:text-2xl font-display font-bold text-foreground">{episode.title}</h2>
-          <div className="h-0.5 w-16 bg-primary/40 mt-2 rounded-full" />
-        </div>
-
-        {/* Narrative */}
-        <div className="space-y-4">
-          {episode.narrative.map((p, i) => (
-            <p key={i} className="text-sm md:text-base text-muted-foreground leading-relaxed">{p}</p>
-          ))}
-        </div>
-
-        {/* Stats */}
-        <StatsBar stats={episode.initialStats} />
-
-        {/* Choices — gated for logged-out users */}
-        {user ? (
-          <ChoiceButtons choices={episode.choices} onChoose={handleChoose} disabled={choosing} />
-        ) : (
-          <SignupGate feature="story choices">
-            <ChoiceButtons choices={episode.choices} onChoose={() => {}} disabled />
-          </SignupGate>
-        )}
+      {/* Episode title block */}
+      <div className="space-y-2">
+        <p className="text-[10px] font-mono uppercase tracking-[0.25em] text-primary/60">Season 1</p>
+        <h2 className="text-xl md:text-2xl font-display font-bold text-foreground">{episode.title}</h2>
+        <p className="text-xs text-muted-foreground italic">Who are you under pressure?</p>
+        <div className="h-px w-12 bg-primary/30 mt-1" />
       </div>
+
+      {/* Narrative block */}
+      <div className="rounded-xl border border-border/20 bg-card/30 p-5 md:p-6 space-y-4">
+        {episode.narrative.map((p, i) => (
+          <p key={i} className="text-sm md:text-[15px] text-muted-foreground leading-[1.8]">{p}</p>
+        ))}
+      </div>
+
+      {/* Stats */}
+      <StatsBar stats={episode.initialStats} />
+
+      {/* Choices */}
+      {user ? (
+        <ChoiceButtons choices={episode.choices} onChoose={handleChoose} disabled={choosing} />
+      ) : (
+        <SignupGate feature="story choices">
+          <ChoiceButtons choices={episode.choices} onChoose={() => {}} disabled />
+        </SignupGate>
+      )}
     </EpisodeShell>
   );
 }

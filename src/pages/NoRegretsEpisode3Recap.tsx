@@ -7,6 +7,12 @@ import { Button } from "@/components/ui/button";
 import { ArrowRight } from "lucide-react";
 import type { PlayerStats, ConsequenceLabel } from "@/types/no-regrets-game";
 
+const CONSEQUENCE_LABELS: Record<ConsequenceLabel, string> = {
+  "moral-injury": "Moral Injury",
+  "mission-collapse": "Mission Collapse",
+  "burnout-spiral": "Burnout Spiral",
+};
+
 interface RecapData {
   choiceId: string;
   stats: PlayerStats;
@@ -58,26 +64,38 @@ export default function NoRegretsEpisode3Recap() {
   if (!data) return null;
 
   const cta = CONSEQUENCE_CTA[data.consequenceLabel];
+  const consequenceLabel = CONSEQUENCE_LABELS[data.consequenceLabel];
 
   return (
     <EpisodeShell>
-      <div className="space-y-6">
-        <div>
-          <h2 className="text-xl md:text-2xl font-display font-bold text-foreground">Episode 3: The Cost — Recap</h2>
-          <div className="h-0.5 w-16 bg-primary/40 mt-2 rounded-full" />
+      {/* Verdict header */}
+      <div className="space-y-3">
+        <p className="text-[10px] font-mono uppercase tracking-[0.25em] text-primary/60">Episode 3 — Final Verdict</p>
+        <h2 className="text-xl md:text-2xl font-display font-bold text-foreground">The Cost — Recap</h2>
+        <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-lg border border-[hsl(var(--destructive))]/20 bg-[hsl(var(--destructive))]/5">
+          <div className="w-1.5 h-1.5 rounded-full bg-[hsl(var(--destructive))]" />
+          <span className="text-xs font-mono text-[hsl(var(--destructive))] font-semibold">{consequenceLabel}</span>
         </div>
+      </div>
 
-        <p className="text-sm md:text-base text-muted-foreground leading-relaxed">{data.recapText}</p>
+      {/* Recap narrative */}
+      <div className="rounded-xl border border-border/20 bg-card/30 p-5 md:p-6">
+        <p className="text-sm md:text-[15px] text-muted-foreground leading-[1.8]">{data.recapText}</p>
+      </div>
 
-        <StatsBar stats={data.stats} previousStats={data.previousStats} />
+      <StatsBar stats={data.stats} previousStats={data.previousStats} />
 
-        <FollowTheMoneyTeaser />
+      <FollowTheMoneyTeaser />
 
-        {/* Consequence-specific conversion */}
-        <div className="rounded-xl border border-primary/30 bg-primary/5 p-6 space-y-4">
+      {/* Consequence-specific conversion */}
+      <div className="rounded-xl border border-primary/25 bg-card/60 overflow-hidden">
+        <div className="px-5 py-3 border-b border-primary/15 bg-primary/5">
+          <p className="text-[10px] font-mono uppercase tracking-[0.25em] text-primary">Next Action</p>
+        </div>
+        <div className="p-5 md:p-6 space-y-4">
           <h3 className="text-lg md:text-xl font-display font-bold text-foreground">{cta.headline}</h3>
           <p className="text-sm text-muted-foreground leading-relaxed">{cta.body}</p>
-          <div className="flex flex-col sm:flex-row gap-3">
+          <div className="flex flex-col sm:flex-row gap-3 pt-1">
             <Button asChild variant="premium" size="lg" className="flex-1">
               <Link to={cta.primaryLink} className="gap-2">
                 {cta.primary} <ArrowRight className="w-4 h-4" />
@@ -88,12 +106,18 @@ export default function NoRegretsEpisode3Recap() {
             </Button>
           </div>
         </div>
+      </div>
 
-        {/* End-of-game summary */}
-        <div className="rounded-xl border border-border/50 bg-card p-5 text-center space-y-3">
-          <p className="text-xs text-muted-foreground uppercase tracking-widest font-mono">End of Season 1</p>
-          <h3 className="text-base font-display font-bold text-foreground">This was a game. Your career isn't.</h3>
-          <p className="text-sm text-muted-foreground leading-relaxed">
+      {/* End-of-season dossier close */}
+      <div className="rounded-xl border border-border/30 bg-card/40 overflow-hidden">
+        <div className="px-5 py-3 border-b border-border/20">
+          <p className="text-[9px] font-mono uppercase tracking-[0.3em] text-muted-foreground/50">End of Season 1</p>
+        </div>
+        <div className="p-5 md:p-6 text-center space-y-4">
+          <h3 className="text-base md:text-lg font-display font-bold text-foreground">
+            This was a game. Your career isn't.
+          </h3>
+          <p className="text-sm text-muted-foreground leading-relaxed max-w-md mx-auto">
             Every company in this story was fictional. The patterns behind them are not.
             WDIWF tracks real employer signals — political donations, lobbying spend, layoff history,
             and the gaps between what companies say and what they do.
