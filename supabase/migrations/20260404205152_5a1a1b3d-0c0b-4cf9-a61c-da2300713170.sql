@@ -1,0 +1,1 @@
+ALTER TABLE public.receipts_enriched ADD COLUMN IF NOT EXISTS poster_url TEXT DEFAULT NULL;

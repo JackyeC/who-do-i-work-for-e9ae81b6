@@ -9067,6 +9067,7 @@ export type Database = {
           is_controversy: boolean | null
           jackye_take: string
           poster_data: Json
+          poster_url: string | null
           published_at: string | null
           receipt_connection: string
           sentiment_score: number | null
@@ -9090,6 +9091,7 @@ export type Database = {
           is_controversy?: boolean | null
           jackye_take: string
           poster_data: Json
+          poster_url?: string | null
           published_at?: string | null
           receipt_connection: string
           sentiment_score?: number | null
@@ -9113,6 +9115,7 @@ export type Database = {
           is_controversy?: boolean | null
           jackye_take?: string
           poster_data?: Json
+          poster_url?: string | null
           published_at?: string | null
           receipt_connection?: string
           sentiment_score?: number | null
