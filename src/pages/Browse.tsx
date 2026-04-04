@@ -107,6 +107,7 @@ export default function Browse() {
         description: c.description, isDbOnly: false,
         isStartup: false, categoryTags: [] as string[],
         careerIntelligenceScore: null as number | null,
+        vettedStatus: null as string | null,
       }));
     return [...dbList, ...sampleExtras];
   }, [dbCompanies]);
