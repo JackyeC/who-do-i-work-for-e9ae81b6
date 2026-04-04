@@ -502,6 +502,15 @@ export default function MockInterview() {
               )}
             </div>
 
+            {/* Session intro — first question only */}
+            {currentIdx === 0 && currentQ?.feedback === null && (
+              <div className="rounded-lg border border-border/40 bg-muted/20 px-4 py-3 text-center">
+                <p className="text-sm text-foreground/70 italic">
+                  "Answer in your own words. This tool is here to help you practice, not perform for you."
+                </p>
+              </div>
+            )}
+
             {/* Question card */}
             <motion.div
               key={currentIdx}
