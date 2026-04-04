@@ -15,6 +15,8 @@ import { BiasBar, getSourceBiasKey } from "@/components/receipts/BiasBar";
 import { EDITORIAL_CATEGORIES, EDITORIAL_CAT_COLORS } from "@/components/receipts/heat-config";
 import { PosterLightbox } from "@/components/receipts/PosterLightbox";
 import { FloatingBubble } from "@/components/receipts/FloatingBubble";
+import { SignalStoryCard } from "@/components/work-signal/SignalStoryCard";
+import type { SignalStory, SignalCategory, HeatLevel } from "@/lib/work-signal-schema";
 import { motion } from "framer-motion";
 import { format } from "date-fns";
 import workSignalLogo from "@/assets/work-signal-logo.png";
@@ -22,6 +24,41 @@ import {
   Mail, ArrowRight, Check, ExternalLink, Newspaper,
   Radio, Eye, TrendingUp, Award, Clock, Zap, Star, Search,
 } from "lucide-react";
+
+/* ── Adapt ReceiptArticle → SignalStory for poster cards ── */
+function toSignalStory(a: ReceiptArticle): SignalStory {
+  const catMap: Record<string, SignalCategory> = {
+    layoffs: "c_suite",
+    worker_rights: "fine_print",
+    ai_workplace: "tech_stack",
+    regulation: "fine_print",
+    pay_equity: "paycheck",
+    future_of_work: "daily_grind",
+  };
+  const heatMap = (s: number): HeatLevel =>
+    s >= 4 ? "high" : s >= 2 ? "medium" : "low";
+
+  return {
+    id: a.id,
+    company_name: null,
+    category: catMap[a.category ?? ""] || "daily_grind",
+    signal_type: "breaking",
+    headline: a.headline,
+    heat_level: heatMap(a.spice_level),
+    source_name: a.source_name,
+    source_url: a.source_url,
+    receipt: a.receipt_connection || null,
+    jrc_take: a.jackye_take || null,
+    why_it_matters_applicants: a.why_it_matters?.[0] ?? null,
+    why_it_matters_employees: a.why_it_matters?.[1] ?? null,
+    why_it_matters_execs: null,
+    before_you_say_yes: null,
+    published_at: a.published_at ?? new Date().toISOString(),
+    status: "live",
+    created_at: a.created_at ?? new Date().toISOString(),
+    updated_at: a.created_at ?? new Date().toISOString(),
+  };
+}
 
 /* ── Category badge ── */
 function CategoryBadge({ category }: { category: string | null }) {
@@ -697,14 +734,14 @@ export default function Newsletter() {
                 </div>
               )}
 
-              {/* ── Lead Story ── */}
+              {/* ── Lead Story — Poster Card ── */}
               {withTakes.length > 0 && (
                 <div className="mb-10">
-                  <LeadStoryCard article={withTakes[0]} onPosterClick={setLightboxArticle} />
+                  <SignalStoryCard story={toSignalStory(withTakes[0])} />
                 </div>
               )}
 
-              {/* ── Jackye's Takes — editorial cards ── */}
+              {/* ── Jackye's Takes — poster cards ── */}
               {withTakes.length > 1 && (
                 <div className="mb-10">
                   <div className="flex items-center gap-3 mb-6">
@@ -715,7 +752,7 @@ export default function Newsletter() {
                   </div>
                   <div className="grid md:grid-cols-2 gap-5">
                     {withTakes.slice(1).map((article) => (
-                      <StoryCard key={article.id} article={article} onPosterClick={setLightboxArticle} />
+                      <SignalStoryCard key={article.id} story={toSignalStory(article)} />
                     ))}
                   </div>
                 </div>
