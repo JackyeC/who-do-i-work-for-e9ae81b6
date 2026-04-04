@@ -84,11 +84,17 @@ const Index = forwardRef<HTMLDivElement>((_, ref) => {
             Check who you&apos;re really working for in 30 seconds &mdash; the receipts on politics, enforcement, layoffs, and values, pulled from the public record so you&apos;re not guessing about your next move.
           </p>
 
-          {/* Hybrid Search / Upload */}
+          {/* Primary CTA */}
           <div
-            className="mt-9 w-full flex justify-center"
+            className="mt-9 w-full flex flex-col items-center gap-4"
             style={{ opacity: 0, animation: "heroFadeIn 0.5s ease 0.9s forwards" }}
           >
+            <button
+              onClick={() => navigate("/intelligence-check")}
+              className="bg-primary text-primary-foreground px-8 py-3.5 font-sans text-sm font-semibold hover:brightness-110 transition-all rounded-xl shadow-elevated"
+            >
+              Get a free employer intelligence check
+            </button>
             <HeroScanInput />
           </div>
 
