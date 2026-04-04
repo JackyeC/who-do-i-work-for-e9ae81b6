@@ -294,11 +294,22 @@ export default function MockInterview() {
             </Badge>
           </div>
           <p className="text-sm text-muted-foreground">
-            {mode === "setup" && "Practice with AI-generated questions tailored to your target role. Get real-time feedback on your answers."}
+            {mode === "setup" && "Practice with AI-generated questions tailored to your target role. Get feedback after you submit each answer."}
             {mode === "interview" && `Interviewing for ${role} at ${company} — Question ${currentIdx + 1} of ${questions.length}`}
             {mode === "review" && "Review your performance and identify areas for improvement."}
           </p>
         </motion.div>
+
+        {/* Anti-cheat practice banner */}
+        {mode === "interview" && (
+          <div className="rounded-lg border border-destructive/20 bg-destructive/5 px-4 py-3 flex items-start gap-3">
+            <Shield className="w-4 h-4 text-destructive shrink-0 mt-0.5" />
+            <div>
+              <p className="text-xs font-bold text-destructive tracking-wide uppercase font-mono">Practice Mode Only</p>
+              <p className="text-xs text-foreground/60 mt-0.5">Not designed for use during a live interview. Answer in your own words — this tool is here to help you practice, not perform for you.</p>
+            </div>
+          </div>
+        )}
 
         {/* ─── SETUP MODE ─── */}
         {mode === "setup" && (
