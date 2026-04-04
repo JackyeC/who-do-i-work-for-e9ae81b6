@@ -10,7 +10,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { cn } from "@/lib/utils";
 import {
   Target, DollarSign, Upload, Rocket, ChevronRight, ChevronLeft,
-  Crosshair, Shield, Zap, CheckCircle2, Plus, X, Briefcase
+  Shield, Zap, CheckCircle2, Plus, X, Briefcase
 } from "lucide-react";
 import { useAutoApplySettings } from "@/hooks/use-auto-apply";
 import { useAuth } from "@/contexts/AuthContext";
