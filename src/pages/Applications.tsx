@@ -29,11 +29,18 @@ function statusColor(status: string) {
 }
 
 export default function Applications() {
-  const { user } = useAuth();
+  const { user, loading: authLoading } = useAuth();
   const navigate = useNavigate();
   const { applications, isLoading, updateStatus } = useApplicationsTracker();
   const { data: dossiers } = useApplicationDossiers();
 
+  if (authLoading) {
+    return (
+      <div className="flex justify-center py-16">
+        <Loader2 className="w-5 h-5 animate-spin text-muted-foreground" />
+      </div>
+    );
+  }
   if (!user) return null;
 
   return (
