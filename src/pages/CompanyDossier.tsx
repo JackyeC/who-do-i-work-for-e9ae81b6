@@ -114,7 +114,8 @@ export default function CompanyDossier() {
         employee_count: company.employee_count ?? undefined,
       });
     }
-  }, [company, setActiveCompany]);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [company?.id]);
   const { data: eeocCases } = useEEOCByCompanyName(company?.name);
 
   const seoCompanyName = company?.name ?? "Company";
