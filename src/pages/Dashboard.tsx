@@ -1,4 +1,4 @@
-import { useState, useMemo } from "react";
+import { useState, useMemo, useEffect } from "react";
 import { useAuth } from "@/contexts/AuthContext";
 import { usePersona } from "@/hooks/use-persona";
 import { PersonaQuizBanner } from "@/components/PersonaQuizBanner";
@@ -83,8 +83,23 @@ export default function Dashboard() {
 
   const creditPurchase = searchParams.get("credit_purchase");
   const [showUpsell, setShowUpsell] = useState(creditPurchase === "success");
+  const [timedOut, setTimedOut] = useState(false);
 
-  if (loading || onboardingLoading) return null;
+  useEffect(() => {
+    if (loading || onboardingLoading) {
+      const timer = setTimeout(() => setTimedOut(true), 5000);
+      return () => clearTimeout(timer);
+    }
+  }, [loading, onboardingLoading]);
+
+  if (!timedOut && (loading || onboardingLoading)) {
+    return (
+      <div className="flex flex-col items-center justify-center flex-1 gap-4 p-8">
+        <div className="w-8 h-8 border-2 border-primary border-t-transparent rounded-full animate-spin" />
+        <p className="text-sm text-muted-foreground">Loading your dashboard…</p>
+      </div>
+    );
+  }
   if (!user) return <Navigate to="/login" replace />;
 
   const showOnboarding = onboardingCompleted === false;

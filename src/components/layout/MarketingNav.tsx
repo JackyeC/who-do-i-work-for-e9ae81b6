@@ -24,7 +24,7 @@ export function MarketingNav() {
 
   return (
     <>
-      <header className="sticky top-0 z-50 bg-background/95 backdrop-blur-sm border-b border-border/50 px-6 lg:px-16 py-4 w-full">
+      <header className="sticky top-0 z-50 bg-background border-b border-border px-6 lg:px-16 py-4 w-full">
         <div className="max-w-[1100px] mx-auto flex items-center justify-between">
           <Link to="/" className="flex items-center shrink-0">
             <LogoMark showWordmark iconSize={22} />

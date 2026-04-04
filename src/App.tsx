@@ -336,6 +336,7 @@ const App = () => (
                   <Route path="/job-board" element={<Navigate to="/jobs" replace />} />
                   <Route path="/offer-checks" element={<Navigate to="/my-offer-checks" replace />} />
                   <Route path="/outreach" element={<Navigate to="/dashboard?tab=outreach" replace />} />
+                  <Route path="/my-intel" element={<Navigate to="/dashboard" replace />} />
                   <Route path="/offer-clarity" element={<OfferClarity />} />
                   <Route path="/site-map" element={<SiteMap />} />
                   <Route path="/rivalries" element={<Rivalries />} />
