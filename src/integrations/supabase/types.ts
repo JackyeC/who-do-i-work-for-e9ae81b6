@@ -993,6 +993,8 @@ export type Database = {
       }
       briefing_signals: {
         Row: {
+          dna_profile: string | null
+          email: string | null
           id: string
           is_active: boolean
           is_pinned: boolean
@@ -1002,10 +1004,13 @@ export type Database = {
           source_bias: string
           source_name: string
           source_url: string | null
+          submitted_at: string | null
           summary: string | null
           title: string
         }
         Insert: {
+          dna_profile?: string | null
+          email?: string | null
           id?: string
           is_active?: boolean
           is_pinned?: boolean
@@ -1015,10 +1020,13 @@ export type Database = {
           source_bias?: string
           source_name: string
           source_url?: string | null
+          submitted_at?: string | null
           summary?: string | null
           title: string
         }
         Update: {
+          dna_profile?: string | null
+          email?: string | null
           id?: string
           is_active?: boolean
           is_pinned?: boolean
@@ -1028,6 +1036,7 @@ export type Database = {
           source_bias?: string
           source_name?: string
           source_url?: string | null
+          submitted_at?: string | null
           summary?: string | null
           title?: string
         }
