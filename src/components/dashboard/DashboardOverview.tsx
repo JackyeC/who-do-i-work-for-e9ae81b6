@@ -22,59 +22,15 @@ interface DashboardOverviewProps {
   onNavigate: (tab: string) => void;
 }
 
-/* ── Signal card data ── */
-const SIGNAL_CARDS = [
-  {
-    company: "Amazon",
-    slug: "amazon",
-    badge: "OSHA",
-    summary: "We found 6 OSHA citations across 4 fulfillment centers — ergonomic injuries and heat exposure. If you're interviewing here, ask about warehouse safety culture.",
-    amount: "$60K+ penalties",
-    severity: "HIGH" as const,
-    date: "Jan 2025",
-    source: "OSHA",
-  },
-  {
-    company: "Goldman Sachs",
-    slug: "goldman-sachs",
-    badge: "DOJ",
-    summary: "$6B+ in fines since 2010. Off-channel comms, 1MDB fraud, misleading investors. Their compliance record tells a story worth reading.",
-    amount: "$2.9B settlement",
-    severity: "CRITICAL" as const,
-    date: "2020",
-    source: "DOJ",
-  },
-  {
-    company: "JPMorgan Chase",
-    slug: "jpmorgan-chase",
-    badge: "SEC",
-    summary: "Spoofing precious-metals and Treasury markets — traders convicted. $920M in fines. Worth understanding before you walk in.",
-    amount: "$920M fine",
-    severity: "HIGH" as const,
-    date: "2020",
-    source: "SEC / CFTC",
-  },
-  {
-    company: "Starbucks",
-    slug: "starbucks",
-    badge: "NLRB",
-    summary: "$1B restructuring with 500+ store closures and 2,000 layoffs. Union disputes ongoing. Know what you're walking into.",
-    amount: "$1B restructuring",
-    severity: "MEDIUM" as const,
-    date: "2025",
-    source: "NLRB / Reuters",
-  },
-  {
-    company: "Google / Alphabet",
-    slug: "google-alphabet",
-    badge: "DOJ",
-    summary: "Found guilty of maintaining an illegal monopoly on search ads. Remedies pending — this could reshape the entire company.",
-    amount: "Monopoly ruling",
-    severity: "CRITICAL" as const,
-    date: "2024",
-    source: "DOJ Antitrust",
-  },
-];
+/* ── Map alert signal_category to severity ── */
+function alertSeverity(cat: string | null): string {
+  const high = ["enforcement", "regulatory", "lawsuit", "safety", "osha", "doj", "sec"];
+  const critical = ["criminal", "fraud", "monopoly"];
+  const c = (cat || "").toLowerCase();
+  if (critical.some((k) => c.includes(k))) return "CRITICAL";
+  if (high.some((k) => c.includes(k))) return "HIGH";
+  return "MEDIUM";
+}
 
 /* ── From Jackye content ── */
 const JACKYE_CONTENT = [
