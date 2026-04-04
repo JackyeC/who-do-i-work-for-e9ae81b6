@@ -5,6 +5,7 @@ import { HardInterviewQuestions } from "@/components/dossier/HardInterviewQuesti
 import { useParams, Link, useNavigate, useSearchParams } from "react-router-dom";
 import { useNDMode } from "@/contexts/NDModeContext";
 import { NDDossierView } from "@/components/nd/NDDossierView";
+import { NDModeToggle } from "@/components/nd/NDModeToggle";
 import { CompanyZeroState } from "@/components/CompanyZeroState";
 import { OfferIntelligencePanel } from "@/components/company/OfferIntelligencePanel";
 import { WarnFilingsCard } from "@/components/company/WarnFilingsCard";
