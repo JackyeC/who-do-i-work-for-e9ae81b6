@@ -69,10 +69,11 @@ export function FullyAuditedShowcase() {
               className="group flex flex-col items-center gap-2.5 p-4 rounded-xl border border-border/40 bg-card hover:border-[hsl(var(--civic-green))]/30 hover:shadow-[0_0_16px_hsl(var(--civic-green)/0.08)] transition-all"
             >
               {company.logo_url ? (
-                <CompanyLogo
-                  src={company.logo_url}
-                  alt={company.name}
-                  className="w-10 h-10 rounded-lg"
+              <CompanyLogo
+                  companyId={company.id}
+                  logoUrl={company.logo_url}
+                  name={company.name}
+                  size="sm"
                 />
               ) : (
                 <div className="w-10 h-10 rounded-lg bg-muted/60 flex items-center justify-center">
