@@ -60,6 +60,7 @@ interface EvaluationContextType {
   alignmentScore: number;
   riskScore: number;
   verdictText: string;
+  verdictReasons: string[];
   contextLabel: string;
 }
 
