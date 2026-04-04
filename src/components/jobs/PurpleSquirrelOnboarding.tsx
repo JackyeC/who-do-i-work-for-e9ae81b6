@@ -352,7 +352,7 @@ export function PurpleSquirrelOnboarding({ onComplete }: PurpleSquirrelOnboardin
                 </div>
               )}
 
-              {/* Step 2: Arsenal */}
+              {/* Step 2: Documents */}
               {step === 2 && (
                 <div className="space-y-6">
                   <p className="text-sm text-muted-foreground">
