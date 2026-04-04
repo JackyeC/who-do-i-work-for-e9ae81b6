@@ -1,11 +1,11 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Helmet } from "react-helmet-async";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
-import { Shield, ChevronDown, Lightbulb, MessageSquare, ArrowRight, CheckCircle, RotateCcw, Loader2 } from "lucide-react";
+import { Shield, ChevronDown, Lightbulb, MessageSquare, ArrowRight, CheckCircle, RotateCcw, Loader2, Volume2, VolumeX } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { motion } from "framer-motion";
 import { supabase } from "@/integrations/supabase/client";
@@ -13,6 +13,7 @@ import { useAuth } from "@/contexts/AuthContext";
 import { toast } from "sonner";
 import { Textarea } from "@/components/ui/textarea";
 import { Progress } from "@/components/ui/progress";
+import { speakRobot, stopSpeaking, VOICE_PRESETS, type VoicePreset } from "@/lib/robot-voice";
 
 interface NormalizedQuestion {
   id: string;
@@ -138,6 +139,17 @@ export default function MockInterview() {
   const [answer, setAnswer] = useState("");
   const [generating, setGenerating] = useState(false);
   const [evaluating, setEvaluating] = useState(false);
+  const [voicePreset, setVoicePreset] = useState<VoicePreset>("standard");
+  const [voiceEnabled, setVoiceEnabled] = useState(true);
+
+  // Auto-speak question when it changes
+  useEffect(() => {
+    if (mode !== "interview" || !voiceEnabled) return;
+    const q = questions[currentIdx];
+    const text = q?.question;
+    if (text) speakRobot(text, voicePreset);
+    return () => stopSpeaking();
+  }, [mode, currentIdx, questions, voicePreset, voiceEnabled]);
 
   const startInterview = async () => {
     if (!company.trim() || !role.trim()) {
@@ -430,6 +442,54 @@ export default function MockInterview() {
                 <Progress value={progressPct} className="h-2" />
               </div>
             </motion.div>
+
+            {/* Voice controls */}
+            <div className="flex items-center gap-3 flex-wrap">
+              <div className="flex items-center gap-1.5">
+                <button
+                  onClick={() => { setVoiceEnabled(!voiceEnabled); if (voiceEnabled) stopSpeaking(); }}
+                  className={cn(
+                    "p-1.5 rounded-md border transition-colors",
+                    voiceEnabled
+                      ? "border-primary/30 bg-primary/10 text-primary"
+                      : "border-border/40 bg-muted/30 text-muted-foreground"
+                  )}
+                  title={voiceEnabled ? "Mute interviewer" : "Unmute interviewer"}
+                >
+                  {voiceEnabled ? <Volume2 className="w-3.5 h-3.5" /> : <VolumeX className="w-3.5 h-3.5" />}
+                </button>
+                <span className="text-[10px] font-mono text-muted-foreground tracking-wider uppercase">
+                  AI Interviewer Voice:
+                </span>
+              </div>
+              <div className="flex items-center gap-1">
+                {(Object.entries(VOICE_PRESETS) as [VoicePreset, typeof VOICE_PRESETS[VoicePreset]][]).map(([key, preset]) => (
+                  <button
+                    key={key}
+                    onClick={() => setVoicePreset(key)}
+                    className={cn(
+                      "px-2.5 py-1 rounded-md text-[10px] font-mono tracking-wider border transition-all",
+                      voicePreset === key
+                        ? "bg-primary text-primary-foreground border-primary font-bold"
+                        : "bg-card text-muted-foreground border-border/40 hover:border-primary/40"
+                    )}
+                  >
+                    {preset.label}
+                  </button>
+                ))}
+              </div>
+              {voiceEnabled && (
+                <button
+                  onClick={() => {
+                    const text = questions[currentIdx]?.question;
+                    if (text) speakRobot(text, voicePreset);
+                  }}
+                  className="text-[10px] font-mono text-primary hover:text-primary/80 transition-colors"
+                >
+                  ▶ Replay
+                </button>
+              )}
+            </div>
 
             {/* Question card */}
             <motion.div
