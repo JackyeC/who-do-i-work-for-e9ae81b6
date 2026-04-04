@@ -9,9 +9,9 @@ import {
 const TOOLS = [
   {
     icon: FileSearch,
-    title: "The Receipts",
-    description: "Company-by-company investigations connecting corporate values claims to political spending, DEI actions, and labor impact. Every claim sourced. Every dollar traced.",
-    path: "/receipts",
+    title: "The Work Signal",
+    description: "Live employer intelligence feed — layoffs, DEI rollbacks, AI workplace moves, pay equity, and enforcement actions. With Jackye's Take on every story.",
+    path: "/newsletter",
     badge: "Free",
   },
   {

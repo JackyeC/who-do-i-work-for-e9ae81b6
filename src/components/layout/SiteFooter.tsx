@@ -26,7 +26,7 @@ export function SiteFooter() {
                 { label: "Home", to: "/" },
                 { label: "How It Works", to: "/about" },
                 { label: "Companies", to: "/browse" },
-                { label: "The Receipts", to: "/receipts" },
+                { label: "The Work Signal", to: "/newsletter" },
                 { label: "Values Profile", to: "/values" },
                 { label: "Offer Review", to: "/offer-check" },
                 { label: "Pricing", to: "/pricing" },

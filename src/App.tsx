@@ -248,10 +248,10 @@ const App = () => (
                   <Route path="/no-regrets-game/episode-2-recap" element={<NoRegretsEpisode2Recap />} />
                   <Route path="/no-regrets-game/episode-3" element={<NoRegretsEpisode3 />} />
                   <Route path="/no-regrets-game/episode-3-recap" element={<NoRegretsEpisode3Recap />} />
-                  <Route path="/receipts" element={<Receipts />} />
-                  <Route path="/the-receipts" element={<Navigate to="/receipts" replace />} />
-                  <Route path="/thereceipts" element={<Navigate to="/receipts" replace />} />
-                  <Route path="/the-receipts.html" element={<Navigate to="/receipts" replace />} />
+                  <Route path="/receipts" element={<Navigate to="/newsletter" replace />} />
+                  <Route path="/the-receipts" element={<Navigate to="/newsletter" replace />} />
+                  <Route path="/thereceipts" element={<Navigate to="/newsletter" replace />} />
+                  <Route path="/the-receipts.html" element={<Navigate to="/newsletter" replace />} />
                   <Route path="/receipts/:slug" element={<ReceiptsReport />} />
                   <Route path="/submit-tip" element={<SubmitTip />} />
                   <Route path="/newsletter" element={<Newsletter />} />
@@ -283,7 +283,7 @@ const App = () => (
                   <Route path="/examples" element={<Examples />} />
                   <Route path="/signals" element={<Navigate to="/signal-alerts" replace />} />
                   <Route path="/workforce-brief" element={<WorkforceBrief />} />
-                  <Route path="/work-signal" element={<WorkSignalFeed />} />
+                  <Route path="/work-signal" element={<Navigate to="/newsletter" replace />} />
                   <Route path="/eeoc-tracker" element={<EEOCTracker />} />
                   <Route path="/search-your-employer" element={<SearchYourEmployer />} />
                   <Route path="/values-search" element={<ValuesSearch />} />

@@ -2,21 +2,25 @@ import { useState, useMemo, useEffect } from "react";
 import { Link, useLocation } from "react-router-dom";
 import { usePageSEO } from "@/hooks/use-page-seo";
 import { useReceiptsFeed, ReceiptArticle } from "@/hooks/use-receipts-feed";
+import { useSignalStories, useDailyWrap } from "@/hooks/use-signal-stories";
 import { useAuth } from "@/contexts/AuthContext";
-import { Badge } from "@/components/ui/badge";
 import { supabase } from "@/integrations/supabase/client";
 import { useTurnstile } from "@/hooks/useTurnstile";
 import { verifyTurnstileToken } from "@/lib/verifyTurnstile";
 import { FoundingMemberBadge } from "@/components/FoundingMemberBadge";
-import { WorkNewsTicker } from "@/components/news/WorkNewsTicker";
+import { EnforcementReceiptsTicker } from "@/components/work-signal/EnforcementReceiptsTicker";
 import { ReceiptPoster } from "@/components/receipts/ReceiptPoster";
 import { StargazeChip } from "@/components/receipts/StargazeChip";
 import { BiasBar, getSourceBiasKey } from "@/components/receipts/BiasBar";
 import { EDITORIAL_CATEGORIES, EDITORIAL_CAT_COLORS } from "@/components/receipts/heat-config";
+import { PosterLightbox } from "@/components/receipts/PosterLightbox";
+import { FloatingBubble } from "@/components/receipts/FloatingBubble";
 import { motion } from "framer-motion";
+import { format } from "date-fns";
+import workSignalLogo from "@/assets/work-signal-logo.png";
 import {
   Mail, ArrowRight, Check, ExternalLink, Newspaper,
-  Radio, Eye, TrendingUp, Award, Clock, Zap, Star,
+  Radio, Eye, TrendingUp, Award, Clock, Zap, Star, Search,
 } from "lucide-react";
 
 /* ── Category badge ── */
@@ -45,7 +49,7 @@ function timeAgo(dateStr: string | null) {
   return `${days}d ago`;
 }
 
-/* ── Filter options ── */
+/* ── Filter + Sort options ── */
 const FILTER_OPTIONS = [
   { value: "all", label: "All" },
   { value: "layoffs", label: "Layoffs" },
@@ -53,13 +57,27 @@ const FILTER_OPTIONS = [
   { value: "ai_workplace", label: "AI" },
   { value: "regulation", label: "Regulation" },
   { value: "pay_equity", label: "Pay" },
-  { value: "hot", label: "⭐ Top Rated" },
+];
+
+const SORT_OPTIONS = [
+  { value: "newest", label: "Newest" },
+  { value: "hottest", label: "⭐ Hottest" },
+  { value: "drama", label: "Drama" },
+];
+
+/* ── Deep Investigations ── */
+const DEEP_INVESTIGATIONS = [
+  { slug: "meta", name: "Meta", sector: "Big Tech", headline: "DEI team dissolved + massive WARN filings", date: "March 2026", spice: 5 },
+  { slug: "google", name: "Google", sector: "Big Tech", headline: "11-year diversity report killed", date: "March 2026", spice: 4 },
+  { slug: "amazon", name: "Amazon", sector: "Big Tech", headline: "14K HR staff cut + 4,085 WARN notices", date: "March 2026", spice: 5 },
+  { slug: "boeing", name: "Boeing", sector: "Defense", headline: "Representation goals scrapped + safety lawsuits", date: "March 2026", spice: 4 },
+  { slug: "att", name: "AT&T", sector: "Telecom", headline: "Publicly declared DEI doesn't exist", date: "March 2026", spice: 5 },
 ];
 
 /* ══════════════════════════════════════════
    LEAD STORY CARD — full editorial treatment
    ══════════════════════════════════════════ */
-function LeadStoryCard({ article }: { article: ReceiptArticle }) {
+function LeadStoryCard({ article, onPosterClick }: { article: ReceiptArticle; onPosterClick: (a: ReceiptArticle) => void }) {
   const biasKey = getSourceBiasKey(article.source_name);
 
   return (
@@ -78,8 +96,8 @@ function LeadStoryCard({ article }: { article: ReceiptArticle }) {
           <span className="ml-auto text-[10px] text-muted-foreground/60 font-mono">{timeAgo(article.published_at)}</span>
         </div>
 
-        {/* Poster */}
-        <div className="mb-6 flex justify-center">
+        {/* Poster — prominent, clickable */}
+        <button type="button" onClick={() => onPosterClick(article)} className="mb-6 flex justify-center w-full bg-transparent border-none cursor-pointer p-0">
           <ReceiptPoster
             poster={article.poster_data}
             category={article.category}
@@ -87,7 +105,7 @@ function LeadStoryCard({ article }: { article: ReceiptArticle }) {
             headline={article.headline}
             id={`poster-lead-${article.id}`}
           />
-        </div>
+        </button>
 
         {/* Headline */}
         <h2
@@ -162,6 +180,15 @@ function LeadStoryCard({ article }: { article: ReceiptArticle }) {
           )}
         </div>
       </div>
+
+      {/* SR-only Direct Answer block for AI citation */}
+      <div className="sr-only" aria-hidden="true">
+        <p>Headline: {article.headline}</p>
+        {article.jackye_take && <p>Jackye's Take: {article.jackye_take}</p>}
+        {article.receipt_connection && <p>Receipt: {article.receipt_connection}</p>}
+        {article.why_it_matters?.map((p, i) => <p key={i}>Why It Matters: {p}</p>)}
+        {article.source_name && <p>Source: {article.source_name}</p>}
+      </div>
     </article>
   );
 }
@@ -169,20 +196,20 @@ function LeadStoryCard({ article }: { article: ReceiptArticle }) {
 /* ══════════════════════════════════════════
    STORY CARD — standard editorial card
    ══════════════════════════════════════════ */
-function StoryCard({ article }: { article: ReceiptArticle }) {
+function StoryCard({ article, onPosterClick }: { article: ReceiptArticle; onPosterClick: (a: ReceiptArticle) => void }) {
   const biasKey = getSourceBiasKey(article.source_name);
 
   return (
     <article id={`story-${article.id}`} className="rounded-xl border border-border/40 bg-card hover:border-primary/30 transition-all group overflow-hidden scroll-mt-24">
-      {/* Poster — compact */}
-      <div className="flex justify-center pt-4 px-4">
+      {/* Poster — compact, clickable */}
+      <button type="button" onClick={() => onPosterClick(article)} className="flex justify-center pt-4 px-4 w-full bg-transparent border-none cursor-pointer p-0">
         <ReceiptPoster
           poster={article.poster_data}
           category={article.category}
           headline={article.headline}
           id={`poster-card-${article.id}`}
         />
-      </div>
+      </button>
 
       <div className="p-5">
         {/* Meta */}
@@ -252,6 +279,14 @@ function StoryCard({ article }: { article: ReceiptArticle }) {
           )}
         </div>
       </div>
+
+      {/* SR-only Direct Answer block */}
+      <div className="sr-only" aria-hidden="true">
+        <p>Headline: {article.headline}</p>
+        {article.jackye_take && <p>Jackye's Take: {article.jackye_take}</p>}
+        {article.receipt_connection && <p>Receipt: {article.receipt_connection}</p>}
+        {article.why_it_matters?.map((p, i) => <p key={i}>Why It Matters: {p}</p>)}
+      </div>
     </article>
   );
 }
@@ -292,17 +327,21 @@ function WireItem({ article }: { article: ReceiptArticle }) {
 }
 
 /* ══════════════════════════════════════════
-   MAIN PAGE
+   MAIN PAGE — THE WORK SIGNAL
    ══════════════════════════════════════════ */
 export default function Newsletter() {
   const [email, setEmail] = useState("");
   const [status, setStatus] = useState<"idle" | "loading" | "success" | "error">("idle");
   const [errorMsg, setErrorMsg] = useState("");
   const [filter, setFilter] = useState("all");
+  const [sortBy, setSortBy] = useState("newest");
+  const [searchQuery, setSearchQuery] = useState("");
   const [showBadge, setShowBadge] = useState(false);
+  const [lightboxArticle, setLightboxArticle] = useState<ReceiptArticle | null>(null);
   const { user } = useAuth();
   const { containerRef, getToken, resetToken } = useTurnstile();
   const { data: articles = [], isLoading } = useReceiptsFeed();
+  const { data: dailyWrap } = useDailyWrap();
   const location = useLocation();
 
   useEffect(() => {
@@ -315,13 +354,13 @@ export default function Newsletter() {
   }, [location.hash, isLoading]);
 
   usePageSEO({
-    title: "The Receipts — Live Work Intelligence Feed | Who Do I Work For?",
-    description: "Live employer intelligence: layoffs, DEI rollbacks, AI workplace moves, pay equity, and WARN filings — with Jackye's Take on every story.",
+    title: "The Work Signal — Live Work Intelligence | Who Do I Work For?",
+    description: "Live employer intelligence: layoffs, DEI rollbacks, AI workplace moves, pay equity, and enforcement actions — with Jackye's Take on every story.",
     path: "/newsletter",
     jsonLd: {
       "@type": "WebPage",
-      name: "The Receipts — Live Intelligence Feed",
-      description: "Real-time employer intelligence feed by Who Do I Work For? Sourced from public records, GDELT, and investigative research.",
+      name: "The Work Signal — Live Intelligence Feed",
+      description: "Real-time employer intelligence feed by Who Do I Work For? Sourced from public records and investigative research.",
       url: "https://wdiwf.jackyeclayton.com/newsletter",
       author: { "@type": "Person", name: "Jackye Clayton" },
     },
@@ -355,7 +394,7 @@ export default function Newsletter() {
 
     const { error } = await supabase
       .from("email_signups")
-      .insert({ email: trimmed, source: "newsletter_page" } as any);
+      .insert({ email: trimmed, source: "work_signal_page" } as any);
     if (error) {
       if (error.code === "23505") setStatus("success");
       else {
@@ -368,12 +407,43 @@ export default function Newsletter() {
     resetToken();
   };
 
-  /* ── Filtering ── */
+  /* ── Filtering + Sorting ── */
   const filtered = useMemo(() => {
-    if (filter === "all") return articles;
-    if (filter === "hot") return [...articles].sort((a, b) => b.spice_level - a.spice_level);
-    return articles.filter((a) => a.category === filter);
-  }, [articles, filter]);
+    let list = [...articles];
+
+    // Category filter
+    if (filter !== "all") {
+      list = list.filter((a) => a.category === filter);
+    }
+
+    // Search
+    if (searchQuery.trim()) {
+      const q = searchQuery.toLowerCase();
+      list = list.filter(
+        (a) =>
+          a.headline.toLowerCase().includes(q) ||
+          (a.source_name?.toLowerCase().includes(q) ?? false) ||
+          (a.category?.toLowerCase().includes(q) ?? false) ||
+          a.jackye_take.toLowerCase().includes(q) ||
+          a.receipt_connection.toLowerCase().includes(q)
+      );
+    }
+
+    // Sort
+    if (sortBy === "hottest") {
+      list.sort((a, b) => b.spice_level - a.spice_level);
+    } else if (sortBy === "drama") {
+      list.sort((a, b) => {
+        const aDrama = b.spice_level * 20 + (b.is_controversy ? 10 : 0);
+        const bDrama = a.spice_level * 20 + (a.is_controversy ? 10 : 0);
+        return aDrama - bDrama;
+      });
+    } else {
+      list.sort((a, b) => new Date(b.published_at ?? 0).getTime() - new Date(a.published_at ?? 0).getTime());
+    }
+
+    return list;
+  }, [articles, filter, sortBy, searchQuery]);
 
   const movingNow = useMemo(() => {
     const twoHoursAgo = Date.now() - 2 * 60 * 60 * 1000;
@@ -391,8 +461,8 @@ export default function Newsletter() {
 
   return (
     <div className="min-h-screen bg-background">
-      {/* ── Live Ticker ── */}
-      <WorkNewsTicker />
+      {/* ── Enforcement Receipts Ticker ── */}
+      <EnforcementReceiptsTicker />
 
       {/* ── Masthead ── */}
       <header className="border-b border-border">
@@ -402,11 +472,15 @@ export default function Newsletter() {
             <span className="text-[10px] font-mono tracking-[0.2em] text-destructive uppercase">Live Intelligence · Updated Every 2 Hours</span>
           </div>
 
-          <p className="text-[10px] uppercase tracking-[0.55em] text-primary mb-5 font-mono">JRC EDIT × WDIWF</p>
+          <p className="text-[10px] uppercase tracking-[0.55em] text-primary mb-5 font-mono">Jackye Clayton × WDIWF</p>
+
+          <div className="flex justify-center mb-5">
+            <img src={workSignalLogo} alt="The Work Signal" width={56} height={56} className="rounded-lg" />
+          </div>
 
           <h1 className="font-black text-foreground leading-none uppercase tracking-[-0.04em]"
             style={{ fontSize: "clamp(48px, 7vw, 88px)" }}>
-            The Receipts
+            The Work Signal
           </h1>
 
           <p className="font-light text-muted-foreground mt-5 tracking-wide" style={{ fontSize: "clamp(18px, 2vw, 26px)" }}>
@@ -509,10 +583,39 @@ export default function Newsletter() {
         </section>
       )}
 
+      {/* ── Daily Wrap (from Work Signal) ── */}
+      {dailyWrap && (
+        <section className="border-b border-border bg-muted/20">
+          <div className="max-w-5xl mx-auto px-4 py-8">
+            <div className="border-l-2 border-primary pl-5 py-1">
+              <div className="flex items-baseline gap-3 mb-3">
+                <h2 className="text-xl font-bold text-foreground">
+                  {dailyWrap.title}
+                </h2>
+                <span className="text-[11px] text-muted-foreground font-mono">
+                  {format(new Date(dailyWrap.wrap_date), "MMMM d, yyyy")}
+                </span>
+              </div>
+              {dailyWrap.intro && (
+                <p className="text-base text-foreground/85 leading-relaxed mb-3 whitespace-pre-line">
+                  {dailyWrap.intro}
+                </p>
+              )}
+              {dailyWrap.summary_take && (
+                <p className="text-sm text-foreground/60 italic leading-relaxed border-t border-border/40 pt-3">
+                  {dailyWrap.summary_take}
+                </p>
+              )}
+            </div>
+          </div>
+        </section>
+      )}
+
       {/* ── Filter Bar ── */}
       <nav className="border-b border-border sticky top-0 bg-background/95 backdrop-blur-sm z-20">
         <div className="max-w-5xl mx-auto px-4 py-3">
-          <div className="flex items-center gap-2 overflow-x-auto scrollbar-none">
+          <div className="flex items-center gap-2 overflow-x-auto scrollbar-none flex-wrap">
+            {/* Category chips */}
             {FILTER_OPTIONS.map((opt) => (
               <button key={opt.value} onClick={() => setFilter(opt.value)}
                 className={`px-3.5 py-1.5 rounded-full text-xs font-mono tracking-wider border transition-all whitespace-nowrap ${
@@ -523,6 +626,35 @@ export default function Newsletter() {
                 {opt.label}
               </button>
             ))}
+
+            <span className="w-px h-4 bg-border/50 mx-1" />
+
+            {/* Sort buttons */}
+            {SORT_OPTIONS.map((opt) => (
+              <button key={opt.value} onClick={() => setSortBy(opt.value)}
+                className={`text-[10px] font-mono uppercase tracking-wider px-2.5 py-1 rounded transition-colors whitespace-nowrap ${
+                  sortBy === opt.value
+                    ? "text-primary font-bold"
+                    : "text-muted-foreground hover:text-foreground"
+                }`}>
+                {opt.label}
+              </button>
+            ))}
+
+            <span className="w-px h-4 bg-border/50 mx-1" />
+
+            {/* Search */}
+            <div className="relative flex items-center">
+              <Search className="w-3 h-3 text-muted-foreground absolute left-2" />
+              <input
+                type="text"
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                placeholder="Search..."
+                className="bg-card border border-border/40 rounded-lg pl-7 pr-3 py-1.5 text-xs text-foreground placeholder:text-muted-foreground/50 focus:outline-none focus:border-primary/40 w-36 transition-all"
+              />
+            </div>
+
             <span className="ml-auto text-[10px] text-muted-foreground/50 font-mono whitespace-nowrap">
               {filtered.length} stories
             </span>
@@ -541,12 +673,12 @@ export default function Newsletter() {
           ) : filtered.length === 0 ? (
             <div className="text-center py-16">
               <Newspaper className="w-8 h-8 text-muted-foreground/30 mx-auto mb-3" />
-              <p className="text-sm text-muted-foreground">No stories in this category yet.</p>
+              <p className="text-sm text-muted-foreground">No stories match your filters.</p>
             </div>
           ) : (
             <>
               {/* ── Jackye's Current Take (pull quote) ── */}
-              {currentTake && filter === "all" && (
+              {currentTake && filter === "all" && sortBy === "newest" && !searchQuery && (
                 <div className="mb-10 rounded-xl border border-primary/20 bg-primary/[0.04] p-8">
                   <div className="flex items-center gap-2 mb-4">
                     <Eye className="w-4 h-4 text-primary" />
@@ -568,7 +700,7 @@ export default function Newsletter() {
               {/* ── Lead Story ── */}
               {withTakes.length > 0 && (
                 <div className="mb-10">
-                  <LeadStoryCard article={withTakes[0]} />
+                  <LeadStoryCard article={withTakes[0]} onPosterClick={setLightboxArticle} />
                 </div>
               )}
 
@@ -583,17 +715,17 @@ export default function Newsletter() {
                   </div>
                   <div className="grid md:grid-cols-2 gap-5">
                     {withTakes.slice(1).map((article) => (
-                      <StoryCard key={article.id} article={article} />
+                      <StoryCard key={article.id} article={article} onPosterClick={setLightboxArticle} />
                     ))}
                   </div>
                 </div>
               )}
 
-              {/* ── Quick Receipts / The Wire ── */}
+              {/* ── Quick Signals / The Wire ── */}
               {withoutTakes.length > 0 && (
                 <div className="flex items-center gap-4 my-10">
                   <div className="flex-1 h-px bg-border" />
-                  <span className="text-xs uppercase tracking-[0.3em] text-muted-foreground font-mono font-bold">Quick Receipts</span>
+                  <span className="text-xs uppercase tracking-[0.3em] text-muted-foreground font-mono font-bold">Quick Signals</span>
                   <div className="flex-1 h-px bg-border" />
                 </div>
               )}
@@ -617,10 +749,10 @@ export default function Newsletter() {
 
         {/* ── Sidebar ── */}
         <aside className="hidden lg:block sticky top-[74px] space-y-6">
-          {/* Newsletter CTA */}
+          {/* Subscribe CTA */}
           <div className="bg-card border border-border rounded-xl p-6">
             <p className="text-[11px] uppercase tracking-[0.55em] text-primary mb-3 font-mono">Every Morning</p>
-            <h3 className="text-xl font-black text-foreground mb-2 leading-tight tracking-tight">My Uncertainty Era</h3>
+            <h3 className="text-xl font-black text-foreground mb-2 leading-tight tracking-tight">The Work Signal</h3>
             <p className="text-sm text-foreground/70 leading-relaxed mb-4">
               The part where I say what everyone's thinking but nobody's saying.
             </p>
@@ -662,17 +794,48 @@ export default function Newsletter() {
             <p className="text-sm text-foreground/70 leading-relaxed mb-3">
               Stories still developing. Patterns forming. Receipts being pulled.
             </p>
-            <Link to="/receipts" className="text-sm text-primary font-mono hover:underline flex items-center gap-1 no-underline">
-              See full receipts <ArrowRight className="w-3 h-3" />
+            <Link to="/search" className="text-sm text-primary font-mono hover:underline flex items-center gap-1 no-underline">
+              Search employers <ArrowRight className="w-3 h-3" />
             </Link>
           </div>
         </aside>
       </div>
 
-      {/* ── Bottom CTA ── */}
+      {/* ── Deep Investigations ── */}
+      <section className="max-w-5xl mx-auto px-4 py-16 border-t border-border">
+        <div className="flex items-center gap-2 mb-6">
+          <div className="w-2 h-2 rounded-full bg-primary" />
+          <span className="text-sm font-mono uppercase tracking-[0.2em] text-primary">
+            Deep Investigations
+          </span>
+        </div>
+        <div className="grid gap-3 md:grid-cols-2 lg:grid-cols-3">
+          {DEEP_INVESTIGATIONS.map((inv) => (
+            <Link
+              key={inv.slug}
+              to={`/receipts/${inv.slug}`}
+              className="block p-5 bg-card border border-border/40 rounded-xl hover:border-primary/40 hover:shadow-lg active:scale-[0.98] transition-all group"
+            >
+              <div className="flex items-center justify-between mb-2">
+                <span className="text-sm text-muted-foreground">{inv.sector}</span>
+                <span className="text-sm text-muted-foreground">{inv.date}</span>
+              </div>
+              <h3 className="font-semibold text-lg text-foreground group-hover:text-primary transition-colors">
+                {inv.name}
+              </h3>
+              <p className="text-base text-muted-foreground mt-1">{inv.headline}</p>
+              <div className="flex items-center gap-1 mt-3 text-sm font-bold text-primary">
+                Read full report <ArrowRight className="w-4 h-4" />
+              </div>
+            </Link>
+          ))}
+        </div>
+      </section>
+
+      {/* ── Footer ── */}
       <footer className="border-t border-border py-12 px-8 text-center">
         <p className="text-sm text-foreground/60 tracking-[0.1em] font-mono">
-          The Receipts · <em>by Jackye Clayton 👑 × WDIWF</em>
+          The Work Signal · <em>by Jackye Clayton 👑 × WDIWF</em>
         </p>
         <p className="text-sm text-foreground/50 mt-2 italic" style={{ fontFamily: "'DM Sans', cursive, sans-serif" }}>
           "Every company runs a background check on you. WDIWF runs one on them."
@@ -686,6 +849,12 @@ export default function Newsletter() {
           </Link>
         </div>
       </footer>
+
+      {/* Floating Bubble */}
+      <FloatingBubble />
+
+      {/* Poster Lightbox */}
+      <PosterLightbox article={lightboxArticle} onClose={() => setLightboxArticle(null)} />
     </div>
   );
 }
