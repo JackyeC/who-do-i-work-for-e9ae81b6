@@ -14,6 +14,83 @@ import { toast } from "sonner";
 import { Textarea } from "@/components/ui/textarea";
 import { Progress } from "@/components/ui/progress";
 
+interface NormalizedQuestion {
+  id: string;
+  question: string;
+  category: string;
+  tip: string;
+  userAnswer: string;
+  feedback: string | null;
+  score: number | null;
+  strengths: string | null;
+  improvements: string | null;
+}
+
+const FALLBACK_QUESTIONS = [
+  "Tell me about your experience and why you want this role.",
+  "Describe a time you helped a customer solve a problem.",
+  "How would you handle competing priorities during a busy shift?",
+];
+
+/** Normalize interview data from any shape the AI might return */
+function normalizeInterviewData(raw: any): NormalizedQuestion[] {
+  if (!raw) return [];
+
+  // Find the questions array from various possible shapes
+  let sourceQuestions: any[] = [];
+  if (Array.isArray(raw?.questions)) {
+    sourceQuestions = raw.questions;
+  } else if (Array.isArray(raw?.interviewQuestions)) {
+    sourceQuestions = raw.interviewQuestions;
+  } else if (Array.isArray(raw?.data?.questions)) {
+    sourceQuestions = raw.data.questions;
+  }
+
+  const normalized = sourceQuestions
+    .map((item: any, index: number) => {
+      let questionText = "";
+      if (typeof item === "string") {
+        questionText = item;
+      } else if (item?.question) {
+        questionText = item.question;
+      } else if (item?.prompt) {
+        questionText = item.prompt;
+      } else if (item?.text) {
+        questionText = item.text;
+      }
+
+      return {
+        id: `q-${index + 1}`,
+        question: questionText.trim(),
+        category: (typeof item === "object" && item?.category) || `Question ${index + 1}`,
+        tip: (typeof item === "object" && item?.tip) || "",
+        userAnswer: "",
+        feedback: null,
+        score: null,
+        strengths: null,
+        improvements: null,
+      } as NormalizedQuestion;
+    })
+    .filter((q) => q.question.length > 0);
+
+  // Inject fallback questions if none were valid
+  if (normalized.length === 0) {
+    return FALLBACK_QUESTIONS.map((text, i) => ({
+      id: `fallback-${i + 1}`,
+      question: text,
+      category: "General",
+      tip: "",
+      userAnswer: "",
+      feedback: null,
+      score: null,
+      strengths: null,
+      improvements: null,
+    }));
+  }
+
+  return normalized;
+}
+
 interface PrepQuestion {
   question: string;
   category: string;
