@@ -31,23 +31,44 @@ const DECISION_IMPACTS: Record<string, string> = {
   environmental: 'Environmental records may reflect the company\'s operational impact and regulatory compliance posture.',
   legal: 'Court records may indicate ongoing legal exposure or patterns in corporate conduct.',
   political: 'Political spending records may reflect leadership priorities, affiliations, or lobbying strategies.',
+  ai_hiring: 'AI-driven hiring tools may affect transparency, fairness, and bias in recruitment processes.',
+  ai_hr: 'Use of AI in HR operations may impact employee monitoring, evaluation, and workplace autonomy.',
+  news: 'Media coverage may reflect public perception, controversies, or notable corporate developments.',
+  signal_scan: 'This signal was detected through automated public record scanning and may reflect corporate behavior patterns.',
 };
 
+async function fetchAll(supabase: any, table: string, companyId: string, selectCols = '*') {
+  // Paginate to handle >1000 rows per company
+  const rows: any[] = [];
+  let from = 0;
+  const pageSize = 1000;
+  while (true) {
+    const { data, error } = await supabase
+      .from(table)
+      .select(selectCols)
+      .eq('company_id', companyId)
+      .range(from, from + pageSize - 1);
+    if (error || !data || data.length === 0) break;
+    rows.push(...data);
+    if (data.length < pageSize) break;
+    from += pageSize;
+  }
+  return rows;
+}
+
 const SIGNAL_SOURCES: SignalSource[] = [
+  // 1. WARN Notices
   {
     table: 'company_warn_notices',
     claimType: 'layoff',
     sourceLabel: 'WARN',
-    query: async (sb, companyId) => {
-      const { data } = await sb.from('company_warn_notices').select('*').eq('company_id', companyId);
-      return data || [];
-    },
-    toClaim: (row, companyName) => {
+    query: (sb, cid) => fetchAll(sb, 'company_warn_notices', cid),
+    toClaim: (row, name) => {
       const date = row.notice_date || row.effective_date;
       const dateStr = date ? new Date(date).toLocaleDateString('en-US', { month: 'long', year: 'numeric' }) : 'date unknown';
       const count = row.employees_affected ? ` affecting ${row.employees_affected} employees` : '';
       return {
-        claim_text: `${companyName} conducted layoffs${count} (WARN filing, ${dateStr}).`,
+        claim_text: `${name} conducted layoffs${count} (WARN filing, ${dateStr}).`,
         source_url: row.source_url || null,
         evidence_type: 'direct_source',
         confidence_score: 0.95,
@@ -56,15 +77,16 @@ const SIGNAL_SOURCES: SignalSource[] = [
       };
     },
   },
+  // 2. Accountability Signals
   {
     table: 'accountability_signals',
     claimType: 'accountability',
     sourceLabel: 'Public Record',
-    query: async (sb, companyId) => {
-      const { data } = await sb.from('accountability_signals').select('*').eq('company_id', companyId).eq('is_verified', true);
+    query: async (sb, cid) => {
+      const { data } = await sb.from('accountability_signals').select('*').eq('company_id', cid).eq('is_verified', true);
       return data || [];
     },
-    toClaim: (row, _companyName) => {
+    toClaim: (row, _name) => {
       const evidenceMap: Record<string, 'direct_source' | 'multi_source' | 'inferred'> = {
         government_record: 'direct_source',
         news_report: 'multi_source',
@@ -80,18 +102,16 @@ const SIGNAL_SOURCES: SignalSource[] = [
       };
     },
   },
+  // 3. Civil Rights
   {
     table: 'civil_rights_signals',
     claimType: 'civil_rights',
     sourceLabel: 'EEOC / Civil Rights',
-    query: async (sb, companyId) => {
-      const { data } = await sb.from('civil_rights_signals').select('*').eq('company_id', companyId);
-      return data || [];
-    },
-    toClaim: (row, companyName) => {
+    query: (sb, cid) => fetchAll(sb, 'civil_rights_signals', cid),
+    toClaim: (row, name) => {
       const amount = row.settlement_amount ? ` ($${Number(row.settlement_amount).toLocaleString()} settlement)` : '';
       return {
-        claim_text: `${companyName} has a ${row.signal_type || 'civil rights'} record${amount} via ${row.source_name || 'public records'}.`,
+        claim_text: `${name} has a ${row.signal_type || 'civil rights'} record${amount} via ${row.source_name || 'public records'}.`,
         source_url: row.source_url || null,
         evidence_type: 'direct_source',
         confidence_score: 0.90,
@@ -100,16 +120,14 @@ const SIGNAL_SOURCES: SignalSource[] = [
       };
     },
   },
+  // 4. Climate / Environmental
   {
     table: 'climate_signals',
     claimType: 'environmental',
     sourceLabel: 'EPA / Climate',
-    query: async (sb, companyId) => {
-      const { data } = await sb.from('climate_signals').select('*').eq('company_id', companyId);
-      return data || [];
-    },
-    toClaim: (row, companyName) => ({
-      claim_text: row.description || `${companyName} has an environmental signal: ${row.signal_type}.`,
+    query: (sb, cid) => fetchAll(sb, 'climate_signals', cid),
+    toClaim: (row, name) => ({
+      claim_text: row.description || `${name} has an environmental signal: ${row.signal_type}.`,
       source_url: row.source_url || null,
       evidence_type: 'direct_source',
       confidence_score: 0.80,
@@ -117,15 +135,13 @@ const SIGNAL_SOURCES: SignalSource[] = [
       decision_impact: DECISION_IMPACTS.environmental,
     }),
   },
+  // 5. Court Cases
   {
     table: 'company_court_cases',
     claimType: 'legal',
     sourceLabel: 'Court Record',
-    query: async (sb, companyId) => {
-      const { data } = await sb.from('company_court_cases').select('*').eq('company_id', companyId);
-      return data || [];
-    },
-    toClaim: (row, _companyName) => {
+    query: (sb, cid) => fetchAll(sb, 'company_court_cases', cid),
+    toClaim: (row, _name) => {
       const damages = row.damages_amount ? ` ($${Number(row.damages_amount).toLocaleString()})` : '';
       return {
         claim_text: `${row.case_name}${damages} — ${row.nature_of_suit || row.case_type || 'civil case'}.`,
@@ -137,12 +153,92 @@ const SIGNAL_SOURCES: SignalSource[] = [
       };
     },
   },
+  // 6. AI Hiring Signals
+  {
+    table: 'ai_hiring_signals',
+    claimType: 'ai_hiring',
+    sourceLabel: 'AI Hiring Audit',
+    query: (sb, cid) => fetchAll(sb, 'ai_hiring_signals', cid),
+    toClaim: (row, name) => {
+      const vendor = row.vendor_name ? ` (vendor: ${row.vendor_name})` : '';
+      return {
+        claim_text: `${name} uses AI-driven hiring tools in ${row.category || 'recruitment'}${vendor}.`,
+        source_url: row.evidence_url || row.bias_audit_link || null,
+        evidence_type: row.bias_audit_status === 'completed' ? 'direct_source' : 'inferred',
+        confidence_score: row.confidence_score || 0.70,
+        event_date: row.last_scanned || null,
+        decision_impact: DECISION_IMPACTS.ai_hiring,
+      };
+    },
+  },
+  // 7. AI HR Signals
+  {
+    table: 'ai_hr_signals',
+    claimType: 'ai_hr',
+    sourceLabel: 'AI HR Detection',
+    query: (sb, cid) => fetchAll(sb, 'ai_hr_signals', cid),
+    toClaim: (row, name) => {
+      const tool = row.tool_name ? ` (${row.tool_name})` : '';
+      return {
+        claim_text: `${name} deploys AI in HR operations: ${row.signal_type}${tool}.`,
+        source_url: row.source_url || null,
+        evidence_type: row.detection_method === 'direct_observation' ? 'direct_source' : 'inferred',
+        confidence_score: row.confidence === 'high' ? 0.90 : row.confidence === 'medium' ? 0.70 : 0.50,
+        event_date: row.date_detected || null,
+        decision_impact: DECISION_IMPACTS.ai_hr,
+      };
+    },
+  },
+  // 8. News Signals
+  {
+    table: 'company_news_signals',
+    claimType: 'news',
+    sourceLabel: 'News / Media',
+    query: (sb, cid) => fetchAll(sb, 'company_news_signals', cid),
+    toClaim: (row, _name) => ({
+      claim_text: row.headline || 'News coverage detected.',
+      source_url: row.source_url || null,
+      evidence_type: 'multi_source',
+      confidence_score: row.is_controversy ? 0.85 : 0.65,
+      event_date: row.published_at || null,
+      decision_impact: DECISION_IMPACTS.news,
+    }),
+  },
+  // 9. Signal Scans (values, governance, etc.)
+  {
+    table: 'company_signal_scans',
+    claimType: 'signal_scan',
+    sourceLabel: 'Signal Scan',
+    query: (sb, cid) => fetchAll(sb, 'company_signal_scans', cid),
+    toClaim: (row, name) => ({
+      claim_text: row.summary || `${name}: ${row.signal_type} signal detected (${row.signal_category}).`,
+      source_url: row.source_url || null,
+      evidence_type: row.confidence_level === 'high' ? 'direct_source' : row.confidence_level === 'medium' ? 'multi_source' : 'inferred',
+      confidence_score: row.confidence_level === 'high' ? 0.90 : row.confidence_level === 'medium' ? 0.70 : 0.50,
+      event_date: row.scan_timestamp || null,
+      decision_impact: DECISION_IMPACTS.signal_scan,
+    }),
+  },
+  // 10. FEC Candidates / Political Contributions
+  {
+    table: 'company_candidates',
+    claimType: 'political',
+    sourceLabel: 'FEC',
+    query: (sb, cid) => fetchAll(sb, 'company_candidates', cid),
+    toClaim: (row, name) => ({
+      claim_text: `${name} or its PAC contributed $${Number(row.amount || 0).toLocaleString()} to ${row.name} (${row.party}-${row.state}).`,
+      source_url: `https://www.fec.gov/data/receipts/?contributor_name=${encodeURIComponent(name)}`,
+      evidence_type: 'direct_source',
+      confidence_score: 0.90,
+      event_date: null,
+      decision_impact: DECISION_IMPACTS.political,
+    }),
+  },
 ];
 
 async function generateClaimsForCompany(supabase: any, companyId: string, companyName: string) {
   let totalGenerated = 0;
   let totalSkipped = 0;
-  const errors: string[] = [];
 
   for (const source of SIGNAL_SOURCES) {
     try {
@@ -150,13 +246,13 @@ async function generateClaimsForCompany(supabase: any, companyId: string, compan
       for (const signal of signals) {
         const claim = source.toClaim(signal, companyName);
 
-        // ATTRIBUTION ENFORCEMENT: discard if missing source
+        // ATTRIBUTION ENFORCEMENT
         if (!claim.source_url) {
           totalSkipped++;
           continue;
         }
 
-        // Check for existing claim from this signal (partial unique index)
+        // Deduplicate
         const { data: existing } = await supabase
           .from('company_claims')
           .select('id')
@@ -187,18 +283,17 @@ async function generateClaimsForCompany(supabase: any, companyId: string, compan
         });
 
         if (insertErr) {
-          console.warn(`[generate-claims] Insert error for ${source.table}:`, insertErr.message);
           totalSkipped++;
         } else {
           totalGenerated++;
         }
       }
-    } catch (sourceErr: any) {
-      errors.push(`${source.table}: ${sourceErr.message}`);
+    } catch (_e) {
+      // table may not exist for some deploys, skip silently
     }
   }
 
-  return { generated: totalGenerated, skipped: totalSkipped, errors };
+  return { generated: totalGenerated, skipped: totalSkipped };
 }
 
 Deno.serve(async (req: Request) => {
@@ -215,35 +310,37 @@ Deno.serve(async (req: Request) => {
     const companyId = body.companyId;
     const backfillAll = body.backfillAll === true;
 
-    // BACKFILL ALL MODE
     if (backfillAll) {
-      const { data: companies, error: listErr } = await supabase
-        .from('companies')
-        .select('id, name')
-        .order('name');
-
-      if (listErr) {
-        return new Response(JSON.stringify({ error: listErr.message }), {
-          status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-        });
-      }
-
+      // Paginate through ALL companies (no limit)
       let totalGenerated = 0;
       let totalSkipped = 0;
       let companiesProcessed = 0;
       let companiesWithClaims = 0;
-      const allErrors: string[] = [];
+      let offset = 0;
+      const pageSize = 500;
 
-      for (const company of (companies || [])) {
-        const result = await generateClaimsForCompany(supabase, company.id, company.name);
-        totalGenerated += result.generated;
-        totalSkipped += result.skipped;
-        if (result.generated > 0) companiesWithClaims++;
-        companiesProcessed++;
-        allErrors.push(...result.errors);
+      while (true) {
+        const { data: companies, error: listErr } = await supabase
+          .from('companies')
+          .select('id, name')
+          .order('name')
+          .range(offset, offset + pageSize - 1);
+
+        if (listErr || !companies || companies.length === 0) break;
+
+        for (const company of companies) {
+          const result = await generateClaimsForCompany(supabase, company.id, company.name);
+          totalGenerated += result.generated;
+          totalSkipped += result.skipped;
+          if (result.generated > 0) companiesWithClaims++;
+          companiesProcessed++;
+        }
+
+        if (companies.length < pageSize) break;
+        offset += pageSize;
       }
 
-      console.log(`[generate-claims] Backfill complete: ${companiesProcessed} companies, ${totalGenerated} claims, ${totalSkipped} skipped`);
+      console.log(`[generate-claims] Full backfill: ${companiesProcessed} companies, ${totalGenerated} claims generated, ${totalSkipped} skipped`);
 
       return new Response(JSON.stringify({
         success: true,
@@ -252,11 +349,9 @@ Deno.serve(async (req: Request) => {
         companiesWithClaims,
         totalGenerated,
         totalSkipped,
-        errors: allErrors.length > 0 ? allErrors : undefined,
       }), { headers: { ...corsHeaders, 'Content-Type': 'application/json' } });
     }
 
-    // SINGLE COMPANY MODE
     if (!companyId) {
       return new Response(JSON.stringify({ error: 'companyId is required (or set backfillAll: true)' }), {
         status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' },
