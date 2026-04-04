@@ -163,7 +163,7 @@ const Index = forwardRef<HTMLDivElement>((_, ref) => {
       </section>
 
       {/* 3 - PRODUCT MODULES */}
-      <section className="px-6 lg:px-16 py-20 lg:py-28 bg-background">
+      <section className="px-6 lg:px-16 py-20 lg:py-28 bg-card border-y border-border/60">
         <div className="max-w-[1100px] mx-auto">
           <p className="font-mono text-xs tracking-[0.15em] uppercase text-primary mb-3 text-center">The Platform</p>
           <h2 className="text-h1 text-foreground text-center mb-4">
@@ -193,7 +193,7 @@ const Index = forwardRef<HTMLDivElement>((_, ref) => {
       </section>
 
       {/* 4 - FINAL CTA */}
-      <section className="px-6 lg:px-16 py-24 lg:py-32 text-center relative overflow-hidden border-t border-border">
+      <section className="px-6 lg:px-16 py-24 lg:py-32 text-center relative overflow-hidden border-t border-border bg-muted/30">
         <div className="absolute bottom-[-20%] left-[-5%] w-[40%] h-[60%] pointer-events-none" style={{ background: "radial-gradient(ellipse, hsl(var(--primary) / 0.04) 0%, transparent 70%)" }} />
         <div className="relative z-[1] max-w-[600px] mx-auto">
           <p className="font-mono text-xs tracking-[0.15em] uppercase text-primary mb-4">Know who you work for.</p>

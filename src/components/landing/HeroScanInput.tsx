@@ -195,8 +195,9 @@ export function HeroScanInput() {
           {suggestions.map((s) => (
             <button
               key={s}
-              onClick={() => { setQuery(s); }}
-              className="font-mono text-xs tracking-wider text-muted-foreground hover:text-primary transition-colors"
+              type="button"
+              onClick={(e) => { e.preventDefault(); e.stopPropagation(); setQuery(s); }}
+              className="font-mono text-xs tracking-wider text-muted-foreground hover:text-primary transition-colors cursor-pointer"
             >
               {s}
             </button>

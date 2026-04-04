@@ -43,8 +43,8 @@ const TIERS = [
     annualPrice: 399,
     annualMonthly: 33,
     annualSavings: 189,
-    monthlyPriceId: "price_1TEEvt89MyCOs8yv7SV1TeUJ",
-    annualPriceId: "price_1TF2Wd89MyCOs8yv0GXHpkUE",
+    monthlyPriceId: "price_1TF2WU89MyCOs8yvobpafjEl",
+    annualPriceId: "price_1TIKsT89MyCOs8yvTWfkAMcd",
     features: [
       "Full company dossiers — all signals unlocked",
       "Unlimited AI job-link audits",
@@ -69,8 +69,8 @@ const TIERS = [
     annualPrice: 1199,
     annualMonthly: 100,
     annualSavings: 589,
-    monthlyPriceId: "price_1TEEw589MyCOs8yvQI8FpHJx",
-    annualPriceId: "price_1TEEw589MyCOs8yvQI8FpHJx",
+    monthlyPriceId: "price_1TIKsR89MyCOs8yvT0Mogipj",
+    annualPriceId: "price_1TIKsW89MyCOs8yvXnrcKZwZ",
     features: [
       "Everything in The Signal, plus:",
       "Smart job matching — jobs delivered to you",
@@ -134,7 +134,7 @@ export default function Pricing() {
 
   const handleCheckout = async (tier: (typeof TIERS)[number]) => {
     if (tier.free) {
-      navigate("/join");
+      navigate("/login");
       return;
     }
 
