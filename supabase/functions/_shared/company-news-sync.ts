@@ -26,10 +26,22 @@ export async function syncCompanyNews(supabase: any, companyId: string, companyN
   const gdeltUrl = `${GDELT_DOC_API}?query=${query}&mode=ArtList&maxrecords=25&format=json&timespan=90d&sort=DateDesc`;
 
   console.log("Querying GDELT for:", companyName);
-  const gdeltRes = await fetch(gdeltUrl);
 
-  if (!gdeltRes.ok) {
-    console.error("GDELT API error:", gdeltRes.status);
+  // Retry with exponential backoff for rate limiting
+  let gdeltRes: Response | null = null;
+  for (let attempt = 0; attempt < 3; attempt++) {
+    if (attempt > 0) {
+      const delay = Math.pow(2, attempt) * 2000; // 4s, 8s
+      console.log(`[GDELT] Retry ${attempt} after ${delay}ms...`);
+      await new Promise(r => setTimeout(r, delay));
+    }
+    gdeltRes = await fetch(gdeltUrl);
+    if (gdeltRes.ok || (gdeltRes.status !== 429 && gdeltRes.status !== 503)) break;
+    console.warn(`[GDELT] Rate limited (${gdeltRes.status}), retrying...`);
+  }
+
+  if (!gdeltRes || !gdeltRes.ok) {
+    console.error("GDELT API error:", gdeltRes?.status);
     return { success: true, count: 0, message: "GDELT API unavailable", controversies: 0 };
   }
 
