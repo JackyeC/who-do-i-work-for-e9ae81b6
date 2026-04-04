@@ -2,6 +2,7 @@ import { Link } from "react-router-dom";
 import { motion } from "framer-motion";
 import {
   Sun, Sparkles, Briefcase, Radio, ArrowRight, Zap, Target, Mail,
+  Eye, Search, FileText, Bell,
 } from "lucide-react";
 import { useDashboardBriefing } from "@/hooks/use-dashboard-briefing";
 import { useDreamJobProfile } from "@/hooks/use-dream-job-profile";
@@ -48,22 +49,61 @@ function Block({
   );
 }
 
+/* Onboarding CTA tile for empty states */
+function OnboardingTile({ icon: Icon, label, action, onClick }: {
+  icon: React.ElementType;
+  label: string;
+  action: string;
+  onClick: () => void;
+}) {
+  return (
+    <button
+      type="button"
+      onClick={onClick}
+      className="text-left rounded-xl border border-dashed border-primary/30 bg-primary/[0.04] p-3 hover:bg-primary/[0.08] transition-colors group"
+    >
+      <div className="flex items-center gap-2 mb-1">
+        <Icon className="w-3.5 h-3.5 text-primary" />
+        <p className="text-[10px] text-muted-foreground uppercase tracking-wide">{label}</p>
+      </div>
+      <p className="text-xs text-primary font-semibold group-hover:underline">{action}</p>
+    </button>
+  );
+}
+
+/* Stat tile for populated states */
+function StatTile({ label, value, onClick }: {
+  label: string;
+  value: number;
+  onClick: () => void;
+}) {
+  return (
+    <button
+      type="button"
+      onClick={onClick}
+      className="text-left rounded-xl border border-border/40 bg-muted/20 p-3 hover:bg-muted/40 transition-colors"
+    >
+      <p className="text-[10px] text-muted-foreground uppercase tracking-wide">{label}</p>
+      <p className="text-2xl font-bold text-foreground">{value}</p>
+    </button>
+  );
+}
+
 interface HireToRetireCommandCenterProps {
   onNavigate: (tab: string) => void;
 }
 
-/**
- * Hire-to-retire overview: six editorial blocks wired to live hooks.
- */
 export function HireToRetireCommandCenter({ onNavigate }: HireToRetireCommandCenterProps) {
   const { data: briefing, isLoading: briefingLoading } = useDashboardBriefing();
-  const { profile, version, schemaFallback } = useDreamJobProfile();
+  const { profile, version } = useDreamJobProfile();
   const { data: matchData, isLoading: matchLoading } = useJobMatcher();
   const { applications } = useApplicationsTracker();
   const { data: dossiers } = useApplicationDossiers();
 
   const firstName = briefing?.firstName || "there";
+  const watchCount = briefing?.tracked?.length ?? 0;
   const matches = matchData?.matches || [];
+  const alertCount = briefing?.alerts?.length ?? 0;
   const topMatches = matches.slice(0, 3);
   const inMotion = applications.filter(
     (a: { status?: string }) => !["Rejected", "Withdrawn", "Ghosted"].includes(a.status || "")
@@ -84,38 +124,26 @@ export function HireToRetireCommandCenter({ onNavigate }: HireToRetireCommandCen
             <div className="h-16 rounded-lg bg-muted/30 animate-pulse" />
           ) : (
             <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
-              <button
-                type="button"
-                onClick={() => onNavigate("tracked")}
-                className="text-left rounded-xl border border-border/40 bg-muted/20 p-3 hover:bg-muted/40 transition-colors"
-              >
-                <p className="text-[10px] text-muted-foreground uppercase tracking-wide">Watching</p>
-                <p className="text-2xl font-bold text-foreground">{briefing?.tracked?.length ?? 0}</p>
-              </button>
-              <button
-                type="button"
-                onClick={() => onNavigate("matches")}
-                className="text-left rounded-xl border border-border/40 bg-muted/20 p-3 hover:bg-muted/40 transition-colors"
-              >
-                <p className="text-[10px] text-muted-foreground uppercase tracking-wide">Matches</p>
-                <p className="text-2xl font-bold text-foreground">{matches.length}</p>
-              </button>
-              <button
-                type="button"
-                onClick={() => onNavigate("tracker")}
-                className="text-left rounded-xl border border-border/40 bg-muted/20 p-3 hover:bg-muted/40 transition-colors"
-              >
-                <p className="text-[10px] text-muted-foreground uppercase tracking-wide">Applications</p>
-                <p className="text-2xl font-bold text-foreground">{applications.length}</p>
-              </button>
-              <button
-                type="button"
-                onClick={() => onNavigate("alerts")}
-                className="text-left rounded-xl border border-border/40 bg-muted/20 p-3 hover:bg-muted/40 transition-colors"
-              >
-                <p className="text-[10px] text-muted-foreground uppercase tracking-wide">Alerts</p>
-                <p className="text-2xl font-bold text-foreground">{briefing?.alerts?.length ?? 0}</p>
-              </button>
+              {watchCount > 0 ? (
+                <StatTile label="Watching" value={watchCount} onClick={() => onNavigate("tracked")} />
+              ) : (
+                <OnboardingTile icon={Eye} label="Watching" action="Track a company →" onClick={() => onNavigate("tracked")} />
+              )}
+              {matches.length > 0 ? (
+                <StatTile label="Matches" value={matches.length} onClick={() => onNavigate("matches")} />
+              ) : (
+                <OnboardingTile icon={Search} label="Matches" action="Set up your profile →" onClick={() => onNavigate("profile")} />
+              )}
+              {applications.length > 0 ? (
+                <StatTile label="Applications" value={applications.length} onClick={() => onNavigate("tracker")} />
+              ) : (
+                <OnboardingTile icon={FileText} label="Applications" action="Start tracking →" onClick={() => onNavigate("tracker")} />
+              )}
+              {alertCount > 0 ? (
+                <StatTile label="Alerts" value={alertCount} onClick={() => onNavigate("alerts")} />
+              ) : (
+                <OnboardingTile icon={Bell} label="Alerts" action="Watch companies first →" onClick={() => onNavigate("tracked")} />
+              )}
             </div>
           )}
         </Block>
@@ -127,14 +155,10 @@ export function HireToRetireCommandCenter({ onNavigate }: HireToRetireCommandCen
           <Block
             eyebrow="Profile"
             title="Your Dream Job Profile"
-            subtitle={
-              schemaFallback
-                ? "Deploy the dream_job_profile migration — profile merge is unavailable until then."
-                : `Canonical inputs for matching & queue · v${version}.`
-            }
+            subtitle={`Canonical inputs for matching & queue · v${version}.`}
           >
             <p className="text-xs text-muted-foreground mb-3">
-              Version <span className="text-foreground font-mono">{schemaFallback ? "—" : version}</span>
+              Version <span className="text-foreground font-mono">{version}</span>
               {profile?.targetTitles?.length ? ` · ${profile.targetTitles.length} titles` : ""}
               {profile?.facets?.skills?.length ? ` · ${profile.facets.skills.length} skills` : ""}
             </p>
@@ -172,8 +196,11 @@ export function HireToRetireCommandCenter({ onNavigate }: HireToRetireCommandCen
             {matchLoading ? (
               <div className="h-20 rounded-lg bg-muted/30 animate-pulse" />
             ) : topMatches.length === 0 ? (
-              <div className="rounded-lg border border-border/50 bg-muted/10 px-3 py-3 text-sm text-muted-foreground leading-relaxed">
-                No strong matches surfaced yet. Tighten your Dream Job Profile (titles, skills, values) and signal prefs — then check back as new roles ingest.
+              <div className="rounded-lg border border-dashed border-primary/30 bg-primary/[0.04] px-3 py-3 text-sm text-muted-foreground leading-relaxed">
+                <p className="mb-2">No matches yet. Complete your profile to activate the matching engine:</p>
+                <Button size="sm" variant="outline" className="h-7 text-xs gap-1" onClick={() => onNavigate("profile")}>
+                  Set up profile <ArrowRight className="w-3 h-3" />
+                </Button>
               </div>
             ) : (
               <ul className="space-y-2 mb-4">
@@ -187,9 +214,11 @@ export function HireToRetireCommandCenter({ onNavigate }: HireToRetireCommandCen
                 ))}
               </ul>
             )}
-            <Button size="sm" className="h-8 text-xs gap-1" onClick={() => onNavigate("matches")}>
-              Open matched jobs <ArrowRight className="w-3 h-3" />
-            </Button>
+            {topMatches.length > 0 && (
+              <Button size="sm" className="h-8 text-xs gap-1" onClick={() => onNavigate("matches")}>
+                Open matched jobs <ArrowRight className="w-3 h-3" />
+              </Button>
+            )}
           </Block>
         </motion.div>
       </div>
@@ -201,23 +230,35 @@ export function HireToRetireCommandCenter({ onNavigate }: HireToRetireCommandCen
             eyebrow="Motion"
             title="Applications in motion"
             subtitle={
-              pendingDossiers
-                ? `${pendingDossiers} dossier receipt(s) ready · email delivery still pending (outbound email is not live in all environments)`
-                : "Track status, notes, and in-dashboard dossier receipts."
+              applications.length === 0
+                ? "Track applications to see your pipeline here."
+                : pendingDossiers
+                  ? `${pendingDossiers} dossier receipt(s) ready`
+                  : "Track status, notes, and in-dashboard dossier receipts."
             }
           >
-            <p className="text-sm text-foreground mb-3">
-              {inMotion.length} active in pipeline
-              {applications.length ? ` · ${applications.length} total` : ""}
-            </p>
-            <div className="flex flex-wrap gap-2">
-              <Button size="sm" variant="outline" className="h-8 text-xs" asChild>
-                <Link to="/applications">Applications</Link>
-              </Button>
-              <Button size="sm" variant="outline" className="h-8 text-xs" onClick={() => onNavigate("tracker")}>
-                Tracker
-              </Button>
-            </div>
+            {applications.length === 0 ? (
+              <div className="rounded-lg border border-dashed border-primary/30 bg-primary/[0.04] px-3 py-3 text-sm text-muted-foreground leading-relaxed">
+                <p className="mb-2">No applications tracked yet. Start by checking a company.</p>
+                <Button size="sm" variant="outline" className="h-7 text-xs gap-1" asChild>
+                  <Link to="/check">Check a company <ArrowRight className="w-3 h-3" /></Link>
+                </Button>
+              </div>
+            ) : (
+              <>
+                <p className="text-sm text-foreground mb-3">
+                  {inMotion.length} active in pipeline · {applications.length} total
+                </p>
+                <div className="flex flex-wrap gap-2">
+                  <Button size="sm" variant="outline" className="h-8 text-xs" asChild>
+                    <Link to="/applications">Applications</Link>
+                  </Button>
+                  <Button size="sm" variant="outline" className="h-8 text-xs" onClick={() => onNavigate("tracker")}>
+                    Tracker
+                  </Button>
+                </div>
+              </>
+            )}
           </Block>
         </motion.div>
 
