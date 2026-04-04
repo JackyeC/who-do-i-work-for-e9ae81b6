@@ -22,7 +22,16 @@ const QUIZ_VALUES = [
 export function ValuesQuiz() {
   const [selected, setSelected] = useState<Set<string>>(new Set());
   const [showResult, setShowResult] = useState(false);
+  const [showBriefing, setShowBriefing] = useState(false);
   const navigate = useNavigate();
+
+  // Show briefing modal shortly after result card appears
+  useEffect(() => {
+    if (showResult) {
+      const timer = setTimeout(() => setShowBriefing(true), 1500);
+      return () => clearTimeout(timer);
+    }
+  }, [showResult]);
 
   const toggle = (key: string) => {
     setSelected(prev => {
