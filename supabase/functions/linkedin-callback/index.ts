@@ -104,13 +104,23 @@ Deno.serve(async (req: Request) => {
         name: profile.name,
         email: profile.email,
         profile_picture_url: profile.picture,
-        access_token: tokenData.access_token,
         expires_at: expiresAt,
         updated_at: new Date().toISOString(),
       }, { onConflict: "user_id" });
 
     if (upsertError) throw upsertError;
     logStep("LinkedIn profile upserted");
+
+    // Store token encrypted via RPC
+    const { error: encryptError } = await supabase.rpc("encrypt_linkedin_token", {
+      p_user_id: userId,
+      p_token: tokenData.access_token,
+    });
+    if (encryptError) {
+      console.error("Failed to encrypt token:", encryptError.message);
+    } else {
+      logStep("Token encrypted via RPC");
+    }
 
     // Generate a magic link so the user is logged into Supabase
     logStep("Generating magic link for session");
