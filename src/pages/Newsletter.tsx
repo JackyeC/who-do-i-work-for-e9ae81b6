@@ -734,14 +734,14 @@ export default function Newsletter() {
                 </div>
               )}
 
-              {/* ── Lead Story ── */}
+              {/* ── Lead Story — Poster Card ── */}
               {withTakes.length > 0 && (
                 <div className="mb-10">
-                  <LeadStoryCard article={withTakes[0]} onPosterClick={setLightboxArticle} />
+                  <SignalStoryCard story={toSignalStory(withTakes[0])} />
                 </div>
               )}
 
-              {/* ── Jackye's Takes — editorial cards ── */}
+              {/* ── Jackye's Takes — poster cards ── */}
               {withTakes.length > 1 && (
                 <div className="mb-10">
                   <div className="flex items-center gap-3 mb-6">
@@ -752,7 +752,7 @@ export default function Newsletter() {
                   </div>
                   <div className="grid md:grid-cols-2 gap-5">
                     {withTakes.slice(1).map((article) => (
-                      <StoryCard key={article.id} article={article} onPosterClick={setLightboxArticle} />
+                      <SignalStoryCard key={article.id} story={toSignalStory(article)} />
                     ))}
                   </div>
                 </div>
