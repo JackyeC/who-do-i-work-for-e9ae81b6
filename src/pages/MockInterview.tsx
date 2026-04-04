@@ -135,6 +135,31 @@ export default function MockInterview() {
   const [evaluating, setEvaluating] = useState(false);
   const [voicePreset, setVoicePreset] = useState<VoicePreset>("standard");
   const [voiceEnabled, setVoiceEnabled] = useState(true);
+  const [practiceMode, setPracticeMode] = useState<"text" | "voice">("text");
+
+  const speech = useSpeechRecognition();
+
+  // Sync speech final text into the answer field in voice mode
+  useEffect(() => {
+    if (practiceMode === "voice" && speech.finalText) {
+      setAnswer(speech.finalText);
+    }
+  }, [speech.finalText, practiceMode]);
+
+  // Auto-fallback to text mode if speech unsupported or mic denied
+  useEffect(() => {
+    if (practiceMode === "voice" && !speech.supported) {
+      setPracticeMode("text");
+      toast.error("Voice practice works best in Chrome.");
+    }
+  }, [practiceMode, speech.supported]);
+
+  useEffect(() => {
+    if (speech.micStatus === "error" && speech.errorMessage.includes("denied")) {
+      setPracticeMode("text");
+      toast.error(speech.errorMessage);
+    }
+  }, [speech.micStatus, speech.errorMessage]);
 
   const currentQuestion = session.questions[session.currentIndex] ?? null;
   const currentAnswer = session.answers.find((a) => a.questionId === currentQuestion?.id) ?? null;
