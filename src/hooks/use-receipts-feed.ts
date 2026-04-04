@@ -22,6 +22,7 @@ export interface ReceiptArticle {
   receipt_connection: string;
   spice_level: number;
   why_it_matters: string[] | null;
+  poster_url: string | null;
   poster_data: {
     bg: string;
     accent: string;

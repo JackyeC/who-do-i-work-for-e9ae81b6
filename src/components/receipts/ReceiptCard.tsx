@@ -59,6 +59,7 @@ export function ReceiptCard({ article, featured = false, onPosterClick, onReques
       <div className={cn("mb-6", featured ? "flex justify-center" : "")}>
         <ReceiptPoster
           poster={article.poster_data}
+          posterUrl={article.poster_url}
           category={article.category}
           big={featured}
           id={posterId}
