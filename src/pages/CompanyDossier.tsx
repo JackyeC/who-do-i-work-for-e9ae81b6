@@ -425,6 +425,22 @@ export default function CompanyDossier() {
     );
   }
 
+  // ND Mode: render alternate view
+  if (isNDMode) {
+    return (
+      <section className="container mx-auto px-4 py-8">
+        <NDDossierView
+          company={company}
+          companyId={companyId!}
+          executives={executives as any[]}
+          eeocCases={eeocCases as any[]}
+          issueSignals={issueSignals as any[]}
+          contracts={contracts as any[]}
+        />
+      </section>
+    );
+  }
+
   const influenceScore = company.employer_clarity_score || 0;
   const civicScore = company.civic_footprint_score ?? 0;
 
