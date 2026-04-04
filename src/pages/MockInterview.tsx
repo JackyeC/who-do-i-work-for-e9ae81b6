@@ -443,6 +443,54 @@ export default function MockInterview() {
               </div>
             </motion.div>
 
+            {/* Voice controls */}
+            <div className="flex items-center gap-3 flex-wrap">
+              <div className="flex items-center gap-1.5">
+                <button
+                  onClick={() => { setVoiceEnabled(!voiceEnabled); if (voiceEnabled) stopSpeaking(); }}
+                  className={cn(
+                    "p-1.5 rounded-md border transition-colors",
+                    voiceEnabled
+                      ? "border-primary/30 bg-primary/10 text-primary"
+                      : "border-border/40 bg-muted/30 text-muted-foreground"
+                  )}
+                  title={voiceEnabled ? "Mute interviewer" : "Unmute interviewer"}
+                >
+                  {voiceEnabled ? <Volume2 className="w-3.5 h-3.5" /> : <VolumeX className="w-3.5 h-3.5" />}
+                </button>
+                <span className="text-[10px] font-mono text-muted-foreground tracking-wider uppercase">
+                  AI Interviewer Voice:
+                </span>
+              </div>
+              <div className="flex items-center gap-1">
+                {(Object.entries(VOICE_PRESETS) as [VoicePreset, typeof VOICE_PRESETS[VoicePreset]][]).map(([key, preset]) => (
+                  <button
+                    key={key}
+                    onClick={() => setVoicePreset(key)}
+                    className={cn(
+                      "px-2.5 py-1 rounded-md text-[10px] font-mono tracking-wider border transition-all",
+                      voicePreset === key
+                        ? "bg-primary text-primary-foreground border-primary font-bold"
+                        : "bg-card text-muted-foreground border-border/40 hover:border-primary/40"
+                    )}
+                  >
+                    {preset.label}
+                  </button>
+                ))}
+              </div>
+              {voiceEnabled && (
+                <button
+                  onClick={() => {
+                    const text = questions[currentIdx]?.question;
+                    if (text) speakRobot(text, voicePreset);
+                  }}
+                  className="text-[10px] font-mono text-primary hover:text-primary/80 transition-colors"
+                >
+                  ▶ Replay
+                </button>
+              )}
+            </div>
+
             {/* Question card */}
             <motion.div
               key={currentIdx}
