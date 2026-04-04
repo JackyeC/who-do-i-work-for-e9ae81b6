@@ -526,7 +526,93 @@ export default function MockInterview() {
                     {currentQuestion.text}
                   </p>
 
-                  <div className="space-y-3">
+                  {/* Practice mode toggle */}
+                  <div className="flex items-center gap-2">
+                    <span className="text-[10px] font-mono text-muted-foreground tracking-wider uppercase">Answer Mode:</span>
+                    <div className="flex items-center gap-1">
+                      <button
+                        onClick={() => { setPracticeMode("text"); speech.stopListening(); speech.resetTranscript(); }}
+                        className={cn("px-2.5 py-1 rounded-md text-[10px] font-mono tracking-wider border transition-all flex items-center gap-1", practiceMode === "text" ? "bg-primary text-primary-foreground border-primary font-bold" : "bg-card text-muted-foreground border-border/40 hover:border-primary/40")}
+                      >
+                        <Type className="w-3 h-3" /> Text
+                      </button>
+                      <button
+                        onClick={() => {
+                          if (!speech.supported) {
+                            toast.error("Voice practice works best in Chrome.");
+                            return;
+                          }
+                          setPracticeMode("voice");
+                        }}
+                        className={cn("px-2.5 py-1 rounded-md text-[10px] font-mono tracking-wider border transition-all flex items-center gap-1", practiceMode === "voice" ? "bg-primary text-primary-foreground border-primary font-bold" : "bg-card text-muted-foreground border-border/40 hover:border-primary/40")}
+                      >
+                        <Mic className="w-3 h-3" /> Voice
+                      </button>
+                    </div>
+                    {/* Mic status pill */}
+                    {practiceMode === "voice" && (
+                      <MicStatusPill status={speech.micStatus} />
+                    )}
+                  </div>
+
+                  {/* Voice mode UI */}
+                  {practiceMode === "voice" && (
+                    <div className="space-y-3">
+                      {speech.errorMessage && (
+                        <div className="rounded-lg border border-destructive/20 bg-destructive/5 px-3 py-2">
+                          <p className="text-xs text-destructive">{speech.errorMessage}</p>
+                        </div>
+                      )}
+
+                      {/* Live transcript display */}
+                      <div className="rounded-lg bg-muted/20 border border-border/30 p-3 min-h-[80px]">
+                        {speech.finalText || speech.interimText ? (
+                          <p className="text-sm text-foreground/80 leading-relaxed whitespace-pre-wrap">
+                            {speech.finalText}
+                            {speech.interimText && <span className="text-muted-foreground italic"> {speech.interimText}</span>}
+                          </p>
+                        ) : (
+                          <p className="text-sm text-muted-foreground/50 italic">
+                            {speech.micStatus === "listening" ? "Listening… speak your answer" : "Press Start Recording to begin"}
+                          </p>
+                        )}
+                      </div>
+
+                      {/* Mic controls */}
+                      <div className="flex items-center gap-2">
+                        {speech.micStatus === "idle" || speech.micStatus === "ready" || speech.micStatus === "error" ? (
+                          <Button onClick={() => speech.startListening()} variant="default" size="sm" className="gap-2">
+                            <Mic className="w-3.5 h-3.5" /> Start Recording
+                          </Button>
+                        ) : speech.micStatus === "listening" ? (
+                          <Button onClick={() => speech.stopListening()} variant="destructive" size="sm" className="gap-2">
+                            <MicOff className="w-3.5 h-3.5" /> Stop Recording
+                          </Button>
+                        ) : null}
+                        {(speech.finalText || speech.interimText) && (
+                          <Button onClick={() => { speech.resetTranscript(); setAnswer(""); }} variant="outline" size="sm" className="gap-2">
+                            <RotateCcw className="w-3 h-3" /> Retry
+                          </Button>
+                        )}
+                      </div>
+
+                      {/* Editable transcript area */}
+                      {speech.finalText && speech.micStatus !== "listening" && (
+                        <div className="space-y-1.5">
+                          <p className="text-[10px] font-mono text-muted-foreground uppercase tracking-wider">Edit transcript before submitting:</p>
+                          <Textarea
+                            value={answer}
+                            onChange={(e) => setAnswer(e.target.value)}
+                            disabled={evaluating}
+                            className="min-h-[100px] text-sm"
+                          />
+                        </div>
+                      )}
+                    </div>
+                  )}
+
+                  {/* Text mode UI */}
+                  {practiceMode === "text" && (
                     <Textarea
                       placeholder="Type your answer here… Be specific and use examples."
                       value={answer}
@@ -534,14 +620,16 @@ export default function MockInterview() {
                       disabled={evaluating}
                       className="min-h-[140px] text-sm"
                     />
-                    <Button onClick={submitAnswer} disabled={!answer.trim() || evaluating} className="w-full gap-2" size="lg">
-                      {evaluating ? (
-                        <><Loader2 className="w-4 h-4 animate-spin" /> Evaluating…</>
-                      ) : (
-                        <><CheckCircle className="w-4 h-4" /> Submit Answer</>
-                      )}
-                    </Button>
-                  </div>
+                  )}
+
+                  {/* Submit (shared) */}
+                  <Button onClick={() => { speech.stopListening(); submitAnswer(); }} disabled={!answer.trim() || evaluating || speech.micStatus === "listening"} className="w-full gap-2" size="lg">
+                    {evaluating ? (
+                      <><Loader2 className="w-4 h-4 animate-spin" /> Evaluating…</>
+                    ) : (
+                      <><CheckCircle className="w-4 h-4" /> Submit Answer</>
+                    )}
+                  </Button>
                 </CardContent>
               </Card>
             </motion.div>
