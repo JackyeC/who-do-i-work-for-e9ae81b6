@@ -5,6 +5,7 @@ import { HardInterviewQuestions } from "@/components/dossier/HardInterviewQuesti
 import { useParams, Link, useNavigate, useSearchParams } from "react-router-dom";
 import { useNDMode } from "@/contexts/NDModeContext";
 import { NDDossierView } from "@/components/nd/NDDossierView";
+import { NDModeToggle } from "@/components/nd/NDModeToggle";
 import { CompanyZeroState } from "@/components/CompanyZeroState";
 import { OfferIntelligencePanel } from "@/components/company/OfferIntelligencePanel";
 import { WarnFilingsCard } from "@/components/company/WarnFilingsCard";
@@ -114,7 +115,8 @@ export default function CompanyDossier() {
         employee_count: company.employee_count ?? undefined,
       });
     }
-  }, [company, setActiveCompany]);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [company?.id]);
   const { data: eeocCases } = useEEOCByCompanyName(company?.name);
 
   const seoCompanyName = company?.name ?? "Company";
@@ -529,6 +531,11 @@ export default function CompanyDossier() {
   /* ─── Report header + advocacy report ─── */
   const overviewContent = (
     <>
+      {/* ── ND MODE TOGGLE ── */}
+      <div className="flex justify-end mb-4">
+        <NDModeToggle />
+      </div>
+
       {/* ── ABOVE THE FOLD: Verdict Header + Snapshot Cards ── */}
       <DossierVerdictHeader company={company} />
 
