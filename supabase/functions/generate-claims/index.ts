@@ -309,6 +309,8 @@ Deno.serve(async (req: Request) => {
     const body = await req.json().catch(() => ({}));
     const companyId = body.companyId;
     const backfillAll = body.backfillAll === true;
+    const batchOffset = typeof body.batchOffset === 'number' ? body.batchOffset : 0;
+    const batchSize = typeof body.batchSize === 'number' ? Math.min(body.batchSize, 100) : 50;
 
     if (backfillAll) {
       // Paginate through ALL companies (no limit)
