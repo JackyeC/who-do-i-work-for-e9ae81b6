@@ -226,7 +226,9 @@ export function DashboardOverview({ onNavigate }: DashboardOverviewProps) {
         </Collapsible>
       </motion.div>
 
-      {/* ═══ URGENT SIGNALS — top priority, RAG colored ═══ */}
+
+      {/* ═══ URGENT SIGNALS — only shown when real alerts exist ═══ */}
+      {alerts.length > 0 && (
       <motion.div {...anim(0.05)}>
         <BriefingCard className="border-l-0">
           <div className="flex items-center justify-between mb-4">
@@ -237,47 +239,44 @@ export function DashboardOverview({ onNavigate }: DashboardOverviewProps) {
               </h3>
             </div>
             <span className="shrink-0 rounded-full px-2.5 py-1 text-[10px] font-bold border" style={{ color: "hsl(43, 96%, 56%)", backgroundColor: "hsla(43, 96%, 56%, 0.1)", borderColor: "hsla(43, 96%, 56%, 0.3)" }}>
-              {SIGNAL_CARDS.length} ACTIVE
+              {alerts.length} ACTIVE
             </span>
           </div>
           <p className="text-xs text-muted-foreground mb-4">
             Signals from your watched companies — violations, settlements, and regulatory actions
           </p>
           <div className="space-y-2">
-            {SIGNAL_CARDS.map((s, i) => {
-              const style = SEVERITY_STYLES[s.severity] || SEVERITY_STYLES.MEDIUM;
+            {alerts.map((a: any, i: number) => {
+              const sev = alertSeverity(a.signal_category);
+              const style = SEVERITY_STYLES[sev] || SEVERITY_STYLES.MEDIUM;
               return (
                 <motion.div
-                  key={i}
+                  key={a.id}
                   initial={{ opacity: 0, x: -12 }}
                   animate={{ opacity: 1, x: 0 }}
                   transition={{ delay: 0.08 + i * 0.05, duration: 0.4, ease: [0.22, 1, 0.36, 1] }}
                 >
                   <Link
-                    to={`/dossier/${s.slug}`}
+                    to={a.company_id ? `/dossier/${a.company_name?.toLowerCase().replace(/[^a-z0-9]+/g, "-")}` : "#"}
                     className={`block rounded-xl p-4 border-l-[3px] transition-all duration-200 hover:scale-[1.005] hover:shadow-md bg-muted/30 border border-border/30 hover:border-border/60 ${style.border}`}
                   >
                     <div className="flex items-start justify-between gap-3">
                       <div className="min-w-0 flex-1">
                         <div className="flex items-center gap-2 mb-1.5 flex-wrap">
                           <span className={`w-2 h-2 rounded-full shrink-0 ${style.dot}`} />
-                          <span className="text-sm font-bold text-foreground">{s.company}</span>
+                          <span className="text-sm font-bold text-foreground">{a.company_name}</span>
                           <span className={`rounded px-1.5 py-0.5 text-[10px] font-bold font-mono border ${style.badge}`}>
-                            {s.severity}
+                            {sev}
                           </span>
                           <span className="rounded px-1.5 py-0.5 text-[10px] font-mono text-muted-foreground bg-muted/50">
-                            {s.badge}
+                            {a.signal_category}
                           </span>
                         </div>
-                        <p className="text-[13px] text-muted-foreground leading-snug">{s.summary}</p>
+                        <p className="text-[13px] text-muted-foreground leading-snug">{a.change_description}</p>
                         <div className="flex items-center gap-3 mt-2">
-                          <span className="text-xs font-bold font-mono" style={{ color: "hsl(43, 96%, 56%)" }}>
-                            {s.amount}
+                          <span className="text-xs text-muted-foreground/50 font-mono">
+                            {a.date_detected ? new Date(a.date_detected).toLocaleDateString() : ""}
                           </span>
-                          <span className="text-xs text-muted-foreground/40">·</span>
-                          <span className="text-xs text-muted-foreground/50 font-mono">{s.date}</span>
-                          <span className="text-xs text-muted-foreground/40">·</span>
-                          <span className="text-xs text-muted-foreground/50">{s.source}</span>
                         </div>
                       </div>
                       <span className="text-xs font-semibold whitespace-nowrap mt-0.5 flex items-center gap-1 shrink-0" style={{ color: "hsl(43, 96%, 56%)" }}>
@@ -291,6 +290,7 @@ export function DashboardOverview({ onNavigate }: DashboardOverviewProps) {
           </div>
         </BriefingCard>
       </motion.div>
+      )}
 
       {/* ═══ EMPLOYER SEARCH (inline) ═══ */}
       <motion.div {...anim(0.08)}>
