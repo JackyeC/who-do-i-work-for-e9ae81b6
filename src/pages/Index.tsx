@@ -112,7 +112,7 @@ const Index = forwardRef<HTMLDivElement>((_, ref) => {
       </section>
 
       <style>{`
-        @keyframes heroFadeIn { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: translateY(0); } }
+        @keyframes heroFadeIn { from { opacity: 0.01; transform: translateY(6px); } to { opacity: 1; transform: translateY(0); } }
         @keyframes scroll-left { from { transform: translateX(0); } to { transform: translateX(-50%); } }
         .animate-scroll-left { animation: scroll-left 40s linear infinite; }
       `}</style>
