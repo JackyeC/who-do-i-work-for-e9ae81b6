@@ -63,9 +63,9 @@ const NAV_ITEMS: NavItem[] = [
     dotColor: "bg-[#fbbf24]",
   },
   {
-    id: "receipts",
-    label: "The Receipts",
-    path: "/the-receipts",
+    id: "work-signal",
+    label: "The Work Signal",
+    path: "/newsletter",
     dotColor: "bg-[#fb7185]",
   },
   {

@@ -38,10 +38,10 @@ export const MAIN_SECTIONS = [
     subItems: [],
   },
   {
-    id: "receipts",
-    label: "Receipts",
-    path: "/receipts",
-    matchPaths: ["/receipts"],
+    id: "work-signal",
+    label: "The Work Signal",
+    path: "/newsletter",
+    matchPaths: ["/newsletter"],
     subItems: [],
   },
   {
