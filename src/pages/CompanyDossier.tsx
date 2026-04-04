@@ -33,7 +33,7 @@ import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import { EmployerReportDrawer, type EvidenceRecord } from "@/components/dossier/EmployerReportDrawer";
 import { SignalRevealCard } from "@/components/dossier/SignalRevealCard";
-import { SignalIntelligenceBreakdown } from "@/components/dossier/SignalIntelligenceBreakdown";
+import { PowerInfluenceView } from "@/components/dossier/PowerInfluenceView";
 import { ApplyWithWDIWF } from "@/components/applications/ApplyWithWDIWF";
 import { useEvaluation } from "@/contexts/EvaluationContext";
 import { EvaluationView } from "@/components/evaluation/EvaluationView";
@@ -127,6 +127,15 @@ export default function CompanyDossier() {
     queryKey: ["dossier-candidates", companyId],
     queryFn: async () => {
       const { data } = await supabase.from("company_candidates").select("*").eq("company_id", companyId!).order("amount", { ascending: false });
+      return data || [];
+    },
+    enabled: !!companyId,
+  });
+
+  const { data: dossierBoardMembers } = useQuery({
+    queryKey: ["dossier-board-members", companyId],
+    queryFn: async () => {
+      const { data } = await supabase.from("board_members").select("*").eq("company_id", companyId!).order("name");
       return data || [];
     },
     enabled: !!companyId,
@@ -523,18 +532,17 @@ export default function CompanyDossier() {
         )}
       </div>
 
-      {/* ── SIGNAL INTELLIGENCE BREAKDOWN ── */}
-      <SignalIntelligenceBreakdown
+      {/* ── POWER & INFLUENCE ── */}
+      <PowerInfluenceView
         companyName={company.name}
+        companyId={companyId!}
         totalPacSpending={company.total_pac_spending ?? 0}
         lobbyingSpend={company.lobbying_spend ?? 0}
         candidates={(candidates || []) as any}
-        executives={(executives || []).filter((e: any) => e.total_donations != null) as any}
+        executives={(executives || []) as any}
+        boardMembers={(dossierBoardMembers || []) as any}
         partyBreakdown={(partyBreakdown || []) as any}
         evidenceRecords={evidenceRecords}
-        eeocCount={eeocCases?.length || 0}
-        issueSignalCount={issueSignals?.length || 0}
-        clarityScore={influenceScore}
       />
 
       <p className="text-xs text-muted-foreground leading-relaxed max-w-xl mb-6">
