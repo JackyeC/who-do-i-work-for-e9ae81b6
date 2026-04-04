@@ -72,7 +72,7 @@ export function FullyAuditedShowcase() {
               <CompanyLogo
                   companyId={company.id}
                   logoUrl={company.logo_url}
-                  name={company.name}
+                  companyName={company.name}
                   size="sm"
                 />
               ) : (
