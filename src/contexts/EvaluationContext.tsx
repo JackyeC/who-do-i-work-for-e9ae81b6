@@ -214,6 +214,7 @@ export function EvaluationProvider({ children }: { children: ReactNode }) {
         alignmentScore,
         riskScore,
         verdictText,
+        verdictReasons,
         contextLabel,
       }}
     >
