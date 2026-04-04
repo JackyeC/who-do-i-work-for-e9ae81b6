@@ -860,6 +860,16 @@ export default function MockInterview() {
                           </div>
                         )}
 
+                        {a?.rubric && (
+                          <div className="flex items-center gap-3 flex-wrap">
+                            {(["clarity", "relevance", "specificity", "confidence", "structure"] as const).map((cat) => (
+                              <span key={cat} className="text-[10px] font-mono text-muted-foreground">
+                                <span className="font-bold tabular-nums" style={{ color: scoreColor((a.rubric![cat] / 5) * 100) }}>{a.rubric![cat]}</span>/5 {cat}
+                              </span>
+                            ))}
+                          </div>
+                        )}
+
                         {a?.feedback && (
                           <div className="rounded-lg bg-[hsl(var(--civic-gold))]/5 border border-[hsl(var(--civic-gold))]/10 p-3">
                             <p className="text-xs font-medium text-[hsl(var(--civic-gold-muted))] flex items-center gap-1.5 mb-1"><Lightbulb className="w-3 h-3" /> Feedback</p>
@@ -869,16 +879,16 @@ export default function MockInterview() {
 
                         {a && (a.strengths || a.improvements) && (
                           <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                            {a.strengths && (
+                            {a.strengths && a.strengths.length > 0 && (
                               <div className="rounded-lg bg-green-500/5 border border-green-500/10 p-3">
                                 <p className="text-xs font-medium text-green-400 mb-1">Strengths</p>
-                                <p className="text-sm text-foreground/80 leading-relaxed">{a.strengths}</p>
+                                <ul className="space-y-0.5">{a.strengths.map((s, j) => <li key={j} className="text-sm text-foreground/80 flex items-start gap-1"><span className="text-green-400 shrink-0">✓</span> {s}</li>)}</ul>
                               </div>
                             )}
-                            {a.improvements && (
+                            {a.improvements && a.improvements.length > 0 && (
                               <div className="rounded-lg bg-orange-500/5 border border-orange-500/10 p-3">
                                 <p className="text-xs font-medium text-orange-400 mb-1">To Improve</p>
-                                <p className="text-sm text-foreground/80 leading-relaxed">{a.improvements}</p>
+                                <ul className="space-y-0.5">{a.improvements.map((s, j) => <li key={j} className="text-sm text-foreground/80 flex items-start gap-1"><span className="text-orange-400 shrink-0">→</span> {s}</li>)}</ul>
                               </div>
                             )}
                           </div>
