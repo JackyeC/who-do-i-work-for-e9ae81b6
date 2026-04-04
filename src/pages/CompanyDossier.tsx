@@ -530,6 +530,11 @@ export default function CompanyDossier() {
   /* ─── Report header + advocacy report ─── */
   const overviewContent = (
     <>
+      {/* ── ND MODE TOGGLE ── */}
+      <div className="flex justify-end mb-4">
+        <NDModeToggle />
+      </div>
+
       {/* ── ABOVE THE FOLD: Verdict Header + Snapshot Cards ── */}
       <DossierVerdictHeader company={company} />
 
