@@ -69,8 +69,7 @@ const Index = forwardRef<HTMLDivElement>((_, ref) => {
               letterSpacing: "-2px",
               lineHeight: 1.04,
               maxWidth: "18ch",
-              opacity: 0,
-              animation: "heroFadeIn 0.7s ease 0.3s forwards",
+              animation: "heroFadeIn 0.7s ease 0.3s",
             }}
           >
             Stop applying.<br />
