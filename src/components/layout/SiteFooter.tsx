@@ -27,8 +27,8 @@ export function SiteFooter() {
                 { label: "How It Works", to: "/about" },
                 { label: "Companies", to: "/browse" },
                 { label: "The Receipts", to: "/receipts" },
-                { label: "Values Alignment", to: "/alignment" },
-                { label: "Offer Review", to: "/offer-analysis" },
+                { label: "Values Profile", to: "/values" },
+                { label: "Offer Review", to: "/offer-check" },
                 { label: "Pricing", to: "/pricing" },
                 { label: "For Companies", to: "/for-employers" },
               ].map((link) => (
