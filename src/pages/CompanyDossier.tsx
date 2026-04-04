@@ -2,7 +2,9 @@ import { useMemo, useState, useEffect } from "react";
 import { AdvocacyReport } from "@/components/dossier/AdvocacyReport";
 import { CandidatePrepPack } from "@/components/dossier/CandidatePrepPack";
 import { HardInterviewQuestions } from "@/components/dossier/HardInterviewQuestions";
-import { useParams, Link, useNavigate } from "react-router-dom";
+import { useParams, Link, useNavigate, useSearchParams } from "react-router-dom";
+import { useNDMode } from "@/contexts/NDModeContext";
+import { NDDossierView } from "@/components/nd/NDDossierView";
 import { CompanyZeroState } from "@/components/CompanyZeroState";
 import { OfferIntelligencePanel } from "@/components/company/OfferIntelligencePanel";
 import { WarnFilingsCard } from "@/components/company/WarnFilingsCard";
@@ -62,6 +64,8 @@ import { CompanyClaimsSection } from "@/components/dossier/CompanyClaimsSection"
 export default function CompanyDossier() {
   const { id } = useParams();
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
+  const { isNDMode, setNDMode } = useNDMode();
   const { isCompanyTracked } = useTrackedCompanies();
   const [showPrep, setShowPrep] = useState(false);
   const [showRawLayers, setShowRawLayers] = useState(false);
@@ -69,6 +73,13 @@ export default function CompanyDossier() {
   const [reportOpen, setReportOpen] = useState(false);
   const [reportCategory, setReportCategory] = useState<string | null>(null);
   const { setActiveCompany } = useEvaluation();
+
+  // Sync URL query param ?mode=nd
+  useEffect(() => {
+    if (searchParams.get("mode") === "nd" && !isNDMode) {
+      setNDMode(true);
+    }
+  }, [searchParams, isNDMode, setNDMode]);
 
   /* ─── Data fetching ─── */
   const { data: company, isLoading } = useQuery({
@@ -409,6 +420,22 @@ export default function CompanyDossier() {
         <CompanyZeroState
           companyName={derivedName}
           onDiscovered={(_, slug) => navigate(`/dossier/${slug}`)}
+        />
+      </section>
+    );
+  }
+
+  // ND Mode: render alternate view
+  if (isNDMode) {
+    return (
+      <section className="container mx-auto px-4 py-8">
+        <NDDossierView
+          company={company}
+          companyId={companyId!}
+          executives={executives as any[]}
+          eeocCases={eeocCases as any[]}
+          issueSignals={issueSignals as any[]}
+          contracts={contracts as any[]}
         />
       </section>
     );
