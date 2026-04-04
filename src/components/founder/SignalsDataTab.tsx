@@ -165,12 +165,17 @@ export function SignalsDataTab() {
         supabase.from("company_corporate_claims").select("id", { count: "exact", head: true }).is("claim_source_url", null).is("claim_source", null),
       ]);
 
-      // New structured claims — attribution enforcement
-      const [totalNew, newAttributed, newUnattributed] = await Promise.all([
+      // New structured claims — attribution enforcement + platform-wide counts
+      const [totalNew, newAttributed, newUnattributed, companiesWithClaims, totalCompanies] = await Promise.all([
         (supabase as any).from("company_claims").select("id", { count: "exact", head: true }).eq("is_active", true),
         (supabase as any).from("company_claims").select("id", { count: "exact", head: true }).eq("is_active", true).not("source_url", "is", null).not("source_label", "is", null),
         (supabase as any).from("company_claims").select("id, company_id, claim_text, source_label, claim_type", { count: "exact" }).eq("is_active", true).or("source_url.is.null,source_label.is.null"),
+        (supabase as any).from("company_claims").select("company_id").eq("is_active", true),
+        supabase.from("companies").select("id", { count: "exact", head: true }),
       ]);
+
+      // Count distinct companies with claims
+      const uniqueCompaniesWithClaims = new Set((companiesWithClaims.data ?? []).map((r: any) => r.company_id)).size;
 
       // Per-company breakdown of unattributed claims
       const unattributedList = (newUnattributed.data ?? []) as any[];
@@ -196,6 +201,9 @@ export function SignalsDataTab() {
         missingSources: total - verified,
         unattributedPerCompany: perCompany,
         unattributedCount: newUnattributed.count ?? 0,
+        companiesWithClaims: uniqueCompaniesWithClaims,
+        companiesWithoutClaims: (totalCompanies.count ?? 0) - uniqueCompaniesWithClaims,
+        totalCompanies: totalCompanies.count ?? 0,
       };
     },
   });
