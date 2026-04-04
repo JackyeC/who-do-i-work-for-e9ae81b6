@@ -198,6 +198,7 @@ const App = () => (
         <ViewModeProvider>
         <DossierLensProvider>
         <EvaluationProvider>
+        <NDModeProvider>
         <SourceDrawerProvider>
         <TooltipProvider>
           <Toaster />
