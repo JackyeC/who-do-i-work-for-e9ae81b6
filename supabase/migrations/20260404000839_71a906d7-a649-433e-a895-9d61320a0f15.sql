@@ -1,0 +1,1 @@
+ALTER TABLE public.company_claims ADD COLUMN IF NOT EXISTS decision_impact text;

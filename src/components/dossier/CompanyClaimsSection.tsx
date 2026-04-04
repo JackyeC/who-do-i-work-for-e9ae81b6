@@ -7,7 +7,7 @@ import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/comp
 import { cn } from "@/lib/utils";
 import {
   ShieldCheck, Layers, HelpCircle, ExternalLink,
-  ChevronDown, FileText, AlertTriangle,
+  ChevronDown, FileText, AlertTriangle, User,
 } from "lucide-react";
 
 const EVIDENCE_CONFIG = {
@@ -161,6 +161,17 @@ export function CompanyClaimsSection({ companyId, companyName }: CompanyClaimsSe
 
                 {isExpanded && (
                   <div className="px-3 pb-3 pt-0 border-t border-border/30">
+                    {/* Decision Context */}
+                    {claim.decision_impact && (
+                      <div className="mt-2 rounded-md border-l-2 border-primary/40 bg-primary/5 px-3 py-2">
+                        <div className="flex items-center gap-1.5 mb-1">
+                          <User className="w-3 h-3 text-primary" />
+                          <span className="text-[11px] font-semibold text-primary uppercase tracking-wider">What this could mean for you</span>
+                        </div>
+                        <p className="text-xs text-foreground/80 leading-relaxed">{claim.decision_impact}</p>
+                      </div>
+                    )}
+
                     <div className="bg-muted/20 rounded-md p-3 mt-2 space-y-2">
                       <div className="flex items-center justify-between text-xs">
                         <span className="text-muted-foreground">Evidence Type</span>
