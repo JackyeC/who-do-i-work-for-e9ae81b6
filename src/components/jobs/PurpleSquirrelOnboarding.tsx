@@ -10,16 +10,16 @@ import { Card, CardContent } from "@/components/ui/card";
 import { cn } from "@/lib/utils";
 import {
   Target, DollarSign, Upload, Rocket, ChevronRight, ChevronLeft,
-  Crosshair, Shield, Zap, CheckCircle2, Plus, X, Briefcase
+  Shield, Zap, CheckCircle2, Plus, X, Briefcase
 } from "lucide-react";
 import { useAutoApplySettings } from "@/hooks/use-auto-apply";
 import { useAuth } from "@/contexts/AuthContext";
 
 const STEPS = [
   { id: "dna", label: "Calibrate", icon: Target, subtitle: "How do you work?" },
-  { id: "bounty", label: "Target", icon: Crosshair, subtitle: "What are we hunting?" },
-  { id: "arsenal", label: "Arsenal", icon: Upload, subtitle: "Upload your weapons" },
-  { id: "launch", label: "Launch", icon: Rocket, subtitle: "Engage the engine" },
+  { id: "focus", label: "Focus", icon: Briefcase, subtitle: "What roles fit you?" },
+  { id: "documents", label: "Documents", icon: Upload, subtitle: "Upload your resume" },
+  { id: "launch", label: "Launch", icon: Rocket, subtitle: "Start your search" },
 ] as const;
 
 const DNA_DIALS = [
@@ -242,11 +242,11 @@ export function PurpleSquirrelOnboarding({ onComplete }: PurpleSquirrelOnboardin
                 </div>
               )}
 
-              {/* Step 1: Bounty */}
+              {/* Step 1: Focus */}
               {step === 1 && (
                 <div className="space-y-6">
                   <p className="text-sm text-muted-foreground">
-                    Define your target. The engine only fires when all four quadrants align.
+                    Define your focus. We will only surface roles that match your criteria.
                   </p>
 
                   {/* Target Titles */}
@@ -346,13 +346,13 @@ export function PurpleSquirrelOnboarding({ onComplete }: PurpleSquirrelOnboardin
                       step={5}
                     />
                     <p className="text-xs text-muted-foreground">
-                      Only fire on jobs with this level of values alignment or higher.
+                      Only surface roles with this level of values alignment or higher.
                     </p>
                   </div>
                 </div>
               )}
 
-              {/* Step 2: Arsenal */}
+              {/* Step 2: Documents */}
               {step === 2 && (
                 <div className="space-y-6">
                   <p className="text-sm text-muted-foreground">
