@@ -242,11 +242,11 @@ export function PurpleSquirrelOnboarding({ onComplete }: PurpleSquirrelOnboardin
                 </div>
               )}
 
-              {/* Step 1: Bounty */}
+              {/* Step 1: Focus */}
               {step === 1 && (
                 <div className="space-y-6">
                   <p className="text-sm text-muted-foreground">
-                    Define your target. The engine only fires when all four quadrants align.
+                    Define your focus. We will only surface roles that match your criteria.
                   </p>
 
                   {/* Target Titles */}
