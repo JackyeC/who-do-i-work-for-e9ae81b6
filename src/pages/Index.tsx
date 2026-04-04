@@ -86,7 +86,7 @@ const Index = forwardRef<HTMLDivElement>((_, ref) => {
           {/* Primary CTA */}
           <div
             className="mt-9 w-full flex flex-col items-center gap-4"
-            style={{ opacity: 0, animation: "heroFadeIn 0.5s ease 0.9s forwards" }}
+            style={{ animation: "heroFadeIn 0.5s ease 0.9s" }}
           >
             <button
               onClick={() => navigate("/intelligence-check")}
