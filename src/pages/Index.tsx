@@ -121,7 +121,7 @@ const Index = forwardRef<HTMLDivElement>((_, ref) => {
       <FullyAuditedShowcase />
 
       {/* 2 - HOW IT WORKS */}
-      <section className="bg-card border-y border-border px-6 lg:px-16 py-20 lg:py-28">
+      <section className="bg-muted/40 border-y border-border px-6 lg:px-16 py-20 lg:py-28">
         <div className="max-w-[900px] mx-auto">
           <p className="font-mono text-xs tracking-[0.15em] uppercase text-primary mb-4 text-center">How It Works</p>
           <h2 className="text-h1 text-foreground text-center mb-14">
@@ -163,7 +163,7 @@ const Index = forwardRef<HTMLDivElement>((_, ref) => {
       </section>
 
       {/* 3 - PRODUCT MODULES */}
-      <section className="px-6 lg:px-16 py-20 lg:py-28 bg-card border-y border-border/60">
+      <section className="px-6 lg:px-16 py-20 lg:py-28 bg-card/80 border-y border-border">
         <div className="max-w-[1100px] mx-auto">
           <p className="font-mono text-xs tracking-[0.15em] uppercase text-primary mb-3 text-center">The Platform</p>
           <h2 className="text-h1 text-foreground text-center mb-4">

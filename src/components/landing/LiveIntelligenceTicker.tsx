@@ -90,7 +90,7 @@ export function LiveIntelligenceTicker() {
     (sum, i) => sum + (i.headline?.length || 0) + (i.source_name?.length || 0) + 20,
     0
   );
-  const duration = Math.max(140, Math.min((totalChars * 0.6), 360));
+  const duration = Math.max(160, Math.min((totalChars * 0.8), 400));
 
   const handleStoryClick = (storyId: string) => {
     navigate(`/newsletter#story-${storyId}`);
@@ -155,9 +155,12 @@ export function LiveIntelligenceTicker() {
 
   return (
     <div
-      className="bg-background overflow-hidden whitespace-nowrap h-[36px] flex items-center"
+      className="bg-background overflow-hidden whitespace-nowrap h-[36px] flex items-center relative"
       style={{ borderBottom: "1px solid rgba(255,255,255,0.1)" }}
     >
+      {/* Fade edges for seamless loop */}
+      <div className="absolute left-0 top-0 bottom-0 w-16 z-10 pointer-events-none" style={{ background: "linear-gradient(to right, hsl(var(--background)), transparent)" }} />
+      <div className="absolute right-0 top-0 bottom-0 w-16 z-10 pointer-events-none" style={{ background: "linear-gradient(to left, hsl(var(--background)), transparent)" }} />
       {/* LIVE badge */}
       <div
         className="flex items-center gap-2 px-3 shrink-0"
