@@ -134,7 +134,7 @@ export default function Pricing() {
 
   const handleCheckout = async (tier: (typeof TIERS)[number]) => {
     if (tier.free) {
-      navigate("/join");
+      navigate("/login");
       return;
     }
 
