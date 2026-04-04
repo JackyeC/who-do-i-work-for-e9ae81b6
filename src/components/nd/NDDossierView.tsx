@@ -1,6 +1,6 @@
 import { useMemo, useState, useRef, useCallback } from "react";
 import { useNavigate } from "react-router-dom";
-import { Bookmark, FileText, Briefcase, MessageSquare, Bot, Map } from "lucide-react";
+import { Bookmark, FileText, Briefcase, MessageSquare, Bot, Map, ArrowRight } from "lucide-react";
 import { NDOnboardingWalkthrough, resetNDOnboarding } from "@/components/nd/NDOnboardingWalkthrough";
 import { NDHelpLegend } from "@/components/nd/NDHelpLegend";
 import { Button } from "@/components/ui/button";
