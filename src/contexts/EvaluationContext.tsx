@@ -60,6 +60,7 @@ interface EvaluationContextType {
   alignmentScore: number;
   riskScore: number;
   verdictText: string;
+  verdictReasons: string[];
   contextLabel: string;
 }
 
@@ -76,6 +77,7 @@ const EvaluationContext = createContext<EvaluationContextType>({
   alignmentScore: 0,
   riskScore: 0,
   verdictText: "",
+  verdictReasons: [],
   contextLabel: "",
 });
 
@@ -127,15 +129,15 @@ export function EvaluationProvider({ children }: { children: ReactNode }) {
   }, []);
 
   // Derived scores
-  const { alignmentScore, riskScore, verdictText } = useMemo(() => {
-    if (!activeCompany) return { alignmentScore: 0, riskScore: 0, verdictText: "" };
+  const { alignmentScore, riskScore, verdictText, verdictReasons } = useMemo(() => {
+    if (!activeCompany) return { alignmentScore: 0, riskScore: 0, verdictText: "", verdictReasons: [] as string[] };
 
     const civic = activeCompany.civic_footprint_score ?? 0;
     const clarity = activeCompany.employer_clarity_score ?? 0;
     const career = activeCompany.career_intelligence_score ?? 0;
 
     // Alignment: weighted average of company scores against user priorities
-    const { values, safety, growth } = userPriorities;
+    const { values, safety, growth, pay, flexibility } = userPriorities;
     const totalWeight = values + safety + growth || 1;
     const alignment = Math.round(
       ((civic * values) + (clarity * safety) + ((career * 10) * growth)) / totalWeight
@@ -150,12 +152,43 @@ export function EvaluationProvider({ children }: { children: ReactNode }) {
     const jobAlignment = activeJob?.alignmentScore ?? clampedAlignment;
     const offerRisk = activeOffer?.riskScore ?? risk;
 
+    // Build reasons from user priorities + company data
+    const reasons: string[] = [];
+
+    // Map priority weights to company dimensions with labels
+    const dimensions: Array<{ priority: string; weight: number; score: number; label: string }> = [
+      { priority: "values", weight: values, score: civic, label: "Political transparency" },
+      { priority: "safety", weight: safety, score: clarity, label: "Employer clarity" },
+      { priority: "growth", weight: growth, score: career * 10, label: "Career growth signals" },
+      { priority: "pay", weight: pay, score: Math.round((clarity + civic) / 2), label: "Compensation fairness" },
+    ];
+
+    // Sort by user weight (highest priority first)
+    const sorted = [...dimensions].sort((a, b) => b.weight - a.weight);
+
+    // Top priority matches/mismatches become reasons
+    for (const dim of sorted.slice(0, 3)) {
+      if (dim.weight < 30) continue; // user doesn't care about this
+      if (dim.score >= 60) {
+        reasons.push(`${dim.label} scores well — and you ranked it high`);
+      } else if (dim.score < 40) {
+        reasons.push(`${dim.label} is weak — and it's a priority for you`);
+      } else {
+        reasons.push(`${dim.label} is mixed — worth verifying given your priorities`);
+      }
+    }
+
+    // Fallback if no profile-driven reasons
+    if (reasons.length === 0) {
+      reasons.push("Based on public records — complete your values profile for a personalized read");
+    }
+
     let verdict = "";
     if (jobAlignment >= 70 && offerRisk < 40) verdict = "Worth serious consideration";
     else if (jobAlignment >= 40 || offerRisk < 60) verdict = "Proceed with caution";
     else verdict = "Protect your peace";
 
-    return { alignmentScore: jobAlignment, riskScore: offerRisk, verdictText: verdict };
+    return { alignmentScore: jobAlignment, riskScore: offerRisk, verdictText: verdict, verdictReasons: reasons };
   }, [activeCompany, activeJob, activeOffer, userPriorities]);
 
   const contextLabel = useMemo(() => {
@@ -181,6 +214,7 @@ export function EvaluationProvider({ children }: { children: ReactNode }) {
         alignmentScore,
         riskScore,
         verdictText,
+        verdictReasons,
         contextLabel,
       }}
     >

@@ -1,7 +1,7 @@
 import { useEvaluation } from "@/contexts/EvaluationContext";
 import { CompanyLogo } from "@/components/CompanyLogo";
 import { Badge } from "@/components/ui/badge";
-import { ShieldCheck, AlertTriangle, XCircle } from "lucide-react";
+import { ShieldCheck, AlertTriangle, XCircle, Info } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 interface Props {
@@ -17,26 +17,26 @@ interface Props {
 
 /**
  * Decisive verdict header for the top of a company dossier.
- * Shows company identity + alignment/risk scores + one-line human verdict.
+ * Shows company identity + alignment/risk scores + values-driven verdict with explanation.
  */
 export function DossierVerdictHeader({ company }: Props) {
-  const { alignmentScore, riskScore, verdictText } = useEvaluation();
+  const { alignmentScore, riskScore, verdictText, verdictReasons } = useEvaluation();
 
   const riskLevel = riskScore < 40 ? "low" : riskScore < 65 ? "medium" : "high";
   const Icon = riskLevel === "low" ? ShieldCheck : riskLevel === "medium" ? AlertTriangle : XCircle;
 
   const verdictStyle = {
     low: {
-      bg: "bg-civic-green/5",
-      border: "border-civic-green/30",
-      text: "text-civic-green",
-      badge: "border-civic-green/40 text-civic-green",
+      bg: "bg-[hsl(var(--civic-green))]/5",
+      border: "border-[hsl(var(--civic-green))]/30",
+      text: "text-[hsl(var(--civic-green))]",
+      badge: "border-[hsl(var(--civic-green))]/40 text-[hsl(var(--civic-green))]",
     },
     medium: {
-      bg: "bg-civic-yellow/5",
-      border: "border-civic-yellow/30",
-      text: "text-civic-yellow",
-      badge: "border-civic-yellow/40 text-civic-yellow",
+      bg: "bg-[hsl(var(--civic-yellow))]/5",
+      border: "border-[hsl(var(--civic-yellow))]/30",
+      text: "text-[hsl(var(--civic-yellow))]",
+      badge: "border-[hsl(var(--civic-yellow))]/40 text-[hsl(var(--civic-yellow))]",
     },
     high: {
       bg: "bg-destructive/5",
@@ -102,9 +102,28 @@ export function DossierVerdictHeader({ company }: Props) {
           </div>
         </div>
 
-        <p className="text-xs text-muted-foreground mt-3 leading-relaxed">
-          Based on political spending, labor record, enforcement history, and public disclosures.
-          Not an opinion. A reading of what's on file.
+        {/* Values-driven explanation */}
+        {verdictReasons.length > 0 && (
+          <div className="mt-4 pt-3 border-t border-border/50">
+            <div className="flex items-center gap-1.5 mb-2">
+              <Info className="w-3.5 h-3.5 text-primary" />
+              <span className="font-mono text-[10px] tracking-[0.2em] uppercase text-primary">
+                Why this verdict — based on your profile
+              </span>
+            </div>
+            <ul className="space-y-1">
+              {verdictReasons.slice(0, 3).map((reason, i) => (
+                <li key={i} className="text-xs text-foreground/80 leading-relaxed flex items-start gap-2">
+                  <span className="text-primary mt-0.5">·</span>
+                  {reason}
+                </li>
+              ))}
+            </ul>
+          </div>
+        )}
+
+        <p className="text-[10px] text-muted-foreground mt-3 leading-relaxed">
+          Not an opinion. A reading of what's on file, scored against what you said matters.
         </p>
       </div>
     </div>
