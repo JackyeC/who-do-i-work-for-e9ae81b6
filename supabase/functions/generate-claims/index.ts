@@ -240,33 +240,37 @@ async function generateClaimsForCompany(supabase: any, companyId: string, compan
   let totalGenerated = 0;
   let totalSkipped = 0;
 
+  // Pre-fetch existing claims for this company to avoid per-signal queries
+  const existingSet = new Set<string>();
+  let from = 0;
+  while (true) {
+    const { data } = await supabase
+      .from('company_claims')
+      .select('signal_id, signal_table')
+      .eq('company_id', companyId)
+      .range(from, from + 999);
+    if (!data || data.length === 0) break;
+    for (const r of data) {
+      if (r.signal_id && r.signal_table) existingSet.add(`${r.signal_table}:${r.signal_id}`);
+    }
+    if (data.length < 1000) break;
+    from += 1000;
+  }
+
+  // Batch inserts
+  const toInsert: any[] = [];
+
   for (const source of SIGNAL_SOURCES) {
     try {
       const signals = await source.query(supabase, companyId);
       for (const signal of signals) {
+        const key = `${source.table}:${signal.id}`;
+        if (existingSet.has(key)) { totalSkipped++; continue; }
+
         const claim = source.toClaim(signal, companyName);
+        if (!claim.source_url) { totalSkipped++; continue; }
 
-        // ATTRIBUTION ENFORCEMENT
-        if (!claim.source_url) {
-          totalSkipped++;
-          continue;
-        }
-
-        // Deduplicate
-        const { data: existing } = await supabase
-          .from('company_claims')
-          .select('id')
-          .eq('company_id', companyId)
-          .eq('signal_id', signal.id)
-          .eq('signal_table', source.table)
-          .maybeSingle();
-
-        if (existing) {
-          totalSkipped++;
-          continue;
-        }
-
-        const { error: insertErr } = await supabase.from('company_claims').insert({
+        toInsert.push({
           company_id: companyId,
           claim_text: claim.claim_text,
           claim_type: source.claimType,
@@ -281,15 +285,23 @@ async function generateClaimsForCompany(supabase: any, companyId: string, compan
           is_active: true,
           generated_by: 'claim_engine',
         });
-
-        if (insertErr) {
-          totalSkipped++;
-        } else {
-          totalGenerated++;
-        }
       }
-    } catch (_e) {
-      // table may not exist for some deploys, skip silently
+    } catch (_e) { /* table may not exist */ }
+  }
+
+  // Batch insert in chunks of 100
+  for (let i = 0; i < toInsert.length; i += 100) {
+    const chunk = toInsert.slice(i, i + 100);
+    const { error } = await supabase.from('company_claims').insert(chunk);
+    if (error) {
+      // Fall back to individual inserts on conflict
+      for (const row of chunk) {
+        const { error: e2 } = await supabase.from('company_claims').insert(row);
+        if (!e2) totalGenerated++;
+        else totalSkipped++;
+      }
+    } else {
+      totalGenerated += chunk.length;
     }
   }
 
