@@ -105,7 +105,7 @@ const Index = forwardRef<HTMLDivElement>((_, ref) => {
             <LiveDataFeed />
           </div>
 
-          <p className="font-mono text-xs text-muted-foreground mt-5 tracking-wide max-w-[52ch] mx-auto text-center leading-relaxed" style={{ opacity: 0, animation: "heroFadeIn 0.4s ease 1.4s forwards" }}>
+          <p className="font-mono text-xs text-muted-foreground mt-5 tracking-wide max-w-[52ch] mx-auto text-center leading-relaxed" style={{ animation: "heroFadeIn 0.4s ease 1.4s" }}>
             Facts over feelings, built on FEC, SEC, OSHA, NLRB, BLS, and more — the public record, not the press release.
           </p>
         </div>
