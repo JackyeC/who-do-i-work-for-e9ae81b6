@@ -33,7 +33,7 @@ import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import { EmployerReportDrawer, type EvidenceRecord } from "@/components/dossier/EmployerReportDrawer";
 import { SignalRevealCard } from "@/components/dossier/SignalRevealCard";
-import { SignalIntelligenceBreakdown } from "@/components/dossier/SignalIntelligenceBreakdown";
+import { PowerInfluenceView } from "@/components/dossier/PowerInfluenceView";
 import { ApplyWithWDIWF } from "@/components/applications/ApplyWithWDIWF";
 import { useEvaluation } from "@/contexts/EvaluationContext";
 import { EvaluationView } from "@/components/evaluation/EvaluationView";
