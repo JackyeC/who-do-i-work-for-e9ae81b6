@@ -310,7 +310,8 @@ export function DashboardOverview({ onNavigate }: DashboardOverviewProps) {
           {/* YOUR JOURNEY */}
           <YourJourney onNavigate={onNavigate} />
 
-          {/* COMPANIES YOU'RE WATCHING */}
+          {/* COMPANIES YOU'RE WATCHING — only if user has tracked companies */}
+          {trackedCompanies.length > 0 && (
           <motion.div {...anim(0.12)}>
             <BriefingCard>
               <div className="flex items-center justify-between mb-3">
@@ -326,7 +327,7 @@ export function DashboardOverview({ onNavigate }: DashboardOverviewProps) {
                   const score = t.score ?? 0;
                   return (
                     <motion.div
-                      key={i}
+                      key={t.slug || i}
                       initial={{ opacity: 0, x: -8 }}
                       animate={{ opacity: 1, x: 0 }}
                       transition={{ delay: 0.05 + i * 0.04, duration: 0.35, ease: [0.22, 1, 0.36, 1] }}
@@ -357,17 +358,7 @@ export function DashboardOverview({ onNavigate }: DashboardOverviewProps) {
               </button>
             </BriefingCard>
           </motion.div>
-
-          {/* VALUES ALIGNMENT */}
-          <motion.div {...anim(0.16)}>
-            <BriefingCard>
-              <h3 className="text-[16px] font-bold text-foreground mb-0.5">
-                Aligned With Your Values
-              </h3>
-              <p className="text-xs text-muted-foreground mb-3">Based on your Work DNA profile</p>
-              <AlignedValuesSearch hasTakenQuiz={hasTakenQuiz} />
-            </BriefingCard>
-          </motion.div>
+          )}
         </div>
 
         {/* ──── RIGHT: RESOURCES ──── */}
