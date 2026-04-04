@@ -1,31 +1,19 @@
-## ND Mode Onboarding and Career Map Integration
 
-### 1. First-Time Walkthrough (3-5 steps)
-Appears once when a user first enables ND Mode. Uses a focused overlay that highlights one section at a time:
 
-- **Step 1: "Welcome to ND Mode"** — "This view translates employer signals into plain language. Every section answers: what is this, why does it matter, and what can I do next."
-- **Step 2: "Quick Read"** — "Start here. Five simple ratings tell you how clear, fast, social, flexible, and safe this workplace may be."
-- **Step 3: "Evidence and Feel"** — "We show what we found and what it may feel like day-to-day. Good fit / be careful lines help you decide quickly."
-- **Step 4: "Questions and Actions"** — "Ready-made interview questions (with softer versions) and suggestions for your resume, cover letter, and application."
-- **Step 5: "Need help anytime?"** — "Tap the help button to see what any icon, rating, or section means."
+## Fix: LinkedIn Callback — Write Encrypted Token
 
-Stored in localStorage so it only shows once. A "Show walkthrough again" option in the help legend.
+**Problem**: The `linkedin-callback` edge function writes `access_token` (line 107), but that column has been removed. It should use `encrypt_linkedin_token()` RPC instead, which writes to `access_token_encrypted` using `pgp_sym_encrypt`.
 
-### 2. Persistent Help Legend
-A floating help button (bottom-right) that opens a panel explaining:
-- What Low / Medium / High ratings mean
-- What each section covers (Quick Read, Evidence, Feel, Questions, Application)
-- What the progress rail does
-- What the view modes (Detailed, Summary, Checklist, Script) do
-- A "Show walkthrough again" link
+**Change**: `supabase/functions/linkedin-callback/index.ts`
 
-### 3. Career Map Integration
-Add a connection from the ND Dossier to the Career Map:
-- Add a "Use this in my career plan" button in the ND Dossier's application section
-- When clicked, navigates to /career-map with the company pre-loaded as context
-- The Career Map can then reference ND-specific findings (clarity, pace, social load) when generating path recommendations
+1. Remove `access_token` from the upsert payload (line 107)
+2. After the upsert succeeds, call the `encrypt_linkedin_token` RPC to store the token securely:
+   ```typescript
+   await supabase.rpc("encrypt_linkedin_token", {
+     p_user_id: userId,
+     p_token: tokenData.access_token,
+   });
+   ```
 
-### Components to build
-- `NDOnboardingWalkthrough` — step-by-step overlay
-- `NDHelpLegend` — floating help button + panel
-- Integration link in `NDDossierView` to Career Map
+This is a single-file, ~5-line change. The `encrypt_linkedin_token` DB function already exists and handles encryption via `pgp_sym_encrypt`.
+
