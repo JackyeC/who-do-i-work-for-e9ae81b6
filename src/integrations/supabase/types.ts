@@ -12230,6 +12230,45 @@ export type Database = {
         }
         Relationships: []
       }
+      linkedin_profiles_safe: {
+        Row: {
+          created_at: string | null
+          email: string | null
+          expires_at: string | null
+          id: string | null
+          linkedin_id: string | null
+          name: string | null
+          profile_picture_url: string | null
+          profile_url: string | null
+          updated_at: string | null
+          user_id: string | null
+        }
+        Insert: {
+          created_at?: string | null
+          email?: string | null
+          expires_at?: string | null
+          id?: string | null
+          linkedin_id?: string | null
+          name?: string | null
+          profile_picture_url?: string | null
+          profile_url?: string | null
+          updated_at?: string | null
+          user_id?: string | null
+        }
+        Update: {
+          created_at?: string | null
+          email?: string | null
+          expires_at?: string | null
+          id?: string | null
+          linkedin_id?: string | null
+          name?: string | null
+          profile_picture_url?: string | null
+          profile_url?: string | null
+          updated_at?: string | null
+          user_id?: string | null
+        }
+        Relationships: []
+      }
       public_employer_rebuttals: {
         Row: {
           company_id: string | null
