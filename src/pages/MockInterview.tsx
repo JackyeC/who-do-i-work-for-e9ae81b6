@@ -299,6 +299,8 @@ export default function MockInterview() {
 
   const goNext = () => {
     if (session.currentIndex < session.questions.length - 1) {
+      speech.stopListening();
+      speech.resetTranscript();
       setSession((s) => ({ ...s, currentIndex: s.currentIndex + 1 }));
       setAnswer("");
       setState("asking");
