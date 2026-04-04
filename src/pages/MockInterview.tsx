@@ -5,7 +5,7 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
-import { Shield, ChevronDown, Lightbulb, MessageSquare, ArrowRight, CheckCircle, RotateCcw, Loader2, Volume2, VolumeX, AlertTriangle } from "lucide-react";
+import { Shield, ChevronDown, Lightbulb, MessageSquare, ArrowRight, CheckCircle, RotateCcw, Loader2, Volume2, VolumeX, AlertTriangle, Mic, MicOff, Type } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { motion } from "framer-motion";
 import { supabase } from "@/integrations/supabase/client";
@@ -14,6 +14,7 @@ import { toast } from "sonner";
 import { Textarea } from "@/components/ui/textarea";
 import { Progress } from "@/components/ui/progress";
 import { speakRobot, stopSpeaking, VOICE_PRESETS, type VoicePreset } from "@/lib/robot-voice";
+import { useSpeechRecognition, type MicStatus } from "@/hooks/useSpeechRecognition";
 
 // ── Types ──
 
@@ -116,6 +117,23 @@ function computeScoreSummary(answers: AnswerItem[], total: number): Session["sco
   return { average: avg, answered: scored.length, total };
 }
 
+const MIC_STATUS_CONFIG: Record<MicStatus, { label: string; className: string }> = {
+  idle: { label: "Idle", className: "bg-muted/40 text-muted-foreground" },
+  listening: { label: "Listening", className: "bg-primary/10 text-primary animate-pulse" },
+  processing: { label: "Processing", className: "bg-[hsl(var(--civic-gold))]/10 text-[hsl(var(--civic-gold))]" },
+  ready: { label: "Ready", className: "bg-green-500/10 text-green-500" },
+  error: { label: "Error", className: "bg-destructive/10 text-destructive" },
+};
+
+function MicStatusPill({ status }: { status: MicStatus }) {
+  const config = MIC_STATUS_CONFIG[status];
+  return (
+    <span className={cn("px-2 py-0.5 rounded-full text-[10px] font-mono tracking-wider", config.className)}>
+      {config.label}
+    </span>
+  );
+}
+
 // ── Component ──
 
 export default function MockInterview() {
@@ -134,6 +152,31 @@ export default function MockInterview() {
   const [evaluating, setEvaluating] = useState(false);
   const [voicePreset, setVoicePreset] = useState<VoicePreset>("standard");
   const [voiceEnabled, setVoiceEnabled] = useState(true);
+  const [practiceMode, setPracticeMode] = useState<"text" | "voice">("text");
+
+  const speech = useSpeechRecognition();
+
+  // Sync speech final text into the answer field in voice mode
+  useEffect(() => {
+    if (practiceMode === "voice" && speech.finalText) {
+      setAnswer(speech.finalText);
+    }
+  }, [speech.finalText, practiceMode]);
+
+  // Auto-fallback to text mode if speech unsupported or mic denied
+  useEffect(() => {
+    if (practiceMode === "voice" && !speech.supported) {
+      setPracticeMode("text");
+      toast.error("Voice practice works best in Chrome.");
+    }
+  }, [practiceMode, speech.supported]);
+
+  useEffect(() => {
+    if (speech.micStatus === "error" && speech.errorMessage.includes("denied")) {
+      setPracticeMode("text");
+      toast.error(speech.errorMessage);
+    }
+  }, [speech.micStatus, speech.errorMessage]);
 
   const currentQuestion = session.questions[session.currentIndex] ?? null;
   const currentAnswer = session.answers.find((a) => a.questionId === currentQuestion?.id) ?? null;
@@ -144,6 +187,14 @@ export default function MockInterview() {
     speakRobot(currentQuestion.text, voicePreset);
     return () => stopSpeaking();
   }, [state, session.currentIndex, voicePreset, voiceEnabled]);
+
+  // Stop recognition on question change
+  useEffect(() => {
+    if (state !== "asking" && state !== "recording") {
+      speech.stopListening();
+      speech.resetTranscript();
+    }
+  }, [state]);
 
   // Skip invalid questions
   useEffect(() => {
@@ -242,8 +293,8 @@ export default function MockInterview() {
         questionId: currentQuestion.id,
         questionText: currentQuestion.text,
         answerText: answer,
-        transcript: answer,
-        mode: "typed",
+        transcript: practiceMode === "voice" ? speech.finalText : answer,
+        mode: practiceMode === "voice" ? "voice" : "typed",
         feedback: evaluation.feedback,
         score: evaluation.score,
         strengths: evaluation.strengths,
@@ -265,6 +316,8 @@ export default function MockInterview() {
 
   const goNext = () => {
     if (session.currentIndex < session.questions.length - 1) {
+      speech.stopListening();
+      speech.resetTranscript();
       setSession((s) => ({ ...s, currentIndex: s.currentIndex + 1 }));
       setAnswer("");
       setState("asking");
@@ -490,7 +543,93 @@ export default function MockInterview() {
                     {currentQuestion.text}
                   </p>
 
-                  <div className="space-y-3">
+                  {/* Practice mode toggle */}
+                  <div className="flex items-center gap-2">
+                    <span className="text-[10px] font-mono text-muted-foreground tracking-wider uppercase">Answer Mode:</span>
+                    <div className="flex items-center gap-1">
+                      <button
+                        onClick={() => { setPracticeMode("text"); speech.stopListening(); speech.resetTranscript(); }}
+                        className={cn("px-2.5 py-1 rounded-md text-[10px] font-mono tracking-wider border transition-all flex items-center gap-1", practiceMode === "text" ? "bg-primary text-primary-foreground border-primary font-bold" : "bg-card text-muted-foreground border-border/40 hover:border-primary/40")}
+                      >
+                        <Type className="w-3 h-3" /> Text
+                      </button>
+                      <button
+                        onClick={() => {
+                          if (!speech.supported) {
+                            toast.error("Voice practice works best in Chrome.");
+                            return;
+                          }
+                          setPracticeMode("voice");
+                        }}
+                        className={cn("px-2.5 py-1 rounded-md text-[10px] font-mono tracking-wider border transition-all flex items-center gap-1", practiceMode === "voice" ? "bg-primary text-primary-foreground border-primary font-bold" : "bg-card text-muted-foreground border-border/40 hover:border-primary/40")}
+                      >
+                        <Mic className="w-3 h-3" /> Voice
+                      </button>
+                    </div>
+                    {/* Mic status pill */}
+                    {practiceMode === "voice" && (
+                      <MicStatusPill status={speech.micStatus} />
+                    )}
+                  </div>
+
+                  {/* Voice mode UI */}
+                  {practiceMode === "voice" && (
+                    <div className="space-y-3">
+                      {speech.errorMessage && (
+                        <div className="rounded-lg border border-destructive/20 bg-destructive/5 px-3 py-2">
+                          <p className="text-xs text-destructive">{speech.errorMessage}</p>
+                        </div>
+                      )}
+
+                      {/* Live transcript display */}
+                      <div className="rounded-lg bg-muted/20 border border-border/30 p-3 min-h-[80px]">
+                        {speech.finalText || speech.interimText ? (
+                          <p className="text-sm text-foreground/80 leading-relaxed whitespace-pre-wrap">
+                            {speech.finalText}
+                            {speech.interimText && <span className="text-muted-foreground italic"> {speech.interimText}</span>}
+                          </p>
+                        ) : (
+                          <p className="text-sm text-muted-foreground/50 italic">
+                            {speech.micStatus === "listening" ? "Listening… speak your answer" : "Press Start Recording to begin"}
+                          </p>
+                        )}
+                      </div>
+
+                      {/* Mic controls */}
+                      <div className="flex items-center gap-2">
+                        {speech.micStatus === "idle" || speech.micStatus === "ready" || speech.micStatus === "error" ? (
+                          <Button onClick={() => speech.startListening()} variant="default" size="sm" className="gap-2">
+                            <Mic className="w-3.5 h-3.5" /> Start Recording
+                          </Button>
+                        ) : speech.micStatus === "listening" ? (
+                          <Button onClick={() => speech.stopListening()} variant="destructive" size="sm" className="gap-2">
+                            <MicOff className="w-3.5 h-3.5" /> Stop Recording
+                          </Button>
+                        ) : null}
+                        {(speech.finalText || speech.interimText) && (
+                          <Button onClick={() => { speech.resetTranscript(); setAnswer(""); }} variant="outline" size="sm" className="gap-2">
+                            <RotateCcw className="w-3 h-3" /> Retry
+                          </Button>
+                        )}
+                      </div>
+
+                      {/* Editable transcript area */}
+                      {speech.finalText && speech.micStatus !== "listening" && (
+                        <div className="space-y-1.5">
+                          <p className="text-[10px] font-mono text-muted-foreground uppercase tracking-wider">Edit transcript before submitting:</p>
+                          <Textarea
+                            value={answer}
+                            onChange={(e) => setAnswer(e.target.value)}
+                            disabled={evaluating}
+                            className="min-h-[100px] text-sm"
+                          />
+                        </div>
+                      )}
+                    </div>
+                  )}
+
+                  {/* Text mode UI */}
+                  {practiceMode === "text" && (
                     <Textarea
                       placeholder="Type your answer here… Be specific and use examples."
                       value={answer}
@@ -498,14 +637,16 @@ export default function MockInterview() {
                       disabled={evaluating}
                       className="min-h-[140px] text-sm"
                     />
-                    <Button onClick={submitAnswer} disabled={!answer.trim() || evaluating} className="w-full gap-2" size="lg">
-                      {evaluating ? (
-                        <><Loader2 className="w-4 h-4 animate-spin" /> Evaluating…</>
-                      ) : (
-                        <><CheckCircle className="w-4 h-4" /> Submit Answer</>
-                      )}
-                    </Button>
-                  </div>
+                  )}
+
+                  {/* Submit (shared) */}
+                  <Button onClick={() => { speech.stopListening(); submitAnswer(); }} disabled={!answer.trim() || evaluating || speech.micStatus === "listening"} className="w-full gap-2" size="lg">
+                    {evaluating ? (
+                      <><Loader2 className="w-4 h-4 animate-spin" /> Evaluating…</>
+                    ) : (
+                      <><CheckCircle className="w-4 h-4" /> Submit Answer</>
+                    )}
+                  </Button>
                 </CardContent>
               </Card>
             </motion.div>
