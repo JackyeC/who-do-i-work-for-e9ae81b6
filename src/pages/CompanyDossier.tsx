@@ -132,6 +132,15 @@ export default function CompanyDossier() {
     enabled: !!companyId,
   });
 
+  const { data: dossierBoardMembers } = useQuery({
+    queryKey: ["dossier-board-members", companyId],
+    queryFn: async () => {
+      const { data } = await supabase.from("board_members").select("*").eq("company_id", companyId!).order("name");
+      return data || [];
+    },
+    enabled: !!companyId,
+  });
+
   const { data: partyBreakdown } = useQuery({
     queryKey: ["dossier-party-breakdown", companyId],
     queryFn: async () => {
