@@ -35,11 +35,13 @@ export function BriefingHoldingModal({ open, onClose }: BriefingHoldingModalProp
     if (!email.includes("@")) return;
     setSubmitting(true);
     try {
-      await supabase.from("career_waitlist").insert({
+      await supabase.from("briefing_signals").insert({
         email: email.toLowerCase().trim(),
-        reason: `briefing_dna_${persona || "unknown"}`,
-        name: dnaLabel,
-      });
+        dna_profile: persona || "unknown",
+        title: `Briefing request: ${dnaLabel}`,
+        source_name: dnaLabel,
+        signal_type: "briefing_dna",
+      } as any);
       setSubmitted(true);
     } catch {
       toast.error("Something went wrong. Try again.");
