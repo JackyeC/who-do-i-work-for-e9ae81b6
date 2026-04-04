@@ -59,16 +59,22 @@ export function LiveIntelligenceTicker() {
         .limit(30);
 
       if (error) throw error;
+
+      const BLOCKED_SOURCES = /\b(bible|church|gospel|devotion|prayer|christian|catholic|faith|sermon|cricket|soccer|football|nfl|nba|mlb|nhl|espn|sport|athletic|fashion|vogue|glamour|cosmopolitan|allure|bazaar|style|beauty|horoscope|astrology|recipe|cooking|celebrity|gossip|entertainment|bollywood|telenovela|pageant|runway)\b/i;
+
       return ((data as TickerNewsItem[]) || [])
         .map(item => ({
           ...item,
           headline: decodeEscapes(item.headline || ""),
           source_name: item.source_name ? decodeEscapes(item.source_name) : null,
         }))
-        .filter(item =>
-          isLikelyEnglish(item.headline) &&
-          isUSOrEmployerRelevant(item.headline, item.source_name)
-        );
+        .filter(item => {
+          if (!isLikelyEnglish(item.headline)) return false;
+          if (BLOCKED_SOURCES.test(item.headline)) return false;
+          if (item.source_name && BLOCKED_SOURCES.test(item.source_name)) return false;
+          return isUSOrEmployerRelevant(item.headline, item.source_name);
+        })
+        .slice(0, 12);
     },
     staleTime: 120_000,
     refetchInterval: 300_000,
