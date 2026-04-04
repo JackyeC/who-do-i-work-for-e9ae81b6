@@ -117,6 +117,9 @@ const Index = forwardRef<HTMLDivElement>((_, ref) => {
         <LiveIntelligenceTicker />
       </Suspense>
 
+      {/* FULLY AUDITED SHOWCASE */}
+      <FullyAuditedShowcase />
+
       {/* 2 - HOW IT WORKS */}
       <section className="bg-card border-y border-border px-6 lg:px-16 py-20 lg:py-28">
         <div className="max-w-[900px] mx-auto">

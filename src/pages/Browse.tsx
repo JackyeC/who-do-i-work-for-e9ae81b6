@@ -95,6 +95,7 @@ export default function Browse() {
       description: c.description, isDbOnly: true,
       isStartup: c.is_startup, categoryTags: c.category_tags || [],
       careerIntelligenceScore: c.career_intelligence_score,
+      vettedStatus: c.vetted_status,
     }));
     const dbSlugs = new Set(dbList.map((c: any) => c.slug));
     const sampleExtras = sampleCompanies
