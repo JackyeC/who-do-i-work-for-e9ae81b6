@@ -258,6 +258,15 @@ export function NDDossierView({ company, companyId, executives = [], eeocCases =
 
   return (
     <div className="max-w-3xl mx-auto">
+      {/* ── ONBOARDING ── */}
+      <NDOnboardingWalkthrough onComplete={() => setShowOnboarding(false)} />
+      <NDHelpLegend onReplayWalkthrough={() => {
+        resetNDOnboarding();
+        setShowOnboarding(true);
+        // Force remount by toggling — the walkthrough checks localStorage on mount
+        window.location.reload();
+      }} />
+
       {/* ── HEADER ── */}
       <header className="flex flex-col gap-4 mb-2">
         <div className="flex items-center gap-4">
