@@ -21,6 +21,12 @@ interface TickerNewsItem {
   jackye_take: string | null;
 }
 
+const ALLOWED_CATEGORIES = [
+  "regulation", "future_of_work", "worker_rights", "ai_workplace",
+  "legislation", "layoffs", "pay_equity", "labor_organizing",
+  "dei", "workplace", "policy", "wdiwf_intel",
+];
+
 const CATEGORY_LABELS: Record<string, string> = {
   regulation: "REG",
   future_of_work: "WORK",
@@ -34,7 +40,6 @@ const CATEGORY_LABELS: Record<string, string> = {
   workplace: "WORK",
   policy: "POLICY",
   wdiwf_intel: "WDIWF",
-  general: "NEWS",
 };
 
 export function LiveIntelligenceTicker() {
