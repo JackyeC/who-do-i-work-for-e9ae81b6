@@ -152,14 +152,14 @@ export function DashboardOverview({ onNavigate }: DashboardOverviewProps) {
 
   const firstName = data?.firstName || "there";
   const alerts = data?.alerts || [];
-  const trackedCompanies = data?.tracked && data.tracked.length > 0
-    ? data.tracked.map((t: any) => ({
-        name: t.company?.name,
-        slug: t.company?.slug,
-        industry: t.company?.industry,
-        score: t.company?.employer_clarity_score ?? 0,
-      }))
-    : DEMO_WATCHED;
+  const trackedCompanies = (data?.tracked || [])
+    .map((t: any) => ({
+      name: t.company?.name,
+      slug: t.company?.slug,
+      industry: t.company?.industry,
+      score: t.company?.employer_clarity_score ?? 0,
+    }))
+    .filter((t: any) => t.name);
 
   return (
     <div className="space-y-5 max-w-[1200px] mx-auto">
