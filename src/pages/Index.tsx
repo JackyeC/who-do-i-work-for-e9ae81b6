@@ -56,7 +56,7 @@ const Index = forwardRef<HTMLDivElement>((_, ref) => {
         <div className="relative z-[1] max-w-[780px] mx-auto flex flex-col items-center text-center">
           <p
             className="font-mono text-[11px] tracking-[0.2em] uppercase text-primary mb-5"
-            style={{ opacity: 0, animation: "heroFadeIn 0.5s ease 0.15s forwards" }}
+            style={{ animation: "heroFadeIn 0.5s ease 0.15s" }}
           >
             Before you apply, accept, stay, or leave
           </p>
