@@ -21,6 +21,12 @@ interface TickerNewsItem {
   jackye_take: string | null;
 }
 
+const ALLOWED_CATEGORIES = [
+  "regulation", "future_of_work", "worker_rights", "ai_workplace",
+  "legislation", "layoffs", "pay_equity", "labor_organizing",
+  "dei", "workplace", "policy", "wdiwf_intel",
+];
+
 const CATEGORY_LABELS: Record<string, string> = {
   regulation: "REG",
   future_of_work: "WORK",
@@ -34,7 +40,6 @@ const CATEGORY_LABELS: Record<string, string> = {
   workplace: "WORK",
   policy: "POLICY",
   wdiwf_intel: "WDIWF",
-  general: "NEWS",
 };
 
 export function LiveIntelligenceTicker() {
@@ -49,20 +54,27 @@ export function LiveIntelligenceTicker() {
           "id, headline, source_name, source_url, category, is_controversy, published_at, jackye_take"
         )
         .eq("language", "en")
+        .in("category", ALLOWED_CATEGORIES)
         .order("published_at", { ascending: false })
-        .limit(10);
+        .limit(30);
 
       if (error) throw error;
+
+      const BLOCKED_SOURCES = /\b(bible|church|gospel|devotion|prayer|christian|catholic|faith|sermon|cricket|soccer|football|nfl|nba|mlb|nhl|espn|sport|athletic|fashion|vogue|glamour|cosmopolitan|allure|bazaar|style|beauty|horoscope|astrology|recipe|cooking|celebrity|gossip|entertainment|bollywood|telenovela|pageant|runway)\b/i;
+
       return ((data as TickerNewsItem[]) || [])
         .map(item => ({
           ...item,
           headline: decodeEscapes(item.headline || ""),
           source_name: item.source_name ? decodeEscapes(item.source_name) : null,
         }))
-        .filter(item =>
-          isLikelyEnglish(item.headline) &&
-          isUSOrEmployerRelevant(item.headline, item.source_name)
-        );
+        .filter(item => {
+          if (!isLikelyEnglish(item.headline)) return false;
+          if (BLOCKED_SOURCES.test(item.headline)) return false;
+          if (item.source_name && BLOCKED_SOURCES.test(item.source_name)) return false;
+          return isUSOrEmployerRelevant(item.headline, item.source_name);
+        })
+        .slice(0, 12);
     },
     staleTime: 120_000,
     refetchInterval: 300_000,
