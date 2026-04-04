@@ -222,7 +222,9 @@ const App = () => (
                   <Route path="/recruiter-brief" element={<RecruiterBrief />} />
                   <Route path="/ask-jackye" element={<AskJackye />} />
                   <Route path="/reality-check" element={<ProtectedRoute><RealityCheck /></ProtectedRoute>} />
-                  <Route path="/would-you-work-here" element={<Navigate to="/offer-check" replace />} />
+                  <Route path="/would-you-work-here" element={<Navigate to="/intelligence-check" replace />} />
+                  <Route path="/intelligence-check" element={<IntelligenceCheck />} />
+                  <Route path="/intelligence-check/confirmation" element={<IntelligenceCheckConfirmation />} />
                   <Route path="/work-with-jackye" element={<WorkWithJackye />} />
                   <Route path="/contact" element={<Contact />} />
                   <Route path="/employer-receipt" element={<EmployerReceipt />} />
