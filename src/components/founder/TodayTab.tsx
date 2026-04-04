@@ -191,16 +191,46 @@ export function TodayTab() {
     },
   });
 
-  // ─── Data Health ───
+  // ─── Data Health + Product Readiness ───
   const { data: dataHealth, isLoading: dataLoading } = useQuery({
     queryKey: ["founder-today-data"],
     queryFn: async () => {
-      const [total, withEvidence, noEvidence] = await Promise.all([
+      const [total, withEvidence, noEvidence, withWebsite, fullyAudited, withClaims, totalClaims, attributedClaims] = await Promise.all([
         supabase.from("companies").select("id", { count: "exact", head: true }),
         supabase.from("companies").select("id", { count: "exact", head: true }).not("description", "is", null).gt("employer_clarity_score", 0),
         supabase.from("companies").select("id", { count: "exact", head: true }).or("description.is.null,employer_clarity_score.eq.0"),
+        supabase.from("companies").select("id", { count: "exact", head: true }).not("website_url", "is", null),
+        supabase.from("companies").select("id", { count: "exact", head: true }).eq("vetted_status", "fully_audited"),
+        // Companies with at least 1 claim
+        (supabase as any).from("company_claims").select("company_id", { count: "exact", head: false }).eq("is_active", true),
+        (supabase as any).from("company_claims").select("id", { count: "exact", head: true }).eq("is_active", true),
+        (supabase as any).from("company_claims").select("id", { count: "exact", head: true }).eq("is_active", true).not("source_url", "is", null).not("source_label", "is", null),
       ]);
-      return { total: total.count ?? 0, strong: withEvidence.count ?? 0, none: noEvidence.count ?? 0 };
+
+      // Count distinct companies with claims
+      const claimCompanyIds = new Set((withClaims.data ?? []).map((r: any) => r.company_id));
+      const companiesWithClaims = claimCompanyIds.size;
+
+      const totalCount = total.count ?? 0;
+      const totalClaimsCount = totalClaims.count ?? 0;
+      const attributedCount = attributedClaims.count ?? 0;
+      const websiteCount = withWebsite.count ?? 0;
+
+      return {
+        total: totalCount,
+        strong: withEvidence.count ?? 0,
+        none: noEvidence.count ?? 0,
+        withWebsite: websiteCount,
+        websitePct: totalCount > 0 ? Math.round((websiteCount / totalCount) * 100) : 0,
+        fullyAudited: fullyAudited.count ?? 0,
+        companiesWithClaims,
+        claimCoveragePct: totalCount > 0 ? Math.round((companiesWithClaims / totalCount) * 100) : 0,
+        companiesNoClaims: totalCount - companiesWithClaims,
+        totalClaims: totalClaimsCount,
+        attributedClaims: attributedCount,
+        attributionPct: totalClaimsCount > 0 ? Math.round((attributedCount / totalClaimsCount) * 100) : 0,
+        unattributedClaims: totalClaimsCount - attributedCount,
+      };
     },
   });
 
