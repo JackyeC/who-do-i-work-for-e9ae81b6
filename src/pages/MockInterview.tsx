@@ -1,11 +1,11 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { Helmet } from "react-helmet-async";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
-import { Shield, ChevronDown, Lightbulb, MessageSquare, ArrowRight, CheckCircle, RotateCcw, Loader2, Volume2, VolumeX } from "lucide-react";
+import { Shield, ChevronDown, Lightbulb, MessageSquare, ArrowRight, CheckCircle, RotateCcw, Loader2, Volume2, VolumeX, AlertTriangle } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { motion } from "framer-motion";
 import { supabase } from "@/integrations/supabase/client";
@@ -15,218 +15,247 @@ import { Textarea } from "@/components/ui/textarea";
 import { Progress } from "@/components/ui/progress";
 import { speakRobot, stopSpeaking, VOICE_PRESETS, type VoicePreset } from "@/lib/robot-voice";
 
-interface NormalizedQuestion {
+// ── Types ──
+
+type InterviewState = "setup" | "loading" | "asking" | "recording" | "reviewing" | "complete" | "error";
+
+interface QuestionItem {
   id: string;
-  question: string;
+  text: string;
   category: string;
   tip: string;
-  userAnswer: string;
+}
+
+interface AnswerItem {
+  questionId: string;
+  questionText: string;
+  answerText: string;
+  transcript: string;
+  mode: "typed" | "voice";
   feedback: string | null;
   score: number | null;
   strengths: string | null;
   improvements: string | null;
 }
 
-const FALLBACK_QUESTIONS = [
-  "Tell me about your experience and why you want this role.",
-  "Describe a time you helped a customer solve a problem.",
-  "How would you handle competing priorities during a busy shift?",
+interface Session {
+  role: string;
+  company: string;
+  interviewType: string;
+  startedAt: string;
+  currentIndex: number;
+  questions: QuestionItem[];
+  answers: AnswerItem[];
+  scoreSummary: { average: number; answered: number; total: number } | null;
+}
+
+// ── Constants ──
+
+const FALLBACK_QUESTIONS: QuestionItem[] = [
+  { id: "fallback-1", text: "Tell me about your experience and why you want this role.", category: "General", tip: "" },
+  { id: "fallback-2", text: "Describe a time you helped a customer solve a problem.", category: "General", tip: "" },
+  { id: "fallback-3", text: "How would you handle competing priorities during a busy shift?", category: "General", tip: "" },
 ];
 
-/** Normalize interview data from any shape the AI might return */
-function normalizeInterviewData(raw: any): NormalizedQuestion[] {
-  if (!raw) return [];
+const PREP_QUESTIONS = [
+  { question: "Tell me about a time you had to make a decision that balanced business goals with personal values.", category: "Behavioral", tip: "Lead with the tension — name the competing priorities clearly. Then walk through your reasoning." },
+  { question: "How do you approach building consensus across teams with competing priorities?", category: "Leadership", tip: "Focus on the process, not the outcome. Show you listen before persuading." },
+  { question: "Describe a project where the right thing to do conflicted with the fastest thing to do.", category: "Integrity", tip: "This is a values litmus test. Share the real trade-off and what you chose." },
+  { question: "What does accountability look like to you — both from leadership and from yourself?", category: "Culture", tip: "Use your Who Do I Work For dossier to compare their stated values to employee reviews." },
+  { question: "Ask them about the gap between their careers page and their employee reviews — they will tell you everything.", category: "Integrity Flip", tip: "Frame it respectfully: 'I noticed your careers page emphasizes X, but some reviews mention Y — can you help me understand that gap?'" },
+];
 
-  // Find the questions array from various possible shapes
-  let sourceQuestions: any[] = [];
-  if (Array.isArray(raw?.questions)) {
-    sourceQuestions = raw.questions;
-  } else if (Array.isArray(raw?.interviewQuestions)) {
-    sourceQuestions = raw.interviewQuestions;
-  } else if (Array.isArray(raw?.data?.questions)) {
-    sourceQuestions = raw.data.questions;
-  }
+// ── Normalizer ──
 
-  const normalized = sourceQuestions
-    .map((item: any, index: number) => {
-      let questionText = "";
-      if (typeof item === "string") {
-        questionText = item;
-      } else if (item?.question) {
-        questionText = item.question;
-      } else if (item?.prompt) {
-        questionText = item.prompt;
-      } else if (item?.text) {
-        questionText = item.text;
-      }
+function normalizeInterviewData(raw: any, role: string, company: string): { questions: QuestionItem[] } {
+  if (!raw) return { questions: [] };
 
+  let source: any[] = [];
+  if (Array.isArray(raw?.questions)) source = raw.questions;
+  else if (Array.isArray(raw?.interviewQuestions)) source = raw.interviewQuestions;
+  else if (Array.isArray(raw?.data?.questions)) source = raw.data.questions;
+
+  const questions = source
+    .map((item: any, i: number): QuestionItem | null => {
+      let text = "";
+      if (typeof item === "string") text = item;
+      else if (item?.question) text = item.question;
+      else if (item?.prompt) text = item.prompt;
+      else if (item?.text) text = item.text;
+      text = text.trim();
+      if (!text) return null;
       return {
-        id: `q-${index + 1}`,
-        question: questionText.trim(),
-        category: (typeof item === "object" && item?.category) || `Question ${index + 1}`,
+        id: `q-${i + 1}`,
+        text,
+        category: (typeof item === "object" && item?.category) || `Question ${i + 1}`,
         tip: (typeof item === "object" && item?.tip) || "",
-        userAnswer: "",
-        feedback: null,
-        score: null,
-        strengths: null,
-        improvements: null,
-      } as NormalizedQuestion;
+      };
     })
-    .filter((q) => q.question.length > 0);
+    .filter((q): q is QuestionItem => q !== null);
 
-  // Inject fallback questions if none were valid
-  if (normalized.length === 0) {
-    return FALLBACK_QUESTIONS.map((text, i) => ({
-      id: `fallback-${i + 1}`,
-      question: text,
-      category: "General",
-      tip: "",
-      userAnswer: "",
-      feedback: null,
-      score: null,
-      strengths: null,
-      improvements: null,
-    }));
-  }
-
-  return normalized;
+  return { questions };
 }
 
-interface PrepQuestion {
-  question: string;
-  category: string;
-  tip: string;
+function createEmptySession(): Session {
+  return {
+    role: "",
+    company: "",
+    interviewType: "ai-generated",
+    startedAt: "",
+    currentIndex: 0,
+    questions: [],
+    answers: [],
+    scoreSummary: null,
+  };
 }
 
-const PREP_QUESTIONS: PrepQuestion[] = [
-  {
-    question: "Tell me about a time you had to make a decision that balanced business goals with personal values.",
-    category: "Behavioral",
-    tip: "Lead with the tension — name the competing priorities clearly. Then walk through your reasoning. Interviewers want to see that you can hold complexity without defaulting to 'whatever the boss says.'",
-  },
-  {
-    question: "How do you approach building consensus across teams with competing priorities?",
-    category: "Leadership",
-    tip: "Focus on the process, not the outcome. Who Do I Work For-aligned candidates show they listen before persuading. Mention how you surface hidden objections — that signals emotional intelligence.",
-  },
-  {
-    question: "Describe a project where the right thing to do conflicted with the fastest thing to do.",
-    category: "Integrity",
-    tip: "This is a values litmus test. Don't sanitize it. Share the real trade-off and what you chose. If you chose speed, own it — and say what you'd do differently. Honesty beats polish.",
-  },
-  {
-    question: "What does accountability look like to you — both from leadership and from yourself?",
-    category: "Culture",
-    tip: "Ask yourself: does this company actually practice accountability, or just talk about it? Use your Who Do I Work For dossier to compare their stated values to employee reviews. Your answer should signal you expect reciprocity.",
-  },
-  {
-    question: "Ask them about the gap between their careers page and their employee reviews — they will tell you everything.",
-    category: "Integrity Flip",
-    tip: "This is your power move. Frame it respectfully: 'I noticed your careers page emphasizes X, but some reviews mention Y — can you help me understand that gap?' Watch how they respond. Defensiveness is a signal. Curiosity is a green flag.",
-  },
-];
+function computeScoreSummary(answers: AnswerItem[], total: number): Session["scoreSummary"] {
+  const scored = answers.filter((a) => a.score !== null);
+  if (scored.length === 0) return { average: 0, answered: 0, total };
+  const avg = Math.round(scored.reduce((s, a) => s + (a.score ?? 0), 0) / scored.length);
+  return { average: avg, answered: scored.length, total };
+}
+
+// ── Component ──
 
 export default function MockInterview() {
   const { user } = useAuth();
-  const [company, setCompany] = useState("");
-  const [role, setRole] = useState("");
+  const [state, setState] = useState<InterviewState>("setup");
+  const [session, setSession] = useState<Session>(createEmptySession);
+  const [errorMessage, setErrorMessage] = useState("");
+
+  // Setup form
+  const [companyInput, setCompanyInput] = useState("");
+  const [roleInput, setRoleInput] = useState("");
   const [openIdx, setOpenIdx] = useState<number | null>(null);
 
-  // Interview flow states
-  const [mode, setMode] = useState<"setup" | "interview" | "review">("setup");
-  const [questions, setQuestions] = useState<any[]>([]);
-  const [currentIdx, setCurrentIdx] = useState(0);
+  // Active interview
   const [answer, setAnswer] = useState("");
-  const [generating, setGenerating] = useState(false);
   const [evaluating, setEvaluating] = useState(false);
   const [voicePreset, setVoicePreset] = useState<VoicePreset>("standard");
   const [voiceEnabled, setVoiceEnabled] = useState(true);
 
-  // Auto-speak question when it changes
+  const currentQuestion = session.questions[session.currentIndex] ?? null;
+  const currentAnswer = session.answers.find((a) => a.questionId === currentQuestion?.id) ?? null;
+
+  // Auto-speak on question change
   useEffect(() => {
-    if (mode !== "interview" || !voiceEnabled) return;
-    const q = questions[currentIdx];
-    const text = q?.question;
-    if (text) speakRobot(text, voicePreset);
+    if (state !== "asking" || !voiceEnabled || !currentQuestion) return;
+    speakRobot(currentQuestion.text, voicePreset);
     return () => stopSpeaking();
-  }, [mode, currentIdx, questions, voicePreset, voiceEnabled]);
+  }, [state, session.currentIndex, voicePreset, voiceEnabled]);
+
+  // Skip invalid questions
+  useEffect(() => {
+    if (state !== "asking" && state !== "recording") return;
+    if (!currentQuestion?.text) {
+      const nextValid = session.questions.findIndex((q, i) => i > session.currentIndex && q.text);
+      if (nextValid >= 0) {
+        setSession((s) => ({ ...s, currentIndex: nextValid }));
+      } else {
+        finishInterview();
+      }
+    }
+  }, [session.currentIndex, state]);
 
   const startInterview = async () => {
-    if (!company.trim() || !role.trim()) {
+    if (!companyInput.trim() || !roleInput.trim()) {
       toast.error("Enter both company and role to start.");
       return;
     }
-    setGenerating(true);
+
+    setState("loading");
+    setErrorMessage("");
+
     try {
       const { data, error } = await supabase.functions.invoke("job-questions", {
-        body: { company: company.trim(), role: role.trim(), count: 5 },
+        body: { company: companyInput.trim(), role: roleInput.trim(), count: 5 },
       });
       if (error) throw error;
 
-      // Log raw payload for debugging
       console.log("[MockInterview] Raw API payload:", JSON.stringify(data, null, 2));
 
-      const qs = normalizeInterviewData(data);
+      const { questions } = normalizeInterviewData(data, roleInput.trim(), companyInput.trim());
+      console.log("[MockInterview] Normalized questions:", questions);
 
-      console.log("[MockInterview] Normalized questions:", qs);
+      const finalQuestions = questions.length > 0 ? questions : FALLBACK_QUESTIONS;
 
-      if (qs.length === 0) throw new Error("No questions generated");
-      setQuestions(qs);
-      setCurrentIdx(0);
+      setSession({
+        role: roleInput.trim(),
+        company: companyInput.trim(),
+        interviewType: questions.length > 0 ? "ai-generated" : "fallback",
+        startedAt: new Date().toISOString(),
+        currentIndex: 0,
+        questions: finalQuestions,
+        answers: [],
+        scoreSummary: null,
+      });
       setAnswer("");
-      setMode("interview");
+      setState("asking");
     } catch (err: any) {
-      toast.error(err.message || "Failed to generate questions");
-    } finally {
-      setGenerating(false);
+      console.error("[MockInterview] Generation failed:", err);
+      setErrorMessage(err.message || "Failed to generate questions.");
+      setState("error");
     }
   };
 
+  const useFallbackQuestions = () => {
+    setSession({
+      role: roleInput.trim() || "this role",
+      company: companyInput.trim() || "this company",
+      interviewType: "fallback",
+      startedAt: new Date().toISOString(),
+      currentIndex: 0,
+      questions: FALLBACK_QUESTIONS,
+      answers: [],
+      scoreSummary: null,
+    });
+    setAnswer("");
+    setState("asking");
+  };
+
   const submitAnswer = async () => {
-    if (!answer.trim()) return;
+    if (!answer.trim() || !currentQuestion) return;
     setEvaluating(true);
+
     try {
-      const q = questions[currentIdx];
       const { data, error } = await supabase.functions.invoke("ask-jackye-chat", {
         body: {
           messages: [
-            {
-              role: "system",
-              content:
-                "You are an expert interview coach. Evaluate the candidate's answer. Return JSON with: score (0-100), feedback (2-3 specific sentences), strengths (1-2 things they did well), improvements (1-2 specific suggestions).",
-            },
-            {
-              role: "user",
-              content: `Interview for ${role} at ${company}.\n\nQuestion: ${q.question}\nCandidate's Answer: ${answer}\n\nEvaluate this answer. Return valid JSON: {"score": number, "feedback": string, "strengths": string, "improvements": string}`,
-            },
+            { role: "system", content: "You are an expert interview coach. Evaluate the candidate's answer. Return JSON with: score (0-100), feedback (2-3 specific sentences), strengths (1-2 things they did well), improvements (1-2 specific suggestions)." },
+            { role: "user", content: `Interview for ${session.role} at ${session.company}.\n\nQuestion: ${currentQuestion.text}\nCandidate's Answer: ${answer}\n\nEvaluate this answer. Return valid JSON: {"score": number, "feedback": string, "strengths": string, "improvements": string}` },
           ],
         },
       });
       if (error) throw error;
 
-      // Parse AI response
       const responseText = data?.reply || data?.content || data?.message || "";
-      let evaluation;
+      let evaluation: { score: number; feedback: string; strengths: string; improvements: string };
       try {
         const jsonMatch = responseText.match(/\{[\s\S]*\}/);
-        evaluation = jsonMatch
-          ? JSON.parse(jsonMatch[0])
-          : { score: 70, feedback: responseText, strengths: "", improvements: "" };
+        evaluation = jsonMatch ? JSON.parse(jsonMatch[0]) : { score: 70, feedback: responseText, strengths: "", improvements: "" };
       } catch {
         evaluation = { score: 70, feedback: responseText, strengths: "", improvements: "" };
       }
 
-      const updated = [...questions];
-      updated[currentIdx] = {
-        ...updated[currentIdx],
-        userAnswer: answer,
+      const newAnswer: AnswerItem = {
+        questionId: currentQuestion.id,
+        questionText: currentQuestion.text,
+        answerText: answer,
+        transcript: answer,
+        mode: "typed",
         feedback: evaluation.feedback,
         score: evaluation.score,
         strengths: evaluation.strengths,
         improvements: evaluation.improvements,
       };
-      setQuestions(updated);
+
+      setSession((s) => {
+        const updatedAnswers = [...s.answers.filter((a) => a.questionId !== currentQuestion.id), newAnswer];
+        return { ...s, answers: updatedAnswers };
+      });
       setAnswer("");
+      setState("reviewing");
     } catch (err: any) {
       toast.error("Failed to evaluate. Try again.");
     } finally {
@@ -235,37 +264,34 @@ export default function MockInterview() {
   };
 
   const goNext = () => {
-    if (currentIdx < questions.length - 1) {
-      setCurrentIdx(currentIdx + 1);
+    if (session.currentIndex < session.questions.length - 1) {
+      setSession((s) => ({ ...s, currentIndex: s.currentIndex + 1 }));
       setAnswer("");
+      setState("asking");
     }
   };
 
-  const finishInterview = () => {
-    setMode("review");
-  };
+  const finishInterview = useCallback(() => {
+    setSession((s) => ({
+      ...s,
+      scoreSummary: computeScoreSummary(s.answers, s.questions.length),
+    }));
+    setState("complete");
+  }, []);
 
   const resetAll = () => {
-    setMode("setup");
-    setCompany("");
-    setRole("");
-    setQuestions([]);
-    setCurrentIdx(0);
+    setState("setup");
+    setSession(createEmptySession());
+    setCompanyInput("");
+    setRoleInput("");
     setAnswer("");
     setOpenIdx(null);
+    setErrorMessage("");
   };
 
-  const currentQ = questions[currentIdx];
-  const isLastQuestion = currentIdx === questions.length - 1;
-  const answeredCount = questions.filter((q) => q.feedback !== null).length;
-  const progressPct = questions.length > 0 ? (answeredCount / questions.length) * 100 : 0;
-  const averageScore =
-    answeredCount > 0
-      ? Math.round(
-          questions.filter((q) => q.score !== null).reduce((sum: number, q: any) => sum + q.score, 0) /
-            answeredCount
-        )
-      : 0;
+  const isLastQuestion = session.currentIndex === session.questions.length - 1;
+  const answeredCount = session.answers.filter((a) => a.feedback !== null).length;
+  const progressPct = session.questions.length > 0 ? (answeredCount / session.questions.length) * 100 : 0;
 
   const scoreColor = (score: number) => {
     if (score >= 80) return "hsl(142, 70%, 45%)";
@@ -280,28 +306,25 @@ export default function MockInterview() {
       </Helmet>
       <div className="max-w-3xl mx-auto px-4 sm:px-6 py-8 space-y-6">
         {/* Header */}
-        <motion.div
-          initial={{ opacity: 0, y: 14 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
-        >
+        <motion.div initial={{ opacity: 0, y: 14 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5, ease: [0.16, 1, 0.3, 1] }}>
           <div className="flex items-center gap-3 mb-1">
-            <h1 className="text-2xl font-extrabold text-foreground tracking-tight font-display">
-              Mock Interview
-            </h1>
+            <h1 className="text-2xl font-extrabold text-foreground tracking-tight font-display">Mock Interview</h1>
             <Badge className="bg-[hsl(var(--civic-gold))]/10 text-[hsl(var(--civic-gold))] border-[hsl(var(--civic-gold))]/20 text-xs font-mono">
               <Shield className="w-3 h-3 mr-1" /> AI-powered interview prep
             </Badge>
           </div>
           <p className="text-sm text-muted-foreground">
-            {mode === "setup" && "Practice with AI-generated questions tailored to your target role. Get feedback after you submit each answer."}
-            {mode === "interview" && `Interviewing for ${role} at ${company} — Question ${currentIdx + 1} of ${questions.length}`}
-            {mode === "review" && "Review your performance and identify areas for improvement."}
+            {state === "setup" && "Practice with AI-generated questions tailored to your target role. Get feedback after you submit each answer."}
+            {state === "loading" && "Generating your interview questions…"}
+            {state === "error" && "Something went wrong. You can retry or use practice questions."}
+            {(state === "asking" || state === "recording") && `Interviewing for ${session.role} at ${session.company} — Question ${session.currentIndex + 1} of ${session.questions.length}`}
+            {state === "reviewing" && `Reviewing your answer to question ${session.currentIndex + 1}`}
+            {state === "complete" && "Review your performance and identify areas for improvement."}
           </p>
         </motion.div>
 
-        {/* Anti-cheat practice banner */}
-        {mode === "interview" && (
+        {/* Practice banner */}
+        {(state === "asking" || state === "recording" || state === "reviewing") && (
           <div className="rounded-lg border border-destructive/20 bg-destructive/5 px-4 py-3 flex items-start gap-3">
             <Shield className="w-4 h-4 text-destructive shrink-0 mt-0.5" />
             <div>
@@ -311,108 +334,48 @@ export default function MockInterview() {
           </div>
         )}
 
-        {/* ─── SETUP MODE ─── */}
-        {mode === "setup" && (
+        {/* ─── SETUP ─── */}
+        {state === "setup" && (
           <>
-            <motion.div
-              initial={{ opacity: 0, y: 14 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.08, duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
-            >
+            <motion.div initial={{ opacity: 0, y: 14 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.08, duration: 0.5, ease: [0.16, 1, 0.3, 1] }}>
               <Card className="border-border/40">
                 <CardContent className="p-5 space-y-4">
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                     <div>
-                      <label className="text-sm font-medium text-foreground mb-1.5 block">
-                        Company Name
-                      </label>
-                      <Input
-                        placeholder="e.g. Patagonia"
-                        value={company}
-                        onChange={(e) => setCompany(e.target.value)}
-                        disabled={generating}
-                      />
+                      <label className="text-sm font-medium text-foreground mb-1.5 block">Company Name</label>
+                      <Input placeholder="e.g. Patagonia" value={companyInput} onChange={(e) => setCompanyInput(e.target.value)} />
                     </div>
                     <div>
-                      <label className="text-sm font-medium text-foreground mb-1.5 block">
-                        Role Title
-                      </label>
-                      <Input
-                        placeholder="e.g. Senior Product Manager"
-                        value={role}
-                        onChange={(e) => setRole(e.target.value)}
-                        disabled={generating}
-                      />
+                      <label className="text-sm font-medium text-foreground mb-1.5 block">Role Title</label>
+                      <Input placeholder="e.g. Senior Product Manager" value={roleInput} onChange={(e) => setRoleInput(e.target.value)} />
                     </div>
                   </div>
-                  <Button
-                    onClick={startInterview}
-                    disabled={!company.trim() || !role.trim() || generating}
-                    className="w-full gap-2"
-                    size="lg"
-                  >
-                    {generating ? (
-                      <>
-                        <Loader2 className="w-4 h-4 animate-spin" /> Generating Questions…
-                      </>
-                    ) : (
-                      <>
-                        <MessageSquare className="w-4 h-4" /> Start Interview
-                      </>
-                    )}
+                  <Button onClick={startInterview} disabled={!companyInput.trim() || !roleInput.trim()} className="w-full gap-2" size="lg">
+                    <MessageSquare className="w-4 h-4" /> Start Interview
                   </Button>
                 </CardContent>
               </Card>
             </motion.div>
 
-            {/* Practice Tips (formerly the static PREP_QUESTIONS) */}
-            <motion.div
-              initial={{ opacity: 0, y: 14 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.16, duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
-            >
+            <motion.div initial={{ opacity: 0, y: 14 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.16, duration: 0.5, ease: [0.16, 1, 0.3, 1] }}>
               <h2 className="text-lg font-bold text-foreground mb-3 flex items-center gap-2">
-                <Lightbulb className="w-4 h-4 text-[hsl(var(--civic-gold))]" />
-                Practice Tips
+                <Lightbulb className="w-4 h-4 text-[hsl(var(--civic-gold))]" /> Practice Tips
               </h2>
               <div className="space-y-3">
                 {PREP_QUESTIONS.map((q, i) => (
-                  <Collapsible
-                    key={i}
-                    open={openIdx === i}
-                    onOpenChange={(open) => setOpenIdx(open ? i : null)}
-                  >
-                    <Card
-                      className={cn(
-                        "border-border/40 transition-colors",
-                        openIdx === i && "border-[hsl(var(--civic-gold))]/30"
-                      )}
-                    >
+                  <Collapsible key={i} open={openIdx === i} onOpenChange={(open) => setOpenIdx(open ? i : null)}>
+                    <Card className={cn("border-border/40 transition-colors", openIdx === i && "border-[hsl(var(--civic-gold))]/30")}>
                       <CollapsibleTrigger asChild>
                         <CardContent className="p-4 cursor-pointer select-none">
                           <div className="flex items-start justify-between gap-3">
                             <div className="flex-1 min-w-0">
                               <div className="flex items-center gap-2 mb-1.5">
-                                <Badge
-                                  variant="outline"
-                                  className="text-xs font-mono text-muted-foreground"
-                                >
-                                  {q.category}
-                                </Badge>
-                                <span className="text-xs text-muted-foreground/60 tabular-nums">
-                                  Tip {i + 1}
-                                </span>
+                                <Badge variant="outline" className="text-xs font-mono text-muted-foreground">{q.category}</Badge>
+                                <span className="text-xs text-muted-foreground/60 tabular-nums">Tip {i + 1}</span>
                               </div>
-                              <p className="text-sm font-medium text-foreground leading-relaxed">
-                                {q.question}
-                              </p>
+                              <p className="text-sm font-medium text-foreground leading-relaxed">{q.question}</p>
                             </div>
-                            <ChevronDown
-                              className={cn(
-                                "w-4 h-4 text-muted-foreground shrink-0 mt-1 transition-transform duration-200",
-                                openIdx === i && "rotate-180"
-                              )}
-                            />
+                            <ChevronDown className={cn("w-4 h-4 text-muted-foreground shrink-0 mt-1 transition-transform duration-200", openIdx === i && "rotate-180")} />
                           </div>
                         </CardContent>
                       </CollapsibleTrigger>
@@ -434,20 +397,46 @@ export default function MockInterview() {
           </>
         )}
 
-        {/* ─── INTERVIEW MODE ─── */}
-        {mode === "interview" && currentQ && (
+        {/* ─── LOADING ─── */}
+        {state === "loading" && (
+          <motion.div initial={{ opacity: 0, y: 14 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.4 }}>
+            <Card className="border-border/40">
+              <CardContent className="p-8 flex flex-col items-center gap-4">
+                <Loader2 className="w-8 h-8 text-primary animate-spin" />
+                <p className="text-sm text-muted-foreground">Generating interview questions for <span className="font-semibold text-foreground">{roleInput}</span> at <span className="font-semibold text-foreground">{companyInput}</span>…</p>
+              </CardContent>
+            </Card>
+          </motion.div>
+        )}
+
+        {/* ─── ERROR ─── */}
+        {state === "error" && (
+          <motion.div initial={{ opacity: 0, y: 14 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.4 }}>
+            <Card className="border-destructive/30">
+              <CardContent className="p-6 space-y-4 text-center">
+                <AlertTriangle className="w-8 h-8 text-destructive mx-auto" />
+                <p className="text-sm text-foreground font-medium">Failed to generate questions</p>
+                <p className="text-xs text-muted-foreground">{errorMessage}</p>
+                <div className="flex items-center gap-3 justify-center">
+                  <Button onClick={startInterview} variant="default" size="sm" className="gap-2">
+                    <RotateCcw className="w-3 h-3" /> Retry
+                  </Button>
+                  <Button onClick={useFallbackQuestions} variant="outline" size="sm" className="gap-2">
+                    <MessageSquare className="w-3 h-3" /> Use Practice Questions
+                  </Button>
+                </div>
+              </CardContent>
+            </Card>
+          </motion.div>
+        )}
+
+        {/* ─── ASKING / RECORDING ─── */}
+        {(state === "asking" || state === "recording") && currentQuestion && (
           <>
-            {/* Progress bar */}
-            <motion.div
-              initial={{ opacity: 0, y: 14 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.06, duration: 0.4, ease: [0.16, 1, 0.3, 1] }}
-            >
+            <motion.div initial={{ opacity: 0, y: 14 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.06, duration: 0.4, ease: [0.16, 1, 0.3, 1] }}>
               <div className="space-y-2">
                 <div className="flex items-center justify-between text-xs text-muted-foreground">
-                  <span>
-                    Progress: {answeredCount} of {questions.length} answered
-                  </span>
+                  <span>Progress: {answeredCount} of {session.questions.length} answered</span>
                   <span className="tabular-nums">{Math.round(progressPct)}%</span>
                 </div>
                 <Progress value={progressPct} className="h-2" />
@@ -459,212 +448,91 @@ export default function MockInterview() {
               <div className="flex items-center gap-1.5">
                 <button
                   onClick={() => { setVoiceEnabled(!voiceEnabled); if (voiceEnabled) stopSpeaking(); }}
-                  className={cn(
-                    "p-1.5 rounded-md border transition-colors",
-                    voiceEnabled
-                      ? "border-primary/30 bg-primary/10 text-primary"
-                      : "border-border/40 bg-muted/30 text-muted-foreground"
-                  )}
+                  className={cn("p-1.5 rounded-md border transition-colors", voiceEnabled ? "border-primary/30 bg-primary/10 text-primary" : "border-border/40 bg-muted/30 text-muted-foreground")}
                   title={voiceEnabled ? "Mute interviewer" : "Unmute interviewer"}
                 >
                   {voiceEnabled ? <Volume2 className="w-3.5 h-3.5" /> : <VolumeX className="w-3.5 h-3.5" />}
                 </button>
-                <span className="text-[10px] font-mono text-muted-foreground tracking-wider uppercase">
-                  AI Interviewer Voice:
-                </span>
+                <span className="text-[10px] font-mono text-muted-foreground tracking-wider uppercase">AI Interviewer Voice:</span>
               </div>
               <div className="flex items-center gap-1">
                 {(Object.entries(VOICE_PRESETS) as [VoicePreset, typeof VOICE_PRESETS[VoicePreset]][]).map(([key, preset]) => (
-                  <button
-                    key={key}
-                    onClick={() => setVoicePreset(key)}
-                    className={cn(
-                      "px-2.5 py-1 rounded-md text-[10px] font-mono tracking-wider border transition-all",
-                      voicePreset === key
-                        ? "bg-primary text-primary-foreground border-primary font-bold"
-                        : "bg-card text-muted-foreground border-border/40 hover:border-primary/40"
-                    )}
-                  >
+                  <button key={key} onClick={() => setVoicePreset(key)} className={cn("px-2.5 py-1 rounded-md text-[10px] font-mono tracking-wider border transition-all", voicePreset === key ? "bg-primary text-primary-foreground border-primary font-bold" : "bg-card text-muted-foreground border-border/40 hover:border-primary/40")}>
                     {preset.label}
                   </button>
                 ))}
               </div>
               {voiceEnabled && (
-                <button
-                  onClick={() => {
-                    const text = questions[currentIdx]?.question;
-                    if (text) speakRobot(text, voicePreset);
-                  }}
-                  className="text-[10px] font-mono text-primary hover:text-primary/80 transition-colors"
-                >
+                <button onClick={() => { if (currentQuestion?.text) speakRobot(currentQuestion.text, voicePreset); }} className="text-[10px] font-mono text-primary hover:text-primary/80 transition-colors">
                   ▶ Replay
                 </button>
               )}
             </div>
 
-            {/* Session intro — first question only */}
-            {currentIdx === 0 && currentQ?.feedback === null && (
+            {/* Session intro */}
+            {session.currentIndex === 0 && !currentAnswer && (
               <div className="rounded-lg border border-border/40 bg-muted/20 px-4 py-3 text-center">
-                <p className="text-sm text-foreground/70 italic">
-                  "Answer in your own words. This tool is here to help you practice, not perform for you."
-                </p>
+                <p className="text-sm text-foreground/70 italic">"Answer in your own words. This tool is here to help you practice, not perform for you."</p>
               </div>
             )}
 
             {/* Question card */}
-            <motion.div
-              key={currentIdx}
-              initial={{ opacity: 0, y: 14 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.4, ease: [0.16, 1, 0.3, 1] }}
-            >
+            <motion.div key={session.currentIndex} initial={{ opacity: 0, y: 14 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.4, ease: [0.16, 1, 0.3, 1] }}>
               <Card className="border-[hsl(var(--civic-gold))]/20">
                 <CardContent className="p-5 space-y-4">
                   <div className="flex items-center gap-2 mb-1">
                     <Badge className="bg-[hsl(var(--civic-gold))]/10 text-[hsl(var(--civic-gold))] border-[hsl(var(--civic-gold))]/20 text-xs font-mono">
-                      {currentQ.category || `Question ${currentIdx + 1}`}
+                      {currentQuestion.category}
                     </Badge>
-                    <span className="text-xs text-muted-foreground tabular-nums">
-                      Q{currentIdx + 1} of {questions.length}
-                    </span>
+                    <span className="text-xs text-muted-foreground tabular-nums">Q{session.currentIndex + 1} of {session.questions.length}</span>
                   </div>
                   <p className="text-base font-semibold text-foreground leading-relaxed min-h-[2em] rounded-lg bg-muted/20 p-3 border border-border/30">
-                    {currentQ.question || "Tell me about your experience and why you want this role."}
+                    {currentQuestion.text}
                   </p>
 
-                  {/* Answer area — only show if not yet answered */}
-                  {currentQ.feedback === null ? (
-                    <div className="space-y-3">
-                      <Textarea
-                        placeholder="Type your answer here… Be specific and use examples."
-                        value={answer}
-                        onChange={(e) => setAnswer(e.target.value)}
-                        disabled={evaluating}
-                        className="min-h-[140px] text-sm"
-                      />
-                      <Button
-                        onClick={submitAnswer}
-                        disabled={!answer.trim() || evaluating}
-                        className="w-full gap-2"
-                        size="lg"
-                      >
-                        {evaluating ? (
-                          <>
-                            <Loader2 className="w-4 h-4 animate-spin" /> Evaluating…
-                          </>
-                        ) : (
-                          <>
-                            <CheckCircle className="w-4 h-4" /> Submit Answer
-                          </>
-                        )}
-                      </Button>
-                    </div>
-                  ) : (
-                    /* Feedback display */
-                    <motion.div
-                      initial={{ opacity: 0, y: 10 }}
-                      animate={{ opacity: 1, y: 0 }}
-                      transition={{ duration: 0.3 }}
-                      className="space-y-3"
-                    >
-                      {/* User's answer */}
-                      <div className="rounded-lg bg-muted/30 border border-border/40 p-3">
-                        <p className="text-xs font-medium text-muted-foreground mb-1">Your Answer</p>
-                        <p className="text-sm text-foreground/80 leading-relaxed whitespace-pre-wrap">
-                          {currentQ.userAnswer}
-                        </p>
-                      </div>
-
-                      {/* Score */}
-                      <div className="flex items-center gap-3">
-                        <div
-                          className="text-2xl font-extrabold tabular-nums"
-                          style={{ color: scoreColor(currentQ.score ?? 0) }}
-                        >
-                          {currentQ.score ?? "—"}/100
-                        </div>
-                        <div className="flex-1">
-                          <Progress
-                            value={currentQ.score ?? 0}
-                            className="h-2.5"
-                          />
-                        </div>
-                      </div>
-
-                      {/* Feedback */}
-                      <div className="rounded-lg bg-[hsl(var(--civic-gold))]/5 border border-[hsl(var(--civic-gold))]/10 p-3 space-y-2">
-                        <p className="text-xs font-medium text-[hsl(var(--civic-gold-muted))] flex items-center gap-1.5">
-                          <Lightbulb className="w-3 h-3" /> Feedback
-                        </p>
-                        <p className="text-sm text-foreground/80 leading-relaxed">
-                          {currentQ.feedback}
-                        </p>
-                      </div>
-
-                      {/* Strengths & Improvements */}
-                      {(currentQ.strengths || currentQ.improvements) && (
-                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                          {currentQ.strengths && (
-                            <div className="rounded-lg bg-green-500/5 border border-green-500/10 p-3">
-                              <p className="text-xs font-medium text-green-400 mb-1">Strengths</p>
-                              <p className="text-sm text-foreground/80 leading-relaxed">
-                                {currentQ.strengths}
-                              </p>
-                            </div>
-                          )}
-                          {currentQ.improvements && (
-                            <div className="rounded-lg bg-orange-500/5 border border-orange-500/10 p-3">
-                              <p className="text-xs font-medium text-orange-400 mb-1">To Improve</p>
-                              <p className="text-sm text-foreground/80 leading-relaxed">
-                                {currentQ.improvements}
-                              </p>
-                            </div>
-                          )}
-                        </div>
+                  <div className="space-y-3">
+                    <Textarea
+                      placeholder="Type your answer here… Be specific and use examples."
+                      value={answer}
+                      onChange={(e) => setAnswer(e.target.value)}
+                      disabled={evaluating}
+                      className="min-h-[140px] text-sm"
+                    />
+                    <Button onClick={submitAnswer} disabled={!answer.trim() || evaluating} className="w-full gap-2" size="lg">
+                      {evaluating ? (
+                        <><Loader2 className="w-4 h-4 animate-spin" /> Evaluating…</>
+                      ) : (
+                        <><CheckCircle className="w-4 h-4" /> Submit Answer</>
                       )}
-
-                      {/* Navigation */}
-                      <div className="flex items-center gap-3 pt-1">
-                        {!isLastQuestion ? (
-                          <Button onClick={goNext} className="flex-1 gap-2" size="lg">
-                            <ArrowRight className="w-4 h-4" /> Next Question
-                          </Button>
-                        ) : (
-                          <Button onClick={finishInterview} className="flex-1 gap-2" size="lg">
-                            <CheckCircle className="w-4 h-4" /> Finish Interview
-                          </Button>
-                        )}
-                      </div>
-                    </motion.div>
-                  )}
+                    </Button>
+                  </div>
                 </CardContent>
               </Card>
             </motion.div>
 
-            {/* Question thumbnails for navigation */}
+            {/* Question nav dots */}
             <div className="flex items-center gap-2 justify-center">
-              {questions.map((q, i) => (
-                <button
-                  key={i}
-                  onClick={() => {
-                    setCurrentIdx(i);
-                    setAnswer("");
-                  }}
-                  className={cn(
-                    "w-8 h-8 rounded-full text-xs font-mono font-bold transition-all",
-                    i === currentIdx
-                      ? "bg-[hsl(var(--civic-gold))] text-primary-foreground"
-                      : q.feedback !== null
-                      ? "bg-[hsl(var(--civic-gold))]/20 text-[hsl(var(--civic-gold))]"
-                      : "bg-muted/40 text-muted-foreground"
-                  )}
-                >
-                  {i + 1}
-                </button>
-              ))}
+              {session.questions.map((q, i) => {
+                const hasAnswer = session.answers.some((a) => a.questionId === q.id && a.feedback !== null);
+                return (
+                  <button
+                    key={q.id}
+                    onClick={() => {
+                      setSession((s) => ({ ...s, currentIndex: i }));
+                      setAnswer("");
+                      setState("asking");
+                    }}
+                    className={cn(
+                      "w-8 h-8 rounded-full text-xs font-mono font-bold transition-all",
+                      i === session.currentIndex ? "bg-[hsl(var(--civic-gold))] text-primary-foreground" : hasAnswer ? "bg-[hsl(var(--civic-gold))]/20 text-[hsl(var(--civic-gold))]" : "bg-muted/40 text-muted-foreground"
+                    )}
+                  >
+                    {i + 1}
+                  </button>
+                );
+              })}
             </div>
 
-            {/* Start over */}
             <div className="flex justify-center">
               <Button variant="outline" size="sm" onClick={resetAll} className="gap-2">
                 <RotateCcw className="w-3 h-3" /> Start Over
@@ -673,130 +541,151 @@ export default function MockInterview() {
           </>
         )}
 
-        {/* ─── REVIEW MODE ─── */}
-        {mode === "review" && (
+        {/* ─── REVIEWING (single answer feedback) ─── */}
+        {state === "reviewing" && currentQuestion && currentAnswer && (
+          <motion.div initial={{ opacity: 0, y: 14 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.4 }}>
+            <Card className="border-[hsl(var(--civic-gold))]/20">
+              <CardContent className="p-5 space-y-4">
+                <div className="flex items-center gap-2 mb-1">
+                  <Badge className="bg-[hsl(var(--civic-gold))]/10 text-[hsl(var(--civic-gold))] border-[hsl(var(--civic-gold))]/20 text-xs font-mono">
+                    {currentQuestion.category}
+                  </Badge>
+                  <span className="text-xs text-muted-foreground tabular-nums">Q{session.currentIndex + 1} of {session.questions.length}</span>
+                </div>
+                <p className="text-sm font-medium text-foreground leading-relaxed">{currentQuestion.text}</p>
+
+                <div className="rounded-lg bg-muted/30 border border-border/40 p-3">
+                  <p className="text-xs font-medium text-muted-foreground mb-1">Your Answer</p>
+                  <p className="text-sm text-foreground/80 leading-relaxed whitespace-pre-wrap">{currentAnswer.answerText}</p>
+                </div>
+
+                <div className="flex items-center gap-3">
+                  <div className="text-2xl font-extrabold tabular-nums" style={{ color: scoreColor(currentAnswer.score ?? 0) }}>
+                    {currentAnswer.score ?? "—"}/100
+                  </div>
+                  <div className="flex-1">
+                    <Progress value={currentAnswer.score ?? 0} className="h-2.5" />
+                  </div>
+                </div>
+
+                {currentAnswer.feedback && (
+                  <div className="rounded-lg bg-[hsl(var(--civic-gold))]/5 border border-[hsl(var(--civic-gold))]/10 p-3 space-y-2">
+                    <p className="text-xs font-medium text-[hsl(var(--civic-gold-muted))] flex items-center gap-1.5"><Lightbulb className="w-3 h-3" /> Feedback</p>
+                    <p className="text-sm text-foreground/80 leading-relaxed">{currentAnswer.feedback}</p>
+                  </div>
+                )}
+
+                {(currentAnswer.strengths || currentAnswer.improvements) && (
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                    {currentAnswer.strengths && (
+                      <div className="rounded-lg bg-green-500/5 border border-green-500/10 p-3">
+                        <p className="text-xs font-medium text-green-400 mb-1">Strengths</p>
+                        <p className="text-sm text-foreground/80 leading-relaxed">{currentAnswer.strengths}</p>
+                      </div>
+                    )}
+                    {currentAnswer.improvements && (
+                      <div className="rounded-lg bg-orange-500/5 border border-orange-500/10 p-3">
+                        <p className="text-xs font-medium text-orange-400 mb-1">To Improve</p>
+                        <p className="text-sm text-foreground/80 leading-relaxed">{currentAnswer.improvements}</p>
+                      </div>
+                    )}
+                  </div>
+                )}
+
+                <div className="flex items-center gap-3 pt-1">
+                  {!isLastQuestion ? (
+                    <Button onClick={goNext} className="flex-1 gap-2" size="lg">
+                      <ArrowRight className="w-4 h-4" /> Next Question
+                    </Button>
+                  ) : (
+                    <Button onClick={finishInterview} className="flex-1 gap-2" size="lg">
+                      <CheckCircle className="w-4 h-4" /> Finish Interview
+                    </Button>
+                  )}
+                </div>
+              </CardContent>
+            </Card>
+          </motion.div>
+        )}
+
+        {/* ─── COMPLETE ─── */}
+        {state === "complete" && (
           <>
-            {/* Overall score */}
-            <motion.div
-              initial={{ opacity: 0, y: 14 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.06, duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
-            >
+            <motion.div initial={{ opacity: 0, y: 14 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.06, duration: 0.5, ease: [0.16, 1, 0.3, 1] }}>
               <Card className="border-[hsl(var(--civic-gold))]/20">
                 <CardContent className="p-6 text-center space-y-3">
                   <p className="text-sm text-muted-foreground font-medium">Overall Score</p>
-                  <div
-                    className="text-5xl font-extrabold tabular-nums"
-                    style={{ color: scoreColor(averageScore) }}
-                  >
-                    {averageScore}
+                  <div className="text-5xl font-extrabold tabular-nums" style={{ color: scoreColor(session.scoreSummary?.average ?? 0) }}>
+                    {session.scoreSummary?.average ?? 0}
                     <span className="text-2xl text-muted-foreground">/100</span>
                   </div>
-                  <Progress value={averageScore} className="h-3 max-w-xs mx-auto" />
+                  <Progress value={session.scoreSummary?.average ?? 0} className="h-3 max-w-xs mx-auto" />
                   <p className="text-sm text-muted-foreground">
-                    {role} at {company} — {answeredCount} question{answeredCount !== 1 ? "s" : ""}{" "}
-                    answered
+                    {session.role} at {session.company} — {session.scoreSummary?.answered ?? 0} question{(session.scoreSummary?.answered ?? 0) !== 1 ? "s" : ""} answered
                   </p>
                 </CardContent>
               </Card>
             </motion.div>
 
-            {/* Per-question review */}
             <div className="space-y-3">
-              {questions.map((q, i) => (
-                <motion.div
-                  key={i}
-                  initial={{ opacity: 0, y: 14 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{
-                    delay: 0.1 + i * 0.08,
-                    duration: 0.5,
-                    ease: [0.16, 1, 0.3, 1],
-                  }}
-                >
-                  <Card className="border-border/40">
-                    <CardContent className="p-4 space-y-3">
-                      <div className="flex items-start justify-between gap-3">
-                        <div className="flex-1 min-w-0">
-                          <div className="flex items-center gap-2 mb-1.5">
-                            <Badge
-                              variant="outline"
-                              className="text-xs font-mono text-muted-foreground"
-                            >
-                              {q.category || `Q${i + 1}`}
-                            </Badge>
-                            {q.score !== null && (
-                              <span
-                                className="text-xs font-bold tabular-nums"
-                                style={{ color: scoreColor(q.score) }}
-                              >
-                                {q.score}/100
-                              </span>
+              {session.questions.map((q, i) => {
+                const a = session.answers.find((ans) => ans.questionId === q.id);
+                return (
+                  <motion.div key={q.id} initial={{ opacity: 0, y: 14 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.1 + i * 0.08, duration: 0.5, ease: [0.16, 1, 0.3, 1] }}>
+                    <Card className="border-border/40">
+                      <CardContent className="p-4 space-y-3">
+                        <div className="flex items-start justify-between gap-3">
+                          <div className="flex-1 min-w-0">
+                            <div className="flex items-center gap-2 mb-1.5">
+                              <Badge variant="outline" className="text-xs font-mono text-muted-foreground">{q.category}</Badge>
+                              {a?.score != null && (
+                                <span className="text-xs font-bold tabular-nums" style={{ color: scoreColor(a.score) }}>{a.score}/100</span>
+                              )}
+                            </div>
+                            <p className="text-sm font-medium text-foreground leading-relaxed">{q.text}</p>
+                          </div>
+                        </div>
+
+                        {a?.answerText && (
+                          <div className="rounded-lg bg-muted/30 border border-border/40 p-3">
+                            <p className="text-xs font-medium text-muted-foreground mb-1">Your Answer</p>
+                            <p className="text-sm text-foreground/80 leading-relaxed whitespace-pre-wrap">{a.answerText}</p>
+                          </div>
+                        )}
+
+                        {a?.feedback && (
+                          <div className="rounded-lg bg-[hsl(var(--civic-gold))]/5 border border-[hsl(var(--civic-gold))]/10 p-3">
+                            <p className="text-xs font-medium text-[hsl(var(--civic-gold-muted))] flex items-center gap-1.5 mb-1"><Lightbulb className="w-3 h-3" /> Feedback</p>
+                            <p className="text-sm text-foreground/80 leading-relaxed">{a.feedback}</p>
+                          </div>
+                        )}
+
+                        {a && (a.strengths || a.improvements) && (
+                          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                            {a.strengths && (
+                              <div className="rounded-lg bg-green-500/5 border border-green-500/10 p-3">
+                                <p className="text-xs font-medium text-green-400 mb-1">Strengths</p>
+                                <p className="text-sm text-foreground/80 leading-relaxed">{a.strengths}</p>
+                              </div>
+                            )}
+                            {a.improvements && (
+                              <div className="rounded-lg bg-orange-500/5 border border-orange-500/10 p-3">
+                                <p className="text-xs font-medium text-orange-400 mb-1">To Improve</p>
+                                <p className="text-sm text-foreground/80 leading-relaxed">{a.improvements}</p>
+                              </div>
                             )}
                           </div>
-                          <p className="text-sm font-medium text-foreground leading-relaxed">
-                            {q.question}
-                          </p>
-                        </div>
-                      </div>
+                        )}
 
-                      {q.userAnswer && (
-                        <div className="rounded-lg bg-muted/30 border border-border/40 p-3">
-                          <p className="text-xs font-medium text-muted-foreground mb-1">
-                            Your Answer
-                          </p>
-                          <p className="text-sm text-foreground/80 leading-relaxed whitespace-pre-wrap">
-                            {q.userAnswer}
-                          </p>
-                        </div>
-                      )}
-
-                      {q.feedback && (
-                        <div className="rounded-lg bg-[hsl(var(--civic-gold))]/5 border border-[hsl(var(--civic-gold))]/10 p-3">
-                          <p className="text-xs font-medium text-[hsl(var(--civic-gold-muted))] flex items-center gap-1.5 mb-1">
-                            <Lightbulb className="w-3 h-3" /> Feedback
-                          </p>
-                          <p className="text-sm text-foreground/80 leading-relaxed">{q.feedback}</p>
-                        </div>
-                      )}
-
-                      {(q.strengths || q.improvements) && (
-                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                          {q.strengths && (
-                            <div className="rounded-lg bg-green-500/5 border border-green-500/10 p-3">
-                              <p className="text-xs font-medium text-green-400 mb-1">Strengths</p>
-                              <p className="text-sm text-foreground/80 leading-relaxed">
-                                {q.strengths}
-                              </p>
-                            </div>
-                          )}
-                          {q.improvements && (
-                            <div className="rounded-lg bg-orange-500/5 border border-orange-500/10 p-3">
-                              <p className="text-xs font-medium text-orange-400 mb-1">To Improve</p>
-                              <p className="text-sm text-foreground/80 leading-relaxed">
-                                {q.improvements}
-                              </p>
-                            </div>
-                          )}
-                        </div>
-                      )}
-
-                      {!q.userAnswer && (
-                        <p className="text-xs text-muted-foreground italic">Skipped</p>
-                      )}
-                    </CardContent>
-                  </Card>
-                </motion.div>
-              ))}
+                        {!a && <p className="text-xs text-muted-foreground italic">Skipped</p>}
+                      </CardContent>
+                    </Card>
+                  </motion.div>
+                );
+              })}
             </div>
 
-            {/* Actions */}
-            <motion.div
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              transition={{ delay: 0.6 }}
-              className="flex items-center gap-3 justify-center"
-            >
+            <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.6 }} className="flex items-center gap-3 justify-center">
               <Button onClick={resetAll} variant="outline" size="sm" className="gap-2">
                 <RotateCcw className="w-3 h-3" /> New Interview
               </Button>
