@@ -547,6 +547,18 @@ export function SignalsDataTab() {
                 <span className={cn("font-mono font-medium", claimSafety!.noEvidence > 0 ? "text-destructive" : "text-muted-foreground")}>{claimSafety!.noEvidence}</span>
               </div>
 
+              {/* Platform-wide company coverage */}
+              <div className="border-t border-border/40 pt-2 mt-2 space-y-1.5">
+                <div className="flex items-center justify-between text-sm">
+                  <span className="text-muted-foreground">Companies with verified claims</span>
+                  <span className="font-mono font-medium text-civic-green">{claimSafety!.companiesWithClaims} / {claimSafety!.totalCompanies}</span>
+                </div>
+                <div className="flex items-center justify-between text-sm">
+                  <span className="text-muted-foreground">Companies without claims</span>
+                  <span className={cn("font-mono font-medium", claimSafety!.companiesWithoutClaims > 0 ? "text-civic-yellow" : "text-muted-foreground")}>{claimSafety!.companiesWithoutClaims}</span>
+                </div>
+              </div>
+
               {/* Unattributed per-company breakdown */}
               {claimSafety!.unattributedCount > 0 && (
                 <div className="bg-destructive/5 border border-destructive/20 rounded-lg p-3 space-y-2">
