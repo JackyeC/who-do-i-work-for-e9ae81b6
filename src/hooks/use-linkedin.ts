@@ -25,9 +25,7 @@ export function useLinkedIn() {
       }
 
       const { data, error } = await supabase
-        .from("linkedin_profiles")
-        .select("linkedin_id, name, email, profile_picture_url, expires_at")
-        .eq("user_id", user.id)
+        .rpc("get_my_linkedin_profile")
         .maybeSingle();
 
       if (error) {
