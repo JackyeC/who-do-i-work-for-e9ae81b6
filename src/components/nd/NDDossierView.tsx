@@ -353,6 +353,26 @@ export function NDDossierView({ company, companyId, executives = [], eeocCases =
             <ApplicationActionCard key={i} type={a.type} recommendation={a.recommendation} />
           ))}
         </div>
+
+        {/* Career Map integration */}
+        <div className="mt-4 border border-primary/30 bg-primary/5 p-4 flex items-start gap-3">
+          <Map className="w-5 h-5 text-primary mt-0.5 shrink-0" />
+          <div className="flex-1">
+            <p className="text-sm font-semibold text-foreground">Use this in your career plan</p>
+            <p className="text-xs text-foreground/60 mt-0.5 leading-relaxed">
+              Take what you learned about this company into the Career Map. It will factor in clarity, pace, and social load when suggesting paths and roles.
+            </p>
+            <Button
+              variant="outline"
+              size="sm"
+              className="text-xs gap-1.5 mt-3"
+              onClick={() => navigate(`/career-map?company=${company.slug}`)}
+            >
+              Open Career Map
+              <ArrowRight className="w-3 h-3" />
+            </Button>
+          </div>
+        </div>
       </section>
     </div>
   );
