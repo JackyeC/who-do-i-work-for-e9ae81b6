@@ -117,6 +117,23 @@ function computeScoreSummary(answers: AnswerItem[], total: number): Session["sco
   return { average: avg, answered: scored.length, total };
 }
 
+const MIC_STATUS_CONFIG: Record<MicStatus, { label: string; className: string }> = {
+  idle: { label: "Idle", className: "bg-muted/40 text-muted-foreground" },
+  listening: { label: "Listening", className: "bg-primary/10 text-primary animate-pulse" },
+  processing: { label: "Processing", className: "bg-[hsl(var(--civic-gold))]/10 text-[hsl(var(--civic-gold))]" },
+  ready: { label: "Ready", className: "bg-green-500/10 text-green-500" },
+  error: { label: "Error", className: "bg-destructive/10 text-destructive" },
+};
+
+function MicStatusPill({ status }: { status: MicStatus }) {
+  const config = MIC_STATUS_CONFIG[status];
+  return (
+    <span className={cn("px-2 py-0.5 rounded-full text-[10px] font-mono tracking-wider", config.className)}>
+      {config.label}
+    </span>
+  );
+}
+
 // ── Component ──
 
 export default function MockInterview() {
