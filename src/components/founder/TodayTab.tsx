@@ -7,7 +7,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 import {
   ClipboardList, Activity, Database, AlertCircle, Zap,
   StickyNote, AlertOctagon, ChevronRight, Link2, CheckCircle,
-  Clock, Search, AlertTriangle,
+  Clock, Search, AlertTriangle, ShieldCheck, FileText, BarChart3,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useEffect } from "react";
@@ -54,6 +54,23 @@ function MetricRow({ label, value, loading, highlight }: {
 
 function EmptyLine({ text }: { text: string }) {
   return <p className="text-xs text-muted-foreground italic leading-relaxed">{text}</p>;
+}
+
+function ProgressBar({ label, value, color }: { label: string; value: number; color: string }) {
+  return (
+    <div className="space-y-1">
+      <div className="flex items-center justify-between">
+        <span className="text-[11px] text-muted-foreground">{label}</span>
+        <span className="text-[11px] font-mono font-medium text-foreground">{value}%</span>
+      </div>
+      <div className="h-1.5 bg-muted/40 rounded-full overflow-hidden">
+        <div
+          className="h-full rounded-full transition-all duration-700"
+          style={{ width: `${Math.min(value, 100)}%`, backgroundColor: color }}
+        />
+      </div>
+    </div>
+  );
 }
 
 type AlertItem = { label: string; count: number; tab: string; severity: "critical" | "data_gap" };
@@ -191,16 +208,46 @@ export function TodayTab() {
     },
   });
 
-  // ─── Data Health ───
+  // ─── Data Health + Product Readiness ───
   const { data: dataHealth, isLoading: dataLoading } = useQuery({
     queryKey: ["founder-today-data"],
     queryFn: async () => {
-      const [total, withEvidence, noEvidence] = await Promise.all([
+      const [total, withEvidence, noEvidence, withWebsite, fullyAudited, withClaims, totalClaims, attributedClaims] = await Promise.all([
         supabase.from("companies").select("id", { count: "exact", head: true }),
         supabase.from("companies").select("id", { count: "exact", head: true }).not("description", "is", null).gt("employer_clarity_score", 0),
         supabase.from("companies").select("id", { count: "exact", head: true }).or("description.is.null,employer_clarity_score.eq.0"),
+        supabase.from("companies").select("id", { count: "exact", head: true }).not("website_url", "is", null),
+        supabase.from("companies").select("id", { count: "exact", head: true }).eq("vetted_status", "fully_audited"),
+        // Companies with at least 1 claim
+        (supabase as any).from("company_claims").select("company_id", { count: "exact", head: false }).eq("is_active", true),
+        (supabase as any).from("company_claims").select("id", { count: "exact", head: true }).eq("is_active", true),
+        (supabase as any).from("company_claims").select("id", { count: "exact", head: true }).eq("is_active", true).not("source_url", "is", null).not("source_label", "is", null),
       ]);
-      return { total: total.count ?? 0, strong: withEvidence.count ?? 0, none: noEvidence.count ?? 0 };
+
+      // Count distinct companies with claims
+      const claimCompanyIds = new Set((withClaims.data ?? []).map((r: any) => r.company_id));
+      const companiesWithClaims = claimCompanyIds.size;
+
+      const totalCount = total.count ?? 0;
+      const totalClaimsCount = totalClaims.count ?? 0;
+      const attributedCount = attributedClaims.count ?? 0;
+      const websiteCount = withWebsite.count ?? 0;
+
+      return {
+        total: totalCount,
+        strong: withEvidence.count ?? 0,
+        none: noEvidence.count ?? 0,
+        withWebsite: websiteCount,
+        websitePct: totalCount > 0 ? Math.round((websiteCount / totalCount) * 100) : 0,
+        fullyAudited: fullyAudited.count ?? 0,
+        companiesWithClaims,
+        claimCoveragePct: totalCount > 0 ? Math.round((companiesWithClaims / totalCount) * 100) : 0,
+        companiesNoClaims: totalCount - companiesWithClaims,
+        totalClaims: totalClaimsCount,
+        attributedClaims: attributedCount,
+        attributionPct: totalClaimsCount > 0 ? Math.round((attributedCount / totalClaimsCount) * 100) : 0,
+        unattributedClaims: totalClaimsCount - attributedCount,
+      };
     },
   });
 
@@ -392,6 +439,51 @@ export function TodayTab() {
                 <><Link2 className="w-3 h-3" />{missingWebsiteCount.toLocaleString()} missing website {missingWebsiteCount === 1 ? "URL" : "URLs"}</>
               ) : (
                 <><CheckCircle className="w-3 h-3" />All indexed companies have a website URL</>
+              )}
+            </div>
+          )}
+        </TriageCard>
+
+        {/* Product Readiness */}
+        <TriageCard
+          title="Product Readiness"
+          icon={ShieldCheck}
+          iconColor="text-[hsl(var(--civic-green))]"
+          badge={dataHealth && dataHealth.fullyAudited >= 10 ? { label: "READY", variant: "info" } : undefined}
+        >
+          {dataLoading ? (
+            <Skeleton className="h-20 w-full" />
+          ) : !dataHealth ? (
+            <EmptyLine text="Loading readiness metrics…" />
+          ) : (
+            <div className="space-y-3">
+              <MetricRow label="Fully audited" value={dataHealth.fullyAudited} />
+              <MetricRow label="Companies with website" value={`${dataHealth.websitePct}%`} />
+              <MetricRow label="Companies with ≥1 claim" value={`${dataHealth.claimCoveragePct}%`} />
+              <MetricRow label="Claims with sources" value={`${dataHealth.attributionPct}%`} />
+
+              <div className="pt-2 space-y-2.5 border-t border-border/30">
+                <ProgressBar label="Identity Completion" value={dataHealth.websitePct} color="hsl(var(--civic-green))" />
+                <ProgressBar label="Claim Coverage" value={dataHealth.claimCoveragePct} color="hsl(var(--primary))" />
+                <ProgressBar label="Attribution Integrity" value={dataHealth.attributionPct} color="hsl(var(--civic-gold, var(--primary)))" />
+              </div>
+
+              {dataHealth.companiesNoClaims > 0 && (
+                <div className="flex items-center gap-1.5 text-xs font-medium rounded-lg px-2 py-1.5" style={{ background: "hsl(var(--civic-yellow) / 0.1)", color: "hsl(var(--civic-yellow))" }}>
+                  <FileText className="w-3 h-3 shrink-0" />
+                  {dataHealth.companiesNoClaims} {dataHealth.companiesNoClaims === 1 ? "company has" : "companies have"} no claims
+                </div>
+              )}
+              {dataHealth.unattributedClaims > 0 && (
+                <div className="flex items-center gap-1.5 text-xs font-medium rounded-lg px-2 py-1.5 bg-destructive/10 text-destructive">
+                  <AlertTriangle className="w-3 h-3 shrink-0" />
+                  {dataHealth.unattributedClaims} {dataHealth.unattributedClaims === 1 ? "claim" : "claims"} missing sources
+                </div>
+              )}
+              {dataHealth.companiesNoClaims === 0 && dataHealth.unattributedClaims === 0 && (
+                <div className="flex items-center gap-1.5 text-xs font-medium rounded-lg px-2 py-1.5 bg-civic-green/10 text-civic-green">
+                  <CheckCircle className="w-3 h-3" /> All systems green. Ready to scale.
+                </div>
               )}
             </div>
           )}
