@@ -20,6 +20,7 @@ const TABS = [
   { id: "signals", label: "Signals & Data", icon: Radio },
   { id: "users", label: "Users & Feedback", icon: Users },
   { id: "notes", label: "Notes", icon: StickyNote },
+  { id: "duplicates", label: "Duplicates", icon: Copy },
 ] as const;
 
 export default function FounderConsole() {
