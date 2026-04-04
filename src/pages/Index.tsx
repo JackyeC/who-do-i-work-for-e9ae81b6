@@ -56,7 +56,7 @@ const Index = forwardRef<HTMLDivElement>((_, ref) => {
         <div className="relative z-[1] max-w-[780px] mx-auto flex flex-col items-center text-center">
           <p
             className="font-mono text-[11px] tracking-[0.2em] uppercase text-primary mb-5"
-            style={{ opacity: 0, animation: "heroFadeIn 0.5s ease 0.15s forwards" }}
+            style={{ animation: "heroFadeIn 0.5s ease 0.15s" }}
           >
             Before you apply, accept, stay, or leave
           </p>
@@ -69,8 +69,7 @@ const Index = forwardRef<HTMLDivElement>((_, ref) => {
               letterSpacing: "-2px",
               lineHeight: 1.04,
               maxWidth: "18ch",
-              opacity: 0,
-              animation: "heroFadeIn 0.7s ease 0.3s forwards",
+              animation: "heroFadeIn 0.7s ease 0.3s",
             }}
           >
             Stop applying.<br />
@@ -79,7 +78,7 @@ const Index = forwardRef<HTMLDivElement>((_, ref) => {
 
           <p
             className="text-muted-foreground max-w-[52ch] mx-auto leading-relaxed mt-6"
-            style={{ fontSize: "clamp(0.95rem, 1.3vw, 1.075rem)", opacity: 0, animation: "heroFadeIn 0.6s ease 0.6s forwards" }}
+            style={{ fontSize: "clamp(0.95rem, 1.3vw, 1.075rem)", animation: "heroFadeIn 0.6s ease 0.6s" }}
           >
             Check who you&apos;re really working for in 30 seconds &mdash; the receipts on politics, enforcement, layoffs, and values, pulled from the public record so you&apos;re not guessing about your next move.
           </p>
@@ -87,7 +86,7 @@ const Index = forwardRef<HTMLDivElement>((_, ref) => {
           {/* Primary CTA */}
           <div
             className="mt-9 w-full flex flex-col items-center gap-4"
-            style={{ opacity: 0, animation: "heroFadeIn 0.5s ease 0.9s forwards" }}
+            style={{ animation: "heroFadeIn 0.5s ease 0.9s" }}
           >
             <button
               onClick={() => navigate("/intelligence-check")}
@@ -101,19 +100,19 @@ const Index = forwardRef<HTMLDivElement>((_, ref) => {
           {/* Live Data Feed */}
           <div
             className="mt-6 w-full max-w-[560px]"
-            style={{ opacity: 0, animation: "heroFadeIn 0.4s ease 1.2s forwards" }}
+            style={{ animation: "heroFadeIn 0.4s ease 1.2s" }}
           >
             <LiveDataFeed />
           </div>
 
-          <p className="font-mono text-xs text-muted-foreground mt-5 tracking-wide max-w-[52ch] mx-auto text-center leading-relaxed" style={{ opacity: 0, animation: "heroFadeIn 0.4s ease 1.4s forwards" }}>
+          <p className="font-mono text-xs text-muted-foreground mt-5 tracking-wide max-w-[52ch] mx-auto text-center leading-relaxed" style={{ animation: "heroFadeIn 0.4s ease 1.4s" }}>
             Facts over feelings, built on FEC, SEC, OSHA, NLRB, BLS, and more — the public record, not the press release.
           </p>
         </div>
       </section>
 
       <style>{`
-        @keyframes heroFadeIn { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: translateY(0); } }
+        @keyframes heroFadeIn { from { opacity: 0.01; transform: translateY(6px); } to { opacity: 1; transform: translateY(0); } }
         @keyframes scroll-left { from { transform: translateX(0); } to { transform: translateX(-50%); } }
         .animate-scroll-left { animation: scroll-left 40s linear infinite; }
       `}</style>
