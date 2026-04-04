@@ -8072,6 +8072,48 @@ export type Database = {
           },
         ]
       }
+      personal_work_logs: {
+        Row: {
+          created_at: string
+          id: string
+          incident_date: string
+          incident_time: string | null
+          original_text: string | null
+          participants: string
+          related_policy: string | null
+          rewritten_text: string | null
+          updated_at: string
+          user_id: string
+          verbatim_quote: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          incident_date: string
+          incident_time?: string | null
+          original_text?: string | null
+          participants?: string
+          related_policy?: string | null
+          rewritten_text?: string | null
+          updated_at?: string
+          user_id: string
+          verbatim_quote?: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          incident_date?: string
+          incident_time?: string | null
+          original_text?: string | null
+          participants?: string
+          related_policy?: string | null
+          rewritten_text?: string | null
+          updated_at?: string
+          user_id?: string
+          verbatim_quote?: string
+        }
+        Relationships: []
+      }
       personalized_news: {
         Row: {
           category: string

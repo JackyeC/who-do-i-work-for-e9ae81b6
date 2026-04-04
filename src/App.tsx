@@ -153,6 +153,10 @@ const NewsOnboarding = lazy(() => import("./components/NewsOnboarding"));
 const ReportConfirmation = lazy(() => import("./pages/ReportConfirmation"));
 const ApplicationDetail = lazy(() => import("./pages/ApplicationDetail"));
 const Applications = lazy(() => import("./pages/Applications"));
+const EvidenceLogger = lazy(() => import("./pages/EvidenceLogger"));
+const UnfairVsIllegal = lazy(() => import("./pages/UnfairVsIllegal"));
+
+
 
 // Lazy-load floating widgets — not needed on first paint
 const AskJackyeWidget = lazy(() => import("./components/AskJackyeWidget").then(m => ({ default: m.AskJackyeWidget })));
@@ -358,6 +362,8 @@ const App = () => (
                   <Route path="/community" element={<Community />} />
                   <Route path="/dossier" element={<SampleDossier />} />
                   <Route path="/welcome" element={<Welcome />} />
+                  <Route path="/evidence-logger" element={<ProtectedRoute><EvidenceLogger /></ProtectedRoute>} />
+                  <Route path="/unfair-vs-illegal" element={<UnfairVsIllegal />} />
                   <Route path="/tools" element={<Tools />} />
                   <Route path="/report-confirmation" element={<ReportConfirmation />} />
                   <Route path="*" element={<NotFound />} />

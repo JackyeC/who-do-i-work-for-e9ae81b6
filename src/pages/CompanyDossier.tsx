@@ -61,6 +61,8 @@ import { StateWomenStatusCard } from "@/components/StateWomenStatusCard";
 import { SourceDocumentsLayer } from "@/components/dossier/SourceDocumentsLayer";
 import { AccountabilitySignalsLayer } from "@/components/dossier/AccountabilitySignalsLayer";
 import { CompanyClaimsSection } from "@/components/dossier/CompanyClaimsSection";
+import { CodeWordScanner } from "@/components/dossier/CodeWordScanner";
+import { MissionIntegrityCard } from "@/components/dossier/MissionIntegrityCard";
 
 export default function CompanyDossier() {
   const { id } = useParams();
@@ -597,6 +599,20 @@ export default function CompanyDossier() {
       {/* No-data fallback */}
       {hasNoData && (
         <OfferIntelligencePanel company={company} companyId={companyId!} />
+      )}
+
+      {/* ── CULTURE SIGNAL SCANNER ── */}
+      {companyId && (
+        <div className="mb-6">
+          <CodeWordScanner companyId={companyId} companyName={company.name} />
+        </div>
+      )}
+
+      {/* ── MISSION INTEGRITY ── */}
+      {companyId && (
+        <div className="mb-6">
+          <MissionIntegrityCard companyId={companyId} companyName={company.name} />
+        </div>
       )}
 
       {/* ── THE ADVOCACY REPORT ── */}
