@@ -427,6 +427,51 @@ export function TodayTab() {
           )}
         </TriageCard>
 
+        {/* Product Readiness */}
+        <TriageCard
+          title="Product Readiness"
+          icon={ShieldCheck}
+          iconColor="text-[hsl(var(--civic-green))]"
+          badge={dataHealth && dataHealth.fullyAudited >= 10 ? { label: "READY", variant: "info" } : undefined}
+        >
+          {dataLoading ? (
+            <Skeleton className="h-20 w-full" />
+          ) : !dataHealth ? (
+            <EmptyLine text="Loading readiness metrics…" />
+          ) : (
+            <div className="space-y-3">
+              <MetricRow label="Fully audited" value={dataHealth.fullyAudited} />
+              <MetricRow label="Companies with website" value={`${dataHealth.websitePct}%`} />
+              <MetricRow label="Companies with ≥1 claim" value={`${dataHealth.claimCoveragePct}%`} />
+              <MetricRow label="Claims with sources" value={`${dataHealth.attributionPct}%`} />
+
+              <div className="pt-2 space-y-2.5 border-t border-border/30">
+                <ProgressBar label="Identity Completion" value={dataHealth.websitePct} color="hsl(var(--civic-green))" />
+                <ProgressBar label="Claim Coverage" value={dataHealth.claimCoveragePct} color="hsl(var(--primary))" />
+                <ProgressBar label="Attribution Integrity" value={dataHealth.attributionPct} color="hsl(var(--civic-gold, var(--primary)))" />
+              </div>
+
+              {dataHealth.companiesNoClaims > 0 && (
+                <div className="flex items-center gap-1.5 text-xs font-medium rounded-lg px-2 py-1.5" style={{ background: "hsl(var(--civic-yellow) / 0.1)", color: "hsl(var(--civic-yellow))" }}>
+                  <FileText className="w-3 h-3 shrink-0" />
+                  {dataHealth.companiesNoClaims} {dataHealth.companiesNoClaims === 1 ? "company has" : "companies have"} no claims
+                </div>
+              )}
+              {dataHealth.unattributedClaims > 0 && (
+                <div className="flex items-center gap-1.5 text-xs font-medium rounded-lg px-2 py-1.5 bg-destructive/10 text-destructive">
+                  <AlertTriangle className="w-3 h-3 shrink-0" />
+                  {dataHealth.unattributedClaims} {dataHealth.unattributedClaims === 1 ? "claim" : "claims"} missing sources
+                </div>
+              )}
+              {dataHealth.companiesNoClaims === 0 && dataHealth.unattributedClaims === 0 && (
+                <div className="flex items-center gap-1.5 text-xs font-medium rounded-lg px-2 py-1.5 bg-civic-green/10 text-civic-green">
+                  <CheckCircle className="w-3 h-3" /> All systems green. Ready to scale.
+                </div>
+              )}
+            </div>
+          )}
+        </TriageCard>
+
         {/* User Friction */}
         <TriageCard
           title="User Friction"
