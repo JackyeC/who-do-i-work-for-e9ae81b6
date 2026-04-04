@@ -1,44 +1,31 @@
+## ND Mode Onboarding and Career Map Integration
 
+### 1. First-Time Walkthrough (3-5 steps)
+Appears once when a user first enables ND Mode. Uses a focused overlay that highlights one section at a time:
 
-## Daily Note Control System — Implementation
+- **Step 1: "Welcome to ND Mode"** — "This view translates employer signals into plain language. Every section answers: what is this, why does it matter, and what can I do next."
+- **Step 2: "Quick Read"** — "Start here. Five simple ratings tell you how clear, fast, social, flexible, and safe this workplace may be."
+- **Step 3: "Evidence and Feel"** — "We show what we found and what it may feel like day-to-day. Good fit / be careful lines help you decide quickly."
+- **Step 4: "Questions and Actions"** — "Ready-made interview questions (with softer versions) and suggestions for your resume, cover letter, and application."
+- **Step 5: "Need help anytime?"** — "Tap the help button to see what any icon, rating, or section means."
 
-### What's wrong
+Stored in localStorage so it only shows once. A "Show walkthrough again" option in the help legend.
 
-1. **Prompt** (lines 139–159): Inherits `JRC_MASTER_SYSTEM_PROMPT` (identity-specific framing), asks for "Always in your corner — Jackye" signature, uses old 4-part structure that doesn't match the new spec.
-2. **User message** (lines 109–119): Contradicts the new prompt — asks for "text message from a mentor" and signature.
-3. **No validation**: AI output goes straight to client with no sanitization, word-count check, or banned-phrase scan.
-4. **Fallbacks**: Generic, fluffy, no sharp closing question.
+### 2. Persistent Help Legend
+A floating help button (bottom-right) that opens a panel explaining:
+- What Low / Medium / High ratings mean
+- What each section covers (Quick Read, Evidence, Feel, Questions, Application)
+- What the progress rail does
+- What the view modes (Detailed, Summary, Checklist, Script) do
+- A "Show walkthrough again" link
 
-### Changes
+### 3. Career Map Integration
+Add a connection from the ND Dossier to the Career Map:
+- Add a "Use this in my career plan" button in the ND Dossier's application section
+- When clicked, navigates to /career-map with the company pre-loaded as context
+- The Career Map can then reference ND-specific findings (clarity, pace, social load) when generating path recommendations
 
-#### 1. `supabase/functions/_shared/jrc-edit-prompt.ts` (lines 139–159)
-Replace `JRC_DAILY_NOTE_PROMPT` with the user's exact standalone prompt (no longer inheriting `JRC_MASTER_SYSTEM_PROMPT`).
-
-#### 2. `supabase/functions/generate-jackye-note/index.ts`
-- **Replace user message** (lines 109–119) with context-only content (headline, summary, industry, company, values) — no formatting instructions (the system prompt handles that).
-- **Add `sanitizeNote()`**: Strip lines containing `<think>`, `JRC EDIT`, `draft`, `Here is`, system scaffolding.
-- **Add `validateNote()`**: Check ≤120 words, scan for banned phrases, verify final line ends with `?`. If fail → return fallback.
-- **Rewrite `generateTemplateNote()`**: 3 rotating spec-compliant fallbacks, each ≤120 words, ending with a sharp question.
-
-#### 3. `src/components/dashboard/JackyeMessage.tsx`
-- Add artifact-detection filter before render (check for `<think>`, `JRC EDIT`, draft markers). If contaminated → show "Still reviewing today's signal. Check back shortly."
-- Render signature ("Always in your corner — Jackye") as a static element — not part of AI output.
-- **No layout/styling changes.**
-
-#### 4. `src/services/JackyeNoteService.ts`
-- Rewrite `fallbackNote()` with 3 rotating notes matching the 4-beat structure, each ≤120 words, ending with a question. No signature in note text.
-
-### What will NOT change
-- Dashboard layout, spacing, typography, component order
-- Greeting, date, gold separator, Like/Save buttons
-- Any other page, route, or component
-
-### Files
-
-| File | Scope |
-|------|-------|
-| `supabase/functions/_shared/jrc-edit-prompt.ts` | Replace lines 139–159 with standalone prompt |
-| `supabase/functions/generate-jackye-note/index.ts` | New user message, sanitize+validate, new fallbacks |
-| `src/components/dashboard/JackyeMessage.tsx` | Sanitization filter, static signature |
-| `src/services/JackyeNoteService.ts` | Spec-compliant rotating fallbacks |
-
+### Components to build
+- `NDOnboardingWalkthrough` — step-by-step overlay
+- `NDHelpLegend` — floating help button + panel
+- Integration link in `NDDossierView` to Career Map
