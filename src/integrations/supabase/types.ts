@@ -8794,6 +8794,8 @@ export type Database = {
           bio: string | null
           briefing_timezone: string | null
           created_at: string
+          dream_job_profile: Json | null
+          dream_job_profile_version: number | null
           email: string | null
           employer_company_id: string | null
           full_name: string | null
@@ -8824,6 +8826,8 @@ export type Database = {
           bio?: string | null
           briefing_timezone?: string | null
           created_at?: string
+          dream_job_profile?: Json | null
+          dream_job_profile_version?: number | null
           email?: string | null
           employer_company_id?: string | null
           full_name?: string | null
@@ -8854,6 +8858,8 @@ export type Database = {
           bio?: string | null
           briefing_timezone?: string | null
           created_at?: string
+          dream_job_profile?: Json | null
+          dream_job_profile_version?: number | null
           email?: string | null
           employer_company_id?: string | null
           full_name?: string | null

@@ -93,9 +93,6 @@ export default function ResumeOptimizer() {
           queryClient.invalidateQueries({ queryKey: ["dream-job-profile"] });
         } catch (parseErr) {
           console.warn("Resume text parse skipped", parseErr);
-          if (isLikelyMissingSchemaObject(parseErr)) {
-            toast.error("Dream Job Profile columns are missing on this project. Deploy the latest Supabase migration, then re-upload.");
-          }
         }
       }
 

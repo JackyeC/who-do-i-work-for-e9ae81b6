@@ -8,19 +8,17 @@ import { useDreamJobProfile } from "@/hooks/use-dream-job-profile";
 import { cn } from "@/lib/utils";
 
 interface DreamJobProfileSummaryCardProps {
-  /** Dashboard: sync button */
   showSync?: boolean;
   className?: string;
   compact?: boolean;
 }
 
-/** Rich summary of the canonical Dream Job Profile — use on dashboard tabs, jobs feed, auto-apply. */
 export function DreamJobProfileSummaryCard({
   showSync = false,
   className,
   compact = false,
 }: DreamJobProfileSummaryCardProps) {
-  const { profile, version, isLoading, isError, refetch, syncDreamJobProfile, isSyncing, schemaFallback } =
+  const { profile, version, isLoading, isError, refetch, syncDreamJobProfile, isSyncing } =
     useDreamJobProfile();
 
   const completeness = (() => {
@@ -48,7 +46,7 @@ export function DreamJobProfileSummaryCard({
       <Card className={cn("border-destructive/20 bg-destructive/[0.03]", className)}>
         <CardHeader className="pb-2">
           <CardTitle className="text-base font-display">Dream Job Profile</CardTitle>
-          <CardDescription className="text-xs">We couldn’t load your profile snapshot.</CardDescription>
+          <CardDescription className="text-xs">We couldn't load your profile snapshot.</CardDescription>
         </CardHeader>
         <CardContent className="flex flex-wrap gap-2">
           <Button type="button" variant="outline" size="sm" className="h-8 text-xs" onClick={() => refetch()}>
@@ -57,22 +55,6 @@ export function DreamJobProfileSummaryCard({
           <Button type="button" variant="ghost" size="sm" className="h-8 text-xs" asChild>
             <Link to="/dashboard?tab=profile">Open profile tab</Link>
           </Button>
-        </CardContent>
-      </Card>
-    );
-  }
-
-  if (schemaFallback) {
-    return (
-      <Card className={cn("border-amber-500/25 bg-amber-500/[0.03]", className)}>
-        <CardHeader className="pb-2">
-          <CardTitle className="text-base font-display">Dream Job Profile</CardTitle>
-          <CardDescription className="text-xs">
-            Database not migrated — the <span className="font-mono text-[10px]">dream_job_profile</span> columns are missing on this project.
-          </CardDescription>
-        </CardHeader>
-        <CardContent className="text-xs text-muted-foreground leading-relaxed">
-          Deploy migration <span className="font-mono">20260403120000_dream_job_profile_and_application_dossiers.sql</span> to Supabase, then refresh. Matching will use profile fields until then.
         </CardContent>
       </Card>
     );
@@ -130,6 +112,14 @@ export function DreamJobProfileSummaryCard({
             <p className="text-xs text-muted-foreground mt-1 leading-relaxed">
               Nothing here yet — add target titles, upload a resume, or complete Values so the feed and auto-apply have something real to work with.
             </p>
+            <div className="flex flex-wrap gap-2 mt-3">
+              <Button variant="default" size="sm" className="h-8 text-xs" asChild>
+                <Link to="/dashboard?tab=profile">Set up profile</Link>
+              </Button>
+              <Button variant="outline" size="sm" className="h-8 text-xs" asChild>
+                <Link to="/dashboard?tab=values">Define values</Link>
+              </Button>
+            </div>
           </div>
         )}
 
