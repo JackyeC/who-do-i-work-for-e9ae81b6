@@ -247,6 +247,7 @@ export function NDDossierView({ company, companyId, executives = [], eeocCases =
   const feelLikeWork = useMemo(() => buildFeelLikeWork(company, eeocCases), [company, eeocCases]);
   const questions = useMemo(() => buildQuestions(), []);
   const applicationActions = useMemo(() => buildApplicationActions(company), [company]);
+  const [showOnboarding, setShowOnboarding] = useState(false);
 
   const scrollToSection = useCallback((index: number) => {
     setActiveStep(index);
