@@ -96,6 +96,8 @@ function JobCard({ job, onQueue, queueing, isQueued }: {
             <MatchExplainer
               alignmentScore={job.alignment_score}
               matchedSignals={job.matched_signals}
+              matchReasons={job.match_reasons}
+              scoreBreakdown={job.score_breakdown}
               jobTitle={job.title}
               department={job.department}
               industry={job.industry}

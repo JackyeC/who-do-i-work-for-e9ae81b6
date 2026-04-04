@@ -338,7 +338,6 @@ export default function JobsFeed() {
                   industry={selectedJob.company.industry}
                   employerClarityScore={selectedJob.company.employer_clarity_score}
                 />
-                />
 
                 {/* Actions */}
                 <div className="flex gap-3 pt-2">
