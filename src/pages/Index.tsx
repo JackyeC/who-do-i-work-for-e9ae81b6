@@ -1,4 +1,5 @@
 import { lazy, Suspense, forwardRef } from "react";
+import { FullyAuditedShowcase } from "@/components/landing/FullyAuditedShowcase";
 import { useNavigate, Link } from "react-router-dom";
 import {
   ArrowRight,
