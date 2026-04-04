@@ -53,7 +53,7 @@ function toSignalStory(a: WorkNewsArticle): SignalStory {
     id: a.id,
     company_name: null,
     category: catMap[a.category] || "daily_grind",
-    signal_type: a.is_controversy ? "breaking" : "trend",
+    signal_type: a.is_controversy ? "breaking" : "developing",
     headline: a.headline,
     heat_level: sentimentToHeat(a.sentiment_score),
     source_name: a.source_name,
