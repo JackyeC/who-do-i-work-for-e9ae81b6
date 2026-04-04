@@ -171,6 +171,8 @@ const SubmitTip = lazy(() => import("./pages/SubmitTip"));
 const HRTechIntelligence = lazy(() => import("./pages/HRTechIntelligence"));
 const PaletteStudio = lazy(() => import("./pages/PaletteStudio"));
 const WhoDidIVoteForPage = lazy(() => import("./pages/WhoDidIVoteForPage"));
+const IntelligenceCheck = lazy(() => import("./pages/IntelligenceCheck"));
+const IntelligenceCheckConfirmation = lazy(() => import("./pages/IntelligenceCheckConfirmation"));
 
 const queryClient = new QueryClient();
 
