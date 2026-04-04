@@ -61,6 +61,10 @@ export default function Browse() {
   const [sortBy, setSortBy] = useState<"name" | "score" | "cis">("score");
   const [searchQuery, setSearchQuery] = useState("");
   const [isDiscovering, setIsDiscovering] = useState(false);
+  const [auditedOnly, setAuditedOnly] = useState(() => {
+    const params = new URLSearchParams(window.location.search);
+    return params.get("filter") === "fully_audited";
+  });
   const [currentPage, setCurrentPage] = useState(1);
   const navigate = useNavigate();
   const { toast } = useToast();
