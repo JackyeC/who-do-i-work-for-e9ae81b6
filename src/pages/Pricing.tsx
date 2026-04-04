@@ -43,8 +43,8 @@ const TIERS = [
     annualPrice: 399,
     annualMonthly: 33,
     annualSavings: 189,
-    monthlyPriceId: "price_1TEEvt89MyCOs8yv7SV1TeUJ",
-    annualPriceId: "price_1TF2Wd89MyCOs8yv0GXHpkUE",
+    monthlyPriceId: "price_1TF2WU89MyCOs8yvobpafjEl",
+    annualPriceId: "price_1TIKsT89MyCOs8yvTWfkAMcd",
     features: [
       "Full company dossiers — all signals unlocked",
       "Unlimited AI job-link audits",
