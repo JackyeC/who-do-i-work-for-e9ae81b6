@@ -77,6 +77,7 @@ const EvaluationContext = createContext<EvaluationContextType>({
   alignmentScore: 0,
   riskScore: 0,
   verdictText: "",
+  verdictReasons: [],
   contextLabel: "",
 });
 
