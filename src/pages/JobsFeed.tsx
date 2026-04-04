@@ -23,6 +23,21 @@ import { useQuery } from "@tanstack/react-query";
 import { DreamJobProfileSummaryCard } from "@/components/career/DreamJobProfileSummaryCard";
 import { MatchExplainer } from "@/components/jobs/MatchExplainer";
 
+interface MatchReason {
+  dimension: string;
+  label: string;
+  detail: string;
+  impact: number;
+}
+
+interface ScoreBreakdown {
+  skill: number;
+  role: number;
+  values: number;
+  signals: number;
+  location: number;
+}
+
 interface MatchedJob {
   id: string;
   job_id?: string;
@@ -39,6 +54,8 @@ interface MatchedJob {
   salary_range?: string;
   alignment_score: number;
   matched_signals: string[];
+  match_reasons?: MatchReason[];
+  score_breakdown?: ScoreBreakdown;
   url: string;
 }
 
@@ -314,6 +331,8 @@ export default function JobsFeed() {
                 <MatchExplainer
                   alignmentScore={selectedJob.alignment_score}
                   matchedSignals={selectedJob.matched_signals || []}
+                  matchReasons={selectedJob.match_reasons}
+                  scoreBreakdown={selectedJob.score_breakdown}
                   jobTitle={selectedJob.title}
                   department={selectedJob.department}
                   industry={selectedJob.company.industry}
