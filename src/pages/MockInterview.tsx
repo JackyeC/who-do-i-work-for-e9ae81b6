@@ -139,6 +139,17 @@ export default function MockInterview() {
   const [answer, setAnswer] = useState("");
   const [generating, setGenerating] = useState(false);
   const [evaluating, setEvaluating] = useState(false);
+  const [voicePreset, setVoicePreset] = useState<VoicePreset>("standard");
+  const [voiceEnabled, setVoiceEnabled] = useState(true);
+
+  // Auto-speak question when it changes
+  useEffect(() => {
+    if (mode !== "interview" || !voiceEnabled) return;
+    const q = questions[currentIdx];
+    const text = q?.question;
+    if (text) speakRobot(text, voicePreset);
+    return () => stopSpeaking();
+  }, [mode, currentIdx, questions, voicePreset, voiceEnabled]);
 
   const startInterview = async () => {
     if (!company.trim() || !role.trim()) {
