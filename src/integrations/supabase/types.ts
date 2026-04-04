@@ -6367,6 +6367,48 @@ export type Database = {
           },
         ]
       }
+      intelligence_requests: {
+        Row: {
+          concerns: string | null
+          created_at: string
+          email: string
+          employer_name: string
+          id: string
+          job_posting_url: string | null
+          location: string | null
+          role_title: string
+          status: string
+          updated_at: string
+          user_id: string | null
+        }
+        Insert: {
+          concerns?: string | null
+          created_at?: string
+          email: string
+          employer_name: string
+          id?: string
+          job_posting_url?: string | null
+          location?: string | null
+          role_title: string
+          status?: string
+          updated_at?: string
+          user_id?: string | null
+        }
+        Update: {
+          concerns?: string | null
+          created_at?: string
+          email?: string
+          employer_name?: string
+          id?: string
+          job_posting_url?: string | null
+          location?: string | null
+          role_title?: string
+          status?: string
+          updated_at?: string
+          user_id?: string | null
+        }
+        Relationships: []
+      }
       interview_flinch_signals: {
         Row: {
           company_id: string | null
