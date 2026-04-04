@@ -243,6 +243,17 @@ export function SourceDocumentsLayer({ companyId, companyName }: SourceDocuments
         These are the receipts behind the signals.
       </p>
 
+      {/* SEC absence note when other docs exist but no SEC filings */}
+      {secDocs.length === 0 && (
+        <div className="rounded-lg border border-border/30 p-4">
+          <p className="text-xs font-semibold text-foreground mb-1">No SEC Filings Found</p>
+          <p className="text-[11px] text-muted-foreground leading-relaxed">
+            This company does not appear to have SEC filings on record. This typically indicates a privately held entity.
+            Financial transparency is limited to voluntary disclosures.
+          </p>
+        </div>
+      )}
+
       {categoryOrder.map((catKey) => {
         const docs = grouped[catKey];
         if (!docs || docs.length === 0) return null;
