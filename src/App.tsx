@@ -9,6 +9,7 @@ import { AuthProvider } from "@/contexts/AuthContext";
 import { ViewModeProvider } from "@/contexts/ViewModeContext";
 import { DossierLensProvider } from "@/contexts/DossierLensContext";
 import { EvaluationProvider } from "@/contexts/EvaluationContext";
+import { NDModeProvider } from "@/contexts/NDModeContext";
 import { DemoSafeModeProvider } from "@/contexts/DemoSafeModeContext";
 import { ProtectedRoute } from "@/components/ProtectedRoute";
 import { AdminRoute } from "@/components/AdminRoute";
