@@ -8,9 +8,10 @@ import { LogoMark } from "@/components/brand/LogoMark";
 import { ScanCounter } from "@/components/landing/ScanCounter";
 
 const PRIMARY_LINKS = [
-  { label: "Check a Company", to: "/offer-check" },
+  { label: "Intelligence Check", to: "/intelligence-check" },
   { label: "How It Works", to: "/how-it-works" },
-  { label: "Pricing", to: "/pricing" },
+  { label: "About", to: "/about" },
+  { label: "Methodology", to: "/methodology" },
 ];
 
 export function MarketingNav() {
