@@ -27,6 +27,14 @@ interface QuestionItem {
   tip: string;
 }
 
+interface RubricScore {
+  clarity: number;
+  relevance: number;
+  specificity: number;
+  confidence: number;
+  structure: number;
+}
+
 interface AnswerItem {
   questionId: string;
   questionText: string;
@@ -35,8 +43,11 @@ interface AnswerItem {
   mode: "typed" | "voice";
   feedback: string | null;
   score: number | null;
-  strengths: string | null;
-  improvements: string | null;
+  strengths: string[] | null;
+  improvements: string[] | null;
+  rubric: RubricScore | null;
+  sampleAnswer: string | null;
+  coachingNote: string | null;
 }
 
 interface Session {
