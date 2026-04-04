@@ -61,14 +61,7 @@ const JACKYE_CONTENT = [
   },
 ];
 
-/* ── Demo watched companies (fallback) ── */
-const DEMO_WATCHED = [
-  { name: "Amazon", slug: "amazon", industry: "Technology / Logistics", score: 42 },
-  { name: "Goldman Sachs", slug: "goldman-sachs", industry: "Financial Services", score: 38 },
-  { name: "Starbucks", slug: "starbucks", industry: "Food & Beverage", score: 51 },
-  { name: "Google / Alphabet", slug: "google-alphabet", industry: "Technology", score: 62 },
-  { name: "JPMorgan Chase", slug: "jpmorgan-chase", industry: "Financial Services", score: 55 },
-];
+/* Demo watched companies removed — only real data shown */
 
 /* ── Severity → RAG color mapping ── */
 const SEVERITY_STYLES: Record<string, { dot: string; badge: string; border: string }> = {
