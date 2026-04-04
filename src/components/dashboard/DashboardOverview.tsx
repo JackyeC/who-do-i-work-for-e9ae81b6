@@ -158,6 +158,7 @@ export function DashboardOverview({ onNavigate }: DashboardOverviewProps) {
   }
 
   const firstName = data?.firstName || "there";
+  const alerts = data?.alerts || [];
   const trackedCompanies = data?.tracked && data.tracked.length > 0
     ? data.tracked.map((t: any) => ({
         name: t.company?.name,
