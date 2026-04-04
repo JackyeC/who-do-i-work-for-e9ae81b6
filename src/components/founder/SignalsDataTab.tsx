@@ -165,12 +165,17 @@ export function SignalsDataTab() {
         supabase.from("company_corporate_claims").select("id", { count: "exact", head: true }).is("claim_source_url", null).is("claim_source", null),
       ]);
 
-      // New structured claims — attribution enforcement
-      const [totalNew, newAttributed, newUnattributed] = await Promise.all([
+      // New structured claims — attribution enforcement + platform-wide counts
+      const [totalNew, newAttributed, newUnattributed, companiesWithClaims, totalCompanies] = await Promise.all([
         (supabase as any).from("company_claims").select("id", { count: "exact", head: true }).eq("is_active", true),
         (supabase as any).from("company_claims").select("id", { count: "exact", head: true }).eq("is_active", true).not("source_url", "is", null).not("source_label", "is", null),
         (supabase as any).from("company_claims").select("id, company_id, claim_text, source_label, claim_type", { count: "exact" }).eq("is_active", true).or("source_url.is.null,source_label.is.null"),
+        (supabase as any).from("company_claims").select("company_id").eq("is_active", true),
+        supabase.from("companies").select("id", { count: "exact", head: true }),
       ]);
+
+      // Count distinct companies with claims
+      const uniqueCompaniesWithClaims = new Set((companiesWithClaims.data ?? []).map((r: any) => r.company_id)).size;
 
       // Per-company breakdown of unattributed claims
       const unattributedList = (newUnattributed.data ?? []) as any[];
@@ -196,6 +201,9 @@ export function SignalsDataTab() {
         missingSources: total - verified,
         unattributedPerCompany: perCompany,
         unattributedCount: newUnattributed.count ?? 0,
+        companiesWithClaims: uniqueCompaniesWithClaims,
+        companiesWithoutClaims: (totalCompanies.count ?? 0) - uniqueCompaniesWithClaims,
+        totalCompanies: totalCompanies.count ?? 0,
       };
     },
   });
@@ -537,6 +545,18 @@ export function SignalsDataTab() {
               <div className="flex items-center justify-between text-sm">
                 <span className="flex items-center gap-1.5 text-muted-foreground"><XCircle className="w-3 h-3" /> Unattributed (suppressed)</span>
                 <span className={cn("font-mono font-medium", claimSafety!.noEvidence > 0 ? "text-destructive" : "text-muted-foreground")}>{claimSafety!.noEvidence}</span>
+              </div>
+
+              {/* Platform-wide company coverage */}
+              <div className="border-t border-border/40 pt-2 mt-2 space-y-1.5">
+                <div className="flex items-center justify-between text-sm">
+                  <span className="text-muted-foreground">Companies with verified claims</span>
+                  <span className="font-mono font-medium text-civic-green">{claimSafety!.companiesWithClaims} / {claimSafety!.totalCompanies}</span>
+                </div>
+                <div className="flex items-center justify-between text-sm">
+                  <span className="text-muted-foreground">Companies without claims</span>
+                  <span className={cn("font-mono font-medium", claimSafety!.companiesWithoutClaims > 0 ? "text-civic-yellow" : "text-muted-foreground")}>{claimSafety!.companiesWithoutClaims}</span>
+                </div>
               </div>
 
               {/* Unattributed per-company breakdown */}
