@@ -17,9 +17,9 @@ import { useAuth } from "@/contexts/AuthContext";
 
 const STEPS = [
   { id: "dna", label: "Calibrate", icon: Target, subtitle: "How do you work?" },
-  { id: "bounty", label: "Target", icon: Crosshair, subtitle: "What are we hunting?" },
-  { id: "arsenal", label: "Arsenal", icon: Upload, subtitle: "Upload your weapons" },
-  { id: "launch", label: "Launch", icon: Rocket, subtitle: "Engage the engine" },
+  { id: "focus", label: "Focus", icon: Briefcase, subtitle: "What roles fit you?" },
+  { id: "documents", label: "Documents", icon: Upload, subtitle: "Upload your resume" },
+  { id: "launch", label: "Launch", icon: Rocket, subtitle: "Start your search" },
 ] as const;
 
 const DNA_DIALS = [
