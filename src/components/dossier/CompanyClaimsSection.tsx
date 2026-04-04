@@ -7,7 +7,7 @@ import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/comp
 import { cn } from "@/lib/utils";
 import {
   ShieldCheck, Layers, HelpCircle, ExternalLink,
-  ChevronDown, FileText, AlertTriangle,
+  ChevronDown, FileText, AlertTriangle, User,
 } from "lucide-react";
 
 const EVIDENCE_CONFIG = {
