@@ -296,6 +296,15 @@ export default function Browse() {
               {cat}
             </button>
           ))}
+          <button
+            onClick={() => setAuditedOnly(!auditedOnly)}
+            className={`text-xs font-mono tracking-wider uppercase px-2.5 py-1 transition-all flex items-center gap-1 ${
+              auditedOnly ? "bg-[hsl(var(--civic-green))] text-primary-foreground" : "bg-muted/40 text-muted-foreground hover:text-foreground border border-border/40"
+            }`}
+          >
+            <ShieldCheck className="w-3 h-3" />
+            Fully Audited
+          </button>
         </div>
 
         {/* Results count */}
