@@ -11,6 +11,7 @@ interface Props {
     industry: string;
     state: string;
     employee_count?: string | null;
+    vetted_status?: string | null;
   };
 }
 
