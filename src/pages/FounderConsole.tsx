@@ -9,8 +9,9 @@ import { ReviewQueueTab } from "@/components/founder/ReviewQueueTab";
 import { SignalsDataTab } from "@/components/founder/SignalsDataTab";
 import { UsersFeedbackTab } from "@/components/founder/UsersFeedbackTab";
 import { NotesTab } from "@/components/founder/NotesTab";
+import { DuplicateDetectionTab } from "@/components/founder/DuplicateDetectionTab";
 import {
-  LayoutDashboard, ClipboardList, Radio, Users, StickyNote, ExternalLink,
+  LayoutDashboard, ClipboardList, Radio, Users, StickyNote, ExternalLink, Copy,
 } from "lucide-react";
 
 const TABS = [
@@ -19,6 +20,7 @@ const TABS = [
   { id: "signals", label: "Signals & Data", icon: Radio },
   { id: "users", label: "Users & Feedback", icon: Users },
   { id: "notes", label: "Notes", icon: StickyNote },
+  { id: "duplicates", label: "Duplicates", icon: Copy },
 ] as const;
 
 export default function FounderConsole() {
@@ -90,6 +92,7 @@ export default function FounderConsole() {
           <TabsContent value="signals"><SignalsDataTab /></TabsContent>
           <TabsContent value="users"><UsersFeedbackTab /></TabsContent>
           <TabsContent value="notes"><NotesTab /></TabsContent>
+          <TabsContent value="duplicates"><DuplicateDetectionTab /></TabsContent>
         </Tabs>
       </main>
     </div>
