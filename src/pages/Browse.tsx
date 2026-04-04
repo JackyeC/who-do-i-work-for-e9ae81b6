@@ -137,7 +137,7 @@ export default function Browse() {
       if (sortBy === "score") return b.civicFootprintScore - a.civicFootprintScore;
       return a.name.localeCompare(b.name);
     });
-  }, [allCompanies, selectedIndustry, selectedCategory, sortBy, searchQuery]);
+  }, [allCompanies, selectedIndustry, selectedCategory, sortBy, searchQuery, auditedOnly]);
 
   const totalPages = Math.ceil(filtered.length / PAGE_SIZE);
   const visibleCompanies = filtered.slice((currentPage - 1) * PAGE_SIZE, currentPage * PAGE_SIZE);
