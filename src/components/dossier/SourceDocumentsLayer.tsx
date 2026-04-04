@@ -184,16 +184,44 @@ export function SourceDocumentsLayer({ companyId, companyName }: SourceDocuments
     );
   }
 
-  if (!documents || documents.length === 0) {
+  // Separate SEC filings from other documents
+  const secTypes = new Set(["10-K", "10-Q", "DEF_14A", "8-K", "proxy_statement", "annual_report"]);
+  const secDocs = documents?.filter(d => secTypes.has(d.document_type)) ?? [];
+  const otherDocs = documents?.filter(d => !secTypes.has(d.document_type)) ?? [];
+  const hasAnyDocs = (documents?.length ?? 0) > 0;
+
+  if (!hasAnyDocs) {
     return (
-      <div className="text-center py-10">
-        <FileText className="w-8 h-8 text-muted-foreground/30 mx-auto mb-3" />
-        <p className="text-sm text-muted-foreground">
-          No primary-source documents attached yet for {companyName}.
-        </p>
-        <p className="text-xs text-muted-foreground/60 mt-1">
-          Annual reports, proxy statements, and ESG disclosures will appear here when indexed.
-        </p>
+      <div className="space-y-6">
+        {/* SEC Filings — clear absence state */}
+        <div className="rounded-xl border border-border/40 bg-card p-5">
+          <h4 className="text-sm font-semibold text-foreground mb-2">No SEC Filings Found</h4>
+          <p className="text-xs text-foreground/80 leading-relaxed mb-3">
+            This typically means the company is privately held or not required to file with the SEC.
+            Non-filing companies include private corporations, partnerships, LLCs, and companies with fewer than 
+            the regulatory threshold of shareholders.
+          </p>
+          <div className="border-l-2 border-[hsl(var(--civic-yellow))]/40 pl-3 py-2">
+            <p className="font-mono text-[10px] tracking-[0.2em] uppercase text-[hsl(var(--civic-yellow))] mb-1">
+              What this means for you
+            </p>
+            <p className="text-xs text-foreground/80 leading-relaxed">
+              Limited public financial transparency. You may need to rely on other signals — news coverage, hiring trends, 
+              leadership behavior, and employee reviews — to evaluate financial stability and corporate governance.
+            </p>
+          </div>
+        </div>
+
+        {/* General empty state */}
+        <div className="text-center py-6">
+          <FileText className="w-8 h-8 text-muted-foreground/30 mx-auto mb-3" />
+          <p className="text-sm text-muted-foreground">
+            No additional source documents indexed for {companyName}.
+          </p>
+          <p className="text-xs text-muted-foreground/60 mt-1">
+            DEI reports, ESG disclosures, and governance documents will appear here when available.
+          </p>
+        </div>
       </div>
     );
   }
