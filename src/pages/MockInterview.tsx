@@ -171,6 +171,14 @@ export default function MockInterview() {
     return () => stopSpeaking();
   }, [state, session.currentIndex, voicePreset, voiceEnabled]);
 
+  // Stop recognition on question change
+  useEffect(() => {
+    if (state !== "asking" && state !== "recording") {
+      speech.stopListening();
+      speech.resetTranscript();
+    }
+  }, [state]);
+
   // Skip invalid questions
   useEffect(() => {
     if (state !== "asking" && state !== "recording") return;
