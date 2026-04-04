@@ -532,18 +532,17 @@ export default function CompanyDossier() {
         )}
       </div>
 
-      {/* ── SIGNAL INTELLIGENCE BREAKDOWN ── */}
-      <SignalIntelligenceBreakdown
+      {/* ── POWER & INFLUENCE ── */}
+      <PowerInfluenceView
         companyName={company.name}
+        companyId={companyId!}
         totalPacSpending={company.total_pac_spending ?? 0}
         lobbyingSpend={company.lobbying_spend ?? 0}
         candidates={(candidates || []) as any}
-        executives={(executives || []).filter((e: any) => e.total_donations != null) as any}
+        executives={(executives || []) as any}
+        boardMembers={(dossierBoardMembers || []) as any}
         partyBreakdown={(partyBreakdown || []) as any}
         evidenceRecords={evidenceRecords}
-        eeocCount={eeocCases?.length || 0}
-        issueSignalCount={issueSignals?.length || 0}
-        clarityScore={influenceScore}
       />
 
       <p className="text-xs text-muted-foreground leading-relaxed max-w-xl mb-6">
