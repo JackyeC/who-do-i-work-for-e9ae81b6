@@ -278,7 +278,10 @@ export default function Pricing() {
                   onClick={() => handleCheckout(tier)}
                   disabled={isLoading}
                   variant={tier.highlight ? "default" : "outline"}
-                  className="w-full"
+                  className={cn(
+                    "w-full",
+                    !tier.highlight && "border-border bg-muted/50 text-foreground hover:bg-muted hover:text-foreground"
+                  )}
                 >
                   {isLoading ? (
                     <Loader2 className="w-4 h-4 animate-spin" />

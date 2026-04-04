@@ -30,20 +30,36 @@ export function HeroScanInput() {
     if (mode === "upload" && !file) return;
 
     setVerifying(true);
-    const token = await getToken();
-    const verified = token ? await verifyTurnstileToken(token) : false;
+    try {
+      const token = await getToken();
+      if (token) {
+        const verified = await verifyTurnstileToken(token);
+        resetToken();
+        if (!verified) {
+          setVerifying(false);
+          return;
+        }
+      }
+    } catch (err) {
+      console.warn("[HeroScanInput] Turnstile verification skipped:", err);
+    }
     setVerifying(false);
-    resetToken();
 
-    if (!verified) return;
-
-    if (mode === "search") {
-      await recordScan("company", query.trim());
-      navigate(`/search?q=${encodeURIComponent(query.trim())}`);
-    } else {
-      await recordScan("offer", file?.name);
-      // Navigate to offer-check with file state
-      navigate("/offer-check", { state: { uploadedFile: file } });
+    try {
+      if (mode === "search") {
+        await recordScan("company", query.trim());
+        navigate(`/search?q=${encodeURIComponent(query.trim())}`);
+      } else {
+        await recordScan("offer", file?.name);
+        navigate("/offer-check", { state: { uploadedFile: file } });
+      }
+    } catch (err) {
+      console.warn("[HeroScanInput] Scan record failed, navigating anyway:", err);
+      if (mode === "search") {
+        navigate(`/search?q=${encodeURIComponent(query.trim())}`);
+      } else {
+        navigate("/offer-check", { state: { uploadedFile: file } });
+      }
     }
   };
 
