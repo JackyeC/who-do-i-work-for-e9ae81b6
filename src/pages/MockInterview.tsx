@@ -284,21 +284,30 @@ export default function MockInterview() {
       const { data, error } = await supabase.functions.invoke("ask-jackye-chat", {
         body: {
           messages: [
-            { role: "system", content: "You are an expert interview coach. Evaluate the candidate's answer. Return JSON with: score (0-100), feedback (2-3 specific sentences), strengths (1-2 things they did well), improvements (1-2 specific suggestions)." },
-            { role: "user", content: `Interview for ${session.role} at ${session.company}.\n\nQuestion: ${currentQuestion.text}\nCandidate's Answer: ${answer}\n\nEvaluate this answer. Return valid JSON: {"score": number, "feedback": string, "strengths": string, "improvements": string}` },
+            { role: "system", content: `You are an expert interview coach. Evaluate the candidate's answer across 5 categories: clarity, relevance, specificity, confidence, structure. Each scored 1-5. Return JSON:
+{"score": number (0-100 overall), "rubric": {"clarity": number, "relevance": number, "specificity": number, "confidence": number, "structure": number}, "strengths": ["strength 1", "strength 2"], "improvements": ["improvement 1", "improvement 2"], "sampleAnswer": "a stronger sample answer under 120 words", "coachingNote": "one short coaching note", "feedback": "2-3 sentence summary"}` },
+            { role: "user", content: `Interview for ${session.role} at ${session.company}.\n\nQuestion: ${currentQuestion.text}\nCandidate's Answer: ${answer}\n\nEvaluate this answer. Return valid JSON only.` },
           ],
         },
       });
       if (error) throw error;
 
       const responseText = data?.reply || data?.content || data?.message || "";
-      let evaluation: { score: number; feedback: string; strengths: string; improvements: string };
+      let evaluation: any;
       try {
         const jsonMatch = responseText.match(/\{[\s\S]*\}/);
-        evaluation = jsonMatch ? JSON.parse(jsonMatch[0]) : { score: 70, feedback: responseText, strengths: "", improvements: "" };
+        evaluation = jsonMatch ? JSON.parse(jsonMatch[0]) : {};
       } catch {
-        evaluation = { score: 70, feedback: responseText, strengths: "", improvements: "" };
+        evaluation = {};
       }
+
+      const rubric: RubricScore = {
+        clarity: evaluation.rubric?.clarity ?? 3,
+        relevance: evaluation.rubric?.relevance ?? 3,
+        specificity: evaluation.rubric?.specificity ?? 3,
+        confidence: evaluation.rubric?.confidence ?? 3,
+        structure: evaluation.rubric?.structure ?? 3,
+      };
 
       const newAnswer: AnswerItem = {
         questionId: currentQuestion.id,
@@ -306,10 +315,13 @@ export default function MockInterview() {
         answerText: answer,
         transcript: practiceMode === "voice" ? speech.finalText : answer,
         mode: practiceMode === "voice" ? "voice" : "typed",
-        feedback: evaluation.feedback,
-        score: evaluation.score,
-        strengths: evaluation.strengths,
-        improvements: evaluation.improvements,
+        feedback: evaluation.feedback || responseText || "No feedback available.",
+        score: evaluation.score ?? Math.round(Object.values(rubric).reduce((a, b) => a + b, 0) / 5 * 20),
+        strengths: Array.isArray(evaluation.strengths) ? evaluation.strengths.slice(0, 2) : null,
+        improvements: Array.isArray(evaluation.improvements) ? evaluation.improvements.slice(0, 2) : null,
+        rubric,
+        sampleAnswer: evaluation.sampleAnswer || null,
+        coachingNote: evaluation.coachingNote || null,
       };
 
       setSession((s) => {
