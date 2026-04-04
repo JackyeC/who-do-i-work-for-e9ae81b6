@@ -14,6 +14,83 @@ import { toast } from "sonner";
 import { Textarea } from "@/components/ui/textarea";
 import { Progress } from "@/components/ui/progress";
 
+interface NormalizedQuestion {
+  id: string;
+  question: string;
+  category: string;
+  tip: string;
+  userAnswer: string;
+  feedback: string | null;
+  score: number | null;
+  strengths: string | null;
+  improvements: string | null;
+}
+
+const FALLBACK_QUESTIONS = [
+  "Tell me about your experience and why you want this role.",
+  "Describe a time you helped a customer solve a problem.",
+  "How would you handle competing priorities during a busy shift?",
+];
+
+/** Normalize interview data from any shape the AI might return */
+function normalizeInterviewData(raw: any): NormalizedQuestion[] {
+  if (!raw) return [];
+
+  // Find the questions array from various possible shapes
+  let sourceQuestions: any[] = [];
+  if (Array.isArray(raw?.questions)) {
+    sourceQuestions = raw.questions;
+  } else if (Array.isArray(raw?.interviewQuestions)) {
+    sourceQuestions = raw.interviewQuestions;
+  } else if (Array.isArray(raw?.data?.questions)) {
+    sourceQuestions = raw.data.questions;
+  }
+
+  const normalized = sourceQuestions
+    .map((item: any, index: number) => {
+      let questionText = "";
+      if (typeof item === "string") {
+        questionText = item;
+      } else if (item?.question) {
+        questionText = item.question;
+      } else if (item?.prompt) {
+        questionText = item.prompt;
+      } else if (item?.text) {
+        questionText = item.text;
+      }
+
+      return {
+        id: `q-${index + 1}`,
+        question: questionText.trim(),
+        category: (typeof item === "object" && item?.category) || `Question ${index + 1}`,
+        tip: (typeof item === "object" && item?.tip) || "",
+        userAnswer: "",
+        feedback: null,
+        score: null,
+        strengths: null,
+        improvements: null,
+      } as NormalizedQuestion;
+    })
+    .filter((q) => q.question.length > 0);
+
+  // Inject fallback questions if none were valid
+  if (normalized.length === 0) {
+    return FALLBACK_QUESTIONS.map((text, i) => ({
+      id: `fallback-${i + 1}`,
+      question: text,
+      category: "General",
+      tip: "",
+      userAnswer: "",
+      feedback: null,
+      score: null,
+      strengths: null,
+      improvements: null,
+    }));
+  }
+
+  return normalized;
+}
+
 interface PrepQuestion {
   question: string;
   category: string;
@@ -73,14 +150,14 @@ export default function MockInterview() {
         body: { company: company.trim(), role: role.trim(), count: 5 },
       });
       if (error) throw error;
-      const qs = (data?.questions || []).map((q: any) => ({
-        ...q,
-        userAnswer: "",
-        feedback: null,
-        score: null,
-        strengths: null,
-        improvements: null,
-      }));
+
+      // Log raw payload for debugging
+      console.log("[MockInterview] Raw API payload:", JSON.stringify(data, null, 2));
+
+      const qs = normalizeInterviewData(data);
+
+      console.log("[MockInterview] Normalized questions:", qs);
+
       if (qs.length === 0) throw new Error("No questions generated");
       setQuestions(qs);
       setCurrentIdx(0);
@@ -371,8 +448,8 @@ export default function MockInterview() {
                       Q{currentIdx + 1} of {questions.length}
                     </span>
                   </div>
-                  <p className="text-base font-semibold text-foreground leading-relaxed">
-                    {currentQ.question}
+                  <p className="text-base font-semibold text-foreground leading-relaxed min-h-[2em] rounded-lg bg-muted/20 p-3 border border-border/30">
+                    {currentQ.question || "Tell me about your experience and why you want this role."}
                   </p>
 
                   {/* Answer area — only show if not yet answered */}
