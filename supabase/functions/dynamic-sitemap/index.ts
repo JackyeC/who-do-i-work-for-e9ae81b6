@@ -1,4 +1,5 @@
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
+import { COMPANY_SITEMAP_IDENTITY_STATUSES } from "../_shared/dossier-sitemap-policy.ts";
 
 function getPublicSiteUrl(): string {
   const raw = Deno.env.get("PUBLIC_SITE_URL") || "https://wdiwf.jackyeclayton.com";
@@ -11,13 +12,16 @@ const corsHeaders = {
 };
 
 // Static pages with their priorities and change frequencies
+/** Canonical public URLs only (no legacy redirect paths). */
 const STATIC_PAGES = [
   { path: "/", priority: "1.0", freq: "weekly" },
+  { path: "/about", priority: "0.7", freq: "monthly" },
+  { path: "/how-it-works", priority: "0.7", freq: "monthly" },
   { path: "/browse", priority: "0.9", freq: "daily" },
   { path: "/check", priority: "0.9", freq: "weekly" },
   { path: "/search", priority: "0.8", freq: "daily" },
   { path: "/ask-jackye", priority: "0.8", freq: "weekly" },
-  { path: "/would-you-work-here", priority: "0.9", freq: "weekly" },
+  { path: "/offer-check", priority: "0.9", freq: "weekly" },
   { path: "/strategic-offer-review", priority: "0.8", freq: "weekly" },
   { path: "/offer-clarity", priority: "0.8", freq: "weekly" },
   { path: "/compare", priority: "0.8", freq: "weekly" },
@@ -33,7 +37,9 @@ const STATIC_PAGES = [
   { path: "/intelligence-chain", priority: "0.6", freq: "weekly" },
   { path: "/investigative", priority: "0.7", freq: "weekly" },
   { path: "/intelligence", priority: "0.8", freq: "weekly" },
-  { path: "/signals", priority: "0.7", freq: "daily" },
+  { path: "/signal-alerts", priority: "0.7", freq: "daily" },
+  { path: "/receipts", priority: "0.8", freq: "weekly" },
+  { path: "/tools", priority: "0.7", freq: "weekly" },
   { path: "/rivalries", priority: "0.6", freq: "weekly" },
   { path: "/brand-madness", priority: "0.6", freq: "weekly" },
   { path: "/rankings", priority: "0.7", freq: "weekly" },
@@ -93,10 +99,21 @@ Deno.serve(async () => {
     // we still return a valid sitemap containing at least the static routes.
     if (supabaseUrl && supabaseKey) {
       const supabase = createClient(supabaseUrl, supabaseKey);
-      const { data: companies, error } = await supabase
+      const includeAllCompanies = Deno.env.get("SITEMAP_INCLUDE_ALL_COMPANIES") === "1";
+
+      let companyQuery = supabase
         .from("companies")
-        .select("slug, updated_at, name")
+        .select("slug, updated_at, name, identity_status")
         .order("name");
+
+      if (!includeAllCompanies) {
+        companyQuery = companyQuery.in(
+          "identity_status",
+          [...COMPANY_SITEMAP_IDENTITY_STATUSES],
+        );
+      }
+
+      const { data: companies, error } = await companyQuery;
 
       if (error) {
         console.error("Sitemap company fetch error:", error);

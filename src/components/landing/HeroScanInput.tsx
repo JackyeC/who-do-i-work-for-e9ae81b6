@@ -22,7 +22,7 @@ export function HeroScanInput() {
 
     if (!hasScansRemaining) {
       toast.error("You have used all 3 free scans. Sign up to continue.");
-      navigate("/auth");
+      navigate("/login");
       return;
     }
 
@@ -39,7 +39,7 @@ export function HeroScanInput() {
 
     if (mode === "search") {
       await recordScan("company", query.trim());
-      navigate(`/search?q=${encodeURIComponent(query.trim())}`);
+      navigate(`/offer-check?q=${encodeURIComponent(query.trim())}`);
     } else {
       await recordScan("offer", file?.name);
       // Navigate to offer-check with file state

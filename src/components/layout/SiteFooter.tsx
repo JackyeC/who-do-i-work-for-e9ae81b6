@@ -24,13 +24,24 @@ export function SiteFooter() {
             <nav className="flex flex-col gap-2">
               {[
                 { label: "Home", to: "/" },
-                { label: "How It Works", to: "/about" },
-                { label: "Companies", to: "/browse" },
-                { label: "The Receipts", to: "/receipts" },
-                { label: "Values Profile", to: "/values" },
-                { label: "Offer Review", to: "/offer-check" },
+                { label: "How It Works", to: "/how-it-works" },
+                { label: "Check a Company", to: "/offer-check" },
                 { label: "Pricing", to: "/pricing" },
+                { label: "Methodology", to: "/methodology" },
                 { label: "For Companies", to: "/for-employers" },
+              ].map((link) => (
+                <Link key={link.to} to={link.to} className="font-sans text-sm text-muted-foreground hover:text-foreground transition-colors">
+                  {link.label}
+                </Link>
+              ))}
+            </nav>
+            <p className="font-mono text-xs tracking-[0.15em] uppercase text-muted-foreground/50 mb-3 mt-6">More</p>
+            <nav className="flex flex-col gap-2">
+              {[
+                { label: "Sample audit (demo)", to: "/would-you-work-here" },
+                { label: "Company directory", to: "/browse" },
+                { label: "The Receipts", to: "/receipts" },
+                { label: "Labs & tools", to: "/tools" },
               ].map((link) => (
                 <Link key={link.to} to={link.to} className="font-sans text-sm text-muted-foreground hover:text-foreground transition-colors">
                   {link.label}
@@ -71,7 +82,6 @@ export function SiteFooter() {
               {[
                 { label: "Privacy Policy", to: "/privacy" },
                 { label: "Terms of Service", to: "/terms" },
-                { label: "Methodology", to: "/methodology" },
                 { label: "Data Ethics", to: "/data-ethics" },
               ].map((link) => (
                 <Link key={link.to} to={link.to} className="font-sans text-sm text-muted-foreground hover:text-foreground transition-colors">

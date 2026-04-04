@@ -10,59 +10,59 @@ const TOOLS = [
   {
     icon: FileSearch,
     title: "The Receipts",
-    description: "Company-by-company investigations connecting corporate values claims to political spending, DEI actions, and labor impact. Every claim sourced. Every dollar traced.",
+    description: "Forensic company files: values claims vs. political spend, labor signals, and citations. You see the evidence, not a verdict handed down.",
     path: "/receipts",
     badge: "Free",
   },
   {
     icon: Map,
     title: "Career Map",
-    description: "Explore career paths with intelligence-backed insights. Understand role progressions, skill gaps, and industry trajectories powered by public data.",
+    description: "Career paths with public-data context — where demand is moving, what skills gap actually costs you, and what to verify next.",
     path: "/career-intelligence",
     badge: "Pro",
   },
   {
     icon: GitCompare,
     title: "Compare Companies",
-    description: "Side-by-side comparison of two employers across Employer Clarity Scores, lobbying, PAC spending, workforce signals, and transparency metrics.",
+    description: "Two employers, same lens: clarity scores, money out the door, workforce risk, transparency gaps — so you can choose with leverage.",
     path: "/compare",
   },
   {
     icon: Landmark,
     title: "Follow the Money",
-    description: "Trace PAC donations, lobbying expenditures, and political spending from any company to the candidates and bills they support.",
+    description: "PACs, lobbying, where dollars land. Follow incentives to see who benefits when the talking points say something else.",
     path: "/follow-the-money",
   },
   {
     icon: UserCheck,
     title: "Recruiter Brief",
-    description: "Generate signal-grounded intelligence briefs for candidate conversations. Honest, non-salesy framing backed by real data.",
+    description: "Signal-grounded talking points for candidate conversations — what the record supports, what to ask, without recruiter theater.",
     path: "/recruiter-brief",
   },
   {
     icon: Radio,
     title: "Signal Alerts",
-    description: "Monitor companies for new signals — WARN Act filings, lobbying changes, OSHA complaints, executive turnover — delivered in real time.",
+    description: "WARN, filings, leadership moves, lobbying shifts — when the public record changes, you know before the narrative solidifies.",
     path: "/signal-alerts",
     badge: "Pro",
   },
   {
     icon: Briefcase,
     title: "Job Board",
-    description: "Browse job listings enriched with employer transparency signals, civic scores, and values alignment data. Know before you apply.",
+    description: "Open roles with employer context attached: money, risk, values signals. Apply with eyes open, not after the fact.",
     path: "/jobs",
   },
   {
     icon: Dna,
     title: "Workplace DNA",
-    description: "Discover what matters to you in a workplace — so we can match you with companies that actually live it.",
+    description: "Short calibration on what you actually need from a workplace — we match you to employers whose signals fit, not whose ads do.",
     path: "/quiz",
     badge: "Free",
   },
   {
     icon: Shield,
     title: "Submit a Tip",
-    description: "Report employer misconduct anonymously. We verify against public records and publish what checks out.",
+    description: "Anonymous tip line; we only publish what we can verify in public records or filings.",
     path: "/submit-tip",
     badge: "Free",
   },
@@ -81,7 +81,7 @@ export default function Tools() {
         <p className="tracking-[0.2em] text-primary font-mono uppercase text-sm mb-4">Platform</p>
         <h1 className="text-4xl md:text-5xl font-bold text-foreground mb-4">All Tools</h1>
         <p className="text-muted-foreground text-lg">
-          Every tool you need to understand who you really work for — powered by public records, not opinions.
+          Decision intelligence for work: public records, clear implications, and what most people skip — not inspiration, not HR fluff.
         </p>
       </section>
 
