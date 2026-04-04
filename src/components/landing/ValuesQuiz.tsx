@@ -1,9 +1,10 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Sparkles, Check, ArrowRight, Lock } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useNavigate } from "react-router-dom";
 import { SectionReveal } from "./SectionReveal";
+import { BriefingHoldingModal } from "./BriefingHoldingModal";
 
 const QUIZ_VALUES = [
   { key: "pay_equity", label: "Pay Equity", emoji: "💰" },
@@ -21,7 +22,16 @@ const QUIZ_VALUES = [
 export function ValuesQuiz() {
   const [selected, setSelected] = useState<Set<string>>(new Set());
   const [showResult, setShowResult] = useState(false);
+  const [showBriefing, setShowBriefing] = useState(false);
   const navigate = useNavigate();
+
+  // Show briefing modal shortly after result card appears
+  useEffect(() => {
+    if (showResult) {
+      const timer = setTimeout(() => setShowBriefing(true), 1500);
+      return () => clearTimeout(timer);
+    }
+  }, [showResult]);
 
   const toggle = (key: string) => {
     setSelected(prev => {
@@ -140,6 +150,8 @@ export function ValuesQuiz() {
             </motion.div>
           )}
         </AnimatePresence>
+
+        <BriefingHoldingModal open={showBriefing} onClose={() => setShowBriefing(false)} />
       </section>
     </SectionReveal>
   );
