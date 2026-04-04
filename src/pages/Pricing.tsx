@@ -112,7 +112,7 @@ export default function Pricing() {
   const [loadingTier, setLoadingTier] = useState<string | null>(null);
 
   usePageSEO({
-    title: "Pricing — Know Before You Sign | Who Do I Work For",
+    title: "Pricing — Know Before You Sign",
     description:
       "From a free employer check to full career intelligence. See what's included at every level — and why it matters before you apply, interview, or accept.",
     path: "/pricing",
