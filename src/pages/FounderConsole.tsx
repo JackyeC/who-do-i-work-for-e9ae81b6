@@ -11,7 +11,7 @@ import { UsersFeedbackTab } from "@/components/founder/UsersFeedbackTab";
 import { NotesTab } from "@/components/founder/NotesTab";
 import { DuplicateDetectionTab } from "@/components/founder/DuplicateDetectionTab";
 import {
-  LayoutDashboard, ClipboardList, Radio, Users, StickyNote, ExternalLink,
+  LayoutDashboard, ClipboardList, Radio, Users, StickyNote, ExternalLink, Copy,
 } from "lucide-react";
 
 const TABS = [
