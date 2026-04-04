@@ -360,6 +360,8 @@ const App = () => (
                   <Route path="/community" element={<Community />} />
                   <Route path="/dossier" element={<SampleDossier />} />
                   <Route path="/welcome" element={<Welcome />} />
+                  <Route path="/evidence-logger" element={<ProtectedRoute><EvidenceLogger /></ProtectedRoute>} />
+                  <Route path="/unfair-vs-illegal" element={<UnfairVsIllegal />} />
                   <Route path="/tools" element={<Tools />} />
                   <Route path="/report-confirmation" element={<ReportConfirmation />} />
                   <Route path="*" element={<NotFound />} />
