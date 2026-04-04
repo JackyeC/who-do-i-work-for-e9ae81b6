@@ -84,7 +84,26 @@ export function CompanyClaimsSection({ companyId, companyName }: CompanyClaimsSe
     );
   }
 
-  if (claims.length === 0) return null;
+  if (claims.length === 0) {
+    return (
+      <div className="mb-6">
+        <div className="flex items-center gap-2 mb-3">
+          <FileText className="w-3.5 h-3.5 text-muted-foreground" />
+          <h2 className="text-xs font-semibold text-foreground uppercase tracking-wider">
+            Verified Claims
+          </h2>
+        </div>
+        <div className="border border-border/40 bg-card rounded-lg p-4">
+          <p className="text-sm text-muted-foreground">
+            We could not verify any claims for this company yet.
+          </p>
+          <p className="text-xs text-muted-foreground/60 mt-1">
+            Claims are generated from public records including WARN filings, FEC data, EEOC records, court cases, and more. Data coverage expands continuously.
+          </p>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <TooltipProvider>
