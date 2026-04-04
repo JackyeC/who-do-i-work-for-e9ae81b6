@@ -150,7 +150,7 @@ export default function MockInterview() {
   // Active interview
   const [answer, setAnswer] = useState("");
   const [evaluating, setEvaluating] = useState(false);
-  const [voicePreset, setVoicePreset] = useState<VoicePreset>("standard");
+  const [voicePreset, setVoicePreset] = useState<VoicePreset>("strict");
   const [voiceEnabled, setVoiceEnabled] = useState(true);
   const [practiceMode, setPracticeMode] = useState<"text" | "voice">("text");
 
