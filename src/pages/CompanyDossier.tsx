@@ -8,6 +8,7 @@ import { OfferIntelligencePanel } from "@/components/company/OfferIntelligencePa
 import { WarnFilingsCard } from "@/components/company/WarnFilingsCard";
 import { CompanyCoverageSummary } from "@/components/company/CompanyCoverageSummary";
 import { SignalTimeline } from "@/components/company/SignalTimeline";
+import { MediaSignalSummary } from "@/components/company/MediaSignalSummary";
 import { useQuery } from "@tanstack/react-query";
 import { usePageSEO } from "@/hooks/use-page-seo";
 import { getOGImageUrl } from "@/lib/social-share";
