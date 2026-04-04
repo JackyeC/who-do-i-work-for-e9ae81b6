@@ -5,25 +5,33 @@ const corsHeaders = {
 
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2';
 
-/**
- * Claim Generation Engine
- * Transforms raw signals into structured, human-readable claims with evidence typing.
- * Scans signal tables, generates claim text, and stores in company_claims.
- */
+interface ClaimOutput {
+  claim_text: string;
+  source_url: string | null;
+  evidence_type: 'direct_source' | 'multi_source' | 'inferred';
+  confidence_score: number;
+  event_date: string | null;
+  decision_impact: string | null;
+}
 
 interface SignalSource {
   table: string;
   claimType: string;
   sourceLabel: string;
   query: (supabase: any, companyId: string) => Promise<any[]>;
-  toClaim: (row: any, companyName: string) => {
-    claim_text: string;
-    source_url: string | null;
-    evidence_type: 'direct_source' | 'multi_source' | 'inferred';
-    confidence_score: number;
-    event_date: string | null;
-  };
+  toClaim: (row: any, companyName: string) => ClaimOutput;
 }
+
+const DECISION_IMPACTS: Record<string, string> = {
+  layoff: 'This may indicate changes in workforce planning or financial pressure that could affect job stability.',
+  accountability: 'This public record may reflect patterns in corporate governance or regulatory compliance.',
+  safety: 'Workplace safety records may affect employee well-being and indicate operational risk management practices.',
+  labor: 'Labor relations filings may signal workforce dynamics relevant to employee experience and bargaining rights.',
+  civil_rights: 'Civil rights records may indicate patterns in workplace equity and inclusion practices.',
+  environmental: 'Environmental records may reflect the company\'s operational impact and regulatory compliance posture.',
+  legal: 'Court records may indicate ongoing legal exposure or patterns in corporate conduct.',
+  political: 'Political spending records may reflect leadership priorities, affiliations, or lobbying strategies.',
+};
 
 const SIGNAL_SOURCES: SignalSource[] = [
   {
@@ -41,9 +49,10 @@ const SIGNAL_SOURCES: SignalSource[] = [
       return {
         claim_text: `${companyName} conducted layoffs${count} (WARN filing, ${dateStr}).`,
         source_url: row.source_url || null,
-        evidence_type: 'direct_source' as const,
+        evidence_type: 'direct_source',
         confidence_score: 0.95,
         event_date: date || null,
+        decision_impact: DECISION_IMPACTS.layoff,
       };
     },
   },
@@ -67,45 +76,7 @@ const SIGNAL_SOURCES: SignalSource[] = [
         evidence_type: evidenceMap[row.source_type] || 'multi_source',
         confidence_score: row.severity === 'critical' ? 0.95 : row.severity === 'high' ? 0.85 : 0.70,
         event_date: row.event_date || null,
-      };
-    },
-  },
-  {
-    table: 'company_osha_violations',
-    claimType: 'safety',
-    sourceLabel: 'OSHA',
-    query: async (sb, companyId) => {
-      const { data } = await sb.from('company_osha_violations').select('*').eq('company_id', companyId);
-      return data || [];
-    },
-    toClaim: (row, companyName) => {
-      const penalty = row.penalty_amount ? ` with a $${Number(row.penalty_amount).toLocaleString()} penalty` : '';
-      const date = row.inspection_date ? new Date(row.inspection_date).toLocaleDateString('en-US', { month: 'long', year: 'numeric' }) : '';
-      return {
-        claim_text: `${companyName} received an OSHA ${row.violation_type || 'safety'} violation${penalty}${date ? ` (${date})` : ''}.`,
-        source_url: row.source_url || null,
-        evidence_type: 'direct_source' as const,
-        confidence_score: 0.95,
-        event_date: row.inspection_date || null,
-      };
-    },
-  },
-  {
-    table: 'company_nlrb_cases',
-    claimType: 'labor',
-    sourceLabel: 'NLRB',
-    query: async (sb, companyId) => {
-      const { data } = await sb.from('company_nlrb_cases').select('*').eq('company_id', companyId);
-      return data || [];
-    },
-    toClaim: (row, companyName) => {
-      const date = row.date_filed ? new Date(row.date_filed).toLocaleDateString('en-US', { month: 'long', year: 'numeric' }) : '';
-      return {
-        claim_text: `${companyName} has an NLRB case on file${row.case_type ? ` (${row.case_type})` : ''}${date ? `, filed ${date}` : ''}.`,
-        source_url: row.source_url || null,
-        evidence_type: 'direct_source' as const,
-        confidence_score: 0.90,
-        event_date: row.date_filed || null,
+        decision_impact: DECISION_IMPACTS.accountability,
       };
     },
   },
@@ -122,9 +93,10 @@ const SIGNAL_SOURCES: SignalSource[] = [
       return {
         claim_text: `${companyName} has a ${row.signal_type || 'civil rights'} record${amount} via ${row.source_name || 'public records'}.`,
         source_url: row.source_url || null,
-        evidence_type: 'direct_source' as const,
+        evidence_type: 'direct_source',
         confidence_score: 0.90,
         event_date: row.filing_date || null,
+        decision_impact: DECISION_IMPACTS.civil_rights,
       };
     },
   },
@@ -139,9 +111,10 @@ const SIGNAL_SOURCES: SignalSource[] = [
     toClaim: (row, companyName) => ({
       claim_text: row.description || `${companyName} has an environmental signal: ${row.signal_type}.`,
       source_url: row.source_url || null,
-      evidence_type: 'direct_source' as const,
+      evidence_type: 'direct_source',
       confidence_score: 0.80,
       event_date: row.created_at || null,
+      decision_impact: DECISION_IMPACTS.environmental,
     }),
   },
   {
@@ -157,13 +130,76 @@ const SIGNAL_SOURCES: SignalSource[] = [
       return {
         claim_text: `${row.case_name}${damages} — ${row.nature_of_suit || row.case_type || 'civil case'}.`,
         source_url: row.courtlistener_url || null,
-        evidence_type: 'direct_source' as const,
+        evidence_type: 'direct_source',
         confidence_score: 0.90,
         event_date: row.date_filed || null,
+        decision_impact: DECISION_IMPACTS.legal,
       };
     },
   },
 ];
+
+async function generateClaimsForCompany(supabase: any, companyId: string, companyName: string) {
+  let totalGenerated = 0;
+  let totalSkipped = 0;
+  const errors: string[] = [];
+
+  for (const source of SIGNAL_SOURCES) {
+    try {
+      const signals = await source.query(supabase, companyId);
+      for (const signal of signals) {
+        const claim = source.toClaim(signal, companyName);
+
+        // ATTRIBUTION ENFORCEMENT: discard if missing source
+        if (!claim.source_url) {
+          totalSkipped++;
+          continue;
+        }
+
+        // Check for existing claim from this signal (partial unique index)
+        const { data: existing } = await supabase
+          .from('company_claims')
+          .select('id')
+          .eq('company_id', companyId)
+          .eq('signal_id', signal.id)
+          .eq('signal_table', source.table)
+          .maybeSingle();
+
+        if (existing) {
+          totalSkipped++;
+          continue;
+        }
+
+        const { error: insertErr } = await supabase.from('company_claims').insert({
+          company_id: companyId,
+          claim_text: claim.claim_text,
+          claim_type: source.claimType,
+          source_label: source.sourceLabel,
+          source_url: claim.source_url,
+          evidence_type: claim.evidence_type,
+          confidence_score: claim.confidence_score,
+          signal_id: signal.id,
+          signal_table: source.table,
+          event_date: claim.event_date,
+          decision_impact: claim.decision_impact,
+          is_active: true,
+          generated_by: 'claim_engine',
+        });
+
+        if (insertErr) {
+          console.warn(`[generate-claims] Insert error for ${source.table}:`, insertErr.message);
+          totalSkipped++;
+        } else {
+          totalGenerated++;
+        }
+      }
+    } catch (sourceErr: any) {
+      errors.push(`${source.table}: ${sourceErr.message}`);
+    }
+  }
+
+  return { generated: totalGenerated, skipped: totalSkipped, errors };
+}
 
 Deno.serve(async (req: Request) => {
   if (req.method === 'OPTIONS') {
@@ -177,14 +213,56 @@ Deno.serve(async (req: Request) => {
   try {
     const body = await req.json().catch(() => ({}));
     const companyId = body.companyId;
+    const backfillAll = body.backfillAll === true;
 
+    // BACKFILL ALL MODE
+    if (backfillAll) {
+      const { data: companies, error: listErr } = await supabase
+        .from('companies')
+        .select('id, name')
+        .order('name');
+
+      if (listErr) {
+        return new Response(JSON.stringify({ error: listErr.message }), {
+          status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+        });
+      }
+
+      let totalGenerated = 0;
+      let totalSkipped = 0;
+      let companiesProcessed = 0;
+      let companiesWithClaims = 0;
+      const allErrors: string[] = [];
+
+      for (const company of (companies || [])) {
+        const result = await generateClaimsForCompany(supabase, company.id, company.name);
+        totalGenerated += result.generated;
+        totalSkipped += result.skipped;
+        if (result.generated > 0) companiesWithClaims++;
+        companiesProcessed++;
+        allErrors.push(...result.errors);
+      }
+
+      console.log(`[generate-claims] Backfill complete: ${companiesProcessed} companies, ${totalGenerated} claims, ${totalSkipped} skipped`);
+
+      return new Response(JSON.stringify({
+        success: true,
+        mode: 'backfill_all',
+        companiesProcessed,
+        companiesWithClaims,
+        totalGenerated,
+        totalSkipped,
+        errors: allErrors.length > 0 ? allErrors : undefined,
+      }), { headers: { ...corsHeaders, 'Content-Type': 'application/json' } });
+    }
+
+    // SINGLE COMPANY MODE
     if (!companyId) {
-      return new Response(JSON.stringify({ error: 'companyId is required' }), {
+      return new Response(JSON.stringify({ error: 'companyId is required (or set backfillAll: true)' }), {
         status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' },
       });
     }
 
-    // Get company name
     const { data: company, error: companyErr } = await supabase
       .from('companies')
       .select('name')
@@ -197,66 +275,13 @@ Deno.serve(async (req: Request) => {
       });
     }
 
-    let totalGenerated = 0;
-    let totalSkipped = 0;
-    const errors: string[] = [];
-
-    for (const source of SIGNAL_SOURCES) {
-      try {
-        const signals = await source.query(supabase, companyId);
-
-        for (const signal of signals) {
-          const claim = source.toClaim(signal, company.name);
-
-          // Suppress claims without source
-          if (!claim.source_url && claim.evidence_type === 'direct_source') {
-            claim.evidence_type = 'inferred';
-            claim.confidence_score = Math.min(claim.confidence_score, 0.50);
-          }
-
-          // No source URL + low confidence → suppress
-          if (!claim.source_url && claim.confidence_score < 0.40) {
-            totalSkipped++;
-            continue;
-          }
-
-          const { error: insertErr } = await supabase.from('company_claims').upsert({
-            company_id: companyId,
-            claim_text: claim.claim_text,
-            claim_type: source.claimType,
-            source_label: source.sourceLabel,
-            source_url: claim.source_url,
-            evidence_type: claim.evidence_type,
-            confidence_score: claim.confidence_score,
-            signal_id: signal.id,
-            signal_table: source.table,
-            event_date: claim.event_date,
-            is_active: true,
-            generated_by: 'claim_engine',
-          }, {
-            onConflict: 'company_id,signal_id,signal_table',
-            ignoreDuplicates: false,
-          });
-
-          if (insertErr) {
-            console.warn(`[generate-claims] Insert error for ${source.table}:`, insertErr.message);
-            totalSkipped++;
-          } else {
-            totalGenerated++;
-          }
-        }
-      } catch (sourceErr: any) {
-        errors.push(`${source.table}: ${sourceErr.message}`);
-      }
-    }
+    const result = await generateClaimsForCompany(supabase, companyId, company.name);
 
     return new Response(JSON.stringify({
       success: true,
       companyId,
       companyName: company.name,
-      generated: totalGenerated,
-      skipped: totalSkipped,
-      errors: errors.length > 0 ? errors : undefined,
+      ...result,
     }), { headers: { ...corsHeaders, 'Content-Type': 'application/json' } });
 
   } catch (error: any) {
