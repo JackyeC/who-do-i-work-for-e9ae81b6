@@ -90,7 +90,7 @@ export function LiveIntelligenceTicker() {
     (sum, i) => sum + (i.headline?.length || 0) + (i.source_name?.length || 0) + 20,
     0
   );
-  const duration = Math.max(140, Math.min((totalChars * 0.6), 360));
+  const duration = Math.max(160, Math.min((totalChars * 0.8), 400));
 
   const handleStoryClick = (storyId: string) => {
     navigate(`/newsletter#story-${storyId}`);
