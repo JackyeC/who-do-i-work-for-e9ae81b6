@@ -61,14 +61,7 @@ const JACKYE_CONTENT = [
   },
 ];
 
-/* ── Demo watched companies (fallback) ── */
-const DEMO_WATCHED = [
-  { name: "Amazon", slug: "amazon", industry: "Technology / Logistics", score: 42 },
-  { name: "Goldman Sachs", slug: "goldman-sachs", industry: "Financial Services", score: 38 },
-  { name: "Starbucks", slug: "starbucks", industry: "Food & Beverage", score: 51 },
-  { name: "Google / Alphabet", slug: "google-alphabet", industry: "Technology", score: 62 },
-  { name: "JPMorgan Chase", slug: "jpmorgan-chase", industry: "Financial Services", score: 55 },
-];
+/* Demo watched companies removed — only real data shown */
 
 /* ── Severity → RAG color mapping ── */
 const SEVERITY_STYLES: Record<string, { dot: string; badge: string; border: string }> = {
@@ -159,14 +152,14 @@ export function DashboardOverview({ onNavigate }: DashboardOverviewProps) {
 
   const firstName = data?.firstName || "there";
   const alerts = data?.alerts || [];
-  const trackedCompanies = data?.tracked && data.tracked.length > 0
-    ? data.tracked.map((t: any) => ({
-        name: t.company?.name,
-        slug: t.company?.slug,
-        industry: t.company?.industry,
-        score: t.company?.employer_clarity_score ?? 0,
-      }))
-    : DEMO_WATCHED;
+  const trackedCompanies = (data?.tracked || [])
+    .map((t: any) => ({
+      name: t.company?.name,
+      slug: t.company?.slug,
+      industry: t.company?.industry,
+      score: t.company?.employer_clarity_score ?? 0,
+    }))
+    .filter((t: any) => t.name);
 
   return (
     <div className="space-y-5 max-w-[1200px] mx-auto">
@@ -317,7 +310,8 @@ export function DashboardOverview({ onNavigate }: DashboardOverviewProps) {
           {/* YOUR JOURNEY */}
           <YourJourney onNavigate={onNavigate} />
 
-          {/* COMPANIES YOU'RE WATCHING */}
+          {/* COMPANIES YOU'RE WATCHING — only if user has tracked companies */}
+          {trackedCompanies.length > 0 && (
           <motion.div {...anim(0.12)}>
             <BriefingCard>
               <div className="flex items-center justify-between mb-3">
@@ -333,7 +327,7 @@ export function DashboardOverview({ onNavigate }: DashboardOverviewProps) {
                   const score = t.score ?? 0;
                   return (
                     <motion.div
-                      key={i}
+                      key={t.slug || i}
                       initial={{ opacity: 0, x: -8 }}
                       animate={{ opacity: 1, x: 0 }}
                       transition={{ delay: 0.05 + i * 0.04, duration: 0.35, ease: [0.22, 1, 0.36, 1] }}
@@ -364,17 +358,7 @@ export function DashboardOverview({ onNavigate }: DashboardOverviewProps) {
               </button>
             </BriefingCard>
           </motion.div>
-
-          {/* VALUES ALIGNMENT */}
-          <motion.div {...anim(0.16)}>
-            <BriefingCard>
-              <h3 className="text-[16px] font-bold text-foreground mb-0.5">
-                Aligned With Your Values
-              </h3>
-              <p className="text-xs text-muted-foreground mb-3">Based on your Work DNA profile</p>
-              <AlignedValuesSearch hasTakenQuiz={hasTakenQuiz} />
-            </BriefingCard>
-          </motion.div>
+          )}
         </div>
 
         {/* ──── RIGHT: RESOURCES ──── */}
