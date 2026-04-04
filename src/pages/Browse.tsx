@@ -12,7 +12,7 @@ import { companies as sampleCompanies, formatCurrency } from "@/data/sampleData"
 import { supabase } from "@/integrations/supabase/client";
 import { useQuery } from "@tanstack/react-query";
 import { useToast } from "@/hooks/use-toast";
-import { Building2, ArrowRight, Search, TrendingUp, SortAsc, Sparkles, Loader2, Landmark } from "lucide-react";
+import { Building2, ArrowRight, Search, TrendingUp, SortAsc, Sparkles, Loader2, Landmark, ShieldCheck } from "lucide-react";
 import { Tooltip, TooltipTrigger, TooltipContent } from "@/components/ui/tooltip";
 import { EmptyState } from "@/components/EmptyState";
 import {
