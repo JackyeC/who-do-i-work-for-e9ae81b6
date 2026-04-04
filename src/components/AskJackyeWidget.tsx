@@ -30,7 +30,8 @@ const QUICK_PROMPTS = [
   "What questions should I ask HR?",
   "Is this company safe to work for?",
   "Help me write a counter-offer",
-  "How would a recruiter see this company?",
+  "How do I document a workplace incident?",
+  "Is this unfair or illegal?",
   "What does this signal mean for my career?",
 ];
 

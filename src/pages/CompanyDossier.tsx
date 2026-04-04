@@ -601,6 +601,20 @@ export default function CompanyDossier() {
         <OfferIntelligencePanel company={company} companyId={companyId!} />
       )}
 
+      {/* ── CULTURE SIGNAL SCANNER ── */}
+      {companyId && (
+        <div className="mb-6">
+          <CodeWordScanner companyId={companyId} companyName={company.name} />
+        </div>
+      )}
+
+      {/* ── MISSION INTEGRITY ── */}
+      {companyId && (
+        <div className="mb-6">
+          <MissionIntegrityCard companyId={companyId} companyName={company.name} />
+        </div>
+      )}
+
       {/* ── THE ADVOCACY REPORT ── */}
       <AdvocacyReport
         company={{ ...company, id: companyId!, slug: company.slug } as any}
