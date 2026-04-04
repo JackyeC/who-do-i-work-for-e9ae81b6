@@ -150,6 +150,8 @@ export function ValuesQuiz() {
             </motion.div>
           )}
         </AnimatePresence>
+
+        <BriefingHoldingModal open={showBriefing} onClose={() => setShowBriefing(false)} />
       </section>
     </SectionReveal>
   );
