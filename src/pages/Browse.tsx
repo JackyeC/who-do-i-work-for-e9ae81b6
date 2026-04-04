@@ -75,7 +75,7 @@ export default function Browse() {
     queryFn: async () => {
       const { data, error } = await supabase
         .from("companies")
-        .select("id, name, slug, industry, state, employer_clarity_score, total_pac_spending, lobbying_spend, revenue, employee_count, description, is_startup, category_tags, career_intelligence_score")
+        .select("id, name, slug, industry, state, employer_clarity_score, total_pac_spending, lobbying_spend, revenue, employee_count, description, is_startup, category_tags, career_intelligence_score, vetted_status")
         .order("employer_clarity_score", { ascending: false });
       if (error) {
         console.error("Browse companies query error:", error);
