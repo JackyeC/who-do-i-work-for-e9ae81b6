@@ -3,15 +3,8 @@ import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/contexts/AuthContext";
 import type { DreamJobProfileV1 } from "@/domain/career/dream-job-profile";
 import { syncDreamJobProfileRemote } from "@/domain/career/sync-dream-job-profile";
-import { isLikelyMissingSchemaObject } from "@/lib/supabase-errors";
 import { friendlyErrorMessage } from "@/lib/user-friendly-error";
 import { useToast } from "@/hooks/use-toast";
-
-type DreamJobProfileQueryRow = {
-  dream_job_profile: unknown | null;
-  dream_job_profile_version: number;
-  __schemaFallback: boolean;
-};
 
 export function useDreamJobProfile() {
   const { user } = useAuth();
@@ -26,22 +19,11 @@ export function useDreamJobProfile() {
         .select("dream_job_profile, dream_job_profile_version")
         .eq("id", user!.id)
         .maybeSingle();
-      if (error) {
-        if (isLikelyMissingSchemaObject(error)) {
-          console.warn("[dream_job_profile] column missing — run migrations:", error);
-          return {
-            dream_job_profile: null,
-            dream_job_profile_version: 0,
-            __schemaFallback: true,
-          } satisfies DreamJobProfileQueryRow;
-        }
-        throw error;
-      }
+      if (error) throw error;
       return {
         dream_job_profile: data?.dream_job_profile ?? null,
         dream_job_profile_version: data?.dream_job_profile_version ?? 0,
-        __schemaFallback: false,
-      } satisfies DreamJobProfileQueryRow;
+      };
     },
     enabled: !!user,
     staleTime: 30_000,
@@ -56,14 +38,6 @@ export function useDreamJobProfile() {
       queryClient.invalidateQueries({ queryKey: ["dream-job-profile"] });
     },
     onError: (err: unknown) => {
-      if (isLikelyMissingSchemaObject(err)) {
-        toast({
-          title: "Dream Job Profile not available yet",
-          description: "Deploy the migration that adds dream_job_profile to profiles, then try Sync again.",
-          variant: "destructive",
-        });
-        return;
-      }
       toast({
         title: "Could not sync profile",
         description: friendlyErrorMessage(err),
@@ -80,7 +54,7 @@ export function useDreamJobProfile() {
   return {
     profile: parsed,
     version: query.data?.dream_job_profile_version ?? 0,
-    schemaFallback: query.data?.__schemaFallback === true,
+    schemaFallback: false,
     isLoading: query.isLoading,
     isError: query.isError,
     refetch: query.refetch,
