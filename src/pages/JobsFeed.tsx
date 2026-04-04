@@ -331,10 +331,13 @@ export default function JobsFeed() {
                 <MatchExplainer
                   alignmentScore={selectedJob.alignment_score}
                   matchedSignals={selectedJob.matched_signals || []}
+                  matchReasons={selectedJob.match_reasons}
+                  scoreBreakdown={selectedJob.score_breakdown}
                   jobTitle={selectedJob.title}
                   department={selectedJob.department}
                   industry={selectedJob.company.industry}
                   employerClarityScore={selectedJob.company.employer_clarity_score}
+                />
                 />
 
                 {/* Actions */}
