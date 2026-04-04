@@ -56,6 +56,23 @@ function EmptyLine({ text }: { text: string }) {
   return <p className="text-xs text-muted-foreground italic leading-relaxed">{text}</p>;
 }
 
+function ProgressBar({ label, value, color }: { label: string; value: number; color: string }) {
+  return (
+    <div className="space-y-1">
+      <div className="flex items-center justify-between">
+        <span className="text-[11px] text-muted-foreground">{label}</span>
+        <span className="text-[11px] font-mono font-medium text-foreground">{value}%</span>
+      </div>
+      <div className="h-1.5 bg-muted/40 rounded-full overflow-hidden">
+        <div
+          className="h-full rounded-full transition-all duration-700"
+          style={{ width: `${Math.min(value, 100)}%`, backgroundColor: color }}
+        />
+      </div>
+    </div>
+  );
+}
+
 type AlertItem = { label: string; count: number; tab: string; severity: "critical" | "data_gap" };
 
 export function TodayTab() {
