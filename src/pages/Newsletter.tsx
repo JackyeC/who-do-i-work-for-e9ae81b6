@@ -137,6 +137,7 @@ function LeadStoryCard({ article, onPosterClick }: { article: ReceiptArticle; on
         <button type="button" onClick={() => onPosterClick(article)} className="mb-6 flex justify-center w-full bg-transparent border-none cursor-pointer p-0">
           <ReceiptPoster
             poster={article.poster_data}
+            posterUrl={article.poster_url}
             category={article.category}
             big
             headline={article.headline}
