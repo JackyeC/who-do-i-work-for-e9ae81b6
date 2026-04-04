@@ -1,39 +1,44 @@
 
 
-## Fix: heroFadeIn compositor rendering artifact
+## RLS Fix for `briefing_signals`
 
-### Problem
-Six hero elements in `src/pages/Index.tsx` use `opacity: 0` inline + `animation-fill-mode: forwards`, causing GPU paint deferral and black scroll voids.
+### Current State
+- RLS is already **enabled** on `briefing_signals`
+- Existing policy: `"Public read active briefing signals"` grants SELECT to both `anon` and `authenticated`
+- No INSERT policy exists — meaning anonymous quiz submissions would currently be **blocked**
 
-### Changes
+### What Your SQL Does
+1. `ENABLE ROW LEVEL SECURITY` — already done, harmless to re-run
+2. Insert policy for `anon` — **needed**, this is the missing piece that lets the quiz modal submit without login
+3. Select policy for `authenticated` — adds a read policy, but the existing policy already grants read to `anon` too, so to truly restrict reads to authenticated users, we should **drop the old policy first**
 
-**1. `src/pages/Index.tsx` — Remove `opacity: 0` and `forwards` from 6 hero elements:**
+### Recommended Migration
 
-| Line | Current | New |
-|------|---------|-----|
-| 59 | `style={{ opacity: 0, animation: "heroFadeIn 0.5s ease 0.15s forwards" }}` | `style={{ animation: "heroFadeIn 0.5s ease 0.15s" }}` |
-| 66–74 | `opacity: 0, animation: "heroFadeIn 0.7s ease 0.3s forwards"` | Remove `opacity: 0`, change to `animation: "heroFadeIn 0.7s ease 0.3s"` |
-| 82 | `opacity: 0, animation: "heroFadeIn 0.6s ease 0.6s forwards"` | Remove `opacity: 0`, remove `forwards` |
-| 90 | `opacity: 0, animation: "heroFadeIn 0.5s ease 0.9s forwards"` | Remove `opacity: 0`, remove `forwards` |
-| 104 | `opacity: 0, animation: "heroFadeIn 0.4s ease 1.2s forwards"` | Remove `opacity: 0`, remove `forwards` |
-| 109 | `opacity: 0, animation: "heroFadeIn 0.4s ease 1.4s forwards"` | Remove `opacity: 0`, remove `forwards` |
+```sql
+-- 1. RLS already enabled, but safe to re-run
+ALTER TABLE briefing_signals ENABLE ROW LEVEL SECURITY;
 
-**2. `src/pages/Index.tsx` line 116 — Update inline keyframe:**
-```css
-@keyframes heroFadeIn {
-  from { opacity: 0.01; transform: translateY(6px); }
-  to   { opacity: 1;    transform: translateY(0);   }
-}
+-- 2. Drop the overly permissive existing read policy
+DROP POLICY IF EXISTS "Public read active briefing signals" ON briefing_signals;
+
+-- 3. Allow anonymous inserts (quiz submissions without login)
+CREATE POLICY "Allow public insert"
+  ON briefing_signals
+  FOR INSERT
+  TO anon
+  WITH CHECK (true);
+
+-- 4. Only authenticated users can read the data
+CREATE POLICY "Allow authenticated read"
+  ON briefing_signals
+  FOR SELECT
+  TO authenticated
+  USING (true);
 ```
 
-**3. `src/index.css` lines 419–421 — Update global keyframe to match:**
-```css
-@keyframes heroFadeIn {
-  from { opacity: 0.01; transform: translateY(6px); }
-  to   { opacity: 1;    transform: translateY(0);   }
-}
-```
+### Why the Extra DROP
+Without dropping the old policy, `anon` can still SELECT all rows (Postgres OR's all matching policies). Adding the DROP ensures only authenticated users can read briefing signal data.
 
-### What stays unchanged
-Everything else — copy, colors, layout, nav, other pages, other components.
+### Files Changed
+- One database migration only. No code changes needed — `BriefingHoldingModal.tsx` already writes to this table (though it currently targets `career_waitlist`; that's a separate issue if you want it pointed at `briefing_signals` instead).
 
