@@ -92,6 +92,7 @@ export default function FounderConsole() {
           <TabsContent value="signals"><SignalsDataTab /></TabsContent>
           <TabsContent value="users"><UsersFeedbackTab /></TabsContent>
           <TabsContent value="notes"><NotesTab /></TabsContent>
+          <TabsContent value="duplicates"><DuplicateDetectionTab /></TabsContent>
         </Tabs>
       </main>
     </div>
