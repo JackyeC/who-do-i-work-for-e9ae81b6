@@ -58,10 +58,21 @@ export function DossierVerdictHeader({ company }: Props) {
           <h1 className="text-2xl md:text-3xl font-black tracking-tight text-foreground leading-tight">
             {company.name}
           </h1>
-          <p className="text-sm text-muted-foreground mt-1">
-            {company.industry} · {company.state}
-            {company.employee_count && ` · ${company.employee_count} employees`}
-          </p>
+          <div className="flex items-center gap-2 mt-1">
+            <p className="text-sm text-muted-foreground">
+              {company.industry} · {company.state}
+              {company.employee_count && ` · ${company.employee_count} employees`}
+            </p>
+            {company.vetted_status === "fully_audited" && (
+              <Badge
+                variant="outline"
+                className="text-[9px] gap-1 px-1.5 py-0 border-[hsl(var(--civic-green))]/30 text-[hsl(var(--civic-green))] bg-[hsl(var(--civic-green))]/[0.06]"
+              >
+                <ShieldCheck className="w-2.5 h-2.5" />
+                Audit Complete
+              </Badge>
+            )}
+          </div>
         </div>
       </div>
 
