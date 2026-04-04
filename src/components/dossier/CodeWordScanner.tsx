@@ -38,7 +38,7 @@ export function CodeWordScanner({ companyId, companyName }: CodeWordScannerProps
     queryFn: async () => {
       const { data } = await supabase
         .from("company_public_stances")
-        .select("stance_topic, stance_summary")
+        .select("topic, public_position")
         .eq("company_id", companyId)
         .limit(30);
       return data || [];
@@ -54,9 +54,9 @@ export function CodeWordScanner({ companyId, companyName }: CodeWordScannerProps
     });
 
     (stances || []).forEach((s) => {
-      const text = `${s.stance_topic || ""} ${s.stance_summary || ""}`;
+      const text = `${s.topic || ""} ${s.public_position || ""}`;
       const matches = scanForCodeWords(text);
-      matches.forEach((m) => all.push({ source: "Public Stance", sourceDetail: s.stance_topic || "—", entry: m }));
+      matches.forEach((m) => all.push({ source: "Public Stance", sourceDetail: s.topic || "—", entry: m }));
     });
 
     // Deduplicate by phrase (keep first occurrence)

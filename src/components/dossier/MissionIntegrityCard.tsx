@@ -24,9 +24,9 @@ export function MissionIntegrityCard({ companyId, companyName }: MissionIntegrit
     queryFn: async () => {
       const { data } = await supabase
         .from("company_public_stances")
-        .select("stance_topic, stance_summary")
+        .select("topic, public_position")
         .eq("company_id", companyId);
-      return data || [];
+      return (data || []).map((d) => ({ stance_topic: d.topic, stance_summary: d.public_position }));
     },
   });
 
