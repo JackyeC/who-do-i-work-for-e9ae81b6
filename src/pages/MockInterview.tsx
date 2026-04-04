@@ -448,8 +448,8 @@ export default function MockInterview() {
                       Q{currentIdx + 1} of {questions.length}
                     </span>
                   </div>
-                  <p className="text-base font-semibold text-foreground leading-relaxed">
-                    {currentQ.question}
+                  <p className="text-base font-semibold text-foreground leading-relaxed min-h-[2em] rounded-lg bg-muted/20 p-3 border border-border/30">
+                    {currentQ.question || "Tell me about your experience and why you want this role."}
                   </p>
 
                   {/* Answer area — only show if not yet answered */}
