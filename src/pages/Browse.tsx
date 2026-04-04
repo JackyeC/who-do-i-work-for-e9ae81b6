@@ -119,6 +119,7 @@ export default function Browse() {
   const filtered = useMemo(() => {
     setCurrentPage(1);
     let list = allCompanies;
+    if (auditedOnly) list = list.filter((c) => c.vettedStatus === "fully_audited");
     if (selectedIndustry !== "all") list = list.filter((c) => c.industry === selectedIndustry);
     if (selectedCategory !== "all") {
       if (selectedCategory === "Startups") {
