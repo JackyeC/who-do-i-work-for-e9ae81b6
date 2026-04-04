@@ -64,6 +64,8 @@ import { CompanyClaimsSection } from "@/components/dossier/CompanyClaimsSection"
 export default function CompanyDossier() {
   const { id } = useParams();
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
+  const { isNDMode, setNDMode } = useNDMode();
   const { isCompanyTracked } = useTrackedCompanies();
   const [showPrep, setShowPrep] = useState(false);
   const [showRawLayers, setShowRawLayers] = useState(false);
@@ -71,6 +73,13 @@ export default function CompanyDossier() {
   const [reportOpen, setReportOpen] = useState(false);
   const [reportCategory, setReportCategory] = useState<string | null>(null);
   const { setActiveCompany } = useEvaluation();
+
+  // Sync URL query param ?mode=nd
+  useEffect(() => {
+    if (searchParams.get("mode") === "nd" && !isNDMode) {
+      setNDMode(true);
+    }
+  }, [searchParams, isNDMode, setNDMode]);
 
   /* ─── Data fetching ─── */
   const { data: company, isLoading } = useQuery({
