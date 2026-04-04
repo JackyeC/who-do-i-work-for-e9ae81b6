@@ -284,8 +284,22 @@ export default function MockInterview() {
       const { data, error } = await supabase.functions.invoke("ask-jackye-chat", {
         body: {
           messages: [
-            { role: "system", content: `You are an expert interview coach. Evaluate the candidate's answer across 5 categories: clarity, relevance, specificity, confidence, structure. Each scored 1-5. Return JSON:
-{"score": number (0-100 overall), "rubric": {"clarity": number, "relevance": number, "specificity": number, "confidence": number, "structure": number}, "strengths": ["strength 1", "strength 2"], "improvements": ["improvement 1", "improvement 2"], "sampleAnswer": "a stronger sample answer under 120 words", "coachingNote": "one short coaching note", "feedback": "2-3 sentence summary"}` },
+            { role: "system", content: `You are a direct, practical interview coach. Evaluate the candidate's answer across 5 categories, each scored 1-5:
+- clarity: easy to follow, concise, understandable
+- relevance: directly answers the question asked
+- specificity: includes concrete examples, details, metrics, or evidence
+- confidence: sounds direct and credible, avoids excessive hedging
+- structure: has clear flow, preferably STAR-like when appropriate
+
+Return JSON only:
+{"score": number (0-100 overall), "rubric": {"clarity": number, "relevance": number, "specificity": number, "confidence": number, "structure": number}, "strengths": ["specific strength 1", "specific strength 2"], "improvements": ["actionable improvement 1", "actionable improvement 2"], "sampleAnswer": "a stronger sample answer under 120 words", "coachingNote": "one direct sentence of coaching advice", "feedback": "2-3 sentence summary"}
+
+Rules:
+- strengths must be specific to this answer, not generic praise
+- improvements must be actionable
+- coachingNote must be one sentence
+- sampleAnswer must be under 120 words
+- keep tone direct and practical, not overly cheerful` },
             { role: "user", content: `Interview for ${session.role} at ${session.company}.\n\nQuestion: ${currentQuestion.text}\nCandidate's Answer: ${answer}\n\nEvaluate this answer. Return valid JSON only.` },
           ],
         },
