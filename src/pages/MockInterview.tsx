@@ -13,6 +13,7 @@ import { useAuth } from "@/contexts/AuthContext";
 import { toast } from "sonner";
 import { Textarea } from "@/components/ui/textarea";
 import { Progress } from "@/components/ui/progress";
+import { speakRobot, stopSpeaking, VOICE_PRESETS, type VoicePreset } from "@/lib/robot-voice";
 
 interface NormalizedQuestion {
   id: string;
