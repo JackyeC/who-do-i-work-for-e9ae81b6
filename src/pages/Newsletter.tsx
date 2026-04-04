@@ -15,6 +15,8 @@ import { BiasBar, getSourceBiasKey } from "@/components/receipts/BiasBar";
 import { EDITORIAL_CATEGORIES, EDITORIAL_CAT_COLORS } from "@/components/receipts/heat-config";
 import { PosterLightbox } from "@/components/receipts/PosterLightbox";
 import { FloatingBubble } from "@/components/receipts/FloatingBubble";
+import { SignalStoryCard } from "@/components/work-signal/SignalStoryCard";
+import type { SignalStory, SignalCategory, HeatLevel } from "@/lib/work-signal-schema";
 import { motion } from "framer-motion";
 import { format } from "date-fns";
 import workSignalLogo from "@/assets/work-signal-logo.png";
@@ -22,6 +24,41 @@ import {
   Mail, ArrowRight, Check, ExternalLink, Newspaper,
   Radio, Eye, TrendingUp, Award, Clock, Zap, Star, Search,
 } from "lucide-react";
+
+/* ── Adapt ReceiptArticle → SignalStory for poster cards ── */
+function toSignalStory(a: ReceiptArticle): SignalStory {
+  const catMap: Record<string, SignalCategory> = {
+    layoffs: "c_suite",
+    worker_rights: "fine_print",
+    ai_workplace: "tech_stack",
+    regulation: "fine_print",
+    pay_equity: "paycheck",
+    future_of_work: "daily_grind",
+  };
+  const heatMap = (s: number): HeatLevel =>
+    s >= 4 ? "high" : s >= 2 ? "medium" : "low";
+
+  return {
+    id: a.id,
+    company_name: null,
+    category: catMap[a.category ?? ""] || "daily_grind",
+    signal_type: "breaking",
+    headline: a.headline,
+    heat_level: heatMap(a.spice_level),
+    source_name: a.source_name,
+    source_url: a.source_url,
+    receipt: a.receipt_connection || null,
+    jrc_take: a.jackye_take || null,
+    why_it_matters_applicants: a.why_it_matters?.[0] ?? null,
+    why_it_matters_employees: a.why_it_matters?.[1] ?? null,
+    why_it_matters_execs: null,
+    before_you_say_yes: null,
+    published_at: a.published_at ?? new Date().toISOString(),
+    status: "live",
+    created_at: a.created_at ?? new Date().toISOString(),
+    updated_at: a.created_at ?? new Date().toISOString(),
+  };
+}
 
 /* ── Category badge ── */
 function CategoryBadge({ category }: { category: string | null }) {
