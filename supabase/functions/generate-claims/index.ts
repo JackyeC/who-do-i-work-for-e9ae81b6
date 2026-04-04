@@ -344,11 +344,15 @@ Deno.serve(async (req: Request) => {
 
       return new Response(JSON.stringify({
         success: true,
-        mode: 'backfill_all',
+        mode: 'backfill_batch',
+        batchOffset,
+        batchSize,
         companiesProcessed,
         companiesWithClaims,
         totalGenerated,
         totalSkipped,
+        hasMore,
+        nextOffset: hasMore ? batchOffset + batchSize : null,
       }), { headers: { ...corsHeaders, 'Content-Type': 'application/json' } });
     }
 
