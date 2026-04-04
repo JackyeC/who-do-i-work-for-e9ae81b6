@@ -69,8 +69,8 @@ const TIERS = [
     annualPrice: 1199,
     annualMonthly: 100,
     annualSavings: 589,
-    monthlyPriceId: "price_1TEEw589MyCOs8yvQI8FpHJx",
-    annualPriceId: "price_1TEEw589MyCOs8yvQI8FpHJx",
+    monthlyPriceId: "price_1TIKsR89MyCOs8yvT0Mogipj",
+    annualPriceId: "price_1TIKsW89MyCOs8yvXnrcKZwZ",
     features: [
       "Everything in The Signal, plus:",
       "Smart job matching — jobs delivered to you",
