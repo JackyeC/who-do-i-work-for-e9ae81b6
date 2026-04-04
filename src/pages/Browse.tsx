@@ -394,6 +394,12 @@ export default function Browse() {
                             {company.industry} · {company.state}
                           </p>
                         </div>
+                        {company.vettedStatus === "fully_audited" && (
+                          <Badge variant="outline" className="text-[9px] gap-1 px-1.5 py-0 border-[hsl(var(--civic-green))]/30 text-[hsl(var(--civic-green))] bg-[hsl(var(--civic-green))]/[0.06] shrink-0">
+                            <ShieldCheck className="w-2.5 h-2.5" />
+                            Audited
+                          </Badge>
+                        )}
                         <ArrowRight className="w-3.5 h-3.5 text-muted-foreground/30 group-hover:text-primary transition-all group-hover:translate-x-0.5 shrink-0" />
                       </div>
                       <div className="mt-2.5 pt-2.5 border-t border-border/30 flex items-center justify-between">
