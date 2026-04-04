@@ -346,7 +346,7 @@ export function PurpleSquirrelOnboarding({ onComplete }: PurpleSquirrelOnboardin
                       step={5}
                     />
                     <p className="text-xs text-muted-foreground">
-                      Only fire on jobs with this level of values alignment or higher.
+                      Only surface roles with this level of values alignment or higher.
                     </p>
                   </div>
                 </div>
