@@ -2084,6 +2084,7 @@ export type Database = {
           company_id: string
           confidence_score: number
           created_at: string
+          decision_impact: string | null
           event_date: string | null
           evidence_type: Database["public"]["Enums"]["evidence_type"]
           generated_by: string
@@ -2101,6 +2102,7 @@ export type Database = {
           company_id: string
           confidence_score?: number
           created_at?: string
+          decision_impact?: string | null
           event_date?: string | null
           evidence_type?: Database["public"]["Enums"]["evidence_type"]
           generated_by?: string
@@ -2118,6 +2120,7 @@ export type Database = {
           company_id?: string
           confidence_score?: number
           created_at?: string
+          decision_impact?: string | null
           event_date?: string | null
           evidence_type?: Database["public"]["Enums"]["evidence_type"]
           generated_by?: string
