@@ -522,28 +522,19 @@ export default function CompanyDossier() {
         )}
       </div>
 
-      {/* ── TOP SIGNALS ── */}
-      <div className="mb-6">
-        <h2 className="text-xs font-semibold text-foreground uppercase tracking-wider mb-3">Top Signals</h2>
-        <div className="space-y-2">
-          {displaySignals.map((signal, i) => {
-            const reportCat = SIGNAL_CATEGORY_MAP[signal.title] || "";
-            const catRecords = reportCat ? evidenceRecords.filter(r => r.category === reportCat) : [];
-            const hasEvidence = catRecords.length > 0;
-
-            return (
-              <SignalRevealCard
-                key={i}
-                title={signal.title}
-                explanation={signal.explanation}
-                tier={signal.tier}
-                records={catRecords}
-                hasEvidence={hasEvidence}
-              />
-            );
-          })}
-        </div>
-      </div>
+      {/* ── SIGNAL INTELLIGENCE BREAKDOWN ── */}
+      <SignalIntelligenceBreakdown
+        companyName={company.name}
+        totalPacSpending={company.total_pac_spending ?? 0}
+        lobbyingSpend={company.lobbying_spend ?? 0}
+        candidates={(candidates || []) as any}
+        executives={(executives || []).filter((e: any) => e.total_donations != null) as any}
+        partyBreakdown={(partyBreakdown || []) as any}
+        evidenceRecords={evidenceRecords}
+        eeocCount={eeocCases?.length || 0}
+        issueSignalCount={issueSignals?.length || 0}
+        clarityScore={influenceScore}
+      />
 
       <p className="text-xs text-muted-foreground leading-relaxed max-w-xl mb-6">
         This is a background check on the employer — built from public records, not opinions.
