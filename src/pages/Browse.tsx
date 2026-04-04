@@ -8,11 +8,12 @@ import { EmployerClarityBadge } from "@/components/EmployerClarityBadge";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
 import { companies as sampleCompanies, formatCurrency } from "@/data/sampleData";
 import { supabase } from "@/integrations/supabase/client";
 import { useQuery } from "@tanstack/react-query";
 import { useToast } from "@/hooks/use-toast";
-import { Building2, ArrowRight, Search, TrendingUp, SortAsc, Sparkles, Loader2, Landmark } from "lucide-react";
+import { Building2, ArrowRight, Search, TrendingUp, SortAsc, Sparkles, Loader2, Landmark, ShieldCheck } from "lucide-react";
 import { Tooltip, TooltipTrigger, TooltipContent } from "@/components/ui/tooltip";
 import { EmptyState } from "@/components/EmptyState";
 import {
@@ -61,6 +62,10 @@ export default function Browse() {
   const [sortBy, setSortBy] = useState<"name" | "score" | "cis">("score");
   const [searchQuery, setSearchQuery] = useState("");
   const [isDiscovering, setIsDiscovering] = useState(false);
+  const [auditedOnly, setAuditedOnly] = useState(() => {
+    const params = new URLSearchParams(window.location.search);
+    return params.get("filter") === "fully_audited";
+  });
   const [currentPage, setCurrentPage] = useState(1);
   const navigate = useNavigate();
   const { toast } = useToast();
@@ -71,7 +76,7 @@ export default function Browse() {
     queryFn: async () => {
       const { data, error } = await supabase
         .from("companies")
-        .select("id, name, slug, industry, state, employer_clarity_score, total_pac_spending, lobbying_spend, revenue, employee_count, description, is_startup, category_tags, career_intelligence_score")
+        .select("id, name, slug, industry, state, employer_clarity_score, total_pac_spending, lobbying_spend, revenue, employee_count, description, is_startup, category_tags, career_intelligence_score, vetted_status")
         .order("employer_clarity_score", { ascending: false });
       if (error) {
         console.error("Browse companies query error:", error);
@@ -91,6 +96,7 @@ export default function Browse() {
       description: c.description, isDbOnly: true,
       isStartup: c.is_startup, categoryTags: c.category_tags || [],
       careerIntelligenceScore: c.career_intelligence_score,
+      vettedStatus: c.vetted_status,
     }));
     const dbSlugs = new Set(dbList.map((c: any) => c.slug));
     const sampleExtras = sampleCompanies
@@ -102,6 +108,7 @@ export default function Browse() {
         description: c.description, isDbOnly: false,
         isStartup: false, categoryTags: [] as string[],
         careerIntelligenceScore: null as number | null,
+        vettedStatus: null as string | null,
       }));
     return [...dbList, ...sampleExtras];
   }, [dbCompanies]);
@@ -113,6 +120,7 @@ export default function Browse() {
   const filtered = useMemo(() => {
     setCurrentPage(1);
     let list = allCompanies;
+    if (auditedOnly) list = list.filter((c) => c.vettedStatus === "fully_audited");
     if (selectedIndustry !== "all") list = list.filter((c) => c.industry === selectedIndustry);
     if (selectedCategory !== "all") {
       if (selectedCategory === "Startups") {
@@ -130,7 +138,7 @@ export default function Browse() {
       if (sortBy === "score") return b.civicFootprintScore - a.civicFootprintScore;
       return a.name.localeCompare(b.name);
     });
-  }, [allCompanies, selectedIndustry, selectedCategory, sortBy, searchQuery]);
+  }, [allCompanies, selectedIndustry, selectedCategory, sortBy, searchQuery, auditedOnly]);
 
   const totalPages = Math.ceil(filtered.length / PAGE_SIZE);
   const visibleCompanies = filtered.slice((currentPage - 1) * PAGE_SIZE, currentPage * PAGE_SIZE);
@@ -289,6 +297,15 @@ export default function Browse() {
               {cat}
             </button>
           ))}
+          <button
+            onClick={() => setAuditedOnly(!auditedOnly)}
+            className={`text-xs font-mono tracking-wider uppercase px-2.5 py-1 transition-all flex items-center gap-1 ${
+              auditedOnly ? "bg-[hsl(var(--civic-green))] text-primary-foreground" : "bg-muted/40 text-muted-foreground hover:text-foreground border border-border/40"
+            }`}
+          >
+            <ShieldCheck className="w-3 h-3" />
+            Fully Audited
+          </button>
         </div>
 
         {/* Results count */}
@@ -378,6 +395,12 @@ export default function Browse() {
                             {company.industry} · {company.state}
                           </p>
                         </div>
+                        {company.vettedStatus === "fully_audited" && (
+                          <Badge variant="outline" className="text-[9px] gap-1 px-1.5 py-0 border-[hsl(var(--civic-green))]/30 text-[hsl(var(--civic-green))] bg-[hsl(var(--civic-green))]/[0.06] shrink-0">
+                            <ShieldCheck className="w-2.5 h-2.5" />
+                            Audited
+                          </Badge>
+                        )}
                         <ArrowRight className="w-3.5 h-3.5 text-muted-foreground/30 group-hover:text-primary transition-all group-hover:translate-x-0.5 shrink-0" />
                       </div>
                       <div className="mt-2.5 pt-2.5 border-t border-border/30 flex items-center justify-between">
