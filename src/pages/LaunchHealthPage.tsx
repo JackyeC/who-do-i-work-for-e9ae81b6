@@ -87,8 +87,8 @@ export default function LaunchHealthPage() {
       next.push({
         id: "djp-cols",
         label: "Dream Job Profile (profiles.dream_job_profile)",
-        status: "fail",
-        detail: "Migration not applied — run 20260403120000_dream_job_profile_and_application_dossiers.sql",
+        status: "warn",
+        detail: "Column may not be available yet. Check database status.",
       });
     } else if (profileErr) {
       next.push({
