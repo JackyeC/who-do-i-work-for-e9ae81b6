@@ -4,6 +4,21 @@ import { useAuth } from "@/contexts/AuthContext";
 import { useToast } from "@/hooks/use-toast";
 import { syncDreamJobProfileRemote } from "@/domain/career/sync-dream-job-profile";
 
+export interface MatchReason {
+  dimension: string;
+  label: string;
+  detail: string;
+  impact: number;
+}
+
+export interface ScoreBreakdown {
+  skill: number;
+  role: number;
+  values: number;
+  signals: number;
+  location: number;
+}
+
 export interface MatchedJob {
   job_id: string;
   title: string;
@@ -24,6 +39,8 @@ export interface MatchedJob {
   state: string;
   alignment_score: number;
   matched_signals: string[];
+  match_reasons?: MatchReason[];
+  score_breakdown?: ScoreBreakdown;
   meets_requirements: boolean;
 }
 
