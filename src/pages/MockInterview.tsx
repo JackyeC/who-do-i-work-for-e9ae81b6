@@ -27,6 +27,14 @@ interface QuestionItem {
   tip: string;
 }
 
+interface RubricScore {
+  clarity: number;
+  relevance: number;
+  specificity: number;
+  confidence: number;
+  structure: number;
+}
+
 interface AnswerItem {
   questionId: string;
   questionText: string;
@@ -35,8 +43,11 @@ interface AnswerItem {
   mode: "typed" | "voice";
   feedback: string | null;
   score: number | null;
-  strengths: string | null;
-  improvements: string | null;
+  strengths: string[] | null;
+  improvements: string[] | null;
+  rubric: RubricScore | null;
+  sampleAnswer: string | null;
+  coachingNote: string | null;
 }
 
 interface Session {
@@ -273,21 +284,30 @@ export default function MockInterview() {
       const { data, error } = await supabase.functions.invoke("ask-jackye-chat", {
         body: {
           messages: [
-            { role: "system", content: "You are an expert interview coach. Evaluate the candidate's answer. Return JSON with: score (0-100), feedback (2-3 specific sentences), strengths (1-2 things they did well), improvements (1-2 specific suggestions)." },
-            { role: "user", content: `Interview for ${session.role} at ${session.company}.\n\nQuestion: ${currentQuestion.text}\nCandidate's Answer: ${answer}\n\nEvaluate this answer. Return valid JSON: {"score": number, "feedback": string, "strengths": string, "improvements": string}` },
+            { role: "system", content: `You are an expert interview coach. Evaluate the candidate's answer across 5 categories: clarity, relevance, specificity, confidence, structure. Each scored 1-5. Return JSON:
+{"score": number (0-100 overall), "rubric": {"clarity": number, "relevance": number, "specificity": number, "confidence": number, "structure": number}, "strengths": ["strength 1", "strength 2"], "improvements": ["improvement 1", "improvement 2"], "sampleAnswer": "a stronger sample answer under 120 words", "coachingNote": "one short coaching note", "feedback": "2-3 sentence summary"}` },
+            { role: "user", content: `Interview for ${session.role} at ${session.company}.\n\nQuestion: ${currentQuestion.text}\nCandidate's Answer: ${answer}\n\nEvaluate this answer. Return valid JSON only.` },
           ],
         },
       });
       if (error) throw error;
 
       const responseText = data?.reply || data?.content || data?.message || "";
-      let evaluation: { score: number; feedback: string; strengths: string; improvements: string };
+      let evaluation: any;
       try {
         const jsonMatch = responseText.match(/\{[\s\S]*\}/);
-        evaluation = jsonMatch ? JSON.parse(jsonMatch[0]) : { score: 70, feedback: responseText, strengths: "", improvements: "" };
+        evaluation = jsonMatch ? JSON.parse(jsonMatch[0]) : {};
       } catch {
-        evaluation = { score: 70, feedback: responseText, strengths: "", improvements: "" };
+        evaluation = {};
       }
+
+      const rubric: RubricScore = {
+        clarity: evaluation.rubric?.clarity ?? 3,
+        relevance: evaluation.rubric?.relevance ?? 3,
+        specificity: evaluation.rubric?.specificity ?? 3,
+        confidence: evaluation.rubric?.confidence ?? 3,
+        structure: evaluation.rubric?.structure ?? 3,
+      };
 
       const newAnswer: AnswerItem = {
         questionId: currentQuestion.id,
@@ -295,10 +315,13 @@ export default function MockInterview() {
         answerText: answer,
         transcript: practiceMode === "voice" ? speech.finalText : answer,
         mode: practiceMode === "voice" ? "voice" : "typed",
-        feedback: evaluation.feedback,
-        score: evaluation.score,
-        strengths: evaluation.strengths,
-        improvements: evaluation.improvements,
+        feedback: evaluation.feedback || responseText || "No feedback available.",
+        score: evaluation.score ?? Math.round(Object.values(rubric).reduce((a, b) => a + b, 0) / 5 * 20),
+        strengths: Array.isArray(evaluation.strengths) ? evaluation.strengths.slice(0, 2) : null,
+        improvements: Array.isArray(evaluation.improvements) ? evaluation.improvements.slice(0, 2) : null,
+        rubric,
+        sampleAnswer: evaluation.sampleAnswer || null,
+        coachingNote: evaluation.coachingNote || null,
       };
 
       setSession((s) => {
@@ -709,6 +732,23 @@ export default function MockInterview() {
                   </div>
                 </div>
 
+                {/* Rubric breakdown */}
+                {currentAnswer.rubric && (
+                  <div className="rounded-lg border border-border/40 p-3 space-y-2">
+                    <p className="text-xs font-bold text-foreground tracking-wide uppercase font-mono mb-2">Category Scores</p>
+                    <div className="grid grid-cols-5 gap-2">
+                      {(["clarity", "relevance", "specificity", "confidence", "structure"] as const).map((cat) => (
+                        <div key={cat} className="text-center">
+                          <div className="text-lg font-extrabold tabular-nums" style={{ color: scoreColor((currentAnswer.rubric![cat] / 5) * 100) }}>
+                            {currentAnswer.rubric![cat]}
+                          </div>
+                          <p className="text-[10px] font-mono text-muted-foreground capitalize">{cat}</p>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                )}
+
                 {currentAnswer.feedback && (
                   <div className="rounded-lg bg-[hsl(var(--civic-gold))]/5 border border-[hsl(var(--civic-gold))]/10 p-3 space-y-2">
                     <p className="text-xs font-medium text-[hsl(var(--civic-gold-muted))] flex items-center gap-1.5"><Lightbulb className="w-3 h-3" /> Feedback</p>
@@ -718,18 +758,44 @@ export default function MockInterview() {
 
                 {(currentAnswer.strengths || currentAnswer.improvements) && (
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                    {currentAnswer.strengths && (
+                    {currentAnswer.strengths && currentAnswer.strengths.length > 0 && (
                       <div className="rounded-lg bg-green-500/5 border border-green-500/10 p-3">
-                        <p className="text-xs font-medium text-green-400 mb-1">Strengths</p>
-                        <p className="text-sm text-foreground/80 leading-relaxed">{currentAnswer.strengths}</p>
+                        <p className="text-xs font-medium text-green-400 mb-1.5">Strengths</p>
+                        <ul className="space-y-1">
+                          {currentAnswer.strengths.map((s, i) => (
+                            <li key={i} className="text-sm text-foreground/80 leading-relaxed flex items-start gap-1.5">
+                              <span className="text-green-400 mt-0.5 shrink-0">✓</span> {s}
+                            </li>
+                          ))}
+                        </ul>
                       </div>
                     )}
-                    {currentAnswer.improvements && (
+                    {currentAnswer.improvements && currentAnswer.improvements.length > 0 && (
                       <div className="rounded-lg bg-orange-500/5 border border-orange-500/10 p-3">
-                        <p className="text-xs font-medium text-orange-400 mb-1">To Improve</p>
-                        <p className="text-sm text-foreground/80 leading-relaxed">{currentAnswer.improvements}</p>
+                        <p className="text-xs font-medium text-orange-400 mb-1.5">To Improve</p>
+                        <ul className="space-y-1">
+                          {currentAnswer.improvements.map((s, i) => (
+                            <li key={i} className="text-sm text-foreground/80 leading-relaxed flex items-start gap-1.5">
+                              <span className="text-orange-400 mt-0.5 shrink-0">→</span> {s}
+                            </li>
+                          ))}
+                        </ul>
                       </div>
                     )}
+                  </div>
+                )}
+
+                {currentAnswer.sampleAnswer && (
+                  <div className="rounded-lg bg-primary/5 border border-primary/10 p-3 space-y-1.5">
+                    <p className="text-xs font-bold text-primary tracking-wide uppercase font-mono">Stronger Sample Answer</p>
+                    <p className="text-sm text-foreground/80 leading-relaxed italic">{currentAnswer.sampleAnswer}</p>
+                  </div>
+                )}
+
+                {currentAnswer.coachingNote && (
+                  <div className="rounded-lg bg-muted/30 border border-border/40 p-3 flex items-start gap-2">
+                    <Lightbulb className="w-3.5 h-3.5 text-[hsl(var(--civic-gold))] shrink-0 mt-0.5" />
+                    <p className="text-xs text-foreground/70 leading-relaxed">{currentAnswer.coachingNote}</p>
                   </div>
                 )}
 
@@ -794,6 +860,16 @@ export default function MockInterview() {
                           </div>
                         )}
 
+                        {a?.rubric && (
+                          <div className="flex items-center gap-3 flex-wrap">
+                            {(["clarity", "relevance", "specificity", "confidence", "structure"] as const).map((cat) => (
+                              <span key={cat} className="text-[10px] font-mono text-muted-foreground">
+                                <span className="font-bold tabular-nums" style={{ color: scoreColor((a.rubric![cat] / 5) * 100) }}>{a.rubric![cat]}</span>/5 {cat}
+                              </span>
+                            ))}
+                          </div>
+                        )}
+
                         {a?.feedback && (
                           <div className="rounded-lg bg-[hsl(var(--civic-gold))]/5 border border-[hsl(var(--civic-gold))]/10 p-3">
                             <p className="text-xs font-medium text-[hsl(var(--civic-gold-muted))] flex items-center gap-1.5 mb-1"><Lightbulb className="w-3 h-3" /> Feedback</p>
@@ -803,16 +879,16 @@ export default function MockInterview() {
 
                         {a && (a.strengths || a.improvements) && (
                           <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                            {a.strengths && (
+                            {a.strengths && a.strengths.length > 0 && (
                               <div className="rounded-lg bg-green-500/5 border border-green-500/10 p-3">
                                 <p className="text-xs font-medium text-green-400 mb-1">Strengths</p>
-                                <p className="text-sm text-foreground/80 leading-relaxed">{a.strengths}</p>
+                                <ul className="space-y-0.5">{a.strengths.map((s, j) => <li key={j} className="text-sm text-foreground/80 flex items-start gap-1"><span className="text-green-400 shrink-0">✓</span> {s}</li>)}</ul>
                               </div>
                             )}
-                            {a.improvements && (
+                            {a.improvements && a.improvements.length > 0 && (
                               <div className="rounded-lg bg-orange-500/5 border border-orange-500/10 p-3">
                                 <p className="text-xs font-medium text-orange-400 mb-1">To Improve</p>
-                                <p className="text-sm text-foreground/80 leading-relaxed">{a.improvements}</p>
+                                <ul className="space-y-0.5">{a.improvements.map((s, j) => <li key={j} className="text-sm text-foreground/80 flex items-start gap-1"><span className="text-orange-400 shrink-0">→</span> {s}</li>)}</ul>
                               </div>
                             )}
                           </div>
