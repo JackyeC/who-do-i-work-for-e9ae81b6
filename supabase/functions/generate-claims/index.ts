@@ -318,31 +318,29 @@ Deno.serve(async (req: Request) => {
       let totalSkipped = 0;
       let companiesProcessed = 0;
       let companiesWithClaims = 0;
-      let offset = 0;
-      const pageSize = 500;
 
-      while (true) {
-        const { data: companies, error: listErr } = await supabase
-          .from('companies')
-          .select('id, name')
-          .order('name')
-          .range(offset, offset + pageSize - 1);
+      const { data: companies, error: listErr } = await supabase
+        .from('companies')
+        .select('id, name')
+        .order('name')
+        .range(batchOffset, batchOffset + batchSize - 1);
 
-        if (listErr || !companies || companies.length === 0) break;
-
-        for (const company of companies) {
-          const result = await generateClaimsForCompany(supabase, company.id, company.name);
-          totalGenerated += result.generated;
-          totalSkipped += result.skipped;
-          if (result.generated > 0) companiesWithClaims++;
-          companiesProcessed++;
-        }
-
-        if (companies.length < pageSize) break;
-        offset += pageSize;
+      if (listErr || !companies || companies.length === 0) {
+        return new Response(JSON.stringify({
+          success: true, mode: 'backfill_batch', companiesProcessed: 0, totalGenerated: 0, totalSkipped: 0, done: true,
+        }), { headers: { ...corsHeaders, 'Content-Type': 'application/json' } });
       }
 
-      console.log(`[generate-claims] Full backfill: ${companiesProcessed} companies, ${totalGenerated} claims generated, ${totalSkipped} skipped`);
+      for (const company of companies) {
+        const result = await generateClaimsForCompany(supabase, company.id, company.name);
+        totalGenerated += result.generated;
+        totalSkipped += result.skipped;
+        if (result.generated > 0) companiesWithClaims++;
+        companiesProcessed++;
+      }
+
+      const hasMore = companies.length === batchSize;
+      console.log(`[generate-claims] Batch ${batchOffset}-${batchOffset + batchSize}: ${companiesProcessed} companies, ${totalGenerated} claims`);
 
       return new Response(JSON.stringify({
         success: true,
