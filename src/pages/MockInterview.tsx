@@ -150,14 +150,14 @@ export default function MockInterview() {
         body: { company: company.trim(), role: role.trim(), count: 5 },
       });
       if (error) throw error;
-      const qs = (data?.questions || []).map((q: any) => ({
-        ...q,
-        userAnswer: "",
-        feedback: null,
-        score: null,
-        strengths: null,
-        improvements: null,
-      }));
+
+      // Log raw payload for debugging
+      console.log("[MockInterview] Raw API payload:", JSON.stringify(data, null, 2));
+
+      const qs = normalizeInterviewData(data);
+
+      console.log("[MockInterview] Normalized questions:", qs);
+
       if (qs.length === 0) throw new Error("No questions generated");
       setQuestions(qs);
       setCurrentIdx(0);
