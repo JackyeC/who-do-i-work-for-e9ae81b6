@@ -771,29 +771,6 @@ function SliderInput({
 }) {
   return (
     <div className="w-full" style={{ maxWidth: 520, margin: "0 auto" }}>
-      <style>{`
-        input.quiz-slider::-webkit-slider-thumb {
-          -webkit-appearance: none;
-          width: 22px; height: 22px;
-          border-radius: 50%;
-          background: #f0c040;
-          cursor: pointer;
-          box-shadow: 0 0 0 6px rgba(240,192,64,0.15), 0 0 16px rgba(240,192,64,0.2);
-          transition: transform 0.15s;
-          border: none;
-        }
-        input.quiz-slider::-webkit-slider-thumb:hover {
-          transform: scale(1.15);
-        }
-        input.quiz-slider::-moz-range-thumb {
-          width: 22px; height: 22px;
-          border-radius: 50%;
-          background: #f0c040;
-          cursor: pointer;
-          box-shadow: 0 0 0 6px rgba(240,192,64,0.15), 0 0 16px rgba(240,192,64,0.2);
-          border: none;
-        }
-      `}</style>
       <input
         type="range"
         min={0}
