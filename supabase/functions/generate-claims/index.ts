@@ -156,7 +156,21 @@ async function generateClaimsForCompany(supabase: any, companyId: string, compan
           continue;
         }
 
-        const { error: insertErr } = await supabase.from('company_claims').upsert({
+        // Check for existing claim from this signal (partial unique index)
+        const { data: existing } = await supabase
+          .from('company_claims')
+          .select('id')
+          .eq('company_id', companyId)
+          .eq('signal_id', signal.id)
+          .eq('signal_table', source.table)
+          .maybeSingle();
+
+        if (existing) {
+          totalSkipped++;
+          continue;
+        }
+
+        const { error: insertErr } = await supabase.from('company_claims').insert({
           company_id: companyId,
           claim_text: claim.claim_text,
           claim_type: source.claimType,
@@ -170,9 +184,6 @@ async function generateClaimsForCompany(supabase: any, companyId: string, compan
           decision_impact: claim.decision_impact,
           is_active: true,
           generated_by: 'claim_engine',
-        }, {
-          onConflict: 'company_id,signal_id,signal_table',
-          ignoreDuplicates: false,
         });
 
         if (insertErr) {
