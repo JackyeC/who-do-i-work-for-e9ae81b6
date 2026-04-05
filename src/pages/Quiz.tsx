@@ -914,7 +914,7 @@ export default function Quiz() {
                     Already took the quiz? Reset and start over.
                   </button>
                 </div>
-              )
+              )}
             </div>
           </div>
         ))}
