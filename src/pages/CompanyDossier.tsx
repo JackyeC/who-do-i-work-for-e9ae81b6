@@ -577,17 +577,19 @@ export default function CompanyDossier() {
       </div>
 
       {/* ── POWER & INFLUENCE ── */}
-      <PowerInfluenceView
-        companyName={company.name}
-        companyId={companyId!}
-        totalPacSpending={company.total_pac_spending ?? 0}
-        lobbyingSpend={company.lobbying_spend ?? 0}
-        candidates={(candidates || []) as any}
-        executives={(executives || []) as any}
-        boardMembers={(dossierBoardMembers || []) as any}
-        partyBreakdown={(partyBreakdown || []) as any}
-        evidenceRecords={evidenceRecords}
-      />
+      <div id="political-giving">
+        <PowerInfluenceView
+          companyName={company.name}
+          companyId={companyId!}
+          totalPacSpending={company.total_pac_spending ?? 0}
+          lobbyingSpend={company.lobbying_spend ?? 0}
+          candidates={(candidates || []) as any}
+          executives={(executives || []) as any}
+          boardMembers={(dossierBoardMembers || []) as any}
+          partyBreakdown={(partyBreakdown || []) as any}
+          evidenceRecords={evidenceRecords}
+        />
+      </div>
 
       <p className="text-xs text-muted-foreground leading-relaxed max-w-xl mb-6">
         This is a background check on the employer — built from public records, not opinions.
@@ -611,7 +613,7 @@ export default function CompanyDossier() {
 
       {/* ── CULTURE SIGNAL SCANNER ── */}
       {companyId && (
-        <div className="mb-6">
+        <div className="mb-6" id="workforce-signals">
           <CodeWordScanner companyId={companyId} companyName={company.name} />
         </div>
       )}
@@ -624,14 +626,16 @@ export default function CompanyDossier() {
       )}
 
       {/* ── THE ADVOCACY REPORT ── */}
-      <AdvocacyReport
-        company={{ ...company, id: companyId!, slug: company.slug } as any}
-        executives={executives as any}
-        contracts={contracts as any}
-        issueSignals={issueSignals as any}
-        publicStances={publicStances as any}
-        eeocCases={eeocCases as any}
-      />
+      <div id="leadership-signals">
+        <AdvocacyReport
+          company={{ ...company, id: companyId!, slug: company.slug } as any}
+          executives={executives as any}
+          contracts={contracts as any}
+          issueSignals={issueSignals as any}
+          publicStances={publicStances as any}
+          eeocCases={eeocCases as any}
+        />
+      </div>
 
       {/* ── WHAT THIS MEANS FOR YOU ── */}
       <WhatThisMeansForYou
