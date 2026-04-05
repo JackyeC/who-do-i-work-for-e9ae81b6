@@ -61,6 +61,32 @@ export default function IntelligenceCheck() {
     }
   };
 
+  if (submitted) {
+    return (
+      <div className="flex flex-col min-h-screen bg-background">
+        <Helmet>
+          <title>Request Received — Who Do I Work For</title>
+        </Helmet>
+        <MarketingNav />
+        <main className="flex-1 px-6 lg:px-16 py-16 lg:py-24">
+          <div className="max-w-[520px] mx-auto text-center">
+            <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-primary/10 mb-6">
+              <Shield className="w-8 h-8 text-primary" />
+            </div>
+            <h1 className="text-foreground font-sans text-2xl font-bold mb-4">You're in the queue.</h1>
+            <p className="text-muted-foreground text-sm leading-relaxed mb-6">
+              Jackyé will send your intelligence snapshot within 2–3 business days.
+            </p>
+            <p className="text-xs text-muted-foreground/70">
+              We'll email your results to <span className="font-medium text-foreground">{form.email}</span>.
+            </p>
+          </div>
+        </main>
+        <SiteFooter />
+      </div>
+    );
+  }
+
   return (
     <div className="flex flex-col min-h-screen bg-background">
       <Helmet>
