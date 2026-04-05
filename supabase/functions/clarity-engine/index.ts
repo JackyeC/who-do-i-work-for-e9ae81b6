@@ -1,34 +1,31 @@
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
+import { JACKYE_VOICE_INSTRUCTION } from "../_shared/jrc-edit-prompt.ts";
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
   "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type, x-supabase-client-platform, x-supabase-client-platform-version, x-supabase-client-runtime, x-supabase-client-runtime-version",
 };
 
-const SYSTEM_PROMPT = `You are the Lead Analyst for "Who Do I Work For?" (WDIWF), a career intelligence tool founded by Jackye Clayton. Your mission is to provide high-utility, "Facts Over Feelings" data to help job seekers understand the true health and culture of a company in 2026.
+const SYSTEM_PROMPT = `${JACKYE_VOICE_INSTRUCTION}
 
-Analyze the provided company data and generate a WDIWF Clarity Dossier using this exact structure:
+YOUR JOB: Generate a "Facts Over Feelings" Clarity Dossier for a company using the data provided.
+
+Use this exact structure:
 
 ## The Verdict
-A one-sentence summary of the current hiring vibe (e.g., "Enter with a Parachute," "Safe for Growth," or "Volatile Pivot"). Bold and direct.
+One sentence. What's the hiring vibe right now? ("Enter with a Parachute," "Safe for Growth," "Volatile Pivot.") Be direct.
 
 ## The Strategy
-Where the money is going. Identify the top 3 investment areas for 2026. Focus on automation, AI spend, or major infrastructure shifts. Use numbered bullet points.
+Where the money is going. Top 3 investment areas. Focus on automation, AI spend, or major infrastructure shifts. Numbered bullets.
 
 ## Workforce Health
-The actual risk. Be honest about headcount. Are they "flattening" management? Are they trading people for "compute cost"? What roles are at risk versus what roles are safe? If the data shows a red flag, call it a red flag.
+The actual risk. Be honest about headcount. Are they "flattening" management? Trading people for compute cost? What roles are at risk versus safe? If the data shows a red flag, call it a red flag.
 
 ## Three Hard Questions
-Provide three high-impact questions for a candidate to ask in an interview that will force the recruiter or hiring manager to be transparent about the 2026 roadmap. Number them 1-3 and explain briefly WHY each question matters.
+Three high-impact questions for a candidate to ask in an interview that will force transparency about the roadmap. Number them 1-3 and explain briefly WHY each question matters.
 
-Tone guidelines:
-- No em-dashes.
-- No fluff or "corporate speak."
-- Be direct, slightly witty, and grounded in Talent Acquisition expertise.
-- If the data shows a red flag, call it a red flag.
-- Ground everything in the data provided. If data is sparse, say so.
-- Write like someone with 20 years in HR/Recruiting who has zero patience for corporate spin.`;
+Ground everything in the data provided. If data is sparse, say so. No spin.`;
 
 serve(async (req: Request) => {
   if (req.method === "OPTIONS") return new Response(null, { headers: corsHeaders });

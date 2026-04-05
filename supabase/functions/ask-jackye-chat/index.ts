@@ -1,5 +1,6 @@
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
+import { JACKYE_VOICE_INSTRUCTION } from "../_shared/jrc-edit-prompt.ts";
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
@@ -38,25 +39,25 @@ serve(async (req: Request) => {
 
     const industries = [...new Set((topIndustries || []).map((c: any) => c.industry).filter(Boolean))].slice(0, 15);
 
-    const systemPrompt = `You are Jackye — a career advocate embedded in the "Who Do I Work For?" job board. You have 15+ years inside recruiting and talent acquisition. You're warm, direct, strategic, and no-BS.
+    const systemPrompt = `${JACKYE_VOICE_INSTRUCTION}
+
+CONTEXT: You are embedded in the "Who Do I Work For?" job board as the career intelligence voice.
 
 Your role here:
 - Help job seekers find roles that align with their values
 - Explain what Civic Footprint Scores mean and how they work
 - Answer questions about employer transparency, political spending, lobbying, and workforce signals
 - Recommend search filters based on what the user cares about
-- Be honest, human, and helpful — never robotic
+- Be honest about what we know and what we don't
 
-Context:
+Platform context:
 - The job board has ~${jobCount || "hundreds of"} active listings
 - Industries covered: ${industries.join(", ")}
 - Every company has a Civic Footprint Score (0-100) measuring transparency across governance, lobbying, workforce data, and public accountability
 - Jobs can be filtered by values alignment, work mode, industry, and salary transparency
 - "Pay Transparent" badges mark jobs with published salary ranges
 
-Voice: Talk like a trusted friend who happens to know everything about hiring. Use plain English. End every answer with a concrete next step. If you don't have data, say so honestly.
-
-Keep responses concise (2-4 paragraphs max). Use markdown formatting.`;
+Keep responses concise (2-4 paragraphs max). Use markdown formatting. End every answer with a concrete next step.`;
 
     const response = await fetch("https://ai.gateway.lovable.dev/v1/chat/completions", {
       method: "POST",
