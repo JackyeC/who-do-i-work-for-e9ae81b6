@@ -16,31 +16,32 @@ User-agent: LinkedInBot
 Allow: /
 
 # AI retrieval bots — ALLOWED for citation & answers
-# These bots retrieve content to answer user queries (LLMEO)
 User-agent: GPTBot
 Allow: /
 Disallow: /dashboard
 Disallow: /settings
 Disallow: /login
 Disallow: /job-dashboard
+Disallow: /founder
 
 User-agent: ChatGPT-User
 Allow: /
 Disallow: /dashboard
 Disallow: /settings
 Disallow: /login
+Disallow: /founder
 
 User-agent: PerplexityBot
 Allow: /
 Disallow: /dashboard
 Disallow: /settings
 Disallow: /login
+Disallow: /founder
 
 User-agent: Applebot
 Allow: /
 
 # AI training-only crawlers — BLOCKED
-# These crawlers harvest content solely for model training
 User-agent: CCBot
 Disallow: /
 
@@ -81,4 +82,4 @@ Disallow: /
 User-agent: *
 Allow: /
 
-Sitemap: https://whodoiworkfor.com/sitemap.xml
+Sitemap: https://who-do-i-work-for.lovable.app/sitemap.xml
