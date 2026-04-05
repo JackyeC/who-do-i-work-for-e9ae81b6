@@ -4797,6 +4797,54 @@ export type Database = {
         }
         Relationships: []
       }
+      congressional_news: {
+        Row: {
+          created_at: string
+          id: string
+          is_workplace_relevant: boolean | null
+          matched_company_ids: string[] | null
+          matched_keywords: string[] | null
+          published_at: string | null
+          raw_content: string | null
+          relevance_tags: string[] | null
+          source_feed: string
+          source_url: string | null
+          summary: string | null
+          title: string
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          is_workplace_relevant?: boolean | null
+          matched_company_ids?: string[] | null
+          matched_keywords?: string[] | null
+          published_at?: string | null
+          raw_content?: string | null
+          relevance_tags?: string[] | null
+          source_feed: string
+          source_url?: string | null
+          summary?: string | null
+          title: string
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          is_workplace_relevant?: boolean | null
+          matched_company_ids?: string[] | null
+          matched_keywords?: string[] | null
+          published_at?: string | null
+          raw_content?: string | null
+          relevance_tags?: string[] | null
+          source_feed?: string
+          source_url?: string | null
+          summary?: string | null
+          title?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
       connection_company_map: {
         Row: {
           company_id: string
