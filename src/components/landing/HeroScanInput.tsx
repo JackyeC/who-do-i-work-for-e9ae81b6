@@ -148,7 +148,7 @@ export function HeroScanInput() {
               <button
                 type="submit"
                 disabled={verifying || !query.trim()}
-                className="mr-2 px-5 py-2 bg-primary text-primary-foreground font-mono text-xs tracking-wider uppercase font-semibold hover:brightness-110 transition-all flex items-center gap-1.5 disabled:opacity-50"
+                className="mr-2 px-5 py-2 bg-primary text-primary-foreground font-mono text-xs tracking-wider uppercase font-semibold hover:brightness-110 active:scale-[0.97] transition-all flex items-center gap-1.5 disabled:opacity-50"
               >
                 {verifying ? <Loader2 className="w-3 h-3 animate-spin" /> : <>Run My Free Scan <ArrowRight className="w-3 h-3" /></>}
               </button>
