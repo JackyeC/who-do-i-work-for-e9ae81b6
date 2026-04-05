@@ -371,6 +371,8 @@ function WireItem({ article }: { article: ReceiptArticle }) {
 /* ══════════════════════════════════════════
    MAIN PAGE — THE WORK SIGNAL
    ══════════════════════════════════════════ */
+const PAGE_SIZE = 12;
+
 export default function Newsletter() {
   const [email, setEmail] = useState("");
   const [status, setStatus] = useState<"idle" | "loading" | "success" | "error">("idle");
@@ -380,6 +382,7 @@ export default function Newsletter() {
   const [searchQuery, setSearchQuery] = useState("");
   const [showBadge, setShowBadge] = useState(false);
   const [lightboxArticle, setLightboxArticle] = useState<ReceiptArticle | null>(null);
+  const [visibleCount, setVisibleCount] = useState(PAGE_SIZE);
   const { user } = useAuth();
   const { containerRef, getToken, resetToken } = useTurnstile();
   const { data: articles = [], isLoading } = useReceiptsFeed();
