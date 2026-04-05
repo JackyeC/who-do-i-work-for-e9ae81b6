@@ -48,6 +48,15 @@ serve(async (req: Request) => {
 
     const { priceId } = await req.json();
 
+    // Validate priceId against allowlist — reject unknown IDs
+    const ALLOWED_PRICES = new Set([...ONE_TIME_PRICES, ...SUBSCRIPTION_PRICES]);
+    if (!priceId || typeof priceId !== "string" || !ALLOWED_PRICES.has(priceId)) {
+      return new Response(JSON.stringify({ error: "Invalid or unknown price ID" }), {
+        headers: { ...corsHeaders, "Content-Type": "application/json" },
+        status: 400,
+      });
+    }
+
     const stripeKey = Deno.env.get("STRIPE_SECRET_KEY");
     if (!stripeKey) throw new Error("STRIPE_SECRET_KEY is not set");
     if (!stripeKey.startsWith("sk_live_")) {
