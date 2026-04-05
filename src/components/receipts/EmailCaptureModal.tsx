@@ -6,9 +6,10 @@ import { toast } from "sonner";
 interface EmailCaptureModalProps {
   open: boolean;
   onClose: () => void;
+  onUnlocked?: () => void;
 }
 
-export function EmailCaptureModal({ open, onClose }: EmailCaptureModalProps) {
+export function EmailCaptureModal({ open, onClose, onUnlocked }: EmailCaptureModalProps) {
   const [email, setEmail] = useState("");
   const [submitting, setSubmitting] = useState(false);
 
@@ -21,7 +22,7 @@ export function EmailCaptureModal({ open, onClose }: EmailCaptureModalProps) {
     try {
       await supabase.from("career_waitlist").insert({ email, reason: "heat_map_signup" });
       toast.success("You're in. Welcome to the heat map.");
-      localStorage.setItem("jrc-edit-unlocked", "true");
+      onUnlocked?.();
       onClose();
     } catch {
       toast.error("Something went wrong. Try again.");
