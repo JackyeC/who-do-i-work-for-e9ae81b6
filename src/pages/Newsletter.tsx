@@ -129,7 +129,7 @@ function LeadStoryCard({ article, onPosterClick }: { article: ReceiptArticle; on
         <div className="flex items-center gap-3 mb-5 flex-wrap">
           <CategoryBadge category={article.category} />
           <span className="w-px h-4 bg-border" />
-          <StargazeChip score={article.spice_level} big />
+          <SpicePeppers level={article.spice_level} big />
           {article.spice_level >= 4 && (
             <span className="text-xs font-black uppercase px-2.5 py-1 rounded" style={{ background: "#EF4444", color: "#fff" }}>HOT</span>
           )}
@@ -258,7 +258,7 @@ function StoryCard({ article, onPosterClick }: { article: ReceiptArticle; onPost
         <div className="flex items-center gap-2 mb-3 flex-wrap">
           <CategoryBadge category={article.category} />
           <span className="w-px h-3 bg-border" />
-          <StargazeChip score={article.spice_level} />
+          <SpicePeppers level={article.spice_level} />
           <span className="ml-auto text-[10px] text-muted-foreground/60 font-mono">{timeAgo(article.published_at)}</span>
         </div>
 
@@ -347,7 +347,7 @@ function WireItem({ article }: { article: ReceiptArticle }) {
       >
         <div className="flex items-center gap-2 mb-2 flex-wrap">
           <CategoryBadge category={article.category} />
-          <StargazeChip score={article.spice_level} />
+          <SpicePeppers level={article.spice_level} />
           <span className="ml-auto text-xs text-foreground/50 font-mono">{timeAgo(article.published_at)}</span>
         </div>
         <p className="text-base font-semibold text-foreground leading-snug flex-1 group-hover:text-primary transition-colors mb-2">
@@ -616,7 +616,7 @@ export default function Newsletter() {
                   <p className="text-sm font-medium text-foreground group-hover:text-primary transition-colors flex-1 truncate">
                     {article.headline}
                   </p>
-                  <StargazeChip score={article.spice_level} />
+                  <SpicePeppers level={article.spice_level} />
                   <span className="text-[10px] text-muted-foreground/50 font-mono shrink-0">{timeAgo(article.published_at)}</span>
                 </button>
               ))}
@@ -824,7 +824,7 @@ export default function Newsletter() {
                 </div>
                 <p className="text-sm font-semibold text-foreground leading-snug group-hover/hot:text-primary transition-colors">{article.headline}</p>
                 <div className="mt-1">
-                  <StargazeChip score={article.spice_level} />
+                  <SpicePeppers level={article.spice_level} />
                 </div>
               </button>
             ))}
