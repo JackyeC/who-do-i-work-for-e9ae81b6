@@ -95,7 +95,12 @@ export function ValuesQuiz() {
                     className="gap-1.5 font-mono text-xs tracking-wider uppercase"
                   >
                     See how employers measure up
-                    <ArrowRight className="w-3.5 h-3.5" />
+                    <motion.span
+                      animate={{ x: [0, 4, 0] }}
+                      transition={{ repeat: Infinity, duration: 1.5, ease: "easeInOut" }}
+                    >
+                      <ArrowRight className="w-3.5 h-3.5" />
+                    </motion.span>
                   </Button>
                 </motion.div>
               )}
