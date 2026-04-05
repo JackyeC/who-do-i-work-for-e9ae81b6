@@ -91,13 +91,14 @@ async function searchUSASpending(searchText: string, awardTypes: string[]): Prom
 
 Deno.serve(async (req: Request) => {
 
-  // Auth guard: require service-role key
-  const authDenied = requireServiceRole(req);
-  if (authDenied) return authDenied;
-
   if (req.method === 'OPTIONS') {
     return new Response(null, { headers: corsHeaders });
   }
+
+
+  // Auth guard: require service-role key
+  const authDenied = requireServiceRole(req);
+  if (authDenied) return authDenied;
 
   try {
     const { companyId, companyName, uei, searchNames, entityMap } = await req.json();

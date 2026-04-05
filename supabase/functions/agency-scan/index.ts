@@ -20,13 +20,14 @@ const CONTROVERSIAL_AGENCIES = [
 
 Deno.serve(async (req: Request) => {
 
-  // Auth guard: require valid JWT or service-role key
-  const authResult = await requireAuth(req);
-  if (authResult.error) return authResult.error;
-
   if (req.method === 'OPTIONS') {
     return new Response(null, { headers: corsHeaders });
   }
+
+
+  // Auth guard: require valid JWT or service-role key
+  const authResult = await requireAuth(req);
+  if (authResult.error) return authResult.error;
 
   try {
     const { companyId, companyName } = await req.json();

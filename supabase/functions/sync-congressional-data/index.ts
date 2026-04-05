@@ -21,13 +21,14 @@ async function fetchJSON(url: string, apiKey: string) {
 
 Deno.serve(async (req) => {
 
-  // Auth guard: require service-role key
-  const authDenied = requireServiceRole(req);
-  if (authDenied) return authDenied;
-
   if (req.method === "OPTIONS") {
     return new Response(null, { headers: corsHeaders });
   }
+
+
+  // Auth guard: require service-role key
+  const authDenied = requireServiceRole(req);
+  if (authDenied) return authDenied;
 
   try {
     const apiKey = Deno.env.get("CONGRESS_GOV_API_KEY");

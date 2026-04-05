@@ -25,10 +25,6 @@ function sleep(ms: number) {
 
 Deno.serve(async (req: Request) => {
 
-  // Auth guard: require service-role key
-  const authDenied = requireServiceRole(req);
-  if (authDenied) return authDenied;
-
   if (req.method === "OPTIONS") return new Response(null, { headers: corsHeaders });
 
   const supabaseUrl = Deno.env.get("SUPABASE_URL")!;
@@ -37,6 +33,11 @@ Deno.serve(async (req: Request) => {
 
   try {
     const body = await req.json().catch(() => ({}));
+
+  // Auth guard: require service-role key
+  const authDenied = requireServiceRole(req);
+  if (authDenied) return authDenied;
+
     const batchSize = Math.min(body.batchSize || BATCH_SIZE, 25);
     const offset = body.offset || 0;
     const dryRun = body.dryRun || false;

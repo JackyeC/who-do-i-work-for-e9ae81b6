@@ -128,13 +128,14 @@ async function fecFetch(endpoint: string, params: Record<string, string | string
 
 Deno.serve(async (req: Request) => {
 
-  // Auth guard: require service-role key
-  const authDenied = requireServiceRole(req);
-  if (authDenied) return authDenied;
-
   if (req.method === 'OPTIONS') {
     return new Response(null, { headers: corsHeaders });
   }
+
+
+  // Auth guard: require service-role key
+  const authDenied = requireServiceRole(req);
+  if (authDenied) return authDenied;
 
   try {
     const apiKey = Deno.env.get('OPENFEC_API_KEY');

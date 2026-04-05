@@ -89,13 +89,14 @@ const DAILY_PAID_SCAN_LIMIT = 20;
 
 Deno.serve(async (req: Request) => {
 
-  // Auth guard: require valid JWT or service-role key
-  const authResult = await requireAuth(req);
-  if (authResult.error) return authResult.error;
-
   if (req.method === 'OPTIONS') {
     return new Response(null, { headers: corsHeaders });
   }
+
+
+  // Auth guard: require valid JWT or service-role key
+  const authResult = await requireAuth(req);
+  if (authResult.error) return authResult.error;
 
   const supabaseUrl = Deno.env.get('SUPABASE_URL')!;
   const supabaseKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!;
