@@ -133,7 +133,7 @@ export default function IntelligenceCheck() {
               We'll scan layoffs, lawsuits, political spending, and more from the public record.
             </p>
             <div className="max-w-[400px] mx-auto">
-              <div className="relative">
+              <div className="relative focus-within:ring-1 focus-within:ring-primary/30 rounded-lg transition-all">
                 <Briefcase className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
                 <Input
                   placeholder="Employer name *"
