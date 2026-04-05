@@ -410,16 +410,18 @@ export default function Quiz() {
     meta: MetaFlags;
   } | null>(null);
   const [showShareModal, setShowShareModal] = useState(false);
+  const [showWelcomeBack, setShowWelcomeBack] = useState(false);
+  const [savedProfile, setSavedProfile] = useState<{ primary: PersonaKey; secondary: PersonaKey; meta: MetaFlags } | null>(null);
 
-  // Restore previous result from localStorage on mount
+  // Detect returning visitor — show interstitial instead of auto-jumping
   useEffect(() => {
     const saved = localStorage.getItem("workDnaProfile");
     if (saved) {
       try {
         const parsed = JSON.parse(saved);
         if (parsed.primary && parsed.secondary && parsed.meta) {
-          setResult(parsed);
-          setStep(TOTAL_QUESTIONS);
+          setSavedProfile(parsed);
+          setShowWelcomeBack(true);
         }
       } catch {}
     }
