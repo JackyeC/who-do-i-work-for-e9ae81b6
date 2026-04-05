@@ -73,6 +73,7 @@ export default function IntelligenceCheck() {
           <title>Request Received — Who Do I Work For</title>
         </Helmet>
         <MarketingNav />
+        <style>{`@keyframes successPulse { 0% { box-shadow: 0 0 0 0 hsl(var(--primary) / 0.4); } 100% { box-shadow: 0 0 0 24px hsl(var(--primary) / 0); } }`}</style>
         <main className="flex-1 px-6 lg:px-16 py-16 lg:py-24">
           <motion.div
             initial={{ opacity: 0, y: 16 }}
