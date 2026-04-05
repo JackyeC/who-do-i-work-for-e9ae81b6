@@ -613,7 +613,7 @@ export default function CompanyDossier() {
 
       {/* ── CULTURE SIGNAL SCANNER ── */}
       {companyId && (
-        <div className="mb-6">
+        <div className="mb-6" id="workforce-signals">
           <CodeWordScanner companyId={companyId} companyName={company.name} />
         </div>
       )}
@@ -626,6 +626,7 @@ export default function CompanyDossier() {
       )}
 
       {/* ── THE ADVOCACY REPORT ── */}
+      <div id="leadership-signals">
       <AdvocacyReport
         company={{ ...company, id: companyId!, slug: company.slug } as any}
         executives={executives as any}
