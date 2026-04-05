@@ -135,16 +135,7 @@ export function YourSignalDashboard() {
 
   const firstName = data?.firstName || "there";
   const alerts = data?.alerts || [];
-  const tracked = (data?.tracked || [])
-    .map((t: any) => ({
-      name: t.company?.name,
-      slug: t.company?.slug,
-      industry: t.company?.industry,
-      score: t.company?.employer_clarity_score ?? 0,
-      updatedAt: t.company?.updated_at,
-    }))
-    .filter((t: any) => t.name)
-    .slice(0, 5);
+  const tracked = (data?.tracked || []).slice(0, 5);
 
   // Derived "What Stands Out" insights
   const insights: { icon: React.ReactNode; text: string }[] = [];
