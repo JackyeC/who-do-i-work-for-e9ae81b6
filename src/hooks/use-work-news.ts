@@ -68,7 +68,7 @@ export function useWorkNewsTicker() {
     queryFn: async () => {
       const { data, error } = await supabase
         .from("work_news")
-        .select("id, headline, source_name, source_url, category, is_controversy, published_at")
+        .select("id, headline, source_name, source_url, category, is_controversy, published_at, jackye_take")
         .eq("language", "en")
         .not("source_url", "is", null)
         .order("published_at", { ascending: false })
