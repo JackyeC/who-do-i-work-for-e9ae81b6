@@ -125,10 +125,16 @@ export default function CompanyDossier() {
 
   const seoCompanyName = company?.name ?? "Company";
   usePageSEO({
-    title: `${seoCompanyName} — Employer Intelligence Report | WDIWF`,
-    description: `Before you apply to ${seoCompanyName}, see the receipts. Leadership stability, labor record, political spending, and values alignment — all from public sources.`,
+    title: `Who Do You Work For at ${seoCompanyName}? — Employer Intelligence`,
+    description: `See who really influences ${seoCompanyName}. Compensation, leadership, political spending, and workplace signals. No bias. Just receipts.`,
     path: `/dossier/${id}`,
     image: getOGImageUrl({ type: "company", companyA: seoCompanyName }),
+    jsonLd: company ? {
+      "@type": "Article",
+      headline: `Who Do You Really Work For at ${seoCompanyName}?`,
+      author: { "@type": "Person", name: "Jackye Clayton" },
+      publisher: { "@type": "Organization", name: "Who Do I Work For?" },
+    } : undefined,
   });
 
   const { data: executives } = useQuery({
