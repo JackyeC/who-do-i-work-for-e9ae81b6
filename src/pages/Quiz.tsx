@@ -502,6 +502,10 @@ export default function Quiz() {
   }, [step]);
 
   const reset = useCallback(() => {
+    localStorage.removeItem("workDnaProfile");
+    localStorage.removeItem("wdiwf_persona");
+    localStorage.removeItem("wdiwf_nepotism_flag");
+    localStorage.removeItem("wdiwf_trust");
     setDirection("right");
     setStep(0);
     setAnswers([null, null, null, null, null, null, null]);
