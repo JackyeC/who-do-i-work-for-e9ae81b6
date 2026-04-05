@@ -40,7 +40,19 @@ export default function IntelligenceCheck() {
         email: form.email.trim().toLowerCase(),
       });
       if (error) throw error;
-      navigate(`/intelligence-check/confirmation?email=${encodeURIComponent(form.email.trim().toLowerCase())}`);
+
+      // Notify Jackyé via email (fire-and-forget)
+      supabase.functions.invoke("notify-intelligence-request", {
+        body: {
+          employer_name: form.employer_name.trim(),
+          role_title: form.role_title.trim(),
+          email: form.email.trim().toLowerCase(),
+          location: form.location.trim() || null,
+          concern: form.concerns.trim() || null,
+        },
+      }).catch((err) => console.error("Notification email failed:", err));
+
+      setSubmitted(true);
     } catch (err) {
       console.error("Intelligence request submission failed:", err);
       toast.error("Something went wrong. Please try again.");
