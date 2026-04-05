@@ -222,7 +222,7 @@ export function HeroScanInput() {
                   formRef.current?.requestSubmit();
                 }, 150);
               }}
-              className="font-mono text-xs tracking-wider text-muted-foreground hover:text-primary transition-colors cursor-pointer"
+              className="font-mono text-xs tracking-wider text-muted-foreground hover:text-primary active:scale-95 active:bg-primary/20 transition-all cursor-pointer rounded px-1 py-0.5"
             >
               {s}
             </button>
