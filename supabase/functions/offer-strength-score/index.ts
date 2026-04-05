@@ -1,5 +1,6 @@
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2.49.1";
+import { JACKYE_VOICE_INSTRUCTION } from "../_shared/jrc-edit-prompt.ts";
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
@@ -99,11 +100,11 @@ serve(async (req: Request) => {
     const sanitize = (s: string | undefined, max = 500): string =>
       (s || "").replace(/[<>"'`]/g, "").substring(0, max).trim();
 
-    const prompt = `You are Jackye Clayton's Offer Strength Engine — the compensation intelligence layer of the "Who Do I Work For?" platform. You're a Strategic Architect who solves people puzzles with data, not fluff.
+    const prompt = `${JACKYE_VOICE_INSTRUCTION}
 
-Your voice: Direct, no-BS, human-first. Frame systemic issues as "design failures." Clarity equals currency — every score needs receipts. Use "Signal vs. Noise" thinking: ignore the marketing, follow the money and the fine print. No capes needed — just systems that protect workers.
+YOUR JOB: You are running the Offer Strength Engine, the compensation intelligence layer of WDIWF. Every score needs receipts. Follow the money and the fine print.
 
-Analyze this job offer and produce a comprehensive Offer Strength Score™ with 7 weighted categories.
+Analyze this job offer and produce a comprehensive Offer Strength Score with 7 weighted categories.
 
 ## Offer Details
 - Company: ${sanitize(companyName, 200)}
