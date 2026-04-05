@@ -585,6 +585,55 @@ export default function Quiz() {
     return () => window.removeEventListener("keydown", handler);
   }, [canAdvance, advance, isResults]);
 
+  // Welcome-back interstitial for returning visitors
+  if (showWelcomeBack && savedProfile) {
+    const profileName = PERSONA_PROFILES[savedProfile.primary]?.name || "Your Profile";
+    return (
+      <div
+        className="fixed inset-0 overflow-hidden flex items-center justify-center"
+        style={{ background: "#0a0a0e", fontFamily: "'DM Sans', sans-serif" }}
+      >
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
+          className="text-center max-w-[400px] px-6"
+        >
+          <div className="text-4xl mb-4">♕</div>
+          <h2 className="text-xl font-bold mb-2" style={{ color: "#f5f0e8" }}>
+            Welcome back, {profileName}.
+          </h2>
+          <p className="text-sm mb-8" style={{ color: "rgba(245,240,232,0.55)" }}>
+            You already have a Work DNA profile. Pick up where you left off or start fresh.
+          </p>
+          <div className="flex flex-col gap-3">
+            <button
+              onClick={() => {
+                setResult(savedProfile);
+                setStep(TOTAL_QUESTIONS);
+                setShowWelcomeBack(false);
+              }}
+              className="px-6 py-3 text-xs font-mono tracking-wider uppercase font-bold transition-opacity hover:opacity-90"
+              style={{ background: "hsl(var(--primary))", color: "#0a0a0e" }}
+            >
+              View My Results
+            </button>
+            <button
+              onClick={() => {
+                setShowWelcomeBack(false);
+                reset();
+              }}
+              className="px-6 py-3 text-xs font-mono tracking-wider uppercase border transition-opacity hover:opacity-80"
+              style={{ borderColor: "rgba(245,240,232,0.15)", color: "rgba(245,240,232,0.6)" }}
+            >
+              Retake Quiz
+            </button>
+          </div>
+        </motion.div>
+      </div>
+    );
+  }
+
   return (
     <div
       className="fixed inset-0 overflow-hidden"
