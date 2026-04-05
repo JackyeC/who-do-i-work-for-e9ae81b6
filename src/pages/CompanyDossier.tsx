@@ -1,5 +1,6 @@
 import { useMemo, useState, useEffect } from "react";
 import { AdvocacyReport } from "@/components/dossier/AdvocacyReport";
+import { DossierSEOContent } from "@/components/seo/DossierSEOContent";
 import { CandidatePrepPack } from "@/components/dossier/CandidatePrepPack";
 import { HardInterviewQuestions } from "@/components/dossier/HardInterviewQuestions";
 import { useParams, Link, useNavigate, useSearchParams } from "react-router-dom";
