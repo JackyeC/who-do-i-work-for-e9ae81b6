@@ -151,21 +151,21 @@ const Index = forwardRef<HTMLDivElement>((_, ref) => {
               {
                 step: "01",
                 title: "Define what \u201cgood\u201d means",
-                body: "Values profile, quiz, and professional fields roll into your Dream Job Profile \u2014 the canonical lens for matching and optional auto-apply.",
+                body: "Take the quiz. Set your deal-breakers. We build your Dream Job Profile so every match actually means something.",
                 link: "/dashboard?tab=profile",
                 comingSoon: true,
               },
               {
                 step: "02",
                 title: "Investigate & match",
-                body: "Open employer dossiers from the public record. See why roles fit in the jobs feed \u2014 role family, values, and mission alignment with clear risk notes when data is thin.",
+                body: "Pull the public record on any employer. Political spending, enforcement history, layoff patterns. See what lines up and where the risk is.",
                 link: "/browse",
                 comingSoon: false,
               },
               {
                 step: "03",
                 title: "Apply with receipts",
-                body: "Track applications and post-apply dossiers from the dashboard. Review-first auto-apply stays in your control until you promote to a trusted queue.",
+                body: "Track what you sent and why. Auto-apply only moves when you say so. Your dossier travels with your application.",
                 link: "/dashboard?tab=tracker",
                 comingSoon: true,
               },
@@ -189,20 +189,20 @@ const Index = forwardRef<HTMLDivElement>((_, ref) => {
         <div className="max-w-[1100px] mx-auto">
           <p className="font-mono text-xs tracking-[0.15em] uppercase text-primary mb-3 text-center">The Platform</p>
           <h2 className="text-h1 text-foreground text-center mb-4">
-            Everything you need. Nothing you don't.
+            Built for the part nobody talks about.
           </h2>
           <p className="text-body-lg text-center max-w-[52ch] mx-auto mb-14">
-            Six entry points. One foundation: the public record — plus your stated priorities when you're signed in.
+            The due diligence between "I'm interested" and "I accept." All public record. All yours.
           </p>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
             {([
-              { icon: <FileSearch className="w-6 h-6" strokeWidth={1.5} />, title: "Employer Dossiers", desc: "Forensic employer profiles from FEC, SEC, OSHA, NLRB, lobbying disclosures, and more \u2014 political giving, enforcement, leadership signals, and values alignment. Sourced and traceable.", link: "/browse", comingSoon: false },
-              { icon: <Target className="w-6 h-6" strokeWidth={1.5} />, title: "Dream Job Profile", desc: "Your targets, values sliders, quiz, and preferences merge into one profile that powers matching and optional auto-apply \u2014 without weak data overwriting what you typed.", link: "/dashboard?tab=profile", comingSoon: true },
-              { icon: <Briefcase className="w-6 h-6" strokeWidth={1.5} />, title: "Jobs Feed & Matching", desc: "See aligned and adjacent roles with \u201cwhy this matches you\u201d \u2014 role family, values fit, mission alignment, and risk notes when employer clarity is low.", link: "/jobs-feed", comingSoon: true },
-              { icon: <Shield className="w-6 h-6" strokeWidth={1.5} />, title: "Auto-Apply", desc: "Set integrity thresholds and daily caps. Stay on review-before-apply or move to a trusted queue when you\u2019re ready \u2014 with clear visibility into what the profile is driving.", link: "/auto-apply", comingSoon: true },
-              { icon: <FileText className="w-6 h-6" strokeWidth={1.5} />, title: "Applications & Dossiers", desc: "Track applications in motion and open post-apply dossiers generated for your materials \u2014 your receipts for what you sent and why.", link: "/dashboard?tab=tracker", comingSoon: true },
-              { icon: <LayoutDashboard className="w-6 h-6" strokeWidth={1.5} />, title: "Command Center", desc: "Dashboard overview: today\u2019s snapshot, Dream Job Profile, matches, applications, signals, and one suggested move \u2014 editorial, daily-use layout. Ask Jackye stays one click away in the product.", link: "/dashboard?tab=overview", comingSoon: true },
+              { icon: <FileSearch className="w-6 h-6" strokeWidth={1.5} />, title: "Employer Dossiers", desc: "The full picture on any company. Political spending, enforcement actions, lobbying, leadership moves. Sourced, traceable, no editorializing.", link: "/browse", comingSoon: false },
+              { icon: <Target className="w-6 h-6" strokeWidth={1.5} />, title: "Dream Job Profile", desc: "Your deal-breakers, your priorities, your definition of good. One profile that drives every match you see.", link: "/dashboard?tab=profile", comingSoon: true },
+              { icon: <Briefcase className="w-6 h-6" strokeWidth={1.5} />, title: "Jobs Feed & Matching", desc: "Roles that actually line up with what you said matters. When employer data is thin, we tell you that too.", link: "/jobs-feed", comingSoon: true },
+              { icon: <Shield className="w-6 h-6" strokeWidth={1.5} />, title: "Auto-Apply", desc: "Set your floor. Cap your volume. Nothing goes out without your say-so unless you decide otherwise.", link: "/auto-apply", comingSoon: true },
+              { icon: <FileText className="w-6 h-6" strokeWidth={1.5} />, title: "Applications & Dossiers", desc: "Track what you sent, when, and why. Post-apply dossiers give you receipts on your own process.", link: "/dashboard?tab=tracker", comingSoon: true },
+              { icon: <LayoutDashboard className="w-6 h-6" strokeWidth={1.5} />, title: "Command Center", desc: "One view. Today's signals, your matches, your applications, and one suggested move. Jackye is one click away.", link: "/dashboard?tab=overview", comingSoon: true },
             ] as { icon: React.ReactNode; title: string; desc: string; link: string; comingSoon: boolean }[]).map((item) => (
               <Link key={item.title} to={item.link} className="group p-6 border border-border bg-card hover:border-primary/30 transition-all relative">
                 {item.comingSoon && <div className="absolute top-3 right-3">{COMING_SOON_BADGE}</div>}
