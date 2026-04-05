@@ -1,8 +1,10 @@
 import { useState, useCallback, useMemo, useEffect, useRef } from "react";
-import { motion } from "framer-motion";
+import { motion, AnimatePresence } from "framer-motion";
 import { WorkplaceDNAShareCard } from "@/components/quiz/WorkplaceDNAShareCard";
 import { supabase } from "@/integrations/supabase/client";
 import { syncDreamJobProfileRemote } from "@/domain/career/sync-dream-job-profile";
+import { useAuth } from "@/contexts/AuthContext";
+import { Shield, Lock, AlertTriangle, Scan, ChevronRight, Eye } from "lucide-react";
 
 // ─── TYPES ───────────────────────────────────────────────
 type PersonaKey =
