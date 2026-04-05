@@ -215,8 +215,9 @@ Deno.serve(async (req) => {
     {
       const { data: allCompanies } = await supabase
         .from("companies")
-        .select("id, industry")
+        .select("id, industry, lobbying_spend")
         .gt("lobbying_spend", 0)
+        .order("lobbying_spend", { ascending: false })
         .limit(1000);
 
       for (const co of allCompanies || []) {
