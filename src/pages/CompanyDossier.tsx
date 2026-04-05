@@ -1,5 +1,6 @@
 import { useMemo, useState, useEffect } from "react";
 import { AdvocacyReport } from "@/components/dossier/AdvocacyReport";
+import { DossierSEOContent } from "@/components/seo/DossierSEOContent";
 import { CandidatePrepPack } from "@/components/dossier/CandidatePrepPack";
 import { HardInterviewQuestions } from "@/components/dossier/HardInterviewQuestions";
 import { useParams, Link, useNavigate, useSearchParams } from "react-router-dom";
@@ -124,10 +125,16 @@ export default function CompanyDossier() {
 
   const seoCompanyName = company?.name ?? "Company";
   usePageSEO({
-    title: `${seoCompanyName} — Employer Intelligence Report | WDIWF`,
-    description: `Before you apply to ${seoCompanyName}, see the receipts. Leadership stability, labor record, political spending, and values alignment — all from public sources.`,
+    title: `Who Do You Work For at ${seoCompanyName}? — Employer Intelligence`,
+    description: `See who really influences ${seoCompanyName}. Compensation, leadership, political spending, and workplace signals. No bias. Just receipts.`,
     path: `/dossier/${id}`,
     image: getOGImageUrl({ type: "company", companyA: seoCompanyName }),
+    jsonLd: company ? {
+      "@type": "Article",
+      headline: `Who Do You Really Work For at ${seoCompanyName}?`,
+      author: { "@type": "Person", name: "Jackye Clayton" },
+      publisher: { "@type": "Organization", name: "Who Do I Work For?" },
+    } : undefined,
   });
 
   const { data: executives } = useQuery({
@@ -834,6 +841,15 @@ export default function CompanyDossier() {
         companyName={company.name}
         records={evidenceRecords}
         initialCategory={reportCategory}
+      />
+
+      {/* SEO: Crawlable structured content for search engines and AI systems */}
+      <DossierSEOContent
+        company={company}
+        eeocCount={eeocCases?.length || 0}
+        executiveCount={(executives?.length || 0) + (dossierBoardMembers?.length || 0)}
+        lobbyingCount={lobbyingLinkages?.length || 0}
+        contractCount={contracts?.length || 0}
       />
     </section>
     </EvaluationView>
