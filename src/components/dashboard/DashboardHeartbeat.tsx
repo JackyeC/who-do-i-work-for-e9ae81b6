@@ -22,10 +22,11 @@ interface HeartbeatProps {
 }
 
 export function DashboardHeartbeat({ onNavigate }: HeartbeatProps) {
-  const { data: matchedJobs } = useJobMatcher();
-  const { data: applications } = useApplicationsTracker();
+  const jobData = useJobMatcher();
+  const { applications } = useApplicationsTracker();
 
-  const matchCount = matchedJobs?.length ?? 0;
+  const matchedJobs = jobData?.matches ?? [];
+  const matchCount = matchedJobs.length;
   const appCount = applications?.length ?? 0;
 
   const tiles = [
