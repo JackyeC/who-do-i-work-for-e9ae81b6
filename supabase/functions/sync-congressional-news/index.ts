@@ -27,14 +27,15 @@ const WORKPLACE_KEYWORDS = [
 
 // Topic tags to apply based on content
 const TOPIC_TAGS: Record<string, string[]> = {
-  labor: ["labor", "union", "nlrb", "collective bargaining", "right to work", "worker"],
+  labor: ["labor", "union", "nlrb", "collective bargaining", "right to work", "worker", "minimum wage", "overtime", "osha"],
   immigration: ["immigration", "h-1b", "ice", "dhs", "deportation", "visa"],
   defense: ["defense", "pentagon", "military", "dod", "contract"],
   healthcare: ["healthcare", "aca", "medicare", "medicaid", "health insurance"],
-  tech: ["ai", "artificial intelligence", "data privacy", "tech", "algorithm", "automation"],
+  tech: ["ai", "artificial intelligence", "data privacy", "tech", "algorithm", "automation", "semiconductor", "chips act"],
   finance: ["sec", "wall street", "banking", "financial", "fdic", "cfpb"],
-  energy: ["climate", "epa", "emissions", "renewable", "fossil fuel", "oil", "gas"],
+  energy: ["climate", "epa", "emissions", "renewable", "fossil fuel", "oil", "gas", "ev", "electric vehicle"],
   education: ["student loan", "education", "title ix", "university", "college"],
+  trade: ["tariff", "trade", "import", "export", "customs"],
 };
 
 // ─── XML Parser (lightweight, no deps) ───────────────────
@@ -58,7 +59,7 @@ function parseRSSItems(xml: string): Array<{ title: string; link: string; descri
     });
   }
 
-  // Atom feed fallback (<entry> instead of <item>)
+  // Atom feed fallback
   if (items.length === 0) {
     const entryRegex = /<entry>([\s\S]*?)<\/entry>/gi;
     while ((match = entryRegex.exec(xml)) !== null) {
@@ -81,49 +82,87 @@ function parseRSSItems(xml: string): Array<{ title: string; link: string; descri
   return items;
 }
 
-// Strip HTML tags from description
 function stripHtml(str: string): string {
   return str.replace(/<[^>]*>/g, "").replace(/&amp;/g, "&").replace(/&lt;/g, "<").replace(/&gt;/g, ">").replace(/&quot;/g, '"').replace(/&#39;/g, "'").trim();
 }
 
-// ─── Company Matching ────────────────────────────────────
-async function matchCompanies(
-  supabase: ReturnType<typeof createClient>,
-  text: string
-): Promise<{ companyIds: string[]; keywords: string[] }> {
-  const lower = text.toLowerCase();
-  const matchedKeywords: string[] = [];
+// ─── Matching Strategies ─────────────────────────────────
 
-  // Check workplace keywords
-  for (const kw of WORKPLACE_KEYWORDS) {
-    if (lower.includes(kw)) matchedKeywords.push(kw);
-  }
-
-  // Find companies that have lobbying spend and whose names appear in the text
-  // Only check companies with lobbying activity (most likely to be mentioned in congressional news)
-  const { data: lobbyingCompanies } = await supabase
-    .from("companies")
-    .select("id, name, canonical_name")
-    .gt("lobbying_spend", 0)
-    .limit(500);
-
-  const companyIds: string[] = [];
-  if (lobbyingCompanies) {
-    for (const co of lobbyingCompanies) {
-      const names = [co.name, co.canonical_name].filter(Boolean).map((n: string) => n.toLowerCase());
-      for (const name of names) {
-        if (name.length > 3 && lower.includes(name)) {
-          companyIds.push(co.id);
-          break;
-        }
+/** Strategy 1: Direct name match (existing) */
+function matchByName(
+  lower: string,
+  companies: Array<{ id: string; name: string; canonical_name: string | null }>
+): string[] {
+  const ids: string[] = [];
+  for (const co of companies) {
+    const names = [co.name, co.canonical_name].filter(Boolean).map((n: string) => n.toLowerCase());
+    for (const name of names) {
+      if (name.length > 3 && lower.includes(name)) {
+        ids.push(co.id);
+        break;
       }
     }
   }
-
-  return { companyIds: [...new Set(companyIds)], keywords: [...new Set(matchedKeywords)] };
+  return ids;
 }
 
-// Determine relevance tags
+/** Strategy 2: Ticker mention match ($TSLA, etc.) */
+const COMMON_WORDS_TICKERS = new Set(["A", "ALL", "AN", "ARE", "AS", "AT", "BE", "BIG", "CAN", "CAR", "CO", "FOR", "HAS", "HE", "IT", "MAN", "NOW", "ON", "ONE", "OR", "OUT", "RUN", "SO", "SUN", "THE", "TO", "TWO", "UP", "US", "WAS"]);
+
+function matchByTicker(
+  text: string,
+  companies: Array<{ id: string; ticker: string }>
+): string[] {
+  const ids: string[] = [];
+  for (const co of companies) {
+    const t = co.ticker;
+    if (!t || t.length < 2) continue;
+    // Skip tickers that are common English words unless prefixed with $
+    if (COMMON_WORDS_TICKERS.has(t.toUpperCase())) {
+      // Only match explicit $TICKER notation
+      if (text.includes(`$${t}`)) ids.push(co.id);
+      continue;
+    }
+    // Match $TSLA or standalone TSLA (case-sensitive for short tickers)
+    const pattern = t.length <= 2
+      ? new RegExp(`\\$${t}\\b`)
+      : new RegExp(`(\\$${t}\\b|\\b${t}\\b)`);
+    if (pattern.test(text)) {
+      ids.push(co.id);
+    }
+  }
+  return ids;
+}
+
+/** Strategy 3: Industry-topic match — map article tags to companies by industry */
+/**
+ * Strategy 3: Industry-topic match — only when article is *specifically* about
+ * an industry's concern (≥2 specific keyword hits), not just vaguely tagged.
+ * Also caps to top-lobbying companies to avoid 60+ matches.
+ */
+function matchByIndustryTopic(
+  relevanceTags: string[],
+  lower: string,
+  industryMap: Array<{ industry: string; topic_tag: string; topic_keywords: string[] }>,
+  companiesByIndustry: Map<string, string[]>
+): string[] {
+  const ids: string[] = [];
+
+  for (const mapping of industryMap) {
+    if (!relevanceTags.includes(mapping.topic_tag)) continue;
+
+    // Require ≥2 specific keyword hits to prove real industry relevance
+    const keywordHits = mapping.topic_keywords.filter(kw => lower.includes(kw));
+    if (keywordHits.length < 2) continue;
+
+    // Cap to first 5 companies per industry (sorted by lobbying spend in the query)
+    const companyIds = (companiesByIndustry.get(mapping.industry) || []).slice(0, 5);
+    ids.push(...companyIds);
+  }
+
+  return ids;
+}
+
 function getRelevanceTags(text: string): string[] {
   const lower = text.toLowerCase();
   const tags: string[] = [];
@@ -144,9 +183,9 @@ Deno.serve(async (req) => {
     const serviceKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!;
     const supabase = createClient(supabaseUrl, serviceKey);
 
-    const results = { fetched: 0, inserted: 0, skipped: 0, errors: [] as string[] };
+    const results = { fetched: 0, inserted: 0, skipped: 0, matched: { byName: 0, byTicker: 0, byIndustry: 0 }, errors: [] as string[] };
 
-    // Fetch all feeds in parallel
+    // Fetch feeds in parallel
     const feedPromises = FEEDS.map(async (feed) => {
       try {
         console.log(`Fetching ${feed.label}: ${feed.url}`);
@@ -170,14 +209,36 @@ Deno.serve(async (req) => {
     const allItems = (await Promise.all(feedPromises)).flat();
     results.fetched = allItems.length;
 
-    // Pre-fetch lobbying companies once for all items
-    const { data: lobbyingCompanies } = await supabase
-      .from("companies")
-      .select("id, name, canonical_name")
-      .gt("lobbying_spend", 0)
-      .limit(500);
+    // Pre-fetch all matching data in parallel
+    const [lobbyingRes, tickerRes, industryMapRes] = await Promise.all([
+      supabase.from("companies").select("id, name, canonical_name").gt("lobbying_spend", 0).limit(500),
+      supabase.from("companies").select("id, ticker").not("ticker", "is", null).limit(500),
+      supabase.from("industry_topic_map").select("industry, topic_tag, topic_keywords"),
+    ]);
 
-    // Process and upsert items
+    const lobbyingCompanies = lobbyingRes.data || [];
+    const tickerCompanies = (tickerRes.data || []).filter((c: any) => c.ticker && c.ticker.length >= 2);
+    const industryMap = industryMapRes.data || [];
+
+    // Build industry → company IDs lookup (only companies with lobbying spend = most relevant)
+    const companiesByIndustry = new Map<string, string[]>();
+    {
+      const { data: allCompanies } = await supabase
+        .from("companies")
+        .select("id, industry, lobbying_spend")
+        .gt("lobbying_spend", 0)
+        .order("lobbying_spend", { ascending: false })
+        .limit(1000);
+
+      for (const co of allCompanies || []) {
+        if (!co.industry) continue;
+        const list = companiesByIndustry.get(co.industry) || [];
+        list.push(co.id);
+        companiesByIndustry.set(co.industry, list);
+      }
+    }
+
+    // Process items
     for (const item of allItems) {
       if (!item.link && !item.title) continue;
 
@@ -190,23 +251,22 @@ Deno.serve(async (req) => {
         if (lower.includes(kw)) matchedKeywords.push(kw);
       }
 
-      // Match companies
-      const companyIds: string[] = [];
-      if (lobbyingCompanies) {
-        for (const co of lobbyingCompanies) {
-          const names = [co.name, co.canonical_name].filter(Boolean).map((n: string) => n.toLowerCase());
-          for (const name of names) {
-            if (name.length > 3 && lower.includes(name)) {
-              companyIds.push(co.id);
-              break;
-            }
-          }
-        }
-      }
-
       const relevanceTags = getRelevanceTags(fullText);
-      const isWorkplaceRelevant = matchedKeywords.length > 0 || relevanceTags.includes("labor");
 
+      // ── Three matching strategies ──
+      const nameMatches = matchByName(lower, lobbyingCompanies as any);
+      const tickerMatches = matchByTicker(fullText, tickerCompanies as any);
+      const industryMatches = matchByIndustryTopic(relevanceTags, lower, industryMap as any, companiesByIndustry);
+
+      // Deduplicate
+      const allCompanyIds = [...new Set([...nameMatches, ...tickerMatches, ...industryMatches])];
+
+      // Track stats
+      if (nameMatches.length > 0) results.matched.byName++;
+      if (tickerMatches.length > 0) results.matched.byTicker++;
+      if (industryMatches.length > 0) results.matched.byIndustry++;
+
+      const isWorkplaceRelevant = matchedKeywords.length > 0 || relevanceTags.includes("labor");
       const publishedAt = item.pubDate ? new Date(item.pubDate).toISOString() : null;
 
       const row = {
@@ -215,7 +275,7 @@ Deno.serve(async (req) => {
         summary: stripHtml(item.description).slice(0, 1000) || null,
         source_url: item.link || null,
         published_at: publishedAt,
-        matched_company_ids: companyIds,
+        matched_company_ids: allCompanyIds,
         matched_keywords: matchedKeywords,
         relevance_tags: relevanceTags,
         is_workplace_relevant: isWorkplaceRelevant,
@@ -224,10 +284,9 @@ Deno.serve(async (req) => {
 
       const { error } = await supabase
         .from("congressional_news")
-        .upsert(row, { onConflict: "source_url", ignoreDuplicates: true });
+        .upsert(row, { onConflict: "source_url" });
 
       if (error) {
-        // Likely duplicate or constraint issue — skip
         results.skipped++;
       } else {
         results.inserted++;

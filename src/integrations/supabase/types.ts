@@ -6215,6 +6215,27 @@ export type Database = {
           },
         ]
       }
+      industry_topic_map: {
+        Row: {
+          id: string
+          industry: string
+          topic_keywords: string[]
+          topic_tag: string
+        }
+        Insert: {
+          id?: string
+          industry: string
+          topic_keywords?: string[]
+          topic_tag: string
+        }
+        Update: {
+          id?: string
+          industry?: string
+          topic_keywords?: string[]
+          topic_tag?: string
+        }
+        Relationships: []
+      }
       insider_testimonials: {
         Row: {
           approved_at: string | null
