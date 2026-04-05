@@ -106,7 +106,9 @@ function matchByName(
   return ids;
 }
 
-/** Strategy 2: Ticker mention match ($TSLA, TSLA) */
+/** Strategy 2: Ticker mention match ($TSLA, etc.) */
+const COMMON_WORDS_TICKERS = new Set(["A", "ALL", "AN", "ARE", "AS", "AT", "BE", "BIG", "CAN", "CAR", "CO", "FOR", "HAS", "HE", "IT", "MAN", "NOW", "ON", "ONE", "OR", "OUT", "RUN", "SO", "SUN", "THE", "TO", "TWO", "UP", "US", "WAS"]);
+
 function matchByTicker(
   text: string,
   companies: Array<{ id: string; ticker: string }>
@@ -115,8 +117,16 @@ function matchByTicker(
   for (const co of companies) {
     const t = co.ticker;
     if (!t || t.length < 2) continue;
-    // Match $TSLA or standalone TSLA (word boundary, case-sensitive for tickers)
-    const pattern = new RegExp(`(\\$${t}|\\b${t}\\b)`, t.length <= 2 ? "g" : "gi");
+    // Skip tickers that are common English words unless prefixed with $
+    if (COMMON_WORDS_TICKERS.has(t.toUpperCase())) {
+      // Only match explicit $TICKER notation
+      if (text.includes(`$${t}`)) ids.push(co.id);
+      continue;
+    }
+    // Match $TSLA or standalone TSLA (case-sensitive for short tickers)
+    const pattern = t.length <= 2
+      ? new RegExp(`\\$${t}\\b`)
+      : new RegExp(`(\\$${t}\\b|\\b${t}\\b)`);
     if (pattern.test(text)) {
       ids.push(co.id);
     }
