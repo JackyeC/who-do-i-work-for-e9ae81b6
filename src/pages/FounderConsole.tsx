@@ -10,6 +10,7 @@ import { SignalsDataTab } from "@/components/founder/SignalsDataTab";
 import { UsersFeedbackTab } from "@/components/founder/UsersFeedbackTab";
 import { NotesTab } from "@/components/founder/NotesTab";
 import { DuplicateDetectionTab } from "@/components/founder/DuplicateDetectionTab";
+import { DeskTab } from "@/components/founder/DeskTab";
 import {
   LayoutDashboard, ClipboardList, Radio, Users, StickyNote, ExternalLink, Copy,
 } from "lucide-react";
