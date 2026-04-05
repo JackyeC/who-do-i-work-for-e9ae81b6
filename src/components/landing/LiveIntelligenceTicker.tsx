@@ -76,10 +76,10 @@ export function LiveIntelligenceTicker() {
         }))
         .filter(item => {
           if (!isLikelyEnglish(item.headline)) return false;
+          // If Jackye already vetted it with a real take, trust it
+          if (item.jackye_take && item.jackye_take !== "[FILTERED]") return true;
           const combined = `${item.headline} ${item.source_name || ""}`;
-          // Block garbage content
           if (BLOCKED_CONTENT.test(combined)) return false;
-          // Must have workplace relevance OR come from a trusted source
           const fromTrustedSource = item.source_name && TRUSTED_SOURCES.test(item.source_name);
           const hasRelevance = RELEVANCE_KEYWORDS.test(item.headline);
           return fromTrustedSource || hasRelevance;
