@@ -411,6 +411,20 @@ export default function Quiz() {
   } | null>(null);
   const [showShareModal, setShowShareModal] = useState(false);
 
+  // Restore previous result from localStorage on mount
+  useEffect(() => {
+    const saved = localStorage.getItem("workDnaProfile");
+    if (saved) {
+      try {
+        const parsed = JSON.parse(saved);
+        if (parsed.primary && parsed.secondary && parsed.meta) {
+          setResult(parsed);
+          setStep(TOTAL_QUESTIONS);
+        }
+      } catch {}
+    }
+  }, []);
+
   const isResults = step === TOTAL_QUESTIONS;
   const progressPct = isResults ? 100 : (step / TOTAL_QUESTIONS) * 100;
 
