@@ -473,6 +473,39 @@ export type Database = {
           },
         ]
       }
+      audit_log: {
+        Row: {
+          action: string
+          actor_email: string | null
+          actor_id: string | null
+          created_at: string
+          id: string
+          metadata: Json | null
+          target_id: string | null
+          target_table: string | null
+        }
+        Insert: {
+          action: string
+          actor_email?: string | null
+          actor_id?: string | null
+          created_at?: string
+          id?: string
+          metadata?: Json | null
+          target_id?: string | null
+          target_table?: string | null
+        }
+        Update: {
+          action?: string
+          actor_email?: string | null
+          actor_id?: string | null
+          created_at?: string
+          id?: string
+          metadata?: Json | null
+          target_id?: string | null
+          target_table?: string | null
+        }
+        Relationships: []
+      }
       audit_requests: {
         Row: {
           company_name: string
@@ -11806,18 +11839,30 @@ export type Database = {
           additional_slots: number | null
           current_period_end: string | null
           plan_id: string | null
+          status: string
+          stripe_customer_id: string | null
+          stripe_subscription_id: string | null
+          updated_at: string
           user_id: string
         }
         Insert: {
           additional_slots?: number | null
           current_period_end?: string | null
           plan_id?: string | null
+          status?: string
+          stripe_customer_id?: string | null
+          stripe_subscription_id?: string | null
+          updated_at?: string
           user_id: string
         }
         Update: {
           additional_slots?: number | null
           current_period_end?: string | null
           plan_id?: string | null
+          status?: string
+          stripe_customer_id?: string | null
+          stripe_subscription_id?: string | null
+          updated_at?: string
           user_id?: string
         }
         Relationships: [
