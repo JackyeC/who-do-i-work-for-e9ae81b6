@@ -50,14 +50,14 @@ export function MarketingNav() {
             {user ? (
               <>
                 <Link
-                  to="/applications"
+                  to="/ask-jackye"
                   className={`font-sans text-sm transition-colors ${
-                    location.pathname === "/applications"
+                    location.pathname === "/ask-jackye"
                       ? "text-foreground font-medium"
                       : "text-muted-foreground hover:text-foreground"
                   }`}
                 >
-                  Applications
+                  Ask Jackye
                 </Link>
                 <Button size="sm" variant="outline" onClick={() => navigate("/dashboard")} className="font-sans text-sm">
                   Dashboard
@@ -100,13 +100,13 @@ export function MarketingNav() {
             {user ? (
               <>
                 <Link
-                  to="/applications"
+                  to="/ask-jackye"
                   onClick={() => setMobileMenuOpen(false)}
                   className={`font-sans text-sm py-2 transition-colors ${
-                    location.pathname === "/applications" ? "text-foreground font-medium" : "text-muted-foreground hover:text-foreground"
+                    location.pathname === "/ask-jackye" ? "text-foreground font-medium" : "text-muted-foreground hover:text-foreground"
                   }`}
                 >
-                  Applications
+                  Ask Jackye
                 </Link>
                 <Button size="sm" variant="outline" onClick={() => { setMobileMenuOpen(false); navigate("/dashboard"); }} className="w-full mt-2">
                   Dashboard
