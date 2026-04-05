@@ -85,9 +85,9 @@ Deno.serve(async (req: Request) => {
     let emailSent = false;
     const supabase = getSupabaseAdmin();
 
-    // Attempt email delivery
-    const lovableApiKey = Deno.env.get("LOVABLE_API_KEY");
-    if (lovableApiKey) {
+    // Attempt email delivery via Resend
+    const resendApiKey = Deno.env.get("RESEND_API_KEY");
+    if (resendApiKey) {
       const safeName = escapeHtml(cleanName);
       const safeEmail = escapeHtml(cleanEmail);
       const safeReason = escapeHtml(cleanReason);
@@ -105,33 +105,31 @@ Deno.serve(async (req: Request) => {
         </div>
       `;
 
-      const text = [
-        "New contact submission",
-        `Name: ${cleanName}`,
-        `Email: ${cleanEmail}`,
-        `Reason: ${cleanReason}`,
-        "",
-        "Message:",
-        cleanMessage,
-      ].join("\n");
-
       try {
-        const emailResponse = await fetch("https://email.lovable.dev/v1/send", {
+        const emailResponse = await fetch("https://api.resend.com/emails", {
           method: "POST",
           headers: {
-            Authorization: `Bearer ${lovableApiKey}`,
+            Authorization: `Bearer ${resendApiKey}`,
             "Content-Type": "application/json",
           },
-          body: JSON.stringify({ to: CONTACT_EMAIL, subject, html, text }),
+          body: JSON.stringify({
+            from: "Who Do I Work For <onboarding@resend.dev>",
+            to: [CONTACT_EMAIL],
+            subject,
+            html,
+          }),
         });
 
         emailSent = emailResponse.ok;
         if (!emailSent) {
-          console.error("Email send failed:", emailResponse.status);
+          const errBody = await emailResponse.text();
+          console.error("Resend email failed:", emailResponse.status, errBody);
         }
       } catch (emailErr) {
-        console.error("Email send error:", emailErr);
+        console.error("Resend email error:", emailErr);
       }
+    } else {
+      console.warn("RESEND_API_KEY not configured, skipping email delivery");
     }
 
     // Save to database (never loses a submission)
