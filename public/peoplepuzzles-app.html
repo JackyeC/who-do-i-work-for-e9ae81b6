@@ -2615,8 +2615,37 @@ document.getElementById('tut-skip').addEventListener('click',function(){
 });
 
 // ============================
-// FEEDBACK BUTTON
+// DEFERRED NAME CAPTURE BANNER
 // ============================
+var nameBannerShown=false;
+function showNameCaptureBanner(){
+  if(nameBannerShown) return;
+  if(playerName!=='People Puzzler' && playerEmail) return; // already captured
+  nameBannerShown=true;
+  var banner=document.getElementById('name-banner');
+  banner.style.display='flex';
+  // Auto-hide after 15 seconds if not interacted with
+  var autoHide=setTimeout(function(){ banner.style.display='none' },15000);
+
+  document.getElementById('banner-save').addEventListener('click',function(){
+    clearTimeout(autoHide);
+    var n=document.getElementById('banner-name').value.trim();
+    var e=document.getElementById('banner-email').value.trim();
+    if(n) playerName=n;
+    if(e) playerEmail=e;
+    // Pre-fill gate/signup forms
+    if(n){var gn=document.getElementById('gate-name');var sn=document.getElementById('signup-name');if(gn)gn.value=n;if(sn)sn.value=n;}
+    if(e){var ge=document.getElementById('gate-email');var se=document.getElementById('signup-email');if(ge)ge.value=e;if(se)se.value=e;}
+    banner.style.display='none';
+    saveLead();
+  });
+  document.getElementById('banner-dismiss').addEventListener('click',function(){
+    clearTimeout(autoHide);
+    banner.style.display='none';
+  });
+}
+
+
 document.getElementById('feedback-btn').addEventListener('click',function(){
   var subject=encodeURIComponent('PeoplePuzzles Feedback \u2014 from '+playerName);
   var body=encodeURIComponent('Hey Jackye,\n\nJust played PeoplePuzzles and wanted to share some feedback:\n\n[Your feedback here]\n\nDiscovered: '+state.discovered.length+'/'+TOTAL+'\nScore: '+state.score+'\n\n\u2014 '+playerName);
