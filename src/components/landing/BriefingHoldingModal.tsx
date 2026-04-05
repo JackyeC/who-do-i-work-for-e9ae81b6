@@ -147,11 +147,7 @@ export function BriefingHoldingModal({ open, onClose }: BriefingHoldingModalProp
               >
                 <motion.div
                   initial={{ scale: 0 }}
-                  animate={[
-                    { scale: 1 },
-                    { scale: 1.15 },
-                    { scale: 1 },
-                  ]}
+                  animate={{ scale: [0, 1.15, 1] }}
                   transition={{ duration: 0.6, times: [0, 0.5, 1], ease: "easeOut" }}
                   className="w-14 h-14 rounded-full bg-primary/10 flex items-center justify-center mx-auto mb-5"
                 >
