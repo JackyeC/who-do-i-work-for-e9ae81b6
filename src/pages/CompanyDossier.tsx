@@ -578,17 +578,18 @@ export default function CompanyDossier() {
 
       {/* ── POWER & INFLUENCE ── */}
       <div id="political-giving">
-      <PowerInfluenceView
-        companyName={company.name}
-        companyId={companyId!}
-        totalPacSpending={company.total_pac_spending ?? 0}
-        lobbyingSpend={company.lobbying_spend ?? 0}
-        candidates={(candidates || []) as any}
-        executives={(executives || []) as any}
-        boardMembers={(dossierBoardMembers || []) as any}
-        partyBreakdown={(partyBreakdown || []) as any}
-        evidenceRecords={evidenceRecords}
-      />
+        <PowerInfluenceView
+          companyName={company.name}
+          companyId={companyId!}
+          totalPacSpending={company.total_pac_spending ?? 0}
+          lobbyingSpend={company.lobbying_spend ?? 0}
+          candidates={(candidates || []) as any}
+          executives={(executives || []) as any}
+          boardMembers={(dossierBoardMembers || []) as any}
+          partyBreakdown={(partyBreakdown || []) as any}
+          evidenceRecords={evidenceRecords}
+        />
+      </div>
 
       <p className="text-xs text-muted-foreground leading-relaxed max-w-xl mb-6">
         This is a background check on the employer — built from public records, not opinions.
