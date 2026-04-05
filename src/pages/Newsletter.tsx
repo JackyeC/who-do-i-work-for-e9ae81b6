@@ -589,240 +589,234 @@ export default function Newsletter() {
         </div>
       </header>
 
-      {/* ── Founding Member CTA ── */}
-      {user && (
-        <section className="max-w-5xl mx-auto px-4 py-4">
-          <button onClick={() => setShowBadge(true)}
-            className="w-full rounded-xl bg-gradient-to-r from-primary/10 via-primary/5 to-primary/10 border border-primary/20 hover:border-primary/40 transition-all p-4 flex items-center gap-4 group cursor-pointer">
-            <div className="shrink-0 w-10 h-10 rounded-full bg-primary/10 border border-primary/30 flex items-center justify-center">
-              <Award className="w-5 h-5 text-primary" />
-            </div>
-            <div className="text-left flex-1 min-w-0">
-              <p className="text-sm font-bold text-foreground">You're a Founding Member 🎖️</p>
-              <p className="text-xs text-muted-foreground">Download your badge and share it on LinkedIn.</p>
-            </div>
-            <ArrowRight className="w-4 h-4 text-primary shrink-0 group-hover:translate-x-1 transition-transform" />
-          </button>
-        </section>
-      )}
-      {showBadge && (
-        <FoundingMemberBadge memberName={user?.email?.split("@")[0]} joinedDate={user?.created_at} onClose={() => setShowBadge(false)} />
-      )}
+      {/* ── Main 2-Column Layout (starts right after masthead) ── */}
+      <div className="max-w-5xl mx-auto px-4 grid grid-cols-1 lg:grid-cols-[1fr_280px] gap-10 items-start">
+        {/* ── Left Column: Feed ── */}
+        <div>
+          {/* ── Founding Member CTA ── */}
+          {user && (
+            <section className="py-4">
+              <button onClick={() => setShowBadge(true)}
+                className="w-full rounded-xl bg-gradient-to-r from-primary/10 via-primary/5 to-primary/10 border border-primary/20 hover:border-primary/40 transition-all p-4 flex items-center gap-4 group cursor-pointer">
+                <div className="shrink-0 w-10 h-10 rounded-full bg-primary/10 border border-primary/30 flex items-center justify-center">
+                  <Award className="w-5 h-5 text-primary" />
+                </div>
+                <div className="text-left flex-1 min-w-0">
+                  <p className="text-sm font-bold text-foreground">You're a Founding Member 🎖️</p>
+                  <p className="text-xs text-muted-foreground">Download your badge and share it on LinkedIn.</p>
+                </div>
+                <ArrowRight className="w-4 h-4 text-primary shrink-0 group-hover:translate-x-1 transition-transform" />
+              </button>
+            </section>
+          )}
+          {showBadge && (
+            <FoundingMemberBadge memberName={user?.email?.split("@")[0]} joinedDate={user?.created_at} onClose={() => setShowBadge(false)} />
+          )}
 
-      {/* ── Moving Now ── */}
-      {movingNow.length > 0 && (
-        <section className="border-b border-border bg-destructive/[0.03]">
-          <div className="max-w-5xl mx-auto px-4 py-4">
-            <div className="flex items-center gap-2 mb-3">
-              <Zap className="w-3.5 h-3.5 text-destructive" />
-              <span className="text-[10px] font-mono tracking-[0.2em] uppercase text-destructive font-bold">Moving Now</span>
-              <Clock className="w-3 h-3 text-muted-foreground/50 ml-1" />
-              <span className="text-[10px] text-muted-foreground/50 font-mono">Last 2 hours</span>
-            </div>
-            <div className="space-y-2">
-              {movingNow.map((article) => (
-                <button key={article.id}
-                  onClick={() => document.getElementById(`story-${article.id}`)?.scrollIntoView({ behavior: "smooth", block: "start" })}
-                  className="flex items-center gap-3 py-2 px-3 rounded-lg hover:bg-card/50 transition-colors group w-full text-left">
-                  <CategoryBadge category={article.category} />
-                  <p className="text-sm font-medium text-foreground group-hover:text-primary transition-colors flex-1 truncate">
-                    {article.headline}
-                  </p>
-                  <SpicePeppers level={article.spice_level} />
-                  <span className="text-[10px] text-muted-foreground/50 font-mono shrink-0">{timeAgo(article.published_at)}</span>
-                </button>
-              ))}
-            </div>
-          </div>
-        </section>
-      )}
+          {/* ── Moving Now ── */}
+          {movingNow.length > 0 && (
+            <section className="border-b border-border bg-destructive/[0.03] rounded-xl mb-6 -mx-1 px-1">
+              <div className="py-4">
+                <div className="flex items-center gap-2 mb-3">
+                  <Zap className="w-3.5 h-3.5 text-destructive" />
+                  <span className="text-[10px] font-mono tracking-[0.2em] uppercase text-destructive font-bold">Moving Now</span>
+                  <Clock className="w-3 h-3 text-muted-foreground/50 ml-1" />
+                  <span className="text-[10px] text-muted-foreground/50 font-mono">Last 2 hours</span>
+                </div>
+                <div className="space-y-2">
+                  {movingNow.map((article) => (
+                    <button key={article.id}
+                      onClick={() => document.getElementById(`story-${article.id}`)?.scrollIntoView({ behavior: "smooth", block: "start" })}
+                      className="flex items-center gap-3 py-2 px-3 rounded-lg hover:bg-card/50 transition-colors group w-full text-left">
+                      <CategoryBadge category={article.category} />
+                      <p className="text-sm font-medium text-foreground group-hover:text-primary transition-colors flex-1 truncate">
+                        {article.headline}
+                      </p>
+                      <SpicePeppers level={article.spice_level} />
+                      <span className="text-[10px] text-muted-foreground/50 font-mono shrink-0">{timeAgo(article.published_at)}</span>
+                    </button>
+                  ))}
+                </div>
+              </div>
+            </section>
+          )}
 
-      {/* ── Daily Wrap (from Work Signal) ── */}
-      {dailyWrap && (
-        <section className="border-b border-border bg-muted/20">
-          <div className="max-w-5xl mx-auto px-4 py-8">
-            <div className="border-l-2 border-primary pl-5 py-1">
-              <div className="flex items-baseline gap-3 mb-3">
-                <h2 className="text-xl font-bold text-foreground">
-                  {dailyWrap.title}
-                </h2>
-                <span className="text-[11px] text-muted-foreground font-mono">
-                  {format(new Date(dailyWrap.wrap_date), "MMMM d, yyyy")}
+          {/* ── Daily Wrap ── */}
+          {dailyWrap && (
+            <section className="border-b border-border bg-muted/20 rounded-xl mb-6 -mx-1 px-1">
+              <div className="py-8">
+                <div className="border-l-2 border-primary pl-5 py-1">
+                  <div className="flex items-baseline gap-3 mb-3">
+                    <h2 className="text-xl font-bold text-foreground">
+                      {dailyWrap.title}
+                    </h2>
+                    <span className="text-[11px] text-muted-foreground font-mono">
+                      {format(new Date(dailyWrap.wrap_date), "MMMM d, yyyy")}
+                    </span>
+                  </div>
+                  {dailyWrap.intro && (
+                    <p className="text-base text-foreground/85 leading-relaxed mb-3 whitespace-pre-line">
+                      {dailyWrap.intro}
+                    </p>
+                  )}
+                  {dailyWrap.summary_take && (
+                    <p className="text-sm text-foreground/60 italic leading-relaxed border-t border-border/40 pt-3">
+                      {dailyWrap.summary_take}
+                    </p>
+                  )}
+                </div>
+              </div>
+            </section>
+          )}
+
+          {/* ── Filter Bar ── */}
+          <nav className="border-b border-border sticky top-0 bg-background/95 backdrop-blur-sm z-20 -mx-4 px-4 mb-8">
+            <div className="py-3">
+              <div className="flex items-center gap-2 overflow-x-auto scrollbar-none flex-wrap">
+                {FILTER_OPTIONS.map((opt) => (
+                  <button key={opt.value} onClick={() => setFilter(opt.value)}
+                    className={`px-3.5 py-1.5 rounded-full text-xs font-mono tracking-wider border transition-all whitespace-nowrap ${
+                      filter === opt.value
+                        ? "bg-primary text-primary-foreground border-primary"
+                        : "bg-card text-muted-foreground border-border/40 hover:border-primary/40 hover:text-foreground"
+                    }`}>
+                    {opt.label}
+                  </button>
+                ))}
+
+                <span className="w-px h-4 bg-border/50 mx-1" />
+
+                {SORT_OPTIONS.map((opt) => (
+                  <button key={opt.value} onClick={() => setSortBy(opt.value)}
+                    className={`text-[10px] font-mono uppercase tracking-wider px-2.5 py-1 rounded transition-colors whitespace-nowrap ${
+                      sortBy === opt.value
+                        ? "text-primary font-bold"
+                        : "text-muted-foreground hover:text-foreground"
+                    }`}>
+                    {opt.label}
+                  </button>
+                ))}
+
+                <span className="w-px h-4 bg-border/50 mx-1" />
+
+                <div className="relative flex items-center">
+                  <Search className="w-3 h-3 text-muted-foreground absolute left-2" />
+                  <input
+                    type="text"
+                    value={searchQuery}
+                    onChange={(e) => setSearchQuery(e.target.value)}
+                    placeholder="Search..."
+                    className="bg-card border border-border/40 rounded-lg pl-7 pr-3 py-1.5 text-xs text-foreground placeholder:text-muted-foreground/50 focus:outline-none focus:border-primary/40 w-36 transition-all"
+                  />
+                </div>
+
+                <span className="ml-auto text-[10px] text-muted-foreground/50 font-mono whitespace-nowrap">
+                  {filtered.length} stories
                 </span>
               </div>
-              {dailyWrap.intro && (
-                <p className="text-base text-foreground/85 leading-relaxed mb-3 whitespace-pre-line">
-                  {dailyWrap.intro}
-                </p>
-              )}
-              {dailyWrap.summary_take && (
-                <p className="text-sm text-foreground/60 italic leading-relaxed border-t border-border/40 pt-3">
-                  {dailyWrap.summary_take}
-                </p>
-              )}
             </div>
-          </div>
-        </section>
-      )}
+          </nav>
 
-      {/* ── Filter Bar ── */}
-      <nav className="border-b border-border sticky top-0 bg-background/95 backdrop-blur-sm z-20">
-        <div className="max-w-5xl mx-auto px-4 py-3">
-          <div className="flex items-center gap-2 overflow-x-auto scrollbar-none flex-wrap">
-            {/* Category chips */}
-            {FILTER_OPTIONS.map((opt) => (
-              <button key={opt.value} onClick={() => setFilter(opt.value)}
-                className={`px-3.5 py-1.5 rounded-full text-xs font-mono tracking-wider border transition-all whitespace-nowrap ${
-                  filter === opt.value
-                    ? "bg-primary text-primary-foreground border-primary"
-                    : "bg-card text-muted-foreground border-border/40 hover:border-primary/40 hover:text-foreground"
-                }`}>
-                {opt.label}
-              </button>
-            ))}
+          {/* ── Feed ── */}
+          <main className="space-y-0">
+            {isLoading ? (
+              <div className="flex flex-col items-center gap-3 py-20">
+                <div className="w-6 h-6 border-2 border-primary/30 border-t-primary rounded-full animate-spin" />
+                <p className="text-sm text-muted-foreground font-mono">Loading intelligence...</p>
+              </div>
+            ) : filtered.length === 0 ? (
+              <div className="text-center py-16">
+                <Newspaper className="w-8 h-8 text-muted-foreground/30 mx-auto mb-3" />
+                <p className="text-sm text-muted-foreground">No stories match your filters.</p>
+              </div>
+            ) : (
+              <>
+                <WireEditionHeader storyCount={filtered.length} />
 
-            <span className="w-px h-4 bg-border/50 mx-1" />
+                {filter === "all" && sortBy === "newest" && !searchQuery && (
+                  <EditorsNote />
+                )}
 
-            {/* Sort buttons */}
-            {SORT_OPTIONS.map((opt) => (
-              <button key={opt.value} onClick={() => setSortBy(opt.value)}
-                className={`text-[10px] font-mono uppercase tracking-wider px-2.5 py-1 rounded transition-colors whitespace-nowrap ${
-                  sortBy === opt.value
-                    ? "text-primary font-bold"
-                    : "text-muted-foreground hover:text-foreground"
-                }`}>
-                {opt.label}
-              </button>
-            ))}
-
-            <span className="w-px h-4 bg-border/50 mx-1" />
-
-            {/* Search */}
-            <div className="relative flex items-center">
-              <Search className="w-3 h-3 text-muted-foreground absolute left-2" />
-              <input
-                type="text"
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-                placeholder="Search..."
-                className="bg-card border border-border/40 rounded-lg pl-7 pr-3 py-1.5 text-xs text-foreground placeholder:text-muted-foreground/50 focus:outline-none focus:border-primary/40 w-36 transition-all"
-              />
-            </div>
-
-            <span className="ml-auto text-[10px] text-muted-foreground/50 font-mono whitespace-nowrap">
-              {filtered.length} stories
-            </span>
-          </div>
-        </div>
-      </nav>
-
-      {/* ── Main Content: Feed + Sidebar ── */}
-      <div className="max-w-5xl mx-auto px-4 py-12 grid grid-cols-1 lg:grid-cols-[1fr_300px] gap-12 items-start">
-        <main className="space-y-0">
-          {isLoading ? (
-            <div className="flex flex-col items-center gap-3 py-20">
-              <div className="w-6 h-6 border-2 border-primary/30 border-t-primary rounded-full animate-spin" />
-              <p className="text-sm text-muted-foreground font-mono">Loading intelligence...</p>
-            </div>
-          ) : filtered.length === 0 ? (
-            <div className="text-center py-16">
-              <Newspaper className="w-8 h-8 text-muted-foreground/30 mx-auto mb-3" />
-              <p className="text-sm text-muted-foreground">No stories match your filters.</p>
-            </div>
-          ) : (
-            <>
-              {/* ── Wire Edition Header ── */}
-              <WireEditionHeader storyCount={filtered.length} />
-
-              {/* ── Editor's Note ── */}
-              {filter === "all" && sortBy === "newest" && !searchQuery && (
-                <EditorsNote />
-              )}
-
-              {/* ── Jackye's Current Take (pull quote) ── */}
-              {currentTake && filter === "all" && sortBy === "newest" && !searchQuery && (
-                <div className="mb-10 rounded-xl border border-primary/20 bg-primary/[0.04] p-8">
-                  <div className="flex items-center gap-2 mb-4">
-                    <Eye className="w-4 h-4 text-primary" />
-                    <span className="text-xs font-mono tracking-[0.2em] uppercase text-primary font-bold">Jackye's Current Take</span>
+                {currentTake && filter === "all" && sortBy === "newest" && !searchQuery && (
+                  <div className="mb-10 rounded-xl border border-primary/20 bg-primary/[0.04] p-8">
+                    <div className="flex items-center gap-2 mb-4">
+                      <Eye className="w-4 h-4 text-primary" />
+                      <span className="text-xs font-mono tracking-[0.2em] uppercase text-primary font-bold">Jackye's Current Take</span>
+                    </div>
+                    <blockquote className="text-xl text-foreground leading-[1.8] italic border-l-2 border-primary pl-5 font-light" style={{ fontFamily: "'DM Sans', cursive, sans-serif" }}>
+                      "{currentTake.jackye_take}"
+                    </blockquote>
+                    <button
+                      onClick={() => document.getElementById(`story-${currentTake.id}`)?.scrollIntoView({ behavior: "smooth", block: "start" })}
+                      className="text-sm text-foreground/60 mt-4 cursor-pointer hover:text-primary transition-colors group/take flex items-center gap-1"
+                    >
+                      Re: <span className="text-foreground/80 font-semibold group-hover/take:text-primary transition-colors">{currentTake.headline}</span>
+                      <ArrowRight className="w-3 h-3 opacity-0 group-hover/take:opacity-100 transition-opacity" />
+                    </button>
                   </div>
-                  <blockquote className="text-xl text-foreground leading-[1.8] italic border-l-2 border-primary pl-5 font-light" style={{ fontFamily: "'DM Sans', cursive, sans-serif" }}>
-                    "{currentTake.jackye_take}"
-                  </blockquote>
-                  <button
-                    onClick={() => document.getElementById(`story-${currentTake.id}`)?.scrollIntoView({ behavior: "smooth", block: "start" })}
-                    className="text-sm text-foreground/60 mt-4 cursor-pointer hover:text-primary transition-colors group/take flex items-center gap-1"
-                  >
-                    Re: <span className="text-foreground/80 font-semibold group-hover/take:text-primary transition-colors">{currentTake.headline}</span>
-                    <ArrowRight className="w-3 h-3 opacity-0 group-hover/take:opacity-100 transition-opacity" />
-                  </button>
-                </div>
-              )}
+                )}
 
-              {/* ── Lead Story — Poster Card ── */}
-              {withTakes.length > 0 && (
-                <div className="mb-10">
-                  <SignalStoryCard story={toSignalStory(withTakes[0])} />
-                </div>
-              )}
+                {withTakes.length > 0 && (
+                  <div className="mb-10">
+                    <SignalStoryCard story={toSignalStory(withTakes[0])} />
+                  </div>
+                )}
 
-              {/* ── Jackye's Takes — poster cards ── */}
-              {withTakes.length > 1 && (
-                <div className="mb-10">
-                  <div className="flex items-center gap-3 mb-6">
-                    <Star className="w-4 h-4 text-primary" />
-                    <h2 className="text-xs font-mono tracking-[0.2em] uppercase text-primary font-bold">Jackye's Takes</h2>
+                {withTakes.length > 1 && (
+                  <div className="mb-10">
+                    <div className="flex items-center gap-3 mb-6">
+                      <Star className="w-4 h-4 text-primary" />
+                      <h2 className="text-xs font-mono tracking-[0.2em] uppercase text-primary font-bold">Jackye's Takes</h2>
+                      <div className="flex-1 h-px bg-border" />
+                      <span className="text-[10px] text-muted-foreground/50 font-mono">{withTakes.length - 1} more</span>
+                    </div>
+                    <div className="grid md:grid-cols-2 gap-5">
+                      {withTakes.slice(1, visibleCount).map((article) => (
+                        <SignalStoryCard key={article.id} story={toSignalStory(article)} />
+                      ))}
+                    </div>
+                  </div>
+                )}
+
+                {withoutTakes.length > 0 && (
+                  <div className="flex items-center gap-4 my-10">
                     <div className="flex-1 h-px bg-border" />
-                    <span className="text-[10px] text-muted-foreground/50 font-mono">{withTakes.length - 1} more</span>
+                    <span className="text-xs uppercase tracking-[0.3em] text-muted-foreground font-mono font-bold">Quick Signals</span>
+                    <div className="flex-1 h-px bg-border" />
                   </div>
-                  <div className="grid md:grid-cols-2 gap-5">
-                    {withTakes.slice(1, visibleCount).map((article) => (
-                      <SignalStoryCard key={article.id} story={toSignalStory(article)} />
-                    ))}
+                )}
+
+                {withoutTakes.length > 0 && (
+                  <div>
+                    <div className="flex items-center gap-2 mb-5">
+                      <TrendingUp className="w-4 h-4 text-muted-foreground" />
+                      <h2 className="text-[10px] font-mono tracking-[0.2em] uppercase text-muted-foreground font-bold">All Signals</h2>
+                    </div>
+                    <div className="grid md:grid-cols-2 gap-4">
+                      {withoutTakes.slice(0, Math.max(0, visibleCount - withTakes.length)).map((article) => (
+                        <WireItem key={article.id} article={article} />
+                      ))}
+                    </div>
                   </div>
-                </div>
-              )}
+                )}
 
-              {/* ── Quick Signals / The Wire ── */}
-              {withoutTakes.length > 0 && (
-                <div className="flex items-center gap-4 my-10">
-                  <div className="flex-1 h-px bg-border" />
-                  <span className="text-xs uppercase tracking-[0.3em] text-muted-foreground font-mono font-bold">Quick Signals</span>
-                  <div className="flex-1 h-px bg-border" />
-                </div>
-              )}
-
-              {withoutTakes.length > 0 && (
-                <div>
-                  <div className="flex items-center gap-2 mb-5">
-                    <TrendingUp className="w-4 h-4 text-muted-foreground" />
-                    <h2 className="text-[10px] font-mono tracking-[0.2em] uppercase text-muted-foreground font-bold">All Signals</h2>
+                {visibleCount < (withTakes.length + withoutTakes.length) && (
+                  <div className="flex justify-center mt-10">
+                    <button
+                      onClick={() => setVisibleCount((c) => c + PAGE_SIZE)}
+                      className="px-8 py-3 border border-border rounded-xl text-sm font-semibold text-foreground hover:border-primary/40 hover:text-primary transition-all font-mono tracking-wider"
+                    >
+                      Load More Signals
+                    </button>
                   </div>
-                  <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
-                    {withoutTakes.slice(0, Math.max(0, visibleCount - withTakes.length)).map((article) => (
-                      <WireItem key={article.id} article={article} />
-                    ))}
-                  </div>
-                </div>
-              )}
+                )}
+              </>
+            )}
+          </main>
+        </div>
 
-              {/* ── Load More ── */}
-              {visibleCount < (withTakes.length + withoutTakes.length) && (
-                <div className="flex justify-center mt-10">
-                  <button
-                    onClick={() => setVisibleCount((c) => c + PAGE_SIZE)}
-                    className="px-8 py-3 border border-border rounded-xl text-sm font-semibold text-foreground hover:border-primary/40 hover:text-primary transition-all font-mono tracking-wider"
-                  >
-                    Load More Signals
-                  </button>
-                </div>
-              )}
-            </>
-          )}
-        </main>
-
-        {/* ── Sidebar ── */}
-        <aside className="hidden lg:block sticky top-[74px] space-y-6">
+        {/* ── Sidebar (now starts at top of content, not buried below) ── */}
+        <aside className="hidden lg:block sticky top-[74px] space-y-6 pt-4">
           {/* Subscribe CTA */}
           <div className="bg-card border border-border rounded-xl p-6">
             <p className="text-[11px] uppercase tracking-[0.55em] text-primary mb-3 font-mono">Every Morning</p>
