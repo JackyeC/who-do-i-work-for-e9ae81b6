@@ -1035,6 +1035,8 @@ function ResultsScreen({
         <div className="flex flex-col sm:flex-row items-center gap-3">
           <a
             href="/login"
+            className="quiz-focus-ring"
+            aria-label="Create free account"
             style={{
               background: "#f0c040",
               color: "#0a0a0e",
@@ -1052,6 +1054,8 @@ function ResultsScreen({
           </a>
           <button
             onClick={() => setShowShareModal(true)}
+            className="quiz-focus-ring"
+            aria-label="Share your Workplace DNA"
             style={{
               background: "#221f30",
               border: "1px solid rgba(240,192,64,0.3)",
@@ -1075,6 +1079,8 @@ function ResultsScreen({
           </button>
           <button
             onClick={onCopy}
+            className="quiz-focus-ring"
+            aria-label="Copy profile text to clipboard"
             style={{
               background: "#221f30",
               border: "1px solid rgba(255,255,255,0.07)",
