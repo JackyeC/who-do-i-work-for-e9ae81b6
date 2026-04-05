@@ -707,7 +707,7 @@ export default function Quiz() {
         style={{
           width: `${(TOTAL_QUESTIONS + 1) * 100}vw`,
           transform: `translateX(-${step * 100}vw)`,
-          transition: "transform 0.5s cubic-bezier(0.16,1,0.3,1)",
+          transition: "transform 0.35s cubic-bezier(0.16,1,0.3,1)",
         }}
       >
         {/* Question screens */}
