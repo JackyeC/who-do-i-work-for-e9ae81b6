@@ -395,6 +395,86 @@ function resolvePersonas(
   return { primary: entries[0][0], secondary: entries[1][0] };
 }
 
+// ─── WELCOME BACK INTERSTITIAL ───────────────────────────
+function WelcomeBackInterstitial({
+  profileName,
+  onViewResults,
+  onRetake,
+}: {
+  profileName: string;
+  onViewResults: () => void;
+  onRetake: () => void;
+}) {
+  const autoTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const [countdown, setCountdown] = useState(3);
+
+  useEffect(() => {
+    // Countdown display
+    const interval = setInterval(() => {
+      setCountdown((c) => {
+        if (c <= 1) { clearInterval(interval); return 0; }
+        return c - 1;
+      });
+    }, 1000);
+    // Auto-advance after 3s
+    autoTimerRef.current = setTimeout(onViewResults, 3000);
+    return () => {
+      clearInterval(interval);
+      if (autoTimerRef.current) clearTimeout(autoTimerRef.current);
+    };
+  }, [onViewResults]);
+
+  const handleRetake = () => {
+    if (autoTimerRef.current) clearTimeout(autoTimerRef.current);
+    onRetake();
+  };
+
+  return (
+    <div
+      className="fixed inset-0 overflow-hidden flex items-center justify-center"
+      style={{ background: "#0a0a0e", fontFamily: "'DM Sans', sans-serif" }}
+    >
+      <motion.div
+        initial={{ opacity: 0, y: 12 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.35, ease: [0.22, 1, 0.36, 1] }}
+        className="text-center max-w-[400px] px-6"
+      >
+        <div className="text-4xl mb-4">♕</div>
+        <h2 className="text-xl font-bold mb-2" style={{ color: "#f5f0e8" }}>
+          Welcome back, {profileName}.
+        </h2>
+        <p className="text-sm mb-6" style={{ color: "rgba(245,240,232,0.55)" }}>
+          Your intelligence profile is ready.
+        </p>
+        <div className="flex flex-col gap-3">
+          <button
+            onClick={() => {
+              if (autoTimerRef.current) clearTimeout(autoTimerRef.current);
+              onViewResults();
+            }}
+            className="px-6 py-3 text-sm font-mono tracking-wider uppercase font-bold transition-all hover:opacity-90 rounded-sm"
+            style={{
+              background: "hsl(var(--primary))",
+              color: "#0a0a0e",
+              boxShadow: "0 0 20px rgba(201,168,76,0.25)",
+            }}
+          >
+            View My Results{countdown > 0 ? ` (${countdown}s)` : ""}
+          </button>
+          <button
+            onClick={handleRetake}
+            className="px-6 py-3 text-xs font-mono tracking-wider uppercase border transition-opacity hover:opacity-80"
+            style={{ borderColor: "rgba(245,240,232,0.12)", color: "rgba(245,240,232,0.45)" }}
+          >
+            Start fresh instead
+          </button>
+        </div>
+      </motion.div>
+    </div>
+  );
+}
+
 // ─── COMPONENT ───────────────────────────────────────────
 const TOTAL_QUESTIONS = 7;
 
@@ -659,68 +739,45 @@ export default function Quiz() {
         className="fixed inset-0 overflow-hidden flex items-center justify-center"
         style={{ background: "#0a0a0e", fontFamily: "'DM Sans', sans-serif" }}
       >
-        <div className="flex flex-col items-center gap-4">
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ duration: 0.2 }}
+          className="flex flex-col items-center gap-4"
+        >
           <div
             className="w-10 h-10 rounded-full border-2 border-transparent"
             style={{
               borderTopColor: "#C9A84C",
-              animation: "spin 0.8s linear infinite",
+              animation: "spin 0.6s linear infinite",
             }}
           />
-          <p style={{ color: "rgba(245,240,232,0.4)", fontSize: 13, fontFamily: "'DM Sans', sans-serif" }}>
-            Checking your profile…
-          </p>
-        </div>
+          <motion.p
+            animate={{ opacity: [0.35, 0.6, 0.35] }}
+            transition={{ duration: 1.8, repeat: Infinity, ease: "easeInOut" }}
+            style={{ color: "rgba(245,240,232,0.5)", fontSize: 13, fontFamily: "'DM Sans', sans-serif" }}
+          >
+            Loading your profile…
+          </motion.p>
+        </motion.div>
       </div>
     );
   }
 
-  // Welcome-back interstitial for returning visitors
+  // Welcome-back interstitial for returning visitors — auto-advances after 2s
   if (showWelcomeBack && savedProfile) {
     const profileName = PERSONA_PROFILES[savedProfile.primary]?.name || "Your Profile";
+    const goToResults = () => {
+      setResult(savedProfile);
+      setStep(TOTAL_QUESTIONS);
+      setShowWelcomeBack(false);
+    };
     return (
-      <div
-        className="fixed inset-0 overflow-hidden flex items-center justify-center"
-        style={{ background: "#0a0a0e", fontFamily: "'DM Sans', sans-serif" }}
-      >
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
-          className="text-center max-w-[400px] px-6"
-        >
-          <div className="text-4xl mb-4">♕</div>
-          <h2 className="text-xl font-bold mb-2" style={{ color: "#f5f0e8" }}>
-            Welcome back, {profileName}.
-          </h2>
-          <p className="text-sm mb-8" style={{ color: "rgba(245,240,232,0.55)" }}>
-            You already have a Work DNA profile. Pick up where you left off or start fresh.
-          </p>
-          <div className="flex flex-col gap-3">
-            <button
-              onClick={() => {
-                setResult(savedProfile);
-                setStep(TOTAL_QUESTIONS);
-                setShowWelcomeBack(false);
-              }}
-              className="px-6 py-3 text-xs font-mono tracking-wider uppercase font-bold transition-opacity hover:opacity-90"
-              style={{ background: "hsl(var(--primary))", color: "#0a0a0e" }}
-            >
-              View My Results
-            </button>
-            <button
-              onClick={() => {
-                setShowWelcomeBack(false);
-                reset();
-              }}
-              className="px-6 py-3 text-xs font-mono tracking-wider uppercase border transition-opacity hover:opacity-80"
-              style={{ borderColor: "rgba(245,240,232,0.15)", color: "rgba(245,240,232,0.6)" }}
-            >
-              Retake Quiz
-            </button>
-          </div>
-        </motion.div>
-      </div>
+      <WelcomeBackInterstitial
+        profileName={profileName}
+        onViewResults={goToResults}
+        onRetake={() => { setShowWelcomeBack(false); reset(); }}
+      />
     );
   }
 
