@@ -760,9 +760,28 @@ function TileGrid({
   selected: number | null;
   onSelect: (idx: number) => void;
 }) {
+  const handleKeyDown = (e: React.KeyboardEvent, idx: number) => {
+    let next = idx;
+    if (e.key === "ArrowRight" || e.key === "ArrowDown") {
+      e.preventDefault();
+      next = (idx + 1) % answers.length;
+    } else if (e.key === "ArrowLeft" || e.key === "ArrowUp") {
+      e.preventDefault();
+      next = (idx - 1 + answers.length) % answers.length;
+    } else {
+      return;
+    }
+    onSelect(next);
+    const container = e.currentTarget.parentElement;
+    const buttons = container?.querySelectorAll<HTMLButtonElement>('[role="radio"]');
+    buttons?.[next]?.focus();
+  };
+
   return (
     <div
       className="grid gap-4"
+      role="radiogroup"
+      aria-label="Choose one answer"
       style={{ gridTemplateColumns: "repeat(2, 1fr)" }}
     >
       {answers.map((text, idx) => {
@@ -770,8 +789,12 @@ function TileGrid({
         return (
           <button
             key={idx}
+            role="radio"
+            aria-checked={isSelected}
+            tabIndex={isSelected || (selected === null && idx === 0) ? 0 : -1}
             onClick={() => onSelect(idx)}
-            className="text-left"
+            onKeyDown={(e) => handleKeyDown(e, idx)}
+            className="text-left quiz-focus-ring"
             style={{
               background: isSelected
                 ? "rgba(240,192,64,0.12)"
