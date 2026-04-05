@@ -412,14 +412,9 @@ Deno.serve(async (req) => {
   }
 
   try {
-    // Validate caller has service role or admin JWT
-    const authHeader = req.headers.get("Authorization");
-    if (!authHeader) {
-      return new Response(JSON.stringify({ error: "Unauthorized" }), {
-        status: 401,
-        headers: { ...corsHeaders, "Content-Type": "application/json" },
-      });
-    }
+    // Auth guard: require service-role key
+    const authDenied = requireServiceRole(req);
+    if (authDenied) return authDenied;
 
     const { company_id, modules = [] } = await req.json();
 
