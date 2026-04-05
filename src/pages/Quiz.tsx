@@ -1068,7 +1068,7 @@ function ResultsScreen({
           fontFamily: "'DM Sans', sans-serif",
         }}
       >
-        ← Start over
+        ← Retake the quiz
       </button>
 
 
