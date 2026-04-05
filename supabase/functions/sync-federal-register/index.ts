@@ -73,12 +73,12 @@ async function searchFederalRegister(terms: string[], docTypes: string[]): Promi
 
   for (const batch of termBatches.slice(0, 5)) { // Max 5 batches to stay within reason
     const query = batch.join(' OR ');
-    const typeParam = docTypes.join(',');
+    const typeParams = docTypes.map(t => `conditions[type][]=${t}`).join('&');
     
     // Only get recent docs (last 90 days)
     const sinceDate = new Date(Date.now() - 90 * 86400000).toISOString().split('T')[0];
     
-    const url = `${FR_API}/documents.json?conditions[term]=${encodeURIComponent(query)}&conditions[type][]=${typeParam}&conditions[publication_date][gte]=${sinceDate}&per_page=20&order=newest&fields[]=document_number&fields[]=title&fields[]=type&fields[]=abstract&fields[]=agencies&fields[]=publication_date&fields[]=effective_on&fields[]=html_url&fields[]=pdf_url&fields[]=agency_names`;
+    const url = `${FR_API}/documents.json?conditions[term]=${encodeURIComponent(query)}&${typeParams}&conditions[publication_date][gte]=${sinceDate}&per_page=20&order=newest&fields[]=document_number&fields[]=title&fields[]=type&fields[]=abstract&fields[]=agencies&fields[]=publication_date&fields[]=effective_on&fields[]=html_url&fields[]=pdf_url&fields[]=agency_names`;
 
     try {
       const res = await fetch(url);
