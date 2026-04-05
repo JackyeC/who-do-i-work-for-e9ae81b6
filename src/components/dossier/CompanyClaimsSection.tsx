@@ -47,6 +47,21 @@ function isAttributed(claim: any): boolean {
   return !!(claim.source_label && claim.source_url);
 }
 
+/**
+ * Quality gate for news-sourced claims: the claim text must mention
+ * the company name (or a reasonable substring) to avoid junk matches
+ * from loosely-associated news articles.
+ */
+function passesQualityGate(claim: any, companyName: string): boolean {
+  if (claim.claim_type !== "news" && claim.signal_table !== "company_news_signals") return true;
+  // News claims must reference the company name to be shown
+  const text = (claim.claim_text || "").toLowerCase();
+  const name = companyName.toLowerCase().replace(/[^a-z0-9\s]/g, "");
+  // Check each word of the company name (at least 4 chars) appears in the claim
+  const words = name.split(/\s+/).filter((w: string) => w.length >= 4);
+  return words.some((w: string) => text.includes(w));
+}
+
 interface CompanyClaimsSectionProps {
   companyId: string;
   companyName: string;
@@ -71,8 +86,8 @@ export function CompanyClaimsSection({ companyId, companyName }: CompanyClaimsSe
     enabled: !!companyId,
   });
 
-  // ENFORCEMENT: suppress unattributed claims from UI
-  const claims = (rawClaims ?? []).filter(isAttributed);
+  // ENFORCEMENT: suppress unattributed + junk news claims from UI
+  const claims = (rawClaims ?? []).filter((c: any) => isAttributed(c) && passesQualityGate(c, companyName));
 
   if (isLoading) {
     return (
