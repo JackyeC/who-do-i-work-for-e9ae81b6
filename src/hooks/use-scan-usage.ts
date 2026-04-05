@@ -22,10 +22,17 @@ export function useScanUsage() {
 
   const fetchCount = useCallback(async () => {
     try {
-      const query = supabase
-        .from("scan_usage" as any)
-        .select("id", { count: "exact", head: true })
-        .eq("session_id", sessionId);
+      // For authenticated users, count by user_id (tamper-proof).
+      // For anonymous users, fall back to session_id (best effort).
+      const query = user
+        ? supabase
+            .from("scan_usage" as any)
+            .select("id", { count: "exact", head: true })
+            .eq("user_id", user.id)
+        : supabase
+            .from("scan_usage" as any)
+            .select("id", { count: "exact", head: true })
+            .eq("session_id", sessionId);
 
       const { count } = await query;
       setScanCount(count || 0);
@@ -34,7 +41,7 @@ export function useScanUsage() {
     } finally {
       setLoading(false);
     }
-  }, [sessionId]);
+  }, [user, sessionId]);
 
   useEffect(() => {
     fetchCount();
@@ -50,8 +57,9 @@ export function useScanUsage() {
     setScanCount(prev => prev + 1);
   }, [user, sessionId]);
 
+  // Authenticated users bypass free scan limit entirely
   const hasScansRemaining = user !== null || scanCount < FREE_SCAN_LIMIT;
-  const scansRemaining = Math.max(0, FREE_SCAN_LIMIT - scanCount);
+  const scansRemaining = user ? Infinity : Math.max(0, FREE_SCAN_LIMIT - scanCount);
 
   return {
     scanCount,
