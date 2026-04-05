@@ -152,7 +152,7 @@ export function YourSignalDashboard() {
   if (highRiskCount > 0) {
     insights.push({
       icon: <AlertTriangle className="w-4 h-4 text-destructive" />,
-      text: `${highRiskCount} ${highRiskCount === 1 ? "company" : "companies"} on your watchlist ${highRiskCount === 1 ? "shows" : "show"} low clarity — review the record before proceeding`,
+      text: `${highRiskCount} ${highRiskCount === 1 ? "company" : "companies"} scored below 40 — review the record before proceeding`,
     });
   }
   const regAlerts = alerts.filter((a: any) => {
@@ -162,14 +162,14 @@ export function YourSignalDashboard() {
   if (regAlerts.length > 0) {
     insights.push({
       icon: <Shield className="w-4 h-4 text-[hsl(35,100%,50%)]" />,
-      text: `${regAlerts.length} enforcement or regulatory ${regAlerts.length === 1 ? "signal" : "signals"} flagged — check the dossier for context`,
+      text: `${regAlerts.length} enforcement or labor ${regAlerts.length === 1 ? "flag" : "flags"} detected — open the dossier for context`,
     });
   }
   const goodCount = tracked.filter((t: any) => t.score >= 70).length;
   if (goodCount > 0) {
     insights.push({
       icon: <TrendingUp className="w-4 h-4 text-[hsl(142,70%,45%)]" />,
-      text: `${goodCount} ${goodCount === 1 ? "company shows" : "companies show"} strong alignment signals — worth a closer look`,
+      text: `${goodCount} ${goodCount === 1 ? "company" : "companies"} above 70 — alignment looks solid`,
     });
   }
 
