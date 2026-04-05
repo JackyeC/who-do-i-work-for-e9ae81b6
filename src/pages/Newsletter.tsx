@@ -22,7 +22,7 @@ import { format } from "date-fns";
 import workSignalLogo from "@/assets/work-signal-logo.png";
 import {
   Mail, ArrowRight, Check, ExternalLink, Newspaper,
-  Radio, Eye, TrendingUp, Award, Clock, Zap, Star, Search,
+  Radio, Eye, TrendingUp, Award, Clock, Zap, Star, Search, Crown,
 } from "lucide-react";
 
 /* ── Adapt ReceiptArticle → SignalStory for poster cards ── */
@@ -163,7 +163,7 @@ function LeadStoryCard({ article, onPosterClick }: { article: ReceiptArticle; on
         {article.jackye_take && (
           <div className="rounded-xl border p-6 mb-5" style={{ background: "hsl(var(--primary) / 0.04)", borderColor: "hsl(var(--primary) / 0.15)" }}>
             <div className="flex items-center gap-2 mb-3">
-              <Eye className="w-4 h-4 text-primary" />
+              <Crown className="w-4 h-4 text-primary" />
               <span className="text-xs font-bold text-primary tracking-[0.15em] uppercase font-mono">Jackye's Take</span>
             </div>
             <p className="text-lg text-foreground leading-[1.8] italic font-light" style={{ fontFamily: "'DM Sans', cursive, sans-serif" }}>
@@ -273,7 +273,7 @@ function StoryCard({ article, onPosterClick }: { article: ReceiptArticle; onPost
         {article.jackye_take && (
           <div className="rounded-lg border p-4 mb-3" style={{ background: "hsl(var(--primary) / 0.04)", borderColor: "hsl(var(--primary) / 0.15)" }}>
             <div className="flex items-center gap-1.5 mb-2">
-              <Eye className="w-3.5 h-3.5 text-primary" />
+              <Crown className="w-3.5 h-3.5 text-primary" />
               <span className="text-[11px] font-bold text-primary tracking-[0.15em] uppercase font-mono">The Take</span>
             </div>
             <p className="text-base text-foreground leading-relaxed italic" style={{ fontFamily: "'DM Sans', cursive, sans-serif" }}>
