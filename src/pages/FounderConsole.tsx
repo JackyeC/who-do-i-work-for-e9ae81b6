@@ -10,8 +10,9 @@ import { SignalsDataTab } from "@/components/founder/SignalsDataTab";
 import { UsersFeedbackTab } from "@/components/founder/UsersFeedbackTab";
 import { NotesTab } from "@/components/founder/NotesTab";
 import { DuplicateDetectionTab } from "@/components/founder/DuplicateDetectionTab";
+import { DeskTab } from "@/components/founder/DeskTab";
 import {
-  LayoutDashboard, ClipboardList, Radio, Users, StickyNote, ExternalLink, Copy,
+  LayoutDashboard, ClipboardList, Radio, Users, StickyNote, ExternalLink, Copy, FileEdit,
 } from "lucide-react";
 
 const TABS = [
@@ -21,6 +22,7 @@ const TABS = [
   { id: "users", label: "Users & Feedback", icon: Users },
   { id: "notes", label: "Notes", icon: StickyNote },
   { id: "duplicates", label: "Duplicates", icon: Copy },
+  { id: "desk", label: "Desk", icon: FileEdit },
 ] as const;
 
 export default function FounderConsole() {
@@ -93,6 +95,7 @@ export default function FounderConsole() {
           <TabsContent value="users"><UsersFeedbackTab /></TabsContent>
           <TabsContent value="notes"><NotesTab /></TabsContent>
           <TabsContent value="duplicates"><DuplicateDetectionTab /></TabsContent>
+          <TabsContent value="desk"><DeskTab /></TabsContent>
         </Tabs>
       </main>
     </div>
