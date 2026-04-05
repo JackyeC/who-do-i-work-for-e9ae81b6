@@ -75,14 +75,15 @@ export default function IntelligenceCheck() {
         <main className="flex-1 px-6 lg:px-16 py-16 lg:py-24">
           <div className="max-w-[520px] mx-auto text-center">
             <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-primary/10 mb-6">
-              <Shield className="w-8 h-8 text-primary" />
+              <Mail className="w-8 h-8 text-primary" />
             </div>
-            <h1 className="text-foreground font-sans text-2xl font-bold mb-4">You're in the queue.</h1>
+            <h1 className="text-foreground font-sans text-2xl font-bold mb-4">Your snapshot is on the way.</h1>
             <p className="text-muted-foreground text-sm leading-relaxed mb-6">
-              Jackyé will send your intelligence snapshot within 2–3 business days.
+              We're generating your employer intelligence snapshot now. Check your inbox at{" "}
+              <span className="font-medium text-foreground">{form.email}</span> — it should arrive within a few minutes.
             </p>
             <p className="text-xs text-muted-foreground/70">
-              We'll email your results to <span className="font-medium text-foreground">{form.email}</span>.
+              Jackyé also gets a copy and may follow up with additional insights.
             </p>
           </div>
         </main>
