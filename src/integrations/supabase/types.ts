@@ -12806,6 +12806,10 @@ export type Database = {
         }
         Returns: boolean
       }
+      invoke_edge_function: {
+        Args: { body?: Json; fn_name: string }
+        Returns: number
+      }
       resolve_name_variants: { Args: { _name: string }; Returns: string[] }
       score_news_for_user: {
         Args: { p_news_id: string; p_user_id: string }
