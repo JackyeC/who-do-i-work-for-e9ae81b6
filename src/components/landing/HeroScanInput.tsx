@@ -12,6 +12,7 @@ export function HeroScanInput() {
   const [file, setFile] = useState<File | null>(null);
   const [verifying, setVerifying] = useState(false);
   const [mode, setMode] = useState<"search" | "upload">("search");
+  const [dragOver, setDragOver] = useState(false);
   const fileRef = useRef<HTMLInputElement>(null);
   const formRef = useRef<HTMLFormElement>(null);
   const navigate = useNavigate();
