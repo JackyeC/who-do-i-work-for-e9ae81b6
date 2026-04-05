@@ -161,7 +161,7 @@ export function HeroScanInput() {
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
-              className={`relative bg-card border border-dashed transition-colors p-4 ${false ? "border-primary bg-primary/5" : "border-border hover:border-primary/40"}`}
+              className={`relative bg-card border border-dashed transition-colors p-4 ${dragOver ? "border-primary bg-primary/5" : "border-border hover:border-primary/40"}`}
             >
               {file ? (
                 <div className="flex items-center justify-between">
