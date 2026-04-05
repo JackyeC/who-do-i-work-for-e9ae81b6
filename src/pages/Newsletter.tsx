@@ -10,12 +10,15 @@ import { verifyTurnstileToken } from "@/lib/verifyTurnstile";
 import { FoundingMemberBadge } from "@/components/FoundingMemberBadge";
 import { EnforcementReceiptsTicker } from "@/components/work-signal/EnforcementReceiptsTicker";
 import { ReceiptPoster } from "@/components/receipts/ReceiptPoster";
-import { StargazeChip } from "@/components/receipts/StargazeChip";
+import { SpicePeppers } from "@/components/receipts/SpicePeppers";
 import { BiasBar, getSourceBiasKey } from "@/components/receipts/BiasBar";
 import { EDITORIAL_CATEGORIES, EDITORIAL_CAT_COLORS } from "@/components/receipts/heat-config";
 import { PosterLightbox } from "@/components/receipts/PosterLightbox";
 import { FloatingBubble } from "@/components/receipts/FloatingBubble";
 import { SignalStoryCard } from "@/components/work-signal/SignalStoryCard";
+import { WireEditionHeader } from "@/components/receipts/WireEditionHeader";
+import { EditorsNote } from "@/components/receipts/EditorsNote";
+import { SharePastiche } from "@/components/receipts/SharePastiche";
 import type { SignalStory, SignalCategory, HeatLevel } from "@/lib/work-signal-schema";
 import { motion } from "framer-motion";
 import { format } from "date-fns";
@@ -126,7 +129,7 @@ function LeadStoryCard({ article, onPosterClick }: { article: ReceiptArticle; on
         <div className="flex items-center gap-3 mb-5 flex-wrap">
           <CategoryBadge category={article.category} />
           <span className="w-px h-4 bg-border" />
-          <StargazeChip score={article.spice_level} big />
+          <SpicePeppers level={article.spice_level} big />
           {article.spice_level >= 4 && (
             <span className="text-xs font-black uppercase px-2.5 py-1 rounded" style={{ background: "#EF4444", color: "#fff" }}>HOT</span>
           )}
@@ -202,7 +205,7 @@ function LeadStoryCard({ article, onPosterClick }: { article: ReceiptArticle; on
           )}
         </div>
 
-        {/* Source + Bias footer */}
+        {/* Source + Bias + Share footer */}
         <div className="flex items-center justify-between pt-4 border-t border-border/20">
           <div className="flex items-center gap-3">
             {article.source_name && (
@@ -210,12 +213,15 @@ function LeadStoryCard({ article, onPosterClick }: { article: ReceiptArticle; on
             )}
             <BiasBar bias={biasKey} />
           </div>
-          {article.source_url && (
-            <a href={article.source_url} target="_blank" rel="noopener noreferrer"
-              className="flex items-center gap-1 text-xs font-mono text-primary hover:text-primary/80 transition-colors no-underline">
-              See the receipts <ExternalLink className="w-3.5 h-3.5" />
-            </a>
-          )}
+          <div className="flex items-center gap-3">
+            <SharePastiche headline={article.headline} articleId={article.id} />
+            {article.source_url && (
+              <a href={article.source_url} target="_blank" rel="noopener noreferrer"
+                className="flex items-center gap-1 text-xs font-mono text-primary hover:text-primary/80 transition-colors no-underline">
+                See the receipts <ExternalLink className="w-3.5 h-3.5" />
+              </a>
+            )}
+          </div>
         </div>
       </div>
 
@@ -255,7 +261,7 @@ function StoryCard({ article, onPosterClick }: { article: ReceiptArticle; onPost
         <div className="flex items-center gap-2 mb-3 flex-wrap">
           <CategoryBadge category={article.category} />
           <span className="w-px h-3 bg-border" />
-          <StargazeChip score={article.spice_level} />
+          <SpicePeppers level={article.spice_level} />
           <span className="ml-auto text-[10px] text-muted-foreground/60 font-mono">{timeAgo(article.published_at)}</span>
         </div>
 
@@ -302,7 +308,7 @@ function StoryCard({ article, onPosterClick }: { article: ReceiptArticle; onPost
           ) : null}
         </div>
 
-        {/* Source + Bias footer */}
+        {/* Source + Bias + Share footer */}
         <div className="flex items-center justify-between pt-3 border-t border-border/20">
           <div className="flex items-center gap-2">
             {article.source_name && (
@@ -310,12 +316,15 @@ function StoryCard({ article, onPosterClick }: { article: ReceiptArticle; onPost
             )}
             <BiasBar bias={biasKey} />
           </div>
-          {article.source_url && (
-            <a href={article.source_url} target="_blank" rel="noopener noreferrer"
-              className="flex items-center gap-1 text-xs font-mono text-primary hover:text-primary/80 transition-colors no-underline">
-              Receipts <ExternalLink className="w-3.5 h-3.5" />
-            </a>
-          )}
+          <div className="flex items-center gap-3">
+            <SharePastiche headline={article.headline} articleId={article.id} />
+            {article.source_url && (
+              <a href={article.source_url} target="_blank" rel="noopener noreferrer"
+                className="flex items-center gap-1 text-xs font-mono text-primary hover:text-primary/80 transition-colors no-underline">
+                Receipts <ExternalLink className="w-3.5 h-3.5" />
+              </a>
+            )}
+          </div>
         </div>
       </div>
 
@@ -344,7 +353,7 @@ function WireItem({ article }: { article: ReceiptArticle }) {
       >
         <div className="flex items-center gap-2 mb-2 flex-wrap">
           <CategoryBadge category={article.category} />
-          <StargazeChip score={article.spice_level} />
+          <SpicePeppers level={article.spice_level} />
           <span className="ml-auto text-xs text-foreground/50 font-mono">{timeAgo(article.published_at)}</span>
         </div>
         <p className="text-base font-semibold text-foreground leading-snug flex-1 group-hover:text-primary transition-colors mb-2">
@@ -368,6 +377,8 @@ function WireItem({ article }: { article: ReceiptArticle }) {
 /* ══════════════════════════════════════════
    MAIN PAGE — THE WORK SIGNAL
    ══════════════════════════════════════════ */
+const PAGE_SIZE = 12;
+
 export default function Newsletter() {
   const [email, setEmail] = useState("");
   const [status, setStatus] = useState<"idle" | "loading" | "success" | "error">("idle");
@@ -377,6 +388,7 @@ export default function Newsletter() {
   const [searchQuery, setSearchQuery] = useState("");
   const [showBadge, setShowBadge] = useState(false);
   const [lightboxArticle, setLightboxArticle] = useState<ReceiptArticle | null>(null);
+  const [visibleCount, setVisibleCount] = useState(PAGE_SIZE);
   const { user } = useAuth();
   const { containerRef, getToken, resetToken } = useTurnstile();
   const { data: articles = [], isLoading } = useReceiptsFeed();
@@ -445,6 +457,9 @@ export default function Newsletter() {
     }
     resetToken();
   };
+
+  /* ── Reset pagination on filter/sort change ── */
+  useEffect(() => { setVisibleCount(PAGE_SIZE); }, [filter, sortBy, searchQuery]);
 
   /* ── Filtering + Sorting ── */
   const filtered = useMemo(() => {
@@ -613,7 +628,7 @@ export default function Newsletter() {
                   <p className="text-sm font-medium text-foreground group-hover:text-primary transition-colors flex-1 truncate">
                     {article.headline}
                   </p>
-                  <StargazeChip score={article.spice_level} />
+                  <SpicePeppers level={article.spice_level} />
                   <span className="text-[10px] text-muted-foreground/50 font-mono shrink-0">{timeAgo(article.published_at)}</span>
                 </button>
               ))}
@@ -716,6 +731,14 @@ export default function Newsletter() {
             </div>
           ) : (
             <>
+              {/* ── Wire Edition Header ── */}
+              <WireEditionHeader storyCount={filtered.length} />
+
+              {/* ── Editor's Note ── */}
+              {filter === "all" && sortBy === "newest" && !searchQuery && (
+                <EditorsNote />
+              )}
+
               {/* ── Jackye's Current Take (pull quote) ── */}
               {currentTake && filter === "all" && sortBy === "newest" && !searchQuery && (
                 <div className="mb-10 rounded-xl border border-primary/20 bg-primary/[0.04] p-8">
@@ -753,7 +776,7 @@ export default function Newsletter() {
                     <span className="text-[10px] text-muted-foreground/50 font-mono">{withTakes.length - 1} more</span>
                   </div>
                   <div className="grid md:grid-cols-2 gap-5">
-                    {withTakes.slice(1).map((article) => (
+                    {withTakes.slice(1, visibleCount).map((article) => (
                       <SignalStoryCard key={article.id} story={toSignalStory(article)} />
                     ))}
                   </div>
@@ -776,10 +799,22 @@ export default function Newsletter() {
                     <h2 className="text-[10px] font-mono tracking-[0.2em] uppercase text-muted-foreground font-bold">All Signals</h2>
                   </div>
                   <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
-                    {withoutTakes.map((article) => (
+                    {withoutTakes.slice(0, Math.max(0, visibleCount - withTakes.length)).map((article) => (
                       <WireItem key={article.id} article={article} />
                     ))}
                   </div>
+                </div>
+              )}
+
+              {/* ── Load More ── */}
+              {visibleCount < (withTakes.length + withoutTakes.length) && (
+                <div className="flex justify-center mt-10">
+                  <button
+                    onClick={() => setVisibleCount((c) => c + PAGE_SIZE)}
+                    className="px-8 py-3 border border-border rounded-xl text-sm font-semibold text-foreground hover:border-primary/40 hover:text-primary transition-all font-mono tracking-wider"
+                  >
+                    Load More Signals
+                  </button>
                 </div>
               )}
             </>
@@ -821,7 +856,7 @@ export default function Newsletter() {
                 </div>
                 <p className="text-sm font-semibold text-foreground leading-snug group-hover/hot:text-primary transition-colors">{article.headline}</p>
                 <div className="mt-1">
-                  <StargazeChip score={article.spice_level} />
+                  <SpicePeppers level={article.spice_level} />
                 </div>
               </button>
             ))}
