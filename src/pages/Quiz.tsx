@@ -705,7 +705,8 @@ export default function Quiz() {
                   height: "100%",
                   width: `${progressPct}%`,
                   background: "hsl(var(--primary))",
-                  transition: "width 0.5s cubic-bezier(0.16,1,0.3,1)",
+                  transition: "width 0.5s cubic-bezier(0.16,1,0.3,1), box-shadow 0.4s ease",
+                  boxShadow: progressPct >= 100 ? "0 0 16px 4px hsl(var(--primary) / 0.5)" : "none",
                 }}
               />
             </div>
@@ -881,7 +882,7 @@ function TileGrid({
             tabIndex={isSelected || (selected === null && idx === 0) ? 0 : -1}
             onClick={() => onSelect(idx)}
             onKeyDown={(e) => handleKeyDown(e, idx)}
-            className="text-left quiz-focus-ring"
+            className="text-left quiz-focus-ring active:scale-[0.97]"
             style={{
               background: isSelected
                 ? "rgba(240,192,64,0.12)"
@@ -899,8 +900,11 @@ function TileGrid({
               cursor: "pointer",
               fontFamily: "'DM Sans', sans-serif",
               transition:
-                "border-color 0.2s, background 0.2s, transform 0.2s, color 0.2s",
+                "border-color 0.2s, background 0.2s, transform 0.15s, color 0.2s, box-shadow 0.3s",
               transform: isSelected ? "scale(1.02)" : "scale(1)",
+              boxShadow: isSelected
+                ? "0 0 12px 2px rgba(240,192,64,0.15)"
+                : "none",
             }}
             onMouseEnter={(e) => {
               if (!isSelected) {

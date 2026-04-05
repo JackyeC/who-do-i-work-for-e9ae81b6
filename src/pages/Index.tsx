@@ -90,7 +90,7 @@ const Index = forwardRef<HTMLDivElement>((_, ref) => {
           >
             <button
               onClick={() => navigate("/intelligence-check")}
-              className="bg-primary text-primary-foreground px-8 py-3.5 font-sans text-sm font-semibold hover:brightness-110 transition-all rounded-xl shadow-elevated"
+              className="bg-primary text-primary-foreground px-8 py-3.5 font-sans text-sm font-semibold hover:brightness-110 active:scale-[0.97] transition-all rounded-xl shadow-elevated"
             >
               Get a free employer intelligence check
             </button>

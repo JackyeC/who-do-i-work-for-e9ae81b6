@@ -73,6 +73,7 @@ export default function IntelligenceCheck() {
           <title>Request Received — Who Do I Work For</title>
         </Helmet>
         <MarketingNav />
+        <style>{`@keyframes successPulse { 0% { box-shadow: 0 0 0 0 hsl(var(--primary) / 0.4); } 100% { box-shadow: 0 0 0 24px hsl(var(--primary) / 0); } }`}</style>
         <main className="flex-1 px-6 lg:px-16 py-16 lg:py-24">
           <motion.div
             initial={{ opacity: 0, y: 16 }}
@@ -85,6 +86,7 @@ export default function IntelligenceCheck() {
               animate={{ scale: [0, 1.15, 1] }}
               transition={{ duration: 0.6, times: [0, 0.5, 1], ease: "easeOut" }}
               className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-primary/10 mb-6"
+              style={{ boxShadow: "0 0 0 0 hsl(var(--primary) / 0.3)", animation: "successPulse 0.6s ease-out" }}
             >
               <Mail className="w-8 h-8 text-primary" />
             </motion.div>
@@ -133,7 +135,7 @@ export default function IntelligenceCheck() {
               We'll scan layoffs, lawsuits, political spending, and more from the public record.
             </p>
             <div className="max-w-[400px] mx-auto">
-              <div className="relative">
+              <div className="relative focus-within:ring-1 focus-within:ring-primary/30 rounded-lg transition-all">
                 <Briefcase className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
                 <Input
                   placeholder="Employer name *"
@@ -232,7 +234,7 @@ export default function IntelligenceCheck() {
                   />
                 </div>
 
-                <Button type="submit" disabled={submitting} className="w-full gap-2">
+                <Button type="submit" disabled={submitting} className="w-full gap-2 active:scale-[0.97]">
                   {submitting ? (
                     <><Loader2 className="w-4 h-4 animate-spin" /> Submitting…</>
                   ) : (

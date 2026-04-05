@@ -119,7 +119,7 @@ export function EmailCapture() {
                 <form onSubmit={handleSubmit} className="relative group max-w-[480px] mx-auto">
                   <div ref={containerRef} />
                   <div className="absolute -inset-1 bg-gradient-to-r from-primary/25 via-primary/10 to-primary/25 opacity-0 group-focus-within:opacity-100 transition-opacity duration-500 blur-md rounded-xl" />
-                  <div className="relative flex items-center bg-background/80 backdrop-blur-sm border-2 border-primary/20 focus-within:border-primary/50 transition-colors rounded-xl">
+                  <div className="relative flex items-center bg-background/80 backdrop-blur-sm border-2 border-primary/20 focus-within:border-primary/50 focus-within:ring-1 focus-within:ring-primary/30 transition-all rounded-xl">
                     <Mail className="w-4.5 h-4.5 text-muted-foreground ml-4 shrink-0" />
                     <input
                       type="email"

@@ -12,6 +12,7 @@ export function HeroScanInput() {
   const [file, setFile] = useState<File | null>(null);
   const [verifying, setVerifying] = useState(false);
   const [mode, setMode] = useState<"search" | "upload">("search");
+  const [dragOver, setDragOver] = useState(false);
   const fileRef = useRef<HTMLInputElement>(null);
   const formRef = useRef<HTMLFormElement>(null);
   const navigate = useNavigate();
@@ -121,8 +122,9 @@ export function HeroScanInput() {
       <form
         ref={formRef}
         onSubmit={handleSubmit}
-        onDragOver={(e) => e.preventDefault()}
-        onDrop={handleFileDrop}
+        onDragOver={(e) => { e.preventDefault(); setDragOver(true); }}
+        onDragLeave={() => setDragOver(false)}
+        onDrop={(e) => { setDragOver(false); handleFileDrop(e); }}
         className="relative group"
       >
         <div ref={containerRef} />
@@ -148,7 +150,7 @@ export function HeroScanInput() {
               <button
                 type="submit"
                 disabled={verifying || !query.trim()}
-                className="mr-2 px-5 py-2 bg-primary text-primary-foreground font-mono text-xs tracking-wider uppercase font-semibold hover:brightness-110 transition-all flex items-center gap-1.5 disabled:opacity-50"
+                className="mr-2 px-5 py-2 bg-primary text-primary-foreground font-mono text-xs tracking-wider uppercase font-semibold hover:brightness-110 active:scale-[0.97] transition-all flex items-center gap-1.5 disabled:opacity-50"
               >
                 {verifying ? <Loader2 className="w-3 h-3 animate-spin" /> : <>Run My Free Scan <ArrowRight className="w-3 h-3" /></>}
               </button>
@@ -159,7 +161,7 @@ export function HeroScanInput() {
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
-              className="relative bg-card border border-dashed border-border hover:border-primary/40 transition-colors p-4"
+              className={`relative bg-card border border-dashed transition-colors p-4 ${dragOver ? "border-primary bg-primary/5" : "border-border hover:border-primary/40"}`}
             >
               {file ? (
                 <div className="flex items-center justify-between">
@@ -177,7 +179,7 @@ export function HeroScanInput() {
                     <button
                       type="submit"
                       disabled={verifying}
-                      className="px-5 py-2 bg-primary text-primary-foreground font-mono text-xs tracking-wider uppercase font-semibold hover:brightness-110 transition-all flex items-center gap-1.5 disabled:opacity-50"
+                      className="px-5 py-2 bg-primary text-primary-foreground font-mono text-xs tracking-wider uppercase font-semibold hover:brightness-110 active:scale-[0.97] transition-all flex items-center gap-1.5 disabled:opacity-50"
                     >
                       {verifying ? <Loader2 className="w-3 h-3 animate-spin" /> : <>Analyze Offer <ArrowRight className="w-3 h-3" /></>}
                     </button>
@@ -222,7 +224,7 @@ export function HeroScanInput() {
                   formRef.current?.requestSubmit();
                 }, 150);
               }}
-              className="font-mono text-xs tracking-wider text-muted-foreground hover:text-primary transition-colors cursor-pointer"
+              className="font-mono text-xs tracking-wider text-muted-foreground hover:text-primary active:scale-95 active:bg-primary/20 transition-all cursor-pointer rounded px-1 py-0.5"
             >
               {s}
             </button>
