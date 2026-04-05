@@ -2562,9 +2562,7 @@ function fallbackCopy(text){
 // TUTORIAL
 // ============================
 var TUT_STEPS=[
-  {illust:'⬅️ 🧩',title:'Drag from the sidebar',desc:'See the elements on the right? Drag any of them onto the canvas. That\'s your workspace.'},
-  {illust:'🧩 + 🧩 = ✨',title:'Drop elements on each other',desc:'When two elements overlap on the canvas, they combine into something new. Every combo teaches you something real.'},
-  {illust:'💼 → 🔍 → 🌟',title:'Discover the full picture',desc:'72 combos across 6 tiers. Follow the money. Check the receipts. Earn certifications. Share them on LinkedIn.'},
+  {illust:'⬅️ 🧩 → 🧩 = ✨',title:'Drag. Drop. Discover.',desc:'Drag elements from the sidebar onto the canvas. Drop them on each other to combine. Every combo reveals real recruiting intelligence.'},
 ];
 var tutStep=0;
 
@@ -2572,41 +2570,42 @@ function showTutorial(){
   tutStep=0;
   renderTutStep();
   document.getElementById('tutorial-overlay').classList.add('show');
-  // Add game-active class to body so feedback button shows
   document.body.classList.add('game-active');
+
+  // Auto-dismiss tutorial after 4 seconds if user hasn't interacted
+  var autoDismiss = setTimeout(function(){
+    document.getElementById('tutorial-overlay').classList.remove('show');
+    showNameCaptureBanner();
+  }, 4000);
+
+  // Clear auto-dismiss on manual interaction
+  document.getElementById('tut-next').addEventListener('click', function onceTut(){
+    clearTimeout(autoDismiss);
+    document.getElementById('tut-next').removeEventListener('click', onceTut);
+  }, {once:true});
+  document.getElementById('tut-skip').addEventListener('click', function onceSkip(){
+    clearTimeout(autoDismiss);
+    document.getElementById('tut-skip').removeEventListener('click', onceSkip);
+  }, {once:true});
 }
 
 function renderTutStep(){
   var s=TUT_STEPS[tutStep];
-  // Dots
-  var dotsHtml='';
-  for(var i=0;i<TUT_STEPS.length;i++){
-    dotsHtml+='<div class="tut-dot'+(i===tutStep?' active':'')+'">'+'</div>';
-  }
-  document.getElementById('tut-dots').innerHTML=dotsHtml;
+  document.getElementById('tut-dots').innerHTML='<div class="tut-dot active"></div>';
   document.getElementById('tut-illust').textContent=s.illust;
   document.getElementById('tut-title').textContent=s.title;
   document.getElementById('tut-desc').textContent=s.desc;
-  var btn=document.getElementById('tut-next');
-  btn.textContent=tutStep===TUT_STEPS.length-1?'Start playing \u2192':'Next';
+  document.getElementById('tut-next').textContent='Start playing \u2192';
 }
 
 document.getElementById('tut-next').addEventListener('click',function(){
-  tutStep++;
-  if(tutStep>=TUT_STEPS.length){
-    document.getElementById('tutorial-overlay').classList.remove('show');
-    return;
-  }
-  // Re-animate card
-  var card=document.getElementById('tut-card');
-  card.style.animation='none';
-  card.offsetHeight; // force reflow
-  card.style.animation='splashPop .3s ease-out';
-  renderTutStep();
+  document.getElementById('tutorial-overlay').classList.remove('show');
+  showNameCaptureBanner();
 });
 
 document.getElementById('tut-skip').addEventListener('click',function(){
   document.getElementById('tutorial-overlay').classList.remove('show');
+  showNameCaptureBanner();
 });
 
 // ============================
