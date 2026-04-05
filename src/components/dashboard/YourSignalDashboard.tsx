@@ -152,7 +152,7 @@ export function YourSignalDashboard() {
   if (highRiskCount > 0) {
     insights.push({
       icon: <AlertTriangle className="w-4 h-4 text-destructive" />,
-      text: `${highRiskCount} ${highRiskCount === 1 ? "company" : "companies"} scored below 40 — review the record before proceeding`,
+      text: `${highRiskCount} ${highRiskCount === 1 ? "company" : "companies"} scored below 40 — review before proceeding`,
     });
   }
   const regAlerts = alerts.filter((a: any) => {
@@ -162,14 +162,14 @@ export function YourSignalDashboard() {
   if (regAlerts.length > 0) {
     insights.push({
       icon: <Shield className="w-4 h-4 text-[hsl(35,100%,50%)]" />,
-      text: `${regAlerts.length} enforcement or labor ${regAlerts.length === 1 ? "flag" : "flags"} detected — open the dossier for context`,
+      text: `${regAlerts.length} enforcement or labor ${regAlerts.length === 1 ? "flag" : "flags"} on record — check the dossier for context`,
     });
   }
   const goodCount = tracked.filter((t: any) => t.score >= 70).length;
   if (goodCount > 0) {
     insights.push({
       icon: <TrendingUp className="w-4 h-4 text-[hsl(142,70%,45%)]" />,
-      text: `${goodCount} ${goodCount === 1 ? "company" : "companies"} above 70 — alignment looks solid`,
+      text: `${goodCount} ${goodCount === 1 ? "company" : "companies"} above 70 — conditions look favorable`,
     });
   }
 
@@ -270,11 +270,13 @@ export function YourSignalDashboard() {
                     </div>
                     {t.score > 0 && (
                       <span className="text-[10px] text-muted-foreground/60 pl-0.5">
-                        {t.score >= 70
-                          ? `${t.industry || "Company"} · Strong alignment signals present`
-                          : t.score >= 40
-                          ? `${t.industry || "Company"} · Mixed signals — review recommended`
-                          : `${t.industry || "Company"} · Low clarity — proceed with caution`}
+                        {t.industry || "Company"} · {(() => {
+                          const high = ["Strong alignment across key factors", "Conditions look favorable", "Indicators point to stability"];
+                          const mid = ["Mixed indicators — take a closer look", "Uneven patterns — worth reviewing", "Some areas need a second pass"];
+                          const low = ["Low clarity — move carefully", "Weak conditions — verify before proceeding", "Early flags present — check the record"];
+                          const pool = t.score >= 70 ? high : t.score >= 40 ? mid : low;
+                          return pool[i % pool.length];
+                        })()}
                       </span>
                     )}
                   </Link>
