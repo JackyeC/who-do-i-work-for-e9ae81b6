@@ -12045,6 +12045,45 @@ export type Database = {
         }
         Relationships: []
       }
+      wdiwf_quiz_results: {
+        Row: {
+          answers: Json
+          id: string
+          meta_flags: Json | null
+          result_profile: string
+          result_secondary: string | null
+          scores: Json | null
+          session_id: string
+          slider_value: number | null
+          submitted_at: string
+          user_id: string | null
+        }
+        Insert: {
+          answers?: Json
+          id?: string
+          meta_flags?: Json | null
+          result_profile: string
+          result_secondary?: string | null
+          scores?: Json | null
+          session_id?: string
+          slider_value?: number | null
+          submitted_at?: string
+          user_id?: string | null
+        }
+        Update: {
+          answers?: Json
+          id?: string
+          meta_flags?: Json | null
+          result_profile?: string
+          result_secondary?: string | null
+          scores?: Json | null
+          session_id?: string
+          slider_value?: number | null
+          submitted_at?: string
+          user_id?: string | null
+        }
+        Relationships: []
+      }
       weekly_issues: {
         Row: {
           created_at: string

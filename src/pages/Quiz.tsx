@@ -476,10 +476,28 @@ export default function Quiz() {
     setResult({ primary, secondary, meta: m });
 
     void (async () => {
-      const { data: { user } } = await supabase.auth.getUser();
-      if (!user) return;
+      // Save quiz results to database
       try {
-        await syncDreamJobProfileRemote(supabase, user.id);
+        const { data: { user } } = await supabase.auth.getUser();
+        await (supabase as any).from("wdiwf_quiz_results").insert({
+          user_id: user?.id ?? null,
+          answers,
+          slider_value: sliderVal,
+          result_profile: primary,
+          result_secondary: secondary,
+          scores: s,
+          meta_flags: m,
+        });
+      } catch (e) {
+        console.warn("Quiz result save failed", e);
+      }
+
+      // Sync dream job profile if logged in
+      try {
+        const { data: { user } } = await supabase.auth.getUser();
+        if (user) {
+          await syncDreamJobProfileRemote(supabase, user.id);
+        }
       } catch (e) {
         console.warn("Dream job profile sync failed", e);
       }
