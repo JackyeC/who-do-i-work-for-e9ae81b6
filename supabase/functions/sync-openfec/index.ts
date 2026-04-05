@@ -4,6 +4,7 @@ const corsHeaders = {
 };
 
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2';
+import { requireServiceRole } from "../_shared/auth-guard.ts";
 
 const FEC_BASE = 'https://api.open.fec.gov/v1';
 
@@ -126,6 +127,11 @@ async function fecFetch(endpoint: string, params: Record<string, string | string
 }
 
 Deno.serve(async (req: Request) => {
+
+  // Auth guard: require service-role key
+  const authDenied = requireServiceRole(req);
+  if (authDenied) return authDenied;
+
   if (req.method === 'OPTIONS') {
     return new Response(null, { headers: corsHeaders });
   }

@@ -5,6 +5,7 @@
 // ============================================================
 
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
+import { requireServiceRole } from "../_shared/auth-guard.ts";
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
@@ -154,6 +155,11 @@ function toValidatedWorkNewsRow(n: any) {
 }
 
 Deno.serve(async (req: Request) => {
+
+  // Auth guard: require service-role key
+  const authDenied = requireServiceRole(req);
+  if (authDenied) return authDenied;
+
   try {
     const supabase = createClient(SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY);
 

@@ -1,4 +1,5 @@
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
+import { requireServiceRole } from "../_shared/auth-guard.ts";
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
@@ -85,6 +86,11 @@ function normalizeLayoffType(raw: string | undefined): string {
 }
 
 Deno.serve(async (req: Request) => {
+
+  // Auth guard: require service-role key
+  const authDenied = requireServiceRole(req);
+  if (authDenied) return authDenied;
+
   if (req.method === "OPTIONS") {
     return new Response(null, { headers: corsHeaders });
   }
