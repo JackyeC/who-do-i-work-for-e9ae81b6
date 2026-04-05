@@ -854,7 +854,9 @@ function SliderInput({
         max={100}
         value={value}
         onChange={(e) => onChange(Number(e.target.value))}
-        className="quiz-slider w-full"
+        aria-label={`Trust level: ${getSliderLabel(value)}`}
+        aria-valuetext={getSliderLabel(value)}
+        className="quiz-slider quiz-focus-ring w-full"
         style={{
           WebkitAppearance: "none",
           appearance: "none",
