@@ -36,10 +36,17 @@ interface NavItem {
 
 const NAV_ITEMS: NavItem[] = [
   {
-    id: "home",
-    label: "Home",
-    path: "/",
+    id: "command-center",
+    label: "Command Center",
+    path: "/dashboard",
     dotColor: "bg-[hsl(var(--primary))]",
+    auth: true,
+  },
+  {
+    id: "home",
+    label: "Site Home",
+    path: "/",
+    dotColor: "bg-[hsl(var(--muted-foreground))]",
   },
   {
     id: "places",

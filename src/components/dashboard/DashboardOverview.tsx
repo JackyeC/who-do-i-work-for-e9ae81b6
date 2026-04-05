@@ -12,6 +12,7 @@ import {
 import { useState } from "react";
 import { AlignedValuesSearch } from "./AlignedValuesSearch";
 import { FoundingMemberBadge } from "@/components/FoundingMemberBadge";
+import { DashboardHeartbeat } from "./DashboardHeartbeat";
 import { AffirmationBar } from "./AffirmationBar";
 import { YourJourney } from "./YourJourney";
 import { JackyeMessage } from "./JackyeMessage";
@@ -163,6 +164,9 @@ export function DashboardOverview({ onNavigate }: DashboardOverviewProps) {
 
   return (
     <div className="space-y-5 max-w-[1200px] mx-auto">
+
+      {/* ═══ PULSE — Heartbeat: ticker + action tiles + briefing ═══ */}
+      <DashboardHeartbeat onNavigate={onNavigate} />
 
       <HireToRetireCommandCenter onNavigate={onNavigate} />
 
