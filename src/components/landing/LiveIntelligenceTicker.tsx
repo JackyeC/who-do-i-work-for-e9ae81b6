@@ -84,6 +84,8 @@ export function LiveIntelligenceTicker() {
           const hasRelevance = RELEVANCE_KEYWORDS.test(item.headline);
           return fromTrustedSource || hasRelevance;
         })
+        // Deduplicate by headline text
+        .filter((item, idx, arr) => arr.findIndex(a => a.headline === item.headline) === idx)
         .slice(0, 12);
     },
     staleTime: 120_000,

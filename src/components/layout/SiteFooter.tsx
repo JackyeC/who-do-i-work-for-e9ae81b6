@@ -13,13 +13,13 @@ export function SiteFooter() {
               You deserve to know exactly who you work for.
             </p>
             <p className="font-sans text-sm text-muted-foreground mt-1">
-              Start with a free employer intelligence check — built by Jackye Clayton.
+              Built by Jackye Clayton. Facts over feelings.
             </p>
           </div>
           <div className="flex items-center gap-3 shrink-0">
             <Button asChild className="rounded-full gap-2">
               <Link to="/intelligence-check">
-                Start Your Audit <ArrowRight className="w-4 h-4" />
+                Run My Free Scan <ArrowRight className="w-4 h-4" />
               </Link>
             </Button>
             <Button asChild variant="outline" className="rounded-full">
