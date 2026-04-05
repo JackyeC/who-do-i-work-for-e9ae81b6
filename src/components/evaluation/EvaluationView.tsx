@@ -120,7 +120,7 @@ function ActionBar({
         {/* Company-only context */}
         {activeCompany && !activeJob && !activeOffer && (
           <>
-            <Link to="/offer-check">
+            <Link to="/check">
               <Button size="sm" variant="outline" className="text-xs h-8">
                 Should I apply?
               </Button>
@@ -152,7 +152,7 @@ function ActionBar({
         {/* Offer context */}
         {activeOffer && (
           <>
-            <Link to="/offer-check">
+            <Link to="/check">
               <Button size="sm" className="text-xs h-8">Should I accept?</Button>
             </Link>
             <Link to="/negotiation-simulator">

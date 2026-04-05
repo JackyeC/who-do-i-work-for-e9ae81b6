@@ -811,7 +811,7 @@ export default function CompanyDossier() {
           {showSecondary && (
             <div className="mt-3 grid grid-cols-1 sm:grid-cols-2 gap-3">
               <Link
-                to="/offer-check"
+                to="/check"
                 className="flex items-center gap-3 p-4 border border-border/40 bg-card hover:bg-muted/30 transition-colors group"
               >
                 <AlertTriangle className="w-4 h-4 text-destructive shrink-0" />
