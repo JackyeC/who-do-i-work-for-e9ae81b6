@@ -85,6 +85,7 @@ export default function IntelligenceCheck() {
               animate={{ scale: [0, 1.15, 1] }}
               transition={{ duration: 0.6, times: [0, 0.5, 1], ease: "easeOut" }}
               className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-primary/10 mb-6"
+              style={{ boxShadow: "0 0 0 0 hsl(var(--primary) / 0.3)", animation: "successPulse 0.6s ease-out" }}
             >
               <Mail className="w-8 h-8 text-primary" />
             </motion.div>
