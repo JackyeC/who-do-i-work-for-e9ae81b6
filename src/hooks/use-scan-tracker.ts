@@ -1,27 +1,39 @@
 import { useEffect } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/contexts/AuthContext";
+import { useQueryClient } from "@tanstack/react-query";
 
 /**
- * Logs a scan event when a company profile is viewed.
- * Used for social proof on the landing page.
- * Only tracks for authenticated users.
+ * Logs a view event when a company profile/dossier/check is viewed.
+ * Writes to user_recent_company_views (per-user, RLS-protected).
+ * Only tracks for authenticated users, once per company per browser session.
  */
 export function useScanTracker(companyId: string | undefined, companyName: string | undefined) {
   const { user } = useAuth();
+  const queryClient = useQueryClient();
 
   useEffect(() => {
     if (!companyId || !companyName || !user) return;
 
-    // Debounce: only log once per company per session
     const sessionKey = `scan_logged_${companyId}`;
     if (sessionStorage.getItem(sessionKey)) return;
 
-    supabase.from("company_scan_events").insert({
-      company_id: companyId,
-      company_name: companyName,
-    }).then(() => {
-      sessionStorage.setItem(sessionKey, "1");
-    });
-  }, [companyId, companyName, user]);
+    (supabase as any)
+      .from("user_recent_company_views")
+      .upsert(
+        {
+          user_id: user.id,
+          company_id: companyId,
+          company_name: companyName,
+          viewed_at: new Date().toISOString(),
+        },
+        { onConflict: "user_id,company_id" }
+      )
+      .then(({ error }: any) => {
+        if (!error) {
+          sessionStorage.setItem(sessionKey, "1");
+          queryClient.invalidateQueries({ queryKey: ["dashboard-briefing"] });
+        }
+      });
+  }, [companyId, companyName, user, queryClient]);
 }

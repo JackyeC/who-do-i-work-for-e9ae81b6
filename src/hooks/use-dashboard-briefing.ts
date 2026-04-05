@@ -9,20 +9,19 @@ export function useDashboardBriefing() {
     queryKey: ["dashboard-briefing", user?.id],
     queryFn: async () => {
       const [
-        trackedRes,
+        recentViewsRes,
         alertsRes,
         profileRes,
         docsRes,
         newsRes,
         profileNameRes,
       ] = await Promise.all([
-        // Watched companies with scores & recent signals
+        // Recent company views (the new lightweight table)
         (supabase as any)
-          .from("tracked_companies")
-          .select("id, company:companies(id, name, slug, industry, employer_clarity_score, insider_score, updated_at)")
+          .from("user_recent_company_views")
+          .select("company_id, company_name, viewed_at")
           .eq("user_id", user!.id)
-          .eq("is_active", true)
-          .order("created_at", { ascending: false })
+          .order("viewed_at", { ascending: false })
           .limit(10),
         // Real alerts
         (supabase as any)
@@ -57,16 +56,42 @@ export function useDashboardBriefing() {
           .maybeSingle(),
       ]);
 
+      // Enrich recent views with company metadata (scores, slug, industry)
+      const recentViews = recentViewsRes.data || [];
+      let recentCompanies: any[] = [];
+
+      if (recentViews.length > 0) {
+        const companyIds = recentViews.map((v: any) => v.company_id);
+        const { data: companiesData } = await supabase
+          .from("companies")
+          .select("id, name, slug, industry, employer_clarity_score, updated_at")
+          .in("id", companyIds);
+
+        const companyMap = new Map((companiesData || []).map((c: any) => [c.id, c]));
+        recentCompanies = recentViews
+          .map((v: any) => {
+            const c = companyMap.get(v.company_id);
+            if (!c) return null;
+            return {
+              name: c.name,
+              slug: c.slug,
+              industry: c.industry,
+              score: c.employer_clarity_score ?? 0,
+              updatedAt: v.viewed_at,
+            };
+          })
+          .filter(Boolean);
+      }
+
       const docs = docsRes.data || [];
       const hasResume = docs.length > 0 || localStorage.getItem("wdiwf_resume_uploaded") === "true";
       const parsedSkillsCount = (docs[0]?.parsed_signals as any)?.skills?.length || 0;
 
-      // Extract first name
       const fullName = profileNameRes.data?.full_name || "";
       const firstName = fullName.split(" ")[0] || "";
 
       return {
-        tracked: trackedRes.data || [],
+        tracked: recentCompanies,
         alerts: alertsRes.data || [],
         hasResume,
         parsedSkillsCount,
