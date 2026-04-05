@@ -108,7 +108,7 @@ Return ONLY the JSON array, no other text.`;
   } catch (error: any) {
     console.error("extract-corporate-claims error:", error);
     return new Response(
-      JSON.stringify({ success: false, error: error instanceof Error ? error.message : "Unknown error" }),
+      JSON.stringify({ success: false, error: "Request failed" }),
       { status: 500, headers: { ...corsHeaders, "Content-Type": "application/json" } }
     );
   }

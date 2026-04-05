@@ -78,10 +78,30 @@ Deno.serve(async (req: Request) => {
   const authResult = await requireAuth(req);
   if (authResult.error) return authResult.error;
 
+  // Restrict to admin/owner roles or service-role callers (Option A)
+  if (!authResult.isServiceRole) {
+    const supabaseUrl = Deno.env.get('SUPABASE_URL')!;
+    const supabaseKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!;
+    const adminCheck = createClient(supabaseUrl, supabaseKey);
+    const { data: roles } = await adminCheck
+      .from('user_roles')
+      .select('role')
+      .eq('user_id', authResult.userId)
+      .in('role', ['owner', 'admin', 'internal_test']);
+    if (!roles || roles.length === 0) {
+      return new Response(JSON.stringify({ error: 'Forbidden' }), {
+        status: 403, headers: { ...corsHeaders, 'Content-Type': 'application/json' }
+      });
+    }
+  }
+
   try {
     const { companyId, companyName } = await req.json();
-    if (!companyId || !companyName) {
-      return new Response(JSON.stringify({ success: false, error: 'companyId and companyName required' }), {
+
+    // Validate UUID format
+    const uuidRe = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
+    if (!companyId || !uuidRe.test(companyId) || !companyName) {
+      return new Response(JSON.stringify({ error: 'Invalid request' }), {
         status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' }
       });
     }
@@ -93,7 +113,8 @@ Deno.serve(async (req: Request) => {
     const supabase = createClient(supabaseUrl, supabaseKey);
 
     if (!lovableKey) {
-      return new Response(JSON.stringify({ success: false, error: 'LOVABLE_API_KEY not configured' }), {
+      console.error('LOVABLE_API_KEY not configured');
+      return new Response(JSON.stringify({ error: 'Request failed' }), {
         status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' }
       });
     }
@@ -392,9 +413,10 @@ ${truncated}`,
 
   } catch (error: any) {
     console.error('AI Accountability scan error:', error);
+    console.error('AI Accountability scan error:', error);
     return new Response(JSON.stringify({
       success: false,
-      error: error instanceof Error ? error.message : 'Unknown error',
+      error: 'Request failed',
     }), { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } });
   }
 });

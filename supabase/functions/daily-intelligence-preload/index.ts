@@ -117,7 +117,7 @@ Deno.serve(async (req: Request) => {
   } catch (error: any) {
     console.error('daily-intelligence-preload error:', error);
     return new Response(
-      JSON.stringify({ success: false, error: error instanceof Error ? error.message : 'Unknown error' }),
+      JSON.stringify({ success: false, error: "Request failed" }),
       { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
     );
   }
