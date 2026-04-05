@@ -143,42 +143,29 @@ export function BriefingHoldingModal({ open, onClose }: BriefingHoldingModalProp
                 initial={{ opacity: 0, scale: 0.9 }}
                 animate={{ opacity: 1, scale: 1 }}
                 transition={{ duration: 0.4, ease: [0.22, 1, 0.36, 1] }}
-                className="text-center py-4"
+                className="text-center py-8"
               >
                 <motion.div
                   initial={{ scale: 0 }}
-                  animate={{ scale: 1 }}
-                  transition={{ delay: 0.1, type: "spring", stiffness: 300, damping: 20 }}
-                  className="w-14 h-14 rounded-full bg-primary/10 flex items-center justify-center mx-auto mb-4"
+                  animate={[
+                    { scale: 1 },
+                    { scale: 1.15 },
+                    { scale: 1 },
+                  ]}
+                  transition={{ duration: 0.6, times: [0, 0.5, 1], ease: "easeOut" }}
+                  className="w-14 h-14 rounded-full bg-primary/10 flex items-center justify-center mx-auto mb-5"
                 >
                   <Check className="w-7 h-7 text-primary" />
                 </motion.div>
 
-                <motion.div
+                <motion.p
                   initial={{ opacity: 0, y: 8 }}
                   animate={{ opacity: 1, y: 0 }}
-                  transition={{ delay: 0.25 }}
+                  transition={{ delay: 0.3 }}
+                  className="text-sm text-muted-foreground leading-relaxed"
                 >
-                  <h3 className="text-lg font-bold text-foreground mb-2 font-display">
-                    You're on the list.
-                  </h3>
-                  <p className="text-sm text-muted-foreground mb-1">
-                    Your <span className="text-primary font-medium">{dnaLabel}</span> briefing is being built.
-                  </p>
-                  <p className="text-xs text-muted-foreground">
-                    We'll send it to <span className="text-foreground">{email}</span>.
-                  </p>
-                </motion.div>
-
-                <motion.button
-                  initial={{ opacity: 0 }}
-                  animate={{ opacity: 1 }}
-                  transition={{ delay: 0.5 }}
-                  onClick={onClose}
-                  className="mt-6 text-xs text-muted-foreground hover:text-foreground font-mono tracking-wider uppercase transition-colors"
-                >
-                  Continue exploring →
-                </motion.button>
+                  You're in. Your personalized briefing is on the way.
+                </motion.p>
               </motion.div>
             )}
           </AnimatePresence>
