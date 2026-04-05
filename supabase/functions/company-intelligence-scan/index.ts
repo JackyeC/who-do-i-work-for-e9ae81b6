@@ -4,6 +4,7 @@ const corsHeaders = {
 };
 
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2';
+import { requireAuth } from "../_shared/auth-guard.ts";
 
 // Phase 1: Primary data connectors (federal APIs - highest confidence)
 // These are the authoritative sources: FEC, Senate LDA, USASpending, Congress.gov
@@ -87,9 +88,15 @@ const DAILY_FREE_SCAN_LIMIT = 2;
 const DAILY_PAID_SCAN_LIMIT = 20;
 
 Deno.serve(async (req: Request) => {
+
   if (req.method === 'OPTIONS') {
     return new Response(null, { headers: corsHeaders });
   }
+
+
+  // Auth guard: require valid JWT or service-role key
+  const authResult = await requireAuth(req);
+  if (authResult.error) return authResult.error;
 
   const supabaseUrl = Deno.env.get('SUPABASE_URL')!;
   const supabaseKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!;

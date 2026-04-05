@@ -1,5 +1,6 @@
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 import { resilientSearch } from "../_shared/resilient-search.ts";
+import { requireServiceRole } from "../_shared/auth-guard.ts";
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
@@ -7,9 +8,15 @@ const corsHeaders = {
 };
 
 Deno.serve(async (req: Request) => {
+
   if (req.method === "OPTIONS") {
     return new Response(null, { headers: corsHeaders });
   }
+
+
+  // Auth guard: require service-role key
+  const authDenied = requireServiceRole(req);
+  if (authDenied) return authDenied;
 
   try {
     const { company_id, company_name, national = false } = await req.json();

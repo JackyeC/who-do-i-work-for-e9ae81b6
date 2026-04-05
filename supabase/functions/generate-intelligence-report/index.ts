@@ -1,4 +1,5 @@
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2.49.1";
+import { requireAuth } from "../_shared/auth-guard.ts";
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
@@ -25,9 +26,15 @@ function escapeHtml(value: string) {
 }
 
 Deno.serve(async (req: Request) => {
+
   if (req.method === "OPTIONS") {
     return new Response(null, { headers: corsHeaders });
   }
+
+
+  // Auth guard: require valid JWT or service-role key
+  const authResult = await requireAuth(req);
+  if (authResult.error) return authResult.error;
 
   if (req.method !== "POST") {
     return json({ error: "Method not allowed" }, 405);

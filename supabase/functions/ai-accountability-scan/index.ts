@@ -5,6 +5,7 @@ const corsHeaders = {
 
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2';
 import { resilientSearch } from '../_shared/resilient-search.ts';
+import { requireAuth } from "../_shared/auth-guard.ts";
 // Vendor fingerprint database: domain → { name, category, risk_flags }
 const VENDOR_SIGNATURES: Record<string, { name: string; category: string; riskFlags: string[] }> = {
   // Sourcing AI
@@ -67,9 +68,15 @@ const SAFEPATH_RISK_KEYWORDS = [
 ];
 
 Deno.serve(async (req: Request) => {
+
   if (req.method === 'OPTIONS') {
     return new Response(null, { headers: corsHeaders });
   }
+
+
+  // Auth guard: require valid JWT or service-role key
+  const authResult = await requireAuth(req);
+  if (authResult.error) return authResult.error;
 
   try {
     const { companyId, companyName } = await req.json();

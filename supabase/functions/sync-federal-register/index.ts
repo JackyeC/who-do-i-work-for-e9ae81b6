@@ -14,6 +14,7 @@ const corsHeaders = {
 };
 
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2';
+import { requireServiceRole } from "../_shared/auth-guard.ts";
 
 const FR_API = 'https://www.federalregister.gov/api/v1';
 
@@ -116,9 +117,15 @@ function scoreRelevance(doc: any, issueSearchTerms: string[]): number {
 }
 
 Deno.serve(async (req: Request) => {
+
   if (req.method === 'OPTIONS') {
     return new Response(null, { headers: corsHeaders });
   }
+
+
+  // Auth guard: require service-role key
+  const authDenied = requireServiceRole(req);
+  if (authDenied) return authDenied;
 
   try {
     const { companyId, companyName } = await req.json();
