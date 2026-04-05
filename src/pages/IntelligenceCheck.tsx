@@ -12,8 +12,8 @@ import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 
 export default function IntelligenceCheck() {
-  const navigate = useNavigate();
   const [submitting, setSubmitting] = useState(false);
+  const [submitted, setSubmitted] = useState(false);
   const [form, setForm] = useState({
     employer_name: "",
     role_title: "",
