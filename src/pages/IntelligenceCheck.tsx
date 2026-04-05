@@ -31,7 +31,10 @@ export default function IntelligenceCheck() {
 
     setSubmitting(true);
     try {
+      // Insert with a known ID so we can pass it to the report generator
+      const requestId = crypto.randomUUID();
       const { error } = await (supabase as any).from("intelligence_requests").insert({
+        id: requestId,
         employer_name: form.employer_name.trim(),
         role_title: form.role_title.trim(),
         location: form.location.trim() || null,
@@ -41,16 +44,17 @@ export default function IntelligenceCheck() {
       });
       if (error) throw error;
 
-      // Notify Jackyé via email (fire-and-forget)
-      supabase.functions.invoke("notify-intelligence-request", {
+      // Auto-generate intelligence report + email it (fire-and-forget)
+      supabase.functions.invoke("generate-intelligence-report", {
         body: {
           employer_name: form.employer_name.trim(),
           role_title: form.role_title.trim(),
           email: form.email.trim().toLowerCase(),
           location: form.location.trim() || null,
           concern: form.concerns.trim() || null,
+          request_id: requestId,
         },
-      }).catch((err) => console.error("Notification email failed:", err));
+      }).catch((err: Error) => console.error("Report generation failed:", err));
 
       setSubmitted(true);
     } catch (err) {
