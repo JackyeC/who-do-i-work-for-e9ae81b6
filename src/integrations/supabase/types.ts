@@ -5874,6 +5874,68 @@ export type Database = {
           },
         ]
       }
+      federal_register_rules: {
+        Row: {
+          abstract: string | null
+          agency_names: string[] | null
+          company_id: string
+          created_at: string
+          document_number: string
+          document_type: string
+          effective_date: string | null
+          html_url: string | null
+          id: string
+          matched_issue_codes: string[] | null
+          pdf_url: string | null
+          publication_date: string | null
+          raw_payload: Json | null
+          relevance_score: number | null
+          title: string
+        }
+        Insert: {
+          abstract?: string | null
+          agency_names?: string[] | null
+          company_id: string
+          created_at?: string
+          document_number: string
+          document_type?: string
+          effective_date?: string | null
+          html_url?: string | null
+          id?: string
+          matched_issue_codes?: string[] | null
+          pdf_url?: string | null
+          publication_date?: string | null
+          raw_payload?: Json | null
+          relevance_score?: number | null
+          title: string
+        }
+        Update: {
+          abstract?: string | null
+          agency_names?: string[] | null
+          company_id?: string
+          created_at?: string
+          document_number?: string
+          document_type?: string
+          effective_date?: string | null
+          html_url?: string | null
+          id?: string
+          matched_issue_codes?: string[] | null
+          pdf_url?: string | null
+          publication_date?: string | null
+          raw_payload?: Json | null
+          relevance_score?: number | null
+          title?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "federal_register_rules_company_id_fkey"
+            columns: ["company_id"]
+            isOneToOne: false
+            referencedRelation: "companies"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       founder_notes: {
         Row: {
           created_at: string
