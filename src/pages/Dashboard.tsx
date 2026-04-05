@@ -1,10 +1,9 @@
-import { useState, useMemo, useEffect } from "react";
+import { useState, useEffect } from "react";
 import { useAuth } from "@/contexts/AuthContext";
 import { usePersona } from "@/hooks/use-persona";
-import { PersonaQuizBanner } from "@/components/PersonaQuizBanner";
 import { Navigate, useSearchParams } from "react-router-dom";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
-import { DashboardOverview } from "@/components/dashboard/DashboardOverview";
+import { YourSignalDashboard } from "@/components/dashboard/YourSignalDashboard";
 import { AlignedJobsList } from "@/components/jobs/AlignedJobsList";
 import { PreferenceCenter } from "@/components/jobs/PreferenceCenter";
 import { UserProfileForm } from "@/components/jobs/UserProfileForm";
@@ -32,11 +31,10 @@ import { ApplyKitSection } from "@/components/dashboard/ApplyKitSection";
 import { MockInterviewSection } from "@/components/dashboard/MockInterviewSection";
 import { InboxSection } from "@/components/dashboard/InboxSection";
 import { SavedSection } from "@/components/dashboard/SavedSection";
-import { TodayReflection } from "@/components/dashboard/TodayReflection";
 import { DreamJobProfileSummaryCard } from "@/components/career/DreamJobProfileSummaryCard";
 
 const TAB_TITLES: Record<string, string> = {
-  overview: "My Intelligence",
+  overview: "Your Signal",
   tracked: "Tracked Companies",
   matches: "Matched Jobs",
   values: "My Values Profile",
@@ -96,7 +94,7 @@ export default function Dashboard() {
     return (
       <div className="flex flex-col items-center justify-center flex-1 gap-4 p-8">
         <div className="w-8 h-8 border-2 border-primary border-t-transparent rounded-full animate-spin" />
-        <p className="text-sm text-muted-foreground">Loading your dashboard…</p>
+        <p className="text-sm text-muted-foreground">Loading your signal…</p>
       </div>
     );
   }
@@ -113,7 +111,7 @@ export default function Dashboard() {
   const renderContent = () => {
     switch (tab) {
       case "overview":
-        return <DashboardOverview onNavigate={setTab} />;
+        return <YourSignalDashboard />;
       case "tracked":
         return <SlotManagementDashboard />;
       case "matches":
@@ -184,14 +182,14 @@ export default function Dashboard() {
       case "search-saved":
         return <SavedSection />;
       default:
-        return <DashboardOverview onNavigate={setTab} />;
+        return <YourSignalDashboard />;
     }
   };
 
   return (
     <div className="flex flex-col flex-1">
       <Helmet>
-        <title>My Intelligence — Who Do I Work For?</title>
+        <title>Your Signal — Who Do I Work For?</title>
       </Helmet>
 
       {showOnboarding && (
@@ -204,12 +202,10 @@ export default function Dashboard() {
 
       <div className="flex items-center gap-3 border-b border-border/30 px-6 h-12">
         <h1 className="text-sm font-semibold text-foreground truncate">
-          {TAB_TITLES[tab] || "My Intelligence"}
+          {TAB_TITLES[tab] || "Your Signal"}
         </h1>
       </div>
       <div className="flex-1 overflow-y-auto px-4 sm:px-6 py-6">
-        {!hasTakenQuiz && tab === "overview" && <PersonaQuizBanner />}
-        {tab === "overview" && <TodayReflection />}
         {showUpsell && <PostPurchaseUpsell onDismiss={dismissUpsell} />}
         <AnimatePresence mode="popLayout">
           <motion.div
