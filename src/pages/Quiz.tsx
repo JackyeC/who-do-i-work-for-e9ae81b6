@@ -881,7 +881,7 @@ function TileGrid({
             tabIndex={isSelected || (selected === null && idx === 0) ? 0 : -1}
             onClick={() => onSelect(idx)}
             onKeyDown={(e) => handleKeyDown(e, idx)}
-            className="text-left quiz-focus-ring"
+            className="text-left quiz-focus-ring active:scale-[0.97]"
             style={{
               background: isSelected
                 ? "rgba(240,192,64,0.12)"
