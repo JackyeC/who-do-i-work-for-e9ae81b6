@@ -627,14 +627,15 @@ export default function CompanyDossier() {
 
       {/* ── THE ADVOCACY REPORT ── */}
       <div id="leadership-signals">
-      <AdvocacyReport
-        company={{ ...company, id: companyId!, slug: company.slug } as any}
-        executives={executives as any}
-        contracts={contracts as any}
-        issueSignals={issueSignals as any}
-        publicStances={publicStances as any}
-        eeocCases={eeocCases as any}
-      />
+        <AdvocacyReport
+          company={{ ...company, id: companyId!, slug: company.slug } as any}
+          executives={executives as any}
+          contracts={contracts as any}
+          issueSignals={issueSignals as any}
+          publicStances={publicStances as any}
+          eeocCases={eeocCases as any}
+        />
+      </div>
 
       {/* ── WHAT THIS MEANS FOR YOU ── */}
       <WhatThisMeansForYou
