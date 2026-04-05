@@ -88,18 +88,11 @@ const Index = forwardRef<HTMLDivElement>((_, ref) => {
             Check who you&apos;re really working for in 30 seconds &mdash; the receipts on politics, enforcement, layoffs, and values, pulled from the public record so you&apos;re not guessing about your next move.
           </p>
 
-          {/* Primary CTA */}
+          {/* Primary CTA — single form with submit inside HeroScanInput */}
           <div
             className="mt-9 w-full flex flex-col items-center gap-4"
             style={{ animation: "heroFadeIn 0.5s ease 0.5s" }}
           >
-            <button
-              id="cta-intelligence-check"
-              onClick={() => navigate("/intelligence-check")}
-              className="bg-primary text-primary-foreground px-8 py-3.5 font-sans text-sm font-semibold hover:brightness-110 active:scale-[0.97] transition-all rounded-xl shadow-elevated"
-            >
-              Run My Free Scan
-            </button>
             <HeroScanInput />
           </div>
 
