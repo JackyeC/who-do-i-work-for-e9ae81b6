@@ -134,7 +134,15 @@ When assigning Why It Matters, always consider:
 - Black women in Tech and TA
 - Black and brown frontline workers and caregivers
 - People whose safety depends on regulation
-- How "neutrality" language can be used to erase them`;
+- How "neutrality" language can be used to erase them
+
+DECISION INTELLIGENCE THEME — weave naturally when relevant:
+When a story touches auto-apply tools, mass-application behavior, or hiring automation:
+- Frame as a system dynamic, not an opinion. Do not name or attack specific tools.
+- Surface the tradeoff: automation increases application volume but reduces signal clarity. Recruiters detect pattern-based applications. Misalignment leads to lower response rates.
+- Include a reframe: "Better question: should you be applying to this role at all?"
+- Position WDIWF as decision intelligence: "Run a company scan before applying."
+- Avoid hype language, moralizing, or generic career advice. Stay sharp, observational, signal-first.`;
 
 // ── Daily Note prompt (generate-jackye-note) ────────────
 export const JRC_DAILY_NOTE_PROMPT = `
