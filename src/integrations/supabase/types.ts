@@ -11846,6 +11846,38 @@ export type Database = {
         }
         Relationships: []
       }
+      user_recent_company_views: {
+        Row: {
+          company_id: string
+          company_name: string
+          id: string
+          user_id: string
+          viewed_at: string
+        }
+        Insert: {
+          company_id: string
+          company_name: string
+          id?: string
+          user_id: string
+          viewed_at?: string
+        }
+        Update: {
+          company_id?: string
+          company_name?: string
+          id?: string
+          user_id?: string
+          viewed_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "user_recent_company_views_company_id_fkey"
+            columns: ["company_id"]
+            isOneToOne: false
+            referencedRelation: "companies"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       user_roles: {
         Row: {
           id: string
