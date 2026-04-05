@@ -413,9 +413,10 @@ ${truncated}`,
 
   } catch (error: any) {
     console.error('AI Accountability scan error:', error);
+    console.error('AI Accountability scan error:', error);
     return new Response(JSON.stringify({
       success: false,
-      error: error instanceof Error ? error.message : 'Unknown error',
+      error: 'Request failed',
     }), { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } });
   }
 });
