@@ -16,10 +16,15 @@ import { usePageSEO } from "@/hooks/use-page-seo";
 import { MarketingNav } from "@/components/layout/MarketingNav";
 import { SiteFooter } from "@/components/layout/SiteFooter";
 import { HeroScanInput } from "@/components/landing/HeroScanInput";
-import { LiveDataFeed } from "@/components/landing/LiveDataFeed";
 
 const LiveIntelligenceTicker = lazy(() => import("@/components/landing/LiveIntelligenceTicker").then(m => ({ default: m.LiveIntelligenceTicker })));
 const ExitIntentCapture = lazy(() => import("@/components/ExitIntentCapture").then(m => ({ default: m.ExitIntentCapture })));
+
+const COMING_SOON_BADGE = (
+  <span className="font-mono text-[9px] tracking-wider uppercase px-2 py-0.5 bg-primary/15 text-primary border border-primary/30 rounded-full">
+    Coming Soon
+  </span>
+);
 
 const Index = forwardRef<HTMLDivElement>((_, ref) => {
   const navigate = useNavigate();
@@ -34,7 +39,7 @@ const Index = forwardRef<HTMLDivElement>((_, ref) => {
     jsonLd: {
       "@type": "WebApplication",
       name: "Who Do I Work For",
-      description: "Career advocacy platform by Jackye Clayton. Evaluate employers using public records \u2014 political spending, enforcement history, lobbying, compensation data.",
+      description: "Career advocacy platform by Jackye Clayton. Evaluate employers using public records — political spending, enforcement history, lobbying, compensation data.",
       applicationCategory: "BusinessApplication",
       creator: { "@type": "Person", name: "Jackye Clayton" },
       url: "https://whodoiworkfor.com",
@@ -89,6 +94,7 @@ const Index = forwardRef<HTMLDivElement>((_, ref) => {
             style={{ animation: "heroFadeIn 0.5s ease 0.5s" }}
           >
             <button
+              id="cta-intelligence-check"
               onClick={() => navigate("/intelligence-check")}
               className="bg-primary text-primary-foreground px-8 py-3.5 font-sans text-sm font-semibold hover:brightness-110 active:scale-[0.97] transition-all rounded-xl shadow-elevated"
             >
@@ -97,7 +103,7 @@ const Index = forwardRef<HTMLDivElement>((_, ref) => {
             <HeroScanInput />
           </div>
 
-          {/* Work DNA Quiz CTA */}
+          {/* Work DNA Quiz CTA — split-test Path B */}
           <p
             className="font-mono text-xs text-muted-foreground mt-4 tracking-wide"
             style={{ animation: "heroFadeIn 0.4s ease 0.7s" }}
@@ -108,7 +114,7 @@ const Index = forwardRef<HTMLDivElement>((_, ref) => {
               onClick={() => navigate("/quiz")}
               className="text-primary hover:text-primary/80 underline underline-offset-2 transition-colors font-semibold"
             >
-              Find your Work DNA first →
+              Find your Work DNA first &rarr;
             </button>
           </p>
 
@@ -141,27 +147,31 @@ const Index = forwardRef<HTMLDivElement>((_, ref) => {
           </h2>
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-            {[
+            {([
               {
                 step: "01",
-                title: "Define what “good” means",
-                body: "Values profile, quiz, and professional fields roll into your Dream Job Profile — the canonical lens for matching and optional auto-apply.",
+                title: "Define what \u201cgood\u201d means",
+                body: "Values profile, quiz, and professional fields roll into your Dream Job Profile \u2014 the canonical lens for matching and optional auto-apply.",
                 link: "/dashboard?tab=profile",
+                comingSoon: true,
               },
               {
                 step: "02",
                 title: "Investigate & match",
-                body: "Open employer dossiers from the public record. See why roles fit in the jobs feed — role family, values, and mission alignment with clear risk notes when data is thin.",
+                body: "Open employer dossiers from the public record. See why roles fit in the jobs feed \u2014 role family, values, and mission alignment with clear risk notes when data is thin.",
                 link: "/browse",
+                comingSoon: false,
               },
               {
                 step: "03",
                 title: "Apply with receipts",
                 body: "Track applications and post-apply dossiers from the dashboard. Review-first auto-apply stays in your control until you promote to a trusted queue.",
                 link: "/dashboard?tab=tracker",
+                comingSoon: true,
               },
-            ].map((item) => (
-              <Link key={item.step} to={item.link} className="flex flex-col no-underline group/step hover:bg-primary/[0.03] rounded-lg p-4 -m-4 transition-colors">
+            ] as const).map((item) => (
+              <Link key={item.step} to={item.link} className="flex flex-col no-underline group/step hover:bg-primary/[0.03] rounded-lg p-4 -m-4 transition-colors relative">
+                {item.comingSoon && <div className="absolute top-2 right-2">{COMING_SOON_BADGE}</div>}
                 <span className="font-mono text-primary text-xs tracking-wider mb-3">{item.step}</span>
                 <h3 className="font-sans font-bold text-foreground text-base mb-2 group-hover/step:text-primary transition-colors">{item.title}</h3>
                 <p className="font-sans text-sm text-muted-foreground leading-relaxed">{item.body}</p>
@@ -182,19 +192,20 @@ const Index = forwardRef<HTMLDivElement>((_, ref) => {
             Everything you need. Nothing you don't.
           </h2>
           <p className="text-body-lg text-center max-w-[52ch] mx-auto mb-14">
-            Six entry points. One foundation: the public record — plus your stated priorities when you’re signed in.
+            Six entry points. One foundation: the public record — plus your stated priorities when you're signed in.
           </p>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-            {[
-              { icon: <FileSearch className="w-6 h-6" strokeWidth={1.5} />, title: "Employer Dossiers", desc: "Forensic employer profiles from FEC, SEC, OSHA, NLRB, lobbying disclosures, and more — political giving, enforcement, leadership signals, and values alignment. Sourced and traceable.", link: "/browse" },
-              { icon: <Target className="w-6 h-6" strokeWidth={1.5} />, title: "Dream Job Profile", desc: "Your targets, values sliders, quiz, and preferences merge into one profile that powers matching and optional auto-apply — without weak data overwriting what you typed.", link: "/dashboard?tab=profile" },
-              { icon: <Briefcase className="w-6 h-6" strokeWidth={1.5} />, title: "Jobs Feed & Matching", desc: "See aligned and adjacent roles with “why this matches you” — role family, values fit, mission alignment, and risk notes when employer clarity is low.", link: "/jobs-feed" },
-              { icon: <Shield className="w-6 h-6" strokeWidth={1.5} />, title: "Auto-Apply", desc: "Set integrity thresholds and daily caps. Stay on review-before-apply or move to a trusted queue when you’re ready — with clear visibility into what the profile is driving.", link: "/auto-apply" },
-              { icon: <FileText className="w-6 h-6" strokeWidth={1.5} />, title: "Applications & Dossiers", desc: "Track applications in motion and open post-apply dossiers generated for your materials — your receipts for what you sent and why.", link: "/dashboard?tab=tracker" },
-              { icon: <LayoutDashboard className="w-6 h-6" strokeWidth={1.5} />, title: "Command Center", desc: "Dashboard overview: today’s snapshot, Dream Job Profile, matches, applications, signals, and one suggested move — editorial, daily-use layout. Ask Jackye stays one click away in the product.", link: "/dashboard?tab=overview" },
-            ].map((item) => (
-              <Link key={item.title} to={item.link} className="group p-6 border border-border bg-card hover:border-primary/30 transition-all">
+            {([
+              { icon: <FileSearch className="w-6 h-6" strokeWidth={1.5} />, title: "Employer Dossiers", desc: "Forensic employer profiles from FEC, SEC, OSHA, NLRB, lobbying disclosures, and more \u2014 political giving, enforcement, leadership signals, and values alignment. Sourced and traceable.", link: "/browse", comingSoon: false },
+              { icon: <Target className="w-6 h-6" strokeWidth={1.5} />, title: "Dream Job Profile", desc: "Your targets, values sliders, quiz, and preferences merge into one profile that powers matching and optional auto-apply \u2014 without weak data overwriting what you typed.", link: "/dashboard?tab=profile", comingSoon: true },
+              { icon: <Briefcase className="w-6 h-6" strokeWidth={1.5} />, title: "Jobs Feed & Matching", desc: "See aligned and adjacent roles with \u201cwhy this matches you\u201d \u2014 role family, values fit, mission alignment, and risk notes when employer clarity is low.", link: "/jobs-feed", comingSoon: true },
+              { icon: <Shield className="w-6 h-6" strokeWidth={1.5} />, title: "Auto-Apply", desc: "Set integrity thresholds and daily caps. Stay on review-before-apply or move to a trusted queue when you\u2019re ready \u2014 with clear visibility into what the profile is driving.", link: "/auto-apply", comingSoon: true },
+              { icon: <FileText className="w-6 h-6" strokeWidth={1.5} />, title: "Applications & Dossiers", desc: "Track applications in motion and open post-apply dossiers generated for your materials \u2014 your receipts for what you sent and why.", link: "/dashboard?tab=tracker", comingSoon: true },
+              { icon: <LayoutDashboard className="w-6 h-6" strokeWidth={1.5} />, title: "Command Center", desc: "Dashboard overview: today\u2019s snapshot, Dream Job Profile, matches, applications, signals, and one suggested move \u2014 editorial, daily-use layout. Ask Jackye stays one click away in the product.", link: "/dashboard?tab=overview", comingSoon: true },
+            ] as { icon: React.ReactNode; title: string; desc: string; link: string; comingSoon: boolean }[]).map((item) => (
+              <Link key={item.title} to={item.link} className="group p-6 border border-border bg-card hover:border-primary/30 transition-all relative">
+                {item.comingSoon && <div className="absolute top-3 right-3">{COMING_SOON_BADGE}</div>}
                 <div className="text-primary mb-4 group-hover:scale-105 transition-transform">{item.icon}</div>
                 <h3 className="font-sans font-bold text-foreground text-[15px] mb-2 group-hover:text-primary transition-colors">{item.title}</h3>
                 <p className="font-sans text-sm text-muted-foreground leading-relaxed">{item.desc}</p>
