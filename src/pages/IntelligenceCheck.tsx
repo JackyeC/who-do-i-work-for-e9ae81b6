@@ -1,5 +1,4 @@
 import { useState } from "react";
-import { useNavigate } from "react-router-dom";
 import { Helmet } from "react-helmet-async";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -12,8 +11,8 @@ import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 
 export default function IntelligenceCheck() {
-  const navigate = useNavigate();
   const [submitting, setSubmitting] = useState(false);
+  const [submitted, setSubmitted] = useState(false);
   const [form, setForm] = useState({
     employer_name: "",
     role_title: "",
@@ -41,7 +40,19 @@ export default function IntelligenceCheck() {
         email: form.email.trim().toLowerCase(),
       });
       if (error) throw error;
-      navigate(`/intelligence-check/confirmation?email=${encodeURIComponent(form.email.trim().toLowerCase())}`);
+
+      // Notify Jackyé via email (fire-and-forget)
+      supabase.functions.invoke("notify-intelligence-request", {
+        body: {
+          employer_name: form.employer_name.trim(),
+          role_title: form.role_title.trim(),
+          email: form.email.trim().toLowerCase(),
+          location: form.location.trim() || null,
+          concern: form.concerns.trim() || null,
+        },
+      }).catch((err) => console.error("Notification email failed:", err));
+
+      setSubmitted(true);
     } catch (err) {
       console.error("Intelligence request submission failed:", err);
       toast.error("Something went wrong. Please try again.");
@@ -49,6 +60,32 @@ export default function IntelligenceCheck() {
       setSubmitting(false);
     }
   };
+
+  if (submitted) {
+    return (
+      <div className="flex flex-col min-h-screen bg-background">
+        <Helmet>
+          <title>Request Received — Who Do I Work For</title>
+        </Helmet>
+        <MarketingNav />
+        <main className="flex-1 px-6 lg:px-16 py-16 lg:py-24">
+          <div className="max-w-[520px] mx-auto text-center">
+            <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-primary/10 mb-6">
+              <Shield className="w-8 h-8 text-primary" />
+            </div>
+            <h1 className="text-foreground font-sans text-2xl font-bold mb-4">You're in the queue.</h1>
+            <p className="text-muted-foreground text-sm leading-relaxed mb-6">
+              Jackyé will send your intelligence snapshot within 2–3 business days.
+            </p>
+            <p className="text-xs text-muted-foreground/70">
+              We'll email your results to <span className="font-medium text-foreground">{form.email}</span>.
+            </p>
+          </div>
+        </main>
+        <SiteFooter />
+      </div>
+    );
+  }
 
   return (
     <div className="flex flex-col min-h-screen bg-background">
