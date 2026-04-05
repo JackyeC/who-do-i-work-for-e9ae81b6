@@ -525,7 +525,7 @@ export default function Newsletter() {
           <p className="font-light text-muted-foreground mt-5 tracking-wide" style={{ fontSize: "clamp(18px, 2vw, 26px)" }}>
             Follow the story until you know what to do.
           </p>
-          <p className="text-sm text-foreground/80 mt-4 max-w-md mx-auto leading-relaxed">
+          <p className="text-sm text-foreground/80 mt-4 max-w-xl mx-auto leading-relaxed">
             Every satisfactory headline has a labor signal underneath it.{" "}
             <span className="text-primary font-semibold">This is the part they hoped you wouldn't read.</span>
           </p>
