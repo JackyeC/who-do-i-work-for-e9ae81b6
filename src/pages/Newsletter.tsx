@@ -728,6 +728,14 @@ export default function Newsletter() {
             </div>
           ) : (
             <>
+              {/* ── Wire Edition Header ── */}
+              <WireEditionHeader storyCount={filtered.length} />
+
+              {/* ── Editor's Note ── */}
+              {filter === "all" && sortBy === "newest" && !searchQuery && (
+                <EditorsNote />
+              )}
+
               {/* ── Jackye's Current Take (pull quote) ── */}
               {currentTake && filter === "all" && sortBy === "newest" && !searchQuery && (
                 <div className="mb-10 rounded-xl border border-primary/20 bg-primary/[0.04] p-8">
@@ -765,7 +773,7 @@ export default function Newsletter() {
                     <span className="text-[10px] text-muted-foreground/50 font-mono">{withTakes.length - 1} more</span>
                   </div>
                   <div className="grid md:grid-cols-2 gap-5">
-                    {withTakes.slice(1).map((article) => (
+                    {withTakes.slice(1, visibleCount).map((article) => (
                       <SignalStoryCard key={article.id} story={toSignalStory(article)} />
                     ))}
                   </div>
@@ -788,10 +796,22 @@ export default function Newsletter() {
                     <h2 className="text-[10px] font-mono tracking-[0.2em] uppercase text-muted-foreground font-bold">All Signals</h2>
                   </div>
                   <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
-                    {withoutTakes.map((article) => (
+                    {withoutTakes.slice(0, Math.max(0, visibleCount - withTakes.length)).map((article) => (
                       <WireItem key={article.id} article={article} />
                     ))}
                   </div>
+                </div>
+              )}
+
+              {/* ── Load More ── */}
+              {visibleCount < (withTakes.length + withoutTakes.length) && (
+                <div className="flex justify-center mt-10">
+                  <button
+                    onClick={() => setVisibleCount((c) => c + PAGE_SIZE)}
+                    className="px-8 py-3 border border-border rounded-xl text-sm font-semibold text-foreground hover:border-primary/40 hover:text-primary transition-all font-mono tracking-wider"
+                  >
+                    Load More Signals
+                  </button>
                 </div>
               )}
             </>
