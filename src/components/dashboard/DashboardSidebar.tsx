@@ -26,7 +26,7 @@ const navGroups = [
   {
     label: "Intelligence",
     items: [
-      { id: "overview", label: "Dashboard", icon: Home },
+      { id: "overview", label: "Your Signal", icon: Home },
       { id: "tracked", label: "Tracked Companies", icon: Building2 },
       { id: "values", label: "My Values", icon: Heart },
       { id: "alerts", label: "Signal Alerts", icon: Bell },
@@ -97,8 +97,8 @@ export function DashboardSidebar({ activeTab, onTabChange }: DashboardSidebarPro
               <Compass className="w-4 h-4 text-primary-foreground" />
             </div>
             <div className="leading-none">
-              <p className="text-sm font-bold text-foreground font-display">My Dashboard</p>
-              <p className="text-xs text-muted-foreground mt-0.5">Career Intelligence Hub</p>
+              <p className="text-sm font-bold text-foreground font-display">Your Signal</p>
+              <p className="text-xs text-muted-foreground mt-0.5">Decision Intelligence</p>
             </div>
           </div>
         )}
