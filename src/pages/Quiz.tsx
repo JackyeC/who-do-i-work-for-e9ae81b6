@@ -894,6 +894,27 @@ export default function Quiz() {
                   {qIdx === TOTAL_QUESTIONS - 1 ? "See my profile" : "Next →"}
                 </button>
               </div>
+              {/* Reset link on first question screen */}
+              {qIdx === 0 && (
+                <div className="text-center mt-6">
+                  <button
+                    onClick={reset}
+                    style={{
+                      background: "none",
+                      border: "none",
+                      color: "rgba(245,240,232,0.35)",
+                      fontSize: 12,
+                      cursor: "pointer",
+                      fontFamily: "'DM Sans', sans-serif",
+                      transition: "color 0.2s ease",
+                    }}
+                    onMouseEnter={(e) => (e.currentTarget.style.color = "#C9A84C")}
+                    onMouseLeave={(e) => (e.currentTarget.style.color = "rgba(245,240,232,0.35)")}
+                  >
+                    Already took the quiz? Reset and start over.
+                  </button>
+                </div>
+              )
             </div>
           </div>
         ))}
