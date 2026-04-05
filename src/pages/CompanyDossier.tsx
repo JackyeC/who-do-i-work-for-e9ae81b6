@@ -60,6 +60,7 @@ import { PolicyScoreCard } from "@/components/policy-intelligence/PolicyScoreCar
 import { StateWomenStatusCard } from "@/components/StateWomenStatusCard";
 import { SourceDocumentsLayer } from "@/components/dossier/SourceDocumentsLayer";
 import { AccountabilitySignalsLayer } from "@/components/dossier/AccountabilitySignalsLayer";
+import { CongressionalContextCard } from "@/components/dossier/CongressionalContextCard";
 import { CompanyClaimsSection } from "@/components/dossier/CompanyClaimsSection";
 import { CodeWordScanner } from "@/components/dossier/CodeWordScanner";
 import { MissionIntegrityCard } from "@/components/dossier/MissionIntegrityCard";
@@ -753,6 +754,12 @@ export default function CompanyDossier() {
           {companyId && (
             <DossierLayer title="Accountability Signals" subtitle="Power, conduct, governance, and narrative gap patterns from public records" icon={ShieldCheck} layerNumber={10}>
               <AccountabilitySignalsLayer companyId={companyId} companyName={company.name} />
+            </DossierLayer>
+          )}
+
+          {companyId && (
+            <DossierLayer title="Capitol Watch" subtitle="Congressional activity relevant to this employer" icon={Landmark} layerNumber={11}>
+              <CongressionalContextCard companyId={companyId} companyName={company.name} />
             </DossierLayer>
           )}
         </div>
