@@ -132,10 +132,13 @@ export function LiveIntelligenceTicker() {
     getFactualityColor(profile.factuality);
     const catLabel = CATEGORY_LABELS[item.category] || "NEWS";
 
+    const displayText = item.jackye_take && item.jackye_take !== "[FILTERED]"
+      ? item.jackye_take
+      : item.headline;
     const headlineText =
-      item.headline.length > 70
-        ? item.headline.slice(0, 70) + "\u2026"
-        : item.headline;
+      displayText.length > 120
+        ? displayText.slice(0, 120) + "\u2026"
+        : displayText;
 
     return (
       <button
