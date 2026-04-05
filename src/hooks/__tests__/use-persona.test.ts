@@ -1,5 +1,5 @@
 import { describe, it, expect, beforeEach } from "vitest";
-import { getPersonaState, PERSONA_NAMES, SECTION_HEADER_COPY, CTA_COPY, BADGES } from "../use-persona";
+import { getPersonaState, PERSONA_NAMES, SECTION_HEADER_COPY, CTA_COPY } from "../use-persona";
 import { BADGES as SignalBadges } from "@/components/dashboard/SignalBadges";
 
 describe("getPersonaState", () => {
