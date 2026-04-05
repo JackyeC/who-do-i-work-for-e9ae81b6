@@ -37,7 +37,7 @@ interface NavItem {
 const NAV_ITEMS: NavItem[] = [
   {
     id: "command-center",
-    label: "Command Center",
+    label: "Your Signal",
     path: "/dashboard",
     dotColor: "bg-[hsl(var(--primary))]",
     auth: true,
