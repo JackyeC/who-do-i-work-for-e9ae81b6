@@ -5,7 +5,7 @@ export function EditorsNote() {
     <div className="rounded-xl border p-6 mb-8" style={{ background: "hsl(var(--primary) / 0.03)", borderColor: "hsl(var(--primary) / 0.15)" }}>
       <div className="flex items-center gap-2 mb-3">
         <Crown className="w-4 h-4 text-primary" />
-        <span className="text-[11px] font-bold text-primary tracking-[0.15em] uppercase font-mono">Editor's Note</span>
+        <span className="text-[13px] font-bold text-primary tracking-[0.15em] uppercase font-mono">Editor's Note</span>
       </div>
       <p className="text-sm text-foreground/80 leading-relaxed">
         Every story here has a labor signal underneath it. I'm not summarizing the news.
