@@ -756,6 +756,12 @@ export default function CompanyDossier() {
               <AccountabilitySignalsLayer companyId={companyId} companyName={company.name} />
             </DossierLayer>
           )}
+
+          {companyId && (
+            <DossierLayer title="Capitol Watch" subtitle="Congressional activity relevant to this employer" icon={Landmark} layerNumber={11}>
+              <CongressionalContextCard companyId={companyId} companyName={company.name} />
+            </DossierLayer>
+          )}
         </div>
       )}
     </>
