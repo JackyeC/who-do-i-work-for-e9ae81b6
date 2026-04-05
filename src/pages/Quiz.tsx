@@ -1271,11 +1271,14 @@ function ResultsScreen({
           marginTop: 24,
           background: "none",
           border: "none",
-          color: "hsl(var(--muted-foreground))",
+          color: "rgba(245,240,232,0.4)",
           fontSize: 12,
           cursor: "pointer",
           fontFamily: "'DM Sans', sans-serif",
+          transition: "color 0.2s ease",
         }}
+        onMouseEnter={(e) => (e.currentTarget.style.color = "#C9A84C")}
+        onMouseLeave={(e) => (e.currentTarget.style.color = "rgba(245,240,232,0.4)")}
       >
         ← Retake the quiz
       </button>
