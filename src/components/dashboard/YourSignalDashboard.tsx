@@ -183,7 +183,7 @@ export function YourSignalDashboard() {
             Your Signal
           </h1>
           <p className="text-sm text-muted-foreground">
-            What you've learned. What's changed. What to do next.
+            Your receipts, your signals, your next move.
           </p>
           <div className="flex items-center gap-2 pt-2">
             <span className="text-sm font-semibold text-foreground">{firstName}</span>
@@ -252,20 +252,31 @@ export function YourSignalDashboard() {
                 >
                   <Link
                     to={`/dossier/${t.slug}`}
-                    className="flex items-center gap-3 p-3 rounded-xl transition-all duration-200 group bg-muted/20 hover:bg-muted/40 border border-transparent hover:border-border/30"
+                    className="flex flex-col gap-0.5 p-3 rounded-xl transition-all duration-200 group bg-muted/20 hover:bg-muted/40 border border-transparent hover:border-border/30"
                   >
-                    <span className="flex-1 min-w-0 truncate text-sm font-semibold text-foreground group-hover:text-primary transition-colors">
-                      {t.name}
-                    </span>
-                    <span className={`text-xs font-bold shrink-0 rounded-full px-2 py-0.5 ${scoreBg(t.score)}`}>
-                      {t.score}
-                    </span>
-                    {t.updatedAt && (
-                      <span className="text-[10px] text-muted-foreground/50 font-mono shrink-0 hidden sm:block">
-                        {timeAgo(t.updatedAt)}
+                    <div className="flex items-center gap-3">
+                      <span className="flex-1 min-w-0 truncate text-sm font-semibold text-foreground group-hover:text-primary transition-colors">
+                        {t.name}
+                      </span>
+                      <span className={`text-xs font-bold shrink-0 rounded-full px-2 py-0.5 ${scoreBg(t.score)}`}>
+                        {t.score}
+                      </span>
+                      {t.updatedAt && (
+                        <span className="text-[10px] text-muted-foreground/50 font-mono shrink-0 hidden sm:block">
+                          {timeAgo(t.updatedAt)}
+                        </span>
+                      )}
+                      <ArrowRight className="w-3.5 h-3.5 text-muted-foreground/30 group-hover:text-primary transition-colors shrink-0" />
+                    </div>
+                    {t.score > 0 && (
+                      <span className="text-[10px] text-muted-foreground/60 pl-0.5">
+                        {t.score >= 70
+                          ? `${t.industry || "Company"} · Strong clarity signals`
+                          : t.score >= 40
+                          ? `${t.industry || "Company"} · Mixed signals — review recommended`
+                          : `${t.industry || "Company"} · Low clarity — proceed with caution`}
                       </span>
                     )}
-                    <ArrowRight className="w-3.5 h-3.5 text-muted-foreground/30 group-hover:text-primary transition-colors shrink-0" />
                   </Link>
                 </motion.div>
               ))}
