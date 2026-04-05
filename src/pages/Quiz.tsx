@@ -413,19 +413,68 @@ export default function Quiz() {
   const [showShareModal, setShowShareModal] = useState(false);
   const [showWelcomeBack, setShowWelcomeBack] = useState(false);
   const [savedProfile, setSavedProfile] = useState<{ primary: PersonaKey; secondary: PersonaKey; meta: MetaFlags } | null>(null);
+  const [checkingProfile, setCheckingProfile] = useState(true);
 
-  // Detect returning visitor — show interstitial instead of auto-jumping
+  // Detect returning visitor — auth-aware: DB profile takes priority over localStorage
   useEffect(() => {
-    const saved = localStorage.getItem("workDnaProfile");
-    if (saved) {
+    let cancelled = false;
+    (async () => {
       try {
-        const parsed = JSON.parse(saved);
-        if (parsed.primary && parsed.secondary && parsed.meta) {
-          setSavedProfile(parsed);
-          setShowWelcomeBack(true);
+        // Wait for auth to settle first
+        const { data: { user } } = await supabase.auth.getUser();
+        if (cancelled) return;
+
+        // If logged in, check DB for quiz results first
+        if (user) {
+          const { data: dbResult } = await (supabase as any)
+            .from("wdiwf_quiz_results")
+            .select("result_profile, result_secondary, meta_flags")
+            .eq("user_id", user.id)
+            .order("created_at", { ascending: false })
+            .limit(1)
+            .maybeSingle();
+          if (cancelled) return;
+          if (dbResult?.result_profile && dbResult?.result_secondary && dbResult?.meta_flags) {
+            const dbProfile = {
+              primary: dbResult.result_profile as PersonaKey,
+              secondary: dbResult.result_secondary as PersonaKey,
+              meta: dbResult.meta_flags as MetaFlags,
+            };
+            setSavedProfile(dbProfile);
+            setShowWelcomeBack(true);
+            setCheckingProfile(false);
+            return;
+          }
         }
-      } catch {}
-    }
+
+        // Fallback to localStorage
+        const saved = localStorage.getItem("workDnaProfile");
+        if (saved) {
+          try {
+            const parsed = JSON.parse(saved);
+            if (parsed.primary && parsed.secondary && parsed.meta) {
+              setSavedProfile(parsed);
+              setShowWelcomeBack(true);
+            }
+          } catch {}
+        }
+      } catch {
+        // Auth check failed — fall back to localStorage silently
+        const saved = localStorage.getItem("workDnaProfile");
+        if (saved) {
+          try {
+            const parsed = JSON.parse(saved);
+            if (parsed.primary && parsed.secondary && parsed.meta) {
+              setSavedProfile(parsed);
+              setShowWelcomeBack(true);
+            }
+          } catch {}
+        }
+      } finally {
+        if (!cancelled) setCheckingProfile(false);
+      }
+    })();
+    return () => { cancelled = true; };
   }, []);
 
   const isResults = step === TOTAL_QUESTIONS;
@@ -602,6 +651,29 @@ export default function Quiz() {
     window.addEventListener("keydown", handler);
     return () => window.removeEventListener("keydown", handler);
   }, [canAdvance, advance, isResults]);
+
+  // Loading shimmer while checking for existing profile
+  if (checkingProfile) {
+    return (
+      <div
+        className="fixed inset-0 overflow-hidden flex items-center justify-center"
+        style={{ background: "#0a0a0e", fontFamily: "'DM Sans', sans-serif" }}
+      >
+        <div className="flex flex-col items-center gap-4">
+          <div
+            className="w-10 h-10 rounded-full border-2 border-transparent"
+            style={{
+              borderTopColor: "#C9A84C",
+              animation: "spin 0.8s linear infinite",
+            }}
+          />
+          <p style={{ color: "rgba(245,240,232,0.4)", fontSize: 13, fontFamily: "'DM Sans', sans-serif" }}>
+            Checking your profile…
+          </p>
+        </div>
+      </div>
+    );
+  }
 
   // Welcome-back interstitial for returning visitors
   if (showWelcomeBack && savedProfile) {
@@ -822,6 +894,27 @@ export default function Quiz() {
                   {qIdx === TOTAL_QUESTIONS - 1 ? "See my profile" : "Next →"}
                 </button>
               </div>
+              {/* Reset link on first question screen */}
+              {qIdx === 0 && (
+                <div className="text-center mt-6">
+                  <button
+                    onClick={reset}
+                    style={{
+                      background: "none",
+                      border: "none",
+                      color: "rgba(245,240,232,0.35)",
+                      fontSize: 12,
+                      cursor: "pointer",
+                      fontFamily: "'DM Sans', sans-serif",
+                      transition: "color 0.2s ease",
+                    }}
+                    onMouseEnter={(e) => (e.currentTarget.style.color = "#C9A84C")}
+                    onMouseLeave={(e) => (e.currentTarget.style.color = "rgba(245,240,232,0.35)")}
+                  >
+                    Already took the quiz? Reset and start over.
+                  </button>
+                </div>
+              )}
             </div>
           </div>
         ))}
@@ -1222,11 +1315,14 @@ function ResultsScreen({
           marginTop: 24,
           background: "none",
           border: "none",
-          color: "hsl(var(--muted-foreground))",
+          color: "rgba(245,240,232,0.4)",
           fontSize: 12,
           cursor: "pointer",
           fontFamily: "'DM Sans', sans-serif",
+          transition: "color 0.2s ease",
         }}
+        onMouseEnter={(e) => (e.currentTarget.style.color = "#C9A84C")}
+        onMouseLeave={(e) => (e.currentTarget.style.color = "rgba(245,240,232,0.4)")}
       >
         ← Retake the quiz
       </button>
