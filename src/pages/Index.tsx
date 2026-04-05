@@ -97,13 +97,20 @@ const Index = forwardRef<HTMLDivElement>((_, ref) => {
             <HeroScanInput />
           </div>
 
-          {/* Live Data Feed */}
-          <div
-            className="mt-6 w-full max-w-[560px]"
+          {/* Work DNA Quiz CTA */}
+          <p
+            className="font-mono text-xs text-muted-foreground mt-4 tracking-wide"
             style={{ animation: "heroFadeIn 0.4s ease 0.7s" }}
           >
-            <LiveDataFeed />
-          </div>
+            Not sure where to start?{" "}
+            <button
+              id="cta-work-dna-quiz"
+              onClick={() => navigate("/quiz")}
+              className="text-primary hover:text-primary/80 underline underline-offset-2 transition-colors font-semibold"
+            >
+              Find your Work DNA first →
+            </button>
+          </p>
 
           <p className="font-mono text-xs text-muted-foreground mt-5 tracking-wide max-w-[52ch] mx-auto text-center leading-relaxed" style={{ animation: "heroFadeIn 0.4s ease 1.0s" }}>
             Facts over feelings, built on FEC, SEC, OSHA, NLRB, BLS, and more — the public record, not the press release.
